@@ -1,4 +1,77 @@
 {
+  "overview": {
+    "title": "Website",
+    "subtitle": "Manage your Academy's public website from one place.",
+    "pages": {
+      "title": "Pages",
+      "description": "Core and custom pages"
+    },
+    "content": {
+      "title": "Content",
+      "description": "FAQs, testimonials, blog & announcements"
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Theme, brand, SEO and navigation"
+    },
+    "preview": {
+      "title": "Preview",
+      "description": "See your draft website"
+    },
+    "sitemapPreview": {
+      "title": "Sitemap preview",
+      "help": "The pages a future public website would list in its sitemap, based on what's currently published, visible and indexable. Nothing here is served yet.",
+      "empty": "Nothing would appear in the sitemap yet — publish your website and make sure pages are visible and indexable."
+    }
+  },
+  "content": {
+    "title": "Content",
+    "subtitle": "Reusable FAQ and testimonial content, plus your blog and announcements.",
+    "tabs": {
+      "faqs": "FAQs",
+      "testimonials": "Testimonials",
+      "blog": "Blog & Announcements"
+    },
+    "questionEn": "Question (English)",
+    "questionAr": "Question (Arabic)",
+    "answerEn": "Answer (English)",
+    "answerAr": "Answer (Arabic)",
+    "quoteEn": "Quote (English)",
+    "quoteAr": "Quote (Arabic)",
+    "authorRoleEn": "Author role (English)",
+    "authorRoleAr": "Author role (Arabic)",
+    "publishAction": "Publish",
+    "archiveAction": "Archive",
+    "archiveConfirmTitle": "Archive this entry?",
+    "archiveConfirmDescription": "It will no longer appear on your website, even where it's referenced from a page. This does not delete it and can be reversed later.",
+    "status": {
+      "draft": "Draft",
+      "published": "Published",
+      "archived": "Archived"
+    },
+    "faq": {
+      "createAction": "New FAQ entry",
+      "createTitle": "Create FAQ entry",
+      "editTitle": "Edit FAQ entry",
+      "empty": "No FAQ entries yet"
+    },
+    "testimonial": {
+      "createAction": "New testimonial",
+      "createTitle": "Create testimonial",
+      "editTitle": "Edit testimonial",
+      "empty": "No testimonials yet"
+    },
+    "blog": {
+      "title": "Blog",
+      "description": "Your Academy's knowledge blog posts, managed on their own dedicated page.",
+      "manageAction": "Manage blog posts"
+    },
+    "announcements": {
+      "title": "Announcements",
+      "description": "Announcements published to your students and courses.",
+      "manageAction": "Manage announcements"
+    }
+  },
   "settings": {
     "title": "Website",
     "subtitle": "Configure your Academy's public website — theme, branding, SEO and navigation.",
@@ -49,9 +122,21 @@
     "saveError": "Failed to save brand settings"
   },
   "seo": {
+    "siteTitle": "Site title",
     "metaTitle": "Meta title",
     "metaDescription": "Meta description",
+    "ogTitle": "Social share title",
+    "ogDescription": "Social share description",
     "ogImage": "Social share image",
+    "canonicalPath": "Canonical path",
+    "canonicalBaseUrl": "Canonical base URL",
+    "canonicalBaseUrlHelp": "A real, verified domain is connected later in your website's lifecycle — this is only used to compose canonical links once it is.",
+    "robotsIndexable": "Allow search engines to index this website",
+    "sitemapEnabled": "Include this website in the sitemap",
+    "indexable": "Allow search engines to index this page",
+    "structuredDataPreview": "Structured data preview",
+    "structuredDataPreviewHelp": "A preview of the structured data (JSON-LD) a future public website would publish for search engines and social platforms — nothing here is published yet.",
+    "resolvedFallbackHint": "If you leave the fields below blank, this page currently falls back to: \"{{title}}\" / \"{{description}}\".",
     "saved": "SEO settings saved",
     "saveError": "Failed to save SEO settings"
   },
@@ -105,6 +190,11 @@
     "invalidConfig": "Some values need to be corrected before this can be saved.",
     "moveUp": "Move up",
     "moveDown": "Move down",
+    "seoAction": "Edit SEO",
+    "seoTitle": "Page SEO",
+    "libraryEntries": "From your content library",
+    "libraryEntriesHelpFaq": "Published FAQ entries you select here appear on this section, alongside any items added directly below.",
+    "libraryEntriesHelpTestimonials": "Published testimonials you select here appear on this section, alongside any items added directly below.",
     "visibility": {
       "desktop": "Desktop",
       "tablet": "Tablet",

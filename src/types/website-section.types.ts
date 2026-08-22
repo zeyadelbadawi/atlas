@@ -110,6 +110,14 @@ export interface TestimonialItem {
 export interface TestimonialsSectionConfig {
   readonly title?: string;
   readonly items: readonly TestimonialItem[];
+  /**
+   * Optional references into the Academy's reusable Testimonial content
+   * library (Prompt 10, `WebsiteTestimonialEntry`). Resolved live at
+   * render time and shown ADDITIVELY alongside `items` — never a
+   * migration or replacement of existing inline data, so every page
+   * saved before Prompt 10 renders identically (empty/absent list).
+   */
+  readonly libraryEntryIds?: readonly string[];
 }
 
 export interface FaqItem {
@@ -121,6 +129,8 @@ export interface FaqItem {
 export interface FaqSectionConfig {
   readonly title?: string;
   readonly items: readonly FaqItem[];
+  /** Same additive library-reference mechanism as `TestimonialsSectionConfig.libraryEntryIds` — see that field's doc comment. References `WebsiteFaqEntry` (Prompt 10). */
+  readonly libraryEntryIds?: readonly string[];
 }
 
 export interface CtaSectionConfig {

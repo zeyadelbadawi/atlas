@@ -207,8 +207,14 @@ const PlatformProvisioningDetailPage = lazy(
   () => import('@features/provisioning/pages/PlatformProvisioningDetailPage')
 );
 
+const WebsiteOverviewPage = lazy(
+  () => import('@features/website/pages/WebsiteOverviewPage')
+);
 const WebsiteSettingsPage = lazy(
   () => import('@features/website/pages/WebsiteSettingsPage')
+);
+const WebsiteContentPage = lazy(
+  () => import('@features/website/pages/WebsiteContentPage')
 );
 const WebsitePagesPage = lazy(
   () => import('@features/website/pages/WebsitePagesPage')
@@ -804,10 +810,28 @@ export function AppRouter(): JSX.Element {
             />
 
             <Route
+              path={DASHBOARD_ROUTES.websiteOverview}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['academy.website.view']}>
+                  <WebsiteOverviewPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
               path={DASHBOARD_ROUTES.websiteSettings}
               element={
                 <RouteGuard requireAuthentication requiredPermissions={['academy.website.view']}>
                   <WebsiteSettingsPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.websiteContent}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['academy.website.view']}>
+                  <WebsiteContentPage />
                 </RouteGuard>
               }
             />

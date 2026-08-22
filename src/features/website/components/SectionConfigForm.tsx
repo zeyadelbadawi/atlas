@@ -30,21 +30,127 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { WebsiteImageField } from './WebsiteImageField';
+import { useWebsiteFaqEntries, useWebsiteTestimonialEntries } from '../hooks';
 import { SECTION_FIELD_SCHEMAS } from '../sections/section-fields.registry';
 import { getSectionConfigSchema } from '../schemas/website-section.schemas';
 import { MAX_SECTION_ITEMS } from '../constants/website.constants';
 import type { SectionFieldDescriptor } from '../sections/section-field.types';
-import type { SectionConfigMap, SectionType, WebsitePage } from '@types';
+import type { LanguageCode, SectionConfigMap, SectionType, WebsitePage } from '@types';
 
 type DraftValue = Record<string, unknown>;
 
 export interface SectionConfigFormProps<TType extends SectionType> {
   readonly type: TType;
+  readonly academyId: string;
   readonly initialConfig: SectionConfigMap[TType];
   readonly pages: readonly WebsitePage[];
   readonly onSave: (config: SectionConfigMap[TType]) => void;
   readonly onCancel: () => void;
   readonly isSaving: boolean;
+}
+
+interface LibraryOption {
+  readonly id: string;
+  readonly label: string;
+}
+
+function LibraryEntryPicker({
+  titleKey,
+  helpKey,
+  options,
+  selectedIds,
+  onChange,
+}: {
+  readonly titleKey: string;
+  readonly helpKey: string;
+  readonly options: readonly LibraryOption[];
+  readonly selectedIds: readonly string[];
+  readonly onChange: (ids: string[]) => void;
+}): JSX.Element | null {
+  const { t } = useTranslation();
+  if (options.length === 0) return null;
+
+  const toggle = (id: string, checked: boolean) => {
+    onChange(checked ? [...selectedIds, id] : selectedIds.filter((existing) => existing !== id));
+  };
+
+  return (
+    <div className="space-y-2 border-t border-border pt-4">
+      <p className="text-sm font-medium text-foreground">{t(titleKey)}</p>
+      <p className="text-xs text-muted-foreground">{t(helpKey)}</p>
+      <div className="space-y-2">
+        {options.map((option) => (
+          <label key={option.id} className="flex items-center gap-2 text-sm">
+            <Checkbox
+              checked={selectedIds.includes(option.id)}
+              onCheckedChange={(checked) => toggle(option.id, checked === true)}
+            />
+            <span className="line-clamp-1">{option.label}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Fetches and adapts the Academy's published FAQ library — kept separate from `TestimonialLibraryField` so each calls its own hook unconditionally, never behind a runtime branch. */
+function FaqLibraryField({
+  academyId,
+  selectedIds,
+  onChange,
+}: {
+  readonly academyId: string;
+  readonly selectedIds: readonly string[];
+  readonly onChange: (ids: string[]) => void;
+}): JSX.Element | null {
+  const { i18n } = useTranslation();
+  const language = i18n.language as LanguageCode;
+  const { data } = useWebsiteFaqEntries(academyId, { query: { filters: { status: 'published' } } });
+  const options: LibraryOption[] = (data?.items ?? []).map((entry) => ({
+    id: entry.id,
+    label: entry.question[language] || entry.question.en,
+  }));
+
+  return (
+    <LibraryEntryPicker
+      titleKey="website:editor.libraryEntries"
+      helpKey="website:editor.libraryEntriesHelpFaq"
+      options={options}
+      selectedIds={selectedIds}
+      onChange={onChange}
+    />
+  );
+}
+
+/** Same reasoning as `FaqLibraryField` — see its doc comment. */
+function TestimonialLibraryField({
+  academyId,
+  selectedIds,
+  onChange,
+}: {
+  readonly academyId: string;
+  readonly selectedIds: readonly string[];
+  readonly onChange: (ids: string[]) => void;
+}): JSX.Element | null {
+  const { i18n } = useTranslation();
+  const language = i18n.language as LanguageCode;
+  const { data } = useWebsiteTestimonialEntries(academyId, {
+    query: { filters: { status: 'published' } },
+  });
+  const options: LibraryOption[] = (data?.items ?? []).map((entry) => ({
+    id: entry.id,
+    label: `${entry.quote[language] || entry.quote.en} — ${entry.authorName}`,
+  }));
+
+  return (
+    <LibraryEntryPicker
+      titleKey="website:editor.libraryEntries"
+      helpKey="website:editor.libraryEntriesHelpTestimonials"
+      options={options}
+      selectedIds={selectedIds}
+      onChange={onChange}
+    />
+  );
 }
 
 function CtaFieldEditor({
@@ -169,6 +275,7 @@ function ScalarField({
 
 export function SectionConfigForm<TType extends SectionType>({
   type,
+  academyId,
   initialConfig,
   pages,
   onSave,
@@ -280,6 +387,21 @@ export function SectionConfigForm<TType extends SectionType>({
             </div>
           ))}
         </div>
+      ) : null}
+
+      {type === 'faq' ? (
+        <FaqLibraryField
+          academyId={academyId}
+          selectedIds={(draft.libraryEntryIds as string[] | undefined) ?? []}
+          onChange={(ids) => setField('libraryEntryIds', ids)}
+        />
+      ) : null}
+      {type === 'testimonials' ? (
+        <TestimonialLibraryField
+          academyId={academyId}
+          selectedIds={(draft.libraryEntryIds as string[] | undefined) ?? []}
+          onChange={(ids) => setField('libraryEntryIds', ids)}
+        />
       ) : null}
 
       {error ? <p className="text-sm text-destructive">{t(error)}</p> : null}

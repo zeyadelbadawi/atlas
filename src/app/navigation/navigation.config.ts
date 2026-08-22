@@ -109,7 +109,7 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
       {
         id: 'academy-website',
         labelKey: 'navigation:items.academyWebsite',
-        path: buildPath(DASHBOARD_ROUTES.websiteSettings, {
+        path: buildPath(DASHBOARD_ROUTES.websiteOverview, {
           academyId: activeAcademyId,
         }),
         icon: Globe,

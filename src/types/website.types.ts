@@ -31,10 +31,26 @@ export interface WebsiteBrandConfig {
   readonly accentColor: HslColorTriplet;
 }
 
+/**
+ * Global SEO defaults for the whole website. `robotsIndexable`/
+ * `sitemapEnabled`/`canonicalBaseUrl` are CONFIGURATION DATA the future
+ * public runtime will read to decide what it serves — this prompt does
+ * not itself serve `robots.txt`/`sitemap.xml` (see
+ * `Reports/ARCHITECTURE.md`, Prompt 10, "Robots / Sitemap Contracts").
+ * `canonicalBaseUrl` is a plain string field, never a real, verified,
+ * DNS-backed domain — it is the same kind of "display-state, not
+ * infrastructure" contract Prompt 8 established for
+ * `DomainConnection.hostname`.
+ */
 export interface WebsiteSeoConfig {
+  readonly siteTitle?: string;
   readonly metaTitle?: string;
   readonly metaDescription?: string;
   readonly ogImage?: string;
+  /** Site-wide default; a page's own `WebsitePageSeo.indexable` overrides it. Defaults to `true`. */
+  readonly robotsIndexable?: boolean;
+  readonly sitemapEnabled?: boolean;
+  readonly canonicalBaseUrl?: string;
 }
 
 export interface WebsiteNavigationItem {
@@ -129,9 +145,22 @@ export const TOGGLEABLE_CORE_PAGE_TYPES: readonly WebsiteCorePageType[] = [
 
 export type WebsitePageType = 'core' | 'custom';
 
+/**
+ * Page-level SEO — independently editable from `WebsiteSeoConfig`
+ * (global). A page that leaves these unset simply falls through the
+ * resolution hierarchy to the global default, then the system fallback
+ * (see `resolvePageSeo` in `seo-resolution.utils.ts`).
+ */
 export interface WebsitePageSeo {
   readonly metaTitle?: string;
   readonly metaDescription?: string;
+  readonly ogTitle?: string;
+  readonly ogDescription?: string;
+  readonly ogImage?: string;
+  /** A path, e.g. `/about` — never a full origin (see `WebsiteSeoConfig.canonicalBaseUrl`'s doc comment for the boundary this respects). */
+  readonly canonicalPath?: string;
+  /** Defaults to `true`. Explicitly `false` for a draft-only or intentionally unlisted page. */
+  readonly indexable?: boolean;
 }
 
 export interface WebsitePage {

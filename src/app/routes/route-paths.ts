@@ -114,7 +114,10 @@ export const DASHBOARD_ROUTES = {
   platformProvisioning: '/dashboard/platform/provisioning',
   platformProvisioningDetail: '/dashboard/platform/provisioning/:requestId',
 
-  websiteSettings: '/dashboard/academy/:academyId/website',
+  /** The Website Management landing (Prompt 10) — `websiteSettings` moved to its own sub-path to make room for it. */
+  websiteOverview: '/dashboard/academy/:academyId/website',
+  websiteSettings: '/dashboard/academy/:academyId/website/settings',
+  websiteContent: '/dashboard/academy/:academyId/website/content',
   websitePages: '/dashboard/academy/:academyId/website/pages',
   websitePageEditor: '/dashboard/academy/:academyId/website/pages/:pageId',
   websitePreview: '/dashboard/academy/:academyId/website/preview',

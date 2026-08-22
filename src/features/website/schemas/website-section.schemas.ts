@@ -79,6 +79,8 @@ const testimonialItemSchema = z.object({
 export const testimonialsSectionSchema = z.object({
   title: z.string().max(MAX_SHORT_TEXT, 'validation:maxLength').optional(),
   items: z.array(testimonialItemSchema).max(MAX_SECTION_ITEMS),
+  /** References into the Prompt 10 Testimonial content library — see `TestimonialsSectionConfig.libraryEntryIds`'s doc comment. */
+  libraryEntryIds: z.array(z.string()).max(MAX_SECTION_ITEMS).optional(),
 });
 
 const faqItemSchema = z.object({
@@ -90,6 +92,8 @@ const faqItemSchema = z.object({
 export const faqSectionSchema = z.object({
   title: z.string().max(MAX_SHORT_TEXT, 'validation:maxLength').optional(),
   items: z.array(faqItemSchema).max(MAX_SECTION_ITEMS),
+  /** References into the Prompt 10 FAQ content library — see `FaqSectionConfig.libraryEntryIds`'s doc comment. */
+  libraryEntryIds: z.array(z.string()).max(MAX_SECTION_ITEMS).optional(),
 });
 
 export const ctaSectionSchema = z.object({

@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-08-23T12:00:00Z
+last_updated: 2026-08-23T18:00:00Z
 ---
 
 # Architecture Design
@@ -1156,4 +1156,235 @@ built, and page/content versioning or revision history. These remain
 explicitly future modules — the point of this prompt's architecture is
 that a future backend and a future public-routing layer can be built
 behind these exact contracts without the frontend needing a rewrite.
+
+---
+
+## Atlas CMS + SEO Platform (Prompt 10)
+
+Structured Website Content Management and an independent SEO domain,
+built on top of Prompt 9's Theme Engine and Page Composer. CMS and SEO
+are two separate architectural domains implemented in one prompt — Theme
+owns HOW content looks, CMS owns WHAT content exists, SEO owns HOW
+content is represented to search engines/crawlers, and none of the three
+is allowed to reach into either of the other two's responsibility.
+
+### CMS vs. Page Composer
+
+Prompt 9 already owns page composition: `WebsitePage`, `SectionInstance`,
+the Section Registry, the Page Composer, and `WebsiteRenderer`. Prompt 10
+does not build a second page builder, a second Section Editor, or a
+second renderer — it adds a durable, reusable CONTENT layer
+(`WebsiteFaqEntry`/`WebsiteTestimonialEntry`) that a page's existing FAQ/
+Testimonials sections can reference by id, and it extends the existing,
+single `SectionConfigForm` with a small picker rather than forking it.
+`WebsiteContentPage` (the new CMS surface) manages standalone library
+content; it is deliberately NOT another place to compose a page.
+
+### The `LocalizedText` decision — narrow, not retroactive
+
+Atlas's localization system (`react-i18next`) translates UI chrome; it
+has never translated user-generated content — a Course title, an Academy
+name, and every Prompt 9 page/section content string are single-locale,
+tenant-authored strings ("real content, not a translation key"). Prompt
+10 needed genuine content localization for the CMS library (a FAQ
+question written once must still work for an Arabic-reading visitor), so
+it introduces `LocalizedText` (`{ en: string; ar: string }`, both
+required — an entry only written in one language would silently vanish
+for the other locale). This primitive is used ONLY by
+`WebsiteFaqEntry`/`WebsiteTestimonialEntry` — every existing Prompt 9
+content string (`WebsitePage.title`, `HeroSectionConfig.title`, inline
+`FaqItem.question`, etc.) is deliberately left untouched and
+single-locale. This is a documented, bounded inconsistency, not an
+oversight: retrofitting `LocalizedText` onto Prompt 9's already-shipped,
+already-validated content model would have been exactly the "rebuild
+Prompt 9" the spec forbids, for a benefit (bilingual inline section
+content) no user story in this prompt actually asked for.
+
+### One shared CMS content shape, not a generic content framework
+
+Section 3 of the spec explicitly warns against introducing an abstract
+`ContentType`/`ContentEntry` framework "merely for abstraction's sake."
+`WebsiteFaqEntry` and `WebsiteTestimonialEntry` are two concrete types
+sharing one deliberate shape (localized fields + `order` + `visible` +
+`status`) and one deliberate service/hook pattern
+(`WebsiteContentService`, list/get/create/update/publish/archive). The
+extension point for a future content type (Events, Partners, Team
+Members) is "add a third file that follows this same shape and pattern,"
+not "extend a generic framework" — the two existing types together ARE
+the documented pattern a third would copy.
+
+### Additive, backward-compatible section wiring
+
+`FaqSectionConfig`/`TestimonialsSectionConfig` each gained exactly one
+new optional field, `libraryEntryIds?: readonly string[]`. A page saved
+before this prompt has no such field and renders identically — its
+`FaqSection`/`TestimonialsSection` resolves an empty library list and
+falls straight through to the existing inline `items`. When
+`libraryEntryIds` IS present, the resolved library entries (published
+only, in the given order) render ADDITIVELY, ahead of `items` — never a
+silent replace, so a page mixing library references and inline items has
+a well-defined, visible order. Resolution happens inside the section
+components themselves (`useWebsiteFaqEntries`/`useWebsiteTestimonialEntries`,
+`enabled` only when `libraryEntryIds.length > 0`), the same pattern
+`FeaturedCoursesSection`/`InstructorsSection` already established in
+Prompt 9 for section-owned data fetching.
+
+### Publish/Archive mirrors the existing Blog precedent, minus hard delete
+
+`WebsiteContentService`'s publish/archive actions are dedicated `POST`
+endpoints, never implicit in a field edit — the exact shape
+`BlogService.publishPost`/`archivePost` (Prompt 5) already established.
+There is deliberately no `deleteEntry`: Archive is the one, terminal,
+non-destructive removal action for CMS content (section 12 of the spec:
+"Do not silently hard-delete published business content"). Publish/
+Archive on an entry are gated by `academy.website.publish` — the exact
+same permission that already gates the website's own publish action —
+distinct from `academy.website.manage`, which covers ordinary field
+edits. Zero new permission strings were introduced anywhere in this
+prompt.
+
+### Blog/Announcements: reuse, not rebuild
+
+`@features/blog` (Knowledge Blog, Prompt 5) and `@features/announcements`
+(Prompt 5) already provide full draft/published/archived content
+management with their own services, hooks, and pages. `WebsiteContentPage`'s
+Blog & Announcements tab links out to those existing surfaces rather than
+rebuilding either — the same "reuse, don't duplicate" decision Prompt 9's
+Brand tab made for Academy Branding. Dynamic SEO for a Blog post
+(`resolveBlogPostSeo`) reads `BlogPost`'s existing `title`/`excerpt`/
+`featuredImage`/`status` fields directly; no new Blog content model, and
+no new localized-content fields, were added to `BlogPost`.
+
+### SEO is architecturally independent of Theme
+
+`resolvePageSeo`/`resolveCourseSeo`/`resolveBlogPostSeo` and the
+structured-data/sitemap builders are pure functions: they read
+`WebsiteConfiguration.seo`/`WebsitePage.seo`/`Course`/`BlogPost`/`Academy`
+and nothing else. None of them import from `themes/`, read a
+`WebsiteThemeKey`, or touch a `--website-*` CSS token — verified by grep
+across the whole `utils/` directory. Switching an Academy's theme changes
+zero SEO values, by construction, not by convention.
+
+### SEO resolution hierarchy
+
+`resolvePageSeo` implements a deterministic three-tier hierarchy — Page
+Override (`WebsitePage.seo`) → Website Global Default
+(`WebsiteConfiguration.seo`) → Atlas System Fallback (caller-supplied,
+e.g. the Academy's own name) — returning both the resolved value and
+which tier it came from (`titleSource`/`descriptionSource`), so the UI
+can show an Academy Owner exactly why a value is what it is.
+`resolveCourseSeo`/`resolveBlogPostSeo` apply the same shape to dynamic
+entities, reading the entity's own fields as the "override" tier (a
+Course's `title` IS its SEO title unless a future dedicated Course SEO
+field is added) before falling through to the website's global default
+and the same system fallback. `WebsitePageSeoDialog` (new — Prompt 9 had
+typed `WebsitePageSeo` with no editing surface anywhere) shows this
+resolution live: "if you leave this blank, this page currently falls
+back to X."
+
+### Structured data and sitemap are documented contracts, not served output
+
+`buildOrganizationJsonLd`/`buildCourseJsonLd`/`buildArticleJsonLd`/
+`buildBreadcrumbJsonLd` are pure builders producing plain schema.org
+fragments from real, typed Atlas data. `buildSitemapEntries` filters to
+published, visible, indexable content only. Neither is wired into the DOM
+via `dangerouslySetInnerHTML` or any script injection anywhere in this
+prompt (verified absent by grep) — there is no public runtime yet to
+crawl them. Both are shown as plain, read-only `<pre>`/list previews
+(`WebsiteSeoTab`'s structured-data preview, `WebsiteOverviewPage`'s
+sitemap preview) so an Academy Owner can see exactly what a future public
+runtime would emit, without this prompt claiming to emit it.
+
+### A second real naming collision, caught the same way as the first
+
+Prompt 9 discovered and worked around a `Theme` collision with the
+pre-existing dashboard light/dark theme system. This prompt hit a second,
+independent collision: the new SEO breadcrumb shape was initially named
+`BreadcrumbItem`, which already exists in `navigation.types.ts` (the
+dashboard's own UI breadcrumb trail, an unrelated concept). `npx tsc`
+caught the resulting type error immediately after the file was written,
+before it ever reached lint or build; the SEO shape was renamed to
+`SeoBreadcrumbItem`. Documented here because it reinforces the same
+lesson Prompt 9 already recorded: grep for an existing symbol before
+introducing a common, generic-sounding type name.
+
+### Website Management information architecture
+
+Added `WebsiteOverviewPage` as the new landing at the website's base
+route (publish status, quick links into Pages/Content/Settings/Preview,
+a read-only sitemap preview) and `WebsiteContentPage` (FAQs/Testimonials/
+Blog & Announcements tabs) at a new `/website/content` route. The
+existing `WebsiteSettingsPage` moved from the base route to
+`/website/settings` to make room — its internal Theme/Brand/SEO/
+Navigation tabs are unchanged. The Academy nav item now points at the
+Overview landing instead of Settings directly.
+
+### Module Design
+| Area | Responsibility | Key Files |
+|------|-----------------|-----------|
+| CMS content types | `LocalizedText`, `WebsiteContentStatus`, `WebsiteFaqEntry`/`WebsiteTestimonialEntry` + create/update payloads | `src/types/website-content.types.ts` |
+| SEO types | `ResolvedSeoMetadata`, `SeoResolutionSource`, `OrganizationJsonLd`/`CourseJsonLd`/`ArticleJsonLd`/`BreadcrumbJsonLd`, `SeoBreadcrumbItem`, `SitemapEntry`/`SitemapChangeFrequency` | `src/types/website-seo.types.ts` |
+| SEO field extensions | `WebsiteSeoConfig`/`WebsitePageSeo` additive fields | `src/types/website.types.ts` |
+| Section wiring | `FaqSectionConfig`/`TestimonialsSectionConfig.libraryEntryIds` | `src/types/website-section.types.ts` |
+| Content service | `WebsiteContentService` — FAQ/Testimonial CRUD + publish/archive, academy-scoped | `src/features/website/services/WebsiteContentService.ts` |
+| Content hooks | 12 hooks (list/get/create/update/publish/archive × 2 entities) | `src/features/website/hooks/` |
+| SEO utilities | `resolvePageSeo`/`resolveCourseSeo`/`resolveBlogPostSeo`, structured-data builders, `buildSitemapEntries` | `src/features/website/utils/` |
+| Content management UI | `WebsiteContentPage`, `WebsiteFaqContentTab`, `WebsiteTestimonialContentTab`, `WebsiteBlogContentTab` | `src/features/website/pages/`, `src/features/website/components/` |
+| SEO editing UI | `WebsiteSeoTab` (extended), `WebsitePageSeoDialog` (new) | `src/features/website/components/` |
+| Overview | `WebsiteOverviewPage` — new IA landing | `src/features/website/pages/WebsiteOverviewPage.tsx` |
+| Query keys | `websiteKeys.faqEntries`/`faqEntry`/`testimonialEntries`/`testimonialEntry` (academy-scoped) | `src/services/query/query-keys.ts` |
+| Routing | `websiteOverview` (new base path), `websiteSettings` (moved to `/settings`), `websiteContent` (new) | `route-paths.ts`, `AppRouter.tsx` |
+| Localization | `website` namespace extended (240/240 keys, EN/AR parity verified programmatically) — no new namespace | `src/localization/resources/{en,ar}/website.json` |
+
+### Tech Decisions
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| CMS extends, doesn't replace, the Page Composer | `libraryEntryIds` is one additive field per config; `SectionConfigForm` gets a small picker, not a fork | Prompt 9's Page Composer, Section Registry and Renderer stay the single source of truth |
+| `LocalizedText` scoped to CMS entries only | Prompt 9's existing content strings remain single-locale, unchanged | Real bilingual content need vs. not rewriting a shipped, validated content model for a benefit nobody asked for |
+| One shared shape for FAQ/Testimonial entries, no generic content framework | Two concrete types + one pattern, not an abstract `ContentType`/`ContentEntry` system | Matches the spec's own warning against unnecessary abstraction |
+| Archive, never hard-delete, for CMS content | `WebsiteContentService` has no `deleteEntry` | "Do not silently hard-delete published business content" |
+| Blog/Announcements reused, not duplicated | `WebsiteContentPage`'s Blog tab links out to `@features/blog`/`@features/announcements` | Both already provide full lifecycle management; rebuilding either is the actual architectural error |
+| SEO reads Theme never | Zero imports from `themes/`, zero token reads, in every SEO util | "SEO / Theme Independence" as a checked property, not only a stated intention |
+| SEO resolution hierarchy is a pure function | `resolvePageSeo`/`resolveCourseSeo`/`resolveBlogPostSeo`, no service calls | Deterministic, testable, and same-shaped across every entity |
+| Structured data / sitemap shown, never injected | Read-only `<pre>`/list previews, no `dangerouslySetInnerHTML` anywhere | No public runtime exists yet to crawl real JSON-LD/sitemap output |
+| `SeoBreadcrumbItem`, not bare `BreadcrumbItem` | Renamed after a real collision with `navigation.types.ts` | Same naming discipline Prompt 9 established for `Website*` vs. `Theme*` |
+| Website base route now `WebsiteOverviewPage` | Settings moved to `/website/settings` | One coherent Website Management surface per spec section 33, not scattered controls |
+
+### Backend Contracts To Document (frontend-defined, backend TBD)
+1. **FAQ/Testimonial entries** — `GET/POST /academies/:academyId/website/faq-entries`, `GET/PATCH .../faq-entries/:id`, `POST .../faq-entries/:id/publish`, `POST .../faq-entries/:id/archive`; identical shape under `testimonial-entries`. No delete endpoint is called by the frontend.
+2. **Global/Page SEO** — persisted as sub-objects of the existing `WebsiteConfiguration`/`WebsitePage` resources via their existing update endpoints (Prompt 9) — no new SEO-specific endpoint was introduced.
+3. **Structured data / sitemap** — not served by any endpoint in this prompt; documented here as the exact shape (`OrganizationJsonLd`/`CourseJsonLd`/`ArticleJsonLd`/`BreadcrumbJsonLd`, `SitemapEntry[]`) a future public-runtime backend should be able to produce from the same underlying Academy/Course/BlogPost/WebsitePage data this frontend already reads.
+4. **Robots** — `WebsiteSeoConfig.robotsIndexable`/`WebsitePageSeo.indexable` are the frontend-owned configuration inputs; an actual `robots.txt` response is a future public-runtime concern, not implemented here.
+
+### Security / Tenancy Verification
+- **Cross-Academy leakage**: every new hook (`useWebsiteFaqEntries`, etc.) requires an explicit `academyId` argument with no default; every new query key (`websiteKeys.faqEntries`, etc.) embeds it; every new service call passes it as a URL path segment, never in a request body — verified by grep across the entire feature.
+- **Fail-closed authorization**: all 6 website routes (2 new, 4 pre-existing) go through the unmodified `RouteGuard`; grep confirms 63/63 `RouteGuard` instances across the whole router still explicitly set `requireAuthentication`.
+- **No new permission vocabulary**: grep across the feature, its routes, and its nav config confirms only the 3 pre-existing `academy.website.view`/`manage`/`publish` strings appear anywhere.
+- **No client-executable configuration**: grepped the entire feature for `dangerouslySetInnerHTML`, `eval`, `new Function`, and raw `<script>` — none found (including the new structured-data preview, which renders as plain text).
+- **No fake backend**: grepped for `setTimeout`/`setInterval` used to simulate save/publish/fetch latency, and for any `localStorage`-as-persistence pattern — none found.
+- **Draft never leaks**: `FaqSection`/`TestimonialsSection` only ever resolve library entries with `status: 'published'`; the management UI (`WebsiteContentPage`) intentionally shows all statuses, gated behind the same `academy.website.view`/`manage` permissions the rest of the feature already requires.
+
+### What Is Frontend-Only (No Real Backend Behind It Yet)
+Every new service method issues a real HTTP call through the existing
+`apiClient` against a documented endpoint shape, consistent with every
+prior prompt. There is no real search-engine indexing, no real sitemap/
+robots serving, and no real structured-data crawling behind any of it —
+the SEO domain's job in this prompt is to model the data and resolution
+rules correctly and show what a future public runtime would produce,
+never to produce it.
+
+### Scope Boundary
+Explicitly not implemented in Prompt 10: any public website
+runtime/serving of `robots.txt` or `sitemap.xml`, real DNS/SSL/CDN,
+custom-domain provisioning, a rewrite or duplication of the Course/
+Instructor/Blog/Announcement/Academy Branding domains, a generic
+`ContentType`/`ContentEntry` CMS framework, hard delete of CMS content,
+new content types beyond FAQ/Testimonial entries (Events/Partners/Team
+Members remain a documented future extension, not built now), bilingual
+localization of Prompt 9's existing page/section content strings, and any
+new permission beyond the 3 that already existed. These remain explicitly
+future work — the point of this prompt's architecture is that a future
+public-runtime backend can serve real search-engine-facing output
+directly from the CMS/SEO contracts built here, without the frontend
+needing a rewrite.
 

@@ -13,7 +13,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { Loader2, Save } from 'lucide-react';
+import { Loader2, Save, Search } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { Button } from '@/components/ui/button';
@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useConfirmDialog } from '@app/providers';
-import { useUnsavedChanges, usePermissions } from '@hooks';
+import { useDisclosure, useUnsavedChanges, usePermissions } from '@hooks';
 import { useAcademy } from '@features/academy';
 import {
   useUpdateWebsitePage,
@@ -37,6 +37,7 @@ import {
 import { WebsitePublishBar } from '../components/WebsitePublishBar';
 import { SectionTree } from '../components/SectionTree';
 import { SectionConfigForm } from '../components/SectionConfigForm';
+import { WebsitePageSeoDialog } from '../components/WebsitePageSeoDialog';
 import { PreviewViewport, type PreviewBreakpoint } from '../components/PreviewViewport';
 import { WebsiteRenderer } from '../renderer';
 import { SECTION_METADATA, getDefaultSectionConfig } from '../sections';
@@ -61,6 +62,7 @@ export default function WebsitePageEditorPage(): JSX.Element {
   const [draftSections, setDraftSections] = useState<SectionInstance[]>([]);
   const [selectedId, setSelectedId] = useState<string>();
   const [breakpoint, setBreakpoint] = useState<PreviewBreakpoint>('desktop');
+  const seoDialog = useDisclosure();
 
   useEffect(() => {
     if (pageQuery.data) setDraftSections(pageQuery.data.sections as SectionInstance[]);
@@ -194,14 +196,20 @@ export default function WebsitePageEditorPage(): JSX.Element {
           descriptionKey="website:editor.subtitle"
           actions={
             canManage ? (
-              <Button type="button" onClick={handleSaveChanges} disabled={!isDirty || updatePage.isPending}>
-                {updatePage.isPending ? (
-                  <Loader2 className="size-4 animate-spin" aria-hidden />
-                ) : (
-                  <Save className="size-4" strokeWidth={2} aria-hidden />
-                )}
-                {t('website:editor.saveChanges')}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button type="button" variant="outline" onClick={seoDialog.open}>
+                  <Search className="size-4" strokeWidth={2} aria-hidden />
+                  {t('website:editor.seoAction')}
+                </Button>
+                <Button type="button" onClick={handleSaveChanges} disabled={!isDirty || updatePage.isPending}>
+                  {updatePage.isPending ? (
+                    <Loader2 className="size-4 animate-spin" aria-hidden />
+                  ) : (
+                    <Save className="size-4" strokeWidth={2} aria-hidden />
+                  )}
+                  {t('website:editor.saveChanges')}
+                </Button>
+              </div>
             ) : undefined
           }
         />
@@ -253,6 +261,7 @@ export default function WebsitePageEditorPage(): JSX.Element {
               </DialogHeader>
               <SectionConfigForm
                 type={selectedSection.type}
+                academyId={academyId}
                 initialConfig={selectedSection.config}
                 pages={pages}
                 isSaving={false}
@@ -263,6 +272,17 @@ export default function WebsitePageEditorPage(): JSX.Element {
           ) : null}
         </DialogContent>
       </Dialog>
+
+      {canManage ? (
+        <WebsitePageSeoDialog
+          academyId={academyId}
+          academyName={academy.name}
+          configuration={configuration}
+          page={page}
+          open={seoDialog.isOpen}
+          onOpenChange={seoDialog.setOpen}
+        />
+      ) : null}
     </PageContainer>
   );
 }

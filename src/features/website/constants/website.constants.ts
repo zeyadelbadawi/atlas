@@ -64,3 +64,26 @@ export const MAX_SECTION_ITEMS = 12;
 /** Same bound Course thumbnails and Academy branding already use for an image asset. */
 export const MAX_WEBSITE_IMAGE_FILE_SIZE = 5 * 1024 * 1024;
 export const ALLOWED_WEBSITE_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+
+/* -------------------------------------------------------------------- */
+/* CMS content (Prompt 10)                                              */
+/* -------------------------------------------------------------------- */
+
+export const MAX_FAQ_QUESTION_LENGTH = 200;
+export const MAX_FAQ_ANSWER_LENGTH = 2000;
+export const MAX_TESTIMONIAL_QUOTE_LENGTH = 500;
+export const MAX_TESTIMONIAL_AUTHOR_NAME_LENGTH = 100;
+export const MAX_TESTIMONIAL_AUTHOR_ROLE_LENGTH = 100;
+export const CONTENT_LIST_PAGE_SIZE = 50;
+
+/* -------------------------------------------------------------------- */
+/* SEO (Prompt 10)                                                      */
+/* -------------------------------------------------------------------- */
+
+export const MAX_SITE_TITLE_LENGTH = 70;
+export const MAX_OG_TITLE_LENGTH = 70;
+export const MAX_OG_DESCRIPTION_LENGTH = 200;
+
+/** A site-relative path only — enforced so a canonical value can never smuggle a full origin/protocol (that remains a future public-runtime concern, never client configuration). */
+export const CANONICAL_PATH_REGEX = /^\/[a-z0-9/-]*$/;
+export const MAX_CANONICAL_PATH_LENGTH = 200;

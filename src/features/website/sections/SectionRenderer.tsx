@@ -39,9 +39,9 @@ export function SectionRenderer({ instance, academyId }: SectionRendererProps): 
     case 'features':
       return <FeaturesSection config={instance.config} />;
     case 'testimonials':
-      return <TestimonialsSection config={instance.config} />;
+      return <TestimonialsSection config={instance.config} academyId={academyId} />;
     case 'faq':
-      return <FaqSection config={instance.config} />;
+      return <FaqSection config={instance.config} academyId={academyId} />;
     case 'cta':
       return <CtaSection config={instance.config} />;
     case 'instructors':

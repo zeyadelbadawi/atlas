@@ -453,4 +453,13 @@ export const websiteKeys = {
     [...websiteKeys.all, 'pages', academyId, query] as const,
   page: (academyId: string | undefined, pageId: string) =>
     [...websiteKeys.all, 'page', academyId, pageId] as const,
+  /** CMS content (Prompt 10) — same academy-scoping technique as `configuration`/`pages` above. */
+  faqEntries: (academyId: string | undefined, query?: CollectionQuery) =>
+    [...websiteKeys.all, 'faq-entries', academyId, query] as const,
+  faqEntry: (academyId: string | undefined, entryId: string) =>
+    [...websiteKeys.all, 'faq-entry', academyId, entryId] as const,
+  testimonialEntries: (academyId: string | undefined, query?: CollectionQuery) =>
+    [...websiteKeys.all, 'testimonial-entries', academyId, query] as const,
+  testimonialEntry: (academyId: string | undefined, entryId: string) =>
+    [...websiteKeys.all, 'testimonial-entry', academyId, entryId] as const,
 } as const;

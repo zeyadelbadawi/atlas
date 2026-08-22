@@ -34,3 +34,5 @@ export * from './provisioning.types';
 export * from './website-theme.types';
 export * from './website-section.types';
 export * from './website.types';
+export * from './website-content.types';
+export * from './website-seo.types';
