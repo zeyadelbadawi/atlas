@@ -45,7 +45,8 @@
     "continueLearning": "Continue Learning",
     "viewProgress": "View Progress",
     "courseCompleted": "You've completed this course",
-    "viewCompletedCourse": "Review Course"
+    "viewCompletedCourse": "Review Course",
+    "discussionsAction": "Discussions"
   },
   "learn": {
     "curriculumLabel": "Curriculum",

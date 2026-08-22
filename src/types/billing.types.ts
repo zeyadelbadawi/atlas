@@ -3,6 +3,14 @@
  *
  * Types for subscription plans, billing information, invoices, and payment status.
  * These types describe the UI model only - no real payment integration.
+ *
+ * Scope note (Prompt 6): these types are user-scoped (`Subscription.userId`)
+ * and predate the SaaS Tenant model. They are NOT the tenant-scoped
+ * subscription/plan contract — see `tenant.types.ts` (`TenantSubscription`)
+ * and `plan.types.ts` (`Plan`) for the Organization/Tenant-scoped
+ * equivalents introduced in Prompt 6. Both sets of types are kept, on
+ * purpose, since this file's `BillingPage` remains untouched Prompt 3A
+ * history.
  */
 import type { BaseEntity } from './common.types';
 

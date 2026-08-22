@@ -25,3 +25,5 @@ export * from './instructor.types';
 export * from './announcement.types';
 export * from './blog.types';
 export * from './forum.types';
+export * from './plan.types';
+export * from './tenant.types';

@@ -89,6 +89,13 @@ export const DASHBOARD_ROUTES = {
   blogCreate: '/dashboard/blog/create',
   blogPost: '/dashboard/blog/:postId',
   blogEdit: '/dashboard/blog/:postId/edit',
+
+  tenant: '/dashboard/tenant',
+  tenantSubscription: '/dashboard/tenant/subscription',
+  tenantUsage: '/dashboard/tenant/usage',
+  tenantAddOns: '/dashboard/tenant/add-ons',
+
+  platformTrialPolicy: '/dashboard/platform/trial',
 } as const;
 
 /** System paths that exist outside the product modules. */

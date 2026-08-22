@@ -18,6 +18,7 @@
     "teaching": "التدريس",
     "learning": "التعلّم",
     "community": "المجتمع",
+    "saas": "خدمة سحابية",
     "user": "المستخدم",
     "workspace": "مساحة العمل",
     "administration": "الإدارة"
@@ -41,7 +42,12 @@
     "notifications": "الإشعارات",
     "settings": "الإعدادات",
     "billing": "الفواتير",
-    "analytics": "التحليلات"
+    "analytics": "التحليلات",
+    "tenantOverview": "نظرة عامة",
+    "tenantSubscription": "الاشتراك",
+    "tenantUsage": "الاستخدام",
+    "tenantAddOns": "الإضافات",
+    "platformTrialPolicy": "سياسة الفترة التجريبية"
   },
   "account": {
     "menu": "قائمة الحساب",

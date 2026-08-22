@@ -157,6 +157,22 @@ const ForumThreadPage = lazy(
   () => import('@features/forum/pages/ForumThreadPage')
 );
 
+const TenantDashboardPage = lazy(
+  () => import('@features/tenant/pages/TenantDashboardPage')
+);
+const TenantSubscriptionPage = lazy(
+  () => import('@features/tenant/pages/TenantSubscriptionPage')
+);
+const TenantUsagePage = lazy(
+  () => import('@features/tenant/pages/TenantUsagePage')
+);
+const TenantAddOnsPage = lazy(
+  () => import('@features/tenant/pages/TenantAddOnsPage')
+);
+const PlatformTrialPolicyPage = lazy(
+  () => import('@features/tenant/pages/PlatformTrialPolicyPage')
+);
+
 const ForbiddenPage = lazy(
   () => import('@features/system/pages/ForbiddenPage')
 );
@@ -583,6 +599,51 @@ export function AppRouter(): JSX.Element {
               element={
                 <RouteGuard requireAuthentication requiredPermissions={['blog.create']}>
                   <BlogEditorPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.tenant}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['tenant.dashboard.view']}>
+                  <TenantDashboardPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.tenantSubscription}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['tenant.subscription.view']}>
+                  <TenantSubscriptionPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.tenantUsage}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['tenant.usage.view']}>
+                  <TenantUsagePage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.tenantAddOns}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['tenant.addon.view']}>
+                  <TenantAddOnsPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformTrialPolicy}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <PlatformTrialPolicyPage />
                 </RouteGuard>
               }
             />

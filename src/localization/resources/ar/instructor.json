@@ -1,0 +1,153 @@
+{
+  "dashboard": {
+    "title": "لوحة تحكم التدريس",
+    "subtitle": "نظرة عامة على الدورات التي تُدرّسها.",
+    "assignedCourses": "الدورات المسندة",
+    "activeCourses": "الدورات النشطة",
+    "totalStudents": "إجمالي الطلاب",
+    "pendingSubmissions": "التسليمات المعلّقة",
+    "pendingGrading": "بانتظار التصحيح",
+    "requiresAttention": "دورات تحتاج إلى اهتمام",
+    "noAttentionNeeded": "لا يوجد ما يحتاج إلى اهتمامك الآن.",
+    "recentActivity": "النشاط الأخير",
+    "noRecentActivity": "لا يوجد نشاط حديث بعد.",
+    "attentionReason": {
+      "pending_grading": "تسليمات بانتظار التصحيح",
+      "low_engagement": "تفاعل منخفض من الطلاب",
+      "no_recent_activity": "لا يوجد نشاط حديث"
+    }
+  },
+  "courses": {
+    "title": "دوراتي",
+    "subtitle": "الدورات المخوّل لك تدريسها.",
+    "searchPlaceholder": "ابحث في دوراتك",
+    "empty": "لا تُدرّس أي دورات بعد",
+    "emptyDescription": "ستظهر هنا الدورات المسندة إليك للتدريس.",
+    "table": {
+      "title": "الدورة",
+      "status": "الحالة",
+      "visibility": "الظهور",
+      "enrolled": "المسجّلون",
+      "averageProgress": "متوسط التقدّم"
+    }
+  },
+  "overview": {
+    "title": "نظرة عامة على الدورة",
+    "curriculumSummary": "{{sections}} أقسام · {{lessons}} دروس",
+    "enrolledStudents": "الطلاب المسجّلون",
+    "averageProgress": "متوسط التقدّم",
+    "pendingSubmissions": "التسليمات المعلّقة",
+    "pendingGrading": "بانتظار التصحيح",
+    "quickLinks": {
+      "students": "الطلاب",
+      "assessments": "التقييمات",
+      "announcements": "الإعلانات",
+      "discussions": "النقاشات"
+    }
+  },
+  "students": {
+    "title": "الطلاب",
+    "subtitle": "الطلاب المسجّلون في هذه الدورة.",
+    "searchPlaceholder": "ابحث عن طالب",
+    "empty": "لا يوجد طلاب مسجّلون بعد",
+    "emptyDescription": "سيظهر الطلاب المسجّلون هنا.",
+    "table": {
+      "name": "الطالب",
+      "enrollmentStatus": "التسجيل",
+      "progress": "التقدّم",
+      "completionState": "الإكمال",
+      "lastActivity": "آخر نشاط"
+    },
+    "enrollmentStatus": {
+      "available": "متاح",
+      "pending": "قيد الانتظار",
+      "enrolled": "مسجّل",
+      "completed": "مكتمل",
+      "unavailable": "غير متاح"
+    },
+    "completionState": {
+      "incomplete": "غير مكتمل",
+      "in_progress": "قيد التقدّم",
+      "completed": "مكتمل"
+    }
+  },
+  "studentProgress": {
+    "title": "تقدّم الطالب",
+    "courseProgress": "تقدّم الدورة",
+    "lessonsCompleted": "تم إكمال {{completed}} من {{total}} دروس",
+    "quizAttempts": "محاولات الاختبار",
+    "noQuizAttempts": "لا توجد محاولات اختبار بعد.",
+    "attemptNumber": "المحاولة {{number}}",
+    "quizStatus": {
+      "not_started": "لم تبدأ",
+      "in_progress": "قيد التقدّم",
+      "submitted": "تم التسليم",
+      "passed": "ناجح",
+      "failed": "راسب"
+    },
+    "assignmentSubmissions": "تسليمات الواجبات",
+    "noSubmissions": "لا توجد تسليمات بعد.",
+    "viewSubmission": "عرض التسليم"
+  },
+  "assessments": {
+    "title": "التقييمات",
+    "subtitle": "الاختبارات والواجبات المحدّدة لهذه الدورة.",
+    "quizzes": "الاختبارات",
+    "assignments": "الواجبات",
+    "noQuizzes": "لا توجد اختبارات محدّدة لهذه الدورة بعد.",
+    "noAssignments": "لا توجد واجبات محدّدة لهذه الدورة بعد.",
+    "questionCount": "{{count}} أسئلة",
+    "dueAt": "الاستحقاق {{date}}",
+    "status": {
+      "draft": "مسودة",
+      "published": "منشور"
+    }
+  },
+  "quizResults": {
+    "title": "نتائج الاختبار",
+    "empty": "لا توجد محاولات بعد",
+    "emptyDescription": "ستظهر هنا محاولات الطلاب لهذا الاختبار.",
+    "table": {
+      "student": "الطالب",
+      "attempt": "المحاولة",
+      "score": "الدرجة",
+      "status": "الحالة",
+      "submittedAt": "تاريخ التسليم"
+    }
+  },
+  "submissions": {
+    "title": "التسليمات",
+    "subtitle": "تسليمات جميع الطلاب لهذا الواجب.",
+    "empty": "لا توجد تسليمات بعد",
+    "emptyDescription": "ستظهر تسليمات الطلاب هنا.",
+    "table": {
+      "student": "الطالب",
+      "status": "الحالة",
+      "gradingStatus": "التصحيح",
+      "score": "الدرجة",
+      "submittedAt": "تاريخ التسليم"
+    }
+  },
+  "grading": {
+    "title": "مراجعة التسليم",
+    "submissionTitle": "التسليم",
+    "formTitle": "التصحيح",
+    "noWrittenResponse": "لم يتم تسليم رد مكتوب.",
+    "viewAttachment": "عرض المرفق",
+    "submittedAt": "تم التسليم في {{date}}",
+    "scoreLabel": "الدرجة",
+    "scorePlaceholder": "٠–١٠٠",
+    "feedbackLabel": "الملاحظات",
+    "feedbackPlaceholder": "ملاحظات اختيارية للطالب",
+    "optional": "اختياري",
+    "cancelButton": "إلغاء",
+    "submitButton": "حفظ الدرجة",
+    "success": "تم حفظ الدرجة",
+    "error": "فشل حفظ الدرجة",
+    "viewOnlyNotice": "ليس لديك صلاحية تصحيح هذا التسليم.",
+    "status": {
+      "ungraded": "غير مصحّح",
+      "graded": "تم التصحيح"
+    }
+  }
+}

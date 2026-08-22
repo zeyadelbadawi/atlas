@@ -1,0 +1,96 @@
+/**
+ * Tenant domain types.
+ *
+ * "Tenant" is a SaaS-business term for the existing `Organization` — Atlas
+ * does NOT introduce a parallel Tenant entity/context/store. Every type
+ * below is scoped by `organizationId`, the same identifier
+ * `IdentityProvider`/`PlatformProvider` already use. See
+ * `Reports/ARCHITECTURE.md` (Prompt 6 section) for the full rationale.
+ */
+import type {
+  AddOn,
+  LimitValue,
+  Plan,
+  PlanFeatures,
+  PlanResourceLimits,
+} from './plan.types';
+
+/** A tenant subscription's lifecycle state. Named distinctly from the pre-existing, user-scoped `SubscriptionStatus` in `billing.types.ts` (see that file's doc comment for the distinction). */
+export type TenantSubscriptionStatus =
+  | 'trialing'
+  | 'active'
+  | 'past_due'
+  | 'paused'
+  | 'grace_period'
+  | 'cancelled'
+  | 'expired';
+
+/** A Tenant's (Organization's) subscription. Always tenant-scoped, never per-Academy. */
+export interface TenantSubscription {
+  readonly organizationId: string;
+  readonly status: TenantSubscriptionStatus;
+  readonly planId: string;
+  readonly plan: Plan;
+  /** Present only while `status` is `'trialing'`. */
+  readonly trialEndsAt?: string;
+  /** Present only while `status` is `'grace_period'`. */
+  readonly graceEndsAt?: string;
+  readonly currentPeriodStart?: string;
+  readonly currentPeriodEnd?: string;
+  readonly cancelAtPeriodEnd: boolean;
+}
+
+/** One resource's usage against its (possibly unlimited) limit. */
+export interface UsageMetric {
+  readonly used: number;
+  readonly limit: LimitValue;
+}
+
+/** A Tenant's (Organization's) resource usage. Authoritative usage comes from the backend. */
+export interface TenantUsage {
+  readonly organizationId: string;
+  readonly academies: UsageMetric;
+  readonly students: UsageMetric;
+  readonly instructors: UsageMetric;
+  readonly staff: UsageMetric;
+  readonly courses: UsageMetric;
+  /** GB. */
+  readonly generalStorage: UsageMetric;
+  /** GB — tracked separately from general storage. */
+  readonly videoStorage: UsageMetric;
+  readonly updatedAt: string;
+}
+
+/** An Add-on currently active on a Tenant's subscription. */
+export interface TenantAddOn {
+  readonly id: string;
+  readonly organizationId: string;
+  readonly addOnId: string;
+  readonly addOn: AddOn;
+  readonly activatedAt: string;
+}
+
+/**
+ * The result of combining a Plan's entitlements with the Tenant's active
+ * Add-ons — what the Tenant can actually use right now. Always computed
+ * through `computeEffectiveEntitlements` (see `tenant/utils`), never
+ * duplicated inline in a component.
+ */
+export interface EffectiveEntitlements {
+  readonly organizationId: string;
+  readonly limits: PlanResourceLimits;
+  readonly features: PlanFeatures;
+}
+
+/** The result of evaluating one resource limit against current usage. */
+export type ResourceLimitStatus = 'allowed' | 'limitReached' | 'unlimited' | 'unknown';
+
+/**
+ * What a Tenant would need to close an entitlement gap (a reached limit or
+ * an unavailable feature): a full plan upgrade, or a compatible Add-on —
+ * or `'none'` when there is no gap. Always computed through
+ * `getLimitGapAction`/`getFeatureGapAction` (see `tenant/utils`), never
+ * decided ad hoc inside a page. This is UX guidance only — the future
+ * backend remains the authority on what a Tenant may actually do.
+ */
+export type EntitlementGapAction = 'upgradePlan' | 'addOn' | 'none';

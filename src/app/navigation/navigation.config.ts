@@ -23,6 +23,9 @@ import {
   ClipboardList,
   Megaphone,
   Newspaper,
+  Boxes,
+  Gauge,
+  Gift,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem, NavigationSection } from '@types';
@@ -207,6 +210,45 @@ export function getDashboardNavigation(
       showDivider: true,
     },
     {
+      id: 'saas',
+      labelKey: 'navigation:sections.saas',
+      items: [
+        {
+          id: 'tenant-overview',
+          labelKey: 'navigation:items.tenantOverview',
+          path: DASHBOARD_ROUTES.tenant,
+          icon: Gauge,
+          requiresAuth: true,
+          requiredPermissions: ['tenant.dashboard.view'],
+        },
+        {
+          id: 'tenant-subscription',
+          labelKey: 'navigation:items.tenantSubscription',
+          path: DASHBOARD_ROUTES.tenantSubscription,
+          icon: CreditCard,
+          requiresAuth: true,
+          requiredPermissions: ['tenant.subscription.view'],
+        },
+        {
+          id: 'tenant-usage',
+          labelKey: 'navigation:items.tenantUsage',
+          path: DASHBOARD_ROUTES.tenantUsage,
+          icon: Boxes,
+          requiresAuth: true,
+          requiredPermissions: ['tenant.usage.view'],
+        },
+        {
+          id: 'tenant-add-ons',
+          labelKey: 'navigation:items.tenantAddOns',
+          path: DASHBOARD_ROUTES.tenantAddOns,
+          icon: Gift,
+          requiresAuth: true,
+          requiredPermissions: ['tenant.addon.view'],
+        },
+      ],
+      showDivider: true,
+    },
+    {
       id: 'user',
       labelKey: 'navigation:sections.user',
       items: [
@@ -251,6 +293,14 @@ export function getDashboardNavigation(
           labelKey: 'navigation:items.analytics',
           path: DASHBOARD_ROUTES.analytics,
           icon: BarChart3,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+        },
+        {
+          id: 'platform-trial-policy',
+          labelKey: 'navigation:items.platformTrialPolicy',
+          path: DASHBOARD_ROUTES.platformTrialPolicy,
+          icon: Gift,
           requiresAuth: true,
           requiredRoles: ['platform_owner'],
         },

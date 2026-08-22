@@ -1,0 +1,59 @@
+{
+  "feed": {
+    "title": "الإعلانات",
+    "subtitle": "التحديثات ذات الصلة بك عبر المنصة وأكاديمياتك ودوراتك.",
+    "byAuthor": "بواسطة {{name}}",
+    "empty": "لا توجد إعلانات بعد",
+    "emptyDescription": "ستظهر هنا الإعلانات الموجّهة إليك."
+  },
+  "detail": {
+    "title": "الإعلان"
+  },
+  "audience": {
+    "platform": "المنصة",
+    "academy": "الأكاديمية",
+    "course": "الدورة"
+  },
+  "status": {
+    "draft": "مسودة",
+    "scheduled": "مجدول",
+    "published": "منشور",
+    "archived": "مؤرشف"
+  },
+  "manage": {
+    "title": "إعلانات الدورة",
+    "subtitle": "أنشئ وانشر إعلانات لطلاب هذه الدورة.",
+    "createButton": "إعلان جديد",
+    "createTitle": "إعلان جديد",
+    "editTitle": "تعديل الإعلان",
+    "editAction": "تعديل",
+    "publishAction": "نشر",
+    "archiveAction": "أرشفة",
+    "titleLabel": "العنوان",
+    "bodyLabel": "الرسالة",
+    "scheduledAtLabel": "جدولة النشر في",
+    "optional": "اختياري",
+    "cancelButton": "إلغاء",
+    "saveButton": "حفظ",
+    "saveSuccess": "تم حفظ الإعلان",
+    "saveError": "فشل حفظ الإعلان",
+    "publishSuccess": "تم نشر الإعلان",
+    "publishError": "فشل نشر الإعلان",
+    "archiveSuccess": "تمت أرشفة الإعلان",
+    "archiveError": "فشلت أرشفة الإعلان",
+    "empty": "لا توجد إعلانات بعد",
+    "emptyDescription": "ستظهر هنا الإعلانات التي تنشئها لهذه الدورة.",
+    "publishDialog": {
+      "title": "نشر هذا الإعلان؟",
+      "description": "سيصبح مرئيًا لكل طالب مسجّل في هذه الدورة.",
+      "confirmLabel": "نشر",
+      "cancelLabel": "إلغاء"
+    },
+    "archiveDialog": {
+      "title": "أرشفة هذا الإعلان؟",
+      "description": "لن يظهر بعد ذلك في قوائم الطلاب.",
+      "confirmLabel": "أرشفة",
+      "cancelLabel": "إلغاء"
+    }
+  }
+}

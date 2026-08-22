@@ -7,7 +7,7 @@
  */
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowRight, Award, BookOpen, CheckCircle2, LogIn } from 'lucide-react';
+import { ArrowRight, Award, BookOpen, CheckCircle2, LogIn, MessageSquare } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
@@ -87,6 +87,11 @@ export default function StudentCourseDetailsPage(): JSX.Element {
         ? buildPath(DASHBOARD_ROUTES.learningLesson, { courseId, lessonId })
         : buildPath(DASHBOARD_ROUTES.learningCourseLearn, { courseId })
     );
+  };
+
+  const goToDiscussions = () => {
+    if (!courseId) return;
+    navigate(buildPath(DASHBOARD_ROUTES.learningDiscussions, { courseId }));
   };
 
   if (isLoading) {
@@ -209,12 +214,30 @@ export default function StudentCourseDetailsPage(): JSX.Element {
                       />
                       {t('learning:details.viewCompletedCourse')}
                     </Button>
+                    <Button variant="outline" onClick={goToDiscussions}>
+                      <MessageSquare
+                        className="size-4"
+                        strokeWidth={2}
+                        aria-hidden
+                      />
+                      {t('learning:details.discussionsAction')}
+                    </Button>
                   </>
                 ) : isEnrolled ? (
-                  <Button onClick={goToLearn}>
-                    <ArrowRight className="size-4" strokeWidth={2} aria-hidden />
-                    {t('learning:details.continueLearning')}
-                  </Button>
+                  <>
+                    <Button onClick={goToLearn}>
+                      <ArrowRight className="size-4" strokeWidth={2} aria-hidden />
+                      {t('learning:details.continueLearning')}
+                    </Button>
+                    <Button variant="outline" onClick={goToDiscussions}>
+                      <MessageSquare
+                        className="size-4"
+                        strokeWidth={2}
+                        aria-hidden
+                      />
+                      {t('learning:details.discussionsAction')}
+                    </Button>
+                  </>
                 ) : enrollment?.status === 'unavailable' ? (
                   <p className="text-sm text-muted-foreground">
                     {t('learning:details.notAvailable')}

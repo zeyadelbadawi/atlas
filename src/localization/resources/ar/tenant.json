@@ -1,0 +1,124 @@
+{
+  "common": {
+    "unlimited": "غير محدود",
+    "limits": {
+      "academies": "الأكاديميات",
+      "students": "الطلاب",
+      "instructors": "المدرّبون",
+      "staff": "الموظفون",
+      "courses": "الدورات",
+      "generalStorage": "التخزين العام",
+      "videoStorage": "تخزين الفيديو"
+    },
+    "features": {
+      "cms": "إدارة المحتوى (CMS)",
+      "seo": "تحسين محركات البحث",
+      "seoAdvanced": "تحسين محركات البحث المتقدم",
+      "marketing": "التسويق",
+      "marketingAdvanced": "التسويق المتقدم",
+      "analytics": "التحليلات",
+      "analyticsAdvanced": "التحليلات المتقدمة",
+      "customDomain": "نطاق مخصص",
+      "themes": "القوالب",
+      "multipleThemes": "قوالب متعددة",
+      "backup": "النسخ الاحتياطي"
+    },
+    "subscriptionStatus": {
+      "trialing": "فترة تجريبية",
+      "active": "نشط",
+      "past_due": "الدفع مطلوب",
+      "paused": "متوقف مؤقتًا",
+      "grace_period": "فترة سماح",
+      "cancelled": "ملغى",
+      "expired": "منتهي الصلاحية"
+    },
+    "subscriptionStatusDescription": {
+      "trialing": "مؤسستك في فترة تجريبية مجانية.",
+      "active": "اشتراكك نشط وفي حالة جيدة.",
+      "past_due": "تعذّر تأكيد آخر عملية دفع. يُرجى تحديث بيانات الفوترة لتجنب انقطاع الخدمة.",
+      "paused": "اشتراكك متوقف مؤقتًا حاليًا.",
+      "grace_period": "انتهى اشتراكك وهو الآن في فترة السماح قبل تقييد الوصول.",
+      "cancelled": "تم إلغاء اشتراكك.",
+      "expired": "انتهت صلاحية اشتراكك."
+    },
+    "usageStatus": {
+      "allowed": "ضمن الحد المسموح",
+      "limitReached": "تم بلوغ الحد",
+      "unlimited": "غير محدود",
+      "unknown": "غير معروف"
+    },
+    "gapAction": {
+      "upgradePlan": "يتطلب الترقية",
+      "addOn": "تتوفر إضافة"
+    }
+  },
+  "dashboard": {
+    "title": "نظرة عامة على الخدمة السحابية",
+    "subtitle": "اشتراك مؤسستك واستخدامها وإضافاتها.",
+    "trialDaysRemaining": "يتبقى {{count}} يومًا في فترتك التجريبية",
+    "graceDaysRemaining": "يتبقى {{count}} يومًا في فترة السماح",
+    "viewSubscription": "عرض الاشتراك",
+    "usageSectionTitle": "الاستخدام",
+    "viewUsage": "عرض الاستخدام",
+    "addOnsSectionTitle": "الإضافات",
+    "viewAddOns": "عرض الإضافات",
+    "activeAddOnsCount": "{{count}} إضافة نشطة"
+  },
+  "subscription": {
+    "title": "الاشتراك",
+    "subtitle": "خطتك وحالة دورة حياة الاشتراك واستحقاقات الميزات.",
+    "comparePlans": "مقارنة الخطط",
+    "cancelAtPeriodEnd": "لن يتم تجديد اشتراكك في نهاية الفترة الحالية.",
+    "featuresTitle": "ميزات الخطة",
+    "featuresSubtitle": "تعكس خطتك بالإضافة إلى أي إضافات نشطة."
+  },
+  "usage": {
+    "title": "الاستخدام",
+    "subtitle": "الاستخدام الحالي مقابل حدود الموارد في خطتك.",
+    "gapMessage": {
+      "upgradePlan": "لقد بلغت هذا الحد. ترقية خطتك سترفعه.",
+      "addOn": "لقد بلغت هذا الحد. يمكن لإضافة متوافقة رفعه."
+    },
+    "enforcementNote": "تعكس هذه الأرقام استخدام حسابك الحالي. يتم فرض الحدود بواسطة أطلس، وليس بواسطة هذه الصفحة."
+  },
+  "addOns": {
+    "title": "الإضافات",
+    "subtitle": "الإضافات النشطة على اشتراكك، وما هو متاح غيرها.",
+    "activeSectionTitle": "الإضافات النشطة",
+    "noActiveAddOns": "لا توجد إضافات نشطة",
+    "noActiveAddOnsDescription": "ليس لديك أي إضافات نشطة على اشتراكك بعد.",
+    "activeBadge": "نشط",
+    "activatedAt": "نشط منذ {{date}}",
+    "availableSectionTitle": "الإضافات المتاحة",
+    "noAvailableAddOns": "لا توجد إضافات إضافية متاحة",
+    "availableBadge": "متاح",
+    "incompatibleBadge": "غير متاح في خطتك",
+    "contactToActivate": "تواصل مع ممثل أطلس لتفعيل هذه الإضافة.",
+    "notOnCurrentPlan": "غير متوافقة مع خطتك الحالية. قد تتيحها الترقية.",
+    "limitEffect": "‎+{{amount}} {{resource}}",
+    "featureEffect": "يتيح {{feature}}"
+  },
+  "planComparison": {
+    "title": "مقارنة الخطط",
+    "description": "الحدود والميزات عبر جميع خطط أطلس.",
+    "currentPlanBadge": "الخطة الحالية",
+    "footerNote": "يتم التعامل مع تغييرات الخطة من قِبل ممثل أطلس الخاص بك — هذه الصفحة لا تعالج المدفوعات ولا تغيّر خطتك."
+  },
+  "platformAdmin": {
+    "trialPolicy": {
+      "title": "سياسة الفترة التجريبية",
+      "subtitle": "تهيئة ما إذا كانت المؤسسات الجديدة تحصل على فترة تجريبية مجانية، ومدتها.",
+      "unsavedChanges": "لديك تغييرات غير محفوظة على سياسة الفترة التجريبية.",
+      "success": "تم تحديث سياسة الفترة التجريبية",
+      "error": "فشل تحديث سياسة الفترة التجريبية",
+      "formTitle": "الفترة التجريبية المجانية",
+      "enabledLabel": "تفعيل الفترة التجريبية المجانية",
+      "enabledDescription": "عند الإيقاف، تشترك المؤسسات الجديدة مباشرة دون فترة تجريبية.",
+      "durationDaysLabel": "مدة الفترة التجريبية (أيام)",
+      "durationDaysHelp": "عدد الأيام التي تستمر فيها الفترة التجريبية لمؤسسة جديدة.",
+      "durationDaysDisabledHelp": "يُتجاهل أثناء إيقاف الفترة التجريبية المجانية.",
+      "saving": "جارٍ الحفظ…",
+      "saveButton": "حفظ التغييرات"
+    }
+  }
+}

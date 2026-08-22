@@ -1,0 +1,153 @@
+{
+  "dashboard": {
+    "title": "Teaching Dashboard",
+    "subtitle": "An overview of the courses you teach.",
+    "assignedCourses": "Assigned Courses",
+    "activeCourses": "Active Courses",
+    "totalStudents": "Total Students",
+    "pendingSubmissions": "Pending Submissions",
+    "pendingGrading": "Pending Grading",
+    "requiresAttention": "Courses Requiring Attention",
+    "noAttentionNeeded": "Nothing needs your attention right now.",
+    "recentActivity": "Recent Activity",
+    "noRecentActivity": "No recent activity yet.",
+    "attentionReason": {
+      "pending_grading": "Submissions awaiting grading",
+      "low_engagement": "Low student engagement",
+      "no_recent_activity": "No recent activity"
+    }
+  },
+  "courses": {
+    "title": "My Courses",
+    "subtitle": "Courses you are authorized to teach.",
+    "searchPlaceholder": "Search your courses",
+    "empty": "You aren't teaching any courses yet",
+    "emptyDescription": "Courses you're assigned to teach will appear here.",
+    "table": {
+      "title": "Course",
+      "status": "Status",
+      "visibility": "Visibility",
+      "enrolled": "Enrolled",
+      "averageProgress": "Avg. Progress"
+    }
+  },
+  "overview": {
+    "title": "Course Overview",
+    "curriculumSummary": "{{sections}} sections · {{lessons}} lessons",
+    "enrolledStudents": "Enrolled Students",
+    "averageProgress": "Average Progress",
+    "pendingSubmissions": "Pending Submissions",
+    "pendingGrading": "Pending Grading",
+    "quickLinks": {
+      "students": "Students",
+      "assessments": "Assessments",
+      "announcements": "Announcements",
+      "discussions": "Discussions"
+    }
+  },
+  "students": {
+    "title": "Students",
+    "subtitle": "Students enrolled in this course.",
+    "searchPlaceholder": "Search students",
+    "empty": "No students enrolled yet",
+    "emptyDescription": "Enrolled students will appear here.",
+    "table": {
+      "name": "Student",
+      "enrollmentStatus": "Enrollment",
+      "progress": "Progress",
+      "completionState": "Completion",
+      "lastActivity": "Last Activity"
+    },
+    "enrollmentStatus": {
+      "available": "Available",
+      "pending": "Pending",
+      "enrolled": "Enrolled",
+      "completed": "Completed",
+      "unavailable": "Unavailable"
+    },
+    "completionState": {
+      "incomplete": "Incomplete",
+      "in_progress": "In Progress",
+      "completed": "Completed"
+    }
+  },
+  "studentProgress": {
+    "title": "Student Progress",
+    "courseProgress": "Course Progress",
+    "lessonsCompleted": "{{completed}} of {{total}} lessons completed",
+    "quizAttempts": "Quiz Attempts",
+    "noQuizAttempts": "No quiz attempts yet.",
+    "attemptNumber": "Attempt {{number}}",
+    "quizStatus": {
+      "not_started": "Not Started",
+      "in_progress": "In Progress",
+      "submitted": "Submitted",
+      "passed": "Passed",
+      "failed": "Failed"
+    },
+    "assignmentSubmissions": "Assignment Submissions",
+    "noSubmissions": "No submissions yet.",
+    "viewSubmission": "View Submission"
+  },
+  "assessments": {
+    "title": "Assessments",
+    "subtitle": "Quizzes and assignments defined for this course.",
+    "quizzes": "Quizzes",
+    "assignments": "Assignments",
+    "noQuizzes": "No quizzes defined for this course yet.",
+    "noAssignments": "No assignments defined for this course yet.",
+    "questionCount": "{{count}} questions",
+    "dueAt": "Due {{date}}",
+    "status": {
+      "draft": "Draft",
+      "published": "Published"
+    }
+  },
+  "quizResults": {
+    "title": "Quiz Results",
+    "empty": "No attempts yet",
+    "emptyDescription": "Student attempts at this quiz will appear here.",
+    "table": {
+      "student": "Student",
+      "attempt": "Attempt",
+      "score": "Score",
+      "status": "Status",
+      "submittedAt": "Submitted"
+    }
+  },
+  "submissions": {
+    "title": "Submissions",
+    "subtitle": "Every student's submission for this assignment.",
+    "empty": "No submissions yet",
+    "emptyDescription": "Student submissions will appear here.",
+    "table": {
+      "student": "Student",
+      "status": "Status",
+      "gradingStatus": "Grading",
+      "score": "Score",
+      "submittedAt": "Submitted"
+    }
+  },
+  "grading": {
+    "title": "Review Submission",
+    "submissionTitle": "Submission",
+    "formTitle": "Grade",
+    "noWrittenResponse": "No written response was submitted.",
+    "viewAttachment": "View attachment",
+    "submittedAt": "Submitted {{date}}",
+    "scoreLabel": "Score",
+    "scorePlaceholder": "0–100",
+    "feedbackLabel": "Feedback",
+    "feedbackPlaceholder": "Optional feedback for the student",
+    "optional": "optional",
+    "cancelButton": "Cancel",
+    "submitButton": "Save Grade",
+    "success": "Grade saved",
+    "error": "Failed to save the grade",
+    "viewOnlyNotice": "You don't have permission to grade this submission.",
+    "status": {
+      "ungraded": "Ungraded",
+      "graded": "Graded"
+    }
+  }
+}

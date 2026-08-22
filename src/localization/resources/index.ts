@@ -26,6 +26,11 @@ import enSearch from './en/search.json';
 import enAcademy from './en/academy.json';
 import enCourse from './en/course.json';
 import enLearning from './en/learning.json';
+import enInstructor from './en/instructor.json';
+import enAnnouncements from './en/announcements.json';
+import enBlog from './en/blog.json';
+import enForum from './en/forum.json';
+import enTenant from './en/tenant.json';
 
 import arCommon from './ar/common.json';
 import arNavigation from './ar/navigation.json';
@@ -45,6 +50,11 @@ import arSearch from './ar/search.json';
 import arAcademy from './ar/academy.json';
 import arCourse from './ar/course.json';
 import arLearning from './ar/learning.json';
+import arInstructor from './ar/instructor.json';
+import arAnnouncements from './ar/announcements.json';
+import arBlog from './ar/blog.json';
+import arForum from './ar/forum.json';
+import arTenant from './ar/tenant.json';
 
 /** One language's resources, keyed by namespace. */
 type NamespaceBundle = Record<TranslationNamespace, Record<string, unknown>>;
@@ -71,6 +81,11 @@ export const TRANSLATION_RESOURCES: Readonly<
     academy: enAcademy,
     course: enCourse,
     learning: enLearning,
+    instructor: enInstructor,
+    announcements: enAnnouncements,
+    blog: enBlog,
+    forum: enForum,
+    tenant: enTenant,
   },
   ar: {
     common: arCommon,
@@ -91,5 +106,10 @@ export const TRANSLATION_RESOURCES: Readonly<
     academy: arAcademy,
     course: arCourse,
     learning: arLearning,
+    instructor: arInstructor,
+    announcements: arAnnouncements,
+    blog: arBlog,
+    forum: arForum,
+    tenant: arTenant,
   },
 });

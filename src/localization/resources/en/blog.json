@@ -1,0 +1,45 @@
+{
+  "list": {
+    "title": "Knowledge Blog",
+    "subtitle": "Articles and updates shared across the platform.",
+    "searchPlaceholder": "Search posts",
+    "createButton": "New Post",
+    "byAuthor": "By {{name}}",
+    "empty": "No posts yet",
+    "emptyDescription": "Published posts will appear here."
+  },
+  "detail": {
+    "title": "Post",
+    "editAction": "Edit"
+  },
+  "status": {
+    "draft": "Draft",
+    "published": "Published",
+    "archived": "Archived"
+  },
+  "editor": {
+    "createTitle": "New Post",
+    "editTitle": "Edit Post",
+    "contentSection": "Content",
+    "metadataSection": "Metadata",
+    "titleLabel": "Title",
+    "slugLabel": "Slug",
+    "slugHelp": "Used in the post's URL. Lowercase letters, numbers and hyphens only.",
+    "excerptLabel": "Excerpt",
+    "contentLabel": "Content",
+    "featuredImageLabel": "Featured Image",
+    "uploadImage": "Upload Image",
+    "changeImage": "Change Image",
+    "imageTooLarge": "The image must be 5MB or smaller",
+    "imageInvalidType": "This image type is not supported",
+    "categoryLabel": "Category",
+    "tagsLabel": "Tags",
+    "tagsPlaceholder": "Comma-separated, e.g. teaching, tips",
+    "optional": "optional",
+    "cancelButton": "Cancel",
+    "saveButton": "Save",
+    "createSuccess": "Post created",
+    "updateSuccess": "Post updated",
+    "saveError": "Failed to save the post"
+  }
+}

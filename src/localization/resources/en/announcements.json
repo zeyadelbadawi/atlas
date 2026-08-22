@@ -1,0 +1,59 @@
+{
+  "feed": {
+    "title": "Announcements",
+    "subtitle": "Updates relevant to you across the platform, your academies and your courses.",
+    "byAuthor": "By {{name}}",
+    "empty": "No announcements yet",
+    "emptyDescription": "Announcements addressed to you will appear here."
+  },
+  "detail": {
+    "title": "Announcement"
+  },
+  "audience": {
+    "platform": "Platform",
+    "academy": "Academy",
+    "course": "Course"
+  },
+  "status": {
+    "draft": "Draft",
+    "scheduled": "Scheduled",
+    "published": "Published",
+    "archived": "Archived"
+  },
+  "manage": {
+    "title": "Course Announcements",
+    "subtitle": "Author and publish announcements for students in this course.",
+    "createButton": "New Announcement",
+    "createTitle": "New Announcement",
+    "editTitle": "Edit Announcement",
+    "editAction": "Edit",
+    "publishAction": "Publish",
+    "archiveAction": "Archive",
+    "titleLabel": "Title",
+    "bodyLabel": "Message",
+    "scheduledAtLabel": "Schedule for",
+    "optional": "optional",
+    "cancelButton": "Cancel",
+    "saveButton": "Save",
+    "saveSuccess": "Announcement saved",
+    "saveError": "Failed to save the announcement",
+    "publishSuccess": "Announcement published",
+    "publishError": "Failed to publish the announcement",
+    "archiveSuccess": "Announcement archived",
+    "archiveError": "Failed to archive the announcement",
+    "empty": "No announcements yet",
+    "emptyDescription": "Announcements you create for this course will appear here.",
+    "publishDialog": {
+      "title": "Publish this announcement?",
+      "description": "It will become visible to every student enrolled in this course.",
+      "confirmLabel": "Publish",
+      "cancelLabel": "Cancel"
+    },
+    "archiveDialog": {
+      "title": "Archive this announcement?",
+      "description": "It will no longer appear in students' feeds.",
+      "confirmLabel": "Archive",
+      "cancelLabel": "Cancel"
+    }
+  }
+}

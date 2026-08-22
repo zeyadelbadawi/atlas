@@ -1,0 +1,34 @@
+{
+  "list": {
+    "title": "Discussions",
+    "subtitle": "Ask questions and discuss this course with others.",
+    "newThreadButton": "New Thread",
+    "newThreadTitle": "Start a Discussion",
+    "titleLabel": "Title",
+    "bodyLabel": "Message",
+    "cancelButton": "Cancel",
+    "postButton": "Post",
+    "createSuccess": "Thread posted",
+    "createError": "Failed to post the thread",
+    "byAuthor": "By {{name}}",
+    "replyCount": "{{count}} replies",
+    "empty": "No discussions yet",
+    "emptyDescription": "Start the first discussion for this course."
+  },
+  "thread": {
+    "title": "Discussion",
+    "backToForum": "Back to Discussions",
+    "pinned": "Pinned",
+    "locked": "Locked",
+    "pinAction": "Pin",
+    "unpinAction": "Unpin",
+    "lockAction": "Lock",
+    "unlockAction": "Unlock",
+    "moderationError": "Failed to update the thread",
+    "noReplies": "No replies yet.",
+    "replyPlaceholder": "Write a reply",
+    "replyButton": "Reply",
+    "replyError": "Failed to post the reply",
+    "lockedNotice": "This discussion is locked. New replies aren't accepted."
+  }
+}

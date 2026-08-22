@@ -1,0 +1,34 @@
+{
+  "list": {
+    "title": "النقاشات",
+    "subtitle": "اطرح الأسئلة وناقش هذه الدورة مع الآخرين.",
+    "newThreadButton": "موضوع جديد",
+    "newThreadTitle": "بدء نقاش",
+    "titleLabel": "العنوان",
+    "bodyLabel": "الرسالة",
+    "cancelButton": "إلغاء",
+    "postButton": "نشر",
+    "createSuccess": "تم نشر الموضوع",
+    "createError": "فشل نشر الموضوع",
+    "byAuthor": "بواسطة {{name}}",
+    "replyCount": "{{count}} ردود",
+    "empty": "لا توجد نقاشات بعد",
+    "emptyDescription": "ابدأ أول نقاش لهذه الدورة."
+  },
+  "thread": {
+    "title": "النقاش",
+    "backToForum": "العودة إلى النقاشات",
+    "pinned": "مثبّت",
+    "locked": "مغلق",
+    "pinAction": "تثبيت",
+    "unpinAction": "إلغاء التثبيت",
+    "lockAction": "إغلاق",
+    "unlockAction": "فتح",
+    "moderationError": "فشل تحديث الموضوع",
+    "noReplies": "لا توجد ردود بعد.",
+    "replyPlaceholder": "اكتب ردًا",
+    "replyButton": "رد",
+    "replyError": "فشل نشر الرد",
+    "lockedNotice": "هذا النقاش مغلق. لا يمكن إضافة ردود جديدة."
+  }
+}

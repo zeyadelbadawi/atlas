@@ -23,6 +23,8 @@ export const QUERY_KEY_ROOTS = {
   announcement: ['announcement'] as const,
   blog: ['blog'] as const,
   forum: ['forum'] as const,
+  tenant: ['tenant'] as const,
+  plan: ['plan'] as const,
 } as const;
 
 /**
@@ -296,4 +298,41 @@ export const forumKeys = {
     [...forumKeys.all, 'thread', courseId, threadId] as const,
   replies: (courseId: string, threadId: string, query?: CollectionQuery) =>
     [...forumKeys.all, 'replies', courseId, threadId, query] as const,
+} as const;
+
+/**
+ * Query keys for the Tenant SaaS domain (subscription/usage/add-ons).
+ *
+ * Every key embeds `organizationId` — the existing Organization IS the
+ * Tenant boundary (see `Reports/ARCHITECTURE.md`, Prompt 6). This is the
+ * same technique `academyKeys` uses for the same reason: `PlatformProvider`'s
+ * `atlas:organization-switched` handler invalidates every cached query whose
+ * key contains the active organization id, so switching organizations can
+ * never leave a different Tenant's subscription/usage/add-ons visible —
+ * without any Tenant-specific invalidation wiring there.
+ */
+export const tenantKeys = {
+  all: QUERY_KEY_ROOTS.tenant,
+  subscription: (organizationId: string | undefined) =>
+    [...tenantKeys.all, 'subscription', organizationId] as const,
+  usage: (organizationId: string | undefined) =>
+    [...tenantKeys.all, 'usage', organizationId] as const,
+  addOns: (organizationId: string | undefined) =>
+    [...tenantKeys.all, 'addOns', organizationId] as const,
+} as const;
+
+/**
+ * Query keys for the Plan/Add-on catalog and the platform Trial Policy.
+ *
+ * Deliberately NOT organization-scoped — the catalog and the trial policy
+ * are the same for every Tenant; only `tenantKeys` (the Tenant's own
+ * subscription/usage/active add-ons) varies by organization.
+ */
+export const planKeys = {
+  all: QUERY_KEY_ROOTS.plan,
+  list: () => [...planKeys.all, 'list'] as const,
+  detail: (key: string) => [...planKeys.all, 'detail', key] as const,
+  addOnList: () => [...planKeys.all, 'add-ons', 'list'] as const,
+  addOnDetail: (key: string) => [...planKeys.all, 'add-ons', 'detail', key] as const,
+  trialPolicy: () => [...planKeys.all, 'trial-policy'] as const,
 } as const;

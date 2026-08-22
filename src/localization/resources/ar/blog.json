@@ -1,0 +1,45 @@
+{
+  "list": {
+    "title": "مدونة المعرفة",
+    "subtitle": "مقالات وتحديثات مشتركة عبر المنصة.",
+    "searchPlaceholder": "ابحث في المقالات",
+    "createButton": "مقال جديد",
+    "byAuthor": "بواسطة {{name}}",
+    "empty": "لا توجد مقالات بعد",
+    "emptyDescription": "ستظهر المقالات المنشورة هنا."
+  },
+  "detail": {
+    "title": "المقال",
+    "editAction": "تعديل"
+  },
+  "status": {
+    "draft": "مسودة",
+    "published": "منشور",
+    "archived": "مؤرشف"
+  },
+  "editor": {
+    "createTitle": "مقال جديد",
+    "editTitle": "تعديل المقال",
+    "contentSection": "المحتوى",
+    "metadataSection": "البيانات الوصفية",
+    "titleLabel": "العنوان",
+    "slugLabel": "الرابط المختصر",
+    "slugHelp": "يُستخدم في رابط المقال. أحرف إنجليزية صغيرة وأرقام وشرطات فقط.",
+    "excerptLabel": "مقتطف",
+    "contentLabel": "المحتوى",
+    "featuredImageLabel": "الصورة البارزة",
+    "uploadImage": "رفع صورة",
+    "changeImage": "تغيير الصورة",
+    "imageTooLarge": "يجب ألا يتجاوز حجم الصورة 5 ميغابايت",
+    "imageInvalidType": "نوع هذه الصورة غير مدعوم",
+    "categoryLabel": "التصنيف",
+    "tagsLabel": "الوسوم",
+    "tagsPlaceholder": "مفصولة بفواصل، مثل: تدريس، نصائح",
+    "optional": "اختياري",
+    "cancelButton": "إلغاء",
+    "saveButton": "حفظ",
+    "createSuccess": "تم إنشاء المقال",
+    "updateSuccess": "تم تحديث المقال",
+    "saveError": "فشل حفظ المقال"
+  }
+}

@@ -45,7 +45,8 @@
     "continueLearning": "متابعة التعلّم",
     "viewProgress": "عرض التقدّم",
     "courseCompleted": "لقد أكملت هذه الدورة",
-    "viewCompletedCourse": "مراجعة الدورة"
+    "viewCompletedCourse": "مراجعة الدورة",
+    "discussionsAction": "النقاشات"
   },
   "learn": {
     "curriculumLabel": "المنهج",

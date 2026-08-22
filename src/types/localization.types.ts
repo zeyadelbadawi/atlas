@@ -47,6 +47,11 @@ export const TRANSLATION_NAMESPACES = [
   'academy',
   'course',
   'learning',
+  'instructor',
+  'announcements',
+  'blog',
+  'forum',
+  'tenant',
 ] as const;
 
 export type TranslationNamespace = (typeof TRANSLATION_NAMESPACES)[number];

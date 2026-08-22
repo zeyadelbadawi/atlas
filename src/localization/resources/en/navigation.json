@@ -18,6 +18,7 @@
     "teaching": "Teaching",
     "learning": "Learning",
     "community": "Community",
+    "saas": "SaaS",
     "user": "User",
     "workspace": "Workspace",
     "administration": "Administration"
@@ -41,7 +42,12 @@
     "notifications": "Notifications",
     "settings": "Settings",
     "billing": "Billing",
-    "analytics": "Analytics"
+    "analytics": "Analytics",
+    "tenantOverview": "Overview",
+    "tenantSubscription": "Subscription",
+    "tenantUsage": "Usage",
+    "tenantAddOns": "Add-ons",
+    "platformTrialPolicy": "Trial Policy"
   },
   "account": {
     "menu": "Account menu",

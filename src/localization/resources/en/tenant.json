@@ -1,0 +1,124 @@
+{
+  "common": {
+    "unlimited": "Unlimited",
+    "limits": {
+      "academies": "Academies",
+      "students": "Students",
+      "instructors": "Instructors",
+      "staff": "Staff",
+      "courses": "Courses",
+      "generalStorage": "General storage",
+      "videoStorage": "Video storage"
+    },
+    "features": {
+      "cms": "Content management (CMS)",
+      "seo": "SEO",
+      "seoAdvanced": "Advanced SEO",
+      "marketing": "Marketing",
+      "marketingAdvanced": "Advanced marketing",
+      "analytics": "Analytics",
+      "analyticsAdvanced": "Advanced analytics",
+      "customDomain": "Custom domain",
+      "themes": "Themes",
+      "multipleThemes": "Multiple themes",
+      "backup": "Backup"
+    },
+    "subscriptionStatus": {
+      "trialing": "Trialing",
+      "active": "Active",
+      "past_due": "Payment required",
+      "paused": "Paused",
+      "grace_period": "Grace period",
+      "cancelled": "Cancelled",
+      "expired": "Expired"
+    },
+    "subscriptionStatusDescription": {
+      "trialing": "Your organization is on a free trial.",
+      "active": "Your subscription is active and in good standing.",
+      "past_due": "We were unable to confirm your latest payment. Please update your billing details to avoid an interruption.",
+      "paused": "Your subscription is currently paused.",
+      "grace_period": "Your subscription has lapsed and is in its grace period before access is restricted.",
+      "cancelled": "Your subscription has been cancelled.",
+      "expired": "Your subscription has expired."
+    },
+    "usageStatus": {
+      "allowed": "Within limit",
+      "limitReached": "Limit reached",
+      "unlimited": "Unlimited",
+      "unknown": "Unknown"
+    },
+    "gapAction": {
+      "upgradePlan": "Upgrade required",
+      "addOn": "Add-on available"
+    }
+  },
+  "dashboard": {
+    "title": "SaaS Overview",
+    "subtitle": "Your organization's subscription, usage and add-ons.",
+    "trialDaysRemaining": "{{count}} days remaining in your trial",
+    "graceDaysRemaining": "{{count}} days remaining in your grace period",
+    "viewSubscription": "View subscription",
+    "usageSectionTitle": "Usage",
+    "viewUsage": "View usage",
+    "addOnsSectionTitle": "Add-ons",
+    "viewAddOns": "View add-ons",
+    "activeAddOnsCount": "{{count}} active add-ons"
+  },
+  "subscription": {
+    "title": "Subscription",
+    "subtitle": "Your plan, lifecycle status and feature entitlements.",
+    "comparePlans": "Compare plans",
+    "cancelAtPeriodEnd": "Your subscription will not renew at the end of the current period.",
+    "featuresTitle": "Plan features",
+    "featuresSubtitle": "Reflects your plan plus any active add-ons."
+  },
+  "usage": {
+    "title": "Usage",
+    "subtitle": "Current usage against your plan's resource limits.",
+    "gapMessage": {
+      "upgradePlan": "You've reached this limit. Upgrading your plan will raise it.",
+      "addOn": "You've reached this limit. A compatible add-on can raise it."
+    },
+    "enforcementNote": "These figures reflect your account's current usage. Limits are enforced by Atlas, not by this page."
+  },
+  "addOns": {
+    "title": "Add-ons",
+    "subtitle": "Add-ons active on your subscription, and what else is available.",
+    "activeSectionTitle": "Active add-ons",
+    "noActiveAddOns": "No active add-ons",
+    "noActiveAddOnsDescription": "You don't have any add-ons active on your subscription yet.",
+    "activeBadge": "Active",
+    "activatedAt": "Active since {{date}}",
+    "availableSectionTitle": "Available add-ons",
+    "noAvailableAddOns": "No further add-ons available",
+    "availableBadge": "Available",
+    "incompatibleBadge": "Not on your plan",
+    "contactToActivate": "Contact your Atlas representative to activate this add-on.",
+    "notOnCurrentPlan": "Not compatible with your current plan. Upgrading may unlock it.",
+    "limitEffect": "+{{amount}} {{resource}}",
+    "featureEffect": "Unlocks {{feature}}"
+  },
+  "planComparison": {
+    "title": "Compare plans",
+    "description": "Limits and features across every Atlas plan.",
+    "currentPlanBadge": "Current plan",
+    "footerNote": "Plan changes are handled by your Atlas representative — this page does not process payments or change your plan."
+  },
+  "platformAdmin": {
+    "trialPolicy": {
+      "title": "Trial Policy",
+      "subtitle": "Configure whether new organizations receive a free trial, and for how long.",
+      "unsavedChanges": "You have unsaved changes to the trial policy.",
+      "success": "Trial policy updated",
+      "error": "Failed to update trial policy",
+      "formTitle": "Free trial",
+      "enabledLabel": "Enable free trial",
+      "enabledDescription": "When off, new organizations subscribe directly without a trial period.",
+      "durationDaysLabel": "Trial duration (days)",
+      "durationDaysHelp": "Number of days a new organization's trial lasts.",
+      "durationDaysDisabledHelp": "Ignored while the free trial is disabled.",
+      "saving": "Saving…",
+      "saveButton": "Save changes"
+    }
+  }
+}
