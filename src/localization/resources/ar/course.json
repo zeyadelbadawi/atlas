@@ -1,0 +1,238 @@
+{
+  "title": "إدارة الدورات",
+  "validation": {
+    "priceRequired": "أدخل سعرًا أكبر من 0 للدورة المدفوعة"
+  },
+  "status": {
+    "draft": "مسودة",
+    "published": "منشورة",
+    "archived": "مؤرشفة"
+  },
+  "visibility": {
+    "public": "عامة",
+    "private": "خاصة"
+  },
+  "pricing": {
+    "free": "مجانية",
+    "paid": "مدفوعة"
+  },
+  "lessonStatus": {
+    "draft": "مسودة",
+    "published": "منشور"
+  },
+  "contentType": {
+    "text": "نص",
+    "video": "فيديو",
+    "file": "ملف"
+  },
+  "list": {
+    "title": "الدورات",
+    "subtitle": "إدارة دورات أكاديميتك",
+    "searchPlaceholder": "البحث عن الدورات...",
+    "filterByStatus": "الحالة",
+    "filterByVisibility": "الظهور",
+    "filterByCategory": "الفئة",
+    "filterByPricing": "التسعير",
+    "allStatuses": "كل الحالات",
+    "allVisibilities": "كل مستويات الظهور",
+    "allCategories": "كل الفئات",
+    "allPricing": "كل أنواع التسعير",
+    "createButton": "إنشاء دورة",
+    "table": {
+      "title": "العنوان",
+      "status": "الحالة",
+      "visibility": "الظهور",
+      "category": "الفئة",
+      "pricing": "التسعير",
+      "updatedAt": "آخر تحديث",
+      "actions": "الإجراءات"
+    },
+    "actions": {
+      "edit": "تعديل",
+      "builder": "المنهج",
+      "settings": "الإعدادات",
+      "delete": "حذف"
+    },
+    "uncategorized": "بدون فئة"
+  },
+  "empty": {
+    "noCourses": "ليس لديك أي دورات بعد.",
+    "noCoursesDescription": "أنشئ أول دورة لتبدأ في بناء أكاديميتك.",
+    "createFirstCourse": "إنشاء دورة",
+    "noResults": "لا توجد دورات مطابقة لعوامل التصفية.",
+    "noResultsDescription": "جرّب تعديل البحث أو عوامل التصفية."
+  },
+  "errors": {
+    "loadFailed": "تعذّر تحميل هذه الدورة.",
+    "invalidCourse": "الدورة غير موجودة"
+  },
+  "create": {
+    "title": "إنشاء دورة",
+    "subtitle": "إعداد دورة جديدة لأكاديميتك",
+    "basicInformation": "المعلومات الأساسية",
+    "titleLabel": "عنوان الدورة",
+    "titlePlaceholder": "أدخل عنوان الدورة",
+    "slugLabel": "الرابط المختصر للدورة",
+    "slugPlaceholder": "course-url-slug",
+    "slugHelp": "يُستخدم في الروابط. أحرف لاتينية صغيرة وأرقام وشرطات فقط.",
+    "shortDescriptionLabel": "وصف مختصر",
+    "shortDescriptionPlaceholder": "ملخص موجز في سطر واحد",
+    "descriptionLabel": "الوصف",
+    "descriptionPlaceholder": "وصف تفصيلي لدورتك",
+    "thumbnailLabel": "الصورة المصغّرة",
+    "thumbnailHelp": "تحميل صورة مصغّرة للدورة (PNG، JPG، بحد أقصى 5 ميجابايت)",
+    "uploadThumbnail": "تحميل الصورة المصغّرة",
+    "changeThumbnail": "تغيير الصورة المصغّرة",
+    "configuration": "الإعدادات",
+    "categoryLabel": "الفئة",
+    "categoryPlaceholder": "اختر فئة",
+    "noCategoryOption": "بدون فئة",
+    "visibilityLabel": "الظهور",
+    "pricingTypeLabel": "التسعير",
+    "priceLabel": "السعر",
+    "pricePlaceholder": "0.00",
+    "currencyLabel": "العملة",
+    "optional": "اختياري",
+    "createButton": "إنشاء دورة",
+    "cancelButton": "إلغاء",
+    "creating": "جارٍ إنشاء الدورة...",
+    "success": "تم إنشاء الدورة بنجاح",
+    "successNextStepTitle": "الخطوة التالية:",
+    "successNextStepDescription": "ابدأ في بناء منهج دورتك.",
+    "continueToBuilder": "الانتقال إلى منشئ الدورة",
+    "error": "فشل إنشاء الدورة",
+    "thumbnailTooLarge": "يجب أن يكون حجم الصورة المصغّرة أقل من 5 ميجابايت.",
+    "thumbnailInvalidType": "يجب أن تكون الصورة المصغّرة بصيغة PNG أو JPG."
+  },
+  "edit": {
+    "title": "تعديل الدورة",
+    "subtitle": "تحديث معلومات دورتك",
+    "basicInformation": "المعلومات الأساسية",
+    "configuration": "الإعدادات",
+    "saveButton": "حفظ التغييرات",
+    "cancelButton": "إلغاء",
+    "saving": "جارٍ حفظ التغييرات...",
+    "success": "تم تحديث الدورة بنجاح",
+    "error": "فشل تحديث الدورة",
+    "unsavedChanges": "لديك تغييرات غير محفوظة في الدورة. هل أنت متأكد من رغبتك في المغادرة؟",
+    "goToBuilder": "منشئ الدورة",
+    "goToSettings": "إعدادات الدورة"
+  },
+  "builder": {
+    "title": "منشئ الدورة",
+    "subtitle": "نظّم منهج دورتك",
+    "addSection": "إضافة قسم",
+    "emptyCurriculum": "لا يحتوي هذا المنهج على أي محتوى بعد.",
+    "emptyCurriculumDescription": "ابدأ بإضافة أول قسم.",
+    "emptySectionLessons": "لا يحتوي هذا القسم على أي دروس بعد.",
+    "emptySectionLessonsDescription": "أضف الدرس الأول لبدء بناء المنهج.",
+    "addLesson": "إضافة درس",
+    "sectionMenu": {
+      "edit": "تعديل القسم",
+      "delete": "حذف القسم",
+      "moveUp": "نقل القسم لأعلى",
+      "moveDown": "نقل القسم لأسفل"
+    },
+    "lessonMenu": {
+      "edit": "تعديل الدرس",
+      "delete": "حذف الدرس",
+      "moveUp": "نقل الدرس لأعلى",
+      "moveDown": "نقل الدرس لأسفل"
+    },
+    "sectionDialog": {
+      "createTitle": "إضافة قسم",
+      "editTitle": "تعديل القسم",
+      "titleLabel": "عنوان القسم",
+      "titlePlaceholder": "مثال: البداية",
+      "descriptionLabel": "الوصف",
+      "descriptionPlaceholder": "وصف اختياري",
+      "saveButton": "حفظ القسم",
+      "cancelButton": "إلغاء",
+      "creating": "جارٍ إضافة القسم...",
+      "saving": "جارٍ حفظ القسم..."
+    },
+    "lessonDialog": {
+      "createTitle": "إضافة درس",
+      "editTitle": "تعديل الدرس",
+      "titleLabel": "عنوان الدرس",
+      "titlePlaceholder": "مثال: مقدمة",
+      "descriptionLabel": "الوصف",
+      "descriptionPlaceholder": "وصف اختياري",
+      "contentTypeLabel": "نوع المحتوى",
+      "contentUrlLabel": "رابط المحتوى",
+      "contentUrlPlaceholder": "https://...",
+      "statusLabel": "الإتاحة",
+      "saveButton": "حفظ الدرس",
+      "cancelButton": "إلغاء",
+      "creating": "جارٍ إضافة الدرس...",
+      "saving": "جارٍ حفظ الدرس..."
+    },
+    "deleteSectionConfirm": {
+      "title": "حذف هذا القسم؟",
+      "description": "سيؤدي هذا إلى حذف \"{{title}}\" وجميع دروسه نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
+      "confirmLabel": "حذف القسم",
+      "cancelLabel": "إلغاء"
+    },
+    "deleteLessonConfirm": {
+      "title": "حذف هذا الدرس؟",
+      "description": "سيؤدي هذا إلى حذف \"{{title}}\" نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
+      "confirmLabel": "حذف الدرس",
+      "cancelLabel": "إلغاء"
+    },
+    "sectionCreated": "تمت إضافة القسم",
+    "sectionUpdated": "تم تحديث القسم",
+    "sectionDeleted": "تم حذف القسم",
+    "sectionError": "فشل حفظ القسم",
+    "lessonCreated": "تمت إضافة الدرس",
+    "lessonUpdated": "تم تحديث الدرس",
+    "lessonDeleted": "تم حذف الدرس",
+    "lessonError": "فشل حفظ الدرس",
+    "reorderError": "فشل حفظ الترتيب الجديد",
+    "loadError": "فشل تحميل المنهج"
+  },
+  "settings": {
+    "title": "إعدادات الدورة",
+    "subtitle": "إدارة الحالة والظهور والنشر",
+    "general": "عام",
+    "publishing": "النشر",
+    "currentStatus": "الحالة الحالية",
+    "currentVisibility": "الظهور الحالي",
+    "curriculumSummary": "{{sections}} أقسام، {{lessons}} دروس",
+    "publishAction": "نشر الدورة",
+    "unpublishAction": "إلغاء نشر الدورة",
+    "publishDialog": {
+      "title": "نشر هذه الدورة؟",
+      "descriptionWithCurriculum": "ستصبح دورتك مرئية وفقًا لإعداد الظهور المحدد.",
+      "descriptionNoCurriculum": "لا يحتوي هذا المنهج على أي محتوى بعد. يمكنك نشره وإضافة الدروس لاحقًا.",
+      "confirmLabel": "نشر",
+      "cancelLabel": "إلغاء"
+    },
+    "unpublishDialog": {
+      "title": "إلغاء نشر هذه الدورة؟",
+      "description": "ستعود الدورة إلى وضع المسودة ولن تكون مرئية وفقًا لإعداد الظهور المحدد.",
+      "confirmLabel": "إلغاء النشر",
+      "cancelLabel": "إلغاء"
+    },
+    "publishSuccess": "تم نشر الدورة بنجاح",
+    "publishSuccessNextStepTitle": "الخطوة التالية:",
+    "publishSuccessNextStepDescription": "تابع إدارة أكاديميتك.",
+    "backToAcademy": "العودة إلى الأكاديمية",
+    "unpublishSuccess": "تم إلغاء نشر الدورة",
+    "publishError": "فشل نشر الدورة",
+    "unpublishError": "فشل إلغاء نشر الدورة",
+    "dangerZone": "منطقة الخطر",
+    "deleteCourse": "حذف الدورة",
+    "deleteCourseConfirm": {
+      "title": "حذف هذه الدورة؟",
+      "description": "سيؤدي هذا إلى حذف \"{{title}}\" ومنهجها بالكامل نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
+      "confirmLabel": "حذف الدورة",
+      "cancelLabel": "إلغاء"
+    },
+    "deleteCourseSuccess": "تم حذف الدورة",
+    "deleteCourseError": "فشل حذف الدورة"
+  },
+  "categories": {
+    "loadFailed": "فشل تحميل الفئات",
+    "empty": "لا توجد فئات بعد"
+  }
+}

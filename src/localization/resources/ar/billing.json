@@ -1,0 +1,120 @@
+{
+  "title": "الفواتير",
+  "subtitle": "إدارة اشتراكك والفواتير",
+  "currentPlan": {
+    "title": "الخطة الحالية",
+    "description": "اشتراكك النشط",
+    "free": "مجاني",
+    "starter": "المبتدئ",
+    "professional": "المحترف",
+    "enterprise": "المؤسسات",
+    "status": "الحالة",
+    "billingCycle": "دورة الفوترة",
+    "monthly": "شهري",
+    "yearly": "سنوي",
+    "nextBilling": "تاريخ الفوترة القادم",
+    "amount": "المبلغ",
+    "autoRenew": "التجديد التلقائي",
+    "trialEndsOn": "تنتهي الفترة التجريبية في",
+    "canceledOn": "تم الإلغاء في"
+  },
+  "status": {
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "trial": "تجريبي",
+    "past_due": "متأخر",
+    "canceled": "ملغى",
+    "expired": "منتهي الصلاحية"
+  },
+  "plans": {
+    "title": "الخطط المتاحة",
+    "description": "اختر الخطة التي تناسب احتياجاتك",
+    "compare": "مقارنة الخطط",
+    "popular": "الأكثر شعبية",
+    "current": "الخطة الحالية",
+    "features": "الميزات",
+    "limits": "الحدود",
+    "academies": "الأكاديميات",
+    "courses": "الدورات",
+    "students": "الطلاب",
+    "storage": "التخزين",
+    "bandwidth": "النطاق الترددي",
+    "customDomain": "نطاق مخصص",
+    "analytics": "التحليلات",
+    "support": "الدعم",
+    "supportCommunity": "المجتمع",
+    "supportEmail": "البريد الإلكتروني",
+    "supportPriority": "الأولوية",
+    "unlimited": "غير محدود"
+  },
+  "actions": {
+    "upgrade": "ترقية الخطة",
+    "downgrade": "تخفيض الخطة",
+    "changePlan": "تغيير الخطة",
+    "cancelSubscription": "إلغاء الاشتراك",
+    "resumeSubscription": "استئناف الاشتراك",
+    "viewInvoices": "عرض الفواتير",
+    "downloadInvoice": "تنزيل الفاتورة",
+    "updatePaymentMethod": "تحديث طريقة الدفع"
+  },
+  "invoices": {
+    "title": "الفواتير",
+    "description": "سجل الفواتير",
+    "invoiceNumber": "رقم الفاتورة",
+    "date": "التاريخ",
+    "amount": "المبلغ",
+    "status": "الحالة",
+    "period": "الفترة",
+    "dueDate": "تاريخ الاستحقاق",
+    "paidDate": "تاريخ الدفع",
+    "empty": "لا توجد فواتير بعد",
+    "emptyDescription": "سيظهر سجل الفواتير هنا"
+  },
+  "paymentStatus": {
+    "pending": "قيد الانتظار",
+    "succeeded": "مدفوع",
+    "failed": "فشل",
+    "refunded": "مسترد"
+  },
+  "history": {
+    "title": "سجل الفواتير",
+    "description": "جميع المعاملات المالية",
+    "type": "النوع",
+    "invoice": "فاتورة",
+    "payment": "دفع",
+    "refund": "استرداد",
+    "subscription_change": "تغيير الاشتراك",
+    "empty": "لا يوجد سجل فواتير",
+    "emptyDescription": "سيظهر سجل الفواتير هنا"
+  },
+  "paymentMethod": {
+    "title": "طريقة الدفع",
+    "description": "إدارة طرق الدفع",
+    "card": "بطاقة",
+    "bankAccount": "حساب بنكي",
+    "ending": "تنتهي بـ",
+    "expires": "تنتهي في",
+    "default": "افتراضي",
+    "add": "إضافة طريقة دفع",
+    "remove": "إزالة",
+    "setDefault": "تعيين كافتراضي"
+  },
+  "messages": {
+    "upgradeSuccess": "تم ترقية الخطة بنجاح",
+    "downgradeSuccess": "تم تخفيض الخطة بنجاح",
+    "cancelSuccess": "تم إلغاء الاشتراك بنجاح",
+    "resumeSuccess": "تم استئناف الاشتراك بنجاح",
+    "updateSuccess": "تم تحديث طريقة الدفع بنجاح",
+    "error": "حدث خطأ. يرجى المحاولة مرة أخرى.",
+    "cancelConfirm": "هل أنت متأكد من إلغاء اشتراكك؟",
+    "cancelWarning": "سيبقى اشتراكك نشطاً حتى نهاية فترة الفوترة الحالية."
+  },
+  "summary": {
+    "title": "ملخص الفواتير",
+    "currentPlan": "الخطة الحالية",
+    "subscriptionStatus": "الحالة",
+    "nextBilling": "الفوترة القادمة",
+    "outstandingBalance": "الرصيد المستحق",
+    "recentInvoices": "الفواتير الأخيرة"
+  }
+}

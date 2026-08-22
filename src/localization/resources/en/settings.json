@@ -1,0 +1,91 @@
+{
+  "title": "Settings",
+  "subtitle": "Configure your platform preferences",
+  "sections": {
+    "general": "General",
+    "notifications": "Notifications",
+    "appearance": "Appearance",
+    "localization": "Localization",
+    "privacy": "Privacy",
+    "advanced": "Advanced"
+  },
+  "general": {
+    "title": "General Settings",
+    "description": "Manage your platform configuration",
+    "platformName": "Platform Name",
+    "platformNamePlaceholder": "Enter platform name",
+    "timezone": "Timezone",
+    "dateFormat": "Date Format",
+    "timeFormat": "Time Format",
+    "timeFormat12": "12-hour",
+    "timeFormat24": "24-hour"
+  },
+  "notifications": {
+    "title": "Notification Preferences",
+    "description": "Choose how you want to be notified",
+    "emailSettings": "Email Notifications",
+    "pushSettings": "Push Notifications",
+    "smsSettings": "SMS Notifications",
+    "systemNotifications": "System Notifications",
+    "accountNotifications": "Account Notifications",
+    "billingNotifications": "Billing Notifications",
+    "securityNotifications": "Security Notifications",
+    "activityNotifications": "Activity Notifications",
+    "announcementNotifications": "Announcements"
+  },
+  "appearance": {
+    "title": "Appearance",
+    "description": "Customize how the platform looks",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeAuto": "Auto (System)",
+    "compactMode": "Compact Mode",
+    "compactModeDescription": "Use a more compact layout"
+  },
+  "localization": {
+    "title": "Language & Region",
+    "description": "Set your language and regional preferences",
+    "language": "Interface Language",
+    "languageEnglish": "English",
+    "languageArabic": "العربية",
+    "direction": "Text Direction",
+    "directionLTR": "Left to Right",
+    "directionRTL": "Right to Left",
+    "currency": "Currency",
+    "numberFormat": "Number Format"
+  },
+  "privacy": {
+    "title": "Privacy Settings",
+    "description": "Control your privacy and data",
+    "dataCollection": "Data Collection",
+    "dataCollectionDescription": "Allow anonymous usage data collection",
+    "analytics": "Analytics",
+    "analyticsDescription": "Help improve the platform by sharing usage statistics",
+    "cookies": "Cookie Preferences",
+    "cookiesDescription": "Manage your cookie preferences"
+  },
+  "advanced": {
+    "title": "Advanced Settings",
+    "description": "Advanced configuration options",
+    "developer": "Developer Mode",
+    "developerDescription": "Enable developer tools and debug information",
+    "experimental": "Experimental Features",
+    "experimentalDescription": "Try new features before they are released",
+    "apiAccess": "API Access",
+    "apiAccessDescription": "Manage API keys and tokens"
+  },
+  "actions": {
+    "save": "Save Settings",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "reset": "Reset to Defaults",
+    "resetConfirm": "Are you sure you want to reset all settings to defaults?"
+  },
+  "messages": {
+    "saveSuccess": "Settings saved successfully",
+    "saveError": "Failed to save settings",
+    "resetSuccess": "Settings reset to defaults",
+    "unsavedChanges": "You have unsaved changes"
+  }
+}

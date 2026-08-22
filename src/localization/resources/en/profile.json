@@ -1,0 +1,59 @@
+{
+  "title": "Profile",
+  "subtitle": "Manage your personal information and preferences",
+  "sections": {
+    "personal": "Personal Information",
+    "account": "Account Settings",
+    "preferences": "Preferences",
+    "security": "Security"
+  },
+  "fields": {
+    "name": "Full Name",
+    "namePlaceholder": "Enter your full name",
+    "email": "Email Address",
+    "emailPlaceholder": "your@email.com",
+    "avatar": "Profile Picture",
+    "changeAvatar": "Change Picture",
+    "removeAvatar": "Remove Picture",
+    "language": "Language",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
+    "compactMode": "Compact Mode",
+    "compactModeDescription": "Display more content in less space",
+    "notifications": "Notifications",
+    "emailNotifications": "Email Notifications",
+    "pushNotifications": "Push Notifications",
+    "smsNotifications": "SMS Notifications"
+  },
+  "actions": {
+    "edit": "Edit Profile",
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "saving": "Saving..."
+  },
+  "messages": {
+    "updateSuccess": "Profile updated successfully",
+    "updateError": "Failed to update profile",
+    "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?"
+  },
+  "accountInfo": {
+    "title": "Account Information",
+    "userId": "User ID",
+    "createdAt": "Member Since",
+    "lastSignIn": "Last Sign In",
+    "accountStatus": "Account Status",
+    "statusActive": "Active",
+    "statusInactive": "Inactive",
+    "statusSuspended": "Suspended"
+  },
+  "security": {
+    "title": "Security Settings",
+    "changePassword": "Change Password",
+    "twoFactor": "Two-Factor Authentication",
+    "twoFactorDescription": "Add an extra layer of security to your account",
+    "sessions": "Active Sessions",
+    "viewSessions": "View Active Sessions"
+  }
+}

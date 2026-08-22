@@ -1,0 +1,18 @@
+{
+  "public": {
+    "footer": {
+      "rights": "© {{year}} Atlas. All rights reserved."
+    }
+  },
+  "auth": {
+    "brandPromise": "One platform to launch, run and grow your education business.",
+    "highlights": {
+      "unified": "Every module designed as one product",
+      "bilingual": "Built for Arabic and English from day one",
+      "enterprise": "Enterprise architecture that scales with you"
+    }
+  },
+  "dashboard": {
+    "contentLabel": "Main content"
+  }
+}

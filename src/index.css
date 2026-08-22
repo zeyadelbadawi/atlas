@@ -1,0 +1,349 @@
+/**
+ * Atlas Design System — Global Token Layer
+ *
+ * Every visual value used anywhere in Atlas resolves to a token declared in
+ * this file. Components never hardcode colors, radii, shadows or typography.
+ *
+ * Token naming follows the semantic role of the value, never its appearance,
+ * so a token keeps its meaning across Light Mode, Dark Mode, LTR and RTL.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&family=Rubik:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ---------------------------------------------------------------- *
+     * Brand scale — Atlas Deep Teal.
+     * The single saturated hue of the platform. Used sparingly so that
+     * primary actions always remain the focal point of a screen.
+     * ---------------------------------------------------------------- */
+    --brand-50: 184 44% 96%;
+    --brand-100: 184 44% 90%;
+    --brand-200: 184 42% 79%;
+    --brand-300: 184 42% 65%;
+    --brand-400: 184 50% 48%;
+    --brand-500: 184 62% 34%;
+    --brand-600: 184 68% 26%;
+    --brand-700: 184 70% 21%;
+    --brand-800: 185 68% 16%;
+    --brand-900: 186 62% 12%;
+
+    /* ---------------------------------------------------------------- *
+     * Surfaces & content — neutrals tinted toward the brand hue.
+     * Pure white and pure black are never used.
+     * ---------------------------------------------------------------- */
+    --background: 200 20% 99%;
+    --foreground: 199 34% 12%;
+
+    --surface: 200 24% 97%;
+    --surface-foreground: 199 34% 12%;
+    --surface-raised: 0 0% 100%;
+    --surface-overlay: 0 0% 100%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 199 34% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 199 34% 12%;
+
+    /* ---------------------------------------------------------------- *
+     * Interactive roles
+     * ---------------------------------------------------------------- */
+    --primary: 184 68% 26%;
+    --primary-foreground: 184 44% 97%;
+    --primary-hover: 184 70% 21%;
+
+    --secondary: 199 22% 93%;
+    --secondary-foreground: 199 34% 18%;
+
+    --muted: 199 20% 94%;
+    --muted-foreground: 199 14% 42%;
+
+    --accent: 184 40% 92%;
+    --accent-foreground: 184 70% 19%;
+
+    /* ---------------------------------------------------------------- *
+     * Semantic feedback roles
+     * ---------------------------------------------------------------- */
+    --destructive: 358 66% 46%;
+    --destructive-foreground: 0 0% 100%;
+    --destructive-surface: 358 70% 96%;
+
+    --success: 152 54% 32%;
+    --success-foreground: 0 0% 100%;
+    --success-surface: 152 46% 95%;
+
+    --warning: 38 78% 44%;
+    --warning-foreground: 40 60% 99%;
+    --warning-surface: 38 82% 95%;
+
+    --info: 212 62% 40%;
+    --info-foreground: 0 0% 100%;
+    --info-surface: 212 70% 96%;
+
+    /* ---------------------------------------------------------------- *
+     * Lines, fields, focus
+     * ---------------------------------------------------------------- */
+    --border: 199 18% 88%;
+    --border-strong: 199 16% 76%;
+    --input: 199 18% 86%;
+    --ring: 184 62% 34%;
+
+    /* ---------------------------------------------------------------- *
+     * Navigation shell
+     * ---------------------------------------------------------------- */
+    --sidebar-background: 199 28% 97%;
+    --sidebar-foreground: 199 26% 26%;
+    --sidebar-primary: 184 68% 26%;
+    --sidebar-primary-foreground: 184 44% 97%;
+    --sidebar-accent: 184 34% 92%;
+    --sidebar-accent-foreground: 184 70% 19%;
+    --sidebar-border: 199 18% 89%;
+    --sidebar-ring: 184 62% 34%;
+
+    /* ---------------------------------------------------------------- *
+     * Data visualization — ordered for categorical series.
+     * ---------------------------------------------------------------- */
+    --chart-1: 184 62% 34%;
+    --chart-2: 212 58% 46%;
+    --chart-3: 38 74% 48%;
+    --chart-4: 268 40% 52%;
+    --chart-5: 152 46% 38%;
+    --chart-6: 358 58% 52%;
+
+    /* ---------------------------------------------------------------- *
+     * Radius scale
+     * ---------------------------------------------------------------- */
+    --radius: 0.625rem;
+    --radius-xs: 0.25rem;
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.625rem;
+    --radius-xl: 0.875rem;
+    --radius-2xl: 1.25rem;
+    --radius-pill: 9999px;
+
+    /* ---------------------------------------------------------------- *
+     * Elevation — deliberately restrained for an enterprise surface.
+     * ---------------------------------------------------------------- */
+    --shadow-color: 199 40% 18%;
+    --shadow-xs: 0 1px 2px 0 hsl(var(--shadow-color) / 0.05);
+    --shadow-sm:
+      0 1px 2px 0 hsl(var(--shadow-color) / 0.06),
+      0 1px 3px 0 hsl(var(--shadow-color) / 0.05);
+    --shadow-md:
+      0 2px 4px -1px hsl(var(--shadow-color) / 0.07),
+      0 4px 10px -2px hsl(var(--shadow-color) / 0.06);
+    --shadow-lg:
+      0 4px 8px -2px hsl(var(--shadow-color) / 0.08),
+      0 12px 24px -6px hsl(var(--shadow-color) / 0.08);
+    --shadow-overlay: 0 16px 48px -12px hsl(var(--shadow-color) / 0.18);
+
+    /* ---------------------------------------------------------------- *
+     * Motion — shared by CSS transitions and Framer Motion tokens.
+     * ---------------------------------------------------------------- */
+    --duration-instant: 100ms;
+    --duration-fast: 150ms;
+    --duration-normal: 220ms;
+    --duration-slow: 320ms;
+    --duration-deliberate: 480ms;
+    --ease-standard: cubic-bezier(0.25, 1, 0.5, 1);
+    --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+
+    /* ---------------------------------------------------------------- *
+     * Layout shell metrics
+     * ---------------------------------------------------------------- */
+    --layout-header-height: 3.75rem;
+    --layout-sidebar-width: 16.5rem;
+    --layout-sidebar-collapsed-width: 4.25rem;
+    --layout-content-max-width: 96rem;
+
+    /* ---------------------------------------------------------------- *
+     * Typography families
+     * ---------------------------------------------------------------- */
+    --font-sans: 'Rubik', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --font-display: 'Readex Pro', 'Rubik', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+  }
+
+  .dark {
+    /* Depth in Dark Mode comes from surface lightness, not from shadow. */
+    --background: 199 32% 8%;
+    --foreground: 195 24% 94%;
+
+    --surface: 199 30% 10%;
+    --surface-foreground: 195 24% 94%;
+    --surface-raised: 199 28% 13%;
+    --surface-overlay: 199 28% 15%;
+
+    --card: 199 28% 12%;
+    --card-foreground: 195 24% 94%;
+
+    --popover: 199 28% 14%;
+    --popover-foreground: 195 24% 94%;
+
+    --primary: 184 52% 46%;
+    --primary-foreground: 186 62% 9%;
+    --primary-hover: 184 54% 52%;
+
+    --secondary: 199 22% 18%;
+    --secondary-foreground: 195 22% 92%;
+
+    --muted: 199 20% 17%;
+    --muted-foreground: 197 14% 66%;
+
+    --accent: 184 34% 20%;
+    --accent-foreground: 184 46% 84%;
+
+    --destructive: 358 56% 52%;
+    --destructive-foreground: 0 0% 100%;
+    --destructive-surface: 358 40% 17%;
+
+    --success: 152 44% 42%;
+    --success-foreground: 152 60% 8%;
+    --success-surface: 152 34% 15%;
+
+    --warning: 38 68% 52%;
+    --warning-foreground: 38 70% 10%;
+    --warning-surface: 38 44% 16%;
+
+    --info: 212 54% 54%;
+    --info-foreground: 212 60% 10%;
+    --info-surface: 212 40% 17%;
+
+    --border: 199 20% 20%;
+    --border-strong: 199 18% 30%;
+    --input: 199 20% 22%;
+    --ring: 184 52% 46%;
+
+    --sidebar-background: 199 32% 10%;
+    --sidebar-foreground: 196 18% 84%;
+    --sidebar-primary: 184 52% 46%;
+    --sidebar-primary-foreground: 186 62% 9%;
+    --sidebar-accent: 184 32% 19%;
+    --sidebar-accent-foreground: 184 46% 86%;
+    --sidebar-border: 199 20% 18%;
+    --sidebar-ring: 184 52% 46%;
+
+    --chart-1: 184 52% 50%;
+    --chart-2: 212 56% 60%;
+    --chart-3: 38 70% 58%;
+    --chart-4: 268 44% 66%;
+    --chart-5: 152 42% 50%;
+    --chart-6: 358 54% 62%;
+
+    --shadow-color: 199 60% 3%;
+    --shadow-overlay: 0 16px 48px -12px hsl(var(--shadow-color) / 0.55);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans text-base leading-relaxed antialiased;
+    font-kerning: normal;
+    text-wrap: pretty;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display text-foreground;
+    text-wrap: balance;
+  }
+
+  h1 {
+    @apply text-3xl font-semibold leading-tight tracking-tight;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold leading-snug;
+  }
+
+  h3 {
+    @apply text-xl font-semibold leading-snug;
+  }
+
+  h4 {
+    @apply text-lg font-medium leading-snug;
+  }
+
+  /* Numeric data must stay column-aligned in tables and dashboards. */
+  th,
+  td,
+  [data-atlas-numeric='true'] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Arabic renders at a larger optical size; neutralise Latin tracking. */
+  [dir='rtl'] body,
+  [dir='rtl'] h1,
+  [dir='rtl'] h2,
+  [dir='rtl'] h3,
+  [dir='rtl'] h4 {
+    letter-spacing: 0;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  ::selection {
+    @apply bg-accent text-accent-foreground;
+  }
+}
+
+@layer utilities {
+  /* Visible only to assistive technology. */
+  .sr-only-focusable:not(:focus):not(:focus-within) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border-strong)) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--border-strong));
+    border-radius: var(--radius-pill);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

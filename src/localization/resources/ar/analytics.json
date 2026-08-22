@@ -1,0 +1,102 @@
+{
+  "title": "التحليلات",
+  "subtitle": "رؤى ومقاييس المنصة",
+  "dashboard": {
+    "title": "لوحة التحليلات",
+    "description": "راقب أداء منصتك",
+    "overview": "نظرة عامة",
+    "customize": "تخصيص اللوحة",
+    "export": "تصدير التقرير",
+    "refresh": "تحديث البيانات"
+  },
+  "metrics": {
+    "title": "المقاييس الرئيسية",
+    "totalAcademies": "إجمالي الأكاديميات",
+    "activeAcademies": "الأكاديميات النشطة",
+    "totalUsers": "إجمالي المستخدمين",
+    "activeUsers": "المستخدمون النشطون",
+    "totalRevenue": "إجمالي الإيرادات",
+    "monthlyRevenue": "الإيرادات الشهرية",
+    "growth": "النمو",
+    "engagement": "التفاعل",
+    "retention": "الاحتفاظ",
+    "churn": "معدل التسرب"
+  },
+  "timeRange": {
+    "label": "النطاق الزمني",
+    "7d": "آخر 7 أيام",
+    "30d": "آخر 30 يوم",
+    "90d": "آخر 90 يوم",
+    "1y": "السنة الماضية",
+    "custom": "نطاق مخصص",
+    "from": "من",
+    "to": "إلى",
+    "apply": "تطبيق"
+  },
+  "charts": {
+    "userGrowth": "نمو المستخدمين",
+    "revenueOverTime": "الإيرادات عبر الزمن",
+    "academyActivity": "نشاط الأكاديميات",
+    "engagement": "مقاييس التفاعل",
+    "topAcademies": "أفضل الأكاديميات",
+    "userRetention": "الاحتفاظ بالمستخدمين",
+    "conversionRate": "معدل التحويل"
+  },
+  "filters": {
+    "title": "الفلاتر",
+    "organization": "المؤسسة",
+    "plan": "الخطة",
+    "status": "الحالة",
+    "groupBy": "تجميع حسب",
+    "day": "اليوم",
+    "week": "الأسبوع",
+    "month": "الشهر",
+    "applyFilters": "تطبيق الفلاتر",
+    "clearFilters": "مسح الفلاتر"
+  },
+  "comparison": {
+    "title": "المقارنة",
+    "previousPeriod": "مقارنة بالفترة السابقة",
+    "previousYear": "مقارنة بالعام السابق",
+    "increase": "زيادة",
+    "decrease": "انخفاض",
+    "noChange": "لا تغيير"
+  },
+  "export": {
+    "title": "تصدير التقرير",
+    "format": "التنسيق",
+    "csv": "CSV",
+    "pdf": "PDF",
+    "excel": "Excel",
+    "json": "JSON",
+    "includeCharts": "تضمين المخططات",
+    "dateRange": "النطاق الزمني",
+    "export": "تصدير",
+    "exporting": "جارٍ التصدير...",
+    "success": "تم تصدير التقرير بنجاح",
+    "error": "فشل تصدير التقرير"
+  },
+  "widgets": {
+    "add": "إضافة أداة",
+    "remove": "إزالة الأداة",
+    "configure": "تكوين",
+    "metric": "مقياس",
+    "chart": "مخطط",
+    "table": "جدول",
+    "map": "خريطة"
+  },
+  "messages": {
+    "loadError": "فشل تحميل بيانات التحليلات",
+    "noData": "لا توجد بيانات متاحة",
+    "noDataDescription": "لا توجد بيانات للنطاق الزمني المحدد",
+    "refreshSuccess": "تم تحديث البيانات بنجاح",
+    "saveSuccess": "تم حفظ اللوحة بنجاح"
+  },
+  "aggregation": {
+    "sum": "المجموع",
+    "avg": "المتوسط",
+    "min": "الحد الأدنى",
+    "max": "الحد الأقصى",
+    "count": "العدد"
+  }
+}

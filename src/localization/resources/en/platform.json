@@ -1,0 +1,27 @@
+{
+  "dashboard": {
+    "title": "Platform Dashboard",
+    "description": "Monitor platform-wide metrics, health, and activity"
+  },
+  "metrics": {
+    "totalAcademies": "Total Academies",
+    "totalUsers": "Total Users",
+    "activeCourses": "Active Courses",
+    "revenue": "Revenue",
+    "academiesGrowth": "{{value}} from last month",
+    "usersGrowth": "{{value}} from last month",
+    "coursesGrowth": "{{value}} from last month",
+    "revenueGrowth": "{{value}} from last month",
+    "systemHealth": "System Health",
+    "storageUsage": "Storage Usage",
+    "apiUptime": "API Uptime",
+    "lastUpdated": "Last updated at {{time}}"
+  },
+  "sections": {
+    "metrics": "Platform Metrics",
+    "activity": "Recent Activity"
+  },
+  "activity": {
+    "empty": "No recent activity"
+  }
+}

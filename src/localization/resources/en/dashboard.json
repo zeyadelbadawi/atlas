@@ -1,0 +1,14 @@
+{
+  "overview": {
+    "title": "Dashboard",
+    "description": "Your workspace overview. Modules will appear here as they are activated.",
+    "foundation": {
+      "title": "Platform foundation",
+      "description": "The application shell, design system and shared infrastructure are ready."
+    },
+    "empty": {
+      "title": "No modules activated yet",
+      "description": "Once {{product}} modules are enabled, their summaries and quick actions will appear in this overview."
+    }
+  }
+}

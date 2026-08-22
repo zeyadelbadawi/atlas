@@ -1,0 +1,29 @@
+{
+  "title": "Search",
+  "subtitle": "Search across the platform",
+  "placeholder": "Search for pages, settings, and more...",
+  "ariaLabel": "Search the platform",
+  "hint": "Press Cmd+K to focus search",
+  "loading": "Searching...",
+  "minLength": "Type at least {{count}} characters to search",
+  "empty": {
+    "title": "No results found",
+    "message": "Try adjusting your search query"
+  },
+  "error": {
+    "title": "Search failed",
+    "message": "Unable to perform search. Please try again.",
+    "retry": "Retry search"
+  },
+  "categories": {
+    "platform": "Platform",
+    "users": "Users",
+    "content": "Content",
+    "system": "System"
+  },
+  "keyboard": {
+    "navigate": "Navigate results",
+    "select": "Select result",
+    "close": "Close search"
+  }
+}

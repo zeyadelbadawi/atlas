@@ -1,0 +1,155 @@
+{
+  "title": "Learning",
+  "discovery": {
+    "title": "Discover Courses",
+    "subtitle": "Browse published courses across every academy",
+    "searchPlaceholder": "Search courses...",
+    "filterByPricing": "Pricing",
+    "allPricing": "All pricing",
+    "card": {
+      "byInstructor": "By {{name}}",
+      "enrollAction": "Enroll",
+      "continueAction": "Continue Learning",
+      "viewAction": "View Course",
+      "completedAction": "View Completed Course"
+    }
+  },
+  "empty": {
+    "noCourses": "No courses are available yet.",
+    "noCoursesDescription": "Check back soon — new courses will appear here as academies publish them.",
+    "noResults": "No courses match your search.",
+    "noResultsDescription": "Try a different search term or filter."
+  },
+  "errors": {
+    "loadFailed": "We couldn't load this course.",
+    "notFound": "This course is not available.",
+    "unauthorized": "Sign in to access your learning."
+  },
+  "details": {
+    "title": "Course Overview",
+    "curriculum": "Curriculum",
+    "lessonCount": "{{count}} lessons",
+    "sectionCount": "{{count}} sections",
+    "instructors": "Instructors",
+    "aboutCourse": "About this course",
+    "signInPrompt": "Sign in to enroll in this course.",
+    "signInAction": "Sign In",
+    "notEnrolledPrompt": "You're not enrolled in this course yet.",
+    "enrollAction": "Enroll",
+    "enrolling": "Enrolling...",
+    "enrollSuccess": "You're enrolled!",
+    "enrollSuccessNextStep": "Next step:",
+    "enrollSuccessNextStepDescription": "Start learning right away.",
+    "enrollError": "Failed to enroll in this course",
+    "notAvailable": "This course isn't available for enrollment right now.",
+    "continueLearning": "Continue Learning",
+    "viewProgress": "View Progress",
+    "courseCompleted": "You've completed this course",
+    "viewCompletedCourse": "Review Course"
+  },
+  "learn": {
+    "curriculumLabel": "Curriculum",
+    "progressLabel": "{{percentage}}% complete",
+    "backToCourse": "Back to course overview",
+    "openCurriculum": "Open curriculum",
+    "closeCurriculum": "Close curriculum"
+  },
+  "lesson": {
+    "status": {
+      "locked": "Locked",
+      "available": "Available",
+      "in_progress": "In progress",
+      "completed": "Completed"
+    },
+    "lockedMessage": "Complete the previous lessons to unlock this one.",
+    "markComplete": "Mark as Complete",
+    "completing": "Saving...",
+    "completed": "Lesson completed",
+    "completeError": "Failed to update your progress",
+    "previous": "Previous",
+    "next": "Next",
+    "unsupportedContent": "This lesson's content isn't available in this view.",
+    "openResource": "Open Resource"
+  },
+  "progress": {
+    "overallTitle": "Your Progress",
+    "completedOf": "{{completed}} of {{total}} lessons completed",
+    "state": {
+      "incomplete": "Not started",
+      "in_progress": "In progress",
+      "completed": "Completed"
+    },
+    "loadFailed": "Failed to load your progress"
+  },
+  "quiz": {
+    "listTitle": "Quizzes",
+    "emptyQuizzes": "This course has no quizzes yet.",
+    "startAction": "Start Quiz",
+    "resumeAction": "Resume Quiz",
+    "reviewAction": "Review Result",
+    "instructionsTitle": "Instructions",
+    "instructionsDefault": "Answer every question, then submit your attempt.",
+    "questionOf": "Question {{current}} of {{total}}",
+    "previousQuestion": "Previous",
+    "nextQuestion": "Next",
+    "reviewTitle": "Review your answers",
+    "reviewDescription": "You can go back and change an answer before submitting.",
+    "submitAction": "Submit Attempt",
+    "submitting": "Submitting...",
+    "submitConfirm": {
+      "title": "Submit this attempt?",
+      "description": "You won't be able to change your answers after submitting.",
+      "confirmLabel": "Submit",
+      "cancelLabel": "Keep answering"
+    },
+    "unansweredWarning": "Answer every question before submitting.",
+    "resultTitle": "Quiz Result",
+    "passed": "Passed",
+    "failed": "Not passed",
+    "scoreLabel": "Score: {{score}}%",
+    "passingScoreLabel": "Passing score: {{score}}%",
+    "attemptNumber": "Attempt {{number}}",
+    "retryAvailable": "Try Again",
+    "retryUnavailable": "No more attempts available",
+    "submitSuccess": "Attempt submitted",
+    "submitError": "Failed to submit your attempt",
+    "startError": "Failed to start the quiz",
+    "loadFailed": "Failed to load this quiz"
+  },
+  "assignment": {
+    "listTitle": "Assignments",
+    "emptyAssignments": "This course has no assignments yet.",
+    "instructionsTitle": "Instructions",
+    "responseLabel": "Your Response",
+    "responsePlaceholder": "Write your response here",
+    "attachmentLabel": "Attachment",
+    "attachmentHelp": "Optional. PDF, Word or image, max 10MB.",
+    "uploadAttachment": "Upload File",
+    "changeAttachment": "Change File",
+    "submitAction": "Submit Assignment",
+    "resubmitAction": "Resubmit",
+    "submitting": "Submitting...",
+    "submitSuccess": "Assignment submitted",
+    "submitSuccessNextStep": "Next step:",
+    "submitSuccessNextStepDescription": "Continue with the next lesson or assignment.",
+    "submitError": "Failed to submit your assignment",
+    "status": {
+      "draft": "Not submitted",
+      "submitting": "Submitting",
+      "submitted": "Submitted",
+      "failed": "Submission failed"
+    },
+    "resubmissionUnavailable": "Resubmission isn't available for this assignment.",
+    "loadFailed": "Failed to load this assignment",
+    "attachmentTooLarge": "Attachment must be smaller than 10MB.",
+    "attachmentInvalidType": "Attachment must be a PDF, Word document, or image."
+  },
+  "completion": {
+    "title": "Course Completion",
+    "completedBanner": "Congratulations — you've completed this course!",
+    "certificate": {
+      "eligible": "You're eligible for a certificate",
+      "unavailable": "A certificate isn't available for this course"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "required": "{{field}} is required",
+  "invalid": "{{field}} is not valid",
+  "email": "Enter a valid email address",
+  "invalidEmail": "Enter a valid email address",
+  "url": "Enter a valid URL",
+  "invalidUrl": "Enter a valid URL",
+  "invalidSlug": "Use only lowercase letters, numbers, and hyphens",
+  "minLength": "{{field}} must be at least {{count}} characters",
+  "maxLength": "{{field}} must be {{count}} characters or fewer",
+  "min": "{{field}} must be {{min}} or more",
+  "max": "{{field}} must be {{max}} or less",
+  "pattern": "{{field}} has an unexpected format",
+  "mustMatch": "{{field}} must match {{target}}",
+  "number": "Enter a number",
+  "integer": "Enter a whole number",
+  "date": "Enter a valid date",
+  "file": {
+    "tooLarge": "The file must be {{size}} or smaller",
+    "unsupportedType": "This file type is not supported"
+  }
+}

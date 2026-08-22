@@ -1,0 +1,60 @@
+{
+  "title": "الملف الشخصي",
+  "subtitle": "إدارة معلوماتك الشخصية وتفضيلاتك",
+  "sections": {
+    "personal": "المعلومات الشخصية",
+    "account": "إعدادات الحساب",
+    "preferences": "التفضيلات",
+    "security": "الأمان"
+  },
+  "fields": {
+    "name": "الاسم الكامل",
+    "namePlaceholder": "أدخل اسمك الكامل",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "your@email.com",
+    "avatar": "صورة الملف الشخصي",
+    "changeAvatar": "تغيير الصورة",
+    "removeAvatar": "إزالة الصورة",
+    "language": "اللغة",
+    "theme": "المظهر",
+    "themeLight": "فاتح",
+    "themeDark": "داكن",
+    "themeSystem": "النظام",
+    "compactMode": "الوضع المضغوط",
+    "compactModeDescription": "عرض المزيد من المحتوى في مساحة أقل",
+    "notifications": "الإشعارات",
+    "emailNotifications": "إشعارات البريد الإلكتروني",
+    "pushNotifications": "الإشعارات الفورية",
+    "smsNotifications": "إشعارات الرسائل النصية"
+  },
+  "actions": {
+    "edit": "تعديل الملف الشخصي",
+    "save": "حفظ التغييرات",
+    "cancel": "إلغاء",
+    "saving": "جارٍ الحفظ..."
+  },
+  "messages": {
+    "updateSuccess": "تم تحديث الملف الشخصي بنجاح",
+    "updateError": "فشل تحديث الملف الشخصي",
+    "unsavedChanges": "لديك تغييرات غير محفوظة. هل أنت متأكد من المغادرة؟"
+  },
+  "accountInfo": {
+    "title": "معلومات الحساب",
+    "userId": "معرف المستخدم",
+    "createdAt": "عضو منذ",
+    "lastSignIn": "آخر تسجيل دخول",
+    "accountStatus": "حالة الحساب",
+    "statusActive": "نشط",
+    "statusInactive": "غير نشط",
+    "statusSuspended": "معلق"
+  },
+  "security": {
+    "title": "إعدادات الأمان",
+    "changePassword": "تغيير كلمة المرور",
+    "twoFactor": "المصادقة الثنائية",
+    "twoFactorDescription": "أضف طبقة أمان إضافية لحسابك",
+    "sessions": "الجلسات النشطة",
+    "viewSessions": "عرض الجلسات النشطة"
+  }
+}
+

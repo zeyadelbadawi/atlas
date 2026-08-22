@@ -1,0 +1,89 @@
+/**
+ * Request-building helpers.
+ *
+ * Shared by services so collection queries and paginated responses are shaped
+ * identically everywhere, and so no service invents its own parameter names.
+ */
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '@constants';
+import type {
+  CollectionQuery,
+  PaginatedResult,
+  PaginationMeta,
+  QueryParams,
+} from '@types';
+
+/** Wire parameter names for collection queries. Declared once, used everywhere. */
+export const COLLECTION_PARAM_NAMES = {
+  page: 'page',
+  pageSize: 'pageSize',
+  sortField: 'sortBy',
+  sortDirection: 'sortDirection',
+  search: 'search',
+} as const;
+
+/** Converts a collection query into flat query parameters. */
+export function toCollectionParams(query?: CollectionQuery): QueryParams {
+  if (!query) return {};
+
+  const params: Record<string, QueryParams[string]> = {
+    [COLLECTION_PARAM_NAMES.page]: query.pagination?.page ?? DEFAULT_PAGE,
+    [COLLECTION_PARAM_NAMES.pageSize]:
+      query.pagination?.pageSize ?? DEFAULT_PAGE_SIZE,
+  };
+
+  if (query.sort) {
+    params[COLLECTION_PARAM_NAMES.sortField] = query.sort.field;
+    params[COLLECTION_PARAM_NAMES.sortDirection] = query.sort.direction;
+  }
+
+  if (query.search && query.search.trim().length > 0) {
+    params[COLLECTION_PARAM_NAMES.search] = query.search.trim();
+  }
+
+  for (const [key, value] of Object.entries(query.filters ?? {})) {
+    if (value === null || value === undefined) continue;
+    if (typeof value === 'object') continue;
+    params[key] = value;
+  }
+
+  return params;
+}
+
+/** Derives pagination metadata, tolerating an incomplete backend response. */
+export function buildPaginationMeta(
+  page: number,
+  pageSize: number,
+  totalItems: number
+): PaginationMeta {
+  const safePageSize = pageSize > 0 ? pageSize : DEFAULT_PAGE_SIZE;
+  const safeTotal = Number.isFinite(totalItems) && totalItems > 0 ? totalItems : 0;
+
+  return {
+    page: page > 0 ? page : DEFAULT_PAGE,
+    pageSize: safePageSize,
+    totalItems: safeTotal,
+    totalPages: Math.max(1, Math.ceil(safeTotal / safePageSize)),
+  };
+}
+
+/** Builds an empty page, used as a safe fallback for a missing collection. */
+export function emptyPaginatedResult<TItem>(
+  query?: CollectionQuery
+): PaginatedResult<TItem> {
+  return {
+    items: [],
+    pagination: buildPaginationMeta(
+      query?.pagination?.page ?? DEFAULT_PAGE,
+      query?.pagination?.pageSize ?? DEFAULT_PAGE_SIZE,
+      0
+    ),
+  };
+}
+
+/** Builds a path with URL-encoded segments, preventing malformed requests. */
+export function resourcePath(...segments: readonly string[]): string {
+  return segments
+    .filter((segment) => segment.length > 0)
+    .map((segment) => encodeURIComponent(segment))
+    .join('/');
+}

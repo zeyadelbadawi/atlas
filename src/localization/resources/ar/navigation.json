@@ -1,0 +1,50 @@
+{
+  "skipToContent": "الانتقال إلى المحتوى الرئيسي",
+  "primary": "التنقل الرئيسي",
+  "sidebar": {
+    "expand": "توسيع قائمة التنقل",
+    "collapse": "تصغير قائمة التنقل",
+    "open": "فتح قائمة التنقل",
+    "close": "إغلاق قائمة التنقل"
+  },
+  "breadcrumb": {
+    "label": "مسار التنقل",
+    "home": "الرئيسية"
+  },
+  "sections": {
+    "overview": "نظرة عامة",
+    "platform": "المنصة",
+    "academy": "الأكاديمية",
+    "teaching": "التدريس",
+    "learning": "التعلّم",
+    "community": "المجتمع",
+    "user": "المستخدم",
+    "workspace": "مساحة العمل",
+    "administration": "الإدارة"
+  },
+  "items": {
+    "home": "الرئيسية",
+    "dashboard": "لوحة التحكم",
+    "platformDashboard": "لوحة تحكم المنصة",
+    "search": "البحث",
+    "academyOverview": "نظرة عامة على الأكاديمية",
+    "academyCourses": "الدورات",
+    "myLearning": "تعلّمي",
+    "academyMembers": "الأعضاء",
+    "academyBranding": "الهوية البصرية",
+    "academySettings": "إعدادات الأكاديمية",
+    "instructorDashboard": "لوحة تحكم التدريس",
+    "myTeachingCourses": "دوراتي التدريسية",
+    "announcements": "الإعلانات",
+    "blog": "مدونة المعرفة",
+    "profile": "الملف الشخصي",
+    "notifications": "الإشعارات",
+    "settings": "الإعدادات",
+    "billing": "الفواتير",
+    "analytics": "التحليلات"
+  },
+  "account": {
+    "menu": "قائمة الحساب",
+    "signedInAs": "مسجّل الدخول باسم {{name}}"
+  }
+}

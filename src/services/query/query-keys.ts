@@ -1,0 +1,299 @@
+/**
+ * Query key factory.
+ *
+ * Provides deterministic query keys for every entity and operation. Keys are
+ * namespaced by resource and include the relevant identifiers so cache
+ * invalidation can target exactly the affected queries.
+ */
+import type { CollectionQuery, CourseListQuery } from '@types';
+
+/** Base keys for resource categories. */
+export const QUERY_KEY_ROOTS = {
+  auth: ['auth'] as const,
+  user: ['user'] as const,
+  organizations: ['organizations'] as const,
+  academy: ['academy'] as const,
+  course: ['course'] as const,
+  courseDiscovery: ['course-discovery'] as const,
+  enrollment: ['enrollment'] as const,
+  progress: ['progress'] as const,
+  quiz: ['quiz'] as const,
+  assignment: ['assignment'] as const,
+  instructor: ['instructor'] as const,
+  announcement: ['announcement'] as const,
+  blog: ['blog'] as const,
+  forum: ['forum'] as const,
+} as const;
+
+/**
+ * Query keys for authentication and identity.
+ */
+export const authKeys = {
+  all: QUERY_KEY_ROOTS.auth,
+  session: () => [...authKeys.all, 'session'] as const,
+  currentUser: () => [...authKeys.all, 'current-user'] as const,
+} as const;
+
+/**
+ * Query keys for user-related queries.
+ */
+export const userKeys = {
+  all: QUERY_KEY_ROOTS.user,
+  profile: (userId: string) => [...userKeys.all, 'profile', userId] as const,
+  preferences: (userId: string) =>
+    [...userKeys.all, 'preferences', userId] as const,
+} as const;
+
+/**
+ * Query keys for organization-related queries.
+ */
+export const organizationKeys = {
+  all: QUERY_KEY_ROOTS.organizations,
+  list: (filters?: Record<string, unknown>) =>
+    [...organizationKeys.all, 'list', filters] as const,
+  detail: (orgId: string) => [...organizationKeys.all, 'detail', orgId] as const,
+  memberships: (userId: string) =>
+    [...organizationKeys.all, 'memberships', userId] as const,
+} as const;
+
+/**
+ * Query keys for Academy Management.
+ *
+ * Every key embeds the active organization ID, so `PlatformProvider`'s
+ * org-switch invalidation (which matches keys containing the organization id)
+ * always catches Academy data without any Academy-specific wiring there.
+ */
+export const academyKeys = {
+  all: QUERY_KEY_ROOTS.academy,
+  list: (organizationId: string | undefined, query?: CollectionQuery) =>
+    [...academyKeys.all, 'list', organizationId, query] as const,
+  detail: (organizationId: string | undefined, academyId: string) =>
+    [...academyKeys.all, 'detail', organizationId, academyId] as const,
+  members: (
+    organizationId: string | undefined,
+    academyId: string,
+    query?: CollectionQuery
+  ) =>
+    [...academyKeys.all, 'members', organizationId, academyId, query] as const,
+  stats: (organizationId: string | undefined, academyId: string) =>
+    [...academyKeys.all, 'stats', organizationId, academyId] as const,
+  activity: (
+    organizationId: string | undefined,
+    academyId: string,
+    query?: CollectionQuery
+  ) =>
+    [...academyKeys.all, 'activity', organizationId, academyId, query] as const,
+} as const;
+
+/**
+ * Query keys for Course Management.
+ *
+ * Every course belongs to a specific academy, so every key embeds the
+ * academy id. Switching academies therefore produces different keys — the
+ * previous academy's course data simply isn't addressed by the new keys, so
+ * it can never leak across academies, without any Course-specific
+ * invalidation wiring (the same technique `academyKeys` uses for org id).
+ */
+export const courseKeys = {
+  all: QUERY_KEY_ROOTS.course,
+  list: (academyId: string | undefined, query?: CourseListQuery) =>
+    [...courseKeys.all, 'list', academyId, query] as const,
+  detail: (academyId: string | undefined, courseId: string) =>
+    [...courseKeys.all, 'detail', academyId, courseId] as const,
+  categories: (academyId: string | undefined) =>
+    [...courseKeys.all, 'categories', academyId] as const,
+  sections: (academyId: string | undefined, courseId: string) =>
+    [...courseKeys.all, 'sections', academyId, courseId] as const,
+} as const;
+
+/**
+ * Query keys for the student-facing cross-academy course catalog.
+ *
+ * Deliberately not scoped by academy — `discoverCourses` reads across every
+ * academy, so its own key tree is separate from the owner-facing `courseKeys`.
+ */
+export const courseDiscoveryKeys = {
+  all: QUERY_KEY_ROOTS.courseDiscovery,
+  list: (query?: CourseListQuery) =>
+    [...courseDiscoveryKeys.all, 'list', query] as const,
+} as const;
+
+/**
+ * Query keys for Student Learning.
+ *
+ * Every key embeds the current student's id (not just the course/quiz/
+ * assignment id) so that signing in as a different student in the same
+ * browser session can never surface the previous student's cached
+ * progress, attempts or submissions — the same technique `academyKeys`/
+ * `courseKeys` use for organization/academy id.
+ */
+export const enrollmentKeys = {
+  all: QUERY_KEY_ROOTS.enrollment,
+  list: (studentId: string | undefined) =>
+    [...enrollmentKeys.all, 'list', studentId] as const,
+  course: (studentId: string | undefined, courseId: string) =>
+    [...enrollmentKeys.all, 'course', studentId, courseId] as const,
+} as const;
+
+export const progressKeys = {
+  all: QUERY_KEY_ROOTS.progress,
+  course: (studentId: string | undefined, courseId: string) =>
+    [...progressKeys.all, 'course', studentId, courseId] as const,
+} as const;
+
+export const quizKeys = {
+  all: QUERY_KEY_ROOTS.quiz,
+  list: (studentId: string | undefined, courseId: string) =>
+    [...quizKeys.all, 'list', studentId, courseId] as const,
+  detail: (studentId: string | undefined, courseId: string, quizId: string) =>
+    [...quizKeys.all, 'detail', studentId, courseId, quizId] as const,
+  attempts: (
+    studentId: string | undefined,
+    courseId: string,
+    quizId: string
+  ) => [...quizKeys.all, 'attempts', studentId, courseId, quizId] as const,
+} as const;
+
+export const assignmentKeys = {
+  all: QUERY_KEY_ROOTS.assignment,
+  list: (studentId: string | undefined, courseId: string) =>
+    [...assignmentKeys.all, 'list', studentId, courseId] as const,
+  detail: (
+    studentId: string | undefined,
+    courseId: string,
+    assignmentId: string
+  ) => [...assignmentKeys.all, 'detail', studentId, courseId, assignmentId] as const,
+  submission: (
+    studentId: string | undefined,
+    courseId: string,
+    assignmentId: string
+  ) =>
+    [
+      ...assignmentKeys.all,
+      'submission',
+      studentId,
+      courseId,
+      assignmentId,
+    ] as const,
+} as const;
+
+/**
+ * Query keys for the Instructor experience.
+ *
+ * Every key embeds the current instructor's id, for the same reason
+ * `enrollmentKeys`/`progressKeys` embed the current student's id: no cached
+ * teaching data can surface for a different instructor signed in in the
+ * same session.
+ */
+export const instructorKeys = {
+  all: QUERY_KEY_ROOTS.instructor,
+  dashboard: (instructorId: string | undefined) =>
+    [...instructorKeys.all, 'dashboard', instructorId] as const,
+  courses: (instructorId: string | undefined, query?: CollectionQuery) =>
+    [...instructorKeys.all, 'courses', instructorId, query] as const,
+  course: (instructorId: string | undefined, courseId: string) =>
+    [...instructorKeys.all, 'course', instructorId, courseId] as const,
+  students: (
+    instructorId: string | undefined,
+    courseId: string,
+    query?: CollectionQuery
+  ) => [...instructorKeys.all, 'students', instructorId, courseId, query] as const,
+  studentProgress: (
+    instructorId: string | undefined,
+    courseId: string,
+    studentId: string
+  ) =>
+    [
+      ...instructorKeys.all,
+      'studentProgress',
+      instructorId,
+      courseId,
+      studentId,
+    ] as const,
+  quizAttempts: (
+    instructorId: string | undefined,
+    courseId: string,
+    quizId: string,
+    query?: CollectionQuery
+  ) =>
+    [
+      ...instructorKeys.all,
+      'quizAttempts',
+      instructorId,
+      courseId,
+      quizId,
+      query,
+    ] as const,
+  submissions: (
+    instructorId: string | undefined,
+    courseId: string,
+    assignmentId: string,
+    query?: CollectionQuery
+  ) =>
+    [
+      ...instructorKeys.all,
+      'submissions',
+      instructorId,
+      courseId,
+      assignmentId,
+      query,
+    ] as const,
+  submission: (
+    instructorId: string | undefined,
+    courseId: string,
+    assignmentId: string,
+    submissionId: string
+  ) =>
+    [
+      ...instructorKeys.all,
+      'submission',
+      instructorId,
+      courseId,
+      assignmentId,
+      submissionId,
+    ] as const,
+} as const;
+
+/**
+ * Query keys for Announcements.
+ *
+ * `feed` embeds the current user's id (their visible feed differs by
+ * identity); `course` is scoped by courseId alone, matching how course
+ * ownership is otherwise expressed in this codebase.
+ */
+export const announcementKeys = {
+  all: QUERY_KEY_ROOTS.announcement,
+  feed: (userId: string | undefined, query?: CollectionQuery) =>
+    [...announcementKeys.all, 'feed', userId, query] as const,
+  detail: (userId: string | undefined, id: string) =>
+    [...announcementKeys.all, 'detail', userId, id] as const,
+  course: (courseId: string, query?: CollectionQuery) =>
+    [...announcementKeys.all, 'course', courseId, query] as const,
+} as const;
+
+/** Query keys for the Blog (Knowledge Content) feature. */
+export const blogKeys = {
+  all: QUERY_KEY_ROOTS.blog,
+  list: (userId: string | undefined, query?: CollectionQuery) =>
+    [...blogKeys.all, 'list', userId, query] as const,
+  detail: (userId: string | undefined, id: string) =>
+    [...blogKeys.all, 'detail', userId, id] as const,
+} as const;
+
+/**
+ * Query keys for the Course Forum.
+ *
+ * Every key is rooted in `courseId` — a forum, its threads and its replies
+ * only ever exist in the context of the course they were fetched for, so a
+ * cache entry for one course's forum can never be read as another's.
+ */
+export const forumKeys = {
+  all: QUERY_KEY_ROOTS.forum,
+  forum: (courseId: string) => [...forumKeys.all, 'forum', courseId] as const,
+  threads: (courseId: string, query?: CollectionQuery) =>
+    [...forumKeys.all, 'threads', courseId, query] as const,
+  thread: (courseId: string, threadId: string) =>
+    [...forumKeys.all, 'thread', courseId, threadId] as const,
+  replies: (courseId: string, threadId: string, query?: CollectionQuery) =>
+    [...forumKeys.all, 'replies', courseId, threadId, query] as const,
+} as const;

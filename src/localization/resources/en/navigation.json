@@ -1,0 +1,50 @@
+{
+  "skipToContent": "Skip to main content",
+  "primary": "Main navigation",
+  "sidebar": {
+    "expand": "Expand navigation",
+    "collapse": "Collapse navigation",
+    "open": "Open navigation",
+    "close": "Close navigation"
+  },
+  "breadcrumb": {
+    "label": "Breadcrumb",
+    "home": "Home"
+  },
+  "sections": {
+    "overview": "Overview",
+    "platform": "Platform",
+    "academy": "Academy",
+    "teaching": "Teaching",
+    "learning": "Learning",
+    "community": "Community",
+    "user": "User",
+    "workspace": "Workspace",
+    "administration": "Administration"
+  },
+  "items": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "platformDashboard": "Platform Dashboard",
+    "search": "Search",
+    "academyOverview": "Academy Overview",
+    "academyCourses": "Courses",
+    "myLearning": "My Learning",
+    "academyMembers": "Members",
+    "academyBranding": "Branding",
+    "academySettings": "Academy Settings",
+    "instructorDashboard": "Teaching Dashboard",
+    "myTeachingCourses": "My Courses",
+    "announcements": "Announcements",
+    "blog": "Knowledge Blog",
+    "profile": "Profile",
+    "notifications": "Notifications",
+    "settings": "Settings",
+    "billing": "Billing",
+    "analytics": "Analytics"
+  },
+  "account": {
+    "menu": "Account menu",
+    "signedInAs": "Signed in as {{name}}"
+  }
+}

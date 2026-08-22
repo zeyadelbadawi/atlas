@@ -1,0 +1,91 @@
+{
+  "title": "الإعدادات",
+  "subtitle": "تكوين تفضيلات المنصة",
+  "sections": {
+    "general": "عام",
+    "notifications": "الإشعارات",
+    "appearance": "المظهر",
+    "localization": "اللغة والمنطقة",
+    "privacy": "الخصوصية",
+    "advanced": "متقدم"
+  },
+  "general": {
+    "title": "الإعدادات العامة",
+    "description": "إدارة تكوين المنصة",
+    "platformName": "اسم المنصة",
+    "platformNamePlaceholder": "أدخل اسم المنصة",
+    "timezone": "المنطقة الزمنية",
+    "dateFormat": "تنسيق التاريخ",
+    "timeFormat": "تنسيق الوقت",
+    "timeFormat12": "12 ساعة",
+    "timeFormat24": "24 ساعة"
+  },
+  "notifications": {
+    "title": "تفضيلات الإشعارات",
+    "description": "اختر كيف تريد أن يتم إشعارك",
+    "emailSettings": "إشعارات البريد الإلكتروني",
+    "pushSettings": "الإشعارات الفورية",
+    "smsSettings": "إشعارات الرسائل النصية",
+    "systemNotifications": "إشعارات النظام",
+    "accountNotifications": "إشعارات الحساب",
+    "billingNotifications": "إشعارات الفواتير",
+    "securityNotifications": "إشعارات الأمان",
+    "activityNotifications": "إشعارات النشاط",
+    "announcementNotifications": "الإعلانات"
+  },
+  "appearance": {
+    "title": "المظهر",
+    "description": "تخصيص شكل المنصة",
+    "theme": "المظهر",
+    "themeLight": "فاتح",
+    "themeDark": "داكن",
+    "themeAuto": "تلقائي (النظام)",
+    "compactMode": "الوضع المضغوط",
+    "compactModeDescription": "استخدام تخطيط أكثر إحكاماً"
+  },
+  "localization": {
+    "title": "اللغة والمنطقة",
+    "description": "تعيين تفضيلات اللغة والمنطقة",
+    "language": "لغة الواجهة",
+    "languageEnglish": "English",
+    "languageArabic": "العربية",
+    "direction": "اتجاه النص",
+    "directionLTR": "من اليسار إلى اليمين",
+    "directionRTL": "من اليمين إلى اليسار",
+    "currency": "العملة",
+    "numberFormat": "تنسيق الأرقام"
+  },
+  "privacy": {
+    "title": "إعدادات الخصوصية",
+    "description": "التحكم في خصوصيتك وبياناتك",
+    "dataCollection": "جمع البيانات",
+    "dataCollectionDescription": "السماح بجمع بيانات الاستخدام المجهولة",
+    "analytics": "التحليلات",
+    "analyticsDescription": "ساعد في تحسين المنصة من خلال مشاركة إحصائيات الاستخدام",
+    "cookies": "تفضيلات ملفات تعريف الارتباط",
+    "cookiesDescription": "إدارة تفضيلات ملفات تعريف الارتباط"
+  },
+  "advanced": {
+    "title": "الإعدادات المتقدمة",
+    "description": "خيارات التكوين المتقدمة",
+    "developer": "وضع المطور",
+    "developerDescription": "تمكين أدوات المطور ومعلومات التصحيح",
+    "experimental": "الميزات التجريبية",
+    "experimentalDescription": "جرب الميزات الجديدة قبل إصدارها",
+    "apiAccess": "الوصول إلى API",
+    "apiAccessDescription": "إدارة مفاتيح API والرموز"
+  },
+  "actions": {
+    "save": "حفظ الإعدادات",
+    "saving": "جارٍ الحفظ...",
+    "cancel": "إلغاء",
+    "reset": "إعادة تعيين إلى الافتراضي",
+    "resetConfirm": "هل أنت متأكد من إعادة تعيين جميع الإعدادات إلى الافتراضي؟"
+  },
+  "messages": {
+    "saveSuccess": "تم حفظ الإعدادات بنجاح",
+    "saveError": "فشل حفظ الإعدادات",
+    "resetSuccess": "تم إعادة تعيين الإعدادات إلى الافتراضي",
+    "unsavedChanges": "لديك تغييرات غير محفوظة"
+  }
+}

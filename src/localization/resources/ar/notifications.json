@@ -1,0 +1,68 @@
+{
+  "title": "الإشعارات",
+  "subtitle": "إدارة الإشعارات والتنبيهات",
+  "center": {
+    "title": "مركز الإشعارات",
+    "empty": "لا توجد إشعارات",
+    "emptyDescription": "لقد اطلعت على كل شيء! تحقق مرة أخرى لاحقاً للحصول على إشعارات جديدة.",
+    "markAllRead": "وضع علامة مقروء على الكل",
+    "markAsRead": "وضع علامة كمقروء",
+    "markAsUnread": "وضع علامة كغير مقروء",
+    "delete": "حذف",
+    "deleteAll": "حذف الكل",
+    "deleteConfirm": "هل أنت متأكد من حذف هذا الإشعار؟",
+    "deleteAllConfirm": "هل أنت متأكد من حذف جميع الإشعارات؟",
+    "viewAll": "عرض الكل"
+  },
+  "filters": {
+    "all": "الكل",
+    "unread": "غير مقروء",
+    "read": "مقروء",
+    "type": "النوع",
+    "priority": "الأولوية"
+  },
+  "types": {
+    "system": "النظام",
+    "account": "الحساب",
+    "billing": "الفواتير",
+    "security": "الأمان",
+    "activity": "النشاط",
+    "announcement": "إعلان"
+  },
+  "priority": {
+    "low": "منخفض",
+    "medium": "متوسط",
+    "high": "عالي",
+    "urgent": "عاجل"
+  },
+  "actions": {
+    "viewDetails": "عرض التفاصيل",
+    "dismiss": "تجاهل",
+    "takeAction": "اتخاذ إجراء"
+  },
+  "messages": {
+    "markReadSuccess": "تم وضع علامة كمقروء",
+    "markUnreadSuccess": "تم وضع علامة كغير مقروء",
+    "deleteSuccess": "تم حذف الإشعار",
+    "deleteAllSuccess": "تم حذف جميع الإشعارات",
+    "loadError": "فشل تحميل الإشعارات",
+    "actionError": "فشل تنفيذ الإجراء"
+  },
+  "summary": {
+    "total": "الإجمالي",
+    "unread": "غير مقروء",
+    "today": "اليوم",
+    "thisWeek": "هذا الأسبوع"
+  },
+  "settings": {
+    "title": "إعدادات الإشعارات",
+    "description": "اختر الإشعارات التي تريد تلقيها",
+    "channels": "قنوات الإشعارات",
+    "email": "البريد الإلكتروني",
+    "push": "الإشعارات الفورية",
+    "sms": "الرسائل النصية",
+    "inApp": "داخل التطبيق",
+    "preferences": "تفضيلات الإشعارات",
+    "saveSuccess": "تم حفظ إعدادات الإشعارات"
+  }
+}

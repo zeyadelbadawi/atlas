@@ -1,0 +1,103 @@
+{
+  "product": {
+    "name": "Atlas",
+    "tagline": "The operating system for education businesses"
+  },
+  "languages": {
+    "en": "English",
+    "ar": "Arabic"
+  },
+  "language": {
+    "switcher": "Change language",
+    "current": "Current language: {{language}}"
+  },
+  "theme": {
+    "switcher": "Change theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "current": "Current theme: {{theme}}"
+  },
+  "actions": {
+    "save": "Save changes",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "retry": "Try again",
+    "reload": "Reload page",
+    "search": "Search",
+    "clear": "Clear",
+    "clearSearch": "Clear search",
+    "filter": "Filter",
+    "reset": "Reset",
+    "copy": "Copy",
+    "copied": "Copied to clipboard",
+    "download": "Download",
+    "back": "Go back",
+    "next": "Next",
+    "previous": "Previous",
+    "more": "More options",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "goToHome": "Go to home",
+    "contactSupport": "Contact support"
+  },
+  "states": {
+    "loading": "Loading your content…",
+    "saving": "Saving your changes…",
+    "empty": {
+      "title": "Nothing here yet",
+      "description": "Once content is added it will appear in this view."
+    },
+    "noResults": {
+      "title": "No matching results",
+      "description": "Adjust your search terms or filters and try again."
+    },
+    "offline": {
+      "title": "You are offline",
+      "description": "Check your connection. Atlas will retry once you are back online."
+    }
+  },
+  "table": {
+    "rowsSelected": "{{count}} of {{total}} rows selected",
+    "columns": "Columns",
+    "toggleColumn": "Toggle {{column}} column",
+    "sortAscending": "Sort ascending",
+    "sortDescending": "Sort descending",
+    "clearSort": "Clear sorting",
+    "selectAllRows": "Select all rows",
+    "selectRow": "Select row"
+  },
+  "pagination": {
+    "summary": "Showing {{from}}–{{to}} of {{total}}",
+    "pageSize": "Rows per page",
+    "page": "Page {{page}} of {{totalPages}}",
+    "goToPage": "Go to page {{page}}",
+    "firstPage": "First page",
+    "lastPage": "Last page",
+    "nextPage": "Next page",
+    "previousPage": "Previous page",
+    "morePages": "More pages"
+  },
+  "form": {
+    "required": "Required",
+    "optional": "Optional",
+    "requiredFieldIndicator": "This field is required"
+  },
+  "feedback": {
+    "successTitle": "Done",
+    "errorTitle": "Something went wrong",
+    "warningTitle": "Check this first",
+    "infoTitle": "For your information"
+  },
+  "units": {
+    "bytes": "B",
+    "kilobytes": "KB",
+    "megabytes": "MB",
+    "gigabytes": "GB",
+    "terabytes": "TB"
+  },
+  "time": {
+    "justNow": "Just now"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "title": "Notifications",
+  "subtitle": "Manage your notifications and alerts",
+  "center": {
+    "title": "Notification Center",
+    "empty": "No notifications",
+    "emptyDescription": "You're all caught up! Check back later for new notifications.",
+    "markAllRead": "Mark all as read",
+    "markAsRead": "Mark as read",
+    "markAsUnread": "Mark as unread",
+    "delete": "Delete",
+    "deleteAll": "Delete all",
+    "deleteConfirm": "Are you sure you want to delete this notification?",
+    "deleteAllConfirm": "Are you sure you want to delete all notifications?",
+    "viewAll": "View All"
+  },
+  "filters": {
+    "all": "All",
+    "unread": "Unread",
+    "read": "Read",
+    "type": "Type",
+    "priority": "Priority"
+  },
+  "types": {
+    "system": "System",
+    "account": "Account",
+    "billing": "Billing",
+    "security": "Security",
+    "activity": "Activity",
+    "announcement": "Announcement"
+  },
+  "priority": {
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "urgent": "Urgent"
+  },
+  "actions": {
+    "viewDetails": "View Details",
+    "dismiss": "Dismiss",
+    "takeAction": "Take Action"
+  },
+  "messages": {
+    "markReadSuccess": "Marked as read",
+    "markUnreadSuccess": "Marked as unread",
+    "deleteSuccess": "Notification deleted",
+    "deleteAllSuccess": "All notifications deleted",
+    "loadError": "Failed to load notifications",
+    "actionError": "Failed to perform action"
+  },
+  "summary": {
+    "total": "Total",
+    "unread": "Unread",
+    "today": "Today",
+    "thisWeek": "This Week"
+  },
+  "settings": {
+    "title": "Notification Settings",
+    "description": "Choose which notifications you want to receive",
+    "channels": "Notification Channels",
+    "email": "Email",
+    "push": "Push",
+    "sms": "SMS",
+    "inApp": "In-App",
+    "preferences": "Notification Preferences",
+    "saveSuccess": "Notification settings saved"
+  }
+}

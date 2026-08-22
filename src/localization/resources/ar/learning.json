@@ -1,0 +1,155 @@
+{
+  "title": "التعلّم",
+  "discovery": {
+    "title": "اكتشف الدورات",
+    "subtitle": "تصفّح الدورات المنشورة من جميع الأكاديميات",
+    "searchPlaceholder": "البحث عن الدورات...",
+    "filterByPricing": "التسعير",
+    "allPricing": "كل أنواع التسعير",
+    "card": {
+      "byInstructor": "بواسطة {{name}}",
+      "enrollAction": "التسجيل",
+      "continueAction": "متابعة التعلّم",
+      "viewAction": "عرض الدورة",
+      "completedAction": "عرض الدورة المكتملة"
+    }
+  },
+  "empty": {
+    "noCourses": "لا توجد دورات متاحة بعد.",
+    "noCoursesDescription": "تحقق مرة أخرى قريبًا — ستظهر الدورات الجديدة هنا عند نشرها.",
+    "noResults": "لا توجد دورات مطابقة لبحثك.",
+    "noResultsDescription": "جرّب كلمة بحث أو عامل تصفية مختلف."
+  },
+  "errors": {
+    "loadFailed": "تعذّر تحميل هذه الدورة.",
+    "notFound": "هذه الدورة غير متاحة.",
+    "unauthorized": "سجّل الدخول للوصول إلى تعلّمك."
+  },
+  "details": {
+    "title": "نظرة عامة على الدورة",
+    "curriculum": "المنهج",
+    "lessonCount": "{{count}} دروس",
+    "sectionCount": "{{count}} أقسام",
+    "instructors": "المدرّبون",
+    "aboutCourse": "عن هذه الدورة",
+    "signInPrompt": "سجّل الدخول للتسجيل في هذه الدورة.",
+    "signInAction": "تسجيل الدخول",
+    "notEnrolledPrompt": "لست مسجّلاً في هذه الدورة بعد.",
+    "enrollAction": "التسجيل",
+    "enrolling": "جارٍ التسجيل...",
+    "enrollSuccess": "تم تسجيلك بنجاح!",
+    "enrollSuccessNextStep": "الخطوة التالية:",
+    "enrollSuccessNextStepDescription": "ابدأ التعلّم على الفور.",
+    "enrollError": "فشل التسجيل في هذه الدورة",
+    "notAvailable": "هذه الدورة غير متاحة للتسجيل حاليًا.",
+    "continueLearning": "متابعة التعلّم",
+    "viewProgress": "عرض التقدّم",
+    "courseCompleted": "لقد أكملت هذه الدورة",
+    "viewCompletedCourse": "مراجعة الدورة"
+  },
+  "learn": {
+    "curriculumLabel": "المنهج",
+    "progressLabel": "اكتمل {{percentage}}%",
+    "backToCourse": "العودة إلى نظرة عامة على الدورة",
+    "openCurriculum": "فتح المنهج",
+    "closeCurriculum": "إغلاق المنهج"
+  },
+  "lesson": {
+    "status": {
+      "locked": "مُقفل",
+      "available": "متاح",
+      "in_progress": "قيد التقدّم",
+      "completed": "مكتمل"
+    },
+    "lockedMessage": "أكمل الدروس السابقة لفتح هذا الدرس.",
+    "markComplete": "وضع علامة مكتمل",
+    "completing": "جارٍ الحفظ...",
+    "completed": "تم إكمال الدرس",
+    "completeError": "فشل تحديث تقدّمك",
+    "previous": "السابق",
+    "next": "التالي",
+    "unsupportedContent": "محتوى هذا الدرس غير متاح في هذا العرض.",
+    "openResource": "فتح المورد"
+  },
+  "progress": {
+    "overallTitle": "تقدّمك",
+    "completedOf": "تم إكمال {{completed}} من {{total}} دروس",
+    "state": {
+      "incomplete": "لم يبدأ",
+      "in_progress": "قيد التقدّم",
+      "completed": "مكتمل"
+    },
+    "loadFailed": "فشل تحميل تقدّمك"
+  },
+  "quiz": {
+    "listTitle": "الاختبارات",
+    "emptyQuizzes": "لا تحتوي هذه الدورة على اختبارات بعد.",
+    "startAction": "بدء الاختبار",
+    "resumeAction": "استئناف الاختبار",
+    "reviewAction": "مراجعة النتيجة",
+    "instructionsTitle": "التعليمات",
+    "instructionsDefault": "أجب عن كل الأسئلة، ثم أرسل محاولتك.",
+    "questionOf": "السؤال {{current}} من {{total}}",
+    "previousQuestion": "السابق",
+    "nextQuestion": "التالي",
+    "reviewTitle": "راجع إجاباتك",
+    "reviewDescription": "يمكنك العودة وتغيير أي إجابة قبل الإرسال.",
+    "submitAction": "إرسال المحاولة",
+    "submitting": "جارٍ الإرسال...",
+    "submitConfirm": {
+      "title": "إرسال هذه المحاولة؟",
+      "description": "لن تتمكن من تغيير إجاباتك بعد الإرسال.",
+      "confirmLabel": "إرسال",
+      "cancelLabel": "متابعة الإجابة"
+    },
+    "unansweredWarning": "أجب عن كل الأسئلة قبل الإرسال.",
+    "resultTitle": "نتيجة الاختبار",
+    "passed": "ناجح",
+    "failed": "غير ناجح",
+    "scoreLabel": "النتيجة: {{score}}%",
+    "passingScoreLabel": "درجة النجاح: {{score}}%",
+    "attemptNumber": "المحاولة {{number}}",
+    "retryAvailable": "إعادة المحاولة",
+    "retryUnavailable": "لا توجد محاولات إضافية متاحة",
+    "submitSuccess": "تم إرسال المحاولة",
+    "submitError": "فشل إرسال محاولتك",
+    "startError": "فشل بدء الاختبار",
+    "loadFailed": "فشل تحميل هذا الاختبار"
+  },
+  "assignment": {
+    "listTitle": "الواجبات",
+    "emptyAssignments": "لا تحتوي هذه الدورة على واجبات بعد.",
+    "instructionsTitle": "التعليمات",
+    "responseLabel": "إجابتك",
+    "responsePlaceholder": "اكتب إجابتك هنا",
+    "attachmentLabel": "مرفق",
+    "attachmentHelp": "اختياري. PDF أو Word أو صورة، بحد أقصى 10 ميجابايت.",
+    "uploadAttachment": "تحميل ملف",
+    "changeAttachment": "تغيير الملف",
+    "submitAction": "إرسال الواجب",
+    "resubmitAction": "إعادة الإرسال",
+    "submitting": "جارٍ الإرسال...",
+    "submitSuccess": "تم إرسال الواجب",
+    "submitSuccessNextStep": "الخطوة التالية:",
+    "submitSuccessNextStepDescription": "تابع مع الدرس أو الواجب التالي.",
+    "submitError": "فشل إرسال واجبك",
+    "status": {
+      "draft": "لم يتم الإرسال",
+      "submitting": "جارٍ الإرسال",
+      "submitted": "تم الإرسال",
+      "failed": "فشل الإرسال"
+    },
+    "resubmissionUnavailable": "إعادة الإرسال غير متاحة لهذا الواجب.",
+    "loadFailed": "فشل تحميل هذا الواجب",
+    "attachmentTooLarge": "يجب أن يكون حجم المرفق أقل من 10 ميجابايت.",
+    "attachmentInvalidType": "يجب أن يكون المرفق بصيغة PDF أو Word أو صورة."
+  },
+  "completion": {
+    "title": "إكمال الدورة",
+    "completedBanner": "تهانينا — لقد أكملت هذه الدورة!",
+    "certificate": {
+      "eligible": "أنت مؤهل للحصول على شهادة",
+      "unavailable": "لا تتوفر شهادة لهذه الدورة"
+    }
+  }
+}

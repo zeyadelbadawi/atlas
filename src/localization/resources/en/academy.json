@@ -1,0 +1,222 @@
+{
+  "title": "Academy Management",
+  "dashboard": {
+    "title": "Academy Dashboard",
+    "subtitle": "Manage your academy overview and settings",
+    "welcome": "Welcome to {{academyName}}",
+    "overview": "Overview",
+    "recentActivity": "Recent Activity",
+    "quickActions": "Quick Actions",
+    "viewProfile": "View Profile",
+    "manageSettings": "Manage Settings",
+    "viewMembers": "View Members",
+    "updateBranding": "Update Branding"
+  },
+  "stats": {
+    "totalMembers": "Total Members",
+    "activeStaff": "Active Staff",
+    "activeInstructors": "Active Instructors",
+    "publishedCourses": "Published Courses"
+  },
+  "create": {
+    "title": "Create Academy",
+    "subtitle": "Set up a new academy for your organization",
+    "basicInformation": "Basic Information",
+    "configuration": "Configuration",
+    "optional": "Optional",
+    "nameLabel": "Academy Name",
+    "namePlaceholder": "Enter academy name",
+    "slugLabel": "Academy Slug",
+    "slugPlaceholder": "academy-url-slug",
+    "slugHelp": "Used in URLs. Only lowercase letters, numbers, and hyphens.",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Brief description of your academy",
+    "contactEmailLabel": "Contact Email",
+    "contactEmailPlaceholder": "contact@academy.com",
+    "contactPhoneLabel": "Contact Phone",
+    "contactPhonePlaceholder": "+1 (555) 123-4567",
+    "websiteLabel": "Website",
+    "websitePlaceholder": "https://academy.com",
+    "countryLabel": "Country",
+    "countryPlaceholder": "Select country",
+    "languageLabel": "Default Language",
+    "languagePlaceholder": "Select language",
+    "timezoneLabel": "Timezone",
+    "timezonePlaceholder": "Select timezone",
+    "currencyLabel": "Currency",
+    "currencyPlaceholder": "Select currency",
+    "createButton": "Create Academy",
+    "cancelButton": "Cancel",
+    "creating": "Creating academy...",
+    "success": "Academy created successfully",
+    "error": "Failed to create academy"
+  },
+  "profile": {
+    "title": "Academy Profile",
+    "subtitle": "Manage your academy information",
+    "basicInfo": "Basic Information",
+    "contactInfo": "Contact Information",
+    "localization": "Localization",
+    "address": "Address",
+    "streetLabel": "Street Address",
+    "cityLabel": "City",
+    "stateLabel": "State/Province",
+    "postalCodeLabel": "Postal Code",
+    "saveButton": "Save Changes",
+    "cancelButton": "Cancel",
+    "saving": "Saving changes...",
+    "success": "Profile updated successfully",
+    "error": "Failed to update profile",
+    "unsavedChanges": "You have unsaved profile changes. Are you sure you want to leave?"
+  },
+  "settings": {
+    "title": "Academy Settings",
+    "subtitle": "Configure your academy preferences",
+    "general": "General",
+    "localization": "Localization",
+    "contact": "Contact",
+    "branding": "Branding",
+    "access": "Access",
+    "statusLabel": "Academy Status",
+    "statusDraft": "Draft",
+    "statusActive": "Active",
+    "statusSuspended": "Suspended",
+    "statusArchived": "Archived",
+    "saveButton": "Save Settings",
+    "cancelButton": "Cancel",
+    "saving": "Saving settings...",
+    "success": "Settings updated successfully",
+    "error": "Failed to update settings",
+    "unsavedChanges": "You have unsaved settings changes. Are you sure you want to leave?"
+  },
+  "branding": {
+    "title": "Academy Branding",
+    "subtitle": "Customize your academy's visual identity",
+    "logo": "Logo",
+    "favicon": "Favicon",
+    "displayName": "Display Name",
+    "logoHelp": "Upload your academy logo (PNG, JPG, max 5MB)",
+    "faviconHelp": "Upload your favicon (ICO, PNG, max 1MB)",
+    "uploadLogo": "Upload Logo",
+    "uploadFavicon": "Upload Favicon",
+    "changeLogo": "Change Logo",
+    "changeFavicon": "Change Favicon",
+    "removeLogo": "Remove Logo",
+    "removeFavicon": "Remove Favicon",
+    "saveButton": "Save Branding",
+    "cancelButton": "Cancel",
+    "saving": "Saving branding...",
+    "uploading": "Uploading...",
+    "success": "Branding updated successfully",
+    "error": "Failed to update branding",
+    "uploadError": "Failed to upload file",
+    "unsavedChanges": "You have unsaved branding changes. Are you sure you want to leave?",
+    "errors": {
+      "logoTooLarge": "Logo must be smaller than 5MB.",
+      "logoInvalidType": "Logo must be a PNG or JPG image.",
+      "faviconTooLarge": "Favicon must be smaller than 1MB.",
+      "faviconInvalidType": "Favicon must be an ICO or PNG image."
+    }
+  },
+  "members": {
+    "title": "Academy Members",
+    "subtitle": "Manage your academy team members",
+    "searchPlaceholder": "Search members...",
+    "filterByRole": "Filter by Role",
+    "allRoles": "All Roles",
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "joinedAt": "Joined Date",
+      "actions": "Actions"
+    },
+    "roles": {
+      "owner": "Owner",
+      "administrator": "Administrator",
+      "manager": "Manager",
+      "instructor": "Instructor",
+      "staff": "Staff"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending"
+    },
+    "emptyState": "No members found",
+    "emptyStateDescription": "Your academy doesn't have any members yet."
+  },
+  "switcher": {
+    "title": "Switch Academy",
+    "currentAcademy": "Current Academy",
+    "selectAcademy": "Select Academy",
+    "noAcademies": "No academies available",
+    "createNew": "Create New Academy",
+    "loading": "Loading academies..."
+  },
+  "onboarding": {
+    "title": "Set Up {{academyName}}",
+    "subtitle": "A few quick steps to get your academy ready.",
+    "skipAll": "Skip for now",
+    "finish": "Go to dashboard",
+    "continueTo": "Continue to {{step}}",
+    "skipStep": "Skip this step",
+    "resumeBanner": "Your academy setup isn't finished yet.",
+    "resumeAction": "Finish setup",
+    "steps": {
+      "basics": {
+        "title": "Basic information",
+        "description": "Your academy's name and details are set."
+      },
+      "branding": {
+        "title": "Add your branding",
+        "description": "Upload a logo and favicon so your academy looks like yours."
+      },
+      "settings": {
+        "title": "Review your settings",
+        "description": "Confirm your language, timezone, currency and status."
+      },
+      "complete": {
+        "title": "You're all set",
+        "description": "Your academy is ready. You can revisit branding and settings anytime."
+      }
+    }
+  },
+  "activity": {
+    "academyCreated": "Academy created",
+    "academyUpdated": "Academy information updated",
+    "settingsUpdated": "Settings updated",
+    "brandingUpdated": "Branding updated",
+    "memberAdded": "Member added",
+    "memberUpdated": "Member updated",
+    "memberRemoved": "Member removed"
+  },
+  "empty": {
+    "noAcademies": "No Academies Yet",
+    "noAcademiesDescription": "Create your first academy to get started with Atlas.",
+    "createFirstAcademy": "Create Your First Academy",
+    "noActivity": "No Recent Activity",
+    "noActivityDescription": "Activity will appear here as you manage your academy.",
+    "noMembers": "No Members Yet",
+    "noMembersDescription": "Add team members to collaborate on your academy."
+  },
+  "errors": {
+    "loadFailed": "Failed to load academy",
+    "loadAcademiesFailed": "Failed to load academies",
+    "createFailed": "Failed to create academy",
+    "updateFailed": "Failed to update academy",
+    "deleteFailed": "Failed to delete academy",
+    "permissionDenied": "You don't have permission to manage this academy",
+    "invalidAcademy": "Invalid academy",
+    "noActiveOrganization": "No active organization selected",
+    "retry": "Try Again"
+  },
+  "actions": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "view": "View",
+    "manage": "Manage",
+    "configure": "Configure"
+  }
+}

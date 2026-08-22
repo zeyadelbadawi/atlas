@@ -1,0 +1,45 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@app/*": ["./src/app/*"],
+      "@tokens/*": ["./src/design-system/tokens/*"],
+      "@tokens": ["./src/design-system/tokens"],
+      "@ui/*": ["./src/design-system/ui/*"],
+      "@ui": ["./src/design-system/ui"],
+      "@motion/*": ["./src/design-system/motion/*"],
+      "@motion": ["./src/design-system/motion"],
+      "@components/*": ["./src/shared/components/*"],
+      "@components": ["./src/shared/components"],
+      "@hooks/*": ["./src/shared/hooks/*"],
+      "@hooks": ["./src/shared/hooks"],
+      "@utils/*": ["./src/shared/utils/*"],
+      "@utils": ["./src/shared/utils"],
+      "@forms/*": ["./src/shared/forms/*"],
+      "@forms": ["./src/shared/forms"],
+      "@services/*": ["./src/services/*"],
+      "@services": ["./src/services"],
+      "@api/*": ["./src/services/api/*"],
+      "@api": ["./src/services/api"],
+      "@query/*": ["./src/services/query/*"],
+      "@query": ["./src/services/query"],
+      "@config/*": ["./src/config/*"],
+      "@config": ["./src/config"],
+      "@constants/*": ["./src/constants/*"],
+      "@constants": ["./src/constants"],
+      "@localization/*": ["./src/localization/*"],
+      "@localization": ["./src/localization"],
+      "@types/*": ["./src/types/*"],
+      "@types": ["./src/types"],
+      "@features/*": ["./src/features/*"]
+    },
+    "skipLibCheck": true,
+    "allowJs": true
+  }
+}

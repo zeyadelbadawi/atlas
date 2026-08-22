@@ -1,0 +1,23 @@
+{
+  "hero": {
+    "eyebrow": "Enterprise education platform",
+    "title": "One platform to launch, run and grow your education business",
+    "description": "Atlas brings academy administration, learning, commerce and analytics together in a single product — so your team works in one place instead of stitching tools together.",
+    "primaryAction": "Open dashboard",
+    "secondaryAction": "Sign in"
+  },
+  "capabilities": {
+    "unified": {
+      "title": "One unified product",
+      "description": "Every module shares the same layout, navigation and interaction patterns, so your team learns Atlas once."
+    },
+    "bilingual": {
+      "title": "Arabic and English",
+      "description": "Full right-to-left and left-to-right support is built into the platform architecture, not added as an afterthought."
+    },
+    "enterprise": {
+      "title": "Built to scale",
+      "description": "An architecture designed for many academies, large catalogues and long-term growth from the first release."
+    }
+  }
+}

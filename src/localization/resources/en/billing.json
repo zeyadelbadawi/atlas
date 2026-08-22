@@ -1,0 +1,120 @@
+{
+  "title": "Billing",
+  "subtitle": "Manage your subscription and billing",
+  "currentPlan": {
+    "title": "Current Plan",
+    "description": "Your active subscription",
+    "free": "Free",
+    "starter": "Starter",
+    "professional": "Professional",
+    "enterprise": "Enterprise",
+    "status": "Status",
+    "billingCycle": "Billing Cycle",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "nextBilling": "Next Billing Date",
+    "amount": "Amount",
+    "autoRenew": "Auto-renew",
+    "trialEndsOn": "Trial ends on",
+    "canceledOn": "Canceled on"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "trial": "Trial",
+    "past_due": "Past Due",
+    "canceled": "Canceled",
+    "expired": "Expired"
+  },
+  "plans": {
+    "title": "Available Plans",
+    "description": "Choose the plan that fits your needs",
+    "compare": "Compare Plans",
+    "popular": "Most Popular",
+    "current": "Current Plan",
+    "features": "Features",
+    "limits": "Limits",
+    "academies": "Academies",
+    "courses": "Courses",
+    "students": "Students",
+    "storage": "Storage",
+    "bandwidth": "Bandwidth",
+    "customDomain": "Custom Domain",
+    "analytics": "Analytics",
+    "support": "Support",
+    "supportCommunity": "Community",
+    "supportEmail": "Email",
+    "supportPriority": "Priority",
+    "unlimited": "Unlimited"
+  },
+  "actions": {
+    "upgrade": "Upgrade Plan",
+    "downgrade": "Downgrade Plan",
+    "changePlan": "Change Plan",
+    "cancelSubscription": "Cancel Subscription",
+    "resumeSubscription": "Resume Subscription",
+    "viewInvoices": "View Invoices",
+    "downloadInvoice": "Download Invoice",
+    "updatePaymentMethod": "Update Payment Method"
+  },
+  "invoices": {
+    "title": "Invoices",
+    "description": "Your billing history",
+    "invoiceNumber": "Invoice Number",
+    "date": "Date",
+    "amount": "Amount",
+    "status": "Status",
+    "period": "Period",
+    "dueDate": "Due Date",
+    "paidDate": "Paid Date",
+    "empty": "No invoices yet",
+    "emptyDescription": "Your invoice history will appear here"
+  },
+  "paymentStatus": {
+    "pending": "Pending",
+    "succeeded": "Paid",
+    "failed": "Failed",
+    "refunded": "Refunded"
+  },
+  "history": {
+    "title": "Billing History",
+    "description": "All billing transactions",
+    "type": "Type",
+    "invoice": "Invoice",
+    "payment": "Payment",
+    "refund": "Refund",
+    "subscription_change": "Subscription Change",
+    "empty": "No billing history",
+    "emptyDescription": "Your billing history will appear here"
+  },
+  "paymentMethod": {
+    "title": "Payment Method",
+    "description": "Manage your payment methods",
+    "card": "Card",
+    "bankAccount": "Bank Account",
+    "ending": "Ending in",
+    "expires": "Expires",
+    "default": "Default",
+    "add": "Add Payment Method",
+    "remove": "Remove",
+    "setDefault": "Set as Default"
+  },
+  "messages": {
+    "upgradeSuccess": "Plan upgraded successfully",
+    "downgradeSuccess": "Plan downgraded successfully",
+    "cancelSuccess": "Subscription canceled successfully",
+    "resumeSuccess": "Subscription resumed successfully",
+    "updateSuccess": "Payment method updated successfully",
+    "error": "An error occurred. Please try again.",
+    "cancelConfirm": "Are you sure you want to cancel your subscription?",
+    "cancelWarning": "Your subscription will remain active until the end of the current billing period."
+  },
+  "summary": {
+    "title": "Billing Summary",
+    "currentPlan": "Current Plan",
+    "subscriptionStatus": "Status",
+    "nextBilling": "Next Billing",
+    "outstandingBalance": "Outstanding Balance",
+    "recentInvoices": "Recent Invoices"
+  }
+}

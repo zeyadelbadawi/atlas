@@ -1,0 +1,27 @@
+{
+  "dashboard": {
+    "title": "لوحة تحكم المنصة",
+    "description": "مراقبة مقاييس المنصة والصحة والنشاط"
+  },
+  "metrics": {
+    "totalAcademies": "إجمالي الأكاديميات",
+    "totalUsers": "إجمالي المستخدمين",
+    "activeCourses": "الدورات النشطة",
+    "revenue": "الإيرادات",
+    "academiesGrowth": "{{value}} من الشهر الماضي",
+    "usersGrowth": "{{value}} من الشهر الماضي",
+    "coursesGrowth": "{{value}} من الشهر الماضي",
+    "revenueGrowth": "{{value}} من الشهر الماضي",
+    "systemHealth": "صحة النظام",
+    "storageUsage": "استخدام التخزين",
+    "apiUptime": "وقت تشغيل API",
+    "lastUpdated": "آخر تحديث في {{time}}"
+  },
+  "sections": {
+    "metrics": "مقاييس المنصة",
+    "activity": "النشاط الأخير"
+  },
+  "activity": {
+    "empty": "لا يوجد نشاط حديث"
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "product": {
+    "name": "أطلس",
+    "tagline": "نظام التشغيل الكامل لأعمال التعليم"
+  },
+  "languages": {
+    "en": "الإنجليزية",
+    "ar": "العربية"
+  },
+  "language": {
+    "switcher": "تغيير اللغة",
+    "current": "اللغة الحالية: {{language}}"
+  },
+  "theme": {
+    "switcher": "تغيير المظهر",
+    "light": "فاتح",
+    "dark": "داكن",
+    "system": "حسب النظام",
+    "current": "المظهر الحالي: {{theme}}"
+  },
+  "actions": {
+    "save": "حفظ التغييرات",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد",
+    "close": "إغلاق",
+    "retry": "إعادة المحاولة",
+    "reload": "إعادة تحميل الصفحة",
+    "search": "بحث",
+    "clear": "مسح",
+    "clearSearch": "مسح البحث",
+    "filter": "تصفية",
+    "reset": "إعادة تعيين",
+    "copy": "نسخ",
+    "copied": "تم النسخ",
+    "download": "تنزيل",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "more": "خيارات إضافية",
+    "showPassword": "إظهار كلمة المرور",
+    "hidePassword": "إخفاء كلمة المرور",
+    "goToHome": "الانتقال إلى الرئيسية",
+    "contactSupport": "التواصل مع الدعم"
+  },
+  "states": {
+    "loading": "جارٍ تحميل المحتوى…",
+    "saving": "جارٍ حفظ التغييرات…",
+    "empty": {
+      "title": "لا يوجد محتوى بعد",
+      "description": "بمجرد إضافة المحتوى سيظهر في هذه الشاشة."
+    },
+    "noResults": {
+      "title": "لا توجد نتائج مطابقة",
+      "description": "جرّب تعديل كلمات البحث أو عوامل التصفية."
+    },
+    "offline": {
+      "title": "لا يوجد اتصال بالإنترنت",
+      "description": "تحقّق من الاتصال، وسيعيد أطلس المحاولة تلقائيًا عند عودته."
+    }
+  },
+  "table": {
+    "rowsSelected": "تم تحديد {{count}} من {{total}} صفوف",
+    "columns": "الأعمدة",
+    "toggleColumn": "إظهار أو إخفاء عمود {{column}}",
+    "sortAscending": "ترتيب تصاعدي",
+    "sortDescending": "ترتيب تنازلي",
+    "clearSort": "إلغاء الترتيب",
+    "selectAllRows": "تحديد جميع الصفوف",
+    "selectRow": "تحديد الصف"
+  },
+  "pagination": {
+    "summary": "عرض {{from}}–{{to}} من {{total}}",
+    "pageSize": "عدد الصفوف في الصفحة",
+    "page": "صفحة {{page}} من {{totalPages}}",
+    "goToPage": "الانتقال إلى صفحة {{page}}",
+    "firstPage": "الصفحة الأولى",
+    "lastPage": "الصفحة الأخيرة",
+    "nextPage": "الصفحة التالية",
+    "previousPage": "الصفحة السابقة",
+    "morePages": "صفحات إضافية"
+  },
+  "form": {
+    "required": "مطلوب",
+    "optional": "اختياري",
+    "requiredFieldIndicator": "هذا الحقل مطلوب"
+  },
+  "feedback": {
+    "successTitle": "تم بنجاح",
+    "errorTitle": "حدث خطأ",
+    "warningTitle": "يلزم الانتباه",
+    "infoTitle": "للعلم"
+  },
+  "units": {
+    "bytes": "بايت",
+    "kilobytes": "كيلوبايت",
+    "megabytes": "ميجابايت",
+    "gigabytes": "جيجابايت",
+    "terabytes": "تيرابايت"
+  },
+  "time": {
+    "justNow": "الآن"
+  }
+}

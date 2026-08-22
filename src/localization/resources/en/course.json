@@ -1,0 +1,238 @@
+{
+  "title": "Course Management",
+  "validation": {
+    "priceRequired": "Enter a price greater than 0 for a paid course"
+  },
+  "status": {
+    "draft": "Draft",
+    "published": "Published",
+    "archived": "Archived"
+  },
+  "visibility": {
+    "public": "Public",
+    "private": "Private"
+  },
+  "pricing": {
+    "free": "Free",
+    "paid": "Paid"
+  },
+  "lessonStatus": {
+    "draft": "Draft",
+    "published": "Published"
+  },
+  "contentType": {
+    "text": "Text",
+    "video": "Video",
+    "file": "File"
+  },
+  "list": {
+    "title": "Courses",
+    "subtitle": "Manage your academy's courses",
+    "searchPlaceholder": "Search courses...",
+    "filterByStatus": "Status",
+    "filterByVisibility": "Visibility",
+    "filterByCategory": "Category",
+    "filterByPricing": "Pricing",
+    "allStatuses": "All statuses",
+    "allVisibilities": "All visibility",
+    "allCategories": "All categories",
+    "allPricing": "All pricing",
+    "createButton": "Create Course",
+    "table": {
+      "title": "Title",
+      "status": "Status",
+      "visibility": "Visibility",
+      "category": "Category",
+      "pricing": "Pricing",
+      "updatedAt": "Updated",
+      "actions": "Actions"
+    },
+    "actions": {
+      "edit": "Edit",
+      "builder": "Curriculum",
+      "settings": "Settings",
+      "delete": "Delete"
+    },
+    "uncategorized": "Uncategorized"
+  },
+  "empty": {
+    "noCourses": "You don't have any courses yet.",
+    "noCoursesDescription": "Create your first course to start building your academy.",
+    "createFirstCourse": "Create Course",
+    "noResults": "No courses match your filters.",
+    "noResultsDescription": "Try adjusting your search or filters."
+  },
+  "errors": {
+    "loadFailed": "We couldn't load this course.",
+    "invalidCourse": "Course not found"
+  },
+  "create": {
+    "title": "Create Course",
+    "subtitle": "Set up a new course for your academy",
+    "basicInformation": "Basic Information",
+    "titleLabel": "Course Title",
+    "titlePlaceholder": "Enter course title",
+    "slugLabel": "Course Slug",
+    "slugPlaceholder": "course-url-slug",
+    "slugHelp": "Used in URLs. Only lowercase letters, numbers, and hyphens.",
+    "shortDescriptionLabel": "Short Description",
+    "shortDescriptionPlaceholder": "A brief one-line summary",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Detailed description of your course",
+    "thumbnailLabel": "Thumbnail",
+    "thumbnailHelp": "Upload a course thumbnail (PNG, JPG, max 5MB)",
+    "uploadThumbnail": "Upload Thumbnail",
+    "changeThumbnail": "Change Thumbnail",
+    "configuration": "Configuration",
+    "categoryLabel": "Category",
+    "categoryPlaceholder": "Select a category",
+    "noCategoryOption": "Uncategorized",
+    "visibilityLabel": "Visibility",
+    "pricingTypeLabel": "Pricing",
+    "priceLabel": "Price",
+    "pricePlaceholder": "0.00",
+    "currencyLabel": "Currency",
+    "optional": "Optional",
+    "createButton": "Create Course",
+    "cancelButton": "Cancel",
+    "creating": "Creating course...",
+    "success": "Course created successfully",
+    "successNextStepTitle": "Next step:",
+    "successNextStepDescription": "Start building your curriculum.",
+    "continueToBuilder": "Continue to Course Builder",
+    "error": "Failed to create course",
+    "thumbnailTooLarge": "Thumbnail must be smaller than 5MB.",
+    "thumbnailInvalidType": "Thumbnail must be a PNG or JPG image."
+  },
+  "edit": {
+    "title": "Edit Course",
+    "subtitle": "Update your course information",
+    "basicInformation": "Basic Information",
+    "configuration": "Configuration",
+    "saveButton": "Save Changes",
+    "cancelButton": "Cancel",
+    "saving": "Saving changes...",
+    "success": "Course updated successfully",
+    "error": "Failed to update course",
+    "unsavedChanges": "You have unsaved course changes. Are you sure you want to leave?",
+    "goToBuilder": "Course Builder",
+    "goToSettings": "Course Settings"
+  },
+  "builder": {
+    "title": "Course Builder",
+    "subtitle": "Organize your course curriculum",
+    "addSection": "Add Section",
+    "emptyCurriculum": "This course doesn't have any curriculum yet.",
+    "emptyCurriculumDescription": "Start by adding your first section.",
+    "emptySectionLessons": "This section has no lessons yet.",
+    "emptySectionLessonsDescription": "Add the first lesson to start building the curriculum.",
+    "addLesson": "Add Lesson",
+    "sectionMenu": {
+      "edit": "Edit section",
+      "delete": "Delete section",
+      "moveUp": "Move section up",
+      "moveDown": "Move section down"
+    },
+    "lessonMenu": {
+      "edit": "Edit lesson",
+      "delete": "Delete lesson",
+      "moveUp": "Move lesson up",
+      "moveDown": "Move lesson down"
+    },
+    "sectionDialog": {
+      "createTitle": "Add Section",
+      "editTitle": "Edit Section",
+      "titleLabel": "Section Title",
+      "titlePlaceholder": "e.g. Getting Started",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Optional description",
+      "saveButton": "Save Section",
+      "cancelButton": "Cancel",
+      "creating": "Adding section...",
+      "saving": "Saving section..."
+    },
+    "lessonDialog": {
+      "createTitle": "Add Lesson",
+      "editTitle": "Edit Lesson",
+      "titleLabel": "Lesson Title",
+      "titlePlaceholder": "e.g. Introduction",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Optional description",
+      "contentTypeLabel": "Content Type",
+      "contentUrlLabel": "Content URL",
+      "contentUrlPlaceholder": "https://...",
+      "statusLabel": "Availability",
+      "saveButton": "Save Lesson",
+      "cancelButton": "Cancel",
+      "creating": "Adding lesson...",
+      "saving": "Saving lesson..."
+    },
+    "deleteSectionConfirm": {
+      "title": "Delete this section?",
+      "description": "This will permanently delete \"{{title}}\" and all of its lessons. This cannot be undone.",
+      "confirmLabel": "Delete Section",
+      "cancelLabel": "Cancel"
+    },
+    "deleteLessonConfirm": {
+      "title": "Delete this lesson?",
+      "description": "This will permanently delete \"{{title}}\". This cannot be undone.",
+      "confirmLabel": "Delete Lesson",
+      "cancelLabel": "Cancel"
+    },
+    "sectionCreated": "Section added",
+    "sectionUpdated": "Section updated",
+    "sectionDeleted": "Section deleted",
+    "sectionError": "Failed to save section",
+    "lessonCreated": "Lesson added",
+    "lessonUpdated": "Lesson updated",
+    "lessonDeleted": "Lesson deleted",
+    "lessonError": "Failed to save lesson",
+    "reorderError": "Failed to save the new order",
+    "loadError": "Failed to load curriculum"
+  },
+  "settings": {
+    "title": "Course Settings",
+    "subtitle": "Manage status, visibility and publishing",
+    "general": "General",
+    "publishing": "Publishing",
+    "currentStatus": "Current Status",
+    "currentVisibility": "Current Visibility",
+    "curriculumSummary": "{{sections}} sections, {{lessons}} lessons",
+    "publishAction": "Publish Course",
+    "unpublishAction": "Unpublish Course",
+    "publishDialog": {
+      "title": "Publish this course?",
+      "descriptionWithCurriculum": "Your course will become visible according to its configured visibility.",
+      "descriptionNoCurriculum": "This course doesn't have any curriculum yet. You can still publish it and add lessons later.",
+      "confirmLabel": "Publish",
+      "cancelLabel": "Cancel"
+    },
+    "unpublishDialog": {
+      "title": "Unpublish this course?",
+      "description": "The course will return to draft and won't be visible per its configured visibility.",
+      "confirmLabel": "Unpublish",
+      "cancelLabel": "Cancel"
+    },
+    "publishSuccess": "Course published successfully",
+    "publishSuccessNextStepTitle": "Next step:",
+    "publishSuccessNextStepDescription": "Continue managing your academy.",
+    "backToAcademy": "Back to Academy",
+    "unpublishSuccess": "Course unpublished",
+    "publishError": "Failed to publish course",
+    "unpublishError": "Failed to unpublish course",
+    "dangerZone": "Danger Zone",
+    "deleteCourse": "Delete Course",
+    "deleteCourseConfirm": {
+      "title": "Delete this course?",
+      "description": "This will permanently delete \"{{title}}\" and its entire curriculum. This cannot be undone.",
+      "confirmLabel": "Delete Course",
+      "cancelLabel": "Cancel"
+    },
+    "deleteCourseSuccess": "Course deleted",
+    "deleteCourseError": "Failed to delete course"
+  },
+  "categories": {
+    "loadFailed": "Failed to load categories",
+    "empty": "No categories yet"
+  }
+}

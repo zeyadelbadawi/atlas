@@ -1,0 +1,67 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
+    /* Atlas Constitution: strict TypeScript is mandatory (LAW-022, LAW-098). */
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noImplicitOverride": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+
+    "ignoreDeprecations": "5.0",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@app/*": ["./src/app/*"],
+      "@tokens/*": ["./src/design-system/tokens/*"],
+      "@tokens": ["./src/design-system/tokens"],
+      "@ui/*": ["./src/design-system/ui/*"],
+      "@ui": ["./src/design-system/ui"],
+      "@motion/*": ["./src/design-system/motion/*"],
+      "@motion": ["./src/design-system/motion"],
+      "@components/*": ["./src/shared/components/*"],
+      "@components": ["./src/shared/components"],
+      "@hooks/*": ["./src/shared/hooks/*"],
+      "@hooks": ["./src/shared/hooks"],
+      "@utils/*": ["./src/shared/utils/*"],
+      "@utils": ["./src/shared/utils"],
+      "@forms/*": ["./src/shared/forms/*"],
+      "@forms": ["./src/shared/forms"],
+      "@services/*": ["./src/services/*"],
+      "@services": ["./src/services"],
+      "@api/*": ["./src/services/api/*"],
+      "@api": ["./src/services/api"],
+      "@query/*": ["./src/services/query/*"],
+      "@query": ["./src/services/query"],
+      "@config/*": ["./src/config/*"],
+      "@config": ["./src/config"],
+      "@constants/*": ["./src/constants/*"],
+      "@constants": ["./src/constants"],
+      "@localization/*": ["./src/localization/*"],
+      "@localization": ["./src/localization"],
+      "@types/*": ["./src/types/*"],
+      "@types": ["./src/types"],
+      "@features/*": ["./src/features/*"]
+    }
+  },
+  "include": ["src"]
+}

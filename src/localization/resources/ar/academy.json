@@ -1,0 +1,222 @@
+{
+  "title": "إدارة الأكاديمية",
+  "dashboard": {
+    "title": "لوحة تحكم الأكاديمية",
+    "subtitle": "إدارة نظرة عامة على الأكاديمية والإعدادات",
+    "welcome": "مرحباً بك في {{academyName}}",
+    "overview": "نظرة عامة",
+    "recentActivity": "النشاط الأخير",
+    "quickActions": "إجراءات سريعة",
+    "viewProfile": "عرض الملف الشخصي",
+    "manageSettings": "إدارة الإعدادات",
+    "viewMembers": "عرض الأعضاء",
+    "updateBranding": "تحديث العلامة التجارية"
+  },
+  "stats": {
+    "totalMembers": "إجمالي الأعضاء",
+    "activeStaff": "الموظفون النشطون",
+    "activeInstructors": "المدربون النشطون",
+    "publishedCourses": "الدورات المنشورة"
+  },
+  "create": {
+    "title": "إنشاء أكاديمية",
+    "subtitle": "إعداد أكاديمية جديدة لمؤسستك",
+    "basicInformation": "المعلومات الأساسية",
+    "configuration": "التكوين",
+    "optional": "اختياري",
+    "nameLabel": "اسم الأكاديمية",
+    "namePlaceholder": "أدخل اسم الأكاديمية",
+    "slugLabel": "معرف الأكاديمية",
+    "slugPlaceholder": "academy-url-slug",
+    "slugHelp": "يُستخدم في عناوين URL. أحرف صغيرة وأرقام وشرطات فقط.",
+    "descriptionLabel": "الوصف",
+    "descriptionPlaceholder": "وصف مختصر لأكاديميتك",
+    "contactEmailLabel": "البريد الإلكتروني للتواصل",
+    "contactEmailPlaceholder": "contact@academy.com",
+    "contactPhoneLabel": "هاتف التواصل",
+    "contactPhonePlaceholder": "+966 55 123 4567",
+    "websiteLabel": "الموقع الإلكتروني",
+    "websitePlaceholder": "https://academy.com",
+    "countryLabel": "الدولة",
+    "countryPlaceholder": "اختر الدولة",
+    "languageLabel": "اللغة الافتراضية",
+    "languagePlaceholder": "اختر اللغة",
+    "timezoneLabel": "المنطقة الزمنية",
+    "timezonePlaceholder": "اختر المنطقة الزمنية",
+    "currencyLabel": "العملة",
+    "currencyPlaceholder": "اختر العملة",
+    "createButton": "إنشاء الأكاديمية",
+    "cancelButton": "إلغاء",
+    "creating": "جارٍ إنشاء الأكاديمية...",
+    "success": "تم إنشاء الأكاديمية بنجاح",
+    "error": "فشل إنشاء الأكاديمية"
+  },
+  "profile": {
+    "title": "ملف الأكاديمية",
+    "subtitle": "إدارة معلومات الأكاديمية",
+    "basicInfo": "المعلومات الأساسية",
+    "contactInfo": "معلومات الاتصال",
+    "localization": "التوطين",
+    "address": "العنوان",
+    "streetLabel": "عنوان الشارع",
+    "cityLabel": "المدينة",
+    "stateLabel": "الولاية/المحافظة",
+    "postalCodeLabel": "الرمز البريدي",
+    "saveButton": "حفظ التغييرات",
+    "cancelButton": "إلغاء",
+    "saving": "جارٍ حفظ التغييرات...",
+    "success": "تم تحديث الملف الشخصي بنجاح",
+    "error": "فشل تحديث الملف الشخصي",
+    "unsavedChanges": "لديك تغييرات غير محفوظة في الملف الشخصي. هل أنت متأكد من رغبتك في المغادرة؟"
+  },
+  "settings": {
+    "title": "إعدادات الأكاديمية",
+    "subtitle": "تكوين تفضيلات الأكاديمية",
+    "general": "عام",
+    "localization": "التوطين",
+    "contact": "الاتصال",
+    "branding": "العلامة التجارية",
+    "access": "الوصول",
+    "statusLabel": "حالة الأكاديمية",
+    "statusDraft": "مسودة",
+    "statusActive": "نشطة",
+    "statusSuspended": "معلقة",
+    "statusArchived": "مؤرشفة",
+    "saveButton": "حفظ الإعدادات",
+    "cancelButton": "إلغاء",
+    "saving": "جارٍ حفظ الإعدادات...",
+    "success": "تم تحديث الإعدادات بنجاح",
+    "error": "فشل تحديث الإعدادات",
+    "unsavedChanges": "لديك تغييرات غير محفوظة في الإعدادات. هل أنت متأكد من رغبتك في المغادرة؟"
+  },
+  "branding": {
+    "title": "العلامة التجارية للأكاديمية",
+    "subtitle": "تخصيص الهوية البصرية للأكاديمية",
+    "logo": "الشعار",
+    "favicon": "أيقونة المفضلة",
+    "displayName": "اسم العرض",
+    "logoHelp": "تحميل شعار الأكاديمية (PNG، JPG، بحد أقصى 5 ميجابايت)",
+    "faviconHelp": "تحميل أيقونة المفضلة (ICO، PNG، بحد أقصى 1 ميجابايت)",
+    "uploadLogo": "تحميل الشعار",
+    "uploadFavicon": "تحميل أيقونة المفضلة",
+    "changeLogo": "تغيير الشعار",
+    "changeFavicon": "تغيير أيقونة المفضلة",
+    "removeLogo": "إزالة الشعار",
+    "removeFavicon": "إزالة أيقونة المفضلة",
+    "saveButton": "حفظ العلامة التجارية",
+    "cancelButton": "إلغاء",
+    "saving": "جارٍ حفظ العلامة التجارية...",
+    "uploading": "جارٍ التحميل...",
+    "success": "تم تحديث العلامة التجارية بنجاح",
+    "error": "فشل تحديث العلامة التجارية",
+    "uploadError": "فشل تحميل الملف",
+    "unsavedChanges": "لديك تغييرات غير محفوظة في العلامة التجارية. هل أنت متأكد من رغبتك في المغادرة؟",
+    "errors": {
+      "logoTooLarge": "يجب أن يكون حجم الشعار أقل من 5 ميجابايت.",
+      "logoInvalidType": "يجب أن يكون الشعار بصيغة PNG أو JPG.",
+      "faviconTooLarge": "يجب أن يكون حجم أيقونة المفضلة أقل من 1 ميجابايت.",
+      "faviconInvalidType": "يجب أن تكون أيقونة المفضلة بصيغة ICO أو PNG."
+    }
+  },
+  "members": {
+    "title": "أعضاء الأكاديمية",
+    "subtitle": "إدارة أعضاء فريق الأكاديمية",
+    "searchPlaceholder": "البحث عن الأعضاء...",
+    "filterByRole": "تصفية حسب الدور",
+    "allRoles": "جميع الأدوار",
+    "table": {
+      "name": "الاسم",
+      "email": "البريد الإلكتروني",
+      "role": "الدور",
+      "status": "الحالة",
+      "joinedAt": "تاريخ الانضمام",
+      "actions": "الإجراءات"
+    },
+    "roles": {
+      "owner": "المالك",
+      "administrator": "المسؤول",
+      "manager": "المدير",
+      "instructor": "المدرب",
+      "staff": "الموظف"
+    },
+    "status": {
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "pending": "قيد الانتظار"
+    },
+    "emptyState": "لم يتم العثور على أعضاء",
+    "emptyStateDescription": "لا يوجد أعضاء في أكاديميتك بعد."
+  },
+  "switcher": {
+    "title": "تبديل الأكاديمية",
+    "currentAcademy": "الأكاديمية الحالية",
+    "selectAcademy": "اختر الأكاديمية",
+    "noAcademies": "لا توجد أكاديميات متاحة",
+    "createNew": "إنشاء أكاديمية جديدة",
+    "loading": "جارٍ تحميل الأكاديميات..."
+  },
+  "onboarding": {
+    "title": "إعداد {{academyName}}",
+    "subtitle": "خطوات سريعة لتجهيز أكاديميتك.",
+    "skipAll": "تخطي الآن",
+    "finish": "الذهاب إلى لوحة التحكم",
+    "continueTo": "متابعة إلى {{step}}",
+    "skipStep": "تخطي هذه الخطوة",
+    "resumeBanner": "لم يكتمل إعداد أكاديميتك بعد.",
+    "resumeAction": "إنهاء الإعداد",
+    "steps": {
+      "basics": {
+        "title": "المعلومات الأساسية",
+        "description": "تم تعيين اسم أكاديميتك وتفاصيلها."
+      },
+      "branding": {
+        "title": "أضف علامتك التجارية",
+        "description": "قم بتحميل شعار وأيقونة مفضلة لتمييز أكاديميتك."
+      },
+      "settings": {
+        "title": "راجع إعداداتك",
+        "description": "تأكد من اللغة والمنطقة الزمنية والعملة والحالة."
+      },
+      "complete": {
+        "title": "كل شيء جاهز",
+        "description": "أكاديميتك جاهزة الآن. يمكنك مراجعة العلامة التجارية والإعدادات في أي وقت."
+      }
+    }
+  },
+  "activity": {
+    "academyCreated": "تم إنشاء الأكاديمية",
+    "academyUpdated": "تم تحديث معلومات الأكاديمية",
+    "settingsUpdated": "تم تحديث الإعدادات",
+    "brandingUpdated": "تم تحديث العلامة التجارية",
+    "memberAdded": "تمت إضافة عضو",
+    "memberUpdated": "تم تحديث العضو",
+    "memberRemoved": "تمت إزالة العضو"
+  },
+  "empty": {
+    "noAcademies": "لا توجد أكاديميات بعد",
+    "noAcademiesDescription": "أنشئ أكاديميتك الأولى للبدء مع Atlas.",
+    "createFirstAcademy": "إنشاء أكاديميتك الأولى",
+    "noActivity": "لا يوجد نشاط حديث",
+    "noActivityDescription": "سيظهر النشاط هنا عند إدارة الأكاديمية.",
+    "noMembers": "لا يوجد أعضاء بعد",
+    "noMembersDescription": "أضف أعضاء الفريق للتعاون في أكاديميتك."
+  },
+  "errors": {
+    "loadFailed": "فشل تحميل الأكاديمية",
+    "loadAcademiesFailed": "فشل تحميل الأكاديميات",
+    "createFailed": "فشل إنشاء الأكاديمية",
+    "updateFailed": "فشل تحديث الأكاديمية",
+    "deleteFailed": "فشل حذف الأكاديمية",
+    "permissionDenied": "ليس لديك إذن لإدارة هذه الأكاديمية",
+    "invalidAcademy": "أكاديمية غير صالحة",
+    "noActiveOrganization": "لم يتم تحديد مؤسسة نشطة",
+    "retry": "حاول مرة أخرى"
+  },
+  "actions": {
+    "edit": "تعديل",
+    "delete": "حذف",
+    "view": "عرض",
+    "manage": "إدارة",
+    "configure": "تكوين"
+  }
+}

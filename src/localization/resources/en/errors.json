@@ -1,0 +1,55 @@
+{
+  "generic": {
+    "title": "Something went wrong",
+    "description": "The action could not be completed. Please try again."
+  },
+  "network": {
+    "title": "Connection problem",
+    "description": "Atlas could not reach the server. Check your connection and try again."
+  },
+  "timeout": {
+    "title": "The request took too long",
+    "description": "The server did not respond in time. Please try again."
+  },
+  "cancelled": {
+    "title": "Request cancelled",
+    "description": "The request was stopped before it completed."
+  },
+  "validation": {
+    "title": "Check the highlighted fields",
+    "description": "Some information needs to be corrected before saving."
+  },
+  "unauthorized": {
+    "title": "Your session has expired",
+    "description": "Sign in again to continue where you left off."
+  },
+  "forbidden": {
+    "title": "You do not have access",
+    "description": "Your account does not have permission to view this page. Contact your administrator if you need access."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist or has been moved."
+  },
+  "conflict": {
+    "title": "This item was changed elsewhere",
+    "description": "Reload the page to see the latest version, then try again."
+  },
+  "rateLimited": {
+    "title": "Too many attempts",
+    "description": "Please wait a moment before trying again."
+  },
+  "server": {
+    "title": "Server error",
+    "description": "Something failed on our side. We are looking into it — please try again shortly."
+  },
+  "unknown": {
+    "title": "Unexpected error",
+    "description": "An unexpected problem occurred. Please try again."
+  },
+  "boundary": {
+    "title": "This section could not be displayed",
+    "description": "The rest of Atlas is still working. Try reloading this section."
+  },
+  "errorReference": "Reference: {{requestId}}"
+}

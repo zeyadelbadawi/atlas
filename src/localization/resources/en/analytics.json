@@ -1,0 +1,102 @@
+{
+  "title": "Analytics",
+  "subtitle": "Platform insights and metrics",
+  "dashboard": {
+    "title": "Analytics Dashboard",
+    "description": "Monitor your platform performance",
+    "overview": "Overview",
+    "customize": "Customize Dashboard",
+    "export": "Export Report",
+    "refresh": "Refresh Data"
+  },
+  "metrics": {
+    "title": "Key Metrics",
+    "totalAcademies": "Total Academies",
+    "activeAcademies": "Active Academies",
+    "totalUsers": "Total Users",
+    "activeUsers": "Active Users",
+    "totalRevenue": "Total Revenue",
+    "monthlyRevenue": "Monthly Revenue",
+    "growth": "Growth",
+    "engagement": "Engagement",
+    "retention": "Retention",
+    "churn": "Churn Rate"
+  },
+  "timeRange": {
+    "label": "Time Range",
+    "7d": "Last 7 Days",
+    "30d": "Last 30 Days",
+    "90d": "Last 90 Days",
+    "1y": "Last Year",
+    "custom": "Custom Range",
+    "from": "From",
+    "to": "To",
+    "apply": "Apply"
+  },
+  "charts": {
+    "userGrowth": "User Growth",
+    "revenueOverTime": "Revenue Over Time",
+    "academyActivity": "Academy Activity",
+    "engagement": "Engagement Metrics",
+    "topAcademies": "Top Academies",
+    "userRetention": "User Retention",
+    "conversionRate": "Conversion Rate"
+  },
+  "filters": {
+    "title": "Filters",
+    "organization": "Organization",
+    "plan": "Plan",
+    "status": "Status",
+    "groupBy": "Group By",
+    "day": "Day",
+    "week": "Week",
+    "month": "Month",
+    "applyFilters": "Apply Filters",
+    "clearFilters": "Clear Filters"
+  },
+  "comparison": {
+    "title": "Comparison",
+    "previousPeriod": "vs. Previous Period",
+    "previousYear": "vs. Previous Year",
+    "increase": "Increase",
+    "decrease": "Decrease",
+    "noChange": "No Change"
+  },
+  "export": {
+    "title": "Export Report",
+    "format": "Format",
+    "csv": "CSV",
+    "pdf": "PDF",
+    "excel": "Excel",
+    "json": "JSON",
+    "includeCharts": "Include Charts",
+    "dateRange": "Date Range",
+    "export": "Export",
+    "exporting": "Exporting...",
+    "success": "Report exported successfully",
+    "error": "Failed to export report"
+  },
+  "widgets": {
+    "add": "Add Widget",
+    "remove": "Remove Widget",
+    "configure": "Configure",
+    "metric": "Metric",
+    "chart": "Chart",
+    "table": "Table",
+    "map": "Map"
+  },
+  "messages": {
+    "loadError": "Failed to load analytics data",
+    "noData": "No data available",
+    "noDataDescription": "There is no data for the selected time range",
+    "refreshSuccess": "Data refreshed successfully",
+    "saveSuccess": "Dashboard saved successfully"
+  },
+  "aggregation": {
+    "sum": "Sum",
+    "avg": "Average",
+    "min": "Minimum",
+    "max": "Maximum",
+    "count": "Count"
+  }
+}
