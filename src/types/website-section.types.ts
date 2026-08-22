@@ -39,18 +39,36 @@ export interface ResponsiveVisibility {
   readonly mobile: boolean;
 }
 
-/** A generic call-to-action: a label plus a target — either another Website page, or an external URL, never raw markup/script. */
+/**
+ * A generic call-to-action: a label plus a typed target — never raw
+ * markup/script. Exactly one of `pageId`/`courseId`/`url` is meaningful
+ * at a time (the editor's Link Type selector enforces this; the
+ * resolver in `link-resolution.utils.ts` checks them in that precedence
+ * order regardless, so a malformed record degrades safely rather than
+ * throwing). `courseId` references the EXISTING Course domain by id —
+ * never a duplicated course projection (Prompt 11 — "Link / Redirect
+ * System"). A Blog post/Announcement target was deliberately NOT added:
+ * neither has a public rendering surface today (Blog/Announcements are
+ * authenticated dashboard content, Prompt 5), so offering them as a
+ * public website link target would be a dead or fake reference — see
+ * `Reports/ARCHITECTURE.md`, Prompt 11, "Link Target Scope".
+ */
 export interface WebsiteCta {
   readonly label: string;
   readonly pageId?: string;
+  readonly courseId?: string;
   readonly url?: string;
 }
 
 export interface HeroSectionConfig {
+  /** A short label shown above the title (e.g. "New Cohort Open") — real tenant-authored content, not a translation key. */
+  readonly eyebrow?: string;
   readonly title: string;
   readonly subtitle?: string;
   readonly description?: string;
   readonly image?: string;
+  /** Accessible alternative text for `image`. Empty/absent renders the image as decorative (`alt=""`), matching standard accessibility guidance for purely illustrative imagery. */
+  readonly imageAlt?: string;
   readonly cta?: WebsiteCta;
   readonly secondaryCta?: WebsiteCta;
 }
@@ -59,6 +77,7 @@ export interface AboutSectionConfig {
   readonly title: string;
   readonly body: string;
   readonly image?: string;
+  readonly imageAlt?: string;
 }
 
 /** References the existing Academy-scoped Course catalog — never a duplicate course projection. */
@@ -105,6 +124,7 @@ export interface TestimonialItem {
   readonly authorName: string;
   readonly authorRole?: string;
   readonly avatar?: string;
+  readonly avatarAlt?: string;
 }
 
 export interface TestimonialsSectionConfig {
@@ -150,6 +170,7 @@ export interface GalleryImage {
   readonly id: string;
   readonly image: string;
   readonly caption?: string;
+  readonly imageAlt?: string;
 }
 
 export interface GallerySectionConfig {

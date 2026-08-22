@@ -338,6 +338,14 @@ export function getDashboardNavigation(
           requiredRoles: ['platform_owner'],
         },
         {
+          id: 'platform-domain',
+          labelKey: 'navigation:items.platformDomain',
+          path: DASHBOARD_ROUTES.platformDomain,
+          icon: Globe,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+        },
+        {
           id: 'platform-payments',
           labelKey: 'navigation:items.platformPayments',
           path: DASHBOARD_ROUTES.platformPayments,

@@ -17,10 +17,12 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
   hero: {
     type: 'hero',
     fields: [
+      { key: 'eyebrow', kind: 'text', labelKey: 'website:fields.eyebrow' },
       { key: 'title', kind: 'text', labelKey: 'website:fields.title' },
       { key: 'subtitle', kind: 'text', labelKey: 'website:fields.subtitle' },
       { key: 'description', kind: 'longText', labelKey: 'website:fields.description' },
       { key: 'image', kind: 'image', labelKey: 'website:fields.image' },
+      { key: 'imageAlt', kind: 'text', labelKey: 'website:fields.imageAlt' },
       { key: 'cta', kind: 'cta', labelKey: 'website:fields.primaryCta' },
       { key: 'secondaryCta', kind: 'cta', labelKey: 'website:fields.secondaryCta' },
     ],
@@ -31,6 +33,7 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
       { key: 'title', kind: 'text', labelKey: 'website:fields.title' },
       { key: 'body', kind: 'longText', labelKey: 'website:fields.body' },
       { key: 'image', kind: 'image', labelKey: 'website:fields.image' },
+      { key: 'imageAlt', kind: 'text', labelKey: 'website:fields.imageAlt' },
     ],
   },
   featuredCourses: {
@@ -103,6 +106,7 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
         { key: 'authorName', kind: 'text', labelKey: 'website:fields.authorName' },
         { key: 'authorRole', kind: 'text', labelKey: 'website:fields.authorRole' },
         { key: 'avatar', kind: 'image', labelKey: 'website:fields.avatar' },
+        { key: 'avatarAlt', kind: 'text', labelKey: 'website:fields.avatarAlt' },
       ],
     },
   },
@@ -144,6 +148,7 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
       itemLabelKey: 'website:fields.galleryImage',
       itemFields: [
         { key: 'image', kind: 'image', labelKey: 'website:fields.image' },
+        { key: 'imageAlt', kind: 'text', labelKey: 'website:fields.imageAlt' },
         { key: 'caption', kind: 'text', labelKey: 'website:fields.caption' },
       ],
     },

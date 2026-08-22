@@ -72,6 +72,106 @@
       "manageAction": "Manage announcements"
     }
   },
+  "domain": {
+    "subdomain": {
+      "title": "Atlas subdomain",
+      "notConfigured": "Atlas's platform domain isn't configured yet, so a subdomain address isn't available for your website. This will appear automatically once it is.",
+      "status": {
+        "suggested": "Suggested",
+        "available": "Available",
+        "unavailable": "Unavailable",
+        "reserved": "Reserved",
+        "assigned": "Active"
+      }
+    },
+    "custom": {
+      "title": "Custom domain",
+      "empty": "You haven't connected a custom domain yet.",
+      "addAction": "Connect a domain",
+      "added": "Domain connection started",
+      "addError": "Failed to start connecting this domain",
+      "hostnameLabel": "Domain",
+      "removeAction": "Disconnect",
+      "removeConfirmTitle": "Disconnect this domain?",
+      "removeConfirmDescription": "Your website will fall back to its Atlas subdomain. This can be reconnected later.",
+      "removeError": "Failed to disconnect this domain",
+      "verifyAction": "Check verification",
+      "verifyError": "Failed to check verification",
+      "dnsInstructionsTitle": "DNS records to add",
+      "dnsType": "Type",
+      "dnsName": "Name",
+      "dnsValue": "Value",
+      "status": {
+        "not_configured": "Not configured",
+        "pending": "Pending",
+        "verification_required": "Verification required",
+        "verifying": "Verifying…",
+        "connected": "Connected",
+        "failed": "Failed",
+        "disconnected": "Disconnected"
+      }
+    },
+    "infrastructure": {
+      "title": "Infrastructure",
+      "ssl": "SSL certificate",
+      "cdn": "Content delivery network",
+      "provider": "Infrastructure provider",
+      "providerConnected": "Connected",
+      "providerNotConnected": "Not connected",
+      "sslStatus": {
+        "not_configured": "Not configured",
+        "pending": "Pending",
+        "provisioning": "Provisioning…",
+        "active": "Active",
+        "failed": "Failed",
+        "expired": "Expired"
+      },
+      "cdnStatus": {
+        "not_configured": "Not configured",
+        "active": "Active",
+        "degraded": "Degraded",
+        "error": "Error"
+      }
+    }
+  },
+  "platformDomain": {
+    "title": "Platform Domain",
+    "subtitle": "Configure the base domain Academy subdomains are derived from.",
+    "formTitle": "Base domain",
+    "baseDomainLabel": "Domain",
+    "baseDomainHelp": "Once set, an Academy with the slug \"harvard\" becomes reachable at \"harvard.{{baseDomain}}\" — this field doesn't perform any real DNS setup itself.",
+    "status": {
+      "configured": "Configured",
+      "notConfigured": "Not configured"
+    },
+    "success": "Platform domain saved",
+    "error": "Failed to save the platform domain",
+    "unsavedChanges": "You have unsaved changes to the platform domain.",
+    "infrastructureTitle": "Infrastructure provider",
+    "infrastructureHelp": "Whether Atlas's backend currently has real Cloudflare credentials configured. This is a read-only status — credentials are never entered here or exposed to this dashboard.",
+    "providerConnected": "Connected",
+    "providerNotConnected": "Not connected"
+  },
+  "public": {
+    "poweredBy": "Powered by Atlas",
+    "notFound": {
+      "title": "Website not found",
+      "description": "We couldn't find a website at this address."
+    },
+    "unavailable": {
+      "title": "Temporarily unavailable",
+      "description": "This website can't be reached right now. Please try again shortly."
+    },
+    "unpublished": {
+      "title": "Coming soon",
+      "description": "This website hasn't been published yet."
+    },
+    "pageNotFound": {
+      "title": "Page not found",
+      "description": "This page doesn't exist or is no longer available.",
+      "homeAction": "Go to homepage"
+    }
+  },
   "settings": {
     "title": "Website",
     "subtitle": "Configure your Academy's public website — theme, branding, SEO and navigation.",
@@ -79,7 +179,8 @@
       "theme": "Theme",
       "brand": "Brand",
       "seo": "SEO",
-      "navigation": "Navigation"
+      "navigation": "Navigation",
+      "domain": "Domain"
     }
   },
   "theme": {
@@ -239,15 +340,23 @@
     "contact": { "label": "Contact" }
   },
   "fields": {
+    "eyebrow": "Eyebrow",
     "title": "Title",
     "subtitle": "Subtitle",
     "description": "Description",
     "body": "Body",
     "image": "Image",
+    "imageAlt": "Image description (alt text)",
+    "avatarAlt": "Photo description (alt text)",
     "primaryCta": "Primary button",
     "secondaryCta": "Secondary button",
     "ctaLabelPlaceholder": "Button label",
     "ctaTargetPlaceholder": "Links to a page",
+    "ctaCoursePlaceholder": "Links to a course",
+    "linkType": "Link type",
+    "linkTypePage": "Internal page",
+    "linkTypeExternal": "External URL",
+    "linkTypeCourse": "Course",
     "mode": "Source",
     "modeLatest": "Latest courses",
     "modeSelected": "Selected courses",

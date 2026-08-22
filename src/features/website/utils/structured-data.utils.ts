@@ -26,7 +26,18 @@ import type {
   SeoBreadcrumbItem,
 } from '@types';
 
-export function buildOrganizationJsonLd(academy: Academy): OrganizationJsonLd {
+/**
+ * Accepts a structural SUBSET of `Academy` (not the full type) so the
+ * public runtime — which only ever has `HostnameResolution`'s narrower
+ * academy summary, never a full authenticated `Academy` fetch — can call
+ * this without a second, otherwise-unnecessary Academy request. Every
+ * existing `Academy`-typed call site (e.g. `WebsiteSeoTab`) keeps
+ * working unchanged, since a full `Academy` structurally satisfies this
+ * narrower shape.
+ */
+export function buildOrganizationJsonLd(
+  academy: Pick<Academy, 'name' | 'description' | 'logo' | 'contactEmail' | 'contactPhone'>
+): OrganizationJsonLd {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
@@ -38,7 +49,7 @@ export function buildOrganizationJsonLd(academy: Academy): OrganizationJsonLd {
   };
 }
 
-export function buildCourseJsonLd(course: Course, academy: Academy): CourseJsonLd {
+export function buildCourseJsonLd(course: Course, academy: Pick<Academy, 'name'>): CourseJsonLd {
   return {
     '@context': 'https://schema.org',
     '@type': 'Course',

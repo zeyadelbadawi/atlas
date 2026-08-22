@@ -17,19 +17,34 @@ import { CtaSection } from './CtaSection';
 import { InstructorsSection } from './InstructorsSection';
 import { GallerySection } from './GallerySection';
 import { ContactSection } from './ContactSection';
-import type { SectionInstance } from '@types';
+import type { SectionInstance, WebsitePage } from '@types';
+import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
 
 export interface SectionRendererProps {
   readonly instance: SectionInstance;
   readonly academyId: string;
+  readonly pages: readonly WebsitePage[];
+  /**
+   * Supplied ONLY by contexts that can safely navigate for real (the
+   * public runtime). Left undefined everywhere else (Theme gallery
+   * preview, Page Editor live preview, `WebsitePreviewPage`) so a CTA
+   * button stays an inert label there, exactly as before Prompt 11 — see
+   * `WebsiteRenderer`'s doc comment.
+   */
+  readonly linkRenderer?: WebsiteLinkRenderer;
 }
 
-export function SectionRenderer({ instance, academyId }: SectionRendererProps): JSX.Element | null {
+export function SectionRenderer({
+  instance,
+  academyId,
+  pages,
+  linkRenderer,
+}: SectionRendererProps): JSX.Element | null {
   if (!instance.enabled) return null;
 
   switch (instance.type) {
     case 'hero':
-      return <HeroSection config={instance.config} />;
+      return <HeroSection config={instance.config} pages={pages} linkRenderer={linkRenderer} />;
     case 'about':
       return <AboutSection config={instance.config} />;
     case 'featuredCourses':
@@ -43,7 +58,7 @@ export function SectionRenderer({ instance, academyId }: SectionRendererProps): 
     case 'faq':
       return <FaqSection config={instance.config} academyId={academyId} />;
     case 'cta':
-      return <CtaSection config={instance.config} />;
+      return <CtaSection config={instance.config} pages={pages} linkRenderer={linkRenderer} />;
     case 'instructors':
       return <InstructorsSection config={instance.config} academyId={academyId} />;
     case 'gallery':

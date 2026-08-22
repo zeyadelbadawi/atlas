@@ -8,12 +8,14 @@
  * page list the caller already has — this component never fetches
  * anything itself.
  *
- * There is no real public multi-tenant routing yet (see
- * `Reports/ARCHITECTURE.md`, Prompt 9, "Public Website Routing Boundary"),
- * so navigating is expressed as an `onNavigate(pageId)` callback rather
- * than an `<a href>` — the in-dashboard Preview surface uses it to switch
- * the previewed page; a future public site would swap it for real links
- * without changing this component's contract.
+ * `onNavigate(pageId)` remains the callback every dashboard preview
+ * context uses to switch the previewed page in place. Prompt 11's public
+ * runtime additionally supplies `linkRenderer`, which turns navigation
+ * and the header CTA into real `<a>`/`<Link>` elements — both mechanisms
+ * coexist so `onNavigate` still fires for `<button>`-based fallback
+ * clicks and any caller that hasn't supplied a `linkRenderer` keeps
+ * behaving exactly as it did before Prompt 11 (see
+ * `Reports/ARCHITECTURE.md`, Prompt 11, "Header/Footer Real Navigation").
  */
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -25,7 +27,9 @@ import {
 import { useDisclosure } from '@hooks';
 import { useWebsiteDesignSystem } from './WebsiteDesignSystemContext';
 import { useWebsiteContainerClass } from './renderer-style.utils';
+import { resolveWebsiteCtaHref, isExternalHref } from '../utils/link-resolution.utils';
 import type { WebsiteHeaderConfig, WebsiteNavigationItem, WebsitePage } from '@types';
+import type { WebsiteLinkRenderer } from './website-link-renderer.types';
 
 export interface WebsiteHeaderProps {
   readonly logo?: string;
@@ -35,6 +39,8 @@ export interface WebsiteHeaderProps {
   readonly header: WebsiteHeaderConfig;
   readonly activePageId?: string;
   readonly onNavigate: (pageId: string) => void;
+  /** See `website-link-renderer.types.ts` — absent in every dashboard preview context, supplied only by the public runtime. */
+  readonly linkRenderer?: WebsiteLinkRenderer;
 }
 
 function resolveLabel(item: WebsiteNavigationItem, pages: readonly WebsitePage[]): string {
@@ -46,28 +52,46 @@ function NavLinks({
   pages,
   activePageId,
   onNavigate,
+  linkRenderer,
   className,
-}: Pick<WebsiteHeaderProps, 'navigation' | 'pages' | 'activePageId' | 'onNavigate'> & {
+}: Pick<WebsiteHeaderProps, 'navigation' | 'pages' | 'activePageId' | 'onNavigate' | 'linkRenderer'> & {
   readonly className?: string;
 }): JSX.Element {
   return (
     <nav className={className}>
       {[...navigation]
         .sort((a, b) => a.order - b.order)
-        .map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => onNavigate(item.pageId)}
-            className={
-              item.pageId === activePageId
-                ? 'text-sm font-medium text-[var(--website-primary-solid)]'
-                : 'text-sm font-medium text-foreground/80 hover:text-foreground'
-            }
-          >
-            {resolveLabel(item, pages)}
-          </button>
-        ))}
+        .map((item) => {
+          const activeClassName =
+            item.pageId === activePageId
+              ? 'text-sm font-medium text-[var(--website-primary-solid)]'
+              : 'text-sm font-medium text-foreground/80 hover:text-foreground';
+          const href = linkRenderer ? resolveWebsiteCtaHref(item, pages) : undefined;
+
+          if (href) {
+            return (
+              <span key={item.id}>
+                {linkRenderer!({
+                  href,
+                  external: isExternalHref(href),
+                  className: activeClassName,
+                  children: resolveLabel(item, pages),
+                })}
+              </span>
+            );
+          }
+
+          return (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => onNavigate(item.pageId)}
+              className={activeClassName}
+            >
+              {resolveLabel(item, pages)}
+            </button>
+          );
+        })}
     </nav>
   );
 }
@@ -80,6 +104,7 @@ export function WebsiteHeader({
   header,
   activePageId,
   onNavigate,
+  linkRenderer,
 }: WebsiteHeaderProps): JSX.Element {
   const design = useWebsiteDesignSystem();
   const container = useWebsiteContainerClass();
@@ -95,14 +120,21 @@ export function WebsiteHeader({
     </div>
   );
 
+  const ctaHref = header.cta && linkRenderer ? resolveWebsiteCtaHref(header.cta, pages) : undefined;
+  const ctaButtonProps = {
+    size: 'sm' as const,
+    style: { backgroundColor: 'var(--website-primary-solid)' },
+    className: 'text-white hover:opacity-90',
+  };
+
   const cta = header.cta ? (
-    <Button
-      size="sm"
-      style={{ backgroundColor: 'var(--website-primary-solid)' }}
-      className="text-white hover:opacity-90"
-    >
-      {header.cta.label}
-    </Button>
+    ctaHref ? (
+      <Button {...ctaButtonProps} asChild>
+        {linkRenderer!({ href: ctaHref, external: isExternalHref(ctaHref), children: header.cta.label })}
+      </Button>
+    ) : (
+      <Button {...ctaButtonProps}>{header.cta.label}</Button>
+    )
   ) : null;
 
   const mobileTrigger = (
@@ -121,6 +153,7 @@ export function WebsiteHeader({
             onNavigate(pageId);
             mobileMenu.close();
           }}
+          linkRenderer={linkRenderer}
           className="flex flex-col gap-4 pt-8"
         />
       </SheetContent>
@@ -138,6 +171,7 @@ export function WebsiteHeader({
               pages={pages}
               activePageId={activePageId}
               onNavigate={onNavigate}
+              linkRenderer={linkRenderer}
               className="hidden items-center gap-6 lg:flex"
             />
             {mobileTrigger}
@@ -159,6 +193,7 @@ export function WebsiteHeader({
               pages={pages}
               activePageId={activePageId}
               onNavigate={onNavigate}
+              linkRenderer={linkRenderer}
               className="hidden items-center gap-6 lg:flex"
             />
             {mobileTrigger}
@@ -177,6 +212,7 @@ export function WebsiteHeader({
           pages={pages}
           activePageId={activePageId}
           onNavigate={onNavigate}
+          linkRenderer={linkRenderer}
           className="hidden items-center gap-6 lg:flex"
         />
         <div className="flex items-center gap-2">

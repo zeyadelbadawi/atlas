@@ -1,6 +1,8 @@
 import { Suspense, lazy } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
+import { ENV } from '@config';
+import { getCurrentPublicWebsiteContext } from '@features/public-website';
 import { ErrorBoundary } from '@app/providers/error/ErrorBoundary';
 import { PublicLayout } from '@app/layouts/public/PublicLayout';
 import { AuthLayout } from '@app/layouts/auth/AuthLayout';
@@ -172,6 +174,9 @@ const TenantAddOnsPage = lazy(
 const PlatformTrialPolicyPage = lazy(
   () => import('@features/tenant/pages/PlatformTrialPolicyPage')
 );
+const PlatformDomainSettingsPage = lazy(
+  () => import('@features/domain/pages/PlatformDomainSettingsPage')
+);
 
 const BillingOverviewPage = lazy(
   () => import('@features/billing/pages/BillingOverviewPage')
@@ -231,8 +236,33 @@ const ForbiddenPage = lazy(
 );
 const NotFoundPage = lazy(() => import('@features/system/pages/NotFoundPage'));
 
+const PublicWebsiteRouter = lazy(
+  () => import('@features/public-website/PublicWebsiteRouter')
+);
+
 export function AppRouter(): JSX.Element {
   const location = useLocation();
+
+  // Resolved ONCE per page load — the hostname a visitor is on cannot
+  // change while this SPA instance is running. When no Platform base
+  // domain is configured (true in every environment today), this always
+  // resolves to `{ mode: 'atlas-app' }` and the branch below is a no-op
+  // — see `Reports/ARCHITECTURE.md`, Prompt 11, "No Real Atlas Domain
+  // Yet".
+  const publicWebsiteContext = getCurrentPublicWebsiteContext(
+    ENV.platformBaseDomain,
+    ENV.isDevelopment
+  );
+
+  if (publicWebsiteContext.mode === 'academy-website') {
+    return (
+      <ErrorBoundary resetKey={location.pathname}>
+        <Suspense fallback={<RouteFallback />}>
+          <PublicWebsiteRouter context={publicWebsiteContext} />
+        </Suspense>
+      </ErrorBoundary>
+    );
+  }
 
   return (
     <ErrorBoundary resetKey={location.pathname}>
@@ -697,6 +727,15 @@ export function AppRouter(): JSX.Element {
               element={
                 <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
                   <PlatformTrialPolicyPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformDomain}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <PlatformDomainSettingsPage />
                 </RouteGuard>
               }
             />

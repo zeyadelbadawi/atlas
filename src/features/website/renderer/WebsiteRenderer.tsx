@@ -20,6 +20,7 @@ import type {
   WebsiteConfiguration,
   WebsitePage,
 } from '@types';
+import type { WebsiteLinkRenderer } from './website-link-renderer.types';
 
 export interface WebsiteRendererProps {
   readonly academyId: string;
@@ -31,6 +32,8 @@ export interface WebsiteRendererProps {
   /** Only meaningful when previewing `coreType: 'courseDetails'` — which real course to demonstrate the template with. */
   readonly previewCourseId?: string;
   readonly onNavigate: (pageId: string) => void;
+  /** See `website-link-renderer.types.ts` — absent in every dashboard preview context, supplied only by the public runtime. */
+  readonly linkRenderer?: WebsiteLinkRenderer;
   readonly className?: string;
 }
 
@@ -43,6 +46,7 @@ export function WebsiteRenderer({
   page,
   previewCourseId,
   onNavigate,
+  linkRenderer,
   className,
 }: WebsiteRendererProps): JSX.Element {
   const theme = getWebsiteTheme(configuration.themeKey);
@@ -60,6 +64,7 @@ export function WebsiteRenderer({
           header={configuration.header}
           activePageId={page.id}
           onNavigate={onNavigate}
+          linkRenderer={linkRenderer}
         />
 
         <main>
@@ -69,7 +74,13 @@ export function WebsiteRenderer({
             ) : null
           ) : (
             page.sections.map((instance) => (
-              <SectionRenderer key={instance.id} instance={instance} academyId={academyId} />
+              <SectionRenderer
+                key={instance.id}
+                instance={instance}
+                academyId={academyId}
+                pages={pages}
+                linkRenderer={linkRenderer}
+              />
             ))
           )}
         </main>
@@ -77,7 +88,9 @@ export function WebsiteRenderer({
         <WebsiteFooter
           academyName={academyName}
           footer={configuration.footer}
+          pages={pages}
           onNavigate={onNavigate}
+          linkRenderer={linkRenderer}
         />
       </div>
     </WebsiteThemeScope>

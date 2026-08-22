@@ -6,6 +6,7 @@
   "url": "Enter a valid URL",
   "invalidUrl": "Enter a valid URL",
   "invalidSlug": "Use only lowercase letters, numbers, and hyphens",
+  "invalidHostname": "Enter a valid domain, like example.com",
   "invalidColor": "Choose a valid color",
   "minLength": "{{field}} must be at least {{count}} characters",
   "maxLength": "{{field}} must be {{count}} characters or fewer",

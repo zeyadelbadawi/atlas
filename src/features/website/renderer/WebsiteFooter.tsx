@@ -6,33 +6,55 @@
  */
 import { useWebsiteDesignSystem } from './WebsiteDesignSystemContext';
 import { useWebsiteContainerClass } from './renderer-style.utils';
-import type { WebsiteFooterConfig } from '@types';
+import { resolveWebsiteCtaHref, isExternalHref } from '../utils/link-resolution.utils';
+import type { WebsiteFooterConfig, WebsiteFooterLink, WebsitePage } from '@types';
+import type { WebsiteLinkRenderer } from './website-link-renderer.types';
 
 export interface WebsiteFooterProps {
   readonly academyName: string;
   readonly footer: WebsiteFooterConfig;
+  readonly pages: readonly WebsitePage[];
   readonly onNavigate: (pageId: string) => void;
+  /** See `website-link-renderer.types.ts` — absent in every dashboard preview context, supplied only by the public runtime. */
+  readonly linkRenderer?: WebsiteLinkRenderer;
 }
 
 function FooterLinkButton({
-  label,
-  onClick,
+  link,
+  pages,
+  onNavigate,
+  linkRenderer,
 }: {
-  readonly label: string;
-  readonly onClick?: () => void;
+  readonly link: WebsiteFooterLink;
+  readonly pages: readonly WebsitePage[];
+  readonly onNavigate: (pageId: string) => void;
+  readonly linkRenderer?: WebsiteLinkRenderer;
 }): JSX.Element {
+  const className = 'text-start text-sm text-muted-foreground hover:text-foreground';
+  const href = linkRenderer ? resolveWebsiteCtaHref(link, pages) : undefined;
+
+  if (href) {
+    return linkRenderer!({ href, external: isExternalHref(href), className, children: link.label });
+  }
+
   return (
     <button
       type="button"
-      onClick={onClick}
-      className="text-start text-sm text-muted-foreground hover:text-foreground"
+      onClick={link.pageId ? () => onNavigate(link.pageId!) : undefined}
+      className={className}
     >
-      {label}
+      {link.label}
     </button>
   );
 }
 
-export function WebsiteFooter({ academyName, footer, onNavigate }: WebsiteFooterProps): JSX.Element {
+export function WebsiteFooter({
+  academyName,
+  footer,
+  pages,
+  onNavigate,
+  linkRenderer,
+}: WebsiteFooterProps): JSX.Element {
   const design = useWebsiteDesignSystem();
   const container = useWebsiteContainerClass();
   const copyright =
@@ -47,8 +69,10 @@ export function WebsiteFooter({ academyName, footer, onNavigate }: WebsiteFooter
             {footer.groups.flatMap((group) => group.links).map((link) => (
               <FooterLinkButton
                 key={link.id}
-                label={link.label}
-                onClick={link.pageId ? () => onNavigate(link.pageId!) : undefined}
+                link={link}
+                pages={pages}
+                onNavigate={onNavigate}
+                linkRenderer={linkRenderer}
               />
             ))}
           </div>
@@ -66,8 +90,10 @@ export function WebsiteFooter({ academyName, footer, onNavigate }: WebsiteFooter
             {footer.groups.flatMap((group) => group.links).map((link) => (
               <FooterLinkButton
                 key={link.id}
-                label={link.label}
-                onClick={link.pageId ? () => onNavigate(link.pageId!) : undefined}
+                link={link}
+                pages={pages}
+                onNavigate={onNavigate}
+                linkRenderer={linkRenderer}
               />
             ))}
           </div>
@@ -91,8 +117,10 @@ export function WebsiteFooter({ academyName, footer, onNavigate }: WebsiteFooter
               {group.links.map((link) => (
                 <FooterLinkButton
                   key={link.id}
-                  label={link.label}
-                  onClick={link.pageId ? () => onNavigate(link.pageId!) : undefined}
+                  link={link}
+                  pages={pages}
+                  onNavigate={onNavigate}
+                  linkRenderer={linkRenderer}
                 />
               ))}
             </div>

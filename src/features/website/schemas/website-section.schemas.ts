@@ -7,22 +7,32 @@
  */
 import { z } from 'zod';
 import { FEATURE_ICON_OPTIONS, MAX_SECTION_ITEMS } from '../constants/website.constants';
+import { isSafeExternalUrl } from '../utils/url-safety.utils';
 import type { SectionType } from '@types';
 
 const MAX_SHORT_TEXT = 100;
 const MAX_LONG_TEXT = 2000;
 
+/** `url` is checked against `isSafeExternalUrl` (never `javascript:`/`data:`/etc.) in addition to being syntactically a URL — see that util's doc comment. */
 const websiteCtaSchema = z.object({
   label: z.string().min(1, 'validation:required').max(MAX_SHORT_TEXT, 'validation:maxLength'),
   pageId: z.string().optional(),
-  url: z.string().url('validation:invalidUrl').optional().or(z.literal('')),
+  courseId: z.string().optional(),
+  url: z
+    .string()
+    .url('validation:invalidUrl')
+    .refine(isSafeExternalUrl, { message: 'validation:invalidUrl' })
+    .optional()
+    .or(z.literal('')),
 });
 
 export const heroSectionSchema = z.object({
+  eyebrow: z.string().max(MAX_SHORT_TEXT, 'validation:maxLength').optional(),
   title: z.string().min(1, 'validation:required').max(MAX_SHORT_TEXT, 'validation:maxLength'),
   subtitle: z.string().max(MAX_SHORT_TEXT, 'validation:maxLength').optional(),
   description: z.string().max(MAX_LONG_TEXT, 'validation:maxLength').optional(),
   image: z.string().optional(),
+  imageAlt: z.string().max(MAX_SHORT_TEXT, 'validation:maxLength').optional(),
   cta: websiteCtaSchema.optional(),
   secondaryCta: websiteCtaSchema.optional(),
 });
@@ -31,6 +41,7 @@ export const aboutSectionSchema = z.object({
   title: z.string().min(1, 'validation:required').max(MAX_SHORT_TEXT, 'validation:maxLength'),
   body: z.string().min(1, 'validation:required').max(MAX_LONG_TEXT, 'validation:maxLength'),
   image: z.string().optional(),
+  imageAlt: z.string().max(MAX_SHORT_TEXT, 'validation:maxLength').optional(),
 });
 
 export const featuredCoursesSectionSchema = z.object({
@@ -74,6 +85,7 @@ const testimonialItemSchema = z.object({
   authorName: z.string().min(1, 'validation:required').max(MAX_SHORT_TEXT, 'validation:maxLength'),
   authorRole: z.string().max(MAX_SHORT_TEXT, 'validation:maxLength').optional(),
   avatar: z.string().optional(),
+  avatarAlt: z.string().max(MAX_SHORT_TEXT, 'validation:maxLength').optional(),
 });
 
 export const testimonialsSectionSchema = z.object({
@@ -112,6 +124,7 @@ const galleryImageSchema = z.object({
   id: z.string(),
   image: z.string().min(1, 'validation:required'),
   caption: z.string().max(MAX_SHORT_TEXT, 'validation:maxLength').optional(),
+  imageAlt: z.string().max(MAX_SHORT_TEXT, 'validation:maxLength').optional(),
 });
 
 export const gallerySectionSchema = z.object({

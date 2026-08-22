@@ -23,7 +23,7 @@ export function GallerySection({ config }: GallerySectionProps): JSX.Element {
           <figure key={image.id} className="space-y-1.5">
             <img
               src={image.image}
-              alt={image.caption ?? ''}
+              alt={image.imageAlt ?? image.caption ?? ''}
               className="aspect-square w-full object-cover"
               style={{ borderRadius: 'var(--website-radius)' }}
             />

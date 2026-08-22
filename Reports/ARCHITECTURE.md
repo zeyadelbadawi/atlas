@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-08-23T18:00:00Z
+last_updated: 2026-08-24T00:00:00Z
 ---
 
 # Architecture Design
@@ -1387,4 +1387,290 @@ future work — the point of this prompt's architecture is that a future
 public-runtime backend can serve real search-engine-facing output
 directly from the CMS/SEO contracts built here, without the frontend
 needing a rewrite.
+
+---
+
+## Atlas Public Website Runtime + Full Website CMS + Domain/Cloudflare Readiness (Prompt 11)
+
+Four objectives, all built as extensions of Prompt 9's Theme Engine/Page
+Composer/Renderer and Prompt 10's CMS/SEO — never a rewrite of either.
+(A) closes real content-editing gaps found by auditing the Section
+Registry; (B) turns the authenticated `WebsitePreviewPage` architecture
+into an actual public website runtime; (C) wires Prompt 10's SEO/
+structured-data/sitemap/robots contracts into real runtime behavior; (D)
+builds a complete, honest Domain/DNS/SSL/CDN/Cloudflare readiness layer
+that stays truthfully "not configured" until a real Atlas domain and
+Cloudflare account exist.
+
+### CMS audit findings, not invented fields
+
+Section 4 of the spec explicitly warned against inventing fields a
+section doesn't need. The audit (inspecting every `SectionConfigMap`
+type, every renderer, every editor field) found the real gaps were
+narrow: no image anywhere carried alt text, `HeroSectionConfig` had no
+`eyebrow`, and — the single most significant finding — `CtaFieldEditor`
+(the one generic CTA editor `SectionConfigForm` reuses for every Hero/
+CTA-banner button) only ever exposed a page picker. `WebsiteCta.url` had
+existed as a typed field since Prompt 9 with **no way to reach it from
+the UI at all**. Everything else the spec's Hero example lists (title,
+subtitle, description, button labels) was already fully editable via the
+existing Prompt 9 `SectionConfigForm` — confirmed by inspection, not
+rebuilt. `mobileImage`/`backgroundImage` from the spec's example were
+deliberately NOT added: no responsive art-direction infrastructure
+exists anywhere else in Atlas's image handling (`WebsiteImageField` is a
+single-image picker throughout), and building a second image slot per
+breakpoint for a capability no user story asked for would have been the
+over-engineering the spec itself warns against elsewhere.
+
+### `WebsiteCta` extended, never replaced
+
+`WebsiteCta` gained one new optional field, `courseId`, alongside its
+existing `label`/`pageId`/`url` — additive, every page saved before this
+prompt renders identically. Precedence when resolving
+(`resolveWebsiteCtaHref`) is `courseId` → `pageId` → `url`; the CTA
+editor's Link Type selector keeps exactly one of them populated at a
+time, but the resolver degrades safely regardless. Blog Post and
+Announcement were deliberately **not** added as link-target types: an
+audit found neither has a public rendering surface today (Blog is an
+authenticated dashboard feature gated by `blog.view`; Announcements by
+`announcement.view`) — offering them as public website link targets
+would have been exactly the "fake reference" the spec forbids. Course
+was added because `CourseDetailsTemplate`/`/courses/:courseId` already
+fully exist as a genuine public rendering path.
+
+### `isSafeExternalUrl` — one URL-safety boundary, reused everywhere
+
+A single util rejects any URL whose scheme isn't `http:`/`https:`/
+`mailto:`/`tel:` (blocking `javascript:`/`data:`/`vbscript:`/`file:`).
+Applied at the Zod-schema boundary (`websiteCtaSchema`'s `.refine()`) and
+inline in `WebsiteNavigationTab`'s social-link/header-CTA persist paths —
+the same function, never a per-field reimplementation.
+
+### One render seam turns "preview" into "real navigation," never a second renderer
+
+`WebsiteLinkRenderer` is a small, optional prop
+(`{href, external, className, children} → JSX.Element`) threaded through
+`WebsiteRenderer` → `SectionRenderer` → `HeroSection`/`CtaSection`/
+`WebsiteHeader`/`WebsiteFooter`. Every dashboard preview context (Theme
+gallery mini-preview, Page Editor live preview, `WebsitePreviewPage`)
+leaves it `undefined` — CTAs/nav render exactly as inert as they did
+before Prompt 11, zero behavior change. The public runtime is the ONLY
+caller that supplies a real implementation: react-router's `Link` for
+internal paths, a plain `<a target="_blank" rel="noopener noreferrer">`
+for external URLs. This is what "the public runtime and dashboard
+preview must use the same renderer" (spec section 11) means in practice
+— one component, one contract, a caller-supplied navigation strategy.
+
+### Public runtime mounting: a hostname branch, not a parallel route tree
+
+`AppRouter` calls a new pure function, `resolvePublicWebsiteContext`,
+**once**, before choosing which `<Routes>` tree to render. When it
+resolves to `{mode: 'academy-website'}`, `AppRouter` renders
+`PublicWebsiteRouter` **instead of** the normal dashboard/auth/marketing
+tree — never alongside it, so there is no path collision with Atlas's
+own `/` marketing route (`PUBLIC_ROUTES.home`). This mirrors exactly how
+a real Cloudflare Worker would eventually route traffic by hostname at
+the edge — the SPA faithfully reproduces that branching today, and the
+future edge layer becomes a caching/performance optimization in front of
+behavior that is already correct, not a behavior change.
+
+### No real Atlas domain, proven safe by construction
+
+`resolvePublicWebsiteContext(hostname, search, platformBaseDomain,
+isDevelopment)` is a pure, directly-testable function. When
+`platformBaseDomain` is `undefined` — `ENV.platformBaseDomain`, sourced
+from an optional `VITE_PLATFORM_BASE_DOMAIN` env var that is never given
+a fallback fake value — the function returns `{mode: 'atlas-app'}`
+**unconditionally**, regardless of hostname. Since no environment today
+sets this variable, the entire public-runtime branch is provably inert
+everywhere except when a developer explicitly opts in via the
+development-only `?__atlas_academy_preview=<slug>` query override. This
+is the concrete mechanism behind "the application must continue working
+without a real platform domain" (spec section 13) — not a policy, a
+structural guarantee.
+
+### `PublicWebsiteService`: a third service tree, mirroring existing precedent
+
+Distinct from `WebsiteConfigurationService` for the same reason
+`InstructorService`/`PlatformPaymentService`/`PlatformProvisioningService`
+were each their own tree: the authorization shape is completely
+different (no session; Academy identity comes FROM the hostname, never a
+client-supplied `academyId` — `useParams` is never used anywhere in
+`@features/public-website`, verified by grep) and the data is
+published-only by contract. `resolveHostname`/`getPublishedPage` return
+`null` for a genuinely unrecognized hostname/slug rather than throwing —
+an expected outcome for a public visitor, not an exceptional one — while
+network/server failures still propagate as real query errors, so
+`usePublicWebsiteData` can distinguish "not found" from "unavailable."
+
+### `usePublicWebsiteData`: one exhaustive state, three consumers
+
+Composes `useResolveHostname` + `usePublishedWebsite` +
+`usePublishedPages` into `loading | not-found | unavailable | unpublished
+| ready`. The page renderer, `/robots.txt`, and `/sitemap.xml` all
+consume this SAME hook — a domain that doesn't resolve, one whose website
+was never published, and one that's temporarily unreachable are each
+handled identically everywhere they're relevant, never three divergent
+error-handling implementations.
+
+### SEO runtime: `document.head` management with zero `dangerouslySetInnerHTML`
+
+No head-management library (`react-helmet` or equivalent) exists
+anywhere in this stack — verified via `package.json`. `useDocumentSeo`
+manages `document.title` and upserts/cleans up `<meta>`/`<link
+rel="canonical">` tags via plain DOM APIs, tagging every element it
+creates and sweeping them on every change/unmount so client-side
+navigation between public pages never accumulates stale metadata.
+Structured data (JSON-LD) is emitted via
+`document.createElement('script'); script.type = 'application/ld+json';
+script.textContent = JSON.stringify(entry)` — `textContent` is never
+HTML-parsed, so this achieves real, crawlable structured-data output
+with **zero** `dangerouslySetInnerHTML` anywhere in the entire feature
+(confirmed by grep) — a strictly safer mechanism than the injection
+pattern the spec cautioned against, not merely a "justified exception"
+to it.
+
+### Structured-data builders narrowed, not duplicated
+
+`buildOrganizationJsonLd`/`buildCourseJsonLd` (Prompt 10) took a full
+`Academy` parameter. The public runtime only ever has
+`HostnameResolution`'s narrower summary (`academyId`/`academyName`/
+`academySlug`/`academyLogo`) — fetching a full `Academy` record just for
+structured data would have been an unnecessary second request. Both
+signatures were narrowed to `Pick<Academy, ...>` — a full `Academy`
+still satisfies the narrower shape structurally, so every existing
+Prompt 10 call site (`WebsiteSeoTab`) kept working unchanged.
+
+### robots.txt / sitemap.xml: honest content, honest boundary
+
+`generateRobotsTxt`/`generateSitemapXml` are pure string generators;
+`generateSitemapXml` reuses Prompt 10's `buildSitemapEntries` completely
+unchanged for WHICH content qualifies (published, visible, indexable
+only). Both are rendered as visible plain text at `/robots.txt`/
+`/sitemap.xml` routes. This is explicitly documented as **not** real
+`Content-Type: text/plain` HTTP serving: a pure client-rendered SPA
+cannot control the response headers for an arbitrary path — every static
+host and Vite's own dev server serve non-asset paths as the SPA shell
+(`text/html`). Real serving requires a server/edge component (the
+Cloudflare Worker this prompt's own architecture anticipates). What
+exists today is the exact, correctly-generated content that future layer
+would serve verbatim — an honest "here is the payload, not yet the HTTP
+contract" boundary, consistent with "do not pretend infrastructure is
+production-live."
+
+### Domain/DNS/SSL/CDN: reuse Prompt 8's vocabulary, add only what's new
+
+`DomainStatus`/`DomainVerificationRecord`/`DomainConnection`/
+`SubdomainAllocation` (Prompt 8, `provisioning.types.ts`) are imported
+and reused **verbatim** for the ongoing Academy domain-management
+surface — no parallel status vocabulary was invented. What Prompt 8
+genuinely didn't need is new: `SslStatus`/`CdnStatus`/
+`InfrastructureProviderStatus` (every status defaults to its
+"not configured" end; `connected` is reported by the backend, never
+assumed `true` by the frontend) and `PlatformDomainConfiguration` (a
+Platform-wide singleton). `DomainService` is nested under the SAME
+`academies/:academyId/website/...` tree `WebsiteConfigurationService`/
+`WebsiteContentService` already established — a new sub-resource on the
+existing tree, not a parallel one.
+
+### `PlatformDomainService` mirrors Trial Policy's precedent exactly
+
+One backend-configurable settings resource (`PlatformDomainConfiguration`)
+doesn't justify its own dedicated multi-file service architecture —
+`PlatformDomainService` is a small, focused service, and
+`usePlatformDomainConfiguration` seeds `initialData` with
+`DEFAULT_PLATFORM_DOMAIN_CONFIGURATION` (marked stale via
+`initialDataUpdatedAt: 0`) exactly like `useTrialPolicy` seeds
+`DEFAULT_TRIAL_POLICY` — a compiled bootstrap default immediately
+superseded by the real backend response. `PlatformDomainSettingsPage`
+mirrors `PlatformTrialPolicyPage` structurally: `requiredRoles:
+['platform_owner']` at the route/nav level, zero new permission strings.
+
+### No fake infrastructure, verified by grep
+
+Every domain-adjacent service method issues one real HTTP call and
+returns whatever the backend reports — no `setTimeout`-simulated
+provisioning, no hardcoded "Active"/"Connected" value, no fake Cloudflare
+API response, anywhere in `@features/domain` or `@features/public-website`
+(confirmed by grep for `setTimeout`/`setInterval`/hardcoded status
+literals). `WebsiteDomainTab` and `PlatformDomainSettingsPage` both
+render the literal "not configured" state as their default and only
+truthful state today.
+
+### Module Design
+| Area | Responsibility | Key Files |
+|------|-----------------|-----------|
+| CMS gap-closure | `WebsiteCta.courseId`, alt-text/eyebrow fields, `isSafeExternalUrl`, rebuilt `CtaFieldEditor` | `src/types/website-section.types.ts`, `src/features/website/utils/url-safety.utils.ts`, `src/features/website/components/SectionConfigForm.tsx` |
+| Link resolution + real navigation | `resolveWebsiteCtaHref`/`resolvePagePath`/`isExternalHref`, `WebsiteLinkRenderer` seam through Renderer/Header/Footer/Hero/Cta | `src/features/website/utils/link-resolution.utils.ts`, `src/features/website/renderer/website-link-renderer.types.ts` |
+| `@features/website` public barrel | Curated cross-feature export surface (renderer + pure utils) | `src/features/website/index.ts` |
+| Domain types/services/hooks | `AcademyDomainConfiguration`/`PlatformDomainConfiguration`, `DomainService`/`PlatformDomainService`/`InfrastructureService`, 7 hooks | `src/types/domain.types.ts`, `src/features/domain/` |
+| Domain UI | `WebsiteDomainTab` (Academy), `PlatformDomainSettingsPage` (Platform Owner) | `src/features/domain/components/`, `src/features/domain/pages/` |
+| Public runtime service/hooks | `PublicWebsiteService`, `usePublicWebsiteData`, `useDocumentSeo` | `src/features/public-website/services/`, `src/features/public-website/hooks/` |
+| Hostname resolution | `resolvePublicWebsiteContext`/`getCurrentPublicWebsiteContext` | `src/features/public-website/utils/hostname-resolution.utils.ts` |
+| Page/path resolution | `resolvePathToPage` | `src/features/public-website/utils/page-resolution.utils.ts` |
+| SEO/structured-data/sitemap runtime | `generateRobotsTxt`/`generateSitemapXml`, narrowed `buildOrganizationJsonLd`/`buildCourseJsonLd` | `src/features/public-website/utils/robots-sitemap.utils.ts`, `src/features/website/utils/structured-data.utils.ts` |
+| Public route tree | `PublicWebsiteRouter`, `PublicWebsitePage`, `PublicWebsiteStatus`, robots/sitemap routes | `src/features/public-website/PublicWebsiteRouter.tsx`, `src/features/public-website/components/` |
+| Environment | `ENV.platformBaseDomain` (optional, never a fake default) | `src/config/env.config.ts` |
+| Localization | `website` namespace extended (319/319 keys); `validation`/`navigation` extended | `src/localization/resources/{en,ar}/{website,validation,navigation}.json` |
+
+### Tech Decisions
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| CMS gaps closed additively, not rebuilt | New optional fields only; existing content stays editable via the same `SectionConfigForm` | Prompt 9's Page Composer/Section Editor remain the single system, per spec section 3 |
+| No responsive art-direction fields (`mobileImage`/`backgroundImage`) | Deliberately not added | No such infrastructure exists elsewhere in Atlas; avoids over-engineering for an unrequested capability |
+| Blog Post/Announcement excluded as CTA link targets | Only Internal Page / External URL / Course supported | Neither has a public rendering surface today; offering them would be a fake/dead reference |
+| `WebsiteLinkRenderer` as an optional prop, not a context | Explicit, fully-controlled component, caller decides navigation strategy | Keeps every dashboard preview context's behavior byte-for-byte unchanged |
+| Public runtime mounted instead of, never alongside, the dashboard tree | One hostname branch at the top of `AppRouter` | No path collision with Atlas's own `/`; mirrors real edge-routing behavior |
+| `platformBaseDomain` absence ⇒ public runtime provably inert | Early-return in `resolvePublicWebsiteContext` | The literal mechanism behind "must work with no real domain" |
+| `PublicWebsiteService` is a third, separate tree | Not an extension of `WebsiteConfigurationService` | Different auth shape (none) and data contract (published-only); mirrors `InstructorService`/`PlatformPaymentService` precedent |
+| JSON-LD via `textContent`, not `dangerouslySetInnerHTML` | `document.createElement('script').textContent = JSON.stringify(...)` | Strictly safer than the injection pattern the spec cautioned about — never HTML-parsed |
+| robots.txt/sitemap.xml shown as content, not claimed as served | Explicit "future edge layer" boundary documented | A pure SPA cannot control response `Content-Type` for arbitrary paths |
+| Domain/SSL/CDN types reuse Prompt 8's vocabulary | Import `DomainStatus`/`DomainConnection`/etc. verbatim | No duplicate state machine; extends exactly what was missing |
+| `PlatformDomainService` mirrors Trial Policy | Same `initialData`-seeded singleton-config pattern | Established, proven idiom for "one backend-configurable value" |
+
+### Backend Contracts To Document (frontend-defined, backend TBD)
+1. **Public website resolution** — `GET /public/websites/resolve?hostname=...` → `HostnameResolution | 404`; `GET /public/websites/:academyId` → published `WebsiteConfiguration` only; `GET /public/websites/:academyId/pages` / `.../pages/:slug` → published, visible pages only. The backend is the sole authority that draft content never reaches these responses.
+2. **Academy domain configuration** — `GET/POST/DELETE .../website/domain[/custom-domain]`, `POST .../website/domain/verify` → `AcademyDomainConfiguration`. No real DNS/SSL/CDN action is performed by any frontend call; the backend orchestrates real infrastructure (if/when connected) behind these exact contracts.
+3. **Platform domain configuration** — `GET/PATCH /platform-domain` → `PlatformDomainConfiguration`, a singleton resource.
+4. **Infrastructure provider status** — `GET /infrastructure/:provider/status` → `InfrastructureProviderStatus`. Credentials themselves never appear in any request/response body this frontend reads.
+5. **Robots/Sitemap serving** (not implemented; documented for a future edge layer) — the future Cloudflare Worker/backend should call the same `generateRobotsTxt`-equivalent logic (or its backend counterpart) to serve real `Content-Type: text/plain` responses at `/robots.txt`/`/sitemap.xml` for each resolved Academy hostname.
+
+### Security / Tenancy Verification
+- **Hostname trust**: Academy identity is established ONLY via `resolveHostname`'s authoritative backend response; `useParams` is never used anywhere in `@features/public-website` (verified by grep) — a visited hostname can never smuggle an arbitrary `academyId`.
+- **Cross-Academy leakage**: every public hook (`usePublishedWebsite`, `usePublishedPages`, `usePublishedPage`) requires an explicit `academyId` argument with no default; every query key (`publicWebsiteKeys.*`) embeds it or the hostname.
+- **Draft/hidden/archived never public**: `usePublicWebsiteData` checks `configuration.status === 'published'` before ever exposing content; `resolvePathToPage` excludes any page with `visible: false`; `buildSitemapEntries` (Prompt 10, reused unchanged) already excludes drafts/hidden/archived/unpublished content.
+- **No unsafe URL schemes**: `isSafeExternalUrl` rejects `javascript:`/`data:`/`vbscript:`/`file:`, enforced at both the Zod-schema boundary and every inline persist path; verified by grep that no unvalidated `url` field reaches a rendered `href`.
+- **No secrets client-side**: grepped the entire codebase for `CLOUDFLARE`/Cloudflare-token-shaped strings — none found; `InfrastructureProviderStatus` only ever carries a boolean `connected` flag, never a credential.
+- **No fake infrastructure**: grepped `@features/domain`/`@features/public-website` for `setTimeout`/`setInterval` used as progress simulation and for hardcoded "active"/"connected"/"verified" literals — none found.
+- **No new permission vocabulary**: grepped the entire feature, its routes, and its nav config — only the pre-existing `academy.website.view`/`manage` and the `platform_owner` role gate appear anywhere.
+- **Route guard regression check**: 64/64 `RouteGuard` instances across the authenticated router explicitly set `requireAuthentication` (the public runtime's own tree is intentionally ungated — a different tree, never mounted alongside the authenticated one).
+
+### What Is Frontend-Only (No Real Backend/Infrastructure Behind It Yet)
+Every new service method (`PublicWebsiteService`, `DomainService`,
+`PlatformDomainService`, `InfrastructureService`) issues a real HTTP call
+through the existing `apiClient`, consistent with every prior prompt.
+There is no real DNS record creation, SSL certificate issuance, CDN
+configuration, or Cloudflare account connection behind any of it — every
+status defaults to "not configured," and the frontend never marks any of
+it active on its own. `robots.txt`/`sitemap.xml` show real, correctly
+generated content but are not genuinely served with correct HTTP
+semantics from this pure client SPA — that remains a future edge/backend
+layer's responsibility, built to consume exactly the contracts
+documented above.
+
+### Scope Boundary
+Explicitly not implemented in Prompt 11: any real domain purchase/
+registration, real DNS record creation or mutation, real SSL certificate
+issuance, real CDN/Cloudflare account connection or configuration, real
+`Content-Type: text/plain` HTTP serving of `robots.txt`/`sitemap.xml`
+(shown as content only), Blog Post/Announcement as public website link
+targets (no public rendering surface exists for either), responsive
+art-direction image fields (`mobileImage`/`backgroundImage`), a second
+Page Composer/Section Editor/renderer/CMS/authorization/upload system,
+and any new permission beyond the pre-existing `academy.website.*`
+vocabulary and `platform_owner` role. These remain explicitly future
+work — the point of this prompt's architecture is that a real Atlas
+domain and Cloudflare account can be connected later, and a real edge/
+worker layer built, entirely behind the contracts and boundaries
+established here, without the frontend needing a rewrite.
 

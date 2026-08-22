@@ -96,6 +96,7 @@ export const DASHBOARD_ROUTES = {
   tenantAddOns: '/dashboard/tenant/add-ons',
 
   platformTrialPolicy: '/dashboard/platform/trial',
+  platformDomain: '/dashboard/platform/domain',
 
   tenantBilling: '/dashboard/tenant/billing',
   tenantBillingCheckout:

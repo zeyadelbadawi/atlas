@@ -23,7 +23,7 @@ export function AboutSection({ config }: AboutSectionProps): JSX.Element {
         {config.image ? (
           <img
             src={config.image}
-            alt=""
+            alt={config.imageAlt ?? ''}
             className="aspect-[4/3] w-full object-cover"
             style={{ borderRadius: 'var(--website-radius)' }}
           />

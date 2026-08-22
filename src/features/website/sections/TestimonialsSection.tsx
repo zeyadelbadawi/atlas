@@ -45,6 +45,8 @@ export function TestimonialsSection({ config, academyId }: TestimonialsSectionPr
       authorName: entry.authorName,
       authorRole: entry.authorRole ? entry.authorRole[language] || entry.authorRole.en : undefined,
       avatar: entry.avatar,
+      // Library entries have no dedicated `avatarAlt` field (Prompt 10) — the author's own name is a reasonable, honest alt for a portrait photo.
+      avatarAlt: entry.authorName,
     }));
 
   const allItems = [...libraryItems, ...config.items];
@@ -63,7 +65,11 @@ export function TestimonialsSection({ config, academyId }: TestimonialsSectionPr
             </blockquote>
             <figcaption className="mt-4 flex items-center gap-3">
               {item.avatar ? (
-                <img src={item.avatar} alt="" className="size-9 rounded-full object-cover" />
+                <img
+                  src={item.avatar}
+                  alt={item.avatarAlt ?? item.authorName}
+                  className="size-9 rounded-full object-cover"
+                />
               ) : null}
               <div>
                 <p className="text-sm font-medium text-foreground">{item.authorName}</p>

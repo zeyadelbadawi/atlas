@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
 import { useUpdateWebsiteConfiguration } from '../hooks';
+import { isSafeExternalUrl } from '../utils/url-safety.utils';
 import type {
   WebsiteConfiguration,
   WebsiteFooterLink,
@@ -89,10 +90,17 @@ export function WebsiteNavigationTab({
     persistNavigation(reorder(sortedNav, index, direction));
   };
 
-  const updateHeaderCta = (ctaLabel: string, ctaPageId: string | undefined) => {
+  const updateHeaderCta = (
+    ctaLabel: string,
+    target: { pageId?: string; url?: string }
+  ) => {
+    if (target.url !== undefined && !isSafeExternalUrl(target.url)) {
+      toast({ title: t('validation:invalidUrl'), variant: 'destructive' });
+      return;
+    }
     updateConfig.mutate({
       academyId,
-      payload: { header: ctaLabel ? { cta: { label: ctaLabel, pageId: ctaPageId } } : {} },
+      payload: { header: ctaLabel ? { cta: { label: ctaLabel, ...target } } : {} },
     });
   };
 
@@ -112,6 +120,10 @@ export function WebsiteNavigationTab({
   };
 
   const updateSocialLink = (id: string, patch: Partial<WebsiteFooterLink>) => {
+    if (patch.url !== undefined && !isSafeExternalUrl(patch.url)) {
+      toast({ title: t('validation:invalidUrl'), variant: 'destructive' });
+      return;
+    }
     const links = configuration.footer.socialLinks.map((link) =>
       link.id === id ? { ...link, ...patch } : link
     );
@@ -192,30 +204,68 @@ export function WebsiteNavigationTab({
               id="header-cta-label"
               defaultValue={configuration.header.cta?.label ?? ''}
               onBlur={(event) =>
-                updateHeaderCta(event.target.value, configuration.header.cta?.pageId)
+                updateHeaderCta(event.target.value, {
+                  pageId: configuration.header.cta?.pageId,
+                  url: configuration.header.cta?.url,
+                })
               }
             />
           </div>
           <div className="space-y-1.5">
-            <Label>{t('website:navigation.ctaTarget')}</Label>
+            <Label>{t('website:fields.linkType')}</Label>
             <Select
-              value={configuration.header.cta?.pageId}
-              onValueChange={(pageId) =>
-                updateHeaderCta(configuration.header.cta?.label ?? '', pageId)
+              value={configuration.header.cta?.url ? 'external' : 'page'}
+              onValueChange={(type) =>
+                updateHeaderCta(
+                  configuration.header.cta?.label ?? '',
+                  type === 'external' ? { url: '' } : { pageId: undefined }
+                )
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder={t('website:navigation.ctaTargetPlaceholder')} />
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {navigablePages.map((page) => (
-                  <SelectItem key={page.id} value={page.id}>
-                    {page.title}
-                  </SelectItem>
-                ))}
+                <SelectItem value="page">{t('website:fields.linkTypePage')}</SelectItem>
+                <SelectItem value="external">{t('website:fields.linkTypeExternal')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
+          {configuration.header.cta?.url !== undefined ? (
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label htmlFor="header-cta-url">{t('website:navigation.ctaTarget')}</Label>
+              <Input
+                id="header-cta-url"
+                dir="ltr"
+                placeholder="https://example.com"
+                defaultValue={configuration.header.cta?.url ?? ''}
+                onBlur={(event) =>
+                  updateHeaderCta(configuration.header.cta?.label ?? '', { url: event.target.value })
+                }
+              />
+            </div>
+          ) : (
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label>{t('website:navigation.ctaTarget')}</Label>
+              <Select
+                value={configuration.header.cta?.pageId}
+                onValueChange={(pageId) =>
+                  updateHeaderCta(configuration.header.cta?.label ?? '', { pageId })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={t('website:navigation.ctaTargetPlaceholder')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {navigablePages.map((page) => (
+                    <SelectItem key={page.id} value={page.id}>
+                      {page.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </CardContent>
       </Card>
 

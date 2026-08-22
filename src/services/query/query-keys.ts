@@ -34,6 +34,10 @@ export const QUERY_KEY_ROOTS = {
   subdomain: ['subdomain'] as const,
   platformProvisioning: ['platform-provisioning'] as const,
   website: ['website'] as const,
+  domain: ['domain'] as const,
+  platformDomain: ['platform-domain'] as const,
+  infrastructure: ['infrastructure'] as const,
+  publicWebsite: ['public-website'] as const,
 } as const;
 
 /**
@@ -462,4 +466,49 @@ export const websiteKeys = {
     [...websiteKeys.all, 'testimonial-entries', academyId, query] as const,
   testimonialEntry: (academyId: string | undefined, entryId: string) =>
     [...websiteKeys.all, 'testimonial-entry', academyId, entryId] as const,
+} as const;
+
+/**
+ * Query keys for an Academy's domain configuration (Prompt 11).
+ * Academy-scoped — same technique `websiteKeys` already uses.
+ */
+export const domainKeys = {
+  all: QUERY_KEY_ROOTS.domain,
+  configuration: (academyId: string | undefined) =>
+    [...domainKeys.all, 'configuration', academyId] as const,
+} as const;
+
+/**
+ * Query keys for the Atlas-wide platform base-domain configuration
+ * (Prompt 11) — deliberately unscoped, the same singleton-config
+ * technique `planKeys.trialPolicy` already established.
+ */
+export const platformDomainKeys = {
+  all: QUERY_KEY_ROOTS.platformDomain,
+  configuration: () => [...platformDomainKeys.all, 'configuration'] as const,
+} as const;
+
+/** Query keys for infrastructure-provider status (Prompt 11) — unscoped, account-level. */
+export const infrastructureKeys = {
+  all: QUERY_KEY_ROOTS.infrastructure,
+  providerStatus: (provider: string) => [...infrastructureKeys.all, 'provider-status', provider] as const,
+} as const;
+
+/**
+ * Query keys for the PUBLIC website runtime (Prompt 11). These are
+ * deliberately NOT scoped by any authenticated session identity (a
+ * visitor has none) — Academy isolation instead comes from `academyId`/
+ * `hostname` being embedded directly in every key, exactly like every
+ * other Academy-scoped key tree in this codebase embeds its own scope
+ * id. A request resolved for Academy A can never read Academy B's cached
+ * entry because their keys are never equal.
+ */
+export const publicWebsiteKeys = {
+  all: QUERY_KEY_ROOTS.publicWebsite,
+  hostnameResolution: (hostname: string) => [...publicWebsiteKeys.all, 'resolve', hostname] as const,
+  configuration: (academyId: string | undefined) =>
+    [...publicWebsiteKeys.all, 'configuration', academyId] as const,
+  pages: (academyId: string | undefined) => [...publicWebsiteKeys.all, 'pages', academyId] as const,
+  page: (academyId: string | undefined, slug: string) =>
+    [...publicWebsiteKeys.all, 'page', academyId, slug] as const,
 } as const;

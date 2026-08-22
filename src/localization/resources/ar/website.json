@@ -72,6 +72,106 @@
       "manageAction": "إدارة الإعلانات"
     }
   },
+  "domain": {
+    "subdomain": {
+      "title": "النطاق الفرعي في أطلس",
+      "notConfigured": "لم يتم تهيئة نطاق منصة أطلس بعد، لذا لا يتوفر عنوان نطاق فرعي لموقعك. سيظهر هذا تلقائيًا بمجرد تهيئته.",
+      "status": {
+        "suggested": "مقترح",
+        "available": "متاح",
+        "unavailable": "غير متاح",
+        "reserved": "محجوز",
+        "assigned": "نشط"
+      }
+    },
+    "custom": {
+      "title": "نطاق مخصص",
+      "empty": "لم تقم بربط نطاق مخصص بعد.",
+      "addAction": "ربط نطاق",
+      "added": "بدأ ربط النطاق",
+      "addError": "فشل بدء ربط هذا النطاق",
+      "hostnameLabel": "النطاق",
+      "removeAction": "فصل",
+      "removeConfirmTitle": "هل تريد فصل هذا النطاق؟",
+      "removeConfirmDescription": "سيعود موقعك إلى نطاقه الفرعي في أطلس. يمكن إعادة ربطه لاحقًا.",
+      "removeError": "فشل فصل هذا النطاق",
+      "verifyAction": "التحقق من الحالة",
+      "verifyError": "فشل التحقق من الحالة",
+      "dnsInstructionsTitle": "سجلات DNS المطلوب إضافتها",
+      "dnsType": "النوع",
+      "dnsName": "الاسم",
+      "dnsValue": "القيمة",
+      "status": {
+        "not_configured": "غير مهيأ",
+        "pending": "معلّق",
+        "verification_required": "التحقق مطلوب",
+        "verifying": "جارٍ التحقق…",
+        "connected": "متصل",
+        "failed": "فشل",
+        "disconnected": "غير متصل"
+      }
+    },
+    "infrastructure": {
+      "title": "البنية التحتية",
+      "ssl": "شهادة SSL",
+      "cdn": "شبكة توصيل المحتوى",
+      "provider": "مزود البنية التحتية",
+      "providerConnected": "متصل",
+      "providerNotConnected": "غير متصل",
+      "sslStatus": {
+        "not_configured": "غير مهيأ",
+        "pending": "معلّق",
+        "provisioning": "جارٍ التهيئة…",
+        "active": "نشط",
+        "failed": "فشل",
+        "expired": "منتهي الصلاحية"
+      },
+      "cdnStatus": {
+        "not_configured": "غير مهيأ",
+        "active": "نشط",
+        "degraded": "متدهور",
+        "error": "خطأ"
+      }
+    }
+  },
+  "platformDomain": {
+    "title": "نطاق المنصة",
+    "subtitle": "تهيئة النطاق الأساسي الذي تُشتق منه النطاقات الفرعية للأكاديميات.",
+    "formTitle": "النطاق الأساسي",
+    "baseDomainLabel": "النطاق",
+    "baseDomainHelp": "بمجرد تعيينه، تصبح أكاديمية معرّفها \"harvard\" متاحة عبر \"harvard.{{baseDomain}}\" — هذا الحقل لا يقوم بأي إعداد DNS حقيقي بحد ذاته.",
+    "status": {
+      "configured": "مهيأ",
+      "notConfigured": "غير مهيأ"
+    },
+    "success": "تم حفظ نطاق المنصة",
+    "error": "فشل حفظ نطاق المنصة",
+    "unsavedChanges": "لديك تغييرات غير محفوظة على نطاق المنصة.",
+    "infrastructureTitle": "مزود البنية التحتية",
+    "infrastructureHelp": "ما إذا كان لدى خادم أطلس بيانات اعتماد Cloudflare حقيقية مهيأة حاليًا. هذه حالة للقراءة فقط — لا يتم إدخال بيانات الاعتماد هنا أو عرضها في لوحة التحكم أبدًا.",
+    "providerConnected": "متصل",
+    "providerNotConnected": "غير متصل"
+  },
+  "public": {
+    "poweredBy": "مُشغَّل بواسطة أطلس",
+    "notFound": {
+      "title": "الموقع غير موجود",
+      "description": "لم نتمكن من العثور على موقع بهذا العنوان."
+    },
+    "unavailable": {
+      "title": "غير متاح مؤقتًا",
+      "description": "تعذّر الوصول إلى هذا الموقع حاليًا. يُرجى المحاولة مرة أخرى بعد قليل."
+    },
+    "unpublished": {
+      "title": "قريبًا",
+      "description": "لم يتم نشر هذا الموقع بعد."
+    },
+    "pageNotFound": {
+      "title": "الصفحة غير موجودة",
+      "description": "هذه الصفحة غير موجودة أو لم تعد متاحة.",
+      "homeAction": "الذهاب إلى الصفحة الرئيسية"
+    }
+  },
   "settings": {
     "title": "الموقع الإلكتروني",
     "subtitle": "تهيئة موقع أكاديميتك الإلكتروني — القالب والهوية البصرية وتحسين محركات البحث والتنقل.",
@@ -79,7 +179,8 @@
       "theme": "القالب",
       "brand": "الهوية البصرية",
       "seo": "تحسين محركات البحث",
-      "navigation": "التنقل"
+      "navigation": "التنقل",
+      "domain": "النطاق"
     }
   },
   "theme": {
@@ -239,15 +340,23 @@
     "contact": { "label": "التواصل" }
   },
   "fields": {
+    "eyebrow": "النص التمهيدي",
     "title": "العنوان",
     "subtitle": "العنوان الفرعي",
     "description": "الوصف",
     "body": "المحتوى",
     "image": "الصورة",
+    "imageAlt": "وصف الصورة (نص بديل)",
+    "avatarAlt": "وصف الصورة الشخصية (نص بديل)",
     "primaryCta": "الزر الأساسي",
     "secondaryCta": "الزر الثانوي",
     "ctaLabelPlaceholder": "نص الزر",
     "ctaTargetPlaceholder": "يرتبط بصفحة",
+    "ctaCoursePlaceholder": "يرتبط بدورة",
+    "linkType": "نوع الرابط",
+    "linkTypePage": "صفحة داخلية",
+    "linkTypeExternal": "رابط خارجي",
+    "linkTypeCourse": "دورة",
     "mode": "المصدر",
     "modeLatest": "أحدث الدورات",
     "modeSelected": "دورات مختارة",

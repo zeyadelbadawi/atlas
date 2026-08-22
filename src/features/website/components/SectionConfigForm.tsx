@@ -34,8 +34,10 @@ import { useWebsiteFaqEntries, useWebsiteTestimonialEntries } from '../hooks';
 import { SECTION_FIELD_SCHEMAS } from '../sections/section-fields.registry';
 import { getSectionConfigSchema } from '../schemas/website-section.schemas';
 import { MAX_SECTION_ITEMS } from '../constants/website.constants';
+import { isSafeExternalUrl } from '../utils/url-safety.utils';
+import { useCourses } from '@features/course';
 import type { SectionFieldDescriptor } from '../sections/section-field.types';
-import type { LanguageCode, SectionConfigMap, SectionType, WebsitePage } from '@types';
+import type { LanguageCode, SectionConfigMap, SectionType, WebsiteCta, WebsitePage } from '@types';
 
 type DraftValue = Record<string, unknown>;
 
@@ -153,27 +155,81 @@ function TestimonialLibraryField({
   );
 }
 
+/** Which target kind a CTA currently points to — derived from which field is populated, never stored separately (see `WebsiteCta`'s doc comment). */
+type CtaLinkType = 'page' | 'external' | 'course';
+
+function inferLinkType(value: Partial<WebsiteCta> | undefined): CtaLinkType {
+  if (value?.courseId) return 'course';
+  if (value?.url) return 'external';
+  return 'page';
+}
+
+/**
+ * The one editor for every CTA in the Section Registry (Hero primary/
+ * secondary, CTA banner). Exposes a Link Type selector so a tenant picks
+ * an internal page, a real Course, or types an external URL — rather
+ * than `url` being a silently unreachable field, as it was before Prompt
+ * 11 (see `Reports/ARCHITECTURE.md`, Prompt 11, "CTA Editor Gap").
+ */
 function CtaFieldEditor({
   value,
   onChange,
   labelKey,
   pages,
+  academyId,
 }: {
-  readonly value: { label?: string; pageId?: string } | undefined;
-  readonly onChange: (next: { label: string; pageId?: string } | undefined) => void;
+  readonly value: Partial<WebsiteCta> | undefined;
+  readonly onChange: (next: Partial<WebsiteCta> | undefined) => void;
   readonly labelKey: string;
   readonly pages: readonly WebsitePage[];
+  readonly academyId: string;
 }): JSX.Element {
   const { t } = useTranslation();
+  const linkType = inferLinkType(value);
+  const urlValue = value?.url ?? '';
+  const urlError = urlValue && !isSafeExternalUrl(urlValue);
+
+  const { data: coursesData } = useCourses(academyId, {
+    query: {
+      pagination: { page: 1, pageSize: 100 },
+      filters: { status: 'published' },
+    },
+  });
+  const courses = coursesData?.items ?? [];
+
+  const setLinkType = (type: CtaLinkType) => {
+    // Switching target kind clears the other kinds' fields — a CTA
+    // never carries a stale pageId/url/courseId from a previous choice.
+    const base = { label: value?.label ?? '' };
+    if (type === 'page') onChange(base);
+    else if (type === 'external') onChange({ ...base, url: '' });
+    else onChange({ ...base, courseId: '' });
+  };
+
   return (
-    <div className="space-y-2 rounded-md border border-border p-3">
+    <div className="space-y-3 rounded-md border border-border p-3">
       <p className="text-sm font-medium text-foreground">{t(labelKey)}</p>
-      <div className="grid gap-2 sm:grid-cols-2">
-        <Input
-          placeholder={t('website:fields.ctaLabelPlaceholder')}
-          value={value?.label ?? ''}
-          onChange={(event) => onChange({ label: event.target.value, pageId: value?.pageId })}
-        />
+      <Input
+        placeholder={t('website:fields.ctaLabelPlaceholder')}
+        value={value?.label ?? ''}
+        onChange={(event) => onChange({ ...value, label: event.target.value })}
+      />
+
+      <div className="space-y-1.5">
+        <Label>{t('website:fields.linkType')}</Label>
+        <Select value={linkType} onValueChange={(next) => setLinkType(next as CtaLinkType)}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="page">{t('website:fields.linkTypePage')}</SelectItem>
+            <SelectItem value="external">{t('website:fields.linkTypeExternal')}</SelectItem>
+            <SelectItem value="course">{t('website:fields.linkTypeCourse')}</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {linkType === 'page' ? (
         <Select
           value={value?.pageId}
           onValueChange={(pageId) => onChange({ label: value?.label ?? '', pageId })}
@@ -189,7 +245,39 @@ function CtaFieldEditor({
             ))}
           </SelectContent>
         </Select>
-      </div>
+      ) : null}
+
+      {linkType === 'course' ? (
+        <Select
+          value={value?.courseId}
+          onValueChange={(courseId) => onChange({ label: value?.label ?? '', courseId })}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder={t('website:fields.ctaCoursePlaceholder')} />
+          </SelectTrigger>
+          <SelectContent>
+            {courses.map((course) => (
+              <SelectItem key={course.id} value={course.id}>
+                {course.title}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      ) : null}
+
+      {linkType === 'external' ? (
+        <div className="space-y-1">
+          <Input
+            dir="ltr"
+            placeholder="https://example.com"
+            value={urlValue}
+            onChange={(event) => onChange({ label: value?.label ?? '', url: event.target.value })}
+          />
+          {urlError ? (
+            <p className="text-xs text-destructive">{t('validation:invalidUrl')}</p>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -332,7 +420,8 @@ export function SectionConfigForm<TType extends SectionType>({
             key={field.key}
             labelKey={field.labelKey}
             pages={pages}
-            value={draft[field.key] as { label?: string; pageId?: string } | undefined}
+            academyId={academyId}
+            value={draft[field.key] as Partial<WebsiteCta> | undefined}
             onChange={(value) => setField(field.key, value)}
           />
         ) : (

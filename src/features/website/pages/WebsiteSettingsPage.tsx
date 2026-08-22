@@ -12,6 +12,7 @@ import { ErrorState } from '@components/feedback';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAcademy } from '@features/academy';
+import { WebsiteDomainTab } from '@features/domain';
 import { useWebsiteConfiguration, useWebsitePages } from '../hooks';
 import { WebsitePublishBar } from '../components/WebsitePublishBar';
 import { WebsiteThemeTab } from '../components/WebsiteThemeTab';
@@ -78,6 +79,7 @@ export default function WebsiteSettingsPage(): JSX.Element {
             <TabsTrigger value="brand">{t('website:settings.tabs.brand')}</TabsTrigger>
             <TabsTrigger value="seo">{t('website:settings.tabs.seo')}</TabsTrigger>
             <TabsTrigger value="navigation">{t('website:settings.tabs.navigation')}</TabsTrigger>
+            <TabsTrigger value="domain">{t('website:settings.tabs.domain')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="theme" className="pt-4">
@@ -104,6 +106,10 @@ export default function WebsiteSettingsPage(): JSX.Element {
               configuration={configuration}
               pages={pages}
             />
+          </TabsContent>
+
+          <TabsContent value="domain" className="pt-4">
+            <WebsiteDomainTab academyId={academyId} academySlug={academy.slug} />
           </TabsContent>
         </Tabs>
       </div>
