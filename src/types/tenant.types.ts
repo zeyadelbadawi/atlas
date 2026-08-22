@@ -14,6 +14,7 @@ import type {
   PlanFeatures,
   PlanResourceLimits,
 } from './plan.types';
+import type { SubscriptionBillingCycle } from './money.types';
 
 /** A tenant subscription's lifecycle state. Named distinctly from the pre-existing, user-scoped `SubscriptionStatus` in `billing.types.ts` (see that file's doc comment for the distinction). */
 export type TenantSubscriptionStatus =
@@ -38,6 +39,14 @@ export interface TenantSubscription {
   readonly currentPeriodStart?: string;
   readonly currentPeriodEnd?: string;
   readonly cancelAtPeriodEnd: boolean;
+  /**
+   * The billing cycle this subscription is on. Optional because a
+   * subscription can exist before any real Checkout ever set one (e.g. a
+   * trial seeded with no billing cycle yet) — added in Prompt 7 alongside
+   * real Checkout; Prompt 6 had no commercial pricing contract that would
+   * have populated it.
+   */
+  readonly billingCycle?: SubscriptionBillingCycle;
 }
 
 /** One resource's usage against its (possibly unlimited) limit. */

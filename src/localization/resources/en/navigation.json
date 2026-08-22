@@ -47,7 +47,9 @@
     "tenantSubscription": "Subscription",
     "tenantUsage": "Usage",
     "tenantAddOns": "Add-ons",
-    "platformTrialPolicy": "Trial Policy"
+    "platformTrialPolicy": "Trial Policy",
+    "tenantBilling": "Billing",
+    "platformPayments": "Payment Review"
   },
   "account": {
     "menu": "Account menu",

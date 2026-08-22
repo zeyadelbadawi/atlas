@@ -96,6 +96,16 @@ export const DASHBOARD_ROUTES = {
   tenantAddOns: '/dashboard/tenant/add-ons',
 
   platformTrialPolicy: '/dashboard/platform/trial',
+
+  tenantBilling: '/dashboard/tenant/billing',
+  tenantBillingCheckout:
+    '/dashboard/tenant/billing/checkout/:targetType/:targetKey',
+  tenantBillingPayments: '/dashboard/tenant/billing/payments',
+  tenantBillingPaymentDetail: '/dashboard/tenant/billing/payments/:paymentId',
+  tenantBillingInvoices: '/dashboard/tenant/billing/invoices',
+
+  platformPayments: '/dashboard/platform/payments',
+  platformPaymentDetail: '/dashboard/platform/payments/:paymentId',
 } as const;
 
 /** System paths that exist outside the product modules. */

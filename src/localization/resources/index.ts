@@ -31,6 +31,7 @@ import enAnnouncements from './en/announcements.json';
 import enBlog from './en/blog.json';
 import enForum from './en/forum.json';
 import enTenant from './en/tenant.json';
+import enPayments from './en/payments.json';
 
 import arCommon from './ar/common.json';
 import arNavigation from './ar/navigation.json';
@@ -55,6 +56,7 @@ import arAnnouncements from './ar/announcements.json';
 import arBlog from './ar/blog.json';
 import arForum from './ar/forum.json';
 import arTenant from './ar/tenant.json';
+import arPayments from './ar/payments.json';
 
 /** One language's resources, keyed by namespace. */
 type NamespaceBundle = Record<TranslationNamespace, Record<string, unknown>>;
@@ -86,6 +88,7 @@ export const TRANSLATION_RESOURCES: Readonly<
     blog: enBlog,
     forum: enForum,
     tenant: enTenant,
+    payments: enPayments,
   },
   ar: {
     common: arCommon,
@@ -111,5 +114,6 @@ export const TRANSLATION_RESOURCES: Readonly<
     blog: arBlog,
     forum: arForum,
     tenant: arTenant,
+    payments: arPayments,
   },
 });

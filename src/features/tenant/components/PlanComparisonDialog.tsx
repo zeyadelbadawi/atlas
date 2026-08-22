@@ -5,9 +5,15 @@
  * from the Subscription, Usage and Add-ons pages whenever the user needs to
  * see "what would change" after reaching a limit or missing a feature.
  *
- * Deliberately has no "Upgrade" submit action — Prompt 6 has no payment
- * provider, so this dialog never claims a plan change happened. The footer
- * says so explicitly (see `tenant:planComparison.footerNote`).
+ * `onSelectPlan` is optional and, when provided (Prompt 7's
+ * `TenantSubscriptionPage`), adds a "Select this plan" action per plan
+ * that starts Checkout — it still never submits a plan change itself, so
+ * this dialog never claims a plan change happened on its own; only an
+ * authoritative, backend-confirmed Payment does that (see
+ * `Reports/ARCHITECTURE.md`, Prompt 7, "Payment Is Not Subscription").
+ * Callers that omit `onSelectPlan` (Usage/Add-ons pages, showing this
+ * purely as "what would fix this gap") keep the original read-only
+ * behavior unchanged.
  */
 import { useTranslation } from 'react-i18next';
 import { Check, X } from 'lucide-react';
@@ -20,6 +26,7 @@ import {
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@components/data-display';
 import { cn } from '@utils';
 import {
@@ -37,6 +44,8 @@ export interface PlanComparisonDialogProps {
   readonly isLoading?: boolean;
   /** The Tenant's current plan key, so it can be marked in the comparison. */
   readonly currentPlanKey?: string;
+  /** When provided, renders a "Select this plan" action per non-current, active plan that starts Checkout. */
+  readonly onSelectPlan?: (plan: Plan) => void;
 }
 
 export function PlanComparisonDialog({
@@ -45,6 +54,7 @@ export function PlanComparisonDialog({
   plans,
   isLoading = false,
   currentPlanKey,
+  onSelectPlan,
 }: PlanComparisonDialogProps): JSX.Element {
   const { t } = useTranslation();
   const unlimitedLabel = t('tenant:common.unlimited');
@@ -157,6 +167,18 @@ export function PlanComparisonDialog({
                       );
                     })}
                   </div>
+
+                  {onSelectPlan && plan.key !== currentPlanKey ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="mt-auto"
+                      disabled={plan.status !== 'active'}
+                      onClick={() => onSelectPlan(plan)}
+                    >
+                      {t('tenant:planComparison.selectPlan')}
+                    </Button>
+                  ) : null}
                 </div>
               ))}
             </div>
@@ -164,7 +186,11 @@ export function PlanComparisonDialog({
         </ScrollArea>
 
         <p className="text-xs text-muted-foreground">
-          {t('tenant:planComparison.footerNote')}
+          {t(
+            onSelectPlan
+              ? 'tenant:planComparison.selectableFooterNote'
+              : 'tenant:planComparison.footerNote'
+          )}
         </p>
       </DialogContent>
     </Dialog>

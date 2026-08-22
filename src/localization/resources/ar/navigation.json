@@ -47,7 +47,9 @@
     "tenantSubscription": "الاشتراك",
     "tenantUsage": "الاستخدام",
     "tenantAddOns": "الإضافات",
-    "platformTrialPolicy": "سياسة الفترة التجريبية"
+    "platformTrialPolicy": "سياسة الفترة التجريبية",
+    "tenantBilling": "الفواتير والمدفوعات",
+    "platformPayments": "مراجعة المدفوعات"
   },
   "account": {
     "menu": "قائمة الحساب",

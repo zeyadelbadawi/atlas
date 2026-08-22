@@ -1,0 +1,162 @@
+{
+  "common": {
+    "billingCycle": {
+      "monthly": "Monthly",
+      "yearly": "Yearly"
+    },
+    "billingCycleShort": {
+      "monthly": "mo",
+      "yearly": "yr"
+    },
+    "methodType": {
+      "label": "Method",
+      "manual_bank_transfer": "Bank transfer",
+      "manual_wallet_transfer": "Wallet transfer",
+      "gateway": "Online payment"
+    }
+  },
+  "overview": {
+    "title": "Billing",
+    "subtitle": "Payments that need your attention, and quick access to your history and invoices.",
+    "currentPlan": "Current plan",
+    "manageSubscription": "Manage subscription",
+    "needsAttentionTitle": "Needs attention",
+    "viewAllPayments": "View all payments",
+    "noAttentionNeeded": "Nothing needs your attention right now",
+    "invoicesLink": "Invoices",
+    "invoicesLinkDescription": "View issued and paid invoices",
+    "addOnsLink": "Add-ons",
+    "addOnsLinkDescription": "Browse and purchase available add-ons"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "subtitle": "Review what you're purchasing before choosing a payment method.",
+    "reviewTitle": "Review your order",
+    "reviewPlanDescription": "You're changing your organization's plan.",
+    "reviewAddOnDescription": "You're purchasing an add-on for your organization.",
+    "billingCycleLabel": "Billing cycle",
+    "startingCheckout": "Starting checkout…",
+    "startCheckout": "Start checkout",
+    "summaryTitle": "Order summary",
+    "paymentMethodTitle": "Payment method",
+    "methodUnavailable": "Not available yet",
+    "creatingPayment": "Creating payment…",
+    "continueToPayment": "Continue to payment"
+  },
+  "paymentHistory": {
+    "title": "Payment History",
+    "subtitle": "Every payment made for your organization.",
+    "table": {
+      "amount": "Amount",
+      "method": "Method",
+      "status": "Status",
+      "reviewStatus": "Review",
+      "createdAt": "Date"
+    },
+    "emptyState": "No payments yet",
+    "emptyStateDescription": "Payments you make will appear here."
+  },
+  "invoices": {
+    "title": "Invoices",
+    "subtitle": "Invoices issued for your organization.",
+    "table": {
+      "number": "Invoice",
+      "status": "Status",
+      "amount": "Amount",
+      "issuedAt": "Issued",
+      "paidAt": "Paid"
+    },
+    "status": {
+      "draft": "Draft",
+      "issued": "Issued",
+      "paid": "Paid",
+      "void": "Void"
+    },
+    "emptyState": "No invoices yet",
+    "emptyStateDescription": "Invoices issued for your organization will appear here."
+  },
+  "payment": {
+    "title": "Payment",
+    "subtitle": "Full detail for one payment, however it was made.",
+    "reference": "Reference",
+    "createdAt": "Created",
+    "status": {
+      "created": "Created",
+      "pending": "Pending",
+      "processing": "Processing",
+      "requires_action": "Action required",
+      "requires_confirmation": "Confirmation required",
+      "succeeded": "Succeeded",
+      "failed": "Failed",
+      "cancelled": "Cancelled",
+      "expired": "Expired"
+    },
+    "reviewStatus": {
+      "not_required": "Not required",
+      "pending": "Awaiting review",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "attemptsTitle": "Attempts",
+    "attemptLabel": "Attempt {{number}}",
+    "attemptStatus": {
+      "initiated": "Initiated",
+      "processing": "Processing",
+      "failed": "Failed",
+      "succeeded": "Succeeded",
+      "cancelled": "Cancelled",
+      "expired": "Expired"
+    },
+    "succeededMessage": "This payment succeeded. Your subscription has been updated.",
+    "failedMessage": "This payment failed. You can start a new checkout to try again.",
+    "awaitingReviewTitle": "Awaiting review",
+    "awaitingReviewDescription": "Your proof of payment has been submitted and is awaiting review by our team. This can take a little time — you don't need to do anything else.",
+    "viewProof": "View submitted proof",
+    "instructionsTitle": "Transfer instructions",
+    "bankName": "Bank",
+    "accountName": "Account name",
+    "accountNumber": "Account number",
+    "iban": "IBAN",
+    "walletProvider": "Wallet",
+    "walletNumber": "Wallet number",
+    "uploadProofTitle": "Proof of payment",
+    "chooseFile": "Choose file",
+    "proofNotePlaceholder": "Add a note for the reviewer (optional)",
+    "submittingProof": "Submitting…",
+    "submitProof": "Submit for review",
+    "proofTooLarge": "The file is too large.",
+    "proofInvalidType": "This file type isn't supported. Use PNG, JPG or PDF.",
+    "redirectDescription": "You'll be taken to a secure page to complete this payment.",
+    "continueToProvider": "Continue to secure payment",
+    "processingMessage": "This payment is being processed. This page updates automatically.",
+    "refreshStatus": "Refresh status",
+    "cancelPayment": "Cancel payment"
+  },
+  "platformReview": {
+    "title": "Payment Review",
+    "subtitle": "Manual payments awaiting review, across every organization.",
+    "detailTitle": "Review Payment",
+    "detailSubtitle": "Approve or reject this manual payment.",
+    "organization": "Organization",
+    "table": {
+      "organization": "Organization",
+      "amount": "Amount",
+      "method": "Method",
+      "status": "Status",
+      "reviewStatus": "Review",
+      "submittedAt": "Submitted"
+    },
+    "filterAll": "All",
+    "emptyState": "No payments to review",
+    "emptyStateDescription": "Payments matching this filter will appear here.",
+    "alreadyReviewed": "This payment has already been reviewed and can no longer be approved or rejected.",
+    "selfReviewBlocked": "This payment belongs to your own organization. You cannot review your own organization's payments.",
+    "readOnlyNotice": "You have permission to view this payment, but not to approve or reject it.",
+    "approveTitle": "Approve",
+    "notesOptionalLabel": "Notes (optional)",
+    "approveAction": "Approve payment",
+    "rejectTitle": "Reject",
+    "notesRequiredLabel": "Reason for rejection",
+    "rejectAction": "Reject payment"
+  }
+}

@@ -4,17 +4,22 @@
  * Lists the Add-ons active on the Tenant's subscription (`TenantAddOn`,
  * from `TenantService`) separately from the full catalog (`AddOn`, from
  * `PlanService`) — the two are different resources with different scopes
- * (see `Reports/ARCHITECTURE.md`, Prompt 6). No purchase action exists: an
- * available Add-on is described, never sold, since no payment provider
- * exists.
+ * (see `Reports/ARCHITECTURE.md`, Prompt 6). Since Prompt 7, a compatible
+ * available Add-on now has a real "Purchase" action that starts Checkout
+ * (`/dashboard/tenant/billing/checkout/add_on/:addOnKey`) — this page
+ * itself still never sells anything or claims a purchase happened; only
+ * an authoritative, backend-confirmed Payment activates an Add-on.
  */
 import { useTranslation } from 'react-i18next';
-import { Boxes } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Boxes, ShoppingCart } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState, EmptyState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import {
   useAddOnCatalog,
   useTenantAddOns,
@@ -54,6 +59,7 @@ function AddOnEffectSummary({ addOn }: { readonly addOn: AddOn }): JSX.Element {
 
 export default function TenantAddOnsPage(): JSX.Element {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const activeAddOnsQuery = useTenantAddOns();
   const catalogQuery = useAddOnCatalog();
@@ -200,11 +206,32 @@ export default function TenantAddOnsPage(): JSX.Element {
                       <p className="text-sm text-foreground">
                         <AddOnEffectSummary addOn={addOn} />
                       </p>
-                      <p className="text-xs text-muted-foreground">
-                        {compatible
-                          ? t('tenant:addOns.contactToActivate')
-                          : t('tenant:addOns.notOnCurrentPlan')}
-                      </p>
+                      {compatible ? (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            navigate(
+                              buildPath(
+                                DASHBOARD_ROUTES.tenantBillingCheckout,
+                                { targetType: 'add_on', targetKey: addOn.key }
+                              )
+                            )
+                          }
+                        >
+                          <ShoppingCart
+                            className="size-3.5"
+                            strokeWidth={2}
+                            aria-hidden
+                          />
+                          {t('tenant:addOns.purchaseAction')}
+                        </Button>
+                      ) : (
+                        <p className="text-xs text-muted-foreground">
+                          {t('tenant:addOns.notOnCurrentPlan')}
+                        </p>
+                      )}
                     </CardContent>
                   </Card>
                 );

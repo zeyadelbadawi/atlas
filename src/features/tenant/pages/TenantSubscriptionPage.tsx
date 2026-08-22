@@ -3,11 +3,14 @@
  *
  * Full subscription lifecycle detail, plan features (effective — Plan +
  * active Add-ons, via `useEffectiveEntitlements`), and the Plan Comparison
- * dialog as the only "upgrade" surface. No self-serve checkout exists, so
- * nothing here claims a plan change happened.
+ * dialog. Since Prompt 7, selecting a plan in the dialog navigates into
+ * real Checkout (`/dashboard/tenant/billing/checkout/plan_subscription/:planKey`)
+ * — but this page itself still never submits a plan change or claims one
+ * happened; only an authoritative, backend-confirmed Payment does that.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { Check, Columns3, X } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
@@ -16,6 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@utils';
+import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import {
   useAddOnCatalog,
   useEffectiveEntitlements,
@@ -32,6 +36,7 @@ import { PlanComparisonDialog } from '../components/PlanComparisonDialog';
 
 export default function TenantSubscriptionPage(): JSX.Element {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [comparisonOpen, setComparisonOpen] = useState(false);
 
   const subscriptionQuery = useTenantSubscription();
@@ -200,6 +205,15 @@ export default function TenantSubscriptionPage(): JSX.Element {
         plans={planCatalogQuery.data}
         isLoading={planCatalogQuery.isLoading}
         currentPlanKey={subscription.plan.key}
+        onSelectPlan={(plan) => {
+          setComparisonOpen(false);
+          navigate(
+            buildPath(DASHBOARD_ROUTES.tenantBillingCheckout, {
+              targetType: 'plan_subscription',
+              targetKey: plan.key,
+            })
+          );
+        }}
       />
     </PageContainer>
   );

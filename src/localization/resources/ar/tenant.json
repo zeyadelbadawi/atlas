@@ -93,7 +93,7 @@
     "noAvailableAddOns": "لا توجد إضافات إضافية متاحة",
     "availableBadge": "متاح",
     "incompatibleBadge": "غير متاح في خطتك",
-    "contactToActivate": "تواصل مع ممثل أطلس لتفعيل هذه الإضافة.",
+    "purchaseAction": "شراء",
     "notOnCurrentPlan": "غير متوافقة مع خطتك الحالية. قد تتيحها الترقية.",
     "limitEffect": "‎+{{amount}} {{resource}}",
     "featureEffect": "يتيح {{feature}}"
@@ -102,7 +102,9 @@
     "title": "مقارنة الخطط",
     "description": "الحدود والميزات عبر جميع خطط أطلس.",
     "currentPlanBadge": "الخطة الحالية",
-    "footerNote": "يتم التعامل مع تغييرات الخطة من قِبل ممثل أطلس الخاص بك — هذه الصفحة لا تعالج المدفوعات ولا تغيّر خطتك."
+    "footerNote": "يتم التعامل مع تغييرات الخطة من قِبل ممثل أطلس الخاص بك — هذه الصفحة لا تعالج المدفوعات ولا تغيّر خطتك.",
+    "selectPlan": "اختيار هذه الخطة",
+    "selectableFooterNote": "اختيار خطة يبدأ عملية الدفع — لن يتم خصم أي مبلغ حتى تُكمل العملية."
   },
   "platformAdmin": {
     "trialPolicy": {

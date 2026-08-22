@@ -25,6 +25,11 @@ export const QUERY_KEY_ROOTS = {
   forum: ['forum'] as const,
   tenant: ['tenant'] as const,
   plan: ['plan'] as const,
+  checkout: ['checkout'] as const,
+  paymentMethod: ['payment-method'] as const,
+  payment: ['payment'] as const,
+  invoice: ['invoice'] as const,
+  platformPayment: ['platform-payment'] as const,
 } as const;
 
 /**
@@ -335,4 +340,55 @@ export const planKeys = {
   addOnList: () => [...planKeys.all, 'add-ons', 'list'] as const,
   addOnDetail: (key: string) => [...planKeys.all, 'add-ons', 'detail', key] as const,
   trialPolicy: () => [...planKeys.all, 'trial-policy'] as const,
+} as const;
+
+/**
+ * Query keys for Checkout (Prompt 7).
+ *
+ * Embeds `organizationId` — the same technique `tenantKeys` (Prompt 6)
+ * uses, so `PlatformProvider`'s existing `atlas:organization-switched`
+ * invalidation catches Checkout data automatically, with no new wiring.
+ */
+export const checkoutKeys = {
+  all: QUERY_KEY_ROOTS.checkout,
+  detail: (organizationId: string | undefined, checkoutId: string) =>
+    [...checkoutKeys.all, 'detail', organizationId, checkoutId] as const,
+} as const;
+
+/** Query keys for the payment method catalog. NOT organization-scoped — the same list for every Tenant, like `planKeys`. */
+export const paymentMethodKeys = {
+  all: QUERY_KEY_ROOTS.paymentMethod,
+  list: () => [...paymentMethodKeys.all, 'list'] as const,
+} as const;
+
+/** Query keys for a Tenant's own Payments. Embeds `organizationId`, same reasoning as `checkoutKeys`. */
+export const paymentKeys = {
+  all: QUERY_KEY_ROOTS.payment,
+  list: (organizationId: string | undefined, query?: CollectionQuery) =>
+    [...paymentKeys.all, 'list', organizationId, query] as const,
+  detail: (organizationId: string | undefined, paymentId: string) =>
+    [...paymentKeys.all, 'detail', organizationId, paymentId] as const,
+} as const;
+
+/** Query keys for a Tenant's own Invoices. Embeds `organizationId`, same reasoning as `checkoutKeys`. */
+export const invoiceKeys = {
+  all: QUERY_KEY_ROOTS.invoice,
+  list: (organizationId: string | undefined, query?: CollectionQuery) =>
+    [...invoiceKeys.all, 'list', organizationId, query] as const,
+} as const;
+
+/**
+ * Query keys for Platform payment review.
+ *
+ * Deliberately NOT organization-scoped — a platform reviewer's list spans
+ * every Tenant by design (see `PlatformPaymentService`'s doc comment).
+ * Organization-switch invalidation intentionally does not touch these:
+ * they aren't "this Tenant's" data to begin with.
+ */
+export const platformPaymentKeys = {
+  all: QUERY_KEY_ROOTS.platformPayment,
+  list: (query?: CollectionQuery) =>
+    [...platformPaymentKeys.all, 'list', query] as const,
+  detail: (paymentId: string) =>
+    [...platformPaymentKeys.all, 'detail', paymentId] as const,
 } as const;

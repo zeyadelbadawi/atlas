@@ -1,0 +1,162 @@
+{
+  "common": {
+    "billingCycle": {
+      "monthly": "شهري",
+      "yearly": "سنوي"
+    },
+    "billingCycleShort": {
+      "monthly": "شهر",
+      "yearly": "سنة"
+    },
+    "methodType": {
+      "label": "طريقة الدفع",
+      "manual_bank_transfer": "تحويل بنكي",
+      "manual_wallet_transfer": "تحويل عبر المحفظة",
+      "gateway": "دفع إلكتروني"
+    }
+  },
+  "overview": {
+    "title": "الفواتير والمدفوعات",
+    "subtitle": "المدفوعات التي تحتاج انتباهك، بالإضافة إلى وصول سريع إلى سجلك وفواتيرك.",
+    "currentPlan": "الخطة الحالية",
+    "manageSubscription": "إدارة الاشتراك",
+    "needsAttentionTitle": "يحتاج انتباهك",
+    "viewAllPayments": "عرض جميع المدفوعات",
+    "noAttentionNeeded": "لا يوجد ما يحتاج انتباهك الآن",
+    "invoicesLink": "الفواتير",
+    "invoicesLinkDescription": "عرض الفواتير الصادرة والمدفوعة",
+    "addOnsLink": "الإضافات",
+    "addOnsLinkDescription": "تصفح وشراء الإضافات المتاحة"
+  },
+  "checkout": {
+    "title": "إتمام الدفع",
+    "subtitle": "راجع ما تشتريه قبل اختيار طريقة الدفع.",
+    "reviewTitle": "مراجعة طلبك",
+    "reviewPlanDescription": "أنت بصدد تغيير خطة مؤسستك.",
+    "reviewAddOnDescription": "أنت بصدد شراء إضافة لمؤسستك.",
+    "billingCycleLabel": "دورة الفوترة",
+    "startingCheckout": "جارٍ بدء عملية الدفع…",
+    "startCheckout": "بدء عملية الدفع",
+    "summaryTitle": "ملخص الطلب",
+    "paymentMethodTitle": "طريقة الدفع",
+    "methodUnavailable": "غير متاحة بعد",
+    "creatingPayment": "جارٍ إنشاء الدفعة…",
+    "continueToPayment": "المتابعة إلى الدفع"
+  },
+  "paymentHistory": {
+    "title": "سجل المدفوعات",
+    "subtitle": "كل دفعة تمت لمؤسستك.",
+    "table": {
+      "amount": "المبلغ",
+      "method": "الطريقة",
+      "status": "الحالة",
+      "reviewStatus": "المراجعة",
+      "createdAt": "التاريخ"
+    },
+    "emptyState": "لا توجد مدفوعات بعد",
+    "emptyStateDescription": "ستظهر هنا المدفوعات التي تقوم بها."
+  },
+  "invoices": {
+    "title": "الفواتير",
+    "subtitle": "الفواتير الصادرة لمؤسستك.",
+    "table": {
+      "number": "الفاتورة",
+      "status": "الحالة",
+      "amount": "المبلغ",
+      "issuedAt": "تاريخ الإصدار",
+      "paidAt": "تاريخ الدفع"
+    },
+    "status": {
+      "draft": "مسودة",
+      "issued": "صادرة",
+      "paid": "مدفوعة",
+      "void": "ملغاة"
+    },
+    "emptyState": "لا توجد فواتير بعد",
+    "emptyStateDescription": "ستظهر هنا الفواتير الصادرة لمؤسستك."
+  },
+  "payment": {
+    "title": "الدفعة",
+    "subtitle": "التفاصيل الكاملة لدفعة واحدة، أيًّا كانت طريقة إتمامها.",
+    "reference": "المرجع",
+    "createdAt": "تاريخ الإنشاء",
+    "status": {
+      "created": "تم الإنشاء",
+      "pending": "قيد الانتظار",
+      "processing": "قيد المعالجة",
+      "requires_action": "يتطلب إجراءً",
+      "requires_confirmation": "يتطلب تأكيدًا",
+      "succeeded": "ناجحة",
+      "failed": "فاشلة",
+      "cancelled": "ملغاة",
+      "expired": "منتهية الصلاحية"
+    },
+    "reviewStatus": {
+      "not_required": "غير مطلوبة",
+      "pending": "بانتظار المراجعة",
+      "approved": "موافَق عليها",
+      "rejected": "مرفوضة"
+    },
+    "attemptsTitle": "المحاولات",
+    "attemptLabel": "المحاولة {{number}}",
+    "attemptStatus": {
+      "initiated": "بدأت",
+      "processing": "قيد المعالجة",
+      "failed": "فشلت",
+      "succeeded": "نجحت",
+      "cancelled": "ألغيت",
+      "expired": "انتهت صلاحيتها"
+    },
+    "succeededMessage": "نجحت هذه الدفعة. تم تحديث اشتراكك.",
+    "failedMessage": "فشلت هذه الدفعة. يمكنك بدء عملية دفع جديدة للمحاولة مرة أخرى.",
+    "awaitingReviewTitle": "بانتظار المراجعة",
+    "awaitingReviewDescription": "تم إرسال إثبات الدفع الخاص بك وهو بانتظار مراجعة فريقنا. قد يستغرق هذا بعض الوقت — لا حاجة لاتخاذ أي إجراء آخر.",
+    "viewProof": "عرض الإثبات المُرسل",
+    "instructionsTitle": "تعليمات التحويل",
+    "bankName": "البنك",
+    "accountName": "اسم الحساب",
+    "accountNumber": "رقم الحساب",
+    "iban": "رقم الآيبان",
+    "walletProvider": "المحفظة",
+    "walletNumber": "رقم المحفظة",
+    "uploadProofTitle": "إثبات الدفع",
+    "chooseFile": "اختيار ملف",
+    "proofNotePlaceholder": "أضف ملاحظة للمراجع (اختياري)",
+    "submittingProof": "جارٍ الإرسال…",
+    "submitProof": "إرسال للمراجعة",
+    "proofTooLarge": "حجم الملف كبير جدًا.",
+    "proofInvalidType": "نوع الملف غير مدعوم. استخدم PNG أو JPG أو PDF.",
+    "redirectDescription": "سيتم نقلك إلى صفحة آمنة لإتمام هذه الدفعة.",
+    "continueToProvider": "المتابعة إلى الدفع الآمن",
+    "processingMessage": "يتم حاليًا معالجة هذه الدفعة. تتحدّث هذه الصفحة تلقائيًا.",
+    "refreshStatus": "تحديث الحالة",
+    "cancelPayment": "إلغاء الدفعة"
+  },
+  "platformReview": {
+    "title": "مراجعة المدفوعات",
+    "subtitle": "المدفوعات اليدوية بانتظار المراجعة، عبر جميع المؤسسات.",
+    "detailTitle": "مراجعة الدفعة",
+    "detailSubtitle": "الموافقة على هذه الدفعة اليدوية أو رفضها.",
+    "organization": "المؤسسة",
+    "table": {
+      "organization": "المؤسسة",
+      "amount": "المبلغ",
+      "method": "الطريقة",
+      "status": "الحالة",
+      "reviewStatus": "المراجعة",
+      "submittedAt": "تاريخ الإرسال"
+    },
+    "filterAll": "الكل",
+    "emptyState": "لا توجد مدفوعات للمراجعة",
+    "emptyStateDescription": "ستظهر هنا المدفوعات المطابقة لهذا الفلتر.",
+    "alreadyReviewed": "تمت مراجعة هذه الدفعة بالفعل ولم يعد بالإمكان الموافقة عليها أو رفضها.",
+    "selfReviewBlocked": "تنتمي هذه الدفعة إلى مؤسستك الخاصة. لا يمكنك مراجعة مدفوعات مؤسستك الخاصة.",
+    "readOnlyNotice": "لديك صلاحية عرض هذه الدفعة، لكن ليس الموافقة عليها أو رفضها.",
+    "approveTitle": "الموافقة",
+    "notesOptionalLabel": "ملاحظات (اختياري)",
+    "approveAction": "الموافقة على الدفعة",
+    "rejectTitle": "الرفض",
+    "notesRequiredLabel": "سبب الرفض",
+    "rejectAction": "رفض الدفعة"
+  }
+}

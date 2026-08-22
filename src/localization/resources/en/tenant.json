@@ -93,7 +93,7 @@
     "noAvailableAddOns": "No further add-ons available",
     "availableBadge": "Available",
     "incompatibleBadge": "Not on your plan",
-    "contactToActivate": "Contact your Atlas representative to activate this add-on.",
+    "purchaseAction": "Purchase",
     "notOnCurrentPlan": "Not compatible with your current plan. Upgrading may unlock it.",
     "limitEffect": "+{{amount}} {{resource}}",
     "featureEffect": "Unlocks {{feature}}"
@@ -102,7 +102,9 @@
     "title": "Compare plans",
     "description": "Limits and features across every Atlas plan.",
     "currentPlanBadge": "Current plan",
-    "footerNote": "Plan changes are handled by your Atlas representative — this page does not process payments or change your plan."
+    "footerNote": "Plan changes are handled by your Atlas representative — this page does not process payments or change your plan.",
+    "selectPlan": "Select this plan",
+    "selectableFooterNote": "Selecting a plan starts checkout — no payment is taken until you complete it."
   },
   "platformAdmin": {
     "trialPolicy": {

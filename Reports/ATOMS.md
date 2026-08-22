@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-08-22T12:00:00Z
+last_updated: 2026-08-22T18:00:00Z
 status: active
 ---
 
@@ -7,10 +7,10 @@ status: active
 
 ## Project Overview
 
-Atlas Platform - Prompt 6 Implementation (Atlas SaaS Foundation, Tenancy, Subscriptions, Plans, Entitlements, Usage & Platform Admin)
-Current Phase: The SaaS foundation that turns Atlas into a real multi-tenant product — Tenant (= Organization) subscription/usage/entitlements/add-ons for the Tenant Owner, and a Platform-Owner-only Trial Policy admin page — built on top of completed Platform Core + Academy Management + Course Management + Student Learning & Assessment + Instructor/Teaching + Communication & Knowledge Modules. Resumed mid-build after a prior session was interrupted; the recovery audit confirmed the existing foundation layer (types/constants/utils/services/query-key roots) was complete and correct, and preserved it unchanged.
-Scope: Tenant Dashboard/Subscription/Usage/Add-ons (Tenant Owner, read-only), Platform Trial Policy (Platform Owner, the one genuine write in this prompt), a centralized upgrade-vs-add-on entitlement-gap model, and a reusable read-only Plan Comparison dialog — no payment provider, no real checkout, no tenant-provisioning flow
-Previous Completion: Platform Core (9 features) + Academy Management + Course Management (Prompt 3 Parts A/B/C) + Student Learning & Assessment (Prompt 4) + Instructor / Teaching Operations + Communication & Knowledge Modules (Prompt 5) - all APPROVED and PERMANENT
+Atlas Platform - Prompt 7 Implementation (Atlas Enterprise Billing & Payment Platform)
+Current Phase: The complete, provider-agnostic payment engine on top of Prompt 6's SaaS foundation — Checkout, Payment, a capability-driven provider abstraction, Manual Bank/Wallet Transfer as the only currently-available provider (`ManualTransferProvider`), and a gateway-ready architecture (payment intents, redirect/return handling, webhook contract) that connects zero real payment providers — built on top of completed Platform Core + Academy Management + Course Management + Student Learning & Assessment + Instructor/Teaching + Communication & Knowledge Modules + Atlas SaaS Foundation (Prompt 6). Discovered and preserved a pre-existing, unrelated Prompt 3A `billing` feature sharing the same directory and (briefly, before being caught and corrected) the same localization namespace.
+Scope: Tenant Billing Overview/Checkout/Payment History/Payment Details/Invoices, Platform Payment Review (list + approve/reject), a real provider abstraction with exactly one concrete adapter (manual transfer) and zero fake gateway implementations, and full Prompt 6 subscription/add-on integration (a successful Payment invalidates `EffectiveEntitlements`) — no real gateway connection, no card-data collection, no fake webhooks
+Previous Completion: Platform Core (9 features) + Academy Management + Course Management (Prompt 3 Parts A/B/C) + Student Learning & Assessment (Prompt 4) + Instructor / Teaching Operations + Communication & Knowledge Modules (Prompt 5) + Atlas SaaS Foundation, Tenancy, Subscriptions, Plans, Entitlements, Usage & Platform Admin (Prompt 6) - all APPROVED and PERMANENT
 Backend: Remains abstract - no real backend integration yet
 Architecture: Extending existing foundation WITHOUT creating parallel infrastructure
 
@@ -58,12 +58,30 @@ Architecture: Extending existing foundation WITHOUT creating parallel infrastruc
 | 2026-08-22 | Platform Trial Policy is gated by `requiredRoles: ['platform_owner']`, structurally distinct from every Tenant page's `requiredPermissions: ['tenant.*.view']` | Claude | Matches the pre-existing Settings/Billing/Analytics precedent exactly; guarantees no permission string can imply the Platform Owner role |
 | 2026-08-22 | Tenant query keys (`tenantKeys`) embed `organizationId`; catalog keys (`planKeys`) deliberately do not | Claude | Reuses the existing `academyKeys`/`PlatformProvider` org-switch invalidation technique with zero new wiring; the catalog and trial policy are the same for every Tenant, so scoping them by org would be incorrect |
 | 2026-08-22 | Every new Prompt 6 route explicitly sets `requireAuthentication` | Claude | Verified by grep: all 45 `RouteGuard` instances across the entire router now set it - the Prompt 3 regression was not repeated |
+| 2026-08-22 | `Payment`/`PaymentAttempt`/`PaymentIntent` are one shape for manual and gateway payments, distinguished only by `methodType`/`provider` and populated optional fields | Claude | Two parallel payment models would be the actual duplication; every UI surface branches on `PaymentMethodCapabilities`, never on method/provider name |
+| 2026-08-22 | Provider abstraction (`PaymentProviderAdapter`) still calls Atlas's own `PaymentService`/`CheckoutService`, never a real provider SDK/API | Claude | No real gateway is connected in Prompt 7; the abstraction is an architectural seam for a future adapter, not a networking integration |
+| 2026-08-22 | `PaymentProviderRegistry` registers exactly one adapter (`ManualTransferProvider`, key `'atlas_manual'`), backing both bank and wallet transfer | Claude | The two manual methods differ only in which `ManualPaymentInstructions` variant is published, not in payment lifecycle behavior; no placeholder/fake gateway adapter was registered |
+| 2026-08-22 | Removed a `methodType === 'gateway'` conditional found in `usePaymentDetails`/`PaymentDetailsPage` during audit, kept the `reviewStatus === 'pending'` check alone | Claude | Manual review is a capability/state (`ManualReviewStatus`), not a fact about method type — a future gateway method could also require it |
+| 2026-08-22 | `PlatformPaymentService` is a third, deliberately flat service tree, not nested under `organizations/:organizationId` | Claude | Mirrors Prompt 5's `InstructorService` reasoning: platform review's authorization scope (cross-tenant) genuinely differs from a Tenant's own view of its payments |
+| 2026-08-22 | Platform payment review uses two gates: route-level `requiredRoles: ['platform_owner']` plus page-level `platform.payment.approve`/`reject` permission checks on the Approve/Reject buttons | Claude | Mirrors Prompt 5's `instructor.submission.view` vs `instructor.assignment.grade` split - a role holder without the specific action permission gets a read-only view, not a broken form |
+| 2026-08-22 | Self-review UX guard added (`payment.organizationId === organization?.id` disables Approve/Reject) | Claude | Defense in depth, explicitly documented as non-authoritative — the backend contract is the actual requirement |
+| 2026-08-22 | Discovered `src/features/billing/` already held a Prompt 3A feature (`BillingPage.tsx`/`billing.types.ts`/`en/ar billing.json`); registered Prompt 7's translations under a NEW `payments` namespace and renamed 4 colliding type names (`PaymentMethod`→`CheckoutPaymentMethod`, `PaymentStatus`→`PaymentLifecycleStatus`, `BillingCycle`→`SubscriptionBillingCycle`, `Invoice`→`TenantInvoice`) | Claude | A same-named localization file was briefly overwritten mid-session; caught before finalizing, restored via git, and namespaced correctly — the legacy feature remains untouched and must stay that way |
+| 2026-08-22 | Added `src/features/tenant/index.ts` (Prompt 6 feature's first public barrel) instead of importing `@features/tenant/hooks` directly from `@features/billing` | Claude | The `no-restricted-imports` ESLint rule blocks reaching into another feature's internals; the fix is the same `@features/<name>` public-barrel pattern `@features/course` already established for `@features/instructor`, not suppressing the rule |
+| 2026-08-22 | No financial mutation (`createCheckout`/`createPayment`/`submitProof`/`cancelPayment`/`approvePayment`/`rejectPayment`) is ever auto-retried | Claude | A blind retry on a mutation that may have already reached the backend could double-charge, double-submit, or double-approve |
+| 2026-08-22 | `idempotencyKey` generated once per checkout attempt via `crypto.randomUUID()`, memoized in component state, replayed on retry | Claude | Guarantees the frontend never manufactures a duplicate-looking request out of its own retry; the backend remains the authority on enforcing it |
+| 2026-08-22 | Every new Prompt 7 route explicitly sets `requireAuthentication` | Claude | Verified by grep: all 52 `RouteGuard` instances across the entire router now set it - the Prompt 3 regression was not repeated |
 
 ## Constraints
 
-- MUST preserve all Prompt 1, Prompt 2, Prompt 3 Part A/B/C, Prompt 4, Prompt 5 approved architecture
+- MUST preserve all Prompt 1, Prompt 2, Prompt 3 Part A/B/C, Prompt 4, Prompt 5, Prompt 6 approved architecture (including the pre-existing, unrelated Prompt 3A `billing` feature and namespace)
 - NO duplicate infrastructure (auth, query, forms, services, API clients, tables, upload, dialogs)
 - NO Orders/Ecommerce/Payments, Certificate generation/PDF/verification, Website/CMS, Marketplace, Messaging, Live classes, Video streaming, AI features, real auto-grading (future scope)
+- Atlas Enterprise Billing & Payment Platform (Checkout, Payment, provider abstraction, Manual Bank/Wallet Transfer, gateway-ready architecture) ONLY in this prompt (Prompt 7) - NO real gateway connection/SDK, NO card-data collection, NO fake webhooks, NO real refund/reconciliation/recurring-billing processing, NO public unauthenticated checkout/pricing page
+- The payment engine is provider-agnostic: `Payment`/`PaymentAttempt`/`PaymentIntent` are ONE shape for manual and any future gateway payment - NO parallel type per method, NO `methodType`/`provider` string branching in UI (capability flags decide)
+- Creating a Checkout or a Payment, or uploading proof, NEVER by itself changes `TenantSubscription`/`TenantAddOn` - only an authoritative `Payment.status === 'succeeded'` transition does, and only `usePaymentDetails` triggers the resulting entitlement refresh
+- Redirect/return query parameters are NEVER trusted as proof of payment outcome - `PaymentDetailsPage` always re-fetches authoritative status
+- `PaymentProviderRegistry` registers ONLY real, backend-calling adapters - NO placeholder/fake gateway adapter, ever
+- Financial mutations (`createCheckout`/`createPayment`/`submitProof`/`cancelPayment`/`approvePayment`/`rejectPayment`) are NEVER auto-retried
 - Atlas SaaS Foundation (Tenant subscription/usage/entitlements/add-ons, Plan/Add-on catalog, configurable Trial Policy) ONLY in this prompt (Prompt 6) - NO real payment/checkout/billing integration, NO upgrade or add-on-purchase mutation, NO tenant-provisioning/onboarding flow, NO public pricing page, NO full Plan/Subscription CRUD admin UI
 - An instructor's teaching scope is always resolved server-side from `Course.instructors` - never trusted from a client-supplied id, and never able to grant Academy Owner-level permissions
 - Organization IS the Tenant boundary - NO parallel `tenantId`/`TenantContext`; every Tenant-scoped type carries `organizationId`
@@ -77,11 +95,13 @@ Architecture: Extending existing foundation WITHOUT creating parallel infrastruc
 - Light Mode + Dark Mode both required
 - Responsive: Desktop, Tablet, Mobile
 - Accessibility: WCAG compliant with keyboard navigation
-- State completeness: Loading, Empty, Success, Error, Retry, Permission Denied, Submitting, Deleting, Uploading, Publishing, Unpublishing, Unsaved Changes, Locked, Passed, Failed, Submitted, Graded/Ungraded, Pinned/Locked (forum), Trialing/Past due/Grace period/Cancelled/Expired, Limit reached/Unlimited, Upgrade required/Add-on available (Prompt 6)
+- State completeness: Loading, Empty, Success, Error, Retry, Permission Denied, Submitting, Deleting, Uploading, Publishing, Unpublishing, Unsaved Changes, Locked, Passed, Failed, Submitted, Graded/Ungraded, Pinned/Locked (forum), Trialing/Past due/Grace period/Cancelled/Expired, Limit reached/Unlimited, Upgrade required/Add-on available (Prompt 6), Created/Pending/Processing/Requires action/Requires confirmation/Succeeded/Cancelled/Expired (payment), Not required/Pending/Approved/Rejected (manual review), Ambiguous network state (Prompt 7)
 - Every course belongs to exactly one academy; no cross-academy data leakage
 - Every learning resource belongs to exactly one student; no cross-student data leakage
 - Every instructor-facing resource is scoped to courses that instructor is authorized to teach; no cross-instructor/cross-course data leakage
 - Quiz correct answers are never modeled in any type/contract the client can read before submission (structural guarantee, carried forward unchanged from Prompt 4)
-- Every Tenant-scoped resource (subscription/usage/add-ons) is scoped to `organizationId`; no cross-tenant data leakage, and no stale data survives an organization switch
+- Every Tenant-scoped resource (subscription/usage/add-ons/checkouts/payments/invoices) is scoped to `organizationId`; no cross-tenant data leakage, and no stale data survives an organization switch
+- A platform payment reviewer can never approve or reject their own organization's payment (UX-layer guard; backend remains the actual authority)
+- No card data (`cardNumber`/`cvv`/`expiry`) is ever collected or stored in the Atlas frontend
 
 

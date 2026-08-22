@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-08-22T12:00:00Z
+last_updated: 2026-08-22T18:00:00Z
 ---
 
 # Architecture Design
@@ -547,4 +547,222 @@ infrastructure (only the entitlement/usage *boundary* is modeled), and the
 full tenant-provisioning/onboarding journey (choose name → theme → domain
 → provision). These remain explicitly future modules, matching the
 Prompt 6 specification's own scope boundary.
+
+---
+
+## Atlas Enterprise Billing & Payment Platform (Prompt 7)
+
+The complete payment engine on top of Prompt 6's SaaS foundation. The
+governing principle: **the payment engine, the Checkout UI, the Payment
+UI, payment history, and the Subscription/Add-on/Entitlement domains are
+all provider-agnostic.** Manual Bank/Wallet Transfer is today's only
+available provider; a real gateway is a future *adapter*, never a
+redesign. No real gateway is connected, no gateway SDK is installed, no
+card data is collected, and no webhook is faked — every "gateway-ready"
+piece introduced here is a real, typed, callable contract with zero
+concrete implementation behind it.
+
+### A same-named, unrelated Prompt 3A feature — caught and preserved
+
+`src/features/billing/` already contained a Prompt 3A feature
+(`BillingPage.tsx`, user-scoped `Subscription`/`Invoice`/`PaymentMethod`
+types in `billing.types.ts`, and `en/ar billing.json`) before this prompt
+started. Prompt 7's new payment engine was built inside the same
+directory (a defensible choice — it *is* the billing feature, and the
+legacy page is one page among many now-siblings), which meant the two
+localization files briefly collided under one Write call mid-session.
+This was caught before finalizing: the two legacy JSON files were
+restored via `git checkout`, and every Prompt 7 translation key was
+re-registered under a **new `payments` namespace**, never `billing`. Four
+distinct type names also collided with Prompt 3A's existing
+`billing.types.ts` exports (`PaymentMethod`, `PaymentStatus`,
+`BillingCycle`, `Invoice`) and were renamed to `CheckoutPaymentMethod`,
+`PaymentLifecycleStatus`, `SubscriptionBillingCycle`, and `TenantInvoice`
+respectively — the same "prefix with the owning domain" convention
+`TenantSubscriptionStatus` already established over the same file's
+`SubscriptionStatus` in Prompt 6. `BillingPage.tsx`/`billing.types.ts`/
+`en/ar billing.json` remain byte-for-byte untouched.
+
+### Payment is not Subscription
+
+This is the single most load-bearing rule in this prompt. Creating a
+Checkout, creating a Payment, uploading proof, or a customer returning
+from a redirect NEVER, by itself, changes `TenantSubscription` or
+`TenantAddOn` (Prompt 6). The ONLY trigger anywhere in the frontend that
+treats a purchase as real is `usePaymentDetails` observing
+`Payment.status` transition INTO `'succeeded'` — at which point it
+invalidates Prompt 6's `tenantKeys` (subscription/usage/add-ons) so
+`useEffectiveEntitlements` picks up the change on its next read. The
+actual subscription/add-on mutation happens server-side; the frontend
+never performs it and never claims it happened from anything less than
+that one authoritative signal.
+
+### One Payment shape for manual and gateway
+
+`Payment`/`PaymentAttempt`/`PaymentIntent` are not manual-specific or
+gateway-specific types with a duplicate pair — they are the SAME shape,
+distinguished by `methodType`/`provider` and which optional,
+capability-gated fields are populated (`proof` for manual,
+`providerReference`/`nextAction.type: 'redirect'` for gateway). Every UI
+surface (`PaymentHistoryPage`, `PaymentDetailsPage`) branches on
+`PaymentMethodCapabilities`/`status`/`reviewStatus`/`nextAction`, never on
+`methodType === 'gateway'` as a proxy for "this needs different UI." This
+was verified explicitly during the CTO audit: an early draft of
+`usePaymentDetails`'s polling gate and `PaymentDetailsPage`'s
+"awaiting review" branch both checked `methodType !== 'gateway'` in
+addition to `reviewStatus === 'pending'` — removed in favor of the
+`reviewStatus` check alone, since manual review is a capability, not a
+method-type fact (a future gateway method could, per the spec, also
+require manual review; the check needed to be correct for that case too).
+
+### The provider abstraction
+
+`PaymentProviderAdapter` (base) / `GatewayPaymentProviderAdapter`
+(adds `createPaymentIntent`/`handleProviderReturn`/`verifyPayment`) /
+`ManualReviewPaymentProviderAdapter` (adds `submitProof`) — interfaces
+segregated by capability, not one god-interface every adapter must fully
+implement. Every method on every adapter still calls Atlas's own
+`PaymentService`/`CheckoutService` (plain `BaseService` subclasses) —
+never a real provider's SDK or API directly. What the abstraction buys is
+architectural: the Checkout/Payment UI resolves an adapter by
+`PaymentMethod.provider` through `PaymentProviderRegistry` and reads its
+`capabilities` — it never has a `switch (provider)` anywhere.
+`ManualTransferProvider` is the one concrete adapter registered today,
+under the key `'atlas_manual'`, backing both `manual_bank_transfer` and
+`manual_wallet_transfer` (they differ only in which
+`ManualPaymentInstructions` variant the catalog publishes for a given
+method, not in how the Payment itself is created/checked/proven).
+Connecting a real gateway later means: implement a concrete
+`GatewayPaymentProviderAdapter` (a `StripeAdapter`, etc.), register it in
+`PaymentProviderRegistry` under its provider key, and have the backend
+start returning a `CheckoutPaymentMethod` with `type: 'gateway'` and that
+provider key. Nothing in `CheckoutPage`/`PaymentDetailsPage`/
+`PaymentHistoryPage`/the Subscription/Add-on/Entitlement domains would
+need to change.
+
+### Checkout snapshot, idempotency, and money
+
+`Checkout.snapshot` is captured once, at creation, and never recomputed
+from live catalog data — if a Plan's price changes tomorrow, every
+Checkout created today keeps yesterday's price, by construction (nothing
+re-reads `Plan.pricing` after `createCheckout` returns).
+`CreateCheckoutPayload.idempotencyKey` is generated once per checkout
+attempt client-side (`generateIdempotencyKey`, `crypto.randomUUID()`) and
+replayed verbatim on any retry within that attempt — the frontend's half
+of idempotency; the backend remains the authority on actually deduplicating
+by that key. `Money{amountMinorUnits, currency}` is the one monetary
+representation in this prompt: an integer in the currency's smallest unit,
+a plain ISO `currency` string never assumed to be one platform currency,
+and `formatMoney` the single place minor-units-to-display conversion
+happens (documented 2-decimal-exponent assumption, with a named seam to
+extend if a future currency needs otherwise).
+
+### Payment methods and manual review are capability-driven, not name-driven
+
+`PaymentMethodCapabilities` (9 boolean flags) is what every UI decision is
+actually keyed on. `ManualReviewStatus` is a state SEPARATE from
+`PaymentLifecycleStatus` — it only exists meaningfully when
+`capabilities.supportsManualReview` is true, and a gateway method's
+`reviewStatus` is `'not_required'` by default, never forced through a
+proof-upload flow it has no `manualInstructions` to render.
+
+### Two structurally different review gates (again)
+
+Platform payment review routes are gated by `requiredRoles: ['platform_owner']`
+— the exact Prompt 6 Trial Policy precedent. The Approve/Reject actions
+inside `PlatformPaymentReviewDetailPage` are gated a second, finer time by
+`usePermissions().hasPermission('platform.payment.approve'|'reject')` —
+the same "route-level view vs. page-level action permission" split Prompt
+5 established for instructor grading (`instructor.submission.view` vs.
+`instructor.assignment.grade`). A reviewer holding the role but not the
+specific action permission sees a read-only notice instead of a
+disabled-looking form. A UX-layer guard additionally blocks a reviewer
+from approving/rejecting their own organization's payment
+(`payment.organizationId === organization?.id`) — explicitly documented as
+UX-only; the backend remains the actual authority (see Security section
+below).
+
+### Never trust the redirect
+
+`PaymentDetailsPage` is deliberately the SAME page a gateway's
+`returnUrl`/`cancelUrl` would point at. Whatever query string the
+customer's browser carries back is never read as proof of anything — the
+page always re-derives truth through `usePaymentDetails`, which re-fetches
+`Payment` from `PaymentService.getPayment` and polls while genuinely
+non-terminal. `PaymentReturnParams` exists only to know WHICH payment to
+re-check (a `paymentId`), never to decide the outcome.
+
+### Module Design
+| Area | Responsibility | Key Files |
+|------|-----------------|-----------|
+| Money/Billing-cycle types | `Money`, `SubscriptionBillingCycle` | `src/types/money.types.ts` |
+| Checkout domain types | `CheckoutTarget`, `CheckoutSnapshot`, `Checkout`, `CreateCheckoutPayload` | `src/types/checkout.types.ts` |
+| Payment domain types | `Payment`, `PaymentIntent`, `PaymentAttempt`, `PaymentLifecycleStatus`, `ManualReviewStatus`, `CheckoutPaymentMethod`, `PaymentMethodCapabilities`, `ManualPaymentInstructions`, `PaymentNextAction`, `TenantInvoice`, `PaymentWebhookEvent` (documented contract only) | `src/types/payment.types.ts` |
+| Provider abstraction | `PaymentProviderAdapter`/`GatewayPaymentProviderAdapter`/`ManualReviewPaymentProviderAdapter`, `ManualTransferProvider`, `PaymentProviderRegistry` | `src/features/billing/providers/` |
+| Services | `CheckoutService`/`PaymentService` (tenant-scoped), `PlatformPaymentService` (flat, cross-tenant) | `src/features/billing/services/` |
+| Hooks | 8 tenant hooks + 5 platform-review hooks | `src/features/billing/hooks/` |
+| Pages | Billing Overview, Checkout, Payment History, Payment Details, Invoices (tenant); Payment Review List/Detail (platform) | `src/features/billing/pages/` |
+| Query keys | `checkoutKeys`/`paymentKeys`/`invoiceKeys` (organization-scoped), `paymentMethodKeys`/`platformPaymentKeys` (unscoped) | `src/services/query/query-keys.ts` |
+| Localization | 1 new namespace: `payments` (126/126 keys, EN/AR parity verified programmatically) — deliberately NOT `billing`, which remains Prompt 3A's | `src/localization/resources/{en,ar}/payments.json` |
+| Routing | 7 new routes, all `RouteGuard`s explicitly `requireAuthentication` | `route-paths.ts`, `AppRouter.tsx` |
+| Navigation | "Billing" appended to the existing Prompt 6 SaaS section; "Payment Review" appended to the existing Administration section | `navigation.config.ts` |
+| Cross-feature barrel | `src/features/tenant/index.ts` (new) — lets `features/billing` depend on Prompt 6's `useTenantSubscription` without violating the `no-restricted-imports` feature-isolation ESLint rule | `src/features/tenant/index.ts` |
+
+### Tech Decisions
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| One Payment shape, capability-driven | `PaymentMethodCapabilities` flags decide UI branching, never `methodType`/`provider` string checks | A future gateway method that also required manual review must render correctly without a rewrite; verified by removing a `methodType === 'gateway'` check found during audit |
+| Provider abstraction still calls Atlas's own backend | Every adapter method calls `PaymentService`/`CheckoutService`, never a real provider SDK/API | No real gateway is connected in this prompt; the abstraction is an architectural seam, not a networking one |
+| `ManualTransferProvider` backs both bank and wallet transfer | One adapter, two `PaymentMethodType`s | They differ only in which `ManualPaymentInstructions` variant is published, not in payment lifecycle behavior |
+| `PaymentProviderRegistry` starts with exactly one entry | No placeholder/fake gateway adapter registered | An unregistered provider key must mean "not available yet," rendered explicitly in `CheckoutPage`, never silently assumed to work |
+| Checkout snapshot never recomputed | `snapshot.price`/`snapshot.displayName` fixed at creation | Historical checkout values must not silently change because catalog data changed afterward |
+| `PlatformPaymentService` is a third, flat service tree | Not nested under `organizations/:organizationId` | Mirrors Prompt 5's `InstructorService` reasoning exactly: platform review's authorization scope is genuinely different from a Tenant's own view of its payments |
+| Two-layer platform review gate | Route: `requiredRoles: ['platform_owner']`; Approve/Reject buttons: inline `platform.payment.approve`/`reject` permission check | Mirrors Prompt 5's instructor-grading permission split; a role holder without the specific action permission gets a read-only view, not a broken form |
+| Self-review UX guard | `payment.organizationId === organization?.id` disables Approve/Reject with an explanatory notice | Defense in depth; explicitly documented as UX-only since the frontend cannot be the authority on this |
+| `usePaymentDetails` polls only while genuinely in progress | Stops at any terminal status AND at `reviewStatus: 'pending'` | Nothing external is happening during manual review for polling to observe — a human has to act, not a backend process |
+| Financial mutations never auto-retry | `showSuccessToast`/`showErrorToast: false` on every billing mutation, page-owned feedback, explicit user-triggered retry only | A network retry on `createPayment`/`approvePayment`/etc. could double-charge or double-approve if blindly repeated |
+| New `payments` i18n namespace, not `billing` | Discovered mid-session that `billing` was already Prompt 3A's | Reusing it would have silently overwritten unrelated legacy translations — caught and corrected before finalizing |
+| `src/features/tenant/index.ts` added | Public barrel, same `@features/<name>` pattern as `@features/course` | `features/billing` legitimately needs Prompt 6's `useTenantSubscription`; the ESLint feature-isolation rule requires reaching through a feature's root barrel, not its internals — fixed correctly rather than suppressing the rule |
+
+### Backend Contracts To Document (frontend-defined, backend TBD)
+1. **Checkout** — `POST /organizations/:organizationId/checkouts` (idempotent on `idempotencyKey`), `GET .../checkouts/:checkoutId` → `Checkout`. Snapshot is computed and frozen server-side at creation.
+2. **Payment** — `POST .../payments` (`{checkoutId, methodKey}`) → `Payment`; `GET .../payments`, `GET .../payments/:paymentId`; `POST .../payments/:paymentId/cancel`. Every GET/POST re-verifies the caller's organization membership server-side — `RouteGuard`'s check is UX only.
+3. **PaymentIntent** (gateway-ready, currently unused by any adapter) — `POST .../payments/intents` (`{checkoutId}`) → `PaymentIntent{checkoutUrl, providerReference, expiresAt, ...}`. Backend-supplied `checkoutUrl` only; the frontend never constructs one.
+4. **Payment method catalog** — `GET /payment-methods` → `CheckoutPaymentMethod[]`, including `manualInstructions` for manual methods. Not organization-scoped.
+5. **Payment proof** — `PATCH .../payments/:paymentId/proof` (`{fileData, fileName, mimeType, note}`, base64) → `Payment` with `reviewStatus: 'pending'`. Never a success signal by itself.
+6. **Payment review** (platform-scoped, flat) — `GET /payments`, `GET /payments/:paymentId`, `POST /payments/:paymentId/approve` (`{notes?}`), `POST /payments/:paymentId/reject` (`{notes}`, required). Backend MUST reject a reviewer approving/rejecting their own organization's payment — the frontend guard is UX only.
+7. **Invoices** — `GET .../invoices` → `TenantInvoice[]`. Read-only; no invoice-generation endpoint defined here.
+8. **Webhook** (not implemented in this prompt; documented for the future backend) — Gateway → backend webhook endpoint → signature verification → event-source validation → provider event ID → idempotency check → normalize into `PaymentWebhookEvent` (`payment.*`/`refund.*`) → update `Payment`/`PaymentAttempt` → mutate `TenantSubscription`/`TenantAddOn` where applicable → audit event. The frontend never receives or trusts a webhook payload directly.
+9. **Idempotency** — `createCheckout`/`createPayment`/a future `createPaymentIntent`/`approvePayment`/`rejectPayment` are all financial or state-changing mutations; the backend is the authority on deduplicating `createCheckout` by `idempotencyKey` and on making the others safe to retry deliberately (not automatically) from the frontend.
+10. **Refunds** (not implemented) — `Payment`/`PaymentAttempt` already carry stable ids a future `Refund` record could reference (`paymentId`); no refund endpoint or UI exists yet.
+11. **Reconciliation** (not implemented) — `Payment.providerReference` ↔ `Payment.id` ↔ `Checkout.id` ↔ (future) `TenantSubscription`/`TenantAddOn` change is the traceable chain a future reconciliation process would walk; no reconciliation logic exists on the frontend.
+
+### Security / Tenancy Verification
+- **Cross-tenant leakage**: `checkoutKeys`/`paymentKeys`/`invoiceKeys` all embed `organizationId`, sourced from `useAuth().organization` — never a route param or user-editable field. `platformPaymentKeys` is intentionally unscoped (cross-tenant by design, gated by role instead).
+- **Self-approval**: UX-layer guard in `PlatformPaymentReviewDetailPage`; documented explicitly as non-authoritative — the backend contract (#6 above) states the actual requirement.
+- **Card data**: no `cardNumber`/`cvv`/`expiry` field exists anywhere in this prompt's types or forms — verified by grep during the CTO audit.
+- **Secrets**: no API key/secret/webhook-secret/merchant-secret/private-key string appears anywhere in the frontend — provider configuration is explicitly a backend/server-side concern (Backend Contracts above).
+- **Fail-closed authorization**: all 7 new routes go through the unmodified `RouteGuard`; nothing in this prompt touched `RouteGuard`/`AuthorizationService`.
+- **No fake success**: grepped for any hardcoded `status: 'succeeded'` assignment — none exists; every `Payment` the frontend renders came from a `PaymentService`/`PlatformPaymentService` response.
+- **Frontend checks are UX, not enforcement**: documented on every capability check and permission gate in this prompt, consistent with Prompt 6's identical framing for usage limits.
+
+### What Is Frontend-Only (No Real Backend Behind It Yet)
+Every service/adapter method in this prompt issues a real HTTP call
+through the existing `apiClient` against an endpoint shape documented
+above — consistent with every prior prompt. Nothing is mocked data
+presented as real; there is simply no server listening yet, and no
+gateway is connected on purpose.
+
+### Scope Boundary
+Explicitly not implemented in Prompt 7: any real payment gateway
+connection, gateway SDK installation, card-data collection, a working
+webhook receiver (server-to-server, out of frontend scope entirely), real
+refund processing, real reconciliation/accounting, real recurring/
+automatic billing (saved cards, card vaults, automatic retries), and a
+public checkout/pricing page for unauthenticated visitors (Checkout here
+is reached only from an authenticated Tenant's Subscription/Add-ons
+pages). These remain explicitly future modules — the point of this
+prompt's architecture is that adding them later is adapter/configuration
+work, not a redesign of Checkout, Payment, Subscription, Add-on, or
+Entitlement.
 

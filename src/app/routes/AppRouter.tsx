@@ -173,6 +173,24 @@ const PlatformTrialPolicyPage = lazy(
   () => import('@features/tenant/pages/PlatformTrialPolicyPage')
 );
 
+const BillingOverviewPage = lazy(
+  () => import('@features/billing/pages/BillingOverviewPage')
+);
+const CheckoutPage = lazy(() => import('@features/billing/pages/CheckoutPage'));
+const PaymentHistoryPage = lazy(
+  () => import('@features/billing/pages/PaymentHistoryPage')
+);
+const PaymentDetailsPage = lazy(
+  () => import('@features/billing/pages/PaymentDetailsPage')
+);
+const InvoicesPage = lazy(() => import('@features/billing/pages/InvoicesPage'));
+const PlatformPaymentReviewListPage = lazy(
+  () => import('@features/billing/pages/PlatformPaymentReviewListPage')
+);
+const PlatformPaymentReviewDetailPage = lazy(
+  () => import('@features/billing/pages/PlatformPaymentReviewDetailPage')
+);
+
 const ForbiddenPage = lazy(
   () => import('@features/system/pages/ForbiddenPage')
 );
@@ -644,6 +662,69 @@ export function AppRouter(): JSX.Element {
               element={
                 <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
                   <PlatformTrialPolicyPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.tenantBilling}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['tenant.billing.view']}>
+                  <BillingOverviewPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.tenantBillingCheckout}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['tenant.payment.create']}>
+                  <CheckoutPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.tenantBillingPayments}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['tenant.payment.view']}>
+                  <PaymentHistoryPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.tenantBillingPaymentDetail}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['tenant.payment.view']}>
+                  <PaymentDetailsPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.tenantBillingInvoices}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['tenant.billing.view']}>
+                  <InvoicesPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformPayments}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <PlatformPaymentReviewListPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformPaymentDetail}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <PlatformPaymentReviewDetailPage />
                 </RouteGuard>
               }
             />

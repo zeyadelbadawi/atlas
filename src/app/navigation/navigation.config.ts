@@ -26,6 +26,8 @@ import {
   Boxes,
   Gauge,
   Gift,
+  Receipt,
+  ShieldCheck,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem, NavigationSection } from '@types';
@@ -245,6 +247,15 @@ export function getDashboardNavigation(
           requiresAuth: true,
           requiredPermissions: ['tenant.addon.view'],
         },
+        {
+          id: 'tenant-billing',
+          labelKey: 'navigation:items.tenantBilling',
+          path: DASHBOARD_ROUTES.tenantBilling,
+          icon: Receipt,
+          requiresAuth: true,
+          requiredPermissions: ['tenant.billing.view'],
+          matchNestedPaths: true,
+        },
       ],
       showDivider: true,
     },
@@ -303,6 +314,15 @@ export function getDashboardNavigation(
           icon: Gift,
           requiresAuth: true,
           requiredRoles: ['platform_owner'],
+        },
+        {
+          id: 'platform-payments',
+          labelKey: 'navigation:items.platformPayments',
+          path: DASHBOARD_ROUTES.platformPayments,
+          icon: ShieldCheck,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+          matchNestedPaths: true,
         },
       ],
       showDivider: true,
