@@ -1,0 +1,226 @@
+{
+  "settings": {
+    "title": "الموقع الإلكتروني",
+    "subtitle": "تهيئة موقع أكاديميتك الإلكتروني — القالب والهوية البصرية وتحسين محركات البحث والتنقل.",
+    "tabs": {
+      "theme": "القالب",
+      "brand": "الهوية البصرية",
+      "seo": "تحسين محركات البحث",
+      "navigation": "التنقل"
+    }
+  },
+  "theme": {
+    "currentTheme": "القالب الحالي",
+    "selectTheme": "اختيار القالب",
+    "noHomePage": "لم يتم العثور على الصفحة الرئيسية"
+  },
+  "themes": {
+    "modernEducation": {
+      "name": "التعليم الحديث",
+      "description": "ودود وسهل التعامل معه، بواجهة رئيسية مقسّمة وبطاقات بارزة."
+    },
+    "premiumAcademy": {
+      "name": "الأكاديمية المتميزة",
+      "description": "أنيق وراقٍ، بواجهة رئيسية مركزية ومساحات فارغة سخية."
+    },
+    "corporateLearning": {
+      "name": "التعلّم المؤسسي",
+      "description": "منظّم واحترافي، مصمم لمزوّدي التدريب للمؤسسات."
+    },
+    "minimalEditorial": {
+      "name": "التحريري البسيط",
+      "description": "متحفظ ومركّز على النصوص، ليتحدث محتواك عن نفسه."
+    },
+    "boldCreative": {
+      "name": "الإبداعي الجريء",
+      "description": "نابض بالحياة ومعبّر، للأكاديميات التي تريد أن تتميّز."
+    }
+  },
+  "brand": {
+    "primaryColor": "اللون الأساسي",
+    "secondaryColor": "اللون الثانوي",
+    "accentColor": "لون التمييز",
+    "contrastWarning": "قد يكون هذا اللون صعب القراءة كنص على خلفية فاتحة.",
+    "darkLogo": "الشعار للخلفيات الداكنة",
+    "darkLogoHelp": "يُستخدم أينما يضع القالب شعارك على سطح داكن.",
+    "primaryLogoNote": "يتم إدارة شعارك الأساسي وأيقونة الموقع من صفحة الهوية البصرية لأكاديميتك.",
+    "manageInAcademyBranding": "الإدارة من الهوية البصرية للأكاديمية",
+    "saved": "تم حفظ إعدادات الهوية البصرية",
+    "saveError": "فشل حفظ إعدادات الهوية البصرية"
+  },
+  "seo": {
+    "metaTitle": "عنوان الميتا",
+    "metaDescription": "وصف الميتا",
+    "ogImage": "صورة المشاركة الاجتماعية",
+    "saved": "تم حفظ إعدادات تحسين محركات البحث",
+    "saveError": "فشل حفظ إعدادات تحسين محركات البحث"
+  },
+  "navigation": {
+    "primaryNavTitle": "التنقل الرئيسي",
+    "orderTitle": "الترتيب",
+    "moveUp": "تحريك للأعلى",
+    "moveDown": "تحريك للأسفل",
+    "headerCtaTitle": "زر الإجراء في الترويسة",
+    "ctaLabel": "نص الزر",
+    "ctaTarget": "يرتبط بـ",
+    "ctaTargetPlaceholder": "اختر صفحة",
+    "footerTitle": "التذييل",
+    "copyrightText": "نص حقوق النشر",
+    "socialLinks": "روابط التواصل الاجتماعي",
+    "addSocialLink": "إضافة رابط",
+    "removeSocialLink": "إزالة الرابط",
+    "socialLabelPlaceholder": "التسمية",
+    "saveError": "فشل حفظ التنقل"
+  },
+  "pages": {
+    "title": "الصفحات",
+    "subtitle": "صفحات موقعك الأساسية والمخصصة.",
+    "coreBadge": "أساسية",
+    "visibilityToggle": "ظاهرة",
+    "createAction": "صفحة جديدة",
+    "createTitle": "إنشاء صفحة مخصصة",
+    "titleLabel": "عنوان الصفحة",
+    "slugLabel": "الرابط المختصر",
+    "deleteAction": "حذف الصفحة",
+    "deleteConfirmTitle": "هل تريد حذف هذه الصفحة؟",
+    "deleteConfirmDescription": "سيتم حذف \"{{title}}\" ومحتواها نهائيًا. لا يمكن التراجع عن هذا الإجراء."
+  },
+  "editor": {
+    "title": "محرر الصفحة",
+    "subtitle": "قم بتكوين هذه الصفحة من أقسام، ثم احفظ تغييراتك.",
+    "compositionTitle": "التكوين",
+    "addSection": "إضافة قسم",
+    "addItem": "إضافة عنصر",
+    "removeItem": "إزالة",
+    "applyChanges": "تطبيق التغييرات",
+    "saveChanges": "حفظ التغييرات",
+    "unsavedChanges": "لديك تغييرات غير محفوظة على هذه الصفحة.",
+    "toggleEnabled": "مفعّل",
+    "editSection": "تعديل القسم",
+    "duplicateSection": "تكرار القسم",
+    "deleteSection": "حذف القسم",
+    "deleteConfirmTitle": "هل تريد حذف هذا القسم؟",
+    "deleteConfirmDescription": "سيتم إزالة هذا القسم ومحتواه من الصفحة. لا يمكن التراجع عن هذا الإجراء.",
+    "noSections": "لا توجد أقسام بعد",
+    "invalidConfig": "بعض القيم تحتاج إلى تصحيح قبل أن يمكن حفظ هذا.",
+    "moveUp": "تحريك للأعلى",
+    "moveDown": "تحريك للأسفل",
+    "visibility": {
+      "desktop": "سطح المكتب",
+      "tablet": "الجهاز اللوحي",
+      "mobile": "الجوال"
+    }
+  },
+  "preview": {
+    "title": "المعاينة",
+    "subtitle": "شاهد موقعك الإلكتروني المسوّد تمامًا كما سيُنتجه العارض.",
+    "pageSelectPlaceholder": "اختر صفحة",
+    "breakpoint": {
+      "desktop": "سطح المكتب",
+      "tablet": "الجهاز اللوحي",
+      "mobile": "الجوال"
+    }
+  },
+  "publish": {
+    "action": "نشر",
+    "confirmTitle": "هل تريد نشر هذا الموقع؟",
+    "confirmDescription": "سيصبح إعدادك المسوّد مباشرًا لكل زائر.",
+    "confirmAction": "نشر",
+    "draftHint": "لديك تغييرات غير منشورة.",
+    "publishedHint": "هذا الموقع مباشر الآن.",
+    "status": {
+      "draft": "مسودة",
+      "published": "منشور",
+      "publishing": "جارٍ النشر…",
+      "failed": "فشل النشر"
+    }
+  },
+  "sections": {
+    "hero": { "label": "الواجهة الرئيسية" },
+    "about": { "label": "من نحن" },
+    "featuredCourses": { "label": "الدورات المميزة" },
+    "statistics": { "label": "الإحصائيات" },
+    "features": { "label": "المزايا" },
+    "testimonials": { "label": "آراء العملاء" },
+    "faq": { "label": "الأسئلة الشائعة" },
+    "cta": { "label": "دعوة لاتخاذ إجراء" },
+    "instructors": { "label": "المدرّبون" },
+    "gallery": { "label": "معرض الصور" },
+    "contact": { "label": "التواصل" }
+  },
+  "fields": {
+    "title": "العنوان",
+    "subtitle": "العنوان الفرعي",
+    "description": "الوصف",
+    "body": "المحتوى",
+    "image": "الصورة",
+    "primaryCta": "الزر الأساسي",
+    "secondaryCta": "الزر الثانوي",
+    "ctaLabelPlaceholder": "نص الزر",
+    "ctaTargetPlaceholder": "يرتبط بصفحة",
+    "mode": "المصدر",
+    "modeLatest": "أحدث الدورات",
+    "modeSelected": "دورات مختارة",
+    "layout": "التخطيط",
+    "layoutGrid": "شبكة",
+    "layoutCarousel": "عرض دوّار",
+    "count": "عدد العناصر المعروضة",
+    "showPrice": "عرض السعر",
+    "showInstructor": "عرض المدرّب",
+    "statisticItems": "الإحصائيات",
+    "statisticItem": "إحصائية",
+    "statValue": "القيمة",
+    "statLabel": "التسمية",
+    "featureItems": "المزايا",
+    "featureItem": "ميزة",
+    "icon": "الأيقونة",
+    "testimonialItems": "آراء العملاء",
+    "testimonialItem": "رأي",
+    "quote": "الاقتباس",
+    "authorName": "اسم الكاتب",
+    "authorRole": "منصب الكاتب",
+    "avatar": "الصورة الرمزية",
+    "faqItems": "الأسئلة",
+    "faqItem": "سؤال",
+    "question": "السؤال",
+    "answer": "الإجابة",
+    "galleryImages": "الصور",
+    "galleryImage": "صورة",
+    "caption": "التسمية التوضيحية",
+    "email": "البريد الإلكتروني",
+    "phone": "الهاتف",
+    "address": "العنوان",
+    "showForm": "عرض نموذج التواصل"
+  },
+  "icons": {
+    "GraduationCap": "قبعة التخرج",
+    "BookOpen": "كتاب مفتوح",
+    "Award": "جائزة",
+    "Users": "أشخاص",
+    "Clock": "ساعة",
+    "ShieldCheck": "درع",
+    "Sparkles": "بريق",
+    "Globe": "كرة أرضية",
+    "Video": "فيديو",
+    "Headphones": "سماعات"
+  },
+  "renderer": {
+    "hero": "إجراءات الواجهة الرئيسية",
+    "noCourses": "لا توجد دورات لعرضها بعد",
+    "noInstructors": "لا يوجد مدرّبون لعرضهم بعد",
+    "instructorsLabel": "المدرّبون",
+    "contactNameLabel": "الاسم",
+    "contactEmailLabel": "البريد الإلكتروني",
+    "contactMessageLabel": "الرسالة",
+    "contactSubmit": "إرسال الرسالة"
+  },
+  "common": {
+    "saveChanges": "حفظ التغييرات",
+    "saving": "جارٍ الحفظ…",
+    "chooseImage": "اختيار صورة",
+    "replaceImage": "استبدال الصورة",
+    "removeImage": "إزالة الصورة",
+    "imageTooLarge": "حجم الملف كبير جدًا.",
+    "imageInvalidType": "نوع الملف غير مدعوم. استخدم PNG أو JPG أو WEBP."
+  }
+}

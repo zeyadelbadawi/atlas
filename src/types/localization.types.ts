@@ -54,6 +54,7 @@ export const TRANSLATION_NAMESPACES = [
   'tenant',
   'payments',
   'provisioning',
+  'website',
 ] as const;
 
 export type TranslationNamespace = (typeof TRANSLATION_NAMESPACES)[number];

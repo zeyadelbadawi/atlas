@@ -33,6 +33,7 @@ export const QUERY_KEY_ROOTS = {
   provisioning: ['provisioning'] as const,
   subdomain: ['subdomain'] as const,
   platformProvisioning: ['platform-provisioning'] as const,
+  website: ['website'] as const,
 } as const;
 
 /**
@@ -432,4 +433,24 @@ export const platformProvisioningKeys = {
     [...platformProvisioningKeys.all, 'list', query] as const,
   detail: (requestId: string) =>
     [...platformProvisioningKeys.all, 'detail', requestId] as const,
+} as const;
+
+/**
+ * Query keys for the Website domain (Prompt 9).
+ *
+ * Academy-scoped, not organization-scoped — a website belongs to one
+ * Academy, the same boundary `courseKeys` already uses. Embedding
+ * `academyId` directly means switching the active Academy produces
+ * different keys automatically, so no cross-Academy website data can ever
+ * be read from cache — the same technique `courseKeys` documents for
+ * itself, requiring no new invalidation wiring.
+ */
+export const websiteKeys = {
+  all: QUERY_KEY_ROOTS.website,
+  configuration: (academyId: string | undefined) =>
+    [...websiteKeys.all, 'configuration', academyId] as const,
+  pages: (academyId: string | undefined, query?: CollectionQuery) =>
+    [...websiteKeys.all, 'pages', academyId, query] as const,
+  page: (academyId: string | undefined, pageId: string) =>
+    [...websiteKeys.all, 'page', academyId, pageId] as const,
 } as const;

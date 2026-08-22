@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-08-23T00:00:00Z
+last_updated: 2026-08-23T12:00:00Z
 status: active
 ---
 
@@ -7,10 +7,10 @@ status: active
 
 ## Project Overview
 
-Atlas Platform - Prompt 8 Implementation (Atlas Provisioning + Academy Lifecycle)
-Current Phase: The orchestration domain that turns an eligible request into a ready Academy — Tenant → Academy → Theme → Branding → Subdomain → Domain → Provisioning → Ready — consuming Prompt 6's entitlements and Prompt 7's commerce without rebuilding either, built on top of completed Platform Core + Academy Management + Course Management + Student Learning & Assessment + Instructor/Teaching + Communication & Knowledge Modules + Atlas SaaS Foundation (Prompt 6) + Enterprise Billing & Payment Platform (Prompt 7).
-Scope: Provisioning Start/Status/History (Tenant Owner) + Platform Provisioning console (list + retry/cancel), a real idempotent/resumable state machine with step-level detail, Prompt 6 plan-limit enforcement reused verbatim, subdomain-availability checking and domain-status representation as display-state contracts only — no real DNS/SSL/infrastructure provisioning, no Theme Engine, no fake progress, no public website
-Previous Completion: Platform Core (9 features) + Academy Management + Course Management (Prompt 3 Parts A/B/C) + Student Learning & Assessment (Prompt 4) + Instructor / Teaching Operations + Communication & Knowledge Modules (Prompt 5) + Atlas SaaS Foundation, Tenancy, Subscriptions, Plans, Entitlements, Usage & Platform Admin (Prompt 6) + Atlas Enterprise Billing & Payment Platform (Prompt 7) - all APPROVED and PERMANENT
+Atlas Platform - Prompt 9 Implementation (Atlas Theme Engine + Website Experience Platform)
+Current Phase: The multi-tenant Theme Engine and Page Composer that let an Academy Owner configure and operate a professional public-facing Academy website without a developer — five genuinely distinct built-in themes, a Design Token system, a draft/publish `WebsiteConfiguration` model, an 11-type Section Registry, and one shared renderer used identically by the Theme gallery, the live editor preview, and the in-dashboard Preview surface — built on top of completed Platform Core + Academy Management + Course Management + Student Learning & Assessment + Instructor/Teaching + Communication & Knowledge Modules + Atlas SaaS Foundation (Prompt 6) + Enterprise Billing & Payment Platform (Prompt 7) + Atlas Provisioning + Academy Lifecycle (Prompt 8).
+Scope: Theme Registry + Design Tokens, Website Settings (Theme/Brand/SEO/Navigation tabs), Core Pages (Home/About/Courses/Course Details/FAQs/Contact) reusing the existing Course domain, Custom Pages, Page Composer with per-breakpoint section visibility, draft/publish workflow, in-dashboard Preview — no real DNS/SSL/public routing infrastructure, no payment logic, no Course Management rewrite, no arbitrary client-executable HTML/CSS/JS
+Previous Completion: Platform Core (9 features) + Academy Management + Course Management (Prompt 3 Parts A/B/C) + Student Learning & Assessment (Prompt 4) + Instructor / Teaching Operations + Communication & Knowledge Modules (Prompt 5) + Atlas SaaS Foundation, Tenancy, Subscriptions, Plans, Entitlements, Usage & Platform Admin (Prompt 6) + Atlas Enterprise Billing & Payment Platform (Prompt 7) + Atlas Provisioning + Academy Lifecycle (Prompt 8) - all APPROVED and PERMANENT
 Backend: Remains abstract - no real backend integration yet
 Architecture: Extending existing foundation WITHOUT creating parallel infrastructure
 
@@ -79,12 +79,31 @@ Architecture: Extending existing foundation WITHOUT creating parallel infrastruc
 | 2026-08-23 | `ProvisioningStatusPage` renders `useProvisioningRequest`'s polled state exactly, with zero `setTimeout`/`setInterval`-based progress simulation | Claude | "No fake backend" is non-negotiable; verified by grep during the CTO audit |
 | 2026-08-23 | The `'ready'` success state offers only "Go to Academy Dashboard," never "Visit Website" | Claude | Provisioning readiness and public-website existence are different, later-owned (Prompt 9/10) concerns - conflating them would have leaked scope |
 | 2026-08-23 | Every new Prompt 8 route explicitly sets `requireAuthentication` | Claude | Verified by grep: all 57 `RouteGuard` instances across the entire router now set it - the Prompt 3 regression was not repeated |
+| 2026-08-23 | Every new Prompt 9 type/file is prefixed `Website*`, never bare `Theme*` | Claude | Atlas already has an unrelated dashboard light/dark `Theme`/`ThemePreference`/`ThemeProvider` system; a name collision would risk real confusion in imports and IDE autocomplete |
+| 2026-08-23 | `WebsiteConfiguration`/`WebsitePage`/`websiteKeys` are academy-scoped (`academyId`), not organization-scoped | Claude | A website belongs to one Academy, not the Tenant; mirrors `courseKeys`'s existing precedent - switching academies produces different keys with zero extra invalidation wiring |
+| 2026-08-23 | Sections reference course ids, never copy course data | Claude | Guarantees content/presentation separation - switching themes or republishing can never corrupt or duplicate a page's actual content |
+| 2026-08-23 | 5 built-in themes share one token system (radius/shadow/spacing/containerWidth/heading weight-tracking-case/cardVariant) plus structural Hero/Header/Footer variants, rather than either ~60 bespoke per-theme components or 5 color-only reskins | Claude | The only way to satisfy "genuinely distinct" without unrealistic scope; makes a 6th theme addable as one registry entry |
+| 2026-08-23 | No new web font was loaded; all themes reuse `--font-sans`/`--font-display` | Claude | Avoids new FOUC/CLS risk and an Arabic-script typeface gap a Latin-only decorative font would introduce |
+| 2026-08-23 | One descriptor-driven `SectionConfigForm` replaces 11 bespoke section-editor forms; internal draft state is a narrowly-scoped `Record<string, unknown>` | Claude | Real type safety is enforced at the Zod-validation boundary on save; adding a 12th section type never requires editor changes |
+| 2026-08-23 | `FeaturedCoursesSection`/`InstructorsSection`/`CourseDetailsTemplate` call `@features/course`'s existing hooks directly - no new Course or Instructor service was written | Claude | Guarantees the website's Course Details always reflects the live, authoritative Course Management record, never a duplicated projection (US-60) |
+| 2026-08-23 | `WebsitePreviewPage` (authenticated, in-dashboard) is the explicit substitute for a public multi-tenant website | Claude | No subdomain-serving infrastructure exists (Prompt 8 only allocates subdomains); building it is real infrastructure work explicitly out of scope |
+| 2026-08-23 | Website Brand tab is scoped to colors + a dark-background logo only; primary logo/favicon stay on the existing Academy Branding page | Claude | Avoids duplicating the upload infrastructure Prompt 3B already owns |
+| 2026-08-23 | Publishing is a single explicit, backend-confirmed action (`WebsitePublishBar`); draft edits never auto-publish | Claude | "Content vs. presentation" and "draft vs. published" are both hard architectural requirements of the spec - optimistic publish would violate both |
+| 2026-08-23 | Every new Prompt 9 route explicitly sets `requireAuthentication requiredPermissions={['academy.website.view']}` | Claude | Continues the same grep-verified discipline established since the Prompt 3 `RouteGuard` regression |
 
 ## Constraints
 
-- MUST preserve all Prompt 1, Prompt 2, Prompt 3 Part A/B/C, Prompt 4, Prompt 5, Prompt 6, Prompt 7 approved architecture (including the pre-existing, unrelated Prompt 3A `billing` feature and namespace)
+- MUST preserve all Prompt 1, Prompt 2, Prompt 3 Part A/B/C, Prompt 4, Prompt 5, Prompt 6, Prompt 7, Prompt 8 approved architecture (including the pre-existing, unrelated Prompt 3A `billing` feature/namespace and the pre-existing, unrelated dashboard light/dark `Theme`/`ThemePreference`/`ThemeProvider` system)
 - NO duplicate infrastructure (auth, query, forms, services, API clients, tables, upload, dialogs)
-- NO Orders/Ecommerce/Payments, Certificate generation/PDF/verification, Website/CMS, Marketplace, Messaging, Live classes, Video streaming, AI features, real auto-grading (future scope)
+- NO Orders/Ecommerce/Payments, Certificate generation/PDF/verification, Marketplace, Messaging, Live classes, Video streaming, AI features, real auto-grading (future scope)
+- Atlas Theme Engine + Website Experience Platform (Theme Registry, Design Tokens, `WebsiteConfiguration`, Page Composer, Section Registry, draft/publish, in-dashboard Preview) ONLY in this prompt (Prompt 9) - NO real DNS/SSL/public multi-tenant routing infrastructure, NO payment logic, NO Course Management rewrite, NO arbitrary client-executable HTML/CSS/JS in any section/page config, NO primary logo/favicon management (stays on Academy Branding), NO revision history/versioning beyond unsaved-changes protection
+- Every new website type/file is prefixed `Website*`, never bare `Theme*` - no collision with the pre-existing dashboard light/dark theme system
+- `WebsiteConfiguration`/`WebsitePage`/`websiteKeys` are scoped by `academyId`, never `organizationId` - a website belongs to one Academy, not the Tenant
+- Sections MUST reference course ids, never copy/duplicate course data - content/presentation separation is non-negotiable, so theme switching and republishing can never corrupt or duplicate page content
+- The 5 built-in themes MUST remain genuinely distinct (token system + structural Hero/Header/Footer variants) - NO shallow color-only reskins, and adding a 6th theme MUST be one registry entry, never a rewrite of the existing five
+- `FeaturedCoursesSection`/`InstructorsSection`/`CourseDetailsTemplate` MUST consume `@features/course`'s existing hooks directly - NO new Course or Instructor service/type may be introduced
+- `WebsitePreviewPage` is an authenticated, in-dashboard surface only - it is NOT, and must never claim to be, a public website
+- Publishing is ALWAYS an explicit, backend-confirmed action - draft edits NEVER auto-publish, and theme switching NEVER destroys or alters existing page content/configuration
 - Atlas Provisioning + Academy Lifecycle (ProvisioningRequest state machine, step-level detail, subdomain/domain display-state, Academy provisioning orchestration) ONLY in this prompt (Prompt 8) - NO real DNS/SSL/infrastructure provisioning, NO Theme Engine, NO public website/CMS, NO tenant/academy cloning, NO real observability infrastructure
 - Provisioning does NOT create Tenants (existing registration flow owns that) and does NOT implement a Theme Engine (Prompt 9 owns that) - both the `tenant` and `theme` steps are observability-only, never frontend-triggered
 - Retry/resume is ONE contract (`retryProvisioning`) - it must never conceptually recreate a step the backend already reports `completed`/`skipped`

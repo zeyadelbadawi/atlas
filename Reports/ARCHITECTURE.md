@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-08-23T00:00:00Z
+last_updated: 2026-08-23T12:00:00Z
 ---
 
 # Architecture Design
@@ -957,4 +957,203 @@ remain explicitly future modules — the point of this prompt's
 architecture is that a future backend can implement real provisioning
 engines behind these exact contracts without the frontend needing a
 rewrite.
+
+---
+
+## Atlas Theme Engine + Website Experience Platform (Prompt 9)
+
+The system that lets an Academy Owner configure and operate a professional
+public-facing Academy website — theme, branding, pages, sections,
+navigation, SEO, draft/publish — without a developer, on top of Prompt
+3B's Academy domain and Prompt 3C's Course domain. Prompt 9 does not
+rebuild either — it renders a live view of an Academy's existing courses
+and consumes the existing branding/upload infrastructure. It owns exactly
+one new responsibility: presentation configuration (theme + content
+composition), kept strictly separate from the content it presents.
+
+### The `Website`/`Theme` naming-collision decision
+
+Atlas already ships an unrelated dashboard light/dark preference system —
+`Theme`/`ThemePreference`/`ThemeProvider` — controlling the SPA's own
+chrome. Every new type, file, and hook in this prompt is deliberately
+prefixed `Website*` (`WebsiteThemeDefinition`, `WebsiteThemeRegistry`,
+`WebsiteThemeScope`, `useWebsiteConfiguration`, …), never bare `Theme*`,
+so the two systems can never be confused by name, import, or IDE
+autocomplete. Verified by grep: no new symbol in `src/features/website/`
+or `src/types/website-theme.types.ts` collides with the existing
+`src/providers/ThemeProvider.tsx` or `theme.types.ts` exports.
+
+### Academy-scoping decision
+
+A website belongs to exactly one Academy, not to the Tenant/Organization.
+`WebsiteConfigurationService` is nested under
+`academies/:academyId/website/...`, and `websiteKeys` embeds `academyId`
+directly — the same pattern `courseKeys` already established in Prompt
+3C. This is a deliberate departure from Prompt 6/7/8's
+`organizationId`-scoped keys: an Academy website has no reason to
+invalidate on a Tenant/organization switch (a Tenant Owner switching
+organizations is switching Tenants, not Academies within one), so no new
+`atlas:organization-switched` wiring was needed — switching the active
+Academy simply produces different query keys.
+
+### Content vs. presentation, enforced by the data model
+
+`WebsiteConfiguration` and `WebsitePage` model presentation (theme choice,
+tokens, section instances, visibility, navigation, SEO) as data entirely
+separate from the Course/Academy content they reference. A `Section`
+never stores a copy of course data — `FeaturedCoursesSection` stores a
+`mode` (`'latest'` | `'selected'`) and, when `'selected'`, an array of
+course ids; the actual course records are always fetched live through
+`@features/course`'s existing hooks at render time. This is what makes
+theme switching content-safe: switching `WebsiteConfiguration.themeKey`
+changes zero bytes of any `WebsitePage.sections`, and republishing after a
+theme switch cannot silently drop or corrupt page content, because the
+theme was never coupled to it in the first place.
+
+### The token + structural-variant theme strategy
+
+Building 5 *genuinely* distinct themes without either writing ~60
+bespoke per-theme section components (unrealistic scope) or shipping 5
+shallow color-only reskins (explicitly forbidden by the spec) required a
+bounded middle design: a shared token system (`radius`/`shadow`/
+`spacing`/`containerWidth`/heading `weight`/`tracking`/`case`/
+`cardVariant`) combined with structural variants for the three
+highest-visual-impact, highest-leverage elements — Hero (4 layout
+variants), Header (3), and Footer (3) — plus distinct default brand
+colors per theme. Every other section (About, Statistics, Features, …)
+renders through the same component across all 5 themes, but with a
+visibly different look, because it reads its spacing/radius/shadow/
+typography entirely from the active `ResolvedWebsiteDesignSystem`, never
+a hardcoded class. This is documented here explicitly as a deliberate
+engineering trade-off, not an oversight: it is what makes a 6th theme
+addable as one new `WebsiteThemeDefinition` registry entry, not a new set
+of section components.
+
+### The font-reuse decision
+
+No new web font was loaded. Every theme reuses Atlas's already-loaded
+`--font-sans`/`--font-display` (Rubik/Readex Pro — both RTL-safe, already
+covering Arabic and Latin scripts). Typographic personality is
+differentiated through the heading weight/tracking/case token triplet
+instead of typeface, avoiding a new font-loading dependency, a new
+FOUC/CLS risk, and an Arabic-script gap a Latin-only decorative font would
+have introduced.
+
+### The descriptor-driven Section Editor decision
+
+Building 11 fully bespoke section-editor forms (one per `SectionType`)
+was rejected as unnecessary duplication of the same
+label/input/validation wiring 11 times. Instead, `section-field.types.ts`
+defines a small, properly-discriminated `SectionFieldDescriptor` union
+(`TextFieldDescriptor`/`BooleanFieldDescriptor`/`NumberFieldDescriptor`/
+`SelectFieldDescriptor`), and `section-fields.registry.ts` maps each
+`SectionType` to its field list; one shared `SectionConfigForm` renders
+whichever descriptor list is active. The generic internal draft state is
+typed `Record<string, unknown>`, a narrow and explicitly commented
+exception to the "no `any`" rule — real type safety is enforced at the
+Zod-schema validation boundary the moment a save is attempted, which is
+the point at which type correctness actually matters. Adding a 12th
+section type means adding one metadata entry, one config type, one Zod
+schema, and one field-descriptor list — never touching the editor itself.
+
+### The Course-domain-reuse decision
+
+`FeaturedCoursesSection`, `InstructorsSection`, and
+`CourseDetailsTemplate` consume `@features/course`'s existing
+`useCourses`/`useCourse`/`formatCoursePricing` directly through its
+public barrel — zero new Course-adjacent service, hook, or type was
+written. `InstructorsSection` in particular has no Instructor
+service/entity of its own; it derives its instructor list by
+deduplicating instructors across the courses already fetched for the
+Academy. This guarantees a Course Details page rendered inside the
+website always reflects the same live, authoritative Course Management
+data every other part of Atlas sees — never a duplicated or stale
+projection (the exact requirement of US-60).
+
+### The public-routing-boundary decision
+
+Section 31 of the spec scoped public routing conditionally ("if the
+existing application architecture supports them"). It does not: Prompt 8
+allocates a subdomain record but there is no infrastructure anywhere in
+the repository that serves a request against a Tenant's subdomain, and
+building that is real infrastructure work explicitly out of scope (spec
+section 43). `WebsitePreviewPage` is the honest, explicitly-scoped
+substitute — an authenticated, in-dashboard, permission-gated page that
+renders a website's draft configuration through the exact same
+`WebsiteRenderer` a real public site would eventually use, at
+selectable desktop/tablet/mobile breakpoints. `WebsiteHeader`/
+`WebsiteFooter` take an `onNavigate(pageId)` callback rather than
+real `<a href>` navigation, because there is no public URL space to
+navigate within yet; when public routing is built, this callback becomes
+the one integration seam that needs to change.
+
+### Module Design
+| Area | Responsibility | Key Files |
+|------|-----------------|-----------|
+| Theme domain types + registry | `WebsiteThemeTokens`/`WebsiteThemeDefinition`/`ResolvedWebsiteDesignSystem`; 5 theme definitions; `getWebsiteTheme`/`listWebsiteThemes` | `src/types/website-theme.types.ts`, `src/features/website/themes/` |
+| Section domain types + registry | `SectionType`/`SectionInstance` (discriminated union)/`ResponsiveVisibility`; `SECTION_METADATA`, descriptor-driven field registry | `src/types/website-section.types.ts`, `src/features/website/sections/` |
+| Website domain types | `WebsiteConfiguration`, `WebsitePage`, `WebsiteBrandConfig`/`SeoConfig`/`HeaderConfig`/`FooterConfig`, publish status/error | `src/types/website.types.ts` |
+| Renderer | `WebsiteThemeScope` (CSS var scoping), `WebsiteRenderer`, `WebsiteHeader`/`WebsiteFooter`, `CourseDetailsTemplate`, 11 section components | `src/features/website/renderer/`, `src/features/website/sections/` |
+| Services | `WebsiteConfigurationService` (academy-scoped, config + pages + publish + section-reorder) | `src/features/website/services/` |
+| Hooks | 9 hooks covering configuration/publish/pages/section-reorder | `src/features/website/hooks/` |
+| Pages | Website Settings (Theme/Brand/SEO/Navigation tabs), Pages list, Page Editor (Composer), Preview | `src/features/website/pages/` |
+| Query keys | `websiteKeys` (academy-scoped, no extra invalidation wiring needed) | `src/services/query/query-keys.ts` |
+| Localization | 1 new namespace: `website` (176/176 keys, EN/AR parity verified programmatically); incidental `invalidColor`/`academyWebsite` keys added to `validation`/`navigation` | `src/localization/resources/{en,ar}/website.json` |
+| Routing | 4 new routes, all `RouteGuard`s explicitly `requireAuthentication requiredPermissions={['academy.website.view']}` | `route-paths.ts`, `AppRouter.tsx` |
+| Navigation | "Academy Website" appended to the existing Academy nav section | `navigation.config.ts` |
+
+### Tech Decisions
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| `Website*` naming prefix everywhere | Never bare `Theme*` | Avoids collision with the pre-existing dashboard light/dark theme system |
+| Academy-scoped, not organization-scoped | `websiteKeys`/`WebsiteConfigurationService` keyed by `academyId` | A website belongs to one Academy; matches `courseKeys`'s precedent, no org-switch wiring needed |
+| Content/presentation separation | Sections reference course ids, never copy course data | Theme switching and republishing can never corrupt or duplicate content |
+| Token + structural-variant themes | 5 shared tokens + Hero/Header/Footer structural variants, not per-theme components | Genuinely distinct themes without ~60 bespoke components or shallow color reskins |
+| No new font | Reuse `--font-sans`/`--font-display` | Avoids new FOUC/CLS risk and an Arabic-script typeface gap |
+| Descriptor-driven Section Editor | One `SectionConfigForm` + field-descriptor registry, not 11 bespoke forms | Adding a 12th section type never requires editor changes; type safety enforced at the Zod boundary |
+| Course domain reuse | `FeaturedCoursesSection`/`InstructorsSection`/`CourseDetailsTemplate` call `@features/course` directly | Zero duplication; website Course Details is always the live, authoritative record |
+| No public routing | `WebsitePreviewPage` (authenticated, in-dashboard) instead | No subdomain-serving infrastructure exists yet; building it is out of scope |
+| Brand tab scoped to colors + dark logo only | Primary logo/favicon stay on the existing Academy Branding page | Avoids duplicating upload infrastructure Prompt 3B already owns |
+
+### Backend Contracts To Document (frontend-defined, backend TBD)
+1. **Get/update website configuration** — `GET/PATCH /academies/:academyId/website` → `WebsiteConfiguration`. Always the Academy's draft state; publishing is a separate action.
+2. **Publish website** — `POST /academies/:academyId/website/publish`. Backend copies draft → published atomically; frontend never assumes success before the response confirms it.
+3. **List/get/create/update/delete pages** — `GET/POST /academies/:academyId/website/pages`, `GET/PATCH/DELETE .../pages/:pageId`. Core pages are never deletable (frontend-enforced via `TOGGLEABLE_CORE_PAGE_TYPES`, backend must independently enforce this).
+4. **Reorder page sections** — `PATCH .../pages/:pageId/sections/reorder`. Body carries the full ordered section-id list; backend is authoritative on validity.
+5. **Theme catalog** — theme definitions are frontend-bundled (`WebsiteThemeRegistry`), not backend-fetched; only the *selected* `themeKey` round-trips through `WebsiteConfiguration`.
+6. **Brand/SEO/Navigation** — all persisted as sub-objects of the same `WebsiteConfiguration` resource via the same update endpoint; no separate sub-resource contracts.
+7. **Idempotency** — `updateWebsiteConfiguration`/`updateWebsitePage` are plain PATCH-style saves (no create-with-retry-risk mutation exists in this prompt, unlike Prompt 7/8's `idempotencyKey` pattern); `publishWebsite` should be safe against duplicate-click/multi-tab submission on the backend.
+
+### Security / Tenancy Verification
+- **Cross-academy leakage**: `websiteKeys`/`WebsiteConfigurationService` calls are grepped to confirm `academyId` is always sourced from the active Academy context (`useAuth`/`PlatformProvider`), never trusted from an unvalidated route param alone.
+- **Fail-closed authorization**: all 4 new routes go through the unmodified `RouteGuard`; nothing in this prompt touched `RouteGuard`/`AuthorizationService`. Minimal permission set: `academy.website.view`/`manage`/`publish`.
+- **No client-executable configuration**: grepped the entire feature for `dangerouslySetInnerHTML`, `eval`, `new Function`, and raw `<script>` — none found. Every section config is a bounded, typed data shape (`SectionConfigMap`); there is no "custom HTML" or "custom code" section type.
+- **No fake backend**: grepped for `setTimeout`/`setInterval` used to simulate save/publish latency, and for any `localStorage`-as-persistence pattern — none found; every read/write goes through `WebsiteConfigurationService` → `apiClient`.
+- **No hardcoded business rules**: theme/section catalogs are legitimately frontend-bundled (equivalent to Prompt 7's `PaymentProviderRegistry`), but no color/price/limit value is hardcoded outside of it; brand colors and content are always the Academy's own configured data.
+
+### What Is Frontend-Only (No Real Backend Behind It Yet)
+Every service method in this prompt issues a real HTTP call through the
+existing `apiClient` against a documented endpoint shape, consistent with
+every prior prompt. There is no real public website hosting behind any of
+it: no DNS, no SSL, no CDN, no server-side rendering, no actual subdomain
+serving. The Theme Registry and Section Registry are legitimately
+frontend-bundled catalogs (the same pattern Prompt 7's
+`PaymentProviderRegistry` established) — only the *selection* the Academy
+makes from them is backend-persisted. `WebsitePreviewPage` is a real,
+honest render of the draft configuration; it is not, and does not claim
+to be, the public website.
+
+### Scope Boundary
+Explicitly not implemented in Prompt 9: real DNS/SSL/CDN or any
+subdomain-serving infrastructure, a public (unauthenticated,
+multi-tenant-routed) website — `WebsitePreviewPage` is its authenticated
+in-dashboard substitute — payment/checkout logic of any kind, any rewrite
+of Course Management (only consumption via `@features/course`'s public
+barrel), arbitrary client-executable HTML/CSS/JS in the section or page
+model, primary logo/favicon management (stays on the existing Academy
+Branding page), undo/redo beyond the unsaved-changes-protection already
+built, and page/content versioning or revision history. These remain
+explicitly future modules — the point of this prompt's architecture is
+that a future backend and a future public-routing layer can be built
+behind these exact contracts without the frontend needing a rewrite.
 

@@ -207,6 +207,19 @@ const PlatformProvisioningDetailPage = lazy(
   () => import('@features/provisioning/pages/PlatformProvisioningDetailPage')
 );
 
+const WebsiteSettingsPage = lazy(
+  () => import('@features/website/pages/WebsiteSettingsPage')
+);
+const WebsitePagesPage = lazy(
+  () => import('@features/website/pages/WebsitePagesPage')
+);
+const WebsitePageEditorPage = lazy(
+  () => import('@features/website/pages/WebsitePageEditorPage')
+);
+const WebsitePreviewPage = lazy(
+  () => import('@features/website/pages/WebsitePreviewPage')
+);
+
 const ForbiddenPage = lazy(
   () => import('@features/system/pages/ForbiddenPage')
 );
@@ -786,6 +799,42 @@ export function AppRouter(): JSX.Element {
               element={
                 <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
                   <PlatformProvisioningDetailPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.websiteSettings}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['academy.website.view']}>
+                  <WebsiteSettingsPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.websitePages}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['academy.website.view']}>
+                  <WebsitePagesPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.websitePageEditor}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['academy.website.view']}>
+                  <WebsitePageEditorPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.websitePreview}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['academy.website.view']}>
+                  <WebsitePreviewPage />
                 </RouteGuard>
               }
             />

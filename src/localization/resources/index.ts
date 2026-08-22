@@ -33,6 +33,7 @@ import enForum from './en/forum.json';
 import enTenant from './en/tenant.json';
 import enPayments from './en/payments.json';
 import enProvisioning from './en/provisioning.json';
+import enWebsite from './en/website.json';
 
 import arCommon from './ar/common.json';
 import arNavigation from './ar/navigation.json';
@@ -59,6 +60,7 @@ import arForum from './ar/forum.json';
 import arTenant from './ar/tenant.json';
 import arPayments from './ar/payments.json';
 import arProvisioning from './ar/provisioning.json';
+import arWebsite from './ar/website.json';
 
 /** One language's resources, keyed by namespace. */
 type NamespaceBundle = Record<TranslationNamespace, Record<string, unknown>>;
@@ -92,6 +94,7 @@ export const TRANSLATION_RESOURCES: Readonly<
     tenant: enTenant,
     payments: enPayments,
     provisioning: enProvisioning,
+    website: enWebsite,
   },
   ar: {
     common: arCommon,
@@ -119,5 +122,6 @@ export const TRANSLATION_RESOURCES: Readonly<
     tenant: arTenant,
     payments: arPayments,
     provisioning: arProvisioning,
+    website: arWebsite,
   },
 });

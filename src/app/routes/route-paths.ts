@@ -113,6 +113,11 @@ export const DASHBOARD_ROUTES = {
 
   platformProvisioning: '/dashboard/platform/provisioning',
   platformProvisioningDetail: '/dashboard/platform/provisioning/:requestId',
+
+  websiteSettings: '/dashboard/academy/:academyId/website',
+  websitePages: '/dashboard/academy/:academyId/website/pages',
+  websitePageEditor: '/dashboard/academy/:academyId/website/pages/:pageId',
+  websitePreview: '/dashboard/academy/:academyId/website/preview',
 } as const;
 
 /** System paths that exist outside the product modules. */

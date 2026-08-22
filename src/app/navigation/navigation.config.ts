@@ -29,6 +29,7 @@ import {
   Receipt,
   ShieldCheck,
   Rocket,
+  Globe,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem, NavigationSection } from '@types';
@@ -104,6 +105,17 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
         icon: Settings,
         requiresAuth: true,
         requiredPermissions: ['academy.configure'],
+      },
+      {
+        id: 'academy-website',
+        labelKey: 'navigation:items.academyWebsite',
+        path: buildPath(DASHBOARD_ROUTES.websiteSettings, {
+          academyId: activeAcademyId,
+        }),
+        icon: Globe,
+        requiresAuth: true,
+        requiredPermissions: ['academy.website.view'],
+        matchNestedPaths: true,
       }
     );
   }

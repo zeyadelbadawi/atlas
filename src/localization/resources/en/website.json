@@ -1,0 +1,226 @@
+{
+  "settings": {
+    "title": "Website",
+    "subtitle": "Configure your Academy's public website — theme, branding, SEO and navigation.",
+    "tabs": {
+      "theme": "Theme",
+      "brand": "Brand",
+      "seo": "SEO",
+      "navigation": "Navigation"
+    }
+  },
+  "theme": {
+    "currentTheme": "Current theme",
+    "selectTheme": "Select theme",
+    "noHomePage": "No Home page found"
+  },
+  "themes": {
+    "modernEducation": {
+      "name": "Modern Education",
+      "description": "Friendly and approachable, with a split hero and elevated cards."
+    },
+    "premiumAcademy": {
+      "name": "Premium Academy",
+      "description": "Upscale and elegant, with a centered hero and generous whitespace."
+    },
+    "corporateLearning": {
+      "name": "Corporate Learning",
+      "description": "Structured and professional, built for enterprise training providers."
+    },
+    "minimalEditorial": {
+      "name": "Minimal Editorial",
+      "description": "Restrained and typographic, letting your content speak for itself."
+    },
+    "boldCreative": {
+      "name": "Bold Creative",
+      "description": "Energetic and expressive, for academies that want to stand out."
+    }
+  },
+  "brand": {
+    "primaryColor": "Primary color",
+    "secondaryColor": "Secondary color",
+    "accentColor": "Accent color",
+    "contrastWarning": "This color may be hard to read as text on a light background.",
+    "darkLogo": "Logo for dark backgrounds",
+    "darkLogoHelp": "Used wherever the theme places your logo on a dark surface.",
+    "primaryLogoNote": "Your primary logo and favicon are managed on your Academy's Branding page.",
+    "manageInAcademyBranding": "Manage in Academy Branding",
+    "saved": "Brand settings saved",
+    "saveError": "Failed to save brand settings"
+  },
+  "seo": {
+    "metaTitle": "Meta title",
+    "metaDescription": "Meta description",
+    "ogImage": "Social share image",
+    "saved": "SEO settings saved",
+    "saveError": "Failed to save SEO settings"
+  },
+  "navigation": {
+    "primaryNavTitle": "Primary navigation",
+    "orderTitle": "Order",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "headerCtaTitle": "Header call-to-action",
+    "ctaLabel": "Button label",
+    "ctaTarget": "Links to",
+    "ctaTargetPlaceholder": "Choose a page",
+    "footerTitle": "Footer",
+    "copyrightText": "Copyright text",
+    "socialLinks": "Social links",
+    "addSocialLink": "Add link",
+    "removeSocialLink": "Remove link",
+    "socialLabelPlaceholder": "Label",
+    "saveError": "Failed to save navigation"
+  },
+  "pages": {
+    "title": "Pages",
+    "subtitle": "Your website's core and custom pages.",
+    "coreBadge": "Core",
+    "visibilityToggle": "Visible",
+    "createAction": "New page",
+    "createTitle": "Create a custom page",
+    "titleLabel": "Page title",
+    "slugLabel": "URL slug",
+    "deleteAction": "Delete page",
+    "deleteConfirmTitle": "Delete this page?",
+    "deleteConfirmDescription": "\"{{title}}\" and its content will be permanently deleted. This cannot be undone."
+  },
+  "editor": {
+    "title": "Page Editor",
+    "subtitle": "Compose this page from sections, then save your changes.",
+    "compositionTitle": "Composition",
+    "addSection": "Add section",
+    "addItem": "Add item",
+    "removeItem": "Remove",
+    "applyChanges": "Apply changes",
+    "saveChanges": "Save changes",
+    "unsavedChanges": "You have unsaved changes to this page.",
+    "toggleEnabled": "Enabled",
+    "editSection": "Edit section",
+    "duplicateSection": "Duplicate section",
+    "deleteSection": "Delete section",
+    "deleteConfirmTitle": "Delete this section?",
+    "deleteConfirmDescription": "This section and its content will be removed from the page. This cannot be undone.",
+    "noSections": "No sections yet",
+    "invalidConfig": "Some values need to be corrected before this can be saved.",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "visibility": {
+      "desktop": "Desktop",
+      "tablet": "Tablet",
+      "mobile": "Mobile"
+    }
+  },
+  "preview": {
+    "title": "Preview",
+    "subtitle": "See your draft website exactly as the renderer will produce it.",
+    "pageSelectPlaceholder": "Choose a page",
+    "breakpoint": {
+      "desktop": "Desktop",
+      "tablet": "Tablet",
+      "mobile": "Mobile"
+    }
+  },
+  "publish": {
+    "action": "Publish",
+    "confirmTitle": "Publish this website?",
+    "confirmDescription": "Your draft configuration will become live for every visitor.",
+    "confirmAction": "Publish",
+    "draftHint": "You have unpublished changes.",
+    "publishedHint": "This website is live.",
+    "status": {
+      "draft": "Draft",
+      "published": "Published",
+      "publishing": "Publishing…",
+      "failed": "Publish failed"
+    }
+  },
+  "sections": {
+    "hero": { "label": "Hero" },
+    "about": { "label": "About" },
+    "featuredCourses": { "label": "Featured Courses" },
+    "statistics": { "label": "Statistics" },
+    "features": { "label": "Features" },
+    "testimonials": { "label": "Testimonials" },
+    "faq": { "label": "FAQ" },
+    "cta": { "label": "Call to Action" },
+    "instructors": { "label": "Instructors" },
+    "gallery": { "label": "Gallery" },
+    "contact": { "label": "Contact" }
+  },
+  "fields": {
+    "title": "Title",
+    "subtitle": "Subtitle",
+    "description": "Description",
+    "body": "Body",
+    "image": "Image",
+    "primaryCta": "Primary button",
+    "secondaryCta": "Secondary button",
+    "ctaLabelPlaceholder": "Button label",
+    "ctaTargetPlaceholder": "Links to a page",
+    "mode": "Source",
+    "modeLatest": "Latest courses",
+    "modeSelected": "Selected courses",
+    "layout": "Layout",
+    "layoutGrid": "Grid",
+    "layoutCarousel": "Carousel",
+    "count": "Number to show",
+    "showPrice": "Show price",
+    "showInstructor": "Show instructor",
+    "statisticItems": "Statistics",
+    "statisticItem": "Statistic",
+    "statValue": "Value",
+    "statLabel": "Label",
+    "featureItems": "Features",
+    "featureItem": "Feature",
+    "icon": "Icon",
+    "testimonialItems": "Testimonials",
+    "testimonialItem": "Testimonial",
+    "quote": "Quote",
+    "authorName": "Author name",
+    "authorRole": "Author role",
+    "avatar": "Avatar",
+    "faqItems": "Questions",
+    "faqItem": "Question",
+    "question": "Question",
+    "answer": "Answer",
+    "galleryImages": "Images",
+    "galleryImage": "Image",
+    "caption": "Caption",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "showForm": "Show contact form"
+  },
+  "icons": {
+    "GraduationCap": "Graduation cap",
+    "BookOpen": "Open book",
+    "Award": "Award",
+    "Users": "People",
+    "Clock": "Clock",
+    "ShieldCheck": "Shield",
+    "Sparkles": "Sparkles",
+    "Globe": "Globe",
+    "Video": "Video",
+    "Headphones": "Headphones"
+  },
+  "renderer": {
+    "hero": "Hero actions",
+    "noCourses": "No courses to show yet",
+    "noInstructors": "No instructors to show yet",
+    "instructorsLabel": "Instructors",
+    "contactNameLabel": "Name",
+    "contactEmailLabel": "Email",
+    "contactMessageLabel": "Message",
+    "contactSubmit": "Send message"
+  },
+  "common": {
+    "saveChanges": "Save changes",
+    "saving": "Saving…",
+    "chooseImage": "Choose image",
+    "replaceImage": "Replace image",
+    "removeImage": "Remove image",
+    "imageTooLarge": "The file is too large.",
+    "imageInvalidType": "This file type isn't supported. Use PNG, JPG or WEBP."
+  }
+}
