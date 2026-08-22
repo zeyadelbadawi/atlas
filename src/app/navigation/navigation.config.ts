@@ -28,6 +28,7 @@ import {
   Gift,
   Receipt,
   ShieldCheck,
+  Rocket,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem, NavigationSection } from '@types';
@@ -48,6 +49,15 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
       icon: GraduationCap,
       requiresAuth: true,
       requiredPermissions: ['academy.view'],
+      matchNestedPaths: true,
+    },
+    {
+      id: 'academy-provisioning',
+      labelKey: 'navigation:items.academyProvisioning',
+      path: DASHBOARD_ROUTES.provisioning,
+      icon: Rocket,
+      requiresAuth: true,
+      requiredPermissions: ['academy.provisioning.view'],
       matchNestedPaths: true,
     },
   ];
@@ -320,6 +330,15 @@ export function getDashboardNavigation(
           labelKey: 'navigation:items.platformPayments',
           path: DASHBOARD_ROUTES.platformPayments,
           icon: ShieldCheck,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+          matchNestedPaths: true,
+        },
+        {
+          id: 'platform-provisioning',
+          labelKey: 'navigation:items.platformProvisioning',
+          path: DASHBOARD_ROUTES.platformProvisioning,
+          icon: Rocket,
           requiresAuth: true,
           requiredRoles: ['platform_owner'],
           matchNestedPaths: true,

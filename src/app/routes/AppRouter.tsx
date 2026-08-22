@@ -191,6 +191,22 @@ const PlatformPaymentReviewDetailPage = lazy(
   () => import('@features/billing/pages/PlatformPaymentReviewDetailPage')
 );
 
+const ProvisioningStartPage = lazy(
+  () => import('@features/provisioning/pages/ProvisioningStartPage')
+);
+const ProvisioningStatusPage = lazy(
+  () => import('@features/provisioning/pages/ProvisioningStatusPage')
+);
+const ProvisioningHistoryPage = lazy(
+  () => import('@features/provisioning/pages/ProvisioningHistoryPage')
+);
+const PlatformProvisioningListPage = lazy(
+  () => import('@features/provisioning/pages/PlatformProvisioningListPage')
+);
+const PlatformProvisioningDetailPage = lazy(
+  () => import('@features/provisioning/pages/PlatformProvisioningDetailPage')
+);
+
 const ForbiddenPage = lazy(
   () => import('@features/system/pages/ForbiddenPage')
 );
@@ -725,6 +741,51 @@ export function AppRouter(): JSX.Element {
               element={
                 <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
                   <PlatformPaymentReviewDetailPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.provisioning}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['academy.provisioning.view']}>
+                  <ProvisioningHistoryPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.provisioningNew}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['academy.provisioning.create']}>
+                  <ProvisioningStartPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.provisioningStatus}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['academy.provisioning.view']}>
+                  <ProvisioningStatusPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformProvisioning}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <PlatformProvisioningListPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformProvisioningDetail}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <PlatformProvisioningDetailPage />
                 </RouteGuard>
               }
             />

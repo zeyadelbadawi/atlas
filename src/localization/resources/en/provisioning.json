@@ -1,0 +1,100 @@
+{
+  "step": {
+    "tenant": "Confirming your organization",
+    "academy": "Creating your Academy",
+    "theme": "Applying your theme",
+    "branding": "Applying your branding",
+    "subdomain": "Assigning your Atlas address",
+    "domain": "Connecting your custom domain",
+    "finalization": "Finalizing setup"
+  },
+  "status": {
+    "title": "Provisioning",
+    "subtitle": "Preparing {{academyName}}",
+    "lifecycle": {
+      "payment_success": "Payment confirmed",
+      "tenant_created": "Organization confirmed",
+      "academy_created": "Academy created",
+      "theme_applied": "Theme applied",
+      "branding_applied": "Branding applied",
+      "subdomain_assigned": "Address assigned",
+      "custom_domain_pending": "Domain pending",
+      "custom_domain_connected": "Domain connected",
+      "provisioning": "Provisioning",
+      "ready": "Ready",
+      "failed": "Failed",
+      "cancelled": "Cancelled"
+    },
+    "checklistTitle": "Preparing your Academy",
+    "failedTitle": "Provisioning could not be completed",
+    "failedGenericDescription": "Something went wrong while setting up your Academy.",
+    "retryAction": "Retry",
+    "returnToDashboard": "Return to dashboard",
+    "readyTitle": "Your Academy is ready",
+    "readyDescription": "Provisioning is complete. You can now go to your Academy dashboard.",
+    "goToAcademy": "Go to Academy dashboard",
+    "cancelledDescription": "This provisioning request was cancelled.",
+    "inProgressDescription": "This page updates automatically as provisioning progresses.",
+    "cancelAction": "Cancel provisioning",
+    "cancelConfirmTitle": "Cancel provisioning?",
+    "cancelConfirmDescription": "This request will stop where it stands. Any steps already completed are not undone.",
+    "cancelConfirmAction": "Cancel provisioning"
+  },
+  "start": {
+    "title": "New Academy",
+    "subtitle": "Set up a new Academy for your organization.",
+    "limitReachedTitle": "Academy limit reached",
+    "limitReachedDescription": "Your plan allows a limited number of Academies, and you currently have {{used}}.",
+    "viewPlans": "View plans",
+    "formTitle": "Academy details",
+    "academyNameLabel": "Academy name",
+    "subdomainLabel": "Atlas address",
+    "subdomainHelp": "This will be your Academy's Atlas address. You can connect a custom domain later.",
+    "subdomainStatus": {
+      "suggested": "Checking availability…",
+      "available": "Available",
+      "unavailable": "Already taken",
+      "reserved": "This address is reserved",
+      "assigned": "Already assigned"
+    },
+    "creating": "Starting…",
+    "submit": "Start provisioning"
+  },
+  "history": {
+    "title": "Academy Provisioning",
+    "subtitle": "Every Academy provisioning request for your organization.",
+    "table": {
+      "academyName": "Academy",
+      "status": "Status",
+      "attempts": "Attempts",
+      "createdAt": "Started"
+    },
+    "newAcademyAction": "New Academy",
+    "emptyState": "No provisioning requests yet",
+    "emptyStateDescription": "Start provisioning a new Academy to see it here."
+  },
+  "platformConsole": {
+    "title": "Academy Provisioning",
+    "subtitle": "Every Academy currently being provisioned, across every organization.",
+    "detailTitle": "Provisioning Request",
+    "detailSubtitle": "Full detail for one provisioning request.",
+    "organization": "Organization",
+    "table": {
+      "organization": "Organization",
+      "academyName": "Academy",
+      "currentStep": "Current step",
+      "attempts": "Attempts",
+      "status": "Status",
+      "startedAt": "Started"
+    },
+    "emptyState": "No provisioning requests",
+    "emptyStateDescription": "Requests matching this view will appear here.",
+    "readOnlyNotice": "You have permission to view this request, but not to retry or cancel it.",
+    "retryAction": "Retry",
+    "retryConfirmTitle": "Retry provisioning?",
+    "retryConfirmDescription": "This continues the request from where it stands — completed steps are not repeated.",
+    "cancelAction": "Cancel",
+    "cancelConfirmTitle": "Cancel provisioning?",
+    "cancelConfirmDescription": "This request will stop where it stands. Any steps already completed are not undone."
+  }
+}

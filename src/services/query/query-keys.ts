@@ -30,6 +30,9 @@ export const QUERY_KEY_ROOTS = {
   payment: ['payment'] as const,
   invoice: ['invoice'] as const,
   platformPayment: ['platform-payment'] as const,
+  provisioning: ['provisioning'] as const,
+  subdomain: ['subdomain'] as const,
+  platformProvisioning: ['platform-provisioning'] as const,
 } as const;
 
 /**
@@ -391,4 +394,42 @@ export const platformPaymentKeys = {
     [...platformPaymentKeys.all, 'list', query] as const,
   detail: (paymentId: string) =>
     [...platformPaymentKeys.all, 'detail', paymentId] as const,
+} as const;
+
+/**
+ * Query keys for Provisioning (Prompt 8).
+ *
+ * Embeds `organizationId` — the same technique `checkoutKeys`/`paymentKeys`
+ * (Prompt 7) use, so `PlatformProvider`'s existing `atlas:organization-switched`
+ * invalidation catches provisioning data automatically, with no new wiring.
+ */
+export const provisioningKeys = {
+  all: QUERY_KEY_ROOTS.provisioning,
+  list: (organizationId: string | undefined, query?: CollectionQuery) =>
+    [...provisioningKeys.all, 'list', organizationId, query] as const,
+  detail: (organizationId: string | undefined, requestId: string) =>
+    [...provisioningKeys.all, 'detail', organizationId, requestId] as const,
+} as const;
+
+/** Query keys for subdomain availability checks. Not organization-scoped — a subdomain is unique across all of Atlas. */
+export const subdomainKeys = {
+  all: QUERY_KEY_ROOTS.subdomain,
+  availability: (subdomain: string) =>
+    [...subdomainKeys.all, 'availability', subdomain] as const,
+} as const;
+
+/**
+ * Query keys for the Platform Provisioning console.
+ *
+ * Deliberately NOT organization-scoped — the same reasoning
+ * `platformPaymentKeys` documents: a Platform Owner's list spans every
+ * Tenant by design, so organization-switch invalidation intentionally does
+ * not touch these.
+ */
+export const platformProvisioningKeys = {
+  all: QUERY_KEY_ROOTS.platformProvisioning,
+  list: (query?: CollectionQuery) =>
+    [...platformProvisioningKeys.all, 'list', query] as const,
+  detail: (requestId: string) =>
+    [...platformProvisioningKeys.all, 'detail', requestId] as const,
 } as const;

@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-08-22T18:00:00Z
+last_updated: 2026-08-23T00:00:00Z
 status: active
 ---
 
@@ -7,10 +7,10 @@ status: active
 
 ## Project Overview
 
-Atlas Platform - Prompt 7 Implementation (Atlas Enterprise Billing & Payment Platform)
-Current Phase: The complete, provider-agnostic payment engine on top of Prompt 6's SaaS foundation — Checkout, Payment, a capability-driven provider abstraction, Manual Bank/Wallet Transfer as the only currently-available provider (`ManualTransferProvider`), and a gateway-ready architecture (payment intents, redirect/return handling, webhook contract) that connects zero real payment providers — built on top of completed Platform Core + Academy Management + Course Management + Student Learning & Assessment + Instructor/Teaching + Communication & Knowledge Modules + Atlas SaaS Foundation (Prompt 6). Discovered and preserved a pre-existing, unrelated Prompt 3A `billing` feature sharing the same directory and (briefly, before being caught and corrected) the same localization namespace.
-Scope: Tenant Billing Overview/Checkout/Payment History/Payment Details/Invoices, Platform Payment Review (list + approve/reject), a real provider abstraction with exactly one concrete adapter (manual transfer) and zero fake gateway implementations, and full Prompt 6 subscription/add-on integration (a successful Payment invalidates `EffectiveEntitlements`) — no real gateway connection, no card-data collection, no fake webhooks
-Previous Completion: Platform Core (9 features) + Academy Management + Course Management (Prompt 3 Parts A/B/C) + Student Learning & Assessment (Prompt 4) + Instructor / Teaching Operations + Communication & Knowledge Modules (Prompt 5) + Atlas SaaS Foundation, Tenancy, Subscriptions, Plans, Entitlements, Usage & Platform Admin (Prompt 6) - all APPROVED and PERMANENT
+Atlas Platform - Prompt 8 Implementation (Atlas Provisioning + Academy Lifecycle)
+Current Phase: The orchestration domain that turns an eligible request into a ready Academy — Tenant → Academy → Theme → Branding → Subdomain → Domain → Provisioning → Ready — consuming Prompt 6's entitlements and Prompt 7's commerce without rebuilding either, built on top of completed Platform Core + Academy Management + Course Management + Student Learning & Assessment + Instructor/Teaching + Communication & Knowledge Modules + Atlas SaaS Foundation (Prompt 6) + Enterprise Billing & Payment Platform (Prompt 7).
+Scope: Provisioning Start/Status/History (Tenant Owner) + Platform Provisioning console (list + retry/cancel), a real idempotent/resumable state machine with step-level detail, Prompt 6 plan-limit enforcement reused verbatim, subdomain-availability checking and domain-status representation as display-state contracts only — no real DNS/SSL/infrastructure provisioning, no Theme Engine, no fake progress, no public website
+Previous Completion: Platform Core (9 features) + Academy Management + Course Management (Prompt 3 Parts A/B/C) + Student Learning & Assessment (Prompt 4) + Instructor / Teaching Operations + Communication & Knowledge Modules (Prompt 5) + Atlas SaaS Foundation, Tenancy, Subscriptions, Plans, Entitlements, Usage & Platform Admin (Prompt 6) + Atlas Enterprise Billing & Payment Platform (Prompt 7) - all APPROVED and PERMANENT
 Backend: Remains abstract - no real backend integration yet
 Architecture: Extending existing foundation WITHOUT creating parallel infrastructure
 
@@ -70,12 +70,27 @@ Architecture: Extending existing foundation WITHOUT creating parallel infrastruc
 | 2026-08-22 | No financial mutation (`createCheckout`/`createPayment`/`submitProof`/`cancelPayment`/`approvePayment`/`rejectPayment`) is ever auto-retried | Claude | A blind retry on a mutation that may have already reached the backend could double-charge, double-submit, or double-approve |
 | 2026-08-22 | `idempotencyKey` generated once per checkout attempt via `crypto.randomUUID()`, memoized in component state, replayed on retry | Claude | Guarantees the frontend never manufactures a duplicate-looking request out of its own retry; the backend remains the authority on enforcing it |
 | 2026-08-22 | Every new Prompt 7 route explicitly sets `requireAuthentication` | Claude | Verified by grep: all 52 `RouteGuard` instances across the entire router now set it - the Prompt 3 regression was not repeated |
+| 2026-08-23 | `ProvisioningRequest` carries both a coarse `ProvisioningStatus` (12-value milestone) and a real `steps[]` array (7 steps × pending/running/completed/failed/skipped) | Claude | Retry logic must read step completion directly, never infer it from the coarse status - this is what guarantees retry never recreates a completed step |
+| 2026-08-23 | The `tenant` and `theme` provisioning steps are observability-only; the frontend never triggers either | Claude | Prompt 8 doesn't create Tenants (that's Prompt 2/3A's registration flow) or implement a Theme Engine (that's Prompt 9's) - both render `'skipped'` until their owning system exists |
+| 2026-08-23 | `retryProvisioning` covers both "retry a failed step" and "resume an interrupted request" as one contract | Claude | Both are the same frontend instruction ("continue this request"); the backend decides what continuing actually means - two near-identical methods would have been the unnecessary abstraction the spec warned against |
+| 2026-08-23 | `ProvisioningService`/`PlatformProvisioningService` split into tenant-scoped nested vs. flat cross-tenant trees | Claude | Mirrors Prompt 7's `CheckoutService`/`PlatformPaymentService` split exactly - a Platform Owner's console genuinely needs a different authorization shape |
+| 2026-08-23 | Academy-limit enforcement on `ProvisioningStartPage` reuses Prompt 6's `useTenantUsage`/`getUsageMetricStatus`/`getLimitGapAction` completely unchanged | Claude | Zero new entitlement logic; no `plan.key`/`plan.name` conditional anywhere in the feature - verified by grep |
+| 2026-08-23 | `SubdomainAllocation`/`DomainConnection` model display state only - no DNS/SSL logic anywhere | Claude | Matches the explicit Prompt 8 boundary; real infrastructure remains a future backend's responsibility |
+| 2026-08-23 | `ProvisioningStatusPage` renders `useProvisioningRequest`'s polled state exactly, with zero `setTimeout`/`setInterval`-based progress simulation | Claude | "No fake backend" is non-negotiable; verified by grep during the CTO audit |
+| 2026-08-23 | The `'ready'` success state offers only "Go to Academy Dashboard," never "Visit Website" | Claude | Provisioning readiness and public-website existence are different, later-owned (Prompt 9/10) concerns - conflating them would have leaked scope |
+| 2026-08-23 | Every new Prompt 8 route explicitly sets `requireAuthentication` | Claude | Verified by grep: all 57 `RouteGuard` instances across the entire router now set it - the Prompt 3 regression was not repeated |
 
 ## Constraints
 
-- MUST preserve all Prompt 1, Prompt 2, Prompt 3 Part A/B/C, Prompt 4, Prompt 5, Prompt 6 approved architecture (including the pre-existing, unrelated Prompt 3A `billing` feature and namespace)
+- MUST preserve all Prompt 1, Prompt 2, Prompt 3 Part A/B/C, Prompt 4, Prompt 5, Prompt 6, Prompt 7 approved architecture (including the pre-existing, unrelated Prompt 3A `billing` feature and namespace)
 - NO duplicate infrastructure (auth, query, forms, services, API clients, tables, upload, dialogs)
 - NO Orders/Ecommerce/Payments, Certificate generation/PDF/verification, Website/CMS, Marketplace, Messaging, Live classes, Video streaming, AI features, real auto-grading (future scope)
+- Atlas Provisioning + Academy Lifecycle (ProvisioningRequest state machine, step-level detail, subdomain/domain display-state, Academy provisioning orchestration) ONLY in this prompt (Prompt 8) - NO real DNS/SSL/infrastructure provisioning, NO Theme Engine, NO public website/CMS, NO tenant/academy cloning, NO real observability infrastructure
+- Provisioning does NOT create Tenants (existing registration flow owns that) and does NOT implement a Theme Engine (Prompt 9 owns that) - both the `tenant` and `theme` steps are observability-only, never frontend-triggered
+- Retry/resume is ONE contract (`retryProvisioning`) - it must never conceptually recreate a step the backend already reports `completed`/`skipped`
+- Academy provisioning MUST check Prompt 6's existing Academy-limit entitlement before allowing a new request - NO hardcoded plan-name/plan-key conditionals, ever
+- `ProvisioningStatusPage`/platform console MUST NEVER simulate progress with timers - every status/step comes from a real, polled service response
+- `READY` means the provisioning contract is satisfied - it does NOT mean a public website/Theme/CMS exists; no "Visit Website" action may appear until that is genuinely true
 - Atlas Enterprise Billing & Payment Platform (Checkout, Payment, provider abstraction, Manual Bank/Wallet Transfer, gateway-ready architecture) ONLY in this prompt (Prompt 7) - NO real gateway connection/SDK, NO card-data collection, NO fake webhooks, NO real refund/reconciliation/recurring-billing processing, NO public unauthenticated checkout/pricing page
 - The payment engine is provider-agnostic: `Payment`/`PaymentAttempt`/`PaymentIntent` are ONE shape for manual and any future gateway payment - NO parallel type per method, NO `methodType`/`provider` string branching in UI (capability flags decide)
 - Creating a Checkout or a Payment, or uploading proof, NEVER by itself changes `TenantSubscription`/`TenantAddOn` - only an authoritative `Payment.status === 'succeeded'` transition does, and only `usePaymentDetails` triggers the resulting entitlement refresh
@@ -95,12 +110,13 @@ Architecture: Extending existing foundation WITHOUT creating parallel infrastruc
 - Light Mode + Dark Mode both required
 - Responsive: Desktop, Tablet, Mobile
 - Accessibility: WCAG compliant with keyboard navigation
-- State completeness: Loading, Empty, Success, Error, Retry, Permission Denied, Submitting, Deleting, Uploading, Publishing, Unpublishing, Unsaved Changes, Locked, Passed, Failed, Submitted, Graded/Ungraded, Pinned/Locked (forum), Trialing/Past due/Grace period/Cancelled/Expired, Limit reached/Unlimited, Upgrade required/Add-on available (Prompt 6), Created/Pending/Processing/Requires action/Requires confirmation/Succeeded/Cancelled/Expired (payment), Not required/Pending/Approved/Rejected (manual review), Ambiguous network state (Prompt 7)
+- State completeness: Loading, Empty, Success, Error, Retry, Permission Denied, Submitting, Deleting, Uploading, Publishing, Unpublishing, Unsaved Changes, Locked, Passed, Failed, Submitted, Graded/Ungraded, Pinned/Locked (forum), Trialing/Past due/Grace period/Cancelled/Expired, Limit reached/Unlimited, Upgrade required/Add-on available (Prompt 6), Created/Pending/Processing/Requires action/Requires confirmation/Succeeded/Cancelled/Expired (payment), Not required/Pending/Approved/Rejected (manual review), Ambiguous network state (Prompt 7), Pending/Running/Completed/Failed/Skipped (provisioning step), Ready/Failed/Cancelled (provisioning request), Available/Unavailable/Reserved (subdomain) (Prompt 8)
 - Every course belongs to exactly one academy; no cross-academy data leakage
 - Every learning resource belongs to exactly one student; no cross-student data leakage
 - Every instructor-facing resource is scoped to courses that instructor is authorized to teach; no cross-instructor/cross-course data leakage
 - Quiz correct answers are never modeled in any type/contract the client can read before submission (structural guarantee, carried forward unchanged from Prompt 4)
-- Every Tenant-scoped resource (subscription/usage/add-ons/checkouts/payments/invoices) is scoped to `organizationId`; no cross-tenant data leakage, and no stale data survives an organization switch
+- Every Tenant-scoped resource (subscription/usage/add-ons/checkouts/payments/invoices/provisioning requests) is scoped to `organizationId`; no cross-tenant data leakage, and no stale data survives an organization switch
+- Every Tenant-scoped provisioning hook sources `organizationId` from `useAuth().organization` - never from a route param or arbitrary client-supplied id
 - A platform payment reviewer can never approve or reject their own organization's payment (UX-layer guard; backend remains the actual authority)
 - No card data (`cardNumber`/`cvv`/`expiry`) is ever collected or stored in the Atlas frontend
 

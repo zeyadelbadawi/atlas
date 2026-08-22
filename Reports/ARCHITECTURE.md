@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-08-22T18:00:00Z
+last_updated: 2026-08-23T00:00:00Z
 ---
 
 # Architecture Design
@@ -765,4 +765,196 @@ pages). These remain explicitly future modules — the point of this
 prompt's architecture is that adding them later is adapter/configuration
 work, not a redesign of Checkout, Payment, Subscription, Add-on, or
 Entitlement.
+
+---
+
+## Atlas Provisioning + Academy Lifecycle (Prompt 8)
+
+The orchestration domain that turns an eligible request into a ready
+Academy: Tenant → Academy → Theme → Branding → Subdomain → Domain →
+Provisioning → Ready. Prompt 8 does not rebuild Prompt 6's tenancy or
+Prompt 7's commerce — it consumes both, and owns exactly one new
+responsibility: the lifecycle/state-machine/idempotency/retry contract
+that coordinates them into "a ready Academy." Nothing here knows about
+databases, containers, DNS providers, or deployment mechanics — the
+domain speaks only in business capabilities (create academy, apply theme,
+apply branding, allocate subdomain, connect domain, provision, complete).
+
+### Two layers of state, deliberately
+
+A `ProvisioningRequest` carries a coarse `ProvisioningStatus` (the 12-value
+canonical milestone: `payment_success → tenant_created → academy_created →
+theme_applied → branding_applied → subdomain_assigned →
+custom_domain_pending/connected → provisioning → ready`, plus `failed`/
+`cancelled`) AND true step-level detail (`steps: ProvisioningStep[]`, each
+one of 7 named steps carrying its own `pending`/`running`/`completed`/
+`failed`/`skipped` status, `attemptNumber`, timestamps, and a safe error).
+The coarse status is what a list/history view reads; the step array is
+what the checklist UI and retry logic actually reason about. This
+two-layer design is what makes "retry never recreates a completed step"
+possible: the frontend never infers step completion from the coarse
+status — it reads `ProvisioningStep.status` directly, and a step already
+reported `'completed'` (or `'skipped'`) by the backend is rendered as
+such, never re-attempted.
+
+### The `tenant` step exists for observability, not because Prompt 8 creates Tenants
+
+Prompt 8 does NOT implement tenant creation. A `ProvisioningRequest` is
+always created within an already-authenticated Tenant context
+(`organizationId` sourced from `useAuth().organization`, exactly like
+every Prompt 6/7 hook) — you cannot call `createProvisioningRequest`
+without one. The `tenant` step exists in the model purely so a future
+backend orchestration that DOES create a Tenant and an Academy atomically
+in one combined signup flow has somewhere to report that fact; from the
+frontend's perspective it is always `'completed'` or `'skipped'`, never
+something a component triggers. Actual Organization/registration
+creation remains owned by the existing auth/registration flow
+(Prompt 2/3A) — Prompt 8 does not duplicate it.
+
+### The `theme` step exists for observability, not because Prompt 8 implements a Theme Engine
+
+Prompt 9 owns the Theme Engine. Prompt 8's `ProvisioningStepKey` includes
+`'theme'` and `CreateProvisioningRequestPayload` structurally allows a
+future `themeId`, but there is no theme picker UI, no theme registry, no
+theme rendering — this step is reported `'skipped'` by the backend today
+and the frontend renders that faithfully. When Prompt 9 lands, this step
+starts being exercised without any change to `ProvisioningRequest`'s
+shape or `ProvisioningStatusPage`'s rendering logic.
+
+### `retryProvisioning` covers both retry and resume
+
+Section 11 of the Prompt 8 spec lists `retryProvisioning` and
+`resumeProvisioning` as separate potential contracts. They were
+deliberately consolidated into one: from the frontend's perspective,
+"retry a failed step" and "resume an interrupted request" are the same
+instruction — "please continue this request from where it stands" — and
+the backend is what actually decides whether that means re-running a
+failed step or picking a stalled one back up. Exposing two near-identical
+methods for the same customer action would have been the
+unnecessary-abstraction the spec itself warns against (section 51, "CTO
+Audit... unnecessary abstractions").
+
+### Two service trees, mirroring Prompt 7 exactly
+
+`ProvisioningService` (tenant-scoped, nested
+`organizations/:organizationId/provisioning-requests/...`) and
+`PlatformProvisioningService` (flat, cross-tenant `provisioning-requests`
+resource) are the same "third service tree over one entity" split
+`CheckoutService`/`PlatformPaymentService` (Prompt 7) and
+`InstructorService` (Prompt 5) already established: a Platform Owner's
+provisioning console genuinely needs a different authorization shape
+(cross-tenant) than a Tenant's own view of their own requests. Subdomain
+availability is exposed as a third, unscoped shape (a subdomain is unique
+across all of Atlas, not per-Tenant) — the same pattern `PlanService`
+uses for its catalog, `PaymentService` for its payment-method catalog.
+
+### Plan-limit enforcement is 100% reused, not reimplemented
+
+`ProvisioningStartPage` calls Prompt 6's `useTenantUsage`,
+`getUsageMetricStatus`, and `getLimitGapAction` completely unchanged — no
+new entitlement calculation exists anywhere in this prompt, and no
+`plan.key`/`plan.name` string comparison appears in the feature (verified
+by grep during the CTO audit). "Academy limit reached" renders the exact
+same `EntitlementGapAction` (`'upgradePlan'` | `'addOn'` | `'none'`)
+concept Prompt 6/7 already use for Usage/Subscription pages, linking back
+to `TenantSubscriptionPage` rather than inventing a parallel upgrade flow.
+
+### Subdomain and Custom Domain are display-state contracts, not infrastructure
+
+`SubdomainAllocation`/`DomainConnection` model only what a customer needs
+to see (`status`, `fullHost`/`hostname`, `verificationRecords` as opaque
+display data) — there is no DNS API call, no SSL logic, no record
+creation anywhere in this prompt. `checkSubdomainAvailability` hits a
+real (backend-undefined) endpoint through `ProvisioningService`, exactly
+like every other Atlas service call; it does not simulate availability.
+
+### Never simulated progress
+
+`ProvisioningStatusPage`/`PlatformProvisioningDetailPage` render
+`ProvisioningStep.status` exactly as `useProvisioningRequest`/
+`usePlatformProvisioningRequest` report it — there is no `setTimeout`, no
+locally-incrementing progress percentage, no automatic status
+advancement anywhere in the feature (verified by grep during the CTO
+audit). `useProvisioningRequest` polls only while the request is
+non-terminal (mirrors Prompt 7's `usePaymentDetails` exactly) and stops
+the instant a terminal status (`ready`/`failed`/`cancelled`) is reached.
+Refreshing the page, or opening it in a second tab, re-runs the same
+read-only query against the same backend-authoritative record — never two
+provisioning operations, and never a state restored from `localStorage`
+or component memory.
+
+### `READY` is not a public website
+
+The `ProvisioningStatusPage` success state offers exactly one action —
+"Go to Academy Dashboard" (only when `academyId` is present) — and
+deliberately no "Visit Website." `ready` means the provisioning contract
+reports the Academy is ready; it says nothing about whether Prompt 9's
+Theme Engine or a future Prompt 10 public website/CMS exists. Leaking
+that assumption into this prompt's UI would have been exactly the
+scope-creep section 48 of the spec warns against.
+
+### Module Design
+| Area | Responsibility | Key Files |
+|------|-----------------|-----------|
+| Provisioning domain types | `ProvisioningStatus`/`ProvisioningStep`/`ProvisioningError`/`ProvisioningRequest`, `SubdomainAllocation`, `DomainConnection`, documented `ProvisioningEvent` contract | `src/types/provisioning.types.ts` |
+| Services | `ProvisioningService` (tenant-scoped), `PlatformProvisioningService` (flat, cross-tenant) | `src/features/provisioning/services/` |
+| Hooks | 5 tenant hooks + 4 platform-console hooks | `src/features/provisioning/hooks/` |
+| Pages | Provisioning Start/Status/History (tenant), Platform Provisioning List/Detail | `src/features/provisioning/pages/` |
+| Query keys | `provisioningKeys`/`subdomainKeys` (organization-scoped / unscoped respectively), `platformProvisioningKeys` (unscoped, cross-tenant) | `src/services/query/query-keys.ts` |
+| Localization | 1 new namespace: `provisioning` (80/80 keys, EN/AR parity verified programmatically) | `src/localization/resources/{en,ar}/provisioning.json` |
+| Routing | 5 new routes, all `RouteGuard`s explicitly `requireAuthentication` | `route-paths.ts`, `AppRouter.tsx` |
+| Navigation | "New Academy" appended to the existing Academy nav section; "Academy Provisioning" appended to the existing Administration section | `navigation.config.ts` |
+
+### Tech Decisions
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| Two-layer state (coarse status + step array) | `ProvisioningRequest.status` for summaries, `steps[]` for the real checklist/retry logic | Lets retry logic read step completion directly, never infer it from the coarse milestone |
+| `tenant`/`theme` steps are observability-only | Frontend never triggers either; both render `'skipped'` until their owning system exists | Prompt 8 doesn't duplicate Tenant creation (Prompt 2/3A) or the Theme Engine (Prompt 9) |
+| `retryProvisioning` covers resume too | One contract, not two | The frontend action is identical either way; the backend decides what "continue" means |
+| Two provisioning service trees | `ProvisioningService` (tenant-scoped) / `PlatformProvisioningService` (flat, cross-tenant) | Mirrors Prompt 7's `CheckoutService`/`PlatformPaymentService` split for the same authorization-shape reason |
+| Plan-limit gate reuses Prompt 6 verbatim | `useTenantUsage`/`getUsageMetricStatus`/`getLimitGapAction`, zero new logic | The exact "no hardcoded plan behavior" rule every prompt since Prompt 6 has enforced |
+| Subdomain/Domain are display-state only | No DNS/SSL logic anywhere | Matches the explicit Prompt 8 boundary; real infrastructure is future backend work |
+| No simulated progress | Every status/step comes from `useProvisioningRequest`'s polled query, never a timer | The entire point of "no fake backend" — verified by grep for `setTimeout`/`setInterval` |
+| `READY` offers only "Go to Academy Dashboard" | No "Visit Website" action | Provisioning readiness and public-website existence are different, later-owned concerns |
+
+### Backend Contracts To Document (frontend-defined, backend TBD)
+1. **Create provisioning request** — `POST /organizations/:organizationId/provisioning-requests` (idempotent on `idempotencyKey`) → `ProvisioningRequest`. Backend independently re-verifies the Tenant's Academy-limit entitlement — the frontend's pre-check is UX only.
+2. **Get/list provisioning requests** — `GET .../provisioning-requests/:id`, `GET .../provisioning-requests` (history). Every response re-scoped to the caller's organization server-side.
+3. **Retry/resume** — `POST .../provisioning-requests/:id/retry`. Must not re-execute a step already reported `completed`/`skipped`; the backend is the authority on what "continue" means for the current failure.
+4. **Cancel** — `POST .../provisioning-requests/:id/cancel`. Only valid while non-terminal; backend rejects otherwise.
+5. **Subdomain availability** — `GET /subdomains/availability?subdomain=...` → `SubdomainAllocation`. Global uniqueness check, not organization-scoped.
+6. **Platform console** (flat, cross-tenant) — `GET /provisioning-requests`, `GET /provisioning-requests/:id`, `POST .../retry`, `POST .../cancel`. Backend must independently verify the caller holds Platform Owner / `platform.provisioning.manage`-equivalent authorization — the frontend's role/permission gates are UX only.
+7. **Provisioning events** (not implemented; documented for a future observability backend) — `provisioning.request_created`/`step_started`/`step_completed`/`step_failed`/`retry_requested`/`resumed`/`completed`/`cancelled`. The frontend never receives these directly; all progress reaches the UI through polling the `ProvisioningRequest` record.
+8. **Idempotency** — `createProvisioningRequest` must deduplicate on `idempotencyKey`; `retryProvisioning`/`cancelProvisioning` must be safe against duplicate clicks/multi-tab submission (the backend, not the frontend, is the authority here).
+
+### Security / Tenancy Verification
+- **Cross-tenant leakage**: `provisioningKeys` embeds `organizationId`, sourced exclusively from `useAuth().organization` — grepped every provisioning page and confirmed only `requestId` is ever read from `useParams`, never `organizationId`.
+- **Fail-closed authorization**: all 5 new routes go through the unmodified `RouteGuard`; nothing in this prompt touched `RouteGuard`/`AuthorizationService`.
+- **Platform console gating**: two layers, matching Prompt 7's payment-review precedent — route-level `requiredRoles: ['platform_owner']`, action-level `usePermissions().hasPermission('platform.provisioning.manage')` on Retry/Cancel specifically.
+- **No infrastructure leakage**: grepped for Docker/Kubernetes/MySQL/Postgres/Redis/Nginx/Apache/AWS/DigitalOcean/Cloudflare — none found anywhere in the feature.
+- **No fake backend**: grepped for `setTimeout`/`setInterval` used for progress simulation — none found; every status shown comes from a real service response.
+- **Frontend checks are UX, not enforcement**: documented explicitly on the plan-limit gate and every permission check in this prompt, consistent with Prompt 6/7's identical framing.
+
+### What Is Frontend-Only (No Real Backend Behind It Yet)
+Every service method in this prompt issues a real HTTP call through the
+existing `apiClient` against a documented endpoint shape — consistent
+with every prior prompt. There is no real provisioning engine behind any
+of it: no database/server/container/storage creation, no DNS/SSL, no
+queues or workers. The frontend's job — representing the lifecycle
+faithfully and never pretending it completed something it didn't — is
+done; the actual provisioning work remains entirely a future backend's.
+
+### Scope Boundary
+Explicitly not implemented in Prompt 8: any real infrastructure
+provisioning (database/server/container/storage/deployment), real DNS
+configuration or record creation, real SSL issuance or certificate
+verification, real background workers/queues, a Theme Engine (Prompt 9),
+a public Academy website/CMS (Prompt 9/10), tenant/academy cloning,
+provisioning templates or versioning beyond the minimum step model
+already described, and real observability/audit infrastructure (only the
+`ProvisioningEvent` contract is documented, not implemented). These
+remain explicitly future modules — the point of this prompt's
+architecture is that a future backend can implement real provisioning
+engines behind these exact contracts without the frontend needing a
+rewrite.
 

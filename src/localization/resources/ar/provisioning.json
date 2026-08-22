@@ -1,0 +1,100 @@
+{
+  "step": {
+    "tenant": "تأكيد مؤسستك",
+    "academy": "إنشاء أكاديميتك",
+    "theme": "تطبيق القالب",
+    "branding": "تطبيق الهوية البصرية",
+    "subdomain": "تخصيص عنوان أطلس الخاص بك",
+    "domain": "ربط النطاق المخصص",
+    "finalization": "إنهاء الإعداد"
+  },
+  "status": {
+    "title": "التهيئة",
+    "subtitle": "جارٍ تجهيز {{academyName}}",
+    "lifecycle": {
+      "payment_success": "تم تأكيد الدفع",
+      "tenant_created": "تم تأكيد المؤسسة",
+      "academy_created": "تم إنشاء الأكاديمية",
+      "theme_applied": "تم تطبيق القالب",
+      "branding_applied": "تم تطبيق الهوية البصرية",
+      "subdomain_assigned": "تم تخصيص العنوان",
+      "custom_domain_pending": "النطاق قيد الانتظار",
+      "custom_domain_connected": "تم ربط النطاق",
+      "provisioning": "قيد التهيئة",
+      "ready": "جاهزة",
+      "failed": "فشلت",
+      "cancelled": "ألغيت"
+    },
+    "checklistTitle": "جارٍ تجهيز أكاديميتك",
+    "failedTitle": "تعذّر إكمال التهيئة",
+    "failedGenericDescription": "حدث خطأ ما أثناء إعداد أكاديميتك.",
+    "retryAction": "إعادة المحاولة",
+    "returnToDashboard": "العودة إلى لوحة التحكم",
+    "readyTitle": "أكاديميتك جاهزة",
+    "readyDescription": "اكتملت عملية التهيئة. يمكنك الآن الانتقال إلى لوحة تحكم أكاديميتك.",
+    "goToAcademy": "الانتقال إلى لوحة تحكم الأكاديمية",
+    "cancelledDescription": "تم إلغاء طلب التهيئة هذا.",
+    "inProgressDescription": "تتحدّث هذه الصفحة تلقائيًا مع تقدّم عملية التهيئة.",
+    "cancelAction": "إلغاء التهيئة",
+    "cancelConfirmTitle": "إلغاء التهيئة؟",
+    "cancelConfirmDescription": "سيتوقف هذا الطلب عند وضعه الحالي. الخطوات المكتملة بالفعل لن يتم التراجع عنها.",
+    "cancelConfirmAction": "إلغاء التهيئة"
+  },
+  "start": {
+    "title": "أكاديمية جديدة",
+    "subtitle": "إعداد أكاديمية جديدة لمؤسستك.",
+    "limitReachedTitle": "تم بلوغ الحد الأقصى للأكاديميات",
+    "limitReachedDescription": "تسمح خطتك بعدد محدود من الأكاديميات، ولديك حاليًا {{used}}.",
+    "viewPlans": "عرض الخطط",
+    "formTitle": "بيانات الأكاديمية",
+    "academyNameLabel": "اسم الأكاديمية",
+    "subdomainLabel": "عنوان أطلس",
+    "subdomainHelp": "سيكون هذا عنوان أكاديميتك على أطلس. يمكنك ربط نطاق مخصص لاحقًا.",
+    "subdomainStatus": {
+      "suggested": "جارٍ التحقق من التوفر…",
+      "available": "متاح",
+      "unavailable": "مُستخدم بالفعل",
+      "reserved": "هذا العنوان محجوز",
+      "assigned": "مخصَّص بالفعل"
+    },
+    "creating": "جارٍ البدء…",
+    "submit": "بدء التهيئة"
+  },
+  "history": {
+    "title": "تهيئة الأكاديميات",
+    "subtitle": "كل طلب تهيئة أكاديمية لمؤسستك.",
+    "table": {
+      "academyName": "الأكاديمية",
+      "status": "الحالة",
+      "attempts": "المحاولات",
+      "createdAt": "تاريخ البدء"
+    },
+    "newAcademyAction": "أكاديمية جديدة",
+    "emptyState": "لا توجد طلبات تهيئة بعد",
+    "emptyStateDescription": "ابدأ تهيئة أكاديمية جديدة لتظهر هنا."
+  },
+  "platformConsole": {
+    "title": "تهيئة الأكاديميات",
+    "subtitle": "كل أكاديمية قيد التهيئة حاليًا، عبر جميع المؤسسات.",
+    "detailTitle": "طلب التهيئة",
+    "detailSubtitle": "التفاصيل الكاملة لطلب تهيئة واحد.",
+    "organization": "المؤسسة",
+    "table": {
+      "organization": "المؤسسة",
+      "academyName": "الأكاديمية",
+      "currentStep": "الخطوة الحالية",
+      "attempts": "المحاولات",
+      "status": "الحالة",
+      "startedAt": "تاريخ البدء"
+    },
+    "emptyState": "لا توجد طلبات تهيئة",
+    "emptyStateDescription": "ستظهر هنا الطلبات المطابقة لهذا العرض.",
+    "readOnlyNotice": "لديك صلاحية عرض هذا الطلب، لكن ليس إعادة المحاولة أو الإلغاء.",
+    "retryAction": "إعادة المحاولة",
+    "retryConfirmTitle": "إعادة محاولة التهيئة؟",
+    "retryConfirmDescription": "سيُكمل هذا الطلب من حيث توقف — الخطوات المكتملة لن تتكرر.",
+    "cancelAction": "إلغاء",
+    "cancelConfirmTitle": "إلغاء التهيئة؟",
+    "cancelConfirmDescription": "سيتوقف هذا الطلب عند وضعه الحالي. الخطوات المكتملة بالفعل لن يتم التراجع عنها."
+  }
+}

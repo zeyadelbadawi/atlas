@@ -30,3 +30,4 @@ export * from './tenant.types';
 export * from './money.types';
 export * from './checkout.types';
 export * from './payment.types';
+export * from './provisioning.types';

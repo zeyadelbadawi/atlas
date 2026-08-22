@@ -49,7 +49,9 @@
     "tenantAddOns": "Add-ons",
     "platformTrialPolicy": "Trial Policy",
     "tenantBilling": "Billing",
-    "platformPayments": "Payment Review"
+    "platformPayments": "Payment Review",
+    "academyProvisioning": "New Academy",
+    "platformProvisioning": "Academy Provisioning"
   },
   "account": {
     "menu": "Account menu",

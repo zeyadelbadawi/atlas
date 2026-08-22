@@ -49,7 +49,9 @@
     "tenantAddOns": "الإضافات",
     "platformTrialPolicy": "سياسة الفترة التجريبية",
     "tenantBilling": "الفواتير والمدفوعات",
-    "platformPayments": "مراجعة المدفوعات"
+    "platformPayments": "مراجعة المدفوعات",
+    "academyProvisioning": "أكاديمية جديدة",
+    "platformProvisioning": "تهيئة الأكاديميات"
   },
   "account": {
     "menu": "قائمة الحساب",

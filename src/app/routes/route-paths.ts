@@ -106,6 +106,13 @@ export const DASHBOARD_ROUTES = {
 
   platformPayments: '/dashboard/platform/payments',
   platformPaymentDetail: '/dashboard/platform/payments/:paymentId',
+
+  provisioning: '/dashboard/provisioning',
+  provisioningNew: '/dashboard/provisioning/new',
+  provisioningStatus: '/dashboard/provisioning/:requestId',
+
+  platformProvisioning: '/dashboard/platform/provisioning',
+  platformProvisioningDetail: '/dashboard/platform/provisioning/:requestId',
 } as const;
 
 /** System paths that exist outside the product modules. */
