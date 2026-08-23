@@ -2,6 +2,19 @@
  * Academy Dashboard Page.
  *
  * Provides academy-level overview including metrics, activity, and quick actions.
+ *
+ * Prompt 13 health-view audit: `AcademyStats` (`totalMembers`/
+ * `activeStaff`/`activeInstructors`/`publishedCourses`) and the real
+ * `useAcademyActivity` feed below already cover this page's "aggregated
+ * health view" and "activity/audit trail" requirements — neither is a
+ * scaffold. "Active students" and "completion rate" are NOT added here:
+ * no `AcademyStats`, Course, Enrollment, or Progress type anywhere in
+ * Atlas exposes either metric, so surfacing them would mean computing an
+ * unverified number client-side rather than reflecting a real backend
+ * figure — the same boundary already documented for Roles & Permissions
+ * and the Plan/Add-on catalog. The one real, previously-missing link this
+ * page did own — a Quick Action to the Academy's own Website — is added
+ * below; it needs no new fetch, since it is pure navigation.
  */
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -375,6 +388,19 @@ export default function AcademyDashboardPage(): JSX.Element {
                 }
               >
                 {t('academy:dashboard.updateBranding')}
+              </Button>
+              <Button
+                variant="outline"
+                className="justify-start"
+                onClick={() =>
+                  navigate(
+                    buildPath(DASHBOARD_ROUTES.websiteOverview, {
+                      academyId: currentAcademy.id,
+                    })
+                  )
+                }
+              >
+                {t('academy:dashboard.viewWebsite')}
               </Button>
               <Button
                 variant="outline"

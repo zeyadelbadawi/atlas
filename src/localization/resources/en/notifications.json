@@ -42,6 +42,7 @@
   },
   "messages": {
     "markReadSuccess": "Marked as read",
+    "markAllReadSuccess": "All notifications marked as read",
     "markUnreadSuccess": "Marked as unread",
     "deleteSuccess": "Notification deleted",
     "deleteAllSuccess": "All notifications deleted",

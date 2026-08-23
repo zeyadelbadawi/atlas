@@ -1,0 +1,39 @@
+{
+  "title": "الدعم",
+  "subtitle": "حالات الدعم عبر كل مؤسسة على أطلس.",
+  "searchPlaceholder": "ابحث حسب الموضوع أو مقدم الطلب",
+  "emptyState": "لم يتم العثور على حالات دعم",
+  "emptyStateDescription": "لا توجد حالات مطابقة لبحثك.",
+  "detailTitle": "حالة الدعم",
+  "overviewTitle": "نظرة عامة",
+  "table": {
+    "subject": "الموضوع",
+    "status": "الحالة",
+    "priority": "الأولوية",
+    "organization": "المؤسسة",
+    "updatedAt": "آخر تحديث"
+  },
+  "status": {
+    "open": "مفتوحة",
+    "in_progress": "قيد المعالجة",
+    "resolved": "تم الحل",
+    "closed": "مغلقة"
+  },
+  "priority": {
+    "low": "منخفضة",
+    "medium": "متوسطة",
+    "high": "عالية",
+    "urgent": "عاجلة"
+  },
+  "filters": {
+    "allStatuses": "كل الحالات"
+  },
+  "detail": {
+    "assignedTo": "مُسندة إلى",
+    "unassigned": "غير مُسندة",
+    "conversationTitle": "المحادثة",
+    "replyPlaceholder": "اكتب ردًا…",
+    "sendReply": "إرسال الرد",
+    "statusUpdated": "تم تحديث حالة الحالة"
+  }
+}

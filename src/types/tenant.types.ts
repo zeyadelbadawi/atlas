@@ -16,7 +16,7 @@ import type {
 } from './plan.types';
 import type { SubscriptionBillingCycle } from './money.types';
 
-/** A tenant subscription's lifecycle state. Named distinctly from the pre-existing, user-scoped `SubscriptionStatus` in `billing.types.ts` (see that file's doc comment for the distinction). */
+/** A tenant subscription's lifecycle state. Named distinctly from the Prompt 3A, user-scoped `SubscriptionStatus` that used to live in `billing.types.ts` — that legacy file was removed in Prompt 13 along with its only consumer, the fake `BillingPage`. */
 export type TenantSubscriptionStatus =
   | 'trialing'
   | 'active'

@@ -1,60 +1,103 @@
 {
   "title": "الملف الشخصي",
   "subtitle": "إدارة معلوماتك الشخصية وتفضيلاتك",
-  "sections": {
-    "personal": "المعلومات الشخصية",
-    "account": "إعدادات الحساب",
+  "tabs": {
+    "personal": "شخصي",
+    "account": "الحساب",
     "preferences": "التفضيلات",
     "security": "الأمان"
   },
+  "sections": {
+    "personal": {
+      "title": "المعلومات الشخصية",
+      "description": "حدّث اسمك — يظهر في جميع أنحاء أطلس أينما أُشير إلى حسابك."
+    },
+    "account": {
+      "title": "معلومات الحساب",
+      "description": "معرّفات حسابك وعضويات المؤسسات.",
+      "organizations": "المؤسسات",
+      "noOrganizations": "أنت لست عضوًا في أي مؤسسة."
+    },
+    "preferences": {
+      "title": "التفضيلات",
+      "description": "اللغة والمظهر وقنوات الإشعارات.",
+      "notifications": "قنوات الإشعارات"
+    },
+    "security": {
+      "changePassword": "تغيير كلمة المرور",
+      "passwordDescription": "اختر كلمة مرور قوية لا تستخدمها في مكان آخر.",
+      "twoFactor": "المصادقة الثنائية",
+      "twoFactorDescription": "أضف طبقة أمان إضافية لحسابك.",
+      "twoFactorStatus": "المصادقة الثنائية",
+      "twoFactorDisabled": "غير مفعّلة",
+      "sessions": "الجلسات النشطة",
+      "sessionsDescription": "الأجهزة المسجّلة دخولها حاليًا إلى حسابك.",
+      "currentDevice": "هذا الجهاز",
+      "lastActive": "آخر نشاط",
+      "current": "الحالي",
+      "notYetAvailable": "غير متاح بعد"
+    }
+  },
   "fields": {
-    "name": "الاسم الكامل",
-    "namePlaceholder": "أدخل اسمك الكامل",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
     "email": "البريد الإلكتروني",
-    "emailPlaceholder": "your@email.com",
-    "avatar": "صورة الملف الشخصي",
-    "changeAvatar": "تغيير الصورة",
-    "removeAvatar": "إزالة الصورة",
+    "userId": "معرّف المستخدم",
+    "accountStatus": "حالة الحساب",
+    "role": "الدور",
+    "memberSince": "عضو منذ",
     "language": "اللغة",
     "theme": "المظهر",
-    "themeLight": "فاتح",
-    "themeDark": "داكن",
-    "themeSystem": "النظام",
-    "compactMode": "الوضع المضغوط",
-    "compactModeDescription": "عرض المزيد من المحتوى في مساحة أقل",
-    "notifications": "الإشعارات",
+    "currentPassword": "كلمة المرور الحالية",
+    "newPassword": "كلمة المرور الجديدة",
+    "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
     "emailNotifications": "إشعارات البريد الإلكتروني",
-    "pushNotifications": "الإشعارات الفورية",
-    "smsNotifications": "إشعارات الرسائل النصية"
+    "pushNotifications": "الإشعارات الفورية"
+  },
+  "placeholders": {
+    "currentPassword": "أدخل كلمة مرورك الحالية",
+    "newPassword": "أدخل كلمة مرور جديدة",
+    "confirmPassword": "أعد إدخال كلمة مرورك الجديدة"
+  },
+  "hints": {
+    "emailReadOnly": "لا يمكن تغيير بريدك الإلكتروني من هنا بعد.",
+    "passwordRequirements": "8 أحرف على الأقل."
+  },
+  "languages": {
+    "english": "الإنجليزية",
+    "arabic": "العربية"
+  },
+  "themes": {
+    "light": "فاتح",
+    "dark": "داكن",
+    "system": "النظام"
+  },
+  "descriptions": {
+    "emailNotifications": "تلقي الإشعارات عبر البريد الإلكتروني.",
+    "pushNotifications": "تلقي الإشعارات الفورية في متصفحك."
+  },
+  "errors": {
+    "firstNameRequired": "الاسم الأول مطلوب",
+    "lastNameRequired": "اسم العائلة مطلوب",
+    "currentPasswordRequired": "كلمة المرور الحالية مطلوبة",
+    "passwordTooShort": "يجب ألا تقل كلمة المرور عن 8 أحرف",
+    "passwordMismatch": "كلمتا المرور غير متطابقتين",
+    "userNotFound": "تعذّر تحميل ملفك الشخصي."
+  },
+  "success": {
+    "passwordChanged": "تم تغيير كلمة المرور",
+    "passwordUpdated": "تم تحديث كلمة مرورك.",
+    "preferencesUpdated": "تم تحديث التفضيلات",
+    "changesApplied": "تم تطبيق تغييراتك."
   },
   "actions": {
-    "edit": "تعديل الملف الشخصي",
-    "save": "حفظ التغييرات",
-    "cancel": "إلغاء",
-    "saving": "جارٍ الحفظ..."
-  },
-  "messages": {
-    "updateSuccess": "تم تحديث الملف الشخصي بنجاح",
-    "updateError": "فشل تحديث الملف الشخصي",
-    "unsavedChanges": "لديك تغييرات غير محفوظة. هل أنت متأكد من المغادرة؟"
-  },
-  "accountInfo": {
-    "title": "معلومات الحساب",
-    "userId": "معرف المستخدم",
-    "createdAt": "عضو منذ",
-    "lastSignIn": "آخر تسجيل دخول",
-    "accountStatus": "حالة الحساب",
-    "statusActive": "نشط",
-    "statusInactive": "غير نشط",
-    "statusSuspended": "معلق"
-  },
-  "security": {
-    "title": "إعدادات الأمان",
     "changePassword": "تغيير كلمة المرور",
-    "twoFactor": "المصادقة الثنائية",
-    "twoFactorDescription": "أضف طبقة أمان إضافية لحسابك",
-    "sessions": "الجلسات النشطة",
-    "viewSessions": "عرض الجلسات النشطة"
-  }
+    "enable": "تفعيل",
+    "signOutAllDevices": "تسجيل الخروج من جميع الأجهزة"
+  },
+  "status": {
+    "noRole": "لا يوجد دور معيّن",
+    "current": "الحالي"
+  },
+  "unsavedChanges": "لديك تغييرات غير محفوظة. هل أنت متأكد أنك تريد المغادرة؟"
 }
-

@@ -46,45 +46,23 @@ export function AtlasPlatformProvider({
   });
 
   /**
-   * Loads feature flags on mount.
+   * Resolves dynamic (per-user/org) feature flags.
+   *
+   * Prompt 13 audit boundary: Atlas has no dynamic feature-flag backend
+   * contract anywhere — `feature-flags.config.ts` is the one real flag
+   * registry, and it is static/compile-time (`languageSwitcher`/
+   * `themeSwitcher`), not fetched per session. No current `NavigationItem`
+   * sets `featureFlag`, so `isFeatureEnabled` below has no live consumer
+   * today; it exists as a ready extension point for `NavigationItem`'s
+   * `featureFlag` field. Rather than inventing a dynamic-flags service to
+   * populate it, this resolves to "no dynamic flags" immediately and
+   * honestly — no fake network delay, no invented endpoint.
    */
   useEffect(() => {
-    let cancelled = false;
-
-    async function loadFeatureFlags() {
-      try {
-        // TODO: Replace with actual feature flag service when implemented.
-        // For now, simulate loading and set to empty flags.
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
-        if (!cancelled) {
-          setState((prev) => ({
-            ...prev,
-            featureFlags: {
-              flags: {},
-              loading: false,
-            },
-          }));
-        }
-      } catch (error) {
-        if (!cancelled) {
-          setState((prev) => ({
-            ...prev,
-            featureFlags: {
-              flags: {},
-              loading: false,
-              error: "Failed to load feature flags",
-            },
-          }));
-        }
-      }
-    }
-
-    void loadFeatureFlags();
-
-    return () => {
-      cancelled = true;
-    };
+    setState((prev) => ({
+      ...prev,
+      featureFlags: { flags: {}, loading: false },
+    }));
   }, []);
 
   /**

@@ -1,59 +1,103 @@
 {
   "title": "Profile",
   "subtitle": "Manage your personal information and preferences",
-  "sections": {
-    "personal": "Personal Information",
-    "account": "Account Settings",
+  "tabs": {
+    "personal": "Personal",
+    "account": "Account",
     "preferences": "Preferences",
     "security": "Security"
   },
+  "sections": {
+    "personal": {
+      "title": "Personal Information",
+      "description": "Update your name — shown across Atlas wherever your account is referenced."
+    },
+    "account": {
+      "title": "Account Information",
+      "description": "Your account identifiers and organization memberships.",
+      "organizations": "Organizations",
+      "noOrganizations": "You are not a member of any organization."
+    },
+    "preferences": {
+      "title": "Preferences",
+      "description": "Language, theme and notification channels.",
+      "notifications": "Notification channels"
+    },
+    "security": {
+      "changePassword": "Change Password",
+      "passwordDescription": "Choose a strong password you don't use elsewhere.",
+      "twoFactor": "Two-Factor Authentication",
+      "twoFactorDescription": "Add an extra layer of security to your account.",
+      "twoFactorStatus": "Two-factor authentication",
+      "twoFactorDisabled": "Not enabled",
+      "sessions": "Active Sessions",
+      "sessionsDescription": "Devices currently signed in to your account.",
+      "currentDevice": "This device",
+      "lastActive": "Last active",
+      "current": "Current",
+      "notYetAvailable": "Not available yet"
+    }
+  },
   "fields": {
-    "name": "Full Name",
-    "namePlaceholder": "Enter your full name",
-    "email": "Email Address",
-    "emailPlaceholder": "your@email.com",
-    "avatar": "Profile Picture",
-    "changeAvatar": "Change Picture",
-    "removeAvatar": "Remove Picture",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email address",
+    "userId": "User ID",
+    "accountStatus": "Account status",
+    "role": "Role",
+    "memberSince": "Member since",
     "language": "Language",
     "theme": "Theme",
-    "themeLight": "Light",
-    "themeDark": "Dark",
-    "themeSystem": "System",
-    "compactMode": "Compact Mode",
-    "compactModeDescription": "Display more content in less space",
-    "notifications": "Notifications",
-    "emailNotifications": "Email Notifications",
-    "pushNotifications": "Push Notifications",
-    "smsNotifications": "SMS Notifications"
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmNewPassword": "Confirm new password",
+    "emailNotifications": "Email notifications",
+    "pushNotifications": "Push notifications"
+  },
+  "placeholders": {
+    "currentPassword": "Enter your current password",
+    "newPassword": "Enter a new password",
+    "confirmPassword": "Re-enter your new password"
+  },
+  "hints": {
+    "emailReadOnly": "Your email address can't be changed here yet.",
+    "passwordRequirements": "At least 8 characters."
+  },
+  "languages": {
+    "english": "English",
+    "arabic": "Arabic"
+  },
+  "themes": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "descriptions": {
+    "emailNotifications": "Receive notifications by email.",
+    "pushNotifications": "Receive push notifications in your browser."
+  },
+  "errors": {
+    "firstNameRequired": "First name is required",
+    "lastNameRequired": "Last name is required",
+    "currentPasswordRequired": "Current password is required",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "passwordMismatch": "Passwords do not match",
+    "userNotFound": "We couldn't load your profile."
+  },
+  "success": {
+    "passwordChanged": "Password changed",
+    "passwordUpdated": "Your password has been updated.",
+    "preferencesUpdated": "Preferences updated",
+    "changesApplied": "Your changes have been applied."
   },
   "actions": {
-    "edit": "Edit Profile",
-    "save": "Save Changes",
-    "cancel": "Cancel",
-    "saving": "Saving..."
+    "changePassword": "Change password",
+    "enable": "Enable",
+    "signOutAllDevices": "Sign out of all devices"
   },
-  "messages": {
-    "updateSuccess": "Profile updated successfully",
-    "updateError": "Failed to update profile",
-    "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?"
+  "status": {
+    "noRole": "No role assigned",
+    "current": "Current"
   },
-  "accountInfo": {
-    "title": "Account Information",
-    "userId": "User ID",
-    "createdAt": "Member Since",
-    "lastSignIn": "Last Sign In",
-    "accountStatus": "Account Status",
-    "statusActive": "Active",
-    "statusInactive": "Inactive",
-    "statusSuspended": "Suspended"
-  },
-  "security": {
-    "title": "Security Settings",
-    "changePassword": "Change Password",
-    "twoFactor": "Two-Factor Authentication",
-    "twoFactorDescription": "Add an extra layer of security to your account",
-    "sessions": "Active Sessions",
-    "viewSessions": "View Active Sessions"
-  }
+  "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?"
 }

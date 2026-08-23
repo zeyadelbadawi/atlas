@@ -63,10 +63,11 @@ export type ManualPaymentInstructions =
 /**
  * A payment method as a first-class catalog object — never a hardcoded
  * string switch in a component. Catalog-scoped like `Plan`/`AddOn`
- * (Prompt 6), not Tenant-owned. Named distinctly from the pre-existing,
- * user-scoped, Prompt 3A `PaymentMethod` in `billing.types.ts` (a saved
- * card on file) — a different concept entirely, kept separate the same
- * way `SubscriptionBillingCycle` is (see `money.types.ts`).
+ * (Prompt 6), not Tenant-owned. Named distinctly from the Prompt 3A,
+ * user-scoped `PaymentMethod` (a saved card on file) that used to live in
+ * `billing.types.ts` — a different concept entirely; that legacy file was
+ * removed in Prompt 13 along with its only consumer, the fake
+ * `BillingPage`.
  */
 export interface CheckoutPaymentMethod {
   readonly id: string;
@@ -87,9 +88,11 @@ export interface CheckoutPaymentMethod {
  * NOT payment-method-specific. Manual review is tracked separately (see
  * `ManualReviewStatus`) precisely so this enum doesn't need
  * manual-transfer-only states mixed into a gateway-shaped state machine.
- * Named distinctly from the pre-existing, user-scoped, Prompt 3A
- * `PaymentStatus` in `billing.types.ts` (a simple 4-state invoice-line
- * status) — this is the real Payment lifecycle Prompt 7 introduces.
+ * Named distinctly from the Prompt 3A, user-scoped `PaymentStatus` (a
+ * simple 4-state invoice-line status) that used to live in
+ * `billing.types.ts` — this is the real Payment lifecycle Prompt 7
+ * introduces. That legacy file was removed in Prompt 13 along with its
+ * only consumer, the fake `BillingPage`.
  */
 export type PaymentLifecycleStatus =
   | 'created'
@@ -260,8 +263,8 @@ export interface PaymentReturnParams {
 
 /**
  * Invoice-ready domain contract. No accounting logic — a read-only record
- * the backend produces. Named distinctly from the pre-existing, user-scoped,
- * Prompt 3A `Invoice` in `billing.types.ts` (which has its own
+ * the backend produces. Named distinctly from the Prompt 3A, user-scoped
+ * `Invoice` that used to live in `billing.types.ts` (its own
  * `invoiceNumber`/`items`/`periodStart` shape) — this is the
  * organization-scoped equivalent, matching `TenantSubscription`/
  * `TenantUsage`/`TenantAddOn`'s naming (Prompt 6).

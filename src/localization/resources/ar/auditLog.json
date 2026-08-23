@@ -1,0 +1,18 @@
+{
+  "title": "سجل التدقيق",
+  "subtitle": "كل حدث مسجّل عبر أطلس، عبر جميع المؤسسات.",
+  "searchPlaceholder": "ابحث حسب الفاعل أو الإجراء أو الهدف",
+  "emptyState": "لم يتم العثور على إدخالات في سجل التدقيق",
+  "emptyStateDescription": "لا توجد أحداث مطابقة لبحثك.",
+  "detailTitle": "حدث التدقيق",
+  "overviewTitle": "نظرة عامة",
+  "contextTitle": "السياق",
+  "noContext": "لم يتم تسجيل سياق إضافي لهذا الحدث.",
+  "table": {
+    "occurredAt": "وقت الحدوث",
+    "actor": "الفاعل",
+    "action": "الإجراء",
+    "target": "الهدف",
+    "organization": "المؤسسة"
+  }
+}

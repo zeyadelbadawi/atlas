@@ -1,0 +1,39 @@
+{
+  "title": "Support",
+  "subtitle": "Support cases across every organization on Atlas.",
+  "searchPlaceholder": "Search by subject or requester",
+  "emptyState": "No support cases found",
+  "emptyStateDescription": "No cases match your search.",
+  "detailTitle": "Support case",
+  "overviewTitle": "Overview",
+  "table": {
+    "subject": "Subject",
+    "status": "Status",
+    "priority": "Priority",
+    "organization": "Organization",
+    "updatedAt": "Updated"
+  },
+  "status": {
+    "open": "Open",
+    "in_progress": "In progress",
+    "resolved": "Resolved",
+    "closed": "Closed"
+  },
+  "priority": {
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "urgent": "Urgent"
+  },
+  "filters": {
+    "allStatuses": "All statuses"
+  },
+  "detail": {
+    "assignedTo": "Assigned to",
+    "unassigned": "Unassigned",
+    "conversationTitle": "Conversation",
+    "replyPlaceholder": "Write a reply…",
+    "sendReply": "Send reply",
+    "statusUpdated": "Case status updated"
+  }
+}

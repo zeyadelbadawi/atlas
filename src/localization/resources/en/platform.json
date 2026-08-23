@@ -8,10 +8,7 @@
     "totalUsers": "Total Users",
     "activeCourses": "Active Courses",
     "revenue": "Revenue",
-    "academiesGrowth": "{{value}} from last month",
-    "usersGrowth": "{{value}} from last month",
-    "coursesGrowth": "{{value}} from last month",
-    "revenueGrowth": "{{value}} from last month",
+    "vsLastMonth": "vs last month",
     "systemHealth": "System Health",
     "storageUsage": "Storage Usage",
     "apiUptime": "API Uptime",
@@ -23,5 +20,127 @@
   },
   "activity": {
     "empty": "No recent activity"
+  },
+  "organizations": {
+    "title": "Organizations",
+    "subtitle": "Every organization on Atlas, across all tenants.",
+    "searchPlaceholder": "Search organizations by name",
+    "emptyState": "No organizations found",
+    "emptyStateDescription": "No organizations match your search.",
+    "detailTitle": "Organization",
+    "overviewTitle": "Overview",
+    "owner": "Owner",
+    "subscriptionTitle": "Subscription",
+    "subscriptionStatus": "Status",
+    "currentPeriodEnd": "Current period ends",
+    "noSubscription": "This organization has no subscription on record.",
+    "academiesTitle": "Academies",
+    "noAcademies": "This organization has no academies yet.",
+    "membersTitle": "Members",
+    "noMembers": "This organization has no members on record.",
+    "table": {
+      "name": "Organization",
+      "status": "Status",
+      "plan": "Plan",
+      "academies": "Academies",
+      "members": "Members",
+      "createdAt": "Created"
+    },
+    "status": {
+      "active": "Active",
+      "suspended": "Suspended",
+      "archived": "Archived"
+    }
+  },
+  "academies": {
+    "title": "Academies",
+    "subtitle": "Every academy on Atlas, across all organizations.",
+    "searchPlaceholder": "Search academies by name",
+    "emptyState": "No academies found",
+    "emptyStateDescription": "No academies match your search.",
+    "detailTitle": "Academy",
+    "overviewTitle": "Overview",
+    "owner": "Owner",
+    "description": "Description",
+    "stateTitle": "Provisioning & delivery state",
+    "provisioningStatus": "Provisioning",
+    "websiteStatus": "Website",
+    "domainStatus": "Domain",
+    "coursesTitle": "Courses",
+    "noCourses": "This academy has no courses yet.",
+    "membersTitle": "Members",
+    "noMembers": "This academy has no members on record.",
+    "table": {
+      "name": "Academy",
+      "organization": "Organization",
+      "status": "Status",
+      "courses": "Courses",
+      "members": "Members",
+      "createdAt": "Created"
+    },
+    "status": {
+      "draft": "Draft",
+      "active": "Active",
+      "suspended": "Suspended",
+      "archived": "Archived"
+    }
+  },
+  "users": {
+    "title": "Users",
+    "subtitle": "Every user account on Atlas, across all organizations.",
+    "searchPlaceholder": "Search users by name or email",
+    "emptyState": "No users found",
+    "emptyStateDescription": "No users match your search.",
+    "detailTitle": "User",
+    "overviewTitle": "Overview",
+    "rolesTitle": "Roles",
+    "noRoles": "This user has no roles assigned.",
+    "membershipsTitle": "Organization memberships",
+    "noMemberships": "This user has no organization memberships.",
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "status": "Status",
+      "organizations": "Organizations",
+      "lastSignIn": "Last sign-in",
+      "createdAt": "Created"
+    },
+    "status": {
+      "active": "Active",
+      "invited": "Invited",
+      "suspended": "Suspended"
+    }
+  },
+  "rolesPermissions": {
+    "title": "Roles & Permissions",
+    "subtitle": "Your own effective roles and permissions across Atlas.",
+    "boundaryTitle": "This is an inspection view, not a catalog",
+    "boundaryDescription": "Atlas does not yet define a platform-wide role/permission catalog or an assignment workflow for other users. This page shows only the roles and permissions already granted to your own signed-in account.",
+    "rolesTitle": "Roles",
+    "noRoles": "No roles are assigned to your account.",
+    "permissionsTitle": "Permissions",
+    "noPermissions": "No permissions are assigned to your account.",
+    "scope": {
+      "global": "Global",
+      "organization": "{{name}}"
+    }
+  },
+  "planCatalog": {
+    "title": "Plans & Add-ons",
+    "subtitle": "The Atlas catalog of plans and add-ons.",
+    "boundaryTitle": "This is a read-only catalog view",
+    "boundaryDescription": "Atlas does not yet define a create/edit/retire workflow for plans or add-ons. This page shows the live catalog exactly as Tenants see it when choosing a plan.",
+    "plansTitle": "Plans",
+    "noPlans": "No plans are currently in the catalog.",
+    "addOnsTitle": "Add-ons",
+    "noAddOns": "No add-ons are currently in the catalog.",
+    "status": {
+      "active": "Active",
+      "archived": "Archived"
+    },
+    "billingCycle": {
+      "monthly": "month",
+      "yearly": "year"
+    }
   }
 }

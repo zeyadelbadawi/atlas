@@ -1,0 +1,17 @@
+{
+  "dialog": {
+    "title": "Media Library",
+    "description": "Reuse an asset already uploaded to this academy, or upload a new one.",
+    "browseTab": "Browse",
+    "uploadTab": "Upload",
+    "searchPlaceholder": "Search assets",
+    "empty": "No assets in the library yet",
+    "altText": "Alt text",
+    "altTextPlaceholder": "Describe this image",
+    "chooseFile": "Choose file",
+    "uploading": "Uploading…"
+  },
+  "actions": {
+    "archiveSuccess": "Asset archived"
+  }
+}

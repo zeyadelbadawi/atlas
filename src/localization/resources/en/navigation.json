@@ -42,7 +42,6 @@
     "profile": "Profile",
     "notifications": "Notifications",
     "settings": "Settings",
-    "billing": "Billing",
     "analytics": "Analytics",
     "tenantOverview": "Overview",
     "tenantSubscription": "Subscription",
@@ -53,7 +52,14 @@
     "tenantBilling": "Billing",
     "platformPayments": "Payment Review",
     "academyProvisioning": "New Academy",
-    "platformProvisioning": "Academy Provisioning"
+    "platformProvisioning": "Academy Provisioning",
+    "platformOrganizations": "Organizations",
+    "platformAcademies": "Academies",
+    "platformUsers": "Users",
+    "platformRolesPermissions": "Roles & Permissions",
+    "platformAuditLog": "Audit Log",
+    "platformSupport": "Support",
+    "platformPlanCatalog": "Plans & Add-ons"
   },
   "account": {
     "menu": "Account menu",

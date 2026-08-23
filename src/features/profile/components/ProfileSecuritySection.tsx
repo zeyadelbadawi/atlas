@@ -1,7 +1,14 @@
 /**
  * Profile Security Section.
  *
- * Manage password and security settings.
+ * Manage password and security settings. Prompt 13 wired password change
+ * to the real, pre-existing `currentUserService.changePassword` (it used
+ * to fake-save via `setTimeout`). Two-Factor Authentication and Session
+ * Management remain display-only below — Atlas has no 2FA-enrollment or
+ * session-listing/revocation contract anywhere (no such endpoint, no
+ * such type), so their controls stay inert intentionally rather than
+ * simulate an enrollment flow or a session list with no real backend
+ * behind either.
  */
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -19,9 +26,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
+import { ErrorState } from "@components/feedback";
 import { useToast } from "@hooks";
+import { useChangePassword } from "../hooks";
 
 const passwordSchema = z
   .object({
@@ -44,8 +52,7 @@ export function ProfileSecuritySection(): JSX.Element {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const changePassword = useChangePassword();
 
   const {
     register,
@@ -61,25 +68,21 @@ export function ProfileSecuritySection(): JSX.Element {
     },
   });
 
-  const handleFormSubmit = async (data: PasswordFormData) => {
-    setIsLoading(true);
-    setError(null);
+  const isLoading = changePassword.isPending;
 
-    try {
-      // Password change will be connected to backend service in future
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      toast({
-        title: t("profile:success.passwordChanged"),
-        description: t("profile:success.passwordUpdated"),
-      });
-
-      reset();
-    } catch (err) {
-      setError("profile:errors.passwordChangeFailed");
-    } finally {
-      setIsLoading(false);
-    }
+  const handleFormSubmit = (data: PasswordFormData) => {
+    changePassword.mutate(
+      { currentPassword: data.currentPassword, newPassword: data.newPassword },
+      {
+        onSuccess: () => {
+          toast({
+            title: t("profile:success.passwordChanged"),
+            description: t("profile:success.passwordUpdated"),
+          });
+          reset();
+        },
+      }
+    );
   };
 
   return (
@@ -93,10 +96,8 @@ export function ProfileSecuritySection(): JSX.Element {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
-            {error ? (
-              <Alert variant="destructive">
-                <AlertDescription>{t(error)}</AlertDescription>
-              </Alert>
+            {changePassword.error ? (
+              <ErrorState onRetry={handleSubmit(handleFormSubmit)} />
             ) : null}
 
             <div className="space-y-4">
@@ -261,7 +262,9 @@ export function ProfileSecuritySection(): JSX.Element {
                 {t("profile:sections.security.twoFactorDisabled")}
               </p>
             </div>
-            <Button variant="outline">{t("profile:actions.enable")}</Button>
+            <Button variant="outline" disabled title={t("profile:sections.security.notYetAvailable")}>
+              {t("profile:actions.enable")}
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -291,7 +294,12 @@ export function ProfileSecuritySection(): JSX.Element {
             </div>
           </div>
           <Separator className="my-4" />
-          <Button variant="destructive" className="w-full">
+          <Button
+            variant="destructive"
+            className="w-full"
+            disabled
+            title={t("profile:sections.security.notYetAvailable")}
+          >
             {t("profile:actions.signOutAllDevices")}
           </Button>
         </CardContent>

@@ -1,88 +1,67 @@
 /**
- * Analytics types.
+ * Platform Analytics types (Prompt 13).
  *
- * Types for platform analytics, metrics, charts, and reporting.
+ * Replaces `AnalyticsPage`'s hardcoded `0`/`$0` metrics and permanently
+ * empty tabs (Prompt 3A legacy scaffold) with a real, typed, filterable
+ * contract. Carries exactly the four KPIs the scaffold already named
+ * (`totalUsers`, `activeUsers`, `engagementRate`, `revenue`) — no
+ * additional KPI is invented — plus the time-series/breakdown shapes
+ * needed to render the "Users" / "Engagement" / "Revenue" tabs with real
+ * chart data instead of a static "empty" placeholder.
  */
 
-/** Time range for analytics queries. */
-export type AnalyticsTimeRange = '7d' | '30d' | '90d' | '1y' | 'custom';
-
-/** Metric aggregation type. */
-export type MetricAggregation = 'sum' | 'avg' | 'min' | 'max' | 'count';
-
-/** Chart type for visualization. */
-export type ChartType = 'line' | 'bar' | 'area' | 'pie' | 'donut';
-
-/** A single data point in a time series. */
-export interface TimeSeriesDataPoint {
-  readonly timestamp: string;
-  readonly value: number;
-  readonly label?: string;
+/** An inclusive date range filter, applied to every Analytics query. */
+export interface AnalyticsDateRange {
+  /** ISO 8601 date, e.g. "2026-07-24". */
+  readonly from: string;
+  /** ISO 8601 date, e.g. "2026-08-22". */
+  readonly to: string;
 }
 
-/** Time series data for a metric. */
-export interface TimeSeriesData {
-  readonly metricKey: string;
-  readonly data: readonly TimeSeriesDataPoint[];
-  readonly aggregation: MetricAggregation;
+/** Every Analytics read accepts the same date-range filter. */
+export interface AnalyticsQuery {
+  readonly dateRange?: AnalyticsDateRange;
 }
 
-/** A platform-level metric. */
-export interface PlatformMetric {
-  /** Translation key for the metric name. */
-  readonly labelKey: string;
+/** A single KPI's current value plus its change over the selected date range, when the backend can compute one. */
+export interface AnalyticsMetricTrend {
   readonly value: number;
-  readonly formattedValue: string;
-  readonly previousValue?: number;
   readonly changePercent?: number;
-  readonly trend?: 'up' | 'down' | 'flat';
-  readonly unit?: string;
 }
 
-/** Analytics dashboard configuration. */
-export interface AnalyticsDashboard {
-  readonly id: string;
-  /** Translation key for the dashboard name. */
-  readonly nameKey: string;
-  readonly widgets: readonly AnalyticsWidget[];
-  readonly timeRange: AnalyticsTimeRange;
+/** The Overview tab's four KPIs — a singleton snapshot for the active date range, not a paginated collection. */
+export interface AnalyticsOverview {
+  readonly totalUsers: AnalyticsMetricTrend;
+  readonly activeUsers: AnalyticsMetricTrend;
+  /** 0–100. */
+  readonly engagementRatePercent: number;
+  readonly engagementRateChangePercent?: number;
+  readonly revenue: AnalyticsMetricTrend;
+  readonly revenueCurrency: string;
+  readonly generatedAt: string;
 }
 
-/** A dashboard widget. */
-export interface AnalyticsWidget {
-  readonly id: string;
-  readonly type: 'metric' | 'chart' | 'table' | 'map';
-  /** Translation key for the widget title. */
-  readonly titleKey: string;
-  readonly metric?: PlatformMetric;
-  readonly chartData?: TimeSeriesData;
-  readonly chartType?: ChartType;
-  readonly size: 'small' | 'medium' | 'large' | 'full';
-}
-
-/** Analytics filter options. */
-export interface AnalyticsFilters {
-  readonly timeRange: AnalyticsTimeRange;
-  readonly startDate?: string;
-  readonly endDate?: string;
-  readonly groupBy?: 'day' | 'week' | 'month';
-  readonly organizationId?: string;
-}
-
-/** Platform overview statistics. */
-export interface PlatformStatistics {
-  readonly totalAcademies: number;
-  readonly activeAcademies: number;
-  readonly totalUsers: number;
-  readonly activeUsers: number;
-  readonly totalRevenue: number;
-  readonly currency: string;
-  readonly metrics: readonly PlatformMetric[];
-}
-
-/** Chart data point for general use. */
-export interface ChartDataPoint {
-  readonly name: string;
+/** One point on a time-series chart. */
+export interface AnalyticsTimeSeriesPoint {
+  /** ISO 8601 date. */
+  readonly date: string;
   readonly value: number;
-  readonly [key: string]: string | number;
+}
+
+/** A named metric's values across the selected date range. */
+export interface AnalyticsTimeSeries {
+  readonly metric: string;
+  readonly points: readonly AnalyticsTimeSeriesPoint[];
+}
+
+/** One category's value within a breakdown (e.g. "by plan", "by organization"). */
+export interface AnalyticsBreakdownItem {
+  readonly label: string;
+  readonly value: number;
+}
+
+/** A dimension broken down into its category values. */
+export interface AnalyticsBreakdown {
+  readonly dimension: string;
+  readonly items: readonly AnalyticsBreakdownItem[];
 }

@@ -118,6 +118,7 @@ export function WebsiteSeoTab({ academyId, configuration }: WebsiteSeoTabProps):
                 labelKey="website:seo.ogImage"
                 value={ogImage}
                 onChange={setOgImage}
+                academyId={academyId}
               />
               <FormField
                 control={form.control}

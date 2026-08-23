@@ -1,7 +1,10 @@
 /**
  * Reset Password Form.
  *
- * Set new password with confirmation.
+ * Set new password with confirmation. Prompt 13 replacement for the
+ * Prompt 3A scaffold — this used to fake-succeed via `setTimeout`. Now a
+ * real mutation via `useConfirmPasswordReset`
+ * (`authenticationService.confirmPasswordReset`).
  */
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -13,9 +16,10 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ErrorState } from "@components/feedback";
 import { useToast } from "@hooks";
 import { AUTH_ROUTES } from "@app/routes/route-paths";
+import { useConfirmPasswordReset } from "../hooks";
 
 const resetPasswordSchema = z
   .object({
@@ -41,8 +45,7 @@ export function ResetPasswordForm({
   const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const confirmPasswordReset = useConfirmPasswordReset();
 
   const {
     register,
@@ -56,34 +59,27 @@ export function ResetPasswordForm({
     },
   });
 
-  const handleFormSubmit = async (data: ResetPasswordFormData) => {
-    setIsLoading(true);
-    setError(null);
+  const isLoading = confirmPasswordReset.isPending;
 
-    try {
-      // Password reset logic will be connected to backend service in future
-      // For now, simulate password reset
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      toast({
-        title: t("auth:resetPassword.success.title"),
-        description: t("auth:resetPassword.success.description"),
-      });
-
-      navigate(AUTH_ROUTES.signIn);
-    } catch (err) {
-      setError("auth:resetPassword.errors.resetFailed");
-    } finally {
-      setIsLoading(false);
-    }
+  const handleFormSubmit = (data: ResetPasswordFormData) => {
+    confirmPasswordReset.mutate(
+      { token, newPassword: data.password },
+      {
+        onSuccess: () => {
+          toast({
+            title: t("auth:resetPassword.success.title"),
+            description: t("auth:resetPassword.success.description"),
+          });
+          navigate(AUTH_ROUTES.signIn);
+        },
+      }
+    );
   };
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
-      {error ? (
-        <Alert variant="destructive">
-          <AlertDescription>{t(error)}</AlertDescription>
-        </Alert>
+      {confirmPasswordReset.error ? (
+        <ErrorState onRetry={handleSubmit(handleFormSubmit)} />
       ) : null}
 
       <div className="space-y-4">

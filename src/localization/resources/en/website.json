@@ -418,6 +418,7 @@
     "saving": "Saving…",
     "chooseImage": "Choose image",
     "replaceImage": "Replace image",
+    "chooseFromLibrary": "Choose from library",
     "removeImage": "Remove image",
     "imageTooLarge": "The file is too large.",
     "imageInvalidType": "This file type isn't supported. Use PNG, JPG or WEBP."

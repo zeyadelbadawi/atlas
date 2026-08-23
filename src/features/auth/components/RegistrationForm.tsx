@@ -1,7 +1,9 @@
 /**
  * Registration Form.
  *
- * New user registration form with validation.
+ * New user registration form with validation. Prompt 13 replacement for
+ * the Prompt 3A scaffold — this used to fake-succeed via `setTimeout`.
+ * Now a real mutation via `useRegister` (`authenticationService.register`).
  */
 import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
@@ -14,9 +16,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ErrorState } from '@components/feedback';
 import { useToast } from '@hooks';
 import { AUTH_ROUTES } from '@app/routes/route-paths';
+import { useRegister } from '../hooks';
 
 const registrationSchema = z
   .object({
@@ -44,8 +47,7 @@ export function RegistrationForm(): JSX.Element {
   const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const registerAccount = useRegister();
 
   const {
     register,
@@ -63,34 +65,27 @@ export function RegistrationForm(): JSX.Element {
     },
   });
 
-  const handleFormSubmit = async (data: RegistrationFormData) => {
-    setIsLoading(true);
-    setError(null);
+  const isLoading = registerAccount.isPending;
 
-    try {
-      // Registration logic will be connected to backend service in future
-      // For now, simulate registration and show success
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      toast({
-        title: t('auth:register.success.title'),
-        description: t('auth:register.success.description'),
-      });
-
-      navigate(AUTH_ROUTES.signIn);
-    } catch (err) {
-      setError('auth:register.errors.registrationFailed');
-    } finally {
-      setIsLoading(false);
-    }
+  const handleFormSubmit = (data: RegistrationFormData) => {
+    registerAccount.mutate(
+      { name: data.name, email: data.email, password: data.password },
+      {
+        onSuccess: () => {
+          toast({
+            title: t('auth:register.success.title'),
+            description: t('auth:register.success.description'),
+          });
+          navigate(AUTH_ROUTES.signIn);
+        },
+      }
+    );
   };
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
-      {error ? (
-        <Alert variant="destructive">
-          <AlertDescription>{t(error)}</AlertDescription>
-        </Alert>
+      {registerAccount.error ? (
+        <ErrorState onRetry={handleSubmit(handleFormSubmit)} />
       ) : null}
 
       <div className="space-y-4">

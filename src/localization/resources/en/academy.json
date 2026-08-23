@@ -10,7 +10,8 @@
     "viewProfile": "View Profile",
     "manageSettings": "Manage Settings",
     "viewMembers": "View Members",
-    "updateBranding": "Update Branding"
+    "updateBranding": "Update Branding",
+    "viewWebsite": "View Website"
   },
   "stats": {
     "totalMembers": "Total Members",

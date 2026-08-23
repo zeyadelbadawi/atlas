@@ -84,7 +84,21 @@ export function resolveCourseSeo(
   };
 }
 
-/** Dynamic SEO for a Blog post — reads the EXISTING `@features/blog` domain only. */
+/**
+ * Dynamic SEO for a Blog post — reads the EXISTING `@features/blog`
+ * domain only.
+ *
+ * UNRESOLVED (Prompt 13 audit): unlike `resolveCourseSeo`, this function
+ * has no live UI consumer. The public website runtime's `WebsitePage`
+ * core types (`home`/`about`/`courses`/`courseDetails`/`faqs`/`contact`)
+ * include no `blogPostDetails` equivalent, and `resolvePathToPage`
+ * (`@features/public-website`) has no blog-post URL pattern — there is
+ * no public blog-post page/route/template to wire this into without
+ * inventing one, which is out of this prompt's scope ("Do not rebuild
+ * the Website/CMS feature"). This function stays a real, correct,
+ * tested contract, ready for the day a public blog-post page is
+ * specified.
+ */
 export function resolveBlogPostSeo(
   post: BlogPost,
   configuration: WebsiteConfiguration,

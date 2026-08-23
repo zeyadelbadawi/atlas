@@ -1,0 +1,18 @@
+{
+  "title": "Audit Log",
+  "subtitle": "Every recorded event across Atlas, across all organizations.",
+  "searchPlaceholder": "Search by actor, action or target",
+  "emptyState": "No audit log entries found",
+  "emptyStateDescription": "No events match your search.",
+  "detailTitle": "Audit event",
+  "overviewTitle": "Overview",
+  "contextTitle": "Context",
+  "noContext": "No additional context was recorded for this event.",
+  "table": {
+    "occurredAt": "Occurred at",
+    "actor": "Actor",
+    "action": "Action",
+    "target": "Target",
+    "organization": "Organization"
+  }
+}

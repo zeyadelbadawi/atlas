@@ -1,0 +1,17 @@
+{
+  "dialog": {
+    "title": "مكتبة الوسائط",
+    "description": "أعد استخدام أصل تم رفعه بالفعل لهذه الأكاديمية، أو ارفع أصلًا جديدًا.",
+    "browseTab": "تصفح",
+    "uploadTab": "رفع",
+    "searchPlaceholder": "ابحث عن الأصول",
+    "empty": "لا توجد أصول في المكتبة بعد",
+    "altText": "النص البديل",
+    "altTextPlaceholder": "صف هذه الصورة",
+    "chooseFile": "اختر ملفًا",
+    "uploading": "جارٍ الرفع…"
+  },
+  "actions": {
+    "archiveSuccess": "تمت أرشفة الأصل"
+  }
+}

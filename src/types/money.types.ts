@@ -32,10 +32,11 @@ export interface Money {
 
 /**
  * How often a plan subscription bills. Add-ons may be one-time (`undefined`)
- * or recurring. Named distinctly from the pre-existing, user-scoped,
- * Prompt 3A `BillingCycle` in `billing.types.ts` — same shape today, but a
- * different domain (that file's own doc comment explains why it's kept
- * separate; this mirrors `TenantSubscriptionStatus` doing the same for
- * `SubscriptionStatus` in Prompt 6).
+ * or recurring. Named distinctly from the Prompt 3A, user-scoped
+ * `BillingCycle` that used to live in `billing.types.ts` — same shape
+ * today, but a different domain; this mirrors `TenantSubscriptionStatus`
+ * doing the same for `SubscriptionStatus` in Prompt 6. That legacy file
+ * was removed in Prompt 13 along with its only consumer, the fake
+ * `BillingPage`.
  */
 export type SubscriptionBillingCycle = 'monthly' | 'yearly';

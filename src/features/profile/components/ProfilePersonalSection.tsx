@@ -1,9 +1,15 @@
 /**
  * Profile Personal Section.
  *
- * Edit personal information (name, email, phone, bio).
+ * Edit personal information. Prompt 13 replacement for the Prompt 3A
+ * scaffold — the form used to fake-save via `setTimeout` and collected
+ * `phone`/`bio` fields `CurrentUser`/`currentUserService.updateProfile`
+ * have no contract for (only `name`/`avatar` are real). Those fields are
+ * removed rather than left half-fake; email is shown read-only since no
+ * mutation writes it (a real email change is a verification flow no
+ * contract defines yet — documented here rather than invented).
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,7 +18,6 @@ import { Save, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Card,
   CardContent,
@@ -20,16 +25,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useToast, useUnsavedChanges } from "@hooks";
+import { ErrorState } from "@components/feedback";
+import { useUnsavedChanges } from "@hooks";
+import { useUpdateProfile } from "../hooks";
 import type { CurrentUser } from "@types";
 
 const personalSchema = z.object({
   firstName: z.string().min(1, "profile:errors.firstNameRequired"),
   lastName: z.string().min(1, "profile:errors.lastNameRequired"),
-  email: z.string().email("profile:errors.invalidEmail"),
-  phone: z.string().optional(),
-  bio: z.string().max(500, "profile:errors.bioTooLong").optional(),
 });
 
 type PersonalFormData = z.infer<typeof personalSchema>;
@@ -42,10 +45,8 @@ export function ProfilePersonalSection({
   user,
 }: ProfilePersonalSectionProps): JSX.Element {
   const { t } = useTranslation();
-  const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const updateProfile = useUpdateProfile();
 
   const {
     register,
@@ -57,9 +58,6 @@ export function ProfilePersonalSection({
     defaultValues: {
       firstName: user.name.split(" ")[0] || "",
       lastName: user.name.split(" ").slice(1).join(" ") || "",
-      email: user.email,
-      phone: "",
-      bio: "",
     },
   });
 
@@ -68,32 +66,30 @@ export function ProfilePersonalSection({
     messageKey: "profile:unsavedChanges",
   });
 
-  const handleFormSubmit = async (data: PersonalFormData) => {
-    setIsLoading(true);
-    setError(null);
+  useEffect(() => {
+    reset({
+      firstName: user.name.split(" ")[0] || "",
+      lastName: user.name.split(" ").slice(1).join(" ") || "",
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user.name]);
 
-    try {
-      // Profile update will be connected to backend service in future
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      toast({
-        title: t("profile:success.profileUpdated"),
-        description: t("profile:success.changesApplied"),
-      });
-
-      setIsEditing(false);
-      reset(data);
-    } catch (err) {
-      setError("profile:errors.updateFailed");
-    } finally {
-      setIsLoading(false);
-    }
+  const handleFormSubmit = (data: PersonalFormData) => {
+    const name = `${data.firstName} ${data.lastName}`.trim();
+    updateProfile.mutate(
+      { name },
+      {
+        onSuccess: () => {
+          setIsEditing(false);
+        },
+      }
+    );
   };
 
   const handleCancel = () => {
     reset();
     setIsEditing(false);
-    setError(null);
+    updateProfile.reset();
   };
 
   return (
@@ -106,10 +102,8 @@ export function ProfilePersonalSection({
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
-          {error ? (
-            <Alert variant="destructive">
-              <AlertDescription>{t(error)}</AlertDescription>
-            </Alert>
+          {updateProfile.error ? (
+            <ErrorState onRetry={handleSubmit(handleFormSubmit)} />
           ) : null}
 
           <div className="grid gap-6 md:grid-cols-2">
@@ -117,7 +111,7 @@ export function ProfilePersonalSection({
               <Label htmlFor="firstName">{t("profile:fields.firstName")}</Label>
               <Input
                 id="firstName"
-                disabled={!isEditing || isLoading}
+                disabled={!isEditing || updateProfile.isPending}
                 {...register("firstName")}
                 aria-invalid={!!errors.firstName}
               />
@@ -135,7 +129,7 @@ export function ProfilePersonalSection({
               <Label htmlFor="lastName">{t("profile:fields.lastName")}</Label>
               <Input
                 id="lastName"
-                disabled={!isEditing || isLoading}
+                disabled={!isEditing || updateProfile.isPending}
                 {...register("lastName")}
                 aria-invalid={!!errors.lastName}
               />
@@ -152,46 +146,10 @@ export function ProfilePersonalSection({
 
           <div className="space-y-2">
             <Label htmlFor="email">{t("profile:fields.email")}</Label>
-            <Input
-              id="email"
-              type="email"
-              disabled={!isEditing || isLoading}
-              {...register("email")}
-              aria-invalid={!!errors.email}
-            />
-            {errors.email ? (
-              <p className="text-sm text-destructive">
-                {t(errors.email.message || "profile:errors.invalidEmail")}
-              </p>
-            ) : null}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="phone">{t("profile:fields.phone")}</Label>
-            <Input
-              id="phone"
-              type="tel"
-              placeholder={t("profile:placeholders.phone")}
-              disabled={!isEditing || isLoading}
-              {...register("phone")}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="bio">{t("profile:fields.bio")}</Label>
-            <Textarea
-              id="bio"
-              placeholder={t("profile:placeholders.bio")}
-              disabled={!isEditing || isLoading}
-              {...register("bio")}
-              rows={4}
-              aria-invalid={!!errors.bio}
-            />
-            {errors.bio ? (
-              <p className="text-sm text-destructive">
-                {t(errors.bio.message || "profile:errors.bioTooLong")}
-              </p>
-            ) : null}
+            <Input id="email" type="email" value={user.email} disabled readOnly />
+            <p className="text-sm text-muted-foreground">
+              {t("profile:hints.emailReadOnly")}
+            </p>
           </div>
 
           <div className="flex gap-3">
@@ -201,9 +159,9 @@ export function ProfilePersonalSection({
               </Button>
             ) : (
               <>
-                <Button type="submit" disabled={isLoading || !isDirty}>
+                <Button type="submit" disabled={updateProfile.isPending || !isDirty}>
                   <Save className="me-2 size-4" aria-hidden />
-                  {isLoading
+                  {updateProfile.isPending
                     ? t("common:actions.saving")
                     : t("common:actions.save")}
                 </Button>
@@ -211,7 +169,7 @@ export function ProfilePersonalSection({
                   type="button"
                   variant="outline"
                   onClick={handleCancel}
-                  disabled={isLoading}
+                  disabled={updateProfile.isPending}
                 >
                   <X className="me-2 size-4" aria-hidden />
                   {t("common:actions.cancel")}

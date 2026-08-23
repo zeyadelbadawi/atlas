@@ -47,7 +47,6 @@ const SettingsPage = lazy(
 const NotificationsPage = lazy(
   () => import('@features/notifications/pages/NotificationsPage')
 );
-const BillingPage = lazy(() => import('@features/billing/pages/BillingPage'));
 const AnalyticsPage = lazy(
   () => import('@features/analytics/pages/AnalyticsPage')
 );
@@ -211,6 +210,42 @@ const PlatformProvisioningListPage = lazy(
 const PlatformProvisioningDetailPage = lazy(
   () => import('@features/provisioning/pages/PlatformProvisioningDetailPage')
 );
+const PlatformOrganizationListPage = lazy(
+  () => import('@features/platform/pages/PlatformOrganizationListPage')
+);
+const PlatformOrganizationDetailPage = lazy(
+  () => import('@features/platform/pages/PlatformOrganizationDetailPage')
+);
+const PlatformAcademyListPage = lazy(
+  () => import('@features/platform/pages/PlatformAcademyListPage')
+);
+const PlatformAcademyDetailPage = lazy(
+  () => import('@features/platform/pages/PlatformAcademyDetailPage')
+);
+const PlatformUserListPage = lazy(
+  () => import('@features/platform/pages/PlatformUserListPage')
+);
+const PlatformUserDetailPage = lazy(
+  () => import('@features/platform/pages/PlatformUserDetailPage')
+);
+const PlatformRolesPermissionsPage = lazy(
+  () => import('@features/platform/pages/PlatformRolesPermissionsPage')
+);
+const PlatformAuditLogListPage = lazy(
+  () => import('@features/audit-log/pages/PlatformAuditLogListPage')
+);
+const PlatformAuditLogDetailPage = lazy(
+  () => import('@features/audit-log/pages/PlatformAuditLogDetailPage')
+);
+const PlatformSupportListPage = lazy(
+  () => import('@features/support/pages/PlatformSupportListPage')
+);
+const PlatformSupportDetailPage = lazy(
+  () => import('@features/support/pages/PlatformSupportDetailPage')
+);
+const PlatformPlanCatalogPage = lazy(
+  () => import('@features/platform/pages/PlatformPlanCatalogPage')
+);
 
 const WebsiteOverviewPage = lazy(
   () => import('@features/website/pages/WebsiteOverviewPage')
@@ -326,7 +361,6 @@ export function AppRouter(): JSX.Element {
               element={<NotificationsPage />}
             />
 
-            <Route path={DASHBOARD_ROUTES.billing} element={<BillingPage />} />
 
             <Route
               path={DASHBOARD_ROUTES.analytics}
@@ -844,6 +878,114 @@ export function AppRouter(): JSX.Element {
               element={
                 <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
                   <PlatformProvisioningDetailPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformOrganizations}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <PlatformOrganizationListPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformOrganizationDetail}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <PlatformOrganizationDetailPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformAcademies}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <PlatformAcademyListPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformAcademyDetail}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <PlatformAcademyDetailPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformUsers}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <PlatformUserListPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformUserDetail}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <PlatformUserDetailPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformRolesPermissions}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <PlatformRolesPermissionsPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformAuditLog}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <PlatformAuditLogListPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformAuditLogDetail}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <PlatformAuditLogDetailPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformSupport}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <PlatformSupportListPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformSupportDetail}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <PlatformSupportDetailPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformPlanCatalog}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <PlatformPlanCatalogPage />
                 </RouteGuard>
               }
             />

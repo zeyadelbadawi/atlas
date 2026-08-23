@@ -31,7 +31,6 @@ export const DASHBOARD_ROUTES = {
   profile: '/dashboard/profile',
   settings: '/dashboard/settings',
   notifications: '/dashboard/notifications',
-  billing: '/dashboard/billing',
   analytics: '/dashboard/analytics',
   platform: '/dashboard/platform',
   search: '/dashboard/search',
@@ -114,6 +113,25 @@ export const DASHBOARD_ROUTES = {
 
   platformProvisioning: '/dashboard/platform/provisioning',
   platformProvisioningDetail: '/dashboard/platform/provisioning/:requestId',
+
+  platformOrganizations: '/dashboard/platform/organizations',
+  platformOrganizationDetail: '/dashboard/platform/organizations/:organizationId',
+
+  platformAcademies: '/dashboard/platform/academies',
+  platformAcademyDetail: '/dashboard/platform/academies/:academyId',
+
+  platformUsers: '/dashboard/platform/users',
+  platformUserDetail: '/dashboard/platform/users/:userId',
+
+  platformRolesPermissions: '/dashboard/platform/roles-permissions',
+
+  platformAuditLog: '/dashboard/platform/audit-log',
+  platformAuditLogDetail: '/dashboard/platform/audit-log/:eventId',
+
+  platformSupport: '/dashboard/platform/support',
+  platformSupportDetail: '/dashboard/platform/support/:caseId',
+
+  platformPlanCatalog: '/dashboard/platform/plans',
 
   /** The Website Management landing (Prompt 10) — `websiteSettings` moved to its own sub-path to make room for it. */
   websiteOverview: '/dashboard/academy/:academyId/website',

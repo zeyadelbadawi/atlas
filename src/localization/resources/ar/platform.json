@@ -8,10 +8,7 @@
     "totalUsers": "إجمالي المستخدمين",
     "activeCourses": "الدورات النشطة",
     "revenue": "الإيرادات",
-    "academiesGrowth": "{{value}} من الشهر الماضي",
-    "usersGrowth": "{{value}} من الشهر الماضي",
-    "coursesGrowth": "{{value}} من الشهر الماضي",
-    "revenueGrowth": "{{value}} من الشهر الماضي",
+    "vsLastMonth": "مقارنة بالشهر الماضي",
     "systemHealth": "صحة النظام",
     "storageUsage": "استخدام التخزين",
     "apiUptime": "وقت تشغيل API",
@@ -23,5 +20,127 @@
   },
   "activity": {
     "empty": "لا يوجد نشاط حديث"
+  },
+  "organizations": {
+    "title": "المؤسسات",
+    "subtitle": "جميع المؤسسات على أطلس، عبر جميع المستأجرين.",
+    "searchPlaceholder": "ابحث عن المؤسسات بالاسم",
+    "emptyState": "لم يتم العثور على مؤسسات",
+    "emptyStateDescription": "لا توجد مؤسسات مطابقة لبحثك.",
+    "detailTitle": "المؤسسة",
+    "overviewTitle": "نظرة عامة",
+    "owner": "المالك",
+    "subscriptionTitle": "الاشتراك",
+    "subscriptionStatus": "الحالة",
+    "currentPeriodEnd": "تنتهي الفترة الحالية في",
+    "noSubscription": "لا يوجد اشتراك مسجل لهذه المؤسسة.",
+    "academiesTitle": "الأكاديميات",
+    "noAcademies": "لا توجد أكاديميات لهذه المؤسسة بعد.",
+    "membersTitle": "الأعضاء",
+    "noMembers": "لا يوجد أعضاء مسجلون لهذه المؤسسة.",
+    "table": {
+      "name": "المؤسسة",
+      "status": "الحالة",
+      "plan": "الخطة",
+      "academies": "الأكاديميات",
+      "members": "الأعضاء",
+      "createdAt": "تاريخ الإنشاء"
+    },
+    "status": {
+      "active": "نشطة",
+      "suspended": "معلّقة",
+      "archived": "مؤرشفة"
+    }
+  },
+  "academies": {
+    "title": "الأكاديميات",
+    "subtitle": "جميع الأكاديميات على أطلس، عبر جميع المؤسسات.",
+    "searchPlaceholder": "ابحث عن الأكاديميات بالاسم",
+    "emptyState": "لم يتم العثور على أكاديميات",
+    "emptyStateDescription": "لا توجد أكاديميات مطابقة لبحثك.",
+    "detailTitle": "الأكاديمية",
+    "overviewTitle": "نظرة عامة",
+    "owner": "المالك",
+    "description": "الوصف",
+    "stateTitle": "حالة التهيئة والتسليم",
+    "provisioningStatus": "التهيئة",
+    "websiteStatus": "الموقع الإلكتروني",
+    "domainStatus": "النطاق",
+    "coursesTitle": "الدورات",
+    "noCourses": "لا توجد دورات لهذه الأكاديمية بعد.",
+    "membersTitle": "الأعضاء",
+    "noMembers": "لا يوجد أعضاء مسجلون لهذه الأكاديمية.",
+    "table": {
+      "name": "الأكاديمية",
+      "organization": "المؤسسة",
+      "status": "الحالة",
+      "courses": "الدورات",
+      "members": "الأعضاء",
+      "createdAt": "تاريخ الإنشاء"
+    },
+    "status": {
+      "draft": "مسودة",
+      "active": "نشطة",
+      "suspended": "معلّقة",
+      "archived": "مؤرشفة"
+    }
+  },
+  "users": {
+    "title": "المستخدمون",
+    "subtitle": "جميع حسابات المستخدمين على أطلس، عبر جميع المؤسسات.",
+    "searchPlaceholder": "ابحث عن المستخدمين بالاسم أو البريد الإلكتروني",
+    "emptyState": "لم يتم العثور على مستخدمين",
+    "emptyStateDescription": "لا يوجد مستخدمون مطابقون لبحثك.",
+    "detailTitle": "المستخدم",
+    "overviewTitle": "نظرة عامة",
+    "rolesTitle": "الأدوار",
+    "noRoles": "لا توجد أدوار معينة لهذا المستخدم.",
+    "membershipsTitle": "عضويات المؤسسات",
+    "noMemberships": "لا توجد عضويات مؤسسات لهذا المستخدم.",
+    "table": {
+      "name": "الاسم",
+      "email": "البريد الإلكتروني",
+      "status": "الحالة",
+      "organizations": "المؤسسات",
+      "lastSignIn": "آخر تسجيل دخول",
+      "createdAt": "تاريخ الإنشاء"
+    },
+    "status": {
+      "active": "نشط",
+      "invited": "مدعو",
+      "suspended": "معلّق"
+    }
+  },
+  "rolesPermissions": {
+    "title": "الأدوار والصلاحيات",
+    "subtitle": "أدوارك وصلاحياتك الفعلية عبر أطلس.",
+    "boundaryTitle": "هذه نافذة عرض وليست فهرسًا",
+    "boundaryDescription": "لا يحدد أطلس بعد فهرسًا للأدوار/الصلاحيات على مستوى المنصة أو سير عمل لتعيينها لمستخدمين آخرين. تعرض هذه الصفحة فقط الأدوار والصلاحيات الممنوحة بالفعل لحسابك المسجّل دخوله.",
+    "rolesTitle": "الأدوار",
+    "noRoles": "لا توجد أدوار معينة لحسابك.",
+    "permissionsTitle": "الصلاحيات",
+    "noPermissions": "لا توجد صلاحيات معينة لحسابك.",
+    "scope": {
+      "global": "عام",
+      "organization": "{{name}}"
+    }
+  },
+  "planCatalog": {
+    "title": "الخطط والإضافات",
+    "subtitle": "فهرس أطلس للخطط والإضافات.",
+    "boundaryTitle": "هذه نافذة عرض للفهرس للقراءة فقط",
+    "boundaryDescription": "لا يحدد أطلس بعد سير عمل لإنشاء/تعديل/إيقاف الخطط أو الإضافات. تعرض هذه الصفحة الفهرس الفعلي كما يراه المستأجرون عند اختيار خطة.",
+    "plansTitle": "الخطط",
+    "noPlans": "لا توجد خطط في الفهرس حاليًا.",
+    "addOnsTitle": "الإضافات",
+    "noAddOns": "لا توجد إضافات في الفهرس حاليًا.",
+    "status": {
+      "active": "نشطة",
+      "archived": "مؤرشفة"
+    },
+    "billingCycle": {
+      "monthly": "شهر",
+      "yearly": "سنة"
+    }
   }
 }

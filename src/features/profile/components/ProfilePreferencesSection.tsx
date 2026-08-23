@@ -1,7 +1,13 @@
 /**
  * Profile Preferences Section.
  *
- * Edit user preferences (language, theme, notifications).
+ * Edit user preferences. Prompt 13 replacement for the Prompt 3A
+ * scaffold — the form used to fake-save via `setTimeout` and collected a
+ * `marketingEmails` toggle `UserPreferences.notifications` has no field
+ * for (only `email`/`push`/`sms` exist, per `identity.types.ts`); that
+ * toggle is removed rather than left half-fake. Language/theme apply
+ * immediately via `useLanguage`/`useTheme` (unchanged, already real);
+ * only the notification channels are persisted through this mutation.
  */
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,15 +32,15 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { useToast, useLanguage, useTheme } from "@hooks";
-import { useState } from "react";
+import { ErrorState } from "@components/feedback";
+import { useToast, useLanguage, useTheme, useAuth } from "@hooks";
+import { useUpdatePreferences } from "../hooks";
 
 const preferencesSchema = z.object({
   language: z.enum(["en", "ar"]),
   theme: z.enum(["light", "dark", "system"]),
   emailNotifications: z.boolean(),
   pushNotifications: z.boolean(),
-  marketingEmails: z.boolean(),
 });
 
 type PreferencesFormData = z.infer<typeof preferencesSchema>;
@@ -44,7 +50,8 @@ export function ProfilePreferencesSection(): JSX.Element {
   const { toast } = useToast();
   const { language, setLanguage } = useLanguage();
   const { preference, setPreference } = useTheme();
-  const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
+  const updatePreferences = useUpdatePreferences();
 
   const { register, handleSubmit, setValue, watch } =
     useForm<PreferencesFormData>({
@@ -52,36 +59,38 @@ export function ProfilePreferencesSection(): JSX.Element {
       defaultValues: {
         language: language as "en" | "ar",
         theme: preference as "light" | "dark" | "system",
-        emailNotifications: true,
-        pushNotifications: false,
-        marketingEmails: false,
+        emailNotifications: user?.preferences?.notifications?.email ?? true,
+        pushNotifications: user?.preferences?.notifications?.push ?? false,
       },
     });
 
   const formValues = watch();
 
-  const handleFormSubmit = async (data: PreferencesFormData) => {
-    setIsLoading(true);
-
-    try {
-      // Apply language and theme changes immediately
-      if (data.language !== language) {
-        setLanguage(data.language);
-      }
-      if (data.theme !== preference) {
-        setPreference(data.theme);
-      }
-
-      // Preferences update will be connected to backend service in future
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      toast({
-        title: t("profile:success.preferencesUpdated"),
-        description: t("profile:success.changesApplied"),
-      });
-    } finally {
-      setIsLoading(false);
+  const handleFormSubmit = (data: PreferencesFormData) => {
+    if (data.language !== language) {
+      setLanguage(data.language);
     }
+    if (data.theme !== preference) {
+      setPreference(data.theme);
+    }
+
+    updatePreferences.mutate(
+      {
+        notifications: {
+          email: data.emailNotifications,
+          push: data.pushNotifications,
+          sms: user?.preferences?.notifications?.sms ?? false,
+        },
+      },
+      {
+        onSuccess: () => {
+          toast({
+            title: t("profile:success.preferencesUpdated"),
+            description: t("profile:success.changesApplied"),
+          });
+        },
+      }
+    );
   };
 
   return (
@@ -94,6 +103,10 @@ export function ProfilePreferencesSection(): JSX.Element {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+          {updatePreferences.error ? (
+            <ErrorState onRetry={handleSubmit(handleFormSubmit)} />
+          ) : null}
+
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="language">{t("profile:fields.language")}</Label>
@@ -104,7 +117,7 @@ export function ProfilePreferencesSection(): JSX.Element {
                     shouldDirty: true,
                   })
                 }
-                disabled={isLoading}
+                disabled={updatePreferences.isPending}
               >
                 <SelectTrigger id="language">
                   <SelectValue />
@@ -129,7 +142,7 @@ export function ProfilePreferencesSection(): JSX.Element {
                     shouldDirty: true,
                   })
                 }
-                disabled={isLoading}
+                disabled={updatePreferences.isPending}
               >
                 <SelectTrigger id="theme">
                   <SelectValue />
@@ -171,7 +184,7 @@ export function ProfilePreferencesSection(): JSX.Element {
                 onCheckedChange={(checked) =>
                   setValue("emailNotifications", checked, { shouldDirty: true })
                 }
-                disabled={isLoading}
+                disabled={updatePreferences.isPending}
               />
             </div>
 
@@ -190,33 +203,16 @@ export function ProfilePreferencesSection(): JSX.Element {
                 onCheckedChange={(checked) =>
                   setValue("pushNotifications", checked, { shouldDirty: true })
                 }
-                disabled={isLoading}
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="marketingEmails" className="font-normal">
-                  {t("profile:fields.marketingEmails")}
-                </Label>
-                <p className="text-sm text-muted-foreground">
-                  {t("profile:descriptions.marketingEmails")}
-                </p>
-              </div>
-              <Switch
-                id="marketingEmails"
-                checked={formValues.marketingEmails}
-                onCheckedChange={(checked) =>
-                  setValue("marketingEmails", checked, { shouldDirty: true })
-                }
-                disabled={isLoading}
+                disabled={updatePreferences.isPending}
               />
             </div>
           </div>
 
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={updatePreferences.isPending}>
             <Save className="me-2 size-4" aria-hidden />
-            {isLoading ? t("common:actions.saving") : t("common:actions.save")}
+            {updatePreferences.isPending
+              ? t("common:actions.saving")
+              : t("common:actions.save")}
           </Button>
         </form>
       </CardContent>

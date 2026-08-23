@@ -20,10 +20,13 @@ import {
   WebsiteRenderer,
   buildBreadcrumbJsonLd,
   buildOrganizationJsonLd,
+  buildCourseJsonLd,
   resolvePagePath,
   resolvePageSeo,
+  resolveCourseSeo,
 } from '@features/website';
 import type { WebsiteLinkRenderer } from '@features/website';
+import { useCourse } from '@features/course';
 import { useDocumentSeo } from '../hooks/useDocumentSeo';
 import { resolvePathToPage } from '../utils/page-resolution.utils';
 import type { PublicWebsiteDataState } from '../hooks/usePublicWebsiteData';
@@ -51,20 +54,39 @@ export function PublicWebsitePage({ data }: PublicWebsitePageProps): JSX.Element
 
   const { page, courseId } = resolvePathToPage(location.pathname, pages);
 
-  const fallback = { title: academy.academyName, description: academy.academyName };
-  const seo = page
-    ? resolvePageSeo(page, configuration, fallback)
-    : {
-        title: fallback.title,
-        description: fallback.description,
-        ogTitle: fallback.title,
-        ogDescription: fallback.description,
-        indexable: false,
-        titleSource: 'fallback' as const,
-        descriptionSource: 'fallback' as const,
-      };
+  // The Course Details page renders a specific Course (`CourseDetailsTemplate`,
+  // via `@features/course`) rather than CMS sections, so its SEO must reflect
+  // THAT course — `resolveCourseSeo`, not the page's own generic
+  // `resolvePageSeo` — the same real Course data `CourseDetailsTemplate`
+  // fetches (TanStack Query de-duplicates the identical query, so this is
+  // not a second network request).
+  const isCourseDetailsPage = page?.coreType === 'courseDetails' && !!courseId;
+  const { data: course } = useCourse(academy.academyId, courseId ?? '', {
+    enabled: isCourseDetailsPage,
+  });
 
-  const pagePath = page ? resolvePagePath(page) ?? location.pathname : location.pathname;
+  const fallback = { title: academy.academyName, description: academy.academyName };
+  const seo =
+    isCourseDetailsPage && course
+      ? resolveCourseSeo(course, configuration, fallback)
+      : page
+        ? resolvePageSeo(page, configuration, fallback)
+        : {
+            title: fallback.title,
+            description: fallback.description,
+            ogTitle: fallback.title,
+            ogDescription: fallback.description,
+            indexable: false,
+            titleSource: 'fallback' as const,
+            descriptionSource: 'fallback' as const,
+          };
+
+  const pagePath =
+    isCourseDetailsPage && course
+      ? (seo.canonicalPath ?? location.pathname)
+      : page
+        ? resolvePagePath(page) ?? location.pathname
+        : location.pathname;
   const canonicalUrl = `${window.location.origin}${pagePath}`;
 
   const structuredData = page
@@ -72,8 +94,11 @@ export function PublicWebsitePage({ data }: PublicWebsitePageProps): JSX.Element
         buildOrganizationJsonLd({ name: academy.academyName, logo: academy.academyLogo }),
         buildBreadcrumbJsonLd([
           { name: academy.academyName, path: window.location.origin },
-          { name: page.title, path: canonicalUrl },
+          { name: isCourseDetailsPage && course ? course.title : page.title, path: canonicalUrl },
         ]),
+        ...(isCourseDetailsPage && course
+          ? [buildCourseJsonLd(course, { name: academy.academyName })]
+          : []),
       ]
     : undefined;
 

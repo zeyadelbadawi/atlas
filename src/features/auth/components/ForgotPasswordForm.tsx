@@ -1,9 +1,11 @@
 /**
  * Forgot Password Form.
  *
- * Request password reset link via email.
+ * Request password reset link via email. Prompt 13 replacement for the
+ * Prompt 3A scaffold — this used to fake-succeed via `setTimeout`. Now a
+ * real mutation via `useRequestPasswordReset`
+ * (`authenticationService.requestPasswordReset`).
  */
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -13,6 +15,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { CheckCircle2 } from "lucide-react";
+import { ErrorState } from "@components/feedback";
+import { useRequestPasswordReset } from "../hooks";
 
 const forgotPasswordSchema = z.object({
   email: z
@@ -25,9 +29,7 @@ type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
 export function ForgotPasswordForm(): JSX.Element {
   const { t } = useTranslation();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const requestPasswordReset = useRequestPasswordReset();
 
   const {
     register,
@@ -40,23 +42,13 @@ export function ForgotPasswordForm(): JSX.Element {
     },
   });
 
-  const handleFormSubmit = async (data: ForgotPasswordFormData) => {
-    setIsLoading(true);
-    setError(null);
+  const isLoading = requestPasswordReset.isPending;
 
-    try {
-      // Password reset logic will be connected to backend service in future
-      // For now, simulate email sending
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setIsSuccess(true);
-    } catch (err) {
-      setError("auth:forgotPassword.errors.requestFailed");
-    } finally {
-      setIsLoading(false);
-    }
+  const handleFormSubmit = (data: ForgotPasswordFormData) => {
+    requestPasswordReset.mutate({ email: data.email });
   };
 
-  if (isSuccess) {
+  if (requestPasswordReset.isSuccess) {
     return (
       <Alert className="border-success bg-success/10">
         <CheckCircle2 className="size-4 text-success" />
@@ -69,10 +61,8 @@ export function ForgotPasswordForm(): JSX.Element {
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
-      {error ? (
-        <Alert variant="destructive">
-          <AlertDescription>{t(error)}</AlertDescription>
-        </Alert>
+      {requestPasswordReset.error ? (
+        <ErrorState onRetry={handleSubmit(handleFormSubmit)} />
       ) : null}
 
       <div className="space-y-4">

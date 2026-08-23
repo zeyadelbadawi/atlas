@@ -1,7 +1,11 @@
 /**
  * Profile Account Section.
  *
- * Display account information and status.
+ * Display account information. Prompt 13 removed the "Account Status"
+ * field — it rendered a hardcoded `variant="success"` "Active" badge
+ * (an invalid `Badge` variant besides) with no real status data behind
+ * it: `CurrentUser` has no account-status field anywhere in Atlas.
+ * Reintroduce this once a real status field is specified.
  */
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
@@ -39,15 +43,6 @@ export function ProfileAccountSection({
               {t("profile:fields.userId")}
             </p>
             <p className="mt-1 font-mono text-sm">{user.id}</p>
-          </div>
-
-          <div>
-            <p className="text-sm font-medium text-muted-foreground">
-              {t("profile:fields.accountStatus")}
-            </p>
-            <Badge variant="success" className="mt-1">
-              {t("profile:status.active")}
-            </Badge>
           </div>
 
           <div>

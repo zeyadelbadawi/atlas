@@ -165,6 +165,7 @@ export function WebsitePageSeoDialog({
               labelKey="website:seo.ogImage"
               value={ogImage}
               onChange={setOgImage}
+              academyId={academyId}
             />
             <FormField
               control={form.control}

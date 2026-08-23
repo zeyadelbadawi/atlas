@@ -6,13 +6,20 @@
  * `useFilePicker` + base64 pattern (no upload endpoint exists anywhere in
  * Atlas — the same convention Course thumbnails and Academy branding
  * already use), never a bespoke upload mechanism.
+ *
+ * Prompt 13 adds an alternate "choose from library" path via
+ * `MediaLibraryDialog` — reusing a previously-uploaded academy asset
+ * instead of always uploading a fresh blob. The direct-upload flow above
+ * is unchanged and still the default; the library is optional, gated by
+ * `academyId` being known to the caller.
  */
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Upload, X } from 'lucide-react';
+import { FolderOpen, Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useFilePicker } from '@hooks';
+import { MediaLibraryDialog } from '@features/media';
 import {
   ALLOWED_WEBSITE_IMAGE_TYPES,
   MAX_WEBSITE_IMAGE_FILE_SIZE,
@@ -24,6 +31,8 @@ export interface WebsiteImageFieldProps {
   readonly value?: string;
   readonly onChange: (value: string | undefined) => void;
   readonly aspectClassName?: string;
+  /** When provided, a "Choose from library" action is offered alongside direct upload. */
+  readonly academyId?: string;
 }
 
 export function WebsiteImageField({
@@ -32,9 +41,11 @@ export function WebsiteImageField({
   value,
   onChange,
   aspectClassName = 'aspect-video',
+  academyId,
 }: WebsiteImageFieldProps): JSX.Element {
   const { t } = useTranslation();
   const [error, setError] = useState<string>();
+  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const filePicker = useFilePicker({ accept: ALLOWED_WEBSITE_IMAGE_TYPES.join(',') });
 
   useEffect(() => {
@@ -82,6 +93,17 @@ export function WebsiteImageField({
           >
             {value ? t('website:common.replaceImage') : t('website:common.chooseImage')}
           </Button>
+          {academyId ? (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsLibraryOpen(true)}
+            >
+              <FolderOpen className="size-3.5" aria-hidden />
+              {t('website:common.chooseFromLibrary')}
+            </Button>
+          ) : null}
           {value ? (
             <Button
               type="button"
@@ -96,6 +118,15 @@ export function WebsiteImageField({
         </div>
       </div>
       {error ? <p className="text-sm text-destructive">{t(error)}</p> : null}
+      {academyId ? (
+        <MediaLibraryDialog
+          academyId={academyId}
+          open={isLibraryOpen}
+          onOpenChange={setIsLibraryOpen}
+          onSelect={(asset) => onChange(asset.url)}
+          accept={ALLOWED_WEBSITE_IMAGE_TYPES.join(',')}
+        />
+      ) : null}
     </div>
   );
 }

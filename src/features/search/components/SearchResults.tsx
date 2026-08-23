@@ -3,7 +3,7 @@
  *
  * Displays grouped search results with keyboard navigation.
  */
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { AlertCircle, Loader2, SearchX } from "lucide-react";
@@ -36,12 +36,26 @@ export function SearchResults({
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   // Flatten all results for keyboard navigation
-  const allItems = results?.groups.flatMap((group) => group.items) ?? [];
+  const allItems = useMemo(
+    () => results?.groups.flatMap((group) => group.items) ?? [],
+    [results],
+  );
 
   // Reset selection when results change
   useEffect(() => {
     setSelectedIndex(0);
   }, [results]);
+
+  const handleItemClick = useCallback(
+    (item: SearchResultItemType): void => {
+      if (onResultSelect) {
+        onResultSelect(item);
+      } else if (item.path) {
+        navigate(item.path);
+      }
+    },
+    [navigate, onResultSelect],
+  );
 
   // Keyboard navigation
   useEffect(() => {
@@ -71,18 +85,7 @@ export function SearchResults({
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [allItems, selectedIndex]);
-
-  const handleItemClick = useCallback(
-    (item: SearchResultItemType): void => {
-      if (onResultSelect) {
-        onResultSelect(item);
-      } else if (item.path) {
-        navigate(item.path);
-      }
-    },
-    [navigate, onResultSelect],
-  );
+  }, [allItems, selectedIndex, handleItemClick]);
 
   // Loading state
   if (isLoading) {

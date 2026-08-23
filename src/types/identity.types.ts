@@ -100,6 +100,28 @@ export interface TokenRefreshResponse {
   readonly expiresIn: number;
 }
 
+/**
+ * Account registration (Prompt 13). Creates an account but does not
+ * establish a session — the caller still signs in afterward, matching
+ * `RegistrationForm`'s existing navigate-to-sign-in behavior.
+ */
+export interface RegistrationRequest {
+  readonly name: string;
+  readonly email: string;
+  readonly password: string;
+}
+
+/** Requests a password-reset email be sent. */
+export interface PasswordResetRequest {
+  readonly email: string;
+}
+
+/** Completes a password reset using the token from the reset email. */
+export interface PasswordResetConfirmation {
+  readonly token: string;
+  readonly newPassword: string;
+}
+
 /** Authorization policy evaluation request. */
 export interface AuthorizationRequest {
   readonly resource: string;

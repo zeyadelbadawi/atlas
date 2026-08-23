@@ -42,6 +42,7 @@
   },
   "messages": {
     "markReadSuccess": "تم وضع علامة كمقروء",
+    "markAllReadSuccess": "تم وضع علامة مقروء على جميع الإشعارات",
     "markUnreadSuccess": "تم وضع علامة كغير مقروء",
     "deleteSuccess": "تم حذف الإشعار",
     "deleteAllSuccess": "تم حذف جميع الإشعارات",

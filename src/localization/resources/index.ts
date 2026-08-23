@@ -34,6 +34,9 @@ import enTenant from './en/tenant.json';
 import enPayments from './en/payments.json';
 import enProvisioning from './en/provisioning.json';
 import enWebsite from './en/website.json';
+import enAuditLog from './en/auditLog.json';
+import enSupport from './en/support.json';
+import enMedia from './en/media.json';
 
 import arCommon from './ar/common.json';
 import arNavigation from './ar/navigation.json';
@@ -61,6 +64,9 @@ import arTenant from './ar/tenant.json';
 import arPayments from './ar/payments.json';
 import arProvisioning from './ar/provisioning.json';
 import arWebsite from './ar/website.json';
+import arAuditLog from './ar/auditLog.json';
+import arSupport from './ar/support.json';
+import arMedia from './ar/media.json';
 
 /** One language's resources, keyed by namespace. */
 type NamespaceBundle = Record<TranslationNamespace, Record<string, unknown>>;
@@ -95,6 +101,9 @@ export const TRANSLATION_RESOURCES: Readonly<
     payments: enPayments,
     provisioning: enProvisioning,
     website: enWebsite,
+    auditLog: enAuditLog,
+    support: enSupport,
+    media: enMedia,
   },
   ar: {
     common: arCommon,
@@ -123,5 +132,8 @@ export const TRANSLATION_RESOURCES: Readonly<
     payments: arPayments,
     provisioning: arProvisioning,
     website: arWebsite,
+    auditLog: arAuditLog,
+    support: arSupport,
+    media: arMedia,
   },
 });

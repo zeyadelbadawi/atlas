@@ -286,10 +286,12 @@ function ScalarField({
   descriptor,
   value,
   onChange,
+  academyId,
 }: {
   readonly descriptor: SectionFieldDescriptor;
   readonly value: unknown;
   readonly onChange: (value: unknown) => void;
+  readonly academyId: string;
 }): JSX.Element {
   const { t } = useTranslation();
   const id = `section-field-${descriptor.key}`;
@@ -348,6 +350,7 @@ function ScalarField({
           labelKey={descriptor.labelKey}
           value={value as string | undefined}
           onChange={onChange}
+          academyId={academyId}
         />
       );
     case 'text':
@@ -430,6 +433,7 @@ export function SectionConfigForm<TType extends SectionType>({
             descriptor={field}
             value={draft[field.key]}
             onChange={(value) => setField(field.key, value)}
+            academyId={academyId}
           />
         )
       )}
@@ -471,6 +475,7 @@ export function SectionConfigForm<TType extends SectionType>({
                   descriptor={field}
                   value={item[field.key]}
                   onChange={(value) => updateItem(index, field.key, value)}
+                  academyId={academyId}
                 />
               ))}
             </div>

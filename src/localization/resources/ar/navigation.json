@@ -42,7 +42,6 @@
     "profile": "الملف الشخصي",
     "notifications": "الإشعارات",
     "settings": "الإعدادات",
-    "billing": "الفواتير",
     "analytics": "التحليلات",
     "tenantOverview": "نظرة عامة",
     "tenantSubscription": "الاشتراك",
@@ -53,7 +52,14 @@
     "tenantBilling": "الفواتير والمدفوعات",
     "platformPayments": "مراجعة المدفوعات",
     "academyProvisioning": "أكاديمية جديدة",
-    "platformProvisioning": "تهيئة الأكاديميات"
+    "platformProvisioning": "تهيئة الأكاديميات",
+    "platformOrganizations": "المؤسسات",
+    "platformAcademies": "الأكاديميات",
+    "platformUsers": "المستخدمون",
+    "platformRolesPermissions": "الأدوار والصلاحيات",
+    "platformAuditLog": "سجل التدقيق",
+    "platformSupport": "الدعم",
+    "platformPlanCatalog": "الخطط والإضافات"
   },
   "account": {
     "menu": "قائمة الحساب",

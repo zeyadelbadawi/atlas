@@ -1,6 +1,19 @@
 {
   "title": "التحليلات",
   "subtitle": "رؤى ومقاييس المنصة",
+  "tabs": {
+    "overview": "نظرة عامة",
+    "users": "المستخدمون",
+    "engagement": "التفاعل",
+    "revenue": "الإيرادات"
+  },
+  "dateRange": {
+    "label": "النطاق الزمني",
+    "last7Days": "آخر 7 أيام",
+    "last30Days": "آخر 30 يومًا",
+    "last90Days": "آخر 90 يومًا",
+    "selected": "النطاق المحدد"
+  },
   "dashboard": {
     "title": "لوحة التحليلات",
     "description": "راقب أداء منصتك",
@@ -15,6 +28,7 @@
     "activeAcademies": "الأكاديميات النشطة",
     "totalUsers": "إجمالي المستخدمين",
     "activeUsers": "المستخدمون النشطون",
+    "revenue": "الإيرادات",
     "totalRevenue": "إجمالي الإيرادات",
     "monthlyRevenue": "الإيرادات الشهرية",
     "growth": "النمو",
@@ -34,6 +48,9 @@
     "apply": "تطبيق"
   },
   "charts": {
+    "title": "النمو",
+    "empty": "لا توجد بيانات للنطاق الزمني المحدد",
+    "revenueByPlan": "الإيرادات حسب الخطة",
     "userGrowth": "نمو المستخدمين",
     "revenueOverTime": "الإيرادات عبر الزمن",
     "academyActivity": "نشاط الأكاديميات",

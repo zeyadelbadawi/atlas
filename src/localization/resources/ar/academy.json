@@ -10,7 +10,8 @@
     "viewProfile": "عرض الملف الشخصي",
     "manageSettings": "إدارة الإعدادات",
     "viewMembers": "عرض الأعضاء",
-    "updateBranding": "تحديث العلامة التجارية"
+    "updateBranding": "تحديث العلامة التجارية",
+    "viewWebsite": "عرض الموقع الإلكتروني"
   },
   "stats": {
     "totalMembers": "إجمالي الأعضاء",

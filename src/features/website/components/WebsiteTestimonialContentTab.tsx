@@ -180,6 +180,7 @@ function TestimonialEntryDialog({
               labelKey="website:fields.avatar"
               value={avatar}
               onChange={setAvatar}
+              academyId={academyId}
             />
             {(createEntry.error ?? updateEntry.error) ? (
               <ErrorState onRetry={form.handleSubmit(onSubmit)} />

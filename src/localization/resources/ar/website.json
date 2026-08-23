@@ -418,6 +418,7 @@
     "saving": "جارٍ الحفظ…",
     "chooseImage": "اختيار صورة",
     "replaceImage": "استبدال الصورة",
+    "chooseFromLibrary": "الاختيار من المكتبة",
     "removeImage": "إزالة الصورة",
     "imageTooLarge": "حجم الملف كبير جدًا.",
     "imageInvalidType": "نوع الملف غير مدعوم. استخدم PNG أو JPG أو WEBP."

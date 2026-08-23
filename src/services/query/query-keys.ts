@@ -5,7 +5,7 @@
  * namespaced by resource and include the relevant identifiers so cache
  * invalidation can target exactly the affected queries.
  */
-import type { CollectionQuery, CourseListQuery } from '@types';
+import type { AnalyticsQuery, CollectionQuery, CourseListQuery } from '@types';
 
 /** Base keys for resource categories. */
 export const QUERY_KEY_ROOTS = {
@@ -38,6 +38,18 @@ export const QUERY_KEY_ROOTS = {
   platformDomain: ['platform-domain'] as const,
   infrastructure: ['infrastructure'] as const,
   publicWebsite: ['public-website'] as const,
+  platformOrganization: ['platform-organization'] as const,
+  platformAcademy: ['platform-academy'] as const,
+  platformUser: ['platform-user'] as const,
+  role: ['role'] as const,
+  auditLog: ['audit-log'] as const,
+  support: ['support'] as const,
+  platformMetrics: ['platform-metrics'] as const,
+  analytics: ['analytics'] as const,
+  notification: ['notification'] as const,
+  platformSettings: ['platform-settings'] as const,
+  media: ['media'] as const,
+  search: ['search'] as const,
 } as const;
 
 /**
@@ -511,4 +523,108 @@ export const publicWebsiteKeys = {
   pages: (academyId: string | undefined) => [...publicWebsiteKeys.all, 'pages', academyId] as const,
   page: (academyId: string | undefined, slug: string) =>
     [...publicWebsiteKeys.all, 'page', academyId, slug] as const,
+} as const;
+
+/**
+ * Query keys for the Platform Owner Control Plane consoles (Prompt 13).
+ * All deliberately unscoped by any Tenant/Academy id — these ARE the
+ * cross-tenant views, gated instead by route-level `platform_owner`
+ * role checks (see `Reports/ARCHITECTURE.md`, Prompt 13).
+ */
+export const platformOrganizationKeys = {
+  all: QUERY_KEY_ROOTS.platformOrganization,
+  list: (query?: CollectionQuery) => [...platformOrganizationKeys.all, 'list', query] as const,
+  detail: (organizationId: string) => [...platformOrganizationKeys.all, 'detail', organizationId] as const,
+} as const;
+
+export const platformAcademyKeys = {
+  all: QUERY_KEY_ROOTS.platformAcademy,
+  list: (query?: CollectionQuery) => [...platformAcademyKeys.all, 'list', query] as const,
+  detail: (academyId: string) => [...platformAcademyKeys.all, 'detail', academyId] as const,
+} as const;
+
+export const platformUserKeys = {
+  all: QUERY_KEY_ROOTS.platformUser,
+  list: (query?: CollectionQuery) => [...platformUserKeys.all, 'list', query] as const,
+  detail: (userId: string) => [...platformUserKeys.all, 'detail', userId] as const,
+} as const;
+
+/** Roles & Permissions catalog (Prompt 13) — unscoped, platform-wide. */
+export const roleKeys = {
+  all: QUERY_KEY_ROOTS.role,
+  list: () => [...roleKeys.all, 'list'] as const,
+  detail: (roleId: string) => [...roleKeys.all, 'detail', roleId] as const,
+  permissionCatalog: () => [...roleKeys.all, 'permission-catalog'] as const,
+} as const;
+
+/** Audit Log (Prompt 13) — unscoped, platform-wide; a future backend may accept org/academy filters as query params without changing this key shape. */
+export const auditLogKeys = {
+  all: QUERY_KEY_ROOTS.auditLog,
+  list: (query?: CollectionQuery) => [...auditLogKeys.all, 'list', query] as const,
+  detail: (eventId: string) => [...auditLogKeys.all, 'detail', eventId] as const,
+} as const;
+
+/** Support Operations (Prompt 13) — unscoped, platform-wide. */
+export const supportKeys = {
+  all: QUERY_KEY_ROOTS.support,
+  list: (query?: CollectionQuery) => [...supportKeys.all, 'list', query] as const,
+  detail: (caseId: string) => [...supportKeys.all, 'detail', caseId] as const,
+} as const;
+
+/** Platform-wide command-center metrics (Prompt 13). */
+export const platformMetricsKeys = {
+  all: QUERY_KEY_ROOTS.platformMetrics,
+  overview: () => [...platformMetricsKeys.all, 'overview'] as const,
+} as const;
+
+/** Platform Analytics (Prompt 13). */
+export const analyticsKeys = {
+  all: QUERY_KEY_ROOTS.analytics,
+  overview: (query?: AnalyticsQuery) => [...analyticsKeys.all, 'overview', query] as const,
+  timeSeries: (metric: string, query?: AnalyticsQuery) =>
+    [...analyticsKeys.all, 'time-series', metric, query] as const,
+  breakdown: (dimension: string, query?: AnalyticsQuery) =>
+    [...analyticsKeys.all, 'breakdown', dimension, query] as const,
+} as const;
+
+/**
+ * Notifications (Prompt 13). User-scoped — embeds the current user's id,
+ * the same technique `blogKeys`/`announcementKeys` already use, so one
+ * user's notifications can never surface for another in the same
+ * browser session.
+ */
+export const notificationKeys = {
+  all: QUERY_KEY_ROOTS.notification,
+  list: (userId: string | undefined, query?: CollectionQuery) =>
+    [...notificationKeys.all, 'list', userId, query] as const,
+  unreadCount: (userId: string | undefined) =>
+    [...notificationKeys.all, 'unread-count', userId] as const,
+  preferences: (userId: string | undefined) =>
+    [...notificationKeys.all, 'preferences', userId] as const,
+} as const;
+
+/** Platform Settings (Prompt 13) — a singleton, unscoped, mirrors `platformDomainKeys`. */
+export const platformSettingsKeys = {
+  all: QUERY_KEY_ROOTS.platformSettings,
+  configuration: () => [...platformSettingsKeys.all, 'configuration'] as const,
+} as const;
+
+/**
+ * Media Library (Prompt 13) — academy-scoped, the same boundary
+ * `websiteKeys` already uses (a shared asset library still belongs to
+ * one Academy, never the whole platform).
+ */
+export const mediaKeys = {
+  all: QUERY_KEY_ROOTS.media,
+  list: (academyId: string | undefined, query?: CollectionQuery) =>
+    [...mediaKeys.all, 'list', academyId, query] as const,
+  detail: (academyId: string | undefined, assetId: string) =>
+    [...mediaKeys.all, 'detail', academyId, assetId] as const,
+} as const;
+
+/** Global Search (Prompt 13) — user-scoped (results are permission-filtered per caller). */
+export const searchKeys = {
+  all: QUERY_KEY_ROOTS.search,
+  results: (userId: string | undefined, query: string) =>
+    [...searchKeys.all, 'results', userId, query] as const,
 } as const;

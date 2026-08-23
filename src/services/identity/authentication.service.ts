@@ -11,6 +11,9 @@ import type {
   AuthenticationResponse,
   TokenRefreshRequest,
   TokenRefreshResponse,
+  RegistrationRequest,
+  PasswordResetRequest,
+  PasswordResetConfirmation,
 } from '@types';
 
 export class AuthenticationService {
@@ -70,6 +73,35 @@ export class AuthenticationService {
     } catch {
       return false;
     }
+  }
+
+  /**
+   * Registers a new account. Does not sign the caller in — matches
+   * `RegistrationForm`'s existing "navigate to sign-in after success"
+   * behavior, never an auto-login the form doesn't ask for.
+   */
+  public async register(request: RegistrationRequest): Promise<void> {
+    await apiClient.post<void, RegistrationRequest>('/auth/register', request);
+  }
+
+  /** Requests a password-reset email be sent to the given address. */
+  public async requestPasswordReset(
+    request: PasswordResetRequest
+  ): Promise<void> {
+    await apiClient.post<void, PasswordResetRequest>(
+      '/auth/password-reset/request',
+      request
+    );
+  }
+
+  /** Completes a password reset using the token from the reset email. */
+  public async confirmPasswordReset(
+    request: PasswordResetConfirmation
+  ): Promise<void> {
+    await apiClient.post<void, PasswordResetConfirmation>(
+      '/auth/password-reset/confirm',
+      request
+    );
   }
 }
 

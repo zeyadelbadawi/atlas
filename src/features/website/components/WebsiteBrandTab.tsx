@@ -96,6 +96,7 @@ export function WebsiteBrandTab({
             value={configuration.brand.darkLogo}
             onChange={(darkLogo) => save({ darkLogo })}
             aspectClassName="aspect-video bg-neutral-900"
+            academyId={academyId}
           />
           <p className="text-sm text-muted-foreground">
             {t('website:brand.darkLogoHelp')}
