@@ -1,0 +1,27 @@
+{
+  "switcher": {
+    "label": "Switch organization",
+    "selectPrompt": "Select organization",
+    "noOrganizations": "No organization"
+  },
+  "overview": {
+    "title": "Organization",
+    "subtitle": "Your organization's identity and membership.",
+    "fields": {
+      "slug": "Slug",
+      "yourRelationship": "Your relationship",
+      "createdAt": "Created"
+    },
+    "status": {
+      "active": "Active",
+      "suspended": "Suspended",
+      "archived": "Archived",
+      "owner": "Owner",
+      "member": "Member"
+    },
+    "empty": {
+      "title": "No organization yet",
+      "description": "You don't belong to any organization yet. Once you're added to one, it will appear here."
+    }
+  }
+}

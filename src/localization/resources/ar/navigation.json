@@ -13,6 +13,7 @@
   },
   "sections": {
     "overview": "نظرة عامة",
+    "organization": "المؤسسة",
     "platform": "المنصة",
     "academy": "الأكاديمية",
     "teaching": "التدريس",
@@ -27,6 +28,7 @@
     "home": "الرئيسية",
     "dashboard": "لوحة التحكم",
     "platformDashboard": "لوحة تحكم المنصة",
+    "organizationOverview": "المؤسسة",
     "search": "البحث",
     "academyOverview": "نظرة عامة على الأكاديمية",
     "academyCourses": "الدورات",

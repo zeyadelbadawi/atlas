@@ -13,6 +13,7 @@
   },
   "sections": {
     "overview": "Overview",
+    "organization": "Organization",
     "platform": "Platform",
     "academy": "Academy",
     "teaching": "Teaching",
@@ -27,6 +28,7 @@
     "home": "Home",
     "dashboard": "Dashboard",
     "platformDashboard": "Platform Dashboard",
+    "organizationOverview": "Organization",
     "search": "Search",
     "academyOverview": "Academy Overview",
     "academyCourses": "Courses",

@@ -28,6 +28,7 @@ export const AUTH_ROUTES = {
 /** Paths rendered inside the authenticated dashboard layout. */
 export const DASHBOARD_ROUTES = {
   root: '/dashboard',
+  organization: '/dashboard/organization',
   profile: '/dashboard/profile',
   settings: '/dashboard/settings',
   notifications: '/dashboard/notifications',

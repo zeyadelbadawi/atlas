@@ -16,6 +16,25 @@ import type {
 } from './plan.types';
 import type { SubscriptionBillingCycle } from './money.types';
 
+/** An Organization's lifecycle state (backend `organization_status` enum — master plan §5.2). Soft-delete only: there is no delete capability, `'archived'` is the terminal state. */
+export type OrganizationStatus = 'active' | 'suspended' | 'archived';
+
+/**
+ * The Organization/Tenant itself — its own identity, distinct from
+ * `OrganizationContext`/`OrganizationMembership` (`identity.types.ts`),
+ * which describe the *caller's relationship* to an organization (role,
+ * permissions). This is the bare entity: `GET /organizations/:id`.
+ */
+export interface Organization {
+  readonly id: string;
+  readonly name: string;
+  readonly slug: string;
+  readonly status: OrganizationStatus;
+  readonly ownerUserId: string;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+}
+
 /** A tenant subscription's lifecycle state. Named distinctly from the Prompt 3A, user-scoped `SubscriptionStatus` that used to live in `billing.types.ts` — that legacy file was removed in Prompt 13 along with its only consumer, the fake `BillingPage`. */
 export type TenantSubscriptionStatus =
   | 'trialing'

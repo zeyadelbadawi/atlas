@@ -30,6 +30,7 @@ import enInstructor from './en/instructor.json';
 import enAnnouncements from './en/announcements.json';
 import enBlog from './en/blog.json';
 import enForum from './en/forum.json';
+import enOrganization from './en/organization.json';
 import enTenant from './en/tenant.json';
 import enPayments from './en/payments.json';
 import enProvisioning from './en/provisioning.json';
@@ -60,6 +61,7 @@ import arInstructor from './ar/instructor.json';
 import arAnnouncements from './ar/announcements.json';
 import arBlog from './ar/blog.json';
 import arForum from './ar/forum.json';
+import arOrganization from './ar/organization.json';
 import arTenant from './ar/tenant.json';
 import arPayments from './ar/payments.json';
 import arProvisioning from './ar/provisioning.json';
@@ -97,6 +99,7 @@ export const TRANSLATION_RESOURCES: Readonly<
     announcements: enAnnouncements,
     blog: enBlog,
     forum: enForum,
+    organization: enOrganization,
     tenant: enTenant,
     payments: enPayments,
     provisioning: enProvisioning,
@@ -128,6 +131,7 @@ export const TRANSLATION_RESOURCES: Readonly<
     announcements: arAnnouncements,
     blog: arBlog,
     forum: arForum,
+    organization: arOrganization,
     tenant: arTenant,
     payments: arPayments,
     provisioning: arProvisioning,

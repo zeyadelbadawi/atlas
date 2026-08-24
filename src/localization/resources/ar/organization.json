@@ -1,0 +1,27 @@
+{
+  "switcher": {
+    "label": "تبديل المؤسسة",
+    "selectPrompt": "اختر المؤسسة",
+    "noOrganizations": "لا توجد مؤسسة"
+  },
+  "overview": {
+    "title": "المؤسسة",
+    "subtitle": "هوية مؤسستك وعضويتك فيها.",
+    "fields": {
+      "slug": "المعرّف",
+      "yourRelationship": "علاقتك",
+      "createdAt": "تاريخ الإنشاء"
+    },
+    "status": {
+      "active": "نشطة",
+      "suspended": "موقوفة",
+      "archived": "مؤرشفة",
+      "owner": "مالك",
+      "member": "عضو"
+    },
+    "empty": {
+      "title": "لا توجد مؤسسة بعد",
+      "description": "أنت لست عضوًا في أي مؤسسة حتى الآن. بمجرد إضافتك إلى إحداها، ستظهر هنا."
+    }
+  }
+}

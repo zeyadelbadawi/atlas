@@ -156,6 +156,19 @@ export function getDashboardNavigation(
       ],
     },
     {
+      id: 'organization',
+      labelKey: 'navigation:sections.organization',
+      items: [
+        {
+          id: 'organization-overview',
+          labelKey: 'navigation:items.organizationOverview',
+          path: DASHBOARD_ROUTES.organization,
+          icon: Building2,
+        },
+      ],
+      showDivider: true,
+    },
+    {
       id: 'platform',
       labelKey: 'navigation:sections.platform',
       items: [

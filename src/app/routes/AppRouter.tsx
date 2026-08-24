@@ -38,6 +38,9 @@ const DashboardOverviewPage = lazy(
 );
 
 const ProfilePage = lazy(() => import('@features/profile/pages/ProfilePage'));
+const OrganizationOverviewPage = lazy(
+  () => import('@features/organization/pages/OrganizationOverviewPage')
+);
 const PlatformDashboardPage = lazy(
   () => import('@features/platform/pages/PlatformDashboardPage')
 );
@@ -345,6 +348,11 @@ export function AppRouter(): JSX.Element {
             <Route index element={<DashboardOverviewPage />} />
 
             <Route path={DASHBOARD_ROUTES.profile} element={<ProfilePage />} />
+
+            <Route
+              path={DASHBOARD_ROUTES.organization}
+              element={<OrganizationOverviewPage />}
+            />
 
             <Route
               path={DASHBOARD_ROUTES.platform}

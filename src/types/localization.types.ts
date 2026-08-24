@@ -51,6 +51,7 @@ export const TRANSLATION_NAMESPACES = [
   'announcements',
   'blog',
   'forum',
+  'organization',
   'tenant',
   'payments',
   'provisioning',

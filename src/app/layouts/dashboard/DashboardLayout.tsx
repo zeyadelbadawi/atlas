@@ -18,6 +18,7 @@ import {
   useLocalStorage,
   useOnlineStatus,
 } from "@hooks";
+import { OrganizationSwitcher } from "@components/controls";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { DashboardTopbar } from "./DashboardTopbar";
 
@@ -54,7 +55,11 @@ export function DashboardLayout(): JSX.Element {
       {/* `min-w-0` lets wide content scroll inside the flex row instead of
           stretching the shell and breaking the layout. */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <DashboardTopbar onOpenNavigation={drawer.open} isMobile={isMobile} />
+        <DashboardTopbar
+          onOpenNavigation={drawer.open}
+          isMobile={isMobile}
+          actions={<OrganizationSwitcher />}
+        />
         {!isOnline ? <OfflineNotice /> : null}
 
         <main
