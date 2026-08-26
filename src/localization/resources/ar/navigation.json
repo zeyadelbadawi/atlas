@@ -53,6 +53,7 @@
     "platformDomain": "نطاق المنصة",
     "tenantBilling": "الفواتير والمدفوعات",
     "platformPayments": "مراجعة المدفوعات",
+    "platformAtlasPaymentProvider": "مزوّد الدفع الخاص بأطلس",
     "academyProvisioning": "أكاديمية جديدة",
     "platformProvisioning": "تهيئة الأكاديميات",
     "platformOrganizations": "المؤسسات",

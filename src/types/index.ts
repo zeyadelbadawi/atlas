@@ -29,6 +29,7 @@ export * from './tenant.types';
 export * from './money.types';
 export * from './checkout.types';
 export * from './payment.types';
+export * from './atlas-subscription-payment-provider.types';
 export * from './provisioning.types';
 export * from './website-theme.types';
 export * from './website-section.types';

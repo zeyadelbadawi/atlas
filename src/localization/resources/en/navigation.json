@@ -53,6 +53,7 @@
     "platformDomain": "Platform Domain",
     "tenantBilling": "Billing",
     "platformPayments": "Payment Review",
+    "platformAtlasPaymentProvider": "Atlas Payment Provider",
     "academyProvisioning": "New Academy",
     "platformProvisioning": "Academy Provisioning",
     "platformOrganizations": "Organizations",

@@ -197,6 +197,9 @@ const PlatformPaymentReviewListPage = lazy(
 const PlatformPaymentReviewDetailPage = lazy(
   () => import('@features/billing/pages/PlatformPaymentReviewDetailPage')
 );
+const AtlasSubscriptionPaymentProviderPage = lazy(
+  () => import('@features/billing/pages/AtlasSubscriptionPaymentProviderPage')
+);
 
 const ProvisioningStartPage = lazy(
   () => import('@features/provisioning/pages/ProvisioningStartPage')
@@ -841,6 +844,15 @@ export function AppRouter(): JSX.Element {
               element={
                 <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
                   <PlatformPaymentReviewDetailPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformAtlasPaymentProvider}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <AtlasSubscriptionPaymentProviderPage />
                 </RouteGuard>
               }
             />

@@ -30,6 +30,7 @@ export const QUERY_KEY_ROOTS = {
   payment: ['payment'] as const,
   invoice: ['invoice'] as const,
   platformPayment: ['platform-payment'] as const,
+  atlasSubscriptionPaymentProvider: ['atlas-subscription-payment-provider'] as const,
   provisioning: ['provisioning'] as const,
   subdomain: ['subdomain'] as const,
   platformProvisioning: ['platform-provisioning'] as const,
@@ -411,6 +412,14 @@ export const platformPaymentKeys = {
     [...platformPaymentKeys.all, 'list', query] as const,
   detail: (paymentId: string) =>
     [...platformPaymentKeys.all, 'detail', paymentId] as const,
+} as const;
+
+/** Query keys for Atlas Subscription Payment provider configuration (2026-08-26). Platform-owned singleton — not organization-scoped, like `platformPaymentKeys`. */
+export const atlasSubscriptionPaymentProviderKeys = {
+  all: QUERY_KEY_ROOTS.atlasSubscriptionPaymentProvider,
+  config: () => [...atlasSubscriptionPaymentProviderKeys.all, 'config'] as const,
+  availableProviders: () =>
+    [...atlasSubscriptionPaymentProviderKeys.all, 'available-providers'] as const,
 } as const;
 
 /**

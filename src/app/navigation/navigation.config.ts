@@ -32,6 +32,7 @@ import {
   Globe,
   ShieldQuestion,
   LifeBuoy,
+  Plug,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem, NavigationSection } from '@types';
@@ -360,6 +361,14 @@ export function getDashboardNavigation(
           requiresAuth: true,
           requiredRoles: ['platform_owner'],
           matchNestedPaths: true,
+        },
+        {
+          id: 'platform-atlas-payment-provider',
+          labelKey: 'navigation:items.platformAtlasPaymentProvider',
+          path: DASHBOARD_ROUTES.platformAtlasPaymentProvider,
+          icon: Plug,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
         },
         {
           id: 'platform-provisioning',

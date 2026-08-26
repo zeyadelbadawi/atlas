@@ -107,6 +107,7 @@ export const DASHBOARD_ROUTES = {
 
   platformPayments: '/dashboard/platform/payments',
   platformPaymentDetail: '/dashboard/platform/payments/:paymentId',
+  platformAtlasPaymentProvider: '/dashboard/platform/atlas-payment-provider',
 
   provisioning: '/dashboard/provisioning',
   provisioningNew: '/dashboard/provisioning/new',
