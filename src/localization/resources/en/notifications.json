@@ -65,5 +65,47 @@
     "inApp": "In-App",
     "preferences": "Notification Preferences",
     "saveSuccess": "Notification settings saved"
+  },
+  "events": {
+    "provisioningCompleted": {
+      "title": "Your academy is ready",
+      "message": "\"{{academyName}}\" has finished provisioning and is ready to use."
+    },
+    "provisioningFailed": {
+      "title": "Academy setup failed",
+      "message": "We ran into a problem provisioning \"{{academyName}}\". Please contact support if this persists."
+    },
+    "courseOrderPaid": {
+      "title": "Purchase confirmed",
+      "message": "Your purchase of \"{{courseTitle}}\" is confirmed."
+    },
+    "courseOrderPaymentFailed": {
+      "title": "Payment failed",
+      "message": "Your payment for \"{{courseTitle}}\" could not be completed."
+    },
+    "courseOrderRefunded": {
+      "title": "Refund processed",
+      "message": "Your purchase of \"{{courseTitle}}\" has been refunded."
+    },
+    "platformPaymentApproved": {
+      "title": "Payment approved",
+      "message": "Your payment of {{amount}} {{currency}} has been approved."
+    },
+    "platformPaymentRejected": {
+      "title": "Payment rejected",
+      "message": "Your payment of {{amount}} {{currency}} was rejected."
+    },
+    "supportCaseStatusChanged": {
+      "title": "Support case updated",
+      "message": "Your support case \"{{subject}}\" is now {{status}}."
+    },
+    "supportCaseReply": {
+      "title": "New reply on your support case",
+      "message": "There's a new reply on \"{{subject}}\"."
+    },
+    "passwordChanged": {
+      "title": "Password changed",
+      "message": "Your account password was just changed. If this wasn't you, contact support immediately."
+    }
   }
 }

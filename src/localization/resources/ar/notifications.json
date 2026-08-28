@@ -65,5 +65,47 @@
     "inApp": "داخل التطبيق",
     "preferences": "تفضيلات الإشعارات",
     "saveSuccess": "تم حفظ إعدادات الإشعارات"
+  },
+  "events": {
+    "provisioningCompleted": {
+      "title": "أكاديميتك جاهزة",
+      "message": "انتهى إعداد \"{{academyName}}\" وأصبحت جاهزة للاستخدام."
+    },
+    "provisioningFailed": {
+      "title": "فشل إعداد الأكاديمية",
+      "message": "واجهنا مشكلة في إعداد \"{{academyName}}\". يرجى التواصل مع الدعم إذا استمرت المشكلة."
+    },
+    "courseOrderPaid": {
+      "title": "تم تأكيد الشراء",
+      "message": "تم تأكيد شرائك لـ \"{{courseTitle}}\"."
+    },
+    "courseOrderPaymentFailed": {
+      "title": "فشل الدفع",
+      "message": "تعذر إتمام دفعتك لـ \"{{courseTitle}}\"."
+    },
+    "courseOrderRefunded": {
+      "title": "تمت معالجة الاسترداد",
+      "message": "تم استرداد قيمة شرائك لـ \"{{courseTitle}}\"."
+    },
+    "platformPaymentApproved": {
+      "title": "تمت الموافقة على الدفعة",
+      "message": "تمت الموافقة على دفعتك بقيمة {{amount}} {{currency}}."
+    },
+    "platformPaymentRejected": {
+      "title": "تم رفض الدفعة",
+      "message": "تم رفض دفعتك بقيمة {{amount}} {{currency}}."
+    },
+    "supportCaseStatusChanged": {
+      "title": "تم تحديث حالة الدعم",
+      "message": "حالة حالة الدعم \"{{subject}}\" أصبحت الآن {{status}}."
+    },
+    "supportCaseReply": {
+      "title": "رد جديد على حالة الدعم",
+      "message": "يوجد رد جديد على \"{{subject}}\"."
+    },
+    "passwordChanged": {
+      "title": "تم تغيير كلمة المرور",
+      "message": "تم للتو تغيير كلمة مرور حسابك. إذا لم تكن أنت من قام بذلك، تواصل مع الدعم فوراً."
+    }
   }
 }
