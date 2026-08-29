@@ -8,9 +8,10 @@
  */
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { FileText, Globe, MessageSquareQuote, Settings2 } from 'lucide-react';
+import { ExternalLink, FileText, Globe, MessageSquareQuote, Settings2 } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAcademy } from '@features/academy';
@@ -18,6 +19,7 @@ import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useWebsiteConfiguration, useWebsitePages } from '../hooks';
 import { WebsitePublishBar } from '../components/WebsitePublishBar';
 import { buildSitemapEntries } from '../utils/sitemap.utils';
+import { getAcademyPublicWebsiteUrl } from '../utils/public-website-link.utils';
 import { CONTENT_LIST_PAGE_SIZE } from '../constants/website.constants';
 import type { WebsiteConfiguration, WebsitePage } from '@types';
 
@@ -92,12 +94,66 @@ export default function WebsiteOverviewPage(): JSX.Element {
     },
   ] as const;
 
+  const publicUrl = academyQuery.data
+    ? getAcademyPublicWebsiteUrl(academyQuery.data.slug)
+    : undefined;
+  const isPublished = configQuery.data.status === 'published';
+
   return (
     <PageContainer>
-      <PageHeader titleKey="website:overview.title" descriptionKey="website:overview.subtitle" />
+      <PageHeader
+        titleKey="website:overview.title"
+        descriptionKey="website:overview.subtitle"
+        actions={
+          publicUrl && isPublished ? (
+            <Button asChild variant="outline">
+              <a href={publicUrl} target="_blank" rel="noreferrer">
+                <ExternalLink className="size-4" strokeWidth={2} aria-hidden />
+                {t('website:overview.visitWebsite')}
+              </a>
+            </Button>
+          ) : undefined
+        }
+      />
 
       <div className="space-y-6">
         <WebsitePublishBar academyId={academyId} status={configQuery.data.status} />
+
+        {/* A clear, obvious place to see and open the academy's public
+            website — previously missing entirely from this dashboard
+            (found during a real browser acceptance test: the only prior
+            surface, `WebsiteDomainTab`, showed the subdomain as
+            non-clickable text, and only once a platform base domain is
+            configured, which it never is in local dev). */}
+        {publicUrl ? (
+          <Card>
+            <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
+              <div className="flex items-center gap-3">
+                <Globe className="size-5 shrink-0 text-muted-foreground" aria-hidden />
+                <div>
+                  <p className="text-sm font-medium text-foreground">
+                    {t('website:overview.publicUrl.label')}
+                  </p>
+                  <p className="font-mono text-xs text-muted-foreground" dir="ltr">
+                    {publicUrl}
+                  </p>
+                </div>
+              </div>
+              {isPublished ? (
+                <Button asChild size="sm">
+                  <a href={publicUrl} target="_blank" rel="noreferrer">
+                    <ExternalLink className="size-4" strokeWidth={2} aria-hidden />
+                    {t('website:overview.visitWebsite')}
+                  </a>
+                </Button>
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  {t('website:overview.publicUrl.notPublishedYet')}
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        ) : null}
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {links.map((link) => (

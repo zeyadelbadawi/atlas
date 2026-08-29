@@ -12,7 +12,7 @@
  */
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Boxes, ShoppingCart } from 'lucide-react';
+import { Boxes, Columns3, CreditCard, ShoppingCart } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState, EmptyState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
@@ -86,6 +86,29 @@ export default function TenantAddOnsPage(): JSX.Element {
           <Skeleton className="h-40 w-full" />
           <Skeleton className="h-64 w-full" />
         </div>
+      </PageContainer>
+    );
+  }
+
+  // A real, legitimate "no subscription yet" — see `TenantSubscriptionPage`'s
+  // identical branch for the full rationale. This page reads the plan's
+  // `key` to determine add-on compatibility below, so it genuinely cannot
+  // render without one; the correct response is the same guide-to-Plans
+  // empty state, not a generic error screen.
+  if (subscriptionQuery.error?.kind === 'notFound') {
+    return (
+      <PageContainer>
+        <PageHeader titleKey="tenant:addOns.title" />
+        <EmptyState
+          icon={CreditCard}
+          titleKey="tenant:subscription.noSubscription.title"
+          descriptionKey="tenant:subscription.noSubscription.description"
+          primaryAction={{
+            labelKey: 'tenant:subscription.noSubscription.action',
+            icon: Columns3,
+            onAction: () => navigate(DASHBOARD_ROUTES.plans),
+          }}
+        />
       </PageContainer>
     );
   }

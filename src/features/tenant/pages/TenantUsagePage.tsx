@@ -12,14 +12,16 @@
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Columns3 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Clock, Columns3, CreditCard } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
-import { ErrorState } from '@components/feedback';
+import { ErrorState, EmptyState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
+import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import {
   useAddOnCatalog,
   usePlanCatalog,
@@ -49,6 +51,7 @@ const STATUS_TONE: Record<ResourceLimitStatus, StatusTone> = {
 
 export default function TenantUsagePage(): JSX.Element {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [comparisonOpen, setComparisonOpen] = useState(false);
 
   const usageQuery = useTenantUsage();
@@ -77,6 +80,51 @@ export default function TenantUsagePage(): JSX.Element {
             ))}
           </div>
         </div>
+      </PageContainer>
+    );
+  }
+
+  // A real, legitimate "no subscription yet" — see `TenantSubscriptionPage`'s
+  // identical branch for the full rationale. This page reads the plan's
+  // `key` for every limit below, so it genuinely cannot render usage
+  // without one; the correct response is the same guide-to-Plans empty
+  // state, not a generic error screen.
+  if (subscriptionQuery.error?.kind === 'notFound') {
+    return (
+      <PageContainer>
+        <PageHeader titleKey="tenant:usage.title" />
+        <EmptyState
+          icon={CreditCard}
+          titleKey="tenant:subscription.noSubscription.title"
+          descriptionKey="tenant:subscription.noSubscription.description"
+          primaryAction={{
+            labelKey: 'tenant:subscription.noSubscription.action',
+            icon: Columns3,
+            onAction: () => navigate(DASHBOARD_ROUTES.plans),
+          }}
+        />
+      </PageContainer>
+    );
+  }
+
+  // Also a real, legitimate state, distinct from "no subscription" above:
+  // usage is a computed/cached row a background worker fills in shortly
+  // after a subscription activates (see `TenantSubscriptionService.getUsage`'s
+  // own doc comment) — expected for a freshly-approved subscription, not a
+  // failure.
+  if (usageQuery.error?.kind === 'notFound') {
+    return (
+      <PageContainer>
+        <PageHeader titleKey="tenant:usage.title" />
+        <EmptyState
+          icon={Clock}
+          titleKey="tenant:usage.notReady.title"
+          descriptionKey="tenant:usage.notReady.description"
+          primaryAction={{
+            labelKey: 'tenant:usage.notReady.action',
+            onAction: () => void usageQuery.refetch(),
+          }}
+        />
       </PageContainer>
     );
   }

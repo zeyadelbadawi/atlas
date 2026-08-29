@@ -5,6 +5,7 @@
  * always scoped to the current authenticated user — there is no shape here
  * that lets one student's UI address another student's enrollment.
  */
+import type { Course } from './course.types';
 
 /** Enrollment lifecycle status. */
 export type EnrollmentStatus =
@@ -26,6 +27,9 @@ export interface Enrollment {
   readonly status: EnrollmentStatus;
   readonly enrolledAt?: string;
   readonly completedAt?: string;
+  /** Only populated by `GET /enrollments` (the "My Learning" list) — see
+   * `EnrollmentResponse.course`'s doc comment on the backend for why. */
+  readonly course?: Course;
 }
 
 /** Enrollment creation payload. */

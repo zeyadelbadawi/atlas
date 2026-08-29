@@ -9,7 +9,7 @@
  */
 import { BaseService } from '@services';
 import type { ReadOptions, WriteOptions } from '@services';
-import { resourcePath } from '@api';
+import { resourcePath, toCollectionParams } from '@api';
 import type {
   Course,
   CourseCategory,
@@ -20,7 +20,6 @@ import type {
   CreateCoursePayload,
   CreateCourseSectionPayload,
   PaginatedResult,
-  QueryParams,
   ReorderItemsPayload,
   UpdateCourseLessonPayload,
   UpdateCoursePayload,
@@ -53,7 +52,7 @@ export class CourseService extends BaseService {
   ): Promise<PaginatedResult<Course>> {
     return this.client.get<PaginatedResult<Course>>(resourcePath('courses'), {
       ...options,
-      params: query as unknown as QueryParams,
+      params: { ...toCollectionParams(query), ...options?.params },
     });
   }
 
@@ -81,7 +80,7 @@ export class CourseService extends BaseService {
   ): Promise<PaginatedResult<Course>> {
     return this.client.get<PaginatedResult<Course>>(
       this.coursesPath(academyId),
-      { ...options, params: query as unknown as QueryParams }
+      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
     );
   }
 

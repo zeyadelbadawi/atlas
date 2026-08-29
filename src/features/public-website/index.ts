@@ -5,6 +5,7 @@ export { PublicWebsiteRouter } from './PublicWebsiteRouter';
 export {
   resolvePublicWebsiteContext,
   getCurrentPublicWebsiteContext,
+  DEV_OVERRIDE_PARAM,
 } from './utils/hostname-resolution.utils';
 export type {
   PublicWebsiteContext,

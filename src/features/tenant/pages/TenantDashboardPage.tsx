@@ -13,11 +13,13 @@ import {
   BookOpen,
   Building2,
   ChevronRight,
+  Columns3,
+  CreditCard,
   GraduationCap,
   Users,
 } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
-import { ErrorState } from '@components/feedback';
+import { ErrorState, EmptyState } from '@components/feedback';
 import { MetricCard, StatusBadge } from '@components/data-display';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -68,7 +70,41 @@ export default function TenantDashboardPage(): JSX.Element {
     );
   }
 
-  if (error || !subscriptionQuery.data || !usageQuery.data) {
+  // A real, legitimate "no subscription yet" — see `TenantSubscriptionPage`'s
+  // identical branch for the full rationale. This page reads directly from
+  // `subscription.plan`/`subscription.status` below, so it genuinely cannot
+  // render its own content without one; the correct response is the same
+  // guide-to-Plans empty state, not a generic error screen.
+  if (subscriptionQuery.error?.kind === 'notFound') {
+    return (
+      <PageContainer>
+        <PageHeader
+          titleKey="tenant:dashboard.title"
+          descriptionKey="tenant:dashboard.subtitle"
+        />
+        <EmptyState
+          icon={CreditCard}
+          titleKey="tenant:subscription.noSubscription.title"
+          descriptionKey="tenant:subscription.noSubscription.description"
+          primaryAction={{
+            labelKey: 'tenant:subscription.noSubscription.action',
+            icon: Columns3,
+            onAction: () => navigate(DASHBOARD_ROUTES.plans),
+          }}
+        />
+      </PageContainer>
+    );
+  }
+
+  // Usage is a computed/cached row a background worker fills in shortly
+  // after a subscription activates (see `TenantSubscriptionService.getUsage`'s
+  // own doc comment) — a real 404 for a freshly-approved subscription, not
+  // a failure. Subscription and add-ons are both real, so the page still
+  // renders; only the "Key Metrics" section below degrades on its own.
+  const usageNotReady = usageQuery.error?.kind === 'notFound';
+  const usageBlocking = usageQuery.error && !usageNotReady;
+
+  if (subscriptionQuery.error || !subscriptionQuery.data || usageBlocking || addOnsQuery.error) {
     return (
       <PageContainer>
         <PageHeader
@@ -154,33 +190,39 @@ export default function TenantDashboardPage(): JSX.Element {
               <ChevronRight className="size-4" strokeWidth={2} aria-hidden />
             </Button>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            <MetricCard
-              labelKey="tenant:common.limits.academies"
-              icon={Building2}
-              value={`${usage.academies.used} / ${formatLimitValue(usage.academies.limit, false, unlimitedLabel)}`}
-            />
-            <MetricCard
-              labelKey="tenant:common.limits.students"
-              icon={GraduationCap}
-              value={`${usage.students.used} / ${formatLimitValue(usage.students.limit, false, unlimitedLabel)}`}
-            />
-            <MetricCard
-              labelKey="tenant:common.limits.instructors"
-              icon={Users}
-              value={`${usage.instructors.used} / ${formatLimitValue(usage.instructors.limit, false, unlimitedLabel)}`}
-            />
-            <MetricCard
-              labelKey="tenant:common.limits.staff"
-              icon={Users}
-              value={`${usage.staff.used} / ${formatLimitValue(usage.staff.limit, false, unlimitedLabel)}`}
-            />
-            <MetricCard
-              labelKey="tenant:common.limits.courses"
-              icon={BookOpen}
-              value={`${usage.courses.used} / ${formatLimitValue(usage.courses.limit, false, unlimitedLabel)}`}
-            />
-          </div>
+          {usage ? (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+              <MetricCard
+                labelKey="tenant:common.limits.academies"
+                icon={Building2}
+                value={`${usage.academies.used} / ${formatLimitValue(usage.academies.limit, false, unlimitedLabel)}`}
+              />
+              <MetricCard
+                labelKey="tenant:common.limits.students"
+                icon={GraduationCap}
+                value={`${usage.students.used} / ${formatLimitValue(usage.students.limit, false, unlimitedLabel)}`}
+              />
+              <MetricCard
+                labelKey="tenant:common.limits.instructors"
+                icon={Users}
+                value={`${usage.instructors.used} / ${formatLimitValue(usage.instructors.limit, false, unlimitedLabel)}`}
+              />
+              <MetricCard
+                labelKey="tenant:common.limits.staff"
+                icon={Users}
+                value={`${usage.staff.used} / ${formatLimitValue(usage.staff.limit, false, unlimitedLabel)}`}
+              />
+              <MetricCard
+                labelKey="tenant:common.limits.courses"
+                icon={BookOpen}
+                value={`${usage.courses.used} / ${formatLimitValue(usage.courses.limit, false, unlimitedLabel)}`}
+              />
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              {t('tenant:usage.notReady.description')}
+            </p>
+          )}
         </div>
 
         <Card>

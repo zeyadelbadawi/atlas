@@ -64,10 +64,24 @@
     "viewAddOns": "View add-ons",
     "activeAddOnsCount": "{{count}} active add-ons"
   },
+  "plans": {
+    "title": "Plans",
+    "subtitle": "Compare plans and choose the one that fits your organization.",
+    "needsOrganization": {
+      "title": "Create an organization to subscribe",
+      "description": "Plans compare here, but a subscription belongs to an organization. Create one first, then come back to choose a plan.",
+      "action": "Create organization"
+    }
+  },
   "subscription": {
     "title": "Subscription",
     "subtitle": "Your plan, lifecycle status and feature entitlements.",
     "comparePlans": "Compare plans",
+    "noSubscription": {
+      "title": "No subscription yet",
+      "description": "Choose a plan to activate your organization's subscription.",
+      "action": "Browse plans"
+    },
     "cancelAtPeriodEnd": "Your subscription will not renew at the end of the current period.",
     "featuresTitle": "Plan features",
     "featuresSubtitle": "Reflects your plan plus any active add-ons."
@@ -79,7 +93,12 @@
       "upgradePlan": "You've reached this limit. Upgrading your plan will raise it.",
       "addOn": "You've reached this limit. A compatible add-on can raise it."
     },
-    "enforcementNote": "These figures reflect your account's current usage. Limits are enforced by Atlas, not by this page."
+    "enforcementNote": "These figures reflect your account's current usage. Limits are enforced by Atlas, not by this page.",
+    "notReady": {
+      "title": "Usage data isn't ready yet",
+      "description": "Usage is calculated shortly after your subscription activates. Check back in a few minutes.",
+      "action": "Try again"
+    }
   },
   "addOns": {
     "title": "Add-ons",

@@ -16,7 +16,8 @@
  * behavior unchanged.
  */
 import { useTranslation } from 'react-i18next';
-import { Check, X } from 'lucide-react';
+import { Check, Info, X } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -24,6 +25,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
@@ -37,6 +39,15 @@ import {
 import { formatLimitValue } from '../utils/entitlement.utils';
 import type { Plan } from '@types';
 
+/** An inline notice shown above the plan grid, with an optional action. */
+export interface PlanComparisonNotice {
+  readonly titleKey: string;
+  readonly descriptionKey: string;
+  readonly actionLabelKey?: string;
+  readonly onAction?: () => void;
+  readonly icon?: LucideIcon;
+}
+
 export interface PlanComparisonDialogProps {
   readonly open: boolean;
   readonly onOpenChange: (open: boolean) => void;
@@ -46,6 +57,14 @@ export interface PlanComparisonDialogProps {
   readonly currentPlanKey?: string;
   /** When provided, renders a "Select this plan" action per non-current, active plan that starts Checkout. */
   readonly onSelectPlan?: (plan: Plan) => void;
+  /**
+   * Purely informational notice rendered above the plan grid — e.g.
+   * explaining why plan selection is unavailable right now and what to do
+   * about it. Never controls whether `onSelectPlan` renders; the caller
+   * decides that independently (typically by omitting `onSelectPlan`
+   * itself when selection genuinely cannot succeed).
+   */
+  readonly notice?: PlanComparisonNotice;
 }
 
 export function PlanComparisonDialog({
@@ -55,12 +74,14 @@ export function PlanComparisonDialog({
   isLoading = false,
   currentPlanKey,
   onSelectPlan,
+  notice,
 }: PlanComparisonDialogProps): JSX.Element {
   const { t } = useTranslation();
   const unlimitedLabel = t('tenant:common.unlimited');
   const sortedPlans = plans
     ? [...plans].sort((a, b) => a.displayOrder - b.displayOrder)
     : undefined;
+  const NoticeIcon = notice?.icon ?? Info;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -71,6 +92,21 @@ export function PlanComparisonDialog({
             {t('tenant:planComparison.description')}
           </DialogDescription>
         </DialogHeader>
+
+        {notice ? (
+          <Alert>
+            <NoticeIcon className="size-4" aria-hidden />
+            <AlertTitle>{t(notice.titleKey)}</AlertTitle>
+            <AlertDescription className="flex flex-wrap items-center justify-between gap-3">
+              <span>{t(notice.descriptionKey)}</span>
+              {notice.actionLabelKey && notice.onAction ? (
+                <Button type="button" size="sm" onClick={notice.onAction}>
+                  {t(notice.actionLabelKey)}
+                </Button>
+              ) : null}
+            </AlertDescription>
+          </Alert>
+        ) : null}
 
         <ScrollArea className="max-h-[60vh]">
           {isLoading ? (

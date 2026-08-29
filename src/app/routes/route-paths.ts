@@ -29,6 +29,7 @@ export const AUTH_ROUTES = {
 export const DASHBOARD_ROUTES = {
   root: '/dashboard',
   organization: '/dashboard/organization',
+  organizationCreate: '/dashboard/organization/create',
   profile: '/dashboard/profile',
   settings: '/dashboard/settings',
   notifications: '/dashboard/notifications',
@@ -50,6 +51,7 @@ export const DASHBOARD_ROUTES = {
   academyCourseSettings:
     '/dashboard/academy/:academyId/courses/:courseId/settings',
   learning: '/dashboard/learning',
+  myLearning: '/dashboard/learning/my-courses',
   learningCourses: '/dashboard/learning/courses',
   learningCourseDetail: '/dashboard/learning/courses/:courseId',
   learningCourseLearn: '/dashboard/learning/courses/:courseId/learn',
@@ -91,6 +93,8 @@ export const DASHBOARD_ROUTES = {
   blogEdit: '/dashboard/blog/:postId/edit',
 
   tenant: '/dashboard/tenant',
+  /** Phase P19 — first-time plan browsing, reachable independent of an existing subscription (unlike `tenantSubscription`'s comparison dialog, which assumes one). See `Reports/DEVELOPMENT_E2E_FLOW_AUDIT.md` P2 "Plans browsing". */
+  plans: '/dashboard/plans',
   tenantSubscription: '/dashboard/tenant/subscription',
   tenantUsage: '/dashboard/tenant/usage',
   tenantAddOns: '/dashboard/tenant/add-ons',

@@ -21,7 +21,18 @@
     },
     "empty": {
       "title": "No organization yet",
-      "description": "You don't belong to any organization yet. Once you're added to one, it will appear here."
+      "description": "You don't belong to any organization yet. Create one to get started.",
+      "action": "Create organization"
     }
+  },
+  "create": {
+    "title": "Create your organization",
+    "subtitle": "This is where your Academies, subscription, and billing will live.",
+    "basicInformation": "Basic information",
+    "nameLabel": "Organization name",
+    "namePlaceholder": "e.g. Acme Academy Group",
+    "submit": "Create organization",
+    "success": "Organization created",
+    "error": "Couldn't create organization"
   }
 }

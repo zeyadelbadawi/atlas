@@ -16,7 +16,7 @@
  */
 import { BaseService } from '@services';
 import type { ReadOptions, WriteOptions } from '@services';
-import { resourcePath } from '@api';
+import { resourcePath, toCollectionParams } from '@api';
 import type {
   CheckoutPaymentMethod,
   CollectionQuery,
@@ -24,7 +24,6 @@ import type {
   Payment,
   PaymentIntent,
   PaginatedResult,
-  QueryParams,
   SubmitPaymentProofPayload,
   TenantInvoice,
 } from '@types';
@@ -59,7 +58,16 @@ export class PaymentService extends BaseService {
     );
   }
 
-  /** Retrieves the organization's payment history (paginated). */
+  /**
+   * Retrieves the organization's payment history (paginated).
+   *
+   * Must go through `toCollectionParams` — Axios serializes a raw nested
+   * `CollectionQuery` (`{pagination:{page,pageSize}}`) into
+   * `pagination[page]=1&pagination[pageSize]=10`, which the backend's flat
+   * `CollectionQueryDto` rejects with a 400 (confirmed live: `GET
+   * .../payments` on the Billing Overview page). Same root cause and fix
+   * as `ProvisioningService.getProvisioningRequests`.
+   */
   async getPayments(
     organizationId: string,
     query?: CollectionQuery,
@@ -67,7 +75,7 @@ export class PaymentService extends BaseService {
   ): Promise<PaginatedResult<Payment>> {
     return this.client.get<PaginatedResult<Payment>>(
       this.paymentsPath(organizationId),
-      { ...options, params: query as QueryParams }
+      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
     );
   }
 
@@ -106,6 +114,23 @@ export class PaymentService extends BaseService {
     );
   }
 
+  /**
+   * Downloads a submitted proof file as a `Blob`, for the Tenant to open as
+   * a local object URL (`URL.createObjectURL`). See
+   * `PlatformPaymentService.getProofFile`'s doc comment — `payment.proof.fileUrl`
+   * is never a usable link `href` on its own.
+   */
+  async getProofFile(
+    organizationId: string,
+    paymentId: string,
+    options?: ReadOptions
+  ): Promise<Blob> {
+    return this.client.get<Blob>(this.paymentsPath(organizationId, paymentId, 'proof', 'file'), {
+      ...options,
+      responseType: 'blob',
+    });
+  }
+
   /** Cancels a Payment, where its method's capabilities allow it. */
   async cancelPayment(
     organizationId: string,
@@ -132,7 +157,11 @@ export class PaymentService extends BaseService {
     );
   }
 
-  /** Retrieves the organization's invoices (paginated). Invoice-ready contract — see `TenantInvoice`. */
+  /**
+   * Retrieves the organization's invoices (paginated). Invoice-ready
+   * contract — see `TenantInvoice`. Same `toCollectionParams` requirement
+   * as `getPayments` above.
+   */
   async getInvoices(
     organizationId: string,
     query?: CollectionQuery,
@@ -140,7 +169,7 @@ export class PaymentService extends BaseService {
   ): Promise<PaginatedResult<TenantInvoice>> {
     return this.client.get<PaginatedResult<TenantInvoice>>(
       this.path(organizationId, 'invoices'),
-      { ...options, params: query as QueryParams }
+      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
     );
   }
 }

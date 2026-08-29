@@ -126,6 +126,7 @@
     "submitProof": "إرسال للمراجعة",
     "proofTooLarge": "حجم الملف كبير جدًا.",
     "proofInvalidType": "نوع الملف غير مدعوم. استخدم PNG أو JPG أو PDF.",
+    "proofLoadError": "تعذّر فتح الإثبات المُرسل. يرجى إعادة المحاولة.",
     "redirectDescription": "سيتم نقلك إلى صفحة آمنة لإتمام هذه الدفعة.",
     "continueToProvider": "المتابعة إلى الدفع الآمن",
     "processingMessage": "يتم حاليًا معالجة هذه الدفعة. تتحدّث هذه الصفحة تلقائيًا.",

@@ -7,6 +7,7 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '@constants';
 import type {
   CollectionQuery,
+  JsonValue,
   PaginatedResult,
   PaginationMeta,
   QueryParams,
@@ -21,8 +22,23 @@ export const COLLECTION_PARAM_NAMES = {
   search: 'search',
 } as const;
 
-/** Converts a collection query into flat query parameters. */
-export function toCollectionParams(query?: CollectionQuery): QueryParams {
+/**
+ * Converts a collection query into flat query parameters.
+ *
+ * Generic over `TFilters` so a domain-narrowed query type (e.g.
+ * `CourseListQuery`, which narrows `filters` to `CourseFilters` instead of
+ * the base `Record<string, JsonValue>` — see that type's own doc comment)
+ * satisfies this function without a call-site type cast. `filters` is only
+ * ever read generically here (enumerated and defensively filtered to
+ * primitives), so the looser `extends object` constraint costs no runtime
+ * safety versus the previous fixed `CollectionQuery` parameter — it only
+ * removes a structural-typing false negative (interfaces don't carry an
+ * implicit index signature, so TS rejected every narrowed filters type even
+ * though every field on them is a JSON-compatible primitive).
+ */
+export function toCollectionParams<TFilters extends object = Record<string, JsonValue>>(
+  query?: Omit<CollectionQuery, 'filters'> & { readonly filters?: TFilters }
+): QueryParams {
   if (!query) return {};
 
   const params: Record<string, QueryParams[string]> = {
@@ -40,10 +56,12 @@ export function toCollectionParams(query?: CollectionQuery): QueryParams {
     params[COLLECTION_PARAM_NAMES.search] = query.search.trim();
   }
 
-  for (const [key, value] of Object.entries(query.filters ?? {})) {
+  for (const [key, value] of Object.entries(
+    (query.filters ?? {}) as Record<string, unknown>
+  )) {
     if (value === null || value === undefined) continue;
     if (typeof value === 'object') continue;
-    params[key] = value;
+    params[key] = value as QueryParams[string];
   }
 
   return params;

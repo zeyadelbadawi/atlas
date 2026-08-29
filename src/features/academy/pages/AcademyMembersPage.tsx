@@ -6,12 +6,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { Search, Users } from 'lucide-react';
+import { GraduationCap, Search, UserPlus, Users } from 'lucide-react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { DataTable } from '@components/table';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -24,6 +25,9 @@ import {
 } from '@/components/ui/select';
 import { usePagination } from '@hooks';
 import { useAcademy, useAcademyMembers } from '../hooks';
+import { AddAcademyManagerDialog } from '../components/AddAcademyManagerDialog';
+import { AddAcademyInstructorDialog } from '../components/AddAcademyInstructorDialog';
+import { CreateAcademyStudentDialog } from '../components/CreateAcademyStudentDialog';
 import {
   getAcademyMemberRoleTone,
   getAcademyMemberStatusTone,
@@ -37,6 +41,9 @@ export default function AcademyMembersPage(): JSX.Element {
   const [roleFilter, setRoleFilter] = useState<AcademyMemberRole | 'all'>(
     'all'
   );
+  const [isAddManagerOpen, setIsAddManagerOpen] = useState(false);
+  const [isAddInstructorOpen, setIsAddInstructorOpen] = useState(false);
+  const [isCreateStudentOpen, setIsCreateStudentOpen] = useState(false);
 
   const {
     data: academy,
@@ -163,8 +170,30 @@ export default function AcademyMembersPage(): JSX.Element {
       />
 
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0">
           <CardTitle>{t('academy:members.title')}</CardTitle>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsCreateStudentOpen(true)}
+            >
+              <GraduationCap className="size-4" strokeWidth={2} aria-hidden />
+              {t('academy:members.createStudent.triggerButton')}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsAddInstructorOpen(true)}
+            >
+              <UserPlus className="size-4" strokeWidth={2} aria-hidden />
+              {t('academy:members.addInstructor.triggerButton')}
+            </Button>
+            <Button type="button" onClick={() => setIsAddManagerOpen(true)}>
+              <UserPlus className="size-4" strokeWidth={2} aria-hidden />
+              {t('academy:members.addManager.triggerButton')}
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Filters */}
@@ -228,6 +257,22 @@ export default function AcademyMembersPage(): JSX.Element {
           )}
         </CardContent>
       </Card>
+
+      <AddAcademyManagerDialog
+        open={isAddManagerOpen}
+        onOpenChange={setIsAddManagerOpen}
+        academyId={academyId ?? ''}
+      />
+      <AddAcademyInstructorDialog
+        open={isAddInstructorOpen}
+        onOpenChange={setIsAddInstructorOpen}
+        academyId={academyId ?? ''}
+      />
+      <CreateAcademyStudentDialog
+        open={isCreateStudentOpen}
+        onOpenChange={setIsCreateStudentOpen}
+        academyId={academyId ?? ''}
+      />
     </PageContainer>
   );
 }

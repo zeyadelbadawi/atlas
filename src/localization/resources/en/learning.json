@@ -20,6 +20,23 @@
     "noResults": "No courses match your search.",
     "noResultsDescription": "Try a different search term or filter."
   },
+  "myLearning": {
+    "title": "My Learning",
+    "subtitle": "Courses you're enrolled in.",
+    "browseCoursesAction": "Discover Courses",
+    "empty": {
+      "title": "You're not enrolled in any courses yet.",
+      "description": "Browse the course catalog to find something to learn.",
+      "action": "Discover Courses"
+    },
+    "status": {
+      "enrolled": "Not started",
+      "pending": "Pending",
+      "completed": "Completed",
+      "available": "Available",
+      "unavailable": "Unavailable"
+    }
+  },
   "errors": {
     "loadFailed": "We couldn't load this course.",
     "notFound": "This course is not available.",

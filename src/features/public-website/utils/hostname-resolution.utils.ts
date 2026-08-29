@@ -32,8 +32,16 @@ export type PublicWebsiteContext =
       readonly value: string;
     };
 
-/** The dev-only query param that lets a developer preview the public runtime for a given Academy subdomain without a real domain — see the file's doc comment. Never relevant once a real platform domain routes real traffic. */
-const DEV_OVERRIDE_PARAM = '__atlas_academy_preview';
+/**
+ * The dev-only query param that lets a developer preview the public
+ * runtime for a given Academy subdomain without a real domain — see the
+ * file's doc comment. Never relevant once a real platform domain routes
+ * real traffic. Exported so `getAcademyPublicWebsiteUrl`
+ * (`features/website/utils/public-website-link.utils.ts`) can build the
+ * exact same link this module resolves, rather than a second, drifting
+ * copy of the param name.
+ */
+export const DEV_OVERRIDE_PARAM = '__atlas_academy_preview';
 
 function isLocalOrIpHost(host: string): boolean {
   if (host === 'localhost' || host.endsWith('.localhost')) return true;

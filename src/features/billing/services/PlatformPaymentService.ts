@@ -63,6 +63,25 @@ export class PlatformPaymentService extends BaseService {
       options
     );
   }
+
+  /**
+   * Downloads a submitted proof file as a `Blob`, for the reviewer to open
+   * as a local object URL (`URL.createObjectURL`).
+   *
+   * Never use `payment.proof.fileUrl` directly as a link `href` — it is a
+   * path relative to the API base (not an absolute URL, and this endpoint
+   * requires the Bearer token every other Atlas request already carries
+   * via `HttpClient`'s interceptor), so a plain anchor tag resolves it
+   * against the frontend's own origin and hits the SPA router instead of
+   * the backend (confirmed live: opened as `http://localhost:3001/…` and
+   * hit `NotFoundPage`, a real 404, not a permissions issue).
+   */
+  async getProofFile(paymentId: string, options?: ReadOptions): Promise<Blob> {
+    return this.client.get<Blob>(this.path(paymentId, 'proof', 'file'), {
+      ...options,
+      responseType: 'blob',
+    });
+  }
 }
 
 /** Singleton instance following the Atlas service pattern. */

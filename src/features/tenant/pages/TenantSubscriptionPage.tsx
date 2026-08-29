@@ -11,9 +11,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Check, Columns3, X } from 'lucide-react';
+import { Check, Columns3, CreditCard, X } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
-import { ErrorState } from '@components/feedback';
+import { ErrorState, EmptyState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -60,6 +60,32 @@ export default function TenantSubscriptionPage(): JSX.Element {
           <Skeleton className="h-40 w-full" />
           <Skeleton className="h-64 w-full" />
         </div>
+      </PageContainer>
+    );
+  }
+
+  // Phase P19 (`Reports/DEVELOPMENT_E2E_FLOW_AUDIT.md` P2 "Empty
+  // subscription state"): a real, legitimate "no subscription yet" — the
+  // backend's own honest 404 (`errors.tenant.noSubscription`, see
+  // `TenantSubscriptionService.getSubscription`'s own doc comment) for
+  // any Organization that hasn't completed Plans → Payment → Approval
+  // yet — is not an error to apologize for and offer a "Retry" button on;
+  // it is the expected state for a brand-new Organization, and the
+  // correct response is to guide the Client toward Plans, not stall them.
+  if (subscriptionQuery.error?.kind === 'notFound') {
+    return (
+      <PageContainer>
+        <PageHeader titleKey="tenant:subscription.title" />
+        <EmptyState
+          icon={CreditCard}
+          titleKey="tenant:subscription.noSubscription.title"
+          descriptionKey="tenant:subscription.noSubscription.description"
+          primaryAction={{
+            labelKey: 'tenant:subscription.noSubscription.action',
+            icon: Columns3,
+            onAction: () => navigate(DASHBOARD_ROUTES.plans),
+          }}
+        />
       </PageContainer>
     );
   }

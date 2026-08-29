@@ -18,13 +18,12 @@
  */
 import { BaseService } from '@services';
 import type { ReadOptions, WriteOptions } from '@services';
-import { resourcePath } from '@api';
+import { resourcePath, toCollectionParams } from '@api';
 import type {
   CollectionQuery,
   CreateProvisioningRequestPayload,
   PaginatedResult,
   ProvisioningRequest,
-  QueryParams,
   SubdomainAllocation,
 } from '@types';
 
@@ -60,7 +59,18 @@ export class ProvisioningService extends BaseService {
     );
   }
 
-  /** Retrieves the organization's provisioning history (paginated). */
+  /**
+   * Retrieves the organization's provisioning history (paginated).
+   *
+   * The raw `CollectionQuery` (`{ pagination: { page, pageSize }, ... }`)
+   * must never be handed to Axios as `params` directly — Axios serializes
+   * a nested object into bracket notation (`pagination[page]=1`), which
+   * the backend's flat `CollectionQueryDto` (`page`/`pageSize`/...) does
+   * not declare, and its `ValidationPipe` runs with
+   * `forbidNonWhitelisted: true`, rejecting the request with a 400. Every
+   * other paginated read on this service (and `BaseService.fetchCollection`)
+   * goes through `toCollectionParams` for exactly this reason.
+   */
   async getProvisioningRequests(
     organizationId: string,
     query?: CollectionQuery,
@@ -68,7 +78,7 @@ export class ProvisioningService extends BaseService {
   ): Promise<PaginatedResult<ProvisioningRequest>> {
     return this.client.get<PaginatedResult<ProvisioningRequest>>(
       this.requestsPath(organizationId),
-      { ...options, params: query as QueryParams }
+      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
     );
   }
 

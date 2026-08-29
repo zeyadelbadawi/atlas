@@ -16,6 +16,13 @@
  */
 export { WebsiteRenderer } from './renderer/WebsiteRenderer';
 export type { WebsiteRendererProps } from './renderer/WebsiteRenderer';
+
+// Phase P19 — `ProvisioningStartPage`'s theme-selection step needs the
+// real theme registry (never a second, invented catalog). Curated export,
+// same discipline as this barrel's own header comment: only what a
+// consumer outside this feature's dashboard pages genuinely needs.
+export { listWebsiteThemes } from './themes/website-theme.registry';
+export type { WebsiteThemeDefinition } from '@types';
 export type {
   WebsiteLinkRenderer,
   WebsiteLinkRendererProps,

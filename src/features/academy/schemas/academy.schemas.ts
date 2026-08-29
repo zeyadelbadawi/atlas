@@ -113,3 +113,44 @@ export const updateAcademyBrandingSchema = z.object({
 export type UpdateAcademyBrandingFormData = z.infer<
   typeof updateAcademyBrandingSchema
 >;
+
+/**
+ * Add Academy Manager schema — `email` alone grants access to an
+ * already-registered Atlas account; filling in `name` + `password`
+ * together creates a brand-new account and grants it in the same action
+ * (no invitation flow exists). Both new-account fields must be provided
+ * together, or neither.
+ */
+export const addAcademyManagerSchema = z
+  .object({
+    email: z.string().min(1, 'validation:required').email('validation:invalidEmail'),
+    name: z.string().max(MAX_ACADEMY_NAME_LENGTH, 'validation:maxLength').optional().or(z.literal('')),
+    password: z.string().optional().or(z.literal('')),
+  })
+  .refine((data) => !data.password || data.password.length >= 8, {
+    message: 'validation:minLength',
+    path: ['password'],
+  })
+  .refine((data) => (!data.name && !data.password) || (!!data.name && !!data.password), {
+    message: 'academy:members.newAccount.bothRequired',
+    path: ['password'],
+  });
+
+export type AddAcademyManagerFormData = z.infer<typeof addAcademyManagerSchema>;
+
+/** Add Academy Instructor schema — identical shape/rationale to `addAcademyManagerSchema`. */
+export const addAcademyInstructorSchema = addAcademyManagerSchema;
+
+export type AddAcademyInstructorFormData = z.infer<typeof addAcademyInstructorSchema>;
+
+/** Create Academy Student schema — always a brand-new account, so all three fields are required. */
+export const createAcademyStudentSchema = z.object({
+  name: z
+    .string()
+    .min(1, 'validation:required')
+    .max(MAX_ACADEMY_NAME_LENGTH, 'validation:maxLength'),
+  email: z.string().min(1, 'validation:required').email('validation:invalidEmail'),
+  password: z.string().min(8, 'validation:minLength'),
+});
+
+export type CreateAcademyStudentFormData = z.infer<typeof createAcademyStudentSchema>;

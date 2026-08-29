@@ -159,6 +159,8 @@ export interface ProvisioningRequest {
   readonly requestedSubdomain: string;
   /** Present only when this request was triggered by a specific Prompt 7 Payment (e.g. a plan/academy-slot purchase) — not every request needs one, since an existing Tenant may still be within its plan's academy limit. */
   readonly triggeringPaymentId?: string;
+  /** Phase P19 — the theme key applied by the 'theme' provisioning step, if one was chosen. */
+  readonly selectedThemeKey?: string;
   readonly lastError?: ProvisioningError;
   readonly createdAt: string;
   readonly startedAt?: string;
@@ -170,6 +172,8 @@ export interface CreateProvisioningRequestPayload {
   readonly academyName: string;
   readonly requestedSubdomain: string;
   readonly triggeringPaymentId?: string;
+  /** Phase P19 — matches the real Website Builder theme registry's own keys (`WEBSITE_THEME_KEYS`). */
+  readonly selectedThemeKey?: string;
   readonly idempotencyKey: string;
 }
 

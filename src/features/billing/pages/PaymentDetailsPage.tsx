@@ -23,12 +23,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth, useFilePicker } from '@hooks';
+import { useToast } from '@app/providers/toast/useToast';
 import {
   usePaymentDetails,
   usePaymentMethods,
   useCancelPayment,
   useSubmitPaymentProof,
 } from '../hooks';
+import { paymentService } from '../services/PaymentService';
 import { getPaymentProvider } from '../providers/PaymentProviderRegistry';
 import { isManualReviewProvider } from '../providers/PaymentProviderAdapter';
 import {
@@ -53,9 +55,28 @@ export default function PaymentDetailsPage(): JSX.Element {
   const paymentMethodsQuery = usePaymentMethods();
   const submitProof = useSubmitPaymentProof();
   const cancelPayment = useCancelPayment();
+  const { notifyError } = useToast();
 
   const [note, setNote] = useState('');
   const [fileError, setFileError] = useState<string>();
+  const [isOpeningProof, setIsOpeningProof] = useState(false);
+
+  // `payment.proof.fileUrl` is a path relative to the API base, not a
+  // usable link `href` on its own — see `PaymentService.getProofFile`'s
+  // doc comment. Fetched as an authenticated Blob, then opened as a local
+  // object URL.
+  const handleViewProof = async () => {
+    if (!payment?.id || !organization?.id) return;
+    setIsOpeningProof(true);
+    try {
+      const blob = await paymentService.getProofFile(organization.id, payment.id);
+      window.open(URL.createObjectURL(blob), '_blank', 'noreferrer');
+    } catch {
+      notifyError('errors:unknown.title', 'payments:payment.proofLoadError');
+    } finally {
+      setIsOpeningProof(false);
+    }
+  };
   const filePicker = useFilePicker({
     accept: ALLOWED_PAYMENT_PROOF_TYPES.join(','),
   });
@@ -258,15 +279,19 @@ export default function PaymentDetailsPage(): JSX.Element {
                 {t('payments:payment.awaitingReviewDescription')}
               </p>
               {payment.proof ? (
-                <a
-                  href={payment.proof.fileUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+                <button
+                  type="button"
+                  onClick={handleViewProof}
+                  disabled={isOpeningProof}
+                  className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline disabled:opacity-60"
                 >
                   {t('payments:payment.viewProof')}
-                  <ExternalLink className="size-3.5" strokeWidth={2} aria-hidden />
-                </a>
+                  {isOpeningProof ? (
+                    <Loader2 className="size-3.5 animate-spin" aria-hidden />
+                  ) : (
+                    <ExternalLink className="size-3.5" strokeWidth={2} aria-hidden />
+                  )}
+                </button>
               ) : null}
             </CardContent>
           </Card>

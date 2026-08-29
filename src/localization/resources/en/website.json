@@ -2,6 +2,11 @@
   "overview": {
     "title": "Website",
     "subtitle": "Manage your Academy's public website from one place.",
+    "visitWebsite": "Visit website",
+    "publicUrl": {
+      "label": "Your website address",
+      "notPublishedYet": "Publish your website to make this link live."
+    },
     "pages": {
       "title": "Pages",
       "description": "Core and custom pages"

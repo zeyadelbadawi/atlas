@@ -41,6 +41,9 @@ const ProfilePage = lazy(() => import('@features/profile/pages/ProfilePage'));
 const OrganizationOverviewPage = lazy(
   () => import('@features/organization/pages/OrganizationOverviewPage')
 );
+const OrganizationCreatePage = lazy(
+  () => import('@features/organization/pages/OrganizationCreatePage')
+);
 const PlatformDashboardPage = lazy(
   () => import('@features/platform/pages/PlatformDashboardPage')
 );
@@ -95,6 +98,9 @@ const CourseSettingsPage = lazy(
 
 const StudentCourseDiscoveryPage = lazy(
   () => import('@features/learning/pages/StudentCourseDiscoveryPage')
+);
+const StudentMyLearningPage = lazy(
+  () => import('@features/learning/pages/StudentMyLearningPage')
 );
 const StudentCourseDetailsPage = lazy(
   () => import('@features/learning/pages/StudentCourseDetailsPage')
@@ -167,6 +173,7 @@ const TenantDashboardPage = lazy(
 const TenantSubscriptionPage = lazy(
   () => import('@features/tenant/pages/TenantSubscriptionPage')
 );
+const PlansPage = lazy(() => import('@features/tenant/pages/PlansPage'));
 const TenantUsagePage = lazy(
   () => import('@features/tenant/pages/TenantUsagePage')
 );
@@ -357,6 +364,20 @@ export function AppRouter(): JSX.Element {
               element={<OrganizationOverviewPage />}
             />
 
+            {/* Phase P19 — no `requiredPermissions`, deliberately: this is
+                the org-creation entry point itself, reachable by any
+                authenticated user regardless of org membership, matching
+                `OrganizationOverviewPage`'s own guard-free pattern above. */}
+            <Route
+              path={DASHBOARD_ROUTES.organizationCreate}
+              element={<OrganizationCreatePage />}
+            />
+
+            {/* Phase P19 — first-time plan browsing; no `requiredPermissions`
+                so it is reachable before a subscription (and therefore
+                `tenant.subscription.view`-gated pages) exist. */}
+            <Route path={DASHBOARD_ROUTES.plans} element={<PlansPage />} />
+
             <Route
               path={DASHBOARD_ROUTES.platform}
               element={<PlatformDashboardPage />}
@@ -392,7 +413,20 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.academyCreate}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['academy.view']}>
+                // Creating a brand-new academy is a provisioning action,
+                // the same boundary `provisioningNew` (the "New Academy"
+                // wizard) already enforces — `academy.view` alone (found
+                // live during Organization Manager testing: a Manager,
+                // who legitimately holds `academy.view`, could reach this
+                // older direct-create form and provision a new academy,
+                // an owner-level action their permission set otherwise
+                // deliberately excludes) let ANY academy member reach a
+                // second, redundant academy-creation entry point this
+                // permission check never matched.
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.provisioning.create']}
+                >
                   <AcademyCreatePage />
                 </RouteGuard>
               }
@@ -492,7 +526,26 @@ export function AppRouter(): JSX.Element {
               path={DASHBOARD_ROUTES.learning}
               element={
                 <RouteGuard requireAuthentication requiredPermissions={['student.learning.view']}>
-                  <Navigate to={DASHBOARD_ROUTES.learningCourses} replace />
+                  <Navigate to={DASHBOARD_ROUTES.myLearning} replace />
+                </RouteGuard>
+              }
+            />
+
+            {/*
+              Found missing during a real browser acceptance test: a
+              student who enrolled in a course had nowhere to see "my
+              enrolled courses" — the "My Learning" nav link routed
+              straight to the public course catalog (`learningCourses`,
+              below), which has no notion of enrollment at all. The
+              backend "list my enrollments" endpoint already existed and
+              was correctly RLS-scoped; only the page consuming it was
+              missing.
+            */}
+            <Route
+              path={DASHBOARD_ROUTES.myLearning}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['student.learning.view']}>
+                  <StudentMyLearningPage />
                 </RouteGuard>
               }
             />

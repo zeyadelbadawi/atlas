@@ -11,13 +11,12 @@
  */
 import { BaseService } from '@services';
 import type { ReadOptions, WriteOptions } from '@services';
-import { resourcePath } from '@api';
+import { resourcePath, toCollectionParams } from '@api';
 import type {
   Announcement,
   CollectionQuery,
   CreateAnnouncementPayload,
   PaginatedResult,
-  QueryParams,
   UpdateAnnouncementPayload,
 } from '@types';
 
@@ -45,7 +44,7 @@ export class AnnouncementService extends BaseService {
   ): Promise<PaginatedResult<Announcement>> {
     return this.client.get<PaginatedResult<Announcement>>(
       resourcePath('courses', courseId, 'announcements'),
-      { ...options, params: query as unknown as QueryParams }
+      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
     );
   }
 

@@ -16,12 +16,12 @@
  */
 import { BaseService } from '@services';
 import type { ReadOptions, WriteOptions } from '@services';
+import { toCollectionParams } from '@api';
 import type {
   CollectionQuery,
   CreateWebsiteFaqEntryPayload,
   CreateWebsiteTestimonialEntryPayload,
   PaginatedResult,
-  QueryParams,
   UpdateWebsiteFaqEntryPayload,
   UpdateWebsiteTestimonialEntryPayload,
   WebsiteFaqEntry,
@@ -48,7 +48,7 @@ export class WebsiteContentService extends BaseService {
   ): Promise<PaginatedResult<WebsiteFaqEntry>> {
     return this.client.get<PaginatedResult<WebsiteFaqEntry>>(
       this.contentPath(academyId, 'faq-entries'),
-      { ...options, params: query as QueryParams }
+      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
     );
   }
 
@@ -123,7 +123,7 @@ export class WebsiteContentService extends BaseService {
   ): Promise<PaginatedResult<WebsiteTestimonialEntry>> {
     return this.client.get<PaginatedResult<WebsiteTestimonialEntry>>(
       this.contentPath(academyId, 'testimonial-entries'),
-      { ...options, params: query as QueryParams }
+      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
     );
   }
 

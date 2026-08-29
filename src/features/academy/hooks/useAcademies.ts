@@ -23,7 +23,9 @@ export function useAcademies(options?: UseAcademiesOptions) {
 
   return useApiQuery<PaginatedResult<Academy>>({
     queryKey: academyKeys.list(organization?.id, query),
-    queryFn: () => academyService.getAcademies(query),
+    // `enabled` guarantees `organization` is set by the time this runs —
+    // same non-null-assertion precedent as `useProvisioningRequests`.
+    queryFn: () => academyService.getAcademies(organization!.id, query),
     enabled: enabled && !!organization?.id,
   });
 }

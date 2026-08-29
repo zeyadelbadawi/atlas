@@ -20,6 +20,23 @@
     "noResults": "لا توجد دورات مطابقة لبحثك.",
     "noResultsDescription": "جرّب كلمة بحث أو عامل تصفية مختلف."
   },
+  "myLearning": {
+    "title": "تعلّمي",
+    "subtitle": "الدورات التي التحقت بها.",
+    "browseCoursesAction": "اكتشف الدورات",
+    "empty": {
+      "title": "لم تلتحق بأي دورة بعد.",
+      "description": "تصفّح كتالوج الدورات للعثور على ما تريد تعلّمه.",
+      "action": "اكتشف الدورات"
+    },
+    "status": {
+      "enrolled": "لم تبدأ",
+      "pending": "قيد الانتظار",
+      "completed": "مكتملة",
+      "available": "متاحة",
+      "unavailable": "غير متاحة"
+    }
+  },
   "errors": {
     "loadFailed": "تعذّر تحميل هذه الدورة.",
     "notFound": "هذه الدورة غير متاحة.",

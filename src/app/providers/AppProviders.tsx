@@ -18,6 +18,7 @@
  */
 import type { ReactNode } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/toaster";
 import { ErrorBoundary } from "./error/ErrorBoundary";
 import { AtlasThemeProvider } from "./theme/ThemeProvider";
 import { AtlasLocalizationProvider } from "./localization/LocalizationProvider";
@@ -45,6 +46,26 @@ export function AppProviders({ children }: AppProvidersProps): JSX.Element {
                     <AtlasLoadingProvider>
                       <TooltipProvider delayDuration={200}>
                         {children}
+                        {/*
+                          Found during a real browser acceptance test: 24
+                          pages call `toast()` from `@/hooks/use-toast` (a
+                          self-contained shadcn/Radix toast store, entirely
+                          separate from `AtlasToastProvider`'s sonner-based
+                          `notifySuccess`/`notifyError`) — its own
+                          `<Toaster/>` was never mounted anywhere in this
+                          tree, so every one of those toasts (including
+                          `StudentCourseDetailsPage`'s enroll-error message,
+                          confirmed live: a paid course's failed enrollment
+                          produced a real 403 with zero user-facing
+                          feedback) was silently swallowed. Mounting it here
+                          is the minimal, safe fix — it makes those 24
+                          already-written call sites work as their authors
+                          clearly intended, without rewriting each one's
+                          call shape to the other toast system's API.
+                          Consolidating onto one toast system end-to-end is
+                          a separate, larger cleanup left for a future pass.
+                        */}
+                        <Toaster />
                       </TooltipProvider>
                     </AtlasLoadingProvider>
                   </AtlasDialogProvider>

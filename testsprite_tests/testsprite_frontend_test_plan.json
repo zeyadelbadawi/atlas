@@ -1,0 +1,2092 @@
+[
+  {
+    "id": "TC001",
+    "title": "Sign in and reach the dashboard",
+    "description": "This verifies that a valid user can sign in and land on the authenticated dashboard.",
+    "category": "Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user lands on the dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify dashboard summary content is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC002",
+    "title": "Enroll in a discovered course",
+    "description": "This test verifies that a student can browse the course catalog, open a course, and enroll successfully.",
+    "category": "Student Learning",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/learning/courses"
+      },
+      {
+        "type": "action",
+        "description": "Open a published course"
+      },
+      {
+        "type": "action",
+        "description": "Enroll in the course"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify enrollment confirmation is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC003",
+    "title": "Create a provisioning request and track its status",
+    "description": "Verifies a tenant owner can start a new academy provisioning request and then open its status page.",
+    "category": "Tenant Billing & Subscription",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Open the provisioning history page"
+      },
+      {
+        "type": "action",
+        "description": "Start a new provisioning request"
+      },
+      {
+        "type": "action",
+        "description": "Fill the required provisioning details"
+      },
+      {
+        "type": "action",
+        "description": "Submit the provisioning request"
+      },
+      {
+        "type": "action",
+        "description": "Open the created provisioning request"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify provisioning request status details are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC004",
+    "title": "Create a new academy successfully",
+    "description": "This test verifies that an academy owner can create a new academy and reach the onboarding start state.",
+    "category": "Academy Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/academy/create"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the academy name field with Atlas Academy"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the academy slug field with atlas-academy"
+      },
+      {
+        "type": "action",
+        "description": "Submit the academy creation form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the onboarding start state is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC005",
+    "title": "Restore an existing session on dashboard load",
+    "description": "This verifies that a returning authenticated user can open the dashboard without being sent back to sign in.",
+    "category": "Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user lands on the dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify dashboard summary content is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC006",
+    "title": "Complete an add-on checkout purchase",
+    "description": "This test verifies that a tenant owner can start checkout for an add-on and finish the purchase flow successfully.",
+    "category": "Tenant Billing and Provisioning",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/tenant/add-ons"
+      },
+      {
+        "type": "action",
+        "description": "Select an add-on to purchase"
+      },
+      {
+        "type": "action",
+        "description": "Proceed to checkout"
+      },
+      {
+        "type": "action",
+        "description": "Complete the checkout form"
+      },
+      {
+        "type": "action",
+        "description": "Submit the checkout"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a purchase confirmation is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC007",
+    "title": "Create a provisioning request for a new academy",
+    "description": "This test verifies that a tenant owner can create a new academy provisioning request and see it appear in the request list.",
+    "category": "Provisioning",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/provisioning/new"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a unique academy name into the academy name field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid subdomain into the subdomain field"
+      },
+      {
+        "type": "action",
+        "description": "Check the subdomain availability"
+      },
+      {
+        "type": "action",
+        "description": "Submit the provisioning request"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a provisioning request confirmation is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the new request appears in the provisioning history"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC008",
+    "title": "Complete a lesson and mark progress",
+    "description": "This test verifies that a student can open a lesson, complete it, and see progress update.",
+    "category": "Student Learning",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/learning/courses"
+      },
+      {
+        "type": "action",
+        "description": "Open an enrolled course"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to continue learning"
+      },
+      {
+        "type": "action",
+        "description": "Mark the lesson as complete"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify lesson progress is updated"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC009",
+    "title": "Grade a submission with feedback",
+    "description": "Verifies an instructor can review a submission, assign a grade, add feedback, and save the review.",
+    "category": "Instructor Operations",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Open the instructor course list"
+      },
+      {
+        "type": "action",
+        "description": "Open a course with pending submissions"
+      },
+      {
+        "type": "action",
+        "description": "Open the assignment submissions view"
+      },
+      {
+        "type": "action",
+        "description": "Open a submission for review"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid score into the grade field"
+      },
+      {
+        "type": "action",
+        "description": "Fill detailed feedback into the feedback field"
+      },
+      {
+        "type": "action",
+        "description": "Save the review"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the graded submission is reflected in the review view"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC010",
+    "title": "Publish a website page and verify it appears in the public site",
+    "description": "This test verifies that an academy owner can edit a website page, publish it, and see the published page available in the public website flow.",
+    "category": "Website Builder and Public Delivery",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/academy"
+      },
+      {
+        "type": "action",
+        "description": "Open an academy"
+      },
+      {
+        "type": "action",
+        "description": "Click the website pages section"
+      },
+      {
+        "type": "action",
+        "description": "Open a page editor"
+      },
+      {
+        "type": "action",
+        "description": "Edit the page content"
+      },
+      {
+        "type": "action",
+        "description": "Publish the page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the published page is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC011",
+    "title": "Create and track a provisioning request",
+    "description": "This test verifies that a tenant owner can start a provisioning request and view its status page.",
+    "category": "Tenant Billing and Provisioning",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/provisioning/new"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the academy request name field with Atlas Provisioning Test"
+      },
+      {
+        "type": "action",
+        "description": "Submit the provisioning request"
+      },
+      {
+        "type": "action",
+        "description": "Verify the request status page is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC012",
+    "title": "Open an academy from the academy list",
+    "description": "This test verifies that an academy owner can view the academy list and open an academy overview from it.",
+    "category": "Academy Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/academy"
+      },
+      {
+        "type": "action",
+        "description": "Click an academy entry"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the academy overview is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC013",
+    "title": "Create and publish a billing add-on purchase",
+    "description": "Verifies a tenant owner can start checkout for an add-on, complete payment details, and see the purchase reflected in billing history.",
+    "category": "Tenant Billing & Subscription",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Open the tenant billing area"
+      },
+      {
+        "type": "action",
+        "description": "Open the add-ons page"
+      },
+      {
+        "type": "action",
+        "description": "Choose an available add-on to purchase"
+      },
+      {
+        "type": "action",
+        "description": "Start checkout"
+      },
+      {
+        "type": "action",
+        "description": "Fill the payment details form with valid information"
+      },
+      {
+        "type": "action",
+        "description": "Submit the checkout form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the payment history reflects the completed purchase"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC014",
+    "title": "Public visitor opens a published academy website by hostname",
+    "description": "This test verifies that a public visitor can load an academy public website by its hostname and browse published page content.",
+    "category": "Public Marketing Site & Blog",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Open the published academy website from the public entry point"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the academy public homepage is displayed"
+      },
+      {
+        "type": "action",
+        "description": "Click a public page link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify published academy page content is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC015",
+    "title": "Visit a published academy website as a public visitor",
+    "description": "This test verifies that a public visitor can open a published academy hostname and browse the public site navigation.",
+    "category": "Public Website Runtime",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the published academy homepage hostname"
+      },
+      {
+        "type": "action",
+        "description": "Click the public navigation link to another published page"
+      },
+      {
+        "type": "action",
+        "description": "Click the public navigation link back to the homepage"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the published academy website is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify public site navigation links are available"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC016",
+    "title": "Submit a course assignment",
+    "description": "This test verifies that a student can write an assignment response, submit it, and see the submitted state.",
+    "category": "Student Learning",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/learning/courses"
+      },
+      {
+        "type": "action",
+        "description": "Open an enrolled course"
+      },
+      {
+        "type": "action",
+        "description": "Open the assignment"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the assignment response field with I completed the assignment"
+      },
+      {
+        "type": "action",
+        "description": "Submit the assignment"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the assignment submission state is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC017",
+    "title": "Create a new account from registration",
+    "description": "This verifies that a visitor can complete registration and see the account-created state.",
+    "category": "Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/register"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the name field with Atlas Test User"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with atlas.test.user@example.com"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with a valid password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an account created confirmation is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC018",
+    "title": "Submit a quiz attempt",
+    "description": "This test verifies that a student can answer quiz questions and submit a quiz attempt to receive a result.",
+    "category": "Student Learning",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/learning/courses"
+      },
+      {
+        "type": "action",
+        "description": "Open an enrolled course"
+      },
+      {
+        "type": "action",
+        "description": "Open the quiz"
+      },
+      {
+        "type": "action",
+        "description": "Answer the quiz questions"
+      },
+      {
+        "type": "action",
+        "description": "Submit the quiz attempt"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a quiz result is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC019",
+    "title": "Create and publish a course announcement",
+    "description": "Verifies an instructor can post a new announcement and see it appear in the announcement feed.",
+    "category": "Instructor Operations",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Open the instructor course list"
+      },
+      {
+        "type": "action",
+        "description": "Open a course with announcement tools"
+      },
+      {
+        "type": "action",
+        "description": "Open the announcements page for the course"
+      },
+      {
+        "type": "action",
+        "description": "Create a new announcement"
+      },
+      {
+        "type": "action",
+        "description": "Fill the announcement title field"
+      },
+      {
+        "type": "action",
+        "description": "Fill the announcement body field"
+      },
+      {
+        "type": "action",
+        "description": "Publish the announcement"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the new announcement appears in the feed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC020",
+    "title": "Open the platform dashboard and admin sections",
+    "description": "This test verifies that a platform admin can land on the platform dashboard and navigate to key administration areas.",
+    "category": "Platform Administration",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/platform"
+      },
+      {
+        "type": "action",
+        "description": "Click the organizations section"
+      },
+      {
+        "type": "action",
+        "description": "Click the users section"
+      },
+      {
+        "type": "action",
+        "description": "Click the audit log section"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the platform administration navigation is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC021",
+    "title": "Open instructor dashboard and course overview",
+    "description": "Verifies an instructor can reach their teaching overview and open a course summary from it.",
+    "category": "Instructor Operations",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Click the instructor workspace navigation"
+      },
+      {
+        "type": "action",
+        "description": "Open the instructor course list"
+      },
+      {
+        "type": "action",
+        "description": "Open a course from the list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the course summary is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC022",
+    "title": "Track an in-progress provisioning request across visits",
+    "description": "This test verifies that a tenant owner can open a provisioning request, leave the page, return later, and see the same request state.",
+    "category": "Provisioning",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/provisioning"
+      },
+      {
+        "type": "action",
+        "description": "Open a provisioning request from the history list"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the request status to load"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/provisioning"
+      },
+      {
+        "type": "action",
+        "description": "Open the same provisioning request again"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the request status details are still available"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the request progress is preserved"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC023",
+    "title": "Keep access on the dashboard after signing in",
+    "description": "This verifies that signing in takes the user into the authenticated area rather than leaving them on an auth page.",
+    "category": "Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to the dashboard overview"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify dashboard summary content is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC024",
+    "title": "Review enrolled students and open a student progress page",
+    "description": "This test verifies that an instructor can view enrolled students for a course and open an individual student's progress details.",
+    "category": "Instructor Operations",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/instructor/courses"
+      },
+      {
+        "type": "action",
+        "description": "Open a course overview"
+      },
+      {
+        "type": "action",
+        "description": "Open the students section"
+      },
+      {
+        "type": "action",
+        "description": "Click a student entry"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the student progress view is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC025",
+    "title": "View enrolled students and open progress details",
+    "description": "Verifies an instructor can inspect the roster for a course and open a student's progress view.",
+    "category": "Instructor Operations",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Open the instructor course list"
+      },
+      {
+        "type": "action",
+        "description": "Open a course with enrolled students"
+      },
+      {
+        "type": "action",
+        "description": "Open the student roster"
+      },
+      {
+        "type": "action",
+        "description": "Open a student from the roster"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify student progress details are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC026",
+    "title": "Update website settings and save a draft",
+    "description": "This test verifies that an academy owner can change website settings and see the updated draft saved in the website settings page.",
+    "category": "Website Builder",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/academy/1/website/settings"
+      },
+      {
+        "type": "action",
+        "description": "Change the website theme or branding settings"
+      },
+      {
+        "type": "action",
+        "description": "Save the website settings"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the draft website settings are saved"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated website configuration is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC027",
+    "title": "Update academy profile details",
+    "description": "This test verifies that an academy owner can edit academy profile fields and see the updated profile saved.",
+    "category": "Academy Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/academy"
+      },
+      {
+        "type": "action",
+        "description": "Open an academy"
+      },
+      {
+        "type": "action",
+        "description": "Click the academy profile section"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the academy display name field with Atlas Academy Updated"
+      },
+      {
+        "type": "action",
+        "description": "Save the academy profile changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated academy profile is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC028",
+    "title": "Change account password from profile settings",
+    "description": "This verifies that a user can submit a password change from profile settings and see the password-updated state.",
+    "category": "User Profile & Settings",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the profile settings link"
+      },
+      {
+        "type": "action",
+        "description": "Enter the current password"
+      },
+      {
+        "type": "action",
+        "description": "Enter a valid new password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the password change form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a password updated confirmation is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC029",
+    "title": "Browse the platform admin overview and open a management section",
+    "description": "This verifies that a platform owner can reach the platform dashboard and navigate to a platform management area from there.",
+    "category": "Platform Admin Console",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/platform"
+      },
+      {
+        "type": "action",
+        "description": "Open a platform management section"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the selected management page is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC030",
+    "title": "Check plan usage and open the billing area",
+    "description": "This test verifies that a tenant owner can view usage information and navigate to billing-related pages.",
+    "category": "Tenant Billing and Provisioning",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/tenant/usage"
+      },
+      {
+        "type": "action",
+        "description": "Verify the usage summary is displayed"
+      },
+      {
+        "type": "action",
+        "description": "Click the billing section link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the billing overview is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC031",
+    "title": "Review quiz results and performance breakdown",
+    "description": "Verifies an instructor can open quiz results and inspect attempt summaries and performance information.",
+    "category": "Instructor Operations",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Open the instructor course list"
+      },
+      {
+        "type": "action",
+        "description": "Open a course with quiz activity"
+      },
+      {
+        "type": "action",
+        "description": "Open the quiz results view"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify quiz attempt summaries are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a performance breakdown is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC032",
+    "title": "Retry a failed provisioning request",
+    "description": "This test verifies that a tenant owner can retry a failed provisioning request and see the request resume progress.",
+    "category": "Provisioning",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/provisioning"
+      },
+      {
+        "type": "action",
+        "description": "Open a failed provisioning request from the history list"
+      },
+      {
+        "type": "action",
+        "description": "Retry the provisioning request"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the request status changes to an in-progress state"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the request progress resumes"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC033",
+    "title": "Save academy branding changes",
+    "description": "This test verifies that an academy owner can update branding settings and see the new branding state saved.",
+    "category": "Academy Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/academy"
+      },
+      {
+        "type": "action",
+        "description": "Open an academy"
+      },
+      {
+        "type": "action",
+        "description": "Click the academy branding section"
+      },
+      {
+        "type": "action",
+        "description": "Select a new theme color"
+      },
+      {
+        "type": "action",
+        "description": "Save the branding changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated branding state is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC034",
+    "title": "Review a support case and update its status",
+    "description": "This verifies that a platform owner can open a support case, add a reply or change its status, and see the case update.",
+    "category": "Platform Admin Console",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/platform/support"
+      },
+      {
+        "type": "action",
+        "description": "Open a support case"
+      },
+      {
+        "type": "action",
+        "description": "Change the case status or add a reply"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the support case updates are visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC035",
+    "title": "Create and save a website page draft",
+    "description": "This test verifies that an academy owner can create a website page, add content, and save it as a draft.",
+    "category": "Website Builder",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/academy/1/website/pages"
+      },
+      {
+        "type": "action",
+        "description": "Create a new website page"
+      },
+      {
+        "type": "action",
+        "description": "Add content sections to the page"
+      },
+      {
+        "type": "action",
+        "description": "Save the page draft"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the new page is listed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the page draft is available for editing"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC036",
+    "title": "Open the academy public website preview",
+    "description": "This test verifies that an academy owner can preview the public website before publishing.",
+    "category": "Website Builder and Public Delivery",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/academy"
+      },
+      {
+        "type": "action",
+        "description": "Open an academy"
+      },
+      {
+        "type": "action",
+        "description": "Click the website section"
+      },
+      {
+        "type": "action",
+        "description": "Click the preview section"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the website preview is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC037",
+    "title": "Search organizations and open an organization detail",
+    "description": "This verifies that a platform owner can search the organization list and open a matching organization record.",
+    "category": "Platform Admin Console",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/platform/organizations"
+      },
+      {
+        "type": "action",
+        "description": "Type a search query into the organization search field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the search"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify matching organizations are displayed"
+      },
+      {
+        "type": "action",
+        "description": "Open an organization from the results"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the organization detail page is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC038",
+    "title": "Update the user profile",
+    "description": "This verifies that a user can edit profile information and see the updated profile state afterward.",
+    "category": "User Profile & Settings",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the profile settings link"
+      },
+      {
+        "type": "action",
+        "description": "Update the name field"
+      },
+      {
+        "type": "action",
+        "description": "Save the profile changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated profile information is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC039",
+    "title": "Complete academy onboarding checklist",
+    "description": "This test verifies that an academy owner can step through onboarding and reach the completed onboarding state.",
+    "category": "Academy Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/academy"
+      },
+      {
+        "type": "action",
+        "description": "Open an academy"
+      },
+      {
+        "type": "action",
+        "description": "Click the onboarding section"
+      },
+      {
+        "type": "action",
+        "description": "Complete the current onboarding step"
+      },
+      {
+        "type": "action",
+        "description": "Complete the next onboarding step"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the onboarding completed state is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC040",
+    "title": "Review subscription usage and plan guidance",
+    "description": "Verifies a tenant owner can view usage meters and understand current plan capacity and guidance.",
+    "category": "Tenant Billing & Subscription",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Open the tenant usage page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify usage meters are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify plan capacity guidance is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC041",
+    "title": "Search users and open a user detail",
+    "description": "This verifies that a platform owner can search the user list and inspect a single user record.",
+    "category": "Platform Admin Console",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/platform/users"
+      },
+      {
+        "type": "action",
+        "description": "Type a search query into the user search field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the search"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify matching users are displayed"
+      },
+      {
+        "type": "action",
+        "description": "Open a user from the results"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user detail page is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC042",
+    "title": "Preview the public website draft",
+    "description": "This test verifies that an academy owner can preview the drafted public website before publishing it.",
+    "category": "Website Builder",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/academy/1/website/preview"
+      },
+      {
+        "type": "action",
+        "description": "Inspect the previewed website layout"
+      },
+      {
+        "type": "action",
+        "description": "Change the preview breakpoint"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the draft website preview is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the preview reflects the current website content"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC043",
+    "title": "Reach profile settings from the dashboard",
+    "description": "This verifies that an authenticated user can open profile settings from the dashboard navigation.",
+    "category": "User Profile & Settings",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the profile settings link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the profile settings page is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC044",
+    "title": "Post in a course discussion",
+    "description": "This test verifies that a student can open a course discussion and publish a reply successfully.",
+    "category": "Student Learning",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/learning/courses"
+      },
+      {
+        "type": "action",
+        "description": "Open an enrolled course"
+      },
+      {
+        "type": "action",
+        "description": "Open the discussion forum"
+      },
+      {
+        "type": "action",
+        "description": "Start a new discussion reply"
+      },
+      {
+        "type": "action",
+        "description": "Submit the discussion message"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the discussion post is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC045",
+    "title": "Moderate a discussion thread",
+    "description": "Verifies an instructor can open a discussion thread and change its moderation state.",
+    "category": "Instructor Operations",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Open the instructor course list"
+      },
+      {
+        "type": "action",
+        "description": "Open a course with discussion activity"
+      },
+      {
+        "type": "action",
+        "description": "Open the discussions page"
+      },
+      {
+        "type": "action",
+        "description": "Open a discussion thread"
+      },
+      {
+        "type": "action",
+        "description": "Change the thread moderation state"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the thread moderation state change is visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC046",
+    "title": "Review a provisioning request and update its state",
+    "description": "This verifies that a platform owner can inspect a provisioning request and apply an available request action from the detail view.",
+    "category": "Platform Admin Console",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/platform/provisioning"
+      },
+      {
+        "type": "action",
+        "description": "Open a provisioning request"
+      },
+      {
+        "type": "action",
+        "description": "Choose an available request action"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the provisioning request detail reflects the updated state"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC047",
+    "title": "View analytics with a selected date range",
+    "description": "This verifies that an authenticated user can change the analytics date range and see the KPI tiles and charts update accordingly.",
+    "category": "Analytics",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/analytics"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid date range"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify KPI cards are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify analytics charts are displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC048",
+    "title": "Open a completed provisioning request from history",
+    "description": "This test verifies that a tenant owner can review completed provisioning history and open the provisioned academy from the request detail view.",
+    "category": "Provisioning",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/provisioning"
+      },
+      {
+        "type": "action",
+        "description": "Open a completed provisioning request from the history list"
+      },
+      {
+        "type": "action",
+        "description": "Open the linked academy dashboard from the request detail"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the academy dashboard is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the completed request context is accessible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC049",
+    "title": "Filter academy members by role",
+    "description": "This test verifies that an academy owner can search and filter academy members to view the expected member list.",
+    "category": "Academy Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /auth/sign-in"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the sign-in form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/academy"
+      },
+      {
+        "type": "action",
+        "description": "Open an academy"
+      },
+      {
+        "type": "action",
+        "description": "Click the academy members section"
+      },
+      {
+        "type": "action",
+        "description": "Search for a member"
+      },
+      {
+        "type": "action",
+        "description": "Filter members by role"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the filtered member list is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC050",
+    "title": "Open a search result from the global search page",
+    "description": "This verifies that an authenticated user can search across the tenant, view grouped results, and open a matching result.",
+    "category": "Notifications & Search",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard/search"
+      },
+      {
+        "type": "action",
+        "description": "Type a search query into the search field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the search"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify grouped search results are displayed"
+      },
+      {
+        "type": "action",
+        "description": "Open a matching search result"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the selected result page is displayed"
+      }
+    ],
+    "priority": "Medium"
+  }
+]

@@ -33,6 +33,7 @@ import {
   ShieldQuestion,
   LifeBuoy,
   Plug,
+  Layers,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem, NavigationSection } from '@types';
@@ -214,12 +215,21 @@ export function getDashboardNavigation(
       labelKey: 'navigation:sections.learning',
       items: [
         {
-          id: 'learning-courses',
+          id: 'my-learning',
           labelKey: 'navigation:items.myLearning',
-          path: DASHBOARD_ROUTES.learningCourses,
+          path: DASHBOARD_ROUTES.myLearning,
           icon: BookMarked,
           requiresAuth: true,
           requiredPermissions: ['student.learning.view'],
+          matchNestedPaths: false,
+        },
+        {
+          id: 'learning-courses',
+          labelKey: 'navigation:items.discoverCourses',
+          path: DASHBOARD_ROUTES.learningCourses,
+          icon: BookOpen,
+          requiresAuth: true,
+          requiredPermissions: ['student.course.view'],
           matchNestedPaths: true,
         },
       ],
@@ -260,6 +270,17 @@ export function getDashboardNavigation(
           icon: Gauge,
           requiresAuth: true,
           requiredPermissions: ['tenant.dashboard.view'],
+        },
+        {
+          // Phase P19 — no `requiredPermissions`: reachable before a
+          // subscription (and therefore before the `tenant.*` permissions
+          // a real subscription's org membership carries) exists. See
+          // `Reports/DEVELOPMENT_E2E_FLOW_AUDIT.md` P2 "Plans browsing".
+          id: 'plans',
+          labelKey: 'navigation:items.plans',
+          path: DASHBOARD_ROUTES.plans,
+          icon: Layers,
+          requiresAuth: true,
         },
         {
           id: 'tenant-subscription',

@@ -8,7 +8,7 @@
  */
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, FileText, Receipt } from 'lucide-react';
+import { ArrowRight, Columns3, CreditCard, FileText, Receipt } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState, EmptyState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
@@ -47,6 +47,32 @@ export default function BillingOverviewPage(): JSX.Element {
           <Skeleton className="h-32 w-full" />
           <Skeleton className="h-64 w-full" />
         </div>
+      </PageContainer>
+    );
+  }
+
+  // A real, legitimate "no subscription yet" — see `TenantSubscriptionPage`'s
+  // identical branch for the full rationale. This page reads `subscription.plan`
+  // for its "current plan" card, so it genuinely cannot render without one;
+  // the correct response is the same guide-to-Plans empty state, not a
+  // generic error screen.
+  if (subscriptionQuery.error?.kind === 'notFound') {
+    return (
+      <PageContainer>
+        <PageHeader
+          titleKey="payments:overview.title"
+          descriptionKey="payments:overview.subtitle"
+        />
+        <EmptyState
+          icon={CreditCard}
+          titleKey="tenant:subscription.noSubscription.title"
+          descriptionKey="tenant:subscription.noSubscription.description"
+          primaryAction={{
+            labelKey: 'tenant:subscription.noSubscription.action',
+            icon: Columns3,
+            onAction: () => navigate(DASHBOARD_ROUTES.plans),
+          }}
+        />
       </PageContainer>
     );
   }

@@ -50,6 +50,8 @@
     "academyNameLabel": "Academy name",
     "subdomainLabel": "Atlas address",
     "subdomainHelp": "This will be your Academy's Atlas address. You can connect a custom domain later.",
+    "themeLabel": "Theme",
+    "themeHelp": "Choose a starting look for your Academy's website. You can change it anytime from Website Settings.",
     "subdomainStatus": {
       "suggested": "Checking availability…",
       "available": "Available",

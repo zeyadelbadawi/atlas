@@ -9,7 +9,7 @@ import axios, { type AxiosInstance, type AxiosError } from 'axios';
 import { ENV } from '@config';
 import { tokenService } from '@services/identity';
 import type { ApiRequest, ApiResponse } from '@types';
-import { normalizeApiError, ApiError } from './api-error';
+import { normalizeAxiosError, ApiError } from './api-error';
 
 /** Default timeout for API requests, in milliseconds. */
 const DEFAULT_TIMEOUT_MS = 30_000;
@@ -67,6 +67,7 @@ export class HttpClient {
         headers,
         timeout: request.timeoutMs ?? DEFAULT_TIMEOUT_MS,
         signal: request.signal,
+        responseType: request.responseType,
       });
 
       return {
@@ -75,7 +76,7 @@ export class HttpClient {
         requestId: response.headers['x-request-id'],
       };
     } catch (error) {
-      throw normalizeApiError(error);
+      throw normalizeAxiosError(error);
     }
   }
 

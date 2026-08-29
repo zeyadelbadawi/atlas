@@ -12,12 +12,15 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CheckCircle2, Loader2, XCircle } from 'lucide-react';
+import { Check, CheckCircle2, Loader2, XCircle } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { cn } from '@utils';
+import { listWebsiteThemes } from '@features/website';
+import type { WebsiteThemeDefinition } from '@types';
 import {
   Form,
   FormControl,
@@ -63,8 +66,11 @@ export default function ProvisioningStartPage(): JSX.Element {
 
   const form = useForm<CreateProvisioningRequestFormData>({
     resolver: zodResolver(createProvisioningRequestSchema),
-    defaultValues: { academyName: '', requestedSubdomain: '' },
+    defaultValues: { academyName: '', requestedSubdomain: '', selectedThemeKey: undefined },
   });
+
+  const themes = listWebsiteThemes();
+  const selectedThemeKey = form.watch('selectedThemeKey');
 
   useServerValidation(form, createRequest.error);
 
@@ -72,7 +78,22 @@ export default function ProvisioningStartPage(): JSX.Element {
   const availability = useCheckSubdomainAvailability(subdomainValue);
 
   const isLoading = usageQuery.isLoading || subscriptionQuery.isLoading;
-  const error = usageQuery.error ?? subscriptionQuery.error;
+
+  // Usage is a computed/cached row a background worker fills in shortly
+  // after a subscription activates (see `TenantSubscriptionService.getUsage`'s
+  // own doc comment) — a real 404 for a freshly-approved subscription, not
+  // a failure. Confirmed live: a brand-new organization whose payment was
+  // just approved could never reach Setup at all, because this page
+  // treated that timing gap as a hard "Unexpected error" and blocked the
+  // form outright. This page cannot know the academies limit without a
+  // usage row, but a subscription this fresh cannot have created any
+  // academy yet either — proceed to the form instead of blocking
+  // onboarding on an infra timing artifact; the backend remains the
+  // actual limit-enforcement authority regardless (see
+  // `TenantUsagePage`'s own doc comment, "Frontend limit checks are UX
+  // only").
+  const usageNotReady = usageQuery.error?.kind === 'notFound';
+  const error = (usageQuery.error && !usageNotReady) || subscriptionQuery.error;
 
   const refetchAll = () => {
     void usageQuery.refetch();
@@ -90,7 +111,7 @@ export default function ProvisioningStartPage(): JSX.Element {
     );
   }
 
-  if (error || !usageQuery.data || !subscriptionQuery.data || !organization?.id) {
+  if (error || !subscriptionQuery.data || !organization?.id) {
     return (
       <PageContainer>
         <PageHeader titleKey="provisioning:start.title" />
@@ -99,10 +120,12 @@ export default function ProvisioningStartPage(): JSX.Element {
     );
   }
 
-  const usageStatus = getUsageMetricStatus(usageQuery.data.academies);
+  const usageStatus = usageQuery.data
+    ? getUsageMetricStatus(usageQuery.data.academies)
+    : 'allowed';
   const limitReached = usageStatus === 'limitReached';
 
-  if (limitReached) {
+  if (limitReached && usageQuery.data) {
     const gapAction = getLimitGapAction(
       'academies',
       usageStatus,
@@ -155,6 +178,7 @@ export default function ProvisioningStartPage(): JSX.Element {
         payload: {
           academyName: data.academyName,
           requestedSubdomain: data.requestedSubdomain,
+          selectedThemeKey: data.selectedThemeKey,
           idempotencyKey,
         },
       },
@@ -236,6 +260,79 @@ export default function ProvisioningStartPage(): JSX.Element {
                       </p>
                     ) : null}
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Phase P19 — real theme selection during onboarding
+                  (previously always skipped — see `Reports/
+                  DEVELOPMENT_E2E_FLOW_AUDIT.md` P1-1). Optional: skipping
+                  leaves the Website Builder's own bootstrap default in
+                  place, applied the first time the Academy's website is
+                  ever read (`WebsiteBootstrapService`). */}
+              <FormField
+                control={form.control}
+                name="selectedThemeKey"
+                render={() => (
+                  <FormItem>
+                    <FormLabel>{t('provisioning:start.themeLabel')}</FormLabel>
+                    <FormDescription>
+                      {t('provisioning:start.themeHelp')}
+                    </FormDescription>
+                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                      {themes.map((theme: WebsiteThemeDefinition) => {
+                        const isSelected = selectedThemeKey === theme.key;
+                        return (
+                          <button
+                            key={theme.key}
+                            type="button"
+                            onClick={() =>
+                              form.setValue(
+                                'selectedThemeKey',
+                                isSelected ? undefined : theme.key,
+                                { shouldDirty: true }
+                              )
+                            }
+                            className={cn(
+                              'flex flex-col gap-3 rounded-lg border p-4 text-start transition-colors',
+                              isSelected
+                                ? 'border-2 border-primary'
+                                : 'border-border hover:border-primary/50'
+                            )}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="flex gap-1.5">
+                                {[
+                                  theme.tokens.defaultPrimary,
+                                  theme.tokens.defaultSecondary,
+                                  theme.tokens.defaultAccent,
+                                ].map((hsl, index) => (
+                                  <span
+                                    key={index}
+                                    className="size-4 rounded-full border border-border"
+                                    style={{ backgroundColor: `hsl(${hsl})` }}
+                                    aria-hidden
+                                  />
+                                ))}
+                              </span>
+                              {isSelected ? (
+                                <Check
+                                  className="size-4 text-primary"
+                                  strokeWidth={2}
+                                  aria-hidden
+                                />
+                              ) : null}
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium">{t(theme.nameKey)}</p>
+                              <p className="mt-0.5 text-xs text-muted-foreground">
+                                {t(theme.descriptionKey)}
+                              </p>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </FormItem>
                 )}
               />

@@ -10,6 +10,7 @@
  */
 import { BaseService } from '@services';
 import type { ReadOptions, WriteOptions } from '@services';
+import { toCollectionParams } from '@api';
 import type {
   CollectionQuery,
   CreateForumReplyPayload,
@@ -18,7 +19,6 @@ import type {
   ForumReply,
   ForumThread,
   PaginatedResult,
-  QueryParams,
 } from '@types';
 
 export class ForumService extends BaseService {
@@ -37,7 +37,7 @@ export class ForumService extends BaseService {
   ): Promise<PaginatedResult<ForumThread>> {
     return this.client.get<PaginatedResult<ForumThread>>(
       this.path(courseId, 'forum', 'threads'),
-      { ...options, params: query as unknown as QueryParams }
+      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
     );
   }
 
@@ -62,7 +62,7 @@ export class ForumService extends BaseService {
   ): Promise<PaginatedResult<ForumReply>> {
     return this.client.get<PaginatedResult<ForumReply>>(
       this.path(courseId, 'forum', 'threads', threadId, 'replies'),
-      { ...options, params: query as unknown as QueryParams }
+      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
     );
   }
 

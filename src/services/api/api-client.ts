@@ -17,6 +17,8 @@ export interface ReadOptions {
   readonly headers?: Record<string, string>;
   readonly signal?: AbortSignal;
   readonly timeoutMs?: number;
+  /** See `ApiRequest['responseType']`. */
+  readonly responseType?: 'json' | 'blob';
 }
 
 /** Options accepted by write operations. */

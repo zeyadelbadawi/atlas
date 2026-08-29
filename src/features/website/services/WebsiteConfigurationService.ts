@@ -16,11 +16,11 @@
  */
 import { BaseService } from '@services';
 import type { ReadOptions, WriteOptions } from '@services';
+import { toCollectionParams } from '@api';
 import type {
   CreateWebsitePagePayload,
   PaginatedResult,
   CollectionQuery,
-  QueryParams,
   ReorderItemsPayload,
   UpdateWebsiteConfigurationPayload,
   UpdateWebsitePagePayload,
@@ -79,7 +79,7 @@ export class WebsiteConfigurationService extends BaseService {
   ): Promise<PaginatedResult<WebsitePage>> {
     return this.client.get<PaginatedResult<WebsitePage>>(
       this.websitePath(academyId, 'pages'),
-      { ...options, params: query as QueryParams }
+      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
     );
   }
 

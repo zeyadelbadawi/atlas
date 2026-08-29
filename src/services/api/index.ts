@@ -13,6 +13,7 @@ export {
   errorTitleKey,
   isApiError,
   normalizeApiError,
+  normalizeAxiosError,
   normalizeResponseError,
   normalizeUnknownError,
 } from './api-error';

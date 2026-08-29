@@ -35,6 +35,11 @@ export interface Organization {
   readonly updatedAt: string;
 }
 
+/** `POST /organizations` request (Phase P19). Slug is server-generated from `name` — no slug field here, matching the real backend contract (`CreateOrganizationDto`). */
+export interface CreateOrganizationPayload {
+  readonly name: string;
+}
+
 /** A tenant subscription's lifecycle state. Named distinctly from the Prompt 3A, user-scoped `SubscriptionStatus` that used to live in `billing.types.ts` — that legacy file was removed in Prompt 13 along with its only consumer, the fake `BillingPage`. */
 export type TenantSubscriptionStatus =
   | 'trialing'

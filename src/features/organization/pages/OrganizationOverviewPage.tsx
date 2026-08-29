@@ -8,7 +8,8 @@
  * Reports/PROGRESS.md's Organization Management Completion entry).
  */
 import { useTranslation } from 'react-i18next';
-import { Building2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Building2, Plus } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState, EmptyState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
@@ -16,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@hooks';
+import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { useOrganization } from '../hooks';
 import type { OrganizationStatus } from '@types';
 
@@ -28,11 +30,13 @@ function statusTone(status: OrganizationStatus): 'success' | 'warning' | 'neutra
 export default function OrganizationOverviewPage(): JSX.Element {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const organizationQuery = useOrganization();
 
-  // Zero organizations — a real state today (P2 shipped no
-  // organization-creation flow). Distinct from a loading/error state:
-  // there is genuinely nothing to fetch.
+  // Zero organizations — a real state today. Phase P19 closed the gap
+  // this comment used to describe (`Reports/DEVELOPMENT_E2E_FLOW_AUDIT.md`
+  // P0-1: no organization-creation flow existed anywhere) — this empty
+  // state is now the real entry point into it, not a dead end.
   if (user && user.organizations.length === 0) {
     return (
       <PageContainer>
@@ -44,6 +48,11 @@ export default function OrganizationOverviewPage(): JSX.Element {
           icon={Building2}
           titleKey="organization:overview.empty.title"
           descriptionKey="organization:overview.empty.description"
+          primaryAction={{
+            labelKey: 'organization:overview.empty.action',
+            icon: Plus,
+            onAction: () => navigate(DASHBOARD_ROUTES.organizationCreate),
+          }}
         />
       </PageContainer>
     );

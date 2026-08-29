@@ -15,6 +15,7 @@
  */
 import { BaseService } from '@services';
 import type { ReadOptions, WriteOptions } from '@services';
+import { toCollectionParams } from '@api';
 import type {
   AssignmentSubmissionReview,
   CollectionQuery,
@@ -24,7 +25,6 @@ import type {
   InstructorStudent,
   InstructorStudentProgress,
   PaginatedResult,
-  QueryParams,
   QuizAttemptSummary,
   TeachingCourse,
 } from '@types';
@@ -47,7 +47,7 @@ export class InstructorService extends BaseService {
   ): Promise<PaginatedResult<TeachingCourse>> {
     return this.client.get<PaginatedResult<TeachingCourse>>(
       this.path('courses'),
-      { ...options, params: query as unknown as QueryParams }
+      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
     );
   }
 
@@ -70,7 +70,7 @@ export class InstructorService extends BaseService {
   ): Promise<PaginatedResult<InstructorStudent>> {
     return this.client.get<PaginatedResult<InstructorStudent>>(
       this.path('courses', courseId, 'students'),
-      { ...options, params: query as unknown as QueryParams }
+      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
     );
   }
 
@@ -95,7 +95,7 @@ export class InstructorService extends BaseService {
   ): Promise<PaginatedResult<QuizAttemptSummary>> {
     return this.client.get<PaginatedResult<QuizAttemptSummary>>(
       this.path('courses', courseId, 'quizzes', quizId, 'attempts'),
-      { ...options, params: query as unknown as QueryParams }
+      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
     );
   }
 
@@ -108,7 +108,7 @@ export class InstructorService extends BaseService {
   ): Promise<PaginatedResult<AssignmentSubmissionReview>> {
     return this.client.get<PaginatedResult<AssignmentSubmissionReview>>(
       this.path('courses', courseId, 'assignments', assignmentId, 'submissions'),
-      { ...options, params: query as unknown as QueryParams }
+      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
     );
   }
 

@@ -146,7 +146,65 @@
       "pending": "Pending"
     },
     "emptyState": "No members found",
-    "emptyStateDescription": "Your academy doesn't have any members yet."
+    "emptyStateDescription": "Your academy doesn't have any members yet.",
+    "addManager": {
+      "triggerButton": "Add Manager",
+      "title": "Add an Academy Manager",
+      "description": "Grant an Atlas user Manager access to this academy — they'll be able to manage courses, instructors, content and academy settings, but not your organization's billing or subscription.",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "manager@example.com",
+      "cancelButton": "Cancel",
+      "submitButton": "Add Manager",
+      "success": "Manager added successfully",
+      "errors": {
+        "userNotFound": "No Atlas account exists for that email address.",
+        "alreadyMember": "This person is already a member of this academy.",
+        "insufficientRole": "Only the academy owner can add a manager.",
+        "generic": "Could not add this manager. Please try again."
+      }
+    },
+    "addInstructor": {
+      "triggerButton": "Add Instructor",
+      "title": "Add an Academy Instructor",
+      "description": "Grant an Atlas user Instructor access to this academy — they'll be able to view their courses, students and submissions, and grade assignments, but not manage academy content or settings.",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "instructor@example.com",
+      "cancelButton": "Cancel",
+      "submitButton": "Add Instructor",
+      "success": "Instructor added successfully",
+      "errors": {
+        "userNotFound": "No Atlas account exists for that email address.",
+        "alreadyMember": "This person is already a member of this academy.",
+        "insufficientRole": "Only the academy owner can add an instructor.",
+        "generic": "Could not add this instructor. Please try again."
+      }
+    },
+    "createStudent": {
+      "triggerButton": "Add Student",
+      "title": "Create a Student Account",
+      "description": "Students aren't academy team members — this creates a brand-new Atlas account that can browse the course catalog and enroll, exactly like any other Atlas user.",
+      "nameLabel": "Full name",
+      "emailLabel": "Email address",
+      "passwordLabel": "Password",
+      "cancelButton": "Cancel",
+      "submitButton": "Create Student",
+      "doneButton": "Done",
+      "success": "Student account created",
+      "credentialsHint": "Share these credentials with the student — they won't be shown again.",
+      "errors": {
+        "emailTaken": "An Atlas account already exists for that email address.",
+        "insufficientRole": "Only the academy owner can create a student account.",
+        "generic": "Could not create this student account. Please try again."
+      }
+    },
+    "newAccount": {
+      "title": "New account (optional)",
+      "description": "Leave name and password blank if this person already has an Atlas account. Fill in both to create a new account for them.",
+      "nameLabel": "Full name",
+      "passwordLabel": "Password",
+      "passwordHelp": "At least 8 characters.",
+      "bothRequired": "Enter both a name and a password to create a new account, or leave both blank."
+    }
   },
   "switcher": {
     "title": "Switch Academy",

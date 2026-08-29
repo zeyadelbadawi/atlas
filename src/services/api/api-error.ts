@@ -8,6 +8,7 @@
  * User-facing text is never taken from the backend: only translation keys are
  * exposed, so error messages stay localized and never leak internal details.
  */
+import axios from 'axios';
 import { API_ERROR_KINDS } from '@types';
 import type {
   ApiErrorKind,
@@ -157,6 +158,29 @@ function readRequestId(payload: BackendErrorPayload): string | undefined {
 }
 
 /**
+ * Unwraps a raw HTTP body into the flat shape {@link normalizeResponseError}
+ * reads from.
+ *
+ * `AllExceptionsFilter` (atlas backend `src/common/filters/`) always nests
+ * the normalized error one level under an `error` key —
+ * `{ error: { kind, messageKey, code, status, violations, requestId,
+ * retryable } }` — never flat. A flat top-level shape is still accepted so
+ * this stays forward-compatible with a future endpoint that doesn't nest,
+ * rather than assuming the current backend is the only one this will ever
+ * talk to.
+ */
+function unwrapErrorBody(payload: unknown): BackendErrorPayload {
+  if (typeof payload !== 'object' || payload === null) return {};
+
+  const root = payload as { readonly error?: unknown };
+  if (typeof root.error === 'object' && root.error !== null) {
+    return root.error as BackendErrorPayload;
+  }
+
+  return payload as BackendErrorPayload;
+}
+
+/**
  * Normalizes a response-based failure.
  *
  * @param status HTTP-like status code of the response.
@@ -166,11 +190,7 @@ export function normalizeResponseError(
   status: number,
   payload: unknown
 ): ApiError {
-  const body: BackendErrorPayload =
-    typeof payload === 'object' && payload !== null
-      ? (payload as BackendErrorPayload)
-      : {};
-
+  const body = unwrapErrorBody(payload);
   const kind = toErrorKind(body.kind) ?? kindFromStatus(status);
 
   return createApiError(kind, {
@@ -190,7 +210,9 @@ export function normalizeUnknownError(error: unknown): ApiError {
   }
 
   if (error instanceof TypeError) {
-    // `fetch` rejects with a TypeError when the request never reached a server.
+    // A raw (non-Axios) `fetch` rejects with a TypeError when the request
+    // never reached a server. Kept for any caller that isn't going through
+    // the Axios-backed `HttpClient` — see `normalizeAxiosError` for that path.
     return createApiError('network');
   }
 
@@ -199,3 +221,49 @@ export function normalizeUnknownError(error: unknown): ApiError {
 
 /** Alias for normalizeUnknownError for backward compatibility. */
 export const normalizeApiError = normalizeUnknownError;
+
+/**
+ * Normalizes a failure thrown by the Axios-backed `HttpClient`.
+ *
+ * This is the actual transport in use (`http-client.ts` wraps `axios`, not
+ * the raw `fetch` API), and an `AxiosError` is neither a `DOMException`
+ * `AbortError` nor a `TypeError` — so routing it through
+ * {@link normalizeUnknownError} alone always fell through to the generic
+ * `'unknown'` kind, discarding the backend's actual status and structured
+ * body (kind/messageKey/violations) on every single failed request. This is
+ * the one place that distinction is made:
+ *
+ * - A response was received (`error.response` set): the backend did answer,
+ *   so its real status and body are authoritative — {@link normalizeResponseError}.
+ * - The request was cancelled (`AbortController`/`CancelToken`): `'cancelled'`.
+ * - No response and the client aborted the wait itself: `'timeout'`.
+ * - No response for any other reason (DNS/CORS/offline/refused): `'network'`.
+ * - Anything else (a non-Axios throw) falls back to {@link normalizeUnknownError}.
+ */
+export function normalizeAxiosError(error: unknown): ApiError {
+  if (isApiError(error)) return error;
+
+  if (axios.isAxiosError(error)) {
+    // `error.code === 'ERR_CANCELED'` alone identifies a cancelled Axios
+    // request (v1's `CanceledError`) — deliberately not also combined with
+    // `axios.isCancel(error)` here: two type predicates OR'd together in
+    // one guard clause makes TypeScript narrow `error` to `never` for the
+    // rest of this block (`Exclude<AxiosError, Cancel>` collapses to
+    // nothing), which then fails to compile on every property access below.
+    if (error.code === 'ERR_CANCELED') {
+      return createApiError('cancelled');
+    }
+
+    if (error.response) {
+      return normalizeResponseError(error.response.status, error.response.data);
+    }
+
+    if (error.code === 'ECONNABORTED') {
+      return createApiError('timeout');
+    }
+
+    return createApiError('network');
+  }
+
+  return normalizeUnknownError(error);
+}

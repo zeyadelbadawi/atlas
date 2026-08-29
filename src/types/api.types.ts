@@ -34,6 +34,14 @@ export interface ApiRequest<TBody = unknown> {
   readonly timeoutMs?: number;
   /** Allows a caller to cancel an in-flight request. */
   readonly signal?: AbortSignal;
+  /**
+   * How the transport should parse the response body. Defaults to JSON.
+   * `'blob'` is for binary downloads (e.g. an authenticated payment-proof
+   * file) that a plain `<a href>` cannot fetch, since that never attaches
+   * the Bearer token this API requires — the caller turns the resulting
+   * `Blob` into an object URL (`URL.createObjectURL`) instead.
+   */
+  readonly responseType?: 'json' | 'blob';
 }
 
 /** Normalised successful response returned to services. */

@@ -126,6 +126,7 @@
     "submitProof": "Submit for review",
     "proofTooLarge": "The file is too large.",
     "proofInvalidType": "This file type isn't supported. Use PNG, JPG or PDF.",
+    "proofLoadError": "Couldn't open the submitted proof. Please try again.",
     "redirectDescription": "You'll be taken to a secure page to complete this payment.",
     "continueToProvider": "Continue to secure payment",
     "processingMessage": "This payment is being processed. This page updates automatically.",
