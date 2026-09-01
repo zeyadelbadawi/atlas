@@ -132,6 +132,17 @@ export interface CreateCoursePayload {
   readonly visibility: CourseVisibility;
 }
 
+/**
+ * Grants course-level instructor access (Phase 3 — Instructor <-> Course
+ * Assignment). `userId` must already be an active `instructor`-role
+ * member of the SAME academy that owns the course; see
+ * `CourseInstructorsCard`'s doc comment for why this is a distinct action
+ * from academy-wide instructor roster membership.
+ */
+export interface AssignCourseInstructorPayload {
+  readonly userId: string;
+}
+
 /** Course update payload. */
 export interface UpdateCoursePayload {
   readonly title?: string;

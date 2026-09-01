@@ -38,6 +38,7 @@ import { useFilePicker, useUnsavedChanges } from '@hooks';
 import { useServerValidation } from '@forms';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useCourse, useUpdateCourse, useCourseCategories } from '../hooks';
+import { CourseInstructorsCard } from '../components/CourseInstructorsCard';
 import {
   updateCourseSchema,
   type UpdateCourseFormData,
@@ -532,6 +533,12 @@ export default function CourseEditPage(): JSX.Element {
           </div>
         </form>
       </Form>
+
+      {academyId ? (
+        <div className="mt-6">
+          <CourseInstructorsCard academyId={academyId} course={course} />
+        </div>
+      ) : null}
     </PageContainer>
   );
 }

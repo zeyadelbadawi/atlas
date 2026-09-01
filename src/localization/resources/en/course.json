@@ -122,6 +122,19 @@
     "goToBuilder": "Course Builder",
     "goToSettings": "Course Settings"
   },
+  "instructors": {
+    "title": "Instructors",
+    "description": "Choose which of this academy's instructors can access this course. Being on the academy's instructor roster does not, by itself, grant access to any course.",
+    "rosterEmpty": "This academy has no instructors yet. Add one from Academy Members first.",
+    "assignSuccess": "Instructor assigned to this course",
+    "removeSuccess": "Instructor removed from this course",
+    "errors": {
+      "notEligible": "This person isn't an active instructor in this academy.",
+      "alreadyAssigned": "This instructor is already assigned to this course.",
+      "insufficientRole": "You don't have permission to manage this course's instructors.",
+      "generic": "Couldn't update this course's instructors. Please try again."
+    }
+  },
   "builder": {
     "title": "Course Builder",
     "subtitle": "Organize your course curriculum",

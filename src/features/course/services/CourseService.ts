@@ -11,6 +11,7 @@ import { BaseService } from '@services';
 import type { ReadOptions, WriteOptions } from '@services';
 import { resourcePath, toCollectionParams } from '@api';
 import type {
+  AssignCourseInstructorPayload,
   Course,
   CourseCategory,
   CourseLesson,
@@ -157,6 +158,37 @@ export class CourseService extends BaseService {
     return this.client.post<Course, undefined>(
       this.coursesPath(academyId, courseId, 'unpublish'),
       undefined,
+      options
+    );
+  }
+
+  /**
+   * Grants course-level instructor access (Phase 3). The target must
+   * already be an active `instructor`-role member of this academy — see
+   * `AssignCourseInstructorPayload`'s doc comment.
+   */
+  async assignCourseInstructor(
+    academyId: string,
+    courseId: string,
+    payload: AssignCourseInstructorPayload,
+    options?: WriteOptions
+  ): Promise<Course> {
+    return this.client.post<Course, AssignCourseInstructorPayload>(
+      this.coursesPath(academyId, courseId, 'instructors'),
+      payload,
+      options
+    );
+  }
+
+  /** Revokes course-level instructor access. Does not affect the instructor's Academy roster membership. */
+  async removeCourseInstructor(
+    academyId: string,
+    courseId: string,
+    userId: string,
+    options?: WriteOptions
+  ): Promise<void> {
+    await this.client.delete<void>(
+      this.coursesPath(academyId, courseId, 'instructors', userId),
       options
     );
   }
