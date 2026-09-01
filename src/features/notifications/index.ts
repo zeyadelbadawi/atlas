@@ -4,6 +4,7 @@
  * Notification center and management.
  */
 export { default as NotificationsPage } from './pages/NotificationsPage';
+export { NotificationBell } from './components/NotificationBell';
 export {
   useNotifications,
   useNotificationSummary,

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as LabelPrimitive from '@radix-ui/react-label';
 import { Slot } from '@radix-ui/react-slot';
+import { useTranslation } from 'react-i18next';
 import {
     Controller,
     FormProvider,
@@ -149,7 +150,18 @@ const FormMessage = React.forwardRef<
     React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
     const { error, formMessageId } = useFormField();
-    const body = error ? String(error?.message) : children;
+    const { t } = useTranslation();
+    const rawMessage = error ? String(error?.message) : undefined;
+    // Both Zod schemas and server-mapped violations across this app store
+    // their message as a translation key (e.g. "validation:required") —
+    // the same "contains a colon => it's an i18n key, otherwise render it
+    // as-is" rule `shared/forms/form.utils.ts`'s `resolveValidationMessage`
+    // already uses for the other form-field convention. Without this,
+    // every field error in a shadcn-based form rendered the raw key
+    // string instead of translated text.
+    const body = rawMessage
+        ? (rawMessage.includes(':') ? t(rawMessage) : rawMessage)
+        : children;
 
     if (!body) {
         return null;

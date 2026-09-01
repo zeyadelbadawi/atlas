@@ -25,10 +25,12 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useServerValidation } from '@forms';
 import {
   courseSectionSchema,
   type CourseSectionFormData,
 } from '../schemas/course.schemas';
+import type { ApiError } from '@api';
 
 export interface SectionFormDialogProps {
   readonly open: boolean;
@@ -37,6 +39,8 @@ export interface SectionFormDialogProps {
   readonly defaultValues?: CourseSectionFormData;
   readonly isPending: boolean;
   readonly onSubmit: (data: CourseSectionFormData) => void | Promise<void>;
+  /** The create/update mutation's current error, so a validation (400) failure maps onto the field that caused it instead of only a page-level toast. */
+  readonly error?: ApiError | null;
 }
 
 export function SectionFormDialog({
@@ -46,6 +50,7 @@ export function SectionFormDialog({
   defaultValues,
   isPending,
   onSubmit,
+  error,
 }: SectionFormDialogProps): JSX.Element {
   const { t } = useTranslation();
 
@@ -53,6 +58,8 @@ export function SectionFormDialog({
     resolver: zodResolver(courseSectionSchema),
     values: defaultValues ?? { title: '', description: '' },
   });
+
+  useServerValidation(form, error ?? null);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

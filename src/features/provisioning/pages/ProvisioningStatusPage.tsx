@@ -31,6 +31,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@hooks';
 import { useConfirmDialog } from '@app/providers';
+import { toErrorsNamespaceKey } from '@utils';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import {
   useCancelProvisioning,
@@ -152,7 +153,7 @@ export default function ProvisioningStatusPage(): JSX.Element {
                       </p>
                       {status === 'failed' && step?.error ? (
                         <p className="mt-0.5 text-sm text-destructive">
-                          {t(step.error.messageKey)}
+                          {t(toErrorsNamespaceKey(step.error.messageKey))}
                         </p>
                       ) : null}
                     </div>
@@ -173,7 +174,7 @@ export default function ProvisioningStatusPage(): JSX.Element {
             <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground">
                 {request.lastError
-                  ? t(request.lastError.messageKey)
+                  ? t(toErrorsNamespaceKey(request.lastError.messageKey))
                   : t('provisioning:status.failedGenericDescription')}
               </p>
               {retryProvisioning.error ? (

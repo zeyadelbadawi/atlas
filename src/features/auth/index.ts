@@ -12,6 +12,7 @@ export { default as ResetPasswordPage } from './pages/ResetPasswordPage';
 export { SignInForm } from './components/SignInForm';
 export type { SignInFormProps } from './components/SignInForm';
 export { RegistrationForm } from './components/RegistrationForm';
+export type { RegistrationFormProps } from './components/RegistrationForm';
 export { ForgotPasswordForm } from './components/ForgotPasswordForm';
 export { ResetPasswordForm } from './components/ResetPasswordForm';
 export type { ResetPasswordFormProps } from './components/ResetPasswordForm';

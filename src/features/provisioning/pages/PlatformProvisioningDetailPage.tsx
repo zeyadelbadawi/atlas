@@ -21,6 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useConfirmDialog } from '@app/providers';
 import { usePermissions } from '@hooks';
+import { toErrorsNamespaceKey } from '@utils';
 import {
   usePlatformCancelProvisioning,
   usePlatformProvisioningRequest,
@@ -167,7 +168,7 @@ export default function PlatformProvisioningDetailPage(): JSX.Element {
                       {status === 'failed' && step?.error ? (
                         <div className="mt-0.5 space-y-0.5">
                           <p className="text-sm text-destructive">
-                            {t(step.error.messageKey)}
+                            {t(toErrorsNamespaceKey(step.error.messageKey))}
                           </p>
                           {step.error.detail ? (
                             <p className="font-mono text-xs text-muted-foreground">

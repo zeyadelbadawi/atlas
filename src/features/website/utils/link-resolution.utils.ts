@@ -28,6 +28,12 @@ export function resolveWebsiteCtaHref(
 ): string | undefined {
   if (!cta) return undefined;
 
+  // Phase 1 (Extended Scope, Decision 11, dependency C) — highest
+  // precedence: an explicit, unambiguous request for this Academy's own
+  // Sign In/Sign Up, never confusable with a `pageId`/`courseId`/`url`.
+  if (cta.authAction === 'signIn') return '/sign-in';
+  if (cta.authAction === 'signUp') return '/sign-up';
+
   if (cta.courseId) return `/courses/${cta.courseId}`;
 
   if (cta.pageId) {

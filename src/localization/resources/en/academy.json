@@ -50,7 +50,12 @@
     "cancelButton": "Cancel",
     "creating": "Creating academy...",
     "success": "Academy created successfully",
-    "error": "Failed to create academy"
+    "error": "Failed to create academy",
+    "errors": {
+      "slugTaken": "This slug is already taken. Try a different one.",
+      "limitReachedTitle": "Academy limit reached",
+      "limitReachedDescription": "You've reached your plan's academy limit. Upgrade your plan to create another academy."
+    }
   },
   "profile": {
     "title": "Academy Profile",
@@ -176,6 +181,7 @@
         "userNotFound": "No Atlas account exists for that email address.",
         "alreadyMember": "This person is already a member of this academy.",
         "insufficientRole": "Only the academy owner can add an instructor.",
+        "limitReached": "You've reached your plan's instructor limit. Upgrade your plan to add more.",
         "generic": "Could not add this instructor. Please try again."
       }
     },

@@ -102,7 +102,11 @@
     "continueToBuilder": "الانتقال إلى منشئ الدورة",
     "error": "فشل إنشاء الدورة",
     "thumbnailTooLarge": "يجب أن يكون حجم الصورة المصغّرة أقل من 5 ميجابايت.",
-    "thumbnailInvalidType": "يجب أن تكون الصورة المصغّرة بصيغة PNG أو JPG."
+    "thumbnailInvalidType": "يجب أن تكون الصورة المصغّرة بصيغة PNG أو JPG.",
+    "errors": {
+      "limitReachedTitle": "تم بلوغ الحد الأقصى للدورات",
+      "limitReachedDescription": "لقد وصلت إلى الحد الأقصى للدورات في خطتك. قم بترقية خطتك لإنشاء دورة أخرى."
+    }
   },
   "edit": {
     "title": "تعديل الدورة",
@@ -161,6 +165,7 @@
       "contentTypeLabel": "نوع المحتوى",
       "contentUrlLabel": "رابط المحتوى",
       "contentUrlPlaceholder": "https://...",
+      "chooseFromLibrary": "اختر من المكتبة",
       "statusLabel": "الإتاحة",
       "saveButton": "حفظ الدرس",
       "cancelButton": "إلغاء",

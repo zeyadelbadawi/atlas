@@ -33,6 +33,8 @@ import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@hooks';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
+import { useServerValidation } from '@forms';
+import { isApiError } from '@api';
 import { useCreateOrganization } from '../hooks';
 import {
   createOrganizationSchema,
@@ -43,12 +45,14 @@ export default function OrganizationCreatePage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { refreshSession } = useAuth();
-  const { mutateAsync: createOrganization, isPending } = useCreateOrganization();
+  const { mutateAsync: createOrganization, isPending, error } = useCreateOrganization();
 
   const form = useForm<CreateOrganizationFormData>({
     resolver: zodResolver(createOrganizationSchema),
     defaultValues: { name: '' },
   });
+
+  useServerValidation(form, error);
 
   const onSubmit = async (data: CreateOrganizationFormData) => {
     try {
@@ -63,7 +67,15 @@ export default function OrganizationCreatePage(): JSX.Element {
       // stale until the next natural session refresh.
       await refreshSession();
       navigate(DASHBOARD_ROUTES.plans, { replace: true });
-    } catch (error) {
+    } catch (caughtError) {
+      if (
+        isApiError(caughtError) &&
+        caughtError.kind === 'validation' &&
+        caughtError.violations &&
+        caughtError.violations.length > 0
+      ) {
+        return;
+      }
       toast({
         title: t('organization:create.error'),
         description: t('errors:generic'),

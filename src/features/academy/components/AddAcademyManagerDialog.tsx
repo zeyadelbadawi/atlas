@@ -31,6 +31,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@app/providers/toast/useToast';
+import { useServerValidation } from '@forms';
 import { useAddAcademyManager } from '../hooks';
 import {
   addAcademyManagerSchema,
@@ -59,6 +60,12 @@ export function AddAcademyManagerDialog({
     defaultValues: DEFAULT_VALUES,
   });
 
+  // Maps a `validation` (400) mutation error's per-field violations onto
+  // this form — e.g. the backend's `@MinLength(2)` on `name` versus this
+  // schema's client-side check having no minimum at all, previously
+  // surfaced only as a generic "Couldn't create this manager" toast.
+  useServerValidation(form, addManager.error);
+
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {
       form.reset(DEFAULT_VALUES);
@@ -82,9 +89,17 @@ export function AddAcademyManagerDialog({
           handleOpenChange(false);
         },
         onError: (error) => {
-          // These three kinds have a specific, actionable copy; anything
-          // else (network/timeout/server/...) falls back to the generic
-          // "something went wrong" message the toast key below covers.
+          // A validation error with real field violations is shown
+          // inline, on the field that actually needs fixing, via
+          // `useServerValidation` above — a generic toast on top of that
+          // would just repeat "something's wrong" without saying what,
+          // exactly the UX gap this fixes. Every other kind (network/
+          // timeout/server/notFound/conflict/forbidden/an edge-case
+          // validation error with no mappable field) still gets a toast.
+          if (error.kind === 'validation' && error.violations && error.violations.length > 0) {
+            return;
+          }
+
           const key =
             error.kind === 'notFound'
               ? 'academy:members.addManager.errors.userNotFound'

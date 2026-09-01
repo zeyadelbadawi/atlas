@@ -141,9 +141,13 @@ function readViolations(payload: BackendErrorPayload): readonly FieldViolation[]
     const candidate = entry as Record<string, unknown>;
     const field = readString(candidate.field);
     const messageKey = readString(candidate.messageKey);
+    const values =
+      typeof candidate.values === 'object' && candidate.values !== null
+        ? (candidate.values as Record<string, string | number>)
+        : undefined;
 
     if (field && messageKey) {
-      collected.push({ field, messageKey });
+      collected.push(values ? { field, messageKey, values } : { field, messageKey });
     }
 
     return collected;

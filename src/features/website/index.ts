@@ -17,6 +17,17 @@
 export { WebsiteRenderer } from './renderer/WebsiteRenderer';
 export type { WebsiteRendererProps } from './renderer/WebsiteRenderer';
 
+// Phase 1 (Extended Scope, Decision 11, dependency C) — Sign In/Sign Up
+// are real public-runtime surfaces that are NOT `WebsitePage` rows (never
+// CMS content, never editable through the Page Composer), so they cannot
+// render through `WebsiteRenderer` itself (which always requires one).
+// `WebsiteChrome` is the exact same Theme/Header/Footer shell
+// `WebsiteRenderer` builds, extracted so this one other real consumer can
+// reuse it instead of duplicating the wiring — see that component's own
+// doc comment.
+export { WebsiteChrome } from './renderer/WebsiteChrome';
+export type { WebsiteChromeProps } from './renderer/WebsiteChrome';
+
 // Phase P19 — `ProvisioningStartPage`'s theme-selection step needs the
 // real theme registry (never a second, invented catalog). Curated export,
 // same discipline as this barrel's own header comment: only what a

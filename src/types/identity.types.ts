@@ -109,6 +109,8 @@ export interface RegistrationRequest {
   readonly name: string;
   readonly email: string;
   readonly password: string;
+  /** Phase 1 (Extended Scope, Decision 11, dependency D) — supplied only by an Academy's own public website Sign Up page, so the resulting account gets a real, validated Academy-scoped membership instead of none at all. */
+  readonly academyId?: string;
 }
 
 /** Requests a password-reset email be sent. */

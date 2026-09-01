@@ -58,6 +58,8 @@ export interface WebsiteCta {
   readonly pageId?: string;
   readonly courseId?: string;
   readonly url?: string;
+  /** Phase 1 (Extended Scope, Decision 11, dependency C) — targets this Academy's own public Sign In/Sign Up page, preserving Academy context. Takes precedence over `pageId`/`courseId`/`url` when set — see `resolveWebsiteCtaHref`. */
+  readonly authAction?: 'signIn' | 'signUp';
 }
 
 export interface HeroSectionConfig {

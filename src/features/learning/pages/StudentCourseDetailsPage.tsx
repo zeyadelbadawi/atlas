@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
+import { isApiError } from '@api';
 import { useAuth } from '@hooks';
 import { AUTH_ROUTES, DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { formatCoursePricing } from '@features/course';
@@ -70,7 +71,19 @@ export default function StudentCourseDetailsPage(): JSX.Element {
         title: t('learning:details.enrollSuccess'),
         description: t('learning:details.enrollSuccessNextStepDescription'),
       });
-    } catch {
+    } catch (caughtError) {
+      // Phase 2 — the academy has reached its own plan's student limit;
+      // a distinct, honest message rather than the generic failure text,
+      // even though it's the academy's plan, not something the student
+      // themselves can act on.
+      if (isApiError(caughtError) && caughtError.code === 'ENTITLEMENT_LIMIT_REACHED') {
+        toast({
+          title: t('learning:details.enrollLimitReachedTitle'),
+          description: t('learning:details.enrollLimitReachedDescription'),
+          variant: 'destructive',
+        });
+        return;
+      }
       toast({
         title: t('learning:details.enrollError'),
         description: t('errors:generic'),

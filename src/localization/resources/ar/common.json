@@ -99,5 +99,13 @@
   },
   "time": {
     "justNow": "الآن"
+  },
+  "account": {
+    "menu": "قائمة الحساب",
+    "signOut": "تسجيل الخروج"
+  },
+  "notifications": {
+    "bell": "الإشعارات",
+    "bellUnread": "الإشعارات ({{count}} غير مقروءة)"
   }
 }

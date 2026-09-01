@@ -9,7 +9,11 @@
     "altText": "النص البديل",
     "altTextPlaceholder": "صف هذه الصورة",
     "chooseFile": "اختر ملفًا",
-    "uploading": "جارٍ الرفع…"
+    "uploading": "جارٍ الرفع…",
+    "errors": {
+      "limitReachedTitle": "تم بلوغ الحد الأقصى للتخزين",
+      "limitReachedDescription": "لقد وصلت إلى الحد الأقصى للتخزين في خطتك. قم بترقية خطتك أو حرّر مساحة لرفع المزيد."
+    }
   },
   "actions": {
     "archiveSuccess": "تمت أرشفة الأصل"

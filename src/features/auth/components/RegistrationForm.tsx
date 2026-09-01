@@ -19,6 +19,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ErrorState } from '@components/feedback';
 import { useToast } from '@hooks';
 import { AUTH_ROUTES } from '@app/routes/route-paths';
+import { useServerValidation } from '@forms';
 import { useRegister } from '../hooks';
 
 const registrationSchema = z
@@ -41,7 +42,25 @@ const registrationSchema = z
 
 type RegistrationFormData = z.infer<typeof registrationSchema>;
 
-export function RegistrationForm(): JSX.Element {
+export interface RegistrationFormProps {
+  /**
+   * Phase 1 (Extended Scope, Decision 11, dependency D) — supplied only
+   * by an Academy's own public website Sign Up page (`PublicWebsiteSignUpPage`),
+   * so the resulting account is registered into that specific Academy.
+   * Absent for the internal app's own `RegistrationPage` — unchanged,
+   * pre-existing self-service Organization-Owner onboarding behavior.
+   */
+  readonly academyId?: string;
+  /**
+   * Phase 1 (Extended Scope, dependency C) — overrides the default
+   * "navigate to the internal app's Sign In route" behavior, which does
+   * not exist inside the public-website route tree. Absent, behavior is
+   * unchanged.
+   */
+  readonly onSuccess?: () => void;
+}
+
+export function RegistrationForm({ academyId, onSuccess }: RegistrationFormProps = {}): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -49,12 +68,7 @@ export function RegistrationForm(): JSX.Element {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const registerAccount = useRegister();
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm<RegistrationFormData>({
+  const form = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
     defaultValues: {
       name: '',
@@ -64,19 +78,34 @@ export function RegistrationForm(): JSX.Element {
       acceptTerms: false,
     },
   });
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = form;
+
+  // Maps a validation (400) failure's per-field violations onto this
+  // form — e.g. a stricter server-side password rule than this schema's
+  // client-side one — instead of only the generic `ErrorState` below.
+  useServerValidation(form, registerAccount.error);
 
   const isLoading = registerAccount.isPending;
 
   const handleFormSubmit = (data: RegistrationFormData) => {
     registerAccount.mutate(
-      { name: data.name, email: data.email, password: data.password },
+      { name: data.name, email: data.email, password: data.password, academyId },
       {
         onSuccess: () => {
           toast({
             title: t('auth:register.success.title'),
             description: t('auth:register.success.description'),
           });
-          navigate(AUTH_ROUTES.signIn);
+          if (onSuccess) {
+            onSuccess();
+          } else {
+            navigate(AUTH_ROUTES.signIn);
+          }
         },
       }
     );
@@ -84,8 +113,27 @@ export function RegistrationForm(): JSX.Element {
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
-      {registerAccount.error ? (
-        <ErrorState onRetry={handleSubmit(handleFormSubmit)} />
+      {registerAccount.error &&
+      // A validation error with real field violations is shown inline,
+      // on the field that caused it, via `useServerValidation` above —
+      // this block is for every other failure.
+      !(
+        registerAccount.error.kind === 'validation' &&
+        registerAccount.error.violations &&
+        registerAccount.error.violations.length > 0
+      ) ? (
+        registerAccount.error.kind === 'conflict' ? (
+          <ErrorState
+            kind="conflict"
+            descriptionKey="auth:register.errors.emailTaken"
+            onRetry={handleSubmit(handleFormSubmit)}
+          />
+        ) : (
+          <ErrorState
+            kind={registerAccount.error.kind}
+            onRetry={handleSubmit(handleFormSubmit)}
+          />
+        )
       ) : null}
 
       <div className="space-y-4">

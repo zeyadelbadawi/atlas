@@ -9,7 +9,11 @@
     "altText": "Alt text",
     "altTextPlaceholder": "Describe this image",
     "chooseFile": "Choose file",
-    "uploading": "Uploading…"
+    "uploading": "Uploading…",
+    "errors": {
+      "limitReachedTitle": "Storage limit reached",
+      "limitReachedDescription": "You've reached your plan's storage limit. Upgrade your plan or free up space to upload more."
+    }
   },
   "actions": {
     "archiveSuccess": "Asset archived"

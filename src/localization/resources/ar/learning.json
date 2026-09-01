@@ -58,6 +58,8 @@
     "enrollSuccessNextStep": "الخطوة التالية:",
     "enrollSuccessNextStepDescription": "ابدأ التعلّم على الفور.",
     "enrollError": "فشل التسجيل في هذه الدورة",
+    "enrollLimitReachedTitle": "التسجيل غير متاح حاليًا",
+    "enrollLimitReachedDescription": "وصلت هذه الأكاديمية إلى الحد الأقصى لعدد الطلاب. يرجى التواصل مع الأكاديمية للمساعدة.",
     "notAvailable": "هذه الدورة غير متاحة للتسجيل حاليًا.",
     "continueLearning": "متابعة التعلّم",
     "viewProgress": "عرض التقدّم",

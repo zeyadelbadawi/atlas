@@ -14,7 +14,7 @@
  * no full reload), external targets use a plain `<a target="_blank">`.
  */
 import { useTranslation } from 'react-i18next';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { EmptyState } from '@components/feedback';
 import {
   WebsiteRenderer,
@@ -25,22 +25,11 @@ import {
   resolvePageSeo,
   resolveCourseSeo,
 } from '@features/website';
-import type { WebsiteLinkRenderer } from '@features/website';
 import { useCourse } from '@features/course';
 import { useDocumentSeo } from '../hooks/useDocumentSeo';
 import { resolvePathToPage } from '../utils/page-resolution.utils';
+import { usePublicWebsiteLinkRenderer } from '../utils/public-website-link-renderer';
 import type { PublicWebsiteDataState } from '../hooks/usePublicWebsiteData';
-
-const linkRenderer: WebsiteLinkRenderer = ({ href, external, className, children }) =>
-  external ? (
-    <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
-      {children}
-    </a>
-  ) : (
-    <Link to={href} className={className}>
-      {children}
-    </Link>
-  );
 
 export interface PublicWebsitePageProps {
   readonly data: Extract<PublicWebsiteDataState, { status: 'ready' }>;
@@ -50,6 +39,7 @@ export function PublicWebsitePage({ data }: PublicWebsitePageProps): JSX.Element
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
+  const linkRenderer = usePublicWebsiteLinkRenderer();
   const { academy, configuration, pages } = data;
 
   const { page, courseId } = resolvePathToPage(location.pathname, pages);

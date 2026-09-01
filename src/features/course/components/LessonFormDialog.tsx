@@ -3,11 +3,13 @@
  *
  * Shared create/edit dialog for a course lesson.
  */
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2 } from 'lucide-react';
+import { FolderOpen, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { MediaLibraryDialog } from '@features/media';
 import {
   Dialog,
   DialogContent,
@@ -32,10 +34,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useServerValidation } from '@forms';
 import {
   courseLessonSchema,
   type CourseLessonFormData,
 } from '../schemas/course.schemas';
+import type { ApiError } from '@api';
 
 export interface LessonFormDialogProps {
   readonly open: boolean;
@@ -44,6 +48,16 @@ export interface LessonFormDialogProps {
   readonly defaultValues?: CourseLessonFormData;
   readonly isPending: boolean;
   readonly onSubmit: (data: CourseLessonFormData) => void | Promise<void>;
+  /** The create/update mutation's current error, so a validation (400) failure maps onto the field that caused it instead of only a page-level toast. */
+  readonly error?: ApiError | null;
+  /**
+   * When provided, video/file lessons offer "Choose from library" — the
+   * same real, working `MediaLibraryDialog` upload the Website Builder
+   * already uses (Phase 0 fix: this dialog previously only ever offered a
+   * plain URL field, even though the upload pipeline behind it was
+   * already real and production-shaped).
+   */
+  readonly academyId?: string;
 }
 
 export function LessonFormDialog({
@@ -53,8 +67,11 @@ export function LessonFormDialog({
   defaultValues,
   isPending,
   onSubmit,
+  academyId,
+  error,
 }: LessonFormDialogProps): JSX.Element {
   const { t } = useTranslation();
+  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
 
   const form = useForm<CourseLessonFormData>({
     resolver: zodResolver(courseLessonSchema),
@@ -66,6 +83,8 @@ export function LessonFormDialog({
       status: 'draft',
     },
   });
+
+  useServerValidation(form, error ?? null);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -190,23 +209,49 @@ export function LessonFormDialog({
             <FormField
               control={form.control}
               name="contentUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {t('course:builder.lessonDialog.contentUrlLabel')}
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="url"
-                      placeholder={t(
-                        'course:builder.lessonDialog.contentUrlPlaceholder'
-                      )}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              render={({ field }) => {
+                const contentType = form.watch('contentType');
+                const canUpload = academyId && contentType !== 'text';
+
+                return (
+                  <FormItem>
+                    <FormLabel>
+                      {t('course:builder.lessonDialog.contentUrlLabel')}
+                    </FormLabel>
+                    <div className="flex gap-2">
+                      <FormControl>
+                        <Input
+                          type="url"
+                          placeholder={t(
+                            'course:builder.lessonDialog.contentUrlPlaceholder'
+                          )}
+                          {...field}
+                        />
+                      </FormControl>
+                      {canUpload ? (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setIsLibraryOpen(true)}
+                        >
+                          <FolderOpen className="size-4" aria-hidden />
+                          {t('course:builder.lessonDialog.chooseFromLibrary')}
+                        </Button>
+                      ) : null}
+                    </div>
+                    <FormMessage />
+                    {canUpload ? (
+                      <MediaLibraryDialog
+                        academyId={academyId}
+                        open={isLibraryOpen}
+                        onOpenChange={setIsLibraryOpen}
+                        onSelect={(asset) => field.onChange(asset.url)}
+                        accept={contentType === 'video' ? 'video/*' : '*/*'}
+                      />
+                    ) : null}
+                  </FormItem>
+                );
+              }}
             />
 
             <DialogFooter>

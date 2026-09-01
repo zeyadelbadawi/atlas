@@ -18,7 +18,8 @@ import {
   useLocalStorage,
   useOnlineStatus,
 } from "@hooks";
-import { OrganizationSwitcher } from "@components/controls";
+import { AccountMenu, OrganizationSwitcher } from "@components/controls";
+import { NotificationBell } from "@features/notifications";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { DashboardTopbar } from "./DashboardTopbar";
 
@@ -58,7 +59,13 @@ export function DashboardLayout(): JSX.Element {
         <DashboardTopbar
           onOpenNavigation={drawer.open}
           isMobile={isMobile}
-          actions={<OrganizationSwitcher />}
+          actions={
+            <>
+              <OrganizationSwitcher />
+              <NotificationBell />
+              <AccountMenu />
+            </>
+          }
         />
         {!isOnline ? <OfflineNotice /> : null}
 

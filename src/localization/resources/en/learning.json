@@ -58,6 +58,8 @@
     "enrollSuccessNextStep": "Next step:",
     "enrollSuccessNextStepDescription": "Start learning right away.",
     "enrollError": "Failed to enroll in this course",
+    "enrollLimitReachedTitle": "Enrollment isn't available right now",
+    "enrollLimitReachedDescription": "This academy has reached its student capacity. Please contact the academy for help.",
     "notAvailable": "This course isn't available for enrollment right now.",
     "continueLearning": "Continue Learning",
     "viewProgress": "View Progress",

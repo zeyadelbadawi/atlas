@@ -62,7 +62,13 @@ export interface WebsiteNavigationItem {
 }
 
 export interface WebsiteHeaderConfig {
-  readonly cta?: { readonly label: string; readonly pageId?: string; readonly url?: string };
+  readonly cta?: {
+    readonly label: string;
+    readonly pageId?: string;
+    readonly url?: string;
+    /** Phase 1 (Extended Scope, Decision 11, dependency C) — see `WebsiteCta.authAction`. */
+    readonly authAction?: 'signIn' | 'signUp';
+  };
 }
 
 export interface WebsiteFooterLink {

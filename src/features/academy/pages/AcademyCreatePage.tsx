@@ -32,6 +32,8 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { usePlatform } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
+import { useServerValidation } from '@forms';
+import { isApiError } from '@api';
 import { useCreateAcademy } from '../hooks';
 import {
   createAcademySchema,
@@ -47,7 +49,7 @@ export default function AcademyCreatePage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { setActiveAcademy } = usePlatform();
-  const { mutateAsync: createAcademy, isPending } = useCreateAcademy();
+  const { mutateAsync: createAcademy, isPending, error } = useCreateAcademy();
 
   const form = useForm<CreateAcademyFormData>({
     resolver: zodResolver(createAcademySchema),
@@ -65,6 +67,15 @@ export default function AcademyCreatePage(): JSX.Element {
     },
   });
 
+  // Maps a validation (400) failure's per-field violations onto this
+  // form (e.g. an invalid slug format, a too-long name) instead of only
+  // the generic toast below. A slug already taken by another academy is
+  // a 409 conflict, not a validation error — handled separately below,
+  // on the `slug` field specifically, since that's the one real,
+  // reproducible cause of this page's previously-generic "Unexpected
+  // Error" (Phase 0 fix, `AcademiesService.withSlugConflictHandling`).
+  useServerValidation(form, error);
+
   const onSubmit = async (data: CreateAcademyFormData) => {
     try {
       const academy = await createAcademy(data);
@@ -79,7 +90,33 @@ export default function AcademyCreatePage(): JSX.Element {
         }),
         { replace: true }
       );
-    } catch (error) {
+    } catch (caughtError) {
+      // Phase 2 — a plan-limit rejection also arrives as `kind: 'conflict'`
+      // (the same HTTP 409 a taken slug uses); distinguished by its own
+      // stable `code` so it never gets mis-attributed to the `slug` field.
+      if (isApiError(caughtError) && caughtError.code === 'ENTITLEMENT_LIMIT_REACHED') {
+        toast({
+          title: t('academy:create.errors.limitReachedTitle'),
+          description: t('academy:create.errors.limitReachedDescription'),
+          variant: 'destructive',
+        });
+        return;
+      }
+      if (isApiError(caughtError) && caughtError.kind === 'conflict') {
+        form.setError('slug', {
+          type: 'server',
+          message: t('academy:create.errors.slugTaken'),
+        });
+        return;
+      }
+      if (
+        isApiError(caughtError) &&
+        caughtError.kind === 'validation' &&
+        caughtError.violations &&
+        caughtError.violations.length > 0
+      ) {
+        return;
+      }
       toast({
         title: t('academy:create.error'),
         description: t('errors:generic'),

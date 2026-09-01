@@ -28,13 +28,20 @@ export class AuthorizationService {
   ): boolean {
     if (!user) return false;
 
-    // Organization-scoped permission check.
-    if (organization) {
-      return organization.permissions.includes(permission);
+    // A permission is granted if EITHER the account's own base permissions
+    // (e.g. `student.*`, granted to every authenticated user regardless of
+    // organization affiliation) OR the active organization's role-based
+    // permissions include it. Previously this checked only the
+    // organization's permissions whenever one was active, never falling
+    // back to the user's own — the same bug independently found and fixed
+    // in `RouteGuard.tsx` (this service backs `usePermissions()`, used
+    // across many feature pages, so the fix belongs here too, not only at
+    // the route level).
+    if (user.permissions.includes(permission)) {
+      return true;
     }
 
-    // Global permission check.
-    return user.permissions.includes(permission);
+    return organization ? organization.permissions.includes(permission) : false;
   }
 
   /**

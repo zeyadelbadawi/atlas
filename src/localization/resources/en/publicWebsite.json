@@ -1,0 +1,19 @@
+{
+  "auth": {
+    "signIn": {
+      "title": "Sign in to {{academyName}}",
+      "subtitle": "Access your courses and track your progress.",
+      "success": "You're signed in, {{name}}.",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up"
+    },
+    "signUp": {
+      "title": "Join {{academyName}}",
+      "subtitle": "Create your student account to start learning with {{academyName}}.",
+      "success": "Your account has been created. Sign in to get started.",
+      "goToSignIn": "Go to sign in",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in"
+    }
+  }
+}

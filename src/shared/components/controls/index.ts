@@ -7,3 +7,5 @@ export { ThemeSwitcher } from './ThemeSwitcher';
 export type { ThemeSwitcherProps } from './ThemeSwitcher';
 export { OrganizationSwitcher } from './OrganizationSwitcher';
 export type { OrganizationSwitcherProps } from './OrganizationSwitcher';
+export { AccountMenu } from './AccountMenu';
+export type { AccountMenuProps } from './AccountMenu';

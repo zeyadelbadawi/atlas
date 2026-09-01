@@ -102,7 +102,11 @@
     "continueToBuilder": "Continue to Course Builder",
     "error": "Failed to create course",
     "thumbnailTooLarge": "Thumbnail must be smaller than 5MB.",
-    "thumbnailInvalidType": "Thumbnail must be a PNG or JPG image."
+    "thumbnailInvalidType": "Thumbnail must be a PNG or JPG image.",
+    "errors": {
+      "limitReachedTitle": "Course limit reached",
+      "limitReachedDescription": "You've reached your plan's course limit. Upgrade your plan to create another course."
+    }
   },
   "edit": {
     "title": "Edit Course",
@@ -161,6 +165,7 @@
       "contentTypeLabel": "Content Type",
       "contentUrlLabel": "Content URL",
       "contentUrlPlaceholder": "https://...",
+      "chooseFromLibrary": "Choose from library",
       "statusLabel": "Availability",
       "saveButton": "Save Lesson",
       "cancelButton": "Cancel",

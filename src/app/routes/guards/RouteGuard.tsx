@@ -65,11 +65,23 @@ export function RouteGuard({
       return <Navigate to={SYSTEM_ROUTES.forbidden} replace />;
     }
 
+    // A permission is granted if EITHER the account's own base permissions
+    // (e.g. `student.*`, granted to every authenticated user regardless of
+    // organization affiliation) OR the active organization's role-based
+    // permissions include it. Previously this checked only one or the
+    // other based on whether an organization happened to be set, which
+    // meant any org-affiliated account (Owner/Manager/Instructor) who was
+    // ALSO enrolled as a student in some course failed every `student.*`
+    // check the moment an organization context was active, since no
+    // organization permission set contains any `student.*` string. This
+    // never grants an organization-scoped permission the user doesn't
+    // already have — it only stops suppressing the user's own base
+    // permissions while an organization context is present.
     const hasPermissions = requiredPermissions.every((permission) => {
-      if (organization) {
-        return organization.permissions.includes(permission);
+      if (user.permissions.includes(permission)) {
+        return true;
       }
-      return user.permissions.includes(permission);
+      return organization ? organization.permissions.includes(permission) : false;
     });
 
     if (!hasPermissions) {

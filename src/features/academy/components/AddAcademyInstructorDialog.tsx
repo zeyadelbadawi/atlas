@@ -33,6 +33,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@app/providers/toast/useToast';
+import { useServerValidation } from '@forms';
 import { useAddAcademyInstructor } from '../hooks';
 import {
   addAcademyInstructorSchema,
@@ -61,6 +62,8 @@ export function AddAcademyInstructorDialog({
     defaultValues: DEFAULT_VALUES,
   });
 
+  useServerValidation(form, addInstructor.error);
+
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {
       form.reset(DEFAULT_VALUES);
@@ -84,14 +87,24 @@ export function AddAcademyInstructorDialog({
           handleOpenChange(false);
         },
         onError: (error) => {
+          if (error.kind === 'validation' && error.violations && error.violations.length > 0) {
+            return;
+          }
+
+          // Phase 2 — a plan-limit rejection also arrives as `kind:
+          // 'conflict'` (the same HTTP 409 an "already a member" collision
+          // uses), distinguished by its own stable `code` rather than
+          // conflated with that unrelated message.
           const key =
-            error.kind === 'notFound'
-              ? 'academy:members.addInstructor.errors.userNotFound'
-              : error.kind === 'conflict'
-                ? 'academy:members.addInstructor.errors.alreadyMember'
-                : error.kind === 'forbidden'
-                  ? 'academy:members.addInstructor.errors.insufficientRole'
-                  : 'academy:members.addInstructor.errors.generic';
+            error.code === 'ENTITLEMENT_LIMIT_REACHED'
+              ? 'academy:members.addInstructor.errors.limitReached'
+              : error.kind === 'notFound'
+                ? 'academy:members.addInstructor.errors.userNotFound'
+                : error.kind === 'conflict'
+                  ? 'academy:members.addInstructor.errors.alreadyMember'
+                  : error.kind === 'forbidden'
+                    ? 'academy:members.addInstructor.errors.insufficientRole'
+                    : 'academy:members.addInstructor.errors.generic';
           notifyError(key);
         },
       }

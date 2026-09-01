@@ -33,6 +33,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@app/providers/toast/useToast';
+import { useServerValidation } from '@forms';
 import { useCreateAcademyStudent } from '../hooks';
 import {
   createAcademyStudentSchema,
@@ -65,6 +66,8 @@ export function CreateAcademyStudentDialog({
     defaultValues: DEFAULT_VALUES,
   });
 
+  useServerValidation(form, createStudent.error);
+
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {
       form.reset(DEFAULT_VALUES);
@@ -81,6 +84,10 @@ export function CreateAcademyStudentDialog({
           setCreated({ email: data.email, password: data.password });
         },
         onError: (error) => {
+          if (error.kind === 'validation' && error.violations && error.violations.length > 0) {
+            return;
+          }
+
           const key =
             error.kind === 'conflict'
               ? 'academy:members.createStudent.errors.emailTaken'

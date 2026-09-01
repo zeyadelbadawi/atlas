@@ -154,7 +154,24 @@ export function MediaLibraryDialog({
               />
             </div>
 
-            {uploadAsset.error ? <ErrorState onRetry={filePicker.openFilePicker} /> : null}
+            {uploadAsset.error ? (
+              <ErrorState
+                // Phase 2 — a storage-limit rejection has its own stable
+                // `code`; everything else keeps the default kind-based
+                // message `ErrorState` already renders.
+                titleKey={
+                  uploadAsset.error.code === 'ENTITLEMENT_LIMIT_REACHED'
+                    ? 'media:dialog.errors.limitReachedTitle'
+                    : undefined
+                }
+                descriptionKey={
+                  uploadAsset.error.code === 'ENTITLEMENT_LIMIT_REACHED'
+                    ? 'media:dialog.errors.limitReachedDescription'
+                    : undefined
+                }
+                onRetry={filePicker.openFilePicker}
+              />
+            ) : null}
 
             <Button
               type="button"

@@ -99,5 +99,13 @@
   },
   "time": {
     "justNow": "Just now"
+  },
+  "account": {
+    "menu": "Account menu",
+    "signOut": "Sign out"
+  },
+  "notifications": {
+    "bell": "Notifications",
+    "bellUnread": "Notifications ({{count}} unread)"
   }
 }

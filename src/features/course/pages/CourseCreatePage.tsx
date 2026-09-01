@@ -34,6 +34,7 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { useFilePicker } from '@hooks';
 import { useServerValidation } from '@forms';
+import { isApiError } from '@api';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useCreateCourse, useCourseCategories } from '../hooks';
 import {
@@ -154,7 +155,17 @@ export default function CourseCreatePage(): JSX.Element {
         description: t('common:states.success.description'),
       });
       setCreatedCourse(course);
-    } catch {
+    } catch (caughtError) {
+      // Phase 2 — a plan-limit rejection has its own stable `code`, never
+      // shown as the same generic message every other failure gets here.
+      if (isApiError(caughtError) && caughtError.code === 'ENTITLEMENT_LIMIT_REACHED') {
+        toast({
+          title: t('course:create.errors.limitReachedTitle'),
+          description: t('course:create.errors.limitReachedDescription'),
+          variant: 'destructive',
+        });
+        return;
+      }
       toast({
         title: t('course:create.error'),
         description: t('errors:generic'),

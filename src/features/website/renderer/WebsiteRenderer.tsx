@@ -9,17 +9,10 @@
  * produces" can never drift apart (see `Reports/ARCHITECTURE.md`,
  * Prompt 9, "One Renderer, Every Surface").
  */
-import { getWebsiteTheme } from '../themes/website-theme.registry';
-import { WebsiteThemeScope } from './WebsiteThemeScope';
-import { WebsiteHeader } from './WebsiteHeader';
-import { WebsiteFooter } from './WebsiteFooter';
+import { WebsiteChrome } from './WebsiteChrome';
 import { SectionRenderer } from '../sections';
 import { CourseDetailsTemplate } from './CourseDetailsTemplate';
-import type {
-  WebsiteBrandConfig,
-  WebsiteConfiguration,
-  WebsitePage,
-} from '@types';
+import type { WebsiteConfiguration, WebsitePage } from '@types';
 import type { WebsiteLinkRenderer } from './website-link-renderer.types';
 
 export interface WebsiteRendererProps {
@@ -49,50 +42,32 @@ export function WebsiteRenderer({
   linkRenderer,
   className,
 }: WebsiteRendererProps): JSX.Element {
-  const theme = getWebsiteTheme(configuration.themeKey);
-  const brand: Pick<WebsiteBrandConfig, 'primaryColor' | 'secondaryColor' | 'accentColor'> =
-    configuration.brand;
-
   return (
-    <WebsiteThemeScope theme={theme} brand={brand} className={className}>
-      <div className="min-h-full bg-background text-foreground">
-        <WebsiteHeader
-          logo={academyLogo}
-          academyName={academyName}
-          navigation={configuration.navigation}
-          pages={pages}
-          header={configuration.header}
-          activePageId={page.id}
-          onNavigate={onNavigate}
-          linkRenderer={linkRenderer}
-        />
-
-        <main>
-          {page.coreType === 'courseDetails' ? (
-            previewCourseId ? (
-              <CourseDetailsTemplate academyId={academyId} courseId={previewCourseId} />
-            ) : null
-          ) : (
-            page.sections.map((instance) => (
-              <SectionRenderer
-                key={instance.id}
-                instance={instance}
-                academyId={academyId}
-                pages={pages}
-                linkRenderer={linkRenderer}
-              />
-            ))
-          )}
-        </main>
-
-        <WebsiteFooter
-          academyName={academyName}
-          footer={configuration.footer}
-          pages={pages}
-          onNavigate={onNavigate}
-          linkRenderer={linkRenderer}
-        />
-      </div>
-    </WebsiteThemeScope>
+    <WebsiteChrome
+      academyName={academyName}
+      academyLogo={academyLogo}
+      configuration={configuration}
+      pages={pages}
+      activePageId={page.id}
+      onNavigate={onNavigate}
+      linkRenderer={linkRenderer}
+      className={className}
+    >
+      {page.coreType === 'courseDetails' ? (
+        previewCourseId ? (
+          <CourseDetailsTemplate academyId={academyId} courseId={previewCourseId} />
+        ) : null
+      ) : (
+        page.sections.map((instance) => (
+          <SectionRenderer
+            key={instance.id}
+            instance={instance}
+            academyId={academyId}
+            pages={pages}
+            linkRenderer={linkRenderer}
+          />
+        ))
+      )}
+    </WebsiteChrome>
   );
 }

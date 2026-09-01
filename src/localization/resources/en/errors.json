@@ -51,5 +51,14 @@
     "title": "This section could not be displayed",
     "description": "The rest of Atlas is still working. Try reloading this section."
   },
-  "errorReference": "Reference: {{requestId}}"
+  "errorReference": "Reference: {{requestId}}",
+  "entitlement": {
+    "limitReached": "You've reached your plan's limit for this. Upgrade your plan to continue.",
+    "noSubscription": "This organization doesn't have an active subscription yet.",
+    "subscriptionInactive": "Your subscription isn't currently active. Renew or upgrade your plan to continue.",
+    "noPlanAvailable": "No plan is currently available. Please contact support."
+  },
+  "provisioning": {
+    "stepFailed": "Something went wrong while setting up your Academy. Please try again or contact support if the problem continues."
+  }
 }

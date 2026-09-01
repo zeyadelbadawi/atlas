@@ -7,8 +7,10 @@
  * `getLimitGapAction`. Usage is authoritative backend data (`TenantUsage`)
  * — never recalculated from local state.
  *
- * Frontend limit checks are UX only; the future backend remains the actual
- * enforcement point (see `Reports/ARCHITECTURE.md`, Prompt 6).
+ * Frontend limit checks here are advisory UX only; the backend
+ * (`EntitlementEnforcementService`, Phase 2) is the real, authoritative
+ * enforcement point — a direct API call cannot bypass a plan limit
+ * regardless of what this page shows.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';

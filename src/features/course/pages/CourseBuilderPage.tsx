@@ -19,6 +19,8 @@ import {
   Video,
 } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
+import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
+import type { BreadcrumbItem } from '@types';
 import { EmptyState, ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { Button } from '@/components/ui/button';
@@ -31,6 +33,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { toast } from '@/hooks/use-toast';
+import { isApiError } from '@api';
 import { useConfirmDialog } from '@app/providers';
 import {
   useCourse,
@@ -89,6 +92,30 @@ export default function CourseBuilderPage(): JSX.Element {
   const [lessonDialog, setLessonDialog] = useState<LessonDialogState>(null);
 
   const { data: course } = useCourse(academyId ?? '', courseId ?? '');
+
+  // The middle crumb (the course's own name) only joins the trail once the
+  // course has loaded — before that, "Courses -> Course Builder" is still
+  // a complete, honest trail rather than a placeholder label.
+  const breadcrumbs: readonly BreadcrumbItem[] = [
+    {
+      labelKey: 'course:list.title',
+      path: buildPath(DASHBOARD_ROUTES.academyCourses, { academyId: academyId ?? '' }),
+    },
+    ...(course
+      ? [
+          {
+            labelKey: 'course:builder.title',
+            label: course.title,
+            path: buildPath(DASHBOARD_ROUTES.academyCourseDetail, {
+              academyId: academyId ?? '',
+              courseId: courseId ?? '',
+            }),
+          } satisfies BreadcrumbItem,
+        ]
+      : []),
+    { labelKey: 'course:builder.title' },
+  ];
+
   const {
     data: sectionsData,
     isLoading,
@@ -129,7 +156,10 @@ export default function CourseBuilderPage(): JSX.Element {
         toast({ title: t('course:builder.sectionCreated') });
       }
       setSectionDialog(null);
-    } catch {
+    } catch (error) {
+      if (isApiError(error) && error.kind === 'validation' && error.violations?.length) {
+        return;
+      }
       toast({
         title: t('course:builder.sectionError'),
         description: t('errors:generic'),
@@ -202,7 +232,14 @@ export default function CourseBuilderPage(): JSX.Element {
         toast({ title: t('course:builder.lessonCreated') });
       }
       setLessonDialog(null);
-    } catch {
+    } catch (error) {
+      // A validation error is shown inline, on the field that caused it,
+      // via `useServerValidation` inside `LessonFormDialog` — a generic
+      // toast on top would just repeat "something's wrong" without
+      // saying what.
+      if (isApiError(error) && error.kind === 'validation' && error.violations?.length) {
+        return;
+      }
       toast({
         title: t('course:builder.lessonError'),
         description: t('errors:generic'),
@@ -275,6 +312,7 @@ export default function CourseBuilderPage(): JSX.Element {
         <PageHeader
           titleKey="course:builder.title"
           descriptionKey="course:builder.subtitle"
+          breadcrumbs={breadcrumbs}
         />
         <ErrorState onRetry={() => refetch()} />
       </PageContainer>
@@ -287,6 +325,7 @@ export default function CourseBuilderPage(): JSX.Element {
         title={course?.title}
         titleKey="course:builder.title"
         descriptionKey="course:builder.subtitle"
+        breadcrumbs={breadcrumbs}
         actions={
           <Button onClick={() => setSectionDialog({ mode: 'create' })}>
             <Plus className="size-4" strokeWidth={2} aria-hidden />
@@ -532,6 +571,7 @@ export default function CourseBuilderPage(): JSX.Element {
         }
         isPending={createSection.isPending || updateSection.isPending}
         onSubmit={handleSectionSubmit}
+        error={sectionDialog?.mode === 'edit' ? updateSection.error : createSection.error}
       />
 
       <LessonFormDialog
@@ -551,6 +591,8 @@ export default function CourseBuilderPage(): JSX.Element {
         }
         isPending={createLesson.isPending || updateLesson.isPending}
         onSubmit={handleLessonSubmit}
+        academyId={academyId}
+        error={lessonDialog?.mode === 'edit' ? updateLesson.error : createLesson.error}
       />
     </PageContainer>
   );

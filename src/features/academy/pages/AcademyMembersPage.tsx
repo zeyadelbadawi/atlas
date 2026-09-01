@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { usePagination } from '@hooks';
+import { useAuth, usePagination } from '@hooks';
 import { useAcademy, useAcademyMembers } from '../hooks';
 import { AddAcademyManagerDialog } from '../components/AddAcademyManagerDialog';
 import { AddAcademyInstructorDialog } from '../components/AddAcademyInstructorDialog';
@@ -36,6 +36,7 @@ import type { AcademyMember, AcademyMemberRole } from '@types';
 
 export default function AcademyMembersPage(): JSX.Element {
   const { t } = useTranslation();
+  const { organization } = useAuth();
   const { academyId } = useParams<{ academyId: string }>();
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<AcademyMemberRole | 'all'>(
@@ -189,10 +190,17 @@ export default function AcademyMembersPage(): JSX.Element {
               <UserPlus className="size-4" strokeWidth={2} aria-hidden />
               {t('academy:members.addInstructor.triggerButton')}
             </Button>
-            <Button type="button" onClick={() => setIsAddManagerOpen(true)}>
-              <UserPlus className="size-4" strokeWidth={2} aria-hidden />
-              {t('academy:members.addManager.triggerButton')}
-            </Button>
+            {/* Backend restricts granting Manager access to the
+                Organization Owner only (`GRANTS_MANAGER_ROLES`,
+                `academies.service.ts`) — this mirrors that restriction
+                here so a Manager never sees an action that would only
+                ever 403. */}
+            {organization?.role === 'owner' ? (
+              <Button type="button" onClick={() => setIsAddManagerOpen(true)}>
+                <UserPlus className="size-4" strokeWidth={2} aria-hidden />
+                {t('academy:members.addManager.triggerButton')}
+              </Button>
+            ) : null}
           </div>
         </CardHeader>
         <CardContent className="space-y-4">

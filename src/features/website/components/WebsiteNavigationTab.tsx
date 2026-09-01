@@ -92,7 +92,7 @@ export function WebsiteNavigationTab({
 
   const updateHeaderCta = (
     ctaLabel: string,
-    target: { pageId?: string; url?: string }
+    target: { pageId?: string; url?: string; authAction?: 'signIn' | 'signUp' }
   ) => {
     if (target.url !== undefined && !isSafeExternalUrl(target.url)) {
       toast({ title: t('validation:invalidUrl'), variant: 'destructive' });
@@ -214,11 +214,21 @@ export function WebsiteNavigationTab({
           <div className="space-y-1.5">
             <Label>{t('website:fields.linkType')}</Label>
             <Select
-              value={configuration.header.cta?.url ? 'external' : 'page'}
+              value={
+                configuration.header.cta?.url !== undefined
+                  ? 'external'
+                  : configuration.header.cta?.authAction
+                    ? 'auth'
+                    : 'page'
+              }
               onValueChange={(type) =>
                 updateHeaderCta(
                   configuration.header.cta?.label ?? '',
-                  type === 'external' ? { url: '' } : { pageId: undefined }
+                  type === 'external'
+                    ? { url: '' }
+                    : type === 'auth'
+                      ? { authAction: 'signIn' }
+                      : { pageId: undefined }
                 )
               }
             >
@@ -228,6 +238,8 @@ export function WebsiteNavigationTab({
               <SelectContent>
                 <SelectItem value="page">{t('website:fields.linkTypePage')}</SelectItem>
                 <SelectItem value="external">{t('website:fields.linkTypeExternal')}</SelectItem>
+                {/* Phase 1 (Extended Scope, Decision 11, dependency C) */}
+                <SelectItem value="auth">{t('website:fields.linkTypeAuth')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -243,6 +255,24 @@ export function WebsiteNavigationTab({
                   updateHeaderCta(configuration.header.cta?.label ?? '', { url: event.target.value })
                 }
               />
+            </div>
+          ) : configuration.header.cta?.authAction ? (
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label>{t('website:navigation.ctaTarget')}</Label>
+              <Select
+                value={configuration.header.cta.authAction}
+                onValueChange={(authAction: 'signIn' | 'signUp') =>
+                  updateHeaderCta(configuration.header.cta?.label ?? '', { authAction })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="signIn">{t('website:navigation.ctaTargetSignIn')}</SelectItem>
+                  <SelectItem value="signUp">{t('website:navigation.ctaTargetSignUp')}</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           ) : (
             <div className="space-y-1.5 sm:col-span-2">

@@ -20,6 +20,8 @@ import { PublicWebsiteStatus } from './components/PublicWebsiteStatus';
 import { PublicWebsitePage } from './components/PublicWebsitePage';
 import { PublicWebsiteRobotsRoute } from './components/PublicWebsiteRobotsRoute';
 import { PublicWebsiteSitemapRoute } from './components/PublicWebsiteSitemapRoute';
+import { PublicWebsiteSignInPage } from './components/PublicWebsiteSignInPage';
+import { PublicWebsiteSignUpPage } from './components/PublicWebsiteSignUpPage';
 import { usePublicWebsiteData } from './hooks/usePublicWebsiteData';
 import type { PublicWebsiteContext } from './utils/hostname-resolution.utils';
 
@@ -49,6 +51,12 @@ export function PublicWebsiteRouter({ context }: PublicWebsiteRouterProps): JSX.
     <Routes>
       <Route path="/robots.txt" element={<PublicWebsiteRobotsRoute lookupKey={lookupKey} />} />
       <Route path="/sitemap.xml" element={<PublicWebsiteSitemapRoute lookupKey={lookupKey} />} />
+      {/* Phase 1 (Extended Scope, Decision 11, dependency C) — two
+          separate pages, matching the confirmed product requirement,
+          reached before the data-driven catch-all so they are never
+          shadowed by a Custom Page happening to share the same slug. */}
+      <Route path="/sign-in" element={<PublicWebsiteSignInPage lookupKey={lookupKey} />} />
+      <Route path="/sign-up" element={<PublicWebsiteSignUpPage lookupKey={lookupKey} />} />
       <Route path="*" element={<PublicWebsiteShell lookupKey={lookupKey} />} />
     </Routes>
   );
