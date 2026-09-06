@@ -31,14 +31,15 @@
     "retryAction": "Retry",
     "returnToDashboard": "Return to dashboard",
     "readyTitle": "Your Academy is ready",
-    "readyDescription": "Provisioning is complete. You can now go to your Academy dashboard.",
-    "goToAcademy": "Go to Academy dashboard",
+    "readyDescription": "Provisioning is complete. Let's finish setting up your Academy.",
+    "goToAcademy": "Continue setup",
     "cancelledDescription": "This provisioning request was cancelled.",
     "inProgressDescription": "This page updates automatically as provisioning progresses.",
     "cancelAction": "Cancel provisioning",
     "cancelConfirmTitle": "Cancel provisioning?",
     "cancelConfirmDescription": "This request will stop where it stands. Any steps already completed are not undone.",
-    "cancelConfirmAction": "Cancel provisioning"
+    "cancelConfirmAction": "Cancel provisioning",
+    "viewWebsite": "View your website"
   },
   "start": {
     "title": "New Academy",
@@ -60,7 +61,20 @@
       "assigned": "Already assigned"
     },
     "creating": "Starting…",
-    "submit": "Start provisioning"
+    "submit": "Start provisioning",
+    "setupModeLabel": "How would you like to start?",
+    "setupModeHelp": "Either way, your pages and structure are set up for you — this only decides how much content is already filled in.",
+    "setupMode": {
+      "recommended": "Recommended",
+      "complete": {
+        "title": "Start with a ready-made website",
+        "description": "We'll set up a complete website for your Academy — pages, layout, and starting content, in English and Arabic. You can change anything, anytime."
+      },
+      "empty": {
+        "title": "Start from a blank page",
+        "description": "We'll set up the right pages and structure for your theme, ready for you to fill in. Best if you already know exactly what you want to say."
+      }
+    }
   },
   "history": {
     "title": "Academy Provisioning",

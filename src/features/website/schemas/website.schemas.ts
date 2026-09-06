@@ -16,6 +16,7 @@ import {
   MIN_PAGE_SLUG_LENGTH,
   PAGE_SLUG_REGEX,
 } from '../constants/website.constants';
+import { localizedOptional } from './website-section.schemas';
 
 export const createWebsitePageSchema = z.object({
   title: z.string().min(1, 'validation:required').max(MAX_PAGE_TITLE_LENGTH, 'validation:maxLength'),
@@ -34,26 +35,21 @@ const canonicalPathSchema = z
   .optional()
   .or(z.literal(''));
 
+/** Phase 6 — every title/description a search engine or share preview shows is `LocalizedText`; see `seo-resolution.utils.ts`'s own doc comment for why (`/about` and `/ar/about` are two distinct indexed URLs). */
 export const pageSeoSchema = z.object({
-  metaTitle: z.string().max(MAX_SEO_TITLE_LENGTH, 'validation:maxLength').optional(),
-  metaDescription: z
-    .string()
-    .max(MAX_SEO_DESCRIPTION_LENGTH, 'validation:maxLength')
-    .optional(),
-  ogTitle: z.string().max(MAX_OG_TITLE_LENGTH, 'validation:maxLength').optional(),
-  ogDescription: z.string().max(MAX_OG_DESCRIPTION_LENGTH, 'validation:maxLength').optional(),
+  metaTitle: localizedOptional(MAX_SEO_TITLE_LENGTH).optional(),
+  metaDescription: localizedOptional(MAX_SEO_DESCRIPTION_LENGTH).optional(),
+  ogTitle: localizedOptional(MAX_OG_TITLE_LENGTH).optional(),
+  ogDescription: localizedOptional(MAX_OG_DESCRIPTION_LENGTH).optional(),
   canonicalPath: canonicalPathSchema,
   indexable: z.boolean().optional(),
 });
 export type PageSeoFormData = z.infer<typeof pageSeoSchema>;
 
 export const globalSeoSchema = z.object({
-  siteTitle: z.string().max(MAX_SITE_TITLE_LENGTH, 'validation:maxLength').optional(),
-  metaTitle: z.string().max(MAX_SEO_TITLE_LENGTH, 'validation:maxLength').optional(),
-  metaDescription: z
-    .string()
-    .max(MAX_SEO_DESCRIPTION_LENGTH, 'validation:maxLength')
-    .optional(),
+  siteTitle: localizedOptional(MAX_SITE_TITLE_LENGTH).optional(),
+  metaTitle: localizedOptional(MAX_SEO_TITLE_LENGTH).optional(),
+  metaDescription: localizedOptional(MAX_SEO_DESCRIPTION_LENGTH).optional(),
   robotsIndexable: z.boolean().optional(),
   sitemapEnabled: z.boolean().optional(),
   /** Deliberately lenient (length-only) — a real, verified domain is out of scope for this prompt; see the field's doc comment in `website.types.ts`. */

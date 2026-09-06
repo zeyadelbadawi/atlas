@@ -37,6 +37,8 @@ import {
 import { getPaymentProvider } from '../providers/PaymentProviderRegistry';
 import { generateIdempotencyKey } from '../utils/idempotency.utils';
 import { formatMoney } from '../utils/money.utils';
+import { toErrorsNamespaceKey } from '@utils';
+import type { ApiError } from '@api';
 import type {
   CheckoutTarget,
   CheckoutTargetType,
@@ -44,6 +46,24 @@ import type {
 } from '@types';
 
 const BILLING_CYCLES: readonly SubscriptionBillingCycle[] = ['monthly', 'yearly'];
+
+/**
+ * The specific translation key for a backend error's own `messageKey`
+ * (e.g. `errors.checkout.pricingUnavailable`), if one is actually mapped
+ * — otherwise `undefined`, so `ErrorState` falls back to its own generic,
+ * `kind`-based message instead of rendering a raw/missing translation
+ * key. Fixes `CheckoutPage`'s previous behavior of collapsing every
+ * checkout/payment failure (including ordinary, well-typed, backend-
+ * explained validation errors like `pricingUnavailable`) into the same
+ * unhelpful generic "Unexpected error" card.
+ */
+function specificDescriptionKey(
+  i18n: { exists: (key: string) => boolean },
+  error: ApiError
+): string | undefined {
+  const key = toErrorsNamespaceKey(error.messageKey);
+  return i18n.exists(key) ? key : undefined;
+}
 
 export default function CheckoutPage(): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -167,7 +187,12 @@ export default function CheckoutPage(): JSX.Element {
               ) : null}
 
               {createCheckout.error ? (
-                <ErrorState onRetry={handleStartCheckout} />
+                <ErrorState
+                  kind={createCheckout.error.kind}
+                  descriptionKey={specificDescriptionKey(i18n, createCheckout.error)}
+                  requestId={createCheckout.error.requestId}
+                  onRetry={handleStartCheckout}
+                />
               ) : (
                 <Button
                   type="button"
@@ -269,7 +294,12 @@ export default function CheckoutPage(): JSX.Element {
                 )}
 
                 {createPayment.error ? (
-                  <ErrorState onRetry={handleContinueToPayment} />
+                  <ErrorState
+                    kind={createPayment.error.kind}
+                    descriptionKey={specificDescriptionKey(i18n, createPayment.error)}
+                    requestId={createPayment.error.requestId}
+                    onRetry={handleContinueToPayment}
+                  />
                 ) : null}
 
                 <Button

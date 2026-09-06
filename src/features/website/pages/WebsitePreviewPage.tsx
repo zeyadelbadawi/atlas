@@ -20,6 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
+import { SectionTabs } from '@components/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Select,
@@ -29,9 +30,18 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useAcademy } from '@features/academy';
+import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { useWebsiteConfiguration, useWebsitePages } from '../hooks';
 import { PreviewViewport, type PreviewBreakpoint } from '../components/PreviewViewport';
 import { WebsiteRenderer } from '../renderer';
+import { getWebsiteTabs } from '../utils/website-navigation.utils';
+import {
+  PUBLIC_WEBSITE_LOCALES,
+  PUBLIC_WEBSITE_LOCALE_LABELS,
+  DEFAULT_PUBLIC_WEBSITE_LOCALE,
+  type PublicWebsiteLocale,
+} from '../constants/locale.constants';
+import type { BreadcrumbItem } from '@types';
 
 export default function WebsitePreviewPage(): JSX.Element {
   const { t } = useTranslation();
@@ -45,6 +55,10 @@ export default function WebsitePreviewPage(): JSX.Element {
 
   const [breakpoint, setBreakpoint] = useState<PreviewBreakpoint>('desktop');
   const [selectedPageId, setSelectedPageId] = useState<string>();
+  // Phase 6 — the site is bilingual by default; the review surface should
+  // let the Owner check both real, rendered languages before they ever
+  // publish, not just trust the site "is" bilingual.
+  const [previewLocale, setPreviewLocale] = useState<PublicWebsiteLocale>(DEFAULT_PUBLIC_WEBSITE_LOCALE);
 
   const isLoading = academyQuery.isLoading || configQuery.isLoading || pagesQuery.isLoading;
   const error = academyQuery.error ?? configQuery.error ?? pagesQuery.error;
@@ -83,27 +97,53 @@ export default function WebsitePreviewPage(): JSX.Element {
     pages.find((page) => page.coreType === 'home') ??
     pages[0];
 
+  const breadcrumbs: readonly BreadcrumbItem[] = [
+    {
+      labelKey: 'navigation:items.academyOverview',
+      label: academy.name,
+      path: DASHBOARD_ROUTES.academy,
+    },
+    { labelKey: 'website:preview.title' },
+  ];
+
   return (
     <PageContainer fullWidth>
       <div className="space-y-6 px-4 sm:px-6 lg:px-8">
         <PageHeader
           titleKey="website:preview.title"
           descriptionKey="website:preview.subtitle"
+          breadcrumbs={breadcrumbs}
           actions={
-            <Select value={activePage?.id} onValueChange={setSelectedPageId}>
-              <SelectTrigger className="w-56">
-                <SelectValue placeholder={t('website:preview.pageSelectPlaceholder')} />
-              </SelectTrigger>
-              <SelectContent>
-                {pages.map((page) => (
-                  <SelectItem key={page.id} value={page.id}>
-                    {page.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex items-center gap-2">
+              <Select value={previewLocale} onValueChange={(value) => setPreviewLocale(value as PublicWebsiteLocale)}>
+                <SelectTrigger className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {PUBLIC_WEBSITE_LOCALES.map((locale) => (
+                    <SelectItem key={locale} value={locale}>
+                      {PUBLIC_WEBSITE_LOCALE_LABELS[locale]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={activePage?.id} onValueChange={setSelectedPageId}>
+                <SelectTrigger className="w-56">
+                  <SelectValue placeholder={t('website:preview.pageSelectPlaceholder')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {pages.map((page) => (
+                    <SelectItem key={page.id} value={page.id}>
+                      {page.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           }
         />
+
+        <SectionTabs items={getWebsiteTabs(academyId)} />
 
         {activePage ? (
           <PreviewViewport breakpoint={breakpoint} onBreakpointChange={setBreakpoint}>
@@ -116,6 +156,7 @@ export default function WebsitePreviewPage(): JSX.Element {
               page={activePage}
               previewCourseId={undefined}
               onNavigate={setSelectedPageId}
+              locale={previewLocale}
             />
           </PreviewViewport>
         ) : (

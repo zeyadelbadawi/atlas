@@ -112,7 +112,9 @@
     "title": "Edit Course",
     "subtitle": "Update your course information",
     "basicInformation": "Basic Information",
+    "basicInformationDescription": "The title, description, and thumbnail students see before enrolling.",
     "configuration": "Configuration",
+    "configurationDescription": "Category, pricing, and other settings that control how this course is offered.",
     "saveButton": "Save Changes",
     "cancelButton": "Cancel",
     "saving": "Saving changes...",
@@ -120,7 +122,10 @@
     "error": "Failed to update course",
     "unsavedChanges": "You have unsaved course changes. Are you sure you want to leave?",
     "goToBuilder": "Course Builder",
-    "goToSettings": "Course Settings"
+    "goToQuizzes": "Quizzes",
+    "goToAssignments": "Assignments",
+    "goToSettings": "Course Settings",
+    "detailsTabLabel": "Details"
   },
   "instructors": {
     "title": "Instructors",
@@ -213,6 +218,7 @@
     "subtitle": "Manage status, visibility and publishing",
     "general": "General",
     "publishing": "Publishing",
+    "publishingDescription": "Published courses are visible to students and open for enrollment.",
     "currentStatus": "Current Status",
     "currentVisibility": "Current Visibility",
     "curriculumSummary": "{{sections}} sections, {{lessons}} lessons",
@@ -239,6 +245,7 @@
     "publishError": "Failed to publish course",
     "unpublishError": "Failed to unpublish course",
     "dangerZone": "Danger Zone",
+    "dangerZoneDescription": "Deleting a course is permanent and removes it for every enrolled student.",
     "deleteCourse": "Delete Course",
     "deleteCourseConfirm": {
       "title": "Delete this course?",
@@ -248,6 +255,102 @@
     },
     "deleteCourseSuccess": "Course deleted",
     "deleteCourseError": "Failed to delete course"
+  },
+  "assignmentAuthoring": {
+    "title": "Assignments",
+    "subtitle": "Author the assignments students submit for this course",
+    "addAssignment": "Add Assignment",
+    "empty": "This course has no assignments yet.",
+    "emptyDescription": "Add an assignment for students to submit work against.",
+    "dueLabel": "Due {{date}}",
+    "menu": {
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "dialog": {
+      "createTitle": "Add Assignment",
+      "editTitle": "Edit Assignment",
+      "titleLabel": "Title",
+      "descriptionLabel": "Description",
+      "instructionsLabel": "Instructions",
+      "statusLabel": "Status",
+      "dueAtLabel": "Due date",
+      "allowResubmissionLabel": "Allow resubmission",
+      "allowResubmissionDescription": "Students may submit again after their first submission.",
+      "cancelButton": "Cancel",
+      "saveButton": "Save"
+    },
+    "created": "Assignment created",
+    "updated": "Assignment updated",
+    "deleted": "Assignment deleted",
+    "error": "Failed to save assignment",
+    "deleteConfirm": {
+      "title": "Delete this assignment?",
+      "description": "This will permanently delete \"{{title}}\" and any student submissions against it. This cannot be undone.",
+      "confirmLabel": "Delete Assignment",
+      "cancelLabel": "Cancel"
+    }
+  },
+  "quizAuthoring": {
+    "title": "Quizzes",
+    "subtitle": "Author the quizzes students take for this course",
+    "addQuiz": "Add Quiz",
+    "empty": "This course has no quizzes yet.",
+    "emptyDescription": "Add a quiz to test what students have learned.",
+    "questionCount": "{{count}} question",
+    "questionCount_other": "{{count}} questions",
+    "menu": {
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "created": "Quiz created",
+    "updated": "Quiz updated",
+    "deleted": "Quiz deleted",
+    "error": "Failed to save quiz",
+    "loadError": "Failed to load this quiz",
+    "deleteConfirm": {
+      "title": "Delete this quiz?",
+      "description": "This will permanently delete \"{{title}}\" and any student attempts against it. This cannot be undone.",
+      "confirmLabel": "Delete Quiz",
+      "cancelLabel": "Cancel"
+    },
+    "editor": {
+      "createTitle": "Add Quiz",
+      "editTitle": "Edit Quiz",
+      "detailsTitle": "Quiz Details",
+      "titleLabel": "Title",
+      "descriptionLabel": "Description",
+      "statusLabel": "Status",
+      "passingScoreLabel": "Passing score (%)",
+      "maxAttemptsLabel": "Max attempts",
+      "maxAttemptsHelp": "Leave blank for unlimited attempts.",
+      "questionsTitle": "Questions",
+      "addQuestion": "Add Question",
+      "removeQuestion": "Remove Question",
+      "questionLabel": "Question {{number}}",
+      "promptLabel": "Prompt",
+      "typeLabel": "Type",
+      "type": {
+        "single_choice": "Single choice",
+        "multiple_choice": "Multiple choice",
+        "true_false": "True / False"
+      },
+      "optionsLabel": "Options",
+      "optionLabel": "Option {{number}}",
+      "addOption": "Add Option",
+      "removeOption": "Remove",
+      "correctLabel": "Correct",
+      "trueLabel": "True",
+      "falseLabel": "False",
+      "cancelButton": "Cancel",
+      "saveButton": "Save Quiz"
+    },
+    "validation": {
+      "trueFalseOptionCount": "A True/False question needs exactly two options.",
+      "exactlyOneCorrect": "Mark exactly one option as correct.",
+      "atLeastOneCorrect": "Mark at least one option as correct.",
+      "minTwoOptions": "Add at least two options."
+    }
   },
   "categories": {
     "loadFailed": "Failed to load categories",

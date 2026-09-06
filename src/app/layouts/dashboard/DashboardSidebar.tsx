@@ -10,7 +10,8 @@ import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import { AtlasLogo } from "@components/branding";
+import { AcademyBrandMark, AtlasPlatformAttribution } from "@components/branding";
+import { useAcademyIdentity } from "@features/public-website/hooks";
 import { getDashboardNavigation, filterNavigationItems } from "@app/navigation";
 import { useAuth, useLanguage, usePlatform } from "@hooks";
 import { cn } from "@utils";
@@ -36,6 +37,13 @@ export function DashboardSidebar({
   const { isRtl } = useLanguage();
   const { isAuthenticated, user, organization } = useAuth();
   const { activeAcademyId, isFeatureEnabled } = usePlatform();
+  // Phase 6 — the active Academy's own identity replaces the hardcoded
+  // Atlas mark whenever one is set (Owners across multiple Academies get
+  // whichever Academy `usePlatform` currently has active — never a stale
+  // or cross-Academy one, since this re-fetches on every `activeAcademyId`
+  // change). Falls back to the Atlas mark itself when no Academy is active
+  // (e.g. the platform-owner console) or the Academy has no logo yet.
+  const { data: academyIdentity } = useAcademyIdentity(activeAcademyId);
 
   // Navigation is filtered by the same fail-closed permission/role logic used
   // everywhere else in Atlas, so a hidden platform-owner or academy entry here
@@ -57,7 +65,12 @@ export function DashboardSidebar({
         isCollapsed && !isMobile ? "justify-center" : "justify-between",
       )}
     >
-      <AtlasLogo size="sm" markOnly={isCollapsed && !isMobile} />
+      <AcademyBrandMark
+        size="sm"
+        markOnly={isCollapsed && !isMobile}
+        name={academyIdentity?.name}
+        logoUrl={academyIdentity?.logoUrl}
+      />
 
       {!isMobile ? (
         <Button
@@ -111,6 +124,10 @@ export function DashboardSidebar({
               isCollapsed={false}
               onNavigate={() => onDrawerOpenChange(false)}
             />
+            {/* Phase 6 — mandatory, platform-owned; never a CMS-editable field. */}
+            <div className="border-t border-sidebar-border px-3 py-3">
+              <AtlasPlatformAttribution />
+            </div>
           </div>
         </SheetContent>
       </Sheet>
@@ -129,6 +146,12 @@ export function DashboardSidebar({
         sections={sections}
         isCollapsed={isCollapsed}
       />
+      {/* Phase 6 — mandatory, platform-owned; never a CMS-editable field. Hidden only when the rail is collapsed to a bare icon strip, matching every other text row in that state. */}
+      {!isCollapsed ? (
+        <div className="border-t border-sidebar-border px-3 py-3">
+          <AtlasPlatformAttribution />
+        </div>
+      ) : null}
     </aside>
   );
 }

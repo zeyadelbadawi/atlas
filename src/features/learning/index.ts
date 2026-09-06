@@ -10,5 +10,7 @@ export * from './services/ProgressService';
 export * from './services/QuizService';
 export * from './services/AssignmentService';
 export * from './schemas/learning.schemas';
+export * from './schemas/quiz-authoring.schemas';
+export * from './schemas/assignment-authoring.schemas';
 export * from './constants/learning.constants';
 export * from './utils/learning-status.utils';

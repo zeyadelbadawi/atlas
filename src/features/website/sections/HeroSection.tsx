@@ -11,11 +11,13 @@ import { useTranslation } from 'react-i18next';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useWebsiteDesignSystem } from '../renderer/WebsiteDesignSystemContext';
+import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import {
   useWebsiteContainerClass,
   useWebsiteHeadingClass,
 } from '../renderer/renderer-style.utils';
 import { resolveWebsiteCtaHref, isExternalHref } from '../utils/link-resolution.utils';
+import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { HeroSectionConfig, WebsiteCta, WebsitePage } from '@types';
 import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
 
@@ -53,6 +55,7 @@ function CtaButton({
 
 function HeroActions({ config, pages, linkRenderer }: HeroSectionProps): JSX.Element | null {
   const { t } = useTranslation();
+  const { locale } = usePublicWebsiteLocale();
   if (!config.cta && !config.secondaryCta) return null;
 
   return (
@@ -66,13 +69,13 @@ function HeroActions({ config, pages, linkRenderer }: HeroSectionProps): JSX.Ele
           style={{ backgroundColor: 'var(--website-primary-solid)' }}
           className="text-white hover:opacity-90"
         >
-          {config.cta.label}
+          {resolveLocalizedText(config.cta.label, locale)}
           <ArrowRight className="size-4" strokeWidth={2} aria-hidden />
         </CtaButton>
       ) : null}
       {config.secondaryCta ? (
         <CtaButton cta={config.secondaryCta} pages={pages} linkRenderer={linkRenderer} size="lg" variant="outline">
-          {config.secondaryCta.label}
+          {resolveLocalizedText(config.secondaryCta.label, locale)}
         </CtaButton>
       ) : null}
       <span className="sr-only">{t('website:renderer.hero')}</span>
@@ -84,26 +87,33 @@ export function HeroSection({ config, pages, linkRenderer }: HeroSectionProps): 
   const design = useWebsiteDesignSystem();
   const container = useWebsiteContainerClass();
   const headingClass = useWebsiteHeadingClass();
+  const { locale } = usePublicWebsiteLocale();
+
+  const eyebrow = resolveLocalizedText(config.eyebrow, locale);
+  const subtitle = resolveLocalizedText(config.subtitle, locale);
+  const title = resolveLocalizedText(config.title, locale);
+  const description = resolveLocalizedText(config.description, locale);
+  const imageAlt = resolveLocalizedText(config.imageAlt, locale);
 
   if (design.heroVariant === 'split') {
     return (
       <section className={`${container} grid gap-10 py-16 lg:grid-cols-2 lg:items-center lg:py-24`}>
         <div className="space-y-5">
-          {config.eyebrow ? (
+          {eyebrow ? (
             <p className="text-sm font-semibold uppercase tracking-wide text-[var(--website-primary-solid)]">
-              {config.eyebrow}
+              {eyebrow}
             </p>
           ) : null}
-          {config.subtitle ? (
+          {subtitle ? (
             <p className="text-sm font-medium text-[var(--website-primary-solid)]">
-              {config.subtitle}
+              {subtitle}
             </p>
           ) : null}
           <h1 className={`${headingClass} text-4xl leading-tight text-foreground sm:text-5xl`}>
-            {config.title}
+            {title}
           </h1>
-          {config.description ? (
-            <p className="max-w-prose text-lg text-muted-foreground">{config.description}</p>
+          {description ? (
+            <p className="max-w-prose text-lg text-muted-foreground">{description}</p>
           ) : null}
           <HeroActions config={config} pages={pages} linkRenderer={linkRenderer} />
         </div>
@@ -114,7 +124,7 @@ export function HeroSection({ config, pages, linkRenderer }: HeroSectionProps): 
           {config.image ? (
             <img
               src={config.image}
-              alt={config.imageAlt ?? ''}
+              alt={imageAlt}
               className="size-full object-cover"
               style={{ borderRadius: 'var(--website-radius)' }}
             />
@@ -134,15 +144,15 @@ export function HeroSection({ config, pages, linkRenderer }: HeroSectionProps): 
           <div className="absolute inset-0 bg-black/45" aria-hidden />
         ) : null}
         <div className={`${container} relative space-y-5 ${config.image ? 'text-white' : 'text-foreground'}`}>
-          {config.eyebrow ? (
-            <p className="text-sm font-semibold uppercase tracking-wide opacity-90">{config.eyebrow}</p>
+          {eyebrow ? (
+            <p className="text-sm font-semibold uppercase tracking-wide opacity-90">{eyebrow}</p>
           ) : null}
-          {config.subtitle ? (
-            <p className="text-sm font-medium opacity-90">{config.subtitle}</p>
+          {subtitle ? (
+            <p className="text-sm font-medium opacity-90">{subtitle}</p>
           ) : null}
-          <h1 className={`${headingClass} text-4xl leading-tight sm:text-6xl`}>{config.title}</h1>
-          {config.description ? (
-            <p className="max-w-2xl text-lg opacity-90">{config.description}</p>
+          <h1 className={`${headingClass} text-4xl leading-tight sm:text-6xl`}>{title}</h1>
+          {description ? (
+            <p className="max-w-2xl text-lg opacity-90">{description}</p>
           ) : null}
           <HeroActions config={config} pages={pages} linkRenderer={linkRenderer} />
         </div>
@@ -153,17 +163,17 @@ export function HeroSection({ config, pages, linkRenderer }: HeroSectionProps): 
   if (design.heroVariant === 'minimal') {
     return (
       <section className={`${container} space-y-4 border-b border-border py-16`}>
-        {config.eyebrow ? (
-          <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{config.eyebrow}</p>
+        {eyebrow ? (
+          <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{eyebrow}</p>
         ) : null}
-        {config.subtitle ? (
-          <p className="text-sm font-medium text-muted-foreground">{config.subtitle}</p>
+        {subtitle ? (
+          <p className="text-sm font-medium text-muted-foreground">{subtitle}</p>
         ) : null}
         <h1 className={`${headingClass} max-w-3xl text-3xl leading-tight text-foreground sm:text-4xl`}>
-          {config.title}
+          {title}
         </h1>
-        {config.description ? (
-          <p className="max-w-2xl text-base text-muted-foreground">{config.description}</p>
+        {description ? (
+          <p className="max-w-2xl text-base text-muted-foreground">{description}</p>
         ) : null}
         <HeroActions config={config} pages={pages} linkRenderer={linkRenderer} />
       </section>
@@ -173,19 +183,19 @@ export function HeroSection({ config, pages, linkRenderer }: HeroSectionProps): 
   // centered
   return (
     <section className={`${container} space-y-6 py-20 text-center`}>
-      {config.eyebrow ? (
+      {eyebrow ? (
         <p className="text-sm font-semibold uppercase tracking-wide text-[var(--website-primary-solid)]">
-          {config.eyebrow}
+          {eyebrow}
         </p>
       ) : null}
-      {config.subtitle ? (
-        <p className="text-sm font-medium text-[var(--website-primary-solid)]">{config.subtitle}</p>
+      {subtitle ? (
+        <p className="text-sm font-medium text-[var(--website-primary-solid)]">{subtitle}</p>
       ) : null}
       <h1 className={`${headingClass} mx-auto max-w-3xl text-4xl leading-tight text-foreground sm:text-5xl`}>
-        {config.title}
+        {title}
       </h1>
-      {config.description ? (
-        <p className="mx-auto max-w-xl text-lg text-muted-foreground">{config.description}</p>
+      {description ? (
+        <p className="mx-auto max-w-xl text-lg text-muted-foreground">{description}</p>
       ) : null}
       <div className="flex justify-center">
         <HeroActions config={config} pages={pages} linkRenderer={linkRenderer} />

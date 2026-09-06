@@ -13,7 +13,17 @@
  * Course/instructor references are ids into the EXISTING Course domain
  * (`@features/course`) — this file never redeclares `Course` or an
  * instructor shape of its own.
+ *
+ * Phase 6 (Bilingual Academy Websites) — every field a website VISITOR
+ * reads as copy is `LocalizedText`, not `string` (see that type's own doc
+ * comment in `website-content.types.ts`). References/enums/technical
+ * values (`id`, `mode`, `layout`, `courseIds`, `url`, `email`, `phone`,
+ * `image` src, `icon`) and the one proper name (`authorName`) are
+ * unaffected — matches the backend's `section-config.schemas.ts` exactly,
+ * field for field, including which fields were widened and which were
+ * deliberately left alone.
  */
+import type { LocalizedText } from './website-content.types';
 
 /** The initial section catalog — enough distinct building blocks to make five themes feel genuinely different. Adding a 12th section is adding one new config type + one new registry entry, never touching an existing section. */
 export const SECTION_TYPES = [
@@ -54,7 +64,7 @@ export interface ResponsiveVisibility {
  * `Reports/ARCHITECTURE.md`, Prompt 11, "Link Target Scope".
  */
 export interface WebsiteCta {
-  readonly label: string;
+  readonly label: LocalizedText;
   readonly pageId?: string;
   readonly courseId?: string;
   readonly url?: string;
@@ -64,28 +74,28 @@ export interface WebsiteCta {
 
 export interface HeroSectionConfig {
   /** A short label shown above the title (e.g. "New Cohort Open") — real tenant-authored content, not a translation key. */
-  readonly eyebrow?: string;
-  readonly title: string;
-  readonly subtitle?: string;
-  readonly description?: string;
+  readonly eyebrow?: LocalizedText;
+  readonly title: LocalizedText;
+  readonly subtitle?: LocalizedText;
+  readonly description?: LocalizedText;
   readonly image?: string;
-  /** Accessible alternative text for `image`. Empty/absent renders the image as decorative (`alt=""`), matching standard accessibility guidance for purely illustrative imagery. */
-  readonly imageAlt?: string;
+  /** Accessible alternative text for `image`. Empty/absent renders the image as decorative (`alt=""`), matching standard accessibility guidance for purely illustrative imagery. Localized because screen readers announce it in the visitor's own language. */
+  readonly imageAlt?: LocalizedText;
   readonly cta?: WebsiteCta;
   readonly secondaryCta?: WebsiteCta;
 }
 
 export interface AboutSectionConfig {
-  readonly title: string;
-  readonly body: string;
+  readonly title: LocalizedText;
+  readonly body: LocalizedText;
   readonly image?: string;
-  readonly imageAlt?: string;
+  readonly imageAlt?: LocalizedText;
 }
 
 /** References the existing Academy-scoped Course catalog — never a duplicate course projection. */
 export interface FeaturedCoursesSectionConfig {
-  readonly title: string;
-  readonly description?: string;
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
   readonly mode: 'latest' | 'selected';
   /** Only meaningful when `mode === 'selected'`. */
   readonly courseIds?: readonly string[];
@@ -95,42 +105,55 @@ export interface FeaturedCoursesSectionConfig {
   readonly showInstructor: boolean;
 }
 
+/** A real, live-data metric `StatisticsSection` can resolve from `GET public/websites/:academyId/statistics` instead of the freely-typed `value`. */
+export type StatisticMetric = 'courses' | 'students' | 'instructors';
+
 export interface StatisticItem {
   readonly id: string;
-  readonly value: string;
-  readonly label: string;
+  /**
+   * Phase 6 — when set, the displayed number is resolved LIVE from real
+   * Academy data (`metric` wins over `value`, which is ignored). Absent
+   * on already-persisted pages authored before this phase — `value`
+   * remains a valid, freely-typed fallback so no existing `WebsitePage`
+   * needs a forced migration.
+   */
+  readonly metric?: StatisticMetric;
+  /** Localized, not just a number — an Owner may want different copy per language (e.g. a differently worded suffix), not merely a numeral-format conversion of one authored value. */
+  readonly value: LocalizedText;
+  readonly label: LocalizedText;
 }
 
 export interface StatisticsSectionConfig {
-  readonly title?: string;
+  readonly title?: LocalizedText;
   readonly items: readonly StatisticItem[];
 }
 
 export interface FeatureItem {
   readonly id: string;
-  readonly title: string;
-  readonly description: string;
+  readonly title: LocalizedText;
+  readonly description: LocalizedText;
   /** A name from Atlas's existing bounded icon set (lucide-react) — never an arbitrary asset or markup. */
   readonly icon: string;
 }
 
 export interface FeaturesSectionConfig {
-  readonly title?: string;
-  readonly description?: string;
+  readonly title?: LocalizedText;
+  readonly description?: LocalizedText;
   readonly items: readonly FeatureItem[];
 }
 
 export interface TestimonialItem {
   readonly id: string;
-  readonly quote: string;
+  readonly quote: LocalizedText;
+  /** A proper name — not translated, matches `WebsiteTestimonialEntry.authorName` (`website-content.types.ts`). */
   readonly authorName: string;
-  readonly authorRole?: string;
+  readonly authorRole?: LocalizedText;
   readonly avatar?: string;
-  readonly avatarAlt?: string;
+  readonly avatarAlt?: LocalizedText;
 }
 
 export interface TestimonialsSectionConfig {
-  readonly title?: string;
+  readonly title?: LocalizedText;
   readonly items: readonly TestimonialItem[];
   /**
    * Optional references into the Academy's reusable Testimonial content
@@ -144,45 +167,51 @@ export interface TestimonialsSectionConfig {
 
 export interface FaqItem {
   readonly id: string;
-  readonly question: string;
-  readonly answer: string;
+  readonly question: LocalizedText;
+  readonly answer: LocalizedText;
 }
 
 export interface FaqSectionConfig {
-  readonly title?: string;
+  readonly title?: LocalizedText;
   readonly items: readonly FaqItem[];
   /** Same additive library-reference mechanism as `TestimonialsSectionConfig.libraryEntryIds` — see that field's doc comment. References `WebsiteFaqEntry` (Prompt 10). */
   readonly libraryEntryIds?: readonly string[];
 }
 
 export interface CtaSectionConfig {
-  readonly title: string;
-  readonly description?: string;
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
   readonly cta: WebsiteCta;
 }
 
 /** References the existing Course domain's instructor summaries — derived, never a parallel Instructor model. */
 export interface InstructorsSectionConfig {
-  readonly title?: string;
-  readonly description?: string;
+  readonly title?: LocalizedText;
+  readonly description?: LocalizedText;
   readonly count: number;
 }
 
 export interface GalleryImage {
   readonly id: string;
   readonly image: string;
-  readonly caption?: string;
-  readonly imageAlt?: string;
+  readonly caption?: LocalizedText;
+  readonly imageAlt?: LocalizedText;
 }
 
 export interface GallerySectionConfig {
-  readonly title?: string;
+  readonly title?: LocalizedText;
   readonly images: readonly GalleryImage[];
 }
 
+/**
+ * `email`/`phone`/`address` stay plain scalars — factual reference data
+ * (and usually left blank so this section falls back to the Academy's own
+ * real `contactEmail`/`contactPhone`/`address`, themselves plain scalars
+ * on the `Academy` model), not authored copy a translator would rewrite.
+ */
 export interface ContactSectionConfig {
-  readonly title?: string;
-  readonly description?: string;
+  readonly title?: LocalizedText;
+  readonly description?: LocalizedText;
   readonly email?: string;
   readonly phone?: string;
   readonly address?: string;

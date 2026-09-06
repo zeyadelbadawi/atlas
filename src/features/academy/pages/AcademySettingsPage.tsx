@@ -8,11 +8,18 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, Save } from 'lucide-react';
+import { Globe2, Loader2, Mail, Save, SlidersHorizontal } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
+import { SectionTabs } from '@components/navigation';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -35,12 +42,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { useUnsavedChanges } from '@hooks';
 import { useServerValidation } from '@forms';
-import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
+import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useAcademy, useUpdateAcademy } from '../hooks';
+import { getAcademyAdminTabs } from '../utils/academy-navigation.utils';
 import {
   updateAcademySettingsSchema,
   type UpdateAcademySettingsFormData,
 } from '../schemas/academy.schemas';
+import type { BreadcrumbItem } from '@types';
 
 export default function AcademySettingsPage(): JSX.Element {
   const { t } = useTranslation();
@@ -143,20 +152,36 @@ export default function AcademySettingsPage(): JSX.Element {
     );
   }
 
+  const breadcrumbs: readonly BreadcrumbItem[] = [
+    {
+      labelKey: 'navigation:items.academyOverview',
+      label: academy.name,
+      path: DASHBOARD_ROUTES.academy,
+    },
+    { labelKey: 'academy:settings.title' },
+  ];
+
   return (
     <PageContainer>
       <PageHeader
         title={academy.name}
         titleKey="academy:settings.title"
         descriptionKey="academy:settings.subtitle"
+        breadcrumbs={breadcrumbs}
       />
+
+      <SectionTabs items={getAcademyAdminTabs(academyId ?? '')} />
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* General Settings */}
           <Card>
             <CardHeader>
-              <CardTitle>{t('academy:settings.general')}</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <SlidersHorizontal className="size-4 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+                {t('academy:settings.general')}
+              </CardTitle>
+              <CardDescription>{t('academy:settings.generalDescription')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
@@ -243,7 +268,11 @@ export default function AcademySettingsPage(): JSX.Element {
           {/* Localization Settings */}
           <Card>
             <CardHeader>
-              <CardTitle>{t('academy:settings.localization')}</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Globe2 className="size-4 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+                {t('academy:settings.localization')}
+              </CardTitle>
+              <CardDescription>{t('academy:settings.localizationDescription')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-3">
@@ -340,7 +369,11 @@ export default function AcademySettingsPage(): JSX.Element {
           {/* Contact Settings */}
           <Card>
             <CardHeader>
-              <CardTitle>{t('academy:settings.contact')}</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Mail className="size-4 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+                {t('academy:settings.contact')}
+              </CardTitle>
+              <CardDescription>{t('academy:settings.contactDescription')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">

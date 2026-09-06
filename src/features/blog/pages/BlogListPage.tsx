@@ -26,6 +26,8 @@ function getStatusTone(status: BlogPostStatus) {
   switch (status) {
     case 'published':
       return 'success' as const;
+    case 'scheduled':
+      return 'info' as const;
     case 'archived':
       return 'destructive' as const;
     case 'draft':

@@ -1,6 +1,7 @@
 {
   "skipToContent": "Skip to main content",
   "primary": "Main navigation",
+  "back": "Back",
   "sidebar": {
     "expand": "Expand navigation",
     "collapse": "Collapse navigation",
@@ -10,6 +11,9 @@
   "breadcrumb": {
     "label": "Breadcrumb",
     "home": "Home"
+  },
+  "sectionTabs": {
+    "label": "Section pages"
   },
   "sections": {
     "overview": "Overview",

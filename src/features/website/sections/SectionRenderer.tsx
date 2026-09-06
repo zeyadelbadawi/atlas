@@ -50,7 +50,7 @@ export function SectionRenderer({
     case 'featuredCourses':
       return <FeaturedCoursesSection config={instance.config} academyId={academyId} />;
     case 'statistics':
-      return <StatisticsSection config={instance.config} />;
+      return <StatisticsSection config={instance.config} academyId={academyId} />;
     case 'features':
       return <FeaturesSection config={instance.config} />;
     case 'testimonials':
@@ -64,7 +64,7 @@ export function SectionRenderer({
     case 'gallery':
       return <GallerySection config={instance.config} />;
     case 'contact':
-      return <ContactSection config={instance.config} />;
+      return <ContactSection config={instance.config} academyId={academyId} />;
     default:
       return null;
   }

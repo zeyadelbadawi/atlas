@@ -60,5 +60,14 @@
   },
   "provisioning": {
     "stepFailed": "Something went wrong while setting up your Academy. Please try again or contact support if the problem continues."
+  },
+  "checkout": {
+    "expired": "This checkout has expired. Please start again.",
+    "notPayable": "This checkout can no longer be paid.",
+    "planNotFound": "The selected plan is no longer available.",
+    "pricingUnavailable": "Pricing isn't configured for this plan and billing cycle yet. Please choose a different plan or contact support.",
+    "addOnNotFound": "The selected add-on is no longer available.",
+    "planNoLongerExists": "The plan for this checkout no longer exists.",
+    "addOnNoLongerExists": "The add-on for this checkout no longer exists."
   }
 }

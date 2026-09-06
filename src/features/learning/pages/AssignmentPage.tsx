@@ -32,6 +32,7 @@ import {
   useAssignment,
   useAssignmentSubmission,
   useSubmitAssignment,
+  useUploadSubmissionAttachment,
 } from "../hooks";
 import {
   assignmentSubmissionSchema,
@@ -63,6 +64,8 @@ export default function AssignmentPage(): JSX.Element {
     useAssignmentSubmission(courseId ?? "", assignmentId ?? "");
   const { mutateAsync: submitAssignment, isPending: isSubmitting } =
     useSubmitAssignment(courseId ?? "", assignmentId ?? "");
+  const { mutateAsync: uploadAttachment, isPending: isUploadingAttachment } =
+    useUploadSubmissionAttachment();
 
   const form = useForm<AssignmentSubmissionFormData>({
     resolver: zodResolver(assignmentSubmissionSchema),
@@ -100,12 +103,30 @@ export default function AssignmentPage(): JSX.Element {
     }
 
     form.clearErrors("attachmentUrl");
-    setAttachmentName(file.name);
     const reader = new FileReader();
-    reader.onload = () => {
-      form.setValue("attachmentUrl", reader.result as string, {
-        shouldDirty: true,
-      });
+    reader.onload = async () => {
+      try {
+        const asset = await uploadAttachment({
+          courseId: courseId ?? "",
+          assignmentId: assignmentId ?? "",
+          payload: {
+            fileName: file.name,
+            mimeType: file.type,
+            sizeBytes: file.size,
+            dataUrl: reader.result as string,
+          },
+        });
+        // Phase 4 — the attachment is now a real, permanently-stored file
+        // (via the R2 media pipeline), not a base64 blob in the form state.
+        form.setValue("attachmentUrl", asset.url, { shouldDirty: true });
+        setAttachmentName(file.name);
+      } catch {
+        form.setError("attachmentUrl", {
+          type: "upload",
+          message: "learning:assignment.attachmentUploadError",
+        });
+        filePicker.clearFiles();
+      }
     };
     reader.readAsDataURL(file);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -265,14 +286,21 @@ export default function AssignmentPage(): JSX.Element {
                         <Button
                           type="button"
                           variant="outline"
+                          disabled={isUploadingAttachment}
                           onClick={filePicker.openFilePicker}
                         >
-                          <Upload className="size-4" strokeWidth={2} aria-hidden />
-                          {attachmentName
-                            ? t("learning:assignment.changeAttachment")
-                            : t("learning:assignment.uploadAttachment")}
+                          {isUploadingAttachment ? (
+                            <Loader2 className="size-4 animate-spin" aria-hidden />
+                          ) : (
+                            <Upload className="size-4" strokeWidth={2} aria-hidden />
+                          )}
+                          {isUploadingAttachment
+                            ? t("learning:assignment.uploadingAttachment")
+                            : attachmentName
+                              ? t("learning:assignment.changeAttachment")
+                              : t("learning:assignment.uploadAttachment")}
                         </Button>
-                        {attachmentName ? (
+                        {attachmentName && !isUploadingAttachment ? (
                           <p className="text-xs text-muted-foreground">
                             {attachmentName}
                           </p>
@@ -284,7 +312,10 @@ export default function AssignmentPage(): JSX.Element {
                 </CardContent>
               </Card>
 
-              <Button type="submit" disabled={isSubmitting}>
+              <Button
+                type="submit"
+                disabled={isSubmitting || isUploadingAttachment}
+              >
                 {isSubmitting ? (
                   <Loader2 className="size-4 animate-spin" aria-hidden />
                 ) : null}

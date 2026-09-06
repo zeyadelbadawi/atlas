@@ -116,6 +116,7 @@ function toErrorKind(value: unknown): ApiErrorKind | undefined {
 interface BackendErrorPayload {
   readonly code?: unknown;
   readonly kind?: unknown;
+  readonly messageKey?: unknown;
   readonly requestId?: unknown;
   readonly errors?: unknown;
   readonly violations?: unknown;
@@ -200,6 +201,21 @@ export function normalizeResponseError(
   return createApiError(kind, {
     status,
     code: readString(body.code),
+    // The backend's own specific translation key (e.g.
+    // `errors.checkout.pricingUnavailable`), when it sent one — this is
+    // the ONE place that value is read off the wire at all. Before this
+    // fix, `BackendErrorPayload` never declared a `messageKey` field, so
+    // `createApiError` always fell back to the generic per-`kind` key
+    // (`errors:validation.description`, "Some information needs to be
+    // corrected before saving.") for every single backend error, no
+    // matter how specific and well-translated the backend's own message
+    // was — silently discarding it on every request, not just Checkout's.
+    // `messageKey` stays optional here (`readString` returns `undefined`
+    // for a missing/blank field) so a backend response with no specific
+    // key still falls back to the same generic, per-`kind` message exactly
+    // as before — this fixes what was lost, it does not require every
+    // caller to suddenly supply one.
+    messageKey: readString(body.messageKey),
     requestId: readRequestId(body),
     violations: kind === 'validation' ? readViolations(body) : undefined,
   });

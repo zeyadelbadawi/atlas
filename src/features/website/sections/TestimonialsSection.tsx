@@ -3,10 +3,14 @@
  *
  * Renders library entries (Prompt 10, `WebsiteTestimonialEntry`,
  * resolved live) additively alongside the page's own inline `items`
- * (Prompt 9, unchanged) — same order/backward-compatibility contract as
- * `FaqSection`.
+ * (Prompt 9, now also `LocalizedText` — Phase 6) — same order/backward-
+ * compatibility contract as `FaqSection`. Both sources are normalized to
+ * the same plain-string shape up front via `resolveLocalizedText`, using
+ * the REAL public-website locale (`usePublicWebsiteLocale`) — no longer
+ * the dashboard chrome's own `i18n.language`, which has nothing to do
+ * with which language a public visitor is looking at (see
+ * `PublicWebsiteLocaleContext`'s own doc comment).
  */
-import { useTranslation } from 'react-i18next';
 import { Quote } from 'lucide-react';
 import { useWebsiteTestimonialEntries } from '../hooks';
 import {
@@ -15,7 +19,9 @@ import {
   useWebsiteHeadingClass,
   useWebsiteSectionClass,
 } from '../renderer/renderer-style.utils';
-import type { LanguageCode, TestimonialsSectionConfig } from '@types';
+import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
+import { resolveLocalizedText } from '../utils/localized-text.utils';
+import type { TestimonialsSectionConfig } from '@types';
 
 export interface TestimonialsSectionProps {
   readonly config: TestimonialsSectionConfig;
@@ -23,12 +29,11 @@ export interface TestimonialsSectionProps {
 }
 
 export function TestimonialsSection({ config, academyId }: TestimonialsSectionProps): JSX.Element {
-  const { i18n } = useTranslation();
   const container = useWebsiteContainerClass();
   const section = useWebsiteSectionClass();
   const heading = useWebsiteHeadingClass();
   const cardClass = useWebsiteCardClass();
-  const language = i18n.language as LanguageCode;
+  const { locale } = usePublicWebsiteLocale();
 
   const libraryEntryIds = config.libraryEntryIds ?? [];
   const { data } = useWebsiteTestimonialEntries(academyId, {
@@ -41,20 +46,30 @@ export function TestimonialsSection({ config, academyId }: TestimonialsSectionPr
     .filter((entry): entry is NonNullable<typeof entry> => !!entry && entry.visible)
     .map((entry) => ({
       id: entry.id,
-      quote: entry.quote[language] || entry.quote.en,
+      quote: resolveLocalizedText(entry.quote, locale),
       authorName: entry.authorName,
-      authorRole: entry.authorRole ? entry.authorRole[language] || entry.authorRole.en : undefined,
+      authorRole: entry.authorRole ? resolveLocalizedText(entry.authorRole, locale) : undefined,
       avatar: entry.avatar,
       // Library entries have no dedicated `avatarAlt` field (Prompt 10) — the author's own name is a reasonable, honest alt for a portrait photo.
       avatarAlt: entry.authorName,
     }));
 
-  const allItems = [...libraryItems, ...config.items];
+  const inlineItems = config.items.map((item) => ({
+    id: item.id,
+    quote: resolveLocalizedText(item.quote, locale),
+    authorName: item.authorName,
+    authorRole: item.authorRole ? resolveLocalizedText(item.authorRole, locale) : undefined,
+    avatar: item.avatar,
+    avatarAlt: resolveLocalizedText(item.avatarAlt, locale) || item.authorName,
+  }));
+
+  const allItems = [...libraryItems, ...inlineItems];
+  const title = resolveLocalizedText(config.title, locale);
 
   return (
     <section className={`${container} ${section}`}>
-      {config.title ? (
-        <h2 className={`${heading} mb-10 text-center text-3xl text-foreground`}>{config.title}</h2>
+      {title ? (
+        <h2 className={`${heading} mb-10 text-center text-3xl text-foreground`}>{title}</h2>
       ) : null}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {allItems.map((item) => (

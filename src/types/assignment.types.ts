@@ -47,3 +47,27 @@ export interface CreateAssignmentSubmissionPayload {
   readonly response?: string;
   readonly attachmentUrl?: string;
 }
+
+/** Assignment AUTHORING payload (Phase 4) — reached only by an Owner/Manager/course-assigned Instructor. */
+export interface CreateAssignmentPayload {
+  readonly title: string;
+  readonly description?: string;
+  readonly instructions?: string;
+  readonly sectionId?: string;
+  readonly lessonId?: string;
+  readonly status?: AssignmentStatus;
+  readonly dueAt?: string;
+  readonly allowResubmission?: boolean;
+}
+
+/** Assignment update payload — a general field update, matching `UpdateCoursePayload`'s own shape. */
+export interface UpdateAssignmentPayload {
+  readonly title?: string;
+  readonly description?: string;
+  readonly instructions?: string;
+  readonly sectionId?: string;
+  readonly lessonId?: string;
+  readonly status?: AssignmentStatus;
+  readonly dueAt?: string;
+  readonly allowResubmission?: boolean;
+}

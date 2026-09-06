@@ -39,6 +39,23 @@ import {
 import { formatLimitValue } from '../utils/entitlement.utils';
 import type { Plan } from '@types';
 
+/**
+ * "Fail safely" defense-in-depth (never the source of truth — the backend
+ * catalog query is: `PlansRepository`'s `CUSTOMER_FACING_WHERE` is what
+ * actually keeps an unpriced/fixture plan out of `GET /plans` in the first
+ * place). This is a second, independent check purely so that if a plan
+ * without usable pricing ever reaches this dialog anyway — a future
+ * regression, a stale cached response, a different caller of this same
+ * component — a customer can never click into a checkout that is
+ * guaranteed to fail with `pricingUnavailable`. Mirrors
+ * `CheckoutService.resolvePricingOrThrow`'s own "field present, never
+ * truthiness" check on the backend exactly, so a real free plan
+ * (`amount: 0`) is never mistaken for "unpriced" here either.
+ */
+function hasUsablePricing(plan: Plan): boolean {
+  return plan.pricing?.amount !== undefined && plan.pricing.amount !== null && !!plan.pricing?.currency;
+}
+
 /** An inline notice shown above the plan grid, with an optional action. */
 export interface PlanComparisonNotice {
   readonly titleKey: string;
@@ -209,7 +226,7 @@ export function PlanComparisonDialog({
                       type="button"
                       variant="outline"
                       className="mt-auto"
-                      disabled={plan.status !== 'active'}
+                      disabled={plan.status !== 'active' || !hasUsablePricing(plan)}
                       onClick={() => onSelectPlan(plan)}
                     >
                       {t('tenant:planComparison.selectPlan')}

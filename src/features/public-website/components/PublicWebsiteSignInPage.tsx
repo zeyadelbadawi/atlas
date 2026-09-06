@@ -21,22 +21,31 @@
  * identity — never a different Academy, never an Organization-level
  * fallback — because the backend account this credential belongs to
  * already carries its own real Academy membership (dependency D).
+ *
+ * Phase 6 — `locale` comes from `PublicWebsiteRouter`'s `/ar/...` prefix,
+ * applies real `dir`/`lang` + the shared i18next instance's active
+ * language (`usePublicWebsiteDocumentDirection`), and resolves the
+ * Owner's optional heading-copy override (`authPages.signIn`, now
+ * `LocalizedText`) to it.
  */
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2 } from 'lucide-react';
 import { useAuth, useSignIn } from '@hooks';
-import { WebsiteChrome, resolvePagePath } from '@features/website';
+import { WebsiteChrome, resolvePagePath, resolveLocalizedText, usePublicWebsiteDocumentDirection } from '@features/website';
 import { SignInForm } from '@features/auth';
 import { usePublicWebsiteData } from '../hooks/usePublicWebsiteData';
 import { PublicWebsiteStatus } from './PublicWebsiteStatus';
 import { usePublicWebsiteLinkRenderer } from '../utils/public-website-link-renderer';
+import type { PublicWebsiteLocale } from '@types';
 
 export interface PublicWebsiteSignInPageProps {
   readonly lookupKey: string;
+  readonly locale: PublicWebsiteLocale;
 }
 
-export function PublicWebsiteSignInPage({ lookupKey }: PublicWebsiteSignInPageProps): JSX.Element {
+export function PublicWebsiteSignInPage({ lookupKey, locale }: PublicWebsiteSignInPageProps): JSX.Element {
   const { t } = useTranslation();
+  usePublicWebsiteDocumentDirection(locale);
   const data = usePublicWebsiteData(lookupKey);
   const { session } = useAuth();
   const { signIn, isLoading, error } = useSignIn();
@@ -47,6 +56,7 @@ export function PublicWebsiteSignInPage({ lookupKey }: PublicWebsiteSignInPagePr
   }
 
   const { academy, configuration, pages } = data;
+  const withLocale = (path: string): string => (locale === 'en' ? path : `/ar${path}`);
 
   const handleSubmit = async (email: string, password: string, rememberMe: boolean) => {
     try {
@@ -59,8 +69,15 @@ export function PublicWebsiteSignInPage({ lookupKey }: PublicWebsiteSignInPagePr
   const onNavigate = (pageId: string) => {
     const target = pages.find((candidate) => candidate.id === pageId);
     const path = target ? resolvePagePath(target) : undefined;
-    if (path) window.location.assign(path);
+    if (path) window.location.assign(withLocale(path));
   };
+
+  const title =
+    resolveLocalizedText(configuration.header.authPages?.signIn?.title, locale) ||
+    t('publicWebsite:auth.signIn.title', { academyName: academy.academyName });
+  const subtitle =
+    resolveLocalizedText(configuration.header.authPages?.signIn?.subtitle, locale) ||
+    t('publicWebsite:auth.signIn.subtitle');
 
   return (
     <WebsiteChrome
@@ -70,15 +87,13 @@ export function PublicWebsiteSignInPage({ lookupKey }: PublicWebsiteSignInPagePr
       pages={pages}
       onNavigate={onNavigate}
       linkRenderer={linkRenderer}
+      locale={locale}
+      onLocaleChange={(target) => window.location.assign(`${target === 'en' ? '' : '/ar'}/sign-in`)}
     >
       <div className="mx-auto flex min-h-[60vh] w-full max-w-md flex-col justify-center px-4 py-16">
         <div className="mb-8 text-center">
-          <h1 className="font-display text-2xl font-bold text-foreground">
-            {t('publicWebsite:auth.signIn.title', { academyName: academy.academyName })}
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {t('publicWebsite:auth.signIn.subtitle')}
-          </p>
+          <h1 className="font-display text-2xl font-bold text-foreground">{title}</h1>
+          <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>
         </div>
 
         {session.status === 'authenticated' ? (
@@ -95,7 +110,7 @@ export function PublicWebsiteSignInPage({ lookupKey }: PublicWebsiteSignInPagePr
         <div className="mt-6 text-center text-sm">
           <span className="text-muted-foreground">{t('publicWebsite:auth.signIn.noAccount')} </span>
           {linkRenderer({
-            href: '/sign-up',
+            href: withLocale('/sign-up'),
             external: false,
             className: 'font-medium text-[var(--website-primary-solid)] hover:underline',
             children: t('publicWebsite:auth.signIn.signUp'),

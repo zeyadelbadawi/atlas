@@ -2,15 +2,23 @@
  * Website CMS Content domain types (Prompt 10).
  *
  * Structured, reusable website content — distinct from a page's own
- * inline section content (Prompt 9's `FaqItem`/`TestimonialItem`, which
- * remain single-locale, page-authored strings, unchanged). A CMS entry
- * here is Academy-scoped library content: authored once, independently
- * localized in English and Arabic, carries its own draft/published/
- * archived lifecycle, and can be referenced by id from any number of FAQ
- * or Testimonials sections across a website (see
+ * inline section content (Prompt 9's `FaqItem`/`TestimonialItem`). Both
+ * now share this same `LocalizedText` shape as of Phase 6 (Bilingual
+ * Academy Websites) — this file's original doc comment described
+ * page-inline content as "remain[ing] single-locale, page-authored
+ * strings, unchanged," which was the correct, deliberate boundary before
+ * Phase 6 but is superseded by it: every visitor-facing copy field across
+ * both the CMS library (this file) and inline section content
+ * (`website-section.types.ts`) is `LocalizedText` now, for the same
+ * reason — a website that only exists in one language is not "bilingual
+ * by default." A CMS entry here remains distinct in one real way: it is
+ * Academy-scoped LIBRARY content, authored once, carrying its own
+ * draft/published/archived lifecycle, and can be referenced by id from any
+ * number of FAQ or Testimonials sections across a website (see
  * `FaqSectionConfig.libraryEntryIds` / `TestimonialsSectionConfig.libraryEntryIds`
  * in `website-section.types.ts`) instead of the same content being
- * copy-pasted into every page that wants it.
+ * copy-pasted into every page that wants it — inline content is still
+ * page-specific and one-off, just no longer single-locale.
  *
  * Both entry types below share one deliberate shape (localized fields +
  * `order` + `visible` + `status`), which is itself the extension point:

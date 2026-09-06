@@ -50,3 +50,20 @@ export {
 } from './utils/structured-data.utils';
 export { buildSitemapEntries } from './utils/sitemap.utils';
 export type { BuildSitemapEntriesInput } from './utils/sitemap.utils';
+
+// Phase 6 (Bilingual Academy Websites) — `@features/public-website`'s
+// router/pages need these to derive locale from the URL, resolve
+// `LocalizedText` fields, and apply `dir`/`lang` — the same curated-export
+// discipline as everything else in this barrel.
+export { resolveLocalizedText, isLocalizedTextComplete } from './utils/localized-text.utils';
+export { usePublicWebsiteDocumentDirection } from './renderer/usePublicWebsiteDocumentDirection';
+export { usePublicWebsiteLocale } from './renderer/PublicWebsiteLocaleContext';
+export {
+  PUBLIC_WEBSITE_LOCALES,
+  DEFAULT_PUBLIC_WEBSITE_LOCALE,
+  PUBLIC_WEBSITE_LOCALE_DIRECTION,
+  PUBLIC_WEBSITE_LOCALE_LABELS,
+  PUBLIC_WEBSITE_LOCALE_PATH_PREFIX,
+  isPublicWebsiteLocale,
+} from './constants/locale.constants';
+export type { PublicWebsiteLocale } from './constants/locale.constants';

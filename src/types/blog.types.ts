@@ -10,8 +10,8 @@
  * this contract.
  */
 
-/** Blog post lifecycle status. */
-export type BlogPostStatus = 'draft' | 'published' | 'archived';
+/** Blog post lifecycle status. Phase 6 adds `scheduled` — a future-dated post between `draft` and `published`, flipped to `published` by the Phase 2 sweep tick once `scheduledAt` is due. */
+export type BlogPostStatus = 'draft' | 'scheduled' | 'published' | 'archived';
 
 /** Blog post entity. */
 export interface BlogPost {
@@ -28,6 +28,12 @@ export interface BlogPost {
   readonly category?: string;
   readonly tags: readonly string[];
   readonly status: BlogPostStatus;
+  /** Phase 6 — set only when `status === 'scheduled'`. */
+  readonly scheduledAt?: string;
+  /** Phase 6 — real, persisted SEO metadata; each falls back to `title`/`excerpt`/`featuredImage` when unset. */
+  readonly metaTitle?: string;
+  readonly metaDescription?: string;
+  readonly ogImage?: string;
   readonly publishedAt?: string;
   readonly createdAt: string;
   readonly updatedAt: string;
@@ -42,6 +48,11 @@ export interface CreateBlogPostPayload {
   readonly featuredImage?: string;
   readonly category?: string;
   readonly tags?: readonly string[];
+  /** Phase 6 — a future ISO-8601 instant; the post is created as `scheduled` instead of `draft`. Omit to save a plain draft. */
+  readonly scheduledAt?: string;
+  readonly metaTitle?: string;
+  readonly metaDescription?: string;
+  readonly ogImage?: string;
 }
 
 /** Blog post update payload. */
@@ -53,4 +64,8 @@ export interface UpdateBlogPostPayload {
   readonly featuredImage?: string;
   readonly category?: string;
   readonly tags?: readonly string[];
+  readonly scheduledAt?: string;
+  readonly metaTitle?: string;
+  readonly metaDescription?: string;
+  readonly ogImage?: string;
 }

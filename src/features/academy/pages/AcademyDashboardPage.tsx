@@ -26,7 +26,7 @@ import { EmptyState, ErrorState } from '@components/feedback';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { usePlatform } from '@hooks';
+import { usePermissions, usePlatform } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import {
   useAcademies,
@@ -46,6 +46,15 @@ export default function AcademyDashboardPage(): JSX.Element {
   const [searchParams] = useSearchParams();
   const activeAcademyId = searchParams.get('academyId');
   const { setActiveAcademy } = usePlatform();
+  const { hasPermission } = usePermissions();
+  // Phase 5 — `academy.provisioning.create` is Organization-Owner-only
+  // (`ORGANIZATION_OWNER_PERMISSIONS`, never granted to a Manager/
+  // Instructor/Student — see that constant's own doc comment), matching
+  // the identical `requiredPermissions` the `academyCreate` route itself
+  // already enforces. Gating the CTA on the same permission means a
+  // Manager viewing this page never sees an action that the route guard
+  // would immediately reject anyway.
+  const canCreateAcademy = hasPermission('academy.provisioning.create');
 
   const {
     data: academiesData,
@@ -127,11 +136,15 @@ export default function AcademyDashboardPage(): JSX.Element {
           titleKey="academy:empty.noAcademies"
           descriptionKey="academy:empty.noAcademiesDescription"
           icon={Building2}
-          primaryAction={{
-            labelKey: 'academy:empty.createFirstAcademy',
-            onAction: () => navigate(DASHBOARD_ROUTES.academyCreate),
-            icon: Plus,
-          }}
+          primaryAction={
+            canCreateAcademy
+              ? {
+                  labelKey: 'academy:empty.createFirstAcademy',
+                  onAction: () => navigate(DASHBOARD_ROUTES.academyCreate),
+                  icon: Plus,
+                }
+              : undefined
+          }
         />
       </PageContainer>
     );
@@ -166,10 +179,12 @@ export default function AcademyDashboardPage(): JSX.Element {
                 currentAcademy={currentAcademy}
               />
             )}
-            <Button onClick={() => navigate(DASHBOARD_ROUTES.academyCreate)}>
-              <Plus className="size-4" strokeWidth={2} aria-hidden />
-              {t('academy:create.title')}
-            </Button>
+            {canCreateAcademy && (
+              <Button onClick={() => navigate(DASHBOARD_ROUTES.academyCreate)}>
+                <Plus className="size-4" strokeWidth={2} aria-hidden />
+                {t('academy:create.title')}
+              </Button>
+            )}
           </div>
         }
       />

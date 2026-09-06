@@ -15,6 +15,8 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, PanelLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { AcademyBrandMark, AtlasPlatformAttribution } from "@components/branding";
+import { useAcademyIdentity } from "@features/public-website/hooks";
 import { useBreakpoint, useDisclosure, useLanguage } from "@hooks";
 import { DASHBOARD_ROUTES, buildPath } from "@app/routes/route-paths";
 import { CurriculumNav } from "./CurriculumNav";
@@ -23,6 +25,14 @@ import type { CourseSection, LessonProgressStatus } from "@types";
 export interface LearningLayoutProps {
   readonly courseId: string;
   readonly courseTitle: string;
+  /**
+   * Phase 6 — the enrolling Academy, resolved via the PUBLIC identity
+   * endpoint (never the authenticated `academies/:id/*` routes: a Student
+   * only ever holds an `academy_students` row, never an
+   * `organization_memberships` one, so `AcademyScopeGuard` structurally
+   * cannot pass for them — see `useAcademyIdentity`'s own doc comment).
+   */
+  readonly academyId?: string;
   readonly progressPercentage: number;
   readonly sections: readonly CourseSection[];
   readonly lessonStatusById: ReadonlyMap<string, LessonProgressStatus>;
@@ -33,6 +43,7 @@ export interface LearningLayoutProps {
 export function LearningLayout({
   courseId,
   courseTitle,
+  academyId,
   progressPercentage,
   sections,
   lessonStatusById,
@@ -44,6 +55,7 @@ export function LearningLayout({
   const { isDesktop } = useBreakpoint();
   const { isRtl } = useLanguage();
   const drawer = useDisclosure(false);
+  const { data: academyIdentity } = useAcademyIdentity(academyId);
 
   const nav = (
     <CurriculumNav
@@ -59,6 +71,12 @@ export function LearningLayout({
     <div className="flex min-h-full flex-col">
       <header className="flex flex-col gap-3 border-b border-border px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div className="flex items-center gap-3">
+          <AcademyBrandMark
+            size="sm"
+            markOnly
+            name={academyIdentity?.name}
+            logoUrl={academyIdentity?.logoUrl}
+          />
           {!isDesktop ? (
             <Button
               variant="outline"
@@ -127,6 +145,10 @@ export function LearningLayout({
 
         <main className="min-w-0 flex-1 overflow-y-auto p-4 sm:p-6">
           {children}
+          {/* Phase 6 — mandatory, platform-owned; never a CMS-editable field. */}
+          <footer className="mt-8 border-t border-border pt-4">
+            <AtlasPlatformAttribution />
+          </footer>
         </main>
       </div>
     </div>

@@ -95,6 +95,15 @@ const CourseBuilderPage = lazy(
 const CourseSettingsPage = lazy(
   () => import('@features/course/pages/CourseSettingsPage')
 );
+const CourseQuizzesPage = lazy(
+  () => import('@features/course/pages/CourseQuizzesPage')
+);
+const CourseQuizEditorPage = lazy(
+  () => import('@features/course/pages/CourseQuizEditorPage')
+);
+const CourseAssignmentsPage = lazy(
+  () => import('@features/course/pages/CourseAssignmentsPage')
+);
 
 const StudentCourseDiscoveryPage = lazy(
   () => import('@features/learning/pages/StudentCourseDiscoveryPage')
@@ -518,6 +527,42 @@ export function AppRouter(): JSX.Element {
               element={
                 <RouteGuard requireAuthentication requiredPermissions={['course.configure']}>
                   <CourseSettingsPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.academyCourseQuizzes}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['quiz.manage']}>
+                  <CourseQuizzesPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.academyCourseQuizCreate}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['quiz.manage']}>
+                  <CourseQuizEditorPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.academyCourseQuizEdit}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['quiz.manage']}>
+                  <CourseQuizEditorPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.academyCourseAssignments}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['assignment.manage']}>
+                  <CourseAssignmentsPage />
                 </RouteGuard>
               }
             />

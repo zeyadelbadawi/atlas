@@ -3,6 +3,9 @@
     "name": "Atlas",
     "tagline": "The operating system for education businesses"
   },
+  "attribution": {
+    "poweredBy": "Powered by"
+  },
   "languages": {
     "en": "English",
     "ar": "Arabic"

@@ -112,7 +112,9 @@
     "title": "تعديل الدورة",
     "subtitle": "تحديث معلومات دورتك",
     "basicInformation": "المعلومات الأساسية",
+    "basicInformationDescription": "العنوان والوصف والصورة المصغرة التي يراها الطلاب قبل التسجيل.",
     "configuration": "الإعدادات",
+    "configurationDescription": "التصنيف والتسعير وإعدادات أخرى تتحكم في كيفية عرض هذه الدورة.",
     "saveButton": "حفظ التغييرات",
     "cancelButton": "إلغاء",
     "saving": "جارٍ حفظ التغييرات...",
@@ -120,7 +122,10 @@
     "error": "فشل تحديث الدورة",
     "unsavedChanges": "لديك تغييرات غير محفوظة في الدورة. هل أنت متأكد من رغبتك في المغادرة؟",
     "goToBuilder": "منشئ الدورة",
-    "goToSettings": "إعدادات الدورة"
+    "goToQuizzes": "الاختبارات",
+    "goToAssignments": "الواجبات",
+    "goToSettings": "إعدادات الدورة",
+    "detailsTabLabel": "التفاصيل"
   },
   "instructors": {
     "title": "المدرّسون",
@@ -213,6 +218,7 @@
     "subtitle": "إدارة الحالة والظهور والنشر",
     "general": "عام",
     "publishing": "النشر",
+    "publishingDescription": "الدورات المنشورة تكون مرئية للطلاب ومتاحة للتسجيل.",
     "currentStatus": "الحالة الحالية",
     "currentVisibility": "الظهور الحالي",
     "curriculumSummary": "{{sections}} أقسام، {{lessons}} دروس",
@@ -239,6 +245,7 @@
     "publishError": "فشل نشر الدورة",
     "unpublishError": "فشل إلغاء نشر الدورة",
     "dangerZone": "منطقة الخطر",
+    "dangerZoneDescription": "حذف الدورة إجراء نهائي ويزيلها لدى جميع الطلاب المسجَّلين.",
     "deleteCourse": "حذف الدورة",
     "deleteCourseConfirm": {
       "title": "حذف هذه الدورة؟",
@@ -248,6 +255,102 @@
     },
     "deleteCourseSuccess": "تم حذف الدورة",
     "deleteCourseError": "فشل حذف الدورة"
+  },
+  "assignmentAuthoring": {
+    "title": "الواجبات",
+    "subtitle": "أنشئ الواجبات التي يرسلها الطلاب لهذه الدورة",
+    "addAssignment": "إضافة واجب",
+    "empty": "لا تحتوي هذه الدورة على واجبات بعد.",
+    "emptyDescription": "أضف واجبًا ليقدّم الطلاب أعمالهم مقابله.",
+    "dueLabel": "الموعد النهائي {{date}}",
+    "menu": {
+      "edit": "تعديل",
+      "delete": "حذف"
+    },
+    "dialog": {
+      "createTitle": "إضافة واجب",
+      "editTitle": "تعديل الواجب",
+      "titleLabel": "العنوان",
+      "descriptionLabel": "الوصف",
+      "instructionsLabel": "التعليمات",
+      "statusLabel": "الحالة",
+      "dueAtLabel": "الموعد النهائي",
+      "allowResubmissionLabel": "السماح بإعادة الإرسال",
+      "allowResubmissionDescription": "يمكن للطلاب الإرسال مرة أخرى بعد إرسالهم الأول.",
+      "cancelButton": "إلغاء",
+      "saveButton": "حفظ"
+    },
+    "created": "تم إنشاء الواجب",
+    "updated": "تم تحديث الواجب",
+    "deleted": "تم حذف الواجب",
+    "error": "فشل حفظ الواجب",
+    "deleteConfirm": {
+      "title": "حذف هذا الواجب؟",
+      "description": "سيؤدي هذا إلى حذف \"{{title}}\" وأي تسليمات للطلاب مقابله نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
+      "confirmLabel": "حذف الواجب",
+      "cancelLabel": "إلغاء"
+    }
+  },
+  "quizAuthoring": {
+    "title": "الاختبارات",
+    "subtitle": "أنشئ الاختبارات التي يخوضها الطلاب لهذه الدورة",
+    "addQuiz": "إضافة اختبار",
+    "empty": "لا تحتوي هذه الدورة على اختبارات بعد.",
+    "emptyDescription": "أضف اختبارًا لقياس ما تعلمه الطلاب.",
+    "questionCount": "{{count}} سؤال",
+    "questionCount_other": "{{count}} أسئلة",
+    "menu": {
+      "edit": "تعديل",
+      "delete": "حذف"
+    },
+    "created": "تم إنشاء الاختبار",
+    "updated": "تم تحديث الاختبار",
+    "deleted": "تم حذف الاختبار",
+    "error": "فشل حفظ الاختبار",
+    "loadError": "فشل تحميل هذا الاختبار",
+    "deleteConfirm": {
+      "title": "حذف هذا الاختبار؟",
+      "description": "سيؤدي هذا إلى حذف \"{{title}}\" وأي محاولات للطلاب عليه نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
+      "confirmLabel": "حذف الاختبار",
+      "cancelLabel": "إلغاء"
+    },
+    "editor": {
+      "createTitle": "إضافة اختبار",
+      "editTitle": "تعديل الاختبار",
+      "detailsTitle": "تفاصيل الاختبار",
+      "titleLabel": "العنوان",
+      "descriptionLabel": "الوصف",
+      "statusLabel": "الحالة",
+      "passingScoreLabel": "درجة النجاح (%)",
+      "maxAttemptsLabel": "الحد الأقصى للمحاولات",
+      "maxAttemptsHelp": "اتركه فارغًا لعدد غير محدود من المحاولات.",
+      "questionsTitle": "الأسئلة",
+      "addQuestion": "إضافة سؤال",
+      "removeQuestion": "إزالة السؤال",
+      "questionLabel": "السؤال {{number}}",
+      "promptLabel": "نص السؤال",
+      "typeLabel": "النوع",
+      "type": {
+        "single_choice": "اختيار واحد",
+        "multiple_choice": "اختيار متعدد",
+        "true_false": "صح / خطأ"
+      },
+      "optionsLabel": "الخيارات",
+      "optionLabel": "الخيار {{number}}",
+      "addOption": "إضافة خيار",
+      "removeOption": "إزالة",
+      "correctLabel": "صحيح",
+      "trueLabel": "صح",
+      "falseLabel": "خطأ",
+      "cancelButton": "إلغاء",
+      "saveButton": "حفظ الاختبار"
+    },
+    "validation": {
+      "trueFalseOptionCount": "يحتاج سؤال صح/خطأ إلى خيارين بالضبط.",
+      "exactlyOneCorrect": "حدد خيارًا واحدًا بالضبط كإجابة صحيحة.",
+      "atLeastOneCorrect": "حدد خيارًا واحدًا على الأقل كإجابة صحيحة.",
+      "minTwoOptions": "أضف خيارين على الأقل."
+    }
   },
   "categories": {
     "loadFailed": "فشل تحميل الفئات",

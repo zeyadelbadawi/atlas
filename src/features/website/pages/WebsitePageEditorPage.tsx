@@ -28,6 +28,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useConfirmDialog } from '@app/providers';
 import { useDisclosure, useUnsavedChanges, usePermissions } from '@hooks';
 import { useAcademy } from '@features/academy';
+import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
+import type { BreadcrumbItem } from '@types';
 import {
   useUpdateWebsitePage,
   useWebsiteConfiguration,
@@ -120,6 +122,19 @@ export default function WebsitePageEditorPage(): JSX.Element {
   const selectedSection = draftSections.find((section) => section.id === selectedId);
   const previewPage = { ...page, sections: draftSections };
 
+  const breadcrumbs: readonly BreadcrumbItem[] = [
+    {
+      labelKey: 'navigation:items.academyOverview',
+      label: academy.name,
+      path: DASHBOARD_ROUTES.academy,
+    },
+    {
+      labelKey: 'website:pages.title',
+      path: buildPath(DASHBOARD_ROUTES.websitePages, { academyId: academyId ?? '' }),
+    },
+    { labelKey: 'website:editor.title', label: page.title },
+  ];
+
   const handleToggleEnabled = (id: string) =>
     setDraftSections((prev) =>
       prev.map((section) => (section.id === id ? { ...section, enabled: !section.enabled } : section))
@@ -194,6 +209,7 @@ export default function WebsitePageEditorPage(): JSX.Element {
           titleKey="website:editor.title"
           title={page.title}
           descriptionKey="website:editor.subtitle"
+          breadcrumbs={breadcrumbs}
           actions={
             canManage ? (
               <div className="flex items-center gap-2">
@@ -253,7 +269,7 @@ export default function WebsitePageEditorPage(): JSX.Element {
       </div>
 
       <Dialog open={!!selectedSection} onOpenChange={(open) => !open && setSelectedId(undefined)}>
-        <DialogContent className="max-h-[85vh] max-w-lg overflow-y-auto">
+        <DialogContent className="max-h-[85vh] max-w-4xl overflow-y-auto">
           {selectedSection ? (
             <>
               <DialogHeader>
@@ -264,6 +280,7 @@ export default function WebsitePageEditorPage(): JSX.Element {
                 academyId={academyId}
                 initialConfig={selectedSection.config}
                 pages={pages}
+                configuration={configuration}
                 isSaving={false}
                 onSave={handleSaveSectionConfig}
                 onCancel={() => setSelectedId(undefined)}

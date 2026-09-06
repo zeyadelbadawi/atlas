@@ -25,9 +25,30 @@ import type { AddOn, Plan, TrialPolicy } from '@types';
 export class PlanService extends BaseService {
   protected readonly resource = 'plans';
 
-  /** Retrieves every plan in the catalog. */
+  /**
+   * Retrieves the plan catalog.
+   *
+   * Phase 4.5.3 (scalability, Change 4) — the backend endpoint is now
+   * paginated (`ATLAS_SCALABILITY_PHASE_4_5_3_REPORT.md`); this method's
+   * own signature is deliberately left unchanged (`readonly Plan[]`, not
+   * a `PaginatedResult`) so every existing caller (`usePlanCatalog` and,
+   * through it, `PlansPage`/`TenantUsagePage`/`TenantSubscriptionPage`/
+   * `PlatformPlanCatalogPage`) needs no change — none of them page
+   * through the catalog; they render a full comparison view, which a
+   * real production catalog (a handful of plans) always fits in one
+   * request. `pageSize: 100` is the backend's own maximum allowed page
+   * size — comfortably above any real catalog, while no longer capable of
+   * forcing a browser to render an unbounded number of rows the way the
+   * unpaginated endpoint could (reproduced and documented in Phase 4.5:
+   * thousands of accumulated dev/test fixture rows hung the real Plans
+   * page in a real browser).
+   */
   async getPlans(options?: ReadOptions): Promise<readonly Plan[]> {
-    return this.client.get<readonly Plan[]>(this.path(), options);
+    const result = await this.fetchCollection<Plan>(
+      { pagination: { page: 1, pageSize: 100 } },
+      options
+    );
+    return result.items;
   }
 
   /** Retrieves a single plan by its stable key. */

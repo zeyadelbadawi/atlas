@@ -257,13 +257,19 @@
     "ctaTargetPlaceholder": "Choose a page",
     "ctaTargetSignIn": "Sign In",
     "ctaTargetSignUp": "Sign Up",
+    "authPagesTitle": "Sign In / Sign Up pages",
+    "authPagesDescription": "Sign In and Sign Up are fixed pages that already use your logo, colors, and footer — customize just their heading text here. Leave a field blank to use the default wording.",
+    "authPageHeading": "Heading",
+    "authPageSubheading": "Subheading",
     "footerTitle": "Footer",
     "copyrightText": "Copyright text",
     "socialLinks": "Social links",
     "addSocialLink": "Add link",
+    "newSocialLinkLabel": "New link",
     "removeSocialLink": "Remove link",
     "socialLabelPlaceholder": "Label",
-    "saveError": "Failed to save navigation"
+    "saveError": "Failed to save navigation",
+    "itemLabel": "Menu item label"
   },
   "pages": {
     "title": "Pages",
@@ -296,6 +302,7 @@
     "deleteConfirmDescription": "This section and its content will be removed from the page. This cannot be undone.",
     "noSections": "No sections yet",
     "invalidConfig": "Some values need to be corrected before this can be saved.",
+    "livePreview": "Live preview",
     "moveUp": "Move up",
     "moveDown": "Move down",
     "seoAction": "Edit SEO",
@@ -307,7 +314,12 @@
       "desktop": "Desktop",
       "tablet": "Tablet",
       "mobile": "Mobile"
-    }
+    },
+    "languageEnglish": "English",
+    "languageArabic": "Arabic",
+    "optional": "optional",
+    "translationComplete": "Complete",
+    "translationIncomplete": "Not translated yet"
   },
   "preview": {
     "title": "Preview",
@@ -334,17 +346,39 @@
     }
   },
   "sections": {
-    "hero": { "label": "Hero" },
-    "about": { "label": "About" },
-    "featuredCourses": { "label": "Featured Courses" },
-    "statistics": { "label": "Statistics" },
-    "features": { "label": "Features" },
-    "testimonials": { "label": "Testimonials" },
-    "faq": { "label": "FAQ" },
-    "cta": { "label": "Call to Action" },
-    "instructors": { "label": "Instructors" },
-    "gallery": { "label": "Gallery" },
-    "contact": { "label": "Contact" }
+    "hero": {
+      "label": "Hero"
+    },
+    "about": {
+      "label": "About"
+    },
+    "featuredCourses": {
+      "label": "Featured Courses"
+    },
+    "statistics": {
+      "label": "Statistics"
+    },
+    "features": {
+      "label": "Features"
+    },
+    "testimonials": {
+      "label": "Testimonials"
+    },
+    "faq": {
+      "label": "FAQ"
+    },
+    "cta": {
+      "label": "Call to Action"
+    },
+    "instructors": {
+      "label": "Instructors"
+    },
+    "gallery": {
+      "label": "Gallery"
+    },
+    "contact": {
+      "label": "Contact"
+    }
   },
   "fields": {
     "eyebrow": "Eyebrow",
@@ -376,6 +410,11 @@
     "showInstructor": "Show instructor",
     "statisticItems": "Statistics",
     "statisticItem": "Statistic",
+    "statMetric": "Data source",
+    "statMetricNone": "Custom text (below)",
+    "statMetricCourses": "Live course count",
+    "statMetricStudents": "Live student count",
+    "statMetricInstructors": "Live instructor count",
     "statValue": "Value",
     "statLabel": "Label",
     "featureItems": "Features",
@@ -419,7 +458,9 @@
     "contactNameLabel": "Name",
     "contactEmailLabel": "Email",
     "contactMessageLabel": "Message",
-    "contactSubmit": "Send message"
+    "contactSubmit": "Send message",
+    "contactSuccess": "Thanks — your message has been sent.",
+    "contactError": "Something went wrong. Please try again."
   },
   "common": {
     "saveChanges": "Save changes",

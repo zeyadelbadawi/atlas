@@ -9,3 +9,5 @@ export { useDocumentSeo } from './useDocumentSeo';
 export type { UseDocumentSeoOptions } from './useDocumentSeo';
 export { usePublicWebsiteData } from './usePublicWebsiteData';
 export type { PublicWebsiteDataState } from './usePublicWebsiteData';
+export { usePublicWebsiteStatistics } from './usePublicWebsiteStatistics';
+export { useAcademyIdentity } from './useAcademyIdentity';

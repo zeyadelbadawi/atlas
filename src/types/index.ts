@@ -36,6 +36,7 @@ export * from './website-section.types';
 export * from './website.types';
 export * from './website-content.types';
 export * from './website-seo.types';
+export * from './public-website-locale.types';
 export * from './domain.types';
 export * from './public-website.types';
 export * from './platform-organization.types';

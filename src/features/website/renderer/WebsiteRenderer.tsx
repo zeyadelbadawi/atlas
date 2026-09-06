@@ -12,6 +12,7 @@
 import { WebsiteChrome } from './WebsiteChrome';
 import { SectionRenderer } from '../sections';
 import { CourseDetailsTemplate } from './CourseDetailsTemplate';
+import type { PublicWebsiteLocale } from '../constants/locale.constants';
 import type { WebsiteConfiguration, WebsitePage } from '@types';
 import type { WebsiteLinkRenderer } from './website-link-renderer.types';
 
@@ -28,6 +29,10 @@ export interface WebsiteRendererProps {
   /** See `website-link-renderer.types.ts` — absent in every dashboard preview context, supplied only by the public runtime. */
   readonly linkRenderer?: WebsiteLinkRenderer;
   readonly className?: string;
+  /** Which side of every `LocalizedText` field to show. Defaults to English — the real public runtime derives this from the `/ar/...` URL prefix; the in-dashboard Page Editor preview passes whichever language tab the admin is currently viewing (see `SectionConfigForm`). Threaded straight through to `WebsiteChrome`, which is the one place that actually mounts `PublicWebsiteLocaleProvider` — see that component's own doc comment ("One Renderer, Every Surface" applies to Sign In/Sign Up too, so the provider lives at the shell they share, not duplicated here). */
+  readonly locale?: PublicWebsiteLocale;
+  /** See `WebsiteChromeProps.onLocaleChange` — forwarded verbatim. */
+  readonly onLocaleChange?: (locale: PublicWebsiteLocale) => void;
 }
 
 export function WebsiteRenderer({
@@ -41,6 +46,8 @@ export function WebsiteRenderer({
   onNavigate,
   linkRenderer,
   className,
+  locale,
+  onLocaleChange,
 }: WebsiteRendererProps): JSX.Element {
   return (
     <WebsiteChrome
@@ -52,6 +59,8 @@ export function WebsiteRenderer({
       onNavigate={onNavigate}
       linkRenderer={linkRenderer}
       className={className}
+      locale={locale}
+      onLocaleChange={onLocaleChange}
     >
       {page.coreType === 'courseDetails' ? (
         previewCourseId ? (

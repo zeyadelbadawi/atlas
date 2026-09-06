@@ -50,6 +50,14 @@ export const DASHBOARD_ROUTES = {
     '/dashboard/academy/:academyId/courses/:courseId/builder',
   academyCourseSettings:
     '/dashboard/academy/:academyId/courses/:courseId/settings',
+  academyCourseQuizzes:
+    '/dashboard/academy/:academyId/courses/:courseId/quizzes',
+  academyCourseQuizCreate:
+    '/dashboard/academy/:academyId/courses/:courseId/quizzes/create',
+  academyCourseQuizEdit:
+    '/dashboard/academy/:academyId/courses/:courseId/quizzes/:quizId',
+  academyCourseAssignments:
+    '/dashboard/academy/:academyId/courses/:courseId/assignments',
   learning: '/dashboard/learning',
   myLearning: '/dashboard/learning/my-courses',
   learningCourses: '/dashboard/learning/courses',

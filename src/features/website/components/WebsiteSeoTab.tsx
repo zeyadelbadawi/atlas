@@ -20,15 +20,17 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
 import { useServerValidation } from '@forms';
 import { useAcademy } from '@features/academy';
 import { useUpdateWebsiteConfiguration } from '../hooks';
 import { WebsiteImageField } from './WebsiteImageField';
+import { LocalizedTextField } from './LocalizedTextField';
 import { globalSeoSchema, type GlobalSeoFormData } from '../schemas/website.schemas';
 import { buildOrganizationJsonLd } from '../utils/structured-data.utils';
-import type { WebsiteConfiguration } from '@types';
+import type { LocalizedText, WebsiteConfiguration } from '@types';
+
+const EMPTY_LOCALIZED: LocalizedText = { en: '', ar: '' };
 
 export interface WebsiteSeoTabProps {
   readonly academyId: string;
@@ -44,9 +46,9 @@ export function WebsiteSeoTab({ academyId, configuration }: WebsiteSeoTabProps):
   const form = useForm<GlobalSeoFormData>({
     resolver: zodResolver(globalSeoSchema),
     values: {
-      siteTitle: configuration.seo.siteTitle ?? '',
-      metaTitle: configuration.seo.metaTitle ?? '',
-      metaDescription: configuration.seo.metaDescription ?? '',
+      siteTitle: configuration.seo.siteTitle ?? EMPTY_LOCALIZED,
+      metaTitle: configuration.seo.metaTitle ?? EMPTY_LOCALIZED,
+      metaDescription: configuration.seo.metaDescription ?? EMPTY_LOCALIZED,
       robotsIndexable: configuration.seo.robotsIndexable ?? true,
       sitemapEnabled: configuration.seo.sitemapEnabled ?? true,
       canonicalBaseUrl: configuration.seo.canonicalBaseUrl ?? '',
@@ -79,9 +81,13 @@ export function WebsiteSeoTab({ academyId, configuration }: WebsiteSeoTabProps):
                 name="siteTitle"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('website:seo.siteTitle')}</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <LocalizedTextField
+                        id="website-seo-site-title"
+                        labelKey="website:seo.siteTitle"
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -92,9 +98,13 @@ export function WebsiteSeoTab({ academyId, configuration }: WebsiteSeoTabProps):
                 name="metaTitle"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('website:seo.metaTitle')}</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <LocalizedTextField
+                        id="website-seo-meta-title"
+                        labelKey="website:seo.metaTitle"
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -105,9 +115,14 @@ export function WebsiteSeoTab({ academyId, configuration }: WebsiteSeoTabProps):
                 name="metaDescription"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('website:seo.metaDescription')}</FormLabel>
                     <FormControl>
-                      <Textarea rows={3} {...field} />
+                      <LocalizedTextField
+                        id="website-seo-meta-description"
+                        labelKey="website:seo.metaDescription"
+                        value={field.value}
+                        onChange={field.onChange}
+                        multiline
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

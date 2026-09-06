@@ -16,9 +16,18 @@
  * HTML-parsed, so this is safe without `dangerouslySetInnerHTML` or any
  * other injection risk (see `Reports/ARCHITECTURE.md`, Prompt 11,
  * "Structured Data Injection Safety").
+ *
+ * Phase 6 (Bilingual Academy Websites) — also the one place `<html
+ * lang>`/`<html dir>` are applied for the public runtime (a real visitor
+ * never mounts `AtlasLocalizationProvider`, which only ever sets these for
+ * the dashboard), and where `seo.hreflangAlternates` becomes real `<link
+ * rel="alternate" hreflang>` tags — one per supported locale, so search
+ * engines discover the `/ar/...` twin of every page instead of treating
+ * the two languages as unrelated, duplicate-content URLs.
  */
 import { useEffect } from 'react';
 import type { ResolvedSeoMetadata } from '@types';
+import { usePublicWebsiteDocumentDirection, type PublicWebsiteLocale } from '@features/website';
 
 const MANAGED_ATTR = 'data-atlas-seo';
 
@@ -29,6 +38,8 @@ export interface UseDocumentSeoOptions {
   readonly canonicalUrl?: string;
   /** Plain schema.org objects (`OrganizationJsonLd`, `CourseJsonLd`, ...) — each emitted as its own `<script type="application/ld+json">`. Typed as `unknown` only because it accepts a union of several distinct JSON-LD interfaces; every entry is still real, typed Atlas data produced by `@features/website`'s structured-data builders, never an arbitrary/untyped value. */
   readonly structuredData?: readonly unknown[];
+  /** The locale this render is for — sets `<html lang>`/`<html dir>` and is used to build each hreflang alternate's absolute URL from `seo.hreflangAlternates`' paths. */
+  readonly locale: PublicWebsiteLocale;
 }
 
 function upsertMeta(attr: 'name' | 'property', key: string, content: string | undefined): void {
@@ -44,7 +55,15 @@ function upsertMeta(attr: 'name' | 'property', key: string, content: string | un
   if (!existing) document.head.appendChild(tag);
 }
 
-export function useDocumentSeo({ seo, siteTitle, canonicalUrl, structuredData }: UseDocumentSeoOptions): void {
+export function useDocumentSeo({
+  seo,
+  siteTitle,
+  canonicalUrl,
+  structuredData,
+  locale,
+}: UseDocumentSeoOptions): void {
+  usePublicWebsiteDocumentDirection(locale);
+
   useEffect(() => {
     const previousTitle = document.title;
     document.title = siteTitle ? `${seo.title} · ${siteTitle}` : seo.title;
@@ -74,6 +93,18 @@ export function useDocumentSeo({ seo, siteTitle, canonicalUrl, structuredData }:
       if (!canonicalLink.isConnected) document.head.appendChild(canonicalLink);
     }
 
+    if (canonicalUrl) {
+      const origin = new URL(canonicalUrl).origin;
+      seo.hreflangAlternates.forEach((alternate) => {
+        const link = document.createElement('link');
+        link.rel = 'alternate';
+        link.hreflang = alternate.locale;
+        link.href = `${origin}${alternate.path}`;
+        link.setAttribute(MANAGED_ATTR, 'true');
+        document.head.appendChild(link);
+      });
+    }
+
     (structuredData ?? []).forEach((entry) => {
       const script = document.createElement('script');
       script.type = 'application/ld+json';
@@ -90,5 +121,5 @@ export function useDocumentSeo({ seo, siteTitle, canonicalUrl, structuredData }:
       document.head.querySelectorAll(`[${MANAGED_ATTR}]`).forEach((node) => node.remove());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [seo, siteTitle, canonicalUrl, JSON.stringify(structuredData)]);
+  }, [seo, siteTitle, canonicalUrl, locale, JSON.stringify(structuredData)]);
 }

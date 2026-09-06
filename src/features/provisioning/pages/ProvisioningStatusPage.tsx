@@ -8,10 +8,17 @@
  * second tab, restores the same state from the query layer; nothing here
  * is tracked in local component state.
  *
- * `READY` means the provisioning contract reports the Academy is ready —
- * it does NOT mean a public website exists (that is Prompt 9/10's
- * responsibility). The only action offered on success is "Go to Academy
- * Dashboard"; there is deliberately no "Visit Website" action here.
+ * `READY` means the provisioning contract reports the Academy is ready.
+ * Before Phase 6, that did NOT mean a public website existed, so this
+ * page deliberately offered no "Visit Website" action. Phase 6 (Bilingual
+ * Academy Websites) changes that: whenever a theme was selected, the
+ * `'theme'` provisioning step has already generated a real, structured,
+ * bilingual website (`WebsiteGenerationService`) by the time this screen
+ * ever shows `ready` — so the ready card now also offers "View your
+ * website," the reveal moment the specification's §7.2 recommends in
+ * place of a pre-creation preview: real, rendered, honest, reusing the
+ * existing in-dashboard `WebsitePreviewPage` pipeline, not a second
+ * preview mechanism.
  */
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -29,7 +36,7 @@ import { StatusBadge } from '@components/data-display';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useAuth } from '@hooks';
+import { useAuth, usePlatform } from '@hooks';
 import { useConfirmDialog } from '@app/providers';
 import { toErrorsNamespaceKey } from '@utils';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
@@ -63,6 +70,7 @@ export default function ProvisioningStatusPage(): JSX.Element {
   const navigate = useNavigate();
   const { requestId } = useParams<{ requestId: string }>();
   const { organization } = useAuth();
+  const { setActiveAcademy } = usePlatform();
   const { confirm } = useConfirmDialog();
 
   const { data: request, isLoading, error, refetch } = useProvisioningRequest(
@@ -215,18 +223,48 @@ export default function ProvisioningStatusPage(): JSX.Element {
                 </p>
               </div>
               {request.academyId ? (
-                <Button
-                  type="button"
-                  onClick={() =>
-                    navigate(
-                      buildPath(DASHBOARD_ROUTES.academyProfile, {
-                        academyId: request.academyId!,
-                      })
-                    )
-                  }
-                >
-                  {t('provisioning:status.goToAcademy')}
-                </Button>
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  {request.selectedThemeKey ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setActiveAcademy(request.academyId!);
+                        navigate(
+                          buildPath(DASHBOARD_ROUTES.websitePreview, {
+                            academyId: request.academyId!,
+                          })
+                        );
+                      }}
+                    >
+                      {t('provisioning:status.viewWebsite')}
+                    </Button>
+                  ) : null}
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      // Phase 5 — a customer who just completed real
+                      // payment and provisioning lands in the existing
+                      // Academy Onboarding wizard, never a bare profile
+                      // page (matches `AcademyCreatePage`'s own identical
+                      // post-create navigation for the legacy path, so
+                      // both real entry points into Academy creation end
+                      // up in the same one wizard). `setActiveAcademy`
+                      // mirrors that same call site too, so the header/
+                      // sidebar's academy context is already correct for
+                      // the duration of the wizard, not only after it.
+                      setActiveAcademy(request.academyId!);
+                      navigate(
+                        buildPath(DASHBOARD_ROUTES.academyOnboarding, {
+                          academyId: request.academyId!,
+                        }),
+                        { replace: true }
+                      );
+                    }}
+                  >
+                    {t('provisioning:status.goToAcademy')}
+                  </Button>
+                </div>
               ) : null}
             </CardContent>
           </Card>

@@ -47,7 +47,7 @@ import {
   DEFAULT_COURSE_VISIBILITY,
   MAX_COURSE_THUMBNAIL_FILE_SIZE,
 } from '../constants/course.constants';
-import type { Course, CoursePricing } from '@types';
+import type { BreadcrumbItem, Course, CoursePricing } from '@types';
 
 export default function CourseCreatePage(): JSX.Element {
   const { t } = useTranslation();
@@ -220,11 +220,20 @@ export default function CourseCreatePage(): JSX.Element {
     );
   }
 
+  const breadcrumbs: readonly BreadcrumbItem[] = [
+    {
+      labelKey: 'course:list.title',
+      path: buildPath(DASHBOARD_ROUTES.academyCourses, { academyId: academyId ?? '' }),
+    },
+    { labelKey: 'course:create.title' },
+  ];
+
   return (
     <PageContainer>
       <PageHeader
         titleKey="course:create.title"
         descriptionKey="course:create.subtitle"
+        breadcrumbs={breadcrumbs}
       />
 
       <Form {...form}>

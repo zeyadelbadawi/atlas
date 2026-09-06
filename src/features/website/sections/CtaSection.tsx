@@ -4,6 +4,8 @@
 import { Button } from '@/components/ui/button';
 import { useWebsiteContainerClass, useWebsiteHeadingClass, useWebsiteSectionClass } from '../renderer/renderer-style.utils';
 import { resolveWebsiteCtaHref, isExternalHref } from '../utils/link-resolution.utils';
+import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
+import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { CtaSectionConfig, WebsitePage } from '@types';
 import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
 
@@ -17,7 +19,9 @@ export function CtaSection({ config, pages, linkRenderer }: CtaSectionProps): JS
   const container = useWebsiteContainerClass();
   const section = useWebsiteSectionClass();
   const heading = useWebsiteHeadingClass();
+  const { locale } = usePublicWebsiteLocale();
   const href = linkRenderer ? resolveWebsiteCtaHref(config.cta, pages) : undefined;
+  const ctaLabel = resolveLocalizedText(config.cta.label, locale);
 
   return (
     <section className={section}>
@@ -28,17 +32,17 @@ export function CtaSection({ config, pages, linkRenderer }: CtaSectionProps): JS
           borderRadius: 'var(--website-radius)',
         }}
       >
-        <h2 className={`${heading} text-3xl`}>{config.title}</h2>
+        <h2 className={`${heading} text-3xl`}>{resolveLocalizedText(config.title, locale)}</h2>
         {config.description ? (
-          <p className="max-w-xl opacity-90">{config.description}</p>
+          <p className="max-w-xl opacity-90">{resolveLocalizedText(config.description, locale)}</p>
         ) : null}
         {href ? (
           <Button size="lg" variant="secondary" asChild>
-            {linkRenderer!({ href, external: isExternalHref(href), children: config.cta.label })}
+            {linkRenderer!({ href, external: isExternalHref(href), children: ctaLabel })}
           </Button>
         ) : (
           <Button size="lg" variant="secondary">
-            {config.cta.label}
+            {ctaLabel}
           </Button>
         )}
       </div>

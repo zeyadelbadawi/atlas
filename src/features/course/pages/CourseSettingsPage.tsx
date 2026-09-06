@@ -10,12 +10,19 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { CheckCircle2, Loader2 } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Info, Loader2, Rocket } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
+import { SectionTabs } from '@components/navigation';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { useConfirmDialog } from '@app/providers';
@@ -33,6 +40,8 @@ import {
   getCourseVisibilityLabelKey,
   getCourseVisibilityTone,
 } from '../utils/course-status.utils';
+import { getCourseEditorTabs } from '../utils/course-navigation.utils';
+import type { BreadcrumbItem } from '@types';
 
 export default function CourseSettingsPage(): JSX.Element {
   const { t } = useTranslation();
@@ -170,13 +179,26 @@ export default function CourseSettingsPage(): JSX.Element {
     );
   }
 
+  const breadcrumbs: readonly BreadcrumbItem[] = [
+    {
+      labelKey: 'course:list.title',
+      path: buildPath(DASHBOARD_ROUTES.academyCourses, { academyId: academyId ?? '' }),
+    },
+    { labelKey: 'course:settings.title', label: course.title },
+  ];
+
   return (
     <PageContainer>
       <PageHeader
         title={course.title}
         titleKey="course:settings.title"
         descriptionKey="course:settings.subtitle"
+        breadcrumbs={breadcrumbs}
       />
+
+      {academyId && courseId ? (
+        <SectionTabs items={getCourseEditorTabs(academyId, courseId)} />
+      ) : null}
 
       <div className="space-y-6">
         {justPublished && (
@@ -209,7 +231,10 @@ export default function CourseSettingsPage(): JSX.Element {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t('course:settings.general')}</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Info className="size-4 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+              {t('course:settings.general')}
+            </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap items-center gap-6">
             <div className="space-y-1">
@@ -246,7 +271,11 @@ export default function CourseSettingsPage(): JSX.Element {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t('course:settings.publishing')}</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Rocket className="size-4 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+              {t('course:settings.publishing')}
+            </CardTitle>
+            <CardDescription>{t('course:settings.publishingDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             {course.status === 'published' ? (
@@ -273,9 +302,11 @@ export default function CourseSettingsPage(): JSX.Element {
 
         <Card className="border-destructive/30">
           <CardHeader>
-            <CardTitle className="text-destructive">
+            <CardTitle className="flex items-center gap-2 text-destructive">
+              <AlertTriangle className="size-4" strokeWidth={1.75} aria-hidden />
               {t('course:settings.dangerZone')}
             </CardTitle>
+            <CardDescription>{t('course:settings.dangerZoneDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             <Button

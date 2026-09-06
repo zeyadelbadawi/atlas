@@ -9,11 +9,18 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, Save, Upload } from 'lucide-react';
+import { FileText, Loader2, Save, SlidersHorizontal, Upload } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
+import { SectionTabs } from '@components/navigation';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -39,10 +46,12 @@ import { useServerValidation } from '@forms';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useCourse, useUpdateCourse, useCourseCategories } from '../hooks';
 import { CourseInstructorsCard } from '../components/CourseInstructorsCard';
+import { getCourseEditorTabs } from '../utils/course-navigation.utils';
 import {
   updateCourseSchema,
   type UpdateCourseFormData,
 } from '../schemas/course.schemas';
+import type { BreadcrumbItem } from '@types';
 import {
   ALLOWED_COURSE_THUMBNAIL_TYPES,
   DEFAULT_COURSE_PRICING_CURRENCY,
@@ -214,51 +223,36 @@ export default function CourseEditPage(): JSX.Element {
 
   const currentThumbnail = thumbnailPreview ?? course.thumbnail;
 
+  const breadcrumbs: readonly BreadcrumbItem[] = [
+    {
+      labelKey: 'course:list.title',
+      path: buildPath(DASHBOARD_ROUTES.academyCourses, { academyId: academyId ?? '' }),
+    },
+    { labelKey: 'course:edit.title', label: course.title },
+  ];
+
   return (
     <PageContainer>
       <PageHeader
         title={course.title}
         titleKey="course:edit.title"
         descriptionKey="course:edit.subtitle"
-        actions={
-          academyId && courseId ? (
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                onClick={() =>
-                  navigate(
-                    buildPath(DASHBOARD_ROUTES.academyCourseBuilder, {
-                      academyId,
-                      courseId,
-                    })
-                  )
-                }
-              >
-                {t('course:edit.goToBuilder')}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() =>
-                  navigate(
-                    buildPath(DASHBOARD_ROUTES.academyCourseSettings, {
-                      academyId,
-                      courseId,
-                    })
-                  )
-                }
-              >
-                {t('course:edit.goToSettings')}
-              </Button>
-            </div>
-          ) : undefined
-        }
+        breadcrumbs={breadcrumbs}
       />
+
+      {academyId && courseId ? (
+        <SectionTabs items={getCourseEditorTabs(academyId, courseId)} />
+      ) : null}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>{t('course:create.basicInformation')}</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="size-4 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+                {t('course:create.basicInformation')}
+              </CardTitle>
+              <CardDescription>{t('course:edit.basicInformationDescription')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
@@ -363,7 +357,11 @@ export default function CourseEditPage(): JSX.Element {
 
           <Card>
             <CardHeader>
-              <CardTitle>{t('course:edit.configuration')}</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <SlidersHorizontal className="size-4 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+                {t('course:edit.configuration')}
+              </CardTitle>
+              <CardDescription>{t('course:edit.configurationDescription')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">

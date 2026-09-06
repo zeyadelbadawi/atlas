@@ -8,11 +8,18 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, Save, Upload, X } from 'lucide-react';
+import { ImageIcon, Loader2, Save, Type, Upload, X } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
+import { SectionTabs } from '@components/navigation';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -29,10 +36,12 @@ import { useFilePicker, useUnsavedChanges } from '@hooks';
 import { useServerValidation } from '@forms';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { useAcademy, useUpdateAcademyBranding } from '../hooks';
+import { getAcademyAdminTabs } from '../utils/academy-navigation.utils';
 import {
   updateAcademyBrandingSchema,
   type UpdateAcademyBrandingFormData,
 } from '../schemas/academy.schemas';
+import type { BreadcrumbItem } from '@types';
 import {
   ALLOWED_FAVICON_TYPES,
   ALLOWED_LOGO_TYPES,
@@ -233,20 +242,36 @@ export default function AcademyBrandingPage(): JSX.Element {
   const currentLogo = logoPreviewUrl ?? academy.logo;
   const currentFavicon = faviconPreviewUrl ?? academy.favicon;
 
+  const breadcrumbs: readonly BreadcrumbItem[] = [
+    {
+      labelKey: 'navigation:items.academyOverview',
+      label: academy.name,
+      path: DASHBOARD_ROUTES.academy,
+    },
+    { labelKey: 'academy:branding.title' },
+  ];
+
   return (
     <PageContainer>
       <PageHeader
         title={academy.name}
         titleKey="academy:branding.title"
         descriptionKey="academy:branding.subtitle"
+        breadcrumbs={breadcrumbs}
       />
+
+      <SectionTabs items={getAcademyAdminTabs(academyId ?? '')} />
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Display Name */}
           <Card>
             <CardHeader>
-              <CardTitle>{t('academy:branding.displayName')}</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Type className="size-4 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+                {t('academy:branding.displayName')}
+              </CardTitle>
+              <CardDescription>{t('academy:branding.displayNameDescription')}</CardDescription>
             </CardHeader>
             <CardContent>
               <FormField
@@ -268,7 +293,10 @@ export default function AcademyBrandingPage(): JSX.Element {
           {/* Logo */}
           <Card>
             <CardHeader>
-              <CardTitle>{t('academy:branding.logo')}</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <ImageIcon className="size-4 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+                {t('academy:branding.logo')}
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
@@ -328,7 +356,10 @@ export default function AcademyBrandingPage(): JSX.Element {
           {/* Favicon */}
           <Card>
             <CardHeader>
-              <CardTitle>{t('academy:branding.favicon')}</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <ImageIcon className="size-4 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+                {t('academy:branding.favicon')}
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField

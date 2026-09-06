@@ -17,6 +17,7 @@
   "number": "Enter a number",
   "integer": "Enter a whole number",
   "date": "Enter a valid date",
+  "futureDateRequired": "Choose a date and time in the future",
   "file": {
     "tooLarge": "The file must be {{size}} or smaller",
     "unsupportedType": "This file type is not supported"

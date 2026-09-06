@@ -11,6 +11,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ExternalLink, FileText, Globe, MessageSquareQuote, Settings2 } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
+import { SectionTabs } from '@components/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -20,8 +21,9 @@ import { useWebsiteConfiguration, useWebsitePages } from '../hooks';
 import { WebsitePublishBar } from '../components/WebsitePublishBar';
 import { buildSitemapEntries } from '../utils/sitemap.utils';
 import { getAcademyPublicWebsiteUrl } from '../utils/public-website-link.utils';
+import { getWebsiteTabs } from '../utils/website-navigation.utils';
 import { CONTENT_LIST_PAGE_SIZE } from '../constants/website.constants';
-import type { WebsiteConfiguration, WebsitePage } from '@types';
+import type { BreadcrumbItem, WebsiteConfiguration, WebsitePage } from '@types';
 
 export default function WebsiteOverviewPage(): JSX.Element {
   const { t } = useTranslation();
@@ -99,11 +101,21 @@ export default function WebsiteOverviewPage(): JSX.Element {
     : undefined;
   const isPublished = configQuery.data.status === 'published';
 
+  const breadcrumbs: readonly BreadcrumbItem[] = [
+    {
+      labelKey: 'navigation:items.academyOverview',
+      label: academyQuery.data?.name,
+      path: DASHBOARD_ROUTES.academy,
+    },
+    { labelKey: 'website:overview.title' },
+  ];
+
   return (
     <PageContainer>
       <PageHeader
         titleKey="website:overview.title"
         descriptionKey="website:overview.subtitle"
+        breadcrumbs={breadcrumbs}
         actions={
           publicUrl && isPublished ? (
             <Button asChild variant="outline">
@@ -115,6 +127,8 @@ export default function WebsiteOverviewPage(): JSX.Element {
           ) : undefined
         }
       />
+
+      <SectionTabs items={getWebsiteTabs(academyId)} />
 
       <div className="space-y-6">
         <WebsitePublishBar academyId={academyId} status={configQuery.data.status} />

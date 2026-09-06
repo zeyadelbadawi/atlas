@@ -66,11 +66,25 @@ export default function ProvisioningStartPage(): JSX.Element {
 
   const form = useForm<CreateProvisioningRequestFormData>({
     resolver: zodResolver(createProvisioningRequestSchema),
-    defaultValues: { academyName: '', requestedSubdomain: '', selectedThemeKey: undefined },
+    // Phase 6 — `websiteSetupMode` is pre-selected to `'complete'`: the
+    // easiest action (submit without touching this field) should be the
+    // one that produces a presentable site, not an empty shell — see the
+    // Bilingual Academy Websites specification, §3.2 ("make the easiest
+    // action the correct action"). This is a UI default only; the
+    // backend's own schema default for an OMITTED value is `'empty'` —
+    // deliberately different, see `CreateProvisioningRequestPayload.
+    // websiteSetupMode`'s own doc comment.
+    defaultValues: {
+      academyName: '',
+      requestedSubdomain: '',
+      selectedThemeKey: undefined,
+      websiteSetupMode: 'complete',
+    },
   });
 
   const themes = listWebsiteThemes();
   const selectedThemeKey = form.watch('selectedThemeKey');
+  const websiteSetupMode = form.watch('websiteSetupMode');
 
   useServerValidation(form, createRequest.error);
 
@@ -179,6 +193,7 @@ export default function ProvisioningStartPage(): JSX.Element {
           academyName: data.academyName,
           requestedSubdomain: data.requestedSubdomain,
           selectedThemeKey: data.selectedThemeKey,
+          websiteSetupMode: data.websiteSetupMode,
           idempotencyKey,
         },
       },
@@ -329,6 +344,61 @@ export default function ProvisioningStartPage(): JSX.Element {
                                 {t(theme.descriptionKey)}
                               </p>
                             </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              {/*
+                Phase 6 (Bilingual Academy Websites) — the setup-mode
+                choice lives directly beneath the existing theme picker,
+                on the SAME screen, rather than a new onboarding step
+                (see the specification's §3.1 for why this insertion
+                point was chosen over a bigger one). Two large, plain-
+                language cards — never "Empty Academy"/"Complete Website"
+                to the client, that framing is for engineering docs only.
+              */}
+              <FormField
+                control={form.control}
+                name="websiteSetupMode"
+                render={() => (
+                  <FormItem>
+                    <FormLabel>{t('provisioning:start.setupModeLabel')}</FormLabel>
+                    <FormDescription>{t('provisioning:start.setupModeHelp')}</FormDescription>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {(['complete', 'empty'] as const).map((mode) => {
+                        const isSelected = websiteSetupMode === mode;
+                        return (
+                          <button
+                            key={mode}
+                            type="button"
+                            onClick={() => form.setValue('websiteSetupMode', mode, { shouldDirty: true })}
+                            className={cn(
+                              'flex flex-col gap-1.5 rounded-lg border p-4 text-start transition-colors',
+                              isSelected
+                                ? 'border-2 border-primary'
+                                : 'border-border hover:border-primary/50'
+                            )}
+                          >
+                            <span className="flex items-center justify-between">
+                              <span className="text-sm font-medium">
+                                {t(`provisioning:start.setupMode.${mode}.title`)}
+                              </span>
+                              {mode === 'complete' ? (
+                                <StatusBadge
+                                  labelKey="provisioning:start.setupMode.recommended"
+                                  tone="info"
+                                />
+                              ) : isSelected ? (
+                                <Check className="size-4 text-primary" strokeWidth={2} aria-hidden />
+                              ) : null}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {t(`provisioning:start.setupMode.${mode}.description`)}
+                            </span>
                           </button>
                         );
                       })}

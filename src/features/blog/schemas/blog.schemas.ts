@@ -5,6 +5,8 @@ import { z } from 'zod';
 import {
   MAX_BLOG_CONTENT_LENGTH,
   MAX_BLOG_EXCERPT_LENGTH,
+  MAX_BLOG_META_DESCRIPTION_LENGTH,
+  MAX_BLOG_META_TITLE_LENGTH,
   MAX_BLOG_SLUG_LENGTH,
   MAX_BLOG_TITLE_LENGTH,
 } from '../constants/blog.constants';
@@ -32,6 +34,23 @@ export const blogPostSchema = z.object({
   featuredImage: z.string().optional(),
   category: z.string().optional(),
   tags: z.string().optional(),
+  /** Phase 6 — datetime-local input value; empty string means "no schedule" (plain draft), matching the form's own "" default rather than `undefined` (React controlled-input requirement). */
+  scheduledAt: z
+    .string()
+    .optional()
+    .refine(
+      (value) => !value || new Date(value).getTime() > Date.now(),
+      'validation:futureDateRequired',
+    ),
+  metaTitle: z
+    .string()
+    .max(MAX_BLOG_META_TITLE_LENGTH, 'validation:maxLength')
+    .optional(),
+  metaDescription: z
+    .string()
+    .max(MAX_BLOG_META_DESCRIPTION_LENGTH, 'validation:maxLength')
+    .optional(),
+  ogImage: z.string().optional(),
 });
 
 export type BlogPostFormData = z.infer<typeof blogPostSchema>;

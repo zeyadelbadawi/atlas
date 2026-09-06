@@ -18,7 +18,14 @@
  */
 import { BaseService, isApiError } from '@services';
 import type { ReadOptions } from '@services';
-import type { HostnameResolution, WebsiteConfiguration, WebsitePage } from '@types';
+import type {
+  AcademyIdentity,
+  ContactMessagePayload,
+  HostnameResolution,
+  PublicWebsiteStatistics,
+  WebsiteConfiguration,
+  WebsitePage,
+} from '@types';
 
 export class PublicWebsiteService extends BaseService {
   protected readonly resource = 'public';
@@ -83,6 +90,46 @@ export class PublicWebsiteService extends BaseService {
       if (isApiError(error) && error.kind === 'notFound') return null;
       throw error;
     }
+  }
+
+  /** Phase 6 — the combined Academy Identity/Branding read, reused by the public site, the LMS, and the dashboard. `null` for a genuinely unrecognized academyId, same convention as `resolveHostname`. */
+  async getIdentity(
+    academyId: string,
+    options?: ReadOptions
+  ): Promise<AcademyIdentity | null> {
+    try {
+      return await this.client.get<AcademyIdentity>(
+        this.path('websites', academyId, 'identity'),
+        options
+      );
+    } catch (error) {
+      if (isApiError(error) && error.kind === 'notFound') return null;
+      throw error;
+    }
+  }
+
+  /** Phase 6 — `StatisticsSection`'s real, live counts. `null` for a genuinely unrecognized academyId, same convention as `resolveHostname`. */
+  async getStatistics(
+    academyId: string,
+    options?: ReadOptions
+  ): Promise<PublicWebsiteStatistics | null> {
+    try {
+      return await this.client.get<PublicWebsiteStatistics>(
+        this.path('websites', academyId, 'statistics'),
+        options
+      );
+    } catch (error) {
+      if (isApiError(error) && error.kind === 'notFound') return null;
+      throw error;
+    }
+  }
+
+  /** Phase 6 — the real backend destination for the public Contact section's form (previously an intentional no-op). */
+  async submitContactMessage(
+    academyId: string,
+    payload: ContactMessagePayload
+  ): Promise<void> {
+    await this.client.post(this.path('websites', academyId, 'contact'), payload);
   }
 }
 

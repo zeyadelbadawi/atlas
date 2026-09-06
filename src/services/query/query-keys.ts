@@ -180,6 +180,20 @@ export const quizKeys = {
     courseId: string,
     quizId: string
   ) => [...quizKeys.all, 'attempts', studentId, courseId, quizId] as const,
+  /**
+   * Phase 4 authoring — every status (draft + published), including
+   * `isCorrect`. Embeds the authoring user's own id, same rationale as the
+   * student-facing keys above: no cached authoring data (with correct
+   * answers) can surface for a different author signed in in the same
+   * session.
+   */
+  authoringList: (authorId: string | undefined, courseId: string) =>
+    [...quizKeys.all, 'authoring-list', authorId, courseId] as const,
+  authoringDetail: (
+    authorId: string | undefined,
+    courseId: string,
+    quizId: string
+  ) => [...quizKeys.all, 'authoring-detail', authorId, courseId, quizId] as const,
 } as const;
 
 export const assignmentKeys = {
@@ -200,6 +214,21 @@ export const assignmentKeys = {
       ...assignmentKeys.all,
       'submission',
       studentId,
+      courseId,
+      assignmentId,
+    ] as const,
+  /** Phase 4 authoring — every status (draft + published). Embeds the authoring user's own id, same rationale as `quizKeys.authoringList`. */
+  authoringList: (authorId: string | undefined, courseId: string) =>
+    [...assignmentKeys.all, 'authoring-list', authorId, courseId] as const,
+  authoringDetail: (
+    authorId: string | undefined,
+    courseId: string,
+    assignmentId: string
+  ) =>
+    [
+      ...assignmentKeys.all,
+      'authoring-detail',
+      authorId,
       courseId,
       assignmentId,
     ] as const,
@@ -532,6 +561,12 @@ export const publicWebsiteKeys = {
   pages: (academyId: string | undefined) => [...publicWebsiteKeys.all, 'pages', academyId] as const,
   page: (academyId: string | undefined, slug: string) =>
     [...publicWebsiteKeys.all, 'page', academyId, slug] as const,
+  /** Phase 6 — `StatisticsSection`'s real, live counts. */
+  statistics: (academyId: string | undefined) =>
+    [...publicWebsiteKeys.all, 'statistics', academyId] as const,
+  /** Phase 6 — the combined Academy Identity/Branding read. */
+  identity: (academyId: string | undefined) =>
+    [...publicWebsiteKeys.all, 'identity', academyId] as const,
 } as const;
 
 /**

@@ -89,7 +89,8 @@
     "previous": "Previous",
     "next": "Next",
     "unsupportedContent": "This lesson's content isn't available in this view.",
-    "openResource": "Open Resource"
+    "openResource": "Open Resource",
+    "videoUnsupported": "Your browser doesn't support embedded video playback."
   },
   "progress": {
     "overallTitle": "Your Progress",
@@ -145,6 +146,7 @@
     "attachmentLabel": "Attachment",
     "attachmentHelp": "Optional. PDF, Word or image, max 10MB.",
     "uploadAttachment": "Upload File",
+    "uploadingAttachment": "Uploading...",
     "changeAttachment": "Change File",
     "submitAction": "Submit Assignment",
     "resubmitAction": "Resubmit",
@@ -162,7 +164,8 @@
     "resubmissionUnavailable": "Resubmission isn't available for this assignment.",
     "loadFailed": "Failed to load this assignment",
     "attachmentTooLarge": "Attachment must be smaller than 10MB.",
-    "attachmentInvalidType": "Attachment must be a PDF, Word document, or image."
+    "attachmentInvalidType": "Attachment must be a PDF, Word document, or image.",
+    "attachmentUploadError": "Failed to upload the attachment. Please try again."
   },
   "completion": {
     "title": "Course Completion",

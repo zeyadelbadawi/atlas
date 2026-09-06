@@ -29,14 +29,17 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
 import { useServerValidation } from '@forms';
 import { useUpdateWebsitePage } from '../hooks';
 import { WebsiteImageField } from './WebsiteImageField';
+import { LocalizedTextField } from './LocalizedTextField';
 import { pageSeoSchema, type PageSeoFormData } from '../schemas/website.schemas';
 import { resolvePageSeo } from '../utils/seo-resolution.utils';
-import type { WebsiteConfiguration, WebsitePage } from '@types';
+import { DEFAULT_PUBLIC_WEBSITE_LOCALE } from '../constants/locale.constants';
+import type { LocalizedText, WebsiteConfiguration, WebsitePage } from '@types';
+
+const EMPTY_LOCALIZED: LocalizedText = { en: '', ar: '' };
 
 export interface WebsitePageSeoDialogProps {
   readonly academyId: string;
@@ -62,10 +65,10 @@ export function WebsitePageSeoDialog({
   const form = useForm<PageSeoFormData>({
     resolver: zodResolver(pageSeoSchema),
     values: {
-      metaTitle: page.seo.metaTitle ?? '',
-      metaDescription: page.seo.metaDescription ?? '',
-      ogTitle: page.seo.ogTitle ?? '',
-      ogDescription: page.seo.ogDescription ?? '',
+      metaTitle: page.seo.metaTitle ?? EMPTY_LOCALIZED,
+      metaDescription: page.seo.metaDescription ?? EMPTY_LOCALIZED,
+      ogTitle: page.seo.ogTitle ?? EMPTY_LOCALIZED,
+      ogDescription: page.seo.ogDescription ?? EMPTY_LOCALIZED,
       canonicalPath: page.seo.canonicalPath ?? '',
       indexable: page.seo.indexable ?? true,
     },
@@ -74,11 +77,14 @@ export function WebsitePageSeoDialog({
 
   // What this page would resolve to right now if the fields below were
   // left blank — makes the Page Override → Website Global → Atlas System
-  // Fallback hierarchy visible rather than only documented.
+  // Fallback hierarchy visible rather than only documented. English is
+  // shown here as the reference language; Arabic follows the exact same
+  // resolution hierarchy at render time.
   const resolved = resolvePageSeo(
     { ...page, seo: {} },
     configuration,
-    { title: academyName, description: academyName }
+    { title: academyName, description: academyName },
+    DEFAULT_PUBLIC_WEBSITE_LOCALE
   );
 
   const onSubmit = (data: PageSeoFormData) => {
@@ -113,9 +119,13 @@ export function WebsitePageSeoDialog({
               name="metaTitle"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('website:seo.metaTitle')}</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <LocalizedTextField
+                      id="page-seo-meta-title"
+                      labelKey="website:seo.metaTitle"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -126,9 +136,14 @@ export function WebsitePageSeoDialog({
               name="metaDescription"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('website:seo.metaDescription')}</FormLabel>
                   <FormControl>
-                    <Textarea rows={3} {...field} />
+                    <LocalizedTextField
+                      id="page-seo-meta-description"
+                      labelKey="website:seo.metaDescription"
+                      value={field.value}
+                      onChange={field.onChange}
+                      multiline
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -139,9 +154,13 @@ export function WebsitePageSeoDialog({
               name="ogTitle"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('website:seo.ogTitle')}</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <LocalizedTextField
+                      id="page-seo-og-title"
+                      labelKey="website:seo.ogTitle"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -152,9 +171,14 @@ export function WebsitePageSeoDialog({
               name="ogDescription"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('website:seo.ogDescription')}</FormLabel>
                   <FormControl>
-                    <Textarea rows={2} {...field} />
+                    <LocalizedTextField
+                      id="page-seo-og-description"
+                      labelKey="website:seo.ogDescription"
+                      value={field.value}
+                      onChange={field.onChange}
+                      multiline
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

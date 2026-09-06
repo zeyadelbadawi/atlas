@@ -178,6 +178,7 @@ export default function LessonPage(): JSX.Element {
     <LearningLayout
       courseId={courseId ?? ""}
       courseTitle={course?.title ?? ""}
+      academyId={academyId}
       progressPercentage={progress?.percentage ?? 0}
       sections={sections}
       lessonStatusById={lessonStatusById}
@@ -208,7 +209,19 @@ export default function LessonPage(): JSX.Element {
                 </p>
               ) : null}
 
-              {currentLesson.contentType !== "text" &&
+              {currentLesson.contentType === "video" &&
+              currentLesson.contentUrl ? (
+                <video
+                  key={currentLesson.id}
+                  controls
+                  className="w-full rounded-lg bg-black"
+                  src={currentLesson.contentUrl}
+                >
+                  {t("learning:lesson.videoUnsupported")}
+                </video>
+              ) : null}
+
+              {currentLesson.contentType === "file" &&
               currentLesson.contentUrl ? (
                 <Button variant="outline" asChild>
                   <a

@@ -35,14 +35,34 @@ export class PaymentService extends BaseService {
     return this.path(organizationId, 'payments', ...segments);
   }
 
-  /** Retrieves every enabled payment method — catalog-scoped, not per-organization. */
+  /**
+   * Retrieves the enabled payment method catalog — catalog-scoped, not
+   * per-organization.
+   *
+   * Phase 4.5.3 (scalability, Change 4) — same shape-preserving fix as
+   * `PlanService.getPlans`: the backend endpoint is now paginated
+   * (`ATLAS_SCALABILITY_PHASE_4_5_3_REPORT.md`), but this method's own
+   * signature stays `readonly CheckoutPaymentMethod[]` so `usePaymentMethods`
+   * and its consumers (`CheckoutPage`, `PaymentDetailsPage`) need no
+   * change — a real payment-method catalog is always small, and
+   * `pageSize: 100` (the backend's own maximum) comfortably covers it
+   * while no longer risking the unbounded-row-rendering hang this
+   * endpoint's dev-database fixture pollution already reproduced once.
+   */
   async getPaymentMethods(
     options?: ReadOptions
   ): Promise<readonly CheckoutPaymentMethod[]> {
-    return this.client.get<readonly CheckoutPaymentMethod[]>(
+    // Deliberately NOT `this.fetchCollection` — that helper builds its
+    // request against `this.path()`, which resolves through THIS class's
+    // `resource` (`'organizations'`, used by every other method here).
+    // `payment-methods` is the same manually-built-path exception the
+    // class doc comment already describes for this one method, so the
+    // request is built and normalized explicitly instead.
+    const result = await this.client.get<PaginatedResult<CheckoutPaymentMethod>>(
       resourcePath('payment-methods'),
-      options
+      { ...options, params: { page: 1, pageSize: 100, ...options?.params } }
     );
+    return result.items;
   }
 
   /** Creates a Payment against an existing Checkout, for a chosen payment method. */

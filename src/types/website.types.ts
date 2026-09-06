@@ -18,6 +18,7 @@
  */
 import type { WebsiteThemeKey } from './website-theme.types';
 import type { SectionInstance } from './website-section.types';
+import type { LocalizedText } from './website-content.types';
 
 export type WebsitePublishStatus = 'draft' | 'published' | 'publishing' | 'failed';
 
@@ -41,11 +42,16 @@ export interface WebsiteBrandConfig {
  * DNS-backed domain — it is the same kind of "display-state, not
  * infrastructure" contract Prompt 8 established for
  * `DomainConnection.hostname`.
+ *
+ * Phase 6 — `siteTitle`/`metaTitle`/`metaDescription` are `LocalizedText`:
+ * a search engine indexes `/about` and `/ar/about` as two distinct pages
+ * (`seo-resolution.util.ts`'s hreflang alternates), so each needs its own
+ * language's title/description, not one string reused verbatim for both.
  */
 export interface WebsiteSeoConfig {
-  readonly siteTitle?: string;
-  readonly metaTitle?: string;
-  readonly metaDescription?: string;
+  readonly siteTitle?: LocalizedText;
+  readonly metaTitle?: LocalizedText;
+  readonly metaDescription?: LocalizedText;
   readonly ogImage?: string;
   /** Site-wide default; a page's own `WebsitePageSeo.indexable` overrides it. Defaults to `true`. */
   readonly robotsIndexable?: boolean;
@@ -56,38 +62,57 @@ export interface WebsiteSeoConfig {
 export interface WebsiteNavigationItem {
   readonly id: string;
   /** Tenant-authored display label — real content, not a translation key. */
-  readonly label: string;
+  readonly label: LocalizedText;
   readonly pageId: string;
   readonly order: number;
 }
 
+/** Per-page copy override for one of the public Sign In/Sign Up pages — both optional; an unset field falls back to the app's own generic default copy (see `PublicWebsiteSignInPage`/`PublicWebsiteSignUpPage`). */
+export interface WebsiteAuthPageCopy {
+  readonly title?: LocalizedText;
+  readonly subtitle?: LocalizedText;
+}
+
 export interface WebsiteHeaderConfig {
   readonly cta?: {
-    readonly label: string;
+    readonly label: LocalizedText;
     readonly pageId?: string;
     readonly url?: string;
     /** Phase 1 (Extended Scope, Decision 11, dependency C) — see `WebsiteCta.authAction`. */
     readonly authAction?: 'signIn' | 'signUp';
   };
+  /**
+   * Sign In/Sign Up are fixed, dedicated pages — not `WebsitePage` records
+   * — so they never appear in the Pages list and have no sections to
+   * compose. This is the deliberately narrow customization surface for
+   * them instead: just their heading copy, editable from the Navigation
+   * tab (the same tab that already configures the header CTA linking to
+   * them). Branding/theme/nav/footer already apply via the shared
+   * `WebsiteChrome` every public page renders inside.
+   */
+  readonly authPages?: {
+    readonly signIn?: WebsiteAuthPageCopy;
+    readonly signUp?: WebsiteAuthPageCopy;
+  };
 }
 
 export interface WebsiteFooterLink {
   readonly id: string;
-  readonly label: string;
+  readonly label: LocalizedText;
   readonly pageId?: string;
   readonly url?: string;
 }
 
 export interface WebsiteFooterGroup {
   readonly id: string;
-  readonly title: string;
+  readonly title: LocalizedText;
   readonly links: readonly WebsiteFooterLink[];
 }
 
 export interface WebsiteFooterConfig {
   readonly groups: readonly WebsiteFooterGroup[];
   readonly socialLinks: readonly WebsiteFooterLink[];
-  readonly copyrightText?: string;
+  readonly copyrightText?: LocalizedText;
 }
 
 export interface WebsitePublishError {
@@ -158,10 +183,10 @@ export type WebsitePageType = 'core' | 'custom';
  * (see `resolvePageSeo` in `seo-resolution.utils.ts`).
  */
 export interface WebsitePageSeo {
-  readonly metaTitle?: string;
-  readonly metaDescription?: string;
-  readonly ogTitle?: string;
-  readonly ogDescription?: string;
+  readonly metaTitle?: LocalizedText;
+  readonly metaDescription?: LocalizedText;
+  readonly ogTitle?: LocalizedText;
+  readonly ogDescription?: LocalizedText;
   readonly ogImage?: string;
   /** A path, e.g. `/about` — never a full origin (see `WebsiteSeoConfig.canonicalBaseUrl`'s doc comment for the boundary this respects). */
   readonly canonicalPath?: string;

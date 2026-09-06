@@ -257,13 +257,19 @@
     "ctaTargetPlaceholder": "اختر صفحة",
     "ctaTargetSignIn": "تسجيل الدخول",
     "ctaTargetSignUp": "إنشاء حساب",
+    "authPagesTitle": "صفحتا تسجيل الدخول / إنشاء حساب",
+    "authPagesDescription": "تسجيل الدخول وإنشاء حساب صفحتان ثابتتان تستخدمان بالفعل شعارك وألوانك وتذييلك — خصّص هنا نص العنوان فقط. اترك الحقل فارغًا لاستخدام النص الافتراضي.",
+    "authPageHeading": "العنوان",
+    "authPageSubheading": "العنوان الفرعي",
     "footerTitle": "التذييل",
     "copyrightText": "نص حقوق النشر",
     "socialLinks": "روابط التواصل الاجتماعي",
     "addSocialLink": "إضافة رابط",
+    "newSocialLinkLabel": "رابط جديد",
     "removeSocialLink": "إزالة الرابط",
     "socialLabelPlaceholder": "التسمية",
-    "saveError": "فشل حفظ التنقل"
+    "saveError": "فشل حفظ التنقل",
+    "itemLabel": "تسمية عنصر القائمة"
   },
   "pages": {
     "title": "الصفحات",
@@ -296,6 +302,7 @@
     "deleteConfirmDescription": "سيتم إزالة هذا القسم ومحتواه من الصفحة. لا يمكن التراجع عن هذا الإجراء.",
     "noSections": "لا توجد أقسام بعد",
     "invalidConfig": "بعض القيم تحتاج إلى تصحيح قبل أن يمكن حفظ هذا.",
+    "livePreview": "معاينة مباشرة",
     "moveUp": "تحريك للأعلى",
     "moveDown": "تحريك للأسفل",
     "seoAction": "تعديل تحسين محركات البحث",
@@ -307,7 +314,12 @@
       "desktop": "سطح المكتب",
       "tablet": "الجهاز اللوحي",
       "mobile": "الجوال"
-    }
+    },
+    "languageEnglish": "الإنجليزية",
+    "languageArabic": "العربية",
+    "optional": "اختياري",
+    "translationComplete": "مكتمل",
+    "translationIncomplete": "لم تتم الترجمة بعد"
   },
   "preview": {
     "title": "المعاينة",
@@ -334,17 +346,39 @@
     }
   },
   "sections": {
-    "hero": { "label": "الواجهة الرئيسية" },
-    "about": { "label": "من نحن" },
-    "featuredCourses": { "label": "الدورات المميزة" },
-    "statistics": { "label": "الإحصائيات" },
-    "features": { "label": "المزايا" },
-    "testimonials": { "label": "آراء العملاء" },
-    "faq": { "label": "الأسئلة الشائعة" },
-    "cta": { "label": "دعوة لاتخاذ إجراء" },
-    "instructors": { "label": "المدرّبون" },
-    "gallery": { "label": "معرض الصور" },
-    "contact": { "label": "التواصل" }
+    "hero": {
+      "label": "الواجهة الرئيسية"
+    },
+    "about": {
+      "label": "من نحن"
+    },
+    "featuredCourses": {
+      "label": "الدورات المميزة"
+    },
+    "statistics": {
+      "label": "الإحصائيات"
+    },
+    "features": {
+      "label": "المزايا"
+    },
+    "testimonials": {
+      "label": "آراء العملاء"
+    },
+    "faq": {
+      "label": "الأسئلة الشائعة"
+    },
+    "cta": {
+      "label": "دعوة لاتخاذ إجراء"
+    },
+    "instructors": {
+      "label": "المدرّبون"
+    },
+    "gallery": {
+      "label": "معرض الصور"
+    },
+    "contact": {
+      "label": "التواصل"
+    }
   },
   "fields": {
     "eyebrow": "النص التمهيدي",
@@ -376,6 +410,11 @@
     "showInstructor": "عرض المدرّب",
     "statisticItems": "الإحصائيات",
     "statisticItem": "إحصائية",
+    "statMetric": "مصدر البيانات",
+    "statMetricNone": "نص مخصص (أدناه)",
+    "statMetricCourses": "عدد الدورات المباشر",
+    "statMetricStudents": "عدد الطلاب المباشر",
+    "statMetricInstructors": "عدد المدرّبين المباشر",
     "statValue": "القيمة",
     "statLabel": "التسمية",
     "featureItems": "المزايا",
@@ -419,7 +458,9 @@
     "contactNameLabel": "الاسم",
     "contactEmailLabel": "البريد الإلكتروني",
     "contactMessageLabel": "الرسالة",
-    "contactSubmit": "إرسال الرسالة"
+    "contactSubmit": "إرسال الرسالة",
+    "contactSuccess": "شكرًا لك — تم إرسال رسالتك.",
+    "contactError": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
   },
   "common": {
     "saveChanges": "حفظ التغييرات",

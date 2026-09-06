@@ -1,6 +1,7 @@
 {
   "skipToContent": "الانتقال إلى المحتوى الرئيسي",
   "primary": "التنقل الرئيسي",
+  "back": "رجوع",
   "sidebar": {
     "expand": "توسيع قائمة التنقل",
     "collapse": "تصغير قائمة التنقل",
@@ -10,6 +11,9 @@
   "breadcrumb": {
     "label": "مسار التنقل",
     "home": "الرئيسية"
+  },
+  "sectionTabs": {
+    "label": "صفحات القسم"
   },
   "sections": {
     "overview": "نظرة عامة",

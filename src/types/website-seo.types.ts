@@ -14,6 +14,11 @@
  * a Course/BlogPost's own fields), and a last-resort fallback, every time
  * it's needed.
  *
+ * Phase 6 — `title`/`description`/`ogTitle`/`ogDescription` sources
+ * (`WebsitePageSeo`/`WebsiteSeoConfig`) are `LocalizedText`; resolution now
+ * takes an explicit `locale` and resolves each field to that locale
+ * before applying the same Override → Global → Fallback precedence.
+ *
  * The structured-data (`*JsonLd`) shapes below are plain, typed schema.org
  * fragments produced by pure builder functions from real Atlas data —
  * never hand-authored or injected as raw HTML/script. No renderer in this
@@ -22,9 +27,17 @@
  * SEO surface and documented as the exact contract a future public
  * runtime will emit.
  */
+import type { PublicWebsiteLocale } from './public-website-locale.types';
 
 /** Where a resolved SEO value ultimately came from — surfaced in the read-only preview so an Academy Owner can see why a value is what it is, never persisted. */
 export type SeoResolutionSource = 'override' | 'global' | 'fallback';
+
+/** One `<link rel="alternate" hreflang="...">` entry per supported public-website locale (Phase 6) — matches Google's documented "self-referencing hreflang" requirement (the resolved page's own locale is included). */
+export interface HreflangAlternate {
+  readonly locale: PublicWebsiteLocale;
+  /** Always a full, already-locale-prefixed path (`/ar/about`, or `/about` for `en`). */
+  readonly path: string;
+}
 
 export interface ResolvedSeoMetadata {
   readonly title: string;
@@ -37,6 +50,9 @@ export interface ResolvedSeoMetadata {
   readonly indexable: boolean;
   readonly titleSource: SeoResolutionSource;
   readonly descriptionSource: SeoResolutionSource;
+  /** Phase 6 — which locale this resolution is for; every title/description field above is already resolved to this locale (falling back to English when the Arabic side is blank). */
+  readonly locale: PublicWebsiteLocale;
+  readonly hreflangAlternates: readonly HreflangAlternate[];
 }
 
 /** https://schema.org/Organization — built from the existing Academy record only. */

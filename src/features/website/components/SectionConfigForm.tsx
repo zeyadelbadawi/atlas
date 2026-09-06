@@ -30,14 +30,35 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { WebsiteImageField } from './WebsiteImageField';
+import { LocalizedTextField } from './LocalizedTextField';
+import { PublicWebsiteLocaleProvider } from '../renderer/PublicWebsiteLocaleContext';
+import {
+  PUBLIC_WEBSITE_LOCALES,
+  PUBLIC_WEBSITE_LOCALE_LABELS,
+  DEFAULT_PUBLIC_WEBSITE_LOCALE,
+  type PublicWebsiteLocale,
+} from '../constants/locale.constants';
 import { useWebsiteFaqEntries, useWebsiteTestimonialEntries } from '../hooks';
 import { SECTION_FIELD_SCHEMAS } from '../sections/section-fields.registry';
 import { getSectionConfigSchema } from '../schemas/website-section.schemas';
 import { MAX_SECTION_ITEMS } from '../constants/website.constants';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
 import { useCourses } from '@features/course';
+import { getWebsiteTheme } from '../themes/website-theme.registry';
+import { WebsiteThemeScope } from '../renderer/WebsiteThemeScope';
+import { SectionRenderer } from '../sections/SectionRenderer';
 import type { SectionFieldDescriptor } from '../sections/section-field.types';
-import type { LanguageCode, SectionConfigMap, SectionType, WebsiteCta, WebsitePage } from '@types';
+import { DEFAULT_RESPONSIVE_VISIBILITY } from '@types';
+import type {
+  LanguageCode,
+  LocalizedText,
+  SectionConfigMap,
+  SectionInstance,
+  SectionType,
+  WebsiteConfiguration,
+  WebsiteCta,
+  WebsitePage,
+} from '@types';
 
 type DraftValue = Record<string, unknown>;
 
@@ -46,6 +67,13 @@ export interface SectionConfigFormProps<TType extends SectionType> {
   readonly academyId: string;
   readonly initialConfig: SectionConfigMap[TType];
   readonly pages: readonly WebsitePage[];
+  /**
+   * Phase 6 — the real theme/brand this Academy's public site renders
+   * under, so the live inline preview below uses the SAME
+   * `WebsiteThemeScope`/`SectionRenderer` pipeline as the actual public
+   * site (never a second, simplified preview renderer).
+   */
+  readonly configuration: Pick<WebsiteConfiguration, 'themeKey' | 'brand'>;
   readonly onSave: (config: SectionConfigMap[TType]) => void;
   readonly onCancel: () => void;
   readonly isSaving: boolean;
@@ -158,9 +186,18 @@ function TestimonialLibraryField({
 /** Which target kind a CTA currently points to — derived from which field is populated, never stored separately (see `WebsiteCta`'s doc comment). */
 type CtaLinkType = 'page' | 'external' | 'course';
 
+/**
+ * Checked by KEY PRESENCE (`!== undefined`), never truthiness. `setLinkType`
+ * below sets the newly-chosen field to `''` (a course/URL not yet picked
+ * is still that link type, just incomplete) — a truthy check on an empty
+ * string reports `false`, so the type this very function had just told the
+ * Select to switch to would immediately be inferred as 'page' again on
+ * the next render, snapping the dropdown straight back before a tenant
+ * could type or pick anything.
+ */
 function inferLinkType(value: Partial<WebsiteCta> | undefined): CtaLinkType {
-  if (value?.courseId) return 'course';
-  if (value?.url) return 'external';
+  if (value?.courseId !== undefined) return 'course';
+  if (value?.url !== undefined) return 'external';
   return 'page';
 }
 
@@ -197,10 +234,12 @@ function CtaFieldEditor({
   });
   const courses = coursesData?.items ?? [];
 
+  const emptyLabel: LocalizedText = { en: '', ar: '' };
+
   const setLinkType = (type: CtaLinkType) => {
     // Switching target kind clears the other kinds' fields — a CTA
     // never carries a stale pageId/url/courseId from a previous choice.
-    const base = { label: value?.label ?? '' };
+    const base = { label: value?.label ?? emptyLabel };
     if (type === 'page') onChange(base);
     else if (type === 'external') onChange({ ...base, url: '' });
     else onChange({ ...base, courseId: '' });
@@ -209,10 +248,12 @@ function CtaFieldEditor({
   return (
     <div className="space-y-3 rounded-md border border-border p-3">
       <p className="text-sm font-medium text-foreground">{t(labelKey)}</p>
-      <Input
-        placeholder={t('website:fields.ctaLabelPlaceholder')}
-        value={value?.label ?? ''}
-        onChange={(event) => onChange({ ...value, label: event.target.value })}
+      <LocalizedTextField
+        id={`cta-label-${labelKey}`}
+        labelKey="website:fields.ctaLabelPlaceholder"
+        value={value?.label as Partial<LocalizedText> | undefined}
+        onChange={(label) => onChange({ ...value, label })}
+        required
       />
 
       <div className="space-y-1.5">
@@ -232,7 +273,7 @@ function CtaFieldEditor({
       {linkType === 'page' ? (
         <Select
           value={value?.pageId}
-          onValueChange={(pageId) => onChange({ label: value?.label ?? '', pageId })}
+          onValueChange={(pageId) => onChange({ label: value?.label ?? emptyLabel, pageId })}
         >
           <SelectTrigger>
             <SelectValue placeholder={t('website:fields.ctaTargetPlaceholder')} />
@@ -250,7 +291,7 @@ function CtaFieldEditor({
       {linkType === 'course' ? (
         <Select
           value={value?.courseId}
-          onValueChange={(courseId) => onChange({ label: value?.label ?? '', courseId })}
+          onValueChange={(courseId) => onChange({ label: value?.label ?? emptyLabel, courseId })}
         >
           <SelectTrigger>
             <SelectValue placeholder={t('website:fields.ctaCoursePlaceholder')} />
@@ -295,6 +336,18 @@ function ScalarField({
 }): JSX.Element {
   const { t } = useTranslation();
   const id = `section-field-${descriptor.key}`;
+
+  if ((descriptor.kind === 'text' || descriptor.kind === 'longText') && descriptor.localized) {
+    return (
+      <LocalizedTextField
+        id={id}
+        labelKey={descriptor.labelKey}
+        value={value as Partial<LocalizedText> | undefined}
+        onChange={onChange}
+        multiline={descriptor.kind === 'longText'}
+      />
+    );
+  }
 
   switch (descriptor.kind) {
     case 'longText':
@@ -369,6 +422,7 @@ export function SectionConfigForm<TType extends SectionType>({
   academyId,
   initialConfig,
   pages,
+  configuration,
   onSave,
   onCancel,
   isSaving,
@@ -377,6 +431,30 @@ export function SectionConfigForm<TType extends SectionType>({
   const schema = SECTION_FIELD_SCHEMAS[type];
   const [draft, setDraft] = useState<DraftValue>(initialConfig as unknown as DraftValue);
   const [error, setError] = useState<string>();
+  // Phase 6 — which language the live preview shows. Independent of the
+  // admin's own dashboard chrome language (`i18n.language`) and of which
+  // side of the editor fields the admin is currently typing into — a
+  // small, explicit toggle so an Owner can genuinely check their Arabic
+  // content looks right before saving, not just trust it does.
+  const [previewLocale, setPreviewLocale] = useState<PublicWebsiteLocale>(DEFAULT_PUBLIC_WEBSITE_LOCALE);
+
+  // Phase 6 — live inline preview. Reactive to every keystroke (`draft`),
+  // scoped to just this one section instance, rendered through the exact
+  // same `SectionRenderer`/`WebsiteThemeScope` the real public site and
+  // the Page Editor's own whole-page preview already use — never a
+  // simplified stand-in. Deliberately built from `draft` directly (not
+  // the schema-validated result `onSave` produces): a preview should keep
+  // reflecting in-progress edits even mid-typo, exactly like the public
+  // site would once saved, rather than freezing/erroring on every
+  // momentarily-invalid keystroke.
+  const previewTheme = getWebsiteTheme(configuration.themeKey);
+  const previewInstance: SectionInstance = {
+    id: 'section-config-form-preview',
+    type,
+    enabled: true,
+    visibility: DEFAULT_RESPONSIVE_VISIBILITY,
+    config: draft as unknown as SectionConfigMap[TType],
+  } as SectionInstance;
 
   const setField = (key: string, value: unknown) => setDraft((prev) => ({ ...prev, [key]: value }));
 
@@ -386,7 +464,8 @@ export function SectionConfigForm<TType extends SectionType>({
     if (!schema.repeatable) return;
     const blank: DraftValue = { id: crypto.randomUUID() };
     for (const field of schema.repeatable.itemFields) {
-      blank[field.key] = field.kind === 'boolean' ? false : '';
+      const isLocalized = (field.kind === 'text' || field.kind === 'longText') && field.localized;
+      blank[field.key] = field.kind === 'boolean' ? false : isLocalized ? { en: '', ar: '' } : '';
     }
     setField(schema.repeatable.key, [...items, blank]);
   };
@@ -416,7 +495,8 @@ export function SectionConfigForm<TType extends SectionType>({
   };
 
   return (
-    <div className="space-y-5">
+    <div className="grid gap-6 lg:grid-cols-2">
+      <div className="space-y-5">
       {schema.fields.map((field) =>
         field.kind === 'cta' ? (
           <CtaFieldEditor
@@ -507,6 +587,47 @@ export function SectionConfigForm<TType extends SectionType>({
         <Button type="button" onClick={handleSave} disabled={isSaving}>
           {t('website:editor.applyChanges')}
         </Button>
+      </div>
+      </div>
+
+      {/*
+        Phase 6 — live inline preview, updating on every field change.
+        `pointer-events-none` + the section's own `enabled: true` keeps it
+        a pure visual preview (CTA buttons/links stay inert, matching the
+        whole-page preview's own established convention — see
+        `WebsitePageEditorPage`'s doc comment on `linkRenderer`).
+      */}
+      <div className="space-y-2 lg:sticky lg:top-0 lg:self-start">
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            {t('website:editor.livePreview')}
+          </p>
+          <div className="flex overflow-hidden rounded-md border border-border text-xs">
+            {PUBLIC_WEBSITE_LOCALES.map((candidate) => (
+              <button
+                key={candidate}
+                type="button"
+                onClick={() => setPreviewLocale(candidate)}
+                className={
+                  candidate === previewLocale
+                    ? 'bg-primary px-2.5 py-1 font-medium text-primary-foreground'
+                    : 'px-2.5 py-1 text-muted-foreground hover:text-foreground'
+                }
+              >
+                {PUBLIC_WEBSITE_LOCALE_LABELS[candidate]}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="max-h-[70vh] overflow-y-auto rounded-lg border border-border">
+          <div className="pointer-events-none">
+            <WebsiteThemeScope theme={previewTheme} brand={configuration.brand}>
+              <PublicWebsiteLocaleProvider locale={previewLocale}>
+                <SectionRenderer instance={previewInstance} academyId={academyId} pages={pages} />
+              </PublicWebsiteLocaleProvider>
+            </WebsiteThemeScope>
+          </div>
+        </div>
       </div>
     </div>
   );

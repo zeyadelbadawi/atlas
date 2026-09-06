@@ -17,7 +17,7 @@
  * behaving exactly as it did before Prompt 11 (see
  * `Reports/ARCHITECTURE.md`, Prompt 11, "Header/Footer Real Navigation").
  */
-import { Menu } from 'lucide-react';
+import { Globe, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -28,6 +28,13 @@ import { useDisclosure } from '@hooks';
 import { useWebsiteDesignSystem } from './WebsiteDesignSystemContext';
 import { useWebsiteContainerClass } from './renderer-style.utils';
 import { resolveWebsiteCtaHref, isExternalHref } from '../utils/link-resolution.utils';
+import { resolveLocalizedText } from '../utils/localized-text.utils';
+import {
+  PUBLIC_WEBSITE_LOCALES,
+  PUBLIC_WEBSITE_LOCALE_LABELS,
+  DEFAULT_PUBLIC_WEBSITE_LOCALE,
+  type PublicWebsiteLocale,
+} from '../constants/locale.constants';
 import type { WebsiteHeaderConfig, WebsiteNavigationItem, WebsitePage } from '@types';
 import type { WebsiteLinkRenderer } from './website-link-renderer.types';
 
@@ -41,10 +48,45 @@ export interface WebsiteHeaderProps {
   readonly onNavigate: (pageId: string) => void;
   /** See `website-link-renderer.types.ts` — absent in every dashboard preview context, supplied only by the public runtime. */
   readonly linkRenderer?: WebsiteLinkRenderer;
+  readonly locale?: PublicWebsiteLocale;
+  /** See `WebsiteChromeProps.onLocaleChange` — its presence is what makes the language switcher render at all. */
+  readonly onLocaleChange?: (locale: PublicWebsiteLocale) => void;
 }
 
-function resolveLabel(item: WebsiteNavigationItem, pages: readonly WebsitePage[]): string {
-  return item.label || pages.find((page) => page.id === item.pageId)?.title || '';
+function resolveLabel(
+  item: WebsiteNavigationItem,
+  pages: readonly WebsitePage[],
+  locale: PublicWebsiteLocale
+): string {
+  return (
+    resolveLocalizedText(item.label, locale) ||
+    pages.find((page) => page.id === item.pageId)?.title ||
+    ''
+  );
+}
+
+/** A plain, unstyled-menu two-way toggle (there are only ever two supported public-website locales today — see `locale.constants.ts`) — deliberately not a `Select`, so it reads as "switch language," not "configure a setting," matching the non-technical, client-facing register every other public-runtime control uses. */
+function LanguageSwitcher({
+  locale,
+  onLocaleChange,
+}: {
+  readonly locale: PublicWebsiteLocale;
+  readonly onLocaleChange: (locale: PublicWebsiteLocale) => void;
+}): JSX.Element {
+  const other = PUBLIC_WEBSITE_LOCALES.find((candidate) => candidate !== locale) ?? locale;
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="sm"
+      onClick={() => onLocaleChange(other)}
+      className="gap-1.5 text-sm font-medium text-foreground/80 hover:text-foreground"
+      aria-label={`${PUBLIC_WEBSITE_LOCALE_LABELS.en} / ${PUBLIC_WEBSITE_LOCALE_LABELS.ar}`}
+    >
+      <Globe className="size-4" aria-hidden />
+      {PUBLIC_WEBSITE_LOCALE_LABELS[other]}
+    </Button>
+  );
 }
 
 function NavLinks({
@@ -53,8 +95,9 @@ function NavLinks({
   activePageId,
   onNavigate,
   linkRenderer,
+  locale = DEFAULT_PUBLIC_WEBSITE_LOCALE,
   className,
-}: Pick<WebsiteHeaderProps, 'navigation' | 'pages' | 'activePageId' | 'onNavigate' | 'linkRenderer'> & {
+}: Pick<WebsiteHeaderProps, 'navigation' | 'pages' | 'activePageId' | 'onNavigate' | 'linkRenderer' | 'locale'> & {
   readonly className?: string;
 }): JSX.Element {
   return (
@@ -75,7 +118,7 @@ function NavLinks({
                   href,
                   external: isExternalHref(href),
                   className: activeClassName,
-                  children: resolveLabel(item, pages),
+                  children: resolveLabel(item, pages, locale),
                 })}
               </span>
             );
@@ -88,7 +131,7 @@ function NavLinks({
               onClick={() => onNavigate(item.pageId)}
               className={activeClassName}
             >
-              {resolveLabel(item, pages)}
+              {resolveLabel(item, pages, locale)}
             </button>
           );
         })}
@@ -105,6 +148,8 @@ export function WebsiteHeader({
   activePageId,
   onNavigate,
   linkRenderer,
+  locale = DEFAULT_PUBLIC_WEBSITE_LOCALE,
+  onLocaleChange,
 }: WebsiteHeaderProps): JSX.Element {
   const design = useWebsiteDesignSystem();
   const container = useWebsiteContainerClass();
@@ -120,6 +165,7 @@ export function WebsiteHeader({
     </div>
   );
 
+  const ctaLabel = header.cta ? resolveLocalizedText(header.cta.label, locale) : undefined;
   const ctaHref = header.cta && linkRenderer ? resolveWebsiteCtaHref(header.cta, pages) : undefined;
   const ctaButtonProps = {
     size: 'sm' as const,
@@ -130,11 +176,15 @@ export function WebsiteHeader({
   const cta = header.cta ? (
     ctaHref ? (
       <Button {...ctaButtonProps} asChild>
-        {linkRenderer!({ href: ctaHref, external: isExternalHref(ctaHref), children: header.cta.label })}
+        {linkRenderer!({ href: ctaHref, external: isExternalHref(ctaHref), children: ctaLabel })}
       </Button>
     ) : (
-      <Button {...ctaButtonProps}>{header.cta.label}</Button>
+      <Button {...ctaButtonProps}>{ctaLabel}</Button>
     )
+  ) : null;
+
+  const languageSwitcher = onLocaleChange ? (
+    <LanguageSwitcher locale={locale} onLocaleChange={onLocaleChange} />
   ) : null;
 
   const mobileTrigger = (
@@ -154,8 +204,10 @@ export function WebsiteHeader({
             mobileMenu.close();
           }}
           linkRenderer={linkRenderer}
+          locale={locale}
           className="flex flex-col gap-4 pt-8"
         />
+        {languageSwitcher}
       </SheetContent>
     </Sheet>
   );
@@ -172,8 +224,10 @@ export function WebsiteHeader({
               activePageId={activePageId}
               onNavigate={onNavigate}
               linkRenderer={linkRenderer}
+              locale={locale}
               className="hidden items-center gap-6 lg:flex"
             />
+            {languageSwitcher}
             {mobileTrigger}
           </div>
           {cta}
@@ -194,8 +248,10 @@ export function WebsiteHeader({
               activePageId={activePageId}
               onNavigate={onNavigate}
               linkRenderer={linkRenderer}
+              locale={locale}
               className="hidden items-center gap-6 lg:flex"
             />
+            {languageSwitcher}
             {mobileTrigger}
           </div>
         </div>
@@ -210,12 +266,14 @@ export function WebsiteHeader({
         <NavLinks
           navigation={navigation}
           pages={pages}
+          locale={locale}
           activePageId={activePageId}
           onNavigate={onNavigate}
           linkRenderer={linkRenderer}
           className="hidden items-center gap-6 lg:flex"
         />
         <div className="flex items-center gap-2">
+          {languageSwitcher}
           {cta}
           {mobileTrigger}
         </div>

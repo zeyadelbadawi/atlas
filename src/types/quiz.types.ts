@@ -83,3 +83,76 @@ export interface QuizAttempt {
 export interface SubmitQuizAttemptPayload {
   readonly answers: readonly QuizAnswer[];
 }
+
+/**
+ * Quiz AUTHORING types (Phase 4). Deliberately separate from
+ * `QuizQuestionOption`/`QuizQuestion`/`Quiz` above, which structurally
+ * never carry `isCorrect` — see this file's own header comment. These
+ * types are used ONLY by the authoring service methods/pages
+ * (`getQuizForAuthoring`, `createQuiz`, `updateQuiz`), reached only by an
+ * Owner/Manager/course-assigned Instructor, never by the student-facing
+ * quiz-taking flow.
+ */
+export interface QuizQuestionOptionInput {
+  readonly label: string;
+  readonly isCorrect: boolean;
+}
+
+/** One authored question. Matches the shape the scoring engine actually depends on: `true_false`/`single_choice` need exactly one correct option; `multiple_choice` needs at least one — re-enforced server-side, never trusted from the form alone. */
+export interface QuizQuestionInput {
+  readonly prompt: string;
+  readonly type: QuizQuestionType;
+  readonly options: readonly QuizQuestionOptionInput[];
+}
+
+/** Quiz creation payload — the full question/option set is authored in one atomic action. */
+export interface CreateQuizPayload {
+  readonly title: string;
+  readonly description?: string;
+  readonly sectionId?: string;
+  readonly status?: QuizStatus;
+  readonly passingScore?: number;
+  readonly maxAttempts?: number;
+  readonly questions: readonly QuizQuestionInput[];
+}
+
+/** Quiz update payload. `questions`, when present, REPLACES the quiz's entire question/option set — omit it to update only title/description/status/passingScore/maxAttempts. */
+export interface UpdateQuizPayload {
+  readonly title?: string;
+  readonly description?: string;
+  readonly sectionId?: string;
+  readonly status?: QuizStatus;
+  readonly passingScore?: number;
+  readonly maxAttempts?: number;
+  readonly questions?: readonly QuizQuestionInput[];
+}
+
+/** An authored option, WITH `isCorrect` — the one deliberate exception to this file's "never send isCorrect to the client" rule, reachable only through the authoring surface. */
+export interface QuizQuestionOptionAuthoring {
+  readonly id: string;
+  readonly label: string;
+  readonly isCorrect: boolean;
+}
+
+export interface QuizQuestionAuthoring {
+  readonly id: string;
+  readonly quizId: string;
+  readonly prompt: string;
+  readonly type: QuizQuestionType;
+  readonly order: number;
+  readonly options: readonly QuizQuestionOptionAuthoring[];
+}
+
+/** The authoring projection of `Quiz` — always carries its full question/option set, including `isCorrect`. */
+export interface QuizAuthoring {
+  readonly id: string;
+  readonly courseId: string;
+  readonly sectionId?: string;
+  readonly title: string;
+  readonly description?: string;
+  readonly status: QuizStatus;
+  readonly questionCount: number;
+  readonly passingScore?: number;
+  readonly maxAttempts?: number;
+  readonly questions: readonly QuizQuestionAuthoring[];
+}

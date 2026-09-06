@@ -15,6 +15,8 @@ import {
   useWebsiteHeadingClass,
   useWebsiteSectionClass,
 } from '../renderer/renderer-style.utils';
+import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
+import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { CourseInstructorSummary, InstructorsSectionConfig } from '@types';
 
 export interface InstructorsSectionProps {
@@ -30,6 +32,9 @@ export function InstructorsSection({
   const section = useWebsiteSectionClass();
   const heading = useWebsiteHeadingClass();
   const cardClass = useWebsiteCardClass();
+  const { locale } = usePublicWebsiteLocale();
+  const title = resolveLocalizedText(config.title, locale);
+  const description = resolveLocalizedText(config.description, locale);
 
   const { data, isLoading } = useCourses(academyId, {
     query: { pagination: { page: 1, pageSize: 50 } },
@@ -49,11 +54,11 @@ export function InstructorsSection({
 
   return (
     <section className={`${container} ${section}`}>
-      {(config.title || config.description) && (
+      {(title || description) && (
         <div className="mb-10 space-y-2 text-center">
-          {config.title ? <h2 className={`${heading} text-3xl text-foreground`}>{config.title}</h2> : null}
-          {config.description ? (
-            <p className="mx-auto max-w-2xl text-muted-foreground">{config.description}</p>
+          {title ? <h2 className={`${heading} text-3xl text-foreground`}>{title}</h2> : null}
+          {description ? (
+            <p className="mx-auto max-w-2xl text-muted-foreground">{description}</p>
           ) : null}
         </div>
       )}

@@ -161,6 +161,8 @@ export interface ProvisioningRequest {
   readonly triggeringPaymentId?: string;
   /** Phase P19 — the theme key applied by the 'theme' provisioning step, if one was chosen. */
   readonly selectedThemeKey?: string;
+  /** Phase 6 (Bilingual Academy Websites) — `'empty' | 'complete'`; see `CreateProvisioningRequestPayload.websiteSetupMode`'s own doc comment. */
+  readonly websiteSetupMode?: string;
   readonly lastError?: ProvisioningError;
   readonly createdAt: string;
   readonly startedAt?: string;
@@ -174,6 +176,16 @@ export interface CreateProvisioningRequestPayload {
   readonly triggeringPaymentId?: string;
   /** Phase P19 — matches the real Website Builder theme registry's own keys (`WEBSITE_THEME_KEYS`). */
   readonly selectedThemeKey?: string;
+  /**
+   * Phase 6 (Bilingual Academy Websites) — how the generated website
+   * starts once `selectedThemeKey` is applied. Omitted is treated as
+   * `'empty'` server-side (the safe, backward-compatible default) — the
+   * real provisioning form pre-selects `'complete'` for a human filling
+   * it out, but that is a UI default, not this field's own schema
+   * default; the two are deliberately different (see the specification's
+   * §3.2). Meaningless without `selectedThemeKey`.
+   */
+  readonly websiteSetupMode?: 'empty' | 'complete';
   readonly idempotencyKey: string;
 }
 

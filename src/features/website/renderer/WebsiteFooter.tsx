@@ -7,7 +7,10 @@
 import { useWebsiteDesignSystem } from './WebsiteDesignSystemContext';
 import { useWebsiteContainerClass } from './renderer-style.utils';
 import { resolveWebsiteCtaHref, isExternalHref } from '../utils/link-resolution.utils';
+import { resolveLocalizedText } from '../utils/localized-text.utils';
+import { usePublicWebsiteLocale } from './PublicWebsiteLocaleContext';
 import type { WebsiteFooterConfig, WebsiteFooterLink, WebsitePage } from '@types';
+import type { PublicWebsiteLocale } from '../constants/locale.constants';
 import type { WebsiteLinkRenderer } from './website-link-renderer.types';
 
 export interface WebsiteFooterProps {
@@ -24,17 +27,20 @@ function FooterLinkButton({
   pages,
   onNavigate,
   linkRenderer,
+  locale,
 }: {
   readonly link: WebsiteFooterLink;
   readonly pages: readonly WebsitePage[];
   readonly onNavigate: (pageId: string) => void;
   readonly linkRenderer?: WebsiteLinkRenderer;
+  readonly locale: PublicWebsiteLocale;
 }): JSX.Element {
   const className = 'text-start text-sm text-muted-foreground hover:text-foreground';
   const href = linkRenderer ? resolveWebsiteCtaHref(link, pages) : undefined;
+  const label = resolveLocalizedText(link.label, locale);
 
   if (href) {
-    return linkRenderer!({ href, external: isExternalHref(href), className, children: link.label });
+    return linkRenderer!({ href, external: isExternalHref(href), className, children: label });
   }
 
   return (
@@ -43,7 +49,7 @@ function FooterLinkButton({
       onClick={link.pageId ? () => onNavigate(link.pageId!) : undefined}
       className={className}
     >
-      {link.label}
+      {label}
     </button>
   );
 }
@@ -57,8 +63,16 @@ export function WebsiteFooter({
 }: WebsiteFooterProps): JSX.Element {
   const design = useWebsiteDesignSystem();
   const container = useWebsiteContainerClass();
+  const { locale } = usePublicWebsiteLocale();
   const copyright =
-    footer.copyrightText ?? `© ${new Date().getFullYear()} ${academyName}`;
+    resolveLocalizedText(footer.copyrightText, locale) || `© ${new Date().getFullYear()} ${academyName}`;
+
+  // `footer.groups` (titled link columns) and `footer.socialLinks` (the
+  // flat list the settings UI's "Social links" section actually edits)
+  // are two independent arrays. Every variant used to render only
+  // `groups`, so social links an admin added always saved correctly but
+  // never appeared anywhere on the public site.
+  const groupLinks = footer.groups.flatMap((group) => group.links);
 
   if (design.footerVariant === 'simple') {
     return (
@@ -66,13 +80,14 @@ export function WebsiteFooter({
         <div className={`${container} flex flex-col items-center gap-3 text-center sm:flex-row sm:justify-between sm:text-start`}>
           <p className="text-sm text-muted-foreground">{copyright}</p>
           <div className="flex flex-wrap items-center gap-4">
-            {footer.groups.flatMap((group) => group.links).map((link) => (
+            {[...groupLinks, ...footer.socialLinks].map((link) => (
               <FooterLinkButton
                 key={link.id}
                 link={link}
                 pages={pages}
                 onNavigate={onNavigate}
                 linkRenderer={linkRenderer}
+                locale={locale}
               />
             ))}
           </div>
@@ -87,13 +102,14 @@ export function WebsiteFooter({
         <div className={`${container} space-y-8 text-center`}>
           <p className="font-display text-lg font-semibold text-foreground">{academyName}</p>
           <div className="flex flex-wrap justify-center gap-6">
-            {footer.groups.flatMap((group) => group.links).map((link) => (
+            {[...groupLinks, ...footer.socialLinks].map((link) => (
               <FooterLinkButton
                 key={link.id}
                 link={link}
                 pages={pages}
                 onNavigate={onNavigate}
                 linkRenderer={linkRenderer}
+                locale={locale}
               />
             ))}
           </div>
@@ -112,7 +128,7 @@ export function WebsiteFooter({
         </div>
         {footer.groups.map((group) => (
           <div key={group.id} className="space-y-3">
-            <p className="text-sm font-medium text-foreground">{group.title}</p>
+            <p className="text-sm font-medium text-foreground">{resolveLocalizedText(group.title, locale)}</p>
             <div className="flex flex-col gap-2">
               {group.links.map((link) => (
                 <FooterLinkButton
@@ -121,14 +137,31 @@ export function WebsiteFooter({
                   pages={pages}
                   onNavigate={onNavigate}
                   linkRenderer={linkRenderer}
+                  locale={locale}
                 />
               ))}
             </div>
           </div>
         ))}
       </div>
-      <div className={`${container} mt-8 border-t border-border pt-6`}>
+      <div
+        className={`${container} mt-8 flex flex-col items-center gap-3 border-t border-border pt-6 text-center sm:flex-row sm:justify-between sm:text-start`}
+      >
         <p className="text-xs text-muted-foreground">{copyright}</p>
+        {footer.socialLinks.length > 0 ? (
+          <div className="flex flex-wrap items-center gap-4">
+            {footer.socialLinks.map((link) => (
+              <FooterLinkButton
+                key={link.id}
+                link={link}
+                pages={pages}
+                onNavigate={onNavigate}
+                linkRenderer={linkRenderer}
+                locale={locale}
+              />
+            ))}
+          </div>
+        ) : null}
       </div>
     </footer>
   );

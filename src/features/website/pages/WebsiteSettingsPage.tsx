@@ -9,16 +9,20 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
+import { SectionTabs } from '@components/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAcademy } from '@features/academy';
 import { WebsiteDomainTab } from '@features/domain';
+import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { useWebsiteConfiguration, useWebsitePages } from '../hooks';
 import { WebsitePublishBar } from '../components/WebsitePublishBar';
 import { WebsiteThemeTab } from '../components/WebsiteThemeTab';
 import { WebsiteBrandTab } from '../components/WebsiteBrandTab';
 import { WebsiteSeoTab } from '../components/WebsiteSeoTab';
 import { WebsiteNavigationTab } from '../components/WebsiteNavigationTab';
+import { getWebsiteTabs } from '../utils/website-navigation.utils';
+import type { BreadcrumbItem } from '@types';
 
 export default function WebsiteSettingsPage(): JSX.Element {
   const { t } = useTranslation();
@@ -63,12 +67,24 @@ export default function WebsiteSettingsPage(): JSX.Element {
   const configuration = configQuery.data;
   const pages = pagesQuery.data.items;
 
+  const breadcrumbs: readonly BreadcrumbItem[] = [
+    {
+      labelKey: 'navigation:items.academyOverview',
+      label: academy.name,
+      path: DASHBOARD_ROUTES.academy,
+    },
+    { labelKey: 'website:settings.title' },
+  ];
+
   return (
     <PageContainer>
       <PageHeader
         titleKey="website:settings.title"
         descriptionKey="website:settings.subtitle"
+        breadcrumbs={breadcrumbs}
       />
+
+      <SectionTabs items={getWebsiteTabs(academyId)} />
 
       <div className="space-y-6">
         <WebsitePublishBar academyId={academyId} status={configuration.status} />

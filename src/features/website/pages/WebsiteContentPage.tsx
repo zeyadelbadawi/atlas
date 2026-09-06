@@ -10,10 +10,14 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageContainer, PageHeader } from '@components/layout';
+import { SectionTabs } from '@components/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { WebsiteFaqContentTab } from '../components/WebsiteFaqContentTab';
 import { WebsiteTestimonialContentTab } from '../components/WebsiteTestimonialContentTab';
 import { WebsiteBlogContentTab } from '../components/WebsiteBlogContentTab';
+import { getWebsiteTabs } from '../utils/website-navigation.utils';
+import type { BreadcrumbItem } from '@types';
 
 export default function WebsiteContentPage(): JSX.Element {
   const { t } = useTranslation();
@@ -21,9 +25,20 @@ export default function WebsiteContentPage(): JSX.Element {
 
   if (!academyId) return <PageContainer><PageHeader titleKey="website:content.title" /></PageContainer>;
 
+  const breadcrumbs: readonly BreadcrumbItem[] = [
+    { labelKey: 'navigation:items.academyOverview', path: DASHBOARD_ROUTES.academy },
+    { labelKey: 'website:content.title' },
+  ];
+
   return (
     <PageContainer>
-      <PageHeader titleKey="website:content.title" descriptionKey="website:content.subtitle" />
+      <PageHeader
+        titleKey="website:content.title"
+        descriptionKey="website:content.subtitle"
+        breadcrumbs={breadcrumbs}
+      />
+
+      <SectionTabs items={getWebsiteTabs(academyId)} />
 
       <Tabs defaultValue="faqs">
         <TabsList>

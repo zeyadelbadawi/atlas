@@ -15,6 +15,7 @@ import { Loader2, Lock, Plus, Trash2 } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
+import { SectionTabs } from '@components/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -43,13 +44,17 @@ import {
   useCreateWebsitePage,
   useDeleteWebsitePage,
   useUpdateWebsitePage,
+  useWebsiteConfiguration,
   useWebsitePages,
 } from '../hooks';
 import {
   createWebsitePageSchema,
   type CreateWebsitePageFormData,
 } from '../schemas/website.schemas';
-import type { WebsitePage } from '@types';
+import { getWebsiteTabs } from '../utils/website-navigation.utils';
+import { AuthPageCopyDialog } from '../components/AuthPageCopyDialog';
+import type { AuthPageKey } from '../utils/auth-page-copy.utils';
+import type { BreadcrumbItem, WebsitePage } from '@types';
 
 function CreatePageDialog({
   academyId,
@@ -144,9 +149,14 @@ export default function WebsitePagesPage(): JSX.Element {
   const { data, isLoading, error, refetch } = useWebsitePages(academyId ?? '', {
     query: { pagination: { page: 1, pageSize: 50 } },
   });
+  // Sign In/Sign Up have no `WebsitePage` row of their own — their heading
+  // copy lives on `header.authPages` (see `AuthPageCopyDialog`'s doc
+  // comment) — so this page also needs the configuration, not just pages.
+  const configQuery = useWebsiteConfiguration(academyId ?? '');
   const updatePage = useUpdateWebsitePage();
   const deletePage = useDeleteWebsitePage();
   const [pendingId, setPendingId] = useState<string>();
+  const [openAuthPage, setOpenAuthPage] = useState<AuthPageKey | null>(null);
 
   useEffect(() => {
     if (!updatePage.isPending) setPendingId(undefined);
@@ -154,7 +164,7 @@ export default function WebsitePagesPage(): JSX.Element {
 
   const canManage = hasPermission('academy.website.manage');
 
-  if (isLoading) {
+  if (isLoading || configQuery.isLoading) {
     return (
       <PageContainer>
         <div className="space-y-6">
@@ -165,16 +175,27 @@ export default function WebsitePagesPage(): JSX.Element {
     );
   }
 
-  if (error || !data || !academyId) {
+  if (error || configQuery.error || !data || !configQuery.data || !academyId) {
     return (
       <PageContainer>
         <PageHeader titleKey="website:pages.title" />
-        <ErrorState onRetry={() => refetch()} />
+        <ErrorState
+          onRetry={() => {
+            void refetch();
+            void configQuery.refetch();
+          }}
+        />
       </PageContainer>
     );
   }
 
   const pages = data.items;
+  const configuration = configQuery.data;
+
+  const breadcrumbs: readonly BreadcrumbItem[] = [
+    { labelKey: 'navigation:items.academyOverview', path: DASHBOARD_ROUTES.academy },
+    { labelKey: 'website:pages.title' },
+  ];
 
   const toggleVisibility = (page: WebsitePage) => {
     setPendingId(page.id);
@@ -202,6 +223,7 @@ export default function WebsitePagesPage(): JSX.Element {
       <PageHeader
         titleKey="website:pages.title"
         descriptionKey="website:pages.subtitle"
+        breadcrumbs={breadcrumbs}
         actions={
           canManage ? (
             <Button type="button" onClick={createDialog.open}>
@@ -211,6 +233,8 @@ export default function WebsitePagesPage(): JSX.Element {
           ) : undefined
         }
       />
+
+      <SectionTabs items={getWebsiteTabs(academyId)} />
 
       <Card>
         <CardContent className="divide-y divide-border p-0">
@@ -255,6 +279,38 @@ export default function WebsitePagesPage(): JSX.Element {
               </div>
             </div>
           ))}
+
+          {/*
+            Sign In/Sign Up are fixed, dedicated pages — not `WebsitePage`
+            records — so they never showed up here, even though they are
+            genuinely part of the site an admin browses and customizes
+            like every other page. These two rows make them discoverable
+            in the one place admins already look, without pretending they
+            are full page-editor pages (locked, same as Course Details;
+            no visibility toggle since they must always be reachable, no
+            delete since they aren't real records to delete).
+          */}
+          {(['signIn', 'signUp'] as const).map((page) => (
+            <div key={page} className="flex items-center justify-between gap-3 p-4">
+              <button
+                type="button"
+                className="flex-1 text-start"
+                onClick={() => setOpenAuthPage(page)}
+              >
+                <p className="font-medium text-foreground">
+                  {t(page === 'signIn' ? 'website:navigation.ctaTargetSignIn' : 'website:navigation.ctaTargetSignUp')}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  /{page === 'signIn' ? 'sign-in' : 'sign-up'}
+                </p>
+              </button>
+
+              <div className="flex items-center gap-3">
+                <StatusBadge labelKey="website:pages.coreBadge" tone="neutral" />
+                <Lock className="size-4 text-muted-foreground" aria-hidden />
+              </div>
+            </div>
+          ))}
         </CardContent>
       </Card>
 
@@ -263,6 +319,16 @@ export default function WebsitePagesPage(): JSX.Element {
           academyId={academyId}
           open={createDialog.isOpen}
           onOpenChange={createDialog.setOpen}
+        />
+      ) : null}
+
+      {openAuthPage ? (
+        <AuthPageCopyDialog
+          academyId={academyId}
+          configuration={configuration}
+          page={openAuthPage}
+          open={!!openAuthPage}
+          onOpenChange={(open) => setOpenAuthPage(open ? openAuthPage : null)}
         />
       ) : null}
     </PageContainer>

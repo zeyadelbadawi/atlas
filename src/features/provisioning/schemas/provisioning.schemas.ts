@@ -17,6 +17,8 @@ export const createProvisioningRequestSchema = z.object({
     .regex(SUBDOMAIN_REGEX, 'validation:invalidSlug'),
   /** Phase P19 — optional: the real Website Builder's own bootstrap default applies if the Client skips this step (see `Reports/DEVELOPMENT_E2E_FLOW_AUDIT.md` P1-1's fix). */
   selectedThemeKey: z.string().optional(),
+  /** Phase 6 (Bilingual Academy Websites) — see `CreateProvisioningRequestDto.websiteSetupMode`'s own doc comment for why the UI pre-selects `'complete'` while the schema itself treats an omitted value as `'empty'`. */
+  websiteSetupMode: z.enum(['empty', 'complete']).optional(),
 });
 
 export type CreateProvisioningRequestFormData = z.infer<

@@ -29,3 +29,23 @@ export type { UseAssignmentOptions } from './useAssignment';
 export { useAssignmentSubmission } from './useAssignmentSubmission';
 export type { UseAssignmentSubmissionOptions } from './useAssignmentSubmission';
 export { useSubmitAssignment } from './useSubmitAssignment';
+
+// Phase 4 — authoring + real-file-upload hooks.
+export { useQuizzesForAuthoring } from './useQuizzesForAuthoring';
+export type { UseQuizzesForAuthoringOptions } from './useQuizzesForAuthoring';
+export { useQuizForAuthoring } from './useQuizForAuthoring';
+export type { UseQuizForAuthoringOptions } from './useQuizForAuthoring';
+export { useCreateQuiz } from './useCreateQuiz';
+export { useUpdateQuiz } from './useUpdateQuiz';
+export type { UpdateQuizVariables } from './useUpdateQuiz';
+export { useDeleteQuiz } from './useDeleteQuiz';
+export { useAssignmentsForAuthoring } from './useAssignmentsForAuthoring';
+export type { UseAssignmentsForAuthoringOptions } from './useAssignmentsForAuthoring';
+export { useAssignmentForAuthoring } from './useAssignmentForAuthoring';
+export type { UseAssignmentForAuthoringOptions } from './useAssignmentForAuthoring';
+export { useCreateAssignment } from './useCreateAssignment';
+export { useUpdateAssignment } from './useUpdateAssignment';
+export type { UpdateAssignmentVariables } from './useUpdateAssignment';
+export { useDeleteAssignment } from './useDeleteAssignment';
+export { useUploadSubmissionAttachment } from './useUploadSubmissionAttachment';
+export type { UploadSubmissionAttachmentVariables } from './useUploadSubmissionAttachment';

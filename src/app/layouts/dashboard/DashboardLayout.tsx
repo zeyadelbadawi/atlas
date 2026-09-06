@@ -22,6 +22,7 @@ import { AccountMenu, OrganizationSwitcher } from "@components/controls";
 import { NotificationBell } from "@features/notifications";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { DashboardTopbar } from "./DashboardTopbar";
+import { useSmartBack } from "./useSmartBack";
 
 /** Id of the main landmark, targeted by the skip link. */
 const MAIN_CONTENT_ID = "atlas-dashboard-content";
@@ -40,6 +41,7 @@ export function DashboardLayout(): JSX.Element {
 
   const drawer = useDisclosure(false);
   const isMobile = isBelow(SIDEBAR_BREAKPOINT);
+  const smartBack = useSmartBack();
 
   return (
     <div className="flex min-h-dvh bg-surface">
@@ -59,6 +61,8 @@ export function DashboardLayout(): JSX.Element {
         <DashboardTopbar
           onOpenNavigation={drawer.open}
           isMobile={isMobile}
+          canGoBack={smartBack.canGoBack}
+          onGoBack={smartBack.goBack}
           actions={
             <>
               <OrganizationSwitcher />

@@ -19,6 +19,7 @@ import {
   Video,
 } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
+import { SectionTabs } from '@components/navigation';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { BreadcrumbItem } from '@types';
 import { EmptyState, ErrorState } from '@components/feedback';
@@ -54,6 +55,7 @@ import {
   getLessonStatusTone,
 } from '../utils/course-status.utils';
 import { moveItem } from '../utils/reorder.utils';
+import { getCourseEditorTabs } from '../utils/course-navigation.utils';
 import type {
   CourseLessonFormData,
   CourseSectionFormData,
@@ -333,6 +335,10 @@ export default function CourseBuilderPage(): JSX.Element {
           </Button>
         }
       />
+
+      {academyId && courseId ? (
+        <SectionTabs items={getCourseEditorTabs(academyId, courseId)} />
+      ) : null}
 
       {sections.length === 0 ? (
         <EmptyState

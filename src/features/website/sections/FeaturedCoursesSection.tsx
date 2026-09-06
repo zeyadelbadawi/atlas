@@ -17,6 +17,8 @@ import {
   useWebsiteHeadingClass,
   useWebsiteSectionClass,
 } from '../renderer/renderer-style.utils';
+import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
+import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { FeaturedCoursesSectionConfig } from '@types';
 
 export interface FeaturedCoursesSectionProps {
@@ -33,6 +35,7 @@ export function FeaturedCoursesSection({
   const section = useWebsiteSectionClass();
   const heading = useWebsiteHeadingClass();
   const cardClass = useWebsiteCardClass();
+  const { locale } = usePublicWebsiteLocale();
 
   const { data, isLoading } = useCourses(academyId, {
     query: {
@@ -49,9 +52,9 @@ export function FeaturedCoursesSection({
   return (
     <section className={`${container} ${section}`}>
       <div className="mb-10 space-y-2 text-center">
-        <h2 className={`${heading} text-3xl text-foreground`}>{config.title}</h2>
+        <h2 className={`${heading} text-3xl text-foreground`}>{resolveLocalizedText(config.title, locale)}</h2>
         {config.description ? (
-          <p className="mx-auto max-w-2xl text-muted-foreground">{config.description}</p>
+          <p className="mx-auto max-w-2xl text-muted-foreground">{resolveLocalizedText(config.description, locale)}</p>
         ) : null}
       </div>
 

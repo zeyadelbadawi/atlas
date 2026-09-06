@@ -39,6 +39,15 @@ import {
   MAX_BLOG_FEATURED_IMAGE_SIZE,
 } from '../constants/blog.constants';
 
+/** ISO instant → `<input type="datetime-local">`'s local, timezone-less value format. */
+function toDateTimeLocalValue(iso?: string): string {
+  if (!iso) return '';
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return '';
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
 export default function BlogEditorPage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -77,6 +86,10 @@ export default function BlogEditorPage(): JSX.Element {
       featuredImage: undefined,
       category: '',
       tags: '',
+      scheduledAt: '',
+      metaTitle: '',
+      metaDescription: '',
+      ogImage: '',
     },
   });
 
@@ -96,6 +109,10 @@ export default function BlogEditorPage(): JSX.Element {
         featuredImage: existingPost.featuredImage,
         category: existingPost.category ?? '',
         tags: existingPost.tags.join(', '),
+        scheduledAt: toDateTimeLocalValue(existingPost.scheduledAt),
+        metaTitle: existingPost.metaTitle ?? '',
+        metaDescription: existingPost.metaDescription ?? '',
+        ogImage: existingPost.ogImage ?? '',
       });
       setFeaturedImagePreview(existingPost.featuredImage ?? null);
     }
@@ -152,6 +169,10 @@ export default function BlogEditorPage(): JSX.Element {
           .filter(Boolean)
       : [];
 
+    const scheduledAt = data.scheduledAt
+      ? new Date(data.scheduledAt).toISOString()
+      : undefined;
+
     try {
       if (isEditMode && postId) {
         await updatePost({
@@ -164,6 +185,10 @@ export default function BlogEditorPage(): JSX.Element {
             featuredImage: data.featuredImage,
             category: data.category || undefined,
             tags,
+            scheduledAt,
+            metaTitle: data.metaTitle || undefined,
+            metaDescription: data.metaDescription || undefined,
+            ogImage: data.ogImage || undefined,
           },
         });
         toast({
@@ -180,6 +205,10 @@ export default function BlogEditorPage(): JSX.Element {
           featuredImage: data.featuredImage,
           category: data.category || undefined,
           tags,
+          scheduledAt,
+          metaTitle: data.metaTitle || undefined,
+          metaDescription: data.metaDescription || undefined,
+          ogImage: data.ogImage || undefined,
         });
         toast({
           title: t('blog:editor.createSuccess'),
@@ -386,6 +415,108 @@ export default function BlogEditorPage(): JSX.Element {
                   )}
                 />
               </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('blog:editor.schedulingSection')}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <FormField
+                control={form.control}
+                name="scheduledAt"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {t('blog:editor.scheduledAtLabel')}{' '}
+                      <span className="text-xs text-muted-foreground">
+                        ({t('blog:editor.optional')})
+                      </span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input type="datetime-local" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      {t('blog:editor.scheduledAtHelp')}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('blog:editor.seoSection')}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <FormField
+                control={form.control}
+                name="metaTitle"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {t('blog:editor.metaTitleLabel')}{' '}
+                      <span className="text-xs text-muted-foreground">
+                        ({t('blog:editor.optional')})
+                      </span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      {t('blog:editor.metaTitleHelp')}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="metaDescription"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {t('blog:editor.metaDescriptionLabel')}{' '}
+                      <span className="text-xs text-muted-foreground">
+                        ({t('blog:editor.optional')})
+                      </span>
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea rows={2} {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      {t('blog:editor.metaDescriptionHelp')}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="ogImage"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {t('blog:editor.ogImageLabel')}{' '}
+                      <span className="text-xs text-muted-foreground">
+                        ({t('blog:editor.optional')})
+                      </span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      {t('blog:editor.ogImageHelp')}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
 

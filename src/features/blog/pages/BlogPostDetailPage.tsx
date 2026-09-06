@@ -53,7 +53,13 @@ export default function BlogPostDetailPage(): JSX.Element {
           <div className="flex items-center gap-2">
             <StatusBadge
               labelKey={`blog:status.${post.status}`}
-              tone={post.status === 'published' ? 'success' : 'neutral'}
+              tone={
+                post.status === 'published'
+                  ? 'success'
+                  : post.status === 'scheduled'
+                    ? 'info'
+                    : 'neutral'
+              }
             />
             {isOwner ? (
               <Button

@@ -5,11 +5,14 @@
  * hand-rolled disclosure widget. Renders TWO sources of FAQ content,
  * additively and in this fixed order: library entries resolved live from
  * the Academy's reusable FAQ content (Prompt 10, `WebsiteFaqEntry`) come
- * first, followed by the page's own inline `items` (Prompt 9, unchanged).
- * A page saved before Prompt 10 has no `libraryEntryIds`, so it renders
- * exactly as it always has.
+ * first, followed by the page's own inline `items` (Prompt 9, now also
+ * `LocalizedText` — Phase 6). A page saved before Prompt 10 has no
+ * `libraryEntryIds`, so it renders exactly as it always has.
+ *
+ * Both sources resolve through the REAL public-website locale
+ * (`usePublicWebsiteLocale`), not the dashboard chrome's own
+ * `i18n.language` — see `PublicWebsiteLocaleContext`'s own doc comment.
  */
-import { useTranslation } from 'react-i18next';
 import {
   Accordion,
   AccordionContent,
@@ -18,7 +21,9 @@ import {
 } from '@/components/ui/accordion';
 import { useWebsiteFaqEntries } from '../hooks';
 import { useWebsiteContainerClass, useWebsiteHeadingClass, useWebsiteSectionClass } from '../renderer/renderer-style.utils';
-import type { FaqSectionConfig, LanguageCode } from '@types';
+import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
+import { resolveLocalizedText } from '../utils/localized-text.utils';
+import type { FaqSectionConfig } from '@types';
 
 export interface FaqSectionProps {
   readonly config: FaqSectionConfig;
@@ -26,11 +31,10 @@ export interface FaqSectionProps {
 }
 
 export function FaqSection({ config, academyId }: FaqSectionProps): JSX.Element {
-  const { i18n } = useTranslation();
   const container = useWebsiteContainerClass();
   const section = useWebsiteSectionClass();
   const heading = useWebsiteHeadingClass();
-  const language = i18n.language as LanguageCode;
+  const { locale } = usePublicWebsiteLocale();
 
   const libraryEntryIds = config.libraryEntryIds ?? [];
   const { data } = useWebsiteFaqEntries(academyId, {
@@ -43,16 +47,23 @@ export function FaqSection({ config, academyId }: FaqSectionProps): JSX.Element 
     .filter((entry): entry is NonNullable<typeof entry> => !!entry && entry.visible)
     .map((entry) => ({
       id: entry.id,
-      question: entry.question[language] || entry.question.en,
-      answer: entry.answer[language] || entry.answer.en,
+      question: resolveLocalizedText(entry.question, locale),
+      answer: resolveLocalizedText(entry.answer, locale),
     }));
 
-  const allItems = [...libraryItems, ...config.items];
+  const inlineItems = config.items.map((item) => ({
+    id: item.id,
+    question: resolveLocalizedText(item.question, locale),
+    answer: resolveLocalizedText(item.answer, locale),
+  }));
+
+  const allItems = [...libraryItems, ...inlineItems];
+  const title = resolveLocalizedText(config.title, locale);
 
   return (
     <section className={`${container} ${section}`}>
-      {config.title ? (
-        <h2 className={`${heading} mb-8 text-center text-3xl text-foreground`}>{config.title}</h2>
+      {title ? (
+        <h2 className={`${heading} mb-8 text-center text-3xl text-foreground`}>{title}</h2>
       ) : null}
       <Accordion type="single" collapsible className="mx-auto max-w-2xl">
         {allItems.map((item) => (

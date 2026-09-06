@@ -8,9 +8,15 @@
  * (Prompt 3C) — never drag-and-drop as the only way to reorder.
  */
 import { useTranslation } from 'react-i18next';
-import { ArrowDown, ArrowUp, Loader2, Plus, X } from 'lucide-react';
+import { ArrowDown, ArrowUp, KeyRound, Loader2, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,12 +30,21 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { useUpdateWebsiteConfiguration } from '../hooks';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
+import { LocalizedTextField } from './LocalizedTextField';
+import {
+  buildAuthPageCopyHeaderPatch,
+  type AuthPageCopyField,
+  type AuthPageKey,
+} from '../utils/auth-page-copy.utils';
 import type {
+  LocalizedText,
   WebsiteConfiguration,
   WebsiteFooterLink,
   WebsiteNavigationItem,
   WebsitePage,
 } from '@types';
+
+const EMPTY_LOCALIZED: LocalizedText = { en: '', ar: '' };
 
 export interface WebsiteNavigationTabProps {
   readonly academyId: string;
@@ -73,14 +88,24 @@ export function WebsiteNavigationTab({
     if (inNav) {
       persistNavigation([
         ...configuration.navigation,
-        { id: crypto.randomUUID(), label: page.title, pageId: page.id, order: configuration.navigation.length },
+        {
+          id: crypto.randomUUID(),
+          // `page.title` (a plain, admin-internal label — see
+          // `WebsitePage.title`'s own doc comment) seeds English only; an
+          // Owner fills in Arabic afterward via the reorder list below,
+          // same "start from something real, never a blank field" default
+          // this tab already used before Phase 6.
+          label: { en: page.title, ar: '' },
+          pageId: page.id,
+          order: configuration.navigation.length,
+        },
       ]);
     } else {
       persistNavigation(configuration.navigation.filter((item) => item.pageId !== page.id));
     }
   };
 
-  const renameItem = (id: string, label: string) => {
+  const renameItem = (id: string, label: LocalizedText) => {
     persistNavigation(
       configuration.navigation.map((item) => (item.id === id ? { ...item, label } : item))
     );
@@ -90,33 +115,124 @@ export function WebsiteNavigationTab({
     persistNavigation(reorder(sortedNav, index, direction));
   };
 
-  const updateHeaderCta = (
-    ctaLabel: string,
-    target: { pageId?: string; url?: string; authAction?: 'signIn' | 'signUp' }
-  ) => {
+  const currentCta = configuration.header.cta;
+  const currentAuthPages = configuration.header.authPages;
+
+  /**
+   * Clearing the label is the one deliberate way to remove the header CTA
+   * entirely. `header` is a full replace server-side, so every mutation
+   * here must carry forward `authPages` explicitly — otherwise saving a
+   * CTA change would silently wipe any Sign In/Sign Up copy an admin
+   * already set, and vice versa.
+   */
+  const updateHeaderCtaLabel = (label: LocalizedText) => {
+    updateConfig.mutate(
+      {
+        academyId,
+        payload: {
+          header: label.en.trim()
+            ? {
+                cta: {
+                  label,
+                  pageId: currentCta?.pageId,
+                  url: currentCta?.url,
+                  authAction: currentCta?.authAction,
+                },
+                authPages: currentAuthPages,
+              }
+            : { authPages: currentAuthPages },
+        },
+      },
+      { onError: () => toast({ title: t('website:navigation.saveError'), variant: 'destructive' }) }
+    );
+  };
+
+  /**
+   * Changes the CTA's type/target while preserving whatever label already
+   * exists — even an empty one. This used to reuse `updateHeaderCtaLabel`'s
+   * "empty label clears everything" rule, so picking a Link Type or a
+   * Sign In/Sign Up target before ever typing a label silently sent
+   * `header: {}` and dropped the choice instead of saving it.
+   *
+   * The backend still requires a non-empty `label` for any CTA — a button
+   * with no text isn't a valid button — so an admin who picks "Sign In /
+   * Sign Up" before typing one would otherwise hit that rejection on the
+   * very first try. Since "Sign In"/"Sign Up" is exactly the label such a
+   * button needs anyway, default to it when the field is still blank
+   * instead of surfacing an error for something we can fill in ourselves;
+   * an existing label (auto-filled or typed) is never overwritten. Every
+   * other failure — including a genuinely empty label on a page/external
+   * link, which has no sensible default — now shows an error instead of
+   * silently doing nothing.
+   */
+  const updateHeaderCtaTarget = (target: {
+    pageId?: string;
+    url?: string;
+    authAction?: 'signIn' | 'signUp';
+  }) => {
     if (target.url !== undefined && !isSafeExternalUrl(target.url)) {
       toast({ title: t('validation:invalidUrl'), variant: 'destructive' });
       return;
     }
+
+    const label: LocalizedText =
+      currentCta?.label?.en
+        ? currentCta.label
+        : {
+            en:
+              target.authAction === 'signUp'
+                ? t('website:navigation.ctaTargetSignUp')
+                : target.authAction === 'signIn'
+                  ? t('website:navigation.ctaTargetSignIn')
+                  : '',
+            ar: currentCta?.label?.ar ?? '',
+          };
+
+    updateConfig.mutate(
+      {
+        academyId,
+        payload: { header: { cta: { label, ...target }, authPages: currentAuthPages } },
+      },
+      { onError: () => toast({ title: t('website:navigation.saveError'), variant: 'destructive' }) }
+    );
+  };
+
+  /** Preserves the existing CTA — `header` is a full replace, same reasoning as `updateHeaderCtaLabel`. An unset title/subtitle here removes that one override, falling back to the app's own default copy. Shared with the Pages list's own auth-page dialog — see that util's doc comment. */
+  const updateAuthPageCopy = (page: AuthPageKey, field: AuthPageCopyField, value: LocalizedText) => {
+    updateConfig.mutate(
+      { academyId, payload: { header: buildAuthPageCopyHeaderPatch(configuration, page, field, value) } },
+      { onError: () => toast({ title: t('website:navigation.saveError'), variant: 'destructive' }) }
+    );
+  };
+
+  const updateFooterCopyright = (value: LocalizedText) => {
     updateConfig.mutate({
       academyId,
-      payload: { header: ctaLabel ? { cta: { label: ctaLabel, ...target } } : {} },
+      payload: { footer: { ...configuration.footer, copyrightText: value } },
     });
   };
 
-  const updateFooterField = (field: 'copyrightText', value: string) => {
-    updateConfig.mutate({
-      academyId,
-      payload: { footer: { ...configuration.footer, [field]: value } },
-    });
+  const persistSocialLinks = (links: readonly WebsiteFooterLink[]) => {
+    updateConfig.mutate(
+      { academyId, payload: { footer: { ...configuration.footer, socialLinks: links } } },
+      { onError: () => toast({ title: t('website:navigation.saveError'), variant: 'destructive' }) }
+    );
   };
 
+  /**
+   * The backend requires a non-empty `label` on every footer link
+   * (`footerLinkSchema.label` is `min(1)`) — a brand-new row created with
+   * `label: ''` was rejected outright, and with no `onError` handler on
+   * this mutation the failure was silent: the request round-tripped, the
+   * cache never updated, and "Add link" looked like it did nothing.
+   * Seeding a real, editable default label (renamed inline afterward,
+   * same as any other link) makes the add itself always succeed.
+   */
   const addSocialLink = () => {
-    const links: WebsiteFooterLink[] = [
+    persistSocialLinks([
       ...configuration.footer.socialLinks,
-      { id: crypto.randomUUID(), label: '', url: '' },
-    ];
-    updateConfig.mutate({ academyId, payload: { footer: { ...configuration.footer, socialLinks: links } } });
+      { id: crypto.randomUUID(), label: { en: t('website:navigation.newSocialLinkLabel'), ar: '' }, url: '' },
+    ]);
   };
 
   const updateSocialLink = (id: string, patch: Partial<WebsiteFooterLink>) => {
@@ -124,15 +240,22 @@ export function WebsiteNavigationTab({
       toast({ title: t('validation:invalidUrl'), variant: 'destructive' });
       return;
     }
-    const links = configuration.footer.socialLinks.map((link) =>
-      link.id === id ? { ...link, ...patch } : link
+    if (patch.label !== undefined && !patch.label.en.trim()) {
+      toast({
+        title: t('validation:required', { field: t('website:navigation.socialLabelPlaceholder') }),
+        variant: 'destructive',
+      });
+      return;
+    }
+    persistSocialLinks(
+      configuration.footer.socialLinks.map((link) =>
+        link.id === id ? { ...link, ...patch } : link
+      )
     );
-    updateConfig.mutate({ academyId, payload: { footer: { ...configuration.footer, socialLinks: links } } });
   };
 
   const removeSocialLink = (id: string) => {
-    const links = configuration.footer.socialLinks.filter((link) => link.id !== id);
-    updateConfig.mutate({ academyId, payload: { footer: { ...configuration.footer, socialLinks: links } } });
+    persistSocialLinks(configuration.footer.socialLinks.filter((link) => link.id !== id));
   };
 
   return (
@@ -160,32 +283,37 @@ export function WebsiteNavigationTab({
                 {t('website:navigation.orderTitle')}
               </p>
               {sortedNav.map((item, index) => (
-                <div key={item.id} className="flex items-center gap-2">
-                  <Input
-                    value={item.label}
-                    onChange={(event) => renameItem(item.id, event.target.value)}
-                    className="flex-1"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    disabled={index === 0}
-                    onClick={() => moveItem(index, -1)}
-                    aria-label={t('website:navigation.moveUp')}
-                  >
-                    <ArrowUp className="size-4" aria-hidden />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    disabled={index === sortedNav.length - 1}
-                    onClick={() => moveItem(index, 1)}
-                    aria-label={t('website:navigation.moveDown')}
-                  >
-                    <ArrowDown className="size-4" aria-hidden />
-                  </Button>
+                <div key={item.id} className="flex items-start gap-2">
+                  <div className="flex-1">
+                    <LocalizedTextField
+                      id={`nav-item-${item.id}`}
+                      labelKey="website:navigation.itemLabel"
+                      value={item.label}
+                      onBlur={(label) => renameItem(item.id, label)}
+                    />
+                  </div>
+                  <div className="flex shrink-0 flex-col gap-2 pt-8">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      disabled={index === 0}
+                      onClick={() => moveItem(index, -1)}
+                      aria-label={t('website:navigation.moveUp')}
+                    >
+                      <ArrowUp className="size-4" aria-hidden />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      disabled={index === sortedNav.length - 1}
+                      onClick={() => moveItem(index, 1)}
+                      aria-label={t('website:navigation.moveDown')}
+                    >
+                      <ArrowDown className="size-4" aria-hidden />
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -198,17 +326,12 @@ export function WebsiteNavigationTab({
           <CardTitle className="text-base">{t('website:navigation.headerCtaTitle')}</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <Label htmlFor="header-cta-label">{t('website:navigation.ctaLabel')}</Label>
-            <Input
+          <div className="sm:col-span-2">
+            <LocalizedTextField
               id="header-cta-label"
-              defaultValue={configuration.header.cta?.label ?? ''}
-              onBlur={(event) =>
-                updateHeaderCta(event.target.value, {
-                  pageId: configuration.header.cta?.pageId,
-                  url: configuration.header.cta?.url,
-                })
-              }
+              labelKey="website:navigation.ctaLabel"
+              value={configuration.header.cta?.label ?? EMPTY_LOCALIZED}
+              onBlur={updateHeaderCtaLabel}
             />
           </div>
           <div className="space-y-1.5">
@@ -222,8 +345,7 @@ export function WebsiteNavigationTab({
                     : 'page'
               }
               onValueChange={(type) =>
-                updateHeaderCta(
-                  configuration.header.cta?.label ?? '',
+                updateHeaderCtaTarget(
                   type === 'external'
                     ? { url: '' }
                     : type === 'auth'
@@ -251,9 +373,7 @@ export function WebsiteNavigationTab({
                 dir="ltr"
                 placeholder="https://example.com"
                 defaultValue={configuration.header.cta?.url ?? ''}
-                onBlur={(event) =>
-                  updateHeaderCta(configuration.header.cta?.label ?? '', { url: event.target.value })
-                }
+                onBlur={(event) => updateHeaderCtaTarget({ url: event.target.value })}
               />
             </div>
           ) : configuration.header.cta?.authAction ? (
@@ -262,7 +382,7 @@ export function WebsiteNavigationTab({
               <Select
                 value={configuration.header.cta.authAction}
                 onValueChange={(authAction: 'signIn' | 'signUp') =>
-                  updateHeaderCta(configuration.header.cta?.label ?? '', { authAction })
+                  updateHeaderCtaTarget({ authAction })
                 }
               >
                 <SelectTrigger>
@@ -279,9 +399,7 @@ export function WebsiteNavigationTab({
               <Label>{t('website:navigation.ctaTarget')}</Label>
               <Select
                 value={configuration.header.cta?.pageId}
-                onValueChange={(pageId) =>
-                  updateHeaderCta(configuration.header.cta?.label ?? '', { pageId })
-                }
+                onValueChange={(pageId) => updateHeaderCtaTarget({ pageId })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder={t('website:navigation.ctaTargetPlaceholder')} />
@@ -301,17 +419,70 @@ export function WebsiteNavigationTab({
 
       <Card>
         <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <KeyRound className="size-4 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+            {t('website:navigation.authPagesTitle')}
+          </CardTitle>
+          <CardDescription>{t('website:navigation.authPagesDescription')}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-3">
+            <p className="text-sm font-medium text-foreground">
+              {t('website:navigation.ctaTargetSignIn')}
+            </p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <LocalizedTextField
+                id="auth-signin-title"
+                labelKey="website:navigation.authPageHeading"
+                placeholderEn={t('publicWebsite:auth.signIn.title', { academyName: '' }).trim()}
+                value={currentAuthPages?.signIn?.title ?? EMPTY_LOCALIZED}
+                onBlur={(value) => updateAuthPageCopy('signIn', 'title', value)}
+              />
+              <LocalizedTextField
+                id="auth-signin-subtitle"
+                labelKey="website:navigation.authPageSubheading"
+                placeholderEn={t('publicWebsite:auth.signIn.subtitle')}
+                value={currentAuthPages?.signIn?.subtitle ?? EMPTY_LOCALIZED}
+                onBlur={(value) => updateAuthPageCopy('signIn', 'subtitle', value)}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-3 border-t border-border pt-4">
+            <p className="text-sm font-medium text-foreground">
+              {t('website:navigation.ctaTargetSignUp')}
+            </p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <LocalizedTextField
+                id="auth-signup-title"
+                labelKey="website:navigation.authPageHeading"
+                placeholderEn={t('publicWebsite:auth.signUp.title', { academyName: '' }).trim()}
+                value={currentAuthPages?.signUp?.title ?? EMPTY_LOCALIZED}
+                onBlur={(value) => updateAuthPageCopy('signUp', 'title', value)}
+              />
+              <LocalizedTextField
+                id="auth-signup-subtitle"
+                labelKey="website:navigation.authPageSubheading"
+                placeholderEn={t('publicWebsite:auth.signUp.subtitle', { academyName: '' }).trim()}
+                value={currentAuthPages?.signUp?.subtitle ?? EMPTY_LOCALIZED}
+                onBlur={(value) => updateAuthPageCopy('signUp', 'subtitle', value)}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle className="text-base">{t('website:navigation.footerTitle')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="footer-copyright">{t('website:navigation.copyrightText')}</Label>
-            <Input
-              id="footer-copyright"
-              defaultValue={configuration.footer.copyrightText ?? ''}
-              onBlur={(event) => updateFooterField('copyrightText', event.target.value)}
-            />
-          </div>
+          <LocalizedTextField
+            id="footer-copyright"
+            labelKey="website:navigation.copyrightText"
+            value={configuration.footer.copyrightText ?? EMPTY_LOCALIZED}
+            onBlur={updateFooterCopyright}
+          />
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
@@ -322,23 +493,26 @@ export function WebsiteNavigationTab({
               </Button>
             </div>
             {configuration.footer.socialLinks.map((link) => (
-              <div key={link.id} className="flex items-center gap-2">
-                <Input
-                  placeholder={t('website:navigation.socialLabelPlaceholder')}
-                  defaultValue={link.label}
-                  onBlur={(event) => updateSocialLink(link.id, { label: event.target.value })}
-                  className="w-32"
-                />
+              <div key={link.id} className="flex items-start gap-2">
+                <div className="w-48">
+                  <LocalizedTextField
+                    id={`social-link-${link.id}`}
+                    labelKey="website:navigation.socialLabelPlaceholder"
+                    value={link.label}
+                    onBlur={(label) => updateSocialLink(link.id, { label })}
+                  />
+                </div>
                 <Input
                   placeholder="https://"
                   defaultValue={link.url ?? ''}
                   onBlur={(event) => updateSocialLink(link.id, { url: event.target.value })}
-                  className="flex-1"
+                  className="mt-8 flex-1"
                 />
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon"
+                  className="mt-6"
                   onClick={() => removeSocialLink(link.id)}
                   aria-label={t('website:navigation.removeSocialLink')}
                 >

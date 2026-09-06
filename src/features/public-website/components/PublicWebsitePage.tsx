@@ -24,25 +24,38 @@ import {
   resolvePagePath,
   resolvePageSeo,
   resolveCourseSeo,
+  resolveLocalizedText,
 } from '@features/website';
 import { useCourse } from '@features/course';
 import { useDocumentSeo } from '../hooks/useDocumentSeo';
 import { resolvePathToPage } from '../utils/page-resolution.utils';
 import { usePublicWebsiteLinkRenderer } from '../utils/public-website-link-renderer';
 import type { PublicWebsiteDataState } from '../hooks/usePublicWebsiteData';
+import type { PublicWebsiteLocale } from '@types';
 
 export interface PublicWebsitePageProps {
   readonly data: Extract<PublicWebsiteDataState, { status: 'ready' }>;
+  /** Derived by `PublicWebsiteRouter` from the `/ar/...` URL prefix — see `locale.constants.ts`. */
+  readonly locale: PublicWebsiteLocale;
 }
 
-export function PublicWebsitePage({ data }: PublicWebsitePageProps): JSX.Element {
+export function PublicWebsitePage({ data, locale }: PublicWebsitePageProps): JSX.Element {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const linkRenderer = usePublicWebsiteLinkRenderer();
   const { academy, configuration, pages } = data;
 
-  const { page, courseId } = resolvePathToPage(location.pathname, pages);
+  // `useLocation().pathname` is the full, un-nested-away path — still
+  // carrying the `/ar` prefix `PublicWebsiteRouter` matched on, even
+  // though pages are stored/matched by their one canonical, unprefixed
+  // slug path. Strip it before matching, re-apply it (via `withLocale`)
+  // wherever a path is turned back into a real link/URL below.
+  const unprefixedPathname =
+    locale === 'en' ? location.pathname : location.pathname.replace(/^\/ar/, '') || '/';
+  const withLocale = (path: string): string => (locale === 'en' ? path : `/ar${path}`);
+
+  const { page, courseId } = resolvePathToPage(unprefixedPathname, pages);
 
   // The Course Details page renders a specific Course (`CourseDetailsTemplate`,
   // via `@features/course`) rather than CMS sections, so its SEO must reflect
@@ -58,9 +71,9 @@ export function PublicWebsitePage({ data }: PublicWebsitePageProps): JSX.Element
   const fallback = { title: academy.academyName, description: academy.academyName };
   const seo =
     isCourseDetailsPage && course
-      ? resolveCourseSeo(course, configuration, fallback)
+      ? resolveCourseSeo(course, configuration, fallback, locale)
       : page
-        ? resolvePageSeo(page, configuration, fallback)
+        ? resolvePageSeo(page, configuration, fallback, locale)
         : {
             title: fallback.title,
             description: fallback.description,
@@ -69,15 +82,20 @@ export function PublicWebsitePage({ data }: PublicWebsitePageProps): JSX.Element
             indexable: false,
             titleSource: 'fallback' as const,
             descriptionSource: 'fallback' as const,
+            locale,
+            hreflangAlternates: [],
           };
 
   const pagePath =
     isCourseDetailsPage && course
-      ? (seo.canonicalPath ?? location.pathname)
+      ? (seo.canonicalPath ?? unprefixedPathname)
       : page
-        ? resolvePagePath(page) ?? location.pathname
-        : location.pathname;
-  const canonicalUrl = `${window.location.origin}${pagePath}`;
+        ? resolvePagePath(page) ?? unprefixedPathname
+        : unprefixedPathname;
+  // Self-referencing canonical: the CURRENT locale's own URL, matching
+  // standard hreflang practice — `seo.hreflangAlternates` is what points
+  // at the OTHER locale's URL, this one always points at itself.
+  const canonicalUrl = `${window.location.origin}${withLocale(pagePath)}`;
 
   const structuredData = page
     ? [
@@ -94,9 +112,10 @@ export function PublicWebsitePage({ data }: PublicWebsitePageProps): JSX.Element
 
   useDocumentSeo({
     seo,
-    siteTitle: configuration.seo.siteTitle,
+    siteTitle: resolveLocalizedText(configuration.seo.siteTitle, locale),
     canonicalUrl,
     structuredData,
+    locale,
   });
 
   if (!page) {
@@ -105,7 +124,7 @@ export function PublicWebsitePage({ data }: PublicWebsitePageProps): JSX.Element
         <EmptyState
           titleKey="website:public.pageNotFound.title"
           descriptionKey="website:public.pageNotFound.description"
-          primaryAction={{ labelKey: 'website:public.pageNotFound.homeAction', onAction: () => navigate('/') }}
+          primaryAction={{ labelKey: 'website:public.pageNotFound.homeAction', onAction: () => navigate(withLocale('/')) }}
         />
       </div>
     );
@@ -114,7 +133,7 @@ export function PublicWebsitePage({ data }: PublicWebsitePageProps): JSX.Element
   const onNavigate = (pageId: string) => {
     const target = pages.find((candidate) => candidate.id === pageId);
     const path = target ? resolvePagePath(target) : undefined;
-    if (path) navigate(path);
+    if (path) navigate(withLocale(path));
   };
 
   return (
@@ -134,8 +153,12 @@ export function PublicWebsitePage({ data }: PublicWebsitePageProps): JSX.Element
           pages={pages}
           page={page}
           previewCourseId={courseId}
+          locale={locale}
           onNavigate={onNavigate}
           linkRenderer={linkRenderer}
+          onLocaleChange={(targetLocale) =>
+            navigate(`${targetLocale === 'en' ? pagePath : `/ar${pagePath}`}${location.search}`)
+          }
         />
       </div>
     </>

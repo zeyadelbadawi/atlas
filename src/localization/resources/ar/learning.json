@@ -89,7 +89,8 @@
     "previous": "السابق",
     "next": "التالي",
     "unsupportedContent": "محتوى هذا الدرس غير متاح في هذا العرض.",
-    "openResource": "فتح المورد"
+    "openResource": "فتح المورد",
+    "videoUnsupported": "متصفحك لا يدعم تشغيل الفيديو المضمّن."
   },
   "progress": {
     "overallTitle": "تقدّمك",
@@ -145,6 +146,7 @@
     "attachmentLabel": "مرفق",
     "attachmentHelp": "اختياري. PDF أو Word أو صورة، بحد أقصى 10 ميجابايت.",
     "uploadAttachment": "تحميل ملف",
+    "uploadingAttachment": "جارٍ الرفع...",
     "changeAttachment": "تغيير الملف",
     "submitAction": "إرسال الواجب",
     "resubmitAction": "إعادة الإرسال",
@@ -162,7 +164,8 @@
     "resubmissionUnavailable": "إعادة الإرسال غير متاحة لهذا الواجب.",
     "loadFailed": "فشل تحميل هذا الواجب",
     "attachmentTooLarge": "يجب أن يكون حجم المرفق أقل من 10 ميجابايت.",
-    "attachmentInvalidType": "يجب أن يكون المرفق بصيغة PDF أو Word أو صورة."
+    "attachmentInvalidType": "يجب أن يكون المرفق بصيغة PDF أو Word أو صورة.",
+    "attachmentUploadError": "فشل رفع المرفق. يرجى المحاولة مرة أخرى."
   },
   "completion": {
     "title": "إكمال الدورة",

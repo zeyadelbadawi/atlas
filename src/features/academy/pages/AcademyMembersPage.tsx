@@ -12,6 +12,7 @@ import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { DataTable } from '@components/table';
+import { SectionTabs } from '@components/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -24,6 +25,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useAuth, usePagination } from '@hooks';
+import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { useAcademy, useAcademyMembers } from '../hooks';
 import { AddAcademyManagerDialog } from '../components/AddAcademyManagerDialog';
 import { AddAcademyInstructorDialog } from '../components/AddAcademyInstructorDialog';
@@ -32,7 +34,8 @@ import {
   getAcademyMemberRoleTone,
   getAcademyMemberStatusTone,
 } from '../utils/academy-status.utils';
-import type { AcademyMember, AcademyMemberRole } from '@types';
+import { getAcademyAdminTabs } from '../utils/academy-navigation.utils';
+import type { AcademyMember, AcademyMemberRole, BreadcrumbItem } from '@types';
 
 export default function AcademyMembersPage(): JSX.Element {
   const { t } = useTranslation();
@@ -162,13 +165,25 @@ export default function AcademyMembersPage(): JSX.Element {
     );
   }
 
+  const breadcrumbs: readonly BreadcrumbItem[] = [
+    {
+      labelKey: 'navigation:items.academyOverview',
+      label: academy.name,
+      path: DASHBOARD_ROUTES.academy,
+    },
+    { labelKey: 'academy:members.title' },
+  ];
+
   return (
     <PageContainer>
       <PageHeader
         title={academy.name}
         titleKey="academy:members.title"
         descriptionKey="academy:members.subtitle"
+        breadcrumbs={breadcrumbs}
       />
+
+      <SectionTabs items={getAcademyAdminTabs(academyId ?? '')} />
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0">
