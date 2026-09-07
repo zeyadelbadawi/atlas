@@ -450,6 +450,13 @@
     "Video": "فيديو",
     "Headphones": "سماعات"
   },
+  "mobileNav": {
+    "label": "التنقل عبر الجوال",
+    "home": "الرئيسية",
+    "courses": "الدورات",
+    "myLearning": "تعلّمي",
+    "profile": "حسابي"
+  },
   "renderer": {
     "hero": "إجراءات الواجهة الرئيسية",
     "noCourses": "لا توجد دورات لعرضها بعد",
@@ -460,7 +467,27 @@
     "contactMessageLabel": "الرسالة",
     "contactSubmit": "إرسال الرسالة",
     "contactSuccess": "شكرًا لك — تم إرسال رسالتك.",
-    "contactError": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+    "contactError": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "courseDetails": {
+      "aboutTitle": "عن هذه الدورة",
+      "curriculumTitle": "محتوى الدورة",
+      "sectionCount_zero": "بدون أقسام",
+      "sectionCount_one": "قسم واحد",
+      "sectionCount_two": "قسمان",
+      "sectionCount_few": "{{count}} أقسام",
+      "sectionCount_many": "{{count}} قسمًا",
+      "sectionCount_other": "{{count}} قسم",
+      "lessonCount_zero": "بدون دروس",
+      "lessonCount_one": "درس واحد",
+      "lessonCount_two": "درسان",
+      "lessonCount_few": "{{count}} دروس",
+      "lessonCount_many": "{{count}} درسًا",
+      "lessonCount_other": "{{count}} درس",
+      "enrollAction": "التسجيل مجانًا",
+      "continueAction": "متابعة التعلّم",
+      "signInToEnrollAction": "سجّل الدخول للتسجيل",
+      "enrollError": "تعذّر تسجيلك في هذه الدورة. يرجى المحاولة مرة أخرى."
+    }
   },
   "common": {
     "saveChanges": "حفظ التغييرات",

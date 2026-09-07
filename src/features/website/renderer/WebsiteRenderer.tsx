@@ -69,7 +69,7 @@ export function WebsiteRenderer({
     >
       {page.coreType === 'courseDetails' ? (
         previewCourseId ? (
-          <CourseDetailsTemplate academyId={academyId} courseId={previewCourseId} />
+          <CourseDetailsTemplate academyId={academyId} courseId={previewCourseId} locale={locale} />
         ) : null
       ) : (
         page.sections.map((instance) => (

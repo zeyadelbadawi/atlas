@@ -9,6 +9,22 @@
  * on the public marketing site for real visitors with no `OrganizationMembership`
  * in this Academy, and the tenant-scoped `useCourses` 403s for exactly that
  * caller (reproduced live — see `usePublicCourses`'s own doc comment).
+ *
+ * Final QA pass: cards were real data but not real navigation — no link to
+ * the Course Details page existed at all (found live: clicking a card did
+ * nothing). Fixed the same way `CtaSection`/`HeroSection` already handle a
+ * CTA — through the shared `linkRenderer` this section simply wasn't
+ * receiving before (`SectionRenderer` already threads it to every OTHER
+ * section that needs real navigation). `/courses/:id` matches
+ * `page-resolution.utils.ts`'s own `COURSE_DETAILS_PATH` pattern exactly,
+ * the same path `resolveWebsiteCtaHref` already produces for a Course
+ * Details CTA — no second routing concept invented. `linkRenderer` itself
+ * is already locale- and dev-preview-param-aware (`usePublicWebsiteLinkRenderer`),
+ * so a card clicked from `/ar/...` correctly opens `/ar/courses/:id`, with
+ * zero locale-handling code added here. Absent `linkRenderer` (dashboard
+ * preview), the card stays the same inert `<article>` it always was —
+ * matching every other section's identical "no real navigation to invent
+ * in a preview" convention.
  */
 import { useTranslation } from 'react-i18next';
 import { BookOpen } from 'lucide-react';
@@ -25,15 +41,18 @@ import {
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { FeaturedCoursesSectionConfig } from '@types';
+import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
 
 export interface FeaturedCoursesSectionProps {
   readonly config: FeaturedCoursesSectionConfig;
   readonly academyId: string;
+  readonly linkRenderer?: WebsiteLinkRenderer;
 }
 
 export function FeaturedCoursesSection({
   config,
   academyId,
+  linkRenderer,
 }: FeaturedCoursesSectionProps): JSX.Element {
   const { t } = useTranslation();
   const container = useWebsiteContainerClass();
@@ -81,54 +100,71 @@ export function FeaturedCoursesSection({
               : 'grid-cols-[repeat(auto-fit,minmax(17rem,1fr))]'
           }`}
         >
-          {courses.map((course) => (
-            <article key={course.id} className={cardClass}>
-              {course.thumbnail ? (
-                <img
-                  src={course.thumbnail}
-                  alt=""
-                  className="mb-4 aspect-video w-full object-cover"
-                  style={{ borderRadius: 'var(--website-radius)' }}
-                />
-              ) : (
-                <div
-                  className="mb-4 flex aspect-video w-full items-center justify-center bg-[var(--website-primary-surface)]"
-                  style={{ borderRadius: 'var(--website-radius)' }}
-                >
-                  <BookOpen className="size-8 text-[var(--website-primary-solid)]" aria-hidden />
-                </div>
-              )}
-              {/* `dir="auto"` — `course.title`/`.shortDescription`/instructor
-                  name are plain, single-language strings an Owner typed
-                  once (never `LocalizedText`, unlike section copy), so they
-                  can genuinely be English inside an Arabic page or vice
-                  versa. Without this, a `line-clamp` truncation on Latin
-                  text inside an inherited `dir="rtl"` block places its
-                  ellipsis at the start of the visual line instead of the
-                  end (reproduced live: "The Complete Advanced Full-
-                  …Stack Web Development" instead of "...Development…") —
-                  `dir="auto"` lets the browser detect each string's own
-                  script instead of blindly inheriting the page direction. */}
-              <h3 className="line-clamp-2 font-medium text-foreground" dir="auto">{course.title}</h3>
-              {course.shortDescription ? (
-                <p className="mt-1 line-clamp-2 text-sm text-muted-foreground" dir="auto">
-                  {course.shortDescription}
-                </p>
-              ) : null}
-              <div className="mt-4 flex items-center justify-between gap-2 text-sm">
-                {config.showInstructor && course.instructors[0] ? (
-                  <span className="min-w-0 truncate text-muted-foreground" dir="auto">{course.instructors[0].name}</span>
+          {courses.map((course) => {
+            const cardBody = (
+              <>
+                {course.thumbnail ? (
+                  <img
+                    src={course.thumbnail}
+                    alt=""
+                    className="mb-4 aspect-video w-full object-cover"
+                    style={{ borderRadius: 'var(--website-radius)' }}
+                  />
                 ) : (
-                  <span />
+                  <div
+                    className="mb-4 flex aspect-video w-full items-center justify-center bg-[var(--website-primary-surface)]"
+                    style={{ borderRadius: 'var(--website-radius)' }}
+                  >
+                    <BookOpen className="size-8 text-[var(--website-primary-solid)]" aria-hidden />
+                  </div>
                 )}
-                {config.showPrice ? (
-                  <span className="shrink-0 font-medium text-foreground">
-                    {formatCoursePricing(course.pricing, t)}
-                  </span>
+                {/* `dir="auto"` — `course.title`/`.shortDescription`/instructor
+                    name are plain, single-language strings an Owner typed
+                    once (never `LocalizedText`, unlike section copy), so they
+                    can genuinely be English inside an Arabic page or vice
+                    versa. Without this, a `line-clamp` truncation on Latin
+                    text inside an inherited `dir="rtl"` block places its
+                    ellipsis at the start of the visual line instead of the
+                    end (reproduced live: "The Complete Advanced Full-
+                    …Stack Web Development" instead of "...Development…") —
+                    `dir="auto"` lets the browser detect each string's own
+                    script instead of blindly inheriting the page direction. */}
+                <h3 className="line-clamp-2 font-medium text-foreground" dir="auto">{course.title}</h3>
+                {course.shortDescription ? (
+                  <p className="mt-1 line-clamp-2 text-sm text-muted-foreground" dir="auto">
+                    {course.shortDescription}
+                  </p>
                 ) : null}
+                <div className="mt-4 flex items-center justify-between gap-2 text-sm">
+                  {config.showInstructor && course.instructors[0] ? (
+                    <span className="min-w-0 truncate text-muted-foreground" dir="auto">{course.instructors[0].name}</span>
+                  ) : (
+                    <span />
+                  )}
+                  {config.showPrice ? (
+                    <span className="shrink-0 font-medium text-foreground">
+                      {formatCoursePricing(course.pricing, t)}
+                    </span>
+                  ) : null}
+                </div>
+              </>
+            );
+
+            return linkRenderer ? (
+              <div key={course.id} className="contents">
+                {linkRenderer({
+                  href: `/courses/${course.id}`,
+                  external: false,
+                  className: `block w-full text-start hover:shadow-[var(--website-shadow)] ${cardClass}`,
+                  children: cardBody,
+                })}
               </div>
-            </article>
-          ))}
+            ) : (
+              <article key={course.id} className={cardClass}>
+                {cardBody}
+              </article>
+            );
+          })}
         </div>
       )}
     </section>

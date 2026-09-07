@@ -14,3 +14,4 @@ export * from './string.utils';
 export * from './responsive.utils';
 export * from './storage.utils';
 export * from './url.utils';
+export * from './youtube.utils';

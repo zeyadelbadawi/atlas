@@ -26,11 +26,11 @@ import {
   resolveCourseSeo,
   resolveLocalizedText,
 } from '@features/website';
-import { useCourse } from '@features/course';
-import { useAuth, useSignOut } from '@hooks';
 import { useDocumentSeo } from '../hooks/useDocumentSeo';
+import { usePublicCourse } from '../hooks/usePublicCourse';
 import { resolvePathToPage } from '../utils/page-resolution.utils';
-import { usePublicWebsiteLinkRenderer } from '../utils/public-website-link-renderer';
+import { useAuth, useSignOut } from '@hooks';
+import { usePublicWebsiteLinkRenderer, usePublicWebsiteHrefBuilder } from '../utils/public-website-link-renderer';
 import type { PublicWebsiteDataState } from '../hooks/usePublicWebsiteData';
 import type { PublicWebsiteLocale } from '@types';
 
@@ -44,7 +44,8 @@ export function PublicWebsitePage({ data, locale }: PublicWebsitePageProps): JSX
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
-  const linkRenderer = usePublicWebsiteLinkRenderer();
+  const linkRenderer = usePublicWebsiteLinkRenderer(locale);
+  const buildHref = usePublicWebsiteHrefBuilder(locale);
   const { session } = useAuth();
   const { signOut } = useSignOut();
   const { academy, configuration, pages } = data;
@@ -52,7 +53,7 @@ export function PublicWebsitePage({ data, locale }: PublicWebsitePageProps): JSX
   // `useLocation().pathname` is the full, un-nested-away path — still
   // carrying the `/ar` prefix `PublicWebsiteRouter` matched on, even
   // though pages are stored/matched by their one canonical, unprefixed
-  // slug path. Strip it before matching, re-apply it (via `withLocale`)
+  // slug path. Strip it before matching, re-apply it (via `buildHref`)
   // wherever a path is turned back into a real link/URL below.
   const unprefixedPathname =
     locale === 'en' ? location.pathname : location.pathname.replace(/^\/ar/, '') || '/';
@@ -63,22 +64,30 @@ export function PublicWebsitePage({ data, locale }: PublicWebsitePageProps): JSX
       ? {
           name: session.user.name,
           onSignOut: () => void signOut(),
-          myLearningHref: withLocale('/my-learning'),
+          // Bare path — `WebsiteHeader` hands this straight to `linkRenderer`,
+          // which now applies the locale prefix itself; pre-applying it here
+          // too would double it (`/ar/ar/my-learning`).
+          myLearningHref: '/my-learning',
         }
       : undefined;
 
   const { page, courseId } = resolvePathToPage(unprefixedPathname, pages);
 
-  // The Course Details page renders a specific Course (`CourseDetailsTemplate`,
-  // via `@features/course`) rather than CMS sections, so its SEO must reflect
-  // THAT course — `resolveCourseSeo`, not the page's own generic
-  // `resolvePageSeo` — the same real Course data `CourseDetailsTemplate`
-  // fetches (TanStack Query de-duplicates the identical query, so this is
-  // not a second network request).
+  // The Course Details page renders a specific Course (`CourseDetailsTemplate`)
+  // rather than CMS sections, so its SEO must reflect THAT course —
+  // `resolveCourseSeo`, not the page's own generic `resolvePageSeo` — the
+  // same real, PUBLIC-SAFE course data `CourseDetailsTemplate` itself
+  // fetches (`usePublicCourse`, same query key, so TanStack Query
+  // de-dupes it — not a second network request). Previously called the
+  // tenant-scoped `useCourse` (`@features/course`) — masked by that same
+  // de-dupe for as long as `CourseDetailsTemplate` used the identical
+  // call, but a real, reproduced 401 the moment that template was fixed
+  // to use the public endpoint and this one wasn't: found live during
+  // this pass's own browser validation (a real visitor got a silent
+  // background 401 + "session expired" toast on every course details
+  // page view, despite the page itself rendering correctly).
   const isCourseDetailsPage = page?.coreType === 'courseDetails' && !!courseId;
-  const { data: course } = useCourse(academy.academyId, courseId ?? '', {
-    enabled: isCourseDetailsPage,
-  });
+  const { data: course } = usePublicCourse(academy.academyId, isCourseDetailsPage ? courseId : undefined);
 
   const fallback = { title: academy.academyName, description: academy.academyName };
   const seo =
@@ -168,8 +177,24 @@ export function PublicWebsitePage({ data, locale }: PublicWebsitePageProps): JSX
           locale={locale}
           onNavigate={onNavigate}
           linkRenderer={linkRenderer}
+          // Switches locale on the ACTUAL current route (`unprefixedPathname`),
+          // never `pagePath` — `pagePath` is the SEO-canonical path (a
+          // real, pre-existing, deliberate divergence for Course Details:
+          // `seo.canonicalPath` is slug-based, e.g. `/courses/yoga`, for
+          // search engines, while the actual route only ever resolves a
+          // COURSE ID, e.g. `/courses/405cc388-...` —
+          // `resolvePathToPage`'s course-details matcher has no slug
+          // lookup at all). Using `pagePath` here reproduced live as a
+          // real "Unexpected error" the moment a visitor switched locale
+          // from a Course Details page: the slug-based canonical path
+          // isn't a resolvable route. `unprefixedPathname` is always the
+          // literal path the visitor is actually looking at, so switching
+          // locale can never land anywhere it didn't already know how to
+          // render.
           onLocaleChange={(targetLocale) =>
-            navigate(`${targetLocale === 'en' ? pagePath : `/ar${pagePath}`}${location.search}`)
+            navigate(
+              `${targetLocale === 'en' ? unprefixedPathname : `/ar${unprefixedPathname}`}${location.search}`
+            )
           }
           authState={authState}
         />

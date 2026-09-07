@@ -48,7 +48,9 @@ export function SectionRenderer({
     case 'about':
       return <AboutSection config={instance.config} />;
     case 'featuredCourses':
-      return <FeaturedCoursesSection config={instance.config} academyId={academyId} />;
+      return (
+        <FeaturedCoursesSection config={instance.config} academyId={academyId} linkRenderer={linkRenderer} />
+      );
     case 'statistics':
       return <StatisticsSection config={instance.config} academyId={academyId} />;
     case 'features':

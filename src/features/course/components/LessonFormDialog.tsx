@@ -7,9 +7,10 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FolderOpen, Loader2 } from 'lucide-react';
+import { FolderOpen, Loader2, Youtube } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { MediaLibraryDialog } from '@features/media';
+import { isYouTubeUrl } from '@utils';
 import {
   Dialog,
   DialogContent,
@@ -234,6 +235,11 @@ export function LessonFormDialog({
               render={({ field }) => {
                 const contentType = form.watch('contentType');
                 const canUpload = academyId && contentType !== 'text';
+                // Inferred from the URL string itself, never a separate
+                // stored field — see `youtube.utils.ts`'s own doc comment
+                // for why the content model stays a single opaque
+                // `contentUrl` regardless of source.
+                const isYoutube = contentType === 'video' && !!field.value && isYouTubeUrl(field.value);
 
                 return (
                   <FormItem>
@@ -261,6 +267,21 @@ export function LessonFormDialog({
                         </Button>
                       ) : null}
                     </div>
+                    {contentType === 'video' || contentType === 'file' ? (
+                      <p className="text-xs text-muted-foreground">
+                        {t(
+                          contentType === 'video'
+                            ? 'course:builder.lessonDialog.contentUrlHelpVideo'
+                            : 'course:builder.lessonDialog.contentUrlHelpFile'
+                        )}
+                      </p>
+                    ) : null}
+                    {isYoutube ? (
+                      <p className="flex items-center gap-1.5 text-xs font-medium text-[hsl(var(--brand-500))]">
+                        <Youtube className="size-3.5" aria-hidden />
+                        {t('course:builder.lessonDialog.youtubeDetected')}
+                      </p>
+                    ) : null}
                     <FormMessage />
                     {canUpload ? (
                       <MediaLibraryDialog

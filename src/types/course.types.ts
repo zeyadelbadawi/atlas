@@ -86,6 +86,22 @@ export interface CourseStats {
   readonly totalLessons: number;
 }
 
+/** A curriculum-preview lesson — the public Course Details page's pre-enrollment view: title/order/type only, never `contentUrl`/`description` (see backend `toPublicCourseCurriculumResponse`'s doc comment for why those stay gated). */
+export interface PublicCourseCurriculumLesson {
+  readonly id: string;
+  readonly title: string;
+  readonly order: number;
+  readonly contentType: CourseLessonContentType;
+}
+
+/** A curriculum-preview section, paired with `PublicCourseCurriculumLesson`. */
+export interface PublicCourseCurriculumSection {
+  readonly id: string;
+  readonly title: string;
+  readonly order: number;
+  readonly lessons: readonly PublicCourseCurriculumLesson[];
+}
+
 /** Course entity. */
 export interface Course {
   readonly id: string;

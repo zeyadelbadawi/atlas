@@ -13,3 +13,4 @@ export { usePublicWebsiteStatistics } from './usePublicWebsiteStatistics';
 export { useAcademyIdentity } from './useAcademyIdentity';
 export { usePublicCourses } from './usePublicCourses';
 export type { UsePublicCoursesOptions } from './usePublicCourses';
+export { usePublicCourse, usePublicCourseCurriculum } from './usePublicCourse';

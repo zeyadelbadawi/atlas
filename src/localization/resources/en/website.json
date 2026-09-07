@@ -450,6 +450,13 @@
     "Video": "Video",
     "Headphones": "Headphones"
   },
+  "mobileNav": {
+    "label": "Mobile navigation",
+    "home": "Home",
+    "courses": "Courses",
+    "myLearning": "My Learning",
+    "profile": "Profile"
+  },
   "renderer": {
     "hero": "Hero actions",
     "noCourses": "No courses to show yet",
@@ -460,7 +467,19 @@
     "contactMessageLabel": "Message",
     "contactSubmit": "Send message",
     "contactSuccess": "Thanks — your message has been sent.",
-    "contactError": "Something went wrong. Please try again."
+    "contactError": "Something went wrong. Please try again.",
+    "courseDetails": {
+      "aboutTitle": "About this course",
+      "curriculumTitle": "Course content",
+      "sectionCount": "{{count}} section",
+      "sectionCount_other": "{{count}} sections",
+      "lessonCount": "{{count}} lesson",
+      "lessonCount_other": "{{count}} lessons",
+      "enrollAction": "Enroll for free",
+      "continueAction": "Continue Learning",
+      "signInToEnrollAction": "Sign in to enroll",
+      "enrollError": "We couldn't enroll you in this course. Please try again."
+    }
   },
   "common": {
     "saveChanges": "Save changes",

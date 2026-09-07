@@ -30,7 +30,7 @@
  * `undefined` as "hide this link," so this is a real, disclosed, but
  * non-breaking scope decision, not an oversight.
  */
-import { useLocation, useNavigate, useSearchParams, Navigate } from 'react-router-dom';
+import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { useAuth, useSignOut } from '@hooks';
 import {
   WebsiteChrome,
@@ -44,8 +44,10 @@ import {
 } from '@features/learning/context/LearningPaths.context';
 import { usePublicWebsiteData } from '../hooks/usePublicWebsiteData';
 import { PublicWebsiteStatus } from './PublicWebsiteStatus';
-import { usePublicWebsiteLinkRenderer } from '../utils/public-website-link-renderer';
-import { DEV_OVERRIDE_PARAM } from '../utils/hostname-resolution.utils';
+import {
+  usePublicWebsiteLinkRenderer,
+  usePublicWebsiteHrefBuilder,
+} from '../utils/public-website-link-renderer';
 import type { PublicWebsiteLocale } from '@types';
 
 export interface PublicWebsiteLearningRouteProps {
@@ -73,30 +75,20 @@ export function PublicWebsiteLearningRoute({
   const { signOut } = useSignOut();
   const navigate = useNavigate();
   const location = useLocation();
-  const linkRenderer = usePublicWebsiteLinkRenderer();
-  const [searchParams] = useSearchParams();
-  const devSlug = searchParams.get(DEV_OVERRIDE_PARAM);
+  const linkRenderer = usePublicWebsiteLinkRenderer(locale);
+  // Locale- and dev-preview-aware path builder — see
+  // `usePublicWebsiteHrefBuilder`'s own doc comment. Every path this file
+  // hands to `LearningPathsProvider`/`onNavigate`/the sign-in redirect
+  // goes through this one function (consumed via plain `navigate()`, not
+  // `linkRenderer` — `LearningPaths` never touches CMS nav), so every one
+  // of them gets the same locale/dev-param handling for free.
+  const buildHref = usePublicWebsiteHrefBuilder(locale);
 
   if (data.status !== 'ready') {
     return <PublicWebsiteStatus state={data} />;
   }
 
   const { academy, configuration, pages } = data;
-  // Appends the dev-preview query param whenever it's already present —
-  // see `usePublicWebsiteLinkRenderer`'s own doc comment for the exact
-  // real bug this mirrors: client-side `navigate()` to a bare path drops
-  // any existing query string, and in local dev the Academy's identity
-  // lives in THIS param (a real subdomain/custom-domain deployment
-  // carries it in the hostname instead and is entirely unaffected). Every
-  // path this file hands to `LearningPathsProvider`/`onNavigate`/the
-  // sign-in redirect goes through this one function, so every one of
-  // them — not just page-to-page CMS nav — gets the same fix for free.
-  const withLocale = (path: string): string => {
-    const localized = locale === 'en' ? path : `/ar${path}`;
-    if (!devSlug) return localized;
-    const separator = localized.includes('?') ? '&' : '?';
-    return `${localized}${separator}${DEV_OVERRIDE_PARAM}=${encodeURIComponent(devSlug)}`;
-  };
   const unprefixedPathname =
     locale === 'en' ? location.pathname : location.pathname.replace(/^\/ar/, '') || '/';
 
@@ -111,7 +103,7 @@ export function PublicWebsiteLearningRoute({
   if (session.status !== 'authenticated') {
     return (
       <Navigate
-        to={withLocale(`/sign-in?returnTo=${encodeURIComponent(unprefixedPathname)}`)}
+        to={buildHref(`/sign-in?returnTo=${encodeURIComponent(unprefixedPathname)}`)}
         replace
         state={{ from: unprefixedPathname }}
       />
@@ -122,29 +114,31 @@ export function PublicWebsiteLearningRoute({
     ? {
         name: session.user.name,
         onSignOut: () => void signOut(),
-        myLearningHref: withLocale('/my-learning'),
+        // Bare path — `linkRenderer` (via `WebsiteHeader`) applies the
+        // locale prefix itself; pre-applying it here too would double it.
+        myLearningHref: '/my-learning',
       }
     : undefined;
 
   const onNavigate = (pageId: string) => {
     const target = pages.find((candidate) => candidate.id === pageId);
     const path = target ? resolvePagePath(target) : undefined;
-    if (path) navigate(withLocale(path));
+    if (path) navigate(buildHref(path));
   };
 
   const websiteLearningPaths: LearningPaths = {
-    myLearning: () => withLocale('/my-learning'),
-    courses: () => withLocale('/courses'),
-    courseDetail: (courseId) => withLocale(`/my-learning/courses/${courseId}`),
-    courseLearn: (courseId) => withLocale(`/my-learning/courses/${courseId}/learn`),
+    myLearning: () => buildHref('/my-learning'),
+    courses: () => buildHref('/courses'),
+    courseDetail: (courseId) => buildHref(`/my-learning/courses/${courseId}`),
+    courseLearn: (courseId) => buildHref(`/my-learning/courses/${courseId}/learn`),
     lesson: (courseId, lessonId) =>
-      withLocale(`/my-learning/courses/${courseId}/learn/${lessonId}`),
+      buildHref(`/my-learning/courses/${courseId}/learn/${lessonId}`),
     quiz: (courseId, quizId) =>
-      withLocale(`/my-learning/courses/${courseId}/quizzes/${quizId}`),
+      buildHref(`/my-learning/courses/${courseId}/quizzes/${quizId}`),
     assignment: (courseId, assignmentId) =>
-      withLocale(`/my-learning/courses/${courseId}/assignments/${assignmentId}`),
+      buildHref(`/my-learning/courses/${courseId}/assignments/${assignmentId}`),
     discussions: () => undefined,
-    signIn: (returnTo) => withLocale(`/sign-in?returnTo=${encodeURIComponent(returnTo)}`),
+    signIn: (returnTo) => buildHref(`/sign-in?returnTo=${encodeURIComponent(returnTo)}`),
   };
 
   return (

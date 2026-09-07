@@ -19,13 +19,18 @@
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { CheckCircle2 } from 'lucide-react';
 import { WebsiteChrome, WebsiteBrandBridge, resolvePagePath, resolveLocalizedText, usePublicWebsiteDocumentDirection } from '@features/website';
 import { RegistrationForm } from '@features/auth';
 import { useAuth, useSignOut } from '@hooks';
 import { usePublicWebsiteData } from '../hooks/usePublicWebsiteData';
 import { PublicWebsiteStatus } from './PublicWebsiteStatus';
-import { usePublicWebsiteLinkRenderer } from '../utils/public-website-link-renderer';
+import {
+  usePublicWebsiteLinkRenderer,
+  usePublicWebsiteHrefBuilder,
+} from '../utils/public-website-link-renderer';
+import { DEV_OVERRIDE_PARAM } from '../utils/hostname-resolution.utils';
 import type { PublicWebsiteLocale } from '@types';
 
 export interface PublicWebsiteSignUpPageProps {
@@ -38,7 +43,9 @@ export function PublicWebsiteSignUpPage({ lookupKey, locale }: PublicWebsiteSign
   usePublicWebsiteDocumentDirection(locale);
   const data = usePublicWebsiteData(lookupKey);
   const [registered, setRegistered] = useState(false);
-  const linkRenderer = usePublicWebsiteLinkRenderer();
+  const linkRenderer = usePublicWebsiteLinkRenderer(locale);
+  const buildHref = usePublicWebsiteHrefBuilder(locale);
+  const [searchParams] = useSearchParams();
   const { session } = useAuth();
   const { signOut } = useSignOut();
   const authState =
@@ -46,7 +53,8 @@ export function PublicWebsiteSignUpPage({ lookupKey, locale }: PublicWebsiteSign
       ? {
           name: session.user.name,
           onSignOut: () => void signOut(),
-          myLearningHref: locale === 'en' ? '/my-learning' : '/ar/my-learning',
+          // Bare path — see `PublicWebsiteSignInPage`'s identical note.
+          myLearningHref: '/my-learning',
         }
       : undefined;
 
@@ -55,12 +63,11 @@ export function PublicWebsiteSignUpPage({ lookupKey, locale }: PublicWebsiteSign
   }
 
   const { academy, configuration, pages } = data;
-  const withLocale = (path: string): string => (locale === 'en' ? path : `/ar${path}`);
 
   const onNavigate = (pageId: string) => {
     const target = pages.find((candidate) => candidate.id === pageId);
     const path = target ? resolvePagePath(target) : undefined;
-    if (path) window.location.assign(withLocale(path));
+    if (path) window.location.assign(buildHref(path));
   };
 
   const title =
@@ -79,7 +86,13 @@ export function PublicWebsiteSignUpPage({ lookupKey, locale }: PublicWebsiteSign
       onNavigate={onNavigate}
       linkRenderer={linkRenderer}
       locale={locale}
-      onLocaleChange={(target) => window.location.assign(`${target === 'en' ? '' : '/ar'}/sign-up`)}
+      onLocaleChange={(target) => {
+        const base = `${target === 'en' ? '' : '/ar'}/sign-up`;
+        const devSlug = searchParams.get(DEV_OVERRIDE_PARAM);
+        window.location.assign(
+          devSlug ? `${base}?${DEV_OVERRIDE_PARAM}=${encodeURIComponent(devSlug)}` : base
+        );
+      }}
       authState={authState}
     >
       <div className="mx-auto flex min-h-[60vh] w-full max-w-md flex-col justify-center px-4 py-16">
@@ -93,7 +106,7 @@ export function PublicWebsiteSignUpPage({ lookupKey, locale }: PublicWebsiteSign
             <CheckCircle2 className="size-8 text-[var(--website-primary-solid)]" aria-hidden />
             <p className="font-medium text-foreground">{t('publicWebsite:auth.signUp.success')}</p>
             {linkRenderer({
-              href: withLocale('/sign-in'),
+              href: '/sign-in',
               external: false,
               className: 'font-medium text-[var(--website-primary-solid)] hover:underline',
               children: t('publicWebsite:auth.signUp.goToSignIn'),
@@ -107,7 +120,7 @@ export function PublicWebsiteSignUpPage({ lookupKey, locale }: PublicWebsiteSign
             <div className="mt-6 text-center text-sm">
               <span className="text-muted-foreground">{t('publicWebsite:auth.signUp.hasAccount')} </span>
               {linkRenderer({
-                href: withLocale('/sign-in'),
+                href: '/sign-in',
                 external: false,
                 className: 'font-medium text-[var(--website-primary-solid)] hover:underline',
                 children: t('publicWebsite:auth.signUp.signIn'),

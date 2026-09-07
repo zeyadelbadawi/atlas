@@ -5,6 +5,7 @@
  * existing Atlas form infrastructure.
  */
 import { z } from 'zod';
+import { isYouTubeHost, isYouTubeUrl } from '@utils';
 import {
   MAX_COURSE_TITLE_LENGTH,
   MAX_COURSE_SLUG_LENGTH,
@@ -126,22 +127,40 @@ export const courseSectionSchema = z.object({
 export type CourseSectionFormData = z.infer<typeof courseSectionSchema>;
 
 /** Course lesson creation/update schema. */
-export const courseLessonSchema = z.object({
-  title: z
-    .string()
-    .min(1, 'validation:required')
-    .max(MAX_LESSON_TITLE_LENGTH, 'validation:maxLength'),
-  description: z
-    .string()
-    .max(MAX_LESSON_DESCRIPTION_LENGTH, 'validation:maxLength')
-    .optional(),
-  contentType: z.enum(['text', 'video', 'file']),
-  contentUrl: z
-    .string()
-    .url('validation:invalidUrl')
-    .optional()
-    .or(z.literal('')),
-  status: z.enum(['draft', 'published']),
-});
+export const courseLessonSchema = z
+  .object({
+    title: z
+      .string()
+      .min(1, 'validation:required')
+      .max(MAX_LESSON_TITLE_LENGTH, 'validation:maxLength'),
+    description: z
+      .string()
+      .max(MAX_LESSON_DESCRIPTION_LENGTH, 'validation:maxLength')
+      .optional(),
+    contentType: z.enum(['text', 'video', 'file']),
+    contentUrl: z
+      .string()
+      .url('validation:invalidUrl')
+      .optional()
+      .or(z.literal('')),
+    status: z.enum(['draft', 'published']),
+  })
+  // A `video` lesson's URL is either a hosted file (uploaded/library) or a
+  // YouTube link — the content model stays a single opaque `contentUrl`
+  // string either way (see `youtube.utils.ts`'s own doc comment for why
+  // no new field was introduced). This refinement only ever REJECTS a URL
+  // that's clearly heading for YouTube but malformed (e.g. a bare channel
+  // link, a copy-paste mistake) — a hosted URL on any other host is
+  // untouched, exactly like before this addition.
+  .superRefine((data, ctx) => {
+    if (data.contentType !== 'video' || !data.contentUrl) return;
+    if (isYouTubeHost(data.contentUrl) && !isYouTubeUrl(data.contentUrl)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['contentUrl'],
+        message: 'course:builder.lessonDialog.invalidYoutubeUrl',
+      });
+    }
+  });
 
 export type CourseLessonFormData = z.infer<typeof courseLessonSchema>;

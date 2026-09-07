@@ -28,6 +28,12 @@
  * Owner's optional heading-copy override (`authPages.signIn`, now
  * `LocalizedText`) to it.
  *
+ * Locale-aware internal navigation goes through `usePublicWebsiteHrefBuilder`/
+ * `usePublicWebsiteLinkRenderer` (`public-website-link-renderer.tsx`) —
+ * see that file's own doc comment for the real "clicking a link while
+ * browsing `/ar/...` silently returns English" bug this replaces a local
+ * `withLocale` closure to fix.
+ *
  * `SignInForm` is wrapped in `WebsiteBrandBridge` (`@features/website`) —
  * it's an ordinary dashboard component (predates any Academy website)
  * that reads Atlas's own generic `--primary` token, so without the
@@ -45,7 +51,7 @@ import { WebsiteChrome, WebsiteBrandBridge, resolvePagePath, resolveLocalizedTex
 import { SignInForm } from '@features/auth';
 import { usePublicWebsiteData } from '../hooks/usePublicWebsiteData';
 import { PublicWebsiteStatus } from './PublicWebsiteStatus';
-import { usePublicWebsiteLinkRenderer } from '../utils/public-website-link-renderer';
+import { usePublicWebsiteLinkRenderer, usePublicWebsiteHrefBuilder } from '../utils/public-website-link-renderer';
 import { DEV_OVERRIDE_PARAM } from '../utils/hostname-resolution.utils';
 import type { PublicWebsiteLocale } from '@types';
 
@@ -61,7 +67,8 @@ export function PublicWebsiteSignInPage({ lookupKey, locale }: PublicWebsiteSign
   const { session } = useAuth();
   const { signIn, isLoading, error } = useSignIn();
   const { signOut } = useSignOut();
-  const linkRenderer = usePublicWebsiteLinkRenderer();
+  const linkRenderer = usePublicWebsiteLinkRenderer(locale);
+  const buildHref = usePublicWebsiteHrefBuilder(locale);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   // Set by `PublicWebsiteLearningRoute` (and any other authenticated-only
@@ -69,28 +76,23 @@ export function PublicWebsiteSignInPage({ lookupKey, locale }: PublicWebsiteSign
   // a real, on-site path within THIS Academy's own website only (never a
   // caller-supplied absolute URL/host), so signing in returns the visitor
   // to what they actually came here to do instead of stranding them on a
-  // generic "you're signed in" card.
+  // generic "you're signed in" card. Already bare/unprefixed — the
+  // redirecting page builds it that way (see `PublicWebsiteLearningRoute`).
   const returnTo = searchParams.get('returnTo');
-  // See `PublicWebsiteLearningRoute`'s identical `withLocale` doc comment
-  // — client-side `navigate()` to a bare path drops any existing query
-  // string, and in local dev the Academy's identity lives in this param.
-  const devSlug = searchParams.get(DEV_OVERRIDE_PARAM);
 
   useEffect(() => {
     if (session.status === 'authenticated' && returnTo && returnTo.startsWith('/')) {
-      const localized = locale === 'en' ? returnTo : `/ar${returnTo}`;
-      const target = devSlug
-        ? `${localized}${localized.includes('?') ? '&' : '?'}${DEV_OVERRIDE_PARAM}=${encodeURIComponent(devSlug)}`
-        : localized;
-      navigate(target, { replace: true });
+      navigate(buildHref(returnTo), { replace: true });
     }
-  }, [session.status, returnTo, locale, navigate, devSlug]);
+  }, [session.status, returnTo, navigate, buildHref]);
   const authState =
     session.status === 'authenticated' && session.user
       ? {
           name: session.user.name,
           onSignOut: () => void signOut(),
-          myLearningHref: locale === 'en' ? '/my-learning' : '/ar/my-learning',
+          // Bare path — `linkRenderer`/`WebsiteHeader` apply the locale
+          // prefix; pre-applying it here too would double it.
+          myLearningHref: '/my-learning',
         }
       : undefined;
 
@@ -99,7 +101,6 @@ export function PublicWebsiteSignInPage({ lookupKey, locale }: PublicWebsiteSign
   }
 
   const { academy, configuration, pages } = data;
-  const withLocale = (path: string): string => (locale === 'en' ? path : `/ar${path}`);
 
   const handleSubmit = async (email: string, password: string, rememberMe: boolean) => {
     try {
@@ -112,7 +113,7 @@ export function PublicWebsiteSignInPage({ lookupKey, locale }: PublicWebsiteSign
   const onNavigate = (pageId: string) => {
     const target = pages.find((candidate) => candidate.id === pageId);
     const path = target ? resolvePagePath(target) : undefined;
-    if (path) window.location.assign(withLocale(path));
+    if (path) window.location.assign(buildHref(path));
   };
 
   const title =
@@ -131,7 +132,13 @@ export function PublicWebsiteSignInPage({ lookupKey, locale }: PublicWebsiteSign
       onNavigate={onNavigate}
       linkRenderer={linkRenderer}
       locale={locale}
-      onLocaleChange={(target) => window.location.assign(`${target === 'en' ? '' : '/ar'}/sign-in`)}
+      onLocaleChange={(target) => {
+        const base = `${target === 'en' ? '' : '/ar'}/sign-in`;
+        const devSlug = searchParams.get(DEV_OVERRIDE_PARAM);
+        window.location.assign(
+          devSlug ? `${base}?${DEV_OVERRIDE_PARAM}=${encodeURIComponent(devSlug)}` : base
+        );
+      }}
       authState={authState}
     >
       <div className="mx-auto flex min-h-[60vh] w-full max-w-md flex-col justify-center px-4 py-16">
@@ -156,7 +163,7 @@ export function PublicWebsiteSignInPage({ lookupKey, locale }: PublicWebsiteSign
         <div className="mt-6 text-center text-sm">
           <span className="text-muted-foreground">{t('publicWebsite:auth.signIn.noAccount')} </span>
           {linkRenderer({
-            href: withLocale('/sign-up'),
+            href: '/sign-up',
             external: false,
             className: 'font-medium text-[var(--website-primary-solid)] hover:underline',
             children: t('publicWebsite:auth.signIn.signUp'),

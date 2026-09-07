@@ -24,10 +24,21 @@
     "title": "تعلّمي",
     "subtitle": "الدورات التي التحقت بها.",
     "browseCoursesAction": "اكتشف الدورات",
+    "searchPlaceholder": "ابحث في دوراتك...",
+    "startAction": "ابدأ الدورة",
+    "certificateEligible": "مؤهّل للحصول على شهادة",
     "empty": {
       "title": "لم تلتحق بأي دورة بعد.",
       "description": "تصفّح كتالوج الدورات للعثور على ما تريد تعلّمه.",
       "action": "اكتشف الدورات"
+    },
+    "filters": {
+      "all": "الكل",
+      "inProgress": "قيد التقدّم",
+      "completed": "مكتملة",
+      "certificates": "الشهادات",
+      "emptyTitle": "لا توجد دورات هنا بعد.",
+      "emptyDescription": "جرّب فلترًا مختلفًا أو مصطلح بحث آخر."
     },
     "status": {
       "enrolled": "لم تبدأ",
@@ -90,7 +101,12 @@
     "next": "التالي",
     "unsupportedContent": "محتوى هذا الدرس غير متاح في هذا العرض.",
     "openResource": "فتح المورد",
-    "videoUnsupported": "متصفحك لا يدعم تشغيل الفيديو المضمّن."
+    "videoUnsupported": "متصفحك لا يدعم تشغيل الفيديو المضمّن.",
+    "tabs": {
+      "overview": "نظرة عامة",
+      "announcements": "الإعلانات"
+    },
+    "noAnnouncements": "لا توجد إعلانات لهذه الدورة بعد."
   },
   "progress": {
     "overallTitle": "تقدّمك",

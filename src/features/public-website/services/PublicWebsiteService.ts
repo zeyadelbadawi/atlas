@@ -26,6 +26,7 @@ import type {
   CourseListQuery,
   HostnameResolution,
   PaginatedResult,
+  PublicCourseCurriculumSection,
   PublicWebsiteStatistics,
   WebsiteConfiguration,
   WebsitePage,
@@ -145,6 +146,47 @@ export class PublicWebsiteService extends BaseService {
       return await this.client.get<PaginatedResult<Course>>(
         this.path('websites', academyId, 'courses'),
         { ...options, params: { ...toCollectionParams(query), ...options?.params } }
+      );
+    } catch (error) {
+      if (isApiError(error) && error.kind === 'notFound') return null;
+      throw error;
+    }
+  }
+
+  /**
+   * The public Course Details page's real data source — `null` for a
+   * genuinely unknown/unpublished/private/wrong-academy course, same
+   * convention as `resolveHostname`. See backend
+   * `PublicWebsiteService.getPublicCourse`'s own doc comment for the real
+   * 401 bug this replaces (the page previously called the tenant-scoped
+   * `useCourse`, which fails for every unauthenticated visitor).
+   */
+  async getPublicCourse(
+    academyId: string,
+    courseId: string,
+    options?: ReadOptions
+  ): Promise<Course | null> {
+    try {
+      return await this.client.get<Course>(
+        this.path('websites', academyId, 'courses', courseId),
+        options
+      );
+    } catch (error) {
+      if (isApiError(error) && error.kind === 'notFound') return null;
+      throw error;
+    }
+  }
+
+  /** The public Course Details page's curriculum preview — real section/lesson titles, never gated `contentUrl`/`description`. `null` for the same not-found cases as `getPublicCourse`. */
+  async getPublicCourseCurriculum(
+    academyId: string,
+    courseId: string,
+    options?: ReadOptions
+  ): Promise<readonly PublicCourseCurriculumSection[] | null> {
+    try {
+      return await this.client.get<readonly PublicCourseCurriculumSection[]>(
+        this.path('websites', academyId, 'courses', courseId, 'curriculum'),
+        options
       );
     } catch (error) {
       if (isApiError(error) && error.kind === 'notFound') return null;

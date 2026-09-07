@@ -582,6 +582,11 @@ export const publicWebsiteKeys = {
   /** `FeaturedCoursesSection`/`InstructorsSection`'s real, public course list — see `usePublicCourses`'s own doc comment. */
   courses: (academyId: string | undefined, query?: CourseListQuery) =>
     [...publicWebsiteKeys.all, 'courses', academyId, query] as const,
+  /** The public Course Details page's real course + curriculum preview — see `usePublicCourse`'s own doc comment. */
+  course: (academyId: string | undefined, courseId: string | undefined) =>
+    [...publicWebsiteKeys.all, 'course', academyId, courseId] as const,
+  courseCurriculum: (academyId: string | undefined, courseId: string | undefined) =>
+    [...publicWebsiteKeys.all, 'course-curriculum', academyId, courseId] as const,
 } as const;
 
 /**

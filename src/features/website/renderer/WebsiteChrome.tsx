@@ -19,6 +19,8 @@ import { AtlasPlatformAttribution } from '@components/branding';
 import { WebsiteThemeScope } from './WebsiteThemeScope';
 import { WebsiteHeader, type WebsiteHeaderAuthState } from './WebsiteHeader';
 import { WebsiteFooter } from './WebsiteFooter';
+import { MobileBottomNav } from './MobileBottomNav';
+import { useMobileBottomNavVisibility } from './useMobileBottomNavVisibility';
 import { PublicWebsiteLocaleProvider } from './PublicWebsiteLocaleContext';
 import {
   DEFAULT_PUBLIC_WEBSITE_LOCALE,
@@ -67,6 +69,13 @@ export function WebsiteChrome({
   const theme = getWebsiteTheme(configuration.themeKey);
   const brand: Pick<WebsiteBrandConfig, 'primaryColor' | 'secondaryColor' | 'accentColor'> =
     configuration.brand;
+  // `linkRenderer` absent means dashboard preview (Theme gallery/Page
+  // Editor) — `MobileBottomNav` itself already renders `null` there too;
+  // computed once here as well so `<main>`'s bottom padding stays in sync
+  // with the bar's actual visibility (see `MobileBottomNav`'s own doc
+  // comment for why these must never disagree).
+  const isBottomNavRouteVisible = useMobileBottomNavVisibility();
+  const showBottomNav = !!linkRenderer && isBottomNavRouteVisible;
 
   return (
     <PublicWebsiteLocaleProvider locale={locale}>
@@ -94,7 +103,8 @@ export function WebsiteChrome({
           authState={authState}
         />
 
-        <main>{children}</main>
+        {/* Bottom padding matches `MobileBottomNav`'s own height + safe-area inset whenever it's showing, so the bar never covers the page's own last CTA/content — see that component's own doc comment for why this and its render condition must never disagree. */}
+        <main className={showBottomNav ? 'pb-16 md:pb-0' : undefined}>{children}</main>
 
         <WebsiteFooter
           academyName={academyName}
@@ -116,6 +126,8 @@ export function WebsiteChrome({
         <div className="border-t border-border bg-background px-4 py-3">
           <AtlasPlatformAttribution />
         </div>
+
+        <MobileBottomNav pages={pages} locale={locale} linkRenderer={linkRenderer} />
       </div>
     </WebsiteThemeScope>
     </PublicWebsiteLocaleProvider>
