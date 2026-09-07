@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { CheckCircle2 } from 'lucide-react';
 import { WebsiteChrome, resolvePagePath, resolveLocalizedText, usePublicWebsiteDocumentDirection } from '@features/website';
 import { RegistrationForm } from '@features/auth';
+import { useAuth, useSignOut } from '@hooks';
 import { usePublicWebsiteData } from '../hooks/usePublicWebsiteData';
 import { PublicWebsiteStatus } from './PublicWebsiteStatus';
 import { usePublicWebsiteLinkRenderer } from '../utils/public-website-link-renderer';
@@ -37,6 +38,12 @@ export function PublicWebsiteSignUpPage({ lookupKey, locale }: PublicWebsiteSign
   const data = usePublicWebsiteData(lookupKey);
   const [registered, setRegistered] = useState(false);
   const linkRenderer = usePublicWebsiteLinkRenderer();
+  const { session } = useAuth();
+  const { signOut } = useSignOut();
+  const authState =
+    session.status === 'authenticated' && session.user
+      ? { name: session.user.name, onSignOut: () => void signOut() }
+      : undefined;
 
   if (data.status !== 'ready') {
     return <PublicWebsiteStatus state={data} />;
@@ -68,6 +75,7 @@ export function PublicWebsiteSignUpPage({ lookupKey, locale }: PublicWebsiteSign
       linkRenderer={linkRenderer}
       locale={locale}
       onLocaleChange={(target) => window.location.assign(`${target === 'en' ? '' : '/ar'}/sign-up`)}
+      authState={authState}
     >
       <div className="mx-auto flex min-h-[60vh] w-full max-w-md flex-col justify-center px-4 py-16">
         <div className="mb-8 text-center">

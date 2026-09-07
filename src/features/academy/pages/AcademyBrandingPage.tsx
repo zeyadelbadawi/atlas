@@ -8,10 +8,11 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ImageIcon, Loader2, Save, Type, Upload, X } from 'lucide-react';
+import { ExternalLink, ImageIcon, Loader2, Save, Type, Upload, X } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { SectionTabs } from '@components/navigation';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -34,7 +35,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { useFilePicker, useUnsavedChanges } from '@hooks';
 import { useServerValidation } from '@forms';
-import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
+import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useAcademy, useUpdateAcademyBranding } from '../hooks';
 import { getAcademyAdminTabs } from '../utils/academy-navigation.utils';
 import {
@@ -261,6 +262,30 @@ export default function AcademyBrandingPage(): JSX.Element {
       />
 
       <SectionTabs items={getAcademyAdminTabs(academyId ?? '')} />
+
+      {/*
+        This page only ever managed name/logo/favicon — brand COLORS live
+        on the Website Builder's own Brand tab (`WebsiteBrandTab.tsx`,
+        which carries the exact symmetric pointer back to this page for
+        logo/name). Without this, an Owner looking for colors here would
+        find nothing and no signpost to where they actually are.
+      */}
+      <Alert>
+        <AlertDescription className="flex flex-wrap items-center justify-between gap-3">
+          <span>{t('academy:branding.colorsPointer')}</span>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              navigate(buildPath(DASHBOARD_ROUTES.websiteSettings, { academyId: academyId ?? '' }))
+            }
+          >
+            {t('academy:branding.colorsPointerAction')}
+            <ExternalLink className="size-3.5" aria-hidden />
+          </Button>
+        </AlertDescription>
+      </Alert>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

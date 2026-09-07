@@ -16,6 +16,7 @@
  */
 export { WebsiteRenderer } from './renderer/WebsiteRenderer';
 export type { WebsiteRendererProps } from './renderer/WebsiteRenderer';
+export type { WebsiteHeaderAuthState } from './renderer/WebsiteHeader';
 
 // Phase 1 (Extended Scope, Decision 11, dependency C) — Sign In/Sign Up
 // are real public-runtime surfaces that are NOT `WebsitePage` rows (never

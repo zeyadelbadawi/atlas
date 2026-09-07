@@ -103,13 +103,21 @@ export class AuthorizationService {
   ): boolean {
     if (!user) return false;
 
-    // Organization-scoped role check.
-    if (organization) {
-      return organization.role === role;
+    // A role is granted if EITHER the account's own global roles (e.g.
+    // `platform_owner`, which can never be an organization-scoped role)
+    // OR the active organization's own role matches — never exclusively
+    // one or the other based on whether an organization happens to be
+    // active. Previously this checked only the organization's role
+    // whenever one was active, which meant a Platform Owner who also
+    // held (or created) an Organization membership lost every
+    // `platform_owner`-gated check the moment that organization became
+    // active, since `organization.role` can never equal `platform_owner`.
+    // Mirrors the identical fix in `RouteGuard.tsx`/`navigation.utils.ts`.
+    if (user.roles.includes(role)) {
+      return true;
     }
 
-    // Global role check.
-    return user.roles.includes(role);
+    return organization ? organization.role === role : false;
   }
 
   /**

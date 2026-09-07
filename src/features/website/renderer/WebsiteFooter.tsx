@@ -100,7 +100,7 @@ export function WebsiteFooter({
     return (
       <footer className="border-t border-border py-12">
         <div className={`${container} space-y-8 text-center`}>
-          <p className="font-display text-lg font-semibold text-foreground">{academyName}</p>
+          <p className="font-display text-lg font-semibold text-foreground" dir="auto">{academyName}</p>
           <div className="flex flex-wrap justify-center gap-6">
             {[...groupLinks, ...footer.socialLinks].map((link) => (
               <FooterLinkButton
@@ -122,13 +122,16 @@ export function WebsiteFooter({
   // columns
   return (
     <footer className="border-t border-border py-12">
-      <div className={`${container} grid gap-8 sm:grid-cols-2 lg:grid-cols-4`}>
-        <div className="space-y-2">
-          <p className="font-display text-lg font-semibold text-foreground">{academyName}</p>
+      {/* `auto-fit`/`minmax`, not fixed `sm:grid-cols-2 lg:grid-cols-4` — an
+          Academy with only 1-2 configured link groups never reserves empty
+          desktop columns next to the brand column. */}
+      <div className={`${container} grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-8`}>
+        <div className="min-w-0 space-y-2">
+          <p className="break-words font-display text-lg font-semibold text-foreground" dir="auto">{academyName}</p>
         </div>
         {footer.groups.map((group) => (
-          <div key={group.id} className="space-y-3">
-            <p className="text-sm font-medium text-foreground">{resolveLocalizedText(group.title, locale)}</p>
+          <div key={group.id} className="min-w-0 space-y-3">
+            <p className="break-words text-sm font-medium text-foreground">{resolveLocalizedText(group.title, locale)}</p>
             <div className="flex flex-col gap-2">
               {group.links.map((link) => (
                 <FooterLinkButton

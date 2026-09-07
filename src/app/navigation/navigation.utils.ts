@@ -68,16 +68,23 @@ function shouldShowNavigationItem(
 
   // Permission requirement.
   // FAIL CLOSED: if permissions are required but user is missing, hide item.
+  // A permission is granted if EITHER the account's own base permissions
+  // (e.g. `platform_owner`'s global grants, held regardless of any active
+  // organization) OR the active organization's role-based permissions
+  // include it — never one exclusively based on whether an organization
+  // happens to be active. Matches the fix already applied to
+  // `RouteGuard.tsx`'s equivalent check (see that file's own doc comment);
+  // this was the same bug, independently present here too.
   if (item.requiredPermissions && item.requiredPermissions.length > 0) {
     if (!user) {
       return false;
     }
 
     const hasPermissions = item.requiredPermissions.every((permission) => {
-      if (organization) {
-        return organization.permissions.includes(permission);
+      if (user.permissions.includes(permission)) {
+        return true;
       }
-      return user.permissions.includes(permission);
+      return organization ? organization.permissions.includes(permission) : false;
     });
 
     if (!hasPermissions) {
@@ -87,16 +94,20 @@ function shouldShowNavigationItem(
 
   // Role requirement.
   // FAIL CLOSED: if roles are required but user is missing, hide item.
+  // Same additive rule as permissions above: a global role (e.g.
+  // `platform_owner`, which can never appear as an organization-scoped
+  // role) must never be suppressed just because an organization context
+  // also happens to be active.
   if (item.requiredRoles && item.requiredRoles.length > 0) {
     if (!user) {
       return false;
     }
 
     const hasRoles = item.requiredRoles.every((role) => {
-      if (organization) {
-        return organization.role === role;
+      if (user.roles.includes(role)) {
+        return true;
       }
-      return user.roles.includes(role);
+      return organization ? organization.role === role : false;
     });
 
     if (!hasRoles) {

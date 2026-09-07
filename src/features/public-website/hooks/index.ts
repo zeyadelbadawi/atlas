@@ -11,3 +11,5 @@ export { usePublicWebsiteData } from './usePublicWebsiteData';
 export type { PublicWebsiteDataState } from './usePublicWebsiteData';
 export { usePublicWebsiteStatistics } from './usePublicWebsiteStatistics';
 export { useAcademyIdentity } from './useAcademyIdentity';
+export { usePublicCourses } from './usePublicCourses';
+export type { UsePublicCoursesOptions } from './usePublicCourses';

@@ -35,14 +35,16 @@ export function FeaturesSection({ config }: FeaturesSectionProps): JSX.Element {
           ) : null}
         </div>
       )}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {/* `auto-fit`/`minmax`, not fixed `sm:grid-cols-2 lg:grid-cols-3` — see
+          `FeaturedCoursesSection`'s identical comment for why. */}
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(14rem,1fr))] gap-6">
         {config.items.map((item) => {
           const Icon = resolveFeatureIcon(item.icon);
           return (
             <div key={item.id} className={cardClass}>
               <Icon className="size-6 text-[var(--website-primary-solid)]" strokeWidth={1.75} aria-hidden />
-              <h3 className="mt-3 font-medium text-foreground">{resolveLocalizedText(item.title, locale)}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{resolveLocalizedText(item.description, locale)}</p>
+              <h3 className="mt-3 break-words font-medium text-foreground">{resolveLocalizedText(item.title, locale)}</h3>
+              <p className="mt-1 break-words text-sm text-muted-foreground">{resolveLocalizedText(item.description, locale)}</p>
             </div>
           );
         })}

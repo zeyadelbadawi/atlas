@@ -25,12 +25,23 @@ export interface SidebarNavigationProps {
   readonly isCollapsed: boolean;
   /** Invoked after a successful navigation, used to close the mobile drawer. */
   readonly onNavigate?: () => void;
+  /**
+   * True only when an Academy with its own configured brand color is the
+   * active scope (see `DashboardSidebar`/`AcademyBrandScope`) — adds a
+   * brand-colored start-border indicator to the active item, on top of
+   * (never instead of) the existing `bg-sidebar-accent` treatment. Never
+   * set for the platform-level dashboard (no active Academy) or an
+   * Academy with no custom brand color, so their nav renders identically
+   * to before this existed.
+   */
+  readonly brandAccent?: boolean;
 }
 
 export function SidebarNavigation({
   sections,
   isCollapsed,
   onNavigate,
+  brandAccent = false,
 }: SidebarNavigationProps): JSX.Element {
   const { t } = useTranslation();
   const location = useLocation();
@@ -53,7 +64,17 @@ export function SidebarNavigation({
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar",
           isCollapsed && "justify-center px-0",
           isActive
-            ? "bg-sidebar-accent text-sidebar-accent-foreground"
+            ? cn(
+                "bg-sidebar-accent text-sidebar-accent-foreground",
+                // Skipped while collapsed: the rail centers a bare icon with
+                // no reading-start gutter for a border indicator to occupy,
+                // and avoids fighting the collapsed `justify-center px-0`
+                // padding reset above with a second, conflicting padding
+                // utility on the same edge.
+                brandAccent &&
+                  !isCollapsed &&
+                  "border-s-2 ps-[calc(0.75rem-2px)] [border-inline-start-color:var(--academy-brand-primary-solid)]",
+              )
             : "text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground",
         )}
       >

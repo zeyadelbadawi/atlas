@@ -87,23 +87,29 @@ export function ContactSection({ config, academyId }: ContactSectionProps): JSX.
         </div>
       )}
       <div className={`grid gap-10 ${config.showForm ? 'lg:grid-cols-2' : ''}`}>
-        <dl className="space-y-4">
+        <dl className="min-w-0 space-y-4">
+          {/* `dir="ltr"` on email/phone — always effectively Latin/numeral
+              tokens regardless of page direction; `dir="auto"` on address,
+              which (unlike email/phone) can genuinely be authored in
+              Arabic. All three are plain strings, never `LocalizedText` —
+              see `FeaturedCoursesSection`'s identical comment for why this
+              matters inside an RTL page. */}
           {email ? (
             <div className="flex items-center gap-3">
-              <Mail className="size-5 text-[var(--website-primary-solid)]" aria-hidden />
-              <dd className="text-sm text-foreground">{email}</dd>
+              <Mail className="size-5 shrink-0 text-[var(--website-primary-solid)]" aria-hidden />
+              <dd className="min-w-0 break-words text-sm text-foreground" dir="ltr">{email}</dd>
             </div>
           ) : null}
           {phone ? (
             <div className="flex items-center gap-3">
-              <Phone className="size-5 text-[var(--website-primary-solid)]" aria-hidden />
-              <dd className="text-sm text-foreground">{phone}</dd>
+              <Phone className="size-5 shrink-0 text-[var(--website-primary-solid)]" aria-hidden />
+              <dd className="min-w-0 break-words text-sm text-foreground" dir="ltr">{phone}</dd>
             </div>
           ) : null}
           {address ? (
             <div className="flex items-center gap-3">
-              <MapPin className="size-5 text-[var(--website-primary-solid)]" aria-hidden />
-              <dd className="text-sm text-foreground">{address}</dd>
+              <MapPin className="size-5 shrink-0 text-[var(--website-primary-solid)]" aria-hidden />
+              <dd className="min-w-0 break-words text-sm text-foreground" dir="auto">{address}</dd>
             </div>
           ) : null}
         </dl>

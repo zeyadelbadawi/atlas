@@ -27,6 +27,7 @@ import {
   resolveLocalizedText,
 } from '@features/website';
 import { useCourse } from '@features/course';
+import { useAuth, useSignOut } from '@hooks';
 import { useDocumentSeo } from '../hooks/useDocumentSeo';
 import { resolvePathToPage } from '../utils/page-resolution.utils';
 import { usePublicWebsiteLinkRenderer } from '../utils/public-website-link-renderer';
@@ -44,6 +45,12 @@ export function PublicWebsitePage({ data, locale }: PublicWebsitePageProps): JSX
   const location = useLocation();
   const navigate = useNavigate();
   const linkRenderer = usePublicWebsiteLinkRenderer();
+  const { session } = useAuth();
+  const { signOut } = useSignOut();
+  const authState =
+    session.status === 'authenticated' && session.user
+      ? { name: session.user.name, onSignOut: () => void signOut() }
+      : undefined;
   const { academy, configuration, pages } = data;
 
   // `useLocation().pathname` is the full, un-nested-away path — still
@@ -159,6 +166,7 @@ export function PublicWebsitePage({ data, locale }: PublicWebsitePageProps): JSX
           onLocaleChange={(targetLocale) =>
             navigate(`${targetLocale === 'en' ? pagePath : `/ar${pagePath}`}${location.search}`)
           }
+          authState={authState}
         />
       </div>
     </>

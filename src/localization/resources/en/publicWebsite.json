@@ -1,4 +1,8 @@
 {
+  "header": {
+    "greeting": "Welcome, {{name}}",
+    "signOut": "Sign out"
+  },
   "auth": {
     "signIn": {
       "title": "Sign in to {{academyName}}",

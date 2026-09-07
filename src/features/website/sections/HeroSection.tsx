@@ -109,7 +109,7 @@ export function HeroSection({ config, pages, linkRenderer }: HeroSectionProps): 
               {subtitle}
             </p>
           ) : null}
-          <h1 className={`${headingClass} text-4xl leading-tight text-foreground sm:text-5xl`}>
+          <h1 className={`${headingClass} break-words text-4xl leading-tight text-foreground sm:text-5xl`}>
             {title}
           </h1>
           {description ? (
@@ -137,7 +137,10 @@ export function HeroSection({ config, pages, linkRenderer }: HeroSectionProps): 
   if (design.heroVariant === 'fullbleed') {
     return (
       <section
-        className="relative flex min-h-[28rem] items-end overflow-hidden bg-[var(--website-primary-surface)] py-16"
+        // Scales with viewport instead of a flat 28rem on every screen —
+        // on a short mobile-landscape viewport, 448px could force excess
+        // whitespace/vertical scroll before the fold even starts.
+        className="relative flex min-h-[18rem] items-end overflow-hidden bg-[var(--website-primary-surface)] py-16 sm:min-h-[22rem] lg:min-h-[28rem]"
         style={config.image ? { backgroundImage: `url(${config.image})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}
       >
         {config.image ? (
@@ -150,7 +153,7 @@ export function HeroSection({ config, pages, linkRenderer }: HeroSectionProps): 
           {subtitle ? (
             <p className="text-sm font-medium opacity-90">{subtitle}</p>
           ) : null}
-          <h1 className={`${headingClass} text-4xl leading-tight sm:text-6xl`}>{title}</h1>
+          <h1 className={`${headingClass} break-words text-4xl leading-tight sm:text-6xl`}>{title}</h1>
           {description ? (
             <p className="max-w-2xl text-lg opacity-90">{description}</p>
           ) : null}
@@ -169,7 +172,7 @@ export function HeroSection({ config, pages, linkRenderer }: HeroSectionProps): 
         {subtitle ? (
           <p className="text-sm font-medium text-muted-foreground">{subtitle}</p>
         ) : null}
-        <h1 className={`${headingClass} max-w-3xl text-3xl leading-tight text-foreground sm:text-4xl`}>
+        <h1 className={`${headingClass} max-w-3xl break-words text-3xl leading-tight text-foreground sm:text-4xl`}>
           {title}
         </h1>
         {description ? (
@@ -191,7 +194,7 @@ export function HeroSection({ config, pages, linkRenderer }: HeroSectionProps): 
       {subtitle ? (
         <p className="text-sm font-medium text-[var(--website-primary-solid)]">{subtitle}</p>
       ) : null}
-      <h1 className={`${headingClass} mx-auto max-w-3xl text-4xl leading-tight text-foreground sm:text-5xl`}>
+      <h1 className={`${headingClass} mx-auto max-w-3xl break-words text-4xl leading-tight text-foreground sm:text-5xl`}>
         {title}
       </h1>
       {description ? (

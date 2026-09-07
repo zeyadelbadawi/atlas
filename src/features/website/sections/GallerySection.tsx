@@ -22,12 +22,16 @@ export function GallerySection({ config }: GallerySectionProps): JSX.Element {
       {title ? (
         <h2 className={`${heading} mb-8 text-center text-3xl text-foreground`}>{title}</h2>
       ) : null}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+      {/* `auto-fit`/`minmax`, not fixed `grid-cols-2 sm:grid-cols-3 lg:grid-cols-4`
+          — see `FeaturedCoursesSection`'s identical comment for why. A
+          smaller minimum than the card sections above since these are
+          square image tiles, not text-bearing cards. */}
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(8rem,1fr))] gap-4">
         {config.images.map((image) => {
           const caption = resolveLocalizedText(image.caption, locale);
           const imageAlt = resolveLocalizedText(image.imageAlt, locale) || caption;
           return (
-            <figure key={image.id} className="space-y-1.5">
+            <figure key={image.id} className="min-w-0 space-y-1.5">
               <img
                 src={image.image}
                 alt={imageAlt}
@@ -35,7 +39,7 @@ export function GallerySection({ config }: GallerySectionProps): JSX.Element {
                 style={{ borderRadius: 'var(--website-radius)' }}
               />
               {caption ? (
-                <figcaption className="text-xs text-muted-foreground">{caption}</figcaption>
+                <figcaption className="truncate text-xs text-muted-foreground">{caption}</figcaption>
               ) : null}
             </figure>
           );

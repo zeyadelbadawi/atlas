@@ -91,16 +91,28 @@ export function RouteGuard({
 
   // Check required roles.
   // FAIL CLOSED: if roles are required but user is missing, deny access.
+  // A role is granted if EITHER the account's own global roles (e.g.
+  // `platform_owner`, which can never appear as an organization-scoped
+  // role) OR the active organization's own role matches. Previously this
+  // checked only the organization's role whenever one was active, never
+  // falling back to the user's own global roles — the same bug already
+  // found and fixed for `requiredPermissions` just above (see that
+  // block's own comment), left unfixed here. This meant a real Platform
+  // Owner who also holds (or creates) any Organization membership — a
+  // real, legitimate combination, not a corrupted account — lost every
+  // `platform_owner`-gated route the moment that organization became
+  // their active context, since `organization.role` is always
+  // `owner`/`manager`/`instructor`, never `platform_owner`.
   if (requiredRoles.length > 0) {
     if (!user) {
       return <Navigate to={SYSTEM_ROUTES.forbidden} replace />;
     }
 
     const hasRoles = requiredRoles.every((role) => {
-      if (organization) {
-        return organization.role === role;
+      if (user.roles.includes(role)) {
+        return true;
       }
-      return user.roles.includes(role);
+      return organization ? organization.role === role : false;
     });
 
     if (!hasRoles) {

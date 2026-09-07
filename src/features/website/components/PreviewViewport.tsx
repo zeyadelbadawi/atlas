@@ -5,7 +5,37 @@
  * the standalone Preview surface can both demonstrate desktop/tablet/
  * mobile behavior — the same renderer, just constrained to a different
  * width, never a separate "preview-only" rendering path.
+ *
+ * Renders each breakpoint inside a real `<iframe>` (a genuine, independent
+ * browser viewport), not a same-document `<div>` with an inline `width`
+ * style. Tailwind's `sm:`/`md:`/`lg:`/`xl:` utilities compile to
+ * `@media (min-width: …)` rules, which the browser evaluates against the
+ * ACTUAL viewport — an ancestor `<div>`'s CSS width has no effect on that
+ * evaluation at all. The previous same-document implementation therefore
+ * always rendered every breakpoint at whatever layout the real host
+ * window's width produced (almost always the desktop/`lg:` tier in a
+ * normal dashboard session), visually squeezed into a narrower box but
+ * never actually re-flowing — "tablet"/"mobile" preview was cosmetic, not
+ * a real simulation, and made every generated website look non-responsive
+ * even where the live public site (a real, full document, real
+ * `@media` evaluation) was not. An `<iframe>`'s content establishes its
+ * own independent viewport equal to its own rendered box size, so setting
+ * that box's width to a real device width makes every `@media` query
+ * inside it evaluate correctly — this is a real fix to the tool, not a
+ * cosmetic one.
+ *
+ * The iframe's document is populated via `createPortal`, not a full page
+ * navigation/`srcDoc` re-render — `WebsiteRenderer`'s existing React tree,
+ * context providers, and TanStack Query cache are reused exactly as they
+ * are in the editor; only the DOM node they portal into lives inside the
+ * iframe. Every `<style>`/`<link rel="stylesheet">` tag already present in
+ * the host document's `<head>` (Vite's injected Tailwind build output) is
+ * cloned into the iframe's own head once it loads, so the iframe renders
+ * with identical compiled CSS — the same technique established "styled
+ * iframe" preview libraries use, not a bespoke stylesheet reimplementation.
  */
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { Laptop, Smartphone, Tablet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,10 +43,17 @@ import { cn } from '@utils';
 
 export type PreviewBreakpoint = 'desktop' | 'tablet' | 'mobile';
 
-const BREAKPOINT_WIDTH: Record<PreviewBreakpoint, string> = {
-  desktop: '100%',
-  tablet: '48rem',
-  mobile: '24rem',
+/**
+ * Real device viewport widths — not arbitrary round numbers. Chosen so
+ * each tier lands unambiguously on a different side of this app's own
+ * Tailwind breakpoints (`sm 640 / md 768 / lg 1024 / xl 1280`,
+ * `tailwind.config.ts`): mobile clears none of them, tablet clears `sm`/
+ * `md` only, desktop clears everything up to `xl`.
+ */
+const BREAKPOINT_PIXEL_WIDTH: Record<PreviewBreakpoint, number> = {
+  desktop: 1440,
+  tablet: 768,
+  mobile: 390,
 };
 
 const BREAKPOINT_ICON: Record<PreviewBreakpoint, typeof Laptop> = {
@@ -24,6 +61,81 @@ const BREAKPOINT_ICON: Record<PreviewBreakpoint, typeof Laptop> = {
   tablet: Tablet,
   mobile: Smartphone,
 };
+
+const MIN_PREVIEW_HEIGHT = 480;
+
+/**
+ * Mounts an `<iframe>`, clones the host document's stylesheets into it
+ * once it loads, then portals `children` into its `<body>`. Auto-grows
+ * the iframe's height to fit its own content (via `ResizeObserver`) so
+ * the page never shows a second, nested scrollbar.
+ */
+function IframeViewport({ width, children }: { readonly width: number; readonly children: ReactNode }): JSX.Element {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [mountNode, setMountNode] = useState<HTMLElement | null>(null);
+  const [height, setHeight] = useState(MIN_PREVIEW_HEIGHT);
+
+  useEffect(() => {
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+
+    const setup = (): void => {
+      const doc = iframe.contentDocument;
+      if (!doc) return;
+
+      doc.head.innerHTML = '';
+      document.querySelectorAll('style, link[rel="stylesheet"]').forEach((node) => {
+        doc.head.appendChild(node.cloneNode(true));
+      });
+
+      // Mirror direction/language/dark-mode class exactly — Tailwind's
+      // `dark:` variant and this app's own RTL handling both key off
+      // attributes/classes on `<html>`, which a cloned stylesheet alone
+      // does not carry.
+      doc.documentElement.setAttribute('dir', document.documentElement.dir);
+      doc.documentElement.setAttribute('lang', document.documentElement.lang);
+      doc.documentElement.className = document.documentElement.className;
+      doc.body.style.margin = '0';
+      doc.body.className = 'bg-background text-foreground';
+
+      setMountNode(doc.body);
+    };
+
+    // A `srcDoc`-initialized iframe's blank document is same-origin and
+    // already parsed by the time `contentDocument` is first read in most
+    // browsers, but `load` is the only universally correct signal.
+    if (iframe.contentDocument?.readyState === 'complete') {
+      setup();
+    }
+    iframe.addEventListener('load', setup);
+    return () => iframe.removeEventListener('load', setup);
+  }, []);
+
+  useEffect(() => {
+    if (!mountNode) return undefined;
+
+    const updateHeight = (): void => {
+      setHeight(Math.max(mountNode.scrollHeight, MIN_PREVIEW_HEIGHT));
+    };
+
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(mountNode);
+    return () => observer.disconnect();
+  }, [mountNode]);
+
+  return (
+    <>
+      <iframe
+        ref={iframeRef}
+        srcDoc="<!DOCTYPE html><html><head></head><body></body></html>"
+        title="Website preview"
+        style={{ width, maxWidth: '100%', height, border: 0, display: 'block' }}
+      />
+      {mountNode ? createPortal(children, mountNode) : null}
+    </>
+  );
+}
 
 export interface PreviewViewportProps {
   readonly breakpoint: PreviewBreakpoint;
@@ -59,11 +171,14 @@ export function PreviewViewport({
         })}
       </div>
       <div className="flex justify-center overflow-x-auto rounded-lg border border-border bg-muted p-4">
-        <div
-          className={cn('overflow-hidden rounded-md border border-border bg-background shadow-sm')}
-          style={{ width: BREAKPOINT_WIDTH[breakpoint], maxWidth: '100%' }}
-        >
-          {children}
+        <div className={cn('overflow-hidden rounded-md border border-border bg-background shadow-sm')}>
+          {/* Re-mounts a fresh iframe per breakpoint (keyed) — simplest
+              correct behavior for a config/preview tool that only switches
+              on an explicit click, never worth the added complexity of
+              resizing one persistent iframe in place. */}
+          <IframeViewport key={breakpoint} width={BREAKPOINT_PIXEL_WIDTH[breakpoint]}>
+            {children}
+          </IframeViewport>
         </div>
       </div>
     </div>

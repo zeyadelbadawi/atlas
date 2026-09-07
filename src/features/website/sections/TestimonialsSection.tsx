@@ -71,11 +71,13 @@ export function TestimonialsSection({ config, academyId }: TestimonialsSectionPr
       {title ? (
         <h2 className={`${heading} mb-10 text-center text-3xl text-foreground`}>{title}</h2>
       ) : null}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {/* `auto-fit`/`minmax`, not fixed `sm:grid-cols-2 lg:grid-cols-3` — see
+          `FeaturedCoursesSection`'s identical comment for why. */}
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(17rem,1fr))] gap-6">
         {allItems.map((item) => (
           <figure key={item.id} className={cardClass}>
             <Quote className="size-5 text-[var(--website-primary-solid)]" aria-hidden />
-            <blockquote className="mt-3 text-sm leading-relaxed text-foreground">
+            <blockquote className="mt-3 break-words text-sm leading-relaxed text-foreground">
               “{item.quote}”
             </blockquote>
             <figcaption className="mt-4 flex items-center gap-3">
@@ -83,13 +85,16 @@ export function TestimonialsSection({ config, academyId }: TestimonialsSectionPr
                 <img
                   src={item.avatar}
                   alt={item.avatarAlt ?? item.authorName}
-                  className="size-9 rounded-full object-cover"
+                  className="size-9 shrink-0 rounded-full object-cover"
                 />
               ) : null}
-              <div>
-                <p className="text-sm font-medium text-foreground">{item.authorName}</p>
+              <div className="min-w-0">
+                {/* `dir="auto"` — `authorName` is a plain, single-language
+                    string (never `LocalizedText`); see
+                    `FeaturedCoursesSection`'s identical comment. */}
+                <p className="truncate text-sm font-medium text-foreground" dir="auto">{item.authorName}</p>
                 {item.authorRole ? (
-                  <p className="text-xs text-muted-foreground">{item.authorRole}</p>
+                  <p className="truncate text-xs text-muted-foreground">{item.authorRole}</p>
                 ) : null}
               </div>
             </figcaption>

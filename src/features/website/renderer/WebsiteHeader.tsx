@@ -17,7 +17,8 @@
  * behaving exactly as it did before Prompt 11 (see
  * `Reports/ARCHITECTURE.md`, Prompt 11, "Header/Footer Real Navigation").
  */
-import { Globe, Menu } from 'lucide-react';
+import { Globe, LogOut, Menu } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -38,6 +39,20 @@ import {
 import type { WebsiteHeaderConfig, WebsiteNavigationItem, WebsitePage } from '@types';
 import type { WebsiteLinkRenderer } from './website-link-renderer.types';
 
+/**
+ * The real visitor's session, supplied only by the public runtime (see
+ * `WebsiteChromeProps.authState`) — absent in every dashboard preview
+ * context, exactly like `linkRenderer`/`onLocaleChange`, so an Owner
+ * editing/previewing their own site never sees THEIR OWN admin login
+ * reflected back as if they were a signed-in visitor.
+ */
+export interface WebsiteHeaderAuthState {
+  /** The signed-in visitor's display name. */
+  readonly name: string;
+  /** Absent while sign-out is not yet wired by a given caller — the greeting still renders, just without the action. */
+  readonly onSignOut?: () => void;
+}
+
 export interface WebsiteHeaderProps {
   readonly logo?: string;
   readonly academyName: string;
@@ -51,6 +66,8 @@ export interface WebsiteHeaderProps {
   readonly locale?: PublicWebsiteLocale;
   /** See `WebsiteChromeProps.onLocaleChange` — its presence is what makes the language switcher render at all. */
   readonly onLocaleChange?: (locale: PublicWebsiteLocale) => void;
+  /** When present, replaces the Sign In/Sign Up CTA with the signed-in visitor's own name — see `WebsiteHeaderAuthState`. */
+  readonly authState?: WebsiteHeaderAuthState;
 }
 
 function resolveLabel(
@@ -80,11 +97,15 @@ function LanguageSwitcher({
       variant="ghost"
       size="sm"
       onClick={() => onLocaleChange(other)}
-      className="gap-1.5 text-sm font-medium text-foreground/80 hover:text-foreground"
+      className="shrink-0 gap-1.5 px-2 text-sm font-medium text-foreground/80 hover:text-foreground sm:px-3"
       aria-label={`${PUBLIC_WEBSITE_LOCALE_LABELS.en} / ${PUBLIC_WEBSITE_LOCALE_LABELS.ar}`}
     >
-      <Globe className="size-4" aria-hidden />
-      {PUBLIC_WEBSITE_LOCALE_LABELS[other]}
+      <Globe className="size-4 shrink-0" aria-hidden />
+      {/* Label text hidden below `sm` — with the header's other controls
+          (brand mark, auth state, hamburger) all sharing one narrow row,
+          the icon alone (real `aria-label` above still names the action)
+          is what keeps this row from competing for space on a real phone. */}
+      <span className="hidden sm:inline">{PUBLIC_WEBSITE_LOCALE_LABELS[other]}</span>
     </Button>
   );
 }
@@ -150,17 +171,23 @@ export function WebsiteHeader({
   linkRenderer,
   locale = DEFAULT_PUBLIC_WEBSITE_LOCALE,
   onLocaleChange,
+  authState,
 }: WebsiteHeaderProps): JSX.Element {
+  const { t } = useTranslation();
   const design = useWebsiteDesignSystem();
   const container = useWebsiteContainerClass();
   const mobileMenu = useDisclosure();
 
+  // `dir="auto"` on the academy-name span below — a plain, single-language
+  // string (never `LocalizedText`), so it can genuinely be English on an
+  // Arabic-locale page or vice versa; see `FeaturedCoursesSection`'s
+  // identical comment for the reproduced ellipsis-position bug this avoids.
   const brandMark = (
-    <div className="flex items-center gap-2">
+    <div className="flex min-w-0 max-w-[10rem] items-center gap-2 sm:max-w-[16rem]">
       {logo ? (
-        <img src={logo} alt={academyName} className="h-8 w-auto" />
+        <img src={logo} alt={academyName} className="h-8 w-auto shrink-0" />
       ) : (
-        <span className="font-display text-lg font-bold text-foreground">{academyName}</span>
+        <span className="truncate font-display text-lg font-bold text-foreground" dir="auto">{academyName}</span>
       )}
     </div>
   );
@@ -173,7 +200,41 @@ export function WebsiteHeader({
     className: 'text-white hover:opacity-90',
   };
 
-  const cta = header.cta ? (
+  // A signed-in visitor never sees the Sign In/Sign Up CTA — regardless of
+  // what `header.cta` is configured to (an Owner has no field that can
+  // remove this branch, matching how `AtlasPlatformAttribution` is
+  // deliberately unremovable). `authState` is only ever populated by the
+  // real public runtime (never dashboard/preview callers), so an Owner
+  // editing their own site is never shown their own admin session here.
+  const cta = authState ? (
+    // `min-w-0` on the row + `truncate` on the greeting (never
+    // `whitespace-normal`'s default wrap) — a long real name, or the
+    // longer Arabic greeting string, shrinks to an ellipsis instead of
+    // wrapping the header to two or three lines on a narrow phone, which
+    // is what a plain `<span>` here did before this fix (reproduced live
+    // at 375px: "Welcome, Atlas Admin" wrapped across 3 lines next to the
+    // language switcher and hamburger). "Sign out" drops to an icon-only
+    // button below `sm` for the same reason, matching the language
+    // switcher's identical treatment just above.
+    <div className="flex min-w-0 items-center gap-2">
+      <span className="max-w-[6rem] truncate text-sm font-medium text-foreground/80 sm:max-w-[10rem]">
+        {t('publicWebsite:header.greeting', { name: authState.name })}
+      </span>
+      {authState.onSignOut ? (
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={authState.onSignOut}
+          className="shrink-0 px-2 sm:px-3"
+          aria-label={t('publicWebsite:header.signOut')}
+        >
+          <LogOut className="size-4 sm:hidden" aria-hidden />
+          <span className="hidden sm:inline">{t('publicWebsite:header.signOut')}</span>
+        </Button>
+      ) : null}
+    </div>
+  ) : header.cta ? (
     ctaHref ? (
       <Button {...ctaButtonProps} asChild>
         {linkRenderer!({ href: ctaHref, external: isExternalHref(ctaHref), children: ctaLabel })}
@@ -225,7 +286,11 @@ export function WebsiteHeader({
               onNavigate={onNavigate}
               linkRenderer={linkRenderer}
               locale={locale}
-              className="hidden items-center gap-6 lg:flex"
+              // `flex-wrap` — the Owner-authored item count/label length is
+              // unbounded (longer still under Arabic), so this row must be
+              // able to grow to a second line instead of forcing horizontal
+              // overflow past the header's own container.
+              className="hidden min-w-0 flex-wrap items-center gap-x-6 gap-y-2 lg:flex"
             />
             {languageSwitcher}
             {mobileTrigger}
@@ -249,8 +314,19 @@ export function WebsiteHeader({
               onNavigate={onNavigate}
               linkRenderer={linkRenderer}
               locale={locale}
-              className="hidden items-center gap-6 lg:flex"
+              // `flex-wrap` — the Owner-authored item count/label length is
+              // unbounded (longer still under Arabic), so this row must be
+              // able to grow to a second line instead of forcing horizontal
+              // overflow past the header's own container.
+              className="hidden min-w-0 flex-wrap items-center gap-x-6 gap-y-2 lg:flex"
             />
+            {/*
+              `minimal`'s own design intentionally omits a marketing CTA
+              button (no Sign In/Sign Up here, by theme personality) — but
+              a signed-in visitor's own auth status is not a marketing CTA,
+              so it still renders here, matching every other header variant.
+            */}
+            {authState ? cta : null}
             {languageSwitcher}
             {mobileTrigger}
           </div>
@@ -270,7 +346,7 @@ export function WebsiteHeader({
           activePageId={activePageId}
           onNavigate={onNavigate}
           linkRenderer={linkRenderer}
-          className="hidden items-center gap-6 lg:flex"
+          className="hidden min-w-0 flex-wrap items-center gap-x-6 gap-y-2 lg:flex"
         />
         <div className="flex items-center gap-2">
           {languageSwitcher}

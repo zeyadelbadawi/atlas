@@ -567,6 +567,9 @@ export const publicWebsiteKeys = {
   /** Phase 6 — the combined Academy Identity/Branding read. */
   identity: (academyId: string | undefined) =>
     [...publicWebsiteKeys.all, 'identity', academyId] as const,
+  /** `FeaturedCoursesSection`/`InstructorsSection`'s real, public course list — see `usePublicCourses`'s own doc comment. */
+  courses: (academyId: string | undefined, query?: CourseListQuery) =>
+    [...publicWebsiteKeys.all, 'courses', academyId, query] as const,
 } as const;
 
 /**

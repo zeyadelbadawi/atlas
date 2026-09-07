@@ -101,6 +101,8 @@
   "branding": {
     "title": "Academy Branding",
     "subtitle": "Customize your academy's visual identity",
+    "colorsPointer": "Looking for brand colors? Set your primary, secondary and accent colors from the Website Builder's Brand tab — they apply to both your public website and your dashboard.",
+    "colorsPointerAction": "Go to Website Brand settings",
     "logo": "Logo",
     "favicon": "Favicon",
     "displayName": "Display Name",

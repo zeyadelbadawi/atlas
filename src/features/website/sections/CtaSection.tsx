@@ -32,7 +32,7 @@ export function CtaSection({ config, pages, linkRenderer }: CtaSectionProps): JS
           borderRadius: 'var(--website-radius)',
         }}
       >
-        <h2 className={`${heading} text-3xl`}>{resolveLocalizedText(config.title, locale)}</h2>
+        <h2 className={`${heading} max-w-2xl break-words text-3xl`}>{resolveLocalizedText(config.title, locale)}</h2>
         {config.description ? (
           <p className="max-w-xl opacity-90">{resolveLocalizedText(config.description, locale)}</p>
         ) : null}

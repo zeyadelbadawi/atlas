@@ -10,6 +10,7 @@
  * Prompt 9, "One Renderer, Every Surface").
  */
 import { WebsiteChrome } from './WebsiteChrome';
+import type { WebsiteHeaderAuthState } from './WebsiteHeader';
 import { SectionRenderer } from '../sections';
 import { CourseDetailsTemplate } from './CourseDetailsTemplate';
 import type { PublicWebsiteLocale } from '../constants/locale.constants';
@@ -33,6 +34,8 @@ export interface WebsiteRendererProps {
   readonly locale?: PublicWebsiteLocale;
   /** See `WebsiteChromeProps.onLocaleChange` — forwarded verbatim. */
   readonly onLocaleChange?: (locale: PublicWebsiteLocale) => void;
+  /** See `WebsiteChromeProps.authState` — forwarded verbatim. */
+  readonly authState?: WebsiteHeaderAuthState;
 }
 
 export function WebsiteRenderer({
@@ -48,6 +51,7 @@ export function WebsiteRenderer({
   className,
   locale,
   onLocaleChange,
+  authState,
 }: WebsiteRendererProps): JSX.Element {
   return (
     <WebsiteChrome
@@ -61,6 +65,7 @@ export function WebsiteRenderer({
       className={className}
       locale={locale}
       onLocaleChange={onLocaleChange}
+      authState={authState}
     >
       {page.coreType === 'courseDetails' ? (
         previewCourseId ? (

@@ -1,4 +1,8 @@
 {
+  "header": {
+    "greeting": "مرحبًا، {{name}}",
+    "signOut": "تسجيل الخروج"
+  },
   "auth": {
     "signIn": {
       "title": "تسجيل الدخول إلى {{academyName}}",

@@ -30,7 +30,7 @@
  */
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2 } from 'lucide-react';
-import { useAuth, useSignIn } from '@hooks';
+import { useAuth, useSignIn, useSignOut } from '@hooks';
 import { WebsiteChrome, resolvePagePath, resolveLocalizedText, usePublicWebsiteDocumentDirection } from '@features/website';
 import { SignInForm } from '@features/auth';
 import { usePublicWebsiteData } from '../hooks/usePublicWebsiteData';
@@ -49,7 +49,12 @@ export function PublicWebsiteSignInPage({ lookupKey, locale }: PublicWebsiteSign
   const data = usePublicWebsiteData(lookupKey);
   const { session } = useAuth();
   const { signIn, isLoading, error } = useSignIn();
+  const { signOut } = useSignOut();
   const linkRenderer = usePublicWebsiteLinkRenderer();
+  const authState =
+    session.status === 'authenticated' && session.user
+      ? { name: session.user.name, onSignOut: () => void signOut() }
+      : undefined;
 
   if (data.status !== 'ready') {
     return <PublicWebsiteStatus state={data} />;
@@ -89,6 +94,7 @@ export function PublicWebsiteSignInPage({ lookupKey, locale }: PublicWebsiteSign
       linkRenderer={linkRenderer}
       locale={locale}
       onLocaleChange={(target) => window.location.assign(`${target === 'en' ? '' : '/ar'}/sign-in`)}
+      authState={authState}
     >
       <div className="mx-auto flex min-h-[60vh] w-full max-w-md flex-col justify-center px-4 py-16">
         <div className="mb-8 text-center">

@@ -17,7 +17,7 @@
 import { getWebsiteTheme } from '../themes/website-theme.registry';
 import { AtlasPlatformAttribution } from '@components/branding';
 import { WebsiteThemeScope } from './WebsiteThemeScope';
-import { WebsiteHeader } from './WebsiteHeader';
+import { WebsiteHeader, type WebsiteHeaderAuthState } from './WebsiteHeader';
 import { WebsiteFooter } from './WebsiteFooter';
 import { PublicWebsiteLocaleProvider } from './PublicWebsiteLocaleContext';
 import {
@@ -46,6 +46,8 @@ export interface WebsiteChromeProps {
   readonly locale?: PublicWebsiteLocale;
   /** Present only on the real public runtime (`PublicWebsitePage`/Sign In/Sign Up), which supplies real `/ar/...` URL navigation — absent in every dashboard preview context, where there is no real URL to switch to and the CMS has its own explicit language-tab control instead (`SectionConfigForm`). Its presence is what makes `WebsiteHeader` show the switcher at all. */
   readonly onLocaleChange?: (locale: PublicWebsiteLocale) => void;
+  /** The real visitor's session — see `WebsiteHeaderAuthState`. Present only on the real public runtime; absent in every dashboard preview context, same convention as `linkRenderer`/`onLocaleChange`. */
+  readonly authState?: WebsiteHeaderAuthState;
 }
 
 export function WebsiteChrome({
@@ -60,6 +62,7 @@ export function WebsiteChrome({
   children,
   locale = DEFAULT_PUBLIC_WEBSITE_LOCALE,
   onLocaleChange,
+  authState,
 }: WebsiteChromeProps): JSX.Element {
   const theme = getWebsiteTheme(configuration.themeKey);
   const brand: Pick<WebsiteBrandConfig, 'primaryColor' | 'secondaryColor' | 'accentColor'> =
@@ -88,6 +91,7 @@ export function WebsiteChrome({
           linkRenderer={linkRenderer}
           locale={locale}
           onLocaleChange={onLocaleChange}
+          authState={authState}
         />
 
         <main>{children}</main>

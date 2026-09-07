@@ -53,16 +53,20 @@ export function StatisticsSection({ config, academyId }: StatisticsSectionProps)
       {config.title ? (
         <h2 className={`${heading} mb-10 text-center text-3xl text-foreground`}>{resolveLocalizedText(config.title, locale)}</h2>
       ) : null}
-      <dl className="grid grid-cols-2 gap-8 text-center sm:grid-cols-4">
+      {/* `auto-fit`/`minmax`, not fixed `grid-cols-2 sm:grid-cols-4` — 2-3
+          configured stats never stretch across 4 reserved slots, and the
+          column count degrades gracefully at every width instead of
+          jumping only once at `sm`. */}
+      <dl className="grid grid-cols-[repeat(auto-fit,minmax(8rem,1fr))] gap-8 text-center">
         {config.items.map((item) => (
-          <div key={item.id}>
+          <div key={item.id} className="min-w-0">
             <dd
               className={`${heading} text-4xl text-[var(--website-primary-solid)]`}
               data-atlas-numeric="true"
             >
               {displayValue(item)}
             </dd>
-            <dt className="mt-1 text-sm text-muted-foreground">{resolveLocalizedText(item.label, locale)}</dt>
+            <dt className="mt-1 break-words text-sm text-muted-foreground">{resolveLocalizedText(item.label, locale)}</dt>
           </div>
         ))}
       </dl>

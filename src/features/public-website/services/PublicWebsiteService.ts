@@ -17,11 +17,15 @@
  * so no second HTTP client was introduced.
  */
 import { BaseService, isApiError } from '@services';
+import { toCollectionParams } from '@api';
 import type { ReadOptions } from '@services';
 import type {
   AcademyIdentity,
   ContactMessagePayload,
+  Course,
+  CourseListQuery,
   HostnameResolution,
+  PaginatedResult,
   PublicWebsiteStatistics,
   WebsiteConfiguration,
   WebsitePage,
@@ -117,6 +121,30 @@ export class PublicWebsiteService extends BaseService {
       return await this.client.get<PublicWebsiteStatistics>(
         this.path('websites', academyId, 'statistics'),
         options
+      );
+    } catch (error) {
+      if (isApiError(error) && error.kind === 'notFound') return null;
+      throw error;
+    }
+  }
+
+  /**
+   * `FeaturedCoursesSection`/`InstructorsSection`'s real, public,
+   * published-only course list — added after both sections were found
+   * calling the tenant-scoped `courseService.getCourses` (`@features/
+   * course`), which 403s for any real visitor with no `OrganizationMembership`
+   * in this Academy's org (i.e. every genuine public visitor). `null` for a
+   * genuinely unrecognized academyId, same convention as `resolveHostname`.
+   */
+  async getPublicCourses(
+    academyId: string,
+    query?: CourseListQuery,
+    options?: ReadOptions
+  ): Promise<PaginatedResult<Course> | null> {
+    try {
+      return await this.client.get<PaginatedResult<Course>>(
+        this.path('websites', academyId, 'courses'),
+        { ...options, params: { ...toCollectionParams(query), ...options?.params } }
       );
     } catch (error) {
       if (isApiError(error) && error.kind === 'notFound') return null;

@@ -10,7 +10,7 @@ import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import { AcademyBrandMark, AtlasPlatformAttribution } from "@components/branding";
+import { AcademyBrandMark, AcademyBrandScope, AtlasPlatformAttribution } from "@components/branding";
 import { useAcademyIdentity } from "@features/public-website/hooks";
 import { getDashboardNavigation, filterNavigationItems } from "@app/navigation";
 import { useAuth, useLanguage, usePlatform } from "@hooks";
@@ -44,6 +44,12 @@ export function DashboardSidebar({
   // change). Falls back to the Atlas mark itself when no Academy is active
   // (e.g. the platform-owner console) or the Academy has no logo yet.
   const { data: academyIdentity } = useAcademyIdentity(activeAcademyId);
+  // Phase 6 follow-up — the active Academy's own brand color, when it has
+  // one, accents this same sidebar (see `AcademyBrandScope`'s own doc
+  // comment for why this is additive, never a wholesale re-theme). `false`
+  // whenever there's no active Academy or no custom color, so nothing
+  // about the platform-level dashboard or a not-yet-branded Academy changes.
+  const hasBrandAccent = Boolean(activeAcademyId && academyIdentity?.primaryColor);
 
   // Navigation is filtered by the same fail-closed permission/role logic used
   // everywhere else in Atlas, so a hidden platform-owner or academy entry here
@@ -119,11 +125,18 @@ export function DashboardSidebar({
           <SheetTitle className="sr-only">{t("navigation:primary")}</SheetTitle>
           <div className="flex h-full flex-col">
             {brandRow}
-            <SidebarNavigation
-              sections={sections}
-              isCollapsed={false}
-              onNavigate={() => onDrawerOpenChange(false)}
-            />
+            <AcademyBrandScope
+              primaryColor={academyIdentity?.primaryColor}
+              secondaryColor={academyIdentity?.secondaryColor}
+              accentColor={academyIdentity?.accentColor}
+            >
+              <SidebarNavigation
+                sections={sections}
+                isCollapsed={false}
+                onNavigate={() => onDrawerOpenChange(false)}
+                brandAccent={hasBrandAccent}
+              />
+            </AcademyBrandScope>
             {/* Phase 6 — mandatory, platform-owned; never a CMS-editable field. */}
             <div className="border-t border-sidebar-border px-3 py-3">
               <AtlasPlatformAttribution />
@@ -142,10 +155,17 @@ export function DashboardSidebar({
       )}
     >
       {brandRow}
-      <SidebarNavigation
-        sections={sections}
-        isCollapsed={isCollapsed}
-      />
+      <AcademyBrandScope
+        primaryColor={academyIdentity?.primaryColor}
+        secondaryColor={academyIdentity?.secondaryColor}
+        accentColor={academyIdentity?.accentColor}
+      >
+        <SidebarNavigation
+          sections={sections}
+          isCollapsed={isCollapsed}
+          brandAccent={hasBrandAccent}
+        />
+      </AcademyBrandScope>
       {/* Phase 6 — mandatory, platform-owned; never a CMS-editable field. Hidden only when the rail is collapsed to a bare icon strip, matching every other text row in that state. */}
       {!isCollapsed ? (
         <div className="border-t border-sidebar-border px-3 py-3">
