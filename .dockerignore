@@ -1,0 +1,7 @@
+node_modules
+dist
+.git
+.env
+testsprite_tests
+Reports
+prerender/node_modules

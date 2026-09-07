@@ -1,0 +1,59 @@
+# Main platform + every academy subdomain: one wildcard certificate covers
+# both, since both are served identically by this same container — the
+# frontend build already branches "atlas-app" vs "academy-website" mode at
+# the JS level based on hostname (resolvePublicWebsiteContext). The
+# DNS-01 issuer is scoped to this site block specifically (not a global
+# default) so it doesn't collide with the catch-all block's own `tls
+# internal` policy below. CLOUDFLARE_API_TOKEN is provided at container
+# start via env_file, never baked into the image.
+atlass.dpdns.org, *.atlass.dpdns.org {
+	tls {
+		dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+	}
+
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+	}
+
+	handle /api/* {
+		reverse_proxy backend:3000 {
+			header_up X-Real-IP {remote_host}
+		}
+	}
+
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}
+
+# Catch-all fallback for connected custom domains (e.g. an academy's own
+# domain via the existing Cloudflare Custom Hostnames flow). Cloudflare's
+# edge terminates and manages TLS for the custom hostname itself once
+# verified; this origin just needs to answer TLS on any other SNI and
+# serve the same app — same static files, same API routing, Host header
+# alone (already handled entirely by the frontend's own hostname-resolution
+# logic) decides which academy is served.
+:443 {
+	tls internal
+
+	encode zstd gzip
+
+	handle /api/* {
+		reverse_proxy backend:3000 {
+			header_up X-Real-IP {remote_host}
+		}
+	}
+
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}
