@@ -51,7 +51,11 @@ export default defineConfig(({ command }) => {
       atoms(),
       ensureBuildOutDir(),
       Sitemap({
-        hostname: 'https://atoms.template.com',
+        // Phase 7 — was a leftover scaffold placeholder nobody owns
+        // (baked verbatim into the shipped sitemap.xml/robots.txt).
+        // Overridable via env for any environment that isn't the real
+        // production domain (e.g. a future staging deploy).
+        hostname: process.env.VITE_SITE_URL || 'https://atlass.dpdns.org',
         lastmod: getSitemapLastmod(),
         readable: true,
         generateRobotsTxt: true,

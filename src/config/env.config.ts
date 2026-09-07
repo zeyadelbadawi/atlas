@@ -54,9 +54,15 @@ function getEnvironment(): Environment {
 function getApiBaseUrl(): string {
   return (
     import.meta.env.VITE_API_BASE_URL ??
-    (getEnvironment() === 'production'
-      ? 'https://api.atlas-platform.com'
-      : 'http://localhost:3000/api')
+    // Phase 7 — the production reverse proxy (Caddy) routes `/api/*` to the
+    // backend on the exact same origin the frontend is served from,
+    // whether that's the platform's own domain, an academy subdomain, or a
+    // connected custom domain. A relative path is therefore correct for
+    // all three, with no per-domain configuration and no CORS involved for
+    // the browser's own requests (same-origin). Replaces a previous,
+    // invented `https://api.atlas-platform.com` default that pointed at a
+    // domain nobody owns.
+    (getEnvironment() === 'production' ? '/api/v1' : 'http://localhost:3000/api')
   );
 }
 
