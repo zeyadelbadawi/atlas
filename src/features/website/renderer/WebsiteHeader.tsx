@@ -51,6 +51,18 @@ export interface WebsiteHeaderAuthState {
   readonly name: string;
   /** Absent while sign-out is not yet wired by a given caller — the greeting still renders, just without the action. */
   readonly onSignOut?: () => void;
+  /**
+   * Present only for a signed-in Student, on the real public runtime —
+   * turns the greeting itself into a real link to their "My Learning"
+   * area instead of adding a third header control (a real, reproduced
+   * regression this deliberately avoids repeating — see the greeting's
+   * own `truncate`/compact-mobile treatment, added after a real header-
+   * crowding bug at 375px; a new, separate button here would reintroduce
+   * exactly that). `undefined` for every other signed-in role (Owner/
+   * Manager/Instructor previewing or genuinely visiting their own site),
+   * which have no "My Learning" area to link to.
+   */
+  readonly myLearningHref?: string;
 }
 
 export interface WebsiteHeaderProps {
@@ -217,9 +229,19 @@ export function WebsiteHeader({
     // button below `sm` for the same reason, matching the language
     // switcher's identical treatment just above.
     <div className="flex min-w-0 items-center gap-2">
-      <span className="max-w-[6rem] truncate text-sm font-medium text-foreground/80 sm:max-w-[10rem]">
-        {t('publicWebsite:header.greeting', { name: authState.name })}
-      </span>
+      {authState.myLearningHref && linkRenderer ? (
+        linkRenderer({
+          href: authState.myLearningHref,
+          external: false,
+          className:
+            'max-w-[6rem] truncate text-sm font-medium text-[var(--website-primary-solid)] hover:underline sm:max-w-[10rem]',
+          children: t('publicWebsite:header.greeting', { name: authState.name }),
+        })
+      ) : (
+        <span className="max-w-[6rem] truncate text-sm font-medium text-foreground/80 sm:max-w-[10rem]">
+          {t('publicWebsite:header.greeting', { name: authState.name })}
+        </span>
+      )}
       {authState.onSignOut ? (
         <Button
           type="button"

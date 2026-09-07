@@ -3,7 +3,7 @@
  *
  * Shared create/edit dialog for a course lesson.
  */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -60,6 +60,14 @@ export interface LessonFormDialogProps {
   readonly academyId?: string;
 }
 
+const EMPTY_LESSON_VALUES: CourseLessonFormData = {
+  title: '',
+  description: '',
+  contentType: 'text',
+  contentUrl: '',
+  status: 'draft',
+};
+
 export function LessonFormDialog({
   open,
   onOpenChange,
@@ -75,14 +83,28 @@ export function LessonFormDialog({
 
   const form = useForm<CourseLessonFormData>({
     resolver: zodResolver(courseLessonSchema),
-    values: defaultValues ?? {
-      title: '',
-      description: '',
-      contentType: 'text',
-      contentUrl: '',
-      status: 'draft',
-    },
+    defaultValues: EMPTY_LESSON_VALUES,
   });
+
+  // This dialog is kept mounted across opens (`CourseBuilderPage` never
+  // unmounts it, just toggles `open`), so `useForm`'s own `values:` option
+  // (previously used here) silently skipped resetting whenever the new
+  // `defaultValues` was deep-equal to the previous open's — which is
+  // ALWAYS true for two consecutive "Add Lesson" (create-mode) opens,
+  // since both fall back to the exact same literal empty-values object by
+  // value. Net effect, reproduced live: opening "Add Lesson" a second
+  // time inherited the first lesson's still-dirty `title`/`contentUrl`
+  // field state, and typing into a field the user assumed was empty
+  // inserted at the caret instead of replacing anything — producing a
+  // garbled concatenation of both lessons' text in one saved field.
+  // Force-resetting on every `open` transition (matching
+  // `AssignmentFormDialog.tsx`'s identical, already-correct convention)
+  // fixes this regardless of `deepEqual`.
+  useEffect(() => {
+    if (!open) return;
+    form.reset(defaultValues ?? EMPTY_LESSON_VALUES);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, defaultValues]);
 
   useServerValidation(form, error ?? null);
 

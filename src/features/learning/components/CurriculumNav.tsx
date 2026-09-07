@@ -8,8 +8,8 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { CheckCircle2, Circle, Lock, PlayCircle } from "lucide-react";
-import { DASHBOARD_ROUTES, buildPath } from "@app/routes/route-paths";
 import { cn } from "@utils";
+import { useLearningPaths } from "../context/LearningPaths.context";
 import type { CourseSection, LessonProgressStatus } from "@types";
 
 export interface CurriculumNavProps {
@@ -35,6 +35,7 @@ export function CurriculumNav({
   onNavigate,
 }: CurriculumNavProps): JSX.Element {
   const { t } = useTranslation();
+  const paths = useLearningPaths();
 
   return (
     <nav aria-label={t("learning:learn.curriculumLabel")} className="space-y-4">
@@ -72,10 +73,7 @@ export function CurriculumNav({
                 return (
                   <li key={lesson.id}>
                     <Link
-                      to={buildPath(DASHBOARD_ROUTES.learningLesson, {
-                        courseId,
-                        lessonId: lesson.id,
-                      })}
+                      to={paths.lesson(courseId, lesson.id)}
                       onClick={onNavigate}
                       aria-current={isCurrent ? "page" : undefined}
                       className={cn(

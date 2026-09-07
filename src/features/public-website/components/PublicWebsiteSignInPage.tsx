@@ -27,15 +27,26 @@
  * language (`usePublicWebsiteDocumentDirection`), and resolves the
  * Owner's optional heading-copy override (`authPages.signIn`, now
  * `LocalizedText`) to it.
+ *
+ * `SignInForm` is wrapped in `WebsiteBrandBridge` (`@features/website`) —
+ * it's an ordinary dashboard component (predates any Academy website)
+ * that reads Atlas's own generic `--primary` token, so without the
+ * bridge its submit button rendered in Atlas's default accent color
+ * instead of this Academy's real brand color even though the
+ * surrounding `WebsiteChrome` was already correctly branded; see that
+ * component's own doc comment for the full reasoning.
  */
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle2 } from 'lucide-react';
 import { useAuth, useSignIn, useSignOut } from '@hooks';
-import { WebsiteChrome, resolvePagePath, resolveLocalizedText, usePublicWebsiteDocumentDirection } from '@features/website';
+import { WebsiteChrome, WebsiteBrandBridge, resolvePagePath, resolveLocalizedText, usePublicWebsiteDocumentDirection } from '@features/website';
 import { SignInForm } from '@features/auth';
 import { usePublicWebsiteData } from '../hooks/usePublicWebsiteData';
 import { PublicWebsiteStatus } from './PublicWebsiteStatus';
 import { usePublicWebsiteLinkRenderer } from '../utils/public-website-link-renderer';
+import { DEV_OVERRIDE_PARAM } from '../utils/hostname-resolution.utils';
 import type { PublicWebsiteLocale } from '@types';
 
 export interface PublicWebsiteSignInPageProps {
@@ -51,9 +62,36 @@ export function PublicWebsiteSignInPage({ lookupKey, locale }: PublicWebsiteSign
   const { signIn, isLoading, error } = useSignIn();
   const { signOut } = useSignOut();
   const linkRenderer = usePublicWebsiteLinkRenderer();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  // Set by `PublicWebsiteLearningRoute` (and any other authenticated-only
+  // public-website surface) redirecting an unauthenticated visitor here —
+  // a real, on-site path within THIS Academy's own website only (never a
+  // caller-supplied absolute URL/host), so signing in returns the visitor
+  // to what they actually came here to do instead of stranding them on a
+  // generic "you're signed in" card.
+  const returnTo = searchParams.get('returnTo');
+  // See `PublicWebsiteLearningRoute`'s identical `withLocale` doc comment
+  // — client-side `navigate()` to a bare path drops any existing query
+  // string, and in local dev the Academy's identity lives in this param.
+  const devSlug = searchParams.get(DEV_OVERRIDE_PARAM);
+
+  useEffect(() => {
+    if (session.status === 'authenticated' && returnTo && returnTo.startsWith('/')) {
+      const localized = locale === 'en' ? returnTo : `/ar${returnTo}`;
+      const target = devSlug
+        ? `${localized}${localized.includes('?') ? '&' : '?'}${DEV_OVERRIDE_PARAM}=${encodeURIComponent(devSlug)}`
+        : localized;
+      navigate(target, { replace: true });
+    }
+  }, [session.status, returnTo, locale, navigate, devSlug]);
   const authState =
     session.status === 'authenticated' && session.user
-      ? { name: session.user.name, onSignOut: () => void signOut() }
+      ? {
+          name: session.user.name,
+          onSignOut: () => void signOut(),
+          myLearningHref: locale === 'en' ? '/my-learning' : '/ar/my-learning',
+        }
       : undefined;
 
   if (data.status !== 'ready') {
@@ -110,7 +148,9 @@ export function PublicWebsiteSignInPage({ lookupKey, locale }: PublicWebsiteSign
             </p>
           </div>
         ) : (
-          <SignInForm onSubmit={handleSubmit} isLoading={isLoading} error={error} />
+          <WebsiteBrandBridge>
+            <SignInForm onSubmit={handleSubmit} isLoading={isLoading} error={error} />
+          </WebsiteBrandBridge>
         )}
 
         <div className="mt-6 text-center text-sm">

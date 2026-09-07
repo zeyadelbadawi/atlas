@@ -23,19 +23,21 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
-import { DASHBOARD_ROUTES, buildPath } from "@app/routes/route-paths";
-import { useCourse, useCourseSections } from "@features/course";
 import {
   useEnrollment,
   useCourseProgress,
   useCompleteLesson,
+  useCourseContent,
+  useDiscoverCourse,
 } from "../hooks";
+import { useLearningPaths } from "../context/LearningPaths.context";
 import { LearningLayout } from "../components/LearningLayout";
 import type { CourseLesson, LessonProgressStatus } from "@types";
 
 export default function LessonPage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const paths = useLearningPaths();
   const { courseId, lessonId } = useParams<{
     courseId: string;
     lessonId: string;
@@ -49,16 +51,16 @@ export default function LessonPage(): JSX.Element {
   const academyId = enrollment?.academyId;
   const isEnrolled = !!enrollment && enrollment.status !== "available";
 
-  const { data: course } = useCourse(academyId ?? "", courseId ?? "", {
-    enabled: !!academyId,
+  const { data: course } = useDiscoverCourse(courseId ?? "", {
+    enabled: !!courseId,
   });
   const {
     data: sectionsData,
     isLoading: isLoadingSections,
     error: sectionsError,
     refetch: refetchSections,
-  } = useCourseSections(academyId ?? "", courseId ?? "", {
-    enabled: !!academyId,
+  } = useCourseContent(courseId ?? "", {
+    enabled: isEnrolled,
   });
   const {
     data: progress,
@@ -103,9 +105,7 @@ export default function LessonPage(): JSX.Element {
 
   const goToLesson = (id: string) => {
     if (!courseId) return;
-    navigate(
-      buildPath(DASHBOARD_ROUTES.learningLesson, { courseId, lessonId: id })
-    );
+    navigate(paths.lesson(courseId, id));
   };
 
   const handleMarkComplete = async () => {
@@ -144,12 +144,7 @@ export default function LessonPage(): JSX.Element {
             courseId
               ? {
                   labelKey: "learning:details.enrollAction",
-                  onAction: () =>
-                    navigate(
-                      buildPath(DASHBOARD_ROUTES.learningCourseDetail, {
-                        courseId,
-                      })
-                    ),
+                  onAction: () => navigate(paths.courseDetail(courseId)),
                 }
               : undefined
           }

@@ -51,6 +51,7 @@ export const QUERY_KEY_ROOTS = {
   platformSettings: ['platform-settings'] as const,
   media: ['media'] as const,
   search: ['search'] as const,
+  courseContent: ['course-content'] as const,
 } as const;
 
 /**
@@ -157,8 +158,12 @@ export const courseDiscoveryKeys = {
  */
 export const enrollmentKeys = {
   all: QUERY_KEY_ROOTS.enrollment,
-  list: (studentId: string | undefined) =>
-    [...enrollmentKeys.all, 'list', studentId] as const,
+  // `query` (e.g. an `academyId` filter, used by the Academy-website-
+  // embedded "My Learning" experience) is embedded in the key — the same
+  // signed-in student calling this with different filters (one Academy's
+  // site vs. another's) must never share a cache entry.
+  list: (studentId: string | undefined, query?: CollectionQuery) =>
+    [...enrollmentKeys.all, 'list', studentId, query] as const,
   course: (studentId: string | undefined, courseId: string) =>
     [...enrollmentKeys.all, 'course', studentId, courseId] as const,
 } as const;
@@ -167,6 +172,13 @@ export const progressKeys = {
   all: QUERY_KEY_ROOTS.progress,
   course: (studentId: string | undefined, courseId: string) =>
     [...progressKeys.all, 'course', studentId, courseId] as const,
+} as const;
+
+/** `CourseContentService` — the student-facing curriculum read, `@features/learning`. See that service's own doc comment. */
+export const courseContentKeys = {
+  all: QUERY_KEY_ROOTS.courseContent,
+  sections: (studentId: string | undefined, courseId: string) =>
+    [...courseContentKeys.all, 'sections', studentId, courseId] as const,
 } as const;
 
 export const quizKeys = {

@@ -18,7 +18,7 @@ export function useEnrollments(options?: UseEnrollmentsOptions) {
   const { user } = useAuth();
 
   return useApiQuery<PaginatedResult<Enrollment>>({
-    queryKey: enrollmentKeys.list(user?.id),
+    queryKey: enrollmentKeys.list(user?.id, query),
     queryFn: () => enrollmentService.getEnrollments(query),
     enabled: enabled && !!user?.id,
   });

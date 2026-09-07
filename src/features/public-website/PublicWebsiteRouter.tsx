@@ -22,6 +22,7 @@
  * locale split — they are site-wide infrastructure files, never
  * duplicated per locale.
  */
+import { lazy } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { PublicWebsiteStatus } from './components/PublicWebsiteStatus';
 import { PublicWebsitePage } from './components/PublicWebsitePage';
@@ -29,9 +30,30 @@ import { PublicWebsiteRobotsRoute } from './components/PublicWebsiteRobotsRoute'
 import { PublicWebsiteSitemapRoute } from './components/PublicWebsiteSitemapRoute';
 import { PublicWebsiteSignInPage } from './components/PublicWebsiteSignInPage';
 import { PublicWebsiteSignUpPage } from './components/PublicWebsiteSignUpPage';
+import { PublicWebsiteLearningRoute } from './components/PublicWebsiteLearningRoute';
 import { usePublicWebsiteData } from './hooks/usePublicWebsiteData';
 import type { PublicWebsiteContext } from './utils/hostname-resolution.utils';
 import type { PublicWebsiteLocale } from '@types';
+
+// The Student Learning experience, reused unmodified from
+// `@features/learning`/`@features/profile` — see
+// `PublicWebsiteLearningRoute`'s own doc comment for how these render
+// inside this Academy's own branded chrome instead of the internal
+// dashboard shell. Lazy so a visitor who never signs in never downloads
+// this code.
+const StudentMyLearningPage = lazy(
+  () => import('@features/learning/pages/StudentMyLearningPage')
+);
+const StudentCourseDetailsPage = lazy(
+  () => import('@features/learning/pages/StudentCourseDetailsPage')
+);
+const CourseLearnRedirectPage = lazy(
+  () => import('@features/learning/pages/CourseLearnRedirectPage')
+);
+const LessonPage = lazy(() => import('@features/learning/pages/LessonPage'));
+const QuizPage = lazy(() => import('@features/learning/pages/QuizPage'));
+const AssignmentPage = lazy(() => import('@features/learning/pages/AssignmentPage'));
+const ProfilePage = lazy(() => import('@features/profile/pages/ProfilePage'));
 
 export interface PublicWebsiteRouterProps {
   readonly context: Extract<PublicWebsiteContext, { mode: 'academy-website' }>;
@@ -74,6 +96,71 @@ function PublicWebsiteLocaleRoutes({
           shadowed by a Custom Page happening to share the same slug. */}
       <Route path="sign-in" element={<PublicWebsiteSignInPage lookupKey={lookupKey} locale={locale} />} />
       <Route path="sign-up" element={<PublicWebsiteSignUpPage lookupKey={lookupKey} locale={locale} />} />
+
+      {/* Student Learning — the Academy-website-embedded LMS experience.
+          Same "reached before the data-driven catch-all" precedent as
+          sign-in/sign-up immediately above: an Academy that happens to
+          have authored a Custom Page at one of these exact slugs would
+          have it permanently shadowed, matching that already-accepted
+          risk (never silently — the Pages list still shows the page,
+          it's simply unreachable at this specific path). */}
+      <Route
+        path="my-learning"
+        element={
+          <PublicWebsiteLearningRoute lookupKey={lookupKey} locale={locale}>
+            {({ academyId }) => <StudentMyLearningPage academyId={academyId} />}
+          </PublicWebsiteLearningRoute>
+        }
+      />
+      <Route
+        path="my-learning/courses/:courseId"
+        element={
+          <PublicWebsiteLearningRoute lookupKey={lookupKey} locale={locale}>
+            {() => <StudentCourseDetailsPage />}
+          </PublicWebsiteLearningRoute>
+        }
+      />
+      <Route
+        path="my-learning/courses/:courseId/learn"
+        element={
+          <PublicWebsiteLearningRoute lookupKey={lookupKey} locale={locale}>
+            {() => <CourseLearnRedirectPage />}
+          </PublicWebsiteLearningRoute>
+        }
+      />
+      <Route
+        path="my-learning/courses/:courseId/learn/:lessonId"
+        element={
+          <PublicWebsiteLearningRoute lookupKey={lookupKey} locale={locale}>
+            {() => <LessonPage />}
+          </PublicWebsiteLearningRoute>
+        }
+      />
+      <Route
+        path="my-learning/courses/:courseId/quizzes/:quizId"
+        element={
+          <PublicWebsiteLearningRoute lookupKey={lookupKey} locale={locale}>
+            {() => <QuizPage />}
+          </PublicWebsiteLearningRoute>
+        }
+      />
+      <Route
+        path="my-learning/courses/:courseId/assignments/:assignmentId"
+        element={
+          <PublicWebsiteLearningRoute lookupKey={lookupKey} locale={locale}>
+            {() => <AssignmentPage />}
+          </PublicWebsiteLearningRoute>
+        }
+      />
+      <Route
+        path="my-account"
+        element={
+          <PublicWebsiteLearningRoute lookupKey={lookupKey} locale={locale}>
+            {() => <ProfilePage />}
+          </PublicWebsiteLearningRoute>
+        }
+      />
+
       <Route path="*" element={<PublicWebsiteShell lookupKey={lookupKey} locale={locale} />} />
     </Routes>
   );

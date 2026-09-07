@@ -27,13 +27,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import { useFilePicker } from "@hooks";
-import { DASHBOARD_ROUTES, buildPath } from "@app/routes/route-paths";
 import {
   useAssignment,
   useAssignmentSubmission,
   useSubmitAssignment,
   useUploadSubmissionAttachment,
 } from "../hooks";
+import { useLearningPaths } from "../context/LearningPaths.context";
 import {
   assignmentSubmissionSchema,
   type AssignmentSubmissionFormData,
@@ -47,6 +47,7 @@ import { getSubmissionStatusTone } from "../utils/learning-status.utils";
 export default function AssignmentPage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const paths = useLearningPaths();
   const { courseId, assignmentId } = useParams<{
     courseId: string;
     assignmentId: string;
@@ -193,15 +194,7 @@ export default function AssignmentPage(): JSX.Element {
               </p>
             </div>
             {courseId ? (
-              <Button
-                onClick={() =>
-                  navigate(
-                    buildPath(DASHBOARD_ROUTES.learningCourseDetail, {
-                      courseId,
-                    })
-                  )
-                }
-              >
+              <Button onClick={() => navigate(paths.courseDetail(courseId))}>
                 {t("learning:learn.backToCourse")}
               </Button>
             ) : null}

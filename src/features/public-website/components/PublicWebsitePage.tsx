@@ -47,10 +47,6 @@ export function PublicWebsitePage({ data, locale }: PublicWebsitePageProps): JSX
   const linkRenderer = usePublicWebsiteLinkRenderer();
   const { session } = useAuth();
   const { signOut } = useSignOut();
-  const authState =
-    session.status === 'authenticated' && session.user
-      ? { name: session.user.name, onSignOut: () => void signOut() }
-      : undefined;
   const { academy, configuration, pages } = data;
 
   // `useLocation().pathname` is the full, un-nested-away path — still
@@ -61,6 +57,15 @@ export function PublicWebsitePage({ data, locale }: PublicWebsitePageProps): JSX
   const unprefixedPathname =
     locale === 'en' ? location.pathname : location.pathname.replace(/^\/ar/, '') || '/';
   const withLocale = (path: string): string => (locale === 'en' ? path : `/ar${path}`);
+
+  const authState =
+    session.status === 'authenticated' && session.user
+      ? {
+          name: session.user.name,
+          onSignOut: () => void signOut(),
+          myLearningHref: withLocale('/my-learning'),
+        }
+      : undefined;
 
   const { page, courseId } = resolvePathToPage(unprefixedPathname, pages);
 

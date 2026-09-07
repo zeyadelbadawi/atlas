@@ -12,6 +12,8 @@ export { useDiscoverCourse } from './useDiscoverCourse';
 export type { UseDiscoverCourseOptions } from './useDiscoverCourse';
 export { useCourseProgress } from './useCourseProgress';
 export type { UseCourseProgressOptions } from './useCourseProgress';
+export { useCourseContent } from './useCourseContent';
+export type { UseCourseContentOptions } from './useCourseContent';
 export { useCompleteLesson } from './useCompleteLesson';
 export { useQuizzes } from './useQuizzes';
 export type { UseQuizzesOptions } from './useQuizzes';

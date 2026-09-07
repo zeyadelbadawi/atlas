@@ -17,7 +17,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { isApiError } from '@api';
 import { useAuth } from '@hooks';
-import { AUTH_ROUTES, DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { formatCoursePricing } from '@features/course';
 import {
   useDiscoverCourse,
@@ -27,11 +26,13 @@ import {
   useQuizzes,
   useAssignments,
 } from '../hooks';
+import { useLearningPaths } from '../context/LearningPaths.context';
 import { getCourseCompletionTone } from '../utils/learning-status.utils';
 
 export default function StudentCourseDetailsPage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const paths = useLearningPaths();
   const { courseId } = useParams<{ courseId: string }>();
   const { isAuthenticated } = useAuth();
 
@@ -95,16 +96,12 @@ export default function StudentCourseDetailsPage(): JSX.Element {
   const goToLearn = () => {
     if (!courseId) return;
     const lessonId = progress?.currentLessonId;
-    navigate(
-      lessonId
-        ? buildPath(DASHBOARD_ROUTES.learningLesson, { courseId, lessonId })
-        : buildPath(DASHBOARD_ROUTES.learningCourseLearn, { courseId })
-    );
+    navigate(lessonId ? paths.lesson(courseId, lessonId) : paths.courseLearn(courseId));
   };
 
+  const discussionsHref = courseId ? paths.discussions(courseId) : undefined;
   const goToDiscussions = () => {
-    if (!courseId) return;
-    navigate(buildPath(DASHBOARD_ROUTES.learningDiscussions, { courseId }));
+    if (discussionsHref) navigate(discussionsHref);
   };
 
   if (isLoading) {
@@ -203,7 +200,7 @@ export default function StudentCourseDetailsPage(): JSX.Element {
                     </p>
                     <Button
                       onClick={() =>
-                        navigate(AUTH_ROUTES.signIn, {
+                        navigate(paths.signIn(window.location.pathname), {
                           state: { from: window.location.pathname },
                         })
                       }
@@ -227,14 +224,16 @@ export default function StudentCourseDetailsPage(): JSX.Element {
                       />
                       {t('learning:details.viewCompletedCourse')}
                     </Button>
-                    <Button variant="outline" onClick={goToDiscussions}>
-                      <MessageSquare
-                        className="size-4"
-                        strokeWidth={2}
-                        aria-hidden
-                      />
-                      {t('learning:details.discussionsAction')}
-                    </Button>
+                    {discussionsHref ? (
+                      <Button variant="outline" onClick={goToDiscussions}>
+                        <MessageSquare
+                          className="size-4"
+                          strokeWidth={2}
+                          aria-hidden
+                        />
+                        {t('learning:details.discussionsAction')}
+                      </Button>
+                    ) : null}
                   </>
                 ) : isEnrolled ? (
                   <>
@@ -242,14 +241,16 @@ export default function StudentCourseDetailsPage(): JSX.Element {
                       <ArrowRight className="size-4" strokeWidth={2} aria-hidden />
                       {t('learning:details.continueLearning')}
                     </Button>
-                    <Button variant="outline" onClick={goToDiscussions}>
-                      <MessageSquare
-                        className="size-4"
-                        strokeWidth={2}
-                        aria-hidden
-                      />
-                      {t('learning:details.discussionsAction')}
-                    </Button>
+                    {discussionsHref ? (
+                      <Button variant="outline" onClick={goToDiscussions}>
+                        <MessageSquare
+                          className="size-4"
+                          strokeWidth={2}
+                          aria-hidden
+                        />
+                        {t('learning:details.discussionsAction')}
+                      </Button>
+                    ) : null}
                   </>
                 ) : enrollment?.status === 'unavailable' ? (
                   <p className="text-sm text-muted-foreground">
@@ -318,15 +319,7 @@ export default function StudentCourseDetailsPage(): JSX.Element {
                 <button
                   key={quiz.id}
                   type="button"
-                  onClick={() =>
-                    courseId &&
-                    navigate(
-                      buildPath(DASHBOARD_ROUTES.learningQuiz, {
-                        courseId,
-                        quizId: quiz.id,
-                      })
-                    )
-                  }
+                  onClick={() => courseId && navigate(paths.quiz(courseId, quiz.id))}
                   className="flex w-full items-center justify-between rounded-md border border-border p-3 text-start text-sm hover:bg-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <span className="font-medium text-foreground">
@@ -340,13 +333,7 @@ export default function StudentCourseDetailsPage(): JSX.Element {
                   key={assignment.id}
                   type="button"
                   onClick={() =>
-                    courseId &&
-                    navigate(
-                      buildPath(DASHBOARD_ROUTES.learningAssignment, {
-                        courseId,
-                        assignmentId: assignment.id,
-                      })
-                    )
+                    courseId && navigate(paths.assignment(courseId, assignment.id))
                   }
                   className="flex w-full items-center justify-between rounded-md border border-border p-3 text-start text-sm hover:bg-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >

@@ -29,6 +29,14 @@ export type { WebsiteHeaderAuthState } from './renderer/WebsiteHeader';
 export { WebsiteChrome } from './renderer/WebsiteChrome';
 export type { WebsiteChromeProps } from './renderer/WebsiteChrome';
 
+// The Academy-website-embedded Student Learning experience (`@features/
+// learning`'s `WebsiteLearningRoute`) needs the resolved theme's brand
+// color to alias onto Atlas's own generic `--primary`/`--ring` tokens —
+// see that file's own doc comment for why this is a CSS-variable bridge,
+// not a per-component retheme.
+export { useWebsiteDesignSystem } from './renderer/WebsiteDesignSystemContext';
+export { WebsiteBrandBridge } from './renderer/WebsiteBrandBridge';
+
 // Phase P19 — `ProvisioningStartPage`'s theme-selection step needs the
 // real theme registry (never a second, invented catalog). Curated export,
 // same discipline as this barrel's own header comment: only what a

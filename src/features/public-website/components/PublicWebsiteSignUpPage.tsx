@@ -14,12 +14,13 @@
  * Organization-level value.
  *
  * Phase 6 — see `PublicWebsiteSignInPage`'s identically-shaped doc
- * comment for `locale`/`usePublicWebsiteDocumentDirection`.
+ * comment for `locale`/`usePublicWebsiteDocumentDirection`, and for why
+ * `RegistrationForm` is wrapped in `WebsiteBrandBridge`.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2 } from 'lucide-react';
-import { WebsiteChrome, resolvePagePath, resolveLocalizedText, usePublicWebsiteDocumentDirection } from '@features/website';
+import { WebsiteChrome, WebsiteBrandBridge, resolvePagePath, resolveLocalizedText, usePublicWebsiteDocumentDirection } from '@features/website';
 import { RegistrationForm } from '@features/auth';
 import { useAuth, useSignOut } from '@hooks';
 import { usePublicWebsiteData } from '../hooks/usePublicWebsiteData';
@@ -42,7 +43,11 @@ export function PublicWebsiteSignUpPage({ lookupKey, locale }: PublicWebsiteSign
   const { signOut } = useSignOut();
   const authState =
     session.status === 'authenticated' && session.user
-      ? { name: session.user.name, onSignOut: () => void signOut() }
+      ? {
+          name: session.user.name,
+          onSignOut: () => void signOut(),
+          myLearningHref: locale === 'en' ? '/my-learning' : '/ar/my-learning',
+        }
       : undefined;
 
   if (data.status !== 'ready') {
@@ -96,7 +101,9 @@ export function PublicWebsiteSignUpPage({ lookupKey, locale }: PublicWebsiteSign
           </div>
         ) : (
           <>
-            <RegistrationForm academyId={academy.academyId} onSuccess={() => setRegistered(true)} />
+            <WebsiteBrandBridge>
+              <RegistrationForm academyId={academy.academyId} onSuccess={() => setRegistered(true)} />
+            </WebsiteBrandBridge>
             <div className="mt-6 text-center text-sm">
               <span className="text-muted-foreground">{t('publicWebsite:auth.signUp.hasAccount')} </span>
               {linkRenderer({

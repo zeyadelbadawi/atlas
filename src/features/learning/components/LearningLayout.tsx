@@ -18,7 +18,7 @@ import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { AcademyBrandMark, AtlasPlatformAttribution } from "@components/branding";
 import { useAcademyIdentity } from "@features/public-website/hooks";
 import { useBreakpoint, useDisclosure, useLanguage } from "@hooks";
-import { DASHBOARD_ROUTES, buildPath } from "@app/routes/route-paths";
+import { useLearningPaths } from "../context/LearningPaths.context";
 import { CurriculumNav } from "./CurriculumNav";
 import type { CourseSection, LessonProgressStatus } from "@types";
 
@@ -55,6 +55,7 @@ export function LearningLayout({
   const { isDesktop } = useBreakpoint();
   const { isRtl } = useLanguage();
   const drawer = useDisclosure(false);
+  const paths = useLearningPaths();
   const { data: academyIdentity } = useAcademyIdentity(academyId);
 
   const nav = (
@@ -92,13 +93,7 @@ export function LearningLayout({
               variant="ghost"
               size="sm"
               className="-ms-2 text-muted-foreground"
-              onClick={() =>
-                navigate(
-                  buildPath(DASHBOARD_ROUTES.learningCourseDetail, {
-                    courseId,
-                  })
-                )
-              }
+              onClick={() => navigate(paths.courseDetail(courseId))}
             >
               <ArrowLeft className="size-4 rtl:-scale-x-100" aria-hidden />
               {t("learning:learn.backToCourse")}

@@ -3,6 +3,7 @@
  *
  * Shared create/edit dialog for a course section.
  */
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -43,6 +44,8 @@ export interface SectionFormDialogProps {
   readonly error?: ApiError | null;
 }
 
+const EMPTY_SECTION_VALUES: CourseSectionFormData = { title: '', description: '' };
+
 export function SectionFormDialog({
   open,
   onOpenChange,
@@ -56,8 +59,20 @@ export function SectionFormDialog({
 
   const form = useForm<CourseSectionFormData>({
     resolver: zodResolver(courseSectionSchema),
-    values: defaultValues ?? { title: '', description: '' },
+    defaultValues: EMPTY_SECTION_VALUES,
   });
+
+  // See `LessonFormDialog.tsx`'s identical fix for the exact bug this
+  // avoids — this dialog stays mounted across opens, so a reactive
+  // `values:` option silently skips resetting whenever two consecutive
+  // "Add Section" opens' fallback values are deep-equal (always true for
+  // two create-mode opens), leaving the previous section's dirty field
+  // state in place for the next one.
+  useEffect(() => {
+    if (!open) return;
+    form.reset(defaultValues ?? EMPTY_SECTION_VALUES);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, defaultValues]);
 
   useServerValidation(form, error ?? null);
 

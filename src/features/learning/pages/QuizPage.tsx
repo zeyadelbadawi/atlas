@@ -23,13 +23,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "@/hooks/use-toast";
 import { useConfirmDialog } from "@app/providers";
-import { DASHBOARD_ROUTES, buildPath } from "@app/routes/route-paths";
 import {
   useQuiz,
   useQuizAttempts,
   useStartQuizAttempt,
   useSubmitQuizAttempt,
 } from "../hooks";
+import { useLearningPaths } from "../context/LearningPaths.context";
 import { buildQuizAttemptSchema } from "../schemas/learning.schemas";
 import type { QuizAttemptFormData } from "../schemas/learning.schemas";
 import { getQuizAttemptStatusTone } from "../utils/learning-status.utils";
@@ -37,6 +37,7 @@ import { getQuizAttemptStatusTone } from "../utils/learning-status.utils";
 export default function QuizPage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const paths = useLearningPaths();
   const { courseId, quizId } = useParams<{
     courseId: string;
     quizId: string;
@@ -214,13 +215,7 @@ export default function QuizPage(): JSX.Element {
                 {courseId ? (
                   <Button
                     variant="outline"
-                    onClick={() =>
-                      navigate(
-                        buildPath(DASHBOARD_ROUTES.learningCourseDetail, {
-                          courseId,
-                        })
-                      )
-                    }
+                    onClick={() => navigate(paths.courseDetail(courseId))}
                   >
                     {t("learning:learn.backToCourse")}
                   </Button>

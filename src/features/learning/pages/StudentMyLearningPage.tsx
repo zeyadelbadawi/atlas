@@ -26,10 +26,23 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { usePagination } from '@hooks';
-import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useEnrollments } from '../hooks';
+import { useLearningPaths } from '../context/LearningPaths.context';
 import { formatCoursePricing } from '@features/course';
 import type { EnrollmentStatus } from '@types';
+
+export interface StudentMyLearningPageProps {
+  /**
+   * Scopes the list to one Academy's enrollments — passed when this page
+   * is mounted inside that Academy's own public website (see
+   * `WebsiteLearningPathsProvider`'s doc comment for why cross-Academy
+   * data must never leak into a single Academy's branded "My Learning"
+   * page). `undefined` (the dashboard's own `/dashboard/learning/my-courses`
+   * route) keeps today's behaviour — every enrollment, across every
+   * Academy.
+   */
+  readonly academyId?: string;
+}
 
 const STATUS_BADGE_VARIANT: Record<EnrollmentStatus, 'default' | 'secondary' | 'outline'> = {
   enrolled: 'secondary',
@@ -39,15 +52,21 @@ const STATUS_BADGE_VARIANT: Record<EnrollmentStatus, 'default' | 'secondary' | '
   unavailable: 'outline',
 };
 
-export default function StudentMyLearningPage(): JSX.Element {
+export default function StudentMyLearningPage({
+  academyId,
+}: StudentMyLearningPageProps = {}): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const paths = useLearningPaths();
 
   const [totalItems, setTotalItems] = useState(0);
   const pagination = usePagination({ totalItems });
 
   const { data, isLoading, error, refetch } = useEnrollments({
-    query: { pagination: { page: pagination.page, pageSize: pagination.pageSize } },
+    query: {
+      pagination: { page: pagination.page, pageSize: pagination.pageSize },
+      ...(academyId ? { filters: { academyId } } : {}),
+    },
   });
 
   useEffect(() => {
@@ -55,7 +74,7 @@ export default function StudentMyLearningPage(): JSX.Element {
   }, [data]);
 
   const enrollments = data?.items ?? [];
-  const browseCourses = () => navigate(DASHBOARD_ROUTES.learningCourses);
+  const browseCourses = () => navigate(paths.courses());
 
   if (error) {
     return (
@@ -95,8 +114,7 @@ export default function StudentMyLearningPage(): JSX.Element {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {enrollments.map((enrollment) => {
             const course = enrollment.course;
-            const goToDetail = () =>
-              navigate(buildPath(DASHBOARD_ROUTES.learningCourseDetail, { courseId: enrollment.courseId }));
+            const goToDetail = () => navigate(paths.courseDetail(enrollment.courseId));
 
             return (
               <Card

@@ -23,6 +23,7 @@
   },
   "actions": {
     "save": "Save changes",
+    "edit": "Edit",
     "cancel": "Cancel",
     "confirm": "Confirm",
     "close": "Close",
