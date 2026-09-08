@@ -48,3 +48,4 @@ export * from './audit-log.types';
 export * from './support.types';
 export * from './platform-settings.types';
 export * from './media.types';
+export * from './dashboard.types';

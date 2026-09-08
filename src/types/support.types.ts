@@ -20,6 +20,8 @@ export interface SupportCaseSummary {
   readonly priority: SupportCasePriority;
   readonly organizationId?: string;
   readonly organizationName?: string;
+  /** Phase 8 — present only for a ticket scoped to one Academy. */
+  readonly academyId?: string;
   readonly requesterName: string;
   readonly requesterEmail: string;
   readonly assignedToName?: string;
@@ -47,4 +49,17 @@ export interface UpdateSupportCaseStatusPayload {
 
 export interface PostSupportCaseReplyPayload {
   readonly body: string;
+}
+
+/**
+ * Phase 8 — the tenant-facing "submit a ticket" payload. `description`
+ * becomes the case's first message (`authorRole: 'requester'`); a ticket
+ * IS a subject plus a message thread, never a separate free-text field
+ * on the case. Deliberately carries no `priority`/`academyId`: scope
+ * comes from the route the caller can actually reach, and priority is
+ * triaged by the Platform, never chosen by the requester.
+ */
+export interface CreateSupportCasePayload {
+  readonly subject: string;
+  readonly description: string;
 }

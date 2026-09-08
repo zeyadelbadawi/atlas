@@ -1,14 +1,123 @@
 {
   "overview": {
     "title": "Dashboard",
-    "description": "Your workspace overview. Modules will appear here as they are activated.",
-    "foundation": {
-      "title": "Platform foundation",
-      "description": "The application shell, design system and shared infrastructure are ready."
+    "description": "How your organization is doing right now.",
+    "academyDescription": "How {{academy}} is doing right now.",
+    "noScope": {
+      "title": "No workspace selected",
+      "description": "Choose an organization or academy to see its dashboard."
     },
+    "error": {
+      "title": "Couldn't load your dashboard",
+      "description": "Something went wrong fetching your latest numbers. Try again in a moment."
+    }
+  },
+  "metrics": {
+    "academies": "Academies",
+    "courses": "Courses",
+    "publishedCourses": "Published courses",
+    "students": "Students",
+    "instructors": "Instructors"
+  },
+  "revenue": {
+    "title": "Revenue",
+    "description": "Earnings recorded by Atlas from course sales.",
+    "netOfFees": "After platform fees",
+    "notTracked": {
+      "title": "Not tracked here",
+      "ownGateway": "Your academy collects payments through your own gateway, so this money never passes through Atlas and we have no figure to show. Check your gateway's own dashboard for earnings.",
+      "unconfigured": "Set up how you collect payments to start seeing earnings here."
+    },
+    "none": {
+      "title": "No earnings yet",
+      "description": "Once your first course sale goes through, it will appear here."
+    }
+  },
+  "usage": {
+    "title": "Plan usage",
+    "description": "What you're using against your current plan.",
+    "value": "{{used}} of {{limit}}",
+    "unlimitedValue": "{{used}} — unlimited",
+    "metrics": {
+      "academies": "Academies",
+      "courses": "Courses",
+      "students": "Students",
+      "instructors": "Instructors"
+    },
+    "unavailable": {
+      "title": "Usage isn't available yet",
+      "description": "Your plan usage appears here once your subscription is active and the first figures have been calculated."
+    }
+  },
+  "activity": {
+    "title": "Recent activity",
+    "description": "The latest changes across your workspace.",
     "empty": {
-      "title": "No modules activated yet",
-      "description": "Once {{product}} modules are enabled, their summaries and quick actions will appear in this overview."
+      "title": "Nothing has happened yet",
+      "description": "Changes to courses, lessons and your team will show up here as they happen."
+    },
+    "actions": {
+      "generic": "{{actor}} made a change",
+      "course.created": "{{actor}} created the course \"{{target}}\"",
+      "course.updated": "{{actor}} updated the course \"{{target}}\"",
+      "course.published": "{{actor}} published the course \"{{target}}\"",
+      "course.unpublished": "{{actor}} unpublished the course \"{{target}}\"",
+      "course.archived": "{{actor}} archived the course \"{{target}}\"",
+      "course.instructor_assigned": "{{actor}} assigned an instructor to \"{{target}}\"",
+      "course.instructor_removed": "{{actor}} removed an instructor from \"{{target}}\"",
+      "course_section.created": "{{actor}} added the section \"{{target}}\"",
+      "course_section.updated": "{{actor}} updated the section \"{{target}}\"",
+      "course_section.deleted": "{{actor}} deleted the section \"{{target}}\"",
+      "course_lesson.created": "{{actor}} added the lesson \"{{target}}\"",
+      "course_lesson.updated": "{{actor}} updated the lesson \"{{target}}\"",
+      "course_lesson.deleted": "{{actor}} deleted the lesson \"{{target}}\"",
+      "quiz.created": "{{actor}} created the quiz \"{{target}}\"",
+      "quiz.updated": "{{actor}} updated the quiz \"{{target}}\"",
+      "quiz.deleted": "{{actor}} deleted the quiz \"{{target}}\"",
+      "assignment.created": "{{actor}} created the assignment \"{{target}}\"",
+      "assignment.updated": "{{actor}} updated the assignment \"{{target}}\"",
+      "assignment.deleted": "{{actor}} deleted the assignment \"{{target}}\"",
+      "assignment_submission.graded": "{{actor}} graded a submission from {{target}}",
+      "academy.created": "{{actor}} created the academy \"{{target}}\"",
+      "support_case.created": "{{actor}} submitted the ticket \"{{target}}\"",
+      "support_case.auto_created": "A ticket was opened automatically: \"{{target}}\""
+    }
+  },
+  "support": {
+    "status": {
+      "open": "Open",
+      "in_progress": "In progress",
+      "resolved": "Resolved",
+      "closed": "Closed"
+    },
+    "form": {
+      "title": "Need a hand?",
+      "description": "Tell us what's going on and our team will pick it up.",
+      "subjectLabel": "Subject",
+      "subjectPlaceholder": "A short summary of the problem",
+      "descriptionLabel": "What's happening?",
+      "descriptionPlaceholder": "Describe the problem, and what you were doing when it came up.",
+      "submit": "Submit ticket",
+      "submitting": "Sending…",
+      "submitAnother": "Submit another ticket",
+      "success": "Thanks — your ticket is in. We'll be in touch by email.",
+      "errors": {
+        "subjectRequired": "Add a subject so we know what this is about.",
+        "subjectTooLong": "Keep the subject under 200 characters.",
+        "descriptionRequired": "Tell us what's happening so we can help.",
+        "descriptionTooLong": "Keep the description under 5000 characters.",
+        "submitFailed": "We couldn't send your ticket. Please try again in a moment."
+      }
+    },
+    "list": {
+      "title": "Your tickets",
+      "description": "Tickets you've submitted, and where they stand.",
+      "submittedOn": "Submitted {{date}}",
+      "loadFailed": "We couldn't load your tickets. Please try again in a moment.",
+      "empty": {
+        "title": "No tickets yet",
+        "description": "Anything you submit will show up here so you can follow its progress."
+      }
     }
   }
 }

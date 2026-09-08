@@ -1,15 +1,123 @@
-
 {
   "overview": {
     "title": "لوحة التحكم",
-    "description": "نظرة عامة على مساحة عملك. ستظهر الوحدات هنا بمجرد تنشيطها.",
-    "foundation": {
-      "title": "أساس المنصّة",
-      "description": "هيكل التطبيق ونظام التصميم والبنية المشتركة جاهزة للاستخدام."
+    "description": "حالة مؤسستك في الوقت الحالي.",
+    "academyDescription": "حالة {{academy}} في الوقت الحالي.",
+    "noScope": {
+      "title": "لم يتم اختيار مساحة عمل",
+      "description": "اختر مؤسسة أو أكاديمية لعرض لوحة التحكم الخاصة بها."
     },
+    "error": {
+      "title": "تعذّر تحميل لوحة التحكم",
+      "description": "حدث خطأ أثناء جلب أحدث البيانات. يرجى المحاولة بعد قليل."
+    }
+  },
+  "metrics": {
+    "academies": "الأكاديميات",
+    "courses": "الدورات",
+    "publishedCourses": "الدورات المنشورة",
+    "students": "الطلاب",
+    "instructors": "المعلمون"
+  },
+  "revenue": {
+    "title": "الإيرادات",
+    "description": "الأرباح المسجّلة في أطلس من مبيعات الدورات.",
+    "netOfFees": "بعد خصم رسوم المنصّة",
+    "notTracked": {
+      "title": "غير متتبَّعة هنا",
+      "ownGateway": "تحصّل أكاديميتك المدفوعات عبر بوابة الدفع الخاصة بك، لذا لا تمرّ هذه الأموال عبر أطلس ولا نملك رقمًا لعرضه. راجع لوحة تحكم بوابتك لمعرفة الأرباح.",
+      "unconfigured": "حدّد طريقة تحصيل المدفوعات لتبدأ برؤية الأرباح هنا."
+    },
+    "none": {
+      "title": "لا توجد أرباح بعد",
+      "description": "ستظهر هنا فور إتمام أول عملية بيع لدورة."
+    }
+  },
+  "usage": {
+    "title": "استهلاك الخطة",
+    "description": "ما تستخدمه مقارنةً بخطتك الحالية.",
+    "value": "{{used}} من {{limit}}",
+    "unlimitedValue": "{{used}} — غير محدود",
+    "metrics": {
+      "academies": "الأكاديميات",
+      "courses": "الدورات",
+      "students": "الطلاب",
+      "instructors": "المعلمون"
+    },
+    "unavailable": {
+      "title": "الاستهلاك غير متاح بعد",
+      "description": "سيظهر استهلاك خطتك هنا بمجرد تفعيل اشتراكك واحتساب أول البيانات."
+    }
+  },
+  "activity": {
+    "title": "النشاط الأخير",
+    "description": "آخر التغييرات في مساحة عملك.",
     "empty": {
-      "title": "لا توجد وحدات مُنشّطة بعد",
-      "description": "بمجرد تنشيط وحدات {{product}} ستظهر ملخّصاتها وإجراءاتها السريعة في هذه النظرة العامة."
+      "title": "لم يحدث شيء بعد",
+      "description": "ستظهر هنا التغييرات على الدورات والدروس وفريقك فور حدوثها."
+    },
+    "actions": {
+      "generic": "أجرى {{actor}} تغييرًا",
+      "course.created": "أنشأ {{actor}} الدورة \"{{target}}\"",
+      "course.updated": "حدّث {{actor}} الدورة \"{{target}}\"",
+      "course.published": "نشر {{actor}} الدورة \"{{target}}\"",
+      "course.unpublished": "ألغى {{actor}} نشر الدورة \"{{target}}\"",
+      "course.archived": "أرشف {{actor}} الدورة \"{{target}}\"",
+      "course.instructor_assigned": "أسند {{actor}} معلمًا إلى \"{{target}}\"",
+      "course.instructor_removed": "أزال {{actor}} معلمًا من \"{{target}}\"",
+      "course_section.created": "أضاف {{actor}} القسم \"{{target}}\"",
+      "course_section.updated": "حدّث {{actor}} القسم \"{{target}}\"",
+      "course_section.deleted": "حذف {{actor}} القسم \"{{target}}\"",
+      "course_lesson.created": "أضاف {{actor}} الدرس \"{{target}}\"",
+      "course_lesson.updated": "حدّث {{actor}} الدرس \"{{target}}\"",
+      "course_lesson.deleted": "حذف {{actor}} الدرس \"{{target}}\"",
+      "quiz.created": "أنشأ {{actor}} الاختبار \"{{target}}\"",
+      "quiz.updated": "حدّث {{actor}} الاختبار \"{{target}}\"",
+      "quiz.deleted": "حذف {{actor}} الاختبار \"{{target}}\"",
+      "assignment.created": "أنشأ {{actor}} الواجب \"{{target}}\"",
+      "assignment.updated": "حدّث {{actor}} الواجب \"{{target}}\"",
+      "assignment.deleted": "حذف {{actor}} الواجب \"{{target}}\"",
+      "assignment_submission.graded": "صحّح {{actor}} تسليمًا من {{target}}",
+      "academy.created": "أنشأ {{actor}} الأكاديمية \"{{target}}\"",
+      "support_case.created": "قدّم {{actor}} التذكرة \"{{target}}\"",
+      "support_case.auto_created": "تم فتح تذكرة تلقائيًا: \"{{target}}\""
+    }
+  },
+  "support": {
+    "status": {
+      "open": "مفتوحة",
+      "in_progress": "قيد المعالجة",
+      "resolved": "تم حلّها",
+      "closed": "مغلقة"
+    },
+    "form": {
+      "title": "تحتاج مساعدة؟",
+      "description": "أخبرنا بما يحدث وسيتولّى فريقنا الأمر.",
+      "subjectLabel": "الموضوع",
+      "subjectPlaceholder": "ملخّص قصير للمشكلة",
+      "descriptionLabel": "ما الذي يحدث؟",
+      "descriptionPlaceholder": "صف المشكلة وما كنت تفعله عند حدوثها.",
+      "submit": "إرسال التذكرة",
+      "submitting": "جارٍ الإرسال…",
+      "submitAnother": "إرسال تذكرة أخرى",
+      "success": "شكرًا لك — وصلتنا تذكرتك، وسنتواصل معك عبر البريد الإلكتروني.",
+      "errors": {
+        "subjectRequired": "أضف موضوعًا لنعرف الأمر المتعلّق بالتذكرة.",
+        "subjectTooLong": "اجعل الموضوع أقل من 200 حرف.",
+        "descriptionRequired": "أخبرنا بما يحدث حتى نتمكّن من المساعدة.",
+        "descriptionTooLong": "اجعل الوصف أقل من 5000 حرف.",
+        "submitFailed": "تعذّر إرسال تذكرتك. يرجى المحاولة بعد قليل."
+      }
+    },
+    "list": {
+      "title": "تذاكرك",
+      "description": "التذاكر التي أرسلتها وحالتها الحالية.",
+      "submittedOn": "أُرسلت في {{date}}",
+      "loadFailed": "تعذّر تحميل تذاكرك. يرجى المحاولة بعد قليل.",
+      "empty": {
+        "title": "لا توجد تذاكر بعد",
+        "description": "ستظهر هنا أي تذكرة ترسلها لتتمكّن من متابعة حالتها."
+      }
     }
   }
 }
