@@ -1,0 +1,162 @@
+{
+  "page": {
+    "title": "Everything you need to run an academy",
+    "description": "A tour of what Atlas actually does — organized around the real parts of running an education business."
+  },
+  "groups": {
+    "academies": {
+      "title": "Academy management",
+      "items": {
+        "overview": {
+          "title": "One dashboard per academy",
+          "description": "See members, courses and activity for an academy without digging through settings screens."
+        },
+        "provisioning": {
+          "title": "Set up in minutes",
+          "description": "A new academy is created, branded and reachable on its own subdomain in one guided flow."
+        },
+        "branding": {
+          "title": "Your branding, everywhere",
+          "description": "Logo, colors and identity carry through the dashboard, the student experience, and the public website."
+        }
+      }
+    },
+    "lms": {
+      "title": "Courses and learning",
+      "items": {
+        "courses": {
+          "title": "Structured course content",
+          "description": "Organize courses into sections and lessons, with video and document content attached directly."
+        },
+        "quizzes": {
+          "title": "Quizzes with real scoring",
+          "description": "Build quizzes with multiple question types and get automatic scoring as students complete them."
+        },
+        "assignments": {
+          "title": "Assignments and submissions",
+          "description": "Collect student submissions and grade them without emailing files back and forth."
+        }
+      }
+    },
+    "people": {
+      "title": "Students",
+      "items": {
+        "students": {
+          "title": "Students belong to one academy",
+          "description": "A student who signs up through your academy's own page is yours alone — never shared with another academy."
+        },
+        "enrollment": {
+          "title": "Simple enrollment",
+          "description": "Enroll students into courses and track where each one stands at a glance."
+        },
+        "progress": {
+          "title": "Real progress tracking",
+          "description": "Lesson-by-lesson completion and quiz results, visible to the student and to you."
+        }
+      }
+    },
+    "instructors": {
+      "title": "Instructors",
+      "items": {
+        "teaching": {
+          "title": "A dedicated teaching dashboard",
+          "description": "Instructors see their assigned courses, students and grading queue in one place."
+        },
+        "grading": {
+          "title": "Grade quizzes and assignments",
+          "description": "Review submissions and quiz attempts without leaving the teaching dashboard."
+        },
+        "scoped": {
+          "title": "Scoped to assigned courses",
+          "description": "An instructor's access is limited to the courses they're actually assigned to teach."
+        }
+      }
+    },
+    "website": {
+      "title": "Website and CMS",
+      "items": {
+        "builder": {
+          "title": "A real website builder",
+          "description": "Build your academy's public site from configurable sections — hero, courses, instructors, testimonials, FAQ and more."
+        },
+        "themes": {
+          "title": "Professional themes",
+          "description": "Start from a theme designed for education businesses and adjust it to match your brand."
+        },
+        "cms": {
+          "title": "Announcements and a blog",
+          "description": "Publish announcements and blog posts to your academy's audience without a separate content tool."
+        }
+      }
+    },
+    "domains": {
+      "title": "Domains",
+      "items": {
+        "subdomains": {
+          "title": "Instant subdomains",
+          "description": "Every academy gets its own subdomain automatically the moment it's created — no DNS knowledge required."
+        },
+        "customDomains": {
+          "title": "Connect your own domain",
+          "description": "Point a domain you already own at your academy's public site when you're ready."
+        },
+        "ssl": {
+          "title": "HTTPS by default",
+          "description": "Every academy subdomain and connected custom domain is served securely, automatically."
+        }
+      }
+    },
+    "organizations": {
+      "title": "Organizations",
+      "items": {
+        "multiAcademy": {
+          "title": "Run more than one academy",
+          "description": "One organization can own several academies, each with its own branding, content and students."
+        },
+        "roles": {
+          "title": "Owners, managers and staff",
+          "description": "Assign a manager to a specific academy without giving them access to your whole organization."
+        },
+        "billing": {
+          "title": "Billing at the organization level",
+          "description": "One subscription covers the organization; academies underneath it share the same plan and usage limits."
+        }
+      }
+    },
+    "analytics": {
+      "title": "Analytics",
+      "items": {
+        "dashboards": {
+          "title": "Enrollment and completion trends",
+          "description": "See how students are moving through your courses over time, not just a snapshot."
+        },
+        "reporting": {
+          "title": "Date-range reporting",
+          "description": "Look at activity over the exact period you care about, from the last week to the last quarter."
+        }
+      }
+    },
+    "security": {
+      "title": "Security and infrastructure",
+      "items": {
+        "isolation": {
+          "title": "Database-level tenant isolation",
+          "description": "Each academy's data is isolated at the database layer, not just filtered in the application — one customer's data cannot leak into another's, even through a direct API call."
+        },
+        "auditLog": {
+          "title": "An audit trail you can trust",
+          "description": "Sensitive actions are recorded with who did what and when, for accountability across your organization."
+        },
+        "infrastructure": {
+          "title": "Production infrastructure, not a prototype",
+          "description": "Automated backups, encrypted credentials, and rate-limited APIs protect your academy's data and uptime."
+        }
+      }
+    }
+  },
+  "cta": {
+    "title": "Ready to see it running your academy?",
+    "action": "Get started free",
+    "pricing": "See pricing"
+  }
+}

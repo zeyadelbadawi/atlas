@@ -1,0 +1,45 @@
+{
+  "page": {
+    "title": "Plans for academies of every size",
+    "description": "Start free, and move up only when you actually need more room."
+  },
+  "table": {
+    "recommended": "Most popular",
+    "choosePlan": "Choose {{plan}}",
+    "feature": "Feature",
+    "unlimited": "Unlimited",
+    "errorTitle": "Couldn't load plans",
+    "errorDescription": "Something went wrong loading pricing. Please try again.",
+    "emptyTitle": "Pricing isn't available right now",
+    "emptyDescription": "Check back shortly, or contact us for current pricing."
+  },
+  "limits": {
+    "academies": "Academies",
+    "students": "Students",
+    "instructors": "Instructors",
+    "staff": "Staff members",
+    "courses": "Courses",
+    "generalStorage": "Storage",
+    "videoStorage": "Video storage"
+  },
+  "units": {
+    "gb": "GB"
+  },
+  "features": {
+    "cms": "Website and CMS",
+    "themes": "Website themes",
+    "multipleThemes": "Multiple themes",
+    "customDomain": "Custom domain",
+    "seo": "SEO tools",
+    "seoAdvanced": "Advanced SEO",
+    "marketing": "Marketing tools",
+    "marketingAdvanced": "Advanced marketing tools",
+    "analytics": "Analytics",
+    "analyticsAdvanced": "Advanced analytics",
+    "backup": "Automated backups"
+  },
+  "faq": {
+    "title": "Questions about pricing?",
+    "description": "Every plan starts with a free trial and no credit card is required to begin. Reach out any time if you need help choosing."
+  }
+}

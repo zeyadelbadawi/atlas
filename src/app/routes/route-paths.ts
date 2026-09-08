@@ -12,6 +12,8 @@
 /** Paths rendered inside the public marketing layout. */
 export const PUBLIC_ROUTES = {
   home: '/',
+  features: '/features',
+  pricing: '/pricing',
 } as const;
 
 /**

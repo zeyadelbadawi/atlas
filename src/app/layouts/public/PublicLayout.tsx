@@ -12,8 +12,13 @@ import { AtlasLogo } from "@components/branding";
 import { LanguageSwitcher, ThemeSwitcher } from "@components/controls";
 import { OfflineNotice } from "@components/feedback";
 import { SkipToContentLink } from "@components/navigation";
-import { PUBLIC_ROUTES } from "@app/routes/route-paths";
-import { useOnlineStatus } from "@hooks";
+import { Button } from "@/components/ui/button";
+import {
+  AUTH_ROUTES,
+  DASHBOARD_ROUTES,
+  PUBLIC_ROUTES,
+} from "@app/routes/route-paths";
+import { useAuth, useOnlineStatus } from "@hooks";
 
 /** Id of the main landmark, targeted by the skip link. */
 const MAIN_CONTENT_ID = "atlas-public-content";
@@ -21,6 +26,7 @@ const MAIN_CONTENT_ID = "atlas-public-content";
 export function PublicLayout(): JSX.Element {
   const { t } = useTranslation();
   const isOnline = useOnlineStatus();
+  const { isAuthenticated } = useAuth();
 
   return (
     <div className="flex min-h-dvh flex-col bg-background">
@@ -36,9 +42,38 @@ export function PublicLayout(): JSX.Element {
             <AtlasLogo />
           </Link>
 
+          <nav className="hidden items-center gap-6 sm:flex" aria-label={t("layout:public.nav.product")}>
+            <Link
+              to={PUBLIC_ROUTES.features}
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {t("layout:public.nav.product")}
+            </Link>
+            <Link
+              to={PUBLIC_ROUTES.pricing}
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {t("layout:public.nav.pricing")}
+            </Link>
+          </nav>
+
           <div className="flex items-center gap-1">
             <LanguageSwitcher />
             <ThemeSwitcher />
+            {isAuthenticated ? (
+              <Button asChild size="sm" className="ms-2">
+                <Link to={DASHBOARD_ROUTES.root}>{t("layout:public.nav.getStarted")}</Link>
+              </Button>
+            ) : (
+              <>
+                <Button asChild variant="ghost" size="sm" className="ms-2">
+                  <Link to={AUTH_ROUTES.signIn}>{t("layout:public.nav.signIn")}</Link>
+                </Button>
+                <Button asChild size="sm">
+                  <Link to={AUTH_ROUTES.register}>{t("layout:public.nav.getStarted")}</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </header>

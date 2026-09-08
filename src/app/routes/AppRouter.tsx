@@ -21,6 +21,8 @@ import { RouteFallback } from './RouteFallback';
 
 // Lazily loaded so each route ships as its own chunk.
 const HomePage = lazy(() => import('@features/home/pages/HomePage'));
+const FeaturesPage = lazy(() => import('@features/home/pages/FeaturesPage'));
+const PricingPage = lazy(() => import('@features/home/pages/PricingPage'));
 
 const SignInPage = lazy(() => import('@features/auth/pages/SignInPage'));
 const RegistrationPage = lazy(
@@ -328,6 +330,8 @@ export function AppRouter(): JSX.Element {
           {/* Public routes */}
           <Route element={<PublicLayout />}>
             <Route path={PUBLIC_ROUTES.home} element={<HomePage />} />
+            <Route path={PUBLIC_ROUTES.features} element={<FeaturesPage />} />
+            <Route path={PUBLIC_ROUTES.pricing} element={<PricingPage />} />
           </Route>
 
           {/* Authentication surface */}

@@ -1,5 +1,11 @@
 {
   "public": {
+    "nav": {
+      "product": "Product",
+      "pricing": "Pricing",
+      "signIn": "Sign in",
+      "getStarted": "Get started"
+    },
     "footer": {
       "rights": "© {{year}} Atlas. All rights reserved."
     }

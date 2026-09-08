@@ -1,5 +1,11 @@
 {
   "public": {
+    "nav": {
+      "product": "المنتج",
+      "pricing": "الأسعار",
+      "signIn": "تسجيل الدخول",
+      "getStarted": "ابدأ الآن"
+    },
     "footer": {
       "rights": "© {{year}} أطلس. جميع الحقوق محفوظة."
     }

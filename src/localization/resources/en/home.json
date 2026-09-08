@@ -1,23 +1,89 @@
 {
   "hero": {
-    "eyebrow": "Enterprise education platform",
-    "title": "One platform to launch, run and grow your education business",
-    "description": "Atlas brings academy administration, learning, commerce and analytics together in a single product — so your team works in one place instead of stitching tools together.",
-    "primaryAction": "Open dashboard",
-    "secondaryAction": "Sign in"
+    "eyebrow": "Software for education businesses",
+    "title": "Run your academies from one platform, not a pile of disconnected tools",
+    "description": "Atlas gives education businesses one place to manage academies, courses, students and instructors, publish a branded public website, and see how the business is actually doing — instead of stitching together a spreadsheet, a course tool and a website builder.",
+    "primaryAction": "Get started free",
+    "secondaryAction": "See pricing"
+  },
+  "whatIsAtlas": {
+    "title": "What Atlas is",
+    "description": "Atlas is a platform for running an education business: one or more academies, their courses, their students and instructors, and the public website that represents each one — all under a single organization you control. You keep your own branding on every academy's public site; Atlas runs the infrastructure underneath it."
+  },
+  "capabilitiesSection": {
+    "title": "Everything an academy needs, already built",
+    "description": "Each of these is a real, working part of Atlas today — not a roadmap promise.",
+    "viewAll": "See every feature"
   },
   "capabilities": {
-    "unified": {
-      "title": "One unified product",
-      "description": "Every module shares the same layout, navigation and interaction patterns, so your team learns Atlas once."
+    "academies": {
+      "title": "Academy management",
+      "description": "Create an academy, configure its branding, and manage its members and settings from one dashboard."
     },
-    "bilingual": {
-      "title": "Arabic and English",
-      "description": "Full right-to-left and left-to-right support is built into the platform architecture, not added as an afterthought."
+    "lms": {
+      "title": "Courses and learning",
+      "description": "Build courses out of sections and lessons, add quizzes and assignments, and track completion as students move through them."
     },
-    "enterprise": {
-      "title": "Built to scale",
-      "description": "An architecture designed for many academies, large catalogues and long-term growth from the first release."
+    "students": {
+      "title": "Students, scoped correctly",
+      "description": "A student who signs up through one academy only ever sees that academy — never another academy under the same organization."
+    },
+    "instructors": {
+      "title": "Instructors with real boundaries",
+      "description": "An instructor only ever teaches the courses assigned to them, with grading and student-progress tools built around exactly that scope."
+    },
+    "website": {
+      "title": "A public website for every academy",
+      "description": "Every academy gets its own branded public website — built from the same section-based builder Atlas uses for its own site — with no separate tool to learn."
+    },
+    "domains": {
+      "title": "Subdomains and custom domains",
+      "description": "Every academy is reachable on its own subdomain the moment it's created, with a path to connect a fully custom domain when you're ready."
+    },
+    "organizations": {
+      "title": "One organization, many academies",
+      "description": "Run a single academy or a whole portfolio of them under one organization, with billing and ownership handled at the organization level."
+    },
+    "analytics": {
+      "title": "Analytics that matter",
+      "description": "See enrollment, completion and engagement trends across your academies without exporting data into a spreadsheet first."
+    },
+    "security": {
+      "title": "Real tenant isolation",
+      "description": "Every academy's data is isolated at the database level, not just hidden in the interface — one customer's data is never reachable by another's."
     }
+  },
+  "howItWorks": {
+    "title": "From sign-up to a live academy",
+    "steps": {
+      "organization": {
+        "title": "Create your organization",
+        "description": "Sign up and create the organization that will own your academies, subscription and billing."
+      },
+      "academy": {
+        "title": "Set up your academy",
+        "description": "Name your academy, add your branding, and it's immediately reachable on its own Atlas subdomain."
+      },
+      "launch": {
+        "title": "Launch and grow",
+        "description": "Add courses, invite instructors, enroll students, and publish your academy's public website."
+      }
+    }
+  },
+  "pricingPreview": {
+    "title": "Straightforward pricing",
+    "description": "Start free. Upgrade when your academy needs more room to grow.",
+    "loading": "Loading plans…",
+    "choosePlan": "Choose plan",
+    "viewFullPricing": "See the full plan comparison",
+    "contactUs": "Contact us",
+    "free": "Free",
+    "perMonth": "/month",
+    "perYear": "/year"
+  },
+  "finalCta": {
+    "title": "Bring your academy onto Atlas",
+    "description": "Create your organization in minutes — no credit card required to start.",
+    "action": "Get started free"
   }
 }
