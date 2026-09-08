@@ -242,6 +242,10 @@ export default function HomePage(): JSX.Element {
           <p className="text-center text-sm text-muted-foreground">
             {t("home:pricingPreview.loading")}
           </p>
+        ) : plansQuery.isError || plans.length === 0 ? (
+          <p className="text-center text-sm text-muted-foreground">
+            {t("home:pricingPreview.contactUs")}
+          </p>
         ) : (
           <div className="grid gap-4 sm:grid-cols-3">
             {plans.map((plan) => (
