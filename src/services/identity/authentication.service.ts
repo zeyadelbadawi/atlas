@@ -6,6 +6,7 @@
  * independent of any specific authentication provider.
  */
 import { apiClient } from '@api';
+import { resourcePath } from '@services/api/request.utils';
 import type {
   SignInCredentials,
   AuthenticationResponse,
@@ -14,6 +15,7 @@ import type {
   RegistrationRequest,
   PasswordResetRequest,
   PasswordResetConfirmation,
+  UserSession,
 } from '@types';
 
 export class AuthenticationService {
@@ -102,6 +104,31 @@ export class AuthenticationService {
       '/auth/password-reset/confirm',
       request
     );
+  }
+
+  /**
+   * Lists the caller's own active device sessions (Phase 10).
+   *
+   * Scoped entirely by the access token — there is no user-id parameter,
+   * by design: the backend resolves the owner from the verified token, so
+   * this endpoint can never be pointed at another user's sessions.
+   */
+  public async listSessions(): Promise<readonly UserSession[]> {
+    return apiClient.get<readonly UserSession[]>('/auth/sessions');
+  }
+
+  /**
+   * Revokes one device session. Takes effect against the backend's actual
+   * token-validation path immediately, not just the stored row, so the
+   * revoked device's next request fails rather than working until its
+   * access token happens to expire.
+   *
+   * Revoking the CURRENT session is allowed and is the "sign out this
+   * device" case — the caller is responsible for tearing down local
+   * session state afterwards, since every subsequent request will 401.
+   */
+  public async revokeSession(sessionId: string): Promise<void> {
+    await apiClient.delete<void>(resourcePath('auth', 'sessions', sessionId));
   }
 }
 

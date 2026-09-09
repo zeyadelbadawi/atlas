@@ -32,10 +32,25 @@
       "twoFactorDisabled": "غير مفعّلة",
       "sessions": "الجلسات النشطة",
       "sessionsDescription": "الأجهزة المسجّلة دخولها حاليًا إلى حسابك.",
-      "currentDevice": "هذا الجهاز",
       "lastActive": "آخر نشاط",
-      "current": "الحالي",
-      "notYetAvailable": "غير متاح بعد"
+      "notYetAvailable": "غير متاح بعد",
+      "thisDevice": "هذا الجهاز",
+      "signedIn": "تم تسجيل الدخول",
+      "unknownDevice": "جهاز غير معروف",
+      "unknownActivity": "غير مُسجَّل",
+      "unknownIp": "موقع غير معروف",
+      "noSessions": "لا توجد جلسات نشطة",
+      "noSessionsDescription": "لا توجد أجهزة أخرى مسجّلة دخولها إلى حسابك.",
+      "signOutThisDevice": "تسجيل الخروج",
+      "signOutThisDeviceTitle": "تسجيل الخروج من هذا الجهاز؟",
+      "signOutThisDeviceDescription": "سيتم تسجيل خروجك فورًا وإعادتك إلى صفحة تسجيل الدخول.",
+      "revokeConfirmTitle": "تسجيل الخروج من هذا الجهاز؟",
+      "revokeConfirmDescription": "سيتم تسجيل خروج ذلك الجهاز فورًا وسيحتاج إلى تسجيل الدخول مرة أخرى.",
+      "revokeSessionLabel": "تسجيل الخروج من {{device}}",
+      "sessionRevoked": "تم تسجيل خروج الجهاز",
+      "sessionRevokedDescription": "لم يعد بإمكان ذلك الجهاز الوصول إلى حسابك.",
+      "sessionRevokeFailed": "تعذّر تسجيل خروج ذلك الجهاز",
+      "sessionRevokeFailedDescription": "الجلسة ما زالت نشطة. يرجى المحاولة مرة أخرى."
     }
   },
   "fields": {
@@ -93,7 +108,7 @@
   "actions": {
     "changePassword": "تغيير كلمة المرور",
     "enable": "تفعيل",
-    "signOutAllDevices": "تسجيل الخروج من جميع الأجهزة"
+    "revoke": "تسجيل الخروج"
   },
   "status": {
     "noRole": "لا يوجد دور معيّن",

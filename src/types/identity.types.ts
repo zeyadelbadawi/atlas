@@ -153,3 +153,29 @@ export interface RoleCheck {
 export interface SwitchOrganizationRequest {
   readonly organizationId: string;
 }
+/**
+ * One active device session (Phase 10) — mirrors the backend's
+ * `UserSessionResponse` exactly.
+ *
+ * Every descriptive field is optional because the backend genuinely does
+ * not know it for sessions that predate Phase 10, and it reports that
+ * honestly rather than backfilling a plausible-looking value. The UI must
+ * therefore render an explicit "unknown" state for each, never invent a
+ * label, an address, or a last-active time.
+ *
+ * `id` is the session id, not a token and not a refresh-token row id — it
+ * is only useful for revoking a session the caller already owns.
+ */
+export interface UserSession {
+  readonly id: string;
+  readonly deviceLabel?: string;
+  readonly userAgent?: string;
+  readonly ipAddress?: string;
+  /** ISO-8601. When the user signed in on this device. */
+  readonly startedAt: string;
+  /** ISO-8601. Real last activity — sign-in or most recent token refresh. */
+  readonly lastUsedAt?: string;
+  readonly expiresAt: string;
+  /** True for the session making the request, so the UI can mark it and warn that revoking it signs the user out. */
+  readonly isCurrent: boolean;
+}

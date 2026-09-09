@@ -3,12 +3,18 @@
  *
  * Manage password and security settings. Prompt 13 wired password change
  * to the real, pre-existing `currentUserService.changePassword` (it used
- * to fake-save via `setTimeout`). Two-Factor Authentication and Session
- * Management remain display-only below — Atlas has no 2FA-enrollment or
- * session-listing/revocation contract anywhere (no such endpoint, no
- * such type), so their controls stay inert intentionally rather than
- * simulate an enrollment flow or a session list with no real backend
- * behind either.
+ * to fake-save via `setTimeout`).
+ *
+ * Phase 10 replaced the display-only session block with the real
+ * `ProfileSessionsCard`, backed by `GET /auth/sessions` and
+ * `DELETE /auth/sessions/:id`.
+ *
+ * Two-Factor Authentication below remains deliberately inert: Phase 10
+ * added a documented server-side insertion point for it
+ * (`auth.service.ts`) but explicitly DEFERRED the feature itself, so
+ * there is still no enrollment contract to call. The control stays
+ * disabled rather than simulating an enrollment flow with nothing behind
+ * it — see the roadmap's Phase 10 scope note.
  */
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -26,10 +32,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { ErrorState } from "@components/feedback";
 import { useToast } from "@hooks";
 import { useChangePassword } from "../hooks";
+import { ProfileSessionsCard } from "./ProfileSessionsCard";
 
 const passwordSchema = z
   .object({
@@ -269,41 +275,7 @@ export function ProfileSecuritySection(): JSX.Element {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("profile:sections.security.sessions")}</CardTitle>
-          <CardDescription>
-            {t("profile:sections.security.sessionsDescription")}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between rounded-lg border p-4">
-              <div>
-                <p className="font-medium">
-                  {t("profile:sections.security.currentDevice")}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {t("profile:sections.security.lastActive")}:{" "}
-                  {t("common:time.now")}
-                </p>
-              </div>
-              <Button variant="outline" size="sm" disabled>
-                {t("profile:sections.security.current")}
-              </Button>
-            </div>
-          </div>
-          <Separator className="my-4" />
-          <Button
-            variant="destructive"
-            className="w-full"
-            disabled
-            title={t("profile:sections.security.notYetAvailable")}
-          >
-            {t("profile:actions.signOutAllDevices")}
-          </Button>
-        </CardContent>
-      </Card>
+      <ProfileSessionsCard />
     </div>
   );
 }

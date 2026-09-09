@@ -32,10 +32,25 @@
       "twoFactorDisabled": "Not enabled",
       "sessions": "Active Sessions",
       "sessionsDescription": "Devices currently signed in to your account.",
-      "currentDevice": "This device",
       "lastActive": "Last active",
-      "current": "Current",
-      "notYetAvailable": "Not available yet"
+      "notYetAvailable": "Not available yet",
+      "thisDevice": "This device",
+      "signedIn": "Signed in",
+      "unknownDevice": "Unrecognized device",
+      "unknownActivity": "Not recorded",
+      "unknownIp": "Unknown location",
+      "noSessions": "No active sessions",
+      "noSessionsDescription": "There are no other devices signed in to your account.",
+      "signOutThisDevice": "Sign out",
+      "signOutThisDeviceTitle": "Sign out of this device?",
+      "signOutThisDeviceDescription": "You will be signed out immediately and returned to the sign-in page.",
+      "revokeConfirmTitle": "Sign out this device?",
+      "revokeConfirmDescription": "That device will be signed out immediately and will need to sign in again.",
+      "revokeSessionLabel": "Sign out {{device}}",
+      "sessionRevoked": "Device signed out",
+      "sessionRevokedDescription": "That device no longer has access to your account.",
+      "sessionRevokeFailed": "Could not sign out that device",
+      "sessionRevokeFailedDescription": "The session is still active. Please try again."
     }
   },
   "fields": {
@@ -93,7 +108,7 @@
   "actions": {
     "changePassword": "Change password",
     "enable": "Enable",
-    "signOutAllDevices": "Sign out of all devices"
+    "revoke": "Sign out"
   },
   "status": {
     "noRole": "No role assigned",
