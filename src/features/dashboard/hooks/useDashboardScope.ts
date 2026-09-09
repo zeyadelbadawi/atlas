@@ -35,14 +35,28 @@ export function useDashboardScope(): DashboardScopeSelection {
   const { activeOrganizationId, activeAcademyId } = usePlatform();
 
   return useMemo<DashboardScopeSelection>(() => {
-    const membership = user?.organizations.find(
-      (candidate) => candidate.organizationId === activeOrganizationId
-    );
+    const memberships = user?.organizations ?? [];
+
+    // `activeOrganizationId` is only ever set by an explicit organization
+    // SWITCH (`PlatformProvider` deliberately does not restore it on
+    // mount), so it is undefined for every user who simply signed in and
+    // never switched — which is every user with exactly one organization.
+    // Falling back to their real primary membership (else their first) is
+    // the same resolution `SessionService.selectPrimaryOrganization`
+    // already uses, reused rather than reinvented; without it the
+    // dashboard showed a "no workspace selected" empty state to an owner
+    // who plainly had one (found in real production browser testing).
+    const membership = activeOrganizationId
+      ? memberships.find(
+          (candidate) => candidate.organizationId === activeOrganizationId
+        )
+      : (memberships.find((candidate) => candidate.isPrimary) ?? memberships[0]);
+
     const isOrganizationOwner =
       membership?.permissions.includes(ORGANIZATION_DASHBOARD_PERMISSION) ?? false;
 
-    if (activeOrganizationId && isOrganizationOwner) {
-      return { kind: 'organization', organizationId: activeOrganizationId };
+    if (membership && isOrganizationOwner) {
+      return { kind: 'organization', organizationId: membership.organizationId };
     }
     if (activeAcademyId) {
       return { kind: 'academy', academyId: activeAcademyId };
