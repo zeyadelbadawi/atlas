@@ -111,5 +111,8 @@
   "notifications": {
     "bell": "Notifications",
     "bellUnread": "Notifications ({{count}} unread)"
+  },
+  "fieldHelp": {
+    "trigger": "More information about this field"
   }
 }

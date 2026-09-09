@@ -68,7 +68,9 @@
     "platformRolesPermissions": "Roles & Permissions",
     "platformAuditLog": "Audit Log",
     "platformSupport": "Support",
-    "platformPlanCatalog": "Plans & Add-ons"
+    "platformPlanCatalog": "Plans & Add-ons",
+    "myResults": "My Results",
+    "studentAnalytics": "Student Analytics"
   },
   "account": {
     "menu": "Account menu",

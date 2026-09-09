@@ -190,5 +190,40 @@
       "eligible": "أنت مؤهل للحصول على شهادة",
       "unavailable": "لا تتوفر شهادة لهذه الدورة"
     }
+  },
+  "results": {
+    "title": "نتائجي",
+    "description": "أداؤك في الاختبارات والواجبات.",
+    "metrics": {
+      "coursesEnrolled": "الدورات المسجّل بها",
+      "coursesCompleted": "الدورات المكتملة",
+      "quizzesPassed": "الاختبارات المجتازة",
+      "passedOf": "{{passed}} من {{attempted}}",
+      "averageScore": "متوسط درجات الاختبارات",
+      "noScoresYet": "لا توجد درجات بعد"
+    },
+    "course": {
+      "progressSummary": "أكملت {{completed}} من {{total}} درسًا ({{percentage}}%)",
+      "quizzes": "الاختبارات",
+      "assignments": "الواجبات",
+      "attemptNumber": "المحاولة {{number}}",
+      "submittedOn": "أُرسل في {{date}}",
+      "awaitingMarking": "بانتظار التصحيح",
+      "hasFeedback": "تتوفّر ملاحظات",
+      "passed": "ناجح",
+      "notPassed": "غير ناجح"
+    },
+    "gradingStatus": {
+      "ungraded": "لم يُصحّح بعد",
+      "graded": "تم التصحيح"
+    },
+    "empty": {
+      "title": "لا توجد نتائج بعد",
+      "description": "بمجرد إرسالك لاختبار أو واجب ستظهر درجاتك هنا."
+    },
+    "error": {
+      "title": "تعذّر تحميل نتائجك",
+      "description": "حدث خطأ أثناء جلب نتائجك. يرجى المحاولة مرة أخرى."
+    }
   }
 }

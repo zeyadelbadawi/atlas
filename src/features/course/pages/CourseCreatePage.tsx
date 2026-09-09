@@ -12,6 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowRight, BookOpen, Loader2, Upload } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { Button } from '@/components/ui/button';
+import { FieldHelp } from '@components/feedback';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Form,
@@ -415,7 +416,10 @@ export default function CourseCreatePage(): JSX.Element {
                   name="visibility"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('course:create.visibilityLabel')}</FormLabel>
+                      <FormLabel className="flex items-center gap-1.5">
+                        {t('course:create.visibilityLabel')}
+                        <FieldHelp contentKey="course:create.help.visibility" />
+                      </FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
@@ -446,7 +450,10 @@ export default function CourseCreatePage(): JSX.Element {
                   name="pricingType"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('course:create.pricingTypeLabel')}</FormLabel>
+                      <FormLabel className="flex items-center gap-1.5">
+                        {t('course:create.pricingTypeLabel')}
+                        <FieldHelp contentKey="course:create.help.pricingType" />
+                      </FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}

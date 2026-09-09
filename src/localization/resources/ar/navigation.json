@@ -68,7 +68,9 @@
     "platformRolesPermissions": "الأدوار والصلاحيات",
     "platformAuditLog": "سجل التدقيق",
     "platformSupport": "الدعم",
-    "platformPlanCatalog": "الخطط والإضافات"
+    "platformPlanCatalog": "الخطط والإضافات",
+    "myResults": "نتائجي",
+    "studentAnalytics": "تحليلات الطلاب"
   },
   "account": {
     "menu": "قائمة الحساب",

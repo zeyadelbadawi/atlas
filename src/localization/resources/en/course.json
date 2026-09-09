@@ -106,6 +106,10 @@
     "errors": {
       "limitReachedTitle": "Course limit reached",
       "limitReachedDescription": "You've reached your plan's course limit. Upgrade your plan to create another course."
+    },
+    "help": {
+      "visibility": "Private courses are visible only to your staff. Public courses can appear on your academy website and be discovered by students.",
+      "pricingType": "Free courses can be enrolled in directly. Paid courses require a completed purchase before a student gets access."
     }
   },
   "edit": {
@@ -282,7 +286,11 @@
       "allowResubmissionLabel": "Allow resubmission",
       "allowResubmissionDescription": "Students may submit again after their first submission.",
       "cancelButton": "Cancel",
-      "saveButton": "Save"
+      "saveButton": "Save",
+      "help": {
+        "status": "Draft assignments are visible only to you. Students can only see and submit an assignment once it is published.",
+        "dueAt": "Shown to students as the deadline. Submissions after this date are still accepted and are marked as late rather than blocked."
+      }
     },
     "created": "Assignment created",
     "updated": "Assignment updated",
@@ -347,7 +355,12 @@
       "trueLabel": "True",
       "falseLabel": "False",
       "cancelButton": "Cancel",
-      "saveButton": "Save Quiz"
+      "saveButton": "Save Quiz",
+      "help": {
+        "status": "Draft quizzes are visible only to you. Students can only see and attempt a quiz once it is published.",
+        "passingScore": "The percentage a student needs to pass. Leave it empty if this quiz has no pass mark — every submitted attempt then counts as passed.",
+        "maxAttempts": "How many times a student may take this quiz. Leave it empty for unlimited attempts."
+      }
     },
     "validation": {
       "trueFalseOptionCount": "A True/False question needs exactly two options.",

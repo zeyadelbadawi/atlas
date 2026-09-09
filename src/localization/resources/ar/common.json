@@ -111,5 +111,8 @@
   "notifications": {
     "bell": "الإشعارات",
     "bellUnread": "الإشعارات ({{count}} غير مقروءة)"
+  },
+  "fieldHelp": {
+    "trigger": "مزيد من المعلومات عن هذا الحقل"
   }
 }

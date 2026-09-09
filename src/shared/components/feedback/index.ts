@@ -7,3 +7,5 @@ export { EmptyState } from './EmptyState';
 export type { EmptyStateAction, EmptyStateProps } from './EmptyState';
 export { OfflineNotice } from './OfflineNotice';
 export type { OfflineNoticeProps } from './OfflineNotice';
+export { FieldHelp } from './FieldHelp';
+export type { FieldHelpProps } from './FieldHelp';

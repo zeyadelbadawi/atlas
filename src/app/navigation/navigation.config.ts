@@ -20,6 +20,8 @@ import {
   Palette,
   BookOpen,
   BookMarked,
+  ClipboardCheck,
+  LineChart,
   ClipboardList,
   Megaphone,
   Newspaper,
@@ -224,6 +226,16 @@ export function getDashboardNavigation(
           matchNestedPaths: false,
         },
         {
+          // Phase 9 (roadmap ST6) — the student's own outcomes.
+          id: 'my-results',
+          labelKey: 'navigation:items.myResults',
+          path: DASHBOARD_ROUTES.myResults,
+          icon: ClipboardCheck,
+          requiresAuth: true,
+          requiredPermissions: ['student.learning.view'],
+          matchNestedPaths: false,
+        },
+        {
           id: 'learning-courses',
           labelKey: 'navigation:items.discoverCourses',
           path: DASHBOARD_ROUTES.learningCourses,
@@ -268,6 +280,16 @@ export function getDashboardNavigation(
           labelKey: 'navigation:items.tenantOverview',
           path: DASHBOARD_ROUTES.tenant,
           icon: Gauge,
+          requiresAuth: true,
+          requiredPermissions: ['tenant.dashboard.view'],
+        },
+        {
+          // Phase 9 (roadmap CO11) — same owner-exclusive permission the
+          // backend endpoint itself requires, so nav and server agree.
+          id: 'student-analytics',
+          labelKey: 'navigation:items.studentAnalytics',
+          path: DASHBOARD_ROUTES.studentAnalytics,
+          icon: LineChart,
           requiresAuth: true,
           requiredPermissions: ['tenant.dashboard.view'],
         },

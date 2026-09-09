@@ -110,6 +110,12 @@ const CourseAssignmentsPage = lazy(
 const StudentCourseDiscoveryPage = lazy(
   () => import('@features/learning/pages/StudentCourseDiscoveryPage')
 );
+const StudentMyResultsPage = lazy(
+  () => import('@features/learning/pages/StudentMyResultsPage')
+);
+const StudentAnalyticsPage = lazy(
+  () => import('@features/dashboard/pages/StudentAnalyticsPage')
+);
 const StudentMyLearningPage = lazy(
   () => import('@features/learning/pages/StudentMyLearningPage')
 );
@@ -412,6 +418,20 @@ export function AppRouter(): JSX.Element {
               element={<AnalyticsPage />}
             />
 
+            {/* Phase 9 (roadmap CO11) — the Client Owner's student progress
+                rollup. `tenant.dashboard.view` is the real owner-exclusive
+                permission the backend endpoint itself requires, so the
+                route guard and the server agree rather than the guard
+                being the only gate. */}
+            <Route
+              path={DASHBOARD_ROUTES.studentAnalytics}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['tenant.dashboard.view']}>
+                  <StudentAnalyticsPage />
+                </RouteGuard>
+              }
+            />
+
             <Route path={DASHBOARD_ROUTES.search} element={<SearchPage />} />
 
             <Route
@@ -595,6 +615,20 @@ export function AppRouter(): JSX.Element {
               element={
                 <RouteGuard requireAuthentication requiredPermissions={['student.learning.view']}>
                   <StudentMyLearningPage />
+                </RouteGuard>
+              }
+            />
+
+            {/* Phase 9 (roadmap ST6) — the outcomes half of the student
+                experience. Gated on the same `student.learning.view`
+                permission as My Learning: both are the student's own
+                learning record, and the backend scopes the response to the
+                authenticated caller regardless. */}
+            <Route
+              path={DASHBOARD_ROUTES.myResults}
+              element={
+                <RouteGuard requireAuthentication requiredPermissions={['student.learning.view']}>
+                  <StudentMyResultsPage />
                 </RouteGuard>
               }
             />

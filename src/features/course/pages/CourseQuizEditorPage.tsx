@@ -14,6 +14,7 @@ import { Loader2, Trash2 } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { Button } from '@/components/ui/button';
+import { FieldHelp } from '@components/feedback';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -303,8 +304,9 @@ export default function CourseQuizEditorPage(): JSX.Element {
                   name="status"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
+                      <FormLabel className="flex items-center gap-1.5">
                         {t('course:quizAuthoring.editor.statusLabel')}
+                        <FieldHelp contentKey="course:quizAuthoring.editor.help.status" />
                       </FormLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
@@ -331,8 +333,9 @@ export default function CourseQuizEditorPage(): JSX.Element {
                   name="passingScore"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
+                      <FormLabel className="flex items-center gap-1.5">
                         {t('course:quizAuthoring.editor.passingScoreLabel')}
+                        <FieldHelp contentKey="course:quizAuthoring.editor.help.passingScore" />
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -353,8 +356,9 @@ export default function CourseQuizEditorPage(): JSX.Element {
                   name="maxAttempts"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
+                      <FormLabel className="flex items-center gap-1.5">
                         {t('course:quizAuthoring.editor.maxAttemptsLabel')}
+                        <FieldHelp contentKey="course:quizAuthoring.editor.help.maxAttempts" />
                       </FormLabel>
                       <FormControl>
                         <Input

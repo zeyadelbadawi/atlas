@@ -36,6 +36,8 @@ export const DASHBOARD_ROUTES = {
   settings: '/dashboard/settings',
   notifications: '/dashboard/notifications',
   analytics: '/dashboard/analytics',
+  /** Phase 9 — the Client Owner's student progress rollup (roadmap CO11). */
+  studentAnalytics: '/dashboard/student-analytics',
   platform: '/dashboard/platform',
   search: '/dashboard/search',
   academy: '/dashboard/academy',
@@ -62,6 +64,8 @@ export const DASHBOARD_ROUTES = {
     '/dashboard/academy/:academyId/courses/:courseId/assignments',
   learning: '/dashboard/learning',
   myLearning: '/dashboard/learning/my-courses',
+  /** Phase 9 — the student's own quiz/assignment outcomes (roadmap ST6). */
+  myResults: '/dashboard/learning/my-results',
   learningCourses: '/dashboard/learning/courses',
   learningCourseDetail: '/dashboard/learning/courses/:courseId',
   learningCourseLearn: '/dashboard/learning/courses/:courseId/learn',

@@ -190,5 +190,40 @@
       "eligible": "You're eligible for a certificate",
       "unavailable": "A certificate isn't available for this course"
     }
+  },
+  "results": {
+    "title": "My Results",
+    "description": "How you've done across your quizzes and assignments.",
+    "metrics": {
+      "coursesEnrolled": "Courses enrolled",
+      "coursesCompleted": "Courses completed",
+      "quizzesPassed": "Quizzes passed",
+      "passedOf": "{{passed}} of {{attempted}}",
+      "averageScore": "Average quiz score",
+      "noScoresYet": "No scores yet"
+    },
+    "course": {
+      "progressSummary": "{{completed}} of {{total}} lessons complete ({{percentage}}%)",
+      "quizzes": "Quizzes",
+      "assignments": "Assignments",
+      "attemptNumber": "Attempt {{number}}",
+      "submittedOn": "Submitted {{date}}",
+      "awaitingMarking": "Awaiting marking",
+      "hasFeedback": "Feedback available",
+      "passed": "Passed",
+      "notPassed": "Not passed"
+    },
+    "gradingStatus": {
+      "ungraded": "Not marked yet",
+      "graded": "Marked"
+    },
+    "empty": {
+      "title": "No results yet",
+      "description": "Once you submit a quiz or an assignment, your scores will appear here."
+    },
+    "error": {
+      "title": "Couldn't load your results",
+      "description": "Something went wrong fetching your results. Please try again."
+    }
   }
 }

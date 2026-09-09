@@ -119,5 +119,47 @@
         "description": "Anything you submit will show up here so you can follow its progress."
       }
     }
+  },
+  "studentAnalytics": {
+    "title": "Student analytics",
+    "description": "How your students are progressing, based on real enrolment and progress data.",
+    "error": {
+      "title": "Couldn't load student analytics",
+      "description": "Something went wrong fetching your analytics. Please try again."
+    },
+    "funnel": {
+      "title": "Completion funnel",
+      "description": "Enrolled students who have started, and who have finished.",
+      "enrolled": "Enrolled",
+      "started": "Started",
+      "completed": "Completed",
+      "countAndShare": "{{total}} ({{share}}%)",
+      "empty": {
+        "title": "No enrolments yet",
+        "description": "Once students enrol in a course, their progress through it appears here."
+      }
+    },
+    "trends": {
+      "title": "Cohort trends",
+      "description": "New enrolments and completions per month.",
+      "month": "Month",
+      "newEnrollments": "New enrolments",
+      "completions": "Completions"
+    },
+    "atRisk": {
+      "metric": "Students at risk",
+      "title": "Students who may need help",
+      "description": "Students on a course they haven't finished, flagged after {{days}} days without progress or after not passing a quiz.",
+      "lessonsDone": "{{completed}} of {{total}} lessons",
+      "reasons": {
+        "no_progress": "Hasn't started",
+        "stalled": "No recent progress",
+        "failing_quiz": "Hasn't passed a quiz"
+      },
+      "empty": {
+        "title": "No students flagged",
+        "description": "Nobody currently meets the at-risk criteria. That's a good sign."
+      }
+    }
   }
 }

@@ -13,6 +13,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { FieldHelp } from '@components/feedback';
 import {
   Dialog,
   DialogContent,
@@ -188,8 +189,9 @@ export function AssignmentFormDialog({
                 name="status"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
+                    <FormLabel className="flex items-center gap-1.5">
                       {t('course:assignmentAuthoring.dialog.statusLabel')}
+                      <FieldHelp contentKey="course:assignmentAuthoring.dialog.help.status" />
                     </FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
@@ -216,8 +218,9 @@ export function AssignmentFormDialog({
                 name="dueAt"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
+                    <FormLabel className="flex items-center gap-1.5">
                       {t('course:assignmentAuthoring.dialog.dueAtLabel')}
+                      <FieldHelp contentKey="course:assignmentAuthoring.dialog.help.dueAt" />
                     </FormLabel>
                     <FormControl>
                       <Input type="datetime-local" {...field} />
