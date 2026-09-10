@@ -134,6 +134,7 @@ export const DASHBOARD_ROUTES = {
   platformProvisioning: '/dashboard/platform/provisioning',
   platformProvisioningDetail: '/dashboard/platform/provisioning/:requestId',
 
+  platformSubscriptions: '/dashboard/platform/subscriptions',
   platformOrganizations: '/dashboard/platform/organizations',
   platformOrganizationDetail: '/dashboard/platform/organizations/:organizationId',
 

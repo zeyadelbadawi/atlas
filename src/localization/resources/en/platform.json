@@ -142,5 +142,53 @@
       "monthly": "month",
       "yearly": "year"
     }
+  },
+  "adminSubscriptions": {
+    "title": "Subscriptions & Trials",
+    "description": "Platform-wide subscription, trial and cancellation activity.",
+    "metrics": {
+      "organizations": "Organizations",
+      "activePaid": "Active paid subscriptions",
+      "activeTrials": "Active free trials",
+      "trialsRedeemed": "Trials redeemed (all time)"
+    },
+    "trials": {
+      "title": "Free trials",
+      "description": "Redemption and conversion, counted from real redemption records.",
+      "everRedeemed": "Redeemed, all time",
+      "convertedToPaid": "Now on a paid plan",
+      "cancelled": "Cancelled",
+      "conversionNote": "Conversion is counted as organizations that redeemed a trial and hold a paid subscription right now. It is a point-in-time figure, not a historical funnel — an organization that converted and later left is not counted here."
+    },
+    "status": {
+      "title": "Subscription status",
+      "empty": "No subscriptions yet",
+      "values": {
+        "trialing": "Trialing",
+        "active": "Active",
+        "past_due": "Past due",
+        "paused": "Paused",
+        "grace_period": "Grace period",
+        "cancelled": "Cancelled",
+        "expired": "Expired"
+      }
+    },
+    "plans": {
+      "title": "Plan distribution",
+      "empty": "No plans in use yet"
+    },
+    "cancellations": {
+      "title": "Cancellations",
+      "description": "{{trials}} trial and {{paid}} paid cancellations recorded.",
+      "empty": "No cancellations recorded",
+      "emptyDescription": "Cancellation reasons will appear here as customers use the cancel flow.",
+      "kindTrial": "Trial",
+      "kindPaid": "Paid"
+    },
+    "revenue": {
+      "title": "Revenue",
+      "notTracked": "Atlas does not track subscription revenue. Plan prices are catalog information and no ledger links a subscription to money actually received, so no revenue figure is shown here rather than one derived from list prices."
+    },
+    "generatedAt": "Figures generated {{timestamp}}"
   }
 }

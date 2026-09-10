@@ -184,6 +184,18 @@ export function getDashboardNavigation(
           requiresAuth: true,
           requiredRoles: ['platform_owner'],
         },
+        {
+          // Phase 10.2 — subscription/trial operations. `requiredRoles`
+          // hides it from every Academy role, but hiding a menu item is
+          // NOT the control: `PlatformOwnerGuard` on
+          // `GET /platform/subscriptions/overview` is.
+          id: 'platform-subscriptions',
+          labelKey: 'navigation:items.platformSubscriptions',
+          path: DASHBOARD_ROUTES.platformSubscriptions,
+          icon: CreditCard,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+        },
       ],
       showDivider: true,
     },

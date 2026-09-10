@@ -84,7 +84,8 @@
     },
     "cancelAtPeriodEnd": "Your subscription will not renew at the end of the current period.",
     "featuresTitle": "Plan features",
-    "featuresSubtitle": "Reflects your plan plus any active add-ons."
+    "featuresSubtitle": "Reflects your plan plus any active add-ons.",
+    "cancelSubscription": "Cancel subscription"
   },
   "usage": {
     "title": "Usage",
@@ -140,6 +141,48 @@
       "durationDaysDisabledHelp": "Ignored while the free trial is disabled.",
       "saving": "Saving…",
       "saveButton": "Save changes"
+    }
+  },
+  "trial": {
+    "startTitle": "Start your free trial",
+    "startDescription": "Try Atlas free for {{days}} days. No card required.",
+    "startAction": "Start free trial",
+    "starting": "Starting your trial…",
+    "started": "Your free trial has started",
+    "startedDescription": "You have full access until {{date}}.",
+    "alreadyUsedTitle": "You've already used your free trial",
+    "alreadyUsedDescription": "Free trials are one per customer. Choose a plan to continue with Atlas.",
+    "activeUntil": "Free trial — active until {{date}}",
+    "cancelAction": "Cancel free trial",
+    "noTrialYet": "No active plan yet",
+    "noTrialYetDescription": "Start a free trial or choose a plan to activate this workspace."
+  },
+  "cancellation": {
+    "trialTitle": "Cancel your free trial?",
+    "trialDescription": "Your trial ends as soon as you confirm, and this workspace loses access. Free trials are one per customer, so you won't be able to start another one.",
+    "subscriptionTitle": "Cancel your subscription?",
+    "subscriptionDescription": "Your subscription will not renew. You keep access until the end of your current billing period.",
+    "subscriptionDescriptionWithDate": "Your subscription will not renew. You keep full access until {{date}} — you're not losing time you've already paid for.",
+    "reasonLabel": "Why are you cancelling?",
+    "reasonPlaceholder": "Choose a reason",
+    "feedbackLabel": "Anything else you'd like to tell us?",
+    "feedbackPlaceholder": "What could we have done better?",
+    "feedbackOptional": "Optional — you can cancel without answering.",
+    "keepIt": "Never mind, keep it",
+    "confirmCancel": "Confirm cancellation",
+    "cancelledTrial": "Your free trial has been cancelled",
+    "cancelledSubscription": "Your subscription has been cancelled",
+    "cancelledSubscriptionDescription": "You keep access until {{date}}.",
+    "failed": "We couldn't cancel that",
+    "failedDescription": "Nothing has changed. Please try again.",
+    "reasons": {
+      "too_expensive": "Too expensive",
+      "missing_features": "Missing features I need",
+      "not_using_it": "Not using it enough",
+      "too_difficult": "Too difficult to use",
+      "switching_provider": "Switching to something else",
+      "temporary_pause": "Pausing for now",
+      "other": "Something else"
     }
   }
 }

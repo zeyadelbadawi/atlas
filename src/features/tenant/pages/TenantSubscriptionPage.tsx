@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Check, Columns3, CreditCard, X } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
+import { SubscriptionLifecycleActions } from '../components/SubscriptionLifecycleActions';
 import { ErrorState, EmptyState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { Button } from '@/components/ui/button';
@@ -160,6 +161,14 @@ export default function TenantSubscriptionPage(): JSX.Element {
                 {t('tenant:subscription.cancelAtPeriodEnd')}
               </p>
             ) : null}
+
+            {/* Phase 10.2 — the subscription lifecycle controls.
+                Rendered from the REAL backend status, never from local
+                optimism: a workspace with no trial yet shows the start
+                action, an active trial shows cancel, and a paid
+                subscription shows cancel-at-period-end. The server is
+                authoritative for all three. */}
+            <SubscriptionLifecycleActions subscription={subscription} />
           </CardContent>
         </Card>
 

@@ -143,3 +143,109 @@ export interface TrialPolicy {
   /** Meaningless (and ignored) while `enabled` is `false`; `0` means no trial. */
   readonly durationDays: number;
 }
+
+/**
+ * Closed vocabulary for why a customer cancelled — mirrors the backend's
+ * `CANCELLATION_REASONS` exactly, and is validated server-side.
+ *
+ * Deliberately a fixed list rather than free text: it is what makes the
+ * admin dashboard able to aggregate reasons at all. Anything the customer
+ * wants to say in their own words goes in the optional `feedback` field.
+ */
+export const CANCELLATION_REASONS = [
+  'too_expensive',
+  'missing_features',
+  'not_using_it',
+  'too_difficult',
+  'switching_provider',
+  'temporary_pause',
+  'other',
+] as const;
+
+export type CancellationReason = (typeof CANCELLATION_REASONS)[number];
+
+/** `POST /organizations/:id/subscription/trial` request. */
+export interface StartTrialRequest {
+  /** Always `true` — the backend rejects anything else. See `TenantService.startTrial`. */
+  readonly confirm: true;
+  /** The plan chosen on the Plans page. Omitted falls back to the default trial tier. */
+  readonly planId?: string;
+}
+
+export interface StartTrialResult {
+  /** `false` is a normal outcome, not an error — read this rather than relying on a thrown error. */
+  readonly started: boolean;
+  /** Why it was refused. `already_redeemed` means this person has used their one trial. */
+  readonly reason?: 'already_redeemed' | 'already_has_subscription';
+  readonly trialEndsAt?: string;
+}
+
+export interface CancelSubscriptionRequestInput {
+  readonly reason: CancellationReason;
+  /** Optional. Never required to cancel. */
+  readonly feedback?: string;
+}
+
+export interface CancelSubscriptionRequest extends CancelSubscriptionRequestInput {
+  readonly confirm: true;
+}
+
+export interface CancellationResult {
+  readonly cancelled: boolean;
+  /** True when a prior cancellation already existed — the request was a safe no-op. */
+  readonly alreadyCancelled: boolean;
+  /** When access actually ends: immediate for a trial, end of the paid period for a paid subscription. */
+  readonly effectiveAt: string;
+}
+
+/**
+ * Platform-admin subscription/trial operations view — mirrors the
+ * backend's `AdminSubscriptionOverview` exactly.
+ *
+ * `revenue.tracked` is `false` because Atlas genuinely does not track
+ * subscription revenue. The UI must say so rather than render a zero that
+ * a reader would mistake for a measurement.
+ */
+export interface AdminCancellationRow {
+  readonly id: string;
+  readonly kind: 'trial' | 'paid';
+  readonly reason: string;
+  readonly feedback?: string;
+  readonly cancelledAt: string;
+  readonly effectiveAt: string;
+  readonly organizationId: string;
+  readonly organizationName: string;
+  readonly cancelledByUserId?: string;
+  readonly cancelledByName?: string;
+}
+
+export interface AdminPlanDistributionRow {
+  readonly planId: string;
+  readonly planKey: string;
+  readonly planName: string;
+  readonly subscriptions: number;
+}
+
+export interface AdminSubscriptionOverview {
+  readonly organizations: number;
+  readonly subscriptions: {
+    readonly byStatus: Record<string, number>;
+    readonly activePaid: number;
+  };
+  readonly trials: {
+    readonly everRedeemed: number;
+    readonly active: number;
+    readonly cancelled: number;
+    readonly convertedToPaid: number;
+  };
+  readonly cancellations: {
+    readonly trials: number;
+    readonly paid: number;
+    readonly byReason: Record<string, number>;
+    readonly recent: readonly AdminCancellationRow[];
+  };
+  readonly plans: readonly AdminPlanDistributionRow[];
+  /** Atlas does not track subscription revenue — reported, never fabricated. */
+  readonly revenue: { readonly tracked: false };
+  readonly generatedAt: string;
+}

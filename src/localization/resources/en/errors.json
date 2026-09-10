@@ -69,5 +69,9 @@
     "addOnNotFound": "The selected add-on is no longer available.",
     "planNoLongerExists": "The plan for this checkout no longer exists.",
     "addOnNoLongerExists": "The add-on for this checkout no longer exists."
+  },
+  "auth": {
+    "emailNotAcceptable": "Please use a permanent email address you can receive mail at. Temporary or disposable addresses aren't accepted.",
+    "invalidVerificationToken": "This verification link is invalid or has already been used. Request a new one to continue."
   }
 }

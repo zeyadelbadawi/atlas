@@ -84,7 +84,8 @@
     },
     "cancelAtPeriodEnd": "لن يتم تجديد اشتراكك في نهاية الفترة الحالية.",
     "featuresTitle": "ميزات الخطة",
-    "featuresSubtitle": "تعكس خطتك بالإضافة إلى أي إضافات نشطة."
+    "featuresSubtitle": "تعكس خطتك بالإضافة إلى أي إضافات نشطة.",
+    "cancelSubscription": "إلغاء الاشتراك"
   },
   "usage": {
     "title": "الاستخدام",
@@ -140,6 +141,48 @@
       "durationDaysDisabledHelp": "يُتجاهل أثناء إيقاف الفترة التجريبية المجانية.",
       "saving": "جارٍ الحفظ…",
       "saveButton": "حفظ التغييرات"
+    }
+  },
+  "trial": {
+    "startTitle": "ابدأ فترتك التجريبية المجانية",
+    "startDescription": "جرّب أطلس مجانًا لمدة {{days}} أيام. بدون بطاقة ائتمان.",
+    "startAction": "ابدأ الفترة التجريبية",
+    "starting": "جارٍ بدء فترتك التجريبية…",
+    "started": "بدأت فترتك التجريبية المجانية",
+    "startedDescription": "لديك وصول كامل حتى {{date}}.",
+    "alreadyUsedTitle": "لقد استخدمت فترتك التجريبية المجانية بالفعل",
+    "alreadyUsedDescription": "الفترة التجريبية المجانية متاحة مرة واحدة لكل عميل. اختر خطة لمواصلة استخدام أطلس.",
+    "activeUntil": "فترة تجريبية مجانية — نشطة حتى {{date}}",
+    "cancelAction": "إلغاء الفترة التجريبية",
+    "noTrialYet": "لا توجد خطة نشطة بعد",
+    "noTrialYetDescription": "ابدأ فترة تجريبية مجانية أو اختر خطة لتفعيل مساحة العمل هذه."
+  },
+  "cancellation": {
+    "trialTitle": "إلغاء فترتك التجريبية المجانية؟",
+    "trialDescription": "ستنتهي فترتك التجريبية فور التأكيد، وستفقد مساحة العمل هذه إمكانية الوصول. الفترة التجريبية متاحة مرة واحدة لكل عميل، لذا لن تتمكن من بدء فترة أخرى.",
+    "subscriptionTitle": "إلغاء اشتراكك؟",
+    "subscriptionDescription": "لن يتم تجديد اشتراكك. ستحتفظ بإمكانية الوصول حتى نهاية فترة الفوترة الحالية.",
+    "subscriptionDescriptionWithDate": "لن يتم تجديد اشتراكك. ستحتفظ بوصول كامل حتى {{date}} — لن تفقد المدة التي دفعت مقابلها بالفعل.",
+    "reasonLabel": "لماذا تقوم بالإلغاء؟",
+    "reasonPlaceholder": "اختر سببًا",
+    "feedbackLabel": "هل هناك شيء آخر تود إخبارنا به؟",
+    "feedbackPlaceholder": "ما الذي كان بإمكاننا تحسينه؟",
+    "feedbackOptional": "اختياري — يمكنك الإلغاء دون الإجابة.",
+    "keepIt": "تراجع، احتفظ به",
+    "confirmCancel": "تأكيد الإلغاء",
+    "cancelledTrial": "تم إلغاء فترتك التجريبية المجانية",
+    "cancelledSubscription": "تم إلغاء اشتراكك",
+    "cancelledSubscriptionDescription": "ستحتفظ بإمكانية الوصول حتى {{date}}.",
+    "failed": "تعذّر تنفيذ الإلغاء",
+    "failedDescription": "لم يتغير شيء. يرجى المحاولة مرة أخرى.",
+    "reasons": {
+      "too_expensive": "مكلف جدًا",
+      "missing_features": "يفتقر إلى ميزات أحتاجها",
+      "not_using_it": "لا أستخدمه بما يكفي",
+      "too_difficult": "صعب الاستخدام",
+      "switching_provider": "سأنتقل إلى خدمة أخرى",
+      "temporary_pause": "إيقاف مؤقت",
+      "other": "سبب آخر"
     }
   }
 }

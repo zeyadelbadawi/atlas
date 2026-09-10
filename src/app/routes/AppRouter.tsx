@@ -240,6 +240,11 @@ const PlatformProvisioningListPage = lazy(
 const PlatformProvisioningDetailPage = lazy(
   () => import('@features/provisioning/pages/PlatformProvisioningDetailPage')
 );
+const AdminSubscriptionsPage = lazy(() =>
+  import('@features/platform/pages/AdminSubscriptionsPage').then((m) => ({
+    default: m.AdminSubscriptionsPage,
+  }))
+);
 const PlatformOrganizationListPage = lazy(
   () => import('@features/platform/pages/PlatformOrganizationListPage')
 );
@@ -1034,6 +1039,18 @@ export function AppRouter(): JSX.Element {
               element={
                 <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
                   <PlatformProvisioningDetailPage />
+                </RouteGuard>
+              }
+            />
+
+            {/* Phase 10.2 — platform-admin subscription/trial operations.
+                The role gate here is a usability affordance; the real
+                control is `PlatformOwnerGuard` on the API. */}
+            <Route
+              path={DASHBOARD_ROUTES.platformSubscriptions}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <AdminSubscriptionsPage />
                 </RouteGuard>
               }
             />
