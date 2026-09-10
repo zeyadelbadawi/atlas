@@ -8,12 +8,16 @@
 import { authenticationService } from './authentication.service';
 import { currentUserService } from './current-user.service';
 import { tokenService } from './token.service';
+import { isTwoFactorChallenge } from '@types';
+import { twoFactorService } from './two-factor.service';
 import type {
+  AuthenticationResponse,
   SignInCredentials,
   Session,
   CurrentUser,
   TokenMetadata,
   OrganizationContext,
+  TwoFactorChallenge,
 } from '@types';
 
 export class SessionService {
@@ -23,9 +27,40 @@ export class SessionService {
    * @param credentials Sign-in credentials.
    * @returns The new session.
    */
-  public async signIn(credentials: SignInCredentials): Promise<Session> {
+  public async signIn(
+    credentials: SignInCredentials
+  ): Promise<Session | TwoFactorChallenge> {
     const response = await authenticationService.signIn(credentials);
 
+    // Phase 10.3 — the password alone was not enough. Return the
+    // challenge UNCHANGED and store nothing: there is no token here, and
+    // treating the challenge id as one would be exactly the mistake the
+    // backend contract is shaped to prevent. The caller routes the user
+    // to the second-factor step and calls `completeTwoFactor` below.
+    if (isTwoFactorChallenge(response)) {
+      return response;
+    }
+
+    return this.establishSession(response);
+  }
+
+  /**
+   * Phase 10.3 — completes a sign-in that stopped for a second factor.
+   *
+   * Shares `establishSession` with the password-only path, so a session
+   * created via 2FA is stored and shaped identically — there is no second
+   * notion of "logged in" to keep in sync.
+   */
+  public async completeTwoFactor(input: {
+    readonly challengeId: string;
+    readonly token?: string;
+    readonly recoveryCode?: string;
+  }): Promise<Session> {
+    const response = await twoFactorService.verifyChallenge(input);
+    return this.establishSession(response);
+  }
+
+  private establishSession(response: AuthenticationResponse): Session {
     const tokens = tokenService.createMetadata(
       response.accessToken,
       response.expiresIn,

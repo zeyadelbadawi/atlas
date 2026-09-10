@@ -6,6 +6,7 @@
  */
 import { createContext } from 'react';
 import type {
+  TwoFactorChallenge,
   Session,
   CurrentUser,
   OrganizationContext,
@@ -28,8 +29,25 @@ export interface IdentityContextValue {
   /** True when the user is authenticated. */
   readonly isAuthenticated: boolean;
 
-  /** Signs in with credentials. */
-  readonly signIn: (credentials: SignInCredentials) => Promise<void>;
+  /**
+   * Signs in with credentials.
+   *
+   * Phase 10.3 — resolves to a `TwoFactorChallenge` when the password
+   * alone was not enough, and to `undefined` when a session was
+   * established. The challenge is deliberately NOT stored as session
+   * state: it carries no token and confers no access, so the caller must
+   * finish via `completeTwoFactor`.
+   */
+  readonly signIn: (
+    credentials: SignInCredentials
+  ) => Promise<TwoFactorChallenge | undefined>;
+
+  /** Completes a sign-in that stopped for a second factor. */
+  readonly completeTwoFactor: (input: {
+    challengeId: string;
+    token?: string;
+    recoveryCode?: string;
+  }) => Promise<void>;
 
   /** Signs out the current user. */
   readonly signOut: () => Promise<void>;

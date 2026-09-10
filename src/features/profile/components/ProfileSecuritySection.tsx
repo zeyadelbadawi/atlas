@@ -9,12 +9,8 @@
  * `ProfileSessionsCard`, backed by `GET /auth/sessions` and
  * `DELETE /auth/sessions/:id`.
  *
- * Two-Factor Authentication below remains deliberately inert: Phase 10
- * added a documented server-side insertion point for it
- * (`auth.service.ts`) but explicitly DEFERRED the feature itself, so
- * there is still no enrollment contract to call. The control stays
- * disabled rather than simulating an enrollment flow with nothing behind
- * it — see the roadmap's Phase 10 scope note.
+ * Phase 10.3 replaced the permanently-disabled Two-Factor control with
+ * the real `TwoFactorCard`, backed by `/auth/2fa/*`.
  */
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -36,6 +32,7 @@ import { ErrorState } from "@components/feedback";
 import { useToast } from "@hooks";
 import { useChangePassword } from "../hooks";
 import { ProfileSessionsCard } from "./ProfileSessionsCard";
+import { TwoFactorCard } from "./TwoFactorCard";
 
 const passwordSchema = z
   .object({
@@ -246,34 +243,7 @@ export function ProfileSecuritySection(): JSX.Element {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <Shield className="size-5 text-primary" aria-hidden />
-            <div>
-              <CardTitle>{t("profile:sections.security.twoFactor")}</CardTitle>
-              <CardDescription>
-                {t("profile:sections.security.twoFactorDescription")}
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">
-                {t("profile:sections.security.twoFactorStatus")}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {t("profile:sections.security.twoFactorDisabled")}
-              </p>
-            </div>
-            <Button variant="outline" disabled title={t("profile:sections.security.notYetAvailable")}>
-              {t("profile:actions.enable")}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <TwoFactorCard />
 
       <ProfileSessionsCard />
     </div>

@@ -4,11 +4,13 @@
  * Authenticates users with email and password using the existing
  * SessionService and AuthenticationService infrastructure.
  */
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LogIn } from "lucide-react";
 import { useAuth, useSignIn } from "@hooks";
+import { TwoFactorChallengeForm } from "../components/TwoFactorChallengeForm";
+import type { TwoFactorChallenge } from "@types";
 import {
   AUTHENTICATED_ENTRY_ROUTE,
   AUTH_ROUTES,
@@ -21,7 +23,8 @@ export default function SignInPage(): JSX.Element {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { session } = useAuth();
-  const { signIn, isLoading, error, clearError } = useSignIn();
+  const { signIn, completeTwoFactor, isLoading, error, clearError } = useSignIn();
+  const [challenge, setChallenge] = useState<TwoFactorChallenge | null>(null);
 
   // Redirect authenticated users
   useEffect(() => {
@@ -39,10 +42,32 @@ export default function SignInPage(): JSX.Element {
   ) => {
     clearError();
     try {
-      await signIn({ email, password, rememberMe });
-      // Navigation happens automatically via the effect above
+      const result = await signIn({ email, password, rememberMe });
+      // Phase 10.3 — a challenge means the password was correct but the
+      // account requires a second factor. No session exists yet, so the
+      // navigation effect above will not fire; the code step below takes
+      // over instead.
+      if (result) {
+        setChallenge(result);
+      }
+      // Otherwise navigation happens automatically via the effect above.
     } catch {
       // Error is already set by useSignIn
+    }
+  };
+
+  const handleVerify = async (input: {
+    token?: string;
+    recoveryCode?: string;
+  }) => {
+    if (!challenge) return;
+    clearError();
+    try {
+      await completeTwoFactor({ challengeId: challenge.challengeId, ...input });
+      // Session now exists — the effect above navigates.
+    } catch {
+      // Error is already set by useSignIn; the user can retry with a new
+      // code without starting the whole sign-in over.
     }
   };
 
@@ -65,11 +90,25 @@ export default function SignInPage(): JSX.Element {
           />
         </div>
 
-        <SignInForm
-          onSubmit={handleSignIn}
-          isLoading={isLoading}
-          error={error}
-        />
+        {challenge ? (
+          <TwoFactorChallengeForm
+            onSubmit={handleVerify}
+            onCancel={() => {
+              // Abandoning the challenge returns to the password step.
+              // The challenge itself simply expires server-side.
+              setChallenge(null);
+              clearError();
+            }}
+            isLoading={isLoading}
+            error={error}
+          />
+        ) : (
+          <SignInForm
+            onSubmit={handleSignIn}
+            isLoading={isLoading}
+            error={error}
+          />
+        )}
 
         <div className="text-center text-sm">
           <span className="text-muted-foreground">

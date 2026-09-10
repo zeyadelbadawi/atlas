@@ -22,6 +22,7 @@
 import { useState, useCallback } from 'react';
 import { useAuth } from './useAuth';
 import type { ApiError } from '@api';
+import type { TwoFactorChallenge } from '@types';
 
 export interface SignInCredentials {
   readonly email: string;
@@ -30,7 +31,20 @@ export interface SignInCredentials {
 }
 
 export interface UseSignInResult {
-  readonly signIn: (credentials: SignInCredentials) => Promise<void>;
+  /**
+   * Phase 10.3 — resolves to a `TwoFactorChallenge` when the password
+   * alone was not enough, or `undefined` once a session exists. The
+   * caller shows the code step for the former.
+   */
+  readonly signIn: (
+    credentials: SignInCredentials
+  ) => Promise<TwoFactorChallenge | undefined>;
+  /** Completes a challenged sign-in. Only this establishes the session. */
+  readonly completeTwoFactor: (input: {
+    challengeId: string;
+    token?: string;
+    recoveryCode?: string;
+  }) => Promise<void>;
   readonly isLoading: boolean;
   readonly error: ApiError | null;
   readonly clearError: () => void;
@@ -42,7 +56,7 @@ export interface UseSignInResult {
  * Wraps the authentication service sign-in method with state management.
  */
 export function useSignIn(): UseSignInResult {
-  const { signIn: establishSession } = useAuth();
+  const { signIn: establishSession, completeTwoFactor: finishTwoFactor } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
 
@@ -52,7 +66,7 @@ export function useSignIn(): UseSignInResult {
       setError(null);
 
       try {
-        await establishSession(credentials);
+        return await establishSession(credentials);
       } catch (err) {
         const apiError = err as ApiError;
         setError(apiError);
@@ -64,12 +78,31 @@ export function useSignIn(): UseSignInResult {
     [establishSession],
   );
 
+  const completeTwoFactor = useCallback(
+    async (input: { challengeId: string; token?: string; recoveryCode?: string }) => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        await finishTwoFactor(input);
+      } catch (err) {
+        const apiError = err as ApiError;
+        setError(apiError);
+        throw apiError;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [finishTwoFactor],
+  );
+
   const clearError = useCallback(() => {
     setError(null);
   }, []);
 
   return {
     signIn,
+    completeTwoFactor,
     isLoading,
     error,
     clearError,

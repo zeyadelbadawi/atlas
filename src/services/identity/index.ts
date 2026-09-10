@@ -8,4 +8,4 @@ export { TokenService, tokenService } from './token.service';
 export { AuthenticationService, authenticationService } from './authentication.service';
 export { CurrentUserService, currentUserService } from './current-user.service';
 export { AuthorizationService, authorizationService } from './authorization.service';
-export { SessionService, sessionService } from './session.service';
+export { SessionService, sessionService } from './session.service';export { twoFactorService, TwoFactorService } from './two-factor.service';

@@ -114,5 +114,31 @@
     "noRole": "No role assigned",
     "current": "Current"
   },
-  "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?"
+  "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?",
+  "twoFactor": {
+    "enabled": "Enabled",
+    "setupTitle": "Set up two-factor authentication",
+    "setupDescription": "Scan this code with your authenticator app, then enter the 6-digit code it shows.",
+    "qrAlt": "QR code for your authenticator app",
+    "manualEntry": "Can't scan? Enter this key instead",
+    "enterCode": "6-digit code from your app",
+    "verifyAndEnable": "Verify and enable",
+    "invalidCode": "That code didn't work",
+    "invalidCodeDescription": "Check your authenticator app and try the current code.",
+    "setupFailed": "Couldn't start setup",
+    "recoveryTitle": "Save your recovery codes",
+    "recoveryDescription": "Each code works once. If you lose your phone, these are the only way back into your account — we cannot show them again.",
+    "recoveryAcknowledge": "I've saved these codes somewhere safe.",
+    "recoveryDone": "Done",
+    "recoveryCodesRemaining": "{{count}} recovery codes remaining",
+    "regenerateCodes": "New recovery codes",
+    "regenerateTitle": "Generate new recovery codes",
+    "regenerateDescription": "Your existing recovery codes will stop working immediately.",
+    "disable": "Turn off",
+    "disableTitle": "Turn off two-factor authentication?",
+    "disableDescription": "Your account will be protected by your password alone.",
+    "disabled": "Two-factor authentication is off",
+    "passwordRequiredReason": "We ask for your password because a signed-in session alone shouldn't be able to weaken your account's security.",
+    "passwordRejected": "That password isn't correct"
+  }
 }

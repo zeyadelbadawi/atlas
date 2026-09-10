@@ -179,3 +179,52 @@ export interface UserSession {
   /** True for the session making the request, so the UI can mark it and warn that revoking it signs the user out. */
   readonly isCurrent: boolean;
 }
+
+/**
+ * Two-factor authentication (Phase 10.3) — mirrors the backend contracts.
+ */
+export interface TwoFactorStatus {
+  readonly enabled: boolean;
+  /** A setup was started but never confirmed. 2FA is NOT enforced in this state. */
+  readonly pendingSetup: boolean;
+  readonly recoveryCodesRemaining: number;
+}
+
+export interface TwoFactorSetupResult {
+  /**
+   * Base32 secret for manual entry. Returned exactly ONCE, by the setup
+   * call — it is unrecoverable afterwards, so it must never be cached,
+   * logged, or persisted anywhere by the client.
+   */
+  readonly secret: string;
+  readonly qrCodeDataUri: string;
+}
+
+/**
+ * What a sign-in returns when the password alone is not enough.
+ *
+ * `challengeId` is NOT a token. It authenticates nothing, is accepted by
+ * exactly one endpoint, and must never be sent as an Authorization
+ * header.
+ */
+export interface TwoFactorChallenge {
+  readonly twoFactorRequired: true;
+  readonly challengeId: string;
+  readonly expiresIn: number;
+}
+
+/**
+ * Discriminates a second-factor challenge from anything else a sign-in
+ * path can produce.
+ *
+ * Deliberately accepts a broad `object` rather than a narrow union: the
+ * same check runs against the raw API response in `SessionService` and
+ * against the already-established `Session | TwoFactorChallenge` in the
+ * identity provider, and a narrow parameter type would force a cast at
+ * one of those call sites — exactly where a mistake would be costly.
+ */
+export function isTwoFactorChallenge(
+  response: object
+): response is TwoFactorChallenge {
+  return (response as TwoFactorChallenge).twoFactorRequired === true;
+}
