@@ -21,5 +21,19 @@
   "file": {
     "tooLarge": "The file must be {{size}} or smaller",
     "unsupportedType": "This file type is not supported"
+  },
+  "language": {
+    "expectedArabic": "This field expects Arabic text. Brand names, technical terms, numbers and links are fine.",
+    "expectedEnglish": "This field expects English text. Brand names, technical terms, numbers and links are fine."
+  },
+  "numeric": {
+    "notANumber": "Please enter a number.",
+    "integer": "Please enter a whole number.",
+    "count": "Please enter a whole number of zero or more.",
+    "percentage": "Please enter a percentage between 0 and 100.",
+    "price": "Please enter an amount with at most two decimal places.",
+    "duration": "Please enter a duration greater than zero.",
+    "year": "Please enter a valid four-digit year.",
+    "phone": "Please enter a valid phone number, including the country code if it is international."
   }
 }

@@ -24,6 +24,10 @@ import {
   ALLOWED_WEBSITE_IMAGE_TYPES,
   MAX_WEBSITE_IMAGE_FILE_SIZE,
 } from '../constants/website.constants';
+import {
+  WEBSITE_IMAGE_RECOMMENDATIONS,
+  type WebsiteImagePurpose,
+} from '../constants/image-recommendations.constants';
 
 export interface WebsiteImageFieldProps {
   readonly id: string;
@@ -33,6 +37,12 @@ export interface WebsiteImageFieldProps {
   readonly aspectClassName?: string;
   /** When provided, a "Choose from library" action is offered alongside direct upload. */
   readonly academyId?: string;
+  /**
+   * What this image is FOR. Drives the recommended-size hint shown under
+   * the control. Omitted only where the role genuinely is not known —
+   * showing no hint is better than showing a wrong one.
+   */
+  readonly purpose?: WebsiteImagePurpose;
 }
 
 export function WebsiteImageField({
@@ -42,6 +52,7 @@ export function WebsiteImageField({
   onChange,
   aspectClassName = 'aspect-video',
   academyId,
+  purpose,
 }: WebsiteImageFieldProps): JSX.Element {
   const { t } = useTranslation();
   const [error, setError] = useState<string>();
@@ -49,6 +60,9 @@ export function WebsiteImageField({
   const filePicker = useFilePicker({
     accept: ALLOWED_WEBSITE_IMAGE_TYPES.join(','),
   });
+  const recommendation = purpose
+    ? WEBSITE_IMAGE_RECOMMENDATIONS[purpose]
+    : undefined;
 
   useEffect(() => {
     const file = filePicker.files?.[0];
@@ -121,6 +135,28 @@ export function WebsiteImageField({
           ) : null}
         </div>
       </div>
+      {/*
+        The recommendation sits directly under the control, where someone
+        about to pick a file will actually read it — not in a tooltip or a
+        docs page. Sizes come from what the renderer really draws; see
+        `image-recommendations.constants.ts`.
+      */}
+      {recommendation ? (
+        <p
+          className="text-xs text-muted-foreground"
+          data-testid={`${id}-recommendation`}
+        >
+          {t('website:common.imageRecommendation', {
+            width: recommendation.width,
+            height: recommendation.height,
+            ratio: recommendation.ratio,
+            formats: recommendation.formats.join(' / '),
+          })}
+          {recommendation.transparency
+            ? ` ${t('website:common.imageTransparencyHint')}`
+            : ''}
+        </p>
+      ) : null}
       {error ? <p className="text-sm text-destructive">{t(error)}</p> : null}
       {academyId ? (
         <MediaLibraryDialog

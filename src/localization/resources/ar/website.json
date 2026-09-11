@@ -343,7 +343,12 @@
       "published": "منشور",
       "publishing": "جارٍ النشر…",
       "failed": "فشل النشر"
-    }
+    },
+    "unpublishAction": "إلغاء النشر",
+    "unpublishConfirmTitle": "إيقاف الموقع؟",
+    "unpublishConfirmDescription": "لن يتمكّن الزوّار من الوصول إلى الموقع العام لأكاديميتك. يمكنك نشره مرة أخرى في أي وقت.",
+    "unpublishConfirmAction": "إلغاء النشر",
+    "unpublishedHint": "موقعك متوقّف وغير متاح للزوّار."
   },
   "sections": {
     "hero": {
@@ -497,6 +502,8 @@
     "chooseFromLibrary": "الاختيار من المكتبة",
     "removeImage": "إزالة الصورة",
     "imageTooLarge": "حجم الملف كبير جدًا.",
-    "imageInvalidType": "نوع الملف غير مدعوم. استخدم PNG أو JPG أو WEBP."
+    "imageInvalidType": "نوع الملف غير مدعوم. استخدم PNG أو JPG أو WEBP.",
+    "imageRecommendation": "الحجم الموصى به: {{width}}×{{height}} بكسل ({{ratio}}) · {{formats}}",
+    "imageTransparencyHint": "يُفضَّل استخدام خلفية شفافة."
   }
 }

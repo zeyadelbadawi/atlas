@@ -669,6 +669,16 @@ export const supportKeys = {
   list: (query?: CollectionQuery) =>
     [...supportKeys.all, 'list', query] as const,
   detail: (caseId: string) => [...supportKeys.all, 'detail', caseId] as const,
+  /**
+   * A requester's OWN tickets. Namespaced apart from `list`/`detail`
+   * above because those are the Platform Owner's cross-tenant views —
+   * sharing a key would let an operator's cached cross-tenant list be
+   * served to a tenant, or vice versa.
+   */
+  mineList: (organizationId: string | undefined, query?: CollectionQuery) =>
+    [...supportKeys.all, 'mine', 'list', organizationId, query] as const,
+  mineDetail: (caseId: string) =>
+    [...supportKeys.all, 'mine', 'detail', caseId] as const,
 } as const;
 
 /** Platform-wide command-center metrics (Prompt 13). */

@@ -50,7 +50,9 @@
       "sessionRevoked": "Device signed out",
       "sessionRevokedDescription": "That device no longer has access to your account.",
       "sessionRevokeFailed": "Could not sign out that device",
-      "sessionRevokeFailedDescription": "The session is still active. Please try again."
+      "sessionRevokeFailedDescription": "The session is still active. Please try again.",
+      "unknownLocation": "Location unavailable",
+      "ipAddress": "IP address"
     }
   },
   "fields": {

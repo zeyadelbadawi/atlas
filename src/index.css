@@ -239,6 +239,57 @@
     --shadow-color: 199 60% 3%;
     --shadow-overlay: 0 16px 48px -12px hsl(var(--shadow-color) / 0.55);
   }
+
+  /* ------------------------------------------------------------------ *
+   * PUBLIC ACADEMY WEBSITES — their own neutral palette.
+   *
+   * `.website-theme-scope` wraps every public-website surface (the real
+   * public runtime, the CMS page-editor preview, the theme gallery — see
+   * `WebsiteThemeScope`). Re-declaring the neutral tokens here means every
+   * `bg-background`, `bg-card`, `text-foreground` and `border-border`
+   * INSIDE a customer's website resolves to the website's palette, while
+   * the identical class names elsewhere keep resolving to the dashboard's.
+   *
+   * WHY THIS IS ONE RULE AND NOT FORTY EDITS. Those class names appear
+   * across ~40 places in the section renderers. Rewriting each to a
+   * `--website-*` variable would work until the forty-first was added and
+   * silently picked up the dashboard's colours again. Scoping the tokens
+   * makes the correct behaviour the default for anything written later.
+   *
+   * TWO CONCRETE BUGS THIS FIXES:
+   *   1. Atlas's own palette deliberately tints every neutral toward the
+   *      Atlas brand hue ("Pure white and pure black are never used",
+   *      above), so every academy site inherited a blue-green cast that
+   *      had nothing to do with that academy's branding.
+   *   2. These tokens flip under the dashboard's `.dark` class, so an
+   *      admin who prefers dark mode saw — and could show visitors — a
+   *      dark version of a site whose owner never chose one. A customer's
+   *      public site is not a surface the Atlas operator themes.
+   *
+   * Brand colour is untouched: it lives in the separate `--website-primary-*`
+   * variables and still drives buttons, CTA bands and accents.
+   * ------------------------------------------------------------------ */
+  .website-theme-scope {
+    --background: 0 0% 100%;
+    --foreground: 222 22% 12%;
+
+    --surface: 210 20% 97%;
+    --surface-foreground: 222 22% 12%;
+    --surface-raised: 0 0% 100%;
+    --surface-overlay: 0 0% 100%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 22% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 22% 12%;
+
+    --muted: 210 20% 97%;
+    --muted-foreground: 215 16% 42%;
+
+    --border: 214 20% 91%;
+    --input: 214 20% 91%;
+  }
 }
 
 @layer base {

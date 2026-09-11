@@ -73,6 +73,24 @@ export class WebsiteConfigurationService extends BaseService {
     );
   }
 
+  /**
+   * Takes the published website offline again.
+   *
+   * The backend returns the configuration whose `status` is now `draft`,
+   * and that response is the only thing the UI reads — the frontend never
+   * decides on its own that a site is offline.
+   */
+  async unpublishConfiguration(
+    academyId: string,
+    options?: WriteOptions
+  ): Promise<WebsiteConfiguration> {
+    return this.client.post<WebsiteConfiguration, undefined>(
+      this.websitePath(academyId, 'unpublish'),
+      undefined,
+      options
+    );
+  }
+
   /** Retrieves every page (core + custom) for the Academy's website. */
   async getPages(
     academyId: string,

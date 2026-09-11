@@ -150,6 +150,10 @@ export const DASHBOARD_ROUTES = {
   platformAuditLog: '/dashboard/platform/audit-log',
   platformAuditLogDetail: '/dashboard/platform/audit-log/:eventId',
 
+  /** The TENANT's own support centre — distinct from the Platform-Owner console below. */
+  support: '/dashboard/support',
+  supportDetail: '/dashboard/support/:caseId',
+
   platformSupport: '/dashboard/platform/support',
   platformSupportDetail: '/dashboard/platform/support/:caseId',
 

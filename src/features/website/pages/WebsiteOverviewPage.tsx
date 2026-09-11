@@ -141,6 +141,7 @@ export default function WebsiteOverviewPage(): JSX.Element {
         <WebsitePublishBar
           academyId={academyId}
           status={configQuery.data.status}
+          lastPublishedAt={configQuery.data.publishedAt}
         />
 
         {/* A clear, obvious place to see and open the academy's public

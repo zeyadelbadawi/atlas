@@ -33,7 +33,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
-import { useFilePicker } from '@hooks';
+import { useFilePicker, useUnsavedChanges } from '@hooks';
 import { useServerValidation } from '@forms';
 import { isApiError } from '@api';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
@@ -79,6 +79,11 @@ export default function CourseCreatePage(): JSX.Element {
       pricingCurrency: DEFAULT_COURSE_PRICING_CURRENCY,
     },
   });
+
+  // Warns before this editor is left with unsaved work — both on
+  // in-app navigation (via the shared registry the route blocker
+  // reads) and on tab close or refresh.
+  useUnsavedChanges({ isDirty: form.formState.isDirty });
 
   useServerValidation(form, mutationError);
 

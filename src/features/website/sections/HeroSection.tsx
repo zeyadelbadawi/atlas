@@ -167,7 +167,14 @@ export function HeroSection({
         // Scales with viewport instead of a flat 28rem on every screen —
         // on a short mobile-landscape viewport, 448px could force excess
         // whitespace/vertical scroll before the fold even starts.
-        className="relative flex min-h-[18rem] items-end overflow-hidden bg-[var(--website-primary-surface)] py-16 sm:min-h-[22rem] lg:min-h-[28rem]"
+        // A NEUTRAL band, not a brand wash. This was
+        // `--website-primary-surface`, an 8% tint of the academy's primary
+        // colour applied to a full-width, up-to-28rem-tall block — the
+        // single biggest reason these sites read as "a green page"
+        // rather than a white page with green accents. The brand still
+        // carries the hero through its heading, CTA button and any
+        // background image; it no longer paints the whole band.
+        className="relative flex min-h-[18rem] items-end overflow-hidden bg-[var(--website-surface)] py-16 sm:min-h-[22rem] lg:min-h-[28rem]"
         style={
           config.image
             ? {

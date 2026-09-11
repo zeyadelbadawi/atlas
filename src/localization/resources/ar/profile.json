@@ -50,7 +50,9 @@
       "sessionRevoked": "تم تسجيل خروج الجهاز",
       "sessionRevokedDescription": "لم يعد بإمكان ذلك الجهاز الوصول إلى حسابك.",
       "sessionRevokeFailed": "تعذّر تسجيل خروج ذلك الجهاز",
-      "sessionRevokeFailedDescription": "الجلسة ما زالت نشطة. يرجى المحاولة مرة أخرى."
+      "sessionRevokeFailedDescription": "الجلسة ما زالت نشطة. يرجى المحاولة مرة أخرى.",
+      "unknownLocation": "الموقع غير متاح",
+      "ipAddress": "عنوان IP"
     }
   },
   "fields": {

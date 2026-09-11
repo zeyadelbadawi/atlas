@@ -11,6 +11,7 @@
  */
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
+import { useDirtyGuard } from '@features/unsaved-changes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -66,13 +67,20 @@ export function AddAcademyInstructorDialog({
     defaultValues: DEFAULT_VALUES,
   });
 
+  const dirtyGuard = useDirtyGuard(form.formState.isDirty);
+
   useServerValidation(form, addInstructor.error);
 
+  // Unsaved-changes protection for a MODAL. Closing a dialog is not a
+  // navigation, so the route blocker never sees the X button, an outside
+  // click or Escape — they are intercepted here instead. Opening is
+  // never guarded; only closing can lose work.
   const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen) {
+    if (nextOpen) return onOpenChange(true);
+    void dirtyGuard.requestClose(() => {
       form.reset(DEFAULT_VALUES);
-    }
-    onOpenChange(nextOpen);
+      onOpenChange(false);
+    });
   };
 
   const onSubmit = (data: AddAcademyInstructorFormData) => {

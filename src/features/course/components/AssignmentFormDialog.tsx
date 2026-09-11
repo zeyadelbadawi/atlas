@@ -10,6 +10,7 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
+import { useDirtyGuard } from '@features/unsaved-changes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -103,6 +104,11 @@ export function AssignmentFormDialog({
     defaultValues: EMPTY_VALUES,
   });
 
+  // Unsaved-changes protection for a MODAL. The route blocker cannot see
+  // this: closing a dialog is not a navigation, so the X button, an
+  // outside click and Escape all need to be intercepted here instead.
+  const dirtyGuard = useDirtyGuard(form.formState.isDirty);
+
   useServerValidation(form, error ?? null);
 
   useEffect(() => {
@@ -125,7 +131,14 @@ export function AssignmentFormDialog({
   }, [open, assignment]);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        // Opening is never guarded; only closing can lose work.
+        if (next) return onOpenChange(true);
+        void dirtyGuard.requestClose(() => onOpenChange(false));
+      }}
+    >
       <DialogContent className="max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
@@ -269,7 +282,9 @@ export function AssignmentFormDialog({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => onOpenChange(false)}
+                onClick={() =>
+                  void dirtyGuard.requestClose(() => onOpenChange(false))
+                }
                 disabled={isPending}
               >
                 {t('course:assignmentAuthoring.dialog.cancelButton')}

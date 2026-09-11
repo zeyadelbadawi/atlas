@@ -9,6 +9,7 @@
  */
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
+import { useDirtyGuard } from '@features/unsaved-changes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -64,17 +65,24 @@ export function AddAcademyManagerDialog({
     defaultValues: DEFAULT_VALUES,
   });
 
+  const dirtyGuard = useDirtyGuard(form.formState.isDirty);
+
   // Maps a `validation` (400) mutation error's per-field violations onto
   // this form — e.g. the backend's `@MinLength(2)` on `name` versus this
   // schema's client-side check having no minimum at all, previously
   // surfaced only as a generic "Couldn't create this manager" toast.
   useServerValidation(form, addManager.error);
 
+  // Unsaved-changes protection for a MODAL. Closing a dialog is not a
+  // navigation, so the route blocker never sees the X button, an outside
+  // click or Escape — they are intercepted here instead. Opening is
+  // never guarded; only closing can lose work.
   const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen) {
+    if (nextOpen) return onOpenChange(true);
+    void dirtyGuard.requestClose(() => {
       form.reset(DEFAULT_VALUES);
-    }
-    onOpenChange(nextOpen);
+      onOpenChange(false);
+    });
   };
 
   const onSubmit = (data: AddAcademyManagerFormData) => {

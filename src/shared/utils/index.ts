@@ -5,6 +5,7 @@
  * by services, hooks and components alike.
  */
 export * from './class-name.utils';
+export * from './country.utils';
 export * from './date.utils';
 export * from './number.utils';
 export * from './function.utils';

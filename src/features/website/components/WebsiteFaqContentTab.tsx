@@ -36,7 +36,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useConfirmDialog } from '@app/providers';
-import { useDisclosure, usePermissions } from '@hooks';
+import { useDisclosure, usePermissions, useUnsavedChanges } from '@hooks';
 import { useServerValidation } from '@forms';
 import {
   useArchiveWebsiteFaqEntry,
@@ -81,6 +81,11 @@ function FaqEntryDialog({
       answer: entry?.answer ?? { en: '', ar: '' },
     },
   });
+
+  // Warns before this editor is left with unsaved work — both on
+  // in-app navigation (via the shared registry the route blocker
+  // reads) and on tab close or refresh.
+  useUnsavedChanges({ isDirty: form.formState.isDirty });
   useServerValidation(form, createEntry.error ?? updateEntry.error);
 
   const onSubmit = (data: FaqEntryFormData) => {

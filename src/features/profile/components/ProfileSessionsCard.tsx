@@ -23,6 +23,7 @@
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatCountryName } from '@utils';
 import { Laptop, LogOut, MapPin, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -143,12 +144,34 @@ export function ProfileSessionsCard(): JSX.Element {
             <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
               <MapPin className="size-3.5 shrink-0" aria-hidden />
               <span>
-                {session.ipAddress ?? t('profile:sections.security.unknownIp')}
+                {/*
+                  A COUNTRY NAME, NOT AN IP, AND NEVER A GUESSED CITY.
+                  This line used to show the raw IP address as the
+                  "location", which is a technical value most people
+                  cannot read. The country comes from Cloudflare's edge —
+                  a real signal, not an IP-database estimate — and is the
+                  most precise thing that is actually true. Atlas has no
+                  trustworthy city source, so no city is shown; where even
+                  the country is unknown the text says so rather than
+                  inventing a place.
+                */}
+                {formatCountryName(session.locationCountry, language) ??
+                  t('profile:sections.security.unknownLocation')}
                 {' · '}
                 {t('profile:sections.security.signedIn')}{' '}
                 {formatDate(session.startedAt, language, 'short')}
               </span>
             </p>
+
+            {/* The IP stays available, one level down: it is the user's own
+                data about their own session and is what actually helps
+                someone recognise a login they do not remember — but it is
+                secondary detail, not the headline "location". */}
+            {session.ipAddress ? (
+              <p className="text-xs text-muted-foreground">
+                {t('profile:sections.security.ipAddress')}: {session.ipAddress}
+              </p>
+            ) : null}
           </div>
         </div>
 

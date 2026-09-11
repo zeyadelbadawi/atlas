@@ -59,6 +59,12 @@ const AnalyticsPage = lazy(
   () => import('@features/analytics/pages/AnalyticsPage')
 );
 const SearchPage = lazy(() => import('@features/search/pages/SearchPage'));
+const SupportCenterPage = lazy(
+  () => import('@features/support/pages/SupportCenterPage')
+);
+const SupportCaseDetailPage = lazy(
+  () => import('@features/support/pages/SupportCaseDetailPage')
+);
 
 const AcademyDashboardPage = lazy(
   () => import('@features/academy/pages/AcademyDashboardPage')
@@ -449,6 +455,29 @@ export function AppRouter(): JSX.Element {
             />
 
             <Route path={DASHBOARD_ROUTES.search} element={<SearchPage />} />
+
+            {/*
+              Support is available to EVERY signed-in role — a student
+              who cannot submit a ticket has no way to report a problem.
+              Authorization is per-ticket and enforced by RLS, not by a
+              route permission, so no `requiredPermissions` here.
+            */}
+            <Route
+              path={DASHBOARD_ROUTES.support}
+              element={
+                <RouteGuard requireAuthentication>
+                  <SupportCenterPage />
+                </RouteGuard>
+              }
+            />
+            <Route
+              path={DASHBOARD_ROUTES.supportDetail}
+              element={
+                <RouteGuard requireAuthentication>
+                  <SupportCaseDetailPage />
+                </RouteGuard>
+              }
+            />
 
             <Route
               path={DASHBOARD_ROUTES.academy}

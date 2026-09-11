@@ -98,6 +98,7 @@ export function WebsiteBrandTab({
           <WebsiteImageField
             id="website-dark-logo"
             labelKey="website:brand.darkLogo"
+            purpose="darkLogo"
             value={configuration.brand.darkLogo}
             onChange={(darkLogo) => save({ darkLogo })}
             aspectClassName="aspect-video bg-neutral-900"

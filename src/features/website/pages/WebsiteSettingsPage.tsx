@@ -97,6 +97,7 @@ export default function WebsiteSettingsPage(): JSX.Element {
         <WebsitePublishBar
           academyId={academyId}
           status={configuration.status}
+          lastPublishedAt={configuration.publishedAt}
         />
 
         <Tabs defaultValue="theme">

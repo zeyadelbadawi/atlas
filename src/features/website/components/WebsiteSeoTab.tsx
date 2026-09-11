@@ -6,6 +6,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
+import { useUnsavedChanges } from '@hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -60,6 +61,11 @@ export function WebsiteSeoTab({
       canonicalBaseUrl: configuration.seo.canonicalBaseUrl ?? '',
     },
   });
+
+  // Warns before this editor is left with unsaved work — both on
+  // in-app navigation (via the shared registry the route blocker
+  // reads) and on tab close or refresh.
+  useUnsavedChanges({ isDirty: form.formState.isDirty });
 
   useServerValidation(form, updateConfig.error);
 
@@ -138,6 +144,7 @@ export function WebsiteSeoTab({
               <WebsiteImageField
                 id="website-og-image"
                 labelKey="website:seo.ogImage"
+                purpose="ogImage"
                 value={ogImage}
                 onChange={setOgImage}
                 academyId={academyId}

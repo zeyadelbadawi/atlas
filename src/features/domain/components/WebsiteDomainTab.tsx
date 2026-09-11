@@ -37,7 +37,7 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { useConfirmDialog } from '@app/providers';
-import { usePermissions } from '@hooks';
+import { usePermissions, useUnsavedChanges } from '@hooks';
 import { useServerValidation } from '@forms';
 import {
   useAcademyDomain,
@@ -84,6 +84,11 @@ export function WebsiteDomainTab({
     resolver: zodResolver(addCustomDomainSchema),
     defaultValues: { hostname: '' },
   });
+
+  // Warns before this editor is left with unsaved work — both on
+  // in-app navigation (via the shared registry the route blocker
+  // reads) and on tab close or refresh.
+  useUnsavedChanges({ isDirty: form.formState.isDirty });
   useServerValidation(form, addDomain.error);
 
   if (domainQuery.isLoading) return <Skeleton className="h-64 w-full" />;

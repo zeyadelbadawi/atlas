@@ -30,6 +30,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { WebsiteImageField } from './WebsiteImageField';
+import { resolveSectionImagePurpose } from '../constants/image-recommendations.constants';
 import { LocalizedTextField } from './LocalizedTextField';
 import { PublicWebsiteLocaleProvider } from '../renderer/PublicWebsiteLocaleContext';
 import {
@@ -355,11 +356,14 @@ function ScalarField({
   value,
   onChange,
   academyId,
+  sectionType,
 }: {
   readonly descriptor: SectionFieldDescriptor;
   readonly value: unknown;
   readonly onChange: (value: unknown) => void;
   readonly academyId: string;
+  /** Which section this field belongs to — decides the image recommendation. */
+  readonly sectionType: SectionType;
 }): JSX.Element {
   const { t } = useTranslation();
   const id = `section-field-${descriptor.key}`;
@@ -442,6 +446,10 @@ function ScalarField({
           value={value as string | undefined}
           onChange={onChange}
           academyId={academyId}
+          // Section fields are generically named (`image`, `avatar`), so the
+          // SECTION is what says whether this is a full-bleed hero band or a
+          // 64px round avatar — they want very different files.
+          purpose={resolveSectionImagePurpose(sectionType, descriptor.key)}
         />
       );
     case 'text':
@@ -572,6 +580,7 @@ export function SectionConfigForm<TType extends SectionType>({
               value={draft[field.key]}
               onChange={(value) => setField(field.key, value)}
               academyId={academyId}
+              sectionType={type}
             />
           )
         )}
@@ -619,6 +628,7 @@ export function SectionConfigForm<TType extends SectionType>({
                     value={item[field.key]}
                     onChange={(value) => updateItem(index, field.key, value)}
                     academyId={academyId}
+                    sectionType={type}
                   />
                 ))}
               </div>

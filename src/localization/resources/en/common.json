@@ -114,5 +114,13 @@
   },
   "fieldHelp": {
     "trigger": "More information about this field"
+  },
+  "unsavedChanges": {
+    "title": "You have unsaved changes.",
+    "description": "You made changes that haven't been saved. Do you want to leave without saving?",
+    "stay": "Continue editing",
+    "leave": "Leave without saving",
+    "save": "Save changes",
+    "saving": "Saving…"
   }
 }

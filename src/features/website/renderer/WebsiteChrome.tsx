@@ -95,7 +95,10 @@ export function WebsiteChrome({
       */}
         <div
           dir={PUBLIC_WEBSITE_LOCALE_DIRECTION[locale]}
-          className="min-h-full bg-background text-foreground"
+          // `--website-background`, not Atlas's `bg-background`: a
+          // customer's site must not inherit the dashboard's brand-tinted
+          // neutrals or its dark-mode preference. See `WebsiteThemeScope`.
+          className="min-h-full bg-[var(--website-background)] text-[var(--website-foreground)]"
         >
           <WebsiteHeader
             logo={academyLogo}

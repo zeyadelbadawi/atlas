@@ -9,6 +9,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, FormProvider } from 'react-hook-form';
+import { useUnsavedChanges } from '@hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, Trash2 } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
@@ -106,6 +107,11 @@ export default function CourseQuizEditorPage(): JSX.Element {
         ? undefined
         : EMPTY_VALUES,
   });
+
+  // Warns before this editor is left with unsaved work — both on
+  // in-app navigation (via the shared registry the route blocker
+  // reads) and on tab close or refresh.
+  useUnsavedChanges({ isDirty: form.formState.isDirty });
 
   const goToList = () => {
     if (!academyId || !courseId) return;

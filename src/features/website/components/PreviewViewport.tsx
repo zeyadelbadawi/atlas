@@ -72,9 +72,13 @@ const MIN_PREVIEW_HEIGHT = 480;
  */
 function IframeViewport({
   width,
+  dir,
+  lang,
   children,
 }: {
   readonly width: number;
+  readonly dir: string;
+  readonly lang: string;
   readonly children: ReactNode;
 }): JSX.Element {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -96,12 +100,14 @@ function IframeViewport({
           doc.head.appendChild(node.cloneNode(true));
         });
 
-      // Mirror direction/language/dark-mode class exactly — Tailwind's
-      // `dark:` variant and this app's own RTL handling both key off
-      // attributes/classes on `<html>`, which a cloned stylesheet alone
-      // does not carry.
-      doc.documentElement.setAttribute('dir', document.documentElement.dir);
-      doc.documentElement.setAttribute('lang', document.documentElement.lang);
+      // THE PREVIEWED SITE'S DIRECTION, NOT THE DASHBOARD'S. This used to
+      // copy `document.documentElement.dir`, which is the ADMIN's own UI
+      // direction — so an English-speaking admin previewing their Arabic
+      // site got an `ltr` iframe root and a left-to-right preview of a
+      // right-to-left website. The dark-mode class is still mirrored from
+      // the host, because that IS a dashboard-level preference.
+      doc.documentElement.setAttribute('dir', dir);
+      doc.documentElement.setAttribute('lang', lang);
       doc.documentElement.className = document.documentElement.className;
       doc.body.style.margin = '0';
       doc.body.className = 'bg-background text-foreground';
@@ -117,7 +123,20 @@ function IframeViewport({
     }
     iframe.addEventListener('load', setup);
     return () => iframe.removeEventListener('load', setup);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Re-applied whenever the previewed locale changes. The setup effect
+  // above deliberately runs only on load (it rebuilds the whole head), so
+  // without this the direction would be correct only for whichever locale
+  // happened to be selected when the iframe first mounted — switching the
+  // preview to Arabic would change the copy but not the direction.
+  useEffect(() => {
+    const doc = iframeRef.current?.contentDocument;
+    if (!doc) return;
+    doc.documentElement.setAttribute('dir', dir);
+    doc.documentElement.setAttribute('lang', lang);
+  }, [dir, lang, mountNode]);
 
   useEffect(() => {
     if (!mountNode) return undefined;
@@ -148,12 +167,24 @@ function IframeViewport({
 export interface PreviewViewportProps {
   readonly breakpoint: PreviewBreakpoint;
   readonly onBreakpointChange: (breakpoint: PreviewBreakpoint) => void;
+  /**
+   * Direction of the website being PREVIEWED — `rtl` for an Arabic
+   * preview even when the surrounding dashboard is left-to-right.
+   * Defaults to `ltr` rather than to the dashboard's direction, so a
+   * caller that forgets to pass it gets the public default rather than
+   * silently inheriting the admin's UI language.
+   */
+  readonly dir?: 'ltr' | 'rtl';
+  /** Language of the website being previewed, for the iframe's `<html lang>`. */
+  readonly lang?: string;
   readonly children: React.ReactNode;
 }
 
 export function PreviewViewport({
   breakpoint,
   onBreakpointChange,
+  dir = 'ltr',
+  lang = 'en',
   children,
 }: PreviewViewportProps): JSX.Element {
   const { t } = useTranslation();
@@ -191,6 +222,8 @@ export function PreviewViewport({
           <IframeViewport
             key={breakpoint}
             width={BREAKPOINT_PIXEL_WIDTH[breakpoint]}
+            dir={dir}
+            lang={lang}
           >
             {children}
           </IframeViewport>

@@ -29,11 +29,33 @@
     "allStatuses": "All statuses"
   },
   "detail": {
-    "assignedTo": "Assigned to",
-    "unassigned": "Unassigned",
-    "conversationTitle": "Conversation",
-    "replyPlaceholder": "Write a reply…",
-    "sendReply": "Send reply",
-    "statusUpdated": "Case status updated"
+    "title": "Ticket",
+    "fromSupport": "Atlas Support",
+    "fromYou": "You",
+    "replyLabel": "Add a reply",
+    "replyPlaceholder": "Type your reply…",
+    "replyFailed": "Your reply could not be sent. Please try again.",
+    "send": "Send reply",
+    "closedNotice": "This ticket is closed. If you still need help, please open a new ticket."
+  },
+  "center": {
+    "title": "Support",
+    "subtitle": "Ask the Atlas team for help and track your tickets.",
+    "newTicket": "New ticket",
+    "emptyTitle": "You have no support tickets",
+    "emptyDescription": "If something is not working or you have a question, open a ticket and the Atlas team will reply here.",
+    "lastActivity": "Last activity {{date}}",
+    "openedOn": "Opened {{date}}"
+  },
+  "create": {
+    "title": "New support ticket",
+    "description": "Tell us what is happening. The more detail you give, the faster we can help.",
+    "subjectLabel": "Subject",
+    "subjectPlaceholder": "A short summary of the problem",
+    "subjectInvalid": "Please enter a subject of at least 3 characters.",
+    "descriptionLabel": "What is happening?",
+    "descriptionPlaceholder": "Describe the problem, what you expected, and what you saw instead.",
+    "descriptionInvalid": "Please describe the problem in at least 10 characters.",
+    "submit": "Submit ticket"
   }
 }

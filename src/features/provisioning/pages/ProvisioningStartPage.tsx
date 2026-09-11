@@ -32,7 +32,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useAuth } from '@hooks';
+import { useAuth, useUnsavedChanges } from '@hooks';
 import { useServerValidation } from '@forms';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import {
@@ -83,6 +83,11 @@ export default function ProvisioningStartPage(): JSX.Element {
       websiteSetupMode: 'complete',
     },
   });
+
+  // Warns before this editor is left with unsaved work — both on
+  // in-app navigation (via the shared registry the route blocker
+  // reads) and on tab close or refresh.
+  useUnsavedChanges({ isDirty: form.formState.isDirty });
 
   const themes = listWebsiteThemes();
   const selectedThemeKey = form.watch('selectedThemeKey');

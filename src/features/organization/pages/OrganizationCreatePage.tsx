@@ -31,7 +31,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
-import { useAuth } from '@hooks';
+import { useAuth, useUnsavedChanges } from '@hooks';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { useServerValidation } from '@forms';
 import { isApiError } from '@api';
@@ -55,6 +55,11 @@ export default function OrganizationCreatePage(): JSX.Element {
     resolver: zodResolver(createOrganizationSchema),
     defaultValues: { name: '' },
   });
+
+  // Warns before this editor is left with unsaved work — both on
+  // in-app navigation (via the shared registry the route blocker
+  // reads) and on tab close or refresh.
+  useUnsavedChanges({ isDirty: form.formState.isDirty });
 
   useServerValidation(form, error);
 

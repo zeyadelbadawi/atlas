@@ -29,11 +29,33 @@
     "allStatuses": "كل الحالات"
   },
   "detail": {
-    "assignedTo": "مُسندة إلى",
-    "unassigned": "غير مُسندة",
-    "conversationTitle": "المحادثة",
-    "replyPlaceholder": "اكتب ردًا…",
-    "sendReply": "إرسال الرد",
-    "statusUpdated": "تم تحديث حالة الحالة"
+    "title": "التذكرة",
+    "fromSupport": "دعم أطلس",
+    "fromYou": "أنت",
+    "replyLabel": "أضف ردًا",
+    "replyPlaceholder": "اكتب ردك…",
+    "replyFailed": "تعذّر إرسال ردك. يرجى المحاولة مرة أخرى.",
+    "send": "إرسال الرد",
+    "closedNotice": "هذه التذكرة مغلقة. إذا كنت ما زلت بحاجة إلى المساعدة، يرجى فتح تذكرة جديدة."
+  },
+  "center": {
+    "title": "الدعم",
+    "subtitle": "اطلب المساعدة من فريق أطلس وتابع تذاكرك.",
+    "newTicket": "تذكرة جديدة",
+    "emptyTitle": "ليس لديك أي تذاكر دعم",
+    "emptyDescription": "إذا كان هناك شيء لا يعمل أو لديك سؤال، افتح تذكرة وسيرد فريق أطلس هنا.",
+    "lastActivity": "آخر نشاط {{date}}",
+    "openedOn": "فُتحت في {{date}}"
+  },
+  "create": {
+    "title": "تذكرة دعم جديدة",
+    "description": "أخبرنا بما يحدث. كلما زادت التفاصيل، أمكننا المساعدة بسرعة أكبر.",
+    "subjectLabel": "الموضوع",
+    "subjectPlaceholder": "ملخّص قصير للمشكلة",
+    "subjectInvalid": "يرجى إدخال موضوع لا يقل عن ٣ أحرف.",
+    "descriptionLabel": "ما الذي يحدث؟",
+    "descriptionPlaceholder": "صف المشكلة، وما الذي كنت تتوقعه، وما الذي حدث بدلاً من ذلك.",
+    "descriptionInvalid": "يرجى وصف المشكلة بما لا يقل عن ١٠ أحرف.",
+    "submit": "إرسال التذكرة"
   }
 }

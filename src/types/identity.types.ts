@@ -171,6 +171,15 @@ export interface UserSession {
   readonly deviceLabel?: string;
   readonly userAgent?: string;
   readonly ipAddress?: string;
+  /**
+   * ISO 3166-1 alpha-2 country from Cloudflare's edge, e.g. `EG`.
+   * Rendered as a localized country NAME by `formatCountryName`.
+   *
+   * Country only — Atlas has no trustworthy city-level source and does
+   * not guess one from an IP. Absent means genuinely unknown, and the UI
+   * says "Location unavailable" rather than inventing a place.
+   */
+  readonly locationCountry?: string;
   /** ISO-8601. When the user signed in on this device. */
   readonly startedAt: string;
   /** ISO-8601. Real last activity — sign-in or most recent token refresh. */

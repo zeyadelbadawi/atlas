@@ -26,6 +26,7 @@
  */
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isAcceptableForLanguage } from '@/shared/validation/script-validation.utils';
 import { CheckCircle2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -73,6 +74,20 @@ export function LocalizedTextField({
   const Control = multiline ? Textarea : Input;
   const arComplete = local.ar.trim().length > 0;
 
+  /*
+   * LANGUAGE HINTS, NOT BLOCKING ERRORS.
+   *
+   * Each half warns when its content is predominantly the OTHER script —
+   * the common real mistake is pasting the English copy into the Arabic
+   * box and never noticing. It is shown as a warning rather than a
+   * validation failure because the check is a heuristic: a legitimate
+   * entry that happens to be mostly a brand name ("Atlas Pro 2026") would
+   * otherwise be impossible to save. See `script-validation.utils.ts` for
+   * everything it deliberately tolerates.
+   */
+  const enLooksWrong = !isAcceptableForLanguage(local.en, 'en');
+  const arLooksWrong = !isAcceptableForLanguage(local.ar, 'ar');
+
   const update = (patch: Partial<LocalizedText>) => {
     const next = { ...local, ...patch };
     setLocal(next);
@@ -98,7 +113,18 @@ export function LocalizedTextField({
           value={local.en}
           onChange={(event) => update({ en: event.target.value })}
           onBlur={() => onBlur?.(local)}
+          aria-invalid={enLooksWrong || undefined}
+          aria-describedby={enLooksWrong ? `${id}-en-language` : undefined}
         />
+        {enLooksWrong ? (
+          <p
+            id={`${id}-en-language`}
+            data-testid={`${id}-en-language`}
+            className="text-xs text-warning"
+          >
+            {t('validation:language.expectedEnglish')}
+          </p>
+        ) : null}
       </div>
 
       <div className="space-y-1.5">
@@ -129,7 +155,18 @@ export function LocalizedTextField({
           value={local.ar}
           onChange={(event) => update({ ar: event.target.value })}
           onBlur={() => onBlur?.(local)}
+          aria-invalid={arLooksWrong || undefined}
+          aria-describedby={arLooksWrong ? `${id}-ar-language` : undefined}
         />
+        {arLooksWrong ? (
+          <p
+            id={`${id}-ar-language`}
+            data-testid={`${id}-ar-language`}
+            className="text-xs text-warning"
+          >
+            {t('validation:language.expectedArabic')}
+          </p>
+        ) : null}
       </div>
     </div>
   );

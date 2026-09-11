@@ -343,7 +343,12 @@
       "published": "Published",
       "publishing": "Publishing…",
       "failed": "Publish failed"
-    }
+    },
+    "unpublishAction": "Unpublish",
+    "unpublishConfirmTitle": "Take the website offline?",
+    "unpublishConfirmDescription": "Visitors will no longer be able to reach your academy's public website. You can publish it again at any time.",
+    "unpublishConfirmAction": "Unpublish",
+    "unpublishedHint": "Your website is offline and not reachable by visitors."
   },
   "sections": {
     "hero": {
@@ -489,6 +494,8 @@
     "chooseFromLibrary": "Choose from library",
     "removeImage": "Remove image",
     "imageTooLarge": "The file is too large.",
-    "imageInvalidType": "This file type isn't supported. Use PNG, JPG or WEBP."
+    "imageInvalidType": "This file type isn't supported. Use PNG, JPG or WEBP.",
+    "imageRecommendation": "Recommended: {{width}}×{{height}} px ({{ratio}}) · {{formats}}",
+    "imageTransparencyHint": "Transparent background recommended."
   }
 }

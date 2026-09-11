@@ -5,6 +5,7 @@ export { useWebsiteConfiguration } from './useWebsiteConfiguration';
 export { useUpdateWebsiteConfiguration } from './useUpdateWebsiteConfiguration';
 export type { UpdateWebsiteConfigurationVariables } from './useUpdateWebsiteConfiguration';
 export { usePublishWebsite } from './usePublishWebsite';
+export { useUnpublishWebsite } from './useUnpublishWebsite';
 export { useWebsitePages } from './useWebsitePages';
 export type { UseWebsitePagesOptions } from './useWebsitePages';
 export { useWebsitePage } from './useWebsitePage';

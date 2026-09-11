@@ -6,6 +6,7 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
+import { useDirtyGuard } from '@features/unsaved-changes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -65,6 +66,11 @@ export function SectionFormDialog({
     defaultValues: EMPTY_SECTION_VALUES,
   });
 
+  // Unsaved-changes protection for a MODAL. The route blocker cannot see
+  // this: closing a dialog is not a navigation, so the X button, an
+  // outside click and Escape all need to be intercepted here instead.
+  const dirtyGuard = useDirtyGuard(form.formState.isDirty);
+
   // See `LessonFormDialog.tsx`'s identical fix for the exact bug this
   // avoids — this dialog stays mounted across opens, so a reactive
   // `values:` option silently skips resetting whenever two consecutive
@@ -80,7 +86,14 @@ export function SectionFormDialog({
   useServerValidation(form, error ?? null);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        // Opening is never guarded; only closing can lose work.
+        if (next) return onOpenChange(true);
+        void dirtyGuard.requestClose(() => onOpenChange(false));
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
@@ -142,7 +155,9 @@ export function SectionFormDialog({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => onOpenChange(false)}
+                onClick={() =>
+                  void dirtyGuard.requestClose(() => onOpenChange(false))
+                }
                 disabled={isPending}
               >
                 {t('course:builder.sectionDialog.cancelButton')}

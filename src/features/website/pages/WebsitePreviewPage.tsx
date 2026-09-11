@@ -40,6 +40,7 @@ import { WebsiteRenderer } from '../renderer';
 import { getWebsiteTabs } from '../utils/website-navigation.utils';
 import {
   PUBLIC_WEBSITE_LOCALES,
+  PUBLIC_WEBSITE_LOCALE_DIRECTION,
   PUBLIC_WEBSITE_LOCALE_LABELS,
   DEFAULT_PUBLIC_WEBSITE_LOCALE,
   type PublicWebsiteLocale,
@@ -168,6 +169,8 @@ export default function WebsitePreviewPage(): JSX.Element {
           <PreviewViewport
             breakpoint={breakpoint}
             onBreakpointChange={setBreakpoint}
+            dir={PUBLIC_WEBSITE_LOCALE_DIRECTION[previewLocale]}
+            lang={previewLocale}
           >
             <WebsiteRenderer
               academyId={academyId}

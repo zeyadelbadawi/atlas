@@ -45,6 +45,20 @@ import {
   type PreviewBreakpoint,
 } from '../components/PreviewViewport';
 import { WebsiteRenderer } from '../renderer';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  DEFAULT_PUBLIC_WEBSITE_LOCALE,
+  PUBLIC_WEBSITE_LOCALES,
+  PUBLIC_WEBSITE_LOCALE_DIRECTION,
+  PUBLIC_WEBSITE_LOCALE_LABELS,
+  type PublicWebsiteLocale,
+} from '../constants/locale.constants';
 import { SECTION_METADATA, getDefaultSectionConfig } from '../sections';
 import { DEFAULT_RESPONSIVE_VISIBILITY } from '@types';
 import type {
@@ -73,6 +87,16 @@ export default function WebsitePageEditorPage(): JSX.Element {
 
   const [draftSections, setDraftSections] = useState<SectionInstance[]>([]);
   const [selectedId, setSelectedId] = useState<string>();
+  // THE PAGE EDITOR PREVIEW USED TO BE HARDCODED TO ENGLISH. This page
+  // never passed `locale` to `WebsiteRenderer`, so it fell back to
+  // `DEFAULT_PUBLIC_WEBSITE_LOCALE` ('en') — meaning an admin editing the
+  // Arabic side of their site previewed it in English AND left-to-right,
+  // which is exactly the RTL-preview defect. `WebsitePreviewPage` already
+  // had this selector; the editor, where admins actually spend their
+  // time, did not.
+  const [previewLocale, setPreviewLocale] = useState<PublicWebsiteLocale>(
+    DEFAULT_PUBLIC_WEBSITE_LOCALE
+  );
   const [breakpoint, setBreakpoint] = useState<PreviewBreakpoint>('desktop');
   const seoDialog = useDisclosure();
 
@@ -257,6 +281,26 @@ export default function WebsitePageEditorPage(): JSX.Element {
           actions={
             canManage ? (
               <div className="flex items-center gap-2">
+                <Select
+                  value={previewLocale}
+                  onValueChange={(value) =>
+                    setPreviewLocale(value as PublicWebsiteLocale)
+                  }
+                >
+                  <SelectTrigger
+                    className="w-32"
+                    aria-label={t('website:preview.localeLabel')}
+                  >
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PUBLIC_WEBSITE_LOCALES.map((locale) => (
+                      <SelectItem key={locale} value={locale}>
+                        {PUBLIC_WEBSITE_LOCALE_LABELS[locale]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <Button
                   type="button"
                   variant="outline"
@@ -285,6 +329,7 @@ export default function WebsitePageEditorPage(): JSX.Element {
         <WebsitePublishBar
           academyId={academyId}
           status={configuration.status}
+          lastPublishedAt={configuration.publishedAt}
         />
         {updatePage.error ? <ErrorState onRetry={handleSaveChanges} /> : null}
 
@@ -314,6 +359,8 @@ export default function WebsitePageEditorPage(): JSX.Element {
           <PreviewViewport
             breakpoint={breakpoint}
             onBreakpointChange={setBreakpoint}
+            dir={PUBLIC_WEBSITE_LOCALE_DIRECTION[previewLocale]}
+            lang={previewLocale}
           >
             <WebsiteRenderer
               academyId={academyId}
@@ -322,6 +369,7 @@ export default function WebsitePageEditorPage(): JSX.Element {
               configuration={configuration}
               pages={pages}
               page={previewPage}
+              locale={previewLocale}
               onNavigate={() => undefined}
             />
           </PreviewViewport>

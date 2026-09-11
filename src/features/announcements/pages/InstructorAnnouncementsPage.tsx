@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { useUnsavedChanges } from '@hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, Plus } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
@@ -100,6 +101,11 @@ export default function InstructorAnnouncementsPage(): JSX.Element {
     resolver: zodResolver(announcementSchema),
     defaultValues: { title: '', body: '', scheduledAt: '' },
   });
+
+  // Warns before this editor is left with unsaved work — both on
+  // in-app navigation (via the shared registry the route blocker
+  // reads) and on tab close or refresh.
+  useUnsavedChanges({ isDirty: form.formState.isDirty });
 
   useServerValidation(form, editing ? updateError : createError);
 
