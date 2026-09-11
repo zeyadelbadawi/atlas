@@ -25,10 +25,7 @@ export interface Assignment {
 
 /** A submission's lifecycle status. */
 export type AssignmentSubmissionStatus =
-  | 'draft'
-  | 'submitting'
-  | 'submitted'
-  | 'failed';
+  'draft' | 'submitting' | 'submitted' | 'failed';
 
 /** A student's submission for one assignment. */
 export interface AssignmentSubmission {

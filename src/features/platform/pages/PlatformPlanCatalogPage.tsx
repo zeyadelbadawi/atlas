@@ -33,18 +33,25 @@ export default function PlatformPlanCatalogPage(): JSX.Element {
 
   return (
     <PageContainer>
-      <PageHeader titleKey="platform:planCatalog.title" descriptionKey="platform:planCatalog.subtitle" />
+      <PageHeader
+        titleKey="platform:planCatalog.title"
+        descriptionKey="platform:planCatalog.subtitle"
+      />
 
       <div className="space-y-6">
         <Alert>
           <Info className="size-4" aria-hidden />
           <AlertTitle>{t('platform:planCatalog.boundaryTitle')}</AlertTitle>
-          <AlertDescription>{t('platform:planCatalog.boundaryDescription')}</AlertDescription>
+          <AlertDescription>
+            {t('platform:planCatalog.boundaryDescription')}
+          </AlertDescription>
         </Alert>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">{t('platform:planCatalog.plansTitle')}</CardTitle>
+            <CardTitle className="text-base">
+              {t('platform:planCatalog.plansTitle')}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {plansQuery.isLoading ? (
@@ -60,17 +67,30 @@ export default function PlatformPlanCatalogPage(): JSX.Element {
             ) : (
               <ul className="divide-y divide-border">
                 {plansQuery.data.map((plan) => (
-                  <li key={plan.id} className="flex items-center justify-between gap-3 py-3">
+                  <li
+                    key={plan.id}
+                    className="flex items-center justify-between gap-3 py-3"
+                  >
                     <div>
                       <p className="font-medium text-foreground">{plan.name}</p>
                       {plan.description ? (
-                        <p className="text-xs text-muted-foreground">{plan.description}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {plan.description}
+                        </p>
                       ) : null}
                     </div>
                     <div className="flex items-center gap-3">
-                      {plan.pricing?.amount !== undefined && plan.pricing.currency ? (
-                        <span className="text-sm text-muted-foreground" data-atlas-numeric="true">
-                          {formatCurrency(plan.pricing.amount, language, plan.pricing.currency)}
+                      {plan.pricing?.amount !== undefined &&
+                      plan.pricing.currency ? (
+                        <span
+                          className="text-sm text-muted-foreground"
+                          data-atlas-numeric="true"
+                        >
+                          {formatCurrency(
+                            plan.pricing.amount,
+                            language,
+                            plan.pricing.currency
+                          )}
                           {plan.pricing.billingCycle
                             ? ` / ${t(`platform:planCatalog.billingCycle.${plan.pricing.billingCycle}`)}`
                             : ''}
@@ -90,7 +110,9 @@ export default function PlatformPlanCatalogPage(): JSX.Element {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">{t('platform:planCatalog.addOnsTitle')}</CardTitle>
+            <CardTitle className="text-base">
+              {t('platform:planCatalog.addOnsTitle')}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {addOnsQuery.isLoading ? (
@@ -106,16 +128,31 @@ export default function PlatformPlanCatalogPage(): JSX.Element {
             ) : (
               <ul className="divide-y divide-border">
                 {addOnsQuery.data.map((addOn) => (
-                  <li key={addOn.id} className="flex items-center justify-between gap-3 py-3">
+                  <li
+                    key={addOn.id}
+                    className="flex items-center justify-between gap-3 py-3"
+                  >
                     <div>
-                      <p className="font-medium text-foreground">{addOn.name}</p>
+                      <p className="font-medium text-foreground">
+                        {addOn.name}
+                      </p>
                       {addOn.description ? (
-                        <p className="text-xs text-muted-foreground">{addOn.description}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {addOn.description}
+                        </p>
                       ) : null}
                     </div>
-                    {addOn.pricing?.amount !== undefined && addOn.pricing.currency ? (
-                      <span className="text-sm text-muted-foreground" data-atlas-numeric="true">
-                        {formatCurrency(addOn.pricing.amount, language, addOn.pricing.currency)}
+                    {addOn.pricing?.amount !== undefined &&
+                    addOn.pricing.currency ? (
+                      <span
+                        className="text-sm text-muted-foreground"
+                        data-atlas-numeric="true"
+                      >
+                        {formatCurrency(
+                          addOn.pricing.amount,
+                          language,
+                          addOn.pricing.currency
+                        )}
                       </span>
                     ) : null}
                   </li>

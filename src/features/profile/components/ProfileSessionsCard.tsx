@@ -63,7 +63,9 @@ export function ProfileSessionsCard(): JSX.Element {
   // Which session the confirmation dialog is currently asking about.
   // Holding the whole session (not just an id) keeps the dialog copy able
   // to name the device being revoked.
-  const [pendingSession, setPendingSession] = useState<UserSession | null>(null);
+  const [pendingSession, setPendingSession] = useState<UserSession | null>(
+    null
+  );
 
   const handleConfirmRevoke = (): void => {
     if (!pendingSession) return;
@@ -84,14 +86,18 @@ export function ProfileSessionsCard(): JSX.Element {
           }
           toast({
             title: t('profile:sections.security.sessionRevoked'),
-            description: t('profile:sections.security.sessionRevokedDescription'),
+            description: t(
+              'profile:sections.security.sessionRevokedDescription'
+            ),
           });
         },
         onError: () => {
           toast({
             variant: 'destructive',
             title: t('profile:sections.security.sessionRevokeFailed'),
-            description: t('profile:sections.security.sessionRevokeFailedDescription'),
+            description: t(
+              'profile:sections.security.sessionRevokeFailedDescription'
+            ),
           });
         },
       }

@@ -8,7 +8,13 @@
  */
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ExternalLink, FileText, Globe, MessageSquareQuote, Settings2 } from 'lucide-react';
+import {
+  ExternalLink,
+  FileText,
+  Globe,
+  MessageSquareQuote,
+  Settings2,
+} from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { SectionTabs } from '@components/navigation';
@@ -36,7 +42,8 @@ export default function WebsiteOverviewPage(): JSX.Element {
     query: { pagination: { page: 1, pageSize: CONTENT_LIST_PAGE_SIZE } },
   });
 
-  const isLoading = academyQuery.isLoading || configQuery.isLoading || pagesQuery.isLoading;
+  const isLoading =
+    academyQuery.isLoading || configQuery.isLoading || pagesQuery.isLoading;
   const error = academyQuery.error ?? configQuery.error ?? pagesQuery.error;
 
   if (isLoading) {
@@ -131,7 +138,10 @@ export default function WebsiteOverviewPage(): JSX.Element {
       <SectionTabs items={getWebsiteTabs(academyId)} />
 
       <div className="space-y-6">
-        <WebsitePublishBar academyId={academyId} status={configQuery.data.status} />
+        <WebsitePublishBar
+          academyId={academyId}
+          status={configQuery.data.status}
+        />
 
         {/* A clear, obvious place to see and open the academy's public
             website — previously missing entirely from this dashboard
@@ -143,12 +153,18 @@ export default function WebsiteOverviewPage(): JSX.Element {
           <Card>
             <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
               <div className="flex items-center gap-3">
-                <Globe className="size-5 shrink-0 text-muted-foreground" aria-hidden />
+                <Globe
+                  className="size-5 shrink-0 text-muted-foreground"
+                  aria-hidden
+                />
                 <div>
                   <p className="text-sm font-medium text-foreground">
                     {t('website:overview.publicUrl.label')}
                   </p>
-                  <p className="font-mono text-xs text-muted-foreground" dir="ltr">
+                  <p
+                    className="font-mono text-xs text-muted-foreground"
+                    dir="ltr"
+                  >
                     {publicUrl}
                   </p>
                 </div>
@@ -156,7 +172,11 @@ export default function WebsiteOverviewPage(): JSX.Element {
               {isPublished ? (
                 <Button asChild size="sm">
                   <a href={publicUrl} target="_blank" rel="noreferrer">
-                    <ExternalLink className="size-4" strokeWidth={2} aria-hidden />
+                    <ExternalLink
+                      className="size-4"
+                      strokeWidth={2}
+                      aria-hidden
+                    />
                     {t('website:overview.visitWebsite')}
                   </a>
                 </Button>
@@ -178,21 +198,30 @@ export default function WebsiteOverviewPage(): JSX.Element {
               className="cursor-pointer transition-colors hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               onClick={() => navigate(link.path)}
               onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') navigate(link.path);
+                if (event.key === 'Enter' || event.key === ' ')
+                  navigate(link.path);
               }}
             >
               <CardHeader className="flex flex-row items-center gap-3 space-y-0">
-                <link.icon className="size-5 text-muted-foreground" aria-hidden />
+                <link.icon
+                  className="size-5 text-muted-foreground"
+                  aria-hidden
+                />
                 <CardTitle className="text-base">{t(link.titleKey)}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">{t(link.descriptionKey)}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t(link.descriptionKey)}
+                </p>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        <SitemapPreviewCard configuration={configQuery.data} pages={pagesQuery.data?.items ?? []} />
+        <SitemapPreviewCard
+          configuration={configQuery.data}
+          pages={pagesQuery.data?.items ?? []}
+        />
       </div>
     </PageContainer>
   );
@@ -217,20 +246,29 @@ function SitemapPreviewCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">{t('website:overview.sitemapPreview.title')}</CardTitle>
+        <CardTitle className="text-base">
+          {t('website:overview.sitemapPreview.title')}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <p className="mb-3 text-xs text-muted-foreground">
           {t('website:overview.sitemapPreview.help')}
         </p>
         {entries.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t('website:overview.sitemapPreview.empty')}</p>
+          <p className="text-sm text-muted-foreground">
+            {t('website:overview.sitemapPreview.empty')}
+          </p>
         ) : (
           <ul className="space-y-1 text-sm" dir="ltr">
             {entries.map((entry) => (
-              <li key={entry.path} className="flex items-center justify-between gap-4 font-mono text-xs">
+              <li
+                key={entry.path}
+                className="flex items-center justify-between gap-4 font-mono text-xs"
+              >
                 <span className="text-foreground">{entry.path}</span>
-                <span className="text-muted-foreground">{entry.priority.toFixed(1)}</span>
+                <span className="text-muted-foreground">
+                  {entry.priority.toFixed(1)}
+                </span>
               </li>
             ))}
           </ul>

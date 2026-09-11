@@ -140,5 +140,33 @@
     "disabled": "Two-factor authentication is off",
     "passwordRequiredReason": "We ask for your password because a signed-in session alone shouldn't be able to weaken your account's security.",
     "passwordRejected": "That password isn't correct"
+  },
+  "deleteAccount": {
+    "title": "Delete my account",
+    "description": "Permanently deletes your Atlas account. This cannot be undone.",
+    "consequenceIrreversible": "Your name, email address and profile are permanently removed. The account cannot be restored.",
+    "consequenceSessions": "You are signed out everywhere immediately, and you will not be able to sign in again.",
+    "consequenceAcademies": "Any academy you own is archived, which takes its public website offline.",
+    "consequenceRecords": "Records that must be kept — billing history, audit entries, and content you posted — remain, but are no longer linked to you by name.",
+    "action": "Delete my account",
+    "confirmTitle": "Delete your account permanently?",
+    "confirmDescription": "This is irreversible. Please confirm you want to delete your Atlas account.",
+    "reasonLabel": "Why are you leaving? (optional)",
+    "reasonPlaceholder": "Select a reason",
+    "reasons": {
+      "no_longer_needed": "I no longer need Atlas",
+      "too_expensive": "It is too expensive",
+      "missing_features": "It is missing features I need",
+      "too_difficult": "It is too difficult to use",
+      "switching_provider": "I am switching to another provider",
+      "privacy_concerns": "I have privacy concerns",
+      "other": "Another reason"
+    },
+    "feedbackLabel": "Anything you would like us to know? (optional)",
+    "feedbackPlaceholder": "Your feedback helps us improve Atlas.",
+    "typeEmailLabel": "Type {{email}} to confirm",
+    "confirmAction": "Permanently delete",
+    "deleting": "Deleting…",
+    "failed": "Your account could not be deleted. Please try again."
   }
 }

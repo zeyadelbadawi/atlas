@@ -44,25 +44,47 @@ export function SectionRenderer({
 
   switch (instance.type) {
     case 'hero':
-      return <HeroSection config={instance.config} pages={pages} linkRenderer={linkRenderer} />;
+      return (
+        <HeroSection
+          config={instance.config}
+          pages={pages}
+          linkRenderer={linkRenderer}
+        />
+      );
     case 'about':
       return <AboutSection config={instance.config} />;
     case 'featuredCourses':
       return (
-        <FeaturedCoursesSection config={instance.config} academyId={academyId} linkRenderer={linkRenderer} />
+        <FeaturedCoursesSection
+          config={instance.config}
+          academyId={academyId}
+          linkRenderer={linkRenderer}
+        />
       );
     case 'statistics':
-      return <StatisticsSection config={instance.config} academyId={academyId} />;
+      return (
+        <StatisticsSection config={instance.config} academyId={academyId} />
+      );
     case 'features':
       return <FeaturesSection config={instance.config} />;
     case 'testimonials':
-      return <TestimonialsSection config={instance.config} academyId={academyId} />;
+      return (
+        <TestimonialsSection config={instance.config} academyId={academyId} />
+      );
     case 'faq':
       return <FaqSection config={instance.config} academyId={academyId} />;
     case 'cta':
-      return <CtaSection config={instance.config} pages={pages} linkRenderer={linkRenderer} />;
+      return (
+        <CtaSection
+          config={instance.config}
+          pages={pages}
+          linkRenderer={linkRenderer}
+        />
+      );
     case 'instructors':
-      return <InstructorsSection config={instance.config} academyId={academyId} />;
+      return (
+        <InstructorsSection config={instance.config} academyId={academyId} />
+      );
     case 'gallery':
       return <GallerySection config={instance.config} />;
     case 'contact':

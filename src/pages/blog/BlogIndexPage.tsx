@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import { blogPosts, getBlogRoute } from "@/lib/blog";
+import { Link } from 'react-router-dom';
+import { blogPosts, getBlogRoute } from '@/lib/blog';
 
 const BlogIndexPage = () => (
   <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(14,165,233,0.14),_transparent_36%),linear-gradient(180deg,_#f8fafc_0%,_#eff6ff_100%)] text-slate-900">

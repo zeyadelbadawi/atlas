@@ -20,7 +20,8 @@ import type { WebsiteThemeKey } from './website-theme.types';
 import type { SectionInstance } from './website-section.types';
 import type { LocalizedText } from './website-content.types';
 
-export type WebsitePublishStatus = 'draft' | 'published' | 'publishing' | 'failed';
+export type WebsitePublishStatus =
+  'draft' | 'published' | 'publishing' | 'failed';
 
 /** A validated HSL triplet string, e.g. `"221 83% 53%"` — the same format Atlas's own `hsl(var(--x))` design tokens use. */
 export type HslColorTriplet = string;

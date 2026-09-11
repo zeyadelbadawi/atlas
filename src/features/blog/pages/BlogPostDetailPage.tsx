@@ -66,7 +66,9 @@ export default function BlogPostDetailPage(): JSX.Element {
                 variant="outline"
                 size="sm"
                 onClick={() =>
-                  navigate(buildPath(DASHBOARD_ROUTES.blogEdit, { postId: post.id }))
+                  navigate(
+                    buildPath(DASHBOARD_ROUTES.blogEdit, { postId: post.id })
+                  )
                 }
               >
                 <Pencil className="size-4" strokeWidth={2} aria-hidden />

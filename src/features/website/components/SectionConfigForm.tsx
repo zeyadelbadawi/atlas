@@ -101,7 +101,11 @@ function LibraryEntryPicker({
   if (options.length === 0) return null;
 
   const toggle = (id: string, checked: boolean) => {
-    onChange(checked ? [...selectedIds, id] : selectedIds.filter((existing) => existing !== id));
+    onChange(
+      checked
+        ? [...selectedIds, id]
+        : selectedIds.filter((existing) => existing !== id)
+    );
   };
 
   return (
@@ -135,7 +139,9 @@ function FaqLibraryField({
 }): JSX.Element | null {
   const { i18n } = useTranslation();
   const language = i18n.language as LanguageCode;
-  const { data } = useWebsiteFaqEntries(academyId, { query: { filters: { status: 'published' } } });
+  const { data } = useWebsiteFaqEntries(academyId, {
+    query: { filters: { status: 'published' } },
+  });
   const options: LibraryOption[] = (data?.items ?? []).map((entry) => ({
     id: entry.id,
     label: entry.question[language] || entry.question.en,
@@ -258,14 +264,23 @@ function CtaFieldEditor({
 
       <div className="space-y-1.5">
         <Label>{t('website:fields.linkType')}</Label>
-        <Select value={linkType} onValueChange={(next) => setLinkType(next as CtaLinkType)}>
+        <Select
+          value={linkType}
+          onValueChange={(next) => setLinkType(next as CtaLinkType)}
+        >
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="page">{t('website:fields.linkTypePage')}</SelectItem>
-            <SelectItem value="external">{t('website:fields.linkTypeExternal')}</SelectItem>
-            <SelectItem value="course">{t('website:fields.linkTypeCourse')}</SelectItem>
+            <SelectItem value="page">
+              {t('website:fields.linkTypePage')}
+            </SelectItem>
+            <SelectItem value="external">
+              {t('website:fields.linkTypeExternal')}
+            </SelectItem>
+            <SelectItem value="course">
+              {t('website:fields.linkTypeCourse')}
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -273,10 +288,14 @@ function CtaFieldEditor({
       {linkType === 'page' ? (
         <Select
           value={value?.pageId}
-          onValueChange={(pageId) => onChange({ label: value?.label ?? emptyLabel, pageId })}
+          onValueChange={(pageId) =>
+            onChange({ label: value?.label ?? emptyLabel, pageId })
+          }
         >
           <SelectTrigger>
-            <SelectValue placeholder={t('website:fields.ctaTargetPlaceholder')} />
+            <SelectValue
+              placeholder={t('website:fields.ctaTargetPlaceholder')}
+            />
           </SelectTrigger>
           <SelectContent>
             {pages.map((page) => (
@@ -291,10 +310,14 @@ function CtaFieldEditor({
       {linkType === 'course' ? (
         <Select
           value={value?.courseId}
-          onValueChange={(courseId) => onChange({ label: value?.label ?? emptyLabel, courseId })}
+          onValueChange={(courseId) =>
+            onChange({ label: value?.label ?? emptyLabel, courseId })
+          }
         >
           <SelectTrigger>
-            <SelectValue placeholder={t('website:fields.ctaCoursePlaceholder')} />
+            <SelectValue
+              placeholder={t('website:fields.ctaCoursePlaceholder')}
+            />
           </SelectTrigger>
           <SelectContent>
             {courses.map((course) => (
@@ -312,10 +335,14 @@ function CtaFieldEditor({
             dir="ltr"
             placeholder="https://example.com"
             value={urlValue}
-            onChange={(event) => onChange({ label: value?.label ?? '', url: event.target.value })}
+            onChange={(event) =>
+              onChange({ label: value?.label ?? '', url: event.target.value })
+            }
           />
           {urlError ? (
-            <p className="text-xs text-destructive">{t('validation:invalidUrl')}</p>
+            <p className="text-xs text-destructive">
+              {t('validation:invalidUrl')}
+            </p>
           ) : null}
         </div>
       ) : null}
@@ -337,7 +364,10 @@ function ScalarField({
   const { t } = useTranslation();
   const id = `section-field-${descriptor.key}`;
 
-  if ((descriptor.kind === 'text' || descriptor.kind === 'longText') && descriptor.localized) {
+  if (
+    (descriptor.kind === 'text' || descriptor.kind === 'longText') &&
+    descriptor.localized
+  ) {
     return (
       <LocalizedTextField
         id={id}
@@ -354,13 +384,21 @@ function ScalarField({
       return (
         <div className="space-y-1.5">
           <Label htmlFor={id}>{t(descriptor.labelKey)}</Label>
-          <Textarea id={id} rows={3} value={(value as string) ?? ''} onChange={(e) => onChange(e.target.value)} />
+          <Textarea
+            id={id}
+            rows={3}
+            value={(value as string) ?? ''}
+            onChange={(e) => onChange(e.target.value)}
+          />
         </div>
       );
     case 'boolean':
       return (
         <label className="flex items-center gap-2 text-sm">
-          <Checkbox checked={!!value} onCheckedChange={(checked) => onChange(checked === true)} />
+          <Checkbox
+            checked={!!value}
+            onCheckedChange={(checked) => onChange(checked === true)}
+          />
           {t(descriptor.labelKey)}
         </label>
       );
@@ -411,7 +449,11 @@ function ScalarField({
       return (
         <div className="space-y-1.5">
           <Label htmlFor={id}>{t(descriptor.labelKey)}</Label>
-          <Input id={id} value={(value as string) ?? ''} onChange={(e) => onChange(e.target.value)} />
+          <Input
+            id={id}
+            value={(value as string) ?? ''}
+            onChange={(e) => onChange(e.target.value)}
+          />
         </div>
       );
   }
@@ -429,14 +471,18 @@ export function SectionConfigForm<TType extends SectionType>({
 }: SectionConfigFormProps<TType>): JSX.Element {
   const { t } = useTranslation();
   const schema = SECTION_FIELD_SCHEMAS[type];
-  const [draft, setDraft] = useState<DraftValue>(initialConfig as unknown as DraftValue);
+  const [draft, setDraft] = useState<DraftValue>(
+    initialConfig as unknown as DraftValue
+  );
   const [error, setError] = useState<string>();
   // Phase 6 — which language the live preview shows. Independent of the
   // admin's own dashboard chrome language (`i18n.language`) and of which
   // side of the editor fields the admin is currently typing into — a
   // small, explicit toggle so an Owner can genuinely check their Arabic
   // content looks right before saving, not just trust it does.
-  const [previewLocale, setPreviewLocale] = useState<PublicWebsiteLocale>(DEFAULT_PUBLIC_WEBSITE_LOCALE);
+  const [previewLocale, setPreviewLocale] = useState<PublicWebsiteLocale>(
+    DEFAULT_PUBLIC_WEBSITE_LOCALE
+  );
 
   // Phase 6 — live inline preview. Reactive to every keystroke (`draft`),
   // scoped to just this one section instance, rendered through the exact
@@ -456,23 +502,35 @@ export function SectionConfigForm<TType extends SectionType>({
     config: draft as unknown as SectionConfigMap[TType],
   } as SectionInstance;
 
-  const setField = (key: string, value: unknown) => setDraft((prev) => ({ ...prev, [key]: value }));
+  const setField = (key: string, value: unknown) =>
+    setDraft((prev) => ({ ...prev, [key]: value }));
 
-  const items = (schema.repeatable ? (draft[schema.repeatable.key] as DraftValue[] | undefined) : undefined) ?? [];
+  const items =
+    (schema.repeatable
+      ? (draft[schema.repeatable.key] as DraftValue[] | undefined)
+      : undefined) ?? [];
 
   const addItem = () => {
     if (!schema.repeatable) return;
     const blank: DraftValue = { id: crypto.randomUUID() };
     for (const field of schema.repeatable.itemFields) {
-      const isLocalized = (field.kind === 'text' || field.kind === 'longText') && field.localized;
-      blank[field.key] = field.kind === 'boolean' ? false : isLocalized ? { en: '', ar: '' } : '';
+      const isLocalized =
+        (field.kind === 'text' || field.kind === 'longText') && field.localized;
+      blank[field.key] =
+        field.kind === 'boolean'
+          ? false
+          : isLocalized
+            ? { en: '', ar: '' }
+            : '';
     }
     setField(schema.repeatable.key, [...items, blank]);
   };
 
   const updateItem = (index: number, key: string, value: unknown) => {
     if (!schema.repeatable) return;
-    const next = items.map((item, i) => (i === index ? { ...item, [key]: value } : item));
+    const next = items.map((item, i) =>
+      i === index ? { ...item, [key]: value } : item
+    );
     setField(schema.repeatable.key, next);
   };
 
@@ -497,97 +555,102 @@ export function SectionConfigForm<TType extends SectionType>({
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <div className="space-y-5">
-      {schema.fields.map((field) =>
-        field.kind === 'cta' ? (
-          <CtaFieldEditor
-            key={field.key}
-            labelKey={field.labelKey}
-            pages={pages}
-            academyId={academyId}
-            value={draft[field.key] as Partial<WebsiteCta> | undefined}
-            onChange={(value) => setField(field.key, value)}
-          />
-        ) : (
-          <ScalarField
-            key={field.key}
-            descriptor={field}
-            value={draft[field.key]}
-            onChange={(value) => setField(field.key, value)}
-            academyId={academyId}
-          />
-        )
-      )}
+        {schema.fields.map((field) =>
+          field.kind === 'cta' ? (
+            <CtaFieldEditor
+              key={field.key}
+              labelKey={field.labelKey}
+              pages={pages}
+              academyId={academyId}
+              value={draft[field.key] as Partial<WebsiteCta> | undefined}
+              onChange={(value) => setField(field.key, value)}
+            />
+          ) : (
+            <ScalarField
+              key={field.key}
+              descriptor={field}
+              value={draft[field.key]}
+              onChange={(value) => setField(field.key, value)}
+              academyId={academyId}
+            />
+          )
+        )}
 
-      {schema.repeatable ? (
-        <div className="space-y-3 border-t border-border pt-4">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-foreground">{t(schema.repeatable.labelKey)}</p>
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              onClick={addItem}
-              disabled={items.length >= MAX_SECTION_ITEMS}
-            >
-              <Plus className="size-3.5" aria-hidden />
-              {t('website:editor.addItem')}
-            </Button>
-          </div>
-          {items.map((item, index) => (
-            <div key={(item.id as string) ?? index} className="space-y-3 rounded-md border border-border p-3">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-medium text-muted-foreground">
-                  {t(schema.repeatable!.itemLabelKey)} {index + 1}
-                </p>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => removeItem(index)}
-                  aria-label={t('website:editor.removeItem')}
-                >
-                  <Trash2 className="size-4" aria-hidden />
-                </Button>
-              </div>
-              {schema.repeatable!.itemFields.map((field) => (
-                <ScalarField
-                  key={field.key}
-                  descriptor={field}
-                  value={item[field.key]}
-                  onChange={(value) => updateItem(index, field.key, value)}
-                  academyId={academyId}
-                />
-              ))}
+        {schema.repeatable ? (
+          <div className="space-y-3 border-t border-border pt-4">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium text-foreground">
+                {t(schema.repeatable.labelKey)}
+              </p>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={addItem}
+                disabled={items.length >= MAX_SECTION_ITEMS}
+              >
+                <Plus className="size-3.5" aria-hidden />
+                {t('website:editor.addItem')}
+              </Button>
             </div>
-          ))}
+            {items.map((item, index) => (
+              <div
+                key={(item.id as string) ?? index}
+                className="space-y-3 rounded-md border border-border p-3"
+              >
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-medium text-muted-foreground">
+                    {t(schema.repeatable!.itemLabelKey)} {index + 1}
+                  </p>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => removeItem(index)}
+                    aria-label={t('website:editor.removeItem')}
+                  >
+                    <Trash2 className="size-4" aria-hidden />
+                  </Button>
+                </div>
+                {schema.repeatable!.itemFields.map((field) => (
+                  <ScalarField
+                    key={field.key}
+                    descriptor={field}
+                    value={item[field.key]}
+                    onChange={(value) => updateItem(index, field.key, value)}
+                    academyId={academyId}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
+        ) : null}
+
+        {type === 'faq' ? (
+          <FaqLibraryField
+            academyId={academyId}
+            selectedIds={(draft.libraryEntryIds as string[] | undefined) ?? []}
+            onChange={(ids) => setField('libraryEntryIds', ids)}
+          />
+        ) : null}
+        {type === 'testimonials' ? (
+          <TestimonialLibraryField
+            academyId={academyId}
+            selectedIds={(draft.libraryEntryIds as string[] | undefined) ?? []}
+            onChange={(ids) => setField('libraryEntryIds', ids)}
+          />
+        ) : null}
+
+        {error ? <p className="text-sm text-destructive">{t(error)}</p> : null}
+
+        <div className="flex justify-end gap-2 border-t border-border pt-4">
+          <Button type="button" variant="outline" onClick={onCancel}>
+            {t('common:actions.cancel')}
+          </Button>
+          <Button type="button" onClick={handleSave} disabled={isSaving}>
+            {t('website:editor.applyChanges')}
+          </Button>
         </div>
-      ) : null}
-
-      {type === 'faq' ? (
-        <FaqLibraryField
-          academyId={academyId}
-          selectedIds={(draft.libraryEntryIds as string[] | undefined) ?? []}
-          onChange={(ids) => setField('libraryEntryIds', ids)}
-        />
-      ) : null}
-      {type === 'testimonials' ? (
-        <TestimonialLibraryField
-          academyId={academyId}
-          selectedIds={(draft.libraryEntryIds as string[] | undefined) ?? []}
-          onChange={(ids) => setField('libraryEntryIds', ids)}
-        />
-      ) : null}
-
-      {error ? <p className="text-sm text-destructive">{t(error)}</p> : null}
-
-      <div className="flex justify-end gap-2 border-t border-border pt-4">
-        <Button type="button" variant="outline" onClick={onCancel}>
-          {t('common:actions.cancel')}
-        </Button>
-        <Button type="button" onClick={handleSave} disabled={isSaving}>
-          {t('website:editor.applyChanges')}
-        </Button>
-      </div>
       </div>
 
       {/*
@@ -623,7 +686,11 @@ export function SectionConfigForm<TType extends SectionType>({
           <div className="pointer-events-none">
             <WebsiteThemeScope theme={previewTheme} brand={configuration.brand}>
               <PublicWebsiteLocaleProvider locale={previewLocale}>
-                <SectionRenderer instance={previewInstance} academyId={academyId} pages={pages} />
+                <SectionRenderer
+                  instance={previewInstance}
+                  academyId={academyId}
+                  pages={pages}
+                />
               </PublicWebsiteLocaleProvider>
             </WebsiteThemeScope>
           </div>

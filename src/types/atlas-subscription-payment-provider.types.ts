@@ -13,10 +13,7 @@
  */
 
 export type AtlasSubscriptionPaymentProviderStatus =
-  | 'not_configured'
-  | 'configured'
-  | 'verified'
-  | 'disabled';
+  'not_configured' | 'configured' | 'verified' | 'disabled';
 
 export interface AtlasSubscriptionPaymentProviderTestResult {
   readonly success: boolean;

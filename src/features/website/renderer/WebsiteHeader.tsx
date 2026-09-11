@@ -20,15 +20,14 @@
 import { Globe, LogOut, Menu } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useDisclosure } from '@hooks';
 import { useWebsiteDesignSystem } from './WebsiteDesignSystemContext';
 import { useWebsiteContainerClass } from './renderer-style.utils';
-import { resolveWebsiteCtaHref, isExternalHref } from '../utils/link-resolution.utils';
+import {
+  resolveWebsiteCtaHref,
+  isExternalHref,
+} from '../utils/link-resolution.utils';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import {
   PUBLIC_WEBSITE_LOCALES,
@@ -36,7 +35,11 @@ import {
   DEFAULT_PUBLIC_WEBSITE_LOCALE,
   type PublicWebsiteLocale,
 } from '../constants/locale.constants';
-import type { WebsiteHeaderConfig, WebsiteNavigationItem, WebsitePage } from '@types';
+import type {
+  WebsiteHeaderConfig,
+  WebsiteNavigationItem,
+  WebsitePage,
+} from '@types';
 import type { WebsiteLinkRenderer } from './website-link-renderer.types';
 
 /**
@@ -102,7 +105,8 @@ function LanguageSwitcher({
   readonly locale: PublicWebsiteLocale;
   readonly onLocaleChange: (locale: PublicWebsiteLocale) => void;
 }): JSX.Element {
-  const other = PUBLIC_WEBSITE_LOCALES.find((candidate) => candidate !== locale) ?? locale;
+  const other =
+    PUBLIC_WEBSITE_LOCALES.find((candidate) => candidate !== locale) ?? locale;
   return (
     <Button
       type="button"
@@ -117,7 +121,9 @@ function LanguageSwitcher({
           (brand mark, auth state, hamburger) all sharing one narrow row,
           the icon alone (real `aria-label` above still names the action)
           is what keeps this row from competing for space on a real phone. */}
-      <span className="hidden sm:inline">{PUBLIC_WEBSITE_LOCALE_LABELS[other]}</span>
+      <span className="hidden sm:inline">
+        {PUBLIC_WEBSITE_LOCALE_LABELS[other]}
+      </span>
     </Button>
   );
 }
@@ -130,7 +136,15 @@ function NavLinks({
   linkRenderer,
   locale = DEFAULT_PUBLIC_WEBSITE_LOCALE,
   className,
-}: Pick<WebsiteHeaderProps, 'navigation' | 'pages' | 'activePageId' | 'onNavigate' | 'linkRenderer' | 'locale'> & {
+}: Pick<
+  WebsiteHeaderProps,
+  | 'navigation'
+  | 'pages'
+  | 'activePageId'
+  | 'onNavigate'
+  | 'linkRenderer'
+  | 'locale'
+> & {
   readonly className?: string;
 }): JSX.Element {
   return (
@@ -142,7 +156,9 @@ function NavLinks({
             item.pageId === activePageId
               ? 'text-sm font-medium text-[var(--website-primary-solid)]'
               : 'text-sm font-medium text-foreground/80 hover:text-foreground';
-          const href = linkRenderer ? resolveWebsiteCtaHref(item, pages) : undefined;
+          const href = linkRenderer
+            ? resolveWebsiteCtaHref(item, pages)
+            : undefined;
 
           if (href) {
             return (
@@ -199,13 +215,23 @@ export function WebsiteHeader({
       {logo ? (
         <img src={logo} alt={academyName} className="h-8 w-auto shrink-0" />
       ) : (
-        <span className="truncate font-display text-lg font-bold text-foreground" dir="auto">{academyName}</span>
+        <span
+          className="truncate font-display text-lg font-bold text-foreground"
+          dir="auto"
+        >
+          {academyName}
+        </span>
       )}
     </div>
   );
 
-  const ctaLabel = header.cta ? resolveLocalizedText(header.cta.label, locale) : undefined;
-  const ctaHref = header.cta && linkRenderer ? resolveWebsiteCtaHref(header.cta, pages) : undefined;
+  const ctaLabel = header.cta
+    ? resolveLocalizedText(header.cta.label, locale)
+    : undefined;
+  const ctaHref =
+    header.cta && linkRenderer
+      ? resolveWebsiteCtaHref(header.cta, pages)
+      : undefined;
   const ctaButtonProps = {
     size: 'sm' as const,
     style: { backgroundColor: 'var(--website-primary-solid)' },
@@ -235,7 +261,9 @@ export function WebsiteHeader({
           external: false,
           className:
             'max-w-[6rem] truncate text-sm font-medium text-[var(--website-primary-solid)] hover:underline sm:max-w-[10rem]',
-          children: t('publicWebsite:header.greeting', { name: authState.name }),
+          children: t('publicWebsite:header.greeting', {
+            name: authState.name,
+          }),
         })
       ) : (
         <span className="max-w-[6rem] truncate text-sm font-medium text-foreground/80 sm:max-w-[10rem]">
@@ -252,14 +280,20 @@ export function WebsiteHeader({
           aria-label={t('publicWebsite:header.signOut')}
         >
           <LogOut className="size-4 sm:hidden" aria-hidden />
-          <span className="hidden sm:inline">{t('publicWebsite:header.signOut')}</span>
+          <span className="hidden sm:inline">
+            {t('publicWebsite:header.signOut')}
+          </span>
         </Button>
       ) : null}
     </div>
   ) : header.cta ? (
     ctaHref ? (
       <Button {...ctaButtonProps} asChild>
-        {linkRenderer!({ href: ctaHref, external: isExternalHref(ctaHref), children: ctaLabel })}
+        {linkRenderer!({
+          href: ctaHref,
+          external: isExternalHref(ctaHref),
+          children: ctaLabel,
+        })}
       </Button>
     ) : (
       <Button {...ctaButtonProps}>{ctaLabel}</Button>
@@ -273,7 +307,12 @@ export function WebsiteHeader({
   const mobileTrigger = (
     <Sheet open={mobileMenu.isOpen} onOpenChange={mobileMenu.setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Menu">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="lg:hidden"
+          aria-label="Menu"
+        >
           <Menu className="size-5" aria-hidden />
         </Button>
       </SheetTrigger>

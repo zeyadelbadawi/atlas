@@ -10,7 +10,11 @@ import { useTranslation } from 'react-i18next';
 import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { WebsiteRenderer } from '../renderer';
-import type { WebsiteConfiguration, WebsitePage, WebsiteThemeDefinition } from '@types';
+import type {
+  WebsiteConfiguration,
+  WebsitePage,
+  WebsiteThemeDefinition,
+} from '@types';
 
 export interface WebsiteThemePreviewCardProps {
   readonly theme: WebsiteThemeDefinition;
@@ -73,9 +77,13 @@ export function WebsiteThemePreviewCard({
       <div className="space-y-2 p-4">
         <div className="flex items-center justify-between gap-2">
           <h3 className="font-medium text-foreground">{t(theme.nameKey)}</h3>
-          {isActive ? <Check className="size-4 shrink-0 text-success" aria-hidden /> : null}
+          {isActive ? (
+            <Check className="size-4 shrink-0 text-success" aria-hidden />
+          ) : null}
         </div>
-        <p className="text-sm text-muted-foreground">{t(theme.descriptionKey)}</p>
+        <p className="text-sm text-muted-foreground">
+          {t(theme.descriptionKey)}
+        </p>
         <Button
           type="button"
           size="sm"
@@ -84,7 +92,9 @@ export function WebsiteThemePreviewCard({
           onClick={onSelect}
           className="w-full"
         >
-          {isActive ? t('website:theme.currentTheme') : t('website:theme.selectTheme')}
+          {isActive
+            ? t('website:theme.currentTheme')
+            : t('website:theme.selectTheme')}
         </Button>
       </div>
     </div>

@@ -63,7 +63,9 @@ export function MobileBottomNav({
   if (!linkRenderer || !isVisible) return null;
 
   const unprefixedPathname =
-    locale === 'en' ? location.pathname : location.pathname.replace(/^\/ar/, '') || '/';
+    locale === 'en'
+      ? location.pathname
+      : location.pathname.replace(/^\/ar/, '') || '/';
   const coursesPage = pages.find((page) => page.coreType === 'courses');
   const coursesPath = coursesPage ? resolvePagePath(coursesPage) : '/courses';
 
@@ -106,29 +108,33 @@ export function MobileBottomNav({
     >
       <div className="grid grid-cols-4">
         {items.map(({ key, href, label, icon: Icon, isActive }) => (
-            // `WebsiteLinkRenderer` returns the anchor/`Link` itself with
-            // no `key` slot of its own — this wrapper (matching
-            // `WebsiteBrandBridge`'s identical `contents` precedent) carries
-            // the list key without becoming an extra grid box of its own.
-            <div key={key} className="contents">
-              {linkRenderer({
-                href,
-                external: false,
-                className: cn(
-                  'flex flex-col items-center gap-1 py-2 text-xs font-medium transition-colors',
-                  isActive
-                    ? 'text-[var(--website-primary-solid)]'
-                    : 'text-muted-foreground hover:text-foreground'
-                ),
-                children: (
-                  <>
-                    <Icon className="size-5" strokeWidth={isActive ? 2.5 : 2} aria-hidden />
-                    {label}
-                  </>
-                ),
-              })}
-            </div>
-          ))}
+          // `WebsiteLinkRenderer` returns the anchor/`Link` itself with
+          // no `key` slot of its own — this wrapper (matching
+          // `WebsiteBrandBridge`'s identical `contents` precedent) carries
+          // the list key without becoming an extra grid box of its own.
+          <div key={key} className="contents">
+            {linkRenderer({
+              href,
+              external: false,
+              className: cn(
+                'flex flex-col items-center gap-1 py-2 text-xs font-medium transition-colors',
+                isActive
+                  ? 'text-[var(--website-primary-solid)]'
+                  : 'text-muted-foreground hover:text-foreground'
+              ),
+              children: (
+                <>
+                  <Icon
+                    className="size-5"
+                    strokeWidth={isActive ? 2.5 : 2}
+                    aria-hidden
+                  />
+                  {label}
+                </>
+              ),
+            })}
+          </div>
+        ))}
       </div>
     </nav>
   );

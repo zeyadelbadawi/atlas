@@ -32,11 +32,7 @@ import { useConfirmDialog } from '@app/providers';
 import { toast } from '@/hooks/use-toast';
 import { useDebounce, usePagination } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
-import {
-  useCourses,
-  useCourseCategories,
-  useDeleteCourse,
-} from '../hooks';
+import { useCourses, useCourseCategories, useDeleteCourse } from '../hooks';
 import {
   getCourseStatusLabelKey,
   getCourseStatusTone,
@@ -59,9 +55,7 @@ export default function CourseListPage(): JSX.Element {
 
   const [searchInput, setSearchInput] = useState('');
   const debouncedSearch = useDebounce(searchInput);
-  const [statusFilter, setStatusFilter] = useState<CourseStatus | 'all'>(
-    'all'
-  );
+  const [statusFilter, setStatusFilter] = useState<CourseStatus | 'all'>('all');
   const [visibilityFilter, setVisibilityFilter] = useState<
     CourseVisibility | 'all'
   >('all');
@@ -111,9 +105,8 @@ export default function CourseListPage(): JSX.Element {
 
   const { mutateAsync: deleteCourse } = useDeleteCourse(academyId ?? '');
 
-  const goTo = (path: string) => academyId && navigate(
-    buildPath(path, { academyId })
-  );
+  const goTo = (path: string) =>
+    academyId && navigate(buildPath(path, { academyId }));
   const goToCourse = (path: string, courseId: string) =>
     academyId && navigate(buildPath(path, { academyId, courseId }));
 
@@ -222,10 +215,16 @@ export default function CourseListPage(): JSX.Element {
                 <MoreHorizontal className="size-4" aria-hidden />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+            <DropdownMenuContent
+              align="end"
+              onClick={(e) => e.stopPropagation()}
+            >
               <DropdownMenuItem
                 onClick={() =>
-                  goToCourse(DASHBOARD_ROUTES.academyCourseDetail, row.original.id)
+                  goToCourse(
+                    DASHBOARD_ROUTES.academyCourseDetail,
+                    row.original.id
+                  )
                 }
               >
                 {t('course:list.actions.edit')}
@@ -311,7 +310,9 @@ export default function CourseListPage(): JSX.Element {
               <SelectValue placeholder={t('course:list.filterByStatus')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{t('course:list.allStatuses')}</SelectItem>
+              <SelectItem value="all">
+                {t('course:list.allStatuses')}
+              </SelectItem>
               <SelectItem value="draft">{t('course:status.draft')}</SelectItem>
               <SelectItem value="published">
                 {t('course:status.published')}

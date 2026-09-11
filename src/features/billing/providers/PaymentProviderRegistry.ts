@@ -24,6 +24,8 @@ const registry = new Map<string, PaymentProviderAdapter>([
 ]);
 
 /** Resolves the adapter for a provider key, or `undefined` if none is registered yet. */
-export function getPaymentProvider(providerKey: string): PaymentProviderAdapter | undefined {
+export function getPaymentProvider(
+  providerKey: string
+): PaymentProviderAdapter | undefined {
   return registry.get(providerKey);
 }

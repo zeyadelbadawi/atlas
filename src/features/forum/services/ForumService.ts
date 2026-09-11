@@ -37,7 +37,10 @@ export class ForumService extends BaseService {
   ): Promise<PaginatedResult<ForumThread>> {
     return this.client.get<PaginatedResult<ForumThread>>(
       this.path(courseId, 'forum', 'threads'),
-      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
+      {
+        ...options,
+        params: { ...toCollectionParams(query), ...options?.params },
+      }
     );
   }
 
@@ -62,7 +65,10 @@ export class ForumService extends BaseService {
   ): Promise<PaginatedResult<ForumReply>> {
     return this.client.get<PaginatedResult<ForumReply>>(
       this.path(courseId, 'forum', 'threads', threadId, 'replies'),
-      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
+      {
+        ...options,
+        params: { ...toCollectionParams(query), ...options?.params },
+      }
     );
   }
 

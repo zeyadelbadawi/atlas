@@ -51,7 +51,10 @@ import { DEV_OVERRIDE_PARAM } from './hostname-resolution.utils';
  * instead of a local `withLocale` closure — see this file's own doc
  * comment for the exact bug class that duplicating this logic caused.
  */
-export function withPublicWebsiteLocale(path: string, locale: PublicWebsiteLocale): string {
+export function withPublicWebsiteLocale(
+  path: string,
+  locale: PublicWebsiteLocale
+): string {
   if (locale === 'en') return path;
   if (/^[a-z][a-z\d+.-]*:/i.test(path)) return path; // absolute/external (e.g. `https://…`, `mailto:…`)
   if (path === '/ar' || path.startsWith('/ar/')) return path; // already prefixed
@@ -69,7 +72,9 @@ export function withPublicWebsiteLocale(path: string, locale: PublicWebsiteLocal
  * since every one of these call sites runs above `WebsiteChrome`'s own
  * `PublicWebsiteLocaleProvider` in the tree.
  */
-export function usePublicWebsiteHrefBuilder(locale: PublicWebsiteLocale): (path: string) => string {
+export function usePublicWebsiteHrefBuilder(
+  locale: PublicWebsiteLocale
+): (path: string) => string {
   const [searchParams] = useSearchParams();
   const devSlug = searchParams.get(DEV_OVERRIDE_PARAM);
 
@@ -81,13 +86,20 @@ export function usePublicWebsiteHrefBuilder(locale: PublicWebsiteLocale): (path:
   };
 }
 
-export function usePublicWebsiteLinkRenderer(locale: PublicWebsiteLocale): WebsiteLinkRenderer {
+export function usePublicWebsiteLinkRenderer(
+  locale: PublicWebsiteLocale
+): WebsiteLinkRenderer {
   const buildHref = usePublicWebsiteHrefBuilder(locale);
 
   return ({ href, external, className, children }) => {
     if (external) {
       return (
-        <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={className}
+        >
           {children}
         </a>
       );

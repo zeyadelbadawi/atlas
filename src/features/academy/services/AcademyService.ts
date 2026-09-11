@@ -8,7 +8,6 @@ import { BaseService } from '@services';
 import { toCollectionParams } from '@api';
 import type {
   Academy,
-  CreateAcademyPayload,
   UpdateAcademyPayload,
   UpdateAcademyBrandingPayload,
   AcademyMember,
@@ -22,34 +21,6 @@ import type {
   PaginatedResult,
 } from '@types';
 import type { ReadOptions, WriteOptions } from '@services';
-
-/**
- * Strips format-validated optional fields down to `undefined` when the
- * form left them empty.
- *
- * `createAcademySchema` deliberately accepts `''` for `contactEmail`/
- * `website` (`.optional().or(z.literal(''))`) so an untouched optional
- * field never shows an "invalid email"/"invalid URL" error — correct form
- * UX. But the backend's `CreateAcademyDto` marks both `@IsOptional()`,
- * and `class-validator`'s `@IsOptional()` only skips validation for
- * `null`/`undefined`, not `''` — so `@IsEmail()`/`@IsUrl()` still run
- * against an empty string and reject it (confirmed live: `POST
- * /academies` 400, "contactEmail must be an email", "website must be a
- * URL address"). This is the one place that gap between the form's
- * "empty is valid" and the wire contract's "absent is valid" is closed.
- */
-function omitEmptyOptionalStrings<TPayload extends object, TKey extends keyof TPayload & string>(
-  payload: TPayload,
-  keys: readonly TKey[]
-): TPayload {
-  const overrides = {} as Partial<Pick<TPayload, TKey>>;
-  for (const key of keys) {
-    if (payload[key] === '') {
-      overrides[key] = undefined;
-    }
-  }
-  return { ...payload, ...overrides };
-}
 
 export class AcademyService extends BaseService {
   protected readonly resource = 'academies';
@@ -83,29 +54,21 @@ export class AcademyService extends BaseService {
     return this.fetchOne<Academy>(id, options);
   }
 
-  /**
-   * Creates a new academy.
+  /*
+   * NO `createAcademy` METHOD — REMOVED IN PHASE 10.6, DELIBERATELY.
    *
-   * `organizationId` is required by the backend's `CreateAcademyDto` (a
-   * confirmed, previously-untracked frontend gap — see that DTO's doc
-   * comment) but is deliberately not part of `CreateAcademyPayload`: it
-   * is never a form field, it comes from the session's active
-   * organization, the same "always explicit, never ambient" source
-   * `useCreateAcademy` already threads through.
+   * It posted to `POST /academies`, which was the second of two academy
+   * creation paths and the one that did not allocate a subdomain. Every
+   * academy created through it had no `subdomain_allocations` row, so
+   * `resolve_public_hostname` matched nothing and its public website
+   * answered "not found" — production had five academies and two
+   * allocations.
+   *
+   * Academy Provisioning is now the only creation path, and the backend
+   * route this called no longer exists. Restoring a method here would
+   * reintroduce the defect, so the absence is recorded rather than left
+   * to look like an oversight.
    */
-  async createAcademy(
-    organizationId: string,
-    payload: CreateAcademyPayload,
-    options?: WriteOptions
-  ): Promise<Academy> {
-    return this.createOne<Academy, CreateAcademyPayload & { organizationId: string }>(
-      {
-        ...omitEmptyOptionalStrings(payload, ['contactEmail', 'website']),
-        organizationId,
-      },
-      options
-    );
-  }
 
   /**
    * Updates an existing academy.
@@ -138,6 +101,29 @@ export class AcademyService extends BaseService {
    */
   async deleteAcademy(id: string, options?: WriteOptions): Promise<void> {
     return this.deleteOne(id, options);
+  }
+
+  /**
+   * Deletes an academy and records why.
+   *
+   * Posts to `POST /academies/:id/delete` rather than sending a body on
+   * the DELETE: `WriteOptions` carries no body for `delete`, request
+   * bodies on DELETE have no defined semantics, and the explicit
+   * `confirm: true` means an accidental empty request cannot take a
+   * public website offline.
+   *
+   * Authorization is identical to `deleteAcademy` — this is a different
+   * transport for the same action, not a different permission.
+   */
+  async deleteAcademyWithReason(
+    id: string,
+    payload: { readonly reason?: string; readonly feedback?: string },
+    options?: WriteOptions
+  ): Promise<void> {
+    await this.client.post<
+      void,
+      { confirm: true; reason?: string; feedback?: string }
+    >(this.path(id, 'delete'), { confirm: true, ...payload }, options);
   }
 
   /**

@@ -29,7 +29,10 @@ export class PlatformUserService extends BaseService {
   }
 
   /** Retrieves one user's cross-tenant detail view. */
-  async getUser(userId: string, options?: ReadOptions): Promise<PlatformUserDetail> {
+  async getUser(
+    userId: string,
+    options?: ReadOptions
+  ): Promise<PlatformUserDetail> {
     return this.fetchOne<PlatformUserDetail>(userId, options);
   }
 }

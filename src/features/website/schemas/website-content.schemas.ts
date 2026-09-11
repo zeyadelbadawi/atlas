@@ -17,8 +17,14 @@ import {
 /** Both English and Arabic values are required — an entry that only exists in one language would silently disappear when a visitor's locale doesn't match it. */
 const localizedText = (maxLength: number) =>
   z.object({
-    en: z.string().min(1, 'validation:required').max(maxLength, 'validation:maxLength'),
-    ar: z.string().min(1, 'validation:required').max(maxLength, 'validation:maxLength'),
+    en: z
+      .string()
+      .min(1, 'validation:required')
+      .max(maxLength, 'validation:maxLength'),
+    ar: z
+      .string()
+      .min(1, 'validation:required')
+      .max(maxLength, 'validation:maxLength'),
   });
 
 const localizedTextOptional = (maxLength: number) =>
@@ -39,6 +45,8 @@ export const testimonialEntrySchema = z.object({
     .string()
     .min(1, 'validation:required')
     .max(MAX_TESTIMONIAL_AUTHOR_NAME_LENGTH, 'validation:maxLength'),
-  authorRole: localizedTextOptional(MAX_TESTIMONIAL_AUTHOR_ROLE_LENGTH).optional(),
+  authorRole: localizedTextOptional(
+    MAX_TESTIMONIAL_AUTHOR_ROLE_LENGTH
+  ).optional(),
 });
 export type TestimonialEntryFormData = z.infer<typeof testimonialEntrySchema>;

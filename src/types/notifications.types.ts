@@ -10,12 +10,7 @@ export type NotificationPriority = 'low' | 'medium' | 'high' | 'urgent';
 
 /** Notification type categories. */
 export type NotificationType =
-  | 'system'
-  | 'account'
-  | 'billing'
-  | 'security'
-  | 'activity'
-  | 'announcement';
+  'system' | 'account' | 'billing' | 'security' | 'activity' | 'announcement';
 
 /** A single notification. */
 export interface Notification extends BaseEntity {

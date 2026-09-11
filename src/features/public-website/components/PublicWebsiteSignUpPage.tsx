@@ -21,7 +21,13 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { CheckCircle2 } from 'lucide-react';
-import { WebsiteChrome, WebsiteBrandBridge, resolvePagePath, resolveLocalizedText, usePublicWebsiteDocumentDirection } from '@features/website';
+import {
+  WebsiteChrome,
+  WebsiteBrandBridge,
+  resolvePagePath,
+  resolveLocalizedText,
+  usePublicWebsiteDocumentDirection,
+} from '@features/website';
 import { RegistrationForm } from '@features/auth';
 import { useAuth, useSignOut } from '@hooks';
 import { usePublicWebsiteData } from '../hooks/usePublicWebsiteData';
@@ -38,7 +44,10 @@ export interface PublicWebsiteSignUpPageProps {
   readonly locale: PublicWebsiteLocale;
 }
 
-export function PublicWebsiteSignUpPage({ lookupKey, locale }: PublicWebsiteSignUpPageProps): JSX.Element {
+export function PublicWebsiteSignUpPage({
+  lookupKey,
+  locale,
+}: PublicWebsiteSignUpPageProps): JSX.Element {
   const { t } = useTranslation();
   usePublicWebsiteDocumentDirection(locale);
   const data = usePublicWebsiteData(lookupKey);
@@ -71,11 +80,19 @@ export function PublicWebsiteSignUpPage({ lookupKey, locale }: PublicWebsiteSign
   };
 
   const title =
-    resolveLocalizedText(configuration.header.authPages?.signUp?.title, locale) ||
+    resolveLocalizedText(
+      configuration.header.authPages?.signUp?.title,
+      locale
+    ) ||
     t('publicWebsite:auth.signUp.title', { academyName: academy.academyName });
   const subtitle =
-    resolveLocalizedText(configuration.header.authPages?.signUp?.subtitle, locale) ||
-    t('publicWebsite:auth.signUp.subtitle', { academyName: academy.academyName });
+    resolveLocalizedText(
+      configuration.header.authPages?.signUp?.subtitle,
+      locale
+    ) ||
+    t('publicWebsite:auth.signUp.subtitle', {
+      academyName: academy.academyName,
+    });
 
   return (
     <WebsiteChrome
@@ -90,39 +107,55 @@ export function PublicWebsiteSignUpPage({ lookupKey, locale }: PublicWebsiteSign
         const base = `${target === 'en' ? '' : '/ar'}/sign-up`;
         const devSlug = searchParams.get(DEV_OVERRIDE_PARAM);
         window.location.assign(
-          devSlug ? `${base}?${DEV_OVERRIDE_PARAM}=${encodeURIComponent(devSlug)}` : base
+          devSlug
+            ? `${base}?${DEV_OVERRIDE_PARAM}=${encodeURIComponent(devSlug)}`
+            : base
         );
       }}
       authState={authState}
     >
       <div className="mx-auto flex min-h-[60vh] w-full max-w-md flex-col justify-center px-4 py-16">
         <div className="mb-8 text-center">
-          <h1 className="font-display text-2xl font-bold text-foreground">{title}</h1>
+          <h1 className="font-display text-2xl font-bold text-foreground">
+            {title}
+          </h1>
           <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>
         </div>
 
         {registered ? (
           <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card p-6 text-center">
-            <CheckCircle2 className="size-8 text-[var(--website-primary-solid)]" aria-hidden />
-            <p className="font-medium text-foreground">{t('publicWebsite:auth.signUp.success')}</p>
+            <CheckCircle2
+              className="size-8 text-[var(--website-primary-solid)]"
+              aria-hidden
+            />
+            <p className="font-medium text-foreground">
+              {t('publicWebsite:auth.signUp.success')}
+            </p>
             {linkRenderer({
               href: '/sign-in',
               external: false,
-              className: 'font-medium text-[var(--website-primary-solid)] hover:underline',
+              className:
+                'font-medium text-[var(--website-primary-solid)] hover:underline',
               children: t('publicWebsite:auth.signUp.goToSignIn'),
             })}
           </div>
         ) : (
           <>
             <WebsiteBrandBridge>
-              <RegistrationForm academyId={academy.academyId} onSuccess={() => setRegistered(true)} />
+              <RegistrationForm
+                academyId={academy.academyId}
+                onSuccess={() => setRegistered(true)}
+              />
             </WebsiteBrandBridge>
             <div className="mt-6 text-center text-sm">
-              <span className="text-muted-foreground">{t('publicWebsite:auth.signUp.hasAccount')} </span>
+              <span className="text-muted-foreground">
+                {t('publicWebsite:auth.signUp.hasAccount')}{' '}
+              </span>
               {linkRenderer({
                 href: '/sign-in',
                 external: false,
-                className: 'font-medium text-[var(--website-primary-solid)] hover:underline',
+                className:
+                  'font-medium text-[var(--website-primary-solid)] hover:underline',
                 children: t('publicWebsite:auth.signUp.signIn'),
               })}
             </div>

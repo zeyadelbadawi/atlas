@@ -6,7 +6,12 @@
  */
 import { BaseService } from '@services';
 import type { ReadOptions } from '@services';
-import type { AuditLogEntryDetail, AuditLogEntrySummary, CollectionQuery, PaginatedResult } from '@types';
+import type {
+  AuditLogEntryDetail,
+  AuditLogEntrySummary,
+  CollectionQuery,
+  PaginatedResult,
+} from '@types';
 
 export class AuditLogService extends BaseService {
   protected readonly resource = 'audit-log';
@@ -18,7 +23,10 @@ export class AuditLogService extends BaseService {
     return this.fetchCollection<AuditLogEntrySummary>(query, options);
   }
 
-  async getEntry(eventId: string, options?: ReadOptions): Promise<AuditLogEntryDetail> {
+  async getEntry(
+    eventId: string,
+    options?: ReadOptions
+  ): Promise<AuditLogEntryDetail> {
     return this.fetchOne<AuditLogEntryDetail>(eventId, options);
   }
 }

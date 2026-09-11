@@ -5,11 +5,11 @@
  * state acknowledges the emptiness, explains the value of the missing content,
  * and offers a way to create it.
  */
-import type { LucideIcon } from "lucide-react";
-import { Inbox } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
-import { cn } from "@utils";
+import type { LucideIcon } from 'lucide-react';
+import { Inbox } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
+import { cn } from '@utils';
 
 /** A call to action rendered inside an empty state. */
 export interface EmptyStateAction {
@@ -33,8 +33,8 @@ export interface EmptyStateProps {
 }
 
 export function EmptyState({
-  titleKey = "common:states.empty.title",
-  descriptionKey = "common:states.empty.description",
+  titleKey = 'common:states.empty.title',
+  descriptionKey = 'common:states.empty.description',
   icon: Icon = Inbox,
   primaryAction,
   secondaryAction,
@@ -48,8 +48,8 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed border-border bg-surface/40 px-6 py-12 text-center",
-        className,
+        'flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed border-border bg-surface/40 px-6 py-12 text-center',
+        className
       )}
     >
       <span className="flex size-12 items-center justify-center rounded-pill bg-accent text-accent-foreground">

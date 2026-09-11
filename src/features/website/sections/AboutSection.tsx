@@ -32,7 +32,9 @@ export function AboutSection({ config }: AboutSectionProps): JSX.Element {
           />
         ) : null}
         <div className="space-y-4">
-          <h2 className={`${heading} break-words text-3xl text-foreground`}>{resolveLocalizedText(config.title, locale)}</h2>
+          <h2 className={`${heading} break-words text-3xl text-foreground`}>
+            {resolveLocalizedText(config.title, locale)}
+          </h2>
           <p className="whitespace-pre-line text-base leading-relaxed text-muted-foreground">
             {resolveLocalizedText(config.body, locale)}
           </p>

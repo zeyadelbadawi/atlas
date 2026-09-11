@@ -21,7 +21,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useAcademyIdentity } from '@features/public-website/hooks';
 import { publicWebsiteService } from '@features/public-website/services/PublicWebsiteService';
-import { useWebsiteContainerClass, useWebsiteHeadingClass, useWebsiteSectionClass } from '../renderer/renderer-style.utils';
+import {
+  useWebsiteContainerClass,
+  useWebsiteHeadingClass,
+  useWebsiteSectionClass,
+} from '../renderer/renderer-style.utils';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { ContactSectionConfig } from '@types';
@@ -33,7 +37,10 @@ export interface ContactSectionProps {
 
 type SubmitState = 'idle' | 'submitting' | 'success' | 'error';
 
-export function ContactSection({ config, academyId }: ContactSectionProps): JSX.Element {
+export function ContactSection({
+  config,
+  academyId,
+}: ContactSectionProps): JSX.Element {
   const { t } = useTranslation();
   const container = useWebsiteContainerClass();
   const section = useWebsiteSectionClass();
@@ -48,7 +55,11 @@ export function ContactSection({ config, academyId }: ContactSectionProps): JSX.
   const phone = config.phone || identity?.contactPhone;
   const address =
     config.address ||
-    [identity?.address?.street, identity?.address?.city, identity?.address?.country]
+    [
+      identity?.address?.street,
+      identity?.address?.city,
+      identity?.address?.country,
+    ]
       .filter(Boolean)
       .join(', ') ||
     undefined;
@@ -80,9 +91,13 @@ export function ContactSection({ config, academyId }: ContactSectionProps): JSX.
     <section className={`${container} ${section}`}>
       {(title || description) && (
         <div className="mb-10 space-y-2 text-center">
-          {title ? <h2 className={`${heading} text-3xl text-foreground`}>{title}</h2> : null}
+          {title ? (
+            <h2 className={`${heading} text-3xl text-foreground`}>{title}</h2>
+          ) : null}
           {description ? (
-            <p className="mx-auto max-w-2xl text-muted-foreground">{description}</p>
+            <p className="mx-auto max-w-2xl text-muted-foreground">
+              {description}
+            </p>
           ) : null}
         </div>
       )}
@@ -96,36 +111,82 @@ export function ContactSection({ config, academyId }: ContactSectionProps): JSX.
               matters inside an RTL page. */}
           {email ? (
             <div className="flex items-center gap-3">
-              <Mail className="size-5 shrink-0 text-[var(--website-primary-solid)]" aria-hidden />
-              <dd className="min-w-0 break-words text-sm text-foreground" dir="ltr">{email}</dd>
+              <Mail
+                className="size-5 shrink-0 text-[var(--website-primary-solid)]"
+                aria-hidden
+              />
+              <dd
+                className="min-w-0 break-words text-sm text-foreground"
+                dir="ltr"
+              >
+                {email}
+              </dd>
             </div>
           ) : null}
           {phone ? (
             <div className="flex items-center gap-3">
-              <Phone className="size-5 shrink-0 text-[var(--website-primary-solid)]" aria-hidden />
-              <dd className="min-w-0 break-words text-sm text-foreground" dir="ltr">{phone}</dd>
+              <Phone
+                className="size-5 shrink-0 text-[var(--website-primary-solid)]"
+                aria-hidden
+              />
+              <dd
+                className="min-w-0 break-words text-sm text-foreground"
+                dir="ltr"
+              >
+                {phone}
+              </dd>
             </div>
           ) : null}
           {address ? (
             <div className="flex items-center gap-3">
-              <MapPin className="size-5 shrink-0 text-[var(--website-primary-solid)]" aria-hidden />
-              <dd className="min-w-0 break-words text-sm text-foreground" dir="auto">{address}</dd>
+              <MapPin
+                className="size-5 shrink-0 text-[var(--website-primary-solid)]"
+                aria-hidden
+              />
+              <dd
+                className="min-w-0 break-words text-sm text-foreground"
+                dir="auto"
+              >
+                {address}
+              </dd>
             </div>
           ) : null}
         </dl>
         {config.showForm ? (
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-1.5">
-              <Label htmlFor="website-contact-name">{t('website:renderer.contactNameLabel')}</Label>
-              <Input id="website-contact-name" name="name" autoComplete="name" required />
+              <Label htmlFor="website-contact-name">
+                {t('website:renderer.contactNameLabel')}
+              </Label>
+              <Input
+                id="website-contact-name"
+                name="name"
+                autoComplete="name"
+                required
+              />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="website-contact-email">{t('website:renderer.contactEmailLabel')}</Label>
-              <Input id="website-contact-email" name="email" type="email" autoComplete="email" required />
+              <Label htmlFor="website-contact-email">
+                {t('website:renderer.contactEmailLabel')}
+              </Label>
+              <Input
+                id="website-contact-email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+              />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="website-contact-message">{t('website:renderer.contactMessageLabel')}</Label>
-              <Textarea id="website-contact-message" name="message" rows={4} required />
+              <Label htmlFor="website-contact-message">
+                {t('website:renderer.contactMessageLabel')}
+              </Label>
+              <Textarea
+                id="website-contact-message"
+                name="message"
+                rows={4}
+                required
+              />
             </div>
             <Button type="submit" disabled={submitState === 'submitting'}>
               {submitState === 'submitting' ? (

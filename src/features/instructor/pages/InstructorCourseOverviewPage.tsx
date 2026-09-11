@@ -35,8 +35,12 @@ export default function InstructorCourseOverviewPage(): JSX.Element {
   const navigate = useNavigate();
   const { courseId } = useParams<{ courseId: string }>();
 
-  const { data: overview, isLoading, error, refetch } =
-    useInstructorCourseOverview(courseId ?? '');
+  const {
+    data: overview,
+    isLoading,
+    error,
+    refetch,
+  } = useInstructorCourseOverview(courseId ?? '');
 
   if (isLoading) {
     return (
@@ -154,8 +158,7 @@ export default function InstructorCourseOverviewPage(): JSX.Element {
               variant="outline"
               className="h-auto flex-col items-start gap-1 py-4"
               onClick={() =>
-                courseId &&
-                navigate(buildPath(path, { courseId }))
+                courseId && navigate(buildPath(path, { courseId }))
               }
             >
               <Icon className="size-4" strokeWidth={2} aria-hidden />

@@ -17,7 +17,9 @@ export interface PublicWebsiteStatusProps {
   readonly state: Exclude<PublicWebsiteDataState, { status: 'ready' }>;
 }
 
-export function PublicWebsiteStatus({ state }: PublicWebsiteStatusProps): JSX.Element {
+export function PublicWebsiteStatus({
+  state,
+}: PublicWebsiteStatusProps): JSX.Element {
   const { t } = useTranslation();
 
   if (state.status === 'loading') {
@@ -57,7 +59,9 @@ export function PublicWebsiteStatus({ state }: PublicWebsiteStatusProps): JSX.El
           titleKey={copy.titleKey}
           descriptionKey={copy.descriptionKey}
         />
-        <p className="text-xs text-muted-foreground">{t('website:public.poweredBy')}</p>
+        <p className="text-xs text-muted-foreground">
+          {t('website:public.poweredBy')}
+        </p>
       </div>
     </div>
   );

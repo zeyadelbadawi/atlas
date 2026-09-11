@@ -13,7 +13,8 @@ export function usePlatformCancelProvisioning() {
   const { invalidate } = useInvalidate();
 
   return useApiMutation<ProvisioningRequest, string, ApiError>({
-    mutationFn: (requestId) => platformProvisioningService.cancelProvisioning(requestId),
+    mutationFn: (requestId) =>
+      platformProvisioningService.cancelProvisioning(requestId),
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async (_data, requestId) => {

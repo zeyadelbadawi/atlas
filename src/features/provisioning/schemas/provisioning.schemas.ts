@@ -9,7 +9,10 @@ import {
 } from '../constants/provisioning.constants';
 
 export const createProvisioningRequestSchema = z.object({
-  academyName: z.string().min(1, 'validation:required').max(100, 'validation:maxLength'),
+  academyName: z
+    .string()
+    .min(1, 'validation:required')
+    .max(100, 'validation:maxLength'),
   requestedSubdomain: z
     .string()
     .min(MIN_SUBDOMAIN_LENGTH, 'validation:minLength')

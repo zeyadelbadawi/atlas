@@ -35,11 +35,10 @@ export class PlatformDomainService extends BaseService {
     payload: UpdatePlatformDomainConfigurationPayload,
     options?: WriteOptions
   ): Promise<PlatformDomainConfiguration> {
-    return this.client.patch<PlatformDomainConfiguration, UpdatePlatformDomainConfigurationPayload>(
-      this.path(),
-      payload,
-      options
-    );
+    return this.client.patch<
+      PlatformDomainConfiguration,
+      UpdatePlatformDomainConfigurationPayload
+    >(this.path(), payload, options);
   }
 }
 

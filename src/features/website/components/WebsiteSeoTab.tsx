@@ -26,7 +26,10 @@ import { useAcademy } from '@features/academy';
 import { useUpdateWebsiteConfiguration } from '../hooks';
 import { WebsiteImageField } from './WebsiteImageField';
 import { LocalizedTextField } from './LocalizedTextField';
-import { globalSeoSchema, type GlobalSeoFormData } from '../schemas/website.schemas';
+import {
+  globalSeoSchema,
+  type GlobalSeoFormData,
+} from '../schemas/website.schemas';
 import { buildOrganizationJsonLd } from '../utils/structured-data.utils';
 import type { LocalizedText, WebsiteConfiguration } from '@types';
 
@@ -37,7 +40,10 @@ export interface WebsiteSeoTabProps {
   readonly configuration: WebsiteConfiguration;
 }
 
-export function WebsiteSeoTab({ academyId, configuration }: WebsiteSeoTabProps): JSX.Element {
+export function WebsiteSeoTab({
+  academyId,
+  configuration,
+}: WebsiteSeoTabProps): JSX.Element {
   const { t } = useTranslation();
   const updateConfig = useUpdateWebsiteConfiguration();
   const academyQuery = useAcademy(academyId);
@@ -65,7 +71,8 @@ export function WebsiteSeoTab({ academyId, configuration }: WebsiteSeoTabProps):
       },
       {
         onSuccess: () => toast({ title: t('website:seo.saved') }),
-        onError: () => toast({ title: t('website:seo.saveError'), variant: 'destructive' }),
+        onError: () =>
+          toast({ title: t('website:seo.saveError'), variant: 'destructive' }),
       }
     );
   };
@@ -156,7 +163,10 @@ export function WebsiteSeoTab({ academyId, configuration }: WebsiteSeoTabProps):
                 name="robotsIndexable"
                 render={({ field }) => (
                   <label className="flex items-center gap-2 text-sm">
-                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
                     {t('website:seo.robotsIndexable')}
                   </label>
                 )}
@@ -166,7 +176,10 @@ export function WebsiteSeoTab({ academyId, configuration }: WebsiteSeoTabProps):
                 name="sitemapEnabled"
                 render={({ field }) => (
                   <label className="flex items-center gap-2 text-sm">
-                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
                     {t('website:seo.sitemapEnabled')}
                   </label>
                 )}
@@ -189,14 +202,23 @@ export function WebsiteSeoTab({ academyId, configuration }: WebsiteSeoTabProps):
       {academyQuery.data ? (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">{t('website:seo.structuredDataPreview')}</CardTitle>
+            <CardTitle className="text-base">
+              {t('website:seo.structuredDataPreview')}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="mb-3 text-xs text-muted-foreground">
               {t('website:seo.structuredDataPreviewHelp')}
             </p>
-            <pre className="overflow-x-auto rounded-md bg-muted p-3 text-xs" dir="ltr">
-              {JSON.stringify(buildOrganizationJsonLd(academyQuery.data), null, 2)}
+            <pre
+              className="overflow-x-auto rounded-md bg-muted p-3 text-xs"
+              dir="ltr"
+            >
+              {JSON.stringify(
+                buildOrganizationJsonLd(academyQuery.data),
+                null,
+                2
+              )}
             </pre>
           </CardContent>
         </Card>

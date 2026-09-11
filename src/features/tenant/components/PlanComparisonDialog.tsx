@@ -53,7 +53,11 @@ import type { Plan } from '@types';
  * (`amount: 0`) is never mistaken for "unpriced" here either.
  */
 function hasUsablePricing(plan: Plan): boolean {
-  return plan.pricing?.amount !== undefined && plan.pricing.amount !== null && !!plan.pricing?.currency;
+  return (
+    plan.pricing?.amount !== undefined &&
+    plan.pricing.amount !== null &&
+    !!plan.pricing?.currency
+  );
 }
 
 /** An inline notice shown above the plan grid, with an optional action. */
@@ -226,7 +230,9 @@ export function PlanComparisonDialog({
                       type="button"
                       variant="outline"
                       className="mt-auto"
-                      disabled={plan.status !== 'active' || !hasUsablePricing(plan)}
+                      disabled={
+                        plan.status !== 'active' || !hasUsablePricing(plan)
+                      }
                       onClick={() => onSelectPlan(plan)}
                     >
                       {t('tenant:planComparison.selectPlan')}

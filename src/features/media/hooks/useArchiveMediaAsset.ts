@@ -16,9 +16,12 @@ export interface ArchiveMediaAssetVariables {
 }
 
 export function useArchiveMediaAsset() {
-  return useApiMutation<MediaAssetDetail, ArchiveMediaAssetVariables, ApiError>({
-    mutationFn: ({ academyId, assetId }) => mediaService.archiveAsset(academyId, assetId),
-    successMessageKey: 'media:actions.archiveSuccess',
-    invalidateKeys: [mediaKeys.all],
-  });
+  return useApiMutation<MediaAssetDetail, ArchiveMediaAssetVariables, ApiError>(
+    {
+      mutationFn: ({ academyId, assetId }) =>
+        mediaService.archiveAsset(academyId, assetId),
+      successMessageKey: 'media:actions.archiveSuccess',
+      invalidateKeys: [mediaKeys.all],
+    }
+  );
 }

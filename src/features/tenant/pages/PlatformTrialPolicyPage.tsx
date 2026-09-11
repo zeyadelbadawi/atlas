@@ -151,9 +151,7 @@ export default function PlatformTrialPolicyPage(): JSX.Element {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {t(
-                        'tenant:platformAdmin.trialPolicy.durationDaysLabel'
-                      )}
+                      {t('tenant:platformAdmin.trialPolicy.durationDaysLabel')}
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -173,9 +171,7 @@ export default function PlatformTrialPolicyPage(): JSX.Element {
                     </FormControl>
                     <FormDescription>
                       {enabled
-                        ? t(
-                            'tenant:platformAdmin.trialPolicy.durationDaysHelp'
-                          )
+                        ? t('tenant:platformAdmin.trialPolicy.durationDaysHelp')
                         : t(
                             'tenant:platformAdmin.trialPolicy.durationDaysDisabledHelp'
                           )}

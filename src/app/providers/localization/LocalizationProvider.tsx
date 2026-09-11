@@ -6,35 +6,35 @@
  * document root, every component inherits direction automatically and no
  * component needs a direction branch of its own.
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { ReactNode } from "react";
-import { I18nextProvider } from "react-i18next";
-import type { i18n as I18nInstance } from "i18next";
-import { APP_CONFIG } from "@config";
-import { STORAGE_KEYS } from "@constants";
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
+import { I18nextProvider } from 'react-i18next';
+import type { i18n as I18nInstance } from 'i18next';
+import { APP_CONFIG } from '@config';
+import { STORAGE_KEYS } from '@constants';
 import {
   LANGUAGE_LIST,
   createI18nInstance,
   isSupportedLanguage,
-} from "@localization";
-import { LANGUAGES } from "@localization";
-import type { LanguageCode } from "@types";
-import { readStoredValue, writeStoredValue } from "@utils";
-import { LocalizationContext } from "./localization.context";
-import type { LocalizationContextValue } from "./localization.context";
+} from '@localization';
+import { LANGUAGES } from '@localization';
+import type { LanguageCode } from '@types';
+import { readStoredValue, writeStoredValue } from '@utils';
+import { LocalizationContext } from './localization.context';
+import type { LocalizationContextValue } from './localization.context';
 
 /** Reads the persisted language, falling back to the browser then the default. */
 function readInitialLanguage(): LanguageCode {
   const stored = readStoredValue<unknown>(
     STORAGE_KEYS.language,
-    APP_CONFIG.defaultLanguage,
+    APP_CONFIG.defaultLanguage
   );
 
-  if (typeof stored === "string" && isSupportedLanguage(stored)) {
+  if (typeof stored === 'string' && isSupportedLanguage(stored)) {
     return stored;
   }
 
-  const browserLanguage = navigator.language?.split("-")[0] ?? "";
+  const browserLanguage = navigator.language?.split('-')[0] ?? '';
   return isSupportedLanguage(browserLanguage)
     ? browserLanguage
     : APP_CONFIG.defaultLanguage;
@@ -81,12 +81,12 @@ export function AtlasLocalizationProvider({
       language,
       languageDefinition,
       direction: languageDefinition.direction,
-      isRtl: languageDefinition.direction === "rtl",
+      isRtl: languageDefinition.direction === 'rtl',
       locale: languageDefinition.locale,
       availableLanguages: LANGUAGE_LIST,
       setLanguage,
     }),
-    [language, languageDefinition, setLanguage],
+    [language, languageDefinition, setLanguage]
   );
 
   return (

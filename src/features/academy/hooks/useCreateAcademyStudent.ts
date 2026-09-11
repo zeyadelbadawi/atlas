@@ -15,7 +15,11 @@ export interface CreateAcademyStudentVariables {
 }
 
 export function useCreateAcademyStudent() {
-  return useApiMutation<AcademyStudent, CreateAcademyStudentVariables, ApiError>({
+  return useApiMutation<
+    AcademyStudent,
+    CreateAcademyStudentVariables,
+    ApiError
+  >({
     mutationFn: ({ academyId, payload }) =>
       academyService.createAcademyStudent(academyId, payload),
     // A student account is never listed on the Academy Members page (no

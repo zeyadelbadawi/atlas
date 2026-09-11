@@ -3,27 +3,27 @@
  *
  * Email and password authentication form with validation.
  */
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useTranslation } from "react-i18next";
-import { Eye, EyeOff } from "lucide-react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AUTH_ROUTES } from "@app/routes/route-paths";
-import type { ApiError } from "@api";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
+import { Eye, EyeOff } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AUTH_ROUTES } from '@app/routes/route-paths';
+import type { ApiError } from '@api';
 
 const signInSchema = z.object({
   email: z
     .string()
-    .min(1, "auth:signIn.errors.emailRequired")
-    .email("auth:signIn.errors.invalidEmail"),
-  password: z.string().min(1, "auth:signIn.errors.passwordRequired"),
+    .min(1, 'auth:signIn.errors.emailRequired')
+    .email('auth:signIn.errors.invalidEmail'),
+  password: z.string().min(1, 'auth:signIn.errors.passwordRequired'),
   rememberMe: z.boolean().optional(),
 });
 
@@ -33,7 +33,7 @@ export interface SignInFormProps {
   readonly onSubmit: (
     email: string,
     password: string,
-    rememberMe: boolean,
+    rememberMe: boolean
   ) => Promise<void>;
   readonly isLoading: boolean;
   readonly error: ApiError | null;
@@ -54,8 +54,8 @@ export function SignInForm({
   } = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
       rememberMe: false,
     },
   });
@@ -69,43 +69,43 @@ export function SignInForm({
       {error ? (
         <Alert variant="destructive">
           <AlertDescription>
-            {t(error.messageKey || "auth:signIn.errors.invalidCredentials")}
+            {t(error.messageKey || 'auth:signIn.errors.invalidCredentials')}
           </AlertDescription>
         </Alert>
       ) : null}
 
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">{t("auth:signIn.email")}</Label>
+          <Label htmlFor="email">{t('auth:signIn.email')}</Label>
           <Input
             id="email"
             type="email"
-            placeholder={t("auth:signIn.emailPlaceholder")}
+            placeholder={t('auth:signIn.emailPlaceholder')}
             autoComplete="email"
             disabled={isLoading}
-            {...register("email")}
+            {...register('email')}
             aria-invalid={!!errors.email}
-            aria-describedby={errors.email ? "email-error" : undefined}
+            aria-describedby={errors.email ? 'email-error' : undefined}
           />
           {errors.email ? (
             <p id="email-error" className="text-sm text-destructive">
-              {t(errors.email.message || "auth:signIn.errors.emailRequired")}
+              {t(errors.email.message || 'auth:signIn.errors.emailRequired')}
             </p>
           ) : null}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password">{t("auth:signIn.password")}</Label>
+          <Label htmlFor="password">{t('auth:signIn.password')}</Label>
           <div className="relative">
             <Input
               id="password"
-              type={showPassword ? "text" : "password"}
-              placeholder={t("auth:signIn.passwordPlaceholder")}
+              type={showPassword ? 'text' : 'password'}
+              placeholder={t('auth:signIn.passwordPlaceholder')}
               autoComplete="current-password"
               disabled={isLoading}
-              {...register("password")}
+              {...register('password')}
               aria-invalid={!!errors.password}
-              aria-describedby={errors.password ? "password-error" : undefined}
+              aria-describedby={errors.password ? 'password-error' : undefined}
               className="pe-10"
             />
             <button
@@ -115,8 +115,8 @@ export function SignInForm({
               disabled={isLoading}
               aria-label={
                 showPassword
-                  ? t("common:actions.hidePassword")
-                  : t("common:actions.showPassword")
+                  ? t('common:actions.hidePassword')
+                  : t('common:actions.showPassword')
               }
             >
               {showPassword ? (
@@ -129,8 +129,7 @@ export function SignInForm({
           {errors.password ? (
             <p id="password-error" className="text-sm text-destructive">
               {t(
-                errors.password.message ||
-                  "auth:signIn.errors.passwordRequired",
+                errors.password.message || 'auth:signIn.errors.passwordRequired'
               )}
             </p>
           ) : null}
@@ -140,14 +139,14 @@ export function SignInForm({
           <div className="flex items-center gap-2">
             <Checkbox
               id="rememberMe"
-              {...register("rememberMe")}
+              {...register('rememberMe')}
               disabled={isLoading}
             />
             <Label
               htmlFor="rememberMe"
               className="text-sm font-normal cursor-pointer"
             >
-              {t("auth:signIn.rememberMe")}
+              {t('auth:signIn.rememberMe')}
             </Label>
           </div>
 
@@ -156,7 +155,7 @@ export function SignInForm({
             className="text-sm font-medium text-primary hover:underline"
             tabIndex={isLoading ? -1 : 0}
           >
-            {t("auth:signIn.forgotPassword")}
+            {t('auth:signIn.forgotPassword')}
           </Link>
         </div>
       </div>
@@ -167,7 +166,7 @@ export function SignInForm({
         disabled={isLoading}
         aria-busy={isLoading}
       >
-        {isLoading ? t("common:actions.loading") : t("auth:signIn.submit")}
+        {isLoading ? t('common:actions.loading') : t('auth:signIn.submit')}
       </Button>
     </form>
   );

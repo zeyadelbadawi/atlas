@@ -4,7 +4,11 @@
 import { useApiQuery } from '@/shared/hooks';
 import { platformAcademyKeys } from '@services/query';
 import { platformAcademyService } from '../services/PlatformAcademyService';
-import type { CollectionQuery, PaginatedResult, PlatformAcademySummary } from '@types';
+import type {
+  CollectionQuery,
+  PaginatedResult,
+  PlatformAcademySummary,
+} from '@types';
 import type { ApiError } from '@api';
 
 export interface UsePlatformAcademiesOptions {

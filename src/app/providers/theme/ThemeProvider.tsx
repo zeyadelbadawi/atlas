@@ -5,25 +5,25 @@
  * a theme. Light Mode and Dark Mode are both primary experiences; `system`
  * follows the operating system and keeps following it while the app is open.
  */
-import { useCallback, useEffect, useMemo, useState } from "react";
-import type { ReactNode } from "react";
-import { APP_CONFIG } from "@config";
-import { STORAGE_KEYS } from "@constants";
-import { THEME_PREFERENCES } from "@types";
-import type { ResolvedTheme, ThemePreference } from "@types";
-import { readStoredValue, writeStoredValue } from "@utils";
-import { ThemeContext } from "./theme.context";
-import type { ThemeContextValue } from "./theme.context";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
+import { APP_CONFIG } from '@config';
+import { STORAGE_KEYS } from '@constants';
+import { THEME_PREFERENCES } from '@types';
+import type { ResolvedTheme, ThemePreference } from '@types';
+import { readStoredValue, writeStoredValue } from '@utils';
+import { ThemeContext } from './theme.context';
+import type { ThemeContextValue } from './theme.context';
 
 /** Class applied to the document root when Dark Mode is active. */
-const DARK_MODE_CLASS = "dark";
+const DARK_MODE_CLASS = 'dark';
 
 /** Media query used to resolve the `system` preference. */
-const DARK_MODE_QUERY = "(prefers-color-scheme: dark)";
+const DARK_MODE_QUERY = '(prefers-color-scheme: dark)';
 
 function isThemePreference(value: unknown): value is ThemePreference {
   return (
-    typeof value === "string" &&
+    typeof value === 'string' &&
     (THEME_PREFERENCES as readonly string[]).includes(value)
   );
 }
@@ -32,23 +32,23 @@ function isThemePreference(value: unknown): value is ThemePreference {
 function readStoredPreference(): ThemePreference {
   const stored = readStoredValue<unknown>(
     STORAGE_KEYS.theme,
-    APP_CONFIG.defaultTheme,
+    APP_CONFIG.defaultTheme
   );
   return isThemePreference(stored) ? stored : APP_CONFIG.defaultTheme;
 }
 
 /** Reads the operating system colour scheme. */
 function readSystemTheme(): ResolvedTheme {
-  if (typeof window === "undefined" || !window.matchMedia) return "light";
-  return window.matchMedia(DARK_MODE_QUERY).matches ? "dark" : "light";
+  if (typeof window === 'undefined' || !window.matchMedia) return 'light';
+  return window.matchMedia(DARK_MODE_QUERY).matches ? 'dark' : 'light';
 }
 
 /** Resolves a preference into the theme actually applied. */
 function resolveTheme(
   preference: ThemePreference,
-  systemTheme: ResolvedTheme,
+  systemTheme: ResolvedTheme
 ): ResolvedTheme {
-  return preference === "system" ? systemTheme : preference;
+  return preference === 'system' ? systemTheme : preference;
 }
 
 export interface AtlasThemeProviderProps {
@@ -66,20 +66,20 @@ export function AtlasThemeProvider({
   const resolvedTheme = resolveTheme(preference, systemTheme);
 
   useEffect(() => {
-    if (typeof window === "undefined" || !window.matchMedia) return;
+    if (typeof window === 'undefined' || !window.matchMedia) return;
 
     // Tracked continuously so `system` stays correct without a reload.
     const mediaQueryList = window.matchMedia(DARK_MODE_QUERY);
     const handleChange = (event: MediaQueryListEvent): void =>
-      setSystemTheme(event.matches ? "dark" : "light");
+      setSystemTheme(event.matches ? 'dark' : 'light');
 
-    mediaQueryList.addEventListener("change", handleChange);
-    return () => mediaQueryList.removeEventListener("change", handleChange);
+    mediaQueryList.addEventListener('change', handleChange);
+    return () => mediaQueryList.removeEventListener('change', handleChange);
   }, []);
 
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.toggle(DARK_MODE_CLASS, resolvedTheme === "dark");
+    root.classList.toggle(DARK_MODE_CLASS, resolvedTheme === 'dark');
     // Lets the browser theme native controls such as scrollbars and inputs.
     root.style.colorScheme = resolvedTheme;
   }, [resolvedTheme]);
@@ -90,12 +90,12 @@ export function AtlasThemeProvider({
   }, []);
 
   const toggleTheme = useCallback(() => {
-    setPreference(resolvedTheme === "dark" ? "light" : "dark");
+    setPreference(resolvedTheme === 'dark' ? 'light' : 'dark');
   }, [resolvedTheme, setPreference]);
 
   const value = useMemo<ThemeContextValue>(
     () => ({ preference, resolvedTheme, setPreference, toggleTheme }),
-    [preference, resolvedTheme, setPreference, toggleTheme],
+    [preference, resolvedTheme, setPreference, toggleTheme]
   );
 
   return (

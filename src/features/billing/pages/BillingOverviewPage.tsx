@@ -8,7 +8,13 @@
  */
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Columns3, CreditCard, FileText, Receipt } from 'lucide-react';
+import {
+  ArrowRight,
+  Columns3,
+  CreditCard,
+  FileText,
+  Receipt,
+} from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState, EmptyState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
@@ -115,7 +121,9 @@ export default function BillingOverviewPage(): JSX.Element {
               </p>
               {subscription.billingCycle ? (
                 <p className="text-sm text-muted-foreground">
-                  {t(`payments:common.billingCycle.${subscription.billingCycle}`)}
+                  {t(
+                    `payments:common.billingCycle.${subscription.billingCycle}`
+                  )}
                 </p>
               ) : null}
             </div>
@@ -187,7 +195,11 @@ export default function BillingOverviewPage(): JSX.Element {
             onClick={() => navigate(DASHBOARD_ROUTES.tenantBillingInvoices)}
             className="flex items-center gap-3 rounded-lg border border-border bg-card p-4 text-start hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <FileText className="size-5 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+            <FileText
+              className="size-5 text-muted-foreground"
+              strokeWidth={1.75}
+              aria-hidden
+            />
             <span>
               <span className="block font-medium text-foreground">
                 {t('payments:overview.invoicesLink')}
@@ -203,7 +215,11 @@ export default function BillingOverviewPage(): JSX.Element {
             onClick={() => navigate(DASHBOARD_ROUTES.tenantAddOns)}
             className="flex items-center gap-3 rounded-lg border border-border bg-card p-4 text-start hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <Receipt className="size-5 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+            <Receipt
+              className="size-5 text-muted-foreground"
+              strokeWidth={1.75}
+              aria-hidden
+            />
             <span>
               <span className="block font-medium text-foreground">
                 {t('payments:overview.addOnsLink')}

@@ -14,7 +14,8 @@ export function useUpdatePreferences() {
   const { refreshSession } = useAuth();
 
   return useApiMutation<CurrentUser, Partial<UserPreferences>, ApiError>({
-    mutationFn: (preferences) => currentUserService.updatePreferences(preferences),
+    mutationFn: (preferences) =>
+      currentUserService.updatePreferences(preferences),
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async () => {

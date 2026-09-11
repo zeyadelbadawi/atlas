@@ -9,8 +9,10 @@ import type { FieldValues, UseFormReturn } from 'react-hook-form';
 import { useApiMutation } from '@hooks';
 import type { UseApiMutationOptions } from '@hooks/useApiMutation';
 
-export interface UseFormSubmitOptions<TData, TVariables extends FieldValues>
-  extends Omit<UseApiMutationOptions<TData, TVariables>, 'mutationFn'> {
+export interface UseFormSubmitOptions<
+  TData,
+  TVariables extends FieldValues,
+> extends Omit<UseApiMutationOptions<TData, TVariables>, 'mutationFn'> {
   /** The mutation function to execute. */
   readonly mutationFn: (variables: TVariables) => Promise<TData>;
 
@@ -25,8 +27,12 @@ export function useFormSubmit<TData, TVariables extends FieldValues>(
   form: UseFormReturn<TVariables>,
   options: UseFormSubmitOptions<TData, TVariables>
 ) {
-  const { mutationFn, onSuccess, resetOnSuccess = false, ...mutationOptions } =
-    options;
+  const {
+    mutationFn,
+    onSuccess,
+    resetOnSuccess = false,
+    ...mutationOptions
+  } = options;
 
   const mutation = useApiMutation<TData, TVariables>({
     mutationFn,

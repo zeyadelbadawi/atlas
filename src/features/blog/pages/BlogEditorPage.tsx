@@ -250,7 +250,9 @@ export default function BlogEditorPage(): JSX.Element {
   return (
     <PageContainer>
       <PageHeader
-        titleKey={isEditMode ? 'blog:editor.editTitle' : 'blog:editor.createTitle'}
+        titleKey={
+          isEditMode ? 'blog:editor.editTitle' : 'blog:editor.createTitle'
+        }
       />
 
       <Form {...form}>
@@ -364,7 +366,11 @@ export default function BlogEditorPage(): JSX.Element {
                         variant="outline"
                         onClick={imagePicker.openFilePicker}
                       >
-                        <Upload className="size-4" strokeWidth={2} aria-hidden />
+                        <Upload
+                          className="size-4"
+                          strokeWidth={2}
+                          aria-hidden
+                        />
                         {t('blog:editor.uploadImage')}
                       </Button>
                     )}

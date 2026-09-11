@@ -22,7 +22,10 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { useUpdateWebsiteConfiguration } from '../hooks';
 import { LocalizedTextField } from './LocalizedTextField';
-import { buildAuthPageCopyHeaderPatch, type AuthPageKey } from '../utils/auth-page-copy.utils';
+import {
+  buildAuthPageCopyHeaderPatch,
+  type AuthPageKey,
+} from '../utils/auth-page-copy.utils';
 import type { LocalizedText, WebsiteConfiguration } from '@types';
 
 const EMPTY_LOCALIZED: LocalizedText = { en: '', ar: '' };
@@ -46,15 +49,39 @@ export function AuthPageCopyDialog({
   const updateConfig = useUpdateWebsiteConfiguration();
 
   const copy = configuration.header.authPages?.[page];
-  const titleKey = page === 'signIn' ? 'website:navigation.ctaTargetSignIn' : 'website:navigation.ctaTargetSignUp';
-  const defaultTitleKey = page === 'signIn' ? 'publicWebsite:auth.signIn.title' : 'publicWebsite:auth.signUp.title';
+  const titleKey =
+    page === 'signIn'
+      ? 'website:navigation.ctaTargetSignIn'
+      : 'website:navigation.ctaTargetSignUp';
+  const defaultTitleKey =
+    page === 'signIn'
+      ? 'publicWebsite:auth.signIn.title'
+      : 'publicWebsite:auth.signUp.title';
   const defaultSubtitleKey =
-    page === 'signIn' ? 'publicWebsite:auth.signIn.subtitle' : 'publicWebsite:auth.signUp.subtitle';
+    page === 'signIn'
+      ? 'publicWebsite:auth.signIn.subtitle'
+      : 'publicWebsite:auth.signUp.subtitle';
 
   const save = (field: 'title' | 'subtitle', value: LocalizedText) => {
     updateConfig.mutate(
-      { academyId, payload: { header: buildAuthPageCopyHeaderPatch(configuration, page, field, value) } },
-      { onError: () => toast({ title: t('website:navigation.saveError'), variant: 'destructive' }) }
+      {
+        academyId,
+        payload: {
+          header: buildAuthPageCopyHeaderPatch(
+            configuration,
+            page,
+            field,
+            value
+          ),
+        },
+      },
+      {
+        onError: () =>
+          toast({
+            title: t('website:navigation.saveError'),
+            variant: 'destructive',
+          }),
+      }
     );
   };
 
@@ -64,7 +91,9 @@ export function AuthPageCopyDialog({
         <DialogHeader>
           <DialogTitle>{t(titleKey)}</DialogTitle>
         </DialogHeader>
-        <p className="text-sm text-muted-foreground">{t('website:navigation.authPagesDescription')}</p>
+        <p className="text-sm text-muted-foreground">
+          {t('website:navigation.authPagesDescription')}
+        </p>
         <div className="space-y-4">
           <LocalizedTextField
             id={`auth-page-${page}-title`}

@@ -5,9 +5,9 @@
  * permanent action. Exposing it as a promise lets a feature simply `await` the
  * user's decision instead of managing dialog state and callbacks.
  */
-import { useCallback, useMemo, useRef, useState } from "react";
-import type { ReactNode } from "react";
-import { useTranslation } from "react-i18next";
+import { useCallback, useMemo, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,10 +17,10 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { cn } from "@utils";
-import { DialogContext } from "./dialog.context";
-import type { ConfirmRequest, DialogContextValue } from "./dialog.context";
+} from '@/components/ui/alert-dialog';
+import { cn } from '@utils';
+import { DialogContext } from './dialog.context';
+import type { ConfirmRequest, DialogContextValue } from './dialog.context';
 
 export interface AtlasDialogProviderProps {
   readonly children: ReactNode;
@@ -56,12 +56,12 @@ export function AtlasDialogProvider({
       // Dismissing by overlay click or Escape must resolve as "not confirmed".
       if (!isOpen) settle(false);
     },
-    [settle],
+    [settle]
   );
 
   const value = useMemo<DialogContextValue>(() => ({ confirm }), [confirm]);
 
-  const isDestructive = request?.intent === "destructive";
+  const isDestructive = request?.intent === 'destructive';
 
   return (
     <DialogContext.Provider value={value}>
@@ -80,13 +80,13 @@ export function AtlasDialogProvider({
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel onClick={() => settle(false)}>
-                  {t(request.cancelLabelKey ?? "common:actions.cancel")}
+                  {t(request.cancelLabelKey ?? 'common:actions.cancel')}
                 </AlertDialogCancel>
                 <AlertDialogAction
                   onClick={() => settle(true)}
                   className={cn(
                     isDestructive &&
-                      "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+                      'bg-destructive text-destructive-foreground hover:bg-destructive/90'
                   )}
                 >
                   {t(request.confirmLabelKey, request.values ?? {})}

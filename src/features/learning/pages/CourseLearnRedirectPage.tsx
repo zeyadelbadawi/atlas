@@ -5,30 +5,32 @@
  * it resolves to the student's resume point (or the course's first lesson)
  * and redirects there.
  */
-import { useParams, Navigate } from "react-router-dom";
-import { PageContainer } from "@components/layout";
-import { ErrorState } from "@components/feedback";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useEnrollment, useCourseProgress, useCourseContent } from "../hooks";
-import { useLearningPaths } from "../context/LearningPaths.context";
+import { useParams, Navigate } from 'react-router-dom';
+import { PageContainer } from '@components/layout';
+import { ErrorState } from '@components/feedback';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useEnrollment, useCourseProgress, useCourseContent } from '../hooks';
+import { useLearningPaths } from '../context/LearningPaths.context';
 
 export default function CourseLearnRedirectPage(): JSX.Element {
   const { courseId } = useParams<{ courseId: string }>();
   const paths = useLearningPaths();
 
   const { data: enrollment, isLoading: isLoadingEnrollment } = useEnrollment(
-    courseId ?? ""
+    courseId ?? ''
   );
-  const isEnrolled = !!enrollment && enrollment.status !== "available";
+  const isEnrolled = !!enrollment && enrollment.status !== 'available';
 
   const { data: progress, isLoading: isLoadingProgress } = useCourseProgress(
-    courseId ?? "",
+    courseId ?? '',
     { enabled: isEnrolled }
   );
-  const { data: sectionsData, isLoading: isLoadingSections } =
-    useCourseContent(courseId ?? "", {
+  const { data: sectionsData, isLoading: isLoadingSections } = useCourseContent(
+    courseId ?? '',
+    {
       enabled: isEnrolled,
-    });
+    }
+  );
 
   if (isLoadingEnrollment || isLoadingProgress || isLoadingSections) {
     return (
@@ -48,8 +50,9 @@ export default function CourseLearnRedirectPage(): JSX.Element {
 
   const firstLessonId = [...(sectionsData?.items ?? [])]
     .sort((a, b) => a.order - b.order)
-    .flatMap((section) => [...section.lessons].sort((a, b) => a.order - b.order))[0]
-    ?.id;
+    .flatMap((section) =>
+      [...section.lessons].sort((a, b) => a.order - b.order)
+    )[0]?.id;
 
   const targetLessonId = progress?.currentLessonId ?? firstLessonId;
 

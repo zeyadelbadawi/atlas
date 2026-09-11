@@ -6,23 +6,23 @@
  * real mutation via `useRequestPasswordReset`
  * (`authenticationService.requestPasswordReset`).
  */
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle2 } from "lucide-react";
-import { ErrorState } from "@components/feedback";
-import { useRequestPasswordReset } from "../hooks";
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { CheckCircle2 } from 'lucide-react';
+import { ErrorState } from '@components/feedback';
+import { useRequestPasswordReset } from '../hooks';
 
 const forgotPasswordSchema = z.object({
   email: z
     .string()
-    .min(1, "auth:forgotPassword.errors.emailRequired")
-    .email("auth:forgotPassword.errors.invalidEmail"),
+    .min(1, 'auth:forgotPassword.errors.emailRequired')
+    .email('auth:forgotPassword.errors.invalidEmail'),
 });
 
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
@@ -38,7 +38,7 @@ export function ForgotPasswordForm(): JSX.Element {
   } = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
-      email: "",
+      email: '',
     },
   });
 
@@ -53,7 +53,7 @@ export function ForgotPasswordForm(): JSX.Element {
       <Alert className="border-success bg-success/10">
         <CheckCircle2 className="size-4 text-success" />
         <AlertDescription className="text-success-foreground">
-          {t("auth:forgotPassword.success.description")}
+          {t('auth:forgotPassword.success.description')}
         </AlertDescription>
       </Alert>
     );
@@ -67,26 +67,26 @@ export function ForgotPasswordForm(): JSX.Element {
 
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">{t("auth:forgotPassword.email")}</Label>
+          <Label htmlFor="email">{t('auth:forgotPassword.email')}</Label>
           <Input
             id="email"
             type="email"
-            placeholder={t("auth:forgotPassword.emailPlaceholder")}
+            placeholder={t('auth:forgotPassword.emailPlaceholder')}
             autoComplete="email"
             disabled={isLoading}
-            {...register("email")}
+            {...register('email')}
             aria-invalid={!!errors.email}
           />
           {errors.email ? (
             <p className="text-sm text-destructive">
               {t(
                 errors.email.message ||
-                  "auth:forgotPassword.errors.emailRequired",
+                  'auth:forgotPassword.errors.emailRequired'
               )}
             </p>
           ) : null}
           <p className="text-sm text-muted-foreground">
-            {t("auth:forgotPassword.emailHint")}
+            {t('auth:forgotPassword.emailHint')}
           </p>
         </div>
       </div>
@@ -98,8 +98,8 @@ export function ForgotPasswordForm(): JSX.Element {
         aria-busy={isLoading}
       >
         {isLoading
-          ? t("common:actions.loading")
-          : t("auth:forgotPassword.submit")}
+          ? t('common:actions.loading')
+          : t('auth:forgotPassword.submit')}
       </Button>
     </form>
   );

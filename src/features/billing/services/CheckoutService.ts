@@ -14,7 +14,10 @@ import type { Checkout, CreateCheckoutPayload } from '@types';
 export class CheckoutService extends BaseService {
   protected readonly resource = 'organizations';
 
-  private checkoutsPath(organizationId: string, ...segments: readonly string[]): string {
+  private checkoutsPath(
+    organizationId: string,
+    ...segments: readonly string[]
+  ): string {
     return this.path(organizationId, 'checkouts', ...segments);
   }
 

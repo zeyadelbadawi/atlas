@@ -19,7 +19,12 @@ export default function PlatformUserDetailPage(): JSX.Element {
   const { t, i18n } = useTranslation();
   const { userId } = useParams<{ userId: string }>();
 
-  const { data: user, isLoading, error, refetch } = usePlatformUser(userId ?? '');
+  const {
+    data: user,
+    isLoading,
+    error,
+    refetch,
+  } = usePlatformUser(userId ?? '');
 
   if (isLoading) {
     return (
@@ -57,23 +62,33 @@ export default function PlatformUserDetailPage(): JSX.Element {
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">{t('platform:users.overviewTitle')}</CardTitle>
+            <CardTitle className="text-base">
+              {t('platform:users.overviewTitle')}
+            </CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1">
-              <p className="text-xs text-muted-foreground">{t('platform:users.table.email')}</p>
+              <p className="text-xs text-muted-foreground">
+                {t('platform:users.table.email')}
+              </p>
               <p className="text-sm text-foreground">{user.email}</p>
             </div>
             <div className="space-y-1">
-              <p className="text-xs text-muted-foreground">{t('platform:users.table.lastSignIn')}</p>
+              <p className="text-xs text-muted-foreground">
+                {t('platform:users.table.lastSignIn')}
+              </p>
               <p className="text-sm text-foreground">
                 {user.lastSignInAt
-                  ? new Date(user.lastSignInAt).toLocaleDateString(i18n.language)
+                  ? new Date(user.lastSignInAt).toLocaleDateString(
+                      i18n.language
+                    )
                   : '—'}
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-xs text-muted-foreground">{t('platform:users.table.createdAt')}</p>
+              <p className="text-xs text-muted-foreground">
+                {t('platform:users.table.createdAt')}
+              </p>
               <p className="text-sm text-foreground">
                 {new Date(user.createdAt).toLocaleDateString(i18n.language)}
               </p>
@@ -83,7 +98,9 @@ export default function PlatformUserDetailPage(): JSX.Element {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">{t('platform:users.rolesTitle')}</CardTitle>
+            <CardTitle className="text-base">
+              {t('platform:users.rolesTitle')}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {user.roles.length === 0 ? (
@@ -105,7 +122,9 @@ export default function PlatformUserDetailPage(): JSX.Element {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">{t('platform:users.membershipsTitle')}</CardTitle>
+            <CardTitle className="text-base">
+              {t('platform:users.membershipsTitle')}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {user.organizationMemberships.length === 0 ? (
@@ -118,12 +137,18 @@ export default function PlatformUserDetailPage(): JSX.Element {
                     className="flex items-center justify-between py-2 text-sm"
                   >
                     <div>
-                      <p className="text-foreground">{membership.organizationName}</p>
+                      <p className="text-foreground">
+                        {membership.organizationName}
+                      </p>
                       <p className="text-xs text-muted-foreground">
-                        {new Date(membership.joinedAt).toLocaleDateString(i18n.language)}
+                        {new Date(membership.joinedAt).toLocaleDateString(
+                          i18n.language
+                        )}
                       </p>
                     </div>
-                    <span className="text-xs text-muted-foreground">{membership.role}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {membership.role}
+                    </span>
                   </li>
                 ))}
               </ul>

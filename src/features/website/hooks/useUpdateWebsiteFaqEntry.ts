@@ -20,13 +20,19 @@ export interface UpdateWebsiteFaqEntryVariables {
 export function useUpdateWebsiteFaqEntry() {
   const { invalidate } = useInvalidate();
 
-  return useApiMutation<WebsiteFaqEntry, UpdateWebsiteFaqEntryVariables, ApiError>({
+  return useApiMutation<
+    WebsiteFaqEntry,
+    UpdateWebsiteFaqEntryVariables,
+    ApiError
+  >({
     mutationFn: ({ academyId, entryId, payload }) =>
       websiteContentService.updateFaqEntry(academyId, entryId, payload),
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async (_data, variables) => {
-      await invalidate(websiteKeys.faqEntry(variables.academyId, variables.entryId));
+      await invalidate(
+        websiteKeys.faqEntry(variables.academyId, variables.entryId)
+      );
       await invalidate(websiteKeys.faqEntries(variables.academyId));
     },
   });

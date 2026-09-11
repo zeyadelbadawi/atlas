@@ -101,7 +101,9 @@ export default function CourseBuilderPage(): JSX.Element {
   const breadcrumbs: readonly BreadcrumbItem[] = [
     {
       labelKey: 'course:list.title',
-      path: buildPath(DASHBOARD_ROUTES.academyCourses, { academyId: academyId ?? '' }),
+      path: buildPath(DASHBOARD_ROUTES.academyCourses, {
+        academyId: academyId ?? '',
+      }),
     },
     ...(course
       ? [
@@ -159,7 +161,11 @@ export default function CourseBuilderPage(): JSX.Element {
       }
       setSectionDialog(null);
     } catch (error) {
-      if (isApiError(error) && error.kind === 'validation' && error.violations?.length) {
+      if (
+        isApiError(error) &&
+        error.kind === 'validation' &&
+        error.violations?.length
+      ) {
         return;
       }
       toast({
@@ -239,7 +245,11 @@ export default function CourseBuilderPage(): JSX.Element {
       // via `useServerValidation` inside `LessonFormDialog` — a generic
       // toast on top would just repeat "something's wrong" without
       // saying what.
-      if (isApiError(error) && error.kind === 'validation' && error.violations?.length) {
+      if (
+        isApiError(error) &&
+        error.kind === 'validation' &&
+        error.violations?.length
+      ) {
         return;
       }
       toast({
@@ -250,7 +260,10 @@ export default function CourseBuilderPage(): JSX.Element {
     }
   };
 
-  const handleDeleteLesson = async (sectionId: string, lesson: CourseLesson) => {
+  const handleDeleteLesson = async (
+    sectionId: string,
+    lesson: CourseLesson
+  ) => {
     const confirmed = await confirm({
       titleKey: 'course:builder.deleteLessonConfirm.title',
       descriptionKey: 'course:builder.deleteLessonConfirm.description',
@@ -577,7 +590,11 @@ export default function CourseBuilderPage(): JSX.Element {
         }
         isPending={createSection.isPending || updateSection.isPending}
         onSubmit={handleSectionSubmit}
-        error={sectionDialog?.mode === 'edit' ? updateSection.error : createSection.error}
+        error={
+          sectionDialog?.mode === 'edit'
+            ? updateSection.error
+            : createSection.error
+        }
       />
 
       <LessonFormDialog
@@ -598,7 +615,11 @@ export default function CourseBuilderPage(): JSX.Element {
         isPending={createLesson.isPending || updateLesson.isPending}
         onSubmit={handleLessonSubmit}
         academyId={academyId}
-        error={lessonDialog?.mode === 'edit' ? updateLesson.error : createLesson.error}
+        error={
+          lessonDialog?.mode === 'edit'
+            ? updateLesson.error
+            : createLesson.error
+        }
       />
     </PageContainer>
   );

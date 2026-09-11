@@ -104,7 +104,8 @@ export function LocalizedTextField({
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
           <Label htmlFor={`${id}-ar`} className="text-xs text-muted-foreground">
-            {t('website:editor.languageArabic')} · {t('website:editor.optional')}
+            {t('website:editor.languageArabic')} ·{' '}
+            {t('website:editor.optional')}
           </Label>
           <span
             className={cn(
@@ -112,8 +113,12 @@ export function LocalizedTextField({
               arComplete ? 'text-success' : 'text-muted-foreground'
             )}
           >
-            {arComplete ? <CheckCircle2 className="size-3.5" aria-hidden /> : null}
-            {arComplete ? t('website:editor.translationComplete') : t('website:editor.translationIncomplete')}
+            {arComplete ? (
+              <CheckCircle2 className="size-3.5" aria-hidden />
+            ) : null}
+            {arComplete
+              ? t('website:editor.translationComplete')
+              : t('website:editor.translationIncomplete')}
           </span>
         </div>
         <Control

@@ -49,19 +49,40 @@ import { getProvisioningStatusTone } from '../utils/provisioning-status.utils';
 import { PROVISIONING_STEP_KEYS } from '../constants/provisioning.constants';
 import type { ProvisioningStep, ProvisioningStepStatus } from '@types';
 
-function StepIcon({ status }: { readonly status: ProvisioningStepStatus }): JSX.Element {
+function StepIcon({
+  status,
+}: {
+  readonly status: ProvisioningStepStatus;
+}): JSX.Element {
   switch (status) {
     case 'completed':
-      return <Check className="size-4 shrink-0 text-success" strokeWidth={2.5} aria-hidden />;
+      return (
+        <Check
+          className="size-4 shrink-0 text-success"
+          strokeWidth={2.5}
+          aria-hidden
+        />
+      );
     case 'running':
-      return <Loader2 className="size-4 shrink-0 animate-spin text-info" aria-hidden />;
+      return (
+        <Loader2
+          className="size-4 shrink-0 animate-spin text-info"
+          aria-hidden
+        />
+      );
     case 'failed':
-      return <XCircle className="size-4 shrink-0 text-destructive" aria-hidden />;
+      return (
+        <XCircle className="size-4 shrink-0 text-destructive" aria-hidden />
+      );
     case 'skipped':
-      return <Minus className="size-4 shrink-0 text-muted-foreground" aria-hidden />;
+      return (
+        <Minus className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+      );
     case 'pending':
     default:
-      return <Circle className="size-4 shrink-0 text-muted-foreground" aria-hidden />;
+      return (
+        <Circle className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+      );
   }
 }
 
@@ -73,9 +94,12 @@ export default function ProvisioningStatusPage(): JSX.Element {
   const { setActiveAcademy } = usePlatform();
   const { confirm } = useConfirmDialog();
 
-  const { data: request, isLoading, error, refetch } = useProvisioningRequest(
-    requestId ?? ''
-  );
+  const {
+    data: request,
+    isLoading,
+    error,
+    refetch,
+  } = useProvisioningRequest(requestId ?? '');
   const retryProvisioning = useRetryProvisioning();
   const cancelProvisioning = useCancelProvisioning();
 
@@ -102,11 +126,17 @@ export default function ProvisioningStatusPage(): JSX.Element {
   const stepByKey = new Map<string, ProvisioningStep>(
     request.steps.map((step) => [step.key, step])
   );
-  const isTerminal = request.status === 'ready' || request.status === 'failed' || request.status === 'cancelled';
+  const isTerminal =
+    request.status === 'ready' ||
+    request.status === 'failed' ||
+    request.status === 'cancelled';
   const isCancellable = !isTerminal;
 
   const handleRetry = () => {
-    retryProvisioning.mutate({ organizationId: organization.id, requestId: request.id });
+    retryProvisioning.mutate({
+      organizationId: organization.id,
+      requestId: request.id,
+    });
   };
 
   const handleCancel = async () => {
@@ -117,7 +147,10 @@ export default function ProvisioningStatusPage(): JSX.Element {
       intent: 'destructive',
     });
     if (!confirmed) return;
-    cancelProvisioning.mutate({ organizationId: organization.id, requestId: request.id });
+    cancelProvisioning.mutate({
+      organizationId: organization.id,
+      requestId: request.id,
+    });
   };
 
   return (
@@ -213,7 +246,11 @@ export default function ProvisioningStatusPage(): JSX.Element {
         ) : request.status === 'ready' ? (
           <Card>
             <CardContent className="flex flex-col items-center gap-4 p-8 text-center">
-              <CheckCircle2 className="size-10 text-success" strokeWidth={1.5} aria-hidden />
+              <CheckCircle2
+                className="size-10 text-success"
+                strokeWidth={1.5}
+                aria-hidden
+              />
               <div>
                 <p className="font-display text-lg font-semibold text-foreground">
                   {t('provisioning:status.readyTitle')}
@@ -277,7 +314,10 @@ export default function ProvisioningStatusPage(): JSX.Element {
         ) : (
           <Card>
             <CardContent className="flex items-center gap-3 p-6">
-              <Loader2 className="size-5 shrink-0 animate-spin text-muted-foreground" aria-hidden />
+              <Loader2
+                className="size-5 shrink-0 animate-spin text-muted-foreground"
+                aria-hidden
+              />
               <p className="text-sm text-muted-foreground">
                 {t('provisioning:status.inProgressDescription')}
               </p>

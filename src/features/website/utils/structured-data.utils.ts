@@ -36,7 +36,10 @@ import type {
  * narrower shape.
  */
 export function buildOrganizationJsonLd(
-  academy: Pick<Academy, 'name' | 'description' | 'logo' | 'contactEmail' | 'contactPhone'>
+  academy: Pick<
+    Academy,
+    'name' | 'description' | 'logo' | 'contactEmail' | 'contactPhone'
+  >
 ): OrganizationJsonLd {
   return {
     '@context': 'https://schema.org',
@@ -49,7 +52,10 @@ export function buildOrganizationJsonLd(
   };
 }
 
-export function buildCourseJsonLd(course: Course, academy: Pick<Academy, 'name'>): CourseJsonLd {
+export function buildCourseJsonLd(
+  course: Course,
+  academy: Pick<Academy, 'name'>
+): CourseJsonLd {
   return {
     '@context': 'https://schema.org',
     '@type': 'Course',
@@ -66,13 +72,17 @@ export function buildArticleJsonLd(post: BlogPost): ArticleJsonLd {
     headline: post.title,
     description: post.excerpt,
     image: post.featuredImage,
-    author: post.authorName ? { '@type': 'Person', name: post.authorName } : undefined,
+    author: post.authorName
+      ? { '@type': 'Person', name: post.authorName }
+      : undefined,
     datePublished: post.publishedAt,
     dateModified: post.updatedAt,
   };
 }
 
-export function buildBreadcrumbJsonLd(items: readonly SeoBreadcrumbItem[]): BreadcrumbJsonLd {
+export function buildBreadcrumbJsonLd(
+  items: readonly SeoBreadcrumbItem[]
+): BreadcrumbJsonLd {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',

@@ -62,14 +62,18 @@ function getApiBaseUrl(): string {
     // the browser's own requests (same-origin). Replaces a previous,
     // invented `https://api.atlas-platform.com` default that pointed at a
     // domain nobody owns.
-    (getEnvironment() === 'production' ? '/api/v1' : 'http://localhost:3000/api')
+    (getEnvironment() === 'production'
+      ? '/api/v1'
+      : 'http://localhost:3000/api')
   );
 }
 
 /** Reads the optional platform base domain — `undefined` (not a fallback string) when unset, so callers can distinguish "not configured" from "configured to something." */
 function getPlatformBaseDomain(): string | undefined {
   const value = import.meta.env.VITE_PLATFORM_BASE_DOMAIN;
-  return typeof value === 'string' && value.trim().length > 0 ? value.trim() : undefined;
+  return typeof value === 'string' && value.trim().length > 0
+    ? value.trim()
+    : undefined;
 }
 
 export const ENV: EnvironmentConfig = Object.freeze({

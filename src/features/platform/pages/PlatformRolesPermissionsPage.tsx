@@ -38,13 +38,19 @@ export default function PlatformRolesPermissionsPage(): JSX.Element {
       <div className="space-y-6">
         <Alert>
           <Info className="size-4" aria-hidden />
-          <AlertTitle>{t('platform:rolesPermissions.boundaryTitle')}</AlertTitle>
-          <AlertDescription>{t('platform:rolesPermissions.boundaryDescription')}</AlertDescription>
+          <AlertTitle>
+            {t('platform:rolesPermissions.boundaryTitle')}
+          </AlertTitle>
+          <AlertDescription>
+            {t('platform:rolesPermissions.boundaryDescription')}
+          </AlertDescription>
         </Alert>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">{t('platform:rolesPermissions.rolesTitle')}</CardTitle>
+            <CardTitle className="text-base">
+              {t('platform:rolesPermissions.rolesTitle')}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {!summary || summary.roles.length === 0 ? (
@@ -56,7 +62,9 @@ export default function PlatformRolesPermissionsPage(): JSX.Element {
                     key={`${assignment.role}-${assignment.organizationId ?? 'global'}-${index}`}
                     className="flex items-center justify-between py-2 text-sm"
                   >
-                    <span className="font-medium text-foreground">{assignment.role}</span>
+                    <span className="font-medium text-foreground">
+                      {assignment.role}
+                    </span>
                     <span className="text-xs text-muted-foreground">
                       {assignment.scope === 'global'
                         ? t('platform:rolesPermissions.scope.global')

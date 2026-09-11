@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { client } from "../lib/api";
+import { useEffect } from 'react';
+import { client } from '../lib/api';
 
 export default function AuthCallback() {
   useEffect(() => {

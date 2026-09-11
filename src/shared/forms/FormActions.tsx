@@ -5,10 +5,10 @@
  * the pending state disables submission to prevent duplicate writes, and the
  * button order stays consistent across every form in the platform.
  */
-import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
-import { Spinner } from "@components/loading";
-import { cn } from "@utils";
+import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
+import { Spinner } from '@components/loading';
+import { cn } from '@utils';
 
 export interface FormActionsProps {
   /** Translation key naming the action, e.g. "Create academy". */
@@ -24,8 +24,8 @@ export interface FormActionsProps {
 }
 
 export function FormActions({
-  submitLabelKey = "common:actions.save",
-  cancelLabelKey = "common:actions.cancel",
+  submitLabelKey = 'common:actions.save',
+  cancelLabelKey = 'common:actions.cancel',
   isSubmitting = false,
   isSubmitDisabled = false,
   onCancel,
@@ -36,8 +36,8 @@ export function FormActions({
   return (
     <div
       className={cn(
-        "flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end",
-        className,
+        'flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end',
+        className
       )}
     >
       {onCancel ? (
@@ -55,7 +55,7 @@ export function FormActions({
         {isSubmitting ? (
           <Spinner size="sm" label={false} className="text-current" />
         ) : null}
-        {t(isSubmitting ? "common:states.saving" : submitLabelKey)}
+        {t(isSubmitting ? 'common:states.saving' : submitLabelKey)}
       </Button>
     </div>
   );

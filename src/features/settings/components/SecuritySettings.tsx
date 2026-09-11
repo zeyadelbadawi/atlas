@@ -30,7 +30,12 @@ import { ErrorState } from '@components/feedback';
 import { usePlatformSettings, useUpdatePlatformSettings } from '../hooks';
 import type { PlatformSessionTimeout } from '@types';
 
-const SESSION_TIMEOUT_VALUES: readonly PlatformSessionTimeout[] = [15, 30, 60, 'never'];
+const SESSION_TIMEOUT_VALUES: readonly PlatformSessionTimeout[] = [
+  15,
+  30,
+  60,
+  'never',
+];
 
 export function SecuritySettings(): JSX.Element {
   const { t } = useTranslation();
@@ -42,7 +47,9 @@ export function SecuritySettings(): JSX.Element {
       <Card>
         <CardHeader>
           <CardTitle>{t('settings:security.title')}</CardTitle>
-          <CardDescription>{t('settings:security.description')}</CardDescription>
+          <CardDescription>
+            {t('settings:security.description')}
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <Skeleton className="h-10 w-full" />
@@ -70,14 +77,20 @@ export function SecuritySettings(): JSX.Element {
       <Card>
         <CardHeader>
           <CardTitle>{t('settings:security.title')}</CardTitle>
-          <CardDescription>{t('settings:security.description')}</CardDescription>
+          <CardDescription>
+            {t('settings:security.description')}
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {updateSettings.error ? <ErrorState onRetry={() => updateSettings.reset()} /> : null}
+          {updateSettings.error ? (
+            <ErrorState onRetry={() => updateSettings.reset()} />
+          ) : null}
 
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label htmlFor="two-factor">{t('settings:security.twoFactorAuth')}</Label>
+              <Label htmlFor="two-factor">
+                {t('settings:security.twoFactorAuth')}
+              </Label>
               <p className="text-sm text-muted-foreground">
                 {t('settings:security.twoFactorAuthDescription')}
               </p>
@@ -85,7 +98,9 @@ export function SecuritySettings(): JSX.Element {
             <Switch
               id="two-factor"
               checked={settings.twoFactorRequired}
-              onCheckedChange={(checked) => updateSettings.mutate({ twoFactorRequired: checked })}
+              onCheckedChange={(checked) =>
+                updateSettings.mutate({ twoFactorRequired: checked })
+              }
               disabled={updateSettings.isPending}
             />
           </div>
@@ -96,7 +111,9 @@ export function SecuritySettings(): JSX.Element {
               value={String(settings.sessionTimeoutMinutes)}
               onValueChange={(value) =>
                 updateSettings.mutate({
-                  sessionTimeoutMinutes: (value === 'never' ? 'never' : Number(value)) as PlatformSessionTimeout,
+                  sessionTimeoutMinutes: (value === 'never'
+                    ? 'never'
+                    : Number(value)) as PlatformSessionTimeout,
                 })
               }
               disabled={updateSettings.isPending}
@@ -107,7 +124,9 @@ export function SecuritySettings(): JSX.Element {
               <SelectContent>
                 {SESSION_TIMEOUT_VALUES.map((value) => (
                   <SelectItem key={value} value={String(value)}>
-                    {t(`settings:security.timeout${value === 'never' ? 'Never' : value}`)}
+                    {t(
+                      `settings:security.timeout${value === 'never' ? 'Never' : value}`
+                    )}
                   </SelectItem>
                 ))}
               </SelectContent>

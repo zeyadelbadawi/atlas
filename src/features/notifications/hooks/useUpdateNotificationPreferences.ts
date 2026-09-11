@@ -11,7 +11,11 @@ import type { ApiError } from '@api';
 import type { NotificationPreferences } from '@types';
 
 export function useUpdateNotificationPreferences() {
-  return useApiMutation<NotificationPreferences, NotificationPreferences, ApiError>({
+  return useApiMutation<
+    NotificationPreferences,
+    NotificationPreferences,
+    ApiError
+  >({
     mutationFn: (payload) => notificationService.updatePreferences(payload),
     showSuccessToast: false,
     showErrorToast: false,

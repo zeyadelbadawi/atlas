@@ -15,13 +15,19 @@ export interface PublishWebsiteTestimonialEntryVariables {
 export function usePublishWebsiteTestimonialEntry() {
   const { invalidate } = useInvalidate();
 
-  return useApiMutation<WebsiteTestimonialEntry, PublishWebsiteTestimonialEntryVariables, ApiError>({
+  return useApiMutation<
+    WebsiteTestimonialEntry,
+    PublishWebsiteTestimonialEntryVariables,
+    ApiError
+  >({
     mutationFn: ({ academyId, entryId }) =>
       websiteContentService.publishTestimonialEntry(academyId, entryId),
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async (_data, variables) => {
-      await invalidate(websiteKeys.testimonialEntry(variables.academyId, variables.entryId));
+      await invalidate(
+        websiteKeys.testimonialEntry(variables.academyId, variables.entryId)
+      );
       await invalidate(websiteKeys.testimonialEntries(variables.academyId));
     },
   });

@@ -61,7 +61,8 @@ export function OrganizationSwitcher({
     );
   }
 
-  const activeLabel = organization?.name ?? t('organization:switcher.selectPrompt');
+  const activeLabel =
+    organization?.name ?? t('organization:switcher.selectPrompt');
 
   return (
     <DropdownMenu>
@@ -73,7 +74,11 @@ export function OrganizationSwitcher({
           aria-label={t('organization:switcher.label')}
           className="max-w-48 gap-2 text-foreground"
         >
-          <Building2 className="size-4 shrink-0" strokeWidth={1.75} aria-hidden />
+          <Building2
+            className="size-4 shrink-0"
+            strokeWidth={1.75}
+            aria-hidden
+          />
           <span className="truncate">{activeLabel}</span>
           <ChevronsUpDown
             className="size-3.5 shrink-0 text-muted-foreground"
@@ -92,7 +97,11 @@ export function OrganizationSwitcher({
           >
             <span className="truncate">{membership.organizationName}</span>
             {membership.organizationId === organization?.id ? (
-              <Check className="size-4 shrink-0 text-primary" strokeWidth={2} aria-hidden />
+              <Check
+                className="size-4 shrink-0 text-primary"
+                strokeWidth={2}
+                aria-hidden
+              />
             ) : null}
           </DropdownMenuItem>
         ))}

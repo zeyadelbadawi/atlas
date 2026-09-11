@@ -30,7 +30,10 @@ import type {
   WebsiteConfiguration,
   WebsitePage,
 } from '@types';
-import { PUBLIC_WEBSITE_LOCALES, type PublicWebsiteLocale } from '../constants/locale.constants';
+import {
+  PUBLIC_WEBSITE_LOCALES,
+  type PublicWebsiteLocale,
+} from '../constants/locale.constants';
 import { resolveLocalizedText } from './localized-text.utils';
 
 export interface SeoFallback {
@@ -42,7 +45,9 @@ function withLocalePrefix(path: string, locale: PublicWebsiteLocale): string {
   return locale === 'en' ? path : `/${locale}${path}`;
 }
 
-function buildHreflangAlternates(canonicalPath: string): readonly HreflangAlternate[] {
+function buildHreflangAlternates(
+  canonicalPath: string
+): readonly HreflangAlternate[] {
   return PUBLIC_WEBSITE_LOCALES.map((locale) => ({
     locale,
     path: withLocalePrefix(canonicalPath, locale),
@@ -56,13 +61,27 @@ export function resolvePageSeo(
   locale: PublicWebsiteLocale
 ): ResolvedSeoMetadata {
   const pageMetaTitle = resolveLocalizedText(page.seo.metaTitle, locale);
-  const globalMetaTitle = resolveLocalizedText(configuration.seo.metaTitle, locale);
+  const globalMetaTitle = resolveLocalizedText(
+    configuration.seo.metaTitle,
+    locale
+  );
   const title = pageMetaTitle || globalMetaTitle || fallback.title;
-  const titleSource = pageMetaTitle ? 'override' : globalMetaTitle ? 'global' : 'fallback';
+  const titleSource = pageMetaTitle
+    ? 'override'
+    : globalMetaTitle
+      ? 'global'
+      : 'fallback';
 
-  const pageMetaDescription = resolveLocalizedText(page.seo.metaDescription, locale);
-  const globalMetaDescription = resolveLocalizedText(configuration.seo.metaDescription, locale);
-  const description = pageMetaDescription || globalMetaDescription || fallback.description;
+  const pageMetaDescription = resolveLocalizedText(
+    page.seo.metaDescription,
+    locale
+  );
+  const globalMetaDescription = resolveLocalizedText(
+    configuration.seo.metaDescription,
+    locale
+  );
+  const description =
+    pageMetaDescription || globalMetaDescription || fallback.description;
   const descriptionSource = pageMetaDescription
     ? 'override'
     : globalMetaDescription
@@ -75,11 +94,14 @@ export function resolvePageSeo(
     title,
     description,
     ogTitle: resolveLocalizedText(page.seo.ogTitle, locale) || title,
-    ogDescription: resolveLocalizedText(page.seo.ogDescription, locale) || description,
+    ogDescription:
+      resolveLocalizedText(page.seo.ogDescription, locale) || description,
     ogImage: page.seo.ogImage || configuration.seo.ogImage,
     canonicalPath,
     // A hidden page can never be indexable, regardless of any override.
-    indexable: page.visible && (page.seo.indexable ?? configuration.seo.robotsIndexable ?? true),
+    indexable:
+      page.visible &&
+      (page.seo.indexable ?? configuration.seo.robotsIndexable ?? true),
     titleSource,
     descriptionSource,
     locale,
@@ -107,7 +129,8 @@ export function resolveCourseSeo(
     resolveLocalizedText(configuration.seo.metaDescription, locale) ||
     fallback.description;
 
-  const publiclyReachable = course.status === 'published' && course.visibility === 'public';
+  const publiclyReachable =
+    course.status === 'published' && course.visibility === 'public';
   const canonicalPath = `/courses/${course.slug}`;
 
   return {
@@ -119,7 +142,8 @@ export function resolveCourseSeo(
     canonicalPath,
     indexable: publiclyReachable && (configuration.seo.robotsIndexable ?? true),
     titleSource: course.title ? 'override' : 'fallback',
-    descriptionSource: course.shortDescription || course.description ? 'override' : 'fallback',
+    descriptionSource:
+      course.shortDescription || course.description ? 'override' : 'fallback',
     locale,
     hreflangAlternates: buildHreflangAlternates(canonicalPath),
   };
@@ -149,7 +173,9 @@ export function resolveBlogPostSeo(
 ): ResolvedSeoMetadata {
   const title = post.title || fallback.title;
   const description =
-    post.excerpt || resolveLocalizedText(configuration.seo.metaDescription, locale) || fallback.description;
+    post.excerpt ||
+    resolveLocalizedText(configuration.seo.metaDescription, locale) ||
+    fallback.description;
   const canonicalPath = `/blog/${post.slug}`;
 
   return {
@@ -159,7 +185,9 @@ export function resolveBlogPostSeo(
     ogDescription: description,
     ogImage: post.featuredImage || configuration.seo.ogImage,
     canonicalPath,
-    indexable: post.status === 'published' && (configuration.seo.robotsIndexable ?? true),
+    indexable:
+      post.status === 'published' &&
+      (configuration.seo.robotsIndexable ?? true),
     titleSource: post.title ? 'override' : 'fallback',
     descriptionSource: post.excerpt ? 'override' : 'fallback',
     locale,

@@ -21,10 +21,13 @@ export class StudentResultsService extends BaseService {
     academyId?: string,
     options?: ReadOptions
   ): Promise<StudentResults> {
-    return this.client.get<StudentResults>(resourcePath('learning', 'results'), {
-      ...options,
-      params: { ...(academyId ? { academyId } : {}), ...options?.params },
-    });
+    return this.client.get<StudentResults>(
+      resourcePath('learning', 'results'),
+      {
+        ...options,
+        params: { ...(academyId ? { academyId } : {}), ...options?.params },
+      }
+    );
   }
 }
 

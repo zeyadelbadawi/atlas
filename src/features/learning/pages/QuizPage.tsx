@@ -6,33 +6,33 @@
  * or a pass/fail outcome itself, and correct answers are never rendered
  * before submission (the `QuizQuestionOption` type has no such field).
  */
-import { useEffect, useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckCircle2, Loader2, XCircle } from "lucide-react";
-import { PageContainer, PageHeader } from "@components/layout";
-import { ErrorState } from "@components/feedback";
-import { StatusBadge } from "@components/data-display";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { toast } from "@/hooks/use-toast";
-import { useConfirmDialog } from "@app/providers";
+import { useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CheckCircle2, Loader2, XCircle } from 'lucide-react';
+import { PageContainer, PageHeader } from '@components/layout';
+import { ErrorState } from '@components/feedback';
+import { StatusBadge } from '@components/data-display';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { toast } from '@/hooks/use-toast';
+import { useConfirmDialog } from '@app/providers';
 import {
   useQuiz,
   useQuizAttempts,
   useStartQuizAttempt,
   useSubmitQuizAttempt,
-} from "../hooks";
-import { useLearningPaths } from "../context/LearningPaths.context";
-import { buildQuizAttemptSchema } from "../schemas/learning.schemas";
-import type { QuizAttemptFormData } from "../schemas/learning.schemas";
-import { getQuizAttemptStatusTone } from "../utils/learning-status.utils";
+} from '../hooks';
+import { useLearningPaths } from '../context/LearningPaths.context';
+import { buildQuizAttemptSchema } from '../schemas/learning.schemas';
+import type { QuizAttemptFormData } from '../schemas/learning.schemas';
+import { getQuizAttemptStatusTone } from '../utils/learning-status.utils';
 
 export default function QuizPage(): JSX.Element {
   const { t } = useTranslation();
@@ -49,24 +49,24 @@ export default function QuizPage(): JSX.Element {
     isLoading: isLoadingQuiz,
     error: quizError,
     refetch: refetchQuiz,
-  } = useQuiz(courseId ?? "", quizId ?? "");
+  } = useQuiz(courseId ?? '', quizId ?? '');
   const { data: attemptsData, isLoading: isLoadingAttempts } = useQuizAttempts(
-    courseId ?? "",
-    quizId ?? ""
+    courseId ?? '',
+    quizId ?? ''
   );
 
   const attempts = attemptsData?.items ?? [];
   const latestAttempt = attempts[attempts.length - 1];
   const isAttemptOpen =
-    latestAttempt?.status === "in_progress" ||
-    latestAttempt?.status === "not_started";
+    latestAttempt?.status === 'in_progress' ||
+    latestAttempt?.status === 'not_started';
   const hasResult =
-    latestAttempt?.status === "passed" || latestAttempt?.status === "failed";
+    latestAttempt?.status === 'passed' || latestAttempt?.status === 'failed';
 
   const { mutateAsync: startAttempt, isPending: isStarting } =
-    useStartQuizAttempt(courseId ?? "", quizId ?? "");
+    useStartQuizAttempt(courseId ?? '', quizId ?? '');
   const { mutateAsync: submitAttempt, isPending: isSubmitting } =
-    useSubmitQuizAttempt(courseId ?? "", quizId ?? "");
+    useSubmitQuizAttempt(courseId ?? '', quizId ?? '');
 
   const questions = useMemo(
     () => [...(quiz?.questions ?? [])].sort((a, b) => a.order - b.order),
@@ -90,9 +90,9 @@ export default function QuizPage(): JSX.Element {
       await startAttempt();
     } catch {
       toast({
-        title: t("learning:quiz.startError"),
-        description: t("errors:generic"),
-        variant: "destructive",
+        title: t('learning:quiz.startError'),
+        description: t('errors:generic'),
+        variant: 'destructive',
       });
     }
   };
@@ -101,11 +101,11 @@ export default function QuizPage(): JSX.Element {
     if (!latestAttempt) return;
 
     const confirmed = await confirm({
-      titleKey: "learning:quiz.submitConfirm.title",
-      descriptionKey: "learning:quiz.submitConfirm.description",
-      confirmLabelKey: "learning:quiz.submitConfirm.confirmLabel",
-      cancelLabelKey: "learning:quiz.submitConfirm.cancelLabel",
-      intent: "default",
+      titleKey: 'learning:quiz.submitConfirm.title',
+      descriptionKey: 'learning:quiz.submitConfirm.description',
+      confirmLabelKey: 'learning:quiz.submitConfirm.confirmLabel',
+      cancelLabelKey: 'learning:quiz.submitConfirm.cancelLabel',
+      intent: 'default',
     });
     if (!confirmed) return;
 
@@ -121,12 +121,12 @@ export default function QuizPage(): JSX.Element {
           ),
         },
       });
-      toast({ title: t("learning:quiz.submitSuccess") });
+      toast({ title: t('learning:quiz.submitSuccess') });
     } catch {
       toast({
-        title: t("learning:quiz.submitError"),
-        description: t("errors:generic"),
-        variant: "destructive",
+        title: t('learning:quiz.submitError'),
+        description: t('errors:generic'),
+        variant: 'destructive',
       });
     }
   };
@@ -163,7 +163,7 @@ export default function QuizPage(): JSX.Element {
         {hasResult ? (
           <Card>
             <CardHeader>
-              <CardTitle>{t("learning:quiz.resultTitle")}</CardTitle>
+              <CardTitle>{t('learning:quiz.resultTitle')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-3">
@@ -175,26 +175,28 @@ export default function QuizPage(): JSX.Element {
                 <StatusBadge
                   labelKey={
                     latestAttempt.passed
-                      ? "learning:quiz.passed"
-                      : "learning:quiz.failed"
+                      ? 'learning:quiz.passed'
+                      : 'learning:quiz.failed'
                   }
                   tone={getQuizAttemptStatusTone(latestAttempt.status)}
                 />
               </div>
-              {typeof latestAttempt.score === "number" ? (
+              {typeof latestAttempt.score === 'number' ? (
                 <p className="text-sm text-foreground">
-                  {t("learning:quiz.scoreLabel", { score: latestAttempt.score })}
+                  {t('learning:quiz.scoreLabel', {
+                    score: latestAttempt.score,
+                  })}
                 </p>
               ) : null}
-              {typeof quiz.passingScore === "number" ? (
+              {typeof quiz.passingScore === 'number' ? (
                 <p className="text-sm text-muted-foreground">
-                  {t("learning:quiz.passingScoreLabel", {
+                  {t('learning:quiz.passingScoreLabel', {
                     score: quiz.passingScore,
                   })}
                 </p>
               ) : null}
               <p className="text-sm text-muted-foreground">
-                {t("learning:quiz.attemptNumber", {
+                {t('learning:quiz.attemptNumber', {
                   number: latestAttempt.attemptNumber,
                 })}
               </p>
@@ -205,11 +207,11 @@ export default function QuizPage(): JSX.Element {
                     {isStarting ? (
                       <Loader2 className="size-4 animate-spin" aria-hidden />
                     ) : null}
-                    {t("learning:quiz.retryAvailable")}
+                    {t('learning:quiz.retryAvailable')}
                   </Button>
                 ) : (
                   <p className="text-sm text-muted-foreground">
-                    {t("learning:quiz.retryUnavailable")}
+                    {t('learning:quiz.retryUnavailable')}
                   </p>
                 )}
                 {courseId ? (
@@ -217,7 +219,7 @@ export default function QuizPage(): JSX.Element {
                     variant="outline"
                     onClick={() => navigate(paths.courseDetail(courseId))}
                   >
-                    {t("learning:learn.backToCourse")}
+                    {t('learning:learn.backToCourse')}
                   </Button>
                 ) : null}
               </div>
@@ -226,17 +228,17 @@ export default function QuizPage(): JSX.Element {
         ) : !isAttemptOpen ? (
           <Card>
             <CardHeader>
-              <CardTitle>{t("learning:quiz.instructionsTitle")}</CardTitle>
+              <CardTitle>{t('learning:quiz.instructionsTitle')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                {quiz.description || t("learning:quiz.instructionsDefault")}
+                {quiz.description || t('learning:quiz.instructionsDefault')}
               </p>
               <Button onClick={handleStart} disabled={isStarting}>
                 {isStarting ? (
                   <Loader2 className="size-4 animate-spin" aria-hidden />
                 ) : null}
-                {t("learning:quiz.startAction")}
+                {t('learning:quiz.startAction')}
               </Button>
             </CardContent>
           </Card>
@@ -244,7 +246,7 @@ export default function QuizPage(): JSX.Element {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* Question navigator */}
             <nav
-              aria-label={t("learning:quiz.reviewTitle")}
+              aria-label={t('learning:quiz.reviewTitle')}
               className="flex flex-wrap gap-2"
             >
               {questions.map((question, index) => (
@@ -262,7 +264,7 @@ export default function QuizPage(): JSX.Element {
               <Card key={question.id} id={`question-${question.id}`}>
                 <CardHeader>
                   <CardTitle className="text-base">
-                    {t("learning:quiz.questionOf", {
+                    {t('learning:quiz.questionOf', {
                       current: index + 1,
                       total: questions.length,
                     })}
@@ -278,7 +280,7 @@ export default function QuizPage(): JSX.Element {
                     render={({ field }) => {
                       const selected = field.value ?? [];
 
-                      if (question.type === "multiple_choice") {
+                      if (question.type === 'multiple_choice') {
                         return (
                           <div className="space-y-2">
                             {question.options?.map((option) => {
@@ -302,7 +304,9 @@ export default function QuizPage(): JSX.Element {
                                       );
                                     }}
                                   />
-                                  <Label htmlFor={inputId}>{option.label}</Label>
+                                  <Label htmlFor={inputId}>
+                                    {option.label}
+                                  </Label>
                                 </div>
                               );
                             })}
@@ -312,7 +316,7 @@ export default function QuizPage(): JSX.Element {
 
                       return (
                         <RadioGroup
-                          value={selected[0] ?? ""}
+                          value={selected[0] ?? ''}
                           onValueChange={(value) => field.onChange([value])}
                         >
                           {question.options?.map((option) => {
@@ -339,7 +343,7 @@ export default function QuizPage(): JSX.Element {
                       role="alert"
                       className="mt-2 text-sm font-medium text-destructive"
                     >
-                      {t("validation:required")}
+                      {t('validation:required')}
                     </p>
                   ) : null}
                 </CardContent>
@@ -349,13 +353,13 @@ export default function QuizPage(): JSX.Element {
             <Card>
               <CardContent className="space-y-3 py-4">
                 <p className="text-sm text-muted-foreground">
-                  {t("learning:quiz.reviewDescription")}
+                  {t('learning:quiz.reviewDescription')}
                 </p>
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting ? (
                     <Loader2 className="size-4 animate-spin" aria-hidden />
                   ) : null}
-                  {t("learning:quiz.submitAction")}
+                  {t('learning:quiz.submitAction')}
                 </Button>
               </CardContent>
             </Card>

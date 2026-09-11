@@ -50,7 +50,7 @@ export class HttpClient {
       // For FormData, do NOT set Content-Type (browser sets boundary).
       // For other requests, default to application/json.
       const headers: Record<string, string> = { ...request.headers };
-      
+
       if (request.body instanceof FormData) {
         // Explicitly ensure Content-Type is not set for FormData.
         delete headers['Content-Type'];
@@ -115,7 +115,10 @@ export class HttpClient {
           const tokens = tokenService.retrieve();
 
           // If we have a refresh token, attempt refresh.
-          if (tokens?.refreshToken && !originalRequest.headers['X-Retry-After-Refresh']) {
+          if (
+            tokens?.refreshToken &&
+            !originalRequest.headers['X-Retry-After-Refresh']
+          ) {
             try {
               // Use shared refresh promise to deduplicate concurrent refresh requests.
               if (!this.refreshPromise) {
@@ -140,7 +143,8 @@ export class HttpClient {
 
         // Handle transient failures with retry.
         if (this.shouldRetry(error) && originalRequest) {
-          const retryCount = (originalRequest.headers['X-Retry-Count'] as number) ?? 0;
+          const retryCount =
+            (originalRequest.headers['X-Retry-Count'] as number) ?? 0;
 
           if (retryCount < MAX_RETRIES) {
             originalRequest.headers['X-Retry-Count'] = retryCount + 1;

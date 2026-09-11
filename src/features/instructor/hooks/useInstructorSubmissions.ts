@@ -27,7 +27,12 @@ export function useInstructorSubmissions(
   const { user } = useAuth();
 
   return useApiQuery<PaginatedResult<AssignmentSubmissionReview>>({
-    queryKey: instructorKeys.submissions(user?.id, courseId, assignmentId, query),
+    queryKey: instructorKeys.submissions(
+      user?.id,
+      courseId,
+      assignmentId,
+      query
+    ),
     queryFn: () =>
       instructorService.getAssignmentSubmissions(courseId, assignmentId, query),
     enabled: enabled && !!user?.id && !!courseId && !!assignmentId,

@@ -62,7 +62,9 @@ export default function ProvisioningStartPage(): JSX.Element {
   const addOnCatalogQuery = useAddOnCatalog();
   const createRequest = useCreateProvisioningRequest();
 
-  const idempotencyKey = useState(() => generateProvisioningIdempotencyKey())[0];
+  const idempotencyKey = useState(() =>
+    generateProvisioningIdempotencyKey()
+  )[0];
 
   const form = useForm<CreateProvisioningRequestFormData>({
     resolver: zodResolver(createProvisioningRequestSchema),
@@ -200,7 +202,9 @@ export default function ProvisioningStartPage(): JSX.Element {
       {
         onSuccess: (request) => {
           navigate(
-            buildPath(DASHBOARD_ROUTES.provisioningStatus, { requestId: request.id })
+            buildPath(DASHBOARD_ROUTES.provisioningStatus, {
+              requestId: request.id,
+            })
           );
         },
       }
@@ -228,7 +232,9 @@ export default function ProvisioningStartPage(): JSX.Element {
                 name="academyName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('provisioning:start.academyNameLabel')}</FormLabel>
+                    <FormLabel>
+                      {t('provisioning:start.academyNameLabel')}
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -242,7 +248,9 @@ export default function ProvisioningStartPage(): JSX.Element {
                 name="requestedSubdomain"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('provisioning:start.subdomainLabel')}</FormLabel>
+                    <FormLabel>
+                      {t('provisioning:start.subdomainLabel')}
+                    </FormLabel>
                     <FormControl>
                       <div className="flex items-center gap-2">
                         <Input {...field} className="flex-1" />
@@ -269,9 +277,13 @@ export default function ProvisioningStartPage(): JSX.Element {
                     <FormDescription>
                       {t('provisioning:start.subdomainHelp')}
                     </FormDescription>
-                    {field.value && availability.data?.status !== 'available' && availability.data ? (
+                    {field.value &&
+                    availability.data?.status !== 'available' &&
+                    availability.data ? (
                       <p className="text-sm text-destructive">
-                        {t(`provisioning:start.subdomainStatus.${availability.data.status}`)}
+                        {t(
+                          `provisioning:start.subdomainStatus.${availability.data.status}`
+                        )}
                       </p>
                     ) : null}
                     <FormMessage />
@@ -339,7 +351,9 @@ export default function ProvisioningStartPage(): JSX.Element {
                               ) : null}
                             </div>
                             <div>
-                              <p className="text-sm font-medium">{t(theme.nameKey)}</p>
+                              <p className="text-sm font-medium">
+                                {t(theme.nameKey)}
+                              </p>
                               <p className="mt-0.5 text-xs text-muted-foreground">
                                 {t(theme.descriptionKey)}
                               </p>
@@ -366,8 +380,12 @@ export default function ProvisioningStartPage(): JSX.Element {
                 name="websiteSetupMode"
                 render={() => (
                   <FormItem>
-                    <FormLabel>{t('provisioning:start.setupModeLabel')}</FormLabel>
-                    <FormDescription>{t('provisioning:start.setupModeHelp')}</FormDescription>
+                    <FormLabel>
+                      {t('provisioning:start.setupModeLabel')}
+                    </FormLabel>
+                    <FormDescription>
+                      {t('provisioning:start.setupModeHelp')}
+                    </FormDescription>
                     <div className="grid gap-3 sm:grid-cols-2">
                       {(['complete', 'empty'] as const).map((mode) => {
                         const isSelected = websiteSetupMode === mode;
@@ -375,7 +393,11 @@ export default function ProvisioningStartPage(): JSX.Element {
                           <button
                             key={mode}
                             type="button"
-                            onClick={() => form.setValue('websiteSetupMode', mode, { shouldDirty: true })}
+                            onClick={() =>
+                              form.setValue('websiteSetupMode', mode, {
+                                shouldDirty: true,
+                              })
+                            }
                             className={cn(
                               'flex flex-col gap-1.5 rounded-lg border p-4 text-start transition-colors',
                               isSelected
@@ -385,7 +407,9 @@ export default function ProvisioningStartPage(): JSX.Element {
                           >
                             <span className="flex items-center justify-between">
                               <span className="text-sm font-medium">
-                                {t(`provisioning:start.setupMode.${mode}.title`)}
+                                {t(
+                                  `provisioning:start.setupMode.${mode}.title`
+                                )}
                               </span>
                               {mode === 'complete' ? (
                                 <StatusBadge
@@ -393,11 +417,17 @@ export default function ProvisioningStartPage(): JSX.Element {
                                   tone="info"
                                 />
                               ) : isSelected ? (
-                                <Check className="size-4 text-primary" strokeWidth={2} aria-hidden />
+                                <Check
+                                  className="size-4 text-primary"
+                                  strokeWidth={2}
+                                  aria-hidden
+                                />
                               ) : null}
                             </span>
                             <span className="text-xs text-muted-foreground">
-                              {t(`provisioning:start.setupMode.${mode}.description`)}
+                              {t(
+                                `provisioning:start.setupMode.${mode}.description`
+                              )}
                             </span>
                           </button>
                         );
@@ -411,7 +441,8 @@ export default function ProvisioningStartPage(): JSX.Element {
                 <Button
                   type="submit"
                   disabled={
-                    createRequest.isPending || availability.data?.status !== 'available'
+                    createRequest.isPending ||
+                    availability.data?.status !== 'available'
                   }
                 >
                   {createRequest.isPending ? (

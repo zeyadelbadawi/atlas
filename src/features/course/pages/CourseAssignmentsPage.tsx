@@ -64,7 +64,9 @@ export default function CourseAssignmentsPage(): JSX.Element {
   const breadcrumbs: readonly BreadcrumbItem[] = [
     {
       labelKey: 'course:list.title',
-      path: buildPath(DASHBOARD_ROUTES.academyCourses, { academyId: academyId ?? '' }),
+      path: buildPath(DASHBOARD_ROUTES.academyCourses, {
+        academyId: academyId ?? '',
+      }),
     },
     ...(course
       ? [
@@ -271,7 +273,11 @@ export default function CourseAssignmentsPage(): JSX.Element {
         assignment={dialog?.mode === 'edit' ? dialog.assignment : null}
         isPending={createAssignment.isPending || updateAssignment.isPending}
         onSubmit={handleSubmit}
-        error={dialog?.mode === 'edit' ? updateAssignment.error : createAssignment.error}
+        error={
+          dialog?.mode === 'edit'
+            ? updateAssignment.error
+            : createAssignment.error
+        }
       />
     </PageContainer>
   );

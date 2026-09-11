@@ -28,7 +28,8 @@ export interface AddOnCheckoutTarget {
   readonly addOnKey: string;
 }
 
-export type CheckoutTarget = PlanSubscriptionCheckoutTarget | AddOnCheckoutTarget;
+export type CheckoutTarget =
+  PlanSubscriptionCheckoutTarget | AddOnCheckoutTarget;
 
 /**
  * A Checkout's lifecycle. Deliberately small and generic — a Checkout only
@@ -36,11 +37,7 @@ export type CheckoutTarget = PlanSubscriptionCheckoutTarget | AddOnCheckoutTarge
  * detail (that lives on `Payment`/`PaymentAttempt`).
  */
 export type CheckoutStatus =
-  | 'draft'
-  | 'pending_payment'
-  | 'completed'
-  | 'expired'
-  | 'cancelled';
+  'draft' | 'pending_payment' | 'completed' | 'expired' | 'cancelled';
 
 /**
  * The frozen commercial detail captured at Checkout creation time. A

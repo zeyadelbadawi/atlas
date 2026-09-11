@@ -5,13 +5,13 @@
  * debounced so a request is issued once the user pauses rather than on every
  * keystroke, and a clear affordance appears only when there is something to clear.
  */
-import { useEffect, useState } from "react";
-import { Search, X } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useDebounce } from "@hooks";
-import { cn } from "@utils";
+import { useEffect, useState } from 'react';
+import { Search, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { useDebounce } from '@hooks';
+import { cn } from '@utils';
 
 export interface SearchInputProps {
   /** Current committed value, owned by the caller. */
@@ -27,7 +27,7 @@ export interface SearchInputProps {
 export function SearchInput({
   value,
   onValueChange,
-  labelKey = "common:actions.search",
+  labelKey = 'common:actions.search',
   debounceMs,
   className,
 }: SearchInputProps): JSX.Element {
@@ -46,14 +46,14 @@ export function SearchInput({
 
   // Reset the draft when the caller clears the value externally.
   useEffect(() => {
-    if (value === "" && draft !== "") setDraft("");
+    if (value === '' && draft !== '') setDraft('');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   const label = t(labelKey);
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn('relative', className)}>
       <Search
         className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
         strokeWidth={1.75}
@@ -72,8 +72,8 @@ export function SearchInput({
           type="button"
           variant="ghost"
           size="icon"
-          onClick={() => setDraft("")}
-          aria-label={t("common:actions.clearSearch")}
+          onClick={() => setDraft('')}
+          aria-label={t('common:actions.clearSearch')}
           className="absolute end-1 top-1/2 size-7 -translate-y-1/2 text-muted-foreground hover:text-foreground"
         >
           <X className="size-4" strokeWidth={2} aria-hidden />

@@ -18,14 +18,14 @@
  * user needs in order to complete the field correctly, so nothing is lost
  * to a user who never opens it.
  */
-import { HelpCircle } from "lucide-react";
-import { useTranslation } from "react-i18next";
+import { HelpCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from '@/components/ui/tooltip';
 
 export interface FieldHelpProps {
   /** Translation key for the help text. */
@@ -36,7 +36,7 @@ export interface FieldHelpProps {
 
 export function FieldHelp({
   contentKey,
-  labelKey = "common:fieldHelp.trigger",
+  labelKey = 'common:fieldHelp.trigger',
 }: FieldHelpProps): JSX.Element {
   const { t } = useTranslation();
 

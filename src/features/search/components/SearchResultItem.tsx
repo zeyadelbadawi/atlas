@@ -3,10 +3,10 @@
  *
  * Individual search result with keyboard navigation support.
  */
-import { useTranslation } from "react-i18next";
-import { ChevronRight, FileText, User, Settings, Layers } from "lucide-react";
-import { cn } from "@utils";
-import type { SearchResultItem as SearchResultItemType } from "@types";
+import { useTranslation } from 'react-i18next';
+import { ChevronRight, FileText, User, Settings, Layers } from 'lucide-react';
+import { cn } from '@utils';
+import type { SearchResultItem as SearchResultItemType } from '@types';
 
 export interface SearchResultItemProps {
   readonly item: SearchResultItemType;
@@ -37,20 +37,20 @@ export function SearchResultItem({
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       className={cn(
-        "group flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-start transition-colors",
+        'group flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-start transition-colors',
         isSelected
-          ? "bg-accent text-accent-foreground"
-          : "hover:bg-accent/50 hover:text-accent-foreground",
+          ? 'bg-accent text-accent-foreground'
+          : 'hover:bg-accent/50 hover:text-accent-foreground'
       )}
       role="option"
       aria-selected={isSelected}
     >
       <div
         className={cn(
-          "flex size-8 shrink-0 items-center justify-center rounded-md transition-colors",
+          'flex size-8 shrink-0 items-center justify-center rounded-md transition-colors',
           isSelected
-            ? "bg-primary text-primary-foreground"
-            : "bg-muted text-muted-foreground",
+            ? 'bg-primary text-primary-foreground'
+            : 'bg-muted text-muted-foreground'
         )}
       >
         <Icon className="size-4" strokeWidth={2} aria-hidden />
@@ -74,8 +74,8 @@ export function SearchResultItem({
 
       <ChevronRight
         className={cn(
-          "size-4 shrink-0 text-muted-foreground transition-transform",
-          isSelected && "translate-x-0.5",
+          'size-4 shrink-0 text-muted-foreground transition-transform',
+          isSelected && 'translate-x-0.5'
         )}
         strokeWidth={2}
         aria-hidden

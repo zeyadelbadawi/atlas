@@ -6,26 +6,26 @@
  * inside this shell, which is what makes separately built modules feel like one
  * product.
  */
-import { Outlet } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { OfflineNotice } from "@components/feedback";
-import { SkipToContentLink } from "@components/navigation";
-import { STORAGE_KEYS } from "@constants";
-import { SIDEBAR_BREAKPOINT } from "@tokens";
+import { Outlet } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { OfflineNotice } from '@components/feedback';
+import { SkipToContentLink } from '@components/navigation';
+import { STORAGE_KEYS } from '@constants';
+import { SIDEBAR_BREAKPOINT } from '@tokens';
 import {
   useBreakpoint,
   useDisclosure,
   useLocalStorage,
   useOnlineStatus,
-} from "@hooks";
-import { AccountMenu, OrganizationSwitcher } from "@components/controls";
-import { NotificationBell } from "@features/notifications";
-import { DashboardSidebar } from "./DashboardSidebar";
-import { DashboardTopbar } from "./DashboardTopbar";
-import { useSmartBack } from "./useSmartBack";
+} from '@hooks';
+import { AccountMenu, OrganizationSwitcher } from '@components/controls';
+import { NotificationBell } from '@features/notifications';
+import { DashboardSidebar } from './DashboardSidebar';
+import { DashboardTopbar } from './DashboardTopbar';
+import { useSmartBack } from './useSmartBack';
 
 /** Id of the main landmark, targeted by the skip link. */
-const MAIN_CONTENT_ID = "atlas-dashboard-content";
+const MAIN_CONTENT_ID = 'atlas-dashboard-content';
 
 export function DashboardLayout(): JSX.Element {
   const { t } = useTranslation();
@@ -36,7 +36,7 @@ export function DashboardLayout(): JSX.Element {
   // stay collapsed the next time they sign in.
   const { value: isCollapsed, setValue: setIsCollapsed } = useLocalStorage(
     STORAGE_KEYS.sidebarCollapsed,
-    false,
+    false
   );
 
   const drawer = useDisclosure(false);
@@ -75,7 +75,7 @@ export function DashboardLayout(): JSX.Element {
 
         <main
           id={MAIN_CONTENT_ID}
-          aria-label={t("layout:dashboard.contentLabel")}
+          aria-label={t('layout:dashboard.contentLabel')}
           className="flex-1 bg-background"
         >
           <Outlet />

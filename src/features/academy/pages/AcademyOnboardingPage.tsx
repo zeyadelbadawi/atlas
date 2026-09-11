@@ -87,7 +87,8 @@ export default function AcademyOnboardingPage(): JSX.Element {
     ACADEMY_ONBOARDING_STEPS.find((step) => step.id === currentStep) ??
     ACADEMY_ONBOARDING_STEPS[ACADEMY_ONBOARDING_STEPS.length - 1];
   const isFinalStep =
-    activeStep.id === ACADEMY_ONBOARDING_STEPS[ACADEMY_ONBOARDING_STEPS.length - 1].id;
+    activeStep.id ===
+    ACADEMY_ONBOARDING_STEPS[ACADEMY_ONBOARDING_STEPS.length - 1].id;
 
   return (
     <PageContainer>

@@ -15,8 +15,8 @@
  * and converted from minor units at the last possible moment. Nothing is
  * projected, annualized, or estimated.
  */
-import { useTranslation } from "react-i18next";
-import type { DashboardRevenue } from "@types";
+import { useTranslation } from 'react-i18next';
+import type { DashboardRevenue } from '@types';
 
 export interface RevenueSummaryProps {
   readonly revenue: DashboardRevenue;
@@ -25,10 +25,10 @@ export interface RevenueSummaryProps {
 function formatAmount(
   amountMinorUnits: number,
   currency: string,
-  locale: string,
+  locale: string
 ): string {
   return new Intl.NumberFormat(locale, {
-    style: "currency",
+    style: 'currency',
     currency,
   }).format(amountMinorUnits / 100);
 }
@@ -40,13 +40,13 @@ export function RevenueSummary({ revenue }: RevenueSummaryProps): JSX.Element {
     return (
       <div className="flex flex-col gap-2">
         <p className="text-lg font-medium text-foreground">
-          {t("dashboard:revenue.notTracked.title")}
+          {t('dashboard:revenue.notTracked.title')}
         </p>
         <p className="text-sm text-muted-foreground">
           {t(
-            revenue.paymentCollectionMode === "organization_gateway"
-              ? "dashboard:revenue.notTracked.ownGateway"
-              : "dashboard:revenue.notTracked.unconfigured",
+            revenue.paymentCollectionMode === 'organization_gateway'
+              ? 'dashboard:revenue.notTracked.ownGateway'
+              : 'dashboard:revenue.notTracked.unconfigured'
           )}
         </p>
       </div>
@@ -57,10 +57,10 @@ export function RevenueSummary({ revenue }: RevenueSummaryProps): JSX.Element {
     return (
       <div className="flex flex-col gap-2">
         <p className="text-lg font-medium text-foreground">
-          {t("dashboard:revenue.none.title")}
+          {t('dashboard:revenue.none.title')}
         </p>
         <p className="text-sm text-muted-foreground">
-          {t("dashboard:revenue.none.description")}
+          {t('dashboard:revenue.none.description')}
         </p>
       </div>
     );
@@ -71,10 +71,14 @@ export function RevenueSummary({ revenue }: RevenueSummaryProps): JSX.Element {
       {revenue.totals.map((total) => (
         <div key={total.currency} className="flex flex-col gap-1">
           <span className="text-2xl font-semibold tabular-nums text-foreground">
-            {formatAmount(total.amountMinorUnits, total.currency, i18n.language)}
+            {formatAmount(
+              total.amountMinorUnits,
+              total.currency,
+              i18n.language
+            )}
           </span>
           <span className="text-sm text-muted-foreground">
-            {t("dashboard:revenue.netOfFees")}
+            {t('dashboard:revenue.netOfFees')}
           </span>
         </div>
       ))}

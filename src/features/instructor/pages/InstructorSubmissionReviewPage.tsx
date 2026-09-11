@@ -186,83 +186,87 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
                 {t('instructor:grading.viewOnlyNotice')}
               </p>
             ) : (
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4"
-              >
-                <FormField
-                  control={form.control}
-                  name="score"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('instructor:grading.scoreLabel')}</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          min={0}
-                          max={100}
-                          step="1"
-                          placeholder={t('instructor:grading.scorePlaceholder')}
-                          {...field}
-                          value={field.value ?? ''}
-                          onChange={(e) =>
-                            field.onChange(
-                              e.target.value === ''
-                                ? undefined
-                                : Number(e.target.value)
-                            )
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-4"
+                >
+                  <FormField
+                    control={form.control}
+                    name="score"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t('instructor:grading.scoreLabel')}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            min={0}
+                            max={100}
+                            step="1"
+                            placeholder={t(
+                              'instructor:grading.scorePlaceholder'
+                            )}
+                            {...field}
+                            value={field.value ?? ''}
+                            onChange={(e) =>
+                              field.onChange(
+                                e.target.value === ''
+                                  ? undefined
+                                  : Number(e.target.value)
+                              )
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={form.control}
-                  name="feedback"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t('instructor:grading.feedbackLabel')}{' '}
-                        <span className="text-xs text-muted-foreground">
-                          ({t('instructor:grading.optional')})
-                        </span>
-                      </FormLabel>
-                      <FormControl>
-                        <Textarea
-                          rows={5}
-                          placeholder={t(
-                            'instructor:grading.feedbackPlaceholder'
-                          )}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  <FormField
+                    control={form.control}
+                    name="feedback"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t('instructor:grading.feedbackLabel')}{' '}
+                          <span className="text-xs text-muted-foreground">
+                            ({t('instructor:grading.optional')})
+                          </span>
+                        </FormLabel>
+                        <FormControl>
+                          <Textarea
+                            rows={5}
+                            placeholder={t(
+                              'instructor:grading.feedbackPlaceholder'
+                            )}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <div className="flex items-center justify-end gap-3">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    disabled={isPending}
-                    onClick={() => navigate(-1)}
-                  >
-                    {t('instructor:grading.cancelButton')}
-                  </Button>
-                  <Button type="submit" disabled={isPending}>
-                    {isPending ? (
-                      <Loader2 className="size-4 animate-spin" aria-hidden />
-                    ) : null}
-                    {t('instructor:grading.submitButton')}
-                  </Button>
-                </div>
-              </form>
-            </Form>
+                  <div className="flex items-center justify-end gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={isPending}
+                      onClick={() => navigate(-1)}
+                    >
+                      {t('instructor:grading.cancelButton')}
+                    </Button>
+                    <Button type="submit" disabled={isPending}>
+                      {isPending ? (
+                        <Loader2 className="size-4 animate-spin" aria-hidden />
+                      ) : null}
+                      {t('instructor:grading.submitButton')}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
             )}
           </CardContent>
         </Card>

@@ -4,7 +4,11 @@
 import { useApiQuery } from '@/shared/hooks';
 import { auditLogKeys } from '@services/query';
 import { auditLogService } from '../services/AuditLogService';
-import type { AuditLogEntrySummary, CollectionQuery, PaginatedResult } from '@types';
+import type {
+  AuditLogEntrySummary,
+  CollectionQuery,
+  PaginatedResult,
+} from '@types';
 import type { ApiError } from '@api';
 
 export interface UseAuditLogEntriesOptions {

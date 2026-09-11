@@ -21,25 +21,30 @@ function escapeXml(value: string): string {
 }
 
 /** `sitemapUrl`, when supplied, must be an absolute URL (built from `window.location.origin`, never an invented domain). */
-export function generateRobotsTxt(indexable: boolean, sitemapUrl?: string): string {
+export function generateRobotsTxt(
+  indexable: boolean,
+  sitemapUrl?: string
+): string {
   const lines = ['User-agent: *', indexable ? 'Allow: /' : 'Disallow: /'];
   if (sitemapUrl) lines.push('', `Sitemap: ${sitemapUrl}`);
   return lines.join('\n');
 }
 
 /** `baseUrl` must be an absolute origin (e.g. `https://harvard.example.com`) — every entry's `path` is appended to it. */
-export function generateSitemapXml(entries: readonly SitemapEntry[], baseUrl: string): string {
+export function generateSitemapXml(
+  entries: readonly SitemapEntry[],
+  baseUrl: string
+): string {
   const urlNodes = entries
-    .map(
-      (entry) =>
-        [
-          '  <url>',
-          `    <loc>${escapeXml(baseUrl + entry.path)}</loc>`,
-          `    <lastmod>${entry.lastModified}</lastmod>`,
-          `    <changefreq>${entry.changeFrequency}</changefreq>`,
-          `    <priority>${entry.priority.toFixed(1)}</priority>`,
-          '  </url>',
-        ].join('\n')
+    .map((entry) =>
+      [
+        '  <url>',
+        `    <loc>${escapeXml(baseUrl + entry.path)}</loc>`,
+        `    <lastmod>${entry.lastModified}</lastmod>`,
+        `    <changefreq>${entry.changeFrequency}</changefreq>`,
+        `    <priority>${entry.priority.toFixed(1)}</priority>`,
+        '  </url>',
+      ].join('\n')
     )
     .join('\n');
 

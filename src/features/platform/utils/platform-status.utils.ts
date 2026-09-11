@@ -12,7 +12,9 @@ import type {
   WebsitePublishStatus,
 } from '@types';
 
-export function getPlatformOrganizationStatusTone(status: PlatformOrganizationStatus): StatusTone {
+export function getPlatformOrganizationStatusTone(
+  status: PlatformOrganizationStatus
+): StatusTone {
   switch (status) {
     case 'active':
       return 'success';
@@ -24,7 +26,9 @@ export function getPlatformOrganizationStatusTone(status: PlatformOrganizationSt
   }
 }
 
-export function getPlatformAcademyStatusTone(status: AcademyStatus): StatusTone {
+export function getPlatformAcademyStatusTone(
+  status: AcademyStatus
+): StatusTone {
   switch (status) {
     case 'active':
       return 'success';
@@ -38,7 +42,9 @@ export function getPlatformAcademyStatusTone(status: AcademyStatus): StatusTone 
   }
 }
 
-export function getPlatformUserStatusTone(status: PlatformUserAccountStatus): StatusTone {
+export function getPlatformUserStatusTone(
+  status: PlatformUserAccountStatus
+): StatusTone {
   switch (status) {
     case 'active':
       return 'success';
@@ -56,7 +62,9 @@ export function getPlatformUserStatusTone(status: PlatformUserAccountStatus): St
  * the `provisioning` feature has no public barrel, and `no-restricted-imports`
  * forbids reaching into another feature's internals.
  */
-export function getPlatformProvisioningStatusTone(status: ProvisioningStatus): StatusTone {
+export function getPlatformProvisioningStatusTone(
+  status: ProvisioningStatus
+): StatusTone {
   switch (status) {
     case 'ready':
       return 'success';
@@ -70,7 +78,9 @@ export function getPlatformProvisioningStatusTone(status: ProvisioningStatus): S
 }
 
 /** Mirrors `website/components/WebsitePublishBar.tsx`'s local `STATUS_TONE` map exactly. */
-export function getPlatformWebsitePublishStatusTone(status: WebsitePublishStatus): StatusTone {
+export function getPlatformWebsitePublishStatusTone(
+  status: WebsitePublishStatus
+): StatusTone {
   switch (status) {
     case 'published':
       return 'success';

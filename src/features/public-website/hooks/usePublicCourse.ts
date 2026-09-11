@@ -11,7 +11,10 @@ import { publicWebsiteService } from '../services/PublicWebsiteService';
 import type { Course, PublicCourseCurriculumSection } from '@types';
 import type { ApiError } from '@api';
 
-export function usePublicCourse(academyId: string | undefined, courseId: string | undefined) {
+export function usePublicCourse(
+  academyId: string | undefined,
+  courseId: string | undefined
+) {
   return useApiQuery<Course | null, ApiError>({
     queryKey: publicWebsiteKeys.course(academyId, courseId),
     queryFn: () => publicWebsiteService.getPublicCourse(academyId!, courseId!),
@@ -23,9 +26,12 @@ export function usePublicCourseCurriculum(
   academyId: string | undefined,
   courseId: string | undefined
 ) {
-  return useApiQuery<readonly PublicCourseCurriculumSection[] | null, ApiError>({
-    queryKey: publicWebsiteKeys.courseCurriculum(academyId, courseId),
-    queryFn: () => publicWebsiteService.getPublicCourseCurriculum(academyId!, courseId!),
-    enabled: !!academyId && !!courseId,
-  });
+  return useApiQuery<readonly PublicCourseCurriculumSection[] | null, ApiError>(
+    {
+      queryKey: publicWebsiteKeys.courseCurriculum(academyId, courseId),
+      queryFn: () =>
+        publicWebsiteService.getPublicCourseCurriculum(academyId!, courseId!),
+      enabled: !!academyId && !!courseId,
+    }
+  );
 }

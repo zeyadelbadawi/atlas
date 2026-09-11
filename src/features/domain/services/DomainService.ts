@@ -21,12 +21,18 @@
  */
 import { BaseService } from '@services';
 import type { ReadOptions, WriteOptions } from '@services';
-import type { AcademyDomainConfiguration, AddCustomDomainPayload } from '@types';
+import type {
+  AcademyDomainConfiguration,
+  AddCustomDomainPayload,
+} from '@types';
 
 export class DomainService extends BaseService {
   protected readonly resource = 'academies';
 
-  private domainPath(academyId: string, ...segments: readonly string[]): string {
+  private domainPath(
+    academyId: string,
+    ...segments: readonly string[]
+  ): string {
     return this.path(academyId, 'website', 'domain', ...segments);
   }
 
@@ -35,7 +41,10 @@ export class DomainService extends BaseService {
     academyId: string,
     options?: ReadOptions
   ): Promise<AcademyDomainConfiguration> {
-    return this.client.get<AcademyDomainConfiguration>(this.domainPath(academyId), options);
+    return this.client.get<AcademyDomainConfiguration>(
+      this.domainPath(academyId),
+      options
+    );
   }
 
   /** Begins connecting a custom domain — creates a PENDING association and the DNS verification instructions the owner must configure. Never itself touches real DNS. */

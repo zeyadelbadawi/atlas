@@ -40,7 +40,10 @@ export function WebsiteBrandTab({
           toast({ title: t('website:brand.saved') });
         },
         onError: () => {
-          toast({ title: t('website:brand.saveError'), variant: 'destructive' });
+          toast({
+            title: t('website:brand.saveError'),
+            variant: 'destructive',
+          });
         },
       }
     );
@@ -56,7 +59,9 @@ export function WebsiteBrandTab({
             variant="outline"
             size="sm"
             onClick={() =>
-              navigate(buildPath(DASHBOARD_ROUTES.academyBranding, { academyId }))
+              navigate(
+                buildPath(DASHBOARD_ROUTES.academyBranding, { academyId })
+              )
             }
           >
             {t('website:brand.manageInAcademyBranding')}

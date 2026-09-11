@@ -14,7 +14,8 @@ export type Optional<T> = T | undefined;
 /** A plain serialisable JSON value. */
 export type JsonPrimitive = string | number | boolean | null;
 
-export type JsonValue = JsonPrimitive | JsonValue[] | { [key: string]: JsonValue };
+export type JsonValue =
+  JsonPrimitive | JsonValue[] | { [key: string]: JsonValue };
 
 /** A dictionary keyed by string. */
 export type Dictionary<TValue> = Record<string, TValue>;
@@ -24,9 +25,8 @@ export type WithRequired<TObject, TKey extends keyof TObject> = TObject &
   Required<Pick<TObject, TKey>>;
 
 /** Extracts the resolved type of a promise-returning function. */
-export type Awaited<TValue> = TValue extends Promise<infer TResolved>
-  ? TResolved
-  : TValue;
+export type Awaited<TValue> =
+  TValue extends Promise<infer TResolved> ? TResolved : TValue;
 
 /** Sort direction shared by tables, lists and query parameters. */
 export type SortDirection = 'asc' | 'desc';

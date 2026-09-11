@@ -27,16 +27,18 @@ export class AtlasSubscriptionPaymentProviderService extends BaseService {
   async getAvailableProviders(
     options?: ReadOptions
   ): Promise<readonly AvailableAtlasSubscriptionPaymentProvider[]> {
-    return this.client.get<readonly AvailableAtlasSubscriptionPaymentProvider[]>(
-      this.path('available-providers'),
-      options
-    );
+    return this.client.get<
+      readonly AvailableAtlasSubscriptionPaymentProvider[]
+    >(this.path('available-providers'), options);
   }
 
   async getConfig(
     options?: ReadOptions
   ): Promise<AtlasSubscriptionPaymentProviderConfig> {
-    return this.client.get<AtlasSubscriptionPaymentProviderConfig>(this.path(), options);
+    return this.client.get<AtlasSubscriptionPaymentProviderConfig>(
+      this.path(),
+      options
+    );
   }
 
   async saveConfig(
@@ -72,4 +74,5 @@ export class AtlasSubscriptionPaymentProviderService extends BaseService {
 }
 
 /** Singleton instance following the Atlas service pattern. */
-export const atlasSubscriptionPaymentProviderService = new AtlasSubscriptionPaymentProviderService();
+export const atlasSubscriptionPaymentProviderService =
+  new AtlasSubscriptionPaymentProviderService();

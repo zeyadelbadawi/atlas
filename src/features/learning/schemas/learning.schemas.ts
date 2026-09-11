@@ -36,11 +36,12 @@ export type AssignmentSubmissionFormData = z.infer<
  */
 export function buildQuizAttemptSchema(questionIds: readonly string[]) {
   return z.object({
-    answers: z.record(z.string(), z.array(z.string())).refine(
-      (answers) =>
-        questionIds.every((id) => (answers[id]?.length ?? 0) > 0),
-      { message: 'validation:required' }
-    ),
+    answers: z
+      .record(z.string(), z.array(z.string()))
+      .refine(
+        (answers) => questionIds.every((id) => (answers[id]?.length ?? 0) > 0),
+        { message: 'validation:required' }
+      ),
   });
 }
 

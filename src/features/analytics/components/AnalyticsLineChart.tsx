@@ -37,7 +37,10 @@ export function AnalyticsLineChart({
   };
 
   const data = points.map((point) => ({
-    date: new Date(point.date).toLocaleDateString(language, { month: 'short', day: 'numeric' }),
+    date: new Date(point.date).toLocaleDateString(language, {
+      month: 'short',
+      day: 'numeric',
+    }),
     value: point.value,
   }));
 
@@ -48,7 +51,13 @@ export function AnalyticsLineChart({
         <XAxis dataKey="date" tickLine={false} axisLine={false} />
         <YAxis tickLine={false} axisLine={false} width={40} />
         <ChartTooltip content={<ChartTooltipContent />} />
-        <Line type="monotone" dataKey="value" stroke="var(--color-value)" strokeWidth={2} dot={false} />
+        <Line
+          type="monotone"
+          dataKey="value"
+          stroke="var(--color-value)"
+          strokeWidth={2}
+          dot={false}
+        />
       </LineChart>
     </ChartContainer>
   );

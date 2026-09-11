@@ -15,7 +15,10 @@
  * authoritative backend response can (see `Reports/ARCHITECTURE.md`,
  * Prompt 11, "No Fake Infrastructure").
  */
-import type { DomainConnection, SubdomainAllocation } from './provisioning.types';
+import type {
+  DomainConnection,
+  SubdomainAllocation,
+} from './provisioning.types';
 
 /**
  * SSL certificate lifecycle for a domain (Atlas subdomain or custom).
@@ -58,7 +61,10 @@ export interface AcademyDomainConfiguration {
   readonly subdomain?: SubdomainAllocation;
   readonly customDomain?: DomainConnection;
   readonly ssl: { readonly status: SslStatus };
-  readonly cdn: { readonly status: CdnStatus; readonly provider?: InfrastructureProviderName };
+  readonly cdn: {
+    readonly status: CdnStatus;
+    readonly provider?: InfrastructureProviderName;
+  };
 }
 
 export interface AddCustomDomainPayload {

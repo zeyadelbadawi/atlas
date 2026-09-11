@@ -1,23 +1,23 @@
-import { useEffect } from "react";
-import { Navigate, useLocation } from "react-router-dom";
-import BlogArticleLayout from "@/components/blog/BlogArticleLayout";
-import MarkdownArticle from "@/components/blog/MarkdownArticle";
-import { getBlogPost, getPostSeoMeta } from "@/lib/blog";
+import { useEffect } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import BlogArticleLayout from '@/components/blog/BlogArticleLayout';
+import MarkdownArticle from '@/components/blog/MarkdownArticle';
+import { getBlogPost, getPostSeoMeta } from '@/lib/blog';
 
 function getSlugFromPathname(pathname: string) {
   return pathname
-    .replace(/^\/blog\/?/, "")
-    .replace(/\/+$/, "")
-    .replace(/^\/+/, "");
+    .replace(/^\/blog\/?/, '')
+    .replace(/\/+$/, '')
+    .replace(/^\/+/, '');
 }
 
-function ensureMetaTag(attribute: "name" | "property", value: string) {
+function ensureMetaTag(attribute: 'name' | 'property', value: string) {
   let tag = document.head.querySelector(
-    `meta[${attribute}="${value}"]`,
+    `meta[${attribute}="${value}"]`
   ) as HTMLMetaElement | null;
 
   if (!tag) {
-    tag = document.createElement("meta");
+    tag = document.createElement('meta');
     tag.setAttribute(attribute, value);
     document.head.appendChild(tag);
   }
@@ -26,7 +26,7 @@ function ensureMetaTag(attribute: "name" | "property", value: string) {
 }
 
 function getCurrentPageUrl(pathname: string) {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return undefined;
   }
 
@@ -36,7 +36,7 @@ function getCurrentPageUrl(pathname: string) {
 const BlogPostPage = () => {
   const location = useLocation();
   const slug = getSlugFromPathname(location.pathname);
-  const post = slug === "*" ? null : getBlogPost(slug);
+  const post = slug === '*' ? null : getBlogPost(slug);
 
   useEffect(() => {
     if (!post) {
@@ -50,76 +50,76 @@ const BlogPostPage = () => {
 
     const metaDefinitions = [
       {
-        attribute: "name" as const,
-        key: "description",
+        attribute: 'name' as const,
+        key: 'description',
         value: seoMeta.description,
       },
-      { attribute: "name" as const, key: "keywords", value: seoMeta.keywords },
-      { attribute: "property" as const, key: "og:url", value: resolvedUrl },
+      { attribute: 'name' as const, key: 'keywords', value: seoMeta.keywords },
+      { attribute: 'property' as const, key: 'og:url', value: resolvedUrl },
       {
-        attribute: "property" as const,
-        key: "og:site_name",
+        attribute: 'property' as const,
+        key: 'og:site_name',
         value: seoMeta.siteName,
       },
       {
-        attribute: "property" as const,
-        key: "og:title",
+        attribute: 'property' as const,
+        key: 'og:title',
         value: seoMeta.ogTitle,
       },
       {
-        attribute: "property" as const,
-        key: "og:description",
+        attribute: 'property' as const,
+        key: 'og:description',
         value: seoMeta.ogDescription,
       },
       {
-        attribute: "property" as const,
-        key: "og:image",
+        attribute: 'property' as const,
+        key: 'og:image',
         value: seoMeta.ogImage,
       },
       {
-        attribute: "property" as const,
-        key: "og:image:alt",
+        attribute: 'property' as const,
+        key: 'og:image:alt',
         value: seoMeta.ogImageAlt,
       },
-      { attribute: "property" as const, key: "og:type", value: seoMeta.ogType },
+      { attribute: 'property' as const, key: 'og:type', value: seoMeta.ogType },
       {
-        attribute: "property" as const,
-        key: "article:published_time",
+        attribute: 'property' as const,
+        key: 'article:published_time',
         value: seoMeta.publishedTime,
       },
       {
-        attribute: "name" as const,
-        key: "twitter:card",
+        attribute: 'name' as const,
+        key: 'twitter:card',
         value: seoMeta.twitterCard,
       },
       {
-        attribute: "name" as const,
-        key: "twitter:site",
+        attribute: 'name' as const,
+        key: 'twitter:site',
         value: seoMeta.twitterSite,
       },
       {
-        attribute: "name" as const,
-        key: "twitter:creator",
+        attribute: 'name' as const,
+        key: 'twitter:creator',
         value: seoMeta.twitterCreator,
       },
       {
-        attribute: "name" as const,
-        key: "twitter:title",
+        attribute: 'name' as const,
+        key: 'twitter:title',
         value: seoMeta.twitterTitle,
       },
       {
-        attribute: "name" as const,
-        key: "twitter:description",
+        attribute: 'name' as const,
+        key: 'twitter:description',
         value: seoMeta.twitterDescription,
       },
       {
-        attribute: "name" as const,
-        key: "twitter:image",
+        attribute: 'name' as const,
+        key: 'twitter:image',
         value: seoMeta.twitterImage,
       },
       {
-        attribute: "name" as const,
-        key: "twitter:image:alt",
+        attribute: 'name' as const,
+        key: 'twitter:image:alt',
         value: seoMeta.twitterImageAlt,
       },
     ];
@@ -141,8 +141,8 @@ const BlogPostPage = () => {
     }
 
     const articleTagEntries = (seoMeta.tags ?? []).map((tag) => {
-      const metaTag = document.createElement("meta");
-      metaTag.setAttribute("property", "article:tag");
+      const metaTag = document.createElement('meta');
+      metaTag.setAttribute('property', 'article:tag');
       metaTag.content = tag;
       document.head.appendChild(metaTag);
       return metaTag;
@@ -161,7 +161,7 @@ const BlogPostPage = () => {
     };
   }, [post, location.pathname]);
 
-  if (slug === "*") {
+  if (slug === '*') {
     return <Navigate to="/blog/" replace />;
   }
 

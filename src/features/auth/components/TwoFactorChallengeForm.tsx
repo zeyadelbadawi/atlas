@@ -46,9 +46,7 @@ export function TwoFactorChallengeForm({
   const handleSubmit = (event: React.FormEvent): void => {
     event.preventDefault();
     if (!canSubmit || isLoading) return;
-    onSubmit(
-      mode === 'totp' ? { token: code } : { recoveryCode: code.trim() }
-    );
+    onSubmit(mode === 'totp' ? { token: code } : { recoveryCode: code.trim() });
   };
 
   const switchMode = (next: 'totp' | 'recovery'): void => {
@@ -61,11 +59,12 @@ export function TwoFactorChallengeForm({
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="flex items-start gap-3">
-            <ShieldCheck className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden />
+            <ShieldCheck
+              className="mt-0.5 size-5 shrink-0 text-primary"
+              aria-hidden
+            />
             <div>
-              <h2 className="font-medium">
-                {t('auth:twoFactor.title')}
-              </h2>
+              <h2 className="font-medium">{t('auth:twoFactor.title')}</h2>
               <p className="text-sm text-muted-foreground">
                 {mode === 'totp'
                   ? t('auth:twoFactor.description')
@@ -112,8 +111,14 @@ export function TwoFactorChallengeForm({
             />
           </div>
 
-          <Button type="submit" className="w-full" disabled={!canSubmit || isLoading}>
-            {isLoading ? t('common:actions.saving') : t('auth:twoFactor.verify')}
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={!canSubmit || isLoading}
+          >
+            {isLoading
+              ? t('common:actions.saving')
+              : t('auth:twoFactor.verify')}
           </Button>
 
           <div className="flex flex-col gap-2 text-center text-sm">

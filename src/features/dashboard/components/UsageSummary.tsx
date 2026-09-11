@@ -12,9 +12,9 @@
  * as its own label with no progress bar, because a share-of-limit is
  * meaningless without a limit.
  */
-import { useTranslation } from "react-i18next";
-import { Progress } from "@/components/ui/progress";
-import type { TenantUsage, UsageMetric } from "@types";
+import { useTranslation } from 'react-i18next';
+import { Progress } from '@/components/ui/progress';
+import type { TenantUsage, UsageMetric } from '@types';
 
 export interface UsageSummaryProps {
   readonly usage: TenantUsage;
@@ -23,11 +23,11 @@ export interface UsageSummaryProps {
 /** The metrics this widget shows, in display order — a deliberate subset of the full contract, not everything it happens to carry. */
 const METRICS: readonly (keyof Pick<
   TenantUsage,
-  "academies" | "courses" | "students" | "instructors"
->)[] = ["academies", "courses", "students", "instructors"];
+  'academies' | 'courses' | 'students' | 'instructors'
+>)[] = ['academies', 'courses', 'students', 'instructors'];
 
 function percentUsed(metric: UsageMetric): number | null {
-  if (metric.limit === "unlimited" || metric.limit <= 0) return null;
+  if (metric.limit === 'unlimited' || metric.limit <= 0) return null;
   return Math.min(100, Math.round((metric.used / metric.limit) * 100));
 }
 
@@ -47,9 +47,9 @@ export function UsageSummary({ usage }: UsageSummaryProps): JSX.Element {
                 {t(`dashboard:usage.metrics.${key}`)}
               </span>
               <span className="text-sm tabular-nums text-muted-foreground">
-                {metric.limit === "unlimited"
-                  ? t("dashboard:usage.unlimitedValue", { used: metric.used })
-                  : t("dashboard:usage.value", {
+                {metric.limit === 'unlimited'
+                  ? t('dashboard:usage.unlimitedValue', { used: metric.used })
+                  : t('dashboard:usage.value', {
                       used: metric.used,
                       limit: metric.limit,
                     })}

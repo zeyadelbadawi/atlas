@@ -5,13 +5,13 @@
  * and user preferences. This provider persists state to localStorage and keeps
  * it synchronized with the identity layer.
  */
-import { useCallback, useEffect, useMemo, useState } from "react";
-import type { ReactNode } from "react";
-import { STORAGE_KEYS } from "@constants";
-import type { PlatformState } from "@types";
-import { PlatformContext } from "./platform.context";
-import type { PlatformContextValue } from "./platform.context";
-import { getGlobalQueryClient } from "@services";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
+import { STORAGE_KEYS } from '@constants';
+import type { PlatformState } from '@types';
+import { PlatformContext } from './platform.context';
+import type { PlatformContextValue } from './platform.context';
+import { getGlobalQueryClient } from '@services';
 
 export interface PlatformProviderProps {
   readonly children: ReactNode;
@@ -86,7 +86,7 @@ export function AtlasPlatformProvider({
             return (
               Array.isArray(queryKey) &&
               queryKey.some(
-                (part) => part === "organization" || part === organizationId,
+                (part) => part === 'organization' || part === organizationId
               )
             );
           },
@@ -96,12 +96,12 @@ export function AtlasPlatformProvider({
       }
     };
 
-    window.addEventListener("atlas:organization-switched", handleOrgSwitch);
+    window.addEventListener('atlas:organization-switched', handleOrgSwitch);
 
     return () => {
       window.removeEventListener(
-        "atlas:organization-switched",
-        handleOrgSwitch,
+        'atlas:organization-switched',
+        handleOrgSwitch
       );
     };
   }, []);
@@ -116,7 +116,7 @@ export function AtlasPlatformProvider({
         JSON.stringify({
           sidebarCollapsed: state.sidebarCollapsed,
           userPreferences: state.userPreferences,
-        }),
+        })
       );
     } catch {
       // Storage quota exceeded or unavailable; continue without persistence.
@@ -137,7 +137,7 @@ export function AtlasPlatformProvider({
         localStorage.removeItem(STORAGE_KEYS.activeOrganization);
       }
     },
-    [],
+    []
   );
 
   const setActiveAcademy = useCallback((academyId: string | undefined) => {
@@ -154,7 +154,7 @@ export function AtlasPlatformProvider({
     (flagKey: string): boolean => {
       return state.featureFlags.flags[flagKey] ?? false;
     },
-    [state.featureFlags],
+    [state.featureFlags]
   );
 
   const value: PlatformContextValue = useMemo(
@@ -174,7 +174,7 @@ export function AtlasPlatformProvider({
       setActiveOrganization,
       setActiveAcademy,
       isFeatureEnabled,
-    ],
+    ]
   );
 
   return (

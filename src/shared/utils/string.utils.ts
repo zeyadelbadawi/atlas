@@ -78,5 +78,7 @@ export function isBlank(value: string | null | undefined): boolean {
  * backend messageKey in the first place).
  */
 export function toErrorsNamespaceKey(messageKey: string): string {
-  return messageKey.startsWith('errors.') ? `errors:${messageKey.slice('errors.'.length)}` : messageKey;
+  return messageKey.startsWith('errors.')
+    ? `errors:${messageKey.slice('errors.'.length)}`
+    : messageKey;
 }

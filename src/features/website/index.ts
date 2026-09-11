@@ -48,8 +48,16 @@ export type {
   WebsiteLinkRendererProps,
 } from './renderer/website-link-renderer.types';
 
-export { resolvePagePath, resolveWebsiteCtaHref, isExternalHref } from './utils/link-resolution.utils';
-export { resolvePageSeo, resolveCourseSeo, resolveBlogPostSeo } from './utils/seo-resolution.utils';
+export {
+  resolvePagePath,
+  resolveWebsiteCtaHref,
+  isExternalHref,
+} from './utils/link-resolution.utils';
+export {
+  resolvePageSeo,
+  resolveCourseSeo,
+  resolveBlogPostSeo,
+} from './utils/seo-resolution.utils';
 export type { SeoFallback } from './utils/seo-resolution.utils';
 export {
   buildOrganizationJsonLd,
@@ -64,7 +72,10 @@ export type { BuildSitemapEntriesInput } from './utils/sitemap.utils';
 // router/pages need these to derive locale from the URL, resolve
 // `LocalizedText` fields, and apply `dir`/`lang` — the same curated-export
 // discipline as everything else in this barrel.
-export { resolveLocalizedText, isLocalizedTextComplete } from './utils/localized-text.utils';
+export {
+  resolveLocalizedText,
+  isLocalizedTextComplete,
+} from './utils/localized-text.utils';
 export { usePublicWebsiteDocumentDirection } from './renderer/usePublicWebsiteDocumentDirection';
 export { usePublicWebsiteLocale } from './renderer/PublicWebsiteLocaleContext';
 export {

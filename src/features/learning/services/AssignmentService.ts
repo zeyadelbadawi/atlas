@@ -69,7 +69,10 @@ export class AssignmentService extends BaseService {
     payload: CreateAssignmentSubmissionPayload,
     options?: WriteOptions
   ): Promise<AssignmentSubmission> {
-    return this.client.post<AssignmentSubmission, CreateAssignmentSubmissionPayload>(
+    return this.client.post<
+      AssignmentSubmission,
+      CreateAssignmentSubmissionPayload
+    >(
       this.path(courseId, 'assignments', assignmentId, 'submission'),
       payload,
       options
@@ -84,7 +87,13 @@ export class AssignmentService extends BaseService {
     options?: WriteOptions
   ): Promise<MediaAssetDetail> {
     return this.client.post<MediaAssetDetail, UploadMediaAssetPayload>(
-      this.path(courseId, 'assignments', assignmentId, 'submission', 'attachment'),
+      this.path(
+        courseId,
+        'assignments',
+        assignmentId,
+        'submission',
+        'attachment'
+      ),
       payload,
       options
     );
@@ -146,7 +155,10 @@ export class AssignmentService extends BaseService {
     assignmentId: string,
     options?: WriteOptions
   ): Promise<void> {
-    await this.client.delete<void>(this.path(courseId, 'assignments', assignmentId), options);
+    await this.client.delete<void>(
+      this.path(courseId, 'assignments', assignmentId),
+      options
+    );
   }
 }
 

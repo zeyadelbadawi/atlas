@@ -25,7 +25,10 @@ export default function SearchPage(): JSX.Element {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const { query, setQuery, debouncedQuery } = useSearch({ debounceMs: 300, minLength: MIN_QUERY_LENGTH });
+  const { query, setQuery, debouncedQuery } = useSearch({
+    debounceMs: 300,
+    minLength: MIN_QUERY_LENGTH,
+  });
 
   const { data, isLoading, error, refetch } = useGlobalSearch(debouncedQuery);
 
@@ -61,7 +64,10 @@ export default function SearchPage(): JSX.Element {
           placeholder={t('search:placeholder')}
         />
 
-        {query.length >= MIN_QUERY_LENGTH || results || isLoading || errorMessage ? (
+        {query.length >= MIN_QUERY_LENGTH ||
+        results ||
+        isLoading ||
+        errorMessage ? (
           <Card>
             <CardContent className="p-0">
               <SearchResults

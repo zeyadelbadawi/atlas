@@ -4,17 +4,17 @@
  * View instructions, submit a response (with an optional attachment), and
  * see submission state. Grading/instructor workflows are out of scope.
  */
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckCircle2, Loader2, Upload } from "lucide-react";
-import { PageContainer, PageHeader } from "@components/layout";
-import { ErrorState } from "@components/feedback";
-import { StatusBadge } from "@components/data-display";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CheckCircle2, Loader2, Upload } from 'lucide-react';
+import { PageContainer, PageHeader } from '@components/layout';
+import { ErrorState } from '@components/feedback';
+import { StatusBadge } from '@components/data-display';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -22,27 +22,27 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
-import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "@/hooks/use-toast";
-import { useFilePicker } from "@hooks";
+} from '@/components/ui/form';
+import { Textarea } from '@/components/ui/textarea';
+import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from '@/hooks/use-toast';
+import { useFilePicker } from '@hooks';
 import {
   useAssignment,
   useAssignmentSubmission,
   useSubmitAssignment,
   useUploadSubmissionAttachment,
-} from "../hooks";
-import { useLearningPaths } from "../context/LearningPaths.context";
+} from '../hooks';
+import { useLearningPaths } from '../context/LearningPaths.context';
 import {
   assignmentSubmissionSchema,
   type AssignmentSubmissionFormData,
-} from "../schemas/learning.schemas";
+} from '../schemas/learning.schemas';
 import {
   ALLOWED_ASSIGNMENT_ATTACHMENT_TYPES,
   MAX_ASSIGNMENT_ATTACHMENT_FILE_SIZE,
-} from "../constants/learning.constants";
-import { getSubmissionStatusTone } from "../utils/learning-status.utils";
+} from '../constants/learning.constants';
+import { getSubmissionStatusTone } from '../utils/learning-status.utils';
 
 export default function AssignmentPage(): JSX.Element {
   const { t } = useTranslation();
@@ -60,11 +60,11 @@ export default function AssignmentPage(): JSX.Element {
     isLoading: isLoadingAssignment,
     error: assignmentError,
     refetch: refetchAssignment,
-  } = useAssignment(courseId ?? "", assignmentId ?? "");
+  } = useAssignment(courseId ?? '', assignmentId ?? '');
   const { data: submission, isLoading: isLoadingSubmission } =
-    useAssignmentSubmission(courseId ?? "", assignmentId ?? "");
+    useAssignmentSubmission(courseId ?? '', assignmentId ?? '');
   const { mutateAsync: submitAssignment, isPending: isSubmitting } =
-    useSubmitAssignment(courseId ?? "", assignmentId ?? "");
+    useSubmitAssignment(courseId ?? '', assignmentId ?? '');
   const { mutateAsync: uploadAttachment, isPending: isUploadingAttachment } =
     useUploadSubmissionAttachment();
 
@@ -72,14 +72,14 @@ export default function AssignmentPage(): JSX.Element {
     resolver: zodResolver(assignmentSubmissionSchema),
     values: submission
       ? {
-          response: submission.response ?? "",
+          response: submission.response ?? '',
           attachmentUrl: submission.attachmentUrl,
         }
-      : { response: "", attachmentUrl: undefined },
+      : { response: '', attachmentUrl: undefined },
   });
 
   const filePicker = useFilePicker({
-    accept: ALLOWED_ASSIGNMENT_ATTACHMENT_TYPES.join(","),
+    accept: ALLOWED_ASSIGNMENT_ATTACHMENT_TYPES.join(','),
   });
 
   useEffect(() => {
@@ -87,29 +87,29 @@ export default function AssignmentPage(): JSX.Element {
     if (!file) return;
 
     if (file.size > MAX_ASSIGNMENT_ATTACHMENT_FILE_SIZE) {
-      form.setError("attachmentUrl", {
-        type: "validation",
-        message: "learning:assignment.attachmentTooLarge",
+      form.setError('attachmentUrl', {
+        type: 'validation',
+        message: 'learning:assignment.attachmentTooLarge',
       });
       filePicker.clearFiles();
       return;
     }
     if (!ALLOWED_ASSIGNMENT_ATTACHMENT_TYPES.includes(file.type)) {
-      form.setError("attachmentUrl", {
-        type: "validation",
-        message: "learning:assignment.attachmentInvalidType",
+      form.setError('attachmentUrl', {
+        type: 'validation',
+        message: 'learning:assignment.attachmentInvalidType',
       });
       filePicker.clearFiles();
       return;
     }
 
-    form.clearErrors("attachmentUrl");
+    form.clearErrors('attachmentUrl');
     const reader = new FileReader();
     reader.onload = async () => {
       try {
         const asset = await uploadAttachment({
-          courseId: courseId ?? "",
-          assignmentId: assignmentId ?? "",
+          courseId: courseId ?? '',
+          assignmentId: assignmentId ?? '',
           payload: {
             fileName: file.name,
             mimeType: file.type,
@@ -119,12 +119,12 @@ export default function AssignmentPage(): JSX.Element {
         });
         // Phase 4 — the attachment is now a real, permanently-stored file
         // (via the R2 media pipeline), not a base64 blob in the form state.
-        form.setValue("attachmentUrl", asset.url, { shouldDirty: true });
+        form.setValue('attachmentUrl', asset.url, { shouldDirty: true });
         setAttachmentName(file.name);
       } catch {
-        form.setError("attachmentUrl", {
-          type: "upload",
-          message: "learning:assignment.attachmentUploadError",
+        form.setError('attachmentUrl', {
+          type: 'upload',
+          message: 'learning:assignment.attachmentUploadError',
         });
         filePicker.clearFiles();
       }
@@ -133,7 +133,7 @@ export default function AssignmentPage(): JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filePicker.files]);
 
-  const alreadySubmitted = submission?.status === "submitted";
+  const alreadySubmitted = submission?.status === 'submitted';
   const canEdit = !alreadySubmitted || assignment?.allowResubmission;
 
   const onSubmit = async (data: AssignmentSubmissionFormData) => {
@@ -142,13 +142,13 @@ export default function AssignmentPage(): JSX.Element {
         response: data.response || undefined,
         attachmentUrl: data.attachmentUrl,
       });
-      toast({ title: t("learning:assignment.submitSuccess") });
+      toast({ title: t('learning:assignment.submitSuccess') });
       setJustSubmitted(true);
     } catch {
       toast({
-        title: t("learning:assignment.submitError"),
-        description: t("errors:generic"),
-        variant: "destructive",
+        title: t('learning:assignment.submitError'),
+        description: t('errors:generic'),
+        variant: 'destructive',
       });
     }
   };
@@ -176,7 +176,10 @@ export default function AssignmentPage(): JSX.Element {
   if (justSubmitted) {
     return (
       <PageContainer>
-        <PageHeader title={assignment.title} titleKey="learning:assignment.listTitle" />
+        <PageHeader
+          title={assignment.title}
+          titleKey="learning:assignment.listTitle"
+        />
         <Card>
           <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
             <span className="flex size-12 items-center justify-center rounded-pill bg-success-surface text-success">
@@ -184,18 +187,18 @@ export default function AssignmentPage(): JSX.Element {
             </span>
             <div className="space-y-1.5">
               <h3 className="font-display text-base font-semibold text-foreground">
-                {t("learning:assignment.submitSuccess")}
+                {t('learning:assignment.submitSuccess')}
               </h3>
               <p className="text-sm font-medium text-muted-foreground">
-                {t("learning:assignment.submitSuccessNextStep")}
+                {t('learning:assignment.submitSuccessNextStep')}
               </p>
               <p className="text-sm text-muted-foreground">
-                {t("learning:assignment.submitSuccessNextStepDescription")}
+                {t('learning:assignment.submitSuccessNextStepDescription')}
               </p>
             </div>
             {courseId ? (
               <Button onClick={() => navigate(paths.courseDetail(courseId))}>
-                {t("learning:learn.backToCourse")}
+                {t('learning:learn.backToCourse')}
               </Button>
             ) : null}
           </CardContent>
@@ -206,13 +209,18 @@ export default function AssignmentPage(): JSX.Element {
 
   return (
     <PageContainer>
-      <PageHeader title={assignment.title} titleKey="learning:assignment.listTitle" />
+      <PageHeader
+        title={assignment.title}
+        titleKey="learning:assignment.listTitle"
+      />
 
       <div className="mx-auto max-w-2xl space-y-6">
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>{t("learning:assignment.instructionsTitle")}</CardTitle>
+              <CardTitle>
+                {t('learning:assignment.instructionsTitle')}
+              </CardTitle>
               {submission ? (
                 <StatusBadge
                   labelKey={`learning:assignment.status.${submission.status}`}
@@ -232,7 +240,7 @@ export default function AssignmentPage(): JSX.Element {
           <Card>
             <CardContent className="space-y-2 py-6">
               <p className="text-sm text-muted-foreground">
-                {t("learning:assignment.resubmissionUnavailable")}
+                {t('learning:assignment.resubmissionUnavailable')}
               </p>
               {submission?.response ? (
                 <p className="whitespace-pre-line text-sm text-foreground">
@@ -252,13 +260,13 @@ export default function AssignmentPage(): JSX.Element {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          {t("learning:assignment.responseLabel")}
+                          {t('learning:assignment.responseLabel')}
                         </FormLabel>
                         <FormControl>
                           <Textarea
                             rows={6}
                             placeholder={t(
-                              "learning:assignment.responsePlaceholder"
+                              'learning:assignment.responsePlaceholder'
                             )}
                             {...field}
                           />
@@ -274,7 +282,7 @@ export default function AssignmentPage(): JSX.Element {
                     render={() => (
                       <FormItem>
                         <FormLabel>
-                          {t("learning:assignment.attachmentLabel")}
+                          {t('learning:assignment.attachmentLabel')}
                         </FormLabel>
                         <Button
                           type="button"
@@ -283,15 +291,22 @@ export default function AssignmentPage(): JSX.Element {
                           onClick={filePicker.openFilePicker}
                         >
                           {isUploadingAttachment ? (
-                            <Loader2 className="size-4 animate-spin" aria-hidden />
+                            <Loader2
+                              className="size-4 animate-spin"
+                              aria-hidden
+                            />
                           ) : (
-                            <Upload className="size-4" strokeWidth={2} aria-hidden />
+                            <Upload
+                              className="size-4"
+                              strokeWidth={2}
+                              aria-hidden
+                            />
                           )}
                           {isUploadingAttachment
-                            ? t("learning:assignment.uploadingAttachment")
+                            ? t('learning:assignment.uploadingAttachment')
                             : attachmentName
-                              ? t("learning:assignment.changeAttachment")
-                              : t("learning:assignment.uploadAttachment")}
+                              ? t('learning:assignment.changeAttachment')
+                              : t('learning:assignment.uploadAttachment')}
                         </Button>
                         {attachmentName && !isUploadingAttachment ? (
                           <p className="text-xs text-muted-foreground">
@@ -313,8 +328,8 @@ export default function AssignmentPage(): JSX.Element {
                   <Loader2 className="size-4 animate-spin" aria-hidden />
                 ) : null}
                 {alreadySubmitted
-                  ? t("learning:assignment.resubmitAction")
-                  : t("learning:assignment.submitAction")}
+                  ? t('learning:assignment.resubmitAction')
+                  : t('learning:assignment.submitAction')}
               </Button>
             </form>
           </Form>

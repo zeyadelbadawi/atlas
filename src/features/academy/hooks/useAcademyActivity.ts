@@ -6,11 +6,7 @@
 import { useApiQuery, useAuth } from '@/shared/hooks';
 import { academyKeys } from '@services/query';
 import { academyService } from '../services/AcademyService';
-import type {
-  AcademyActivity,
-  CollectionQuery,
-  PaginatedResult,
-} from '@types';
+import type { AcademyActivity, CollectionQuery, PaginatedResult } from '@types';
 
 export interface UseAcademyActivityOptions {
   readonly query?: CollectionQuery;

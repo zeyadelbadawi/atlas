@@ -62,8 +62,8 @@ export function useOnboardingProgress(
 
   const skipAll = useCallback(() => {
     setValue({
-      currentStep: ACADEMY_ONBOARDING_STEPS[ACADEMY_ONBOARDING_STEPS.length - 1]
-        .id,
+      currentStep:
+        ACADEMY_ONBOARDING_STEPS[ACADEMY_ONBOARDING_STEPS.length - 1].id,
       completedSteps: ACADEMY_ONBOARDING_STEPS.map((step) => step.id),
     });
   }, [setValue]);

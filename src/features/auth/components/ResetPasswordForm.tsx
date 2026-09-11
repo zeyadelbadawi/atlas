@@ -6,29 +6,29 @@
  * real mutation via `useConfirmPasswordReset`
  * (`authenticationService.confirmPasswordReset`).
  */
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useTranslation } from "react-i18next";
-import { Eye, EyeOff } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { ErrorState } from "@components/feedback";
-import { useToast } from "@hooks";
-import { AUTH_ROUTES } from "@app/routes/route-paths";
-import { useConfirmPasswordReset } from "../hooks";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
+import { Eye, EyeOff } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { ErrorState } from '@components/feedback';
+import { useToast } from '@hooks';
+import { AUTH_ROUTES } from '@app/routes/route-paths';
+import { useConfirmPasswordReset } from '../hooks';
 
 const resetPasswordSchema = z
   .object({
-    password: z.string().min(8, "auth:resetPassword.errors.passwordTooShort"),
+    password: z.string().min(8, 'auth:resetPassword.errors.passwordTooShort'),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "auth:resetPassword.errors.passwordMismatch",
-    path: ["confirmPassword"],
+    message: 'auth:resetPassword.errors.passwordMismatch',
+    path: ['confirmPassword'],
   });
 
 type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
@@ -54,8 +54,8 @@ export function ResetPasswordForm({
   } = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
-      password: "",
-      confirmPassword: "",
+      password: '',
+      confirmPassword: '',
     },
   });
 
@@ -67,8 +67,8 @@ export function ResetPasswordForm({
       {
         onSuccess: () => {
           toast({
-            title: t("auth:resetPassword.success.title"),
-            description: t("auth:resetPassword.success.description"),
+            title: t('auth:resetPassword.success.title'),
+            description: t('auth:resetPassword.success.description'),
           });
           navigate(AUTH_ROUTES.signIn);
         },
@@ -85,16 +85,16 @@ export function ResetPasswordForm({
       <div className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="password">
-            {t("auth:resetPassword.newPassword")}
+            {t('auth:resetPassword.newPassword')}
           </Label>
           <div className="relative">
             <Input
               id="password"
-              type={showPassword ? "text" : "password"}
-              placeholder={t("auth:resetPassword.passwordPlaceholder")}
+              type={showPassword ? 'text' : 'password'}
+              placeholder={t('auth:resetPassword.passwordPlaceholder')}
               autoComplete="new-password"
               disabled={isLoading}
-              {...register("password")}
+              {...register('password')}
               aria-invalid={!!errors.password}
               className="pe-10"
             />
@@ -105,8 +105,8 @@ export function ResetPasswordForm({
               disabled={isLoading}
               aria-label={
                 showPassword
-                  ? t("common:actions.hidePassword")
-                  : t("common:actions.showPassword")
+                  ? t('common:actions.hidePassword')
+                  : t('common:actions.showPassword')
               }
             >
               {showPassword ? (
@@ -120,27 +120,27 @@ export function ResetPasswordForm({
             <p className="text-sm text-destructive">
               {t(
                 errors.password.message ||
-                  "auth:resetPassword.errors.passwordTooShort",
+                  'auth:resetPassword.errors.passwordTooShort'
               )}
             </p>
           ) : null}
           <p className="text-xs text-muted-foreground">
-            {t("auth:resetPassword.passwordHint")}
+            {t('auth:resetPassword.passwordHint')}
           </p>
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="confirmPassword">
-            {t("auth:resetPassword.confirmPassword")}
+            {t('auth:resetPassword.confirmPassword')}
           </Label>
           <div className="relative">
             <Input
               id="confirmPassword"
-              type={showConfirmPassword ? "text" : "password"}
-              placeholder={t("auth:resetPassword.confirmPasswordPlaceholder")}
+              type={showConfirmPassword ? 'text' : 'password'}
+              placeholder={t('auth:resetPassword.confirmPasswordPlaceholder')}
               autoComplete="new-password"
               disabled={isLoading}
-              {...register("confirmPassword")}
+              {...register('confirmPassword')}
               aria-invalid={!!errors.confirmPassword}
               className="pe-10"
             />
@@ -151,8 +151,8 @@ export function ResetPasswordForm({
               disabled={isLoading}
               aria-label={
                 showConfirmPassword
-                  ? t("common:actions.hidePassword")
-                  : t("common:actions.showPassword")
+                  ? t('common:actions.hidePassword')
+                  : t('common:actions.showPassword')
               }
             >
               {showConfirmPassword ? (
@@ -166,7 +166,7 @@ export function ResetPasswordForm({
             <p className="text-sm text-destructive">
               {t(
                 errors.confirmPassword.message ||
-                  "auth:resetPassword.errors.passwordMismatch",
+                  'auth:resetPassword.errors.passwordMismatch'
               )}
             </p>
           ) : null}
@@ -180,8 +180,8 @@ export function ResetPasswordForm({
         aria-busy={isLoading}
       >
         {isLoading
-          ? t("common:actions.loading")
-          : t("auth:resetPassword.submit")}
+          ? t('common:actions.loading')
+          : t('auth:resetPassword.submit')}
       </Button>
     </form>
   );

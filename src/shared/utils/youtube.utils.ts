@@ -12,7 +12,11 @@
  * from the URL string itself, never a persisted flag.
  */
 
-const YOUTUBE_HOSTS = new Set(['youtube.com', 'youtu.be', 'youtube-nocookie.com']);
+const YOUTUBE_HOSTS = new Set([
+  'youtube.com',
+  'youtu.be',
+  'youtube-nocookie.com',
+]);
 const VIDEO_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
 
 function normalizeHost(hostname: string): string {
@@ -57,7 +61,9 @@ export function parseYouTubeVideoId(rawUrl: string): string | null {
   const vParam = url.searchParams.get('v');
   if (vParam && VIDEO_ID_PATTERN.test(vParam)) return vParam;
 
-  const pathMatch = /^\/(?:embed|shorts|live)\/([A-Za-z0-9_-]{11})/.exec(url.pathname);
+  const pathMatch = /^\/(?:embed|shorts|live)\/([A-Za-z0-9_-]{11})/.exec(
+    url.pathname
+  );
   return pathMatch ? pathMatch[1] : null;
 }
 

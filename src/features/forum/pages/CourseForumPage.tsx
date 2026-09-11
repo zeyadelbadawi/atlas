@@ -59,9 +59,11 @@ export default function CourseForumPage(): JSX.Element {
   const [totalItems, setTotalItems] = useState(0);
   const pagination = usePagination({ totalItems });
 
-  const { data: forum, error: forumError, refetch: refetchForum } = useForum(
-    courseId ?? ''
-  );
+  const {
+    data: forum,
+    error: forumError,
+    refetch: refetchForum,
+  } = useForum(courseId ?? '');
   const {
     data: threadsData,
     isLoading,
@@ -116,7 +118,9 @@ export default function CourseForumPage(): JSX.Element {
     return (
       <PageContainer>
         <PageHeader titleKey="forum:list.title" />
-        <ErrorState onRetry={() => (forumError ? refetchForum() : refetchThreads())} />
+        <ErrorState
+          onRetry={() => (forumError ? refetchForum() : refetchThreads())}
+        />
       </PageContainer>
     );
   }
@@ -166,7 +170,10 @@ export default function CourseForumPage(): JSX.Element {
                 <div className="min-w-0 flex-1 space-y-1">
                   <div className="flex flex-wrap items-center gap-2">
                     {thread.pinned ? (
-                      <Pin className="size-4 shrink-0 text-primary" aria-hidden />
+                      <Pin
+                        className="size-4 shrink-0 text-primary"
+                        aria-hidden
+                      />
                     ) : null}
                     {thread.locked ? (
                       <Lock

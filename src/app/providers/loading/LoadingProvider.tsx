@@ -5,11 +5,11 @@
  * — rather than a boolean — guarantees that when two blocking operations
  * overlap, the first to finish cannot hide the indicator while the second runs.
  */
-import { useCallback, useMemo, useState } from "react";
-import type { ReactNode } from "react";
-import { FullPageLoader } from "@components/loading/FullPageLoader";
-import { LoadingContext } from "./loading.context";
-import type { LoadingContextValue } from "./loading.context";
+import { useCallback, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
+import { FullPageLoader } from '@components/loading/FullPageLoader';
+import { LoadingContext } from './loading.context';
+import type { LoadingContextValue } from './loading.context';
 
 /** One in-flight blocking operation. */
 interface BlockingOperation {
@@ -25,7 +25,7 @@ export function AtlasLoadingProvider({
   children,
 }: AtlasLoadingProviderProps): JSX.Element {
   const [operations, setOperations] = useState<readonly BlockingOperation[]>(
-    [],
+    []
   );
 
   const startLoading = useCallback((messageKey?: string) => {
@@ -40,7 +40,7 @@ export function AtlasLoadingProvider({
       if (hasStopped) return;
       hasStopped = true;
       setOperations((previous) =>
-        previous.filter((operation) => operation.id !== id),
+        previous.filter((operation) => operation.id !== id)
       );
     };
   }, []);

@@ -17,7 +17,11 @@ export interface CancelProvisioningVariables {
 export function useCancelProvisioning() {
   const { invalidate } = useInvalidate();
 
-  return useApiMutation<ProvisioningRequest, CancelProvisioningVariables, ApiError>({
+  return useApiMutation<
+    ProvisioningRequest,
+    CancelProvisioningVariables,
+    ApiError
+  >({
     mutationFn: ({ organizationId, requestId }) =>
       provisioningService.cancelProvisioning(organizationId, requestId),
     showSuccessToast: false,

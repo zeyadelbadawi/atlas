@@ -30,7 +30,10 @@ export interface WebsitePublishBarProps {
   readonly status: WebsitePublishStatus;
 }
 
-export function WebsitePublishBar({ academyId, status }: WebsitePublishBarProps): JSX.Element {
+export function WebsitePublishBar({
+  academyId,
+  status,
+}: WebsitePublishBarProps): JSX.Element {
   const { t } = useTranslation();
   const { confirm } = useConfirmDialog();
   const { hasPermission } = usePermissions();
@@ -50,7 +53,10 @@ export function WebsitePublishBar({ academyId, status }: WebsitePublishBarProps)
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-card p-4">
       <div className="flex items-center gap-3">
-        <StatusBadge labelKey={`website:publish.status.${status}`} tone={STATUS_TONE[status]} />
+        <StatusBadge
+          labelKey={`website:publish.status.${status}`}
+          tone={STATUS_TONE[status]}
+        />
         <span className="text-sm text-muted-foreground">
           {status === 'draft'
             ? t('website:publish.draftHint')
@@ -60,7 +66,11 @@ export function WebsitePublishBar({ academyId, status }: WebsitePublishBarProps)
         </span>
       </div>
       {canPublish ? (
-        <Button type="button" onClick={handlePublish} disabled={publish.isPending || status === 'publishing'}>
+        <Button
+          type="button"
+          onClick={handlePublish}
+          disabled={publish.isPending || status === 'publishing'}
+        >
           {publish.isPending ? (
             <Loader2 className="size-4 animate-spin" aria-hidden />
           ) : (
@@ -69,7 +79,9 @@ export function WebsitePublishBar({ academyId, status }: WebsitePublishBarProps)
           {t('website:publish.action')}
         </Button>
       ) : null}
-      {publish.error ? <ErrorState onRetry={handlePublish} className="w-full" /> : null}
+      {publish.error ? (
+        <ErrorState onRetry={handlePublish} className="w-full" />
+      ) : null}
     </div>
   );
 }

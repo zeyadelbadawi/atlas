@@ -30,7 +30,9 @@ export const QUERY_KEY_ROOTS = {
   payment: ['payment'] as const,
   invoice: ['invoice'] as const,
   platformPayment: ['platform-payment'] as const,
-  atlasSubscriptionPaymentProvider: ['atlas-subscription-payment-provider'] as const,
+  atlasSubscriptionPaymentProvider: [
+    'atlas-subscription-payment-provider',
+  ] as const,
   provisioning: ['provisioning'] as const,
   subdomain: ['subdomain'] as const,
   platformProvisioning: ['platform-provisioning'] as const,
@@ -80,7 +82,8 @@ export const organizationKeys = {
   all: QUERY_KEY_ROOTS.organizations,
   list: (filters?: Record<string, unknown>) =>
     [...organizationKeys.all, 'list', filters] as const,
-  detail: (orgId: string) => [...organizationKeys.all, 'detail', orgId] as const,
+  detail: (orgId: string) =>
+    [...organizationKeys.all, 'detail', orgId] as const,
   memberships: (userId: string) =>
     [...organizationKeys.all, 'memberships', userId] as const,
 } as const;
@@ -187,11 +190,8 @@ export const quizKeys = {
     [...quizKeys.all, 'list', studentId, courseId] as const,
   detail: (studentId: string | undefined, courseId: string, quizId: string) =>
     [...quizKeys.all, 'detail', studentId, courseId, quizId] as const,
-  attempts: (
-    studentId: string | undefined,
-    courseId: string,
-    quizId: string
-  ) => [...quizKeys.all, 'attempts', studentId, courseId, quizId] as const,
+  attempts: (studentId: string | undefined, courseId: string, quizId: string) =>
+    [...quizKeys.all, 'attempts', studentId, courseId, quizId] as const,
   /**
    * Phase 4 authoring — every status (draft + published), including
    * `isCorrect`. Embeds the authoring user's own id, same rationale as the
@@ -205,7 +205,8 @@ export const quizKeys = {
     authorId: string | undefined,
     courseId: string,
     quizId: string
-  ) => [...quizKeys.all, 'authoring-detail', authorId, courseId, quizId] as const,
+  ) =>
+    [...quizKeys.all, 'authoring-detail', authorId, courseId, quizId] as const,
 } as const;
 
 export const assignmentKeys = {
@@ -216,7 +217,14 @@ export const assignmentKeys = {
     studentId: string | undefined,
     courseId: string,
     assignmentId: string
-  ) => [...assignmentKeys.all, 'detail', studentId, courseId, assignmentId] as const,
+  ) =>
+    [
+      ...assignmentKeys.all,
+      'detail',
+      studentId,
+      courseId,
+      assignmentId,
+    ] as const,
   submission: (
     studentId: string | undefined,
     courseId: string,
@@ -266,7 +274,8 @@ export const instructorKeys = {
     instructorId: string | undefined,
     courseId: string,
     query?: CollectionQuery
-  ) => [...instructorKeys.all, 'students', instructorId, courseId, query] as const,
+  ) =>
+    [...instructorKeys.all, 'students', instructorId, courseId, query] as const,
   studentProgress: (
     instructorId: string | undefined,
     courseId: string,
@@ -400,7 +409,8 @@ export const planKeys = {
   list: () => [...planKeys.all, 'list'] as const,
   detail: (key: string) => [...planKeys.all, 'detail', key] as const,
   addOnList: () => [...planKeys.all, 'add-ons', 'list'] as const,
-  addOnDetail: (key: string) => [...planKeys.all, 'add-ons', 'detail', key] as const,
+  addOnDetail: (key: string) =>
+    [...planKeys.all, 'add-ons', 'detail', key] as const,
   trialPolicy: () => [...planKeys.all, 'trial-policy'] as const,
 } as const;
 
@@ -458,9 +468,13 @@ export const platformPaymentKeys = {
 /** Query keys for Atlas Subscription Payment provider configuration (2026-08-26). Platform-owned singleton — not organization-scoped, like `platformPaymentKeys`. */
 export const atlasSubscriptionPaymentProviderKeys = {
   all: QUERY_KEY_ROOTS.atlasSubscriptionPaymentProvider,
-  config: () => [...atlasSubscriptionPaymentProviderKeys.all, 'config'] as const,
+  config: () =>
+    [...atlasSubscriptionPaymentProviderKeys.all, 'config'] as const,
   availableProviders: () =>
-    [...atlasSubscriptionPaymentProviderKeys.all, 'available-providers'] as const,
+    [
+      ...atlasSubscriptionPaymentProviderKeys.all,
+      'available-providers',
+    ] as const,
 } as const;
 
 /**
@@ -524,8 +538,10 @@ export const websiteKeys = {
     [...websiteKeys.all, 'faq-entries', academyId, query] as const,
   faqEntry: (academyId: string | undefined, entryId: string) =>
     [...websiteKeys.all, 'faq-entry', academyId, entryId] as const,
-  testimonialEntries: (academyId: string | undefined, query?: CollectionQuery) =>
-    [...websiteKeys.all, 'testimonial-entries', academyId, query] as const,
+  testimonialEntries: (
+    academyId: string | undefined,
+    query?: CollectionQuery
+  ) => [...websiteKeys.all, 'testimonial-entries', academyId, query] as const,
   testimonialEntry: (academyId: string | undefined, entryId: string) =>
     [...websiteKeys.all, 'testimonial-entry', academyId, entryId] as const,
 } as const;
@@ -553,7 +569,8 @@ export const platformDomainKeys = {
 /** Query keys for infrastructure-provider status (Prompt 11) — unscoped, account-level. */
 export const infrastructureKeys = {
   all: QUERY_KEY_ROOTS.infrastructure,
-  providerStatus: (provider: string) => [...infrastructureKeys.all, 'provider-status', provider] as const,
+  providerStatus: (provider: string) =>
+    [...infrastructureKeys.all, 'provider-status', provider] as const,
 } as const;
 
 /**
@@ -567,10 +584,12 @@ export const infrastructureKeys = {
  */
 export const publicWebsiteKeys = {
   all: QUERY_KEY_ROOTS.publicWebsite,
-  hostnameResolution: (hostname: string) => [...publicWebsiteKeys.all, 'resolve', hostname] as const,
+  hostnameResolution: (hostname: string) =>
+    [...publicWebsiteKeys.all, 'resolve', hostname] as const,
   configuration: (academyId: string | undefined) =>
     [...publicWebsiteKeys.all, 'configuration', academyId] as const,
-  pages: (academyId: string | undefined) => [...publicWebsiteKeys.all, 'pages', academyId] as const,
+  pages: (academyId: string | undefined) =>
+    [...publicWebsiteKeys.all, 'pages', academyId] as const,
   page: (academyId: string | undefined, slug: string) =>
     [...publicWebsiteKeys.all, 'page', academyId, slug] as const,
   /** Phase 6 — `StatisticsSection`'s real, live counts. */
@@ -585,8 +604,16 @@ export const publicWebsiteKeys = {
   /** The public Course Details page's real course + curriculum preview — see `usePublicCourse`'s own doc comment. */
   course: (academyId: string | undefined, courseId: string | undefined) =>
     [...publicWebsiteKeys.all, 'course', academyId, courseId] as const,
-  courseCurriculum: (academyId: string | undefined, courseId: string | undefined) =>
-    [...publicWebsiteKeys.all, 'course-curriculum', academyId, courseId] as const,
+  courseCurriculum: (
+    academyId: string | undefined,
+    courseId: string | undefined
+  ) =>
+    [
+      ...publicWebsiteKeys.all,
+      'course-curriculum',
+      academyId,
+      courseId,
+    ] as const,
 } as const;
 
 /**
@@ -597,20 +624,26 @@ export const publicWebsiteKeys = {
  */
 export const platformOrganizationKeys = {
   all: QUERY_KEY_ROOTS.platformOrganization,
-  list: (query?: CollectionQuery) => [...platformOrganizationKeys.all, 'list', query] as const,
-  detail: (organizationId: string) => [...platformOrganizationKeys.all, 'detail', organizationId] as const,
+  list: (query?: CollectionQuery) =>
+    [...platformOrganizationKeys.all, 'list', query] as const,
+  detail: (organizationId: string) =>
+    [...platformOrganizationKeys.all, 'detail', organizationId] as const,
 } as const;
 
 export const platformAcademyKeys = {
   all: QUERY_KEY_ROOTS.platformAcademy,
-  list: (query?: CollectionQuery) => [...platformAcademyKeys.all, 'list', query] as const,
-  detail: (academyId: string) => [...platformAcademyKeys.all, 'detail', academyId] as const,
+  list: (query?: CollectionQuery) =>
+    [...platformAcademyKeys.all, 'list', query] as const,
+  detail: (academyId: string) =>
+    [...platformAcademyKeys.all, 'detail', academyId] as const,
 } as const;
 
 export const platformUserKeys = {
   all: QUERY_KEY_ROOTS.platformUser,
-  list: (query?: CollectionQuery) => [...platformUserKeys.all, 'list', query] as const,
-  detail: (userId: string) => [...platformUserKeys.all, 'detail', userId] as const,
+  list: (query?: CollectionQuery) =>
+    [...platformUserKeys.all, 'list', query] as const,
+  detail: (userId: string) =>
+    [...platformUserKeys.all, 'detail', userId] as const,
 } as const;
 
 /** Roles & Permissions catalog (Prompt 13) — unscoped, platform-wide. */
@@ -624,14 +657,17 @@ export const roleKeys = {
 /** Audit Log (Prompt 13) — unscoped, platform-wide; a future backend may accept org/academy filters as query params without changing this key shape. */
 export const auditLogKeys = {
   all: QUERY_KEY_ROOTS.auditLog,
-  list: (query?: CollectionQuery) => [...auditLogKeys.all, 'list', query] as const,
-  detail: (eventId: string) => [...auditLogKeys.all, 'detail', eventId] as const,
+  list: (query?: CollectionQuery) =>
+    [...auditLogKeys.all, 'list', query] as const,
+  detail: (eventId: string) =>
+    [...auditLogKeys.all, 'detail', eventId] as const,
 } as const;
 
 /** Support Operations (Prompt 13) — unscoped, platform-wide. */
 export const supportKeys = {
   all: QUERY_KEY_ROOTS.support,
-  list: (query?: CollectionQuery) => [...supportKeys.all, 'list', query] as const,
+  list: (query?: CollectionQuery) =>
+    [...supportKeys.all, 'list', query] as const,
   detail: (caseId: string) => [...supportKeys.all, 'detail', caseId] as const,
 } as const;
 
@@ -644,7 +680,8 @@ export const platformMetricsKeys = {
 /** Platform Analytics (Prompt 13). */
 export const analyticsKeys = {
   all: QUERY_KEY_ROOTS.analytics,
-  overview: (query?: AnalyticsQuery) => [...analyticsKeys.all, 'overview', query] as const,
+  overview: (query?: AnalyticsQuery) =>
+    [...analyticsKeys.all, 'overview', query] as const,
   timeSeries: (metric: string, query?: AnalyticsQuery) =>
     [...analyticsKeys.all, 'time-series', metric, query] as const,
   breakdown: (dimension: string, query?: AnalyticsQuery) =>

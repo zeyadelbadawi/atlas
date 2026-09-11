@@ -24,11 +24,23 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { usePermissions } from '@hooks';
-import { useSupportCase, useUpdateSupportCaseStatus, usePostSupportCaseReply } from '../hooks';
-import { getSupportCasePriorityTone, getSupportCaseStatusTone } from '../utils/support-status.utils';
+import {
+  useSupportCase,
+  useUpdateSupportCaseStatus,
+  usePostSupportCaseReply,
+} from '../hooks';
+import {
+  getSupportCasePriorityTone,
+  getSupportCaseStatusTone,
+} from '../utils/support-status.utils';
 import type { SupportCaseStatus } from '@types';
 
-const STATUS_VALUES: readonly SupportCaseStatus[] = ['open', 'in_progress', 'resolved', 'closed'];
+const STATUS_VALUES: readonly SupportCaseStatus[] = [
+  'open',
+  'in_progress',
+  'resolved',
+  'closed',
+];
 
 export default function PlatformSupportDetailPage(): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -36,7 +48,12 @@ export default function PlatformSupportDetailPage(): JSX.Element {
   const { hasPermission } = usePermissions();
   const [replyBody, setReplyBody] = useState('');
 
-  const { data: supportCase, isLoading, error, refetch } = useSupportCase(caseId ?? '');
+  const {
+    data: supportCase,
+    isLoading,
+    error,
+    refetch,
+  } = useSupportCase(caseId ?? '');
   const updateStatus = useUpdateSupportCaseStatus();
   const postReply = usePostSupportCaseReply();
 
@@ -92,7 +109,10 @@ export default function PlatformSupportDetailPage(): JSX.Element {
                 }
                 disabled={updateStatus.isPending}
               >
-                <SelectTrigger className="w-40" aria-label={t('support:table.status')}>
+                <SelectTrigger
+                  className="w-40"
+                  aria-label={t('support:table.status')}
+                >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -114,28 +134,48 @@ export default function PlatformSupportDetailPage(): JSX.Element {
       />
 
       <div className="space-y-6">
-        {updateStatus.error ? <ErrorState onRetry={() => updateStatus.reset()} /> : null}
+        {updateStatus.error ? (
+          <ErrorState onRetry={() => updateStatus.reset()} />
+        ) : null}
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">{t('support:overviewTitle')}</CardTitle>
+            <CardTitle className="text-base">
+              {t('support:overviewTitle')}
+            </CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1">
-              <p className="text-xs text-muted-foreground">{t('support:table.subject')}</p>
-              <p className="text-sm text-foreground">{supportCase.requesterName}</p>
-              <p className="text-xs text-muted-foreground">{supportCase.requesterEmail}</p>
+              <p className="text-xs text-muted-foreground">
+                {t('support:table.subject')}
+              </p>
+              <p className="text-sm text-foreground">
+                {supportCase.requesterName}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {supportCase.requesterEmail}
+              </p>
             </div>
             <div className="space-y-1">
-              <p className="text-xs text-muted-foreground">{t('support:table.organization')}</p>
-              <p className="text-sm text-foreground">{supportCase.organizationName ?? '—'}</p>
+              <p className="text-xs text-muted-foreground">
+                {t('support:table.organization')}
+              </p>
+              <p className="text-sm text-foreground">
+                {supportCase.organizationName ?? '—'}
+              </p>
             </div>
             <div className="space-y-1">
-              <p className="text-xs text-muted-foreground">{t('support:detail.assignedTo')}</p>
-              <p className="text-sm text-foreground">{supportCase.assignedToName ?? t('support:detail.unassigned')}</p>
+              <p className="text-xs text-muted-foreground">
+                {t('support:detail.assignedTo')}
+              </p>
+              <p className="text-sm text-foreground">
+                {supportCase.assignedToName ?? t('support:detail.unassigned')}
+              </p>
             </div>
             <div className="space-y-1">
-              <p className="text-xs text-muted-foreground">{t('support:table.updatedAt')}</p>
+              <p className="text-xs text-muted-foreground">
+                {t('support:table.updatedAt')}
+              </p>
               <p className="text-sm text-foreground">
                 {new Date(supportCase.updatedAt).toLocaleString(i18n.language)}
               </p>
@@ -145,15 +185,26 @@ export default function PlatformSupportDetailPage(): JSX.Element {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">{t('support:detail.conversationTitle')}</CardTitle>
+            <CardTitle className="text-base">
+              {t('support:detail.conversationTitle')}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <ul className="space-y-4">
               {supportCase.messages.map((message) => (
-                <li key={message.id} className="rounded-md border border-border p-3">
+                <li
+                  key={message.id}
+                  className="rounded-md border border-border p-3"
+                >
                   <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
-                    <span className="font-medium text-foreground">{message.authorName}</span>
-                    <span>{new Date(message.createdAt).toLocaleString(i18n.language)}</span>
+                    <span className="font-medium text-foreground">
+                      {message.authorName}
+                    </span>
+                    <span>
+                      {new Date(message.createdAt).toLocaleString(
+                        i18n.language
+                      )}
+                    </span>
                   </div>
                   <p className="mt-2 text-sm text-foreground">{message.body}</p>
                 </li>

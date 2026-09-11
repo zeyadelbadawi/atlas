@@ -30,7 +30,9 @@
 import { ENV } from '@config';
 import { DEV_OVERRIDE_PARAM } from '@features/public-website';
 
-export function getAcademyPublicWebsiteUrl(academySlug: string): string | undefined {
+export function getAcademyPublicWebsiteUrl(
+  academySlug: string
+): string | undefined {
   if (ENV.isDevelopment) {
     const url = new URL(window.location.origin);
     url.searchParams.set(DEV_OVERRIDE_PARAM, academySlug);

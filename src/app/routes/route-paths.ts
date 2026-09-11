@@ -14,6 +14,9 @@ export const PUBLIC_ROUTES = {
   home: '/',
   features: '/features',
   pricing: '/pricing',
+  /** Atlas's own legal documents — the SaaS platform's, not a tenant academy's. */
+  privacyPolicy: '/privacy-policy',
+  terms: '/terms',
 } as const;
 
 /**
@@ -74,8 +77,7 @@ export const DASHBOARD_ROUTES = {
   learningAssignment:
     '/dashboard/learning/courses/:courseId/assignments/:assignmentId',
   learningDiscussions: '/dashboard/learning/courses/:courseId/discussions',
-  learningThread:
-    '/dashboard/learning/courses/:courseId/discussions/:threadId',
+  learningThread: '/dashboard/learning/courses/:courseId/discussions/:threadId',
 
   instructorDashboard: '/dashboard/instructor',
   instructorCourses: '/dashboard/instructor/courses',
@@ -83,8 +85,7 @@ export const DASHBOARD_ROUTES = {
   instructorStudents: '/dashboard/instructor/courses/:courseId/students',
   instructorStudentProgress:
     '/dashboard/instructor/courses/:courseId/students/:studentId',
-  instructorAssessments:
-    '/dashboard/instructor/courses/:courseId/assessments',
+  instructorAssessments: '/dashboard/instructor/courses/:courseId/assessments',
   instructorQuizResults:
     '/dashboard/instructor/courses/:courseId/quizzes/:quizId/results',
   instructorSubmissions:
@@ -93,8 +94,7 @@ export const DASHBOARD_ROUTES = {
     '/dashboard/instructor/courses/:courseId/assignments/:assignmentId/submissions/:submissionId',
   instructorAnnouncements:
     '/dashboard/instructor/courses/:courseId/announcements',
-  instructorDiscussions:
-    '/dashboard/instructor/courses/:courseId/discussions',
+  instructorDiscussions: '/dashboard/instructor/courses/:courseId/discussions',
   instructorThread:
     '/dashboard/instructor/courses/:courseId/discussions/:threadId',
 
@@ -136,7 +136,8 @@ export const DASHBOARD_ROUTES = {
 
   platformSubscriptions: '/dashboard/platform/subscriptions',
   platformOrganizations: '/dashboard/platform/organizations',
-  platformOrganizationDetail: '/dashboard/platform/organizations/:organizationId',
+  platformOrganizationDetail:
+    '/dashboard/platform/organizations/:organizationId',
 
   platformAcademies: '/dashboard/platform/academies',
   platformAcademyDetail: '/dashboard/platform/academies/:academyId',

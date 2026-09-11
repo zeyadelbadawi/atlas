@@ -30,11 +30,14 @@ import type { ApiError } from '@api';
 export function useProvisioningRequest(requestId: string) {
   const { organization } = useAuth();
   const { invalidate } = useInvalidate();
-  const previousStatusRef = useRef<ProvisioningRequest['status'] | undefined>(undefined);
+  const previousStatusRef = useRef<ProvisioningRequest['status'] | undefined>(
+    undefined
+  );
 
   const query = useApiQuery<ProvisioningRequest, ApiError>({
     queryKey: provisioningKeys.detail(organization?.id, requestId),
-    queryFn: () => provisioningService.getProvisioningRequest(organization!.id, requestId),
+    queryFn: () =>
+      provisioningService.getProvisioningRequest(organization!.id, requestId),
     enabled: !!organization?.id && !!requestId,
     refetchInterval: (activeQuery) => {
       const request = activeQuery.state.data;

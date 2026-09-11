@@ -17,19 +17,19 @@
  * Storage widget). This is the Phase 8 foundation those will later build
  * on, composed from the existing design system only.
  */
-import { BookOpen, Building2, GraduationCap, Users } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { PageContainer, PageHeader, SectionCard } from "@components/layout";
-import { EmptyState, ErrorState } from "@components/feedback";
-import { MetricCard } from "@components/data-display";
-import { SectionLoader } from "@components/loading";
-import { MyTicketsList } from "../components/MyTicketsList";
-import { RecentActivityList } from "../components/RecentActivityList";
-import { RevenueSummary } from "../components/RevenueSummary";
-import { SubmitTicketForm } from "../components/SubmitTicketForm";
-import { UsageSummary } from "../components/UsageSummary";
-import { useDashboardOverview } from "../hooks/useDashboardOverview";
-import { useDashboardScope } from "../hooks/useDashboardScope";
+import { BookOpen, Building2, GraduationCap, Users } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { PageContainer, PageHeader, SectionCard } from '@components/layout';
+import { EmptyState, ErrorState } from '@components/feedback';
+import { MetricCard } from '@components/data-display';
+import { SectionLoader } from '@components/loading';
+import { MyTicketsList } from '../components/MyTicketsList';
+import { RecentActivityList } from '../components/RecentActivityList';
+import { RevenueSummary } from '../components/RevenueSummary';
+import { SubmitTicketForm } from '../components/SubmitTicketForm';
+import { UsageSummary } from '../components/UsageSummary';
+import { useDashboardOverview } from '../hooks/useDashboardOverview';
+import { useDashboardScope } from '../hooks/useDashboardScope';
 
 export default function DashboardOverviewPage(): JSX.Element {
   const { i18n } = useTranslation();
@@ -41,7 +41,7 @@ export default function DashboardOverviewPage(): JSX.Element {
 
   // No organization or academy context resolved — an honest empty state,
   // never a dashboard of zeros implying real, empty data.
-  if (scope.kind === "none") {
+  if (scope.kind === 'none') {
     return (
       <PageContainer>
         <PageHeader
@@ -87,7 +87,7 @@ export default function DashboardOverviewPage(): JSX.Element {
     );
   }
 
-  const isAcademyScope = data.scope.type === "academy";
+  const isAcademyScope = data.scope.type === 'academy';
 
   return (
     <PageContainer>
@@ -95,10 +95,10 @@ export default function DashboardOverviewPage(): JSX.Element {
         titleKey="dashboard:overview.title"
         descriptionKey={
           isAcademyScope
-            ? "dashboard:overview.academyDescription"
-            : "dashboard:overview.description"
+            ? 'dashboard:overview.academyDescription'
+            : 'dashboard:overview.description'
         }
-        values={{ academy: data.scope.academyName ?? "" }}
+        values={{ academy: data.scope.academyName ?? '' }}
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

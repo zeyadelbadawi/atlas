@@ -8,7 +8,13 @@
  * a draft page or an unpublished course must never appear here, the same
  * "draft is never public" boundary the whole prompt enforces.
  */
-import type { BlogPost, Course, SitemapEntry, WebsiteConfiguration, WebsitePage } from '@types';
+import type {
+  BlogPost,
+  Course,
+  SitemapEntry,
+  WebsiteConfiguration,
+  WebsitePage,
+} from '@types';
 
 export interface BuildSitemapEntriesInput {
   readonly configuration: WebsiteConfiguration;
@@ -25,7 +31,10 @@ export function buildSitemapEntries({
 }: BuildSitemapEntriesInput): readonly SitemapEntry[] {
   // The website itself must be published, and sitemap generation must be
   // explicitly enabled, before anything is listed.
-  if (configuration.status !== 'published' || configuration.seo.sitemapEnabled === false) {
+  if (
+    configuration.status !== 'published' ||
+    configuration.seo.sitemapEnabled === false
+  ) {
     return [];
   }
 
@@ -39,7 +48,10 @@ export function buildSitemapEntries({
     }));
 
   const courseEntries: SitemapEntry[] = courses
-    .filter((course) => course.status === 'published' && course.visibility === 'public')
+    .filter(
+      (course) =>
+        course.status === 'published' && course.visibility === 'public'
+    )
     .map((course) => ({
       path: `/courses/${course.slug}`,
       lastModified: course.updatedAt,

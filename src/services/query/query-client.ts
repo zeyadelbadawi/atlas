@@ -25,7 +25,9 @@ export type QueryErrorReporter = (error: ApiError) => void;
  * @param reportError Receives normalized failures so a provider can surface
  * them (for example as a toast) without any feature wiring error plumbing.
  */
-export function createQueryClient(reportError?: QueryErrorReporter): QueryClient {
+export function createQueryClient(
+  reportError?: QueryErrorReporter
+): QueryClient {
   const handleError = (error: unknown): void => {
     reportError?.(normalizeUnknownError(error));
   };
@@ -46,7 +48,7 @@ export function createQueryClient(reportError?: QueryErrorReporter): QueryClient
         // Reconnecting should recover data the user was already looking at.
         refetchOnReconnect: true,
         // Keeping the previous page visible avoids layout collapse while paging.
-        placeholderData: <TData,>(previous: TData): TData => previous,
+        placeholderData: <TData>(previous: TData): TData => previous,
         throwOnError: false,
       },
       mutations: {
@@ -59,7 +61,7 @@ export function createQueryClient(reportError?: QueryErrorReporter): QueryClient
 
 /**
  * The singleton query client instance used by the entire application.
- * 
+ *
  * This lives in the query infrastructure layer so both QueryProvider and
  * PlatformProvider can access the exact same instance without creating
  * a circular dependency.
@@ -68,7 +70,7 @@ let globalQueryClient: QueryClient | null = null;
 
 /**
  * Returns the global query client instance.
- * 
+ *
  * @throws Error if called before the query client is initialized.
  */
 export function getGlobalQueryClient(): QueryClient {
@@ -80,7 +82,7 @@ export function getGlobalQueryClient(): QueryClient {
 
 /**
  * Initializes the global query client singleton.
- * 
+ *
  * @param client The query client instance to use as the global singleton.
  */
 export function setGlobalQueryClient(client: QueryClient): void {
@@ -89,7 +91,7 @@ export function setGlobalQueryClient(client: QueryClient): void {
 
 /**
  * Clears the global query client singleton.
- * 
+ *
  * Used during unmount in development/test environments.
  */
 export function clearGlobalQueryClient(): void {

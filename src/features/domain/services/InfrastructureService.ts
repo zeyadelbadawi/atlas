@@ -15,7 +15,10 @@
  */
 import { BaseService } from '@services';
 import type { ReadOptions } from '@services';
-import type { InfrastructureProviderName, InfrastructureProviderStatus } from '@types';
+import type {
+  InfrastructureProviderName,
+  InfrastructureProviderStatus,
+} from '@types';
 
 export class InfrastructureService extends BaseService {
   protected readonly resource = 'infrastructure';

@@ -5,18 +5,18 @@
  * requests to the toast infrastructure, so no feature has to wire up error
  * reporting for ordinary data failures.
  */
-import { useMemo, useRef, useEffect } from "react";
-import type { ReactNode } from "react";
-import { QueryClientProvider } from "@tanstack/react-query";
-import type { QueryClient } from "@tanstack/react-query";
+import { useMemo, useRef, useEffect } from 'react';
+import type { ReactNode } from 'react';
+import { QueryClientProvider } from '@tanstack/react-query';
+import type { QueryClient } from '@tanstack/react-query';
 import {
   createQueryClient,
   setGlobalQueryClient,
   clearGlobalQueryClient,
   errorTitleKey,
-} from "@services";
-import type { ApiError } from "@services";
-import { useToast } from "@app/providers/toast/useToast";
+} from '@services';
+import type { ApiError } from '@services';
+import { useToast } from '@app/providers/toast/useToast';
 
 export interface AtlasQueryProviderProps {
   readonly children: ReactNode;
@@ -47,14 +47,14 @@ export function AtlasQueryProvider({
       // calmer empty state, which reads as a broken route when nothing is
       // actually broken.
       if (
-        error.kind === "validation" ||
-        error.kind === "cancelled" ||
-        error.kind === "notFound"
+        error.kind === 'validation' ||
+        error.kind === 'cancelled' ||
+        error.kind === 'notFound'
       )
         return;
       notifyError(errorTitleKey(error.kind), error.messageKey);
     },
-    [notifyError],
+    [notifyError]
   );
 
   if (!clientRef.current) {

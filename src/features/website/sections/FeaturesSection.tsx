@@ -29,9 +29,13 @@ export function FeaturesSection({ config }: FeaturesSectionProps): JSX.Element {
     <section className={`${container} ${section}`}>
       {(title || description) && (
         <div className="mb-10 space-y-2 text-center">
-          {title ? <h2 className={`${heading} text-3xl text-foreground`}>{title}</h2> : null}
+          {title ? (
+            <h2 className={`${heading} text-3xl text-foreground`}>{title}</h2>
+          ) : null}
           {description ? (
-            <p className="mx-auto max-w-2xl text-muted-foreground">{description}</p>
+            <p className="mx-auto max-w-2xl text-muted-foreground">
+              {description}
+            </p>
           ) : null}
         </div>
       )}
@@ -42,9 +46,17 @@ export function FeaturesSection({ config }: FeaturesSectionProps): JSX.Element {
           const Icon = resolveFeatureIcon(item.icon);
           return (
             <div key={item.id} className={cardClass}>
-              <Icon className="size-6 text-[var(--website-primary-solid)]" strokeWidth={1.75} aria-hidden />
-              <h3 className="mt-3 break-words font-medium text-foreground">{resolveLocalizedText(item.title, locale)}</h3>
-              <p className="mt-1 break-words text-sm text-muted-foreground">{resolveLocalizedText(item.description, locale)}</p>
+              <Icon
+                className="size-6 text-[var(--website-primary-solid)]"
+                strokeWidth={1.75}
+                aria-hidden
+              />
+              <h3 className="mt-3 break-words font-medium text-foreground">
+                {resolveLocalizedText(item.title, locale)}
+              </h3>
+              <p className="mt-1 break-words text-sm text-muted-foreground">
+                {resolveLocalizedText(item.description, locale)}
+              </p>
             </div>
           );
         })}

@@ -9,7 +9,10 @@
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
 import { websiteKeys } from '@services/query';
 import type { ApiError } from '@api';
-import type { UpdateWebsiteConfigurationPayload, WebsiteConfiguration } from '@types';
+import type {
+  UpdateWebsiteConfigurationPayload,
+  WebsiteConfiguration,
+} from '@types';
 import { websiteConfigurationService } from '../services/WebsiteConfigurationService';
 
 export interface UpdateWebsiteConfigurationVariables {

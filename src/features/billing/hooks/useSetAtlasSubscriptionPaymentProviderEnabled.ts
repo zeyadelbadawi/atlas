@@ -12,8 +12,13 @@ import { atlasSubscriptionPaymentProviderService } from '../services/AtlasSubscr
 export function useSetAtlasSubscriptionPaymentProviderEnabled() {
   const { invalidate } = useInvalidate();
 
-  return useApiMutation<AtlasSubscriptionPaymentProviderConfig, boolean, ApiError>({
-    mutationFn: (enabled) => atlasSubscriptionPaymentProviderService.setEnabled(enabled),
+  return useApiMutation<
+    AtlasSubscriptionPaymentProviderConfig,
+    boolean,
+    ApiError
+  >({
+    mutationFn: (enabled) =>
+      atlasSubscriptionPaymentProviderService.setEnabled(enabled),
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async () => {

@@ -7,7 +7,11 @@
 import { useApiQuery, useAuth } from '@/shared/hooks';
 import { instructorKeys } from '@services/query';
 import { instructorService } from '../services/InstructorService';
-import type { CollectionQuery, InstructorStudent, PaginatedResult } from '@types';
+import type {
+  CollectionQuery,
+  InstructorStudent,
+  PaginatedResult,
+} from '@types';
 
 export interface UseCourseStudentsOptions {
   readonly query?: CollectionQuery;

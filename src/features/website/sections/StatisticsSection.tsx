@@ -19,7 +19,11 @@
 // website`, and this file lives inside `@features/website` itself; going
 // through the full barrel would create a circular module import.
 import { usePublicWebsiteStatistics } from '@features/public-website/hooks';
-import { useWebsiteContainerClass, useWebsiteHeadingClass, useWebsiteSectionClass } from '../renderer/renderer-style.utils';
+import {
+  useWebsiteContainerClass,
+  useWebsiteHeadingClass,
+  useWebsiteSectionClass,
+} from '../renderer/renderer-style.utils';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { StatisticsSectionConfig } from '@types';
@@ -29,18 +33,28 @@ export interface StatisticsSectionProps {
   readonly academyId: string;
 }
 
-const NUMBER_FORMAT_LOCALE: Record<'en' | 'ar', string> = { en: 'en-US', ar: 'ar-EG' };
+const NUMBER_FORMAT_LOCALE: Record<'en' | 'ar', string> = {
+  en: 'en-US',
+  ar: 'ar-EG',
+};
 
-export function StatisticsSection({ config, academyId }: StatisticsSectionProps): JSX.Element {
+export function StatisticsSection({
+  config,
+  academyId,
+}: StatisticsSectionProps): JSX.Element {
   const container = useWebsiteContainerClass();
   const section = useWebsiteSectionClass();
   const heading = useWebsiteHeadingClass();
   const { locale } = usePublicWebsiteLocale();
 
   const hasLiveMetric = config.items.some((item) => !!item.metric);
-  const { data: statistics } = usePublicWebsiteStatistics(hasLiveMetric ? academyId : undefined);
+  const { data: statistics } = usePublicWebsiteStatistics(
+    hasLiveMetric ? academyId : undefined
+  );
 
-  const displayValue = (item: StatisticsSectionConfig['items'][number]): string => {
+  const displayValue = (
+    item: StatisticsSectionConfig['items'][number]
+  ): string => {
     if (!item.metric) return resolveLocalizedText(item.value, locale);
     const liveValue = statistics?.[item.metric];
     return liveValue === undefined
@@ -51,7 +65,9 @@ export function StatisticsSection({ config, academyId }: StatisticsSectionProps)
   return (
     <section className={`${container} ${section}`}>
       {config.title ? (
-        <h2 className={`${heading} mb-10 text-center text-3xl text-foreground`}>{resolveLocalizedText(config.title, locale)}</h2>
+        <h2 className={`${heading} mb-10 text-center text-3xl text-foreground`}>
+          {resolveLocalizedText(config.title, locale)}
+        </h2>
       ) : null}
       {/* `auto-fit`/`minmax`, not fixed `grid-cols-2 sm:grid-cols-4` — 2-3
           configured stats never stretch across 4 reserved slots, and the
@@ -66,7 +82,9 @@ export function StatisticsSection({ config, academyId }: StatisticsSectionProps)
             >
               {displayValue(item)}
             </dd>
-            <dt className="mt-1 break-words text-sm text-muted-foreground">{resolveLocalizedText(item.label, locale)}</dt>
+            <dt className="mt-1 break-words text-sm text-muted-foreground">
+              {resolveLocalizedText(item.label, locale)}
+            </dt>
           </div>
         ))}
       </dl>

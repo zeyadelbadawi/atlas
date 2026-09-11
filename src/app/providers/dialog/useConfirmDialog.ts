@@ -9,7 +9,9 @@ export function useConfirmDialog(): DialogContextValue {
   const context = useContext(DialogContext);
 
   if (!context) {
-    throw new Error('useConfirmDialog must be used within AtlasDialogProvider.');
+    throw new Error(
+      'useConfirmDialog must be used within AtlasDialogProvider.'
+    );
   }
 
   return context;

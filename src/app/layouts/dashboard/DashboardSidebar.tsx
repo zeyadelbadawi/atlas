@@ -5,17 +5,21 @@
  * sessions. Below the sidebar breakpoint the same navigation is presented as a
  * drawer, because a permanent sidebar would consume most of a phone screen.
  */
-import { useMemo } from "react";
-import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import { AcademyBrandMark, AcademyBrandScope, AtlasPlatformAttribution } from "@components/branding";
-import { useAcademyIdentity } from "@features/public-website/hooks";
-import { getDashboardNavigation, filterNavigationItems } from "@app/navigation";
-import { useAuth, useLanguage, usePlatform } from "@hooks";
-import { cn } from "@utils";
-import { SidebarNavigation } from "./SidebarNavigation";
+import { useMemo } from 'react';
+import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
+import {
+  AcademyBrandMark,
+  AcademyBrandScope,
+  AtlasPlatformAttribution,
+} from '@components/branding';
+import { useAcademyIdentity } from '@features/public-website/hooks';
+import { getDashboardNavigation, filterNavigationItems } from '@app/navigation';
+import { useAuth, useLanguage, usePlatform } from '@hooks';
+import { cn } from '@utils';
+import { SidebarNavigation } from './SidebarNavigation';
 
 export interface DashboardSidebarProps {
   readonly isCollapsed: boolean;
@@ -49,13 +53,20 @@ export function DashboardSidebar({
   // comment for why this is additive, never a wholesale re-theme). `false`
   // whenever there's no active Academy or no custom color, so nothing
   // about the platform-level dashboard or a not-yet-branded Academy changes.
-  const hasBrandAccent = Boolean(activeAcademyId && academyIdentity?.primaryColor);
+  const hasBrandAccent = Boolean(
+    activeAcademyId && academyIdentity?.primaryColor
+  );
 
   // Navigation is filtered by the same fail-closed permission/role logic used
   // everywhere else in Atlas, so a hidden platform-owner or academy entry here
   // matches what RouteGuard would also refuse at the route itself.
   const sections = useMemo(() => {
-    const filterContext = { isAuthenticated, user, organization, isFeatureEnabled };
+    const filterContext = {
+      isAuthenticated,
+      user,
+      organization,
+      isFeatureEnabled,
+    };
     return getDashboardNavigation(activeAcademyId)
       .map((section) => ({
         ...section,
@@ -67,8 +78,8 @@ export function DashboardSidebar({
   const brandRow = (
     <div
       className={cn(
-        "flex h-layout-header shrink-0 items-center border-b border-sidebar-border px-3",
-        isCollapsed && !isMobile ? "justify-center" : "justify-between",
+        'flex h-layout-header shrink-0 items-center border-b border-sidebar-border px-3',
+        isCollapsed && !isMobile ? 'justify-center' : 'justify-between'
       )}
     >
       <AcademyBrandMark
@@ -86,13 +97,13 @@ export function DashboardSidebar({
           onClick={onToggleCollapsed}
           aria-label={t(
             isCollapsed
-              ? "navigation:sidebar.expand"
-              : "navigation:sidebar.collapse",
+              ? 'navigation:sidebar.expand'
+              : 'navigation:sidebar.collapse'
           )}
           aria-expanded={!isCollapsed}
           className={cn(
-            "text-muted-foreground hover:text-foreground",
-            isCollapsed && "absolute end-2 top-3.5",
+            'text-muted-foreground hover:text-foreground',
+            isCollapsed && 'absolute end-2 top-3.5'
           )}
         >
           {isCollapsed ? (
@@ -118,11 +129,11 @@ export function DashboardSidebar({
       <Sheet open={isDrawerOpen} onOpenChange={onDrawerOpenChange}>
         <SheetContent
           // The drawer enters from the reading-start edge in both directions.
-          side={isRtl ? "right" : "left"}
+          side={isRtl ? 'right' : 'left'}
           className="w-layout-sidebar border-sidebar-border bg-sidebar p-0"
         >
           {/* Required for an accessible name on the dialog. */}
-          <SheetTitle className="sr-only">{t("navigation:primary")}</SheetTitle>
+          <SheetTitle className="sr-only">{t('navigation:primary')}</SheetTitle>
           <div className="flex h-full flex-col">
             {brandRow}
             <AcademyBrandScope
@@ -150,8 +161,8 @@ export function DashboardSidebar({
   return (
     <aside
       className={cn(
-        "relative hidden shrink-0 flex-col border-e border-sidebar-border bg-sidebar transition-[width] duration-normal ease-standard lg:flex",
-        isCollapsed ? "w-layout-sidebar-collapsed" : "w-layout-sidebar",
+        'relative hidden shrink-0 flex-col border-e border-sidebar-border bg-sidebar transition-[width] duration-normal ease-standard lg:flex',
+        isCollapsed ? 'w-layout-sidebar-collapsed' : 'w-layout-sidebar'
       )}
     >
       {brandRow}

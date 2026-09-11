@@ -40,15 +40,25 @@ import { WebsitePublishBar } from '../components/WebsitePublishBar';
 import { SectionTree } from '../components/SectionTree';
 import { SectionConfigForm } from '../components/SectionConfigForm';
 import { WebsitePageSeoDialog } from '../components/WebsitePageSeoDialog';
-import { PreviewViewport, type PreviewBreakpoint } from '../components/PreviewViewport';
+import {
+  PreviewViewport,
+  type PreviewBreakpoint,
+} from '../components/PreviewViewport';
 import { WebsiteRenderer } from '../renderer';
 import { SECTION_METADATA, getDefaultSectionConfig } from '../sections';
 import { DEFAULT_RESPONSIVE_VISIBILITY } from '@types';
-import type { ResponsiveVisibility, SectionInstance, SectionType } from '@types';
+import type {
+  ResponsiveVisibility,
+  SectionInstance,
+  SectionType,
+} from '@types';
 
 export default function WebsitePageEditorPage(): JSX.Element {
   const { t } = useTranslation();
-  const { academyId, pageId } = useParams<{ academyId: string; pageId: string }>();
+  const { academyId, pageId } = useParams<{
+    academyId: string;
+    pageId: string;
+  }>();
   const { confirm } = useConfirmDialog();
   const { hasPermission } = usePermissions();
   const canManage = hasPermission('academy.website.manage');
@@ -67,7 +77,8 @@ export default function WebsitePageEditorPage(): JSX.Element {
   const seoDialog = useDisclosure();
 
   useEffect(() => {
-    if (pageQuery.data) setDraftSections(pageQuery.data.sections as SectionInstance[]);
+    if (pageQuery.data)
+      setDraftSections(pageQuery.data.sections as SectionInstance[]);
   }, [pageQuery.data]);
 
   const isDirty =
@@ -77,8 +88,15 @@ export default function WebsitePageEditorPage(): JSX.Element {
   useUnsavedChanges({ isDirty, messageKey: 'website:editor.unsavedChanges' });
 
   const isLoading =
-    academyQuery.isLoading || configQuery.isLoading || pagesQuery.isLoading || pageQuery.isLoading;
-  const error = academyQuery.error ?? configQuery.error ?? pagesQuery.error ?? pageQuery.error;
+    academyQuery.isLoading ||
+    configQuery.isLoading ||
+    pagesQuery.isLoading ||
+    pageQuery.isLoading;
+  const error =
+    academyQuery.error ??
+    configQuery.error ??
+    pagesQuery.error ??
+    pageQuery.error;
 
   const refetchAll = () => {
     void academyQuery.refetch();
@@ -119,7 +137,9 @@ export default function WebsitePageEditorPage(): JSX.Element {
   const configuration = configQuery.data;
   const pages = pagesQuery.data.items;
   const page = pageQuery.data;
-  const selectedSection = draftSections.find((section) => section.id === selectedId);
+  const selectedSection = draftSections.find(
+    (section) => section.id === selectedId
+  );
   const previewPage = { ...page, sections: draftSections };
 
   const breadcrumbs: readonly BreadcrumbItem[] = [
@@ -130,21 +150,34 @@ export default function WebsitePageEditorPage(): JSX.Element {
     },
     {
       labelKey: 'website:pages.title',
-      path: buildPath(DASHBOARD_ROUTES.websitePages, { academyId: academyId ?? '' }),
+      path: buildPath(DASHBOARD_ROUTES.websitePages, {
+        academyId: academyId ?? '',
+      }),
     },
     { labelKey: 'website:editor.title', label: page.title },
   ];
 
   const handleToggleEnabled = (id: string) =>
     setDraftSections((prev) =>
-      prev.map((section) => (section.id === id ? { ...section, enabled: !section.enabled } : section))
+      prev.map((section) =>
+        section.id === id ? { ...section, enabled: !section.enabled } : section
+      )
     );
 
-  const handleToggleVisibility = (id: string, breakpointKey: keyof ResponsiveVisibility) =>
+  const handleToggleVisibility = (
+    id: string,
+    breakpointKey: keyof ResponsiveVisibility
+  ) =>
     setDraftSections((prev) =>
       prev.map((section) =>
         section.id === id
-          ? { ...section, visibility: { ...section.visibility, [breakpointKey]: !section.visibility[breakpointKey] } }
+          ? {
+              ...section,
+              visibility: {
+                ...section.visibility,
+                [breakpointKey]: !section.visibility[breakpointKey],
+              },
+            }
           : section
       )
     );
@@ -162,7 +195,10 @@ export default function WebsitePageEditorPage(): JSX.Element {
     setDraftSections((prev) => {
       const index = prev.findIndex((section) => section.id === id);
       if (index === -1) return prev;
-      const clone: SectionInstance = { ...prev[index], id: crypto.randomUUID() };
+      const clone: SectionInstance = {
+        ...prev[index],
+        id: crypto.randomUUID(),
+      };
       const next = [...prev];
       next.splice(index + 1, 0, clone);
       return next;
@@ -193,13 +229,21 @@ export default function WebsitePageEditorPage(): JSX.Element {
 
   const handleSaveSectionConfig = (config: SectionInstance['config']) => {
     setDraftSections((prev) =>
-      prev.map((section) => (section.id === selectedId ? ({ ...section, config } as SectionInstance) : section))
+      prev.map((section) =>
+        section.id === selectedId
+          ? ({ ...section, config } as SectionInstance)
+          : section
+      )
     );
     setSelectedId(undefined);
   };
 
   const handleSaveChanges = () => {
-    updatePage.mutate({ academyId, pageId, payload: { sections: draftSections } });
+    updatePage.mutate({
+      academyId,
+      pageId,
+      payload: { sections: draftSections },
+    });
   };
 
   return (
@@ -213,11 +257,19 @@ export default function WebsitePageEditorPage(): JSX.Element {
           actions={
             canManage ? (
               <div className="flex items-center gap-2">
-                <Button type="button" variant="outline" onClick={seoDialog.open}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={seoDialog.open}
+                >
                   <Search className="size-4" strokeWidth={2} aria-hidden />
                   {t('website:editor.seoAction')}
                 </Button>
-                <Button type="button" onClick={handleSaveChanges} disabled={!isDirty || updatePage.isPending}>
+                <Button
+                  type="button"
+                  onClick={handleSaveChanges}
+                  disabled={!isDirty || updatePage.isPending}
+                >
                   {updatePage.isPending ? (
                     <Loader2 className="size-4 animate-spin" aria-hidden />
                   ) : (
@@ -230,13 +282,18 @@ export default function WebsitePageEditorPage(): JSX.Element {
           }
         />
 
-        <WebsitePublishBar academyId={academyId} status={configuration.status} />
+        <WebsitePublishBar
+          academyId={academyId}
+          status={configuration.status}
+        />
         {updatePage.error ? <ErrorState onRetry={handleSaveChanges} /> : null}
 
         <div className="grid gap-6 lg:grid-cols-[22rem_1fr]">
           <Card className="h-fit">
             <CardHeader>
-              <CardTitle className="text-base">{t('website:editor.compositionTitle')}</CardTitle>
+              <CardTitle className="text-base">
+                {t('website:editor.compositionTitle')}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <SectionTree
@@ -254,7 +311,10 @@ export default function WebsitePageEditorPage(): JSX.Element {
             </CardContent>
           </Card>
 
-          <PreviewViewport breakpoint={breakpoint} onBreakpointChange={setBreakpoint}>
+          <PreviewViewport
+            breakpoint={breakpoint}
+            onBreakpointChange={setBreakpoint}
+          >
             <WebsiteRenderer
               academyId={academyId}
               academyName={academy.name}
@@ -268,12 +328,17 @@ export default function WebsitePageEditorPage(): JSX.Element {
         </div>
       </div>
 
-      <Dialog open={!!selectedSection} onOpenChange={(open) => !open && setSelectedId(undefined)}>
+      <Dialog
+        open={!!selectedSection}
+        onOpenChange={(open) => !open && setSelectedId(undefined)}
+      >
         <DialogContent className="max-h-[85vh] max-w-4xl overflow-y-auto">
           {selectedSection ? (
             <>
               <DialogHeader>
-                <DialogTitle>{t(SECTION_METADATA[selectedSection.type].labelKey)}</DialogTitle>
+                <DialogTitle>
+                  {t(SECTION_METADATA[selectedSection.type].labelKey)}
+                </DialogTitle>
               </DialogHeader>
               <SectionConfigForm
                 type={selectedSection.type}

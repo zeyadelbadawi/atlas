@@ -16,7 +16,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { usePagination } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { usePaymentHistory } from '../hooks';
-import { getManualReviewStatusTone, getPaymentStatusTone } from '../utils/payment-status.utils';
+import {
+  getManualReviewStatusTone,
+  getPaymentStatusTone,
+} from '../utils/payment-status.utils';
 import { formatMoney } from '../utils/money.utils';
 import type { Payment } from '@types';
 

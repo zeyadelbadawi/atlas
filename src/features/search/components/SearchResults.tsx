@@ -3,17 +3,17 @@
  *
  * Displays grouped search results with keyboard navigation.
  */
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-import { AlertCircle, Loader2, SearchX } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
-import { SearchResultItem } from "./SearchResultItem";
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { AlertCircle, Loader2, SearchX } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
+import { SearchResultItem } from './SearchResultItem';
 import type {
   SearchResults as SearchResultsType,
   SearchResultItem as SearchResultItemType,
-} from "@types";
+} from '@types';
 
 export interface SearchResultsProps {
   readonly results: SearchResultsType | null;
@@ -38,7 +38,7 @@ export function SearchResults({
   // Flatten all results for keyboard navigation
   const allItems = useMemo(
     () => results?.groups.flatMap((group) => group.items) ?? [],
-    [results],
+    [results]
   );
 
   // Reset selection when results change
@@ -54,7 +54,7 @@ export function SearchResults({
         navigate(item.path);
       }
     },
-    [navigate, onResultSelect],
+    [navigate, onResultSelect]
   );
 
   // Keyboard navigation
@@ -63,19 +63,19 @@ export function SearchResults({
       if (allItems.length === 0) return;
 
       switch (event.key) {
-        case "ArrowDown":
+        case 'ArrowDown':
           event.preventDefault();
           setSelectedIndex((prev) => Math.min(prev + 1, allItems.length - 1));
           break;
-        case "ArrowUp":
+        case 'ArrowUp':
           event.preventDefault();
           setSelectedIndex((prev) => Math.max(prev - 1, 0));
           break;
-        case "Enter":
+        case 'Enter':
           event.preventDefault();
           handleItemClick(allItems[selectedIndex]);
           break;
-        case "Escape":
+        case 'Escape':
           event.preventDefault();
           // Clear selection or close search
           setSelectedIndex(0);
@@ -83,8 +83,8 @@ export function SearchResults({
       }
     };
 
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, [allItems, selectedIndex, handleItemClick]);
 
   // Loading state
@@ -96,7 +96,7 @@ export function SearchResults({
           strokeWidth={2}
         />
         <p className="mt-4 text-sm text-muted-foreground">
-          {t("search:loading")}
+          {t('search:loading')}
         </p>
       </div>
     );
@@ -110,13 +110,13 @@ export function SearchResults({
           <AlertCircle className="size-6 text-destructive" strokeWidth={2} />
         </div>
         <p className="mt-4 text-sm font-medium text-foreground">
-          {t("search:error.title")}
+          {t('search:error.title')}
         </p>
         <p className="mt-1 text-sm text-muted-foreground">
-          {t("search:error.message")}
+          {t('search:error.message')}
         </p>
         <Button onClick={onRetry} variant="outline" size="sm" className="mt-4">
-          {t("search:error.retry")}
+          {t('search:error.retry')}
         </Button>
       </div>
     );
@@ -130,10 +130,10 @@ export function SearchResults({
           <SearchX className="size-6 text-muted-foreground" strokeWidth={2} />
         </div>
         <p className="mt-4 text-sm font-medium text-foreground">
-          {t("search:empty.title")}
+          {t('search:empty.title')}
         </p>
         <p className="mt-1 text-sm text-muted-foreground">
-          {t("search:empty.message")}
+          {t('search:empty.message')}
         </p>
       </div>
     );

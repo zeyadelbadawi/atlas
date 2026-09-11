@@ -11,8 +11,13 @@ import type { ApiError } from '@api';
 import type { PlatformConfiguration } from '@types';
 
 export function useUpdatePlatformSettings() {
-  return useApiMutation<PlatformConfiguration, Partial<PlatformConfiguration>, ApiError>({
-    mutationFn: (payload) => platformSettingsService.updateConfiguration(payload),
+  return useApiMutation<
+    PlatformConfiguration,
+    Partial<PlatformConfiguration>,
+    ApiError
+  >({
+    mutationFn: (payload) =>
+      platformSettingsService.updateConfiguration(payload),
     showSuccessToast: false,
     showErrorToast: false,
     invalidateKeys: [platformSettingsKeys.all],

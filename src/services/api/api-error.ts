@@ -10,11 +10,7 @@
  */
 import axios from 'axios';
 import { API_ERROR_KINDS } from '@types';
-import type {
-  ApiErrorKind,
-  FieldViolation,
-  NormalizedApiError,
-} from '@types';
+import type { ApiErrorKind, FieldViolation, NormalizedApiError } from '@types';
 
 /** Translation key namespace holding every error message. */
 const ERROR_NAMESPACE = 'errors';
@@ -132,7 +128,9 @@ function readString(value: unknown): string | undefined {
  * Only entries carrying both a field and a message key are kept, so a
  * malformed payload can never produce a broken form error.
  */
-function readViolations(payload: BackendErrorPayload): readonly FieldViolation[] | undefined {
+function readViolations(
+  payload: BackendErrorPayload
+): readonly FieldViolation[] | undefined {
   const raw = payload.violations ?? payload.errors;
   if (!Array.isArray(raw)) return undefined;
 
@@ -148,7 +146,9 @@ function readViolations(payload: BackendErrorPayload): readonly FieldViolation[]
         : undefined;
 
     if (field && messageKey) {
-      collected.push(values ? { field, messageKey, values } : { field, messageKey });
+      collected.push(
+        values ? { field, messageKey, values } : { field, messageKey }
+      );
     }
 
     return collected;

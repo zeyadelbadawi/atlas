@@ -7,21 +7,21 @@
  * `StatusBadge` with a translated label — never the raw `open`/
  * `in_progress` enum string.
  */
-import { useTranslation } from "react-i18next";
-import { Inbox } from "lucide-react";
-import { EmptyState } from "@components/feedback";
-import { StatusBadge } from "@components/data-display";
-import { SkeletonList } from "@components/loading";
-import type { StatusTone } from "@components/data-display";
-import { useMySupportCases } from "../hooks/useTenantSupportCases";
-import type { SupportCaseStatus } from "@types";
+import { useTranslation } from 'react-i18next';
+import { Inbox } from 'lucide-react';
+import { EmptyState } from '@components/feedback';
+import { StatusBadge } from '@components/data-display';
+import { SkeletonList } from '@components/loading';
+import type { StatusTone } from '@components/data-display';
+import { useMySupportCases } from '../hooks/useTenantSupportCases';
+import type { SupportCaseStatus } from '@types';
 
 /** Maps the real lifecycle to the design system's semantic tones — no invented statuses. */
 const STATUS_TONE: Record<SupportCaseStatus, StatusTone> = {
-  open: "info",
-  in_progress: "warning",
-  resolved: "success",
-  closed: "neutral",
+  open: 'info',
+  in_progress: 'warning',
+  resolved: 'success',
+  closed: 'neutral',
 };
 
 export function MyTicketsList(): JSX.Element {
@@ -38,7 +38,7 @@ export function MyTicketsList(): JSX.Element {
   if (isError) {
     return (
       <p className="text-sm text-destructive">
-        {t("dashboard:support.list.loadFailed")}
+        {t('dashboard:support.list.loadFailed')}
       </p>
     );
   }
@@ -67,8 +67,10 @@ export function MyTicketsList(): JSX.Element {
               {ticket.subject}
             </span>
             <span className="text-sm text-muted-foreground">
-              {t("dashboard:support.list.submittedOn", {
-                date: new Date(ticket.createdAt).toLocaleDateString(i18n.language),
+              {t('dashboard:support.list.submittedOn', {
+                date: new Date(ticket.createdAt).toLocaleDateString(
+                  i18n.language
+                ),
               })}
             </span>
           </div>

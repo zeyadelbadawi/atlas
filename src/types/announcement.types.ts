@@ -7,7 +7,8 @@
  */
 
 /** Announcement lifecycle status. */
-export type AnnouncementStatus = 'draft' | 'scheduled' | 'published' | 'archived';
+export type AnnouncementStatus =
+  'draft' | 'scheduled' | 'published' | 'archived';
 
 /** Who an announcement is addressed to. */
 export type AnnouncementAudience = 'platform' | 'academy' | 'course';

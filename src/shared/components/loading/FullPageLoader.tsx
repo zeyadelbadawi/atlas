@@ -5,8 +5,8 @@
  * session before the shell can render. It is deliberately the sole full-screen
  * blocking pattern in Atlas.
  */
-import { useTranslation } from "react-i18next";
-import { Spinner } from "./Spinner";
+import { useTranslation } from 'react-i18next';
+import { Spinner } from './Spinner';
 
 export interface FullPageLoaderProps {
   /** Translation key describing the operation in progress. */
@@ -17,7 +17,7 @@ export function FullPageLoader({
   messageKey,
 }: FullPageLoaderProps): JSX.Element {
   const { t } = useTranslation();
-  const message = t(messageKey ?? "common:states.loading");
+  const message = t(messageKey ?? 'common:states.loading');
 
   return (
     <div

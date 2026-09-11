@@ -5,59 +5,59 @@
  * (`useStartPlanFlow`) rather than attempting checkout directly; the
  * actual subscription/checkout logic is never duplicated here.
  */
-import { Check, Minus } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { PageContainer, PageHeader } from "@components/layout";
-import { ErrorState, EmptyState } from "@components/feedback";
-import { Skeleton } from "@/components/ui/skeleton";
-import { createStaggerVariants } from "@motion";
-import { usePublicPlans } from "../hooks/usePublicPlans";
-import { useStartPlanFlow } from "../hooks/useStartPlanFlow";
-import { formatPlanPrice } from "../utils/formatPlanPrice";
-import type { PlanFeatures } from "@types";
+import { Check, Minus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { PageContainer, PageHeader } from '@components/layout';
+import { ErrorState, EmptyState } from '@components/feedback';
+import { Skeleton } from '@/components/ui/skeleton';
+import { createStaggerVariants } from '@motion';
+import { usePublicPlans } from '../hooks/usePublicPlans';
+import { useStartPlanFlow } from '../hooks/useStartPlanFlow';
+import { formatPlanPrice } from '../utils/formatPlanPrice';
+import type { PlanFeatures } from '@types';
 
 /** Order features are compared in — matches `PlanFeatures`' own real fields. */
 const FEATURE_ROWS: readonly (keyof PlanFeatures)[] = [
-  "cms",
-  "themes",
-  "multipleThemes",
-  "customDomain",
-  "seo",
-  "seoAdvanced",
-  "marketing",
-  "marketingAdvanced",
-  "analytics",
-  "analyticsAdvanced",
-  "backup",
+  'cms',
+  'themes',
+  'multipleThemes',
+  'customDomain',
+  'seo',
+  'seoAdvanced',
+  'marketing',
+  'marketingAdvanced',
+  'analytics',
+  'analyticsAdvanced',
+  'backup',
 ];
 
 const LIMIT_ROWS = [
-  "academies",
-  "students",
-  "instructors",
-  "staff",
-  "courses",
-  "generalStorage",
-  "videoStorage",
+  'academies',
+  'students',
+  'instructors',
+  'staff',
+  'courses',
+  'generalStorage',
+  'videoStorage',
 ] as const;
 
-const STORAGE_LIMIT_KEYS = new Set(["generalStorage", "videoStorage"]);
+const STORAGE_LIMIT_KEYS = new Set(['generalStorage', 'videoStorage']);
 
 function formatLimit(
   value: unknown,
   limitKey: string,
-  t: (key: string) => string,
+  t: (key: string) => string
 ): string {
-  if (value === "unlimited") return t("pricing:table.unlimited");
-  if (typeof value === "number") {
+  if (value === 'unlimited') return t('pricing:table.unlimited');
+  if (typeof value === 'number') {
     return STORAGE_LIMIT_KEYS.has(limitKey)
-      ? `${value} ${t("pricing:units.gb")}`
+      ? `${value} ${t('pricing:units.gb')}`
       : String(value);
   }
-  return "—";
+  return '—';
 }
 
 export default function PricingPage(): JSX.Element {
@@ -65,14 +65,17 @@ export default function PricingPage(): JSX.Element {
   const plansQuery = usePublicPlans();
   const startPlanFlow = useStartPlanFlow();
   const plans = [...(plansQuery.data ?? [])].sort(
-    (a, b) => a.displayOrder - b.displayOrder,
+    (a, b) => a.displayOrder - b.displayOrder
   );
   const recommendedKey = plans[1]?.key;
   const stagger = createStaggerVariants(plans.length || 1);
 
   return (
     <PageContainer>
-      <PageHeader titleKey="pricing:page.title" descriptionKey="pricing:page.description" />
+      <PageHeader
+        titleKey="pricing:page.title"
+        descriptionKey="pricing:page.description"
+      />
 
       {plansQuery.isLoading ? (
         <div className="grid gap-4 py-4 sm:grid-cols-3">
@@ -87,7 +90,10 @@ export default function PricingPage(): JSX.Element {
           descriptionKey="pricing:table.errorDescription"
         />
       ) : plans.length === 0 ? (
-        <EmptyState titleKey="pricing:table.emptyTitle" descriptionKey="pricing:table.emptyDescription" />
+        <EmptyState
+          titleKey="pricing:table.emptyTitle"
+          descriptionKey="pricing:table.emptyDescription"
+        />
       ) : (
         <>
           <motion.div
@@ -102,19 +108,23 @@ export default function PricingPage(): JSX.Element {
                 variants={stagger.item}
                 className={`flex flex-col gap-4 rounded-lg border p-6 ${
                   plan.key === recommendedKey
-                    ? "border-primary bg-surface shadow-md ring-1 ring-primary"
-                    : "border-border bg-card"
+                    ? 'border-primary bg-surface shadow-md ring-1 ring-primary'
+                    : 'border-border bg-card'
                 }`}
               >
                 {plan.key === recommendedKey ? (
-                  <Badge className="w-fit">{t("pricing:table.recommended")}</Badge>
+                  <Badge className="w-fit">
+                    {t('pricing:table.recommended')}
+                  </Badge>
                 ) : null}
 
                 <div className="space-y-1">
                   <h2 className="font-display text-xl font-semibold text-foreground">
                     {plan.name}
                   </h2>
-                  <p className="text-sm text-muted-foreground">{plan.description}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {plan.description}
+                  </p>
                 </div>
 
                 <p className="font-display text-3xl font-semibold text-foreground">
@@ -124,13 +134,19 @@ export default function PricingPage(): JSX.Element {
                 <ul className="flex-1 space-y-2 text-sm text-muted-foreground">
                   {LIMIT_ROWS.slice(0, 4).map((key) => (
                     <li key={key} className="flex items-center gap-2">
-                      <Check className="size-4 text-primary" strokeWidth={2} aria-hidden />
+                      <Check
+                        className="size-4 text-primary"
+                        strokeWidth={2}
+                        aria-hidden
+                      />
                       <span>
                         {formatLimit(
-                          (plan.limits as unknown as Record<string, unknown>)[key],
+                          (plan.limits as unknown as Record<string, unknown>)[
+                            key
+                          ],
                           key,
-                          t,
-                        )}{" "}
+                          t
+                        )}{' '}
                         {t(`pricing:limits.${key}`)}
                       </span>
                     </li>
@@ -138,7 +154,7 @@ export default function PricingPage(): JSX.Element {
                 </ul>
 
                 <Button onClick={() => startPlanFlow(plan.key)} size="lg">
-                  {t("pricing:table.choosePlan", { plan: plan.name })}
+                  {t('pricing:table.choosePlan', { plan: plan.name })}
                 </Button>
               </motion.div>
             ))}
@@ -150,7 +166,7 @@ export default function PricingPage(): JSX.Element {
               <thead>
                 <tr className="border-b border-border">
                   <th className="py-3 text-start font-medium text-muted-foreground">
-                    {t("pricing:table.feature")}
+                    {t('pricing:table.feature')}
                   </th>
                   {plans.map((plan) => (
                     <th
@@ -169,11 +185,16 @@ export default function PricingPage(): JSX.Element {
                       {t(`pricing:limits.${key}`)}
                     </td>
                     {plans.map((plan) => (
-                      <td key={plan.key} className="py-3 font-medium text-foreground">
+                      <td
+                        key={plan.key}
+                        className="py-3 font-medium text-foreground"
+                      >
                         {formatLimit(
-                          (plan.limits as unknown as Record<string, unknown>)[key],
+                          (plan.limits as unknown as Record<string, unknown>)[
+                            key
+                          ],
                           key,
-                          t,
+                          t
                         )}
                       </td>
                     ))}
@@ -187,9 +208,17 @@ export default function PricingPage(): JSX.Element {
                     {plans.map((plan) => (
                       <td key={plan.key} className="py-3">
                         {plan.features[key] ? (
-                          <Check className="size-4 text-primary" strokeWidth={2} aria-hidden />
+                          <Check
+                            className="size-4 text-primary"
+                            strokeWidth={2}
+                            aria-hidden
+                          />
                         ) : (
-                          <Minus className="size-4 text-muted-foreground/50" strokeWidth={2} aria-hidden />
+                          <Minus
+                            className="size-4 text-muted-foreground/50"
+                            strokeWidth={2}
+                            aria-hidden
+                          />
                         )}
                       </td>
                     ))}
@@ -203,10 +232,10 @@ export default function PricingPage(): JSX.Element {
 
       <section className="mx-auto max-w-xl space-y-2 py-8 text-center">
         <h2 className="font-display text-xl font-semibold text-foreground">
-          {t("pricing:faq.title")}
+          {t('pricing:faq.title')}
         </h2>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          {t("pricing:faq.description")}
+          {t('pricing:faq.description')}
         </p>
       </section>
     </PageContainer>

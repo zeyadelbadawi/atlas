@@ -27,7 +27,11 @@ import type { PlatformOrganizationSummary } from '@types';
 export default function PlatformOrganizationListPage(): JSX.Element {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { query: searchQuery, setQuery: setSearchQuery, debouncedQuery } = useSearch({
+  const {
+    query: searchQuery,
+    setQuery: setSearchQuery,
+    debouncedQuery,
+  } = useSearch({
     debounceMs: 300,
   });
 
@@ -57,7 +61,9 @@ export default function PlatformOrganizationListPage(): JSX.Element {
       {
         accessorKey: 'name',
         header: t('platform:organizations.table.name'),
-        cell: ({ row }) => <span className="font-medium">{row.original.name}</span>,
+        cell: ({ row }) => (
+          <span className="font-medium">{row.original.name}</span>
+        ),
       },
       {
         accessorKey: 'status',
@@ -73,18 +79,24 @@ export default function PlatformOrganizationListPage(): JSX.Element {
         accessorKey: 'planName',
         header: t('platform:organizations.table.plan'),
         cell: ({ row }) => (
-          <span className="text-muted-foreground">{row.original.planName ?? '—'}</span>
+          <span className="text-muted-foreground">
+            {row.original.planName ?? '—'}
+          </span>
         ),
       },
       {
         accessorKey: 'academyCount',
         header: t('platform:organizations.table.academies'),
-        cell: ({ row }) => <span data-atlas-numeric="true">{row.original.academyCount}</span>,
+        cell: ({ row }) => (
+          <span data-atlas-numeric="true">{row.original.academyCount}</span>
+        ),
       },
       {
         accessorKey: 'memberCount',
         header: t('platform:organizations.table.members'),
-        cell: ({ row }) => <span data-atlas-numeric="true">{row.original.memberCount}</span>,
+        cell: ({ row }) => (
+          <span data-atlas-numeric="true">{row.original.memberCount}</span>
+        ),
       },
       {
         accessorKey: 'createdAt',

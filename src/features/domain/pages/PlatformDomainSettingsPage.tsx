@@ -41,14 +41,25 @@ import {
   usePlatformDomainConfiguration,
   useUpdatePlatformDomainConfiguration,
 } from '../hooks';
-import { platformDomainSchema, type PlatformDomainFormData } from '../schemas/domain.schemas';
+import {
+  platformDomainSchema,
+  type PlatformDomainFormData,
+} from '../schemas/domain.schemas';
 
 export default function PlatformDomainSettingsPage(): JSX.Element {
   const { t } = useTranslation();
 
-  const { data: config, isLoading, error, refetch } = usePlatformDomainConfiguration();
-  const { mutateAsync: updateConfig, isPending, error: mutationError } =
-    useUpdatePlatformDomainConfiguration();
+  const {
+    data: config,
+    isLoading,
+    error,
+    refetch,
+  } = usePlatformDomainConfiguration();
+  const {
+    mutateAsync: updateConfig,
+    isPending,
+    error: mutationError,
+  } = useUpdatePlatformDomainConfiguration();
   const cloudflareStatus = useInfrastructureProviderStatus('cloudflare');
 
   const form = useForm<PlatformDomainFormData>({
@@ -67,7 +78,10 @@ export default function PlatformDomainSettingsPage(): JSX.Element {
       await updateConfig(data);
       toast({ title: t('website:platformDomain.success') });
     } catch {
-      toast({ title: t('website:platformDomain.error'), variant: 'destructive' });
+      toast({
+        title: t('website:platformDomain.error'),
+        variant: 'destructive',
+      });
     }
   };
 
@@ -118,17 +132,24 @@ export default function PlatformDomainSettingsPage(): JSX.Element {
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
                 <FormField
                   control={form.control}
                   name="baseDomain"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('website:platformDomain.baseDomainLabel')}</FormLabel>
+                      <FormLabel>
+                        {t('website:platformDomain.baseDomainLabel')}
+                      </FormLabel>
                       <FormControl>
                         <Input {...field} dir="ltr" placeholder="example.com" />
                       </FormControl>
-                      <FormDescription>{t('website:platformDomain.baseDomainHelp')}</FormDescription>
+                      <FormDescription>
+                        {t('website:platformDomain.baseDomainHelp')}
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -150,7 +171,9 @@ export default function PlatformDomainSettingsPage(): JSX.Element {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">{t('website:platformDomain.infrastructureTitle')}</CardTitle>
+            <CardTitle className="text-base">
+              {t('website:platformDomain.infrastructureTitle')}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex items-center gap-2">

@@ -22,7 +22,8 @@
  */
 import type { SectionType } from '@types';
 
-export type SectionFieldKind = 'text' | 'longText' | 'boolean' | 'number' | 'select' | 'image' | 'cta';
+export type SectionFieldKind =
+  'text' | 'longText' | 'boolean' | 'number' | 'select' | 'image' | 'cta';
 
 interface FieldDescriptorBase {
   readonly key: string;
@@ -45,7 +46,10 @@ export interface NumberFieldDescriptor extends FieldDescriptorBase {
 
 export interface SelectFieldDescriptor extends FieldDescriptorBase {
   readonly kind: 'select';
-  readonly options: readonly { readonly value: string; readonly labelKey: string }[];
+  readonly options: readonly {
+    readonly value: string;
+    readonly labelKey: string;
+  }[];
 }
 
 /** A fully discriminated union on `kind` — `select` is the only variant that carries `options`, so `descriptor.options` narrows correctly without a cast. */

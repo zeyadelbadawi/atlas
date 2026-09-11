@@ -29,7 +29,11 @@ export const createAcademySchema = z.object({
     .string()
     .max(MAX_ACADEMY_DESCRIPTION_LENGTH, 'validation:maxLength')
     .optional(),
-  contactEmail: z.string().email('validation:invalidEmail').optional().or(z.literal('')),
+  contactEmail: z
+    .string()
+    .email('validation:invalidEmail')
+    .optional()
+    .or(z.literal('')),
   contactPhone: z.string().optional(),
   website: z.string().url('validation:invalidUrl').optional().or(z.literal('')),
   country: z.string().optional(),
@@ -55,7 +59,11 @@ export const updateAcademyProfileSchema = z.object({
     .string()
     .max(MAX_ACADEMY_DESCRIPTION_LENGTH, 'validation:maxLength')
     .optional(),
-  contactEmail: z.string().email('validation:invalidEmail').optional().or(z.literal('')),
+  contactEmail: z
+    .string()
+    .email('validation:invalidEmail')
+    .optional()
+    .or(z.literal('')),
   contactPhone: z.string().optional(),
   website: z.string().url('validation:invalidUrl').optional().or(z.literal('')),
   street: z.string().optional(),
@@ -91,7 +99,11 @@ export const updateAcademySettingsSchema = z.object({
   language: z.string().min(1, 'validation:required'),
   timezone: z.string().min(1, 'validation:required'),
   currency: z.string().min(1, 'validation:required'),
-  contactEmail: z.string().email('validation:invalidEmail').optional().or(z.literal('')),
+  contactEmail: z
+    .string()
+    .email('validation:invalidEmail')
+    .optional()
+    .or(z.literal('')),
   contactPhone: z.string().optional(),
   website: z.string().url('validation:invalidUrl').optional().or(z.literal('')),
 });
@@ -123,25 +135,38 @@ export type UpdateAcademyBrandingFormData = z.infer<
  */
 export const addAcademyManagerSchema = z
   .object({
-    email: z.string().min(1, 'validation:required').email('validation:invalidEmail'),
-    name: z.string().max(MAX_ACADEMY_NAME_LENGTH, 'validation:maxLength').optional().or(z.literal('')),
+    email: z
+      .string()
+      .min(1, 'validation:required')
+      .email('validation:invalidEmail'),
+    name: z
+      .string()
+      .max(MAX_ACADEMY_NAME_LENGTH, 'validation:maxLength')
+      .optional()
+      .or(z.literal('')),
     password: z.string().optional().or(z.literal('')),
   })
   .refine((data) => !data.password || data.password.length >= 8, {
     message: 'validation:minLength',
     path: ['password'],
   })
-  .refine((data) => (!data.name && !data.password) || (!!data.name && !!data.password), {
-    message: 'academy:members.newAccount.bothRequired',
-    path: ['password'],
-  });
+  .refine(
+    (data) =>
+      (!data.name && !data.password) || (!!data.name && !!data.password),
+    {
+      message: 'academy:members.newAccount.bothRequired',
+      path: ['password'],
+    }
+  );
 
 export type AddAcademyManagerFormData = z.infer<typeof addAcademyManagerSchema>;
 
 /** Add Academy Instructor schema — identical shape/rationale to `addAcademyManagerSchema`. */
 export const addAcademyInstructorSchema = addAcademyManagerSchema;
 
-export type AddAcademyInstructorFormData = z.infer<typeof addAcademyInstructorSchema>;
+export type AddAcademyInstructorFormData = z.infer<
+  typeof addAcademyInstructorSchema
+>;
 
 /** Create Academy Student schema — always a brand-new account, so all three fields are required. */
 export const createAcademyStudentSchema = z.object({
@@ -149,8 +174,13 @@ export const createAcademyStudentSchema = z.object({
     .string()
     .min(1, 'validation:required')
     .max(MAX_ACADEMY_NAME_LENGTH, 'validation:maxLength'),
-  email: z.string().min(1, 'validation:required').email('validation:invalidEmail'),
+  email: z
+    .string()
+    .min(1, 'validation:required')
+    .email('validation:invalidEmail'),
   password: z.string().min(8, 'validation:minLength'),
 });
 
-export type CreateAcademyStudentFormData = z.infer<typeof createAcademyStudentSchema>;
+export type CreateAcademyStudentFormData = z.infer<
+  typeof createAcademyStudentSchema
+>;

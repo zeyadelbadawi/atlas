@@ -5,21 +5,21 @@
  * This provider initializes by attempting silent session restoration, then keeps
  * the session alive through token refresh and handles sign-in/sign-out.
  */
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { isTwoFactorChallenge } from "@types";
-import type { ReactNode } from "react";
-import { sessionService } from "@services/identity";
-import type { Session, SignInCredentials } from "@types";
-import { IdentityContext } from "./identity.context";
-import type { IdentityContextValue } from "./identity.context";
-import { STORAGE_KEYS } from "@constants";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { isTwoFactorChallenge } from '@types';
+import type { ReactNode } from 'react';
+import { sessionService } from '@services/identity';
+import type { Session, SignInCredentials } from '@types';
+import { IdentityContext } from './identity.context';
+import type { IdentityContextValue } from './identity.context';
+import { STORAGE_KEYS } from '@constants';
 
 export interface IdentityProviderProps {
   readonly children: ReactNode;
 }
 
 const INITIAL_SESSION: Session = {
-  status: "restoring",
+  status: 'restoring',
 };
 
 export function AtlasIdentityProvider({
@@ -39,20 +39,20 @@ export function AtlasIdentityProvider({
         let restored = await sessionService.restore();
         if (!cancelled) {
           // Validate and restore active organization from localStorage.
-          if (restored.status === "authenticated" && restored.user) {
+          if (restored.status === 'authenticated' && restored.user) {
             const storedOrgId = localStorage.getItem(
-              STORAGE_KEYS.activeOrganization,
+              STORAGE_KEYS.activeOrganization
             );
             if (storedOrgId) {
               const isValidOrg = restored.user.organizations.some(
-                (org) => org.organizationId === storedOrgId,
+                (org) => org.organizationId === storedOrgId
               );
 
               if (isValidOrg) {
                 // Restore the valid organization context.
                 const orgContext = sessionService.switchOrganization(
                   restored.user,
-                  storedOrgId,
+                  storedOrgId
                 );
                 if (orgContext) {
                   // Create a new session object with the restored organization.
@@ -72,7 +72,7 @@ export function AtlasIdentityProvider({
         }
       } catch {
         if (!cancelled) {
-          setSession({ status: "unauthenticated" });
+          setSession({ status: 'unauthenticated' });
         }
       } finally {
         if (!cancelled) {
@@ -97,10 +97,10 @@ export function AtlasIdentityProvider({
   useEffect(() => {
     const handleTokenRefresh = async () => {
       // Import dynamically to avoid circular dependency.
-      const { tokenService } = await import("@services/identity");
+      const { tokenService } = await import('@services/identity');
       const tokens = tokenService.retrieve();
 
-      if (tokens && session.status === "authenticated") {
+      if (tokens && session.status === 'authenticated') {
         setSession((prev) => ({
           ...prev,
           tokens,
@@ -108,10 +108,10 @@ export function AtlasIdentityProvider({
       }
     };
 
-    window.addEventListener("atlas:token-refreshed", handleTokenRefresh);
+    window.addEventListener('atlas:token-refreshed', handleTokenRefresh);
 
     return () => {
-      window.removeEventListener("atlas:token-refreshed", handleTokenRefresh);
+      window.removeEventListener('atlas:token-refreshed', handleTokenRefresh);
     };
   }, [session.status]);
 
@@ -119,7 +119,7 @@ export function AtlasIdentityProvider({
    * Proactively refreshes tokens when they approach expiration.
    */
   useEffect(() => {
-    if (session.status !== "authenticated" || !session.tokens) {
+    if (session.status !== 'authenticated' || !session.tokens) {
       return;
     }
 
@@ -134,7 +134,7 @@ export function AtlasIdentityProvider({
 
       try {
         const refreshed = await sessionService.refresh(
-          session.tokens.refreshToken,
+          session.tokens.refreshToken
         );
         if (!cancelled) {
           setSession(refreshed);
@@ -142,7 +142,7 @@ export function AtlasIdentityProvider({
       } catch {
         // Refresh failure invalidates the session.
         if (!cancelled) {
-          setSession({ status: "unauthenticated" });
+          setSession({ status: 'unauthenticated' });
         }
       }
     }
@@ -186,7 +186,7 @@ export function AtlasIdentityProvider({
       const newSession = await sessionService.completeTwoFactor(input);
       setSession(newSession);
     },
-    [],
+    []
   );
 
   const signOut = useCallback(async () => {
@@ -200,7 +200,7 @@ export function AtlasIdentityProvider({
 
       const newOrganization = sessionService.switchOrganization(
         session.user,
-        organizationId,
+        organizationId
       );
 
       if (newOrganization) {
@@ -211,20 +211,20 @@ export function AtlasIdentityProvider({
 
         // Notify PlatformProvider and other listeners of the organization switch.
         window.dispatchEvent(
-          new CustomEvent("atlas:organization-switched", {
+          new CustomEvent('atlas:organization-switched', {
             detail: { organizationId },
-          }),
+          })
         );
 
         // Persist the active organization to localStorage.
         localStorage.setItem(STORAGE_KEYS.activeOrganization, organizationId);
       }
     },
-    [session.user],
+    [session.user]
   );
 
   const refreshSession = useCallback(async () => {
-    if (session.status !== "authenticated" || !session.tokens?.refreshToken) {
+    if (session.status !== 'authenticated' || !session.tokens?.refreshToken) {
       return;
     }
 
@@ -238,7 +238,7 @@ export function AtlasIdentityProvider({
       isRestoring,
       user: session.user,
       organization: session.organization,
-      isAuthenticated: session.status === "authenticated",
+      isAuthenticated: session.status === 'authenticated',
       signIn,
       completeTwoFactor,
       signOut,
@@ -253,7 +253,7 @@ export function AtlasIdentityProvider({
       signOut,
       switchOrganization,
       refreshSession,
-    ],
+    ]
   );
 
   return (

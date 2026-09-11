@@ -32,7 +32,9 @@ function buildResources() {
  *
  * @param initialLanguage Language to activate immediately.
  */
-export function createI18nInstance(initialLanguage: LanguageCode): I18nInstance {
+export function createI18nInstance(
+  initialLanguage: LanguageCode
+): I18nInstance {
   const instance = i18next.createInstance();
 
   void instance.use(initReactI18next).init({

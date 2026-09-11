@@ -32,7 +32,11 @@ import {
   useStartTrial,
 } from '../hooks/useSubscriptionLifecycle';
 import { formatDate } from '@/shared/utils/date.utils';
-import type { CancelSubscriptionRequestInput, LanguageCode, TenantSubscription } from '@types';
+import type {
+  CancelSubscriptionRequestInput,
+  LanguageCode,
+  TenantSubscription,
+} from '@types';
 
 /** Statuses where a paid subscription genuinely exists and can be cancelled. */
 const LIVE_PAID_STATUSES = new Set(['active', 'past_due', 'grace_period']);
@@ -131,7 +135,11 @@ export function SubscriptionLifecycleActions({
   return (
     <div className="pt-2">
       {canStartTrial ? (
-        <Button type="button" onClick={handleStartTrial} disabled={startTrial.isPending}>
+        <Button
+          type="button"
+          onClick={handleStartTrial}
+          disabled={startTrial.isPending}
+        >
           <Rocket className="me-2 size-4" aria-hidden />
           {startTrial.isPending
             ? t('tenant:trial.starting')

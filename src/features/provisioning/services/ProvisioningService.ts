@@ -30,7 +30,10 @@ import type {
 export class ProvisioningService extends BaseService {
   protected readonly resource = 'organizations';
 
-  private requestsPath(organizationId: string, ...segments: readonly string[]): string {
+  private requestsPath(
+    organizationId: string,
+    ...segments: readonly string[]
+  ): string {
     return this.path(organizationId, 'provisioning-requests', ...segments);
   }
 
@@ -40,11 +43,10 @@ export class ProvisioningService extends BaseService {
     payload: CreateProvisioningRequestPayload,
     options?: WriteOptions
   ): Promise<ProvisioningRequest> {
-    return this.client.post<ProvisioningRequest, CreateProvisioningRequestPayload>(
-      this.requestsPath(organizationId),
-      payload,
-      options
-    );
+    return this.client.post<
+      ProvisioningRequest,
+      CreateProvisioningRequestPayload
+    >(this.requestsPath(organizationId), payload, options);
   }
 
   /** Retrieves one provisioning request's current, backend-authoritative state. */
@@ -78,7 +80,10 @@ export class ProvisioningService extends BaseService {
   ): Promise<PaginatedResult<ProvisioningRequest>> {
     return this.client.get<PaginatedResult<ProvisioningRequest>>(
       this.requestsPath(organizationId),
-      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
+      {
+        ...options,
+        params: { ...toCollectionParams(query), ...options?.params },
+      }
     );
   }
 

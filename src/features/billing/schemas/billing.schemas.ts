@@ -16,7 +16,9 @@ export const submitPaymentProofSchema = z.object({
     .optional(),
 });
 
-export type SubmitPaymentProofFormData = z.infer<typeof submitPaymentProofSchema>;
+export type SubmitPaymentProofFormData = z.infer<
+  typeof submitPaymentProofSchema
+>;
 
 /** Approval notes are optional — an approval is usually self-explanatory. */
 export const approvePaymentSchema = z.object({

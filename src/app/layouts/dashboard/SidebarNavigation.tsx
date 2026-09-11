@@ -8,16 +8,16 @@
  * Collapsed mode keeps the icons and moves the labels into tooltips, so the
  * navigation stays usable rather than becoming a row of unlabelled glyphs.
  */
-import { NavLink, useLocation } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { NavLink, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { isPathActive } from "@app/routes/route-paths";
-import type { NavigationItem, NavigationSection } from "@types";
-import { cn } from "@utils";
+} from '@/components/ui/tooltip';
+import { isPathActive } from '@app/routes/route-paths';
+import type { NavigationItem, NavigationSection } from '@types';
+import { cn } from '@utils';
 
 export interface SidebarNavigationProps {
   readonly sections: readonly NavigationSection[];
@@ -51,21 +51,21 @@ export function SidebarNavigation({
     const isActive = isPathActive(
       location.pathname,
       item.path,
-      item.matchNestedPaths,
+      item.matchNestedPaths
     );
 
     const link = (
       <NavLink
         to={item.path}
         onClick={onNavigate}
-        aria-current={isActive ? "page" : undefined}
+        aria-current={isActive ? 'page' : undefined}
         className={cn(
-          "flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium transition-colors duration-fast ease-standard",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar",
-          isCollapsed && "justify-center px-0",
+          'flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium transition-colors duration-fast ease-standard',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar',
+          isCollapsed && 'justify-center px-0',
           isActive
             ? cn(
-                "bg-sidebar-accent text-sidebar-accent-foreground",
+                'bg-sidebar-accent text-sidebar-accent-foreground',
                 // Skipped while collapsed: the rail centers a bare icon with
                 // no reading-start gutter for a border indicator to occupy,
                 // and avoids fighting the collapsed `justify-center px-0`
@@ -73,9 +73,9 @@ export function SidebarNavigation({
                 // utility on the same edge.
                 brandAccent &&
                   !isCollapsed &&
-                  "border-s-2 ps-[calc(0.75rem-2px)] [border-inline-start-color:var(--academy-brand-primary-solid)]",
+                  'border-s-2 ps-[calc(0.75rem-2px)] [border-inline-start-color:var(--academy-brand-primary-solid)]'
               )
-            : "text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground",
+            : 'text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground'
         )}
       >
         {item.icon && (
@@ -107,7 +107,7 @@ export function SidebarNavigation({
 
   return (
     <nav
-      aria-label={t("navigation:primary")}
+      aria-label={t('navigation:primary')}
       className="flex flex-1 flex-col gap-6 overflow-y-auto px-3 py-4"
     >
       {sections.map((section) => (

@@ -54,9 +54,7 @@ export default function CourseCreatePage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { academyId } = useParams<{ academyId: string }>();
-  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(
-    null
-  );
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
   const [createdCourse, setCreatedCourse] = useState<Course | null>(null);
 
   const {
@@ -159,7 +157,10 @@ export default function CourseCreatePage(): JSX.Element {
     } catch (caughtError) {
       // Phase 2 — a plan-limit rejection has its own stable `code`, never
       // shown as the same generic message every other failure gets here.
-      if (isApiError(caughtError) && caughtError.code === 'ENTITLEMENT_LIMIT_REACHED') {
+      if (
+        isApiError(caughtError) &&
+        caughtError.code === 'ENTITLEMENT_LIMIT_REACHED'
+      ) {
         toast({
           title: t('course:create.errors.limitReachedTitle'),
           description: t('course:create.errors.limitReachedDescription'),
@@ -176,7 +177,8 @@ export default function CourseCreatePage(): JSX.Element {
   };
 
   const handleCancel = () => {
-    if (academyId) navigate(buildPath(DASHBOARD_ROUTES.academyCourses, { academyId }));
+    if (academyId)
+      navigate(buildPath(DASHBOARD_ROUTES.academyCourses, { academyId }));
   };
 
   if (createdCourse && academyId) {
@@ -224,7 +226,9 @@ export default function CourseCreatePage(): JSX.Element {
   const breadcrumbs: readonly BreadcrumbItem[] = [
     {
       labelKey: 'course:list.title',
-      path: buildPath(DASHBOARD_ROUTES.academyCourses, { academyId: academyId ?? '' }),
+      path: buildPath(DASHBOARD_ROUTES.academyCourses, {
+        academyId: academyId ?? '',
+      }),
     },
     { labelKey: 'course:create.title' },
   ];
@@ -359,7 +363,11 @@ export default function CourseCreatePage(): JSX.Element {
                         variant="outline"
                         onClick={thumbnailPicker.openFilePicker}
                       >
-                        <Upload className="size-4" strokeWidth={2} aria-hidden />
+                        <Upload
+                          className="size-4"
+                          strokeWidth={2}
+                          aria-hidden
+                        />
                         {t('course:create.uploadThumbnail')}
                       </Button>
                     )}
@@ -394,7 +402,9 @@ export default function CourseCreatePage(): JSX.Element {
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue
-                              placeholder={t('course:create.categoryPlaceholder')}
+                              placeholder={t(
+                                'course:create.categoryPlaceholder'
+                              )}
                             />
                           </SelectTrigger>
                         </FormControl>

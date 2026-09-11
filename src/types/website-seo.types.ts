@@ -72,7 +72,10 @@ export interface CourseJsonLd {
   readonly '@type': 'Course';
   readonly name: string;
   readonly description?: string;
-  readonly provider: { readonly '@type': 'Organization'; readonly name: string };
+  readonly provider: {
+    readonly '@type': 'Organization';
+    readonly name: string;
+  };
 }
 
 /** https://schema.org/Article — built from an existing `BlogPost` (`@features/blog`) only. */
@@ -110,8 +113,6 @@ export interface BreadcrumbJsonLd {
     readonly item: string;
   }>;
 }
-
-
 
 /** How often a page's content is expected to change — the standard sitemap.xml vocabulary. */
 export type SitemapChangeFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly';

@@ -4,33 +4,34 @@
  * Authenticates users with email and password using the existing
  * SessionService and AuthenticationService infrastructure.
  */
-import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams, Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { LogIn } from "lucide-react";
-import { useAuth, useSignIn } from "@hooks";
-import { TwoFactorChallengeForm } from "../components/TwoFactorChallengeForm";
-import type { TwoFactorChallenge } from "@types";
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { LogIn } from 'lucide-react';
+import { useAuth, useSignIn } from '@hooks';
+import { TwoFactorChallengeForm } from '../components/TwoFactorChallengeForm';
+import type { TwoFactorChallenge } from '@types';
 import {
   AUTHENTICATED_ENTRY_ROUTE,
   AUTH_ROUTES,
-} from "@app/routes/route-paths";
-import { PageContainer, PageHeader } from "@components/layout";
-import { SignInForm } from "../components/SignInForm";
+} from '@app/routes/route-paths';
+import { PageContainer, PageHeader } from '@components/layout';
+import { SignInForm } from '../components/SignInForm';
 
 export default function SignInPage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { session } = useAuth();
-  const { signIn, completeTwoFactor, isLoading, error, clearError } = useSignIn();
+  const { signIn, completeTwoFactor, isLoading, error, clearError } =
+    useSignIn();
   const [challenge, setChallenge] = useState<TwoFactorChallenge | null>(null);
 
   // Redirect authenticated users
   useEffect(() => {
-    if (session.status === "authenticated") {
+    if (session.status === 'authenticated') {
       const redirectTo =
-        searchParams.get("redirect") || AUTHENTICATED_ENTRY_ROUTE;
+        searchParams.get('redirect') || AUTHENTICATED_ENTRY_ROUTE;
       navigate(redirectTo, { replace: true });
     }
   }, [session.status, navigate, searchParams]);
@@ -38,7 +39,7 @@ export default function SignInPage(): JSX.Element {
   const handleSignIn = async (
     email: string,
     password: string,
-    rememberMe: boolean,
+    rememberMe: boolean
   ) => {
     clearError();
     try {
@@ -71,7 +72,7 @@ export default function SignInPage(): JSX.Element {
     }
   };
 
-  if (session.status === "authenticated") {
+  if (session.status === 'authenticated') {
     return <></>;
   }
 
@@ -85,7 +86,7 @@ export default function SignInPage(): JSX.Element {
           <PageHeader
             titleKey="auth:signIn.title"
             descriptionKey="auth:signIn.subtitle"
-            values={{ product: t("common:product.name") }}
+            values={{ product: t('common:product.name') }}
             className="mt-6"
           />
         </div>
@@ -112,13 +113,13 @@ export default function SignInPage(): JSX.Element {
 
         <div className="text-center text-sm">
           <span className="text-muted-foreground">
-            {t("auth:signIn.noAccount")}{" "}
+            {t('auth:signIn.noAccount')}{' '}
           </span>
           <Link
             to={AUTH_ROUTES.register}
             className="font-medium text-primary hover:underline"
           >
-            {t("auth:signIn.signUp")}
+            {t('auth:signIn.signUp')}
           </Link>
         </div>
       </div>

@@ -5,9 +5,9 @@
  * platform-wide keeps padding, radius and elevation identical everywhere, which
  * is what prevents modules from drifting apart visually.
  */
-import type { ReactNode } from "react";
-import { useTranslation } from "react-i18next";
-import { cn } from "@utils";
+import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
+import { cn } from '@utils';
 
 export interface SectionCardProps {
   /** Translation key for the section heading. */
@@ -39,8 +39,8 @@ export function SectionCard({
   return (
     <section
       className={cn(
-        "overflow-hidden rounded-lg border border-border bg-card shadow-xs",
-        className,
+        'overflow-hidden rounded-lg border border-border bg-card shadow-xs',
+        className
       )}
     >
       {hasHeader ? (
@@ -63,7 +63,7 @@ export function SectionCard({
         </div>
       ) : null}
 
-      <div className={cn(!flushBody && "px-4 py-4 sm:px-6 sm:py-5")}>
+      <div className={cn(!flushBody && 'px-4 py-4 sm:px-6 sm:py-5')}>
         {children}
       </div>
     </section>

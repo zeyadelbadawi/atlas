@@ -2,7 +2,11 @@
  * Domain validation schemas (Prompt 11).
  */
 import { z } from 'zod';
-import { HOSTNAME_REGEX, MAX_HOSTNAME_LENGTH, MIN_HOSTNAME_LENGTH } from '../constants/domain.constants';
+import {
+  HOSTNAME_REGEX,
+  MAX_HOSTNAME_LENGTH,
+  MIN_HOSTNAME_LENGTH,
+} from '../constants/domain.constants';
 
 export const addCustomDomainSchema = z.object({
   hostname: z

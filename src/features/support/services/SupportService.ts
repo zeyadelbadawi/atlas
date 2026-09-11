@@ -27,7 +27,10 @@ export class SupportService extends BaseService {
     return this.fetchCollection<SupportCaseSummary>(query, options);
   }
 
-  async getCase(caseId: string, options?: ReadOptions): Promise<SupportCaseDetail> {
+  async getCase(
+    caseId: string,
+    options?: ReadOptions
+  ): Promise<SupportCaseDetail> {
     return this.fetchOne<SupportCaseDetail>(caseId, options);
   }
 

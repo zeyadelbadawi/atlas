@@ -15,7 +15,9 @@ export interface PublicWebsiteSitemapRouteProps {
   readonly lookupKey: string;
 }
 
-export function PublicWebsiteSitemapRoute({ lookupKey }: PublicWebsiteSitemapRouteProps): JSX.Element {
+export function PublicWebsiteSitemapRoute({
+  lookupKey,
+}: PublicWebsiteSitemapRouteProps): JSX.Element {
   const data = usePublicWebsiteData(lookupKey);
 
   if (data.status !== 'ready') {

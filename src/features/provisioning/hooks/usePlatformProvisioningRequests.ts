@@ -7,7 +7,11 @@
 import { useApiQuery } from '@/shared/hooks';
 import { platformProvisioningKeys } from '@services/query';
 import { platformProvisioningService } from '../services/PlatformProvisioningService';
-import type { CollectionQuery, PaginatedResult, ProvisioningRequest } from '@types';
+import type {
+  CollectionQuery,
+  PaginatedResult,
+  ProvisioningRequest,
+} from '@types';
 import type { ApiError } from '@api';
 
 export interface UsePlatformProvisioningRequestsOptions {

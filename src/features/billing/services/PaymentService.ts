@@ -31,7 +31,10 @@ import type {
 export class PaymentService extends BaseService {
   protected readonly resource = 'organizations';
 
-  private paymentsPath(organizationId: string, ...segments: readonly string[]): string {
+  private paymentsPath(
+    organizationId: string,
+    ...segments: readonly string[]
+  ): string {
     return this.path(organizationId, 'payments', ...segments);
   }
 
@@ -58,10 +61,12 @@ export class PaymentService extends BaseService {
     // `payment-methods` is the same manually-built-path exception the
     // class doc comment already describes for this one method, so the
     // request is built and normalized explicitly instead.
-    const result = await this.client.get<PaginatedResult<CheckoutPaymentMethod>>(
-      resourcePath('payment-methods'),
-      { ...options, params: { page: 1, pageSize: 100, ...options?.params } }
-    );
+    const result = await this.client.get<
+      PaginatedResult<CheckoutPaymentMethod>
+    >(resourcePath('payment-methods'), {
+      ...options,
+      params: { page: 1, pageSize: 100, ...options?.params },
+    });
     return result.items;
   }
 
@@ -95,7 +100,10 @@ export class PaymentService extends BaseService {
   ): Promise<PaginatedResult<Payment>> {
     return this.client.get<PaginatedResult<Payment>>(
       this.paymentsPath(organizationId),
-      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
+      {
+        ...options,
+        params: { ...toCollectionParams(query), ...options?.params },
+      }
     );
   }
 
@@ -145,10 +153,13 @@ export class PaymentService extends BaseService {
     paymentId: string,
     options?: ReadOptions
   ): Promise<Blob> {
-    return this.client.get<Blob>(this.paymentsPath(organizationId, paymentId, 'proof', 'file'), {
-      ...options,
-      responseType: 'blob',
-    });
+    return this.client.get<Blob>(
+      this.paymentsPath(organizationId, paymentId, 'proof', 'file'),
+      {
+        ...options,
+        responseType: 'blob',
+      }
+    );
   }
 
   /** Cancels a Payment, where its method's capabilities allow it. */
@@ -189,7 +200,10 @@ export class PaymentService extends BaseService {
   ): Promise<PaginatedResult<TenantInvoice>> {
     return this.client.get<PaginatedResult<TenantInvoice>>(
       this.path(organizationId, 'invoices'),
-      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
+      {
+        ...options,
+        params: { ...toCollectionParams(query), ...options?.params },
+      }
     );
   }
 }

@@ -12,9 +12,7 @@ import type { Money } from './money.types';
 
 /** The three payment-method shapes Prompt 7's architecture supports. Only the two `manual_*` ones are ever enabled today — `gateway` exists so the type system, UI and services are ready before a real gateway is connected. */
 export type PaymentMethodType =
-  | 'manual_bank_transfer'
-  | 'manual_wallet_transfer'
-  | 'gateway';
+  'manual_bank_transfer' | 'manual_wallet_transfer' | 'gateway';
 
 /**
  * What a payment method can actually do. The UI reads these flags —
@@ -57,8 +55,7 @@ export interface WalletTransferInstructions {
 }
 
 export type ManualPaymentInstructions =
-  | BankTransferInstructions
-  | WalletTransferInstructions;
+  BankTransferInstructions | WalletTransferInstructions;
 
 /**
  * A payment method as a first-class catalog object — never a hardcoded
@@ -119,16 +116,12 @@ export const TERMINAL_PAYMENT_STATUSES: readonly PaymentLifecycleStatus[] = [
  * true. A gateway payment's `reviewStatus` is `'not_required'` by default
  * (see acceptance criteria C-7-15/16/21).
  */
-export type ManualReviewStatus = 'not_required' | 'pending' | 'approved' | 'rejected';
+export type ManualReviewStatus =
+  'not_required' | 'pending' | 'approved' | 'rejected';
 
 /** One provider interaction attempt toward completing a Payment. A Payment may have several — most relevant for gateway retries; a manual payment typically has exactly one. */
 export type PaymentAttemptStatus =
-  | 'initiated'
-  | 'processing'
-  | 'failed'
-  | 'succeeded'
-  | 'cancelled'
-  | 'expired';
+  'initiated' | 'processing' | 'failed' | 'succeeded' | 'cancelled' | 'expired';
 
 export interface PaymentAttempt {
   readonly id: string;

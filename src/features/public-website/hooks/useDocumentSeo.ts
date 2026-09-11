@@ -27,7 +27,10 @@
  */
 import { useEffect } from 'react';
 import type { ResolvedSeoMetadata } from '@types';
-import { usePublicWebsiteDocumentDirection, type PublicWebsiteLocale } from '@features/website';
+import {
+  usePublicWebsiteDocumentDirection,
+  type PublicWebsiteLocale,
+} from '@features/website';
 
 const MANAGED_ATTR = 'data-atlas-seo';
 
@@ -42,8 +45,14 @@ export interface UseDocumentSeoOptions {
   readonly locale: PublicWebsiteLocale;
 }
 
-function upsertMeta(attr: 'name' | 'property', key: string, content: string | undefined): void {
-  const existing = document.head.querySelector(`meta[${attr}="${key}"][${MANAGED_ATTR}]`);
+function upsertMeta(
+  attr: 'name' | 'property',
+  key: string,
+  content: string | undefined
+): void {
+  const existing = document.head.querySelector(
+    `meta[${attr}="${key}"][${MANAGED_ATTR}]`
+  );
   if (!content) {
     existing?.remove();
     return;
@@ -69,7 +78,11 @@ export function useDocumentSeo({
     document.title = siteTitle ? `${seo.title} · ${siteTitle}` : seo.title;
 
     upsertMeta('name', 'description', seo.description);
-    upsertMeta('name', 'robots', seo.indexable ? 'index,follow' : 'noindex,nofollow');
+    upsertMeta(
+      'name',
+      'robots',
+      seo.indexable ? 'index,follow' : 'noindex,nofollow'
+    );
 
     upsertMeta('property', 'og:title', seo.ogTitle);
     upsertMeta('property', 'og:description', seo.ogDescription);
@@ -77,7 +90,11 @@ export function useDocumentSeo({
     if (seo.ogImage) upsertMeta('property', 'og:image', seo.ogImage);
     if (canonicalUrl) upsertMeta('property', 'og:url', canonicalUrl);
 
-    upsertMeta('name', 'twitter:card', seo.ogImage ? 'summary_large_image' : 'summary');
+    upsertMeta(
+      'name',
+      'twitter:card',
+      seo.ogImage ? 'summary_large_image' : 'summary'
+    );
     upsertMeta('name', 'twitter:title', seo.ogTitle);
     upsertMeta('name', 'twitter:description', seo.ogDescription);
     if (seo.ogImage) upsertMeta('name', 'twitter:image', seo.ogImage);
@@ -85,8 +102,9 @@ export function useDocumentSeo({
     let canonicalLink: HTMLLinkElement | null = null;
     if (canonicalUrl) {
       canonicalLink =
-        document.head.querySelector<HTMLLinkElement>(`link[rel="canonical"][${MANAGED_ATTR}]`) ??
-        document.createElement('link');
+        document.head.querySelector<HTMLLinkElement>(
+          `link[rel="canonical"][${MANAGED_ATTR}]`
+        ) ?? document.createElement('link');
       canonicalLink.rel = 'canonical';
       canonicalLink.href = canonicalUrl;
       canonicalLink.setAttribute(MANAGED_ATTR, 'true');
@@ -118,7 +136,9 @@ export function useDocumentSeo({
 
     return () => {
       document.title = previousTitle;
-      document.head.querySelectorAll(`[${MANAGED_ATTR}]`).forEach((node) => node.remove());
+      document.head
+        .querySelectorAll(`[${MANAGED_ATTR}]`)
+        .forEach((node) => node.remove());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seo, siteTitle, canonicalUrl, locale, JSON.stringify(structuredData)]);

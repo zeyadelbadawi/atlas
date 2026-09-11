@@ -24,26 +24,38 @@ import type { PublicWebsiteLocale } from '@types';
 
 export type { PublicWebsiteLocale };
 
-export const PUBLIC_WEBSITE_LOCALES: readonly PublicWebsiteLocale[] = ['en', 'ar'];
+export const PUBLIC_WEBSITE_LOCALES: readonly PublicWebsiteLocale[] = [
+  'en',
+  'ar',
+];
 
 export const DEFAULT_PUBLIC_WEBSITE_LOCALE: PublicWebsiteLocale = 'en';
 
-export const PUBLIC_WEBSITE_LOCALE_DIRECTION: Record<PublicWebsiteLocale, 'ltr' | 'rtl'> = {
+export const PUBLIC_WEBSITE_LOCALE_DIRECTION: Record<
+  PublicWebsiteLocale,
+  'ltr' | 'rtl'
+> = {
   en: 'ltr',
   ar: 'rtl',
 };
 
-export const PUBLIC_WEBSITE_LOCALE_LABELS: Record<PublicWebsiteLocale, string> = {
-  en: 'English',
-  ar: 'العربية',
-};
+export const PUBLIC_WEBSITE_LOCALE_LABELS: Record<PublicWebsiteLocale, string> =
+  {
+    en: 'English',
+    ar: 'العربية',
+  };
 
 /** The URL path segment a non-default locale is prefixed with (`/ar/about`) — the default locale (`en`) is never prefixed (`/about`), matching Revision 1's own routing decision: a clean, unprefixed default keeps every existing/shared link working unchanged. */
-export const PUBLIC_WEBSITE_LOCALE_PATH_PREFIX: Record<PublicWebsiteLocale, string> = {
+export const PUBLIC_WEBSITE_LOCALE_PATH_PREFIX: Record<
+  PublicWebsiteLocale,
+  string
+> = {
   en: '',
   ar: '/ar',
 };
 
-export function isPublicWebsiteLocale(value: string): value is PublicWebsiteLocale {
+export function isPublicWebsiteLocale(
+  value: string
+): value is PublicWebsiteLocale {
   return (PUBLIC_WEBSITE_LOCALES as readonly string[]).includes(value);
 }

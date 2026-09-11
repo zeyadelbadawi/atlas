@@ -5,11 +5,11 @@
  * Standardising that contract in one component is what makes separately built
  * modules feel like a single product.
  */
-import type { ReactNode } from "react";
-import { useTranslation } from "react-i18next";
-import { Breadcrumbs } from "@components/navigation";
-import type { BreadcrumbItem } from "@types";
-import { cn } from "@utils";
+import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Breadcrumbs } from '@components/navigation';
+import type { BreadcrumbItem } from '@types';
+import { cn } from '@utils';
 
 export interface PageHeaderProps {
   /** Translation key for the page title. */
@@ -39,7 +39,7 @@ export function PageHeader({
   const { t } = useTranslation();
 
   return (
-    <header className={cn("space-y-3", className)}>
+    <header className={cn('space-y-3', className)}>
       {breadcrumbs ? <Breadcrumbs items={breadcrumbs} /> : null}
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">

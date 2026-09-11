@@ -10,7 +10,13 @@
  * every one of the five pages renders the exact same, single, "you are
  * here" strip instead.
  */
-import { BookOpen, ClipboardCheck, HelpCircle, Layers, Settings2 } from 'lucide-react';
+import {
+  BookOpen,
+  ClipboardCheck,
+  HelpCircle,
+  Layers,
+  Settings2,
+} from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem } from '@types';
 
@@ -22,19 +28,28 @@ export function getCourseEditorTabs(
     {
       id: 'course-tab-details',
       labelKey: 'course:edit.detailsTabLabel',
-      path: buildPath(DASHBOARD_ROUTES.academyCourseDetail, { academyId, courseId }),
+      path: buildPath(DASHBOARD_ROUTES.academyCourseDetail, {
+        academyId,
+        courseId,
+      }),
       icon: BookOpen,
     },
     {
       id: 'course-tab-builder',
       labelKey: 'course:edit.goToBuilder',
-      path: buildPath(DASHBOARD_ROUTES.academyCourseBuilder, { academyId, courseId }),
+      path: buildPath(DASHBOARD_ROUTES.academyCourseBuilder, {
+        academyId,
+        courseId,
+      }),
       icon: Layers,
     },
     {
       id: 'course-tab-quizzes',
       labelKey: 'course:edit.goToQuizzes',
-      path: buildPath(DASHBOARD_ROUTES.academyCourseQuizzes, { academyId, courseId }),
+      path: buildPath(DASHBOARD_ROUTES.academyCourseQuizzes, {
+        academyId,
+        courseId,
+      }),
       icon: HelpCircle,
       // A quiz's own create/edit screen is a drill-down of Quizzes — still "on" this tab.
       matchNestedPaths: true,
@@ -42,13 +57,19 @@ export function getCourseEditorTabs(
     {
       id: 'course-tab-assignments',
       labelKey: 'course:edit.goToAssignments',
-      path: buildPath(DASHBOARD_ROUTES.academyCourseAssignments, { academyId, courseId }),
+      path: buildPath(DASHBOARD_ROUTES.academyCourseAssignments, {
+        academyId,
+        courseId,
+      }),
       icon: ClipboardCheck,
     },
     {
       id: 'course-tab-settings',
       labelKey: 'course:edit.goToSettings',
-      path: buildPath(DASHBOARD_ROUTES.academyCourseSettings, { academyId, courseId }),
+      path: buildPath(DASHBOARD_ROUTES.academyCourseSettings, {
+        academyId,
+        courseId,
+      }),
       icon: Settings2,
     },
   ];

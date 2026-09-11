@@ -40,7 +40,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { CANCELLATION_REASONS } from '@types';
-import type { CancellationReason, CancelSubscriptionRequestInput } from '@types';
+import type {
+  CancellationReason,
+  CancelSubscriptionRequestInput,
+} from '@types';
 
 export interface CancelSubscriptionDialogProps {
   readonly open: boolean;
@@ -113,7 +116,9 @@ export function CancelSubscriptionDialog({
               onValueChange={(value) => setReason(value as CancellationReason)}
             >
               <SelectTrigger id="cancellation-reason">
-                <SelectValue placeholder={t('tenant:cancellation.reasonPlaceholder')} />
+                <SelectValue
+                  placeholder={t('tenant:cancellation.reasonPlaceholder')}
+                />
               </SelectTrigger>
               <SelectContent>
                 {CANCELLATION_REASONS.map((value) => (

@@ -56,7 +56,8 @@ export interface UseSignInResult {
  * Wraps the authentication service sign-in method with state management.
  */
 export function useSignIn(): UseSignInResult {
-  const { signIn: establishSession, completeTwoFactor: finishTwoFactor } = useAuth();
+  const { signIn: establishSession, completeTwoFactor: finishTwoFactor } =
+    useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
 
@@ -75,11 +76,15 @@ export function useSignIn(): UseSignInResult {
         setIsLoading(false);
       }
     },
-    [establishSession],
+    [establishSession]
   );
 
   const completeTwoFactor = useCallback(
-    async (input: { challengeId: string; token?: string; recoveryCode?: string }) => {
+    async (input: {
+      challengeId: string;
+      token?: string;
+      recoveryCode?: string;
+    }) => {
       setIsLoading(true);
       setError(null);
 
@@ -93,7 +98,7 @@ export function useSignIn(): UseSignInResult {
         setIsLoading(false);
       }
     },
-    [finishTwoFactor],
+    [finishTwoFactor]
   );
 
   const clearError = useCallback(() => {

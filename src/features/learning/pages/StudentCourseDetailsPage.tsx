@@ -7,7 +7,14 @@
  */
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowRight, Award, BookOpen, CheckCircle2, LogIn, MessageSquare } from 'lucide-react';
+import {
+  ArrowRight,
+  Award,
+  BookOpen,
+  CheckCircle2,
+  LogIn,
+  MessageSquare,
+} from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
@@ -77,7 +84,10 @@ export default function StudentCourseDetailsPage(): JSX.Element {
       // a distinct, honest message rather than the generic failure text,
       // even though it's the academy's plan, not something the student
       // themselves can act on.
-      if (isApiError(caughtError) && caughtError.code === 'ENTITLEMENT_LIMIT_REACHED') {
+      if (
+        isApiError(caughtError) &&
+        caughtError.code === 'ENTITLEMENT_LIMIT_REACHED'
+      ) {
         toast({
           title: t('learning:details.enrollLimitReachedTitle'),
           description: t('learning:details.enrollLimitReachedDescription'),
@@ -96,7 +106,9 @@ export default function StudentCourseDetailsPage(): JSX.Element {
   const goToLearn = () => {
     if (!courseId) return;
     const lessonId = progress?.currentLessonId;
-    navigate(lessonId ? paths.lesson(courseId, lessonId) : paths.courseLearn(courseId));
+    navigate(
+      lessonId ? paths.lesson(courseId, lessonId) : paths.courseLearn(courseId)
+    );
   };
 
   const discussionsHref = courseId ? paths.discussions(courseId) : undefined;
@@ -238,7 +250,11 @@ export default function StudentCourseDetailsPage(): JSX.Element {
                 ) : isEnrolled ? (
                   <>
                     <Button onClick={goToLearn}>
-                      <ArrowRight className="size-4" strokeWidth={2} aria-hidden />
+                      <ArrowRight
+                        className="size-4"
+                        strokeWidth={2}
+                        aria-hidden
+                      />
                       {t('learning:details.continueLearning')}
                     </Button>
                     {discussionsHref ? (
@@ -262,7 +278,11 @@ export default function StudentCourseDetailsPage(): JSX.Element {
                       {t('learning:details.notEnrolledPrompt')}
                     </p>
                     <Button onClick={handleEnroll} disabled={isEnrolling}>
-                      <BookOpen className="size-4" strokeWidth={2} aria-hidden />
+                      <BookOpen
+                        className="size-4"
+                        strokeWidth={2}
+                        aria-hidden
+                      />
                       {isEnrolling
                         ? t('learning:details.enrolling')
                         : t('learning:details.enrollAction')}
@@ -319,7 +339,9 @@ export default function StudentCourseDetailsPage(): JSX.Element {
                 <button
                   key={quiz.id}
                   type="button"
-                  onClick={() => courseId && navigate(paths.quiz(courseId, quiz.id))}
+                  onClick={() =>
+                    courseId && navigate(paths.quiz(courseId, quiz.id))
+                  }
                   className="flex w-full items-center justify-between rounded-md border border-border p-3 text-start text-sm hover:bg-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <span className="font-medium text-foreground">
@@ -333,7 +355,8 @@ export default function StudentCourseDetailsPage(): JSX.Element {
                   key={assignment.id}
                   type="button"
                   onClick={() =>
-                    courseId && navigate(paths.assignment(courseId, assignment.id))
+                    courseId &&
+                    navigate(paths.assignment(courseId, assignment.id))
                   }
                   className="flex w-full items-center justify-between rounded-md border border-border p-3 text-start text-sm hover:bg-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >

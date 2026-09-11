@@ -146,7 +146,10 @@ export class QuizService extends BaseService {
     quizId: string,
     options?: WriteOptions
   ): Promise<void> {
-    await this.client.delete<void>(this.path(courseId, 'quizzes', quizId), options);
+    await this.client.delete<void>(
+      this.path(courseId, 'quizzes', quizId),
+      options
+    );
   }
 }
 

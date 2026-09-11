@@ -27,11 +27,19 @@ export function WebsiteBlogContentTab(): JSX.Element {
       <Card>
         <CardHeader className="flex flex-row items-center gap-3 space-y-0">
           <Newspaper className="size-5 text-muted-foreground" aria-hidden />
-          <CardTitle className="text-base">{t('website:content.blog.title')}</CardTitle>
+          <CardTitle className="text-base">
+            {t('website:content.blog.title')}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <p className="text-sm text-muted-foreground">{t('website:content.blog.description')}</p>
-          <Button type="button" variant="outline" onClick={() => navigate(DASHBOARD_ROUTES.blog)}>
+          <p className="text-sm text-muted-foreground">
+            {t('website:content.blog.description')}
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => navigate(DASHBOARD_ROUTES.blog)}
+          >
             {t('website:content.blog.manageAction')}
             <ArrowRight className="size-4 rtl:rotate-180" aria-hidden />
           </Button>
@@ -41,10 +49,14 @@ export function WebsiteBlogContentTab(): JSX.Element {
       <Card>
         <CardHeader className="flex flex-row items-center gap-3 space-y-0">
           <Megaphone className="size-5 text-muted-foreground" aria-hidden />
-          <CardTitle className="text-base">{t('website:content.announcements.title')}</CardTitle>
+          <CardTitle className="text-base">
+            {t('website:content.announcements.title')}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <p className="text-sm text-muted-foreground">{t('website:content.announcements.description')}</p>
+          <p className="text-sm text-muted-foreground">
+            {t('website:content.announcements.description')}
+          </p>
           <Button
             type="button"
             variant="outline"

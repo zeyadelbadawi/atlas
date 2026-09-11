@@ -6,8 +6,13 @@
  */
 import type { CurrentUser, EffectiveAccessSummary } from '@types';
 
-export function deriveEffectiveAccessSummary(user: CurrentUser): EffectiveAccessSummary {
-  const globalRoles = user.roles.map((role) => ({ role, scope: 'global' as const }));
+export function deriveEffectiveAccessSummary(
+  user: CurrentUser
+): EffectiveAccessSummary {
+  const globalRoles = user.roles.map((role) => ({
+    role,
+    scope: 'global' as const,
+  }));
   const globalPermissions = user.permissions.map((permission) => ({
     permission,
     scope: 'global' as const,

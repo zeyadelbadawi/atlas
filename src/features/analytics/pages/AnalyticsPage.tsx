@@ -17,14 +17,23 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatCurrency, formatNumber, formatPercentage } from '@utils';
-import { useAnalyticsOverview, useAnalyticsTimeSeries, useAnalyticsBreakdown } from '../hooks';
+import {
+  useAnalyticsOverview,
+  useAnalyticsTimeSeries,
+  useAnalyticsBreakdown,
+} from '../hooks';
 import { AnalyticsDateRangeSelect } from '../components/AnalyticsDateRangeSelect';
 import { AnalyticsLineChart } from '../components/AnalyticsLineChart';
-import { computeDateRange, type AnalyticsDateRangePreset } from '../utils/analytics-date-range.utils';
+import {
+  computeDateRange,
+  type AnalyticsDateRangePreset,
+} from '../utils/analytics-date-range.utils';
 import type { LanguageCode } from '@types';
 import type { TrendDirection } from '@components/data-display';
 
-function trendFor(changePercent: number | undefined): { direction: TrendDirection; magnitude: number } | undefined {
+function trendFor(
+  changePercent: number | undefined
+): { direction: TrendDirection; magnitude: number } | undefined {
   if (changePercent === undefined) return undefined;
   return {
     direction: changePercent > 0 ? 'up' : changePercent < 0 ? 'down' : 'flat',
@@ -46,22 +55,39 @@ export default function AnalyticsPage(): JSX.Element {
   const revenueByPlanQuery = useAnalyticsBreakdown('plan', query);
 
   const overview = overviewQuery.data;
-  const usersTrend = overview ? trendFor(overview.totalUsers.changePercent) : undefined;
-  const activeUsersTrend = overview ? trendFor(overview.activeUsers.changePercent) : undefined;
-  const engagementTrend = overview ? trendFor(overview.engagementRateChangePercent) : undefined;
-  const revenueTrend = overview ? trendFor(overview.revenue.changePercent) : undefined;
+  const usersTrend = overview
+    ? trendFor(overview.totalUsers.changePercent)
+    : undefined;
+  const activeUsersTrend = overview
+    ? trendFor(overview.activeUsers.changePercent)
+    : undefined;
+  const engagementTrend = overview
+    ? trendFor(overview.engagementRateChangePercent)
+    : undefined;
+  const revenueTrend = overview
+    ? trendFor(overview.revenue.changePercent)
+    : undefined;
 
   return (
     <PageContainer>
-      <PageHeader titleKey="analytics:title" descriptionKey="analytics:subtitle" />
+      <PageHeader
+        titleKey="analytics:title"
+        descriptionKey="analytics:subtitle"
+      />
 
       <Tabs defaultValue="overview" className="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <TabsList>
-            <TabsTrigger value="overview">{t('analytics:tabs.overview')}</TabsTrigger>
+            <TabsTrigger value="overview">
+              {t('analytics:tabs.overview')}
+            </TabsTrigger>
             <TabsTrigger value="users">{t('analytics:tabs.users')}</TabsTrigger>
-            <TabsTrigger value="engagement">{t('analytics:tabs.engagement')}</TabsTrigger>
-            <TabsTrigger value="revenue">{t('analytics:tabs.revenue')}</TabsTrigger>
+            <TabsTrigger value="engagement">
+              {t('analytics:tabs.engagement')}
+            </TabsTrigger>
+            <TabsTrigger value="revenue">
+              {t('analytics:tabs.revenue')}
+            </TabsTrigger>
           </TabsList>
           <AnalyticsDateRangeSelect value={preset} onChange={setPreset} />
         </div>
@@ -75,12 +101,20 @@ export default function AnalyticsPage(): JSX.Element {
                 labelKey="analytics:metrics.totalUsers"
                 icon={Users}
                 isLoading={overviewQuery.isLoading}
-                value={overview ? formatNumber(overview.totalUsers.value, language) : ''}
+                value={
+                  overview
+                    ? formatNumber(overview.totalUsers.value, language)
+                    : ''
+                }
                 trend={
                   usersTrend
                     ? {
                         direction: usersTrend.direction,
-                        value: formatPercentage(usersTrend.magnitude / 100, language, 0),
+                        value: formatPercentage(
+                          usersTrend.magnitude / 100,
+                          language,
+                          0
+                        ),
                         periodKey: 'analytics:dateRange.selected',
                       }
                     : undefined
@@ -90,12 +124,20 @@ export default function AnalyticsPage(): JSX.Element {
                 labelKey="analytics:metrics.activeUsers"
                 icon={Activity}
                 isLoading={overviewQuery.isLoading}
-                value={overview ? formatNumber(overview.activeUsers.value, language) : ''}
+                value={
+                  overview
+                    ? formatNumber(overview.activeUsers.value, language)
+                    : ''
+                }
                 trend={
                   activeUsersTrend
                     ? {
                         direction: activeUsersTrend.direction,
-                        value: formatPercentage(activeUsersTrend.magnitude / 100, language, 0),
+                        value: formatPercentage(
+                          activeUsersTrend.magnitude / 100,
+                          language,
+                          0
+                        ),
                         periodKey: 'analytics:dateRange.selected',
                       }
                     : undefined
@@ -105,12 +147,24 @@ export default function AnalyticsPage(): JSX.Element {
                 labelKey="analytics:metrics.engagement"
                 icon={TrendingUp}
                 isLoading={overviewQuery.isLoading}
-                value={overview ? formatPercentage(overview.engagementRatePercent / 100, language, 0) : ''}
+                value={
+                  overview
+                    ? formatPercentage(
+                        overview.engagementRatePercent / 100,
+                        language,
+                        0
+                      )
+                    : ''
+                }
                 trend={
                   engagementTrend
                     ? {
                         direction: engagementTrend.direction,
-                        value: formatPercentage(engagementTrend.magnitude / 100, language, 0),
+                        value: formatPercentage(
+                          engagementTrend.magnitude / 100,
+                          language,
+                          0
+                        ),
                         periodKey: 'analytics:dateRange.selected',
                       }
                     : undefined
@@ -120,12 +174,24 @@ export default function AnalyticsPage(): JSX.Element {
                 labelKey="analytics:metrics.revenue"
                 icon={BarChart3}
                 isLoading={overviewQuery.isLoading}
-                value={overview ? formatCurrency(overview.revenue.value, language, overview.revenueCurrency) : ''}
+                value={
+                  overview
+                    ? formatCurrency(
+                        overview.revenue.value,
+                        language,
+                        overview.revenueCurrency
+                      )
+                    : ''
+                }
                 trend={
                   revenueTrend
                     ? {
                         direction: revenueTrend.direction,
-                        value: formatPercentage(revenueTrend.magnitude / 100, language, 0),
+                        value: formatPercentage(
+                          revenueTrend.magnitude / 100,
+                          language,
+                          0
+                        ),
                         periodKey: 'analytics:dateRange.selected',
                       }
                     : undefined
@@ -225,15 +291,26 @@ export default function AnalyticsPage(): JSX.Element {
                 <Skeleton className="h-32 w-full" />
               ) : revenueByPlanQuery.error ? (
                 <ErrorState onRetry={() => revenueByPlanQuery.refetch()} />
-              ) : !revenueByPlanQuery.data || revenueByPlanQuery.data.items.length === 0 ? (
+              ) : !revenueByPlanQuery.data ||
+                revenueByPlanQuery.data.items.length === 0 ? (
                 <EmptyState titleKey="analytics:charts.empty" />
               ) : (
                 <ul className="divide-y divide-border">
                   {revenueByPlanQuery.data.items.map((item) => (
-                    <li key={item.label} className="flex items-center justify-between py-2 text-sm">
+                    <li
+                      key={item.label}
+                      className="flex items-center justify-between py-2 text-sm"
+                    >
                       <span className="text-foreground">{item.label}</span>
-                      <span className="text-muted-foreground" data-atlas-numeric="true">
-                        {formatCurrency(item.value, language, overview?.revenueCurrency ?? 'USD')}
+                      <span
+                        className="text-muted-foreground"
+                        data-atlas-numeric="true"
+                      >
+                        {formatCurrency(
+                          item.value,
+                          language,
+                          overview?.revenueCurrency ?? 'USD'
+                        )}
                       </span>
                     </li>
                   ))}

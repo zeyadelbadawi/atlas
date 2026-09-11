@@ -18,7 +18,11 @@ export function useReorderPageSections() {
 
   return useApiMutation<WebsitePage, ReorderPageSectionsVariables, ApiError>({
     mutationFn: ({ academyId, pageId, payload }) =>
-      websiteConfigurationService.reorderPageSections(academyId, pageId, payload),
+      websiteConfigurationService.reorderPageSections(
+        academyId,
+        pageId,
+        payload
+      ),
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async (_data, variables) => {

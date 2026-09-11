@@ -63,11 +63,7 @@ export type ProvisioningStepKey =
   | 'finalization';
 
 export type ProvisioningStepStatus =
-  | 'pending'
-  | 'running'
-  | 'completed'
-  | 'failed'
-  | 'skipped';
+  'pending' | 'running' | 'completed' | 'failed' | 'skipped';
 
 /**
  * A safe, user-facing error. `messageKey` is a translation key the UI can
@@ -94,11 +90,7 @@ export interface ProvisioningStep {
 
 /** Where a subdomain allocation currently stands. */
 export type SubdomainStatus =
-  | 'suggested'
-  | 'available'
-  | 'unavailable'
-  | 'reserved'
-  | 'assigned';
+  'suggested' | 'available' | 'unavailable' | 'reserved' | 'assigned';
 
 export interface SubdomainAllocation {
   readonly subdomain: string;

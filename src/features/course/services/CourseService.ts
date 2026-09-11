@@ -33,7 +33,10 @@ export class CourseService extends BaseService {
   // own sub-resources — and each method appends `:academyId/courses/...`.
   protected readonly resource = 'academies';
 
-  private coursesPath(academyId: string, ...segments: readonly string[]): string {
+  private coursesPath(
+    academyId: string,
+    ...segments: readonly string[]
+  ): string {
     return this.path(academyId, 'courses', ...segments);
   }
 
@@ -67,10 +70,7 @@ export class CourseService extends BaseService {
     courseId: string,
     options?: ReadOptions
   ): Promise<Course> {
-    return this.client.get<Course>(
-      resourcePath('courses', courseId),
-      options
-    );
+    return this.client.get<Course>(resourcePath('courses', courseId), options);
   }
 
   /** Retrieves a page of courses for an academy. */
@@ -81,7 +81,10 @@ export class CourseService extends BaseService {
   ): Promise<PaginatedResult<Course>> {
     return this.client.get<PaginatedResult<Course>>(
       this.coursesPath(academyId),
-      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
+      {
+        ...options,
+        params: { ...toCollectionParams(query), ...options?.params },
+      }
     );
   }
 

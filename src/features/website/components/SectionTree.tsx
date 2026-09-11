@@ -30,7 +30,11 @@ import {
 import { EmptyState } from '@components/feedback';
 import { SECTION_METADATA, listSectionMetadata } from '../sections';
 import { SECTION_TYPE_ORDER } from '../constants/website.constants';
-import type { ResponsiveVisibility, SectionInstance, SectionType } from '@types';
+import type {
+  ResponsiveVisibility,
+  SectionInstance,
+  SectionType,
+} from '@types';
 
 export interface SectionTreeProps {
   readonly sections: readonly SectionInstance[];
@@ -38,7 +42,10 @@ export interface SectionTreeProps {
   readonly canManage: boolean;
   readonly onSelect: (id: string) => void;
   readonly onToggleEnabled: (id: string) => void;
-  readonly onToggleVisibility: (id: string, breakpoint: keyof ResponsiveVisibility) => void;
+  readonly onToggleVisibility: (
+    id: string,
+    breakpoint: keyof ResponsiveVisibility
+  ) => void;
   readonly onMove: (index: number, direction: -1 | 1) => void;
   readonly onDuplicate: (id: string) => void;
   readonly onDelete: (id: string) => void;
@@ -86,7 +93,10 @@ export function SectionTree({
                 }
               >
                 <div className="flex items-center gap-2">
-                  <Icon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+                  <Icon
+                    className="size-4 shrink-0 text-muted-foreground"
+                    aria-hidden
+                  />
                   <button
                     type="button"
                     className="flex-1 text-start text-sm font-medium text-foreground"
@@ -104,7 +114,11 @@ export function SectionTree({
 
                 {canManage ? (
                   <div className="mt-2 flex flex-wrap items-center gap-1">
-                    {(Object.keys(VISIBILITY_ICONS) as (keyof ResponsiveVisibility)[]).map((bp) => {
+                    {(
+                      Object.keys(
+                        VISIBILITY_ICONS
+                      ) as (keyof ResponsiveVisibility)[]
+                    ).map((bp) => {
                       const BpIcon = VISIBILITY_ICONS[bp];
                       const isVisible = instance.visibility[bp];
                       return (
@@ -192,7 +206,10 @@ export function SectionTree({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-64">
             {listSectionMetadata(SECTION_TYPE_ORDER).map((entry) => (
-              <DropdownMenuItem key={entry.type} onClick={() => onAdd(entry.type)}>
+              <DropdownMenuItem
+                key={entry.type}
+                onClick={() => onAdd(entry.type)}
+              >
                 <entry.icon className="size-4" aria-hidden />
                 {t(entry.labelKey)}
               </DropdownMenuItem>

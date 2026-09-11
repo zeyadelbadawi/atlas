@@ -16,8 +16,13 @@ export interface PostSupportCaseReplyVariables {
 }
 
 export function usePostSupportCaseReply() {
-  return useApiMutation<SupportCaseDetail, PostSupportCaseReplyVariables, ApiError>({
-    mutationFn: ({ caseId, payload }) => supportService.postReply(caseId, payload),
+  return useApiMutation<
+    SupportCaseDetail,
+    PostSupportCaseReplyVariables,
+    ApiError
+  >({
+    mutationFn: ({ caseId, payload }) =>
+      supportService.postReply(caseId, payload),
     showSuccessToast: false,
     invalidateKeys: [supportKeys.all],
   });

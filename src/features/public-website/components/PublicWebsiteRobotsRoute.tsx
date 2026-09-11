@@ -21,7 +21,9 @@ export interface PublicWebsiteRobotsRouteProps {
   readonly lookupKey: string;
 }
 
-export function PublicWebsiteRobotsRoute({ lookupKey }: PublicWebsiteRobotsRouteProps): JSX.Element {
+export function PublicWebsiteRobotsRoute({
+  lookupKey,
+}: PublicWebsiteRobotsRouteProps): JSX.Element {
   const data = usePublicWebsiteData(lookupKey);
 
   if (data.status !== 'ready') {
@@ -31,7 +33,9 @@ export function PublicWebsiteRobotsRoute({ lookupKey }: PublicWebsiteRobotsRoute
   const { configuration } = data;
   const indexable = configuration.seo.robotsIndexable ?? true;
   const sitemapUrl =
-    configuration.seo.sitemapEnabled !== false ? `${window.location.origin}/sitemap.xml` : undefined;
+    configuration.seo.sitemapEnabled !== false
+      ? `${window.location.origin}/sitemap.xml`
+      : undefined;
 
   return (
     <pre className="min-h-screen whitespace-pre-wrap bg-background p-6 font-mono text-sm text-foreground">

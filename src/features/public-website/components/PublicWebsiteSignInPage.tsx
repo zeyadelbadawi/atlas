@@ -47,11 +47,20 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle2 } from 'lucide-react';
 import { useAuth, useSignIn, useSignOut } from '@hooks';
-import { WebsiteChrome, WebsiteBrandBridge, resolvePagePath, resolveLocalizedText, usePublicWebsiteDocumentDirection } from '@features/website';
+import {
+  WebsiteChrome,
+  WebsiteBrandBridge,
+  resolvePagePath,
+  resolveLocalizedText,
+  usePublicWebsiteDocumentDirection,
+} from '@features/website';
 import { SignInForm } from '@features/auth';
 import { usePublicWebsiteData } from '../hooks/usePublicWebsiteData';
 import { PublicWebsiteStatus } from './PublicWebsiteStatus';
-import { usePublicWebsiteLinkRenderer, usePublicWebsiteHrefBuilder } from '../utils/public-website-link-renderer';
+import {
+  usePublicWebsiteLinkRenderer,
+  usePublicWebsiteHrefBuilder,
+} from '../utils/public-website-link-renderer';
 import { DEV_OVERRIDE_PARAM } from '../utils/hostname-resolution.utils';
 import type { PublicWebsiteLocale } from '@types';
 
@@ -60,7 +69,10 @@ export interface PublicWebsiteSignInPageProps {
   readonly locale: PublicWebsiteLocale;
 }
 
-export function PublicWebsiteSignInPage({ lookupKey, locale }: PublicWebsiteSignInPageProps): JSX.Element {
+export function PublicWebsiteSignInPage({
+  lookupKey,
+  locale,
+}: PublicWebsiteSignInPageProps): JSX.Element {
   const { t } = useTranslation();
   usePublicWebsiteDocumentDirection(locale);
   const data = usePublicWebsiteData(lookupKey);
@@ -81,7 +93,11 @@ export function PublicWebsiteSignInPage({ lookupKey, locale }: PublicWebsiteSign
   const returnTo = searchParams.get('returnTo');
 
   useEffect(() => {
-    if (session.status === 'authenticated' && returnTo && returnTo.startsWith('/')) {
+    if (
+      session.status === 'authenticated' &&
+      returnTo &&
+      returnTo.startsWith('/')
+    ) {
       navigate(buildHref(returnTo), { replace: true });
     }
   }, [session.status, returnTo, navigate, buildHref]);
@@ -102,7 +118,11 @@ export function PublicWebsiteSignInPage({ lookupKey, locale }: PublicWebsiteSign
 
   const { academy, configuration, pages } = data;
 
-  const handleSubmit = async (email: string, password: string, rememberMe: boolean) => {
+  const handleSubmit = async (
+    email: string,
+    password: string,
+    rememberMe: boolean
+  ) => {
     try {
       await signIn({ email, password, rememberMe });
     } catch {
@@ -117,11 +137,16 @@ export function PublicWebsiteSignInPage({ lookupKey, locale }: PublicWebsiteSign
   };
 
   const title =
-    resolveLocalizedText(configuration.header.authPages?.signIn?.title, locale) ||
+    resolveLocalizedText(
+      configuration.header.authPages?.signIn?.title,
+      locale
+    ) ||
     t('publicWebsite:auth.signIn.title', { academyName: academy.academyName });
   const subtitle =
-    resolveLocalizedText(configuration.header.authPages?.signIn?.subtitle, locale) ||
-    t('publicWebsite:auth.signIn.subtitle');
+    resolveLocalizedText(
+      configuration.header.authPages?.signIn?.subtitle,
+      locale
+    ) || t('publicWebsite:auth.signIn.subtitle');
 
   return (
     <WebsiteChrome
@@ -136,36 +161,52 @@ export function PublicWebsiteSignInPage({ lookupKey, locale }: PublicWebsiteSign
         const base = `${target === 'en' ? '' : '/ar'}/sign-in`;
         const devSlug = searchParams.get(DEV_OVERRIDE_PARAM);
         window.location.assign(
-          devSlug ? `${base}?${DEV_OVERRIDE_PARAM}=${encodeURIComponent(devSlug)}` : base
+          devSlug
+            ? `${base}?${DEV_OVERRIDE_PARAM}=${encodeURIComponent(devSlug)}`
+            : base
         );
       }}
       authState={authState}
     >
       <div className="mx-auto flex min-h-[60vh] w-full max-w-md flex-col justify-center px-4 py-16">
         <div className="mb-8 text-center">
-          <h1 className="font-display text-2xl font-bold text-foreground">{title}</h1>
+          <h1 className="font-display text-2xl font-bold text-foreground">
+            {title}
+          </h1>
           <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>
         </div>
 
         {session.status === 'authenticated' ? (
           <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card p-6 text-center">
-            <CheckCircle2 className="size-8 text-[var(--website-primary-solid)]" aria-hidden />
+            <CheckCircle2
+              className="size-8 text-[var(--website-primary-solid)]"
+              aria-hidden
+            />
             <p className="font-medium text-foreground">
-              {t('publicWebsite:auth.signIn.success', { name: session.user?.name ?? '' })}
+              {t('publicWebsite:auth.signIn.success', {
+                name: session.user?.name ?? '',
+              })}
             </p>
           </div>
         ) : (
           <WebsiteBrandBridge>
-            <SignInForm onSubmit={handleSubmit} isLoading={isLoading} error={error} />
+            <SignInForm
+              onSubmit={handleSubmit}
+              isLoading={isLoading}
+              error={error}
+            />
           </WebsiteBrandBridge>
         )}
 
         <div className="mt-6 text-center text-sm">
-          <span className="text-muted-foreground">{t('publicWebsite:auth.signIn.noAccount')} </span>
+          <span className="text-muted-foreground">
+            {t('publicWebsite:auth.signIn.noAccount')}{' '}
+          </span>
           {linkRenderer({
             href: '/sign-up',
             external: false,
-            className: 'font-medium text-[var(--website-primary-solid)] hover:underline',
+            className:
+              'font-medium text-[var(--website-primary-solid)] hover:underline',
             children: t('publicWebsite:auth.signIn.signUp'),
           })}
         </div>

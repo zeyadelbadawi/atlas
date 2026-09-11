@@ -6,7 +6,11 @@
  * status consistently instead of each hand-rolling its own badge variant.
  */
 import type { StatusTone } from '@components/data-display';
-import type { AcademyStatus, AcademyMemberRole, AcademyMemberStatus } from '@types';
+import type {
+  AcademyStatus,
+  AcademyMemberRole,
+  AcademyMemberStatus,
+} from '@types';
 
 /**
  * Maps an academy's lifecycle status to its translation key.

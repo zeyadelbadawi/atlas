@@ -45,7 +45,10 @@ import {
   useUpdateWebsiteFaqEntry,
   useWebsiteFaqEntries,
 } from '../hooks';
-import { faqEntrySchema, type FaqEntryFormData } from '../schemas/website-content.schemas';
+import {
+  faqEntrySchema,
+  type FaqEntryFormData,
+} from '../schemas/website-content.schemas';
 import { CONTENT_LIST_PAGE_SIZE } from '../constants/website.constants';
 import type { WebsiteContentStatus, WebsiteFaqEntry } from '@types';
 
@@ -86,7 +89,10 @@ function FaqEntryDialog({
       form.reset();
     };
     if (entry) {
-      updateEntry.mutate({ academyId, entryId: entry.id, payload: data }, { onSuccess });
+      updateEntry.mutate(
+        { academyId, entryId: entry.id, payload: data },
+        { onSuccess }
+      );
     } else {
       createEntry.mutate({ academyId, payload: data }, { onSuccess });
     }
@@ -97,7 +103,11 @@ function FaqEntryDialog({
       <DialogContent className="max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {t(entry ? 'website:content.faq.editTitle' : 'website:content.faq.createTitle')}
+            {t(
+              entry
+                ? 'website:content.faq.editTitle'
+                : 'website:content.faq.createTitle'
+            )}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -163,7 +173,9 @@ function FaqEntryDialog({
             ) : null}
             <DialogFooter>
               <Button type="submit" disabled={isPending}>
-                {isPending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
+                {isPending ? (
+                  <Loader2 className="size-4 animate-spin" aria-hidden />
+                ) : null}
                 {t('website:common.saveChanges')}
               </Button>
             </DialogFooter>
@@ -174,7 +186,11 @@ function FaqEntryDialog({
   );
 }
 
-export function WebsiteFaqContentTab({ academyId }: { readonly academyId: string }): JSX.Element {
+export function WebsiteFaqContentTab({
+  academyId,
+}: {
+  readonly academyId: string;
+}): JSX.Element {
   const { t, i18n } = useTranslation();
   const { confirm } = useConfirmDialog();
   const { hasPermission } = usePermissions();
@@ -210,12 +226,24 @@ export function WebsiteFaqContentTab({ academyId }: { readonly academyId: string
     if (targetIndex < 0 || targetIndex >= entries.length) return;
     const current = entries[index];
     const target = entries[targetIndex];
-    updateEntry.mutate({ academyId, entryId: current.id, payload: { order: target.order } });
-    updateEntry.mutate({ academyId, entryId: target.id, payload: { order: current.order } });
+    updateEntry.mutate({
+      academyId,
+      entryId: current.id,
+      payload: { order: target.order },
+    });
+    updateEntry.mutate({
+      academyId,
+      entryId: target.id,
+      payload: { order: current.order },
+    });
   };
 
   const toggleVisible = (entry: WebsiteFaqEntry) => {
-    updateEntry.mutate({ academyId, entryId: entry.id, payload: { visible: !entry.visible } });
+    updateEntry.mutate({
+      academyId,
+      entryId: entry.id,
+      payload: { visible: !entry.visible },
+    });
   };
 
   const handleArchive = async (entry: WebsiteFaqEntry) => {
@@ -246,7 +274,10 @@ export function WebsiteFaqContentTab({ academyId }: { readonly academyId: string
         <Card>
           <CardContent className="divide-y divide-border p-0">
             {entries.map((entry, index) => (
-              <div key={entry.id} className="flex items-center justify-between gap-3 p-4">
+              <div
+                key={entry.id}
+                className="flex items-center justify-between gap-3 p-4"
+              >
                 <button
                   type="button"
                   className="flex-1 text-start disabled:cursor-default"
@@ -289,12 +320,16 @@ export function WebsiteFaqContentTab({ academyId }: { readonly academyId: string
                   onCheckedChange={() => toggleVisible(entry)}
                   aria-label={t('website:pages.visibilityToggle')}
                 />
-                {canPublish && entry.status !== 'published' && entry.status !== 'archived' ? (
+                {canPublish &&
+                entry.status !== 'published' &&
+                entry.status !== 'archived' ? (
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => publishEntry.mutate({ academyId, entryId: entry.id })}
+                    onClick={() =>
+                      publishEntry.mutate({ academyId, entryId: entry.id })
+                    }
                   >
                     <Send className="size-3.5" aria-hidden />
                     {t('website:content.publishAction')}

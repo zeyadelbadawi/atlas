@@ -4,7 +4,11 @@
 import { useApiQuery } from '@/shared/hooks';
 import { platformUserKeys } from '@services/query';
 import { platformUserService } from '../services/PlatformUserService';
-import type { CollectionQuery, PaginatedResult, PlatformUserSummary } from '@types';
+import type {
+  CollectionQuery,
+  PaginatedResult,
+  PlatformUserSummary,
+} from '@types';
 import type { ApiError } from '@api';
 
 export interface UsePlatformUsersOptions {

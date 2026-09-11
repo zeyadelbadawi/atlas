@@ -19,7 +19,12 @@ export function useUpdateCourseSection(academyId: string, courseId: string) {
 
   return useApiMutation<CourseSection, UpdateCourseSectionVariables, ApiError>({
     mutationFn: ({ sectionId, payload }) =>
-      courseService.updateCourseSection(academyId, courseId, sectionId, payload),
+      courseService.updateCourseSection(
+        academyId,
+        courseId,
+        sectionId,
+        payload
+      ),
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async () => {

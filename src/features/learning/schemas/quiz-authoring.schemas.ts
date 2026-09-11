@@ -24,8 +24,13 @@ import {
 /** Turns a blank/undefined numeric field into `undefined` instead of letting `z.coerce.number()` read `''` as `0`. */
 function optionalNumber(min: number, max: number) {
   return z.preprocess(
-    (value) => (value === '' || value === undefined || value === null ? undefined : value),
-    z.coerce.number().min(min, 'validation:min').max(max, 'validation:max').optional()
+    (value) =>
+      value === '' || value === undefined || value === null ? undefined : value,
+    z.coerce
+      .number()
+      .min(min, 'validation:min')
+      .max(max, 'validation:max')
+      .optional()
   );
 }
 
@@ -49,7 +54,9 @@ const quizQuestionSchema = z
       .max(MAX_QUIZ_OPTIONS_PER_QUESTION, 'validation:max'),
   })
   .superRefine((question, ctx) => {
-    const correctCount = question.options.filter((option) => option.isCorrect).length;
+    const correctCount = question.options.filter(
+      (option) => option.isCorrect
+    ).length;
 
     if (question.type === 'true_false') {
       if (question.options.length !== 2) {

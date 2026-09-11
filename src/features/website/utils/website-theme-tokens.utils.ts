@@ -33,30 +33,44 @@ export const WEBSITE_SHADOW_VALUES: Record<WebsiteShadowScale, string> = {
 };
 
 /** Vertical padding a section gets, per spacing scale. */
-export const WEBSITE_SECTION_PADDING_VALUES: Record<WebsiteSpacingScale, string> = {
+export const WEBSITE_SECTION_PADDING_VALUES: Record<
+  WebsiteSpacingScale,
+  string
+> = {
   compact: '2.5rem',
   comfortable: '4rem',
   spacious: '6rem',
 };
 
-export const WEBSITE_CONTAINER_WIDTH_VALUES: Record<WebsiteContainerWidth, string> = {
+export const WEBSITE_CONTAINER_WIDTH_VALUES: Record<
+  WebsiteContainerWidth,
+  string
+> = {
   narrow: '48rem',
   standard: '72rem',
   wide: '90rem',
 };
 
-export const WEBSITE_HEADING_WEIGHT_CLASSES: Record<WebsiteHeadingWeight, string> = {
+export const WEBSITE_HEADING_WEIGHT_CLASSES: Record<
+  WebsiteHeadingWeight,
+  string
+> = {
   semibold: 'font-semibold',
   bold: 'font-bold',
   black: 'font-black',
 };
 
-export const WEBSITE_HEADING_TRACKING_CLASSES: Record<WebsiteHeadingTracking, string> = {
+export const WEBSITE_HEADING_TRACKING_CLASSES: Record<
+  WebsiteHeadingTracking,
+  string
+> = {
   tight: 'tracking-tight',
   normal: 'tracking-normal',
   wide: 'tracking-wide',
 };
 
-export function websiteHeadingCaseClass(headingCase: WebsiteHeadingCase): string {
+export function websiteHeadingCaseClass(
+  headingCase: WebsiteHeadingCase
+): string {
   return headingCase === 'uppercase' ? 'uppercase' : '';
 }

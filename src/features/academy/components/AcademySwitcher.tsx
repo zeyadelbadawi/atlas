@@ -3,10 +3,10 @@
  *
  * Allows users to switch between multiple academies.
  */
-import { Check, ChevronsUpDown } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Check, ChevronsUpDown } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -14,16 +14,16 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
+} from '@/components/ui/command';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { usePlatform } from "@hooks";
-import { cn } from "@utils";
-import type { Academy } from "@types";
-import { useState } from "react";
+} from '@/components/ui/popover';
+import { usePlatform } from '@hooks';
+import { cn } from '@utils';
+import type { Academy } from '@types';
+import { useState } from 'react';
 
 export interface AcademySwitcherProps {
   readonly academies: readonly Academy[];
@@ -42,7 +42,7 @@ export function AcademySwitcher({
 
   const handleSelect = (academyId: string) => {
     const newParams = new URLSearchParams(searchParams);
-    newParams.set("academyId", academyId);
+    newParams.set('academyId', academyId);
     navigate(`?${newParams.toString()}`, { replace: true });
     setActiveAcademy(academyId);
     setOpen(false);
@@ -64,11 +64,11 @@ export function AcademySwitcher({
       <PopoverContent className="w-[200px] p-0">
         <Command>
           <CommandInput
-            placeholder={t("academy:switcher.selectAcademy")}
+            placeholder={t('academy:switcher.selectAcademy')}
             className="h-9"
           />
           <CommandList>
-            <CommandEmpty>{t("academy:switcher.noAcademies")}</CommandEmpty>
+            <CommandEmpty>{t('academy:switcher.noAcademies')}</CommandEmpty>
             <CommandGroup>
               {academies.map((academy) => (
                 <CommandItem
@@ -79,10 +79,10 @@ export function AcademySwitcher({
                   <span className="truncate">{academy.name}</span>
                   <Check
                     className={cn(
-                      "ml-auto h-4 w-4",
+                      'ml-auto h-4 w-4',
                       currentAcademy.id === academy.id
-                        ? "opacity-100"
-                        : "opacity-0",
+                        ? 'opacity-100'
+                        : 'opacity-0'
                     )}
                   />
                 </CommandItem>

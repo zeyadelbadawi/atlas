@@ -36,7 +36,10 @@ export class NotificationService extends BaseService {
     return this.client.get<NotificationSummary>(this.path('summary'), options);
   }
 
-  async markAsRead(notificationId: string, options?: WriteOptions): Promise<Notification> {
+  async markAsRead(
+    notificationId: string,
+    options?: WriteOptions
+  ): Promise<Notification> {
     return this.client.patch<Notification, Record<string, never>>(
       this.path(notificationId, 'read'),
       {},
@@ -45,11 +48,20 @@ export class NotificationService extends BaseService {
   }
 
   async markAllAsRead(options?: WriteOptions): Promise<void> {
-    await this.client.post<void, Record<string, never>>(this.path('read-all'), {}, options);
+    await this.client.post<void, Record<string, never>>(
+      this.path('read-all'),
+      {},
+      options
+    );
   }
 
-  async getPreferences(options?: ReadOptions): Promise<NotificationPreferences> {
-    return this.client.get<NotificationPreferences>(this.path('preferences'), options);
+  async getPreferences(
+    options?: ReadOptions
+  ): Promise<NotificationPreferences> {
+    return this.client.get<NotificationPreferences>(
+      this.path('preferences'),
+      options
+    );
   }
 
   async updatePreferences(

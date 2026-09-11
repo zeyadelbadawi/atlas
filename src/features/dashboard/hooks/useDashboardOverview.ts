@@ -16,7 +16,12 @@ export const dashboardKeys = {
   all: ['dashboard'] as const,
   overview: (scope: DashboardScopeSelection) =>
     scope.kind === 'organization'
-      ? (['dashboard', 'overview', 'organization', scope.organizationId] as const)
+      ? ([
+          'dashboard',
+          'overview',
+          'organization',
+          scope.organizationId,
+        ] as const)
       : scope.kind === 'academy'
         ? (['dashboard', 'overview', 'academy', scope.academyId] as const)
         : (['dashboard', 'overview', 'none'] as const),

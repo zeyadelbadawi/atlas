@@ -93,7 +93,9 @@ export function getUsageMetricStatus(
  * A safe 0–100 usage percentage, or `null` when a percentage wouldn't be
  * meaningful (unlimited, unknown, or a zero/undefined limit).
  */
-export function getUsagePercentage(metric: UsageMetric | undefined): number | null {
+export function getUsagePercentage(
+  metric: UsageMetric | undefined
+): number | null {
   if (!metric) return null;
   if (metric.limit === 'unlimited') return null;
   if (metric.limit <= 0) return null;
@@ -120,7 +122,10 @@ export function formatLimitValue(
  * `trialEndsAt`/`graceEndsAt`, never re-derives it from `DEFAULT_TRIAL_POLICY`'s
  * duration (that constant is display/config only).
  */
-export function getDaysRemaining(untilIso: string, now: Date = new Date()): number {
+export function getDaysRemaining(
+  untilIso: string,
+  now: Date = new Date()
+): number {
   const until = new Date(untilIso).getTime();
   const diffMs = until - now.getTime();
   return Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));

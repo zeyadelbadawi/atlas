@@ -21,7 +21,9 @@ import { formatCurrency, formatNumber, formatPercentage } from '@utils';
 import type { LanguageCode } from '@types';
 import type { TrendDirection } from '@components/data-display';
 
-function trendFor(changePercent: number | undefined): { direction: TrendDirection; magnitude: number } | undefined {
+function trendFor(
+  changePercent: number | undefined
+): { direction: TrendDirection; magnitude: number } | undefined {
   if (changePercent === undefined) return undefined;
   return {
     direction: changePercent > 0 ? 'up' : changePercent < 0 ? 'down' : 'flat',
@@ -52,7 +54,10 @@ export default function PlatformDashboardPage(): JSX.Element {
   if (error || !metrics) {
     return (
       <PageContainer>
-        <PageHeader titleKey="platform:dashboard.title" descriptionKey="platform:dashboard.description" />
+        <PageHeader
+          titleKey="platform:dashboard.title"
+          descriptionKey="platform:dashboard.description"
+        />
         <ErrorState onRetry={() => refetch()} />
       </PageContainer>
     );
@@ -80,7 +85,11 @@ export default function PlatformDashboardPage(): JSX.Element {
               academiesTrend
                 ? {
                     direction: academiesTrend.direction,
-                    value: formatPercentage(academiesTrend.magnitude / 100, language, 0),
+                    value: formatPercentage(
+                      academiesTrend.magnitude / 100,
+                      language,
+                      0
+                    ),
                     periodKey: 'platform:metrics.vsLastMonth',
                   }
                 : undefined
@@ -94,7 +103,11 @@ export default function PlatformDashboardPage(): JSX.Element {
               usersTrend
                 ? {
                     direction: usersTrend.direction,
-                    value: formatPercentage(usersTrend.magnitude / 100, language, 0),
+                    value: formatPercentage(
+                      usersTrend.magnitude / 100,
+                      language,
+                      0
+                    ),
                     periodKey: 'platform:metrics.vsLastMonth',
                   }
                 : undefined
@@ -108,7 +121,11 @@ export default function PlatformDashboardPage(): JSX.Element {
               coursesTrend
                 ? {
                     direction: coursesTrend.direction,
-                    value: formatPercentage(coursesTrend.magnitude / 100, language, 0),
+                    value: formatPercentage(
+                      coursesTrend.magnitude / 100,
+                      language,
+                      0
+                    ),
                     periodKey: 'platform:metrics.vsLastMonth',
                   }
                 : undefined
@@ -117,12 +134,20 @@ export default function PlatformDashboardPage(): JSX.Element {
           <MetricCard
             labelKey="platform:metrics.revenue"
             icon={TrendingUp}
-            value={formatCurrency(metrics.revenue.amount, language, metrics.revenue.currency)}
+            value={formatCurrency(
+              metrics.revenue.amount,
+              language,
+              metrics.revenue.currency
+            )}
             trend={
               revenueTrend
                 ? {
                     direction: revenueTrend.direction,
-                    value: formatPercentage(revenueTrend.magnitude / 100, language, 0),
+                    value: formatPercentage(
+                      revenueTrend.magnitude / 100,
+                      language,
+                      0
+                    ),
                     periodKey: 'platform:metrics.vsLastMonth',
                   }
                 : undefined

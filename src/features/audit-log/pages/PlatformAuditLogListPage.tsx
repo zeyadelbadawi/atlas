@@ -21,7 +21,11 @@ import type { AuditLogEntrySummary } from '@types';
 export default function PlatformAuditLogListPage(): JSX.Element {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { query: searchQuery, setQuery: setSearchQuery, debouncedQuery } = useSearch({
+  const {
+    query: searchQuery,
+    setQuery: setSearchQuery,
+    debouncedQuery,
+  } = useSearch({
     debounceMs: 300,
   });
 
@@ -61,12 +65,16 @@ export default function PlatformAuditLogListPage(): JSX.Element {
       {
         accessorKey: 'actor',
         header: t('auditLog:table.actor'),
-        cell: ({ row }) => <span className="font-medium">{row.original.actor.name}</span>,
+        cell: ({ row }) => (
+          <span className="font-medium">{row.original.actor.name}</span>
+        ),
       },
       {
         accessorKey: 'action',
         header: t('auditLog:table.action'),
-        cell: ({ row }) => <code className="font-mono text-xs">{row.original.action}</code>,
+        cell: ({ row }) => (
+          <code className="font-mono text-xs">{row.original.action}</code>
+        ),
       },
       {
         accessorKey: 'targetLabel',
@@ -81,7 +89,9 @@ export default function PlatformAuditLogListPage(): JSX.Element {
         accessorKey: 'organizationName',
         header: t('auditLog:table.organization'),
         cell: ({ row }) => (
-          <span className="text-muted-foreground">{row.original.organizationName ?? '—'}</span>
+          <span className="text-muted-foreground">
+            {row.original.organizationName ?? '—'}
+          </span>
         ),
       },
     ],
@@ -90,7 +100,10 @@ export default function PlatformAuditLogListPage(): JSX.Element {
 
   return (
     <PageContainer>
-      <PageHeader titleKey="auditLog:title" descriptionKey="auditLog:subtitle" />
+      <PageHeader
+        titleKey="auditLog:title"
+        descriptionKey="auditLog:subtitle"
+      />
 
       <div className="space-y-4">
         <Input
@@ -117,7 +130,11 @@ export default function PlatformAuditLogListPage(): JSX.Element {
                 emptyDescriptionKey="auditLog:emptyStateDescription"
                 getRowId={(entry) => entry.id}
                 onRowSelect={(entry) =>
-                  navigate(buildPath(DASHBOARD_ROUTES.platformAuditLogDetail, { eventId: entry.id }))
+                  navigate(
+                    buildPath(DASHBOARD_ROUTES.platformAuditLogDetail, {
+                      eventId: entry.id,
+                    })
+                  )
                 }
               />
             )}

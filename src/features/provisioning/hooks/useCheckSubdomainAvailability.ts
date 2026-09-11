@@ -17,7 +17,8 @@ export function useCheckSubdomainAvailability(subdomain: string) {
 
   return useApiQuery<SubdomainAllocation, ApiError>({
     queryKey: subdomainKeys.availability(debouncedSubdomain),
-    queryFn: () => provisioningService.checkSubdomainAvailability(debouncedSubdomain),
+    queryFn: () =>
+      provisioningService.checkSubdomainAvailability(debouncedSubdomain),
     enabled: isWellFormed,
   });
 }

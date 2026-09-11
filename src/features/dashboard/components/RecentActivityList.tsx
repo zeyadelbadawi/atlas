@@ -11,10 +11,10 @@
  * than leaking the dotted string — new audited actions can ship from the
  * backend before their copy lands without the UI showing internals.
  */
-import { useTranslation } from "react-i18next";
-import { History } from "lucide-react";
-import { EmptyState } from "@components/feedback";
-import type { DashboardActivityItem } from "@types";
+import { useTranslation } from 'react-i18next';
+import { History } from 'lucide-react';
+import { EmptyState } from '@components/feedback';
+import type { DashboardActivityItem } from '@types';
 
 export interface RecentActivityListProps {
   readonly items: readonly DashboardActivityItem[];
@@ -47,9 +47,9 @@ export function RecentActivityList({
               {hasCopy
                 ? t(actionKey, {
                     actor: item.actorName,
-                    target: item.targetLabel ?? "",
+                    target: item.targetLabel ?? '',
                   })
-                : t("dashboard:activity.actions.generic", {
+                : t('dashboard:activity.actions.generic', {
                     actor: item.actorName,
                   })}
             </span>

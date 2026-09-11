@@ -58,10 +58,7 @@ export class PlanService extends BaseService {
 
   /** Retrieves every add-on in the catalog. */
   async getAddOns(options?: ReadOptions): Promise<readonly AddOn[]> {
-    return this.client.get<readonly AddOn[]>(
-      resourcePath('add-ons'),
-      options
-    );
+    return this.client.get<readonly AddOn[]>(resourcePath('add-ons'), options);
   }
 
   /** Retrieves a single add-on by its stable key. */

@@ -47,7 +47,11 @@ export class BlogService extends BaseService {
     payload: UpdateBlogPostPayload,
     options?: WriteOptions
   ): Promise<BlogPost> {
-    return this.updateOne<BlogPost, UpdateBlogPostPayload>(id, payload, options);
+    return this.updateOne<BlogPost, UpdateBlogPostPayload>(
+      id,
+      payload,
+      options
+    );
   }
 
   /** Publishes a post the current user owns. */

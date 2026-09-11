@@ -44,6 +44,7 @@ import { useUnsavedChanges } from '@hooks';
 import { useServerValidation } from '@forms';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useAcademy, useUpdateAcademy } from '../hooks';
+import { DeleteAcademyCard } from '../components/DeleteAcademyCard';
 import { getAcademyAdminTabs } from '../utils/academy-navigation.utils';
 import {
   updateAcademySettingsSchema,
@@ -178,10 +179,16 @@ export default function AcademySettingsPage(): JSX.Element {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <SlidersHorizontal className="size-4 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+                <SlidersHorizontal
+                  className="size-4 text-muted-foreground"
+                  strokeWidth={1.75}
+                  aria-hidden
+                />
                 {t('academy:settings.general')}
               </CardTitle>
-              <CardDescription>{t('academy:settings.generalDescription')}</CardDescription>
+              <CardDescription>
+                {t('academy:settings.generalDescription')}
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
@@ -269,10 +276,16 @@ export default function AcademySettingsPage(): JSX.Element {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Globe2 className="size-4 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+                <Globe2
+                  className="size-4 text-muted-foreground"
+                  strokeWidth={1.75}
+                  aria-hidden
+                />
                 {t('academy:settings.localization')}
               </CardTitle>
-              <CardDescription>{t('academy:settings.localizationDescription')}</CardDescription>
+              <CardDescription>
+                {t('academy:settings.localizationDescription')}
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-3">
@@ -370,10 +383,16 @@ export default function AcademySettingsPage(): JSX.Element {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Mail className="size-4 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+                <Mail
+                  className="size-4 text-muted-foreground"
+                  strokeWidth={1.75}
+                  aria-hidden
+                />
                 {t('academy:settings.contact')}
               </CardTitle>
-              <CardDescription>{t('academy:settings.contactDescription')}</CardDescription>
+              <CardDescription>
+                {t('academy:settings.contactDescription')}
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
@@ -452,6 +471,15 @@ export default function AcademySettingsPage(): JSX.Element {
           </div>
         </form>
       </Form>
+
+      {/*
+        Outside the form, and last on the page: deleting is not a setting
+        being saved, and a destructive action belongs after everything it
+        would destroy rather than beside the Save button.
+      */}
+      <div className="mt-8">
+        <DeleteAcademyCard academy={academy} />
+      </div>
     </PageContainer>
   );
 }

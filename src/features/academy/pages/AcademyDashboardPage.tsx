@@ -136,11 +136,16 @@ export default function AcademyDashboardPage(): JSX.Element {
           titleKey="academy:empty.noAcademies"
           descriptionKey="academy:empty.noAcademiesDescription"
           icon={Building2}
+          // Phase 10.6 — the CTA hands off to Academy Provisioning, which
+          // is now the only path that creates an Academy. This page no
+          // longer creates one itself: the direct route it used to post to
+          // skipped subdomain allocation, which is what left five of six
+          // production academy websites unreachable.
           primaryAction={
             canCreateAcademy
               ? {
                   labelKey: 'academy:empty.createFirstAcademy',
-                  onAction: () => navigate(DASHBOARD_ROUTES.academyCreate),
+                  onAction: () => navigate(DASHBOARD_ROUTES.provisioningNew),
                   icon: Plus,
                 }
               : undefined
@@ -171,21 +176,18 @@ export default function AcademyDashboardPage(): JSX.Element {
       <PageHeader
         titleKey="academy:dashboard.title"
         descriptionKey="academy:dashboard.subtitle"
+        // Phase 10.6 — NO creation action here. Once an Academy exists
+        // this page is an overview, and the single way to create another
+        // is Academy Provisioning. A second entry point is exactly what
+        // the two-creation-path defect was, so it is not re-introduced in
+        // a different shape.
         actions={
-          <div className="flex items-center gap-2">
-            {academies.length > 1 && (
-              <AcademySwitcher
-                academies={academies}
-                currentAcademy={currentAcademy}
-              />
-            )}
-            {canCreateAcademy && (
-              <Button onClick={() => navigate(DASHBOARD_ROUTES.academyCreate)}>
-                <Plus className="size-4" strokeWidth={2} aria-hidden />
-                {t('academy:create.title')}
-              </Button>
-            )}
-          </div>
+          academies.length > 1 ? (
+            <AcademySwitcher
+              academies={academies}
+              currentAcademy={currentAcademy}
+            />
+          ) : undefined
         }
       />
 

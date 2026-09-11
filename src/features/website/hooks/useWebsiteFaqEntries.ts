@@ -12,7 +12,10 @@ export interface UseWebsiteFaqEntriesOptions {
   readonly enabled?: boolean;
 }
 
-export function useWebsiteFaqEntries(academyId: string, options?: UseWebsiteFaqEntriesOptions) {
+export function useWebsiteFaqEntries(
+  academyId: string,
+  options?: UseWebsiteFaqEntriesOptions
+) {
   const { query, enabled = true } = options ?? {};
 
   return useApiQuery<PaginatedResult<WebsiteFaqEntry>, ApiError>({

@@ -11,7 +11,9 @@ import type { PlatformConfiguration } from '@types';
 export class PlatformSettingsService extends BaseService {
   protected readonly resource = 'platform-settings';
 
-  async getConfiguration(options?: ReadOptions): Promise<PlatformConfiguration> {
+  async getConfiguration(
+    options?: ReadOptions
+  ): Promise<PlatformConfiguration> {
     return this.client.get<PlatformConfiguration>(this.path(), options);
   }
 
@@ -19,11 +21,10 @@ export class PlatformSettingsService extends BaseService {
     payload: Partial<PlatformConfiguration>,
     options?: WriteOptions
   ): Promise<PlatformConfiguration> {
-    return this.client.patch<PlatformConfiguration, Partial<PlatformConfiguration>>(
-      this.path(),
-      payload,
-      options
-    );
+    return this.client.patch<
+      PlatformConfiguration,
+      Partial<PlatformConfiguration>
+    >(this.path(), payload, options);
   }
 }
 

@@ -15,12 +15,20 @@ export interface PlatformMetricsProps {
   readonly metrics: PlatformMetricsOverview;
 }
 
-export function PlatformMetrics({ metrics }: PlatformMetricsProps): JSX.Element {
+export function PlatformMetrics({
+  metrics,
+}: PlatformMetricsProps): JSX.Element {
   const { t } = useTranslation();
 
   const rows = [
-    { label: t('platform:metrics.systemHealth'), value: metrics.systemHealthPercent },
-    { label: t('platform:metrics.storageUsage'), value: metrics.storageUsagePercent },
+    {
+      label: t('platform:metrics.systemHealth'),
+      value: metrics.systemHealthPercent,
+    },
+    {
+      label: t('platform:metrics.storageUsage'),
+      value: metrics.storageUsagePercent,
+    },
     { label: t('platform:metrics.apiUptime'), value: metrics.apiUptimePercent },
   ];
 

@@ -99,10 +99,7 @@ export default function InstructorQuizResultsPage(): JSX.Element {
 
   return (
     <PageContainer>
-      <PageHeader
-        title={quiz?.title}
-        titleKey="instructor:quizResults.title"
-      />
+      <PageHeader title={quiz?.title} titleKey="instructor:quizResults.title" />
 
       <DataTable
         columns={columns}

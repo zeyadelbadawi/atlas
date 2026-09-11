@@ -21,7 +21,8 @@ export function useSaveAtlasSubscriptionPaymentProviderConfig() {
     SaveAtlasSubscriptionPaymentProviderConfigPayload,
     ApiError
   >({
-    mutationFn: (payload) => atlasSubscriptionPaymentProviderService.saveConfig(payload),
+    mutationFn: (payload) =>
+      atlasSubscriptionPaymentProviderService.saveConfig(payload),
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async () => {

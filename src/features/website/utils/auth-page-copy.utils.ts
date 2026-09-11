@@ -10,7 +10,11 @@
  * one place rather than being duplicated (and risking the two drifting
  * out of sync the way `cta` vs. `authPages` preservation already once did).
  */
-import type { LocalizedText, WebsiteConfiguration, WebsiteHeaderConfig } from '@types';
+import type {
+  LocalizedText,
+  WebsiteConfiguration,
+  WebsiteHeaderConfig,
+} from '@types';
 
 export type AuthPageKey = 'signIn' | 'signUp';
 export type AuthPageCopyField = 'title' | 'subtitle';
@@ -27,7 +31,10 @@ export function buildAuthPageCopyHeaderPatch(
   value: LocalizedText
 ): WebsiteHeaderConfig {
   const currentAuthPages = configuration.header.authPages;
-  const nextCopy = { ...currentAuthPages?.[page], [field]: isBlank(value) ? undefined : value };
+  const nextCopy = {
+    ...currentAuthPages?.[page],
+    [field]: isBlank(value) ? undefined : value,
+  };
 
   return {
     cta: configuration.header.cta,

@@ -16,7 +16,10 @@
  * with Arabic not yet translated), never as a validation error.
  */
 import { z } from 'zod';
-import { FEATURE_ICON_OPTIONS, MAX_SECTION_ITEMS } from '../constants/website.constants';
+import {
+  FEATURE_ICON_OPTIONS,
+  MAX_SECTION_ITEMS,
+} from '../constants/website.constants';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
 import type { SectionType } from '@types';
 
@@ -33,7 +36,10 @@ export const localizedRequired = (maxLength: number) =>
   z.preprocess(
     coerceLegacyLocalized,
     z.object({
-      en: z.string().min(1, 'validation:required').max(maxLength, 'validation:maxLength'),
+      en: z
+        .string()
+        .min(1, 'validation:required')
+        .max(maxLength, 'validation:maxLength'),
       ar: z.string().max(maxLength, 'validation:maxLength'),
     })
   );
@@ -126,7 +132,10 @@ export const featuresSectionSchema = z.object({
 const testimonialItemSchema = z.object({
   id: z.string(),
   quote: localizedRequired(MAX_LONG_TEXT),
-  authorName: z.string().min(1, 'validation:required').max(MAX_SHORT_TEXT, 'validation:maxLength'),
+  authorName: z
+    .string()
+    .min(1, 'validation:required')
+    .max(MAX_SHORT_TEXT, 'validation:maxLength'),
   authorRole: localizedOptional(MAX_SHORT_TEXT).optional(),
   avatar: z.string().optional(),
   avatarAlt: localizedOptional(MAX_SHORT_TEXT).optional(),
@@ -179,7 +188,11 @@ export const gallerySectionSchema = z.object({
 export const contactSectionSchema = z.object({
   title: localizedOptional(MAX_SHORT_TEXT).optional(),
   description: localizedOptional(MAX_LONG_TEXT).optional(),
-  email: z.string().email('validation:invalidEmail').optional().or(z.literal('')),
+  email: z
+    .string()
+    .email('validation:invalidEmail')
+    .optional()
+    .or(z.literal('')),
   phone: z.string().max(30, 'validation:maxLength').optional(),
   address: z.string().max(MAX_SHORT_TEXT, 'validation:maxLength').optional(),
   showForm: z.boolean(),

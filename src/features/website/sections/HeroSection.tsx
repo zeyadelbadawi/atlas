@@ -16,7 +16,10 @@ import {
   useWebsiteContainerClass,
   useWebsiteHeadingClass,
 } from '../renderer/renderer-style.utils';
-import { resolveWebsiteCtaHref, isExternalHref } from '../utils/link-resolution.utils';
+import {
+  resolveWebsiteCtaHref,
+  isExternalHref,
+} from '../utils/link-resolution.utils';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { HeroSectionConfig, WebsiteCta, WebsitePage } from '@types';
 import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
@@ -53,7 +56,11 @@ function CtaButton({
   return <Button {...buttonProps}>{children}</Button>;
 }
 
-function HeroActions({ config, pages, linkRenderer }: HeroSectionProps): JSX.Element | null {
+function HeroActions({
+  config,
+  pages,
+  linkRenderer,
+}: HeroSectionProps): JSX.Element | null {
   const { t } = useTranslation();
   const { locale } = usePublicWebsiteLocale();
   if (!config.cta && !config.secondaryCta) return null;
@@ -74,7 +81,13 @@ function HeroActions({ config, pages, linkRenderer }: HeroSectionProps): JSX.Ele
         </CtaButton>
       ) : null}
       {config.secondaryCta ? (
-        <CtaButton cta={config.secondaryCta} pages={pages} linkRenderer={linkRenderer} size="lg" variant="outline">
+        <CtaButton
+          cta={config.secondaryCta}
+          pages={pages}
+          linkRenderer={linkRenderer}
+          size="lg"
+          variant="outline"
+        >
           {resolveLocalizedText(config.secondaryCta.label, locale)}
         </CtaButton>
       ) : null}
@@ -83,7 +96,11 @@ function HeroActions({ config, pages, linkRenderer }: HeroSectionProps): JSX.Ele
   );
 }
 
-export function HeroSection({ config, pages, linkRenderer }: HeroSectionProps): JSX.Element {
+export function HeroSection({
+  config,
+  pages,
+  linkRenderer,
+}: HeroSectionProps): JSX.Element {
   const design = useWebsiteDesignSystem();
   const container = useWebsiteContainerClass();
   const headingClass = useWebsiteHeadingClass();
@@ -97,7 +114,9 @@ export function HeroSection({ config, pages, linkRenderer }: HeroSectionProps): 
 
   if (design.heroVariant === 'split') {
     return (
-      <section className={`${container} grid gap-10 py-16 lg:grid-cols-2 lg:items-center lg:py-24`}>
+      <section
+        className={`${container} grid gap-10 py-16 lg:grid-cols-2 lg:items-center lg:py-24`}
+      >
         <div className="space-y-5">
           {eyebrow ? (
             <p className="text-sm font-semibold uppercase tracking-wide text-[var(--website-primary-solid)]">
@@ -109,13 +128,21 @@ export function HeroSection({ config, pages, linkRenderer }: HeroSectionProps): 
               {subtitle}
             </p>
           ) : null}
-          <h1 className={`${headingClass} break-words text-4xl leading-tight text-foreground sm:text-5xl`}>
+          <h1
+            className={`${headingClass} break-words text-4xl leading-tight text-foreground sm:text-5xl`}
+          >
             {title}
           </h1>
           {description ? (
-            <p className="max-w-prose text-lg text-muted-foreground">{description}</p>
+            <p className="max-w-prose text-lg text-muted-foreground">
+              {description}
+            </p>
           ) : null}
-          <HeroActions config={config} pages={pages} linkRenderer={linkRenderer} />
+          <HeroActions
+            config={config}
+            pages={pages}
+            linkRenderer={linkRenderer}
+          />
         </div>
         <div
           className="aspect-[4/3] w-full bg-[var(--website-primary-surface)]"
@@ -141,23 +168,43 @@ export function HeroSection({ config, pages, linkRenderer }: HeroSectionProps): 
         // on a short mobile-landscape viewport, 448px could force excess
         // whitespace/vertical scroll before the fold even starts.
         className="relative flex min-h-[18rem] items-end overflow-hidden bg-[var(--website-primary-surface)] py-16 sm:min-h-[22rem] lg:min-h-[28rem]"
-        style={config.image ? { backgroundImage: `url(${config.image})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}
+        style={
+          config.image
+            ? {
+                backgroundImage: `url(${config.image})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }
+            : undefined
+        }
       >
         {config.image ? (
           <div className="absolute inset-0 bg-black/45" aria-hidden />
         ) : null}
-        <div className={`${container} relative space-y-5 ${config.image ? 'text-white' : 'text-foreground'}`}>
+        <div
+          className={`${container} relative space-y-5 ${config.image ? 'text-white' : 'text-foreground'}`}
+        >
           {eyebrow ? (
-            <p className="text-sm font-semibold uppercase tracking-wide opacity-90">{eyebrow}</p>
+            <p className="text-sm font-semibold uppercase tracking-wide opacity-90">
+              {eyebrow}
+            </p>
           ) : null}
           {subtitle ? (
             <p className="text-sm font-medium opacity-90">{subtitle}</p>
           ) : null}
-          <h1 className={`${headingClass} break-words text-4xl leading-tight sm:text-6xl`}>{title}</h1>
+          <h1
+            className={`${headingClass} break-words text-4xl leading-tight sm:text-6xl`}
+          >
+            {title}
+          </h1>
           {description ? (
             <p className="max-w-2xl text-lg opacity-90">{description}</p>
           ) : null}
-          <HeroActions config={config} pages={pages} linkRenderer={linkRenderer} />
+          <HeroActions
+            config={config}
+            pages={pages}
+            linkRenderer={linkRenderer}
+          />
         </div>
       </section>
     );
@@ -165,20 +212,34 @@ export function HeroSection({ config, pages, linkRenderer }: HeroSectionProps): 
 
   if (design.heroVariant === 'minimal') {
     return (
-      <section className={`${container} space-y-4 border-b border-border py-16`}>
+      <section
+        className={`${container} space-y-4 border-b border-border py-16`}
+      >
         {eyebrow ? (
-          <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{eyebrow}</p>
+          <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+            {eyebrow}
+          </p>
         ) : null}
         {subtitle ? (
-          <p className="text-sm font-medium text-muted-foreground">{subtitle}</p>
+          <p className="text-sm font-medium text-muted-foreground">
+            {subtitle}
+          </p>
         ) : null}
-        <h1 className={`${headingClass} max-w-3xl break-words text-3xl leading-tight text-foreground sm:text-4xl`}>
+        <h1
+          className={`${headingClass} max-w-3xl break-words text-3xl leading-tight text-foreground sm:text-4xl`}
+        >
           {title}
         </h1>
         {description ? (
-          <p className="max-w-2xl text-base text-muted-foreground">{description}</p>
+          <p className="max-w-2xl text-base text-muted-foreground">
+            {description}
+          </p>
         ) : null}
-        <HeroActions config={config} pages={pages} linkRenderer={linkRenderer} />
+        <HeroActions
+          config={config}
+          pages={pages}
+          linkRenderer={linkRenderer}
+        />
       </section>
     );
   }
@@ -192,16 +253,26 @@ export function HeroSection({ config, pages, linkRenderer }: HeroSectionProps): 
         </p>
       ) : null}
       {subtitle ? (
-        <p className="text-sm font-medium text-[var(--website-primary-solid)]">{subtitle}</p>
+        <p className="text-sm font-medium text-[var(--website-primary-solid)]">
+          {subtitle}
+        </p>
       ) : null}
-      <h1 className={`${headingClass} mx-auto max-w-3xl break-words text-4xl leading-tight text-foreground sm:text-5xl`}>
+      <h1
+        className={`${headingClass} mx-auto max-w-3xl break-words text-4xl leading-tight text-foreground sm:text-5xl`}
+      >
         {title}
       </h1>
       {description ? (
-        <p className="mx-auto max-w-xl text-lg text-muted-foreground">{description}</p>
+        <p className="mx-auto max-w-xl text-lg text-muted-foreground">
+          {description}
+        </p>
       ) : null}
       <div className="flex justify-center">
-        <HeroActions config={config} pages={pages} linkRenderer={linkRenderer} />
+        <HeroActions
+          config={config}
+          pages={pages}
+          linkRenderer={linkRenderer}
+        />
       </div>
     </section>
   );

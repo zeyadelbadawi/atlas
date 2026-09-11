@@ -27,4 +27,6 @@ export const assignmentAuthoringSchema = z.object({
   allowResubmission: z.boolean(),
 });
 
-export type AssignmentAuthoringFormData = z.infer<typeof assignmentAuthoringSchema>;
+export type AssignmentAuthoringFormData = z.infer<
+  typeof assignmentAuthoringSchema
+>;

@@ -6,15 +6,14 @@
  * that lets one student's UI address another student's enrollment.
  */
 import type { Course } from './course.types';
-import type { CourseCompletionState, CertificateStatus } from './progress.types';
+import type {
+  CourseCompletionState,
+  CertificateStatus,
+} from './progress.types';
 
 /** Enrollment lifecycle status. */
 export type EnrollmentStatus =
-  | 'available'
-  | 'pending'
-  | 'enrolled'
-  | 'completed'
-  | 'unavailable';
+  'available' | 'pending' | 'enrolled' | 'completed' | 'unavailable';
 
 /** A slim progress summary for list views — see `EnrollmentResponse.progress`'s doc comment on the backend for why this is a totals-only projection, not the full per-lesson `CourseProgress`. */
 export interface EnrollmentProgressSummary {

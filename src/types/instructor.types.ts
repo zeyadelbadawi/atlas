@@ -15,9 +15,7 @@ import type { AssignmentSubmission } from './assignment.types';
 
 /** Why a course is flagged as needing the instructor's attention. */
 export type CourseAttentionReason =
-  | 'pending_grading'
-  | 'low_engagement'
-  | 'no_recent_activity';
+  'pending_grading' | 'low_engagement' | 'no_recent_activity';
 
 /** A course surfaced on the dashboard as needing attention. */
 export interface CourseAttentionItem {
@@ -28,10 +26,7 @@ export interface CourseAttentionItem {
 
 /** The kind of event behind one activity feed entry. */
 export type InstructorActivityType =
-  | 'submission'
-  | 'quiz_attempt'
-  | 'enrollment'
-  | 'completion';
+  'submission' | 'quiz_attempt' | 'enrollment' | 'completion';
 
 /** One entry in the instructor's recent-activity feed. */
 export interface InstructorActivityItem {

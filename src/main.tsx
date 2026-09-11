@@ -6,13 +6,13 @@
  * forbids console statements in production code, and configuration failures are
  * handled by falling back to compiled defaults rather than by logging.
  */
-import { createRoot } from "react-dom/client";
-import App from "./App.tsx";
-import "./index.css";
-import { loadRuntimeConfig } from "./lib/config.ts";
+import { createRoot } from 'react-dom/client';
+import App from './App.tsx';
+import './index.css';
+import { loadRuntimeConfig } from './lib/config.ts';
 
 /** Id of the mount node declared in `index.html`. */
-const ROOT_ELEMENT_ID = "root";
+const ROOT_ELEMENT_ID = 'root';
 
 /**
  * True for prerendered blog pages.
@@ -24,7 +24,7 @@ function isPrerenderedStaticPage(): boolean {
   return (
     document
       .querySelector('meta[name="prerender-static-page"]')
-      ?.getAttribute("content") === "blog"
+      ?.getAttribute('content') === 'blog'
   );
 }
 

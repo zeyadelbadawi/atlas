@@ -32,6 +32,7 @@ import enBlog from './en/blog.json';
 import enForum from './en/forum.json';
 import enOrganization from './en/organization.json';
 import enTenant from './en/tenant.json';
+import enLegal from './en/legal.json';
 import enPayments from './en/payments.json';
 import enProvisioning from './en/provisioning.json';
 import enWebsite from './en/website.json';
@@ -66,6 +67,7 @@ import arBlog from './ar/blog.json';
 import arForum from './ar/forum.json';
 import arOrganization from './ar/organization.json';
 import arTenant from './ar/tenant.json';
+import arLegal from './ar/legal.json';
 import arPayments from './ar/payments.json';
 import arProvisioning from './ar/provisioning.json';
 import arWebsite from './ar/website.json';
@@ -107,6 +109,7 @@ export const TRANSLATION_RESOURCES: Readonly<
     forum: enForum,
     organization: enOrganization,
     tenant: enTenant,
+    legal: enLegal,
     payments: enPayments,
     provisioning: enProvisioning,
     website: enWebsite,
@@ -142,6 +145,7 @@ export const TRANSLATION_RESOURCES: Readonly<
     forum: arForum,
     organization: arOrganization,
     tenant: arTenant,
+    legal: arLegal,
     payments: arPayments,
     provisioning: arProvisioning,
     website: arWebsite,

@@ -42,7 +42,8 @@ export default function NotificationsPage(): JSX.Element {
   const markAllAsRead = useMarkAllNotificationsRead();
 
   useEffect(() => {
-    if (notificationsQuery.data) setTotalItems(notificationsQuery.data.pagination.totalItems);
+    if (notificationsQuery.data)
+      setTotalItems(notificationsQuery.data.pagination.totalItems);
   }, [notificationsQuery.data]);
 
   const notifications = useMemo(
@@ -53,16 +54,29 @@ export default function NotificationsPage(): JSX.Element {
 
   return (
     <PageContainer>
-      <PageHeader titleKey="notifications:title" descriptionKey="notifications:subtitle" />
+      <PageHeader
+        titleKey="notifications:title"
+        descriptionKey="notifications:subtitle"
+      />
 
-      <Tabs value={filter} onValueChange={(value) => setFilter(value as 'all' | 'unread')} className="space-y-4">
+      <Tabs
+        value={filter}
+        onValueChange={(value) => setFilter(value as 'all' | 'unread')}
+        className="space-y-4"
+      >
         <div className="flex flex-wrap items-center justify-between gap-3">
           <TabsList>
-            <TabsTrigger value="all">{t('notifications:filters.all')}</TabsTrigger>
+            <TabsTrigger value="all">
+              {t('notifications:filters.all')}
+            </TabsTrigger>
             <TabsTrigger value="unread">
               {t('notifications:filters.unread')}
               {!summaryQuery.isLoading ? (
-                <Badge variant="secondary" className="ml-2" data-atlas-numeric="true">
+                <Badge
+                  variant="secondary"
+                  className="ml-2"
+                  data-atlas-numeric="true"
+                >
                   {unreadCount}
                 </Badge>
               ) : null}
@@ -82,7 +96,9 @@ export default function NotificationsPage(): JSX.Element {
         </div>
 
         <TabsContent value={filter} className="space-y-4">
-          {markAllAsRead.error ? <ErrorState onRetry={() => markAllAsRead.reset()} /> : null}
+          {markAllAsRead.error ? (
+            <ErrorState onRetry={() => markAllAsRead.reset()} />
+          ) : null}
 
           <Card>
             <CardContent className="p-6">
@@ -98,7 +114,9 @@ export default function NotificationsPage(): JSX.Element {
                 <div className="flex items-center justify-center py-12">
                   <div className="text-center">
                     <Bell className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                    <p className="text-sm text-muted-foreground">{t('notifications:center.empty')}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {t('notifications:center.empty')}
+                    </p>
                   </div>
                 </div>
               ) : (
@@ -113,13 +131,21 @@ export default function NotificationsPage(): JSX.Element {
                       >
                         <div className="space-y-1">
                           <p className="text-sm font-medium text-foreground">
-                            {t(notification.titleKey, notification.values ?? {})}
+                            {t(
+                              notification.titleKey,
+                              notification.values ?? {}
+                            )}
                           </p>
                           <p className="text-sm text-muted-foreground">
-                            {t(notification.messageKey, notification.values ?? {})}
+                            {t(
+                              notification.messageKey,
+                              notification.values ?? {}
+                            )}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {new Date(notification.createdAt).toLocaleString(i18n.language)}
+                            {new Date(notification.createdAt).toLocaleString(
+                              i18n.language
+                            )}
                           </p>
                         </div>
                         {!notification.isRead ? (

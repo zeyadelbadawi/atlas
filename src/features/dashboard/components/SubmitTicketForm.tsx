@@ -16,15 +16,15 @@
  * than inventing its own — the server re-enforces them regardless, per
  * this codebase's blanket "never trust the client alone" rule.
  */
-import { useState } from "react";
-import type { FormEvent } from "react";
-import { useTranslation } from "react-i18next";
-import { LifeBuoy } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { useSubmitSupportCase } from "../hooks/useTenantSupportCases";
+import { useState } from 'react';
+import type { FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
+import { LifeBuoy } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { useSubmitSupportCase } from '../hooks/useTenantSupportCases';
 
 /** Mirrors the backend's `support.constants.ts` values exactly. */
 const MAX_SUBJECT_LENGTH = 200;
@@ -37,8 +37,8 @@ interface FieldErrors {
 
 export function SubmitTicketForm(): JSX.Element {
   const { t } = useTranslation();
-  const [subject, setSubject] = useState("");
-  const [description, setDescription] = useState("");
+  const [subject, setSubject] = useState('');
+  const [description, setDescription] = useState('');
   const [errors, setErrors] = useState<FieldErrors>({});
   const [submitted, setSubmitted] = useState(false);
 
@@ -47,14 +47,14 @@ export function SubmitTicketForm(): JSX.Element {
   function validate(): FieldErrors {
     const next: FieldErrors = {
       subject: !subject.trim()
-        ? "dashboard:support.form.errors.subjectRequired"
+        ? 'dashboard:support.form.errors.subjectRequired'
         : subject.trim().length > MAX_SUBJECT_LENGTH
-          ? "dashboard:support.form.errors.subjectTooLong"
+          ? 'dashboard:support.form.errors.subjectTooLong'
           : undefined,
       description: !description.trim()
-        ? "dashboard:support.form.errors.descriptionRequired"
+        ? 'dashboard:support.form.errors.descriptionRequired'
         : description.trim().length > MAX_DESCRIPTION_LENGTH
-          ? "dashboard:support.form.errors.descriptionTooLong"
+          ? 'dashboard:support.form.errors.descriptionTooLong'
           : undefined,
     };
     return next;
@@ -70,11 +70,11 @@ export function SubmitTicketForm(): JSX.Element {
       { subject: subject.trim(), description: description.trim() },
       {
         onSuccess: () => {
-          setSubject("");
-          setDescription("");
+          setSubject('');
+          setDescription('');
           setSubmitted(true);
         },
-      },
+      }
     );
   }
 
@@ -82,7 +82,7 @@ export function SubmitTicketForm(): JSX.Element {
     return (
       <div className="flex flex-col items-start gap-3">
         <p className="text-sm text-success">
-          {t("dashboard:support.form.success")}
+          {t('dashboard:support.form.success')}
         </p>
         <Button
           type="button"
@@ -92,7 +92,7 @@ export function SubmitTicketForm(): JSX.Element {
             reset();
           }}
         >
-          {t("dashboard:support.form.submitAnother")}
+          {t('dashboard:support.form.submitAnother')}
         </Button>
       </div>
     );
@@ -102,16 +102,18 @@ export function SubmitTicketForm(): JSX.Element {
     <form className="flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
       <div className="flex flex-col gap-2">
         <Label htmlFor="support-subject">
-          {t("dashboard:support.form.subjectLabel")}
+          {t('dashboard:support.form.subjectLabel')}
         </Label>
         <Input
           id="support-subject"
           value={subject}
           maxLength={MAX_SUBJECT_LENGTH}
           onChange={(event) => setSubject(event.target.value)}
-          placeholder={t("dashboard:support.form.subjectPlaceholder")}
+          placeholder={t('dashboard:support.form.subjectPlaceholder')}
           aria-invalid={Boolean(errors.subject)}
-          aria-describedby={errors.subject ? "support-subject-error" : undefined}
+          aria-describedby={
+            errors.subject ? 'support-subject-error' : undefined
+          }
         />
         {errors.subject ? (
           <p id="support-subject-error" className="text-sm text-destructive">
@@ -122,7 +124,7 @@ export function SubmitTicketForm(): JSX.Element {
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="support-description">
-          {t("dashboard:support.form.descriptionLabel")}
+          {t('dashboard:support.form.descriptionLabel')}
         </Label>
         <Textarea
           id="support-description"
@@ -130,14 +132,17 @@ export function SubmitTicketForm(): JSX.Element {
           value={description}
           maxLength={MAX_DESCRIPTION_LENGTH}
           onChange={(event) => setDescription(event.target.value)}
-          placeholder={t("dashboard:support.form.descriptionPlaceholder")}
+          placeholder={t('dashboard:support.form.descriptionPlaceholder')}
           aria-invalid={Boolean(errors.description)}
           aria-describedby={
-            errors.description ? "support-description-error" : undefined
+            errors.description ? 'support-description-error' : undefined
           }
         />
         {errors.description ? (
-          <p id="support-description-error" className="text-sm text-destructive">
+          <p
+            id="support-description-error"
+            className="text-sm text-destructive"
+          >
             {t(errors.description)}
           </p>
         ) : null}
@@ -146,7 +151,7 @@ export function SubmitTicketForm(): JSX.Element {
       {/* One generic sentence — never the underlying error. See this file's header comment. */}
       {isError ? (
         <p role="alert" className="text-sm text-destructive">
-          {t("dashboard:support.form.errors.submitFailed")}
+          {t('dashboard:support.form.errors.submitFailed')}
         </p>
       ) : null}
 
@@ -154,8 +159,8 @@ export function SubmitTicketForm(): JSX.Element {
         <Button type="submit" disabled={isPending}>
           <LifeBuoy className="me-2 h-4 w-4" aria-hidden="true" />
           {isPending
-            ? t("dashboard:support.form.submitting")
-            : t("dashboard:support.form.submit")}
+            ? t('dashboard:support.form.submitting')
+            : t('dashboard:support.form.submit')}
         </Button>
       </div>
     </form>

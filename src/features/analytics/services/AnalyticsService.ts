@@ -26,11 +26,17 @@ function toParams(query?: AnalyticsQuery): Record<string, string> | undefined {
 export class AnalyticsService extends BaseService {
   protected readonly resource = 'analytics';
 
-  async getOverview(query?: AnalyticsQuery, options?: ReadOptions): Promise<AnalyticsOverview> {
-    return this.client.get<AnalyticsOverview>(resourcePath('analytics', 'overview'), {
-      ...options,
-      params: { ...toParams(query), ...options?.params },
-    });
+  async getOverview(
+    query?: AnalyticsQuery,
+    options?: ReadOptions
+  ): Promise<AnalyticsOverview> {
+    return this.client.get<AnalyticsOverview>(
+      resourcePath('analytics', 'overview'),
+      {
+        ...options,
+        params: { ...toParams(query), ...options?.params },
+      }
+    );
   }
 
   async getTimeSeries(

@@ -18,7 +18,13 @@
  * gets a 403 from the server and an error state from this page.
  */
 import { useTranslation } from 'react-i18next';
-import { AlertCircle, Building2, CreditCard, TimerReset, XCircle } from 'lucide-react';
+import {
+  AlertCircle,
+  Building2,
+  CreditCard,
+  TimerReset,
+  XCircle,
+} from 'lucide-react';
 import { PageContainer, PageHeader, SectionCard } from '@components/layout';
 import { MetricCard } from '@components/data-display';
 import { EmptyState, ErrorState } from '@components/feedback';
@@ -151,7 +157,9 @@ export function AdminSubscriptionsPage(): JSX.Element {
                   className="flex items-center justify-between rounded-md border px-3 py-2"
                 >
                   <span className="text-sm">{plan.planName}</span>
-                  <span className="font-medium tabular-nums">{plan.subscriptions}</span>
+                  <span className="font-medium tabular-nums">
+                    {plan.subscriptions}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -196,11 +204,19 @@ export function AdminSubscriptionsPage(): JSX.Element {
                 {data.cancellations.recent.map((row) => (
                   <li key={row.id} className="rounded-lg border p-4">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-medium">{row.organizationName}</span>
-                      <Badge variant={row.kind === 'trial' ? 'secondary' : 'outline'}>
+                      <span className="font-medium">
+                        {row.organizationName}
+                      </span>
+                      <Badge
+                        variant={row.kind === 'trial' ? 'secondary' : 'outline'}
+                      >
                         {row.kind === 'trial'
-                          ? t('platform:adminSubscriptions.cancellations.kindTrial')
-                          : t('platform:adminSubscriptions.cancellations.kindPaid')}
+                          ? t(
+                              'platform:adminSubscriptions.cancellations.kindTrial'
+                            )
+                          : t(
+                              'platform:adminSubscriptions.cancellations.kindPaid'
+                            )}
                       </Badge>
                     </div>
                     <p className="mt-1 text-sm text-muted-foreground">

@@ -29,7 +29,13 @@ import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -77,7 +83,11 @@ const configFormSchema = z.object({
       if (value.trim() === '') return true;
       try {
         const parsed: unknown = JSON.parse(value);
-        return typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed);
+        return (
+          typeof parsed === 'object' &&
+          parsed !== null &&
+          !Array.isArray(parsed)
+        );
       } catch {
         return false;
       }
@@ -88,7 +98,9 @@ const configFormSchema = z.object({
 
 type ConfigFormData = z.infer<typeof configFormSchema>;
 
-function statusTone(status: AtlasSubscriptionPaymentProviderStatus): 'success' | 'warning' | 'neutral' {
+function statusTone(
+  status: AtlasSubscriptionPaymentProviderStatus
+): 'success' | 'warning' | 'neutral' {
   if (status === 'verified') return 'success';
   if (status === 'configured') return 'warning';
   return 'neutral';
@@ -97,11 +109,19 @@ function statusTone(status: AtlasSubscriptionPaymentProviderStatus): 'success' |
 export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
   const { t } = useTranslation();
 
-  const { data: config, isLoading, error, refetch } = useAtlasSubscriptionPaymentProviderConfig();
+  const {
+    data: config,
+    isLoading,
+    error,
+    refetch,
+  } = useAtlasSubscriptionPaymentProviderConfig();
   const { data: availableProviders, isLoading: isLoadingProviders } =
     useAvailableAtlasSubscriptionPaymentProviders();
-  const { mutateAsync: saveConfig, isPending: isSaving, error: saveError } =
-    useSaveAtlasSubscriptionPaymentProviderConfig();
+  const {
+    mutateAsync: saveConfig,
+    isPending: isSaving,
+    error: saveError,
+  } = useSaveAtlasSubscriptionPaymentProviderConfig();
   const { mutateAsync: testConnection, isPending: isTesting } =
     useTestAtlasSubscriptionPaymentProviderConnection();
   const { mutateAsync: setEnabled, isPending: isTogglingEnabled } =
@@ -127,12 +147,21 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
 
   const onSubmit = async (data: ConfigFormData) => {
     try {
-      const parsedConfig = data.configJson.trim() === '' ? {} : (JSON.parse(data.configJson) as Record<string, unknown>);
-      await saveConfig({ providerKey: selectedProviderKey, config: parsedConfig });
+      const parsedConfig =
+        data.configJson.trim() === ''
+          ? {}
+          : (JSON.parse(data.configJson) as Record<string, unknown>);
+      await saveConfig({
+        providerKey: selectedProviderKey,
+        config: parsedConfig,
+      });
       form.setValue('configJson', '');
       toast({ title: t('payments:atlasPaymentProvider.saveSuccess') });
     } catch {
-      toast({ title: t('payments:atlasPaymentProvider.saveError'), variant: 'destructive' });
+      toast({
+        title: t('payments:atlasPaymentProvider.saveError'),
+        variant: 'destructive',
+      });
     }
   };
 
@@ -147,7 +176,10 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
         variant: result.lastTestResult?.success ? undefined : 'destructive',
       });
     } catch {
-      toast({ title: t('payments:atlasPaymentProvider.testError'), variant: 'destructive' });
+      toast({
+        title: t('payments:atlasPaymentProvider.testError'),
+        variant: 'destructive',
+      });
     }
   };
 
@@ -156,7 +188,10 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
       await setEnabled(true);
       toast({ title: t('payments:atlasPaymentProvider.enableSuccess') });
     } catch {
-      toast({ title: t('payments:atlasPaymentProvider.enableError'), variant: 'destructive' });
+      toast({
+        title: t('payments:atlasPaymentProvider.enableError'),
+        variant: 'destructive',
+      });
     }
   };
 
@@ -165,7 +200,10 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
       await setEnabled(false);
       toast({ title: t('payments:atlasPaymentProvider.disableSuccess') });
     } catch {
-      toast({ title: t('payments:atlasPaymentProvider.disableError'), variant: 'destructive' });
+      toast({
+        title: t('payments:atlasPaymentProvider.disableError'),
+        variant: 'destructive',
+      });
     }
   };
 
@@ -206,7 +244,10 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
               {config.enabled ? (
                 <ShieldCheck className="size-4 text-green-600" aria-hidden />
               ) : (
-                <ShieldAlert className="size-4 text-muted-foreground" aria-hidden />
+                <ShieldAlert
+                  className="size-4 text-muted-foreground"
+                  aria-hidden
+                />
               )}
               {t('payments:atlasPaymentProvider.effectiveTitle')}
             </CardTitle>
@@ -247,9 +288,14 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
           </CardHeader>
           <CardContent className="space-y-6">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
                 <FormItem>
-                  <FormLabel>{t('payments:atlasPaymentProvider.providerLabel')}</FormLabel>
+                  <FormLabel>
+                    {t('payments:atlasPaymentProvider.providerLabel')}
+                  </FormLabel>
                   <Select
                     value={selectedProviderKey}
                     onValueChange={setSelectedProviderKey}
@@ -258,13 +304,18 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue
-                          placeholder={t('payments:atlasPaymentProvider.providerPlaceholder')}
+                          placeholder={t(
+                            'payments:atlasPaymentProvider.providerPlaceholder'
+                          )}
                         />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {(availableProviders ?? []).map((provider) => (
-                        <SelectItem key={provider.providerKey} value={provider.providerKey}>
+                        <SelectItem
+                          key={provider.providerKey}
+                          value={provider.providerKey}
+                        >
                           {provider.displayName}
                         </SelectItem>
                       ))}
@@ -286,14 +337,18 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          {t('payments:atlasPaymentProvider.configurationLabel')}
+                          {t(
+                            'payments:atlasPaymentProvider.configurationLabel'
+                          )}
                         </FormLabel>
                         <FormControl>
                           <Textarea
                             {...field}
                             dir="ltr"
                             rows={6}
-                            placeholder={t('payments:atlasPaymentProvider.configurationPlaceholder')}
+                            placeholder={t(
+                              'payments:atlasPaymentProvider.configurationPlaceholder'
+                            )}
                           />
                         </FormControl>
                         <FormDescription>
@@ -312,10 +367,15 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
                     onClick={onTestConnection}
                     disabled={isTesting || config.status === 'not_configured'}
                   >
-                    {isTesting ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
+                    {isTesting ? (
+                      <Loader2 className="size-4 animate-spin" aria-hidden />
+                    ) : null}
                     {t('payments:atlasPaymentProvider.testConnection')}
                   </Button>
-                  <Button type="submit" disabled={isSaving || !selectedProviderKey}>
+                  <Button
+                    type="submit"
+                    disabled={isSaving || !selectedProviderKey}
+                  >
                     {isSaving ? (
                       <Loader2 className="size-4 animate-spin" aria-hidden />
                     ) : (
@@ -341,7 +401,9 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
                         {t('payments:atlasPaymentProvider.disableConfirmTitle')}
                       </AlertDialogTitle>
                       <AlertDialogDescription>
-                        {t('payments:atlasPaymentProvider.disableConfirmDescription')}
+                        {t(
+                          'payments:atlasPaymentProvider.disableConfirmDescription'
+                        )}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

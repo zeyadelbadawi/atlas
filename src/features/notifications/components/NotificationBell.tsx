@@ -18,18 +18,18 @@
  * the shell, the same direction every other App-imports-Feature wiring in
  * this codebase already flows.
  */
-import { Bell } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
+import { Bell } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { DASHBOARD_ROUTES } from "@app/routes/route-paths";
-import { cn } from "@utils";
-import { useNotificationSummary } from "../hooks";
+} from '@/components/ui/tooltip';
+import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
+import { cn } from '@utils';
+import { useNotificationSummary } from '../hooks';
 
 export interface NotificationBellProps {
   readonly className?: string;
@@ -43,8 +43,8 @@ export function NotificationBell({
   const unreadCount = data?.unread ?? 0;
   const label =
     unreadCount > 0
-      ? t("common:notifications.bellUnread", { count: unreadCount })
-      : t("common:notifications.bell");
+      ? t('common:notifications.bellUnread', { count: unreadCount })
+      : t('common:notifications.bell');
 
   return (
     <Tooltip>
@@ -56,8 +56,8 @@ export function NotificationBell({
           size="icon"
           aria-label={label}
           className={cn(
-            "relative text-muted-foreground hover:text-foreground",
-            className,
+            'relative text-muted-foreground hover:text-foreground',
+            className
           )}
         >
           <Link to={DASHBOARD_ROUTES.notifications}>
@@ -67,7 +67,7 @@ export function NotificationBell({
                 aria-hidden
                 className="absolute end-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-medium leading-none text-destructive-foreground"
               >
-                {unreadCount > 99 ? "99+" : unreadCount}
+                {unreadCount > 99 ? '99+' : unreadCount}
               </span>
             ) : null}
           </Link>

@@ -178,7 +178,11 @@ export default function TenantUsagePage(): JSX.Element {
                       data-atlas-numeric="true"
                     >
                       {isStorage ? `${metric.used} GB` : metric.used} /{' '}
-                      {formatLimitValue(metric.limit, isStorage, unlimitedLabel)}
+                      {formatLimitValue(
+                        metric.limit,
+                        isStorage,
+                        unlimitedLabel
+                      )}
                     </span>
                     <StatusBadge
                       labelKey={`tenant:common.usageStatus.${status}`}
@@ -205,7 +209,11 @@ export default function TenantUsagePage(): JSX.Element {
                       variant="outline"
                       onClick={() => setComparisonOpen(true)}
                     >
-                      <Columns3 className="size-3.5" strokeWidth={2} aria-hidden />
+                      <Columns3
+                        className="size-3.5"
+                        strokeWidth={2}
+                        aria-hidden
+                      />
                       {t('tenant:subscription.comparePlans')}
                     </Button>
                   </div>

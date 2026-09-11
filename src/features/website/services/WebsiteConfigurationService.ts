@@ -31,7 +31,10 @@ import type {
 export class WebsiteConfigurationService extends BaseService {
   protected readonly resource = 'academies';
 
-  private websitePath(academyId: string, ...segments: readonly string[]): string {
+  private websitePath(
+    academyId: string,
+    ...segments: readonly string[]
+  ): string {
     return this.path(academyId, 'website', ...segments);
   }
 
@@ -52,11 +55,10 @@ export class WebsiteConfigurationService extends BaseService {
     payload: UpdateWebsiteConfigurationPayload,
     options?: WriteOptions
   ): Promise<WebsiteConfiguration> {
-    return this.client.patch<WebsiteConfiguration, UpdateWebsiteConfigurationPayload>(
-      this.websitePath(academyId, 'configuration'),
-      payload,
-      options
-    );
+    return this.client.patch<
+      WebsiteConfiguration,
+      UpdateWebsiteConfigurationPayload
+    >(this.websitePath(academyId, 'configuration'), payload, options);
   }
 
   /** Promotes the current draft to published. The backend is the sole authority on when this actually succeeds — the frontend never marks a website "Published" itself. */
@@ -79,7 +81,10 @@ export class WebsiteConfigurationService extends BaseService {
   ): Promise<PaginatedResult<WebsitePage>> {
     return this.client.get<PaginatedResult<WebsitePage>>(
       this.websitePath(academyId, 'pages'),
-      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
+      {
+        ...options,
+        params: { ...toCollectionParams(query), ...options?.params },
+      }
     );
   }
 

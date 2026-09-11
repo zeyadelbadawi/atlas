@@ -46,7 +46,11 @@ export interface AddAcademyInstructorDialogProps {
   readonly academyId: string;
 }
 
-const DEFAULT_VALUES: AddAcademyInstructorFormData = { email: '', name: '', password: '' };
+const DEFAULT_VALUES: AddAcademyInstructorFormData = {
+  email: '',
+  name: '',
+  password: '',
+};
 
 export function AddAcademyInstructorDialog({
   open,
@@ -87,7 +91,11 @@ export function AddAcademyInstructorDialog({
           handleOpenChange(false);
         },
         onError: (error) => {
-          if (error.kind === 'validation' && error.violations && error.violations.length > 0) {
+          if (
+            error.kind === 'validation' &&
+            error.violations &&
+            error.violations.length > 0
+          ) {
             return;
           }
 
@@ -160,7 +168,9 @@ export function AddAcademyInstructorDialog({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('academy:members.newAccount.nameLabel')}</FormLabel>
+                  <FormLabel>
+                    {t('academy:members.newAccount.nameLabel')}
+                  </FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -174,7 +184,9 @@ export function AddAcademyInstructorDialog({
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('academy:members.newAccount.passwordLabel')}</FormLabel>
+                  <FormLabel>
+                    {t('academy:members.newAccount.passwordLabel')}
+                  </FormLabel>
                   <FormControl>
                     <Input type="password" {...field} />
                   </FormControl>

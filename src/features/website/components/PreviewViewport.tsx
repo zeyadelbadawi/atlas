@@ -70,7 +70,13 @@ const MIN_PREVIEW_HEIGHT = 480;
  * the iframe's height to fit its own content (via `ResizeObserver`) so
  * the page never shows a second, nested scrollbar.
  */
-function IframeViewport({ width, children }: { readonly width: number; readonly children: ReactNode }): JSX.Element {
+function IframeViewport({
+  width,
+  children,
+}: {
+  readonly width: number;
+  readonly children: ReactNode;
+}): JSX.Element {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [mountNode, setMountNode] = useState<HTMLElement | null>(null);
   const [height, setHeight] = useState(MIN_PREVIEW_HEIGHT);
@@ -84,9 +90,11 @@ function IframeViewport({ width, children }: { readonly width: number; readonly 
       if (!doc) return;
 
       doc.head.innerHTML = '';
-      document.querySelectorAll('style, link[rel="stylesheet"]').forEach((node) => {
-        doc.head.appendChild(node.cloneNode(true));
-      });
+      document
+        .querySelectorAll('style, link[rel="stylesheet"]')
+        .forEach((node) => {
+          doc.head.appendChild(node.cloneNode(true));
+        });
 
       // Mirror direction/language/dark-mode class exactly — Tailwind's
       // `dark:` variant and this app's own RTL handling both key off
@@ -171,12 +179,19 @@ export function PreviewViewport({
         })}
       </div>
       <div className="flex justify-center overflow-x-auto rounded-lg border border-border bg-muted p-4">
-        <div className={cn('overflow-hidden rounded-md border border-border bg-background shadow-sm')}>
+        <div
+          className={cn(
+            'overflow-hidden rounded-md border border-border bg-background shadow-sm'
+          )}
+        >
           {/* Re-mounts a fresh iframe per breakpoint (keyed) — simplest
               correct behavior for a config/preview tool that only switches
               on an explicit click, never worth the added complexity of
               resizing one persistent iframe in place. */}
-          <IframeViewport key={breakpoint} width={BREAKPOINT_PIXEL_WIDTH[breakpoint]}>
+          <IframeViewport
+            key={breakpoint}
+            width={BREAKPOINT_PIXEL_WIDTH[breakpoint]}
+          >
             {children}
           </IframeViewport>
         </div>

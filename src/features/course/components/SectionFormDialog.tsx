@@ -44,7 +44,10 @@ export interface SectionFormDialogProps {
   readonly error?: ApiError | null;
 }
 
-const EMPTY_SECTION_VALUES: CourseSectionFormData = { title: '', description: '' };
+const EMPTY_SECTION_VALUES: CourseSectionFormData = {
+  title: '',
+  description: '',
+};
 
 export function SectionFormDialog({
   open,
@@ -90,10 +93,7 @@ export function SectionFormDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="title"

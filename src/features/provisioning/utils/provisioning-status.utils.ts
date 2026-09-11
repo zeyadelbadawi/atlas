@@ -7,7 +7,9 @@
 import type { StatusTone } from '@components/data-display';
 import type { ProvisioningStatus, ProvisioningStepStatus } from '@types';
 
-export function getProvisioningStatusTone(status: ProvisioningStatus): StatusTone {
+export function getProvisioningStatusTone(
+  status: ProvisioningStatus
+): StatusTone {
   switch (status) {
     case 'ready':
       return 'success';
@@ -20,7 +22,9 @@ export function getProvisioningStatusTone(status: ProvisioningStatus): StatusTon
   }
 }
 
-export function getProvisioningStepStatusTone(status: ProvisioningStepStatus): StatusTone {
+export function getProvisioningStepStatusTone(
+  status: ProvisioningStepStatus
+): StatusTone {
   switch (status) {
     case 'completed':
       return 'success';

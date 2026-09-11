@@ -8,7 +8,15 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ExternalLink, ImageIcon, Loader2, Save, Type, Upload, X } from 'lucide-react';
+import {
+  ExternalLink,
+  ImageIcon,
+  Loader2,
+  Save,
+  Type,
+  Upload,
+  X,
+} from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { SectionTabs } from '@components/navigation';
@@ -113,12 +121,18 @@ export default function AcademyBrandingPage(): JSX.Element {
     if (!file) return;
 
     if (file.size > MAX_LOGO_FILE_SIZE) {
-      form.setError('logo', { type: 'validation', message: 'academy:branding.errors.logoTooLarge' });
+      form.setError('logo', {
+        type: 'validation',
+        message: 'academy:branding.errors.logoTooLarge',
+      });
       logoPicker.clearFiles();
       return;
     }
     if (!ALLOWED_LOGO_TYPES.includes(file.type)) {
-      form.setError('logo', { type: 'validation', message: 'academy:branding.errors.logoInvalidType' });
+      form.setError('logo', {
+        type: 'validation',
+        message: 'academy:branding.errors.logoInvalidType',
+      });
       logoPicker.clearFiles();
       return;
     }
@@ -141,12 +155,18 @@ export default function AcademyBrandingPage(): JSX.Element {
     if (!file) return;
 
     if (file.size > MAX_FAVICON_FILE_SIZE) {
-      form.setError('favicon', { type: 'validation', message: 'academy:branding.errors.faviconTooLarge' });
+      form.setError('favicon', {
+        type: 'validation',
+        message: 'academy:branding.errors.faviconTooLarge',
+      });
       faviconPicker.clearFiles();
       return;
     }
     if (!ALLOWED_FAVICON_TYPES.includes(file.type)) {
-      form.setError('favicon', { type: 'validation', message: 'academy:branding.errors.faviconInvalidType' });
+      form.setError('favicon', {
+        type: 'validation',
+        message: 'academy:branding.errors.faviconInvalidType',
+      });
       faviconPicker.clearFiles();
       return;
     }
@@ -278,7 +298,11 @@ export default function AcademyBrandingPage(): JSX.Element {
             variant="outline"
             size="sm"
             onClick={() =>
-              navigate(buildPath(DASHBOARD_ROUTES.websiteSettings, { academyId: academyId ?? '' }))
+              navigate(
+                buildPath(DASHBOARD_ROUTES.websiteSettings, {
+                  academyId: academyId ?? '',
+                })
+              )
             }
           >
             {t('academy:branding.colorsPointerAction')}
@@ -293,10 +317,16 @@ export default function AcademyBrandingPage(): JSX.Element {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Type className="size-4 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+                <Type
+                  className="size-4 text-muted-foreground"
+                  strokeWidth={1.75}
+                  aria-hidden
+                />
                 {t('academy:branding.displayName')}
               </CardTitle>
-              <CardDescription>{t('academy:branding.displayNameDescription')}</CardDescription>
+              <CardDescription>
+                {t('academy:branding.displayNameDescription')}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <FormField
@@ -319,7 +349,11 @@ export default function AcademyBrandingPage(): JSX.Element {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <ImageIcon className="size-4 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+                <ImageIcon
+                  className="size-4 text-muted-foreground"
+                  strokeWidth={1.75}
+                  aria-hidden
+                />
                 {t('academy:branding.logo')}
               </CardTitle>
             </CardHeader>
@@ -367,7 +401,11 @@ export default function AcademyBrandingPage(): JSX.Element {
                         variant="outline"
                         onClick={logoPicker.openFilePicker}
                       >
-                        <Upload className="size-4" strokeWidth={2} aria-hidden />
+                        <Upload
+                          className="size-4"
+                          strokeWidth={2}
+                          aria-hidden
+                        />
                         {t('academy:branding.uploadLogo')}
                       </Button>
                     )}
@@ -382,7 +420,11 @@ export default function AcademyBrandingPage(): JSX.Element {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <ImageIcon className="size-4 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+                <ImageIcon
+                  className="size-4 text-muted-foreground"
+                  strokeWidth={1.75}
+                  aria-hidden
+                />
                 {t('academy:branding.favicon')}
               </CardTitle>
             </CardHeader>
@@ -430,7 +472,11 @@ export default function AcademyBrandingPage(): JSX.Element {
                         variant="outline"
                         onClick={faviconPicker.openFilePicker}
                       >
-                        <Upload className="size-4" strokeWidth={2} aria-hidden />
+                        <Upload
+                          className="size-4"
+                          strokeWidth={2}
+                          aria-hidden
+                        />
                         {t('academy:branding.uploadFavicon')}
                       </Button>
                     )}

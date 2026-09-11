@@ -1,4 +1,4 @@
-import Markdown from "markdown-to-jsx";
+import Markdown from 'markdown-to-jsx';
 
 type MarkdownArticleProps = {
   markdown: string;
@@ -12,17 +12,17 @@ const MarkdownArticle = ({ markdown }: MarkdownArticleProps) => (
         overrides: {
           a: {
             props: {
-              className: "font-medium",
+              className: 'font-medium',
             },
           },
           code: {
             props: {
-              className: "",
+              className: '',
             },
           },
           pre: {
             props: {
-              className: "overflow-x-auto",
+              className: 'overflow-x-auto',
             },
           },
         },

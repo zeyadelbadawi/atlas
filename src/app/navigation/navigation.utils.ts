@@ -84,7 +84,9 @@ function shouldShowNavigationItem(
       if (user.permissions.includes(permission)) {
         return true;
       }
-      return organization ? organization.permissions.includes(permission) : false;
+      return organization
+        ? organization.permissions.includes(permission)
+        : false;
     });
 
     if (!hasPermissions) {

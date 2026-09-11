@@ -11,7 +11,8 @@
  */
 import { useLocation } from 'react-router-dom';
 
-const LESSON_SCREEN_PATTERN = /^\/(ar\/)?my-learning\/courses\/[^/]+\/learn\/[^/]+/;
+const LESSON_SCREEN_PATTERN =
+  /^\/(ar\/)?my-learning\/courses\/[^/]+\/learn\/[^/]+/;
 
 export function useMobileBottomNavVisibility(): boolean {
   const location = useLocation();

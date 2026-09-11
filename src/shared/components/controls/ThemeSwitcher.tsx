@@ -5,35 +5,35 @@
  * who chose to follow their operating system needs to see that state reflected
  * rather than inferred.
  */
-import { Check, Monitor, Moon, Sun } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
+import { Check, Monitor, Moon, Sun } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { isFeatureEnabled } from "@config";
-import { useTheme } from "@hooks";
-import { THEME_PREFERENCES } from "@types";
-import type { ThemePreference } from "@types";
-import { cn } from "@utils";
+} from '@/components/ui/tooltip';
+import { isFeatureEnabled } from '@config';
+import { useTheme } from '@hooks';
+import { THEME_PREFERENCES } from '@types';
+import type { ThemePreference } from '@types';
+import { cn } from '@utils';
 
 /** Icon and label for each preference. */
 const PREFERENCE_PRESENTATION: Record<
   ThemePreference,
   { readonly icon: LucideIcon; readonly labelKey: string }
 > = {
-  light: { icon: Sun, labelKey: "common:theme.light" },
-  dark: { icon: Moon, labelKey: "common:theme.dark" },
-  system: { icon: Monitor, labelKey: "common:theme.system" },
+  light: { icon: Sun, labelKey: 'common:theme.light' },
+  dark: { icon: Moon, labelKey: 'common:theme.dark' },
+  system: { icon: Monitor, labelKey: 'common:theme.system' },
 };
 
 export interface ThemeSwitcherProps {
@@ -46,12 +46,12 @@ export function ThemeSwitcher({
   const { t } = useTranslation();
   const { preference, resolvedTheme, setPreference } = useTheme();
 
-  if (!isFeatureEnabled("themeSwitcher")) return null;
+  if (!isFeatureEnabled('themeSwitcher')) return null;
 
-  const label = t("common:theme.switcher");
+  const label = t('common:theme.switcher');
   // The trigger shows what is applied, not what was selected, so `system`
   // communicates the actual appearance.
-  const TriggerIcon = resolvedTheme === "dark" ? Moon : Sun;
+  const TriggerIcon = resolvedTheme === 'dark' ? Moon : Sun;
 
   return (
     <DropdownMenu>
@@ -64,8 +64,8 @@ export function ThemeSwitcher({
               size="icon"
               aria-label={label}
               className={cn(
-                "text-muted-foreground hover:text-foreground",
-                className,
+                'text-muted-foreground hover:text-foreground',
+                className
               )}
             >
               <TriggerIcon

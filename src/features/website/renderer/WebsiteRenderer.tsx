@@ -21,7 +21,10 @@ export interface WebsiteRendererProps {
   readonly academyId: string;
   readonly academyName: string;
   readonly academyLogo?: string;
-  readonly configuration: Pick<WebsiteConfiguration, 'themeKey' | 'brand' | 'navigation' | 'header' | 'footer'>;
+  readonly configuration: Pick<
+    WebsiteConfiguration,
+    'themeKey' | 'brand' | 'navigation' | 'header' | 'footer'
+  >;
   readonly pages: readonly WebsitePage[];
   readonly page: WebsitePage;
   /** Only meaningful when previewing `coreType: 'courseDetails'` — which real course to demonstrate the template with. */
@@ -69,7 +72,11 @@ export function WebsiteRenderer({
     >
       {page.coreType === 'courseDetails' ? (
         previewCourseId ? (
-          <CourseDetailsTemplate academyId={academyId} courseId={previewCourseId} locale={locale} />
+          <CourseDetailsTemplate
+            academyId={academyId}
+            courseId={previewCourseId}
+            locale={locale}
+          />
         ) : null
       ) : (
         page.sections.map((instance) => (

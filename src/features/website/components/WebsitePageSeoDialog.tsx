@@ -34,7 +34,10 @@ import { useServerValidation } from '@forms';
 import { useUpdateWebsitePage } from '../hooks';
 import { WebsiteImageField } from './WebsiteImageField';
 import { LocalizedTextField } from './LocalizedTextField';
-import { pageSeoSchema, type PageSeoFormData } from '../schemas/website.schemas';
+import {
+  pageSeoSchema,
+  type PageSeoFormData,
+} from '../schemas/website.schemas';
 import { resolvePageSeo } from '../utils/seo-resolution.utils';
 import { DEFAULT_PUBLIC_WEBSITE_LOCALE } from '../constants/locale.constants';
 import type { LocalizedText, WebsiteConfiguration, WebsitePage } from '@types';
@@ -95,7 +98,8 @@ export function WebsitePageSeoDialog({
           toast({ title: t('website:seo.saved') });
           onOpenChange(false);
         },
-        onError: () => toast({ title: t('website:seo.saveError'), variant: 'destructive' }),
+        onError: () =>
+          toast({ title: t('website:seo.saveError'), variant: 'destructive' }),
       }
     );
   };
@@ -209,17 +213,24 @@ export function WebsitePageSeoDialog({
               name="indexable"
               render={({ field }) => (
                 <label className="flex items-center gap-2 text-sm">
-                  <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
                   {t('website:seo.indexable')}
                 </label>
               )}
             />
             {updatePage.error ? (
-              <p className="text-sm text-destructive">{t('website:seo.saveError')}</p>
+              <p className="text-sm text-destructive">
+                {t('website:seo.saveError')}
+              </p>
             ) : null}
             <DialogFooter>
               <Button type="submit" disabled={updatePage.isPending}>
-                {updatePage.isPending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
+                {updatePage.isPending ? (
+                  <Loader2 className="size-4 animate-spin" aria-hidden />
+                ) : null}
                 {t('website:common.saveChanges')}
               </Button>
             </DialogFooter>

@@ -8,11 +8,11 @@
  * The separator is direction-aware: it mirrors in RTL so the trail always reads
  * from the start of the line toward the current page.
  */
-import { ChevronRight } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import type { BreadcrumbItem } from "@types";
-import { cn } from "@utils";
+import { ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import type { BreadcrumbItem } from '@types';
+import { cn } from '@utils';
 
 export interface BreadcrumbsProps {
   /** Trail from the outermost ancestor to the current page. */
@@ -30,7 +30,7 @@ export function Breadcrumbs({
   if (items.length < 2) return null;
 
   return (
-    <nav aria-label={t("navigation:breadcrumb.label")} className={className}>
+    <nav aria-label={t('navigation:breadcrumb.label')} className={className}>
       <ol className="flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
         {items.map((item, index) => {
           const isCurrent = index === items.length - 1;
@@ -51,8 +51,8 @@ export function Breadcrumbs({
 
               {isCurrent || !item.path ? (
                 <span
-                  aria-current={isCurrent ? "page" : undefined}
-                  className={cn(isCurrent && "font-medium text-foreground")}
+                  aria-current={isCurrent ? 'page' : undefined}
+                  className={cn(isCurrent && 'font-medium text-foreground')}
                 >
                   {label}
                 </span>

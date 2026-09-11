@@ -10,4 +10,6 @@ export const createOrganizationSchema = z.object({
     .max(MAX_ORGANIZATION_NAME_LENGTH, 'validation:maxLength'),
 });
 
-export type CreateOrganizationFormData = z.infer<typeof createOrganizationSchema>;
+export type CreateOrganizationFormData = z.infer<
+  typeof createOrganizationSchema
+>;

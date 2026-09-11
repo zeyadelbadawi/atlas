@@ -7,17 +7,17 @@
  * it: `CurrentUser` has no account-status field anywhere in Atlas.
  * Reintroduce this once a real status field is specified.
  */
-import { useTranslation } from "react-i18next";
-import { Badge } from "@/components/ui/badge";
+import { useTranslation } from 'react-i18next';
+import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import type { CurrentUser } from "@types";
+} from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import type { CurrentUser } from '@types';
 
 export interface ProfileAccountSectionProps {
   readonly user: CurrentUser;
@@ -31,40 +31,40 @@ export function ProfileAccountSection({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t("profile:sections.account.title")}</CardTitle>
+        <CardTitle>{t('profile:sections.account.title')}</CardTitle>
         <CardDescription>
-          {t("profile:sections.account.description")}
+          {t('profile:sections.account.description')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="grid gap-6 md:grid-cols-2">
           <div>
             <p className="text-sm font-medium text-muted-foreground">
-              {t("profile:fields.userId")}
+              {t('profile:fields.userId')}
             </p>
             <p className="mt-1 font-mono text-sm">{user.id}</p>
           </div>
 
           <div>
             <p className="text-sm font-medium text-muted-foreground">
-              {t("profile:fields.role")}
+              {t('profile:fields.role')}
             </p>
             <p className="mt-1 text-sm capitalize">
               {user.roles.length > 0
-                ? user.roles.join(", ")
-                : t("profile:status.noRole")}
+                ? user.roles.join(', ')
+                : t('profile:status.noRole')}
             </p>
           </div>
 
           <div>
             <p className="text-sm font-medium text-muted-foreground">
-              {t("profile:fields.memberSince")}
+              {t('profile:fields.memberSince')}
             </p>
             <p className="mt-1 text-sm">
               {new Date(user.createdAt).toLocaleDateString(undefined, {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
               })}
             </p>
           </div>
@@ -74,7 +74,7 @@ export function ProfileAccountSection({
 
         <div>
           <h3 className="text-sm font-medium mb-3">
-            {t("profile:sections.account.organizations")}
+            {t('profile:sections.account.organizations')}
           </h3>
           {user.organizationMemberships &&
           user.organizationMemberships.length > 0 ? (
@@ -92,7 +92,7 @@ export function ProfileAccountSection({
                   </div>
                   {membership.isPrimary ? (
                     <Badge variant="outline">
-                      {t("profile:status.current")}
+                      {t('profile:status.current')}
                     </Badge>
                   ) : null}
                 </div>
@@ -100,7 +100,7 @@ export function ProfileAccountSection({
             </div>
           ) : (
             <p className="text-sm text-muted-foreground">
-              {t("profile:sections.account.noOrganizations")}
+              {t('profile:sections.account.noOrganizations')}
             </p>
           )}
         </div>

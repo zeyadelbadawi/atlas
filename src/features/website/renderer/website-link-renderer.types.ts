@@ -17,4 +17,6 @@ export interface WebsiteLinkRendererProps {
   readonly children: ReactNode;
 }
 
-export type WebsiteLinkRenderer = (props: WebsiteLinkRendererProps) => JSX.Element;
+export type WebsiteLinkRenderer = (
+  props: WebsiteLinkRendererProps
+) => JSX.Element;

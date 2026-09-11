@@ -9,7 +9,10 @@ import { useApiMutation, useAuth, useInvalidate } from '@/shared/hooks';
 import { instructorKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { instructorService } from '../services/InstructorService';
-import type { AssignmentSubmissionReview, GradeSubmissionPayload } from '@types';
+import type {
+  AssignmentSubmissionReview,
+  GradeSubmissionPayload,
+} from '@types';
 
 export function useGradeSubmission(courseId: string, assignmentId: string) {
   const { invalidate } = useInvalidate();

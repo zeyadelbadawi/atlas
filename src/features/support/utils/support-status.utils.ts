@@ -4,7 +4,9 @@
 import type { StatusTone } from '@components/data-display';
 import type { SupportCasePriority, SupportCaseStatus } from '@types';
 
-export function getSupportCaseStatusTone(status: SupportCaseStatus): StatusTone {
+export function getSupportCaseStatusTone(
+  status: SupportCaseStatus
+): StatusTone {
   switch (status) {
     case 'resolved':
     case 'closed':
@@ -17,7 +19,9 @@ export function getSupportCaseStatusTone(status: SupportCaseStatus): StatusTone 
   }
 }
 
-export function getSupportCasePriorityTone(priority: SupportCasePriority): StatusTone {
+export function getSupportCasePriorityTone(
+  priority: SupportCasePriority
+): StatusTone {
   switch (priority) {
     case 'urgent':
       return 'destructive';

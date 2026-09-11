@@ -21,7 +21,11 @@ import type { ApiError } from '@api';
 export const tenantSupportCaseKeys = {
   mine: (scope: DashboardScopeSelection) =>
     scope.kind === 'organization'
-      ? (['tenant-support-cases', 'organization', scope.organizationId] as const)
+      ? ([
+          'tenant-support-cases',
+          'organization',
+          scope.organizationId,
+        ] as const)
       : scope.kind === 'academy'
         ? (['tenant-support-cases', 'academy', scope.academyId] as const)
         : (['tenant-support-cases', 'none'] as const),
@@ -48,7 +52,10 @@ export function useSubmitSupportCase() {
   return useApiMutation<SupportCaseDetail, CreateSupportCasePayload, ApiError>({
     mutationFn: (payload) =>
       scope.kind === 'organization'
-        ? tenantSupportCaseService.createForOrganization(scope.organizationId, payload)
+        ? tenantSupportCaseService.createForOrganization(
+            scope.organizationId,
+            payload
+          )
         : tenantSupportCaseService.createForAcademy(
             (scope as { academyId: string }).academyId,
             payload

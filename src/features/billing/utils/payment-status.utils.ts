@@ -7,7 +7,9 @@
 import type { StatusTone } from '@components/data-display';
 import type { ManualReviewStatus, PaymentLifecycleStatus } from '@types';
 
-export function getPaymentStatusTone(status: PaymentLifecycleStatus): StatusTone {
+export function getPaymentStatusTone(
+  status: PaymentLifecycleStatus
+): StatusTone {
   switch (status) {
     case 'succeeded':
       return 'success';
@@ -28,7 +30,9 @@ export function getPaymentStatusTone(status: PaymentLifecycleStatus): StatusTone
   }
 }
 
-export function getManualReviewStatusTone(status: ManualReviewStatus): StatusTone {
+export function getManualReviewStatusTone(
+  status: ManualReviewStatus
+): StatusTone {
   switch (status) {
     case 'approved':
       return 'success';

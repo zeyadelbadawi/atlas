@@ -12,8 +12,12 @@ import type {
 import { useToast } from '@app/providers';
 import { useTranslation } from 'react-i18next';
 
-export interface UseApiMutationOptions<TData, TVariables, TError = Error, TContext = unknown>
-  extends UseMutationOptions<TData, TError, TVariables, TContext> {
+export interface UseApiMutationOptions<
+  TData,
+  TVariables,
+  TError = Error,
+  TContext = unknown,
+> extends UseMutationOptions<TData, TError, TVariables, TContext> {
   /** Translation key for success toast message. */
   readonly successMessageKey?: string;
 
@@ -30,7 +34,12 @@ export interface UseApiMutationOptions<TData, TVariables, TError = Error, TConte
   readonly invalidateKeys?: readonly (readonly unknown[])[];
 }
 
-export function useApiMutation<TData, TVariables, TError = Error, TContext = unknown>(
+export function useApiMutation<
+  TData,
+  TVariables,
+  TError = Error,
+  TContext = unknown,
+>(
   options: UseApiMutationOptions<TData, TVariables, TError, TContext>
 ): UseMutationResult<TData, TError, TVariables, TContext> {
   const queryClient = useQueryClient();
@@ -72,7 +81,11 @@ export function useApiMutation<TData, TVariables, TError = Error, TContext = unk
     onError: (error, variables, context) => {
       // Show error toast.
       if (showErrorToast) {
-        notifyError(errorMessageKey ?? 'errors:mutation.failed', undefined, undefined);
+        notifyError(
+          errorMessageKey ?? 'errors:mutation.failed',
+          undefined,
+          undefined
+        );
       }
 
       // Call user-provided onError.

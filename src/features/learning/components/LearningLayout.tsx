@@ -9,18 +9,21 @@
  * uses for its own navigation, so learning doesn't introduce a second
  * responsive-navigation mechanism.
  */
-import type { ReactNode } from "react";
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, PanelLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import { AcademyBrandMark, AtlasPlatformAttribution } from "@components/branding";
-import { useAcademyIdentity } from "@features/public-website/hooks";
-import { useBreakpoint, useDisclosure, useLanguage } from "@hooks";
-import { useLearningPaths } from "../context/LearningPaths.context";
-import { CurriculumNav } from "./CurriculumNav";
-import type { CourseSection, LessonProgressStatus } from "@types";
+import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, PanelLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
+import {
+  AcademyBrandMark,
+  AtlasPlatformAttribution,
+} from '@components/branding';
+import { useAcademyIdentity } from '@features/public-website/hooks';
+import { useBreakpoint, useDisclosure, useLanguage } from '@hooks';
+import { useLearningPaths } from '../context/LearningPaths.context';
+import { CurriculumNav } from './CurriculumNav';
+import type { CourseSection, LessonProgressStatus } from '@types';
 
 export interface LearningLayoutProps {
   readonly courseId: string;
@@ -83,7 +86,7 @@ export function LearningLayout({
               variant="outline"
               size="icon"
               onClick={drawer.open}
-              aria-label={t("learning:learn.openCurriculum")}
+              aria-label={t('learning:learn.openCurriculum')}
             >
               <PanelLeft className="size-4" aria-hidden />
             </Button>
@@ -96,7 +99,7 @@ export function LearningLayout({
               onClick={() => navigate(paths.courseDetail(courseId))}
             >
               <ArrowLeft className="size-4 rtl:-scale-x-100" aria-hidden />
-              {t("learning:learn.backToCourse")}
+              {t('learning:learn.backToCourse')}
             </Button>
             <h1 className="font-display text-lg font-semibold text-foreground">
               {courseTitle}
@@ -112,7 +115,7 @@ export function LearningLayout({
             />
           </div>
           <span className="whitespace-nowrap text-xs text-muted-foreground">
-            {t("learning:learn.progressLabel", {
+            {t('learning:learn.progressLabel', {
               percentage: Math.round(progressPercentage),
             })}
           </span>
@@ -127,11 +130,11 @@ export function LearningLayout({
         ) : (
           <Sheet open={drawer.isOpen} onOpenChange={drawer.setOpen}>
             <SheetContent
-              side={isRtl ? "right" : "left"}
+              side={isRtl ? 'right' : 'left'}
               className="w-80 overflow-y-auto p-4"
             >
               <SheetTitle className="sr-only">
-                {t("learning:learn.curriculumLabel")}
+                {t('learning:learn.curriculumLabel')}
               </SheetTitle>
               {nav}
             </SheetContent>

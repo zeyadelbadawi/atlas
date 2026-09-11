@@ -37,7 +37,10 @@ import type { WebsiteLinkRenderer } from './website-link-renderer.types';
 export interface WebsiteChromeProps {
   readonly academyName: string;
   readonly academyLogo?: string;
-  readonly configuration: Pick<WebsiteConfiguration, 'themeKey' | 'brand' | 'navigation' | 'header' | 'footer'>;
+  readonly configuration: Pick<
+    WebsiteConfiguration,
+    'themeKey' | 'brand' | 'navigation' | 'header' | 'footer'
+  >;
   readonly pages: readonly WebsitePage[];
   readonly activePageId?: string;
   readonly onNavigate: (pageId: string) => void;
@@ -67,8 +70,10 @@ export function WebsiteChrome({
   authState,
 }: WebsiteChromeProps): JSX.Element {
   const theme = getWebsiteTheme(configuration.themeKey);
-  const brand: Pick<WebsiteBrandConfig, 'primaryColor' | 'secondaryColor' | 'accentColor'> =
-    configuration.brand;
+  const brand: Pick<
+    WebsiteBrandConfig,
+    'primaryColor' | 'secondaryColor' | 'accentColor'
+  > = configuration.brand;
   // `linkRenderer` absent means dashboard preview (Theme gallery/Page
   // Editor) — `MobileBottomNav` itself already renders `null` there too;
   // computed once here as well so `<main>`'s bottom padding stays in sync
@@ -79,8 +84,8 @@ export function WebsiteChrome({
 
   return (
     <PublicWebsiteLocaleProvider locale={locale}>
-    <WebsiteThemeScope theme={theme} brand={brand} className={className}>
-      {/*
+      <WebsiteThemeScope theme={theme} brand={brand} className={className}>
+        {/*
         `dir` scoped to this subtree (not just `document.documentElement`,
         which the real public runtime also sets — see
         `usePublicWebsiteDocumentDirection`) so an Arabic Academy previewed
@@ -88,33 +93,38 @@ export function WebsiteChrome({
         genuinely right-to-left exactly as a real visitor would see it,
         without flipping the surrounding dashboard chrome.
       */}
-      <div dir={PUBLIC_WEBSITE_LOCALE_DIRECTION[locale]} className="min-h-full bg-background text-foreground">
-        <WebsiteHeader
-          logo={academyLogo}
-          academyName={academyName}
-          navigation={configuration.navigation}
-          pages={pages}
-          header={configuration.header}
-          activePageId={activePageId}
-          onNavigate={onNavigate}
-          linkRenderer={linkRenderer}
-          locale={locale}
-          onLocaleChange={onLocaleChange}
-          authState={authState}
-        />
+        <div
+          dir={PUBLIC_WEBSITE_LOCALE_DIRECTION[locale]}
+          className="min-h-full bg-background text-foreground"
+        >
+          <WebsiteHeader
+            logo={academyLogo}
+            academyName={academyName}
+            navigation={configuration.navigation}
+            pages={pages}
+            header={configuration.header}
+            activePageId={activePageId}
+            onNavigate={onNavigate}
+            linkRenderer={linkRenderer}
+            locale={locale}
+            onLocaleChange={onLocaleChange}
+            authState={authState}
+          />
 
-        {/* Bottom padding matches `MobileBottomNav`'s own height + safe-area inset whenever it's showing, so the bar never covers the page's own last CTA/content — see that component's own doc comment for why this and its render condition must never disagree. */}
-        <main className={showBottomNav ? 'pb-16 md:pb-0' : undefined}>{children}</main>
+          {/* Bottom padding matches `MobileBottomNav`'s own height + safe-area inset whenever it's showing, so the bar never covers the page's own last CTA/content — see that component's own doc comment for why this and its render condition must never disagree. */}
+          <main className={showBottomNav ? 'pb-16 md:pb-0' : undefined}>
+            {children}
+          </main>
 
-        <WebsiteFooter
-          academyName={academyName}
-          footer={configuration.footer}
-          pages={pages}
-          onNavigate={onNavigate}
-          linkRenderer={linkRenderer}
-        />
+          <WebsiteFooter
+            academyName={academyName}
+            footer={configuration.footer}
+            pages={pages}
+            onNavigate={onNavigate}
+            linkRenderer={linkRenderer}
+          />
 
-        {/*
+          {/*
           Phase 6 — mandatory, platform-owned attribution. Placed here,
           below the Academy's OWN footer (never inside `WebsiteFooter`,
           which renders `configuration.footer` — Academy-authored CMS
@@ -123,13 +133,17 @@ export function WebsiteChrome({
           Sign In/Sign Up pages render through, so this one placement
           covers both surfaces without duplication.
         */}
-        <div className="border-t border-border bg-background px-4 py-3">
-          <AtlasPlatformAttribution />
-        </div>
+          <div className="border-t border-border bg-background px-4 py-3">
+            <AtlasPlatformAttribution />
+          </div>
 
-        <MobileBottomNav pages={pages} locale={locale} linkRenderer={linkRenderer} />
-      </div>
-    </WebsiteThemeScope>
+          <MobileBottomNav
+            pages={pages}
+            locale={locale}
+            linkRenderer={linkRenderer}
+          />
+        </div>
+      </WebsiteThemeScope>
     </PublicWebsiteLocaleProvider>
   );
 }

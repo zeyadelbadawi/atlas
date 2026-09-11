@@ -5,11 +5,11 @@
  * notification menus are added by the modules that own them; the topbar exposes
  * a slot rather than anticipating their implementation.
  */
-import type { ReactNode } from "react";
-import { ArrowLeft, Menu } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
-import { LanguageSwitcher, ThemeSwitcher } from "@components/controls";
+import type { ReactNode } from 'react';
+import { ArrowLeft, Menu } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
+import { LanguageSwitcher, ThemeSwitcher } from '@components/controls';
 
 export interface DashboardTopbarProps {
   /** Opens the mobile navigation drawer. */
@@ -42,7 +42,7 @@ export function DashboardTopbar({
             variant="ghost"
             size="icon"
             onClick={onOpenNavigation}
-            aria-label={t("navigation:sidebar.open")}
+            aria-label={t('navigation:sidebar.open')}
             className="text-muted-foreground hover:text-foreground"
           >
             <Menu className="size-5" strokeWidth={1.75} aria-hidden />
@@ -55,8 +55,8 @@ export function DashboardTopbar({
             variant="ghost"
             size="icon"
             onClick={onGoBack}
-            aria-label={t("navigation:back")}
-            title={t("navigation:back")}
+            aria-label={t('navigation:back')}
+            title={t('navigation:back')}
             className="text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft

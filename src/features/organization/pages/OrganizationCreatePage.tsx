@@ -45,7 +45,11 @@ export default function OrganizationCreatePage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { refreshSession } = useAuth();
-  const { mutateAsync: createOrganization, isPending, error } = useCreateOrganization();
+  const {
+    mutateAsync: createOrganization,
+    isPending,
+    error,
+  } = useCreateOrganization();
 
   const form = useForm<CreateOrganizationFormData>({
     resolver: zodResolver(createOrganizationSchema),

@@ -21,7 +21,9 @@ import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { useOrganization } from '../hooks';
 import type { OrganizationStatus } from '@types';
 
-function statusTone(status: OrganizationStatus): 'success' | 'warning' | 'neutral' {
+function statusTone(
+  status: OrganizationStatus
+): 'success' | 'warning' | 'neutral' {
   if (status === 'active') return 'success';
   if (status === 'suspended') return 'warning';
   return 'neutral';
@@ -127,11 +129,14 @@ export default function OrganizationOverviewPage(): JSX.Element {
                 {t('organization:overview.fields.createdAt')}
               </p>
               <p className="mt-1 text-sm">
-                {new Date(organization.createdAt).toLocaleDateString(undefined, {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
+                {new Date(organization.createdAt).toLocaleDateString(
+                  undefined,
+                  {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  }
+                )}
               </p>
             </div>
           </div>

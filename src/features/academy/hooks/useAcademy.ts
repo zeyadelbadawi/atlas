@@ -40,7 +40,11 @@ export function useAcademy(academyId: string, options?: UseAcademyOptions) {
 
   const fetchedOrganizationId = query.data?.organizationId;
   useEffect(() => {
-    if (fetchedOrganizationId && organization?.id && fetchedOrganizationId !== organization.id) {
+    if (
+      fetchedOrganizationId &&
+      organization?.id &&
+      fetchedOrganizationId !== organization.id
+    ) {
       switchOrganization(fetchedOrganizationId);
     }
   }, [fetchedOrganizationId, organization?.id, switchOrganization]);

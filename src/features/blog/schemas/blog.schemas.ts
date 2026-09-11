@@ -40,7 +40,7 @@ export const blogPostSchema = z.object({
     .optional()
     .refine(
       (value) => !value || new Date(value).getTime() > Date.now(),
-      'validation:futureDateRequired',
+      'validation:futureDateRequired'
     ),
   metaTitle: z
     .string()

@@ -6,9 +6,9 @@
  * product called it). Mirrors `ThemeSwitcher`'s trigger/dropdown shape for
  * visual consistency in the topbar's `actions` slot.
  */
-import { LogOut } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { LogOut } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,15 +16,17 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useAuth, useSignOut, useToast } from "@hooks";
-import { initialsFromName } from "@utils";
+} from '@/components/ui/dropdown-menu';
+import { useAuth, useSignOut, useToast } from '@hooks';
+import { initialsFromName } from '@utils';
 
 export interface AccountMenuProps {
   readonly className?: string;
 }
 
-export function AccountMenu({ className }: AccountMenuProps): JSX.Element | null {
+export function AccountMenu({
+  className,
+}: AccountMenuProps): JSX.Element | null {
   const { t } = useTranslation();
   const { user } = useAuth();
   const { signOut, isLoading } = useSignOut();
@@ -34,7 +36,7 @@ export function AccountMenu({ className }: AccountMenuProps): JSX.Element | null
 
   const handleSignOut = async (): Promise<void> => {
     await signOut();
-    toast({ description: t("auth:signOut.success") });
+    toast({ description: t('auth:signOut.success') });
   };
 
   return (
@@ -42,7 +44,7 @@ export function AccountMenu({ className }: AccountMenuProps): JSX.Element | null
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          aria-label={t("common:account.menu")}
+          aria-label={t('common:account.menu')}
           className={className}
         >
           <Avatar className="h-8 w-8">
@@ -72,7 +74,7 @@ export function AccountMenu({ className }: AccountMenuProps): JSX.Element | null
           className="text-destructive focus:text-destructive"
         >
           <LogOut className="me-2 size-4" strokeWidth={1.75} aria-hidden />
-          {t("common:account.signOut")}
+          {t('common:account.signOut')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

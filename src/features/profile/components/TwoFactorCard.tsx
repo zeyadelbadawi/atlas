@@ -84,7 +84,11 @@ export function TwoFactorCard(): JSX.Element {
     showErrorToast: false,
   });
 
-  const confirmSetup = useApiMutation<{ recoveryCodes: string[] }, string, ApiError>({
+  const confirmSetup = useApiMutation<
+    { recoveryCodes: string[] },
+    string,
+    ApiError
+  >({
     mutationFn: (token) => twoFactorService.confirmSetup(token),
     showSuccessToast: false,
     showErrorToast: false,
@@ -96,7 +100,11 @@ export function TwoFactorCard(): JSX.Element {
     showErrorToast: false,
   });
 
-  const regenerate = useApiMutation<{ recoveryCodes: string[] }, string, ApiError>({
+  const regenerate = useApiMutation<
+    { recoveryCodes: string[] },
+    string,
+    ApiError
+  >({
     mutationFn: (pw) => twoFactorService.regenerateRecoveryCodes(pw),
     showSuccessToast: false,
     showErrorToast: false,
@@ -190,7 +198,9 @@ export function TwoFactorCard(): JSX.Element {
             <p className="flex items-center gap-2 font-medium">
               {t('profile:sections.security.twoFactorStatus')}
               {enabled ? (
-                <Badge variant="secondary">{t('profile:twoFactor.enabled')}</Badge>
+                <Badge variant="secondary">
+                  {t('profile:twoFactor.enabled')}
+                </Badge>
               ) : null}
             </p>
             <p className="text-sm text-muted-foreground">
@@ -205,7 +215,10 @@ export function TwoFactorCard(): JSX.Element {
           <div className="flex flex-wrap gap-2">
             {enabled ? (
               <>
-                <Button variant="outline" onClick={() => setStage('regenerating')}>
+                <Button
+                  variant="outline"
+                  onClick={() => setStage('regenerating')}
+                >
                   {t('profile:twoFactor.regenerateCodes')}
                 </Button>
                 <Button variant="outline" onClick={() => setStage('disabling')}>
@@ -264,7 +277,9 @@ export function TwoFactorCard(): JSX.Element {
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="totp-code">{t('profile:twoFactor.enterCode')}</Label>
+                <Label htmlFor="totp-code">
+                  {t('profile:twoFactor.enterCode')}
+                </Label>
                 <Input
                   id="totp-code"
                   inputMode="numeric"

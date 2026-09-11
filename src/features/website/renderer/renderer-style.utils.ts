@@ -36,10 +36,16 @@ export function useWebsiteCardClass(): string {
     case 'outlined':
       return cn(base, 'border-2 bg-card border-[var(--website-primary-muted)]');
     case 'bold':
-      return cn(base, 'border-2 shadow-[var(--website-shadow)] bg-card border-[var(--website-primary-solid)]');
+      return cn(
+        base,
+        'border-2 shadow-[var(--website-shadow)] bg-card border-[var(--website-primary-solid)]'
+      );
     case 'elevated':
     default:
-      return cn(base, 'border border-border/40 shadow-[var(--website-shadow)] bg-card');
+      return cn(
+        base,
+        'border border-border/40 shadow-[var(--website-shadow)] bg-card'
+      );
   }
 }
 

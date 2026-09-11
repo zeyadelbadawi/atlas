@@ -49,7 +49,9 @@ export default function CourseQuizzesPage(): JSX.Element {
   const breadcrumbs: readonly BreadcrumbItem[] = [
     {
       labelKey: 'course:list.title',
-      path: buildPath(DASHBOARD_ROUTES.academyCourses, { academyId: academyId ?? '' }),
+      path: buildPath(DASHBOARD_ROUTES.academyCourses, {
+        academyId: academyId ?? '',
+      }),
     },
     ...(course
       ? [
@@ -66,8 +68,12 @@ export default function CourseQuizzesPage(): JSX.Element {
     { labelKey: 'course:quizAuthoring.title' },
   ];
 
-  const { data: quizzesData, isLoading, error, refetch } =
-    useQuizzesForAuthoring(courseId ?? '');
+  const {
+    data: quizzesData,
+    isLoading,
+    error,
+    refetch,
+  } = useQuizzesForAuthoring(courseId ?? '');
   const quizzes = quizzesData?.items ?? [];
 
   const deleteQuiz = useDeleteQuiz(courseId ?? '');
@@ -75,7 +81,10 @@ export default function CourseQuizzesPage(): JSX.Element {
   const goToCreate = () => {
     if (!academyId || !courseId) return;
     navigate(
-      buildPath(DASHBOARD_ROUTES.academyCourseQuizCreate, { academyId, courseId })
+      buildPath(DASHBOARD_ROUTES.academyCourseQuizCreate, {
+        academyId,
+        courseId,
+      })
     );
   };
 

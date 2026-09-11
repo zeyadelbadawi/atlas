@@ -79,9 +79,7 @@ export default function BlogListPage(): JSX.Element {
         descriptionKey="blog:list.subtitle"
         actions={
           canCreate ? (
-            <Button
-              onClick={() => navigate(DASHBOARD_ROUTES.blogCreate)}
-            >
+            <Button onClick={() => navigate(DASHBOARD_ROUTES.blogCreate)}>
               <Plus className="size-4" strokeWidth={2} aria-hidden />
               {t('blog:list.createButton')}
             </Button>

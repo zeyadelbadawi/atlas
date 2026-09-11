@@ -202,11 +202,13 @@ export default function TenantAddOnsPage(): JSX.Element {
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {availableAddOns.map((addOn) => {
-                const compatible = addOn.compatiblePlanKeys.includes(
-                  currentPlanKey
-                );
+                const compatible =
+                  addOn.compatiblePlanKeys.includes(currentPlanKey);
                 return (
-                  <Card key={addOn.id} className={!compatible ? 'opacity-70' : ''}>
+                  <Card
+                    key={addOn.id}
+                    className={!compatible ? 'opacity-70' : ''}
+                  >
                     <CardContent className="space-y-2 p-4">
                       <div className="flex items-center justify-between gap-2">
                         <h3 className="font-medium text-foreground">

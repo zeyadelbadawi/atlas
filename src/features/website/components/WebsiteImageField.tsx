@@ -46,7 +46,9 @@ export function WebsiteImageField({
   const { t } = useTranslation();
   const [error, setError] = useState<string>();
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
-  const filePicker = useFilePicker({ accept: ALLOWED_WEBSITE_IMAGE_TYPES.join(',') });
+  const filePicker = useFilePicker({
+    accept: ALLOWED_WEBSITE_IMAGE_TYPES.join(','),
+  });
 
   useEffect(() => {
     const file = filePicker.files?.[0];
@@ -91,7 +93,9 @@ export function WebsiteImageField({
             size="sm"
             onClick={filePicker.openFilePicker}
           >
-            {value ? t('website:common.replaceImage') : t('website:common.chooseImage')}
+            {value
+              ? t('website:common.replaceImage')
+              : t('website:common.chooseImage')}
           </Button>
           {academyId ? (
             <Button

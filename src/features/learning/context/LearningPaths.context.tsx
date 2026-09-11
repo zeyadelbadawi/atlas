@@ -34,7 +34,11 @@
  * "hide this link," never as an error.
  */
 import { createContext, useContext, type ReactNode } from 'react';
-import { AUTH_ROUTES, DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
+import {
+  AUTH_ROUTES,
+  DASHBOARD_ROUTES,
+  buildPath,
+} from '@app/routes/route-paths';
 
 export interface LearningPaths {
   readonly myLearning: () => string;
@@ -67,7 +71,9 @@ export const DASHBOARD_LEARNING_PATHS: LearningPaths = {
   signIn: () => AUTH_ROUTES.signIn,
 };
 
-const LearningPathsContext = createContext<LearningPaths>(DASHBOARD_LEARNING_PATHS);
+const LearningPathsContext = createContext<LearningPaths>(
+  DASHBOARD_LEARNING_PATHS
+);
 
 export interface LearningPathsProviderProps {
   readonly paths: LearningPaths;
@@ -79,7 +85,9 @@ export function LearningPathsProvider({
   children,
 }: LearningPathsProviderProps): JSX.Element {
   return (
-    <LearningPathsContext.Provider value={paths}>{children}</LearningPathsContext.Provider>
+    <LearningPathsContext.Provider value={paths}>
+      {children}
+    </LearningPathsContext.Provider>
   );
 }
 

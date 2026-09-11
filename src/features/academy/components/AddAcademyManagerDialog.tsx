@@ -44,7 +44,11 @@ export interface AddAcademyManagerDialogProps {
   readonly academyId: string;
 }
 
-const DEFAULT_VALUES: AddAcademyManagerFormData = { email: '', name: '', password: '' };
+const DEFAULT_VALUES: AddAcademyManagerFormData = {
+  email: '',
+  name: '',
+  password: '',
+};
 
 export function AddAcademyManagerDialog({
   open,
@@ -96,7 +100,11 @@ export function AddAcademyManagerDialog({
           // exactly the UX gap this fixes. Every other kind (network/
           // timeout/server/notFound/conflict/forbidden/an edge-case
           // validation error with no mappable field) still gets a toast.
-          if (error.kind === 'validation' && error.violations && error.violations.length > 0) {
+          if (
+            error.kind === 'validation' &&
+            error.violations &&
+            error.violations.length > 0
+          ) {
             return;
           }
 
@@ -163,7 +171,9 @@ export function AddAcademyManagerDialog({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('academy:members.newAccount.nameLabel')}</FormLabel>
+                  <FormLabel>
+                    {t('academy:members.newAccount.nameLabel')}
+                  </FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -177,7 +187,9 @@ export function AddAcademyManagerDialog({
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('academy:members.newAccount.passwordLabel')}</FormLabel>
+                  <FormLabel>
+                    {t('academy:members.newAccount.passwordLabel')}
+                  </FormLabel>
                   <FormControl>
                     <Input type="password" {...field} />
                   </FormControl>

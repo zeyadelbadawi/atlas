@@ -16,19 +16,23 @@ import {
   Palette,
   ShieldCheck,
   Users,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { PageContainer } from "@components/layout";
-import { AUTH_ROUTES, DASHBOARD_ROUTES, PUBLIC_ROUTES } from "@app/routes/route-paths";
-import { RISE_VARIANTS, createStaggerVariants } from "@motion";
-import { useAuth } from "@hooks";
-import { usePublicPlans } from "../hooks/usePublicPlans";
-import { useStartPlanFlow } from "../hooks/useStartPlanFlow";
-import { formatPlanPrice } from "../utils/formatPlanPrice";
+} from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { PageContainer } from '@components/layout';
+import {
+  AUTH_ROUTES,
+  DASHBOARD_ROUTES,
+  PUBLIC_ROUTES,
+} from '@app/routes/route-paths';
+import { RISE_VARIANTS, createStaggerVariants } from '@motion';
+import { useAuth } from '@hooks';
+import { usePublicPlans } from '../hooks/usePublicPlans';
+import { useStartPlanFlow } from '../hooks/useStartPlanFlow';
+import { formatPlanPrice } from '../utils/formatPlanPrice';
 
 const CAPABILITY_KEYS: readonly {
   readonly id: string;
@@ -37,62 +41,62 @@ const CAPABILITY_KEYS: readonly {
   readonly descriptionKey: string;
 }[] = [
   {
-    id: "academies",
+    id: 'academies',
     icon: Building2,
-    titleKey: "home:capabilities.academies.title",
-    descriptionKey: "home:capabilities.academies.description",
+    titleKey: 'home:capabilities.academies.title',
+    descriptionKey: 'home:capabilities.academies.description',
   },
   {
-    id: "lms",
+    id: 'lms',
     icon: BookOpen,
-    titleKey: "home:capabilities.lms.title",
-    descriptionKey: "home:capabilities.lms.description",
+    titleKey: 'home:capabilities.lms.title',
+    descriptionKey: 'home:capabilities.lms.description',
   },
   {
-    id: "students",
+    id: 'students',
     icon: Users,
-    titleKey: "home:capabilities.students.title",
-    descriptionKey: "home:capabilities.students.description",
+    titleKey: 'home:capabilities.students.title',
+    descriptionKey: 'home:capabilities.students.description',
   },
   {
-    id: "instructors",
+    id: 'instructors',
     icon: GraduationCap,
-    titleKey: "home:capabilities.instructors.title",
-    descriptionKey: "home:capabilities.instructors.description",
+    titleKey: 'home:capabilities.instructors.title',
+    descriptionKey: 'home:capabilities.instructors.description',
   },
   {
-    id: "website",
+    id: 'website',
     icon: Palette,
-    titleKey: "home:capabilities.website.title",
-    descriptionKey: "home:capabilities.website.description",
+    titleKey: 'home:capabilities.website.title',
+    descriptionKey: 'home:capabilities.website.description',
   },
   {
-    id: "domains",
+    id: 'domains',
     icon: Globe2,
-    titleKey: "home:capabilities.domains.title",
-    descriptionKey: "home:capabilities.domains.description",
+    titleKey: 'home:capabilities.domains.title',
+    descriptionKey: 'home:capabilities.domains.description',
   },
   {
-    id: "organizations",
+    id: 'organizations',
     icon: Network,
-    titleKey: "home:capabilities.organizations.title",
-    descriptionKey: "home:capabilities.organizations.description",
+    titleKey: 'home:capabilities.organizations.title',
+    descriptionKey: 'home:capabilities.organizations.description',
   },
   {
-    id: "analytics",
+    id: 'analytics',
     icon: BarChart3,
-    titleKey: "home:capabilities.analytics.title",
-    descriptionKey: "home:capabilities.analytics.description",
+    titleKey: 'home:capabilities.analytics.title',
+    descriptionKey: 'home:capabilities.analytics.description',
   },
   {
-    id: "security",
+    id: 'security',
     icon: ShieldCheck,
-    titleKey: "home:capabilities.security.title",
-    descriptionKey: "home:capabilities.security.description",
+    titleKey: 'home:capabilities.security.title',
+    descriptionKey: 'home:capabilities.security.description',
   },
 ];
 
-const HOW_IT_WORKS_KEYS = ["organization", "academy", "launch"] as const;
+const HOW_IT_WORKS_KEYS = ['organization', 'academy', 'launch'] as const;
 
 export default function HomePage(): JSX.Element {
   const { t } = useTranslation();
@@ -102,7 +106,7 @@ export default function HomePage(): JSX.Element {
   const plansQuery = usePublicPlans();
   const startPlanFlow = useStartPlanFlow();
   const plans = [...(plansQuery.data ?? [])].sort(
-    (a, b) => a.displayOrder - b.displayOrder,
+    (a, b) => a.displayOrder - b.displayOrder
   );
 
   return (
@@ -115,26 +119,36 @@ export default function HomePage(): JSX.Element {
         className="space-y-6 py-8 text-center lg:py-16"
       >
         <span className="inline-flex items-center gap-2 rounded-pill border border-border bg-surface px-3 py-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          {t("home:hero.eyebrow")}
+          {t('home:hero.eyebrow')}
         </span>
 
         <h1 className="mx-auto max-w-3xl font-display text-4xl font-semibold leading-tight tracking-tight text-foreground sm:text-5xl">
-          {t("home:hero.title")}
+          {t('home:hero.title')}
         </h1>
 
         <p className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground">
-          {t("home:hero.description")}
+          {t('home:hero.description')}
         </p>
 
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Button asChild size="lg">
-            <Link to={isAuthenticated ? DASHBOARD_ROUTES.root : AUTH_ROUTES.register}>
-              {t("home:hero.primaryAction")}
-              <ArrowRight className="size-4 rtl:-scale-x-100" strokeWidth={2} aria-hidden />
+            <Link
+              to={
+                isAuthenticated ? DASHBOARD_ROUTES.root : AUTH_ROUTES.register
+              }
+            >
+              {t('home:hero.primaryAction')}
+              <ArrowRight
+                className="size-4 rtl:-scale-x-100"
+                strokeWidth={2}
+                aria-hidden
+              />
             </Link>
           </Button>
           <Button asChild variant="outline" size="lg">
-            <Link to={PUBLIC_ROUTES.pricing}>{t("home:hero.secondaryAction")}</Link>
+            <Link to={PUBLIC_ROUTES.pricing}>
+              {t('home:hero.secondaryAction')}
+            </Link>
           </Button>
         </div>
       </motion.section>
@@ -142,10 +156,10 @@ export default function HomePage(): JSX.Element {
       {/* What Atlas is */}
       <section className="mx-auto max-w-3xl space-y-4 py-8 text-center">
         <h2 className="font-display text-2xl font-semibold text-foreground sm:text-3xl">
-          {t("home:whatIsAtlas.title")}
+          {t('home:whatIsAtlas.title')}
         </h2>
         <p className="text-base leading-relaxed text-muted-foreground">
-          {t("home:whatIsAtlas.description")}
+          {t('home:whatIsAtlas.description')}
         </p>
       </section>
 
@@ -153,17 +167,17 @@ export default function HomePage(): JSX.Element {
       <section className="space-y-6 py-8">
         <div className="mx-auto max-w-2xl space-y-2 text-center">
           <h2 className="font-display text-2xl font-semibold text-foreground sm:text-3xl">
-            {t("home:capabilitiesSection.title")}
+            {t('home:capabilitiesSection.title')}
           </h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
-            {t("home:capabilitiesSection.description")}
+            {t('home:capabilitiesSection.description')}
           </p>
         </div>
 
         <motion.ul
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
+          viewport={{ once: true, margin: '-80px' }}
           variants={capabilityStagger.container}
           className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
         >
@@ -174,7 +188,11 @@ export default function HomePage(): JSX.Element {
               className="space-y-3 rounded-lg border border-border bg-card p-6 shadow-xs"
             >
               <span className="flex size-10 items-center justify-center rounded-md bg-accent text-accent-foreground">
-                <capability.icon className="size-5" strokeWidth={1.75} aria-hidden />
+                <capability.icon
+                  className="size-5"
+                  strokeWidth={1.75}
+                  aria-hidden
+                />
               </span>
               <h3 className="font-display text-base font-semibold text-foreground">
                 {t(capability.titleKey)}
@@ -189,8 +207,12 @@ export default function HomePage(): JSX.Element {
         <div className="text-center">
           <Button asChild variant="outline">
             <Link to={PUBLIC_ROUTES.features}>
-              {t("home:capabilitiesSection.viewAll")}
-              <ArrowRight className="size-4 rtl:-scale-x-100" strokeWidth={2} aria-hidden />
+              {t('home:capabilitiesSection.viewAll')}
+              <ArrowRight
+                className="size-4 rtl:-scale-x-100"
+                strokeWidth={2}
+                aria-hidden
+              />
             </Link>
           </Button>
         </div>
@@ -200,19 +222,23 @@ export default function HomePage(): JSX.Element {
       <section className="space-y-6 py-8">
         <div className="mx-auto max-w-2xl space-y-2 text-center">
           <h2 className="font-display text-2xl font-semibold text-foreground sm:text-3xl">
-            {t("home:howItWorks.title")}
+            {t('home:howItWorks.title')}
           </h2>
         </div>
 
         <motion.ol
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
+          viewport={{ once: true, margin: '-80px' }}
           variants={stepStagger.container}
           className="grid gap-6 sm:grid-cols-3"
         >
           {HOW_IT_WORKS_KEYS.map((step, index) => (
-            <motion.li key={step} variants={stepStagger.item} className="space-y-3 text-center">
+            <motion.li
+              key={step}
+              variants={stepStagger.item}
+              className="space-y-3 text-center"
+            >
               <span className="mx-auto flex size-10 items-center justify-center rounded-full border border-border bg-surface font-display text-sm font-semibold text-foreground">
                 {index + 1}
               </span>
@@ -231,20 +257,20 @@ export default function HomePage(): JSX.Element {
       <section className="space-y-6 py-8">
         <div className="mx-auto max-w-2xl space-y-2 text-center">
           <h2 className="font-display text-2xl font-semibold text-foreground sm:text-3xl">
-            {t("home:pricingPreview.title")}
+            {t('home:pricingPreview.title')}
           </h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
-            {t("home:pricingPreview.description")}
+            {t('home:pricingPreview.description')}
           </p>
         </div>
 
         {plansQuery.isLoading ? (
           <p className="text-center text-sm text-muted-foreground">
-            {t("home:pricingPreview.loading")}
+            {t('home:pricingPreview.loading')}
           </p>
         ) : plansQuery.isError || plans.length === 0 ? (
           <p className="text-center text-sm text-muted-foreground">
-            {t("home:pricingPreview.contactUs")}
+            {t('home:pricingPreview.contactUs')}
           </p>
         ) : (
           <div className="grid gap-4 sm:grid-cols-3">
@@ -259,9 +285,14 @@ export default function HomePage(): JSX.Element {
                 <p className="font-display text-2xl font-semibold text-foreground">
                   {formatPlanPrice(plan.pricing, t)}
                 </p>
-                <p className="flex-1 text-sm text-muted-foreground">{plan.description}</p>
-                <Button onClick={() => startPlanFlow(plan.key)} variant="outline">
-                  {t("home:pricingPreview.choosePlan")}
+                <p className="flex-1 text-sm text-muted-foreground">
+                  {plan.description}
+                </p>
+                <Button
+                  onClick={() => startPlanFlow(plan.key)}
+                  variant="outline"
+                >
+                  {t('home:pricingPreview.choosePlan')}
                 </Button>
               </div>
             ))}
@@ -273,7 +304,7 @@ export default function HomePage(): JSX.Element {
             to={PUBLIC_ROUTES.pricing}
             className="text-sm font-medium text-primary underline-offset-4 hover:underline"
           >
-            {t("home:pricingPreview.viewFullPricing")}
+            {t('home:pricingPreview.viewFullPricing')}
           </Link>
         </div>
       </section>
@@ -287,15 +318,21 @@ export default function HomePage(): JSX.Element {
         className="mx-auto max-w-2xl space-y-4 rounded-lg border border-border bg-surface px-6 py-12 text-center"
       >
         <h2 className="font-display text-2xl font-semibold text-foreground sm:text-3xl">
-          {t("home:finalCta.title")}
+          {t('home:finalCta.title')}
         </h2>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          {t("home:finalCta.description")}
+          {t('home:finalCta.description')}
         </p>
         <Button asChild size="lg">
-          <Link to={isAuthenticated ? DASHBOARD_ROUTES.root : AUTH_ROUTES.register}>
-            {t("home:finalCta.action")}
-            <ArrowRight className="size-4 rtl:-scale-x-100" strokeWidth={2} aria-hidden />
+          <Link
+            to={isAuthenticated ? DASHBOARD_ROUTES.root : AUTH_ROUTES.register}
+          >
+            {t('home:finalCta.action')}
+            <ArrowRight
+              className="size-4 rtl:-scale-x-100"
+              strokeWidth={2}
+              aria-hidden
+            />
           </Link>
         </Button>
       </motion.section>

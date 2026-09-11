@@ -52,7 +52,9 @@ const CourseLearnRedirectPage = lazy(
 );
 const LessonPage = lazy(() => import('@features/learning/pages/LessonPage'));
 const QuizPage = lazy(() => import('@features/learning/pages/QuizPage'));
-const AssignmentPage = lazy(() => import('@features/learning/pages/AssignmentPage'));
+const AssignmentPage = lazy(
+  () => import('@features/learning/pages/AssignmentPage')
+);
 const ProfilePage = lazy(() => import('@features/profile/pages/ProfilePage'));
 
 export interface PublicWebsiteRouterProps {
@@ -60,8 +62,12 @@ export interface PublicWebsiteRouterProps {
 }
 
 /** `window.location.hostname` for a real subdomain/custom-domain visit (both cases the context's `value` already equals it); the dev-override slug in local development only. */
-function resolveLookupKey(context: PublicWebsiteRouterProps['context']): string {
-  return context.lookupType === 'dev-override' ? context.value : window.location.hostname;
+function resolveLookupKey(
+  context: PublicWebsiteRouterProps['context']
+): string {
+  return context.lookupType === 'dev-override'
+    ? context.value
+    : window.location.hostname;
 }
 
 function PublicWebsiteShell({
@@ -94,8 +100,18 @@ function PublicWebsiteLocaleRoutes({
           separate pages, matching the confirmed product requirement,
           reached before the data-driven catch-all so they are never
           shadowed by a Custom Page happening to share the same slug. */}
-      <Route path="sign-in" element={<PublicWebsiteSignInPage lookupKey={lookupKey} locale={locale} />} />
-      <Route path="sign-up" element={<PublicWebsiteSignUpPage lookupKey={lookupKey} locale={locale} />} />
+      <Route
+        path="sign-in"
+        element={
+          <PublicWebsiteSignInPage lookupKey={lookupKey} locale={locale} />
+        }
+      />
+      <Route
+        path="sign-up"
+        element={
+          <PublicWebsiteSignUpPage lookupKey={lookupKey} locale={locale} />
+        }
+      />
 
       {/* Student Learning — the Academy-website-embedded LMS experience.
           Same "reached before the data-driven catch-all" precedent as
@@ -161,20 +177,41 @@ function PublicWebsiteLocaleRoutes({
         }
       />
 
-      <Route path="*" element={<PublicWebsiteShell lookupKey={lookupKey} locale={locale} />} />
+      <Route
+        path="*"
+        element={<PublicWebsiteShell lookupKey={lookupKey} locale={locale} />}
+      />
     </Routes>
   );
 }
 
-export function PublicWebsiteRouter({ context }: PublicWebsiteRouterProps): JSX.Element {
+export function PublicWebsiteRouter({
+  context,
+}: PublicWebsiteRouterProps): JSX.Element {
   const lookupKey = resolveLookupKey(context);
 
   return (
     <Routes>
-      <Route path="/robots.txt" element={<PublicWebsiteRobotsRoute lookupKey={lookupKey} />} />
-      <Route path="/sitemap.xml" element={<PublicWebsiteSitemapRoute lookupKey={lookupKey} />} />
-      <Route path="/ar/*" element={<PublicWebsiteLocaleRoutes lookupKey={lookupKey} locale="ar" />} />
-      <Route path="/*" element={<PublicWebsiteLocaleRoutes lookupKey={lookupKey} locale="en" />} />
+      <Route
+        path="/robots.txt"
+        element={<PublicWebsiteRobotsRoute lookupKey={lookupKey} />}
+      />
+      <Route
+        path="/sitemap.xml"
+        element={<PublicWebsiteSitemapRoute lookupKey={lookupKey} />}
+      />
+      <Route
+        path="/ar/*"
+        element={
+          <PublicWebsiteLocaleRoutes lookupKey={lookupKey} locale="ar" />
+        }
+      />
+      <Route
+        path="/*"
+        element={
+          <PublicWebsiteLocaleRoutes lookupKey={lookupKey} locale="en" />
+        }
+      />
     </Routes>
   );
 }

@@ -25,7 +25,11 @@ import type { PlatformUserSummary } from '@types';
 export default function PlatformUserListPage(): JSX.Element {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { query: searchQuery, setQuery: setSearchQuery, debouncedQuery } = useSearch({
+  const {
+    query: searchQuery,
+    setQuery: setSearchQuery,
+    debouncedQuery,
+  } = useSearch({
     debounceMs: 300,
   });
 
@@ -58,7 +62,9 @@ export default function PlatformUserListPage(): JSX.Element {
         cell: ({ row }) => (
           <div>
             <p className="font-medium">{row.original.name}</p>
-            <p className="text-xs text-muted-foreground">{row.original.email}</p>
+            <p className="text-xs text-muted-foreground">
+              {row.original.email}
+            </p>
           </div>
         ),
       },
@@ -75,7 +81,11 @@ export default function PlatformUserListPage(): JSX.Element {
       {
         accessorKey: 'organizationCount',
         header: t('platform:users.table.organizations'),
-        cell: ({ row }) => <span data-atlas-numeric="true">{row.original.organizationCount}</span>,
+        cell: ({ row }) => (
+          <span data-atlas-numeric="true">
+            {row.original.organizationCount}
+          </span>
+        ),
       },
       {
         accessorKey: 'lastSignInAt',
@@ -83,7 +93,9 @@ export default function PlatformUserListPage(): JSX.Element {
         cell: ({ row }) => (
           <span className="text-muted-foreground">
             {row.original.lastSignInAt
-              ? new Date(row.original.lastSignInAt).toLocaleDateString(i18n.language)
+              ? new Date(row.original.lastSignInAt).toLocaleDateString(
+                  i18n.language
+                )
               : '—'}
           </span>
         ),
@@ -103,7 +115,10 @@ export default function PlatformUserListPage(): JSX.Element {
 
   return (
     <PageContainer>
-      <PageHeader titleKey="platform:users.title" descriptionKey="platform:users.subtitle" />
+      <PageHeader
+        titleKey="platform:users.title"
+        descriptionKey="platform:users.subtitle"
+      />
 
       <div className="space-y-4">
         <Input
@@ -130,7 +145,11 @@ export default function PlatformUserListPage(): JSX.Element {
                 emptyDescriptionKey="platform:users.emptyStateDescription"
                 getRowId={(user) => user.id}
                 onRowSelect={(user) =>
-                  navigate(buildPath(DASHBOARD_ROUTES.platformUserDetail, { userId: user.id }))
+                  navigate(
+                    buildPath(DASHBOARD_ROUTES.platformUserDetail, {
+                      userId: user.id,
+                    })
+                  )
                 }
               />
             )}

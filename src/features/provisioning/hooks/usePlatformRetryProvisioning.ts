@@ -13,7 +13,8 @@ export function usePlatformRetryProvisioning() {
   const { invalidate } = useInvalidate();
 
   return useApiMutation<ProvisioningRequest, string, ApiError>({
-    mutationFn: (requestId) => platformProvisioningService.retryProvisioning(requestId),
+    mutationFn: (requestId) =>
+      platformProvisioningService.retryProvisioning(requestId),
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async (_data, requestId) => {

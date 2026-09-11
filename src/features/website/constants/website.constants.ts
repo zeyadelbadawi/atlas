@@ -68,7 +68,12 @@ export const MAX_SECTION_ITEMS = 12;
 
 /** Same bound Course thumbnails and Academy branding already use for an image asset. */
 export const MAX_WEBSITE_IMAGE_FILE_SIZE = 5 * 1024 * 1024;
-export const ALLOWED_WEBSITE_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+export const ALLOWED_WEBSITE_IMAGE_TYPES = [
+  'image/png',
+  'image/jpeg',
+  'image/jpg',
+  'image/webp',
+];
 
 /* -------------------------------------------------------------------- */
 /* CMS content (Prompt 10)                                              */

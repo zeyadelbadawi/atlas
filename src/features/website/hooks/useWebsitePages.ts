@@ -12,7 +12,10 @@ export interface UseWebsitePagesOptions {
   readonly enabled?: boolean;
 }
 
-export function useWebsitePages(academyId: string, options?: UseWebsitePagesOptions) {
+export function useWebsitePages(
+  academyId: string,
+  options?: UseWebsitePagesOptions
+) {
   const { query, enabled = true } = options ?? {};
 
   return useApiQuery<PaginatedResult<WebsitePage>, ApiError>({

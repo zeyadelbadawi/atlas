@@ -10,16 +10,16 @@
  * driven by the caller's `usePagination` state so the same control works for
  * server-side listings, which is the case Atlas is built for.
  */
-import { useState } from "react";
+import { useState } from 'react';
 import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table";
-import type { ColumnDef, SortingState } from "@tanstack/react-table";
-import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react";
-import { useTranslation } from "react-i18next";
+} from '@tanstack/react-table';
+import type { ColumnDef, SortingState } from '@tanstack/react-table';
+import { ArrowDown, ArrowUp, ChevronsUpDown } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   Table,
   TableBody,
@@ -27,13 +27,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { EmptyState } from "@components/feedback";
-import type { EmptyStateAction } from "@components/feedback";
-import { SkeletonTable } from "@components/loading";
-import { Pagination } from "@components/data-display";
-import type { PaginationState } from "@hooks";
-import { cn } from "@utils";
+} from '@/components/ui/table';
+import { EmptyState } from '@components/feedback';
+import type { EmptyStateAction } from '@components/feedback';
+import { SkeletonTable } from '@components/loading';
+import { Pagination } from '@components/data-display';
+import type { PaginationState } from '@hooks';
+import { cn } from '@utils';
 
 export interface DataTableProps<TData> {
   /** Column definitions. Headers must already be localized by the caller. */
@@ -61,8 +61,8 @@ export function DataTable<TData>({
   data,
   isLoading = false,
   pagination,
-  emptyTitleKey = "common:states.empty.title",
-  emptyDescriptionKey = "common:states.empty.description",
+  emptyTitleKey = 'common:states.empty.title',
+  emptyDescriptionKey = 'common:states.empty.description',
   emptyAction,
   getRowId,
   onRowSelect,
@@ -104,7 +104,7 @@ export function DataTable<TData>({
   }
 
   return (
-    <div className={cn("flex flex-col", className)}>
+    <div className={cn('flex flex-col', className)}>
       {/* Horizontal scrolling is contained so a wide table never stretches
           the page shell. */}
       <div className="w-full overflow-x-auto">
@@ -123,9 +123,9 @@ export function DataTable<TData>({
                       aria-sort={
                         !canSort || sortDirection === false
                           ? undefined
-                          : sortDirection === "asc"
-                            ? "ascending"
-                            : "descending"
+                          : sortDirection === 'asc'
+                            ? 'ascending'
+                            : 'descending'
                       }
                       className="whitespace-nowrap text-xs font-semibold uppercase tracking-wide text-muted-foreground"
                     >
@@ -137,15 +137,15 @@ export function DataTable<TData>({
                         >
                           {flexRender(
                             header.column.columnDef.header,
-                            header.getContext(),
+                            header.getContext()
                           )}
-                          {sortDirection === "asc" ? (
+                          {sortDirection === 'asc' ? (
                             <ArrowUp
                               className="size-3.5"
                               strokeWidth={2}
                               aria-hidden
                             />
-                          ) : sortDirection === "desc" ? (
+                          ) : sortDirection === 'desc' ? (
                             <ArrowDown
                               className="size-3.5"
                               strokeWidth={2}
@@ -160,16 +160,16 @@ export function DataTable<TData>({
                           )}
                           <span className="sr-only">
                             {t(
-                              sortDirection === "asc"
-                                ? "common:table.sortDescending"
-                                : "common:table.sortAscending",
+                              sortDirection === 'asc'
+                                ? 'common:table.sortDescending'
+                                : 'common:table.sortAscending'
                             )}
                           </span>
                         </button>
                       ) : (
                         flexRender(
                           header.column.columnDef.header,
-                          header.getContext(),
+                          header.getContext()
                         )
                       )}
                     </TableHead>
@@ -185,14 +185,14 @@ export function DataTable<TData>({
                 key={row.id}
                 // Activatable rows must be reachable and operable by keyboard.
                 tabIndex={onRowSelect ? 0 : undefined}
-                role={onRowSelect ? "button" : undefined}
+                role={onRowSelect ? 'button' : undefined}
                 onClick={
                   onRowSelect ? () => onRowSelect(row.original) : undefined
                 }
                 onKeyDown={
                   onRowSelect
                     ? (event) => {
-                        if (event.key === "Enter" || event.key === " ") {
+                        if (event.key === 'Enter' || event.key === ' ') {
                           event.preventDefault();
                           onRowSelect(row.original);
                         }
@@ -201,7 +201,7 @@ export function DataTable<TData>({
                 }
                 className={cn(
                   onRowSelect &&
-                    "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
+                    'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring'
                 )}
               >
                 {row.getVisibleCells().map((cell) => (

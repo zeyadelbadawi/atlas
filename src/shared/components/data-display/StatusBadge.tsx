@@ -4,24 +4,20 @@
  * Status is conveyed by colour *and* text, never colour alone, so it remains
  * readable for colour-blind users and in monochrome print.
  */
-import { useTranslation } from "react-i18next";
-import { cn } from "@utils";
+import { useTranslation } from 'react-i18next';
+import { cn } from '@utils';
 
 /** Semantic tone of a status. */
 export type StatusTone =
-  | "neutral"
-  | "success"
-  | "warning"
-  | "destructive"
-  | "info";
+  'neutral' | 'success' | 'warning' | 'destructive' | 'info';
 
 /** Tone-specific surface and text pairings, all token-driven. */
 const TONE_CLASS: Record<StatusTone, string> = {
-  neutral: "bg-muted text-muted-foreground",
-  success: "bg-success-surface text-success",
-  warning: "bg-warning-surface text-warning",
-  destructive: "bg-destructive-surface text-destructive",
-  info: "bg-info-surface text-info",
+  neutral: 'bg-muted text-muted-foreground',
+  success: 'bg-success-surface text-success',
+  warning: 'bg-warning-surface text-warning',
+  destructive: 'bg-destructive-surface text-destructive',
+  info: 'bg-info-surface text-info',
 };
 
 export interface StatusBadgeProps {
@@ -35,7 +31,7 @@ export interface StatusBadgeProps {
 
 export function StatusBadge({
   labelKey,
-  tone = "neutral",
+  tone = 'neutral',
   values,
   className,
 }: StatusBadgeProps): JSX.Element {
@@ -44,9 +40,9 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-pill px-2.5 py-0.5 text-xs font-medium",
+        'inline-flex items-center gap-1.5 rounded-pill px-2.5 py-0.5 text-xs font-medium',
         TONE_CLASS[tone],
-        className,
+        className
       )}
     >
       {/* A dot reinforces the tone without becoming the only signal. */}

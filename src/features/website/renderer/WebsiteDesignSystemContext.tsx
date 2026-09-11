@@ -10,8 +10,9 @@
 import { createContext, useContext } from 'react';
 import type { ResolvedWebsiteDesignSystem } from '@types';
 
-export const WebsiteDesignSystemContext =
-  createContext<ResolvedWebsiteDesignSystem | undefined>(undefined);
+export const WebsiteDesignSystemContext = createContext<
+  ResolvedWebsiteDesignSystem | undefined
+>(undefined);
 
 WebsiteDesignSystemContext.displayName = 'WebsiteDesignSystemContext';
 

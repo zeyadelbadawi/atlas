@@ -19,20 +19,33 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@components/feedback';
-import { useNotificationPreferences, useUpdateNotificationPreferences } from '@features/notifications';
+import {
+  useNotificationPreferences,
+  useUpdateNotificationPreferences,
+} from '@features/notifications';
 import type { NotificationPreferences } from '@types';
 
 export function NotificationSettings(): JSX.Element {
   const { t } = useTranslation();
-  const { data: preferences, isLoading, error, refetch } = useNotificationPreferences();
+  const {
+    data: preferences,
+    isLoading,
+    error,
+    refetch,
+  } = useNotificationPreferences();
   const updatePreferences = useUpdateNotificationPreferences();
-  const [draft, setDraft] = useState<NotificationPreferences | undefined>(preferences);
+  const [draft, setDraft] = useState<NotificationPreferences | undefined>(
+    preferences
+  );
 
   useEffect(() => {
     setDraft(preferences);
   }, [preferences]);
 
-  const handleToggle = (channel: keyof NotificationPreferences, value: boolean) => {
+  const handleToggle = (
+    channel: keyof NotificationPreferences,
+    value: boolean
+  ) => {
     if (!draft) return;
     const next = { ...draft, [channel]: value };
     setDraft(next);
@@ -44,7 +57,9 @@ export function NotificationSettings(): JSX.Element {
       <Card>
         <CardHeader>
           <CardTitle>{t('settings:notifications.title')}</CardTitle>
-          <CardDescription>{t('settings:notifications.description')}</CardDescription>
+          <CardDescription>
+            {t('settings:notifications.description')}
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <Skeleton className="h-10 w-full" />
@@ -72,7 +87,9 @@ export function NotificationSettings(): JSX.Element {
     <Card>
       <CardHeader>
         <CardTitle>{t('settings:notifications.title')}</CardTitle>
-        <CardDescription>{t('settings:notifications.description')}</CardDescription>
+        <CardDescription>
+          {t('settings:notifications.description')}
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {updatePreferences.error ? (
@@ -81,7 +98,9 @@ export function NotificationSettings(): JSX.Element {
 
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
-            <Label htmlFor="notif-email">{t('settings:notifications.emailNotifications')}</Label>
+            <Label htmlFor="notif-email">
+              {t('settings:notifications.emailNotifications')}
+            </Label>
             <p className="text-sm text-muted-foreground">
               {t('settings:notifications.emailNotificationsDescription')}
             </p>
@@ -96,7 +115,9 @@ export function NotificationSettings(): JSX.Element {
 
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
-            <Label htmlFor="notif-push">{t('settings:notifications.pushNotifications')}</Label>
+            <Label htmlFor="notif-push">
+              {t('settings:notifications.pushNotifications')}
+            </Label>
             <p className="text-sm text-muted-foreground">
               {t('settings:notifications.pushNotificationsDescription')}
             </p>
@@ -111,7 +132,9 @@ export function NotificationSettings(): JSX.Element {
 
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
-            <Label htmlFor="notif-sms">{t('settings:notifications.smsNotifications')}</Label>
+            <Label htmlFor="notif-sms">
+              {t('settings:notifications.smsNotifications')}
+            </Label>
             <p className="text-sm text-muted-foreground">
               {t('settings:notifications.smsNotificationsDescription')}
             </p>

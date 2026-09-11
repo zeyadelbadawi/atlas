@@ -45,7 +45,10 @@ import type {
   SubscriptionBillingCycle,
 } from '@types';
 
-const BILLING_CYCLES: readonly SubscriptionBillingCycle[] = ['monthly', 'yearly'];
+const BILLING_CYCLES: readonly SubscriptionBillingCycle[] = [
+  'monthly',
+  'yearly',
+];
 
 /**
  * The specific translation key for a backend error's own `messageKey`
@@ -106,7 +109,8 @@ export default function CheckoutPage(): JSX.Element {
       organizationId: organization.id,
       payload: {
         target,
-        billingCycle: target.type === 'plan_subscription' ? billingCycle : undefined,
+        billingCycle:
+          target.type === 'plan_subscription' ? billingCycle : undefined,
         idempotencyKey,
       },
     });
@@ -177,7 +181,10 @@ export default function CheckoutPage(): JSX.Element {
                     {BILLING_CYCLES.map((cycle) => (
                       <div key={cycle} className="flex items-center gap-2">
                         <RadioGroupItem value={cycle} id={`cycle-${cycle}`} />
-                        <Label htmlFor={`cycle-${cycle}`} className="font-normal">
+                        <Label
+                          htmlFor={`cycle-${cycle}`}
+                          className="font-normal"
+                        >
                           {t(`payments:common.billingCycle.${cycle}`)}
                         </Label>
                       </div>
@@ -189,7 +196,10 @@ export default function CheckoutPage(): JSX.Element {
               {createCheckout.error ? (
                 <ErrorState
                   kind={createCheckout.error.kind}
-                  descriptionKey={specificDescriptionKey(i18n, createCheckout.error)}
+                  descriptionKey={specificDescriptionKey(
+                    i18n,
+                    createCheckout.error
+                  )}
                   requestId={createCheckout.error.requestId}
                   onRetry={handleStartCheckout}
                 />
@@ -230,7 +240,10 @@ export default function CheckoutPage(): JSX.Element {
                   {formatMoney(checkout.snapshot.price, i18n.language)}
                   {checkout.snapshot.billingCycle ? (
                     <span className="ms-1 text-sm font-normal text-muted-foreground">
-                      /{t(`payments:common.billingCycleShort.${checkout.snapshot.billingCycle}`)}
+                      /
+                      {t(
+                        `payments:common.billingCycleShort.${checkout.snapshot.billingCycle}`
+                      )}
                     </span>
                   ) : null}
                 </p>
@@ -296,7 +309,10 @@ export default function CheckoutPage(): JSX.Element {
                 {createPayment.error ? (
                   <ErrorState
                     kind={createPayment.error.kind}
-                    descriptionKey={specificDescriptionKey(i18n, createPayment.error)}
+                    descriptionKey={specificDescriptionKey(
+                      i18n,
+                      createPayment.error
+                    )}
                     requestId={createPayment.error.requestId}
                     onRetry={handleContinueToPayment}
                   />

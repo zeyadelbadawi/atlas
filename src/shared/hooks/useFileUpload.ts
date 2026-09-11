@@ -30,7 +30,10 @@ export interface FileUploadOptions {
 
 export interface UseFileUploadResult {
   /** Uploads files to the specified endpoint. */
-  readonly upload: (endpoint: string, files: FileList | File[]) => Promise<void>;
+  readonly upload: (
+    endpoint: string,
+    files: FileList | File[]
+  ) => Promise<void>;
 
   /** Cancels the current upload. */
   readonly cancel: () => void;

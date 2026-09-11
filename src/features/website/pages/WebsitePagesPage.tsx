@@ -82,7 +82,12 @@ function CreatePageDialog({
         onSuccess: (page) => {
           onOpenChange(false);
           form.reset();
-          navigate(buildPath(DASHBOARD_ROUTES.websitePageEditor, { academyId, pageId: page.id }));
+          navigate(
+            buildPath(DASHBOARD_ROUTES.websitePageEditor, {
+              academyId,
+              pageId: page.id,
+            })
+          );
         },
       }
     );
@@ -122,7 +127,9 @@ function CreatePageDialog({
                 </FormItem>
               )}
             />
-            {createPage.error ? <ErrorState onRetry={form.handleSubmit(onSubmit)} /> : null}
+            {createPage.error ? (
+              <ErrorState onRetry={form.handleSubmit(onSubmit)} />
+            ) : null}
             <DialogFooter>
               <Button type="submit" disabled={createPage.isPending}>
                 {createPage.isPending ? (
@@ -193,7 +200,10 @@ export default function WebsitePagesPage(): JSX.Element {
   const configuration = configQuery.data;
 
   const breadcrumbs: readonly BreadcrumbItem[] = [
-    { labelKey: 'navigation:items.academyOverview', path: DASHBOARD_ROUTES.academy },
+    {
+      labelKey: 'navigation:items.academyOverview',
+      path: DASHBOARD_ROUTES.academy,
+    },
     { labelKey: 'website:pages.title' },
   ];
 
@@ -239,12 +249,20 @@ export default function WebsitePagesPage(): JSX.Element {
       <Card>
         <CardContent className="divide-y divide-border p-0">
           {pages.map((page) => (
-            <div key={page.id} className="flex items-center justify-between gap-3 p-4">
+            <div
+              key={page.id}
+              className="flex items-center justify-between gap-3 p-4"
+            >
               <button
                 type="button"
                 className="flex-1 text-start"
                 onClick={() =>
-                  navigate(buildPath(DASHBOARD_ROUTES.websitePageEditor, { academyId, pageId: page.id }))
+                  navigate(
+                    buildPath(DASHBOARD_ROUTES.websitePageEditor, {
+                      academyId,
+                      pageId: page.id,
+                    })
+                  )
                 }
               >
                 <p className="font-medium text-foreground">{page.title}</p>
@@ -253,14 +271,20 @@ export default function WebsitePagesPage(): JSX.Element {
 
               <div className="flex items-center gap-3">
                 {page.pageType === 'core' ? (
-                  <StatusBadge labelKey="website:pages.coreBadge" tone="neutral" />
+                  <StatusBadge
+                    labelKey="website:pages.coreBadge"
+                    tone="neutral"
+                  />
                 ) : null}
                 {page.coreType === 'courseDetails' ? (
                   <Lock className="size-4 text-muted-foreground" aria-hidden />
                 ) : (
                   <Switch
                     checked={page.visible}
-                    disabled={!canManage || (updatePage.isPending && pendingId === page.id)}
+                    disabled={
+                      !canManage ||
+                      (updatePage.isPending && pendingId === page.id)
+                    }
                     onCheckedChange={() => toggleVisibility(page)}
                     aria-label={t('website:pages.visibilityToggle')}
                   />
@@ -291,14 +315,21 @@ export default function WebsitePagesPage(): JSX.Element {
             delete since they aren't real records to delete).
           */}
           {(['signIn', 'signUp'] as const).map((page) => (
-            <div key={page} className="flex items-center justify-between gap-3 p-4">
+            <div
+              key={page}
+              className="flex items-center justify-between gap-3 p-4"
+            >
               <button
                 type="button"
                 className="flex-1 text-start"
                 onClick={() => setOpenAuthPage(page)}
               >
                 <p className="font-medium text-foreground">
-                  {t(page === 'signIn' ? 'website:navigation.ctaTargetSignIn' : 'website:navigation.ctaTargetSignUp')}
+                  {t(
+                    page === 'signIn'
+                      ? 'website:navigation.ctaTargetSignIn'
+                      : 'website:navigation.ctaTargetSignUp'
+                  )}
                 </p>
                 <p className="text-sm text-muted-foreground">
                   /{page === 'signIn' ? 'sign-in' : 'sign-up'}
@@ -306,7 +337,10 @@ export default function WebsitePagesPage(): JSX.Element {
               </button>
 
               <div className="flex items-center gap-3">
-                <StatusBadge labelKey="website:pages.coreBadge" tone="neutral" />
+                <StatusBadge
+                  labelKey="website:pages.coreBadge"
+                  tone="neutral"
+                />
                 <Lock className="size-4 text-muted-foreground" aria-hidden />
               </div>
             </div>

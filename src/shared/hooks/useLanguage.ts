@@ -9,7 +9,9 @@ export function useLanguage(): LocalizationContextValue {
   const context = useContext(LocalizationContext);
 
   if (!context) {
-    throw new Error('useLanguage must be used within AtlasLocalizationProvider.');
+    throw new Error(
+      'useLanguage must be used within AtlasLocalizationProvider.'
+    );
   }
 
   return context;

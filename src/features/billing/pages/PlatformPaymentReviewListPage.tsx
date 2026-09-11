@@ -25,7 +25,10 @@ import {
 import { usePagination } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { usePlatformPayments } from '../hooks';
-import { getManualReviewStatusTone, getPaymentStatusTone } from '../utils/payment-status.utils';
+import {
+  getManualReviewStatusTone,
+  getPaymentStatusTone,
+} from '../utils/payment-status.utils';
 import { formatMoney } from '../utils/money.utils';
 import type { ManualReviewStatus, Payment } from '@types';
 
@@ -47,7 +50,8 @@ export default function PlatformPaymentReviewListPage(): JSX.Element {
   } = usePlatformPayments({
     query: {
       pagination: { page: pagination.page, pageSize: pagination.pageSize },
-      filters: reviewFilter === 'all' ? undefined : { reviewStatus: reviewFilter },
+      filters:
+        reviewFilter === 'all' ? undefined : { reviewStatus: reviewFilter },
     },
   });
 

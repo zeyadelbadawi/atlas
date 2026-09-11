@@ -58,9 +58,7 @@ export default function InstructorStudentsPage(): JSX.Element {
       cell: ({ row }) => (
         <div>
           <p className="font-medium text-foreground">{row.original.name}</p>
-          <p className="text-xs text-muted-foreground">
-            {row.original.email}
-          </p>
+          <p className="text-xs text-muted-foreground">{row.original.email}</p>
         </div>
       ),
     },

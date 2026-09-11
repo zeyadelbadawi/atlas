@@ -16,7 +16,8 @@ export function usePublishWebsite() {
   const { invalidate } = useInvalidate();
 
   return useApiMutation<WebsiteConfiguration, string, ApiError>({
-    mutationFn: (academyId) => websiteConfigurationService.publishConfiguration(academyId),
+    mutationFn: (academyId) =>
+      websiteConfigurationService.publishConfiguration(academyId),
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async (_data, academyId) => {

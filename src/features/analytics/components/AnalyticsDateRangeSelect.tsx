@@ -24,14 +24,24 @@ export function AnalyticsDateRangeSelect({
   const { t } = useTranslation();
 
   return (
-    <Select value={value} onValueChange={(next) => onChange(next as AnalyticsDateRangePreset)}>
-      <SelectTrigger className="w-44" aria-label={t('analytics:dateRange.label')}>
+    <Select
+      value={value}
+      onValueChange={(next) => onChange(next as AnalyticsDateRangePreset)}
+    >
+      <SelectTrigger
+        className="w-44"
+        aria-label={t('analytics:dateRange.label')}
+      >
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="7d">{t('analytics:dateRange.last7Days')}</SelectItem>
-        <SelectItem value="30d">{t('analytics:dateRange.last30Days')}</SelectItem>
-        <SelectItem value="90d">{t('analytics:dateRange.last90Days')}</SelectItem>
+        <SelectItem value="30d">
+          {t('analytics:dateRange.last30Days')}
+        </SelectItem>
+        <SelectItem value="90d">
+          {t('analytics:dateRange.last90Days')}
+        </SelectItem>
       </SelectContent>
     </Select>
   );

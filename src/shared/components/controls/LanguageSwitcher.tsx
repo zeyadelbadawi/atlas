@@ -5,23 +5,23 @@
  * no change here. Each language is shown in its own script, which is what makes
  * it findable for a speaker of that language.
  */
-import { Check, Languages } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
+import { Check, Languages } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { isFeatureEnabled } from "@config";
-import { useLanguage } from "@hooks";
-import { cn } from "@utils";
+} from '@/components/ui/tooltip';
+import { isFeatureEnabled } from '@config';
+import { useLanguage } from '@hooks';
+import { cn } from '@utils';
 
 export interface LanguageSwitcherProps {
   readonly className?: string;
@@ -33,9 +33,9 @@ export function LanguageSwitcher({
   const { t } = useTranslation();
   const { language, availableLanguages, setLanguage } = useLanguage();
 
-  if (!isFeatureEnabled("languageSwitcher")) return null;
+  if (!isFeatureEnabled('languageSwitcher')) return null;
 
-  const label = t("common:language.switcher");
+  const label = t('common:language.switcher');
 
   return (
     <DropdownMenu>
@@ -48,8 +48,8 @@ export function LanguageSwitcher({
               size="icon"
               aria-label={label}
               className={cn(
-                "text-muted-foreground hover:text-foreground",
-                className,
+                'text-muted-foreground hover:text-foreground',
+                className
               )}
             >
               <Languages

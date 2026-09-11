@@ -14,9 +14,12 @@ export default function AnnouncementDetailPage(): JSX.Element {
   const { t } = useTranslation();
   const { announcementId } = useParams<{ announcementId: string }>();
 
-  const { data: announcement, isLoading, error, refetch } = useAnnouncement(
-    announcementId ?? ''
-  );
+  const {
+    data: announcement,
+    isLoading,
+    error,
+    refetch,
+  } = useAnnouncement(announcementId ?? '');
 
   if (isLoading) {
     return (

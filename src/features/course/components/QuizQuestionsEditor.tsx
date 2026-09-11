@@ -86,7 +86,10 @@ interface QuestionCardProps {
   readonly onRemove?: () => void;
 }
 
-function QuestionCard({ questionIndex, onRemove }: QuestionCardProps): JSX.Element {
+function QuestionCard({
+  questionIndex,
+  onRemove,
+}: QuestionCardProps): JSX.Element {
   const { t } = useTranslation();
   const { control, watch, setValue } = useFormContext<QuizAuthoringFormData>();
 
@@ -100,14 +103,22 @@ function QuestionCard({ questionIndex, onRemove }: QuestionCardProps): JSX.Eleme
   /** Switching type re-shapes the option list to match what that type needs, clearing any prior correct-answer selection that no longer makes sense. */
   const handleTypeChange = (nextType: QuizQuestionType) => {
     const previousType = watch(`questions.${questionIndex}.type`);
-    setValue(`questions.${questionIndex}.type`, nextType, { shouldDirty: true });
+    setValue(`questions.${questionIndex}.type`, nextType, {
+      shouldDirty: true,
+    });
 
     if (nextType === 'true_false') {
       setValue(
         `questions.${questionIndex}.options`,
         [
-          { label: t('course:quizAuthoring.editor.trueLabel'), isCorrect: false },
-          { label: t('course:quizAuthoring.editor.falseLabel'), isCorrect: false },
+          {
+            label: t('course:quizAuthoring.editor.trueLabel'),
+            isCorrect: false,
+          },
+          {
+            label: t('course:quizAuthoring.editor.falseLabel'),
+            isCorrect: false,
+          },
         ],
         { shouldDirty: true }
       );
@@ -129,7 +140,9 @@ function QuestionCard({ questionIndex, onRemove }: QuestionCardProps): JSX.Eleme
     // multiple_choice, clear every correct flag but the first.
     if (nextType === 'single_choice') {
       const currentOptions = watch(`questions.${questionIndex}.options`);
-      const firstCorrectIndex = currentOptions.findIndex((option) => option.isCorrect);
+      const firstCorrectIndex = currentOptions.findIndex(
+        (option) => option.isCorrect
+      );
       currentOptions.forEach((option, index) => {
         const shouldBeCorrect = index === firstCorrectIndex;
         if (option.isCorrect !== shouldBeCorrect) {
@@ -180,7 +193,9 @@ function QuestionCard({ questionIndex, onRemove }: QuestionCardProps): JSX.Eleme
           name={`questions.${questionIndex}.prompt`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('course:quizAuthoring.editor.promptLabel')}</FormLabel>
+              <FormLabel>
+                {t('course:quizAuthoring.editor.promptLabel')}
+              </FormLabel>
               <FormControl>
                 <Textarea rows={2} {...field} />
               </FormControl>
@@ -194,7 +209,9 @@ function QuestionCard({ questionIndex, onRemove }: QuestionCardProps): JSX.Eleme
           name={`questions.${questionIndex}.type`}
           render={({ field }) => (
             <FormItem className="max-w-xs">
-              <FormLabel>{t('course:quizAuthoring.editor.typeLabel')}</FormLabel>
+              <FormLabel>
+                {t('course:quizAuthoring.editor.typeLabel')}
+              </FormLabel>
               <Select
                 value={field.value}
                 onValueChange={(value) =>
@@ -228,8 +245,14 @@ function QuestionCard({ questionIndex, onRemove }: QuestionCardProps): JSX.Eleme
 
           {type === 'single_choice' || type === 'true_false' ? (
             <RadioGroup
-              value={String(options.fields.findIndex((_, i) => watch(`questions.${questionIndex}.options.${i}.isCorrect`)))}
-              onValueChange={(value) => handleSingleCorrectChange(Number(value))}
+              value={String(
+                options.fields.findIndex((_, i) =>
+                  watch(`questions.${questionIndex}.options.${i}.isCorrect`)
+                )
+              )}
+              onValueChange={(value) =>
+                handleSingleCorrectChange(Number(value))
+              }
               className="space-y-2"
             >
               {options.fields.map((option, optionIndex) => (
@@ -266,8 +289,12 @@ function QuestionCard({ questionIndex, onRemove }: QuestionCardProps): JSX.Eleme
                       correctControl={
                         <Checkbox
                           checked={field.value}
-                          onCheckedChange={(checked) => field.onChange(!!checked)}
-                          aria-label={t('course:quizAuthoring.editor.correctLabel')}
+                          onCheckedChange={(checked) =>
+                            field.onChange(!!checked)
+                          }
+                          aria-label={t(
+                            'course:quizAuthoring.editor.correctLabel'
+                          )}
                         />
                       }
                       onRemove={

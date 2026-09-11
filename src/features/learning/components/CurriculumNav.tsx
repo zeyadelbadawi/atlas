@@ -5,12 +5,12 @@
  * lesson's progress state. Used both as the persistent desktop sidebar and
  * inside the mobile/tablet drawer — the caller decides the container.
  */
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-import { CheckCircle2, Circle, Lock, PlayCircle } from "lucide-react";
-import { cn } from "@utils";
-import { useLearningPaths } from "../context/LearningPaths.context";
-import type { CourseSection, LessonProgressStatus } from "@types";
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import { CheckCircle2, Circle, Lock, PlayCircle } from 'lucide-react';
+import { cn } from '@utils';
+import { useLearningPaths } from '../context/LearningPaths.context';
+import type { CourseSection, LessonProgressStatus } from '@types';
 
 export interface CurriculumNavProps {
   readonly courseId: string;
@@ -38,7 +38,7 @@ export function CurriculumNav({
   const paths = useLearningPaths();
 
   return (
-    <nav aria-label={t("learning:learn.curriculumLabel")} className="space-y-4">
+    <nav aria-label={t('learning:learn.curriculumLabel')} className="space-y-4">
       {sections.map((section, sectionIndex) => (
         <div key={section.id} className="space-y-1.5">
           <h3 className="px-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -48,9 +48,9 @@ export function CurriculumNav({
             {[...section.lessons]
               .sort((a, b) => a.order - b.order)
               .map((lesson) => {
-                const status = lessonStatusById.get(lesson.id) ?? "available";
+                const status = lessonStatusById.get(lesson.id) ?? 'available';
                 const Icon = STATUS_ICON[status];
-                const isLocked = status === "locked";
+                const isLocked = status === 'locked';
                 const isCurrent = lesson.id === currentLessonId;
 
                 if (isLocked) {
@@ -63,7 +63,7 @@ export function CurriculumNav({
                         <Icon className="size-4 shrink-0" aria-hidden />
                         <span className="truncate">{lesson.title}</span>
                         <span className="sr-only">
-                          {t("learning:lesson.status.locked")}
+                          {t('learning:lesson.status.locked')}
                         </span>
                       </span>
                     </li>
@@ -75,19 +75,19 @@ export function CurriculumNav({
                     <Link
                       to={paths.lesson(courseId, lesson.id)}
                       onClick={onNavigate}
-                      aria-current={isCurrent ? "page" : undefined}
+                      aria-current={isCurrent ? 'page' : undefined}
                       className={cn(
-                        "flex items-center gap-2.5 rounded-md px-2 py-2 text-sm transition-colors duration-fast ease-standard",
-                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                        'flex items-center gap-2.5 rounded-md px-2 py-2 text-sm transition-colors duration-fast ease-standard',
+                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
                         isCurrent
-                          ? "bg-accent font-medium text-accent-foreground"
-                          : "text-foreground hover:bg-accent/60",
+                          ? 'bg-accent font-medium text-accent-foreground'
+                          : 'text-foreground hover:bg-accent/60'
                       )}
                     >
                       <Icon
                         className={cn(
-                          "size-4 shrink-0",
-                          status === "completed" && "text-success",
+                          'size-4 shrink-0',
+                          status === 'completed' && 'text-success'
                         )}
                         aria-hidden
                       />

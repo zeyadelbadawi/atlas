@@ -76,11 +76,7 @@ export interface UpdateAcademyBrandingPayload {
 
 /** Academy member role types. */
 export type AcademyMemberRole =
-  | 'owner'
-  | 'administrator'
-  | 'manager'
-  | 'instructor'
-  | 'staff';
+  'owner' | 'administrator' | 'manager' | 'instructor' | 'staff';
 
 /** Academy member status. */
 export type AcademyMemberStatus = 'active' | 'inactive' | 'pending';

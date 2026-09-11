@@ -30,9 +30,9 @@
  * + one opaque `contentUrl` string, per `youtube.utils.ts`'s own doc
  * comment.
  */
-import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   CheckCircle2,
   ChevronLeft,
@@ -41,26 +41,26 @@ import {
   Loader2,
   Lock,
   Megaphone,
-} from "lucide-react";
-import { PageContainer } from "@components/layout";
-import { ErrorState, EmptyState } from "@components/feedback";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toast } from "@/hooks/use-toast";
-import { parseYouTubeVideoId, buildYouTubeEmbedUrl } from "@utils";
-import { useAnnouncementFeed } from "@features/announcements";
+} from 'lucide-react';
+import { PageContainer } from '@components/layout';
+import { ErrorState, EmptyState } from '@components/feedback';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { toast } from '@/hooks/use-toast';
+import { parseYouTubeVideoId, buildYouTubeEmbedUrl } from '@utils';
+import { useAnnouncementFeed } from '@features/announcements';
 import {
   useEnrollment,
   useCourseProgress,
   useCompleteLesson,
   useCourseContent,
   useDiscoverCourse,
-} from "../hooks";
-import { useLearningPaths } from "../context/LearningPaths.context";
-import { LearningLayout } from "../components/LearningLayout";
-import type { CourseLesson, LessonProgressStatus } from "@types";
+} from '../hooks';
+import { useLearningPaths } from '../context/LearningPaths.context';
+import { LearningLayout } from '../components/LearningLayout';
+import type { CourseLesson, LessonProgressStatus } from '@types';
 
 export default function LessonPage(): JSX.Element {
   const { t } = useTranslation();
@@ -75,11 +75,11 @@ export default function LessonPage(): JSX.Element {
     data: enrollment,
     isLoading: isLoadingEnrollment,
     error: enrollmentError,
-  } = useEnrollment(courseId ?? "");
+  } = useEnrollment(courseId ?? '');
   const academyId = enrollment?.academyId;
-  const isEnrolled = !!enrollment && enrollment.status !== "available";
+  const isEnrolled = !!enrollment && enrollment.status !== 'available';
 
-  const { data: course } = useDiscoverCourse(courseId ?? "", {
+  const { data: course } = useDiscoverCourse(courseId ?? '', {
     enabled: !!courseId,
   });
   const {
@@ -87,16 +87,16 @@ export default function LessonPage(): JSX.Element {
     isLoading: isLoadingSections,
     error: sectionsError,
     refetch: refetchSections,
-  } = useCourseContent(courseId ?? "", {
+  } = useCourseContent(courseId ?? '', {
     enabled: isEnrolled,
   });
-  const {
-    data: progress,
-    refetch: refetchProgress,
-  } = useCourseProgress(courseId ?? "", { enabled: isEnrolled });
+  const { data: progress, refetch: refetchProgress } = useCourseProgress(
+    courseId ?? '',
+    { enabled: isEnrolled }
+  );
 
   const { mutateAsync: completeLesson, isPending: isCompleting } =
-    useCompleteLesson(courseId ?? "");
+    useCompleteLesson(courseId ?? '');
 
   // Real, existing course-scoped announcements — see this file's own doc
   // comment for why this filters the student's global feed client-side
@@ -104,7 +104,8 @@ export default function LessonPage(): JSX.Element {
   const { data: announcementFeed, isLoading: isLoadingAnnouncements } =
     useAnnouncementFeed({ enabled: isEnrolled });
   const courseAnnouncements = useMemo(
-    () => (announcementFeed?.items ?? []).filter((a) => a.courseId === courseId),
+    () =>
+      (announcementFeed?.items ?? []).filter((a) => a.courseId === courseId),
     [announcementFeed, courseId]
   );
 
@@ -128,21 +129,23 @@ export default function LessonPage(): JSX.Element {
   }, [progress]);
 
   const currentIndex = flatLessons.findIndex((l) => l.id === lessonId);
-  const currentLesson = currentIndex >= 0 ? flatLessons[currentIndex] : undefined;
-  const previousLesson = currentIndex > 0 ? flatLessons[currentIndex - 1] : undefined;
+  const currentLesson =
+    currentIndex >= 0 ? flatLessons[currentIndex] : undefined;
+  const previousLesson =
+    currentIndex > 0 ? flatLessons[currentIndex - 1] : undefined;
   const nextLesson =
     currentIndex >= 0 && currentIndex < flatLessons.length - 1
       ? flatLessons[currentIndex + 1]
       : undefined;
 
   const currentStatus = currentLesson
-    ? lessonStatusById.get(currentLesson.id) ?? "available"
+    ? (lessonStatusById.get(currentLesson.id) ?? 'available')
     : undefined;
-  const isLocked = currentStatus === "locked";
-  const isCompleted = currentStatus === "completed";
+  const isLocked = currentStatus === 'locked';
+  const isCompleted = currentStatus === 'completed';
 
   const youtubeVideoId =
-    currentLesson?.contentType === "video" && currentLesson.contentUrl
+    currentLesson?.contentType === 'video' && currentLesson.contentUrl
       ? parseYouTubeVideoId(currentLesson.contentUrl)
       : null;
 
@@ -155,13 +158,13 @@ export default function LessonPage(): JSX.Element {
     if (!currentLesson) return;
     try {
       await completeLesson({ lessonId: currentLesson.id });
-      toast({ title: t("learning:lesson.completed") });
+      toast({ title: t('learning:lesson.completed') });
       await refetchProgress();
     } catch {
       toast({
-        title: t("learning:lesson.completeError"),
-        description: t("errors:generic"),
-        variant: "destructive",
+        title: t('learning:lesson.completeError'),
+        description: t('errors:generic'),
+        variant: 'destructive',
       });
     }
   };
@@ -187,7 +190,7 @@ export default function LessonPage(): JSX.Element {
           primaryAction={
             courseId
               ? {
-                  labelKey: "learning:details.enrollAction",
+                  labelKey: 'learning:details.enrollAction',
                   onAction: () => navigate(paths.courseDetail(courseId)),
                 }
               : undefined
@@ -215,8 +218,8 @@ export default function LessonPage(): JSX.Element {
 
   return (
     <LearningLayout
-      courseId={courseId ?? ""}
-      courseTitle={course?.title ?? ""}
+      courseId={courseId ?? ''}
+      courseTitle={course?.title ?? ''}
       academyId={academyId}
       progressPercentage={progress?.percentage ?? 0}
       sections={sections}
@@ -228,12 +231,13 @@ export default function LessonPage(): JSX.Element {
           <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card py-16 text-center">
             <Lock className="size-8 text-muted-foreground" aria-hidden />
             <p className="text-sm text-muted-foreground">
-              {t("learning:lesson.lockedMessage")}
+              {t('learning:lesson.lockedMessage')}
             </p>
           </div>
         ) : (
           <>
-            {currentLesson.contentType === "video" && currentLesson.contentUrl ? (
+            {currentLesson.contentType === 'video' &&
+            currentLesson.contentUrl ? (
               <AspectRatio
                 ratio={16 / 9}
                 className="overflow-hidden rounded-lg bg-black shadow-sm"
@@ -254,13 +258,14 @@ export default function LessonPage(): JSX.Element {
                     className="size-full"
                     src={currentLesson.contentUrl}
                   >
-                    {t("learning:lesson.videoUnsupported")}
+                    {t('learning:lesson.videoUnsupported')}
                   </video>
                 )}
               </AspectRatio>
             ) : null}
 
-            {currentLesson.contentType === "file" && currentLesson.contentUrl ? (
+            {currentLesson.contentType === 'file' &&
+            currentLesson.contentUrl ? (
               <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card py-16 text-center">
                 <Button variant="outline" asChild>
                   <a
@@ -268,8 +273,12 @@ export default function LessonPage(): JSX.Element {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    <ExternalLink className="size-4" strokeWidth={2} aria-hidden />
-                    {t("learning:lesson.openResource")}
+                    <ExternalLink
+                      className="size-4"
+                      strokeWidth={2}
+                      aria-hidden
+                    />
+                    {t('learning:lesson.openResource')}
                   </a>
                 </Button>
               </div>
@@ -287,10 +296,10 @@ export default function LessonPage(): JSX.Element {
           <Tabs defaultValue="overview">
             <TabsList>
               <TabsTrigger value="overview">
-                {t("learning:lesson.tabs.overview")}
+                {t('learning:lesson.tabs.overview')}
               </TabsTrigger>
               <TabsTrigger value="announcements">
-                {t("learning:lesson.tabs.announcements")}
+                {t('learning:lesson.tabs.announcements')}
                 {courseAnnouncements.length > 0 ? (
                   <span className="ms-1.5 rounded-pill bg-muted px-1.5 py-0.5 text-xs">
                     {courseAnnouncements.length}
@@ -306,7 +315,7 @@ export default function LessonPage(): JSX.Element {
                 </p>
               ) : (
                 <p className="text-sm text-muted-foreground">
-                  {t("learning:lesson.unsupportedContent")}
+                  {t('learning:lesson.unsupportedContent')}
                 </p>
               )}
             </TabsContent>
@@ -319,9 +328,12 @@ export default function LessonPage(): JSX.Element {
                 </div>
               ) : courseAnnouncements.length === 0 ? (
                 <div className="flex flex-col items-center gap-2 py-8 text-center">
-                  <Megaphone className="size-6 text-muted-foreground" aria-hidden />
+                  <Megaphone
+                    className="size-6 text-muted-foreground"
+                    aria-hidden
+                  />
                   <p className="text-sm text-muted-foreground">
-                    {t("learning:lesson.noAnnouncements")}
+                    {t('learning:lesson.noAnnouncements')}
                   </p>
                 </div>
               ) : (
@@ -336,7 +348,9 @@ export default function LessonPage(): JSX.Element {
                       </h3>
                       {announcement.publishedAt ? (
                         <span className="whitespace-nowrap text-xs text-muted-foreground">
-                          {new Date(announcement.publishedAt).toLocaleDateString()}
+                          {new Date(
+                            announcement.publishedAt
+                          ).toLocaleDateString()}
                         </span>
                       ) : null}
                     </div>
@@ -357,7 +371,7 @@ export default function LessonPage(): JSX.Element {
             onClick={() => previousLesson && goToLesson(previousLesson.id)}
           >
             <ChevronLeft className="size-4 rtl:-scale-x-100" aria-hidden />
-            {t("learning:lesson.previous")}
+            {t('learning:lesson.previous')}
           </Button>
 
           {!isLocked && !isCompleted ? (
@@ -367,7 +381,7 @@ export default function LessonPage(): JSX.Element {
               ) : (
                 <CheckCircle2 className="size-4" strokeWidth={2} aria-hidden />
               )}
-              {t("learning:lesson.markComplete")}
+              {t('learning:lesson.markComplete')}
             </Button>
           ) : null}
 
@@ -376,7 +390,7 @@ export default function LessonPage(): JSX.Element {
             disabled={!nextLesson}
             onClick={() => nextLesson && goToLesson(nextLesson.id)}
           >
-            {t("learning:lesson.next")}
+            {t('learning:lesson.next')}
             <ChevronRight className="size-4 rtl:-scale-x-100" aria-hidden />
           </Button>
         </div>

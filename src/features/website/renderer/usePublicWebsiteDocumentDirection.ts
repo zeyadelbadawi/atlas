@@ -28,9 +28,14 @@
  */
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PUBLIC_WEBSITE_LOCALE_DIRECTION, type PublicWebsiteLocale } from '../constants/locale.constants';
+import {
+  PUBLIC_WEBSITE_LOCALE_DIRECTION,
+  type PublicWebsiteLocale,
+} from '../constants/locale.constants';
 
-export function usePublicWebsiteDocumentDirection(locale: PublicWebsiteLocale): void {
+export function usePublicWebsiteDocumentDirection(
+  locale: PublicWebsiteLocale
+): void {
   const { i18n } = useTranslation();
 
   useEffect(() => {

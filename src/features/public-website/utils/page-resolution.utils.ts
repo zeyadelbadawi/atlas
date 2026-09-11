@@ -24,22 +24,30 @@ export function resolvePathToPage(
 
   const courseMatch = normalized.match(COURSE_DETAILS_PATH);
   if (courseMatch) {
-    const courseDetailsPage = pages.find((page) => page.coreType === 'courseDetails');
+    const courseDetailsPage = pages.find(
+      (page) => page.coreType === 'courseDetails'
+    );
     return { page: courseDetailsPage, courseId: courseMatch[1] };
   }
 
   if (normalized === '/') {
-    return { page: pages.find((page) => page.coreType === 'home' && page.visible) };
+    return {
+      page: pages.find((page) => page.coreType === 'home' && page.visible),
+    };
   }
 
   const segment = normalized.slice(1);
   const corePage = pages.find(
-    (page) => page.coreType === segment && page.coreType !== 'courseDetails' && page.visible
+    (page) =>
+      page.coreType === segment &&
+      page.coreType !== 'courseDetails' &&
+      page.visible
   );
   if (corePage) return { page: corePage };
 
   const customPage = pages.find(
-    (page) => page.pageType === 'custom' && page.slug === segment && page.visible
+    (page) =>
+      page.pageType === 'custom' && page.slug === segment && page.visible
   );
   return { page: customPage };
 }

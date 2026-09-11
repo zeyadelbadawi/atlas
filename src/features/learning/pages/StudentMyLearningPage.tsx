@@ -56,7 +56,10 @@ export interface StudentMyLearningPageProps {
   readonly academyId?: string;
 }
 
-const STATUS_BADGE_VARIANT: Record<EnrollmentStatus, 'default' | 'secondary' | 'outline'> = {
+const STATUS_BADGE_VARIANT: Record<
+  EnrollmentStatus,
+  'default' | 'secondary' | 'outline'
+> = {
   enrolled: 'secondary',
   pending: 'outline',
   completed: 'default',
@@ -66,7 +69,10 @@ const STATUS_BADGE_VARIANT: Record<EnrollmentStatus, 'default' | 'secondary' | '
 
 type LearningFilter = 'all' | 'inProgress' | 'completed' | 'certificates';
 
-function matchesFilter(enrollment: Enrollment, filter: LearningFilter): boolean {
+function matchesFilter(
+  enrollment: Enrollment,
+  filter: LearningFilter
+): boolean {
   switch (filter) {
     case 'inProgress':
       return (
@@ -122,9 +128,12 @@ export default function StudentMyLearningPage({
   const filterCounts = useMemo(
     () => ({
       all: enrollments.length,
-      inProgress: enrollments.filter((e) => matchesFilter(e, 'inProgress')).length,
-      completed: enrollments.filter((e) => matchesFilter(e, 'completed')).length,
-      certificates: enrollments.filter((e) => matchesFilter(e, 'certificates')).length,
+      inProgress: enrollments.filter((e) => matchesFilter(e, 'inProgress'))
+        .length,
+      completed: enrollments.filter((e) => matchesFilter(e, 'completed'))
+        .length,
+      certificates: enrollments.filter((e) => matchesFilter(e, 'certificates'))
+        .length,
     }),
     [enrollments]
   );
@@ -132,7 +141,10 @@ export default function StudentMyLearningPage({
   if (error) {
     return (
       <PageContainer>
-        <PageHeader titleKey="learning:myLearning.title" descriptionKey="learning:myLearning.subtitle" />
+        <PageHeader
+          titleKey="learning:myLearning.title"
+          descriptionKey="learning:myLearning.subtitle"
+        />
         <ErrorState onRetry={() => refetch()} />
       </PageContainer>
     );
@@ -161,24 +173,33 @@ export default function StudentMyLearningPage({
         <EmptyState
           titleKey="learning:myLearning.empty.title"
           descriptionKey="learning:myLearning.empty.description"
-          primaryAction={{ labelKey: 'learning:myLearning.empty.action', onAction: browseCourses }}
+          primaryAction={{
+            labelKey: 'learning:myLearning.empty.action',
+            onAction: browseCourses,
+          }}
         />
       ) : (
         <div className="space-y-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <Tabs value={filter} onValueChange={(value) => setFilter(value as LearningFilter)}>
+            <Tabs
+              value={filter}
+              onValueChange={(value) => setFilter(value as LearningFilter)}
+            >
               <TabsList>
                 <TabsTrigger value="all">
                   {t('learning:myLearning.filters.all')} ({filterCounts.all})
                 </TabsTrigger>
                 <TabsTrigger value="inProgress">
-                  {t('learning:myLearning.filters.inProgress')} ({filterCounts.inProgress})
+                  {t('learning:myLearning.filters.inProgress')} (
+                  {filterCounts.inProgress})
                 </TabsTrigger>
                 <TabsTrigger value="completed">
-                  {t('learning:myLearning.filters.completed')} ({filterCounts.completed})
+                  {t('learning:myLearning.filters.completed')} (
+                  {filterCounts.completed})
                 </TabsTrigger>
                 <TabsTrigger value="certificates">
-                  {t('learning:myLearning.filters.certificates')} ({filterCounts.certificates})
+                  {t('learning:myLearning.filters.certificates')} (
+                  {filterCounts.certificates})
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -210,10 +231,16 @@ export default function StudentMyLearningPage({
                 const hasStarted = (progress?.completedLessons ?? 0) > 0;
                 const isCompleted = enrollment.status === 'completed';
 
-                const goToDetail = () => navigate(paths.courseDetail(enrollment.courseId));
+                const goToDetail = () =>
+                  navigate(paths.courseDetail(enrollment.courseId));
                 const goToContinue = () => {
                   if (progress?.currentLessonId) {
-                    navigate(paths.lesson(enrollment.courseId, progress.currentLessonId));
+                    navigate(
+                      paths.lesson(
+                        enrollment.courseId,
+                        progress.currentLessonId
+                      )
+                    );
                   } else {
                     navigate(paths.courseLearn(enrollment.courseId));
                   }
@@ -234,19 +261,27 @@ export default function StudentMyLearningPage({
                     }}
                   >
                     {course?.thumbnail ? (
-                      <img src={course.thumbnail} alt="" className="h-36 w-full object-cover" />
+                      <img
+                        src={course.thumbnail}
+                        alt=""
+                        className="h-36 w-full object-cover"
+                      />
                     ) : (
                       <div className="h-36 w-full bg-muted" />
                     )}
                     <CardContent className="flex flex-1 flex-col gap-2 pt-4">
                       <div className="flex items-center justify-between gap-2">
-                        <Badge variant={STATUS_BADGE_VARIANT[enrollment.status]}>
+                        <Badge
+                          variant={STATUS_BADGE_VARIANT[enrollment.status]}
+                        >
                           {t(`learning:myLearning.status.${enrollment.status}`)}
                         </Badge>
                         {progress?.certificateStatus === 'eligible' ? (
                           <Award
                             className="size-4 text-[hsl(var(--brand-500))]"
-                            aria-label={t('learning:myLearning.certificateEligible')}
+                            aria-label={t(
+                              'learning:myLearning.certificateEligible'
+                            )}
                           />
                         ) : null}
                       </div>
@@ -255,7 +290,9 @@ export default function StudentMyLearningPage({
                       </h3>
                       {course?.instructors && course.instructors.length > 0 ? (
                         <p className="text-xs text-muted-foreground">
-                          {t('learning:discovery.card.byInstructor', { name: course.instructors[0].name })}
+                          {t('learning:discovery.card.byInstructor', {
+                            name: course.instructors[0].name,
+                          })}
                         </p>
                       ) : null}
 
@@ -286,7 +323,9 @@ export default function StudentMyLearningPage({
                         )}
                         <Button
                           size="sm"
-                          variant={hasStarted || isCompleted ? 'default' : 'outline'}
+                          variant={
+                            hasStarted || isCompleted ? 'default' : 'outline'
+                          }
                           onClick={(e) => {
                             e.stopPropagation();
                             if (isCompleted) goToDetail();

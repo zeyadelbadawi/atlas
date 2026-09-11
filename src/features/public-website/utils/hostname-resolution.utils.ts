@@ -21,7 +21,8 @@
  * Academy id by itself (see "Multi-Academy Isolation").
  */
 
-export type PublicWebsiteLookupType = 'subdomain' | 'custom-domain' | 'dev-override';
+export type PublicWebsiteLookupType =
+  'subdomain' | 'custom-domain' | 'dev-override';
 
 export type PublicWebsiteContext =
   | { readonly mode: 'atlas-app' }
@@ -58,7 +59,11 @@ export function resolvePublicWebsiteContext(
   if (isDevelopment) {
     const devSlug = new URLSearchParams(search).get(DEV_OVERRIDE_PARAM);
     if (devSlug) {
-      return { mode: 'academy-website', lookupType: 'dev-override', value: devSlug };
+      return {
+        mode: 'academy-website',
+        lookupType: 'dev-override',
+        value: devSlug,
+      };
     }
   }
 

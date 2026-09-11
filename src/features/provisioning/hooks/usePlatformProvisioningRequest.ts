@@ -10,7 +10,8 @@ import type { ApiError } from '@api';
 export function usePlatformProvisioningRequest(requestId: string) {
   return useApiQuery<ProvisioningRequest, ApiError>({
     queryKey: platformProvisioningKeys.detail(requestId),
-    queryFn: () => platformProvisioningService.getProvisioningRequest(requestId),
+    queryFn: () =>
+      platformProvisioningService.getProvisioningRequest(requestId),
     enabled: !!requestId,
   });
 }

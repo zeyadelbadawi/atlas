@@ -43,10 +43,12 @@ export class MediaService extends BaseService {
     query?: CollectionQuery,
     options?: ReadOptions
   ): Promise<PaginatedResult<MediaAssetSummary>> {
-    const response = await this.client.get<MediaCollectionEnvelope | readonly MediaAssetSummary[]>(
-      this.mediaPath(academyId),
-      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
-    );
+    const response = await this.client.get<
+      MediaCollectionEnvelope | readonly MediaAssetSummary[]
+    >(this.mediaPath(academyId), {
+      ...options,
+      params: { ...toCollectionParams(query), ...options?.params },
+    });
 
     const requestedPage = query?.pagination?.page ?? DEFAULT_PAGE;
     const requestedPageSize = query?.pagination?.pageSize ?? DEFAULT_PAGE_SIZE;
@@ -55,7 +57,11 @@ export class MediaService extends BaseService {
       const items = response as readonly MediaAssetSummary[];
       return {
         items,
-        pagination: buildPaginationMeta(DEFAULT_PAGE, Math.max(items.length, 1), items.length),
+        pagination: buildPaginationMeta(
+          DEFAULT_PAGE,
+          Math.max(items.length, 1),
+          items.length
+        ),
       };
     }
 
@@ -65,12 +71,23 @@ export class MediaService extends BaseService {
 
     return {
       items,
-      pagination: buildPaginationMeta(envelope.page ?? requestedPage, envelope.pageSize ?? requestedPageSize, totalItems),
+      pagination: buildPaginationMeta(
+        envelope.page ?? requestedPage,
+        envelope.pageSize ?? requestedPageSize,
+        totalItems
+      ),
     };
   }
 
-  async getAsset(academyId: string, assetId: string, options?: ReadOptions): Promise<MediaAssetDetail> {
-    return this.client.get<MediaAssetDetail>(this.mediaPath(academyId, assetId), options);
+  async getAsset(
+    academyId: string,
+    assetId: string,
+    options?: ReadOptions
+  ): Promise<MediaAssetDetail> {
+    return this.client.get<MediaAssetDetail>(
+      this.mediaPath(academyId, assetId),
+      options
+    );
   }
 
   async uploadAsset(
@@ -98,7 +115,11 @@ export class MediaService extends BaseService {
     );
   }
 
-  async archiveAsset(academyId: string, assetId: string, options?: WriteOptions): Promise<MediaAssetDetail> {
+  async archiveAsset(
+    academyId: string,
+    assetId: string,
+    options?: WriteOptions
+  ): Promise<MediaAssetDetail> {
     return this.client.post<MediaAssetDetail, Record<string, never>>(
       this.mediaPath(academyId, assetId, 'archive'),
       {},

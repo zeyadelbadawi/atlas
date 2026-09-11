@@ -19,6 +19,7 @@ import {
   PUBLIC_ROUTES,
 } from "@app/routes/route-paths";
 import { useAuth, useOnlineStatus } from "@hooks";
+import { CookiePreferencesButton } from "@features/legal";
 
 /** Id of the main landmark, targeted by the skip link. */
 const MAIN_CONTENT_ID = "atlas-public-content";
@@ -83,12 +84,36 @@ export function PublicLayout(): JSX.Element {
       </main>
 
       <footer className="border-t border-border bg-surface">
-        <div className="mx-auto max-w-content px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-content flex-col gap-4 px-4 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <p className="text-sm text-muted-foreground">
             {t("layout:public.footer.rights", {
               year: new Date().getFullYear(),
             })}
           </p>
+
+          {/* Atlas's own legal links. Deliberately NOT added to tenant
+              academy websites — these govern the Atlas platform, not an
+              individual academy's relationship with its students. */}
+          <nav
+            aria-label={t("layout:public.footer.legal")}
+            className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm"
+          >
+            <Link
+              to={PUBLIC_ROUTES.privacyPolicy}
+              className="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+            >
+              {t("legal:privacyPolicy")}
+            </Link>
+            <Link
+              to={PUBLIC_ROUTES.terms}
+              className="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+            >
+              {t("legal:terms")}
+            </Link>
+            {/* Reopens the consent dialog so a choice can always be
+                revisited — required for consent to be withdrawable. */}
+            <CookiePreferencesButton />
+          </nav>
         </div>
       </footer>
     </div>

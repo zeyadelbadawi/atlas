@@ -30,7 +30,10 @@ import { useDocumentSeo } from '../hooks/useDocumentSeo';
 import { usePublicCourse } from '../hooks/usePublicCourse';
 import { resolvePathToPage } from '../utils/page-resolution.utils';
 import { useAuth, useSignOut } from '@hooks';
-import { usePublicWebsiteLinkRenderer, usePublicWebsiteHrefBuilder } from '../utils/public-website-link-renderer';
+import {
+  usePublicWebsiteLinkRenderer,
+  usePublicWebsiteHrefBuilder,
+} from '../utils/public-website-link-renderer';
 import type { PublicWebsiteDataState } from '../hooks/usePublicWebsiteData';
 import type { PublicWebsiteLocale } from '@types';
 
@@ -40,7 +43,10 @@ export interface PublicWebsitePageProps {
   readonly locale: PublicWebsiteLocale;
 }
 
-export function PublicWebsitePage({ data, locale }: PublicWebsitePageProps): JSX.Element {
+export function PublicWebsitePage({
+  data,
+  locale,
+}: PublicWebsitePageProps): JSX.Element {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
@@ -56,8 +62,11 @@ export function PublicWebsitePage({ data, locale }: PublicWebsitePageProps): JSX
   // slug path. Strip it before matching, re-apply it (via `buildHref`)
   // wherever a path is turned back into a real link/URL below.
   const unprefixedPathname =
-    locale === 'en' ? location.pathname : location.pathname.replace(/^\/ar/, '') || '/';
-  const withLocale = (path: string): string => (locale === 'en' ? path : `/ar${path}`);
+    locale === 'en'
+      ? location.pathname
+      : location.pathname.replace(/^\/ar/, '') || '/';
+  const withLocale = (path: string): string =>
+    locale === 'en' ? path : `/ar${path}`;
 
   const authState =
     session.status === 'authenticated' && session.user
@@ -87,9 +96,15 @@ export function PublicWebsitePage({ data, locale }: PublicWebsitePageProps): JSX
   // background 401 + "session expired" toast on every course details
   // page view, despite the page itself rendering correctly).
   const isCourseDetailsPage = page?.coreType === 'courseDetails' && !!courseId;
-  const { data: course } = usePublicCourse(academy.academyId, isCourseDetailsPage ? courseId : undefined);
+  const { data: course } = usePublicCourse(
+    academy.academyId,
+    isCourseDetailsPage ? courseId : undefined
+  );
 
-  const fallback = { title: academy.academyName, description: academy.academyName };
+  const fallback = {
+    title: academy.academyName,
+    description: academy.academyName,
+  };
   const seo =
     isCourseDetailsPage && course
       ? resolveCourseSeo(course, configuration, fallback, locale)
@@ -111,7 +126,7 @@ export function PublicWebsitePage({ data, locale }: PublicWebsitePageProps): JSX
     isCourseDetailsPage && course
       ? (seo.canonicalPath ?? unprefixedPathname)
       : page
-        ? resolvePagePath(page) ?? unprefixedPathname
+        ? (resolvePagePath(page) ?? unprefixedPathname)
         : unprefixedPathname;
   // Self-referencing canonical: the CURRENT locale's own URL, matching
   // standard hreflang practice — `seo.hreflangAlternates` is what points
@@ -120,10 +135,16 @@ export function PublicWebsitePage({ data, locale }: PublicWebsitePageProps): JSX
 
   const structuredData = page
     ? [
-        buildOrganizationJsonLd({ name: academy.academyName, logo: academy.academyLogo }),
+        buildOrganizationJsonLd({
+          name: academy.academyName,
+          logo: academy.academyLogo,
+        }),
         buildBreadcrumbJsonLd([
           { name: academy.academyName, path: window.location.origin },
-          { name: isCourseDetailsPage && course ? course.title : page.title, path: canonicalUrl },
+          {
+            name: isCourseDetailsPage && course ? course.title : page.title,
+            path: canonicalUrl,
+          },
         ]),
         ...(isCourseDetailsPage && course
           ? [buildCourseJsonLd(course, { name: academy.academyName })]
@@ -145,7 +166,10 @@ export function PublicWebsitePage({ data, locale }: PublicWebsitePageProps): JSX
         <EmptyState
           titleKey="website:public.pageNotFound.title"
           descriptionKey="website:public.pageNotFound.description"
-          primaryAction={{ labelKey: 'website:public.pageNotFound.homeAction', onAction: () => navigate(withLocale('/')) }}
+          primaryAction={{
+            labelKey: 'website:public.pageNotFound.homeAction',
+            onAction: () => navigate(withLocale('/')),
+          }}
         />
       </div>
     );

@@ -32,7 +32,10 @@ export class AnnouncementService extends BaseService {
   }
 
   /** Retrieves a single announcement, if visible to the current user. */
-  async getAnnouncement(id: string, options?: ReadOptions): Promise<Announcement> {
+  async getAnnouncement(
+    id: string,
+    options?: ReadOptions
+  ): Promise<Announcement> {
     return this.fetchOne<Announcement>(id, options);
   }
 
@@ -44,7 +47,10 @@ export class AnnouncementService extends BaseService {
   ): Promise<PaginatedResult<Announcement>> {
     return this.client.get<PaginatedResult<Announcement>>(
       resourcePath('courses', courseId, 'announcements'),
-      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
+      {
+        ...options,
+        params: { ...toCollectionParams(query), ...options?.params },
+      }
     );
   }
 
@@ -82,7 +88,13 @@ export class AnnouncementService extends BaseService {
     options?: WriteOptions
   ): Promise<Announcement> {
     return this.client.post<Announcement, undefined>(
-      resourcePath('courses', courseId, 'announcements', announcementId, 'publish'),
+      resourcePath(
+        'courses',
+        courseId,
+        'announcements',
+        announcementId,
+        'publish'
+      ),
       undefined,
       options
     );
@@ -95,7 +107,13 @@ export class AnnouncementService extends BaseService {
     options?: WriteOptions
   ): Promise<Announcement> {
     return this.client.post<Announcement, undefined>(
-      resourcePath('courses', courseId, 'announcements', announcementId, 'archive'),
+      resourcePath(
+        'courses',
+        courseId,
+        'announcements',
+        announcementId,
+        'archive'
+      ),
       undefined,
       options
     );

@@ -48,10 +48,13 @@ export class PublicWebsiteService extends BaseService {
     options?: ReadOptions
   ): Promise<HostnameResolution | null> {
     try {
-      return await this.client.get<HostnameResolution>(this.path('websites', 'resolve'), {
-        ...options,
-        params: { hostname },
-      });
+      return await this.client.get<HostnameResolution>(
+        this.path('websites', 'resolve'),
+        {
+          ...options,
+          params: { hostname },
+        }
+      );
     } catch (error) {
       if (isApiError(error) && error.kind === 'notFound') return null;
       throw error;
@@ -145,7 +148,10 @@ export class PublicWebsiteService extends BaseService {
     try {
       return await this.client.get<PaginatedResult<Course>>(
         this.path('websites', academyId, 'courses'),
-        { ...options, params: { ...toCollectionParams(query), ...options?.params } }
+        {
+          ...options,
+          params: { ...toCollectionParams(query), ...options?.params },
+        }
       );
     } catch (error) {
       if (isApiError(error) && error.kind === 'notFound') return null;
@@ -199,7 +205,10 @@ export class PublicWebsiteService extends BaseService {
     academyId: string,
     payload: ContactMessagePayload
   ): Promise<void> {
-    await this.client.post(this.path('websites', academyId, 'contact'), payload);
+    await this.client.post(
+      this.path('websites', academyId, 'contact'),
+      payload
+    );
   }
 }
 

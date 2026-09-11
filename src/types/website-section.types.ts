@@ -248,8 +248,9 @@ export type SectionInstance = {
   };
 }[SectionType];
 
-export const DEFAULT_RESPONSIVE_VISIBILITY: ResponsiveVisibility = Object.freeze({
-  desktop: true,
-  tablet: true,
-  mobile: true,
-});
+export const DEFAULT_RESPONSIVE_VISIBILITY: ResponsiveVisibility =
+  Object.freeze({
+    desktop: true,
+    tablet: true,
+    mobile: true,
+  });

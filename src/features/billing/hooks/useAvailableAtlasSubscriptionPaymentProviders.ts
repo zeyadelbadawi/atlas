@@ -10,8 +10,12 @@ import type { AvailableAtlasSubscriptionPaymentProvider } from '@types';
 import type { ApiError } from '@api';
 
 export function useAvailableAtlasSubscriptionPaymentProviders() {
-  return useApiQuery<readonly AvailableAtlasSubscriptionPaymentProvider[], ApiError>({
+  return useApiQuery<
+    readonly AvailableAtlasSubscriptionPaymentProvider[],
+    ApiError
+  >({
     queryKey: atlasSubscriptionPaymentProviderKeys.availableProviders(),
-    queryFn: () => atlasSubscriptionPaymentProviderService.getAvailableProviders(),
+    queryFn: () =>
+      atlasSubscriptionPaymentProviderService.getAvailableProviders(),
   });
 }

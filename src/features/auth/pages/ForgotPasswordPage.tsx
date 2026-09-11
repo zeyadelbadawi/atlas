@@ -3,12 +3,12 @@
  *
  * Request password reset email.
  */
-import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { KeyRound } from "lucide-react";
-import { AUTH_ROUTES } from "@app/routes/route-paths";
-import { PageContainer, PageHeader } from "@components/layout";
-import { ForgotPasswordForm } from "../components/ForgotPasswordForm";
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { KeyRound } from 'lucide-react';
+import { AUTH_ROUTES } from '@app/routes/route-paths';
+import { PageContainer, PageHeader } from '@components/layout';
+import { ForgotPasswordForm } from '../components/ForgotPasswordForm';
 
 export default function ForgotPasswordPage(): JSX.Element {
   const { t } = useTranslation();
@@ -34,7 +34,7 @@ export default function ForgotPasswordPage(): JSX.Element {
             to={AUTH_ROUTES.signIn}
             className="font-medium text-primary hover:underline"
           >
-            {t("auth:forgotPassword.backToSignIn")}
+            {t('auth:forgotPassword.backToSignIn')}
           </Link>
         </div>
       </div>

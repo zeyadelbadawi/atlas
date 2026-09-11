@@ -50,13 +50,18 @@ export function useDashboardScope(): DashboardScopeSelection {
       ? memberships.find(
           (candidate) => candidate.organizationId === activeOrganizationId
         )
-      : (memberships.find((candidate) => candidate.isPrimary) ?? memberships[0]);
+      : (memberships.find((candidate) => candidate.isPrimary) ??
+        memberships[0]);
 
     const isOrganizationOwner =
-      membership?.permissions.includes(ORGANIZATION_DASHBOARD_PERMISSION) ?? false;
+      membership?.permissions.includes(ORGANIZATION_DASHBOARD_PERMISSION) ??
+      false;
 
     if (membership && isOrganizationOwner) {
-      return { kind: 'organization', organizationId: membership.organizationId };
+      return {
+        kind: 'organization',
+        organizationId: membership.organizationId,
+      };
     }
     if (activeAcademyId) {
       return { kind: 'academy', academyId: activeAcademyId };

@@ -10,7 +10,11 @@
 import { useTranslation } from 'react-i18next';
 import { AlertTriangle } from 'lucide-react';
 import { Label } from '@/components/ui/label';
-import { hasAccessibleContrast, hexToHslTriplet, hslTripletToHex } from '../utils/color.utils';
+import {
+  hasAccessibleContrast,
+  hexToHslTriplet,
+  hslTripletToHex,
+} from '../utils/color.utils';
 import type { HslColorTriplet } from '@types';
 
 const WHITE_HSL: HslColorTriplet = '0 0% 100%';

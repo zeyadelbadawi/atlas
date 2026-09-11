@@ -67,20 +67,28 @@ export function FeaturedCoursesSection({
 
   const courses =
     config.mode === 'selected' && config.courseIds
-      ? (data?.items ?? []).filter((course) => config.courseIds!.includes(course.id))
+      ? (data?.items ?? []).filter((course) =>
+          config.courseIds!.includes(course.id)
+        )
       : (data?.items ?? []);
 
   return (
     <section className={`${container} ${section}`}>
       <div className="mb-10 space-y-2 text-center">
-        <h2 className={`${heading} text-3xl text-foreground`}>{resolveLocalizedText(config.title, locale)}</h2>
+        <h2 className={`${heading} text-3xl text-foreground`}>
+          {resolveLocalizedText(config.title, locale)}
+        </h2>
         {config.description ? (
-          <p className="mx-auto max-w-2xl text-muted-foreground">{resolveLocalizedText(config.description, locale)}</p>
+          <p className="mx-auto max-w-2xl text-muted-foreground">
+            {resolveLocalizedText(config.description, locale)}
+          </p>
         ) : null}
       </div>
 
       {isLoading ? (
-        <div className={`grid gap-6 ${config.layout === 'carousel' ? 'grid-flow-col auto-cols-[16rem] overflow-x-auto' : 'grid-cols-[repeat(auto-fit,minmax(16rem,1fr))]'}`}>
+        <div
+          className={`grid gap-6 ${config.layout === 'carousel' ? 'grid-flow-col auto-cols-[16rem] overflow-x-auto' : 'grid-cols-[repeat(auto-fit,minmax(16rem,1fr))]'}`}
+        >
           {Array.from({ length: 3 }).map((_, i) => (
             <Skeleton key={i} className="h-64 w-full" />
           ))}
@@ -92,12 +100,12 @@ export function FeaturedCoursesSection({
           className={`grid gap-6 ${
             config.layout === 'carousel'
               ? 'grid-flow-col auto-cols-[16rem] overflow-x-auto pb-2'
-              // `auto-fit`/`minmax` instead of fixed `sm:grid-cols-2 lg:grid-cols-3`:
-              // column count follows the REAL number of courses at every
-              // width (1 course never awkwardly stretches to fill 3 empty
-              // slots; 5 never wrap 4+1) — a single rule that is correct at
-              // every viewport, not three fixed tiers with gaps between them.
-              : 'grid-cols-[repeat(auto-fit,minmax(17rem,1fr))]'
+              : // `auto-fit`/`minmax` instead of fixed `sm:grid-cols-2 lg:grid-cols-3`:
+                // column count follows the REAL number of courses at every
+                // width (1 course never awkwardly stretches to fill 3 empty
+                // slots; 5 never wrap 4+1) — a single rule that is correct at
+                // every viewport, not three fixed tiers with gaps between them.
+                'grid-cols-[repeat(auto-fit,minmax(17rem,1fr))]'
           }`}
         >
           {courses.map((course) => {
@@ -115,7 +123,10 @@ export function FeaturedCoursesSection({
                     className="mb-4 flex aspect-video w-full items-center justify-center bg-[var(--website-primary-surface)]"
                     style={{ borderRadius: 'var(--website-radius)' }}
                   >
-                    <BookOpen className="size-8 text-[var(--website-primary-solid)]" aria-hidden />
+                    <BookOpen
+                      className="size-8 text-[var(--website-primary-solid)]"
+                      aria-hidden
+                    />
                   </div>
                 )}
                 {/* `dir="auto"` — `course.title`/`.shortDescription`/instructor
@@ -129,15 +140,28 @@ export function FeaturedCoursesSection({
                     …Stack Web Development" instead of "...Development…") —
                     `dir="auto"` lets the browser detect each string's own
                     script instead of blindly inheriting the page direction. */}
-                <h3 className="line-clamp-2 font-medium text-foreground" dir="auto">{course.title}</h3>
+                <h3
+                  className="line-clamp-2 font-medium text-foreground"
+                  dir="auto"
+                >
+                  {course.title}
+                </h3>
                 {course.shortDescription ? (
-                  <p className="mt-1 line-clamp-2 text-sm text-muted-foreground" dir="auto">
+                  <p
+                    className="mt-1 line-clamp-2 text-sm text-muted-foreground"
+                    dir="auto"
+                  >
                     {course.shortDescription}
                   </p>
                 ) : null}
                 <div className="mt-4 flex items-center justify-between gap-2 text-sm">
                   {config.showInstructor && course.instructors[0] ? (
-                    <span className="min-w-0 truncate text-muted-foreground" dir="auto">{course.instructors[0].name}</span>
+                    <span
+                      className="min-w-0 truncate text-muted-foreground"
+                      dir="auto"
+                    >
+                      {course.instructors[0].name}
+                    </span>
                   ) : (
                     <span />
                   )}

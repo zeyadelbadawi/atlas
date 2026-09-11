@@ -15,8 +15,13 @@ export interface CreateWebsiteFaqEntryVariables {
 export function useCreateWebsiteFaqEntry() {
   const { invalidate } = useInvalidate();
 
-  return useApiMutation<WebsiteFaqEntry, CreateWebsiteFaqEntryVariables, ApiError>({
-    mutationFn: ({ academyId, payload }) => websiteContentService.createFaqEntry(academyId, payload),
+  return useApiMutation<
+    WebsiteFaqEntry,
+    CreateWebsiteFaqEntryVariables,
+    ApiError
+  >({
+    mutationFn: ({ academyId, payload }) =>
+      websiteContentService.createFaqEntry(academyId, payload),
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async (_data, variables) => {

@@ -47,7 +47,9 @@ export function PlatformActivity(): JSX.Element {
             <ErrorState onRetry={() => refetch()} />
           ) : entries.length === 0 ? (
             <div className="flex items-center justify-center py-12">
-              <p className="text-sm text-muted-foreground">{t('platform:activity.empty')}</p>
+              <p className="text-sm text-muted-foreground">
+                {t('platform:activity.empty')}
+              </p>
             </div>
           ) : (
             <ul className="space-y-3">
@@ -56,10 +58,16 @@ export function PlatformActivity(): JSX.Element {
                   key={entry.id}
                   className="cursor-pointer rounded-md p-2 text-sm hover:bg-accent"
                   onClick={() =>
-                    navigate(buildPath(DASHBOARD_ROUTES.platformAuditLogDetail, { eventId: entry.id }))
+                    navigate(
+                      buildPath(DASHBOARD_ROUTES.platformAuditLogDetail, {
+                        eventId: entry.id,
+                      })
+                    )
                   }
                 >
-                  <p className="font-medium text-foreground">{entry.actor.name}</p>
+                  <p className="font-medium text-foreground">
+                    {entry.actor.name}
+                  </p>
                   <p className="text-xs text-muted-foreground">
                     <code className="font-mono">{entry.action}</code>
                     {' · '}

@@ -147,7 +147,11 @@ export default function ForumThreadPage(): JSX.Element {
         onClick={goBackToForum}
         className="mb-2 -ms-2"
       >
-        <ArrowLeft className="size-4 rtl:-scale-x-100" strokeWidth={2} aria-hidden />
+        <ArrowLeft
+          className="size-4 rtl:-scale-x-100"
+          strokeWidth={2}
+          aria-hidden
+        />
         {t('forum:thread.backToForum')}
       </Button>
 
@@ -226,10 +230,7 @@ export default function ForumThreadPage(): JSX.Element {
         ) : repliesError ? (
           <ErrorState onRetry={() => refetchReplies()} />
         ) : replies.length === 0 ? (
-          <EmptyState
-            titleKey="forum:thread.noReplies"
-            className="py-6"
-          />
+          <EmptyState titleKey="forum:thread.noReplies" className="py-6" />
         ) : (
           <div className="space-y-2">
             {replies.map((reply) => (

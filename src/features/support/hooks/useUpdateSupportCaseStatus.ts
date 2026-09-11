@@ -16,8 +16,13 @@ export interface UpdateSupportCaseStatusVariables {
 }
 
 export function useUpdateSupportCaseStatus() {
-  return useApiMutation<SupportCaseDetail, UpdateSupportCaseStatusVariables, ApiError>({
-    mutationFn: ({ caseId, payload }) => supportService.updateStatus(caseId, payload),
+  return useApiMutation<
+    SupportCaseDetail,
+    UpdateSupportCaseStatusVariables,
+    ApiError
+  >({
+    mutationFn: ({ caseId, payload }) =>
+      supportService.updateStatus(caseId, payload),
     successMessageKey: 'support:detail.statusUpdated',
     invalidateKeys: [supportKeys.all],
   });

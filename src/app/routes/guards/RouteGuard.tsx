@@ -5,14 +5,14 @@
  * When a user lacks the required access, the guard either shows a fallback
  * (during restoration) or redirects to the appropriate entry point.
  */
-import { Navigate, useLocation } from "react-router-dom";
-import type { ReactNode } from "react";
-import { useAuth } from "@hooks";
+import { Navigate, useLocation } from 'react-router-dom';
+import type { ReactNode } from 'react';
+import { useAuth } from '@hooks';
 import {
   AUTH_ROUTES,
   AUTHENTICATED_ENTRY_ROUTE,
   SYSTEM_ROUTES,
-} from "../route-paths";
+} from '../route-paths';
 
 export interface RouteGuardProps {
   readonly children: ReactNode;
@@ -81,7 +81,9 @@ export function RouteGuard({
       if (user.permissions.includes(permission)) {
         return true;
       }
-      return organization ? organization.permissions.includes(permission) : false;
+      return organization
+        ? organization.permissions.includes(permission)
+        : false;
     });
 
     if (!hasPermissions) {

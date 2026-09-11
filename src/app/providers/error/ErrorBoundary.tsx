@@ -8,9 +8,9 @@
  * A class component is required: React exposes no hook equivalent of
  * `componentDidCatch`.
  */
-import { Component } from "react";
-import type { ErrorInfo, ReactNode } from "react";
-import { ErrorState } from "@components/feedback";
+import { Component } from 'react';
+import type { ErrorInfo, ReactNode } from 'react';
+import { ErrorState } from '@components/feedback';
 
 export interface ErrorBoundaryProps {
   readonly children: ReactNode;

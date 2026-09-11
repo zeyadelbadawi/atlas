@@ -46,7 +46,11 @@ export interface CreateAcademyStudentDialogProps {
   readonly academyId: string;
 }
 
-const DEFAULT_VALUES: CreateAcademyStudentFormData = { name: '', email: '', password: '' };
+const DEFAULT_VALUES: CreateAcademyStudentFormData = {
+  name: '',
+  email: '',
+  password: '',
+};
 
 export function CreateAcademyStudentDialog({
   open,
@@ -59,7 +63,10 @@ export function CreateAcademyStudentDialog({
   // Shown once, in-dialog, after a successful create — there is no
   // invitation/email system to deliver these credentials any other way,
   // and the password is never retrievable again after this dialog closes.
-  const [created, setCreated] = useState<{ email: string; password: string } | null>(null);
+  const [created, setCreated] = useState<{
+    email: string;
+    password: string;
+  } | null>(null);
 
   const form = useForm<CreateAcademyStudentFormData>({
     resolver: zodResolver(createAcademyStudentSchema),
@@ -84,7 +91,11 @@ export function CreateAcademyStudentDialog({
           setCreated({ email: data.email, password: data.password });
         },
         onError: (error) => {
-          if (error.kind === 'validation' && error.violations && error.violations.length > 0) {
+          if (
+            error.kind === 'validation' &&
+            error.violations &&
+            error.violations.length > 0
+          ) {
             return;
           }
 
@@ -113,7 +124,10 @@ export function CreateAcademyStudentDialog({
         {created ? (
           <div className="space-y-4">
             <div className="flex items-start gap-3 rounded-md bg-success-surface p-3">
-              <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-success" aria-hidden />
+              <CheckCircle2
+                className="mt-0.5 size-5 shrink-0 text-success"
+                aria-hidden
+              />
               <div className="space-y-1 text-sm">
                 <p className="font-medium text-foreground">
                   {t('academy:members.createStudent.success')}
@@ -128,13 +142,17 @@ export function CreateAcademyStudentDialog({
                 <span className="text-muted-foreground">
                   {t('academy:members.createStudent.emailLabel')}
                 </span>
-                <span className="font-medium" dir="ltr">{created.email}</span>
+                <span className="font-medium" dir="ltr">
+                  {created.email}
+                </span>
               </div>
               <div className="flex justify-between gap-2">
                 <span className="text-muted-foreground">
                   {t('academy:members.createStudent.passwordLabel')}
                 </span>
-                <span className="font-medium" dir="ltr">{created.password}</span>
+                <span className="font-medium" dir="ltr">
+                  {created.password}
+                </span>
               </div>
             </div>
             <DialogFooter>
@@ -151,7 +169,9 @@ export function CreateAcademyStudentDialog({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('academy:members.createStudent.nameLabel')}</FormLabel>
+                    <FormLabel>
+                      {t('academy:members.createStudent.nameLabel')}
+                    </FormLabel>
                     <FormControl>
                       <Input autoFocus {...field} />
                     </FormControl>
@@ -165,7 +185,9 @@ export function CreateAcademyStudentDialog({
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('academy:members.createStudent.emailLabel')}</FormLabel>
+                    <FormLabel>
+                      {t('academy:members.createStudent.emailLabel')}
+                    </FormLabel>
                     <FormControl>
                       <Input type="email" {...field} />
                     </FormControl>
@@ -179,7 +201,9 @@ export function CreateAcademyStudentDialog({
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('academy:members.createStudent.passwordLabel')}</FormLabel>
+                    <FormLabel>
+                      {t('academy:members.createStudent.passwordLabel')}
+                    </FormLabel>
                     <FormControl>
                       <Input type="password" {...field} />
                     </FormControl>

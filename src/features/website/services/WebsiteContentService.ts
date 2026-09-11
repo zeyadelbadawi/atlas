@@ -48,7 +48,10 @@ export class WebsiteContentService extends BaseService {
   ): Promise<PaginatedResult<WebsiteFaqEntry>> {
     return this.client.get<PaginatedResult<WebsiteFaqEntry>>(
       this.contentPath(academyId, 'faq-entries'),
-      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
+      {
+        ...options,
+        params: { ...toCollectionParams(query), ...options?.params },
+      }
     );
   }
 
@@ -123,7 +126,10 @@ export class WebsiteContentService extends BaseService {
   ): Promise<PaginatedResult<WebsiteTestimonialEntry>> {
     return this.client.get<PaginatedResult<WebsiteTestimonialEntry>>(
       this.contentPath(academyId, 'testimonial-entries'),
-      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
+      {
+        ...options,
+        params: { ...toCollectionParams(query), ...options?.params },
+      }
     );
   }
 
@@ -143,11 +149,10 @@ export class WebsiteContentService extends BaseService {
     payload: CreateWebsiteTestimonialEntryPayload,
     options?: WriteOptions
   ): Promise<WebsiteTestimonialEntry> {
-    return this.client.post<WebsiteTestimonialEntry, CreateWebsiteTestimonialEntryPayload>(
-      this.contentPath(academyId, 'testimonial-entries'),
-      payload,
-      options
-    );
+    return this.client.post<
+      WebsiteTestimonialEntry,
+      CreateWebsiteTestimonialEntryPayload
+    >(this.contentPath(academyId, 'testimonial-entries'), payload, options);
   }
 
   async updateTestimonialEntry(
@@ -156,7 +161,10 @@ export class WebsiteContentService extends BaseService {
     payload: UpdateWebsiteTestimonialEntryPayload,
     options?: WriteOptions
   ): Promise<WebsiteTestimonialEntry> {
-    return this.client.patch<WebsiteTestimonialEntry, UpdateWebsiteTestimonialEntryPayload>(
+    return this.client.patch<
+      WebsiteTestimonialEntry,
+      UpdateWebsiteTestimonialEntryPayload
+    >(
       this.contentPath(academyId, 'testimonial-entries', entryId),
       payload,
       options

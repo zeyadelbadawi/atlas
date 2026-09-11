@@ -8,21 +8,21 @@
  * No authentication logic lives here — this layout only provides the frame the
  * authentication module will render into.
  */
-import { Outlet } from "react-router-dom";
-import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { Check } from "lucide-react";
-import { AtlasLogo } from "@components/branding";
-import { LanguageSwitcher, ThemeSwitcher } from "@components/controls";
-import { OfflineNotice } from "@components/feedback";
-import { PUBLIC_ROUTES } from "@app/routes/route-paths";
-import { useOnlineStatus } from "@hooks";
+import { Outlet } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { Check } from 'lucide-react';
+import { AtlasLogo } from '@components/branding';
+import { LanguageSwitcher, ThemeSwitcher } from '@components/controls';
+import { OfflineNotice } from '@components/feedback';
+import { PUBLIC_ROUTES } from '@app/routes/route-paths';
+import { useOnlineStatus } from '@hooks';
 
 /** Translation keys for the brand panel's supporting points. */
 const HIGHLIGHT_KEYS = [
-  "layout:auth.highlights.unified",
-  "layout:auth.highlights.bilingual",
-  "layout:auth.highlights.enterprise",
+  'layout:auth.highlights.unified',
+  'layout:auth.highlights.bilingual',
+  'layout:auth.highlights.enterprise',
 ] as const;
 
 export function AuthLayout(): JSX.Element {
@@ -40,7 +40,7 @@ export function AuthLayout(): JSX.Element {
           className="pointer-events-none absolute inset-0 opacity-70"
           style={{
             backgroundImage:
-              "radial-gradient(circle at 20% 20%, hsl(var(--brand-600) / 0.9), transparent 55%), radial-gradient(circle at 80% 70%, hsl(var(--brand-500) / 0.55), transparent 60%)",
+              'radial-gradient(circle at 20% 20%, hsl(var(--brand-600) / 0.9), transparent 55%), radial-gradient(circle at 80% 70%, hsl(var(--brand-500) / 0.55), transparent 60%)',
           }}
           aria-hidden
         />
@@ -56,7 +56,7 @@ export function AuthLayout(): JSX.Element {
 
         <div className="relative space-y-8">
           <p className="max-w-md font-display text-2xl font-semibold leading-snug">
-            {t("layout:auth.brandPromise")}
+            {t('layout:auth.brandPromise')}
           </p>
 
           <ul className="space-y-3">
@@ -75,7 +75,7 @@ export function AuthLayout(): JSX.Element {
         </div>
 
         <p className="relative text-xs text-brand-200">
-          {t("layout:public.footer.rights", { year: new Date().getFullYear() })}
+          {t('layout:public.footer.rights', { year: new Date().getFullYear() })}
         </p>
       </aside>
 

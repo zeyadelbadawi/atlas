@@ -21,18 +21,32 @@ import {
 import { usePagination, useSearch } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useSupportCases } from '../hooks';
-import { getSupportCasePriorityTone, getSupportCaseStatusTone } from '../utils/support-status.utils';
+import {
+  getSupportCasePriorityTone,
+  getSupportCaseStatusTone,
+} from '../utils/support-status.utils';
 import type { SupportCaseStatus, SupportCaseSummary } from '@types';
 
-const STATUS_FILTER_VALUES: readonly SupportCaseStatus[] = ['open', 'in_progress', 'resolved', 'closed'];
+const STATUS_FILTER_VALUES: readonly SupportCaseStatus[] = [
+  'open',
+  'in_progress',
+  'resolved',
+  'closed',
+];
 
 export default function PlatformSupportListPage(): JSX.Element {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { query: searchQuery, setQuery: setSearchQuery, debouncedQuery } = useSearch({
+  const {
+    query: searchQuery,
+    setQuery: setSearchQuery,
+    debouncedQuery,
+  } = useSearch({
     debounceMs: 300,
   });
-  const [statusFilter, setStatusFilter] = useState<SupportCaseStatus | 'all'>('all');
+  const [statusFilter, setStatusFilter] = useState<SupportCaseStatus | 'all'>(
+    'all'
+  );
 
   const [totalItems, setTotalItems] = useState(0);
   const pagination = usePagination({ totalItems });
@@ -64,7 +78,9 @@ export default function PlatformSupportListPage(): JSX.Element {
         cell: ({ row }) => (
           <div>
             <p className="font-medium">{row.original.subject}</p>
-            <p className="text-xs text-muted-foreground">{row.original.requesterName}</p>
+            <p className="text-xs text-muted-foreground">
+              {row.original.requesterName}
+            </p>
           </div>
         ),
       },
@@ -92,7 +108,9 @@ export default function PlatformSupportListPage(): JSX.Element {
         accessorKey: 'organizationName',
         header: t('support:table.organization'),
         cell: ({ row }) => (
-          <span className="text-muted-foreground">{row.original.organizationName ?? '—'}</span>
+          <span className="text-muted-foreground">
+            {row.original.organizationName ?? '—'}
+          </span>
         ),
       },
       {
@@ -123,13 +141,20 @@ export default function PlatformSupportListPage(): JSX.Element {
           />
           <Select
             value={statusFilter}
-            onValueChange={(value) => setStatusFilter(value as SupportCaseStatus | 'all')}
+            onValueChange={(value) =>
+              setStatusFilter(value as SupportCaseStatus | 'all')
+            }
           >
-            <SelectTrigger className="w-44" aria-label={t('support:table.status')}>
+            <SelectTrigger
+              className="w-44"
+              aria-label={t('support:table.status')}
+            >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{t('support:filters.allStatuses')}</SelectItem>
+              <SelectItem value="all">
+                {t('support:filters.allStatuses')}
+              </SelectItem>
               {STATUS_FILTER_VALUES.map((status) => (
                 <SelectItem key={status} value={status}>
                   {t(`support:status.${status}`)}
@@ -155,7 +180,11 @@ export default function PlatformSupportListPage(): JSX.Element {
                 emptyDescriptionKey="support:emptyStateDescription"
                 getRowId={(supportCase) => supportCase.id}
                 onRowSelect={(supportCase) =>
-                  navigate(buildPath(DASHBOARD_ROUTES.platformSupportDetail, { caseId: supportCase.id }))
+                  navigate(
+                    buildPath(DASHBOARD_ROUTES.platformSupportDetail, {
+                      caseId: supportCase.id,
+                    })
+                  )
                 }
               />
             )}

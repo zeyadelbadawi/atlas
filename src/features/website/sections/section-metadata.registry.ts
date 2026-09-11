@@ -24,7 +24,10 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import type { SectionConfigMap, SectionType } from '@types';
-import { DEFAULT_FEATURED_COURSES_COUNT, DEFAULT_INSTRUCTORS_COUNT } from '../constants/website.constants';
+import {
+  DEFAULT_FEATURED_COURSES_COUNT,
+  DEFAULT_INSTRUCTORS_COUNT,
+} from '../constants/website.constants';
 
 export interface SectionMetadataEntry {
   readonly type: SectionType;
@@ -33,29 +36,63 @@ export interface SectionMetadataEntry {
 }
 
 export const SECTION_METADATA: Record<SectionType, SectionMetadataEntry> = {
-  hero: { type: 'hero', labelKey: 'website:sections.hero.label', icon: Sparkles },
-  about: { type: 'about', labelKey: 'website:sections.about.label', icon: LayoutGrid },
+  hero: {
+    type: 'hero',
+    labelKey: 'website:sections.hero.label',
+    icon: Sparkles,
+  },
+  about: {
+    type: 'about',
+    labelKey: 'website:sections.about.label',
+    icon: LayoutGrid,
+  },
   featuredCourses: {
     type: 'featuredCourses',
     labelKey: 'website:sections.featuredCourses.label',
     icon: Grid3x3,
   },
-  statistics: { type: 'statistics', labelKey: 'website:sections.statistics.label', icon: Award },
-  features: { type: 'features', labelKey: 'website:sections.features.label', icon: Sparkles },
+  statistics: {
+    type: 'statistics',
+    labelKey: 'website:sections.statistics.label',
+    icon: Award,
+  },
+  features: {
+    type: 'features',
+    labelKey: 'website:sections.features.label',
+    icon: Sparkles,
+  },
   testimonials: {
     type: 'testimonials',
     labelKey: 'website:sections.testimonials.label',
     icon: MessageSquareQuote,
   },
-  faq: { type: 'faq', labelKey: 'website:sections.faq.label', icon: HelpCircle },
+  faq: {
+    type: 'faq',
+    labelKey: 'website:sections.faq.label',
+    icon: HelpCircle,
+  },
   cta: { type: 'cta', labelKey: 'website:sections.cta.label', icon: Megaphone },
-  instructors: { type: 'instructors', labelKey: 'website:sections.instructors.label', icon: Users },
-  gallery: { type: 'gallery', labelKey: 'website:sections.gallery.label', icon: ImageIcon },
-  contact: { type: 'contact', labelKey: 'website:sections.contact.label', icon: ContactIcon },
+  instructors: {
+    type: 'instructors',
+    labelKey: 'website:sections.instructors.label',
+    icon: Users,
+  },
+  gallery: {
+    type: 'gallery',
+    labelKey: 'website:sections.gallery.label',
+    icon: ImageIcon,
+  },
+  contact: {
+    type: 'contact',
+    labelKey: 'website:sections.contact.label',
+    icon: ContactIcon,
+  },
 };
 
 /** Every registered section type's metadata, in the Page Composer's "Add section" display order. */
-export function listSectionMetadata(order: readonly SectionType[]): readonly SectionMetadataEntry[] {
+export function listSectionMetadata(
+  order: readonly SectionType[]
+): readonly SectionMetadataEntry[] {
   return order.map((type) => SECTION_METADATA[type]);
 }
 

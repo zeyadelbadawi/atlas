@@ -53,7 +53,9 @@ import type { PublicWebsiteLocale } from '@types';
 export interface PublicWebsiteLearningRouteProps {
   readonly lookupKey: string;
   readonly locale: PublicWebsiteLocale;
-  readonly children: (context: { readonly academyId: string }) => React.ReactNode;
+  readonly children: (context: {
+    readonly academyId: string;
+  }) => React.ReactNode;
 }
 
 export function PublicWebsiteLearningRoute({
@@ -90,7 +92,9 @@ export function PublicWebsiteLearningRoute({
 
   const { academy, configuration, pages } = data;
   const unprefixedPathname =
-    locale === 'en' ? location.pathname : location.pathname.replace(/^\/ar/, '') || '/';
+    locale === 'en'
+      ? location.pathname
+      : location.pathname.replace(/^\/ar/, '') || '/';
 
   // Real, backend-enforced route protection, not a UI-hiding convenience:
   // every reused learning page/hook below assumes a real, authenticated
@@ -103,7 +107,9 @@ export function PublicWebsiteLearningRoute({
   if (session.status !== 'authenticated') {
     return (
       <Navigate
-        to={buildHref(`/sign-in?returnTo=${encodeURIComponent(unprefixedPathname)}`)}
+        to={buildHref(
+          `/sign-in?returnTo=${encodeURIComponent(unprefixedPathname)}`
+        )}
         replace
         state={{ from: unprefixedPathname }}
       />
@@ -130,7 +136,8 @@ export function PublicWebsiteLearningRoute({
     myLearning: () => buildHref('/my-learning'),
     courses: () => buildHref('/courses'),
     courseDetail: (courseId) => buildHref(`/my-learning/courses/${courseId}`),
-    courseLearn: (courseId) => buildHref(`/my-learning/courses/${courseId}/learn`),
+    courseLearn: (courseId) =>
+      buildHref(`/my-learning/courses/${courseId}/learn`),
     lesson: (courseId, lessonId) =>
       buildHref(`/my-learning/courses/${courseId}/learn/${lessonId}`),
     quiz: (courseId, quizId) =>
@@ -138,7 +145,8 @@ export function PublicWebsiteLearningRoute({
     assignment: (courseId, assignmentId) =>
       buildHref(`/my-learning/courses/${courseId}/assignments/${assignmentId}`),
     discussions: () => undefined,
-    signIn: (returnTo) => buildHref(`/sign-in?returnTo=${encodeURIComponent(returnTo)}`),
+    signIn: (returnTo) =>
+      buildHref(`/sign-in?returnTo=${encodeURIComponent(returnTo)}`),
   };
 
   return (
@@ -151,7 +159,9 @@ export function PublicWebsiteLearningRoute({
       linkRenderer={linkRenderer}
       locale={locale}
       onLocaleChange={(target) =>
-        navigate(`${target === 'en' ? unprefixedPathname : `/ar${unprefixedPathname}`}${location.search}`)
+        navigate(
+          `${target === 'en' ? unprefixedPathname : `/ar${unprefixedPathname}`}${location.search}`
+        )
       }
       authState={authState}
     >

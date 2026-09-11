@@ -21,7 +21,11 @@ export interface RetryProvisioningVariables {
 export function useRetryProvisioning() {
   const { invalidate } = useInvalidate();
 
-  return useApiMutation<ProvisioningRequest, RetryProvisioningVariables, ApiError>({
+  return useApiMutation<
+    ProvisioningRequest,
+    RetryProvisioningVariables,
+    ApiError
+  >({
     mutationFn: ({ organizationId, requestId }) =>
       provisioningService.retryProvisioning(organizationId, requestId),
     showSuccessToast: false,

@@ -63,9 +63,6 @@ const SearchPage = lazy(() => import('@features/search/pages/SearchPage'));
 const AcademyDashboardPage = lazy(
   () => import('@features/academy/pages/AcademyDashboardPage')
 );
-const AcademyCreatePage = lazy(
-  () => import('@features/academy/pages/AcademyCreatePage')
-);
 const AcademyProfilePage = lazy(
   () => import('@features/academy/pages/AcademyProfilePage')
 );
@@ -245,6 +242,10 @@ const AdminSubscriptionsPage = lazy(() =>
     default: m.AdminSubscriptionsPage,
   }))
 );
+const PrivacyPolicyPage = lazy(
+  () => import('@features/legal/pages/PrivacyPolicyPage')
+);
+const TermsPage = lazy(() => import('@features/legal/pages/TermsPage'));
 const PlatformOrganizationListPage = lazy(
   () => import('@features/platform/pages/PlatformOrganizationListPage')
 );
@@ -343,6 +344,14 @@ export function AppRouter(): JSX.Element {
             <Route path={PUBLIC_ROUTES.home} element={<HomePage />} />
             <Route path={PUBLIC_ROUTES.features} element={<FeaturesPage />} />
             <Route path={PUBLIC_ROUTES.pricing} element={<PricingPage />} />
+            {/* Atlas's own legal documents. Public and unauthenticated by
+                design — someone must be able to read the privacy policy
+                and terms BEFORE deciding to create an account. */}
+            <Route
+              path={PUBLIC_ROUTES.privacyPolicy}
+              element={<PrivacyPolicyPage />}
+            />
+            <Route path={PUBLIC_ROUTES.terms} element={<TermsPage />} />
           </Route>
 
           {/* Authentication surface */}
@@ -417,7 +426,6 @@ export function AppRouter(): JSX.Element {
               element={<NotificationsPage />}
             />
 
-
             <Route
               path={DASHBOARD_ROUTES.analytics}
               element={<AnalyticsPage />}
@@ -431,7 +439,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.studentAnalytics}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['tenant.dashboard.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['tenant.dashboard.view']}
+                >
                   <StudentAnalyticsPage />
                 </RouteGuard>
               }
@@ -442,38 +453,45 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.academy}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['academy.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.view']}
+                >
                   <AcademyDashboardPage />
                 </RouteGuard>
               }
             />
 
+            {/*
+              Phase 10.6 — the direct academy-create form is GONE, and this
+              path now redirects to Academy Provisioning.
+
+              It was the second of two creation paths, and the one that did
+              not allocate a subdomain: every academy created through it
+              had no `subdomain_allocations` row, so its public website
+              answered "not found". Production had five academies and two
+              allocations.
+
+              The path is kept as a redirect rather than deleted so an
+              existing bookmark or a stale link lands on the wizard that
+              replaced it instead of a 404. The backend no longer serves
+              `POST /academies` at all, so this is a usability measure, not
+              the enforcement — the enforcement is server-side.
+            */}
             <Route
               path={DASHBOARD_ROUTES.academyCreate}
               element={
-                // Creating a brand-new academy is a provisioning action,
-                // the same boundary `provisioningNew` (the "New Academy"
-                // wizard) already enforces — `academy.view` alone (found
-                // live during Organization Manager testing: a Manager,
-                // who legitimately holds `academy.view`, could reach this
-                // older direct-create form and provision a new academy,
-                // an owner-level action their permission set otherwise
-                // deliberately excludes) let ANY academy member reach a
-                // second, redundant academy-creation entry point this
-                // permission check never matched.
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['academy.provisioning.create']}
-                >
-                  <AcademyCreatePage />
-                </RouteGuard>
+                <Navigate to={DASHBOARD_ROUTES.provisioningNew} replace />
               }
             />
 
             <Route
               path={DASHBOARD_ROUTES.academyOnboarding}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['academy.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.view']}
+                >
                   <AcademyOnboardingPage />
                 </RouteGuard>
               }
@@ -482,7 +500,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.academyProfile}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['academy.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.view']}
+                >
                   <AcademyProfilePage />
                 </RouteGuard>
               }
@@ -491,7 +512,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.academySettings}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['academy.configure']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.configure']}
+                >
                   <AcademySettingsPage />
                 </RouteGuard>
               }
@@ -500,7 +524,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.academyBranding}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['academy.branding.update']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.branding.update']}
+                >
                   <AcademyBrandingPage />
                 </RouteGuard>
               }
@@ -509,7 +536,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.academyMembers}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['academy.members.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.members.view']}
+                >
                   <AcademyMembersPage />
                 </RouteGuard>
               }
@@ -518,7 +548,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.academyCourses}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['course.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['course.view']}
+                >
                   <CourseListPage />
                 </RouteGuard>
               }
@@ -527,7 +560,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.academyCourseCreate}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['course.create']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['course.create']}
+                >
                   <CourseCreatePage />
                 </RouteGuard>
               }
@@ -536,7 +572,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.academyCourseDetail}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['course.update']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['course.update']}
+                >
                   <CourseEditPage />
                 </RouteGuard>
               }
@@ -545,7 +584,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.academyCourseBuilder}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['course.manage']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['course.manage']}
+                >
                   <CourseBuilderPage />
                 </RouteGuard>
               }
@@ -554,7 +596,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.academyCourseSettings}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['course.configure']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['course.configure']}
+                >
                   <CourseSettingsPage />
                 </RouteGuard>
               }
@@ -563,7 +608,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.academyCourseQuizzes}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['quiz.manage']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['quiz.manage']}
+                >
                   <CourseQuizzesPage />
                 </RouteGuard>
               }
@@ -572,7 +620,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.academyCourseQuizCreate}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['quiz.manage']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['quiz.manage']}
+                >
                   <CourseQuizEditorPage />
                 </RouteGuard>
               }
@@ -581,7 +632,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.academyCourseQuizEdit}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['quiz.manage']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['quiz.manage']}
+                >
                   <CourseQuizEditorPage />
                 </RouteGuard>
               }
@@ -590,7 +644,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.academyCourseAssignments}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['assignment.manage']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['assignment.manage']}
+                >
                   <CourseAssignmentsPage />
                 </RouteGuard>
               }
@@ -599,7 +656,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.learning}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['student.learning.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['student.learning.view']}
+                >
                   <Navigate to={DASHBOARD_ROUTES.myLearning} replace />
                 </RouteGuard>
               }
@@ -618,7 +678,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.myLearning}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['student.learning.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['student.learning.view']}
+                >
                   <StudentMyLearningPage />
                 </RouteGuard>
               }
@@ -632,7 +695,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.myResults}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['student.learning.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['student.learning.view']}
+                >
                   <StudentMyResultsPage />
                 </RouteGuard>
               }
@@ -641,7 +707,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.learningCourses}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['student.course.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['student.course.view']}
+                >
                   <StudentCourseDiscoveryPage />
                 </RouteGuard>
               }
@@ -650,7 +719,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.learningCourseDetail}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['student.course.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['student.course.view']}
+                >
                   <StudentCourseDetailsPage />
                 </RouteGuard>
               }
@@ -659,7 +731,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.learningCourseLearn}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['student.learning.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['student.learning.view']}
+                >
                   <CourseLearnRedirectPage />
                 </RouteGuard>
               }
@@ -668,7 +743,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.learningLesson}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['student.learning.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['student.learning.view']}
+                >
                   <LessonPage />
                 </RouteGuard>
               }
@@ -677,7 +755,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.learningQuiz}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['student.quiz.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['student.quiz.view']}
+                >
                   <QuizPage />
                 </RouteGuard>
               }
@@ -686,7 +767,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.learningAssignment}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['student.assignment.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['student.assignment.view']}
+                >
                   <AssignmentPage />
                 </RouteGuard>
               }
@@ -695,7 +779,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.learningDiscussions}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['forum.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['forum.view']}
+                >
                   <CourseForumPage />
                 </RouteGuard>
               }
@@ -704,7 +791,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.learningThread}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['forum.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['forum.view']}
+                >
                   <ForumThreadPage />
                 </RouteGuard>
               }
@@ -713,7 +803,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.instructorDashboard}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['instructor.dashboard.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['instructor.dashboard.view']}
+                >
                   <InstructorDashboardPage />
                 </RouteGuard>
               }
@@ -722,7 +815,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.instructorCourses}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['instructor.course.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['instructor.course.view']}
+                >
                   <InstructorCoursesPage />
                 </RouteGuard>
               }
@@ -731,7 +827,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.instructorCourseOverview}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['instructor.course.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['instructor.course.view']}
+                >
                   <InstructorCourseOverviewPage />
                 </RouteGuard>
               }
@@ -740,7 +839,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.instructorStudents}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['instructor.student.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['instructor.student.view']}
+                >
                   <InstructorStudentsPage />
                 </RouteGuard>
               }
@@ -749,7 +851,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.instructorStudentProgress}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['instructor.student.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['instructor.student.view']}
+                >
                   <InstructorStudentProgressPage />
                 </RouteGuard>
               }
@@ -758,7 +863,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.instructorAssessments}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['instructor.assessment.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['instructor.assessment.view']}
+                >
                   <InstructorAssessmentsPage />
                 </RouteGuard>
               }
@@ -767,7 +875,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.instructorQuizResults}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['instructor.assessment.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['instructor.assessment.view']}
+                >
                   <InstructorQuizResultsPage />
                 </RouteGuard>
               }
@@ -776,7 +887,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.instructorSubmissions}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['instructor.submission.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['instructor.submission.view']}
+                >
                   <InstructorSubmissionsPage />
                 </RouteGuard>
               }
@@ -785,7 +899,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.instructorSubmissionReview}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['instructor.submission.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['instructor.submission.view']}
+                >
                   <InstructorSubmissionReviewPage />
                 </RouteGuard>
               }
@@ -794,7 +911,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.instructorAnnouncements}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['announcement.manage']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['announcement.manage']}
+                >
                   <InstructorAnnouncementsPage />
                 </RouteGuard>
               }
@@ -803,7 +923,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.instructorDiscussions}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['forum.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['forum.view']}
+                >
                   <CourseForumPage />
                 </RouteGuard>
               }
@@ -812,7 +935,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.instructorThread}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['forum.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['forum.view']}
+                >
                   <ForumThreadPage />
                 </RouteGuard>
               }
@@ -821,7 +947,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.announcements}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['announcement.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['announcement.view']}
+                >
                   <AnnouncementFeedPage />
                 </RouteGuard>
               }
@@ -830,7 +959,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.announcementDetail}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['announcement.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['announcement.view']}
+                >
                   <AnnouncementDetailPage />
                 </RouteGuard>
               }
@@ -839,7 +971,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.blog}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['blog.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['blog.view']}
+                >
                   <BlogListPage />
                 </RouteGuard>
               }
@@ -848,7 +983,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.blogCreate}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['blog.create']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['blog.create']}
+                >
                   <BlogEditorPage />
                 </RouteGuard>
               }
@@ -857,7 +995,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.blogPost}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['blog.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['blog.view']}
+                >
                   <BlogPostDetailPage />
                 </RouteGuard>
               }
@@ -866,7 +1007,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.blogEdit}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['blog.create']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['blog.create']}
+                >
                   <BlogEditorPage />
                 </RouteGuard>
               }
@@ -875,7 +1019,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.tenant}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['tenant.dashboard.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['tenant.dashboard.view']}
+                >
                   <TenantDashboardPage />
                 </RouteGuard>
               }
@@ -884,7 +1031,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.tenantSubscription}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['tenant.subscription.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['tenant.subscription.view']}
+                >
                   <TenantSubscriptionPage />
                 </RouteGuard>
               }
@@ -893,7 +1043,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.tenantUsage}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['tenant.usage.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['tenant.usage.view']}
+                >
                   <TenantUsagePage />
                 </RouteGuard>
               }
@@ -902,7 +1055,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.tenantAddOns}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['tenant.addon.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['tenant.addon.view']}
+                >
                   <TenantAddOnsPage />
                 </RouteGuard>
               }
@@ -911,7 +1067,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.platformTrialPolicy}
               element={
-                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
                   <PlatformTrialPolicyPage />
                 </RouteGuard>
               }
@@ -920,7 +1079,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.platformDomain}
               element={
-                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
                   <PlatformDomainSettingsPage />
                 </RouteGuard>
               }
@@ -929,7 +1091,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.tenantBilling}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['tenant.billing.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['tenant.billing.view']}
+                >
                   <BillingOverviewPage />
                 </RouteGuard>
               }
@@ -938,7 +1103,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.tenantBillingCheckout}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['tenant.payment.create']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['tenant.payment.create']}
+                >
                   <CheckoutPage />
                 </RouteGuard>
               }
@@ -947,7 +1115,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.tenantBillingPayments}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['tenant.payment.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['tenant.payment.view']}
+                >
                   <PaymentHistoryPage />
                 </RouteGuard>
               }
@@ -956,7 +1127,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.tenantBillingPaymentDetail}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['tenant.payment.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['tenant.payment.view']}
+                >
                   <PaymentDetailsPage />
                 </RouteGuard>
               }
@@ -965,7 +1139,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.tenantBillingInvoices}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['tenant.billing.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['tenant.billing.view']}
+                >
                   <InvoicesPage />
                 </RouteGuard>
               }
@@ -974,7 +1151,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.platformPayments}
               element={
-                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
                   <PlatformPaymentReviewListPage />
                 </RouteGuard>
               }
@@ -983,7 +1163,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.platformPaymentDetail}
               element={
-                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
                   <PlatformPaymentReviewDetailPage />
                 </RouteGuard>
               }
@@ -992,7 +1175,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.platformAtlasPaymentProvider}
               element={
-                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
                   <AtlasSubscriptionPaymentProviderPage />
                 </RouteGuard>
               }
@@ -1001,7 +1187,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.provisioning}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['academy.provisioning.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.provisioning.view']}
+                >
                   <ProvisioningHistoryPage />
                 </RouteGuard>
               }
@@ -1010,7 +1199,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.provisioningNew}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['academy.provisioning.create']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.provisioning.create']}
+                >
                   <ProvisioningStartPage />
                 </RouteGuard>
               }
@@ -1019,7 +1211,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.provisioningStatus}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['academy.provisioning.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.provisioning.view']}
+                >
                   <ProvisioningStatusPage />
                 </RouteGuard>
               }
@@ -1028,7 +1223,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.platformProvisioning}
               element={
-                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
                   <PlatformProvisioningListPage />
                 </RouteGuard>
               }
@@ -1037,7 +1235,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.platformProvisioningDetail}
               element={
-                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
                   <PlatformProvisioningDetailPage />
                 </RouteGuard>
               }
@@ -1049,7 +1250,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.platformSubscriptions}
               element={
-                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
                   <AdminSubscriptionsPage />
                 </RouteGuard>
               }
@@ -1058,7 +1262,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.platformOrganizations}
               element={
-                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
                   <PlatformOrganizationListPage />
                 </RouteGuard>
               }
@@ -1067,7 +1274,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.platformOrganizationDetail}
               element={
-                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
                   <PlatformOrganizationDetailPage />
                 </RouteGuard>
               }
@@ -1076,7 +1286,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.platformAcademies}
               element={
-                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
                   <PlatformAcademyListPage />
                 </RouteGuard>
               }
@@ -1085,7 +1298,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.platformAcademyDetail}
               element={
-                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
                   <PlatformAcademyDetailPage />
                 </RouteGuard>
               }
@@ -1094,7 +1310,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.platformUsers}
               element={
-                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
                   <PlatformUserListPage />
                 </RouteGuard>
               }
@@ -1103,7 +1322,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.platformUserDetail}
               element={
-                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
                   <PlatformUserDetailPage />
                 </RouteGuard>
               }
@@ -1112,7 +1334,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.platformRolesPermissions}
               element={
-                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
                   <PlatformRolesPermissionsPage />
                 </RouteGuard>
               }
@@ -1121,7 +1346,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.platformAuditLog}
               element={
-                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
                   <PlatformAuditLogListPage />
                 </RouteGuard>
               }
@@ -1130,7 +1358,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.platformAuditLogDetail}
               element={
-                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
                   <PlatformAuditLogDetailPage />
                 </RouteGuard>
               }
@@ -1139,7 +1370,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.platformSupport}
               element={
-                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
                   <PlatformSupportListPage />
                 </RouteGuard>
               }
@@ -1148,7 +1382,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.platformSupportDetail}
               element={
-                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
                   <PlatformSupportDetailPage />
                 </RouteGuard>
               }
@@ -1157,7 +1394,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.platformPlanCatalog}
               element={
-                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
                   <PlatformPlanCatalogPage />
                 </RouteGuard>
               }
@@ -1166,7 +1406,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.websiteOverview}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['academy.website.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.website.view']}
+                >
                   <WebsiteOverviewPage />
                 </RouteGuard>
               }
@@ -1175,7 +1418,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.websiteSettings}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['academy.website.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.website.view']}
+                >
                   <WebsiteSettingsPage />
                 </RouteGuard>
               }
@@ -1184,7 +1430,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.websiteContent}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['academy.website.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.website.view']}
+                >
                   <WebsiteContentPage />
                 </RouteGuard>
               }
@@ -1193,7 +1442,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.websitePages}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['academy.website.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.website.view']}
+                >
                   <WebsitePagesPage />
                 </RouteGuard>
               }
@@ -1202,7 +1454,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.websitePageEditor}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['academy.website.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.website.view']}
+                >
                   <WebsitePageEditorPage />
                 </RouteGuard>
               }
@@ -1211,7 +1466,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.websitePreview}
               element={
-                <RouteGuard requireAuthentication requiredPermissions={['academy.website.view']}>
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.website.view']}
+                >
                   <WebsitePreviewPage />
                 </RouteGuard>
               }

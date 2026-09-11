@@ -35,7 +35,14 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { BookOpen, CheckCircle2, FileText, Layers, Loader2, PlayCircle } from 'lucide-react';
+import {
+  BookOpen,
+  CheckCircle2,
+  FileText,
+  Layers,
+  Loader2,
+  PlayCircle,
+} from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import {
@@ -55,11 +62,17 @@ import { formatCoursePricing } from '@features/course';
 // and this template renders on the real public runtime where the
 // tenant-scoped `useCourse` (`@features/course`) 403s for any real
 // visitor — see this file's own header comment.
-import { usePublicCourse, usePublicCourseCurriculum } from '@features/public-website/hooks';
+import {
+  usePublicCourse,
+  usePublicCourseCurriculum,
+} from '@features/public-website/hooks';
 import { DEV_OVERRIDE_PARAM } from '@features/public-website';
 import { useAuth } from '@hooks';
 import { useEnrollment, useEnroll } from '@features/learning';
-import { useWebsiteContainerClass, useWebsiteHeadingClass } from './renderer-style.utils';
+import {
+  useWebsiteContainerClass,
+  useWebsiteHeadingClass,
+} from './renderer-style.utils';
 import type { PublicWebsiteLocale } from '@types';
 
 export interface CourseDetailsTemplateProps {
@@ -106,12 +119,17 @@ export function CourseDetailsTemplate({
   const { session } = useAuth();
   const isAuthenticated = session.status === 'authenticated';
 
-  const { data: course, isLoading, error, refetch } = usePublicCourse(academyId, courseId);
-  const { data: curriculum, isLoading: isLoadingCurriculum } = usePublicCourseCurriculum(
-    academyId,
-    courseId
-  );
-  const { data: enrollment } = useEnrollment(courseId, { enabled: isAuthenticated });
+  const {
+    data: course,
+    isLoading,
+    error,
+    refetch,
+  } = usePublicCourse(academyId, courseId);
+  const { data: curriculum, isLoading: isLoadingCurriculum } =
+    usePublicCourseCurriculum(academyId, courseId);
+  const { data: enrollment } = useEnrollment(courseId, {
+    enabled: isAuthenticated,
+  });
   const { mutateAsync: enroll, isPending: isEnrolling } = useEnroll();
   const [enrollError, setEnrollError] = useState(false);
 
@@ -164,7 +182,10 @@ export function CourseDetailsTemplate({
           className="flex aspect-video w-full items-center justify-center bg-[var(--website-primary-surface)]"
           style={{ borderRadius: 'var(--website-radius)' }}
         >
-          <BookOpen className="size-10 text-[var(--website-primary-solid)]" aria-hidden />
+          <BookOpen
+            className="size-10 text-[var(--website-primary-solid)]"
+            aria-hidden
+          />
         </div>
       )}
 
@@ -176,7 +197,9 @@ export function CourseDetailsTemplate({
                 {course.category.name}
               </p>
             ) : null}
-            <h1 className={`${heading} text-3xl text-foreground sm:text-4xl`}>{course.title}</h1>
+            <h1 className={`${heading} text-3xl text-foreground sm:text-4xl`}>
+              {course.title}
+            </h1>
 
             {course.stats ? (
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
@@ -214,7 +237,10 @@ export function CourseDetailsTemplate({
               </h2>
               <div className="flex flex-wrap gap-4">
                 {course.instructors.map((instructor) => (
-                  <span key={instructor.id} className="text-sm text-muted-foreground">
+                  <span
+                    key={instructor.id}
+                    className="text-sm text-muted-foreground"
+                  >
                     {instructor.name}
                   </span>
                 ))}
@@ -227,9 +253,16 @@ export function CourseDetailsTemplate({
               <h2 className="text-lg font-semibold text-foreground">
                 {t('website:renderer.courseDetails.curriculumTitle')}
               </h2>
-              <Accordion type="multiple" className="rounded-lg border border-border">
+              <Accordion
+                type="multiple"
+                className="rounded-lg border border-border"
+              >
                 {curriculum.map((section) => (
-                  <AccordionItem key={section.id} value={section.id} className="px-4">
+                  <AccordionItem
+                    key={section.id}
+                    value={section.id}
+                    className="px-4"
+                  >
                     <AccordionTrigger className="text-sm font-medium">
                       <span className="flex-1 text-start">{section.title}</span>
                       <span className="me-2 whitespace-nowrap text-xs font-normal text-muted-foreground">
@@ -271,14 +304,20 @@ export function CourseDetailsTemplate({
           {isEnrolled ? (
             <Button
               className="w-full"
-              onClick={() => navigate(buildHref(`/my-learning/courses/${courseId}`))}
+              onClick={() =>
+                navigate(buildHref(`/my-learning/courses/${courseId}`))
+              }
             >
               <CheckCircle2 className="size-4" strokeWidth={2} aria-hidden />
               {t('website:renderer.courseDetails.continueAction')}
             </Button>
           ) : isAuthenticated ? (
             isFree ? (
-              <Button className="w-full" onClick={handleEnroll} disabled={isEnrolling}>
+              <Button
+                className="w-full"
+                onClick={handleEnroll}
+                disabled={isEnrolling}
+              >
                 {isEnrolling ? (
                   <Loader2 className="size-4 animate-spin" aria-hidden />
                 ) : null}
@@ -290,7 +329,9 @@ export function CourseDetailsTemplate({
               className="w-full"
               onClick={() =>
                 navigate(
-                  buildHref(`/sign-in?returnTo=${encodeURIComponent(`/courses/${courseId}`)}`)
+                  buildHref(
+                    `/sign-in?returnTo=${encodeURIComponent(`/courses/${courseId}`)}`
+                  )
                 )
               }
             >

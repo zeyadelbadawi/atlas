@@ -32,7 +32,10 @@ import {
 import { useAcademy } from '@features/academy';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { useWebsiteConfiguration, useWebsitePages } from '../hooks';
-import { PreviewViewport, type PreviewBreakpoint } from '../components/PreviewViewport';
+import {
+  PreviewViewport,
+  type PreviewBreakpoint,
+} from '../components/PreviewViewport';
 import { WebsiteRenderer } from '../renderer';
 import { getWebsiteTabs } from '../utils/website-navigation.utils';
 import {
@@ -58,9 +61,12 @@ export default function WebsitePreviewPage(): JSX.Element {
   // Phase 6 — the site is bilingual by default; the review surface should
   // let the Owner check both real, rendered languages before they ever
   // publish, not just trust the site "is" bilingual.
-  const [previewLocale, setPreviewLocale] = useState<PublicWebsiteLocale>(DEFAULT_PUBLIC_WEBSITE_LOCALE);
+  const [previewLocale, setPreviewLocale] = useState<PublicWebsiteLocale>(
+    DEFAULT_PUBLIC_WEBSITE_LOCALE
+  );
 
-  const isLoading = academyQuery.isLoading || configQuery.isLoading || pagesQuery.isLoading;
+  const isLoading =
+    academyQuery.isLoading || configQuery.isLoading || pagesQuery.isLoading;
   const error = academyQuery.error ?? configQuery.error ?? pagesQuery.error;
 
   const refetchAll = () => {
@@ -80,7 +86,13 @@ export default function WebsitePreviewPage(): JSX.Element {
     );
   }
 
-  if (error || !academyQuery.data || !configQuery.data || !pagesQuery.data || !academyId) {
+  if (
+    error ||
+    !academyQuery.data ||
+    !configQuery.data ||
+    !pagesQuery.data ||
+    !academyId
+  ) {
     return (
       <PageContainer>
         <PageHeader titleKey="website:preview.title" />
@@ -115,7 +127,12 @@ export default function WebsitePreviewPage(): JSX.Element {
           breadcrumbs={breadcrumbs}
           actions={
             <div className="flex items-center gap-2">
-              <Select value={previewLocale} onValueChange={(value) => setPreviewLocale(value as PublicWebsiteLocale)}>
+              <Select
+                value={previewLocale}
+                onValueChange={(value) =>
+                  setPreviewLocale(value as PublicWebsiteLocale)
+                }
+              >
                 <SelectTrigger className="w-32">
                   <SelectValue />
                 </SelectTrigger>
@@ -129,7 +146,9 @@ export default function WebsitePreviewPage(): JSX.Element {
               </Select>
               <Select value={activePage?.id} onValueChange={setSelectedPageId}>
                 <SelectTrigger className="w-56">
-                  <SelectValue placeholder={t('website:preview.pageSelectPlaceholder')} />
+                  <SelectValue
+                    placeholder={t('website:preview.pageSelectPlaceholder')}
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {pages.map((page) => (
@@ -146,7 +165,10 @@ export default function WebsitePreviewPage(): JSX.Element {
         <SectionTabs items={getWebsiteTabs(academyId)} />
 
         {activePage ? (
-          <PreviewViewport breakpoint={breakpoint} onBreakpointChange={setBreakpoint}>
+          <PreviewViewport
+            breakpoint={breakpoint}
+            onBreakpointChange={setBreakpoint}
+          >
             <WebsiteRenderer
               academyId={academyId}
               academyName={academy.name}

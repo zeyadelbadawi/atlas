@@ -13,24 +13,24 @@
  * `passed: null` (a quiz with no passing score) shows neither a pass nor
  * a fail badge.
  */
-import { Award, ClipboardList, GraduationCap, Target } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { PageContainer, PageHeader, SectionCard } from "@components/layout";
-import { EmptyState, ErrorState } from "@components/feedback";
-import { MetricCard, StatusBadge } from "@components/data-display";
-import { SectionLoader } from "@components/loading";
-import type { StatusTone } from "@components/data-display";
-import { useStudentResults } from "../hooks/useStudentResults";
-import type { StudentAssignmentResult, StudentQuizResult } from "@types";
+import { Award, ClipboardList, GraduationCap, Target } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { PageContainer, PageHeader, SectionCard } from '@components/layout';
+import { EmptyState, ErrorState } from '@components/feedback';
+import { MetricCard, StatusBadge } from '@components/data-display';
+import { SectionLoader } from '@components/loading';
+import type { StatusTone } from '@components/data-display';
+import { useStudentResults } from '../hooks/useStudentResults';
+import type { StudentAssignmentResult, StudentQuizResult } from '@types';
 
 function quizTone(result: StudentQuizResult): StatusTone {
-  if (result.passed === true) return "success";
-  if (result.passed === false) return "destructive";
-  return "neutral";
+  if (result.passed === true) return 'success';
+  if (result.passed === false) return 'destructive';
+  return 'neutral';
 }
 
 function assignmentTone(result: StudentAssignmentResult): StatusTone {
-  return result.gradingStatus === "graded" ? "success" : "info";
+  return result.gradingStatus === 'graded' ? 'success' : 'info';
 }
 
 export default function StudentMyResultsPage(): JSX.Element {
@@ -38,7 +38,7 @@ export default function StudentMyResultsPage(): JSX.Element {
   const { data, isLoading, isError, refetch } = useStudentResults();
 
   const formatDate = (value: string | null): string =>
-    value ? new Date(value).toLocaleDateString(i18n.language) : "";
+    value ? new Date(value).toLocaleDateString(i18n.language) : '';
 
   if (isLoading) {
     return (
@@ -71,7 +71,7 @@ export default function StudentMyResultsPage(): JSX.Element {
   const { summary, courses } = data;
   const coursesWithResults = courses.filter(
     (course) =>
-      course.quizResults.length > 0 || course.assignmentResults.length > 0,
+      course.quizResults.length > 0 || course.assignmentResults.length > 0
   );
 
   return (
@@ -85,20 +85,20 @@ export default function StudentMyResultsPage(): JSX.Element {
         <MetricCard
           labelKey="learning:results.metrics.coursesEnrolled"
           value={new Intl.NumberFormat(i18n.language).format(
-            summary.coursesEnrolled,
+            summary.coursesEnrolled
           )}
           icon={GraduationCap}
         />
         <MetricCard
           labelKey="learning:results.metrics.coursesCompleted"
           value={new Intl.NumberFormat(i18n.language).format(
-            summary.coursesCompleted,
+            summary.coursesCompleted
           )}
           icon={Award}
         />
         <MetricCard
           labelKey="learning:results.metrics.quizzesPassed"
-          value={t("learning:results.metrics.passedOf", {
+          value={t('learning:results.metrics.passedOf', {
             passed: summary.quizzesPassed,
             attempted: summary.quizzesAttempted,
           })}
@@ -109,7 +109,7 @@ export default function StudentMyResultsPage(): JSX.Element {
           labelKey="learning:results.metrics.averageScore"
           value={
             summary.averageQuizScore === null
-              ? t("learning:results.metrics.noScoresYet")
+              ? t('learning:results.metrics.noScoresYet')
               : `${summary.averageQuizScore}%`
           }
           icon={ClipboardList}
@@ -133,7 +133,7 @@ export default function StudentMyResultsPage(): JSX.Element {
                the card body instead of being forced through a key. */
             descriptionKey={
               course.progress
-                ? "learning:results.course.progressSummary"
+                ? 'learning:results.course.progressSummary'
                 : undefined
             }
             values={{
@@ -149,7 +149,7 @@ export default function StudentMyResultsPage(): JSX.Element {
               {course.quizResults.length > 0 ? (
                 <div className="flex flex-col gap-2">
                   <h3 className="text-sm font-medium text-muted-foreground">
-                    {t("learning:results.course.quizzes")}
+                    {t('learning:results.course.quizzes')}
                   </h3>
                   <ul className="flex flex-col divide-y divide-border">
                     {course.quizResults.map((result) => (
@@ -162,26 +162,26 @@ export default function StudentMyResultsPage(): JSX.Element {
                             {result.quizTitle}
                           </span>
                           <span className="text-sm text-muted-foreground">
-                            {t("learning:results.course.attemptNumber", {
+                            {t('learning:results.course.attemptNumber', {
                               number: result.attemptNumber,
                             })}
                             {result.submittedAt
                               ? ` · ${formatDate(result.submittedAt)}`
-                              : ""}
+                              : ''}
                           </span>
                         </div>
                         <div className="flex items-center gap-3">
                           <span className="tabular-nums font-medium text-foreground">
                             {result.score === null
-                              ? t("learning:results.course.awaitingMarking")
+                              ? t('learning:results.course.awaitingMarking')
                               : `${result.score}%`}
                           </span>
                           {result.passed === null ? null : (
                             <StatusBadge
                               labelKey={
                                 result.passed
-                                  ? "learning:results.course.passed"
-                                  : "learning:results.course.notPassed"
+                                  ? 'learning:results.course.passed'
+                                  : 'learning:results.course.notPassed'
                               }
                               tone={quizTone(result)}
                             />
@@ -196,7 +196,7 @@ export default function StudentMyResultsPage(): JSX.Element {
               {course.assignmentResults.length > 0 ? (
                 <div className="flex flex-col gap-2">
                   <h3 className="text-sm font-medium text-muted-foreground">
-                    {t("learning:results.course.assignments")}
+                    {t('learning:results.course.assignments')}
                   </h3>
                   <ul className="flex flex-col divide-y divide-border">
                     {course.assignmentResults.map((result) => (
@@ -210,19 +210,19 @@ export default function StudentMyResultsPage(): JSX.Element {
                           </span>
                           <span className="text-sm text-muted-foreground">
                             {result.submittedAt
-                              ? t("learning:results.course.submittedOn", {
+                              ? t('learning:results.course.submittedOn', {
                                   date: formatDate(result.submittedAt),
                                 })
-                              : ""}
+                              : ''}
                             {result.hasFeedback
-                              ? ` · ${t("learning:results.course.hasFeedback")}`
-                              : ""}
+                              ? ` · ${t('learning:results.course.hasFeedback')}`
+                              : ''}
                           </span>
                         </div>
                         <div className="flex items-center gap-3">
                           <span className="tabular-nums font-medium text-foreground">
                             {result.score === null
-                              ? t("learning:results.course.awaitingMarking")
+                              ? t('learning:results.course.awaitingMarking')
                               : `${result.score}%`}
                           </span>
                           <StatusBadge

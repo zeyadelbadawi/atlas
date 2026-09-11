@@ -289,5 +289,35 @@
     "view": "View",
     "manage": "Manage",
     "configure": "Configure"
+  },
+  "delete": {
+    "title": "Delete this academy",
+    "description": "Removes the academy from Atlas and takes its public website offline. This cannot be undone.",
+    "consequenceWebsite": "The academy's public website stops responding immediately.",
+    "consequenceAccess": "Managers, instructors and students lose access to it.",
+    "consequenceAllowance": "The academy slot on your plan is freed, so you can create a replacement.",
+    "consequenceRecords": "Billing and payment records are retained, as they must be, but the academy is no longer active.",
+    "action": "Delete academy",
+    "confirmTitle": "Delete this academy permanently?",
+    "confirmDescription": "This will take {{name}} offline and cannot be undone.",
+    "reasonLabel": "Why are you deleting it? (optional)",
+    "reasonPlaceholder": "Select a reason",
+    "reasons": {
+      "created_by_mistake": "I created it by mistake",
+      "no_longer_needed": "I no longer need it",
+      "replacing_with_another": "I am replacing it with another academy",
+      "testing_only": "It was only for testing",
+      "too_expensive": "It is too expensive",
+      "switching_provider": "I am switching to another provider",
+      "other": "Another reason"
+    },
+    "feedbackLabel": "Anything you would like us to know? (optional)",
+    "feedbackPlaceholder": "Your feedback helps us improve Atlas.",
+    "typeNameLabel": "Type {{name}} to confirm",
+    "confirmAction": "Permanently delete",
+    "deleting": "Deleting…",
+    "deletedTitle": "Academy deleted",
+    "deletedDescription": "{{name}} has been deleted and its website is offline.",
+    "failedTitle": "The academy could not be deleted."
   }
 }

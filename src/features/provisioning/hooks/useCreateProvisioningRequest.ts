@@ -11,7 +11,10 @@
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
 import { provisioningKeys } from '@services/query';
 import type { ApiError } from '@api';
-import type { CreateProvisioningRequestPayload, ProvisioningRequest } from '@types';
+import type {
+  CreateProvisioningRequestPayload,
+  ProvisioningRequest,
+} from '@types';
 import { provisioningService } from '../services/ProvisioningService';
 
 export interface CreateProvisioningRequestVariables {

@@ -15,13 +15,19 @@ export interface ArchiveWebsiteTestimonialEntryVariables {
 export function useArchiveWebsiteTestimonialEntry() {
   const { invalidate } = useInvalidate();
 
-  return useApiMutation<WebsiteTestimonialEntry, ArchiveWebsiteTestimonialEntryVariables, ApiError>({
+  return useApiMutation<
+    WebsiteTestimonialEntry,
+    ArchiveWebsiteTestimonialEntryVariables,
+    ApiError
+  >({
     mutationFn: ({ academyId, entryId }) =>
       websiteContentService.archiveTestimonialEntry(academyId, entryId),
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async (_data, variables) => {
-      await invalidate(websiteKeys.testimonialEntry(variables.academyId, variables.entryId));
+      await invalidate(
+        websiteKeys.testimonialEntry(variables.academyId, variables.entryId)
+      );
       await invalidate(websiteKeys.testimonialEntries(variables.academyId));
     },
   });

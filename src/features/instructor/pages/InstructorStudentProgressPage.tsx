@@ -95,7 +95,9 @@ export default function InstructorStudentProgressPage(): JSX.Element {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t('instructor:studentProgress.quizAttempts')}</CardTitle>
+            <CardTitle>
+              {t('instructor:studentProgress.quizAttempts')}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {data.quizAttempts.length === 0 ? (

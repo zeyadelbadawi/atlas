@@ -40,14 +40,11 @@ type SeoMeta = {
   tags?: string[];
 };
 
-const markdownModules = import.meta.glob(
-  ['../../seo/content/**/*.md'],
-  {
-    query: '?raw',
-    import: 'default',
-    eager: true,
-  },
-) as Record<string, string>;
+const markdownModules = import.meta.glob(['../../seo/content/**/*.md'], {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>;
 
 function parseFrontmatter(markdown: string) {
   if (!markdown.startsWith('---')) {
@@ -93,9 +90,7 @@ function normalizeFrontmatter(value: unknown): BlogFrontmatter {
       if (Array.isArray(entryValue)) {
         return [
           key,
-          entryValue
-            .map((item) => String(item).trim())
-            .filter(Boolean),
+          entryValue.map((item) => String(item).trim()).filter(Boolean),
         ] as const;
       }
 
@@ -104,7 +99,7 @@ function normalizeFrontmatter(value: unknown): BlogFrontmatter {
       }
 
       return [key, String(entryValue).trim()] as const;
-    },
+    }
   );
 
   return Object.fromEntries(entries) as BlogFrontmatter;
@@ -161,8 +156,10 @@ const blogPosts: BlogPost[] = Object.entries(markdownModules)
     const { data, content } = parseFrontmatter(rawMarkdown);
     const slug = normalizeSlug(filePath);
     const frontmatter = data;
-    const title = frontmatter.title || titleFromSlug(slug.split('/').pop() || slug);
-    const description = frontmatter.description || descriptionFromMarkdown(content);
+    const title =
+      frontmatter.title || titleFromSlug(slug.split('/').pop() || slug);
+    const description =
+      frontmatter.description || descriptionFromMarkdown(content);
 
     return {
       slug,
@@ -215,7 +212,7 @@ function hasBlogPosts() {
 
 function frontmatterString(
   frontmatter: BlogFrontmatter,
-  key: string,
+  key: string
 ): string | undefined {
   const value = frontmatter[key];
   return typeof value === 'string' ? value : undefined;
@@ -223,7 +220,7 @@ function frontmatterString(
 
 function frontmatterStringList(
   frontmatter: BlogFrontmatter,
-  key: string,
+  key: string
 ): string[] | undefined {
   const value = frontmatter[key];
 
@@ -274,7 +271,8 @@ function getPostSeoMeta(post?: BlogPost | null): SeoMeta {
     frontmatterString(post.frontmatter, 'og_url') ??
     getAbsoluteUrl(getBlogRoute(post.slug));
   const keywordsList =
-    frontmatterStringList(post.frontmatter, 'keywords') ?? post.frontmatter.tags;
+    frontmatterStringList(post.frontmatter, 'keywords') ??
+    post.frontmatter.tags;
   const ogImage =
     frontmatterString(post.frontmatter, 'og_image') ??
     frontmatterString(post.frontmatter, 'hero_image');
@@ -306,8 +304,7 @@ function getPostSeoMeta(post?: BlogPost | null): SeoMeta {
     twitterCreator:
       frontmatterString(post.frontmatter, 'twitter_creator') ??
       twitterCreatorHandle,
-    twitterTitle:
-      frontmatterString(post.frontmatter, 'twitter_title') ?? title,
+    twitterTitle: frontmatterString(post.frontmatter, 'twitter_title') ?? title,
     twitterDescription:
       frontmatterString(post.frontmatter, 'twitter_description') ?? description,
     twitterImage,
@@ -317,11 +314,5 @@ function getPostSeoMeta(post?: BlogPost | null): SeoMeta {
   };
 }
 
-export {
-  blogPosts,
-  getBlogPost,
-  getBlogRoute,
-  getPostSeoMeta,
-  hasBlogPosts,
-};
+export { blogPosts, getBlogPost, getBlogRoute, getPostSeoMeta, hasBlogPosts };
 export type { BlogFrontmatter, BlogPost, SeoMeta };

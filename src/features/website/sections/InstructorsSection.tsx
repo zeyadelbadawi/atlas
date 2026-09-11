@@ -60,9 +60,13 @@ export function InstructorsSection({
     <section className={`${container} ${section}`}>
       {(title || description) && (
         <div className="mb-10 space-y-2 text-center">
-          {title ? <h2 className={`${heading} text-3xl text-foreground`}>{title}</h2> : null}
+          {title ? (
+            <h2 className={`${heading} text-3xl text-foreground`}>{title}</h2>
+          ) : null}
           {description ? (
-            <p className="mx-auto max-w-2xl text-muted-foreground">{description}</p>
+            <p className="mx-auto max-w-2xl text-muted-foreground">
+              {description}
+            </p>
           ) : null}
         </div>
       )}
@@ -90,7 +94,10 @@ export function InstructorsSection({
                 />
               ) : (
                 <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-[var(--website-primary-surface)]">
-                  <Users className="size-6 text-[var(--website-primary-solid)]" aria-hidden />
+                  <Users
+                    className="size-6 text-[var(--website-primary-solid)]"
+                    aria-hidden
+                  />
                 </div>
               )}
               {/* `dir="auto"` — a plain, single-language name (never
@@ -98,7 +105,12 @@ export function InstructorsSection({
                   Arabic page or vice versa; see `FeaturedCoursesSection`'s
                   identical comment for the reproduced ellipsis-position bug
                   this avoids. */}
-              <p className="mt-3 truncate font-medium text-foreground" dir="auto">{instructor.name}</p>
+              <p
+                className="mt-3 truncate font-medium text-foreground"
+                dir="auto"
+              >
+                {instructor.name}
+              </p>
             </div>
           ))}
         </div>

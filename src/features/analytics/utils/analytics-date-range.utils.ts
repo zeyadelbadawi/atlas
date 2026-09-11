@@ -20,7 +20,10 @@ function toIsoDate(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
-export function computeDateRange(preset: AnalyticsDateRangePreset, now = new Date()): AnalyticsDateRange {
+export function computeDateRange(
+  preset: AnalyticsDateRangePreset,
+  now = new Date()
+): AnalyticsDateRange {
   const to = toIsoDate(now);
   const from = new Date(now);
   from.setDate(from.getDate() - PRESET_DAYS[preset]);

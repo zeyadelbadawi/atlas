@@ -1,7 +1,11 @@
 /**
  * Gallery Section.
  */
-import { useWebsiteContainerClass, useWebsiteHeadingClass, useWebsiteSectionClass } from '../renderer/renderer-style.utils';
+import {
+  useWebsiteContainerClass,
+  useWebsiteHeadingClass,
+  useWebsiteSectionClass,
+} from '../renderer/renderer-style.utils';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { GallerySectionConfig } from '@types';
@@ -20,7 +24,9 @@ export function GallerySection({ config }: GallerySectionProps): JSX.Element {
   return (
     <section className={`${container} ${section}`}>
       {title ? (
-        <h2 className={`${heading} mb-8 text-center text-3xl text-foreground`}>{title}</h2>
+        <h2 className={`${heading} mb-8 text-center text-3xl text-foreground`}>
+          {title}
+        </h2>
       ) : null}
       {/* `auto-fit`/`minmax`, not fixed `grid-cols-2 sm:grid-cols-3 lg:grid-cols-4`
           — see `FeaturedCoursesSection`'s identical comment for why. A
@@ -29,7 +35,8 @@ export function GallerySection({ config }: GallerySectionProps): JSX.Element {
       <div className="grid grid-cols-[repeat(auto-fit,minmax(8rem,1fr))] gap-4">
         {config.images.map((image) => {
           const caption = resolveLocalizedText(image.caption, locale);
-          const imageAlt = resolveLocalizedText(image.imageAlt, locale) || caption;
+          const imageAlt =
+            resolveLocalizedText(image.imageAlt, locale) || caption;
           return (
             <figure key={image.id} className="min-w-0 space-y-1.5">
               <img
@@ -39,7 +46,9 @@ export function GallerySection({ config }: GallerySectionProps): JSX.Element {
                 style={{ borderRadius: 'var(--website-radius)' }}
               />
               {caption ? (
-                <figcaption className="truncate text-xs text-muted-foreground">{caption}</figcaption>
+                <figcaption className="truncate text-xs text-muted-foreground">
+                  {caption}
+                </figcaption>
               ) : null}
             </figure>
           );

@@ -1,0 +1,26 @@
+{
+  "effectiveDate": "Effective date",
+  "lastUpdated": "Last updated",
+  "tableOfContents": "Contents",
+  "privacyPolicy": "Privacy Policy",
+  "terms": "Terms of Service",
+  "cookiePreferences": "Cookie Preferences",
+  "consent": {
+    "bannerTitle": "Cookies and similar technologies",
+    "bannerBody": "Atlas stores a small amount of data in your browser. Some of it is required to keep you signed in. The rest only remembers your preferences, and you can decline it.",
+    "acceptAll": "Accept all",
+    "rejectAll": "Reject optional",
+    "managePreferences": "Manage preferences",
+    "dialogTitle": "Cookie preferences",
+    "dialogBody": "Atlas uses no analytics, advertising or third-party tracking technologies. These are the only two categories that exist.",
+    "save": "Save preferences",
+    "cancel": "Cancel",
+    "necessaryTitle": "Strictly necessary",
+    "necessaryBody": "Keeps you signed in and remembers which organization and academy you are working in. Atlas cannot function without this, so it cannot be turned off.",
+    "necessaryAlways": "Always active",
+    "preferencesTitle": "Preferences",
+    "preferencesBody": "Remembers your theme, language, sidebar layout and similar choices. Declining removes what is already stored and Atlas will simply use its defaults.",
+    "decisionSaved": "Your cookie preferences have been saved.",
+    "learnMore": "Read the Privacy Policy"
+  }
+}

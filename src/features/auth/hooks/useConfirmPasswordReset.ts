@@ -11,7 +11,8 @@ import type { PasswordResetConfirmation } from '@types';
 
 export function useConfirmPasswordReset() {
   return useApiMutation<void, PasswordResetConfirmation, ApiError>({
-    mutationFn: (request) => authenticationService.confirmPasswordReset(request),
+    mutationFn: (request) =>
+      authenticationService.confirmPasswordReset(request),
     showSuccessToast: false,
     showErrorToast: false,
   });

@@ -13,7 +13,12 @@ export default function PlatformAuditLogDetailPage(): JSX.Element {
   const { t, i18n } = useTranslation();
   const { eventId } = useParams<{ eventId: string }>();
 
-  const { data: entry, isLoading, error, refetch } = useAuditLogEntry(eventId ?? '');
+  const {
+    data: entry,
+    isLoading,
+    error,
+    refetch,
+  } = useAuditLogEntry(eventId ?? '');
 
   if (isLoading) {
     return (
@@ -44,38 +49,54 @@ export default function PlatformAuditLogDetailPage(): JSX.Element {
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">{t('auditLog:overviewTitle')}</CardTitle>
+            <CardTitle className="text-base">
+              {t('auditLog:overviewTitle')}
+            </CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1">
-              <p className="text-xs text-muted-foreground">{t('auditLog:table.actor')}</p>
+              <p className="text-xs text-muted-foreground">
+                {t('auditLog:table.actor')}
+              </p>
               <p className="text-sm text-foreground">{entry.actor.name}</p>
               {entry.actor.email ? (
-                <p className="text-xs text-muted-foreground">{entry.actor.email}</p>
+                <p className="text-xs text-muted-foreground">
+                  {entry.actor.email}
+                </p>
               ) : null}
             </div>
             <div className="space-y-1">
-              <p className="text-xs text-muted-foreground">{t('auditLog:table.occurredAt')}</p>
+              <p className="text-xs text-muted-foreground">
+                {t('auditLog:table.occurredAt')}
+              </p>
               <p className="text-sm text-foreground">
                 {new Date(entry.occurredAt).toLocaleString(i18n.language)}
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-xs text-muted-foreground">{t('auditLog:table.target')}</p>
+              <p className="text-xs text-muted-foreground">
+                {t('auditLog:table.target')}
+              </p>
               <p className="text-sm text-foreground">
                 {entry.targetLabel ?? entry.targetId} ({entry.targetType})
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-xs text-muted-foreground">{t('auditLog:table.organization')}</p>
-              <p className="text-sm text-foreground">{entry.organizationName ?? '—'}</p>
+              <p className="text-xs text-muted-foreground">
+                {t('auditLog:table.organization')}
+              </p>
+              <p className="text-sm text-foreground">
+                {entry.organizationName ?? '—'}
+              </p>
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">{t('auditLog:contextTitle')}</CardTitle>
+            <CardTitle className="text-base">
+              {t('auditLog:contextTitle')}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {contextEntries.length === 0 ? (

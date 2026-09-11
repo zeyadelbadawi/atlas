@@ -116,7 +116,8 @@ export interface EffectiveEntitlements {
 }
 
 /** The result of evaluating one resource limit against current usage. */
-export type ResourceLimitStatus = 'allowed' | 'limitReached' | 'unlimited' | 'unknown';
+export type ResourceLimitStatus =
+  'allowed' | 'limitReached' | 'unlimited' | 'unknown';
 
 /**
  * What a Tenant would need to close an entitlement gap (a reached limit or

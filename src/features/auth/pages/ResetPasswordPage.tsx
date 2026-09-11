@@ -3,21 +3,21 @@
  *
  * Set new password after receiving reset link.
  */
-import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams, Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { ShieldCheck } from "lucide-react";
-import { AUTH_ROUTES } from "@app/routes/route-paths";
-import { PageContainer, PageHeader } from "@components/layout";
-import { ResetPasswordForm } from "../components/ResetPasswordForm";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { ShieldCheck } from 'lucide-react';
+import { AUTH_ROUTES } from '@app/routes/route-paths';
+import { PageContainer, PageHeader } from '@components/layout';
+import { ResetPasswordForm } from '../components/ResetPasswordForm';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function ResetPasswordPage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [tokenValid, setTokenValid] = useState<boolean | null>(null);
-  const token = searchParams.get("token");
+  const token = searchParams.get('token');
 
   useEffect(() => {
     // Validate reset token
@@ -35,7 +35,7 @@ export default function ResetPasswordPage(): JSX.Element {
     return (
       <PageContainer className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
         <div className="text-center">
-          <p className="text-muted-foreground">{t("common:actions.loading")}</p>
+          <p className="text-muted-foreground">{t('common:actions.loading')}</p>
         </div>
       </PageContainer>
     );
@@ -47,7 +47,7 @@ export default function ResetPasswordPage(): JSX.Element {
         <div className="w-full max-w-md space-y-8">
           <Alert variant="destructive">
             <AlertDescription>
-              {t("auth:resetPassword.errors.invalidToken")}
+              {t('auth:resetPassword.errors.invalidToken')}
             </AlertDescription>
           </Alert>
           <div className="text-center">
@@ -55,7 +55,7 @@ export default function ResetPasswordPage(): JSX.Element {
               to={AUTH_ROUTES.forgotPassword}
               className="text-sm font-medium text-primary hover:underline"
             >
-              {t("auth:resetPassword.requestNewLink")}
+              {t('auth:resetPassword.requestNewLink')}
             </Link>
           </div>
         </div>

@@ -47,15 +47,25 @@ import {
   useRemoveCustomDomain,
   useVerifyDomain,
 } from '../hooks';
-import { addCustomDomainSchema, type AddCustomDomainFormData } from '../schemas/domain.schemas';
-import { getCdnStatusTone, getDomainStatusTone, getSslStatusTone } from '../utils/domain-status.utils';
+import {
+  addCustomDomainSchema,
+  type AddCustomDomainFormData,
+} from '../schemas/domain.schemas';
+import {
+  getCdnStatusTone,
+  getDomainStatusTone,
+  getSslStatusTone,
+} from '../utils/domain-status.utils';
 
 export interface WebsiteDomainTabProps {
   readonly academyId: string;
   readonly academySlug: string;
 }
 
-export function WebsiteDomainTab({ academyId, academySlug }: WebsiteDomainTabProps): JSX.Element {
+export function WebsiteDomainTab({
+  academyId,
+  academySlug,
+}: WebsiteDomainTabProps): JSX.Element {
   const { t } = useTranslation();
   const { confirm } = useConfirmDialog();
   const { hasPermission } = usePermissions();
@@ -82,9 +92,13 @@ export function WebsiteDomainTab({ academyId, academySlug }: WebsiteDomainTabPro
   }
 
   const domain = domainQuery.data;
-  const platformDomainConfigured = platformDomainQuery.data?.configured ?? false;
+  const platformDomainConfigured =
+    platformDomainQuery.data?.configured ?? false;
   const baseDomain = platformDomainQuery.data?.baseDomain;
-  const derivedSubdomain = platformDomainConfigured && baseDomain ? `${academySlug}.${baseDomain}` : undefined;
+  const derivedSubdomain =
+    platformDomainConfigured && baseDomain
+      ? `${academySlug}.${baseDomain}`
+      : undefined;
 
   const onSubmitAddDomain = (data: AddCustomDomainFormData) => {
     addDomain.mutate(
@@ -95,7 +109,11 @@ export function WebsiteDomainTab({ academyId, academySlug }: WebsiteDomainTabPro
           setShowAddForm(false);
           form.reset();
         },
-        onError: () => toast({ title: t('website:domain.custom.addError'), variant: 'destructive' }),
+        onError: () =>
+          toast({
+            title: t('website:domain.custom.addError'),
+            variant: 'destructive',
+          }),
       }
     );
   };
@@ -109,7 +127,11 @@ export function WebsiteDomainTab({ academyId, academySlug }: WebsiteDomainTabPro
     });
     if (!confirmed) return;
     removeDomain.mutate(academyId, {
-      onError: () => toast({ title: t('website:domain.custom.removeError'), variant: 'destructive' }),
+      onError: () =>
+        toast({
+          title: t('website:domain.custom.removeError'),
+          variant: 'destructive',
+        }),
     });
   };
 
@@ -117,7 +139,9 @@ export function WebsiteDomainTab({ academyId, academySlug }: WebsiteDomainTabPro
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">{t('website:domain.subdomain.title')}</CardTitle>
+          <CardTitle className="text-base">
+            {t('website:domain.subdomain.title')}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {derivedSubdomain ? (
@@ -129,7 +153,11 @@ export function WebsiteDomainTab({ academyId, academySlug }: WebsiteDomainTabPro
               {domain.subdomain ? (
                 <StatusBadge
                   labelKey={`website:domain.subdomain.status.${domain.subdomain.status}`}
-                  tone={domain.subdomain.status === 'assigned' ? 'success' : 'neutral'}
+                  tone={
+                    domain.subdomain.status === 'assigned'
+                      ? 'success'
+                      : 'neutral'
+                  }
                 />
               ) : null}
             </div>
@@ -143,7 +171,9 @@ export function WebsiteDomainTab({ academyId, academySlug }: WebsiteDomainTabPro
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">{t('website:domain.custom.title')}</CardTitle>
+          <CardTitle className="text-base">
+            {t('website:domain.custom.title')}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {domain.customDomain?.hostname ? (
@@ -167,19 +197,30 @@ export function WebsiteDomainTab({ academyId, academySlug }: WebsiteDomainTabPro
                     <table className="w-full text-start text-sm" dir="ltr">
                       <thead className="bg-muted/50 text-xs text-muted-foreground">
                         <tr>
-                          <th className="p-2 text-start">{t('website:domain.custom.dnsType')}</th>
-                          <th className="p-2 text-start">{t('website:domain.custom.dnsName')}</th>
-                          <th className="p-2 text-start">{t('website:domain.custom.dnsValue')}</th>
+                          <th className="p-2 text-start">
+                            {t('website:domain.custom.dnsType')}
+                          </th>
+                          <th className="p-2 text-start">
+                            {t('website:domain.custom.dnsName')}
+                          </th>
+                          <th className="p-2 text-start">
+                            {t('website:domain.custom.dnsValue')}
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
-                        {domain.customDomain.verificationRecords.map((record, index) => (
-                          <tr key={`${record.type}-${index}`} className="border-t border-border">
-                            <td className="p-2 font-mono">{record.type}</td>
-                            <td className="p-2 font-mono">{record.name}</td>
-                            <td className="p-2 font-mono">{record.value}</td>
-                          </tr>
-                        ))}
+                        {domain.customDomain.verificationRecords.map(
+                          (record, index) => (
+                            <tr
+                              key={`${record.type}-${index}`}
+                              className="border-t border-border"
+                            >
+                              <td className="p-2 font-mono">{record.type}</td>
+                              <td className="p-2 font-mono">{record.name}</td>
+                              <td className="p-2 font-mono">{record.value}</td>
+                            </tr>
+                          )
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -196,7 +237,10 @@ export function WebsiteDomainTab({ academyId, academySlug }: WebsiteDomainTabPro
                     onClick={() =>
                       verifyDomain.mutate(academyId, {
                         onError: () =>
-                          toast({ title: t('website:domain.custom.verifyError'), variant: 'destructive' }),
+                          toast({
+                            title: t('website:domain.custom.verifyError'),
+                            variant: 'destructive',
+                          }),
                       })
                     }
                   >
@@ -222,28 +266,46 @@ export function WebsiteDomainTab({ academyId, academySlug }: WebsiteDomainTabPro
             </div>
           ) : showAddForm && canManage ? (
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmitAddDomain)} className="space-y-3">
+              <form
+                onSubmit={form.handleSubmit(onSubmitAddDomain)}
+                className="space-y-3"
+              >
                 <FormField
                   control={form.control}
                   name="hostname"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('website:domain.custom.hostnameLabel')}</FormLabel>
+                      <FormLabel>
+                        {t('website:domain.custom.hostnameLabel')}
+                      </FormLabel>
                       <FormControl>
-                        <Input {...field} dir="ltr" placeholder="www.example.com" />
+                        <Input
+                          {...field}
+                          dir="ltr"
+                          placeholder="www.example.com"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
                 <div className="flex gap-2">
-                  <Button type="submit" size="sm" disabled={addDomain.isPending}>
+                  <Button
+                    type="submit"
+                    size="sm"
+                    disabled={addDomain.isPending}
+                  >
                     {addDomain.isPending ? (
                       <Loader2 className="size-3.5 animate-spin" aria-hidden />
                     ) : null}
                     {t('website:domain.custom.addAction')}
                   </Button>
-                  <Button type="button" variant="outline" size="sm" onClick={() => setShowAddForm(false)}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowAddForm(false)}
+                  >
                     {t('common:actions.cancel')}
                   </Button>
                 </div>
@@ -251,9 +313,16 @@ export function WebsiteDomainTab({ academyId, academySlug }: WebsiteDomainTabPro
             </Form>
           ) : (
             <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">{t('website:domain.custom.empty')}</p>
+              <p className="text-sm text-muted-foreground">
+                {t('website:domain.custom.empty')}
+              </p>
               {canManage ? (
-                <Button type="button" variant="outline" size="sm" onClick={() => setShowAddForm(true)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowAddForm(true)}
+                >
                   {t('website:domain.custom.addAction')}
                 </Button>
               ) : null}
@@ -264,18 +333,24 @@ export function WebsiteDomainTab({ academyId, academySlug }: WebsiteDomainTabPro
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">{t('website:domain.infrastructure.title')}</CardTitle>
+          <CardTitle className="text-base">
+            {t('website:domain.infrastructure.title')}
+          </CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <p className="text-sm font-medium text-foreground">{t('website:domain.infrastructure.ssl')}</p>
+            <p className="text-sm font-medium text-foreground">
+              {t('website:domain.infrastructure.ssl')}
+            </p>
             <StatusBadge
               labelKey={`website:domain.infrastructure.sslStatus.${domain.ssl.status}`}
               tone={getSslStatusTone(domain.ssl.status)}
             />
           </div>
           <div className="space-y-1.5">
-            <p className="text-sm font-medium text-foreground">{t('website:domain.infrastructure.cdn')}</p>
+            <p className="text-sm font-medium text-foreground">
+              {t('website:domain.infrastructure.cdn')}
+            </p>
             <StatusBadge
               labelKey={`website:domain.infrastructure.cdnStatus.${domain.cdn.status}`}
               tone={getCdnStatusTone(domain.cdn.status)}

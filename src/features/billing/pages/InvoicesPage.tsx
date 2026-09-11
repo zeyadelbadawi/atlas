@@ -82,7 +82,9 @@ export default function InvoicesPage(): JSX.Element {
         cell: ({ row }) =>
           row.original.issuedAt ? (
             <span className="text-muted-foreground">
-              {new Date(row.original.issuedAt).toLocaleDateString(i18n.language)}
+              {new Date(row.original.issuedAt).toLocaleDateString(
+                i18n.language
+              )}
             </span>
           ) : (
             <span className="text-muted-foreground">—</span>

@@ -34,7 +34,8 @@ export default function WebsiteSettingsPage(): JSX.Element {
     query: { pagination: { page: 1, pageSize: 50 } },
   });
 
-  const isLoading = academyQuery.isLoading || configQuery.isLoading || pagesQuery.isLoading;
+  const isLoading =
+    academyQuery.isLoading || configQuery.isLoading || pagesQuery.isLoading;
   const error = academyQuery.error ?? configQuery.error ?? pagesQuery.error;
 
   const refetchAll = () => {
@@ -54,7 +55,13 @@ export default function WebsiteSettingsPage(): JSX.Element {
     );
   }
 
-  if (error || !academyQuery.data || !configQuery.data || !pagesQuery.data || !academyId) {
+  if (
+    error ||
+    !academyQuery.data ||
+    !configQuery.data ||
+    !pagesQuery.data ||
+    !academyId
+  ) {
     return (
       <PageContainer>
         <PageHeader titleKey="website:settings.title" />
@@ -87,15 +94,28 @@ export default function WebsiteSettingsPage(): JSX.Element {
       <SectionTabs items={getWebsiteTabs(academyId)} />
 
       <div className="space-y-6">
-        <WebsitePublishBar academyId={academyId} status={configuration.status} />
+        <WebsitePublishBar
+          academyId={academyId}
+          status={configuration.status}
+        />
 
         <Tabs defaultValue="theme">
           <TabsList>
-            <TabsTrigger value="theme">{t('website:settings.tabs.theme')}</TabsTrigger>
-            <TabsTrigger value="brand">{t('website:settings.tabs.brand')}</TabsTrigger>
-            <TabsTrigger value="seo">{t('website:settings.tabs.seo')}</TabsTrigger>
-            <TabsTrigger value="navigation">{t('website:settings.tabs.navigation')}</TabsTrigger>
-            <TabsTrigger value="domain">{t('website:settings.tabs.domain')}</TabsTrigger>
+            <TabsTrigger value="theme">
+              {t('website:settings.tabs.theme')}
+            </TabsTrigger>
+            <TabsTrigger value="brand">
+              {t('website:settings.tabs.brand')}
+            </TabsTrigger>
+            <TabsTrigger value="seo">
+              {t('website:settings.tabs.seo')}
+            </TabsTrigger>
+            <TabsTrigger value="navigation">
+              {t('website:settings.tabs.navigation')}
+            </TabsTrigger>
+            <TabsTrigger value="domain">
+              {t('website:settings.tabs.domain')}
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="theme" className="pt-4">
@@ -109,11 +129,17 @@ export default function WebsiteSettingsPage(): JSX.Element {
           </TabsContent>
 
           <TabsContent value="brand" className="pt-4">
-            <WebsiteBrandTab academyId={academyId} configuration={configuration} />
+            <WebsiteBrandTab
+              academyId={academyId}
+              configuration={configuration}
+            />
           </TabsContent>
 
           <TabsContent value="seo" className="pt-4">
-            <WebsiteSeoTab academyId={academyId} configuration={configuration} />
+            <WebsiteSeoTab
+              academyId={academyId}
+              configuration={configuration}
+            />
           </TabsContent>
 
           <TabsContent value="navigation" className="pt-4">
@@ -125,7 +151,10 @@ export default function WebsiteSettingsPage(): JSX.Element {
           </TabsContent>
 
           <TabsContent value="domain" className="pt-4">
-            <WebsiteDomainTab academyId={academyId} academySlug={academy.slug} />
+            <WebsiteDomainTab
+              academyId={academyId}
+              academySlug={academy.slug}
+            />
           </TabsContent>
         </Tabs>
       </div>

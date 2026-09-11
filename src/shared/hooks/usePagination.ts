@@ -135,7 +135,8 @@ export function usePagination(options: UsePaginationOptions): PaginationState {
     [currentPage, totalPages, siblingCount]
   );
 
-  const rangeStart = safeTotalItems === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const rangeStart =
+    safeTotalItems === 0 ? 0 : (currentPage - 1) * pageSize + 1;
   const rangeEnd =
     safeTotalItems === 0 ? 0 : Math.min(currentPage * pageSize, safeTotalItems);
 

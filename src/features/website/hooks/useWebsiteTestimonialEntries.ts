@@ -4,7 +4,11 @@
 import { useApiQuery } from '@/shared/hooks';
 import { websiteKeys } from '@services/query';
 import { websiteContentService } from '../services/WebsiteContentService';
-import type { CollectionQuery, PaginatedResult, WebsiteTestimonialEntry } from '@types';
+import type {
+  CollectionQuery,
+  PaginatedResult,
+  WebsiteTestimonialEntry,
+} from '@types';
 import type { ApiError } from '@api';
 
 export interface UseWebsiteTestimonialEntriesOptions {
@@ -20,7 +24,8 @@ export function useWebsiteTestimonialEntries(
 
   return useApiQuery<PaginatedResult<WebsiteTestimonialEntry>, ApiError>({
     queryKey: websiteKeys.testimonialEntries(academyId, query),
-    queryFn: () => websiteContentService.getTestimonialEntries(academyId, query),
+    queryFn: () =>
+      websiteContentService.getTestimonialEntries(academyId, query),
     enabled: enabled && !!academyId,
   });
 }

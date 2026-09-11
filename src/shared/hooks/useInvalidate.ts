@@ -5,7 +5,10 @@
  */
 import { useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { invalidateQueries, invalidateResource } from '@services/query/query-utils';
+import {
+  invalidateQueries,
+  invalidateResource,
+} from '@services/query/query-utils';
 
 export interface UseInvalidateResult {
   /** Invalidates all queries matching a key prefix. */

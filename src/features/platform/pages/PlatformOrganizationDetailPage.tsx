@@ -19,9 +19,12 @@ export default function PlatformOrganizationDetailPage(): JSX.Element {
   const { t, i18n } = useTranslation();
   const { organizationId } = useParams<{ organizationId: string }>();
 
-  const { data: organization, isLoading, error, refetch } = usePlatformOrganization(
-    organizationId ?? ''
-  );
+  const {
+    data: organization,
+    isLoading,
+    error,
+    refetch,
+  } = usePlatformOrganization(organizationId ?? '');
 
   if (isLoading) {
     return (
@@ -59,20 +62,32 @@ export default function PlatformOrganizationDetailPage(): JSX.Element {
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">{t('platform:organizations.overviewTitle')}</CardTitle>
+            <CardTitle className="text-base">
+              {t('platform:organizations.overviewTitle')}
+            </CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1">
-              <p className="text-xs text-muted-foreground">{t('platform:organizations.owner')}</p>
-              <p className="text-sm text-foreground">{organization.ownerName ?? '—'}</p>
+              <p className="text-xs text-muted-foreground">
+                {t('platform:organizations.owner')}
+              </p>
+              <p className="text-sm text-foreground">
+                {organization.ownerName ?? '—'}
+              </p>
               {organization.ownerEmail ? (
-                <p className="text-xs text-muted-foreground">{organization.ownerEmail}</p>
+                <p className="text-xs text-muted-foreground">
+                  {organization.ownerEmail}
+                </p>
               ) : null}
             </div>
             <div className="space-y-1">
-              <p className="text-xs text-muted-foreground">{t('platform:organizations.table.createdAt')}</p>
+              <p className="text-xs text-muted-foreground">
+                {t('platform:organizations.table.createdAt')}
+              </p>
               <p className="text-sm text-foreground">
-                {new Date(organization.createdAt).toLocaleDateString(i18n.language)}
+                {new Date(organization.createdAt).toLocaleDateString(
+                  i18n.language
+                )}
               </p>
             </div>
           </CardContent>
@@ -80,19 +95,29 @@ export default function PlatformOrganizationDetailPage(): JSX.Element {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">{t('platform:organizations.subscriptionTitle')}</CardTitle>
+            <CardTitle className="text-base">
+              {t('platform:organizations.subscriptionTitle')}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {organization.subscription ? (
               <div className="grid gap-4 sm:grid-cols-3 text-sm">
                 <div>
-                  <p className="text-xs text-muted-foreground">{t('platform:organizations.table.plan')}</p>
-                  <p className="font-medium text-foreground">{organization.subscription.plan.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {t('platform:organizations.table.plan')}
+                  </p>
+                  <p className="font-medium text-foreground">
+                    {organization.subscription.plan.name}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">{t('platform:organizations.subscriptionStatus')}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {t('platform:organizations.subscriptionStatus')}
+                  </p>
                   <p className="font-medium text-foreground">
-                    {t(`tenant:common.subscriptionStatus.${organization.subscription.status}`)}
+                    {t(
+                      `tenant:common.subscriptionStatus.${organization.subscription.status}`
+                    )}
                   </p>
                 </div>
                 <div>
@@ -101,9 +126,9 @@ export default function PlatformOrganizationDetailPage(): JSX.Element {
                   </p>
                   <p className="font-medium text-foreground">
                     {organization.subscription.currentPeriodEnd
-                      ? new Date(organization.subscription.currentPeriodEnd).toLocaleDateString(
-                          i18n.language
-                        )
+                      ? new Date(
+                          organization.subscription.currentPeriodEnd
+                        ).toLocaleDateString(i18n.language)
                       : '—'}
                   </p>
                 </div>
@@ -116,7 +141,9 @@ export default function PlatformOrganizationDetailPage(): JSX.Element {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">{t('platform:organizations.academiesTitle')}</CardTitle>
+            <CardTitle className="text-base">
+              {t('platform:organizations.academiesTitle')}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {organization.academies.length === 0 ? (
@@ -124,9 +151,14 @@ export default function PlatformOrganizationDetailPage(): JSX.Element {
             ) : (
               <ul className="divide-y divide-border">
                 {organization.academies.map((academy) => (
-                  <li key={academy.id} className="flex items-center justify-between py-2 text-sm">
+                  <li
+                    key={academy.id}
+                    className="flex items-center justify-between py-2 text-sm"
+                  >
                     <span className="text-foreground">{academy.name}</span>
-                    <span className="text-xs text-muted-foreground">{academy.status}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {academy.status}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -136,7 +168,9 @@ export default function PlatformOrganizationDetailPage(): JSX.Element {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">{t('platform:organizations.membersTitle')}</CardTitle>
+            <CardTitle className="text-base">
+              {t('platform:organizations.membersTitle')}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {organization.members.length === 0 ? (
@@ -144,12 +178,19 @@ export default function PlatformOrganizationDetailPage(): JSX.Element {
             ) : (
               <ul className="divide-y divide-border">
                 {organization.members.map((member) => (
-                  <li key={member.id} className="flex items-center justify-between py-2 text-sm">
+                  <li
+                    key={member.id}
+                    className="flex items-center justify-between py-2 text-sm"
+                  >
                     <div>
                       <p className="text-foreground">{member.name}</p>
-                      <p className="text-xs text-muted-foreground">{member.email}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {member.email}
+                      </p>
                     </div>
-                    <span className="text-xs text-muted-foreground">{member.role}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {member.role}
+                    </span>
                   </li>
                 ))}
               </ul>

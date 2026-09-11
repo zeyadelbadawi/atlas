@@ -13,9 +13,7 @@
 import type { TenantUsage } from './tenant.types';
 
 export type PaymentCollectionMode =
-  | 'unconfigured'
-  | 'atlas_payments'
-  | 'organization_gateway';
+  'unconfigured' | 'atlas_payments' | 'organization_gateway';
 
 export interface DashboardScope {
   readonly type: 'organization' | 'academy';

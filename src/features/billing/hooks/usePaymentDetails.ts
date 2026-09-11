@@ -55,7 +55,11 @@ export function usePaymentDetails(paymentId: string) {
     const previous = previousStatusRef.current;
     previousStatusRef.current = current;
 
-    if (current === 'succeeded' && previous !== 'succeeded' && previous !== undefined) {
+    if (
+      current === 'succeeded' &&
+      previous !== 'succeeded' &&
+      previous !== undefined
+    ) {
       void invalidate(tenantKeys.subscription(organization?.id));
       void invalidate(tenantKeys.usage(organization?.id));
       void invalidate(tenantKeys.addOns(organization?.id));

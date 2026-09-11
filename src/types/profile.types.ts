@@ -27,7 +27,8 @@ export interface NotificationPreferencesUpdate {
 }
 
 /** Profile section identifier. */
-export type ProfileSection = 'personal' | 'account' | 'preferences' | 'security';
+export type ProfileSection =
+  'personal' | 'account' | 'preferences' | 'security';
 
 /** Profile edit state. */
 export interface ProfileEditState {

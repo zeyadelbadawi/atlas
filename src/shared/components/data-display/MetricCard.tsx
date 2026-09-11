@@ -5,22 +5,22 @@
  * without a comparison is just a number, so the card supports an explicit trend
  * whose direction is stated in text as well as colour.
  */
-import type { LucideIcon } from "lucide-react";
-import { Minus, TrendingDown, TrendingUp } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@utils";
+import type { LucideIcon } from 'lucide-react';
+import { Minus, TrendingDown, TrendingUp } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@utils';
 
 /** Direction of a metric's change. */
-export type TrendDirection = "up" | "down" | "flat";
+export type TrendDirection = 'up' | 'down' | 'flat';
 
 const TREND_PRESENTATION: Record<
   TrendDirection,
   { readonly icon: LucideIcon; readonly className: string }
 > = {
-  up: { icon: TrendingUp, className: "text-success" },
-  down: { icon: TrendingDown, className: "text-destructive" },
-  flat: { icon: Minus, className: "text-muted-foreground" },
+  up: { icon: TrendingUp, className: 'text-success' },
+  down: { icon: TrendingDown, className: 'text-destructive' },
+  flat: { icon: Minus, className: 'text-muted-foreground' },
 };
 
 export interface MetricCardProps {
@@ -55,8 +55,8 @@ export function MetricCard({
   return (
     <div
       className={cn(
-        "rounded-lg border border-border bg-card p-4 shadow-xs sm:p-5",
-        className,
+        'rounded-lg border border-border bg-card p-4 shadow-xs sm:p-5',
+        className
       )}
     >
       <div className="flex items-start justify-between gap-3">
@@ -85,8 +85,8 @@ export function MetricCard({
         {trend && !isLoading ? (
           <p
             className={cn(
-              "flex items-center gap-1.5 text-xs font-medium",
-              TREND_PRESENTATION[trend.direction].className,
+              'flex items-center gap-1.5 text-xs font-medium',
+              TREND_PRESENTATION[trend.direction].className
             )}
           >
             {TrendIcon ? (

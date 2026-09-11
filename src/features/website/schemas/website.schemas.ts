@@ -19,7 +19,10 @@ import {
 import { localizedOptional } from './website-section.schemas';
 
 export const createWebsitePageSchema = z.object({
-  title: z.string().min(1, 'validation:required').max(MAX_PAGE_TITLE_LENGTH, 'validation:maxLength'),
+  title: z
+    .string()
+    .min(1, 'validation:required')
+    .max(MAX_PAGE_TITLE_LENGTH, 'validation:maxLength'),
   slug: z
     .string()
     .min(MIN_PAGE_SLUG_LENGTH, 'validation:minLength')
@@ -53,7 +56,10 @@ export const globalSeoSchema = z.object({
   robotsIndexable: z.boolean().optional(),
   sitemapEnabled: z.boolean().optional(),
   /** Deliberately lenient (length-only) — a real, verified domain is out of scope for this prompt; see the field's doc comment in `website.types.ts`. */
-  canonicalBaseUrl: z.string().max(MAX_CANONICAL_PATH_LENGTH, 'validation:maxLength').optional(),
+  canonicalBaseUrl: z
+    .string()
+    .max(MAX_CANONICAL_PATH_LENGTH, 'validation:maxLength')
+    .optional(),
 });
 export type GlobalSeoFormData = z.infer<typeof globalSeoSchema>;
 

@@ -239,7 +239,10 @@ export function LessonFormDialog({
                 // stored field — see `youtube.utils.ts`'s own doc comment
                 // for why the content model stays a single opaque
                 // `contentUrl` regardless of source.
-                const isYoutube = contentType === 'video' && !!field.value && isYouTubeUrl(field.value);
+                const isYoutube =
+                  contentType === 'video' &&
+                  !!field.value &&
+                  isYouTubeUrl(field.value);
 
                 return (
                   <FormItem>

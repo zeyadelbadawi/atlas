@@ -21,30 +21,84 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
   hero: {
     type: 'hero',
     fields: [
-      { key: 'eyebrow', kind: 'text', labelKey: 'website:fields.eyebrow', localized: true },
-      { key: 'title', kind: 'text', labelKey: 'website:fields.title', localized: true },
-      { key: 'subtitle', kind: 'text', labelKey: 'website:fields.subtitle', localized: true },
-      { key: 'description', kind: 'longText', labelKey: 'website:fields.description', localized: true },
+      {
+        key: 'eyebrow',
+        kind: 'text',
+        labelKey: 'website:fields.eyebrow',
+        localized: true,
+      },
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+      },
+      {
+        key: 'subtitle',
+        kind: 'text',
+        labelKey: 'website:fields.subtitle',
+        localized: true,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+      },
       { key: 'image', kind: 'image', labelKey: 'website:fields.image' },
-      { key: 'imageAlt', kind: 'text', labelKey: 'website:fields.imageAlt', localized: true },
+      {
+        key: 'imageAlt',
+        kind: 'text',
+        labelKey: 'website:fields.imageAlt',
+        localized: true,
+      },
       { key: 'cta', kind: 'cta', labelKey: 'website:fields.primaryCta' },
-      { key: 'secondaryCta', kind: 'cta', labelKey: 'website:fields.secondaryCta' },
+      {
+        key: 'secondaryCta',
+        kind: 'cta',
+        labelKey: 'website:fields.secondaryCta',
+      },
     ],
   },
   about: {
     type: 'about',
     fields: [
-      { key: 'title', kind: 'text', labelKey: 'website:fields.title', localized: true },
-      { key: 'body', kind: 'longText', labelKey: 'website:fields.body', localized: true },
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+      },
+      {
+        key: 'body',
+        kind: 'longText',
+        labelKey: 'website:fields.body',
+        localized: true,
+      },
       { key: 'image', kind: 'image', labelKey: 'website:fields.image' },
-      { key: 'imageAlt', kind: 'text', labelKey: 'website:fields.imageAlt', localized: true },
+      {
+        key: 'imageAlt',
+        kind: 'text',
+        labelKey: 'website:fields.imageAlt',
+        localized: true,
+      },
     ],
   },
   featuredCourses: {
     type: 'featuredCourses',
     fields: [
-      { key: 'title', kind: 'text', labelKey: 'website:fields.title', localized: true },
-      { key: 'description', kind: 'longText', labelKey: 'website:fields.description', localized: true },
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+      },
       {
         key: 'mode',
         kind: 'select',
@@ -64,13 +118,28 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
         ],
       },
       { key: 'count', kind: 'number', labelKey: 'website:fields.count' },
-      { key: 'showPrice', kind: 'boolean', labelKey: 'website:fields.showPrice' },
-      { key: 'showInstructor', kind: 'boolean', labelKey: 'website:fields.showInstructor' },
+      {
+        key: 'showPrice',
+        kind: 'boolean',
+        labelKey: 'website:fields.showPrice',
+      },
+      {
+        key: 'showInstructor',
+        kind: 'boolean',
+        labelKey: 'website:fields.showInstructor',
+      },
     ],
   },
   statistics: {
     type: 'statistics',
-    fields: [{ key: 'title', kind: 'text', labelKey: 'website:fields.title', localized: true }],
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+      },
+    ],
     repeatable: {
       key: 'items',
       labelKey: 'website:fields.statisticItems',
@@ -83,96 +152,227 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
           options: [
             { value: 'none', labelKey: 'website:fields.statMetricNone' },
             { value: 'courses', labelKey: 'website:fields.statMetricCourses' },
-            { value: 'students', labelKey: 'website:fields.statMetricStudents' },
-            { value: 'instructors', labelKey: 'website:fields.statMetricInstructors' },
+            {
+              value: 'students',
+              labelKey: 'website:fields.statMetricStudents',
+            },
+            {
+              value: 'instructors',
+              labelKey: 'website:fields.statMetricInstructors',
+            },
           ],
         },
-        { key: 'value', kind: 'text', labelKey: 'website:fields.statValue', localized: true },
-        { key: 'label', kind: 'text', labelKey: 'website:fields.statLabel', localized: true },
+        {
+          key: 'value',
+          kind: 'text',
+          labelKey: 'website:fields.statValue',
+          localized: true,
+        },
+        {
+          key: 'label',
+          kind: 'text',
+          labelKey: 'website:fields.statLabel',
+          localized: true,
+        },
       ],
     },
   },
   features: {
     type: 'features',
     fields: [
-      { key: 'title', kind: 'text', labelKey: 'website:fields.title', localized: true },
-      { key: 'description', kind: 'longText', labelKey: 'website:fields.description', localized: true },
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+      },
     ],
     repeatable: {
       key: 'items',
       labelKey: 'website:fields.featureItems',
       itemLabelKey: 'website:fields.featureItem',
       itemFields: [
-        { key: 'title', kind: 'text', labelKey: 'website:fields.title', localized: true },
-        { key: 'description', kind: 'longText', labelKey: 'website:fields.description', localized: true },
-        { key: 'icon', kind: 'select', labelKey: 'website:fields.icon', options: iconOptions },
+        {
+          key: 'title',
+          kind: 'text',
+          labelKey: 'website:fields.title',
+          localized: true,
+        },
+        {
+          key: 'description',
+          kind: 'longText',
+          labelKey: 'website:fields.description',
+          localized: true,
+        },
+        {
+          key: 'icon',
+          kind: 'select',
+          labelKey: 'website:fields.icon',
+          options: iconOptions,
+        },
       ],
     },
   },
   testimonials: {
     type: 'testimonials',
-    fields: [{ key: 'title', kind: 'text', labelKey: 'website:fields.title', localized: true }],
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+      },
+    ],
     repeatable: {
       key: 'items',
       labelKey: 'website:fields.testimonialItems',
       itemLabelKey: 'website:fields.testimonialItem',
       itemFields: [
-        { key: 'quote', kind: 'longText', labelKey: 'website:fields.quote', localized: true },
-        { key: 'authorName', kind: 'text', labelKey: 'website:fields.authorName' },
-        { key: 'authorRole', kind: 'text', labelKey: 'website:fields.authorRole', localized: true },
+        {
+          key: 'quote',
+          kind: 'longText',
+          labelKey: 'website:fields.quote',
+          localized: true,
+        },
+        {
+          key: 'authorName',
+          kind: 'text',
+          labelKey: 'website:fields.authorName',
+        },
+        {
+          key: 'authorRole',
+          kind: 'text',
+          labelKey: 'website:fields.authorRole',
+          localized: true,
+        },
         { key: 'avatar', kind: 'image', labelKey: 'website:fields.avatar' },
-        { key: 'avatarAlt', kind: 'text', labelKey: 'website:fields.avatarAlt', localized: true },
+        {
+          key: 'avatarAlt',
+          kind: 'text',
+          labelKey: 'website:fields.avatarAlt',
+          localized: true,
+        },
       ],
     },
   },
   faq: {
     type: 'faq',
-    fields: [{ key: 'title', kind: 'text', labelKey: 'website:fields.title', localized: true }],
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+      },
+    ],
     repeatable: {
       key: 'items',
       labelKey: 'website:fields.faqItems',
       itemLabelKey: 'website:fields.faqItem',
       itemFields: [
-        { key: 'question', kind: 'text', labelKey: 'website:fields.question', localized: true },
-        { key: 'answer', kind: 'longText', labelKey: 'website:fields.answer', localized: true },
+        {
+          key: 'question',
+          kind: 'text',
+          labelKey: 'website:fields.question',
+          localized: true,
+        },
+        {
+          key: 'answer',
+          kind: 'longText',
+          labelKey: 'website:fields.answer',
+          localized: true,
+        },
       ],
     },
   },
   cta: {
     type: 'cta',
     fields: [
-      { key: 'title', kind: 'text', labelKey: 'website:fields.title', localized: true },
-      { key: 'description', kind: 'longText', labelKey: 'website:fields.description', localized: true },
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+      },
       { key: 'cta', kind: 'cta', labelKey: 'website:fields.primaryCta' },
     ],
   },
   instructors: {
     type: 'instructors',
     fields: [
-      { key: 'title', kind: 'text', labelKey: 'website:fields.title', localized: true },
-      { key: 'description', kind: 'longText', labelKey: 'website:fields.description', localized: true },
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+      },
       { key: 'count', kind: 'number', labelKey: 'website:fields.count' },
     ],
   },
   gallery: {
     type: 'gallery',
-    fields: [{ key: 'title', kind: 'text', labelKey: 'website:fields.title', localized: true }],
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+      },
+    ],
     repeatable: {
       key: 'images',
       labelKey: 'website:fields.galleryImages',
       itemLabelKey: 'website:fields.galleryImage',
       itemFields: [
         { key: 'image', kind: 'image', labelKey: 'website:fields.image' },
-        { key: 'imageAlt', kind: 'text', labelKey: 'website:fields.imageAlt', localized: true },
-        { key: 'caption', kind: 'text', labelKey: 'website:fields.caption', localized: true },
+        {
+          key: 'imageAlt',
+          kind: 'text',
+          labelKey: 'website:fields.imageAlt',
+          localized: true,
+        },
+        {
+          key: 'caption',
+          kind: 'text',
+          labelKey: 'website:fields.caption',
+          localized: true,
+        },
       ],
     },
   },
   contact: {
     type: 'contact',
     fields: [
-      { key: 'title', kind: 'text', labelKey: 'website:fields.title', localized: true },
-      { key: 'description', kind: 'longText', labelKey: 'website:fields.description', localized: true },
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+      },
       { key: 'email', kind: 'text', labelKey: 'website:fields.email' },
       { key: 'phone', kind: 'text', labelKey: 'website:fields.phone' },
       { key: 'address', kind: 'text', labelKey: 'website:fields.address' },

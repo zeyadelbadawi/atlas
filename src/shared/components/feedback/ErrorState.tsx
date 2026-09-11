@@ -6,12 +6,12 @@
  * a route to support. Technical detail is never exposed: only the request id,
  * which support can use for traceability.
  */
-import { AlertTriangle } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
-import { errorMessageKey, errorTitleKey } from "@services";
-import type { ApiErrorKind } from "@types";
-import { cn } from "@utils";
+import { AlertTriangle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
+import { errorMessageKey, errorTitleKey } from '@services';
+import type { ApiErrorKind } from '@types';
+import { cn } from '@utils';
 
 export interface ErrorStateProps {
   /** Error category. Determines the default title and description. */
@@ -30,7 +30,7 @@ export interface ErrorStateProps {
 }
 
 export function ErrorState({
-  kind = "unknown",
+  kind = 'unknown',
   titleKey,
   descriptionKey,
   requestId,
@@ -44,8 +44,8 @@ export function ErrorState({
     <div
       role="alert"
       className={cn(
-        "flex flex-col items-center justify-center gap-4 rounded-lg border border-border bg-card px-6 py-10 text-center",
-        className,
+        'flex flex-col items-center justify-center gap-4 rounded-lg border border-border bg-card px-6 py-10 text-center',
+        className
       )}
     >
       <span className="flex size-12 items-center justify-center rounded-pill bg-destructive-surface text-destructive">
@@ -65,12 +65,12 @@ export function ErrorState({
         <div className="flex flex-wrap items-center justify-center gap-2">
           {onRetry ? (
             <Button type="button" onClick={onRetry}>
-              {t("common:actions.retry")}
+              {t('common:actions.retry')}
             </Button>
           ) : null}
           {onContactSupport ? (
             <Button type="button" variant="outline" onClick={onContactSupport}>
-              {t("common:actions.contactSupport")}
+              {t('common:actions.contactSupport')}
             </Button>
           ) : null}
         </div>
@@ -78,7 +78,7 @@ export function ErrorState({
 
       {requestId ? (
         <p className="font-mono text-xs text-muted-foreground">
-          {t("errors:errorReference", { requestId })}
+          {t('errors:errorReference', { requestId })}
         </p>
       ) : null}
     </div>

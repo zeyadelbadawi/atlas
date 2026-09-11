@@ -61,7 +61,9 @@ export default function PlatformProvisioningListPage(): JSX.Element {
         accessorKey: 'requestedAcademyName',
         header: t('provisioning:platformConsole.table.academyName'),
         cell: ({ row }) => (
-          <span className="font-medium">{row.original.requestedAcademyName}</span>
+          <span className="font-medium">
+            {row.original.requestedAcademyName}
+          </span>
         ),
       },
       {

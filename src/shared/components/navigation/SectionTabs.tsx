@@ -13,11 +13,11 @@
  * a tabbed single page, so the browser's own back/forward and the URL bar
  * behave exactly as a user expects.
  */
-import { Link, useLocation } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { isPathActive } from "@app/routes/route-paths";
-import type { NavigationItem } from "@types";
-import { cn } from "@utils";
+import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { isPathActive } from '@app/routes/route-paths';
+import type { NavigationItem } from '@types';
+import { cn } from '@utils';
 
 export interface SectionTabsProps {
   readonly items: readonly NavigationItem[];
@@ -37,34 +37,35 @@ export function SectionTabs({
 
   return (
     <nav
-      aria-label={t("navigation:sectionTabs.label")}
-      className={cn(
-        "flex flex-wrap gap-1 border-b border-border",
-        className,
-      )}
+      aria-label={t('navigation:sectionTabs.label')}
+      className={cn('flex flex-wrap gap-1 border-b border-border', className)}
     >
       {items.map((item) => {
         const isActive = isPathActive(
           location.pathname,
           item.path,
-          item.matchNestedPaths,
+          item.matchNestedPaths
         );
 
         return (
           <Link
             key={item.id}
             to={item.path}
-            aria-current={isActive ? "page" : undefined}
+            aria-current={isActive ? 'page' : undefined}
             className={cn(
-              "flex items-center gap-1.5 border-b-2 px-3 py-2 text-sm font-medium transition-colors duration-fast ease-standard",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              'flex items-center gap-1.5 border-b-2 px-3 py-2 text-sm font-medium transition-colors duration-fast ease-standard',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
               isActive
-                ? "border-primary text-foreground"
-                : "border-transparent text-muted-foreground hover:border-border-strong hover:text-foreground",
+                ? 'border-primary text-foreground'
+                : 'border-transparent text-muted-foreground hover:border-border-strong hover:text-foreground'
             )}
           >
             {item.icon ? (
-              <item.icon className="size-4 shrink-0" strokeWidth={1.75} aria-hidden />
+              <item.icon
+                className="size-4 shrink-0"
+                strokeWidth={1.75}
+                aria-hidden
+              />
             ) : null}
             {t(item.labelKey)}
           </Link>

@@ -50,19 +50,25 @@ export function AcademyBrandMark({
 
   return (
     <span
-      className={cn('flex min-w-0 items-center gap-2.5 text-foreground', className)}
+      className={cn(
+        'flex min-w-0 items-center gap-2.5 text-foreground',
+        className
+      )}
       aria-label={name}
     >
       <img
         src={logoUrl}
         alt=""
-        className={cn('shrink-0 rounded-md object-contain', MARK_SIZE_CLASS[size])}
+        className={cn(
+          'shrink-0 rounded-md object-contain',
+          MARK_SIZE_CLASS[size]
+        )}
       />
       {markOnly ? null : (
         <span
           className={cn(
             'truncate font-display font-semibold tracking-tight',
-            WORDMARK_SIZE_CLASS[size],
+            WORDMARK_SIZE_CLASS[size]
           )}
         >
           {name}

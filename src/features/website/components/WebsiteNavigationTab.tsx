@@ -52,7 +52,11 @@ export interface WebsiteNavigationTabProps {
   readonly pages: readonly WebsitePage[];
 }
 
-function reorder<T>(items: readonly T[], index: number, direction: -1 | 1): T[] {
+function reorder<T>(
+  items: readonly T[],
+  index: number,
+  direction: -1 | 1
+): T[] {
   const targetIndex = index + direction;
   if (targetIndex < 0 || targetIndex >= items.length) return [...items];
   const next = [...items];
@@ -68,19 +72,34 @@ export function WebsiteNavigationTab({
   const { t } = useTranslation();
   const updateConfig = useUpdateWebsiteConfiguration();
 
-  const navPageIds = new Set(configuration.navigation.map((item) => item.pageId));
-  const sortedNav = [...configuration.navigation].sort((a, b) => a.order - b.order);
-  const navigablePages = pages.filter((page) => page.coreType !== 'courseDetails');
+  const navPageIds = new Set(
+    configuration.navigation.map((item) => item.pageId)
+  );
+  const sortedNav = [...configuration.navigation].sort(
+    (a, b) => a.order - b.order
+  );
+  const navigablePages = pages.filter(
+    (page) => page.coreType !== 'courseDetails'
+  );
 
   const persistNavigation = (navigation: readonly WebsiteNavigationItem[]) => {
     updateConfig.mutate(
       {
         academyId,
         payload: {
-          navigation: navigation.map((item, index) => ({ ...item, order: index })),
+          navigation: navigation.map((item, index) => ({
+            ...item,
+            order: index,
+          })),
         },
       },
-      { onError: () => toast({ title: t('website:navigation.saveError'), variant: 'destructive' }) }
+      {
+        onError: () =>
+          toast({
+            title: t('website:navigation.saveError'),
+            variant: 'destructive',
+          }),
+      }
     );
   };
 
@@ -101,13 +120,17 @@ export function WebsiteNavigationTab({
         },
       ]);
     } else {
-      persistNavigation(configuration.navigation.filter((item) => item.pageId !== page.id));
+      persistNavigation(
+        configuration.navigation.filter((item) => item.pageId !== page.id)
+      );
     }
   };
 
   const renameItem = (id: string, label: LocalizedText) => {
     persistNavigation(
-      configuration.navigation.map((item) => (item.id === id ? { ...item, label } : item))
+      configuration.navigation.map((item) =>
+        item.id === id ? { ...item, label } : item
+      )
     );
   };
 
@@ -143,7 +166,13 @@ export function WebsiteNavigationTab({
             : { authPages: currentAuthPages },
         },
       },
-      { onError: () => toast({ title: t('website:navigation.saveError'), variant: 'destructive' }) }
+      {
+        onError: () =>
+          toast({
+            title: t('website:navigation.saveError'),
+            variant: 'destructive',
+          }),
+      }
     );
   };
 
@@ -175,33 +204,60 @@ export function WebsiteNavigationTab({
       return;
     }
 
-    const label: LocalizedText =
-      currentCta?.label?.en
-        ? currentCta.label
-        : {
-            en:
-              target.authAction === 'signUp'
-                ? t('website:navigation.ctaTargetSignUp')
-                : target.authAction === 'signIn'
-                  ? t('website:navigation.ctaTargetSignIn')
-                  : '',
-            ar: currentCta?.label?.ar ?? '',
-          };
+    const label: LocalizedText = currentCta?.label?.en
+      ? currentCta.label
+      : {
+          en:
+            target.authAction === 'signUp'
+              ? t('website:navigation.ctaTargetSignUp')
+              : target.authAction === 'signIn'
+                ? t('website:navigation.ctaTargetSignIn')
+                : '',
+          ar: currentCta?.label?.ar ?? '',
+        };
 
     updateConfig.mutate(
       {
         academyId,
-        payload: { header: { cta: { label, ...target }, authPages: currentAuthPages } },
+        payload: {
+          header: { cta: { label, ...target }, authPages: currentAuthPages },
+        },
       },
-      { onError: () => toast({ title: t('website:navigation.saveError'), variant: 'destructive' }) }
+      {
+        onError: () =>
+          toast({
+            title: t('website:navigation.saveError'),
+            variant: 'destructive',
+          }),
+      }
     );
   };
 
   /** Preserves the existing CTA — `header` is a full replace, same reasoning as `updateHeaderCtaLabel`. An unset title/subtitle here removes that one override, falling back to the app's own default copy. Shared with the Pages list's own auth-page dialog — see that util's doc comment. */
-  const updateAuthPageCopy = (page: AuthPageKey, field: AuthPageCopyField, value: LocalizedText) => {
+  const updateAuthPageCopy = (
+    page: AuthPageKey,
+    field: AuthPageCopyField,
+    value: LocalizedText
+  ) => {
     updateConfig.mutate(
-      { academyId, payload: { header: buildAuthPageCopyHeaderPatch(configuration, page, field, value) } },
-      { onError: () => toast({ title: t('website:navigation.saveError'), variant: 'destructive' }) }
+      {
+        academyId,
+        payload: {
+          header: buildAuthPageCopyHeaderPatch(
+            configuration,
+            page,
+            field,
+            value
+          ),
+        },
+      },
+      {
+        onError: () =>
+          toast({
+            title: t('website:navigation.saveError'),
+            variant: 'destructive',
+          }),
+      }
     );
   };
 
@@ -214,8 +270,17 @@ export function WebsiteNavigationTab({
 
   const persistSocialLinks = (links: readonly WebsiteFooterLink[]) => {
     updateConfig.mutate(
-      { academyId, payload: { footer: { ...configuration.footer, socialLinks: links } } },
-      { onError: () => toast({ title: t('website:navigation.saveError'), variant: 'destructive' }) }
+      {
+        academyId,
+        payload: { footer: { ...configuration.footer, socialLinks: links } },
+      },
+      {
+        onError: () =>
+          toast({
+            title: t('website:navigation.saveError'),
+            variant: 'destructive',
+          }),
+      }
     );
   };
 
@@ -231,7 +296,11 @@ export function WebsiteNavigationTab({
   const addSocialLink = () => {
     persistSocialLinks([
       ...configuration.footer.socialLinks,
-      { id: crypto.randomUUID(), label: { en: t('website:navigation.newSocialLinkLabel'), ar: '' }, url: '' },
+      {
+        id: crypto.randomUUID(),
+        label: { en: t('website:navigation.newSocialLinkLabel'), ar: '' },
+        url: '',
+      },
     ]);
   };
 
@@ -242,7 +311,9 @@ export function WebsiteNavigationTab({
     }
     if (patch.label !== undefined && !patch.label.en.trim()) {
       toast({
-        title: t('validation:required', { field: t('website:navigation.socialLabelPlaceholder') }),
+        title: t('validation:required', {
+          field: t('website:navigation.socialLabelPlaceholder'),
+        }),
         variant: 'destructive',
       });
       return;
@@ -255,14 +326,18 @@ export function WebsiteNavigationTab({
   };
 
   const removeSocialLink = (id: string) => {
-    persistSocialLinks(configuration.footer.socialLinks.filter((link) => link.id !== id));
+    persistSocialLinks(
+      configuration.footer.socialLinks.filter((link) => link.id !== id)
+    );
   };
 
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">{t('website:navigation.primaryNavTitle')}</CardTitle>
+          <CardTitle className="text-base">
+            {t('website:navigation.primaryNavTitle')}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -270,7 +345,9 @@ export function WebsiteNavigationTab({
               <label key={page.id} className="flex items-center gap-2 text-sm">
                 <Checkbox
                   checked={navPageIds.has(page.id)}
-                  onCheckedChange={(checked) => togglePageInNav(page, checked === true)}
+                  onCheckedChange={(checked) =>
+                    togglePageInNav(page, checked === true)
+                  }
                 />
                 {page.title}
               </label>
@@ -323,7 +400,9 @@ export function WebsiteNavigationTab({
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">{t('website:navigation.headerCtaTitle')}</CardTitle>
+          <CardTitle className="text-base">
+            {t('website:navigation.headerCtaTitle')}
+          </CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
@@ -358,22 +437,32 @@ export function WebsiteNavigationTab({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="page">{t('website:fields.linkTypePage')}</SelectItem>
-                <SelectItem value="external">{t('website:fields.linkTypeExternal')}</SelectItem>
+                <SelectItem value="page">
+                  {t('website:fields.linkTypePage')}
+                </SelectItem>
+                <SelectItem value="external">
+                  {t('website:fields.linkTypeExternal')}
+                </SelectItem>
                 {/* Phase 1 (Extended Scope, Decision 11, dependency C) */}
-                <SelectItem value="auth">{t('website:fields.linkTypeAuth')}</SelectItem>
+                <SelectItem value="auth">
+                  {t('website:fields.linkTypeAuth')}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
           {configuration.header.cta?.url !== undefined ? (
             <div className="space-y-1.5 sm:col-span-2">
-              <Label htmlFor="header-cta-url">{t('website:navigation.ctaTarget')}</Label>
+              <Label htmlFor="header-cta-url">
+                {t('website:navigation.ctaTarget')}
+              </Label>
               <Input
                 id="header-cta-url"
                 dir="ltr"
                 placeholder="https://example.com"
                 defaultValue={configuration.header.cta?.url ?? ''}
-                onBlur={(event) => updateHeaderCtaTarget({ url: event.target.value })}
+                onBlur={(event) =>
+                  updateHeaderCtaTarget({ url: event.target.value })
+                }
               />
             </div>
           ) : configuration.header.cta?.authAction ? (
@@ -389,8 +478,12 @@ export function WebsiteNavigationTab({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="signIn">{t('website:navigation.ctaTargetSignIn')}</SelectItem>
-                  <SelectItem value="signUp">{t('website:navigation.ctaTargetSignUp')}</SelectItem>
+                  <SelectItem value="signIn">
+                    {t('website:navigation.ctaTargetSignIn')}
+                  </SelectItem>
+                  <SelectItem value="signUp">
+                    {t('website:navigation.ctaTargetSignUp')}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -402,7 +495,9 @@ export function WebsiteNavigationTab({
                 onValueChange={(pageId) => updateHeaderCtaTarget({ pageId })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={t('website:navigation.ctaTargetPlaceholder')} />
+                  <SelectValue
+                    placeholder={t('website:navigation.ctaTargetPlaceholder')}
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {navigablePages.map((page) => (
@@ -420,10 +515,16 @@ export function WebsiteNavigationTab({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <KeyRound className="size-4 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+            <KeyRound
+              className="size-4 text-muted-foreground"
+              strokeWidth={1.75}
+              aria-hidden
+            />
             {t('website:navigation.authPagesTitle')}
           </CardTitle>
-          <CardDescription>{t('website:navigation.authPagesDescription')}</CardDescription>
+          <CardDescription>
+            {t('website:navigation.authPagesDescription')}
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-3">
@@ -434,7 +535,9 @@ export function WebsiteNavigationTab({
               <LocalizedTextField
                 id="auth-signin-title"
                 labelKey="website:navigation.authPageHeading"
-                placeholderEn={t('publicWebsite:auth.signIn.title', { academyName: '' }).trim()}
+                placeholderEn={t('publicWebsite:auth.signIn.title', {
+                  academyName: '',
+                }).trim()}
                 value={currentAuthPages?.signIn?.title ?? EMPTY_LOCALIZED}
                 onBlur={(value) => updateAuthPageCopy('signIn', 'title', value)}
               />
@@ -443,7 +546,9 @@ export function WebsiteNavigationTab({
                 labelKey="website:navigation.authPageSubheading"
                 placeholderEn={t('publicWebsite:auth.signIn.subtitle')}
                 value={currentAuthPages?.signIn?.subtitle ?? EMPTY_LOCALIZED}
-                onBlur={(value) => updateAuthPageCopy('signIn', 'subtitle', value)}
+                onBlur={(value) =>
+                  updateAuthPageCopy('signIn', 'subtitle', value)
+                }
               />
             </div>
           </div>
@@ -456,16 +561,22 @@ export function WebsiteNavigationTab({
               <LocalizedTextField
                 id="auth-signup-title"
                 labelKey="website:navigation.authPageHeading"
-                placeholderEn={t('publicWebsite:auth.signUp.title', { academyName: '' }).trim()}
+                placeholderEn={t('publicWebsite:auth.signUp.title', {
+                  academyName: '',
+                }).trim()}
                 value={currentAuthPages?.signUp?.title ?? EMPTY_LOCALIZED}
                 onBlur={(value) => updateAuthPageCopy('signUp', 'title', value)}
               />
               <LocalizedTextField
                 id="auth-signup-subtitle"
                 labelKey="website:navigation.authPageSubheading"
-                placeholderEn={t('publicWebsite:auth.signUp.subtitle', { academyName: '' }).trim()}
+                placeholderEn={t('publicWebsite:auth.signUp.subtitle', {
+                  academyName: '',
+                }).trim()}
                 value={currentAuthPages?.signUp?.subtitle ?? EMPTY_LOCALIZED}
-                onBlur={(value) => updateAuthPageCopy('signUp', 'subtitle', value)}
+                onBlur={(value) =>
+                  updateAuthPageCopy('signUp', 'subtitle', value)
+                }
               />
             </div>
           </div>
@@ -474,7 +585,9 @@ export function WebsiteNavigationTab({
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">{t('website:navigation.footerTitle')}</CardTitle>
+          <CardTitle className="text-base">
+            {t('website:navigation.footerTitle')}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <LocalizedTextField
@@ -487,7 +600,12 @@ export function WebsiteNavigationTab({
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label>{t('website:navigation.socialLinks')}</Label>
-              <Button type="button" variant="outline" size="sm" onClick={addSocialLink}>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={addSocialLink}
+              >
                 <Plus className="size-3.5" aria-hidden />
                 {t('website:navigation.addSocialLink')}
               </Button>
@@ -505,7 +623,9 @@ export function WebsiteNavigationTab({
                 <Input
                   placeholder="https://"
                   defaultValue={link.url ?? ''}
-                  onBlur={(event) => updateSocialLink(link.id, { url: event.target.value })}
+                  onBlur={(event) =>
+                    updateSocialLink(link.id, { url: event.target.value })
+                  }
                   className="mt-8 flex-1"
                 />
                 <Button

@@ -71,7 +71,9 @@ export interface AssignmentFormDialogProps {
   readonly mode: 'create' | 'edit';
   readonly assignment?: Assignment | null;
   readonly isPending: boolean;
-  readonly onSubmit: (data: AssignmentAuthoringFormData) => void | Promise<void>;
+  readonly onSubmit: (
+    data: AssignmentAuthoringFormData
+  ) => void | Promise<void>;
   /** The create/update mutation's current error, so a validation (400) failure maps onto the field that caused it instead of only a page-level toast. */
   readonly error?: ApiError | null;
 }
@@ -112,7 +114,9 @@ export function AssignmentFormDialog({
             description: assignment.description ?? '',
             instructions: assignment.instructions ?? '',
             status: assignment.status,
-            dueAt: assignment.dueAt ? toDateTimeLocalValue(assignment.dueAt) : '',
+            dueAt: assignment.dueAt
+              ? toDateTimeLocalValue(assignment.dueAt)
+              : '',
             allowResubmission: assignment.allowResubmission,
           }
         : EMPTY_VALUES

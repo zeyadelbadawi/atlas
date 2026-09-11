@@ -32,7 +32,9 @@ function useInvalidateTenantState(organizationId: string | undefined) {
     void queryClient.invalidateQueries({
       queryKey: tenantKeys.subscription(organizationId),
     });
-    void queryClient.invalidateQueries({ queryKey: tenantKeys.usage(organizationId) });
+    void queryClient.invalidateQueries({
+      queryKey: tenantKeys.usage(organizationId),
+    });
   };
 }
 
@@ -41,7 +43,8 @@ export function useStartTrial() {
   const invalidate = useInvalidateTenantState(organization?.id);
 
   return useApiMutation<StartTrialResult, { planId?: string }, ApiError>({
-    mutationFn: ({ planId }) => tenantService.startTrial(organization!.id, { planId }),
+    mutationFn: ({ planId }) =>
+      tenantService.startTrial(organization!.id, { planId }),
     onSuccess: invalidate,
     // Both outcomes are surfaced by the caller, which is the only place
     // that knows whether `started` was true. See this file's header.
@@ -54,7 +57,11 @@ export function useCancelTrial() {
   const { organization } = useAuth();
   const invalidate = useInvalidateTenantState(organization?.id);
 
-  return useApiMutation<CancellationResult, CancelSubscriptionRequestInput, ApiError>({
+  return useApiMutation<
+    CancellationResult,
+    CancelSubscriptionRequestInput,
+    ApiError
+  >({
     mutationFn: (input) => tenantService.cancelTrial(organization!.id, input),
     onSuccess: invalidate,
     showSuccessToast: false,
@@ -66,8 +73,13 @@ export function useCancelSubscription() {
   const { organization } = useAuth();
   const invalidate = useInvalidateTenantState(organization?.id);
 
-  return useApiMutation<CancellationResult, CancelSubscriptionRequestInput, ApiError>({
-    mutationFn: (input) => tenantService.cancelSubscription(organization!.id, input),
+  return useApiMutation<
+    CancellationResult,
+    CancelSubscriptionRequestInput,
+    ApiError
+  >({
+    mutationFn: (input) =>
+      tenantService.cancelSubscription(organization!.id, input),
     onSuccess: invalidate,
     showSuccessToast: false,
     showErrorToast: false,

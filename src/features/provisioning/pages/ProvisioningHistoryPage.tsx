@@ -50,7 +50,9 @@ export default function ProvisioningHistoryPage(): JSX.Element {
         accessorKey: 'requestedAcademyName',
         header: t('provisioning:history.table.academyName'),
         cell: ({ row }) => (
-          <span className="font-medium">{row.original.requestedAcademyName}</span>
+          <span className="font-medium">
+            {row.original.requestedAcademyName}
+          </span>
         ),
       },
       {

@@ -26,7 +26,8 @@ export const MIN_HOSTNAME_LENGTH = 4;
  * `configured` is derived from whether a real `VITE_PLATFORM_BASE_DOMAIN`
  * was compiled in — never hardcoded `true`.
  */
-export const DEFAULT_PLATFORM_DOMAIN_CONFIGURATION: PlatformDomainConfiguration = Object.freeze({
-  baseDomain: ENV.platformBaseDomain,
-  configured: Boolean(ENV.platformBaseDomain),
-});
+export const DEFAULT_PLATFORM_DOMAIN_CONFIGURATION: PlatformDomainConfiguration =
+  Object.freeze({
+    baseDomain: ENV.platformBaseDomain,
+    configured: Boolean(ENV.platformBaseDomain),
+  });

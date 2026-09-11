@@ -4,7 +4,7 @@
  * Mirrors the dashboard content rhythm so a page arriving over the network does
  * not cause a visible layout jump.
  */
-import { SkeletonCard, SkeletonText } from "@components/loading";
+import { SkeletonCard, SkeletonText } from '@components/loading';
 
 export function RouteFallback(): JSX.Element {
   return (

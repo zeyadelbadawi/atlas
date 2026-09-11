@@ -90,7 +90,10 @@ function TestimonialEntryDialog({
       form.reset();
     };
     if (entry) {
-      updateEntry.mutate({ academyId, entryId: entry.id, payload }, { onSuccess });
+      updateEntry.mutate(
+        { academyId, entryId: entry.id, payload },
+        { onSuccess }
+      );
     } else {
       createEntry.mutate({ academyId, payload }, { onSuccess });
     }
@@ -101,7 +104,11 @@ function TestimonialEntryDialog({
       <DialogContent className="max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {t(entry ? 'website:content.testimonial.editTitle' : 'website:content.testimonial.createTitle')}
+            {t(
+              entry
+                ? 'website:content.testimonial.editTitle'
+                : 'website:content.testimonial.createTitle'
+            )}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -187,7 +194,9 @@ function TestimonialEntryDialog({
             ) : null}
             <DialogFooter>
               <Button type="submit" disabled={isPending}>
-                {isPending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
+                {isPending ? (
+                  <Loader2 className="size-4 animate-spin" aria-hidden />
+                ) : null}
                 {t('website:common.saveChanges')}
               </Button>
             </DialogFooter>
@@ -211,9 +220,12 @@ export function WebsiteTestimonialContentTab({
   const dialog = useDisclosure();
   const [editingEntry, setEditingEntry] = useState<WebsiteTestimonialEntry>();
 
-  const { data, isLoading, error, refetch } = useWebsiteTestimonialEntries(academyId, {
-    query: { pagination: { page: 1, pageSize: CONTENT_LIST_PAGE_SIZE } },
-  });
+  const { data, isLoading, error, refetch } = useWebsiteTestimonialEntries(
+    academyId,
+    {
+      query: { pagination: { page: 1, pageSize: CONTENT_LIST_PAGE_SIZE } },
+    }
+  );
   const updateEntry = useUpdateWebsiteTestimonialEntry();
   const publishEntry = usePublishWebsiteTestimonialEntry();
   const archiveEntry = useArchiveWebsiteTestimonialEntry();
@@ -238,12 +250,24 @@ export function WebsiteTestimonialContentTab({
     if (targetIndex < 0 || targetIndex >= entries.length) return;
     const current = entries[index];
     const target = entries[targetIndex];
-    updateEntry.mutate({ academyId, entryId: current.id, payload: { order: target.order } });
-    updateEntry.mutate({ academyId, entryId: target.id, payload: { order: current.order } });
+    updateEntry.mutate({
+      academyId,
+      entryId: current.id,
+      payload: { order: target.order },
+    });
+    updateEntry.mutate({
+      academyId,
+      entryId: target.id,
+      payload: { order: current.order },
+    });
   };
 
   const toggleVisible = (entry: WebsiteTestimonialEntry) => {
-    updateEntry.mutate({ academyId, entryId: entry.id, payload: { visible: !entry.visible } });
+    updateEntry.mutate({
+      academyId,
+      entryId: entry.id,
+      payload: { visible: !entry.visible },
+    });
   };
 
   const handleArchive = async (entry: WebsiteTestimonialEntry) => {
@@ -274,14 +298,19 @@ export function WebsiteTestimonialContentTab({
         <Card>
           <CardContent className="divide-y divide-border p-0">
             {entries.map((entry, index) => (
-              <div key={entry.id} className="flex items-center justify-between gap-3 p-4">
+              <div
+                key={entry.id}
+                className="flex items-center justify-between gap-3 p-4"
+              >
                 <button
                   type="button"
                   className="flex-1 text-start disabled:cursor-default"
                   disabled={!canManage}
                   onClick={() => canManage && openEdit(entry)}
                 >
-                  <p className="line-clamp-1 font-medium text-foreground">{entry.authorName}</p>
+                  <p className="line-clamp-1 font-medium text-foreground">
+                    {entry.authorName}
+                  </p>
                   <p className="line-clamp-1 text-sm text-muted-foreground">
                     {entry.quote[language] || entry.quote.en}
                   </p>
@@ -318,12 +347,16 @@ export function WebsiteTestimonialContentTab({
                   onCheckedChange={() => toggleVisible(entry)}
                   aria-label={t('website:pages.visibilityToggle')}
                 />
-                {canPublish && entry.status !== 'published' && entry.status !== 'archived' ? (
+                {canPublish &&
+                entry.status !== 'published' &&
+                entry.status !== 'archived' ? (
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => publishEntry.mutate({ academyId, entryId: entry.id })}
+                    onClick={() =>
+                      publishEntry.mutate({ academyId, entryId: entry.id })
+                    }
                   >
                     <Send className="size-3.5" aria-hidden />
                     {t('website:content.publishAction')}

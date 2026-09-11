@@ -18,14 +18,14 @@
  * the Phase 9 analytics view only, composed from the existing design
  * system.
  */
-import { AlertTriangle, TrendingUp, UserCheck, Users } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { PageContainer, PageHeader, SectionCard } from "@components/layout";
-import { EmptyState, ErrorState } from "@components/feedback";
-import { MetricCard, StatusBadge } from "@components/data-display";
-import { SectionLoader } from "@components/loading";
-import { useStudentAnalytics } from "../hooks/useStudentAnalytics";
-import { useDashboardScope } from "../hooks/useDashboardScope";
+import { AlertTriangle, TrendingUp, UserCheck, Users } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { PageContainer, PageHeader, SectionCard } from '@components/layout';
+import { EmptyState, ErrorState } from '@components/feedback';
+import { MetricCard, StatusBadge } from '@components/data-display';
+import { SectionLoader } from '@components/loading';
+import { useStudentAnalytics } from '../hooks/useStudentAnalytics';
+import { useDashboardScope } from '../hooks/useDashboardScope';
 
 /** Share of `value` within `total`, guarding the empty-cohort case so an empty academy reads 0% rather than NaN. */
 function share(value: number, total: number): number {
@@ -40,7 +40,7 @@ export default function StudentAnalyticsPage(): JSX.Element {
   const formatNumber = (value: number): string =>
     new Intl.NumberFormat(i18n.language).format(value);
 
-  if (scope.kind === "none") {
+  if (scope.kind === 'none') {
     return (
       <PageContainer>
         <PageHeader
@@ -90,8 +90,8 @@ export default function StudentAnalyticsPage(): JSX.Element {
   const peakMonth = Math.max(
     1,
     ...cohortTrends.map((point) =>
-      Math.max(point.newEnrollments, point.completions),
-    ),
+      Math.max(point.newEnrollments, point.completions)
+    )
   );
 
   return (
@@ -138,9 +138,9 @@ export default function StudentAnalyticsPage(): JSX.Element {
           <ul className="flex flex-col gap-4">
             {(
               [
-                ["enrolled", funnel.enrolled],
-                ["started", funnel.started],
-                ["completed", funnel.completed],
+                ['enrolled', funnel.enrolled],
+                ['started', funnel.started],
+                ['completed', funnel.completed],
               ] as const
             ).map(([key, value]) => (
               <li key={key} className="flex flex-col gap-2">
@@ -151,7 +151,7 @@ export default function StudentAnalyticsPage(): JSX.Element {
                   <span className="text-sm tabular-nums text-muted-foreground">
                     {/* `count` is reserved by i18next for pluralization, so the
                         interpolation name here is deliberately `total`. */}
-                    {t("dashboard:studentAnalytics.funnel.countAndShare", {
+                    {t('dashboard:studentAnalytics.funnel.countAndShare', {
                       total: formatNumber(value),
                       share: share(value, funnel.enrolled),
                     })}
@@ -181,13 +181,13 @@ export default function StudentAnalyticsPage(): JSX.Element {
             <thead>
               <tr className="text-muted-foreground">
                 <th scope="col" className="py-2 text-start font-medium">
-                  {t("dashboard:studentAnalytics.trends.month")}
+                  {t('dashboard:studentAnalytics.trends.month')}
                 </th>
                 <th scope="col" className="py-2 text-start font-medium">
-                  {t("dashboard:studentAnalytics.trends.newEnrollments")}
+                  {t('dashboard:studentAnalytics.trends.newEnrollments')}
                 </th>
                 <th scope="col" className="py-2 text-start font-medium">
-                  {t("dashboard:studentAnalytics.trends.completions")}
+                  {t('dashboard:studentAnalytics.trends.completions')}
                 </th>
               </tr>
             </thead>
@@ -204,7 +204,7 @@ export default function StudentAnalyticsPage(): JSX.Element {
                         className="h-2 rounded-full bg-primary"
                         style={{
                           width: `${share(point.newEnrollments, peakMonth)}%`,
-                          minWidth: point.newEnrollments > 0 ? "0.5rem" : 0,
+                          minWidth: point.newEnrollments > 0 ? '0.5rem' : 0,
                         }}
                         role="presentation"
                       />
@@ -219,7 +219,7 @@ export default function StudentAnalyticsPage(): JSX.Element {
                         className="h-2 rounded-full bg-success"
                         style={{
                           width: `${share(point.completions, peakMonth)}%`,
-                          minWidth: point.completions > 0 ? "0.5rem" : 0,
+                          minWidth: point.completions > 0 ? '0.5rem' : 0,
                         }}
                         role="presentation"
                       />
@@ -255,8 +255,8 @@ export default function StudentAnalyticsPage(): JSX.Element {
                     {student.studentName}
                   </span>
                   <span className="truncate text-sm text-muted-foreground">
-                    {student.courseTitle} ·{" "}
-                    {t("dashboard:studentAnalytics.atRisk.lessonsDone", {
+                    {student.courseTitle} ·{' '}
+                    {t('dashboard:studentAnalytics.atRisk.lessonsDone', {
                       completed: student.completedLessons,
                       total: student.totalLessons,
                     })}

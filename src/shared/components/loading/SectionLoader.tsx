@@ -4,9 +4,9 @@
  * Fills a region that is waiting for data without collapsing its height, which
  * prevents the layout shift a bare spinner would cause.
  */
-import { useTranslation } from "react-i18next";
-import { cn } from "@utils";
-import { Spinner } from "./Spinner";
+import { useTranslation } from 'react-i18next';
+import { cn } from '@utils';
+import { Spinner } from './Spinner';
 
 export interface SectionLoaderProps {
   /** Minimum height utility so the region keeps its footprint. */
@@ -17,12 +17,12 @@ export interface SectionLoaderProps {
 }
 
 export function SectionLoader({
-  minHeightClassName = "min-h-48",
+  minHeightClassName = 'min-h-48',
   messageKey,
   className,
 }: SectionLoaderProps): JSX.Element {
   const { t } = useTranslation();
-  const message = t(messageKey ?? "common:states.loading");
+  const message = t(messageKey ?? 'common:states.loading');
 
   return (
     <div
@@ -30,9 +30,9 @@ export function SectionLoader({
       aria-live="polite"
       aria-busy="true"
       className={cn(
-        "flex w-full flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-surface/50",
+        'flex w-full flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-surface/50',
         minHeightClassName,
-        className,
+        className
       )}
     >
       <Spinner label={false} className="text-muted-foreground" />

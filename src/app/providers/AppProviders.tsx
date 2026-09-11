@@ -16,18 +16,18 @@
  * Business providers are added by the prompts that introduce them; they belong
  * inside this composition, not around it.
  */
-import type { ReactNode } from "react";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { Toaster } from "@/components/ui/toaster";
-import { ErrorBoundary } from "./error/ErrorBoundary";
-import { AtlasThemeProvider } from "./theme/ThemeProvider";
-import { AtlasLocalizationProvider } from "./localization/LocalizationProvider";
-import { AtlasIdentityProvider } from "./identity/IdentityProvider";
-import { AtlasPlatformProvider } from "./platform/PlatformProvider";
-import { AtlasToastProvider } from "./toast/ToastProvider";
-import { AtlasQueryProvider } from "./query/QueryProvider";
-import { AtlasDialogProvider } from "./dialog/DialogProvider";
-import { AtlasLoadingProvider } from "./loading/LoadingProvider";
+import type { ReactNode } from 'react';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { Toaster } from '@/components/ui/toaster';
+import { ErrorBoundary } from './error/ErrorBoundary';
+import { AtlasThemeProvider } from './theme/ThemeProvider';
+import { AtlasLocalizationProvider } from './localization/LocalizationProvider';
+import { AtlasIdentityProvider } from './identity/IdentityProvider';
+import { AtlasPlatformProvider } from './platform/PlatformProvider';
+import { AtlasToastProvider } from './toast/ToastProvider';
+import { AtlasQueryProvider } from './query/QueryProvider';
+import { AtlasDialogProvider } from './dialog/DialogProvider';
+import { AtlasLoadingProvider } from './loading/LoadingProvider';
 
 export interface AppProvidersProps {
   readonly children: ReactNode;

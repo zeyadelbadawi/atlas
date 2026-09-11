@@ -146,7 +146,11 @@ export default function CourseQuizEditorPage(): JSX.Element {
       }
       goToList();
     } catch (error) {
-      if (isApiError(error) && error.kind === 'validation' && error.violations?.length) {
+      if (
+        isApiError(error) &&
+        error.kind === 'validation' &&
+        error.violations?.length
+      ) {
         return;
       }
       toast({
@@ -185,7 +189,9 @@ export default function CourseQuizEditorPage(): JSX.Element {
   const breadcrumbs: readonly BreadcrumbItem[] = [
     {
       labelKey: 'course:list.title',
-      path: buildPath(DASHBOARD_ROUTES.academyCourses, { academyId: academyId ?? '' }),
+      path: buildPath(DASHBOARD_ROUTES.academyCourses, {
+        academyId: academyId ?? '',
+      }),
     },
     ...(course
       ? [
@@ -265,7 +271,9 @@ export default function CourseQuizEditorPage(): JSX.Element {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>{t('course:quizAuthoring.editor.detailsTitle')}</CardTitle>
+              <CardTitle>
+                {t('course:quizAuthoring.editor.detailsTitle')}
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
@@ -273,7 +281,9 @@ export default function CourseQuizEditorPage(): JSX.Element {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('course:quizAuthoring.editor.titleLabel')}</FormLabel>
+                    <FormLabel>
+                      {t('course:quizAuthoring.editor.titleLabel')}
+                    </FormLabel>
                     <FormControl>
                       <Input autoFocus {...field} />
                     </FormControl>
@@ -308,7 +318,10 @@ export default function CourseQuizEditorPage(): JSX.Element {
                         {t('course:quizAuthoring.editor.statusLabel')}
                         <FieldHelp contentKey="course:quizAuthoring.editor.help.status" />
                       </FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue />
@@ -398,7 +411,10 @@ export default function CourseQuizEditorPage(): JSX.Element {
             </Button>
           </div>
 
-          {mutationError && !(isApiError(mutationError) && mutationError.kind === 'validation') ? (
+          {mutationError &&
+          !(
+            isApiError(mutationError) && mutationError.kind === 'validation'
+          ) ? (
             <p className="text-sm text-destructive">{t('errors:generic')}</p>
           ) : null}
         </form>

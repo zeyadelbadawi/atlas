@@ -60,9 +60,12 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
   const { notifyError } = useToast();
   const [isOpeningProof, setIsOpeningProof] = useState(false);
 
-  const { data: payment, isLoading, error, refetch } = usePlatformPaymentDetail(
-    paymentId ?? ''
-  );
+  const {
+    data: payment,
+    isLoading,
+    error,
+    refetch,
+  } = usePlatformPaymentDetail(paymentId ?? '');
   const approvePayment = useApprovePayment();
   const rejectPayment = useRejectPayment();
 
@@ -150,7 +153,8 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
                 {formatMoney(payment.money, i18n.language)}
               </CardTitle>
               <p className="mt-1 font-mono text-xs text-muted-foreground">
-                {t('payments:platformReview.organization')}: {payment.organizationId}
+                {t('payments:platformReview.organization')}:{' '}
+                {payment.organizationId}
               </p>
             </div>
             <div className="flex flex-col items-end gap-2">
@@ -175,13 +179,17 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
               <span className="text-muted-foreground">
                 {t('payments:common.methodType.label')}
               </span>
-              <span>{t(`payments:common.methodType.${payment.methodType}`)}</span>
+              <span>
+                {t(`payments:common.methodType.${payment.methodType}`)}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">
                 {t('payments:payment.createdAt')}
               </span>
-              <span>{new Date(payment.createdAt).toLocaleString(i18n.language)}</span>
+              <span>
+                {new Date(payment.createdAt).toLocaleString(i18n.language)}
+              </span>
             </div>
           </CardContent>
         </Card>
@@ -195,7 +203,9 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
             </CardHeader>
             <CardContent className="space-y-2">
               {payment.proof.note ? (
-                <p className="text-sm text-muted-foreground">{payment.proof.note}</p>
+                <p className="text-sm text-muted-foreground">
+                  {payment.proof.note}
+                </p>
               ) : null}
               <button
                 type="button"
@@ -207,7 +217,11 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
                 {isOpeningProof ? (
                   <Loader2 className="size-3.5 animate-spin" aria-hidden />
                 ) : (
-                  <ExternalLink className="size-3.5" strokeWidth={2} aria-hidden />
+                  <ExternalLink
+                    className="size-3.5"
+                    strokeWidth={2}
+                    aria-hidden
+                  />
                 )}
               </button>
             </CardContent>
@@ -276,9 +290,16 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
                       ) : null}
                       <Button type="submit" disabled={approvePayment.isPending}>
                         {approvePayment.isPending ? (
-                          <Loader2 className="size-4 animate-spin" aria-hidden />
+                          <Loader2
+                            className="size-4 animate-spin"
+                            aria-hidden
+                          />
                         ) : (
-                          <Check className="size-4" strokeWidth={2} aria-hidden />
+                          <Check
+                            className="size-4"
+                            strokeWidth={2}
+                            aria-hidden
+                          />
                         )}
                         {t('payments:platformReview.approveAction')}
                       </Button>
@@ -317,7 +338,9 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
                         )}
                       />
                       {rejectPayment.error ? (
-                        <ErrorState onRetry={rejectForm.handleSubmit(onReject)} />
+                        <ErrorState
+                          onRetry={rejectForm.handleSubmit(onReject)}
+                        />
                       ) : null}
                       <Button
                         type="submit"
@@ -325,7 +348,10 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
                         disabled={rejectPayment.isPending}
                       >
                         {rejectPayment.isPending ? (
-                          <Loader2 className="size-4 animate-spin" aria-hidden />
+                          <Loader2
+                            className="size-4 animate-spin"
+                            aria-hidden
+                          />
                         ) : (
                           <X className="size-4" strokeWidth={2} aria-hidden />
                         )}

@@ -60,7 +60,10 @@ export interface RegistrationFormProps {
   readonly onSuccess?: () => void;
 }
 
-export function RegistrationForm({ academyId, onSuccess }: RegistrationFormProps = {}): JSX.Element {
+export function RegistrationForm({
+  academyId,
+  onSuccess,
+}: RegistrationFormProps = {}): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -94,7 +97,12 @@ export function RegistrationForm({ academyId, onSuccess }: RegistrationFormProps
 
   const handleFormSubmit = (data: RegistrationFormData) => {
     registerAccount.mutate(
-      { name: data.name, email: data.email, password: data.password, academyId },
+      {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        academyId,
+      },
       {
         onSuccess: () => {
           toast({

@@ -31,19 +31,40 @@ import { getProvisioningStatusTone } from '../utils/provisioning-status.utils';
 import { PROVISIONING_STEP_KEYS } from '../constants/provisioning.constants';
 import type { ProvisioningStep, ProvisioningStepStatus } from '@types';
 
-function StepIcon({ status }: { readonly status: ProvisioningStepStatus }): JSX.Element {
+function StepIcon({
+  status,
+}: {
+  readonly status: ProvisioningStepStatus;
+}): JSX.Element {
   switch (status) {
     case 'completed':
-      return <Check className="size-4 shrink-0 text-success" strokeWidth={2.5} aria-hidden />;
+      return (
+        <Check
+          className="size-4 shrink-0 text-success"
+          strokeWidth={2.5}
+          aria-hidden
+        />
+      );
     case 'running':
-      return <Loader2 className="size-4 shrink-0 animate-spin text-info" aria-hidden />;
+      return (
+        <Loader2
+          className="size-4 shrink-0 animate-spin text-info"
+          aria-hidden
+        />
+      );
     case 'failed':
-      return <XCircle className="size-4 shrink-0 text-destructive" aria-hidden />;
+      return (
+        <XCircle className="size-4 shrink-0 text-destructive" aria-hidden />
+      );
     case 'skipped':
-      return <Minus className="size-4 shrink-0 text-muted-foreground" aria-hidden />;
+      return (
+        <Minus className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+      );
     case 'pending':
     default:
-      return <Circle className="size-4 shrink-0 text-muted-foreground" aria-hidden />;
+      return (
+        <Circle className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+      );
   }
 }
 
@@ -53,9 +74,12 @@ export default function PlatformProvisioningDetailPage(): JSX.Element {
   const { confirm } = useConfirmDialog();
   const { hasPermission } = usePermissions();
 
-  const { data: request, isLoading, error, refetch } = usePlatformProvisioningRequest(
-    requestId ?? ''
-  );
+  const {
+    data: request,
+    isLoading,
+    error,
+    refetch,
+  } = usePlatformProvisioningRequest(requestId ?? '');
   const retryProvisioning = usePlatformRetryProvisioning();
   const cancelProvisioning = usePlatformCancelProvisioning();
 
@@ -81,7 +105,9 @@ export default function PlatformProvisioningDetailPage(): JSX.Element {
 
   const canManage = hasPermission('platform.provisioning.manage');
   const isTerminal =
-    request.status === 'ready' || request.status === 'failed' || request.status === 'cancelled';
+    request.status === 'ready' ||
+    request.status === 'failed' ||
+    request.status === 'cancelled';
   const stepByKey = new Map<string, ProvisioningStep>(
     request.steps.map((step) => [step.key, step])
   );
@@ -123,14 +149,18 @@ export default function PlatformProvisioningDetailPage(): JSX.Element {
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">{request.requestedAcademyName}</CardTitle>
+            <CardTitle className="text-base">
+              {request.requestedAcademyName}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">
                 {t('provisioning:platformConsole.organization')}
               </span>
-              <span className="font-mono text-xs">{request.organizationId}</span>
+              <span className="font-mono text-xs">
+                {request.organizationId}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">
@@ -142,7 +172,9 @@ export default function PlatformProvisioningDetailPage(): JSX.Element {
               <span className="text-muted-foreground">
                 {t('provisioning:platformConsole.table.startedAt')}
               </span>
-              <span>{new Date(request.createdAt).toLocaleString(i18n.language)}</span>
+              <span>
+                {new Date(request.createdAt).toLocaleString(i18n.language)}
+              </span>
             </div>
           </CardContent>
         </Card>
@@ -228,7 +260,9 @@ export default function PlatformProvisioningDetailPage(): JSX.Element {
         ) : null}
 
         {retryProvisioning.error ? <ErrorState onRetry={handleRetry} /> : null}
-        {cancelProvisioning.error ? <ErrorState onRetry={handleCancel} /> : null}
+        {cancelProvisioning.error ? (
+          <ErrorState onRetry={handleCancel} />
+        ) : null}
       </div>
     </PageContainer>
   );

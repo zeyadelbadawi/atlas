@@ -16,7 +16,11 @@
 import { useResolveHostname } from './useResolveHostname';
 import { usePublishedWebsite } from './usePublishedWebsite';
 import { usePublishedPages } from './usePublishedPages';
-import type { HostnameResolution, WebsiteConfiguration, WebsitePage } from '@types';
+import type {
+  HostnameResolution,
+  WebsiteConfiguration,
+  WebsitePage,
+} from '@types';
 
 export type PublicWebsiteDataState =
   | { readonly status: 'loading' }
@@ -30,7 +34,9 @@ export type PublicWebsiteDataState =
       readonly pages: readonly WebsitePage[];
     };
 
-export function usePublicWebsiteData(lookupKey: string): PublicWebsiteDataState {
+export function usePublicWebsiteData(
+  lookupKey: string
+): PublicWebsiteDataState {
   const hostnameQuery = useResolveHostname(lookupKey);
   const academyId = hostnameQuery.data?.academyId;
 
@@ -41,8 +47,10 @@ export function usePublicWebsiteData(lookupKey: string): PublicWebsiteDataState 
   if (hostnameQuery.isError) return { status: 'unavailable' };
   if (!hostnameQuery.data) return { status: 'not-found' };
 
-  if (configQuery.isLoading || pagesQuery.isLoading) return { status: 'loading' };
-  if (configQuery.isError || pagesQuery.isError) return { status: 'unavailable' };
+  if (configQuery.isLoading || pagesQuery.isLoading)
+    return { status: 'loading' };
+  if (configQuery.isError || pagesQuery.isError)
+    return { status: 'unavailable' };
   if (!configQuery.data || !pagesQuery.data) return { status: 'unavailable' };
   if (configQuery.data.status !== 'published') return { status: 'unpublished' };
 

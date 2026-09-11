@@ -20,7 +20,11 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { useWebsiteFaqEntries } from '../hooks';
-import { useWebsiteContainerClass, useWebsiteHeadingClass, useWebsiteSectionClass } from '../renderer/renderer-style.utils';
+import {
+  useWebsiteContainerClass,
+  useWebsiteHeadingClass,
+  useWebsiteSectionClass,
+} from '../renderer/renderer-style.utils';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { FaqSectionConfig } from '@types';
@@ -30,7 +34,10 @@ export interface FaqSectionProps {
   readonly academyId: string;
 }
 
-export function FaqSection({ config, academyId }: FaqSectionProps): JSX.Element {
+export function FaqSection({
+  config,
+  academyId,
+}: FaqSectionProps): JSX.Element {
   const container = useWebsiteContainerClass();
   const section = useWebsiteSectionClass();
   const heading = useWebsiteHeadingClass();
@@ -44,7 +51,9 @@ export function FaqSection({ config, academyId }: FaqSectionProps): JSX.Element 
 
   const libraryItems = libraryEntryIds
     .map((id) => data?.items.find((entry) => entry.id === id))
-    .filter((entry): entry is NonNullable<typeof entry> => !!entry && entry.visible)
+    .filter(
+      (entry): entry is NonNullable<typeof entry> => !!entry && entry.visible
+    )
     .map((entry) => ({
       id: entry.id,
       question: resolveLocalizedText(entry.question, locale),
@@ -63,12 +72,16 @@ export function FaqSection({ config, academyId }: FaqSectionProps): JSX.Element 
   return (
     <section className={`${container} ${section}`}>
       {title ? (
-        <h2 className={`${heading} mb-8 text-center text-3xl text-foreground`}>{title}</h2>
+        <h2 className={`${heading} mb-8 text-center text-3xl text-foreground`}>
+          {title}
+        </h2>
       ) : null}
       <Accordion type="single" collapsible className="mx-auto max-w-2xl">
         {allItems.map((item) => (
           <AccordionItem key={item.id} value={item.id}>
-            <AccordionTrigger className="text-start">{item.question}</AccordionTrigger>
+            <AccordionTrigger className="text-start">
+              {item.question}
+            </AccordionTrigger>
             <AccordionContent>{item.answer}</AccordionContent>
           </AccordionItem>
         ))}

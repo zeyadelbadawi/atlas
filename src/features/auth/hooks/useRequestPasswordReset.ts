@@ -11,7 +11,8 @@ import type { PasswordResetRequest } from '@types';
 
 export function useRequestPasswordReset() {
   return useApiMutation<void, PasswordResetRequest, ApiError>({
-    mutationFn: (request) => authenticationService.requestPasswordReset(request),
+    mutationFn: (request) =>
+      authenticationService.requestPasswordReset(request),
     showSuccessToast: false,
     showErrorToast: false,
   });

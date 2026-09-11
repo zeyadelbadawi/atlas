@@ -23,10 +23,18 @@ export default function WebsiteContentPage(): JSX.Element {
   const { t } = useTranslation();
   const { academyId } = useParams<{ academyId: string }>();
 
-  if (!academyId) return <PageContainer><PageHeader titleKey="website:content.title" /></PageContainer>;
+  if (!academyId)
+    return (
+      <PageContainer>
+        <PageHeader titleKey="website:content.title" />
+      </PageContainer>
+    );
 
   const breadcrumbs: readonly BreadcrumbItem[] = [
-    { labelKey: 'navigation:items.academyOverview', path: DASHBOARD_ROUTES.academy },
+    {
+      labelKey: 'navigation:items.academyOverview',
+      path: DASHBOARD_ROUTES.academy,
+    },
     { labelKey: 'website:content.title' },
   ];
 
@@ -42,9 +50,15 @@ export default function WebsiteContentPage(): JSX.Element {
 
       <Tabs defaultValue="faqs">
         <TabsList>
-          <TabsTrigger value="faqs">{t('website:content.tabs.faqs')}</TabsTrigger>
-          <TabsTrigger value="testimonials">{t('website:content.tabs.testimonials')}</TabsTrigger>
-          <TabsTrigger value="blog">{t('website:content.tabs.blog')}</TabsTrigger>
+          <TabsTrigger value="faqs">
+            {t('website:content.tabs.faqs')}
+          </TabsTrigger>
+          <TabsTrigger value="testimonials">
+            {t('website:content.tabs.testimonials')}
+          </TabsTrigger>
+          <TabsTrigger value="blog">
+            {t('website:content.tabs.blog')}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="faqs" className="pt-4">

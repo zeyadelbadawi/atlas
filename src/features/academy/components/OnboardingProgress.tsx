@@ -36,7 +36,9 @@ export function OnboardingProgress({
               'flex flex-1 items-start gap-2 rounded-lg border p-3 text-sm',
               isCompleted && 'border-success bg-success-surface text-success',
               isCurrent && 'border-primary bg-primary/5',
-              !isCompleted && !isCurrent && 'border-border text-muted-foreground'
+              !isCompleted &&
+                !isCurrent &&
+                'border-border text-muted-foreground'
             )}
           >
             {isCompleted ? (

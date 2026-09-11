@@ -14,7 +14,13 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { CheckCircle2, ExternalLink, Loader2, Upload, XCircle } from 'lucide-react';
+import {
+  CheckCircle2,
+  ExternalLink,
+  Loader2,
+  Upload,
+  XCircle,
+} from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
@@ -49,9 +55,12 @@ export default function PaymentDetailsPage(): JSX.Element {
   const { paymentId } = useParams<{ paymentId: string }>();
   const { organization } = useAuth();
 
-  const { data: payment, isLoading, error, refetch } = usePaymentDetails(
-    paymentId ?? ''
-  );
+  const {
+    data: payment,
+    isLoading,
+    error,
+    refetch,
+  } = usePaymentDetails(paymentId ?? '');
   const paymentMethodsQuery = usePaymentMethods();
   const submitProof = useSubmitPaymentProof();
   const cancelPayment = useCancelPayment();
@@ -69,7 +78,10 @@ export default function PaymentDetailsPage(): JSX.Element {
     if (!payment?.id || !organization?.id) return;
     setIsOpeningProof(true);
     try {
-      const blob = await paymentService.getProofFile(organization.id, payment.id);
+      const blob = await paymentService.getProofFile(
+        organization.id,
+        payment.id
+      );
       window.open(URL.createObjectURL(blob), '_blank', 'noreferrer');
     } catch {
       notifyError('errors:unknown.title', 'payments:payment.proofLoadError');
@@ -191,7 +203,9 @@ export default function PaymentDetailsPage(): JSX.Element {
               <span className="text-muted-foreground">
                 {t('payments:payment.createdAt')}
               </span>
-              <span>{new Date(payment.createdAt).toLocaleString(i18n.language)}</span>
+              <span>
+                {new Date(payment.createdAt).toLocaleString(i18n.language)}
+              </span>
             </div>
             {payment.failureReason ? (
               <p className="rounded-md bg-destructive-surface p-3 text-destructive">
@@ -231,7 +245,9 @@ export default function PaymentDetailsPage(): JSX.Element {
                     <StatusBadge
                       labelKey={`payments:payment.attemptStatus.${attempt.status}`}
                       tone={getPaymentStatusTone(
-                        attempt.status === 'initiated' ? 'created' : attempt.status
+                        attempt.status === 'initiated'
+                          ? 'created'
+                          : attempt.status
                       )}
                     />
                   </div>
@@ -289,7 +305,11 @@ export default function PaymentDetailsPage(): JSX.Element {
                   {isOpeningProof ? (
                     <Loader2 className="size-3.5 animate-spin" aria-hidden />
                   ) : (
-                    <ExternalLink className="size-3.5" strokeWidth={2} aria-hidden />
+                    <ExternalLink
+                      className="size-3.5"
+                      strokeWidth={2}
+                      aria-hidden
+                    />
                   )}
                 </button>
               ) : null}
@@ -306,44 +326,75 @@ export default function PaymentDetailsPage(): JSX.Element {
               {method.manualInstructions?.type === 'manual_bank_transfer' ? (
                 <dl className="grid gap-2 text-sm sm:grid-cols-2">
                   <div>
-                    <dt className="text-muted-foreground">{t('payments:payment.bankName')}</dt>
-                    <dd className="font-medium text-foreground">{method.manualInstructions.bankName}</dd>
+                    <dt className="text-muted-foreground">
+                      {t('payments:payment.bankName')}
+                    </dt>
+                    <dd className="font-medium text-foreground">
+                      {method.manualInstructions.bankName}
+                    </dd>
                   </div>
                   <div>
-                    <dt className="text-muted-foreground">{t('payments:payment.accountName')}</dt>
-                    <dd className="font-medium text-foreground">{method.manualInstructions.accountName}</dd>
+                    <dt className="text-muted-foreground">
+                      {t('payments:payment.accountName')}
+                    </dt>
+                    <dd className="font-medium text-foreground">
+                      {method.manualInstructions.accountName}
+                    </dd>
                   </div>
                   <div>
-                    <dt className="text-muted-foreground">{t('payments:payment.accountNumber')}</dt>
-                    <dd className="font-mono text-foreground">{method.manualInstructions.accountNumber}</dd>
+                    <dt className="text-muted-foreground">
+                      {t('payments:payment.accountNumber')}
+                    </dt>
+                    <dd className="font-mono text-foreground">
+                      {method.manualInstructions.accountNumber}
+                    </dd>
                   </div>
                   {method.manualInstructions.iban ? (
                     <div>
-                      <dt className="text-muted-foreground">{t('payments:payment.iban')}</dt>
-                      <dd className="font-mono text-foreground">{method.manualInstructions.iban}</dd>
+                      <dt className="text-muted-foreground">
+                        {t('payments:payment.iban')}
+                      </dt>
+                      <dd className="font-mono text-foreground">
+                        {method.manualInstructions.iban}
+                      </dd>
                     </div>
                   ) : null}
                 </dl>
-              ) : method.manualInstructions?.type === 'manual_wallet_transfer' ? (
+              ) : method.manualInstructions?.type ===
+                'manual_wallet_transfer' ? (
                 <dl className="grid gap-2 text-sm sm:grid-cols-2">
                   <div>
-                    <dt className="text-muted-foreground">{t('payments:payment.walletProvider')}</dt>
-                    <dd className="font-medium text-foreground">{method.manualInstructions.walletProvider}</dd>
+                    <dt className="text-muted-foreground">
+                      {t('payments:payment.walletProvider')}
+                    </dt>
+                    <dd className="font-medium text-foreground">
+                      {method.manualInstructions.walletProvider}
+                    </dd>
                   </div>
                   <div>
-                    <dt className="text-muted-foreground">{t('payments:payment.walletNumber')}</dt>
-                    <dd className="font-mono text-foreground">{method.manualInstructions.walletNumber}</dd>
+                    <dt className="text-muted-foreground">
+                      {t('payments:payment.walletNumber')}
+                    </dt>
+                    <dd className="font-mono text-foreground">
+                      {method.manualInstructions.walletNumber}
+                    </dd>
                   </div>
                   <div>
-                    <dt className="text-muted-foreground">{t('payments:payment.accountName')}</dt>
-                    <dd className="font-medium text-foreground">{method.manualInstructions.accountName}</dd>
+                    <dt className="text-muted-foreground">
+                      {t('payments:payment.accountName')}
+                    </dt>
+                    <dd className="font-medium text-foreground">
+                      {method.manualInstructions.accountName}
+                    </dd>
                   </div>
                 </dl>
               ) : null}
 
               {method.manualInstructions ? (
                 <div className="space-y-1 text-sm">
-                  <p className="text-foreground">{method.manualInstructions.instructions}</p>
+                  <p className="text-foreground">
+                    {method.manualInstructions.instructions}
+                  </p>
                   <p className="text-muted-foreground">
                     {method.manualInstructions.referenceInstructions}
                   </p>
@@ -354,9 +405,15 @@ export default function PaymentDetailsPage(): JSX.Element {
                 <p className="text-sm font-medium text-foreground">
                   {t('payments:payment.uploadProofTitle')}
                 </p>
-                <Button type="button" variant="outline" onClick={filePicker.openFilePicker}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={filePicker.openFilePicker}
+                >
                   <Upload className="size-4" strokeWidth={2} aria-hidden />
-                  {proofFile ? proofFile.name : t('payments:payment.chooseFile')}
+                  {proofFile
+                    ? proofFile.name
+                    : t('payments:payment.chooseFile')}
                 </Button>
                 {fileError ? (
                   <p className="text-sm text-destructive">{t(fileError)}</p>
@@ -396,7 +453,11 @@ export default function PaymentDetailsPage(): JSX.Element {
               <Button asChild>
                 <a href={payment.nextAction.redirectUrl}>
                   {t('payments:payment.continueToProvider')}
-                  <ExternalLink className="size-4" strokeWidth={2} aria-hidden />
+                  <ExternalLink
+                    className="size-4"
+                    strokeWidth={2}
+                    aria-hidden
+                  />
                 </a>
               </Button>
             </CardContent>
@@ -412,7 +473,10 @@ export default function PaymentDetailsPage(): JSX.Element {
         ) : !isTerminal ? (
           <Card>
             <CardContent className="flex items-center gap-3 p-6">
-              <Loader2 className="size-5 shrink-0 animate-spin text-muted-foreground" aria-hidden />
+              <Loader2
+                className="size-5 shrink-0 animate-spin text-muted-foreground"
+                aria-hidden
+              />
               <p className="text-sm text-muted-foreground">
                 {t('payments:payment.processingMessage')}
               </p>

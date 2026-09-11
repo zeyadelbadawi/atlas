@@ -18,13 +18,15 @@ export interface AddAcademyInstructorVariables {
 export function useAddAcademyInstructor() {
   const { invalidate } = useInvalidate();
 
-  return useApiMutation<AcademyMember, AddAcademyInstructorVariables, ApiError>({
-    mutationFn: ({ academyId, payload }) =>
-      academyService.addAcademyInstructor(academyId, payload),
-    showSuccessToast: false,
-    showErrorToast: false,
-    onSuccess: async () => {
-      await invalidate(academyKeys.all);
-    },
-  });
+  return useApiMutation<AcademyMember, AddAcademyInstructorVariables, ApiError>(
+    {
+      mutationFn: ({ academyId, payload }) =>
+        academyService.addAcademyInstructor(academyId, payload),
+      showSuccessToast: false,
+      showErrorToast: false,
+      onSuccess: async () => {
+        await invalidate(academyKeys.all);
+      },
+    }
+  );
 }

@@ -100,7 +100,9 @@ export default function StudentCourseDiscoveryPage(): JSX.Element {
             }
           >
             <SelectTrigger className="w-full sm:w-[160px]">
-              <SelectValue placeholder={t('learning:discovery.filterByPricing')} />
+              <SelectValue
+                placeholder={t('learning:discovery.filterByPricing')}
+              />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">

@@ -8,10 +8,7 @@
 
 /** A lesson's availability/completion state for the current student. */
 export type LessonProgressStatus =
-  | 'locked'
-  | 'available'
-  | 'in_progress'
-  | 'completed';
+  'locked' | 'available' | 'in_progress' | 'completed';
 
 /** One lesson's progress within a course. */
 export interface LessonProgress {

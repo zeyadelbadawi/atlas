@@ -25,7 +25,10 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@components/feedback';
 import { usePlatformSettings, useUpdatePlatformSettings } from '../hooks';
-import { generalSettingsSchema, type GeneralSettingsFormData } from '../schemas/settings.schemas';
+import {
+  generalSettingsSchema,
+  type GeneralSettingsFormData,
+} from '../schemas/settings.schemas';
 
 export function GeneralSettings(): JSX.Element {
   const { t } = useTranslation();
@@ -39,7 +42,11 @@ export function GeneralSettings(): JSX.Element {
     formState: { errors, isDirty },
   } = useForm<GeneralSettingsFormData>({
     resolver: zodResolver(generalSettingsSchema),
-    defaultValues: { platformName: '', platformDescription: '', supportEmail: '' },
+    defaultValues: {
+      platformName: '',
+      platformDescription: '',
+      supportEmail: '',
+    },
   });
 
   useEffect(() => {
@@ -118,17 +125,23 @@ export function GeneralSettings(): JSX.Element {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {updateSettings.error ? <ErrorState onRetry={handleSubmit(onSubmit)} /> : null}
+          {updateSettings.error ? (
+            <ErrorState onRetry={handleSubmit(onSubmit)} />
+          ) : null}
 
           <div className="space-y-2">
-            <Label htmlFor="platform-name">{t('settings:general.platformName')}</Label>
+            <Label htmlFor="platform-name">
+              {t('settings:general.platformName')}
+            </Label>
             <Input
               id="platform-name"
               placeholder={t('settings:general.platformNamePlaceholder')}
               {...register('platformName')}
             />
             {errors.platformName ? (
-              <p className="text-sm text-destructive">{t(errors.platformName.message ?? '')}</p>
+              <p className="text-sm text-destructive">
+                {t(errors.platformName.message ?? '')}
+              </p>
             ) : null}
           </div>
 
@@ -145,7 +158,9 @@ export function GeneralSettings(): JSX.Element {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="support-email">{t('settings:general.supportEmail')}</Label>
+            <Label htmlFor="support-email">
+              {t('settings:general.supportEmail')}
+            </Label>
             <Input
               id="support-email"
               type="email"
@@ -153,7 +168,9 @@ export function GeneralSettings(): JSX.Element {
               {...register('supportEmail')}
             />
             {errors.supportEmail ? (
-              <p className="text-sm text-destructive">{t(errors.supportEmail.message ?? '')}</p>
+              <p className="text-sm text-destructive">
+                {t(errors.supportEmail.message ?? '')}
+              </p>
             ) : null}
           </div>
 
@@ -163,8 +180,13 @@ export function GeneralSettings(): JSX.Element {
                 {t('settings:actions.cancel')}
               </Button>
             ) : null}
-            <Button type="submit" disabled={!isDirty || updateSettings.isPending}>
-              {updateSettings.isPending ? t('settings:actions.saving') : t('settings:actions.save')}
+            <Button
+              type="submit"
+              disabled={!isDirty || updateSettings.isPending}
+            >
+              {updateSettings.isPending
+                ? t('settings:actions.saving')
+                : t('settings:actions.save')}
             </Button>
           </div>
         </form>

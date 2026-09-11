@@ -12,7 +12,9 @@ import { Palette, Settings, Users } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem } from '@types';
 
-export function getAcademyAdminTabs(academyId: string): readonly NavigationItem[] {
+export function getAcademyAdminTabs(
+  academyId: string
+): readonly NavigationItem[] {
   return [
     {
       id: 'academy-admin-members',

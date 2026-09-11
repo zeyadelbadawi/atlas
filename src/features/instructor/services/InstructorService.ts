@@ -33,7 +33,9 @@ export class InstructorService extends BaseService {
   protected readonly resource = 'instructor';
 
   /** Retrieves the instructor dashboard's aggregated teaching metrics. */
-  async getDashboard(options?: ReadOptions): Promise<InstructorDashboardMetrics> {
+  async getDashboard(
+    options?: ReadOptions
+  ): Promise<InstructorDashboardMetrics> {
     return this.client.get<InstructorDashboardMetrics>(
       this.path('dashboard'),
       options
@@ -47,7 +49,10 @@ export class InstructorService extends BaseService {
   ): Promise<PaginatedResult<TeachingCourse>> {
     return this.client.get<PaginatedResult<TeachingCourse>>(
       this.path('courses'),
-      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
+      {
+        ...options,
+        params: { ...toCollectionParams(query), ...options?.params },
+      }
     );
   }
 
@@ -70,7 +75,10 @@ export class InstructorService extends BaseService {
   ): Promise<PaginatedResult<InstructorStudent>> {
     return this.client.get<PaginatedResult<InstructorStudent>>(
       this.path('courses', courseId, 'students'),
-      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
+      {
+        ...options,
+        params: { ...toCollectionParams(query), ...options?.params },
+      }
     );
   }
 
@@ -95,7 +103,10 @@ export class InstructorService extends BaseService {
   ): Promise<PaginatedResult<QuizAttemptSummary>> {
     return this.client.get<PaginatedResult<QuizAttemptSummary>>(
       this.path('courses', courseId, 'quizzes', quizId, 'attempts'),
-      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
+      {
+        ...options,
+        params: { ...toCollectionParams(query), ...options?.params },
+      }
     );
   }
 
@@ -107,8 +118,17 @@ export class InstructorService extends BaseService {
     options?: ReadOptions
   ): Promise<PaginatedResult<AssignmentSubmissionReview>> {
     return this.client.get<PaginatedResult<AssignmentSubmissionReview>>(
-      this.path('courses', courseId, 'assignments', assignmentId, 'submissions'),
-      { ...options, params: { ...toCollectionParams(query), ...options?.params } }
+      this.path(
+        'courses',
+        courseId,
+        'assignments',
+        assignmentId,
+        'submissions'
+      ),
+      {
+        ...options,
+        params: { ...toCollectionParams(query), ...options?.params },
+      }
     );
   }
 

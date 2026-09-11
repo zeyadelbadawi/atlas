@@ -21,8 +21,10 @@ export type FontFamilyToken = keyof typeof FONT_FAMILY_TOKENS;
  * Product surfaces use a fixed scale; fluid type is reserved for brand pages.
  */
 export const TEXT_STYLE_TOKENS = {
-  displayLarge: 'font-display text-4xl font-semibold leading-tight tracking-tight',
-  displayMedium: 'font-display text-3xl font-semibold leading-tight tracking-tight',
+  displayLarge:
+    'font-display text-4xl font-semibold leading-tight tracking-tight',
+  displayMedium:
+    'font-display text-3xl font-semibold leading-tight tracking-tight',
   pageTitle: 'font-display text-2xl font-semibold leading-snug',
   sectionTitle: 'font-display text-lg font-semibold leading-snug',
   cardTitle: 'font-display text-base font-semibold leading-snug',
@@ -30,7 +32,8 @@ export const TEXT_STYLE_TOKENS = {
   body: 'text-sm leading-relaxed',
   bodyStrong: 'text-sm font-medium leading-relaxed',
   caption: 'text-xs leading-normal text-muted-foreground',
-  overline: 'text-xs font-medium uppercase tracking-wider text-muted-foreground',
+  overline:
+    'text-xs font-medium uppercase tracking-wider text-muted-foreground',
   metric: 'font-display text-3xl font-semibold leading-none',
   code: 'font-mono text-xs',
 } as const;

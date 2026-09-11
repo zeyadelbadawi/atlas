@@ -5,8 +5,8 @@
  * shape of the content that is arriving. Each primitive mirrors a real layout,
  * so a loading screen never looks like a different page.
  */
-import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@utils";
+import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@utils';
 
 export interface SkeletonTextProps {
   /** Number of lines to render. */
@@ -20,11 +20,11 @@ export function SkeletonText({
   className,
 }: SkeletonTextProps): JSX.Element {
   return (
-    <div className={cn("space-y-2", className)} aria-hidden>
+    <div className={cn('space-y-2', className)} aria-hidden>
       {Array.from({ length: lines }, (_, index) => (
         <Skeleton
           key={index}
-          className={cn("h-4", index === lines - 1 ? "w-2/3" : "w-full")}
+          className={cn('h-4', index === lines - 1 ? 'w-2/3' : 'w-full')}
         />
       ))}
     </div>
@@ -40,8 +40,8 @@ export function SkeletonCard({ className }: SkeletonCardProps): JSX.Element {
   return (
     <div
       className={cn(
-        "space-y-4 rounded-lg border border-border bg-card p-4 sm:p-6",
-        className,
+        'space-y-4 rounded-lg border border-border bg-card p-4 sm:p-6',
+        className
       )}
       aria-hidden
     >
@@ -73,8 +73,8 @@ export function SkeletonTable({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-lg border border-border bg-card",
-        className,
+        'overflow-hidden rounded-lg border border-border bg-card',
+        className
       )}
       aria-hidden
     >
@@ -107,7 +107,7 @@ export function SkeletonList({
   className,
 }: SkeletonListProps): JSX.Element {
   return (
-    <div className={cn("space-y-3", className)} aria-hidden>
+    <div className={cn('space-y-3', className)} aria-hidden>
       {Array.from({ length: items }, (_, index) => (
         <div
           key={index}

@@ -9,7 +9,8 @@ import type { Notification } from '@types';
 
 export function useMarkNotificationRead() {
   return useApiMutation<Notification, string, ApiError>({
-    mutationFn: (notificationId) => notificationService.markAsRead(notificationId),
+    mutationFn: (notificationId) =>
+      notificationService.markAsRead(notificationId),
     showSuccessToast: false,
     // Invalidates every notification query (list/summary/preferences) for
     // the current user — broader than strictly necessary, but immune to

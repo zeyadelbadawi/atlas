@@ -11,7 +11,11 @@
  */
 import type { CSSProperties, ReactNode } from 'react';
 import { useMemo } from 'react';
-import type { ResolvedWebsiteDesignSystem, WebsiteBrandConfig, WebsiteThemeDefinition } from '@types';
+import type {
+  ResolvedWebsiteDesignSystem,
+  WebsiteBrandConfig,
+  WebsiteThemeDefinition,
+} from '@types';
 import { cn } from '@utils';
 import { WebsiteDesignSystemContext } from './WebsiteDesignSystemContext';
 import {
@@ -23,7 +27,10 @@ import {
 
 export interface WebsiteThemeScopeProps {
   readonly theme: WebsiteThemeDefinition;
-  readonly brand?: Pick<WebsiteBrandConfig, 'primaryColor' | 'secondaryColor' | 'accentColor'>;
+  readonly brand?: Pick<
+    WebsiteBrandConfig,
+    'primaryColor' | 'secondaryColor' | 'accentColor'
+  >;
   readonly children: ReactNode;
   readonly className?: string;
 }
@@ -57,8 +64,10 @@ export function WebsiteThemeScope({
         '--website-accent-solid': `hsl(${resolved.accent})`,
         '--website-radius': WEBSITE_RADIUS_VALUES[resolved.radius],
         '--website-shadow': WEBSITE_SHADOW_VALUES[resolved.shadow],
-        '--website-section-padding': WEBSITE_SECTION_PADDING_VALUES[resolved.spacing],
-        '--website-container-width': WEBSITE_CONTAINER_WIDTH_VALUES[resolved.containerWidth],
+        '--website-section-padding':
+          WEBSITE_SECTION_PADDING_VALUES[resolved.spacing],
+        '--website-container-width':
+          WEBSITE_CONTAINER_WIDTH_VALUES[resolved.containerWidth],
       }) as CSSProperties,
     [resolved]
   );

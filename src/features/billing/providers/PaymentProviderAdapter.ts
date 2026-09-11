@@ -64,7 +64,10 @@ export interface PaymentProviderAdapter {
  */
 export interface GatewayPaymentProviderAdapter extends PaymentProviderAdapter {
   /** Creates a gateway-ready `PaymentIntent` — a hosted-checkout URL or SDK configuration, backend-supplied. */
-  createPaymentIntent(organizationId: string, checkout: Checkout): Promise<PaymentIntent>;
+  createPaymentIntent(
+    organizationId: string,
+    checkout: Checkout
+  ): Promise<PaymentIntent>;
 
   /**
    * Called when the customer returns from the provider. `params` is
@@ -73,7 +76,10 @@ export interface GatewayPaymentProviderAdapter extends PaymentProviderAdapter {
    * authoritative status from the backend rather than trusting anything
    * about how the customer arrived back (see acceptance criteria C-7-27/28).
    */
-  handleProviderReturn(organizationId: string, params: PaymentReturnParams): Promise<Payment>;
+  handleProviderReturn(
+    organizationId: string,
+    params: PaymentReturnParams
+  ): Promise<Payment>;
 
   /** Explicitly (re-)verifies a Payment against the provider/backend — the only source of truth for "did this succeed". */
   verifyPayment(organizationId: string, paymentId: string): Promise<Payment>;

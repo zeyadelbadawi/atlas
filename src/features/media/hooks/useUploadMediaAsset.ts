@@ -14,7 +14,8 @@ export interface UploadMediaAssetVariables {
 
 export function useUploadMediaAsset() {
   return useApiMutation<MediaAssetDetail, UploadMediaAssetVariables, ApiError>({
-    mutationFn: ({ academyId, payload }) => mediaService.uploadAsset(academyId, payload),
+    mutationFn: ({ academyId, payload }) =>
+      mediaService.uploadAsset(academyId, payload),
     showSuccessToast: false,
     invalidateKeys: [mediaKeys.all],
   });

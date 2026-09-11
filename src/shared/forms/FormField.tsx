@@ -8,19 +8,19 @@
  * Errors are rendered beside the field they belong to, and a required field is
  * marked with both a visual indicator and text for assistive technology.
  */
-import type { ReactNode } from "react";
-import { useId } from "react";
-import { useTranslation } from "react-i18next";
-import { Label } from "@/components/ui/label";
-import { cn } from "@utils";
-import { resolveValidationMessage } from "./form.utils";
+import type { ReactNode } from 'react';
+import { useId } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Label } from '@/components/ui/label';
+import { cn } from '@utils';
+import { resolveValidationMessage } from './form.utils';
 
 /** Render props supplying the ids a control must adopt. */
 export interface FormFieldControlProps {
   readonly id: string;
-  readonly "aria-describedby": string | undefined;
-  readonly "aria-invalid": boolean;
-  readonly "aria-required": boolean;
+  readonly 'aria-describedby': string | undefined;
+  readonly 'aria-invalid': boolean;
+  readonly 'aria-required': boolean;
 }
 
 export interface FormFieldProps {
@@ -64,10 +64,10 @@ export function FormField({
   const describedBy =
     [errorMessage ? errorId : null, descriptionKey ? descriptionId : null]
       .filter((id): id is string => id !== null)
-      .join(" ") || undefined;
+      .join(' ') || undefined;
 
   return (
-    <div className={cn("space-y-2", className)}>
+    <div className={cn('space-y-2', className)}>
       <Label
         htmlFor={controlId}
         className="flex items-center gap-1 text-sm font-medium"
@@ -79,7 +79,7 @@ export function FormField({
               *
             </span>
             <span className="sr-only">
-              {t("common:form.requiredFieldIndicator")}
+              {t('common:form.requiredFieldIndicator')}
             </span>
           </>
         ) : null}
@@ -87,9 +87,9 @@ export function FormField({
 
       {children({
         id: controlId,
-        "aria-describedby": describedBy,
-        "aria-invalid": Boolean(errorMessage),
-        "aria-required": isRequired,
+        'aria-describedby': describedBy,
+        'aria-invalid': Boolean(errorMessage),
+        'aria-required': isRequired,
       })}
 
       {descriptionKey ? (

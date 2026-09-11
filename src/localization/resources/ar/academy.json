@@ -289,5 +289,35 @@
     "view": "عرض",
     "manage": "إدارة",
     "configure": "تكوين"
+  },
+  "delete": {
+    "title": "حذف هذه الأكاديمية",
+    "description": "يزيل الأكاديمية من أطلس ويوقف موقعها العام. لا يمكن التراجع عن هذا الإجراء.",
+    "consequenceWebsite": "يتوقّف الموقع العام للأكاديمية عن الاستجابة فورًا.",
+    "consequenceAccess": "يفقد المديرون والمدرّبون والطلاب إمكانية الوصول إليها.",
+    "consequenceAllowance": "يتحرّر مقعد الأكاديمية في باقتك، فيمكنك إنشاء أكاديمية بديلة.",
+    "consequenceRecords": "يُحتفظ بسجلات الفوترة والمدفوعات كما يجب، لكن الأكاديمية لم تعد نشطة.",
+    "action": "حذف الأكاديمية",
+    "confirmTitle": "حذف هذه الأكاديمية نهائيًا؟",
+    "confirmDescription": "سيؤدي هذا إلى إيقاف {{name}} ولا يمكن التراجع عنه.",
+    "reasonLabel": "لماذا تحذفها؟ (اختياري)",
+    "reasonPlaceholder": "اختر سببًا",
+    "reasons": {
+      "created_by_mistake": "أنشأتها عن طريق الخطأ",
+      "no_longer_needed": "لم أعد بحاجة إليها",
+      "replacing_with_another": "سأستبدلها بأكاديمية أخرى",
+      "testing_only": "كانت للتجربة فقط",
+      "too_expensive": "التكلفة مرتفعة جدًا",
+      "switching_provider": "سأنتقل إلى مزوّد آخر",
+      "other": "سبب آخر"
+    },
+    "feedbackLabel": "هل هناك ما تودّ إخبارنا به؟ (اختياري)",
+    "feedbackPlaceholder": "ملاحظاتك تساعدنا على تحسين أطلس.",
+    "typeNameLabel": "اكتب {{name}} للتأكيد",
+    "confirmAction": "حذف نهائي",
+    "deleting": "جارٍ الحذف…",
+    "deletedTitle": "تم حذف الأكاديمية",
+    "deletedDescription": "تم حذف {{name}} وأصبح موقعها متوقفًا.",
+    "failedTitle": "تعذّر حذف الأكاديمية."
   }
 }

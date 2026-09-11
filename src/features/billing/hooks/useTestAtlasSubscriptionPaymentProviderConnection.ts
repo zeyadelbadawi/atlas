@@ -12,12 +12,15 @@ import { atlasSubscriptionPaymentProviderService } from '../services/AtlasSubscr
 export function useTestAtlasSubscriptionPaymentProviderConnection() {
   const { invalidate } = useInvalidate();
 
-  return useApiMutation<AtlasSubscriptionPaymentProviderConfig, void, ApiError>({
-    mutationFn: () => atlasSubscriptionPaymentProviderService.testConnection(),
-    showSuccessToast: false,
-    showErrorToast: false,
-    onSuccess: async () => {
-      await invalidate(atlasSubscriptionPaymentProviderKeys.config());
-    },
-  });
+  return useApiMutation<AtlasSubscriptionPaymentProviderConfig, void, ApiError>(
+    {
+      mutationFn: () =>
+        atlasSubscriptionPaymentProviderService.testConnection(),
+      showSuccessToast: false,
+      showErrorToast: false,
+      onSuccess: async () => {
+        await invalidate(atlasSubscriptionPaymentProviderKeys.config());
+      },
+    }
+  );
 }

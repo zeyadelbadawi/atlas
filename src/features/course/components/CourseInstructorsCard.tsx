@@ -17,16 +17,19 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Loader2, Users } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { useAcademyMembers } from '@/features/academy/hooks';
-import {
-  useAssignCourseInstructor,
-  useRemoveCourseInstructor,
-} from '../hooks';
+import { useAssignCourseInstructor, useRemoveCourseInstructor } from '../hooks';
 import type { Course } from '@types';
 
 export interface CourseInstructorsCardProps {
@@ -48,10 +51,14 @@ export function CourseInstructorsCard({
     (member) => member.role === 'instructor' && member.status === 'active'
   );
 
-  const assignedIds = new Set(course.instructors.map((instructor) => instructor.id));
+  const assignedIds = new Set(
+    course.instructors.map((instructor) => instructor.id)
+  );
 
-  const { mutateAsync: assignInstructor } = useAssignCourseInstructor(academyId);
-  const { mutateAsync: removeInstructor } = useRemoveCourseInstructor(academyId);
+  const { mutateAsync: assignInstructor } =
+    useAssignCourseInstructor(academyId);
+  const { mutateAsync: removeInstructor } =
+    useRemoveCourseInstructor(academyId);
 
   const handleToggle = async (userId: string, checked: boolean) => {
     setPendingUserId(userId);
@@ -131,7 +138,10 @@ export function CourseInstructorsCard({
                     </span>
                   </Label>
                   {isPending ? (
-                    <Loader2 className="size-4 shrink-0 animate-spin text-muted-foreground" aria-hidden />
+                    <Loader2
+                      className="size-4 shrink-0 animate-spin text-muted-foreground"
+                      aria-hidden
+                    />
                   ) : null}
                 </li>
               );

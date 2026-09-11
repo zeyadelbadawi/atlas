@@ -5,7 +5,11 @@
  * These types describe the *shape* the Service Layer guarantees to callers,
  * which lets the transport be replaced without touching a single feature.
  */
-import type { JsonValue, PaginationDescriptor, SortDescriptor } from './common.types';
+import type {
+  JsonValue,
+  PaginationDescriptor,
+  SortDescriptor,
+} from './common.types';
 
 /** HTTP-like verbs understood by the API client. */
 export type RequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';

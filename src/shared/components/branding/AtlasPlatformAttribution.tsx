@@ -42,12 +42,14 @@ export function AtlasPlatformAttribution({
     <p
       className={cn(
         'flex items-center justify-center gap-1.5 text-xs text-muted-foreground',
-        className,
+        className
       )}
     >
       <span>{t('common:attribution.poweredBy')}</span>
       <AtlasLogo size="sm" markOnly className="gap-0" />
-      <span className="font-medium text-foreground/80">{t('common:product.name')}</span>
+      <span className="font-medium text-foreground/80">
+        {t('common:product.name')}
+      </span>
     </p>
   );
 }

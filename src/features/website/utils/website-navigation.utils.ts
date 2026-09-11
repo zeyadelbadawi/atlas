@@ -8,7 +8,13 @@
  * every one of those pages, so a client editing Settings can jump straight
  * to Pages or Preview without detouring back through Overview each time.
  */
-import { FileText, Globe, LayoutDashboard, MessageSquareQuote, Settings2 } from 'lucide-react';
+import {
+  FileText,
+  Globe,
+  LayoutDashboard,
+  MessageSquareQuote,
+  Settings2,
+} from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem } from '@types';
 

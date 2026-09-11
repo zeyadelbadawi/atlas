@@ -28,7 +28,10 @@ export interface TestimonialsSectionProps {
   readonly academyId: string;
 }
 
-export function TestimonialsSection({ config, academyId }: TestimonialsSectionProps): JSX.Element {
+export function TestimonialsSection({
+  config,
+  academyId,
+}: TestimonialsSectionProps): JSX.Element {
   const container = useWebsiteContainerClass();
   const section = useWebsiteSectionClass();
   const heading = useWebsiteHeadingClass();
@@ -43,12 +46,16 @@ export function TestimonialsSection({ config, academyId }: TestimonialsSectionPr
 
   const libraryItems = libraryEntryIds
     .map((id) => data?.items.find((entry) => entry.id === id))
-    .filter((entry): entry is NonNullable<typeof entry> => !!entry && entry.visible)
+    .filter(
+      (entry): entry is NonNullable<typeof entry> => !!entry && entry.visible
+    )
     .map((entry) => ({
       id: entry.id,
       quote: resolveLocalizedText(entry.quote, locale),
       authorName: entry.authorName,
-      authorRole: entry.authorRole ? resolveLocalizedText(entry.authorRole, locale) : undefined,
+      authorRole: entry.authorRole
+        ? resolveLocalizedText(entry.authorRole, locale)
+        : undefined,
       avatar: entry.avatar,
       // Library entries have no dedicated `avatarAlt` field (Prompt 10) — the author's own name is a reasonable, honest alt for a portrait photo.
       avatarAlt: entry.authorName,
@@ -58,7 +65,9 @@ export function TestimonialsSection({ config, academyId }: TestimonialsSectionPr
     id: item.id,
     quote: resolveLocalizedText(item.quote, locale),
     authorName: item.authorName,
-    authorRole: item.authorRole ? resolveLocalizedText(item.authorRole, locale) : undefined,
+    authorRole: item.authorRole
+      ? resolveLocalizedText(item.authorRole, locale)
+      : undefined,
     avatar: item.avatar,
     avatarAlt: resolveLocalizedText(item.avatarAlt, locale) || item.authorName,
   }));
@@ -69,14 +78,19 @@ export function TestimonialsSection({ config, academyId }: TestimonialsSectionPr
   return (
     <section className={`${container} ${section}`}>
       {title ? (
-        <h2 className={`${heading} mb-10 text-center text-3xl text-foreground`}>{title}</h2>
+        <h2 className={`${heading} mb-10 text-center text-3xl text-foreground`}>
+          {title}
+        </h2>
       ) : null}
       {/* `auto-fit`/`minmax`, not fixed `sm:grid-cols-2 lg:grid-cols-3` — see
           `FeaturedCoursesSection`'s identical comment for why. */}
       <div className="grid grid-cols-[repeat(auto-fit,minmax(17rem,1fr))] gap-6">
         {allItems.map((item) => (
           <figure key={item.id} className={cardClass}>
-            <Quote className="size-5 text-[var(--website-primary-solid)]" aria-hidden />
+            <Quote
+              className="size-5 text-[var(--website-primary-solid)]"
+              aria-hidden
+            />
             <blockquote className="mt-3 break-words text-sm leading-relaxed text-foreground">
               “{item.quote}”
             </blockquote>
@@ -92,9 +106,16 @@ export function TestimonialsSection({ config, academyId }: TestimonialsSectionPr
                 {/* `dir="auto"` — `authorName` is a plain, single-language
                     string (never `LocalizedText`); see
                     `FeaturedCoursesSection`'s identical comment. */}
-                <p className="truncate text-sm font-medium text-foreground" dir="auto">{item.authorName}</p>
+                <p
+                  className="truncate text-sm font-medium text-foreground"
+                  dir="auto"
+                >
+                  {item.authorName}
+                </p>
                 {item.authorRole ? (
-                  <p className="truncate text-xs text-muted-foreground">{item.authorRole}</p>
+                  <p className="truncate text-xs text-muted-foreground">
+                    {item.authorRole}
+                  </p>
                 ) : null}
               </div>
             </figcaption>

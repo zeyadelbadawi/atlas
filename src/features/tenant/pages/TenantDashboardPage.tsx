@@ -30,10 +30,7 @@ import {
   useTenantSubscription,
   useTenantUsage,
 } from '../hooks';
-import {
-  formatLimitValue,
-  getDaysRemaining,
-} from '../utils/entitlement.utils';
+import { formatLimitValue, getDaysRemaining } from '../utils/entitlement.utils';
 import { getSubscriptionStatusTone } from '../utils/subscription-status.utils';
 
 export default function TenantDashboardPage(): JSX.Element {
@@ -45,8 +42,11 @@ export default function TenantDashboardPage(): JSX.Element {
   const addOnsQuery = useTenantAddOns();
 
   const isLoading =
-    subscriptionQuery.isLoading || usageQuery.isLoading || addOnsQuery.isLoading;
-  const error = subscriptionQuery.error ?? usageQuery.error ?? addOnsQuery.error;
+    subscriptionQuery.isLoading ||
+    usageQuery.isLoading ||
+    addOnsQuery.isLoading;
+  const error =
+    subscriptionQuery.error ?? usageQuery.error ?? addOnsQuery.error;
 
   const refetchAll = () => {
     void subscriptionQuery.refetch();
@@ -104,7 +104,12 @@ export default function TenantDashboardPage(): JSX.Element {
   const usageNotReady = usageQuery.error?.kind === 'notFound';
   const usageBlocking = usageQuery.error && !usageNotReady;
 
-  if (subscriptionQuery.error || !subscriptionQuery.data || usageBlocking || addOnsQuery.error) {
+  if (
+    subscriptionQuery.error ||
+    !subscriptionQuery.data ||
+    usageBlocking ||
+    addOnsQuery.error
+  ) {
     return (
       <PageContainer>
         <PageHeader

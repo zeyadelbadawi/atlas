@@ -24,7 +24,11 @@ import type { PlatformAcademySummary } from '@types';
 export default function PlatformAcademyListPage(): JSX.Element {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { query: searchQuery, setQuery: setSearchQuery, debouncedQuery } = useSearch({
+  const {
+    query: searchQuery,
+    setQuery: setSearchQuery,
+    debouncedQuery,
+  } = useSearch({
     debounceMs: 300,
   });
 
@@ -54,13 +58,17 @@ export default function PlatformAcademyListPage(): JSX.Element {
       {
         accessorKey: 'name',
         header: t('platform:academies.table.name'),
-        cell: ({ row }) => <span className="font-medium">{row.original.name}</span>,
+        cell: ({ row }) => (
+          <span className="font-medium">{row.original.name}</span>
+        ),
       },
       {
         accessorKey: 'organizationName',
         header: t('platform:academies.table.organization'),
         cell: ({ row }) => (
-          <span className="text-muted-foreground">{row.original.organizationName}</span>
+          <span className="text-muted-foreground">
+            {row.original.organizationName}
+          </span>
         ),
       },
       {
@@ -76,12 +84,16 @@ export default function PlatformAcademyListPage(): JSX.Element {
       {
         accessorKey: 'courseCount',
         header: t('platform:academies.table.courses'),
-        cell: ({ row }) => <span data-atlas-numeric="true">{row.original.courseCount}</span>,
+        cell: ({ row }) => (
+          <span data-atlas-numeric="true">{row.original.courseCount}</span>
+        ),
       },
       {
         accessorKey: 'memberCount',
         header: t('platform:academies.table.members'),
-        cell: ({ row }) => <span data-atlas-numeric="true">{row.original.memberCount}</span>,
+        cell: ({ row }) => (
+          <span data-atlas-numeric="true">{row.original.memberCount}</span>
+        ),
       },
       {
         accessorKey: 'createdAt',
@@ -98,7 +110,10 @@ export default function PlatformAcademyListPage(): JSX.Element {
 
   return (
     <PageContainer>
-      <PageHeader titleKey="platform:academies.title" descriptionKey="platform:academies.subtitle" />
+      <PageHeader
+        titleKey="platform:academies.title"
+        descriptionKey="platform:academies.subtitle"
+      />
 
       <div className="space-y-4">
         <Input

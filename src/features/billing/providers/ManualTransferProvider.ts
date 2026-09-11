@@ -10,10 +10,7 @@
  * as "connecting to" a bank transfer; a human reviews it (see
  * `PlatformPaymentService`).
  */
-import type {
-  Checkout,
-  Payment,
-} from '@types';
+import type { Checkout, Payment } from '@types';
 import type {
   ManualReviewPaymentProviderAdapter,
   PaymentProviderCapabilities,
@@ -21,17 +18,19 @@ import type {
 import { paymentService } from '../services/PaymentService';
 import { readFileAsDataUrl } from '../utils/file.utils';
 
-const MANUAL_TRANSFER_CAPABILITIES: PaymentProviderCapabilities = Object.freeze({
-  supportsManualReview: true,
-  supportsProof: true,
-  supportsRedirect: false,
-  supportsEmbeddedCheckout: false,
-  supportsAdditionalAuthentication: false,
-  supportsWebhooks: false,
-  supportsRefunds: false,
-  supportsRecurring: false,
-  supportsCancellation: true,
-});
+const MANUAL_TRANSFER_CAPABILITIES: PaymentProviderCapabilities = Object.freeze(
+  {
+    supportsManualReview: true,
+    supportsProof: true,
+    supportsRedirect: false,
+    supportsEmbeddedCheckout: false,
+    supportsAdditionalAuthentication: false,
+    supportsWebhooks: false,
+    supportsRefunds: false,
+    supportsRecurring: false,
+    supportsCancellation: true,
+  }
+);
 
 export class ManualTransferProvider implements ManualReviewPaymentProviderAdapter {
   readonly providerKey = 'atlas_manual';
@@ -44,11 +43,17 @@ export class ManualTransferProvider implements ManualReviewPaymentProviderAdapte
     });
   }
 
-  async getPaymentStatus(organizationId: string, paymentId: string): Promise<Payment> {
+  async getPaymentStatus(
+    organizationId: string,
+    paymentId: string
+  ): Promise<Payment> {
     return paymentService.getPayment(organizationId, paymentId);
   }
 
-  async cancelPayment(organizationId: string, paymentId: string): Promise<Payment> {
+  async cancelPayment(
+    organizationId: string,
+    paymentId: string
+  ): Promise<Payment> {
     return paymentService.cancelPayment(organizationId, paymentId);
   }
 

@@ -12,7 +12,9 @@ export interface UseInstructorDashboardOptions {
   readonly enabled?: boolean;
 }
 
-export function useInstructorDashboard(options?: UseInstructorDashboardOptions) {
+export function useInstructorDashboard(
+  options?: UseInstructorDashboardOptions
+) {
   const { enabled = true } = options ?? {};
   const { user } = useAuth();
 

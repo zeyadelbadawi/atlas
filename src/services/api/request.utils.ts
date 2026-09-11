@@ -36,7 +36,9 @@ export const COLLECTION_PARAM_NAMES = {
  * implicit index signature, so TS rejected every narrowed filters type even
  * though every field on them is a JSON-compatible primitive).
  */
-export function toCollectionParams<TFilters extends object = Record<string, JsonValue>>(
+export function toCollectionParams<
+  TFilters extends object = Record<string, JsonValue>,
+>(
   query?: Omit<CollectionQuery, 'filters'> & { readonly filters?: TFilters }
 ): QueryParams {
   if (!query) return {};
@@ -74,7 +76,8 @@ export function buildPaginationMeta(
   totalItems: number
 ): PaginationMeta {
   const safePageSize = pageSize > 0 ? pageSize : DEFAULT_PAGE_SIZE;
-  const safeTotal = Number.isFinite(totalItems) && totalItems > 0 ? totalItems : 0;
+  const safeTotal =
+    Number.isFinite(totalItems) && totalItems > 0 ? totalItems : 0;
 
   return {
     page: page > 0 ? page : DEFAULT_PAGE,

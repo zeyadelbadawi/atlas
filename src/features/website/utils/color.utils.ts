@@ -11,13 +11,21 @@
 import type { HslColorTriplet } from '@types';
 
 /** Parses `"H S% L%"` into numeric degrees/percentages. Returns black if malformed, never throws. */
-function parseHslTriplet(hsl: HslColorTriplet): { h: number; s: number; l: number } {
+function parseHslTriplet(hsl: HslColorTriplet): {
+  h: number;
+  s: number;
+  l: number;
+} {
   const match = /^(\d{1,3}) (\d{1,3})% (\d{1,3})%$/.exec(hsl.trim());
   if (!match) return { h: 0, s: 0, l: 0 };
   return { h: Number(match[1]), s: Number(match[2]), l: Number(match[3]) };
 }
 
-function hslToRgb(h: number, s: number, l: number): { r: number; g: number; b: number } {
+function hslToRgb(
+  h: number,
+  s: number,
+  l: number
+): { r: number; g: number; b: number } {
   const sNorm = s / 100;
   const lNorm = l / 100;
   const c = (1 - Math.abs(2 * lNorm - 1)) * sNorm;
@@ -39,7 +47,11 @@ function hslToRgb(h: number, s: number, l: number): { r: number; g: number; b: n
   };
 }
 
-function rgbToHsl(r: number, g: number, b: number): { h: number; s: number; l: number } {
+function rgbToHsl(
+  r: number,
+  g: number,
+  b: number
+): { h: number; s: number; l: number } {
   const rNorm = r / 255;
   const gNorm = g / 255;
   const bNorm = b / 255;
@@ -101,6 +113,9 @@ export function contrastRatio(a: HslColorTriplet, b: HslColorTriplet): number {
 }
 
 /** WCAG AA requires 4.5:1 for normal text, 3:1 for large text/UI components — this checks the stricter bound. */
-export function hasAccessibleContrast(a: HslColorTriplet, b: HslColorTriplet): boolean {
+export function hasAccessibleContrast(
+  a: HslColorTriplet,
+  b: HslColorTriplet
+): boolean {
   return contrastRatio(a, b) >= 4.5;
 }

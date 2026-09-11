@@ -15,12 +15,19 @@ export interface PublishWebsiteFaqEntryVariables {
 export function usePublishWebsiteFaqEntry() {
   const { invalidate } = useInvalidate();
 
-  return useApiMutation<WebsiteFaqEntry, PublishWebsiteFaqEntryVariables, ApiError>({
-    mutationFn: ({ academyId, entryId }) => websiteContentService.publishFaqEntry(academyId, entryId),
+  return useApiMutation<
+    WebsiteFaqEntry,
+    PublishWebsiteFaqEntryVariables,
+    ApiError
+  >({
+    mutationFn: ({ academyId, entryId }) =>
+      websiteContentService.publishFaqEntry(academyId, entryId),
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async (_data, variables) => {
-      await invalidate(websiteKeys.faqEntry(variables.academyId, variables.entryId));
+      await invalidate(
+        websiteKeys.faqEntry(variables.academyId, variables.entryId)
+      );
       await invalidate(websiteKeys.faqEntries(variables.academyId));
     },
   });

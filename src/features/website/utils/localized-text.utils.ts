@@ -29,7 +29,9 @@ export function resolveLocalizedText(
 }
 
 /** Whether a `LocalizedText` field's Arabic side has real content — the one predicate the CMS completeness indicator (`LocalizationCompletenessBadge`) is built on. Deliberately blank-string-aware, not just presence-of-key: a page saved before this phase, or an Owner who cleared the field, both correctly read as "incomplete," never as "complete because the key exists." */
-export function isLocalizedTextComplete(value: LocalizedText | string | undefined): boolean {
+export function isLocalizedTextComplete(
+  value: LocalizedText | string | undefined
+): boolean {
   if (value === undefined || typeof value === 'string') return false;
   return value.ar.trim().length > 0;
 }

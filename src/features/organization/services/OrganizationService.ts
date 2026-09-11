@@ -21,7 +21,10 @@ export class OrganizationService extends BaseService {
   protected readonly resource = 'organizations';
 
   /** Retrieves one organization by id. The caller must have an active membership in it — enforced server-side (RLS + guard), never assumed client-side. */
-  async getById(organizationId: string, options?: ReadOptions): Promise<Organization> {
+  async getById(
+    organizationId: string,
+    options?: ReadOptions
+  ): Promise<Organization> {
     return this.fetchOne<Organization>(organizationId, options);
   }
 
@@ -30,7 +33,10 @@ export class OrganizationService extends BaseService {
     payload: CreateOrganizationPayload,
     options?: WriteOptions
   ): Promise<Organization> {
-    return this.createOne<Organization, CreateOrganizationPayload>(payload, options);
+    return this.createOne<Organization, CreateOrganizationPayload>(
+      payload,
+      options
+    );
   }
 }
 

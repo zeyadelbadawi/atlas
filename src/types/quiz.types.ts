@@ -12,7 +12,8 @@
 export type QuizStatus = 'draft' | 'published';
 
 /** Supported question types — kept to what renders cleanly with existing form controls. */
-export type QuizQuestionType = 'single_choice' | 'multiple_choice' | 'true_false';
+export type QuizQuestionType =
+  'single_choice' | 'multiple_choice' | 'true_false';
 
 /** A selectable option for a question. No correctness flag — see file header. */
 export interface QuizQuestionOption {
@@ -51,11 +52,7 @@ export interface Quiz {
 
 /** A student's progress through one quiz attempt. */
 export type QuizAttemptStatus =
-  | 'not_started'
-  | 'in_progress'
-  | 'submitted'
-  | 'passed'
-  | 'failed';
+  'not_started' | 'in_progress' | 'submitted' | 'passed' | 'failed';
 
 /** One question's answer within an attempt. */
 export interface QuizAnswer {

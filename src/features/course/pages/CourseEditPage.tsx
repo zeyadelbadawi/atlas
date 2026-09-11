@@ -9,7 +9,13 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FileText, Loader2, Save, SlidersHorizontal, Upload } from 'lucide-react';
+import {
+  FileText,
+  Loader2,
+  Save,
+  SlidersHorizontal,
+  Upload,
+} from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { SectionTabs } from '@components/navigation';
@@ -66,9 +72,7 @@ export default function CourseEditPage(): JSX.Element {
     academyId: string;
     courseId: string;
   }>();
-  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(
-    null
-  );
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
 
   const {
     data: course,
@@ -97,7 +101,8 @@ export default function CourseEditPage(): JSX.Element {
           visibility: course.visibility,
           pricingType: course.pricing.type,
           pricingAmount: course.pricing.amount,
-          pricingCurrency: course.pricing.currency ?? DEFAULT_COURSE_PRICING_CURRENCY,
+          pricingCurrency:
+            course.pricing.currency ?? DEFAULT_COURSE_PRICING_CURRENCY,
         }
       : undefined,
   });
@@ -226,7 +231,9 @@ export default function CourseEditPage(): JSX.Element {
   const breadcrumbs: readonly BreadcrumbItem[] = [
     {
       labelKey: 'course:list.title',
-      path: buildPath(DASHBOARD_ROUTES.academyCourses, { academyId: academyId ?? '' }),
+      path: buildPath(DASHBOARD_ROUTES.academyCourses, {
+        academyId: academyId ?? '',
+      }),
     },
     { labelKey: 'course:edit.title', label: course.title },
   ];
@@ -249,10 +256,16 @@ export default function CourseEditPage(): JSX.Element {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileText className="size-4 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+                <FileText
+                  className="size-4 text-muted-foreground"
+                  strokeWidth={1.75}
+                  aria-hidden
+                />
                 {t('course:create.basicInformation')}
               </CardTitle>
-              <CardDescription>{t('course:edit.basicInformationDescription')}</CardDescription>
+              <CardDescription>
+                {t('course:edit.basicInformationDescription')}
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
@@ -344,7 +357,11 @@ export default function CourseEditPage(): JSX.Element {
                         variant="outline"
                         onClick={thumbnailPicker.openFilePicker}
                       >
-                        <Upload className="size-4" strokeWidth={2} aria-hidden />
+                        <Upload
+                          className="size-4"
+                          strokeWidth={2}
+                          aria-hidden
+                        />
                         {t('course:create.uploadThumbnail')}
                       </Button>
                     )}
@@ -358,10 +375,16 @@ export default function CourseEditPage(): JSX.Element {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <SlidersHorizontal className="size-4 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+                <SlidersHorizontal
+                  className="size-4 text-muted-foreground"
+                  strokeWidth={1.75}
+                  aria-hidden
+                />
                 {t('course:edit.configuration')}
               </CardTitle>
-              <CardDescription>{t('course:edit.configurationDescription')}</CardDescription>
+              <CardDescription>
+                {t('course:edit.configurationDescription')}
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
@@ -378,7 +401,9 @@ export default function CourseEditPage(): JSX.Element {
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue
-                              placeholder={t('course:create.categoryPlaceholder')}
+                              placeholder={t(
+                                'course:create.categoryPlaceholder'
+                              )}
                             />
                           </SelectTrigger>
                         </FormControl>
@@ -400,8 +425,13 @@ export default function CourseEditPage(): JSX.Element {
                   name="visibility"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('course:create.visibilityLabel')}</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <FormLabel>
+                        {t('course:create.visibilityLabel')}
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue />
@@ -428,8 +458,13 @@ export default function CourseEditPage(): JSX.Element {
                   name="pricingType"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('course:create.pricingTypeLabel')}</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <FormLabel>
+                        {t('course:create.pricingTypeLabel')}
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue />
