@@ -505,5 +505,22 @@
     "imageInvalidType": "نوع الملف غير مدعوم. استخدم PNG أو JPG أو WEBP.",
     "imageRecommendation": "الحجم الموصى به: {{width}}×{{height}} بكسل ({{ratio}}) · {{formats}}",
     "imageTransparencyHint": "يُفضَّل استخدام خلفية شفافة."
+  },
+  "presence": {
+    "oneEditing": "{{name}} ({{role}}) يقوم بتحرير هذه الصفحة الآن.",
+    "manyEditing": "{{name}} و{{count}} آخرون يقومون بتحرير هذه الصفحة الآن.",
+    "roles": {
+      "owner": "مالك",
+      "administrator": "مسؤول",
+      "manager": "مدير"
+    }
+  },
+  "conflict": {
+    "title": "تغيّرت هذه الصفحة أثناء تحريرك",
+    "description": "قام شخص آخر بحفظ نسخة أحدث من هذه الصفحة.",
+    "descriptionNamed": "قام {{name}} بحفظ نسخة أحدث أثناء تحريرك.",
+    "explainer": "أعد التحميل لعرض نسختهم والبدء منها، أو احتفظ بتغييراتك لتطبيقها فوق نسختهم. لن يتم حذف عملهم في الحالتين.",
+    "reload": "إعادة تحميل الأحدث",
+    "keepMine": "الاحتفاظ بتغييراتي"
   }
 }

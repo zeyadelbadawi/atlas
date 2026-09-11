@@ -159,6 +159,12 @@ export const DASHBOARD_ROUTES = {
 
   platformPlanCatalog: '/dashboard/platform/plans',
 
+  /** The Academy's own media library. Academy-scoped by route, because the assets themselves are academy-owned. */
+  academyMedia: '/dashboard/academy/:academyId/media',
+
+  /** Academy-wide announcement authoring — distinct from `announcements`, which is the reader's cross-scope feed. */
+  academyAnnouncements: '/dashboard/academy/:academyId/announcements',
+
   /** The Website Management landing (Prompt 10) — `websiteSettings` moved to its own sub-path to make room for it. */
   websiteOverview: '/dashboard/academy/:academyId/website',
   websiteSettings: '/dashboard/academy/:academyId/website/settings',

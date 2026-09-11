@@ -8,7 +8,7 @@
  * (Prompt 3C) — never drag-and-drop as the only way to reorder.
  */
 import { useTranslation } from 'react-i18next';
-import { ArrowDown, ArrowUp, KeyRound, Loader2, Plus, X } from 'lucide-react';
+import { ArrowDown, ArrowUp, Loader2, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -32,9 +32,6 @@ import { useUpdateWebsiteConfiguration } from '../hooks';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
 import { LocalizedTextField } from './LocalizedTextField';
 import {
-  buildAuthPageCopyHeaderPatch,
-  type AuthPageCopyField,
-  type AuthPageKey,
 } from '../utils/auth-page-copy.utils';
 import type {
   LocalizedText,
@@ -139,6 +136,21 @@ export function WebsiteNavigationTab({
   };
 
   const currentCta = configuration.header.cta;
+  /**
+   * Read but never edited here any more.
+   *
+   * Editing Sign In/Sign Up copy used to live in this tab AND on the Pages
+   * list, both opening the same `AuthPageCopyDialog` through the same
+   * `buildAuthPageCopyHeaderPatch` helper — the same capability in two
+   * places. The Pages list is the right home for it: that is where an
+   * admin already goes to browse and customise the pages of their site,
+   * and Sign In/Sign Up are listed there alongside the core pages. The
+   * duplicate block in this tab is gone; nothing was lost with it.
+   *
+   * The VALUE still has to be read, because `header` is a full replace
+   * server-side (see below) — dropping it here would delete whatever the
+   * admin set on the Pages list the next time they touched navigation.
+   */
   const currentAuthPages = configuration.header.authPages;
 
   /**
@@ -233,33 +245,6 @@ export function WebsiteNavigationTab({
     );
   };
 
-  /** Preserves the existing CTA — `header` is a full replace, same reasoning as `updateHeaderCtaLabel`. An unset title/subtitle here removes that one override, falling back to the app's own default copy. Shared with the Pages list's own auth-page dialog — see that util's doc comment. */
-  const updateAuthPageCopy = (
-    page: AuthPageKey,
-    field: AuthPageCopyField,
-    value: LocalizedText
-  ) => {
-    updateConfig.mutate(
-      {
-        academyId,
-        payload: {
-          header: buildAuthPageCopyHeaderPatch(
-            configuration,
-            page,
-            field,
-            value
-          ),
-        },
-      },
-      {
-        onError: () =>
-          toast({
-            title: t('website:navigation.saveError'),
-            variant: 'destructive',
-          }),
-      }
-    );
-  };
 
   const updateFooterCopyright = (value: LocalizedText) => {
     updateConfig.mutate({
@@ -509,77 +494,6 @@ export function WebsiteNavigationTab({
               </Select>
             </div>
           )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <KeyRound
-              className="size-4 text-muted-foreground"
-              strokeWidth={1.75}
-              aria-hidden
-            />
-            {t('website:navigation.authPagesTitle')}
-          </CardTitle>
-          <CardDescription>
-            {t('website:navigation.authPagesDescription')}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-3">
-            <p className="text-sm font-medium text-foreground">
-              {t('website:navigation.ctaTargetSignIn')}
-            </p>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <LocalizedTextField
-                id="auth-signin-title"
-                labelKey="website:navigation.authPageHeading"
-                placeholderEn={t('publicWebsite:auth.signIn.title', {
-                  academyName: '',
-                }).trim()}
-                value={currentAuthPages?.signIn?.title ?? EMPTY_LOCALIZED}
-                onBlur={(value) => updateAuthPageCopy('signIn', 'title', value)}
-              />
-              <LocalizedTextField
-                id="auth-signin-subtitle"
-                labelKey="website:navigation.authPageSubheading"
-                placeholderEn={t('publicWebsite:auth.signIn.subtitle')}
-                value={currentAuthPages?.signIn?.subtitle ?? EMPTY_LOCALIZED}
-                onBlur={(value) =>
-                  updateAuthPageCopy('signIn', 'subtitle', value)
-                }
-              />
-            </div>
-          </div>
-
-          <div className="space-y-3 border-t border-border pt-4">
-            <p className="text-sm font-medium text-foreground">
-              {t('website:navigation.ctaTargetSignUp')}
-            </p>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <LocalizedTextField
-                id="auth-signup-title"
-                labelKey="website:navigation.authPageHeading"
-                placeholderEn={t('publicWebsite:auth.signUp.title', {
-                  academyName: '',
-                }).trim()}
-                value={currentAuthPages?.signUp?.title ?? EMPTY_LOCALIZED}
-                onBlur={(value) => updateAuthPageCopy('signUp', 'title', value)}
-              />
-              <LocalizedTextField
-                id="auth-signup-subtitle"
-                labelKey="website:navigation.authPageSubheading"
-                placeholderEn={t('publicWebsite:auth.signUp.subtitle', {
-                  academyName: '',
-                }).trim()}
-                value={currentAuthPages?.signUp?.subtitle ?? EMPTY_LOCALIZED}
-                onBlur={(value) =>
-                  updateAuthPageCopy('signUp', 'subtitle', value)
-                }
-              />
-            </div>
-          </div>
         </CardContent>
       </Card>
 

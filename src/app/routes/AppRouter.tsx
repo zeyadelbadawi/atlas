@@ -171,6 +171,12 @@ const AnnouncementDetailPage = lazy(
 const InstructorAnnouncementsPage = lazy(
   () => import('@features/announcements/pages/InstructorAnnouncementsPage')
 );
+const AcademyAnnouncementsPage = lazy(
+  () => import('@features/announcements/pages/AcademyAnnouncementsPage')
+);
+const AcademyMediaPage = lazy(
+  () => import('@features/media/pages/AcademyMediaPage')
+);
 
 const BlogListPage = lazy(() => import('@features/blog/pages/BlogListPage'));
 const BlogPostDetailPage = lazy(
@@ -945,6 +951,45 @@ export function AppRouter(): JSX.Element {
                   requiredPermissions={['announcement.manage']}
                 >
                   <InstructorAnnouncementsPage />
+                </RouteGuard>
+              }
+            />
+
+            {/*
+              `announcement.view`, not `announcement.manage` — an
+              instructor or member may legitimately READ their academy's
+              announcements on this page. The page renders no authoring
+              controls without `announcement.manage`, and the backend
+              rejects the write regardless of what the UI showed, so
+              guarding the whole route on `manage` would lock readers out
+              of a page they are entitled to see.
+            */}
+            {/*
+              `academy.view`, not a manage permission: a member may browse
+              their academy's library. Upload/edit/archive controls are
+              gated inside the page, and the backend refuses the writes
+              regardless of what was rendered.
+            */}
+            <Route
+              path={DASHBOARD_ROUTES.academyMedia}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.view']}
+                >
+                  <AcademyMediaPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.academyAnnouncements}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['announcement.view']}
+                >
+                  <AcademyAnnouncementsPage />
                 </RouteGuard>
               }
             />

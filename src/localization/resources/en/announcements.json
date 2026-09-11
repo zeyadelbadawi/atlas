@@ -55,5 +55,13 @@
       "confirmLabel": "Archive",
       "cancelLabel": "Cancel"
     }
+  },
+  "academy": {
+    "title": "Academy announcements",
+    "subtitle": "Announcements sent to everyone in this academy.",
+    "empty": "No announcements yet",
+    "emptyDescription": "Create your first announcement to reach everyone in this academy.",
+    "emptyReadOnly": "No announcements yet",
+    "emptyReadOnlyDescription": "Announcements from this academy will appear here."
   }
 }

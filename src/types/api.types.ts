@@ -115,6 +115,16 @@ export interface NormalizedApiError {
   readonly code?: string;
   readonly status?: number;
   readonly violations?: readonly FieldViolation[];
+  /**
+   * Structured context for errors that need more than a message to recover
+   * from — mirrors the backend's `NormalizedApiError.details`, which
+   * forwards only what an exception opted into and only primitives.
+   *
+   * The first consumer is the save-conflict response, which carries the
+   * current version so an editor can re-base instead of being told it lost
+   * and left with nowhere to go.
+   */
+  readonly details?: Readonly<Record<string, string | number | boolean>>;
   readonly requestId?: string;
   /** True when repeating the same request may succeed. */
   readonly retryable: boolean;

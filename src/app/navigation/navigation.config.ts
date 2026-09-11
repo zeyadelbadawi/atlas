@@ -23,6 +23,7 @@ import {
   ClipboardCheck,
   LineChart,
   ClipboardList,
+  Image as ImageIcon,
   Megaphone,
   Newspaper,
   Boxes,
@@ -111,6 +112,34 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
         icon: Settings,
         requiresAuth: true,
         requiredPermissions: ['academy.configure'],
+      },
+      {
+        id: 'academy-media',
+        labelKey: 'navigation:items.academyMedia',
+        path: buildPath(DASHBOARD_ROUTES.academyMedia, {
+          academyId: activeAcademyId,
+        }),
+        icon: ImageIcon,
+        requiresAuth: true,
+        // Viewing the library needs academy access; the page itself gates
+        // upload/edit/archive on `academy.website.manage`, and the backend
+        // gates them on the caller's real academy role.
+        requiredPermissions: ['academy.view'],
+      },
+      {
+        id: 'academy-announcements',
+        labelKey: 'navigation:items.academyAnnouncements',
+        path: buildPath(DASHBOARD_ROUTES.academyAnnouncements, {
+          academyId: activeAcademyId,
+        }),
+        icon: Megaphone,
+        requiresAuth: true,
+        // `view` gates the ENTRY, not the authoring controls — an
+        // instructor legitimately reads their academy's announcements.
+        // The page itself checks `announcement.manage` before rendering
+        // the create/edit/publish controls, and the backend checks the
+        // caller's real `academy_members` row regardless.
+        requiredPermissions: ['announcement.view'],
       },
       {
         id: 'academy-website',

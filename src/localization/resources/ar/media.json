@@ -17,5 +17,42 @@
   },
   "actions": {
     "archiveSuccess": "تمت أرشفة الأصل"
+  },
+  "page": {
+    "title": "وسائط الأكاديمية",
+    "subtitle": "الصور والمستندات الخاصة بهذه الأكاديمية.",
+    "uploadButton": "رفع ملف",
+    "uploadSuccess": "تم رفع الملف",
+    "uploadError": "تعذّر رفع هذا الملف",
+    "searchPlaceholder": "ابحث في الملفات",
+    "statusFilter": "الحالة",
+    "gridView": "عرض شبكي",
+    "listView": "عرض قائمة",
+    "empty": "لا توجد وسائط بعد",
+    "emptyDescription": "ارفع صورة أو مستندًا لاستخدامه في موقع هذه الأكاديمية ودوراتها.",
+    "emptyReadOnlyDescription": "ستظهر هنا الملفات المرفوعة إلى هذه الأكاديمية.",
+    "noResults": "لا توجد ملفات مطابقة",
+    "noResultsDescription": "جرّب كلمة بحث مختلفة.",
+    "saveSuccess": "تم حفظ التغييرات",
+    "saveError": "تعذّر حفظ التغييرات",
+    "archiveSuccess": "تمت أرشفة الملف",
+    "archiveError": "تعذّرت أرشفة الملف",
+    "archiveDialog": {
+      "title": "أرشفة هذا الملف؟",
+      "description": "سيتم إخفاؤه من المكتبة. الصفحات التي تستخدمه ستظل تعمل.",
+      "confirmLabel": "أرشفة",
+      "cancelLabel": "إلغاء"
+    }
+  },
+  "details": {
+    "title": "تفاصيل الملف",
+    "type": "النوع",
+    "size": "الحجم",
+    "dimensions": "الأبعاد",
+    "uploaded": "تاريخ الرفع",
+    "altText": "النص البديل",
+    "altTextPlaceholder": "يصف الصورة لقارئات الشاشة",
+    "archive": "أرشفة",
+    "save": "حفظ التغييرات"
   }
 }

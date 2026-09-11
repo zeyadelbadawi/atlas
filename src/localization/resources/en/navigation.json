@@ -72,7 +72,9 @@
     "myResults": "My Results",
     "studentAnalytics": "Student Analytics",
     "platformSubscriptions": "Subscriptions & Trials",
-    "support": "Support"
+    "support": "Support",
+    "academyAnnouncements": "Announcements",
+    "academyMedia": "Academy Media"
   },
   "account": {
     "menu": "Account menu",

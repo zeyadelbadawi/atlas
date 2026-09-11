@@ -19,6 +19,7 @@ import type { ReadOptions, WriteOptions } from '@services';
 import { toCollectionParams } from '@api';
 import type {
   CreateWebsitePagePayload,
+  EditingParticipant,
   PaginatedResult,
   CollectionQuery,
   ReorderItemsPayload,
@@ -141,6 +142,41 @@ export class WebsiteConfigurationService extends BaseService {
     return this.client.patch<WebsitePage, UpdateWebsitePagePayload>(
       this.websitePath(academyId, 'pages', pageId),
       payload,
+      options
+    );
+  }
+
+  /**
+   * Announces (or refreshes) an editing session on a page and returns
+   * everyone ELSE currently editing it.
+   *
+   * A POST because it writes a session record and refreshes a TTL — a GET
+   * would be cacheable, and a cached liveness signal shows colleagues who
+   * already left.
+   */
+  async heartbeatPageEditingSession(
+    academyId: string,
+    pageId: string,
+    options?: WriteOptions
+  ): Promise<{ readonly participants: readonly EditingParticipant[] }> {
+    return this.client.post<
+      { readonly participants: readonly EditingParticipant[] },
+      undefined
+    >(
+      this.websitePath(academyId, 'pages', pageId, 'editing-session'),
+      undefined,
+      options
+    );
+  }
+
+  /** Ends this user's editing session immediately, so colleagues see it without waiting out the TTL. */
+  async releasePageEditingSession(
+    academyId: string,
+    pageId: string,
+    options?: WriteOptions
+  ): Promise<void> {
+    return this.client.delete<void>(
+      this.websitePath(academyId, 'pages', pageId, 'editing-session'),
       options
     );
   }

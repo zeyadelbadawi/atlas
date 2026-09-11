@@ -347,6 +347,9 @@ export const announcementKeys = {
     [...announcementKeys.all, 'detail', userId, id] as const,
   course: (courseId: string, query?: CollectionQuery) =>
     [...announcementKeys.all, 'course', courseId, query] as const,
+  /** Academy-wide announcements — a distinct scope from `course`, matching the backend's own separate `academies/:id/announcements` route tree. */
+  academy: (academyId: string, query?: CollectionQuery) =>
+    [...announcementKeys.all, 'academy', academyId, query] as const,
 } as const;
 
 /** Query keys for the Blog (Knowledge Content) feature. */

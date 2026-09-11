@@ -12,3 +12,12 @@ export { useUpdateAnnouncement } from './useUpdateAnnouncement';
 export type { UpdateAnnouncementVariables } from './useUpdateAnnouncement';
 export { usePublishAnnouncement } from './usePublishAnnouncement';
 export { useArchiveAnnouncement } from './useArchiveAnnouncement';
+
+/** Academy-wide authoring — the course hooks' twins. See that module's doc comment. */
+export {
+  useAcademyAnnouncements,
+  useCreateAcademyAnnouncement,
+  useUpdateAcademyAnnouncement,
+  usePublishAcademyAnnouncement,
+  useArchiveAcademyAnnouncement,
+} from './useAcademyAnnouncements';

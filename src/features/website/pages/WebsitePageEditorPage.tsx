@@ -60,6 +60,14 @@ import {
   type PublicWebsiteLocale,
 } from '../constants/locale.constants';
 import { SECTION_METADATA, getDefaultSectionConfig } from '../sections';
+import { useEditingPresence } from '../hooks/useEditingPresence';
+import { EditingPresenceBanner } from '../components/EditingPresenceBanner';
+import { SaveConflictDialog } from '../components/SaveConflictDialog';
+import {
+  readSaveConflict,
+  versionForSave,
+  type SaveConflict,
+} from '../utils/save-conflict.utils';
 import { DEFAULT_RESPONSIVE_VISIBILITY } from '@types';
 import type {
   ResponsiveVisibility,
@@ -99,6 +107,24 @@ export default function WebsitePageEditorPage(): JSX.Element {
   );
   const [breakpoint, setBreakpoint] = useState<PreviewBreakpoint>('desktop');
   const seoDialog = useDisclosure();
+
+  /*
+    CONCURRENT EDITING. Two things, doing different jobs:
+
+    - Presence is advisory and non-blocking. It announces this editor and
+      names colleagues with the same page open, so a collision is avoided
+      rather than resolved. Only announced when the user can actually
+      manage the page — a read-only viewer is not editing.
+    - The conflict below is the load-bearing half: the save carries the
+      version it was based on, and the server refuses a stale one instead
+      of overwriting whoever committed in between.
+  */
+  const participants = useEditingPresence({
+    academyId: academyId ?? '',
+    pageId: pageId ?? '',
+    enabled: canManage,
+  });
+  const [conflict, setConflict] = useState<SaveConflict | null>(null);
 
   useEffect(() => {
     if (pageQuery.data)
@@ -262,17 +288,54 @@ export default function WebsitePageEditorPage(): JSX.Element {
     setSelectedId(undefined);
   };
 
-  const handleSaveChanges = () => {
-    updatePage.mutate({
-      academyId,
-      pageId,
-      payload: { sections: draftSections },
-    });
+  /**
+   * `expectedVersion` is what turns a silent overwrite into a conversation.
+   * `overrideVersion` is supplied only by "keep my changes" after a
+   * conflict: it re-bases this editor's work on the version the server just
+   * reported, so the colleague's committed save is built on rather than
+   * erased. It is never a way to skip the check.
+   */
+  const handleSaveChanges = (overrideVersion?: number) => {
+    const expectedVersion =
+      overrideVersion ?? versionForSave(pageQuery.data?.version, null);
+
+    updatePage.mutate(
+      {
+        academyId,
+        pageId,
+        payload: { sections: draftSections, expectedVersion },
+      },
+      {
+        onSuccess: () => setConflict(null),
+        // A 409 that is NOT a stale version (a duplicate slug, say) reads
+        // as `null` here and falls through to ordinary error handling —
+        // see `readSaveConflict`.
+        onError: (error) => setConflict(readSaveConflict(error)),
+      }
+    );
+  };
+
+  /** Throws this editor's local work away and shows the server's copy. */
+  const handleReloadLatest = async () => {
+    setConflict(null);
+    const refreshed = await pageQuery.refetch();
+    if (refreshed.data) {
+      setDraftSections(refreshed.data.sections as SectionInstance[]);
+    }
+  };
+
+  /** Re-applies this editor's work ON TOP of the newer version — never over it. */
+  const handleKeepMine = () => {
+    const target = conflict?.currentVersion;
+    setConflict(null);
+    if (target !== undefined) handleSaveChanges(target);
   };
 
   return (
     <PageContainer fullWidth>
       <div className="space-y-6 px-4 sm:px-6 lg:px-8">
+        <EditingPresenceBanner participants={participants} />
+
         <PageHeader
           titleKey="website:editor.title"
           title={page.title}
@@ -311,7 +374,7 @@ export default function WebsitePageEditorPage(): JSX.Element {
                 </Button>
                 <Button
                   type="button"
-                  onClick={handleSaveChanges}
+                  onClick={() => handleSaveChanges()}
                   disabled={!isDirty || updatePage.isPending}
                 >
                   {updatePage.isPending ? (
@@ -331,7 +394,14 @@ export default function WebsitePageEditorPage(): JSX.Element {
           status={configuration.status}
           lastPublishedAt={configuration.publishedAt}
         />
-        {updatePage.error ? <ErrorState onRetry={handleSaveChanges} /> : null}
+        {/*
+          A conflict is NOT an error state — it has its own dialog with real
+          choices. Showing the generic retry strip for it would offer
+          "retry", which for a stale save means "try to overwrite again".
+        */}
+        {updatePage.error && updatePage.error.kind !== 'conflict' ? (
+          <ErrorState onRetry={() => handleSaveChanges()} />
+        ) : null}
 
         <div className="grid gap-6 lg:grid-cols-[22rem_1fr]">
           <Card className="h-fit">
@@ -413,6 +483,15 @@ export default function WebsitePageEditorPage(): JSX.Element {
           onOpenChange={seoDialog.setOpen}
         />
       ) : null}
+      <SaveConflictDialog
+        conflict={conflict}
+        onReload={() => void handleReloadLatest()}
+        onKeepMine={handleKeepMine}
+        onOpenChange={(open) => {
+          if (!open) setConflict(null);
+        }}
+        isSaving={updatePage.isPending}
+      />
     </PageContainer>
   );
 }

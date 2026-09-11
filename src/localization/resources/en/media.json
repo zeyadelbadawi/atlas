@@ -17,5 +17,42 @@
   },
   "actions": {
     "archiveSuccess": "Asset archived"
+  },
+  "page": {
+    "title": "Academy Media",
+    "subtitle": "Images and documents belonging to this academy.",
+    "uploadButton": "Upload",
+    "uploadSuccess": "File uploaded",
+    "uploadError": "That file could not be uploaded",
+    "searchPlaceholder": "Search files",
+    "statusFilter": "Status",
+    "gridView": "Grid view",
+    "listView": "List view",
+    "empty": "No media yet",
+    "emptyDescription": "Upload an image or document to use it across this academy's website and courses.",
+    "emptyReadOnlyDescription": "Files uploaded to this academy will appear here.",
+    "noResults": "No matching files",
+    "noResultsDescription": "Try a different search term.",
+    "saveSuccess": "Changes saved",
+    "saveError": "Those changes could not be saved",
+    "archiveSuccess": "File archived",
+    "archiveError": "That file could not be archived",
+    "archiveDialog": {
+      "title": "Archive this file?",
+      "description": "It will be hidden from the library. Pages already using it keep working.",
+      "confirmLabel": "Archive",
+      "cancelLabel": "Cancel"
+    }
+  },
+  "details": {
+    "title": "File details",
+    "type": "Type",
+    "size": "Size",
+    "dimensions": "Dimensions",
+    "uploaded": "Uploaded",
+    "altText": "Alt text",
+    "altTextPlaceholder": "Describes the image for screen readers",
+    "archive": "Archive",
+    "save": "Save changes"
   }
 }

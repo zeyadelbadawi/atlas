@@ -497,5 +497,22 @@
     "imageInvalidType": "This file type isn't supported. Use PNG, JPG or WEBP.",
     "imageRecommendation": "Recommended: {{width}}×{{height}} px ({{ratio}}) · {{formats}}",
     "imageTransparencyHint": "Transparent background recommended."
+  },
+  "presence": {
+    "oneEditing": "{{name}} ({{role}}) is currently editing this page.",
+    "manyEditing": "{{name}} and {{count}} others are currently editing this page.",
+    "roles": {
+      "owner": "Owner",
+      "administrator": "Administrator",
+      "manager": "Manager"
+    }
+  },
+  "conflict": {
+    "title": "This page changed while you were editing",
+    "description": "Someone saved a newer version of this page.",
+    "descriptionNamed": "{{name}} saved a newer version while you were editing.",
+    "explainer": "Reload to see their version and start again from it, or keep your changes and apply them on top of theirs. Their work is never discarded either way.",
+    "reload": "Reload latest",
+    "keepMine": "Keep my changes"
   }
 }

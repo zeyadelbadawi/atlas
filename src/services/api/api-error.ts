@@ -57,6 +57,7 @@ export class ApiError extends Error implements NormalizedApiError {
   public readonly code?: string;
   public readonly status?: number;
   public readonly violations?: readonly FieldViolation[];
+  public readonly details?: Readonly<Record<string, string | number | boolean>>;
   public readonly requestId?: string;
   public readonly retryable: boolean;
 
@@ -69,6 +70,7 @@ export class ApiError extends Error implements NormalizedApiError {
     this.code = normalized.code;
     this.status = normalized.status;
     this.violations = normalized.violations;
+    this.details = normalized.details;
     this.requestId = normalized.requestId;
     this.retryable = normalized.retryable;
   }
@@ -90,6 +92,7 @@ export function createApiError(
     code: details.code,
     status: details.status,
     violations: details.violations,
+    details: details.details,
     requestId: details.requestId,
     retryable: RETRYABLE_KINDS.includes(kind),
   });
@@ -116,6 +119,31 @@ interface BackendErrorPayload {
   readonly requestId?: unknown;
   readonly errors?: unknown;
   readonly violations?: unknown;
+  readonly details?: unknown;
+}
+
+/**
+ * Reads the backend's opt-in `details` object, keeping only primitives.
+ *
+ * Defensive on purpose: this is untrusted wire data, and a client that
+ * assumed shape here would turn a malformed response into a render crash
+ * inside whatever dialog was about to show the value.
+ */
+function readDetails(
+  payload: BackendErrorPayload
+): Readonly<Record<string, string | number | boolean>> | undefined {
+  const raw = payload.details;
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return undefined;
+
+  const entries = Object.entries(raw as Record<string, unknown>).filter(
+    ([, value]) =>
+      typeof value === 'string' ||
+      typeof value === 'number' ||
+      typeof value === 'boolean'
+  );
+  return entries.length > 0
+    ? (Object.fromEntries(entries) as Record<string, string | number | boolean>)
+    : undefined;
 }
 
 function readString(value: unknown): string | undefined {
@@ -218,6 +246,11 @@ export function normalizeResponseError(
     messageKey: readString(body.messageKey),
     requestId: readRequestId(body),
     violations: kind === 'validation' ? readViolations(body) : undefined,
+    // Read for every kind, not just one: `details` is how the backend
+    // hands a client what it needs to RECOVER, and which errors need that
+    // is the backend's call, not a list maintained here. The save-conflict
+    // response is the first user.
+    details: readDetails(body),
   });
 }
 

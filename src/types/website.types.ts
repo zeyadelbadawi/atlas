@@ -206,8 +206,23 @@ export interface WebsitePage {
   readonly visible: boolean;
   readonly seo: WebsitePageSeo;
   readonly sections: readonly SectionInstance[];
+  /**
+   * Optimistic-concurrency token. Send it back as `expectedVersion` on
+   * update and a save that lost a race is refused with a 409 instead of
+   * overwriting whoever saved in between.
+   */
+  readonly version: number;
   readonly createdAt: string;
   readonly updatedAt: string;
+}
+
+/** Someone with this page's editor open right now. Advisory only — see `useEditingPresence`. */
+export interface EditingParticipant {
+  readonly userId: string;
+  readonly name: string;
+  readonly role: string;
+  readonly startedAt: string;
+  readonly lastSeenAt: string;
 }
 
 export interface CreateWebsitePagePayload {
@@ -221,4 +236,6 @@ export interface UpdateWebsitePagePayload {
   readonly visible?: boolean;
   readonly seo?: WebsitePageSeo;
   readonly sections?: readonly SectionInstance[];
+  /** The `version` this edit was based on. Omitting it keeps the old last-write-wins behaviour, so every real editor sends it. */
+  readonly expectedVersion?: number;
 }

@@ -7,3 +7,5 @@ export { useUploadMediaAsset } from './useUploadMediaAsset';
 export type { UploadMediaAssetVariables } from './useUploadMediaAsset';
 export { useArchiveMediaAsset } from './useArchiveMediaAsset';
 export type { ArchiveMediaAssetVariables } from './useArchiveMediaAsset';
+export { useUpdateMediaAsset } from './useUpdateMediaAsset';
+export type { UpdateMediaAssetVariables } from './useUpdateMediaAsset';
