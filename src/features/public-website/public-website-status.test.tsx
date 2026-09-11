@@ -19,7 +19,7 @@
  * calling a deliberate draft an outage libels the customer.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { renderHook } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import { createI18nInstance } from '@/localization/i18n';
@@ -237,6 +237,46 @@ describe('AcademyComingSoon', () => {
     expect(arabic).not.toBe(english);
     // Real Arabic script, not a romanised placeholder.
     expect(arabic).toMatch(/[ء-ي]/);
+  });
+
+  /*
+   * A GUARD, AND HONESTLY NOT A REPRODUCTION.
+   *
+   * The tests above render an instance already created for the locale
+   * under test, so they never exercise the switch at all. This one starts
+   * the shared instance on English and asks for `ar`, which is the real
+   * production shape: one i18next instance, left on whatever language the
+   * dashboard last set, and an `/ar` visitor needing the page to move it.
+   *
+   * It is worth having for that reason. But it did NOT catch the bug that
+   * prompted it, and it should not be read as if it had: a hand-rolled
+   * version of this switch listed `i18n` in its effect dependencies, and
+   * because `useTranslation()` returns a new `i18n` identity on every
+   * language change, the effect re-ran and its cleanup restored English —
+   * production served Arabic layout with English words. Under jsdom that
+   * same code settles on Arabic instead, so this assertion passes either
+   * way; it was mutation-checked against the broken version to confirm
+   * exactly that. The defect was found in a real browser against
+   * production, and that is where a regression of it would be found
+   * again.
+   */
+  it('switches a shared English instance to Arabic, not just its direction', async () => {
+    const i18n = createI18nInstance('en');
+    render(
+      <I18nextProvider i18n={i18n}>
+        <AcademyComingSoon academy={ACADEMY} locale="ar" />
+      </I18nextProvider>,
+    );
+
+    const root = screen.getByTestId('academy-coming-soon');
+    expect(root.getAttribute('dir')).toBe('rtl');
+
+    // The switch is asynchronous, so the copy is awaited rather than read
+    // on the first paint.
+    await waitFor(() => {
+      expect(root.textContent ?? '').toMatch(/[ء-ي]/);
+    });
+    expect(root.textContent ?? '').not.toMatch(/Coming soon/);
   });
 
   it('uses the Academy logo when one has been uploaded', () => {

@@ -28,10 +28,10 @@
  * customer's domain.
  */
 import { useTranslation } from 'react-i18next';
-import { useEffect } from 'react';
 import type { HostnameResolution } from '@types';
 import {
   PUBLIC_WEBSITE_LOCALE_DIRECTION,
+  usePublicWebsiteDocumentDirection,
   type PublicWebsiteLocale,
 } from '@features/website';
 
@@ -44,28 +44,27 @@ export function AcademyComingSoon({
   academy,
   locale,
 }: AcademyComingSoonProps): JSX.Element {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const direction = PUBLIC_WEBSITE_LOCALE_DIRECTION[locale];
 
-  // The page is rendered outside `WebsiteChrome`, so the locale plumbing
-  // that normally follows the public URL is not mounted. Without this the
-  // Arabic copy would render with whatever language the shared i18next
-  // instance happened to be left on.
-  useEffect(() => {
-    const previousLanguage = i18n.language;
-    const previousDir = document.documentElement.dir;
-    const previousLang = document.documentElement.lang;
-
-    void i18n.changeLanguage(locale);
-    document.documentElement.dir = direction;
-    document.documentElement.lang = locale;
-
-    return () => {
-      void i18n.changeLanguage(previousLanguage);
-      document.documentElement.dir = previousDir;
-      document.documentElement.lang = previousLang;
-    };
-  }, [i18n, locale, direction]);
+  /*
+   * This page renders outside `WebsiteChrome`, so the locale plumbing that
+   * normally follows the public URL is not mounted — without it, Arabic
+   * copy renders in whatever language the shared i18next instance was last
+   * left on (see this hook's own doc comment on why that instance is
+   * shared with the dashboard).
+   *
+   * It is the EXISTING hook rather than a second hand-rolled effect. The
+   * hand-rolled version this replaces looked equivalent but listed `i18n`
+   * in its dependencies, and `useTranslation()` hands back a new `i18n`
+   * identity each time the language changes: the effect re-ran, its
+   * cleanup restored the previous language, and the page settled back on
+   * English while still reporting `dir="rtl"` — Arabic layout, English
+   * words. The shared hook depends on `[locale]` alone, deliberately and
+   * with that disable documented in place, which is precisely what makes
+   * it stable. One mechanism, not two that drift.
+   */
+  usePublicWebsiteDocumentDirection(locale);
 
   return (
     <div
