@@ -37,6 +37,8 @@ import {
 import { getPaymentProvider } from '../providers/PaymentProviderRegistry';
 import { generateIdempotencyKey } from '../utils/idempotency.utils';
 import { formatMoney } from '../utils/money.utils';
+import { PlanChangeSummary } from '../components/PlanChangeSummary';
+import { useTenantSubscription } from '@features/tenant';
 import { toErrorsNamespaceKey } from '@utils';
 import type { ApiError } from '@api';
 import type {
@@ -76,6 +78,16 @@ export default function CheckoutPage(): JSX.Element {
     targetKey: string;
   }>();
   const { organization } = useAuth();
+  /*
+    The authoritative "from" side of the comparison. The hook resolves the
+    session's active Organization itself — the same source the rest of the
+    tenant surfaces use — so the cache key follows an organization switch
+    rather than being pinned to whatever id this page happened to read.
+
+    An Organization buying its first plan has no subscription, and the
+    summary renders nothing rather than inventing a previous plan.
+  */
+  const subscriptionQuery = useTenantSubscription();
 
   const idempotencyKey = useState(() => generateIdempotencyKey())[0];
   const [billingCycle, setBillingCycle] =
@@ -249,6 +261,19 @@ export default function CheckoutPage(): JSX.Element {
                 </p>
               </CardContent>
             </Card>
+
+            {/*
+              Only for a plan purchase, and only when there is an existing
+              subscription to compare against — see `PlanChangeSummary` for
+              what it deliberately refuses to claim about proration and
+              effective dates under a manual-transfer provider.
+            */}
+            {target.type === 'plan_subscription' ? (
+              <PlanChangeSummary
+                subscription={subscriptionQuery.data}
+                newPlanName={checkout.snapshot.displayName}
+              />
+            ) : null}
 
             <Card>
               <CardHeader>

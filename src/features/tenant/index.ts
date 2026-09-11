@@ -16,3 +16,4 @@ export * from './schemas/tenant.schemas';
 export * from './constants/tenant.constants';
 export * from './utils/entitlement.utils';
 export * from './utils/subscription-status.utils';
+export { SubscriptionRequiredBanner } from './components/SubscriptionRequiredBanner';

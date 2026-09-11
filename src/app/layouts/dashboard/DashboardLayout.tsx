@@ -7,6 +7,7 @@
  * product.
  */
 import { Outlet } from 'react-router-dom';
+import { SubscriptionRequiredBanner } from '@features/tenant';
 import { useTranslation } from 'react-i18next';
 import { OfflineNotice } from '@components/feedback';
 import { SkipToContentLink } from '@components/navigation';
@@ -72,6 +73,17 @@ export function DashboardLayout(): JSX.Element {
           }
         />
         {!isOnline ? <OfflineNotice /> : null}
+
+        {/*
+          Above the content, not instead of it. An expired tenant must still
+          SEE their academies and courses — replacing the dashboard with a
+          paywall would say "your data is gone", which is false. This
+          explains why the writes are refused; the backend is what actually
+          refuses them.
+        */}
+        <div className="px-4 pt-4 sm:px-6 lg:px-8 empty:hidden">
+          <SubscriptionRequiredBanner />
+        </div>
 
         <main
           id={MAIN_CONTENT_ID}

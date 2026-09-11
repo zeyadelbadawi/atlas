@@ -198,5 +198,17 @@
       "verified": "Verified",
       "disabled": "Disabled"
     }
+  },
+  "planChange": {
+    "title": "What changes",
+    "currentPlan": "Current plan",
+    "newPlan": "New plan",
+    "currentStatus": "Current status",
+    "trialEnds": "Trial ends",
+    "currentBillingCycle": "Current billing cycle",
+    "effective": "Takes effect",
+    "effectiveOnConfirmation": "When your payment is confirmed",
+    "trialConversionNote": "Your trial ends and this plan starts once the payment is confirmed. You keep trial access until then.",
+    "replacementNote": "This replaces your current plan once the payment is confirmed. You keep your current plan until then."
   }
 }

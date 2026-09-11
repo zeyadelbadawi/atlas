@@ -10,3 +10,5 @@ export { useTrialPolicy } from './useTrialPolicy';
 export { useUpdateTrialPolicy } from './useUpdateTrialPolicy';
 export { useEffectiveEntitlements } from './useEffectiveEntitlements';
 export type { UseEffectiveEntitlementsResult } from './useEffectiveEntitlements';
+export { useSubscriptionAccess } from './useSubscriptionAccess';
+export type { SubscriptionAccess, SubscriptionBlockReason } from './useSubscriptionAccess';

@@ -184,5 +184,15 @@
       "temporary_pause": "Pausing for now",
       "other": "Something else"
     }
+  },
+  "subscriptionRequired": {
+    "title": "Your subscription has ended",
+    "trialTitle": "Your free trial has ended",
+    "description": "You need an active subscription to continue managing your academies.",
+    "trialDescription": "Choose a plan to continue managing your academies.",
+    "dataSafe": "Nothing has been deleted. Your academies, courses, students and content are all still here and will be exactly as you left them.",
+    "planLabel": "Plan",
+    "endedLabel": "Ended",
+    "choosePlan": "Choose a plan"
   }
 }

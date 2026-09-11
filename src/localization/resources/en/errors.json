@@ -73,5 +73,11 @@
   "auth": {
     "emailNotAcceptable": "Please use a permanent email address you can receive mail at. Temporary or disposable addresses aren't accepted.",
     "invalidVerificationToken": "This verification link is invalid or has already been used. Request a new one to continue."
+  },
+  "subscription": {
+    "required": "An active subscription is required to make this change."
+  },
+  "concurrency": {
+    "staleVersion": "This content was changed by someone else while you were editing."
   }
 }
