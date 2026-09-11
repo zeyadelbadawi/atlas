@@ -520,15 +520,54 @@ limit says" — are untouched. The reasoning is recorded inline in the test.
 
 ## 11. Production Verification
 
-**Not yet performed for this pass.** The work is committed and gated
-locally; deployment and real-browser verification are the remaining steps
-and are listed in §14 and §15 rather than claimed here.
+Deployed and verified against `https://atlass.dpdns.org` as a signed-in
+Client Owner, in **Arabic with RTL** throughout.
 
-The previous pass's production verification (full-viewport sites, Coming
-Soon, RTL previews, single footer) remains valid and is unaffected by these
-changes — the public runtime's behaviour is unchanged except that a **lapsed**
-tenant now resolves to the same Coming Soon page, which is the page that
-pass verified.
+### Academy Media
+`/dashboard/academy/:id/media` — sidebar entry **وسائط الأكاديمية** present
+and active; upload control shown (owner holds `academy.website.manage`);
+search, status filter (**نشط**), grid/list toggle; a real stored asset
+listed with a localized size (**٨٫٦ ميجابايت** — Arabic-Indic numerals and a
+translated unit, from `formatBytes`).
+
+### Academy announcements
+`/dashboard/academy/:id/announcements` — **the missing button exists**:
+**إعلان جديد**. The dialog opens with title, message and optional scheduling,
+all RTL. Closed without saving; nothing was written.
+
+### Concurrent editing — the full mechanism, against production
+Heartbeat confirmed firing from the page editor (`POST .../editing-session`
+→ 200, `participants: []` with only one session open). Then a deliberately
+stale save through the live API:
+
+```
+versionBefore     2          titleBefore  "Home"
+staleSaveStatus   409
+errorKind         "conflict"
+errorCode         "stale_resource_version"
+details           submittedVersion 1, currentVersion 2,
+                  lastEditedByName "ziad", lastEditedAt ...
+titleAfter        "Home"     versionAfter 2
+contentPreserved  true
+```
+
+The stale write was refused, the conflict named the **real** last editor,
+and **the page content was not clobbered** — which is the entire point of
+the mechanism, verified on the real system rather than only in a test.
+
+### What was NOT verified in production, and why
+**Expiration enforcement.** Verifying it against production would mean
+expiring a real customer's subscription, taking their live site to Coming
+Soon and their dashboard to a locked state. That is a destructive act on
+real data for the sake of a screenshot; the behaviour is covered by 13 e2e
+tests including the public-site path, data preservation and reactivation.
+The healthy tenant correctly shows **no** subscription-required banner,
+which is the observable half that can be checked without harm.
+
+**Plan upgrade end to end.** Completing it requires a real bank transfer and
+a platform-admin approval. The review screen's inputs are all read from the
+authoritative subscription and the backend's frozen price snapshot; the
+commercial effect is covered by the existing billing suites.
 
 ---
 
