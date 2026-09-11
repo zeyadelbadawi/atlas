@@ -68,6 +68,18 @@ export class HttpClient {
         timeout: request.timeoutMs ?? DEFAULT_TIMEOUT_MS,
         signal: request.signal,
         responseType: request.responseType,
+        // Real byte progress from the browser. Only attached when a caller
+        // actually wants it, so ordinary requests pay nothing.
+        onUploadProgress: request.onUploadProgress
+          ? (event) =>
+              request.onUploadProgress?.({
+                loaded: event.loaded,
+                // `undefined` rather than a guess when the browser cannot
+                // determine the size — the UI shows an indeterminate state
+                // instead of a percentage derived from nothing.
+                total: event.total,
+              })
+          : undefined,
       });
 
       return {

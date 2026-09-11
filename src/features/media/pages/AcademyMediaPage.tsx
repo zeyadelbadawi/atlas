@@ -47,11 +47,9 @@ import { toast } from '@/hooks/use-toast';
 import { useConfirmDialog } from '@app/providers';
 import { useFilePicker, usePermissions, useSearch } from '@hooks';
 import { formatBytes } from '@utils';
-import {
-  useMediaAssets,
-  useUploadMediaAsset,
-  useArchiveMediaAsset,
-} from '../hooks';
+import { useMediaAssets, useArchiveMediaAsset } from '../hooks';
+import { useMediaUpload } from '../hooks/useMediaUpload';
+import { MediaUploadProgress } from '../components/MediaUploadProgress';
 import { useUpdateMediaAsset } from '../hooks/useUpdateMediaAsset';
 import { MediaAssetDetailsDialog } from '../components/MediaAssetDetailsDialog';
 
@@ -103,10 +101,16 @@ export default function AcademyMediaPage(): JSX.Element {
     },
   });
 
-  const uploadAsset = useUploadMediaAsset();
   const archiveAsset = useArchiveMediaAsset();
   const updateAsset = useUpdateMediaAsset();
   const filePicker = useFilePicker({ accept: ACCEPTED_UPLOAD_TYPES });
+  const {
+    state: uploadState,
+    upload,
+    retry: retryUpload,
+    reset: dismissUpload,
+    isBusy: isUploading,
+  } = useMediaUpload(academyId ?? '');
 
   const assets = useMemo(
     () => assetsQuery.data?.items ?? [],
@@ -120,41 +124,22 @@ export default function AcademyMediaPage(): JSX.Element {
     return `${formatted.value} ${t(formatted.unitKey)}`;
   };
 
+  /*
+    Starts the upload as soon as a file is chosen, and the progress strip
+    below reports every stage of it. `upload` ignores a second call while
+    one is in flight, so an impatient second click cannot create a
+    duplicate.
+  */
   useEffect(() => {
     const file = filePicker.files?.[0];
-    if (!file || !academyId) return;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      uploadAsset.mutate(
-        {
-          academyId,
-          payload: {
-            fileName: file.name,
-            mimeType: file.type,
-            sizeBytes: file.size,
-            dataUrl: reader.result as string,
-          },
-        },
-        {
-          onSuccess: () => {
-            filePicker.clearFiles();
-            toast({ title: t('media:page.uploadSuccess') });
-          },
-          onError: () => {
-            filePicker.clearFiles();
-            toast({
-              title: t('media:page.uploadError'),
-              variant: 'destructive',
-            });
-          },
-        }
-      );
-    };
-    reader.readAsDataURL(file);
-    // Mirrors `MediaLibraryDialog`'s own upload effect, including this
-    // disable: re-running on every mutation identity change would re-upload
-    // the same file.
+    if (!file) return;
+    filePicker.clearFiles();
+    void upload(file).then((asset) => {
+      if (asset) void assetsQuery.refetch();
+    });
+    // Deliberately keyed on the picked file alone — see
+    // `MediaLibraryDialog`'s own upload effect for the same reasoning:
+    // re-running on any other identity change would re-upload the file.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filePicker.files]);
 
@@ -193,12 +178,18 @@ export default function AcademyMediaPage(): JSX.Element {
         descriptionKey="media:page.subtitle"
         actions={
           canManage ? (
-            <Button onClick={filePicker.openFilePicker} disabled={uploadAsset.isPending}>
+            <Button onClick={filePicker.openFilePicker} disabled={isUploading}>
               <Upload className="size-4" strokeWidth={2} aria-hidden />
               {t('media:page.uploadButton')}
             </Button>
           ) : undefined
         }
+      />
+
+      <MediaUploadProgress
+        state={uploadState}
+        onRetry={() => void retryUpload().then((a) => a && assetsQuery.refetch())}
+        onDismiss={dismissUpload}
       />
 
       <div className="flex flex-wrap items-center gap-3">

@@ -58,5 +58,17 @@
   "status": {
     "active": "نشط",
     "archived": "مؤرشف"
+  },
+  "upload": {
+    "stage": {
+      "reading": "جارٍ تجهيز ملفك",
+      "uploading": "جارٍ الرفع",
+      "processing": "جارٍ الإنهاء",
+      "succeeded": "تم رفع الملف بنجاح",
+      "failed": "فشل الرفع"
+    },
+    "percent": "{{percent}}٪",
+    "retry": "إعادة المحاولة",
+    "dismiss": "إغلاق"
   }
 }

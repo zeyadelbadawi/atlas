@@ -12,6 +12,8 @@ import type { HttpClient } from './http-client';
 import type { ApiRequest, QueryParams } from '@types';
 
 /** Options accepted by read operations. */
+import type { UploadProgress } from '@types';
+
 export interface ReadOptions {
   readonly params?: QueryParams;
   readonly headers?: Record<string, string>;
@@ -19,6 +21,8 @@ export interface ReadOptions {
   readonly timeoutMs?: number;
   /** See `ApiRequest['responseType']`. */
   readonly responseType?: 'json' | 'blob';
+  /** See `ApiRequest['onUploadProgress']`. */
+  readonly onUploadProgress?: (progress: UploadProgress) => void;
 }
 
 /** Options accepted by write operations. */

@@ -27,6 +27,12 @@ export type QueryParamValue =
 export type QueryParams = Record<string, QueryParamValue>;
 
 /** Describes one request handed to the API client by a service. */
+/** Bytes transferred so far, and the total when the browser knows it. */
+export interface UploadProgress {
+  readonly loaded: number;
+  readonly total?: number;
+}
+
 export interface ApiRequest<TBody = unknown> {
   readonly method: RequestMethod;
   /** Resource path relative to the configured API base URL. */
@@ -38,6 +44,15 @@ export interface ApiRequest<TBody = unknown> {
   readonly timeoutMs?: number;
   /** Allows a caller to cancel an in-flight request. */
   readonly signal?: AbortSignal;
+  /**
+   * Reports REAL bytes sent, for requests large enough that a user is
+   * waiting on them.
+   *
+   * `total` is absent when the browser cannot determine the body size, and
+   * callers must show an indeterminate state rather than inventing a
+   * percentage from a denominator they do not have.
+   */
+  readonly onUploadProgress?: (progress: UploadProgress) => void;
   /**
    * How the transport should parse the response body. Defaults to JSON.
    * `'blob'` is for binary downloads (e.g. an authenticated payment-proof

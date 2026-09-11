@@ -58,5 +58,17 @@
   "status": {
     "active": "Active",
     "archived": "Archived"
+  },
+  "upload": {
+    "stage": {
+      "reading": "Preparing your file",
+      "uploading": "Uploading",
+      "processing": "Finishing up",
+      "succeeded": "Upload completed successfully",
+      "failed": "Upload failed"
+    },
+    "percent": "{{percent}}%",
+    "retry": "Retry",
+    "dismiss": "Dismiss"
   }
 }

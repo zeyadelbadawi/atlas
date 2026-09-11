@@ -168,6 +168,19 @@ export default {
         exit: 'var(--ease-exit)',
       },
       keyframes: {
+        /*
+          A stripe that travels across the track, for the stage of an upload
+          that genuinely cannot be measured (the server validating and
+          storing the file). It says "working" without claiming a position,
+          which a bar creeping toward 99% would.
+
+          Written in logical terms so it travels the reading direction in
+          both LTR and RTL rather than always left-to-right.
+        */
+        'progress-indeterminate': {
+          from: { insetInlineStart: '-40%' },
+          to: { insetInlineStart: '100%' },
+        },
         'accordion-down': {
           from: { height: '0' },
           to: { height: 'var(--radix-accordion-content-height)' },
@@ -194,6 +207,8 @@ export default {
         'fade-in': 'fade-in var(--duration-normal) var(--ease-entrance)',
         'rise-in': 'rise-in var(--duration-slow) var(--ease-entrance)',
         shimmer: 'shimmer 1.6s infinite',
+        'progress-indeterminate':
+          'progress-indeterminate 1.4s var(--ease-standard) infinite',
       },
     },
   },
