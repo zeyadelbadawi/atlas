@@ -180,6 +180,35 @@ describe('AcademyComingSoon', () => {
     expect(root.className).not.toMatch(/h-\[\d+px\]/);
   });
 
+  /*
+   * FOUND IN A BROWSER AGAINST PRODUCTION, NOT BY THIS SUITE.
+   *
+   * A global `h1, h2, h3, h4, h5, h6 { color: hsl(var(--foreground)) }` rule
+   * beats inheritance, and `--foreground` is the Atlas DASHBOARD's token,
+   * which follows the operator's dark-mode preference via `<html
+   * class="dark">` — stamped app-wide, customer domains included. The
+   * Academy's own name therefore rendered in near-white on this page's
+   * white ground: invisible.
+   *
+   * This page renders outside `WebsiteChrome`, so `.website-theme-scope`
+   * is not protecting it and every piece of text has to state its own
+   * colour. Asserting that is what makes the next element added here fail
+   * loudly rather than quietly inherit the operator's theme.
+   */
+  it('states its own colour on every text element, inheriting none', () => {
+    renderComingSoon('en');
+    const root = screen.getByTestId('academy-coming-soon');
+
+    const textNodes = Array.from(
+      root.querySelectorAll<HTMLElement>('h1, p'),
+    );
+
+    expect(textNodes.length).toBeGreaterThan(2);
+    for (const node of textNodes) {
+      expect(node.className).toMatch(/text-\[hsl\(/);
+    }
+  });
+
   it('renders right-to-left in Arabic', () => {
     renderComingSoon('ar');
     const root = screen.getByTestId('academy-coming-soon');

@@ -97,8 +97,25 @@ export function AcademyComingSoon({
         )}
 
         <div className="space-y-3">
+          {/*
+            The colour is set HERE rather than inherited from the wrapper.
+            A global `h1, h2, h3, h4, h5, h6 { color: hsl(var(--foreground)) }`
+            rule beats inheritance, and `--foreground` is the ATLAS
+            DASHBOARD's token — which follows the operator's own dark-mode
+            preference and is stamped on `<html class="dark">` for the whole
+            app, public domains included. Caught in the browser against
+            production: the Academy's own name rendered in the dashboard's
+            near-white dark-mode foreground on this page's white ground,
+            leaving the single most important word on the page invisible.
+
+            This is the same hazard `.website-theme-scope` exists to
+            neutralise for the real site; this page deliberately renders
+            outside `WebsiteChrome`, so it has to defend itself. Every other
+            piece of text here already states its own colour — this one was
+            the gap.
+          */}
           <h1
-            className="font-display text-3xl font-semibold tracking-tight sm:text-4xl"
+            className="font-display text-3xl font-semibold tracking-tight text-[hsl(222_22%_12%)] sm:text-4xl"
             dir="auto"
           >
             {academy.academyName}
