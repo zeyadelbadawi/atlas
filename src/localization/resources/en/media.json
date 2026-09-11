@@ -54,5 +54,9 @@
     "altTextPlaceholder": "Describes the image for screen readers",
     "archive": "Archive",
     "save": "Save changes"
+  },
+  "status": {
+    "active": "Active",
+    "archived": "Archived"
   }
 }

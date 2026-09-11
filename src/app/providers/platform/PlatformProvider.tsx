@@ -29,20 +29,46 @@ export function AtlasPlatformProvider({
   children,
 }: PlatformProviderProps): JSX.Element {
   const [state, setState] = useState<PlatformState>(() => {
-    // Load persisted state on mount, but do NOT restore activeOrganizationId yet.
-    // It will be validated and restored after authentication is confirmed.
+    /*
+      THE ACTIVE ACADEMY WAS WRITTEN BUT NEVER READ BACK.
+
+      `setActiveAcademy` persists to its own key (`atlas:active-academy`),
+      separate from the user-preferences blob restored below — and nothing
+      ever loaded it again. So `activeAcademyId` was `undefined` after every
+      page load, and since the whole academy-scoped sidebar section is built
+      only `if (activeAcademyId)`, Courses, Members, Branding, Settings and
+      Website all silently disappeared on refresh and stayed gone until the
+      user happened to touch the academy switcher again.
+
+      Restoring it is a navigation convenience and grants nothing: every
+      academy route and every API call behind it is independently
+      authorised, and each nav item is still permission-gated. A stale id
+      for an academy the user has lost access to resolves to the same
+      refusal it would today.
+
+      `activeOrganizationId` deliberately stays excluded — it is validated
+      and restored only after authentication is confirmed, which is a
+      different and stricter contract.
+    */
+    const restoredAcademyId =
+      localStorage.getItem(STORAGE_KEYS.activeAcademy) ?? undefined;
+
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.userPreferences);
       if (stored) {
         const parsed = JSON.parse(stored) as Partial<PlatformState>;
         // Exclude activeOrganizationId from initial restoration.
         const { activeOrganizationId: _, ...safeState } = parsed;
-        return { ...INITIAL_STATE, ...safeState };
+        return {
+          ...INITIAL_STATE,
+          ...safeState,
+          activeAcademyId: restoredAcademyId,
+        };
       }
     } catch {
       // Corrupted storage; use defaults.
     }
-    return INITIAL_STATE;
+    return { ...INITIAL_STATE, activeAcademyId: restoredAcademyId };
   });
 
   /**

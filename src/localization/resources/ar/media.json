@@ -54,5 +54,9 @@
     "altTextPlaceholder": "يصف الصورة لقارئات الشاشة",
     "archive": "أرشفة",
     "save": "حفظ التغييرات"
+  },
+  "status": {
+    "active": "نشط",
+    "archived": "مؤرشف"
   }
 }
