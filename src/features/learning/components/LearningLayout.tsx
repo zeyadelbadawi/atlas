@@ -19,7 +19,7 @@ import {
   AcademyBrandMark,
   AtlasPlatformAttribution,
 } from '@components/branding';
-import { useAcademyIdentity } from '@features/public-website/hooks';
+import { useAcademyIdentity } from '@hooks';
 import { useBreakpoint, useDisclosure, useLanguage } from '@hooks';
 import { useLearningPaths } from '../context/LearningPaths.context';
 import { CurriculumNav } from './CurriculumNav';

@@ -38,10 +38,7 @@ import {
   WebsiteBrandBridge,
   usePublicWebsiteDocumentDirection,
 } from '@features/website';
-import {
-  LearningPathsProvider,
-  type LearningPaths,
-} from '@features/learning/context/LearningPaths.context';
+import { LearningPathsProvider, type LearningPaths } from '@features/learning';
 import { usePublicWebsiteData } from '../hooks/usePublicWebsiteData';
 import { PublicWebsiteStatus } from './PublicWebsiteStatus';
 import {

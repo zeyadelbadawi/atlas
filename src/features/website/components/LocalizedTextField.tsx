@@ -69,7 +69,6 @@ export function LocalizedTextField({
   // exactly what this field itself just reported.
   useEffect(() => {
     setLocal({ en: value?.en ?? '', ar: value?.ar ?? '' });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value?.en, value?.ar]);
   const Control = multiline ? Textarea : Input;
   const arComplete = local.ar.trim().length > 0;

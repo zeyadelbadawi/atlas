@@ -46,6 +46,7 @@ import { MAX_SECTION_ITEMS } from '../constants/website.constants';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
 import { useCourses } from '@features/course';
 import { getWebsiteTheme } from '../themes/website-theme.registry';
+import { EMPTY_LOCALIZED_TEXT } from '../utils/localized-text.utils';
 import { WebsiteThemeScope } from '../renderer/WebsiteThemeScope';
 import { SectionRenderer } from '../sections/SectionRenderer';
 import type { SectionFieldDescriptor } from '../sections/section-field.types';
@@ -337,7 +338,13 @@ function CtaFieldEditor({
             placeholder="https://example.com"
             value={urlValue}
             onChange={(event) =>
-              onChange({ label: value?.label ?? '', url: event.target.value })
+              onChange({
+                // `label` is `LocalizedText`, so the fallback must be one
+                // too — a bare `''` here produced legacy-shaped data that
+                // the bilingual label editor could not bind to.
+                label: value?.label ?? EMPTY_LOCALIZED_TEXT,
+                url: event.target.value,
+              })
             }
           />
           {urlError ? (

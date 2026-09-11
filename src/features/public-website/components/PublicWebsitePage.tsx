@@ -27,7 +27,7 @@ import {
   resolveLocalizedText,
 } from '@features/website';
 import { useDocumentSeo } from '../hooks/useDocumentSeo';
-import { usePublicCourse } from '../hooks/usePublicCourse';
+import { usePublicCourse } from '@hooks';
 import { resolvePathToPage } from '../utils/page-resolution.utils';
 import { useAuth, useSignOut } from '@hooks';
 import {

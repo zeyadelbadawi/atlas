@@ -7,7 +7,7 @@
  */
 import { useApiQuery } from '@/shared/hooks';
 import { publicWebsiteKeys } from '@services/query';
-import { publicWebsiteService } from '../services/PublicWebsiteService';
+import { publicWebsiteService } from '@services';
 import type { Course, CourseListQuery, PaginatedResult } from '@types';
 import type { ApiError } from '@api';
 

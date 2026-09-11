@@ -19,8 +19,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { useAcademyIdentity } from '@features/public-website/hooks';
-import { publicWebsiteService } from '@features/public-website/services/PublicWebsiteService';
+import { useAcademyIdentity } from '@hooks';
+import { publicWebsiteService } from '@services';
 import {
   useWebsiteContainerClass,
   useWebsiteHeadingClass,

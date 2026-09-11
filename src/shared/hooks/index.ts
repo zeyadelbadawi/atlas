@@ -43,3 +43,16 @@ export type { FilePickerOptions, UseFilePickerResult } from './useFilePicker';
 export { useSearch } from './useSearch';
 export type { UseSearchOptions, UseSearchResult } from './useSearch';
 export { useToast, toast } from '@/hooks/use-toast';
+
+/**
+ * Academy identity/branding and public statistics — shared, not
+ * feature-owned: the dashboard sidebar, the Student LMS shell and the
+ * website section renderers all read them. See `@services`' note on
+ * `PublicWebsiteService` for why they could not stay inside
+ * `@features/public-website`.
+ */
+export { useAcademyIdentity } from './useAcademyIdentity';
+export { usePublicWebsiteStatistics } from './usePublicWebsiteStatistics';
+export { usePublicCourses } from './usePublicCourses';
+export type { UsePublicCoursesOptions } from './usePublicCourses';
+export { usePublicCourse, usePublicCourseCurriculum } from './usePublicCourse';

@@ -54,18 +54,7 @@ import {
 import { ErrorState } from '@components/feedback';
 import { toast } from '@/hooks/use-toast';
 import { formatCoursePricing } from '@features/course';
-// Deep `@features/public-website/hooks` import matches the established
-// precedent already used by `FeaturedCoursesSection`/`InstructorsSection`/
-// `StatisticsSection`/`ContactSection` (all `@features/website`) for the
-// exact same reason: the public-safe course fetch (`usePublicCourse`/
-// `usePublicCourseCurriculum`) only exists in `@features/public-website`,
-// and this template renders on the real public runtime where the
-// tenant-scoped `useCourse` (`@features/course`) 403s for any real
-// visitor — see this file's own header comment.
-import {
-  usePublicCourse,
-  usePublicCourseCurriculum,
-} from '@features/public-website/hooks';
+import { usePublicCourse, usePublicCourseCurriculum } from '@hooks';
 import { DEV_OVERRIDE_PARAM } from '@features/public-website';
 import { useAuth } from '@hooks';
 import { useEnrollment, useEnroll } from '@features/learning';

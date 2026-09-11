@@ -2,9 +2,9 @@
  * usePublicWebsiteStatistics hook — Phase 6. `StatisticsSection`'s real,
  * live, Academy-scoped counts.
  */
-import { useApiQuery } from '@/shared/hooks';
+import { useApiQuery } from './useApiQuery';
 import { publicWebsiteKeys } from '@services/query';
-import { publicWebsiteService } from '../services/PublicWebsiteService';
+import { publicWebsiteService } from '@services';
 import type { PublicWebsiteStatistics } from '@types';
 import type { ApiError } from '@api';
 

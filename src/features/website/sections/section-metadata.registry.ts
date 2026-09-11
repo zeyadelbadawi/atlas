@@ -24,6 +24,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import type { SectionConfigMap, SectionType } from '@types';
+import { EMPTY_LOCALIZED_TEXT } from '../utils/localized-text.utils';
 import {
   DEFAULT_FEATURED_COURSES_COUNT,
   DEFAULT_INSTRUCTORS_COUNT,
@@ -101,10 +102,10 @@ export function getDefaultSectionConfig<TType extends SectionType>(
   type: TType
 ): SectionConfigMap[TType] {
   const defaults: SectionConfigMap = {
-    hero: { title: '' },
-    about: { title: '', body: '' },
+    hero: { title: EMPTY_LOCALIZED_TEXT },
+    about: { title: EMPTY_LOCALIZED_TEXT, body: EMPTY_LOCALIZED_TEXT },
     featuredCourses: {
-      title: '',
+      title: EMPTY_LOCALIZED_TEXT,
       mode: 'latest',
       layout: 'grid',
       count: DEFAULT_FEATURED_COURSES_COUNT,
@@ -115,7 +116,7 @@ export function getDefaultSectionConfig<TType extends SectionType>(
     features: { items: [] },
     testimonials: { items: [] },
     faq: { items: [] },
-    cta: { title: '', cta: { label: '' } },
+    cta: { title: EMPTY_LOCALIZED_TEXT, cta: { label: EMPTY_LOCALIZED_TEXT } },
     instructors: { count: DEFAULT_INSTRUCTORS_COUNT },
     gallery: { images: [] },
     contact: { showForm: true },

@@ -1,4 +1,5 @@
 import { parse as parseYaml } from 'yaml';
+import { APP_CONFIG } from '@/config/app.config';
 
 type FrontmatterValue = string | string[];
 
@@ -185,11 +186,22 @@ function getSiteDomainUrl() {
 }
 
 function getSiteName() {
-  return import.meta.env.VITE_APP_TITLE?.trim() || 'Atoms';
+  // `'Atoms'` was the project generator's name, not this product's, and it
+  // reached real published metadata.
+  return import.meta.env.VITE_APP_TITLE?.trim() || APP_CONFIG.name;
 }
 
+/**
+ * Undefined unless a handle is actually configured.
+ *
+ * The previous fallback was a hardcoded `'@atoms'` — the generator's own
+ * account, published in `twitter:site` on every page. Attributing Atlas's
+ * content to an unrelated third party's handle is worse than publishing no
+ * handle at all, and guessing at an Atlas handle that may not exist would
+ * be fabricating one. Callers already omit the tag when this is undefined.
+ */
 function getTwitterSiteHandle() {
-  return import.meta.env.VITE_TWITTER_SITE?.trim() || '@atoms';
+  return import.meta.env.VITE_TWITTER_SITE?.trim() || undefined;
 }
 
 function getTwitterCreatorHandle() {

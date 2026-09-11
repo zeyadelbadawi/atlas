@@ -15,7 +15,7 @@ import {
   AcademyBrandScope,
   AtlasPlatformAttribution,
 } from '@components/branding';
-import { useAcademyIdentity } from '@features/public-website/hooks';
+import { useAcademyIdentity } from '@hooks';
 import { getDashboardNavigation, filterNavigationItems } from '@app/navigation';
 import { useAuth, useLanguage, usePlatform } from '@hooks';
 import { cn } from '@utils';

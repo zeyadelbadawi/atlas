@@ -31,7 +31,7 @@ import { BookOpen } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@components/feedback';
 import { formatCoursePricing } from '@features/course';
-import { usePublicCourses } from '@features/public-website/hooks';
+import { usePublicCourses } from '@hooks';
 import {
   useWebsiteCardClass,
   useWebsiteContainerClass,

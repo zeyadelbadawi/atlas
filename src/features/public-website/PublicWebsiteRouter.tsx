@@ -25,6 +25,7 @@
 import { lazy } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { PublicWebsiteStatus } from './components/PublicWebsiteStatus';
+import { AcademyComingSoon } from './components/AcademyComingSoon';
 import { PublicWebsitePage } from './components/PublicWebsitePage';
 import { PublicWebsiteRobotsRoute } from './components/PublicWebsiteRobotsRoute';
 import { PublicWebsiteSitemapRoute } from './components/PublicWebsiteSitemapRoute';
@@ -78,6 +79,15 @@ function PublicWebsiteShell({
   readonly locale: PublicWebsiteLocale;
 }): JSX.Element {
   const data = usePublicWebsiteData(lookupKey);
+
+  // An Academy that exists but has not published its website is a normal
+  // product state, not a failure — it gets a branded Coming Soon page
+  // rather than the outage screen. Every other non-ready state still goes
+  // through `PublicWebsiteStatus`, so a genuine platform failure is still
+  // reported as one.
+  if (data.status === 'unpublished') {
+    return <AcademyComingSoon academy={data.academy} locale={locale} />;
+  }
 
   if (data.status !== 'ready') {
     return <PublicWebsiteStatus state={data} />;

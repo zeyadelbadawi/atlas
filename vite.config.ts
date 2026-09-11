@@ -18,11 +18,19 @@ function escapeHtmlAttr(str: string): string {
     .replace(/'/g, '&#39;');
 }
 
-process.env.VITE_APP_TITLE ??= process.env.OVERVIEW_TITLE ?? 'shadcnui';
-process.env.VITE_APP_DESCRIPTION ??= process.env.OVERVIEW_DESCRIPTION ?? 'Atoms Generated Project';
+// `'shadcnui'`/`'Atoms Generated Project'` were the generator's own
+// placeholders and reached published metadata. `APP_CONFIG.name` is the
+// single source of truth for the product name at runtime; these are its
+// build-time counterparts.
+process.env.VITE_APP_TITLE ??= process.env.OVERVIEW_TITLE ?? 'Atlas';
+process.env.VITE_APP_DESCRIPTION ??=
+  process.env.OVERVIEW_DESCRIPTION ??
+  'The operating system for education businesses.';
 process.env.VITE_APP_TITLE = escapeHtmlAttr(process.env.VITE_APP_TITLE);
 process.env.VITE_APP_DESCRIPTION = escapeHtmlAttr(process.env.VITE_APP_DESCRIPTION);
-process.env.VITE_APP_LOGO_URL ??= process.env.OVERVIEW_LOGO_URL ?? 'https://public-frontend-cos.metadl.com/mgx/img/favicon_atoms.ico';
+// Was hotlinked to the generator vendor's CDN; `public/favicon.svg` is
+// the asset this repository actually ships.
+process.env.VITE_APP_LOGO_URL ??= process.env.OVERVIEW_LOGO_URL ?? '/favicon.svg';
 
 function ensureBuildOutDir() {
   let outDir = path.resolve(__dirname, 'dist');
@@ -44,11 +52,38 @@ export default defineConfig(({ command }) => {
 
   return {
     plugins: [
-      viteSourceLocator({
-        prefix: 'mgx', // Prefix used to identify source locations; do not change.
-      }),
+      /*
+       * SCAFFOLD TOOLING — DEVELOPMENT ONLY.
+       *
+       * Both of these came from the project generator Atlas was scaffolded
+       * with and are authoring aids for that generator's own editor. Until
+       * now they ran for `vite build` too, and both left real traces in the
+       * shipped bundle:
+       *
+       *   - `viteSourceLocator` stamps every element with `data-mgx-*`
+       *     attributes naming the SOURCE FILE AND LINE it came from, so the
+       *     production DOM published on customers' domains disclosed the
+       *     internal layout of the codebase to anyone opening devtools.
+       *   - `atoms()` injects a route-scanning module that logs
+       *     `[routes-scanner] ...` and `postMessage`s the application's
+       *     route table to `window.parent` — behaviour that makes sense
+       *     inside the generator's preview iframe and none at all on a
+       *     public website.
+       *
+       * Restricting them to `serve` keeps the authoring experience exactly
+       * as it was in development while removing both from every build. They
+       * are deliberately left as dependencies rather than uninstalled: the
+       * dev server still uses them.
+       */
+      ...(command === 'serve'
+        ? [
+            viteSourceLocator({
+              prefix: 'mgx', // Prefix used to identify source locations; do not change.
+            }),
+          ]
+        : []),
       react(),
-      atoms(),
+      ...(command === 'serve' ? [atoms()] : []),
       ensureBuildOutDir(),
       Sitemap({
         // Phase 7 — was a leftover scaffold placeholder nobody owns

@@ -5,9 +5,9 @@
  * No new storage, no new theme system — see `AcademyIdentityResponse`'s
  * (backend) own doc comment.
  */
-import { useApiQuery } from '@/shared/hooks';
+import { useApiQuery } from './useApiQuery';
 import { publicWebsiteKeys } from '@services/query';
-import { publicWebsiteService } from '../services/PublicWebsiteService';
+import { publicWebsiteService } from '@services';
 import type { AcademyIdentity } from '@types';
 import type { ApiError } from '@api';
 

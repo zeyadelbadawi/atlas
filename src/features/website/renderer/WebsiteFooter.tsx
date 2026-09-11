@@ -4,6 +4,7 @@
  * Three structural variants (`columns`/`simple`/`stacked`), same
  * token-driven-variant pattern as `WebsiteHeader`.
  */
+import { AtlasPlatformAttribution } from '@components/branding';
 import { useWebsiteDesignSystem } from './WebsiteDesignSystemContext';
 import { useWebsiteContainerClass } from './renderer-style.utils';
 import {
@@ -25,8 +26,38 @@ export interface WebsiteFooterProps {
   readonly footer: WebsiteFooterConfig;
   readonly pages: readonly WebsitePage[];
   readonly onNavigate: (pageId: string) => void;
-  /** See `website-link-renderer.types.ts` — absent in every dashboard preview context, supplied only by the public runtime. */
+  
+/** See `website-link-renderer.types.ts` — absent in every dashboard preview context, supplied only by the public runtime. */
   readonly linkRenderer?: WebsiteLinkRenderer;
+}
+
+/**
+ * The Atlas attribution row — the LAST row of the Academy's own footer.
+ *
+ * Phase 11 post-production fix. This used to be a separate bordered strip
+ * rendered after `<WebsiteFooter/>`, which visitors read as a second
+ * footer stacked under the Academy's. It is now the closing row of the
+ * same `<footer>` element, separated only by a hairline, so it reads as
+ * part of the Academy's footer while staying visually subordinate.
+ *
+ * STILL PLATFORM-OWNED. It is rendered from component code and takes no
+ * props from `configuration.footer`, so no CMS field, toggle or prop can
+ * hide it — the Phase 6 requirement is unchanged. Only its position in
+ * the markup moved.
+ *
+ * It degrades correctly when the Academy has configured no footer content
+ * at all: it is then simply the footer's only row.
+ */
+function FooterAttributionRow({
+  container,
+}: {
+  readonly container: string;
+}): JSX.Element {
+  return (
+    <div className={`${container} mt-6 border-t border-border pt-4`}>
+      <AtlasPlatformAttribution />
+    </div>
+  );
 }
 
 function FooterLinkButton({
@@ -108,6 +139,7 @@ export function WebsiteFooter({
             ))}
           </div>
         </div>
+        <FooterAttributionRow container={container} />
       </footer>
     );
   }
@@ -136,6 +168,7 @@ export function WebsiteFooter({
           </div>
           <p className="text-xs text-muted-foreground">{copyright}</p>
         </div>
+        <FooterAttributionRow container={container} />
       </footer>
     );
   }
@@ -196,6 +229,7 @@ export function WebsiteFooter({
           </div>
         ) : null}
       </div>
+      <FooterAttributionRow container={container} />
     </footer>
   );
 }

@@ -12,7 +12,7 @@
 import { Users } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@components/feedback';
-import { usePublicCourses } from '@features/public-website/hooks';
+import { usePublicCourses } from '@hooks';
 import {
   useWebsiteCardClass,
   useWebsiteContainerClass,

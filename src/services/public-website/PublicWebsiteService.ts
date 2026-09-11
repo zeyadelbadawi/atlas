@@ -16,9 +16,12 @@
  * requests with no access token (the same client sign-in itself uses),
  * so no second HTTP client was introduced.
  */
-import { BaseService, isApiError } from '@services';
-import { toCollectionParams } from '@api';
-import type { ReadOptions } from '@services';
+import { BaseService } from '../base.service';
+// Imported from `@api` directly rather than from this package's own `@services`
+// barrel — the barrel re-exports this very file, so routing through it would
+// close a cycle.
+import { isApiError, toCollectionParams } from '@api';
+import type { ReadOptions } from '@api';
 import type {
   AcademyIdentity,
   ContactMessagePayload,

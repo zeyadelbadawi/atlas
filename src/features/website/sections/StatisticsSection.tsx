@@ -18,7 +18,7 @@
 // barrel) — that barrel re-exports components which import `@features/
 // website`, and this file lives inside `@features/website` itself; going
 // through the full barrel would create a circular module import.
-import { usePublicWebsiteStatistics } from '@features/public-website/hooks';
+import { usePublicWebsiteStatistics } from '@hooks';
 import {
   useWebsiteContainerClass,
   useWebsiteHeadingClass,

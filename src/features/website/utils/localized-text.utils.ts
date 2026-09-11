@@ -19,6 +19,17 @@
 import type { LocalizedText } from '@types';
 import type { PublicWebsiteLocale } from '../constants/locale.constants';
 
+/**
+ * The empty `LocalizedText`, for defaults and cleared fields.
+ *
+ * Exists because `{ en: '', ar: '' }` was being retyped in five places
+ * while several DEFAULTS used a bare `''` instead — which type-checked
+ * nowhere and quietly produced legacy-shaped data for every newly added
+ * section, so a brand-new section's title did not bind to the bilingual
+ * editor until it had round-tripped through the schema's coercion.
+ */
+export const EMPTY_LOCALIZED_TEXT: LocalizedText = { en: '', ar: '' };
+
 export function resolveLocalizedText(
   value: LocalizedText | string | undefined,
   locale: PublicWebsiteLocale

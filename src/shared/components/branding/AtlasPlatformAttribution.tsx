@@ -40,6 +40,7 @@ export function AtlasPlatformAttribution({
 
   return (
     <p
+      data-testid="atlas-platform-attribution"
       className={cn(
         'flex items-center justify-center gap-1.5 text-xs text-muted-foreground',
         className

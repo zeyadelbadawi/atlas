@@ -14,8 +14,8 @@
  * in between (CMS sections, the Course Details template, or an auth
  * form) is the one axis that's allowed to differ.
  */
+import { cn } from '@utils';
 import { getWebsiteTheme } from '../themes/website-theme.registry';
-import { AtlasPlatformAttribution } from '@components/branding';
 import { WebsiteThemeScope } from './WebsiteThemeScope';
 import { WebsiteHeader, type WebsiteHeaderAuthState } from './WebsiteHeader';
 import { WebsiteFooter } from './WebsiteFooter';
@@ -83,23 +83,31 @@ export function WebsiteChrome({
   const showBottomNav = !!linkRenderer && isBottomNavRouteVisible;
 
   return (
-    <PublicWebsiteLocaleProvider locale={locale}>
-      <WebsiteThemeScope theme={theme} brand={brand} className={className}>
+    <PublicWebsiteLocaleProvider locale={locale} className="min-h-[100dvh]">
+      <WebsiteThemeScope
+        theme={theme}
+        brand={brand}
+        className={cn('min-h-[100dvh]', className)}
+      >
         {/*
-        `dir` scoped to this subtree (not just `document.documentElement`,
-        which the real public runtime also sets — see
-        `usePublicWebsiteDocumentDirection`) so an Arabic Academy previewed
-        INSIDE the Atlas dashboard (itself always LTR) still renders
-        genuinely right-to-left exactly as a real visitor would see it,
-        without flipping the surrounding dashboard chrome.
+        `dir` is no longer set here — `PublicWebsiteLocaleProvider` owns it,
+        so every surface that renders public-website content gets correct
+        direction by construction rather than each shell remembering to.
+        See that provider's own doc comment.
+
+        THE FULL-VIEWPORT RULE. This was `min-h-full` (`min-height: 100%`),
+        which only resolves against an ancestor with a definite height — and
+        none of `#root`/`body`/`html` has one. So on an Academy with little
+        or no content the page collapsed to content height and the Atlas
+        dashboard's own dark body showed through underneath it, which is
+        exactly what a visitor must never see. `100dvh` is measured against
+        the viewport itself, needs no ancestor height, and follows mobile
+        browser chrome as it appears and disappears.
+
+        MIN-height, never a fixed height: the column below grows normally
+        once the Academy has real content, so a long page simply scrolls.
       */}
-        <div
-          dir={PUBLIC_WEBSITE_LOCALE_DIRECTION[locale]}
-          // `--website-background`, not Atlas's `bg-background`: a
-          // customer's site must not inherit the dashboard's brand-tinted
-          // neutrals or its dark-mode preference. See `WebsiteThemeScope`.
-          className="min-h-full bg-[var(--website-background)] text-[var(--website-foreground)]"
-        >
+        <div className="flex min-h-[100dvh] flex-col bg-[var(--website-background)] text-[var(--website-foreground)]">
           <WebsiteHeader
             logo={academyLogo}
             academyName={academyName}
@@ -114,11 +122,35 @@ export function WebsiteChrome({
             authState={authState}
           />
 
-          {/* Bottom padding matches `MobileBottomNav`'s own height + safe-area inset whenever it's showing, so the bar never covers the page's own last CTA/content — see that component's own doc comment for why this and its render condition must never disagree. */}
-          <main className={showBottomNav ? 'pb-16 md:pb-0' : undefined}>
+          {/* `flex-1` is what makes the empty-Academy case work: with little
+              or no content the main region absorbs the remaining viewport
+              height, so the footer rests at the bottom and the space above
+              it belongs to the ACADEMY's background rather than revealing
+              whatever is painted behind the app.
+
+              Bottom padding matches `MobileBottomNav`'s own height +
+              safe-area inset whenever it's showing, so the bar never covers
+              the page's own last CTA/content — see that component's own doc
+              comment for why this and its render condition must never
+              disagree. */}
+          <main className={cn('flex-1', showBottomNav && 'pb-16 md:pb-0')}>
             {children}
           </main>
 
+          {/*
+          ONE footer region, not two. The mandatory Atlas attribution used
+          to be a SEPARATE bordered strip rendered here, directly beneath
+          `WebsiteFooter`, which read to visitors as two stacked footers —
+          the Academy's, then the platform's.
+
+          It now renders INSIDE `WebsiteFooter`'s own `<footer>` element as
+          its bottom row. The Phase 6 requirement that it be
+          platform-owned and un-hideable is unchanged and unchanged-able:
+          it is still emitted from component code, never from
+          `configuration.footer`, so no CMS field, prop or toggle can
+          remove it. What moved is where the markup sits, not who controls
+          it.
+        */}
           <WebsiteFooter
             academyName={academyName}
             footer={configuration.footer}
@@ -126,19 +158,6 @@ export function WebsiteChrome({
             onNavigate={onNavigate}
             linkRenderer={linkRenderer}
           />
-
-          {/*
-          Phase 6 — mandatory, platform-owned attribution. Placed here,
-          below the Academy's OWN footer (never inside `WebsiteFooter`,
-          which renders `configuration.footer` — Academy-authored CMS
-          content) so it can never be an editable field. `WebsiteChrome`
-          is the ONE shell both the real public website and the Academy's
-          Sign In/Sign Up pages render through, so this one placement
-          covers both surfaces without duplication.
-        */}
-          <div className="border-t border-border bg-background px-4 py-3">
-            <AtlasPlatformAttribution />
-          </div>
 
           <MobileBottomNav
             pages={pages}
