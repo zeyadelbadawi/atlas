@@ -79,5 +79,11 @@
   },
   "concurrency": {
     "staleVersion": "This content was changed by someone else while you were editing."
+  },
+  "media": {
+    "unsupportedFileType": "That file type isn't supported. Upload a JPG, PNG, GIF, WebP or PDF.",
+    "invalidDataUrl": "That file couldn't be read. Try choosing it again.",
+    "fileTooLarge": "That file is too large to upload.",
+    "insufficientRole": "You don't have permission to upload files to this academy."
   }
 }

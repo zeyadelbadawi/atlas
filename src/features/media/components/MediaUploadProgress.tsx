@@ -25,6 +25,48 @@ import { toErrorsNamespaceKey } from '@utils';
 import type { LanguageCode } from '@types';
 import type { MediaUploadState } from '../hooks/useMediaUpload';
 
+/**
+ * The generic one-line fallback.
+ *
+ * `.description`, not `errors:generic`. The errors bundle uses two shapes:
+ * the top-level kinds (`generic`, `validation`, …) are `{title,
+ * description}` objects for `ErrorState`'s two-line card, while specific
+ * reasons (`concurrency.staleVersion`, `media.unsupportedFileType`) are
+ * plain strings. Asking i18next for the object returns the literal
+ * diagnostic "key 'generic (en)' returned an object instead of string",
+ * which is what this single-line strip would otherwise have shown a
+ * customer.
+ */
+const GENERIC_FAILURE_KEY = 'errors:generic.description';
+
+/**
+ * What to show when an upload fails.
+ *
+ * WHY THIS IS NOT JUST `t(key)`. The backend names the reason precisely —
+ * `errors.media.unsupportedFileType` for a file whose bytes are not what
+ * its extension claims — but the errors bundle had no `media` section at
+ * all, so the lookup missed and the strip rendered a file name, a size,
+ * and a Retry button with NOTHING saying what went wrong. Verified in
+ * production before the strings were added.
+ *
+ * The strings are there now, but the shape of the bug is the real problem:
+ * a missing key produced silence, so the next unmapped `messageKey` would
+ * fail exactly as invisibly. Asking i18next whether the key exists first
+ * means an unmapped reason degrades to the generic message — still not
+ * ideal, but the user is told the upload failed instead of being shown a
+ * blank line. Same technique `CheckoutPage` already uses for backend
+ * errors; see `specificDescriptionKey` there.
+ */
+function failureText(
+  i18n: { exists: (key: string) => boolean },
+  t: (key: string) => string,
+  messageKey: string | undefined
+): string {
+  if (!messageKey) return t(GENERIC_FAILURE_KEY);
+  const key = toErrorsNamespaceKey(messageKey);
+  return i18n.exists(key) ? t(key) : t(GENERIC_FAILURE_KEY);
+}
+
 export interface MediaUploadProgressProps {
   readonly state: MediaUploadState;
   readonly onRetry: () => void;
@@ -82,11 +124,7 @@ export function MediaUploadProgress({
           </p>
           <p className="text-xs text-muted-foreground">
             {failed
-              ? t(
-                  state.error?.messageKey
-                    ? toErrorsNamespaceKey(state.error.messageKey)
-                    : 'errors:generic',
-                )
+              ? failureText(i18n, t, state.error?.messageKey)
               : t(`media:upload.stage.${state.stage}`)}
             {size ? ` · ${size.value} ${t(size.unitKey)}` : ''}
           </p>

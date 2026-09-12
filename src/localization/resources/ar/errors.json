@@ -79,5 +79,11 @@
   },
   "concurrency": {
     "staleVersion": "تم تغيير هذا المحتوى بواسطة شخص آخر أثناء تحريرك."
+  },
+  "media": {
+    "unsupportedFileType": "نوع الملف هذا غير مدعوم. ارفع ملف JPG أو PNG أو GIF أو WebP أو PDF.",
+    "invalidDataUrl": "تعذّرت قراءة هذا الملف. حاول اختياره مرة أخرى.",
+    "fileTooLarge": "حجم هذا الملف أكبر من أن يُرفع.",
+    "insufficientRole": "ليس لديك إذن برفع الملفات إلى هذه الأكاديمية."
   }
 }
