@@ -262,3 +262,41 @@ repository. The "trust" slot is therefore filled with a **verifiable
 architecture statement** drawn from real shipped behaviour (database-level tenant
 isolation, per-academy subdomains, bilingual EN/AR) — not social proof that does
 not exist.
+
+---
+
+## 12. Homepage v2 — cinematic hero override (documented deliberately)
+
+A later, explicit product decision widened the hero only, past §4's/§10's default
+restraint. Recorded here, per this document's own convention, so a later session
+does not "restore" the restrained split hero by mistake.
+
+**What changed:** the homepage hero is now full-viewport (`100svh`) with a
+Magnific-generated, muted, autoplaying, looping ambient background video — one
+deliberate cinematic moment at the very top of the page. This is a genuine
+override of §10's "excessive gradients / neon glows" anti-pattern and §4's
+"teal in at most three places" restraint, scoped **to the hero band only**.
+
+**Why it's still Atlas and not a rebrand:** the video's palette is the existing
+brand teal (`--primary`) and cream, not an invented palette; the motif (loose
+fragments drifting into one coherent form) is a literal rendering of the
+product's own value proposition (scattered tools → one platform), not decoration
+for its own sake; and every section below the hero is untouched by this
+override — same hairline dividers, same one-tinted-closing-CTA rule, same
+`framer-motion` Standard-tier motion, same no-fabricated-content rule.
+
+**Non-negotiables preserved even inside the hero:**
+- `prefers-reduced-motion` renders a static poster frame, no autoplay.
+- The video is `muted`, `playsInline`, decorative (`aria-hidden`), and never the
+  only carrier of information — headline and CTAs are real DOM text, not baked
+  into the video.
+- Contrast: headline/body sit over a fixed dark scrim tuned to hold ≥4.5:1
+  regardless of which video frame is behind it, in both light and dark mode.
+- Readex Pro / Rubik, RTL correctness, and real-content-only sourcing are
+  unchanged — the hero copy still comes from `home.json`.
+
+**Companion asset:** one small supporting illustration (the same crystalline
+motif, settled/resolved) appears once more, near the "why Atlas exists"
+comparison — reinforcing the hero's visual language instead of introducing a
+second one. No further generated imagery appears elsewhere on the page; §4's
+restraint rule otherwise stands.

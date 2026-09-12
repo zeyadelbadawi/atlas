@@ -17,12 +17,14 @@ import {
   BarChart3,
   BookOpen,
   Building2,
+  Check,
   Globe2,
   GraduationCap,
   Network,
   Palette,
   ShieldCheck,
   Users,
+  X,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -40,12 +42,12 @@ import { useAuth } from '@hooks';
 import { usePublicPlans } from '../hooks/usePublicPlans';
 import { useStartPlanFlow } from '../hooks/useStartPlanFlow';
 import { formatPlanPrice } from '../utils/formatPlanPrice';
-import {
-  MarketingContainer,
-  MarketingSection,
-  SectionHeading,
-} from '../components/MarketingSection';
-import { PlatformStructureFigure } from '../components/PlatformStructureFigure';
+import { MarketingSection, SectionHeading } from '../components/MarketingSection';
+import { CinematicHero } from '../components/cinematic-hero';
+import structureCalm from '../components/cinematic-hero/assets/structure-calm.webp';
+
+const OLD_WAY_ITEM_KEYS = ['item1', 'item2', 'item3', 'item4'] as const;
+const NEW_WAY_ITEM_KEYS = ['item1', 'item2', 'item3', 'item4'] as const;
 
 interface Capability {
   readonly id: string;
@@ -101,92 +103,64 @@ export default function HomePage(): JSX.Element {
 
   return (
     <>
-      {/* ── Hero ─────────────────────────────────────────────────────────
-          Two columns on desktop: copy on the text edge, the structure figure
-          beside it. Single column on mobile with the figure below the CTAs, so
-          the value proposition and the primary action stay above the fold on a
-          375px screen. */}
-      <section className="relative overflow-hidden">
-        {/*
-          The one permitted gradient (MASTER.md §4): a single very low-contrast
-          surface wash to give the hero ground, with no colour and no blur.
-          Decorative, so hidden from assistive tech.
-        */}
-        <span
-          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[32rem] bg-gradient-to-b from-surface to-background"
-          aria-hidden
+      {/* ── Hero — full-viewport cinematic override, see MASTER.md §12 ──── */}
+      <CinematicHero />
+
+      {/* ── Why Atlas exists — the old way vs. the Atlas way ────────────── */}
+      <MarketingSection divided aria-labelledby="home-what-is-atlas">
+        <SectionHeading
+          id="home-what-is-atlas"
+          eyebrow={t('home:whatIsAtlas.eyebrow')}
+          title={t('home:whatIsAtlas.title')}
         />
 
-        <MarketingContainer className="py-16 lg:py-24">
-          <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={RISE_VARIANTS}
-              className="flex flex-col items-start gap-6 lg:col-span-7"
-            >
-              <span className="inline-flex items-center rounded-pill border border-border bg-card px-3 py-1 text-xs font-medium uppercase tracking-[0.14em] rtl:tracking-normal text-muted-foreground">
-                {t('home:hero.eyebrow')}
-              </span>
-
-              <h1 className="max-w-[22ch] text-balance font-display text-[2.5rem] font-semibold leading-[1.05] rtl:leading-[1.5] tracking-[-0.03em] rtl:tracking-normal text-foreground sm:text-5xl lg:text-6xl">
-                {t('home:hero.title')}
-              </h1>
-
-              <p className="max-w-[58ch] text-base leading-relaxed text-muted-foreground sm:text-lg">
-                {t('home:hero.description')}
-              </p>
-
-              <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-                <Button asChild size="lg" className="w-full sm:w-auto">
-                  <Link to={startHref}>
-                    {t('home:hero.primaryAction')}
-                    <ArrowRight
-                      className="size-4 rtl:-scale-x-100"
-                      strokeWidth={2}
-                      aria-hidden
-                    />
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  size="lg"
-                  className="w-full sm:w-auto"
+        <div className="relative mt-12 grid gap-10 sm:grid-cols-2 sm:gap-12 lg:gap-16">
+          <div className="flex flex-col gap-5">
+            <h3 className="font-display text-sm font-semibold uppercase tracking-[0.1em] text-muted-foreground rtl:tracking-normal">
+              {t('home:whatIsAtlas.oldWay.label')}
+            </h3>
+            <ul className="flex flex-col gap-4">
+              {OLD_WAY_ITEM_KEYS.map((key) => (
+                <li
+                  key={key}
+                  className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground sm:text-base"
                 >
-                  <Link to={PUBLIC_ROUTES.pricing}>
-                    {t('home:hero.secondaryAction')}
-                  </Link>
-                </Button>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={RISE_VARIANTS}
-              className="w-full lg:col-span-5"
-            >
-              <PlatformStructureFigure />
-            </motion.div>
+                  <X
+                    className="mt-0.5 size-4 shrink-0 text-muted-foreground/50"
+                    strokeWidth={2}
+                    aria-hidden
+                  />
+                  <span>{t(`home:whatIsAtlas.oldWay.${key}`)}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-        </MarketingContainer>
-      </section>
 
-      {/* ── Value proposition ───────────────────────────────────────────── */}
-      <MarketingSection divided aria-labelledby="home-what-is-atlas">
-        <div className="grid gap-8 lg:grid-cols-12 lg:gap-16">
-          <div className="lg:col-span-5">
-            <SectionHeading
-              id="home-what-is-atlas"
-              eyebrow={t('home:whatIsAtlas.eyebrow')}
-              title={t('home:whatIsAtlas.title')}
+          <div className="flex flex-col gap-5 border-t border-border pt-8 sm:border-s sm:border-t-0 sm:ps-10 sm:pt-0 lg:ps-16">
+            <img
+              src={structureCalm}
+              alt=""
+              className="pointer-events-none absolute -top-14 -end-4 hidden size-28 opacity-80 lg:block"
+              aria-hidden
             />
-          </div>
-          <div className="lg:col-span-7">
-            <p className="max-w-[62ch] text-base leading-relaxed text-muted-foreground sm:text-lg">
-              {t('home:whatIsAtlas.description')}
-            </p>
+            <h3 className="font-display text-sm font-semibold uppercase tracking-[0.1em] text-primary rtl:tracking-normal">
+              {t('home:whatIsAtlas.newWay.label')}
+            </h3>
+            <ul className="flex flex-col gap-4">
+              {NEW_WAY_ITEM_KEYS.map((key) => (
+                <li
+                  key={key}
+                  className="flex items-start gap-3 text-sm leading-relaxed text-foreground sm:text-base"
+                >
+                  <Check
+                    className="mt-0.5 size-4 shrink-0 text-primary"
+                    strokeWidth={2}
+                    aria-hidden
+                  />
+                  <span>{t(`home:whatIsAtlas.newWay.${key}`)}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </MarketingSection>

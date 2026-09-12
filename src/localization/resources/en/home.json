@@ -1,15 +1,29 @@
 {
   "hero": {
-    "eyebrow": "Software for education businesses",
-    "title": "Run your academies from one platform, not a pile of disconnected tools",
-    "description": "Atlas gives education businesses one place to manage academies, courses, students and instructors, publish a branded public website, and see how the business is actually doing — instead of stitching together a spreadsheet, a course tool and a website builder.",
+    "eyebrow": "For academies and training providers in Egypt and beyond",
+    "title": "Launch your online academy without building a platform from scratch",
+    "description": "Atlas brings courses, students, instructors, your branded website and the infrastructure behind them into one platform — so you launch in days, not months, and without a development project.",
     "primaryAction": "Get started free",
-    "secondaryAction": "See pricing"
+    "secondaryAction": "See pricing",
+    "scrollHint": "See how"
   },
   "whatIsAtlas": {
-    "title": "What Atlas is",
-    "description": "Atlas is a platform for running an education business: one or more academies, their courses, their students and instructors, and the public website that represents each one — all under a single organization you control. You keep your own branding on every academy's public site; Atlas runs the infrastructure underneath it.",
-    "eyebrow": "The short version"
+    "title": "Why Atlas exists",
+    "eyebrow": "The short version",
+    "oldWay": {
+      "label": "Without a platform",
+      "item1": "Find developers and manage several different vendors",
+      "item2": "Wait weeks or months before anything is actually live",
+      "item3": "Pay separately for development, hosting and security",
+      "item4": "Keep maintaining the technical side yourself, indefinitely"
+    },
+    "newWay": {
+      "label": "With Atlas",
+      "item1": "One platform for courses, students, instructors and your website",
+      "item2": "Live on your own Atlas subdomain the same day",
+      "item3": "Infrastructure, security and tenant isolation handled for you",
+      "item4": "You run the academy — Atlas runs underneath it"
+    }
   },
   "capabilitiesSection": {
     "title": "Everything an academy needs, already built",
