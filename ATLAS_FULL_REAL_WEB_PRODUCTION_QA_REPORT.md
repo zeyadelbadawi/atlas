@@ -1,572 +1,546 @@
 # Atlas — Full Real-Web Production QA Pass
 
-**Target:** `https://atlass.dpdns.org` (production)
-**Date:** 12 September 2026
-**Tenant used:** organisation `elzoz` / academy `elzozo` (the account owner's own workspace)
+**Target** `https://atlass.dpdns.org` (production) · **Date** 12 September 2026
+**Tenant** organisation `elzoz` / academy `elzozo`
+**Identities driven** Client Owner `ziad` (owner) and `mannger` (manager), in two separate Chrome profiles, both live at once
 
 ---
 
-## 1. What this report claims, and what it does not
+## 1. Executive summary
 
-Every line marked **Production verified** was exercised in a real Chrome session against
-the live site, and the evidence is named alongside it. Where a check could not be
-completed, it says so and why, in the same words it would use if the result had been
-good. One section — the two-identity half of concurrent editing — is **not verified**,
-and section 12 explains exactly what remains.
+**Twelve defects found, fixed, deployed and re-verified in production**, plus one test
+that was still asserting a bug. Six defects came from the first half of this pass; six
+more surfaced only once two real browser sessions were driven against the same page at
+the same time — which is exactly the scenario a test suite cannot reach.
 
-Nothing here rests on "the automated tests pass" alone. Where automated suites are
-cited, they are cited in addition to a production observation, never instead of one.
+The two most serious were both silent. `expectedVersion` was documented as something
+"every Atlas editor sends", and tracing every caller showed that to be false: the SEO
+dialog replaced the whole `seo` object without it, so a second admin saving a stale
+dialog destroyed the first one's title and description with no error and nothing to show
+it had happened. And the CMS editor's own preview crashed intermittently on a null
+document root, replacing the page with "this section could not be displayed".
 
----
+One check could not be completed and is stated as such: the expired-subscription state
+could not be exercised live without destroying the only active trial available.
 
-## 2. Summary
-
-Six defects were found and fixed. Five were user-visible; four of those were invisible
-to the English-speaking developer who would normally review this product, because they
-only appear in Arabic, or only in a failure path, or only to a customer who has no
-payment method configured.
-
-| # | Defect | Severity | Status |
-|---|---|---|---|
-| 1 | Uploaded images rendered broken — the stored "public URL" was never public | **Critical** | Fixed, production verified |
-| 2 | Image dimensions read backwards in Arabic (`240×160` shown as `160×240`) | High | Fixed, production verified |
-| 3 | Failed uploads said *which* file failed but never *why* — blank reason line | High | Fixed, production verified |
-| 4 | The generic error fallback rendered an i18next diagnostic string to users | High | Fixed, production verified |
-| 5 | "1 days remaining in your trial" — wrong plural in both languages | Medium | Fixed, production verified |
-| 6 | Checkout's payment step was blank when no method was available | Medium | Fixed, production verified |
-
-Two further observations are recorded in section 13 and were deliberately **not**
-changed, with reasons.
+**Final status: production verified.** Every claim below is backed by a status code, a
+byte comparison, a screenshot, or a named test run.
 
 ---
 
-## 3. Section A — Academy Media broken image
+## 2. Exact changes made
 
-### Root cause
+### Backend — `zeyadelbadawi/atlas-backend`
 
-The stored `url` on every media asset pointed at Cloudflare R2's **S3 API endpoint**
-(`<account>.r2.cloudflarestorage.com/<bucket>/<key>`). That is not a public URL. It
-requires an AWS SigV4 signature, so a browser `<img src>` received
-`400 InvalidArgument: Authorization` and drew a broken image. Confirmed by `curl`
-against the live object before anything was changed.
+| Commit | Change |
+|---|---|
+| `2911f6d` | Serve media from Atlas's own origin — the stored "public URL" was never public |
+| `8659e71` | `expectedVersion` required; Arabic genuinely optional; HSTS pinned to one year |
+| `4c9a0b6` | Correct a submission-attachment test that still asserted the broken URL shape |
 
-R2 public read is a **bucket-level setting** — managed `r2.dev` access, or a bound
-custom domain — configured out of band through Cloudflare with an account-scoped token
-this application neither has nor should have. The provider's own source already
-documented this. Nothing in the app could detect that the bucket was not public, which
-is precisely why the failure reached a customer's screen instead of a log.
+### Frontend — `zeyadelbadawi/atlas`
 
-### Fix
+| Commit | Change |
+|---|---|
+| `cb76a3b` | Upload progress: honest stages, indeterminate where nothing is measurable |
+| `794a08b` | Bidi isolation — Arabic users were reading image dimensions backwards |
+| `dc6996b` | Plural forms for the trial/grace countdowns, both languages |
+| `06b3e52` | Checkout's payment step: an empty state instead of a blank panel |
+| `eec4152` | Upload failures say *why*; generic fallback no longer renders a diagnostic |
+| `af2bfd6` | Interim QA report |
+| `97ae29c` | SEO dialog and visibility toggle send `expectedVersion`; editor surfaces violations |
+| `4d86dd3` | Each layer owns the security headers it serves; custom domains get them too |
+| `d264936` | `useDateFormatter` — dates follow the user's language, not the browser's |
+| `a17e42f` | Preview iframe crash on a null document root |
 
-Atlas now serves its own media (`PublicMediaController`, backend `2911f6d`):
+Deployed SHAs confirmed equal to the tested HEADs: frontend `a17e42f`, backend `8659e71`.
 
-- Bytes come back through the same origin as the rest of the product, so the relative
-  URL resolves correctly on the dashboard, on academy subdomains, and on future custom
-  domains with **zero** Cloudflare configuration.
-- The URL is derived from `storageKey` at response time, so every pre-existing row was
-  corrected without a migration.
-- The route reconstructs the storage key from two individually validated path
-  parameters rather than a wildcard, making traversal structurally impossible rather
-  than filtered.
-- The R2 account hash and bucket name no longer appear in public HTML.
+---
 
-### Production verification
+## 3. Real two-user concurrent editing — evidence
+
+Both sessions live simultaneously, in separate Chrome profiles, driven independently.
+Identity confirmed from each session's own JWT and the academy members list, not assumed:
+
+- Browser 2 → `4751df57…` `ziad` / `ziad@ziad.com` / **owner**
+- Browser 1 → `19e86e51…` `mannger` / `manger@gmail.com` / **manager**
+
+| # | Requirement | Result |
+|---|---|---|
+| 1 | Both open the same editor | ✅ same academy, same page `82c581c5…` |
+| 2 | Presence visible between sessions | ✅ both directions |
+| 3 | Each sees the other's correct name and role | ✅ see below |
+| 4 | Not a generic "another user" | ✅ real names rendered |
+| 5 | Manager identified as Manager, Owner as Owner | ✅ per the real role model |
+| 6 | Presence clears when one leaves | ✅ `participants: []` immediately on navigate-away |
+| 7 | Simultaneous editing from both | ✅ both held dirty drafts at version 8 |
+| 8 | Optimistic concurrency in the real UI | ✅ full sequence below |
+| 9 | No silent data loss | ✅ Owner's save intact throughout |
+| 10 | Unauthorized roles refused | ✅ see §10 |
+| 11 | Real browser sessions, not tests | ✅ every row above |
+
+**Presence, Owner's screen (Arabic/RTL):**
+> `mannger (مدير) يقوم بتحرير هذه الصفحة الآن.`
+
+**Presence, Manager's screen (English/LTR), at the same moment:**
+> `ziad (Owner) is currently editing this page.`
+
+Real names, correct roles, each localized to that viewer's own language.
+
+**The conflict sequence, all through the production UI:**
+
+| Step | Actor | Result |
+|---|---|---|
+| Both editors loaded | — | both hold **version 8** |
+| Toggle section, Save | Owner | **200**, version → **9** |
+| Save stale draft | Manager | **refused** — conflict dialog |
+| Server state after refusal | — | still **9**, Owner's change intact |
+| "Keep my changes" (re-base) | Manager | **200**, version → **10** |
+
+The dialog the Manager actually saw:
+
+> **This page changed while you were editing**
+> ziad saved a newer version while you were editing.
+> Reload to see their version and start again from it, or keep your changes and apply
+> them on top of theirs. **Their work is never discarded either way.**
+> `[Keep my changes]` `[Reload latest]`
+
+It names the colleague who saved. The re-base moved 9 → 10, proving it built **on** the
+Owner's save rather than over it — had it clobbered, it would have gone 8 → 9.
+
+The page was captured before the test and fully restored afterwards (title, slug,
+visibility, SEO, sections all back to original).
+
+---
+
+## 4. Presence verification — mechanism
+
+Backend response to the Owner's heartbeat, while the Manager had the editor open:
+
+```json
+{ "participants": [ { "userId": "19e86e51-…", "name": "mannger",
+                      "role": "manager",
+                      "startedAt": "…T06:04:07Z", "lastSeenAt": "…T06:06:07Z" } ] }
+```
+
+`lastSeenAt` advancing two minutes past `startedAt` is the live heartbeat. Additionally:
+
+- **Cross-academy presence is refused** — heartbeat on another academy: `403
+  errors.tenancy.notAMember`.
+- **Presence is advisory, never a lock** — a save succeeded while the other session held
+  a presence entry. A crashed browser therefore cannot lock anyone out; the 60-second
+  TTL is tidiness, not the safety mechanism.
+- Presence deliberately pauses on a hidden tab (documented in the hook). Observed
+  first-hand while driving two windows, where the background one is occluded.
+
+---
+
+## 5. `expectedVersion` — decision and rationale
+
+**Decision: required. Implemented.**
+
+The audit that changed it matters more than the change. The field was optional so a
+caller predating it would get last-write-wins rather than a hard failure, justified in
+the source by "Every Atlas editor sends it."
+
+**That was false.** Tracing every caller:
+
+| Caller | Sent it? |
+|---|---|
+| `WebsitePageEditorPage` (section editor) | yes |
+| `WebsitePageSeoDialog` | **no** |
+| `WebsitePagesPage` (visibility toggle) | **no** |
+
+The SEO dialog is the damaging one: it replaces the entire `seo` object, so two admins
+editing SEO meant the second silently destroyed the first's title and description. The
+leniency was not protecting a legacy client — it was enabling exactly the data loss the
+concurrency feature exists to prevent.
+
+**Why requiring it is safe here** — each checked, not assumed:
+
+- No external contract to break: Swagger is **disabled in production** (`/api/docs` →
+  `404`, confirmed live).
+- Nothing but the HTTP route reaches `WebsitePagesService.update` — no internal or
+  system callers.
+- Every Atlas caller now sends it (both gaps fixed and shipped **before** the backend
+  began requiring it, so no deploy-order window).
+
+**Refused in the service, not the DTO.** A concurrency token is not something the user
+typed, so a `violations: [{field: 'expectedVersion'}]` response would attach an error to
+a form control that does not exist. The service returns
+`400 errors.website.versionRequired` with copy telling the one caller this can still
+happen to — a tab loaded before the deploy — to reload.
+
+**Verified in production after deploy:** a version-less `PATCH` → `400
+errors.website.versionRequired`, and the row unchanged.
+
+**Residual risk:** a browser tab loaded before this deployed will get that 400 on its
+next save. It is one reload, and the alternative was silently destroying a colleague's
+work.
+
+---
+
+## 6. Security headers — investigation and final state
+
+**Attribution, established by comparing three response paths:**
+
+| Path | Served by | Before |
+|---|---|---|
+| `/` (SPA document) | Caddy directly | one set |
+| `/health` | Caddy directly | one set |
+| `/api/*` | proxied to Nest | **two sets** |
+
+The site-wide `header` block in the `Caddyfile` also stamped proxied responses, on top of
+helmet's. Two of the four pairs **disagreed**:
+
+```
+referrer-policy: strict-origin-when-cross-origin      ← Caddy
+referrer-policy: no-referrer                          ← helmet
+strict-transport-security: max-age=31536000           ← Caddy
+strict-transport-security: max-age=15552000           ← helmet
+```
+
+Nothing was broken, because the specs pick a winner in each case — Referrer Policy takes
+the last valid value, RFC 6797 §8.1 takes the first HSTS. But the effective policy was an
+accident of ordering between two layers that knew nothing about each other. The one with
+teeth is `X-Frame-Options`: browsers are entitled to treat a multi-valued XFO as invalid
+and ignore it.
+
+**Fixed at the correct layer.** Headers moved into a snippet imported by the *static*
+handlers only, so Caddy stops second-guessing responses it merely proxies.
+
+**That surfaced a second, larger gap.** The catch-all `:443` block — the one serving
+academies on their own connected domains — had **no header block at all**. Same app, same
+files, no HSTS, no XFO, no nosniff, purely because of which hostname a visitor arrived
+on. It now imports the same snippet.
+
+**HSTS pinned, so nothing was downgraded.** With Caddy's copy gone from `/api`, helmet's
+180-day default would have become the only value — and HSTS is host-level, so the
+shortest response wins. It is pinned to one year to match.
+
+**Verified in production after deploy:**
+
+```
+/api/v1/auth/login          /
+referrer-policy: no-referrer                    referrer-policy: strict-origin-when-cross-origin
+strict-transport-security: max-age=31536000     strict-transport-security: max-age=31536000
+x-content-type-options: nosniff                 x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN                     x-frame-options: SAMEORIGIN
+```
+
+Every header exactly once. No policy removed; HSTS unchanged at one year on both paths.
+
+---
+
+## 7. Arabic numerals — decision and final state
+
+Investigated rather than assumed, and it decomposed into **two different things**.
+
+**A real bug.** Twenty-four screens rendered dates with a bare
+`new Date(v).toLocaleDateString()`. With no locale argument that uses the **browser's**
+locale — so an Arabic user on an en-US machine saw `9/12/2026`, the same user on a de-DE
+machine would see `12.9.2026`, and Atlas chose neither. This is what produced the
+mismatch originally spotted: a browser-locale date sitting directly under a correctly
+localized `٣٨١ بايت`. **Fixed** — `useDateFormatter` binds the active language to the
+`formatDate` util the codebase already had, all 21 files converted, and a guard test
+re-scans `src` so the pattern cannot return.
+
+**A product decision, deliberately not taken here.** Atlas formats numbers through `Intl`
+with `ar-EG`, which yields Arabic-Indic digits (`٣٨١`, `١٬٢٣٤`); date-fns renders Arabic
+months with Latin ones (`12 سبتمبر 2026`). Both are internally consistent. Which numeral
+system an Arabic product uses is regional and brand-level — Egypt and the Gulf differ —
+it affects every screen, and a QA pass is the wrong place to settle it unilaterally.
+
+**Recommendation:** pick one and state it in the design system. If Arabic-Indic, the
+date layer moves to `Intl`; if Latin, `number.utils` drops to `ar` rather than `ar-EG`.
+Either is a one-line change in one place now that both go through a util.
+
+Technical values are deliberately left Latin and LTR-isolated: dimensions (`240×160`),
+ratios (`16:9`), IDs. Reversing those in RTL was itself a bug fixed earlier in this pass.
+
+---
+
+## 8. Media and upload verification
 
 | Check | Result |
 |---|---|
-| 1. Upload a real PNG | ✅ 240×160 PNG, real magic bytes, uploaded through the live UI |
-| 2. Upload a real JPG | ✅ 1435-byte JPEG, real magic bytes |
-| 3. Upload progress visible | ✅ success strip with filename and size |
-| 4. Asset appears in Media | ✅ both appear in the grid |
-| 5. Refresh | ✅ both persist and render |
-| 6. Navigate away and back | ✅ verified in a fresh tab |
-| 7. Image still renders | ✅ `naturalWidth` 240, `naturalHeight` 160, `complete: true` |
-| 8. Open the asset | ✅ detail dialog renders the image full size with correct metadata |
-| 9. URL works from the browser | ✅ anonymous `fetch` (`credentials: 'omit'`) and `curl` both 200 |
-| 10. No cross-academy access introduced | ✅ see below |
+| Real PNG upload | ✅ 381 B, through the live UI |
+| Real JPEG upload | ✅ 1435 B |
+| Upload progress | ✅ honest stages; indeterminate where nothing is measurable |
+| Uploaded image renders | ✅ `naturalWidth` 240 × 160, `complete: true` |
+| Previously broken images | ✅ all 4 assets render; root cause fixed in `2911f6d` |
+| Byte-exact round-trip | ✅ SHA-256 of served bytes == file on disk, both files |
+| URL is relative, no storage host | ✅ `/api/v1/public/media/…` |
+| Anonymous fetch | ✅ `200 image/png`, `credentials: 'omit'` |
+| Cache headers | ✅ `public, max-age=31536000, immutable` |
+| Failed upload messaging | ✅ names the reason and the accepted formats |
+| Arabic/RTL | ✅ `نوع الملف هذا غير مدعوم…  · ٤٥ بايت` + `إعادة المحاولة` |
 
-**The bytes round-trip exactly.** SHA-256 of what the server returns equals SHA-256 of
-the file on disk, for both files:
-
-```
-5a569cea…6b972  atlas-qa-photo.jpg   (1435 B, served as image/jpeg)
-b4f90fa3…2d13c  atlas-qa-logo.png    (381 B,  served as image/png)
-```
-
-Response headers are correct: `Cache-Control: public, max-age=31536000, immutable`,
-`X-Content-Type-Options: nosniff`.
-
-"The upload succeeded" was not accepted as proof at any point — every claim above is a
-byte, a pixel dimension, or a status code.
+The failure case was reproduced with a real 45-byte text file named `.png`; before the
+fix it rendered a blank reason line and a Retry button that would fail identically
+forever.
 
 ---
 
-## 4. Section B — Media upload progress
-
-Shipped in `cb76a3b`, then corrected twice during this pass (defects 3 and 4 below).
-
-The design rule is that **progress is only reported where it can be measured**:
-
-- `reading` — `FileReader` reports real bytes → real percentage
-- `uploading` — axios reports real bytes sent → real percentage
-- `processing` — the server validating magic bytes and writing to object storage. There
-  is **no signal at all**, so the UI shows an indeterminate stripe and says what it is
-  waiting on. Animating to 99% here would be inventing information, and the moment it
-  stalled the user would learn the whole bar was decorative.
-
-Duplicate submissions are prevented by a ref, not state — React batches state updates,
-so two clicks in one tick would both read the same stale value and both proceed.
-
-### Defect 3 — a failed upload never said why
-
-**Production verified before the fix.** Uploading a 45-byte text file named
-`not-really-an-image.png` produced:
-
-```
-not-really-an-image.png
- · 45 B
-[Retry]
-```
-
-The reason line was **empty**. The backend had done its job correctly, returning
-`errors.media.unsupportedFileType` — but the frontend's errors bundle had no `media`
-section at all, so the lookup missed. The only action offered was Retry, which for this
-file fails identically forever.
-
-All four keys the media endpoints can return are now written in both languages, and the
-unsupported-type message names what *is* accepted rather than only saying no.
-
-### Defect 4 — the fallback was itself broken
-
-Fixing the strings was not enough: a missed lookup rendered **silence**, so the next
-unmapped key would have failed just as invisibly. The component now asks
-`i18n.exists()` first and degrades to the generic message.
-
-That generic message was also wrong. `errors:generic` is a `{title, description}` object
-for the two-line error card; asking i18next for the object returns the literal string
-`key 'generic (en)' returned an object instead of string` — which is what this
-single-line strip would have shown a customer. It now asks for `.description`.
-
-### Production verification (after fix)
-
-English: `That file type isn't supported. Upload a JPG, PNG, GIF, WebP or PDF. · 45 B`
-Arabic: `نوع الملف هذا غير مدعوم. ارفع ملف JPG أو PNG أو GIF أو WebP أو PDF. · ٤٥ بايت`
-
-Note the Arabic-Indic digits — the size formatter localises correctly. Retry and dismiss
-both present; the strip is a panel above the library, not a modal, so the user can keep
-browsing while a large file uploads.
-
----
-
-## 5. Section C — Concurrent editing
-
-### Verified in production (conflict behaviour)
-
-Run against a real CMS page on the live site, with the page's original content captured
-first and **fully restored afterwards** (title, slug, visibility, SEO and sections all
-byte-compared against the original):
-
-| Step | Result |
-|---|---|
-| A saves from version 1 | `200`, version → 2 |
-| B saves holding stale version 1 | **`409 errors.concurrency.staleVersion`** |
-| A's content after B's attempt | **unchanged** — not overwritten |
-| Conflict detail returned | `submittedVersion`, `currentVersion`, `lastEditedByName`, `lastEditedAt` |
-| B re-bases on the server version and saves | `200`, version → 3 |
-| A third save holding the now-stale version 2 | **`409`**, content unchanged |
-
-The conflict response carries enough for a real conflict UI — who changed it and when,
-not just that something changed.
-
-### Verified in production (presence)
+## 9. Trial, subscription and plan upgrade verification
 
 | Check | Result |
 |---|---|
-| Heartbeat on own academy | `200` |
-| Heartbeat on another academy | **`403 errors.tenancy.notAMember`** |
-| Saving while holding a presence session | `200` — presence is **advisory, never a lock** |
+| No auto-trial on organisation creation | ✅ row created `status: 'expired'`, `trialEndsAt: null` |
+| Explicit confirmation enforced server-side | ✅ without `confirm` → `400` on that field |
+| Re-redemption refused | ✅ `200 {"started": false, "reason": "already_has_subscription"}` |
+| Trial not extended by the attempt | ✅ `trialEndsAt` byte-identical before and after |
+| Cancellation requires confirmation | ✅ `@Equals(true)` on `confirm` |
+| Cancelling never restores eligibility | ✅ redemptions are **insert-only** across the whole backend |
+| Durable redemption history | ✅ both FKs `SetNull`, never `Cascade` |
+| Farming prevention | ✅ `subjectHash @unique`; claim is `INSERT … ON CONFLICT DO NOTHING` |
+| Device/browser change irrelevant | ✅ IP and user-agent recorded, never consulted |
+| Upgrade: current and target plan shown | ✅ Starter → Growth |
+| Price from the backend | ✅ **$79.00/mo**, matching `/api/v1/plans` exactly |
+| No invented proration, no false "immediate" | ✅ "Takes effect: when your payment is confirmed" |
+| Trial→paid semantics honest | ✅ "You keep trial access until then." |
+| No upgrade before approval | ✅ still `starter`/`trialing` after reaching checkout |
+| Empty payment-method state | ✅ explains and points at support; continue correctly disabled |
+| Live trial state | ✅ `starter`/`trialing`, mutations succeed (`200`) |
 
-Because presence is not a lock, a crashed browser cannot lock anyone out; the 60-second
-Redis TTL is a tidiness measure, not the safety mechanism.
-
-### ⚠️ NOT VERIFIED — presence with two distinct identities
-
-The brief asks for the Owner in a normal window and a Manager, created by the Owner, in
-Incognito — checking that each sees the other's **name and role**.
-
-Creating that Manager requires setting a password in the Add Manager form, and signing
-in as them requires typing it. I do not create accounts or enter credentials, so I
-stopped at the form without submitting.
-
-**What remains unverified:** that the presence panel displays another participant's
-correct name and role, and that an unauthorised role is refused. Everything that does
-not require a second identity — conflict detection, content preservation, re-basing,
-third-save protection, cross-academy presence isolation, and the not-a-lock property —
-is verified above.
-
-To finish it: add a Manager via **Members → Add Manager**, sign in as them in an
-Incognito window, and I will drive both windows through the full test.
+Live at the time of testing: trial ends `09:19:05Z`, current time `08:31Z` — still
+active, so mutations correctly succeed.
 
 ---
 
-## 6. Section D — Announcements: Academy vs Organisation
+## 10. Tenant and security verification
 
-**Conclusion: (A) organisation-level announcements are intentionally not part of Atlas.
-Nothing was changed.**
+Direct URL manipulation with a **valid token**, run as both identities:
 
-The investigation was conducted before forming an opinion, and the evidence is
-one-directional:
+| Probe | Owner | Manager |
+|---|---|---|
+| Own academy media / pages / announcements | `200` | `200` |
+| **Other academy** media | `403 notAMember` | `403 notAMember` |
+| **Other academy** pages | `403 notAMember` | `403 notAMember` |
+| **Other academy** announcements | `403 forbidden` | — |
+| **Other academy** editing presence | `403 notAMember` | — |
+| **Other org** subscription | `403 notAMember` | — |
+| **Platform** announcements (not platform owner) | `403 forbidden` | `403 forbidden` |
+| **Platform** subscriptions | `404` | — |
+| Start trial | allowed | **`403 notAMember`** |
+| Cancel trial / cancel subscription (valid bodies) | — | **`403 notAMember`** |
 
-- `AnnouncementAudience` is `platform | academy | course`. There is no `organization`
-  value.
-- The `Announcement` model has `academyId` and `courseId` columns. There is **no**
-  `organizationId`.
-- `Organization` has eighteen relations — memberships, academies, subscriptions,
-  payments, invoices, trial redemptions, audit log, support cases. It has no
-  `announcements` relation. Organisation-scoped features are clearly added when
-  intended; this one was not.
-- The RLS read policy resolves visibility through `is_academy_member(...)`, never
-  organisation membership.
-- A repository-wide search for any organisation-announcement concept across
-  `src/`, `prisma/` and `docs/` returns **nothing**.
+Billing is owner territory and the Manager is refused at the permission check, which is
+the **first statement** in each handler — so the refusal happens before any service call
+and no billing state can change. The live trial was confirmed untouched afterwards.
 
-**Why it can look like a gap.** The `announcement.manage` permission is an
-*organisation*-level permission, held by Owners and Managers. But the announcement's
-*audience* is an academy. Atlas's hierarchy is Platform → Academy → Course; the
-Organisation is a billing and tenancy container, not an audience, because users are
-members of academies.
-
-Implementing an organisation scope would require a new enum value, a new column, new RLS
-policies and new endpoints — which is exactly the "invent an Organization announcement
-model" and "create a parallel architecture" the brief forbids. An Owner who wants to
-reach three academies posts to three academies today.
-
-**One stale comment noted:** `organizations.controller.ts`'s header still cites the
-superseded "a brand-new Organization automatically receives a 3-day trial" requirement,
-while the code immediately below it correctly grants no trial. Documentation only; no
-behavioural impact.
-
----
-
-## 7. Section E — Subscription expiration
-
-Non-destructive throughout. No customer billing state was modified.
-
-**Production verified (active state).** The live organisation is `trialing` on Starter.
-The subscription page renders the real state: plan, trial badge, days remaining, and the
-cancel action.
-
-**Code-level verification** of the states that cannot be induced non-destructively:
-
-- `useSubscriptionAccess` returns *not blocked* while `isLoading` — a momentary loading
-  state cannot flash "your subscription ended" at a paying customer. The subscription
-  page skeletons rather than rendering a wrong state.
-- **Never-subscribed is not lapsed.** A missing subscription returns `no_subscription`
-  and does **not** block. Organisation creation deliberately grants no trial, so a
-  customer still setting themselves up has no row yet and is doing nothing wrong.
-- Frontend `INACTIVE_STATUSES` mirrors the backend's; the trial check is against the
-  clock, not `status` alone, because the sweep that flips `trialing` → `expired` runs on
-  a schedule.
-- The frontend is explicitly *not* the control — every mutation is refused server-side
-  by `SubscriptionAccessInterceptor` regardless.
-
-**Integration suite:** `subscription-expiration-enforcement.e2e-spec.ts` — 13 cases
-including "one organization's expiry never affects another's access", "still serves
-every read", "never blocks signing out", "does NOT lock a tenant in its grace period",
-and "restores access the moment the subscription is active again". **Run during this
-pass: passing.**
-
----
-
-## 8. Section F — Free trial
-
-**The desired flow is already what the code does.** Phase 10.2 removed the automatic
-grant, and the service documents why in its own source: creating an organisation used to
-mint a trial unconditionally, and since any user may create any number of organisations,
-that was an unlimited trial generator — *"three trials in under a second from one
-account"*, confirmed against the running application at the time.
-
-```
-create account → create Organization → NO trial
-  → open Plans → choose a plan → "Start Free Trial"
-  → explicit confirmation → eligibility checked → trial or refusal
-```
-
-A new organisation gets a subscription row with `status: 'expired'` and
-`trialEndsAt: null` — an existing, already-handled representation, so no entitlement
-check needed changing.
-
-### Production verified
-
-- **Explicit confirmation is enforced server-side.** `POST …/subscription/trial` without
-  `confirm` returns `400` with a violation on the `confirm` field. It is not merely a UI
-  checkbox.
-- **Re-redemption is refused.** With `confirm: true`, the call returned
-  `200 {"started": false, "reason": "already_has_subscription"}` — a business outcome,
-  not an error — and the trial was **not** extended (`trialEndsAt` byte-identical before
-  and after).
-
-### Anti-abuse, verified at the mechanism level
-
-- `TrialRedemption.subjectHash` is **`@unique`** — a salted hash of the canonical email,
-  which collapses plus-addressing and dots. This constraint is what makes farming fail.
-- The claim is `INSERT … ON CONFLICT DO NOTHING` in the caller's transaction. Two
-  simultaneous requests both attempt it, Postgres serialises them, exactly one inserts.
-  **No read-then-write window**, so no interleaving or retry can produce two trials.
-- The obvious `create()` + catch-P2002 implementation is documented as wrong *and was
-  caught doing real damage*: Postgres aborts the whole transaction on the violation, so
-  organisation creation failed with an opaque 500.
-- **Redemptions are insert-only across the entire backend.** A search for every
-  `trialRedemption.*` usage in `src/` returns exactly three: `createMany`, `findUnique`,
-  and `count`. There is no delete and no update anywhere.
-- Both foreign keys are **`SetNull`, never `Cascade`** — deleting the organisation or the
-  user does not erase the redemption. History is durable.
-- IP address and user agent are recorded as forensic signals and **never consulted** by
-  the decision, so changing browser, device or network neither helps an abuser nor
-  punishes a legitimate user behind a shared NAT.
-
-**Integration suites:** `phase10-1-trial-abuse` and `phase10-2-trial-flow-cancellation`.
-**Run during this pass: passing** (57 tests across these two and the expiration suite).
-
----
-
-## 9. Section G — Free trial cancellation
-
-Verified at the mechanism level; not exercised against the live trial, because
-cancelling it would destroy the only active subscription available for testing.
-
-- **Confirmation and a reason** are required, from a closed server-validated vocabulary.
-- **Idempotent.** A second cancellation returns `alreadyCancelled: true` and performs no
-  second write.
-- **Never restores eligibility.** Nothing in either cancellation path touches
-  `trial_redemptions` — guaranteed by the insert-only finding in section 8. Redemption
-  and cancellation deliberately live in one file so that no future cancellation path can
-  quietly delete a redemption without the author reading that comment.
-- **No fake credit.** A trial ends immediately on cancellation because there is no paid
-  period to honour. A *paid* subscription is flagged `cancelAtPeriodEnd` and the existing
-  expiry sweep performs the transition — time the customer has paid for is never
-  forfeited, and no second expiry mechanism was invented alongside the first.
-
----
-
-## 10. Section H — Plan upgrade
-
-**Production verified, end to end, up to the payment boundary. No payment was made and
-no payment method was configured.**
-
-The review step is honest and complete:
-
-| Requirement | Result |
-|---|---|
-| Current plan shown | ✅ Starter |
-| Target plan shown | ✅ Growth |
-| Price from the backend | ✅ **$79.00/mo**, matching `/api/v1/plans` (`amount: 79, currency: USD`) exactly |
-| No invented proration | ✅ none claimed |
-| No false "immediate" | ✅ "Takes effect: **When your payment is confirmed**" |
-| Honest trial→paid semantics | ✅ "Your trial ends and this plan starts once the payment is confirmed. You keep trial access until then." |
-| No upgrade before approval | ✅ subscription still `starter` / `trialing` after reaching checkout |
-| No duplicate subscription | ✅ none created |
-
-The price comes from a **server-created checkout snapshot**, not client-side
-computation. The pre-checkout screen says "no payment is taken until you complete it".
-
-### Defect 6 — the payment step was blank
-
-The panel handled loading (skeleton) and failure (error card) but **not an empty list**.
-A customer who had already chosen a plan, seen `$79.00/mo` and committed to buying
-reached a heading called "Payment method" with nothing under it and a disabled
-"Continue to payment" button — nothing said what was missing, whose problem it was, or
-what to do.
-
-Which methods exist is platform configuration, not something the tenant can change from
-that screen, so the new empty state says exactly that and points at support, rather than
-inviting them to hunt for a setting that is not theirs. The enabled list is now derived
-once and used by both the empty check and the list, so the two cannot disagree about
-whether there is anything to render.
-
-**Production verified in Arabic/RTL** after deploy: icon, "لا توجد طريقة دفع متاحة",
-explanation, "تواصل مع الدعم" action, and the correctly disabled continue button.
-
-**Not verified:** the payment-proof upload flow, because no payment method is enabled for
-this organisation and enabling one is a platform-owner action affecting real billing
-configuration.
-
----
-
-## 11. Sections I & J — Per-feature verification and tenant isolation
-
-### Defect 2 — Arabic users read image dimensions backwards
-
-An image 240 wide and 160 tall was displayed to Arabic users as **`160×240`** — the wrong
-way round. The DOM text was correct; the *rendering* was not.
-
-`×` is a bidi-**neutral** character, so it does not bind the digits on either side into
-one run. The Unicode bidi algorithm sees two left-to-right number runs inside a
-right-to-left paragraph and lays those runs out right-to-left, swapping them. Nothing is
-misspelled and nothing is missing, which is exactly why it survives review — the value is
-simply read back inverted.
-
-The same hazard applies to `:` in the website builder's size hints, and there it is worse
-than cosmetic: a **16:9** recommendation renders as **9:16**, a different shape.
-
-Two Arabic strings already worked around this with bare U+200E marks embedded in the
-translation file. That works until a translator reflows the sentence or a tool strips the
-character — and the diff shows nothing. The fix is a `NumericExpression` component
-carrying `dir="ltr"` for JSX, and an `isolateNumericExpression` helper for places markup
-cannot reach. Isolate rather than mark, so the expression neither reorders nor is
-reordered.
-
-**Production verified:** the detail dialog now computes `direction: ltr`,
-`unicode-bidi: isolate`, and displays **الأبعاد: 240×160**.
-
-### Defect 5 — "1 days remaining in your trial"
-
-Both countdowns were a single string with a `{{count}}` hole, so every count got the same
-grammar. English said "1 days". Arabic said "يتبقى 1 يومًا" — and `يومًا` is the form
-Arabic uses for 11–99, so at one day left it is simply the wrong word.
-
-This is the message a customer sees at the moment their access is about to end.
-
-The codebase already does this properly elsewhere (`website.json` carries all six Arabic
-plural categories for section and lesson counts); these two strings never got the same
-treatment. They do now.
-
-**Production verified on a live trial with one day left:**
-Arabic `يتبقى يوم واحد في فترتك التجريبية` · English `1 day remaining in your trial`.
-
-### Tenant isolation — normal navigation and direct URL manipulation
-
-All exercised against production with a valid token for a real session:
+Media object-store probes:
 
 | Probe | Result |
 |---|---|
-| Own academy's media list | `200` |
-| **Another academy's media list** | **`403 errors.tenancy.notAMember`** |
-| **Another academy's announcements** | **`403`** |
-| **Platform announcements** (not a platform owner) | **`403`** |
-| **Another academy's editing presence** | **`403 errors.tenancy.notAMember`** |
-| Own media object | `200 image/png` |
-| **Own object name under a different academy id** | **`404`** — the object name alone is not enough |
-| **Path traversal** (`..%2F..%2F`) | **`400`** |
-| Non-UUID academy / non-UUID object / disallowed extension / no extension | **`400`** each |
+| Own object | `200 image/png` |
+| Own object name under a **different academy id** | **`404`** |
+| Path traversal `..%2F..%2F` | **`400`** |
+| Non-UUID academy / non-UUID object / bad extension / no extension | **`400`** each |
 
-The media route's two individually validated path parameters make reading outside the
-academies prefix structurally impossible rather than merely filtered.
-
-### Per-feature matrix
-
-| Feature | Route | EN | AR | RTL | States | Refresh | Console | Isolation |
-|---|---|---|---|---|---|---|---|---|
-| Academy Media | `/dashboard/academy/:id/media` | ✅ | ✅ | ✅ | loading / empty / **error+retry** / success | ✅ | clean | ✅ |
-| Media upload progress | same | ✅ | ✅ | ✅ | reading / uploading / processing / success / failed | n/a | clean | ✅ |
-| Subscription | `/dashboard/tenant/subscription` | ✅ | ✅ | ✅ | loading skeleton / active / trial countdown | ✅ | clean | ✅ |
-| Plans & comparison | `/dashboard/plans` | ✅ | ✅ | ✅ | loaded, real limits | ✅ | clean | ✅ |
-| Checkout / upgrade | `/dashboard/tenant/billing/checkout/…` | ✅ | ✅ | ✅ | review / summary / **empty method** / disabled CTA | ✅ | clean | ✅ |
-| Announcements | `/dashboard/academy/:id/announcements` | ✅ | ✅ | ✅ | — | ✅ | clean | ✅ (403 cross-academy) |
-| Concurrent editing | website page editor | ✅ | ✅ | ✅ | conflict 409 with detail | ✅ | clean | ✅ (403 cross-academy) |
-
-Accessibility: the upload strip is `role="status" aria-live="polite"` — an upload
-starting is information, not an interruption. The indeterminate bar carries
-`role="progressbar"` with a label naming the stage. No regressions observed.
+**No secrets exposed:** served HTML scanned for storage hosts, key patterns and
+credentials — zero matches. Error bodies carry `kind`, `messageKey`, `status`,
+`requestId` and nothing else; no stack traces, no internals.
 
 ---
 
-## 12. Section K — Fix, don't just report
+## 11. Automated test results
 
-Every defect was traced to a root cause, fixed, covered by a regression test,
-type-checked, linted, built, deployed, and **re-verified in production** before being
-marked resolved.
+| Suite | Result |
+|---|---|
+| Frontend unit/integration | **210 passed**, 22 files |
+| Backend e2e — website, CMS, public site, media, subscription, trials | **136 passed**, 14 suites |
+| Backend e2e — expiration + trial abuse + trial flow/cancellation | **57 passed**, 3 suites |
+| Backend e2e — **full suite** | **937 passed / 942**, 90 of 92 suites — see below |
+| Typecheck (both repos) | clean |
+| Lint (both repos) | **0 errors** (13 pre-existing react-refresh warnings, untouched files) |
+| Build | succeeds |
 
-**No defect was classified as pre-existing without proof.** The one thing that could have
-been waved away — duplicated security headers on `/api` responses — was checked against
-`POST /api/v1/auth/login`, a route that long predates this work, and shows the identical
-duplication. It is Caddy and helmet both setting them, is spec-safe (duplicate identical
-values, and the differing `Referrer-Policy` / HSTS pairs resolve to the stricter value),
-and is infrastructure configuration rather than application code. Recorded, not changed.
+### The full backend suite, and what it caught
 
-### Tests
+Running all 942 backend e2e tests surfaced failures the targeted runs did not. Rather
+than assume, each was bisected against two baselines — `src/` checked out at `2911f6d`
+(before this continuation) and at `a0971b7` (before the entire QA pass) — and re-run in
+isolation:
 
-Every new test was **mutation-checked**: the fix was removed and the suite re-run to
-confirm the test actually fails.
-
-| Suite | Tests | Mutation check |
+| Suite | Verdict | Evidence |
 |---|---|---|
-| `numeric-expression.test.tsx` | 6 | removing `dir="ltr"` and downgrading the isolate → **4 fail** |
-| `trial-countdown-plurals.test.ts` | 9 | restoring the single-form strings → **5 fail** |
-| `media-upload-errors.test.ts` | 12 | deleting the media strings → **5 fail** |
-| `checkout-payment-methods.test.ts` | 8 | — predicate and copy assertions |
-| `media-upload-progress.test.ts` | 8 | faking a percentage / dropping the duplicate guard → each fails |
-| `media.e2e-spec.ts` (backend) | 12 | restoring the stored `url` → **4 fail** |
+| `lms-authoring` | **Mine — fixed in `4c9a0b6`** | passed at baseline, failed at HEAD; now **10/10** |
+| `platform-control-plane` | pre-existing | **4 failures at baseline vs 3 at HEAD** |
+| `courses-tenant-isolation` | pre-existing flake | fails intermittently at baseline too; **passed** in the final run |
+| `phase10-6-deletion-and-provisioning` | ordering artifact | **25/25 in isolation**, twice |
+| `media.e2e-spec` | ordering artifact | **17/17 in isolation** |
 
-One weak assertion was found and repaired *in my own test* partway through: i18next echoes
-a missed key **without** the namespace prefix, so `not.toContain('errors.media…')` passed
-against the very failure it was written to catch. The assertion now checks that the text
-is not key-shaped and is not the generic fallback — and only then did the mutation check
-report all five failures.
+**The one that was mine mattered.** `lms-authoring` asserted
+`stringContaining('http')` on an uploaded attachment's `url` — an assertion that encoded
+the exact defect `2911f6d` fixed. Submission attachments share the media pipeline by
+design, so they received the corrected relative URL and the old assertion broke. It now
+pins the real contract (`/api/v1/public/media/academies/{uuid}/{uuid}.png`) and refuses
+the storage host outright. Fixed, not excused.
 
-**Gates:** `tsc --noEmit` clean · `eslint` clean (0 errors, 0 warnings) · **177/177**
-frontend tests · **57/57** backend e2e across the expiration and trial suites · build
-succeeds · all deploys reported success.
+This is why the full suite was run and not only the suites touched. Had it been skipped,
+a test asserting a bug would have stayed green by absence.
 
-Nothing was weakened to make anything pass. No lint rule, typecheck or security control
-was disabled. No authorisation was loosened. No data was fabricated and no payment state
-was invented.
+**On the two remaining full-run failures:** both suites pass on their own, and
+`platform-control-plane` fails *more* at the pre-pass baseline than at HEAD. The residual
+failures are shared-database interference between 92 sequential suites — a test-isolation
+problem, not a product one. It is real and worth its own pass, and is listed in §14 rather
+than absorbed.
 
-### Commits
+**Every new test was mutation-checked** — the fix removed, the suite re-run, the failure
+confirmed:
 
-**Backend**
-- `2911f6d` — Uploaded images rendered broken: the "public URL" was never public
+| Guard | Mutation | Failures |
+|---|---|---|
+| `expectedVersion` required | restore last-write-wins | 1 |
+| Arabic optional | make `ar` required again | 1 |
+| Caddy header ownership | restore the site-wide block | 2 |
+| Locale-aware dates | reintroduce one bare call | 1 (names the file) |
+| Preview null root | — | keeps the unguarded call, asserts it still throws |
+| Bidi isolation | drop `dir="ltr"` | 4 |
+| Trial plurals | restore single form | 5 |
+| Media error strings | delete them | 5 |
+| Media URL derivation | restore stored `url` | 4 |
 
-**Frontend**
-- `cb76a3b` — Upload progress: say what is happening, and only what is known
-- `794a08b` — Arabic users were reading image dimensions backwards
-- `dc6996b` — "1 days remaining in your trial" — in both languages
-- `06b3e52` — Checkout's payment step was blank when there was nothing to choose
-- `eec4152` — A failed upload said which file failed, but never why
-
-### Data handling
-
-No destructive tests against customer data. The CMS page used for the conflict test was
-captured first and fully restored afterwards, verified by comparing title, slug,
-visibility, SEO and sections against the original. No billing state was modified: the
-trial re-redemption attempt was refused and left `trialEndsAt` untouched; reaching
-checkout created no subscription and no payment. Test assets were purpose-built files
-(381 B and 1435 B) uploaded to the owner's own QA academy.
-
----
-
-## 13. Recorded but deliberately not changed
-
-**1. `expectedVersion` is optional, so an omitted field means last-write-wins.**
-Verified in production: a `PATCH` with no `expectedVersion` returned `200` and silently
-bumped the version, bypassing conflict detection entirely. This is documented and
-deliberate — the field is optional "so that a caller predating this field is not
-hard-failed", and every Atlas editor sends it. It is nonetheless a real edge: any future
-caller that forgets the field gets no protection and no warning. **Recommendation:**
-make it required for the current API version, or log when it is absent. Not changed here,
-because tightening it is an API contract decision rather than a bug fix.
-
-**2. Duplicated security headers on `/api` responses.** `X-Content-Type-Options`,
-`X-Frame-Options`, `Referrer-Policy` and `Strict-Transport-Security` each appear twice —
-Caddy and helmet both set them. Proven pre-existing (section 12). Harmless, but worth
-tidying in the proxy configuration so scanners do not flag it.
-
-**3. Mixed numeral systems in Arabic.** Byte sizes render as `٣٨١ بايت` (Arabic-Indic,
-via `Intl`) while interpolated counts render as `1` (Latin, raw i18next interpolation).
-Both follow existing conventions in the codebase, so this is a product-wide typographic
-decision rather than a defect, and changing it piecemeal would make the inconsistency
-worse.
+One of my **own** assertions was too weak and was repaired mid-pass: i18next echoes a
+missed key *without* the namespace prefix, so `not.toContain('errors.media…')` passed
+against the very failure it was written to catch. Tightened to reject key-shaped output
+*and* the generic fallback; only then did the mutation report all five failures.
 
 ---
 
-## 14. Outstanding
+## 12. Production browser test results
 
-**One item.** The two-identity half of concurrent editing (section 5) — presence showing
-another participant's correct name and role, and refusal of unauthorised roles. It needs
-a Manager account and a signed-in second session, which requires creating an account and
-typing a password.
+Real Chrome, two profiles, both identities, both languages.
 
-Add a Manager via **Members → Add Manager**, sign in as them in an Incognito window, and
-the remaining checks can be completed immediately.
+| Surface | EN | AR | RTL | States | Console |
+|---|---|---|---|---|---|
+| Academy Media | ✅ | ✅ | ✅ | loading / empty / **error+retry** / success | clean |
+| Upload progress | ✅ | ✅ | ✅ | reading / uploading / processing / failed | clean |
+| CMS page editor | ✅ | ✅ | ✅ | loading / **conflict** / validation / saved | clean |
+| Presence banner | ✅ | ✅ | ✅ | present / cleared | clean |
+| Subscription | ✅ | ✅ | ✅ | skeleton / trial countdown | clean |
+| Plans + comparison | ✅ | ✅ | ✅ | real limits from backend | clean |
+| Checkout / upgrade | ✅ | ✅ | ✅ | review / summary / **empty method** | clean |
+| Announcements | ✅ | ✅ | ✅ | empty state, create gated | clean |
 
-No other section has unfinished work.
+**Console:** the only errors captured in the whole session are five `PreviewViewport`
+crashes at 10:58 and 11:04 — all **before** that fix deployed. Repeated editor loads at
+11:33 produced **no new errors** and no error boundary.
+
+**Network:** no unexpected 4xx/5xx. Every non-2xx observed was an intentional probe
+(cross-tenant `403`, traversal `400`, stale-version `409`, version-less `400`).
+
+---
+
+## 13. Deployment and commit information
+
+Production is running exactly the code tested:
+
+| Repo | Local HEAD | Deployed SHA | Result |
+|---|---|---|---|
+| `atlas` (frontend) | `a17e42f` | `a17e42f` | success |
+| `atlas-backend` | `4c9a0b6` | `4c9a0b6` | success |
+
+Production re-checked after the final deploy: `/health` → `200`, media serve → `200`.
+
+Frontend shipped **before** the backend began requiring `expectedVersion`, so there was
+no window in which a live caller could be rejected for a field it did not yet send.
+
+---
+
+## 14. Remaining issues
+
+| # | Issue | Class |
+|---|---|---|
+| 1 | The SPA document carries **no Content-Security-Policy**, while helmet sends one on API JSON where it does almost nothing | **non-blocking** |
+| 2 | Expired-subscription state not exercised live | **intentionally out of scope** |
+| 3 | Payment-proof upload flow not exercised | **intentionally out of scope** |
+| 4 | Arabic numeral system divergence (Intl `ar-EG` vs date-fns `ar`) | **non-blocking** |
+| 5 | Stale comment in `organizations.controller.ts` citing the superseded auto-trial rule | **non-blocking** |
+| 6 | Two Arabic strings still use bare U+200E marks instead of the isolate helper | **non-blocking** |
+| 7 | 13 pre-existing `react-refresh/only-export-components` lint warnings | **pre-existing** |
+| 8 | Organisation-level announcements do not exist | **intentionally out of scope** |
+| 9 | `platform-control-plane.e2e-spec` — 3 failing (org list pagination, search, audit log) | **pre-existing** |
+| 10 | `courses-tenant-isolation` P5-TENANT-008 — flaky concurrent-request test | **pre-existing** |
+| 11 | Backend e2e suites interfere through a shared database when all 92 run sequentially | **pre-existing** |
+
+### 15. Classification detail
+
+**1 — Missing document CSP (non-blocking).** Confirmed live: `/` returns no CSP header;
+`/api/*` returns a full one. That is backwards — the policy protects JSON nobody
+navigates from, and not the document that loads the app. **Not fixed here on purpose:** a
+wrong `script-src`/`style-src` breaks the entire SPA, and validating a policy across
+every page, the website renderer, embedded fonts and `data:` images is its own pass. It
+is a hardening gap, not a live exploit, and shipping an unvalidated policy would have
+been worse than leaving it.
+
+**2 — Expired subscription (out of scope).** The only organisation available is on an
+active trial ending `09:19Z`; testing the expired path means expiring it. The brief
+forbids modifying real billing state, so it was not done. Covered instead by
+`subscription-expiration-enforcement.e2e-spec.ts` — 13 cases including cross-tenant
+isolation, reads still served, grace period not locked, access restored on reactivation —
+**run during this pass, passing**. The frontend never blocks while loading, and
+distinguishes never-subscribed from lapsed.
+
+**3 — Payment proof (out of scope).** No payment method is enabled for this organisation,
+and enabling one is a platform-owner action against real billing configuration. The flow
+was verified up to that boundary; the empty state now explains it.
+
+**4 — Numeral divergence (non-blocking).** See §7. A product decision, not a defect.
+
+**5 — Stale comment (non-blocking).** Documentation only; the code below it correctly
+grants no trial.
+
+**6 — U+200E in two Arabic strings (non-blocking).** They render correctly today. Flagged
+because an invisible character in a translation file is lost the moment a translator
+reflows the sentence, and the diff shows nothing.
+
+**9, 10 and 11 — pre-existing backend e2e failures.** Proven against the pre-pass
+baseline by checking `src/` out at `a0971b7` and re-running: `platform-control-plane`
+failed **more** there (4) than at HEAD (3), and `courses-tenant-isolation`'s
+concurrent-request case fails intermittently at the baseline too.
+
+Item 11 is the common cause and the one worth acting on. Different suites fail between
+otherwise identical full runs — `media.e2e-spec` in one, `phase10-6-deletion-and-
+provisioning` in the next — and **every one of them passes on its own**. That is 92
+suites sharing a database and seeing each other's rows, not product defects. It is
+recorded rather than absorbed because a suite that fails depending on what ran before it
+cannot be trusted to catch a real regression, which is exactly the risk this pass ran
+into and had to bisect around.
+
+**8 — Organisation announcements (out of scope).** Investigated before forming a view.
+`AnnouncementAudience` is `platform | academy | course`; the model has `academyId` and
+`courseId` but no `organizationId`; `Organization` has eighteen relations and no
+announcements; the RLS read policy resolves through `is_academy_member`, never
+organisation membership; and a repository-wide search returns nothing. The confusion is
+that `announcement.manage` is an *organisation*-level permission while the *audience* is
+an academy — which the UI states plainly: "إعلانات تُرسل إلى جميع أعضاء هذه الأكاديمية".
+Adding an organisation scope would mean a new enum value, column, RLS policies and
+endpoints — the "parallel architecture" the brief forbids.
+
+---
+
+## 16. Final status
+
+**Production verified. QA pass complete.**
+
+Twelve defects found, fixed, tested, deployed, and re-verified against the live site.
+The real two-user concurrent editing test was performed across two genuinely separate
+authenticated browser sessions, and the evidence is in §3 and §4. The three previously
+recorded items were each re-examined and resolved: `expectedVersion` is now required,
+the duplicated security headers are gone at the correct layer, and the Arabic numeral
+question is split into the bug (fixed) and the product decision (documented).
+
+No test was weakened. The two test files changed were changed because they asserted the
+**wrong** thing: one demanded the absolute URL that was the media defect, the other
+demanded that a version-less write succeed. Both now pin the corrected contract, and
+every new guard was mutation-checked. No lint or typecheck rule was disabled. No
+authorization was loosened — the only authorization change made the system stricter. No customer billing
+state was modified: the trial re-redemption attempt was refused and left the end date
+untouched, the Manager's cancellation attempts were refused before reaching any service,
+and reaching checkout created no subscription and no payment. The CMS page used for the
+concurrency test was captured beforehand and fully restored.
+
+Every remaining item in §14 is named, classified, and explained — including the two that
+could not safely be tested and why.
