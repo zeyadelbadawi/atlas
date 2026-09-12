@@ -19,6 +19,7 @@ import { FolderOpen, Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useFilePicker } from '@hooks';
+import { isolateNumericExpression } from '@utils';
 import { MediaLibraryDialog } from '@features/media';
 import {
   ALLOWED_WEBSITE_IMAGE_TYPES,
@@ -146,10 +147,18 @@ export function WebsiteImageField({
           className="text-xs text-muted-foreground"
           data-testid={`${id}-recommendation`}
         >
+          {/*
+            Both the size and the ratio are composed here rather than in the
+            sentence, and both are bidi-isolated. `×` and `:` are neutral
+            characters, so left to themselves the numbers on either side swap
+            in Arabic — `1280×720` is read back as `720×1280` and a 16:9
+            recommendation becomes a 9:16 one, which is a different shape.
+          */}
           {t('website:common.imageRecommendation', {
-            width: recommendation.width,
-            height: recommendation.height,
-            ratio: recommendation.ratio,
+            dimensions: isolateNumericExpression(
+              `${recommendation.width}×${recommendation.height}`,
+            ),
+            ratio: isolateNumericExpression(recommendation.ratio),
             formats: recommendation.formats.join(' / '),
           })}
           {recommendation.transparency

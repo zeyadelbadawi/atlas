@@ -503,7 +503,7 @@
     "removeImage": "إزالة الصورة",
     "imageTooLarge": "حجم الملف كبير جدًا.",
     "imageInvalidType": "نوع الملف غير مدعوم. استخدم PNG أو JPG أو WEBP.",
-    "imageRecommendation": "الحجم الموصى به: {{width}}×{{height}} بكسل ({{ratio}}) · {{formats}}",
+    "imageRecommendation": "الحجم الموصى به: {{dimensions}} بكسل ({{ratio}}) · {{formats}}",
     "imageTransparencyHint": "يُفضَّل استخدام خلفية شفافة."
   },
   "presence": {

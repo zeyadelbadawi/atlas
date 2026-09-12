@@ -495,7 +495,7 @@
     "removeImage": "Remove image",
     "imageTooLarge": "The file is too large.",
     "imageInvalidType": "This file type isn't supported. Use PNG, JPG or WEBP.",
-    "imageRecommendation": "Recommended: {{width}}×{{height}} px ({{ratio}}) · {{formats}}",
+    "imageRecommendation": "Recommended: {{dimensions}} px ({{ratio}}) · {{formats}}",
     "imageTransparencyHint": "Transparent background recommended."
   },
   "presence": {

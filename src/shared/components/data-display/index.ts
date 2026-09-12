@@ -9,3 +9,5 @@ export { StatusBadge } from './StatusBadge';
 export type { StatusBadgeProps, StatusTone } from './StatusBadge';
 export { MetricCard } from './MetricCard';
 export type { MetricCardProps, TrendDirection } from './MetricCard';
+export { NumericExpression } from './NumericExpression';
+export type { NumericExpressionProps } from './NumericExpression';

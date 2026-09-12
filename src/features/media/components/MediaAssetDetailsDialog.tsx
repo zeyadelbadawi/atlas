@@ -33,6 +33,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { NumericExpression } from '@components/data-display';
 import { formatBytes } from '@utils';
 import type {
   LanguageCode,
@@ -109,7 +110,12 @@ export function MediaAssetDetailsDialog({
                     {t('media:details.dimensions')}
                   </dt>
                   <dd className="text-foreground">
-                    {asset.dimensions.width}×{asset.dimensions.height}
+                    {/* Isolated: `×` is bidi-neutral, so without this the two
+                        numbers swap places in Arabic and the image is
+                        reported at the wrong size. */}
+                    <NumericExpression>
+                      {asset.dimensions.width}×{asset.dimensions.height}
+                    </NumericExpression>
                   </dd>
                 </div>
               ) : null}

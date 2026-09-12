@@ -31,7 +31,7 @@ import { useTranslation } from 'react-i18next';
 import { Grid2x2, List, Upload } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { EmptyState, ErrorState } from '@components/feedback';
-import { StatusBadge } from '@components/data-display';
+import { NumericExpression, StatusBadge } from '@components/data-display';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -313,9 +313,14 @@ export default function AcademyMediaPage(): JSX.Element {
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {asset.mimeType} · {renderSize(asset.sizeBytes)}
-                    {asset.dimensions
-                      ? ` · ${asset.dimensions.width}×${asset.dimensions.height}`
-                      : ''}
+                    {asset.dimensions ? (
+                      <>
+                        {' · '}
+                        <NumericExpression>
+                          {asset.dimensions.width}×{asset.dimensions.height}
+                        </NumericExpression>
+                      </>
+                    ) : null}
                   </p>
                 </button>
                 <StatusBadge

@@ -4,6 +4,7 @@
  * Utilities are framework-independent wherever possible so they can be reused
  * by services, hooks and components alike.
  */
+export * from './bidi.utils';
 export * from './class-name.utils';
 export * from './country.utils';
 export * from './date.utils';
