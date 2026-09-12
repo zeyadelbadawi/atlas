@@ -319,7 +319,8 @@
     "languageArabic": "العربية",
     "optional": "اختياري",
     "translationComplete": "مكتمل",
-    "translationIncomplete": "لم تتم الترجمة بعد"
+    "translationIncomplete": "لم تتم الترجمة بعد",
+    "invalidSections": "تحتاج هذه الأقسام إلى مراجعة قبل حفظ الصفحة: {{sections}}."
   },
   "preview": {
     "title": "المعاينة",

@@ -236,6 +236,14 @@ export interface UpdateWebsitePagePayload {
   readonly visible?: boolean;
   readonly seo?: WebsitePageSeo;
   readonly sections?: readonly SectionInstance[];
-  /** The `version` this edit was based on. Omitting it keeps the old last-write-wins behaviour, so every real editor sends it. */
+  /**
+   * The `version` this edit was based on.
+   *
+   * Optional in the type only because the server still accepts its
+   * absence for callers that predate the field. Every Atlas caller sends
+   * it — the section editor, the SEO dialog and the visibility toggle —
+   * and a new one should too: omitting it means last-write-wins, and the
+   * cost of that is paid by whoever's work gets silently replaced.
+   */
   readonly expectedVersion?: number;
 }

@@ -212,7 +212,11 @@ export default function WebsitePagesPage(): JSX.Element {
     updatePage.mutate({
       academyId,
       pageId: page.id,
-      payload: { visible: !page.visible },
+      // Derived from the row this list loaded, so it is exactly as stale
+      // as `page.visible` is — sending it means a toggle computed from an
+      // out-of-date list is refused rather than applied to a page someone
+      // else has since changed.
+      payload: { visible: !page.visible, expectedVersion: page.version },
     });
   };
 

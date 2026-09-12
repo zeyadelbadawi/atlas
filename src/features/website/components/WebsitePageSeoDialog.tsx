@@ -98,7 +98,21 @@ export function WebsitePageSeoDialog({
 
   const onSubmit = (data: PageSeoFormData) => {
     updatePage.mutate(
-      { academyId, pageId: page.id, payload: { seo: { ...data, ogImage } } },
+      {
+        academyId,
+        pageId: page.id,
+        payload: {
+          seo: { ...data, ogImage },
+          /*
+            `seo` is replaced WHOLE, so without this a second admin saving
+            a stale dialog silently discarded the first one's title and
+            description — no error, nothing to show it happened. The
+            version travels with the page this dialog was opened from, so
+            a save that lost the race is refused with a conflict instead.
+          */
+          expectedVersion: page.version,
+        },
+      },
       {
         onSuccess: () => {
           toast({ title: t('website:seo.saved') });

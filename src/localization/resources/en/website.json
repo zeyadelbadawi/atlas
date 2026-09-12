@@ -319,7 +319,8 @@
     "languageArabic": "Arabic",
     "optional": "optional",
     "translationComplete": "Complete",
-    "translationIncomplete": "Not translated yet"
+    "translationIncomplete": "Not translated yet",
+    "invalidSections": "These sections need attention before this page can be saved: {{sections}}."
   },
   "preview": {
     "title": "Preview",

@@ -80,6 +80,22 @@
   "concurrency": {
     "staleVersion": "This content was changed by someone else while you were editing."
   },
+  "website": {
+    "versionRequired": "This page was open before the editor was updated. Reload the page and make your change again.",
+    "slugTaken": "Another page already uses that address.",
+    "slugReserved": "That address is reserved. Choose a different one.",
+    "invalidSlug": "Page addresses can use lowercase letters, numbers and hyphens only.",
+    "pageNotFound": "That page no longer exists.",
+    "corePageNotDeletable": "Built-in pages can't be deleted. You can hide one instead.",
+    "courseDetailsNotToggleable": "The Course Details page can't be hidden — course pages need it.",
+    "courseNotFound": "That course no longer exists.",
+    "contentArchived": "This item has been archived and can't be edited. Restore it first.",
+    "duplicateSectionId": "Two sections on this page share an identifier. Reload and try again.",
+    "invalidSectionOrder": "The new section order doesn't match the sections on this page. Reload and try again.",
+    "faqEntryNotFound": "That FAQ entry no longer exists.",
+    "testimonialEntryNotFound": "That testimonial no longer exists.",
+    "insufficientRole": "You don't have permission to change this academy's website."
+  },
   "media": {
     "unsupportedFileType": "That file type isn't supported. Upload a JPG, PNG, GIF, WebP or PDF.",
     "invalidDataUrl": "That file couldn't be read. Try choosing it again.",

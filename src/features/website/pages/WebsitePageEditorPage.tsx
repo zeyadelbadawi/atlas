@@ -68,6 +68,10 @@ import {
   versionForSave,
   type SaveConflict,
 } from '../utils/save-conflict.utils';
+import {
+  isContentValidationFailure,
+  rejectedSections,
+} from '../utils/save-validation.utils';
 import { DEFAULT_RESPONSIVE_VISIBILITY } from '@types';
 import type {
   ResponsiveVisibility,
@@ -76,7 +80,7 @@ import type {
 } from '@types';
 
 export default function WebsitePageEditorPage(): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { academyId, pageId } = useParams<{
     academyId: string;
     pageId: string;
@@ -400,7 +404,41 @@ export default function WebsitePageEditorPage(): JSX.Element {
           "retry", which for a stale save means "try to overwrite again".
         */}
         {updatePage.error && updatePage.error.kind !== 'conflict' ? (
-          <ErrorState onRetry={() => handleSaveChanges()} />
+          isContentValidationFailure(updatePage.error) ? (
+            /*
+              The server said exactly which sections it refused, so say so.
+              And no Retry: resubmitting the same invalid content fails the
+              same way every time, which is a trap rather than an offer —
+              the author has to open the named section and fix it.
+            */
+            <ErrorState
+              kind="validation"
+              descriptionKey="website:editor.invalidSections"
+              values={{
+                // `Intl.ListFormat` rather than a hardcoded separator: the
+                // comma between list items is not the same character in
+                // Arabic, and the conjunction differs too.
+                sections: new Intl.ListFormat(i18n.language, {
+                  style: 'long',
+                  type: 'conjunction',
+                }).format(
+                  rejectedSections(
+                    updatePage.error.violations,
+                    draftSections
+                  ).map(({ index, type }) =>
+                    type
+                      ? `${index + 1}. ${t(`website:sections.${type}.label`)}`
+                      : String(index + 1)
+                  )
+                ),
+              }}
+            />
+          ) : (
+            <ErrorState
+              kind={updatePage.error.kind}
+              onRetry={() => handleSaveChanges()}
+            />
+          )
         ) : null}
 
         <div className="grid gap-6 lg:grid-cols-[22rem_1fr]">
