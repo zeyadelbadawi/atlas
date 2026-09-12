@@ -418,6 +418,11 @@ Two things to know:
   comment in the workflow explains why: `ci.yml`'s Lint step has been failing on `main`
   since before Phase 7 (~624 pre-existing prettier violations in test files). **A broken
   build will deploy.** Run the gates locally before pushing.
+
+  Practical consequence: **a red tick on the backend repo is normal and is almost always
+  CI, not Deploy.** Confirmed while writing this handover — a documentation-only commit
+  showed `CI: failure` and `Deploy: success` on the same SHA. Check the workflow name
+  before concluding a deploy failed.
 - **Migrations run with the superuser `DATABASE_URL`**; the app itself always connects as
   `atlas_app` (`APP_DATABASE_URL`). Do not collapse these two.
 
@@ -442,7 +447,11 @@ collide with conflicting values.
 ### Check what is deployed
 
 ```bash
-gh run list --limit 1 --json headSha,conclusion,status   # in either repo
+# The backend repo runs TWO workflows (CI and Deploy) on every push, so
+# `--limit 1` may show you whichever finished last. ALWAYS filter by name —
+# CI is expected to be red (see §9), Deploy is the one that matters.
+gh run list --limit 5 --json workflowName,conclusion,headSha \
+  --jq '.[] | "\(.workflowName): \(.conclusion) (\(.headSha[0:7]))"'
 git rev-parse --short HEAD                               # what you have locally
 git rev-parse --short origin/main                        # what GitHub has
 curl -s -o /dev/null -w "%{http_code}\n" https://atlass.dpdns.org/health
