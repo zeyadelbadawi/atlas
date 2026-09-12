@@ -55,8 +55,10 @@
   "dashboard": {
     "title": "SaaS Overview",
     "subtitle": "Your organization's subscription, usage and add-ons.",
-    "trialDaysRemaining": "{{count}} days remaining in your trial",
-    "graceDaysRemaining": "{{count}} days remaining in your grace period",
+    "trialDaysRemaining_one": "1 day remaining in your trial",
+    "trialDaysRemaining_other": "{{count}} days remaining in your trial",
+    "graceDaysRemaining_one": "1 day remaining in your grace period",
+    "graceDaysRemaining_other": "{{count}} days remaining in your grace period",
     "viewSubscription": "View subscription",
     "usageSectionTitle": "Usage",
     "viewUsage": "View usage",
