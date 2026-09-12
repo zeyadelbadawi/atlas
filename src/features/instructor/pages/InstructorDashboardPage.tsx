@@ -6,6 +6,7 @@
  * hardcoded.
  */
 import { useTranslation } from 'react-i18next';
+import { useDateFormatter } from '@hooks';
 import { useNavigate } from 'react-router-dom';
 import {
   AlertTriangle,
@@ -23,6 +24,7 @@ import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useInstructorDashboard } from '../hooks';
 
 export default function InstructorDashboardPage(): JSX.Element {
+  const fmt = useDateFormatter();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { data, isLoading, error, refetch } = useInstructorDashboard();
@@ -165,7 +167,7 @@ export default function InstructorDashboardPage(): JSX.Element {
                       ) : null}
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {new Date(activity.timestamp).toLocaleDateString()}
+                      {fmt.date(activity.timestamp)}
                     </p>
                   </div>
                 ))}

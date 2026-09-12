@@ -14,7 +14,7 @@ import { ErrorState, EmptyState } from '@components/feedback';
 import { StatusBadge, Pagination } from '@components/data-display';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { usePagination } from '@hooks';
+import { useDateFormatter, usePagination } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useAnnouncementFeed } from '../hooks';
 import type { AnnouncementAudience } from '@types';
@@ -32,6 +32,7 @@ function getAudienceTone(audience: AnnouncementAudience) {
 }
 
 export default function AnnouncementFeedPage(): JSX.Element {
+  const fmt = useDateFormatter();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -127,9 +128,7 @@ export default function AnnouncementFeedPage(): JSX.Element {
                       name: announcement.authorName,
                     })}
                     {announcement.publishedAt
-                      ? ` · ${new Date(
-                          announcement.publishedAt
-                        ).toLocaleDateString()}`
+                      ? ` · ${fmt.date(announcement.publishedAt)}`
                       : ''}
                   </p>
                 </div>

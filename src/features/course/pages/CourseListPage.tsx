@@ -30,7 +30,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useConfirmDialog } from '@app/providers';
 import { toast } from '@/hooks/use-toast';
-import { useDebounce, usePagination } from '@hooks';
+import { useDateFormatter, useDebounce, usePagination } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useCourses, useCourseCategories, useDeleteCourse } from '../hooks';
 import {
@@ -48,6 +48,7 @@ import type {
 } from '@types';
 
 export default function CourseListPage(): JSX.Element {
+  const fmt = useDateFormatter();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { academyId } = useParams<{ academyId: string }>();
@@ -196,7 +197,7 @@ export default function CourseListPage(): JSX.Element {
         header: t('course:list.table.updatedAt'),
         cell: ({ row }) => (
           <span className="text-muted-foreground">
-            {new Date(row.original.updatedAt).toLocaleDateString()}
+            {fmt.date(row.original.updatedAt)}
           </span>
         ),
       },

@@ -56,3 +56,10 @@ export { usePublicWebsiteStatistics } from './usePublicWebsiteStatistics';
 export { usePublicCourses } from './usePublicCourses';
 export type { UsePublicCoursesOptions } from './usePublicCourses';
 export { usePublicCourse, usePublicCourseCurriculum } from './usePublicCourse';
+
+/**
+ * Dates in the user's chosen language, not the browser's. See the hook's
+ * own comment for the defect this exists to prevent.
+ */
+export { useDateFormatter } from './useDateFormatter';
+export type { DateFormatters } from './useDateFormatter';

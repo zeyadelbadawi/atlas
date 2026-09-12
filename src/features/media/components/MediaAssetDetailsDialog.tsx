@@ -23,6 +23,7 @@
  */
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDateFormatter } from '@hooks';
 import {
   Dialog,
   DialogContent,
@@ -58,6 +59,7 @@ export function MediaAssetDetailsDialog({
   onSave,
   onArchive,
 }: MediaAssetDetailsDialogProps): JSX.Element {
+  const fmt = useDateFormatter();
   const { t, i18n } = useTranslation();
   const [altText, setAltText] = useState('');
 
@@ -123,9 +125,7 @@ export function MediaAssetDetailsDialog({
                 <dt className="text-muted-foreground">
                   {t('media:details.uploaded')}
                 </dt>
-                <dd className="text-foreground">
-                  {new Date(asset.createdAt).toLocaleDateString()}
-                </dd>
+                <dd className="text-foreground">{fmt.date(asset.createdAt)}</dd>
               </div>
             </dl>
 

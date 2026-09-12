@@ -30,7 +30,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { useServerValidation } from '@forms';
-import { usePermissions, useUnsavedChanges } from '@hooks';
+import { useDateFormatter, usePermissions, useUnsavedChanges } from '@hooks';
 import { getSubmissionStatusTone } from '@features/learning';
 import { useInstructorSubmission, useGradeSubmission } from '../hooks';
 import {
@@ -39,6 +39,7 @@ import {
 } from '../schemas/instructor.schemas';
 
 export default function InstructorSubmissionReviewPage(): JSX.Element {
+  const fmt = useDateFormatter();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { hasPermission } = usePermissions();
@@ -169,7 +170,7 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
             {submission.submittedAt ? (
               <p className="text-xs text-muted-foreground">
                 {t('instructor:grading.submittedAt', {
-                  date: new Date(submission.submittedAt).toLocaleString(),
+                  date: fmt.dateTime(submission.submittedAt),
                 })}
               </p>
             ) : null}

@@ -8,6 +8,7 @@
  * (attempts/submissions) require the instructor-scoped service.
  */
 import { useTranslation } from 'react-i18next';
+import { useDateFormatter } from '@hooks';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ClipboardList, FileText } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
@@ -26,6 +27,7 @@ function getAssessmentStatusTone(
 }
 
 export default function InstructorAssessmentsPage(): JSX.Element {
+  const fmt = useDateFormatter();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { courseId } = useParams<{ courseId: string }>();
@@ -157,9 +159,7 @@ export default function InstructorAssessmentsPage(): JSX.Element {
                       {assignment.dueAt ? (
                         <p className="text-xs text-muted-foreground">
                           {t('instructor:assessments.dueAt', {
-                            date: new Date(
-                              assignment.dueAt
-                            ).toLocaleDateString(),
+                            date: fmt.date(assignment.dueAt),
                           })}
                         </p>
                       ) : null}

@@ -32,6 +32,7 @@
  */
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDateFormatter } from '@hooks';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   CheckCircle2,
@@ -63,6 +64,7 @@ import { LearningLayout } from '../components/LearningLayout';
 import type { CourseLesson, LessonProgressStatus } from '@types';
 
 export default function LessonPage(): JSX.Element {
+  const fmt = useDateFormatter();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const paths = useLearningPaths();
@@ -348,9 +350,7 @@ export default function LessonPage(): JSX.Element {
                       </h3>
                       {announcement.publishedAt ? (
                         <span className="whitespace-nowrap text-xs text-muted-foreground">
-                          {new Date(
-                            announcement.publishedAt
-                          ).toLocaleDateString()}
+                          {fmt.date(announcement.publishedAt)}
                         </span>
                       ) : null}
                     </div>

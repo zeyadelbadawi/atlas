@@ -12,13 +12,14 @@ import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { DataTable } from '@components/table';
-import { usePagination } from '@hooks';
+import { useDateFormatter, usePagination } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { getSubmissionStatusTone } from '@features/learning';
 import { useInstructorSubmissions } from '../hooks';
 import type { AssignmentSubmissionReview } from '@types';
 
 export default function InstructorSubmissionsPage(): JSX.Element {
+  const fmt = useDateFormatter();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { courseId, assignmentId } = useParams<{
@@ -84,9 +85,7 @@ export default function InstructorSubmissionsPage(): JSX.Element {
       accessorKey: 'submittedAt',
       header: t('instructor:submissions.table.submittedAt'),
       cell: ({ row }) =>
-        row.original.submittedAt
-          ? new Date(row.original.submittedAt).toLocaleDateString()
-          : '—',
+        row.original.submittedAt ? fmt.date(row.original.submittedAt) : '—',
     },
   ];
 

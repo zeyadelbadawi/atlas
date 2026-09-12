@@ -14,13 +14,14 @@ import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { DataTable } from '@components/table';
-import { usePagination } from '@hooks';
+import { useDateFormatter, usePagination } from '@hooks';
 import { useQuiz } from '@features/learning';
 import { getQuizAttemptStatusTone } from '@features/learning';
 import { useInstructorQuizAttempts } from '../hooks';
 import type { QuizAttemptSummary } from '@types';
 
 export default function InstructorQuizResultsPage(): JSX.Element {
+  const fmt = useDateFormatter();
   const { t } = useTranslation();
   const { courseId, quizId } = useParams<{
     courseId: string;
@@ -82,9 +83,7 @@ export default function InstructorQuizResultsPage(): JSX.Element {
       accessorKey: 'submittedAt',
       header: t('instructor:quizResults.table.submittedAt'),
       cell: ({ row }) =>
-        row.original.submittedAt
-          ? new Date(row.original.submittedAt).toLocaleDateString()
-          : '—',
+        row.original.submittedAt ? fmt.date(row.original.submittedAt) : '—',
     },
   ];
 

@@ -10,11 +10,12 @@ import { StatusBadge } from '@components/data-display';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useAuth } from '@hooks';
+import { useAuth, useDateFormatter } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useBlogPost } from '../hooks';
 
 export default function BlogPostDetailPage(): JSX.Element {
+  const fmt = useDateFormatter();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { postId } = useParams<{ postId: string }>();
@@ -90,9 +91,7 @@ export default function BlogPostDetailPage(): JSX.Element {
         <CardContent className="space-y-4 pt-6">
           <p className="text-xs text-muted-foreground">
             {t('blog:list.byAuthor', { name: post.authorName })}
-            {post.publishedAt
-              ? ` · ${new Date(post.publishedAt).toLocaleDateString()}`
-              : ''}
+            {post.publishedAt ? ` · ${fmt.date(post.publishedAt)}` : ''}
           </p>
           <p className="whitespace-pre-wrap text-sm text-foreground">
             {post.content}

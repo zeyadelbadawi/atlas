@@ -27,7 +27,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { useServerValidation } from '@forms';
-import { usePermissions } from '@hooks';
+import { useDateFormatter, usePermissions } from '@hooks';
 import {
   useForumThread,
   useForumReplies,
@@ -43,6 +43,7 @@ import {
 } from '../schemas/forum.schemas';
 
 export default function ForumThreadPage(): JSX.Element {
+  const fmt = useDateFormatter();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
@@ -214,7 +215,7 @@ export default function ForumThreadPage(): JSX.Element {
             <p className="text-xs text-muted-foreground">
               {t('forum:list.byAuthor', { name: thread.authorName })}
               {' · '}
-              {new Date(thread.createdAt).toLocaleString()}
+              {fmt.dateTime(thread.createdAt)}
             </p>
             <p className="whitespace-pre-wrap text-sm text-foreground">
               {thread.body}
@@ -239,7 +240,7 @@ export default function ForumThreadPage(): JSX.Element {
                   <p className="text-xs text-muted-foreground">
                     {t('forum:list.byAuthor', { name: reply.authorName })}
                     {' · '}
-                    {new Date(reply.createdAt).toLocaleString()}
+                    {fmt.dateTime(reply.createdAt)}
                   </p>
                   <p className="whitespace-pre-wrap text-sm text-foreground">
                     {reply.body}

@@ -24,7 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useAuth, usePagination } from '@hooks';
+import { useAuth, useDateFormatter, usePagination } from '@hooks';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { useAcademy, useAcademyMembers } from '../hooks';
 import { AddAcademyManagerDialog } from '../components/AddAcademyManagerDialog';
@@ -38,6 +38,7 @@ import { getAcademyAdminTabs } from '../utils/academy-navigation.utils';
 import type { AcademyMember, AcademyMemberRole, BreadcrumbItem } from '@types';
 
 export default function AcademyMembersPage(): JSX.Element {
+  const fmt = useDateFormatter();
   const { t } = useTranslation();
   const { organization } = useAuth();
   const { academyId } = useParams<{ academyId: string }>();
@@ -134,7 +135,7 @@ export default function AcademyMembersPage(): JSX.Element {
         header: t('academy:members.table.joinedAt'),
         cell: ({ row }) => (
           <span className="text-muted-foreground">
-            {new Date(row.original.joinedAt).toLocaleDateString()}
+            {fmt.date(row.original.joinedAt)}
           </span>
         ),
       },

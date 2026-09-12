@@ -8,6 +8,7 @@
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDateFormatter } from '@hooks';
 import { useParams } from 'react-router-dom';
 import { MoreHorizontal, Plus } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
@@ -50,6 +51,7 @@ type DialogState =
   | null;
 
 export default function CourseAssignmentsPage(): JSX.Element {
+  const fmt = useDateFormatter();
   const { t } = useTranslation();
   const { academyId, courseId } = useParams<{
     academyId: string;
@@ -229,7 +231,7 @@ export default function CourseAssignmentsPage(): JSX.Element {
                     {assignment.dueAt ? (
                       <p className="text-xs text-muted-foreground">
                         {t('course:assignmentAuthoring.dueLabel', {
-                          date: new Date(assignment.dueAt).toLocaleString(),
+                          date: fmt.dateTime(assignment.dueAt),
                         })}
                       </p>
                     ) : null}

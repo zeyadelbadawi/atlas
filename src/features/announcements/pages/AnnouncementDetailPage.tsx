@@ -2,6 +2,7 @@
  * Announcement Detail Page.
  */
 import { useTranslation } from 'react-i18next';
+import { useDateFormatter } from '@hooks';
 import { useParams } from 'react-router-dom';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
@@ -11,6 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useAnnouncement } from '../hooks';
 
 export default function AnnouncementDetailPage(): JSX.Element {
+  const fmt = useDateFormatter();
   const { t } = useTranslation();
   const { announcementId } = useParams<{ announcementId: string }>();
 
@@ -61,7 +63,7 @@ export default function AnnouncementDetailPage(): JSX.Element {
               name: announcement.authorName,
             })}
             {announcement.publishedAt
-              ? ` · ${new Date(announcement.publishedAt).toLocaleString()}`
+              ? ` · ${fmt.dateTime(announcement.publishedAt)}`
               : ''}
           </p>
           <p className="whitespace-pre-wrap text-sm text-foreground">

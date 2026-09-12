@@ -7,6 +7,7 @@
  * Announcements/Discussions.
  */
 import { useTranslation } from 'react-i18next';
+import { useDateFormatter } from '@hooks';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ClipboardCheck,
@@ -31,6 +32,7 @@ import {
 } from '@features/course';
 
 export default function InstructorCourseOverviewPage(): JSX.Element {
+  const fmt = useDateFormatter();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { courseId } = useParams<{ courseId: string }>();
@@ -195,7 +197,7 @@ export default function InstructorCourseOverviewPage(): JSX.Element {
                       ) : null}
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {new Date(activity.timestamp).toLocaleDateString()}
+                      {fmt.date(activity.timestamp)}
                     </p>
                   </div>
                 ))}

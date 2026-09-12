@@ -11,6 +11,7 @@
  * an authoritative, backend-confirmed Payment activates an Add-on.
  */
 import { useTranslation } from 'react-i18next';
+import { useDateFormatter } from '@hooks';
 import { useNavigate } from 'react-router-dom';
 import { Boxes, Columns3, CreditCard, ShoppingCart } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
@@ -58,6 +59,7 @@ function AddOnEffectSummary({ addOn }: { readonly addOn: AddOn }): JSX.Element {
 }
 
 export default function TenantAddOnsPage(): JSX.Element {
+  const fmt = useDateFormatter();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -177,9 +179,7 @@ export default function TenantAddOnsPage(): JSX.Element {
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {t('tenant:addOns.activatedAt', {
-                        date: new Date(
-                          tenantAddOn.activatedAt
-                        ).toLocaleDateString(),
+                        date: fmt.date(tenantAddOn.activatedAt),
                       })}
                     </p>
                   </CardContent>

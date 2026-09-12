@@ -15,7 +15,7 @@ import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { DataTable } from '@components/table';
 import { Input } from '@/components/ui/input';
-import { useDebounce, usePagination } from '@hooks';
+import { useDateFormatter, useDebounce, usePagination } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import {
   getCourseCompletionTone,
@@ -25,6 +25,7 @@ import { useCourseStudents } from '../hooks';
 import type { InstructorStudent } from '@types';
 
 export default function InstructorStudentsPage(): JSX.Element {
+  const fmt = useDateFormatter();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { courseId } = useParams<{ courseId: string }>();
@@ -92,7 +93,7 @@ export default function InstructorStudentsPage(): JSX.Element {
       header: t('instructor:students.table.lastActivity'),
       cell: ({ row }) =>
         row.original.lastActivityAt
-          ? new Date(row.original.lastActivityAt).toLocaleDateString()
+          ? fmt.date(row.original.lastActivityAt)
           : '—',
     },
   ];

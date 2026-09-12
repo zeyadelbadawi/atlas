@@ -21,6 +21,7 @@
  */
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDateFormatter } from '@hooks';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -107,6 +108,7 @@ function statusTone(
 }
 
 export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
+  const fmt = useDateFormatter();
   const { t } = useTranslation();
 
   const {
@@ -281,7 +283,7 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
             {config.lastTestedAt ? (
               <CardDescription>
                 {t('payments:atlasPaymentProvider.lastTested', {
-                  date: new Date(config.lastTestedAt).toLocaleString(),
+                  date: fmt.dateTime(config.lastTestedAt),
                 })}
               </CardDescription>
             ) : null}

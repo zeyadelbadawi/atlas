@@ -12,6 +12,7 @@
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDateFormatter } from '@hooks';
 import { useParams } from 'react-router-dom';
 import { Loader2, Send } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
@@ -29,6 +30,7 @@ import { getSupportCaseStatusTone } from '../utils/support-status.utils';
 import type { BreadcrumbItem } from '@types';
 
 export default function SupportCaseDetailPage(): JSX.Element {
+  const fmt = useDateFormatter();
   const { t } = useTranslation();
   const { caseId } = useParams<{ caseId: string }>();
   const [reply, setReply] = useState('');
@@ -113,7 +115,7 @@ export default function SupportCaseDetailPage(): JSX.Element {
                   className="text-xs text-muted-foreground"
                   dateTime={message.createdAt}
                 >
-                  {new Date(message.createdAt).toLocaleString()}
+                  {fmt.dateTime(message.createdAt)}
                 </time>
               </CardHeader>
               <CardContent>

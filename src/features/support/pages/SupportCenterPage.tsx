@@ -27,13 +27,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { useAuth } from '@hooks';
+import { useAuth, useDateFormatter } from '@hooks';
 import { buildPath, DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { useMySupportCases } from '../hooks';
 import { getSupportCaseStatusTone } from '../utils/support-status.utils';
 import { CreateSupportCaseDialog } from '../components/CreateSupportCaseDialog';
 
 export default function SupportCenterPage(): JSX.Element {
+  const fmt = useDateFormatter();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { organization } = useAuth();
@@ -116,7 +117,7 @@ export default function SupportCenterPage(): JSX.Element {
                   </CardTitle>
                   <CardDescription>
                     {t('support:center.lastActivity', {
-                      date: new Date(supportCase.updatedAt).toLocaleString(),
+                      date: fmt.dateTime(supportCase.updatedAt),
                     })}
                   </CardDescription>
                 </div>
@@ -128,7 +129,7 @@ export default function SupportCenterPage(): JSX.Element {
               <CardContent className="pt-0">
                 <p className="text-sm text-muted-foreground">
                   {t('support:center.openedOn', {
-                    date: new Date(supportCase.createdAt).toLocaleDateString(),
+                    date: fmt.date(supportCase.createdAt),
                   })}
                 </p>
               </CardContent>

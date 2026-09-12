@@ -26,7 +26,7 @@ import { EmptyState, ErrorState } from '@components/feedback';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { usePermissions, usePlatform } from '@hooks';
+import { useDateFormatter, usePermissions, usePlatform } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import {
   useAcademies,
@@ -41,6 +41,7 @@ import {
 } from '../utils/academy-status.utils';
 
 export default function AcademyDashboardPage(): JSX.Element {
+  const fmt = useDateFormatter();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -348,7 +349,7 @@ export default function AcademyDashboardPage(): JSX.Element {
                       )}
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {new Date(activity.timestamp).toLocaleDateString()}
+                      {fmt.date(activity.timestamp)}
                     </p>
                   </div>
                 ))}
