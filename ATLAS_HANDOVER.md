@@ -90,17 +90,23 @@ Production deploys from `main` in both repos. There is no staging branch.
 
 Verified by `git fetch` + `git rev-list --left-right --count`:
 
-| Repo | Local HEAD | `origin/main` | Relationship | Working tree |
-|---|---|---|---|---|
-| `atlas-front` | `0304db7` | `0304db7` | in sync | clean, no untracked |
-| `atlas-backend` | `4c9a0b6` | `4c9a0b6` | in sync | clean, no untracked |
+| Repo | Last APPLICATION-CODE commit | Handover commit (docs only) |
+|---|---|---|
+| `atlas-front` | `0304db7` | `8ca3552` |
+| `atlas-backend` | `4c9a0b6` | `e64ade6` |
+
+The left column is the code production is running. The right column is this
+document and a `.gitignore` entry — **documentation only, no application code**.
+Both repos were in sync with `origin/main` before the handover commit and are in
+sync after it.
 
 Both local clones were **32 (frontend) and 37 (backend) commits behind** at the start of
 this handover and were fast-forwarded with `git pull --ff-only`. Neither had local
 commits or local changes, so nothing was discarded.
 
-**Production is running exactly these SHAs** — confirmed against the GitHub Actions run
-for each repo (`gh run list --json headSha`).
+**Production runs the application code in the left column** — confirmed against the
+GitHub Actions run for each repo (`gh run list --json headSha`). Verify it yourself before
+your first change; see §10.
 
 ### How to safely synchronise before your first change
 
