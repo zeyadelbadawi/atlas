@@ -1,3 +1,31 @@
+# Security headers for the responses CADDY ITSELF serves — the SPA
+# document and its assets.
+#
+# THEY ARE DELIBERATELY NOT APPLIED TO `/api/*`. Those responses come from
+# the Nest app, which sets its own via helmet, and a site-wide `header`
+# block added a SECOND copy on top of every proxied response. Verified in
+# production: `/api/v1/auth/login` returned `x-content-type-options` and
+# `x-frame-options` twice, and — worse — `referrer-policy` and
+# `strict-transport-security` twice with DIFFERENT values
+# (`strict-origin-when-cross-origin` vs `no-referrer`, one year vs 180
+# days). Nothing was broken, because the specs pick a winner in each case
+# (Referrer Policy takes the last valid value, RFC 6797 takes the first
+# HSTS), but the effective policy was then an accident of ordering across
+# two independently-configured layers rather than anything either of them
+# intended. A duplicated `X-Frame-Options` is the one that could actually
+# bite: browsers are entitled to treat a multi-valued XFO as invalid.
+#
+# So each layer now owns exactly what it serves: Caddy the documents,
+# helmet the API. Neither header set was removed from anything.
+(security_headers) {
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+	}
+}
+
 # Main platform + every academy subdomain: one wildcard certificate covers
 # both, since both are served identically by this same container — the
 # frontend build already branches "atlas-app" vs "academy-website" mode at
@@ -13,13 +41,6 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 
 	encode zstd gzip
 
-	header {
-		Strict-Transport-Security "max-age=31536000; includeSubDomains"
-		X-Content-Type-Options "nosniff"
-		X-Frame-Options "SAMEORIGIN"
-		Referrer-Policy "strict-origin-when-cross-origin"
-	}
-
 	handle /api/* {
 		reverse_proxy backend:3000 {
 			header_up X-Real-IP {remote_host}
@@ -27,6 +48,7 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 	}
 
 	handle {
+		import security_headers
 		root * /srv
 		try_files {path} /index.html
 		file_server
@@ -52,6 +74,12 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 	}
 
 	handle {
+		# Previously this block set NO security headers at all, so an
+		# academy serving its own connected domain got none of them on its
+		# document while the same content on `*.atlass.dpdns.org` got all
+		# four. Same app, same files, weaker headers — purely because of
+		# which hostname the visitor arrived on.
+		import security_headers
 		root * /srv
 		try_files {path} /index.html
 		file_server
