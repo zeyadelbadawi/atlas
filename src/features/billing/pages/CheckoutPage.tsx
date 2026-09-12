@@ -19,9 +19,9 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Loader2 } from 'lucide-react';
+import { CreditCard, Loader2 } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
-import { ErrorState } from '@components/feedback';
+import { EmptyState, ErrorState } from '@components/feedback';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -97,6 +97,17 @@ export default function CheckoutPage(): JSX.Element {
   const createCheckout = useCreateCheckout();
   const createPayment = useCreatePayment();
   const paymentMethodsQuery = usePaymentMethods();
+
+  /*
+    Derived once and used by BOTH the empty check and the list below, so the
+    two can never disagree about whether there is anything to choose from —
+    which is exactly the shape of bug that leaves a customer looking at an
+    empty panel where the code believes it rendered options.
+  */
+  const enabledMethods = useMemo(
+    () => (paymentMethodsQuery.data ?? []).filter((method) => method.enabled),
+    [paymentMethodsQuery.data]
+  );
 
   const target: CheckoutTarget | undefined = useMemo(() => {
     if (!targetType || !targetKey) return undefined;
@@ -286,48 +297,66 @@ export default function CheckoutPage(): JSX.Element {
                   <Skeleton className="h-24 w-full" />
                 ) : paymentMethodsQuery.error ? (
                   <ErrorState onRetry={() => paymentMethodsQuery.refetch()} />
+                ) : enabledMethods.length === 0 ? (
+                  /*
+                    Loading and failure were handled; being handed an empty
+                    list was not, so a customer who had already reviewed a
+                    price and committed to buying reached a blank panel and a
+                    disabled button with nothing explaining either. Which
+                    methods exist is platform configuration, not something
+                    this tenant can fix from here — so the honest thing is to
+                    say that plainly and point at the one route that can
+                    actually resolve it.
+                  */
+                  <EmptyState
+                    icon={CreditCard}
+                    titleKey="payments:checkout.noMethodsTitle"
+                    descriptionKey="payments:checkout.noMethodsDescription"
+                    primaryAction={{
+                      labelKey: 'payments:checkout.contactSupport',
+                      onAction: () => navigate(DASHBOARD_ROUTES.support),
+                    }}
+                  />
                 ) : (
                   <RadioGroup
                     value={selectedMethodKey}
                     onValueChange={setSelectedMethodKey}
                     className="gap-3"
                   >
-                    {(paymentMethodsQuery.data ?? [])
-                      .filter((method) => method.enabled)
-                      .map((method) => {
-                        const available = !!getPaymentProvider(method.provider);
-                        return (
-                          <div
-                            key={method.key}
-                            className="flex items-start gap-3 rounded-md border border-border p-3"
+                    {enabledMethods.map((method) => {
+                      const available = !!getPaymentProvider(method.provider);
+                      return (
+                        <div
+                          key={method.key}
+                          className="flex items-start gap-3 rounded-md border border-border p-3"
+                        >
+                          <RadioGroupItem
+                            value={method.key}
+                            id={`method-${method.key}`}
+                            disabled={!available}
+                            className="mt-1"
+                          />
+                          <Label
+                            htmlFor={`method-${method.key}`}
+                            className="flex-1 cursor-pointer font-normal"
                           >
-                            <RadioGroupItem
-                              value={method.key}
-                              id={`method-${method.key}`}
-                              disabled={!available}
-                              className="mt-1"
-                            />
-                            <Label
-                              htmlFor={`method-${method.key}`}
-                              className="flex-1 cursor-pointer font-normal"
-                            >
-                              <span className="block font-medium text-foreground">
-                                {method.displayName}
+                            <span className="block font-medium text-foreground">
+                              {method.displayName}
+                            </span>
+                            {method.description ? (
+                              <span className="block text-sm text-muted-foreground">
+                                {method.description}
                               </span>
-                              {method.description ? (
-                                <span className="block text-sm text-muted-foreground">
-                                  {method.description}
-                                </span>
-                              ) : null}
-                              {!available ? (
-                                <span className="block text-sm text-warning">
-                                  {t('payments:checkout.methodUnavailable')}
-                                </span>
-                              ) : null}
-                            </Label>
-                          </div>
-                        );
-                      })}
+                            ) : null}
+                            {!available ? (
+                              <span className="block text-sm text-warning">
+                                {t('payments:checkout.methodUnavailable')}
+                              </span>
+                            ) : null}
+                          </Label>
+                        </div>
+                      );
+                    })}
                   </RadioGroup>
                 )}
 

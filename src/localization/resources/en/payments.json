@@ -41,7 +41,10 @@
     "paymentMethodTitle": "Payment method",
     "methodUnavailable": "Not available yet",
     "creatingPayment": "Creating payment…",
-    "continueToPayment": "Continue to payment"
+    "continueToPayment": "Continue to payment",
+    "noMethodsTitle": "No payment method available",
+    "noMethodsDescription": "Your order is ready, but no payment method has been enabled for your organization yet. Contact support and we will set one up for you.",
+    "contactSupport": "Contact support"
   },
   "paymentHistory": {
     "title": "Payment History",

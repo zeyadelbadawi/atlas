@@ -41,7 +41,10 @@
     "paymentMethodTitle": "طريقة الدفع",
     "methodUnavailable": "غير متاحة بعد",
     "creatingPayment": "جارٍ إنشاء الدفعة…",
-    "continueToPayment": "المتابعة إلى الدفع"
+    "continueToPayment": "المتابعة إلى الدفع",
+    "noMethodsTitle": "لا توجد طريقة دفع متاحة",
+    "noMethodsDescription": "طلبك جاهز، لكن لم يتم تفعيل أي طريقة دفع لمؤسستك بعد. تواصل مع الدعم وسنقوم بإعدادها لك.",
+    "contactSupport": "تواصل مع الدعم"
   },
   "paymentHistory": {
     "title": "سجل المدفوعات",
