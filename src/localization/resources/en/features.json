@@ -1,7 +1,8 @@
 {
   "page": {
     "title": "Everything you need to run an academy",
-    "description": "A tour of what Atlas actually does — organized around the real parts of running an education business."
+    "description": "A tour of what Atlas actually does — organized around the real parts of running an education business.",
+    "eyebrow": "Product tour"
   },
   "groups": {
     "academies": {

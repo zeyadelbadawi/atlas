@@ -154,6 +154,7 @@ export default {
       },
       maxWidth: {
         content: 'var(--layout-content-max-width)',
+        marketing: 'var(--layout-marketing-max-width)',
       },
       transitionDuration: {
         instant: 'var(--duration-instant)',

@@ -8,12 +8,14 @@
   },
   "whatIsAtlas": {
     "title": "What Atlas is",
-    "description": "Atlas is a platform for running an education business: one or more academies, their courses, their students and instructors, and the public website that represents each one — all under a single organization you control. You keep your own branding on every academy's public site; Atlas runs the infrastructure underneath it."
+    "description": "Atlas is a platform for running an education business: one or more academies, their courses, their students and instructors, and the public website that represents each one — all under a single organization you control. You keep your own branding on every academy's public site; Atlas runs the infrastructure underneath it.",
+    "eyebrow": "The short version"
   },
   "capabilitiesSection": {
     "title": "Everything an academy needs, already built",
     "description": "Each of these is a real, working part of Atlas today — not a roadmap promise.",
-    "viewAll": "See every feature"
+    "viewAll": "See every feature",
+    "eyebrow": "Capabilities"
   },
   "capabilities": {
     "academies": {
@@ -68,7 +70,8 @@
         "title": "Launch and grow",
         "description": "Add courses, invite instructors, enroll students, and publish your academy's public website."
       }
-    }
+    },
+    "eyebrow": "Getting started"
   },
   "pricingPreview": {
     "title": "Straightforward pricing",
@@ -79,11 +82,28 @@
     "contactUs": "Contact us",
     "free": "Free",
     "perMonth": "/month",
-    "perYear": "/year"
+    "perYear": "/year",
+    "eyebrow": "Plans"
   },
   "finalCta": {
     "title": "Bring your academy onto Atlas",
     "description": "Create your organization in minutes — no credit card required to start.",
     "action": "Get started free"
+  },
+  "structure": {
+    "organization": {
+      "title": "Your organization",
+      "caption": "Owns billing, plans and every academy below"
+    },
+    "academies": {
+      "first": "Your first academy",
+      "second": "A second academy"
+    },
+    "leaves": {
+      "courses": "Courses and lessons",
+      "students": "Students and instructors",
+      "website": "Its own public website"
+    },
+    "caption": "How Atlas is organised: one organization, as many academies as your plan allows, each with its own content, people and public site."
   }
 }

@@ -1,7 +1,8 @@
 {
   "page": {
     "title": "Plans for academies of every size",
-    "description": "Start free, and move up only when you actually need more room."
+    "description": "Start free, and move up only when you actually need more room.",
+    "eyebrow": "Pricing"
   },
   "table": {
     "recommended": "Most popular",
@@ -41,5 +42,11 @@
   "faq": {
     "title": "Questions about pricing?",
     "description": "Every plan starts with a free trial and no credit card is required to begin. Reach out any time if you need help choosing."
+  },
+  "comparison": {
+    "title": "Compare every plan",
+    "caption": "Plan limits and included features, compared across every Atlas plan.",
+    "included": "Included",
+    "notIncluded": "Not included"
   }
 }

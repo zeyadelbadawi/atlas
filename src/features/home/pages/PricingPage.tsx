@@ -1,22 +1,34 @@
 /**
- * Public Pricing page — real Plan catalog (`GET /public/plans`), never
- * invented numbers. Choosing a plan while signed out routes into the
- * real sign-up → organization-creation → plan-selection journey
- * (`useStartPlanFlow`) rather than attempting checkout directly; the
- * actual subscription/checkout logic is never duplicated here.
+ * Public Pricing page — real Plan catalog (`GET /public/plans`), never invented
+ * numbers. Choosing a plan while signed out routes into the real sign-up →
+ * organization-creation → plan-selection journey (`useStartPlanFlow`) rather than
+ * attempting checkout directly; the actual subscription/checkout logic is never
+ * duplicated here.
+ *
+ * Design system: `design-system/atlas-marketing/MASTER.md`, shared with the home
+ * and features pages through the `MarketingSection` primitives.
+ *
+ * Accessibility fix carried by this redesign: the comparison table previously
+ * conveyed included-vs-excluded with an `aria-hidden` Check/Minus icon and no
+ * text alternative, so every feature cell was announced as empty — a screen
+ * reader user could not read the comparison at all. Each cell now carries an
+ * `sr-only` label, and the table has a real caption plus `scope` on its headers.
  */
 import { Check, Minus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState, EmptyState } from '@components/feedback';
 import { Skeleton } from '@/components/ui/skeleton';
-import { createStaggerVariants } from '@motion';
+import { RISE_VARIANTS, createStaggerVariants } from '@motion';
 import { usePublicPlans } from '../hooks/usePublicPlans';
 import { useStartPlanFlow } from '../hooks/useStartPlanFlow';
 import { formatPlanPrice } from '../utils/formatPlanPrice';
+import {
+  MarketingContainer,
+  MarketingSection,
+} from '../components/MarketingSection';
 import type { PlanFeatures } from '@types';
 
 /** Order features are compared in — matches `PlanFeatures`' own real fields. */
@@ -71,173 +83,260 @@ export default function PricingPage(): JSX.Element {
   const stagger = createStaggerVariants(plans.length || 1);
 
   return (
-    <PageContainer>
-      <PageHeader
-        titleKey="pricing:page.title"
-        descriptionKey="pricing:page.description"
-      />
-
-      {plansQuery.isLoading ? (
-        <div className="grid gap-4 py-4 sm:grid-cols-3">
-          {[0, 1, 2].map((key) => (
-            <Skeleton key={key} className="h-80 rounded-lg" />
-          ))}
-        </div>
-      ) : plansQuery.isError ? (
-        <ErrorState
-          onRetry={() => plansQuery.refetch()}
-          titleKey="pricing:table.errorTitle"
-          descriptionKey="pricing:table.errorDescription"
+    <>
+      {/* ── Page header ─────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden">
+        <span
+          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-80 bg-gradient-to-b from-surface to-background"
+          aria-hidden
         />
-      ) : plans.length === 0 ? (
-        <EmptyState
-          titleKey="pricing:table.emptyTitle"
-          descriptionKey="pricing:table.emptyDescription"
-        />
-      ) : (
-        <>
+        <MarketingContainer className="py-16 lg:py-24">
           <motion.div
             initial="hidden"
             animate="visible"
-            variants={stagger.container}
-            className="grid gap-6 py-4 sm:grid-cols-3"
+            variants={RISE_VARIANTS}
+            className="flex flex-col gap-5"
           >
-            {plans.map((plan) => (
-              <motion.div
-                key={plan.key}
-                variants={stagger.item}
-                className={`flex flex-col gap-4 rounded-lg border p-6 ${
-                  plan.key === recommendedKey
-                    ? 'border-primary bg-surface shadow-md ring-1 ring-primary'
-                    : 'border-border bg-card'
-                }`}
-              >
-                {plan.key === recommendedKey ? (
-                  <Badge className="w-fit">
-                    {t('pricing:table.recommended')}
-                  </Badge>
-                ) : null}
-
-                <div className="space-y-1">
-                  <h2 className="font-display text-xl font-semibold text-foreground">
-                    {plan.name}
-                  </h2>
-                  <p className="text-sm text-muted-foreground">
-                    {plan.description}
-                  </p>
-                </div>
-
-                <p className="font-display text-3xl font-semibold text-foreground">
-                  {formatPlanPrice(plan.pricing, t)}
-                </p>
-
-                <ul className="flex-1 space-y-2 text-sm text-muted-foreground">
-                  {LIMIT_ROWS.slice(0, 4).map((key) => (
-                    <li key={key} className="flex items-center gap-2">
-                      <Check
-                        className="size-4 text-primary"
-                        strokeWidth={2}
-                        aria-hidden
-                      />
-                      <span>
-                        {formatLimit(
-                          (plan.limits as unknown as Record<string, unknown>)[
-                            key
-                          ],
-                          key,
-                          t
-                        )}{' '}
-                        {t(`pricing:limits.${key}`)}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-
-                <Button onClick={() => startPlanFlow(plan.key)} size="lg">
-                  {t('pricing:table.choosePlan', { plan: plan.name })}
-                </Button>
-              </motion.div>
-            ))}
+            <span className="text-xs font-medium uppercase tracking-[0.14em] rtl:tracking-normal text-muted-foreground">
+              {t('pricing:page.eyebrow')}
+            </span>
+            <h1 className="max-w-[22ch] text-balance font-display text-[2.5rem] font-semibold leading-[1.05] rtl:leading-[1.5] tracking-[-0.03em] rtl:tracking-normal text-foreground sm:text-5xl lg:text-6xl">
+              {t('pricing:page.title')}
+            </h1>
+            <p className="max-w-[58ch] text-base leading-relaxed text-muted-foreground sm:text-lg">
+              {t('pricing:page.description')}
+            </p>
           </motion.div>
-
-          {/* Full comparison table */}
-          <div className="overflow-x-auto py-8">
-            <table className="w-full min-w-[640px] border-collapse text-start text-sm">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="py-3 text-start font-medium text-muted-foreground">
-                    {t('pricing:table.feature')}
-                  </th>
-                  {plans.map((plan) => (
-                    <th
-                      key={plan.key}
-                      className="py-3 text-start font-display font-semibold text-foreground"
-                    >
-                      {plan.name}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {LIMIT_ROWS.map((key) => (
-                  <tr key={key} className="border-b border-border">
-                    <td className="py-3 text-muted-foreground">
-                      {t(`pricing:limits.${key}`)}
-                    </td>
-                    {plans.map((plan) => (
-                      <td
-                        key={plan.key}
-                        className="py-3 font-medium text-foreground"
-                      >
-                        {formatLimit(
-                          (plan.limits as unknown as Record<string, unknown>)[
-                            key
-                          ],
-                          key,
-                          t
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-                {FEATURE_ROWS.map((key) => (
-                  <tr key={key} className="border-b border-border">
-                    <td className="py-3 text-muted-foreground">
-                      {t(`pricing:features.${key}`)}
-                    </td>
-                    {plans.map((plan) => (
-                      <td key={plan.key} className="py-3">
-                        {plan.features[key] ? (
-                          <Check
-                            className="size-4 text-primary"
-                            strokeWidth={2}
-                            aria-hidden
-                          />
-                        ) : (
-                          <Minus
-                            className="size-4 text-muted-foreground/50"
-                            strokeWidth={2}
-                            aria-hidden
-                          />
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </>
-      )}
-
-      <section className="mx-auto max-w-xl space-y-2 py-8 text-center">
-        <h2 className="font-display text-xl font-semibold text-foreground">
-          {t('pricing:faq.title')}
-        </h2>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          {t('pricing:faq.description')}
-        </p>
+        </MarketingContainer>
       </section>
-    </PageContainer>
+
+      <MarketingSection divided>
+        {plansQuery.isLoading ? (
+          <div className="grid gap-4 sm:grid-cols-3">
+            {[0, 1, 2].map((key) => (
+              <Skeleton key={key} className="h-96 rounded-xl" />
+            ))}
+          </div>
+        ) : plansQuery.isError ? (
+          <ErrorState
+            onRetry={() => plansQuery.refetch()}
+            titleKey="pricing:table.errorTitle"
+            descriptionKey="pricing:table.errorDescription"
+          />
+        ) : plans.length === 0 ? (
+          <EmptyState
+            titleKey="pricing:table.emptyTitle"
+            descriptionKey="pricing:table.emptyDescription"
+          />
+        ) : (
+          <>
+            {/* ── Plan cards ─────────────────────────────────────────────
+                The recommended plan is distinguished by border weight and a
+                badge only — no shadow stack and no scale transform, which
+                would break the row's alignment and add visual noise. */}
+            <motion.ul
+              initial="hidden"
+              animate="visible"
+              variants={stagger.container}
+              className="grid gap-4 sm:grid-cols-3"
+            >
+              {plans.map((plan) => {
+                const isRecommended = plan.key === recommendedKey;
+                return (
+                  <motion.li
+                    key={plan.key}
+                    variants={stagger.item}
+                    className={`flex flex-col gap-5 rounded-xl border bg-card p-6 lg:p-8 ${
+                      isRecommended
+                        ? 'border-primary ring-1 ring-primary'
+                        : 'border-border'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <h2 className="font-display text-lg font-semibold text-foreground">
+                        {plan.name}
+                      </h2>
+                      {isRecommended ? (
+                        <Badge className="shrink-0">
+                          {t('pricing:table.recommended')}
+                        </Badge>
+                      ) : null}
+                    </div>
+
+                    <p className="font-display text-4xl font-semibold tracking-[-0.03em] rtl:tracking-normal text-foreground">
+                      {formatPlanPrice(plan.pricing, t)}
+                    </p>
+
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {plan.description}
+                    </p>
+
+                    <ul className="flex-1 space-y-2.5 border-t border-border pt-5 text-sm text-muted-foreground">
+                      {LIMIT_ROWS.slice(0, 4).map((key) => (
+                        <li key={key} className="flex items-start gap-2.5">
+                          <Check
+                            className="mt-0.5 size-4 shrink-0 text-primary"
+                            strokeWidth={2}
+                            aria-hidden
+                          />
+                          <span>
+                            {formatLimit(
+                              (
+                                plan.limits as unknown as Record<
+                                  string,
+                                  unknown
+                                >
+                              )[key],
+                              key,
+                              t
+                            )}{' '}
+                            {t(`pricing:limits.${key}`)}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <Button
+                      onClick={() => startPlanFlow(plan.key)}
+                      size="lg"
+                      variant={isRecommended ? 'default' : 'outline'}
+                      className="w-full"
+                    >
+                      {t('pricing:table.choosePlan', { plan: plan.name })}
+                    </Button>
+                  </motion.li>
+                );
+              })}
+            </motion.ul>
+
+            {/* ── Full comparison table ─────────────────────────────────── */}
+            <div className="mt-16 lg:mt-20">
+              <h2 className="font-display text-xl font-semibold tracking-[-0.01em] text-foreground sm:text-2xl">
+                {t('pricing:comparison.title')}
+              </h2>
+
+              {/*
+                Scrolls inside its own container so a 640px-wide table can never
+                make the page itself scroll horizontally at 375px.
+                `tabIndex={0}` makes the scroll region reachable by keyboard,
+                and the region needs an accessible name to be announced.
+              */}
+              <div
+                className="mt-6 overflow-x-auto"
+                role="region"
+                aria-label={t('pricing:comparison.title')}
+                tabIndex={0}
+              >
+                <table className="w-full min-w-[640px] border-collapse text-start text-sm">
+                  <caption className="sr-only">
+                    {t('pricing:comparison.caption')}
+                  </caption>
+                  <thead>
+                    <tr className="border-b border-border-strong">
+                      <th
+                        scope="col"
+                        className="py-3 text-start font-medium text-muted-foreground"
+                      >
+                        {t('pricing:table.feature')}
+                      </th>
+                      {plans.map((plan) => (
+                        <th
+                          key={plan.key}
+                          scope="col"
+                          className="py-3 text-start font-display font-semibold text-foreground"
+                        >
+                          {plan.name}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {LIMIT_ROWS.map((key) => (
+                      <tr key={key} className="border-b border-border">
+                        <th
+                          scope="row"
+                          className="py-3 text-start font-normal text-muted-foreground"
+                        >
+                          {t(`pricing:limits.${key}`)}
+                        </th>
+                        {plans.map((plan) => (
+                          <td
+                            key={plan.key}
+                            className="py-3 font-medium tabular-nums text-foreground"
+                          >
+                            {formatLimit(
+                              (
+                                plan.limits as unknown as Record<
+                                  string,
+                                  unknown
+                                >
+                              )[key],
+                              key,
+                              t
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                    {FEATURE_ROWS.map((key) => (
+                      <tr key={key} className="border-b border-border">
+                        <th
+                          scope="row"
+                          className="py-3 text-start font-normal text-muted-foreground"
+                        >
+                          {t(`pricing:features.${key}`)}
+                        </th>
+                        {plans.map((plan) => (
+                          <td key={plan.key} className="py-3">
+                            {/* The icon is decorative; the sr-only text is what
+                                actually conveys the value. Colour alone must
+                                never carry meaning. */}
+                            {plan.features[key] ? (
+                              <>
+                                <Check
+                                  className="size-4 text-primary"
+                                  strokeWidth={2}
+                                  aria-hidden
+                                />
+                                <span className="sr-only">
+                                  {t('pricing:comparison.included')}
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <Minus
+                                  className="size-4 text-muted-foreground/60"
+                                  strokeWidth={2}
+                                  aria-hidden
+                                />
+                                <span className="sr-only">
+                                  {t('pricing:comparison.notIncluded')}
+                                </span>
+                              </>
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
+        )}
+      </MarketingSection>
+
+      {/* ── Pricing note ───────────────────────────────────────────────── */}
+      <MarketingSection divided compact>
+        <div className="flex max-w-[62ch] flex-col gap-3">
+          <h2 className="font-display text-xl font-semibold tracking-[-0.01em] text-foreground">
+            {t('pricing:faq.title')}
+          </h2>
+          <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+            {t('pricing:faq.description')}
+          </p>
+        </div>
+      </MarketingSection>
+    </>
   );
 }

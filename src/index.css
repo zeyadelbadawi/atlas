@@ -161,6 +161,13 @@
     --layout-sidebar-width: 16.5rem;
     --layout-sidebar-collapsed-width: 4.25rem;
     --layout-content-max-width: 96rem;
+    /*
+     * The public marketing site measures itself narrower than the product
+     * shell on purpose. 96rem is right for a data-dense dashboard and far
+     * too wide for marketing prose — a paragraph stretched across it runs
+     * well past the ~70ch where reading comfort falls off.
+     */
+    --layout-marketing-max-width: 75rem;
 
     /* ---------------------------------------------------------------- *
      * Typography families

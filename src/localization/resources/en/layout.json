@@ -4,10 +4,16 @@
       "product": "Product",
       "pricing": "Pricing",
       "signIn": "Sign in",
-      "getStarted": "Get started"
+      "getStarted": "Get started",
+      "label": "Main",
+      "openMenu": "Open menu",
+      "menuTitle": "Menu"
     },
     "footer": {
-      "rights": "© {{year}} Atlas. All rights reserved."
+      "rights": "© {{year}} Atlas. All rights reserved.",
+      "tagline": "One platform to launch, run and grow your education business.",
+      "productGroup": "Product",
+      "legal": "Legal"
     }
   },
   "auth": {
