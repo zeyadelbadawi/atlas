@@ -132,10 +132,25 @@ function IframeViewport({
   // happened to be selected when the iframe first mounted — switching the
   // preview to Arabic would change the copy but not the direction.
   useEffect(() => {
-    const doc = iframeRef.current?.contentDocument;
-    if (!doc) return;
-    doc.documentElement.setAttribute('dir', dir);
-    doc.documentElement.setAttribute('lang', lang);
+    /*
+      GUARD `documentElement`, NOT JUST THE DOCUMENT. A `srcDoc` iframe has
+      a `contentDocument` from the moment it is created, but that document
+      has no `documentElement` until it is parsed — and this effect runs on
+      its dependencies, which fire before the `load` handler below has
+      populated anything. Checking only `doc` let a null root through and
+      threw `Cannot read properties of null (reading 'setAttribute')`,
+      which the error boundary turned into "this section could not be
+      displayed" where the page preview should be.
+
+      It is a race, so it struck intermittently and survived a long time;
+      caught in production with the editor open in two browsers at once.
+      The `load` handler re-applies both attributes anyway, so returning
+      early here costs nothing.
+    */
+    const root = iframeRef.current?.contentDocument?.documentElement;
+    if (!root) return;
+    root.setAttribute('dir', dir);
+    root.setAttribute('lang', lang);
   }, [dir, lang, mountNode]);
 
   useEffect(() => {
