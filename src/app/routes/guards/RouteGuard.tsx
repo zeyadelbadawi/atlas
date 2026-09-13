@@ -8,6 +8,7 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { useAuth } from '@hooks';
+import { useSubscriptionLifecycleState } from '@features/tenant';
 import {
   AUTH_ROUTES,
   AUTHENTICATED_ENTRY_ROUTE,
@@ -26,6 +27,22 @@ export interface RouteGuardProps {
   /** Roles required to access this route. */
   readonly requiredRoles?: readonly string[];
 
+  /**
+   * Phase 11 — this route leads to gated product functionality that
+   * requires a working entitlement (an active plan or a live trial).
+   *
+   * WHY THE ROUTE AND NOT ONLY THE SIDEBAR. Removing a link is UX; it is
+   * not a control. Before this existed, a customer whose trial had ended
+   * could type the URL of any "hidden" screen and it rendered — the page
+   * shell, the empty tables, the forms — and only failed when a write was
+   * finally attempted. The API was never actually exposed (the backend
+   * interceptor refuses those mutations regardless), but the product
+   * cheerfully showed a workspace that could not be used and gave no
+   * explanation. This sends the customer to the dashboard, which is where
+   * the real explanation and the recovery action live.
+   */
+  readonly requiresEntitlement?: boolean;
+
   /** Fallback shown while restoring the session. */
   readonly pendingFallback?: ReactNode;
 }
@@ -35,10 +52,16 @@ export function RouteGuard({
   requireAuthentication = false,
   requiredPermissions = [],
   requiredRoles = [],
+  requiresEntitlement = false,
   pendingFallback = null,
 }: RouteGuardProps): JSX.Element {
   const location = useLocation();
   const { isAuthenticated, isRestoring, user, organization } = useAuth();
+  // Only consulted for entitlement-gated routes, but hooks cannot be
+  // called conditionally; the query itself is disabled without an
+  // organization, so this costs nothing on the routes that ignore it.
+  const { state: lifecycle, isLoading: isLifecycleLoading } =
+    useSubscriptionLifecycleState();
 
   // Show fallback while session restoration is in progress.
   if (isRestoring) {
@@ -120,6 +143,25 @@ export function RouteGuard({
     if (!hasRoles) {
       return <Navigate to={SYSTEM_ROUTES.forbidden} replace />;
     }
+  }
+
+  /*
+    Entitlement requirement (Phase 11).
+
+    Deliberately the LAST check, and deliberately not a 403. Being without
+    a plan is not a permission failure — the customer is perfectly
+    entitled to be here, they simply have nothing active yet — so sending
+    them to `forbidden` would be both wrong and a dead end. The dashboard
+    is where the lifecycle is explained and where "choose a plan" /
+    "continue with <plan>" actually live, so that is where they go.
+
+    Waits for a definite answer rather than guessing: redirecting a paying
+    customer away from their own screens for the moment the read is in
+    flight would be far worse than rendering a beat early, and the API
+    refuses the writes either way.
+  */
+  if (requiresEntitlement && !isLifecycleLoading && lifecycle?.hasAccess === false) {
+    return <Navigate to={AUTHENTICATED_ENTRY_ROUTE} replace />;
   }
 
   return <>{children}</>;

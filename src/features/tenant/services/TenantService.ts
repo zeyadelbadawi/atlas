@@ -24,6 +24,7 @@ import type {
   CancelSubscriptionRequestInput,
   StartTrialRequest,
   StartTrialResult,
+  SubscriptionLifecycleState,
   TenantAddOn,
   TenantSubscription,
   TenantUsage,
@@ -39,6 +40,24 @@ export class TenantService extends BaseService {
   ): Promise<TenantSubscription> {
     return this.client.get<TenantSubscription>(
       this.path(organizationId, 'subscription'),
+      options
+    );
+  }
+
+  /**
+   * The authoritative lifecycle state for this Organization (Phase 11).
+   *
+   * THE ONE READ every lifecycle-aware surface uses — dashboard, sidebar,
+   * route guards, recovery banners. Computed server-side by the same
+   * service the request interceptor enforces with, so the UI cannot
+   * disagree with the API that will actually accept or refuse the write.
+   */
+  async getLifecycle(
+    organizationId: string,
+    options?: ReadOptions
+  ): Promise<SubscriptionLifecycleState> {
+    return this.client.get<SubscriptionLifecycleState>(
+      this.path(organizationId, 'subscription', 'lifecycle'),
       options
     );
   }

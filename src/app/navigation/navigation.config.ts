@@ -52,6 +52,7 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
   const items: NavigationItem[] = [
     {
       id: 'academy-overview',
+      requiresEntitlement: true,
       labelKey: 'navigation:items.academyOverview',
       path: DASHBOARD_ROUTES.academy,
       icon: GraduationCap,
@@ -61,6 +62,7 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
     },
     {
       id: 'academy-provisioning',
+      requiresEntitlement: true,
       labelKey: 'navigation:items.academyProvisioning',
       path: DASHBOARD_ROUTES.provisioning,
       icon: Rocket,
@@ -74,6 +76,7 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
     items.push(
       {
         id: 'academy-courses',
+        requiresEntitlement: true,
         labelKey: 'navigation:items.academyCourses',
         path: buildPath(DASHBOARD_ROUTES.academyCourses, {
           academyId: activeAcademyId,
@@ -85,6 +88,7 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
       },
       {
         id: 'academy-members',
+        requiresEntitlement: true,
         labelKey: 'navigation:items.academyMembers',
         path: buildPath(DASHBOARD_ROUTES.academyMembers, {
           academyId: activeAcademyId,
@@ -95,6 +99,7 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
       },
       {
         id: 'academy-branding',
+        requiresEntitlement: true,
         labelKey: 'navigation:items.academyBranding',
         path: buildPath(DASHBOARD_ROUTES.academyBranding, {
           academyId: activeAcademyId,
@@ -105,6 +110,7 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
       },
       {
         id: 'academy-settings',
+        requiresEntitlement: true,
         labelKey: 'navigation:items.academySettings',
         path: buildPath(DASHBOARD_ROUTES.academySettings, {
           academyId: activeAcademyId,
@@ -115,6 +121,7 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
       },
       {
         id: 'academy-media',
+        requiresEntitlement: true,
         labelKey: 'navigation:items.academyMedia',
         path: buildPath(DASHBOARD_ROUTES.academyMedia, {
           academyId: activeAcademyId,
@@ -128,6 +135,7 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
       },
       {
         id: 'academy-announcements',
+        requiresEntitlement: true,
         labelKey: 'navigation:items.academyAnnouncements',
         path: buildPath(DASHBOARD_ROUTES.academyAnnouncements, {
           academyId: activeAcademyId,
@@ -143,6 +151,7 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
       },
       {
         id: 'academy-website',
+        requiresEntitlement: true,
         labelKey: 'navigation:items.academyWebsite',
         path: buildPath(DASHBOARD_ROUTES.websiteOverview, {
           academyId: activeAcademyId,
@@ -235,6 +244,7 @@ export function getDashboardNavigation(
       items: [
         {
           id: 'instructor-dashboard',
+          requiresEntitlement: true,
           labelKey: 'navigation:items.instructorDashboard',
           path: DASHBOARD_ROUTES.instructorDashboard,
           icon: LayoutDashboard,
@@ -243,6 +253,7 @@ export function getDashboardNavigation(
         },
         {
           id: 'instructor-courses',
+          requiresEntitlement: true,
           labelKey: 'navigation:items.myTeachingCourses',
           path: DASHBOARD_ROUTES.instructorCourses,
           icon: ClipboardList,
@@ -294,6 +305,7 @@ export function getDashboardNavigation(
       items: [
         {
           id: 'announcements',
+          requiresEntitlement: true,
           labelKey: 'navigation:items.announcements',
           path: DASHBOARD_ROUTES.announcements,
           icon: Megaphone,
@@ -302,6 +314,7 @@ export function getDashboardNavigation(
         },
         {
           id: 'blog',
+          requiresEntitlement: true,
           labelKey: 'navigation:items.blog',
           path: DASHBOARD_ROUTES.blog,
           icon: Newspaper,
@@ -328,6 +341,7 @@ export function getDashboardNavigation(
           // Phase 9 (roadmap CO11) — same owner-exclusive permission the
           // backend endpoint itself requires, so nav and server agree.
           id: 'student-analytics',
+          requiresEntitlement: true,
           labelKey: 'navigation:items.studentAnalytics',
           path: DASHBOARD_ROUTES.studentAnalytics,
           icon: LineChart,

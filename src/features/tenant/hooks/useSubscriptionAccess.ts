@@ -1,28 +1,36 @@
 /**
  * Whether this tenant currently has working access, and why not if not.
  *
- * READS THE SAME AUTHORITY THE BACKEND ENFORCES ON, and reaches the same
- * conclusion by the same rule — `expired`/`cancelled`, or a trial whose
- * clock has run out. It is NOT the control: every mutation is refused
- * server-side by `SubscriptionAccessInterceptor` whatever this returns.
- * What this is for is telling the customer BEFORE they lose work typing
- * into a form that will be rejected.
+ * READS THE BACKEND'S ANSWER — it no longer computes its own. Until Phase
+ * 11 this hook reimplemented the server's status interpretation locally
+ * (the same inactive-status set, the same live trial-clock check) and the
+ * two were kept in step by hand. They agreed faithfully, including about
+ * the thing they were both wrong about: a brand-new Organization carried
+ * `status: 'expired'`, so this hook confidently told every new customer
+ * their subscription had ended. A second copy of a rule cannot catch the
+ * first copy's mistake; it can only reproduce it.
  *
- * THE TRIAL CHECK IS AGAINST THE CLOCK, not `status` alone, for exactly the
- * reason the backend does the same: the sweep that flips `trialing` to
- * `expired` runs on a schedule, and between a trial ending and the sweep
- * noticing, `status` still reads `trialing` and is wrong. A UI that trusted
- * `status` would cheerfully show a working dashboard whose every save
- * failed.
+ * It is NOT the control: every mutation is refused server-side by
+ * `SubscriptionAccessInterceptor` whatever this returns. What this is for
+ * is telling the customer BEFORE they lose work typing into a form that
+ * will be rejected.
+ *
+ * Kept as a thin adapter over `useSubscriptionLifecycleState` rather than
+ * deleted, because the existing banner/guard call sites read exactly this
+ * shape and rewriting them all to learn the richer vocabulary at once
+ * would be a much larger, riskier change than the bug warranted.
  */
 import { useMemo } from 'react';
+import { useSubscriptionLifecycleState } from './useSubscriptionLifecycleState';
 import { useTenantSubscription } from './useTenantSubscription';
 import type { TenantSubscription } from '@types';
 
-/** Mirrors the backend's `SUBSCRIPTION_INACTIVE_STATUSES`. Grace period and past-due are deliberately absent from both. */
-const INACTIVE_STATUSES: ReadonlySet<string> = new Set(['expired', 'cancelled']);
-
-export type SubscriptionBlockReason = 'no_subscription' | 'expired' | 'trial_ended';
+export type SubscriptionBlockReason =
+  | 'no_subscription'
+  /** A new customer who has not chosen a plan. Never presented as a lapse. */
+  | 'no_plan'
+  | 'expired'
+  | 'trial_ended';
 
 export interface SubscriptionAccess {
   /** False only when we are CERTAIN access is blocked — never while still loading. */
@@ -32,55 +40,49 @@ export interface SubscriptionAccess {
   readonly isLoading: boolean;
 }
 
-function isTrialOver(subscription: TenantSubscription, now: number): boolean {
-  if (subscription.status !== 'trialing') return false;
-  if (!subscription.trialEndsAt) return false;
-  return new Date(subscription.trialEndsAt).getTime() <= now;
-}
-
 export function useSubscriptionAccess(): SubscriptionAccess {
-  const { data, isLoading } = useTenantSubscription();
+  const { state, isLoading } = useSubscriptionLifecycleState();
+  // Still fetched so callers that show plan name / dates keep working.
+  // Never consulted to decide blocking — that is `state`'s job alone.
+  const { data: subscription } = useTenantSubscription();
 
   return useMemo(() => {
     // Never block on incomplete information. A momentary loading state must
     // not flash a "your subscription ended" screen at a paying customer —
     // the backend is the one refusing anything, so being late here costs
     // nothing and being wrong here costs trust.
-    if (isLoading) return { isBlocked: false, isLoading: true };
+    if (isLoading || !state) return { isBlocked: false, isLoading: true };
 
-    if (!data) {
+    switch (state.lifecycle) {
       /*
-        NEVER SUBSCRIBED IS NOT LAPSED — and the backend draws the same
-        line. Organization creation deliberately does not auto-start a
-        trial, so a customer who is still setting themselves up has no
-        subscription row yet and is doing nothing wrong. Telling them "your
+        NEITHER OF THESE IS A LAPSE, and neither blocks. An account still
+        choosing a plan — or one that has not created an Organization yet
+        — is mid-onboarding and doing nothing wrong. Telling them "your
         subscription has ended" would be both false and a rotten first
-        impression.
-
-        The writes that genuinely need an entitlement (creating an academy,
-        a course) are refused by the limit checks with their own message.
+        impression. The writes that genuinely need an entitlement are
+        refused by the entitlement checks with their own message.
       */
-      return { isBlocked: false, reason: 'no_subscription', isLoading: false };
-    }
+      case 'no_organization':
+        return { isBlocked: false, isLoading: false };
+      case 'no_plan':
+        return { isBlocked: false, reason: 'no_plan', subscription, isLoading: false };
 
-    if (isTrialOver(data, Date.now())) {
-      return {
-        isBlocked: true,
-        reason: 'trial_ended',
-        subscription: data,
-        isLoading: false,
-      };
-    }
+      case 'trial_expired':
+        return {
+          isBlocked: true,
+          reason: 'trial_ended',
+          subscription,
+          isLoading: false,
+        };
 
-    if (INACTIVE_STATUSES.has(data.status)) {
-      return {
-        isBlocked: true,
-        reason: 'expired',
-        subscription: data,
-        isLoading: false,
-      };
-    }
+      case 'expired':
+        return { isBlocked: true, reason: 'expired', subscription, isLoading: false };
 
-    return { isBlocked: false, subscription: data, isLoading: false };
-  }, [data, isLoading]);
+      // `trialing`, `active` and `cancelled_active` all have working
+      // access. A cancellation that still has paid time left is emphatically
+      // not expired, and must never be shown as such.
+      default:
+        return { isBlocked: false, subscription, isLoading: false };
+    }
+  }, [state, isLoading, subscription]);
 }

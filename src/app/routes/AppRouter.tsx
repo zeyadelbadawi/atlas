@@ -454,6 +454,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['tenant.dashboard.view']}
+                  requiresEntitlement
                 >
                   <StudentAnalyticsPage />
                 </RouteGuard>
@@ -491,6 +492,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['academy.view']}
+                  requiresEntitlement
                 >
                   <AcademyDashboardPage />
                 </RouteGuard>
@@ -526,6 +528,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['academy.view']}
+                  requiresEntitlement
                 >
                   <AcademyOnboardingPage />
                 </RouteGuard>
@@ -538,6 +541,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['academy.view']}
+                  requiresEntitlement
                 >
                   <AcademyProfilePage />
                 </RouteGuard>
@@ -550,6 +554,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['academy.configure']}
+                  requiresEntitlement
                 >
                   <AcademySettingsPage />
                 </RouteGuard>
@@ -562,6 +567,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['academy.branding.update']}
+                  requiresEntitlement
                 >
                   <AcademyBrandingPage />
                 </RouteGuard>
@@ -574,6 +580,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['academy.members.view']}
+                  requiresEntitlement
                 >
                   <AcademyMembersPage />
                 </RouteGuard>
@@ -586,6 +593,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['course.view']}
+                  requiresEntitlement
                 >
                   <CourseListPage />
                 </RouteGuard>
@@ -598,6 +606,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['course.create']}
+                  requiresEntitlement
                 >
                   <CourseCreatePage />
                 </RouteGuard>
@@ -610,6 +619,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['course.update']}
+                  requiresEntitlement
                 >
                   <CourseEditPage />
                 </RouteGuard>
@@ -622,6 +632,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['course.manage']}
+                  requiresEntitlement
                 >
                   <CourseBuilderPage />
                 </RouteGuard>
@@ -634,6 +645,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['course.configure']}
+                  requiresEntitlement
                 >
                   <CourseSettingsPage />
                 </RouteGuard>
@@ -646,6 +658,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['quiz.manage']}
+                  requiresEntitlement
                 >
                   <CourseQuizzesPage />
                 </RouteGuard>
@@ -658,6 +671,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['quiz.manage']}
+                  requiresEntitlement
                 >
                   <CourseQuizEditorPage />
                 </RouteGuard>
@@ -670,6 +684,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['quiz.manage']}
+                  requiresEntitlement
                 >
                   <CourseQuizEditorPage />
                 </RouteGuard>
@@ -682,6 +697,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['assignment.manage']}
+                  requiresEntitlement
                 >
                   <CourseAssignmentsPage />
                 </RouteGuard>
@@ -841,6 +857,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['instructor.dashboard.view']}
+                  requiresEntitlement
                 >
                   <InstructorDashboardPage />
                 </RouteGuard>
@@ -853,6 +870,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['instructor.course.view']}
+                  requiresEntitlement
                 >
                   <InstructorCoursesPage />
                 </RouteGuard>
@@ -865,6 +883,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['instructor.course.view']}
+                  requiresEntitlement
                 >
                   <InstructorCourseOverviewPage />
                 </RouteGuard>
@@ -877,6 +896,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['instructor.student.view']}
+                  requiresEntitlement
                 >
                   <InstructorStudentsPage />
                 </RouteGuard>
@@ -889,6 +909,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['instructor.student.view']}
+                  requiresEntitlement
                 >
                   <InstructorStudentProgressPage />
                 </RouteGuard>
@@ -901,6 +922,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['instructor.assessment.view']}
+                  requiresEntitlement
                 >
                   <InstructorAssessmentsPage />
                 </RouteGuard>
@@ -913,6 +935,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['instructor.assessment.view']}
+                  requiresEntitlement
                 >
                   <InstructorQuizResultsPage />
                 </RouteGuard>
@@ -925,6 +948,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['instructor.submission.view']}
+                  requiresEntitlement
                 >
                   <InstructorSubmissionsPage />
                 </RouteGuard>
@@ -937,6 +961,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['instructor.submission.view']}
+                  requiresEntitlement
                 >
                   <InstructorSubmissionReviewPage />
                 </RouteGuard>
@@ -949,6 +974,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['announcement.manage']}
+                  requiresEntitlement
                 >
                   <InstructorAnnouncementsPage />
                 </RouteGuard>
@@ -976,6 +1002,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['academy.view']}
+                  requiresEntitlement
                 >
                   <AcademyMediaPage />
                 </RouteGuard>
@@ -988,6 +1015,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['announcement.view']}
+                  requiresEntitlement
                 >
                   <AcademyAnnouncementsPage />
                 </RouteGuard>
@@ -1000,6 +1028,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['forum.view']}
+                  requiresEntitlement
                 >
                   <CourseForumPage />
                 </RouteGuard>
@@ -1012,6 +1041,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['forum.view']}
+                  requiresEntitlement
                 >
                   <ForumThreadPage />
                 </RouteGuard>
@@ -1024,6 +1054,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['announcement.view']}
+                  requiresEntitlement
                 >
                   <AnnouncementFeedPage />
                 </RouteGuard>
@@ -1036,6 +1067,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['announcement.view']}
+                  requiresEntitlement
                 >
                   <AnnouncementDetailPage />
                 </RouteGuard>
@@ -1048,6 +1080,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['blog.view']}
+                  requiresEntitlement
                 >
                   <BlogListPage />
                 </RouteGuard>
@@ -1060,6 +1093,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['blog.create']}
+                  requiresEntitlement
                 >
                   <BlogEditorPage />
                 </RouteGuard>
@@ -1072,6 +1106,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['blog.view']}
+                  requiresEntitlement
                 >
                   <BlogPostDetailPage />
                 </RouteGuard>
@@ -1084,6 +1119,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['blog.create']}
+                  requiresEntitlement
                 >
                   <BlogEditorPage />
                 </RouteGuard>
@@ -1264,6 +1300,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['academy.provisioning.view']}
+                  requiresEntitlement
                 >
                   <ProvisioningHistoryPage />
                 </RouteGuard>
@@ -1276,6 +1313,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['academy.provisioning.create']}
+                  requiresEntitlement
                 >
                   <ProvisioningStartPage />
                 </RouteGuard>
@@ -1288,6 +1326,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['academy.provisioning.view']}
+                  requiresEntitlement
                 >
                   <ProvisioningStatusPage />
                 </RouteGuard>
@@ -1483,6 +1522,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['academy.website.view']}
+                  requiresEntitlement
                 >
                   <WebsiteOverviewPage />
                 </RouteGuard>
@@ -1495,6 +1535,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['academy.website.view']}
+                  requiresEntitlement
                 >
                   <WebsiteSettingsPage />
                 </RouteGuard>
@@ -1507,6 +1548,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['academy.website.view']}
+                  requiresEntitlement
                 >
                   <WebsiteContentPage />
                 </RouteGuard>
@@ -1519,6 +1561,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['academy.website.view']}
+                  requiresEntitlement
                 >
                   <WebsitePagesPage />
                 </RouteGuard>
@@ -1531,6 +1574,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['academy.website.view']}
+                  requiresEntitlement
                 >
                   <WebsitePageEditorPage />
                 </RouteGuard>
@@ -1543,6 +1587,7 @@ export function AppRouter(): JSX.Element {
                 <RouteGuard
                   requireAuthentication
                   requiredPermissions={['academy.website.view']}
+                  requiresEntitlement
                 >
                   <WebsitePreviewPage />
                 </RouteGuard>

@@ -79,6 +79,18 @@ export interface PlanComparisonDialogProps {
   /** When provided, renders a "Select this plan" action per non-current, active plan that starts Checkout. */
   readonly onSelectPlan?: (plan: Plan) => void;
   /**
+   * Phase 11 — when provided, offers a Free Trial on the plans that are
+   * configured as trial-eligible, instead of only "Select this plan".
+   *
+   * WHICH plans get the offer is decided by `plan.trialEligible` (catalog
+   * data from the backend) and never by a comparison against a plan key
+   * here — so making a future plan trialable is a configuration change,
+   * not an edit to this component. WHETHER to offer it at all is the
+   * caller's decision, since it also depends on the account still having
+   * its one lifetime trial.
+   */
+  readonly onStartTrial?: (plan: Plan) => void;
+  /**
    * Purely informational notice rendered above the plan grid — e.g.
    * explaining why plan selection is unavailable right now and what to do
    * about it. Never controls whether `onSelectPlan` renders; the caller
@@ -95,6 +107,7 @@ export function PlanComparisonDialog({
   isLoading = false,
   currentPlanKey,
   onSelectPlan,
+  onStartTrial,
   notice,
 }: PlanComparisonDialogProps): JSX.Element {
   const { t } = useTranslation();
@@ -225,18 +238,47 @@ export function PlanComparisonDialog({
                     })}
                   </div>
 
-                  {onSelectPlan && plan.key !== currentPlanKey ? (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="mt-auto"
-                      disabled={
-                        plan.status !== 'active' || !hasUsablePricing(plan)
-                      }
-                      onClick={() => onSelectPlan(plan)}
-                    >
-                      {t('tenant:planComparison.selectPlan')}
-                    </Button>
+                  {plan.key !== currentPlanKey ? (
+                    <div className="mt-auto flex flex-col gap-2">
+                      {/*
+                        THE TRIAL IS THE PRIMARY ACTION when it is
+                        genuinely available, because "try Growth free for
+                        3 days" is a far more honest first step than
+                        "select this plan" for someone who has not seen
+                        the product yet. The duration comes from the plan
+                        itself (`trialDurationDays`), so no "3" is written
+                        into this component.
+                      */}
+                      {onStartTrial && plan.trialEligible && plan.status === 'active' ? (
+                        <Button
+                          type="button"
+                          onClick={() => onStartTrial(plan)}
+                          data-testid={`start-trial-${plan.key}`}
+                        >
+                          {plan.trialDurationDays
+                            ? t('tenant:planComparison.tryFreeForDays', {
+                                plan: plan.name,
+                                count: plan.trialDurationDays,
+                              })
+                            : t('tenant:planComparison.tryFree', {
+                                plan: plan.name,
+                              })}
+                        </Button>
+                      ) : null}
+
+                      {onSelectPlan ? (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          disabled={
+                            plan.status !== 'active' || !hasUsablePricing(plan)
+                          }
+                          onClick={() => onSelectPlan(plan)}
+                        >
+                          {t('tenant:planComparison.selectPlan')}
+                        </Button>
+                      ) : null}
+                    </div>
                   ) : null}
                 </div>
               ))}

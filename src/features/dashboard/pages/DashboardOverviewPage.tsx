@@ -30,6 +30,7 @@ import { SubmitTicketForm } from '../components/SubmitTicketForm';
 import { UsageSummary } from '../components/UsageSummary';
 import { useDashboardOverview } from '../hooks/useDashboardOverview';
 import { useDashboardScope } from '../hooks/useDashboardScope';
+import { GettingStartedChecklist } from '@features/tenant';
 
 export default function DashboardOverviewPage(): JSX.Element {
   const { i18n } = useTranslation();
@@ -55,6 +56,8 @@ export default function DashboardOverviewPage(): JSX.Element {
             descriptionKey="dashboard:overview.noScope.description"
           />
         </SectionCard>
+        {/* Phase 11 — real activation state, never invented progress. */}
+        <GettingStartedChecklist />
       </PageContainer>
     );
   }

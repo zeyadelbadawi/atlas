@@ -126,7 +126,10 @@
     "currentPlanBadge": "Current plan",
     "footerNote": "Plan changes are handled by your Atlas representative — this page does not process payments or change your plan.",
     "selectPlan": "Select this plan",
-    "selectableFooterNote": "Selecting a plan starts checkout — no payment is taken until you complete it."
+    "selectableFooterNote": "Selecting a plan starts checkout — no payment is taken until you complete it.",
+    "tryFreeForDays_one": "Try {{plan}} free for 1 day",
+    "tryFreeForDays_other": "Try {{plan}} free for {{count}} days",
+    "tryFree": "Try {{plan}} free"
   },
   "platformAdmin": {
     "trialPolicy": {
@@ -157,7 +160,10 @@
     "activeUntil": "Free trial — active until {{date}}",
     "cancelAction": "Cancel free trial",
     "noTrialYet": "No active plan yet",
-    "noTrialYetDescription": "Start a free trial or choose a plan to activate this workspace."
+    "noTrialYetDescription": "Start a free trial or choose a plan to activate this workspace.",
+    "failedTitle": "We couldn't start your trial",
+    "failedDescription": "Something went wrong. Please try again, or contact support if it keeps happening.",
+    "choosePlanToStart": "Choose a plan to start your free trial"
   },
   "cancellation": {
     "trialTitle": "Cancel your free trial?",
@@ -196,5 +202,71 @@
     "planLabel": "Plan",
     "endedLabel": "Ended",
     "choosePlan": "Choose a plan"
+  },
+  "lifecycle": {
+    "noOrganization": {
+      "title": "Create your organization to get started",
+      "description": "An organization is your workspace in Atlas — it holds your academies, your team and your plan. You'll need one before you can build anything.",
+      "action": "Create organization"
+    },
+    "noPlan": {
+      "title": "Your organization is ready",
+      "description": "Choose a plan to start building your academy. You can see exactly what each plan includes before you commit.",
+      "action": "View plans",
+      "trialAction": "View plans and start your free trial",
+      "noCardFootnote": "Your free trial needs no credit card, and you won't be charged when it ends."
+    },
+    "trialing": {
+      "title": "{{plan}} trial",
+      "description": "You're trialing {{plan}} with full access to everything it includes.",
+      "remaining_one": "1 day left in your trial — decide whether to continue before it ends.",
+      "remaining_other": "{{count}} days left in your trial.",
+      "endsOn": "Your trial ends on {{date}}. Nothing is charged automatically — you choose whether to subscribe.",
+      "action": "Subscribe to {{plan}}"
+    },
+    "trialExpired": {
+      "title": "Your free trial has ended",
+      "description": "You were trialing {{plan}}. Subscribe to pick up exactly where you left off, or choose a different plan.",
+      "descriptionGeneric": "Subscribe to continue managing your academies, or choose a different plan.",
+      "continueWith": "Continue with {{plan}}",
+      "choosePlan": "Choose a plan"
+    },
+    "cancelledActive": {
+      "title": "Your subscription is scheduled to end",
+      "description": "You've cancelled, but everything keeps working until {{date}}. You can resubscribe any time before then.",
+      "descriptionNoDate": "You've cancelled. Everything keeps working until the end of your current period.",
+      "action": "Manage subscription"
+    },
+    "expired": {
+      "title": "Your subscription has expired",
+      "description": "You need an active subscription to continue managing your academies.",
+      "action": "Reactivate subscription",
+      "endedOn": "Your subscription ended on {{date}}."
+    },
+    "changePlan": "Change plan",
+    "dataSafe": "Nothing has been deleted. Your academies, courses, students and content are all still here, exactly as you left them.",
+    "gettingStarted": {
+      "title": "Getting started",
+      "description": "A few steps to get your academy live.",
+      "steps": {
+        "account": "Create your account",
+        "organization": "Create your organization",
+        "plan": "Choose a plan",
+        "academy": "Create your first academy"
+      }
+    }
+  },
+  "startTrial": {
+    "title": "Start your {{plan}} trial",
+    "subtitle_one": "1 day free, with everything {{plan}} includes.",
+    "subtitle_other": "{{count}} days free, with everything {{plan}} includes.",
+    "subtitleNoDays": "Free, with everything {{plan}} includes.",
+    "factDates": "Your trial starts today and ends on {{date}}.",
+    "factDatesUnknown": "Your trial starts today.",
+    "factNoCard": "No credit card required.",
+    "factNoAutoCharge": "You won't be charged when it ends — you choose whether to subscribe.",
+    "factEntitlements": "Full access to everything on the {{plan}} plan.",
+    "onePerAccount": "A free trial can be used once per account.",
+    "confirm": "Start {{plan}} trial"
   }
 }

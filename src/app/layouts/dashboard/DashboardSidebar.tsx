@@ -18,6 +18,7 @@ import {
 import { useAcademyIdentity } from '@hooks';
 import { getDashboardNavigation, filterNavigationItems } from '@app/navigation';
 import { useAuth, useLanguage, usePlatform } from '@hooks';
+import { useSubscriptionLifecycleState } from '@features/tenant';
 import { cn } from '@utils';
 import { SidebarNavigation } from './SidebarNavigation';
 
@@ -41,6 +42,10 @@ export function DashboardSidebar({
   const { isRtl } = useLanguage();
   const { isAuthenticated, user, organization } = useAuth();
   const { activeAcademyId, isFeatureEnabled } = usePlatform();
+  // The authoritative lifecycle state — the same answer the backend
+  // enforces with, never a second local derivation.
+  const { state: lifecycle, isLoading: isLifecycleLoading } =
+    useSubscriptionLifecycleState();
   // Phase 6 — the active Academy's own identity replaces the hardcoded
   // Atlas mark whenever one is set (Owners across multiple Academies get
   // whichever Academy `usePlatform` currently has active — never a stale
@@ -66,6 +71,11 @@ export function DashboardSidebar({
       user,
       organization,
       isFeatureEnabled,
+      // Phase 11 — gated product areas disappear for a customer with no
+      // plan, an ended trial or a lapsed subscription. Left `undefined`
+      // while the lifecycle read is in flight so the sidebar does not
+      // flicker; see `NavigationFilterContext.hasEntitlement`.
+      hasEntitlement: isLifecycleLoading ? undefined : lifecycle?.hasAccess,
     };
     return getDashboardNavigation(activeAcademyId)
       .map((section) => ({
@@ -73,7 +83,15 @@ export function DashboardSidebar({
         items: filterNavigationItems(section.items, filterContext),
       }))
       .filter((section) => section.items.length > 0);
-  }, [activeAcademyId, isAuthenticated, user, organization, isFeatureEnabled]);
+  }, [
+    activeAcademyId,
+    isAuthenticated,
+    user,
+    organization,
+    isFeatureEnabled,
+    lifecycle?.hasAccess,
+    isLifecycleLoading,
+  ]);
 
   const brandRow = (
     <div

@@ -7,7 +7,7 @@
  * product.
  */
 import { Outlet } from 'react-router-dom';
-import { SubscriptionRequiredBanner } from '@features/tenant';
+import { LifecyclePanel } from '@features/tenant';
 import { useTranslation } from 'react-i18next';
 import { OfflineNotice } from '@components/feedback';
 import { SkipToContentLink } from '@components/navigation';
@@ -82,7 +82,17 @@ export function DashboardLayout(): JSX.Element {
           refuses them.
         */}
         <div className="px-4 pt-4 sm:px-6 lg:px-8 empty:hidden">
-          <SubscriptionRequiredBanner />
+          {/*
+            Phase 11 — `LifecyclePanel` replaced `SubscriptionRequiredBanner`
+            here. The banner could only ever say "your subscription has
+            ended", because the backend gave a brand-new Organization, a
+            finished trial and a lapsed payer the identical `expired`
+            status. The panel renders from the authoritative lifecycle and
+            so can greet a new customer as a new customer, offer a lapsed
+            trialist their own plan back, and stay silent for everyone
+            whose subscription is simply working.
+          */}
+          <LifecyclePanel />
         </div>
 
         <main

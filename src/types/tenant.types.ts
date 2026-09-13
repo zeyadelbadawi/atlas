@@ -42,13 +42,60 @@ export interface CreateOrganizationPayload {
 
 /** A tenant subscription's lifecycle state. Named distinctly from the Prompt 3A, user-scoped `SubscriptionStatus` that used to live in `billing.types.ts` — that legacy file was removed in Prompt 13 along with its only consumer, the fake `BillingPage`. */
 export type TenantSubscriptionStatus =
+  /**
+   * Created, never chose a plan, never trialed — a NEW CUSTOMER.
+   * Phase 11: previously this was represented as `expired`, which is why
+   * a workspace created seconds earlier greeted its owner with "your
+   * subscription has ended".
+   */
+  | 'no_plan'
   | 'trialing'
+  /** A Free Trial ran its course. Distinct from `expired`: the recovery action is "continue with the plan you were trialing". */
+  | 'trial_expired'
   | 'active'
   | 'past_due'
   | 'paused'
   | 'grace_period'
   | 'cancelled'
+  /** A PAID subscription lapsed. Only ever this — never a new customer. */
   | 'expired';
+
+/**
+ * The lifecycle state the product actually speaks about, computed by the
+ * backend (`GET /organizations/:id/subscription/lifecycle`) and never
+ * re-derived here.
+ *
+ * WHY THE FRONTEND NO LONGER DERIVES THIS. It used to, in
+ * `useSubscriptionAccess`, faithfully mirroring the backend's status
+ * interpretation — and faithfully reproducing its one mistake, because
+ * two hand-synchronised copies of a rule agree about being wrong just as
+ * reliably as about being right. One authority, read by everything.
+ */
+export type SubscriptionLifecycle =
+  /** The account has no Organization at all — the very first step. */
+  | 'no_organization'
+  | 'no_plan'
+  | 'trialing'
+  | 'trial_expired'
+  | 'active'
+  /** Cancelled, but still working through the period already paid for. */
+  | 'cancelled_active'
+  | 'expired';
+
+/** The authoritative lifecycle read. Display truth for dashboard, sidebar and recovery screens. */
+export interface SubscriptionLifecycleState {
+  readonly lifecycle: SubscriptionLifecycle;
+  readonly hasAccess: boolean;
+  readonly status?: TenantSubscriptionStatus;
+  /** The plan being trialed/subscribed, or whose trial ended. Absent in `no_plan` — that row's plan is a placeholder, not a choice. */
+  readonly plan?: Plan;
+  readonly trialEndsAt?: string;
+  /** Whole days left in an active trial. 0 on the final day, never negative. */
+  readonly trialDaysRemaining?: number;
+  readonly currentPeriodEnd?: string;
+  /** Whether this ACCOUNT may still redeem its one lifetime Free Trial. Display only — the backend decides at redemption. */
+  readonly trialAvailable: boolean;
+}
 
 /** A Tenant's (Organization's) subscription. Always tenant-scoped, never per-Academy. */
 export interface TenantSubscription {

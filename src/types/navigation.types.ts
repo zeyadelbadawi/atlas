@@ -29,6 +29,23 @@ export interface NavigationItem {
   readonly featureFlag?: string;
   /** Whether to match nested paths under this route. */
   readonly matchNestedPaths?: boolean;
+  /**
+   * Phase 11 — whether this item leads to GATED PRODUCT functionality
+   * that requires a working entitlement (an active plan or a live trial).
+   *
+   * Marked items disappear for a customer in `no_plan`, `trial_expired`
+   * or `expired`, leaving only the areas they need in order to recover:
+   * the dashboard, plans, billing, the organization, their own account
+   * and support. Never mark one of THOSE — hiding the way out of an
+   * expired state is how a recoverable billing problem becomes a lost
+   * customer.
+   *
+   * HIDING IS UX, NOT SECURITY. The matching route is independently
+   * gated by `RouteGuard`, and the API independently refuses the write.
+   * This flag only stops the product from advertising a door that is
+   * locked.
+   */
+  readonly requiresEntitlement?: boolean;
 }
 
 /** A navigation section containing grouped items. */

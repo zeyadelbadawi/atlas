@@ -21,6 +21,7 @@
  * end. Authorization itself is enforced by the API, not here.
  */
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Rocket, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -29,9 +30,9 @@ import { CancelSubscriptionDialog } from './CancelSubscriptionDialog';
 import {
   useCancelSubscription,
   useCancelTrial,
-  useStartTrial,
 } from '../hooks/useSubscriptionLifecycle';
 import { formatDate } from '@/shared/utils/date.utils';
+import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import type {
   CancelSubscriptionRequestInput,
   LanguageCode,
@@ -51,52 +52,29 @@ export function SubscriptionLifecycleActions({
   const { t, i18n } = useTranslation();
   const language = i18n.language as LanguageCode;
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const [cancelKind, setCancelKind] = useState<'trial' | 'paid' | null>(null);
 
-  const startTrial = useStartTrial();
   const cancelTrial = useCancelTrial();
   const cancelSubscription = useCancelSubscription();
 
   const isTrialing = subscription.status === 'trialing';
   const isPaid = LIVE_PAID_STATUSES.has(subscription.status);
-  // Never started a trial and has no paid plan — the one state where the
-  // trial is still available to ask for.
-  const canStartTrial = !isTrialing && !isPaid && !subscription.trialEndsAt;
+  /*
+    PHASE 11 — STARTING A TRIAL MOVED TO THE PLANS PAGE, and this button
+    became a link there.
 
-  const handleStartTrial = (): void => {
-    startTrial.mutate(
-      { planId: subscription.plan.id },
-      {
-        onSuccess: (result) => {
-          if (result.started) {
-            toast({
-              title: t('tenant:trial.started'),
-              description: result.trialEndsAt
-                ? t('tenant:trial.startedDescription', {
-                    date: formatDate(result.trialEndsAt, language, 'short'),
-                  })
-                : undefined,
-            });
-            return;
-          }
-          // Refused. Say why, honestly, instead of a generic failure.
-          toast({
-            variant: 'destructive',
-            title: t('tenant:trial.alreadyUsedTitle'),
-            description: t('tenant:trial.alreadyUsedDescription'),
-          });
-        },
-        onError: () => {
-          toast({
-            variant: 'destructive',
-            title: t('tenant:cancellation.failed'),
-            description: t('tenant:cancellation.failedDescription'),
-          });
-        },
-      }
-    );
-  };
+    It used to call `startTrial` with `subscription.plan.id`. For an
+    Organization that had never chosen anything, that id is the NOT-NULL
+    placeholder the bootstrap service wrote — so the customer would have
+    burned their one lifetime trial on whichever plan happened to sort
+    first in the catalog, without ever being shown it. A trial is tied to
+    the plan it is taken on, so it has to be started where the plan is
+    actually chosen.
+  */
+  const canStartTrial =
+    subscription.status === 'no_plan' && !subscription.trialEndsAt;
 
   const handleConfirmCancel = (input: CancelSubscriptionRequestInput): void => {
     const kind = cancelKind;
@@ -135,15 +113,9 @@ export function SubscriptionLifecycleActions({
   return (
     <div className="pt-2">
       {canStartTrial ? (
-        <Button
-          type="button"
-          onClick={handleStartTrial}
-          disabled={startTrial.isPending}
-        >
+        <Button type="button" onClick={() => navigate(DASHBOARD_ROUTES.plans)}>
           <Rocket className="me-2 size-4" aria-hidden />
-          {startTrial.isPending
-            ? t('tenant:trial.starting')
-            : t('tenant:trial.startAction')}
+          {t('tenant:trial.choosePlanToStart')}
         </Button>
       ) : null}
 

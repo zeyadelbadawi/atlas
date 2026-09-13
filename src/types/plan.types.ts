@@ -90,6 +90,20 @@ export interface Plan {
   readonly limits: PlanResourceLimits;
   readonly features: PlanFeatures;
   readonly pricing?: PlanPricingMetadata;
+  /**
+   * Whether this plan may be taken as a Free Trial.
+   *
+   * CATALOG DATA, NOT A UI RULE. "Starter and Growth yes, Enterprise no"
+   * is a column on the plan, so a future plan becomes trialable by
+   * configuration rather than by editing a condition here. Never compare
+   * against `key` to decide this.
+   *
+   * DISPLAY ONLY. `TrialRedemptionService` re-reads the same column and
+   * refuses regardless of what this client believed.
+   */
+  readonly trialEligible: boolean;
+  /** How many days this plan's trial runs. Absent when the plan is not trialable. */
+  readonly trialDurationDays?: number;
 }
 
 /** What kind of thing an Add-on affects. */

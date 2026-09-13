@@ -398,6 +398,9 @@ export const tenantKeys = {
     [...tenantKeys.all, 'usage', organizationId] as const,
   addOns: (organizationId: string | undefined) =>
     [...tenantKeys.all, 'addOns', organizationId] as const,
+  /** Phase 11 — the authoritative lifecycle state (`useSubscriptionLifecycleState`). */
+  lifecycle: (organizationId: string | undefined) =>
+    [...tenantKeys.all, 'lifecycle', organizationId] as const,
 } as const;
 
 /**

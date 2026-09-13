@@ -12,3 +12,10 @@ export { useEffectiveEntitlements } from './useEffectiveEntitlements';
 export type { UseEffectiveEntitlementsResult } from './useEffectiveEntitlements';
 export { useSubscriptionAccess } from './useSubscriptionAccess';
 export type { SubscriptionAccess, SubscriptionBlockReason } from './useSubscriptionAccess';
+export { useSubscriptionLifecycleState } from './useSubscriptionLifecycleState';
+export type { LifecycleQueryResult } from './useSubscriptionLifecycleState';
+export {
+  useStartTrial,
+  useCancelTrial,
+  useCancelSubscription,
+} from './useSubscriptionLifecycle';

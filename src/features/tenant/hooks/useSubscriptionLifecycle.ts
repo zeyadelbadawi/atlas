@@ -35,6 +35,13 @@ function useInvalidateTenantState(organizationId: string | undefined) {
     void queryClient.invalidateQueries({
       queryKey: tenantKeys.usage(organizationId),
     });
+    // The lifecycle read drives the dashboard, the sidebar and every
+    // recovery screen. Leaving it stale after starting or cancelling
+    // would keep the whole shell showing the previous state — the sidebar
+    // still hiding the areas a trial just unlocked, for instance.
+    void queryClient.invalidateQueries({
+      queryKey: tenantKeys.lifecycle(organizationId),
+    });
   };
 }
 

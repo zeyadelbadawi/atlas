@@ -17,3 +17,7 @@ export * from './constants/tenant.constants';
 export * from './utils/entitlement.utils';
 export * from './utils/subscription-status.utils';
 export { SubscriptionRequiredBanner } from './components/SubscriptionRequiredBanner';
+export {
+  LifecyclePanel,
+  GettingStartedChecklist,
+} from './components/LifecyclePanel';
