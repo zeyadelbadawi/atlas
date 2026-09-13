@@ -15,18 +15,21 @@
 import {
   ArrowRight,
   BarChart3,
+  Banknote,
   BookOpen,
   Building2,
-  Check,
+  Clock,
   Globe2,
   GraduationCap,
+  Layers,
   Network,
   Palette,
+  Search,
   ShieldCheck,
   Users,
-  X,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
@@ -44,10 +47,20 @@ import { useStartPlanFlow } from '../hooks/useStartPlanFlow';
 import { formatPlanPrice } from '../utils/formatPlanPrice';
 import { MarketingSection, SectionHeading } from '../components/MarketingSection';
 import { CinematicHero } from '../components/cinematic-hero';
-import structureCalm from '../components/cinematic-hero/assets/structure-calm.webp';
+import { PlatformStructureFigure } from '../components/PlatformStructureFigure';
 
-const OLD_WAY_ITEM_KEYS = ['item1', 'item2', 'item3', 'item4'] as const;
-const NEW_WAY_ITEM_KEYS = ['item1', 'item2', 'item3', 'item4'] as const;
+interface OldWayStep {
+  readonly id: string;
+  readonly icon: LucideIcon;
+}
+
+/** The tedious, sequential path without a platform — a chain, not a list. */
+const OLD_WAY_STEPS: readonly OldWayStep[] = [
+  { id: 'step1', icon: Search },
+  { id: 'step2', icon: Clock },
+  { id: 'step3', icon: Layers },
+  { id: 'step4', icon: Banknote },
+];
 
 interface Capability {
   readonly id: string;
@@ -114,53 +127,45 @@ export default function HomePage(): JSX.Element {
           title={t('home:whatIsAtlas.title')}
         />
 
-        <div className="relative mt-12 grid gap-10 sm:grid-cols-2 sm:gap-12 lg:gap-16">
-          <div className="flex flex-col gap-5">
+        <div className="mt-12 grid items-start gap-12 sm:grid-cols-2 sm:gap-12 lg:gap-16">
+          {/* Without a platform — a tedious sequential chain, not a list. */}
+          <div className="flex flex-col gap-6">
             <h3 className="font-display text-sm font-semibold uppercase tracking-[0.1em] text-muted-foreground rtl:tracking-normal">
               {t('home:whatIsAtlas.oldWay.label')}
             </h3>
-            <ul className="flex flex-col gap-4">
-              {OLD_WAY_ITEM_KEYS.map((key) => (
-                <li
-                  key={key}
-                  className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground sm:text-base"
-                >
-                  <X
-                    className="mt-0.5 size-4 shrink-0 text-muted-foreground/50"
-                    strokeWidth={2}
-                    aria-hidden
-                  />
-                  <span>{t(`home:whatIsAtlas.oldWay.${key}`)}</span>
-                </li>
+            <div className="flex flex-wrap items-start gap-x-1 gap-y-4">
+              {OLD_WAY_STEPS.map((step, index) => (
+                <Fragment key={step.id}>
+                  <div className="flex w-20 flex-col items-center gap-2 text-center">
+                    <span className="flex size-12 items-center justify-center rounded-full border border-border bg-muted text-muted-foreground sm:size-14">
+                      <step.icon
+                        className="size-5 sm:size-6"
+                        strokeWidth={1.75}
+                        aria-hidden
+                      />
+                    </span>
+                    <span className="text-xs leading-snug text-muted-foreground">
+                      {t(`home:whatIsAtlas.oldWay.${step.id}`)}
+                    </span>
+                  </div>
+                  {index < OLD_WAY_STEPS.length - 1 ? (
+                    <ArrowRight
+                      className="mt-4 size-4 shrink-0 text-muted-foreground/30 rtl:-scale-x-100 sm:mt-5"
+                      strokeWidth={2}
+                      aria-hidden
+                    />
+                  ) : null}
+                </Fragment>
               ))}
-            </ul>
+            </div>
           </div>
 
-          <div className="flex flex-col gap-5 border-t border-border pt-8 sm:border-s sm:border-t-0 sm:ps-10 sm:pt-0 lg:ps-16">
-            <img
-              src={structureCalm}
-              alt=""
-              className="pointer-events-none absolute -top-14 -end-4 hidden size-28 opacity-80 lg:block"
-              aria-hidden
-            />
+          {/* With Atlas — the real product structure, not a bullet list. */}
+          <div className="flex flex-col gap-6 border-t border-border pt-8 sm:border-s sm:border-t-0 sm:ps-10 sm:pt-0 lg:ps-16">
             <h3 className="font-display text-sm font-semibold uppercase tracking-[0.1em] text-primary rtl:tracking-normal">
               {t('home:whatIsAtlas.newWay.label')}
             </h3>
-            <ul className="flex flex-col gap-4">
-              {NEW_WAY_ITEM_KEYS.map((key) => (
-                <li
-                  key={key}
-                  className="flex items-start gap-3 text-sm leading-relaxed text-foreground sm:text-base"
-                >
-                  <Check
-                    className="mt-0.5 size-4 shrink-0 text-primary"
-                    strokeWidth={2}
-                    aria-hidden
-                  />
-                  <span>{t(`home:whatIsAtlas.newWay.${key}`)}</span>
-                </li>
-              ))}
-            </ul>
+            <PlatformStructureFigure />
           </div>
         </div>
       </MarketingSection>

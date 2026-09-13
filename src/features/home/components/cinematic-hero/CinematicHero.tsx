@@ -35,30 +35,39 @@ export function CinematicHero(): JSX.Element {
     : AUTH_ROUTES.register;
 
   return (
-    <section className="relative min-h-[100svh] w-full overflow-hidden bg-[#05120f]">
+    <section className="relative isolate min-h-[100svh] w-full overflow-hidden bg-[#05120f]">
+      {/*
+        DOM order, not negative z-index, decides the stack here: video/poster
+        paints first, the scrim second (on top of it), copy last. A negative
+        z-index on these previously escaped this section's own stacking
+        context (it has none without `isolate` + non-negative z-index), so the
+        video painted behind the section's own background and was invisible to
+        real users despite loading and decoding correctly — `isolate` plus
+        z-index: 0 here keeps this section's internal stack self-contained.
+      */}
       {shouldReduceMotion ? (
         <img
           src={heroPoster}
           alt=""
-          className="absolute inset-0 -z-20 size-full object-cover"
+          className="absolute inset-0 z-0 size-full object-cover"
           aria-hidden
         />
       ) : (
         <video
-          className="absolute inset-0 -z-20 size-full object-cover"
+          className="absolute inset-0 z-0 size-full object-cover"
           src={heroVideo}
           poster={heroPoster}
           autoPlay
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="auto"
           aria-hidden
         />
       )}
 
       <span
-        className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-black/85 via-black/35 to-black/10"
+        className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10"
         aria-hidden
       />
 

@@ -12,17 +12,13 @@
     "eyebrow": "The short version",
     "oldWay": {
       "label": "Without a platform",
-      "item1": "Find developers and manage several different vendors",
-      "item2": "Wait weeks or months before anything is actually live",
-      "item3": "Pay separately for development, hosting and security",
-      "item4": "Keep maintaining the technical side yourself, indefinitely"
+      "step1": "Find developers",
+      "step2": "Wait months",
+      "step3": "Manage vendors",
+      "step4": "Rising cost"
     },
     "newWay": {
-      "label": "With Atlas",
-      "item1": "One platform for courses, students, instructors and your website",
-      "item2": "Live on your own Atlas subdomain the same day",
-      "item3": "Infrastructure, security and tenant isolation handled for you",
-      "item4": "You run the academy — Atlas runs underneath it"
+      "label": "With Atlas"
     }
   },
   "capabilitiesSection": {
