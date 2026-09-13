@@ -50,6 +50,7 @@ import {
 } from '../hooks';
 import { SectionFormDialog } from '../components/SectionFormDialog';
 import { LessonFormDialog } from '../components/LessonFormDialog';
+import { LiveSessionCurriculumBlock } from '@features/live-sessions';
 import {
   getLessonStatusLabelKey,
   getLessonStatusTone,
@@ -553,21 +554,36 @@ export default function CourseBuilderPage(): JSX.Element {
                       </ol>
                     )}
 
-                    {lessons.length > 0 && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          setLessonDialog({
-                            mode: 'create',
-                            sectionId: section.id,
-                          })
-                        }
-                      >
-                        <Plus className="size-4" strokeWidth={2} aria-hidden />
-                        {t('course:builder.addLesson')}
-                      </Button>
-                    )}
+                    {/*
+                      Phase 12 — Live Sessions are a first-class curriculum
+                      activity, so they are listed and created HERE, in the
+                      unit they belong to, exactly like lessons. Sending an
+                      instructor to a separate page to schedule one would
+                      make it feel like a different product.
+                    */}
+                    <LiveSessionCurriculumBlock
+                      academyId={academyId ?? ''}
+                      courseId={courseId ?? ''}
+                      sectionId={section.id}
+                    />
+
+                    <div className="flex flex-wrap gap-2">
+                      {lessons.length > 0 && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            setLessonDialog({
+                              mode: 'create',
+                              sectionId: section.id,
+                            })
+                          }
+                        >
+                          <Plus className="size-4" strokeWidth={2} aria-hidden />
+                          {t('course:builder.addLesson')}
+                        </Button>
+                      )}
+                    </div>
                   </CardContent>
                 </Card>
               </li>

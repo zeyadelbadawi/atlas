@@ -31,7 +31,7 @@ import {
   useTenantUsage,
 } from '../hooks';
 import {
-  PLAN_LIMIT_KEYS,
+  USAGE_METRIC_KEYS,
   STORAGE_LIMIT_KEYS,
 } from '../constants/tenant.constants';
 import {
@@ -154,7 +154,7 @@ export default function TenantUsagePage(): JSX.Element {
 
       <Card>
         <CardContent className="divide-y divide-border p-0">
-          {PLAN_LIMIT_KEYS.map((limitKey) => {
+          {USAGE_METRIC_KEYS.map((limitKey) => {
             const metric = usage[limitKey];
             const status = getUsageMetricStatus(metric);
             const percentage = getUsagePercentage(metric);

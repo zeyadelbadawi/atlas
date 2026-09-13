@@ -35,6 +35,15 @@ const ResetPasswordPage = lazy(
   () => import('@features/auth/pages/ResetPasswordPage')
 );
 
+const AddOnsCatalogPage = lazy(
+  () => import('@features/live-sessions/pages/AddOnsCatalogPage')
+);
+const LiveSessionsOverviewPage = lazy(
+  () => import('@features/live-sessions/pages/LiveSessionsOverviewPage')
+);
+const LiveSessionsConnectionPage = lazy(
+  () => import('@features/live-sessions/pages/LiveSessionsConnectionPage')
+);
 const DashboardOverviewPage = lazy(
   () => import('@features/dashboard/pages/DashboardOverviewPage')
 );
@@ -457,6 +466,72 @@ export function AppRouter(): JSX.Element {
                   requiresEntitlement
                 >
                   <StudentAnalyticsPage />
+                </RouteGuard>
+              }
+            />
+
+
+            {/*
+              Phase 12 — the Add-ons area.
+
+              NOT marked `requiresEntitlement`: this is where a customer
+              goes to obtain an add-on, so gating it on already having one
+              would be a closed loop. Each page reports its own
+              dependencies, and every API call behind them is
+              independently authorized.
+            */}
+            <Route
+              path={DASHBOARD_ROUTES.addOns}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['tenant.subscription.view']}
+                >
+                  <AddOnsCatalogPage />
+                </RouteGuard>
+              }
+            />
+            <Route
+              path={DASHBOARD_ROUTES.liveSessions}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.view']}
+                >
+                  <LiveSessionsOverviewPage />
+                </RouteGuard>
+              }
+            />
+            <Route
+              path={DASHBOARD_ROUTES.liveSessionsList}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.view']}
+                >
+                  <LiveSessionsOverviewPage />
+                </RouteGuard>
+              }
+            />
+            <Route
+              path={DASHBOARD_ROUTES.liveSessionsRecordings}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.view']}
+                >
+                  <LiveSessionsOverviewPage />
+                </RouteGuard>
+              }
+            />
+            <Route
+              path={DASHBOARD_ROUTES.liveSessionsSettings}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.configure']}
+                >
+                  <LiveSessionsConnectionPage />
                 </RouteGuard>
               }
             />

@@ -1,0 +1,141 @@
+{
+  "addToUnit": "Add live session",
+  "providerNotConnectedShort": "Zoom not connected — students can't join yet",
+  "badge": {
+    "recording": "Recording"
+  },
+  "status": {
+    "draft": "Draft",
+    "scheduled": "Scheduled",
+    "live": "Live now",
+    "ended": "Ended",
+    "cancelled": "Cancelled",
+    "failed": "Failed"
+  },
+  "form": {
+    "createTitle": "Add a live session",
+    "editTitle": "Edit live session",
+    "description": "Students join this session from inside the course — they never need a Zoom link.",
+    "title": "Session title",
+    "titlePlaceholder": "e.g. Unit 1 revision class",
+    "descriptionLabel": "Description",
+    "startsAt": "Starts at",
+    "endsAt": "Ends at",
+    "recordSession": "Record this session",
+    "recordingHint": "Off by default. Recording is never turned on automatically.",
+    "recordingRemaining_one": "Uses 1 of your remaining recorded session.",
+    "recordingRemaining_other": "Uses 1 of your {{count}} remaining recorded sessions.",
+    "recordingUnlimited": "Your plan includes unlimited recorded sessions.",
+    "recordingQuotaExhausted": "You've used every recorded session on your plan. Upgrade to record more — normal live sessions are still unlimited.",
+    "create": "Add session"
+  },
+  "validation": {
+    "endBeforeStart": "The end time must be after the start time.",
+    "tooShort": "A session must be at least 5 minutes long.",
+    "tooLong": "A session can't be longer than 12 hours."
+  },
+  "toast": {
+    "created": "Live session added",
+    "updated": "Live session updated"
+  },
+  "catalog": {
+    "title": "Add-ons",
+    "subtitle": "Extend Atlas with capabilities your academies need.",
+    "emptyTitle": "No add-ons available yet",
+    "emptyDescription": "New capabilities will appear here when they're released.",
+    "free": "Free",
+    "price": "{{amount}} {{currency}} / month",
+    "install": "Install",
+    "enable": "Enable",
+    "disable": "Disable",
+    "uninstall": "Uninstall",
+    "uninstallNote": "Disabling keeps your settings and history — you can turn it back on any time.",
+    "state": {
+      "uninstalled": "Not installed",
+      "installing": "Installing…",
+      "installed": "Installed",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "uninstalling": "Uninstalling…",
+      "failed": "Failed"
+    }
+  },
+  "overview": {
+    "title": "Live Sessions",
+    "subtitle": "Run live classes inside your courses, with attendance and optional recording.",
+    "noAcademyTitle": "Choose an academy first",
+    "noAcademyDescription": "Live Sessions are configured per academy. Select one to continue.",
+    "createInBuilderTitle": "Sessions live in your course curriculum",
+    "createInBuilderDescription": "Add a live session to a unit from the Course Builder, alongside its lessons and quizzes.",
+    "goToCourses": "Go to courses"
+  },
+  "blocked": {
+    "goToAddOns": "Open Add-ons",
+    "not_installed": {
+      "title": "Live Sessions isn't installed",
+      "description": "Install the add-on to start scheduling live classes in your courses."
+    },
+    "disabled": {
+      "title": "Live Sessions is disabled",
+      "description": "Your settings and history are intact. Enable the add-on to start using it again."
+    },
+    "not_entitled": {
+      "title": "Your plan doesn't include Live Sessions",
+      "description": "Upgrade your plan or install the add-on to unlock live classes."
+    },
+    "subscription_inactive": {
+      "title": "Your subscription isn't active",
+      "description": "Add-ons need an active subscription. Choose a plan to continue."
+    },
+    "installing": {
+      "title": "Installing…",
+      "description": "This usually takes a moment. Refresh shortly."
+    },
+    "failed": {
+      "title": "Installation didn't finish",
+      "description": "Something went wrong while installing. Try again from the Add-ons page."
+    }
+  },
+  "provider": {
+    "manageConnection": "Manage connection",
+    "not_connected": {
+      "title": "Zoom isn't connected",
+      "badge": "Not connected",
+      "description": "Connect your academy's Zoom account so students can join sessions."
+    },
+    "connected": {
+      "title": "Zoom is connected",
+      "badge": "Connected",
+      "description": "Your academy's Zoom account is connected and healthy."
+    },
+    "expired": {
+      "title": "Zoom connection expired",
+      "badge": "Expired",
+      "description": "Your credentials are no longer valid. Reconnect to resume sessions."
+    },
+    "revoked": {
+      "title": "Zoom access was revoked",
+      "badge": "Revoked",
+      "description": "Access was withdrawn in Zoom. Reconnect to resume sessions."
+    },
+    "error": {
+      "title": "Zoom connection problem",
+      "badge": "Error",
+      "description": "We couldn't reach Zoom with the stored credentials. Try reconnecting."
+    }
+  },
+  "connection": {
+    "title": "Zoom connection",
+    "subtitle": "Each academy connects its own Zoom account.",
+    "lastChecked": "Last checked {{date}}",
+    "prerequisitesTitle": "What you'll need",
+    "prerequisitesDescription": "Connecting requires a Zoom Server-to-Server OAuth app and a Meeting SDK app created in your academy's own Zoom account. Credentials are stored encrypted and are never shown again after they're saved."
+  },
+  "quota": {
+    "title": "Recorded sessions",
+    "usedOfLimit": "{{used}} of {{limit}} used",
+    "unlimited": "{{used}} recorded — your plan has no limit",
+    "remaining_one": "{{count}} remaining",
+    "remaining_other": "{{count}} remaining"
+  }
+}

@@ -19,7 +19,9 @@ export type PlanLimitKey =
   | 'staff'
   | 'courses'
   | 'generalStorage'
-  | 'videoStorage';
+  | 'videoStorage'
+  /** Live Sessions add-on — how many sessions may be RECORDED. Counts sessions, never recording files. */
+  | 'recordedSessions';
 
 /** Resource limits granted by a Plan. Storage values are in GB. */
 export interface PlanResourceLimits {
@@ -32,6 +34,15 @@ export interface PlanResourceLimits {
   readonly generalStorage: LimitValue;
   /** Video storage (course/lesson video media), in GB — tracked separately from general storage. */
   readonly videoStorage: LimitValue;
+  /**
+   * How many Live Sessions may be RECORDED.
+   *
+   * Counts recorded SESSIONS, not recording files: one session whose
+   * provider produces three files consumes exactly one. Unrecorded live
+   * sessions are not governed by this at all — the `liveSessions` feature
+   * gates those.
+   */
+  readonly recordedSessions: LimitValue;
 }
 
 /** The feature entitlements every Plan (and Add-on effect) can express. */
@@ -46,7 +57,9 @@ export type PlanFeatureKey =
   | 'customDomain'
   | 'themes'
   | 'multipleThemes'
-  | 'backup';
+  | 'backup'
+  /** Whether Live Sessions may be run at all. Normally granted by activating the Live Sessions add-on. */
+  | 'liveSessions';
 
 /** Feature availability granted by a Plan. A capability switch, not a quota. */
 export interface PlanFeatures {
@@ -61,6 +74,7 @@ export interface PlanFeatures {
   readonly themes: boolean;
   readonly multipleThemes: boolean;
   readonly backup: boolean;
+  readonly liveSessions: boolean;
 }
 
 /** A Plan's lifecycle/catalog visibility state. */

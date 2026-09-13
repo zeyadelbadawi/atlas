@@ -25,6 +25,8 @@ export * from './announcement.types';
 export * from './blog.types';
 export * from './forum.types';
 export * from './plan.types';
+// Phase 12 — Live Sessions add-on.
+export * from './liveSession.types';
 export * from './tenant.types';
 export * from './money.types';
 export * from './checkout.types';

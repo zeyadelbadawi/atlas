@@ -1,0 +1,149 @@
+{
+  "addToUnit": "إضافة جلسة مباشرة",
+  "providerNotConnectedShort": "لم يتم ربط Zoom — لا يمكن للطلاب الانضمام بعد",
+  "badge": {
+    "recording": "تسجيل"
+  },
+  "status": {
+    "draft": "مسودة",
+    "scheduled": "مجدولة",
+    "live": "مباشرة الآن",
+    "ended": "انتهت",
+    "cancelled": "أُلغيت",
+    "failed": "فشلت"
+  },
+  "form": {
+    "createTitle": "إضافة جلسة مباشرة",
+    "editTitle": "تعديل الجلسة المباشرة",
+    "description": "ينضم الطلاب إلى هذه الجلسة من داخل الدورة — دون الحاجة إلى رابط Zoom.",
+    "title": "عنوان الجلسة",
+    "titlePlaceholder": "مثال: حصة مراجعة الوحدة الأولى",
+    "descriptionLabel": "الوصف",
+    "startsAt": "تبدأ في",
+    "endsAt": "تنتهي في",
+    "recordSession": "تسجيل هذه الجلسة",
+    "recordingHint": "مُعطّل افتراضيًا. لا يتم تفعيل التسجيل تلقائيًا أبدًا.",
+    "recordingRemaining_zero": "لم يتبقَّ لديك أي جلسات مسجّلة.",
+    "recordingRemaining_one": "ستستخدم الجلسة المسجّلة الوحيدة المتبقية لديك.",
+    "recordingRemaining_two": "ستستخدم واحدة من جلستين مسجّلتين متبقيتين لديك.",
+    "recordingRemaining_few": "ستستخدم واحدة من {{count}} جلسات مسجّلة متبقية لديك.",
+    "recordingRemaining_many": "ستستخدم واحدة من {{count}} جلسة مسجّلة متبقية لديك.",
+    "recordingRemaining_other": "ستستخدم واحدة من {{count}} جلسة مسجّلة متبقية لديك.",
+    "recordingUnlimited": "تتضمن خطتك جلسات مسجّلة غير محدودة.",
+    "recordingQuotaExhausted": "لقد استخدمت كل الجلسات المسجّلة في خطتك. قم بالترقية لتسجيل المزيد — أما الجلسات المباشرة العادية فتظل غير محدودة.",
+    "create": "إضافة الجلسة"
+  },
+  "validation": {
+    "endBeforeStart": "يجب أن يكون وقت الانتهاء بعد وقت البدء.",
+    "tooShort": "يجب ألا تقل مدة الجلسة عن 5 دقائق.",
+    "tooLong": "لا يمكن أن تتجاوز مدة الجلسة 12 ساعة."
+  },
+  "toast": {
+    "created": "تمت إضافة الجلسة المباشرة",
+    "updated": "تم تحديث الجلسة المباشرة"
+  },
+  "catalog": {
+    "title": "الإضافات",
+    "subtitle": "وسّع أطلس بالقدرات التي تحتاجها أكاديمياتك.",
+    "emptyTitle": "لا توجد إضافات متاحة بعد",
+    "emptyDescription": "ستظهر القدرات الجديدة هنا عند إطلاقها.",
+    "free": "مجانًا",
+    "price": "{{amount}} {{currency}} / شهريًا",
+    "install": "تثبيت",
+    "enable": "تفعيل",
+    "disable": "تعطيل",
+    "uninstall": "إزالة",
+    "uninstallNote": "التعطيل يحتفظ بإعداداتك وسجلّك — يمكنك إعادة التفعيل في أي وقت.",
+    "state": {
+      "uninstalled": "غير مثبّتة",
+      "installing": "جارٍ التثبيت…",
+      "installed": "مثبّتة",
+      "enabled": "مفعّلة",
+      "disabled": "معطّلة",
+      "uninstalling": "جارٍ الإزالة…",
+      "failed": "فشلت"
+    }
+  },
+  "overview": {
+    "title": "الجلسات المباشرة",
+    "subtitle": "قدّم حصصًا مباشرة داخل دوراتك، مع تتبّع الحضور وتسجيل اختياري.",
+    "noAcademyTitle": "اختر أكاديمية أولًا",
+    "noAcademyDescription": "تُضبط الجلسات المباشرة لكل أكاديمية على حدة. اختر واحدة للمتابعة.",
+    "createInBuilderTitle": "الجلسات جزء من منهج دورتك",
+    "createInBuilderDescription": "أضف جلسة مباشرة إلى وحدة من داخل منشئ الدورة، إلى جانب دروسها واختباراتها.",
+    "goToCourses": "الانتقال إلى الدورات"
+  },
+  "blocked": {
+    "goToAddOns": "فتح الإضافات",
+    "not_installed": {
+      "title": "لم يتم تثبيت الجلسات المباشرة",
+      "description": "ثبّت الإضافة لتبدأ جدولة الحصص المباشرة في دوراتك."
+    },
+    "disabled": {
+      "title": "الجلسات المباشرة معطّلة",
+      "description": "إعداداتك وسجلّك سليمان. فعّل الإضافة لاستئناف الاستخدام."
+    },
+    "not_entitled": {
+      "title": "خطتك لا تتضمن الجلسات المباشرة",
+      "description": "قم بترقية خطتك أو ثبّت الإضافة لفتح الحصص المباشرة."
+    },
+    "subscription_inactive": {
+      "title": "اشتراكك غير نشط",
+      "description": "تتطلب الإضافات اشتراكًا نشطًا. اختر خطة للمتابعة."
+    },
+    "installing": {
+      "title": "جارٍ التثبيت…",
+      "description": "عادةً ما يستغرق هذا لحظات. حدّث الصفحة بعد قليل."
+    },
+    "failed": {
+      "title": "لم يكتمل التثبيت",
+      "description": "حدث خطأ أثناء التثبيت. أعد المحاولة من صفحة الإضافات."
+    }
+  },
+  "provider": {
+    "manageConnection": "إدارة الاتصال",
+    "not_connected": {
+      "title": "لم يتم ربط Zoom",
+      "badge": "غير مرتبط",
+      "description": "اربط حساب Zoom الخاص بأكاديميتك ليتمكن الطلاب من الانضمام."
+    },
+    "connected": {
+      "title": "تم ربط Zoom",
+      "badge": "مرتبط",
+      "description": "حساب Zoom الخاص بأكاديميتك مرتبط ويعمل بشكل سليم."
+    },
+    "expired": {
+      "title": "انتهت صلاحية ربط Zoom",
+      "badge": "منتهية",
+      "description": "لم تعد بيانات الاعتماد صالحة. أعد الربط لاستئناف الجلسات."
+    },
+    "revoked": {
+      "title": "تم سحب صلاحية Zoom",
+      "badge": "مسحوبة",
+      "description": "تم سحب الصلاحية من Zoom. أعد الربط لاستئناف الجلسات."
+    },
+    "error": {
+      "title": "مشكلة في الاتصال بـ Zoom",
+      "badge": "خطأ",
+      "description": "تعذّر الوصول إلى Zoom ببيانات الاعتماد المحفوظة. حاول إعادة الربط."
+    }
+  },
+  "connection": {
+    "title": "ربط Zoom",
+    "subtitle": "كل أكاديمية تربط حساب Zoom الخاص بها.",
+    "lastChecked": "آخر فحص {{date}}",
+    "prerequisitesTitle": "ما ستحتاج إليه",
+    "prerequisitesDescription": "يتطلب الربط تطبيق Zoom من نوع Server-to-Server OAuth وتطبيق Meeting SDK يتم إنشاؤهما في حساب Zoom الخاص بأكاديميتك. تُحفظ بيانات الاعتماد مشفّرة ولا تُعرض مرة أخرى بعد حفظها."
+  },
+  "quota": {
+    "title": "الجلسات المسجّلة",
+    "usedOfLimit": "{{used}} من {{limit}} مستخدمة",
+    "unlimited": "{{used}} مسجّلة — خطتك بلا حد",
+    "remaining_zero": "لم يتبقَّ شيء",
+    "remaining_one": "يتبقى واحدة",
+    "remaining_two": "يتبقى اثنتان",
+    "remaining_few": "يتبقى {{count}}",
+    "remaining_many": "يتبقى {{count}}",
+    "remaining_other": "يتبقى {{count}}"
+  }
+}

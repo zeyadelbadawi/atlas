@@ -103,5 +103,22 @@
     "invalidDataUrl": "That file couldn't be read. Try choosing it again.",
     "fileTooLarge": "That file is too large to upload.",
     "insufficientRole": "You don't have permission to upload files to this academy."
+  },
+  "tenancy": {
+    "notAMember": "You don't have access to this workspace.",
+    "organizationRequired": "Choose an organization to continue."
+  },
+  "liveSessions": {
+    "addOnNotUsable": "Live Sessions isn't available right now. Check the add-on on the Add-ons page.",
+    "notJoinable": "You can't join this session right now.",
+    "grantInvalid": "That join link has expired. Open the session again to rejoin.",
+    "recordingQuotaExceeded": "You've used every recorded session on your plan. Normal live sessions are still unlimited.",
+    "recordingNotEntitled": "Your plan doesn't include recorded sessions.",
+    "invalidSchedule": "That schedule isn't valid.",
+    "endBeforeStart": "The end time must be after the start time.",
+    "invalidDuration": "A session must be between {{minMinutes}} minutes and {{maxMinutes}} minutes long.",
+    "sectionNotInCourse": "That unit doesn't belong to this course.",
+    "hostNotInAcademy": "The host must be an active member of this academy.",
+    "alreadyEnded": "This session has already ended and can no longer be changed."
   }
 }

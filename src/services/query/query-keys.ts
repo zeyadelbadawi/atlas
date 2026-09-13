@@ -745,3 +745,19 @@ export const searchKeys = {
   results: (userId: string | undefined, query: string) =>
     [...searchKeys.all, 'results', userId, query] as const,
 } as const;
+
+/**
+ * Query keys for the Live Sessions add-on.
+ *
+ * Academy-scoped like the resource itself, so switching academy switches
+ * the cache rather than showing another tenant's sessions for a frame.
+ */
+export const liveSessionKeys = {
+  all: ['live-sessions'] as const,
+  status: (academyId: string | undefined) =>
+    [...liveSessionKeys.all, 'status', academyId] as const,
+  forCourse: (academyId: string | undefined, courseId: string | undefined) =>
+    [...liveSessionKeys.all, 'course', academyId, courseId] as const,
+  attendance: (academyId: string | undefined, liveSessionId: string | undefined) =>
+    [...liveSessionKeys.all, 'attendance', academyId, liveSessionId] as const,
+} as const;

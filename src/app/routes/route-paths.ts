@@ -113,6 +113,20 @@ export const DASHBOARD_ROUTES = {
   tenantUsage: '/dashboard/tenant/usage',
   tenantAddOns: '/dashboard/tenant/add-ons',
 
+  /*
+    Phase 12 — the Add-ons area.
+
+    Nested on purpose: `Add-ons > Live Sessions > (Sessions | Recordings |
+    Connection)` is a real hierarchy, and flattening it into unrelated
+    top-level links is exactly what stops the sidebar scaling when a
+    second add-on arrives.
+  */
+  addOns: '/dashboard/add-ons',
+  liveSessions: '/dashboard/add-ons/live-sessions',
+  liveSessionsList: '/dashboard/add-ons/live-sessions/sessions',
+  liveSessionsRecordings: '/dashboard/add-ons/live-sessions/recordings',
+  liveSessionsSettings: '/dashboard/add-ons/live-sessions/connection',
+
   platformTrialPolicy: '/dashboard/platform/trial',
   platformDomain: '/dashboard/platform/domain',
 

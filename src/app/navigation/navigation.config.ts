@@ -37,6 +37,7 @@ import {
   LifeBuoy,
   Plug,
   Layers,
+  Radio,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem, NavigationSection } from '@types';
@@ -321,6 +322,70 @@ export function getDashboardNavigation(
           requiresAuth: true,
           requiredPermissions: ['blog.view'],
           matchNestedPaths: true,
+        },
+      ],
+      showDivider: true,
+    },
+    {
+      /*
+        Phase 12 — the Add-ons area.
+
+        A CATEGORY, not a link: each installed add-on is a child with its
+        own sub-pages, which is what makes this scale when a second add-on
+        arrives instead of accreting unrelated top-level entries.
+
+        Deliberately NOT marked `requiresEntitlement`: this is where a
+        customer goes to SEE and INSTALL add-ons, so hiding it from anyone
+        without one would hide the only route to getting one. The pages
+        themselves report each dependency, and every API call is
+        independently authorized regardless of what the sidebar shows.
+      */
+      id: 'add-ons',
+      labelKey: 'navigation:sections.addOns',
+      items: [
+        {
+          id: 'add-ons-catalog',
+          labelKey: 'navigation:items.addOnsCatalog',
+          path: DASHBOARD_ROUTES.addOns,
+          icon: Boxes,
+          requiresAuth: true,
+          // Add-ons are a commercial decision, so this is billing
+          // territory — the same owner-exclusive permission the
+          // subscription screens use.
+          requiredPermissions: ['tenant.subscription.view'],
+        },
+        {
+          id: 'live-sessions',
+          labelKey: 'navigation:items.liveSessions',
+          path: DASHBOARD_ROUTES.liveSessions,
+          icon: Radio,
+          requiresAuth: true,
+          requiredPermissions: ['academy.view'],
+          matchNestedPaths: true,
+          children: [
+            {
+              id: 'live-sessions-list',
+              labelKey: 'navigation:items.liveSessionsList',
+              path: DASHBOARD_ROUTES.liveSessionsList,
+              requiresAuth: true,
+              requiredPermissions: ['academy.view'],
+            },
+            {
+              id: 'live-sessions-recordings',
+              labelKey: 'navigation:items.liveSessionsRecordings',
+              path: DASHBOARD_ROUTES.liveSessionsRecordings,
+              requiresAuth: true,
+              requiredPermissions: ['academy.view'],
+            },
+            {
+              id: 'live-sessions-connection',
+              labelKey: 'navigation:items.liveSessionsConnection',
+              path: DASHBOARD_ROUTES.liveSessionsSettings,
+              requiresAuth: true,
+              // Connecting a provider is an academy-configuration action.
+              requiredPermissions: ['academy.configure'],
+            },
+          ],
         },
       ],
       showDivider: true,

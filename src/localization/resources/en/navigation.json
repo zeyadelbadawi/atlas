@@ -26,7 +26,8 @@
     "saas": "SaaS",
     "user": "User",
     "workspace": "Workspace",
-    "administration": "Administration"
+    "administration": "Administration",
+    "addOns": "Add-ons"
   },
   "items": {
     "home": "Home",
@@ -74,7 +75,12 @@
     "platformSubscriptions": "Subscriptions & Trials",
     "support": "Support",
     "academyAnnouncements": "Announcements",
-    "academyMedia": "Academy Media"
+    "academyMedia": "Academy Media",
+    "addOnsCatalog": "Browse add-ons",
+    "liveSessions": "Live Sessions",
+    "liveSessionsList": "Sessions",
+    "liveSessionsRecordings": "Recordings",
+    "liveSessionsConnection": "Connection"
   },
   "account": {
     "menu": "Account menu",

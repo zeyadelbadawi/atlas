@@ -692,6 +692,120 @@ Confirm which one is meant before writing code.
 
 ---
 
+## 15b. Live Sessions add-on (Zoom) — Phase 12
+
+**Status: backend complete and verified; Zoom provider E2E BLOCKED on external
+prerequisites.** Read this before touching anything under
+`src/live-sessions/` or `features/live-sessions/`.
+
+### What it is
+
+A Live Session is a **first-class course activity**, sitting in the curriculum
+beside Lesson / Quiz / Assignment. It follows their exact shape: `course_id`
+required, `section_id` optional (the placement model `quizzes`/`assignments`
+already use), plus an `order` so it can be sequenced within a unit. It is
+created and edited **in the Course Builder**, not on a separate page.
+
+### The four independent dependencies — never collapse these
+
+`AddOnAccessService` reports each separately, and the UI shows whichever is
+blocking:
+
+| Concept | Where it lives | Fix when missing |
+| --- | --- | --- |
+| Subscription active | `tenant_subscriptions.status` | billing |
+| Plan entitlement (`liveSessions`) | plan features + **enabled** add-on effects | upgrade / install |
+| Installed + enabled | `tenant_add_ons.status` | install or enable |
+| Provider connected | `academy_live_provider_connections.status` | connect Zoom |
+
+`Installed != Entitled != Connected != Has quota.` Only `status = 'enabled'`
+add-ons contribute their effect to entitlements
+(`TenantAddOnsRepository.findManyForOrganization`).
+
+### Entitlement integration — no parallel system
+
+The add-on grants its capability through the **existing**
+`AddOnFeatureEffect` mechanism (`{type:'feature', featureKey:'liveSessions'}`).
+`liveSessions` is an ordinary `PlanFeatureKey` and `recordedSessions` an
+ordinary `PlanLimitKey`; both are resolved by the same
+`EntitlementService.computeEffectiveEntitlements` every other limit uses.
+
+### Recording — the rules that must not drift
+
+- **OFF by default.** `live_sessions.recording_enabled` defaults `false`, and
+  `ZoomProvider.createMeeting` always sends `auto_recording` explicitly, so a
+  Zoom account whose own default is "record everything" can never produce an
+  Atlas recording. The webhook handler re-checks Atlas policy before importing.
+- **Quota counts recorded SESSIONS, not files.**
+  `live_session_recordings.live_session_id` is UNIQUE; many
+  `live_session_recording_files` hang off one row and cost one unit.
+- **Normal sessions are NOT metered.** Only recording is.
+- **Concurrency-safe.** `RecordingQuotaService.consumeForSession` takes
+  `SELECT ... FOR UPDATE` on the organization's `tenant_subscriptions` row
+  before counting, serializing recording starts per organization. Verified
+  against a real database: 10 concurrent transactions against a 3-session
+  allowance produced exactly 3, never 4. `quota_consumed_at` makes a repeat
+  charge a no-op, so retries and duplicate provider events cannot double-spend.
+- **A downgrade never deletes existing recordings** — it only changes what may
+  be recorded next.
+
+### Attendance — interval-based, identity-exact
+
+- Every join/leave is its own `live_session_attendance_intervals` row. Totals
+  are derived at read time, so a late provider correction needs no aggregate
+  invalidation.
+- `totalAttendedSeconds` **merges overlapping intervals** (phone + laptop would
+  otherwise report 90 minutes in a 45-minute session).
+- **Identity is never fuzzy.** Atlas mints an opaque `participant_key` per
+  (session, user) at join time and hands it to Zoom as `customer_key`; webhooks
+  and the post-session report are matched on it exactly. No name or email
+  matching anywhere. An unmatched event is recorded as unmatched, never guessed
+  onto a nearby student.
+- Source ranking: `provider_report` (authoritative) > `provider_webhook` >
+  `sdk_event` (never trusted alone). `manual` overrides survive reconciliation.
+- **Default policy** (new to Atlas, documented here because there was none):
+  attended = at least **60% of scheduled duration AND at least 5 minutes**.
+  Both conditions, deliberately — see `DEFAULT_ATTENDANCE_POLICY`.
+
+### Security
+
+- Students reach a session only through an `enrollments` row matching **both**
+  `course_id` and `academy_id`, with status `enrolled`/`completed`. This is
+  what makes a cross-academy id substitution fail.
+- Join is Atlas-controlled: a **single-use, short-lived** `live_session_join_grants`
+  row bound to (session, user, role). Only its hash is stored. Replay or
+  forwarding to another user fails a conditional UPDATE.
+- No provider meeting id, join URL, or credential appears in any response DTO.
+- RLS mirrors the guards: tenant policies via `academies.organization_id`, plus
+  narrow student-self SELECT policies. `live_provider_events` is platform-owned
+  (no RLS), exactly like `payment_webhook_events`.
+- **Credentials reuse the existing AES-256-GCM seam** (`CredentialEncryptionService`,
+  now exported from `BillingModule`). There is no second secret store.
+
+### EXTERNAL PREREQUISITES — nothing works against real Zoom without these
+
+None of these exist in any Atlas environment today:
+
+1. A Zoom account for the academy.
+2. A **Server-to-Server OAuth** app (account id, client id, client secret).
+3. A **Meeting SDK** app (SDK key + secret) for the embedded join.
+4. A **webhook secret token**, and a publicly reachable webhook URL.
+
+Until they exist, `checkHealth` fails honestly and the connection screen says
+so. **Do not fabricate credentials to make a test pass.**
+
+### What is NOT built yet (be honest about this)
+
+- The Zoom OAuth **connect/disconnect flow** (UI + endpoints). The schema,
+  encryption seam and health model are in place; the flow is not.
+- The **webhook controller** and attendance reconciliation **job**. Signature
+  verification (`ZoomProvider.verifyWebhookSignature`, timing-safe) and the
+  idempotent `live_provider_events` table exist; the endpoint does not.
+- **Recording import into Academy Media.** `live_session_recording_files.media_asset_id`
+  and the provider fetch exist; the import worker does not.
+- The **embedded Meeting SDK join UI** and the student-facing session page.
+- **Notifications** for session lifecycle events.
+
 ## 16. Architecture integrity check
 
 **Did the work done after the original roadmap preserve the intended architecture?**

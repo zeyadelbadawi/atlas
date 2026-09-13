@@ -10,6 +10,7 @@ import type { LanguageCode, TranslationNamespace } from '@types';
 
 import enCommon from './en/common.json';
 import enNavigation from './en/navigation.json';
+import enLiveSessions from './en/liveSessions.json';
 import enValidation from './en/validation.json';
 import enErrors from './en/errors.json';
 import enLayout from './en/layout.json';
@@ -45,6 +46,7 @@ import enPricing from './en/pricing.json';
 
 import arCommon from './ar/common.json';
 import arNavigation from './ar/navigation.json';
+import arLiveSessions from './ar/liveSessions.json';
 import arValidation from './ar/validation.json';
 import arErrors from './ar/errors.json';
 import arLayout from './ar/layout.json';
@@ -87,6 +89,7 @@ export const TRANSLATION_RESOURCES: Readonly<
   en: {
     common: enCommon,
     navigation: enNavigation,
+    liveSessions: enLiveSessions,
     validation: enValidation,
     errors: enErrors,
     layout: enLayout,
@@ -123,6 +126,7 @@ export const TRANSLATION_RESOURCES: Readonly<
   ar: {
     common: arCommon,
     navigation: arNavigation,
+    liveSessions: arLiveSessions,
     validation: arValidation,
     errors: arErrors,
     layout: arLayout,

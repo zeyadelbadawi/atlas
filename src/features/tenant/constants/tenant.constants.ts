@@ -40,6 +40,7 @@ export const PLAN_LIMIT_KEYS: readonly PlanLimitKey[] = [
   'courses',
   'generalStorage',
   'videoStorage',
+  'recordedSessions',
 ];
 
 /** Every feature entitlement key, in display order. */
@@ -55,7 +56,24 @@ export const PLAN_FEATURE_KEYS: readonly PlanFeatureKey[] = [
   'themes',
   'multipleThemes',
   'backup',
+  'liveSessions',
 ];
+
+/**
+ * The limit keys the cached `tenant_usage` snapshot actually carries.
+ *
+ * `recordedSessions` is deliberately ABSENT. Its usage is not a counter in
+ * the usage snapshot at all — it is the number of `live_session_recordings`
+ * rows that have consumed quota, read and incremented inside one
+ * serialized transaction so the allowance cannot be oversold. The Live
+ * Sessions surfaces report it from their own status endpoint; the generic
+ * usage table would have nothing to read here.
+ */
+export type UsageMetricKey = Exclude<PlanLimitKey, 'recordedSessions'>;
+
+export const USAGE_METRIC_KEYS: readonly UsageMetricKey[] = PLAN_LIMIT_KEYS.filter(
+  (key): key is UsageMetricKey => key !== 'recordedSessions'
+);
 
 /** Limit keys measured in GB rather than a plain count. */
 export const STORAGE_LIMIT_KEYS: readonly PlanLimitKey[] = [

@@ -93,7 +93,42 @@ export function SidebarNavigation({
       </NavLink>
     );
 
-    if (!isCollapsed) return <li key={item.id}>{link}</li>;
+    /*
+      Phase 12 — NESTED CHILDREN.
+
+      `NavigationItem` has always carried `children` and
+      `filterNavigationItems` has always recursed into them, but this
+      renderer ignored them, so any nested entry silently disappeared.
+      That is why the Add-ons area needs it: `Add-ons > Live Sessions >
+      (Sessions | Recordings | Connection)` is a real hierarchy, and
+      flattening it into unrelated top-level links is what stops the
+      sidebar scaling once a second add-on exists.
+
+      Children render only when the branch is active, so the sidebar stays
+      short by default and expands where the user actually is. In the
+      collapsed rail there is no room for a second level at all, and the
+      parent's tooltip already names the branch — so the sub-list is
+      skipped there rather than crushed into the icon gutter.
+    */
+    const children = item.children ?? [];
+    const isBranchActive =
+      isActive ||
+      children.some((child) =>
+        isPathActive(location.pathname, child.path, child.matchNestedPaths)
+      );
+
+    if (!isCollapsed) {
+      return (
+        <li key={item.id}>
+          {link}
+          {children.length > 0 && isBranchActive ? (
+            <ul className="mt-1 space-y-1 border-s border-sidebar-border ms-4 ps-3">
+              {children.map(renderItem)}
+            </ul>
+          ) : null}
+        </li>
+      );
+    }
 
     return (
       <li key={item.id}>

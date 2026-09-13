@@ -26,7 +26,8 @@
     "saas": "خدمة سحابية",
     "user": "المستخدم",
     "workspace": "مساحة العمل",
-    "administration": "الإدارة"
+    "administration": "الإدارة",
+    "addOns": "الإضافات"
   },
   "items": {
     "home": "الرئيسية",
@@ -74,7 +75,12 @@
     "platformSubscriptions": "الاشتراكات والفترات التجريبية",
     "support": "الدعم",
     "academyAnnouncements": "الإعلانات",
-    "academyMedia": "وسائط الأكاديمية"
+    "academyMedia": "وسائط الأكاديمية",
+    "addOnsCatalog": "تصفّح الإضافات",
+    "liveSessions": "الجلسات المباشرة",
+    "liveSessionsList": "الجلسات",
+    "liveSessionsRecordings": "التسجيلات",
+    "liveSessionsConnection": "الاتصال"
   },
   "account": {
     "menu": "قائمة الحساب",
