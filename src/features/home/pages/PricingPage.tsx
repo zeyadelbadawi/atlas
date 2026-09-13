@@ -29,6 +29,8 @@ import {
   MarketingContainer,
   MarketingSection,
 } from '../components/MarketingSection';
+import launchReady from '../assets/launch-ready.webp';
+import structureCalm from '../components/cinematic-hero/assets/structure-calm.webp';
 import type { PlanFeatures } from '@types';
 
 /** Order features are compared in — matches `PlanFeatures`' own real fields. */
@@ -84,29 +86,48 @@ export default function PricingPage(): JSX.Element {
 
   return (
     <>
-      {/* ── Page header ─────────────────────────────────────────────────── */}
+      {/* ── Hero — this page's own visual identity: one calm, resolved
+          structure, ready to launch. Distinct from the homepage's
+          transformation video and the features page's "modules connecting"
+          motif. ─────────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
         <span
           className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-80 bg-gradient-to-b from-surface to-background"
           aria-hidden
         />
         <MarketingContainer className="py-16 lg:py-24">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={RISE_VARIANTS}
-            className="flex flex-col gap-5"
-          >
-            <span className="text-xs font-medium uppercase tracking-[0.14em] rtl:tracking-normal text-muted-foreground">
-              {t('pricing:page.eyebrow')}
-            </span>
-            <h1 className="max-w-[22ch] text-balance font-display text-[2.5rem] font-semibold leading-[1.05] rtl:leading-[1.5] tracking-[-0.03em] rtl:tracking-normal text-foreground sm:text-5xl lg:text-6xl">
-              {t('pricing:page.title')}
-            </h1>
-            <p className="max-w-[58ch] text-base leading-relaxed text-muted-foreground sm:text-lg">
-              {t('pricing:page.description')}
-            </p>
-          </motion.div>
+          <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={RISE_VARIANTS}
+              className="flex flex-col gap-5 lg:col-span-7"
+            >
+              <span className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground rtl:tracking-normal">
+                {t('pricing:page.eyebrow')}
+              </span>
+              <h1 className="max-w-[22ch] text-balance font-display text-[2.5rem] font-semibold leading-[1.05] tracking-[-0.03em] text-foreground sm:text-5xl lg:text-6xl rtl:leading-[1.5] rtl:tracking-normal">
+                {t('pricing:page.title')}
+              </h1>
+              <p className="max-w-[58ch] text-base leading-relaxed text-muted-foreground sm:text-lg">
+                {t('pricing:page.description')}
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="hidden lg:col-span-5 lg:block"
+            >
+              <img
+                src={launchReady}
+                alt=""
+                className="mx-auto h-auto w-full max-w-[300px]"
+                aria-hidden
+              />
+            </motion.div>
+          </div>
         </MarketingContainer>
       </section>
 
@@ -326,15 +347,26 @@ export default function PricingPage(): JSX.Element {
         )}
       </MarketingSection>
 
-      {/* ── Pricing note ───────────────────────────────────────────────── */}
+      {/* ── Pricing note — a supporting visual moment, not a bare closing
+          paragraph. Reuses the hero's own resolved-structure motif (see
+          `design-system/atlas-marketing/MASTER.md` §12) instead of a new
+          asset. ──────────────────────────────────────────────────────────── */}
       <MarketingSection divided compact>
-        <div className="flex max-w-[62ch] flex-col gap-3">
-          <h2 className="font-display text-xl font-semibold tracking-[-0.01em] text-foreground">
-            {t('pricing:faq.title')}
-          </h2>
-          <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-            {t('pricing:faq.description')}
-          </p>
+        <div className="flex flex-col items-start gap-8 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex max-w-[62ch] flex-col gap-3">
+            <h2 className="font-display text-xl font-semibold tracking-[-0.01em] text-foreground">
+              {t('pricing:faq.title')}
+            </h2>
+            <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+              {t('pricing:faq.description')}
+            </p>
+          </div>
+          <img
+            src={structureCalm}
+            alt=""
+            className="hidden size-24 shrink-0 opacity-80 sm:block"
+            aria-hidden
+          />
         </div>
       </MarketingSection>
     </>

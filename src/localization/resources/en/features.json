@@ -37,6 +37,12 @@
           "title": "Assignments and submissions",
           "description": "Collect student submissions and grade them without emailing files back and forth."
         }
+      },
+      "figure": {
+        "course": "Your course",
+        "lessons": "Lessons",
+        "quizzes": "Quizzes",
+        "assignments": "Assignments"
       }
     },
     "people": {

@@ -48,6 +48,9 @@ import { formatPlanPrice } from '../utils/formatPlanPrice';
 import { MarketingSection, SectionHeading } from '../components/MarketingSection';
 import { CinematicHero } from '../components/cinematic-hero';
 import { PlatformStructureFigure } from '../components/PlatformStructureFigure';
+import platformConvergence from '../assets/platform-convergence.webp';
+import secureShield from '../assets/secure-shield.webp';
+import structureCalm from '../components/cinematic-hero/assets/structure-calm.webp';
 
 interface OldWayStep {
   readonly id: string;
@@ -186,49 +189,59 @@ export default function HomePage(): JSX.Element {
           variants={capabilityStagger.container}
           className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-12"
         >
-          {CAPABILITIES.map((capability) => (
-            <motion.li
-              key={capability.id}
-              variants={capabilityStagger.item}
-              className={`group flex flex-col gap-3 rounded-xl border border-border bg-card p-6 transition-colors duration-normal hover:border-border-strong lg:p-8 ${COL_SPAN_CLASS[capability.span]} ${
-                capability.lead ? 'sm:col-span-2' : ''
-              }`}
-            >
-              <span
-                className={
-                  capability.lead
-                    ? 'flex size-11 items-center justify-center rounded-md bg-primary text-primary-foreground'
-                    : 'flex size-10 items-center justify-center rounded-md bg-accent text-accent-foreground'
-                }
+          {CAPABILITIES.map((capability) =>
+            capability.lead ? (
+              <motion.li
+                key={capability.id}
+                variants={capabilityStagger.item}
+                className={`group flex flex-col gap-6 rounded-xl border border-border bg-card p-6 transition-colors duration-normal hover:border-border-strong sm:col-span-2 sm:flex-row sm:items-center sm:justify-between lg:p-8 ${COL_SPAN_CLASS[capability.span]}`}
               >
-                <capability.icon
-                  className={capability.lead ? 'size-6' : 'size-5'}
-                  strokeWidth={1.75}
+                <div className="flex flex-col gap-3">
+                  <span className="flex size-11 items-center justify-center rounded-md bg-primary text-primary-foreground">
+                    <capability.icon
+                      className="size-6"
+                      strokeWidth={1.75}
+                      aria-hidden
+                    />
+                  </span>
+                  <h3 className="font-display text-xl font-semibold text-foreground sm:text-2xl">
+                    {t(`home:capabilities.${capability.id}.title`)}
+                  </h3>
+                  <p className="max-w-[58ch] text-base leading-relaxed text-muted-foreground">
+                    {t(`home:capabilities.${capability.id}.description`)}
+                  </p>
+                </div>
+                <img
+                  src={secureShield}
+                  alt=""
+                  className="hidden h-auto w-full max-w-[140px] shrink-0 sm:block"
                   aria-hidden
                 />
-              </span>
-
-              <h3
-                className={
-                  capability.lead
-                    ? 'font-display text-xl font-semibold text-foreground sm:text-2xl'
-                    : 'font-display text-lg font-semibold text-foreground'
-                }
+              </motion.li>
+            ) : (
+              <motion.li
+                key={capability.id}
+                variants={capabilityStagger.item}
+                className={`group flex flex-col gap-3 rounded-xl border border-border bg-card p-6 transition-colors duration-normal hover:border-border-strong lg:p-8 ${COL_SPAN_CLASS[capability.span]}`}
               >
-                {t(`home:capabilities.${capability.id}.title`)}
-              </h3>
+                <span className="flex size-10 items-center justify-center rounded-md bg-accent text-accent-foreground">
+                  <capability.icon
+                    className="size-5"
+                    strokeWidth={1.75}
+                    aria-hidden
+                  />
+                </span>
 
-              <p
-                className={
-                  capability.lead
-                    ? 'max-w-[58ch] text-base leading-relaxed text-muted-foreground'
-                    : 'text-sm leading-relaxed text-muted-foreground'
-                }
-              >
-                {t(`home:capabilities.${capability.id}.description`)}
-              </p>
-            </motion.li>
-          ))}
+                <h3 className="font-display text-lg font-semibold text-foreground">
+                  {t(`home:capabilities.${capability.id}.title`)}
+                </h3>
+
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {t(`home:capabilities.${capability.id}.description`)}
+                </p>
+              </motion.li>
+            )
+          )}
         </motion.ul>
 
         <div className="mt-10">
@@ -248,11 +261,17 @@ export default function HomePage(): JSX.Element {
       {/* ── How it works ───────────────────────────────────────────────── */}
       <MarketingSection divided aria-labelledby="home-how-it-works">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
-          <div className="lg:col-span-4">
+          <div className="flex flex-col gap-8 lg:col-span-4">
             <SectionHeading
               id="home-how-it-works"
               eyebrow={t('home:howItWorks.eyebrow')}
               title={t('home:howItWorks.title')}
+            />
+            <img
+              src={platformConvergence}
+              alt=""
+              className="hidden h-auto w-full max-w-[220px] lg:block"
+              aria-hidden
             />
           </div>
 
@@ -362,8 +381,14 @@ export default function HomePage(): JSX.Element {
           whileInView="visible"
           viewport={{ once: true, margin: '-80px' }}
           variants={RISE_VARIANTS}
-          className="flex flex-col items-start gap-6 rounded-xl border border-border bg-surface p-8 lg:flex-row lg:items-center lg:justify-between lg:p-12"
+          className="relative flex flex-col items-start gap-6 overflow-hidden rounded-xl border border-border bg-surface p-8 lg:flex-row lg:items-center lg:justify-between lg:p-12"
         >
+          <img
+            src={structureCalm}
+            alt=""
+            className="pointer-events-none absolute -end-6 -top-8 hidden size-32 opacity-60 lg:block"
+            aria-hidden
+          />
           <div className="flex flex-col gap-3">
             <h2 className="max-w-[24ch] text-balance font-display text-2xl font-semibold leading-[1.15] rtl:leading-[1.5] tracking-[-0.02em] rtl:tracking-normal text-foreground sm:text-3xl">
               {t('home:finalCta.title')}
