@@ -103,7 +103,15 @@ export function PublicLayout(): JSX.Element {
             <ThemeSwitcher />
 
             {isAuthenticated ? (
-              <Button asChild size="sm" className="ms-2">
+              /* Below `xs` (480px), the language switch + theme switch +
+                 this button + the menu trigger genuinely don't fit beside
+                 the logo (measured floor: ~372px content width) — nothing
+                 in this row shrinks or wraps, so past that point content
+                 overflowed the header instead of the row deferring to the
+                 drawer the way it already does for sign-in. `xs` carries
+                 the drawer's own duplicate action below that point instead,
+                 same pattern already used for sign-in. */
+              <Button asChild size="sm" className="ms-2 hidden xs:inline-flex">
                 <Link to={DASHBOARD_ROUTES.root}>
                   {t('layout:public.nav.getStarted')}
                 </Link>
@@ -123,7 +131,9 @@ export function PublicLayout(): JSX.Element {
                     {t('layout:public.nav.signIn')}
                   </Link>
                 </Button>
-                <Button asChild size="sm">
+                {/* Same overflow floor as above: below `xs` this defers to
+                    the drawer's own duplicate "get started" action. */}
+                <Button asChild size="sm" className="hidden xs:inline-flex">
                   <Link to={AUTH_ROUTES.register}>
                     {t('layout:public.nav.getStarted')}
                   </Link>
@@ -154,7 +164,13 @@ export function PublicLayout(): JSX.Element {
               */}
               <SheetContent
                 side={isRtl ? 'left' : 'right'}
-                className="w-[min(20rem,85vw)]"
+                /* `svw`, not `vw`: `vw` resolves against the CSS large/layout
+                   viewport, which WebKit can inflate past the true visible
+                   screen once anything on the page overflows (`ToastViewport`
+                   did exactly this) — verified live, this pushed the open
+                   drawer entirely off-screen. `svw` reads the true visual
+                   viewport and can't be inflated the same way. */
+                className="w-[min(20rem,85svw)]"
               >
                 {/* `SheetHeader` ships `sm:text-left`, a physical alignment
                     that mis-aligns Arabic. Overridden locally with the logical
@@ -183,7 +199,19 @@ export function PublicLayout(): JSX.Element {
                   ))}
                 </nav>
 
-                {!isAuthenticated ? (
+                {isAuthenticated ? (
+                  /* Header hides its own "get started"/dashboard link below
+                     `xs` (see header markup above) — this is that action's
+                     only remaining path at those widths, same reasoning as
+                     the sign-in/get-started pair below. */
+                  <div className="mt-8">
+                    <Button asChild className="w-full">
+                      <Link to={DASHBOARD_ROUTES.root}>
+                        {t('layout:public.nav.getStarted')}
+                      </Link>
+                    </Button>
+                  </div>
+                ) : (
                   <div className="mt-8 flex flex-col gap-3">
                     <Button asChild variant="outline" className="w-full">
                       <Link to={AUTH_ROUTES.signIn}>
@@ -196,7 +224,7 @@ export function PublicLayout(): JSX.Element {
                       </Link>
                     </Button>
                   </div>
-                ) : null}
+                )}
               </SheetContent>
             </Sheet>
           </div>

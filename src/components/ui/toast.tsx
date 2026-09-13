@@ -14,7 +14,17 @@ const ToastViewport = React.forwardRef<
     <ToastPrimitives.Viewport
         ref={ref}
         className={cn(
-            'fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]',
+            // `w-[100svw]` (small viewport width), not `w-full`: this viewport
+            // is `position: fixed`, so a percentage width resolves against the
+            // CSS large/layout viewport, which WebKit can compute wider than
+            // what's actually visible once any content on the page overflows
+            // — inflating this always-mounted element past the real screen
+            // edge and dragging the whole document's scrollWidth with it.
+            // `svw` is defined directly off the true visual viewport and is
+            // immune to that split (verified live: `100svw` measured 440px
+            // against the real viewport while `window.innerWidth` read 525px
+            // on the same page). See also `SheetOverlay`/`SheetContent`.
+            'fixed top-0 z-[100] flex max-h-screen w-[100svw] flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]',
             className
         )}
         {...props}
