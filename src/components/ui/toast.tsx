@@ -24,7 +24,16 @@ const ToastViewport = React.forwardRef<
             // immune to that split (verified live: `100svw` measured 440px
             // against the real viewport while `window.innerWidth` read 525px
             // on the same page). See also `SheetOverlay`/`SheetContent`.
-            'fixed top-0 z-[100] flex max-h-screen w-[100svw] flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]',
+            //
+            // `start-0` is also required, not just the width: with no
+            // horizontal inset at all below `sm`, a `position: fixed` box's
+            // horizontal position falls back to its "static position" —
+            // which is direction-dependent. Verified live: switching to
+            // Arabic (RTL) left this element at `left:-85` instead of `0`,
+            // transiently widening the document and leaving the page's
+            // scroll position stuck offset after the transition, even
+            // though the element's width itself was already correct.
+            'fixed top-0 start-0 z-[100] flex max-h-screen w-[100svw] flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]',
             className
         )}
         {...props}
