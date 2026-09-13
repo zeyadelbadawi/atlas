@@ -19,15 +19,7 @@ const SheetOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
     <SheetPrimitive.Overlay
         className={cn(
-            // Anchored from `top-0 start-0` with explicit `svh`/`svw` sizing
-            // rather than `inset-0`: `inset-0` implies `right:0`/`bottom:0`,
-            // which (like a percentage width) resolve against the CSS
-            // large/layout viewport on a `position: fixed` box — a value
-            // WebKit can inflate past the true visible screen once anything
-            // on the page overflows, pushing this overlay (and the dialog
-            // content anchored against its far edge) off-screen. `svh`/`svw`
-            // read the true visual viewport directly. See `ToastViewport`.
-            'fixed top-0 start-0 z-50 h-[100svh] w-[100svw] bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+            'fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
             className
         )}
         {...props}
