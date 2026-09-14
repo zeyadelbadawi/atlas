@@ -3,3 +3,25 @@ allowBuilds:
   '@swc/core': true
   esbuild: true
   simple-git-hooks: true
+  # Same decision as `ignoredBuiltDependencies` below, in the key this
+  # repo's existing entries use. Both are declared because the two pnpm
+  # versions in play read different fields: the build image honoured
+  # `allowBuilds` (it flagged only this package), while pnpm 10.15 reads
+  # `ignoredBuiltDependencies`. Stating the decision once per key is what
+  # makes the install deterministic in both.
+  '@zoom/meetingsdk': false
+
+# DECIDED: SKIPPED, deliberately.
+#
+# pnpm 10 fails an install outright (ERR_PNPM_IGNORED_BUILDS) while a
+# dependency's build script is merely UNDECIDED. A local install does not
+# show this — the prior decision is cached in the store — so it only
+# surfaced in the Docker build, where the container starts with no state.
+#
+# `ignoredBuiltDependencies` is the field pnpm actually reads for this;
+# skipping is the honest answer rather than granting the script a run.
+# The Zoom SDK's postinstall only prints a console banner about not using
+# the SDK for bots, and nothing in the published package depends on it
+# having executed.
+ignoredBuiltDependencies:
+  - '@zoom/meetingsdk'
