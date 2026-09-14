@@ -11,7 +11,9 @@ import { useApiMutation, useApiQuery } from '@/shared/hooks';
 import { liveSessionKeys } from '@services/query';
 import { liveSessionService } from '../services/LiveSessionService';
 import type {
+  ConnectZoomInput,
   CreateLiveSessionInput,
+  LiveProviderConnectionState,
   LiveSession,
   LiveSessionsStatus,
   ParticipantAttendance,
@@ -98,4 +100,52 @@ export function useUpdateLiveSession(
     onSuccess: invalidate,
     successMessageKey: 'liveSessions:toast.updated',
   });
+}
+
+/** Provider connection health for one academy. */
+export function useZoomConnection(academyId: string | undefined) {
+  return useApiQuery<LiveProviderConnectionState, ApiError>({
+    queryKey: [...liveSessionKeys.all, 'connection', academyId],
+    queryFn: () => liveSessionService.getConnection(academyId!),
+    enabled: Boolean(academyId),
+  });
+}
+
+/**
+ * Connect / re-check / disconnect.
+ *
+ * All three invalidate the whole Live Sessions key tree, because the
+ * connection gates the course-builder block and the overview page too —
+ * leaving those stale would show "Zoom not connected" on a screen the
+ * customer has just connected from.
+ */
+export function useZoomConnectionActions(academyId: string | undefined) {
+  const queryClient = useQueryClient();
+  const invalidate = () => {
+    void queryClient.invalidateQueries({ queryKey: liveSessionKeys.all });
+  };
+
+  const connect = useApiMutation<
+    { status: string; connectedAt?: string },
+    ConnectZoomInput,
+    ApiError
+  >({
+    mutationFn: (input) => liveSessionService.connect(academyId!, input),
+    onSuccess: invalidate,
+    successMessageKey: 'liveSessions:toast.connected',
+  });
+
+  const check = useApiMutation<{ healthy: boolean }, void, ApiError>({
+    mutationFn: () => liveSessionService.checkConnection(academyId!),
+    onSuccess: invalidate,
+    showSuccessToast: false,
+  });
+
+  const disconnect = useApiMutation<{ status: string }, void, ApiError>({
+    mutationFn: () => liveSessionService.disconnect(academyId!),
+    onSuccess: invalidate,
+    successMessageKey: 'liveSessions:toast.disconnected',
+  });
+
+  return { connect, check, disconnect };
 }

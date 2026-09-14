@@ -40,7 +40,9 @@
   },
   "toast": {
     "created": "تمت إضافة الجلسة المباشرة",
-    "updated": "تم تحديث الجلسة المباشرة"
+    "updated": "تم تحديث الجلسة المباشرة",
+    "connected": "تم ربط Zoom",
+    "disconnected": "تم قطع الاتصال بـ Zoom"
   },
   "catalog": {
     "title": "الإضافات",
@@ -133,7 +135,9 @@
     "subtitle": "كل أكاديمية تربط حساب Zoom الخاص بها.",
     "lastChecked": "آخر فحص {{date}}",
     "prerequisitesTitle": "ما ستحتاج إليه",
-    "prerequisitesDescription": "يتطلب الربط تطبيق Zoom من نوع Server-to-Server OAuth وتطبيق Meeting SDK يتم إنشاؤهما في حساب Zoom الخاص بأكاديميتك. تُحفظ بيانات الاعتماد مشفّرة ولا تُعرض مرة أخرى بعد حفظها."
+    "prerequisitesDescription": "يتطلب الربط تطبيق Zoom من نوع Server-to-Server OAuth وتطبيق Meeting SDK يتم إنشاؤهما في حساب Zoom الخاص بأكاديميتك. تُحفظ بيانات الاعتماد مشفّرة ولا تُعرض مرة أخرى بعد حفظها.",
+    "recheck": "إعادة فحص الاتصال",
+    "disconnect": "قطع الاتصال"
   },
   "quota": {
     "title": "الجلسات المسجّلة",
@@ -145,5 +149,23 @@
     "remaining_few": "يتبقى {{count}}",
     "remaining_many": "يتبقى {{count}}",
     "remaining_other": "يتبقى {{count}}"
+  },
+  "connectForm": {
+    "apiGroup": "بيانات اعتماد Zoom API",
+    "apiGroupHint": "من تطبيق Server-to-Server OAuth في حساب Zoom الخاص بك. مطلوبة — بدونها لا يمكن إنشاء الجلسات.",
+    "accountId": "معرّف الحساب",
+    "clientId": "معرّف العميل",
+    "clientSecret": "المفتاح السري للعميل",
+    "sdkGroup": "Meeting SDK (اختياري)",
+    "sdkGroupHint": "من تطبيق Meeting SDK الخاص بك. بدونه يمكنك جدولة الجلسات، لكن لن يتمكن الطلاب من الانضمام داخل أطلس.",
+    "sdkKey": "مفتاح SDK",
+    "sdkSecret": "المفتاح السري لـ SDK",
+    "webhookGroup": "المفتاح السري للـ Webhook (اختياري)",
+    "webhookGroupHint": "بدونه لن تصل بيانات الحضور والتسجيلات إلى أطلس.",
+    "webhookSecretToken": "المفتاح السري للـ Webhook",
+    "webhookUrlHint": "أضف هذا الرابط إلى اشتراك الأحداث في تطبيق Zoom: {{origin}}/api/v1/live-sessions/webhook",
+    "encryptionNote": "تُشفَّر بيانات اعتمادك قبل حفظها ولا تُعرض مرة أخرى — ولا حتى هنا.",
+    "connect": "ربط Zoom",
+    "reconnect": "تحديث بيانات الاعتماد"
   }
 }

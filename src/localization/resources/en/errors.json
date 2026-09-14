@@ -119,6 +119,8 @@
     "invalidDuration": "A session must be between {{minMinutes}} minutes and {{maxMinutes}} minutes long.",
     "sectionNotInCourse": "That unit doesn't belong to this course.",
     "hostNotInAcademy": "The host must be an active member of this academy.",
-    "alreadyEnded": "This session has already ended and can no longer be changed."
+    "alreadyEnded": "This session has already ended and can no longer be changed.",
+    "providerConnectionFailed": "We couldn't connect to Zoom with those credentials. Check them in your Zoom app and try again.",
+    "providerNotConnected": "This academy's Zoom account isn't connected."
   }
 }

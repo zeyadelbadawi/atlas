@@ -66,3 +66,45 @@ export const liveSessionFormSchema = z
   });
 
 export type LiveSessionFormData = z.infer<typeof liveSessionFormSchema>;
+
+/**
+ * Zoom connection credentials.
+ *
+ * Only the API trio is required. The SDK pair and webhook token are
+ * optional because an academy can usefully connect without them — what
+ * each one unlocks is explained in the form rather than enforced by
+ * making every field mandatory.
+ *
+ * Deliberately NOT format-validated beyond presence and length: Zoom has
+ * changed credential formats before, and a clever regex that rejects a
+ * valid new-format secret would be indistinguishable from a Zoom outage
+ * to the person trying to connect. The backend verifies them against Zoom
+ * itself, which is the only check that actually means anything.
+ */
+export const zoomConnectionSchema = z.object({
+  accountId: z
+    .string()
+    .trim()
+    .min(1, { message: 'validation:required' })
+    .max(200, { message: 'validation:maxLength' }),
+  clientId: z
+    .string()
+    .trim()
+    .min(1, { message: 'validation:required' })
+    .max(200, { message: 'validation:maxLength' }),
+  clientSecret: z
+    .string()
+    .trim()
+    .min(1, { message: 'validation:required' })
+    .max(500, { message: 'validation:maxLength' }),
+  sdkKey: z.string().trim().max(200, { message: 'validation:maxLength' }).optional().or(z.literal('')),
+  sdkSecret: z.string().trim().max(500, { message: 'validation:maxLength' }).optional().or(z.literal('')),
+  webhookSecretToken: z
+    .string()
+    .trim()
+    .max(500, { message: 'validation:maxLength' })
+    .optional()
+    .or(z.literal('')),
+});
+
+export type ZoomConnectionFormData = z.infer<typeof zoomConnectionSchema>;

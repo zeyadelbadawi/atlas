@@ -107,5 +107,31 @@
       "title": "Password changed",
       "message": "Your account password was just changed. If this wasn't you, contact support immediately."
     }
+  },
+  "liveSession": {
+    "scheduled": {
+      "title": "New live session",
+      "message": "\"{{title}}\" has been scheduled in your course."
+    },
+    "rescheduled": {
+      "title": "Live session moved",
+      "message": "\"{{title}}\" has been rescheduled."
+    },
+    "cancelled": {
+      "title": "Live session cancelled",
+      "message": "\"{{title}}\" has been cancelled."
+    },
+    "starting_soon": {
+      "title": "Live session starting soon",
+      "message": "\"{{title}}\" starts shortly."
+    },
+    "recordingAvailable": {
+      "title": "Recording ready",
+      "message": "The recording for \"{{title}}\" is now in your media library."
+    },
+    "action": {
+      "openCourse": "Open course",
+      "openRecordings": "View recordings"
+    }
   }
 }

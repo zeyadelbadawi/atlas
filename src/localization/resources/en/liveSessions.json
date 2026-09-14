@@ -36,7 +36,9 @@
   },
   "toast": {
     "created": "Live session added",
-    "updated": "Live session updated"
+    "updated": "Live session updated",
+    "connected": "Zoom connected",
+    "disconnected": "Zoom disconnected"
   },
   "catalog": {
     "title": "Add-ons",
@@ -129,7 +131,9 @@
     "subtitle": "Each academy connects its own Zoom account.",
     "lastChecked": "Last checked {{date}}",
     "prerequisitesTitle": "What you'll need",
-    "prerequisitesDescription": "Connecting requires a Zoom Server-to-Server OAuth app and a Meeting SDK app created in your academy's own Zoom account. Credentials are stored encrypted and are never shown again after they're saved."
+    "prerequisitesDescription": "Connecting requires a Zoom Server-to-Server OAuth app and a Meeting SDK app created in your academy's own Zoom account. Credentials are stored encrypted and are never shown again after they're saved.",
+    "recheck": "Re-check connection",
+    "disconnect": "Disconnect"
   },
   "quota": {
     "title": "Recorded sessions",
@@ -137,5 +141,23 @@
     "unlimited": "{{used}} recorded — your plan has no limit",
     "remaining_one": "{{count}} remaining",
     "remaining_other": "{{count}} remaining"
+  },
+  "connectForm": {
+    "apiGroup": "Zoom API credentials",
+    "apiGroupHint": "From the Server-to-Server OAuth app in your Zoom account. Required — without these, sessions can't be created.",
+    "accountId": "Account ID",
+    "clientId": "Client ID",
+    "clientSecret": "Client secret",
+    "sdkGroup": "Meeting SDK (optional)",
+    "sdkGroupHint": "From your Meeting SDK app. Without it you can schedule sessions, but students can't join inside Atlas.",
+    "sdkKey": "SDK key",
+    "sdkSecret": "SDK secret",
+    "webhookGroup": "Webhook secret (optional)",
+    "webhookGroupHint": "Without it, attendance and recordings never reach Atlas.",
+    "webhookSecretToken": "Webhook secret token",
+    "webhookUrlHint": "Add this URL to your Zoom app's event subscription: {{origin}}/api/v1/live-sessions/webhook",
+    "encryptionNote": "Your credentials are encrypted before they're stored and are never shown again — not even here.",
+    "connect": "Connect Zoom",
+    "reconnect": "Update credentials"
   }
 }

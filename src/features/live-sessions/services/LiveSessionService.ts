@@ -13,7 +13,9 @@
 import { BaseService } from '@services';
 import type { ReadOptions, WriteOptions } from '@services';
 import type {
+  ConnectZoomInput,
   CreateLiveSessionInput,
+  LiveProviderConnectionState,
   LiveSession,
   LiveSessionsStatus,
   ParticipantAttendance,
@@ -85,6 +87,58 @@ export class LiveSessionService extends BaseService {
     return this.client.patch<LiveSession, typeof input>(
       this.path(academyId, 'live-sessions', liveSessionId, 'order'),
       input,
+      options,
+    );
+  }
+
+  /** Provider connection health. NEVER returns credentials. */
+  async getConnection(
+    academyId: string,
+    options?: ReadOptions,
+  ): Promise<LiveProviderConnectionState> {
+    return this.client.get<LiveProviderConnectionState>(
+      this.path(academyId, 'live-sessions', 'connection'),
+      options,
+    );
+  }
+
+  /**
+   * Connects the academy's Zoom account.
+   *
+   * The credentials travel once, over TLS, and are encrypted server-side
+   * before they are stored. Nothing reads them back — there is no endpoint
+   * that returns them, deliberately.
+   */
+  async connect(
+    academyId: string,
+    input: ConnectZoomInput,
+    options?: WriteOptions,
+  ): Promise<{ status: string; connectedAt?: string }> {
+    return this.client.post<{ status: string; connectedAt?: string }, ConnectZoomInput>(
+      this.path(academyId, 'live-sessions', 'connection'),
+      input,
+      options,
+    );
+  }
+
+  /** Re-checks the stored credentials against Zoom. */
+  async checkConnection(
+    academyId: string,
+    options?: WriteOptions,
+  ): Promise<{ healthy: boolean }> {
+    return this.client.post<{ healthy: boolean }, Record<string, never>>(
+      this.path(academyId, 'live-sessions', 'connection', 'check'),
+      {},
+      options,
+    );
+  }
+
+  async disconnect(
+    academyId: string,
+    options?: WriteOptions,
+  ): Promise<{ status: string }> {
+    return this.client.delete<{ status: string }>(
+      this.path(academyId, 'live-sessions', 'connection'),
       options,
     );
   }

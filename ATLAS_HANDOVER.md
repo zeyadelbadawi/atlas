@@ -794,17 +794,69 @@ None of these exist in any Atlas environment today:
 Until they exist, `checkHealth` fails honestly and the connection screen says
 so. **Do not fabricate credentials to make a test pass.**
 
+### Connection model — why there is no "Sign in with Zoom" button
+
+Atlas uses Zoom **Server-to-Server OAuth**, which is owned by the Zoom
+ACCOUNT. A user-OAuth redirect (with PKCE) would bind every meeting to one
+person's Zoom login and break when that instructor leaves. There is
+therefore **no redirect and no callback** — the academy pastes credentials
+from the app they created in their own Zoom account, Atlas verifies them
+against Zoom *before storing*, and encrypts them with
+`CredentialEncryptionService`. Nothing is ever read back: there is no
+endpoint that returns credentials, by design. PKCE is not applicable
+because there is no user agent in the exchange.
+
+### Webhook — the two things that make it safe
+
+1. **Raw-body verification.** Zoom signs the exact bytes it sent, so
+   `main.ts` captures `rawBody` FOR THE WEBHOOK PATH ONLY.
+   `JSON.stringify(parsedBody)` is not byte-identical and would fail
+   unpredictably.
+2. **Uniform refusal.** Unattributable events and bad signatures return the
+   SAME 401. An earlier version returned 200 for unknown meetings and 401
+   for bad signatures — an adversarial test showed that is an **enumeration
+   oracle** letting an attacker discover which Zoom meeting ids belong to
+   an Atlas tenant. Do not "helpfully" differentiate these again.
+
+### RLS and system-initiated reads — READ THIS BEFORE TOUCHING THE WORKER
+
+A webhook has **no tenant context**, but attributing it requires reading
+`live_sessions` by `provider_meeting_id`, and that table is RLS-protected
+with FORCE. The first implementation read it with the plain client, got
+nothing, and marked every genuinely-signed webhook `unmatched`. RLS was
+right; the query had no context.
+
+The fix uses Atlas's existing mechanism for exactly this: a
+**platform-owner context** (`is_platform_owner` +
+`runInUserContext(platformOwnerId)`), the same one the subscription sweep
+uses. `LiveProviderConnectionService.findSessionForMeeting` /
+`findConnectionForMeeting` own it; the worker delegates and never reaches
+for a raw client. The policies are **SELECT-only** (`p46` migration) and
+every subsequent write happens inside the resolved tenant's own context.
+
+**This means webhooks require a platform-owner account to exist.** Without
+one, attribution fails closed (unattributable events) rather than
+bypassing RLS.
+
 ### What is NOT built yet (be honest about this)
 
-- The Zoom OAuth **connect/disconnect flow** (UI + endpoints). The schema,
-  encryption seam and health model are in place; the flow is not.
-- The **webhook controller** and attendance reconciliation **job**. Signature
-  verification (`ZoomProvider.verifyWebhookSignature`, timing-safe) and the
-  idempotent `live_provider_events` table exist; the endpoint does not.
-- **Recording import into Academy Media.** `live_session_recording_files.media_asset_id`
-  and the provider fetch exist; the import worker does not.
-- The **embedded Meeting SDK join UI** and the student-facing session page.
-- **Notifications** for session lifecycle events.
+- The **embedded Meeting SDK join UI**. The server side is complete —
+  `POST /live-sessions/:id/join` mints a single-use grant and
+  `.../join/redeem` returns an SDK signature bound to one meeting, role
+  and participant — but no React component renders the Zoom client yet,
+  and `@zoom/meetingsdk` is not a dependency.
+- The **student-facing session page** in the learning surface (the
+  eligibility/join endpoints exist and are tested).
+- The **attendance reconciliation job** that pulls Zoom's post-session
+  participant report. `AttendanceService.reconcileFromProviderReport` and
+  `ZoomProvider.fetchParticipantIntervals` both exist and are unit-tested;
+  nothing schedules them yet, so live webhook intervals are currently the
+  only populated source.
+- `session scheduled/rescheduled/cancelled` notifications are implemented
+  in `LiveSessionNotificationsService` but **not yet called** from
+  `LiveSessionService` — only `recordingAvailable` is wired (from the
+  event worker).
+- **`starting_soon` reminders** need a scheduler; none is registered.
 
 ## 16. Architecture integrity check
 

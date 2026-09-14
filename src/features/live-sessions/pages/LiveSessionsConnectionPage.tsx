@@ -18,15 +18,20 @@
  * cannot work.
  */
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, Link2Off, Plug } from 'lucide-react';
+import { CheckCircle2, Link2Off, Loader2, Plug } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { EmptyState } from '@components/feedback';
 import { SectionLoader } from '@components/loading';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { usePlatform } from '@hooks';
 import { formatDate } from '@utils';
-import { useLiveSessionsStatus } from '../hooks/useLiveSessions';
+import {
+  useLiveSessionsStatus,
+  useZoomConnectionActions,
+} from '../hooks/useLiveSessions';
+import { ZoomConnectionForm } from '../components/ZoomConnectionForm';
 import type { LanguageCode } from '@types';
 
 export default function LiveSessionsConnectionPage(): JSX.Element {
@@ -34,6 +39,9 @@ export default function LiveSessionsConnectionPage(): JSX.Element {
   const language = i18n.language as LanguageCode;
   const { activeAcademyId } = usePlatform();
   const statusQuery = useLiveSessionsStatus(activeAcademyId ?? undefined);
+  const { connect, check, disconnect } = useZoomConnectionActions(
+    activeAcademyId ?? undefined,
+  );
 
   if (!activeAcademyId) {
     return (
@@ -98,12 +106,6 @@ export default function LiveSessionsConnectionPage(): JSX.Element {
             </p>
           ) : null}
 
-          {/*
-            Stated rather than hidden behind a dead button: connecting needs
-            a Zoom app the academy creates in their own Zoom account, plus
-            platform-level configuration. Claiming otherwise would be the
-            kind of half-finished flow this screen exists to avoid.
-          */}
           <div className="rounded-lg border border-border bg-surface p-4">
             <p className="text-sm font-medium text-foreground">
               {t('liveSessions:connection.prerequisitesTitle')}
@@ -112,6 +114,53 @@ export default function LiveSessionsConnectionPage(): JSX.Element {
               {t('liveSessions:connection.prerequisitesDescription')}
             </p>
           </div>
+
+          {/* Available whenever a connection exists — including an expired
+              one, which is exactly when somebody needs to check it. */}
+          {connected || provider?.status === 'expired' ? (
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={check.isPending}
+                onClick={() => check.mutate()}
+              >
+                {check.isPending ? (
+                  <Loader2 className="me-2 size-4 animate-spin" aria-hidden />
+                ) : null}
+                {t('liveSessions:connection.recheck')}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={disconnect.isPending}
+                onClick={() => disconnect.mutate()}
+              >
+                {t('liveSessions:connection.disconnect')}
+              </Button>
+            </div>
+          ) : null}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="p-5">
+          <ZoomConnectionForm
+            isPending={connect.isPending}
+            error={connect.error}
+            isReconnect={connected || provider?.status === 'expired'}
+            onSubmit={(data) =>
+              connect.mutate({
+                accountId: data.accountId,
+                clientId: data.clientId,
+                clientSecret: data.clientSecret,
+                // Empty strings mean "not provided", not "set to blank".
+                sdkKey: data.sdkKey || undefined,
+                sdkSecret: data.sdkSecret || undefined,
+                webhookSecretToken: data.webhookSecretToken || undefined,
+              })
+            }
+          />
         </CardContent>
       </Card>
     </PageContainer>

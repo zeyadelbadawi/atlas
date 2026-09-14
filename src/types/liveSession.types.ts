@@ -180,3 +180,60 @@ export interface AddOnCatalogEntry {
     | 'failed';
   readonly failureReason?: string;
 }
+
+/**
+ * Zoom credentials submitted when connecting an academy.
+ *
+ * WRITE-ONLY. These travel once and are encrypted server-side; no
+ * endpoint returns them, so nothing in the app ever holds them again.
+ *
+ * The SDK pair and the webhook token are optional because an academy can
+ * usefully connect without them — sessions can be scheduled — but the UI
+ * says plainly what each one unlocks, rather than presenting six required
+ * boxes with no explanation.
+ */
+export interface ConnectZoomInput {
+  readonly accountId: string;
+  readonly clientId: string;
+  readonly clientSecret: string;
+  /** Needed for the EMBEDDED join. Without it students cannot join in-app. */
+  readonly sdkKey?: string;
+  readonly sdkSecret?: string;
+  /** Needed for attendance and recording events to be accepted at all. */
+  readonly webhookSecretToken?: string;
+}
+
+/** Why a student cannot join right now. Each has its own honest explanation. */
+export type JoinRefusalReason =
+  | 'not_enrolled'
+  | 'wrong_academy'
+  | 'not_published'
+  | 'cancelled'
+  | 'too_early'
+  | 'too_late'
+  | 'provider_unavailable'
+  | 'add_on_unavailable';
+
+export interface LiveSessionEligibility {
+  readonly joinable: boolean;
+  readonly reason?: JoinRefusalReason;
+  readonly isHost: boolean;
+  readonly status: LiveSessionStatus;
+  readonly title: string;
+  readonly scheduledStartAt: string;
+  readonly scheduledEndAt: string;
+}
+
+/** What the embedded SDK needs. `sdkKey` is a public client id; the SECRET never leaves the server. */
+export interface LiveSessionJoinAuthorization {
+  readonly joinable: true;
+  readonly sdkKey: string;
+  readonly signature: string;
+  readonly providerMeetingId: string;
+  readonly expiresAt: string;
+}
+
+export interface LiveSessionJoinRefused {
+  readonly joinable: false;
+  readonly reason: string;
+}
