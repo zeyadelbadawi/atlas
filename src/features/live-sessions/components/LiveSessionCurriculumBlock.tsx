@@ -29,6 +29,7 @@ import {
   useCourseLiveSessions,
   useCreateLiveSession,
   useLiveSessionsStatus,
+  usePublishLiveSession,
   useUpdateLiveSession,
 } from '../hooks/useLiveSessions';
 import { LiveSessionFormDialog } from './LiveSessionFormDialog';
@@ -67,6 +68,7 @@ export function LiveSessionCurriculumBlock({
   const sessionsQuery = useCourseLiveSessions(academyId, courseId);
   const createSession = useCreateLiveSession(academyId, courseId);
   const updateSession = useUpdateLiveSession(academyId, courseId);
+  const publishSession = usePublishLiveSession(academyId, courseId);
 
   // Never render a half-answer: while the add-on state is unknown, showing
   // either an "install the add-on" notice or a working Add button would be
@@ -140,6 +142,39 @@ export function LiveSessionCurriculumBlock({
               <Badge variant={getLiveSessionStatusTone(session.status)}>
                 {t(`liveSessions:status.${session.status}`)}
               </Badge>
+
+              {/*
+                PUBLISH IS THE TRANSITION THAT MAKES A CLASS REAL — it
+                creates the meeting at the provider and tells the enrolled
+                students. Until it happens the session is a draft nobody
+                but the instructor can see, so the action is offered
+                prominently rather than hidden behind the edit dialog.
+
+                It is offered ONLY when the provider is genuinely
+                connected. Publishing without a connection cannot succeed,
+                and an enabled button that always fails is worse than an
+                explained one that is absent — this is the "never show a
+                misleading ready state" rule applied literally: add-on
+                usable is NOT the same as provider connected.
+              */}
+              {session.status === 'draft' ? (
+                providerConnected ? (
+                  <Button
+                    variant="default"
+                    size="sm"
+                    disabled={publishSession.isPending}
+                    onClick={() =>
+                      void publishSession.mutateAsync({ liveSessionId: session.id })
+                    }
+                  >
+                    {t('liveSessions:publish.action')}
+                  </Button>
+                ) : (
+                  <Badge variant="outline" className="gap-1">
+                    {t('liveSessions:publish.needsProvider')}
+                  </Badge>
+                )
+              ) : null}
 
               <Button
                 variant="ghost"

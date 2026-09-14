@@ -138,6 +138,9 @@ const CourseLearnRedirectPage = lazy(
   () => import('@features/learning/pages/CourseLearnRedirectPage')
 );
 const LessonPage = lazy(() => import('@features/learning/pages/LessonPage'));
+const StudentLiveSessionPage = lazy(
+  () => import('@features/live-sessions/pages/StudentLiveSessionPage'),
+);
 const QuizPage = lazy(() => import('@features/learning/pages/QuizPage'));
 const AssignmentPage = lazy(
   () => import('@features/learning/pages/AssignmentPage')
@@ -878,6 +881,17 @@ export function AppRouter(): JSX.Element {
               }
             />
 
+            <Route
+              path={DASHBOARD_ROUTES.learningLiveSession}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['student.course.view']}
+                >
+                  <StudentLiveSessionPage />
+                </RouteGuard>
+              }
+            />
             <Route
               path={DASHBOARD_ROUTES.learningQuiz}
               element={

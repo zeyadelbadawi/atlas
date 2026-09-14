@@ -102,6 +102,27 @@ export function useUpdateLiveSession(
   });
 }
 
+/**
+ * Publishes a session.
+ *
+ * Invalidates the same pair as create/update: publishing changes the
+ * session's status AND can consume nothing while still depending on the
+ * recording allowance, so a stale status read would show a published
+ * session as a draft.
+ */
+export function usePublishLiveSession(
+  academyId: string | undefined,
+  courseId: string | undefined,
+) {
+  const invalidate = useInvalidateLiveSessions(academyId, courseId);
+  return useApiMutation<LiveSession, { readonly liveSessionId: string }, ApiError>({
+    mutationFn: ({ liveSessionId }) =>
+      liveSessionService.publish(academyId!, liveSessionId),
+    onSuccess: invalidate,
+    successMessageKey: 'liveSessions:toast.published',
+  });
+}
+
 /** Provider connection health for one academy. */
 export function useZoomConnection(academyId: string | undefined) {
   return useApiQuery<LiveProviderConnectionState, ApiError>({

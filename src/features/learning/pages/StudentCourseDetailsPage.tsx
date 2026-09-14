@@ -5,6 +5,7 @@
  * sign in (unauthenticated) → enroll (authenticated, not enrolled) →
  * continue/view progress (enrolled) → view completed course (completed).
  */
+import { StudentLiveSessionList } from '@features/live-sessions';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -327,6 +328,15 @@ export default function StudentCourseDetailsPage(): JSX.Element {
               </p>
             </CardContent>
           </Card>
+        ) : null}
+
+        {/*
+          Live Sessions sit with the other graded/scheduled activities, and
+          only for an enrolled student — the component renders nothing at
+          all when the course has none, so an ordinary course is unchanged.
+        */}
+        {isEnrolled && courseId ? (
+          <StudentLiveSessionList courseId={courseId} />
         ) : null}
 
         {isEnrolled && (quizzes.length > 0 || assignments.length > 0) ? (

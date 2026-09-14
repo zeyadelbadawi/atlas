@@ -38,7 +38,8 @@
     "created": "Live session added",
     "updated": "Live session updated",
     "connected": "Zoom connected",
-    "disconnected": "Zoom disconnected"
+    "disconnected": "Zoom disconnected",
+    "published": "Session published. Enrolled students have been notified."
   },
   "catalog": {
     "title": "Add-ons",
@@ -159,5 +160,75 @@
     "encryptionNote": "Your credentials are encrypted before they're stored and are never shown again — not even here.",
     "connect": "Connect Zoom",
     "reconnect": "Update credentials"
+  },
+  "student": {
+    "listTitle": "Live sessions",
+    "sessionCard": "Session details",
+    "recorded": "Recorded",
+    "startsAt": "Starts",
+    "endsAt": "Ends",
+    "scheduleRange": "{{start}} — {{end}}",
+    "backToCourse": "Back to course",
+    "startAsHost": "Start session",
+    "error": {
+      "title": "We couldn't load this session",
+      "description": "Try again in a moment. If it keeps happening, contact your academy."
+    },
+    "join": {
+      "action": "Join session",
+      "hint": "The session opens inside Atlas — no download needed.",
+      "refused": "You can't join this session right now.",
+      "failed": "We couldn't start your session. Please try again."
+    },
+    "embed": {
+      "loading": "Preparing the meeting…",
+      "joining": "Joining the session…",
+      "failed": "We couldn't connect you to the meeting. Please try joining again.",
+      "leave": "Leave session",
+      "back": "Go back",
+      "anonymous": "Student"
+    },
+    "refusal": {
+      "too_early": {
+        "title": "Not open yet",
+        "description": "You'll be able to join shortly before the session starts."
+      },
+      "too_late": {
+        "title": "This session has finished",
+        "description": "Joining has closed. If it was recorded, it will appear in your course."
+      },
+      "cancelled": {
+        "title": "Session cancelled",
+        "description": "Your instructor cancelled this session."
+      },
+      "not_published": {
+        "title": "Not available yet",
+        "description": "Your instructor hasn't published this session."
+      },
+      "not_enrolled": {
+        "title": "You're not enrolled",
+        "description": "Only students enrolled in this course can join."
+      },
+      "wrong_academy": {
+        "title": "Not available",
+        "description": "This session belongs to a different academy."
+      },
+      "provider_unavailable": {
+        "title": "Your academy needs to reconnect Zoom",
+        "description": "The academy's Zoom connection isn't working. Let your instructor know."
+      },
+      "add_on_unavailable": {
+        "title": "Live sessions are unavailable",
+        "description": "Your academy's plan doesn't currently include live sessions."
+      },
+      "unknown": {
+        "title": "You can't join right now",
+        "description": "Try again shortly, or contact your academy."
+      }
+    }
+  },
+  "publish": {
+    "action": "Publish",
+    "needsProvider": "Connect Zoom to publish"
   }
 }

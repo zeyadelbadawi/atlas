@@ -77,6 +77,26 @@ export class LiveSessionService extends BaseService {
     );
   }
 
+  /**
+   * Publishes a session — the transition that creates the real meeting.
+   *
+   * Separate from `update` because it has an EXTERNAL side effect and can
+   * fail for reasons unrelated to any field: no provider connection, an
+   * expired credential, an exhausted recording allowance. Folding it into
+   * a field edit would make every save a potential provider call.
+   */
+  async publish(
+    academyId: string,
+    liveSessionId: string,
+    options?: WriteOptions,
+  ): Promise<LiveSession> {
+    return this.client.post<LiveSession, Record<string, never>>(
+      this.path(academyId, 'live-sessions', liveSessionId, 'publish'),
+      {},
+      options,
+    );
+  }
+
   /** Curriculum reordering — moving an activity within or between units. */
   async reorder(
     academyId: string,

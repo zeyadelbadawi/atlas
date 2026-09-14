@@ -760,4 +760,15 @@ export const liveSessionKeys = {
     [...liveSessionKeys.all, 'course', academyId, courseId] as const,
   attendance: (academyId: string | undefined, liveSessionId: string | undefined) =>
     [...liveSessionKeys.all, 'attendance', academyId, liveSessionId] as const,
+  /**
+   * The STUDENT's own reads, kept under a separate branch.
+   *
+   * A student's view of a course is not the manager's view of it, and
+   * invalidating one must never serve the other's cached answer — the two
+   * carry different fields and are authorized by different rules.
+   */
+  studentForCourse: (courseId: string | undefined) =>
+    [...liveSessionKeys.all, 'student', 'course', courseId] as const,
+  studentEligibility: (liveSessionId: string | undefined) =>
+    [...liveSessionKeys.all, 'student', 'eligibility', liveSessionId] as const,
 } as const;

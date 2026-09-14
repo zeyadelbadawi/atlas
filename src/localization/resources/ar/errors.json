@@ -121,6 +121,7 @@
     "hostNotInAcademy": "يجب أن يكون المضيف عضوًا نشطًا في هذه الأكاديمية.",
     "alreadyEnded": "انتهت هذه الجلسة ولم يعد بالإمكان تعديلها.",
     "providerConnectionFailed": "تعذّر الاتصال بـ Zoom باستخدام بيانات الاعتماد هذه. تحقق منها في تطبيق Zoom وحاول مرة أخرى.",
-    "providerNotConnected": "حساب Zoom الخاص بهذه الأكاديمية غير مرتبط."
+    "providerNotConnected": "حساب Zoom الخاص بهذه الأكاديمية غير مرتبط.",
+    "notPublishable": "لا يمكن نشر هذه الجلسة."
   }
 }

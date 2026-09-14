@@ -76,6 +76,13 @@ export const DASHBOARD_ROUTES = {
   learningQuiz: '/dashboard/learning/courses/:courseId/quizzes/:quizId',
   learningAssignment:
     '/dashboard/learning/courses/:courseId/assignments/:assignmentId',
+  /**
+   * A Live Session as a course activity, sitting beside the lesson, quiz
+   * and assignment routes rather than on a separate add-on surface — a
+   * class is part of the course, not a feature the student visits.
+   */
+  learningLiveSession:
+    '/dashboard/learning/courses/:courseId/live-sessions/:liveSessionId',
   learningDiscussions: '/dashboard/learning/courses/:courseId/discussions',
   learningThread: '/dashboard/learning/courses/:courseId/discussions/:threadId',
 

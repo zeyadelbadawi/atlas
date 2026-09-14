@@ -231,6 +231,36 @@ export interface LiveSessionJoinAuthorization {
   readonly signature: string;
   readonly providerMeetingId: string;
   readonly expiresAt: string;
+  readonly isHost: boolean;
+  /**
+   * The host's start token, present ONLY for the host.
+   *
+   * Atlas creates meetings that cannot be joined before the host, so
+   * without this the host waits in their own classroom and nobody can get
+   * in. It is a credential: minted per join, held in memory for the
+   * duration of the join call, and never persisted anywhere.
+   */
+  readonly hostToken?: string;
+}
+
+/**
+ * One Live Session as a STUDENT sees it in their curriculum.
+ *
+ * Deliberately narrower than `LiveSession`: no provider meeting id, no
+ * join URL, no recording location. This shape reaches every enrolled
+ * browser, so it carries only what the screen draws.
+ */
+export interface StudentLiveSession {
+  readonly id: string;
+  readonly title: string;
+  readonly description?: string;
+  readonly status: LiveSessionStatus;
+  readonly sectionId?: string;
+  readonly scheduledStartAt: string;
+  readonly scheduledEndAt: string;
+  readonly host?: { readonly id: string; readonly name: string };
+  /** Whether a recording EXISTS. Opening it still goes through media authorization. */
+  readonly recordingAvailable: boolean;
 }
 
 export interface LiveSessionJoinRefused {
