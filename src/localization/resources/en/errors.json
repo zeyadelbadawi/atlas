@@ -120,8 +120,13 @@
     "sectionNotInCourse": "That unit doesn't belong to this course.",
     "hostNotInAcademy": "The host must be an active member of this academy.",
     "alreadyEnded": "This session has already ended and can no longer be changed.",
-    "providerConnectionFailed": "We couldn't connect to Zoom with those credentials. Check them in your Zoom app and try again.",
+    "providerConnectionFailed": "We couldn't reach Zoom with this academy's authorization. Try reconnecting.",
     "providerNotConnected": "This academy's Zoom account isn't connected.",
-    "notPublishable": "This session can't be published."
+    "notPublishable": "This session can't be published.",
+    "providerNotConfigured": "Live Sessions isn't configured on this platform yet. Contact Atlas support.",
+    "providerReconnectRequired": "This academy's Zoom connection needs to be renewed. Ask your organization owner to reconnect.",
+    "authorizationInvalid": "That Zoom authorization has expired or was already used. Press Connect Zoom to start again.",
+    "accountAlreadyConnected": "That Zoom account is already connected to another academy. Connect a different Zoom account, or disconnect it from the other academy first.",
+    "authorizationFailed": "We couldn't finish connecting to Zoom. Please try again."
   }
 }

@@ -11,7 +11,6 @@ import { useApiMutation, useApiQuery } from '@/shared/hooks';
 import { liveSessionKeys } from '@services/query';
 import { liveSessionService } from '../services/LiveSessionService';
 import type {
-  ConnectZoomInput,
   CreateLiveSessionInput,
   LiveProviderConnectionState,
   LiveSession,
@@ -146,12 +145,41 @@ export function useZoomConnectionActions(academyId: string | undefined) {
     void queryClient.invalidateQueries({ queryKey: liveSessionKeys.all });
   };
 
+  /*
+    CONNECT IS NOW A NAVIGATION, NOT A SAVE.
+
+    The mutation returns the Zoom authorization URL and the caller sends
+    the browser there; success is decided at the callback, not here. No
+    success toast, because nothing has succeeded yet — announcing
+    "connected" before the customer has even seen Zoom's consent screen
+    would be a lie the UI tells itself.
+  */
   const connect = useApiMutation<
-    { status: string; connectedAt?: string },
-    ConnectZoomInput,
+    { authorizationUrl: string; expiresAt: string },
+    void,
     ApiError
   >({
-    mutationFn: (input) => liveSessionService.connect(academyId!, input),
+    mutationFn: () => liveSessionService.startAuthorization(academyId!),
+    showSuccessToast: false,
+  });
+
+  /*
+    COMPLETING THE AUTHORIZATION, back on the Atlas page Zoom returned to.
+
+    This is where "connected" is finally true, so this is where the success
+    toast belongs — not on `connect` above, which has only sent the
+    customer away to a consent screen they may yet decline.
+
+    The academy is deliberately absent: it comes from the state row Atlas
+    wrote when the flow began, so nothing about which tenant is being
+    connected passes through the browser.
+  */
+  const completeAuthorization = useApiMutation<
+    { status: string },
+    { code: string; state: string },
+    ApiError
+  >({
+    mutationFn: (payload) => liveSessionService.completeAuthorization(payload),
     onSuccess: invalidate,
     successMessageKey: 'liveSessions:toast.connected',
   });
@@ -168,5 +196,5 @@ export function useZoomConnectionActions(academyId: string | undefined) {
     successMessageKey: 'liveSessions:toast.disconnected',
   });
 
-  return { connect, check, disconnect };
+  return { connect, completeAuthorization, check, disconnect };
 }

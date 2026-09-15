@@ -129,16 +129,29 @@
       "title": "مشكلة في الاتصال بـ Zoom",
       "badge": "خطأ",
       "description": "تعذّر الوصول إلى Zoom ببيانات الاعتماد المحفوظة. حاول إعادة الربط."
+    },
+    "reconnect_required": {
+      "badge": "يلزم إعادة الربط",
+      "description": "انتهت صلاحية تفويض Zoom أو تم إلغاؤه."
     }
   },
   "connection": {
     "title": "ربط Zoom",
     "subtitle": "كل أكاديمية تربط حساب Zoom الخاص بها.",
     "lastChecked": "آخر فحص {{date}}",
-    "prerequisitesTitle": "ما ستحتاج إليه",
-    "prerequisitesDescription": "يتطلب الربط تطبيق Zoom من نوع Server-to-Server OAuth وتطبيق Meeting SDK يتم إنشاؤهما في حساب Zoom الخاص بأكاديميتك. تُحفظ بيانات الاعتماد مشفّرة ولا تُعرض مرة أخرى بعد حفظها.",
     "recheck": "إعادة فحص الاتصال",
-    "disconnect": "قطع الاتصال"
+    "disconnect": "قطع الاتصال",
+    "connect": "ربط Zoom",
+    "reconnect": "إعادة ربط Zoom",
+    "zoomAccount": "حساب Zoom",
+    "connectedAt": "تاريخ الربط",
+    "reconnectTitle": "يلزم إعادة ربط Zoom",
+    "reconnectDescription": "انتهت صلاحية تفويض Zoom أو تم إلغاؤه. أعد الربط لمواصلة تشغيل الجلسات المباشرة. جلساتك وتسجيلاتك الحالية آمنة.",
+    "reconnectDescriptionNonOwner": "انتهت صلاحية تفويض Zoom أو تم إلغاؤه. اطلب من مالك مؤسستك إعادة الربط. جلساتك وتسجيلاتك الحالية آمنة.",
+    "ownerOnlyNotice": "يمكن لمالك مؤسستك وحده ربط حساب Zoom لهذه الأكاديمية أو تغييره.",
+    "completing": "جارٍ إكمال الربط مع Zoom…",
+    "declinedTitle": "لم يتم ربط Zoom",
+    "declinedDescription": "تم إلغاء التفويض، ولم يتغيّر شيء. اضغط \"ربط Zoom\" متى كنت مستعداً للمحاولة مجدداً."
   },
   "quota": {
     "title": "الجلسات المسجّلة",
@@ -150,24 +163,6 @@
     "remaining_few": "يتبقى {{count}}",
     "remaining_many": "يتبقى {{count}}",
     "remaining_other": "يتبقى {{count}}"
-  },
-  "connectForm": {
-    "apiGroup": "بيانات اعتماد Zoom API",
-    "apiGroupHint": "من تطبيق Server-to-Server OAuth في حساب Zoom الخاص بك. مطلوبة — بدونها لا يمكن إنشاء الجلسات.",
-    "accountId": "معرّف الحساب",
-    "clientId": "معرّف العميل",
-    "clientSecret": "المفتاح السري للعميل",
-    "sdkGroup": "Meeting SDK (اختياري)",
-    "sdkGroupHint": "من تطبيق Meeting SDK الخاص بك. بدونه يمكنك جدولة الجلسات، لكن لن يتمكن الطلاب من الانضمام داخل أطلس.",
-    "sdkKey": "مفتاح SDK",
-    "sdkSecret": "المفتاح السري لـ SDK",
-    "webhookGroup": "المفتاح السري للـ Webhook (اختياري)",
-    "webhookGroupHint": "بدونه لن تصل بيانات الحضور والتسجيلات إلى أطلس.",
-    "webhookSecretToken": "المفتاح السري للـ Webhook",
-    "webhookUrlHint": "أضف هذا الرابط إلى اشتراك الأحداث في تطبيق Zoom: {{origin}}/api/v1/live-sessions/webhook",
-    "encryptionNote": "تُشفَّر بيانات اعتمادك قبل حفظها ولا تُعرض مرة أخرى — ولا حتى هنا.",
-    "connect": "ربط Zoom",
-    "reconnect": "تحديث بيانات الاعتماد"
   },
   "student": {
     "listTitle": "الجلسات المباشرة",

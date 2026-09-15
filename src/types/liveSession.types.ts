@@ -76,11 +76,23 @@ export type LiveProviderConnectionStatus =
   | 'connected'
   | 'expired'
   | 'revoked'
-  | 'error';
+  | 'error'
+  /** The stored authorization can no longer be refreshed. Only the Organization Owner re-authorizing clears it. */
+  | 'reconnect_required';
 
+/**
+ * Connection health as the UI is allowed to see it.
+ *
+ * SAFE METADATA ONLY. The Zoom account id is a non-secret identifier and
+ * is genuinely useful for confirming WHICH account is attached. There is
+ * deliberately no token, no scope secret and no client secret here — no
+ * endpoint returns them, so nothing in the app ever holds one.
+ */
 export interface LiveProviderConnectionState {
   readonly status: LiveProviderConnectionStatus;
   readonly providerKey: string;
+  readonly externalAccountId?: string | null;
+  readonly connectedAt?: string | null;
   readonly lastCheckedAt?: string | null;
 }
 
@@ -182,25 +194,16 @@ export interface AddOnCatalogEntry {
 }
 
 /**
- * Zoom credentials submitted when connecting an academy.
+ * Starting a Zoom authorization.
  *
- * WRITE-ONLY. These travel once and are encrypted server-side; no
- * endpoint returns them, so nothing in the app ever holds them again.
- *
- * The SDK pair and the webhook token are optional because an academy can
- * usefully connect without them — sessions can be scheduled — but the UI
- * says plainly what each one unlocks, rather than presenting six required
- * boxes with no explanation.
+ * WHAT USED TO BE HERE: six fields a customer copied out of Zoom apps
+ * they had to create themselves. Atlas owns the Zoom application now, so
+ * the customer supplies NOTHING — the flow carries no input at all, and
+ * the only thing that comes back is where to send the browser.
  */
-export interface ConnectZoomInput {
-  readonly accountId: string;
-  readonly clientId: string;
-  readonly clientSecret: string;
-  /** Needed for the EMBEDDED join. Without it students cannot join in-app. */
-  readonly sdkKey?: string;
-  readonly sdkSecret?: string;
-  /** Needed for attendance and recording events to be accepted at all. */
-  readonly webhookSecretToken?: string;
+export interface ZoomAuthorizationStart {
+  readonly authorizationUrl: string;
+  readonly expiresAt: string;
 }
 
 /** Why a student cannot join right now. Each has its own honest explanation. */

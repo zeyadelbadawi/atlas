@@ -818,6 +818,67 @@ because there is no user agent in the exchange.
    oracle** letting an attacker discover which Zoom meeting ids belong to
    an Atlas tenant. Do not "helpfully" differentiate these again.
 
+### Deauthorization — a SEPARATE endpoint, on purpose
+
+`POST /api/v1/live-sessions/deauthorization` is where Zoom reports that a
+customer removed Atlas from their Zoom account (`app_deauthorized`). It is
+**not** the meeting webhook and must never be pointed at it.
+
+Why not reuse `/live-sessions/webhook`: the two payloads have nothing in
+common. Meeting events are meeting-shaped and are queued for attribution
+by `provider_meeting_id`; a deauthorization is account-shaped and carries
+no meeting at all. Sent to the meeting webhook it would answer **200**
+while the queue silently discarded it as `unmatched` — so Atlas would hold
+a revoked authorization forever and Zoom would count every delivery a
+success. That is worse than an obvious failure.
+
+- **Same verification, and that was checked rather than assumed.** Zoom's
+  legacy per-app Verification Token was deprecated and sunset; deauthorization
+  is verified with the app-level Secret Token via `x-zm-signature`, exactly
+  like meeting events. `ZoomProvider.verifyWebhookSignature` is reused — one
+  HMAC implementation, already timing-safe. `main.ts` therefore captures
+  `rawBody` for **both** Zoom-signed paths (`ZOOM_SIGNED_PATHS`).
+- **`client_id` is checked too.** A correctly signed notification naming a
+  different Zoom application is refused; otherwise anyone holding another
+  integration's Secret Token could clear an Atlas connection.
+- **account_id → Academy.** The tenant is resolved from
+  `(provider_key='zoom', external_account_id)` — the reverse of the pairing
+  P49b's partial unique index already constrains. This is the first code
+  that uses that index.
+- **Two contexts, because the policies differ.** The lookup runs in
+  **platform-owner** context (`..._platform_select`); the write runs in the
+  resolved **tenant's** context (`..._tenant_update`). There is no
+  platform-owner UPDATE policy on that table and none was added — the split
+  exists because the existing policies already express it.
+- **Actor-less, but not anonymous.** There is no Atlas user behind a
+  deauthorization, so the audit actor is the **real platform owner**, the
+  same system-actor convention `SupportCasesService`, `PlatformSettings`
+  and `CommissionService` already use. No synthetic user was invented.
+- **State is `revoked`, not `not_connected`.** They are different facts:
+  one is what a person chose in Atlas, the other is what happened to Atlas
+  from outside. Every piece of token material is cleared exactly as
+  `disconnect()` clears it; `external_account_id` is kept so the screen
+  still says which Zoom account was attached and the customer can rebind.
+- **Idempotent by construction.** The update is conditional on the row
+  still being in a live status AND on the exact `connected_at` read during
+  lookup, so a redelivery, a concurrent manual disconnect, or a reconnect
+  that lands mid-flight all write nothing — the database decides, the same
+  shape as the refresh-token rotation guard.
+- **Stale notifications cannot clear a fresh authorization.** If
+  `connected_at` is newer than the payload's `deauthorization_time`, the
+  notification refers to an authorization that has already been replaced
+  and is ignored. No schema change was needed; both values already existed.
+- **The response is a constant** `{ received: true }`, and every refusal is
+  the same 401. An unknown Zoom account is indistinguishable from a
+  successful invalidation — same anti-enumeration reasoning as the meeting
+  webhook's uniform refusal.
+
+**Production verification limits.** Zoom does not send deauthorization
+notifications for private or in-development apps, so end-to-end delivery
+cannot be exercised until the app is published. What has been verified is
+the endpoint's own behaviour against synthetic signed requests and real
+Postgres with RLS enforced.
+
 ### RLS and system-initiated reads — READ THIS BEFORE TOUCHING THE WORKER
 
 A webhook has **no tenant context**, but attributing it requires reading

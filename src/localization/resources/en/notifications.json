@@ -133,5 +133,14 @@
       "openCourse": "Open course",
       "openRecordings": "View recordings"
     }
+  },
+  "liveProvider": {
+    "deauthorized": {
+      "title": "Zoom access was removed",
+      "message": "Your Zoom account no longer authorizes Atlas, so live sessions cannot be created or started until you reconnect."
+    },
+    "action": {
+      "reconnect": "Reconnect Zoom"
+    }
   }
 }

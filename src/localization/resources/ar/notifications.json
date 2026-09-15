@@ -133,5 +133,14 @@
       "openCourse": "فتح الدورة",
       "openRecordings": "عرض التسجيلات"
     }
+  },
+  "liveProvider": {
+    "deauthorized": {
+      "title": "تم إلغاء وصول Zoom",
+      "message": "لم يعد حساب Zoom الخاص بك يمنح Atlas التفويض، لذلك لا يمكن إنشاء الجلسات المباشرة أو بدؤها حتى تعيد الربط."
+    },
+    "action": {
+      "reconnect": "إعادة ربط Zoom"
+    }
   }
 }

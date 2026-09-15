@@ -10,10 +10,9 @@
  * the add-on entitlement gate and RLS. This client exists so the UI can
  * ask honest questions, not to decide answers.
  */
-import { BaseService } from '@services';
+import { BaseService, resourcePath } from '@services';
 import type { ReadOptions, WriteOptions } from '@services';
 import type {
-  ConnectZoomInput,
   CreateLiveSessionInput,
   LiveProviderConnectionState,
   LiveSession,
@@ -123,20 +122,50 @@ export class LiveSessionService extends BaseService {
   }
 
   /**
-   * Connects the academy's Zoom account.
+   * Starts a Zoom authorization and returns where to send the owner.
    *
-   * The credentials travel once, over TLS, and are encrypted server-side
-   * before they are stored. Nothing reads them back — there is no endpoint
-   * that returns them, deliberately.
+   * Returns a URL rather than following a redirect: this is an
+   * authenticated XHR, and a 302 on a fetch is consumed by the fetch
+   * layer instead of navigating the user's window. The caller performs
+   * the navigation.
+   *
+   * NOTHING IS TYPED BY THE CUSTOMER ANY MORE. Atlas owns the Zoom
+   * application; the customer authorizes it and Atlas stores only that
+   * authorization. There is no client secret in this flow at all.
    */
-  async connect(
+  async startAuthorization(
     academyId: string,
-    input: ConnectZoomInput,
     options?: WriteOptions,
-  ): Promise<{ status: string; connectedAt?: string }> {
-    return this.client.post<{ status: string; connectedAt?: string }, ConnectZoomInput>(
-      this.path(academyId, 'live-sessions', 'connection'),
-      input,
+  ): Promise<{ authorizationUrl: string; expiresAt: string }> {
+    return this.client.post<
+      { authorizationUrl: string; expiresAt: string },
+      Record<string, never>
+    >(this.path(academyId, 'live-sessions', 'connection', 'authorize'), {}, options);
+  }
+
+  /**
+   * Hands Zoom's answer back to Atlas, from the page the customer landed on.
+   *
+   * NOT ACADEMY-SCOPED, and that is the point: the academy being connected
+   * is read from the state row Atlas wrote when the flow began, never from
+   * anything that travelled through the browser. `resourcePath` is used
+   * directly rather than `this.path`, which would prefix `academies/`.
+   *
+   * WHY THE PAGE FORWARDS THIS AT ALL. Zoom returns the customer as a
+   * top-level navigation, which carries no `Authorization` header — an API
+   * endpoint receiving that redirect directly could not tell who was
+   * calling, and would simply answer 401. Landing on an Atlas page instead
+   * means the request below goes out inside the customer's existing
+   * session, which is what lets the backend bind the authorization to the
+   * owner who started it.
+   */
+  async completeAuthorization(
+    payload: { code: string; state: string },
+    options?: WriteOptions,
+  ): Promise<{ status: string }> {
+    return this.client.post<{ status: string }, { code: string; state: string }>(
+      resourcePath('live-sessions', 'oauth', 'callback'),
+      payload,
       options,
     );
   }
