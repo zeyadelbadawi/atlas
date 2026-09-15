@@ -694,9 +694,10 @@ Confirm which one is meant before writing code.
 
 ## 15b. Live Sessions add-on (Zoom) — Phase 12
 
-**Status: backend complete and verified; Zoom provider E2E BLOCKED on external
-prerequisites.** Read this before touching anything under
-`src/live-sessions/` or `features/live-sessions/`.
+**Status: Atlas-owned OAuth integration complete and tested locally; production
+deployment and all real-Zoom verification still PENDING.** Read this and
+§15c before touching anything under `src/live-sessions/` or
+`features/live-sessions/`.
 
 ### What it is
 
@@ -782,29 +783,38 @@ ordinary `PlanLimitKey`; both are resolved by the same
 - **Credentials reuse the existing AES-256-GCM seam** (`CredentialEncryptionService`,
   now exported from `BillingModule`). There is no second secret store.
 
-### EXTERNAL PREREQUISITES — nothing works against real Zoom without these
+### EXTERNAL PREREQUISITES — superseded by P49, see §15c
 
-None of these exist in any Atlas environment today:
+This section previously said each academy needed its own Server-to-Server
+OAuth app. **That is no longer true and must not be reintroduced.** Atlas now
+owns one Zoom application; an academy authorizes it and nothing is typed. The
+prerequisites are now Atlas's, not the customer's, and are tracked in §15c.
 
-1. A Zoom account for the academy.
-2. A **Server-to-Server OAuth** app (account id, client id, client secret).
-3. A **Meeting SDK** app (SDK key + secret) for the embedded join.
-4. A **webhook secret token**, and a publicly reachable webhook URL.
+`ZOOM_SDK_KEY` / `ZOOM_SDK_SECRET` remain unset — the embedded Meeting SDK
+join is gated on an unresolved architecture decision (§15c). Until Zoom is
+configured, `isConfigured()` is false and the connection screen says "not
+configured" honestly. **Do not fabricate credentials to make a test pass.**
 
-Until they exist, `checkHealth` fails honestly and the connection screen says
-so. **Do not fabricate credentials to make a test pass.**
+### Connection model — Atlas owns the app, the customer owns the account
 
-### Connection model — why there is no "Sign in with Zoom" button
+**This replaced Server-to-Server OAuth in P49.** The old model asked every
+academy to create their own Zoom app and paste an account id, client id and
+client secret. It worked technically and was unacceptable as a product: it
+turned each customer into a Zoom developer and made Atlas the custodian of a
+credential far broader than Atlas needs.
 
-Atlas uses Zoom **Server-to-Server OAuth**, which is owned by the Zoom
-ACCOUNT. A user-OAuth redirect (with PKCE) would bind every meeting to one
-person's Zoom login and break when that instructor leaves. There is
-therefore **no redirect and no callback** — the academy pastes credentials
-from the app they created in their own Zoom account, Atlas verifies them
-against Zoom *before storing*, and encrypts them with
-`CredentialEncryptionService`. Nothing is ever read back: there is no
-endpoint that returns credentials, by design. PKCE is not applicable
-because there is no user agent in the exchange.
+Atlas now owns one **General (user-managed) OAuth** application. An academy's
+Organization Owner authorizes it, and an authorization — an access/refresh
+token set — is all that is stored, in the same
+`CredentialEncryptionService` envelope as before. The customer's Zoom account
+stays the customer's; meetings are created in it via `/users/me/meetings`
+using that academy's token. Nothing is ever read back: there is still no
+endpoint that returns credentials.
+
+Refresh tokens rotate, and the write is conditional on the token actually
+used, so a stale rotation cannot clobber a newer one. A failed refresh moves
+the connection to `reconnect_required` and keeps the row — sessions,
+attendance and recordings survive a recoverable problem.
 
 ### Webhook — the two things that make it safe
 
@@ -918,6 +928,168 @@ bypassing RLS.
   `LiveSessionService` — only `recordingAvailable` is wired (from the
   event worker).
 - **`starting_soon` reminders** need a scheduler; none is registered.
+
+## 15c. Zoom integration — CURRENT STATUS AND HANDOVER
+
+**Read this first if you are picking up Zoom work.** Written at the point
+where the Atlas-side implementation is complete and the remaining work is
+Zoom Marketplace configuration and review, which happens outside this repo.
+
+Anything below marked PENDING or BLOCKED has **not** been verified. Do not
+promote it to "done" without real evidence.
+
+### The architectural decision (settled — do not relitigate)
+
+- Customer academies connect **their own** Zoom accounts through Atlas.
+- Customers do **not** create Zoom Developer apps, OAuth credentials, or
+  webhooks. Atlas owns the Zoom application and its client configuration.
+- Students do **not** create Zoom developer accounts. They authenticate with
+  Atlas and are meant to join through Atlas.
+- Meetings live in the **customer's** Zoom account, never pooled into an
+  Atlas-owned one.
+- The embedded Meeting SDK student join depends on Zoom's **Anonymous Join
+  Exception** (see the Meeting SDK note below).
+
+### What is implemented and tested (Atlas side)
+
+All of this is committed and passing locally:
+
+- Atlas-owned **General OAuth** flow: owner-only authorize endpoint,
+  single-use server-side `state` bound to the initiating user, token
+  exchange, encrypted token-set storage, refresh with a rotation guard,
+  `reconnect_required` lifecycle (`zoom-oauth.service.ts`,
+  `live-provider-oauth.controller.ts`).
+- **App-level webhook verification** — `x-zm-signature` HMAC against the one
+  Atlas Secret Token, verified BEFORE any tenant lookup.
+- **Production CRC handling** for `endpoint.url_validation`. This is the fix
+  for the Marketplace "URL validation failed" error: the previous code gated
+  CRC behind finding exactly one connected academy and verified against a
+  per-academy secret, so it could never pass.
+- **Deauthorization endpoint** — dedicated route, `account_id` → Academy
+  resolution, actor-less/system invalidation, idempotency and stale-delivery
+  guards (§ "Deauthorization — a SEPARATE endpoint, on purpose").
+- **Security/RLS**: platform-owner context for the cross-tenant lookup,
+  tenant context for the write, no new RLS policy, no synthetic actor.
+
+Test results at the time of writing: backend **797/797** unit tests, **9/9**
+real-PostgreSQL RLS e2e tests, frontend **31/31**, typecheck/lint/build clean
+on both repos.
+
+### Public URLs (safe to document — no secrets here, ever)
+
+| Purpose | URL |
+|---|---|
+| OAuth Redirect | `https://atlass.dpdns.org/dashboard/add-ons/live-sessions/connection` |
+| Event Notification Webhook | `https://atlass.dpdns.org/api/v1/live-sessions/webhook` |
+| Deauthorization Notification | `https://atlass.dpdns.org/api/v1/live-sessions/deauthorization` |
+
+The OAuth redirect points at the Atlas **page**, not the API, and that is
+deliberate — see the connection-model section above.
+
+**Never** record in this repo: OAuth client secret, webhook secret token,
+access tokens, refresh tokens, or any other credential. Environment variable
+NAMES only: `ZOOM_OAUTH_CLIENT_ID`, `ZOOM_OAUTH_CLIENT_SECRET`,
+`ZOOM_OAUTH_REDIRECT_URI`, `ZOOM_WEBHOOK_SECRET_TOKEN`.
+
+### Zoom Marketplace status (as reported by the repo owner)
+
+Configuration performed in the Zoom Marketplace, outside this repo and not
+independently verifiable from here:
+
+- An Atlas Zoom Integration app exists; production OAuth configuration is
+  being prepared.
+- OAuth Redirect URL configured.
+- Event Subscription configured against the Atlas webhook endpoint, with the
+  Live Sessions events selected: `meeting.started`, `meeting.ended`,
+  `meeting.participant_joined`, `meeting.participant_left`,
+  `recording.completed`.
+- An **Anonymous Join Exception** has been requested/configured in the
+  production Meeting SDK settings, on the basis that Atlas students are
+  authenticated Atlas users who should not need individual Zoom accounts.
+
+**Awaiting Zoom's review/response. Nothing here has been approved as far as
+this repo can evidence. Do not record an approval without actual evidence.**
+
+### Scopes
+
+Nine scopes are required by the code that exists (each traced to a real API
+call or event subscription):
+
+```
+meeting:write:meeting:admin                      create meeting
+meeting:update:meeting:admin                     reschedule meeting
+meeting:delete:meeting:admin                     cancel meeting
+meeting:read:meeting:admin                       meeting.* event subscriptions
+meeting:read:participant:admin                   participant_joined/_left events
+report:read:list_meeting_participants:admin      attendance reconciliation
+cloud_recording:read:list_recording_files:admin  list recording files (API)
+cloud_recording:read:recording:admin             recording.completed event
+user:read:user:admin                             account_id + health check
+```
+
+Deliberately NOT requested: `user:read:token` (it is the OBF-token scope and
+is wrong for the `?type=zak` call Atlas makes), and `report:read:admin` (the
+classic scope granting the entire Reports API — superseded by the granular
+participant-report scope). `report:read:user:admin` was configured at one
+point and is **extra** — no Atlas code path uses it.
+
+`ZOOM_OAUTH_SCOPES` in `zoom-oauth.service.ts` is **stale and unused** —
+`createAuthorization` sends no `scope` parameter, so the Marketplace
+configuration is the sole source of truth. Fix the constant when convenient;
+it misleads readers but changes nothing at runtime.
+
+### Meeting SDK / embedded student join — UNRESOLVED
+
+Since **2 March 2026** Zoom requires apps joining meetings outside their own
+account to be reviewed AND to attribute each joining client with a ZAK or OBF
+token. Atlas's meetings live in the customer's account, so every student join
+is an "external" join. Zoom's documented position is that anonymous external
+joining is not supported; installing the app into the customer's account does
+not change the determination.
+
+The **Anonymous Join Exception** is the requested path around this. Be aware:
+it appears in **no official Zoom documentation** — only in developer-forum
+threads — and multiple vendors reported approved exceptions failing in
+production with `Error 4012 AppCanNotAnonymousJoinMeeting` during Aug–Sep
+2026, including one apparently reset by republishing the app. Treat approval
+as uncertain and do not build student-join work assuming it will arrive.
+
+`createJoinSignature` and `ZoomMeetingEmbed.tsx` already implement the
+anonymous-JWT student path and need **no changes** if the exception is
+granted. If it is refused, the architecture must change and that is a product
+decision, not an implementation detail.
+
+### PENDING / BLOCKED — none of this is verified
+
+- Production **deployment** of the Zoom commits.
+- Production **CRC validation** against the Event Subscription.
+- Production **deauthorization endpoint** reachability.
+- A real customer Zoom account completing the **OAuth flow**.
+- A real **webhook delivery** from Zoom.
+- **Meeting creation** through a production OAuth connection.
+- **Embedded Meeting SDK external join** by a student.
+- **Anonymous Join Exception** approval.
+- Any remaining **Zoom App Review** requirements.
+
+Note: Zoom does not send deauthorization notifications for private or
+in-development apps, so that endpoint cannot be exercised end to end until
+the app is published.
+
+### Next human actions
+
+1. Push/deploy the Zoom commits (`deploy.yml` triggers on push to `main`).
+2. Ensure the four `ZOOM_*` variables exist on the VPS **before** relying on
+   the deploy — they are `.optional()`, so the backend boots without them and
+   CRC would still fail.
+3. Confirm `/opt/atlas/deploy.sh` runs `prisma migrate deploy` — the
+   Dockerfile's `CMD` does not. CRC needs no database; the deauthorization
+   endpoint does.
+4. Re-run Event Notification Endpoint validation in Zoom.
+5. Configure and validate the Deauthorization Notification Endpoint.
+6. Verify the final scope list, and remove the extra `report:read:user:admin`.
+7. Continue the Zoom Marketplace / App Review process.
+8. Wait for Zoom's response on the Anonymous Join Exception.
+9. Perform real end-to-end verification once Zoom's side allows it.
 
 ## 16. Architecture integrity check
 
