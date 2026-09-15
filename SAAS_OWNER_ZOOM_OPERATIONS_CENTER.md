@@ -168,14 +168,38 @@ operator with a button.
   paths — intentionally deferred.
 - Read-only: no manual reconciliation or connection actions.
 
-## 10. Verification status
+## 10. Verification status (final QA)
 
-- Backend: 64 unit suites / 797 tests; **18/18** real-PostgreSQL RLS/security
-  e2e (`test/platform-zoom-operations.e2e-spec.ts`). Typecheck/lint/build clean.
-- Frontend: **18/18** component tests; typecheck/lint/build clean.
-- Real browser (Platform Owner, real dev DB): all nine pages render real data;
-  masked account ids; no raw i18n keys; Arabic/RTL verified; API returns
-  401 unauthenticated and 403 for a tenant user; secret scan of live responses
-  clean.
-- Production: see the final implementation report for deployed SHAs and
-  production verification evidence.
+**Development authenticated verification — PASS.** Performed against the real
+dev database, signed in as the seeded platform-owner fixture
+`admin@atlas.dev` (from `prisma/seed.ts`; `isPlatformOwner: true`, recognized
+by the real `PlatformOwnerGuard` path — no bypass, no new account).
+
+- Backend: 64 unit suites / **797** tests; **18/18** real-PostgreSQL
+  RLS/security e2e. Typecheck / lint / build clean.
+- Frontend: **18/18** component tests; typecheck / lint / build clean.
+- **API boundary (live):** unauthenticated → **401**, tenant user → **403**,
+  platform owner → **200** on all nine endpoints.
+- **Real Chrome, all nine pages:** real data renders; server-side search /
+  filters / pagination work; academy deep-links work; deep-route refresh
+  works; no feature-caused console errors; no failed API requests.
+- **EN + Arabic/RTL:** sidebar/tables/filters mirror correctly, arrows flip,
+  dates localize, status labels translate, no raw i18n keys; English restores
+  cleanly.
+- **Responsive:** 1440 desktop, 768 tablet, 390 mobile — nav collapses to a
+  hamburger, stat grids reflow, tables scroll inside their own container, no
+  page-level horizontal overflow.
+- **Security:** authenticated secret scan across all nine endpoints + academy
+  detail found zero exposure of tokens / credentials / secrets / raw payloads;
+  the Zoom account id is the only provider identifier shown and is masked.
+
+**Production unauthenticated verification — PASS.** `/health` 200; all nine
+`platform-zoom` APIs reject unauthenticated with 401 (not 404); the SPA serves
+`/` and `/dashboard/platform/zoom` (200); no client-id/secret in production
+HTML.
+
+**Production authenticated verification — BLOCKED — no legitimate production
+Platform Owner test credentials available.** Not a feature failure; the full
+authenticated path is verified against the real development database above.
+
+Deployed SHAs and migration status are in the final implementation report.
