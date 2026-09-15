@@ -1059,6 +1059,61 @@ anonymous-JWT student path and need **no changes** if the exception is
 granted. If it is refused, the architecture must change and that is a product
 decision, not an implementation detail.
 
+### Student join — decision hierarchy and the fallback we are keeping
+
+Recorded so that a rejection from Zoom does not turn into a redesign from
+scratch. **Only the PRIMARY path is implemented. The fallback is a
+contingency architecture, not current behaviour, and must not be built
+speculatively.**
+
+**PRIMARY — Anonymous Join Exception. Students do not need Zoom accounts.**
+
+An Atlas-authenticated student clicks Join and lands in the customer-owned
+meeting through the embedded Meeting SDK, carrying only an Atlas-minted JWT.
+This is what `createJoinSignature` and `ZoomMeetingEmbed.tsx` already do, and
+it needs no code changes if Zoom grants the exception. It depends entirely on
+that approval, which is **still pending and genuinely uncertain** — see the
+Meeting SDK section above for why.
+
+**FALLBACK — student authenticates with their own Zoom account.**
+
+If Zoom rejects the exception, withdraws it, or rules our use case outside
+it, Atlas keeps a second option: the student authorizes with their own Zoom
+account before joining, so the SDK client can be attributed to a real Zoom
+user as the post-March-2026 rules require.
+
+What the fallback must preserve — these are the parts that make it Atlas
+rather than a link to Zoom:
+
+- Atlas remains the authentication system of record.
+- Atlas enrollment and entitlement checks still gate access.
+- Atlas still decides session eligibility and mints the join grant.
+- The embedded Meeting SDK experience is kept wherever Zoom supports it.
+- Meetings stay in the **customer's** Zoom account.
+
+**The exact Zoom authorization mechanism for this path requires final Zoom
+capability verification and end-to-end testing.** It is not settled. Research
+to date found that Zoom's capability matrix pairs an external join by a
+Zoom-account holder with "JWT + OBF token", but OBF is documented as
+obtainable only for participants who have authorized the app via OAuth *and*
+are already actively present in the meeting — which reads as circular for a
+student who is trying to get in. ZAK represents a person rather than an app.
+Which of these actually works for an ordinary student participant has **not**
+been confirmed with Zoom or tested. Do not write the implementation until it
+has been.
+
+Cost to be honest about: the fallback requires every student to hold a Zoom
+account and to authorize Atlas individually. That is a real product
+regression against the "student just clicks Join" requirement, which is
+precisely why it is the fallback and not the plan.
+
+**Never store, log, or expose student Zoom credentials or tokens.** If this
+path is ever built, the token handling must meet the same bar as the academy
+connection: encrypted at rest, never returned by any endpoint, never logged.
+
+No student Zoom OAuth implementation exists in the codebase today, and none
+should be added until Zoom's answer on the exception is known.
+
 ### PENDING / BLOCKED — none of this is verified
 
 - Production **deployment** of the Zoom commits.
