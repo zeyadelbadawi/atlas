@@ -362,6 +362,10 @@ export function getDashboardNavigation(
           icon: Radio,
           requiresAuth: true,
           requiredPermissions: ['academy.view'],
+          // DEFERRED: customer Live Sessions navigation is hidden while the
+          // feature is Coming Soon. Reuses the existing feature-flag gate
+          // (navigation.utils honors `featureFlag` via isFeatureEnabled).
+          featureFlag: 'liveSessions',
           matchNestedPaths: true,
           children: [
             {

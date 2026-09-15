@@ -149,6 +149,8 @@ export interface AddOn {
   /** Plan keys this Add-on may be attached to. An empty list means "not currently offered". */
   readonly compatiblePlanKeys: readonly string[];
   readonly pricing?: PlanPricingMetadata;
+  /** Implemented but customer launch deferred: show "Coming Soon", block purchase. */
+  readonly comingSoon?: boolean;
 }
 
 /**

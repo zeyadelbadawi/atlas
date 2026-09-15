@@ -126,7 +126,9 @@
     "purchaseAction": "شراء",
     "notOnCurrentPlan": "غير متوافقة مع خطتك الحالية. قد تتيحها الترقية.",
     "limitEffect": "‎+{{amount}} {{resource}}",
-    "featureEffect": "يتيح {{feature}}"
+    "featureEffect": "يتيح {{feature}}",
+    "comingSoonBadge": "قريباً",
+    "comingSoonNote": "قريباً — غير متاح للشراء بعد."
   },
   "planComparison": {
     "title": "مقارنة الخطط",

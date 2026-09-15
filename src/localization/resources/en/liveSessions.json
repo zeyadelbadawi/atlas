@@ -61,7 +61,9 @@
       "disabled": "Disabled",
       "uninstalling": "Uninstalling…",
       "failed": "Failed"
-    }
+    },
+    "comingSoon": "Coming soon",
+    "comingSoonNote": "This add-on is coming soon. It will be available once final setup is complete."
   },
   "overview": {
     "title": "Live Sessions",

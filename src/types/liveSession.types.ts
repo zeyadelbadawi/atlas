@@ -182,6 +182,8 @@ export interface AddOnCatalogEntry {
   readonly pricing?: { readonly amount?: number; readonly currency?: string };
   /** Free is simply "no price attached" — decided by the catalog, never a second flag. */
   readonly isFree: boolean;
+  /** Implemented but customer launch deferred: show "Coming Soon", no install. */
+  readonly comingSoon?: boolean;
   readonly installStatus:
     | 'installing'
     | 'installed'

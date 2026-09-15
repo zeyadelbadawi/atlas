@@ -128,5 +128,8 @@
     "authorizationInvalid": "That Zoom authorization has expired or was already used. Press Connect Zoom to start again.",
     "accountAlreadyConnected": "That Zoom account is already connected to another academy. Connect a different Zoom account, or disconnect it from the other academy first.",
     "authorizationFailed": "We couldn't finish connecting to Zoom. Please try again."
+  },
+  "addOns": {
+    "comingSoon": "Live Sessions is coming soon and can’t be installed yet."
   }
 }

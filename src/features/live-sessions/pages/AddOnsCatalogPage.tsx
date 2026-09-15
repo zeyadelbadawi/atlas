@@ -107,8 +107,10 @@ export default function AddOnsCatalogPage(): JSX.Element {
                       <h2 className="font-display text-base font-semibold text-foreground">
                         {addOn.name}
                       </h2>
-                      <Badge variant={enabled ? 'default' : 'outline'}>
-                        {t(`liveSessions:catalog.state.${addOn.installStatus}`)}
+                      <Badge variant={addOn.comingSoon ? 'secondary' : enabled ? 'default' : 'outline'}>
+                        {addOn.comingSoon
+                          ? t('liveSessions:catalog.comingSoon')
+                          : t(`liveSessions:catalog.state.${addOn.installStatus}`)}
                       </Badge>
                     </div>
 
@@ -132,7 +134,11 @@ export default function AddOnsCatalogPage(): JSX.Element {
                     ) : null}
 
                     <div className="flex flex-wrap gap-2">
-                      {!installed ? (
+                      {addOn.comingSoon ? (
+                        <p className="text-sm text-muted-foreground">
+                          {t('liveSessions:catalog.comingSoonNote')}
+                        </p>
+                      ) : !installed ? (
                         <Button
                           size="sm"
                           disabled={busy}

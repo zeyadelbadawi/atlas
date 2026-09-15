@@ -118,7 +118,9 @@
     "purchaseAction": "Purchase",
     "notOnCurrentPlan": "Not compatible with your current plan. Upgrading may unlock it.",
     "limitEffect": "+{{amount}} {{resource}}",
-    "featureEffect": "Unlocks {{feature}}"
+    "featureEffect": "Unlocks {{feature}}",
+    "comingSoonBadge": "Coming soon",
+    "comingSoonNote": "Coming soon — not yet available for purchase."
   },
   "planComparison": {
     "title": "Compare plans",

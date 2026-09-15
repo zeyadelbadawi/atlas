@@ -12,6 +12,16 @@ export const FEATURE_FLAGS = {
   languageSwitcher: true,
   /** Exposes the theme switcher in the application shell. */
   themeSwitcher: true,
+  /**
+   * Customer-facing Live Sessions (the add-on's tenant/academy UI:
+   * navigation, session management, student join). Implemented but its
+   * customer launch is DEFERRED pending external Zoom approvals — see
+   * docs/live-sessions/LIVE_SESSIONS_STATUS.md. Flip to `true` to re-open.
+   * NOTE: this gates only the CUSTOMER surfaces; the Platform Owner Zoom
+   * Operations Center is a separate, platform-owner-only area and is not
+   * gated by this flag.
+   */
+  liveSessions: false,
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;

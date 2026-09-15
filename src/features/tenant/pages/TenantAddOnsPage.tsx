@@ -28,6 +28,7 @@ import {
 } from '../hooks';
 import { formatLimitValue } from '../utils/entitlement.utils';
 import type { AddOn } from '@types';
+import { isAddOnComingSoon } from '@/config/deferred-add-ons';
 
 function AddOnEffectSummary({ addOn }: { readonly addOn: AddOn }): JSX.Element {
   const { t } = useTranslation();
@@ -129,11 +130,17 @@ export default function TenantAddOnsPage(): JSX.Element {
     );
   }
 
-  const activeAddOns = activeAddOnsQuery.data;
+  // A DEFERRED ("Coming Soon") add-on must never present as an active
+  // customer feature — even for a tenant that already holds a row from
+  // before it was deferred. So it is filtered out of "Active" and always
+  // surfaced under "Available" as Coming Soon (with no purchase action).
+  const activeAddOns = activeAddOnsQuery.data.filter(
+    (a) => !isAddOnComingSoon(a.addOn.key),
+  );
   const activeAddOnIds = new Set(activeAddOns.map((a) => a.addOnId));
   const currentPlanKey = subscriptionQuery.data.plan.key;
   const availableAddOns = catalogQuery.data.filter(
-    (addOn) => !activeAddOnIds.has(addOn.id)
+    (addOn) => isAddOnComingSoon(addOn.key) || !activeAddOnIds.has(addOn.id),
   );
 
   return (
@@ -165,8 +172,14 @@ export default function TenantAddOnsPage(): JSX.Element {
                         {tenantAddOn.addOn.name}
                       </h3>
                       <StatusBadge
-                        labelKey="tenant:addOns.activeBadge"
-                        tone="success"
+                        labelKey={
+                          isAddOnComingSoon(tenantAddOn.addOn.key)
+                            ? 'tenant:addOns.comingSoonBadge'
+                            : 'tenant:addOns.activeBadge'
+                        }
+                        tone={
+                          isAddOnComingSoon(tenantAddOn.addOn.key) ? 'neutral' : 'success'
+                        }
                       />
                     </div>
                     {tenantAddOn.addOn.description ? (
@@ -216,11 +229,19 @@ export default function TenantAddOnsPage(): JSX.Element {
                         </h3>
                         <StatusBadge
                           labelKey={
-                            compatible
-                              ? 'tenant:addOns.availableBadge'
-                              : 'tenant:addOns.incompatibleBadge'
+                            isAddOnComingSoon(addOn.key)
+                              ? 'tenant:addOns.comingSoonBadge'
+                              : compatible
+                                ? 'tenant:addOns.availableBadge'
+                                : 'tenant:addOns.incompatibleBadge'
                           }
-                          tone={compatible ? 'info' : 'neutral'}
+                          tone={
+                            isAddOnComingSoon(addOn.key)
+                              ? 'neutral'
+                              : compatible
+                                ? 'info'
+                                : 'neutral'
+                          }
                         />
                       </div>
                       {addOn.description ? (
@@ -231,7 +252,11 @@ export default function TenantAddOnsPage(): JSX.Element {
                       <p className="text-sm text-foreground">
                         <AddOnEffectSummary addOn={addOn} />
                       </p>
-                      {compatible ? (
+                      {isAddOnComingSoon(addOn.key) ? (
+                        <p className="text-xs text-muted-foreground">
+                          {t('tenant:addOns.comingSoonNote')}
+                        </p>
+                      ) : compatible ? (
                         <Button
                           type="button"
                           variant="outline"
