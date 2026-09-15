@@ -198,8 +198,39 @@ by the real `PlatformOwnerGuard` path — no bypass, no new account).
 `/` and `/dashboard/platform/zoom` (200); no client-id/secret in production
 HTML.
 
-**Production authenticated verification — BLOCKED — no legitimate production
-Platform Owner test credentials available.** Not a feature failure; the full
-authenticated path is verified against the real development database above.
+**Production authenticated verification — PASS.** A legitimate production
+Platform Owner was provisioned via `src/scripts/provision-platform-owner.ts`
+(run on the VPS against the production database; real Argon2id hash through
+`PasswordHasherService`, `isPlatformOwner: true`, `status: active` — the
+ordinary path, no bypass, no HTTP surface). Verified against
+`https://atlass.dpdns.org` in real Chrome:
+
+- **Normal login flow** signs the account in and reaches the dashboard as a
+  Platform Owner (Platform section present, "No organization" context).
+- **All nine endpoints return 200** for the owner over the live API; a
+  fetch with **no token returns 401** on all nine.
+- **Real production data** renders (9 academies, all currently "Not
+  connected"; sessions/events empty — honest live state with correct empty
+  states and a verified loading state).
+- **Pages seen live on production:** Overview, Connections, Academy detail,
+  Events, Activity. The remaining pages were confirmed 200 over the
+  authenticated API (empty states; production has no operational data yet)
+  and were verified visually with data on the development database.
+- **Academy deep-link and deep-route refresh** work on production.
+- **EN and Arabic/RTL** correct on production (Academy detail in Arabic:
+  mirrored layout, translated section headers, proper names stay LTR, no raw
+  i18n keys); English restores cleanly.
+- **Responsive** on production: 1440 desktop and 390 mobile verified (nav
+  collapses, filters wrap, tables scroll inside their own container, no
+  page-level horizontal overflow); 768 verified on development.
+- **No feature-caused console errors** on any production page; **no failed
+  API requests.**
+- **Secret scan of live production response bodies** across all nine
+  endpoints + academy detail: zero exposure of tokens, credentials,
+  secrets, or raw payloads; the Zoom account id is masked.
+
+Remaining note: the production **tenant→403** negative case was verified on
+development (identical guard code); a production tenant credential was not
+used, so that specific check was not repeated against production.
 
 Deployed SHAs and migration status are in the final implementation report.
