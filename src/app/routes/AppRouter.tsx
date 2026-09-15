@@ -291,6 +291,35 @@ const PlatformUserDetailPage = lazy(
 const PlatformRolesPermissionsPage = lazy(
   () => import('@features/platform/pages/PlatformRolesPermissionsPage')
 );
+/* Zoom Operations Center (P50) — Platform Owner only. */
+const ZoomOverviewPage = lazy(
+  () => import('@features/platform-zoom/pages/ZoomOverviewPage')
+);
+const ZoomConnectionsPage = lazy(
+  () => import('@features/platform-zoom/pages/ZoomConnectionsPage')
+);
+const ZoomSessionsPage = lazy(
+  () => import('@features/platform-zoom/pages/ZoomSessionsPage')
+);
+const ZoomAttendancePage = lazy(
+  () => import('@features/platform-zoom/pages/ZoomAttendancePage')
+);
+const ZoomRecordingsPage = lazy(
+  () => import('@features/platform-zoom/pages/ZoomRecordingsPage')
+);
+const ZoomEventsPage = lazy(
+  () => import('@features/platform-zoom/pages/ZoomEventsPage')
+);
+const ZoomHealthPage = lazy(
+  () => import('@features/platform-zoom/pages/ZoomHealthPage')
+);
+const ZoomActivityPage = lazy(
+  () => import('@features/platform-zoom/pages/ZoomActivityPage')
+);
+const ZoomAcademyDetailPage = lazy(
+  () => import('@features/platform-zoom/pages/ZoomAcademyDetailPage')
+);
+
 const PlatformAuditLogListPage = lazy(
   () => import('@features/audit-log/pages/PlatformAuditLogListPage')
 );
@@ -1541,6 +1570,92 @@ export function AppRouter(): JSX.Element {
                   requiredRoles={['platform_owner']}
                 >
                   <PlatformRolesPermissionsPage />
+                </RouteGuard>
+              }
+            />
+
+            {/*
+              Zoom Operations Center. Each child is registered
+              independently so a deep link and a refresh both resolve
+              without passing through the overview first.
+            */}
+            <Route
+              path={DASHBOARD_ROUTES.platformZoom}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <ZoomOverviewPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformZoomConnections}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <ZoomConnectionsPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformZoomSessions}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <ZoomSessionsPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformZoomAttendance}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <ZoomAttendancePage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformZoomRecordings}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <ZoomRecordingsPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformZoomEvents}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <ZoomEventsPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformZoomHealth}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <ZoomHealthPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformZoomActivity}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <ZoomActivityPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformZoomAcademyDetail}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <ZoomAcademyDetailPage />
                 </RouteGuard>
               }
             />

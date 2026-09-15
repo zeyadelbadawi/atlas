@@ -7,6 +7,7 @@
  * here is hardcoded.
  */
 import {
+  Video,
   LayoutDashboard,
   User,
   Settings,
@@ -511,6 +512,88 @@ export function getDashboardNavigation(
           icon: BarChart3,
           requiresAuth: true,
           requiredRoles: ['platform_owner'],
+        },
+        {
+          /*
+            ZOOM OPERATIONS CENTER (P50).
+
+            A nested branch rather than eight top-level links: the children
+            are one operational subject, and flattening them would push
+            every other SaaS area off the screen. `matchNestedPaths` keeps
+            the parent active while the operator is anywhere inside it, and
+            `SidebarNavigation` only expands the sub-list when the branch is
+            active, so the sidebar stays short by default.
+
+            Platform-owner only at every level. This mirrors the server:
+            `PlatformZoomController` is guarded by `PlatformOwnerGuard` and
+            the queries run in a platform-owner RLS context, so hiding the
+            menu is a courtesy and the API is the boundary.
+          */
+          id: 'platform-zoom',
+          labelKey: 'navigation:items.platformZoom',
+          path: DASHBOARD_ROUTES.platformZoom,
+          icon: Video,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+          matchNestedPaths: true,
+          children: [
+            {
+              id: 'platform-zoom-overview',
+              labelKey: 'navigation:items.platformZoomOverview',
+              path: DASHBOARD_ROUTES.platformZoom,
+              requiresAuth: true,
+              requiredRoles: ['platform_owner'],
+            },
+            {
+              id: 'platform-zoom-connections',
+              labelKey: 'navigation:items.platformZoomConnections',
+              path: DASHBOARD_ROUTES.platformZoomConnections,
+              requiresAuth: true,
+              requiredRoles: ['platform_owner'],
+            },
+            {
+              id: 'platform-zoom-sessions',
+              labelKey: 'navigation:items.platformZoomSessions',
+              path: DASHBOARD_ROUTES.platformZoomSessions,
+              requiresAuth: true,
+              requiredRoles: ['platform_owner'],
+            },
+            {
+              id: 'platform-zoom-attendance',
+              labelKey: 'navigation:items.platformZoomAttendance',
+              path: DASHBOARD_ROUTES.platformZoomAttendance,
+              requiresAuth: true,
+              requiredRoles: ['platform_owner'],
+            },
+            {
+              id: 'platform-zoom-recordings',
+              labelKey: 'navigation:items.platformZoomRecordings',
+              path: DASHBOARD_ROUTES.platformZoomRecordings,
+              requiresAuth: true,
+              requiredRoles: ['platform_owner'],
+            },
+            {
+              id: 'platform-zoom-events',
+              labelKey: 'navigation:items.platformZoomEvents',
+              path: DASHBOARD_ROUTES.platformZoomEvents,
+              requiresAuth: true,
+              requiredRoles: ['platform_owner'],
+            },
+            {
+              id: 'platform-zoom-health',
+              labelKey: 'navigation:items.platformZoomHealth',
+              path: DASHBOARD_ROUTES.platformZoomHealth,
+              requiresAuth: true,
+              requiredRoles: ['platform_owner'],
+            },
+            {
+              id: 'platform-zoom-activity',
+              labelKey: 'navigation:items.platformZoomActivity',
+              path: DASHBOARD_ROUTES.platformZoomActivity,
+              requiresAuth: true,
+              requiredRoles: ['platform_owner'],
+            },
+          ],
         },
         {
           id: 'platform-trial-policy',

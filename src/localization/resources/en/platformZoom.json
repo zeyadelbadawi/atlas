@@ -1,0 +1,199 @@
+{
+  "overview": {
+    "title": "Zoom operations",
+    "subtitle": "Integration health across every academy on Atlas.",
+    "connectionsHeading": "Connections",
+    "sessionsHeading": "Live sessions",
+    "attentionHeading": "Needs attention",
+    "atRiskHeading": "Upcoming sessions at risk",
+    "activityHeading": "Recent integration activity",
+    "notInstalled": "Not connected",
+    "upcoming": "Upcoming",
+    "unprovisioned": "No Zoom meeting",
+    "viewSessions": "View all sessions",
+    "allHealthyTitle": "Nothing needs attention",
+    "allHealthyDescription": "Every Zoom connection and session is in a healthy state right now.",
+    "noRiskTitle": "No sessions at risk",
+    "noRiskDescription": "Every session scheduled in the next 24 hours has a working Zoom connection.",
+    "noActivityTitle": "No recent activity",
+    "noActivityDescription": "Zoom integration events will appear here as academies connect and run sessions.",
+    "exploreHeading": "Explore"
+  },
+  "connections": {
+    "title": "Zoom connections",
+    "subtitle": "Which academies have connected Zoom, and which need attention.",
+    "searchPlaceholder": "Search academy or organization",
+    "academy": "Academy",
+    "organization": "Organization",
+    "status": "Status",
+    "account": "Zoom account",
+    "connectedAt": "Connected",
+    "lastChecked": "Last checked",
+    "emptyTitle": "No connections match",
+    "emptyDescription": "Try a different search or filter."
+  },
+  "sessions": {
+    "title": "Live sessions",
+    "subtitle": "Operational state of sessions across every academy.",
+    "searchPlaceholder": "Search session title",
+    "session": "Session",
+    "academy": "Academy",
+    "start": "Starts",
+    "status": "Status",
+    "provisioning": "Zoom meeting",
+    "recording": "Recording",
+    "atRiskOnly": "At risk only",
+    "provisioned": "Created",
+    "notProvisioned": "Not created",
+    "recordingOff": "Off",
+    "emptyTitle": "No sessions match",
+    "emptyDescription": "Try a different search or filter."
+  },
+  "connectionStatus": {
+    "connected": "Connected",
+    "not_connected": "Not connected",
+    "expired": "Expired",
+    "revoked": "Revoked",
+    "error": "Error",
+    "reconnect_required": "Reconnect required"
+  },
+  "sessionStatus": {
+    "draft": "Draft",
+    "scheduled": "Scheduled",
+    "live": "Live",
+    "ended": "Ended",
+    "cancelled": "Cancelled",
+    "failed": "Failed"
+  },
+  "recordingStatus": {
+    "requested": "Requested",
+    "processing": "Processing",
+    "available": "Available",
+    "failed": "Failed",
+    "pending": "Pending"
+  },
+  "risk": {
+    "unprovisioned": "No Zoom meeting",
+    "not_connected": "Zoom not connected",
+    "revoked": "Zoom revoked",
+    "expired": "Zoom expired",
+    "error": "Zoom error",
+    "reconnect_required": "Reconnect required",
+    "unknown": "At risk"
+  },
+  "attention": {
+    "connection.revoked": "Academies whose Zoom access was revoked",
+    "connection.reconnect_required": "Academies that must reconnect Zoom",
+    "connection.expired": "Academies with an expired Zoom authorization",
+    "connection.error": "Academies with a Zoom connection error",
+    "session.failed": "Sessions that failed",
+    "session.unprovisioned": "Sessions with no Zoom meeting",
+    "event.failed": "Webhook events that failed processing",
+    "event.unmatched": "Webhook events Atlas could not attribute",
+    "session.at_risk": "Upcoming sessions at risk"
+  },
+  "action": {
+    "live_provider.connected": "Zoom connected",
+    "live_provider.disconnected": "Zoom disconnected",
+    "live_provider.deauthorized": "Zoom access removed by the customer",
+    "live_session.created": "Live session created",
+    "live_session.published": "Live session published"
+  },
+  "reason": {
+    "app_deauthorized": "Removed in Zoom",
+    "refresh_failed": "Token refresh failed",
+    "refresh_token_expired": "Authorization expired",
+    "connection_failed": "Could not reach Zoom"
+  },
+  "filters": {
+    "all": "All"
+  },
+  "pagination": {
+    "summary": "Page {{page}} of {{totalPages}} · {{totalItems}} total",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "nav": {
+    "connections": "Connections",
+    "sessions": "Live sessions",
+    "attendance": "Attendance",
+    "recordings": "Recordings",
+    "events": "Webhooks & events",
+    "health": "Health & incidents",
+    "activity": "Activity"
+  },
+  "attendance": {
+    "title": "Attendance",
+    "subtitle": "Reconciliation health across every academy.",
+    "session": "Session",
+    "academy": "Academy",
+    "state": "State",
+    "participants": "Participants",
+    "reconciledAt": "Reconciled",
+    "attempts": "{{count}} attempts",
+    "emptyTitle": "No sessions match",
+    "emptyDescription": "Try a different filter."
+  },
+  "reconciliation": {
+    "reconciled": "Reconciled",
+    "pending": "Pending",
+    "failing": "Failing",
+    "not_due": "Not due"
+  },
+  "recordings": {
+    "title": "Recordings",
+    "subtitle": "Recording lifecycle across every academy.",
+    "session": "Session",
+    "academy": "Academy",
+    "status": "Status",
+    "files": "Files",
+    "quota": "Quota",
+    "created": "Created",
+    "quotaConsumed": "Counted",
+    "quotaFree": "Not counted",
+    "emptyTitle": "No recordings match",
+    "emptyDescription": "Try a different filter."
+  },
+  "events": {
+    "title": "Webhooks & events",
+    "subtitle": "Zoom event delivery and processing.",
+    "event": "Event",
+    "status": "Status",
+    "academy": "Academy",
+    "session": "Session",
+    "received": "Received",
+    "emptyTitle": "No events match",
+    "emptyDescription": "Try a different filter."
+  },
+  "eventStatus": {
+    "received": "Received",
+    "processed": "Processed",
+    "unmatched": "Unmatched",
+    "failed": "Failed"
+  },
+  "health": {
+    "title": "Health & incidents",
+    "subtitle": "Current operational conditions that need attention.",
+    "allClearTitle": "All clear",
+    "allClearDescription": "No Zoom connection, session, or event issues need attention right now."
+  },
+  "activity": {
+    "title": "Activity",
+    "subtitle": "Zoom integration events, most recent first.",
+    "emptyTitle": "No activity",
+    "emptyDescription": "Integration events will appear here."
+  },
+  "academyDetail": {
+    "title": "Academy Zoom detail",
+    "subtitle": "The full Zoom operational picture for one academy.",
+    "sessionsHeading": "Live sessions",
+    "attendanceHeading": "Attendance",
+    "recordingsHeading": "Recordings",
+    "upcoming": "Upcoming",
+    "atRisk": "At risk",
+    "quota": "Recorded sessions",
+    "unlimited": "Unlimited",
+    "notFoundTitle": "Academy not found",
+    "notFoundDescription": "This academy does not exist or has no Zoom data."
+  }
+}

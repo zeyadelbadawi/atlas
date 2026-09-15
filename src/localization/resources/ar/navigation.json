@@ -80,7 +80,16 @@
     "liveSessions": "الجلسات المباشرة",
     "liveSessionsList": "الجلسات",
     "liveSessionsRecordings": "التسجيلات",
-    "liveSessionsConnection": "الاتصال"
+    "liveSessionsConnection": "الاتصال",
+    "platformZoom": "Zoom",
+    "platformZoomOverview": "نظرة عامة",
+    "platformZoomConnections": "الاتصالات",
+    "platformZoomSessions": "الجلسات المباشرة",
+    "platformZoomAttendance": "الحضور",
+    "platformZoomRecordings": "التسجيلات",
+    "platformZoomEvents": "Webhooks والأحداث",
+    "platformZoomHealth": "الصحة والحوادث",
+    "platformZoomActivity": "النشاط"
   },
   "account": {
     "menu": "قائمة الحساب",

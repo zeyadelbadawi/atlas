@@ -752,6 +752,28 @@ export const searchKeys = {
  * Academy-scoped like the resource itself, so switching academy switches
  * the cache rather than showing another tenant's sessions for a frame.
  */
+/**
+ * Zoom Operations Center (P50) — Platform Owner surfaces.
+ *
+ * Keyed separately from `liveSessionKeys`: these are cross-tenant
+ * operator reads, and invalidating an academy's own Live Sessions data
+ * must never silently refetch an operations table spanning every tenant.
+ */
+export const platformZoomKeys = {
+  all: ['platform-zoom'] as const,
+  overview: () => [...platformZoomKeys.all, 'overview'] as const,
+  connections: (query: unknown) =>
+    [...platformZoomKeys.all, 'connections', query] as const,
+  sessions: (query: unknown) => [...platformZoomKeys.all, 'sessions', query] as const,
+  attendance: (query: unknown) => [...platformZoomKeys.all, 'attendance', query] as const,
+  recordings: (query: unknown) => [...platformZoomKeys.all, 'recordings', query] as const,
+  events: (query: unknown) => [...platformZoomKeys.all, 'events', query] as const,
+  health: () => [...platformZoomKeys.all, 'health'] as const,
+  activity: (query: unknown) => [...platformZoomKeys.all, 'activity', query] as const,
+  academyDetail: (academyId: string | undefined) =>
+    [...platformZoomKeys.all, 'academy', academyId] as const,
+};
+
 export const liveSessionKeys = {
   all: ['live-sessions'] as const,
   status: (academyId: string | undefined) =>

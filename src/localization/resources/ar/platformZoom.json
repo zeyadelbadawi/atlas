@@ -1,0 +1,199 @@
+{
+  "overview": {
+    "title": "عمليات Zoom",
+    "subtitle": "سلامة التكامل عبر جميع الأكاديميات في Atlas.",
+    "connectionsHeading": "الاتصالات",
+    "sessionsHeading": "الجلسات المباشرة",
+    "attentionHeading": "يحتاج إلى انتباه",
+    "atRiskHeading": "جلسات قادمة معرّضة للخطر",
+    "activityHeading": "نشاط التكامل الأخير",
+    "notInstalled": "غير متصل",
+    "upcoming": "قادمة",
+    "unprovisioned": "لا يوجد اجتماع Zoom",
+    "viewSessions": "عرض كل الجلسات",
+    "allHealthyTitle": "لا شيء يحتاج إلى انتباه",
+    "allHealthyDescription": "جميع اتصالات Zoom والجلسات في حالة سليمة حالياً.",
+    "noRiskTitle": "لا توجد جلسات معرّضة للخطر",
+    "noRiskDescription": "كل جلسة مجدولة خلال الـ24 ساعة القادمة لديها اتصال Zoom فعّال.",
+    "noActivityTitle": "لا يوجد نشاط حديث",
+    "noActivityDescription": "ستظهر أحداث تكامل Zoom هنا عند ربط الأكاديميات وتشغيل الجلسات.",
+    "exploreHeading": "استكشاف"
+  },
+  "connections": {
+    "title": "اتصالات Zoom",
+    "subtitle": "الأكاديميات التي ربطت Zoom، وتلك التي تحتاج إلى انتباه.",
+    "searchPlaceholder": "ابحث عن أكاديمية أو مؤسسة",
+    "academy": "الأكاديمية",
+    "organization": "المؤسسة",
+    "status": "الحالة",
+    "account": "حساب Zoom",
+    "connectedAt": "تاريخ الربط",
+    "lastChecked": "آخر فحص",
+    "emptyTitle": "لا توجد اتصالات مطابقة",
+    "emptyDescription": "جرّب بحثاً أو تصفية مختلفة."
+  },
+  "sessions": {
+    "title": "الجلسات المباشرة",
+    "subtitle": "الحالة التشغيلية للجلسات عبر جميع الأكاديميات.",
+    "searchPlaceholder": "ابحث عن عنوان الجلسة",
+    "session": "الجلسة",
+    "academy": "الأكاديمية",
+    "start": "تبدأ",
+    "status": "الحالة",
+    "provisioning": "اجتماع Zoom",
+    "recording": "التسجيل",
+    "atRiskOnly": "المعرّضة للخطر فقط",
+    "provisioned": "تم الإنشاء",
+    "notProvisioned": "لم يُنشأ",
+    "recordingOff": "متوقف",
+    "emptyTitle": "لا توجد جلسات مطابقة",
+    "emptyDescription": "جرّب بحثاً أو تصفية مختلفة."
+  },
+  "connectionStatus": {
+    "connected": "متصل",
+    "not_connected": "غير متصل",
+    "expired": "منتهي الصلاحية",
+    "revoked": "ملغى",
+    "error": "خطأ",
+    "reconnect_required": "يتطلب إعادة ربط"
+  },
+  "sessionStatus": {
+    "draft": "مسودة",
+    "scheduled": "مجدولة",
+    "live": "مباشرة",
+    "ended": "منتهية",
+    "cancelled": "ملغاة",
+    "failed": "فاشلة"
+  },
+  "recordingStatus": {
+    "requested": "مطلوب",
+    "processing": "قيد المعالجة",
+    "available": "متاح",
+    "failed": "فشل",
+    "pending": "قيد الانتظار"
+  },
+  "risk": {
+    "unprovisioned": "لا يوجد اجتماع Zoom",
+    "not_connected": "Zoom غير مربوط",
+    "revoked": "تم إلغاء Zoom",
+    "expired": "انتهت صلاحية Zoom",
+    "error": "خطأ في Zoom",
+    "reconnect_required": "يتطلب إعادة ربط",
+    "unknown": "معرّضة للخطر"
+  },
+  "attention": {
+    "connection.revoked": "أكاديميات تم إلغاء وصول Zoom لديها",
+    "connection.reconnect_required": "أكاديميات يجب أن تعيد ربط Zoom",
+    "connection.expired": "أكاديميات انتهت صلاحية تفويض Zoom لديها",
+    "connection.error": "أكاديميات لديها خطأ في اتصال Zoom",
+    "session.failed": "جلسات فشلت",
+    "session.unprovisioned": "جلسات بلا اجتماع Zoom",
+    "event.failed": "أحداث Webhook فشلت معالجتها",
+    "event.unmatched": "أحداث Webhook تعذّر على Atlas نسبتها",
+    "session.at_risk": "جلسات قادمة معرّضة للخطر"
+  },
+  "action": {
+    "live_provider.connected": "تم ربط Zoom",
+    "live_provider.disconnected": "تم فصل Zoom",
+    "live_provider.deauthorized": "ألغى العميل وصول Zoom",
+    "live_session.created": "تم إنشاء جلسة مباشرة",
+    "live_session.published": "تم نشر جلسة مباشرة"
+  },
+  "reason": {
+    "app_deauthorized": "تمت الإزالة في Zoom",
+    "refresh_failed": "فشل تجديد الرمز",
+    "refresh_token_expired": "انتهت صلاحية التفويض",
+    "connection_failed": "تعذّر الوصول إلى Zoom"
+  },
+  "filters": {
+    "all": "الكل"
+  },
+  "pagination": {
+    "summary": "صفحة {{page}} من {{totalPages}} · {{totalItems}} إجمالاً",
+    "previous": "السابق",
+    "next": "التالي"
+  },
+  "nav": {
+    "connections": "الاتصالات",
+    "sessions": "الجلسات المباشرة",
+    "attendance": "الحضور",
+    "recordings": "التسجيلات",
+    "events": "Webhooks والأحداث",
+    "health": "الصحة والحوادث",
+    "activity": "النشاط"
+  },
+  "attendance": {
+    "title": "الحضور",
+    "subtitle": "صحة التسوية عبر جميع الأكاديميات.",
+    "session": "الجلسة",
+    "academy": "الأكاديمية",
+    "state": "الحالة",
+    "participants": "المشاركون",
+    "reconciledAt": "تمت التسوية",
+    "attempts": "{{count}} محاولات",
+    "emptyTitle": "لا توجد جلسات مطابقة",
+    "emptyDescription": "جرّب تصفية مختلفة."
+  },
+  "reconciliation": {
+    "reconciled": "تمت التسوية",
+    "pending": "قيد الانتظار",
+    "failing": "متعثّرة",
+    "not_due": "غير مستحقة"
+  },
+  "recordings": {
+    "title": "التسجيلات",
+    "subtitle": "دورة حياة التسجيل عبر جميع الأكاديميات.",
+    "session": "الجلسة",
+    "academy": "الأكاديمية",
+    "status": "الحالة",
+    "files": "الملفات",
+    "quota": "الحصة",
+    "created": "أُنشئ",
+    "quotaConsumed": "محتسب",
+    "quotaFree": "غير محتسب",
+    "emptyTitle": "لا توجد تسجيلات مطابقة",
+    "emptyDescription": "جرّب تصفية مختلفة."
+  },
+  "events": {
+    "title": "Webhooks والأحداث",
+    "subtitle": "تسليم أحداث Zoom ومعالجتها.",
+    "event": "الحدث",
+    "status": "الحالة",
+    "academy": "الأكاديمية",
+    "session": "الجلسة",
+    "received": "استُلم",
+    "emptyTitle": "لا توجد أحداث مطابقة",
+    "emptyDescription": "جرّب تصفية مختلفة."
+  },
+  "eventStatus": {
+    "received": "مستلَم",
+    "processed": "معالَج",
+    "unmatched": "غير منسوب",
+    "failed": "فشل"
+  },
+  "health": {
+    "title": "الصحة والحوادث",
+    "subtitle": "الظروف التشغيلية الحالية التي تحتاج إلى انتباه.",
+    "allClearTitle": "كل شيء سليم",
+    "allClearDescription": "لا توجد مشكلات في اتصال Zoom أو الجلسات أو الأحداث تحتاج إلى انتباه حالياً."
+  },
+  "activity": {
+    "title": "النشاط",
+    "subtitle": "أحداث تكامل Zoom، الأحدث أولاً.",
+    "emptyTitle": "لا يوجد نشاط",
+    "emptyDescription": "ستظهر أحداث التكامل هنا."
+  },
+  "academyDetail": {
+    "title": "تفاصيل Zoom للأكاديمية",
+    "subtitle": "الصورة التشغيلية الكاملة لـ Zoom لأكاديمية واحدة.",
+    "sessionsHeading": "الجلسات المباشرة",
+    "attendanceHeading": "الحضور",
+    "recordingsHeading": "التسجيلات",
+    "upcoming": "قادمة",
+    "atRisk": "معرّضة للخطر",
+    "quota": "الجلسات المسجّلة",
+    "unlimited": "غير محدود",
+    "notFoundTitle": "الأكاديمية غير موجودة",
+    "notFoundDescription": "هذه الأكاديمية غير موجودة أو لا تملك بيانات Zoom."
+  }
+}

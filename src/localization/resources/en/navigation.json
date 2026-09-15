@@ -80,7 +80,16 @@
     "liveSessions": "Live Sessions",
     "liveSessionsList": "Sessions",
     "liveSessionsRecordings": "Recordings",
-    "liveSessionsConnection": "Connection"
+    "liveSessionsConnection": "Connection",
+    "platformZoom": "Zoom",
+    "platformZoomOverview": "Overview",
+    "platformZoomConnections": "Connections",
+    "platformZoomSessions": "Live sessions",
+    "platformZoomAttendance": "Attendance",
+    "platformZoomRecordings": "Recordings",
+    "platformZoomEvents": "Webhooks & events",
+    "platformZoomHealth": "Health & incidents",
+    "platformZoomActivity": "Activity"
   },
   "account": {
     "menu": "Account menu",

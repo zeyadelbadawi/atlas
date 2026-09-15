@@ -168,6 +168,23 @@ export const DASHBOARD_ROUTES = {
 
   platformRolesPermissions: '/dashboard/platform/roles-permissions',
 
+  /*
+    Zoom Operations Center (P50) — a Platform Owner operations surface, not
+    an academy one. Nested under `platform/` like every other operator
+    area, and deliberately distinct from the academy-facing
+    `add-ons/live-sessions/*` routes: one is "is Zoom healthy across
+    Atlas", the other is "configure my own academy's Zoom".
+  */
+  platformZoom: '/dashboard/platform/zoom',
+  platformZoomConnections: '/dashboard/platform/zoom/connections',
+  platformZoomSessions: '/dashboard/platform/zoom/live-sessions',
+  platformZoomAttendance: '/dashboard/platform/zoom/attendance',
+  platformZoomRecordings: '/dashboard/platform/zoom/recordings',
+  platformZoomEvents: '/dashboard/platform/zoom/events',
+  platformZoomHealth: '/dashboard/platform/zoom/health',
+  platformZoomActivity: '/dashboard/platform/zoom/activity',
+  platformZoomAcademyDetail: '/dashboard/platform/zoom/academies/:academyId',
+
   platformAuditLog: '/dashboard/platform/audit-log',
   platformAuditLogDetail: '/dashboard/platform/audit-log/:eventId',
 
