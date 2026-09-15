@@ -219,7 +219,32 @@
     "lessonDeleted": "تم حذف الدرس",
     "lessonError": "فشل حفظ الدرس",
     "reorderError": "فشل حفظ الترتيب الجديد",
-    "loadError": "فشل تحميل المنهج"
+    "loadError": "فشل تحميل المنهج",
+    "addContent": "إضافة محتوى",
+    "addExistingQuiz": "إضافة اختبار موجود",
+    "addExistingAssignment": "إضافة واجب موجود",
+    "emptyUnit": "هذه الوحدة فارغة",
+    "emptyUnitDescription": "أضف دروسًا أو اختبارات أو واجبات لبناء تسلسل هذه الوحدة.",
+    "itemType": {
+      "lesson": "درس",
+      "quiz": "اختبار",
+      "assignment": "واجب",
+      "liveSession": "جلسة مباشرة"
+    },
+    "itemMenu": {
+      "actions": "إجراءات العنصر",
+      "removeFromUnit": "إزالة من الوحدة",
+      "liveSessionDeferred": "الجلسات المباشرة قريبًا"
+    },
+    "attach": {
+      "quizTitle": "إضافة اختبار موجود",
+      "assignmentTitle": "إضافة واجب موجود",
+      "emptyTitle": "لا يوجد ما يُضاف",
+      "emptyDescription": "كل الاختبارات والواجبات في هذه الدورة موجودة بالفعل ضمن وحدة. أنشئ المزيد من صفحاتها الخاصة.",
+      "inAnotherUnit": "في وحدة أخرى",
+      "addAction": "إضافة",
+      "error": "تعذّر تحديث الوحدة"
+    }
   },
   "settings": {
     "title": "إعدادات الدورة",

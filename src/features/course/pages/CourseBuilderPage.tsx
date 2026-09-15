@@ -50,6 +50,7 @@ import {
 } from '../hooks';
 import { SectionFormDialog } from '../components/SectionFormDialog';
 import { LessonFormDialog } from '../components/LessonFormDialog';
+import { UnitCurriculum } from '../components/UnitCurriculum';
 import { LiveSessionCurriculumBlock } from '@features/live-sessions';
 import {
   getLessonStatusLabelKey,
@@ -435,124 +436,26 @@ export default function CourseBuilderPage(): JSX.Element {
                   </CardHeader>
 
                   <CardContent className="space-y-3">
-                    {lessons.length === 0 ? (
-                      <EmptyState
-                        titleKey="course:builder.emptySectionLessons"
-                        descriptionKey="course:builder.emptySectionLessonsDescription"
-                        className="py-6"
-                        primaryAction={{
-                          labelKey: 'course:builder.addLesson',
-                          onAction: () =>
-                            setLessonDialog({
-                              mode: 'create',
-                              sectionId: section.id,
-                            }),
-                          icon: Plus,
-                        }}
-                      />
-                    ) : (
-                      <ol className="space-y-2">
-                        {lessons.map((lesson, lessonIndex) => {
-                          const ContentIcon =
-                            CONTENT_TYPE_ICON[lesson.contentType];
-                          return (
-                            <li
-                              key={lesson.id}
-                              className="flex items-center justify-between gap-3 rounded-lg border border-border p-3"
-                            >
-                              <div className="flex min-w-0 items-center gap-3">
-                                <ContentIcon
-                                  className="size-4 shrink-0 text-muted-foreground"
-                                  aria-hidden
-                                />
-                                <span className="truncate text-sm font-medium text-foreground">
-                                  {lessonIndex + 1}. {lesson.title}
-                                </span>
-                                <StatusBadge
-                                  labelKey={getLessonStatusLabelKey(
-                                    lesson.status
-                                  )}
-                                  tone={getLessonStatusTone(lesson.status)}
-                                />
-                              </div>
-
-                              <div className="flex shrink-0 items-center gap-1">
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  disabled={lessonIndex === 0}
-                                  onClick={() =>
-                                    handleMoveLesson(section, lessonIndex, 'up')
-                                  }
-                                  aria-label={t(
-                                    'course:builder.lessonMenu.moveUp'
-                                  )}
-                                >
-                                  <ArrowUp className="size-4" aria-hidden />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  disabled={lessonIndex === lessons.length - 1}
-                                  onClick={() =>
-                                    handleMoveLesson(
-                                      section,
-                                      lessonIndex,
-                                      'down'
-                                    )
-                                  }
-                                  aria-label={t(
-                                    'course:builder.lessonMenu.moveDown'
-                                  )}
-                                >
-                                  <ArrowDown className="size-4" aria-hidden />
-                                </Button>
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      aria-label={t(
-                                        'course:builder.lessonMenu.edit'
-                                      )}
-                                    >
-                                      <MoreHorizontal
-                                        className="size-4"
-                                        aria-hidden
-                                      />
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end">
-                                    <DropdownMenuItem
-                                      onClick={() =>
-                                        setLessonDialog({
-                                          mode: 'edit',
-                                          sectionId: section.id,
-                                          lesson,
-                                        })
-                                      }
-                                    >
-                                      {t('course:builder.lessonMenu.edit')}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                      className="text-destructive focus:text-destructive"
-                                      onClick={() =>
-                                        void handleDeleteLesson(
-                                          section.id,
-                                          lesson
-                                        )
-                                      }
-                                    >
-                                      {t('course:builder.lessonMenu.delete')}
-                                    </DropdownMenuItem>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              </div>
-                            </li>
-                          );
-                        })}
-                      </ol>
-                    )}
+                    {/*
+                      P52 — the unified, ordered curriculum of this unit:
+                      lessons + quizzes + assignments in ONE sequence the
+                      author can reorder freely. Live Sessions render in the
+                      deferred block below (Coming Soon), never installable.
+                    */}
+                    <UnitCurriculum
+                      academyId={academyId ?? ''}
+                      courseId={courseId ?? ''}
+                      section={section}
+                      onAddLesson={(sectionId) =>
+                        setLessonDialog({ mode: 'create', sectionId })
+                      }
+                      onEditLesson={(sectionId, lesson) =>
+                        setLessonDialog({ mode: 'edit', sectionId, lesson })
+                      }
+                      onDeleteLesson={(sectionId, lesson) =>
+                        void handleDeleteLesson(sectionId, lesson)
+                      }
+                    />
 
                     {/*
                       Phase 12 — Live Sessions are a first-class curriculum
@@ -566,24 +469,6 @@ export default function CourseBuilderPage(): JSX.Element {
                       courseId={courseId ?? ''}
                       sectionId={section.id}
                     />
-
-                    <div className="flex flex-wrap gap-2">
-                      {lessons.length > 0 && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            setLessonDialog({
-                              mode: 'create',
-                              sectionId: section.id,
-                            })
-                          }
-                        >
-                          <Plus className="size-4" strokeWidth={2} aria-hidden />
-                          {t('course:builder.addLesson')}
-                        </Button>
-                      )}
-                    </div>
                   </CardContent>
                 </Card>
               </li>

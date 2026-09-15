@@ -219,7 +219,32 @@
     "lessonDeleted": "Lesson deleted",
     "lessonError": "Failed to save lesson",
     "reorderError": "Failed to save the new order",
-    "loadError": "Failed to load curriculum"
+    "loadError": "Failed to load curriculum",
+    "addContent": "Add content",
+    "addExistingQuiz": "Add existing quiz",
+    "addExistingAssignment": "Add existing assignment",
+    "emptyUnit": "This unit is empty",
+    "emptyUnitDescription": "Add lessons, quizzes or assignments to build this unit's sequence.",
+    "itemType": {
+      "lesson": "Lesson",
+      "quiz": "Quiz",
+      "assignment": "Assignment",
+      "liveSession": "Live Session"
+    },
+    "itemMenu": {
+      "actions": "Item actions",
+      "removeFromUnit": "Remove from unit",
+      "liveSessionDeferred": "Live Sessions coming soon"
+    },
+    "attach": {
+      "quizTitle": "Add an existing quiz",
+      "assignmentTitle": "Add an existing assignment",
+      "emptyTitle": "Nothing to add",
+      "emptyDescription": "Every quiz or assignment for this course is already in a unit. Create more from their own pages.",
+      "inAnotherUnit": "In another unit",
+      "addAction": "Add",
+      "error": "Couldn't update the unit"
+    }
   },
   "settings": {
     "title": "Course Settings",

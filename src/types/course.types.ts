@@ -76,8 +76,36 @@ export interface CourseSection {
   /** Position within the course, 0-based. */
   readonly order: number;
   readonly lessons: readonly CourseLesson[];
+  /**
+   * P52 — the unified, ordered curriculum of this unit (lessons + quizzes +
+   * assignments in one shared order). Present on the student curriculum read;
+   * the authoring builder loads items per-unit via `getUnitItems`.
+   */
+  readonly items?: readonly CurriculumItem[];
   readonly createdAt: string;
   readonly updatedAt: string;
+}
+
+/** The type of a unified curriculum item (P52). */
+export type CurriculumItemType = 'lesson' | 'quiz' | 'assignment' | 'live_session';
+
+/** One item in a unit's unified ordered sequence — a projection over the existing entities. */
+export interface CurriculumItem {
+  readonly id: string;
+  readonly type: CurriculumItemType;
+  readonly title: string;
+  readonly order: number;
+  readonly status: string;
+  readonly sectionId: string;
+}
+
+/** A course-level quiz/assignment that can be attached to a unit. */
+export interface AvailableCurriculumItem {
+  readonly id: string;
+  readonly type: 'quiz' | 'assignment';
+  readonly title: string;
+  readonly status: string;
+  readonly sectionId: string | null;
 }
 
 /** Curriculum-shape summary, used by list views that don't load full sections. */

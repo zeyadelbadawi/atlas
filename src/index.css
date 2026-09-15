@@ -296,6 +296,32 @@
 
     --border: 214 20% 91%;
     --input: 214 20% 91%;
+
+    /* ------------------------------------------------------------------
+     * CLOSING THE TOKEN BOUNDARY (Academy website branding leak fix).
+     *
+     * Dashboard-origin components (shadcn Button/Badge/etc.) rendered on a
+     * public site read the GENERIC accent tokens below. Left undefined here
+     * they fell through to Atlas's own `:root`/`.dark` values, so a
+     * public-site button/badge showed the Atlas brand colour — and flipped
+     * DARK whenever the admin's dashboard was in dark mode. Defining them on
+     * the scope keeps every public surface on the site's own palette
+     * regardless of the dashboard theme.
+     *
+     * `--secondary`/`--accent`/`--destructive` are neutral by design (these
+     * are subtle surfaces, not the brand); the ACADEMY BRAND colour is
+     * injected dynamically onto `--primary`/`--ring` by `WebsiteThemeScope`
+     * (per-academy, so two academies never share a palette). Brand
+     * secondary/accent remain available explicitly via `--website-secondary`
+     * / `--website-accent`.
+     * ------------------------------------------------------------------ */
+    --secondary: 210 20% 97%;
+    --secondary-foreground: 222 22% 12%;
+    --accent: 210 20% 96%;
+    --accent-foreground: 222 22% 12%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --primary-foreground: 0 0% 100%;
   }
 }
 

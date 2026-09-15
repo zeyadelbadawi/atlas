@@ -25,6 +25,19 @@ import {
   WEBSITE_SHADOW_VALUES,
 } from '../utils/website-theme-tokens.utils';
 
+/**
+ * Shifts an `"H S% L%"` triplet's lightness for a hover shade — matches
+ * `WebsiteBrandBridge`'s own approach so scope-level and bridge-level hover
+ * shades agree.
+ */
+function shiftLightness(hslTriplet: string, deltaPercent: number): string {
+  const match = /^(-?[\d.]+)\s+([\d.]+)%\s+([\d.]+)%$/.exec(hslTriplet.trim());
+  if (!match) return hslTriplet;
+  const [, h, sat, l] = match;
+  const nextLightness = Math.min(100, Math.max(0, Number(l) + deltaPercent));
+  return `${h} ${sat}% ${nextLightness}%`;
+}
+
 export interface WebsiteThemeScopeProps {
   readonly theme: WebsiteThemeDefinition;
   readonly brand?: Pick<
@@ -99,6 +112,21 @@ export function WebsiteThemeScope({
           WEBSITE_SECTION_PADDING_VALUES[resolved.spacing],
         '--website-container-width':
           WEBSITE_CONTAINER_WIDTH_VALUES[resolved.containerWidth],
+
+        /**
+         * BRAND COLOUR ONTO THE GENERIC ACCENT TOKENS. Dashboard-origin
+         * components (Button/Badge/etc.) rendered on the public site read
+         * these; mapping them to the academy's own brand here — for the whole
+         * scope, not just where `WebsiteBrandBridge` wraps — is what stops
+         * them from showing the Atlas brand colour (or a dark-mode version of
+         * it). Per-academy by construction: `resolved.primary` is this
+         * academy's own brand, so no two academies share a palette. Neutral
+         * accent tokens (`--secondary`/`--accent`/`--destructive`) are set
+         * statically on `.website-theme-scope` in `index.css`.
+         */
+        '--primary': resolved.primary,
+        '--primary-hover': shiftLightness(resolved.primary, -6),
+        '--ring': resolved.primary,
       }) as CSSProperties,
     [resolved]
   );

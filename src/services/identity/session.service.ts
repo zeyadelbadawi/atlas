@@ -22,6 +22,23 @@ import type {
 
 export class SessionService {
   /**
+   * Single-flight guard for token refresh (session-inactivity bug fix).
+   *
+   * Refresh tokens ROTATE server-side (`auth.service.refresh`): presenting
+   * the same token twice makes the second call fail with a denylisted-token
+   * 401. Multiple initiators can want a refresh at once — the 401 response
+   * interceptor, the IdentityProvider proactive-expiry effect,
+   * `refreshSession`, and `restore` — so without coordination two of them
+   * race on the same rotating token and one loses, which is exactly the
+   * "next request fails after the tab was idle, until a reload" bug. Every
+   * refresh funnels through `refresh()`, so coalescing concurrent calls into
+   * ONE in-flight refresh here guarantees the rotating token is presented
+   * exactly once. It weakens nothing: rotation, denylist and JWT validation
+   * are unchanged; this only stops the client racing itself.
+   */
+  private refreshInFlight: Promise<Session> | null = null;
+
+  /**
    * Signs in a user with credentials.
    *
    * @param credentials Sign-in credentials.
@@ -154,6 +171,18 @@ export class SessionService {
    * @returns The new session with refreshed tokens.
    */
   public async refresh(refreshToken: string): Promise<Session> {
+    // Coalesce concurrent refreshes (see `refreshInFlight`'s doc comment).
+    if (this.refreshInFlight) {
+      return this.refreshInFlight;
+    }
+    this.refreshInFlight = this.performRefresh(refreshToken).finally(() => {
+      this.refreshInFlight = null;
+    });
+    return this.refreshInFlight;
+  }
+
+  /** The actual refresh round-trip — always invoked through the single-flight `refresh`. */
+  private async performRefresh(refreshToken: string): Promise<Session> {
     const response = await authenticationService.refreshToken({ refreshToken });
 
     const tokens = tokenService.createMetadata(

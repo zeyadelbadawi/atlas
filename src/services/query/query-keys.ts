@@ -136,6 +136,10 @@ export const courseKeys = {
     [...courseKeys.all, 'categories', academyId] as const,
   sections: (academyId: string | undefined, courseId: string) =>
     [...courseKeys.all, 'sections', academyId, courseId] as const,
+  unitItems: (academyId: string | undefined, courseId: string, sectionId: string) =>
+    [...courseKeys.all, 'unit-items', academyId, courseId, sectionId] as const,
+  availableContent: (academyId: string | undefined, courseId: string) =>
+    [...courseKeys.all, 'available-content', academyId, courseId] as const,
 } as const;
 
 /**

@@ -12,9 +12,11 @@ import type { ReadOptions, WriteOptions } from '@services';
 import { resourcePath, toCollectionParams } from '@api';
 import type {
   AssignCourseInstructorPayload,
+  AvailableCurriculumItem,
   Course,
   CourseCategory,
   CourseLesson,
+  CurriculumItem,
   CourseListQuery,
   CourseSection,
   CreateCourseLessonPayload,
@@ -363,6 +365,77 @@ export class CourseService extends BaseService {
         'lessons',
         'order'
       ),
+      payload,
+      options
+    );
+  }
+  // ---- Unified unit curriculum (P52) ----------------------------------
+
+  /** The unified, ordered curriculum of one unit (author view). */
+  async getUnitItems(
+    academyId: string,
+    courseId: string,
+    sectionId: string,
+    options?: ReadOptions
+  ): Promise<CurriculumItem[]> {
+    return this.client.get<CurriculumItem[]>(
+      this.coursesPath(academyId, courseId, 'sections', sectionId, 'items'),
+      options
+    );
+  }
+
+  /** Course-level quizzes/assignments available to attach to a unit. */
+  async getAvailableContent(
+    academyId: string,
+    courseId: string,
+    options?: ReadOptions
+  ): Promise<AvailableCurriculumItem[]> {
+    return this.client.get<AvailableCurriculumItem[]>(
+      this.coursesPath(academyId, courseId, 'available-content'),
+      options
+    );
+  }
+
+  /** Attach an existing quiz/assignment to a unit. Returns the unit's new item list. */
+  async attachUnitItem(
+    academyId: string,
+    courseId: string,
+    sectionId: string,
+    payload: { type: 'quiz' | 'assignment'; itemId: string },
+    options?: WriteOptions
+  ): Promise<CurriculumItem[]> {
+    return this.client.post<CurriculumItem[], typeof payload>(
+      this.coursesPath(academyId, courseId, 'sections', sectionId, 'items', 'attach'),
+      payload,
+      options
+    );
+  }
+
+  /** Detach a quiz/assignment from a unit (it survives as course-level content). */
+  async detachUnitItem(
+    academyId: string,
+    courseId: string,
+    sectionId: string,
+    payload: { type: 'quiz' | 'assignment'; itemId: string },
+    options?: WriteOptions
+  ): Promise<CurriculumItem[]> {
+    return this.client.post<CurriculumItem[], typeof payload>(
+      this.coursesPath(academyId, courseId, 'sections', sectionId, 'items', 'detach'),
+      payload,
+      options
+    );
+  }
+
+  /** Persists a new unified item order within a unit (mixed content types). */
+  async reorderUnitItems(
+    academyId: string,
+    courseId: string,
+    sectionId: string,
+    payload: ReorderItemsPayload,
+    options?: WriteOptions
+  ): Promise<void> {
+    await this.client.patch<void, ReorderItemsPayload>(
+      this.coursesPath(academyId, courseId, 'sections', sectionId, 'items', 'order'),
       payload,
       options
     );

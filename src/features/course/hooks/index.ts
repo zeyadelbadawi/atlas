@@ -31,4 +31,11 @@ export type { UpdateCourseLessonVariables } from './useUpdateCourseLesson';
 export { useDeleteCourseLesson } from './useDeleteCourseLesson';
 export type { DeleteCourseLessonVariables } from './useDeleteCourseLesson';
 export { useReorderCourseLessons } from './useReorderCourseLessons';
+export {
+  useUnitItems,
+  useAvailableContent,
+  useAttachUnitItem,
+  useDetachUnitItem,
+  useReorderUnitItems,
+} from './useUnitCurriculum';
 export type { ReorderCourseLessonsVariables } from './useReorderCourseLessons';
