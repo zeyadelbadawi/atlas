@@ -774,6 +774,11 @@ export const platformZoomKeys = {
     [...platformZoomKeys.all, 'academy', academyId] as const,
 };
 
+export const platformAddOnKeys = {
+  all: ['platform-add-ons'] as const,
+  list: (query: unknown) => [...platformAddOnKeys.all, 'list', query] as const,
+};
+
 export const liveSessionKeys = {
   all: ['live-sessions'] as const,
   status: (academyId: string | undefined) =>

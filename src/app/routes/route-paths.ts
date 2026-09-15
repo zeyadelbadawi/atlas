@@ -197,6 +197,9 @@ export const DASHBOARD_ROUTES = {
 
   platformPlanCatalog: '/dashboard/platform/plans',
 
+  /** Add-ons Catalog Management (P51) — Platform Owner controls the customer-store publication state of every add-on. */
+  platformAddOns: '/dashboard/platform/add-ons',
+
   /** The Academy's own media library. Academy-scoped by route, because the assets themselves are academy-owned. */
   academyMedia: '/dashboard/academy/:academyId/media',
 

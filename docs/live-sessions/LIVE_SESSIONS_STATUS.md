@@ -88,17 +88,24 @@ re-enable it.
 - [ ] Final launch approval
 
 ## 8. Re-enable instructions (where the Coming Soon state is controlled)
-The customer-facing deferral is controlled in **two** places; both must be
-flipped to re-open the feature. No secrets are involved.
+As of P51 the customer-facing "Coming Soon" state is **backend-authoritative
+and database-driven** — `add_ons.catalog_status` for `live-sessions` is
+`coming_soon`. The old frontend/backend deferral constants
+(`src/config/deferred-add-ons.ts`,
+`atlas-backend/src/live-sessions/constants/deferred-add-ons.constants.ts`)
+were **removed**; the store now reads `comingSoon`/`catalogStatus` straight
+from the API. No secrets are involved.
 
-1. **Frontend feature flag** — `src/config/feature-flags.config.ts`:
-   set `liveSessions: true`. This restores the customer Live Sessions
-   navigation (the nav entry is gated on `featureFlag: 'liveSessions'`).
-2. **Deferred add-on key** — remove `'live-sessions'` from
-   `src/config/deferred-add-ons.ts` **and** from the backend
-   `atlas-backend/src/live-sessions/constants/deferred-add-ons.constants.ts`
-   (the backend is the authoritative gate for install/enable/purchase/use).
+1. **Publish the add-on** — set `live-sessions` to `published` from the
+   SaaS Owner **Add-ons Management** page (`/dashboard/platform/add-ons`),
+   or directly set `add_ons.catalog_status = 'published'`. This is the single
+   authoritative switch: the store immediately shows normal Install/Purchase
+   and the backend permits install/enable/purchase/use for entitled tenants.
+2. **Frontend feature flag (optional nav)** — `src/config/feature-flags.config.ts`:
+   set `liveSessions: true` to restore the customer Live Sessions navigation
+   entry (gated on `featureFlag: 'liveSessions'`). This is independent of the
+   catalog state and does not gate access.
 
-After flipping both and deploying: the store shows normal Install/Purchase,
-the nav returns, and the backend permits install/enable/use for entitled
-tenants. Then work the Launch checklist (§7).
+After publishing (and, if desired, restoring the nav) and deploying, work the
+Launch checklist (§7). To disable again, set the catalog status back to
+`coming_soon` (or `draft`) — see `SAAS_OWNER_ADD_ONS_MANAGEMENT.md`.

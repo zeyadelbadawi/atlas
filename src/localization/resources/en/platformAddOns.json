@@ -1,0 +1,44 @@
+{
+  "title": "Add-ons Management",
+  "subtitle": "Control which add-ons customers can see and install in the store. This is separate from what any academy has installed.",
+  "searchPlaceholder": "Search add-ons",
+  "changeStatusFor": "Change catalog status for {{name}}",
+  "emptyTitle": "No add-ons match",
+  "emptyDescription": "No add-on matches the current search and filter.",
+  "filters": {
+    "all": "All"
+  },
+  "status": {
+    "draft": "Draft",
+    "coming_soon": "Coming Soon",
+    "published": "Published"
+  },
+  "columns": {
+    "addOn": "Add-on",
+    "description": "Description",
+    "catalogStatus": "Catalog Status",
+    "installCount": "Installs",
+    "enabledCount": "Enabled",
+    "updatedAt": "Updated",
+    "actions": "Actions"
+  },
+  "impact": {
+    "draft": "Customers will not see this add-on in the store at all, and it cannot be installed. Academies that already have it keep it.",
+    "coming_soon": "Customers will see this add-on in the store with a \"Coming Soon\" label, but cannot install it yet.",
+    "published": "Customers will see this add-on in the store and can install it under the usual entitlement rules. Publishing does not install or enable it for anyone."
+  },
+  "dialog": {
+    "title": "Change catalog status for {{name}}",
+    "subtitle": "This moves the add-on from {{from}} to {{to}} for every customer.",
+    "confirm": "Apply change",
+    "applying": "Applying…"
+  },
+  "toast": {
+    "statusChanged": "Catalog status updated."
+  },
+  "pagination": {
+    "summary": "Page {{page}} of {{totalPages}} · {{totalItems}} add-ons",
+    "previous": "Previous",
+    "next": "Next"
+  }
+}

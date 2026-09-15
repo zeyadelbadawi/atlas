@@ -151,6 +151,8 @@ export interface AddOn {
   readonly pricing?: PlanPricingMetadata;
   /** Implemented but customer launch deferred: show "Coming Soon", block purchase. */
   readonly comingSoon?: boolean;
+  /** Authoritative catalog publication state. Draft add-ons are never sent to customers. */
+  readonly catalogStatus?: 'coming_soon' | 'published';
 }
 
 /**

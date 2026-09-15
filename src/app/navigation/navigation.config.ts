@@ -39,6 +39,7 @@ import {
   Plug,
   Layers,
   Radio,
+  PackageCheck,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem, NavigationSection } from '@types';
@@ -699,6 +700,17 @@ export function getDashboardNavigation(
           labelKey: 'navigation:items.platformPlanCatalog',
           path: DASHBOARD_ROUTES.platformPlanCatalog,
           icon: Boxes,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+        },
+        {
+          // Add-ons Catalog Management (P51). Platform-owner only at every
+          // level; `PlatformAddOnsController` is the server-side boundary,
+          // this nav entry only decides what a platform owner is shown.
+          id: 'platform-add-ons',
+          labelKey: 'navigation:items.platformAddOns',
+          path: DASHBOARD_ROUTES.platformAddOns,
+          icon: PackageCheck,
           requiresAuth: true,
           requiredRoles: ['platform_owner'],
         },

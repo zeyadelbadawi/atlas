@@ -335,6 +335,9 @@ const PlatformSupportDetailPage = lazy(
 const PlatformPlanCatalogPage = lazy(
   () => import('@features/platform/pages/PlatformPlanCatalogPage')
 );
+const PlatformAddOnsPage = lazy(
+  () => import('@features/platform-add-ons/pages/PlatformAddOnsPage')
+);
 
 const WebsiteOverviewPage = lazy(
   () => import('@features/website/pages/WebsiteOverviewPage')
@@ -1716,6 +1719,18 @@ export function AppRouter(): JSX.Element {
                   requiredRoles={['platform_owner']}
                 >
                   <PlatformPlanCatalogPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformAddOns}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformAddOnsPage />
                 </RouteGuard>
               }
             />
