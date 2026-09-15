@@ -129,7 +129,7 @@ export default function CourseAssignmentsPage(): JSX.Element {
       }
       toast({
         title: t('course:assignmentAuthoring.error'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }
@@ -152,7 +152,7 @@ export default function CourseAssignmentsPage(): JSX.Element {
     } catch {
       toast({
         title: t('course:assignmentAuthoring.error'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }

@@ -38,6 +38,11 @@ export { useUnsavedChanges } from './useUnsavedChanges';
 export type { UseUnsavedChangesOptions } from './useUnsavedChanges';
 export { useFileUpload } from './useFileUpload';
 export type { FileUploadOptions, UseFileUploadResult } from './useFileUpload';
+export { useSlugSuggestion } from './useSlugSuggestion';
+export type {
+  UseSlugSuggestionOptions,
+  UseSlugSuggestionResult,
+} from './useSlugSuggestion';
 export { useFilePicker } from './useFilePicker';
 export type { FilePickerOptions, UseFilePickerResult } from './useFilePicker';
 export { useSearch } from './useSearch';

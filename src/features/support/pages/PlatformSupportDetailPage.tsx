@@ -33,7 +33,9 @@ import {
   getSupportCasePriorityTone,
   getSupportCaseStatusTone,
 } from '../utils/support-status.utils';
+import { SupportAttachmentImage } from '../components/SupportAttachmentImage';
 import type { SupportCaseStatus } from '@types';
+import { cn, MIRROR_IN_RTL } from '@utils';
 
 const STATUS_VALUES: readonly SupportCaseStatus[] = [
   'open',
@@ -206,7 +208,20 @@ export default function PlatformSupportDetailPage(): JSX.Element {
                       )}
                     </span>
                   </div>
-                  <p className="mt-2 text-sm text-foreground">{message.body}</p>
+                  <p className="mt-2 text-sm text-foreground" dir="auto">
+                    {message.body}
+                  </p>
+
+                  {/* P53 — the agent sees the customer's screenshot through
+                      the SAME authenticated route the customer uses; the
+                      `..._platform_select` RLS policy is what grants it. */}
+                  {(message.attachments ?? []).length > 0 ? (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {message.attachments.map((item) => (
+                        <SupportAttachmentImage key={item.id} attachment={item} />
+                      ))}
+                    </div>
+                  ) : null}
                 </li>
               ))}
             </ul>
@@ -227,7 +242,7 @@ export default function PlatformSupportDetailPage(): JSX.Element {
                     onClick={handleReply}
                     disabled={postReply.isPending || !replyBody.trim()}
                   >
-                    <Send className="size-4" strokeWidth={2} aria-hidden />
+                    <Send className={cn('size-4', MIRROR_IN_RTL)} strokeWidth={2} aria-hidden />
                     {t('support:detail.sendReply')}
                   </Button>
                 </div>

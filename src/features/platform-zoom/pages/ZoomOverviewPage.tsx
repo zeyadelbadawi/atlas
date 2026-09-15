@@ -131,7 +131,7 @@ export default function ZoomOverviewPage(): JSX.Element {
             className="flex items-center gap-1 text-sm text-primary hover:underline"
           >
             {t('platformZoom:overview.viewSessions')}
-            <ArrowRight className="size-3.5 rtl:rotate-180" aria-hidden />
+            <ArrowRight className="size-3.5 rtl:-scale-x-100" aria-hidden />
           </Link>
         </div>
         {data && data.upcomingAtRisk.length > 0 ? (
@@ -207,7 +207,7 @@ export default function ZoomOverviewPage(): JSX.Element {
               className="flex items-center justify-between rounded-lg border border-border bg-surface p-4 text-sm font-medium text-foreground hover:border-primary"
             >
               {t(`platformZoom:nav.${link.key}`)}
-              <ArrowRight className="size-4 rtl:rotate-180 text-muted-foreground" aria-hidden />
+              <ArrowRight className="size-4 rtl:-scale-x-100 text-muted-foreground" aria-hidden />
             </Link>
           ))}
         </div>

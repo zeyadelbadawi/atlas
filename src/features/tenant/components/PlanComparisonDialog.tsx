@@ -37,7 +37,8 @@ import {
   STORAGE_LIMIT_KEYS,
 } from '../constants/tenant.constants';
 import { formatLimitValue } from '../utils/entitlement.utils';
-import type { Plan } from '@types';
+import { resolvePlanDescription, resolvePlanName } from '../utils/plan-text.utils';
+import type { LanguageCode, Plan } from '@types';
 
 /**
  * "Fail safely" defense-in-depth (never the source of truth — the backend
@@ -110,8 +111,16 @@ export function PlanComparisonDialog({
   onStartTrial,
   notice,
 }: PlanComparisonDialogProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const unlimitedLabel = t('tenant:common.unlimited');
+  /*
+    P54 — plan names/descriptions are CATALOG DATA, so they are resolved
+    from the row's own `{ en, ar }` text with the same helper the website
+    CMS uses, never from a translation key. `resolveLocalizedText` accepts
+    a plain string too, so a plan seeded before P54 falls back to its
+    English `name` instead of rendering blank.
+  */
+  const locale = i18n.language as LanguageCode;
   const sortedPlans = plans
     ? [...plans].sort((a, b) => a.displayOrder - b.displayOrder)
     : undefined;
@@ -163,8 +172,13 @@ export function PlanComparisonDialog({
                 >
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between gap-2">
-                      <h4 className="font-display text-base font-semibold text-foreground">
-                        {plan.name}
+                      <h4
+                        className="font-display text-base font-semibold text-foreground"
+                        // A plan name is business content that may be in
+                        // either language regardless of the UI language.
+                        dir="auto"
+                      >
+                        {resolvePlanName(plan, locale)}
                       </h4>
                       {plan.key === currentPlanKey ? (
                         <StatusBadge
@@ -173,9 +187,9 @@ export function PlanComparisonDialog({
                         />
                       ) : null}
                     </div>
-                    {plan.description ? (
-                      <p className="text-sm text-muted-foreground">
-                        {plan.description}
+                    {resolvePlanDescription(plan, locale) ? (
+                      <p className="text-sm text-muted-foreground" dir="auto">
+                        {resolvePlanDescription(plan, locale)}
                       </p>
                     ) : null}
                   </div>
@@ -257,11 +271,11 @@ export function PlanComparisonDialog({
                         >
                           {plan.trialDurationDays
                             ? t('tenant:planComparison.tryFreeForDays', {
-                                plan: plan.name,
+                                plan: resolvePlanName(plan, locale),
                                 count: plan.trialDurationDays,
                               })
                             : t('tenant:planComparison.tryFree', {
-                                plan: plan.name,
+                                plan: resolvePlanName(plan, locale),
                               })}
                         </Button>
                       ) : null}

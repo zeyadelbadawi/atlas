@@ -29,6 +29,25 @@ export interface SupportCaseSummary {
   readonly updatedAt: string;
 }
 
+/**
+ * P53 — one image attached to a message.
+ *
+ * `url` is a RELATIVE Atlas path (`/support-cases/attachments/:id`), the
+ * same rule `MediaAssetSummary.url` follows — but unlike media, this path
+ * is AUTHENTICATED: a ticket is private to the person who filed it, so the
+ * bytes are fetched with the session's own credentials and the backend's
+ * RLS policies decide. That is why an attachment cannot simply be dropped
+ * into an `<img src>`; see `useSupportAttachmentUrl`.
+ */
+export interface SupportCaseAttachment {
+  readonly id: string;
+  readonly fileName: string;
+  readonly mimeType: string;
+  readonly sizeBytes: number;
+  readonly url: string;
+  readonly createdAt: string;
+}
+
 /** One message in a case's conversation thread. */
 export interface SupportCaseMessage {
   readonly id: string;
@@ -36,6 +55,24 @@ export interface SupportCaseMessage {
   readonly authorRole: 'requester' | 'agent';
   readonly body: string;
   readonly createdAt: string;
+  /** P53 — empty for a text-only message and for every message filed before attachments existed. */
+  readonly attachments: readonly SupportCaseAttachment[];
+}
+
+/**
+ * P53 — the optional image on a new ticket or reply.
+ *
+ * Reuses `UploadMediaAssetPayload`'s base64 data-URL shape verbatim (minus
+ * `altText`): Atlas has exactly one client→server file transport, and a
+ * support attachment rides it rather than introducing multipart for one
+ * feature. The backend re-derives the real kind and size from the decoded
+ * bytes, so these fields are labels, never facts.
+ */
+export interface SupportAttachmentInput {
+  readonly fileName: string;
+  readonly mimeType: string;
+  readonly sizeBytes: number;
+  readonly dataUrl: string;
 }
 
 /** The full detail view, including the conversation thread. */
@@ -49,6 +86,8 @@ export interface UpdateSupportCaseStatusPayload {
 
 export interface PostSupportCaseReplyPayload {
   readonly body: string;
+  /** P53 — optional. A reply is still a message; an image never replaces the text. */
+  readonly attachment?: SupportAttachmentInput;
 }
 
 /**
@@ -62,4 +101,6 @@ export interface PostSupportCaseReplyPayload {
 export interface CreateSupportCasePayload {
   readonly subject: string;
   readonly description: string;
+  /** P53 — optional image evidence for the ticket's first message. */
+  readonly attachment?: SupportAttachmentInput;
 }

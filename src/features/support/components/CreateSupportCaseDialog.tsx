@@ -7,6 +7,7 @@
  * offering a control that silently does nothing would be worse than not
  * offering one.
  */
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -29,6 +30,8 @@ import { useDirtyGuard } from '@features/unsaved-changes';
 import { useServerValidation } from '@forms';
 import { buildPath, DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { useCreateSupportCase } from '../hooks';
+import { SupportAttachmentField } from './SupportAttachmentField';
+import type { SupportAttachmentInput } from '@types';
 
 /** Mirrors the backend's `MAX_SUPPORT_SUBJECT_LENGTH`/`MAX_SUPPORT_DESCRIPTION_LENGTH`. */
 const createSupportCaseSchema = z.object({
@@ -58,6 +61,16 @@ export function CreateSupportCaseDialog({
     defaultValues: { subject: '', description: '' },
   });
 
+  /*
+    P53 — the optional image lives in local state rather than in the form
+    schema. It is not a validated text field: its real validation is the
+    server's magic-byte check, and `SupportAttachmentField` already owns the
+    picking/preview/clearing behaviour. Putting a base64 data URL through
+    `react-hook-form` would also mean the dirty-state comparison and every
+    re-render carry a multi-megabyte string.
+  */
+  const [attachment, setAttachment] = useState<SupportAttachmentInput>();
+
   // Losing a half-written support ticket to a stray outside click is
   // exactly the kind of small, avoidable frustration this guard exists
   // for. Closing a dialog is not a navigation, so the route blocker
@@ -70,6 +83,7 @@ export function CreateSupportCaseDialog({
     if (nextOpen) return onOpenChange(true);
     void dirtyGuard.requestClose(() => {
       form.reset({ subject: '', description: '' });
+      setAttachment(undefined);
       onOpenChange(false);
     });
   };
@@ -78,12 +92,17 @@ export function CreateSupportCaseDialog({
     if (!organizationId) return;
     const created = await createCase.mutateAsync({
       organizationId,
-      payload: values,
+      // `attachment` is omitted entirely when none was chosen, rather than
+      // sent as `undefined`/`null` — the DTO's `@IsOptional()` treats an
+      // absent key as "no attachment", and the request stays the exact
+      // shape a text-only ticket has always had.
+      payload: attachment ? { ...values, attachment } : values,
     });
     // Reset BEFORE navigating: otherwise the form is still dirty when the
     // route changes and the unsaved-changes dialog fires on a ticket the
     // user just successfully filed.
     form.reset({ subject: '', description: '' });
+    setAttachment(undefined);
     onOpenChange(false);
     navigate(buildPath(DASHBOARD_ROUTES.supportDetail, { caseId: created.id }));
   });
@@ -133,6 +152,23 @@ export function CreateSupportCaseDialog({
               </p>
             ) : null}
           </div>
+
+          <div className="space-y-2">
+            <Label>{t('support:attachment.label')}</Label>
+            <SupportAttachmentField
+              value={attachment}
+              onChange={setAttachment}
+              disabled={createCase.isPending}
+            />
+          </div>
+
+          {/* A server-side refusal (wrong real type, over the real ceiling)
+              surfaces here rather than silently doing nothing. */}
+          {createCase.error ? (
+            <p className="text-sm text-destructive" data-testid="support-create-error">
+              {t('support:create.failed')}
+            </p>
+          ) : null}
 
           <DialogFooter>
             <Button

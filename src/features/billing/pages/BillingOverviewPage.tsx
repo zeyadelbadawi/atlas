@@ -27,6 +27,7 @@ import { useTenantSubscription } from '@features/tenant';
 import { getPaymentStatusTone } from '../utils/payment-status.utils';
 import { formatMoney } from '../utils/money.utils';
 import { TERMINAL_PAYMENT_STATUSES } from '@types';
+import { cn, MIRROR_IN_RTL } from '@utils';
 
 export default function BillingOverviewPage(): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -133,7 +134,7 @@ export default function BillingOverviewPage(): JSX.Element {
               onClick={() => navigate(DASHBOARD_ROUTES.tenantSubscription)}
             >
               {t('payments:overview.manageSubscription')}
-              <ArrowRight className="size-4" strokeWidth={2} aria-hidden />
+              <ArrowRight className={cn('size-4', MIRROR_IN_RTL)} strokeWidth={2} aria-hidden />
             </Button>
           </CardContent>
         </Card>
@@ -150,7 +151,7 @@ export default function BillingOverviewPage(): JSX.Element {
               onClick={() => navigate(DASHBOARD_ROUTES.tenantBillingPayments)}
             >
               {t('payments:overview.viewAllPayments')}
-              <ArrowRight className="size-4" strokeWidth={2} aria-hidden />
+              <ArrowRight className={cn('size-4', MIRROR_IN_RTL)} strokeWidth={2} aria-hidden />
             </Button>
           </CardHeader>
           <CardContent>

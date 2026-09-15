@@ -190,7 +190,7 @@ export default function CourseEditPage(): JSX.Element {
     } catch {
       toast({
         title: t('course:edit.error'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }

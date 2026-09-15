@@ -96,7 +96,7 @@ export default function BlogEditorPage(): JSX.Element {
   useServerValidation(form, isEditMode ? updateError : createError);
   useUnsavedChanges({
     isDirty: form.formState.isDirty,
-    messageKey: 'common:unsavedChanges',
+    messageKey: 'common:unsavedChanges.description',
   });
 
   useEffect(() => {
@@ -219,7 +219,7 @@ export default function BlogEditorPage(): JSX.Element {
     } catch {
       toast({
         title: t('blog:editor.saveError'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }

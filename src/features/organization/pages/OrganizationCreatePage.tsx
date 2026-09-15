@@ -87,7 +87,7 @@ export default function OrganizationCreatePage(): JSX.Element {
       }
       toast({
         title: t('organization:create.error'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }

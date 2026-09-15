@@ -195,7 +195,7 @@ export function AnnouncementManagerPanel({
     } catch {
       toast({
         title: t('announcements:manage.saveError'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }

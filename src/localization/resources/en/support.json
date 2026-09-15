@@ -36,7 +36,12 @@
     "replyPlaceholder": "Type your reply…",
     "replyFailed": "Your reply could not be sent. Please try again.",
     "send": "Send reply",
-    "closedNotice": "This ticket is closed. If you still need help, please open a new ticket."
+    "closedNotice": "This ticket is closed. If you still need help, please open a new ticket.",
+    "assignedTo": "Assigned to",
+    "unassigned": "Unassigned",
+    "conversationTitle": "Conversation",
+    "sendReply": "Send reply",
+    "statusUpdated": "Ticket status updated."
   },
   "center": {
     "title": "Support",
@@ -56,6 +61,21 @@
     "descriptionLabel": "What is happening?",
     "descriptionPlaceholder": "Describe the problem, what you expected, and what you saw instead.",
     "descriptionInvalid": "Please describe the problem in at least 10 characters.",
-    "submit": "Submit ticket"
+    "submit": "Submit ticket",
+    "failed": "Your ticket could not be submitted. Please check the details and try again."
+  },
+  "attachment": {
+    "label": "Image (optional)",
+    "add": "Attach an image",
+    "replace": "Replace image",
+    "remove": "Remove image",
+    "help": "PNG, JPG, GIF or WebP, up to 10 MB.",
+    "loading": "Loading image",
+    "unavailable": "Image unavailable",
+    "errors": {
+      "type": "That file is not a supported image. Use PNG, JPG, GIF or WebP.",
+      "size": "That image is larger than 10 MB. Please attach a smaller one.",
+      "read": "That file could not be read. Please try again or pick another image."
+    }
   }
 }

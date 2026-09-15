@@ -35,5 +35,10 @@
     "duration": "Please enter a duration greater than zero.",
     "year": "Please enter a valid four-digit year.",
     "phone": "Please enter a valid phone number, including the country code if it is international."
+  },
+  "upload": {
+    "multipleNotAllowed": "Only one file can be uploaded here.",
+    "fileTooLarge": "That file is too large.",
+    "invalidType": "That file type is not supported."
   }
 }

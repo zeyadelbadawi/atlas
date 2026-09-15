@@ -212,7 +212,7 @@ export default function AcademyBrandingPage(): JSX.Element {
     } catch (error) {
       toast({
         title: t('academy:branding.error'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }

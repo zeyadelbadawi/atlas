@@ -32,6 +32,8 @@ import {
 } from '../hooks';
 import { formatLimitValue, getDaysRemaining } from '../utils/entitlement.utils';
 import { getSubscriptionStatusTone } from '../utils/subscription-status.utils';
+import { resolvePlanDescription, resolvePlanName } from '../utils/plan-text.utils';
+import { cn, MIRROR_IN_RTL } from '@utils';
 
 export default function TenantDashboardPage(): JSX.Element {
   const { t } = useTranslation();
@@ -136,10 +138,15 @@ export default function TenantDashboardPage(): JSX.Element {
         <Card>
           <CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0">
             <div>
-              <CardTitle>{subscription.plan.name}</CardTitle>
-              {subscription.plan.description ? (
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {subscription.plan.description}
+              {/* P54 — catalog text in the active language; `dir="auto"`
+                  because a plan name is business content that may be in
+                  either language regardless of the UI language. */}
+              <CardTitle dir="auto">
+                {resolvePlanName(subscription.plan, language)}
+              </CardTitle>
+              {resolvePlanDescription(subscription.plan, language) ? (
+                <p className="mt-1 text-sm text-muted-foreground" dir="auto">
+                  {resolvePlanDescription(subscription.plan, language)}
                 </p>
               ) : null}
             </div>
@@ -175,7 +182,7 @@ export default function TenantDashboardPage(): JSX.Element {
               onClick={() => navigate(DASHBOARD_ROUTES.tenantSubscription)}
             >
               {t('tenant:dashboard.viewSubscription')}
-              <ChevronRight className="size-4" strokeWidth={2} aria-hidden />
+              <ChevronRight className={cn('size-4', MIRROR_IN_RTL)} strokeWidth={2} aria-hidden />
             </Button>
           </CardContent>
         </Card>
@@ -192,7 +199,7 @@ export default function TenantDashboardPage(): JSX.Element {
               onClick={() => navigate(DASHBOARD_ROUTES.tenantUsage)}
             >
               {t('tenant:dashboard.viewUsage')}
-              <ChevronRight className="size-4" strokeWidth={2} aria-hidden />
+              <ChevronRight className={cn('size-4', MIRROR_IN_RTL)} strokeWidth={2} aria-hidden />
             </Button>
           </div>
           {usage ? (
@@ -242,7 +249,7 @@ export default function TenantDashboardPage(): JSX.Element {
               onClick={() => navigate(DASHBOARD_ROUTES.tenantAddOns)}
             >
               {t('tenant:dashboard.viewAddOns')}
-              <ChevronRight className="size-4" strokeWidth={2} aria-hidden />
+              <ChevronRight className={cn('size-4', MIRROR_IN_RTL)} strokeWidth={2} aria-hidden />
             </Button>
           </CardHeader>
           <CardContent>

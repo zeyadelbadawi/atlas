@@ -21,6 +21,7 @@ import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useAcademy, useOnboardingProgress } from '../hooks';
 import { OnboardingProgress } from '../components/OnboardingProgress';
 import { ACADEMY_ONBOARDING_STEPS } from '../constants/onboarding.constants';
+import { cn, MIRROR_IN_RTL } from '@utils';
 
 export default function AcademyOnboardingPage(): JSX.Element {
   const { t } = useTranslation();
@@ -141,7 +142,7 @@ export default function AcademyOnboardingPage(): JSX.Element {
                   {t('academy:onboarding.continueTo', {
                     step: t(activeStep.titleKey),
                   })}
-                  <ArrowRight className="size-4" strokeWidth={2} aria-hidden />
+                  <ArrowRight className={cn('size-4', MIRROR_IN_RTL)} strokeWidth={2} aria-hidden />
                 </Button>
                 <Button
                   variant="outline"

@@ -119,7 +119,7 @@ export default function AcademySettingsPage(): JSX.Element {
     } catch (error) {
       toast({
         title: t('academy:settings.error'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }

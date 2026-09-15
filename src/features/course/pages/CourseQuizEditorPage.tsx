@@ -161,7 +161,7 @@ export default function CourseQuizEditorPage(): JSX.Element {
       }
       toast({
         title: t('course:quizAuthoring.error'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }
@@ -186,7 +186,7 @@ export default function CourseQuizEditorPage(): JSX.Element {
     } catch {
       toast({
         title: t('course:quizAuthoring.error'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }
@@ -421,7 +421,7 @@ export default function CourseQuizEditorPage(): JSX.Element {
           !(
             isApiError(mutationError) && mutationError.kind === 'validation'
           ) ? (
-            <p className="text-sm text-destructive">{t('errors:generic')}</p>
+            <p className="text-sm text-destructive">{t('errors:generic.description')}</p>
           ) : null}
         </form>
       </FormProvider>

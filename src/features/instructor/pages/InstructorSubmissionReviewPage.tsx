@@ -75,7 +75,7 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
   useServerValidation(form, mutationError);
   useUnsavedChanges({
     isDirty: form.formState.isDirty,
-    messageKey: 'common:unsavedChanges',
+    messageKey: 'common:unsavedChanges.description',
   });
 
   useEffect(() => {
@@ -103,7 +103,7 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
     } catch {
       toast({
         title: t('instructor:grading.error'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }

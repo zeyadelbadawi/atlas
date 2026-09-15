@@ -131,7 +131,7 @@ export default function CourseListPage(): JSX.Element {
     } catch {
       toast({
         title: t('course:settings.deleteCourseError'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }

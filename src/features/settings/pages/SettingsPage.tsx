@@ -17,20 +17,20 @@ export default function SettingsPage(): JSX.Element {
   return (
     <PageContainer>
       <PageHeader
-        titleKey="settings:page.title"
-        descriptionKey="settings:page.description"
+        titleKey="settings:title"
+        descriptionKey="settings:subtitle"
       />
 
       <Tabs defaultValue="general" className="space-y-6">
         <TabsList>
           <TabsTrigger value="general">
-            {t('settings:tabs.general')}
+            {t('settings:general.title')}
           </TabsTrigger>
           <TabsTrigger value="notifications">
-            {t('settings:tabs.notifications')}
+            {t('settings:notifications.title')}
           </TabsTrigger>
           <TabsTrigger value="security">
-            {t('settings:tabs.security')}
+            {t('settings:security.title')}
           </TabsTrigger>
         </TabsList>
 

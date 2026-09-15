@@ -18,6 +18,9 @@
  * `dir="ltr"` is visible in the source and survives tooling. Use the
  * function here only where markup cannot reach: a value interpolated into a
  * translated sentence, an `aria-label`, a `title`.
+ *
+ * This module also owns `MIRROR_IN_RTL`, the other half of bidi
+ * correctness: text that must NOT reorder, and glyphs that MUST.
  */
 
 /**
@@ -47,3 +50,31 @@ const POP_DIRECTIONAL_ISOLATE = '\u2069';
 export function isolateNumericExpression(expression: string): string {
   return `${LEFT_TO_RIGHT_ISOLATE}${expression}${POP_DIRECTIONAL_ISOLATE}`;
 }
+
+/**
+ * The class that mirrors a DIRECTIONAL icon for right-to-left reading.
+ *
+ * WHY A SHARED CONSTANT AND NOT A LITERAL. The convention already existed —
+ * `Breadcrumbs`, `Pagination` and `LessonPage` each wrote
+ * `rtl:-scale-x-100` by hand — but nothing made it discoverable, so roughly
+ * half the dashboard's directional icons were shipped unmirrored (a "next"
+ * chevron pointing away from the direction it moves you) and one area had
+ * independently invented `rtl:rotate-180` for the same job. Naming it once
+ * makes the correct thing greppable, reviewable, and the obvious thing to
+ * reach for.
+ *
+ * MIRROR, NOT ROTATE. For a chevron the two look identical, which is why
+ * the second convention went unnoticed. They are not equivalent: a Send
+ * paper-plane points up-and-forward, so mirroring gives up-and-forward in
+ * the other direction while a 180° rotation points it DOWN-and-backward.
+ * Reflection about the vertical axis is what "the same glyph, read the
+ * other way" actually means.
+ *
+ * WHAT NOT TO APPLY IT TO. Only glyphs whose horizontal direction carries
+ * the meaning: next/previous chevrons, flow and transition arrows, send,
+ * reply, indent, back. NOT icons that merely contain an asymmetry —
+ * a magnifier, a pencil, a logout door, an external-link box, a user
+ * silhouette, a play button in a media transport (which follows the
+ * timeline, not the text). Mirroring those makes them look broken.
+ */
+export const MIRROR_IN_RTL = 'rtl:-scale-x-100';

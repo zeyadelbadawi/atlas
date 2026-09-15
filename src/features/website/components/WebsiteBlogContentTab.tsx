@@ -41,7 +41,7 @@ export function WebsiteBlogContentTab(): JSX.Element {
             onClick={() => navigate(DASHBOARD_ROUTES.blog)}
           >
             {t('website:content.blog.manageAction')}
-            <ArrowRight className="size-4 rtl:rotate-180" aria-hidden />
+            <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />
           </Button>
         </CardContent>
       </Card>
@@ -63,7 +63,7 @@ export function WebsiteBlogContentTab(): JSX.Element {
             onClick={() => navigate(DASHBOARD_ROUTES.announcements)}
           >
             {t('website:content.announcements.manageAction')}
-            <ArrowRight className="size-4 rtl:rotate-180" aria-hidden />
+            <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />
           </Button>
         </CardContent>
       </Card>

@@ -330,7 +330,8 @@
       "desktop": "Desktop",
       "tablet": "Tablet",
       "mobile": "Mobile"
-    }
+    },
+    "localeLabel": "Language"
   },
   "publish": {
     "action": "Publish",

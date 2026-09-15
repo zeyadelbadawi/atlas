@@ -156,11 +156,11 @@ export function PublicLayout(): JSX.Element {
                 side={isRtl ? 'left' : 'right'}
                 className="w-[min(20rem,85vw)]"
               >
-                {/* `SheetHeader` ships `sm:text-left`, a physical alignment
-                    that mis-aligns Arabic. Overridden locally with the logical
-                    property rather than editing the shared primitive, which the
-                    dashboard also uses. */}
-                <SheetHeader className="text-start sm:text-start">
+                {/* The local `sm:text-left` override this used to need is
+                    gone: `SheetHeader` itself now uses the logical
+                    `sm:text-start` (P56), so every consumer aligns correctly
+                    instead of each one patching the same primitive. */}
+                <SheetHeader>
                   <SheetTitle>{t('layout:public.nav.menuTitle')}</SheetTitle>
                 </SheetHeader>
 

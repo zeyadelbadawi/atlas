@@ -72,7 +72,7 @@ export default function PlatformTrialPolicyPage(): JSX.Element {
     } catch {
       toast({
         title: t('tenant:platformAdmin.trialPolicy.error'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }

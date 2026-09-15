@@ -8,7 +8,8 @@
       "staff": "Staff",
       "courses": "Courses",
       "generalStorage": "General storage",
-      "videoStorage": "Video storage"
+      "videoStorage": "Video storage",
+      "recordedSessions": "Recorded sessions"
     },
     "features": {
       "cms": "Content management (CMS)",
@@ -21,7 +22,8 @@
       "customDomain": "Custom domain",
       "themes": "Themes",
       "multipleThemes": "Multiple themes",
-      "backup": "Backup"
+      "backup": "Backup",
+      "liveSessions": "Live sessions"
     },
     "subscriptionStatus": {
       "trialing": "Trialing",

@@ -116,7 +116,7 @@ export default function CourseQuizzesPage(): JSX.Element {
     } catch {
       toast({
         title: t('course:quizAuthoring.error'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }

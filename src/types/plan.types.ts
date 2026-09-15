@@ -7,6 +7,8 @@
  * NOT finalized here — `pricing` is display metadata only, and the actual
  * checkout/payment flow belongs to a future prompt.
  */
+import type { LocalizedText } from './website-content.types';
+
 
 /** A resource limit value. Explicit `'unlimited'` — never a magic number like 999999999. */
 export type LimitValue = number | 'unlimited';
@@ -97,8 +99,28 @@ export interface Plan {
   readonly id: string;
   /** Stable identifier used by Subscription/Add-on compatibility — never hardcoded in UI logic. */
   readonly key: string;
+  /**
+   * The English catalog name. Still authoritative for English and for
+   * anywhere a plan is referred to technically; `nameLocalized` is what the
+   * UI displays.
+   */
   readonly name: string;
   readonly description?: string;
+  /**
+   * P54 — bilingual catalog text from the `plans` row itself, in the same
+   * `{ en, ar }` `LocalizedText` shape the website CMS already uses.
+   *
+   * WHY THIS IS DATA AND NOT A TRANSLATION KEY. A plan is a catalog row
+   * Atlas can add to; a fourth plan must be translatable without a frontend
+   * release, so its Arabic lives beside its English in the database rather
+   * than in a bundled string table keyed by plan key.
+   *
+   * OPTIONAL BY DESIGN: a plan seeded before P54 has none, and
+   * `resolveLocalizedText` already falls back to a plain string — so the
+   * UI reads `nameLocalized ?? name` and always renders something.
+   */
+  readonly nameLocalized?: LocalizedText;
+  readonly descriptionLocalized?: LocalizedText;
   readonly status: PlanStatus;
   readonly displayOrder: number;
   readonly limits: PlanResourceLimits;

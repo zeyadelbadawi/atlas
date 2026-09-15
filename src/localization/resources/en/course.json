@@ -110,7 +110,8 @@
     "help": {
       "visibility": "Private courses are visible only to your staff. Public courses can appear on your academy website and be discovered by students.",
       "pricingType": "Free courses can be enrolled in directly. Paid courses require a completed purchase before a student gets access."
-    }
+    },
+    "slugSuggested": "Suggested from the course title. Edit it if you would prefer a different address."
   },
   "edit": {
     "title": "Edit Course",

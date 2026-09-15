@@ -91,7 +91,7 @@ export default function QuizPage(): JSX.Element {
     } catch {
       toast({
         title: t('learning:quiz.startError'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }
@@ -125,7 +125,7 @@ export default function QuizPage(): JSX.Element {
     } catch {
       toast({
         title: t('learning:quiz.submitError'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }

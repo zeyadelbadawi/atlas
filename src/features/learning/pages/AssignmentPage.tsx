@@ -147,7 +147,7 @@ export default function AssignmentPage(): JSX.Element {
     } catch {
       toast({
         title: t('learning:assignment.submitError'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }

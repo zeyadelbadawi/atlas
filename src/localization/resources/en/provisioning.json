@@ -74,7 +74,8 @@
         "title": "Start from a blank page",
         "description": "We'll set up the right pages and structure for your theme, ready for you to fill in. Best if you already know exactly what you want to say."
       }
-    }
+    },
+    "subdomainSuggested": "Suggested from your Academy name. Edit it if you would prefer a different address."
   },
   "history": {
     "title": "Academy Provisioning",

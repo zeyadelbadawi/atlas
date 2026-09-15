@@ -106,7 +106,7 @@ export default function CourseSettingsPage(): JSX.Element {
     } catch {
       toast({
         title: t('course:settings.publishError'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }
@@ -130,7 +130,7 @@ export default function CourseSettingsPage(): JSX.Element {
     } catch {
       toast({
         title: t('course:settings.unpublishError'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }
@@ -155,7 +155,7 @@ export default function CourseSettingsPage(): JSX.Element {
     } catch {
       toast({
         title: t('course:settings.deleteCourseError'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }

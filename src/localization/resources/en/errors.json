@@ -131,5 +131,14 @@
   },
   "addOns": {
     "comingSoon": "Live Sessions is coming soon and can’t be installed yet."
+  },
+  "course": {
+    "slugTaken": "That web address is already used by another course in this academy. Please choose a different one."
+  },
+  "support": {
+    "caseClosed": "This ticket is closed. Please open a new ticket if you still need help."
+  },
+  "mutation": {
+    "failed": "That action could not be completed. Please try again."
   }
 }

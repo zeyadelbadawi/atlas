@@ -33,7 +33,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
-import { useFilePicker, useUnsavedChanges } from '@hooks';
+import { useFilePicker, useSlugSuggestion, useUnsavedChanges } from '@hooks';
 import { useServerValidation } from '@forms';
 import { isApiError } from '@api';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
@@ -46,9 +46,11 @@ import {
   ALLOWED_COURSE_THUMBNAIL_TYPES,
   DEFAULT_COURSE_PRICING_CURRENCY,
   DEFAULT_COURSE_VISIBILITY,
+  MAX_COURSE_SLUG_LENGTH,
   MAX_COURSE_THUMBNAIL_FILE_SIZE,
 } from '../constants/course.constants';
 import type { BreadcrumbItem, Course, CoursePricing } from '@types';
+import { cn, MIRROR_IN_RTL } from '@utils';
 
 export default function CourseCreatePage(): JSX.Element {
   const { t } = useTranslation();
@@ -131,6 +133,27 @@ export default function CourseCreatePage(): JSX.Element {
 
   const pricingType = form.watch('pricingType');
 
+  /*
+    P55 — the URL slug follows the course title until the instructor edits
+    it. No availability endpoint is called here, deliberately: course slug
+    uniqueness is per-academy and is enforced by the `@@unique([academyId,
+    slug])` constraint, surfaced as a real 409 (`errors.course.slugTaken`)
+    the form already reports. Inventing a "check this course slug" API
+    would add a second, weaker uniqueness opinion that the database would
+    overrule anyway — and unlike a subdomain (globally unique, allocated
+    before provisioning runs), a colliding course slug is an ordinary
+    recoverable error at submit, not a wasted onboarding.
+  */
+  const titleValue = form.watch('title');
+  const slugValue = form.watch('slug');
+  const slugSuggestion = useSlugSuggestion({
+    title: titleValue,
+    slug: slugValue,
+    maxLength: MAX_COURSE_SLUG_LENGTH,
+    onSuggest: (next) =>
+      form.setValue('slug', next, { shouldDirty: true, shouldValidate: true }),
+  });
+
   const onSubmit = async (data: CreateCourseFormData) => {
     if (!academyId) return;
 
@@ -175,7 +198,7 @@ export default function CourseCreatePage(): JSX.Element {
       }
       toast({
         title: t('course:create.error'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }
@@ -220,7 +243,7 @@ export default function CourseCreatePage(): JSX.Element {
               }
             >
               {t('course:create.continueToBuilder')}
-              <ArrowRight className="size-4" strokeWidth={2} aria-hidden />
+              <ArrowRight className={cn('size-4', MIRROR_IN_RTL)} strokeWidth={2} aria-hidden />
             </Button>
           </CardContent>
         </Card>
@@ -280,10 +303,22 @@ export default function CourseCreatePage(): JSX.Element {
                       <Input
                         placeholder={t('course:create.slugPlaceholder')}
                         {...field}
+                        // A course slug is ASCII and appears in a URL, so it
+                        // reads left-to-right even on an Arabic page.
+                        dir="ltr"
+                        onChange={(event) => {
+                          // Latch before applying — see `useSlugSuggestion`.
+                          slugSuggestion.onSlugEdited();
+                          field.onChange(event);
+                        }}
                       />
                     </FormControl>
                     <FormDescription>
-                      {t('course:create.slugHelp')}
+                      {t(
+                        slugSuggestion.isCustomized
+                          ? 'course:create.slugHelp'
+                          : 'course:create.slugSuggested'
+                      )}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

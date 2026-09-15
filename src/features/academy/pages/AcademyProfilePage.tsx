@@ -118,7 +118,7 @@ export default function AcademyProfilePage(): JSX.Element {
     } catch (error) {
       toast({
         title: t('academy:profile.error'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }

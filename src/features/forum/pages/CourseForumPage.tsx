@@ -108,7 +108,7 @@ export default function CourseForumPage(): JSX.Element {
     } catch {
       toast({
         title: t('forum:list.createError'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }

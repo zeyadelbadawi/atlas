@@ -74,7 +74,7 @@ export default function NotificationsPage(): JSX.Element {
               {!summaryQuery.isLoading ? (
                 <Badge
                   variant="secondary"
-                  className="ml-2"
+                  className="ms-2"
                   data-atlas-numeric="true"
                 >
                   {unreadCount}
@@ -90,7 +90,7 @@ export default function NotificationsPage(): JSX.Element {
             onClick={() => markAllAsRead.mutate()}
             disabled={markAllAsRead.isPending || unreadCount === 0}
           >
-            <Check className="h-4 w-4 mr-2" />
+            <Check className="me-2 h-4 w-4" />
             {t('notifications:center.markAllRead')}
           </Button>
         </div>

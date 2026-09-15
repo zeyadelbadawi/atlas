@@ -84,7 +84,7 @@ export function CourseInstructorsCard({
                 : 'course:instructors.errors.generic';
       toast({
         title: t(key),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     } finally {

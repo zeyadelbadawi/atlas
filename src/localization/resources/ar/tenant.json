@@ -8,7 +8,8 @@
       "staff": "الموظفون",
       "courses": "الدورات",
       "generalStorage": "التخزين العام",
-      "videoStorage": "تخزين الفيديو"
+      "videoStorage": "تخزين الفيديو",
+      "recordedSessions": "الجلسات المسجّلة"
     },
     "features": {
       "cms": "إدارة المحتوى (CMS)",
@@ -21,7 +22,8 @@
       "customDomain": "نطاق مخصص",
       "themes": "القوالب",
       "multipleThemes": "قوالب متعددة",
-      "backup": "النسخ الاحتياطي"
+      "backup": "النسخ الاحتياطي",
+      "liveSessions": "الجلسات المباشرة"
     },
     "subscriptionStatus": {
       "trialing": "فترة تجريبية",

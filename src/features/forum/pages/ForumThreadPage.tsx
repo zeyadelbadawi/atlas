@@ -99,7 +99,7 @@ export default function ForumThreadPage(): JSX.Element {
     } catch {
       toast({
         title: t('forum:thread.replyError'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }

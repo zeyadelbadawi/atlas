@@ -102,7 +102,7 @@ export function UnitCurriculum({
     } catch {
       toast({
         title: t('course:builder.reorderError'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }
@@ -116,7 +116,7 @@ export function UnitCurriculum({
     } catch {
       toast({
         title: t('course:builder.attach.error'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }
@@ -129,7 +129,7 @@ export function UnitCurriculum({
     } catch {
       toast({
         title: t('course:builder.attach.error'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }

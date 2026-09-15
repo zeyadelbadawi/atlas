@@ -165,7 +165,7 @@ export default function LessonPage(): JSX.Element {
     } catch {
       toast({
         title: t('learning:lesson.completeError'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }

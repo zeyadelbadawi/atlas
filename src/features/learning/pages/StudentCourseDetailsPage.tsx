@@ -98,7 +98,7 @@ export default function StudentCourseDetailsPage(): JSX.Element {
       }
       toast({
         title: t('learning:details.enrollError'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }
@@ -252,7 +252,7 @@ export default function StudentCourseDetailsPage(): JSX.Element {
                   <>
                     <Button onClick={goToLearn}>
                       <ArrowRight
-                        className="size-4"
+                        className="size-4 rtl:-scale-x-100"
                         strokeWidth={2}
                         aria-hidden
                       />

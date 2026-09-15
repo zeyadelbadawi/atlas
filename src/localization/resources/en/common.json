@@ -44,7 +44,9 @@
     "showPassword": "Show password",
     "hidePassword": "Hide password",
     "goToHome": "Go to home",
-    "contactSupport": "Contact support"
+    "contactSupport": "Contact support",
+    "loading": "Loading…",
+    "saving": "Saving…"
   },
   "states": {
     "loading": "Loading your content…",
@@ -60,6 +62,10 @@
     "offline": {
       "title": "You are offline",
       "description": "Check your connection. Atlas will retry once you are back online."
+    },
+    "success": {
+      "title": "Saved",
+      "description": "Your changes have been saved."
     }
   },
   "table": {
@@ -116,11 +122,12 @@
     "trigger": "More information about this field"
   },
   "unsavedChanges": {
-    "title": "You have unsaved changes.",
-    "description": "You made changes that haven't been saved. Do you want to leave without saving?",
-    "stay": "Continue editing",
-    "leave": "Leave without saving",
-    "save": "Save changes",
+    "title": "Leave without saving?",
+    "description": "You have unsaved changes on this page. If you leave now they will be lost.",
+    "stay": "Stay on this page",
+    "leave": "Leave and discard",
+    "save": "Save and leave",
     "saving": "Saving…"
-  }
+  },
+  "by": "by"
 }

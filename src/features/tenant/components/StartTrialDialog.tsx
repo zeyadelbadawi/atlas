@@ -31,6 +31,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { formatDate } from '@utils';
 import type { LanguageCode, Plan } from '@types';
+import { resolvePlanName } from '../utils/plan-text.utils';
 
 export interface StartTrialDialogProps {
   readonly open: boolean;
@@ -53,6 +54,8 @@ export function StartTrialDialog({
 
   if (!plan) return null;
 
+  // P54 — the plan's own bilingual catalog text, not its English `name`.
+  const planName = resolvePlanName(plan, language);
   const days = plan.trialDurationDays;
 
   // Computed for display only. The authoritative end date is set by the
@@ -76,7 +79,7 @@ export function StartTrialDialog({
     },
     { icon: CreditCard, text: t('tenant:startTrial.factNoCard') },
     { icon: ShieldCheck, text: t('tenant:startTrial.factNoAutoCharge') },
-    { icon: Rocket, text: t('tenant:startTrial.factEntitlements', { plan: plan.name }) },
+    { icon: Rocket, text: t('tenant:startTrial.factEntitlements', { plan: planName }) },
   ];
 
   return (
@@ -84,12 +87,12 @@ export function StartTrialDialog({
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>
-            {t('tenant:startTrial.title', { plan: plan.name })}
+            {t('tenant:startTrial.title', { plan: planName })}
           </DialogTitle>
           <DialogDescription>
             {days === undefined
-              ? t('tenant:startTrial.subtitleNoDays', { plan: plan.name })
-              : t('tenant:startTrial.subtitle', { plan: plan.name, count: days })}
+              ? t('tenant:startTrial.subtitleNoDays', { plan: planName })
+              : t('tenant:startTrial.subtitle', { plan: planName, count: days })}
           </DialogDescription>
         </DialogHeader>
 
@@ -125,7 +128,7 @@ export function StartTrialDialog({
           <Button type="button" onClick={onConfirm} disabled={isSubmitting}>
             {isSubmitting
               ? t('tenant:trial.starting')
-              : t('tenant:startTrial.confirm', { plan: plan.name })}
+              : t('tenant:startTrial.confirm', { plan: planName })}
           </Button>
         </DialogFooter>
       </DialogContent>

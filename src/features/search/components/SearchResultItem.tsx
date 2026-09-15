@@ -5,7 +5,7 @@
  */
 import { useTranslation } from 'react-i18next';
 import { ChevronRight, FileText, User, Settings, Layers } from 'lucide-react';
-import { cn } from '@utils';
+import { cn, MIRROR_IN_RTL } from '@utils';
 import type { SearchResultItem as SearchResultItemType } from '@types';
 
 export interface SearchResultItemProps {
@@ -75,7 +75,11 @@ export function SearchResultItem({
       <ChevronRight
         className={cn(
           'size-4 shrink-0 text-muted-foreground transition-transform',
-          isSelected && 'translate-x-0.5'
+          MIRROR_IN_RTL,
+          // The nudge follows the reading direction too: `translate-x`
+          // alone would push the chevron BACKWARD in Arabic, away from the
+          // direction it points.
+          isSelected && 'translate-x-0.5 rtl:-translate-x-0.5'
         )}
         strokeWidth={2}
         aria-hidden

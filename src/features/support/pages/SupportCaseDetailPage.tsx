@@ -23,17 +23,21 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { cn } from '@utils';
+import { MIRROR_IN_RTL, cn } from '@utils';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { useMySupportCase, useReplyToMySupportCase } from '../hooks';
 import { getSupportCaseStatusTone } from '../utils/support-status.utils';
-import type { BreadcrumbItem } from '@types';
+import { SupportAttachmentField } from '../components/SupportAttachmentField';
+import { SupportAttachmentImage } from '../components/SupportAttachmentImage';
+import type { BreadcrumbItem, SupportAttachmentInput } from '@types';
 
 export default function SupportCaseDetailPage(): JSX.Element {
   const fmt = useDateFormatter();
   const { t } = useTranslation();
   const { caseId } = useParams<{ caseId: string }>();
   const [reply, setReply] = useState('');
+  /** P53 — see `CreateSupportCaseDialog` for why this is local state, not form state. */
+  const [attachment, setAttachment] = useState<SupportAttachmentInput>();
 
   const { data, isLoading, error, refetch } = useMySupportCase(caseId ?? '');
   const postReply = useReplyToMySupportCase();
@@ -71,11 +75,19 @@ export default function SupportCaseDetailPage(): JSX.Element {
 
   const handleSend = async () => {
     const body = reply.trim();
+    // `postReply.isPending` is the double-submission guard: the button is
+    // also disabled, but a keyboard repeat or a double click can fire twice
+    // before React re-renders, and sending the same image twice would put
+    // two copies in the thread and two objects in storage.
     if (!body || postReply.isPending) return;
-    await postReply.mutateAsync({ caseId: data.id, payload: { body } });
+    await postReply.mutateAsync({
+      caseId: data.id,
+      payload: attachment ? { body, attachment } : { body },
+    });
     // Cleared only after the server accepted it — clearing optimistically
-    // would lose the message if the request failed.
+    // would lose the message (and the chosen image) if the request failed.
     setReply('');
+    setAttachment(undefined);
   };
 
   return (
@@ -128,6 +140,17 @@ export default function SupportCaseDetailPage(): JSX.Element {
                 >
                   {message.body}
                 </p>
+
+                {/* P53 — the image sits UNDER the text it belongs to.
+                    `?? []` because a ticket filed before attachments
+                    existed has no such field in a cached response. */}
+                {(message.attachments ?? []).length > 0 ? (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {message.attachments.map((item) => (
+                      <SupportAttachmentImage key={item.id} attachment={item} />
+                    ))}
+                  </div>
+                ) : null}
               </CardContent>
             </Card>
           );
@@ -153,6 +176,11 @@ export default function SupportCaseDetailPage(): JSX.Element {
             placeholder={t('support:detail.replyPlaceholder')}
             onChange={(event) => setReply(event.target.value)}
           />
+          <SupportAttachmentField
+            value={attachment}
+            onChange={setAttachment}
+            disabled={postReply.isPending}
+          />
           {postReply.error ? (
             <p className="text-sm text-destructive">
               {t('support:detail.replyFailed')}
@@ -167,7 +195,7 @@ export default function SupportCaseDetailPage(): JSX.Element {
               {postReply.isPending ? (
                 <Loader2 className="size-4 animate-spin" aria-hidden />
               ) : (
-                <Send className="size-4" strokeWidth={2} aria-hidden />
+                <Send className={cn('size-4', MIRROR_IN_RTL)} strokeWidth={2} aria-hidden />
               )}
               {t('support:detail.send')}
             </Button>

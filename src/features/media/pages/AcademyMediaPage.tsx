@@ -341,10 +341,10 @@ export default function AcademyMediaPage(): JSX.Element {
             onClick={() => setPage((current) => Math.max(1, current - 1))}
             disabled={page <= 1}
           >
-            {t('common:pagination.previous')}
+            {t('common:pagination.previousPage')}
           </Button>
           <span className="text-sm text-muted-foreground">
-            {t('common:pagination.pageOf', { page, totalPages })}
+            {t('common:pagination.page', { page, totalPages })}
           </span>
           <Button
             variant="outline"
@@ -352,7 +352,7 @@ export default function AcademyMediaPage(): JSX.Element {
             onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
             disabled={page >= totalPages}
           >
-            {t('common:pagination.next')}
+            {t('common:pagination.nextPage')}
           </Button>
         </div>
       ) : null}

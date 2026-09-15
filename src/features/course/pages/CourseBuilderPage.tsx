@@ -172,7 +172,7 @@ export default function CourseBuilderPage(): JSX.Element {
       }
       toast({
         title: t('course:builder.sectionError'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }
@@ -195,7 +195,7 @@ export default function CourseBuilderPage(): JSX.Element {
     } catch {
       toast({
         title: t('course:builder.sectionError'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }
@@ -210,7 +210,7 @@ export default function CourseBuilderPage(): JSX.Element {
     } catch {
       toast({
         title: t('course:builder.reorderError'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }
@@ -256,7 +256,7 @@ export default function CourseBuilderPage(): JSX.Element {
       }
       toast({
         title: t('course:builder.lessonError'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }
@@ -282,7 +282,7 @@ export default function CourseBuilderPage(): JSX.Element {
     } catch {
       toast({
         title: t('course:builder.lessonError'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }
@@ -305,7 +305,7 @@ export default function CourseBuilderPage(): JSX.Element {
     } catch {
       toast({
         title: t('course:builder.reorderError'),
-        description: t('errors:generic'),
+        description: t('errors:generic.description'),
         variant: 'destructive',
       });
     }

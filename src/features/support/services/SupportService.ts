@@ -59,6 +59,30 @@ export class SupportService extends BaseService {
       options
     );
   }
+
+  /**
+   * P53 — fetches an attachment's bytes as a Blob.
+   *
+   * WHY THIS IS NOT AN `<img src>`. The attachment route is authenticated:
+   * Atlas authenticates with a bearer token on the axios client, not a
+   * cookie, so a browser-initiated image request would carry no
+   * credentials and be refused. Going through `apiClient` is also what
+   * makes the 401-refresh-retry interceptor apply — an attachment viewed
+   * after an access token expires reloads rather than breaking.
+   *
+   * Defined on BOTH services, deliberately, and pointing at the SAME path:
+   * one route serves requester and agent alike (the backend's RLS policies
+   * decide which rows exist for whom), so this is one URL, not two.
+   */
+  async getAttachmentBlob(
+    attachmentUrl: string,
+    options?: ReadOptions
+  ): Promise<Blob> {
+    return this.client.get<Blob>(attachmentUrl, {
+      ...options,
+      responseType: 'blob',
+    });
+  }
 }
 
 /**
@@ -128,6 +152,17 @@ export class MySupportService extends BaseService {
       payload,
       options
     );
+  }
+
+  /** P53 — see `SupportService.getAttachmentBlob`; the same route serves both sides. */
+  async getAttachmentBlob(
+    attachmentUrl: string,
+    options?: ReadOptions
+  ): Promise<Blob> {
+    return this.client.get<Blob>(attachmentUrl, {
+      ...options,
+      responseType: 'blob',
+    });
   }
 }
 

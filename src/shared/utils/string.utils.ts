@@ -5,6 +5,50 @@
  * text and never assume a single-byte character set.
  */
 
+/**
+ * Turns a human-entered title into a slug CANDIDATE.
+ *
+ * ONE GENERATOR, SHARED. Academy provisioning (`requestedSubdomain`) and
+ * Course creation (`slug`) both offer a suggestion derived from the title
+ * typed above them, and both must satisfy the same shape rule —
+ * `/^[a-z0-9]+(?:-[a-z0-9]+)*$/`, which every slug schema in this codebase
+ * independently declares. Writing the generator twice is how the two would
+ * drift, so it lives here and each caller keeps its OWN authoritative
+ * validation (the schemas are unchanged; this only proposes a value they
+ * then validate like any typed one).
+ *
+ * THIS IS NOT A SECOND VALIDATION SYSTEM. It proposes, it never approves:
+ * the zod schema still runs, the backend DTO still runs, and uniqueness is
+ * still decided by the availability endpoint or the database constraint.
+ *
+ * NON-LATIN INPUT DELIBERATELY YIELDS `''`, NOT A TRANSLITERATION. A
+ * subdomain is a DNS label and a course slug appears in a URL: both are
+ * ASCII by definition. Transliterating Arabic would mean inventing a
+ * romanization scheme, and a wrong one silently becomes a customer's
+ * permanent public address. So "أكاديمية النور" suggests nothing and the
+ * field stays empty for the owner to choose — while a mixed title like
+ * "أكاديمية ABC" still suggests "abc", because that part genuinely is what
+ * they wrote. An empty suggestion is never written into the field, so the
+ * user is simply left to type, exactly as before this feature existed.
+ *
+ * `maxLength` truncates, then re-trims separators so truncation can never
+ * leave a trailing hyphen — which would fail the very regex this exists to
+ * satisfy.
+ */
+export function slugifyTitle(title: string, maxLength = 100): string {
+  const base = title
+    .toLowerCase()
+    // Everything outside the allowed alphabet becomes a separator: spaces,
+    // punctuation, Arabic letters, emoji. Runs collapse to ONE hyphen, so
+    // "ABC   International  Academy" and "ABC — International Academy"
+    // both give "abc-international-academy".
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+  if (base.length <= maxLength) return base;
+  return base.slice(0, maxLength).replace(/-+$/g, '');
+}
+
 /** Collapses runs of whitespace and trims the result. */
 export function normalizeWhitespace(value: string): string {
   return value.replace(/\s+/g, ' ').trim();

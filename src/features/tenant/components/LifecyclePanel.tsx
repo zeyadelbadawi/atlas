@@ -44,6 +44,7 @@ import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { formatDate } from '@utils';
 import { useSubscriptionLifecycleState } from '../hooks/useSubscriptionLifecycleState';
 import type { LanguageCode, SubscriptionLifecycleState } from '@types';
+import { resolvePlanName } from '../utils/plan-text.utils';
 
 /**
  * How loudly to speak. Derived from the lifecycle, never from whether
@@ -95,7 +96,8 @@ function buildContent(
   t: (key: string, options?: Record<string, unknown>) => string,
   language: LanguageCode
 ): PanelContent | null {
-  const planName = state.plan?.name ?? '';
+  // P54 — the plan's bilingual catalog name, not its English `name`.
+  const planName = state.plan ? resolvePlanName(state.plan, language) : '';
 
   switch (state.lifecycle) {
     case 'no_organization':

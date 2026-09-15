@@ -26,6 +26,7 @@ import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { formatDate } from '@utils';
 import { useSubscriptionAccess } from '../hooks/useSubscriptionAccess';
 import type { LanguageCode } from '@types';
+import { resolvePlanName } from '../utils/plan-text.utils';
 
 export function SubscriptionRequiredBanner(): JSX.Element | null {
   const { t, i18n } = useTranslation();
@@ -66,7 +67,9 @@ export function SubscriptionRequiredBanner(): JSX.Element | null {
                 <dt className="opacity-80">
                   {t('tenant:subscriptionRequired.planLabel')}
                 </dt>
-                <dd className="font-medium">{subscription.plan.name}</dd>
+                <dd className="font-medium" dir="auto">
+                  {resolvePlanName(subscription.plan, language)}
+                </dd>
               </div>
             ) : null}
             {endedAt ? (

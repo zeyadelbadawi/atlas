@@ -32,8 +32,9 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useAuth, useUnsavedChanges } from '@hooks';
+import { useAuth, useSlugSuggestion, useUnsavedChanges } from '@hooks';
 import { useServerValidation } from '@forms';
+import { MAX_SUBDOMAIN_LENGTH } from '../constants/provisioning.constants';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import {
   getLimitGapAction,
@@ -97,6 +98,29 @@ export default function ProvisioningStartPage(): JSX.Element {
 
   const subdomainValue = form.watch('requestedSubdomain');
   const availability = useCheckSubdomainAvailability(subdomainValue);
+
+  /*
+    P55 — the Atlas address follows the Academy name until the owner edits
+    it themselves. `MAX_SUBDOMAIN_LENGTH` is passed so a suggestion can
+    never be born failing the very schema that validates it, and the
+    existing availability check below then runs against the suggestion
+    exactly as it does against a typed value — there is no separate
+    "is this suggestion free?" path.
+  */
+  const academyNameValue = form.watch('academyName');
+  const slugSuggestion = useSlugSuggestion({
+    title: academyNameValue,
+    slug: subdomainValue,
+    maxLength: MAX_SUBDOMAIN_LENGTH,
+    onSuggest: (next) =>
+      // `shouldDirty` so the unsaved-changes guard treats a suggested
+      // address like any other unsaved input; `shouldValidate` so an
+      // out-of-bounds suggestion surfaces immediately rather than at submit.
+      form.setValue('requestedSubdomain', next, {
+        shouldDirty: true,
+        shouldValidate: true,
+      }),
+  });
 
   const isLoading = usageQuery.isLoading || subscriptionQuery.isLoading;
 
@@ -258,7 +282,22 @@ export default function ProvisioningStartPage(): JSX.Element {
                     </FormLabel>
                     <FormControl>
                       <div className="flex items-center gap-2">
-                        <Input {...field} className="flex-1" />
+                        <Input
+                          {...field}
+                          className="flex-1"
+                          // `dir="ltr"` because a subdomain is always ASCII
+                          // and must read left-to-right even on an Arabic
+                          // page — otherwise the caret and the hyphens sit
+                          // on the wrong side of what the user is typing.
+                          dir="ltr"
+                          onChange={(event) => {
+                            // Latch FIRST, then apply: the edit must be
+                            // recorded before any re-render can let a
+                            // pending title change overwrite it.
+                            slugSuggestion.onSlugEdited();
+                            field.onChange(event);
+                          }}
+                        />
                         {field.value ? (
                           availability.isLoading ? (
                             <Loader2
@@ -280,7 +319,11 @@ export default function ProvisioningStartPage(): JSX.Element {
                       </div>
                     </FormControl>
                     <FormDescription>
-                      {t('provisioning:start.subdomainHelp')}
+                      {t(
+                        slugSuggestion.isCustomized
+                          ? 'provisioning:start.subdomainHelp'
+                          : 'provisioning:start.subdomainSuggested'
+                      )}
                     </FormDescription>
                     {field.value &&
                     availability.data?.status !== 'available' &&

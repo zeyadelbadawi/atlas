@@ -55,7 +55,7 @@ export default function ZoomHealthPage(): JSX.Element {
                           className="flex items-center gap-1 text-sm text-primary hover:underline"
                         >
                           {s.academyName}
-                          <ArrowRight className="size-3.5 rtl:rotate-180" aria-hidden />
+                          <ArrowRight className="size-3.5 rtl:-scale-x-100" aria-hidden />
                         </Link>
                       </li>
                     ))}
