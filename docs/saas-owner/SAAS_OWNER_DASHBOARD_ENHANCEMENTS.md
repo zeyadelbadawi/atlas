@@ -49,7 +49,9 @@ policies** so the owner can read a draft course's curriculum.
 
 ### Final status
 
-All code gates green. Full evidence and counts in §17. Deployment status in §18.
+**Deployed to production on 16 September 2026** — backend `94a65fe`, frontend
+`76d906f`, all four migrations applied, backend healthy. Full evidence and counts
+in §17; deployment and its one verification limitation in §18.
 
 ---
 
@@ -1022,9 +1024,85 @@ Verified in a live browser against the local stack, signed in as a platform owne
 
 ## 18. Production Deployment
 
-*Filled in at deploy time — see the deployment log appended below. Nothing in
-this section is claimed until the workflow has run and production has been
-checked.*
+Deployed **16 September 2026** to `https://atlass.dpdns.org`, backend first.
+
+### Commits
+
+| Repo | Commit | Subject |
+|---|---|---|
+| `atlas-backend` | **`94a65fe`** | P57/P58/P60: plan administration, audit detail, Global Courses console |
+| `atlas-front` | **`76d906f`** | P57/P59/P60: plan editor, Analysis routes, role separation, Global Courses |
+
+Both pushed to `main`; both previous heads were `271b912` / `8535d4c`.
+
+### Migrations applied
+
+From the backend Deploy run's own log (`docker compose run --rm backend npx
+prisma migrate deploy`), **89 migrations found, 4 applied**:
+
+```
+Applying migration `20261003000000_p57_plan_admin_version`
+Applying migration `20261004000000_p58_audit_changes_and_request_context`
+Applying migration `20261005000000_p60_course_creator_and_global_index`
+Applying migration `20261005010000_p60b_course_detail_platform_select`
+All migrations have been successfully applied.
+```
+
+The P60 backfill is idempotent (`AND c.created_by_id IS NULL`) and evidence-only,
+so it is safe to re-run and cannot fabricate a creator.
+
+### Workflow results
+
+| Workflow | Run | Result |
+|---|---|---|
+| Backend **Deploy** | `35056007240` | **success** (~10 min) |
+| Backend **CI** | `35056007337` | **failure — pre-existing infrastructure, not this code** |
+| Frontend **Deploy** | `35056750858` | **success** (~5 min) |
+
+**About the CI failure.** CI dies at the *"Start MinIO"* step:
+
+```
+docker: Error response from daemon: pull access denied for minio/minio,
+repository does not exist or may require 'docker login'
+Process completed with exit code 125
+```
+
+Docker Hub refuses the anonymous pull from GitHub Actions. It fails before a
+single test runs, and it failed identically on the **previous** commit
+(`271b912`, 24 s) as on this one (25 s). It is an image-pull/credentials problem
+in the CI environment, unrelated to any code here, and it does not gate Deploy
+(a separate workflow, which succeeded).
+
+### Production health
+
+From the Deploy log: `Container atlas-postgres-1 Healthy`,
+`Container atlas-redis-1 Healthy`, `Container atlas-backend-1 Healthy`,
+`Backend healthy.`
+
+### Production verification performed
+
+| Check | Result |
+|---|---|
+| `GET /api/v1/platform-courses` unauthenticated | **401** — registered, and refusing |
+| `GET /api/v1/platform-plans/growth/history` unauthenticated | **401** |
+| `GET /api/v1/platform-subscriptions/overview` unauthenticated | **401** — the corrected route exists |
+| `GET /api/v1/platform%2Fsubscriptions/overview` (the old encoded path) | **404** — the bug is gone |
+| `/dashboard/platform/courses` in a real browser as a **non-owner** | redirected to **`/403`** — `RouteGuard requiredRoles={['platform_owner']}` enforcing in production |
+| Deployed JS bundle (`/assets/index-CgcYnvQ-.js`, 693 KB) | contains `platform-courses`, `Global Courses`, `platformCourses`, `tenantSurface`, `planAdmin` — the new code genuinely shipped |
+
+A **401 rather than a 404** on the new routes is the meaningful signal: the
+routes are registered in the running production build, and both guards are
+active.
+
+### Verification limitation — stated plainly
+
+**Signed-in production UI verification was not performed.** Doing it requires
+entering a production platform-owner password into a login form, which this
+assistant does not do. Everything reachable without signing in was checked
+(above), and the full signed-in experience was verified against the local stack
+running the identical code (§17). The remaining step — signing in to
+`https://atlass.dpdns.org` and opening Global Courses, the plan editor and
+Analysis — needs a human.
 
 ---
 
@@ -1119,7 +1197,12 @@ shipped behaviour was confirmed correct first, and only the assertion moved.
 
 ### External blockers
 
-None.
+- **Backend CI cannot run.** It fails at *"Start MinIO"* — Docker Hub refuses the
+  anonymous `minio/minio:latest` pull from GitHub Actions — before any test
+  executes. This predates this work (it failed identically on the previous
+  commit) and needs either Docker Hub credentials in Actions secrets or a
+  mirrored image. The Deploy workflow is separate and unaffected. Until it is
+  fixed, the e2e suite's real signal comes from local runs (§17).
 
 ---
 
@@ -1137,3 +1220,7 @@ Only items this work actually surfaced as worth doing:
 4. **Filter the Global Courses list by creator.** The column and index now exist;
    the filter does not.
 5. **Clear the 41 pre-existing frontend type errors** as a dedicated change.
+6. **Unblock CI** by authenticating the MinIO image pull or mirroring the image,
+   so the e2e suite gates merges again rather than only running locally.
+7. **Stabilise the two oversized-payload e2e tests** so they stop flaking under
+   parallel workers (they assert correct behaviour; only the timing is fragile).
