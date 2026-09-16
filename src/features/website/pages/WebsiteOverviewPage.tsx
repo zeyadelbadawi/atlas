@@ -7,6 +7,7 @@
  * ONE publish action in the whole feature.
  */
 import { useTranslation } from 'react-i18next';
+import { useAcademyDomain } from '@features/domain';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ExternalLink,
@@ -37,6 +38,8 @@ export default function WebsiteOverviewPage(): JSX.Element {
   const { academyId } = useParams<{ academyId: string }>();
 
   const academyQuery = useAcademy(academyId ?? '');
+
+  const domainQuery = useAcademyDomain(academyId ?? '');
   const configQuery = useWebsiteConfiguration(academyId ?? '');
   const pagesQuery = useWebsitePages(academyId ?? '', {
     query: { pagination: { page: 1, pageSize: CONTENT_LIST_PAGE_SIZE } },
@@ -103,8 +106,13 @@ export default function WebsiteOverviewPage(): JSX.Element {
     },
   ] as const;
 
+  // P63 — the canonical host (a connected custom domain, otherwise the
+  // Atlas subdomain) is what the server says the website is addressed by.
   const publicUrl = academyQuery.data
-    ? getAcademyPublicWebsiteUrl(academyQuery.data.slug)
+    ? getAcademyPublicWebsiteUrl(
+        academyQuery.data.slug,
+        domainQuery.data?.canonicalHost?.host
+      )
     : undefined;
   const isPublished = configQuery.data.status === 'published';
 

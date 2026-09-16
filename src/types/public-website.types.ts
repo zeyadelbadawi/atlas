@@ -14,6 +14,8 @@ export interface HostnameResolution {
   readonly academyName: string;
   readonly academySlug: string;
   readonly academyLogo?: string;
+  /** P63 — the one host this website advertises (connected custom domain, otherwise the Atlas subdomain). The public runtime sets `rel="canonical"` to it and moves a visitor on the other host there. */
+  readonly canonicalHost?: string;
 }
 
 /** Phase 6 — `StatisticsSection`'s real, live, Academy-scoped counts (`GET public/websites/:academyId/statistics`). Never revenue or any other private figure. */

@@ -78,8 +78,17 @@
     }
   },
   "domain": {
+    "address": {
+      "title": "عنوان الموقع",
+      "primaryCustom": "الأساسي — نطاق مخصص",
+      "primarySubdomain": "الأساسي — نطاق أطلس الفرعي",
+      "redirectNote": "يُحوَّل الزوار الذين يفتحون {{host}} إلى نطاقك المخصص. يبقى العنوانان يعملان.",
+      "subdomainUntilVerified": "يصبح نطاقك المخصص هو العنوان الأساسي فور تحقق أطلس منه. حتى ذلك الحين، شارك نطاقك الفرعي في أطلس.",
+      "subdomainOnly": "هذا هو العنوان الذي تشاركه. اربط نطاقًا مخصصًا أدناه لاستخدام عنوانك الخاص."
+    },
     "subdomain": {
       "title": "النطاق الفرعي في أطلس",
+      "help": "يوفّر أطلس هذا العنوان تلقائيًا، ويدير شهادة HTTPS الخاصة به، ويبقيه يعمل حتى لو تم فصل النطاق المخصص.",
       "notConfigured": "لم يتم تهيئة نطاق منصة أطلس بعد، لذا لا يتوفر عنوان نطاق فرعي لموقعك. سيظهر هذا تلقائيًا بمجرد تهيئته.",
       "status": {
         "suggested": "مقترح",
@@ -91,21 +100,51 @@
     },
     "custom": {
       "title": "نطاق مخصص",
-      "empty": "لم تقم بربط نطاق مخصص بعد.",
+      "empty": "لم تقم بربط نطاق مخصص بعد. استخدم عنوانك الخاص مثل www.your-academy.com.",
       "addAction": "ربط نطاق",
-      "added": "بدأ ربط النطاق",
+      "added": "بدأ ربط النطاق — أضف سجلات DNS أدناه",
       "addError": "فشل بدء ربط هذا النطاق",
       "hostnameLabel": "النطاق",
+      "hostnameHelp": "أدخل العنوان الذي تريد أن يستخدمه الزوار بالضبط، من دون https://. يُنصح بنطاق فرعي مثل learn.your-academy.com.",
+      "removed": "تم فصل النطاق",
       "removeAction": "فصل",
       "removeConfirmTitle": "هل تريد فصل هذا النطاق؟",
       "removeConfirmDescription": "سيعود موقعك إلى نطاقه الفرعي في أطلس. يمكن إعادة ربطه لاحقًا.",
       "removeError": "فشل فصل هذا النطاق",
-      "verifyAction": "التحقق من الحالة",
-      "verifyError": "فشل التحقق من الحالة",
+      "verifyAction": "تحقق الآن",
+      "verifyError": "فشل التحقق من هذا النطاق",
+      "checked": {
+        "connect": "تم التحقق",
+        "configure_dns": "تم التحقق — سجلات DNS ما زالت ناقصة",
+        "verifying": "تم التحقق — ما زال التحقق جاريًا، وقد يستغرق انتشار تغييرات DNS بعض الوقت",
+        "live": "تم التحقق — نطاقك متصل",
+        "attention": "تم التحقق — هذا النطاق يحتاج إلى انتباه"
+      },
       "dnsInstructionsTitle": "سجلات DNS المطلوب إضافتها",
+      "dnsInstructionsHelp": "أضف هذه السجلات لدى الجهة التي تدير DNS نطاقك. يعيد أطلس التحقق تلقائيًا كل بضع دقائق، ويمكنك أيضًا التحقق الآن في أي وقت.",
+      "cnameTargetUnavailable": "أطلس غير جاهز لتوجيه النطاقات المخصصة بعد، لذا لا يتوفر هدف سجل CNAME. يبقى نطاقك الفرعي في أطلس يعمل؛ حاول لاحقًا أو تواصل مع الدعم.",
+      "dnsRecordsPending": "ستظهر سجلات التحقق هنا بمجرد تسجيل النطاق لدى مزود البنية التحتية لأطلس.",
+      "copyValue": "نسخ",
       "dnsType": "النوع",
       "dnsName": "الاسم",
       "dnsValue": "القيمة",
+      "lastChecked": "آخر تحقق",
+      "neverChecked": "لم يتم التحقق بعد",
+      "connectedSince": "متصل منذ",
+      "steps": {
+        "ariaLabel": "تقدم النطاق المخصص",
+        "connect": "الربط",
+        "configure_dns": "إعداد DNS",
+        "verifying": "التحقق",
+        "live": "مباشر"
+      },
+      "stepHelp": {
+        "connect": "أدخل النطاق الذي تريد استخدامه.",
+        "configure_dns": "أضف سجلات DNS أدناه لدى مزود DNS الخاص بك، ثم تحقق.",
+        "verifying": "يتحقق مزود البنية التحتية لأطلس من DNS الخاص بك. يستغرق ذلك عادةً دقائق، وقد يصل أحيانًا إلى يوم.",
+        "live": "نطاقك متصل ويقدّم موقعك عبر HTTPS.",
+        "attention": "شيء ما أوقف هذا النطاق عن العمل. راجع التفاصيل أدناه، وصحّح سجلات DNS إن لزم، ثم تحقق مرة أخرى."
+      },
       "status": {
         "not_configured": "غير مهيأ",
         "pending": "معلّق",
@@ -116,11 +155,35 @@
         "disconnected": "غير متصل"
       }
     },
+    "checkError": {
+      "provider_unavailable": {
+        "title": "تعذّر على أطلس الوصول إلى مزود البنية التحتية",
+        "description": "لم يتغير شيء من جانبك. سيعيد أطلس المحاولة تلقائيًا، ويمكنك أيضًا التحقق مجددًا بعد دقائق."
+      },
+      "provider_hostname_missing": {
+        "title": "لم يعد لدى المزود سجل لهذا النطاق",
+        "description": "افصل النطاق ثم اربطه مرة أخرى لتسجيله من جديد."
+      },
+      "provider_error": {
+        "title": "فشل آخر تحقق",
+        "description": "لم يستجب مزود البنية التحتية. سيعيد أطلس المحاولة تلقائيًا، ويمكنك أيضًا التحقق مجددًا بعد دقائق."
+      },
+      "dns_not_pointing": {
+        "title": "DNS الخاص بك لا يشير إلى أطلس بعد",
+        "description": "تأكد من وجود سجل CNAME أدناه تمامًا كما هو موضح. قد يستغرق انتشار تغييرات DNS حتى يوم كامل."
+      }
+    },
     "infrastructure": {
-      "title": "البنية التحتية",
-      "ssl": "شهادة SSL",
-      "cdn": "شبكة توصيل المحتوى",
+      "title": "HTTPS والبنية التحتية",
+      "subdomainHttps": "HTTPS على نطاقك الفرعي في أطلس",
+      "subdomainHttpsManaged": "يديره أطلس بشهادة على مستوى المنصة.",
+      "customHttps": "HTTPS على نطاقك المخصص",
+      "customHttpsNone": "لا يوجد نطاق مخصص متصل.",
+      "httpsNotProbed": "يفحص أطلس HTTPS بمجرد اتصال النطاق.",
+      "httpsReachable": "يمكن الوصول إليه عبر HTTPS — تم الفحص {{time}}",
+      "httpsUnreachable": "لا يمكن الوصول إليه عبر HTTPS — تم الفحص {{time}}",
       "provider": "مزود البنية التحتية",
+      "providerChecking": "جارٍ الفحص…",
       "providerConnected": "متصل",
       "providerNotConnected": "غير متصل",
       "sslStatus": {
@@ -130,21 +193,18 @@
         "active": "نشط",
         "failed": "فشل",
         "expired": "منتهي الصلاحية"
-      },
-      "cdnStatus": {
-        "not_configured": "غير مهيأ",
-        "active": "نشط",
-        "degraded": "متدهور",
-        "error": "خطأ"
       }
     }
   },
   "platformDomain": {
-    "title": "نطاق المنصة",
-    "subtitle": "تهيئة النطاق الأساسي الذي تُشتق منه النطاقات الفرعية للأكاديميات.",
-    "formTitle": "النطاق الأساسي",
+    "title": "النطاقات",
+    "subtitle": "كيف يُعنون كل موقع أكاديمية، وهل النطاقات المخصصة متحقَّق منها، وهل البنية التحتية خلفها جاهزة.",
+    "refresh": "تحديث",
+    "formTitle": "النطاق الأساسي للمنصة",
     "baseDomainLabel": "النطاق",
-    "baseDomainHelp": "بمجرد تعيينه، تصبح أكاديمية معرّفها \"harvard\" متاحة عبر \"harvard.{{baseDomain}}\" — هذا الحقل لا يقوم بأي إعداد DNS حقيقي بحد ذاته.",
+    "baseDomainHelp": "كل أكاديمية متاحة عبر معرّفها تحت {{baseDomain}} — مثلًا harvard.{{baseDomain}} — ويمكنها إضافة نطاق مخصص فوق ذلك.",
+    "managedByEnvironment": "يحدده النشر (PLATFORM_BASE_DOMAIN). وهو ما يقود التوجيه وشهادة النطاق العام وسجلات DNS، لذا لا يمكن تعديله هنا — غيّر النشر لتغييره.",
+    "databaseFallbackHelp": "لم يحدد هذا النشر PLATFORM_BASE_DOMAIN، لذا تُستخدم القيمة المخزنة هنا لبناء عناوين الأكاديميات. لا تقوم بأي إعداد DNS أو شهادات بحد ذاتها.",
     "status": {
       "configured": "مهيأ",
       "notConfigured": "غير مهيأ"
@@ -152,10 +212,63 @@
     "success": "تم حفظ نطاق المنصة",
     "error": "فشل حفظ نطاق المنصة",
     "unsavedChanges": "لديك تغييرات غير محفوظة على نطاق المنصة.",
-    "infrastructureTitle": "مزود البنية التحتية",
-    "infrastructureHelp": "ما إذا كان لدى خادم أطلس بيانات اعتماد Cloudflare حقيقية مهيأة حاليًا. هذه حالة للقراءة فقط — لا يتم إدخال بيانات الاعتماد هنا أو عرضها في لوحة التحكم أبدًا.",
-    "providerConnected": "متصل",
-    "providerNotConnected": "غير متصل"
+    "readiness": {
+      "title": "جاهزية البنية التحتية",
+      "providerConnected": "بيانات اعتماد Cloudflare API صالحة",
+      "providerNotConnected": "بيانات اعتماد Cloudflare API مفقودة أو غير صالحة",
+      "customHostnamesReady": "يمكن توجيه النطاقات المخصصة — مصدر احتياطي نشط",
+      "customHostnamesNotReady": "لا يمكن توجيه النطاقات المخصصة بعد — لا يوجد مصدر احتياطي نشط في المنطقة",
+      "originSslCompatible": "وضع SSL للمصدر يعمل مع شهادة مصدر المنصة",
+      "originSslIncompatible": "وضع SSL للمصدر \"strict\" — ستفشل النطاقات المخصصة عند الحافة",
+      "originSslUnknown": "تعذّر قراءة وضع SSL للمصدر",
+      "platformHttpsReachable": "نطاق المنصة يستجيب عبر HTTPS",
+      "platformHttpsUnreachable": "نطاق المنصة لا يستجيب عبر HTTPS",
+      "platformHttpsUnknown": "لا يوجد نطاق منصة لفحصه",
+      "wildcardReachable": "النطاقات الفرعية للأكاديميات تستجيب عبر HTTPS (شهادة عامة)",
+      "wildcardUnreachable": "النطاقات الفرعية للأكاديميات لا تستجيب عبر HTTPS",
+      "wildcardUnknown": "لا يوجد نطاق منصة لفحصه",
+      "checkedAt": "تم الفحص {{time}} — كل سطر إجابة حية من المزود أو فحص حي."
+    },
+    "overview": {
+      "academies": "الأكاديميات",
+      "customConnected": "نطاقات مخصصة متصلة",
+      "customAwaiting": "بانتظار التحقق",
+      "needingAttention": "تحتاج إلى انتباه"
+    },
+    "operations": {
+      "title": "عناوين مواقع الأكاديميات",
+      "searchPlaceholder": "ابحث بالأكاديمية أو المؤسسة أو اسم المضيف",
+      "checkNow": "تحقق الآن",
+      "checked": "تم التحقق — {{status}}",
+      "emptyTitle": "لا توجد أكاديميات مطابقة",
+      "emptyDescription": "عدّل البحث أو عوامل التصفية لعرض أكاديميات أخرى.",
+      "filters": {
+        "kind": "نوع العنوان",
+        "allKinds": "كل أنواع العناوين",
+        "kinds": {
+          "custom": "لديها نطاق مخصص",
+          "subdomain": "نطاق أطلس الفرعي فقط"
+        },
+        "status": "حالة النطاق المخصص",
+        "allStatuses": "كل الحالات",
+        "attentionOnly": "التي تحتاج إلى انتباه فقط"
+      },
+      "table": {
+        "academy": "الأكاديمية",
+        "subdomain": "النطاق الفرعي في أطلس",
+        "customDomain": "النطاق المخصص",
+        "noCustomDomain": "لا يوجد",
+        "canonical": "العنوان الأساسي",
+        "https": "HTTPS",
+        "httpsReachable": "يمكن الوصول إليه",
+        "httpsUnreachable": "لا يمكن الوصول إليه",
+        "httpsUnknown": "لم يُفحص",
+        "lastChecked": "آخر تحقق",
+        "attention": "الانتباه",
+        "needsAttention": "يحتاج إلى انتباه",
+        "ok": "سليم"
+      }
+    }
   },
   "public": {
     "poweredBy": "مُشغَّل بواسطة أطلس",

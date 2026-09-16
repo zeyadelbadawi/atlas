@@ -31,13 +31,19 @@ import { ENV } from '@config';
 import { DEV_OVERRIDE_PARAM } from '@features/public-website';
 
 export function getAcademyPublicWebsiteUrl(
-  academySlug: string
+  academySlug: string,
+  canonicalHost?: string
 ): string | undefined {
   if (ENV.isDevelopment) {
     const url = new URL(window.location.origin);
     url.searchParams.set(DEV_OVERRIDE_PARAM, academySlug);
     return url.toString();
   }
+
+  // P63 — the server-computed canonical host wins (a connected custom
+  // domain, otherwise the Atlas subdomain); the build-time base domain is
+  // only the fallback while the domain query has not answered yet.
+  if (canonicalHost) return `https://${canonicalHost}/`;
 
   if (ENV.platformBaseDomain) {
     return `https://${academySlug}.${ENV.platformBaseDomain}/`;

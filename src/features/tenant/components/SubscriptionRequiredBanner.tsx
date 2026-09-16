@@ -30,6 +30,7 @@ import { resolvePlanName } from '../utils/plan-text.utils';
 
 export function SubscriptionRequiredBanner(): JSX.Element | null {
   const { t, i18n } = useTranslation();
+  const language = i18n.language as LanguageCode;
   const navigate = useNavigate();
   const { isBlocked, reason, subscription } = useSubscriptionAccess();
 
@@ -78,7 +79,7 @@ export function SubscriptionRequiredBanner(): JSX.Element | null {
                   {t('tenant:subscriptionRequired.endedLabel')}
                 </dt>
                 <dd className="font-medium">
-                  {formatDate(endedAt, i18n.language as LanguageCode)}
+                  {formatDate(endedAt, language)}
                 </dd>
               </div>
             ) : null}

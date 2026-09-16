@@ -140,5 +140,14 @@
   },
   "mutation": {
     "failed": "That action could not be completed. Please try again."
+  },
+  "domain": {
+    "insufficientRole": "You don't have permission to change this academy's domain.",
+    "hostnameTaken": "That domain is already connected to another academy.",
+    "invalidHostname": "Enter a valid domain, like www.example.com.",
+    "noCustomDomain": "There is no custom domain to check.",
+    "unknownProvider": "Unknown infrastructure provider.",
+    "providerUnavailable": "Atlas's infrastructure provider isn't available right now.",
+    "baseDomainManagedByEnvironment": "The platform domain is set by the deployment and can't be changed here."
   }
 }

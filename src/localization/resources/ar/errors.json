@@ -140,5 +140,14 @@
   },
   "mutation": {
     "failed": "تعذّر إتمام هذا الإجراء. يرجى المحاولة مرة أخرى."
+  },
+  "domain": {
+    "insufficientRole": "ليست لديك صلاحية تغيير نطاق هذه الأكاديمية.",
+    "hostnameTaken": "هذا النطاق مرتبط بالفعل بأكاديمية أخرى.",
+    "invalidHostname": "أدخل نطاقًا صالحًا مثل www.example.com.",
+    "noCustomDomain": "لا يوجد نطاق مخصص للتحقق منه.",
+    "unknownProvider": "مزود بنية تحتية غير معروف.",
+    "providerUnavailable": "مزود البنية التحتية لأطلس غير متاح حاليًا.",
+    "baseDomainManagedByEnvironment": "نطاق المنصة يحدده النشر ولا يمكن تغييره هنا."
   }
 }

@@ -80,7 +80,11 @@
       "assignment_submission.graded": "صحّح {{actor}} تسليمًا من {{target}}",
       "academy.created": "أنشأ {{actor}} الأكاديمية \"{{target}}\"",
       "support_case.created": "قدّم {{actor}} التذكرة \"{{target}}\"",
-      "support_case.auto_created": "تم فتح تذكرة تلقائيًا: \"{{target}}\""
+      "support_case.auto_created": "تم فتح تذكرة تلقائيًا: \"{{target}}\"",
+      "domain.custom_domain_added": "ربط {{actor}} النطاق \"{{target}}\"",
+      "domain.custom_domain_removed": "فصل {{actor}} النطاق \"{{target}}\"",
+      "domain.verification_checked": "تحقق {{actor}} من النطاق \"{{target}}\"",
+      "domain.platform_check": "تحقق أطلس من النطاق \"{{target}}\""
     }
   },
   "support": {

@@ -7,6 +7,8 @@ export * from './components/WebsiteDomainTab';
 export * from './services/DomainService';
 export * from './services/PlatformDomainService';
 export * from './services/InfrastructureService';
+export * from './services/PlatformDomainsService';
+export * from './utils/domain-lifecycle.utils';
 export * from './schemas/domain.schemas';
 export * from './constants/domain.constants';
 export * from './utils/domain-status.utils';

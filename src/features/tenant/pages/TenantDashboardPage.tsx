@@ -34,9 +34,13 @@ import { formatLimitValue, getDaysRemaining } from '../utils/entitlement.utils';
 import { getSubscriptionStatusTone } from '../utils/subscription-status.utils';
 import { resolvePlanDescription, resolvePlanName } from '../utils/plan-text.utils';
 import { cn, MIRROR_IN_RTL } from '@utils';
+import type { LanguageCode } from '@types';
 
 export default function TenantDashboardPage(): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  // P54 plan catalog text resolves per language; P63 fixed a missing
+  // declaration that crashed this page at render (ReferenceError).
+  const language = i18n.language as LanguageCode;
   const navigate = useNavigate();
 
   const subscriptionQuery = useTenantSubscription();

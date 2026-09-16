@@ -27,6 +27,7 @@ import {
   resolveLocalizedText,
 } from '@features/website';
 import { useDocumentSeo } from '../hooks/useDocumentSeo';
+import { resolveCanonicalOrigin } from '../utils/canonical-redirect.utils';
 import { usePublicCourse } from '@hooks';
 import { resolvePathToPage } from '../utils/page-resolution.utils';
 import { useAuth, useSignOut } from '@hooks';
@@ -131,7 +132,14 @@ export function PublicWebsitePage({
   // Self-referencing canonical: the CURRENT locale's own URL, matching
   // standard hreflang practice — `seo.hreflangAlternates` is what points
   // at the OTHER locale's URL, this one always points at itself.
-  const canonicalUrl = `${window.location.origin}${withLocale(pagePath)}`;
+  // P63 — the canonical origin is the Academy's canonical host (its
+  // connected custom domain, otherwise its Atlas subdomain), so both
+  // live hosts advertise the same single URL to search engines.
+  const canonicalOrigin = resolveCanonicalOrigin(
+    window.location.origin,
+    academy.canonicalHost
+  );
+  const canonicalUrl = `${canonicalOrigin}${withLocale(pagePath)}`;
 
   const structuredData = page
     ? [
@@ -140,7 +148,7 @@ export function PublicWebsitePage({
           logo: academy.academyLogo,
         }),
         buildBreadcrumbJsonLd([
-          { name: academy.academyName, path: window.location.origin },
+          { name: academy.academyName, path: canonicalOrigin },
           {
             name: isCourseDetailsPage && course ? course.title : page.title,
             path: canonicalUrl,

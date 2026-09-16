@@ -126,7 +126,21 @@ export interface DomainConnection {
   readonly status: DomainStatus;
   readonly verificationRecords?: readonly DomainVerificationRecord[];
   readonly connectedAt?: string;
+  /** P63 — when Atlas last asked the provider about this hostname; absent until the first check. */
+  readonly lastCheckedAt?: string;
+  /** P63 — a stable code for the latest failed check; absent after a successful one. Copy lives under `website:domain.checkError.*`. */
+  readonly lastCheckError?: DomainCheckErrorCode;
+  /** P63 — Atlas's own outbound HTTPS probe of the hostname; absent when never probed. */
+  readonly httpsReachable?: boolean;
+  readonly httpsCheckedAt?: string;
 }
+
+/** P63 — mirrors the backend's `DOMAIN_CHECK_ERROR_CODES` exactly. */
+export type DomainCheckErrorCode =
+  | 'provider_unavailable'
+  | 'provider_hostname_missing'
+  | 'provider_error'
+  | 'dns_not_pointing';
 
 /**
  * The provisioning request itself. Always Tenant-scoped

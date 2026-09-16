@@ -1,33 +1,40 @@
 /**
- * Website Domain Tab (Prompt 11).
+ * Website access tab (Prompt 11; reworked P63).
  *
- * Embedded as a new tab in the existing `WebsiteSettingsPage`
- * (`@features/website`) — this file lives in `@features/domain` and is
- * consumed through that feature's public barrel, the same
- * cross-feature-import pattern every other Atlas feature already uses
- * (`no-restricted-imports` only allows the bare `@features/<name>`
- * barrel, never a deep import).
+ * Embedded in `WebsiteSettingsPage` (`@features/website`) through this
+ * feature's public barrel. Answers, in the customer's order of concern:
+ * what is my website address, what is my Atlas address, what custom
+ * domain am I using and what do I still need to do, has Atlas verified
+ * it, is HTTPS working, and which address is primary.
  *
- * Shows the Academy's Atlas subdomain (derived from the Platform base
- * domain + the Academy's own slug — or an honest "not configured" state
- * when no Platform base domain exists yet), the custom-domain lifecycle,
- * and SSL/CDN status. Nothing here ever shows a fake "Active"/"Verified"
- * value — every status comes straight from `useAcademyDomain`'s real
- * query response (see `Reports/ARCHITECTURE.md`, Prompt 11, "No Fake
- * Infrastructure").
+ * Every value is a server fact from `useAcademyDomain` — the canonical
+ * host, the lifecycle status, the last check and its error, the HTTPS
+ * probe — or an explicit "not yet"/"unknown". Nothing is derived on the
+ * client from a guessed base domain and nothing is ever shown as
+ * verified because a button was clicked.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Globe, Loader2, RefreshCw, Trash2 } from 'lucide-react';
+import {
+  AlertTriangle,
+  ExternalLink,
+  Globe,
+  Loader2,
+  RefreshCw,
+  ShieldCheck,
+  Trash2,
+} from 'lucide-react';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -37,7 +44,7 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { useConfirmDialog } from '@app/providers';
-import { usePermissions, useUnsavedChanges } from '@hooks';
+import { useDateFormatter, usePermissions, useUnsavedChanges } from '@hooks';
 import { useServerValidation } from '@forms';
 import {
   useAcademyDomain,
@@ -52,10 +59,15 @@ import {
   type AddCustomDomainFormData,
 } from '../schemas/domain.schemas';
 import {
-  getCdnStatusTone,
   getDomainStatusTone,
   getSslStatusTone,
 } from '../utils/domain-status.utils';
+import {
+  deriveCustomDomainStep,
+  shouldShowDnsInstructions,
+} from '../utils/domain-lifecycle.utils';
+import { CustomDomainStepper } from './CustomDomainStepper';
+import { DnsRecordsTable } from './DnsRecordsTable';
 
 export interface WebsiteDomainTabProps {
   readonly academyId: string;
@@ -67,6 +79,7 @@ export function WebsiteDomainTab({
   academySlug,
 }: WebsiteDomainTabProps): JSX.Element {
   const { t } = useTranslation();
+  const fmt = useDateFormatter();
   const { confirm } = useConfirmDialog();
   const { hasPermission } = usePermissions();
   const canManage = hasPermission('academy.website.manage');
@@ -85,9 +98,6 @@ export function WebsiteDomainTab({
     defaultValues: { hostname: '' },
   });
 
-  // Warns before this editor is left with unsaved work — both on
-  // in-app navigation (via the shared registry the route blocker
-  // reads) and on tab close or refresh.
   useUnsavedChanges({ isDirty: form.formState.isDirty });
   useServerValidation(form, addDomain.error);
 
@@ -97,13 +107,18 @@ export function WebsiteDomainTab({
   }
 
   const domain = domainQuery.data;
-  const platformDomainConfigured =
-    platformDomainQuery.data?.configured ?? false;
+  const custom = domain.customDomain;
+  const step = deriveCustomDomainStep(custom);
   const baseDomain = platformDomainQuery.data?.baseDomain;
-  const derivedSubdomain =
-    platformDomainConfigured && baseDomain
-      ? `${academySlug}.${baseDomain}`
-      : undefined;
+  // The server's allocation host is authoritative; the platform base
+  // domain only fills in for an allocation recorded before a base domain
+  // existed. Never a fabricated address.
+  const subdomainHost =
+    domain.subdomain?.fullHost ??
+    (baseDomain ? `${academySlug}.${baseDomain}` : undefined);
+  const canonicalHost = domain.canonicalHost?.host;
+  const customIsCanonical = domain.canonicalHost?.source === 'custom_domain';
+  const isBusy = addDomain.isPending || removeDomain.isPending || verifyDomain.isPending;
 
   const onSubmitAddDomain = (data: AddCustomDomainFormData) => {
     addDomain.mutate(
@@ -123,6 +138,24 @@ export function WebsiteDomainTab({
     );
   };
 
+  const handleCheck = () =>
+    verifyDomain.mutate(academyId, {
+      onSuccess: (result) => {
+        const error = result.customDomain?.lastCheckError;
+        toast({
+          title: error
+            ? t(`website:domain.checkError.${error}.title`)
+            : t(`website:domain.custom.checked.${deriveCustomDomainStep(result.customDomain)}`),
+          variant: error ? 'destructive' : undefined,
+        });
+      },
+      onError: () =>
+        toast({
+          title: t('website:domain.custom.verifyError'),
+          variant: 'destructive',
+        }),
+    });
+
   const handleRemove = async () => {
     const confirmed = await confirm({
       titleKey: 'website:domain.custom.removeConfirmTitle',
@@ -132,6 +165,7 @@ export function WebsiteDomainTab({
     });
     if (!confirmed) return;
     removeDomain.mutate(academyId, {
+      onSuccess: () => toast({ title: t('website:domain.custom.removed') }),
       onError: () =>
         toast({
           title: t('website:domain.custom.removeError'),
@@ -142,30 +176,43 @@ export function WebsiteDomainTab({
 
   return (
     <div className="space-y-6">
+      {/* ------------------------------------------------ website address */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">
-            {t('website:domain.subdomain.title')}
-          </CardTitle>
+          <CardTitle className="text-base">{t('website:domain.address.title')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          {derivedSubdomain ? (
-            <div className="flex items-center gap-3">
-              <Globe className="size-4 text-muted-foreground" aria-hidden />
-              <code className="text-sm font-medium text-foreground" dir="ltr">
-                {derivedSubdomain}
-              </code>
-              {domain.subdomain ? (
+          {canonicalHost ? (
+            <>
+              <div className="flex flex-wrap items-center gap-3">
+                <Globe className="size-4 text-muted-foreground" aria-hidden />
+                <a
+                  href={`https://${canonicalHost}/`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline"
+                  dir="ltr"
+                >
+                  {canonicalHost}
+                  <ExternalLink className="size-3.5" aria-hidden />
+                </a>
                 <StatusBadge
-                  labelKey={`website:domain.subdomain.status.${domain.subdomain.status}`}
-                  tone={
-                    domain.subdomain.status === 'assigned'
-                      ? 'success'
-                      : 'neutral'
+                  labelKey={
+                    customIsCanonical
+                      ? 'website:domain.address.primaryCustom'
+                      : 'website:domain.address.primarySubdomain'
                   }
+                  tone="info"
                 />
-              ) : null}
-            </div>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                {customIsCanonical
+                  ? t('website:domain.address.redirectNote', { host: subdomainHost ?? '' })
+                  : custom?.hostname
+                    ? t('website:domain.address.subdomainUntilVerified')
+                    : t('website:domain.address.subdomainOnly')}
+              </p>
+            </>
           ) : (
             <p className="text-sm text-muted-foreground">
               {t('website:domain.subdomain.notConfigured')}
@@ -174,63 +221,89 @@ export function WebsiteDomainTab({
         </CardContent>
       </Card>
 
+      {/* ------------------------------------------------ atlas subdomain */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">
-            {t('website:domain.custom.title')}
-          </CardTitle>
+          <CardTitle className="text-base">{t('website:domain.subdomain.title')}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {subdomainHost ? (
+            <div className="flex flex-wrap items-center gap-3">
+              <code className="text-sm font-medium text-foreground" dir="ltr">
+                {subdomainHost}
+              </code>
+              {domain.subdomain ? (
+                <StatusBadge
+                  labelKey={`website:domain.subdomain.status.${domain.subdomain.status}`}
+                  tone={domain.subdomain.status === 'assigned' ? 'success' : 'neutral'}
+                />
+              ) : null}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              {t('website:domain.subdomain.notConfigured')}
+            </p>
+          )}
+          <p className="text-sm text-muted-foreground">
+            {t('website:domain.subdomain.help')}
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* ------------------------------------------------ custom domain */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">{t('website:domain.custom.title')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {domain.customDomain?.hostname ? (
+          <CustomDomainStepper step={step} />
+
+          {custom?.hostname ? (
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-3">
                 <code className="text-sm font-medium text-foreground" dir="ltr">
-                  {domain.customDomain.hostname}
+                  {custom.hostname}
                 </code>
                 <StatusBadge
-                  labelKey={`website:domain.custom.status.${domain.customDomain.status}`}
-                  tone={getDomainStatusTone(domain.customDomain.status)}
+                  labelKey={`website:domain.custom.status.${custom.status}`}
+                  tone={getDomainStatusTone(custom.status)}
                 />
               </div>
 
-              {domain.customDomain.verificationRecords?.length ? (
-                <div className="space-y-2">
-                  <p className="text-sm font-medium text-foreground">
-                    {t('website:domain.custom.dnsInstructionsTitle')}
-                  </p>
-                  <div className="overflow-x-auto rounded-md border border-border">
-                    <table className="w-full text-start text-sm" dir="ltr">
-                      <thead className="bg-muted/50 text-xs text-muted-foreground">
-                        <tr>
-                          <th className="p-2 text-start">
-                            {t('website:domain.custom.dnsType')}
-                          </th>
-                          <th className="p-2 text-start">
-                            {t('website:domain.custom.dnsName')}
-                          </th>
-                          <th className="p-2 text-start">
-                            {t('website:domain.custom.dnsValue')}
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {domain.customDomain.verificationRecords.map(
-                          (record, index) => (
-                            <tr
-                              key={`${record.type}-${index}`}
-                              className="border-t border-border"
-                            >
-                              <td className="p-2 font-mono">{record.type}</td>
-                              <td className="p-2 font-mono">{record.name}</td>
-                              <td className="p-2 font-mono">{record.value}</td>
-                            </tr>
-                          )
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+              <p className="text-sm text-muted-foreground">
+                {t(`website:domain.custom.stepHelp.${step}`)}
+              </p>
+
+              {custom.lastCheckError ? (
+                <Alert variant="destructive">
+                  <AlertTriangle className="size-4" aria-hidden />
+                  <AlertTitle>{t(`website:domain.checkError.${custom.lastCheckError}.title`)}</AlertTitle>
+                  <AlertDescription>
+                    {t(`website:domain.checkError.${custom.lastCheckError}.description`)}
+                  </AlertDescription>
+                </Alert>
               ) : null}
+
+              {shouldShowDnsInstructions(step) && domain.dns ? (
+                <DnsRecordsTable hostname={custom.hostname} dns={domain.dns} />
+              ) : null}
+
+              <dl className="grid gap-1 text-sm sm:grid-cols-2">
+                <div className="flex gap-2">
+                  <dt className="text-muted-foreground">{t('website:domain.custom.lastChecked')}</dt>
+                  <dd className="font-medium">
+                    {custom.lastCheckedAt
+                      ? fmt.dateTime(custom.lastCheckedAt)
+                      : t('website:domain.custom.neverChecked')}
+                  </dd>
+                </div>
+                {custom.connectedAt ? (
+                  <div className="flex gap-2">
+                    <dt className="text-muted-foreground">{t('website:domain.custom.connectedSince')}</dt>
+                    <dd className="font-medium">{fmt.dateTime(custom.connectedAt)}</dd>
+                  </div>
+                ) : null}
+              </dl>
 
               {canManage ? (
                 <div className="flex flex-wrap gap-2">
@@ -238,16 +311,8 @@ export function WebsiteDomainTab({
                     type="button"
                     variant="outline"
                     size="sm"
-                    disabled={verifyDomain.isPending}
-                    onClick={() =>
-                      verifyDomain.mutate(academyId, {
-                        onError: () =>
-                          toast({
-                            title: t('website:domain.custom.verifyError'),
-                            variant: 'destructive',
-                          }),
-                      })
-                    }
+                    disabled={isBusy}
+                    onClick={handleCheck}
                   >
                     {verifyDomain.isPending ? (
                       <Loader2 className="size-3.5 animate-spin" aria-hidden />
@@ -261,9 +326,13 @@ export function WebsiteDomainTab({
                     variant="ghost"
                     size="sm"
                     onClick={handleRemove}
-                    disabled={removeDomain.isPending}
+                    disabled={isBusy}
                   >
-                    <Trash2 className="size-3.5" aria-hidden />
+                    {removeDomain.isPending ? (
+                      <Loader2 className="size-3.5 animate-spin" aria-hidden />
+                    ) : (
+                      <Trash2 className="size-3.5" aria-hidden />
+                    )}
                     {t('website:domain.custom.removeAction')}
                   </Button>
                 </div>
@@ -271,35 +340,23 @@ export function WebsiteDomainTab({
             </div>
           ) : showAddForm && canManage ? (
             <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmitAddDomain)}
-                className="space-y-3"
-              >
+              <form onSubmit={form.handleSubmit(onSubmitAddDomain)} className="space-y-3">
                 <FormField
                   control={form.control}
                   name="hostname"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        {t('website:domain.custom.hostnameLabel')}
-                      </FormLabel>
+                      <FormLabel>{t('website:domain.custom.hostnameLabel')}</FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          dir="ltr"
-                          placeholder="www.example.com"
-                        />
+                        <Input {...field} dir="ltr" placeholder="www.example.com" autoComplete="off" />
                       </FormControl>
+                      <FormDescription>{t('website:domain.custom.hostnameHelp')}</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <div className="flex gap-2">
-                  <Button
-                    type="submit"
-                    size="sm"
-                    disabled={addDomain.isPending}
-                  >
+                <div className="flex flex-wrap gap-2">
+                  <Button type="submit" size="sm" disabled={addDomain.isPending}>
                     {addDomain.isPending ? (
                       <Loader2 className="size-3.5 animate-spin" aria-hidden />
                     ) : null}
@@ -309,7 +366,11 @@ export function WebsiteDomainTab({
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => setShowAddForm(false)}
+                    disabled={addDomain.isPending}
+                    onClick={() => {
+                      setShowAddForm(false);
+                      form.reset();
+                    }}
                   >
                     {t('common:actions.cancel')}
                   </Button>
@@ -318,16 +379,9 @@ export function WebsiteDomainTab({
             </Form>
           ) : (
             <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">
-                {t('website:domain.custom.empty')}
-              </p>
+              <p className="text-sm text-muted-foreground">{t('website:domain.custom.empty')}</p>
               {canManage ? (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowAddForm(true)}
-                >
+                <Button type="button" variant="outline" size="sm" onClick={() => setShowAddForm(true)}>
                   {t('website:domain.custom.addAction')}
                 </Button>
               ) : null}
@@ -336,39 +390,65 @@ export function WebsiteDomainTab({
         </CardContent>
       </Card>
 
+      {/* ------------------------------------------------ https & infrastructure */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">
-            {t('website:domain.infrastructure.title')}
-          </CardTitle>
+          <CardTitle className="text-base">{t('website:domain.infrastructure.title')}</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
             <p className="text-sm font-medium text-foreground">
-              {t('website:domain.infrastructure.ssl')}
+              {t('website:domain.infrastructure.subdomainHttps')}
             </p>
-            <StatusBadge
-              labelKey={`website:domain.infrastructure.sslStatus.${domain.ssl.status}`}
-              tone={getSslStatusTone(domain.ssl.status)}
-            />
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <ShieldCheck className="size-4 text-success" aria-hidden />
+              {t('website:domain.infrastructure.subdomainHttpsManaged')}
+            </div>
           </div>
+
           <div className="space-y-1.5">
             <p className="text-sm font-medium text-foreground">
-              {t('website:domain.infrastructure.cdn')}
+              {t('website:domain.infrastructure.customHttps')}
             </p>
-            <StatusBadge
-              labelKey={`website:domain.infrastructure.cdnStatus.${domain.cdn.status}`}
-              tone={getCdnStatusTone(domain.cdn.status)}
-            />
+            {custom?.hostname ? (
+              <div className="flex flex-wrap items-center gap-2">
+                <StatusBadge
+                  labelKey={`website:domain.infrastructure.sslStatus.${domain.ssl.status}`}
+                  tone={getSslStatusTone(domain.ssl.status)}
+                />
+                {custom.httpsReachable === undefined ? (
+                  <span className="text-sm text-muted-foreground">
+                    {t('website:domain.infrastructure.httpsNotProbed')}
+                  </span>
+                ) : (
+                  <span className="text-sm text-muted-foreground">
+                    {custom.httpsReachable
+                      ? t('website:domain.infrastructure.httpsReachable', {
+                          time: custom.httpsCheckedAt ? fmt.dateTime(custom.httpsCheckedAt) : '',
+                        })
+                      : t('website:domain.infrastructure.httpsUnreachable', {
+                          time: custom.httpsCheckedAt ? fmt.dateTime(custom.httpsCheckedAt) : '',
+                        })}
+                  </span>
+                )}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                {t('website:domain.infrastructure.customHttpsNone')}
+              </p>
+            )}
           </div>
+
           <div className="space-y-1.5 sm:col-span-2">
             <p className="text-sm font-medium text-foreground">
               {t('website:domain.infrastructure.provider')}
             </p>
             <p className="text-sm text-muted-foreground">
-              {cloudflareStatusQuery.data?.connected
-                ? t('website:domain.infrastructure.providerConnected')
-                : t('website:domain.infrastructure.providerNotConnected')}
+              {cloudflareStatusQuery.isLoading
+                ? t('website:domain.infrastructure.providerChecking')
+                : cloudflareStatusQuery.data?.connected
+                  ? t('website:domain.infrastructure.providerConnected')
+                  : t('website:domain.infrastructure.providerNotConnected')}
             </p>
           </div>
         </CardContent>

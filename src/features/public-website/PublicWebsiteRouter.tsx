@@ -22,7 +22,7 @@
  * locale split — they are site-wide infrastructure files, never
  * duplicated per locale.
  */
-import { lazy } from 'react';
+import { lazy, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { PublicWebsiteStatus } from './components/PublicWebsiteStatus';
 import { AcademyComingSoon } from './components/AcademyComingSoon';
@@ -34,6 +34,8 @@ import { PublicWebsiteSignUpPage } from './components/PublicWebsiteSignUpPage';
 import { PublicWebsiteLearningRoute } from './components/PublicWebsiteLearningRoute';
 import { usePublicWebsiteData } from './hooks/usePublicWebsiteData';
 import type { PublicWebsiteContext } from './utils/hostname-resolution.utils';
+import { resolveCanonicalRedirect } from './utils/canonical-redirect.utils';
+import { ENV } from '@config';
 import type { PublicWebsiteLocale } from '@types';
 
 // The Student Learning experience, reused unmodified from
@@ -71,6 +73,24 @@ function resolveLookupKey(
     : window.location.hostname;
 }
 
+/**
+ * P63 — once the hostname has resolved, a visitor on the non-canonical
+ * host (e.g. the Atlas subdomain of an Academy whose custom domain is
+ * connected) is moved to the canonical one. `replace`, not `assign`, so the
+ * non-canonical URL does not linger in history. Runs only in production
+ * builds; local development keeps whatever host it is on.
+ */
+function useCanonicalHostRedirect(canonicalHost: string | undefined): void {
+  useEffect(() => {
+    const target = resolveCanonicalRedirect(
+      window.location,
+      canonicalHost,
+      ENV.isDevelopment
+    );
+    if (target) window.location.replace(target);
+  }, [canonicalHost]);
+}
+
 function PublicWebsiteShell({
   lookupKey,
   locale,
@@ -79,6 +99,11 @@ function PublicWebsiteShell({
   readonly locale: PublicWebsiteLocale;
 }): JSX.Element {
   const data = usePublicWebsiteData(lookupKey);
+  const academy =
+    data.status === 'ready' || data.status === 'unpublished'
+      ? data.academy
+      : undefined;
+  useCanonicalHostRedirect(academy?.canonicalHost);
 
   // An Academy that exists but has not published its website is a normal
   // product state, not a failure — it gets a branded Coming Soon page

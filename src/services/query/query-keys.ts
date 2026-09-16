@@ -575,6 +575,15 @@ export const domainKeys = {
 export const platformDomainKeys = {
   all: QUERY_KEY_ROOTS.platformDomain,
   configuration: () => [...platformDomainKeys.all, 'configuration'] as const,
+  /** P63 — live infrastructure readiness (Platform Owner only). */
+  readiness: () => [...platformDomainKeys.all, 'readiness'] as const,
+  /** P63 — the cross-tenant operations list; filters belong IN the key. */
+  operationsList: (query: CollectionQuery | undefined) =>
+    [...platformDomainKeys.all, 'operations', 'list', query ?? {}] as const,
+  operationsOverview: () =>
+    [...platformDomainKeys.all, 'operations', 'overview'] as const,
+  operationsDetail: (academyId: string) =>
+    [...platformDomainKeys.all, 'operations', 'detail', academyId] as const,
 } as const;
 
 /** Query keys for infrastructure-provider status (Prompt 11) — unscoped, account-level. */

@@ -17,6 +17,7 @@ import { BaseService } from '@services';
 import type { ReadOptions, WriteOptions } from '@services';
 import type {
   PlatformDomainConfiguration,
+  PlatformDomainReadiness,
   UpdatePlatformDomainConfigurationPayload,
 } from '@types';
 
@@ -31,6 +32,14 @@ export class PlatformDomainService extends BaseService {
   }
 
   /** Sets Atlas's platform base domain. Platform Owner only — enforced by `RouteGuard`/navigation on the consuming page, and ultimately by the backend, never by this method itself. */
+  /** P63 — live infrastructure readiness; Platform Owner only. */
+  async getReadiness(options?: ReadOptions): Promise<PlatformDomainReadiness> {
+    return this.client.get<PlatformDomainReadiness>(
+      this.path('readiness'),
+      options
+    );
+  }
+
   async updatePlatformDomainConfiguration(
     payload: UpdatePlatformDomainConfigurationPayload,
     options?: WriteOptions

@@ -78,8 +78,17 @@
     }
   },
   "domain": {
+    "address": {
+      "title": "Website address",
+      "primaryCustom": "Primary — custom domain",
+      "primarySubdomain": "Primary — Atlas subdomain",
+      "redirectNote": "Visitors who open {{host}} are sent to your custom domain. Both addresses keep working.",
+      "subdomainUntilVerified": "Your custom domain becomes the primary address as soon as Atlas verifies it. Until then your Atlas subdomain is the address to share.",
+      "subdomainOnly": "This is the address to share. Connect a custom domain below to use your own."
+    },
     "subdomain": {
       "title": "Atlas subdomain",
+      "help": "Atlas provides this address automatically, manages its HTTPS certificate, and keeps it working even if a custom domain is disconnected.",
       "notConfigured": "Atlas's platform domain isn't configured yet, so a subdomain address isn't available for your website. This will appear automatically once it is.",
       "status": {
         "suggested": "Suggested",
@@ -91,21 +100,51 @@
     },
     "custom": {
       "title": "Custom domain",
-      "empty": "You haven't connected a custom domain yet.",
+      "empty": "You haven't connected a custom domain yet. Use your own address, like www.your-academy.com.",
       "addAction": "Connect a domain",
-      "added": "Domain connection started",
+      "added": "Domain connection started — add the DNS records below",
       "addError": "Failed to start connecting this domain",
       "hostnameLabel": "Domain",
+      "hostnameHelp": "Enter the exact address you want visitors to use, without https://. A subdomain such as learn.your-academy.com is recommended.",
+      "removed": "Domain disconnected",
       "removeAction": "Disconnect",
       "removeConfirmTitle": "Disconnect this domain?",
       "removeConfirmDescription": "Your website will fall back to its Atlas subdomain. This can be reconnected later.",
       "removeError": "Failed to disconnect this domain",
-      "verifyAction": "Check verification",
-      "verifyError": "Failed to check verification",
+      "verifyAction": "Check now",
+      "verifyError": "Failed to check this domain",
+      "checked": {
+        "connect": "Checked",
+        "configure_dns": "Checked — DNS records are still missing",
+        "verifying": "Checked — still verifying, DNS changes can take a while to propagate",
+        "live": "Checked — your domain is connected",
+        "attention": "Checked — this domain needs attention"
+      },
       "dnsInstructionsTitle": "DNS records to add",
+      "dnsInstructionsHelp": "Add these records at the company that manages your domain's DNS. Atlas re-checks automatically every few minutes; you can also check now at any time.",
+      "cnameTargetUnavailable": "Atlas is not ready to route custom domains yet, so the CNAME target isn't available. Your Atlas subdomain keeps working; please try again later or contact support.",
+      "dnsRecordsPending": "Verification records will appear here once the domain is registered with Atlas's infrastructure provider.",
+      "copyValue": "Copy",
       "dnsType": "Type",
       "dnsName": "Name",
       "dnsValue": "Value",
+      "lastChecked": "Last checked",
+      "neverChecked": "Not checked yet",
+      "connectedSince": "Connected since",
+      "steps": {
+        "ariaLabel": "Custom domain progress",
+        "connect": "Connect",
+        "configure_dns": "Configure DNS",
+        "verifying": "Verification",
+        "live": "Live"
+      },
+      "stepHelp": {
+        "connect": "Enter the domain you want to use.",
+        "configure_dns": "Add the DNS records below at your DNS provider, then check.",
+        "verifying": "Atlas's infrastructure provider is validating your DNS. This usually takes minutes, sometimes up to a day.",
+        "live": "Your domain is connected and serving your website over HTTPS.",
+        "attention": "Something stopped this domain from working. Review the details below, fix the DNS records if needed, then check again."
+      },
       "status": {
         "not_configured": "Not configured",
         "pending": "Pending",
@@ -116,11 +155,35 @@
         "disconnected": "Disconnected"
       }
     },
+    "checkError": {
+      "provider_unavailable": {
+        "title": "Atlas couldn't reach its infrastructure provider",
+        "description": "Nothing changed on your side. Atlas will retry automatically; you can also check again in a few minutes."
+      },
+      "provider_hostname_missing": {
+        "title": "The provider no longer has a record of this domain",
+        "description": "Disconnect the domain and connect it again to register it afresh."
+      },
+      "provider_error": {
+        "title": "The last check failed",
+        "description": "The infrastructure provider didn't answer. Atlas will retry automatically; you can also check again in a few minutes."
+      },
+      "dns_not_pointing": {
+        "title": "Your DNS doesn't point to Atlas yet",
+        "description": "Make sure the CNAME record below exists exactly as shown. DNS changes can take up to a day to propagate."
+      }
+    },
     "infrastructure": {
-      "title": "Infrastructure",
-      "ssl": "SSL certificate",
-      "cdn": "Content delivery network",
+      "title": "HTTPS & infrastructure",
+      "subdomainHttps": "HTTPS on your Atlas subdomain",
+      "subdomainHttpsManaged": "Managed by Atlas with a platform-wide certificate.",
+      "customHttps": "HTTPS on your custom domain",
+      "customHttpsNone": "No custom domain connected.",
+      "httpsNotProbed": "Atlas checks HTTPS once the domain is connected.",
+      "httpsReachable": "Reachable over HTTPS — checked {{time}}",
+      "httpsUnreachable": "Not reachable over HTTPS — checked {{time}}",
       "provider": "Infrastructure provider",
+      "providerChecking": "Checking…",
       "providerConnected": "Connected",
       "providerNotConnected": "Not connected",
       "sslStatus": {
@@ -130,21 +193,18 @@
         "active": "Active",
         "failed": "Failed",
         "expired": "Expired"
-      },
-      "cdnStatus": {
-        "not_configured": "Not configured",
-        "active": "Active",
-        "degraded": "Degraded",
-        "error": "Error"
       }
     }
   },
   "platformDomain": {
-    "title": "Platform Domain",
-    "subtitle": "Configure the base domain Academy subdomains are derived from.",
-    "formTitle": "Base domain",
+    "title": "Domains",
+    "subtitle": "How every Academy website is addressed, whether custom domains are verified, and whether the infrastructure behind them is ready.",
+    "refresh": "Refresh",
+    "formTitle": "Platform base domain",
     "baseDomainLabel": "Domain",
-    "baseDomainHelp": "Once set, an Academy with the slug \"harvard\" becomes reachable at \"harvard.{{baseDomain}}\" — this field doesn't perform any real DNS setup itself.",
+    "baseDomainHelp": "Every Academy is reachable at its own slug under {{baseDomain}} — for example harvard.{{baseDomain}} — and can add a custom domain on top.",
+    "managedByEnvironment": "Set by the deployment (PLATFORM_BASE_DOMAIN). It drives routing, the wildcard certificate and DNS, so it isn't editable here — change the deployment to change it.",
+    "databaseFallbackHelp": "This deployment has no PLATFORM_BASE_DOMAIN set, so the value stored here is used to build Academy addresses. It performs no DNS or certificate setup by itself.",
     "status": {
       "configured": "Configured",
       "notConfigured": "Not configured"
@@ -152,10 +212,63 @@
     "success": "Platform domain saved",
     "error": "Failed to save the platform domain",
     "unsavedChanges": "You have unsaved changes to the platform domain.",
-    "infrastructureTitle": "Infrastructure provider",
-    "infrastructureHelp": "Whether Atlas's backend currently has real Cloudflare credentials configured. This is a read-only status — credentials are never entered here or exposed to this dashboard.",
-    "providerConnected": "Connected",
-    "providerNotConnected": "Not connected"
+    "readiness": {
+      "title": "Infrastructure readiness",
+      "providerConnected": "Cloudflare API credentials are valid",
+      "providerNotConnected": "Cloudflare API credentials are missing or invalid",
+      "customHostnamesReady": "Custom domains can be routed — a fallback origin is active",
+      "customHostnamesNotReady": "Custom domains cannot be routed yet — no active fallback origin on the zone",
+      "originSslCompatible": "Origin SSL mode works with the platform's origin certificate",
+      "originSslIncompatible": "Origin SSL mode is \"strict\" — custom domains will fail at the edge",
+      "originSslUnknown": "Origin SSL mode could not be read",
+      "platformHttpsReachable": "The platform domain answers over HTTPS",
+      "platformHttpsUnreachable": "The platform domain does not answer over HTTPS",
+      "platformHttpsUnknown": "No platform domain to probe",
+      "wildcardReachable": "Academy subdomains answer over HTTPS (wildcard)",
+      "wildcardUnreachable": "Academy subdomains do not answer over HTTPS",
+      "wildcardUnknown": "No platform domain to probe",
+      "checkedAt": "Checked {{time}} — every line is a live answer from the provider or a live probe."
+    },
+    "overview": {
+      "academies": "Academies",
+      "customConnected": "Custom domains connected",
+      "customAwaiting": "Awaiting verification",
+      "needingAttention": "Needing attention"
+    },
+    "operations": {
+      "title": "Academy website addresses",
+      "searchPlaceholder": "Search by academy, organization or hostname",
+      "checkNow": "Check now",
+      "checked": "Checked — {{status}}",
+      "emptyTitle": "No academies match",
+      "emptyDescription": "Adjust the search or filters to see other academies.",
+      "filters": {
+        "kind": "Address type",
+        "allKinds": "All address types",
+        "kinds": {
+          "custom": "Has a custom domain",
+          "subdomain": "Atlas subdomain only"
+        },
+        "status": "Custom domain status",
+        "allStatuses": "All statuses",
+        "attentionOnly": "Needs attention only"
+      },
+      "table": {
+        "academy": "Academy",
+        "subdomain": "Atlas subdomain",
+        "customDomain": "Custom domain",
+        "noCustomDomain": "None",
+        "canonical": "Primary address",
+        "https": "HTTPS",
+        "httpsReachable": "Reachable",
+        "httpsUnreachable": "Unreachable",
+        "httpsUnknown": "Not probed",
+        "lastChecked": "Last checked",
+        "attention": "Attention",
+        "needsAttention": "Needs attention",
+        "ok": "OK"
+      }
+    }
   },
   "public": {
     "poweredBy": "Powered by Atlas",

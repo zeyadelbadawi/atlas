@@ -80,7 +80,11 @@
       "assignment_submission.graded": "{{actor}} graded a submission from {{target}}",
       "academy.created": "{{actor}} created the academy \"{{target}}\"",
       "support_case.created": "{{actor}} submitted the ticket \"{{target}}\"",
-      "support_case.auto_created": "A ticket was opened automatically: \"{{target}}\""
+      "support_case.auto_created": "A ticket was opened automatically: \"{{target}}\"",
+      "domain.custom_domain_added": "{{actor}} connected the domain \"{{target}}\"",
+      "domain.custom_domain_removed": "{{actor}} disconnected the domain \"{{target}}\"",
+      "domain.verification_checked": "{{actor}} checked the domain \"{{target}}\"",
+      "domain.platform_check": "Atlas checked the domain \"{{target}}\""
     }
   },
   "support": {
