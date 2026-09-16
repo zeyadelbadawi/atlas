@@ -140,6 +140,85 @@ export interface Plan {
   readonly trialEligible: boolean;
   /** How many days this plan's trial runs. Absent when the plan is not trialable. */
   readonly trialDurationDays?: number;
+  /**
+   * P57 — optimistic-concurrency token, sent back as `expectedVersion` on
+   * every Platform-Owner edit. Customer-facing screens ignore it.
+   */
+  readonly version: number;
+}
+
+/** P57 — Platform-Owner plan administration payloads. */
+export interface CreatePlanPayload {
+  readonly key: string;
+  readonly name: string;
+  readonly description?: string;
+  readonly nameLocalized?: LocalizedText;
+  readonly descriptionLocalized?: LocalizedText;
+  readonly displayOrder: number;
+  readonly limits: PlanResourceLimits;
+  readonly features: PlanFeatures;
+  readonly pricing?: PlanPricingMetadata;
+  readonly trialEligible?: boolean;
+  readonly trialDurationDays?: number | null;
+}
+
+export interface UpdatePlanPayload {
+  /** Required. A mismatch is a 409, never a silent overwrite. */
+  readonly expectedVersion: number;
+  readonly name?: string;
+  readonly description?: string;
+  readonly nameLocalized?: LocalizedText;
+  readonly descriptionLocalized?: LocalizedText;
+  readonly displayOrder?: number;
+  readonly limits?: PlanResourceLimits;
+  readonly features?: PlanFeatures;
+  readonly pricing?: PlanPricingMetadata;
+  readonly trialEligible?: boolean;
+  readonly trialDurationDays?: number | null;
+}
+
+export type PlanLimits = PlanResourceLimits;
+
+/** One organization already over a proposed limit. */
+export interface PlanLimitImpactRow {
+  readonly organizationId: string;
+  readonly organizationName: string;
+  readonly limitKey: string;
+  readonly currentUsage: number;
+  readonly proposedLimit: number;
+}
+
+/**
+ * P57 — impact of a proposed limit reduction.
+ *
+ * `usageAsOf` exists because `tenant_usage` is a worker-recomputed
+ * SNAPSHOT, not a live count: the UI states when the figures were taken
+ * rather than implying they are real-time. `unmeasurableLimitKeys` names
+ * the limits that have no usage counter at all (`recordedSessions`), so
+ * they are reported honestly instead of as zero impact.
+ */
+export interface PlanLimitImpact {
+  readonly affected: readonly PlanLimitImpactRow[];
+  readonly unmeasurableLimitKeys: readonly string[];
+  readonly usageAsOf?: string;
+}
+
+/**
+ * P57 — one administrative change to a plan, read from the audit log.
+ *
+ * There is no `plan_price_history` table: completed money already
+ * snapshots itself (`Payment.amountMinorUnits`, `Checkout.snapshot`), so
+ * catalog pricing edits cannot make billing ambiguous, and a price history
+ * IS a change log — which is what the audit log is.
+ */
+export interface PlanHistoryEntry {
+  readonly id: string;
+  readonly action: string;
+  readonly actor: { readonly id: string; readonly name: string; readonly email?: string };
+  readonly occurredAt: string;
+  /** `{field: {from, to}}`, redacted server-side at write time. */
+  readonly changes?: Record<string, { from: unknown; to: unknown }>;
+  readonly context?: Record<string, unknown>;
 }
 
 /** What kind of thing an Add-on affects. */
@@ -298,7 +377,10 @@ export interface AdminSubscriptionOverview {
     readonly byReason: Record<string, number>;
     readonly recent: readonly AdminCancellationRow[];
   };
+  /** Top plans by subscription count — a bounded distribution, not a list. */
   readonly plans: readonly AdminPlanDistributionRow[];
+  /** How many plans carry a subscription in total, including any beyond the cut. */
+  readonly totalPlansWithSubscriptions: number;
   /** Atlas does not track subscription revenue — reported, never fabricated. */
   readonly revenue: { readonly tracked: false };
   readonly generatedAt: string;

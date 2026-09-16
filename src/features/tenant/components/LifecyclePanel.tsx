@@ -28,6 +28,7 @@
  */
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@hooks';
 import {
   AlertTriangle,
   ArrowRight,
@@ -225,7 +226,26 @@ function buildContent(
 export function LifecyclePanel(): JSX.Element | null {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { state, isLoading } = useSubscriptionLifecycleState();
+
+  /*
+    A Platform/SaaS Owner is a platform operator, not a customer.
+
+    This panel renders in `DashboardLayout`, so it appeared on EVERY page a
+    Platform Owner opened — telling them to "create your organization to get
+    started" above the Platform Dashboard, the audit log and the
+    cross-tenant subscription view. Verified live signed in as the real
+    seeded Platform Owner (`admin@atlas.dev`, `organizations: 0`), where
+    `lifecycle` is synthesised as `no_organization` precisely because they
+    correctly have no Organization.
+
+    Every lifecycle this panel speaks to — create an organization, choose a
+    plan, start a trial, renew — is a customer action a Platform Owner will
+    never take. Returning null is the whole fix; nothing downstream needs to
+    know, and a customer's panel is untouched.
+  */
+  if (user?.roles?.includes('platform_owner')) return null;
 
   // Never render on incomplete information: flashing "your subscription
   // ended" at a paying customer for one frame costs more trust than

@@ -2,7 +2,7 @@
  * Platform-admin subscription and trial operations dashboard.
  *
  * EVERY FIGURE ON THIS PAGE IS A REAL AGGREGATE returned by
- * `GET /platform/subscriptions/overview`. Nothing is sampled, seeded, or
+ * `GET /platform-subscriptions/overview`. Nothing is sampled, seeded, or
  * placeholder.
  *
  * REVENUE IS SHOWN AS UNTRACKED, NOT AS ZERO. Atlas does not record
@@ -164,6 +164,18 @@ export function AdminSubscriptionsPage(): JSX.Element {
               ))}
             </ul>
           )}
+
+          {data.totalPlansWithSubscriptions > data.plans.length ? (
+            // Say so rather than letting a truncated chart imply the
+            // catalog is this size. The full catalog lives on Plans &
+            // Add-ons, which pages properly.
+            <p className="mt-3 text-xs text-muted-foreground">
+              {t('platform:adminSubscriptions.plans.truncated', {
+                shown: data.plans.length,
+                total: data.totalPlansWithSubscriptions,
+              })}
+            </p>
+          ) : null}
         </SectionCard>
 
         <SectionCard

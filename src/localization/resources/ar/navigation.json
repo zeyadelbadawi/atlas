@@ -27,7 +27,8 @@
     "user": "المستخدم",
     "workspace": "مساحة العمل",
     "administration": "الإدارة",
-    "addOns": "الإضافات"
+    "addOns": "الإضافات",
+    "platformCommerce": "الاشتراكات والتجارب"
   },
   "items": {
     "home": "الرئيسية",
@@ -90,7 +91,8 @@
     "platformZoomRecordings": "التسجيلات",
     "platformZoomEvents": "Webhooks والأحداث",
     "platformZoomHealth": "الصحة والحوادث",
-    "platformZoomActivity": "النشاط"
+    "platformZoomActivity": "النشاط",
+    "platformCourses": "الدورات العامة"
   },
   "account": {
     "menu": "قائمة الحساب",

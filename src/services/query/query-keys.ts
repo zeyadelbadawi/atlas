@@ -44,6 +44,7 @@ export const QUERY_KEY_ROOTS = {
   platformOrganization: ['platform-organization'] as const,
   platformAcademy: ['platform-academy'] as const,
   platformUser: ['platform-user'] as const,
+  platformCourse: ['platform-course'] as const,
   role: ['role'] as const,
   auditLog: ['audit-log'] as const,
   support: ['support'] as const,
@@ -646,6 +647,20 @@ export const platformAcademyKeys = {
     [...platformAcademyKeys.all, 'list', query] as const,
   detail: (academyId: string) =>
     [...platformAcademyKeys.all, 'detail', academyId] as const,
+} as const;
+
+/**
+ * P60 — the Platform Owner's cross-tenant course console. A root of its own,
+ * separate from `course`, because invalidating one tenant's course list must
+ * not blow away the global list and vice versa; they answer different
+ * questions from different endpoints.
+ */
+export const platformCourseKeys = {
+  all: QUERY_KEY_ROOTS.platformCourse,
+  list: (query?: CollectionQuery) =>
+    [...platformCourseKeys.all, 'list', query] as const,
+  detail: (courseId: string) =>
+    [...platformCourseKeys.all, 'detail', courseId] as const,
 } as const;
 
 export const platformUserKeys = {

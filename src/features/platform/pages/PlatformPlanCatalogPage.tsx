@@ -1,5 +1,15 @@
 /**
- * Plan/Add-on Catalog Administration — Platform Owner Console (Prompt 13).
+ * Plan/Add-on Catalog Administration — Platform Owner Console.
+ *
+ * P57 — NO LONGER READ-ONLY for Plans. The original boundary note below was
+ * accurate when written: no plan mutation existed anywhere in the contract,
+ * so inventing one would have been fabricating a billing surface. That
+ * boundary has now been decided deliberately and implemented behind
+ * `PlatformOwnerGuard` (`platform-plans`), with archive-not-delete
+ * semantics, optimistic concurrency, audited before/after history and a
+ * limit-reduction impact warning. ADD-ONS remain read-only here — their
+ * catalog state is managed on the dedicated Add-ons Management page (P51),
+ * and duplicating that surface would be a second control for one fact.
  *
  * `PlanService` (Prompt 6/7, `features/tenant`) exposes only READ methods
  * for the catalog — `getPlans`/`getAddOn`/etc. — plus `updateTrialPolicy`
@@ -13,6 +23,7 @@
  * uses — with the undefined mutation boundary documented rather than
  * invented.
  */
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Info } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
@@ -22,14 +33,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { usePlanCatalog, useAddOnCatalog } from '@features/tenant';
+import { Button } from '@/components/ui/button';
+import { PlanEditorDialog } from '../components/PlanEditorDialog';
+import { PlanHistoryPanel } from '../components/PlanHistoryPanel';
 import { formatCurrency } from '@utils';
-import type { LanguageCode } from '@types';
+import type { LanguageCode, Plan } from '@types';
 
 export default function PlatformPlanCatalogPage(): JSX.Element {
   const { t, i18n } = useTranslation();
   const language = i18n.language as LanguageCode;
   const plansQuery = usePlanCatalog();
   const addOnsQuery = useAddOnCatalog();
+
+  /** The plan currently open in the editor, or null. Also drives the history panel. */
+  const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
+  /** The plan whose change history is expanded, so history is opt-in rather than N queries on mount. */
+  const [historyPlanKey, setHistoryPlanKey] = useState<string | null>(null);
 
   return (
     <PageContainer>
@@ -100,6 +119,28 @@ export default function PlatformPlanCatalogPage(): JSX.Element {
                         labelKey={`platform:planCatalog.status.${plan.status}`}
                         tone={plan.status === 'active' ? 'success' : 'neutral'}
                       />
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        data-testid={`plan-edit-${plan.key}`}
+                        onClick={() => setEditingPlan(plan)}
+                      >
+                        {t('common:actions.edit')}
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        data-testid={`plan-history-toggle-${plan.key}`}
+                        onClick={() =>
+                          setHistoryPlanKey((current) =>
+                            current === plan.key ? null : plan.key
+                          )
+                        }
+                      >
+                        {t('platform:planAdmin.history.toggle')}
+                      </Button>
                     </div>
                   </li>
                 ))}
@@ -107,6 +148,8 @@ export default function PlatformPlanCatalogPage(): JSX.Element {
             )}
           </CardContent>
         </Card>
+
+        {historyPlanKey ? <PlanHistoryPanel planKey={historyPlanKey} /> : null}
 
         <Card>
           <CardHeader>
@@ -162,6 +205,13 @@ export default function PlatformPlanCatalogPage(): JSX.Element {
           </CardContent>
         </Card>
       </div>
+
+      <PlanEditorDialog
+        plan={editingPlan}
+        onOpenChange={(open) => {
+          if (!open) setEditingPlan(null);
+        }}
+      />
     </PageContainer>
   );
 }

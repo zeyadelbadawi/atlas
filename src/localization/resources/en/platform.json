@@ -128,8 +128,8 @@
   "planCatalog": {
     "title": "Plans & Add-ons",
     "subtitle": "The Atlas catalog of plans and add-ons.",
-    "boundaryTitle": "This is a read-only catalog view",
-    "boundaryDescription": "Atlas does not yet define a create/edit/retire workflow for plans or add-ons. This page shows the live catalog exactly as Tenants see it when choosing a plan.",
+    "boundaryTitle": "Plans are editable here",
+    "boundaryDescription": "Changes are audited and take effect immediately for new operations; existing customer data is never removed. Add-on catalog state is managed on the Add-ons Management page.",
     "plansTitle": "Plans",
     "noPlans": "No plans are currently in the catalog.",
     "addOnsTitle": "Add-ons",
@@ -170,12 +170,15 @@
         "paused": "Paused",
         "grace_period": "Grace period",
         "cancelled": "Cancelled",
-        "expired": "Expired"
+        "expired": "Expired",
+        "no_plan": "No plan",
+        "trial_expired": "Trial expired"
       }
     },
     "plans": {
       "title": "Plan distribution",
-      "empty": "No plans in use yet"
+      "empty": "No plans in use yet",
+      "truncated": "Showing the top {{shown}} of {{total}} plans with subscriptions."
     },
     "cancellations": {
       "title": "Cancellations",
@@ -190,5 +193,116 @@
       "notTracked": "Atlas does not track subscription revenue. Plan prices are catalog information and no ledger links a subscription to money actually received, so no revenue figure is shown here rather than one derived from list prices."
     },
     "generatedAt": "Figures generated {{timestamp}}"
+  },
+  "planAdmin": {
+    "history": {
+      "title": "Change history",
+      "toggle": "History",
+      "by": "by {{name}}",
+      "noDetail": "No change detail was recorded for this entry.",
+      "emptyTitle": "No changes recorded yet",
+      "emptyDescription": "Administrative changes to this plan will appear here.",
+      "actions": {
+        "plan.created": "Plan created",
+        "plan.updated": "Plan updated",
+        "plan.pricing_changed": "Pricing changed",
+        "plan.trial_config_changed": "Free trial settings changed",
+        "plan.archived": "Plan archived"
+      }
+    },
+    "editor": {
+      "title": "Edit {{plan}}",
+      "description": "Changes take effect immediately for new operations. Existing customer data is never removed.",
+      "pricingTitle": "Pricing",
+      "amount": "Amount",
+      "currency": "Currency",
+      "pricingNote": "This is catalog pricing. Completed payments keep the amount they were charged, so changing this never alters billing history.",
+      "trialTitle": "Free trial",
+      "trialEligible": "Offer a free trial on this plan",
+      "trialDays": "Trial length (days)",
+      "trialDaysPlaceholder": "Platform default",
+      "trialDaysHelp": "Leave empty to use the platform-wide trial length.",
+      "limitsTitle": "Limits",
+      "limitsHelp": "Enter a number, or “unlimited”.",
+      "featuresTitle": "Features",
+      "reductionTitle": "You are reducing a limit",
+      "reductionDescription": "Some customers may already be above the new limit. Check the impact before saving.",
+      "checkImpact": "Check impact",
+      "impactNone": "No organization on this plan is currently above the proposed limits.",
+      "impactCount_one": "{{count}} organization is already above a proposed limit:",
+      "impactCount_other": "{{count}} organizations are already above a proposed limit:",
+      "impactMore": "and {{count}} more",
+      "impactAsOf": "Usage figures as of {{date}}.",
+      "impactUnmeasurable": "Usage is not tracked for: {{keys}} — impact cannot be checked for these.",
+      "impactNonDestructive": "Nothing is deleted or disabled. Existing data stays intact; affected customers are only refused new items until they are back within the limit.",
+      "confirmReduction": "I understand the impact and want to apply this change.",
+      "staleTitle": "This plan changed while you were editing",
+      "staleDescription": "Someone else saved a change. Reload the page and reapply your edit so you do not overwrite theirs.",
+      "incompleteLimits": "Every limit needs a number or \"unlimited\". Fill in the empty fields before saving."
+    }
+  },
+  "courses": {
+    "title": "Global Courses",
+    "subtitle": "Every course across all organizations and academies.",
+    "detailTitle": "Course",
+    "backToList": "Back to courses",
+    "searchPlaceholder": "Search by course, academy or organization",
+    "creatorUnknown": "Not recorded",
+    "creatorUnknownLong": "Not recorded — this course predates creator tracking",
+    "ownership": "Ownership",
+    "catalog": "Catalog",
+    "instructors": "Instructors",
+    "noInstructors": "No instructors assigned",
+    "noInstructorsDescription": "Nobody has been assigned to teach this course yet.",
+    "category": "Category",
+    "noCategory": "Uncategorized",
+    "slug": "Slug",
+    "updatedAt": "Last updated",
+    "publishedAt": "Published",
+    "emptyState": "No courses yet",
+    "emptyStateDescription": "No academy has created a course on the platform yet.",
+    "emptyFilteredState": "No matching courses",
+    "emptyFilteredStateDescription": "No course matches the current search and filters. Try clearing them.",
+    "table": {
+      "title": "Course",
+      "academy": "Academy",
+      "organization": "Organization",
+      "status": "Status",
+      "pricing": "Pricing",
+      "createdBy": "Created by",
+      "enrolled": "Enrolled",
+      "createdAt": "Created"
+    },
+    "filters": {
+      "status": "Status",
+      "visibility": "Visibility",
+      "pricing": "Pricing",
+      "sort": "Sort by",
+      "direction": "Toggle sort direction",
+      "allStatuses": "All statuses",
+      "allVisibilities": "All visibilities",
+      "allPricing": "All pricing",
+      "clear": "Clear filters"
+    },
+    "sort": {
+      "createdAt": "Created date",
+      "title": "Title",
+      "updatedAt": "Last updated",
+      "publishedAt": "Published date"
+    },
+    "sortDirection": {
+      "asc": "Ascending",
+      "desc": "Descending"
+    },
+    "stats": {
+      "enrolled": "Enrolled students",
+      "completed": "Completed students",
+      "paidOrders": "Paid orders",
+      "curriculum": "Curriculum",
+      "sectionCount_one": "{{count}} section",
+      "sectionCount_other": "{{count}} sections",
+      "lessonCount_one": "{{count}} lesson",
+      "lessonCount_other": "{{count}} lessons"
+    }
   }
 }

@@ -46,6 +46,32 @@ export interface NavigationItem {
    * locked.
    */
   readonly requiresEntitlement?: boolean;
+
+  /**
+   * Whether this item belongs to the TENANT product surface — the parts of
+   * Atlas that only make sense to someone who owns an Organization and an
+   * Academy, or who is learning inside one.
+   *
+   * A Platform/SaaS Owner is a platform operator, not a customer: they do
+   * not create an Organization for themselves, do not subscribe, do not
+   * start a trial and do not take courses. Before this flag existed the
+   * Platform Owner's sidebar advertised "Organization", "My Learning",
+   * "My Results" and "Discover Courses" — verified live, signed in as the
+   * real seeded Platform Owner (`admin@atlas.dev`, `organizations: 0`).
+   * The Learning entries appeared because `BASE_USER_PERMISSIONS` grants
+   * `student.*` to EVERY authenticated user (correctly — those are
+   * self-service permissions), so a permission gate could never have hidden
+   * them; only a role-shaped rule can.
+   *
+   * HIDING IS UX, NOT SECURITY — the same rule `requiresEntitlement`
+   * documents above. The backend already refuses a Platform Owner on tenant
+   * routes (verified: `GET /organizations/:id/subscription` → 403), and the
+   * Learning routes are not a leak at all: enrollment RLS keys on
+   * `student_id = app.current_user_id`, so a Platform Owner reading them
+   * sees their own empty set. This flag stops Atlas advertising a surface
+   * that is irrelevant to the role; it is not what protects anything.
+   */
+  readonly tenantSurface?: boolean;
 }
 
 /** A navigation section containing grouped items. */

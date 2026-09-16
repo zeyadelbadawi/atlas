@@ -39,6 +39,11 @@ export const DASHBOARD_ROUTES = {
   settings: '/dashboard/settings',
   notifications: '/dashboard/notifications',
   analytics: '/dashboard/analytics',
+  /* P59 — Analysis became four routes instead of four tabs, so each area is
+     deep-linkable and loads only its own data. `analytics` is the index. */
+  analyticsUsers: '/dashboard/analytics/users',
+  analyticsEngagement: '/dashboard/analytics/engagement',
+  analyticsRevenue: '/dashboard/analytics/revenue',
   /** Phase 9 — the Client Owner's student progress rollup (roadmap CO11). */
   studentAnalytics: '/dashboard/student-analytics',
   platform: '/dashboard/platform',
@@ -162,6 +167,15 @@ export const DASHBOARD_ROUTES = {
 
   platformAcademies: '/dashboard/platform/academies',
   platformAcademyDetail: '/dashboard/platform/academies/:academyId',
+
+  /*
+    Global Courses (P60) — the Platform Owner's cross-tenant course
+    console. Nested under `platform/` like every other operator area and
+    deliberately distinct from `/dashboard/courses`, which is one academy's
+    own course list.
+  */
+  platformCourses: '/dashboard/platform/courses',
+  platformCourseDetail: '/dashboard/platform/courses/:courseId',
 
   platformUsers: '/dashboard/platform/users',
   platformUserDetail: '/dashboard/platform/users/:userId',

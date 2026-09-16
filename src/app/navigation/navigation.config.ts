@@ -197,6 +197,13 @@ export function getDashboardNavigation(
           path: DASHBOARD_ROUTES.root,
           icon: LayoutDashboard,
           matchNestedPaths: true,
+          // The tenant dashboard. A Platform Owner has no organization, so
+          // every card on it would be empty for them — they land on and
+          // navigate to the Platform Dashboard instead
+          // (`DashboardIndexRoute`). This empties the whole OVERVIEW group
+          // for an operator, and `DashboardSidebar` already drops sections
+          // with no visible items.
+          tenantSurface: true,
         },
       ],
     },
@@ -206,6 +213,7 @@ export function getDashboardNavigation(
       items: [
         {
           id: 'organization-overview',
+          tenantSurface: true,
           labelKey: 'navigation:items.organizationOverview',
           path: DASHBOARD_ROUTES.organization,
           icon: Building2,
@@ -222,18 +230,6 @@ export function getDashboardNavigation(
           labelKey: 'navigation:items.platformDashboard',
           path: DASHBOARD_ROUTES.platform,
           icon: Building2,
-          requiresAuth: true,
-          requiredRoles: ['platform_owner'],
-        },
-        {
-          // Phase 10.2 — subscription/trial operations. `requiredRoles`
-          // hides it from every Academy role, but hiding a menu item is
-          // NOT the control: `PlatformOwnerGuard` on
-          // `GET /platform/subscriptions/overview` is.
-          id: 'platform-subscriptions',
-          labelKey: 'navigation:items.platformSubscriptions',
-          path: DASHBOARD_ROUTES.platformSubscriptions,
-          icon: CreditCard,
           requiresAuth: true,
           requiredRoles: ['platform_owner'],
         },
@@ -273,6 +269,7 @@ export function getDashboardNavigation(
       items: [
         {
           id: 'my-learning',
+          tenantSurface: true,
           labelKey: 'navigation:items.myLearning',
           path: DASHBOARD_ROUTES.myLearning,
           icon: BookMarked,
@@ -283,6 +280,7 @@ export function getDashboardNavigation(
         {
           // Phase 9 (roadmap ST6) — the student's own outcomes.
           id: 'my-results',
+          tenantSurface: true,
           labelKey: 'navigation:items.myResults',
           path: DASHBOARD_ROUTES.myResults,
           icon: ClipboardCheck,
@@ -292,6 +290,7 @@ export function getDashboardNavigation(
         },
         {
           id: 'learning-courses',
+          tenantSurface: true,
           labelKey: 'navigation:items.discoverCourses',
           path: DASHBOARD_ROUTES.learningCourses,
           icon: BookOpen,
@@ -402,6 +401,7 @@ export function getDashboardNavigation(
       items: [
         {
           id: 'tenant-overview',
+          tenantSurface: true,
           labelKey: 'navigation:items.tenantOverview',
           path: DASHBOARD_ROUTES.tenant,
           icon: Gauge,
@@ -412,6 +412,7 @@ export function getDashboardNavigation(
           // Phase 9 (roadmap CO11) — same owner-exclusive permission the
           // backend endpoint itself requires, so nav and server agree.
           id: 'student-analytics',
+          tenantSurface: true,
           requiresEntitlement: true,
           labelKey: 'navigation:items.studentAnalytics',
           path: DASHBOARD_ROUTES.studentAnalytics,
@@ -425,6 +426,7 @@ export function getDashboardNavigation(
           // a real subscription's org membership carries) exists. See
           // `Reports/DEVELOPMENT_E2E_FLOW_AUDIT.md` P2 "Plans browsing".
           id: 'plans',
+          tenantSurface: true,
           labelKey: 'navigation:items.plans',
           path: DASHBOARD_ROUTES.plans,
           icon: Layers,
@@ -432,6 +434,7 @@ export function getDashboardNavigation(
         },
         {
           id: 'tenant-subscription',
+          tenantSurface: true,
           labelKey: 'navigation:items.tenantSubscription',
           path: DASHBOARD_ROUTES.tenantSubscription,
           icon: CreditCard,
@@ -440,6 +443,7 @@ export function getDashboardNavigation(
         },
         {
           id: 'tenant-usage',
+          tenantSurface: true,
           labelKey: 'navigation:items.tenantUsage',
           path: DASHBOARD_ROUTES.tenantUsage,
           icon: Boxes,
@@ -448,6 +452,7 @@ export function getDashboardNavigation(
         },
         {
           id: 'tenant-add-ons',
+          tenantSurface: true,
           labelKey: 'navigation:items.tenantAddOns',
           path: DASHBOARD_ROUTES.tenantAddOns,
           icon: Gift,
@@ -456,6 +461,7 @@ export function getDashboardNavigation(
         },
         {
           id: 'tenant-billing',
+          tenantSurface: true,
           labelKey: 'navigation:items.tenantBilling',
           path: DASHBOARD_ROUTES.tenantBilling,
           icon: Receipt,
@@ -495,8 +501,52 @@ export function getDashboardNavigation(
           icon: LifeBuoy,
           requiresAuth: true,
           matchNestedPaths: true,
+          // Raising a support ticket is a CUSTOMER action — it opens a case
+          // against Atlas. A Platform Owner is the other end of that
+          // conversation and answers cases from the platform Support
+          // console (`platform-support`), so this entry only ever led them
+          // to a form for filing tickets with themselves.
+          tenantSurface: true,
         },
       ],
+    },
+    {
+      /*
+        SUBSCRIPTIONS & TRIALS — one coherent Platform-Owner group.
+
+        Before this, the three surfaces that together answer "how is the
+        commercial side of Atlas configured and performing?" were scattered:
+        Subscriptions & Trials sat alone under PLATFORM, the trial policy sat
+        in ADMINISTRATION between Zoom and Domains, and the platform plan
+        CATALOG page existed at `platformPlanCatalog` but was linked from
+        nowhere at all — reachable only by typing the URL. The "Plans" entry a
+        Platform Owner could see was the CUSTOMER plan-selection page.
+
+        Nested children, matching the `platformZoom` group's own shape — no
+        new navigation mechanism.
+      */
+      id: 'platform-commerce',
+      labelKey: 'navigation:sections.platformCommerce',
+      items: [
+        {
+          id: 'platform-subscriptions',
+          labelKey: 'navigation:items.platformSubscriptions',
+          path: DASHBOARD_ROUTES.platformSubscriptions,
+          icon: CreditCard,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+        },
+        {
+          id: 'platform-plan-catalog',
+          labelKey: 'navigation:items.platformPlanCatalog',
+          path: DASHBOARD_ROUTES.platformPlanCatalog,
+          icon: Layers,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+          matchNestedPaths: true,
+        },
+      ],
+      showDivider: true,
     },
     {
       id: 'administration',
@@ -511,12 +561,46 @@ export function getDashboardNavigation(
           requiredRoles: ['platform_owner'],
         },
         {
+          /* P59 — four nested children instead of four tabs. Same shape the
+             `platformZoom` group already uses, so the sidebar and the page's
+             own `SectionTabs` strip render the identical set. */
           id: 'analytics',
           labelKey: 'navigation:items.analytics',
           path: DASHBOARD_ROUTES.analytics,
           icon: BarChart3,
           requiresAuth: true,
           requiredRoles: ['platform_owner'],
+          matchNestedPaths: true,
+          children: [
+            {
+              id: 'analytics-overview',
+              labelKey: 'analytics:tabs.overview',
+              path: DASHBOARD_ROUTES.analytics,
+              requiresAuth: true,
+              requiredRoles: ['platform_owner'],
+            },
+            {
+              id: 'analytics-users',
+              labelKey: 'analytics:tabs.users',
+              path: DASHBOARD_ROUTES.analyticsUsers,
+              requiresAuth: true,
+              requiredRoles: ['platform_owner'],
+            },
+            {
+              id: 'analytics-engagement',
+              labelKey: 'analytics:tabs.engagement',
+              path: DASHBOARD_ROUTES.analyticsEngagement,
+              requiresAuth: true,
+              requiredRoles: ['platform_owner'],
+            },
+            {
+              id: 'analytics-revenue',
+              labelKey: 'analytics:tabs.revenue',
+              path: DASHBOARD_ROUTES.analyticsRevenue,
+              requiresAuth: true,
+              requiredRoles: ['platform_owner'],
+            },
+          ],
         },
         {
           /*
@@ -601,14 +685,6 @@ export function getDashboardNavigation(
           ],
         },
         {
-          id: 'platform-trial-policy',
-          labelKey: 'navigation:items.platformTrialPolicy',
-          path: DASHBOARD_ROUTES.platformTrialPolicy,
-          icon: Gift,
-          requiresAuth: true,
-          requiredRoles: ['platform_owner'],
-        },
-        {
           id: 'platform-domain',
           labelKey: 'navigation:items.platformDomain',
           path: DASHBOARD_ROUTES.platformDomain,
@@ -661,6 +737,17 @@ export function getDashboardNavigation(
           matchNestedPaths: true,
         },
         {
+          // P60 — sits directly after Academies because that is the domain
+          // order an operator thinks in: organization → academy → course.
+          id: 'platform-courses',
+          labelKey: 'navigation:items.platformCourses',
+          path: DASHBOARD_ROUTES.platformCourses,
+          icon: BookOpen,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+          matchNestedPaths: true,
+        },
+        {
           id: 'platform-users',
           labelKey: 'navigation:items.platformUsers',
           path: DASHBOARD_ROUTES.platformUsers,
@@ -694,14 +781,6 @@ export function getDashboardNavigation(
           requiresAuth: true,
           requiredRoles: ['platform_owner'],
           matchNestedPaths: true,
-        },
-        {
-          id: 'platform-plan-catalog',
-          labelKey: 'navigation:items.platformPlanCatalog',
-          path: DASHBOARD_ROUTES.platformPlanCatalog,
-          icon: Boxes,
-          requiresAuth: true,
-          requiredRoles: ['platform_owner'],
         },
         {
           // Add-ons Catalog Management (P51). Platform-owner only at every

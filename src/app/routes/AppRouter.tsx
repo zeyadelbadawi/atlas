@@ -44,6 +44,8 @@ const LiveSessionsOverviewPage = lazy(
 const LiveSessionsConnectionPage = lazy(
   () => import('@features/live-sessions/pages/LiveSessionsConnectionPage')
 );
+import { DashboardIndexRoute } from './DashboardIndexRoute';
+
 const DashboardOverviewPage = lazy(
   () => import('@features/dashboard/pages/DashboardOverviewPage')
 );
@@ -64,8 +66,20 @@ const SettingsPage = lazy(
 const NotificationsPage = lazy(
   () => import('@features/notifications/pages/NotificationsPage')
 );
-const AnalyticsPage = lazy(
-  () => import('@features/analytics/pages/AnalyticsPage')
+const AnalyticsLayout = lazy(
+  () => import('@features/analytics/pages/AnalyticsLayout')
+);
+const AnalyticsOverviewPage = lazy(
+  () => import('@features/analytics/pages/AnalyticsOverviewPage')
+);
+const AnalyticsUsersPage = lazy(
+  () => import('@features/analytics/pages/AnalyticsUsersPage')
+);
+const AnalyticsEngagementPage = lazy(
+  () => import('@features/analytics/pages/AnalyticsEngagementPage')
+);
+const AnalyticsRevenuePage = lazy(
+  () => import('@features/analytics/pages/AnalyticsRevenuePage')
 );
 const SearchPage = lazy(() => import('@features/search/pages/SearchPage'));
 const SupportCenterPage = lazy(
@@ -282,6 +296,12 @@ const PlatformAcademyListPage = lazy(
 const PlatformAcademyDetailPage = lazy(
   () => import('@features/platform/pages/PlatformAcademyDetailPage')
 );
+const PlatformCourseListPage = lazy(
+  () => import('@features/platform/pages/PlatformCourseListPage')
+);
+const PlatformCourseDetailPage = lazy(
+  () => import('@features/platform/pages/PlatformCourseDetailPage')
+);
 const PlatformUserListPage = lazy(
   () => import('@features/platform/pages/PlatformUserListPage')
 );
@@ -444,7 +464,14 @@ export function AppRouter(): JSX.Element {
               </RouteGuard>
             }
           >
-            <Route index element={<DashboardOverviewPage />} />
+            <Route
+              index
+              element={
+                <DashboardIndexRoute>
+                  <DashboardOverviewPage />
+                </DashboardIndexRoute>
+              }
+            />
 
             <Route path={DASHBOARD_ROUTES.profile} element={<ProfilePage />} />
 
@@ -482,10 +509,25 @@ export function AppRouter(): JSX.Element {
               element={<NotificationsPage />}
             />
 
+            {/* P59 — Analysis is a layout with four child routes, replacing
+                four tabs inside one page. Each child loads only its own
+                data (the analytics API already exposes them separately), and
+                every area is deep-linkable. The role gate stays exactly
+                where it was; `PlatformOwnerGuard` on the API is the real
+                control. */}
             <Route
               path={DASHBOARD_ROUTES.analytics}
-              element={<AnalyticsPage />}
-            />
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <AnalyticsLayout />
+                </RouteGuard>
+              }
+            >
+              <Route index element={<AnalyticsOverviewPage />} />
+              <Route path="users" element={<AnalyticsUsersPage />} />
+              <Route path="engagement" element={<AnalyticsEngagementPage />} />
+              <Route path="revenue" element={<AnalyticsRevenuePage />} />
+            </Route>
 
             {/* Phase 9 (roadmap CO11) — the Client Owner's student progress
                 rollup. `tenant.dashboard.view` is the real owner-exclusive
@@ -1296,6 +1338,16 @@ export function AppRouter(): JSX.Element {
             />
 
             <Route
+              /*
+                No sidebar entry (removed deliberately — per-plan trial
+                settings live in the plan editor on Plans & Add-ons). The
+                ROUTE stays because this page is still the only place that
+                edits the two PLATFORM-WIDE trial settings a plan cannot
+                express: the global on/off switch (`trial_policy.enabled`,
+                read by `TrialRedemptionService.startTrial`) and the default
+                duration a plan with no `trialDurationDays` of its own falls
+                back to. Deleting the route would make both uneditable.
+              */
               path={DASHBOARD_ROUTES.platformTrialPolicy}
               element={
                 <RouteGuard
@@ -1537,6 +1589,30 @@ export function AppRouter(): JSX.Element {
                   requiredRoles={['platform_owner']}
                 >
                   <PlatformAcademyDetailPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformCourses}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformCourseListPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformCourseDetail}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformCourseDetailPage />
                 </RouteGuard>
               }
             />

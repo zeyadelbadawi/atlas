@@ -43,6 +43,7 @@ export * from './domain.types';
 export * from './public-website.types';
 export * from './platform-organization.types';
 export * from './platform-academy.types';
+export * from './platform-course.types';
 export * from './platform-user.types';
 export * from './rbac.types';
 export * from './platform-metrics.types';

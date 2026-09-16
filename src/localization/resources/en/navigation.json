@@ -27,7 +27,8 @@
     "user": "User",
     "workspace": "Workspace",
     "administration": "Administration",
-    "addOns": "Add-ons"
+    "addOns": "Add-ons",
+    "platformCommerce": "Subscriptions & Trials"
   },
   "items": {
     "home": "Home",
@@ -90,7 +91,8 @@
     "platformZoomRecordings": "Recordings",
     "platformZoomEvents": "Webhooks & events",
     "platformZoomHealth": "Health & incidents",
-    "platformZoomActivity": "Activity"
+    "platformZoomActivity": "Activity",
+    "platformCourses": "Global Courses"
   },
   "account": {
     "menu": "Account menu",

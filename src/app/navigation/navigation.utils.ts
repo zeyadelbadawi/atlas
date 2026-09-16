@@ -59,6 +59,19 @@ export function filterNavigationItems(
  * @param item The navigation item.
  * @param context Filter context.
  */
+/**
+ * Whether the account is a platform operator rather than a customer.
+ *
+ * Reads the same `platform_owner` role the rest of the frontend checks
+ * (`AuthorizationService.hasRole`, `RouteGuard.requiredRoles`), which is
+ * derived server-side from the real `users.is_platform_owner` column — the
+ * one `is_platform_owner()` consults inside the RLS policies. No second
+ * notion of "is an admin" is introduced here.
+ */
+function isPlatformOwner(user: NavigationFilterContext['user']): boolean {
+  return !!user?.roles?.includes('platform_owner');
+}
+
 function shouldShowNavigationItem(
   item: NavigationItem,
   context: NavigationFilterContext
@@ -82,6 +95,26 @@ function shouldShowNavigationItem(
     answered yet, and filtering on a guess would flicker the sidebar.
   */
   if (item.requiresEntitlement && hasEntitlement === false) {
+    return false;
+  }
+
+  /*
+    Tenant surface vs platform operator (SaaS Owner role separation).
+
+    A Platform Owner is not a customer: they do not own an Organization,
+    do not subscribe, and do not take courses. Items marked
+    `tenantSurface` are therefore hidden from them.
+
+    A PERMISSION GATE COULD NOT DO THIS. `BASE_USER_PERMISSIONS` grants
+    `student.*` to every authenticated user — deliberately, since those are
+    self-service permissions gating a user's own data — so the Learning
+    entries were visible to the Platform Owner no matter what permission
+    the items required. The distinction being drawn here is about ROLE, so
+    the rule has to be role-shaped.
+
+    Hiding is UX, not security: see `NavigationItem.tenantSurface`.
+  */
+  if (item.tenantSurface && isPlatformOwner(user)) {
     return false;
   }
 
