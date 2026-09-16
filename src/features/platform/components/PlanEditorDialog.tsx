@@ -326,6 +326,20 @@ export function PlanEditorDialog({
                   </Button>
                 ) : (
                   <div className="space-y-2" data-testid="plan-impact-result">
+                    {/* P61 — say plainly who this edit cannot reach. A
+                        subscriber whose entitlement was captured at purchase
+                        keeps it; the catalog edit changes what NEW customers
+                        get, not what they already bought. Without this line
+                        the count below reads as "everyone else is fine",
+                        which is a different and weaker claim. */}
+                    {impact.protectedSubscriptions > 0 ? (
+                      <p className="text-sm" data-testid="plan-impact-protected">
+                        {t('platform:planAdmin.editor.impactProtected', {
+                          count: impact.protectedSubscriptions,
+                        })}
+                      </p>
+                    ) : null}
+
                     {impact.affected.length === 0 ? (
                       <p>{t('platform:planAdmin.editor.impactNone')}</p>
                     ) : (

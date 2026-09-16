@@ -201,6 +201,15 @@ export interface PlanLimitImpact {
   readonly affected: readonly PlanLimitImpactRow[];
   readonly unmeasurableLimitKeys: readonly string[];
   readonly usageAsOf?: string;
+  /**
+   * P61 — subscribers whose entitlement was captured at purchase, and whom
+   * this edit therefore cannot reach at all. Reported so the editor can say
+   * how many customers are unaffected instead of leaving the reader to
+   * assume a catalog edit changes everyone on the plan.
+   */
+  readonly protectedSubscriptions: number;
+  /** Subscribers still following the live catalog — the ones this edit does reach. */
+  readonly catalogFollowingSubscriptions: number;
 }
 
 /**

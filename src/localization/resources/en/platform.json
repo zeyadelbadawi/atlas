@@ -129,7 +129,7 @@
     "title": "Plans & Add-ons",
     "subtitle": "The Atlas catalog of plans and add-ons.",
     "boundaryTitle": "Plans are editable here",
-    "boundaryDescription": "Changes are audited and take effect immediately for new operations; existing customer data is never removed. Add-on catalog state is managed on the Add-ons Management page.",
+    "boundaryDescription": "Changes are audited and apply to new purchases and to subscribers who have no recorded entitlement. Customers keep the limits they were granted when they bought or started a trial, and no existing customer data is ever removed. Add-on catalog state is managed on the Add-ons Management page.",
     "plansTitle": "Plans",
     "noPlans": "No plans are currently in the catalog.",
     "addOnsTitle": "Add-ons",
@@ -238,7 +238,9 @@
       "confirmReduction": "I understand the impact and want to apply this change.",
       "staleTitle": "This plan changed while you were editing",
       "staleDescription": "Someone else saved a change. Reload the page and reapply your edit so you do not overwrite theirs.",
-      "incompleteLimits": "Every limit needs a number or \"unlimited\". Fill in the empty fields before saving."
+      "incompleteLimits": "Every limit needs a number or \"unlimited\". Fill in the empty fields before saving.",
+      "impactProtected_one": "{{count}} subscriber keeps the limits they were granted at purchase and is not affected by this edit.",
+      "impactProtected_other": "{{count}} subscribers keep the limits they were granted at purchase and are not affected by this edit."
     }
   },
   "courses": {
