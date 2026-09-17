@@ -1,15 +1,22 @@
 /**
  * Customer-facing derivation of "where is my custom domain in its
- * lifecycle" (P63). Pure: the server's stored facts in, one step out.
- * Nothing here decides anything the backend has not already recorded —
- * it only chooses which of the backend's truths to lead with.
+ * lifecycle" (P63, extended P63c). Pure: the server's stored facts in,
+ * one step out. Nothing here decides anything the backend has not
+ * already recorded — it only chooses which of the backend's truths to
+ * lead with.
  */
-import type { DomainConnection, DomainStatus } from '@types';
+import type {
+  DomainConnection,
+  DomainDnsInstructions,
+  DomainStatus,
+} from '@types';
 
 export type CustomDomainStep =
   /** No custom domain yet. */
   | 'connect'
-  /** Row exists; the customer must add DNS records (or the provider has not accepted it yet). */
+  /** Atlas cannot offer DNS setup yet — an Atlas-side provider/routing problem, never the customer's. */
+  | 'blocked'
+  /** Row exists and the provider holds it; the customer must add DNS records. */
   | 'configure_dns'
   /** DNS submitted; the provider is validating. */
   | 'verifying'
@@ -19,10 +26,19 @@ export type CustomDomainStep =
   | 'attention';
 
 export function deriveCustomDomainStep(
-  customDomain: DomainConnection | undefined
+  customDomain: DomainConnection | undefined,
+  dns?: DomainDnsInstructions
 ): CustomDomainStep {
   if (!customDomain?.hostname) return 'connect';
-  return stepForStatus(customDomain.status);
+  const step = stepForStatus(customDomain.status);
+  // Before the domain is live, the customer can only act on DNS when the
+  // provider actually holds the hostname and there is a target to point
+  // at. Otherwise the honest state is "Atlas is not ready", not "add
+  // these (non-existent) records".
+  if ((step === 'configure_dns' || step === 'verifying') && dns && !dns.ready) {
+    return 'blocked';
+  }
+  return step;
 }
 
 export function stepForStatus(status: DomainStatus): CustomDomainStep {
@@ -43,20 +59,26 @@ export function stepForStatus(status: DomainStatus): CustomDomainStep {
 }
 
 /** Steps in display order for the progress indicator. */
-export const CUSTOM_DOMAIN_STEPS: readonly Exclude<CustomDomainStep, 'attention'>[] = [
-  'connect',
-  'configure_dns',
-  'verifying',
-  'live',
-];
+export const CUSTOM_DOMAIN_STEPS: readonly Exclude<
+  CustomDomainStep,
+  'attention' | 'blocked'
+>[] = ['connect', 'configure_dns', 'verifying', 'live'];
 
-/** Index of a step along `CUSTOM_DOMAIN_STEPS`; `attention` sits at the verifying position (something happened after DNS). */
+/** Index of a step along `CUSTOM_DOMAIN_STEPS`; `attention` sits at the verifying position (something happened after DNS), `blocked` at the DNS position (that is the step Atlas cannot offer yet). */
 export function stepIndex(step: CustomDomainStep): number {
   if (step === 'attention') return CUSTOM_DOMAIN_STEPS.indexOf('verifying');
+  if (step === 'blocked') return CUSTOM_DOMAIN_STEPS.indexOf('configure_dns');
   return CUSTOM_DOMAIN_STEPS.indexOf(step);
 }
 
-/** Whether the DNS instructions are still worth showing prominently. */
+/** Whether the DNS instructions are worth showing prominently. */
 export function shouldShowDnsInstructions(step: CustomDomainStep): boolean {
-  return step === 'configure_dns' || step === 'verifying' || step === 'attention';
+  return (
+    step === 'configure_dns' || step === 'verifying' || step === 'attention'
+  );
+}
+
+/** Whether the customer may change the hostname without a confirmation: everything before "live". */
+export function canChangeDomainFreely(step: CustomDomainStep): boolean {
+  return step !== 'connect' && step !== 'live';
 }

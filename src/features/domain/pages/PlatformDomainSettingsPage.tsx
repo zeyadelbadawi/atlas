@@ -347,6 +347,9 @@ export default function PlatformDomainSettingsPage(): JSX.Element {
                   {t(
                     `website:domain.checkError.${custom.lastCheckError}.title`
                   )}
+                  {custom.providerErrorCode
+                    ? ` · ${t('website:platformDomain.operations.table.providerCode', { code: custom.providerErrorCode })}`
+                    : ''}
                 </p>
               ) : null}
             </div>
@@ -556,7 +559,18 @@ export default function PlatformDomainSettingsPage(): JSX.Element {
                     detail={
                       readiness.customHostnames.fallbackOrigin
                         ? `${readiness.customHostnames.fallbackOrigin} · ${readiness.customHostnames.fallbackOriginStatus ?? ''}`
-                        : undefined
+                        : readiness.customHostnames.providerErrorCode
+                          ? t(
+                              'website:platformDomain.readiness.providerRefused',
+                              {
+                                code: readiness.customHostnames
+                                  .providerErrorCode,
+                                category: t(
+                                  `website:platformDomain.readiness.categories.${readiness.customHostnames.providerErrorCategory ?? 'unknown'}`
+                                ),
+                              }
+                            )
+                          : undefined
                     }
                   />
                   <TruthRow

@@ -133,14 +133,24 @@ export interface DomainConnection {
   /** P63 — Atlas's own outbound HTTPS probe of the hostname; absent when never probed. */
   readonly httpsReachable?: boolean;
   readonly httpsCheckedAt?: string;
+  /** P63c — whether the provider currently holds this hostname. `false` means there is nothing for the customer to configure yet. */
+  readonly providerRegistered: boolean;
+  /** P63c — the provider's own numeric error code for the latest refusal (operators only). */
+  readonly providerErrorCode?: string;
 }
 
 /** P63 — mirrors the backend's `DOMAIN_CHECK_ERROR_CODES` exactly. */
 export type DomainCheckErrorCode =
   | 'provider_unavailable'
+  | 'provider_registration_failed'
   | 'provider_hostname_missing'
   | 'provider_error'
   | 'dns_not_pointing';
+
+/** P63c — why the DNS step cannot be offered yet. Always Atlas-side. */
+export type DomainDnsBlockedReason =
+  | 'provider_not_registered'
+  | 'routing_target_missing';
 
 /**
  * The provisioning request itself. Always Tenant-scoped

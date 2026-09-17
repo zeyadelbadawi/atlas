@@ -17,6 +17,7 @@
  */
 import type {
   DomainConnection,
+  DomainDnsBlockedReason,
   DomainStatus,
   DomainVerificationRecord,
   SubdomainAllocation,
@@ -70,6 +71,9 @@ export interface CanonicalHost {
 export interface DomainDnsInstructions {
   readonly cnameTarget?: string;
   readonly records: readonly DomainVerificationRecord[];
+  /** P63c — `true` only when there is genuinely something for the customer to add. */
+  readonly ready: boolean;
+  readonly blockedReason?: DomainDnsBlockedReason;
 }
 
 export interface AcademyDomainConfiguration {
@@ -122,6 +126,14 @@ export interface PlatformDomainReadiness {
     readonly ready: boolean;
     readonly fallbackOrigin?: string;
     readonly fallbackOriginStatus?: string;
+    /** P63c — why the provider refused the zone-facts read, when it did. Code + category only. */
+    readonly providerErrorCode?: string;
+    readonly providerErrorCategory?:
+      | 'permission'
+      | 'not_enabled'
+      | 'invalid_hostname'
+      | 'rate_limited'
+      | 'unknown';
     readonly originSslMode?: string;
     readonly originSslModeCompatible?: boolean;
   };

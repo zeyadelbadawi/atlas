@@ -118,7 +118,8 @@
         "configure_dns": "Checked — DNS records are still missing",
         "verifying": "Checked — still verifying, DNS changes can take a while to propagate",
         "live": "Checked — your domain is connected",
-        "attention": "Checked — this domain needs attention"
+        "attention": "Checked — this domain needs attention",
+        "blocked": "Checked — Atlas still can't register this domain with its provider"
       },
       "dnsInstructionsTitle": "DNS records to add",
       "dnsInstructionsHelp": "Add these records at the company that manages your domain's DNS. Atlas re-checks automatically every few minutes; you can also check now at any time.",
@@ -136,14 +137,16 @@
         "connect": "Connect",
         "configure_dns": "Configure DNS",
         "verifying": "Verification",
-        "live": "Live"
+        "live": "Live",
+        "blocked": "Atlas not ready"
       },
       "stepHelp": {
         "connect": "Enter the domain you want to use.",
         "configure_dns": "Add the DNS records below at your DNS provider, then check.",
         "verifying": "Atlas's infrastructure provider is validating your DNS. This usually takes minutes, sometimes up to a day.",
         "live": "Your domain is connected and serving your website over HTTPS.",
-        "attention": "Something stopped this domain from working. Review the details below, fix the DNS records if needed, then check again."
+        "attention": "Something stopped this domain from working. Review the details below, fix the DNS records if needed, then check again.",
+        "blocked": "Atlas could not register this domain with its infrastructure provider yet, so there is nothing for you to configure. This is on Atlas's side — Atlas retries automatically every few minutes; you can also try again now or change the domain."
       },
       "status": {
         "not_configured": "Not configured",
@@ -153,7 +156,17 @@
         "connected": "Connected",
         "failed": "Failed",
         "disconnected": "Disconnected"
-      }
+      },
+      "changeAction": "Change domain",
+      "backAction": "Back",
+      "changeTitle": "Change domain",
+      "changeHelp": "Enter the address you want instead. The domain you entered before will be released and its verification progress discarded.",
+      "changeLiveConfirmTitle": "Replace your live domain?",
+      "changeLiveConfirmDescription": "{{hostname}} is connected and serving your website. Replacing it disconnects it immediately; visitors are served on your Atlas subdomain until the new domain is verified.",
+      "changeLiveConfirmAction": "Replace domain",
+      "changed": "Domain changed — add the DNS records below",
+      "retryAction": "Try again",
+      "changeSubmit": "Use this domain"
     },
     "checkError": {
       "provider_unavailable": {
@@ -162,7 +175,7 @@
       },
       "provider_hostname_missing": {
         "title": "The provider no longer has a record of this domain",
-        "description": "Disconnect the domain and connect it again to register it afresh."
+        "description": "It was registered before and has since disappeared at the provider. Check again to re-register it, or disconnect and connect it afresh."
       },
       "provider_error": {
         "title": "The last check failed",
@@ -171,6 +184,10 @@
       "dns_not_pointing": {
         "title": "Your DNS doesn't point to Atlas yet",
         "description": "Make sure the CNAME record below exists exactly as shown. DNS changes can take up to a day to propagate."
+      },
+      "provider_registration_failed": {
+        "title": "Atlas's provider refused to register this domain",
+        "description": "This is an Atlas-side configuration problem, not something at your DNS provider. Atlas retries automatically every few minutes; you can also try again now. If it persists, contact support."
       }
     },
     "infrastructure": {
@@ -193,6 +210,16 @@
         "active": "Active",
         "failed": "Failed",
         "expired": "Expired"
+      }
+    },
+    "blocked": {
+      "provider_not_registered": {
+        "title": "Atlas could not register this domain yet",
+        "description": "Atlas's infrastructure provider has not accepted the domain, so there are no DNS records to add. Nothing is wrong with your domain or your DNS. Atlas keeps retrying automatically; if this persists, contact support — the Atlas team can see the exact provider reason."
+      },
+      "routing_target_missing": {
+        "title": "Atlas is not ready to route custom domains",
+        "description": "The domain is registered, but Atlas's platform has no routing target for custom domains yet, so a CNAME record can't be given. Your Atlas subdomain keeps working. Atlas retries automatically; contact support if this persists."
       }
     }
   },
@@ -227,7 +254,15 @@
       "wildcardReachable": "Academy subdomains answer over HTTPS (wildcard)",
       "wildcardUnreachable": "Academy subdomains do not answer over HTTPS",
       "wildcardUnknown": "No platform domain to probe",
-      "checkedAt": "Checked {{time}} — every line is a live answer from the provider or a live probe."
+      "checkedAt": "Checked {{time}} — every line is a live answer from the provider or a live probe.",
+      "providerRefused": "Provider refused the zone read — code {{code}} ({{category}})",
+      "categories": {
+        "permission": "token permissions",
+        "not_enabled": "feature not enabled on the zone",
+        "invalid_hostname": "invalid hostname",
+        "rate_limited": "rate limited",
+        "unknown": "unknown"
+      }
     },
     "overview": {
       "academies": "Academies",
@@ -266,7 +301,8 @@
         "lastChecked": "Last checked",
         "attention": "Attention",
         "needsAttention": "Needs attention",
-        "ok": "OK"
+        "ok": "OK",
+        "providerCode": "provider code {{code}}"
       }
     }
   },

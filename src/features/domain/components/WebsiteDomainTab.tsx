@@ -1,5 +1,5 @@
 /**
- * Website access tab (Prompt 11; reworked P63).
+ * Website access tab (Prompt 11; reworked P63, P63c).
  *
  * Embedded in `WebsiteSettingsPage` (`@features/website`) through this
  * feature's public barrel. Answers, in the customer's order of concern:
@@ -8,10 +8,16 @@
  * it, is HTTPS working, and which address is primary.
  *
  * Every value is a server fact from `useAcademyDomain` — the canonical
- * host, the lifecycle status, the last check and its error, the HTTPS
- * probe — or an explicit "not yet"/"unknown". Nothing is derived on the
- * client from a guessed base domain and nothing is ever shown as
- * verified because a button was clicked.
+ * host, the lifecycle status, whether the provider holds the hostname,
+ * whether DNS setup is genuinely possible, the last check and its error,
+ * the HTTPS probe — or an explicit "not yet"/"unknown". The step shown is
+ * derived from those facts on every render, so a refresh lands on the
+ * same step. Nothing is ever shown as verified because a button was
+ * clicked.
+ *
+ * P63c: a domain the provider has not accepted is a BLOCKED state ("Atlas
+ * is not ready"), never an empty DNS table; and the hostname can be
+ * changed at any step before "live" (with a confirmation once live).
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -19,9 +25,11 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   AlertTriangle,
+  ArrowLeft,
   ExternalLink,
   Globe,
   Loader2,
+  Pencil,
   RefreshCw,
   ShieldCheck,
   Trash2,
@@ -46,6 +54,7 @@ import { toast } from '@/hooks/use-toast';
 import { useConfirmDialog } from '@app/providers';
 import { useDateFormatter, usePermissions, useUnsavedChanges } from '@hooks';
 import { useServerValidation } from '@forms';
+import { cn, MIRROR_IN_RTL } from '@utils';
 import {
   useAcademyDomain,
   useAddCustomDomain,
@@ -63,6 +72,7 @@ import {
   getSslStatusTone,
 } from '../utils/domain-status.utils';
 import {
+  canChangeDomainFreely,
   deriveCustomDomainStep,
   shouldShowDnsInstructions,
 } from '../utils/domain-lifecycle.utils';
@@ -91,14 +101,20 @@ export function WebsiteDomainTab({
   const removeDomain = useRemoveCustomDomain();
   const verifyDomain = useVerifyDomain();
 
-  const [showAddForm, setShowAddForm] = useState(false);
+  // Only transient UI: whether the hostname form is open. Everything
+  // about the domain itself comes from the server on every render.
+  const [formMode, setFormMode] = useState<'closed' | 'add' | 'change'>(
+    'closed'
+  );
 
   const form = useForm<AddCustomDomainFormData>({
     resolver: zodResolver(addCustomDomainSchema),
     defaultValues: { hostname: '' },
   });
 
-  useUnsavedChanges({ isDirty: form.formState.isDirty });
+  useUnsavedChanges({
+    isDirty: formMode !== 'closed' && form.formState.isDirty,
+  });
   useServerValidation(form, addDomain.error);
 
   if (domainQuery.isLoading) return <Skeleton className="h-64 w-full" />;
@@ -108,7 +124,7 @@ export function WebsiteDomainTab({
 
   const domain = domainQuery.data;
   const custom = domain.customDomain;
-  const step = deriveCustomDomainStep(custom);
+  const step = deriveCustomDomainStep(custom, domain.dns);
   const baseDomain = platformDomainQuery.data?.baseDomain;
   // The server's allocation host is authoritative; the platform base
   // domain only fills in for an allocation recorded before a base domain
@@ -118,16 +134,53 @@ export function WebsiteDomainTab({
     (baseDomain ? `${academySlug}.${baseDomain}` : undefined);
   const canonicalHost = domain.canonicalHost?.host;
   const customIsCanonical = domain.canonicalHost?.source === 'custom_domain';
-  const isBusy = addDomain.isPending || removeDomain.isPending || verifyDomain.isPending;
+  const isBusy =
+    addDomain.isPending || removeDomain.isPending || verifyDomain.isPending;
 
-  const onSubmitAddDomain = (data: AddCustomDomainFormData) => {
+  const closeForm = () => {
+    setFormMode('closed');
+    form.reset({ hostname: '' });
+  };
+
+  const openChangeForm = async () => {
+    if (!custom?.hostname) return;
+    if (!canChangeDomainFreely(step)) {
+      // Live: replacing it disconnects a working address. Say so first.
+      const confirmed = await confirm({
+        titleKey: 'website:domain.custom.changeLiveConfirmTitle',
+        descriptionKey: 'website:domain.custom.changeLiveConfirmDescription',
+        confirmLabelKey: 'website:domain.custom.changeLiveConfirmAction',
+        intent: 'destructive',
+        values: { hostname: custom.hostname },
+      });
+      if (!confirmed) return;
+    }
+    form.reset({ hostname: custom.hostname });
+    setFormMode('change');
+  };
+
+  const onSubmitHostname = (data: AddCustomDomainFormData) => {
+    const unchanged = data.hostname === custom?.hostname;
     addDomain.mutate(
       { academyId, payload: data },
       {
-        onSuccess: () => {
-          toast({ title: t('website:domain.custom.added') });
-          setShowAddForm(false);
-          form.reset();
+        onSuccess: (result) => {
+          const nextStep = deriveCustomDomainStep(
+            result.customDomain,
+            result.dns
+          );
+          toast({
+            title:
+              nextStep === 'blocked'
+                ? t(
+                    `website:domain.blocked.${result.dns?.blockedReason ?? 'provider_not_registered'}.title`
+                  )
+                : formMode === 'change' && !unchanged
+                  ? t('website:domain.custom.changed')
+                  : t('website:domain.custom.added'),
+            variant: nextStep === 'blocked' ? 'destructive' : undefined,
+          });
+          closeForm();
         },
         onError: () =>
           toast({
@@ -142,11 +195,15 @@ export function WebsiteDomainTab({
     verifyDomain.mutate(academyId, {
       onSuccess: (result) => {
         const error = result.customDomain?.lastCheckError;
+        const nextStep = deriveCustomDomainStep(
+          result.customDomain,
+          result.dns
+        );
         toast({
           title: error
             ? t(`website:domain.checkError.${error}.title`)
-            : t(`website:domain.custom.checked.${deriveCustomDomainStep(result.customDomain)}`),
-          variant: error ? 'destructive' : undefined,
+            : t(`website:domain.custom.checked.${nextStep}`),
+          variant: error || nextStep === 'blocked' ? 'destructive' : undefined,
         });
       },
       onError: () =>
@@ -165,7 +222,10 @@ export function WebsiteDomainTab({
     });
     if (!confirmed) return;
     removeDomain.mutate(academyId, {
-      onSuccess: () => toast({ title: t('website:domain.custom.removed') }),
+      onSuccess: () => {
+        closeForm();
+        toast({ title: t('website:domain.custom.removed') });
+      },
       onError: () =>
         toast({
           title: t('website:domain.custom.removeError'),
@@ -174,12 +234,73 @@ export function WebsiteDomainTab({
     });
   };
 
+  const hostnameForm = (
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmitHostname)}
+        className="space-y-3"
+      >
+        {formMode === 'change' ? (
+          <p className="text-sm text-muted-foreground">
+            {t('website:domain.custom.changeHelp')}
+          </p>
+        ) : null}
+        <FormField
+          control={form.control}
+          name="hostname"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t('website:domain.custom.hostnameLabel')}</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  dir="ltr"
+                  placeholder="www.example.com"
+                  autoComplete="off"
+                  autoFocus
+                />
+              </FormControl>
+              <FormDescription>
+                {t('website:domain.custom.hostnameHelp')}
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="flex flex-wrap gap-2">
+          <Button type="submit" size="sm" disabled={isBusy}>
+            {addDomain.isPending ? (
+              <Loader2 className="size-3.5 animate-spin" aria-hidden />
+            ) : null}
+            {formMode === 'change'
+              ? t('website:domain.custom.changeSubmit')
+              : t('website:domain.custom.addAction')}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={addDomain.isPending}
+            onClick={closeForm}
+          >
+            <ArrowLeft className={cn('size-3.5', MIRROR_IN_RTL)} aria-hidden />
+            {formMode === 'change'
+              ? t('website:domain.custom.backAction')
+              : t('common:actions.cancel')}
+          </Button>
+        </div>
+      </form>
+    </Form>
+  );
+
   return (
     <div className="space-y-6">
       {/* ------------------------------------------------ website address */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">{t('website:domain.address.title')}</CardTitle>
+          <CardTitle className="text-base">
+            {t('website:domain.address.title')}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {canonicalHost ? (
@@ -207,7 +328,9 @@ export function WebsiteDomainTab({
               </div>
               <p className="text-sm text-muted-foreground">
                 {customIsCanonical
-                  ? t('website:domain.address.redirectNote', { host: subdomainHost ?? '' })
+                  ? t('website:domain.address.redirectNote', {
+                      host: subdomainHost ?? '',
+                    })
                   : custom?.hostname
                     ? t('website:domain.address.subdomainUntilVerified')
                     : t('website:domain.address.subdomainOnly')}
@@ -224,7 +347,9 @@ export function WebsiteDomainTab({
       {/* ------------------------------------------------ atlas subdomain */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">{t('website:domain.subdomain.title')}</CardTitle>
+          <CardTitle className="text-base">
+            {t('website:domain.subdomain.title')}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {subdomainHost ? (
@@ -235,7 +360,11 @@ export function WebsiteDomainTab({
               {domain.subdomain ? (
                 <StatusBadge
                   labelKey={`website:domain.subdomain.status.${domain.subdomain.status}`}
-                  tone={domain.subdomain.status === 'assigned' ? 'success' : 'neutral'}
+                  tone={
+                    domain.subdomain.status === 'assigned'
+                      ? 'success'
+                      : 'neutral'
+                  }
                 />
               ) : null}
             </div>
@@ -253,12 +382,14 @@ export function WebsiteDomainTab({
       {/* ------------------------------------------------ custom domain */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">{t('website:domain.custom.title')}</CardTitle>
+          <CardTitle className="text-base">
+            {t('website:domain.custom.title')}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <CustomDomainStepper step={step} />
 
-          {custom?.hostname ? (
+          {custom?.hostname && formMode !== 'change' ? (
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-3">
                 <code className="text-sm font-medium text-foreground" dir="ltr">
@@ -266,7 +397,11 @@ export function WebsiteDomainTab({
                 </code>
                 <StatusBadge
                   labelKey={`website:domain.custom.status.${custom.status}`}
-                  tone={getDomainStatusTone(custom.status)}
+                  tone={
+                    step === 'blocked'
+                      ? 'warning'
+                      : getDomainStatusTone(custom.status)
+                  }
                 />
               </div>
 
@@ -274,23 +409,45 @@ export function WebsiteDomainTab({
                 {t(`website:domain.custom.stepHelp.${step}`)}
               </p>
 
-              {custom.lastCheckError ? (
+              {step === 'blocked' && domain.dns?.blockedReason ? (
+                <Alert>
+                  <AlertTriangle className="size-4" aria-hidden />
+                  <AlertTitle>
+                    {t(
+                      `website:domain.blocked.${domain.dns.blockedReason}.title`
+                    )}
+                  </AlertTitle>
+                  <AlertDescription>
+                    {t(
+                      `website:domain.blocked.${domain.dns.blockedReason}.description`
+                    )}
+                  </AlertDescription>
+                </Alert>
+              ) : custom.lastCheckError ? (
                 <Alert variant="destructive">
                   <AlertTriangle className="size-4" aria-hidden />
-                  <AlertTitle>{t(`website:domain.checkError.${custom.lastCheckError}.title`)}</AlertTitle>
+                  <AlertTitle>
+                    {t(
+                      `website:domain.checkError.${custom.lastCheckError}.title`
+                    )}
+                  </AlertTitle>
                   <AlertDescription>
-                    {t(`website:domain.checkError.${custom.lastCheckError}.description`)}
+                    {t(
+                      `website:domain.checkError.${custom.lastCheckError}.description`
+                    )}
                   </AlertDescription>
                 </Alert>
               ) : null}
 
-              {shouldShowDnsInstructions(step) && domain.dns ? (
+              {shouldShowDnsInstructions(step) && domain.dns?.ready ? (
                 <DnsRecordsTable hostname={custom.hostname} dns={domain.dns} />
               ) : null}
 
               <dl className="grid gap-1 text-sm sm:grid-cols-2">
                 <div className="flex gap-2">
-                  <dt className="text-muted-foreground">{t('website:domain.custom.lastChecked')}</dt>
+                  <dt className="text-muted-foreground">
+                    {t('website:domain.custom.lastChecked')}
+                  </dt>
                   <dd className="font-medium">
                     {custom.lastCheckedAt
                       ? fmt.dateTime(custom.lastCheckedAt)
@@ -299,8 +456,12 @@ export function WebsiteDomainTab({
                 </div>
                 {custom.connectedAt ? (
                   <div className="flex gap-2">
-                    <dt className="text-muted-foreground">{t('website:domain.custom.connectedSince')}</dt>
-                    <dd className="font-medium">{fmt.dateTime(custom.connectedAt)}</dd>
+                    <dt className="text-muted-foreground">
+                      {t('website:domain.custom.connectedSince')}
+                    </dt>
+                    <dd className="font-medium">
+                      {fmt.dateTime(custom.connectedAt)}
+                    </dd>
                   </div>
                 ) : null}
               </dl>
@@ -309,7 +470,7 @@ export function WebsiteDomainTab({
                 <div className="flex flex-wrap gap-2">
                   <Button
                     type="button"
-                    variant="outline"
+                    variant={step === 'blocked' ? 'default' : 'outline'}
                     size="sm"
                     disabled={isBusy}
                     onClick={handleCheck}
@@ -319,7 +480,19 @@ export function WebsiteDomainTab({
                     ) : (
                       <RefreshCw className="size-3.5" aria-hidden />
                     )}
-                    {t('website:domain.custom.verifyAction')}
+                    {step === 'blocked'
+                      ? t('website:domain.custom.retryAction')
+                      : t('website:domain.custom.verifyAction')}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={isBusy}
+                    onClick={() => void openChangeForm()}
+                  >
+                    <Pencil className="size-3.5" aria-hidden />
+                    {t('website:domain.custom.changeAction')}
                   </Button>
                   <Button
                     type="button"
@@ -338,50 +511,30 @@ export function WebsiteDomainTab({
                 </div>
               ) : null}
             </div>
-          ) : showAddForm && canManage ? (
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmitAddDomain)} className="space-y-3">
-                <FormField
-                  control={form.control}
-                  name="hostname"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('website:domain.custom.hostnameLabel')}</FormLabel>
-                      <FormControl>
-                        <Input {...field} dir="ltr" placeholder="www.example.com" autoComplete="off" />
-                      </FormControl>
-                      <FormDescription>{t('website:domain.custom.hostnameHelp')}</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="flex flex-wrap gap-2">
-                  <Button type="submit" size="sm" disabled={addDomain.isPending}>
-                    {addDomain.isPending ? (
-                      <Loader2 className="size-3.5 animate-spin" aria-hidden />
-                    ) : null}
-                    {t('website:domain.custom.addAction')}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    disabled={addDomain.isPending}
-                    onClick={() => {
-                      setShowAddForm(false);
-                      form.reset();
-                    }}
-                  >
-                    {t('common:actions.cancel')}
-                  </Button>
-                </div>
-              </form>
-            </Form>
+          ) : formMode !== 'closed' && canManage ? (
+            <div className="space-y-3">
+              {formMode === 'change' && custom?.hostname ? (
+                <p className="text-sm font-medium text-foreground">
+                  {t('website:domain.custom.changeTitle')}
+                </p>
+              ) : null}
+              {hostnameForm}
+            </div>
           ) : (
             <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">{t('website:domain.custom.empty')}</p>
+              <p className="text-sm text-muted-foreground">
+                {t('website:domain.custom.empty')}
+              </p>
               {canManage ? (
-                <Button type="button" variant="outline" size="sm" onClick={() => setShowAddForm(true)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    form.reset({ hostname: '' });
+                    setFormMode('add');
+                  }}
+                >
                   {t('website:domain.custom.addAction')}
                 </Button>
               ) : null}
@@ -393,7 +546,9 @@ export function WebsiteDomainTab({
       {/* ------------------------------------------------ https & infrastructure */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">{t('website:domain.infrastructure.title')}</CardTitle>
+          <CardTitle className="text-base">
+            {t('website:domain.infrastructure.title')}
+          </CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
@@ -424,10 +579,14 @@ export function WebsiteDomainTab({
                   <span className="text-sm text-muted-foreground">
                     {custom.httpsReachable
                       ? t('website:domain.infrastructure.httpsReachable', {
-                          time: custom.httpsCheckedAt ? fmt.dateTime(custom.httpsCheckedAt) : '',
+                          time: custom.httpsCheckedAt
+                            ? fmt.dateTime(custom.httpsCheckedAt)
+                            : '',
                         })
                       : t('website:domain.infrastructure.httpsUnreachable', {
-                          time: custom.httpsCheckedAt ? fmt.dateTime(custom.httpsCheckedAt) : '',
+                          time: custom.httpsCheckedAt
+                            ? fmt.dateTime(custom.httpsCheckedAt)
+                            : '',
                         })}
                   </span>
                 )}

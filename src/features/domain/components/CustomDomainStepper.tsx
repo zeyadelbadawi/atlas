@@ -15,10 +15,12 @@ export interface CustomDomainStepperProps {
   readonly step: CustomDomainStep;
 }
 
-export function CustomDomainStepper({ step }: CustomDomainStepperProps): JSX.Element {
+export function CustomDomainStepper({
+  step,
+}: CustomDomainStepperProps): JSX.Element {
   const { t } = useTranslation();
   const current = stepIndex(step);
-  const attention = step === 'attention';
+  const attention = step === 'attention' || step === 'blocked';
 
   return (
     <ol
@@ -63,7 +65,11 @@ export function CustomDomainStepper({ step }: CustomDomainStepperProps): JSX.Ele
                 index + 1
               )}
             </span>
-            <span className="truncate">{t(`website:domain.custom.steps.${item}`)}</span>
+            <span className="truncate">
+              {failedHere && step === 'blocked'
+                ? t('website:domain.custom.steps.blocked')
+                : t(`website:domain.custom.steps.${item}`)}
+            </span>
           </li>
         );
       })}
