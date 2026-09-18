@@ -100,6 +100,38 @@ const STATUS_OPTIONS: readonly DomainStatus[] = [
   'disconnected',
 ];
 
+/** P63d — a connected-but-not-live domain is labelled by what is missing, never "Connected" as if it were live. */
+function lifecycleLabelKey(
+  custom: PlatformDomainRow['customDomain'] & object
+): string {
+  if (custom.status !== 'connected')
+    return `website:domain.custom.status.${custom.status}`;
+  if (custom.live) return 'website:domain.custom.lifecycle.live';
+  if (
+    custom.httpsReachable === false ||
+    custom.sslStatus === 'failed' ||
+    custom.sslStatus === 'expired'
+  ) {
+    return 'website:domain.custom.lifecycle.https_failed';
+  }
+  return 'website:domain.custom.lifecycle.securing';
+}
+
+function lifecycleTone(
+  custom: PlatformDomainRow['customDomain'] & object
+): 'success' | 'warning' | 'destructive' | 'neutral' | 'info' {
+  if (custom.status !== 'connected') return getDomainStatusTone(custom.status);
+  if (custom.live) return 'success';
+  if (
+    custom.httpsReachable === false ||
+    custom.sslStatus === 'failed' ||
+    custom.sslStatus === 'expired'
+  ) {
+    return 'destructive';
+  }
+  return 'warning';
+}
+
 function readParam<T extends string>(
   value: string | null,
   options: readonly T[]
@@ -281,8 +313,8 @@ export default function PlatformDomainSettingsPage(): JSX.Element {
                 {row.original.customDomain.hostname}
               </span>
               <StatusBadge
-                labelKey={`website:domain.custom.status.${row.original.customDomain.status}`}
-                tone={getDomainStatusTone(row.original.customDomain.status)}
+                labelKey={lifecycleLabelKey(row.original.customDomain)}
+                tone={lifecycleTone(row.original.customDomain)}
               />
             </div>
           ) : (
@@ -312,19 +344,40 @@ export default function PlatformDomainSettingsPage(): JSX.Element {
             return <span className="text-xs text-muted-foreground">—</span>;
           if (custom.httpsReachable === undefined)
             return (
-              <span className="text-xs text-muted-foreground">
-                {t('website:platformDomain.operations.table.httpsUnknown')}
-              </span>
+              <div className="space-y-1">
+                <span className="text-xs text-muted-foreground">
+                  {t('website:platformDomain.operations.table.httpsUnknown')}
+                </span>
+                <p className="text-xs text-muted-foreground">
+                  {t(
+                    `website:domain.infrastructure.sslStatus.${custom.sslStatus}`
+                  )}
+                </p>
+              </div>
             );
           return (
-            <StatusBadge
-              labelKey={
-                custom.httpsReachable
-                  ? 'website:platformDomain.operations.table.httpsReachable'
-                  : 'website:platformDomain.operations.table.httpsUnreachable'
-              }
-              tone={custom.httpsReachable ? 'success' : 'destructive'}
-            />
+            <div className="space-y-1">
+              <StatusBadge
+                labelKey={
+                  custom.httpsReachable
+                    ? 'website:platformDomain.operations.table.httpsReachable'
+                    : 'website:platformDomain.operations.table.httpsUnreachable'
+                }
+                tone={custom.httpsReachable ? 'success' : 'destructive'}
+              />
+              <p className="text-xs text-muted-foreground">
+                {custom.httpsReachable
+                  ? t('website:platformDomain.operations.table.certificate', {
+                      status: t(
+                        `website:domain.infrastructure.sslStatus.${custom.sslStatus}`
+                      ),
+                    })
+                  : t(
+                      `website:domain.httpsFailure.${custom.httpsFailureReason ?? 'unknown'}.short`,
+                      { code: custom.httpsStatusCode ?? '', time: '' }
+                    )}
+              </p>
+            </div>
           );
         },
       },
@@ -575,19 +628,46 @@ export default function PlatformDomainSettingsPage(): JSX.Element {
                   />
                   <TruthRow
                     labelKey={
-                      readiness.customHostnames.originSslModeCompatible ===
-                      undefined
-                        ? 'website:platformDomain.readiness.originSslUnknown'
-                        : readiness.customHostnames.originSslModeCompatible
+                      readiness.customHostnames.originSslModeState === 'read'
+                        ? readiness.customHostnames.originSslModeCompatible
                           ? 'website:platformDomain.readiness.originSslCompatible'
                           : 'website:platformDomain.readiness.originSslIncompatible'
+                        : `website:platformDomain.readiness.originSslState.${readiness.customHostnames.originSslModeState}`
                     }
-                    ok={readiness.customHostnames.originSslModeCompatible}
+                    ok={
+                      readiness.customHostnames.originSslModeState === 'read'
+                        ? readiness.customHostnames.originSslModeCompatible
+                        : undefined
+                    }
                     unknown={
-                      readiness.customHostnames.originSslModeCompatible ===
-                      undefined
+                      readiness.customHostnames.originSslModeState !== 'read'
                     }
-                    detail={readiness.customHostnames.originSslMode}
+                    detail={
+                      readiness.customHostnames.originSslModeState === 'read'
+                        ? readiness.customHostnames.originSslMode
+                        : readiness.customHostnames.originSslModeState ===
+                            'permission_missing'
+                          ? t(
+                              'website:platformDomain.readiness.originSslPermissionDetail',
+                              {
+                                code:
+                                  readiness.customHostnames
+                                    .originSslModeErrorCode ?? '—',
+                              }
+                            )
+                          : readiness.customHostnames.originSslModeErrorCode
+                            ? t(
+                                'website:platformDomain.readiness.providerRefused',
+                                {
+                                  code: readiness.customHostnames
+                                    .originSslModeErrorCode,
+                                  category: t(
+                                    'website:platformDomain.readiness.categories.unknown'
+                                  ),
+                                }
+                              )
+                            : undefined
+                    }
                   />
                   <TruthRow
                     labelKey={
@@ -640,8 +720,8 @@ export default function PlatformDomainSettingsPage(): JSX.Element {
             isLoading={overviewQuery.isLoading}
           />
           <MetricCard
-            labelKey="website:platformDomain.overview.customConnected"
-            value={num(overview?.customConnected)}
+            labelKey="website:platformDomain.overview.customLive"
+            value={num(overview?.customLive)}
             isLoading={overviewQuery.isLoading}
           />
           <MetricCard
@@ -655,6 +735,13 @@ export default function PlatformDomainSettingsPage(): JSX.Element {
             isLoading={overviewQuery.isLoading}
           />
         </div>
+        {overview && overview.customConnected !== overview.customLive ? (
+          <p className="text-sm text-muted-foreground">
+            {t('website:platformDomain.overview.customConnectedNotLive', {
+              count: overview.customConnected - overview.customLive,
+            })}
+          </p>
+        ) : null}
 
         {/* ---------------------------------------------- operations list */}
         <Card>

@@ -41,9 +41,16 @@ export interface DnsRecordsTableProps {
   readonly dns: DomainDnsInstructions;
 }
 
-export function DnsRecordsTable({ hostname, dns }: DnsRecordsTableProps): JSX.Element {
+export function DnsRecordsTable({
+  hostname,
+  dns,
+}: DnsRecordsTableProps): JSX.Element {
   const { t } = useTranslation();
-  const rows: readonly { readonly type: string; readonly name: string; readonly value: string }[] = [
+  const rows: readonly {
+    readonly type: string;
+    readonly name: string;
+    readonly value: string;
+  }[] = [
     ...(dns.cnameTarget
       ? [{ type: 'CNAME', name: hostname, value: dns.cnameTarget }]
       : []),
@@ -71,32 +78,51 @@ export function DnsRecordsTable({ hostname, dns }: DnsRecordsTableProps): JSX.El
         <table className="w-full text-sm" dir="ltr">
           <thead className="bg-muted/50 text-xs text-muted-foreground">
             <tr>
-              <th className="p-2 text-left">{t('website:domain.custom.dnsType')}</th>
-              <th className="p-2 text-left">{t('website:domain.custom.dnsName')}</th>
-              <th className="p-2 text-left">{t('website:domain.custom.dnsValue')}</th>
+              <th className="p-2 text-left">
+                {t('website:domain.custom.dnsType')}
+              </th>
+              <th className="p-2 text-left">
+                {t('website:domain.custom.dnsName')}
+              </th>
+              <th className="p-2 text-left">
+                {t('website:domain.custom.dnsValue')}
+              </th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row, index) => (
-              <tr key={`${row.type}-${row.name}-${index}`} className="border-t border-border align-top">
+              <tr
+                key={`${row.type}-${row.name}-${index}`}
+                className="border-t border-border align-top"
+              >
                 <td className="p-2 font-mono">{row.type}</td>
                 <td className="p-2 font-mono break-all">
                   <span className="inline-flex items-start gap-1">
                     <span>{row.name}</span>
-                    <CopyValueButton value={row.name} label={t('website:domain.custom.copyValue')} />
+                    <CopyValueButton
+                      value={row.name}
+                      label={t('website:domain.custom.copyValue')}
+                    />
                   </span>
                 </td>
                 <td className="p-2 font-mono break-all">
                   <span className="inline-flex items-start gap-1">
                     <span>{row.value}</span>
-                    <CopyValueButton value={row.value} label={t('website:domain.custom.copyValue')} />
+                    <CopyValueButton
+                      value={row.value}
+                      label={t('website:domain.custom.copyValue')}
+                    />
                   </span>
                 </td>
               </tr>
             ))}
             {rows.length === 0 ? (
               <tr className="border-t border-border">
-                <td colSpan={3} className="p-3 text-center text-muted-foreground" dir="auto">
+                <td
+                  colSpan={3}
+                  className="p-3 text-center text-muted-foreground"
+                  dir="auto"
+                >
                   {t('website:domain.custom.dnsRecordsPending')}
                 </td>
               </tr>

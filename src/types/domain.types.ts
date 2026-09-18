@@ -114,6 +114,10 @@ export interface PlatformDomainConfiguration {
   readonly source?: PlatformBaseDomainSource;
 }
 
+/** P63d — mirrors the backend's `ORIGIN_SSL_MODE_STATES` exactly. */
+export type OriginSslModeState =
+  'read' | 'permission_missing' | 'provider_error' | 'unavailable';
+
 /** P63 — the Platform Owner's truthful readiness view; every field is a live provider answer, a live probe, or absent. */
 export interface PlatformDomainReadiness {
   readonly baseDomain?: string;
@@ -136,6 +140,9 @@ export interface PlatformDomainReadiness {
       | 'unknown';
     readonly originSslMode?: string;
     readonly originSslModeCompatible?: boolean;
+    /** P63d — `read` (value present), `permission_missing` (token lacks the provider's zone-settings read permission), `provider_error`, or `unavailable` (no credentials). */
+    readonly originSslModeState: OriginSslModeState;
+    readonly originSslModeErrorCode?: string;
   };
   readonly platformHttps: {
     readonly baseDomainReachable?: boolean;
@@ -165,6 +172,8 @@ export interface PlatformDomainsOverview {
   readonly withSubdomain: number;
   readonly withCustomDomain: number;
   readonly customConnected: number;
+  /** P63d — connected AND certificate active AND probe succeeded. */
+  readonly customLive: number;
   readonly customAwaitingProvider: number;
   readonly customFailed: number;
   readonly needingAttention: number;

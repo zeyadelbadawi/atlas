@@ -18,6 +18,14 @@
  * P63c: a domain the provider has not accepted is a BLOCKED state ("Atlas
  * is not ready"), never an empty DNS table; and the hostname can be
  * changed at any step before "live" (with a confirmation once live).
+ *
+ * P63d: "connected" is not "live". The step past verification is HTTPS —
+ * certificate issued AND Atlas's own probe succeeded (server-computed
+ * `live`) — and while it is pending or failing the tab says exactly
+ * which fact is missing, re-reads the server's facts periodically, and
+ * offers "Check now" right where the HTTPS state is shown. While a
+ * replacement hostname is being entered the indicator shows Connect:
+ * the old domain's progress is never shown as the new one's.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -74,14 +82,32 @@ import {
 import {
   canChangeDomainFreely,
   deriveCustomDomainStep,
+  isInProgressStep,
   shouldShowDnsInstructions,
+  stepWhileEditing,
+  type CustomDomainStep,
 } from '../utils/domain-lifecycle.utils';
 import { CustomDomainStepper } from './CustomDomainStepper';
 import { DnsRecordsTable } from './DnsRecordsTable';
 
+/** How often the tab re-reads the server's stored facts while a domain is in progress. */
+const IN_PROGRESS_REFETCH_MS = 60_000;
+
 export interface WebsiteDomainTabProps {
   readonly academyId: string;
   readonly academySlug: string;
+}
+
+/** Which copy explains a failed HTTPS check: the probe's reason, the certificate state, or a generic fallback. */
+function httpsFailureKey(custom: {
+  readonly httpsFailureReason?: string;
+  readonly sslStatus: string;
+}): string {
+  if (custom.httpsFailureReason) return custom.httpsFailureReason;
+  if (custom.sslStatus === 'failed' || custom.sslStatus === 'expired') {
+    return `certificate_${custom.sslStatus}`;
+  }
+  return 'unknown';
 }
 
 export function WebsiteDomainTab({
@@ -94,18 +120,26 @@ export function WebsiteDomainTab({
   const { hasPermission } = usePermissions();
   const canManage = hasPermission('academy.website.manage');
 
-  const platformDomainQuery = usePlatformDomainConfiguration();
-  const domainQuery = useAcademyDomain(academyId);
-  const cloudflareStatusQuery = useInfrastructureProviderStatus('cloudflare');
-  const addDomain = useAddCustomDomain();
-  const removeDomain = useRemoveCustomDomain();
-  const verifyDomain = useVerifyDomain();
-
   // Only transient UI: whether the hostname form is open. Everything
   // about the domain itself comes from the server on every render.
   const [formMode, setFormMode] = useState<'closed' | 'add' | 'change'>(
     'closed'
   );
+  const platformDomainQuery = usePlatformDomainConfiguration();
+  // While the provider, the sweep or the origin can still move the domain
+  // forward, re-read the stored facts every minute (a database read — the
+  // provider is only asked by the sweep and by "Check now").
+  const domainQuery = useAcademyDomain(academyId, {
+    refetchInterval: (data) =>
+      data &&
+      isInProgressStep(deriveCustomDomainStep(data.customDomain, data.dns))
+        ? IN_PROGRESS_REFETCH_MS
+        : false,
+  });
+  const cloudflareStatusQuery = useInfrastructureProviderStatus('cloudflare');
+  const addDomain = useAddCustomDomain();
+  const removeDomain = useRemoveCustomDomain();
+  const verifyDomain = useVerifyDomain();
 
   const form = useForm<AddCustomDomainFormData>({
     resolver: zodResolver(addCustomDomainSchema),
@@ -124,7 +158,10 @@ export function WebsiteDomainTab({
 
   const domain = domainQuery.data;
   const custom = domain.customDomain;
-  const step = deriveCustomDomainStep(custom, domain.dns);
+  const step: CustomDomainStep = deriveCustomDomainStep(custom, domain.dns);
+  // What the progress indicator shows: the stored domain's step, except
+  // while a replacement hostname is being entered (then "Connect").
+  const displayedStep = stepWhileEditing(step, formMode);
   const baseDomain = platformDomainQuery.data?.baseDomain;
   // The server's allocation host is authoritative; the platform base
   // domain only fills in for an allocation recorded before a base domain
@@ -332,7 +369,9 @@ export function WebsiteDomainTab({
                       host: subdomainHost ?? '',
                     })
                   : custom?.hostname
-                    ? t('website:domain.address.subdomainUntilVerified')
+                    ? custom.status === 'connected'
+                      ? t('website:domain.address.subdomainUntilHttps')
+                      : t('website:domain.address.subdomainUntilVerified')
                     : t('website:domain.address.subdomainOnly')}
               </p>
             </>
@@ -387,7 +426,7 @@ export function WebsiteDomainTab({
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <CustomDomainStepper step={step} />
+          <CustomDomainStepper step={displayedStep} />
 
           {custom?.hostname && formMode !== 'change' ? (
             <div className="space-y-4">
@@ -396,11 +435,21 @@ export function WebsiteDomainTab({
                   {custom.hostname}
                 </code>
                 <StatusBadge
-                  labelKey={`website:domain.custom.status.${custom.status}`}
+                  labelKey={
+                    step === 'live'
+                      ? 'website:domain.custom.lifecycle.live'
+                      : step === 'securing'
+                        ? 'website:domain.custom.lifecycle.securing'
+                        : step === 'https_failed'
+                          ? 'website:domain.custom.lifecycle.https_failed'
+                          : `website:domain.custom.status.${custom.status}`
+                  }
                   tone={
-                    step === 'blocked'
+                    step === 'blocked' || step === 'securing'
                       ? 'warning'
-                      : getDomainStatusTone(custom.status)
+                      : step === 'https_failed'
+                        ? 'destructive'
+                        : getDomainStatusTone(custom.status)
                   }
                 />
               </div>
@@ -420,6 +469,22 @@ export function WebsiteDomainTab({
                   <AlertDescription>
                     {t(
                       `website:domain.blocked.${domain.dns.blockedReason}.description`
+                    )}
+                  </AlertDescription>
+                </Alert>
+              ) : step === 'https_failed' ? (
+                <Alert variant="destructive">
+                  <AlertTriangle className="size-4" aria-hidden />
+                  <AlertTitle>
+                    {t(
+                      `website:domain.httpsFailure.${httpsFailureKey(custom)}.title`,
+                      { code: custom.httpsStatusCode ?? '' }
+                    )}
+                  </AlertTitle>
+                  <AlertDescription>
+                    {t(
+                      `website:domain.httpsFailure.${httpsFailureKey(custom)}.description`,
+                      { code: custom.httpsStatusCode ?? '' }
                     )}
                   </AlertDescription>
                 </Alert>
@@ -480,9 +545,11 @@ export function WebsiteDomainTab({
                     ) : (
                       <RefreshCw className="size-3.5" aria-hidden />
                     )}
-                    {step === 'blocked'
-                      ? t('website:domain.custom.retryAction')
-                      : t('website:domain.custom.verifyAction')}
+                    {verifyDomain.isPending
+                      ? t('website:domain.custom.checking')
+                      : step === 'blocked'
+                        ? t('website:domain.custom.retryAction')
+                        : t('website:domain.custom.verifyAction')}
                   </Button>
                   <Button
                     type="button"
@@ -566,30 +633,102 @@ export function WebsiteDomainTab({
               {t('website:domain.infrastructure.customHttps')}
             </p>
             {custom?.hostname ? (
-              <div className="flex flex-wrap items-center gap-2">
-                <StatusBadge
-                  labelKey={`website:domain.infrastructure.sslStatus.${domain.ssl.status}`}
-                  tone={getSslStatusTone(domain.ssl.status)}
-                />
-                {custom.httpsReachable === undefined ? (
-                  <span className="text-sm text-muted-foreground">
-                    {t('website:domain.infrastructure.httpsNotProbed')}
-                  </span>
-                ) : (
-                  <span className="text-sm text-muted-foreground">
-                    {custom.httpsReachable
-                      ? t('website:domain.infrastructure.httpsReachable', {
-                          time: custom.httpsCheckedAt
-                            ? fmt.dateTime(custom.httpsCheckedAt)
-                            : '',
-                        })
-                      : t('website:domain.infrastructure.httpsUnreachable', {
-                          time: custom.httpsCheckedAt
-                            ? fmt.dateTime(custom.httpsCheckedAt)
-                            : '',
-                        })}
-                  </span>
-                )}
+              <div className="space-y-2">
+                <dl className="grid gap-1 text-sm">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <dt className="text-muted-foreground">
+                      {t('website:domain.infrastructure.certificate')}
+                    </dt>
+                    <dd>
+                      <StatusBadge
+                        labelKey={`website:domain.infrastructure.sslStatus.${domain.ssl.status}`}
+                        tone={getSslStatusTone(domain.ssl.status)}
+                      />
+                    </dd>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <dt className="text-muted-foreground">
+                      {t('website:domain.infrastructure.httpsCheck')}
+                    </dt>
+                    <dd>
+                      {custom.status !== 'connected' ? (
+                        <StatusBadge
+                          labelKey="website:domain.infrastructure.httpsState.waiting"
+                          tone="neutral"
+                        />
+                      ) : custom.httpsReachable === undefined ? (
+                        <StatusBadge
+                          labelKey="website:domain.infrastructure.httpsState.pending"
+                          tone="warning"
+                        />
+                      ) : custom.httpsReachable ? (
+                        <StatusBadge
+                          labelKey="website:domain.infrastructure.httpsState.reachable"
+                          tone="success"
+                        />
+                      ) : (
+                        <StatusBadge
+                          labelKey="website:domain.infrastructure.httpsState.failing"
+                          tone="destructive"
+                        />
+                      )}
+                    </dd>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <dt className="text-muted-foreground">
+                      {t('website:domain.infrastructure.publicSite')}
+                    </dt>
+                    <dd>
+                      <StatusBadge
+                        labelKey={
+                          custom.live
+                            ? 'website:domain.infrastructure.publicSiteLive'
+                            : 'website:domain.infrastructure.publicSiteNotLive'
+                        }
+                        tone={custom.live ? 'success' : 'warning'}
+                      />
+                    </dd>
+                  </div>
+                </dl>
+                <p className="text-sm text-muted-foreground">
+                  {custom.status !== 'connected'
+                    ? t('website:domain.infrastructure.httpsNotProbed')
+                    : custom.httpsReachable === undefined
+                      ? t('website:domain.infrastructure.httpsPendingProbe')
+                      : custom.httpsReachable
+                        ? t('website:domain.infrastructure.httpsReachable', {
+                            time: custom.httpsCheckedAt
+                              ? fmt.dateTime(custom.httpsCheckedAt)
+                              : '',
+                          })
+                        : t(
+                            `website:domain.httpsFailure.${httpsFailureKey(custom)}.short`,
+                            {
+                              code: custom.httpsStatusCode ?? '',
+                              time: custom.httpsCheckedAt
+                                ? fmt.dateTime(custom.httpsCheckedAt)
+                                : '',
+                            }
+                          )}
+                </p>
+                {canManage && custom.status === 'connected' && !custom.live ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={isBusy}
+                    onClick={handleCheck}
+                  >
+                    {verifyDomain.isPending ? (
+                      <Loader2 className="size-3.5 animate-spin" aria-hidden />
+                    ) : (
+                      <RefreshCw className="size-3.5" aria-hidden />
+                    )}
+                    {verifyDomain.isPending
+                      ? t('website:domain.custom.checking')
+                      : t('website:domain.custom.verifyAction')}
+                  </Button>
+                ) : null}
               </div>
             ) : (
               <p className="text-sm text-muted-foreground">

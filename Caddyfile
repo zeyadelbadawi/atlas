@@ -26,6 +26,25 @@
 	}
 }
 
+# Global options.
+#
+# fallback_sni (P63d): Cloudflare for SaaS connects to this origin for a
+# customer's custom hostname with the CUSTOM hostname as the TLS SNI (the
+# Host header too). This origin holds no certificate for a customer's
+# name — and Caddy's catch-all block below cannot mint one, so before this
+# option Caddy aborted the handshake ("no certificate available", TLS
+# alert 80) and Cloudflare answered every visitor with 525 "SSL handshake
+# failed". Verified in production against rawc.ae on 18 Sep 2026 and
+# reproduced locally: with fallback_sni, an SNI that matches no loaded
+# certificate is served the platform certificate instead, the handshake
+# completes, and the request reaches the catch-all block where the Host
+# header selects the academy. Cloudflare's origin SSL mode "Full" accepts a
+# trusted certificate issued for a different name; "Full (strict)" would
+# not (the Platform Owner readiness page reports the mode).
+{
+	fallback_sni atlass.dpdns.org
+}
+
 # Main platform + every academy subdomain: one wildcard certificate covers
 # both, since both are served identically by this same container — the
 # frontend build already branches "atlas-app" vs "academy-website" mode at
@@ -61,7 +80,10 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 # verified; this origin just needs to answer TLS on any other SNI and
 # serve the same app — same static files, same API routing, Host header
 # alone (already handled entirely by the frontend's own hostname-resolution
-# logic) decides which academy is served.
+# logic) decides which academy is served. The certificate presented for
+# that "any other SNI" comes from the global fallback_sni above — `tls
+# internal` here only names the issuer for this block's (empty) hostname
+# set and does NOT issue certificates for arbitrary SNI.
 :443 {
 	tls internal
 

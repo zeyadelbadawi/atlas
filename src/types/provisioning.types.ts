@@ -130,9 +130,27 @@ export interface DomainConnection {
   readonly lastCheckedAt?: string;
   /** P63 — a stable code for the latest failed check; absent after a successful one. Copy lives under `website:domain.checkError.*`. */
   readonly lastCheckError?: DomainCheckErrorCode;
+  /** P63d — the provider's certificate state for this hostname (`not_configured` | `pending` | `provisioning` | `active` | `failed` | `expired`). */
+  readonly sslStatus:
+    | 'not_configured'
+    | 'pending'
+    | 'provisioning'
+    | 'active'
+    | 'failed'
+    | 'expired';
   /** P63 — Atlas's own outbound HTTPS probe of the hostname; absent when never probed. */
   readonly httpsReachable?: boolean;
   readonly httpsCheckedAt?: string;
+  /** P63d — the HTTP status the probe received, when a response arrived (a 5xx makes the probe fail and is reported here). */
+  readonly httpsStatusCode?: number;
+  /** P63d — why the probe found the hostname unreachable; absent when reachable or never probed. Copy lives under `website:domain.httpsFailure.*`. */
+  readonly httpsFailureReason?: HttpsFailureReason;
+  /**
+   * P63d — server-computed: provider `connected` AND certificate `active`
+   * AND the probe succeeded. `status === 'connected'` alone is NOT live.
+   * The UI never says "live" unless this is true.
+   */
+  readonly live: boolean;
   /** P63c — whether the provider currently holds this hostname. `false` means there is nothing for the customer to configure yet. */
   readonly providerRegistered: boolean;
   /** P63c — the provider's own numeric error code for the latest refusal (operators only). */
@@ -147,10 +165,18 @@ export type DomainCheckErrorCode =
   | 'provider_error'
   | 'dns_not_pointing';
 
+/** P63d — mirrors the backend's `HTTPS_FAILURE_REASONS` exactly. */
+export type HttpsFailureReason =
+  | 'ip_literal'
+  | 'non_public_address'
+  | 'unresolvable'
+  | 'timeout'
+  | 'tls_or_connection_failed'
+  | 'origin_error';
+
 /** P63c — why the DNS step cannot be offered yet. Always Atlas-side. */
 export type DomainDnsBlockedReason =
-  | 'provider_not_registered'
-  | 'routing_target_missing';
+  'provider_not_registered' | 'routing_target_missing';
 
 /**
  * The provisioning request itself. Always Tenant-scoped

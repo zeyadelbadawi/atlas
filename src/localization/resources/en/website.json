@@ -84,7 +84,8 @@
       "primarySubdomain": "Primary — Atlas subdomain",
       "redirectNote": "Visitors who open {{host}} are sent to your custom domain. Both addresses keep working.",
       "subdomainUntilVerified": "Your custom domain becomes the primary address as soon as Atlas verifies it. Until then your Atlas subdomain is the address to share.",
-      "subdomainOnly": "This is the address to share. Connect a custom domain below to use your own."
+      "subdomainOnly": "This is the address to share. Connect a custom domain below to use your own.",
+      "subdomainUntilHttps": "Your custom domain is verified. It becomes the primary address as soon as its certificate is active and Atlas confirms it answers over HTTPS. Until then your Atlas subdomain is the address to share."
     },
     "subdomain": {
       "title": "Atlas subdomain",
@@ -117,9 +118,11 @@
         "connect": "Checked",
         "configure_dns": "Checked — DNS records are still missing",
         "verifying": "Checked — still verifying, DNS changes can take a while to propagate",
-        "live": "Checked — your domain is connected",
+        "live": "Checked — your domain is live",
         "attention": "Checked — this domain needs attention",
-        "blocked": "Checked — Atlas still can't register this domain with its provider"
+        "blocked": "Checked — Atlas still can't register this domain with its provider",
+        "securing": "Checked — verified; waiting for the certificate and HTTPS",
+        "https_failed": "Checked — verified, but HTTPS is not working yet"
       },
       "dnsInstructionsTitle": "DNS records to add",
       "dnsInstructionsHelp": "Add these records at the company that manages your domain's DNS. Atlas re-checks automatically every few minutes; you can also check now at any time.",
@@ -138,15 +141,20 @@
         "configure_dns": "Configure DNS",
         "verifying": "Verification",
         "live": "Live",
-        "blocked": "Atlas not ready"
+        "blocked": "Atlas not ready",
+        "https": "HTTPS",
+        "securing": "Securing HTTPS",
+        "https_failed": "HTTPS failing"
       },
       "stepHelp": {
         "connect": "Enter the domain you want to use.",
         "configure_dns": "Add the DNS records below at your DNS provider, then check.",
         "verifying": "Atlas's infrastructure provider is validating your DNS. This usually takes minutes, sometimes up to a day.",
-        "live": "Your domain is connected and serving your website over HTTPS.",
+        "live": "Your domain is verified, its certificate is active, and Atlas confirmed it serves your website over HTTPS.",
         "attention": "Something stopped this domain from working. Review the details below, fix the DNS records if needed, then check again.",
-        "blocked": "Atlas could not register this domain with its infrastructure provider yet, so there is nothing for you to configure. This is on Atlas's side — Atlas retries automatically every few minutes; you can also try again now or change the domain."
+        "blocked": "Atlas could not register this domain with its infrastructure provider yet, so there is nothing for you to configure. This is on Atlas's side — Atlas retries automatically every few minutes; you can also try again now or change the domain.",
+        "securing": "Your domain is verified and registered at the edge. Atlas is now waiting for the HTTPS certificate to be issued and for the address to answer securely — this usually takes minutes. Keep the DNS records below in place; the certificate validation record is required.",
+        "https_failed": "Your domain is verified, but visitors cannot load it over HTTPS yet. Review the reason below. Atlas re-checks automatically every few minutes; you can also check now."
       },
       "status": {
         "not_configured": "Not configured",
@@ -162,11 +170,17 @@
       "changeTitle": "Change domain",
       "changeHelp": "Enter the address you want instead. The domain you entered before will be released and its verification progress discarded.",
       "changeLiveConfirmTitle": "Replace your live domain?",
-      "changeLiveConfirmDescription": "{{hostname}} is connected and serving your website. Replacing it disconnects it immediately; visitors are served on your Atlas subdomain until the new domain is verified.",
+      "changeLiveConfirmDescription": "{{hostname}} is live and serving your website. Replacing it disconnects it immediately; visitors are served on your Atlas subdomain until the new domain is verified and secured.",
       "changeLiveConfirmAction": "Replace domain",
       "changed": "Domain changed — add the DNS records below",
       "retryAction": "Try again",
-      "changeSubmit": "Use this domain"
+      "changeSubmit": "Use this domain",
+      "checking": "Checking…",
+      "lifecycle": {
+        "live": "Live",
+        "securing": "Verified — securing HTTPS",
+        "https_failed": "Verified — HTTPS failing"
+      }
     },
     "checkError": {
       "provider_unavailable": {
@@ -210,7 +224,19 @@
         "active": "Active",
         "failed": "Failed",
         "expired": "Expired"
-      }
+      },
+      "certificate": "Certificate",
+      "httpsCheck": "HTTPS check",
+      "publicSite": "Public site",
+      "publicSiteLive": "Live",
+      "publicSiteNotLive": "Not live yet",
+      "httpsState": {
+        "waiting": "Waiting for verification",
+        "pending": "Pending",
+        "reachable": "Reachable",
+        "failing": "Failing"
+      },
+      "httpsPendingProbe": "Atlas has not confirmed HTTPS on this address yet. Check now to run the check."
     },
     "blocked": {
       "provider_not_registered": {
@@ -220,6 +246,53 @@
       "routing_target_missing": {
         "title": "Atlas is not ready to route custom domains",
         "description": "The domain is registered, but Atlas's platform has no routing target for custom domains yet, so a CNAME record can't be given. Your Atlas subdomain keeps working. Atlas retries automatically; contact support if this persists."
+      }
+    },
+    "httpsFailure": {
+      "origin_error": {
+        "title": "The address answers, but with an error ({{code}})",
+        "description": "The edge reached your domain but could not complete the connection to Atlas's servers (HTTP {{code}}). This is on Atlas's side — nothing to change at your DNS provider. Atlas re-checks automatically; you can also check now.",
+        "short": "The edge returned HTTP {{code}} — checked {{time}}"
+      },
+      "tls_or_connection_failed": {
+        "title": "The secure connection could not be established",
+        "description": "The HTTPS handshake to your domain failed. This usually clears once the certificate is issued; keep the DNS records below in place.",
+        "short": "HTTPS handshake failed — checked {{time}}"
+      },
+      "timeout": {
+        "title": "The address did not answer in time",
+        "description": "No answer arrived within the check's time limit. Atlas re-checks automatically.",
+        "short": "No answer in time — checked {{time}}"
+      },
+      "unresolvable": {
+        "title": "The domain does not resolve",
+        "description": "Public DNS returned no address for this domain. Make sure the CNAME record below exists exactly as shown.",
+        "short": "Does not resolve — checked {{time}}"
+      },
+      "non_public_address": {
+        "title": "The domain points to a private address",
+        "description": "This domain resolves to an address Atlas does not check for security reasons. Point it at the CNAME target below.",
+        "short": "Points to a private address — checked {{time}}"
+      },
+      "ip_literal": {
+        "title": "IP addresses cannot be checked",
+        "description": "Use a hostname, not an IP address.",
+        "short": "IP address — not checked"
+      },
+      "certificate_failed": {
+        "title": "The certificate could not be issued",
+        "description": "The provider could not validate the certificate for this domain. Make sure the certificate validation record below exists exactly as shown, then check again.",
+        "short": "Certificate issuance failed — checked {{time}}"
+      },
+      "certificate_expired": {
+        "title": "The certificate has expired",
+        "description": "The provider reports an expired certificate. Make sure the validation record below is still in place so it can be renewed, then check again.",
+        "short": "Certificate expired — checked {{time}}"
+      },
+      "unknown": {
+        "title": "HTTPS is not working yet",
+        "description": "Atlas could not confirm HTTPS on this address. Atlas re-checks automatically; you can also check now.",
+        "short": "Not reachable over HTTPS — checked {{time}}"
       }
     }
   },
@@ -246,7 +319,7 @@
       "customHostnamesReady": "Custom domains can be routed — a fallback origin is active",
       "customHostnamesNotReady": "Custom domains cannot be routed yet — no active fallback origin on the zone",
       "originSslCompatible": "Origin SSL mode works with the platform's origin certificate",
-      "originSslIncompatible": "Origin SSL mode is \"strict\" — custom domains will fail at the edge",
+      "originSslIncompatible": "Origin SSL mode is misconfigured — \"strict\" rejects the origin certificate for custom domains",
       "originSslUnknown": "Origin SSL mode could not be read",
       "platformHttpsReachable": "The platform domain answers over HTTPS",
       "platformHttpsUnreachable": "The platform domain does not answer over HTTPS",
@@ -262,13 +335,21 @@
         "invalid_hostname": "invalid hostname",
         "rate_limited": "rate limited",
         "unknown": "unknown"
-      }
+      },
+      "originSslState": {
+        "permission_missing": "Origin SSL mode is not exposed to Atlas — the API token lacks \"Zone Settings: Read\"",
+        "provider_error": "Origin SSL mode could not be read — the provider did not answer",
+        "unavailable": "Origin SSL mode could not be read — no valid provider credentials"
+      },
+      "originSslPermissionDetail": "Provider code {{code}}. Add \"Zone Settings: Read\" to the token to have Atlas verify the mode; the value is not guessed."
     },
     "overview": {
       "academies": "Academies",
       "customConnected": "Custom domains connected",
       "customAwaiting": "Awaiting verification",
-      "needingAttention": "Needing attention"
+      "needingAttention": "Needing attention",
+      "customLive": "Custom domains live",
+      "customConnectedNotLive": "{{count}} verified, not live yet"
     },
     "operations": {
       "title": "Academy website addresses",
@@ -302,7 +383,8 @@
         "attention": "Attention",
         "needsAttention": "Needs attention",
         "ok": "OK",
-        "providerCode": "provider code {{code}}"
+        "providerCode": "provider code {{code}}",
+        "certificate": "Certificate: {{status}}"
       }
     }
   },
