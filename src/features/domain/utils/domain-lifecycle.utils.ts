@@ -177,13 +177,14 @@ export function canChangeDomainFreely(step: CustomDomainStep): boolean {
   return step !== 'connect' && step !== 'live';
 }
 
-/** Steps where the server (provider, sweep, origin) can still move the domain forward on its own — worth re-reading periodically without a click. */
+/** Steps where the server (provider, sweep, origin) can still move the domain on its own — worth re-reading periodically without a click. `attention` is included (P63f): a failed hostname comes back once the customer fixes DNS and the sweep re-checks it. */
 export function isInProgressStep(step: CustomDomainStep): boolean {
   return (
     step === 'verifying' ||
     step === 'securing' ||
     step === 'blocked' ||
     step === 'https_failed' ||
-    step === 'configure_dns'
+    step === 'configure_dns' ||
+    step === 'attention'
   );
 }

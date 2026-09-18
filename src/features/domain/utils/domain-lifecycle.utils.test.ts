@@ -266,11 +266,11 @@ describe('domain-lifecycle.utils (P63/P63c/P63d)', () => {
       'securing',
       'blocked',
       'https_failed',
+      'attention',
     ] as const) {
       expect(isInProgressStep(step)).toBe(true);
     }
     expect(isInProgressStep('live')).toBe(false);
     expect(isInProgressStep('connect')).toBe(false);
-    expect(isInProgressStep('attention')).toBe(false);
   });
 });
