@@ -83,6 +83,7 @@ import {
   canChangeDomainFreely,
   deriveCustomDomainStep,
   isInProgressStep,
+  isLiveWithCertificatePending,
   shouldShowDnsInstructions,
   stepWhileEditing,
   type CustomDomainStep,
@@ -162,6 +163,9 @@ export function WebsiteDomainTab({
   // What the progress indicator shows: the stored domain's step, except
   // while a replacement hostname is being entered (then "Connect").
   const displayedStep = stepWhileEditing(step, formMode);
+  // Live through something outside Atlas (e.g. the customer's own proxy)
+  // while the Atlas-managed certificate is still pending — say so.
+  const certificatePending = isLiveWithCertificatePending(custom);
   const baseDomain = platformDomainQuery.data?.baseDomain;
   // The server's allocation host is authoritative; the platform base
   // domain only fills in for an allocation recorded before a base domain
@@ -437,7 +441,9 @@ export function WebsiteDomainTab({
                 <StatusBadge
                   labelKey={
                     step === 'live'
-                      ? 'website:domain.custom.lifecycle.live'
+                      ? certificatePending
+                        ? 'website:domain.custom.lifecycle.live_certificate_pending'
+                        : 'website:domain.custom.lifecycle.live'
                       : step === 'securing'
                         ? 'website:domain.custom.lifecycle.securing'
                         : step === 'https_failed'
@@ -455,7 +461,11 @@ export function WebsiteDomainTab({
               </div>
 
               <p className="text-sm text-muted-foreground">
-                {t(`website:domain.custom.stepHelp.${step}`)}
+                {t(
+                  step === 'live' && certificatePending
+                    ? 'website:domain.custom.stepHelp.live_certificate_pending'
+                    : `website:domain.custom.stepHelp.${step}`
+                )}
               </p>
 
               {step === 'blocked' && domain.dns?.blockedReason ? (
@@ -470,6 +480,16 @@ export function WebsiteDomainTab({
                     {t(
                       `website:domain.blocked.${domain.dns.blockedReason}.description`
                     )}
+                  </AlertDescription>
+                </Alert>
+              ) : step === 'live' && certificatePending ? (
+                <Alert>
+                  <AlertTriangle className="size-4" aria-hidden />
+                  <AlertTitle>
+                    {t('website:domain.certificatePending.title')}
+                  </AlertTitle>
+                  <AlertDescription>
+                    {t('website:domain.certificatePending.description')}
                   </AlertDescription>
                 </Alert>
               ) : step === 'https_failed' ? (
@@ -504,7 +524,7 @@ export function WebsiteDomainTab({
                 </Alert>
               ) : null}
 
-              {shouldShowDnsInstructions(step) && domain.dns?.ready ? (
+              {shouldShowDnsInstructions(step, custom) && domain.dns?.ready ? (
                 <DnsRecordsTable hostname={custom.hostname} dns={domain.dns} />
               ) : null}
 
@@ -711,7 +731,9 @@ export function WebsiteDomainTab({
                             }
                           )}
                 </p>
-                {canManage && custom.status === 'connected' && !custom.live ? (
+                {canManage &&
+                custom.status === 'connected' &&
+                (!custom.live || certificatePending) ? (
                   <Button
                     type="button"
                     variant="outline"

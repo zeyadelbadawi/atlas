@@ -106,7 +106,11 @@ function lifecycleLabelKey(
 ): string {
   if (custom.status !== 'connected')
     return `website:domain.custom.status.${custom.status}`;
-  if (custom.live) return 'website:domain.custom.lifecycle.live';
+  if (custom.live) {
+    return custom.sslStatus === 'active'
+      ? 'website:domain.custom.lifecycle.live'
+      : 'website:domain.custom.lifecycle.live_certificate_pending';
+  }
   if (
     custom.httpsReachable === false ||
     custom.sslStatus === 'failed' ||
@@ -121,7 +125,7 @@ function lifecycleTone(
   custom: PlatformDomainRow['customDomain'] & object
 ): 'success' | 'warning' | 'destructive' | 'neutral' | 'info' {
   if (custom.status !== 'connected') return getDomainStatusTone(custom.status);
-  if (custom.live) return 'success';
+  if (custom.live) return custom.sslStatus === 'active' ? 'success' : 'warning';
   if (
     custom.httpsReachable === false ||
     custom.sslStatus === 'failed' ||

@@ -150,11 +150,12 @@
         "connect": "Enter the domain you want to use.",
         "configure_dns": "Add the DNS records below at your DNS provider, then check.",
         "verifying": "Atlas's infrastructure provider is validating your DNS. This usually takes minutes, sometimes up to a day.",
-        "live": "Your domain is verified, its certificate is active, and Atlas confirmed it serves your website over HTTPS.",
+        "live": "Your domain is verified, Atlas's certificate is active, and Atlas confirmed it serves your website over HTTPS.",
         "attention": "Something stopped this domain from working. Review the details below, fix the DNS records if needed, then check again.",
         "blocked": "Atlas could not register this domain with its infrastructure provider yet, so there is nothing for you to configure. This is on Atlas's side — Atlas retries automatically every few minutes; you can also try again now or change the domain.",
         "securing": "Your domain is verified and registered at the edge. Atlas is now waiting for the HTTPS certificate to be issued and for the address to answer securely — this usually takes minutes. Keep the DNS records below in place; the certificate validation record is required.",
-        "https_failed": "Your domain is verified, but visitors cannot load it over HTTPS yet. Review the reason below. Atlas re-checks automatically every few minutes; you can also check now."
+        "https_failed": "Your domain is verified, but visitors cannot load it over HTTPS yet. Review the reason below. Atlas re-checks automatically every few minutes; you can also check now.",
+        "live_certificate_pending": "Your domain is verified and Atlas confirmed it serves your website over HTTPS. Atlas's own certificate for it has not been issued yet, so HTTPS currently depends on your own DNS provider's proxy. Add the certificate validation records below so Atlas can issue its certificate."
       },
       "status": {
         "not_configured": "Not configured",
@@ -179,7 +180,8 @@
       "lifecycle": {
         "live": "Live",
         "securing": "Verified — securing HTTPS",
-        "https_failed": "Verified — HTTPS failing"
+        "https_failed": "Verified — HTTPS failing",
+        "live_certificate_pending": "Live — Atlas certificate pending"
       }
     },
     "checkError": {
@@ -294,6 +296,10 @@
         "description": "Atlas could not confirm HTTPS on this address. Atlas re-checks automatically; you can also check now.",
         "short": "Not reachable over HTTPS — checked {{time}}"
       }
+    },
+    "certificatePending": {
+      "title": "Your site is live, but Atlas's certificate is still pending",
+      "description": "Visitors reach your website securely today because your DNS provider's proxy serves its own certificate. Atlas's infrastructure provider has not been able to validate Atlas's own certificate yet — the TXT records it needs are not the ones currently published. Add the certificate validation records below exactly as shown; Atlas re-checks automatically."
     }
   },
   "platformDomain": {

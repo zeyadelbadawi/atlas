@@ -5,6 +5,7 @@ import {
   deriveCustomDomainStep,
   isFailedStep,
   isInProgressStep,
+  isLiveWithCertificatePending,
   shouldShowDnsInstructions,
   stepIndex,
   stepWhileEditing,
@@ -116,6 +117,25 @@ describe('domain-lifecycle.utils (P63/P63c/P63d)', () => {
         dnsReady
       )
     ).toBe('live');
+    // The rawc.ae case: live through the customer's own proxy while the
+    // Atlas-managed certificate is still pending — live, with an advisory.
+    const liveCertPending = conn('connected', {
+      sslStatus: 'pending',
+      httpsReachable: true,
+      live: true,
+    });
+    expect(deriveCustomDomainStep(liveCertPending, dnsReady)).toBe('live');
+    expect(isLiveWithCertificatePending(liveCertPending)).toBe(true);
+    expect(
+      isLiveWithCertificatePending(
+        conn('connected', {
+          sslStatus: 'active',
+          httpsReachable: true,
+          live: true,
+        })
+      )
+    ).toBe(false);
+    expect(isLiveWithCertificatePending(undefined)).toBe(false);
     // The server's `live` is authoritative — the frontend never promotes on its own.
     expect(
       deriveCustomDomainStep(
@@ -201,6 +221,27 @@ describe('domain-lifecycle.utils (P63/P63c/P63d)', () => {
     expect(shouldShowDnsInstructions('blocked')).toBe(false);
     expect(shouldShowDnsInstructions('live')).toBe(false);
     expect(shouldShowDnsInstructions('connect')).toBe(false);
+    // Live but the Atlas-managed certificate is pending: the validation records are still needed.
+    expect(
+      shouldShowDnsInstructions(
+        'live',
+        conn('connected', {
+          sslStatus: 'pending',
+          httpsReachable: true,
+          live: true,
+        })
+      )
+    ).toBe(true);
+    expect(
+      shouldShowDnsInstructions(
+        'live',
+        conn('connected', {
+          sslStatus: 'active',
+          httpsReachable: true,
+          live: true,
+        })
+      )
+    ).toBe(false);
   });
 
   it('the hostname can be changed freely before live, and only with confirmation once live', () => {

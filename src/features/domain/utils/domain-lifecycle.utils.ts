@@ -5,11 +5,15 @@
  * backend has not already recorded — it only chooses which of the
  * backend's truths to lead with.
  *
- * P63d: "connected" is NOT "live". The provider saying the hostname is
- * active at its edge is one fact; the certificate being issued is a
- * second; Atlas's own probe getting a real answer is a third. The server
- * computes `live` from all three (`isCustomDomainLive`), and the steps
- * between "verified" and "live" are named here instead of collapsed.
+ * P63d/P63e: "connected" is NOT "live". The provider saying the hostname
+ * is active at its edge is one fact; Atlas's own probe getting a trusted
+ * HTTPS answer is the second, and the server computes `live` from both
+ * (`isCustomDomainLive`). The provider's own certificate state is a
+ * third, ADVISORY fact: a live domain whose Atlas-managed certificate is
+ * still pending is served over HTTPS by something outside Atlas (the
+ * rawc.ae case: the customer's own Cloudflare zone), so it is live AND
+ * told what is still missing. The steps between "verified" and "live"
+ * are named here instead of collapsed.
  */
 import type {
   DomainConnection,
@@ -146,14 +150,25 @@ export function isFailedStep(step: CustomDomainStep): boolean {
   return step === 'attention' || step === 'blocked' || step === 'https_failed';
 }
 
-/** Whether the DNS instructions are worth showing prominently — until the domain is live, the records (including the certificate validation ones) may still need adding. */
-export function shouldShowDnsInstructions(step: CustomDomainStep): boolean {
+/** A live domain whose Atlas-managed certificate the provider has not issued yet: HTTPS works through something outside Atlas, and the validation records are still needed. */
+export function isLiveWithCertificatePending(
+  customDomain: DomainConnection | undefined
+): boolean {
+  return Boolean(customDomain?.live) && customDomain?.sslStatus !== 'active';
+}
+
+/** Whether the DNS instructions are worth showing prominently — until the domain is live AND its certificate is issued, the records (including the certificate validation ones) may still need adding. */
+export function shouldShowDnsInstructions(
+  step: CustomDomainStep,
+  customDomain?: DomainConnection
+): boolean {
   return (
     step === 'configure_dns' ||
     step === 'verifying' ||
     step === 'attention' ||
     step === 'securing' ||
-    step === 'https_failed'
+    step === 'https_failed' ||
+    (step === 'live' && isLiveWithCertificatePending(customDomain))
   );
 }
 
