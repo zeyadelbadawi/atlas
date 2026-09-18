@@ -156,7 +156,7 @@ export function WebsiteImageField({
           */}
           {t('website:common.imageRecommendation', {
             dimensions: isolateNumericExpression(
-              `${recommendation.width}×${recommendation.height}`,
+              `${recommendation.width}×${recommendation.height}`
             ),
             ratio: isolateNumericExpression(recommendation.ratio),
             formats: recommendation.formats.join(' / '),

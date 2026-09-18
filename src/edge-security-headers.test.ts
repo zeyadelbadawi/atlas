@@ -73,30 +73,69 @@ function apiHandlerBodies(): readonly string[] {
   return bodies;
 }
 
-describe('the proxy does not duplicate the API\'s own headers', () => {
+describe("the proxy does not duplicate the API's own headers", () => {
   it('routes /api/* on both site blocks', () => {
     // If this drops to one, the assertions below stop covering a real path.
     expect(apiHandlerBodies()).toHaveLength(2);
   });
 
-  it.each(SECURITY_HEADERS)('does not set %s on proxied responses', (header) => {
-    for (const body of apiHandlerBodies()) {
-      expect(body).not.toContain(header);
+  it.each(SECURITY_HEADERS)(
+    'does not set %s on proxied responses',
+    (header) => {
+      for (const body of apiHandlerBodies()) {
+        expect(body).not.toContain(header);
+      }
     }
-  });
+  );
 
   /*
    * The exact regression that produced the duplicates: a `header` block at
    * site level applies to proxied responses too. Security headers belong
    * inside the static handler, never as a bare site-wide directive.
    */
-  it('declares the headers once, in a reusable snippet', () => {
+  it('declares the headers once, in reusable snippets', () => {
     expect(directives).toContain('(security_headers)');
     for (const header of SECURITY_HEADERS) {
-      // One definition only — the snippet's.
+      // One definition only — the snippet's. HSTS (P63g) is the deliberate
+      // exception: two snippets, one per ownership (platform tree vs. a
+      // customer's own domain), each declared exactly once.
       const occurrences = directives.split(header).length - 1;
-      expect(occurrences, `${header} is declared more than once`).toBe(1);
+      const expected = header === 'Strict-Transport-Security' ? 2 : 1;
+      expect(occurrences, `${header} is declared more than once`).toBe(
+        expected
+      );
     }
+    expect(directives).toContain('(hsts_platform)');
+    expect(directives).toContain('(hsts_custom_domain)');
+  });
+});
+
+describe('P63g — HSTS scope follows ownership', () => {
+  it('the platform block asserts includeSubDomains; the custom-domain catch-all does not', () => {
+    expect(directives).toContain(
+      'Strict-Transport-Security "max-age=31536000; includeSubDomains"'
+    );
+    expect(directives).toContain(
+      'Strict-Transport-Security "max-age=31536000"'
+    );
+    expect(directives.split('import hsts_platform').length - 1).toBe(1);
+    expect(directives.split('import hsts_custom_domain').length - 1).toBe(1);
+    // The catch-all imports the custom-domain snippet, never the platform one.
+    const catchAll = directives.slice(directives.indexOf('\n:443 {'));
+    expect(catchAll).toContain('import hsts_custom_domain');
+    expect(catchAll).not.toContain('import hsts_platform');
+  });
+
+  it('forwards the real client address and trusts only Cloudflare as a proxy', () => {
+    expect(directives).toContain('header_up X-Real-IP {client_ip}');
+    expect(directives).not.toContain('header_up X-Real-IP {remote_host}');
+    expect(directives).toContain('trusted_proxies static');
+    expect(directives).toContain('104.16.0.0/13');
+  });
+
+  it('redirects plain HTTP on custom hostnames to HTTPS', () => {
+    expect(directives).toContain(':80 {');
+    expect(directives).toContain('redir https://{host}{uri} permanent');
   });
 });
 

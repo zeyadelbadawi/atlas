@@ -9,7 +9,6 @@
  */
 import type { LocalizedText } from './website-content.types';
 
-
 /** A resource limit value. Explicit `'unlimited'` — never a magic number like 999999999. */
 export type LimitValue = number | 'unlimited';
 
@@ -223,7 +222,11 @@ export interface PlanLimitImpact {
 export interface PlanHistoryEntry {
   readonly id: string;
   readonly action: string;
-  readonly actor: { readonly id: string; readonly name: string; readonly email?: string };
+  readonly actor: {
+    readonly id: string;
+    readonly name: string;
+    readonly email?: string;
+  };
   readonly occurredAt: string;
   /** `{field: {from, to}}`, redacted server-side at write time. */
   readonly changes?: Record<string, { from: unknown; to: unknown }>;

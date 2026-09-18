@@ -149,6 +149,13 @@ export interface PlatformDomainReadiness {
     readonly wildcardReachable?: boolean;
     readonly checkedAt: string;
   };
+  /** P63g — proof the verification sweep is alive, and the provider-release backlog. */
+  readonly sweep: {
+    readonly lastCompletedAt?: string;
+    readonly lastResult?: Record<string, number | string | boolean | null>;
+    readonly pendingReleases: number;
+    readonly intervalMs: number;
+  };
   readonly checkedAt: string;
 }
 

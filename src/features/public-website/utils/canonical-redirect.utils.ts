@@ -43,5 +43,37 @@ export function resolveCanonicalOrigin(
   currentOrigin: string,
   canonicalHost: string | undefined
 ): string {
-  return canonicalHost ? `https://${canonicalHost.toLowerCase()}` : currentOrigin;
+  return canonicalHost
+    ? `https://${canonicalHost.toLowerCase()}`
+    : currentOrigin;
+}
+
+/**
+ * P63g — does the redirect target answer at all? An opaque (`no-cors`)
+ * fetch resolves whenever the network layer succeeded — DNS, TLS and an
+ * HTTP response — and rejects on any of those failing, which is exactly
+ * the "would this visitor land on an error page" question. The response
+ * itself is never read. Bounded so a hanging host cannot stall the page.
+ */
+export async function probeHostAnswers(
+  targetUrl: string,
+  timeoutMs = 4000,
+  fetchImpl: typeof fetch = fetch
+): Promise<boolean> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const origin = new URL(targetUrl).origin;
+    await fetchImpl(`${origin}/?__atlas_probe=1`, {
+      mode: 'no-cors',
+      cache: 'no-store',
+      redirect: 'follow',
+      signal: controller.signal,
+    });
+    return true;
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(timer);
+  }
 }

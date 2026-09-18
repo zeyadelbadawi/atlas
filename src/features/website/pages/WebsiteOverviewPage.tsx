@@ -46,7 +46,10 @@ export default function WebsiteOverviewPage(): JSX.Element {
   });
 
   const isLoading =
-    academyQuery.isLoading || configQuery.isLoading || pagesQuery.isLoading;
+    academyQuery.isLoading ||
+    configQuery.isLoading ||
+    pagesQuery.isLoading ||
+    domainQuery.isLoading;
   const error = academyQuery.error ?? configQuery.error ?? pagesQuery.error;
 
   if (isLoading) {
@@ -108,10 +111,13 @@ export default function WebsiteOverviewPage(): JSX.Element {
 
   // P63 — the canonical host (a connected custom domain, otherwise the
   // Atlas subdomain) is what the server says the website is addressed by.
+  // P63g — the server's canonical host, else the server's allocation host;
+  // never a host built from the slug and a compiled-in base domain.
   const publicUrl = academyQuery.data
     ? getAcademyPublicWebsiteUrl(
         academyQuery.data.slug,
-        domainQuery.data?.canonicalHost?.host
+        domainQuery.data?.canonicalHost?.host ??
+          domainQuery.data?.subdomain?.fullHost
       )
     : undefined;
   const isPublished = configQuery.data.status === 'published';

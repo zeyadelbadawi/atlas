@@ -13,19 +13,11 @@
 
 /** Mirrors the backend `LiveSessionStatus` enum exactly. */
 export type LiveSessionStatus =
-  | 'draft'
-  | 'scheduled'
-  | 'live'
-  | 'ended'
-  | 'cancelled'
-  | 'failed';
+  'draft' | 'scheduled' | 'live' | 'ended' | 'cancelled' | 'failed';
 
 /** Mirrors `LiveSessionRecordingStatus`. Recording state is NOT session state. */
 export type LiveSessionRecordingStatus =
-  | 'requested'
-  | 'processing'
-  | 'available'
-  | 'failed';
+  'requested' | 'processing' | 'available' | 'failed';
 
 export interface LiveSessionRecordingSummary {
   readonly status: LiveSessionRecordingStatus;
@@ -145,10 +137,7 @@ export interface UpdateLiveSessionInput {
 
 /** Where one attendance interval came from. `manual` is always shown as an override. */
 export type LiveAttendanceSource =
-  | 'sdk_event'
-  | 'provider_webhook'
-  | 'provider_report'
-  | 'manual';
+  'sdk_event' | 'provider_webhook' | 'provider_report' | 'manual';
 
 export interface AttendanceIntervalView {
   readonly joinedAt: string;
@@ -177,7 +166,10 @@ export interface AddOnCatalogEntry {
   readonly key: string;
   readonly name: string;
   readonly description?: string;
-  readonly effect: { readonly type: 'limit' | 'feature'; readonly featureKey?: string };
+  readonly effect: {
+    readonly type: 'limit' | 'feature';
+    readonly featureKey?: string;
+  };
   readonly compatiblePlanKeys: readonly string[];
   readonly pricing?: { readonly amount?: number; readonly currency?: string };
   /** Free is simply "no price attached" — decided by the catalog, never a second flag. */

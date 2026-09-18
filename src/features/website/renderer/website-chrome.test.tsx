@@ -54,7 +54,10 @@ const CONFIGURATION: Pick<
   footer: { groups: [], socialLinks: [] },
 };
 
-function renderChrome(children: React.ReactNode, pages: readonly WebsitePage[] = []) {
+function renderChrome(
+  children: React.ReactNode,
+  pages: readonly WebsitePage[] = []
+) {
   return render(
     <I18nextProvider i18n={i18n}>
       <MemoryRouter>
@@ -67,7 +70,7 @@ function renderChrome(children: React.ReactNode, pages: readonly WebsitePage[] =
           {children}
         </WebsiteChrome>
       </MemoryRouter>
-    </I18nextProvider>,
+    </I18nextProvider>
   );
 }
 
@@ -114,7 +117,7 @@ describe('WebsiteChrome — full-viewport shell', () => {
   it('hardcodes no pixel height anywhere in the shell', () => {
     const { container } = renderChrome(<p>Sparse academy.</p>);
     const withPixelHeight = Array.from(
-      container.querySelectorAll<HTMLElement>('[class]'),
+      container.querySelectorAll<HTMLElement>('[class]')
     ).filter((node) => /(?:min-|max-)?h-\[\d+px\]/.test(node.className));
 
     expect(withPixelHeight.map((node) => node.className)).toEqual([]);

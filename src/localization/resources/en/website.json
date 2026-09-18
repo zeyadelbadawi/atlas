@@ -85,7 +85,8 @@
       "redirectNote": "Visitors who open {{host}} are sent to your custom domain. Both addresses keep working.",
       "subdomainUntilVerified": "Your custom domain becomes the primary address as soon as Atlas verifies it. Until then your Atlas subdomain is the address to share.",
       "subdomainOnly": "This is the address to share. Connect a custom domain below to use your own.",
-      "subdomainUntilHttps": "Your custom domain is verified. It becomes the primary address as soon as its certificate is active and Atlas confirms it answers over HTTPS. Until then your Atlas subdomain is the address to share."
+      "subdomainUntilHttps": "Your custom domain is verified. It becomes the primary address as soon as its certificate is active and Atlas confirms it answers over HTTPS. Until then your Atlas subdomain is the address to share.",
+      "subdomainWhileBroken": "Your custom domain is not serving visitors right now, so your Atlas subdomain is the address to share until it is fixed."
     },
     "subdomain": {
       "title": "Atlas subdomain",
@@ -144,7 +145,8 @@
         "blocked": "Atlas not ready",
         "https": "HTTPS",
         "securing": "Securing HTTPS",
-        "https_failed": "HTTPS failing"
+        "https_failed": "HTTPS failing",
+        "attention": "Needs attention"
       },
       "stepHelp": {
         "connect": "Enter the domain you want to use.",
@@ -182,6 +184,13 @@
         "securing": "Verified — securing HTTPS",
         "https_failed": "Verified — HTTPS failing",
         "live_certificate_pending": "Live — Atlas certificate pending"
+      },
+      "addErrors": {
+        "hostnameTaken": "This domain is already connected to another academy. If it is yours, disconnect it there first or contact support.",
+        "hostnameReserved": "This address belongs to the Atlas platform and can't be used as a custom domain. Use a domain you own, like learn.your-academy.com.",
+        "invalidHostname": "Enter a valid domain, like learn.your-academy.com.",
+        "forbidden": "You don't have permission to change this academy's domain.",
+        "rateLimited": "Too many attempts. Please wait a minute and try again."
       }
     },
     "checkError": {
@@ -190,8 +199,8 @@
         "description": "Nothing changed on your side. Atlas will retry automatically; you can also check again in a few minutes."
       },
       "provider_hostname_missing": {
-        "title": "The provider no longer has a record of this domain",
-        "description": "It was registered before and has since disappeared at the provider. Check again to re-register it, or disconnect and connect it afresh."
+        "title": "Atlas re-registered this domain with its provider",
+        "description": "The provider had lost this domain, so Atlas registered it again. Keep the DNS records below in place; verification restarts automatically."
       },
       "provider_error": {
         "title": "The last check failed",
@@ -300,6 +309,11 @@
     "certificatePending": {
       "title": "Your site is live, but Atlas's certificate is still pending",
       "description": "Visitors reach your website securely today because your DNS provider's proxy serves its own certificate. Atlas's infrastructure provider has not been able to validate Atlas's own certificate yet — the TXT records it needs are not the ones currently published. Add the certificate validation records below exactly as shown; Atlas re-checks automatically."
+    },
+    "validation": {
+      "tooShort": "Enter the domain you want to use.",
+      "tooLong": "That domain is too long.",
+      "invalid": "Enter a valid domain, like learn.your-academy.com (no https://, no path)."
     }
   },
   "platformDomain": {
@@ -347,7 +361,14 @@
         "provider_error": "Origin SSL mode could not be read — the provider did not answer",
         "unavailable": "Origin SSL mode could not be read — no valid provider credentials"
       },
-      "originSslPermissionDetail": "Provider code {{code}}. Add \"Zone Settings: Read\" to the token to have Atlas verify the mode; the value is not guessed."
+      "originSslPermissionDetail": "Provider code {{code}}. Add \"Zone Settings: Read\" to the token to have Atlas verify the mode; the value is not guessed.",
+      "sweepAlive": "The verification sweep is running",
+      "sweepStale": "The verification sweep has not completed recently",
+      "sweepNever": "The verification sweep has never completed",
+      "sweepDetail": "Last tick {{time}} — {{checked}} checked, {{failed}} with errors",
+      "releasesClear": "No provider resources are waiting to be released",
+      "releasesPending": "Provider resources are waiting to be released",
+      "releasesPendingDetail": "{{count}} pending — retried automatically until the provider confirms"
     },
     "overview": {
       "academies": "Academies",
@@ -391,7 +412,12 @@
         "ok": "OK",
         "providerCode": "provider code {{code}}",
         "certificate": "Certificate: {{status}}"
-      }
+      },
+      "release": "Release hostname",
+      "released": "Hostname released",
+      "releaseError": "Failed to release this hostname",
+      "releaseConfirmTitle": "Release {{hostname}}?",
+      "releaseConfirmDescription": "{{academy}} will lose this custom domain immediately and fall back to its Atlas subdomain. The hostname becomes available for another academy to connect."
     }
   },
   "public": {

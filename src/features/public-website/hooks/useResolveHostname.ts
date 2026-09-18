@@ -16,8 +16,11 @@ export function useResolveHostname(hostname: string) {
     queryKey: publicWebsiteKeys.hostnameResolution(hostname),
     queryFn: () => publicWebsiteService.resolveHostname(hostname),
     enabled: !!hostname,
-    // Which Academy a hostname resolves to essentially never changes
-    // during a session — safe to treat as effectively static.
-    staleTime: Infinity,
+    // P63g — a hostname's answer changes rarely but it DOES change (a
+    // customer fixes DNS, a domain goes live): re-read after a minute of
+    // staleness and on focus, so a visitor who saw "not found" is not stuck
+    // with it for the whole session.
+    staleTime: 60_000,
+    refetchOnWindowFocus: true,
   });
 }

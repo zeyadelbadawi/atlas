@@ -19,11 +19,22 @@
 # helmet the API. Neither header set was removed from anything.
 (security_headers) {
 	header {
-		Strict-Transport-Security "max-age=31536000; includeSubDomains"
 		X-Content-Type-Options "nosniff"
 		X-Frame-Options "SAMEORIGIN"
 		Referrer-Policy "strict-origin-when-cross-origin"
 	}
+}
+
+# P63g — HSTS is split by ownership. Atlas owns the whole platform tree,
+# so `includeSubDomains` is right there. A customer's custom domain is
+# NOT Atlas's to make policy for: asserting `includeSubDomains` on
+# `customer.com` would force-upgrade `mail.customer.com` and every other
+# host under it for a year. The backend applies the same split on `/api/*`.
+(hsts_platform) {
+	header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+}
+(hsts_custom_domain) {
+	header Strict-Transport-Security "max-age=31536000"
 }
 
 # Global options.
@@ -43,6 +54,18 @@
 # not (the Platform Owner readiness page reports the mode).
 {
 	fallback_sni atlass.dpdns.org
+
+	# P63g — Cloudflare's published edge ranges are the only proxies whose
+	# forwarded headers are believed. With this, `{client_ip}` is the real
+	# visitor (Cloudflare's CF-Connecting-IP / X-Forwarded-For are honoured
+	# only from these ranges) and a request that reaches the origin directly
+	# is attributed to its own socket peer. The backend keys every rate
+	# limiter on the `X-Real-IP` we forward below, so without this every
+	# visitor behind one Cloudflare datacentre shared one bucket.
+	# Source: https://www.cloudflare.com/ips-v4 and /ips-v6 (18 Sep 2026).
+	servers {
+		trusted_proxies static 173.245.48.0/20 103.21.244.0/22 103.22.200.0/22 103.31.4.0/22 141.101.64.0/18 108.162.192.0/18 190.93.240.0/20 188.114.96.0/20 197.234.240.0/22 198.41.128.0/17 162.158.0.0/15 104.16.0.0/13 104.24.0.0/14 172.64.0.0/13 131.0.72.0/22 2400:cb00::/32 2606:4700::/32 2803:f800::/32 2405:b500::/32 2405:8100::/32 2a06:98c0::/29 2c0f:f248::/32
+	}
 }
 
 # Main platform + every academy subdomain: one wildcard certificate covers
@@ -62,16 +85,25 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 
 	handle /api/* {
 		reverse_proxy backend:3000 {
-			header_up X-Real-IP {remote_host}
+			header_up X-Real-IP {client_ip}
 		}
 	}
 
 	handle {
 		import security_headers
+		import hsts_platform
 		root * /srv
 		try_files {path} /index.html
 		file_server
 	}
+}
+
+# P63g — custom hostnames arriving over plain HTTP (a customer's own
+# proxy in a non-TLS origin mode, or a stray http:// link) are redirected
+# to HTTPS instead of hitting an unhandled port. The platform names get
+# this automatically from Caddy; the catch-all must declare it.
+:80 {
+	redir https://{host}{uri} permanent
 }
 
 # Catch-all fallback for connected custom domains (e.g. an academy's own
@@ -91,7 +123,7 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 
 	handle /api/* {
 		reverse_proxy backend:3000 {
-			header_up X-Real-IP {remote_host}
+			header_up X-Real-IP {client_ip}
 		}
 	}
 
@@ -102,6 +134,7 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 		# four. Same app, same files, weaker headers — purely because of
 		# which hostname the visitor arrived on.
 		import security_headers
+		import hsts_custom_domain
 		root * /srv
 		try_files {path} /index.html
 		file_server

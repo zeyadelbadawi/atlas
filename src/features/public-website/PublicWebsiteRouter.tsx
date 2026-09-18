@@ -34,7 +34,10 @@ import { PublicWebsiteSignUpPage } from './components/PublicWebsiteSignUpPage';
 import { PublicWebsiteLearningRoute } from './components/PublicWebsiteLearningRoute';
 import { usePublicWebsiteData } from './hooks/usePublicWebsiteData';
 import type { PublicWebsiteContext } from './utils/hostname-resolution.utils';
-import { resolveCanonicalRedirect } from './utils/canonical-redirect.utils';
+import {
+  probeHostAnswers,
+  resolveCanonicalRedirect,
+} from './utils/canonical-redirect.utils';
 import { ENV } from '@config';
 import type { PublicWebsiteLocale } from '@types';
 
@@ -87,7 +90,18 @@ function useCanonicalHostRedirect(canonicalHost: string | undefined): void {
       canonicalHost,
       ENV.isDevelopment
     );
-    if (target) window.location.replace(target);
+    if (!target) return;
+    // P63g — never bounce a visitor from a working host to a dead one: the
+    // server names the canonical host from its last check, which can be up
+    // to a sweep interval old. Confirm the target answers first; if it does
+    // not, stay on the host that is serving this visitor right now.
+    let cancelled = false;
+    void probeHostAnswers(target).then((answers) => {
+      if (!cancelled && answers) window.location.replace(target);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [canonicalHost]);
 }
 

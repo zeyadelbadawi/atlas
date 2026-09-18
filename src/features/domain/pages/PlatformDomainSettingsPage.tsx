@@ -26,6 +26,7 @@ import {
   Globe,
   Loader2,
   RefreshCw,
+  Trash2,
   Save,
   ShieldCheck,
   XCircle,
@@ -64,10 +65,12 @@ import {
   useUnsavedChanges,
 } from '@hooks';
 import { useServerValidation } from '@forms';
+import { useConfirmDialog } from '@app/providers';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { formatNumber } from '@utils';
 import {
   useCheckPlatformDomain,
+  useReleasePlatformDomain,
   usePlatformDomainConfiguration,
   usePlatformDomainReadiness,
   usePlatformDomains,
@@ -194,6 +197,29 @@ export default function PlatformDomainSettingsPage(): JSX.Element {
   const overviewQuery = usePlatformDomainsOverview();
   const updateConfig = useUpdatePlatformDomainConfiguration();
   const checkDomain = useCheckPlatformDomain();
+  const releaseDomain = useReleasePlatformDomain();
+  const { confirm } = useConfirmDialog();
+  const handleRelease = async (row: PlatformDomainRow) => {
+    if (!row.customDomain?.hostname) return;
+    const confirmed = await confirm({
+      titleKey: 'website:platformDomain.operations.releaseConfirmTitle',
+      descriptionKey:
+        'website:platformDomain.operations.releaseConfirmDescription',
+      confirmLabelKey: 'website:platformDomain.operations.release',
+      intent: 'destructive',
+      values: { hostname: row.customDomain.hostname, academy: row.academyName },
+    });
+    if (!confirmed) return;
+    releaseDomain.mutate(row.academyId, {
+      onSuccess: () =>
+        toast({ title: t('website:platformDomain.operations.released') }),
+      onError: () =>
+        toast({
+          title: t('website:platformDomain.operations.releaseError'),
+          variant: 'destructive',
+        }),
+    });
+  };
 
   // ---- filters live in the URL, like every other platform console
   const kind = readParam(searchParams.get('kind'), KIND_OPTIONS);
@@ -237,8 +263,17 @@ export default function PlatformDomainSettingsPage(): JSX.Element {
   const environmentManaged = configQuery.data?.source === 'environment';
   const form = useForm<PlatformDomainFormData>({
     resolver: zodResolver(platformDomainSchema),
-    values: { baseDomain: configQuery.data?.baseDomain ?? '' },
+    defaultValues: { baseDomain: configQuery.data?.baseDomain ?? '' },
   });
+  // P63g — seed the editor once from the server value; `values` would
+  // reset the operator's typing every time the query re-resolved.
+  const loadedBaseDomain = configQuery.data?.baseDomain;
+  useEffect(() => {
+    if (loadedBaseDomain !== undefined && !form.formState.isDirty) {
+      form.reset({ baseDomain: loadedBaseDomain ?? '' });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadedBaseDomain]);
   useServerValidation(form, updateConfig.error);
   useUnsavedChanges({
     isDirty: !environmentManaged && form.formState.isDirty,
@@ -455,12 +490,40 @@ export default function PlatformDomainSettingsPage(): JSX.Element {
                 {t('website:platformDomain.operations.checkNow')}
               </Button>
             ) : null}
+            {row.original.customDomain?.hostname ? (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                disabled={releaseDomain.isPending}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  void handleRelease(row.original);
+                }}
+                aria-label={t('website:platformDomain.operations.release')}
+              >
+                {releaseDomain.isPending &&
+                releaseDomain.variables === row.original.academyId ? (
+                  <Loader2 className="size-3.5 animate-spin" aria-hidden />
+                ) : (
+                  <Trash2 className="size-3.5" aria-hidden />
+                )}
+                {t('website:platformDomain.operations.release')}
+              </Button>
+            ) : null}
           </div>
         ),
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [t, language, checkDomain.isPending, checkDomain.variables]
+    [
+      t,
+      language,
+      checkDomain.isPending,
+      checkDomain.variables,
+      releaseDomain.isPending,
+      releaseDomain.variables,
+    ]
   );
 
   const readiness = readinessQuery.data;
@@ -702,6 +765,58 @@ export default function PlatformDomainSettingsPage(): JSX.Element {
                     detail={
                       readiness.baseDomain
                         ? `*.${readiness.baseDomain}`
+                        : undefined
+                    }
+                  />
+                  <TruthRow
+                    labelKey={
+                      !readiness.sweep.lastCompletedAt
+                        ? 'website:platformDomain.readiness.sweepNever'
+                        : Date.now() -
+                              new Date(
+                                readiness.sweep.lastCompletedAt
+                              ).getTime() >
+                            readiness.sweep.intervalMs * 3
+                          ? 'website:platformDomain.readiness.sweepStale'
+                          : 'website:platformDomain.readiness.sweepAlive'
+                    }
+                    ok={
+                      !!readiness.sweep.lastCompletedAt &&
+                      Date.now() -
+                        new Date(readiness.sweep.lastCompletedAt).getTime() <=
+                        readiness.sweep.intervalMs * 3
+                    }
+                    unknown={!readiness.sweep.lastCompletedAt}
+                    detail={
+                      readiness.sweep.lastCompletedAt
+                        ? t('website:platformDomain.readiness.sweepDetail', {
+                            time: fmt.dateTime(readiness.sweep.lastCompletedAt),
+                            checked: Number(
+                              readiness.sweep.lastResult?.checked ?? 0
+                            ),
+                            failed: Number(
+                              readiness.sweep.lastResult?.failed ?? 0
+                            ),
+                          })
+                        : undefined
+                    }
+                  />
+                  <TruthRow
+                    labelKey={
+                      readiness.sweep.pendingReleases === 0
+                        ? 'website:platformDomain.readiness.releasesClear'
+                        : 'website:platformDomain.readiness.releasesPending'
+                    }
+                    ok={readiness.sweep.pendingReleases === 0}
+                    unknown={readiness.sweep.pendingReleases > 0}
+                    detail={
+                      readiness.sweep.pendingReleases > 0
+                        ? t(
+                            'website:platformDomain.readiness.releasesPendingDetail',
+                            {
+                              count: readiness.sweep.pendingReleases,
+                            }
+                          )
                         : undefined
                     }
                   />

@@ -11,6 +11,14 @@ on:
   push:
     branches: [main]
 
+# P63g — one deploy at a time against the single VPS. The backend
+# workflow uses the same group name; GitHub scopes groups per repository,
+# so `deploy.sh` additionally takes a host-level lock (`flock`) — this
+# group prevents two FRONTEND pushes from racing each other.
+concurrency:
+  group: atlas-vps-deploy
+  cancel-in-progress: false
+
 permissions:
   contents: read
   packages: write
@@ -40,7 +48,9 @@ jobs:
           context: .
           platforms: linux/arm64
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/atlas-frontend:latest
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/atlas-frontend:latest
+            ghcr.io/${{ github.repository_owner }}/atlas-frontend:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -53,4 +63,4 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           ssh -o StrictHostKeyChecking=accept-new -i ~/.ssh/deploy_key \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
-            'bash /opt/atlas/deploy.sh'
+            'bash /opt/atlas/deploy.sh --frontend-only'

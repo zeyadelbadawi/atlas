@@ -46,7 +46,9 @@ export function useEditingPresence({
   pageId,
   enabled,
 }: UseEditingPresenceOptions): readonly EditingParticipant[] {
-  const [participants, setParticipants] = useState<readonly EditingParticipant[]>([]);
+  const [participants, setParticipants] = useState<
+    readonly EditingParticipant[]
+  >([]);
   // Kept in a ref so the effect below does not need it as a dependency —
   // it only ever reads it during teardown.
   const releasedRef = useRef(false);
@@ -60,10 +62,11 @@ export function useEditingPresence({
     const beat = async () => {
       if (document.visibilityState === 'hidden') return;
       try {
-        const result = await websiteConfigurationService.heartbeatPageEditingSession(
-          academyId,
-          pageId
-        );
+        const result =
+          await websiteConfigurationService.heartbeatPageEditingSession(
+            academyId,
+            pageId
+          );
         if (!cancelled) setParticipants(result.participants);
       } catch {
         // Advisory only — see this file's own doc comment. An editor whose

@@ -8,6 +8,7 @@
  */
 import { buildSitemapEntries } from '@features/website';
 import { generateSitemapXml } from '../utils/robots-sitemap.utils';
+import { resolveCanonicalOrigin } from '../utils/canonical-redirect.utils';
 import { usePublicWebsiteData } from '../hooks/usePublicWebsiteData';
 import { PublicWebsiteStatus } from './PublicWebsiteStatus';
 
@@ -26,7 +27,11 @@ export function PublicWebsiteSitemapRoute({
 
   const { configuration, pages } = data;
   const entries = buildSitemapEntries({ configuration, pages });
-  const xml = generateSitemapXml(entries, window.location.origin);
+  // P63g — the canonical origin, so the sitemap never advertises the non-canonical host.
+  const xml = generateSitemapXml(
+    entries,
+    resolveCanonicalOrigin(window.location.origin, data.academy.canonicalHost)
+  );
 
   return (
     <pre className="min-h-screen whitespace-pre-wrap bg-background p-6 font-mono text-xs text-foreground">

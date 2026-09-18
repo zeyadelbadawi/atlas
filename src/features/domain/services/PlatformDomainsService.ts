@@ -36,6 +36,13 @@ export class PlatformDomainsService extends BaseService {
     return this.fetchOne<PlatformDomainRow>(academyId, options);
   }
 
+  /** P63g — operator release: frees a hostname an Academy is holding (typically archived) so it can be connected elsewhere. */
+  async release(academyId: string): Promise<PlatformDomainRow> {
+    return this.client.delete<PlatformDomainRow>(
+      this.path(academyId, 'custom-domain')
+    );
+  }
+
   /** Operator-triggered re-check — same server-side check the customer's "Check now" runs, audited with the operator as actor. */
   async check(
     academyId: string,

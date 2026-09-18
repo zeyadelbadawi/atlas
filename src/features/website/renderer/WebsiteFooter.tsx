@@ -26,8 +26,8 @@ export interface WebsiteFooterProps {
   readonly footer: WebsiteFooterConfig;
   readonly pages: readonly WebsitePage[];
   readonly onNavigate: (pageId: string) => void;
-  
-/** See `website-link-renderer.types.ts` — absent in every dashboard preview context, supplied only by the public runtime. */
+
+  /** See `website-link-renderer.types.ts` — absent in every dashboard preview context, supplied only by the public runtime. */
   readonly linkRenderer?: WebsiteLinkRenderer;
 }
 

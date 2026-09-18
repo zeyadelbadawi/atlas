@@ -57,8 +57,12 @@ describe('readSaveConflict', () => {
   });
 
   it('ignores non-conflict errors', () => {
-    expect(readSaveConflict(createApiError('server', { status: 500 }))).toBeNull();
-    expect(readSaveConflict(createApiError('forbidden', { status: 403 }))).toBeNull();
+    expect(
+      readSaveConflict(createApiError('server', { status: 500 }))
+    ).toBeNull();
+    expect(
+      readSaveConflict(createApiError('forbidden', { status: 403 }))
+    ).toBeNull();
     expect(readSaveConflict(null)).toBeNull();
   });
 

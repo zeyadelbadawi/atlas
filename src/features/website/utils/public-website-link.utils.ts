@@ -45,9 +45,9 @@ export function getAcademyPublicWebsiteUrl(
   // only the fallback while the domain query has not answered yet.
   if (canonicalHost) return `https://${canonicalHost}/`;
 
-  if (ENV.platformBaseDomain) {
-    return `https://${academySlug}.${ENV.platformBaseDomain}/`;
-  }
-
+  // P63g — no server host known: say so, rather than inventing one from the
+  // slug and a compiled-in base domain (the allocation label can differ
+  // from the slug, and the build-time value can drift from the deployment).
+  void academySlug;
   return undefined;
 }

@@ -99,6 +99,27 @@ export interface WebsiteDomainTabProps {
   readonly academySlug: string;
 }
 
+/** P63g — the specific reason an add/replace was refused, by the server's message key; a generic sentence only when nothing more specific is known. */
+function addErrorKey(error: {
+  readonly messageKey?: string;
+  readonly kind?: string;
+}): string {
+  switch (error.messageKey) {
+    case 'errors.domain.hostnameTaken':
+      return 'website:domain.custom.addErrors.hostnameTaken';
+    case 'errors.domain.hostnameReserved':
+      return 'website:domain.custom.addErrors.hostnameReserved';
+    case 'errors.domain.invalidHostname':
+      return 'website:domain.custom.addErrors.invalidHostname';
+    case 'errors.domain.insufficientRole':
+      return 'website:domain.custom.addErrors.forbidden';
+    default:
+      return error.kind === 'rateLimited'
+        ? 'website:domain.custom.addErrors.rateLimited'
+        : 'website:domain.custom.addError';
+  }
+}
+
 /** Which copy explains a failed HTTPS check: the probe's reason, the certificate state, or a generic fallback. */
 function httpsFailureKey(custom: {
   readonly httpsFailureReason?: string;
@@ -170,9 +191,14 @@ export function WebsiteDomainTab({
   // The server's allocation host is authoritative; the platform base
   // domain only fills in for an allocation recorded before a base domain
   // existed. Never a fabricated address.
+  // P63g — the allocation LABEL (not the slug) under the base domain the
+  // server reports; nothing is built from a compiled-in value.
   const subdomainHost =
     domain.subdomain?.fullHost ??
-    (baseDomain ? `${academySlug}.${baseDomain}` : undefined);
+    (domain.subdomain && baseDomain
+      ? `${domain.subdomain.subdomain}.${baseDomain}`
+      : undefined);
+  void academySlug;
   const canonicalHost = domain.canonicalHost?.host;
   const customIsCanonical = domain.canonicalHost?.source === 'custom_domain';
   const isBusy =
@@ -202,6 +228,11 @@ export function WebsiteDomainTab({
 
   const onSubmitHostname = (data: AddCustomDomainFormData) => {
     const unchanged = data.hostname === custom?.hostname;
+    if (unchanged) {
+      // Nothing to change: keep the domain and its progress exactly as it is.
+      closeForm();
+      return;
+    }
     addDomain.mutate(
       { academyId, payload: data },
       {
@@ -223,9 +254,9 @@ export function WebsiteDomainTab({
           });
           closeForm();
         },
-        onError: () =>
+        onError: (error) =>
           toast({
-            title: t('website:domain.custom.addError'),
+            title: t(addErrorKey(error)),
             variant: 'destructive',
           }),
       }
@@ -373,9 +404,11 @@ export function WebsiteDomainTab({
                       host: subdomainHost ?? '',
                     })
                   : custom?.hostname
-                    ? custom.status === 'connected'
-                      ? t('website:domain.address.subdomainUntilHttps')
-                      : t('website:domain.address.subdomainUntilVerified')
+                    ? step === 'attention' || step === 'blocked'
+                      ? t('website:domain.address.subdomainWhileBroken')
+                      : custom.status === 'connected'
+                        ? t('website:domain.address.subdomainUntilHttps')
+                        : t('website:domain.address.subdomainUntilVerified')
                     : t('website:domain.address.subdomainOnly')}
               </p>
             </>

@@ -14,6 +14,7 @@
  * would call.
  */
 import { generateRobotsTxt } from '../utils/robots-sitemap.utils';
+import { resolveCanonicalOrigin } from '../utils/canonical-redirect.utils';
 import { usePublicWebsiteData } from '../hooks/usePublicWebsiteData';
 import { PublicWebsiteStatus } from './PublicWebsiteStatus';
 
@@ -34,7 +35,7 @@ export function PublicWebsiteRobotsRoute({
   const indexable = configuration.seo.robotsIndexable ?? true;
   const sitemapUrl =
     configuration.seo.sitemapEnabled !== false
-      ? `${window.location.origin}/sitemap.xml`
+      ? `${resolveCanonicalOrigin(window.location.origin, data.academy.canonicalHost)}/sitemap.xml`
       : undefined;
 
   return (

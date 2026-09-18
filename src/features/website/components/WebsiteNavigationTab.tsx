@@ -31,8 +31,7 @@ import { toast } from '@/hooks/use-toast';
 import { useUpdateWebsiteConfiguration } from '../hooks';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
 import { LocalizedTextField } from './LocalizedTextField';
-import {
-} from '../utils/auth-page-copy.utils';
+import {} from '../utils/auth-page-copy.utils';
 import type {
   LocalizedText,
   WebsiteConfiguration,
@@ -244,7 +243,6 @@ export function WebsiteNavigationTab({
       }
     );
   };
-
 
   const updateFooterCopyright = (value: LocalizedText) => {
     updateConfig.mutate({

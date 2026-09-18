@@ -65,7 +65,9 @@ function resolvedHostname() {
 describe('usePublicWebsiteData — unpublished is not an outage', () => {
   it('reports `unpublished` when the published configuration 404s', () => {
     resolvedHostname();
-    usePublishedWebsite.mockReturnValue(failed({ kind: 'notFound', status: 404 }));
+    usePublishedWebsite.mockReturnValue(
+      failed({ kind: 'notFound', status: 404 })
+    );
     usePublishedPages.mockReturnValue(settled([]));
 
     const { result } = renderHook(() => usePublicWebsiteData('elzozo.example'));
@@ -75,20 +77,22 @@ describe('usePublicWebsiteData — unpublished is not an outage', () => {
 
   it('carries the resolved Academy identity so the page can be branded', () => {
     resolvedHostname();
-    usePublishedWebsite.mockReturnValue(failed({ kind: 'notFound', status: 404 }));
+    usePublishedWebsite.mockReturnValue(
+      failed({ kind: 'notFound', status: 404 })
+    );
     usePublishedPages.mockReturnValue(settled([]));
 
     const { result } = renderHook(() => usePublicWebsiteData('elzozo.example'));
 
     expect(
-      result.current.status === 'unpublished' && result.current.academy,
+      result.current.status === 'unpublished' && result.current.academy
     ).toEqual(ACADEMY);
   });
 
   it('reports `unavailable` — not `unpublished` — on a server error', () => {
     resolvedHostname();
     usePublishedWebsite.mockReturnValue(
-      failed({ kind: 'server', status: 500 }),
+      failed({ kind: 'server', status: 500 })
     );
     usePublishedPages.mockReturnValue(settled([]));
 
@@ -157,13 +161,13 @@ describe('usePublicWebsiteData — unpublished is not an outage', () => {
 describe('AcademyComingSoon', () => {
   function renderComingSoon(
     locale: 'en' | 'ar',
-    academy: HostnameResolution = ACADEMY,
+    academy: HostnameResolution = ACADEMY
   ) {
     const i18n = createI18nInstance(locale);
     return render(
       <I18nextProvider i18n={i18n}>
         <AcademyComingSoon academy={academy} locale={locale} />
-      </I18nextProvider>,
+      </I18nextProvider>
     );
   }
 
@@ -199,9 +203,7 @@ describe('AcademyComingSoon', () => {
     renderComingSoon('en');
     const root = screen.getByTestId('academy-coming-soon');
 
-    const textNodes = Array.from(
-      root.querySelectorAll<HTMLElement>('h1, p'),
-    );
+    const textNodes = Array.from(root.querySelectorAll<HTMLElement>('h1, p'));
 
     expect(textNodes.length).toBeGreaterThan(2);
     for (const node of textNodes) {
@@ -265,7 +267,7 @@ describe('AcademyComingSoon', () => {
     render(
       <I18nextProvider i18n={i18n}>
         <AcademyComingSoon academy={ACADEMY} locale="ar" />
-      </I18nextProvider>,
+      </I18nextProvider>
     );
 
     const root = screen.getByTestId('academy-coming-soon');

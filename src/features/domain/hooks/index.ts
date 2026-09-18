@@ -13,3 +13,4 @@ export {
 } from './usePlatformDomains';
 export type { UsePlatformDomainsOptions } from './usePlatformDomains';
 export { useCheckPlatformDomain } from './useCheckPlatformDomain';
+export { useReleasePlatformDomain } from './useReleasePlatformDomain';

@@ -47,7 +47,7 @@ describe('PublicWebsiteLocaleProvider', () => {
     render(
       <PublicWebsiteLocaleProvider locale="ar">
         <DirectionProbe />
-      </PublicWebsiteLocaleProvider>,
+      </PublicWebsiteLocaleProvider>
     );
 
     expect(resolvedDirection(screen.getByTestId('probe'))).toBe('rtl');
@@ -58,7 +58,7 @@ describe('PublicWebsiteLocaleProvider', () => {
     render(
       <PublicWebsiteLocaleProvider locale="en">
         <DirectionProbe />
-      </PublicWebsiteLocaleProvider>,
+      </PublicWebsiteLocaleProvider>
     );
 
     expect(resolvedDirection(screen.getByTestId('probe'))).toBe('ltr');
@@ -69,11 +69,11 @@ describe('PublicWebsiteLocaleProvider', () => {
     render(
       <PublicWebsiteLocaleProvider locale="ar">
         <DirectionProbe />
-      </PublicWebsiteLocaleProvider>,
+      </PublicWebsiteLocaleProvider>
     );
 
     expect(
-      screen.getByTestId('probe').closest('[dir]')?.getAttribute('lang'),
+      screen.getByTestId('probe').closest('[dir]')?.getAttribute('lang')
     ).toBe('ar');
   });
 
@@ -89,7 +89,7 @@ describe('PublicWebsiteLocaleProvider', () => {
         <PublicWebsiteLocaleProvider locale="ar">
           <DirectionProbe />
         </PublicWebsiteLocaleProvider>
-      </div>,
+      </div>
     );
 
     expect(resolvedDirection(screen.getByTestId('probe'))).toBe('rtl');
@@ -102,7 +102,7 @@ describe('PublicWebsiteLocaleProvider', () => {
           <DirectionProbe />
         </PublicWebsiteLocaleProvider>
         <span data-testid="sibling" />
-      </div>,
+      </div>
     );
 
     expect(resolvedDirection(screen.getByTestId('sibling'))).toBe('ltr');
@@ -112,14 +112,14 @@ describe('PublicWebsiteLocaleProvider', () => {
     const { rerender } = render(
       <PublicWebsiteLocaleProvider locale="en">
         <DirectionProbe />
-      </PublicWebsiteLocaleProvider>,
+      </PublicWebsiteLocaleProvider>
     );
     expect(resolvedDirection(screen.getByTestId('probe'))).toBe('ltr');
 
     rerender(
       <PublicWebsiteLocaleProvider locale="ar">
         <DirectionProbe />
-      </PublicWebsiteLocaleProvider>,
+      </PublicWebsiteLocaleProvider>
     );
     expect(resolvedDirection(screen.getByTestId('probe'))).toBe('rtl');
   });

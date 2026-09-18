@@ -84,7 +84,4 @@ export interface PlatformCourseFilters {
 }
 
 export type PlatformCourseSortField =
-  | 'title'
-  | 'createdAt'
-  | 'updatedAt'
-  | 'publishedAt';
+  'title' | 'createdAt' | 'updatedAt' | 'publishedAt';

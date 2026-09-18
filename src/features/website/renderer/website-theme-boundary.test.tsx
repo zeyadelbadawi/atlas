@@ -18,7 +18,7 @@ function scopeStyle(brandPrimary: string): string {
   const { container } = render(
     <WebsiteThemeScope theme={theme} brand={{ primaryColor: brandPrimary }}>
       <div>content</div>
-    </WebsiteThemeScope>,
+    </WebsiteThemeScope>
   );
   const el = container.querySelector('.website-theme-scope') as HTMLElement;
   return el.getAttribute('style') ?? '';

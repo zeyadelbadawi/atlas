@@ -35,6 +35,8 @@ function labelKeyFor(
       return 'website:domain.custom.steps.securing';
     case 'https_failed':
       return 'website:domain.custom.steps.https_failed';
+    case 'attention':
+      return 'website:domain.custom.steps.attention';
     default:
       return `website:domain.custom.steps.${item}`;
   }

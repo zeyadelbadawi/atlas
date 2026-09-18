@@ -23,7 +23,7 @@ import type { WebsiteConfiguration } from '@types';
 const EN_AR = (en: string, ar: string) => ({ en, ar });
 
 function configurationWith(
-  authPages: WebsiteConfiguration['header']['authPages'],
+  authPages: WebsiteConfiguration['header']['authPages']
 ): WebsiteConfiguration {
   return {
     header: {
@@ -44,10 +44,12 @@ describe('buildAuthPageCopyHeaderPatch', () => {
       configuration,
       'signIn',
       'title',
-      EN_AR('Sign in to Elzozo', 'سجّل الدخول'),
+      EN_AR('Sign in to Elzozo', 'سجّل الدخول')
     );
 
-    expect(patch.authPages?.signUp?.title).toEqual(EN_AR('Join us', 'انضم إلينا'));
+    expect(patch.authPages?.signUp?.title).toEqual(
+      EN_AR('Join us', 'انضم إلينا')
+    );
   });
 
   it('keeps the other FIELD of the same page untouched', () => {
@@ -62,11 +64,11 @@ describe('buildAuthPageCopyHeaderPatch', () => {
       configuration,
       'signIn',
       'title',
-      EN_AR('Sign in', 'تسجيل الدخول'),
+      EN_AR('Sign in', 'تسجيل الدخول')
     );
 
     expect(patch.authPages?.signIn?.subtitle).toEqual(
-      EN_AR('Your courses await', 'دوراتك بانتظارك'),
+      EN_AR('Your courses await', 'دوراتك بانتظارك')
     );
   });
 
@@ -77,7 +79,7 @@ describe('buildAuthPageCopyHeaderPatch', () => {
       configuration,
       'signUp',
       'title',
-      EN_AR('Create your account', 'أنشئ حسابك'),
+      EN_AR('Create your account', 'أنشئ حسابك')
     );
 
     expect(patch.cta?.label).toEqual(EN_AR('Enrol now', 'سجل الآن'));
@@ -93,7 +95,7 @@ describe('buildAuthPageCopyHeaderPatch', () => {
       configuration,
       'signIn',
       'title',
-      EN_AR('  ', ''),
+      EN_AR('  ', '')
     );
 
     expect(patch.authPages?.signIn?.title).toBeUndefined();
@@ -106,7 +108,7 @@ describe('buildAuthPageCopyHeaderPatch', () => {
       configuration,
       'signIn',
       'title',
-      EN_AR('', 'مرحبًا بعودتك'),
+      EN_AR('', 'مرحبًا بعودتك')
     );
 
     expect(patch.authPages?.signIn?.title).toEqual(EN_AR('', 'مرحبًا بعودتك'));

@@ -87,7 +87,8 @@ export interface CourseSection {
 }
 
 /** The type of a unified curriculum item (P52). */
-export type CurriculumItemType = 'lesson' | 'quiz' | 'assignment' | 'live_session';
+export type CurriculumItemType =
+  'lesson' | 'quiz' | 'assignment' | 'live_session';
 
 /** One item in a unit's unified ordered sequence — a projection over the existing entities. */
 export interface CurriculumItem {
