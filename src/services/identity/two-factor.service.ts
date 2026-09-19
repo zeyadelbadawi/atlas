@@ -12,6 +12,7 @@ import type {
   AuthenticationResponse,
   TwoFactorSetupResult,
   TwoFactorStatus,
+  TwoFactorVerifyInput,
 } from '@types';
 
 export class TwoFactorService {
@@ -40,13 +41,14 @@ export class TwoFactorService {
    *
    * The challenge id travels in the BODY, never as an Authorization
    * header: it is not a token, and the backend does not accept it as one.
+   *
+   * P64 Phase 1 — `surface`/`academyId` are the ORIGINAL sign-in's, passed
+   * through so the session minted here is shaped for the same surface.
    */
-  async verifyChallenge(input: {
-    readonly challengeId: string;
-    readonly token?: string;
-    readonly recoveryCode?: string;
-  }): Promise<AuthenticationResponse> {
-    return apiClient.post<AuthenticationResponse, typeof input>(
+  async verifyChallenge(
+    input: TwoFactorVerifyInput
+  ): Promise<AuthenticationResponse> {
+    return apiClient.post<AuthenticationResponse, TwoFactorVerifyInput>(
       '/auth/2fa/verify',
       input
     );

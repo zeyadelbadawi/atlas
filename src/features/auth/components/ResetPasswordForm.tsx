@@ -35,10 +35,17 @@ type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
 export interface ResetPasswordFormProps {
   readonly token: string;
+  /**
+   * P64 Phase 1 — overrides the default "navigate to Atlas's own sign-in"
+   * behaviour, which does not exist inside an academy website's route
+   * tree. Absent, behaviour is unchanged.
+   */
+  readonly onSuccess?: () => void;
 }
 
 export function ResetPasswordForm({
   token,
+  onSuccess,
 }: ResetPasswordFormProps): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -70,7 +77,11 @@ export function ResetPasswordForm({
             title: t('auth:resetPassword.success.title'),
             description: t('auth:resetPassword.success.description'),
           });
-          navigate(AUTH_ROUTES.signIn);
+          if (onSuccess) {
+            onSuccess();
+          } else {
+            navigate(AUTH_ROUTES.signIn);
+          }
         },
       }
     );

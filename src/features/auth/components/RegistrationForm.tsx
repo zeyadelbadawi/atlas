@@ -5,13 +5,13 @@
  * the Prompt 3A scaffold — this used to fake-succeed via `setTimeout`.
  * Now a real mutation via `useRegister` (`authenticationService.register`).
  */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { Eye, EyeOff } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -20,7 +20,21 @@ import { ErrorState } from '@components/feedback';
 import { useToast } from '@hooks';
 import { AUTH_ROUTES } from '@app/routes/route-paths';
 import { useServerValidation } from '@forms';
+import { toErrorsNamespaceKey } from '@utils';
 import { useRegister } from '../hooks';
+import { AUTH_ERROR_KEYS } from '../utils/academy-surface.utils';
+
+/**
+ * Registration failures that describe the ACADEMY's policy rather than
+ * the submitted data — shown as a dedicated state with no retry, because
+ * retrying the same submission cannot change the answer.
+ */
+const POLICY_ERROR_KEYS: readonly string[] = [
+  AUTH_ERROR_KEYS.inviteRequired,
+  AUTH_ERROR_KEYS.inviteInvalid,
+  AUTH_ERROR_KEYS.academyContextRequired,
+  AUTH_ERROR_KEYS.academyHostMismatch,
+];
 
 const registrationSchema = z
   .object({
@@ -58,11 +72,28 @@ export interface RegistrationFormProps {
    * unchanged.
    */
   readonly onSuccess?: () => void;
+  /**
+   * P64 Phase 1 — the invitation token from the sign-up link (`?invite=`).
+   * Sent as-is; the backend decides whether this academy's registration
+   * policy needs one and whether it is still valid.
+   */
+  readonly inviteToken?: string;
+  /**
+   * P64 Phase 1 — where the terms/privacy words in the consent label
+   * link to. Absent (an academy website with no legal pages of its own),
+   * the label is plain text.
+   */
+  readonly legalLinks?: {
+    readonly terms: string;
+    readonly privacy: string;
+  };
 }
 
 export function RegistrationForm({
   academyId,
   onSuccess,
+  inviteToken,
+  legalLinks,
 }: RegistrationFormProps = {}): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -93,6 +124,26 @@ export function RegistrationForm({
   // client-side one — instead of only the generic `ErrorState` below.
   useServerValidation(form, registerAccount.error);
 
+  const failure = registerAccount.error;
+  const failureKey = failure?.messageKey;
+  const isEmailNotAcceptable = failureKey === AUTH_ERROR_KEYS.emailNotAcceptable;
+  const policyFailureKey =
+    failureKey && POLICY_ERROR_KEYS.includes(failureKey) ? failureKey : null;
+
+  // `errors.auth.emailNotAcceptable` is about THIS field, so it is shown on
+  // the email input like any other field violation — never as a generic
+  // "check the highlighted fields" alert with nothing highlighted. The
+  // backend sends it as a bare message key without a `violations` entry,
+  // which is why `useServerValidation` above cannot place it.
+  const { setError } = form;
+  useEffect(() => {
+    if (!isEmailNotAcceptable) return;
+    setError('email', {
+      type: 'server',
+      message: toErrorsNamespaceKey(AUTH_ERROR_KEYS.emailNotAcceptable),
+    });
+  }, [isEmailNotAcceptable, setError]);
+
   const isLoading = registerAccount.isPending;
 
   const handleFormSubmit = (data: RegistrationFormData) => {
@@ -102,6 +153,7 @@ export function RegistrationForm({
         email: data.email,
         password: data.password,
         academyId,
+        inviteToken,
       },
       {
         onSuccess: () => {
@@ -121,15 +173,32 @@ export function RegistrationForm({
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
-      {registerAccount.error &&
-      // A validation error with real field violations is shown inline,
-      // on the field that caused it, via `useServerValidation` above —
-      // this block is for every other failure.
-      !(
-        registerAccount.error.kind === 'validation' &&
-        registerAccount.error.violations &&
-        registerAccount.error.violations.length > 0
-      ) ? (
+      {policyFailureKey ? (
+        // The academy's registration policy said no — an invite is
+        // required, the invite is invalid, or the request was not for
+        // this host. No retry: the same submission cannot succeed.
+        <ErrorState
+          kind={failure?.kind ?? 'forbidden'}
+          titleKey={`auth:register.policy.${
+            policyFailureKey === AUTH_ERROR_KEYS.inviteRequired
+              ? 'inviteRequiredTitle'
+              : policyFailureKey === AUTH_ERROR_KEYS.inviteInvalid
+                ? 'inviteInvalidTitle'
+                : 'unavailableTitle'
+          }`}
+          descriptionKey={toErrorsNamespaceKey(policyFailureKey)}
+          requestId={failure?.requestId}
+        />
+      ) : registerAccount.error &&
+        !isEmailNotAcceptable &&
+        // A validation error with real field violations is shown inline,
+        // on the field that caused it, via `useServerValidation` above —
+        // this block is for every other failure.
+        !(
+          registerAccount.error.kind === 'validation' &&
+          registerAccount.error.violations &&
+          registerAccount.error.violations.length > 0
+        ) ? (
         registerAccount.error.kind === 'conflict' ? (
           <ErrorState
             kind="conflict"
@@ -286,7 +355,31 @@ export function RegistrationForm({
             htmlFor="acceptTerms"
             className="text-sm font-normal leading-relaxed cursor-pointer"
           >
-            {t('auth:register.acceptTerms')}
+            {legalLinks ? (
+              <Trans
+                i18nKey="auth:register.acceptTermsLinked"
+                components={{
+                  terms: (
+                    <Link
+                      to={legalLinks.terms}
+                      className="font-medium text-primary hover:underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    />
+                  ),
+                  privacy: (
+                    <Link
+                      to={legalLinks.privacy}
+                      className="font-medium text-primary hover:underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    />
+                  ),
+                }}
+              />
+            ) : (
+              t('auth:register.acceptTerms')
+            )}
           </Label>
         </div>
         {errors.acceptTerms ? (

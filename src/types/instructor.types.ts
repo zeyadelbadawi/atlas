@@ -54,6 +54,14 @@ export interface InstructorDashboardMetrics {
 /** A course this instructor is authorized to teach. */
 export interface TeachingCourse {
   readonly courseId: string;
+  /**
+   * P64 Phase 1 — the owning academy, when the backend contract supplies
+   * it. Needed to deep-link an assigned instructor into the academy
+   * curriculum builder (`academies/:id/courses/:courseId/sections*`),
+   * which is academy-scoped by route. Optional so an older backend
+   * response still type-checks; the link simply does not render without it.
+   */
+  readonly academyId?: string;
   readonly title: string;
   readonly thumbnail?: string;
   readonly status: CourseStatus;
@@ -68,6 +76,8 @@ export interface TeachingCourse {
 /** Teaching-operations overview for one authorized course. */
 export interface InstructorCourseOverview {
   readonly courseId: string;
+  /** P64 Phase 1 — see `TeachingCourse.academyId`. */
+  readonly academyId?: string;
   readonly title: string;
   readonly description?: string;
   readonly status: CourseStatus;

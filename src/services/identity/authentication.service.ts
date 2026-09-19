@@ -15,6 +15,8 @@ import type {
   RegistrationRequest,
   PasswordResetRequest,
   PasswordResetConfirmation,
+  PasswordResetTokenValidation,
+  EmailVerificationRequest,
   UserSession,
 } from '@types';
 
@@ -92,6 +94,31 @@ export class AuthenticationService {
   ): Promise<void> {
     await apiClient.post<void, PasswordResetRequest>(
       '/auth/password-reset/request',
+      request
+    );
+  }
+
+  /**
+   * P64 Phase 1 — whether a reset token is currently usable, so the reset
+   * page can show "invalid or expired" BEFORE asking for a new password
+   * instead of only finding out on submit. Reveals nothing about whom the
+   * token belongs to.
+   */
+  public async validatePasswordResetToken(token: string): Promise<boolean> {
+    const result = await apiClient.post<
+      PasswordResetTokenValidation,
+      { token: string }
+    >('/auth/password-reset/validate', { token });
+    return result.valid === true;
+  }
+
+  /**
+   * Phase 10.1 / P64 Phase 1 — completes email verification with the
+   * emailed token. Public: the recipient is by definition not signed in.
+   */
+  public async verifyEmail(request: EmailVerificationRequest): Promise<void> {
+    await apiClient.post<void, EmailVerificationRequest>(
+      '/auth/verify-email',
       request
     );
   }

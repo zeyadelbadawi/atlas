@@ -34,6 +34,12 @@ const ForgotPasswordPage = lazy(
 const ResetPasswordPage = lazy(
   () => import('@features/auth/pages/ResetPasswordPage')
 );
+const AcademyChooserPage = lazy(
+  () => import('@features/auth/pages/AcademyChooserPage')
+);
+const LearnerSurfaceRedirectPage = lazy(
+  () => import('@features/auth/pages/LearnerSurfaceRedirectPage')
+);
 
 const AddOnsCatalogPage = lazy(
   () => import('@features/live-sessions/pages/AddOnsCatalogPage')
@@ -133,31 +139,12 @@ const CourseAssignmentsPage = lazy(
   () => import('@features/course/pages/CourseAssignmentsPage')
 );
 
-const StudentCourseDiscoveryPage = lazy(
-  () => import('@features/learning/pages/StudentCourseDiscoveryPage')
-);
-const StudentMyResultsPage = lazy(
-  () => import('@features/learning/pages/StudentMyResultsPage')
-);
+// P64 Phase 1 (D2 / AD-12) — the learner pages are no longer mounted under
+// `/dashboard/learning/*`; they render on the academy website
+// (`PublicWebsiteRouter`, `/my-learning/*`). Their route constants survive
+// and all resolve to `LearnerSurfaceRedirectPage` below.
 const StudentAnalyticsPage = lazy(
   () => import('@features/dashboard/pages/StudentAnalyticsPage')
-);
-const StudentMyLearningPage = lazy(
-  () => import('@features/learning/pages/StudentMyLearningPage')
-);
-const StudentCourseDetailsPage = lazy(
-  () => import('@features/learning/pages/StudentCourseDetailsPage')
-);
-const CourseLearnRedirectPage = lazy(
-  () => import('@features/learning/pages/CourseLearnRedirectPage')
-);
-const LessonPage = lazy(() => import('@features/learning/pages/LessonPage'));
-const StudentLiveSessionPage = lazy(
-  () => import('@features/live-sessions/pages/StudentLiveSessionPage'),
-);
-const QuizPage = lazy(() => import('@features/learning/pages/QuizPage'));
-const AssignmentPage = lazy(
-  () => import('@features/learning/pages/AssignmentPage')
 );
 
 const InstructorDashboardPage = lazy(
@@ -453,11 +440,33 @@ export function AppRouter(): JSX.Element {
           </Route>
 
           {/* Authenticated product surface */}
+          {/* P64 Phase 1 — the academy chooser a learner with a platform-host
+              session is sent to. In the auth layout, outside the dashboard
+              chrome, but requiring a session (it lists THAT account's
+              academies). */}
+          <Route element={<AuthLayout />}>
+            <Route
+              path={AUTH_ROUTES.academyChooser}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  pendingFallback={<RouteFallback />}
+                >
+                  <AcademyChooserPage />
+                </RouteGuard>
+              }
+            />
+          </Route>
+
+          {/* Authenticated product surface — the MANAGEMENT surface. The
+              principal check sits here, at the subtree root, so every
+              nested route is covered (P64 Phase 1, AD-5). */}
           <Route
             path={DASHBOARD_ROUTES.root}
             element={
               <RouteGuard
                 requireAuthentication
+                requireManagementPrincipal
                 pendingFallback={<RouteFallback />}
               >
                 <DashboardLayout />
@@ -494,14 +503,26 @@ export function AppRouter(): JSX.Element {
                 `tenant.subscription.view`-gated pages) exist. */}
             <Route path={DASHBOARD_ROUTES.plans} element={<PlansPage />} />
 
+            {/* P64 Phase 1 (F1) — operator-only at the ROUTE, not just in
+                the sidebar: these rendered for any signed-in account before,
+                empty but present. The API's `PlatformOwnerGuard` is the
+                real boundary; this stops the page from pretending. */}
             <Route
               path={DASHBOARD_ROUTES.platform}
-              element={<PlatformDashboardPage />}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <PlatformDashboardPage />
+                </RouteGuard>
+              }
             />
 
             <Route
               path={DASHBOARD_ROUTES.settings}
-              element={<SettingsPage />}
+              element={
+                <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
+                  <SettingsPage />
+                </RouteGuard>
+              }
             />
 
             <Route
@@ -778,12 +799,51 @@ export function AppRouter(): JSX.Element {
               }
             />
 
+            {/*
+              P64 Phase 1 — the curriculum builder is reachable by an
+              assigned COURSE INSTRUCTOR, not only by the academy's
+              owner/manager.
+
+              The backend moved first: the curriculum services now accept
+              a course's instructors for the courses they are assigned to
+              (`assertCanAuthorCourseContent` / `can_author_course_content()`
+              in RLS), so an instructor editing their own course's
+              sections is an authorized request. The frontend was the only
+              thing still refusing it — this guard required
+              `course.manage`, an organization-level string
+              `ORGANIZATION_INSTRUCTOR_PERMISSIONS` deliberately does not
+              carry (an instructor must never gain academy-wide course
+              authoring), so the builder 403'd before a request was ever
+              made.
+
+              `requiredPermissions` is ALL-of and the guard takes no
+              "any of these" form, so the minimal correct change is the
+              one string all three authorized roles genuinely hold:
+              `instructor.course.view` appears in
+              `ORGANIZATION_OWNER_PERMISSIONS`,
+              `ORGANIZATION_MANAGER_PERMISSIONS` and
+              `ORGANIZATION_INSTRUCTOR_PERMISSIONS`
+              (`atlas-backend/src/tenancy/constants/
+              organization-permissions.constants.ts`) and in no other set —
+              a plain organization member holds only `academy.view` and
+              `academy.website.view` and still cannot reach this route.
+              So the audience is unchanged for everyone who could already
+              get here, and widened by exactly the role the backend just
+              authorized.
+
+              This is a DOOR, not the lock. Which courses an instructor may
+              actually edit stays a per-course, server-side decision (this
+              route is academy-scoped; the instructor of course A opening
+              course B's builder is refused by the API and by RLS). Same
+              precedent as `quiz.manage`/`assignment.manage`, which
+              instructors hold for route visibility only.
+            */}
             <Route
               path={DASHBOARD_ROUTES.academyCourseBuilder}
               element={
                 <RouteGuard
                   requireAuthentication
-                  requiredPermissions={['course.manage']}
+                  requiredPermissions={['instructor.course.view']}
                   requiresEntitlement
                 >
                   <CourseBuilderPage />
@@ -856,164 +916,65 @@ export function AppRouter(): JSX.Element {
               }
             />
 
-            <Route
-              path={DASHBOARD_ROUTES.learning}
-              element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['student.learning.view']}
-                >
-                  <Navigate to={DASHBOARD_ROUTES.myLearning} replace />
-                </RouteGuard>
-              }
-            />
+            {/*
+              P64 Phase 1 (D2 / AD-12) — the dashboard learner routes are
+              retired. Every one of these paths now resolves to a single
+              redirect page that sends the visitor to their academy
+              website's `/my-learning` (straight there when the account has
+              exactly one academy with a host, the chooser otherwise). A
+              pure `learner` principal never gets this far — the subtree
+              root sends them to `/academy-chooser` — so what lands here is
+              a staff member who is also enrolled somewhere. The constants
+              are kept because other code still names them.
+            */}
+            {[
+              DASHBOARD_ROUTES.learning,
+              DASHBOARD_ROUTES.myLearning,
+              DASHBOARD_ROUTES.myResults,
+              DASHBOARD_ROUTES.learningCourses,
+              DASHBOARD_ROUTES.learningCourseDetail,
+              DASHBOARD_ROUTES.learningCourseLearn,
+              DASHBOARD_ROUTES.learningLesson,
+              DASHBOARD_ROUTES.learningLiveSession,
+              DASHBOARD_ROUTES.learningQuiz,
+              DASHBOARD_ROUTES.learningAssignment,
+              DASHBOARD_ROUTES.learningDiscussions,
+              DASHBOARD_ROUTES.learningThread,
+            ].map((path) => (
+              <Route
+                key={path}
+                path={path}
+                element={<LearnerSurfaceRedirectPage />}
+              />
+            ))}
 
             {/*
-              Found missing during a real browser acceptance test: a
-              student who enrolled in a course had nowhere to see "my
-              enrolled courses" — the "My Learning" nav link routed
-              straight to the public course catalog (`learningCourses`,
-              below), which has no notion of enrollment at all. The
-              backend "list my enrollments" endpoint already existed and
-              was correctly RLS-scoped; only the page consuming it was
-              missing.
+              P64 Phase 1 — REVIEW routes, not instructor-only routes.
+
+              Everything from here to `instructorSubmissionReview` renders
+              the per-course review surface: rosters, progress, quiz
+              attempts, submissions and grading. The backend widened who
+              may use it — `assertCanReviewCourse` admits the course's
+              instructors AND the owning academy's Client Owner / Manager,
+              and the endpoints were renamed `review/*` to say so (see
+              `InstructorService`). The `/dashboard/instructor/...` paths
+              are kept as they are: they are bookmarked, and a URL rename
+              buys nothing the prefix rename did not.
+
+              These guards need NO widening, which was checked rather than
+              assumed: `instructor.dashboard.view`,
+              `instructor.course.view`, `instructor.student.view`,
+              `instructor.assessment.view`, `instructor.submission.view`
+              and `instructor.assignment.grade` all appear in
+              `ORGANIZATION_MANAGER_PERMISSIONS` — and therefore in
+              `ORGANIZATION_OWNER_PERMISSIONS`, which is defined as a
+              superset of it — as well as in
+              `ORGANIZATION_INSTRUCTOR_PERMISSIONS`
+              (`atlas-backend/src/tenancy/constants/
+              organization-permissions.constants.ts`). An owner or manager
+              has held them all along; what they lacked was any link into
+              these pages, which the academy course screens now provide.
             */}
-            <Route
-              path={DASHBOARD_ROUTES.myLearning}
-              element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['student.learning.view']}
-                >
-                  <StudentMyLearningPage />
-                </RouteGuard>
-              }
-            />
-
-            {/* Phase 9 (roadmap ST6) — the outcomes half of the student
-                experience. Gated on the same `student.learning.view`
-                permission as My Learning: both are the student's own
-                learning record, and the backend scopes the response to the
-                authenticated caller regardless. */}
-            <Route
-              path={DASHBOARD_ROUTES.myResults}
-              element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['student.learning.view']}
-                >
-                  <StudentMyResultsPage />
-                </RouteGuard>
-              }
-            />
-
-            <Route
-              path={DASHBOARD_ROUTES.learningCourses}
-              element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['student.course.view']}
-                >
-                  <StudentCourseDiscoveryPage />
-                </RouteGuard>
-              }
-            />
-
-            <Route
-              path={DASHBOARD_ROUTES.learningCourseDetail}
-              element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['student.course.view']}
-                >
-                  <StudentCourseDetailsPage />
-                </RouteGuard>
-              }
-            />
-
-            <Route
-              path={DASHBOARD_ROUTES.learningCourseLearn}
-              element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['student.learning.view']}
-                >
-                  <CourseLearnRedirectPage />
-                </RouteGuard>
-              }
-            />
-
-            <Route
-              path={DASHBOARD_ROUTES.learningLesson}
-              element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['student.learning.view']}
-                >
-                  <LessonPage />
-                </RouteGuard>
-              }
-            />
-
-            <Route
-              path={DASHBOARD_ROUTES.learningLiveSession}
-              element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['student.course.view']}
-                >
-                  <StudentLiveSessionPage />
-                </RouteGuard>
-              }
-            />
-            <Route
-              path={DASHBOARD_ROUTES.learningQuiz}
-              element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['student.quiz.view']}
-                >
-                  <QuizPage />
-                </RouteGuard>
-              }
-            />
-
-            <Route
-              path={DASHBOARD_ROUTES.learningAssignment}
-              element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['student.assignment.view']}
-                >
-                  <AssignmentPage />
-                </RouteGuard>
-              }
-            />
-
-            <Route
-              path={DASHBOARD_ROUTES.learningDiscussions}
-              element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['forum.view']}
-                >
-                  <CourseForumPage />
-                </RouteGuard>
-              }
-            />
-
-            <Route
-              path={DASHBOARD_ROUTES.learningThread}
-              element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['forum.view']}
-                >
-                  <ForumThreadPage />
-                </RouteGuard>
-              }
-            />
-
             <Route
               path={DASHBOARD_ROUTES.instructorDashboard}
               element={

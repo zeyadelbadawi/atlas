@@ -15,6 +15,7 @@ export * from './notifications.types';
 export * from './analytics.types';
 export * from './search.types';
 export * from './academy.types';
+export * from './academy-roster.types';
 export * from './course.types';
 export * from './enrollment.types';
 export * from './progress.types';

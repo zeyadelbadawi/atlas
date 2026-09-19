@@ -40,11 +40,14 @@ import {
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
-import { useUnsavedChanges } from '@hooks';
+import { useAuth, useUnsavedChanges } from '@hooks';
+import { useAcademyDomain } from '@features/domain';
 import { useServerValidation } from '@forms';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useAcademy, useUpdateAcademy } from '../hooks';
 import { DeleteAcademyCard } from '../components/DeleteAcademyCard';
+import { RegistrationPolicyCard } from '../components/RegistrationPolicyCard';
+import { AcademyInvitesCard } from '../components/AcademyInvitesCard';
 import { getAcademyAdminTabs } from '../utils/academy-navigation.utils';
 import {
   updateAcademySettingsSchema,
@@ -56,6 +59,30 @@ export default function AcademySettingsPage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { academyId } = useParams<{ academyId: string }>();
+  const { organization } = useAuth();
+
+  /*
+    P64 Phase 1 (D8) — changing the registration policy is a SECURITY
+    policy, restricted to the Client Owner (`assertCanManageSecurityPolicy`);
+    a Manager reading this page gets `403 errors.academy.insufficientRole`.
+    The card is told up front so a Manager is never shown a Save that can
+    only fail, and it still maps the 403 — the session's role is a hint,
+    the server is the authority.
+  */
+  const canManageRegistrationPolicy = organization?.role === 'owner';
+
+  /*
+    The invite link is `https://{academy host}/sign-up?invite={token}`.
+    The host is a backend-resolved fact — the connected custom domain when
+    there is one, otherwise the allocated Atlas subdomain — never a host
+    assembled on the client from the slug and a compiled-in base domain
+    (the same rule `WebsiteOverviewPage` follows). Without one the create
+    dialog shows the raw token and says so.
+  */
+  const { data: domainConfiguration } = useAcademyDomain(academyId ?? '');
+  const academyHost =
+    domainConfiguration?.canonicalHost?.host ??
+    domainConfiguration?.subdomain?.fullHost;
 
   const {
     data: academy,
@@ -477,6 +504,27 @@ export default function AcademySettingsPage(): JSX.Element {
         being saved, and a destructive action belongs after everything it
         would destroy rather than beside the Save button.
       */}
+      {/*
+        Registration (P64 Phase 1) — how learners get ONTO the academy,
+        which is a property of the academy rather than a field of the
+        settings form: both cards read and write their own endpoints
+        (`registration-policy`, `invites`) and save independently, so they
+        sit outside the form and never share its dirty state or Save.
+      */}
+      <div className="mt-8 space-y-6">
+        <h2 className="text-lg font-semibold">
+          {t('academy:registration.sectionTitle')}
+        </h2>
+        <RegistrationPolicyCard
+          academyId={academyId ?? ''}
+          canEdit={canManageRegistrationPolicy}
+        />
+        <AcademyInvitesCard
+          academyId={academyId ?? ''}
+          academyHost={academyHost}
+        />
+      </div>
+
       <div className="mt-8">
         <DeleteAcademyCard academy={academy} />
       </div>

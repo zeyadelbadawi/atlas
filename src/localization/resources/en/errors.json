@@ -74,7 +74,16 @@
   },
   "auth": {
     "emailNotAcceptable": "Please use a permanent email address you can receive mail at. Temporary or disposable addresses aren't accepted.",
-    "invalidVerificationToken": "This verification link is invalid or has already been used. Request a new one to continue."
+    "invalidVerificationToken": "This verification link is invalid or has already been used. Request a new one to continue.",
+    "studentUseAcademySignIn": "You are a student. Please sign in through your academy’s website.",
+    "academyContextRequired": "We could not tell which academy this request is for. Open your academy’s website and try again.",
+    "academyHostMismatch": "This academy does not belong to this website address.",
+    "academyAccessBlocked": "Your access to this academy has been blocked. Please contact the academy.",
+    "notAMemberOfAcademy": "You are not a member of this academy yet.",
+    "inviteRequired": "This academy accepts new students by invitation only. Use the invitation link you were sent.",
+    "inviteInvalid": "This invitation link is invalid, already used or expired. Ask the academy for a new one.",
+    "managementSurfaceOnly": "This area is for academy staff only.",
+    "rateLimited": "Too many attempts. Please wait a few minutes and try again."
   },
   "subscription": {
     "required": "An active subscription is required to make this change."

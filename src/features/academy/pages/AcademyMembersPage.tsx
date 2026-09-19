@@ -1,11 +1,23 @@
 /**
  * Academy Members Page.
  *
- * Display and manage academy team members including their roles and status.
+ * Two distinct populations share this screen, separated by tabs because
+ * they are not the same kind of record and must never be confused:
+ *
+ *   - **Team** — `academy_members`: the staff who RUN the academy
+ *     (owner, manager, instructor, staff).
+ *   - **Students** (P64 Phase 1) — `academy_students`: the LEARNERS who
+ *     registered through the academy's own public website. Until this
+ *     phase a Client Owner had no way at all to see who had signed up on
+ *     their academy — the roster existed only in the database.
+ *
+ * The active tab is kept in the URL (`?tab=students`) so a link to the
+ * roster is shareable and a browser refresh does not silently drop the
+ * reader back onto the team table.
  */
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { GraduationCap, Search, UserPlus, Users } from 'lucide-react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { PageContainer, PageHeader } from '@components/layout';
@@ -17,6 +29,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Select,
   SelectContent,
@@ -30,7 +43,10 @@ import { useAcademy, useAcademyMembers } from '../hooks';
 import { AddAcademyManagerDialog } from '../components/AddAcademyManagerDialog';
 import { AddAcademyInstructorDialog } from '../components/AddAcademyInstructorDialog';
 import { CreateAcademyStudentDialog } from '../components/CreateAcademyStudentDialog';
+import { AcademyStudentsTab } from '../components/AcademyStudentsTab';
+import { ACADEMY_MEMBER_ROLES } from '../constants/academy.constants';
 import {
+  getAcademyMemberRoleLabelKey,
   getAcademyMemberRoleTone,
   getAcademyMemberStatusTone,
 } from '../utils/academy-status.utils';
@@ -42,6 +58,9 @@ export default function AcademyMembersPage(): JSX.Element {
   const { t } = useTranslation();
   const { organization } = useAuth();
   const { academyId } = useParams<{ academyId: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab =
+    searchParams.get('tab') === 'students' ? 'students' : 'team';
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<AcademyMemberRole | 'all'>(
     'all'
@@ -115,7 +134,7 @@ export default function AcademyMembersPage(): JSX.Element {
         header: t('academy:members.table.role'),
         cell: ({ row }) => (
           <StatusBadge
-            labelKey={`academy:members.roles.${row.original.role}`}
+            labelKey={getAcademyMemberRoleLabelKey(row.original.role)}
             tone={getAcademyMemberRoleTone(row.original.role)}
           />
         ),
@@ -186,101 +205,140 @@ export default function AcademyMembersPage(): JSX.Element {
 
       <SectionTabs items={getAcademyAdminTabs(academyId ?? '')} />
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0">
-          <CardTitle>{t('academy:members.title')}</CardTitle>
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setIsCreateStudentOpen(true)}
-            >
-              <GraduationCap className="size-4" strokeWidth={2} aria-hidden />
-              {t('academy:members.createStudent.triggerButton')}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setIsAddInstructorOpen(true)}
-            >
-              <UserPlus className="size-4" strokeWidth={2} aria-hidden />
-              {t('academy:members.addInstructor.triggerButton')}
-            </Button>
-            {/* Backend restricts granting Manager access to the
+      <Tabs
+        value={activeTab}
+        onValueChange={(value) => {
+          const next = new URLSearchParams(searchParams);
+          // `team` is the default, so it stays out of the URL entirely
+          // rather than adding a parameter that says nothing.
+          if (value === 'students') next.set('tab', 'students');
+          else next.delete('tab');
+          setSearchParams(next, { replace: true });
+        }}
+        className="mt-4 space-y-4"
+      >
+        <TabsList>
+          <TabsTrigger value="team">
+            <Users className="size-4" strokeWidth={2} aria-hidden />
+            {t('academy:members.tabs.team')}
+          </TabsTrigger>
+          <TabsTrigger value="students">
+            <GraduationCap className="size-4" strokeWidth={2} aria-hidden />
+            {t('academy:members.tabs.students')}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="team" className="space-y-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+              <CardTitle>{t('academy:members.title')}</CardTitle>
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsCreateStudentOpen(true)}
+                >
+                  <GraduationCap
+                    className="size-4"
+                    strokeWidth={2}
+                    aria-hidden
+                  />
+                  {t('academy:members.createStudent.triggerButton')}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsAddInstructorOpen(true)}
+                >
+                  <UserPlus className="size-4" strokeWidth={2} aria-hidden />
+                  {t('academy:members.addInstructor.triggerButton')}
+                </Button>
+                {/* Backend restricts granting Manager access to the
                 Organization Owner only (`GRANTS_MANAGER_ROLES`,
                 `academies.service.ts`) — this mirrors that restriction
                 here so a Manager never sees an action that would only
                 ever 403. */}
-            {organization?.role === 'owner' ? (
-              <Button type="button" onClick={() => setIsAddManagerOpen(true)}>
-                <UserPlus className="size-4" strokeWidth={2} aria-hidden />
-                {t('academy:members.addManager.triggerButton')}
-              </Button>
-            ) : null}
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Filters */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="relative flex-1 sm:max-w-sm">
-              <Search className="absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder={t('academy:members.searchPlaceholder')}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="ps-9"
-              />
-            </div>
+                {organization?.role === 'owner' ? (
+                  <Button
+                    type="button"
+                    onClick={() => setIsAddManagerOpen(true)}
+                  >
+                    <UserPlus className="size-4" strokeWidth={2} aria-hidden />
+                    {t('academy:members.addManager.triggerButton')}
+                  </Button>
+                ) : null}
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Filters */}
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="relative flex-1 sm:max-w-sm">
+                  <Search className="absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    type="search"
+                    placeholder={t('academy:members.searchPlaceholder')}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="ps-9"
+                  />
+                </div>
 
-            <Select
-              value={roleFilter}
-              onValueChange={(value) =>
-                setRoleFilter(value as AcademyMemberRole | 'all')
-              }
-            >
-              <SelectTrigger className="w-full sm:w-[180px]">
-                <SelectValue placeholder={t('academy:members.filterByRole')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">
-                  {t('academy:members.allRoles')}
-                </SelectItem>
-                <SelectItem value="owner">
-                  {t('academy:members.roles.owner')}
-                </SelectItem>
-                <SelectItem value="administrator">
-                  {t('academy:members.roles.administrator')}
-                </SelectItem>
-                <SelectItem value="manager">
-                  {t('academy:members.roles.manager')}
-                </SelectItem>
-                <SelectItem value="instructor">
-                  {t('academy:members.roles.instructor')}
-                </SelectItem>
-                <SelectItem value="staff">
-                  {t('academy:members.roles.staff')}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+                <Select
+                  value={roleFilter}
+                  onValueChange={(value) =>
+                    setRoleFilter(value as AcademyMemberRole | 'all')
+                  }
+                >
+                  <SelectTrigger className="w-full sm:w-[180px]">
+                    <SelectValue
+                      placeholder={t('academy:members.filterByRole')}
+                    />
+                  </SelectTrigger>
+                  {/* Driven by `ACADEMY_MEMBER_ROLES`, which no longer lists the
+                  legacy `administrator` tier (P64 Phase 1, D9) — see that
+                  constant's comment. Hard-coded options were how the
+                  hidden role kept reappearing in one picker at a time. */}
+                  <SelectContent>
+                    <SelectItem value="all">
+                      {t('academy:members.allRoles')}
+                    </SelectItem>
+                    {ACADEMY_MEMBER_ROLES.map((role) => (
+                      <SelectItem key={role} value={role}>
+                        {t(getAcademyMemberRoleLabelKey(role))}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-          {/* Members Table */}
-          {membersError ? (
-            <ErrorState onRetry={() => refetchMembers()} />
-          ) : (
-            <DataTable
-              columns={columns}
-              data={filteredMembers}
-              isLoading={isLoadingMembers}
-              pagination={pagination}
-              emptyTitleKey="academy:members.emptyState"
-              emptyDescriptionKey="academy:members.emptyStateDescription"
-              getRowId={(member) => member.id}
-            />
-          )}
-        </CardContent>
-      </Card>
+              {/* Members Table */}
+              {membersError ? (
+                <ErrorState onRetry={() => refetchMembers()} />
+              ) : (
+                <DataTable
+                  columns={columns}
+                  data={filteredMembers}
+                  isLoading={isLoadingMembers}
+                  pagination={pagination}
+                  emptyTitleKey="academy:members.emptyState"
+                  emptyDescriptionKey="academy:members.emptyStateDescription"
+                  getRowId={(member) => member.id}
+                />
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="students">
+          {/*
+            Mounted only while the tab is open (Radix unmounts inactive
+            content): the roster read is paginated and academy-scoped, and
+            issuing it for every visitor to the team table would be a
+            request nobody asked for.
+          */}
+          <AcademyStudentsTab academyId={academyId ?? ''} />
+        </TabsContent>
+      </Tabs>
 
       <AddAcademyManagerDialog
         open={isAddManagerOpen}

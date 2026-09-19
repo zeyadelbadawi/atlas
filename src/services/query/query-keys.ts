@@ -5,7 +5,12 @@
  * namespaced by resource and include the relevant identifiers so cache
  * invalidation can target exactly the affected queries.
  */
-import type { AnalyticsQuery, CollectionQuery, CourseListQuery } from '@types';
+import type {
+  AcademyRosterQuery,
+  AnalyticsQuery,
+  CollectionQuery,
+  CourseListQuery,
+} from '@types';
 
 /** Base keys for resource categories. */
 export const QUERY_KEY_ROOTS = {
@@ -64,6 +69,9 @@ export const authKeys = {
   all: QUERY_KEY_ROOTS.auth,
   session: () => [...authKeys.all, 'session'] as const,
   currentUser: () => [...authKeys.all, 'current-user'] as const,
+  /** P64 Phase 1 — whether a password-reset token is currently usable. */
+  passwordResetToken: (token: string) =>
+    [...authKeys.all, 'password-reset-token', token] as const,
 } as const;
 
 /**
@@ -116,6 +124,34 @@ export const academyKeys = {
     query?: CollectionQuery
   ) =>
     [...academyKeys.all, 'activity', organizationId, academyId, query] as const,
+  /** P64 Phase 1 — learner roster (`GET academies/:id/students`). `query` is the roster's own filter/sort/page shape. */
+  roster: (
+    organizationId: string | undefined,
+    academyId: string,
+    query?: AcademyRosterQuery
+  ) =>
+    [...academyKeys.all, 'roster', organizationId, academyId, query] as const,
+  rosterStudent: (
+    organizationId: string | undefined,
+    academyId: string,
+    userId: string
+  ) =>
+    [
+      ...academyKeys.all,
+      'roster-student',
+      organizationId,
+      academyId,
+      userId,
+    ] as const,
+  registrationPolicy: (organizationId: string | undefined, academyId: string) =>
+    [
+      ...academyKeys.all,
+      'registration-policy',
+      organizationId,
+      academyId,
+    ] as const,
+  invites: (organizationId: string | undefined, academyId: string) =>
+    [...academyKeys.all, 'invites', organizationId, academyId] as const,
 } as const;
 
 /**

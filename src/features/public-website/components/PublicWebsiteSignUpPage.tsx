@@ -142,8 +142,15 @@ export function PublicWebsiteSignUpPage({
         ) : (
           <>
             <WebsiteBrandBridge>
+              {/* P64 Phase 1 (D3) — the invitation token from the link the
+                  academy sent (`/sign-up?invite=…`). Passed through as-is:
+                  the BACKEND decides whether this academy's registration
+                  policy needs one and whether it is still valid, and
+                  `RegistrationForm` renders the invite-required /
+                  invalid-invite answers it gives. */}
               <RegistrationForm
                 academyId={academy.academyId}
+                inviteToken={searchParams.get('invite') ?? undefined}
                 onSuccess={() => setRegistered(true)}
               />
             </WebsiteBrandBridge>

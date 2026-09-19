@@ -20,10 +20,23 @@ export const ACADEMY_STATUS_OPTIONS: readonly AcademyStatus[] = [
   'archived',
 ] as const;
 
-/** Academy member role options. */
+/**
+ * Academy member roles the product OFFERS — the single list every role
+ * picker, filter and label in the Academy feature is driven from.
+ *
+ * `administrator` is deliberately absent (P64 Phase 1, decision D9).
+ * It is a real, still-supported value of `AcademyMemberRole` — the
+ * backend treats it as part of the managing tier alongside `owner` and
+ * `manager` (`MANAGING_ROLES` in `academies.service.ts`,
+ * `academy-students.service.ts`, the curriculum services) and legacy rows
+ * may still carry it — but no role-assignment endpoint will ever grant it
+ * again, so offering it in a picker would produce a selection the API
+ * refuses. Existing rows are labelled through
+ * `getAcademyMemberRoleLabelKey`, which shows them as Manager: the tier
+ * they actually hold.
+ */
 export const ACADEMY_MEMBER_ROLES: readonly AcademyMemberRole[] = [
   'owner',
-  'administrator',
   'manager',
   'instructor',
   'staff',

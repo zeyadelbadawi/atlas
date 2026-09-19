@@ -3,33 +3,30 @@
  *
  * Set new password after receiving reset link.
  */
-import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ShieldCheck } from 'lucide-react';
 import { AUTH_ROUTES } from '@app/routes/route-paths';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ResetPasswordForm } from '../components/ResetPasswordForm';
+import { useValidatePasswordResetToken } from '../hooks';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function ResetPasswordPage(): JSX.Element {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [tokenValid, setTokenValid] = useState<boolean | null>(null);
   const token = searchParams.get('token');
 
-  useEffect(() => {
-    // Validate reset token
-    if (!token) {
-      setTokenValid(false);
-      return;
-    }
-
-    // Token validation will be connected to backend service in future
-    // For now, accept any token
-    setTokenValid(true);
-  }, [token]);
+  // P64 Phase 1 — a real check against `POST /auth/password-reset/validate`
+  // (this used to accept any non-empty token and only find out on submit).
+  // A failed validation request is treated as "not valid": showing the
+  // form on a guess would only move the same failure to the submit button.
+  const validation = useValidatePasswordResetToken(token);
+  const tokenValid: boolean | null = !token
+    ? false
+    : validation.isPending
+      ? null
+      : validation.data === true;
 
   if (tokenValid === null) {
     return (

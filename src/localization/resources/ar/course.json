@@ -299,7 +299,8 @@
     "dueLabel": "الموعد النهائي {{date}}",
     "menu": {
       "edit": "تعديل",
-      "delete": "حذف"
+      "delete": "حذف",
+      "reviewSubmissions": "مراجعة التسليمات"
     },
     "dialog": {
       "createTitle": "إضافة واجب",
@@ -339,7 +340,8 @@
     "questionCount_other": "{{count}} أسئلة",
     "menu": {
       "edit": "تعديل",
-      "delete": "حذف"
+      "delete": "حذف",
+      "reviewAttempts": "مراجعة المحاولات"
     },
     "created": "تم إنشاء الاختبار",
     "updated": "تم تحديث الاختبار",

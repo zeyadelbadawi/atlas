@@ -26,6 +26,40 @@ export interface Session {
   readonly organization?: OrganizationContext;
 }
 
+/**
+ * P64 Phase 1 (AD-4) — the DERIVED kind of principal an account is, never
+ * a stored flag: `platform_owner` (the flag), `staff` (any organization
+ * membership or active `academy_members` row), `learner` (only
+ * `academy_students` rows), `unaffiliated` (none of the above — e.g. a
+ * brand-new account that has not created an organization yet).
+ *
+ * The SURFACE decides what a kind may do: a `learner` is refused a
+ * management session at sign-in (AD-5) and, should one exist anyway, is
+ * kept out of `/dashboard/*` by `RouteGuard` and sent to the academy
+ * chooser. Nothing here is the control — `ManagementSurfaceGuard` on the
+ * backend refuses learner tokens on every management controller.
+ */
+export type PrincipalKind =
+  | 'platform_owner'
+  | 'staff'
+  | 'learner'
+  | 'unaffiliated';
+
+/**
+ * One academy the account is a STUDENT of, with the public host the
+ * learner should sign in on. `host` is absent when the academy has no
+ * live website host yet — the UI then names the academy without a link.
+ */
+export interface LearnerAcademy {
+  readonly academyId: string;
+  readonly name: string;
+  readonly slug: string;
+  readonly host?: string;
+  /** e.g. `active` | `pending` (awaiting approval) — rendered, never switched on exhaustively. */
+  readonly membershipStatus: string;
+  readonly blocked: boolean;
+}
+
 /** The authenticated user's profile. */
 export interface CurrentUser {
   readonly id: string;
@@ -36,6 +70,18 @@ export interface CurrentUser {
   readonly permissions: readonly string[];
   readonly organizations: readonly OrganizationMembership[];
   readonly organizationMemberships: readonly OrganizationMembership[];
+  /** P64 Phase 1 — see `PrincipalKind`. */
+  readonly principalKind: PrincipalKind;
+  /**
+   * P64 Phase 1 (§T) — whether the backend is actually refusing this
+   * principal the management surface right now. `false` only during the
+   * `surface.enforce` staged rollout, for a learner it has not reached.
+   * Absent on a response that predates the field, which is read as
+   * enforced.
+   */
+  readonly managementSurfaceEnforced?: boolean;
+  /** P64 Phase 1 — every academy this account is a student of. Empty for pure staff. */
+  readonly academies: readonly LearnerAcademy[];
   readonly preferences?: UserPreferences;
   readonly createdAt: string;
   readonly lastSignInAt?: string;
@@ -73,11 +119,49 @@ export interface NotificationPreferences {
   readonly sms: boolean;
 }
 
+/**
+ * P64 Phase 1 (AD-5) — which product surface a sign-in is for. The
+ * backend mints a session shaped for that surface: a learner is refused
+ * on `management`; on `academy` the caller's membership of `academyId`
+ * (verified against the request host) is what is signed in.
+ */
+export type SignInSurface = 'management' | 'academy';
+
 /** Credentials provided during sign-in. */
 export interface SignInCredentials {
   readonly email: string;
   readonly password: string;
   readonly rememberMe?: boolean;
+  /** Defaults to `management` server-side; every caller sets it explicitly. */
+  readonly surface?: SignInSurface;
+  /** Required when `surface` is `academy` — the resolved academy of the current host. */
+  readonly academyId?: string;
+}
+
+/**
+ * The academies named by a management sign-in refusal
+ * (`errors.auth.studentUseAcademySignIn` → `details.academies`) — the
+ * places the refused learner CAN sign in. Parsed defensively from the
+ * error's untyped `details`, see `readRefusedAcademies`.
+ */
+export interface RefusedSignInAcademy {
+  readonly academyId: string;
+  readonly name: string;
+  readonly slug: string;
+  readonly host?: string;
+}
+
+/**
+ * Completes a challenged sign-in. `surface`/`academyId` are passed through
+ * from the ORIGINAL sign-in so the backend mints the right session — the
+ * challenge id alone does not remember which surface asked for it.
+ */
+export interface TwoFactorVerifyInput {
+  readonly challengeId: string;
+  readonly token?: string;
+  readonly recoveryCode?: string;
+  readonly surface?: SignInSurface;
+  readonly academyId?: string;
 }
 
 /** Response returned after successful authentication. */
@@ -111,6 +195,18 @@ export interface RegistrationRequest {
   readonly password: string;
   /** Phase 1 (Extended Scope, Decision 11, dependency D) — supplied only by an Academy's own public website Sign Up page, so the resulting account gets a real, validated Academy-scoped membership instead of none at all. */
   readonly academyId?: string;
+  /** P64 Phase 1 — the invitation token from the sign-up link (`?invite=`), required by academies with an invite-only registration policy. */
+  readonly inviteToken?: string;
+}
+
+/** `POST /auth/password-reset/validate` — whether a reset token is currently usable. */
+export interface PasswordResetTokenValidation {
+  readonly valid: boolean;
+}
+
+/** `POST /auth/verify-email` — completes email verification with the emailed token. */
+export interface EmailVerificationRequest {
+  readonly token: string;
 }
 
 /** Requests a password-reset email be sent. */

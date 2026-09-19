@@ -10,7 +10,12 @@
  */
 import axios from 'axios';
 import { API_ERROR_KINDS } from '@types';
-import type { ApiErrorKind, FieldViolation, NormalizedApiError } from '@types';
+import type {
+  ApiErrorKind,
+  FieldViolation,
+  JsonValue,
+  NormalizedApiError,
+} from '@types';
 
 /** Translation key namespace holding every error message. */
 const ERROR_NAMESPACE = 'errors';
@@ -57,7 +62,7 @@ export class ApiError extends Error implements NormalizedApiError {
   public readonly code?: string;
   public readonly status?: number;
   public readonly violations?: readonly FieldViolation[];
-  public readonly details?: Readonly<Record<string, string | number | boolean>>;
+  public readonly details?: Readonly<Record<string, JsonValue>>;
   public readonly requestId?: string;
   public readonly retryable: boolean;
 
@@ -123,26 +128,49 @@ interface BackendErrorPayload {
 }
 
 /**
- * Reads the backend's opt-in `details` object, keeping only primitives.
+ * Whether a wire value is plain JSON — primitives, arrays and plain
+ * objects thereof, nothing else (no functions, symbols, class instances).
+ */
+function isJsonValue(value: unknown, depth = 0): value is JsonValue {
+  // A pathological payload cannot recurse the client into a stack overflow.
+  if (depth > 8) return false;
+  if (value === null) return true;
+  const type = typeof value;
+  if (type === 'string' || type === 'number' || type === 'boolean') {
+    return true;
+  }
+  if (Array.isArray(value)) {
+    return value.every((entry) => isJsonValue(entry, depth + 1));
+  }
+  if (type === 'object') {
+    return Object.values(value as Record<string, unknown>).every((entry) =>
+      isJsonValue(entry, depth + 1)
+    );
+  }
+  return false;
+}
+
+/**
+ * Reads the backend's opt-in `details` object, keeping only JSON values.
  *
  * Defensive on purpose: this is untrusted wire data, and a client that
  * assumed shape here would turn a malformed response into a render crash
- * inside whatever dialog was about to show the value.
+ * inside whatever dialog was about to show the value. Arrays and nested
+ * objects are kept (P64 Phase 1 — the management sign-in refusal carries
+ * the learner's academies as a list); every consumer still narrows what
+ * it reads instead of trusting the shape.
  */
 function readDetails(
   payload: BackendErrorPayload
-): Readonly<Record<string, string | number | boolean>> | undefined {
+): Readonly<Record<string, JsonValue>> | undefined {
   const raw = payload.details;
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return undefined;
 
   const entries = Object.entries(raw as Record<string, unknown>).filter(
-    ([, value]) =>
-      typeof value === 'string' ||
-      typeof value === 'number' ||
-      typeof value === 'boolean'
+    ([, value]) => value !== undefined && isJsonValue(value)
   );
   return entries.length > 0
-    ? (Object.fromEntries(entries) as Record<string, string | number | boolean>)
+    ? (Object.fromEntries(entries) as Record<string, JsonValue>)
     : undefined;
 }
 

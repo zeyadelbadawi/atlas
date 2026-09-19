@@ -298,7 +298,49 @@ export function WebsiteHeader({
     ) : (
       <Button {...ctaButtonProps}>{ctaLabel}</Button>
     )
-  ) : null;
+  ) : (
+    /*
+     * P64 Phase 1 — an academy website with no CMS CTA configured used to
+     * render NOTHING here, which left a signed-out visitor on a real
+     * academy site with no way to reach `/sign-in` or `/sign-up` at all
+     * unless the Owner happened to add navigation items for them. Sign in
+     * and sign up are not marketing copy an Owner opts into; they are how
+     * a student gets to their courses, so they are the default. An
+     * explicitly configured CTA still wins (the branch above), and a
+     * signed-in visitor never sees either (the `authState` branch).
+     *
+     * `linkRenderer` is absent in every dashboard preview context, where
+     * there is no real navigation — the same non-linking `Button`
+     * fallback the configured CTA uses keeps the preview truthful about
+     * what a visitor will see without pretending to navigate.
+     */
+    <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+      {linkRenderer ? (
+        linkRenderer({
+          href: '/sign-in',
+          external: false,
+          className:
+            'whitespace-nowrap px-1 text-sm font-medium text-foreground/80 hover:text-foreground sm:px-2',
+          children: t('publicWebsite:header.signIn'),
+        })
+      ) : (
+        <span className="whitespace-nowrap px-1 text-sm font-medium text-foreground/80 sm:px-2">
+          {t('publicWebsite:header.signIn')}
+        </span>
+      )}
+      {linkRenderer ? (
+        <Button {...ctaButtonProps} asChild>
+          {linkRenderer({
+            href: '/sign-up',
+            external: false,
+            children: t('publicWebsite:header.signUp'),
+          })}
+        </Button>
+      ) : (
+        <Button {...ctaButtonProps}>{t('publicWebsite:header.signUp')}</Button>
+      )}
+    </div>
+  );
 
   const languageSwitcher = onLocaleChange ? (
     <LanguageSwitcher locale={locale} onLocaleChange={onLocaleChange} />
@@ -386,8 +428,14 @@ export function WebsiteHeader({
               button (no Sign In/Sign Up here, by theme personality) — but
               a signed-in visitor's own auth status is not a marketing CTA,
               so it still renders here, matching every other header variant.
+
+              P64 Phase 1 — neither is the DEFAULT sign in/sign up pair
+              that stands in when the Owner configured no CTA at all: with
+              this variant's `header.cta` unset, a signed-out student had
+              no route to their courses from anywhere in the chrome. Only
+              an Owner-authored marketing CTA is still suppressed here.
             */}
-            {authState ? cta : null}
+            {authState || !header.cta ? cta : null}
             {languageSwitcher}
             {mobileTrigger}
           </div>

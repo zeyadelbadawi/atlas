@@ -216,6 +216,221 @@
       "passwordLabel": "Password",
       "passwordHelp": "At least 8 characters.",
       "bothRequired": "Enter both a name and a password to create a new account, or leave both blank."
+    },
+    "tabs": {
+      "team": "Team",
+      "students": "Students"
+    }
+  },
+  "students": {
+    "title": "Students",
+    "subtitle": "Learners who registered on your academy website",
+    "searchPlaceholder": "Search students by name or email...",
+    "filterByStatus": "Filter by status",
+    "allStatuses": "All statuses",
+    "sortBy": "Sort by",
+    "empty": "No students yet",
+    "emptyDescription": "Nobody has registered on this academy's website yet. Students appear here the moment they sign up.",
+    "sort": {
+      "joinedAt_desc": "Newest first",
+      "joinedAt_asc": "Oldest first",
+      "lastActivityAt_desc": "Recently active",
+      "name_asc": "Name (A–Z)",
+      "name_desc": "Name (Z–A)"
+    },
+    "table": {
+      "student": "Student",
+      "status": "Status",
+      "source": "Joined via",
+      "enrollments": "Enrollments",
+      "enrollmentsValue": "{{active}} active of {{total}}",
+      "joined": "Joined",
+      "lastActivity": "Last activity"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending approval",
+      "blocked": "Blocked"
+    },
+    "source": {
+      "self_signup": "Website sign-up",
+      "sign_in_join": "Website sign-in",
+      "staff_created": "Added by staff",
+      "purchase": "Purchase",
+      "invite": "Invite link",
+      "backfill": "Imported",
+      "other": "Other"
+    },
+    "enrollment": {
+      "revoked": "Revoked",
+      "expired": "Expired",
+      "unknown": "Unknown"
+    },
+    "actions": {
+      "approve": "Approve",
+      "reject": "Reject",
+      "block": "Block",
+      "unblock": "Unblock",
+      "enroll": "Enroll in a course",
+      "revoke": "Revoke",
+      "setExpiry": "Set expiry"
+    },
+    "drawer": {
+      "title": "Student",
+      "description": "Membership, enrollments and assessment outcomes for this learner.",
+      "verified": "Email verified",
+      "unverified": "Email not verified",
+      "activeSessions": "Active sessions",
+      "blockedReason": "Reason for blocking",
+      "readOnlyScope": "You are viewing this student through the courses you teach. Managing their membership and enrollments is done by the academy's owner or a manager.",
+      "enrollments": "Enrollments",
+      "noEnrollments": "No enrollments yet",
+      "enrolledOn": "Enrolled {{date}}",
+      "expiresOn": "Expires {{date}}",
+      "revokedOn": "Revoked {{date}}",
+      "progress": "Course progress",
+      "progressSummary": "{{percentage}}% · {{completed}} of {{total}} lessons",
+      "quizOutcomes": "Quiz outcomes",
+      "noQuizOutcomes": "No quiz attempts yet.",
+      "assignmentOutcomes": "Assignment outcomes",
+      "noAssignmentOutcomes": "No assignment submissions yet.",
+      "notSubmitted": "Not submitted",
+      "hasFeedback": "Feedback given"
+    },
+    "block": {
+      "title": "Block this student",
+      "description": "{{name}} will keep their account but lose access to this academy's courses until you unblock them.",
+      "reasonLabel": "Reason (optional)",
+      "reasonPlaceholder": "Recorded on the membership and visible to your team.",
+      "confirm": "Block student"
+    },
+    "reject": {
+      "title": "Reject this registration",
+      "description": "{{name}} will not be admitted to this academy. They can register again later.",
+      "confirm": "Reject"
+    },
+    "enroll": {
+      "title": "Enroll in a course",
+      "description": "Give {{name}} access to a course without a purchase.",
+      "courseLabel": "Course",
+      "coursePlaceholder": "Choose a course",
+      "noCourses": "There is no course left to enroll this student in.",
+      "expiresLabel": "Access expires (optional)",
+      "expiresHelp": "Leave empty for access that does not expire.",
+      "confirm": "Enroll"
+    },
+    "revoke": {
+      "title": "Revoke access",
+      "description": "The student loses access to {{course}} immediately. Their progress is kept.",
+      "reasonLabel": "Reason",
+      "reasons": {
+        "manual": "Revoked by staff",
+        "membership_ended": "Membership ended",
+        "suspended": "Suspended",
+        "refund": "Refunded"
+      },
+      "confirm": "Revoke access"
+    },
+    "expiry": {
+      "title": "Access expiry",
+      "description": "Choose the day access to {{course}} ends.",
+      "dateLabel": "Expires on",
+      "help": "Access ends at the end of the chosen day.",
+      "clear": "Remove expiry",
+      "confirm": "Save expiry"
+    },
+    "toasts": {
+      "approved": "Student approved",
+      "rejected": "Registration rejected",
+      "blocked": "Student blocked",
+      "unblocked": "Student unblocked",
+      "enrolled": "Student enrolled",
+      "revoked": "Access revoked",
+      "expirySet": "Expiry updated",
+      "expiryCleared": "Expiry removed"
+    },
+    "errors": {
+      "generic": "That action could not be completed. Please try again.",
+      "insufficientRole": "Your role on this academy does not allow that action.",
+      "studentNotPending": "This registration is no longer awaiting approval.",
+      "studentBlocked": "This student is blocked. Unblock them first.",
+      "alreadyEnrolled": "This student is already enrolled in that course.",
+      "expiryInPast": "The expiry date must be in the future.",
+      "notFound": "That student is no longer on this academy."
+    }
+  },
+  "registration": {
+    "sectionTitle": "Registration",
+    "policy": {
+      "title": "Registration policy",
+      "description": "How new learners get onto your academy website.",
+      "options": {
+        "open": {
+          "label": "Open",
+          "description": "Anyone can create an account on your academy website and start learning."
+        },
+        "invite": {
+          "label": "Invite only",
+          "description": "Only someone with a valid invite link can register."
+        },
+        "approval": {
+          "label": "Approval required",
+          "description": "Anyone can apply; each registration waits as pending until you approve it on the Students tab."
+        }
+      },
+      "ownerOnly": "Only the account owner can change the registration policy.",
+      "save": "Save policy",
+      "saved": "Registration policy updated",
+      "saveFailed": "The registration policy could not be saved."
+    },
+    "invites": {
+      "title": "Invite links",
+      "description": "A learner opens an invite link to register on your academy website, whatever the policy says.",
+      "anyone": "Anyone with the link",
+      "empty": "No invite links",
+      "emptyDescription": "Create one to let a specific person register.",
+      "table": {
+        "email": "For",
+        "uses": "Uses",
+        "expires": "Expires",
+        "status": "Status"
+      },
+      "state": {
+        "active": "Active",
+        "revoked": "Revoked",
+        "expired": "Expired",
+        "exhausted": "Fully used"
+      },
+      "create": {
+        "trigger": "Create invite",
+        "title": "Create an invite link",
+        "description": "The link is shown once, right after it is created.",
+        "emailLabel": "Email address (optional)",
+        "emailPlaceholder": "student@example.com",
+        "emailHelp": "Leave empty to let anyone with the link register.",
+        "maxUsesLabel": "Maximum uses",
+        "expiresInDaysLabel": "Valid for (days)",
+        "submit": "Create invite",
+        "failed": "The invite could not be created."
+      },
+      "created": {
+        "title": "Invite created",
+        "linkDescription": "Share this link with the person you are inviting.",
+        "tokenDescription": "This academy has no public address yet, so share the invite code itself.",
+        "linkLabel": "Invite link",
+        "tokenLabel": "Invite code",
+        "onceWarning": "This is the only time it is shown. Copy it now — it cannot be retrieved later.",
+        "done": "Done"
+      },
+      "revoke": {
+        "action": "Revoke",
+        "title": "Revoke this invite link",
+        "description": "The link stops working immediately. Anyone who already registered with it keeps their account.",
+        "confirm": "Revoke invite",
+        "success": "Invite revoked",
+        "failed": "The invite could not be revoked."
+      }
     }
   },
   "switcher": {

@@ -42,7 +42,7 @@
  * surrounding `WebsiteChrome` was already correctly branded; see that
  * component's own doc comment for the full reasoning.
  */
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle2 } from 'lucide-react';
@@ -54,7 +54,13 @@ import {
   resolveLocalizedText,
   usePublicWebsiteDocumentDirection,
 } from '@features/website';
-import { SignInForm } from '@features/auth';
+import {
+  SignInForm,
+  TwoFactorChallengeForm,
+  AUTH_ERROR_KEYS,
+  isSafeReturnPath,
+} from '@features/auth';
+import type { TwoFactorChallenge } from '@types';
 import { usePublicWebsiteData } from '../hooks/usePublicWebsiteData';
 import { PublicWebsiteStatus } from './PublicWebsiteStatus';
 import {
@@ -77,8 +83,14 @@ export function PublicWebsiteSignInPage({
   usePublicWebsiteDocumentDirection(locale);
   const data = usePublicWebsiteData(lookupKey);
   const { session } = useAuth();
-  const { signIn, isLoading, error } = useSignIn();
+  const { signIn, completeTwoFactor, isLoading, error, clearError } =
+    useSignIn();
   const { signOut } = useSignOut();
+  // P64 Phase 1 — a correct password on an account with 2FA enabled
+  // returns a CHALLENGE, not a session. Before this, the academy site
+  // dropped the challenge on the floor: the form simply cleared and the
+  // visitor stayed signed out with no error and no way forward.
+  const [challenge, setChallenge] = useState<TwoFactorChallenge | null>(null);
   const linkRenderer = usePublicWebsiteLinkRenderer(locale);
   const buildHref = usePublicWebsiteHrefBuilder(locale);
   const navigate = useNavigate();
@@ -92,14 +104,17 @@ export function PublicWebsiteSignInPage({
   // redirecting page builds it that way (see `PublicWebsiteLearningRoute`).
   const returnTo = searchParams.get('returnTo');
 
+  // P64 Phase 1 — `returnTo` is checked with the shared `isSafeReturnPath`
+  // (same-site relative path only, never `//host` or a scheme), and a
+  // session with nowhere in particular to go now lands on `/my-learning`
+  // instead of sitting on a "you're signed in" card. `startsWith('/')`
+  // alone let `//evil.example` through, which is an absolute URL to
+  // another origin as far as the browser is concerned.
   useEffect(() => {
-    if (
-      session.status === 'authenticated' &&
-      returnTo &&
-      returnTo.startsWith('/')
-    ) {
-      navigate(buildHref(returnTo), { replace: true });
-    }
+    if (session.status !== 'authenticated') return;
+    navigate(buildHref(isSafeReturnPath(returnTo) ? returnTo : '/my-learning'), {
+      replace: true,
+    });
   }, [session.status, returnTo, navigate, buildHref]);
   const authState =
     session.status === 'authenticated' && session.user
@@ -118,17 +133,58 @@ export function PublicWebsiteSignInPage({
 
   const { academy, configuration, pages } = data;
 
+  // P64 Phase 1 (AD-5) — every sign-in from an academy website is for the
+  // ACADEMY surface, carrying this host's own resolved academy id (from
+  // the same trusted `resolveHostname` lookup every other public page
+  // uses, never a client guess). The backend re-verifies that the id
+  // belongs to the request host and refuses otherwise.
   const handleSubmit = async (
     email: string,
     password: string,
     rememberMe: boolean
   ) => {
+    clearError();
     try {
-      await signIn({ email, password, rememberMe });
+      const result = await signIn({
+        email,
+        password,
+        rememberMe,
+        surface: 'academy',
+        academyId: academy.academyId,
+      });
+      if (result) setChallenge(result);
+      // Otherwise the session exists and the effect above navigates.
     } catch {
       // Error state is already surfaced by `useSignIn` — nothing further to do.
     }
   };
+
+  const handleVerify = async (input: {
+    token?: string;
+    recoveryCode?: string;
+  }) => {
+    if (!challenge) return;
+    clearError();
+    try {
+      await completeTwoFactor({
+        challengeId: challenge.challengeId,
+        ...input,
+        // The ORIGINAL sign-in's surface — the challenge id alone does not
+        // remember it, and the session is minted here.
+        surface: 'academy',
+        academyId: academy.academyId,
+      });
+    } catch {
+      // Error is already set by `useSignIn`; the visitor can retry with a
+      // fresh code.
+    }
+  };
+
+  // `errors.auth.notAMemberOfAcademy` is the one sign-in failure with a
+  // real next step that is not "try again": this academy does not accept
+  // open sign-in joins, so the way in is its sign-up page.
+  const showSignUpRecovery =
+    error?.messageKey === AUTH_ERROR_KEYS.notAMemberOfAcademy;
 
   const onNavigate = (pageId: string) => {
     const target = pages.find((candidate) => candidate.id === pageId);
@@ -188,15 +244,42 @@ export function PublicWebsiteSignInPage({
               })}
             </p>
           </div>
+        ) : challenge ? (
+          <WebsiteBrandBridge>
+            <TwoFactorChallengeForm
+              onSubmit={(input) => void handleVerify(input)}
+              onCancel={() => {
+                setChallenge(null);
+                clearError();
+              }}
+              isLoading={isLoading}
+              error={error}
+            />
+          </WebsiteBrandBridge>
         ) : (
           <WebsiteBrandBridge>
             <SignInForm
               onSubmit={handleSubmit}
               isLoading={isLoading}
               error={error}
+              // Atlas's own `/auth/forgot-password` is not mounted on an
+              // academy host — this site has its own.
+              forgotPasswordHref={buildHref('/forgot-password')}
             />
           </WebsiteBrandBridge>
         )}
+
+        {showSignUpRecovery ? (
+          <div className="mt-4 text-center text-sm">
+            {linkRenderer({
+              href: '/sign-up',
+              external: false,
+              className:
+                'font-medium text-[var(--website-primary-solid)] hover:underline',
+              children: t('publicWebsite:auth.signIn.notAMemberCta'),
+            })}
+          </div>
+        ) : null}
 
         <div className="mt-6 text-center text-sm">
           <span className="text-muted-foreground">

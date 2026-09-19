@@ -7,6 +7,7 @@
  */
 import type { StatusTone } from '@components/data-display';
 import type {
+  Enrollment,
   EnrollmentStatus,
   LessonProgressStatus,
   CourseCompletionState,
@@ -90,4 +91,24 @@ export function getSubmissionStatusTone(
     default:
       return 'neutral';
   }
+}
+
+/**
+ * P64 Phase 1 — whether a learner's own enrollment card must stop
+ * offering an action, because the backend will refuse the content.
+ *
+ * `isActive` is the backend's answer (`isEnrollmentActive`: an accepted
+ * status, not revoked, not past `expiresAt`) and is the only input that
+ * decides it — `status` alone is not enough, since an expired enrollment
+ * still reads `enrolled`. A completed course is deliberately exempt: the
+ * learner keeps reaching their result and certificate after the access
+ * window closes.
+ *
+ * This is presentation only. The refusal that protects the content is the
+ * server's; this just stops the interface from contradicting it.
+ */
+export function isEnrollmentAccessEnded(
+  enrollment: Pick<Enrollment, 'status' | 'isActive'>,
+): boolean {
+  return enrollment.isActive === false && enrollment.status !== 'completed';
 }

@@ -8,7 +8,7 @@
  */
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { MoreHorizontal, Plus } from 'lucide-react';
+import { ListChecks, MoreHorizontal, Plus } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { SectionTabs } from '@components/navigation';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
@@ -85,6 +85,28 @@ export default function CourseQuizzesPage(): JSX.Element {
         academyId,
         courseId,
       })
+    );
+  };
+
+  /*
+    P64 Phase 1 — the way an Owner/Manager reaches a quiz's ATTEMPTS.
+    Reviewing work is no longer instructor-only (`assertCanReviewCourse`
+    admits the academy's owner and managers), and the attempts page has
+    existed all along under `/dashboard/instructor/...` — it simply had no
+    entry point anywhere an owner or manager ever looked, so the
+    capability they hold was unreachable in the product.
+
+    The route's own guard is `instructor.assessment.view`, which
+    `ORGANIZATION_OWNER_PERMISSIONS` and `ORGANIZATION_MANAGER_PERMISSIONS`
+    both carry (`atlas-backend/src/tenancy/constants/
+    organization-permissions.constants.ts`) — verified rather than
+    assumed, and the reason no permission constant needed widening for
+    this link. The per-course boundary stays server-side.
+  */
+  const goToAttempts = (quizId: string) => {
+    if (!courseId) return;
+    navigate(
+      buildPath(DASHBOARD_ROUTES.instructorQuizResults, { courseId, quizId })
     );
   };
 
@@ -216,6 +238,10 @@ export default function CourseQuizzesPage(): JSX.Element {
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => goToEdit(quiz.id)}>
                         {t('course:quizAuthoring.menu.edit')}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => goToAttempts(quiz.id)}>
+                        <ListChecks className="size-4" aria-hidden />
+                        {t('course:quizAuthoring.menu.reviewAttempts')}
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="text-destructive focus:text-destructive"

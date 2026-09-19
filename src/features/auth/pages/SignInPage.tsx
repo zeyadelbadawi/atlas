@@ -10,13 +10,26 @@ import { useTranslation } from 'react-i18next';
 import { LogIn } from 'lucide-react';
 import { useAuth, useSignIn } from '@hooks';
 import { TwoFactorChallengeForm } from '../components/TwoFactorChallengeForm';
-import type { TwoFactorChallenge } from '@types';
+import type { RefusedSignInAcademy, TwoFactorChallenge } from '@types';
+import type { ApiError } from '@api';
 import {
   AUTHENTICATED_ENTRY_ROUTE,
   AUTH_ROUTES,
 } from '@app/routes/route-paths';
 import { PageContainer, PageHeader } from '@components/layout';
 import { SignInForm } from '../components/SignInForm';
+import { StudentSignInRefusal } from '../components/StudentSignInRefusal';
+import {
+  AUTH_ERROR_KEYS,
+  readRefusedAcademies,
+} from '../utils/academy-surface.utils';
+
+/**
+ * P64 Phase 1 (AD-5) — this page is Atlas's own sign-in, so every sign-in
+ * it makes is for the MANAGEMENT surface. A learner is refused here by the
+ * backend and shown the way to their academy website instead.
+ */
+const SURFACE = 'management' as const;
 
 export default function SignInPage(): JSX.Element {
   const { t } = useTranslation();
@@ -26,6 +39,11 @@ export default function SignInPage(): JSX.Element {
   const { signIn, completeTwoFactor, isLoading, error, clearError } =
     useSignIn();
   const [challenge, setChallenge] = useState<TwoFactorChallenge | null>(null);
+  // The academies a refused learner can sign in to; `null` while the form
+  // is the thing on screen.
+  const [refusedAcademies, setRefusedAcademies] = useState<
+    readonly RefusedSignInAcademy[] | null
+  >(null);
 
   // Redirect authenticated users
   useEffect(() => {
@@ -43,7 +61,12 @@ export default function SignInPage(): JSX.Element {
   ) => {
     clearError();
     try {
-      const result = await signIn({ email, password, rememberMe });
+      const result = await signIn({
+        email,
+        password,
+        rememberMe,
+        surface: SURFACE,
+      });
       // Phase 10.3 — a challenge means the password was correct but the
       // account requires a second factor. No session exists yet, so the
       // navigation effect above will not fire; the code step below takes
@@ -52,8 +75,16 @@ export default function SignInPage(): JSX.Element {
         setChallenge(result);
       }
       // Otherwise navigation happens automatically via the effect above.
-    } catch {
-      // Error is already set by useSignIn
+    } catch (caught) {
+      // Error is already set by useSignIn. One failure is not an error to
+      // retry but an answer: the password was right and the account is a
+      // learner, who has no management session to be given (AD-5). That
+      // gets its own screen, with the academies the backend named.
+      const apiError = caught as ApiError;
+      if (apiError?.messageKey === AUTH_ERROR_KEYS.studentUseAcademySignIn) {
+        clearError();
+        setRefusedAcademies(readRefusedAcademies(apiError));
+      }
     }
   };
 
@@ -64,7 +95,13 @@ export default function SignInPage(): JSX.Element {
     if (!challenge) return;
     clearError();
     try {
-      await completeTwoFactor({ challengeId: challenge.challengeId, ...input });
+      await completeTwoFactor({
+        challengeId: challenge.challengeId,
+        ...input,
+        // The same surface the sign-in was for — the challenge id alone
+        // does not remember it, and the backend mints the session here.
+        surface: SURFACE,
+      });
       // Session now exists — the effect above navigates.
     } catch {
       // Error is already set by useSignIn; the user can retry with a new
@@ -91,7 +128,15 @@ export default function SignInPage(): JSX.Element {
           />
         </div>
 
-        {challenge ? (
+        {refusedAcademies ? (
+          <StudentSignInRefusal
+            academies={refusedAcademies}
+            onBack={() => {
+              setRefusedAcademies(null);
+              clearError();
+            }}
+          />
+        ) : challenge ? (
           <TwoFactorChallengeForm
             onSubmit={handleVerify}
             onCancel={() => {
@@ -111,17 +156,25 @@ export default function SignInPage(): JSX.Element {
           />
         )}
 
-        <div className="text-center text-sm">
-          <span className="text-muted-foreground">
-            {t('auth:signIn.noAccount')}{' '}
-          </span>
-          <Link
-            to={AUTH_ROUTES.register}
-            className="font-medium text-primary hover:underline"
-          >
-            {t('auth:signIn.signUp')}
-          </Link>
-        </div>
+        {refusedAcademies ? null : (
+          <div className="space-y-1 text-center text-sm">
+            <div>
+              <span className="text-muted-foreground">
+                {t('auth:signIn.noAccount')}{' '}
+              </span>
+              <Link
+                to={AUTH_ROUTES.register}
+                className="font-medium text-primary hover:underline"
+              >
+                {t('auth:signIn.signUp')}
+              </Link>
+            </div>
+            {/* D2 — students never sign in here; say so before they try. */}
+            <p className="text-xs text-muted-foreground">
+              {t('auth:signIn.studentHint')}
+            </p>
+          </div>
+        )}
       </div>
     </PageContainer>
   );

@@ -42,6 +42,15 @@ export interface Enrollment {
   readonly course?: Course;
   /** Only populated by `GET /enrollments` (the "My Learning" list) — see `EnrollmentResponse.progress`'s doc comment on the backend. */
   readonly progress?: EnrollmentProgressSummary;
+  /**
+   * P64 Phase 1 — whether this enrollment grants access right now
+   * (status, not revoked, not expired), computed by the backend so the UI
+   * never re-derives an access rule of its own. `status` alone is not
+   * enough: an expired enrollment still reads `enrolled`.
+   */
+  readonly isActive?: boolean;
+  readonly expiresAt?: string;
+  readonly revokedAt?: string;
 }
 
 /** Enrollment creation payload. */

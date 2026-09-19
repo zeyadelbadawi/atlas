@@ -28,18 +28,20 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Award, Compass, Search } from 'lucide-react';
+import { Award, Clock3, Compass, Search } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState, EmptyState } from '@components/feedback';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { usePagination } from '@hooks';
+import { useAuth, usePagination } from '@hooks';
 import { useEnrollments } from '../hooks';
 import { useLearningPaths } from '../context/LearningPaths.context';
+import { isEnrollmentAccessEnded } from '../utils/learning-status.utils';
 import { formatCoursePricing } from '@features/course';
 import type { Enrollment, EnrollmentStatus } from '@types';
 
@@ -95,6 +97,7 @@ export default function StudentMyLearningPage({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const paths = useLearningPaths();
+  const { user } = useAuth();
   const [filter, setFilter] = useState<LearningFilter>('all');
   const [search, setSearch] = useState('');
 
@@ -124,6 +127,23 @@ export default function StudentMyLearningPage({
   }, [enrollments, filter, search]);
 
   const browseCourses = () => navigate(paths.courses());
+
+  /*
+   * P64 Phase 1 (D3) — an academy on the `approval` registration policy
+   * accepts the sign-up but leaves the membership `pending` until a human
+   * approves it. The account is real and signed in, so the page renders
+   * normally; what it must not do is leave the (usually empty) course
+   * list looking like a bug. Only ever shown on the academy website,
+   * where `academyId` scopes the page to one membership — in the
+   * cross-academy dashboard there is no single membership to speak for.
+   */
+  const pendingMembership = academyId
+    ? user?.academies?.find(
+        (academy) =>
+          academy.academyId === academyId &&
+          academy.membershipStatus === 'pending'
+      )
+    : undefined;
 
   const filterCounts = useMemo(
     () => ({
@@ -162,6 +182,18 @@ export default function StudentMyLearningPage({
           </Button>
         }
       />
+
+      {pendingMembership ? (
+        <Alert className="mb-4" data-testid="my-learning-pending-approval">
+          <Clock3 className="size-4" aria-hidden />
+          <AlertTitle>
+            {t('learning:myLearning.pendingApproval.title')}
+          </AlertTitle>
+          <AlertDescription>
+            {t('learning:myLearning.pendingApproval.description')}
+          </AlertDescription>
+        </Alert>
+      ) : null}
 
       {isLoading ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -230,6 +262,12 @@ export default function StudentMyLearningPage({
                 const progress = enrollment.progress;
                 const hasStarted = (progress?.completedLessons ?? 0) > 0;
                 const isCompleted = enrollment.status === 'completed';
+                // P64 Phase 1 — the card must not offer an action the
+                // backend will refuse. `isActive` is the backend's own
+                // access answer (revoked, expired, or a non-access
+                // status); a completed course stays openable so the
+                // learner can still reach their result and certificate.
+                const accessEnded = isEnrollmentAccessEnded(enrollment);
 
                 const goToDetail = () =>
                   navigate(paths.courseDetail(enrollment.courseId));
@@ -252,11 +290,13 @@ export default function StudentMyLearningPage({
                     className="flex cursor-pointer flex-col overflow-hidden transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     role="button"
                     tabIndex={0}
-                    onClick={goToDetail}
+                    onClick={() => {
+                      if (!accessEnded) goToDetail();
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
-                        goToDetail();
+                        if (!accessEnded) goToDetail();
                       }
                     }}
                   >
@@ -323,20 +363,28 @@ export default function StudentMyLearningPage({
                         )}
                         <Button
                           size="sm"
+                          disabled={accessEnded}
                           variant={
-                            hasStarted || isCompleted ? 'default' : 'outline'
+                            accessEnded
+                              ? 'outline'
+                              : hasStarted || isCompleted
+                                ? 'default'
+                                : 'outline'
                           }
                           onClick={(e) => {
                             e.stopPropagation();
+                            if (accessEnded) return;
                             if (isCompleted) goToDetail();
                             else goToContinue();
                           }}
                         >
-                          {isCompleted
-                            ? t('learning:discovery.card.completedAction')
-                            : hasStarted
-                              ? t('learning:discovery.card.continueAction')
-                              : t('learning:myLearning.startAction')}
+                          {accessEnded
+                            ? t('learning:myLearning.accessEndedAction')
+                            : isCompleted
+                              ? t('learning:discovery.card.completedAction')
+                              : hasStarted
+                                ? t('learning:discovery.card.continueAction')
+                                : t('learning:myLearning.startAction')}
                         </Button>
                       </div>
                     </CardContent>

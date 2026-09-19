@@ -1,7 +1,9 @@
 {
   "header": {
     "greeting": "Welcome, {{name}}",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "signIn": "Sign in",
+    "signUp": "Sign up"
   },
   "auth": {
     "signIn": {
@@ -9,7 +11,9 @@
       "subtitle": "Access your courses and track your progress.",
       "success": "You're signed in, {{name}}.",
       "noAccount": "Don't have an account?",
-      "signUp": "Sign up"
+      "signUp": "Sign up",
+      "forgotPassword": "Forgot password?",
+      "notAMemberCta": "Create a student account"
     },
     "signUp": {
       "title": "Join {{academyName}}",
@@ -18,6 +22,29 @@
       "goToSignIn": "Go to sign in",
       "hasAccount": "Already have an account?",
       "signIn": "Sign in"
+    },
+    "forgotPassword": {
+      "title": "Reset your password",
+      "subtitle": "Enter the email you use at {{academyName}} and we will send you a reset link.",
+      "backToSignIn": "Back to sign in"
+    },
+    "resetPassword": {
+      "title": "Choose a new password",
+      "subtitle": "Pick a password you have not used before.",
+      "checking": "Checking your reset link…",
+      "invalidTitle": "This reset link is invalid or has expired",
+      "invalidDescription": "Reset links can only be used once and expire after a short time. Request a new one to continue.",
+      "requestNewLink": "Request a new reset link",
+      "goToSignIn": "Go to sign in"
+    },
+    "verifyEmail": {
+      "title": "Verifying your email",
+      "verifying": "One moment while we confirm your email address…",
+      "successTitle": "Your email is verified",
+      "successDescription": "You can sign in and start learning.",
+      "errorTitle": "We could not verify this link",
+      "errorDescription": "This verification link is invalid or has already been used. Request a new one from your account.",
+      "goToSignIn": "Go to sign in"
     }
   },
   "comingSoon": {

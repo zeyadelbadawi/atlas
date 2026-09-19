@@ -11,6 +11,7 @@ import { useAuth } from '@hooks';
 import {
   AUTHENTICATED_ENTRY_ROUTE,
   AUTH_ROUTES,
+  PUBLIC_ROUTES,
 } from '@app/routes/route-paths';
 import { PageContainer, PageHeader } from '@components/layout';
 import { RegistrationForm } from '../components/RegistrationForm';
@@ -38,15 +39,27 @@ export default function RegistrationPage(): JSX.Element {
           <div className="mx-auto flex size-12 items-center justify-center rounded-pill bg-primary text-primary-foreground">
             <UserPlus className="size-6" strokeWidth={2} aria-hidden />
           </div>
+          {/* P64 Phase 1 (D2) — this is the ORGANIZATION / staff account
+              entry point. Students register on their academy's own
+              website, and the copy says so rather than letting a learner
+              create a management account they can never use. */}
           <PageHeader
             titleKey="auth:register.title"
             descriptionKey="auth:register.subtitle"
             values={{ product: t('common:product.name') }}
             className="mt-6"
           />
+          <p className="mt-3 text-xs text-muted-foreground">
+            {t('auth:register.studentHint')}
+          </p>
         </div>
 
-        <RegistrationForm />
+        <RegistrationForm
+          legalLinks={{
+            terms: PUBLIC_ROUTES.terms,
+            privacy: PUBLIC_ROUTES.privacyPolicy,
+          }}
+        />
 
         <div className="text-center text-sm">
           <span className="text-muted-foreground">
