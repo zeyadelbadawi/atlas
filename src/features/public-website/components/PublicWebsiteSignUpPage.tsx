@@ -38,6 +38,7 @@ import {
 } from '../utils/public-website-link-renderer';
 import { DEV_OVERRIDE_PARAM } from '../utils/hostname-resolution.utils';
 import type { PublicWebsiteLocale } from '@types';
+import { LEARNER_ROUTES } from '@app/routes/route-paths';
 
 export interface PublicWebsiteSignUpPageProps {
   readonly lookupKey: string;
@@ -63,7 +64,7 @@ export function PublicWebsiteSignUpPage({
           name: session.user.name,
           onSignOut: () => void signOut(),
           // Bare path — see `PublicWebsiteSignInPage`'s identical note.
-          myLearningHref: '/my-learning',
+          myLearningHref: LEARNER_ROUTES.root,
         }
       : undefined;
 

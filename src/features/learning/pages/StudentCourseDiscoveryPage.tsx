@@ -23,14 +23,19 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { useDebounce, usePagination } from '@hooks';
-import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useDiscoverCourses } from '../hooks';
+import { useLearningPaths } from '../context/LearningPaths.context';
 import { formatCoursePricing } from '@features/course';
 import type { CoursePricingType } from '@types';
 
 export default function StudentCourseDiscoveryPage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  // P64 Phase 2 (D2) — was `buildPath(DASHBOARD_ROUTES.learningCourseDetail)`.
+  // That constant is gone with the rest of the dashboard learner routes, and
+  // hardcoding one surface's URLs was always the thing `LearningPaths` exists
+  // to prevent.
+  const paths = useLearningPaths();
 
   const [searchInput, setSearchInput] = useState('');
   const debouncedSearch = useDebounce(searchInput);
@@ -140,21 +145,11 @@ export default function StudentCourseDiscoveryPage(): JSX.Element {
                 key={course.id}
                 role="button"
                 tabIndex={0}
-                onClick={() =>
-                  navigate(
-                    buildPath(DASHBOARD_ROUTES.learningCourseDetail, {
-                      courseId: course.id,
-                    })
-                  )
-                }
+                onClick={() => navigate(paths.courseDetail(course.id))}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    navigate(
-                      buildPath(DASHBOARD_ROUTES.learningCourseDetail, {
-                        courseId: course.id,
-                      })
-                    );
+                    navigate(paths.courseDetail(course.id));
                   }
                 }}
                 className="flex cursor-pointer flex-col overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"

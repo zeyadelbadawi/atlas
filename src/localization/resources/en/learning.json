@@ -230,5 +230,393 @@
       "title": "Couldn't load your results",
       "description": "Something went wrong fetching your results. Please try again."
     }
+  },
+  "learnerDashboard": {
+    "nav": {
+      "label": "Learner sections",
+      "bottomLabel": "Learner navigation",
+      "openMenu": "Sections",
+      "overview": "Overview",
+      "courses": "My Courses",
+      "coursesShort": "Courses",
+      "assessments": "Assessments",
+      "certificates": "Certificates",
+      "purchases": "Purchases",
+      "devices": "Devices",
+      "profile": "Profile",
+      "security": "Security"
+    },
+    "progress": {
+      "label": "Course progress",
+      "valueText": "{{percentage}}% complete",
+      "pending": "Working out your progress"
+    },
+    "overview": {
+      "title": "Overview",
+      "subtitle": "Pick up where you left off and see what needs your attention.",
+      "empty": {
+        "title": "Your learning starts here",
+        "description": "Once you enrol in a course, what to do next, what is due and your latest results all appear on this page."
+      },
+      "loading": "Loading your dashboard",
+      "continue": {
+        "title": "Continue learning",
+        "nextIs": "Next: {{title}}"
+      },
+      "deadlines": {
+        "title": "Due soon"
+      },
+      "results": {
+        "title": "Recent results"
+      },
+      "announcements": {
+        "title": "Announcements"
+      },
+      "certificates": {
+        "comingSoon": "Certificates are not being issued yet. When they are, every course you complete that awards one will show its certificate here."
+      }
+    },
+    "courses": {
+      "title": "My Courses",
+      "subtitle": "Every course you are enrolled in with this academy.",
+      "empty": {
+        "title": "You are not enrolled in any courses yet",
+        "description": "Browse the academy's courses and enrol — the ones you join will be listed here with your progress."
+      },
+      "searchPlaceholder": "Search your courses",
+      "searchLabel": "Search your courses by title",
+      "filters": {
+        "all": "All",
+        "inProgress": "In progress",
+        "completed": "Completed"
+      },
+      "filterEmpty": {
+        "title": "Nothing here matches",
+        "description": "No course on this page matches your search or the tab you picked. Clear the search, or try another tab."
+      }
+    },
+    "courseProgress": {
+      "title": "Course progress",
+      "subtitle": "Your place in this course, lesson by lesson.",
+      "breadcrumb": "This course",
+      "empty": {
+        "title": "The course outline will appear here",
+        "description": "Each lesson, quiz, assignment and live session shows its own state — and, when something is locked, why."
+      },
+      "loading": "Loading the course outline"
+    },
+    "assessments": {
+      "title": "Assessments",
+      "subtitle": "Your quizzes and assignments across every course.",
+      "tabs": {
+        "quizzes": "Quizzes",
+        "assignments": "Assignments"
+      },
+      "quizzes": {
+        "empty": {
+          "title": "No quizzes yet",
+          "description": "Quizzes from your courses appear here with your attempts, your best score and when they are due."
+        }
+      },
+      "assignments": {
+        "empty": {
+          "title": "No assignments yet",
+          "description": "Assignments from your courses appear here with their due dates, what you submitted and your marks."
+        }
+      },
+      "loading": "Loading your assessments",
+      "score": "Score {{score}}",
+      "state": {
+        "not_started": "Not started",
+        "in_progress": "In progress",
+        "submitted": "Submitted",
+        "submitting": "Submitting",
+        "draft": "Draft",
+        "passed": "Passed",
+        "failed": "Not passed",
+        "graded": "Graded",
+        "overdue": "Overdue"
+      }
+    },
+    "certificates": {
+      "title": "Certificates",
+      "subtitle": "Certificates you have earned with this academy.",
+      "empty": {
+        "title": "No certificates yet",
+        "description": "Certificates are not being issued yet. Once they are, every course you complete that awards one will show its certificate here."
+      }
+    },
+    "purchases": {
+      "title": "Purchases",
+      "subtitle": "Your orders and receipts with this academy.",
+      "empty": {
+        "title": "No orders yet",
+        "description": "Anything you buy from this academy is listed here with its payment status and receipt."
+      },
+      "loading": "Loading your orders",
+      "placedOn": "Ordered {{when}}",
+      "status": {
+        "draft": "Draft",
+        "pending_payment": "Awaiting payment",
+        "paid": "Paid",
+        "expired": "Expired",
+        "cancelled": "Cancelled",
+        "refunded": "Refunded"
+      }
+    },
+    "devices": {
+      "title": "Devices",
+      "subtitle": "The devices you can learn on, and where you are signed in right now.",
+      "empty": {
+        "title": "No devices registered yet",
+        "description": "Every device you learn on is registered here. Remove one to free a slot, or end a learning session you left open elsewhere."
+      },
+      "loading": "Loading your devices",
+      "registeredTitle": "Registered devices",
+      "sessionsTitle": "Where you are signed in",
+      "usage": "{{used}} of {{limit}} devices",
+      "sessionLimit": "Limit: {{limit}} learning session at a time",
+      "policySource": {
+        "academy": "Set by this academy",
+        "plan": "Set by this academy’s plan",
+        "platform": "Platform default",
+        "default": "Platform default"
+      },
+      "lastSeen": "Last used {{when}}",
+      "lastUsed": "Last active {{when}}",
+      "startedAt": "Signed in {{when}}",
+      "thisDevice": "This device",
+      "thisSession": "This session",
+      "remove": "Remove",
+      "noSessions": "No other sign-ins are active right now.",
+      "confirmRemove": {
+        "title": "Remove this device?",
+        "description": "“{{device}}” will have to register again the next time you learn on it, and it will take a device slot when it does.",
+        "currentDescription": "“{{device}}” is the device you are using right now. Removing it ends this learning session, and this browser will register again the next time you open a lesson."
+      }
+    },
+    "profile": {
+      "title": "Profile",
+      "subtitle": "Your details, your language and how this academy contacts you.",
+      "empty": {
+        "title": "Your details will appear here",
+        "description": "Your name, contact details and learning preferences are edited on this page."
+      },
+      "loading": "Loading your details"
+    },
+    "security": {
+      "title": "Security",
+      "subtitle": "Your password, your sign-ins and two-step verification.",
+      "empty": {
+        "title": "Your security settings will appear here",
+        "description": "Change your password, review where you are signed in and turn on two-step verification from this page."
+      },
+      "devicesPointer": "Your learning devices and open learning sessions are managed separately, on"
+    }
+  },
+  "player": {
+    "previous": "Previous",
+    "next": "Next",
+    "untitledCourse": "Course",
+    "durationLabel": "Duration",
+    "progress": {
+      "label": "Progress through {{course}}",
+      "summary": "{{completed}} of {{total}} activities complete"
+    },
+    "curriculum": {
+      "label": "Course contents",
+      "open": "Contents"
+    },
+    "itemType": {
+      "lesson": "Lesson",
+      "quiz": "Quiz",
+      "assignment": "Assignment",
+      "live_session": "Live session"
+    },
+    "itemState": {
+      "locked": "Locked",
+      "available": "Not started",
+      "in_progress": "In progress",
+      "completed": "Completed",
+      "passed": "Passed",
+      "failed": "Not passed",
+      "submitted": "Submitted",
+      "graded": "Graded",
+      "overdue": "Overdue"
+    },
+    "lockReason": {
+      "previousIncomplete": "Finish the activity before this one first",
+      "scheduled": "Opens on a later date",
+      "notStarted": "The session has not started yet",
+      "accessEnded": "Your access to this course has ended"
+    },
+    "lock": {
+      "title": "This activity is locked",
+      "genericReason": "It is not open to you yet. The course outline shows what unlocks it."
+    },
+    "activity": {
+      "type": "Type",
+      "state": "Status",
+      "due": "Due",
+      "opens": "Opens",
+      "openQuiz": "Start the quiz",
+      "openAssignment": "Open the assignment",
+      "liveSessionNote": "Joining details for this session appear here once the academy publishes them."
+    },
+    "completion": {
+      "markComplete": "Mark complete",
+      "confirmed": "Marked complete.",
+      "nextIs": "Next: {{position}} {{title}}",
+      "lastActivity": "That was the last activity in this course.",
+      "undo": "Undo",
+      "watchMoreHint": "Keep watching — this lesson can be completed once you have watched enough of it."
+    },
+    "autoAdvance": {
+      "label": "Go to the next activity automatically",
+      "countdown": "Moving to the next activity in {{seconds}}s. Turn the switch off to stay here."
+    },
+    "video": {
+      "regionLabel": "Video player for {{title}}",
+      "loading": "Loading the video",
+      "speed": "Speed",
+      "rate": "{{rate}}×",
+      "shortcutsHint": "Space or K play and pause · arrows seek 5s · J and L seek 10s · M mutes · F is full screen",
+      "decodeError": "This video could not be played on this device. Try another browser, and tell the academy if it keeps happening."
+    },
+    "text": {
+      "readingProgress": "Reading progress",
+      "readingProgressLabel": "Reading progress through {{title}}",
+      "empty": "This lesson has no written content yet."
+    },
+    "file": {
+      "description": "This lesson is a file. The link below is personal to you and stops working shortly after it is issued.",
+      "open": "Open the file",
+      "expiryNote": "If the link stops working, reload this page to get a new one."
+    },
+    "external": {
+      "notProtectedTitle": "This content is hosted somewhere else",
+      "notProtectedDescription": "The academy links to it rather than hosting it, so none of the academy’s protections apply to it. Opening it takes you out of this course.",
+      "open": "Open in a new tab"
+    },
+    "resources": {
+      "title": "Resources",
+      "externalLabel": "External"
+    },
+    "preview": {
+      "title": "You are watching a preview",
+      "description": "This is a free preview of the course. Enrol to open the rest of it.",
+      "action": "See the course"
+    },
+    "leaseLost": {
+      "title": "Paused — you started learning on another device",
+      "description": "Playback stopped here so that only one device is learning at a time. Nothing you have done is lost. Reload this page to carry on here instead."
+    },
+    "deviceLimit": {
+      "title": "You have reached your device limit",
+      "description": "You can learn on {{limit}} devices. Remove one you no longer use to free a slot.",
+      "descriptionNoLimit": "You are using all of your device slots. Remove one you no longer use to free a slot.",
+      "noDevices": "No devices are registered on this account yet."
+    },
+    "takeover": {
+      "title": "You are already learning on another device",
+      "description": "“{{device}}” is in a learning session. Continuing here ends it.",
+      "descriptionSince": "“{{device}}” has been learning since {{since}}. Continuing here ends that session.",
+      "unknownDevice": "Another device",
+      "confirm": "Continue here",
+      "cancel": "Keep learning there"
+    },
+    "protection": {
+      "title": "What is actually protecting this lesson",
+      "tier": {
+        "normal": "Self-managed delivery",
+        "premium": "Platform-managed delivery"
+      },
+      "badge": {
+        "external": "Not hosted by the academy",
+        "atlasHosted": "Delivered by the academy",
+        "openDetails": "Show what is protecting this lesson"
+      },
+      "expiresIn": "The link on this page stops working in about {{minutes}} minutes, and is replaced automatically while you watch.",
+      "externalNotice": "The academy links to this content rather than hosting it, so none of the measures below apply to it.",
+      "fact": {
+        "signedUrl": {
+          "yes": "Your access is checked before this content is handed over.",
+          "no": "The academy does not check access to this content."
+        },
+        "boundToSession": {
+          "yes": "The delivery service re-checks your sign-in on every request.",
+          "no": "The delivery service does not re-check your sign-in once playback has started."
+        },
+        "boundToDevice": {
+          "yes": "The delivery service re-checks this device on every request.",
+          "no": "Playback is not tied to this device: the link would work on another device until it expires."
+        },
+        "revocable": {
+          "yes": "Access can be withdrawn immediately, before the link expires.",
+          "no": "Access cannot be withdrawn before the link expires."
+        },
+        "originRestricted": {
+          "yes": "Playback is restricted to this academy’s own websites.",
+          "no": "Playback is not restricted to this academy’s websites."
+        },
+        "watermark": {
+          "yes": "Your account is shown over the video.",
+          "no": "No watermark is drawn over this content."
+        }
+      },
+      "noDrm": "There is no DRM. Nothing here prevents screen recording.",
+      "limits": "No content can be made impossible to copy. These measures check who you are and keep links short-lived; they do not stop screen recording, and the academy does not claim they do."
+    },
+    "failure": {
+      "network": {
+        "title": "We could not reach the academy",
+        "description": "Check your connection and try again. Nothing you have done has been lost."
+      },
+      "expired": {
+        "title": "This lesson’s link has expired",
+        "description": "Links are short-lived on purpose. Try again to get a fresh one."
+      },
+      "accessEnded": {
+        "title": "Your access to this course has ended",
+        "description": "Its content can no longer be opened. Contact the academy if you think this is a mistake."
+      },
+      "deviceLimit": {
+        "title": "You have reached your device limit",
+        "description": "This browser is not one of your registered devices, and all of them are in use.",
+        "action": "Manage your devices"
+      },
+      "sessionConflict": {
+        "title": "You are already learning on another device",
+        "description": "Only one device can learn at a time. Continue here to end the other session, or carry on where you left off."
+      },
+      "rateLimited": {
+        "title": "Too many requests",
+        "description": "You are opening content faster than we can check your access. Wait a moment, then try again."
+      },
+      "scheduled": {
+        "title": "This activity has not opened yet",
+        "description": "It becomes available on the date the academy scheduled for it. The course outline shows when."
+      },
+      "suspended": {
+        "title": "Your account is suspended",
+        "description": "Course content cannot be opened while an account is suspended. Contact the academy."
+      },
+      "notAuthenticated": {
+        "title": "Please sign in again",
+        "description": "Your session has ended. Sign in to this academy again to carry on."
+      },
+      "processing": {
+        "title": "This lesson is not ready to play yet",
+        "description": "Its video may still be processing. Try again in a few minutes, and tell the academy if it does not appear."
+      },
+      "unavailable": {
+        "title": "This activity cannot be opened",
+        "description": "It may have been unpublished, or it may not be part of your enrolment. The course outline shows everything you can open."
+      },
+      "unknown": {
+        "title": "Something went wrong",
+        "description": "This activity could not be opened. Try again, and contact the academy if it keeps happening."
+      }
+    }
   }
 }

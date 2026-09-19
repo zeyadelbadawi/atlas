@@ -37,6 +37,7 @@ import {
 } from '../utils/public-website-link-renderer';
 import type { PublicWebsiteDataState } from '../hooks/usePublicWebsiteData';
 import type { PublicWebsiteLocale } from '@types';
+import { LEARNER_ROUTES } from '@app/routes/route-paths';
 
 export interface PublicWebsitePageProps {
   readonly data: Extract<PublicWebsiteDataState, { status: 'ready' }>;
@@ -76,8 +77,8 @@ export function PublicWebsitePage({
           onSignOut: () => void signOut(),
           // Bare path — `WebsiteHeader` hands this straight to `linkRenderer`,
           // which now applies the locale prefix itself; pre-applying it here
-          // too would double it (`/ar/ar/my-learning`).
-          myLearningHref: '/my-learning',
+          // too would double it (`/ar/ar/my`).
+          myLearningHref: LEARNER_ROUTES.root,
         }
       : undefined;
 

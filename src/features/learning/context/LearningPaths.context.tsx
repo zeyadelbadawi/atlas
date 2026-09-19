@@ -15,18 +15,24 @@
  * components.
  *
  * This context is that seam: a small set of path-builder functions,
- * defaulting to today's `/dashboard/learning/...` behaviour (so nothing
- * under `/dashboard` changes unless explicitly opted in), swappable for a
- * locale-prefix-aware `/my-learning/...` implementation
- * (`WebsiteLearningPathsProvider`, `features/public-website/`) when
- * mounted under the Academy website instead.
+ * swappable for a locale-prefix-aware implementation
+ * (`PublicWebsiteLearningRoute`, `features/public-website/`) when mounted
+ * under the Academy website.
  *
- * `courses()` is deliberately NOT a 1:1 mapping of
- * `DASHBOARD_ROUTES.learningCourses` (the cross-Academy "Discover
- * Courses" catalog) — inside one Academy's own website, "browse more
- * courses" means that Academy's own public Courses page, not a
- * cross-tenant catalog of every Academy's courses. See
- * `WebsiteLearningPathsProvider`'s own doc comment.
+ * P64 Phase 2 (D2 / AD-12) — the default below no longer describes
+ * `/dashboard/learning/...`, because those routes no longer exist: the
+ * learner surface is the academy website, full stop. What the default
+ * describes now is that same surface in its plainest form — English, no
+ * `/ar` prefix, no dev-preview query param — which is precisely what the
+ * website provider then re-expresses through `buildHref`. It is a
+ * fallback, not a second surface: every real mount supplies the provider.
+ *
+ * `courses()` is deliberately NOT "my courses" — inside one Academy's own
+ * website, "browse more courses" means that Academy's own public Courses
+ * page, never a cross-tenant catalog of every Academy's courses (the
+ * cross-Academy discovery catalog was a dashboard surface, and D2 retired
+ * it with the rest of them). See `PublicWebsiteLearningRoute`'s own doc
+ * comment.
  *
  * `discussions()` returns `undefined` when the current context has no
  * forum surface wired in (the website-embedded implementation, for now —
@@ -34,11 +40,7 @@
  * "hide this link," never as an error.
  */
 import { createContext, useContext, type ReactNode } from 'react';
-import {
-  AUTH_ROUTES,
-  DASHBOARD_ROUTES,
-  buildPath,
-} from '@app/routes/route-paths';
+import { LEARNER_ROUTES } from '@app/routes/route-paths';
 
 export interface LearningPaths {
   readonly myLearning: () => string;
@@ -53,26 +55,32 @@ export interface LearningPaths {
   readonly signIn: (returnTo: string) => string;
 }
 
-export const DASHBOARD_LEARNING_PATHS: LearningPaths = {
-  myLearning: () => DASHBOARD_ROUTES.myLearning,
-  courses: () => DASHBOARD_ROUTES.learningCourses,
-  courseDetail: (courseId) =>
-    buildPath(DASHBOARD_ROUTES.learningCourseDetail, { courseId }),
-  courseLearn: (courseId) =>
-    buildPath(DASHBOARD_ROUTES.learningCourseLearn, { courseId }),
+/**
+ * The learner surface in its plainest form — see this file's doc comment.
+ *
+ * The activity paths still say `/my-learning/courses/...` because that is
+ * where the player genuinely still lives: Phase 2 §E.1 moved the DASHBOARD
+ * to `/my/*`, and §E.2's unified player has not moved yet. Pointing them at
+ * a `/my/*` URL that nothing serves would trade a working link for a broken
+ * one, so they move when the player does, not before.
+ */
+export const LEARNER_SURFACE_PATHS: LearningPaths = {
+  myLearning: () => LEARNER_ROUTES.courses,
+  courses: () => '/courses',
+  courseDetail: (courseId) => `/my-learning/courses/${courseId}`,
+  courseLearn: (courseId) => `/my-learning/courses/${courseId}/learn`,
   lesson: (courseId, lessonId) =>
-    buildPath(DASHBOARD_ROUTES.learningLesson, { courseId, lessonId }),
+    `/my-learning/courses/${courseId}/learn/${lessonId}`,
   quiz: (courseId, quizId) =>
-    buildPath(DASHBOARD_ROUTES.learningQuiz, { courseId, quizId }),
+    `/my-learning/courses/${courseId}/quizzes/${quizId}`,
   assignment: (courseId, assignmentId) =>
-    buildPath(DASHBOARD_ROUTES.learningAssignment, { courseId, assignmentId }),
-  discussions: (courseId) =>
-    buildPath(DASHBOARD_ROUTES.learningDiscussions, { courseId }),
-  signIn: () => AUTH_ROUTES.signIn,
+    `/my-learning/courses/${courseId}/assignments/${assignmentId}`,
+  discussions: () => undefined,
+  signIn: (returnTo) => `/sign-in?returnTo=${encodeURIComponent(returnTo)}`,
 };
 
 const LearningPathsContext = createContext<LearningPaths>(
-  DASHBOARD_LEARNING_PATHS
+  LEARNER_SURFACE_PATHS
 );
 
 export interface LearningPathsProviderProps {

@@ -14,7 +14,23 @@ import { useLocation } from 'react-router-dom';
 const LESSON_SCREEN_PATTERN =
   /^\/(ar\/)?my-learning\/courses\/[^/]+\/learn\/[^/]+/;
 
+/**
+ * P64 Phase 2 §E.1 — the learner dashboard brings its own bottom bar
+ * (Overview / Courses / Assessments / Profile), which answers a different
+ * question than this one (Home / Courses / My Learning / Profile) and is
+ * the right one to show while a learner is inside their dashboard. Two
+ * fixed bars would claim the bottom of a phone screen twice, so this one
+ * stands down across `/my/*` rather than stacking.
+ *
+ * `-` is not `/`, so `/my-learning` — a different subtree entirely, and
+ * still the player's home — does not match this.
+ */
+const LEARNER_DASHBOARD_PATTERN = /^\/(ar\/)?my(\/|$)/;
+
 export function useMobileBottomNavVisibility(): boolean {
   const location = useLocation();
-  return !LESSON_SCREEN_PATTERN.test(location.pathname);
+  return !(
+    LESSON_SCREEN_PATTERN.test(location.pathname) ||
+    LEARNER_DASHBOARD_PATTERN.test(location.pathname)
+  );
 }

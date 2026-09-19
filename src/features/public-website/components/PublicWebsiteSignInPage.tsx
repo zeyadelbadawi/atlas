@@ -69,6 +69,7 @@ import {
 } from '../utils/public-website-link-renderer';
 import { DEV_OVERRIDE_PARAM } from '../utils/hostname-resolution.utils';
 import type { PublicWebsiteLocale } from '@types';
+import { LEARNER_ROUTES } from '@app/routes/route-paths';
 
 export interface PublicWebsiteSignInPageProps {
   readonly lookupKey: string;
@@ -106,15 +107,23 @@ export function PublicWebsiteSignInPage({
 
   // P64 Phase 1 — `returnTo` is checked with the shared `isSafeReturnPath`
   // (same-site relative path only, never `//host` or a scheme), and a
-  // session with nowhere in particular to go now lands on `/my-learning`
-  // instead of sitting on a "you're signed in" card. `startsWith('/')`
-  // alone let `//evil.example` through, which is an absolute URL to
-  // another origin as far as the browser is concerned.
+  // session with nowhere in particular to go lands on the learner
+  // dashboard instead of sitting on a "you're signed in" card.
+  // `startsWith('/')` alone let `//evil.example` through, which is an
+  // absolute URL to another origin as far as the browser is concerned.
+  //
+  // P64 Phase 2 — that landing is `LEARNER_ROUTES.root`, the learner
+  // dashboard's own overview. `/my-learning` would still arrive (it
+  // redirects), but sign-in is the single most-travelled path on this
+  // surface and it should not spend a redirect on every visit.
   useEffect(() => {
     if (session.status !== 'authenticated') return;
-    navigate(buildHref(isSafeReturnPath(returnTo) ? returnTo : '/my-learning'), {
-      replace: true,
-    });
+    navigate(
+      buildHref(
+        isSafeReturnPath(returnTo) ? returnTo : LEARNER_ROUTES.root
+      ),
+      { replace: true }
+    );
   }, [session.status, returnTo, navigate, buildHref]);
   const authState =
     session.status === 'authenticated' && session.user
@@ -123,7 +132,7 @@ export function PublicWebsiteSignInPage({
           onSignOut: () => void signOut(),
           // Bare path — `linkRenderer`/`WebsiteHeader` apply the locale
           // prefix; pre-applying it here too would double it.
-          myLearningHref: '/my-learning',
+          myLearningHref: LEARNER_ROUTES.root,
         }
       : undefined;
 

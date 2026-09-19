@@ -12,7 +12,10 @@
  *   this host is for them.
  * - `/dashboard/learning/*` — the retired dashboard learner routes. A staff
  *   member who is also enrolled somewhere lands here and is pointed at
- *   the academy website, which is where all learning now lives (D2).
+ *   the academy website, which is where all learning now lives (D2). That
+ *   caller passes the `/my/*` path that replaced the exact URL asked for,
+ *   so the bounce keeps its destination rather than flattening every old
+ *   learner URL onto one landing page.
  *
  * Auto-navigation is opt-in (`autoNavigateSingle`) and only ever fires
  * when there is exactly ONE academy with a host — never a guess between
@@ -37,7 +40,7 @@ import {
 export interface AcademyChooserProps {
   readonly titleKey: string;
   readonly descriptionKey: string;
-  /** The path on the academy host the links point at (`/my-learning` for a signed-in learner). */
+  /** The path on the academy host the links point at (a `LEARNER_ROUTES` path for a signed-in learner). */
   readonly targetPath: string;
   /** Offer a sign-out action — for the chooser a learner is redirected to. */
   readonly showSignOut?: boolean;

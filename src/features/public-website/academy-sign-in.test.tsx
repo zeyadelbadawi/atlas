@@ -22,7 +22,8 @@
  *    while the browser reads it as another origin entirely — a phishing
  *    link could bounce a freshly authenticated student to a look-alike
  *    site. A visitor arriving with no `returnTo` was left sitting on a
- *    "you're signed in" card instead of being taken to their courses.
+ *    "you're signed in" card instead of being taken to their learner
+ *    dashboard.
  *
  * None of this is access control — the backend re-decides every one of
  * these on its own. What is tested here is that the client asks the right
@@ -151,9 +152,15 @@ function renderPage({
                 <PublicWebsiteSignInPage lookupKey="elzozo" locale="en" />
               }
             />
+            {/* P64 Phase 2 (D2 / AD-12) — the fallback landing is the
+                learner dashboard at `/my`, not the retired `/my-learning`.
+                That URL still answers on the real site (it redirects), but
+                sign-in must not spend a redirect on every visit. */}
             <Route
-              path="/my-learning"
-              element={<span data-testid="my-learning">my learning</span>}
+              path="/my"
+              element={
+                <span data-testid="learner-dashboard">learner dashboard</span>
+              }
             />
             <Route
               path="/my-learning/courses/:courseId"
@@ -240,9 +247,9 @@ describe('academy sign-in — the second factor', () => {
 });
 
 describe('academy sign-in — where an authenticated visitor lands', () => {
-  it('goes to My Learning when no returnTo was supplied', async () => {
+  it('goes to the learner dashboard when no returnTo was supplied', async () => {
     renderPage({ authenticated: true });
-    expect(await screen.findByTestId('my-learning')).toBeTruthy();
+    expect(await screen.findByTestId('learner-dashboard')).toBeTruthy();
   });
 
   it('honours a same-site relative returnTo', async () => {
@@ -257,16 +264,16 @@ describe('academy sign-in — where an authenticated visitor lands', () => {
    * `//evil.example` and `https://evil.example` both start with something
    * that looks path-like to a naive check; the browser reads both as
    * another origin. A freshly authenticated session is exactly what a
-   * phishing bounce wants, so both fall back to My Learning.
+   * phishing bounce wants, so both fall back to the learner dashboard.
    */
   it.each(['//evil.example', 'https://evil.example/', '/\\evil.example'])(
-    'refuses %s as a returnTo and goes to My Learning instead',
+    'refuses %s as a returnTo and goes to the learner dashboard instead',
     async (hostile) => {
       renderPage({
         authenticated: true,
         entry: `/sign-in?returnTo=${encodeURIComponent(hostile)}`,
       });
-      expect(await screen.findByTestId('my-learning')).toBeTruthy();
+      expect(await screen.findByTestId('learner-dashboard')).toBeTruthy();
     }
   );
 });

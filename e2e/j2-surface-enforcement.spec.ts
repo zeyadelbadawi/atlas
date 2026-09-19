@@ -113,8 +113,12 @@ test.describe('J2 — surface enforcement', () => {
     await page.locator('input[type="password"]').fill(LEARNER_PASSWORD);
     await page.getByRole('button', { name: /sign in/i }).click();
 
-    await expect(page).toHaveURL(/\/my-learning/, { timeout: 20_000 });
-    await expect(page.getByRole('heading', { name: /my learning/i })).toBeVisible();
+    // P64 Phase 2 (D2 / AD-12) — the learner surface is the `/my/*`
+    // dashboard; sign-in lands on its Overview. `/my-learning` still
+    // answers as a permanent redirect, which is exactly why this asserts
+    // the destination rather than the old URL.
+    await expect(page).toHaveURL(/\/my(\/|$)/, { timeout: 20_000 });
+    await expect(page.getByRole('heading', { name: /overview/i })).toBeVisible();
   });
 
   test('a signed-in learner cannot open /dashboard/platform', async () => {

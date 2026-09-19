@@ -201,6 +201,33 @@ export default {
         shimmer: {
           '100%': { transform: 'translateX(100%)' },
         },
+        /*
+          The per-viewer watermark's slow drift between anchor positions
+          (P64 Phase 2 §E.3). A mark fixed in one corner is cropped out in
+          seconds; a mark that visits four regions of the frame means a
+          crop that removes it also removes part of the picture for part
+          of the time.
+
+          Deliberately slow and deliberately subtle — it is a deterrent
+          aimed at casual re-sharing, not an obstruction of the lesson the
+          learner paid for. `WatermarkOverlay` stands it down entirely
+          under `prefers-reduced-motion`.
+
+          Positioned rather than translated, and in LOGICAL properties:
+          the percentages resolve against the overlay box (which is
+          `inset-0` of the video frame, so they scale with the player at
+          any size), and `inset-inline-start` puts the mark on the
+          reading-side edge in Arabic exactly as it does in English. A
+          `translate` in `vw`/`vh` would have been measured against the
+          viewport instead of the player, and would have drifted the mark
+          clean out of a small embedded frame.
+        */
+        'watermark-drift': {
+          '0%, 100%': { top: '12%', insetInlineStart: '8%' },
+          '25%': { top: '14%', insetInlineStart: '62%' },
+          '50%': { top: '76%', insetInlineStart: '58%' },
+          '75%': { top: '72%', insetInlineStart: '6%' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down var(--duration-normal) var(--ease-standard)',
@@ -210,6 +237,8 @@ export default {
         shimmer: 'shimmer 1.6s infinite',
         'progress-indeterminate':
           'progress-indeterminate 1.4s var(--ease-standard) infinite',
+        // Slow on purpose — see the keyframes' own comment.
+        'watermark-drift': 'watermark-drift 40s linear infinite',
       },
     },
   },

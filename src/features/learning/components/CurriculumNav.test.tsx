@@ -11,7 +11,7 @@ import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
 import { createI18nInstance } from '@/localization/i18n';
 import {
-  DASHBOARD_LEARNING_PATHS,
+  LEARNER_SURFACE_PATHS,
   LearningPathsProvider,
 } from '../context/LearningPaths.context';
 import { CurriculumNav } from './CurriculumNav';
@@ -23,7 +23,7 @@ function renderNav(section: CourseSection, language = 'en') {
   return render(
     <I18nextProvider i18n={i18n}>
       <MemoryRouter>
-        <LearningPathsProvider paths={DASHBOARD_LEARNING_PATHS}>
+        <LearningPathsProvider paths={LEARNER_SURFACE_PATHS}>
           <CurriculumNav
             courseId="c1"
             sections={[section]}

@@ -36,6 +36,7 @@ import {
   usePublicWebsiteHrefBuilder,
 } from '../utils/public-website-link-renderer';
 import type { PublicWebsiteLocale } from '@types';
+import { LEARNER_ROUTES } from '@app/routes/route-paths';
 
 export interface PublicWebsiteAuthShellProps {
   readonly lookupKey: string;
@@ -73,7 +74,7 @@ export function PublicWebsiteAuthShell({
           onSignOut: () => void signOut(),
           // Bare path — `linkRenderer`/`WebsiteHeader` apply the locale
           // prefix; pre-applying it here too would double it.
-          myLearningHref: '/my-learning',
+          myLearningHref: LEARNER_ROUTES.root,
         }
       : undefined;
 

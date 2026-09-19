@@ -8,6 +8,7 @@
  * dashboard chrome — no sidebar, no organization switcher, none of the
  * management furniture a learner should never see.
  */
+import { LEARNER_ROUTES } from '@app/routes/route-paths';
 import { AcademyChooser } from '../components/AcademyChooser';
 
 export default function AcademyChooserPage(): JSX.Element {
@@ -15,7 +16,11 @@ export default function AcademyChooserPage(): JSX.Element {
     <AcademyChooser
       titleKey="auth:academyChooser.title"
       descriptionKey="auth:academyChooser.description"
-      targetPath="/my-learning"
+      // P64 Phase 2 — the learner dashboard home, not the retired
+      // `/my-learning`. Both arrive in the same place (that URL redirects),
+      // but a learner who has just been told "this host is not for you"
+      // should not then be bounced a second time on arrival.
+      targetPath={LEARNER_ROUTES.root}
       showSignOut
     />
   );

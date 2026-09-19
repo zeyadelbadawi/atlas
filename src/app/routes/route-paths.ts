@@ -78,27 +78,22 @@ export const DASHBOARD_ROUTES = {
     '/dashboard/academy/:academyId/courses/:courseId/quizzes/:quizId',
   academyCourseAssignments:
     '/dashboard/academy/:academyId/courses/:courseId/assignments',
-  learning: '/dashboard/learning',
-  myLearning: '/dashboard/learning/my-courses',
-  /** Phase 9 — the student's own quiz/assignment outcomes (roadmap ST6). */
-  myResults: '/dashboard/learning/my-results',
-  learningCourses: '/dashboard/learning/courses',
-  learningCourseDetail: '/dashboard/learning/courses/:courseId',
-  learningCourseLearn: '/dashboard/learning/courses/:courseId/learn',
-  learningLesson: '/dashboard/learning/courses/:courseId/learn/:lessonId',
-  learningQuiz: '/dashboard/learning/courses/:courseId/quizzes/:quizId',
-  learningAssignment:
-    '/dashboard/learning/courses/:courseId/assignments/:assignmentId',
-  /**
-   * A Live Session as a course activity, sitting beside the lesson, quiz
-   * and assignment routes rather than on a separate add-on surface — a
-   * class is part of the course, not a feature the student visits.
-   */
-  learningLiveSession:
-    '/dashboard/learning/courses/:courseId/live-sessions/:liveSessionId',
-  learningDiscussions: '/dashboard/learning/courses/:courseId/discussions',
-  learningThread: '/dashboard/learning/courses/:courseId/discussions/:threadId',
+  /*
+    P64 Phase 2 (D2 / AD-12) — there is no `learning` group here any more.
 
+    Phase 1 stopped MOUNTING the learner pages under `/dashboard/learning/*`
+    but kept their constants, so the paths still looked like real dashboard
+    routes to every consumer that reads this registry (smart back, the
+    navigation config, `LearningPaths`). Phase 2 finishes the removal: the
+    learner surface is `LEARNER_ROUTES` below, and the old dashboard URLs
+    survive ONLY as the redirect table `RETIRED_DASHBOARD_LEARNER_ROUTES`,
+    which is deliberately not part of `DASHBOARD_ROUTES` because nothing
+    renders there — they are forwarding addresses, not pages.
+
+    Instructor, review, academy, tenant and platform routes are untouched:
+    D2 retires the LEARNER surface inside the management dashboard, not
+    the management dashboard.
+  */
   instructorDashboard: '/dashboard/instructor',
   instructorCourses: '/dashboard/instructor/courses',
   instructorCourseOverview: '/dashboard/instructor/courses/:courseId',
@@ -237,6 +232,141 @@ export const DASHBOARD_ROUTES = {
   websitePreview: '/dashboard/academy/:academyId/website/preview',
 } as const;
 
+/**
+ * Paths rendered inside the learner dashboard shell (P64 Phase 2 §E.1).
+ *
+ * These are ACADEMY-HOST paths, not platform-host ones: the learner surface
+ * is mounted by `PublicWebsiteRouter`, so `/my/courses` means
+ * `https://<academy host>/my/courses` and its Arabic twin is `/ar/my/courses`.
+ * The constants here are always the bare, unprefixed English form — the one
+ * place the `/ar` prefix is applied is `withPublicWebsiteLocale`, and
+ * pre-applying it anywhere else doubles it. That is why these live in their
+ * own group rather than inside `DASHBOARD_ROUTES`: a dashboard path is
+ * absolute and host-agnostic, a learner path is neither.
+ *
+ * The group exists at all (rather than the pages hardcoding their own
+ * strings) so the redirect table below, the learner navigation and the
+ * breadcrumb trails all read the same declaration — the whole point of this
+ * registry.
+ */
+export const LEARNER_ROUTES = {
+  /** Overview — the learner dashboard home. */
+  root: '/my',
+  courses: '/my/courses',
+  /** One course's progress: outline, states and lock reasons. */
+  courseProgress: '/my/courses/:courseId',
+  /**
+   * The unified player, showing one LESSON (P64 Phase 2 §E.2).
+   *
+   * A lesson keeps its own path rather than joining `playerActivity`
+   * below for one concrete reason: a PREVIEW lesson must open for a
+   * visitor who has no account yet (§V), and the sequence endpoint —
+   * which is what tells the player what type an item id is — requires a
+   * session. The type therefore has to be readable from the URL in the
+   * one case where nothing else can supply it.
+   */
+  playerLesson: '/my/courses/:courseId/learn/:lessonId',
+  /**
+   * The unified player, showing a quiz, assignment or live session.
+   *
+   * No type segment: every one of these requires a session, so the
+   * sequence is always available to say which type this id is, and a type
+   * in the URL would be a second copy of that fact able to disagree with
+   * it.
+   */
+  playerActivity: '/my/courses/:courseId/activities/:itemId',
+  /** Quizzes and Assignments, as two tabs of one page. */
+  assessments: '/my/assessments',
+  /** Empty until Phase 3 issues the first certificate. */
+  certificates: '/my/certificates',
+  purchases: '/my/purchases',
+  devices: '/my/devices',
+  profile: '/my/profile',
+  security: '/my/security',
+} as const;
+
+/** One retired URL and the `LEARNER_ROUTES` template that replaces it. */
+export interface RetiredLearnerRoute {
+  readonly from: string;
+  readonly to: string;
+}
+
+/**
+ * The learner URLs that used to be served elsewhere, and where each one now
+ * goes (D2 / AD-12).
+ *
+ * Two families, because they are retired for different reasons and are
+ * redirected by different code:
+ *
+ * - `RETIRED_ACADEMY_LEARNER_ROUTES` are same-origin academy-website paths
+ *   (`/my-learning`, `/my-account`) that predate the `/my/*` shell. They
+ *   are redirected client-side by `PublicWebsiteRouter`, so a bookmark, an
+ *   emailed link or a CMS link written before this release still lands on
+ *   the right page.
+ * - `RETIRED_DASHBOARD_LEARNER_ROUTES` are the `/dashboard/learning/*`
+ *   paths D2 deletes outright. Their replacement lives on a DIFFERENT
+ *   ORIGIN (the learner's own academy host), which no client-side
+ *   `<Navigate>` can reach — so they resolve to `LearnerSurfaceRedirectPage`,
+ *   which resolves the account's academy host and then leaves the origin.
+ *   The `to` side is a `LEARNER_ROUTES` template; `:courseId` is carried
+ *   across from the old URL by `resolveRetiredLearnerTarget`.
+ *
+ * Deliberately NOT part of `DASHBOARD_ROUTES`: nothing renders at these
+ * paths any more, so no breadcrumb, smart-back or navigation consumer
+ * should ever treat them as a destination.
+ */
+export const RETIRED_ACADEMY_LEARNER_ROUTES: readonly RetiredLearnerRoute[] = [
+  { from: '/my-learning', to: LEARNER_ROUTES.courses },
+  { from: '/my-account', to: LEARNER_ROUTES.profile },
+];
+
+export const RETIRED_DASHBOARD_LEARNER_ROUTES: readonly RetiredLearnerRoute[] =
+  [
+    { from: '/dashboard/learning', to: LEARNER_ROUTES.root },
+    { from: '/dashboard/learning/my-courses', to: LEARNER_ROUTES.courses },
+    { from: '/dashboard/learning/my-results', to: LEARNER_ROUTES.assessments },
+    { from: '/dashboard/learning/courses', to: LEARNER_ROUTES.courses },
+    {
+      from: '/dashboard/learning/courses/:courseId',
+      to: LEARNER_ROUTES.courseProgress,
+    },
+    /*
+      Every in-course activity lands on the course's own progress page
+      rather than on a fabricated `/my/*` activity URL. The unified player
+      (Phase 2 §E.2) owns activity URLs and is not built yet, and sending a
+      three-year-old bookmark to a course outline that names the activity is
+      honest — inventing a player path that may not exist would not be.
+    */
+    {
+      from: '/dashboard/learning/courses/:courseId/learn',
+      to: LEARNER_ROUTES.courseProgress,
+    },
+    {
+      from: '/dashboard/learning/courses/:courseId/learn/:lessonId',
+      to: LEARNER_ROUTES.courseProgress,
+    },
+    {
+      from: '/dashboard/learning/courses/:courseId/quizzes/:quizId',
+      to: LEARNER_ROUTES.courseProgress,
+    },
+    {
+      from: '/dashboard/learning/courses/:courseId/assignments/:assignmentId',
+      to: LEARNER_ROUTES.courseProgress,
+    },
+    {
+      from: '/dashboard/learning/courses/:courseId/live-sessions/:liveSessionId',
+      to: LEARNER_ROUTES.courseProgress,
+    },
+    {
+      from: '/dashboard/learning/courses/:courseId/discussions',
+      to: LEARNER_ROUTES.courseProgress,
+    },
+    {
+      from: '/dashboard/learning/courses/:courseId/discussions/:threadId',
+      to: LEARNER_ROUTES.courseProgress,
+    },
+  ];
+
 /** System paths that exist outside the product modules. */
 export const SYSTEM_ROUTES = {
   forbidden: '/403',
@@ -248,6 +378,7 @@ export const ROUTES = {
   public: PUBLIC_ROUTES,
   auth: AUTH_ROUTES,
   dashboard: DASHBOARD_ROUTES,
+  learner: LEARNER_ROUTES,
   system: SYSTEM_ROUTES,
 } as const;
 
