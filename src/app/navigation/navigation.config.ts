@@ -20,8 +20,6 @@ import {
   Users,
   Palette,
   BookOpen,
-  BookMarked,
-  ClipboardCheck,
   LineChart,
   ClipboardList,
   Image as ImageIcon,
@@ -263,44 +261,16 @@ export function getDashboardNavigation(
       ],
       showDivider: true,
     },
-    {
-      id: 'learning',
-      labelKey: 'navigation:sections.learning',
-      items: [
-        {
-          id: 'my-learning',
-          tenantSurface: true,
-          labelKey: 'navigation:items.myLearning',
-          path: DASHBOARD_ROUTES.myLearning,
-          icon: BookMarked,
-          requiresAuth: true,
-          requiredPermissions: ['student.learning.view'],
-          matchNestedPaths: false,
-        },
-        {
-          // Phase 9 (roadmap ST6) — the student's own outcomes.
-          id: 'my-results',
-          tenantSurface: true,
-          labelKey: 'navigation:items.myResults',
-          path: DASHBOARD_ROUTES.myResults,
-          icon: ClipboardCheck,
-          requiresAuth: true,
-          requiredPermissions: ['student.learning.view'],
-          matchNestedPaths: false,
-        },
-        {
-          id: 'learning-courses',
-          tenantSurface: true,
-          labelKey: 'navigation:items.discoverCourses',
-          path: DASHBOARD_ROUTES.learningCourses,
-          icon: BookOpen,
-          requiresAuth: true,
-          requiredPermissions: ['student.course.view'],
-          matchNestedPaths: true,
-        },
-      ],
-      showDivider: true,
-    },
+    /*
+     * P64 Phase 1 (D2 / AD-12) — the "Learning" section is gone from the
+     * management sidebar. Learning happens on the academy's own website
+     * (`/my-learning` on the academy host), never inside the management
+     * dashboard, and a `learner` principal cannot reach `/dashboard/*` at
+     * all. The route constants survive (`DASHBOARD_ROUTES.myLearning` and
+     * friends) and resolve to `LearnerSurfaceRedirectPage`, so an old
+     * bookmark still lands somewhere useful — but nothing advertises them
+     * to staff any more.
+     */
     {
       id: 'community',
       labelKey: 'navigation:sections.community',

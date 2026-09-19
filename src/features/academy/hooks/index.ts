@@ -25,3 +25,36 @@ export { useOnboardingProgress } from './useOnboardingProgress';
 export type { UseOnboardingProgressResult } from './useOnboardingProgress';
 export { useDeleteAcademy } from './useDeleteAcademy';
 export type { DeleteAcademyVariables } from './useDeleteAcademy';
+// P64 Phase 1 — learner roster, registration policy and invites.
+export { useAcademyStudents } from './useAcademyStudents';
+export type { UseAcademyStudentsOptions } from './useAcademyStudents';
+export { useAcademyStudent } from './useAcademyStudent';
+export type { UseAcademyStudentOptions } from './useAcademyStudent';
+export {
+  useApproveAcademyStudent,
+  useBlockAcademyStudent,
+  useEnrollAcademyStudent,
+  useRejectAcademyStudent,
+  useRevokeRosterEnrollment,
+  useUnblockAcademyStudent,
+  useUpdateRosterEnrollmentExpiry,
+} from './useAcademyStudentMutations';
+export type {
+  BlockStudentVariables,
+  EnrollStudentVariables,
+  EnrollmentActionVariables,
+  RevokeEnrollmentVariables,
+  StudentActionVariables,
+  UpdateEnrollmentExpiryVariables,
+} from './useAcademyStudentMutations';
+export {
+  useAcademyRegistrationPolicy,
+  useUpdateAcademyRegistrationPolicy,
+} from './useAcademyRegistrationPolicy';
+export type { UseAcademyRegistrationPolicyOptions } from './useAcademyRegistrationPolicy';
+export {
+  useAcademyInvites,
+  useCreateAcademyInvite,
+  useRevokeAcademyInvite,
+} from './useAcademyInvites';
+export type { UseAcademyInvitesOptions } from './useAcademyInvites';

@@ -9,6 +9,11 @@ import { Navigate, useLocation } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { useAuth } from '@hooks';
 import { useSubscriptionLifecycleState } from '@features/tenant';
+// From `@utils`, not the `@features/auth` barrel: a guard must not reach
+// into a feature (the cross-feature lint rule), and that barrel
+// statically imports every auth page, which would pull them into the
+// guard's chunk for every route in the product.
+import { isLearnerPrincipal } from '@utils';
 import {
   AUTH_ROUTES,
   AUTHENTICATED_ENTRY_ROUTE,
@@ -43,6 +48,26 @@ export interface RouteGuardProps {
    */
   readonly requiresEntitlement?: boolean;
 
+  /**
+   * P64 Phase 1 (AD-4 / AD-5, finding F1) — this route belongs to the
+   * MANAGEMENT surface, which a `learner` principal never gets to see.
+   *
+   * Set once, at the `/dashboard` subtree root, so every nested route —
+   * `/dashboard/platform`, `/dashboard/organization/create`,
+   * `/dashboard/settings`, a deep link typed by hand — is covered without
+   * each declaring it. A learner is not 403'd (they did nothing wrong)
+   * but sent to `/academy-chooser`, which lists the academy websites they
+   * actually learn on. `staff`, `platform_owner` and `unaffiliated` (a
+   * new account that has not created an organization yet) all pass.
+   *
+   * THIS IS NOT THE CONTROL. The backend refuses a learner a management
+   * session at sign-in and refuses learner tokens on every management
+   * controller (`ManagementSurfaceGuard`); this only stops the product
+   * from rendering a workspace the API would refuse anyway — the same
+   * relationship `requiresEntitlement` has to the entitlement interceptor.
+   */
+  readonly requireManagementPrincipal?: boolean;
+
   /** Fallback shown while restoring the session. */
   readonly pendingFallback?: ReactNode;
 }
@@ -53,6 +78,7 @@ export function RouteGuard({
   requiredPermissions = [],
   requiredRoles = [],
   requiresEntitlement = false,
+  requireManagementPrincipal = false,
   pendingFallback = null,
 }: RouteGuardProps): JSX.Element {
   const location = useLocation();
@@ -79,6 +105,14 @@ export function RouteGuard({
   // redirect to the authenticated entry point.
   if (requireAuthentication === false && isAuthenticated) {
     return <Navigate to={AUTHENTICATED_ENTRY_ROUTE} replace />;
+  }
+
+  // Management surface (P64 Phase 1) — see `requireManagementPrincipal`.
+  // Evaluated before permissions/roles on purpose: a learner's own base
+  // `student.*` permissions would otherwise let them through a
+  // permission-gated learner route inside the dashboard.
+  if (requireManagementPrincipal && isAuthenticated && isLearnerPrincipal(user)) {
+    return <Navigate to={AUTH_ROUTES.academyChooser} replace />;
   }
 
   // Check required permissions.

@@ -8,6 +8,12 @@
  * the Course domain) rather than trust any id the frontend supplies; this
  * service never accepts an instructor id as a parameter.
  *
+ * P64 Phase 1 reframes half of that: the per-course REVIEW reads and the
+ * grading write are no longer instructor-only and now target the
+ * `review/*` prefix (see `REVIEW_RESOURCE`), which an academy Owner or
+ * Manager is authorized for without teaching the course. The two
+ * "what am I teaching" endpoints stay on `instructor/*`.
+ *
  * Deliberately NOT duplicated here: quiz/assignment *definitions* are
  * identical regardless of viewer role, so pages read them straight from the
  * existing `QuizService`/`AssignmentService`. Only the instructor-specific
@@ -15,7 +21,7 @@
  */
 import { BaseService } from '@services';
 import type { ReadOptions, WriteOptions } from '@services';
-import { toCollectionParams } from '@api';
+import { resourcePath, toCollectionParams } from '@api';
 import type {
   AssignmentSubmissionReview,
   CollectionQuery,
@@ -29,8 +35,39 @@ import type {
   TeachingCourse,
 } from '@types';
 
+/**
+ * P64 Phase 1 (D-RBAC) — the per-course REVIEW prefix.
+ *
+ * Reviewing a course's work is no longer an instructor-only capability:
+ * `assertCanReviewCourse` admits the course's instructors AND the owning
+ * academy's Client Owner / Manager, and the endpoints were renamed
+ * `review/*` to say so (`@Controller(['instructor', 'review'])` —
+ * `instructor/*` survives as an alias for exactly one release).
+ *
+ * The rename matters beyond tidiness: an Owner or Manager calling
+ * `instructor/courses/:id/...` reads as the product claiming they are an
+ * instructor of that course, and the alias is scheduled for removal. Only
+ * the endpoints that answer "about THIS course's work" move — see
+ * `resource` below for the two that stay.
+ */
+const REVIEW_RESOURCE = 'review';
+
 export class InstructorService extends BaseService {
+  /**
+   * `instructor/*` — deliberately NOT `review`. The two endpoints left on
+   * this prefix answer "what am *I* teaching": `instructor/dashboard` and
+   * `instructor/courses` (the teaching list) return only the caller's own
+   * assigned courses, and that is true under either prefix. An Owner who
+   * teaches nothing gets an empty teaching list, which is correct — it is
+   * not the academy's course list, and pointing it at `review/courses`
+   * would not change what it returns.
+   */
   protected readonly resource = 'instructor';
+
+  /** `review/<segments>` — the per-course review prefix (see `REVIEW_RESOURCE`). */
+  private reviewPath(...segments: readonly string[]): string {
+    return resourcePath(REVIEW_RESOURCE, ...segments);
+  }
 
   /** Retrieves the instructor dashboard's aggregated teaching metrics. */
   async getDashboard(
@@ -62,7 +99,7 @@ export class InstructorService extends BaseService {
     options?: ReadOptions
   ): Promise<InstructorCourseOverview> {
     return this.client.get<InstructorCourseOverview>(
-      this.path('courses', courseId),
+      this.reviewPath('courses', courseId),
       options
     );
   }
@@ -74,7 +111,7 @@ export class InstructorService extends BaseService {
     options?: ReadOptions
   ): Promise<PaginatedResult<InstructorStudent>> {
     return this.client.get<PaginatedResult<InstructorStudent>>(
-      this.path('courses', courseId, 'students'),
+      this.reviewPath('courses', courseId, 'students'),
       {
         ...options,
         params: { ...toCollectionParams(query), ...options?.params },
@@ -89,7 +126,7 @@ export class InstructorService extends BaseService {
     options?: ReadOptions
   ): Promise<InstructorStudentProgress> {
     return this.client.get<InstructorStudentProgress>(
-      this.path('courses', courseId, 'students', studentId),
+      this.reviewPath('courses', courseId, 'students', studentId),
       options
     );
   }
@@ -102,7 +139,7 @@ export class InstructorService extends BaseService {
     options?: ReadOptions
   ): Promise<PaginatedResult<QuizAttemptSummary>> {
     return this.client.get<PaginatedResult<QuizAttemptSummary>>(
-      this.path('courses', courseId, 'quizzes', quizId, 'attempts'),
+      this.reviewPath('courses', courseId, 'quizzes', quizId, 'attempts'),
       {
         ...options,
         params: { ...toCollectionParams(query), ...options?.params },
@@ -118,7 +155,7 @@ export class InstructorService extends BaseService {
     options?: ReadOptions
   ): Promise<PaginatedResult<AssignmentSubmissionReview>> {
     return this.client.get<PaginatedResult<AssignmentSubmissionReview>>(
-      this.path(
+      this.reviewPath(
         'courses',
         courseId,
         'assignments',
@@ -140,7 +177,7 @@ export class InstructorService extends BaseService {
     options?: ReadOptions
   ): Promise<AssignmentSubmissionReview> {
     return this.client.get<AssignmentSubmissionReview>(
-      this.path(
+      this.reviewPath(
         'courses',
         courseId,
         'assignments',
@@ -161,7 +198,7 @@ export class InstructorService extends BaseService {
     options?: WriteOptions
   ): Promise<AssignmentSubmissionReview> {
     return this.client.post<AssignmentSubmissionReview, GradeSubmissionPayload>(
-      this.path(
+      this.reviewPath(
         'courses',
         courseId,
         'assignments',

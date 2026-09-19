@@ -43,7 +43,8 @@
       "assessments": "التقييمات",
       "announcements": "الإعلانات",
       "discussions": "النقاشات"
-    }
+    },
+    "editCurriculum": "تحرير المنهج"
   },
   "students": {
     "title": "الطلاب",

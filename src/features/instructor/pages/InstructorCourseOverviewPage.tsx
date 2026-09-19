@@ -12,6 +12,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   ClipboardCheck,
   FileClock,
+  Layers,
   MessageSquare,
   Megaphone,
   Users,
@@ -97,10 +98,45 @@ export default function InstructorCourseOverviewPage(): JSX.Element {
         title={overview.title}
         titleKey="instructor:overview.title"
         actions={
-          <StatusBadge
-            labelKey={getCourseStatusLabelKey(overview.status)}
-            tone={getCourseStatusTone(overview.status)}
-          />
+          <div className="flex flex-wrap items-center gap-2">
+            {/*
+              P64 Phase 1 — an assigned instructor may now edit the
+              curriculum of the courses they teach
+              (`assertCanAuthorCourseContent` accepts course instructors;
+              the same rule holds in RLS). The editor itself is the
+              academy's existing curriculum builder — there is no second,
+              instructor-flavoured builder, and there should not be: one
+              course has one curriculum.
+
+              That builder's route is academy-scoped
+              (`/dashboard/academy/:academyId/courses/:courseId/builder`),
+              so the link needs the OWNING academy's id. The backend
+              contract supplies it on the overview; when an older response
+              omits it there is no honest way to construct the URL, so no
+              link is rendered rather than one that would land on a
+              404 — see `InstructorCourseOverview.academyId`.
+            */}
+            {overview.academyId && courseId ? (
+              <Button
+                variant="outline"
+                onClick={() =>
+                  navigate(
+                    buildPath(DASHBOARD_ROUTES.academyCourseBuilder, {
+                      academyId: overview.academyId as string,
+                      courseId,
+                    })
+                  )
+                }
+              >
+                <Layers className="size-4" strokeWidth={2} aria-hidden />
+                {t('instructor:overview.editCurriculum')}
+              </Button>
+            ) : null}
+            <StatusBadge
+              labelKey={getCourseStatusLabelKey(overview.status)}
+              tone={getCourseStatusTone(overview.status)}
+            />
+          </div>
         }
       />
 

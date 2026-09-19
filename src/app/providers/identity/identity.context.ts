@@ -7,6 +7,7 @@
 import { createContext } from 'react';
 import type {
   TwoFactorChallenge,
+  TwoFactorVerifyInput,
   Session,
   CurrentUser,
   OrganizationContext,
@@ -42,12 +43,8 @@ export interface IdentityContextValue {
     credentials: SignInCredentials
   ) => Promise<TwoFactorChallenge | undefined>;
 
-  /** Completes a sign-in that stopped for a second factor. */
-  readonly completeTwoFactor: (input: {
-    challengeId: string;
-    token?: string;
-    recoveryCode?: string;
-  }) => Promise<void>;
+  /** Completes a sign-in that stopped for a second factor (carrying the original sign-in's surface). */
+  readonly completeTwoFactor: (input: TwoFactorVerifyInput) => Promise<void>;
 
   /** Signs out the current user. */
   readonly signOut: () => Promise<void>;

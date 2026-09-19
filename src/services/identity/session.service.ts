@@ -18,6 +18,7 @@ import type {
   TokenMetadata,
   OrganizationContext,
   TwoFactorChallenge,
+  TwoFactorVerifyInput,
 } from '@types';
 
 export class SessionService {
@@ -68,11 +69,7 @@ export class SessionService {
    * created via 2FA is stored and shaped identically — there is no second
    * notion of "logged in" to keep in sync.
    */
-  public async completeTwoFactor(input: {
-    readonly challengeId: string;
-    readonly token?: string;
-    readonly recoveryCode?: string;
-  }): Promise<Session> {
+  public async completeTwoFactor(input: TwoFactorVerifyInput): Promise<Session> {
     const response = await twoFactorService.verifyChallenge(input);
     return this.establishSession(response);
   }

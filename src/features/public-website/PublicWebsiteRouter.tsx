@@ -31,6 +31,9 @@ import { PublicWebsiteRobotsRoute } from './components/PublicWebsiteRobotsRoute'
 import { PublicWebsiteSitemapRoute } from './components/PublicWebsiteSitemapRoute';
 import { PublicWebsiteSignInPage } from './components/PublicWebsiteSignInPage';
 import { PublicWebsiteSignUpPage } from './components/PublicWebsiteSignUpPage';
+import { PublicWebsiteForgotPasswordPage } from './components/PublicWebsiteForgotPasswordPage';
+import { PublicWebsiteResetPasswordPage } from './components/PublicWebsiteResetPasswordPage';
+import { PublicWebsiteVerifyEmailPage } from './components/PublicWebsiteVerifyEmailPage';
 import { PublicWebsiteLearningRoute } from './components/PublicWebsiteLearningRoute';
 import { usePublicWebsiteData } from './hooks/usePublicWebsiteData';
 import type { PublicWebsiteContext } from './utils/hostname-resolution.utils';
@@ -159,6 +162,41 @@ function PublicWebsiteLocaleRoutes({
         path="sign-up"
         element={
           <PublicWebsiteSignUpPage lookupKey={lookupKey} locale={locale} />
+        }
+      />
+
+      {/* P64 Phase 1 — the rest of the account-recovery/verification set,
+          on the academy host itself. Atlas's own `/auth/*` tree is not
+          mounted here at all (`AppRouter` swaps the entire route tree for
+          an academy hostname), so before this a "Forgot password?" click
+          and every emailed reset/verification link on an academy domain
+          fell through to the CMS catch-all and rendered "page not found".
+          Mounted inside `PublicWebsiteLocaleRoutes`, so each exists in
+          both the `/` (English) and `/ar/` trees, and — like sign-in and
+          sign-up — ahead of the data-driven catch-all so a Custom Page
+          sharing one of these slugs can never shadow account recovery. */}
+      <Route
+        path="forgot-password"
+        element={
+          <PublicWebsiteForgotPasswordPage
+            lookupKey={lookupKey}
+            locale={locale}
+          />
+        }
+      />
+      <Route
+        path="reset-password"
+        element={
+          <PublicWebsiteResetPasswordPage
+            lookupKey={lookupKey}
+            locale={locale}
+          />
+        }
+      />
+      <Route
+        path="verify-email"
+        element={
+          <PublicWebsiteVerifyEmailPage lookupKey={lookupKey} locale={locale} />
         }
       />
 

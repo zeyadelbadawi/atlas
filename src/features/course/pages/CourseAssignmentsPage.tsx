@@ -9,8 +9,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDateFormatter } from '@hooks';
-import { useParams } from 'react-router-dom';
-import { MoreHorizontal, Plus } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { FileCheck2, MoreHorizontal, Plus } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { SectionTabs } from '@components/navigation';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
@@ -53,6 +53,7 @@ type DialogState =
 export default function CourseAssignmentsPage(): JSX.Element {
   const fmt = useDateFormatter();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { academyId, courseId } = useParams<{
     academyId: string;
     courseId: string;
@@ -133,6 +134,26 @@ export default function CourseAssignmentsPage(): JSX.Element {
         variant: 'destructive',
       });
     }
+  };
+
+  /*
+    P64 Phase 1 — the way an Owner/Manager reaches an assignment's
+    SUBMISSIONS (and from there, grading). Same reasoning as the quiz
+    attempts link on `CourseQuizzesPage`: `assertCanReviewCourse` admits
+    the academy's owner and managers, the review pages already existed,
+    and the route guard's `instructor.submission.view` is already carried
+    by both `ORGANIZATION_OWNER_PERMISSIONS` and
+    `ORGANIZATION_MANAGER_PERMISSIONS` — no permission constant needed
+    widening, only a door.
+  */
+  const goToSubmissions = (assignmentId: string) => {
+    if (!courseId) return;
+    navigate(
+      buildPath(DASHBOARD_ROUTES.instructorSubmissions, {
+        courseId,
+        assignmentId,
+      })
+    );
   };
 
   const handleDelete = async (assignment: Assignment) => {
@@ -252,6 +273,12 @@ export default function CourseAssignmentsPage(): JSX.Element {
                         onClick={() => setDialog({ mode: 'edit', assignment })}
                       >
                         {t('course:assignmentAuthoring.menu.edit')}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => goToSubmissions(assignment.id)}
+                      >
+                        <FileCheck2 className="size-4" aria-hidden />
+                        {t('course:assignmentAuthoring.menu.reviewSubmissions')}
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="text-destructive focus:text-destructive"

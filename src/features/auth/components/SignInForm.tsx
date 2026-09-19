@@ -16,6 +16,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AUTH_ROUTES } from '@app/routes/route-paths';
+import { toErrorsNamespaceKey } from '@utils';
 import type { ApiError } from '@api';
 
 const signInSchema = z.object({
@@ -37,12 +38,20 @@ export interface SignInFormProps {
   ) => Promise<void>;
   readonly isLoading: boolean;
   readonly error: ApiError | null;
+  /**
+   * P64 Phase 1 — where "Forgot password?" goes. Defaults to Atlas's own
+   * `/auth/forgot-password`; an academy website passes its own on-site
+   * `/forgot-password` (locale-prefixed), since the `/auth/*` tree is not
+   * mounted on an academy host at all.
+   */
+  readonly forgotPasswordHref?: string;
 }
 
 export function SignInForm({
   onSubmit,
   isLoading,
   error,
+  forgotPasswordHref = AUTH_ROUTES.forgotPassword,
 }: SignInFormProps): JSX.Element {
   const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
@@ -69,7 +78,13 @@ export function SignInForm({
       {error ? (
         <Alert variant="destructive">
           <AlertDescription>
-            {t(error.messageKey || 'auth:signIn.errors.invalidCredentials')}
+            {/* Backend keys arrive as `errors.auth.x`; the bundle is the
+                `errors:` namespace, so the prefix is remapped before `t()`. */}
+            {t(
+              error.messageKey
+                ? toErrorsNamespaceKey(error.messageKey)
+                : 'auth:signIn.errors.invalidCredentials'
+            )}
           </AlertDescription>
         </Alert>
       ) : null}
@@ -151,7 +166,7 @@ export function SignInForm({
           </div>
 
           <Link
-            to={AUTH_ROUTES.forgotPassword}
+            to={forgotPasswordHref}
             className="text-sm font-medium text-primary hover:underline"
             tabIndex={isLoading ? -1 : 0}
           >

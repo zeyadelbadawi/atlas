@@ -133,13 +133,18 @@ export interface NormalizedApiError {
   /**
    * Structured context for errors that need more than a message to recover
    * from — mirrors the backend's `NormalizedApiError.details`, which
-   * forwards only what an exception opted into and only primitives.
+   * forwards only what an exception opted into.
    *
    * The first consumer is the save-conflict response, which carries the
    * current version so an editor can re-base instead of being told it lost
-   * and left with nowhere to go.
+   * and left with nowhere to go. P64 Phase 1 widened this from primitives
+   * to any JSON value: the management sign-in refusal
+   * (`errors.auth.studentUseAcademySignIn`) carries the learner's academies
+   * as an ARRAY of `{ academyId, name, slug, host }`, which is the very
+   * thing the refusal screen has to render. Consumers still narrow every
+   * value they read (`typeof x === 'number'`), so nothing trusts the shape.
    */
-  readonly details?: Readonly<Record<string, string | number | boolean>>;
+  readonly details?: Readonly<Record<string, JsonValue>>;
   readonly requestId?: string;
   /** True when repeating the same request may succeed. */
   readonly retryable: boolean;

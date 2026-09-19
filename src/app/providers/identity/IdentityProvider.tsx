@@ -9,7 +9,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { isTwoFactorChallenge } from '@types';
 import type { ReactNode } from 'react';
 import { sessionService } from '@services/identity';
-import type { Session, SignInCredentials } from '@types';
+import type {
+  Session,
+  SignInCredentials,
+  TwoFactorVerifyInput,
+} from '@types';
 import { IdentityContext } from './identity.context';
 import type { IdentityContextValue } from './identity.context';
 import { STORAGE_KEYS } from '@constants';
@@ -177,17 +181,10 @@ export function AtlasIdentityProvider({
   }, []);
 
   /** Completes a challenged sign-in. Only here does the session become real. */
-  const completeTwoFactor = useCallback(
-    async (input: {
-      challengeId: string;
-      token?: string;
-      recoveryCode?: string;
-    }) => {
-      const newSession = await sessionService.completeTwoFactor(input);
-      setSession(newSession);
-    },
-    []
-  );
+  const completeTwoFactor = useCallback(async (input: TwoFactorVerifyInput) => {
+    const newSession = await sessionService.completeTwoFactor(input);
+    setSession(newSession);
+  }, []);
 
   const signOut = useCallback(async () => {
     const unauthenticated = await sessionService.signOut();

@@ -46,7 +46,12 @@
       "completed": "Completed",
       "available": "Available",
       "unavailable": "Unavailable"
-    }
+    },
+    "pendingApproval": {
+      "title": "Your membership is awaiting approval",
+      "description": "This academy reviews new students before granting access. You will be able to open your courses as soon as it is approved."
+    },
+    "accessEndedAction": "Access ended"
   },
   "errors": {
     "loadFailed": "We couldn't load this course.",

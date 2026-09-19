@@ -9,6 +9,7 @@ export * from './class-name.utils';
 export * from './country.utils';
 export * from './date.utils';
 export * from './number.utils';
+export * from './principal.utils';
 export * from './function.utils';
 export * from './clipboard.utils';
 export * from './file.utils';

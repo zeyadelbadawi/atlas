@@ -39,6 +39,21 @@ export function getAcademyStatusTone(status: AcademyStatus): StatusTone {
   }
 }
 
+/**
+ * Translation key for an academy member's role.
+ *
+ * `administrator` (P64 Phase 1, D9) is never shown by that name: it is a
+ * legacy tier no endpoint grants any more, and the authority it carries
+ * is exactly the managing tier's (`MANAGING_ROLES` server-side), so a row
+ * still holding it is labelled Manager rather than exposing a role the
+ * product no longer has a concept of. Every label in the feature goes
+ * through here so the hidden role cannot resurface one table at a time.
+ */
+export function getAcademyMemberRoleLabelKey(role: AcademyMemberRole): string {
+  const shown: AcademyMemberRole = role === 'administrator' ? 'manager' : role;
+  return `academy:members.roles.${shown}`;
+}
+
 /** Maps an academy member's role to a status tone. */
 export function getAcademyMemberRoleTone(role: AcademyMemberRole): StatusTone {
   switch (role) {

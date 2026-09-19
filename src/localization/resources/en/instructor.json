@@ -43,7 +43,8 @@
       "assessments": "Assessments",
       "announcements": "Announcements",
       "discussions": "Discussions"
-    }
+    },
+    "editCurriculum": "Edit curriculum"
   },
   "students": {
     "title": "Students",

@@ -22,12 +22,23 @@
 import { useState, useCallback } from 'react';
 import { useAuth } from './useAuth';
 import type { ApiError } from '@api';
-import type { TwoFactorChallenge } from '@types';
+import type {
+  SignInSurface,
+  TwoFactorChallenge,
+  TwoFactorVerifyInput,
+} from '@types';
 
 export interface SignInCredentials {
   readonly email: string;
   readonly password: string;
   readonly rememberMe: boolean;
+  /**
+   * P64 Phase 1 (AD-5) — the surface this sign-in is for. Every page sets
+   * it explicitly: `management` for Atlas's own `/auth/sign-in`, `academy`
+   * (with the resolved `academyId`) for an academy website's `/sign-in`.
+   */
+  readonly surface?: SignInSurface;
+  readonly academyId?: string;
 }
 
 export interface UseSignInResult {
@@ -40,11 +51,7 @@ export interface UseSignInResult {
     credentials: SignInCredentials
   ) => Promise<TwoFactorChallenge | undefined>;
   /** Completes a challenged sign-in. Only this establishes the session. */
-  readonly completeTwoFactor: (input: {
-    challengeId: string;
-    token?: string;
-    recoveryCode?: string;
-  }) => Promise<void>;
+  readonly completeTwoFactor: (input: TwoFactorVerifyInput) => Promise<void>;
   readonly isLoading: boolean;
   readonly error: ApiError | null;
   readonly clearError: () => void;
@@ -80,11 +87,7 @@ export function useSignIn(): UseSignInResult {
   );
 
   const completeTwoFactor = useCallback(
-    async (input: {
-      challengeId: string;
-      token?: string;
-      recoveryCode?: string;
-    }) => {
+    async (input: TwoFactorVerifyInput) => {
       setIsLoading(true);
       setError(null);
 

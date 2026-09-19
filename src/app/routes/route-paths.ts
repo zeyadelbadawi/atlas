@@ -28,6 +28,14 @@ export const AUTH_ROUTES = {
   register: '/auth/register',
   forgotPassword: '/auth/forgot-password',
   resetPassword: '/auth/reset-password',
+  /**
+   * P64 Phase 1 (AD-5 / AD-12) — where a `learner` principal holding a
+   * platform-host session is sent instead of the dashboard. Rendered in the
+   * authentication layout (hence this group) but deliberately outside the
+   * `/auth` subtree: it is a signed-in page, and `/auth`'s index redirect
+   * and sign-in effects assume the opposite.
+   */
+  academyChooser: '/academy-chooser',
 } as const;
 
 /** Paths rendered inside the authenticated dashboard layout. */

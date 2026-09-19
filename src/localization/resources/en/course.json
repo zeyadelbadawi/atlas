@@ -299,7 +299,8 @@
     "dueLabel": "Due {{date}}",
     "menu": {
       "edit": "Edit",
-      "delete": "Delete"
+      "delete": "Delete",
+      "reviewSubmissions": "Review submissions"
     },
     "dialog": {
       "createTitle": "Add Assignment",
@@ -339,7 +340,8 @@
     "questionCount_other": "{{count}} questions",
     "menu": {
       "edit": "Edit",
-      "delete": "Delete"
+      "delete": "Delete",
+      "reviewAttempts": "Review attempts"
     },
     "created": "Quiz created",
     "updated": "Quiz updated",
