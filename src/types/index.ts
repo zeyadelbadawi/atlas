@@ -55,3 +55,10 @@ export * from './media.types';
 export * from './dashboard.types';
 export * from './student-results.types';
 export * from './student-analytics.types';
+// P64 Phase 2 — the learner dashboard and unified player wire contracts.
+// Each file mirrors one backend contract file 1:1; see their own doc
+// comments for why they are transcribed rather than widened.
+export * from './learner-overview.types';
+export * from './course-sequence.types';
+export * from './lesson-content.types';
+export * from './course-order.types';

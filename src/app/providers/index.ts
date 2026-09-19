@@ -19,6 +19,11 @@ export { PlatformContext } from './platform/platform.context';
 export type { PlatformContextValue } from './platform/platform.context';
 export { AtlasQueryProvider } from './query/QueryProvider';
 export { AtlasToastProvider } from './toast/ToastProvider';
+// Exported like `IdentityContext`, `ThemeContext` and the rest: a test (or
+// any host that already owns notification delivery) needs to supply this
+// context directly, and `AtlasToastProvider` itself depends on the theme
+// and localization providers, so it cannot stand alone.
+export { ToastContext } from './toast/toast.context';
 export { useToast } from './toast/useToast';
 export type {
   ToastContextValue,

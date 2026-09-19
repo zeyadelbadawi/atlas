@@ -22,11 +22,17 @@ import { DASHBOARD_ROUTES } from './route-paths';
  * either bounce them right back to where they came from or forward them into
  * a different page than the one implied by the button. Skipped in favour of
  * their own next ancestor.
+ *
+ * Empty since P64 Phase 2 (D2): its only two entries were
+ * `/dashboard/learning` and `/dashboard/learning/courses/:courseId/learn`,
+ * and the learner routes are gone from `DASHBOARD_ROUTES` altogether — a
+ * path that is not in the registry is never matched as an ancestor in the
+ * first place, so listing the retired ones here would be dead weight. The
+ * mechanism stays because the next redirect-only dashboard route will need
+ * it, and finding that out by shipping a "back" button that bounces the
+ * user straight forward again is worse than an empty set.
  */
-const NON_LANDABLE_ROUTES = new Set<string>([
-  DASHBOARD_ROUTES.learning, // redirects to `myLearning`
-  DASHBOARD_ROUTES.learningCourseLearn, // resolves to a lesson and redirects there
-]);
+const NON_LANDABLE_ROUTES = new Set<string>();
 
 const ROUTE_TEMPLATES = Object.values(DASHBOARD_ROUTES) as string[];
 

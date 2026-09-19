@@ -58,7 +58,16 @@
     "subscriptionInactive": "Your subscription isn't currently active. Renew or upgrade your plan to continue.",
     "noPlanAvailable": "No plan is currently available. Please contact support.",
     "planNotTrialEligible": "This plan isn't available as a free trial. You can subscribe to it directly, or start a trial on a plan that offers one.",
-    "trialsDisabled": "Free trials aren't available right now."
+    "trialsDisabled": "Free trials aren't available right now.",
+    "videoStorageMinutesExceeded": "Adding this video would take the academy past its plan's video minutes. Upgrade the plan, or remove videos that are no longer needed, to make room."
+  },
+  "learning": {
+    "deviceLimit": "You are already learning on the maximum number of devices allowed. Open Devices in your learner dashboard, remove one you no longer use, then try again.",
+    "grantRateLimited": "You are opening content faster than we can check your access. Wait a moment, then try again.",
+    "accessEnded": "Your access to this course has ended, so its content can no longer be opened. Contact the academy if you think this is a mistake.",
+    "lessonScheduled": "This lesson has not opened yet. It becomes available on the date the academy scheduled for it.",
+    "sessionConflict": "You are already learning on another device. Continue here to end that session, or carry on where you left off.",
+    "contentUnavailable": "This content cannot be opened right now. Reload the page, and contact the academy if it keeps happening."
   },
   "provisioning": {
     "stepFailed": "Something went wrong while setting up your Academy. Please try again or contact support if the problem continues."

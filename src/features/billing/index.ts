@@ -10,8 +10,13 @@
  * scaffold with a hardcoded "Active" plan badge, a non-functional
  * "Upgrade" button, and permanently-empty payment method/history
  * sections, never wired to any real data. It duplicated (and was
- * misleadingly separate from) the real Tenant billing surface above. No
- * feature currently imports this barrel; it is kept for the next page
- * this feature adds.
+ * misleadingly separate from) the real Tenant billing surface above.
+ *
+ * `formatMoney` is published here because a second feature now needs it:
+ * P64 Phase 2's learner Purchases page renders course-order receipts, and
+ * `money.utils.ts` is deliberately "the ONLY place `amountMinorUnits` is
+ * converted to a display string". Reaching it through this barrel keeps
+ * that true; copying the divisor into `features/learner` would make it
+ * false the first time a currency needed a different minor-unit exponent.
  */
-export {};
+export { formatMoney } from './utils/money.utils';

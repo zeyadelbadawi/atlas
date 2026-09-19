@@ -53,14 +53,31 @@ import {
 import { useCourse } from '../hooks';
 import { QuizQuestionsEditor } from '../components/QuizQuestionsEditor';
 
-const EMPTY_VALUES: QuizAuthoringFormData = {
-  title: '',
-  description: '',
-  status: 'draft',
-  passingScore: undefined,
-  maxAttempts: undefined,
-  questions: [blankQuizQuestion()],
-};
+/**
+ * The blank quiz a "create" visit starts from.
+ *
+ * A FUNCTION, NOT A MODULE-SCOPE CONSTANT, and deliberately so. Building
+ * it at module scope meant calling `blankQuizQuestion()` — imported from
+ * `@features/learning` — while this module was being evaluated, and this
+ * module is reachable from that same barrel (`@features/learning` →
+ * its pages → `@features/course` → here). In an import cycle the binding
+ * that is still initialising reads as `undefined`, so the call threw
+ * `blankQuizQuestion is not a function` depending only on which module
+ * the bundler happened to enter first. Deferring the call to render time
+ * removes the cycle's only side effect; nothing else about the default
+ * changes, and a fresh object per visit is what a form default should be
+ * anyway.
+ */
+function emptyQuizValues(): QuizAuthoringFormData {
+  return {
+    title: '',
+    description: '',
+    status: 'draft',
+    passingScore: undefined,
+    maxAttempts: undefined,
+    questions: [blankQuizQuestion()],
+  };
+}
 
 export default function CourseQuizEditorPage(): JSX.Element {
   const { t } = useTranslation();
@@ -105,7 +122,7 @@ export default function CourseQuizEditorPage(): JSX.Element {
         }
       : isEditMode
         ? undefined
-        : EMPTY_VALUES,
+        : emptyQuizValues(),
   });
 
   // Warns before this editor is left with unsaved work — both on

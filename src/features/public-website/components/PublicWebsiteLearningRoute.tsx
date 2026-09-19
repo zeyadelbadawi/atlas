@@ -1,10 +1,10 @@
 /**
  * Public Website Learning Route.
  *
- * The shared shell every Academy-website-embedded Student Learning route
- * (`/my-learning`, `/my-learning/courses/:courseId`, `.../learn`,
- * `.../learn/:lessonId`, `.../quizzes/:quizId`, `.../assignments/:id`,
- * `/my-account`) mounts through — matching `PublicWebsiteSignInPage`'s own
+ * The shared shell every Academy-website-embedded learner route
+ * (`/my/*` — the learner dashboard, P64 Phase 2 §E.1 — plus the player
+ * routes still at `/my-learning/courses/:courseId/...` until §E.2 moves
+ * them) mounts through — matching `PublicWebsiteSignInPage`'s own
  * precedent exactly (fetch this Academy's real website data, render the
  * real `WebsiteChrome`, reuse the real session), but for an AUTHENTICATED-
  * ONLY surface: an unauthenticated visitor is redirected to this Academy's
@@ -39,6 +39,7 @@ import {
   usePublicWebsiteDocumentDirection,
 } from '@features/website';
 import { LearningPathsProvider, type LearningPaths } from '@features/learning';
+import { LEARNER_ROUTES } from '@app/routes/route-paths';
 import { usePublicWebsiteData } from '../hooks/usePublicWebsiteData';
 import { PublicWebsiteStatus } from './PublicWebsiteStatus';
 import {
@@ -52,6 +53,14 @@ export interface PublicWebsiteLearningRouteProps {
   readonly locale: PublicWebsiteLocale;
   readonly children: (context: {
     readonly academyId: string;
+    /**
+     * The same locale- and dev-preview-aware path builder this file uses
+     * for its own redirects and `LearningPaths` — handed down so an
+     * embedded route tree (`LearnerRouter`, P64 Phase 2) builds links the
+     * one correct way instead of rebuilding the `/ar` prefix locally, the
+     * bug class `usePublicWebsiteLinkRenderer` documents at length.
+     */
+    readonly buildHref: (path: string) => string;
   }) => React.ReactNode;
 }
 
@@ -119,7 +128,7 @@ export function PublicWebsiteLearningRoute({
         onSignOut: () => void signOut(),
         // Bare path — `linkRenderer` (via `WebsiteHeader`) applies the
         // locale prefix itself; pre-applying it here too would double it.
-        myLearningHref: '/my-learning',
+        myLearningHref: LEARNER_ROUTES.root,
       }
     : undefined;
 
@@ -130,7 +139,10 @@ export function PublicWebsiteLearningRoute({
   };
 
   const websiteLearningPaths: LearningPaths = {
-    myLearning: () => buildHref('/my-learning'),
+    // P64 Phase 2 (D2) — "My Learning" is the learner dashboard's own
+    // course list now. `/my-learning` still answers (it redirects), but
+    // the product's own links should not spend a redirect to get there.
+    myLearning: () => buildHref(LEARNER_ROUTES.courses),
     courses: () => buildHref('/courses'),
     courseDetail: (courseId) => buildHref(`/my-learning/courses/${courseId}`),
     courseLearn: (courseId) =>
@@ -164,7 +176,7 @@ export function PublicWebsiteLearningRoute({
     >
       <LearningPathsProvider paths={websiteLearningPaths}>
         <WebsiteBrandBridge>
-          {children({ academyId: academy.academyId })}
+          {children({ academyId: academy.academyId, buildHref })}
         </WebsiteBrandBridge>
       </LearningPathsProvider>
     </WebsiteChrome>

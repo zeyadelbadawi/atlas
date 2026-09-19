@@ -27,7 +27,7 @@ export interface AcademyLinkListItem {
 
 export interface AcademyLinkListProps {
   readonly academies: readonly AcademyLinkListItem[];
-  /** The path on the academy host every link points at, e.g. `/sign-in` or `/my-learning`. */
+  /** The path on the academy host every link points at, e.g. `/sign-in` or `/my`. */
   readonly targetPath: string;
   /** Renders a single academy as the one prominent action instead of a list row. */
   readonly emphasizeSingle?: boolean;

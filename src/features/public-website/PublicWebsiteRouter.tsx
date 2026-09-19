@@ -35,7 +35,9 @@ import { PublicWebsiteForgotPasswordPage } from './components/PublicWebsiteForgo
 import { PublicWebsiteResetPasswordPage } from './components/PublicWebsiteResetPasswordPage';
 import { PublicWebsiteVerifyEmailPage } from './components/PublicWebsiteVerifyEmailPage';
 import { PublicWebsiteLearningRoute } from './components/PublicWebsiteLearningRoute';
+import { PublicWebsiteRedirect } from './components/PublicWebsiteRedirect';
 import { usePublicWebsiteData } from './hooks/usePublicWebsiteData';
+import { RETIRED_ACADEMY_LEARNER_ROUTES } from '@app/routes/route-paths';
 import type { PublicWebsiteContext } from './utils/hostname-resolution.utils';
 import {
   probeHostAnswers,
@@ -45,14 +47,17 @@ import { ENV } from '@config';
 import type { PublicWebsiteLocale } from '@types';
 
 // The Student Learning experience, reused unmodified from
-// `@features/learning`/`@features/profile` — see
-// `PublicWebsiteLearningRoute`'s own doc comment for how these render
-// inside this Academy's own branded chrome instead of the internal
-// dashboard shell. Lazy so a visitor who never signs in never downloads
-// this code.
-const StudentMyLearningPage = lazy(
-  () => import('@features/learning/pages/StudentMyLearningPage')
-);
+// `@features/learning` — see `PublicWebsiteLearningRoute`'s own doc
+// comment for how these render inside this Academy's own branded chrome
+// instead of the internal dashboard shell. Lazy so a visitor who never
+// signs in never downloads this code.
+//
+// P64 Phase 2 §E.1 — what is left here is the PLAYER (course details, the
+// lesson/quiz/assignment activities), which §E.2 moves on its own
+// schedule. The two pages that were the learner's dashboard —
+// `StudentMyLearningPage` at `/my-learning` and the shared `ProfilePage`
+// at `/my-account` — are gone from this tree: those URLs now redirect into
+// `/my/*`, where the learner dashboard owns both.
 const StudentCourseDetailsPage = lazy(
   () => import('@features/learning/pages/StudentCourseDetailsPage')
 );
@@ -64,7 +69,10 @@ const QuizPage = lazy(() => import('@features/learning/pages/QuizPage'));
 const AssignmentPage = lazy(
   () => import('@features/learning/pages/AssignmentPage')
 );
-const ProfilePage = lazy(() => import('@features/profile/pages/ProfilePage'));
+// P64 Phase 2 §E.1 — the learner dashboard: one lazy chunk for the whole
+// `/my/*` tree, which then splits again per section (`LearnerRouter`). A
+// visitor who never signs in never downloads any of it.
+const LearnerRouter = lazy(() => import('@features/learner/LearnerRouter'));
 
 export interface PublicWebsiteRouterProps {
   readonly context: Extract<PublicWebsiteContext, { mode: 'academy-website' }>;
@@ -200,21 +208,57 @@ function PublicWebsiteLocaleRoutes({
         }
       />
 
-      {/* Student Learning — the Academy-website-embedded LMS experience.
-          Same "reached before the data-driven catch-all" precedent as
-          sign-in/sign-up immediately above: an Academy that happens to
-          have authored a Custom Page at one of these exact slugs would
-          have it permanently shadowed, matching that already-accepted
-          risk (never silently — the Pages list still shows the page,
-          it's simply unreachable at this specific path). */}
+      {/* P64 Phase 2 §E.1 (D2 / AD-12) — THE learner surface. Reached
+          before the data-driven catch-all for the same reason sign-in is:
+          a Custom Page authored at one of these slugs must never be able
+          to shadow a learner's own dashboard.
+
+          `my/*`, not nine sibling routes: `LearnerRouter` owns the
+          sections below it, so adding one is a change in that feature
+          rather than a second edit here that someone will forget. */}
       <Route
-        path="my-learning"
+        path="my/*"
         element={
           <PublicWebsiteLearningRoute lookupKey={lookupKey} locale={locale}>
-            {({ academyId }) => <StudentMyLearningPage academyId={academyId} />}
+            {({ academyId, buildHref }) => (
+              <LearnerRouter
+                academyId={academyId}
+                locale={locale}
+                buildHref={buildHref}
+              />
+            )}
           </PublicWebsiteLearningRoute>
         }
       />
+
+      {/* The URLs the learner dashboard replaced. Bookmarked, emailed and
+          linked from the academy's own chrome, so they keep answering —
+          as permanent redirects, never as a second copy of the page. The
+          table itself lives in `route-paths.ts` with every other path
+          declaration (`RETIRED_ACADEMY_LEARNER_ROUTES`).
+
+          Only the two exact paths D2 retired: the `/my-learning/courses/
+          ...` activity URLs still serve the player, which Phase 2 §E.2
+          moves on its own schedule. Redirecting them now would break a
+          working screen to reach a page that does not exist yet. */}
+      {RETIRED_ACADEMY_LEARNER_ROUTES.map(({ from, to }) => (
+        <Route
+          key={from}
+          // Bare, because these are relative to this locale's subtree.
+          path={from.replace(/^\//, '')}
+          element={<PublicWebsiteRedirect to={to} locale={locale} />}
+        />
+      ))}
+
+      {/* Student Learning — the Academy-website-embedded LMS experience,
+          now the PLAYER half of it (§E.2 owns where these finally live;
+          the dashboard half moved to `/my/*` above). Same "reached before
+          the data-driven catch-all" precedent as sign-in/sign-up: an
+          Academy that happens to have authored a Custom Page at one of
+          these exact slugs would have it permanently shadowed, matching
+          that already-accepted risk (never silently — the Pages list
+          still shows the page, it's simply unreachable at this specific
+          path). */}
       <Route
         path="my-learning/courses/:courseId"
         element={
@@ -255,15 +299,6 @@ function PublicWebsiteLocaleRoutes({
           </PublicWebsiteLearningRoute>
         }
       />
-      <Route
-        path="my-account"
-        element={
-          <PublicWebsiteLearningRoute lookupKey={lookupKey} locale={locale}>
-            {() => <ProfilePage />}
-          </PublicWebsiteLearningRoute>
-        }
-      />
-
       <Route
         path="*"
         element={<PublicWebsiteShell lookupKey={lookupKey} locale={locale} />}

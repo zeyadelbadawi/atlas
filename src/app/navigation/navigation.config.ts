@@ -262,14 +262,14 @@ export function getDashboardNavigation(
       showDivider: true,
     },
     /*
-     * P64 Phase 1 (D2 / AD-12) — the "Learning" section is gone from the
+     * P64 Phase 2 (D2 / AD-12) — the "Learning" section is gone from the
      * management sidebar. Learning happens on the academy's own website
-     * (`/my-learning` on the academy host), never inside the management
-     * dashboard, and a `learner` principal cannot reach `/dashboard/*` at
-     * all. The route constants survive (`DASHBOARD_ROUTES.myLearning` and
-     * friends) and resolve to `LearnerSurfaceRedirectPage`, so an old
-     * bookmark still lands somewhere useful — but nothing advertises them
-     * to staff any more.
+     * (the `/my/*` learner dashboard on the academy host), never inside
+     * the management dashboard, and a `learner` principal cannot reach
+     * `/dashboard/*` at all. Phase 1 removed the section; Phase 2 removed
+     * the routes themselves from `DASHBOARD_ROUTES`, leaving only the
+     * `RETIRED_DASHBOARD_LEARNER_ROUTES` forwarding table — so there is no
+     * longer a constant here that could be linked to by accident.
      */
     {
       id: 'community',

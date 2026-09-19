@@ -12,10 +12,11 @@
  * already use for real navigation (locale- and dev-preview-aware — see
  * `usePublicWebsiteLinkRenderer`'s own doc comment) rather than inventing
  * a second link-building mechanism. "My Learning"/"Profile" always link
- * to `/my-learning`/`/my-account` regardless of session state:
- * `PublicWebsiteLearningRoute` already redirects an unauthenticated
- * visitor to Sign In with a `returnTo` back to whichever of those they
- * tapped — the existing route guard, not a second one, decides access.
+ * into the learner dashboard (`/my`, `/my/profile` — P64 Phase 2 §E.1)
+ * regardless of session state: `PublicWebsiteLearningRoute` already
+ * redirects an unauthenticated visitor to Sign In with a `returnTo` back
+ * to whichever of those they tapped — the existing route guard, not a
+ * second one, decides access.
  *
  * `useMobileBottomNavVisibility` is exported separately so `WebsiteChrome`
  * can apply matching bottom padding to `<main>` — the two must never
@@ -37,6 +38,7 @@ import { useLocation } from 'react-router-dom';
 import { Compass, GraduationCap, Home, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
+import { LEARNER_ROUTES } from '@app/routes/route-paths';
 import { resolvePagePath } from '../utils/link-resolution.utils';
 import { useMobileBottomNavVisibility } from './useMobileBottomNavVisibility';
 import type { WebsiteLinkRenderer } from './website-link-renderer.types';
@@ -86,17 +88,23 @@ export function MobileBottomNav({
     },
     {
       key: 'myLearning',
-      href: '/my-learning',
+      href: LEARNER_ROUTES.root,
       label: t('website:mobileNav.myLearning'),
       icon: GraduationCap,
-      isActive: unprefixedPathname.startsWith('/my-learning'),
+      // This bar stands down entirely across `/my/*`
+      // (`useMobileBottomNavVisibility`), where the learner dashboard's own
+      // bar takes over — so these two never actually render active. The
+      // checks stay correct rather than being dropped: the day that
+      // exclusion narrows, a silently wrong active state is a worse bug
+      // than the two lines that prevent it.
+      isActive: unprefixedPathname.startsWith(LEARNER_ROUTES.root),
     },
     {
       key: 'profile',
-      href: '/my-account',
+      href: LEARNER_ROUTES.profile,
       label: t('website:mobileNav.profile'),
       icon: User,
-      isActive: unprefixedPathname.startsWith('/my-account'),
+      isActive: unprefixedPathname.startsWith(LEARNER_ROUTES.profile),
     },
   ] as const;
 

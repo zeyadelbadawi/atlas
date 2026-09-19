@@ -1,4 +1,4 @@
-import { describe, expect, it, probeHostAnswers, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   probeHostAnswers,
   resolveCanonicalOrigin,

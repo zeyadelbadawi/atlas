@@ -13,6 +13,7 @@ import {
   PUBLIC_ROUTES,
   SYSTEM_ROUTES,
   DASHBOARD_ROUTES,
+  RETIRED_DASHBOARD_LEARNER_ROUTES,
   AUTHENTICATED_ENTRY_ROUTE,
 } from './route-paths';
 
@@ -139,10 +140,15 @@ const CourseAssignmentsPage = lazy(
   () => import('@features/course/pages/CourseAssignmentsPage')
 );
 
-// P64 Phase 1 (D2 / AD-12) — the learner pages are no longer mounted under
-// `/dashboard/learning/*`; they render on the academy website
-// (`PublicWebsiteRouter`, `/my-learning/*`). Their route constants survive
-// and all resolve to `LearnerSurfaceRedirectPage` below.
+// P64 Phase 2 (D2 / AD-12) — the learner pages are no longer mounted under
+// `/dashboard/learning/*`, and since this phase their route constants are
+// gone from `DASHBOARD_ROUTES` too: the learner surface is `/my/*` on the
+// academy website (`PublicWebsiteRouter`). What is left of the old paths is
+// `RETIRED_DASHBOARD_LEARNER_ROUTES`, a forwarding table, mounted below.
+//
+// `StudentAnalyticsPage` is NOT one of them despite the name — it is the
+// Client Owner's cross-student progress rollup at `/dashboard/student-
+// analytics`, a management page about learners rather than a learner's own.
 const StudentAnalyticsPage = lazy(
   () => import('@features/dashboard/pages/StudentAnalyticsPage')
 );
@@ -917,33 +923,27 @@ export function AppRouter(): JSX.Element {
             />
 
             {/*
-              P64 Phase 1 (D2 / AD-12) — the dashboard learner routes are
-              retired. Every one of these paths now resolves to a single
-              redirect page that sends the visitor to their academy
-              website's `/my-learning` (straight there when the account has
-              exactly one academy with a host, the chooser otherwise). A
-              pure `learner` principal never gets this far — the subtree
-              root sends them to `/academy-chooser` — so what lands here is
-              a staff member who is also enrolled somewhere. The constants
-              are kept because other code still names them.
+              P64 Phase 2 (D2 / AD-12) — the dashboard learner routes are
+              GONE, not merely unmounted. `RETIRED_DASHBOARD_LEARNER_ROUTES`
+              is a forwarding table, not a route group: each entry answers
+              its old URL with the redirect page, which resolves the
+              account's academy host and then sends the visitor to the
+              matching `/my/*` page there (`resolveRetiredLearnerTarget`
+              carries `:courseId` across). Cross-origin by nature, which is
+              why this is a page and not a `<Navigate>`.
+
+              They stay INSIDE the guarded dashboard subtree deliberately.
+              The redirect page reads the account's own academy memberships,
+              so it needs the authenticated session the subtree root already
+              requires; and a pure `learner` principal never gets this far —
+              that root sends them to `/academy-chooser`. What lands here is
+              a staff member who is also enrolled somewhere, exactly the
+              case D2 is about.
             */}
-            {[
-              DASHBOARD_ROUTES.learning,
-              DASHBOARD_ROUTES.myLearning,
-              DASHBOARD_ROUTES.myResults,
-              DASHBOARD_ROUTES.learningCourses,
-              DASHBOARD_ROUTES.learningCourseDetail,
-              DASHBOARD_ROUTES.learningCourseLearn,
-              DASHBOARD_ROUTES.learningLesson,
-              DASHBOARD_ROUTES.learningLiveSession,
-              DASHBOARD_ROUTES.learningQuiz,
-              DASHBOARD_ROUTES.learningAssignment,
-              DASHBOARD_ROUTES.learningDiscussions,
-              DASHBOARD_ROUTES.learningThread,
-            ].map((path) => (
+            {RETIRED_DASHBOARD_LEARNER_ROUTES.map(({ from }) => (
               <Route
-                key={path}
-                path={path}
+                key={from}
+                path={from}
                 element={<LearnerSurfaceRedirectPage />}
               />
             ))}

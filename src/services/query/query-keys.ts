@@ -60,6 +60,9 @@ export const QUERY_KEY_ROOTS = {
   media: ['media'] as const,
   search: ['search'] as const,
   courseContent: ['course-content'] as const,
+  /** P64 Phase 2 — the `/my/*` learner dashboard and the unified player. */
+  learner: ['learner'] as const,
+  courseOrder: ['course-order'] as const,
 } as const;
 
 /**
@@ -223,6 +226,59 @@ export const courseContentKeys = {
   all: QUERY_KEY_ROOTS.courseContent,
   sections: (studentId: string | undefined, courseId: string) =>
     [...courseContentKeys.all, 'sections', studentId, courseId] as const,
+} as const;
+
+/**
+ * Query keys for the `/my/*` learner dashboard and the unified player
+ * (P64 Phase 2 §E.1–§E.3).
+ *
+ * TWO IDENTITIES IN EVERY KEY, NOT ONE. The student's id is here for the
+ * same reason it is on `enrollmentKeys` — signing in as someone else in
+ * the same browser must not surface the previous learner's cache — and
+ * the ACADEMY id is here because these endpoints are scoped by the
+ * request host, not by a parameter. The same signed-in learner moving
+ * from one academy's site to another's (AD-4) is asking a different
+ * question and must not be answered from the first academy's cached
+ * reply, which is the shape of tenancy leak a customer notices
+ * immediately.
+ *
+ * THE GRANT KEY IS DECLARED BUT IS NEVER A CACHE. A grant is served
+ * `Cache-Control: private, no-store` and carries credentials that expire
+ * in as little as ten minutes, so `useLessonGrant` pins `gcTime: 0` and
+ * `staleTime: 0` on it: the key exists so a refresh targets one lesson
+ * rather than the whole subtree, not so a second mount can be answered
+ * from a copy that may already be dead. Nothing else in the app may read
+ * this key, and nothing may invalidate it expecting a cached reply.
+ */
+export const learnerKeys = {
+  all: QUERY_KEY_ROOTS.learner,
+  overview: (studentId: string | undefined, academyId: string) =>
+    [...learnerKeys.all, 'overview', studentId, academyId] as const,
+  assessments: (
+    studentId: string | undefined,
+    academyId: string,
+    type: 'quiz' | 'assignment'
+  ) =>
+    [...learnerKeys.all, 'assessments', studentId, academyId, type] as const,
+  devices: (studentId: string | undefined, academyId: string) =>
+    [...learnerKeys.all, 'devices', studentId, academyId] as const,
+  /** The ordered curriculum. Course-scoped, so it needs no academy id — the course already belongs to one. */
+  sequence: (studentId: string | undefined, courseId: string) =>
+    [...learnerKeys.all, 'sequence', studentId, courseId] as const,
+  /** See this factory's doc comment: an addressing key, never a cache. */
+  lessonGrant: (
+    studentId: string | undefined,
+    courseId: string,
+    lessonId: string
+  ) =>
+    [...learnerKeys.all, 'lesson-grant', studentId, courseId, lessonId] as const,
+} as const;
+
+/** `CourseOrderService` — a learner's own receipts, filtered to the host academy by the page. */
+export const courseOrderKeys = {
+  all: QUERY_KEY_ROOTS.courseOrder,
+  list: (studentId: string | undefined, query?: CollectionQuery) =>
+    [...courseOrderKeys.all, 'list', studentId, query] as const,
 } as const;
 
 export const quizKeys = {
