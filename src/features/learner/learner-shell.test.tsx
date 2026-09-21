@@ -103,20 +103,20 @@ function renderLearner(path: string, locale: PublicWebsiteLocale = 'en') {
       <QueryClientProvider client={queryClient}>
         <IdentityContext.Provider value={RESTORING_IDENTITY}>
           <ToastContext.Provider value={SILENT_TOASTS}>
-          <MemoryRouter initialEntries={[entry]}>
-            <Routes>
-              <Route
-                path={locale === 'en' ? '/my/*' : '/ar/my/*'}
-                element={
-                  <LearnerRouter
-                    academyId="aca-1"
-                    locale={locale}
-                    buildHref={hrefBuilder(locale)}
-                  />
-                }
-              />
-            </Routes>
-          </MemoryRouter>
+            <MemoryRouter initialEntries={[entry]}>
+              <Routes>
+                <Route
+                  path={locale === 'en' ? '/my/*' : '/ar/my/*'}
+                  element={
+                    <LearnerRouter
+                      academyId="aca-1"
+                      locale={locale}
+                      buildHref={hrefBuilder(locale)}
+                    />
+                  }
+                />
+              </Routes>
+            </MemoryRouter>
           </ToastContext.Provider>
         </IdentityContext.Provider>
       </QueryClientProvider>
@@ -129,11 +129,7 @@ const LAZY_CHUNK_TIMEOUT = { timeout: 10_000 };
 
 /** The `<h1>` a lazily loaded section renders once its chunk has resolved. */
 function findSectionHeading(name: RegExp | string) {
-  return screen.findByRole(
-    'heading',
-    { level: 1, name },
-    LAZY_CHUNK_TIMEOUT
-  );
+  return screen.findByRole('heading', { level: 1, name }, LAZY_CHUNK_TIMEOUT);
 }
 
 afterEach(cleanup);
@@ -157,7 +153,10 @@ describe('learner dashboard shell', () => {
       expect(await findSectionHeading(heading), path).toBeTruthy();
       cleanup();
     }
-  });
+    // Nine lazy chunks in one test: each `findBy` already waits up to
+    // LAZY_CHUNK_TIMEOUT, so the test itself needs more than vitest's 5 s
+    // default when the whole suite is competing for the event loop.
+  }, 60_000);
 
   it('carries exactly Overview, Courses, Assessments and Profile in the bottom bar', async () => {
     renderLearner('/my');
