@@ -21,7 +21,12 @@
  */
 
 /** What a lesson actually delivers. Wider than the authoring content type: `external` is real. */
-export const LESSON_CONTENT_KINDS = ['text', 'video', 'file', 'external'] as const;
+export const LESSON_CONTENT_KINDS = [
+  'text',
+  'video',
+  'file',
+  'external',
+] as const;
 export type LessonContentKind = (typeof LESSON_CONTENT_KINDS)[number];
 
 /** How a lesson is allowed to be marked complete. */
@@ -73,6 +78,19 @@ export interface PlaybackLease {
   readonly leaseId: string;
   readonly ttlSeconds: number;
   readonly heartbeatSeconds: number;
+}
+
+/**
+ * Present only when `externalUrl` is a supported YouTube link. The player
+ * embeds from `videoId` alone — never from the raw URL — so this is the
+ * only way an external address ever becomes a frame on the learner's page.
+ * Mirrors `ExternalEmbedContract` (backend `lesson-content.contract.ts`).
+ */
+export interface ExternalEmbed {
+  readonly provider: 'youtube';
+  /** Exactly YouTube's 11-character id alphabet, validated server-side. */
+  readonly videoId: string;
+  readonly startSeconds?: number;
 }
 
 export interface GrantedVideo {
@@ -141,6 +159,7 @@ export interface LessonContentGrant {
   readonly fileName?: string;
   readonly video?: GrantedVideo;
   readonly externalUrl?: string;
+  readonly externalEmbed?: ExternalEmbed;
   readonly resources: readonly GrantedResource[];
   readonly watermark: ContentWatermark;
   /** Null for a preview opened without a session — there is nothing to lease. */

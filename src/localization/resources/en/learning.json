@@ -487,7 +487,8 @@
       "lastActivity": "That was the last activity in this course.",
       "undo": "Undo",
       "watchMoreHint": "Keep watching — this lesson can be completed once you have watched enough of it.",
-      "failed": "That could not be saved. Check your connection and try again."
+      "failed": "That could not be saved. Check your connection and try again.",
+      "externalNotTracked": "Watching on YouTube cannot be tracked, so this lesson cannot be completed automatically. Ask the academy to allow marking it complete yourself."
     },
     "autoAdvance": {
       "label": "Go to the next activity automatically",
@@ -514,7 +515,8 @@
     "external": {
       "notProtectedTitle": "This content is hosted somewhere else",
       "notProtectedDescription": "The academy links to it rather than hosting it, so none of the academy’s protections apply to it. Opening it takes you out of this course.",
-      "open": "Open in a new tab"
+      "open": "Open in a new tab",
+      "youtubeNotice": "This video is hosted on YouTube. The academy’s protections do not apply to it, and your watching is not tracked here."
     },
     "resources": {
       "title": "Resources",
@@ -634,7 +636,12 @@
       "unknown": {
         "title": "Something went wrong",
         "description": "This activity could not be opened. Try again, and contact the academy if it keeps happening."
-      }
+      },
+      "noContent": {
+        "title": "This lesson has no content yet",
+        "description": "The academy has not added anything to this lesson. It is not a fault on your side and there is nothing to retry — you can carry on with the next activity, and the academy can add the content at any time."
+      },
+      "seeOutline": "See the course outline"
     },
     "nextLocked": "Next, “{{title}}”, is locked: {{reason}}"
   }

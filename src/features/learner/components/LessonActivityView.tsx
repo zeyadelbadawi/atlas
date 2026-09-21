@@ -34,6 +34,7 @@ import type { LessonContentGrant } from '@types';
 import { ProtectedVideoPlayer } from './ProtectedVideoPlayer';
 import { ResourcesPanel } from './ResourcesPanel';
 import { TextLessonView } from './TextLessonView';
+import { YouTubeLessonPlayer } from './YouTubeLessonPlayer';
 
 export interface LessonActivityViewProps {
   readonly grant: LessonContentGrant;
@@ -144,7 +145,16 @@ export function LessonActivityView({
         </div>
       ) : null}
 
-      {grant.kind === 'external' && grant.externalUrl ? (
+      {grant.kind === 'external' && grant.externalEmbed ? (
+        /* A supported YouTube link plays INLINE, inside the same player
+           shell as every other source. The server decided it was
+           embeddable; the component embeds by id, never by URL. */
+        <YouTubeLessonPlayer embed={grant.externalEmbed} title={grant.title} />
+      ) : null}
+
+      {grant.kind === 'external' &&
+      !grant.externalEmbed &&
+      grant.externalUrl ? (
         <div className="space-y-3">
           {/* The honesty requirement, stated before the link rather than
               after it: this content is not Atlas's to protect. */}

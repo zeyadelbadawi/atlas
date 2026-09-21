@@ -235,10 +235,19 @@ export default function LearnerPlayerPage(): JSX.Element {
   /* ---------- completion ---------- */
 
   const isCompleted = current ? isSequenceItemFinished(current.state) : false;
+  // Atlas observes its own players' playback; it cannot observe YouTube's.
+  // A watched-ratio rule on an embedded lesson therefore can never be met,
+  // and the bar says so instead of waiting for evidence that cannot come.
+  const isUnobservableEmbed =
+    grant?.kind === 'external' && !!grant.externalEmbed;
   const canComplete =
     grant?.completionRule === 'watched_ratio'
-      ? heartbeat.completionEligible
+      ? !isUnobservableEmbed && heartbeat.completionEligible
       : true;
+  const completionHintKey =
+    grant?.completionRule === 'watched_ratio' && isUnobservableEmbed
+      ? 'learning:player.completion.externalNotTracked'
+      : 'learning:player.completion.watchMoreHint';
 
   const handleComplete = () => {
     if (!isLessonRoute || !currentId) return;
@@ -271,7 +280,13 @@ export default function LearnerPlayerPage(): JSX.Element {
       />
     );
   } else if (failure) {
-    content = <PlayerFailureState failure={failure} onRetry={refresh} />;
+    content = (
+      <PlayerFailureState
+        failure={failure}
+        onRetry={refresh}
+        courseId={courseId}
+      />
+    );
   } else if (isLessonRoute && grantQuery.isLoading) {
     content = (
       <div className="space-y-4">
@@ -306,6 +321,7 @@ export default function LearnerPlayerPage(): JSX.Element {
       <PlayerFailureState
         failure={{ kind: 'unavailable' }}
         onRetry={() => void sequenceQuery.refetch()}
+        courseId={courseId}
       />
     );
   }
@@ -347,7 +363,7 @@ export default function LearnerPlayerPage(): JSX.Element {
               isCompleting={completeLesson.isPending}
               isUndoing={undoCompletion.isPending}
               canComplete={canComplete && heartbeat.leaseHeld}
-              completionHintKey="learning:player.completion.watchMoreHint"
+              completionHintKey={completionHintKey}
               hasFinishedPlaying={hasFinishedPlaying}
               errorMessage={
                 completeLesson.error || undoCompletion.error

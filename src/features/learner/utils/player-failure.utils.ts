@@ -49,6 +49,8 @@ export const PLAYER_FAILURE_KINDS = [
   'notAuthenticated',
   /** See this file's doc comment — an inference, and worded as one. */
   'processing',
+  /** The learner is entitled to the lesson but nobody has authored its content yet. Not retryable. */
+  'noContent',
   /** The honest catch-all for the deliberately ambiguous 404. */
   'unavailable',
   'unknown',
@@ -90,6 +92,10 @@ const MESSAGE_KEY_TO_KIND: Readonly<Record<string, PlayerFailureKind>> = {
   'errors.learning.lessonScheduled': 'scheduled',
   'errors.learning.sessionConflict': 'sessionConflict',
   'errors.auth.accountSuspended': 'suspended',
+  // Both still arrive as 404s; the key is what tells them apart from an
+  // unreachable lesson, which the server keeps deliberately anonymous.
+  'errors.learning.lessonNoContent': 'noContent',
+  'errors.learning.lessonProcessing': 'processing',
 };
 
 /**

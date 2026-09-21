@@ -248,7 +248,7 @@ export default function LessonPage(): JSX.Element {
                   <iframe
                     key={currentLesson.id}
                     className="size-full"
-                    src={buildYouTubeEmbedUrl(youtubeVideoId)}
+                    src={buildYouTubeEmbedUrl(youtubeVideoId) ?? undefined}
                     title={currentLesson.title}
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen

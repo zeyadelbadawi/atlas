@@ -163,3 +163,46 @@ Accessibility
 - Not exercised in the browser: a playing protected video (seed has no processed
   asset; the "not ready" failure state rendered honestly), the Security page's
   two-factor flow, and dark mode (the academy website is always light by design).
+
+## G. Addendum, 22 September 2026 — lesson content states and YouTube inside the unified player
+
+Architecture verified first: the legacy `LessonPage` was the pre-tier player (it read
+`contentUrl` only and had no provider, token, readiness or lease logic); the unified
+player is the single player, with the provider split underneath it — backend adapters
+chosen per asset (`r2_worker` → progressive MP4 through the Worker gate,
+`cloudflare_stream` → signed HLS) and the frontend attaching `mp4` natively or `hls`
+through hls.js. Retiring the legacy routes lost no tier behaviour. It did expose two
+content-kind gaps, now fixed:
+
+1. **No content is not "processing".** The grant service raises two new access reasons,
+   `noContent` (no `lesson_contents` row) and `processing` (asset not ready), only after
+   every entitlement check has passed, and answers both as 404 with distinct message keys
+   (`errors.learning.lessonNoContent`, `errors.learning.lessonProcessing`). The 404
+   posture for unreachable content is unchanged; an outsider still gets `errors.notFound`.
+   The player maps the keys instead of inferring from the curriculum; the no-content state
+   is a neutral empty state ("This lesson has no content yet", nothing to retry) with a
+   "See the course outline" action, and Previous/Next remain in the action bar.
+2. **Supported YouTube lessons play inline.** The grant classifies an `external` URL
+   server-side (`classifyExternalEmbed`: YouTube hosts only, 11-character id, optional
+   start offset) into `externalEmbed { provider: 'youtube', videoId }`; every other URL
+   stays a link-out with the existing honesty notice. The unified player's external
+   branch renders `YouTubeLessonPlayer` — an iframe built from the vetted id on
+   `youtube-nocookie.com`, sandboxed, titled, lazy — as a third source beside R2/Worker
+   and Stream. The frontend re-validates the id before it ever reaches an `src`.
+3. **Completion stays truthful.** Atlas cannot observe YouTube playback, so no watched
+   time is reported; a manual completion rule works as the learner's own word, and a
+   watched-ratio rule on an embedded lesson is shown as unsatisfiable rather than
+   pretended. The notice under the player says both things.
+
+Validation: backend unit 258 (learning + media) incl. 25 classifier cases; backend e2e
+Phase 2 suites green with three new cases (unsupported and spoofed external URLs stay
+link-outs, processing refusal named, no-content refusal named, YouTube descriptor on the
+grant); frontend tests for classification, source selection (YouTube embed by id,
+unsupported link-out, malformed id refused, text lesson) and the embed builder; typecheck
+at the 34-error baseline; rendered in Chrome: YouTube inline (desktop and 400 px),
+no-content (desktop, 400 px, Arabic), device-limit dialog through the real cookie flow.
+
+Production data note (not changed): 6 lessons have no `lesson_contents` row and one
+video lesson carries a YouTube URL without a row — they now show the honest no-content
+state until the academy authors content. Authoring needs the staff UI that Phase 2 did
+not build; the API (`PUT …/lessons/:id/content`) exists.

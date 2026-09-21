@@ -78,7 +78,17 @@ export function isYouTubeUrl(rawUrl: string): boolean {
  * presses play, and never exposes the original watch URL or channel
  * details beyond what the player itself shows.
  */
-export function buildYouTubeEmbedUrl(videoId: string): string {
+export function buildYouTubeEmbedUrl(
+  videoId: string,
+  options?: { readonly startSeconds?: number }
+): string | null {
+  // Defence in depth: the server vets the id, and so does this. An id that
+  // is not exactly YouTube's alphabet never reaches an `src`.
+  if (!VIDEO_ID_PATTERN.test(videoId)) return null;
   const params = new URLSearchParams({ rel: '0', modestbranding: '1' });
+  const start = options?.startSeconds;
+  if (start !== undefined && Number.isInteger(start) && start > 0) {
+    params.set('start', String(start));
+  }
   return `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
 }

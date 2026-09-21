@@ -1,28 +1,19 @@
 /**
- * What the player shows INSTEAD of content, and why (§E.3's "explicit
- * error states").
+ * What the player shows when the grant was refused or could not be fetched
+ * (§E.3). One sentence per `PlayerFailureKind`, a retry only where a retry
+ * can change the answer, and a way out where the answer is final.
  *
- * EVERY ONE OF THESE IS A DIFFERENT SENTENCE. "Something went wrong" is
- * what the player used to say for a revoked enrolment, an expired
- * credential, a drip date, a device cap and a dropped connection alike —
- * five situations with five different things the learner should do next,
- * collapsed into one that suggests none of them. The failure vocabulary
- * exists so each one can be named; this component is where each one gets
- * its own action.
- *
- * ONLY RETRYABLE STATES OFFER RETRY. A button that cannot work teaches
- * learners to press buttons that cannot work: `scheduled` offers nothing
- * (the date is the date), `accessEnded` offers nothing (the academy
- * decides), and `deviceLimit` offers the Devices page — the one screen
- * that can actually undo it — rather than a retry that will refuse again.
- *
- * `role="alert"` comes from `ErrorState`, which already announces itself;
- * this file does not add a second live region around it.
+ * "NO CONTENT" IS FINAL, NOT PENDING. A lesson nobody has authored is not
+ * going to start playing on the next attempt, so it gets no "Try again";
+ * it gets the truth and the two things that help — the course outline,
+ * and (from the action bar) the next activity. "Processing" is the
+ * opposite: the asset exists and will arrive, so it keeps its retry.
  */
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { ErrorState } from '@components/feedback';
-import { LEARNER_ROUTES } from '@app/routes/route-paths';
+import { Link, useNavigate } from 'react-router-dom';
+import { FileQuestion } from 'lucide-react';
+import { EmptyState, ErrorState } from '@components/feedback';
+import { LEARNER_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useLearnerSurface } from '../context/LearnerSurface.context';
 import {
   playerFailureDescriptionKey,
@@ -30,7 +21,6 @@ import {
   type PlayerFailure,
 } from '../utils/player-failure.utils';
 
-/** Failures where asking again is a reasonable next move. */
 const RETRYABLE: ReadonlySet<PlayerFailure['kind']> = new Set([
   'network',
   'expired',
@@ -40,31 +30,64 @@ const RETRYABLE: ReadonlySet<PlayerFailure['kind']> = new Set([
   'unknown',
 ]);
 
+/** Kinds where the useful next step is the course outline, not this screen. */
+const OUTLINE_LINKED: ReadonlySet<PlayerFailure['kind']> = new Set([
+  'scheduled',
+  'unavailable',
+]);
+
 export interface PlayerFailureStateProps {
   readonly failure: PlayerFailure;
   readonly onRetry?: () => void;
+  /** The course this lesson belongs to, for the outline link. */
+  readonly courseId?: string;
 }
 
 export function PlayerFailureState({
   failure,
   onRetry,
+  courseId,
 }: PlayerFailureStateProps): JSX.Element {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { buildHref } = useLearnerSurface();
-
   const canRetry = RETRYABLE.has(failure.kind) && !!onRetry;
+  const courseOutlineHref = courseId
+    ? buildHref(buildPath(LEARNER_ROUTES.courseProgress, { courseId }))
+    : null;
+  const outlineHref = OUTLINE_LINKED.has(failure.kind)
+    ? courseOutlineHref
+    : null;
+
+  // Not an error, so not the red triangle: nothing failed and nothing is
+  // the learner's to fix. The neutral empty state says what is true and
+  // offers the one useful move.
+  if (failure.kind === 'noContent') {
+    return (
+      <EmptyState
+        icon={FileQuestion}
+        titleKey={playerFailureTitleKey(failure.kind)}
+        descriptionKey={playerFailureDescriptionKey(failure.kind)}
+        primaryAction={
+          courseOutlineHref
+            ? {
+                labelKey: 'learning:player.failure.seeOutline',
+                onAction: () => navigate(courseOutlineHref),
+              }
+            : undefined
+        }
+      />
+    );
+  }
 
   return (
     <div className="space-y-3">
       <ErrorState
-        // The kind drives the icon's colour only; the copy is always this
-        // failure's own, never the generic per-kind text.
         kind={failure.kind === 'network' ? 'network' : 'unknown'}
         titleKey={playerFailureTitleKey(failure.kind)}
         descriptionKey={playerFailureDescriptionKey(failure.kind)}
         onRetry={canRetry ? onRetry : undefined}
       />
-
       {failure.kind === 'deviceLimit' ? (
         <p className="text-center text-sm">
           {/* A real link, not a button that navigates: it is a
@@ -75,6 +98,16 @@ export function PlayerFailureState({
             to={buildHref(LEARNER_ROUTES.devices)}
           >
             {t('learning:player.failure.deviceLimit.action')}
+          </Link>
+        </p>
+      ) : null}
+      {outlineHref ? (
+        <p className="text-center text-sm">
+          <Link
+            className="font-medium text-primary underline underline-offset-4"
+            to={outlineHref}
+          >
+            {t('learning:player.failure.seeOutline')}
           </Link>
         </p>
       ) : null}

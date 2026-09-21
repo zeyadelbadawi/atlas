@@ -18,7 +18,10 @@
  */
 import { describe, expect, it } from 'vitest';
 import { createApiError } from '@api';
-import { classifyPlayerFailure, isAccessRevokedFailure } from './utils/player-failure.utils';
+import {
+  classifyPlayerFailure,
+  isAccessRevokedFailure,
+} from './utils/player-failure.utils';
 
 describe('player failure classification', () => {
   it('names the device cap so the learner can be sent somewhere useful', () => {
@@ -83,10 +86,37 @@ describe('player failure classification', () => {
     // key is ever renamed server-side, the learner must still be offered
     // the takeover rather than a dead end.
     const failure = classifyPlayerFailure(
-      createApiError('conflict', { status: 409, messageKey: 'errors.something.else' })
+      createApiError('conflict', {
+        status: 409,
+        messageKey: 'errors.something.else',
+      })
     );
 
     expect(failure.kind).toBe('sessionConflict');
+  });
+
+  it('names a lesson with no content from the server key, and never calls it "processing"', () => {
+    const failure = classifyPlayerFailure(
+      createApiError('notFound', {
+        status: 404,
+        messageKey: 'errors.learning.lessonNoContent',
+      }),
+      { sequenceSaysAvailable: true }
+    );
+
+    expect(failure.kind).toBe('noContent');
+  });
+
+  it('names a processing asset from the server key, whatever the curriculum says', () => {
+    const failure = classifyPlayerFailure(
+      createApiError('notFound', {
+        status: 404,
+        messageKey: 'errors.learning.lessonProcessing',
+      }),
+      { sequenceSaysAvailable: false }
+    );
+
+    expect(failure.kind).toBe('processing');
   });
 
   it('reads a 404 on an available item as "still processing"', () => {
@@ -112,11 +142,15 @@ describe('player failure classification', () => {
   });
 
   it('treats an unreachable server as a network problem, not a refusal', () => {
-    expect(classifyPlayerFailure(createApiError('network')).kind).toBe('network');
-    expect(classifyPlayerFailure(createApiError('timeout')).kind).toBe('network');
-    expect(classifyPlayerFailure(createApiError('server', { status: 502 })).kind).toBe(
+    expect(classifyPlayerFailure(createApiError('network')).kind).toBe(
       'network'
     );
+    expect(classifyPlayerFailure(createApiError('timeout')).kind).toBe(
+      'network'
+    );
+    expect(
+      classifyPlayerFailure(createApiError('server', { status: 502 })).kind
+    ).toBe('network');
   });
 
   it('separates failures that must interrupt playback from those that must not', () => {
