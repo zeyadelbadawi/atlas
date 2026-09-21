@@ -20,11 +20,13 @@
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { CalendarClock, ClipboardList } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@components/feedback';
+import { readErrorKind } from '../utils/read-error-kind';
 import { useDateFormatter } from '@hooks';
 import { useLearningPaths } from '@features/learning';
 import type { LearnerAssessmentItem } from '@types';
@@ -53,7 +55,11 @@ function AssessmentList({
   const paths = useLearningPaths();
   const { data, isLoading, error, refetch } = useLearnerAssessments(type);
 
-  if (error) return <ErrorState onRetry={() => void refetch()} />;
+  if (error) {
+    return (
+      <ErrorState kind={readErrorKind(error)} onRetry={() => void refetch()} />
+    );
+  }
 
   if (isLoading) {
     return (
@@ -95,12 +101,12 @@ function AssessmentList({
           >
             <div className="min-w-0 flex-1">
               <h3 className="truncate text-sm font-medium text-foreground">
-                <a
-                  href={href}
+                <Link
+                  to={href}
                   className="rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   {item.title}
-                </a>
+                </Link>
               </h3>
               <p className="truncate text-xs text-muted-foreground">
                 {item.courseTitle}

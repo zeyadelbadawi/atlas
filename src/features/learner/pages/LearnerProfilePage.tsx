@@ -90,7 +90,7 @@ export default function LearnerProfilePage(): JSX.Element {
               account is not a learner-surface action in Phase 2, and an
               irreversible control on the page a learner opens to change
               their phone number is a trap. */}
-          <ProfileAccountSection user={user} />
+          <ProfileAccountSection user={user} audience="learner" />
         </TabsContent>
 
         <TabsContent value="preferences" className="space-y-6">

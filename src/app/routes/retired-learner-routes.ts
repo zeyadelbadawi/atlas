@@ -21,8 +21,10 @@
  */
 import {
   LEARNER_ROUTES,
+  RETIRED_ACADEMY_LEARNER_ROUTES,
   RETIRED_DASHBOARD_LEARNER_ROUTES,
   buildPath,
+  type RetiredLearnerRoute,
 } from './route-paths';
 
 /** Splits a path into its non-empty segments. */
@@ -67,10 +69,27 @@ function matchTemplate(
  *
  * @example
  * resolveRetiredLearnerTarget('/dashboard/learning/courses/abc/learn/l1')
- * // '/my/courses/abc'
+ * // '/my/courses/abc/learn/l1'
  */
 export function resolveRetiredLearnerTarget(pathname: string): string {
-  for (const { from, to } of RETIRED_DASHBOARD_LEARNER_ROUTES) {
+  return resolveFromTable(pathname, RETIRED_DASHBOARD_LEARNER_ROUTES);
+}
+
+/**
+ * The academy-website twin: an unprefixed `/my-learning/...` or
+ * `/my-account` path to its `/my/*` replacement, with `:courseId` and
+ * `:lessonId` carried across. The locale prefix is applied by the caller
+ * (`PublicWebsiteRetiredLearnerRedirect`), never here.
+ */
+export function resolveRetiredAcademyLearnerTarget(pathname: string): string {
+  return resolveFromTable(pathname, RETIRED_ACADEMY_LEARNER_ROUTES);
+}
+
+function resolveFromTable(
+  pathname: string,
+  table: readonly RetiredLearnerRoute[]
+): string {
+  for (const { from, to } of table) {
     const params = matchTemplate(pathname, from);
     if (params) return buildPath(to, params);
   }

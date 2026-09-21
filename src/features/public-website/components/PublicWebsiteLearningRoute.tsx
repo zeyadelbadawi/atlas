@@ -39,7 +39,7 @@ import {
   usePublicWebsiteDocumentDirection,
 } from '@features/website';
 import { LearningPathsProvider, type LearningPaths } from '@features/learning';
-import { LEARNER_ROUTES } from '@app/routes/route-paths';
+import { LEARNER_ROUTES, buildPath } from '@app/routes/route-paths';
 import { usePublicWebsiteData } from '../hooks/usePublicWebsiteData';
 import { PublicWebsiteStatus } from './PublicWebsiteStatus';
 import {
@@ -144,11 +144,15 @@ export function PublicWebsiteLearningRoute({
     // the product's own links should not spend a redirect to get there.
     myLearning: () => buildHref(LEARNER_ROUTES.courses),
     courses: () => buildHref('/courses'),
-    courseDetail: (courseId) => buildHref(`/my-learning/courses/${courseId}`),
+    // Pre-Phase-3 baseline: the course page and the lesson player are the
+    // learner app's own (`/my/courses/:courseId`, `.../learn/:lessonId`);
+    // the legacy `/my-learning/courses/...` URLs redirect there.
+    courseDetail: (courseId) =>
+      buildHref(buildPath(LEARNER_ROUTES.courseProgress, { courseId })),
     courseLearn: (courseId) =>
-      buildHref(`/my-learning/courses/${courseId}/learn`),
+      buildHref(buildPath(LEARNER_ROUTES.courseProgress, { courseId })),
     lesson: (courseId, lessonId) =>
-      buildHref(`/my-learning/courses/${courseId}/learn/${lessonId}`),
+      buildHref(buildPath(LEARNER_ROUTES.playerLesson, { courseId, lessonId })),
     quiz: (courseId, quizId) =>
       buildHref(`/my-learning/courses/${courseId}/quizzes/${quizId}`),
     assignment: (courseId, assignmentId) =>

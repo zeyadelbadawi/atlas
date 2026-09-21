@@ -41,6 +41,8 @@ export interface DeviceLimitDialogProps {
   readonly isLoading?: boolean;
   readonly onRemove: (deviceId: string) => void;
   readonly removingDeviceId?: string;
+  /** A failed removal, stated in the dialog the learner is looking at. */
+  readonly errorMessage?: string;
 }
 
 export function DeviceLimitDialog({
@@ -51,6 +53,7 @@ export function DeviceLimitDialog({
   isLoading,
   onRemove,
   removingDeviceId,
+  errorMessage,
 }: DeviceLimitDialogProps): JSX.Element {
   const { t } = useTranslation();
   const fmt = useDateFormatter();
@@ -73,6 +76,11 @@ export function DeviceLimitDialog({
               : t('learning:player.deviceLimit.descriptionNoLimit')}
           </DialogDescription>
         </DialogHeader>
+        {errorMessage ? (
+          <p role="alert" className="text-sm text-destructive">
+            {errorMessage}
+          </p>
+        ) : null}
 
         {isLoading ? (
           <div className="space-y-2">

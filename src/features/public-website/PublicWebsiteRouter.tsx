@@ -35,7 +35,7 @@ import { PublicWebsiteForgotPasswordPage } from './components/PublicWebsiteForgo
 import { PublicWebsiteResetPasswordPage } from './components/PublicWebsiteResetPasswordPage';
 import { PublicWebsiteVerifyEmailPage } from './components/PublicWebsiteVerifyEmailPage';
 import { PublicWebsiteLearningRoute } from './components/PublicWebsiteLearningRoute';
-import { PublicWebsiteRedirect } from './components/PublicWebsiteRedirect';
+import { PublicWebsiteRetiredLearnerRedirect } from './components/PublicWebsiteRetiredLearnerRedirect';
 import { usePublicWebsiteData } from './hooks/usePublicWebsiteData';
 import { RETIRED_ACADEMY_LEARNER_ROUTES } from '@app/routes/route-paths';
 import type { PublicWebsiteContext } from './utils/hostname-resolution.utils';
@@ -52,19 +52,11 @@ import type { PublicWebsiteLocale } from '@types';
 // instead of the internal dashboard shell. Lazy so a visitor who never
 // signs in never downloads this code.
 //
-// P64 Phase 2 §E.1 — what is left here is the PLAYER (course details, the
-// lesson/quiz/assignment activities), which §E.2 moves on its own
-// schedule. The two pages that were the learner's dashboard —
-// `StudentMyLearningPage` at `/my-learning` and the shared `ProfilePage`
-// at `/my-account` — are gone from this tree: those URLs now redirect into
-// `/my/*`, where the learner dashboard owns both.
-const StudentCourseDetailsPage = lazy(
-  () => import('@features/learning/pages/StudentCourseDetailsPage')
-);
-const CourseLearnRedirectPage = lazy(
-  () => import('@features/learning/pages/CourseLearnRedirectPage')
-);
-const LessonPage = lazy(() => import('@features/learning/pages/LessonPage'));
+// P64 Phase 2 §E.1/§E.2 — what is left here is the QUIZ and ASSIGNMENT
+// pages, which Phase 3 moves into the unified player. Everything else the
+// learner used to reach under `/my-learning/...` — the dashboard, the
+// profile, the course page and the lesson player — now lives under `/my/*`
+// and the old URLs redirect there (`RETIRED_ACADEMY_LEARNER_ROUTES`).
 const QuizPage = lazy(() => import('@features/learning/pages/QuizPage'));
 const AssignmentPage = lazy(
   () => import('@features/learning/pages/AssignmentPage')
@@ -237,52 +229,29 @@ function PublicWebsiteLocaleRoutes({
           table itself lives in `route-paths.ts` with every other path
           declaration (`RETIRED_ACADEMY_LEARNER_ROUTES`).
 
-          Only the two exact paths D2 retired: the `/my-learning/courses/
-          ...` activity URLs still serve the player, which Phase 2 §E.2
-          moves on its own schedule. Redirecting them now would break a
-          working screen to reach a page that does not exist yet. */}
-      {RETIRED_ACADEMY_LEARNER_ROUTES.map(({ from, to }) => (
+          The course page and the lesson player at `/my-learning/courses/
+          ...` are retired as well (pre-Phase-3 baseline): the unified
+          player and the course outline under `/my/*` own those screens,
+          and `:courseId`/`:lessonId` are carried across so a lesson
+          bookmark lands on that lesson. */}
+      {RETIRED_ACADEMY_LEARNER_ROUTES.map(({ from }) => (
         <Route
           key={from}
           // Bare, because these are relative to this locale's subtree.
           path={from.replace(/^\//, '')}
-          element={<PublicWebsiteRedirect to={to} locale={locale} />}
+          element={<PublicWebsiteRetiredLearnerRedirect locale={locale} />}
         />
       ))}
 
-      {/* Student Learning — the Academy-website-embedded LMS experience,
-          now the PLAYER half of it (§E.2 owns where these finally live;
-          the dashboard half moved to `/my/*` above). Same "reached before
-          the data-driven catch-all" precedent as sign-in/sign-up: an
-          Academy that happens to have authored a Custom Page at one of
-          these exact slugs would have it permanently shadowed, matching
-          that already-accepted risk (never silently — the Pages list
-          still shows the page, it's simply unreachable at this specific
+      {/* Student Learning — what remains of the Academy-website-embedded
+          LMS experience: the quiz and assignment pages, until Phase 3
+          moves them into the unified player. Same "reached before the
+          data-driven catch-all" precedent as sign-in/sign-up: an Academy
+          that happens to have authored a Custom Page at one of these
+          exact slugs would have it permanently shadowed, matching that
+          already-accepted risk (never silently — the Pages list still
+          shows the page, it's simply unreachable at this specific
           path). */}
-      <Route
-        path="my-learning/courses/:courseId"
-        element={
-          <PublicWebsiteLearningRoute lookupKey={lookupKey} locale={locale}>
-            {() => <StudentCourseDetailsPage />}
-          </PublicWebsiteLearningRoute>
-        }
-      />
-      <Route
-        path="my-learning/courses/:courseId/learn"
-        element={
-          <PublicWebsiteLearningRoute lookupKey={lookupKey} locale={locale}>
-            {() => <CourseLearnRedirectPage />}
-          </PublicWebsiteLearningRoute>
-        }
-      />
-      <Route
-        path="my-learning/courses/:courseId/learn/:lessonId"
-        element={
-          <PublicWebsiteLearningRoute lookupKey={lookupKey} locale={locale}>
-            {() => <LessonPage />}
-          </PublicWebsiteLearningRoute>
-        }
-      />
       <Route
         path="my-learning/courses/:courseId/quizzes/:quizId"
         element={

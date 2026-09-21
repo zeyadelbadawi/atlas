@@ -16,7 +16,8 @@
       "title": "Account Information",
       "description": "Your account identifiers and organization memberships.",
       "organizations": "Organizations",
-      "noOrganizations": "You are not a member of any organization."
+      "noOrganizations": "You are not a member of any organization.",
+      "learnerDescription": "When you joined this academy’s platform."
     },
     "preferences": {
       "title": "Preferences",

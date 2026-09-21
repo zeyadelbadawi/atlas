@@ -318,6 +318,28 @@ export interface RetiredLearnerRoute {
 export const RETIRED_ACADEMY_LEARNER_ROUTES: readonly RetiredLearnerRoute[] = [
   { from: '/my-learning', to: LEARNER_ROUTES.courses },
   { from: '/my-account', to: LEARNER_ROUTES.profile },
+  /*
+    Pre-Phase-3 learner baseline (21 Sep 2026) — the legacy course page
+    and lesson player under `/my-learning/courses/...` are retired too.
+    Phase 2 §E.2 shipped the unified player at `LEARNER_ROUTES.playerLesson`
+    and the course outline at `courseProgress`; leaving the old pages
+    mounted meant the SAME lesson opened in two different players
+    depending on which link the learner followed. Quizzes and assignments
+    keep their legacy pages until Phase 3 moves them into the player, so
+    their URLs are deliberately NOT in this table.
+  */
+  {
+    from: '/my-learning/courses/:courseId',
+    to: LEARNER_ROUTES.courseProgress,
+  },
+  {
+    from: '/my-learning/courses/:courseId/learn',
+    to: LEARNER_ROUTES.courseProgress,
+  },
+  {
+    from: '/my-learning/courses/:courseId/learn/:lessonId',
+    to: LEARNER_ROUTES.playerLesson,
+  },
 ];
 
 export const RETIRED_DASHBOARD_LEARNER_ROUTES: readonly RetiredLearnerRoute[] =
@@ -331,11 +353,13 @@ export const RETIRED_DASHBOARD_LEARNER_ROUTES: readonly RetiredLearnerRoute[] =
       to: LEARNER_ROUTES.courseProgress,
     },
     /*
-      Every in-course activity lands on the course's own progress page
-      rather than on a fabricated `/my/*` activity URL. The unified player
-      (Phase 2 §E.2) owns activity URLs and is not built yet, and sending a
-      three-year-old bookmark to a course outline that names the activity is
-      honest — inventing a player path that may not exist would not be.
+      A lesson bookmark lands on that lesson in the unified player (Phase 2
+      §E.2). Every OTHER in-course activity lands on the course's own
+      progress page, which names the activity and shows its state: quizzes
+      and assignments still open in their legacy pages until Phase 3, and
+      live sessions and discussions have no player screen — sending a
+      bookmark to an outline that names them is honest, inventing a player
+      path that does not exist would not be.
     */
     {
       from: '/dashboard/learning/courses/:courseId/learn',
@@ -343,7 +367,7 @@ export const RETIRED_DASHBOARD_LEARNER_ROUTES: readonly RetiredLearnerRoute[] =
     },
     {
       from: '/dashboard/learning/courses/:courseId/learn/:lessonId',
-      to: LEARNER_ROUTES.courseProgress,
+      to: LEARNER_ROUTES.playerLesson,
     },
     {
       from: '/dashboard/learning/courses/:courseId/quizzes/:quizId',

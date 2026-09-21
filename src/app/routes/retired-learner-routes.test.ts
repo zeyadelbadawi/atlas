@@ -20,7 +20,10 @@ import {
   LEARNER_ROUTES,
   RETIRED_DASHBOARD_LEARNER_ROUTES,
 } from './route-paths';
-import { resolveRetiredLearnerTarget } from './retired-learner-routes';
+import {
+  resolveRetiredAcademyLearnerTarget,
+  resolveRetiredLearnerTarget,
+} from './retired-learner-routes';
 
 describe('retired dashboard learner routes', () => {
   it('sends each retired section to its own replacement', () => {
@@ -38,11 +41,16 @@ describe('retired dashboard learner routes', () => {
     );
   });
 
-  it('carries the course id across, from every in-course URL', () => {
+  it('sends a lesson bookmark to that lesson in the unified player', () => {
+    expect(
+      resolveRetiredLearnerTarget('/dashboard/learning/courses/c-1/learn/l-9')
+    ).toBe('/my/courses/c-1/learn/l-9');
+  });
+
+  it('carries the course id across, from every other in-course URL', () => {
     const inCourse = [
       '/dashboard/learning/courses/c-1',
       '/dashboard/learning/courses/c-1/learn',
-      '/dashboard/learning/courses/c-1/learn/l-9',
       '/dashboard/learning/courses/c-1/quizzes/q-2',
       '/dashboard/learning/courses/c-1/assignments/a-3',
       '/dashboard/learning/courses/c-1/live-sessions/s-4',
@@ -75,6 +83,40 @@ describe('retired dashboard learner routes', () => {
   it('falls back to the learner home for an unmapped learning URL', () => {
     expect(
       resolveRetiredLearnerTarget('/dashboard/learning/something/older/still')
+    ).toBe(LEARNER_ROUTES.root);
+  });
+});
+
+describe('retired academy-website learner routes', () => {
+  it('sends the two dashboard-era pages to their sections', () => {
+    expect(resolveRetiredAcademyLearnerTarget('/my-learning')).toBe(
+      LEARNER_ROUTES.courses
+    );
+    expect(resolveRetiredAcademyLearnerTarget('/my-account')).toBe(
+      LEARNER_ROUTES.profile
+    );
+  });
+
+  it('sends the legacy course page and learn entry to the course outline', () => {
+    expect(resolveRetiredAcademyLearnerTarget('/my-learning/courses/c-1')).toBe(
+      '/my/courses/c-1'
+    );
+    expect(
+      resolveRetiredAcademyLearnerTarget('/my-learning/courses/c-1/learn')
+    ).toBe('/my/courses/c-1');
+  });
+
+  it('sends a legacy lesson URL to the same lesson in the unified player', () => {
+    expect(
+      resolveRetiredAcademyLearnerTarget('/my-learning/courses/c-1/learn/l-9')
+    ).toBe('/my/courses/c-1/learn/l-9');
+  });
+
+  it('leaves quiz and assignment URLs alone until Phase 3 moves them', () => {
+    // Not in the table: the resolver falls back, and the router never
+    // maps these paths to a redirect in the first place.
+    expect(
+      resolveRetiredAcademyLearnerTarget('/my-learning/courses/c-1/quizzes/q-2')
     ).toBe(LEARNER_ROUTES.root);
   });
 });

@@ -40,7 +40,7 @@
  * "hide this link," never as an error.
  */
 import { createContext, useContext, type ReactNode } from 'react';
-import { LEARNER_ROUTES } from '@app/routes/route-paths';
+import { LEARNER_ROUTES, buildPath } from '@app/routes/route-paths';
 
 export interface LearningPaths {
   readonly myLearning: () => string;
@@ -67,10 +67,15 @@ export interface LearningPaths {
 export const LEARNER_SURFACE_PATHS: LearningPaths = {
   myLearning: () => LEARNER_ROUTES.courses,
   courses: () => '/courses',
-  courseDetail: (courseId) => `/my-learning/courses/${courseId}`,
-  courseLearn: (courseId) => `/my-learning/courses/${courseId}/learn`,
+  // Pre-Phase-3 baseline: the course page and the lesson live in the
+  // learner app (`/my/*`); the legacy `/my-learning/courses/...` URLs
+  // redirect there and are no longer a destination anything links to.
+  courseDetail: (courseId) =>
+    buildPath(LEARNER_ROUTES.courseProgress, { courseId }),
+  courseLearn: (courseId) =>
+    buildPath(LEARNER_ROUTES.courseProgress, { courseId }),
   lesson: (courseId, lessonId) =>
-    `/my-learning/courses/${courseId}/learn/${lessonId}`,
+    buildPath(LEARNER_ROUTES.playerLesson, { courseId, lessonId }),
   quiz: (courseId, quizId) =>
     `/my-learning/courses/${courseId}/quizzes/${quizId}`,
   assignment: (courseId, assignmentId) =>

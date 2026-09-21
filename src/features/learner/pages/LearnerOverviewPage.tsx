@@ -34,6 +34,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@components/feedback';
+import { readErrorKind } from '../utils/read-error-kind';
 import { useDateFormatter } from '@hooks';
 import { buildPath, LEARNER_ROUTES } from '@app/routes/route-paths';
 import { LearnerPageHeader } from '../components/LearnerPageHeader';
@@ -62,7 +63,10 @@ export default function LearnerOverviewPage(): JSX.Element {
     return (
       <>
         {header}
-        <ErrorState onRetry={() => void refetch()} />
+        <ErrorState
+          kind={readErrorKind(error)}
+          onRetry={() => void refetch()}
+        />
       </>
     );
   }
@@ -172,7 +176,7 @@ export default function LearnerOverviewPage(): JSX.Element {
                         onClick={() => navigate(continueHref)}
                       >
                         <PlayCircle className="size-4" aria-hidden />
-                        {t('learning:discovery.card.continueAction')}
+                        {t('learning:learnerDashboard.actions.continue')}
                       </Button>
                     </div>
                   </CardContent>
@@ -207,9 +211,19 @@ export default function LearnerOverviewPage(): JSX.Element {
                   aria-hidden
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-foreground">
-                    {deadline.title}
-                  </p>
+                  <h3 className="truncate text-sm font-medium text-foreground">
+                    <Link
+                      to={buildHref(
+                        buildPath(LEARNER_ROUTES.playerActivity, {
+                          courseId: deadline.courseId,
+                          itemId: deadline.id,
+                        })
+                      )}
+                      className="rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      {deadline.title}
+                    </Link>
+                  </h3>
                   <p className="truncate text-xs text-muted-foreground">
                     {deadline.courseTitle}
                   </p>
@@ -254,9 +268,19 @@ export default function LearnerOverviewPage(): JSX.Element {
                   aria-hidden
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-foreground">
-                    {result.title}
-                  </p>
+                  <h3 className="truncate text-sm font-medium text-foreground">
+                    <Link
+                      to={buildHref(
+                        buildPath(LEARNER_ROUTES.playerActivity, {
+                          courseId: result.courseId,
+                          itemId: result.id,
+                        })
+                      )}
+                      className="rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      {result.title}
+                    </Link>
+                  </h3>
                   <p className="truncate text-xs text-muted-foreground">
                     {result.courseTitle} ·{' '}
                     {learnerAssessmentStateLabel(result.status, t)}

@@ -20,10 +20,11 @@
  */
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ListChecks, PlayCircle } from 'lucide-react';
+import { GraduationCap, ListChecks, PlayCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ErrorState } from '@components/feedback';
+import { EmptyState, ErrorState } from '@components/feedback';
+import { readErrorKind } from '../utils/read-error-kind';
 import { buildPath, LEARNER_ROUTES } from '@app/routes/route-paths';
 import type { CourseSequenceItem, LanguageCode } from '@types';
 import { LearnerPageHeader } from '../components/LearnerPageHeader';
@@ -79,7 +80,7 @@ export default function LearnerCourseProgressPage(): JSX.Element {
         continueItem ? (
           <Button onClick={() => navigate(hrefFor(continueItem))}>
             <PlayCircle className="size-4" aria-hidden />
-            {t('learning:discovery.card.continueAction')}
+            {t('learning:learnerDashboard.actions.continue')}
           </Button>
         ) : undefined
       }
@@ -87,10 +88,31 @@ export default function LearnerCourseProgressPage(): JSX.Element {
   );
 
   if (error) {
+    const kind = readErrorKind(error);
+    // The sequence is enrolment-scoped: a 404/403 here means "not your
+    // course", which deserves its own words and its own way forward.
+    const isNotEnrolled = kind === 'notFound' || kind === 'forbidden';
     return (
       <>
         {header}
-        <ErrorState onRetry={() => void refetch()} />
+        {isNotEnrolled ? (
+          <EmptyState
+            icon={GraduationCap}
+            titleKey="learning:learnerDashboard.courseProgress.notEnrolled.title"
+            descriptionKey="learning:learnerDashboard.courseProgress.notEnrolled.description"
+            primaryAction={{
+              labelKey:
+                'learning:learnerDashboard.courseProgress.notEnrolled.seeCourse',
+              onAction: () => navigate(buildHref(`/courses/${courseId}`)),
+            }}
+            secondaryAction={{
+              labelKey: 'learning:learnerDashboard.nav.courses',
+              onAction: () => navigate(buildHref(LEARNER_ROUTES.courses)),
+            }}
+          />
+        ) : (
+          <ErrorState kind={kind} onRetry={() => void refetch()} />
+        )}
       </>
     );
   }

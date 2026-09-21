@@ -11,9 +11,6 @@
  */
 import { useLocation } from 'react-router-dom';
 
-const LESSON_SCREEN_PATTERN =
-  /^\/(ar\/)?my-learning\/courses\/[^/]+\/learn\/[^/]+/;
-
 /**
  * P64 Phase 2 §E.1 — the learner dashboard brings its own bottom bar
  * (Overview / Courses / Assessments / Profile), which answers a different
@@ -29,8 +26,7 @@ const LEARNER_DASHBOARD_PATTERN = /^\/(ar\/)?my(\/|$)/;
 
 export function useMobileBottomNavVisibility(): boolean {
   const location = useLocation();
-  return !(
-    LESSON_SCREEN_PATTERN.test(location.pathname) ||
-    LEARNER_DASHBOARD_PATTERN.test(location.pathname)
-  );
+  // The legacy `/my-learning/.../learn/...` player redirects into `/my/*`
+  // now, so the learner-app pattern is the only one that matters.
+  return !LEARNER_DASHBOARD_PATTERN.test(location.pathname);
 }

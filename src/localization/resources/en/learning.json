@@ -293,7 +293,9 @@
       "filterEmpty": {
         "title": "Nothing here matches",
         "description": "No course on this page matches your search or the tab you picked. Clear the search, or try another tab."
-      }
+      },
+      "resultsCount_one": "{{count}} course shown",
+      "resultsCount_other": "{{count}} courses shown"
     },
     "courseProgress": {
       "title": "Course progress",
@@ -303,7 +305,12 @@
         "title": "The course outline will appear here",
         "description": "Each lesson, quiz, assignment and live session shows its own state — and, when something is locked, why."
       },
-      "loading": "Loading the course outline"
+      "loading": "Loading the course outline",
+      "notEnrolled": {
+        "title": "You are not enrolled in this course",
+        "description": "Its outline is only available to enrolled learners. Enrol from the course page, or go back to your courses.",
+        "seeCourse": "See the course"
+      }
     },
     "assessments": {
       "title": "Assessments",
@@ -351,7 +358,7 @@
       "subtitle": "Your orders and receipts with this academy.",
       "empty": {
         "title": "No orders yet",
-        "description": "Anything you buy from this academy is listed here with its payment status and receipt."
+        "description": "Anything you buy from this academy is listed here with its payment status."
       },
       "loading": "Loading your orders",
       "placedOn": "Ordered {{when}}",
@@ -366,14 +373,14 @@
     },
     "devices": {
       "title": "Devices",
-      "subtitle": "The devices you can learn on, and where you are signed in right now.",
+      "subtitle": "The devices you can learn on, and which of them is learning right now.",
       "empty": {
         "title": "No devices registered yet",
-        "description": "Every device you learn on is registered here. Remove one to free a slot, or end a learning session you left open elsewhere."
+        "description": "Every device you learn on is registered here. Remove one you no longer use to free a slot."
       },
       "loading": "Loading your devices",
       "registeredTitle": "Registered devices",
-      "sessionsTitle": "Where you are signed in",
+      "sessionsTitle": "Active learning sessions",
       "usage": "{{used}} of {{limit}} devices",
       "sessionLimit": "Limit: {{limit}} learning session at a time",
       "policySource": {
@@ -388,12 +395,14 @@
       "thisDevice": "This device",
       "thisSession": "This session",
       "remove": "Remove",
-      "noSessions": "No other sign-ins are active right now.",
+      "noSessions": "No learning session is active right now.",
       "confirmRemove": {
         "title": "Remove this device?",
         "description": "“{{device}}” will have to register again the next time you learn on it, and it will take a device slot when it does.",
         "currentDescription": "“{{device}}” is the device you are using right now. Removing it ends this learning session, and this browser will register again the next time you open a lesson."
-      }
+      },
+      "limitReached": "Limit reached",
+      "removeFailed": "The device could not be removed. Check your connection and try again."
     },
     "profile": {
       "title": "Profile",
@@ -412,6 +421,13 @@
         "description": "Change your password, review where you are signed in and turn on two-step verification from this page."
       },
       "devicesPointer": "Your learning devices and open learning sessions are managed separately, on"
+    },
+    "actions": {
+      "continue": "Continue learning",
+      "start": "Start course",
+      "review": "Review course",
+      "accessEnded": "Access ended",
+      "browseCourses": "Browse courses"
     }
   },
   "player": {
@@ -448,7 +464,8 @@
       "previousIncomplete": "Finish the activity before this one first",
       "scheduled": "Opens on a later date",
       "notStarted": "The session has not started yet",
-      "accessEnded": "Your access to this course has ended"
+      "accessEnded": "Your access to this course has ended",
+      "scheduledOn": "Opens on {{date}}"
     },
     "lock": {
       "title": "This activity is locked",
@@ -469,7 +486,8 @@
       "nextIs": "Next: {{position}} {{title}}",
       "lastActivity": "That was the last activity in this course.",
       "undo": "Undo",
-      "watchMoreHint": "Keep watching — this lesson can be completed once you have watched enough of it."
+      "watchMoreHint": "Keep watching — this lesson can be completed once you have watched enough of it.",
+      "failed": "That could not be saved. Check your connection and try again."
     },
     "autoAdvance": {
       "label": "Go to the next activity automatically",
@@ -617,6 +635,7 @@
         "title": "Something went wrong",
         "description": "This activity could not be opened. Try again, and contact the academy if it keeps happening."
       }
-    }
+    },
+    "nextLocked": "Next, “{{title}}”, is locked: {{reason}}"
   }
 }

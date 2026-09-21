@@ -19,6 +19,7 @@
 import { useTranslation } from 'react-i18next';
 import { Lock } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useDateFormatter } from '@hooks';
 import type { SequenceLockReason } from '@types';
 
 export interface ActivityLockCardProps {
@@ -30,18 +31,25 @@ export interface ActivityLockCardProps {
 
 export function ActivityLockCard({
   lockReason,
+  availableAt,
 }: ActivityLockCardProps): JSX.Element {
   const { t } = useTranslation();
+  const fmt = useDateFormatter();
+  // "Opens on a later date" is true but unhelpful when the date is known.
+  const description =
+    lockReason === 'scheduled' && availableAt
+      ? t('learning:player.lockReason.scheduledOn', {
+          date: fmt.dateTime(availableAt),
+        })
+      : lockReason
+        ? t(`learning:player.lockReason.${lockReason}`)
+        : t('learning:player.lock.genericReason');
 
   return (
     <Alert>
       <Lock className="size-4" aria-hidden />
       <AlertTitle>{t('learning:player.lock.title')}</AlertTitle>
-      <AlertDescription>
-        {lockReason
-          ? t(`learning:player.lockReason.${lockReason}`)
-          : t('learning:player.lock.genericReason')}
-      </AlertDescription>
+      <AlertDescription>{description}</AlertDescription>
     </Alert>
   );
 }

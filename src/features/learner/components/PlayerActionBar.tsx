@@ -40,7 +40,10 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { MIRROR_IN_RTL, cn } from '@utils';
 import type { CourseSequenceItem, LanguageCode } from '@types';
-import { formatSequenceOrdinal } from '../utils/sequence.utils';
+import {
+  formatSequenceOrdinal,
+  sequenceLockReasonKey,
+} from '../utils/sequence.utils';
 
 /** How long the learner has to cancel an auto-advance. */
 const AUTO_ADVANCE_SECONDS = 8;
@@ -66,6 +69,8 @@ export interface PlayerActionBarProps {
   readonly completionHintKey?: string;
   /** Set when the media has just finished, so auto-advance may arm. */
   readonly hasFinishedPlaying?: boolean;
+  /** A failed complete/undo, stated where the button is — never a silent no-op. */
+  readonly errorMessage?: string;
 }
 
 export function PlayerActionBar({
@@ -81,6 +86,7 @@ export function PlayerActionBar({
   canComplete,
   completionHintKey,
   hasFinishedPlaying,
+  errorMessage,
 }: PlayerActionBarProps): JSX.Element {
   const { t } = useTranslation();
   const [autoAdvance, setAutoAdvance] = useState(false);
@@ -155,6 +161,11 @@ export function PlayerActionBar({
           {t('learning:player.autoAdvance.countdown', { seconds: countdown })}
         </p>
       ) : null}
+      {errorMessage ? (
+        <p role="alert" className="text-sm text-destructive">
+          {errorMessage}
+        </p>
+      ) : null}
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Button
@@ -179,7 +190,11 @@ export function PlayerActionBar({
                     aria-hidden
                   />
                 ) : (
-                  <CheckCircle2 className="size-4" strokeWidth={2} aria-hidden />
+                  <CheckCircle2
+                    className="size-4"
+                    strokeWidth={2}
+                    aria-hidden
+                  />
                 )}
                 {t('learning:player.completion.markComplete')}
               </Button>
@@ -203,7 +218,10 @@ export function PlayerActionBar({
                   aria-hidden
                 />
               ) : (
-                <RotateCcw className={cn('size-4', MIRROR_IN_RTL)} aria-hidden />
+                <RotateCcw
+                  className={cn('size-4', MIRROR_IN_RTL)}
+                  aria-hidden
+                />
               )}
               {t('learning:player.completion.undo')}
             </Button>
@@ -220,6 +238,18 @@ export function PlayerActionBar({
         </Button>
       </div>
 
+      {/* A disabled Next with no reason is a dead end; the reason is
+          already known from the sequence, so say it. */}
+      {next?.state === 'locked' ? (
+        <p className="text-xs text-muted-foreground">
+          {t('learning:player.nextLocked', {
+            title: next.title,
+            reason: next.lockReason
+              ? t(sequenceLockReasonKey(next.lockReason))
+              : t('learning:player.lock.genericReason'),
+          })}
+        </p>
+      ) : null}
       {next ? (
         <div className="flex items-center gap-2">
           <Switch

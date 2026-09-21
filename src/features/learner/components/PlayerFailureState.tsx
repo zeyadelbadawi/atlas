@@ -20,7 +20,7 @@
  * this file does not add a second live region around it.
  */
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ErrorState } from '@components/feedback';
 import { LEARNER_ROUTES } from '@app/routes/route-paths';
 import { useLearnerSurface } from '../context/LearnerSurface.context';
@@ -50,7 +50,6 @@ export function PlayerFailureState({
   onRetry,
 }: PlayerFailureStateProps): JSX.Element {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { buildHref } = useLearnerSurface();
 
   const canRetry = RETRYABLE.has(failure.kind) && !!onRetry;
@@ -71,16 +70,12 @@ export function PlayerFailureState({
           {/* A real link, not a button that navigates: it is a
               destination, and a learner should be able to open it in a new
               tab from the screen that refused them. */}
-          <a
+          <Link
             className="font-medium text-primary underline underline-offset-4"
-            href={buildHref(LEARNER_ROUTES.devices)}
-            onClick={(event) => {
-              event.preventDefault();
-              navigate(buildHref(LEARNER_ROUTES.devices));
-            }}
+            to={buildHref(LEARNER_ROUTES.devices)}
           >
             {t('learning:player.failure.deviceLimit.action')}
-          </a>
+          </Link>
         </p>
       ) : null}
     </div>

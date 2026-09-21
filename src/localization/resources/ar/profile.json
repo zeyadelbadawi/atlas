@@ -16,7 +16,8 @@
       "title": "معلومات الحساب",
       "description": "معرّفات حسابك وعضويات المؤسسات.",
       "organizations": "المؤسسات",
-      "noOrganizations": "أنت لست عضوًا في أي مؤسسة."
+      "noOrganizations": "أنت لست عضوًا في أي مؤسسة.",
+      "learnerDescription": "متى انضممت إلى منصّة هذه الأكاديمية."
     },
     "preferences": {
       "title": "التفضيلات",

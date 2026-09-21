@@ -10,13 +10,14 @@
  * the Atlas dashboard chrome around it, and vice versa.
  */
 import type { CSSProperties, ReactNode } from 'react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import type {
   ResolvedWebsiteDesignSystem,
   WebsiteBrandConfig,
   WebsiteThemeDefinition,
 } from '@types';
 import { cn } from '@utils';
+import { PortalContainerProvider } from '@/components/ui/portal-container';
 import { WebsiteDesignSystemContext } from './WebsiteDesignSystemContext';
 import {
   WEBSITE_CONTAINER_WIDTH_VALUES,
@@ -131,10 +132,28 @@ export function WebsiteThemeScope({
     [resolved]
   );
 
+  // Portalled overlays (dialogs, sheets, popovers, selects) mount HERE,
+  // inside the scope, so they take the website's light tokens and the
+  // academy's brand colour instead of the dashboard's theme at the root —
+  // see `portal-container.tsx`. A callback ref, so the container exists
+  // before anything can open into it.
+  const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
+    null
+  );
+
   return (
     <WebsiteDesignSystemContext.Provider value={resolved}>
       <div className={cn('website-theme-scope', className)} style={style}>
-        {children}
+        <PortalContainerProvider value={portalContainer}>
+          {children}
+        </PortalContainerProvider>
+        {/* `text-foreground` so text inside a portalled overlay inherits the
+            scope's colour rather than the body's (dark-mode) colour. */}
+        <div
+          ref={setPortalContainer}
+          data-website-portal-root
+          className="text-foreground"
+        />
       </div>
     </WebsiteDesignSystemContext.Provider>
   );

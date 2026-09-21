@@ -40,7 +40,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { buildPath, LEARNER_ROUTES } from '@app/routes/route-paths';
 import { useAuth } from '@hooks';
-import { useLearningPaths } from '@features/learning';
 import type { CourseSequenceItem, LanguageCode } from '@types';
 import { useLearnerSurface } from '../context/LearnerSurface.context';
 import {
@@ -64,17 +63,23 @@ import {
 } from '../hooks/useLessonCompletion';
 import { useLessonGrant } from '../hooks/useLessonGrant';
 import { usePlaybackHeartbeat } from '../hooks/usePlaybackHeartbeat';
-import { findSequenceNeighbours, isSequenceItemFinished } from '../utils/sequence.utils';
+import {
+  findSequenceNeighbours,
+  isSequenceItemFinished,
+} from '../utils/sequence.utils';
 
 export default function LearnerPlayerPage(): JSX.Element {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const paths = useLearningPaths();
   const { buildHref } = useLearnerSurface();
   const { user } = useAuth();
   const language = i18n.language as LanguageCode;
 
-  const { courseId = '', lessonId, itemId } = useParams<{
+  const {
+    courseId = '',
+    lessonId,
+    itemId,
+  } = useParams<{
     courseId: string;
     lessonId?: string;
     itemId?: string;
@@ -124,10 +129,7 @@ export default function LearnerPlayerPage(): JSX.Element {
   const handlePositionSource = useCallback((getPosition: () => number) => {
     positionSourceRef.current = getPosition;
   }, []);
-  const getPositionSeconds = useCallback(
-    () => positionSourceRef.current(),
-    []
-  );
+  const getPositionSeconds = useCallback(() => positionSourceRef.current(), []);
 
   const heartbeat = usePlaybackHeartbeat({
     courseId,
@@ -142,6 +144,14 @@ export default function LearnerPlayerPage(): JSX.Element {
 
   const [hasFinishedPlaying, setHasFinishedPlaying] = useState(false);
   useEffect(() => setHasFinishedPlaying(false), [currentId]);
+  // A stale failure from the previous activity must not follow the
+  // learner to the next one.
+  const resetCompletion = completeLesson.reset;
+  const resetUndo = undoCompletion.reset;
+  useEffect(() => {
+    resetCompletion();
+    resetUndo();
+  }, [currentId, resetCompletion, resetUndo]);
 
   /* ---------- device and session dialogs ---------- */
 
@@ -339,6 +349,11 @@ export default function LearnerPlayerPage(): JSX.Element {
               canComplete={canComplete && heartbeat.leaseHeld}
               completionHintKey="learning:player.completion.watchMoreHint"
               hasFinishedPlaying={hasFinishedPlaying}
+              errorMessage={
+                completeLesson.error || undoCompletion.error
+                  ? t('learning:player.completion.failed')
+                  : undefined
+              }
             />
           ) : null
         }
@@ -351,7 +366,9 @@ export default function LearnerPlayerPage(): JSX.Element {
               <p>{t('learning:player.preview.description')}</p>
               <Button
                 size="sm"
-                onClick={() => navigate(paths.courseDetail(courseId))}
+                // The academy's own course page — where enrolling happens —
+                // not the learner app's outline, which needs an enrolment.
+                onClick={() => navigate(buildHref(`/courses/${courseId}`))}
               >
                 {t('learning:player.preview.action')}
               </Button>
@@ -380,6 +397,11 @@ export default function LearnerPlayerPage(): JSX.Element {
         onRemove={handleRemoveDevice}
         removingDeviceId={
           removeDevice.isPending ? removeDevice.variables : undefined
+        }
+        errorMessage={
+          removeDevice.error
+            ? t('learning:learnerDashboard.devices.removeFailed')
+            : undefined
         }
       />
     </>

@@ -25,7 +25,9 @@
  * why.
  */
 import { useTranslation } from 'react-i18next';
-import { CalendarClock, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, CalendarClock } from 'lucide-react';
+import { MIRROR_IN_RTL, cn } from '@utils';
 import { Button } from '@/components/ui/button';
 import { useDateFormatter } from '@hooks';
 import { useLearningPaths } from '@features/learning';
@@ -113,13 +115,19 @@ export function AssessmentActivityView({
 
         {!isLocked && attemptHref ? (
           <div className="mt-5">
+            {/* An in-app move, so a router Link — not an `<a>` that reloads
+                the whole website — and no "external" glyph: the quiz page
+                is this academy's own until Phase 3 folds it into here. */}
             <Button asChild>
-              <a href={attemptHref}>
-                <ExternalLink className="size-4" aria-hidden />
+              <Link to={attemptHref}>
                 {item.type === 'quiz'
                   ? t('learning:player.activity.openQuiz')
                   : t('learning:player.activity.openAssignment')}
-              </a>
+                <ArrowRight
+                  className={cn('size-4', MIRROR_IN_RTL)}
+                  aria-hidden
+                />
+              </Link>
             </Button>
           </div>
         ) : null}

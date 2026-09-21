@@ -34,6 +34,7 @@
  */
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { LEARNER_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   BookOpen,
@@ -147,7 +148,9 @@ export function CourseDetailsTemplate({
     setEnrollError(false);
     try {
       await enroll({ courseId });
-      navigate(buildHref(`/my-learning/courses/${courseId}`));
+      navigate(
+        buildHref(buildPath(LEARNER_ROUTES.courseProgress, { courseId }))
+      );
     } catch {
       setEnrollError(true);
       toast({
@@ -294,7 +297,11 @@ export function CourseDetailsTemplate({
             <Button
               className="w-full"
               onClick={() =>
-                navigate(buildHref(`/my-learning/courses/${courseId}`))
+                navigate(
+                  buildHref(
+                    buildPath(LEARNER_ROUTES.courseProgress, { courseId })
+                  )
+                )
               }
             >
               <CheckCircle2 className="size-4" strokeWidth={2} aria-hidden />
