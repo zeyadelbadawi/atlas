@@ -14,6 +14,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  Award,
   BadgeCheck,
   Ban,
   BookPlus,
@@ -41,6 +42,11 @@ import { EmptyState, ErrorState } from '@components/feedback';
 import { useDateFormatter } from '@hooks';
 import { useToast, useConfirmDialog } from '@app/providers';
 import { getQuizAttemptStatusTone, getSubmissionStatusTone } from '@features/learning';
+// The feature barrel, never its internals (`no-restricted-imports`).
+import {
+  IssueCertificateDialog,
+  type IssueCertificateTarget,
+} from '@features/certificates';
 import {
   useAcademyStudent,
   useApproveAcademyStudent,
@@ -102,6 +108,10 @@ export function AcademyStudentDrawer({
     null
   );
   const [expiryTarget, setExpiryTarget] = useState<RosterEnrollment | null>(
+    null
+  );
+  // P64 Phase 3 §E.6 — manual certificate issuance for one enrollment.
+  const [issueTarget, setIssueTarget] = useState<IssueCertificateTarget | null>(
     null
   );
 
@@ -453,25 +463,51 @@ export function AcademyStudentDrawer({
                             ) : null}
                           </div>
                         </div>
-                        {canManage && enrollment.isActive ? (
-                          <div className="flex shrink-0 gap-1">
+                        {canManage &&
+                        (enrollment.isActive ||
+                          enrollment.status === 'completed' ||
+                          !!enrollment.completedAt) &&
+                        !enrollment.revokedAt ? (
+                          <div className="flex shrink-0 flex-wrap gap-1">
+                            {/* P64 Phase 3 §E.6 — manual issuance for an
+                                active or completed enrollment. The
+                                dialog owns the mutation and its copy. */}
                             <Button
                               type="button"
                               size="sm"
                               variant="ghost"
-                              onClick={() => setExpiryTarget(enrollment)}
+                              onClick={() =>
+                                setIssueTarget({
+                                  enrollmentId: enrollment.id,
+                                  courseTitle: enrollment.courseTitle,
+                                  studentName: student.name,
+                                })
+                              }
                             >
-                              {t('academy:students.actions.setExpiry')}
+                              <Award className="size-4" aria-hidden />
+                              {t('certificates:issue.action')}
                             </Button>
-                            <Button
-                              type="button"
-                              size="sm"
-                              variant="ghost"
-                              className="text-destructive"
-                              onClick={() => setRevokeTarget(enrollment)}
-                            >
-                              {t('academy:students.actions.revoke')}
-                            </Button>
+                            {enrollment.isActive ? (
+                              <>
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => setExpiryTarget(enrollment)}
+                                >
+                                  {t('academy:students.actions.setExpiry')}
+                                </Button>
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="ghost"
+                                  className="text-destructive"
+                                  onClick={() => setRevokeTarget(enrollment)}
+                                >
+                                  {t('academy:students.actions.revoke')}
+                                </Button>
+                              </>
+                            ) : null}
                           </div>
                         ) : null}
                       </div>
@@ -642,6 +678,11 @@ export function AcademyStudentDrawer({
             courseTitle={expiryTarget?.courseTitle ?? ''}
             currentExpiresAt={expiryTarget?.expiresAt}
             onConfirm={handleExpiry}
+          />
+          <IssueCertificateDialog
+            academyId={academyId}
+            target={issueTarget}
+            onOpenChange={(next) => !next && setIssueTarget(null)}
           />
         </>
       ) : null}

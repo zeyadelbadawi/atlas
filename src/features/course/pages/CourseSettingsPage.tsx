@@ -6,10 +6,14 @@
  * descriptions, thumbnail, category, pricing) are edited on the Course Edit
  * page — this page owns lifecycle, not content, the same way Academy
  * Settings stays separate from Academy Profile.
+ *
+ * P64 Phase 3 (AD-11, D6) adds the "Completion and certificate" card:
+ * what completing the course means and whether a certificate is issued.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useAuth } from '@hooks';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -47,6 +51,7 @@ import {
   getCourseVisibilityTone,
 } from '../utils/course-status.utils';
 import { getCourseEditorTabs } from '../utils/course-navigation.utils';
+import { CourseCompletionSettingsCard } from '../components/CourseCompletionSettingsCard';
 import type { BreadcrumbItem } from '@types';
 
 export default function CourseSettingsPage(): JSX.Element {
@@ -57,7 +62,13 @@ export default function CourseSettingsPage(): JSX.Element {
     courseId: string;
   }>();
   const { confirm } = useConfirmDialog();
+  const { organization } = useAuth();
   const [justPublished, setJustPublished] = useState(false);
+
+  // Owners and managers may change completion and certificate settings;
+  // the server re-checks and a 403 is mapped inline by the card.
+  const canEditCompletion =
+    organization?.role === 'owner' || organization?.role === 'manager';
 
   const {
     data: course,
@@ -315,6 +326,14 @@ export default function CourseSettingsPage(): JSX.Element {
             )}
           </CardContent>
         </Card>
+
+        {academyId && courseId ? (
+          <CourseCompletionSettingsCard
+            academyId={academyId}
+            courseId={courseId}
+            canEdit={canEditCompletion}
+          />
+        ) : null}
 
         <Card className="border-destructive/30">
           <CardHeader>

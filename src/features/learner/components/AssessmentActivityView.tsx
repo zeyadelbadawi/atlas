@@ -1,23 +1,16 @@
 /**
  * A quiz, an assignment or a live session inside the player shell (§E.2).
  *
- * WHY THIS IS A SUMMARY AND A HAND-OFF, NOT AN ENGINE. §E.2's requirement
- * is that these activities "render inside one shell and participate in
- * Next/Previous" — which they now do: the same course title, the same
- * progress bar, the same numbered activity header, the same curriculum,
- * the same single action bar, and the learner walks the whole course in
- * one place instead of being ejected to a differently-shaped page
- * whenever an assessment comes up. The ATTEMPT itself — question
- * rendering, timers, autosave, submission, manual grading, the integrity
- * layer — is Phase 3 (§D/§E of that phase), and its existing screens
- * (`QuizPage`, `AssignmentPage`) are real, working and unchanged.
+ * P64 Phase 3 folded the attempt itself into the shell: a quiz renders
+ * `QuizActivityView` (intro → attempt → results, all in place) and an
+ * assignment renders `AssignmentActivityView` (draft → submitted →
+ * graded). The Phase 2 hand-off to a separately shaped page is gone,
+ * and the legacy `/my-learning/courses/:id/quizzes/:quizId` URLs now
+ * redirect here.
  *
- * So this shows what the learner needs in order to decide — what kind of
- * activity it is, where it sits in the course, when it is due, what state
- * it is in, what they scored — and hands off to the existing attempt
- * screen. Re-implementing the quiz engine inside the shell as part of
- * Phase 2 would mean two quiz engines to keep in step until Phase 3
- * deleted one of them, which is how divergence happens.
+ * A live session keeps the Phase 2 summary: joining details are a later
+ * phase, and a summary that says so is better than a button that leads
+ * nowhere.
  *
  * THE LOCK CARD LIVES HERE TOO. A locked activity shows its reason and no
  * action — because there genuinely is nothing to do yet, and an enabled
@@ -25,14 +18,12 @@
  * why.
  */
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { ArrowRight, CalendarClock } from 'lucide-react';
-import { MIRROR_IN_RTL, cn } from '@utils';
-import { Button } from '@/components/ui/button';
+import { CalendarClock } from 'lucide-react';
 import { useDateFormatter } from '@hooks';
-import { useLearningPaths } from '@features/learning';
 import type { CourseSequenceItem } from '@types';
 import { ActivityLockCard } from './ActivityLockCard';
+import { AssignmentActivityView } from './AssignmentActivityView';
+import { QuizActivityView } from './QuizActivityView';
 import {
   sequenceStateLabelKey,
   sequenceTypeLabelKey,
@@ -41,24 +32,54 @@ import {
 export interface AssessmentActivityViewProps {
   readonly courseId: string;
   readonly item: CourseSequenceItem;
+  /** Move to the next activity (the results screen's primary action). */
+  readonly onContinue?: () => void;
+  readonly continueLabel?: string;
+  /** Player href for a lesson, so a reviewed question can link to the lesson it came from. */
+  readonly lessonHref?: (lessonId: string) => string;
 }
 
 export function AssessmentActivityView({
   courseId,
   item,
+  onContinue,
+  continueLabel,
+  lessonHref,
 }: AssessmentActivityViewProps): JSX.Element {
   const { t } = useTranslation();
   const fmt = useDateFormatter();
-  const paths = useLearningPaths();
 
   const isLocked = item.state === 'locked';
 
-  const attemptHref =
-    item.type === 'quiz'
-      ? paths.quiz(courseId, item.id)
-      : item.type === 'assignment'
-        ? paths.assignment(courseId, item.id)
-        : undefined;
+  if (item.type === 'quiz') {
+    return (
+      <div className="space-y-4">
+        {isLocked ? (
+          <ActivityLockCard
+            lockReason={item.lockReason}
+            availableAt={item.availableAt}
+          />
+        ) : null}
+        <QuizActivityView
+          courseId={courseId}
+          item={item}
+          onContinue={onContinue}
+          continueLabel={continueLabel}
+          lessonHref={lessonHref}
+        />
+      </div>
+    );
+  }
+
+  if (item.type === 'assignment') {
+    return (
+      <AssignmentActivityView
+        courseId={courseId}
+        item={item}
+        onContinue={onContinue}
+      />
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -113,26 +134,7 @@ export function AssessmentActivityView({
           ) : null}
         </dl>
 
-        {!isLocked && attemptHref ? (
-          <div className="mt-5">
-            {/* An in-app move, so a router Link — not an `<a>` that reloads
-                the whole website — and no "external" glyph: the quiz page
-                is this academy's own until Phase 3 folds it into here. */}
-            <Button asChild>
-              <Link to={attemptHref}>
-                {item.type === 'quiz'
-                  ? t('learning:player.activity.openQuiz')
-                  : t('learning:player.activity.openAssignment')}
-                <ArrowRight
-                  className={cn('size-4', MIRROR_IN_RTL)}
-                  aria-hidden
-                />
-              </Link>
-            </Button>
-          </div>
-        ) : null}
-
-        {!isLocked && item.type === 'live_session' ? (
+        {!isLocked ? (
           <p className="mt-5 text-sm text-muted-foreground">
             {t('learning:player.activity.liveSessionNote')}
           </p>

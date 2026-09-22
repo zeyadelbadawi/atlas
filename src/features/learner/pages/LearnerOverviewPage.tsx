@@ -338,10 +338,14 @@ export default function LearnerOverviewPage(): JSX.Element {
         </section>
       ) : null}
 
-      {/* Certificates — a promise until Phase 3 issues any. */}
+      {/* Certificates — the server's count, or the honest reason there is none (P64 Phase 3 §E.6). */}
       <section
         aria-labelledby="overview-certificates-heading"
-        className="rounded-lg border border-dashed border-border p-4"
+        className={
+          data.certificates.available && data.certificates.count > 0
+            ? 'rounded-lg border border-border bg-card p-4'
+            : 'rounded-lg border border-dashed border-border p-4'
+        }
       >
         <h2
           id="overview-certificates-heading"
@@ -350,15 +354,26 @@ export default function LearnerOverviewPage(): JSX.Element {
           <Award className="size-4" aria-hidden />
           {t('learning:learnerDashboard.nav.certificates')}
         </h2>
-        {/*
-          `available` is typed as the literal `false` in the Phase 2
-          contract, so this renders the honest "not yet" and nothing else.
-          Phase 3 widens the field, and the branch it needs is added then
-          — writing a dead one now would be a branch nobody could test.
-        */}
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t('learning:learnerDashboard.overview.certificates.comingSoon')}
-        </p>
+        {data.certificates.available && data.certificates.count > 0 ? (
+          <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm text-foreground">
+              {t('certificates:overview.count', {
+                count: data.certificates.count,
+              })}
+            </p>
+            <Button asChild size="sm" variant="outline">
+              <Link to={buildHref(LEARNER_ROUTES.certificates)}>
+                {t('certificates:overview.view')}
+              </Link>
+            </Button>
+          </div>
+        ) : (
+          <p className="mt-1 text-sm text-muted-foreground">
+            {data.certificates.available
+              ? t('certificates:overview.none')
+              : t('learning:learnerDashboard.overview.certificates.comingSoon')}
+          </p>
+        )}
       </section>
     </>
   );

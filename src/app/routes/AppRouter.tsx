@@ -174,6 +174,9 @@ const InstructorAssessmentsPage = lazy(
 const InstructorQuizResultsPage = lazy(
   () => import('@features/instructor/pages/InstructorQuizResultsPage')
 );
+const InstructorQuizAttemptPage = lazy(
+  () => import('@features/instructor/pages/InstructorQuizAttemptPage')
+);
 const InstructorSubmissionsPage = lazy(
   () => import('@features/instructor/pages/InstructorSubmissionsPage')
 );
@@ -195,6 +198,17 @@ const AcademyAnnouncementsPage = lazy(
 );
 const AcademyMediaPage = lazy(
   () => import('@features/media/pages/AcademyMediaPage')
+);
+// P64 Phase 3 §E.6 (D6/D7) — certificates: the academy's issued list and
+// template, plus the public verify sheet on the platform host.
+const AcademyCertificatesPage = lazy(
+  () => import('@features/certificates/pages/AcademyCertificatesPage')
+);
+const AcademyCertificateTemplatePage = lazy(
+  () => import('@features/certificates/pages/AcademyCertificateTemplatePage')
+);
+const CertificateVerifyPage = lazy(
+  () => import('@features/certificates/pages/CertificateVerifyPage')
 );
 
 const BlogListPage = lazy(() => import('@features/blog/pages/BlogListPage'));
@@ -421,6 +435,13 @@ export function AppRouter(): JSX.Element {
               element={<PrivacyPolicyPage />}
             />
             <Route path={PUBLIC_ROUTES.terms} element={<TermsPage />} />
+            {/* P64 Phase 3 (D6) — public certificate verification. No
+                session: the code is the credential. The same sheet is
+                mounted on every academy host by `PublicWebsiteRouter`. */}
+            <Route
+              path={PUBLIC_ROUTES.verify}
+              element={<CertificateVerifyPage />}
+            />
           </Route>
 
           {/* Authentication surface */}
@@ -1067,6 +1088,19 @@ export function AppRouter(): JSX.Element {
             />
 
             <Route
+              path={DASHBOARD_ROUTES.instructorQuizAttempt}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['instructor.assessment.view']}
+                  requiresEntitlement
+                >
+                  <InstructorQuizAttemptPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
               path={DASHBOARD_ROUTES.instructorSubmissions}
               element={
                 <RouteGuard
@@ -1129,6 +1163,38 @@ export function AppRouter(): JSX.Element {
                   requiresEntitlement
                 >
                   <AcademyMediaPage />
+                </RouteGuard>
+              }
+            />
+
+            {/*
+              P64 Phase 3 §E.6 — certificates, guarded like media: viewing
+              needs academy access (an instructor reads the list for their
+              courses); issue/revoke/regenerate and the template save are
+              gated inside the pages on the manage permission, and the
+              backend refuses them for anyone else regardless.
+            */}
+            <Route
+              path={DASHBOARD_ROUTES.academyCertificates}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.view']}
+                  requiresEntitlement
+                >
+                  <AcademyCertificatesPage />
+                </RouteGuard>
+              }
+            />
+            <Route
+              path={DASHBOARD_ROUTES.academyCertificateTemplate}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.view']}
+                  requiresEntitlement
+                >
+                  <AcademyCertificateTemplatePage />
                 </RouteGuard>
               }
             />
