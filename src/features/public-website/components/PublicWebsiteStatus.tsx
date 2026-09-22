@@ -17,6 +17,13 @@ export interface PublicWebsiteStatusProps {
   readonly state: Exclude<PublicWebsiteDataState, { status: 'ready' }>;
 }
 
+/**
+ * Every root here carries `website-theme-scope`: these states render OUTSIDE
+ * `WebsiteThemeScope` (there is no site to theme yet), so without the class
+ * their `bg-background`/`text-foreground` resolved to the DASHBOARD tokens
+ * and flipped dark whenever the visitor's OS preferred dark — a dark loading
+ * skeleton before a white academy page (CodeRabbit on PR #8, 22 Sep 2026).
+ */
 export function PublicWebsiteStatus({
   state,
 }: PublicWebsiteStatusProps): JSX.Element {
@@ -24,7 +31,7 @@ export function PublicWebsiteStatus({
 
   if (state.status === 'loading') {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background p-6">
+      <div className="website-theme-scope flex min-h-screen items-center justify-center bg-background p-6">
         <div className="w-full max-w-md space-y-4">
           <Skeleton className="h-8 w-2/3" />
           <Skeleton className="h-40 w-full" />
@@ -49,7 +56,7 @@ export function PublicWebsiteStatus({
   }[state.status];
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-6">
+    <div className="website-theme-scope flex min-h-screen items-center justify-center bg-background p-6">
       <div className="w-full max-w-md space-y-4 text-center">
         <span className="mx-auto flex size-12 items-center justify-center rounded-pill bg-muted text-muted-foreground">
           <Globe className="size-6" strokeWidth={1.75} aria-hidden />

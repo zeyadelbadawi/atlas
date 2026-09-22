@@ -171,7 +171,9 @@ export function PublicWebsitePage({
 
   if (!page) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background p-6">
+      // Outside `WebsiteRenderer`/`WebsiteChrome`, so the scope class is applied
+      // here by hand — see `PublicWebsiteStatus` for why.
+      <div className="website-theme-scope flex min-h-screen items-center justify-center bg-background p-6">
         <EmptyState
           titleKey="website:public.pageNotFound.title"
           descriptionKey="website:public.pageNotFound.description"

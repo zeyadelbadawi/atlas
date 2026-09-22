@@ -322,6 +322,31 @@
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
     --primary-foreground: 0 0% 100%;
+
+    /* ------------------------------------------------------------------
+     * STATUS TOKENS (P64 Phase 3 production validation, 22 Sep 2026).
+     *
+     * The Phase 3 surfaces that live on a public academy site — the
+     * `/verify/:code` sheet, the learner's quiz results and certificate
+     * cards — use `bg-success-surface`, `bg-warning-surface`,
+     * `bg-info-surface` and `bg-destructive-surface` for their notices.
+     * Left undefined here they fell through to the dashboard's `.dark`
+     * values whenever the VISITOR's operating system preferred dark, so
+     * "Valid certificate" rendered as near-black text on a dark-green
+     * panel on an otherwise white page (contrast ≈ 1.6:1). Same rule as
+     * every token above: a customer's public site keeps its own light
+     * palette regardless of the dashboard theme.
+     * ------------------------------------------------------------------ */
+    --destructive-surface: 358 70% 96%;
+    --success: 152 54% 32%;
+    --success-foreground: 0 0% 100%;
+    --success-surface: 152 46% 95%;
+    --warning: 38 78% 44%;
+    --warning-foreground: 40 60% 99%;
+    --warning-surface: 38 82% 95%;
+    --info: 212 62% 40%;
+    --info-foreground: 0 0% 100%;
+    --info-surface: 212 70% 96%;
   }
 }
 
