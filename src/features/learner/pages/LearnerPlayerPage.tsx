@@ -65,6 +65,7 @@ import { useLessonGrant } from '../hooks/useLessonGrant';
 import { usePlaybackHeartbeat } from '../hooks/usePlaybackHeartbeat';
 import {
   findSequenceNeighbours,
+  formatSequenceOrdinal,
   isSequenceItemFinished,
 } from '../utils/sequence.utils';
 
@@ -308,7 +309,26 @@ export default function LearnerPlayerPage(): JSX.Element {
       />
     );
   } else if (!isLessonRoute && current) {
-    content = <AssessmentActivityView courseId={courseId} item={current} />;
+    content = (
+      <AssessmentActivityView
+        courseId={courseId}
+        item={current}
+        onContinue={next ? () => goTo(next) : undefined}
+        continueLabel={
+          next
+            ? t('learning:player.completion.nextIs', {
+                position: formatSequenceOrdinal(next, language),
+                title: next.title,
+              })
+            : undefined
+        }
+        lessonHref={(lessonId) =>
+          buildHref(
+            buildPath(LEARNER_ROUTES.playerLesson, { courseId, lessonId })
+          )
+        }
+      />
+    );
   } else if (sequenceQuery.isLoading) {
     content = <Skeleton className="h-48 w-full" />;
   } else {

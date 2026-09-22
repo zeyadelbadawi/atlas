@@ -33,6 +33,7 @@ import { LearnerSectionPlaceholder } from '../components/LearnerSectionPlacehold
 import { useLearnerSurface } from '../context/LearnerSurface.context';
 import { useCourseSequence } from '../hooks';
 import { CurriculumSidebar } from '../components/CurriculumSidebar';
+import { CourseCompletionCard } from '../components/CourseCompletionCard';
 import { sequenceCompletionPercentage } from '../utils/sequence.utils';
 
 export default function LearnerCourseProgressPage(): JSX.Element {
@@ -161,16 +162,22 @@ export default function LearnerCourseProgressPage(): JSX.Element {
           descriptionKey="learning:learnerDashboard.courseProgress.empty.description"
         />
       ) : (
-        <div className="rounded-lg border border-border bg-card p-4">
-          {/* The same component the player's sidebar uses — one list, one
+        <>
+          {/* P64 Phase 3 (AD-11): where the learner stands against the
+              course's completion rule, and the certificate state. */}
+          <CourseCompletionCard courseId={courseId} />
+
+          <div className="rounded-lg border border-border bg-card p-4">
+            {/* The same component the player's sidebar uses — one list, one
               rendering, no second opinion about order or state. */}
-          <CurriculumSidebar
-            items={data.items}
-            currentItemId={data.continueItemId ?? undefined}
-            hrefFor={hrefFor}
-            language={language}
-          />
-        </div>
+            <CurriculumSidebar
+              items={data.items}
+              currentItemId={data.continueItemId ?? undefined}
+              hrefFor={hrefFor}
+              language={language}
+            />
+          </div>
+        </>
       )}
     </>
   );

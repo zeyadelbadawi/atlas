@@ -106,6 +106,8 @@ export default function CourseAssignmentsPage(): JSX.Element {
       status: data.status,
       dueAt: data.dueAt ? new Date(data.dueAt).toISOString() : undefined,
       allowResubmission: data.allowResubmission,
+      latePolicy: data.latePolicy,
+      requiredForCompletion: data.requiredForCompletion,
     };
 
     try {
@@ -254,7 +256,19 @@ export default function CourseAssignmentsPage(): JSX.Element {
                         {t('course:assignmentAuthoring.dueLabel', {
                           date: fmt.dateTime(assignment.dueAt),
                         })}
+                        {' · '}
+                        {t(
+                          assignment.latePolicy === 'block'
+                            ? 'course:assignmentAuthoring.latePolicyBadge.block'
+                            : 'course:assignmentAuthoring.latePolicyBadge.accept_flagged'
+                        )}
                       </p>
+                    ) : null}
+                    {assignment.requiredForCompletion ? (
+                      <StatusBadge
+                        labelKey="course:assignmentAuthoring.requiredForCompletionBadge"
+                        tone="info"
+                      />
                     ) : null}
                   </div>
 

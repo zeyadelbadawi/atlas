@@ -15,7 +15,11 @@ import {
   LearningPathsProvider,
 } from '../context/LearningPaths.context';
 import { CurriculumNav } from './CurriculumNav';
-import type { CourseSection, CurriculumItem, LessonProgressStatus } from '@types';
+import type {
+  CourseSection,
+  CurriculumItem,
+  LessonProgressStatus,
+} from '@types';
 
 function renderNav(section: CourseSection, language = 'en') {
   const i18n = createI18nInstance(language as 'en' | 'ar');
@@ -31,7 +35,7 @@ function renderNav(section: CourseSection, language = 'en') {
           />
         </LearningPathsProvider>
       </MemoryRouter>
-    </I18nextProvider>,
+    </I18nextProvider>
   );
 }
 
@@ -80,7 +84,7 @@ describe('CurriculumNav — unified sequence', () => {
         item({ id: 'q1', type: 'quiz', title: 'Chapter Quiz', order: 0 }),
         item({ id: 'l1', type: 'lesson', title: 'Intro Lesson', order: 1 }),
         item({ id: 'a1', type: 'assignment', title: 'Homework', order: 2 }),
-      ]),
+      ])
     );
 
     const links = screen.getAllByRole('link');
@@ -90,9 +94,10 @@ describe('CurriculumNav — unified sequence', () => {
       'Intro Lesson',
       'Homework',
     ]);
-    expect(links[0].getAttribute('href')).toContain('/quizzes/q1');
+    // P64 Phase 3: every assessment opens inside the unified player.
+    expect(links[0].getAttribute('href')).toContain('/activities/q1');
     expect(links[1].getAttribute('href')).toContain('/learn/l1');
-    expect(links[2].getAttribute('href')).toContain('/assignments/a1');
+    expect(links[2].getAttribute('href')).toContain('/activities/a1');
   });
 
   it('falls back to lessons when the server sends no unified items', () => {
@@ -104,7 +109,7 @@ describe('CurriculumNav — unified sequence', () => {
   it('renders in Arabic with no raw keys', () => {
     const { container } = renderNav(
       section([item({ id: 'q1', type: 'quiz', title: 'اختبار', order: 0 })]),
-      'ar',
+      'ar'
     );
     expect(container.textContent).not.toMatch(/learning:|course:/);
     expect(container.textContent).toMatch(/[؀-ۿ]/);

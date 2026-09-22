@@ -139,6 +139,13 @@ vi.mock('@app/providers', () => ({
 vi.mock('@features/learning', () => ({
   getQuizAttemptStatusTone: () => 'neutral',
   getSubmissionStatusTone: () => 'neutral',
+  // P64 Phase 3 — the drawer's "Issue certificate" action; never fired here.
+  useIssueCertificate: () => ({
+    mutateAsync: vi.fn(),
+    reset: vi.fn(),
+    isPending: false,
+    error: null,
+  }),
 }));
 
 // The enroll dialog's course picker. Mocked at the feature barrel the

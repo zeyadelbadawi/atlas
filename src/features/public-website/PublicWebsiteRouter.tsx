@@ -34,6 +34,7 @@ import { PublicWebsiteSignUpPage } from './components/PublicWebsiteSignUpPage';
 import { PublicWebsiteForgotPasswordPage } from './components/PublicWebsiteForgotPasswordPage';
 import { PublicWebsiteResetPasswordPage } from './components/PublicWebsiteResetPasswordPage';
 import { PublicWebsiteVerifyEmailPage } from './components/PublicWebsiteVerifyEmailPage';
+import { PublicWebsiteAuthShell } from './components/PublicWebsiteAuthShell';
 import { PublicWebsiteLearningRoute } from './components/PublicWebsiteLearningRoute';
 import { PublicWebsiteRetiredLearnerRedirect } from './components/PublicWebsiteRetiredLearnerRedirect';
 import { usePublicWebsiteData } from './hooks/usePublicWebsiteData';
@@ -52,19 +53,21 @@ import type { PublicWebsiteLocale } from '@types';
 // instead of the internal dashboard shell. Lazy so a visitor who never
 // signs in never downloads this code.
 //
-// P64 Phase 2 §E.1/§E.2 — what is left here is the QUIZ and ASSIGNMENT
-// pages, which Phase 3 moves into the unified player. Everything else the
-// learner used to reach under `/my-learning/...` — the dashboard, the
-// profile, the course page and the lesson player — now lives under `/my/*`
-// and the old URLs redirect there (`RETIRED_ACADEMY_LEARNER_ROUTES`).
-const QuizPage = lazy(() => import('@features/learning/pages/QuizPage'));
-const AssignmentPage = lazy(
-  () => import('@features/learning/pages/AssignmentPage')
-);
+// P64 Phase 3 — nothing of the old embedded LMS renders here any more:
+// the dashboard, the profile, the course page, the lesson player and (as
+// of this phase) the quiz and assignment attempts all live under `/my/*`,
+// and every old `/my-learning/...` URL redirects there
+// (`RETIRED_ACADEMY_LEARNER_ROUTES`).
 // P64 Phase 2 §E.1 — the learner dashboard: one lazy chunk for the whole
 // `/my/*` tree, which then splits again per section (`LearnerRouter`). A
 // visitor who never signs in never downloads any of it.
 const LearnerRouter = lazy(() => import('@features/learner/LearnerRouter'));
+// P64 Phase 3 §E.6 (D6) — the public certificate verification sheet, the
+// same component the platform host mounts at `PUBLIC_ROUTES.verify`, here
+// framed in this academy's own chrome. No session needed.
+const CertificateVerifyPage = lazy(
+  () => import('@features/certificates/pages/CertificateVerifyPage')
+);
 
 export interface PublicWebsiteRouterProps {
   readonly context: Extract<PublicWebsiteContext, { mode: 'academy-website' }>;
@@ -200,6 +203,29 @@ function PublicWebsiteLocaleRoutes({
         }
       />
 
+      {/* P64 Phase 3 §E.6 (D6) — `/verify/:code` on the academy host, ahead
+          of `my/*` and the catch-all so a Custom Page can never shadow a
+          printed verification link. Framed exactly like verify-email; the
+          sheet itself is the one the platform host renders. */}
+      <Route
+        path="verify/:code"
+        element={
+          <CertificateVerifyPage
+            renderFrame={({ title, subtitle, path, content }) => (
+              <PublicWebsiteAuthShell
+                lookupKey={lookupKey}
+                locale={locale}
+                path={path}
+                title={title}
+                subtitle={subtitle}
+              >
+                {() => content}
+              </PublicWebsiteAuthShell>
+            )}
+          />
+        }
+      />
+
       {/* P64 Phase 2 §E.1 (D2 / AD-12) — THE learner surface. Reached
           before the data-driven catch-all for the same reason sign-in is:
           a Custom Page authored at one of these slugs must never be able
@@ -229,11 +255,11 @@ function PublicWebsiteLocaleRoutes({
           table itself lives in `route-paths.ts` with every other path
           declaration (`RETIRED_ACADEMY_LEARNER_ROUTES`).
 
-          The course page and the lesson player at `/my-learning/courses/
-          ...` are retired as well (pre-Phase-3 baseline): the unified
-          player and the course outline under `/my/*` own those screens,
-          and `:courseId`/`:lessonId` are carried across so a lesson
-          bookmark lands on that lesson. */}
+          The course page, the lesson player and (P64 Phase 3) the quiz
+          and assignment pages at `/my-learning/courses/...` are retired
+          as well: the unified player and the course outline under `/my/*`
+          own those screens, and the ids are carried across so a bookmark
+          lands on that lesson or activity. */}
       {RETIRED_ACADEMY_LEARNER_ROUTES.map(({ from }) => (
         <Route
           key={from}
@@ -243,31 +269,6 @@ function PublicWebsiteLocaleRoutes({
         />
       ))}
 
-      {/* Student Learning — what remains of the Academy-website-embedded
-          LMS experience: the quiz and assignment pages, until Phase 3
-          moves them into the unified player. Same "reached before the
-          data-driven catch-all" precedent as sign-in/sign-up: an Academy
-          that happens to have authored a Custom Page at one of these
-          exact slugs would have it permanently shadowed, matching that
-          already-accepted risk (never silently — the Pages list still
-          shows the page, it's simply unreachable at this specific
-          path). */}
-      <Route
-        path="my-learning/courses/:courseId/quizzes/:quizId"
-        element={
-          <PublicWebsiteLearningRoute lookupKey={lookupKey} locale={locale}>
-            {() => <QuizPage />}
-          </PublicWebsiteLearningRoute>
-        }
-      />
-      <Route
-        path="my-learning/courses/:courseId/assignments/:assignmentId"
-        element={
-          <PublicWebsiteLearningRoute lookupKey={lookupKey} locale={locale}>
-            {() => <AssignmentPage />}
-          </PublicWebsiteLearningRoute>
-        }
-      />
       <Route
         path="*"
         element={<PublicWebsiteShell lookupKey={lookupKey} locale={locale} />}

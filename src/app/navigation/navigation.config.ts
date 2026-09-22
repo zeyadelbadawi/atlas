@@ -38,6 +38,7 @@ import {
   Layers,
   Radio,
   PackageCheck,
+  Award,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem, NavigationSection } from '@types';
@@ -133,6 +134,22 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
         // upload/edit/archive on `academy.website.manage`, and the backend
         // gates them on the caller's real academy role.
         requiredPermissions: ['academy.view'],
+      },
+      {
+        id: 'academy-certificates',
+        requiresEntitlement: true,
+        labelKey: 'certificates:nav.certificates',
+        path: buildPath(DASHBOARD_ROUTES.academyCertificates, {
+          academyId: activeAcademyId,
+        }),
+        icon: Award,
+        requiresAuth: true,
+        // P64 Phase 3 §E.6 — same entry gate as media: an instructor
+        // reads the issued list for their courses; issue/revoke/
+        // regenerate and the template are gated inside the pages and by
+        // the backend on the caller's real academy role.
+        requiredPermissions: ['academy.view'],
+        matchNestedPaths: true,
       },
       {
         id: 'academy-announcements',
