@@ -10,8 +10,15 @@
 import type { CourseStatus, CourseVisibility } from './course.types';
 import type { CourseCompletionState, CourseProgress } from './progress.types';
 import type { EnrollmentStatus } from './enrollment.types';
-import type { QuizAttempt } from './quiz.types';
-import type { AssignmentSubmission } from './assignment.types';
+import type {
+  QuizAttempt,
+  QuizAttemptEventType,
+  QuizQuestionType,
+} from './quiz.types';
+import type {
+  AssignmentSubmission,
+  SubmissionAttachment,
+} from './assignment.types';
 
 /** Why a course is flagged as needing the instructor's attention. */
 export type CourseAttentionReason =
@@ -118,13 +125,102 @@ export interface QuizAttemptSummary extends QuizAttempt {
   readonly studentName: string;
 }
 
+/* ---------- P64 Phase 3 — attempt review, manual grading, overrides ---------- */
+
+/** One answered question as the reviewer sees it: correctness AND the correct options. */
+export interface QuizReviewAnswer {
+  readonly questionId: string;
+  readonly prompt: string;
+  readonly type: QuizQuestionType;
+  readonly points: number;
+  readonly answered: boolean;
+  readonly correct: boolean | null;
+  readonly pointsAwarded: number;
+  readonly needsManualGrading: boolean;
+  readonly manualPoints: number | null;
+  readonly selectedOptionIds?: readonly string[];
+  readonly text?: string;
+  readonly options: readonly {
+    readonly id: string;
+    readonly label: string;
+    readonly isCorrect: boolean;
+  }[];
+  readonly acceptedAnswers?: readonly string[];
+}
+
+export interface QuizAttemptEvent {
+  readonly id: string;
+  readonly type: QuizAttemptEventType;
+  /** False when the engine ignored it (warm-up, debounce, sub-second). */
+  readonly counted: boolean;
+  readonly clientAt: string | null;
+  readonly serverAt: string;
+  readonly payload: unknown;
+}
+
+/** `GET /review/courses/:id/quizzes/:quizId/attempts/:attemptId`. */
+export interface QuizAttemptReview extends QuizAttempt {
+  readonly studentName: string;
+  readonly studentEmail: string;
+  readonly durationSeconds: number | null;
+  readonly questions: readonly QuizReviewAnswer[];
+  readonly events: readonly QuizAttemptEvent[];
+  readonly gradedByName: string | null;
+  readonly invalidatedByName: string | null;
+}
+
+export interface GradeQuizAttemptPayload {
+  readonly grades: readonly {
+    readonly questionId: string;
+    readonly points: number;
+  }[];
+}
+
+export interface InvalidateQuizAttemptPayload {
+  readonly reason: string;
+}
+
+export interface QuizStudentOverride {
+  readonly id: string;
+  readonly quizId: string;
+  readonly studentId: string;
+  readonly studentName: string | null;
+  readonly timeMultiplier: number;
+  readonly extraAttempts: number;
+  readonly availableFrom: string | null;
+  readonly availableUntil: string | null;
+  readonly reason: string | null;
+  readonly createdAt: string;
+}
+
+export interface UpsertQuizStudentOverridePayload {
+  readonly studentId: string;
+  readonly timeMultiplier?: number;
+  readonly extraAttempts?: number;
+  readonly availableFrom?: string | null;
+  readonly availableUntil?: string | null;
+  readonly reason?: string;
+}
+
 /**
  * An assignment submission as seen by an authorized instructor — the same
  * `AssignmentSubmission` extended with the submitting student's identity
  * (for roster display) and grading state.
  */
-export interface AssignmentSubmissionReview extends AssignmentSubmission {
+export interface AssignmentSubmissionReview {
+  readonly id: string;
+  readonly assignmentId: string;
+  readonly studentId: string;
   readonly studentName: string;
+  readonly status: AssignmentSubmission['status'];
+  readonly response?: string;
+  /** Pre-Phase-3 public attachment URL, kept for old rows. */
+  readonly attachmentUrl?: string;
+  /** P64 Phase 3 — the protected attachment with a signed link; present on the detail view. */
+  readonly attachment?: SubmissionAttachment | null;
+  readonly submittedAt?: string;
+  readonly isLate: boolean;
+  readonly submittedRevision: number;
   readonly gradingStatus: GradingStatus;
   readonly grade?: Grade;
 }

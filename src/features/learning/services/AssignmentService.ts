@@ -3,13 +3,11 @@
  * authoring and real-file-upload wiring. Nested under the same flat
  * `courses/:courseId/...` tree as `ProgressService`/`QuizService`.
  *
- * `uploadSubmissionAttachment` (Phase 4) replaces the previous
- * `FileReader.readAsDataURL` base64-in-database approach: it uploads a
- * real file through the existing R2 media pipeline and returns a real,
- * permanent URL, to be passed as `attachmentUrl` in the `submitAssignment`
- * call that follows — the same "upload, then reference the resulting URL
- * in an otherwise-ordinary form submission" flow `LessonFormDialog`'s own
- * `MediaLibraryDialog` integration (Phase 0) already established.
+ * `uploadSubmissionAttachment` uploads a real file through the media
+ * pipeline. P64 Phase 3 (§D.4) made the attachment PROTECTED: the upload
+ * answers with the asset id only, the student references that id at
+ * submit time, and every read of the file is a short-lived signed link
+ * minted for whoever is allowed to see it. There is no public URL.
  */
 import { BaseService } from '@services';
 import type { ReadOptions, WriteOptions } from '@services';
@@ -18,8 +16,9 @@ import type {
   AssignmentSubmission,
   CreateAssignmentPayload,
   CreateAssignmentSubmissionPayload,
-  MediaAssetDetail,
   PaginatedResult,
+  SaveAssignmentDraftPayload,
+  SubmissionAttachmentUpload,
   UpdateAssignmentPayload,
   UploadMediaAssetPayload,
 } from '@types';
@@ -62,6 +61,20 @@ export class AssignmentService extends BaseService {
     );
   }
 
+  /** P64 Phase 3 — draft autosave. Never changes a submitted submission's content. */
+  async saveDraft(
+    courseId: string,
+    assignmentId: string,
+    payload: SaveAssignmentDraftPayload,
+    options?: WriteOptions
+  ): Promise<AssignmentSubmission> {
+    return this.client.put<AssignmentSubmission, SaveAssignmentDraftPayload>(
+      this.path(courseId, 'assignments', assignmentId, 'submission', 'draft'),
+      payload,
+      options
+    );
+  }
+
   /** Creates or replaces the current student's submission. */
   async submitAssignment(
     courseId: string,
@@ -79,14 +92,17 @@ export class AssignmentService extends BaseService {
     );
   }
 
-  /** Phase 4 — uploads a real file for the current student's upcoming submission through the existing R2 media pipeline, returning its real, permanent URL. */
+  /** Uploads a file for the current student's upcoming submission into protected storage. Answers with the asset id to reference at submit time. */
   async uploadSubmissionAttachment(
     courseId: string,
     assignmentId: string,
     payload: UploadMediaAssetPayload,
     options?: WriteOptions
-  ): Promise<MediaAssetDetail> {
-    return this.client.post<MediaAssetDetail, UploadMediaAssetPayload>(
+  ): Promise<SubmissionAttachmentUpload> {
+    return this.client.post<
+      SubmissionAttachmentUpload,
+      UploadMediaAssetPayload
+    >(
       this.path(
         courseId,
         'assignments',

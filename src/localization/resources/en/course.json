@@ -288,7 +288,59 @@
       "cancelLabel": "Cancel"
     },
     "deleteCourseSuccess": "Course deleted",
-    "deleteCourseError": "Failed to delete course"
+    "deleteCourseError": "Failed to delete course",
+    "completion": {
+      "title": "Completion and certificate",
+      "description": "What a learner must do to complete this course, and whether a certificate is issued for it.",
+      "lessons": {
+        "label": "Lessons",
+        "published": "This course has {{count}} published lesson.",
+        "published_other": "This course has {{count}} published lessons.",
+        "minInputLabel": "Minimum number of lessons",
+        "options": {
+          "all": {
+            "label": "All published lessons",
+            "description": "Every published lesson must be completed."
+          },
+          "none": {
+            "label": "No lesson requirement",
+            "description": "Only quizzes, assignments and the minimum score, if set, count."
+          },
+          "min": {
+            "label": "At least this many lessons",
+            "description": "Any published lessons count towards the number."
+          }
+        }
+      },
+      "quizzes": {
+        "label": "Required quizzes",
+        "description": "The learner must pass each quiz ticked below.",
+        "empty": "This course has no quizzes yet."
+      },
+      "assignments": {
+        "label": "Required assignments",
+        "description": "The learner must have each assignment ticked below graded.",
+        "empty": "This course has no assignments yet."
+      },
+      "minOverallScore": {
+        "label": "Minimum overall score (%)",
+        "description": "The average of the kept quiz scores and assignment grades must reach this. Leave empty for no minimum.",
+        "placeholder": "No minimum"
+      },
+      "certificates": {
+        "label": "Issue a certificate",
+        "description": "A certificate is issued automatically when the learner completes the course and meets the minimum score below.",
+        "featureDisabled": "Certificates are not enabled for this academy yet."
+      },
+      "certificateMinScore": {
+        "label": "Minimum score for the certificate (%)",
+        "description": "Leave empty to issue on completion alone.",
+        "placeholder": "No minimum"
+      },
+      "ownerOrManagerOnly": "Only academy owners and managers can change these settings.",
+      "save": "Save completion settings",
+      "saved": "Completion settings saved"
+    }
   },
   "assignmentAuthoring": {
     "title": "Assignments",
@@ -316,8 +368,20 @@
       "saveButton": "Save",
       "help": {
         "status": "Draft assignments are visible only to you. Students can only see and submit an assignment once it is published.",
-        "dueAt": "Shown to students as the deadline. Submissions after this date are still accepted and are marked as late rather than blocked."
-      }
+        "dueAt": "Shown to students as the deadline. What happens after it depends on the late policy below.",
+        "latePolicy": "Only matters when a due date is set. The server enforces it; the student sees it on the assignment before submitting."
+      },
+      "latePolicyLabel": "Late policy",
+      "latePolicy": {
+        "block": "Do not accept late submissions",
+        "accept_flagged": "Accept late submissions and flag them"
+      },
+      "latePolicyDescription": {
+        "block": "Enforced: after the due date the submit action is refused and the student is told the deadline has passed.",
+        "accept_flagged": "Recorded: submissions after the due date are accepted and marked as late for reviewers."
+      },
+      "requiredForCompletionLabel": "Required for course completion",
+      "requiredForCompletionDescription": "Counts towards the course completion rule when \"required assignments\" is on in the course settings."
     },
     "created": "Assignment created",
     "updated": "Assignment updated",
@@ -328,7 +392,12 @@
       "description": "This will permanently delete \"{{title}}\" and any student submissions against it. This cannot be undone.",
       "confirmLabel": "Delete Assignment",
       "cancelLabel": "Cancel"
-    }
+    },
+    "latePolicyBadge": {
+      "block": "Late submissions not accepted",
+      "accept_flagged": "Late submissions accepted and flagged"
+    },
+    "requiredForCompletionBadge": "Required for completion"
   },
   "quizAuthoring": {
     "title": "Quizzes",
@@ -373,7 +442,9 @@
       "type": {
         "single_choice": "Single choice",
         "multiple_choice": "Multiple choice",
-        "true_false": "True / False"
+        "true_false": "True / False",
+        "short_answer": "Short answer",
+        "essay": "Essay"
       },
       "optionsLabel": "Options",
       "optionLabel": "Option {{number}}",
@@ -387,14 +458,208 @@
       "help": {
         "status": "Draft quizzes are visible only to you. Students can only see and attempt a quiz once it is published.",
         "passingScore": "The percentage a student needs to pass. Leave it empty if this quiz has no pass mark — every submitted attempt then counts as passed.",
-        "maxAttempts": "How many times a student may take this quiz. Leave it empty for unlimited attempts."
-      }
+        "maxAttempts": "How many times a student may take this quiz. Leave it empty for unlimited attempts.",
+        "points": "How much this question is worth, 0 to 100. The score is the points earned divided by the points available.",
+        "relatedLesson": "Optional. Shown with the review so a learner who missed this question knows where to go back to.",
+        "acceptedAnswers": "Up to 20 answers of up to 200 characters each. The learner’s text is compared case-insensitively to each one.",
+        "explanation": "Optional, up to 2000 characters. Shown with the review only when \"Show explanations\" is on and the results policy allows answers."
+      },
+      "pointsLabel": "Points",
+      "relatedLessonLabel": "Related lesson",
+      "relatedLessonNone": "None",
+      "explanationLabel": "Explanation",
+      "explanationPlaceholder": "Optional. Shown with the review when the results policy allows it.",
+      "essayNote": "Essay answers are graded manually by a reviewer. The attempt stays \"Awaiting grading\" until every essay in it has been graded.",
+      "acceptedAnswersLabel": "Accepted answers",
+      "acceptedAnswersHelp": "Any one of these counts as correct. Matching ignores capitalisation and surrounding spaces.",
+      "acceptedAnswerPlaceholder": "Accepted answer {{number}}",
+      "addAcceptedAnswer": "Add accepted answer",
+      "removeAcceptedAnswer": "Remove accepted answer"
     },
     "validation": {
       "trueFalseOptionCount": "A True/False question needs exactly two options.",
       "exactlyOneCorrect": "Mark exactly one option as correct.",
       "atLeastOneCorrect": "Mark at least one option as correct.",
-      "minTwoOptions": "Add at least two options."
+      "minTwoOptions": "Add at least two options.",
+      "acceptedAnswerRequired": "Add at least one accepted answer.",
+      "availabilityOrder": "The closing time must be after the opening time."
+    },
+    "settings": {
+      "title": "Settings",
+      "presetsLabel": "Presets",
+      "presetsHelp": "Start from a preset, then change anything below.",
+      "presets": {
+        "practice": {
+          "label": "Practice",
+          "description": "No time limit, results and answers shown immediately, nothing recorded. Good for self-checks."
+        },
+        "exam": {
+          "label": "Exam",
+          "description": "30-minute limit, one question per page, score after the due date, answers never shown, learners warned about recorded events."
+        },
+        "custom": "Custom settings. Pick a preset to reset every setting below."
+      },
+      "disclosure": {
+        "immediately": "Immediately after submitting",
+        "after_due": "After the due date",
+        "after_attempts_exhausted": "After the last attempt is used",
+        "never": "Never"
+      },
+      "timing": {
+        "title": "Timing and availability",
+        "description": "When the quiz can be taken and how long an attempt may last. The server is the clock: limits are enforced from its time, not the learner’s device."
+      },
+      "attempts": {
+        "title": "Attempts and grading",
+        "description": "How many attempts a learner gets and how they turn into one score."
+      },
+      "results": {
+        "title": "Results and review",
+        "description": "What a learner sees after submitting. Correct answers are never sent to the learner before the policy allows."
+      },
+      "integrity": {
+        "title": "Integrity",
+        "description": "What is recorded during an attempt and what happens when the limit is reached. Nothing here prevents a learner from switching tabs or copying: events are recorded and reported to reviewers."
+      },
+      "progression": {
+        "title": "Progression",
+        "description": "How this quiz gates the rest of the course."
+      },
+      "fields": {
+        "mode": {
+          "label": "Mode",
+          "description": "Enforced: exam mode requests fullscreen when integrity is on and shows the attempt one question at a time by default.",
+          "options": {
+            "practice": "Practice",
+            "exam": "Exam"
+          }
+        },
+        "timeLimit": {
+          "label": "Time limit (minutes)",
+          "description": "Enforced: when time runs out the saved answers are submitted automatically and graded as they are. Leave empty for no limit.",
+          "placeholder": "No limit"
+        },
+        "availableFrom": {
+          "label": "Opens",
+          "description": "Enforced: attempts cannot start before this time. Leave empty to open as soon as the quiz is published."
+        },
+        "availableUntil": {
+          "label": "Closes",
+          "description": "Enforced: attempts cannot start after this time and open attempts end here at the latest."
+        },
+        "dueAt": {
+          "label": "Due",
+          "description": "Recorded: attempts submitted after this time are marked late and handled by the late policy."
+        },
+        "latePolicy": {
+          "label": "Late policy",
+          "description": "What happens to an attempt started after the due date.",
+          "options": {
+            "block": "Do not allow late attempts",
+            "accept_flagged": "Allow late attempts and flag them"
+          }
+        },
+        "hideTimer": {
+          "label": "Hide the countdown",
+          "description": "The digits are hidden; the limit is still enforced and the learner is still told when time is nearly up and when it has run out."
+        },
+        "passingScore": {
+          "description": "Enforced: the percentage needed to pass. Leave empty if there is no pass mark; every submitted attempt then counts as passed.",
+          "placeholder": "No pass mark"
+        },
+        "maxAttempts": {
+          "description": "Enforced: how many attempts a learner may start. Leave empty for unlimited attempts.",
+          "placeholder": "Unlimited"
+        },
+        "gradingPolicy": {
+          "label": "Score to keep",
+          "description": "Which attempt becomes the learner’s score for completion and certificates.",
+          "options": {
+            "highest": "Highest attempt",
+            "latest": "Latest attempt",
+            "first": "First attempt",
+            "average": "Average of all attempts"
+          }
+        },
+        "questionsPerAttempt": {
+          "label": "Questions per attempt",
+          "description": "Each attempt draws this many questions from the pool. Leave empty to ask every question.",
+          "placeholder": "All questions"
+        },
+        "shuffleQuestions": {
+          "label": "Shuffle questions",
+          "description": "Each attempt gets its own question order, fixed for that attempt."
+        },
+        "shuffleOptions": {
+          "label": "Shuffle options",
+          "description": "Each attempt gets its own option order within a question. True/False questions are never shuffled."
+        },
+        "layout": {
+          "label": "Layout",
+          "description": "On small screens one question per page is used regardless.",
+          "options": {
+            "all_questions": "All questions on one page",
+            "one_per_page": "One question per page"
+          }
+        },
+        "showScore": {
+          "label": "Show the score",
+          "description": "When the learner sees their score and pass/fail result."
+        },
+        "showAnswers": {
+          "label": "Show the correct answers",
+          "description": "When the learner sees which answers were correct. Never sent before this moment."
+        },
+        "showExplanations": {
+          "label": "Show explanations",
+          "description": "Shown with the correct answers, so this follows the \"show the correct answers\" policy."
+        },
+        "integrityMode": {
+          "label": "Integrity mode",
+          "options": {
+            "off": "Off",
+            "monitor": "Monitor",
+            "warn": "Warn",
+            "strict": "Strict"
+          },
+          "descriptions": {
+            "off": "Nothing is recorded.",
+            "monitor": "Tab switches, focus loss, fullscreen exits, copy, paste and printing are recorded and shown to reviewers. The learner is not warned.",
+            "warn": "Tab switches, focus loss, fullscreen exits, copy, paste and printing are recorded and shown to reviewers, and the learner is warned with the count each time.",
+            "strict": "Tab switches, focus loss, fullscreen exits, copy, paste and printing are recorded and shown to reviewers, the learner is warned with the count, and the attempt is submitted automatically when the limit is reached."
+          }
+        },
+        "maxViolations": {
+          "label": "Violation limit",
+          "descriptionMonitor": "Recorded only: attempts at or above this count are flagged for reviewers. Nothing happens to the learner.",
+          "descriptionWarn": "The learner is told how many of these remain. Attempts at or above this count are flagged for reviewers; nothing is submitted automatically.",
+          "descriptionStrict": "Enforced: reaching this count submits the attempt automatically and flags it for reviewers."
+        },
+        "requireFullscreen": {
+          "label": "Ask for fullscreen",
+          "description": "The attempt requests fullscreen when it starts. Leaving fullscreen is recorded as an event; it is not blocked."
+        },
+        "requiredToProgress": {
+          "label": "Required to continue",
+          "description": "Enforced: the activities after this quiz stay locked until it is passed."
+        },
+        "requiredForCompletion": {
+          "label": "Required for course completion",
+          "description": "Counts towards the course completion rule when \"required quizzes\" is on in the course settings."
+        }
+      }
+    },
+    "preview": {
+      "toggle": "Preview as student",
+      "backToEditing": "Back to editing",
+      "title": "Student preview",
+      "description": "What a learner sees when the attempt opens: no correct answers, options in the order above, every control read-only.",
+      "points": "{{count}} point",
+      "points_other": "{{count}} points",
+      "emptyPrompt": "This question has no prompt yet.",
+      "shortAnswer": "Type your answer",
+      "essayAnswer": "Write your answer",
+      "selectAllThatApply": "Select all that apply."
     }
   },
   "categories": {

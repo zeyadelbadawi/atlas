@@ -17,6 +17,12 @@ export const PUBLIC_ROUTES = {
   /** Atlas's own legal documents — the SaaS platform's, not a tenant academy's. */
   privacyPolicy: '/privacy-policy',
   terms: '/terms',
+  /**
+   * P64 Phase 3 (D6) — the public certificate fact sheet. No session: the
+   * code IS the credential. Mounted on the platform host here and on every
+   * academy host by `PublicWebsiteRouter`, rendering the same component.
+   */
+  verify: '/verify/:code',
 } as const;
 
 /**
@@ -103,6 +109,9 @@ export const DASHBOARD_ROUTES = {
   instructorAssessments: '/dashboard/instructor/courses/:courseId/assessments',
   instructorQuizResults:
     '/dashboard/instructor/courses/:courseId/quizzes/:quizId/results',
+  /** P64 Phase 3 — reviewer attempt detail (answers, grading, event timeline). */
+  instructorQuizAttempt:
+    '/dashboard/instructor/courses/:courseId/quizzes/:quizId/attempts/:attemptId',
   instructorSubmissions:
     '/dashboard/instructor/courses/:courseId/assignments/:assignmentId/submissions',
   instructorSubmissionReview:
@@ -220,6 +229,11 @@ export const DASHBOARD_ROUTES = {
   /** The Academy's own media library. Academy-scoped by route, because the assets themselves are academy-owned. */
   academyMedia: '/dashboard/academy/:academyId/media',
 
+  /** P64 Phase 3 (D6/D7) — issued certificates and the academy's certificate template. Academy-scoped by route like media. */
+  academyCertificates: '/dashboard/academy/:academyId/certificates',
+  academyCertificateTemplate:
+    '/dashboard/academy/:academyId/certificates/template',
+
   /** Academy-wide announcement authoring — distinct from `announcements`, which is the reader's cross-scope feed. */
   academyAnnouncements: '/dashboard/academy/:academyId/announcements',
 
@@ -324,9 +338,9 @@ export const RETIRED_ACADEMY_LEARNER_ROUTES: readonly RetiredLearnerRoute[] = [
     Phase 2 §E.2 shipped the unified player at `LEARNER_ROUTES.playerLesson`
     and the course outline at `courseProgress`; leaving the old pages
     mounted meant the SAME lesson opened in two different players
-    depending on which link the learner followed. Quizzes and assignments
-    keep their legacy pages until Phase 3 moves them into the player, so
-    their URLs are deliberately NOT in this table.
+    depending on which link the learner followed. P64 Phase 3 moved the
+    quiz and assignment attempts into that same player, so their legacy
+    URLs now land on the activity (the item id IS the quiz/assignment id).
   */
   {
     from: '/my-learning/courses/:courseId',
@@ -339,6 +353,14 @@ export const RETIRED_ACADEMY_LEARNER_ROUTES: readonly RetiredLearnerRoute[] = [
   {
     from: '/my-learning/courses/:courseId/learn/:lessonId',
     to: LEARNER_ROUTES.playerLesson,
+  },
+  {
+    from: '/my-learning/courses/:courseId/quizzes/:itemId',
+    to: LEARNER_ROUTES.playerActivity,
+  },
+  {
+    from: '/my-learning/courses/:courseId/assignments/:itemId',
+    to: LEARNER_ROUTES.playerActivity,
   },
 ];
 
@@ -356,7 +378,7 @@ export const RETIRED_DASHBOARD_LEARNER_ROUTES: readonly RetiredLearnerRoute[] =
       A lesson bookmark lands on that lesson in the unified player (Phase 2
       §E.2). Every OTHER in-course activity lands on the course's own
       progress page, which names the activity and shows its state: quizzes
-      and assignments still open in their legacy pages until Phase 3, and
+      and assignments open in the player since P64 Phase 3, and
       live sessions and discussions have no player screen — sending a
       bookmark to an outline that names them is honest, inventing a player
       path that does not exist would not be.
@@ -370,12 +392,12 @@ export const RETIRED_DASHBOARD_LEARNER_ROUTES: readonly RetiredLearnerRoute[] =
       to: LEARNER_ROUTES.playerLesson,
     },
     {
-      from: '/dashboard/learning/courses/:courseId/quizzes/:quizId',
-      to: LEARNER_ROUTES.courseProgress,
+      from: '/dashboard/learning/courses/:courseId/quizzes/:itemId',
+      to: LEARNER_ROUTES.playerActivity,
     },
     {
-      from: '/dashboard/learning/courses/:courseId/assignments/:assignmentId',
-      to: LEARNER_ROUTES.courseProgress,
+      from: '/dashboard/learning/courses/:courseId/assignments/:itemId',
+      to: LEARNER_ROUTES.playerActivity,
     },
     {
       from: '/dashboard/learning/courses/:courseId/live-sessions/:liveSessionId',

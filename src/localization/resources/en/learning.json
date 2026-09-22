@@ -142,7 +142,9 @@
       "title": "Submit this attempt?",
       "description": "You won't be able to change your answers after submitting.",
       "confirmLabel": "Submit",
-      "cancelLabel": "Keep answering"
+      "cancelLabel": "Keep answering",
+      "descriptionUnanswered": "{{count}} question is still unanswered (question {{numbers}}). Unanswered questions count as incorrect. You won't be able to change your answers after submitting.",
+      "descriptionUnanswered_other": "{{count}} questions are still unanswered (questions {{numbers}}). Unanswered questions count as incorrect. You won't be able to change your answers after submitting."
     },
     "unansweredWarning": "Answer every question before submitting.",
     "resultTitle": "Quiz Result",
@@ -156,7 +158,144 @@
     "submitSuccess": "Attempt submitted",
     "submitError": "Failed to submit your attempt",
     "startError": "Failed to start the quiz",
-    "loadFailed": "Failed to load this quiz"
+    "loadFailed": "Failed to load this quiz",
+    "attemptStatus": {
+      "not_started": "Not started",
+      "in_progress": "In progress",
+      "submitted": "Submitted",
+      "passed": "Passed",
+      "failed": "Not passed",
+      "expired": "Time ran out",
+      "invalidated": "Voided"
+    },
+    "intro": {
+      "questions": "Questions",
+      "timeLimit": "Time limit",
+      "noTimeLimit": "No time limit",
+      "attempts": "Attempts",
+      "unlimitedAttempts": "{{used}} used, unlimited",
+      "attemptsOf": "{{used}} of {{total}} used",
+      "passingScore": "Passing score",
+      "percent": "{{value}}%",
+      "opens": "Opens",
+      "due": "Due",
+      "closes": "Closes",
+      "gradingPolicy": "Which attempt counts",
+      "gradingPolicies": {
+        "highest": "Your highest score",
+        "latest": "Your latest attempt",
+        "first": "Your first attempt",
+        "average": "The average of your attempts"
+      },
+      "timerNote": "The clock starts when you press Start and keeps running even if you close this page. When it reaches zero, the answers you have saved are submitted automatically.",
+      "attemptsLeft": "{{count}} attempt left",
+      "attemptsLeft_other": "{{count}} attempts left"
+    },
+    "integrity": {
+      "disclosureTitle": "What is recorded during this quiz",
+      "disclosureRecorded": "While the quiz is open, switching tabs or windows, leaving fullscreen, copying, pasting and printing are recorded with the time they happened, and your reviewer can see them.",
+      "disclosureMonitor": "You will not be interrupted. The record is shown to your reviewer with your attempt.",
+      "disclosureWarn": "You will be warned each time one is recorded. The limit is {{count}}; reaching it flags the attempt for review.",
+      "disclosureStrict": "You will be warned each time one is recorded. When {{count}} have been recorded, the quiz is submitted automatically with the answers you have saved.",
+      "disclosureFullscreen": "The quiz asks to open in fullscreen. Leaving fullscreen is recorded.",
+      "disclosureHonest": "Nothing is blocked and nothing on your device is monitored beyond this page.",
+      "acknowledge": "I understand what is recorded during this quiz.",
+      "bannerTitle": "An event was recorded",
+      "bannerWarn": "{{count}} event has been recorded on this attempt. Stay on this page until you submit.",
+      "bannerWarn_other": "{{count}} events have been recorded on this attempt. Stay on this page until you submit.",
+      "bannerStrict": "{{count}} of {{max}} events recorded. When the limit is reached, the quiz is submitted automatically.",
+      "dialogTitle": "Another event was recorded",
+      "dialogRecorded": "{{count}} event has been recorded on this attempt (limit {{max}}).",
+      "dialogRecorded_other": "{{count}} events have been recorded on this attempt (limit {{max}}).",
+      "dialogWarnConsequence": "Your reviewer will see the record alongside your answers.",
+      "dialogStrictConsequence": "{{count}} more and the quiz is submitted automatically with the answers you have saved.",
+      "dialogStrictConsequence_other": "{{count}} more and the quiz is submitted automatically with the answers you have saved.",
+      "continue": "Continue quiz",
+      "fullscreenHint": "This quiz is meant to run in fullscreen. Leaving fullscreen is recorded.",
+      "enterFullscreen": "Enter fullscreen"
+    },
+    "runner": {
+      "saving": "Saving…",
+      "offline": "Offline — will retry",
+      "unsaved": "Unsaved changes",
+      "savedJustNow": "Saved just now",
+      "savedAgo": "Saved {{minutes}} min ago",
+      "notSavedYet": "Nothing saved yet",
+      "announce": {
+        "minutes": "{{count}} minute left",
+        "minutes_other": "{{count}} minutes left",
+        "seconds": "{{count}} seconds left",
+        "seconds_other": "{{count}} seconds left"
+      },
+      "noTimeLimit": "No time limit",
+      "timerHidden": "Timed — the clock is hidden",
+      "timeLeftLabel": "Time left",
+      "hurry": "Finish up",
+      "answered": "{{answered}} of {{total}} answered",
+      "navigatorLabel": "Questions",
+      "navigatorItem": "Question {{number}}, {{state}}",
+      "state": {
+        "answered": "answered",
+        "unanswered": "not answered",
+        "flagged": "flagged to review"
+      },
+      "shortAnswerLabel": "Your answer",
+      "shortAnswerPlaceholder": "Type your answer",
+      "shortAnswerHint": "A short answer. Capitalisation does not matter.",
+      "essayLabel": "Your answer",
+      "essayPlaceholder": "Write your answer",
+      "essayHint": "This question is graded by a reviewer.",
+      "points": "{{count}} point",
+      "points_other": "{{count}} points",
+      "flag": "Flag",
+      "unflag": "Unflag"
+    },
+    "results": {
+      "withheld": {
+        "immediately": "Your score is being prepared.",
+        "after_due": "Your score will be shown after the due date.",
+        "after_attempts_exhausted": "Your score will be shown once you have used all your attempts.",
+        "never": "This quiz does not show scores."
+      },
+      "answersWithheld": {
+        "immediately": "Correct answers are being prepared.",
+        "after_due": "Correct answers will be shown after the due date.",
+        "after_attempts_exhausted": "Correct answers will be shown once you have used all your attempts.",
+        "never": "This quiz does not show the correct answers."
+      },
+      "yourAnswer": "Your answer",
+      "notAnswered": "Not answered",
+      "optionsSelected": "{{count}} option selected",
+      "optionsSelected_other": "{{count}} options selected",
+      "acceptedAnswers": "Accepted answers",
+      "correctOptionsCount": "{{count}} correct option",
+      "correctOptionsCount_other": "{{count}} correct options",
+      "pointsAwarded": "{{awarded}} of {{total}} points",
+      "explanation": "Explanation",
+      "timeRanOutTitle": "Time ran out",
+      "timeRanOut": "Time ran out. Your answers were submitted automatically.",
+      "autoSubmittedIntegrityTitle": "Submitted automatically",
+      "autoSubmittedIntegrity": "The quiz was submitted because the recorded-event limit was reached. The answers you had saved were graded as they were.",
+      "invalidatedTitle": "This attempt was voided",
+      "invalidated": "A reviewer voided this attempt. It no longer counts, and the attempt has been given back to you.",
+      "awaitingGrading": "Awaiting grading",
+      "awaitingGradingDescription": "Some questions are graded by a reviewer. Your score appears once they have finished.",
+      "submittedBadge": "Submitted",
+      "score": "Score",
+      "attempt": "Attempt",
+      "effectiveScore": "Counted score ({{policy}})",
+      "late": "Submitted after the due date",
+      "reviewTitle": "Your answers",
+      "verdict": {
+        "pending": "Awaiting grading",
+        "correct": "Correct",
+        "incorrect": "Incorrect",
+        "unknown": "Recorded"
+      },
+      "reviewLesson": "Review the lesson",
+      "historyTitle": "Your attempts",
+      "continue": "Continue to the next activity"
+    }
   },
   "assignment": {
     "listTitle": "Assignments",
@@ -186,14 +325,89 @@
     "loadFailed": "Failed to load this assignment",
     "attachmentTooLarge": "Attachment must be smaller than 10MB.",
     "attachmentInvalidType": "Attachment must be a PDF, Word document, or image.",
-    "attachmentUploadError": "Failed to upload the attachment. Please try again."
+    "attachmentUploadError": "Failed to upload the attachment. Please try again.",
+    "noInstructions": "The academy has not added instructions.",
+    "noDueDate": "No due date",
+    "latePolicy": {
+      "label": "After the due date",
+      "block": "Submissions are not accepted",
+      "accept_flagged": "Submissions are accepted and marked late"
+    },
+    "resubmission": {
+      "label": "Resubmission",
+      "allowed": "Allowed until graded",
+      "notAllowed": "Not allowed"
+    },
+    "timeline": {
+      "label": "Submission progress",
+      "submitted": "Submitted",
+      "grading": "Being graded",
+      "graded": "Graded"
+    },
+    "submitted": {
+      "title": "Your submission",
+      "late": "Submitted late",
+      "at": "Submitted on {{date}}",
+      "noText": "No written response.",
+      "linkExpires": "link valid until {{time}}",
+      "attachment": "Open attachment",
+      "awaitingGrading": "Waiting for a reviewer to grade it. You will be notified."
+    },
+    "grade": {
+      "score": "Score: {{score}}",
+      "gradedNoScore": "Graded",
+      "feedback": "Feedback",
+      "at": "Graded on {{date}}"
+    },
+    "draft": {
+      "saving": "Saving draft…",
+      "saved": "Draft saved",
+      "failed": "Draft not saved — check your connection",
+      "unsaved": "Unsaved changes"
+    },
+    "pastDue": {
+      "title": "The due date has passed",
+      "acceptFlagged": "You can still submit. Your submission will be marked as late."
+    },
+    "confirm": {
+      "submitTitle": "Submit this assignment?",
+      "resubmitTitle": "Replace your submission?",
+      "description": "Your reviewer will see exactly what is in the form now.",
+      "lateDescription": "The due date has passed, so this submission will be marked late. Your reviewer will see exactly what is in the form now.",
+      "cancel": "Keep editing"
+    },
+    "removeAttachment": "Remove"
   },
   "completion": {
-    "title": "Course Completion",
+    "title": "Course completion",
     "completedBanner": "Congratulations — you've completed this course!",
     "certificate": {
-      "eligible": "You're eligible for a certificate",
-      "unavailable": "A certificate isn't available for this course"
+      "eligible": "You have earned a certificate — it is being prepared.",
+      "unavailable": "This course does not award a certificate.",
+      "issued": "Certificate {{serial}} issued",
+      "preparing": "the PDF is being prepared",
+      "open": "Open certificates",
+      "revoked": "Your certificate for this course was revoked. Contact the academy if you think this is a mistake.",
+      "notYetMinScore": "A certificate is awarded once the course is completed with an overall score of at least {{score}}%.",
+      "notYet": "A certificate is awarded once the course is completed."
+    },
+    "inProgressHint": "Here is what this course needs before it counts as completed.",
+    "requirementsLabel": "Completion requirements",
+    "lessons": "{{completed}} of {{required}} required lessons completed",
+    "quizPassed": "passed with {{score}}%",
+    "quizPending": "awaiting grading",
+    "quizNotPassed": "not passed yet",
+    "assignmentGraded": "graded {{score}}",
+    "assignmentGradedNoScore": "graded",
+    "assignmentSubmitted": "submitted, awaiting grading",
+    "assignmentNotSubmitted": "not submitted yet",
+    "minOverallScore": "Overall score of at least {{required}}% (currently {{current}}%)",
+    "ratePlaceholder": "Rating this course is coming in a later update.",
+    "loadFailed": "Your completion status could not be loaded.",
+    "state": {
+      "incomplete": "Not started",
+      "in_progress": "In progress",
+      "completed": "Completed"
     }
   },
   "results": {
@@ -465,7 +679,8 @@
       "scheduled": "Opens on a later date",
       "notStarted": "The session has not started yet",
       "accessEnded": "Your access to this course has ended",
-      "scheduledOn": "Opens on {{date}}"
+      "scheduledOn": "Opens on {{date}}",
+      "quizNotPassed": "Pass the required quiz before this one first"
     },
     "lock": {
       "title": "This activity is locked",

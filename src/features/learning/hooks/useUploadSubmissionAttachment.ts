@@ -13,7 +13,10 @@
 import { useApiMutation } from '@/shared/hooks';
 import type { ApiError } from '@api';
 import { assignmentService } from '../services/AssignmentService';
-import type { MediaAssetDetail, UploadMediaAssetPayload } from '@types';
+import type {
+  SubmissionAttachmentUpload,
+  UploadMediaAssetPayload,
+} from '@types';
 
 export interface UploadSubmissionAttachmentVariables {
   readonly courseId: string;
@@ -23,7 +26,7 @@ export interface UploadSubmissionAttachmentVariables {
 
 export function useUploadSubmissionAttachment() {
   return useApiMutation<
-    MediaAssetDetail,
+    SubmissionAttachmentUpload,
     UploadSubmissionAttachmentVariables,
     ApiError
   >({

@@ -1,0 +1,228 @@
+{
+  "nav": {
+    "certificates": "Certificates",
+    "list": "Issued certificates",
+    "template": "Template"
+  },
+  "status": {
+    "issued": "Issued",
+    "revoked": "Revoked"
+  },
+  "render": {
+    "pending": "Preparing",
+    "ready": "Ready",
+    "failed": "Failed"
+  },
+  "learner": {
+    "loading": "Loading your certificates…",
+    "notIssued": {
+      "title": "Certificates are not being issued by this academy yet",
+      "description": "When the academy starts issuing them, every course you complete that awards one shows its certificate here."
+    },
+    "empty": {
+      "title": "No certificates yet",
+      "description": "Complete a course that awards one and it appears here."
+    },
+    "card": {
+      "serial": "Serial",
+      "issuedOn": "Issued on {{date}}",
+      "completedOn": "Completed on {{date}}",
+      "score": "Score {{score}}%",
+      "version": "Version {{version}}",
+      "revokedOn": "Revoked on {{date}}",
+      "revokeReason": "Reason: {{reason}}",
+      "code": "Verification code",
+      "copyCode": "Copy code",
+      "copyLink": "Copy verification link",
+      "copied": "Copied",
+      "copyFailed": "Could not copy — select the text and copy it yourself.",
+      "download": "Download PDF",
+      "downloading": "Fetching a fresh link…",
+      "downloadHint": "Each download fetches a fresh link that stays valid for one hour.",
+      "linkValidUntil": "Link valid until {{time}}",
+      "openPdf": "Open the PDF",
+      "print": "Print view",
+      "preparing": "Preparing your certificate…",
+      "preparingHint": "The PDF is being rendered. Refresh in a moment.",
+      "refresh": "Refresh",
+      "failed": "The PDF could not be prepared — contact the academy.",
+      "revokedNoDownload": "A revoked certificate can no longer be downloaded."
+    }
+  },
+  "overview": {
+    "count_one": "{{count}} certificate",
+    "count_other": "{{count}} certificates",
+    "none": "No certificates yet — complete a course that awards one and it appears here.",
+    "view": "View certificates"
+  },
+  "verify": {
+    "title": "Verify a certificate",
+    "subtitle": "Check that a certificate was issued by this academy and has not been revoked.",
+    "loading": "Checking the code…",
+    "codeLabel": "Code",
+    "invalid": {
+      "title": "This code does not match any certificate",
+      "description": "Check the characters and try again. Codes use letters and digits only; the letters I, L and O are never used."
+    },
+    "valid": {
+      "title": "Valid certificate",
+      "description": "This certificate was issued by the academy named below and is still in force."
+    },
+    "revoked": {
+      "title": "This certificate was revoked on {{date}}",
+      "description": "The academy withdrew it. It should no longer be relied on."
+    },
+    "facts": {
+      "title": "Certificate details",
+      "issuedTo": "Issued to",
+      "course": "Course",
+      "academy": "Academy",
+      "issuedOn": "Issued on",
+      "completedOn": "Completed on",
+      "serial": "Serial",
+      "version": "Version",
+      "status": "Status"
+    },
+    "error": {
+      "title": "The code could not be checked",
+      "description": "The verification service did not answer. Try again in a moment."
+    }
+  },
+  "staff": {
+    "title": "Certificates",
+    "subtitle": "Every certificate this academy has issued, with the actions the audit trail records.",
+    "readOnly": "You can view certificates. Issuing, revoking and regenerating are for the academy's owner and managers.",
+    "filters": {
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "course": "Course",
+      "allCourses": "All courses"
+    },
+    "table": {
+      "learner": "Learner",
+      "course": "Course",
+      "serial": "Serial",
+      "issued": "Issued",
+      "status": "Status",
+      "version": "Version",
+      "render": "PDF",
+      "actions": "Actions"
+    },
+    "empty": {
+      "title": "No certificates yet",
+      "description": "Certificates appear here when a learner completes a course that awards one, or when you issue one from a learner's enrollment."
+    },
+    "noMatch": {
+      "title": "No certificates match",
+      "description": "Change the status or course filter to see more."
+    },
+    "actions": {
+      "view": "View",
+      "revoke": "Revoke",
+      "regenerate": "Regenerate",
+      "download": "Download PDF",
+      "openActions": "Actions for {{serial}}"
+    },
+    "detail": {
+      "title": "Certificate {{serial}}",
+      "description": "Everything recorded at issuance. These facts do not change when the learner retakes a quiz.",
+      "learner": "Learner",
+      "nameOnCertificate": "Name on certificate",
+      "course": "Course",
+      "issuedOn": "Issued on",
+      "completedOn": "Completed on",
+      "score": "Score at issuance",
+      "issuedBy": "Issued",
+      "manual": "Manually by staff",
+      "automatic": "Automatically on completion",
+      "locale": "Language",
+      "version": "Version",
+      "code": "Verification code",
+      "render": "PDF",
+      "renderedAt": "Rendered on",
+      "revokedOn": "Revoked on",
+      "revokeReason": "Revoke reason",
+      "downloadHint": "The link stays valid for one hour after opening this dialog.",
+      "noDownload": "No PDF is available yet."
+    },
+    "revoke": {
+      "title": "Revoke certificate {{serial}}",
+      "description": "The certificate stays listed and its verification page shows it as revoked. The learner can no longer download it. This cannot be undone.",
+      "reasonLabel": "Reason",
+      "reasonPlaceholder": "Why this certificate is being withdrawn — recorded in the audit trail.",
+      "reasonRequired": "A reason is required.",
+      "confirm": "Revoke certificate",
+      "success": "Certificate revoked"
+    },
+    "regenerate": {
+      "title": "Regenerate certificate {{serial}}",
+      "description": "A new version of the PDF is produced from the current template and the learner's current name. The serial and the verification code stay the same; the score and dates recorded at issuance do not change.",
+      "reasonLabel": "Reason (optional)",
+      "reasonPlaceholder": "For example: the academy logo changed.",
+      "confirm": "Regenerate",
+      "success": "Regeneration started",
+      "successDescription": "Version {{version}} is being prepared."
+    }
+  },
+  "issue": {
+    "action": "Issue certificate",
+    "title": "Issue a certificate",
+    "description": "Issues a certificate for {{course}} to {{name}} now. Use it when the completion rule was met outside Atlas or an automatic issuance did not happen.",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholder": "Recorded in the audit trail.",
+    "force": "Issue even if the completion rule is not met",
+    "forceHint": "The certificate records the learner's current score, whatever it is. Owners and managers only.",
+    "confirm": "Issue certificate",
+    "success": "Certificate issued",
+    "successDescription": "Serial {{serial}}",
+    "issued": "Issued as {{serial}}"
+  },
+  "template": {
+    "title": "Certificate template",
+    "subtitle": "The academy identity and wording printed on every certificate. Already-issued certificates keep their version until you regenerate them.",
+    "loading": "Loading the template…",
+    "readOnly": "Only the academy's owner and managers can change the template.",
+    "fields": {
+      "name": "Template name",
+      "nameHint": "Shown to staff only.",
+      "logo": "Logo",
+      "logoHint": "Printed at the top of the certificate. Choose from the academy media library.",
+      "signature": "Signature image",
+      "signatureHint": "Printed above the signatory's name.",
+      "signatoryName": "Signatory name",
+      "signatoryTitle": "Signatory title",
+      "wordingEn": "English wording",
+      "wordingAr": "Arabic wording",
+      "wordingTitle": "Title",
+      "wordingBody": "Body",
+      "wordingHint": "The learner's name, the course and the completion date are printed by the layout; the body introduces them."
+    },
+    "actions": {
+      "choose": "Choose image",
+      "replace": "Replace",
+      "clear": "Remove",
+      "save": "Save template"
+    },
+    "preview": {
+      "title": "Preview",
+      "description": "How the wording reads on the standard layout. The footer is fixed.",
+      "logoAlt": "Academy logo",
+      "signatureAlt": "Signature",
+      "learnerPlaceholder": "Learner name",
+      "coursePlaceholder": "Course title",
+      "footer": "Issued via Atlas",
+      "noLogo": "No logo",
+      "noSignature": "No signature"
+    },
+    "validation": {
+      "nameRequired": "Give the template a name.",
+      "titleRequired": "Add a title.",
+      "bodyRequired": "Add a body."
+    },
+    "toast": {
+      "saved": "Template saved",
+      "savedDescription": "New certificates use it from now on."
+    },
+    "unsavedChanges": "You have unsaved template changes."
+  }
+}

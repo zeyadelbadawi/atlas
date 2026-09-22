@@ -82,7 +82,10 @@ export interface LearnerOverviewResponse {
    * omitted field: the dashboard can then say "not being issued yet"
    * rather than render an empty list that reads as "you have earned none".
    */
-  readonly certificates: { readonly available: false; readonly count: 0 };
+  readonly certificates: {
+    readonly available: boolean;
+    readonly count: number;
+  };
 }
 
 export interface LearnerAssessmentItem {

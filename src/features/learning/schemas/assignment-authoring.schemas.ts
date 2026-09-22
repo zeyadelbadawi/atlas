@@ -1,5 +1,10 @@
 /**
- * Assignment authoring validation schema (Phase 4).
+ * Assignment authoring validation schema (Phase 4, extended in P64 Phase 3).
+ *
+ * P64 Phase 3 (§D.4, AD-11) adds the late policy — what the server does
+ * with a submission after `dueAt` — and whether the assignment counts
+ * towards the course completion rule. Both are enforced server-side; the
+ * schema only keeps the form honest about the allowed values.
  */
 import { z } from 'zod';
 import {
@@ -25,6 +30,10 @@ export const assignmentAuthoringSchema = z.object({
   /** A `datetime-local` input value (`YYYY-MM-DDTHH:mm`) — converted to/from an ISO timestamp at the page boundary, matching `InstructorAnnouncementsPage`'s own `scheduledAt` convention. */
   dueAt: z.string().optional(),
   allowResubmission: z.boolean(),
+  /** `block` rejects submissions after `dueAt`; `accept_flagged` accepts them and marks them late for reviewers. */
+  latePolicy: z.enum(['block', 'accept_flagged']),
+  /** Whether the course completion rule counts this assignment (AD-11). */
+  requiredForCompletion: z.boolean(),
 });
 
 export type AssignmentAuthoringFormData = z.infer<

@@ -106,6 +106,22 @@
     "passwordChanged": {
       "title": "Password changed",
       "message": "Your account password was just changed. If this wasn't you, contact support immediately."
+    },
+    "quizGraded": {
+      "title": "Quiz graded",
+      "message": "Your attempt at \"{{quizTitle}}\" has been graded: {{score}}%."
+    },
+    "assignmentGraded": {
+      "title": "Assignment graded",
+      "message": "\"{{assignmentTitle}}\" has been graded. Open it to see your score and feedback."
+    },
+    "certificateIssued": {
+      "title": "Certificate issued",
+      "message": "Your certificate for \"{{courseTitle}}\" is ready in Certificates."
+    },
+    "certificateRevoked": {
+      "title": "Certificate revoked",
+      "message": "Your certificate for \"{{courseTitle}}\" has been revoked. Contact the academy if you think this is a mistake."
     }
   },
   "liveSession": {

@@ -84,7 +84,9 @@
       "in_progress": "In Progress",
       "submitted": "Submitted",
       "passed": "Passed",
-      "failed": "Failed"
+      "failed": "Failed",
+      "expired": "Expired",
+      "invalidated": "Voided"
     },
     "assignmentSubmissions": "Assignment Submissions",
     "noSubmissions": "No submissions yet.",
@@ -113,7 +115,73 @@
       "attempt": "Attempt",
       "score": "Score",
       "status": "Status",
-      "submittedAt": "Submitted"
+      "submittedAt": "Submitted",
+      "points": "Points",
+      "duration": "Duration",
+      "violations": "Violations",
+      "late": "Late",
+      "autoSubmitted": "Auto-submitted",
+      "grading": "Grading"
+    },
+    "flagged": "Flagged",
+    "late": {
+      "yes": "Yes",
+      "no": "No"
+    },
+    "autoSubmittedReason": {
+      "timeout": "Timeout",
+      "integrity": "Integrity"
+    },
+    "gradingStatus": {
+      "auto": "Automatic",
+      "pending": "Pending",
+      "graded": "Graded"
+    },
+    "actions": {
+      "exportCsv": "Export integrity CSV",
+      "overrides": "Overrides"
+    },
+    "csv": {
+      "success": "Integrity report exported",
+      "error": "The integrity report could not be exported"
+    },
+    "overrides": {
+      "title": "Student overrides",
+      "description": "Extra time, extra attempts or a different window for one student. The server applies an override when that student starts an attempt.",
+      "current": "Current overrides",
+      "empty": "No overrides yet",
+      "emptyDescription": "Add one below to give a student extra time, extra attempts or a different window.",
+      "formTitle": "Add or update an override",
+      "student": "Student",
+      "selectStudent": "Select a student",
+      "noStudents": "No enrolled students to choose from.",
+      "timeMultiplier": "Time multiplier",
+      "timeMultiplierHelp": "1 keeps the normal time limit; 1.5 gives 50% more time.",
+      "timeMultiplierRange": "Enter a multiplier between 1 and 5.",
+      "extraAttempts": "Extra attempts",
+      "availableFrom": "Available from",
+      "availableUntil": "Available until",
+      "windowHelp": "Leave both empty to keep the quiz window.",
+      "windowOrder": "The end of the window must come after its start.",
+      "reason": "Reason",
+      "reasonPlaceholder": "Why this student gets an override",
+      "reasonTooLong": "Keep the reason under 500 characters.",
+      "studentRequired": "Choose a student.",
+      "summary": "{{multiplier}}× time · {{attempts}} extra attempts",
+      "windowFrom": "From {{date}}",
+      "windowUntil": "Until {{date}}",
+      "save": "Save override",
+      "remove": "Remove",
+      "saved": "Override saved",
+      "saveError": "The override could not be saved",
+      "removed": "Override removed",
+      "removeError": "The override could not be removed",
+      "removeConfirm": {
+        "title": "Remove this override",
+        "description": "{{student}} goes back to the quiz’s own time limit, attempts and window.",
+        "confirmLabel": "Remove override",
+        "cancelLabel": "Keep it"
+      }
     }
   },
   "submissions": {
@@ -149,6 +217,133 @@
     "status": {
       "ungraded": "Ungraded",
       "graded": "Graded"
+    },
+    "attachment": {
+      "open": "Open attachment",
+      "expires": "This link expires at {{time}}"
+    },
+    "submittedLate": "Submitted late"
+  },
+  "attemptReview": {
+    "title": "Attempt review",
+    "backToResults": "Back to results",
+    "factsTitle": "Attempt",
+    "attemptNumber": "Attempt {{number}}",
+    "facts": {
+      "student": "Student",
+      "attempt": "Attempt",
+      "status": "Status",
+      "score": "Score",
+      "points": "Points",
+      "duration": "Duration",
+      "startedAt": "Started",
+      "submittedAt": "Submitted",
+      "late": "Late",
+      "violations": "Violations",
+      "autoSubmitted": "Auto-submitted",
+      "grading": "Grading",
+      "gradedBy": "Graded by",
+      "gradedAt": "Graded at",
+      "invalidatedBy": "Voided by",
+      "invalidatedAt": "Voided at",
+      "invalidationReason": "Void reason"
+    },
+    "notAvailable": "Not available",
+    "pointsValue": "{{earned}} of {{total}}",
+    "lateYes": "Submitted late",
+    "lateNo": "On time",
+    "violationsRecorded": "{{count}} recorded",
+    "flagged": "Flagged for review",
+    "notAutoSubmitted": "No",
+    "answers": {
+      "title": "Answers",
+      "questionNumber": "Question {{number}}",
+      "pointsWorth": "{{points}} points",
+      "selectedCorrect": "Selected · correct",
+      "selectedIncorrect": "Selected · not correct",
+      "correctAnswer": "Correct answer",
+      "notSelected": "Not selected",
+      "learnerText": "Learner’s answer",
+      "noAnswer": "No answer given",
+      "acceptedAnswers": "Accepted answers",
+      "pointsAwarded": "{{awarded}} of {{points}} points",
+      "result": {
+        "correct": "Correct",
+        "incorrect": "Incorrect",
+        "awaitingGrading": "Awaiting grading",
+        "graded": "Graded manually",
+        "unanswered": "Unanswered"
+      }
+    },
+    "questionType": {
+      "single_choice": "Single choice",
+      "multiple_choice": "Multiple choice",
+      "true_false": "True or false",
+      "short_answer": "Short answer",
+      "essay": "Essay"
+    },
+    "grading": {
+      "title": "Manual grading",
+      "description": "Enter points for each question that needs a manual grade. The attempt finalises and the score is computed once every manual grade is saved.",
+      "pointsLabel": "Points for question {{number}}",
+      "pointsRange": "Enter a number between 0 and the question’s points.",
+      "pointsHint": "0–{{max}}",
+      "save": "Save grades",
+      "saved": "Grades saved",
+      "savedFinal": "Every manual grade is in. The attempt is finalised and the score computed.",
+      "savedPending": "The attempt finalises once every manual grade has been entered.",
+      "error": "The grades could not be saved",
+      "viewOnly": "You don’t have permission to grade this attempt.",
+      "complete": "Every manual grade is in; this attempt is finalised.",
+      "unavailable": "Grading is not available for a voided attempt."
+    },
+    "events": {
+      "title": "Event timeline",
+      "description": "Everything recorded during this attempt, in the order the server received it. Ignored events fell inside the warm-up or debounce window and did not count.",
+      "empty": "No events were recorded for this attempt.",
+      "counted": "Counted",
+      "ignored": "Ignored",
+      "clientAt": "Client time",
+      "serverAt": "Server time",
+      "type": {
+        "visibility_hidden": "Tab hidden",
+        "visibility_visible": "Tab visible",
+        "blur": "Window lost focus",
+        "focus": "Window regained focus",
+        "fullscreen_exit": "Left fullscreen",
+        "fullscreen_enter": "Entered fullscreen",
+        "copy": "Copy",
+        "paste": "Paste",
+        "cut": "Cut",
+        "contextmenu": "Context menu opened",
+        "print": "Print attempted",
+        "heartbeat": "Heartbeat",
+        "second_session": "Second session detected",
+        "device_change": "Device changed",
+        "warning_acknowledged": "Warning acknowledged"
+      }
+    },
+    "actionsTitle": "Actions",
+    "void": {
+      "action": "Void attempt",
+      "title": "Void this attempt",
+      "description": "Voiding marks the attempt invalid, removes its result and refunds the attempt to the student. The reason is recorded.",
+      "reasonLabel": "Reason",
+      "reasonPlaceholder": "Why this attempt is being voided",
+      "reasonRequired": "A reason is required to void an attempt.",
+      "reasonTooLong": "Keep the reason under 500 characters.",
+      "continue": "Continue",
+      "cancel": "Cancel",
+      "confirm": {
+        "title": "Void the attempt?",
+        "description": "Attempt {{number}} by {{student}} will be voided. This cannot be undone.",
+        "confirmLabel": "Void attempt",
+        "cancelLabel": "Keep attempt"
+      },
+      "success": "Attempt voided",
+      "error": "The attempt could not be voided",
+      "alreadyVoided": "This attempt has already been voided.",
+      "viewOnly": "You don’t have permission to void this attempt."
     }
   }
 }

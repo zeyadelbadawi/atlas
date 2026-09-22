@@ -71,6 +71,12 @@ export function getQuizAttemptStatusTone(
       return 'info';
     case 'in_progress':
       return 'warning';
+    // P64 Phase 3 — time ran out (auto-submitted, graded as-is) and a
+    // reviewer void. Both are final; only the void is a negative outcome.
+    case 'expired':
+      return 'warning';
+    case 'invalidated':
+      return 'destructive';
     case 'not_started':
     default:
       return 'neutral';

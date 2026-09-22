@@ -51,3 +51,35 @@ export type { UpdateAssignmentVariables } from './useUpdateAssignment';
 export { useDeleteAssignment } from './useDeleteAssignment';
 export { useUploadSubmissionAttachment } from './useUploadSubmissionAttachment';
 export type { UploadSubmissionAttachmentVariables } from './useUploadSubmissionAttachment';
+
+// P64 Phase 3 — quiz engine v2, drafts, completion and certificates.
+export { useQuizAttemptSession } from './useQuizAttemptSession';
+export type { UseQuizAttemptSessionOptions } from './useQuizAttemptSession';
+export { useQuizAttemptResults } from './useQuizAttemptResults';
+export type { UseQuizAttemptResultsOptions } from './useQuizAttemptResults';
+export { useSaveQuizAnswers } from './useSaveQuizAnswers';
+export type { SaveQuizAnswersVariables } from './useSaveQuizAnswers';
+export { useRecordQuizAttemptEvents } from './useRecordQuizAttemptEvents';
+export type { RecordQuizAttemptEventsVariables } from './useRecordQuizAttemptEvents';
+export { useSaveAssignmentDraft } from './useSaveAssignmentDraft';
+export { useCourseCompletion } from './useCourseCompletion';
+export type { UseCourseCompletionOptions } from './useCourseCompletion';
+export {
+  useCompletionRule,
+  useUpdateCompletionRule,
+} from './useCompletionRule';
+export type { UseCompletionRuleOptions } from './useCompletionRule';
+export {
+  useMyCertificates,
+  useMyCertificate,
+  useMyCertificateDownload,
+  useVerifyCertificate,
+  useAcademyCertificates,
+  useAcademyCertificate,
+  useRevokeCertificate,
+  useRegenerateCertificate,
+  useIssueCertificate,
+  useCertificateTemplate,
+  useUpdateCertificateTemplate,
+} from './useCertificates';
+export type { UseAcademyCertificatesOptions } from './useCertificates';

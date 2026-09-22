@@ -4,7 +4,12 @@
  * Mutation hook for creating or resubmitting an assignment submission.
  */
 import { useApiMutation, useAuth, useInvalidate } from '@/shared/hooks';
-import { assignmentKeys, progressKeys } from '@services/query';
+import {
+  assignmentKeys,
+  completionKeys,
+  learnerKeys,
+  progressKeys,
+} from '@services/query';
 import type { ApiError } from '@api';
 import { assignmentService } from '../services/AssignmentService';
 import type {
@@ -30,6 +35,8 @@ export function useSubmitAssignment(courseId: string, assignmentId: string) {
         assignmentKeys.submission(user?.id, courseId, assignmentId)
       );
       await invalidate(progressKeys.course(user?.id, courseId));
+      await invalidate(completionKeys.course(user?.id, courseId));
+      await invalidate(learnerKeys.sequence(user?.id, courseId));
     },
   });
 }

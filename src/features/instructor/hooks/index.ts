@@ -18,3 +18,15 @@ export type { UseInstructorSubmissionsOptions } from './useInstructorSubmissions
 export { useInstructorSubmission } from './useInstructorSubmission';
 export type { UseInstructorSubmissionOptions } from './useInstructorSubmission';
 export { useGradeSubmission } from './useGradeSubmission';
+
+// P64 Phase 3 — attempt review, manual grading, voiding, overrides, CSV.
+export {
+  useQuizAttemptReview,
+  useGradeQuizAttempt,
+  useInvalidateQuizAttempt,
+  useQuizOverrides,
+  useUpsertQuizOverride,
+  useDeleteQuizOverride,
+  useIntegrityCsv,
+} from './useQuizAttemptReview';
+export type { UseQuizAttemptReviewOptions } from './useQuizAttemptReview';

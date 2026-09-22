@@ -19,12 +19,12 @@ describe('LEARNER_SURFACE_PATHS', () => {
     );
   });
 
-  it('keeps quizzes and assignments on their legacy pages for now', () => {
+  it('points quizzes and assignments at the unified player (P64 Phase 3)', () => {
     expect(LEARNER_SURFACE_PATHS.quiz('c-1', 'q-2')).toBe(
-      '/my-learning/courses/c-1/quizzes/q-2'
+      '/my/courses/c-1/activities/q-2'
     );
     expect(LEARNER_SURFACE_PATHS.assignment('c-1', 'a-3')).toBe(
-      '/my-learning/courses/c-1/assignments/a-3'
+      '/my/courses/c-1/activities/a-3'
     );
   });
 });
