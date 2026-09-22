@@ -25,5 +25,10 @@ export function useQuizAttempts(
     queryKey: quizKeys.attempts(user?.id, courseId, quizId),
     queryFn: () => quizService.getQuizAttempts(courseId, quizId),
     enabled: enabled && !!user?.id && !!courseId && !!quizId,
+    // Retake eligibility can change out from under the learner (a reviewer
+    // granting an extra attempt — P4 Issue 6), so re-check on every mount
+    // rather than trusting the default stale window.
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 }

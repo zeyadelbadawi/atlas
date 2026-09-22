@@ -29,5 +29,12 @@ export function useQuizAttemptResults(
     queryFn: () =>
       quizService.getQuizAttemptResults(courseId, quizId, attemptId ?? ''),
     enabled: enabled && !!user?.id && !!courseId && !!quizId && !!attemptId,
+    // A finalized attempt's SCORE is immutable, but its `canRetry` /
+    // `attemptsAllowed` are not: a reviewer can grant an extra attempt at any
+    // moment (P4 Issue 6). Left to the default 60s stale window the learner
+    // returned to the quiz and still saw "no attempts left". Always re-check
+    // eligibility when the results view mounts.
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 }
