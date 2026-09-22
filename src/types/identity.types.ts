@@ -40,10 +40,7 @@ export interface Session {
  * backend refuses learner tokens on every management controller.
  */
 export type PrincipalKind =
-  | 'platform_owner'
-  | 'staff'
-  | 'learner'
-  | 'unaffiliated';
+  'platform_owner' | 'staff' | 'learner' | 'unaffiliated';
 
 /**
  * One academy the account is a STUDENT of, with the public host the

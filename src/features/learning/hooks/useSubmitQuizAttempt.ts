@@ -6,7 +6,12 @@
  * computes a score or a pass/fail outcome.
  */
 import { useApiMutation, useAuth, useInvalidate } from '@/shared/hooks';
-import { progressKeys, quizKeys } from '@services/query';
+import {
+  completionKeys,
+  learnerKeys,
+  progressKeys,
+  quizKeys,
+} from '@services/query';
 import type { ApiError } from '@api';
 import { quizService } from '../services/QuizService';
 import type { QuizAttempt, SubmitQuizAttemptPayload } from '@types';
@@ -27,8 +32,12 @@ export function useSubmitQuizAttempt(courseId: string, quizId: string) {
     showErrorToast: false,
     onSuccess: async () => {
       await invalidate(quizKeys.attempts(user?.id, courseId, quizId));
-      // A passed quiz can change the course's completion state.
+      // A passed quiz can change the course's completion state, unlock
+      // the next activity (`requiredToProgress`) and change what the
+      // completion screen says.
       await invalidate(progressKeys.course(user?.id, courseId));
+      await invalidate(completionKeys.course(user?.id, courseId));
+      await invalidate(learnerKeys.sequence(user?.id, courseId));
     },
   });
 }

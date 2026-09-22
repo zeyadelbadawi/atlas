@@ -173,5 +173,41 @@
     "unknownProvider": "Unknown infrastructure provider.",
     "providerUnavailable": "Atlas's infrastructure provider isn't available right now.",
     "baseDomainManagedByEnvironment": "The platform domain is set by the deployment and can't be changed here."
+  },
+  "quiz": {
+    "attemptExpired": "Time ran out. Your saved answers were submitted automatically.",
+    "attemptAlreadySubmitted": "This attempt has already been submitted. Open the results to see how it went.",
+    "attemptInvalidated": "A reviewer voided this attempt. Start a new one.",
+    "maxAttemptsReached": "You have used all the attempts allowed for this quiz.",
+    "incompleteAnswers": "Answer every question before submitting.",
+    "windowClosed": "This quiz has closed and no longer accepts attempts.",
+    "notYetAvailable": "This quiz has not opened yet. Check the opening date on the course page.",
+    "pastDue": "The due date for this quiz has passed and late attempts are not accepted.",
+    "invalidOption": "One of your answers does not match this quiz's questions. Reload the page and try again.",
+    "attemptNotSubmitted": "This attempt has not been submitted yet, so it cannot be graded.",
+    "notManuallyGradable": "This attempt has no questions that need manual grading.",
+    "invalidTimeMultiplier": "The time multiplier must be between 1 and 5.",
+    "trueFalseRequiresTwoOptions": "A true/false question needs exactly two options with one correct answer.",
+    "textQuestionHasOptions": "A short-answer or essay question cannot have options.",
+    "singleChoiceRequiresOneCorrectOption": "A single-choice question needs exactly one correct option.",
+    "multipleChoiceRequiresOneCorrectOption": "A multiple-choice question needs at least one correct option.",
+    "choiceRequiresTwoOptions": "A choice question needs at least two options.",
+    "shortAnswerRequiresAcceptedAnswer": "A short-answer question needs at least one accepted answer.",
+    "pointsExceedMaximum": "Points per question cannot exceed 100."
+  },
+  "assignment": {
+    "alreadySubmitted": "This assignment has already been submitted and does not allow resubmission.",
+    "responseRequired": "Write a response or attach a file before submitting.",
+    "pastDue": "The due date has passed and this assignment does not accept late submissions.",
+    "attachmentNotOwned": "That attachment is not one you uploaded for this assignment. Upload the file again."
+  },
+  "certificate": {
+    "insufficientRole": "Only the academy's owner or a manager can issue, revoke or regenerate certificates.",
+    "templateNotFound": "The certificate template could not be found.",
+    "revoked": "This certificate has been revoked and cannot be downloaded.",
+    "notReady": "The certificate PDF is still being prepared. Try again in a moment.",
+    "notIssued": "No certificate has been issued for this enrollment.",
+    "notEligible": "This enrollment has not met the course's completion rule, so a certificate cannot be issued yet.",
+    "featureDisabled": "Certificates are not enabled for this academy yet."
   }
 }

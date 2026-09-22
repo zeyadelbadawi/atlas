@@ -51,8 +51,6 @@ describe('retired dashboard learner routes', () => {
     const inCourse = [
       '/dashboard/learning/courses/c-1',
       '/dashboard/learning/courses/c-1/learn',
-      '/dashboard/learning/courses/c-1/quizzes/q-2',
-      '/dashboard/learning/courses/c-1/assignments/a-3',
       '/dashboard/learning/courses/c-1/live-sessions/s-4',
       '/dashboard/learning/courses/c-1/discussions',
       '/dashboard/learning/courses/c-1/discussions/t-5',
@@ -112,11 +110,22 @@ describe('retired academy-website learner routes', () => {
     ).toBe('/my/courses/c-1/learn/l-9');
   });
 
-  it('leaves quiz and assignment URLs alone until Phase 3 moves them', () => {
-    // Not in the table: the resolver falls back, and the router never
-    // maps these paths to a redirect in the first place.
+  it('sends quiz and assignment URLs into the player (P64 Phase 3)', () => {
     expect(
       resolveRetiredAcademyLearnerTarget('/my-learning/courses/c-1/quizzes/q-2')
-    ).toBe(LEARNER_ROUTES.root);
+    ).toBe('/my/courses/c-1/activities/q-2');
+    expect(
+      resolveRetiredAcademyLearnerTarget(
+        '/my-learning/courses/c-1/assignments/a-3'
+      )
+    ).toBe('/my/courses/c-1/activities/a-3');
+    expect(
+      resolveRetiredLearnerTarget('/dashboard/learning/courses/c-1/quizzes/q-2')
+    ).toBe('/my/courses/c-1/activities/q-2');
+    expect(
+      resolveRetiredLearnerTarget(
+        '/dashboard/learning/courses/c-1/assignments/a-3'
+      )
+    ).toBe('/my/courses/c-1/activities/a-3');
   });
 });

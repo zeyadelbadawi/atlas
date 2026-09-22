@@ -30,7 +30,9 @@ export interface SectionProgress {
 export type CourseCompletionState = 'incomplete' | 'in_progress' | 'completed';
 
 /** Certificate availability state. No generation/storage/verification implied. */
-export type CertificateStatus = 'unavailable' | 'eligible';
+/** P64 Phase 3 (D6): widened from Phase 2's two states once certificates are issued. */
+export type CertificateStatus =
+  'unavailable' | 'eligible' | 'issued' | 'revoked';
 
 /** A student's aggregated progress through a course. */
 export interface CourseProgress {

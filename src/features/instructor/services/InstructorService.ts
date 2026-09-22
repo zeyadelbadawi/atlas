@@ -25,14 +25,19 @@ import { resourcePath, toCollectionParams } from '@api';
 import type {
   AssignmentSubmissionReview,
   CollectionQuery,
+  GradeQuizAttemptPayload,
   GradeSubmissionPayload,
   InstructorCourseOverview,
   InstructorDashboardMetrics,
   InstructorStudent,
   InstructorStudentProgress,
+  InvalidateQuizAttemptPayload,
   PaginatedResult,
+  QuizAttemptReview,
   QuizAttemptSummary,
+  QuizStudentOverride,
   TeachingCourse,
+  UpsertQuizStudentOverridePayload,
 } from '@types';
 
 /**
@@ -210,6 +215,137 @@ export class InstructorService extends BaseService {
       payload,
       options
     );
+  }
+
+  /* ---------- P64 Phase 3 — attempt review (§D.2, §D.3) ---------- */
+
+  /** One attempt with every answer, its correctness, the manual grades and the event timeline. */
+  async getQuizAttempt(
+    courseId: string,
+    quizId: string,
+    attemptId: string,
+    options?: ReadOptions
+  ): Promise<QuizAttemptReview> {
+    return this.client.get<QuizAttemptReview>(
+      this.reviewPath(
+        'courses',
+        courseId,
+        'quizzes',
+        quizId,
+        'attempts',
+        attemptId
+      ),
+      options
+    );
+  }
+
+  /** Enter points for the manually graded questions; the attempt finalises when all are in. */
+  async gradeQuizAttempt(
+    courseId: string,
+    quizId: string,
+    attemptId: string,
+    payload: GradeQuizAttemptPayload,
+    options?: WriteOptions
+  ): Promise<QuizAttemptReview> {
+    return this.client.post<QuizAttemptReview, GradeQuizAttemptPayload>(
+      this.reviewPath(
+        'courses',
+        courseId,
+        'quizzes',
+        quizId,
+        'attempts',
+        attemptId,
+        'grade'
+      ),
+      payload,
+      options
+    );
+  }
+
+  /** Void an attempt (refunds it), with an audited reason. */
+  async invalidateQuizAttempt(
+    courseId: string,
+    quizId: string,
+    attemptId: string,
+    payload: InvalidateQuizAttemptPayload,
+    options?: WriteOptions
+  ): Promise<QuizAttemptReview> {
+    return this.client.post<QuizAttemptReview, InvalidateQuizAttemptPayload>(
+      this.reviewPath(
+        'courses',
+        courseId,
+        'quizzes',
+        quizId,
+        'attempts',
+        attemptId,
+        'invalidate'
+      ),
+      payload,
+      options
+    );
+  }
+
+  async getQuizOverrides(
+    courseId: string,
+    quizId: string,
+    options?: ReadOptions
+  ): Promise<readonly QuizStudentOverride[]> {
+    return this.client.get<readonly QuizStudentOverride[]>(
+      this.reviewPath('courses', courseId, 'quizzes', quizId, 'overrides'),
+      options
+    );
+  }
+
+  async upsertQuizOverride(
+    courseId: string,
+    quizId: string,
+    payload: UpsertQuizStudentOverridePayload,
+    options?: WriteOptions
+  ): Promise<QuizStudentOverride> {
+    return this.client.put<
+      QuizStudentOverride,
+      UpsertQuizStudentOverridePayload
+    >(
+      this.reviewPath('courses', courseId, 'quizzes', quizId, 'overrides'),
+      payload,
+      options
+    );
+  }
+
+  async deleteQuizOverride(
+    courseId: string,
+    quizId: string,
+    studentId: string,
+    options?: WriteOptions
+  ): Promise<void> {
+    await this.client.delete<void>(
+      this.reviewPath(
+        'courses',
+        courseId,
+        'quizzes',
+        quizId,
+        'overrides',
+        studentId
+      ),
+      options
+    );
+  }
+
+  /**
+   * The integrity report as CSV text for a client-side download. Fetched
+   * as a blob because the client parses JSON by default and this route
+   * answers `text/csv`.
+   */
+  async getIntegrityCsv(
+    courseId: string,
+    quizId: string,
+    options?: ReadOptions
+  ): Promise<string> {
+    const blob = await this.client.get<Blob>(
+      this.reviewPath('courses', courseId, 'quizzes', quizId, 'integrity.csv'),
+      { ...options, responseType: 'blob' }
+    );
+    return blob.text();
   }
 }
 

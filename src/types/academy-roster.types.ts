@@ -23,10 +23,7 @@ export type AcademyMembershipStatus = 'active' | 'inactive' | 'pending';
 
 /** Roster status filter — `blocked` is a filter on the flag, not a fourth status. */
 export type AcademyRosterStatusFilter =
-  | 'active'
-  | 'inactive'
-  | 'pending'
-  | 'blocked';
+  'active' | 'inactive' | 'pending' | 'blocked';
 
 export type AcademyRosterSortBy = 'joinedAt' | 'lastActivityAt' | 'name';
 export type AcademyRosterSortDir = 'asc' | 'desc';
@@ -76,9 +73,7 @@ export interface RosterEnrollmentProgress {
 
 /** Why an enrollment was revoked. */
 export type RosterEnrollmentRevokeReason =
-  | 'manual'
-  | 'membership_ended'
-  | 'suspended';
+  'manual' | 'membership_ended' | 'suspended';
 
 /** One enrollment as seen on the roster detail. */
 export interface RosterEnrollment {

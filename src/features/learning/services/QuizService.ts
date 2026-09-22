@@ -19,7 +19,13 @@ import type {
   PaginatedResult,
   Quiz,
   QuizAttempt,
+  QuizAttemptResults,
+  QuizAttemptSession,
   QuizAuthoring,
+  RecordQuizAttemptEventsPayload,
+  RecordQuizAttemptEventsResponse,
+  SaveQuizAnswersPayload,
+  SaveQuizAnswersResponse,
   SubmitQuizAttemptPayload,
   UpdateQuizPayload,
 } from '@types';
@@ -75,7 +81,70 @@ export class QuizService extends BaseService {
     );
   }
 
-  /** Submits a quiz attempt's answers for scoring. */
+  /**
+   * P64 Phase 3 (AD-8) — the resumable attempt session: this attempt's
+   * questions in their seeded order, the server-confirmed answers, the
+   * server clock and the deadline it derived.
+   */
+  async getQuizAttemptSession(
+    courseId: string,
+    quizId: string,
+    attemptId: string,
+    options?: ReadOptions
+  ): Promise<QuizAttemptSession> {
+    return this.client.get<QuizAttemptSession>(
+      this.path(courseId, 'quizzes', quizId, 'attempts', attemptId),
+      options
+    );
+  }
+
+  /** P64 Phase 3 — autosave with a monotonic revision; a stale revision is ignored, not an error. */
+  async saveQuizAnswers(
+    courseId: string,
+    quizId: string,
+    attemptId: string,
+    payload: SaveQuizAnswersPayload,
+    options?: WriteOptions
+  ): Promise<SaveQuizAnswersResponse> {
+    return this.client.put<SaveQuizAnswersResponse, SaveQuizAnswersPayload>(
+      this.path(courseId, 'quizzes', quizId, 'attempts', attemptId, 'answers'),
+      payload,
+      options
+    );
+  }
+
+  /** P64 Phase 3 (AD-9) — a batch of integrity events (≤ 50); the server decides what counts. */
+  async recordQuizAttemptEvents(
+    courseId: string,
+    quizId: string,
+    attemptId: string,
+    payload: RecordQuizAttemptEventsPayload,
+    options?: WriteOptions
+  ): Promise<RecordQuizAttemptEventsResponse> {
+    return this.client.post<
+      RecordQuizAttemptEventsResponse,
+      RecordQuizAttemptEventsPayload
+    >(
+      this.path(courseId, 'quizzes', quizId, 'attempts', attemptId, 'events'),
+      payload,
+      options
+    );
+  }
+
+  /** P64 Phase 3 — the results of a finished attempt, filtered by the disclosure policy. */
+  async getQuizAttemptResults(
+    courseId: string,
+    quizId: string,
+    attemptId: string,
+    options?: ReadOptions
+  ): Promise<QuizAttemptResults> {
+    return this.client.get<QuizAttemptResults>(
+      this.path(courseId, 'quizzes', quizId, 'attempts', attemptId, 'results'),
+      options
+    );
+  }
+
+  /** Submits a quiz attempt's answers for scoring. Partial answers are allowed; unanswered counts as incorrect. */
   async submitQuizAttempt(
     courseId: string,
     quizId: string,

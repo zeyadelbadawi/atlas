@@ -106,6 +106,22 @@
     "passwordChanged": {
       "title": "تم تغيير كلمة المرور",
       "message": "تم للتو تغيير كلمة مرور حسابك. إذا لم تكن أنت من قام بذلك، تواصل مع الدعم فوراً."
+    },
+    "quizGraded": {
+      "title": "تم تقييم الاختبار",
+      "message": "تم تقييم محاولتك في «{{quizTitle}}»: {{score}}%."
+    },
+    "assignmentGraded": {
+      "title": "تم تقييم الواجب",
+      "message": "تم تقييم «{{assignmentTitle}}». افتحه لمعرفة نتيجتك والملاحظات."
+    },
+    "certificateIssued": {
+      "title": "صدرت الشهادة",
+      "message": "شهادتك لدورة «{{courseTitle}}» جاهزة في قسم الشهادات."
+    },
+    "certificateRevoked": {
+      "title": "أُلغيت الشهادة",
+      "message": "أُلغيت شهادتك لدورة «{{courseTitle}}». تواصل مع الأكاديمية إذا كنت ترى أن هذا خطأ."
     }
   },
   "liveSession": {

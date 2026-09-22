@@ -58,6 +58,10 @@ export const QUERY_KEY_ROOTS = {
   notification: ['notification'] as const,
   platformSettings: ['platform-settings'] as const,
   media: ['media'] as const,
+  /** P64 Phase 3 — certificates (learner, staff and the public verify page). */
+  certificate: ['certificate'] as const,
+  /** P64 Phase 3 — course completion (learner state and the staff rule). */
+  completion: ['completion'] as const,
   search: ['search'] as const,
   courseContent: ['course-content'] as const,
   /** P64 Phase 2 — the `/my/*` learner dashboard and the unified player. */
@@ -176,7 +180,11 @@ export const courseKeys = {
     [...courseKeys.all, 'categories', academyId] as const,
   sections: (academyId: string | undefined, courseId: string) =>
     [...courseKeys.all, 'sections', academyId, courseId] as const,
-  unitItems: (academyId: string | undefined, courseId: string, sectionId: string) =>
+  unitItems: (
+    academyId: string | undefined,
+    courseId: string,
+    sectionId: string
+  ) =>
     [...courseKeys.all, 'unit-items', academyId, courseId, sectionId] as const,
   availableContent: (academyId: string | undefined, courseId: string) =>
     [...courseKeys.all, 'available-content', academyId, courseId] as const,
@@ -258,8 +266,7 @@ export const learnerKeys = {
     studentId: string | undefined,
     academyId: string,
     type: 'quiz' | 'assignment'
-  ) =>
-    [...learnerKeys.all, 'assessments', studentId, academyId, type] as const,
+  ) => [...learnerKeys.all, 'assessments', studentId, academyId, type] as const,
   devices: (studentId: string | undefined, academyId: string) =>
     [...learnerKeys.all, 'devices', studentId, academyId] as const,
   /** The ordered curriculum. Course-scoped, so it needs no academy id — the course already belongs to one. */
@@ -271,7 +278,13 @@ export const learnerKeys = {
     courseId: string,
     lessonId: string
   ) =>
-    [...learnerKeys.all, 'lesson-grant', studentId, courseId, lessonId] as const,
+    [
+      ...learnerKeys.all,
+      'lesson-grant',
+      studentId,
+      courseId,
+      lessonId,
+    ] as const,
 } as const;
 
 /** `CourseOrderService` — a learner's own receipts, filtered to the host academy by the page. */
@@ -289,6 +302,36 @@ export const quizKeys = {
     [...quizKeys.all, 'detail', studentId, courseId, quizId] as const,
   attempts: (studentId: string | undefined, courseId: string, quizId: string) =>
     [...quizKeys.all, 'attempts', studentId, courseId, quizId] as const,
+  /** P64 Phase 3 — the resumable session of one attempt. */
+  session: (
+    studentId: string | undefined,
+    courseId: string,
+    quizId: string,
+    attemptId: string
+  ) =>
+    [
+      ...quizKeys.all,
+      'session',
+      studentId,
+      courseId,
+      quizId,
+      attemptId,
+    ] as const,
+  /** P64 Phase 3 — policy-filtered results of one attempt. */
+  results: (
+    studentId: string | undefined,
+    courseId: string,
+    quizId: string,
+    attemptId: string
+  ) =>
+    [
+      ...quizKeys.all,
+      'results',
+      studentId,
+      courseId,
+      quizId,
+      attemptId,
+    ] as const,
   /**
    * Phase 4 authoring — every status (draft + published), including
    * `isCorrect`. Embeds the authoring user's own id, same rationale as the
@@ -426,6 +469,34 @@ export const instructorKeys = {
       courseId,
       assignmentId,
       submissionId,
+    ] as const,
+  /** P64 Phase 3 — one attempt's review detail. */
+  quizAttempt: (
+    instructorId: string | undefined,
+    courseId: string,
+    quizId: string,
+    attemptId: string
+  ) =>
+    [
+      ...instructorKeys.all,
+      'quiz-attempt',
+      instructorId,
+      courseId,
+      quizId,
+      attemptId,
+    ] as const,
+  /** P64 Phase 3 — per-student overrides of one quiz. */
+  quizOverrides: (
+    instructorId: string | undefined,
+    courseId: string,
+    quizId: string
+  ) =>
+    [
+      ...instructorKeys.all,
+      'quiz-overrides',
+      instructorId,
+      courseId,
+      quizId,
     ] as const,
 } as const;
 
@@ -884,12 +955,17 @@ export const platformZoomKeys = {
   overview: () => [...platformZoomKeys.all, 'overview'] as const,
   connections: (query: unknown) =>
     [...platformZoomKeys.all, 'connections', query] as const,
-  sessions: (query: unknown) => [...platformZoomKeys.all, 'sessions', query] as const,
-  attendance: (query: unknown) => [...platformZoomKeys.all, 'attendance', query] as const,
-  recordings: (query: unknown) => [...platformZoomKeys.all, 'recordings', query] as const,
-  events: (query: unknown) => [...platformZoomKeys.all, 'events', query] as const,
+  sessions: (query: unknown) =>
+    [...platformZoomKeys.all, 'sessions', query] as const,
+  attendance: (query: unknown) =>
+    [...platformZoomKeys.all, 'attendance', query] as const,
+  recordings: (query: unknown) =>
+    [...platformZoomKeys.all, 'recordings', query] as const,
+  events: (query: unknown) =>
+    [...platformZoomKeys.all, 'events', query] as const,
   health: () => [...platformZoomKeys.all, 'health'] as const,
-  activity: (query: unknown) => [...platformZoomKeys.all, 'activity', query] as const,
+  activity: (query: unknown) =>
+    [...platformZoomKeys.all, 'activity', query] as const,
   academyDetail: (academyId: string | undefined) =>
     [...platformZoomKeys.all, 'academy', academyId] as const,
 };
@@ -905,7 +981,10 @@ export const liveSessionKeys = {
     [...liveSessionKeys.all, 'status', academyId] as const,
   forCourse: (academyId: string | undefined, courseId: string | undefined) =>
     [...liveSessionKeys.all, 'course', academyId, courseId] as const,
-  attendance: (academyId: string | undefined, liveSessionId: string | undefined) =>
+  attendance: (
+    academyId: string | undefined,
+    liveSessionId: string | undefined
+  ) =>
     [...liveSessionKeys.all, 'attendance', academyId, liveSessionId] as const,
   /**
    * The STUDENT's own reads, kept under a separate branch.
@@ -918,4 +997,45 @@ export const liveSessionKeys = {
     [...liveSessionKeys.all, 'student', 'course', courseId] as const,
   studentEligibility: (liveSessionId: string | undefined) =>
     [...liveSessionKeys.all, 'student', 'eligibility', liveSessionId] as const,
+} as const;
+
+/** `CertificateService` — the learner's own, the staff list and the public verification. */
+export const certificateKeys = {
+  all: QUERY_KEY_ROOTS.certificate,
+  mine: (studentId: string | undefined, academyId: string) =>
+    [...certificateKeys.all, 'mine', studentId, academyId] as const,
+  detail: (studentId: string | undefined, certificateId: string) =>
+    [...certificateKeys.all, 'detail', studentId, certificateId] as const,
+  /** Public — keyed by the code alone; there is no session. */
+  verify: (code: string) => [...certificateKeys.all, 'verify', code] as const,
+  academyList: (
+    academyId: string,
+    query?: CollectionQuery,
+    filters?: Record<string, string | undefined>
+  ) =>
+    [
+      ...certificateKeys.all,
+      'academy-list',
+      academyId,
+      query,
+      filters,
+    ] as const,
+  academyDetail: (academyId: string, certificateId: string) =>
+    [
+      ...certificateKeys.all,
+      'academy-detail',
+      academyId,
+      certificateId,
+    ] as const,
+  template: (academyId: string) =>
+    [...certificateKeys.all, 'template', academyId] as const,
+} as const;
+
+/** `CompletionService` — the learner's evaluated state and the staff rule. */
+export const completionKeys = {
+  all: QUERY_KEY_ROOTS.completion,
+  course: (studentId: string | undefined, courseId: string) =>
+    [...completionKeys.all, 'course', studentId, courseId] as const,
+  rule: (academyId: string, courseId: string) =>
+    [...completionKeys.all, 'rule', academyId, courseId] as const,
 } as const;

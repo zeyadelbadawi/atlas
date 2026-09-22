@@ -21,6 +21,8 @@ export * from './enrollment.types';
 export * from './progress.types';
 export * from './quiz.types';
 export * from './assignment.types';
+export * from './completion.types';
+export * from './certificate.types';
 export * from './instructor.types';
 export * from './announcement.types';
 export * from './blog.types';

@@ -84,7 +84,9 @@
       "in_progress": "قيد التقدّم",
       "submitted": "تم التسليم",
       "passed": "ناجح",
-      "failed": "راسب"
+      "failed": "راسب",
+      "expired": "انتهى الوقت",
+      "invalidated": "ملغاة"
     },
     "assignmentSubmissions": "تسليمات الواجبات",
     "noSubmissions": "لا توجد تسليمات بعد.",
@@ -113,7 +115,73 @@
       "attempt": "المحاولة",
       "score": "الدرجة",
       "status": "الحالة",
-      "submittedAt": "تاريخ التسليم"
+      "submittedAt": "تاريخ التسليم",
+      "points": "النقاط",
+      "duration": "المدة",
+      "violations": "المخالفات",
+      "late": "متأخر",
+      "autoSubmitted": "تسليم تلقائي",
+      "grading": "التصحيح"
+    },
+    "flagged": "مُعلَّمة",
+    "late": {
+      "yes": "نعم",
+      "no": "لا"
+    },
+    "autoSubmittedReason": {
+      "timeout": "انتهاء الوقت",
+      "integrity": "النزاهة"
+    },
+    "gradingStatus": {
+      "auto": "تلقائي",
+      "pending": "قيد الانتظار",
+      "graded": "تم التصحيح"
+    },
+    "actions": {
+      "exportCsv": "تصدير تقرير النزاهة CSV",
+      "overrides": "الاستثناءات"
+    },
+    "csv": {
+      "success": "تم تصدير تقرير النزاهة",
+      "error": "تعذّر تصدير تقرير النزاهة"
+    },
+    "overrides": {
+      "title": "استثناءات الطلاب",
+      "description": "وقت إضافي أو محاولات إضافية أو نافذة مختلفة لطالب واحد. يطبّق الخادم الاستثناء عندما يبدأ هذا الطالب محاولة.",
+      "current": "الاستثناءات الحالية",
+      "empty": "لا توجد استثناءات بعد",
+      "emptyDescription": "أضف استثناءً أدناه لمنح طالب وقتًا إضافيًا أو محاولات إضافية أو نافذة مختلفة.",
+      "formTitle": "إضافة استثناء أو تحديثه",
+      "student": "الطالب",
+      "selectStudent": "اختر طالبًا",
+      "noStudents": "لا يوجد طلاب مسجّلون للاختيار من بينهم.",
+      "timeMultiplier": "مضاعف الوقت",
+      "timeMultiplierHelp": "1 يبقي الحد الزمني كما هو؛ 1.5 يمنح 50% وقتًا إضافيًا.",
+      "timeMultiplierRange": "أدخل مضاعفًا بين 1 و5.",
+      "extraAttempts": "محاولات إضافية",
+      "availableFrom": "متاح من",
+      "availableUntil": "متاح حتى",
+      "windowHelp": "اترك الحقلين فارغين للإبقاء على نافذة الاختبار.",
+      "windowOrder": "يجب أن تأتي نهاية النافذة بعد بدايتها.",
+      "reason": "السبب",
+      "reasonPlaceholder": "لماذا يحصل هذا الطالب على استثناء",
+      "reasonTooLong": "أبقِ السبب أقل من 500 حرف.",
+      "studentRequired": "اختر طالبًا.",
+      "summary": "{{multiplier}}× من الوقت · {{attempts}} محاولات إضافية",
+      "windowFrom": "من {{date}}",
+      "windowUntil": "حتى {{date}}",
+      "save": "حفظ الاستثناء",
+      "remove": "إزالة",
+      "saved": "تم حفظ الاستثناء",
+      "saveError": "تعذّر حفظ الاستثناء",
+      "removed": "تمت إزالة الاستثناء",
+      "removeError": "تعذّر إزالة الاستثناء",
+      "removeConfirm": {
+        "title": "إزالة هذا الاستثناء",
+        "description": "سيعود {{student}} إلى الحد الزمني والمحاولات والنافذة الخاصة بالاختبار نفسه.",
+        "confirmLabel": "إزالة الاستثناء",
+        "cancelLabel": "الإبقاء عليه"
+      }
     }
   },
   "submissions": {
@@ -149,6 +217,133 @@
     "status": {
       "ungraded": "غير مصحّح",
       "graded": "تم التصحيح"
+    },
+    "attachment": {
+      "open": "فتح المرفق",
+      "expires": "تنتهي صلاحية هذا الرابط في {{time}}"
+    },
+    "submittedLate": "تم التسليم متأخرًا"
+  },
+  "attemptReview": {
+    "title": "مراجعة المحاولة",
+    "backToResults": "العودة إلى النتائج",
+    "factsTitle": "المحاولة",
+    "attemptNumber": "المحاولة {{number}}",
+    "facts": {
+      "student": "الطالب",
+      "attempt": "المحاولة",
+      "status": "الحالة",
+      "score": "الدرجة",
+      "points": "النقاط",
+      "duration": "المدة",
+      "startedAt": "البدء",
+      "submittedAt": "التسليم",
+      "late": "متأخر",
+      "violations": "المخالفات",
+      "autoSubmitted": "تسليم تلقائي",
+      "grading": "التصحيح",
+      "gradedBy": "صحّحها",
+      "gradedAt": "وقت التصحيح",
+      "invalidatedBy": "ألغاها",
+      "invalidatedAt": "وقت الإلغاء",
+      "invalidationReason": "سبب الإلغاء"
+    },
+    "notAvailable": "غير متاح",
+    "pointsValue": "{{earned}} من {{total}}",
+    "lateYes": "تم التسليم متأخرًا",
+    "lateNo": "في الوقت المحدد",
+    "violationsRecorded": "تم تسجيل {{count}}",
+    "flagged": "مُعلَّمة للمراجعة",
+    "notAutoSubmitted": "لا",
+    "answers": {
+      "title": "الإجابات",
+      "questionNumber": "السؤال {{number}}",
+      "pointsWorth": "{{points}} نقاط",
+      "selectedCorrect": "مُختار · صحيح",
+      "selectedIncorrect": "مُختار · غير صحيح",
+      "correctAnswer": "الإجابة الصحيحة",
+      "notSelected": "غير مُختار",
+      "learnerText": "إجابة الطالب",
+      "noAnswer": "لم تُقدَّم إجابة",
+      "acceptedAnswers": "الإجابات المقبولة",
+      "pointsAwarded": "{{awarded}} من {{points}} نقاط",
+      "result": {
+        "correct": "صحيحة",
+        "incorrect": "غير صحيحة",
+        "awaitingGrading": "بانتظار التصحيح",
+        "graded": "صُحّحت يدويًا",
+        "unanswered": "بدون إجابة"
+      }
+    },
+    "questionType": {
+      "single_choice": "اختيار واحد",
+      "multiple_choice": "اختيار متعدد",
+      "true_false": "صح أو خطأ",
+      "short_answer": "إجابة قصيرة",
+      "essay": "مقال"
+    },
+    "grading": {
+      "title": "التصحيح اليدوي",
+      "description": "أدخل النقاط لكل سؤال يحتاج إلى تصحيح يدوي. تُختتم المحاولة وتُحتسب الدرجة بمجرد حفظ جميع الدرجات اليدوية.",
+      "pointsLabel": "نقاط السؤال {{number}}",
+      "pointsRange": "أدخل رقمًا بين 0 ونقاط السؤال.",
+      "pointsHint": "0–{{max}}",
+      "save": "حفظ الدرجات",
+      "saved": "تم حفظ الدرجات",
+      "savedFinal": "اكتملت جميع الدرجات اليدوية. اختُتمت المحاولة واحتُسبت الدرجة.",
+      "savedPending": "تُختتم المحاولة بمجرد إدخال جميع الدرجات اليدوية.",
+      "error": "تعذّر حفظ الدرجات",
+      "viewOnly": "ليس لديك صلاحية تصحيح هذه المحاولة.",
+      "complete": "اكتملت جميع الدرجات اليدوية؛ هذه المحاولة مُختتمة.",
+      "unavailable": "التصحيح غير متاح لمحاولة ملغاة."
+    },
+    "events": {
+      "title": "الجدول الزمني للأحداث",
+      "description": "كل ما تم تسجيله أثناء هذه المحاولة، بالترتيب الذي استلمه به الخادم. الأحداث المتجاهَلة وقعت ضمن فترة الإحماء أو التهدئة ولم تُحتسب.",
+      "empty": "لم تُسجَّل أي أحداث لهذه المحاولة.",
+      "counted": "محتسَب",
+      "ignored": "متجاهَل",
+      "clientAt": "وقت العميل",
+      "serverAt": "وقت الخادم",
+      "type": {
+        "visibility_hidden": "إخفاء التبويب",
+        "visibility_visible": "إظهار التبويب",
+        "blur": "فقدت النافذة التركيز",
+        "focus": "استعادت النافذة التركيز",
+        "fullscreen_exit": "الخروج من ملء الشاشة",
+        "fullscreen_enter": "الدخول إلى ملء الشاشة",
+        "copy": "نسخ",
+        "paste": "لصق",
+        "cut": "قص",
+        "contextmenu": "فتح قائمة السياق",
+        "print": "محاولة طباعة",
+        "heartbeat": "نبضة اتصال",
+        "second_session": "رُصدت جلسة ثانية",
+        "device_change": "تغيّر الجهاز",
+        "warning_acknowledged": "تم الإقرار بالتحذير"
+      }
+    },
+    "actionsTitle": "الإجراءات",
+    "void": {
+      "action": "إلغاء المحاولة",
+      "title": "إلغاء هذه المحاولة",
+      "description": "يجعل الإلغاء المحاولة غير صالحة، ويزيل نتيجتها، ويعيد المحاولة إلى رصيد الطالب. يُسجَّل السبب.",
+      "reasonLabel": "السبب",
+      "reasonPlaceholder": "لماذا تُلغى هذه المحاولة",
+      "reasonRequired": "السبب مطلوب لإلغاء المحاولة.",
+      "reasonTooLong": "أبقِ السبب أقل من 500 حرف.",
+      "continue": "متابعة",
+      "cancel": "إلغاء الأمر",
+      "confirm": {
+        "title": "إلغاء المحاولة؟",
+        "description": "ستُلغى المحاولة {{number}} للطالب {{student}}. لا يمكن التراجع عن هذا.",
+        "confirmLabel": "إلغاء المحاولة",
+        "cancelLabel": "الإبقاء على المحاولة"
+      },
+      "success": "تم إلغاء المحاولة",
+      "error": "تعذّر إلغاء المحاولة",
+      "alreadyVoided": "هذه المحاولة مُلغاة بالفعل.",
+      "viewOnly": "ليس لديك صلاحية إلغاء هذه المحاولة."
     }
   }
 }
