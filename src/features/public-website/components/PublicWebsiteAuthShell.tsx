@@ -43,8 +43,9 @@ export interface PublicWebsiteAuthShellProps {
   readonly locale: PublicWebsiteLocale;
   /** This page's own BARE path (e.g. `/forgot-password`) — the language switcher rebuilds the same page in the other locale from it. */
   readonly path: string;
-  readonly title: string;
-  readonly subtitle?: string;
+  /** Heading text — a string, or an element that translates itself where it is rendered (see `CertificateVerifyFrame.title`). */
+  readonly title: ReactNode;
+  readonly subtitle?: ReactNode;
   readonly children: (context: {
     readonly academyId: string;
     readonly academyName: string;

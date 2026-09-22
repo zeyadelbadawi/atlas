@@ -63,7 +63,13 @@ export function CertificateVerifySheet({
     );
   }
 
-  if (!data.valid) {
+  // The server answers `valid: false` for BOTH an unknown code and a revoked
+  // certificate; only the revoked one carries a status and its facts. A
+  // revoked certificate is a real record the visitor should see as revoked
+  // — never "does not match" (production validation, 22 Sep 2026).
+  const isRevoked = data.status === 'revoked';
+
+  if (!data.valid && !isRevoked) {
     return (
       <div
         className="flex flex-col items-center gap-4 rounded-lg border border-border bg-card px-6 py-10 text-center"
@@ -90,8 +96,6 @@ export function CertificateVerifySheet({
       </div>
     );
   }
-
-  const isRevoked = data.status === 'revoked';
 
   return (
     <div className="space-y-4" data-testid="certificate-verify-valid">

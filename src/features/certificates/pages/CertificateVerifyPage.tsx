@@ -16,10 +16,20 @@ import { useParams } from 'react-router-dom';
 import { CertificateVerifySheet } from '../components/CertificateVerifySheet';
 
 export interface CertificateVerifyFrame {
-  /** Localized page title. */
-  readonly title: string;
-  /** Localized one-line explanation of the page. */
-  readonly subtitle: string;
+  /**
+   * Localized page title — an ELEMENT that translates itself where the
+   * frame renders it, not a string translated here. The academy site's
+   * shell switches the active language from its own `useEffect`, and
+   * React runs child effects before parent effects: a string computed by
+   * this page would be produced before the switch and never refreshed
+   * (the page had not subscribed yet when the event fired), leaving an
+   * English heading over an Arabic sheet — observed on production, 22 Sep
+   * 2026. An element rendered inside the frame subscribes deeper than the
+   * shell and follows the language exactly like the sheet does.
+   */
+  readonly title: ReactNode;
+  /** Localized one-line explanation of the page; same contract as `title`. */
+  readonly subtitle: ReactNode;
   /** This page's own bare path, e.g. `/verify/ABCD…` — for locale switchers that rebuild the URL. */
   readonly path: string;
   readonly content: ReactNode;
@@ -33,15 +43,20 @@ export interface CertificateVerifyPageProps {
   readonly renderFrame?: (frame: CertificateVerifyFrame) => ReactNode;
 }
 
+/** Translates one key at the point where the frame renders it (see `CertificateVerifyFrame.title`). */
+function FrameText({ translationKey }: { readonly translationKey: string }): JSX.Element {
+  const { t } = useTranslation();
+  return <>{t(translationKey)}</>;
+}
+
 export default function CertificateVerifyPage({
   renderFrame,
 }: CertificateVerifyPageProps): JSX.Element {
-  const { t } = useTranslation();
   const { code = '' } = useParams<{ code: string }>();
   const normalizedCode = code.trim();
 
-  const title = t('certificates:verify.title');
-  const subtitle = t('certificates:verify.subtitle');
+  const title = <FrameText translationKey="certificates:verify.title" />;
+  const subtitle = <FrameText translationKey="certificates:verify.subtitle" />;
   const content = <CertificateVerifySheet code={normalizedCode} />;
 
   if (renderFrame) {
