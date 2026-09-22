@@ -27,10 +27,13 @@ process.env.VITE_APP_DESCRIPTION ??=
   process.env.OVERVIEW_DESCRIPTION ??
   'The operating system for education businesses.';
 process.env.VITE_APP_TITLE = escapeHtmlAttr(process.env.VITE_APP_TITLE);
-process.env.VITE_APP_DESCRIPTION = escapeHtmlAttr(process.env.VITE_APP_DESCRIPTION);
+process.env.VITE_APP_DESCRIPTION = escapeHtmlAttr(
+  process.env.VITE_APP_DESCRIPTION
+);
 // Was hotlinked to the generator vendor's CDN; `public/favicon.svg` is
 // the asset this repository actually ships.
-process.env.VITE_APP_LOGO_URL ??= process.env.OVERVIEW_LOGO_URL ?? '/favicon.svg';
+process.env.VITE_APP_LOGO_URL ??=
+  process.env.OVERVIEW_LOGO_URL ?? '/favicon.svg';
 
 function ensureBuildOutDir() {
   let outDir = path.resolve(__dirname, 'dist');
@@ -133,6 +136,33 @@ export default defineConfig(({ command }) => {
         '/api': {
           target: `http://localhost:${process.env.BACKEND_PORT || '8000'}`,
           changeOrigin: true,
+          // Local-only: learner endpoints resolve the academy from the
+          // request HOST (the frontend never sends an academy id by
+          // design). Set `VITE_DEV_PROXY_HOST=<slug>.<platform domain>` to
+          // have the dev proxy present that host to the backend, so the
+          // learner dashboard, certificates and the Playwright journeys
+          // work on localhost without a separate reverse proxy.
+          ...(process.env.VITE_DEV_PROXY_HOST
+            ? {
+                configure: (proxy: {
+                  on: (
+                    event: 'proxyReq',
+                    handler: (proxyReq: {
+                      setHeader: (name: string, value: string) => void;
+                    }) => void
+                  ) => void;
+                }) => {
+                  // Set after `changeOrigin` has done its own rewrite, so
+                  // this host is the one the backend actually sees.
+                  proxy.on('proxyReq', (proxyReq) => {
+                    proxyReq.setHeader(
+                      'host',
+                      process.env.VITE_DEV_PROXY_HOST as string
+                    );
+                  });
+                },
+              }
+            : {}),
         },
       },
       watch: { usePolling: true, interval: 600 },
