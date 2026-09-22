@@ -104,6 +104,15 @@ export function createApiError(
 }
 
 /** Type guard narrowing an unknown value to {@link ApiError}. */
+/**
+ * The error kind of a failed request, for call sites whose query hook types
+ * the error as a plain `Error`. `undefined` for anything that is not an
+ * `ApiError`, so `ErrorState` falls back to its generic copy.
+ */
+export function apiErrorKind(error: unknown): ApiErrorKind | undefined {
+  return isApiError(error) ? error.kind : undefined;
+}
+
 export function isApiError(value: unknown): value is ApiError {
   return value instanceof ApiError;
 }

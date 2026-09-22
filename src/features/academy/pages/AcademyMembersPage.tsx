@@ -22,6 +22,7 @@ import { GraduationCap, Search, UserPlus, Users } from 'lucide-react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
+import { apiErrorKind } from '@api';
 import { StatusBadge } from '@components/data-display';
 import { DataTable } from '@components/table';
 import { SectionTabs } from '@components/navigation';
@@ -180,7 +181,7 @@ export default function AcademyMembersPage(): JSX.Element {
           titleKey="academy:members.title"
           descriptionKey="academy:members.subtitle"
         />
-        <ErrorState onRetry={() => refetchAcademy()} />
+        <ErrorState kind={apiErrorKind(academyError)} onRetry={() => refetchAcademy()} />
       </PageContainer>
     );
   }
@@ -313,7 +314,7 @@ export default function AcademyMembersPage(): JSX.Element {
 
               {/* Members Table */}
               {membersError ? (
-                <ErrorState onRetry={() => refetchMembers()} />
+                <ErrorState kind={apiErrorKind(membersError)} onRetry={() => refetchMembers()} />
               ) : (
                 <DataTable
                   columns={columns}

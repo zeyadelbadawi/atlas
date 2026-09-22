@@ -13,7 +13,7 @@
  * neighbours was invisible too.
  */
 import { afterEach, describe, expect, it } from 'vitest';
-import { cleanup, render, screen } from '@testing-library/react';
+import { act, cleanup, render, screen } from '@testing-library/react';
 import { STORAGE_KEYS } from '@constants';
 import { AtlasPlatformProvider } from './PlatformProvider';
 import { usePlatform } from '@hooks';
@@ -74,5 +74,30 @@ describe('AtlasPlatformProvider — active academy restoration', () => {
     renderProvider();
 
     expect(screen.getByTestId('probe').textContent).toBe('academy-3');
+  });
+});
+
+/*
+ * 22 Sep 2026 authorization audit — academies are organization-scoped, so
+ * switching organizations must drop the remembered academy instead of
+ * letting the sidebar build links the API is guaranteed to refuse.
+ */
+describe('AtlasPlatformProvider — organization switch', () => {
+  it('forgets the active academy, in state and in storage, when the organization changes', async () => {
+    localStorage.setItem(STORAGE_KEYS.activeAcademy, 'academy-of-org-a');
+
+    renderProvider();
+    expect(screen.getByTestId('probe').textContent).toBe('academy-of-org-a');
+
+    await act(async () => {
+      window.dispatchEvent(
+        new CustomEvent('atlas:organization-switched', {
+          detail: { organizationId: 'org-b' },
+        }),
+      );
+    });
+
+    expect(screen.getByTestId('probe').textContent).toBe('none');
+    expect(localStorage.getItem(STORAGE_KEYS.activeAcademy)).toBeNull();
   });
 });

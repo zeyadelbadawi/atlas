@@ -21,6 +21,7 @@ import {
 } from '@hooks';
 import { AccountMenu, OrganizationSwitcher } from '@components/controls';
 import { NotificationBell } from '@features/notifications';
+import { useActiveAcademyReconciliation } from '@features/academy';
 import { DashboardSidebar } from './DashboardSidebar';
 import { DashboardTopbar } from './DashboardTopbar';
 import { useSmartBack } from './useSmartBack';
@@ -43,6 +44,9 @@ export function DashboardLayout(): JSX.Element {
   const drawer = useDisclosure(false);
   const isMobile = isBelow(SIDEBAR_BREAKPOINT);
   const smartBack = useSmartBack();
+  // A remembered academy this account cannot reach is replaced or cleared
+  // before any academy-scoped link is built (authorization audit, 22 Sep 2026).
+  useActiveAcademyReconciliation();
 
   return (
     <div className="flex min-h-dvh bg-surface">

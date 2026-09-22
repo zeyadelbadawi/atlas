@@ -8,6 +8,7 @@
 import { authenticationService } from './authentication.service';
 import { currentUserService } from './current-user.service';
 import { tokenService } from './token.service';
+import { STORAGE_KEYS } from '@constants';
 import { isTwoFactorChallenge } from '@types';
 import { twoFactorService } from './two-factor.service';
 import type {
@@ -101,6 +102,9 @@ export class SessionService {
   public async signOut(): Promise<Session> {
     await authenticationService.signOut();
     tokenService.clear();
+    // The remembered academy belongs to the account that just left, never
+    // to whoever signs in next in this browser (22 Sep 2026 audit).
+    localStorage.removeItem(STORAGE_KEYS.activeAcademy);
 
     return {
       status: 'unauthenticated',
