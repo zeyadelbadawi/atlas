@@ -856,7 +856,11 @@
         "title": "This lesson has no content yet",
         "description": "The academy has not added anything to this lesson. It is not a fault on your side and there is nothing to retry — you can carry on with the next activity, and the academy can add the content at any time."
       },
-      "seeOutline": "See the course outline"
+      "seeOutline": "See the course outline",
+      "locked": {
+        "title": "This activity is locked",
+        "description": "Finish the item before it in the course to unlock this one. The course outline shows what comes first."
+      }
     },
     "nextLocked": "Next, “{{title}}”, is locked: {{reason}}"
   }

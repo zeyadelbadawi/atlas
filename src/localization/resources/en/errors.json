@@ -69,7 +69,8 @@
     "sessionConflict": "You are already learning on another device. Continue here to end that session, or carry on where you left off.",
     "contentUnavailable": "This content cannot be opened right now. Reload the page, and contact the academy if it keeps happening.",
     "lessonNoContent": "This lesson has no content yet. The academy has not added anything to it.",
-    "lessonProcessing": "This lesson is not ready to play yet. Its video may still be processing — try again in a few minutes."
+    "lessonProcessing": "This lesson is not ready to play yet. Its video may still be processing — try again in a few minutes.",
+    "lessonLocked": "Finish the earlier lessons in this course first. This one unlocks when the item before it is complete."
   },
   "provisioning": {
     "stepFailed": "Something went wrong while setting up your Academy. Please try again or contact support if the problem continues."
@@ -193,13 +194,15 @@
     "multipleChoiceRequiresOneCorrectOption": "A multiple-choice question needs at least one correct option.",
     "choiceRequiresTwoOptions": "A choice question needs at least two options.",
     "shortAnswerRequiresAcceptedAnswer": "A short-answer question needs at least one accepted answer.",
-    "pointsExceedMaximum": "Points per question cannot exceed 100."
+    "pointsExceedMaximum": "Points per question cannot exceed 100.",
+    "locked": "This quiz is locked until you finish the item before it in the course."
   },
   "assignment": {
     "alreadySubmitted": "This assignment has already been submitted and does not allow resubmission.",
     "responseRequired": "Write a response or attach a file before submitting.",
     "pastDue": "The due date has passed and this assignment does not accept late submissions.",
-    "attachmentNotOwned": "That attachment is not one you uploaded for this assignment. Upload the file again."
+    "attachmentNotOwned": "That attachment is not one you uploaded for this assignment. Upload the file again.",
+    "locked": "This assignment is locked until you finish the item before it in the course."
   },
   "certificate": {
     "insufficientRole": "Only the academy's owner or a manager can issue, revoke or regenerate certificates.",
@@ -209,5 +212,9 @@
     "notIssued": "No certificate has been issued for this enrollment.",
     "notEligible": "This enrollment has not met the course's completion rule, so a certificate cannot be issued yet.",
     "featureDisabled": "Certificates are not enabled for this academy yet."
+  },
+  "progress": {
+    "lessonLocked": "This lesson is locked. Finish the item before it in the course to unlock it.",
+    "watchRequirementNotMet": "Watch more of this lesson before marking it complete."
   }
 }

@@ -44,6 +44,8 @@ export const PLAYER_FAILURE_KINDS = [
   'rateLimited',
   /** Drip: the lesson opens on a future date. */
   'scheduled',
+  /** Sequential progression: an earlier item in the curriculum is not finished yet. */
+  'locked',
   'suspended',
   /** No session, or a session that is not for this academy. */
   'notAuthenticated',
@@ -90,6 +92,7 @@ const MESSAGE_KEY_TO_KIND: Readonly<Record<string, PlayerFailureKind>> = {
   'errors.learning.grantRateLimited': 'rateLimited',
   'errors.learning.accessEnded': 'accessEnded',
   'errors.learning.lessonScheduled': 'scheduled',
+  'errors.learning.lessonLocked': 'locked',
   'errors.learning.sessionConflict': 'sessionConflict',
   'errors.auth.accountSuspended': 'suspended',
   // Both still arrive as 404s; the key is what tells them apart from an
