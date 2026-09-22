@@ -152,8 +152,12 @@
   "addOns": {
     "comingSoon": "Live Sessions is coming soon and can’t be installed yet."
   },
+  "academy": {
+    "insufficientRole": "Your role in this academy does not allow that. Ask an academy owner or manager if you need access."
+  },
   "course": {
-    "slugTaken": "That web address is already used by another course in this academy. Please choose a different one."
+    "slugTaken": "That web address is already used by another course in this academy. Please choose a different one.",
+    "insufficientRole": "Your role in this academy does not allow you to manage its courses."
   },
   "support": {
     "caseClosed": "This ticket is closed. Please open a new ticket if you still need help."

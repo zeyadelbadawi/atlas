@@ -17,6 +17,8 @@ import {
 } from '@services';
 import type { ApiError } from '@services';
 import { useToast } from '@app/providers/toast/useToast';
+import { useTranslation } from 'react-i18next';
+import { errorToastDescriptionKey } from './error-toast.utils';
 
 export interface AtlasQueryProviderProps {
   readonly children: ReactNode;
@@ -26,6 +28,7 @@ export function AtlasQueryProvider({
   children,
 }: AtlasQueryProviderProps): JSX.Element {
   const { notifyError } = useToast();
+  const { i18n } = useTranslation();
 
   // A ref keeps the cache alive across re-renders; recreating the client would
   // discard every cached query.
@@ -52,9 +55,15 @@ export function AtlasQueryProvider({
         error.kind === 'notFound'
       )
         return;
-      notifyError(errorTitleKey(error.kind), error.messageKey);
+      // Namespaced and existence-checked: a dotted backend key or an
+      // untranslated one must never reach the screen as a raw identifier
+      // (see `errorToastDescriptionKey`).
+      notifyError(
+        errorTitleKey(error.kind),
+        errorToastDescriptionKey(error, (key) => i18n.exists(key))
+      );
     },
-    [notifyError]
+    [notifyError, i18n]
   );
 
   if (!clientRef.current) {

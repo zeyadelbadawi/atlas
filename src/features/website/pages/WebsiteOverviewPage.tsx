@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
+import { apiErrorKind } from '@api';
 import { SectionTabs } from '@components/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -68,6 +69,7 @@ export default function WebsiteOverviewPage(): JSX.Element {
       <PageContainer>
         <PageHeader titleKey="website:overview.title" />
         <ErrorState
+          kind={apiErrorKind(error)}
           onRetry={() => {
             void academyQuery.refetch();
             void configQuery.refetch();

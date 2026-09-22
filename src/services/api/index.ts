@@ -12,6 +12,7 @@ export {
   errorMessageKey,
   errorTitleKey,
   isApiError,
+  apiErrorKind,
   normalizeApiError,
   normalizeAxiosError,
   normalizeResponseError,

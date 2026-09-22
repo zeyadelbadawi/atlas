@@ -23,6 +23,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PageContainer, PageHeader } from '@components/layout';
 import { MetricCard, StatusBadge } from '@components/data-display';
 import { EmptyState, ErrorState } from '@components/feedback';
+import { apiErrorKind } from '@api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -121,7 +122,7 @@ export default function AcademyDashboardPage(): JSX.Element {
           titleKey="academy:dashboard.title"
           descriptionKey="academy:dashboard.subtitle"
         />
-        <ErrorState onRetry={() => refetchAcademies()} />
+        <ErrorState kind={apiErrorKind(academiesError)} onRetry={() => refetchAcademies()} />
       </PageContainer>
     );
   }
@@ -282,7 +283,7 @@ export default function AcademyDashboardPage(): JSX.Element {
             </>
           ) : statsError ? (
             <div className="col-span-full">
-              <ErrorState onRetry={() => refetchStats()} />
+              <ErrorState kind={apiErrorKind(statsError)} onRetry={() => refetchStats()} />
             </div>
           ) : (
             <>

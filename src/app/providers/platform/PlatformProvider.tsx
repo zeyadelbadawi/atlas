@@ -99,8 +99,16 @@ export function AtlasPlatformProvider({
       const customEvent = event as CustomEvent<{ organizationId: string }>;
       const { organizationId } = customEvent.detail;
 
-      // Update active organization in platform state.
-      setState((prev) => ({ ...prev, activeOrganizationId: organizationId }));
+      // Update active organization in platform state. Academies are
+      // organization-scoped, so the remembered academy can never be valid
+      // in the organization being switched to — drop it here rather than
+      // let the sidebar build links to an academy the API will refuse.
+      setState((prev) => ({
+        ...prev,
+        activeOrganizationId: organizationId,
+        activeAcademyId: undefined,
+      }));
+      localStorage.removeItem(STORAGE_KEYS.activeAcademy);
 
       // Invalidate organization-scoped React Query cache.
       try {

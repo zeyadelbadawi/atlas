@@ -58,3 +58,5 @@ export {
   useRevokeAcademyInvite,
 } from './useAcademyInvites';
 export type { UseAcademyInvitesOptions } from './useAcademyInvites';
+// 22 Sep 2026 — stale/foreign active-academy reconciliation (authorization audit).
+export { useActiveAcademyReconciliation } from './useActiveAcademyReconciliation';

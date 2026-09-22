@@ -11,6 +11,7 @@ import { MoreHorizontal, Plus, Search } from 'lucide-react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
+import { apiErrorKind } from '@api';
 import { StatusBadge } from '@components/data-display';
 import { DataTable } from '@components/table';
 import { Button } from '@/components/ui/button';
@@ -272,7 +273,7 @@ export default function CourseListPage(): JSX.Element {
           titleKey="course:list.title"
           descriptionKey="course:list.subtitle"
         />
-        <ErrorState onRetry={() => refetch()} />
+        <ErrorState kind={apiErrorKind(error)} onRetry={() => refetch()} />
       </PageContainer>
     );
   }
