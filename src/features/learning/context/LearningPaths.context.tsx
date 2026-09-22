@@ -67,8 +67,8 @@ export interface LearningPaths {
 export const LEARNER_SURFACE_PATHS: LearningPaths = {
   myLearning: () => LEARNER_ROUTES.courses,
   courses: () => '/courses',
-  // The course page, the lesson and (since P64 Phase 3) every assessment
-  // live in the learner app (`/my/*`); the legacy `/my-learning/...` URLs
+  // Pre-Phase-3 baseline: the course page and the lesson live in the
+  // learner app (`/my/*`); the legacy `/my-learning/courses/...` URLs
   // redirect there and are no longer a destination anything links to.
   courseDetail: (courseId) =>
     buildPath(LEARNER_ROUTES.courseProgress, { courseId }),
@@ -76,15 +76,10 @@ export const LEARNER_SURFACE_PATHS: LearningPaths = {
     buildPath(LEARNER_ROUTES.courseProgress, { courseId }),
   lesson: (courseId, lessonId) =>
     buildPath(LEARNER_ROUTES.playerLesson, { courseId, lessonId }),
-  // P64 Phase 3: the attempt lives inside the unified player, addressed
-  // by the sequence item id (which IS the quiz / assignment id).
   quiz: (courseId, quizId) =>
-    buildPath(LEARNER_ROUTES.playerActivity, { courseId, itemId: quizId }),
+    `/my-learning/courses/${courseId}/quizzes/${quizId}`,
   assignment: (courseId, assignmentId) =>
-    buildPath(LEARNER_ROUTES.playerActivity, {
-      courseId,
-      itemId: assignmentId,
-    }),
+    `/my-learning/courses/${courseId}/assignments/${assignmentId}`,
   discussions: () => undefined,
   signIn: (returnTo) => `/sign-in?returnTo=${encodeURIComponent(returnTo)}`,
 };
