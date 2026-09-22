@@ -772,9 +772,11 @@ export default function InstructorQuizAttemptPage(): JSX.Element {
               </Fact>
               <Fact label={t('instructor:attemptReview.facts.violations')}>
                 <span className="inline-flex flex-wrap items-center gap-2">
-                  {t('instructor:attemptReview.violationsRecorded', {
-                    count: attempt.violationCount,
-                  })}
+                  {attempt.integrityMode === 'off'
+                    ? t('instructor:attemptReview.integrityNotMonitored')
+                    : t('instructor:attemptReview.violationsRecorded', {
+                        count: attempt.violationCount,
+                      })}
                   {attempt.integrityFlagged ? (
                     <span className="inline-flex items-center gap-1 text-warning">
                       <Flag className="size-3.5" aria-hidden />
@@ -850,7 +852,9 @@ export default function InstructorQuizAttemptPage(): JSX.Element {
             </p>
             {events.length === 0 ? (
               <p className="text-sm text-muted-foreground">
-                {t('instructor:attemptReview.events.empty')}
+                {attempt.integrityMode === 'off'
+                  ? t('instructor:attemptReview.events.notMonitored')
+                  : t('instructor:attemptReview.events.empty')}
               </p>
             ) : (
               <ol className="divide-y divide-border">

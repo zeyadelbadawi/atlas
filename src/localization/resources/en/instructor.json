@@ -321,7 +321,8 @@
         "second_session": "Second session detected",
         "device_change": "Device changed",
         "warning_acknowledged": "Warning acknowledged"
-      }
+      },
+      "notMonitored": "Integrity monitoring was not enabled for this attempt, so nothing was recorded. This is different from a monitored attempt with no events — enable integrity on the quiz (and, if it is not yet available for this academy, ask the platform to turn it on) to record tab switches, copying, pasting, printing and leaving fullscreen."
     },
     "actionsTitle": "Actions",
     "void": {
@@ -344,6 +345,7 @@
       "error": "The attempt could not be voided",
       "alreadyVoided": "This attempt has already been voided.",
       "viewOnly": "You don’t have permission to void this attempt."
-    }
+    },
+    "integrityNotMonitored": "Not monitored for this attempt"
   }
 }

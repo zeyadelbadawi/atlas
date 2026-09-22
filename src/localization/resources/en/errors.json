@@ -123,7 +123,11 @@
     "unsupportedFileType": "That file type isn't supported. Upload a JPG, PNG, GIF, WebP or PDF.",
     "invalidDataUrl": "That file couldn't be read. Try choosing it again.",
     "fileTooLarge": "That file is too large to upload.",
-    "insufficientRole": "You don't have permission to upload files to this academy."
+    "insufficientRole": "You don't have permission to upload files to this academy.",
+    "videoNotEnabled": "Video uploads are not part of this academy's current plan. Upgrade the plan to upload videos, or add the lesson as a YouTube link instead.",
+    "uploadNotFound": "This upload could not be found — it may have expired. Start the upload again.",
+    "uploadNotStarted": "The file did not finish uploading before it was submitted. Upload it again.",
+    "completionNotApplicable": "This upload cannot be finished from its current state. Start the upload again."
   },
   "tenancy": {
     "notAMember": "You don't have access to this workspace.",

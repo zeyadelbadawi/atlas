@@ -167,6 +167,13 @@ export interface QuizAttemptReview extends QuizAttempt {
   readonly events: readonly QuizAttemptEvent[];
   readonly gradedByName: string | null;
   readonly invalidatedByName: string | null;
+  /**
+   * The integrity mode in force for this attempt (`off` when the quiz had it
+   * off, or the academy's integrity flag was not on when it ran). Lets the
+   * reviewer tell "integrity was not watching" from "watching, recorded
+   * nothing" — an empty event list means different things (P4 Issue 5).
+   */
+  readonly integrityMode: 'off' | 'monitor' | 'warn' | 'strict';
 }
 
 export interface GradeQuizAttemptPayload {
