@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2 } from 'lucide-react';
+import { Clock, ExternalLink, Loader2, Paperclip } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
@@ -30,7 +30,13 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { useServerValidation } from '@forms';
-import { useDateFormatter, usePermissions, useUnsavedChanges } from '@hooks';
+import {
+  useDateFormatter,
+  useLanguage,
+  usePermissions,
+  useUnsavedChanges,
+} from '@hooks';
+import { formatBytes } from '@utils';
 import { getSubmissionStatusTone } from '@features/learning';
 import { useInstructorSubmission, useGradeSubmission } from '../hooks';
 import {
@@ -41,6 +47,7 @@ import {
 export default function InstructorSubmissionReviewPage(): JSX.Element {
   const fmt = useDateFormatter();
   const { t } = useTranslation();
+  const { language } = useLanguage();
   const navigate = useNavigate();
   const { hasPermission } = usePermissions();
   const canGrade = hasPermission('instructor.assignment.grade');
@@ -129,6 +136,11 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
     );
   }
 
+  const attachmentSize = formatBytes(
+    submission.attachment?.sizeBytes ?? 0,
+    language
+  );
+
   return (
     <PageContainer>
       <PageHeader
@@ -157,7 +169,38 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
                 {t('instructor:grading.noWrittenResponse')}
               </p>
             )}
-            {submission.attachmentUrl ? (
+            {submission.attachment ? (
+              // P64 Phase 3 — the protected attachment; the link is signed
+              // and short-lived, so the expiry is stated next to it.
+              <div className="space-y-1 rounded-lg border border-border p-3 text-sm">
+                <p className="flex flex-wrap items-center gap-2">
+                  <Paperclip
+                    className="size-4 text-muted-foreground"
+                    aria-hidden
+                  />
+                  <span className="font-medium text-foreground">
+                    {submission.attachment.fileName}
+                  </span>
+                  <span className="text-muted-foreground">
+                    {attachmentSize.value} {t(attachmentSize.unitKey)}
+                  </span>
+                </p>
+                <a
+                  href={submission.attachment.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 font-medium text-primary underline underline-offset-4"
+                >
+                  {t('instructor:grading.attachment.open')}
+                  <ExternalLink className="size-3.5" aria-hidden />
+                </a>
+                <p className="text-xs text-muted-foreground">
+                  {t('instructor:grading.attachment.expires', {
+                    time: fmt.dateTime(submission.attachment.expiresAt),
+                  })}
+                </p>
+              </div>
+            ) : submission.attachmentUrl ? (
               <a
                 href={submission.attachmentUrl}
                 target="_blank"
@@ -172,6 +215,12 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
                 {t('instructor:grading.submittedAt', {
                   date: fmt.dateTime(submission.submittedAt),
                 })}
+              </p>
+            ) : null}
+            {submission.isLate ? (
+              <p className="inline-flex items-center gap-1 text-sm text-warning">
+                <Clock className="size-4" aria-hidden />
+                {t('instructor:grading.submittedLate')}
               </p>
             ) : null}
           </CardContent>

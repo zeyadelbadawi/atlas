@@ -1,17 +1,25 @@
 /**
- * Course Quiz Editor Page (Phase 4).
+ * Course Quiz Editor Page (Phase 4, extended in P64 Phase 3 §E.1).
  *
  * Creates or edits one quiz, including its complete question/option set,
  * in one atomic submission — matching `CreateQuizDto`/`UpdateQuizDto`
  * (backend): `questions`, when present, REPLACES the whole set, there is
  * no per-question CRUD.
+ *
+ * Phase 3 adds the settings block (presets + grouped cards, see
+ * `QuizSettingsEditor`), per-question points / explanation / related
+ * lesson, the `short_answer` and `essay` types, and a read-only "preview
+ * as student" of the questions. Every setting is sent flat on the
+ * payload (`CreateQuizPayload extends QuizSettingsInput`); text-type
+ * questions send `options: []` because the server rejects options there.
  */
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useUnsavedChanges } from '@hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, Trash2 } from 'lucide-react';
+import { Eye, Loader2, Pencil, Trash2 } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { Button } from '@/components/ui/button';
@@ -22,7 +30,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -48,10 +55,22 @@ import {
   useDeleteQuiz,
   quizAuthoringSchema,
   blankQuizQuestion,
+  defaultQuizSettingsFormValues,
   type QuizAuthoringFormData,
+  type QuizQuestionFormData,
 } from '@features/learning';
-import { useCourse } from '../hooks';
-import { QuizQuestionsEditor } from '../components/QuizQuestionsEditor';
+import type { QuizQuestionInput } from '@types';
+import { useCourse, useCourseSections } from '../hooks';
+import {
+  QuizQuestionsEditor,
+  QuizStudentPreview,
+  type RelatedLessonOption,
+} from '../components/QuizQuestionsEditor';
+import {
+  QuizSettingsEditor,
+  quizSettingsFormToPayload,
+  quizSettingsToFormValues,
+} from '../components/QuizSettingsEditor';
 
 /**
  * The blank quiz a "create" visit starts from.
@@ -75,7 +94,36 @@ function emptyQuizValues(): QuizAuthoringFormData {
     status: 'draft',
     passingScore: undefined,
     maxAttempts: undefined,
+    ...defaultQuizSettingsFormValues(),
     questions: [blankQuizQuestion()],
+  };
+}
+
+/**
+ * One form question → the `QuizQuestionInput` the server accepts. Text
+ * types never carry options; only `short_answer` carries accepted
+ * answers; blank explanation / related lesson are omitted, not sent as
+ * empty strings.
+ */
+function toQuestionInput(question: QuizQuestionFormData): QuizQuestionInput {
+  const isTextType =
+    question.type === 'short_answer' || question.type === 'essay';
+  return {
+    prompt: question.prompt,
+    type: question.type,
+    options: isTextType
+      ? []
+      : question.options.map((option) => ({
+          label: option.label,
+          isCorrect: option.isCorrect,
+        })),
+    points: question.points,
+    explanation: question.explanation?.trim() || undefined,
+    relatedLessonId: question.relatedLessonId || undefined,
+    acceptedAnswers:
+      question.type === 'short_answer'
+        ? (question.acceptedAnswers ?? []).map((answer) => answer.value.trim())
+        : undefined,
   };
 }
 
@@ -89,8 +137,22 @@ export default function CourseQuizEditorPage(): JSX.Element {
   }>();
   const { confirm } = useConfirmDialog();
   const isEditMode = !!quizId;
+  const [previewing, setPreviewing] = useState(false);
 
   const { data: course } = useCourse(academyId ?? '', courseId ?? '');
+  const { data: sectionsData } = useCourseSections(
+    academyId ?? '',
+    courseId ?? ''
+  );
+  const lessons: readonly RelatedLessonOption[] = (
+    sectionsData?.items ?? []
+  ).flatMap((section) =>
+    section.lessons.map((lesson) => ({
+      id: lesson.id,
+      title: lesson.title,
+      sectionTitle: section.title,
+    }))
+  );
   const {
     data: quiz,
     isLoading: isLoadingQuiz,
@@ -111,12 +173,19 @@ export default function CourseQuizEditorPage(): JSX.Element {
           status: quiz.status,
           passingScore: quiz.passingScore,
           maxAttempts: quiz.maxAttempts,
+          ...quizSettingsToFormValues(quiz.settings),
           questions: quiz.questions.map((question) => ({
             prompt: question.prompt,
             type: question.type,
             options: question.options.map((option) => ({
               label: option.label,
               isCorrect: option.isCorrect,
+            })),
+            points: question.points,
+            explanation: question.explanation ?? '',
+            relatedLessonId: question.relatedLessonId ?? '',
+            acceptedAnswers: (question.acceptedAnswers ?? []).map((value) => ({
+              value,
             })),
           })),
         }
@@ -149,14 +218,8 @@ export default function CourseQuizEditorPage(): JSX.Element {
       status: data.status,
       passingScore: data.passingScore,
       maxAttempts: data.maxAttempts,
-      questions: data.questions.map((question) => ({
-        prompt: question.prompt,
-        type: question.type,
-        options: question.options.map((option) => ({
-          label: option.label,
-          isCorrect: option.isCorrect,
-        })),
-      })),
+      ...quizSettingsFormToPayload(data),
+      questions: data.questions.map(toQuestionInput),
     };
 
     try {
@@ -331,91 +394,65 @@ export default function CourseQuizEditorPage(): JSX.Element {
                 )}
               />
 
-              <div className="grid gap-4 sm:grid-cols-3">
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-1.5">
-                        {t('course:quizAuthoring.editor.statusLabel')}
-                        <FieldHelp contentKey="course:quizAuthoring.editor.help.status" />
-                      </FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="draft">
-                            {t('course:lessonStatus.draft')}
-                          </SelectItem>
-                          <SelectItem value="published">
-                            {t('course:lessonStatus.published')}
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="passingScore"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-1.5">
-                        {t('course:quizAuthoring.editor.passingScoreLabel')}
-                        <FieldHelp contentKey="course:quizAuthoring.editor.help.passingScore" />
-                      </FormLabel>
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem className="sm:max-w-xs">
+                    <FormLabel className="flex items-center gap-1.5">
+                      {t('course:quizAuthoring.editor.statusLabel')}
+                      <FieldHelp contentKey="course:quizAuthoring.editor.help.status" />
+                    </FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <Input
-                          type="number"
-                          min={0}
-                          max={100}
-                          {...field}
-                          value={field.value ?? ''}
-                        />
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
                       </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="maxAttempts"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-1.5">
-                        {t('course:quizAuthoring.editor.maxAttemptsLabel')}
-                        <FieldHelp contentKey="course:quizAuthoring.editor.help.maxAttempts" />
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          min={1}
-                          {...field}
-                          value={field.value ?? ''}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        {t('course:quizAuthoring.editor.maxAttemptsHelp')}
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                      <SelectContent>
+                        <SelectItem value="draft">
+                          {t('course:lessonStatus.draft')}
+                        </SelectItem>
+                        <SelectItem value="published">
+                          {t('course:lessonStatus.published')}
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
 
-          <QuizQuestionsEditor />
+          <QuizSettingsEditor />
+
+          <div className="flex items-center justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              aria-pressed={previewing}
+              onClick={() => setPreviewing((current) => !current)}
+            >
+              {previewing ? (
+                <Pencil className="size-4" strokeWidth={2} aria-hidden />
+              ) : (
+                <Eye className="size-4" strokeWidth={2} aria-hidden />
+              )}
+              {t(
+                previewing
+                  ? 'course:quizAuthoring.preview.backToEditing'
+                  : 'course:quizAuthoring.preview.toggle'
+              )}
+            </Button>
+          </div>
+
+          {previewing ? (
+            <QuizStudentPreview />
+          ) : (
+            <QuizQuestionsEditor lessons={lessons} />
+          )}
 
           <div className="flex items-center justify-end gap-3">
             <Button
@@ -438,7 +475,9 @@ export default function CourseQuizEditorPage(): JSX.Element {
           !(
             isApiError(mutationError) && mutationError.kind === 'validation'
           ) ? (
-            <p className="text-sm text-destructive">{t('errors:generic.description')}</p>
+            <p className="text-sm text-destructive">
+              {t('errors:generic.description')}
+            </p>
           ) : null}
         </form>
       </FormProvider>

@@ -2,7 +2,9 @@
  * Assignment Form Dialog (Phase 4).
  *
  * Shared create/edit dialog for a course assignment — instructions,
- * due date, and resubmission rules. Grading and student submission remain
+ * due date, late policy, resubmission rules and whether the assignment
+ * counts towards course completion (P64 Phase 3 §E.4, AD-11). Grading and
+ * student submission remain
  * entirely on the student-facing `AssignmentPage`; this dialog only ever
  * touches the authoring surface (`assignmentService.createAssignment`/
  * `updateAssignment`).
@@ -60,7 +62,7 @@ import type { Assignment } from '@types';
  * pre-existing, out-of-scope file this phase doesn't touch) since it's
  * this dialog's own new Phase 4 code.
  */
-function toDateTimeLocalValue(isoString: string): string {
+export function toDateTimeLocalValue(isoString: string): string {
   const date = new Date(isoString);
   const localOffsetMs = date.getTimezoneOffset() * 60000;
   return new Date(date.getTime() - localOffsetMs).toISOString().slice(0, 16);
@@ -86,6 +88,9 @@ const EMPTY_VALUES: AssignmentAuthoringFormData = {
   status: 'draft',
   dueAt: '',
   allowResubmission: false,
+  // Today's behaviour: late work is accepted and marked, never rejected.
+  latePolicy: 'accept_flagged',
+  requiredForCompletion: false,
 };
 
 export function AssignmentFormDialog({
@@ -124,6 +129,8 @@ export function AssignmentFormDialog({
               ? toDateTimeLocalValue(assignment.dueAt)
               : '',
             allowResubmission: assignment.allowResubmission,
+            latePolicy: assignment.latePolicy,
+            requiredForCompletion: assignment.requiredForCompletion,
           }
         : EMPTY_VALUES
     );
@@ -271,6 +278,76 @@ export function AssignmentFormDialog({
                       onCheckedChange={field.onChange}
                       aria-label={t(
                         'course:assignmentAuthoring.dialog.allowResubmissionLabel'
+                      )}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="latePolicy"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-1.5">
+                    {t('course:assignmentAuthoring.dialog.latePolicyLabel')}
+                    <FieldHelp contentKey="course:assignmentAuthoring.dialog.help.latePolicy" />
+                  </FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="block">
+                        {t(
+                          'course:assignmentAuthoring.dialog.latePolicy.block'
+                        )}
+                      </SelectItem>
+                      <SelectItem value="accept_flagged">
+                        {t(
+                          'course:assignmentAuthoring.dialog.latePolicy.accept_flagged'
+                        )}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    {t(
+                      field.value === 'block'
+                        ? 'course:assignmentAuthoring.dialog.latePolicyDescription.block'
+                        : 'course:assignmentAuthoring.dialog.latePolicyDescription.accept_flagged'
+                    )}
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="requiredForCompletion"
+              render={({ field }) => (
+                <FormItem className="flex items-center justify-between gap-4 rounded-md border border-border p-3">
+                  <div className="space-y-0.5">
+                    <FormLabel>
+                      {t(
+                        'course:assignmentAuthoring.dialog.requiredForCompletionLabel'
+                      )}
+                    </FormLabel>
+                    <FormDescription>
+                      {t(
+                        'course:assignmentAuthoring.dialog.requiredForCompletionDescription'
+                      )}
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      aria-label={t(
+                        'course:assignmentAuthoring.dialog.requiredForCompletionLabel'
                       )}
                     />
                   </FormControl>
