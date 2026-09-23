@@ -130,7 +130,18 @@
     "goToQuizzes": "Quizzes",
     "goToAssignments": "Assignments",
     "goToSettings": "Course Settings",
-    "detailsTabLabel": "Details"
+    "detailsTabLabel": "Details",
+    "catalogTitle": "Catalog details",
+    "catalogDescription": "How this course appears in the public catalog and on its details page.",
+    "levelLabel": "Level",
+    "levelPlaceholder": "Select a level",
+    "languageLabel": "Language",
+    "languagePlaceholder": "e.g. English, العربية",
+    "outcomesLabel": "What learners will achieve",
+    "outcomesPlaceholder": "Build a REST API\nDeploy to production",
+    "requirementsLabel": "Requirements",
+    "requirementsPlaceholder": "Basic JavaScript\nA code editor",
+    "onemPerLineHelp": "One item per line."
   },
   "instructors": {
     "title": "Instructors",
@@ -665,5 +676,11 @@
   "categories": {
     "loadFailed": "Failed to load categories",
     "empty": "No categories yet"
+  },
+  "level": {
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced",
+    "all_levels": "All levels"
   }
 }

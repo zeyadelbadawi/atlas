@@ -103,6 +103,10 @@ export default function CourseEditPage(): JSX.Element {
           pricingAmount: course.pricing.amount,
           pricingCurrency:
             course.pricing.currency ?? DEFAULT_COURSE_PRICING_CURRENCY,
+          level: course.level,
+          language: course.language ?? '',
+          outcomes: course.outcomes ? [...course.outcomes] : [],
+          requirements: course.requirements ? [...course.requirements] : [],
         }
       : undefined,
   });
@@ -181,6 +185,10 @@ export default function CourseEditPage(): JSX.Element {
           categoryId: data.categoryId,
           pricing,
           visibility: data.visibility,
+          level: data.level,
+          language: data.language || undefined,
+          outcomes: data.outcomes ?? [],
+          requirements: data.requirements ?? [],
         },
       });
       toast({
@@ -538,6 +546,131 @@ export default function CourseEditPage(): JSX.Element {
                   </>
                 )}
               </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('course:edit.catalogTitle')}</CardTitle>
+              <CardDescription>
+                {t('course:edit.catalogDescription')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="level"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('course:edit.levelLabel')}</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value ?? ''}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={t('course:edit.levelPlaceholder')}
+                            />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="beginner">
+                            {t('course:level.beginner')}
+                          </SelectItem>
+                          <SelectItem value="intermediate">
+                            {t('course:level.intermediate')}
+                          </SelectItem>
+                          <SelectItem value="advanced">
+                            {t('course:level.advanced')}
+                          </SelectItem>
+                          <SelectItem value="all_levels">
+                            {t('course:level.all_levels')}
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="language"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('course:edit.languageLabel')}</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          value={field.value ?? ''}
+                          placeholder={t('course:edit.languagePlaceholder')}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="outcomes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('course:edit.outcomesLabel')}</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        rows={4}
+                        value={(field.value ?? []).join('\n')}
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value
+                              .split('\n')
+                              .map((line) => line.trim())
+                              .filter(Boolean)
+                          )
+                        }
+                        placeholder={t('course:edit.outcomesPlaceholder')}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      {t('course:edit.onemPerLineHelp')}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="requirements"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('course:edit.requirementsLabel')}</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        rows={4}
+                        value={(field.value ?? []).join('\n')}
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value
+                              .split('\n')
+                              .map((line) => line.trim())
+                              .filter(Boolean)
+                          )
+                        }
+                        placeholder={t('course:edit.requirementsPlaceholder')}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      {t('course:edit.onemPerLineHelp')}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
 

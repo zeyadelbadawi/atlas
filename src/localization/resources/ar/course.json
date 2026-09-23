@@ -130,7 +130,18 @@
     "goToQuizzes": "الاختبارات",
     "goToAssignments": "الواجبات",
     "goToSettings": "إعدادات الدورة",
-    "detailsTabLabel": "التفاصيل"
+    "detailsTabLabel": "التفاصيل",
+    "catalogTitle": "تفاصيل الفهرس",
+    "catalogDescription": "كيف تظهر هذه الدورة في الفهرس العام وصفحة تفاصيلها.",
+    "levelLabel": "المستوى",
+    "levelPlaceholder": "اختر مستوى",
+    "languageLabel": "اللغة",
+    "languagePlaceholder": "مثال: English، العربية",
+    "outcomesLabel": "ما سيحققه المتعلمون",
+    "outcomesPlaceholder": "بناء واجهة برمجية\nالنشر إلى الإنتاج",
+    "requirementsLabel": "المتطلبات",
+    "requirementsPlaceholder": "أساسيات JavaScript\nمحرر أكواد",
+    "onemPerLineHelp": "عنصر واحد لكل سطر."
   },
   "instructors": {
     "title": "المدرّسون",
@@ -673,5 +684,11 @@
   "categories": {
     "loadFailed": "فشل تحميل الفئات",
     "empty": "لا توجد فئات بعد"
+  },
+  "level": {
+    "beginner": "مبتدئ",
+    "intermediate": "متوسط",
+    "advanced": "متقدم",
+    "all_levels": "جميع المستويات"
   }
 }

@@ -51,6 +51,13 @@ export const MAX_COURSE_SLUG_LENGTH = 100;
 export const MAX_COURSE_SHORT_DESCRIPTION_LENGTH = 200;
 export const MAX_COURSE_DESCRIPTION_LENGTH = 5000;
 
+/** P64 Phase 4 catalog authoring bounds — mirror the backend `course.constants.ts`. */
+export const MAX_COURSE_LANGUAGE_LENGTH = 35;
+export const MAX_COURSE_OUTCOME_LENGTH = 300;
+export const MAX_COURSE_OUTCOMES = 20;
+export const MAX_COURSE_REQUIREMENT_LENGTH = 300;
+export const MAX_COURSE_REQUIREMENTS = 20;
+
 /** Maximum section field lengths. */
 export const MAX_SECTION_TITLE_LENGTH = 150;
 export const MAX_SECTION_DESCRIPTION_LENGTH = 500;

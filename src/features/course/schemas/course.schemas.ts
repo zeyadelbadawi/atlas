@@ -11,11 +11,41 @@ import {
   MAX_COURSE_SLUG_LENGTH,
   MAX_COURSE_SHORT_DESCRIPTION_LENGTH,
   MAX_COURSE_DESCRIPTION_LENGTH,
+  MAX_COURSE_LANGUAGE_LENGTH,
+  MAX_COURSE_OUTCOME_LENGTH,
+  MAX_COURSE_OUTCOMES,
+  MAX_COURSE_REQUIREMENT_LENGTH,
+  MAX_COURSE_REQUIREMENTS,
   MAX_SECTION_TITLE_LENGTH,
   MAX_SECTION_DESCRIPTION_LENGTH,
   MAX_LESSON_TITLE_LENGTH,
   MAX_LESSON_DESCRIPTION_LENGTH,
 } from '../constants/course.constants';
+
+/**
+ * P64 Phase 4 catalog metadata, authored on the same create/edit form.
+ * `outcomes`/`requirements` are arrays here; the form edits them as a
+ * one-item-per-line textarea and assembles the array on submit.
+ */
+const catalogFields = {
+  level: z
+    .enum(['beginner', 'intermediate', 'advanced', 'all_levels'])
+    .optional(),
+  language: z
+    .string()
+    .max(MAX_COURSE_LANGUAGE_LENGTH, 'validation:maxLength')
+    .optional(),
+  outcomes: z
+    .array(z.string().max(MAX_COURSE_OUTCOME_LENGTH, 'validation:maxLength'))
+    .max(MAX_COURSE_OUTCOMES, 'validation:maxItems')
+    .optional(),
+  requirements: z
+    .array(
+      z.string().max(MAX_COURSE_REQUIREMENT_LENGTH, 'validation:maxLength')
+    )
+    .max(MAX_COURSE_REQUIREMENTS, 'validation:maxItems')
+    .optional(),
+};
 
 /** Slug validation regex: lowercase letters, numbers, hyphens. */
 const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -54,6 +84,7 @@ export const createCourseSchema = z
     categoryId: z.string().optional(),
     visibility: z.enum(['public', 'private']),
     ...pricingFields,
+    ...catalogFields,
   })
   .refine(
     (data) =>
@@ -91,6 +122,7 @@ export const updateCourseSchema = z
     categoryId: z.string().optional(),
     visibility: z.enum(['public', 'private']),
     ...pricingFields,
+    ...catalogFields,
   })
   .refine(
     (data) =>

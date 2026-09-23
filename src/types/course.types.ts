@@ -192,6 +192,11 @@ export interface CreateCoursePayload {
   readonly categoryId?: string;
   readonly pricing: CoursePricing;
   readonly visibility: CourseVisibility;
+  // P64 Phase 4 catalog metadata.
+  readonly level?: CourseLevel;
+  readonly language?: string;
+  readonly outcomes?: readonly string[];
+  readonly requirements?: readonly string[];
 }
 
 /**
@@ -216,6 +221,11 @@ export interface UpdateCoursePayload {
   readonly pricing?: CoursePricing;
   readonly visibility?: CourseVisibility;
   readonly status?: CourseStatus;
+  // P64 Phase 4 catalog metadata.
+  readonly level?: CourseLevel;
+  readonly language?: string;
+  readonly outcomes?: readonly string[];
+  readonly requirements?: readonly string[];
 }
 
 /** Course section creation payload. */
