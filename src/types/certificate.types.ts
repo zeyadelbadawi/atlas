@@ -103,7 +103,7 @@ export interface CertificateTemplate {
   readonly signatoryName: string | null;
   readonly signatoryTitle: string | null;
   readonly wording: CertificateWordingByLocale;
-  readonly palette: CertificatePalette;
+  readonly palette?: CertificatePalette;
   readonly version: number;
   readonly isDefault: boolean;
   readonly updatedAt: string;

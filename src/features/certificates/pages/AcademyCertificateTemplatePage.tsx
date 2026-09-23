@@ -73,10 +73,12 @@ function toFormValues(
       en: { title: template.wording.en.title, body: template.wording.en.body },
       ar: { title: template.wording.ar.title, body: template.wording.ar.body },
     },
-    primaryColor: template.palette.primary,
-    accentColor: template.palette.accent,
-    textColor: template.palette.text,
-    backgroundColor: template.palette.background,
+    // Defensive: an older backend (mid-deploy) may not send `palette` yet.
+    // Fall back to the original Atlas design so the editor never crashes.
+    primaryColor: template.palette?.primary ?? '#1F4E5F',
+    accentColor: template.palette?.accent ?? '#B08A3E',
+    textColor: template.palette?.text ?? '#14303A',
+    backgroundColor: template.palette?.background ?? '#FCFBF7',
   };
 }
 
