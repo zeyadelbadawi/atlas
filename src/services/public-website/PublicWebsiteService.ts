@@ -25,8 +25,11 @@ import type { ReadOptions } from '@api';
 import type {
   AcademyIdentity,
   ContactMessagePayload,
+  CollectionQuery,
   Course,
   CourseListQuery,
+  CourseRatingSummary,
+  CourseReview,
   HostnameResolution,
   PaginatedResult,
   PublicCourseCurriculumSection,
@@ -195,6 +198,71 @@ export class PublicWebsiteService extends BaseService {
     try {
       return await this.client.get<readonly PublicCourseCurriculumSection[]>(
         this.path('websites', academyId, 'courses', courseId, 'curriculum'),
+        options
+      );
+    } catch (error) {
+      if (isApiError(error) && error.kind === 'notFound') return null;
+      throw error;
+    }
+  }
+
+  /**
+   * P64 Phase 4 — the public, APPROVED reviews of a published+public
+   * course. `null` for the same not-found/not-served cases as
+   * `getPublicCourse`.
+   */
+  async getPublicCourseReviews(
+    academyId: string,
+    courseId: string,
+    query?: CollectionQuery,
+    options?: ReadOptions
+  ): Promise<PaginatedResult<CourseReview> | null> {
+    try {
+      return await this.client.get<PaginatedResult<CourseReview>>(
+        this.path('websites', academyId, 'courses', courseId, 'reviews'),
+        {
+          ...options,
+          params: { ...toCollectionParams(query), ...options?.params },
+        }
+      );
+    } catch (error) {
+      if (isApiError(error) && error.kind === 'notFound') return null;
+      throw error;
+    }
+  }
+
+  /** P64 Phase 4 — the aggregate rating (mean + histogram) over approved reviews. `null` when the course is not publicly visible. */
+  async getPublicCourseRating(
+    academyId: string,
+    courseId: string,
+    options?: ReadOptions
+  ): Promise<CourseRatingSummary | null> {
+    try {
+      return await this.client.get<CourseRatingSummary>(
+        this.path('websites', academyId, 'courses', courseId, 'rating'),
+        options
+      );
+    } catch (error) {
+      if (isApiError(error) && error.kind === 'notFound') return null;
+      throw error;
+    }
+  }
+
+  /** P64 Phase 4 — related courses (same academy, same category first) for the course-details page. `null` when the course is not publicly visible. */
+  async getPublicCourseRecommendations(
+    academyId: string,
+    courseId: string,
+    options?: ReadOptions
+  ): Promise<readonly Course[] | null> {
+    try {
+      return await this.client.get<readonly Course[]>(
+        this.path(
+          'websites',
+          academyId,
+          'courses',
+          courseId,
+          'recommendations'
+        ),
         options
       );
     } catch (error) {

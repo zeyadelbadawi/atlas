@@ -748,7 +748,21 @@
       "enrollAction": "Enroll for free",
       "continueAction": "Continue Learning",
       "signInToEnrollAction": "Sign in to enroll",
-      "enrollError": "We couldn't enroll you in this course. Please try again."
+      "enrollError": "We couldn't enroll you in this course. Please try again.",
+      "outcomesTitle": "What you'll learn",
+      "requirementsTitle": "Requirements",
+      "reviewsTitle": "Learner reviews",
+      "reviewCount": "{{count}} review",
+      "reviewCount_other": "{{count}} reviews",
+      "ratingLabel": "Rated {{rating}} out of 5",
+      "anonymousReviewer": "Learner",
+      "relatedTitle": "Related courses",
+      "level": {
+        "beginner": "Beginner",
+        "intermediate": "Intermediate",
+        "advanced": "Advanced",
+        "all_levels": "All levels"
+      }
     }
   },
   "common": {

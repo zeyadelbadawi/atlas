@@ -17,6 +17,17 @@ export type CourseVisibility = 'public' | 'private';
 /** Whether a course is free or paid. No payment processing is implied. */
 export type CoursePricingType = 'free' | 'paid';
 
+/** P64 Phase 4 — catalog difficulty level. */
+export type CourseLevel =
+  'beginner' | 'intermediate' | 'advanced' | 'all_levels';
+
+export const COURSE_LEVEL_VALUES: readonly CourseLevel[] = [
+  'beginner',
+  'intermediate',
+  'advanced',
+  'all_levels',
+];
+
 /** Backend-agnostic pricing representation. */
 export interface CoursePricing {
   readonly type: CoursePricingType;
@@ -147,6 +158,12 @@ export interface Course {
   readonly category?: CourseCategory;
   readonly instructors: readonly CourseInstructorSummary[];
   readonly stats?: CourseStats;
+  // P64 Phase 4 — catalog metadata (all optional; empty arrays when unset).
+  readonly level?: CourseLevel;
+  readonly language?: string;
+  readonly outcomes?: readonly string[];
+  readonly requirements?: readonly string[];
+  readonly introVideoAssetId?: string;
   readonly createdAt: string;
   readonly updatedAt: string;
   readonly publishedAt?: string;

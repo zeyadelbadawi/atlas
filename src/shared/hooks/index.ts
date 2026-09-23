@@ -61,6 +61,11 @@ export { usePublicWebsiteStatistics } from './usePublicWebsiteStatistics';
 export { usePublicCourses } from './usePublicCourses';
 export type { UsePublicCoursesOptions } from './usePublicCourses';
 export { usePublicCourse, usePublicCourseCurriculum } from './usePublicCourse';
+export {
+  usePublicCourseReviews,
+  usePublicCourseRating,
+  usePublicCourseRecommendations,
+} from './usePublicCourseReviews';
 
 /**
  * Dates in the user's chosen language, not the browser's. See the hook's

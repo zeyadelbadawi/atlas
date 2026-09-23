@@ -797,6 +797,33 @@ export const publicWebsiteKeys = {
       academyId,
       courseId,
     ] as const,
+  /** P64 Phase 4 — the public approved-reviews list for a course. */
+  courseReviews: (
+    academyId: string | undefined,
+    courseId: string | undefined,
+    query?: CollectionQuery
+  ) =>
+    [
+      ...publicWebsiteKeys.all,
+      'course-reviews',
+      academyId,
+      courseId,
+      query,
+    ] as const,
+  /** P64 Phase 4 — the aggregate rating summary for a course. */
+  courseRating: (academyId: string | undefined, courseId: string | undefined) =>
+    [...publicWebsiteKeys.all, 'course-rating', academyId, courseId] as const,
+  /** P64 Phase 4 — related courses for a course-details page. */
+  courseRecommendations: (
+    academyId: string | undefined,
+    courseId: string | undefined
+  ) =>
+    [
+      ...publicWebsiteKeys.all,
+      'course-recommendations',
+      academyId,
+      courseId,
+    ] as const,
 } as const;
 
 /**

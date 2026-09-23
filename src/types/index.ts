@@ -64,3 +64,5 @@ export * from './learner-overview.types';
 export * from './course-sequence.types';
 export * from './lesson-content.types';
 export * from './course-order.types';
+// P64 Phase 4 — course reviews and rating aggregate.
+export * from './review.types';

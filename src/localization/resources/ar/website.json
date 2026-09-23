@@ -756,7 +756,25 @@
       "enrollAction": "التسجيل مجانًا",
       "continueAction": "متابعة التعلّم",
       "signInToEnrollAction": "سجّل الدخول للتسجيل",
-      "enrollError": "تعذّر تسجيلك في هذه الدورة. يرجى المحاولة مرة أخرى."
+      "enrollError": "تعذّر تسجيلك في هذه الدورة. يرجى المحاولة مرة أخرى.",
+      "outcomesTitle": "ما ستتعلمه",
+      "requirementsTitle": "المتطلبات",
+      "reviewsTitle": "تقييمات المتعلمين",
+      "ratingLabel": "التقييم {{rating}} من 5",
+      "anonymousReviewer": "متعلم",
+      "relatedTitle": "دورات ذات صلة",
+      "level": {
+        "beginner": "مبتدئ",
+        "intermediate": "متوسط",
+        "advanced": "متقدم",
+        "all_levels": "جميع المستويات"
+      },
+      "reviewCount_zero": "لا توجد تقييمات",
+      "reviewCount_one": "تقييم واحد",
+      "reviewCount_two": "تقييمان",
+      "reviewCount_few": "{{count}} تقييمات",
+      "reviewCount_many": "{{count}} تقييمًا",
+      "reviewCount_other": "{{count}} تقييم"
     }
   },
   "common": {

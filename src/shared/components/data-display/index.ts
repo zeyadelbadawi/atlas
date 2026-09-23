@@ -11,3 +11,5 @@ export { MetricCard } from './MetricCard';
 export type { MetricCardProps, TrendDirection } from './MetricCard';
 export { NumericExpression } from './NumericExpression';
 export type { NumericExpressionProps } from './NumericExpression';
+export { StarRating } from './StarRating';
+export type { StarRatingProps } from './StarRating';

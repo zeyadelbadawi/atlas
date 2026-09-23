@@ -40,12 +40,17 @@ import {
   BookOpen,
   CheckCircle2,
   FileText,
+  GraduationCap,
+  Globe,
   Layers,
   Loader2,
   PlayCircle,
 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { CourseReviews } from './CourseReviews';
+import { RelatedCourses } from './RelatedCourses';
 import {
   Accordion,
   AccordionContent,
@@ -209,6 +214,23 @@ export function CourseDetailsTemplate({
                 </span>
               </div>
             ) : null}
+
+            {course.level || course.language ? (
+              <div className="flex flex-wrap items-center gap-2">
+                {course.level ? (
+                  <Badge variant="secondary" className="gap-1.5">
+                    <GraduationCap className="size-3.5" aria-hidden />
+                    {t(`website:renderer.courseDetails.level.${course.level}`)}
+                  </Badge>
+                ) : null}
+                {course.language ? (
+                  <Badge variant="secondary" className="gap-1.5">
+                    <Globe className="size-3.5" aria-hidden />
+                    {course.language}
+                  </Badge>
+                ) : null}
+              </div>
+            ) : null}
           </div>
 
           {course.description ? (
@@ -219,6 +241,42 @@ export function CourseDetailsTemplate({
               <p className="max-w-prose whitespace-pre-line text-base leading-relaxed text-muted-foreground">
                 {course.description}
               </p>
+            </div>
+          ) : null}
+
+          {course.outcomes && course.outcomes.length > 0 ? (
+            <div className="space-y-3">
+              <h2 className="text-lg font-semibold text-foreground">
+                {t('website:renderer.courseDetails.outcomesTitle')}
+              </h2>
+              <ul className="grid gap-2 sm:grid-cols-2">
+                {course.outcomes.map((outcome, i) => (
+                  <li
+                    key={i}
+                    className="flex items-start gap-2 text-sm text-muted-foreground"
+                  >
+                    <CheckCircle2
+                      className="mt-0.5 size-4 shrink-0 text-[var(--website-primary-solid)]"
+                      strokeWidth={2}
+                      aria-hidden
+                    />
+                    <span>{outcome}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+
+          {course.requirements && course.requirements.length > 0 ? (
+            <div className="space-y-3">
+              <h2 className="text-lg font-semibold text-foreground">
+                {t('website:renderer.courseDetails.requirementsTitle')}
+              </h2>
+              <ul className="ms-5 list-disc space-y-1 text-sm text-muted-foreground">
+                {course.requirements.map((requirement, i) => (
+                  <li key={i}>{requirement}</li>
+                ))}
+              </ul>
             </div>
           ) : null}
 
@@ -286,6 +344,12 @@ export function CourseDetailsTemplate({
           ) : isLoadingCurriculum ? (
             <Skeleton className="h-32 w-full" />
           ) : null}
+
+          <CourseReviews
+            academyId={academyId}
+            courseId={courseId}
+            locale={locale}
+          />
         </div>
 
         <aside className="h-fit space-y-4 rounded-lg border border-border bg-card p-5 lg:sticky lg:top-6">
@@ -342,6 +406,13 @@ export function CourseDetailsTemplate({
           ) : null}
         </aside>
       </div>
+
+      <RelatedCourses
+        academyId={academyId}
+        courseId={courseId}
+        buildHref={buildHref}
+        navigate={navigate}
+      />
     </article>
   );
 }
