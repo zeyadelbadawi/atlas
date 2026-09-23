@@ -708,5 +708,33 @@
     "ratingLabel": "Rated {{rating}} out of 5",
     "emptyTitle": "No reviews yet",
     "emptyDescription": "Reviews from enrolled learners will appear here for moderation."
+  },
+  "checkout": {
+    "title": "Checkout",
+    "subtitle": "Complete your purchase to enrol.",
+    "summaryTitle": "Order summary",
+    "total": "Total",
+    "methodTitle": "Payment method",
+    "methodDescription": "Choose how you'd like to pay. Payments are reviewed before your enrolment is confirmed.",
+    "continue": "Continue",
+    "proofTitle": "Upload payment proof",
+    "proofDescription": "Transfer the amount, then upload a screenshot or receipt. We'll review it and confirm your enrolment.",
+    "proofFileLabel": "Proof of payment",
+    "proofNoteLabel": "Note (optional)",
+    "proofNotePlaceholder": "Any reference or detail that helps us match your payment…",
+    "submitProof": "Submit for review",
+    "proofRequired": "Please attach your proof of payment.",
+    "submittedTitle": "Payment submitted",
+    "submittedDescription": "Thanks! Your payment is under review. You'll be enrolled once it's approved.",
+    "viewPurchases": "View my purchases",
+    "browseCourses": "Browse courses",
+    "alreadyPurchasedTitle": "You already own this course",
+    "alreadyPurchasedDescription": "Your order is complete.",
+    "goToCourse": "Go to course",
+    "backToCourse": "Back to course",
+    "unavailableTitle": "Not available for purchase yet",
+    "unavailableDescription": "This academy hasn't finished setting up payments, so this course can't be purchased right now. Please check back later.",
+    "paymentError": "We couldn't start your payment. Please try again.",
+    "proofError": "We couldn't submit your proof. Please try again."
   }
 }

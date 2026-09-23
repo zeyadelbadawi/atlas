@@ -15,6 +15,14 @@
  * tenancy requirement and not a convenience.
  */
 import type { Money } from './money.types';
+import type {
+  ManualReviewStatus,
+  PaymentAttempt,
+  PaymentLifecycleStatus,
+  PaymentMethodType,
+  PaymentNextAction,
+  PaymentProof,
+} from './payment.types';
 
 export const COURSE_ORDER_STATUSES = [
   'draft',
@@ -44,4 +52,45 @@ export interface CourseOrder {
   readonly idempotencyKey: string;
   readonly paidAt?: string;
   readonly createdAt: string;
+}
+
+/** `POST courses/:id/course-orders` request (P13). */
+export interface CreateCourseOrderPayload {
+  readonly idempotencyKey: string;
+}
+
+/** `POST course-orders/:id/payments` request — the buyer picks a method key. */
+export interface CreateCourseOrderPaymentPayload {
+  readonly methodKey: string;
+}
+
+/**
+ * A Payment against a course order (backend `course-order-payment.contract`).
+ * The buyer/seller analog of `Payment`: it carries `payerUserId`/
+ * `payeeAcademyId` and no organization/checkout id, and reuses the shared
+ * proof/attempt/review shapes.
+ */
+export interface CourseOrderPayment {
+  readonly id: string;
+  readonly courseOrderId: string;
+  readonly payerUserId: string;
+  readonly payeeAcademyId: string;
+  readonly methodKey: string;
+  readonly methodType: PaymentMethodType;
+  readonly provider: string;
+  readonly money: Money;
+  readonly status: PaymentLifecycleStatus;
+  readonly reviewStatus: ManualReviewStatus;
+  readonly proof?: PaymentProof;
+  readonly attempts: readonly PaymentAttempt[];
+  readonly failureReason?: string;
+  readonly reviewNotes?: string;
+  readonly nextAction?: PaymentNextAction;
+  readonly commission?: {
+    readonly rateBasisPoints: number;
+    readonly amountMinorUnits: number;
+  };
+  readonly createdAt: string;
+  readonly updatedAt: string;
+  readonly expiresAt?: string;
 }

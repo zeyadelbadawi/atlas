@@ -18,8 +18,16 @@
  * rather than a tidy-up.
  */
 import { BaseService } from '@services';
-import type { ReadOptions } from '@services';
-import type { CollectionQuery, CourseOrder, PaginatedResult } from '@types';
+import type { ReadOptions, WriteOptions } from '@services';
+import { resourcePath } from '@api';
+import type {
+  CollectionQuery,
+  CourseOrder,
+  CourseOrderPayment,
+  CreateCourseOrderPayload,
+  CreateCourseOrderPaymentPayload,
+  PaginatedResult,
+} from '@types';
 
 export class CourseOrderService extends BaseService {
   protected readonly resource = 'course-orders';
@@ -30,6 +38,72 @@ export class CourseOrderService extends BaseService {
     options?: ReadOptions
   ): Promise<PaginatedResult<CourseOrder>> {
     return this.fetchCollection<CourseOrder>(query, options);
+  }
+
+  /** One order by id (RLS-scoped to the caller). */
+  async getOrder(orderId: string, options?: ReadOptions): Promise<CourseOrder> {
+    return this.fetchOne<CourseOrder>(orderId, options);
+  }
+
+  /**
+   * P64 Phase 4 — open (or, idempotently, re-open) an order for a paid
+   * course. `POST courses/:id/course-orders` lives under the `courses`
+   * base, not this service's `course-orders` resource, so it is addressed
+   * explicitly. The idempotency key makes a double-click return the same
+   * open order rather than a second one.
+   */
+  async createOrder(
+    courseId: string,
+    payload: CreateCourseOrderPayload,
+    options?: WriteOptions
+  ): Promise<CourseOrder> {
+    return this.client.post<CourseOrder, CreateCourseOrderPayload>(
+      resourcePath('courses', courseId, 'course-orders'),
+      payload,
+      options
+    );
+  }
+
+  /** Create a Payment against an order (buyer picks the method key). */
+  async createPayment(
+    orderId: string,
+    payload: CreateCourseOrderPaymentPayload,
+    options?: WriteOptions
+  ): Promise<CourseOrderPayment> {
+    return this.client.post<
+      CourseOrderPayment,
+      CreateCourseOrderPaymentPayload
+    >(this.path(orderId, 'payments'), payload, options);
+  }
+
+  /** One payment of an order. */
+  async getPayment(
+    orderId: string,
+    paymentId: string,
+    options?: ReadOptions
+  ): Promise<CourseOrderPayment> {
+    return this.client.get<CourseOrderPayment>(
+      this.path(orderId, 'payments', paymentId),
+      options
+    );
+  }
+
+  /**
+   * Submit a manual-transfer proof for review. Mirrors the tenant billing
+   * proof contract (base64 `fileData` + `fileName` + optional `note`) — the
+   * same `useFilePicker` base64 pipeline, no new upload endpoint. Moves the
+   * payment's `reviewStatus` to `pending`; never implies success.
+   */
+  async submitProof(
+    orderId: string,
+    paymentId: string,
+    payload: { fileName: string; fileData: string; note?: string },
+    options?: WriteOptions
+  ): Promise<CourseOrderPayment> {
+    return this.client.patch<
+      CourseOrderPayment,
+      { fileName: string; fileData: string; note?: string }
+    >(this.path(orderId, 'payments', paymentId, 'proof'), payload, options);
   }
 }
 

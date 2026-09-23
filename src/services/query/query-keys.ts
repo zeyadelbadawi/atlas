@@ -307,6 +307,10 @@ export const courseOrderKeys = {
   all: QUERY_KEY_ROOTS.courseOrder,
   list: (studentId: string | undefined, query?: CollectionQuery) =>
     [...courseOrderKeys.all, 'list', studentId, query] as const,
+  detail: (orderId: string | undefined) =>
+    [...courseOrderKeys.all, 'detail', orderId] as const,
+  payment: (orderId: string | undefined, paymentId: string | undefined) =>
+    [...courseOrderKeys.all, 'payment', orderId, paymentId] as const,
 } as const;
 
 export const quizKeys = {

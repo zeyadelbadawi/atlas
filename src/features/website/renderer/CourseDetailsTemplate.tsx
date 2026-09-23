@@ -390,7 +390,20 @@ export function CourseDetailsTemplate({
                 ) : null}
                 {t('website:renderer.courseDetails.enrollAction')}
               </Button>
-            ) : null
+            ) : (
+              <Button
+                className="w-full"
+                onClick={() =>
+                  navigate(
+                    buildHref(
+                      buildPath(LEARNER_ROUTES.courseCheckout, { courseId })
+                    )
+                  )
+                }
+              >
+                {t('website:renderer.courseDetails.buyAction')}
+              </Button>
+            )
           ) : (
             <Button
               className="w-full"

@@ -780,7 +780,8 @@
         "pending": "Awaiting review",
         "approved": "Published",
         "rejected": "Not approved"
-      }
+      },
+      "buyAction": "Buy this course"
     }
   },
   "common": {

@@ -45,6 +45,7 @@ const LearnerCertificatesPage = lazy(
   () => import('./pages/LearnerCertificatesPage')
 );
 const LearnerPurchasesPage = lazy(() => import('./pages/LearnerPurchasesPage'));
+const CourseCheckoutPage = lazy(() => import('./pages/CourseCheckoutPage'));
 const LearnerDevicesPage = lazy(() => import('./pages/LearnerDevicesPage'));
 const LearnerProfilePage = lazy(() => import('./pages/LearnerProfilePage'));
 const LearnerSecurityPage = lazy(() => import('./pages/LearnerSecurityPage'));
@@ -120,6 +121,10 @@ export function LearnerRouter({
             <Route
               path="courses/:courseId"
               element={<LearnerCourseProgressPage />}
+            />
+            <Route
+              path="courses/:courseId/checkout"
+              element={<CourseCheckoutPage />}
             />
             <Route path="assessments" element={<LearnerAssessmentsPage />} />
             <Route path="certificates" element={<LearnerCertificatesPage />} />

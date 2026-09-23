@@ -716,5 +716,33 @@
     "ratingLabel": "التقييم {{rating}} من 5",
     "emptyTitle": "لا توجد تقييمات بعد",
     "emptyDescription": "ستظهر تقييمات المتعلمين المسجّلين هنا للمراجعة."
+  },
+  "checkout": {
+    "title": "إتمام الشراء",
+    "subtitle": "أكمل عملية الشراء للتسجيل.",
+    "summaryTitle": "ملخص الطلب",
+    "total": "الإجمالي",
+    "methodTitle": "طريقة الدفع",
+    "methodDescription": "اختر طريقة الدفع المناسبة. تتم مراجعة المدفوعات قبل تأكيد تسجيلك.",
+    "continue": "متابعة",
+    "proofTitle": "رفع إثبات الدفع",
+    "proofDescription": "حوّل المبلغ ثم ارفع لقطة شاشة أو إيصالًا. سنراجعه ونؤكد تسجيلك.",
+    "proofFileLabel": "إثبات الدفع",
+    "proofNoteLabel": "ملاحظة (اختياري)",
+    "proofNotePlaceholder": "أي مرجع أو تفصيل يساعدنا على مطابقة دفعتك…",
+    "submitProof": "إرسال للمراجعة",
+    "proofRequired": "يرجى إرفاق إثبات الدفع.",
+    "submittedTitle": "تم إرسال الدفعة",
+    "submittedDescription": "شكرًا لك! دفعتك قيد المراجعة. سيتم تسجيلك بمجرد الموافقة عليها.",
+    "viewPurchases": "عرض مشترياتي",
+    "browseCourses": "تصفح الدورات",
+    "alreadyPurchasedTitle": "أنت تملك هذه الدورة بالفعل",
+    "alreadyPurchasedDescription": "طلبك مكتمل.",
+    "goToCourse": "اذهب إلى الدورة",
+    "backToCourse": "العودة إلى الدورة",
+    "unavailableTitle": "غير متاح للشراء بعد",
+    "unavailableDescription": "لم تُكمل هذه الأكاديمية إعداد المدفوعات، لذا لا يمكن شراء هذه الدورة حاليًا. يرجى المحاولة لاحقًا.",
+    "paymentError": "تعذّر بدء الدفع. يرجى المحاولة مرة أخرى.",
+    "proofError": "تعذّر إرسال الإثبات. يرجى المحاولة مرة أخرى."
   }
 }

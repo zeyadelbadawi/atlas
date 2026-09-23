@@ -296,6 +296,8 @@ export const LEARNER_ROUTES = {
   /** Empty until Phase 3 issues the first certificate. */
   certificates: '/my/certificates',
   purchases: '/my/purchases',
+  /** P64 Phase 4 — the paid-course checkout (order → payment → proof). */
+  courseCheckout: '/my/courses/:courseId/checkout',
   devices: '/my/devices',
   profile: '/my/profile',
   security: '/my/security',
