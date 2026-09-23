@@ -12,7 +12,7 @@
  * until a manager regenerates them, which is the explicit, audited action
  * D7 asks for. The subtitle says so.
  */
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -57,6 +57,7 @@ import {
   type CertificateTemplateFormData,
 } from '../schemas/certificate-template.schema';
 import { getCertificateTabs } from './AcademyCertificatesPage';
+import { buildCertificatePreviewKey } from '../utils/certificate-preview-key';
 
 type ImageField = 'logoUrl' | 'signatureUrl';
 
@@ -141,35 +142,25 @@ export default function AcademyCertificateTemplatePage(): JSX.Element {
   const [previewError, setPreviewError] = useState<string | null>(null);
   const previewUrlRef = useRef<string | null>(null);
 
-  // A stable signature of just the fields that affect the rendered PDF, so we
-  // do not re-render on unrelated keystrokes.
-  const previewKey = useMemo(
-    () =>
-      JSON.stringify({
-        l: previewLocale,
-        logoUrl: watched.logoUrl,
-        signatureUrl: watched.signatureUrl,
-        signatoryName: watched.signatoryName,
-        signatoryTitle: watched.signatoryTitle,
-        wording: watched.wording,
-        primaryColor: watched.primaryColor,
-        accentColor: watched.accentColor,
-        textColor: watched.textColor,
-        backgroundColor: watched.backgroundColor,
-      }),
-    [
-      previewLocale,
-      watched.logoUrl,
-      watched.signatureUrl,
-      watched.signatoryName,
-      watched.signatoryTitle,
-      watched.wording,
-      watched.primaryColor,
-      watched.accentColor,
-      watched.textColor,
-      watched.backgroundColor,
-    ]
-  );
+  // A content signature of every field that affects the rendered PDF.
+  // Computed inline (NOT memoised on object references): react-hook-form keeps
+  // the nested `wording` object reference stable across keystrokes, so a memo
+  // keyed on `watched.wording` never saw text edits — only the top-level
+  // colour strings changed. `form.watch()` re-renders on every field change,
+  // and JSON.stringify reads the ACTUAL nested content, so a single typed
+  // character in any text field changes this key and drives a fresh preview.
+  const previewKey = buildCertificatePreviewKey({
+    locale: previewLocale,
+    logoUrl: watched.logoUrl,
+    signatureUrl: watched.signatureUrl,
+    signatoryName: watched.signatoryName,
+    signatoryTitle: watched.signatoryTitle,
+    wording: watched.wording,
+    primaryColor: watched.primaryColor,
+    accentColor: watched.accentColor,
+    textColor: watched.textColor,
+    backgroundColor: watched.backgroundColor,
+  });
 
   useEffect(() => {
     if (!canManage) return;
@@ -207,7 +198,7 @@ export default function AcademyCertificateTemplatePage(): JSX.Element {
         .finally(() => {
           if (!cancelled) setPreviewPending(false);
         });
-    }, 600);
+    }, 300);
     return () => {
       cancelled = true;
       clearTimeout(handle);
