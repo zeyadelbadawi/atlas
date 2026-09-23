@@ -165,5 +165,94 @@
         "description": "Nobody currently meets the at-risk criteria. That's a good sign."
       }
     }
+  },
+  "reports": {
+    "title": "Reports",
+    "description": "Quiz integrity events, lesson-access sharing signals and plan usage for this academy.",
+    "window": {
+      "label": "Window",
+      "days_one": "Last {{count}} day",
+      "days_other": "Last {{count}} days"
+    },
+    "error": {
+      "title": "Couldn't load this report",
+      "description": "Something went wrong fetching the report. Please try again."
+    },
+    "forbidden": {
+      "title": "You can't view reports for this academy",
+      "description": "Reports are available to the academy's owner, admins and managers. Ask an owner if you need access."
+    },
+    "truncated": "Some lists were shortened to their top entries. The headline figures are complete.",
+    "columns": {
+      "course": "Course",
+      "events": "Events",
+      "attempts": "Attempts with events",
+      "refusals": "Refusals",
+      "user": "Learner"
+    },
+    "integrity": {
+      "title": "Integrity summary",
+      "description": "Events recorded during monitored quiz attempts — tab switches, focus loss, fullscreen exits, copy, paste and printing.",
+      "totalEvents": "Events recorded",
+      "countedEvents": "Counted against attempts",
+      "attemptsWithEvents": "Attempts with events",
+      "byType": "By event type",
+      "topCourses": "Courses with the most events",
+      "types": {
+        "visibility_hidden": "Tab hidden",
+        "visibility_visible": "Tab visible",
+        "blur": "Window lost focus",
+        "focus": "Window regained focus",
+        "fullscreen_exit": "Left fullscreen",
+        "fullscreen_enter": "Entered fullscreen",
+        "copy": "Copy",
+        "paste": "Paste",
+        "cut": "Cut",
+        "contextmenu": "Context menu opened",
+        "print": "Print attempted",
+        "heartbeat": "Heartbeat",
+        "second_session": "Second session detected",
+        "device_change": "Device changed",
+        "warning_acknowledged": "Warning acknowledged"
+      },
+      "empty": {
+        "title": "No integrity events",
+        "description": "No events were recorded during quiz attempts in this window."
+      }
+    },
+    "sharing": {
+      "title": "Sharing signals",
+      "description": "Lesson-access grants and refusals. Repeated refusals for one learner point to a shared account or too many devices.",
+      "granted": "Grants",
+      "refused": "Refusals",
+      "distinctUsersRefused": "Learners refused",
+      "distinctDevicesRefused": "Devices refused",
+      "grantedShare": "{{share}}% granted",
+      "refusedShare": "{{share}}% refused",
+      "byReason": "Refusals by reason",
+      "topCourses": "Courses with the most refusals",
+      "topUsers": "Learners with the most refusals",
+      "unnamedUser": "Unnamed learner",
+      "reasons": {
+        "notAuthenticated": "Not signed in",
+        "notEnrolled": "Not enrolled",
+        "accessEnded": "Access ended",
+        "courseUnavailable": "Course unavailable",
+        "lessonUnavailable": "Lesson unavailable",
+        "scheduled": "Not yet scheduled",
+        "deviceLimit": "Device limit reached",
+        "sessionConflict": "Another session active",
+        "suspended": "Account suspended",
+        "rateLimited": "Too many requests"
+      },
+      "empty": {
+        "title": "No access activity",
+        "description": "No lesson-access grants or refusals were recorded in this window."
+      }
+    },
+    "quota": {
+      "title": "Plan usage",
+      "description": "Your organization's usage against its current plan limits. Limits are enforced by the server, not by this page."
+    }
   }
 }

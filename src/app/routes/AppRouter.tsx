@@ -155,6 +155,11 @@ const CourseAssignmentsPage = lazy(
 const StudentAnalyticsPage = lazy(
   () => import('@features/dashboard/pages/StudentAnalyticsPage')
 );
+// P64 Phase 4 §E.5 — the owner's per-academy integrity / sharing / quota
+// reports. Same management-analytics family as `StudentAnalyticsPage`.
+const AcademyReportsPage = lazy(
+  () => import('@features/dashboard/pages/AcademyReportsPage')
+);
 
 const InstructorDashboardPage = lazy(
   () => import('@features/instructor/pages/InstructorDashboardPage')
@@ -598,6 +603,22 @@ export function AppRouter(): JSX.Element {
               }
             />
 
+            {/* P64 Phase 4 §E.5 — the owner's per-academy reports. Guarded
+                with exactly the Student Analytics route's shape; the backend
+                enforces the owner/admin/manager rule on both endpoints and
+                the page renders its 403 as a permission state. */}
+            <Route
+              path={DASHBOARD_ROUTES.academyReports}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['tenant.dashboard.view']}
+                  requiresEntitlement
+                >
+                  <AcademyReportsPage />
+                </RouteGuard>
+              }
+            />
 
             {/*
               Phase 12 — the Add-ons area.

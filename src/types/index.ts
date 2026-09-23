@@ -57,6 +57,8 @@ export * from './media.types';
 export * from './dashboard.types';
 export * from './student-results.types';
 export * from './student-analytics.types';
+// P64 Phase 4 §E.5 — the owner's integrity and sharing reports.
+export * from './academy-reports.types';
 // P64 Phase 2 — the learner dashboard and unified player wire contracts.
 // Each file mirrors one backend contract file 1:1; see their own doc
 // comments for why they are transcribed rather than widened.
