@@ -216,17 +216,39 @@
       "coursePlaceholder": "عنوان الدورة",
       "footer": "صادرة عبر أطلس",
       "noLogo": "لا يوجد شعار",
-      "noSignature": "لا يوجد توقيع"
+      "noSignature": "لا يوجد توقيع",
+      "rendering": "جارٍ إنشاء المعاينة…",
+      "rendererNote": "تُنتَج هذه المعاينة بواسطة المحرك نفسه الذي يُصدر ملف PDF النهائي.",
+      "locale": {
+        "en": "English",
+        "ar": "العربية"
+      }
     },
     "validation": {
       "nameRequired": "أدخل اسمًا للقالب.",
       "titleRequired": "أضف عنوانًا.",
-      "bodyRequired": "أضف نصًا."
+      "bodyRequired": "أضف نصًا.",
+      "invalidColor": "أدخل لون HEX صحيحًا، مثل ‎#1F4E5F."
     },
     "toast": {
       "saved": "حُفظ القالب",
       "savedDescription": "تستخدمه الشهادات الجديدة من الآن فصاعدًا."
     },
-    "unsavedChanges": "لديك تغييرات غير محفوظة في القالب."
+    "unsavedChanges": "لديك تغييرات غير محفوظة في القالب.",
+    "colors": {
+      "title": "الألوان",
+      "description": "أربعة أدوار تُشكِّل الشهادة بأكملها. اختر نمطًا جاهزًا للبدء ثم عدّله. تُرفض التركيبات غير المقروءة أو غير الملائمة للطباعة عند الحفظ.",
+      "primary": "أساسي",
+      "accent": "مميّز",
+      "text": "النص",
+      "background": "الخلفية",
+      "presets": {
+        "atlas": "أطلس",
+        "charcoal": "فحمي",
+        "navy": "كحلي",
+        "burgundy": "عنّابي",
+        "forest": "أخضر غابي"
+      }
+    }
   }
 }

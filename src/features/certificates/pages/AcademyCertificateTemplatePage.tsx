@@ -12,7 +12,7 @@
  * until a manager regenerates them, which is the explicit, audited action
  * D7 asks for. The subtitle says so.
  */
-import { useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -45,6 +45,7 @@ import { useToast } from '@app/providers';
 import { usePermissions, useUnsavedChanges } from '@hooks';
 import { useServerValidation } from '@forms';
 import {
+  certificateService,
   useCertificateTemplate,
   useUpdateCertificateTemplate,
 } from '@features/learning';
@@ -72,8 +73,27 @@ function toFormValues(
       en: { title: template.wording.en.title, body: template.wording.en.body },
       ar: { title: template.wording.ar.title, body: template.wording.ar.body },
     },
+    primaryColor: template.palette.primary,
+    accentColor: template.palette.accent,
+    textColor: template.palette.text,
+    backgroundColor: template.palette.background,
   };
 }
+
+/** Curated, print-safe starting palettes (an original-Atlas default first). */
+const PALETTE_PRESETS: {
+  readonly id: string;
+  readonly primaryColor: string;
+  readonly accentColor: string;
+  readonly textColor: string;
+  readonly backgroundColor: string;
+}[] = [
+  { id: 'atlas', primaryColor: '#1F4E5F', accentColor: '#B08A3E', textColor: '#14303A', backgroundColor: '#FCFBF7' },
+  { id: 'charcoal', primaryColor: '#2B2F36', accentColor: '#9A7B4F', textColor: '#1A1D22', backgroundColor: '#FAFAF8' },
+  { id: 'navy', primaryColor: '#1B3A5B', accentColor: '#C0A15B', textColor: '#152A3E', backgroundColor: '#FBFCFE' },
+  { id: 'burgundy', primaryColor: '#6E1E2B', accentColor: '#C2A05A', textColor: '#2A1418', backgroundColor: '#FDFAF6' },
+  { id: 'forest', primaryColor: '#25503C', accentColor: '#B4914A', textColor: '#16281F', backgroundColor: '#FAFCF8' },
+];
 
 export default function AcademyCertificateTemplatePage(): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -113,6 +133,10 @@ export default function AcademyCertificateTemplatePage(): JSX.Element {
         signatoryName: values.signatoryName.trim() || null,
         signatoryTitle: values.signatoryTitle.trim() || null,
         wording: values.wording,
+        primaryColor: values.primaryColor,
+        accentColor: values.accentColor,
+        textColor: values.textColor,
+        backgroundColor: values.backgroundColor,
       });
       form.reset(toFormValues(saved));
       notifySuccess(
@@ -274,11 +298,147 @@ export default function AcademyCertificateTemplatePage(): JSX.Element {
     </div>
   );
 
-  const previewLocale = i18n.language.startsWith('ar') ? 'ar' : 'en';
-  const previewWording = watched.wording?.[previewLocale] ?? {
-    title: '',
-    body: '',
+  const renderColorField = (
+    name: 'primaryColor' | 'accentColor' | 'textColor' | 'backgroundColor',
+    labelKey: string
+  ) => (
+    <FormField
+      control={form.control}
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>{t(labelKey)}</FormLabel>
+          <div className="flex items-center gap-2">
+            <FormControl>
+              <input
+                type="color"
+                aria-label={t(labelKey)}
+                value={/^#[0-9a-fA-F]{6}$/.test(field.value) ? field.value : '#000000'}
+                disabled={disabled}
+                onChange={(e) =>
+                  field.onChange(e.target.value.toUpperCase())
+                }
+                className="h-9 w-12 shrink-0 cursor-pointer rounded-md border border-input bg-background p-1 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </FormControl>
+            <Input
+              value={field.value ?? ''}
+              onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+              disabled={disabled}
+              spellCheck={false}
+              className="font-mono uppercase"
+              placeholder="#000000"
+            />
+          </div>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+
+  const applyPreset = (preset: (typeof PALETTE_PRESETS)[number]) => {
+    (['primaryColor', 'accentColor', 'textColor', 'backgroundColor'] as const).forEach(
+      (key) =>
+        form.setValue(key, preset[key], {
+          shouldDirty: true,
+          shouldValidate: true,
+        })
+    );
   };
+
+  // The live preview is produced by the REAL server-side PDF renderer, so it
+  // can never diverge from an issued certificate. It re-renders (debounced)
+  // whenever a supported field changes, in the chosen locale.
+  const [previewLocale, setPreviewLocale] = useState<'en' | 'ar'>(
+    i18n.language.startsWith('ar') ? 'ar' : 'en'
+  );
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewPending, setPreviewPending] = useState(false);
+  const [previewError, setPreviewError] = useState<string | null>(null);
+  const previewUrlRef = useRef<string | null>(null);
+
+  // A stable signature of just the fields that affect the rendered PDF, so we
+  // do not re-render on unrelated keystrokes.
+  const previewKey = useMemo(
+    () =>
+      JSON.stringify({
+        l: previewLocale,
+        logoUrl: watched.logoUrl,
+        signatureUrl: watched.signatureUrl,
+        signatoryName: watched.signatoryName,
+        signatoryTitle: watched.signatoryTitle,
+        wording: watched.wording,
+        primaryColor: watched.primaryColor,
+        accentColor: watched.accentColor,
+        textColor: watched.textColor,
+        backgroundColor: watched.backgroundColor,
+      }),
+    [
+      previewLocale,
+      watched.logoUrl,
+      watched.signatureUrl,
+      watched.signatoryName,
+      watched.signatoryTitle,
+      watched.wording,
+      watched.primaryColor,
+      watched.accentColor,
+      watched.textColor,
+      watched.backgroundColor,
+    ]
+  );
+
+  useEffect(() => {
+    if (!canManage) return;
+    let cancelled = false;
+    const handle = setTimeout(() => {
+      setPreviewPending(true);
+      setPreviewError(null);
+      certificateService
+        .previewTemplate(
+          academyId,
+          {
+            logoUrl: watched.logoUrl,
+            signatureUrl: watched.signatureUrl,
+            signatoryName: watched.signatoryName?.trim() || null,
+            signatoryTitle: watched.signatoryTitle?.trim() || null,
+            wording: watched.wording,
+            primaryColor: watched.primaryColor,
+            accentColor: watched.accentColor,
+            textColor: watched.textColor,
+            backgroundColor: watched.backgroundColor,
+          },
+          previewLocale
+        )
+        .then((blob) => {
+          if (cancelled) return;
+          const url = URL.createObjectURL(blob);
+          if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+          previewUrlRef.current = url;
+          setPreviewUrl(url);
+        })
+        .catch((err: unknown) => {
+          if (cancelled) return;
+          setPreviewError(apiErrorMessage(t, i18n, err));
+        })
+        .finally(() => {
+          if (!cancelled) setPreviewPending(false);
+        });
+    }, 600);
+    return () => {
+      cancelled = true;
+      clearTimeout(handle);
+    };
+    // previewKey captures every field that changes the rendered PDF.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [previewKey, canManage, academyId]);
+
+  // Revoke the last object URL when the page unmounts.
+  useEffect(
+    () => () => {
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    },
+    []
+  );
 
   return (
     <PageContainer>
@@ -372,6 +532,56 @@ export default function AcademyCertificateTemplatePage(): JSX.Element {
               </CardContent>
             </Card>
 
+            {/* Colours — four constrained roles, with curated presets. */}
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('certificates:template.colors.title')}</CardTitle>
+                <CardDescription>
+                  {t('certificates:template.colors.description')}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="flex flex-wrap gap-2">
+                  {PALETTE_PRESETS.map((preset) => (
+                    <Button
+                      key={preset.id}
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={disabled}
+                      onClick={() => applyPreset(preset)}
+                      className="gap-2"
+                    >
+                      <span className="flex" aria-hidden>
+                        {[preset.primaryColor, preset.accentColor, preset.textColor].map(
+                          (c, i) => (
+                            <span
+                              key={i}
+                              className="inline-block size-3 rounded-full border border-border"
+                              style={{
+                                backgroundColor: c,
+                                marginInlineStart: i === 0 ? 0 : -4,
+                              }}
+                            />
+                          )
+                        )}
+                      </span>
+                      {t(`certificates:template.colors.presets.${preset.id}`)}
+                    </Button>
+                  ))}
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {renderColorField('primaryColor', 'certificates:template.colors.primary')}
+                  {renderColorField('accentColor', 'certificates:template.colors.accent')}
+                  {renderColorField('textColor', 'certificates:template.colors.text')}
+                  {renderColorField(
+                    'backgroundColor',
+                    'certificates:template.colors.background'
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
             {update.error && update.error.kind !== 'validation' ? (
               <p className="text-sm text-destructive" role="alert">
                 {apiErrorMessage(t, i18n, update.error)}
@@ -395,74 +605,82 @@ export default function AcademyCertificateTemplatePage(): JSX.Element {
             ) : null}
           </div>
 
-          {/* Preview — how the wording reads on the standard layout. */}
+          {/* Live preview — the SAME server-side PDF renderer as an issued
+              certificate, so it can never diverge from the real document. */}
           <Card className="h-fit lg:sticky lg:top-24">
             <CardHeader>
-              <CardTitle>{t('certificates:template.preview.title')}</CardTitle>
-              <CardDescription>
-                {t('certificates:template.preview.description')}
-              </CardDescription>
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <CardTitle>{t('certificates:template.preview.title')}</CardTitle>
+                  <CardDescription>
+                    {t('certificates:template.preview.description')}
+                  </CardDescription>
+                </div>
+                <div className="flex shrink-0 rounded-md border border-input p-0.5">
+                  {(['en', 'ar'] as const).map((loc) => (
+                    <button
+                      key={loc}
+                      type="button"
+                      onClick={() => setPreviewLocale(loc)}
+                      aria-pressed={previewLocale === loc}
+                      className={`rounded px-3 py-1 text-xs font-medium transition-colors ${
+                        previewLocale === loc
+                          ? 'bg-primary text-primary-foreground'
+                          : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      {t(`certificates:template.preview.locale.${loc}`)}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               <div
-                className="flex flex-col items-center gap-4 rounded-lg border-2 border-border bg-card p-6 text-center"
-                dir={previewLocale === 'ar' ? 'rtl' : 'ltr'}
-                lang={previewLocale}
+                className="relative overflow-hidden rounded-lg border border-border bg-muted"
+                style={{ aspectRatio: '1.414 / 1' }}
                 aria-live="polite"
               >
-                {watched.logoUrl ? (
-                  <img
-                    src={watched.logoUrl}
-                    alt={t('certificates:template.preview.logoAlt')}
-                    className="max-h-16 max-w-[10rem] object-contain"
+                {previewUrl ? (
+                  <iframe
+                    key={previewLocale}
+                    src={`${previewUrl}#toolbar=0&navpanes=0&view=Fit`}
+                    title={t('certificates:template.preview.title')}
+                    className="absolute inset-0 h-full w-full"
                   />
-                ) : (
-                  <span className="text-xs text-muted-foreground">
-                    {t('certificates:template.preview.noLogo')}
-                  </span>
-                )}
-                <p className="font-display text-xl font-bold text-foreground">
-                  {previewWording.title || '…'}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {previewWording.body || '…'}
-                </p>
-                <p className="font-display text-lg font-semibold text-foreground">
-                  {t('certificates:template.preview.learnerPlaceholder')}
-                </p>
-                <p className="text-sm text-foreground">
-                  {t('certificates:template.preview.coursePlaceholder')}
-                </p>
-                <div className="mt-2 flex flex-col items-center gap-1">
-                  {watched.signatureUrl ? (
-                    <img
-                      src={watched.signatureUrl}
-                      alt={t('certificates:template.preview.signatureAlt')}
-                      className="max-h-12 max-w-[8rem] object-contain"
+                ) : !previewError ? (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Loader2
+                      className="size-6 animate-spin text-muted-foreground"
+                      aria-hidden
                     />
-                  ) : (
-                    <span className="text-xs text-muted-foreground">
-                      {t('certificates:template.preview.noSignature')}
+                    <span className="sr-only">
+                      {t('certificates:template.preview.rendering')}
                     </span>
-                  )}
-                  {watched.signatoryName ? (
+                  </div>
+                ) : null}
+                {previewError ? (
+                  <div className="absolute inset-0 flex items-center justify-center p-6">
                     <p
-                      className="text-sm font-medium text-foreground"
-                      dir="auto"
+                      className="text-center text-sm text-destructive"
+                      role="alert"
                     >
-                      {watched.signatoryName}
+                      {previewError}
                     </p>
-                  ) : null}
-                  {watched.signatoryTitle ? (
-                    <p className="text-xs text-muted-foreground" dir="auto">
-                      {watched.signatoryTitle}
-                    </p>
-                  ) : null}
-                </div>
-                <p className="mt-2 border-t border-border pt-3 text-xs text-muted-foreground">
-                  {t('certificates:template.preview.footer')}
-                </p>
+                  </div>
+                ) : null}
+                {previewPending && previewUrl ? (
+                  <div className="absolute end-2 top-2 rounded-full bg-background/80 p-1 shadow-sm">
+                    <Loader2
+                      className="size-4 animate-spin text-muted-foreground"
+                      aria-hidden
+                    />
+                  </div>
+                ) : null}
               </div>
+              <p className="mt-3 text-xs text-muted-foreground">
+                {t('certificates:template.preview.rendererNote')}
+              </p>
             </CardContent>
           </Card>
         </form>

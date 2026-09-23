@@ -215,7 +215,11 @@
     "notReady": "The certificate PDF is still being prepared. Try again in a moment.",
     "notIssued": "No certificate has been issued for this enrollment.",
     "notEligible": "This enrollment has not met the course's completion rule, so a certificate cannot be issued yet.",
-    "featureDisabled": "Certificates are not enabled for this academy yet."
+    "featureDisabled": "Certificates are not enabled for this academy yet.",
+    "invalidColor": "That colour isn't a valid hex value (for example #1F4E5F).",
+    "backgroundTooDark": "The certificate background must stay light so it prints cleanly. Choose a paler colour.",
+    "textContrastTooLow": "The text colour doesn't contrast enough with the background to stay readable. Pick a darker text or lighter background.",
+    "primaryContrastTooLow": "The primary colour doesn't contrast enough with the background. Choose a stronger primary or a lighter background."
   },
   "progress": {
     "lessonLocked": "This lesson is locked. Finish the item before it in the course to unlock it.",

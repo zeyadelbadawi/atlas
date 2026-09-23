@@ -212,17 +212,39 @@
       "coursePlaceholder": "Course title",
       "footer": "Issued via Atlas",
       "noLogo": "No logo",
-      "noSignature": "No signature"
+      "noSignature": "No signature",
+      "rendering": "Rendering preview…",
+      "rendererNote": "This preview is produced by the same engine that renders the issued PDF.",
+      "locale": {
+        "en": "English",
+        "ar": "العربية"
+      }
     },
     "validation": {
       "nameRequired": "Give the template a name.",
       "titleRequired": "Add a title.",
-      "bodyRequired": "Add a body."
+      "bodyRequired": "Add a body.",
+      "invalidColor": "Enter a valid hex colour, e.g. #1F4E5F."
     },
     "toast": {
       "saved": "Template saved",
       "savedDescription": "New certificates use it from now on."
     },
-    "unsavedChanges": "You have unsaved template changes."
+    "unsavedChanges": "You have unsaved template changes.",
+    "colors": {
+      "title": "Colours",
+      "description": "Four roles shape the whole certificate. Choose a preset to start, then fine-tune. Combinations that would be unreadable or print poorly are rejected on save.",
+      "primary": "Primary",
+      "accent": "Accent",
+      "text": "Text",
+      "background": "Background",
+      "presets": {
+        "atlas": "Atlas",
+        "charcoal": "Charcoal",
+        "navy": "Navy",
+        "burgundy": "Burgundy",
+        "forest": "Forest"
+      }
+    }
   }
 }

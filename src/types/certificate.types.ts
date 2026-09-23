@@ -86,6 +86,14 @@ export interface CertificateWordingByLocale {
   readonly ar: CertificateWording;
 }
 
+/** The four author-controlled certificate colour roles (hex strings). */
+export interface CertificatePalette {
+  readonly primary: string;
+  readonly accent: string;
+  readonly text: string;
+  readonly background: string;
+}
+
 export interface CertificateTemplate {
   readonly id: string;
   readonly academyId: string;
@@ -95,6 +103,7 @@ export interface CertificateTemplate {
   readonly signatoryName: string | null;
   readonly signatoryTitle: string | null;
   readonly wording: CertificateWordingByLocale;
+  readonly palette: CertificatePalette;
   readonly version: number;
   readonly isDefault: boolean;
   readonly updatedAt: string;
@@ -110,6 +119,10 @@ export interface UpdateCertificateTemplatePayload {
     readonly en?: Partial<CertificateWording>;
     readonly ar?: Partial<CertificateWording>;
   };
+  readonly primaryColor?: string;
+  readonly accentColor?: string;
+  readonly textColor?: string;
+  readonly backgroundColor?: string;
 }
 
 export interface ListCertificatesQuery {

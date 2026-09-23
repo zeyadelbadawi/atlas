@@ -192,6 +192,24 @@ export class CertificateService extends BaseService {
       options
     );
   }
+
+  /**
+   * Render a live preview of the DRAFT template through the real PDF renderer
+   * (server-side), returning the PDF blob. Same code path as an issued
+   * certificate, so the preview cannot diverge from the final document.
+   */
+  async previewTemplate(
+    academyId: string,
+    payload: UpdateCertificateTemplatePayload,
+    locale: 'en' | 'ar',
+    options?: WriteOptions
+  ): Promise<Blob> {
+    return this.client.post<Blob, UpdateCertificateTemplatePayload>(
+      `${resourcePath('academies', academyId, 'certificate-template')}/preview?locale=${locale}`,
+      payload,
+      { ...options, responseType: 'blob' }
+    );
+  }
 }
 
 export const certificateService = new CertificateService();

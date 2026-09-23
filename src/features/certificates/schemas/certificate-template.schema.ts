@@ -20,6 +20,11 @@ const wordingSchema = z.object({
     .max(2000),
 });
 
+const hexColor = z
+  .string()
+  .trim()
+  .regex(/^#[0-9a-fA-F]{6}$/, 'certificates:template.validation.invalidColor');
+
 export const certificateTemplateSchema = z.object({
   name: z
     .string()
@@ -34,6 +39,13 @@ export const certificateTemplateSchema = z.object({
     en: wordingSchema,
     ar: wordingSchema,
   }),
+  // The four constrained colour roles. Cross-field readability/contrast is
+  // enforced by the server (which owns the print-quality rules); the client
+  // validates only the hex format so the picker never sends garbage.
+  primaryColor: hexColor,
+  accentColor: hexColor,
+  textColor: hexColor,
+  backgroundColor: hexColor,
 });
 
 export type CertificateTemplateFormData = z.infer<
