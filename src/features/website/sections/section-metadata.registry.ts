@@ -17,6 +17,7 @@ import {
   HelpCircle,
   Image as ImageIcon,
   LayoutGrid,
+  LibraryBig,
   MessageSquareQuote,
   Megaphone,
   Sparkles,
@@ -26,6 +27,7 @@ import {
 import type { SectionConfigMap, SectionType } from '@types';
 import { EMPTY_LOCALIZED_TEXT } from '../utils/localized-text.utils';
 import {
+  DEFAULT_COURSE_CATALOG_PAGE_SIZE,
   DEFAULT_FEATURED_COURSES_COUNT,
   DEFAULT_INSTRUCTORS_COUNT,
 } from '../constants/website.constants';
@@ -88,6 +90,11 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadataEntry> = {
     labelKey: 'website:sections.contact.label',
     icon: ContactIcon,
   },
+  courseCatalog: {
+    type: 'courseCatalog',
+    labelKey: 'website:sections.courseCatalog.label',
+    icon: LibraryBig,
+  },
 };
 
 /** Every registered section type's metadata, in the Page Composer's "Add section" display order. */
@@ -120,6 +127,15 @@ export function getDefaultSectionConfig<TType extends SectionType>(
     instructors: { count: DEFAULT_INSTRUCTORS_COUNT },
     gallery: { images: [] },
     contact: { showForm: true },
+    courseCatalog: {
+      title: EMPTY_LOCALIZED_TEXT,
+      pageSize: DEFAULT_COURSE_CATALOG_PAGE_SIZE,
+      defaultSort: 'newest',
+      showSearch: true,
+      showLevelFilter: true,
+      showPricingFilter: true,
+      showSort: true,
+    },
   };
 
   return defaults[type] as SectionConfigMap[TType];

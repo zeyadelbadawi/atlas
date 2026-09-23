@@ -625,6 +625,9 @@
     "featuredCourses": {
       "label": "الدورات المميزة"
     },
+    "courseCatalog": {
+      "label": "دليل الدورات"
+    },
     "statistics": {
       "label": "الإحصائيات"
     },
@@ -678,6 +681,16 @@
     "count": "عدد العناصر المعروضة",
     "showPrice": "عرض السعر",
     "showInstructor": "عرض المدرّب",
+    "pageSize": "عدد الدورات في الصفحة",
+    "defaultSort": "الترتيب الافتراضي",
+    "defaultSortNewest": "الأحدث أولًا",
+    "defaultSortTitle": "العنوان (أ–ي)",
+    "defaultSortPriceAsc": "السعر: من الأقل إلى الأعلى",
+    "defaultSortPriceDesc": "السعر: من الأعلى إلى الأقل",
+    "showSearch": "عرض البحث",
+    "showLevelFilter": "عرض فلتر المستوى",
+    "showPricingFilter": "عرض فلتر السعر",
+    "showSort": "عرض خيار الترتيب",
     "statisticItems": "الإحصائيات",
     "statisticItem": "إحصائية",
     "statMetric": "مصدر البيانات",
@@ -738,6 +751,28 @@
     "contactSubmit": "إرسال الرسالة",
     "contactSuccess": "شكرًا لك — تم إرسال رسالتك.",
     "contactError": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "courseCatalog": {
+      "searchLabel": "ابحث في الدورات",
+      "levelLabel": "المستوى",
+      "allLevels": "أي مستوى",
+      "pricingLabel": "السعر",
+      "allPricing": "أي سعر",
+      "free": "مجاني",
+      "paid": "مدفوع",
+      "sortLabel": "ترتيب حسب",
+      "sortNewest": "الأحدث أولًا",
+      "sortTitle": "العنوان (أ–ي)",
+      "sortPriceAsc": "السعر: من الأقل إلى الأعلى",
+      "sortPriceDesc": "السعر: من الأعلى إلى الأقل",
+      "resultCount_zero": "لا توجد دورات",
+      "resultCount_one": "دورة واحدة",
+      "resultCount_two": "دورتان",
+      "resultCount_few": "{{count}} دورات",
+      "resultCount_many": "{{count}} دورةً",
+      "resultCount_other": "{{count}} دورة",
+      "noResults": "لا توجد دورات مطابقة لعوامل التصفية",
+      "noResultsDescription": "جرّب كلمة بحث مختلفة أو أزل أحد الفلاتر."
+    },
     "courseDetails": {
       "aboutTitle": "عن هذه الدورة",
       "curriculumTitle": "محتوى الدورة",

@@ -169,12 +169,25 @@ export interface Course {
   readonly publishedAt?: string;
 }
 
-/** Filters accepted by the course list. */
+/**
+ * Filters accepted by the course list. Sent FLAT by `toCollectionParams`
+ * (`?level=beginner&pricingType=free…`), which is exactly how the backend's
+ * public catalog reads them. Every field is optional, so adding one never
+ * affects an existing caller.
+ */
 export interface CourseFilters {
   readonly status?: CourseStatus;
   readonly visibility?: CourseVisibility;
   readonly categoryId?: string;
   readonly pricingType?: CoursePricingType;
+  // P64 Phase 4 — public catalog filters (`CourseCatalogSection`).
+  readonly level?: CourseLevel;
+  /** Course language code as authored on the course (e.g. `en`, `ar`). */
+  readonly language?: string;
+  /** Inclusive price bound, in minor units (e.g. cents). */
+  readonly priceMin?: number;
+  /** Inclusive price bound, in minor units (e.g. cents). */
+  readonly priceMax?: number;
 }
 
 /** Course collection query, narrowing `filters` to the course domain. */

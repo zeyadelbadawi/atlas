@@ -38,6 +38,7 @@ export const SECTION_TYPE_ORDER: readonly SectionType[] = [
   'hero',
   'about',
   'featuredCourses',
+  'courseCatalog',
   'statistics',
   'features',
   'testimonials',
@@ -65,6 +66,15 @@ export const FEATURE_ICON_OPTIONS: readonly string[] = [
 export const DEFAULT_FEATURED_COURSES_COUNT = 6;
 export const DEFAULT_INSTRUCTORS_COUNT = 4;
 export const MAX_SECTION_ITEMS = 12;
+
+/**
+ * P64 Phase 4 §E.1 — `CourseCatalogSection` page-size bounds. The catalog
+ * is server-paginated, so unlike `MAX_SECTION_ITEMS` this caps ONE
+ * request's size, never how many courses the section can reach.
+ */
+export const DEFAULT_COURSE_CATALOG_PAGE_SIZE = 12;
+export const MIN_COURSE_CATALOG_PAGE_SIZE = 6;
+export const MAX_COURSE_CATALOG_PAGE_SIZE = 48;
 
 /** Same bound Course thumbnails and Academy branding already use for an image asset. */
 export const MAX_WEBSITE_IMAGE_FILE_SIZE = 5 * 1024 * 1024;

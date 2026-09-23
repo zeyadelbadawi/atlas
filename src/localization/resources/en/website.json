@@ -625,6 +625,9 @@
     "featuredCourses": {
       "label": "Featured Courses"
     },
+    "courseCatalog": {
+      "label": "Course Catalog"
+    },
     "statistics": {
       "label": "Statistics"
     },
@@ -678,6 +681,16 @@
     "count": "Number to show",
     "showPrice": "Show price",
     "showInstructor": "Show instructor",
+    "pageSize": "Courses per page",
+    "defaultSort": "Default sort order",
+    "defaultSortNewest": "Newest first",
+    "defaultSortTitle": "Title (A–Z)",
+    "defaultSortPriceAsc": "Price: low to high",
+    "defaultSortPriceDesc": "Price: high to low",
+    "showSearch": "Show search",
+    "showLevelFilter": "Show level filter",
+    "showPricingFilter": "Show pricing filter",
+    "showSort": "Show sort control",
     "statisticItems": "Statistics",
     "statisticItem": "Statistic",
     "statMetric": "Data source",
@@ -738,6 +751,24 @@
     "contactSubmit": "Send message",
     "contactSuccess": "Thanks — your message has been sent.",
     "contactError": "Something went wrong. Please try again.",
+    "courseCatalog": {
+      "searchLabel": "Search courses",
+      "levelLabel": "Level",
+      "allLevels": "Any level",
+      "pricingLabel": "Pricing",
+      "allPricing": "Any price",
+      "free": "Free",
+      "paid": "Paid",
+      "sortLabel": "Sort by",
+      "sortNewest": "Newest first",
+      "sortTitle": "Title (A–Z)",
+      "sortPriceAsc": "Price: low to high",
+      "sortPriceDesc": "Price: high to low",
+      "resultCount": "{{count}} course",
+      "resultCount_other": "{{count}} courses",
+      "noResults": "No courses match your filters",
+      "noResultsDescription": "Try a different search term or clear a filter."
+    },
     "courseDetails": {
       "aboutTitle": "About this course",
       "curriculumTitle": "Course content",
