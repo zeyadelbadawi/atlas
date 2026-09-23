@@ -80,6 +80,15 @@ export interface Quiz {
   readonly questionCount: number;
   readonly passingScore?: number;
   readonly maxAttempts?: number;
+  /**
+   * The learner's OWN effective attempt allowance, extra-attempt override
+   * included. Single authoritative "attempts left" source: `null` = unlimited,
+   * a number = maxAttempts + granted extra attempts. Undefined only from an
+   * older server; the intro card falls back to `maxAttempts` then.
+   */
+  readonly attemptsAllowed?: number | null;
+  /** The learner's own granted extra-attempt override (0 when none). */
+  readonly extraAttempts?: number;
   readonly settings: QuizLearnerSettings;
   readonly questions?: readonly QuizQuestion[];
 }

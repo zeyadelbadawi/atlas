@@ -57,10 +57,16 @@ export function QuizIntroCard({
     (attempt) =>
       attempt.status !== 'in_progress' && attempt.status !== 'not_started'
   ).length;
+  // Effective allowance = the server's override-aware `attemptsAllowed`
+  // (single source of truth, extra-attempt override included). Fall back to
+  // `maxAttempts` only when talking to an older server that omits it.
+  // `null` means unlimited; `undefined` means "unknown / unlimited".
+  const effectiveAllowance =
+    quiz.attemptsAllowed !== undefined ? quiz.attemptsAllowed : (quiz.maxAttempts ?? null);
   const attemptsLeft =
-    quiz.maxAttempts === undefined
+    effectiveAllowance === null
       ? null
-      : Math.max(0, quiz.maxAttempts - finishedAttempts);
+      : Math.max(0, effectiveAllowance - finishedAttempts);
 
   const timeLimit = formatDuration(settings.timeLimitSeconds, language);
 
@@ -76,13 +82,13 @@ export function QuizIntroCard({
   facts.push({
     key: 'learning:quiz.intro.attempts',
     value:
-      quiz.maxAttempts === undefined
+      effectiveAllowance === null
         ? t('learning:quiz.intro.unlimitedAttempts', {
             used: formatNumber(finishedAttempts, language),
           })
         : t('learning:quiz.intro.attemptsOf', {
             used: formatNumber(finishedAttempts, language),
-            total: formatNumber(quiz.maxAttempts, language),
+            total: formatNumber(effectiveAllowance, language),
           }),
   });
   if (typeof quiz.passingScore === 'number') {

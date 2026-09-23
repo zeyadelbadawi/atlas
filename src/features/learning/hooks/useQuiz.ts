@@ -24,5 +24,13 @@ export function useQuiz(
     queryKey: quizKeys.detail(user?.id, courseId, quizId),
     queryFn: () => quizService.getQuiz(courseId, quizId),
     enabled: enabled && !!user?.id && !!courseId && !!quizId,
+    // The quiz detail now carries the learner's own effective attempt
+    // allowance (extra-attempt override included), which a reviewer can
+    // change while the learner sits on the quiz. Refresh it on mount and
+    // whenever the learner returns to the tab so a granted extra attempt
+    // appears without a hard reload (P4 Issue A).
+    staleTime: 0,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
   });
 }
