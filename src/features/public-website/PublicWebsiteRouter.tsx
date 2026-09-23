@@ -31,6 +31,7 @@ import { PublicWebsiteRobotsRoute } from './components/PublicWebsiteRobotsRoute'
 import { PublicWebsiteSitemapRoute } from './components/PublicWebsiteSitemapRoute';
 import { PublicWebsiteSignInPage } from './components/PublicWebsiteSignInPage';
 import { PublicWebsiteSignUpPage } from './components/PublicWebsiteSignUpPage';
+import { PublicWebsiteGuestRoute } from './components/PublicWebsiteGuestRoute';
 import { PublicWebsiteForgotPasswordPage } from './components/PublicWebsiteForgotPasswordPage';
 import { PublicWebsiteResetPasswordPage } from './components/PublicWebsiteResetPasswordPage';
 import { PublicWebsiteVerifyEmailPage } from './components/PublicWebsiteVerifyEmailPage';
@@ -158,13 +159,17 @@ function PublicWebsiteLocaleRoutes({
       <Route
         path="sign-in"
         element={
-          <PublicWebsiteSignInPage lookupKey={lookupKey} locale={locale} />
+          <PublicWebsiteGuestRoute locale={locale}>
+            <PublicWebsiteSignInPage lookupKey={lookupKey} locale={locale} />
+          </PublicWebsiteGuestRoute>
         }
       />
       <Route
         path="sign-up"
         element={
-          <PublicWebsiteSignUpPage lookupKey={lookupKey} locale={locale} />
+          <PublicWebsiteGuestRoute locale={locale}>
+            <PublicWebsiteSignUpPage lookupKey={lookupKey} locale={locale} />
+          </PublicWebsiteGuestRoute>
         }
       />
 
