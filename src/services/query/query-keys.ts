@@ -313,6 +313,9 @@ export const courseOrderKeys = {
     [...courseOrderKeys.all, 'detail', orderId] as const,
   payment: (orderId: string | undefined, paymentId: string | undefined) =>
     [...courseOrderKeys.all, 'payment', orderId, paymentId] as const,
+  /** P64 Phase 4 — the methods payable against one order (learner surface). */
+  paymentMethods: (orderId: string | undefined) =>
+    [...courseOrderKeys.all, 'payment-methods', orderId] as const,
 } as const;
 
 export const quizKeys = {

@@ -10,7 +10,11 @@ import { useApiMutation, useApiQuery, useInvalidate } from '@/shared/hooks';
 import { courseOrderKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { courseOrderService } from '../services/CourseOrderService';
-import type { CourseOrder, CourseOrderPayment } from '@types';
+import type {
+  CheckoutPaymentMethod,
+  CourseOrder,
+  CourseOrderPayment,
+} from '@types';
 
 /** Reads a File as a base64 data URL — the proof wire shape (see billing). */
 function readFileAsDataUrl(file: File): Promise<string> {
@@ -40,6 +44,19 @@ export function useCourseOrderPayment(
     queryFn: () => courseOrderService.getPayment(orderId!, paymentId!),
     enabled: !!orderId && !!paymentId,
     refetchInterval: options?.refetchInterval,
+  });
+}
+
+/**
+ * The payment methods payable against one order. Learner-surface route;
+ * see `CourseOrderService.getPaymentMethods` for why the tenant billing
+ * hook cannot be used here.
+ */
+export function useCourseOrderPaymentMethods(orderId: string | undefined) {
+  return useApiQuery<CheckoutPaymentMethod[], ApiError>({
+    queryKey: courseOrderKeys.paymentMethods(orderId),
+    queryFn: () => courseOrderService.getPaymentMethods(orderId!),
+    enabled: !!orderId,
   });
 }
 

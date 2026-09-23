@@ -28,11 +28,12 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { formatMoney, usePaymentMethods } from '@features/billing';
+import { formatMoney } from '@features/billing';
 import { LEARNER_ROUTES, buildPath } from '@app/routes/route-paths';
 import { LearnerPageHeader } from '../components/LearnerPageHeader';
 import { useLearnerSurface } from '../context/LearnerSurface.context';
 import {
+  useCourseOrderPaymentMethods,
   useCreateCourseOrder,
   useCreateCoursePayment,
   useSubmitCourseOrderProof,
@@ -46,8 +47,6 @@ export default function CourseCheckoutPage(): JSX.Element {
   const { courseId } = useParams<{ courseId: string }>();
   const { buildHref, locale } = useLearnerSurface();
   const intlLocale = locale === 'ar' ? 'ar' : 'en';
-
-  const { data: methods, isLoading: methodsLoading } = usePaymentMethods();
 
   const createOrder = useCreateCourseOrder();
   const idempotencyKeyRef = useRef<string>(
@@ -86,6 +85,12 @@ export default function CourseCheckoutPage(): JSX.Element {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId]);
+
+  // Scoped to THIS order, not the platform catalog: the catalog route is
+  // management-surface-only, so asking it as a learner returns 403 and
+  // leaves the page permanently in its "not available" state.
+  const { data: methods, isLoading: methodsLoading } =
+    useCourseOrderPaymentMethods(order?.id);
 
   const enabledMethods = (methods ?? []).filter((m) => m.enabled);
 

@@ -22,6 +22,7 @@ import type { ReadOptions, WriteOptions } from '@services';
 import { resourcePath } from '@api';
 import type {
   CollectionQuery,
+  CheckoutPaymentMethod,
   CourseOrder,
   CourseOrderPayment,
   CreateCourseOrderPayload,
@@ -60,6 +61,28 @@ export class CourseOrderService extends BaseService {
     return this.client.post<CourseOrder, CreateCourseOrderPayload>(
       resourcePath('courses', courseId, 'course-orders'),
       payload,
+      options
+    );
+  }
+
+  /**
+   * The methods this learner may actually pay THIS order with.
+   *
+   * Not `features/billing`'s `usePaymentMethods()`. That reads the
+   * platform catalog at `GET /payment-methods`, which is behind
+   * `ManagementSurfaceGuard` — staff only. A learner calling it gets
+   * `managementSurfaceOnly`, which is why the checkout page used to show
+   * "not available for purchase yet" to every learner regardless of what
+   * their academy had configured. This route is the learner-surface
+   * equivalent and returns only what the server would accept for this
+   * order, so an offered method is always a payable one.
+   */
+  async getPaymentMethods(
+    orderId: string,
+    options?: ReadOptions
+  ): Promise<CheckoutPaymentMethod[]> {
+    return this.client.get<CheckoutPaymentMethod[]>(
+      this.path(orderId, 'payment-methods'),
       options
     );
   }
