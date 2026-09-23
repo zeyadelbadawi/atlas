@@ -18,10 +18,12 @@
 import { z } from 'zod';
 import {
   FEATURE_ICON_OPTIONS,
+  MAX_COURSE_CATALOG_PAGE_SIZE,
   MAX_SECTION_ITEMS,
+  MIN_COURSE_CATALOG_PAGE_SIZE,
 } from '../constants/website.constants';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
-import type { SectionType } from '@types';
+import { COURSE_CATALOG_SORT_VALUES, type SectionType } from '@types';
 
 const MAX_SHORT_TEXT = 100;
 const MAX_LONG_TEXT = 2000;
@@ -198,6 +200,22 @@ export const contactSectionSchema = z.object({
   showForm: z.boolean(),
 });
 
+/** P64 Phase 4 §E.1 — see `CourseCatalogSectionConfig`. `pageSize` is bounded by the catalog's own request-size constants, not `MAX_SECTION_ITEMS` (it is a page, not an item list). */
+export const courseCatalogSectionSchema = z.object({
+  title: localizedRequired(MAX_SHORT_TEXT),
+  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  pageSize: z
+    .number()
+    .int()
+    .min(MIN_COURSE_CATALOG_PAGE_SIZE)
+    .max(MAX_COURSE_CATALOG_PAGE_SIZE),
+  defaultSort: z.enum(COURSE_CATALOG_SORT_VALUES),
+  showSearch: z.boolean(),
+  showLevelFilter: z.boolean(),
+  showPricingFilter: z.boolean(),
+  showSort: z.boolean(),
+});
+
 const SECTION_SCHEMAS = {
   hero: heroSectionSchema,
   about: aboutSectionSchema,
@@ -210,6 +228,7 @@ const SECTION_SCHEMAS = {
   instructors: instructorsSectionSchema,
   gallery: gallerySectionSchema,
   contact: contactSectionSchema,
+  courseCatalog: courseCatalogSectionSchema,
 } satisfies Record<SectionType, z.ZodTypeAny>;
 
 /** Resolves the right Zod schema for a section type. The Section Editor's ONE dynamic-form entry point — no section's validation is ever hand-rolled inline in a component. */

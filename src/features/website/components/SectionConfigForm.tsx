@@ -420,8 +420,8 @@ function ScalarField({
           <Input
             id={id}
             type="number"
-            min={1}
-            max={MAX_SECTION_ITEMS}
+            min={descriptor.min ?? 1}
+            max={descriptor.max ?? MAX_SECTION_ITEMS}
             value={(value as number) ?? 0}
             onChange={(e) => onChange(Number(e.target.value))}
           />

@@ -8,7 +8,11 @@
  * exact rule (visitor-facing copy is localized, references/enums/proper
  * names are not).
  */
-import { FEATURE_ICON_OPTIONS } from '../constants/website.constants';
+import {
+  FEATURE_ICON_OPTIONS,
+  MAX_COURSE_CATALOG_PAGE_SIZE,
+  MIN_COURSE_CATALOG_PAGE_SIZE,
+} from '../constants/website.constants';
 import type { SectionFieldSchema } from './section-field.types';
 import type { SectionType } from '@types';
 
@@ -377,6 +381,63 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
       { key: 'phone', kind: 'text', labelKey: 'website:fields.phone' },
       { key: 'address', kind: 'text', labelKey: 'website:fields.address' },
       { key: 'showForm', kind: 'boolean', labelKey: 'website:fields.showForm' },
+    ],
+  },
+  courseCatalog: {
+    type: 'courseCatalog',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+      },
+      {
+        key: 'pageSize',
+        kind: 'number',
+        labelKey: 'website:fields.pageSize',
+        min: MIN_COURSE_CATALOG_PAGE_SIZE,
+        max: MAX_COURSE_CATALOG_PAGE_SIZE,
+      },
+      {
+        key: 'defaultSort',
+        kind: 'select',
+        labelKey: 'website:fields.defaultSort',
+        options: [
+          { value: 'newest', labelKey: 'website:fields.defaultSortNewest' },
+          { value: 'title', labelKey: 'website:fields.defaultSortTitle' },
+          {
+            value: 'priceAsc',
+            labelKey: 'website:fields.defaultSortPriceAsc',
+          },
+          {
+            value: 'priceDesc',
+            labelKey: 'website:fields.defaultSortPriceDesc',
+          },
+        ],
+      },
+      {
+        key: 'showSearch',
+        kind: 'boolean',
+        labelKey: 'website:fields.showSearch',
+      },
+      {
+        key: 'showLevelFilter',
+        kind: 'boolean',
+        labelKey: 'website:fields.showLevelFilter',
+      },
+      {
+        key: 'showPricingFilter',
+        kind: 'boolean',
+        labelKey: 'website:fields.showPricingFilter',
+      },
+      { key: 'showSort', kind: 'boolean', labelKey: 'website:fields.showSort' },
     ],
   },
 };

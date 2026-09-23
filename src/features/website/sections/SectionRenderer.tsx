@@ -17,6 +17,7 @@ import { CtaSection } from './CtaSection';
 import { InstructorsSection } from './InstructorsSection';
 import { GallerySection } from './GallerySection';
 import { ContactSection } from './ContactSection';
+import { CourseCatalogSection } from './CourseCatalogSection';
 import type { SectionInstance, WebsitePage } from '@types';
 import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
 
@@ -89,6 +90,14 @@ export function SectionRenderer({
       return <GallerySection config={instance.config} />;
     case 'contact':
       return <ContactSection config={instance.config} academyId={academyId} />;
+    case 'courseCatalog':
+      return (
+        <CourseCatalogSection
+          config={instance.config}
+          academyId={academyId}
+          linkRenderer={linkRenderer}
+        />
+      );
     default:
       return null;
   }

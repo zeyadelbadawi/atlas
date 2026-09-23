@@ -38,6 +38,7 @@ export const SECTION_TYPES = [
   'instructors',
   'gallery',
   'contact',
+  'courseCatalog',
 ] as const;
 
 export type SectionType = (typeof SECTION_TYPES)[number];
@@ -103,6 +104,41 @@ export interface FeaturedCoursesSectionConfig {
   readonly count: number;
   readonly showPrice: boolean;
   readonly showInstructor: boolean;
+}
+
+/**
+ * P64 Phase 4 §E.1 — the sort orders `CourseCatalogSection` offers. A
+ * closed list (not a free `sortBy`/`sortDirection` pair) so the section
+ * can only ever ask the public catalog for a sort it actually supports —
+ * see `COURSE_CATALOG_SORT_DESCRIPTORS` in the section for the mapping.
+ */
+export const COURSE_CATALOG_SORT_VALUES = [
+  'newest',
+  'title',
+  'priceAsc',
+  'priceDesc',
+] as const;
+
+export type CourseCatalogSort = (typeof COURSE_CATALOG_SORT_VALUES)[number];
+
+/**
+ * The full, filterable, server-paginated public catalog an Owner places
+ * on the `/courses` core page (P64 Phase 4 §E.1). `FeaturedCoursesSection`
+ * stays the small fixed teaser; this section is the real listing. Same
+ * rule as every other section: references the EXISTING Course domain via
+ * `usePublicCourses`, never a duplicate course projection. The `show*`
+ * booleans only hide a control — a hidden filter is simply not applied.
+ */
+export interface CourseCatalogSectionConfig {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  /** Courses per page — bounded by `MIN/MAX_COURSE_CATALOG_PAGE_SIZE` (`website.constants.ts`). */
+  readonly pageSize: number;
+  readonly defaultSort: CourseCatalogSort;
+  readonly showSearch: boolean;
+  readonly showLevelFilter: boolean;
+  readonly showPricingFilter: boolean;
+  readonly showSort: boolean;
 }
 
 /** A real, live-data metric `StatisticsSection` can resolve from `GET public/websites/:academyId/statistics` instead of the freely-typed `value`. */
@@ -231,6 +267,7 @@ export interface SectionConfigMap {
   readonly instructors: InstructorsSectionConfig;
   readonly gallery: GallerySectionConfig;
   readonly contact: ContactSectionConfig;
+  readonly courseCatalog: CourseCatalogSectionConfig;
 }
 
 /**
