@@ -76,6 +76,8 @@ export const DASHBOARD_ROUTES = {
     '/dashboard/academy/:academyId/courses/:courseId/builder',
   academyCourseSettings:
     '/dashboard/academy/:academyId/courses/:courseId/settings',
+  academyCourseReviews:
+    '/dashboard/academy/:academyId/courses/:courseId/reviews',
   academyCourseQuizzes:
     '/dashboard/academy/:academyId/courses/:courseId/quizzes',
   academyCourseQuizCreate:

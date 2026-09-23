@@ -130,6 +130,9 @@ const CourseBuilderPage = lazy(
 const CourseSettingsPage = lazy(
   () => import('@features/course/pages/CourseSettingsPage')
 );
+const CourseReviewsModerationPage = lazy(
+  () => import('@features/course/pages/CourseReviewsModerationPage')
+);
 const CourseQuizzesPage = lazy(
   () => import('@features/course/pages/CourseQuizzesPage')
 );
@@ -887,6 +890,28 @@ export function AppRouter(): JSX.Element {
                   requiresEntitlement
                 >
                   <CourseSettingsPage />
+                </RouteGuard>
+              }
+            />
+
+            {/*
+              P64 Phase 4 — course review moderation. Audience mirrors the
+              builder: the course's assigned instructor plus the academy's
+              owner/manager (`instructor.course.view` is the one permission
+              all three hold and no plain member does — see the builder
+              route's own note). Which course's reviews a caller may
+              actually act on stays a per-course server decision
+              (`assertCanReviewCourse` + `course_reviews_*` RLS).
+            */}
+            <Route
+              path={DASHBOARD_ROUTES.academyCourseReviews}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['instructor.course.view']}
+                  requiresEntitlement
+                >
+                  <CourseReviewsModerationPage />
                 </RouteGuard>
               }
             />

@@ -39,3 +39,8 @@ export {
   useReorderUnitItems,
 } from './useUnitCurriculum';
 export type { ReorderCourseLessonsVariables } from './useReorderCourseLessons';
+export {
+  useCourseReviewModeration,
+  useModerateReview,
+  useRemoveReview,
+} from './useCourseReviewModeration';

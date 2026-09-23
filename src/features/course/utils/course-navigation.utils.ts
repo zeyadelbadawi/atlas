@@ -16,6 +16,7 @@ import {
   HelpCircle,
   Layers,
   Settings2,
+  Star,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem } from '@types';
@@ -62,6 +63,15 @@ export function getCourseEditorTabs(
         courseId,
       }),
       icon: ClipboardCheck,
+    },
+    {
+      id: 'course-tab-reviews',
+      labelKey: 'course:edit.goToReviews',
+      path: buildPath(DASHBOARD_ROUTES.academyCourseReviews, {
+        academyId,
+        courseId,
+      }),
+      icon: Star,
     },
     {
       id: 'course-tab-settings',

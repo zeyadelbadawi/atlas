@@ -233,6 +233,9 @@ export const courseReviewKeys = {
   all: QUERY_KEY_ROOTS.courseReview,
   mine: (studentId: string | undefined, courseId: string | undefined) =>
     [...courseReviewKeys.all, 'mine', studentId, courseId] as const,
+  /** Staff moderation list for one course (all statuses / a status filter). */
+  moderation: (courseId: string | undefined, query?: CollectionQuery) =>
+    [...courseReviewKeys.all, 'moderation', courseId, query] as const,
 } as const;
 
 export const progressKeys = {

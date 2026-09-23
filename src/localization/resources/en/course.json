@@ -141,7 +141,8 @@
     "outcomesPlaceholder": "Build a REST API\nDeploy to production",
     "requirementsLabel": "Requirements",
     "requirementsPlaceholder": "Basic JavaScript\nA code editor",
-    "onemPerLineHelp": "One item per line."
+    "onemPerLineHelp": "One item per line.",
+    "goToReviews": "Reviews"
   },
   "instructors": {
     "title": "Instructors",
@@ -682,5 +683,30 @@
     "intermediate": "Intermediate",
     "advanced": "Advanced",
     "all_levels": "All levels"
+  },
+  "reviews": {
+    "title": "Reviews",
+    "subtitle": "Moderate learner reviews for this course.",
+    "filterLabel": "Status",
+    "status": {
+      "all": "All",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "approve": "Approve",
+    "reject": "Reject",
+    "remove": "Remove",
+    "approvedToast": "Review approved.",
+    "rejectedToast": "Review rejected.",
+    "removedToast": "Review removed.",
+    "removeConfirmTitle": "Remove this review?",
+    "removeConfirmDescription": "This permanently removes the review from the course. This cannot be undone.",
+    "removeConfirm": "Remove review",
+    "anonymous": "Learner",
+    "noBody": "No written review.",
+    "ratingLabel": "Rated {{rating}} out of 5",
+    "emptyTitle": "No reviews yet",
+    "emptyDescription": "Reviews from enrolled learners will appear here for moderation."
   }
 }

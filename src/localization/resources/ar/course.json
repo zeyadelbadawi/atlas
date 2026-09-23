@@ -141,7 +141,8 @@
     "outcomesPlaceholder": "بناء واجهة برمجية\nالنشر إلى الإنتاج",
     "requirementsLabel": "المتطلبات",
     "requirementsPlaceholder": "أساسيات JavaScript\nمحرر أكواد",
-    "onemPerLineHelp": "عنصر واحد لكل سطر."
+    "onemPerLineHelp": "عنصر واحد لكل سطر.",
+    "goToReviews": "التقييمات"
   },
   "instructors": {
     "title": "المدرّسون",
@@ -690,5 +691,30 @@
     "intermediate": "متوسط",
     "advanced": "متقدم",
     "all_levels": "جميع المستويات"
+  },
+  "reviews": {
+    "title": "التقييمات",
+    "subtitle": "راجع تقييمات المتعلمين لهذه الدورة.",
+    "filterLabel": "الحالة",
+    "status": {
+      "all": "الكل",
+      "pending": "قيد المراجعة",
+      "approved": "معتمد",
+      "rejected": "مرفوض"
+    },
+    "approve": "اعتماد",
+    "reject": "رفض",
+    "remove": "إزالة",
+    "approvedToast": "تم اعتماد التقييم.",
+    "rejectedToast": "تم رفض التقييم.",
+    "removedToast": "تمت إزالة التقييم.",
+    "removeConfirmTitle": "إزالة هذا التقييم؟",
+    "removeConfirmDescription": "سيؤدي هذا إلى إزالة التقييم نهائيًا من الدورة. لا يمكن التراجع عن هذا.",
+    "removeConfirm": "إزالة التقييم",
+    "anonymous": "متعلم",
+    "noBody": "لا يوجد تقييم مكتوب.",
+    "ratingLabel": "التقييم {{rating}} من 5",
+    "emptyTitle": "لا توجد تقييمات بعد",
+    "emptyDescription": "ستظهر تقييمات المتعلمين المسجّلين هنا للمراجعة."
   }
 }
