@@ -13,3 +13,4 @@ export { usePlatformUsers } from './usePlatformUsers';
 export type { UsePlatformUsersOptions } from './usePlatformUsers';
 export { usePlatformUser } from './usePlatformUser';
 export { usePlatformMetrics } from './usePlatformMetrics';
+export { usePlatformVideoMetrics } from './usePlatformVideoMetrics';

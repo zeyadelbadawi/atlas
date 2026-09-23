@@ -16,7 +16,8 @@
   },
   "sections": {
     "metrics": "Platform Metrics",
-    "activity": "Recent Activity"
+    "activity": "Recent Activity",
+    "video": "Video and delivery"
   },
   "activity": {
     "empty": "No recent activity"
@@ -306,5 +307,27 @@
       "lessonCount_one": "{{count}} lesson",
       "lessonCount_other": "{{count}} lessons"
     }
+  },
+  "video": {
+    "totalAssets": "Video assets",
+    "totalMinutes": "Stored minutes",
+    "totalStorage": "Storage",
+    "gb": "{{value}} GB",
+    "byTier": "By security tier",
+    "tierNormal": "Normal",
+    "tierPremium": "Premium",
+    "tierNone": "No tier",
+    "tierSummary": "{{minutes}} min · {{assets}} assets",
+    "byProvider": "By provider",
+    "processing": "Processing pipeline",
+    "status": {
+      "ready": "Ready",
+      "processing": "Processing",
+      "pending": "Pending",
+      "failed": "Failed"
+    },
+    "failedNotice_one": "{{count}} asset failed processing — check the provider.",
+    "failedNotice_other": "{{count}} assets failed processing — check the provider.",
+    "empty": "No video assets yet."
   }
 }

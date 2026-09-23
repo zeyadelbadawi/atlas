@@ -930,6 +930,8 @@ export const supportKeys = {
 export const platformMetricsKeys = {
   all: QUERY_KEY_ROOTS.platformMetrics,
   overview: () => [...platformMetricsKeys.all, 'overview'] as const,
+  /** P64 Phase 4 §E.5 — video minutes / provider health. */
+  video: () => [...platformMetricsKeys.all, 'video'] as const,
 } as const;
 
 /** Platform Analytics (Prompt 13). */

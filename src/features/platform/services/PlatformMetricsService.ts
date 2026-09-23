@@ -7,13 +7,18 @@
  */
 import { BaseService } from '@services';
 import type { ReadOptions } from '@services';
-import type { PlatformMetricsOverview } from '@types';
+import type { PlatformMetricsOverview, PlatformVideoMetrics } from '@types';
 
 export class PlatformMetricsService extends BaseService {
   protected readonly resource = 'platform-metrics';
 
   async getOverview(options?: ReadOptions): Promise<PlatformMetricsOverview> {
     return this.client.get<PlatformMetricsOverview>(this.path(), options);
+  }
+
+  /** P64 Phase 4 §E.5 — video minutes per tier, assets per provider, processing health. */
+  async getVideoOverview(options?: ReadOptions): Promise<PlatformVideoMetrics> {
+    return this.client.get<PlatformVideoMetrics>(this.path('video'), options);
   }
 }
 

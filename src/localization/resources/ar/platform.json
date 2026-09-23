@@ -16,7 +16,8 @@
   },
   "sections": {
     "metrics": "مقاييس المنصة",
-    "activity": "النشاط الأخير"
+    "activity": "النشاط الأخير",
+    "video": "الفيديو والتسليم"
   },
   "activity": {
     "empty": "لا يوجد نشاط حديث"
@@ -322,5 +323,31 @@
       "lessonCount_many": "{{count}} درسًا",
       "lessonCount_other": "{{count}} درس"
     }
+  },
+  "video": {
+    "totalAssets": "أصول الفيديو",
+    "totalMinutes": "الدقائق المخزَّنة",
+    "totalStorage": "التخزين",
+    "gb": "{{value}} غ.ب",
+    "byTier": "حسب مستوى الحماية",
+    "tierNormal": "عادي",
+    "tierPremium": "مميّز",
+    "tierNone": "بدون مستوى",
+    "tierSummary": "{{minutes}} دقيقة · {{assets}} أصل",
+    "byProvider": "حسب المزوّد",
+    "processing": "مسار المعالجة",
+    "status": {
+      "ready": "جاهز",
+      "processing": "قيد المعالجة",
+      "pending": "في الانتظار",
+      "failed": "فشل"
+    },
+    "failedNotice_zero": "لا توجد أصول فاشلة.",
+    "failedNotice_one": "فشلت معالجة أصل واحد — تحقّق من المزوّد.",
+    "failedNotice_two": "فشلت معالجة أصلين — تحقّق من المزوّد.",
+    "failedNotice_few": "فشلت معالجة {{count}} أصول — تحقّق من المزوّد.",
+    "failedNotice_many": "فشلت معالجة {{count}} أصلًا — تحقّق من المزوّد.",
+    "failedNotice_other": "فشلت معالجة {{count}} أصل — تحقّق من المزوّد.",
+    "empty": "لا توجد أصول فيديو بعد."
   }
 }

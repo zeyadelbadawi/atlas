@@ -17,6 +17,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { usePlatformMetrics } from '../hooks';
 import { PlatformMetrics } from '../components/PlatformMetrics';
 import { PlatformActivity } from '../components/PlatformActivity';
+// P64 Phase 4 §E.5 — video minutes / provider health (fetches its own data:
+// a separate endpoint from the seven-KPI overview snapshot above).
+import { PlatformVideoMetrics } from '../components/PlatformVideoMetrics';
 import { formatCurrency, formatNumber, formatPercentage } from '@utils';
 import type { LanguageCode } from '@types';
 import type { TrendDirection } from '@components/data-display';
@@ -159,6 +162,8 @@ export default function PlatformDashboardPage(): JSX.Element {
           <PlatformMetrics metrics={metrics} />
           <PlatformActivity />
         </div>
+
+        <PlatformVideoMetrics />
 
         <p className="text-xs text-muted-foreground">
           {t('platform:metrics.lastUpdated', {
