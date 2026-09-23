@@ -164,7 +164,10 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
         }),
         icon: BarChart3,
         requiresAuth: true,
-        requiredPermissions: ['tenant.dashboard.view'],
+        // `academy.view` (owner + manager), matching the backend's
+        // owner/administrator/manager rule — not the owner-only dashboard
+        // permission the Student Analytics entry uses.
+        requiredPermissions: ['academy.view'],
       },
       {
         id: 'academy-announcements',
