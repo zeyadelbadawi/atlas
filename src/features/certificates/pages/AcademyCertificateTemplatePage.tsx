@@ -126,6 +126,104 @@ export default function AcademyCertificateTemplatePage(): JSX.Element {
     messageKey: 'certificates:template.unsavedChanges',
   });
 
+  const watched = form.watch();
+  const disabled = !canManage || update.isPending;
+
+  // The live preview is produced by the REAL server-side PDF renderer, so it
+  // can never diverge from an issued certificate. All hooks below MUST run
+  // unconditionally (before the loading/error early returns) to keep hook
+  // order stable across renders (React error #310).
+  const [previewLocale, setPreviewLocale] = useState<'en' | 'ar'>(
+    i18n.language.startsWith('ar') ? 'ar' : 'en'
+  );
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewPending, setPreviewPending] = useState(false);
+  const [previewError, setPreviewError] = useState<string | null>(null);
+  const previewUrlRef = useRef<string | null>(null);
+
+  // A stable signature of just the fields that affect the rendered PDF, so we
+  // do not re-render on unrelated keystrokes.
+  const previewKey = useMemo(
+    () =>
+      JSON.stringify({
+        l: previewLocale,
+        logoUrl: watched.logoUrl,
+        signatureUrl: watched.signatureUrl,
+        signatoryName: watched.signatoryName,
+        signatoryTitle: watched.signatoryTitle,
+        wording: watched.wording,
+        primaryColor: watched.primaryColor,
+        accentColor: watched.accentColor,
+        textColor: watched.textColor,
+        backgroundColor: watched.backgroundColor,
+      }),
+    [
+      previewLocale,
+      watched.logoUrl,
+      watched.signatureUrl,
+      watched.signatoryName,
+      watched.signatoryTitle,
+      watched.wording,
+      watched.primaryColor,
+      watched.accentColor,
+      watched.textColor,
+      watched.backgroundColor,
+    ]
+  );
+
+  useEffect(() => {
+    if (!canManage) return;
+    let cancelled = false;
+    const handle = setTimeout(() => {
+      setPreviewPending(true);
+      setPreviewError(null);
+      certificateService
+        .previewTemplate(
+          academyId,
+          {
+            logoUrl: watched.logoUrl,
+            signatureUrl: watched.signatureUrl,
+            signatoryName: watched.signatoryName?.trim() || null,
+            signatoryTitle: watched.signatoryTitle?.trim() || null,
+            wording: watched.wording,
+            primaryColor: watched.primaryColor,
+            accentColor: watched.accentColor,
+            textColor: watched.textColor,
+            backgroundColor: watched.backgroundColor,
+          },
+          previewLocale
+        )
+        .then((blob) => {
+          if (cancelled) return;
+          const url = URL.createObjectURL(blob);
+          if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+          previewUrlRef.current = url;
+          setPreviewUrl(url);
+        })
+        .catch((err: unknown) => {
+          if (cancelled) return;
+          setPreviewError(apiErrorMessage(t, i18n, err));
+        })
+        .finally(() => {
+          if (!cancelled) setPreviewPending(false);
+        });
+    }, 600);
+    return () => {
+      cancelled = true;
+      clearTimeout(handle);
+    };
+    // previewKey captures every field that changes the rendered PDF.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [previewKey, canManage, academyId]);
+
+  // Revoke the last object URL when the page unmounts.
+  useEffect(
+    () => () => {
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    },
+    []
+  );
+
   const onSubmit = async (values: CertificateTemplateFormData) => {
     try {
       const saved = await update.mutateAsync({
@@ -187,9 +285,6 @@ export default function AcademyCertificateTemplatePage(): JSX.Element {
       </PageContainer>
     );
   }
-
-  const watched = form.watch();
-  const disabled = !canManage || update.isPending;
 
   const renderImageField = (
     field: ImageField,
@@ -347,100 +442,6 @@ export default function AcademyCertificateTemplatePage(): JSX.Element {
         })
     );
   };
-
-  // The live preview is produced by the REAL server-side PDF renderer, so it
-  // can never diverge from an issued certificate. It re-renders (debounced)
-  // whenever a supported field changes, in the chosen locale.
-  const [previewLocale, setPreviewLocale] = useState<'en' | 'ar'>(
-    i18n.language.startsWith('ar') ? 'ar' : 'en'
-  );
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [previewPending, setPreviewPending] = useState(false);
-  const [previewError, setPreviewError] = useState<string | null>(null);
-  const previewUrlRef = useRef<string | null>(null);
-
-  // A stable signature of just the fields that affect the rendered PDF, so we
-  // do not re-render on unrelated keystrokes.
-  const previewKey = useMemo(
-    () =>
-      JSON.stringify({
-        l: previewLocale,
-        logoUrl: watched.logoUrl,
-        signatureUrl: watched.signatureUrl,
-        signatoryName: watched.signatoryName,
-        signatoryTitle: watched.signatoryTitle,
-        wording: watched.wording,
-        primaryColor: watched.primaryColor,
-        accentColor: watched.accentColor,
-        textColor: watched.textColor,
-        backgroundColor: watched.backgroundColor,
-      }),
-    [
-      previewLocale,
-      watched.logoUrl,
-      watched.signatureUrl,
-      watched.signatoryName,
-      watched.signatoryTitle,
-      watched.wording,
-      watched.primaryColor,
-      watched.accentColor,
-      watched.textColor,
-      watched.backgroundColor,
-    ]
-  );
-
-  useEffect(() => {
-    if (!canManage) return;
-    let cancelled = false;
-    const handle = setTimeout(() => {
-      setPreviewPending(true);
-      setPreviewError(null);
-      certificateService
-        .previewTemplate(
-          academyId,
-          {
-            logoUrl: watched.logoUrl,
-            signatureUrl: watched.signatureUrl,
-            signatoryName: watched.signatoryName?.trim() || null,
-            signatoryTitle: watched.signatoryTitle?.trim() || null,
-            wording: watched.wording,
-            primaryColor: watched.primaryColor,
-            accentColor: watched.accentColor,
-            textColor: watched.textColor,
-            backgroundColor: watched.backgroundColor,
-          },
-          previewLocale
-        )
-        .then((blob) => {
-          if (cancelled) return;
-          const url = URL.createObjectURL(blob);
-          if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
-          previewUrlRef.current = url;
-          setPreviewUrl(url);
-        })
-        .catch((err: unknown) => {
-          if (cancelled) return;
-          setPreviewError(apiErrorMessage(t, i18n, err));
-        })
-        .finally(() => {
-          if (!cancelled) setPreviewPending(false);
-        });
-    }, 600);
-    return () => {
-      cancelled = true;
-      clearTimeout(handle);
-    };
-    // previewKey captures every field that changes the rendered PDF.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [previewKey, canManage, academyId]);
-
-  // Revoke the last object URL when the page unmounts.
-  useEffect(
-    () => () => {
-      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
-    },
-    []
-  );
 
   return (
     <PageContainer>
