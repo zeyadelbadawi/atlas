@@ -239,6 +239,9 @@ export const DASHBOARD_ROUTES = {
   /** Academy-wide announcement authoring — distinct from `announcements`, which is the reader's cross-scope feed. */
   academyAnnouncements: '/dashboard/academy/:academyId/announcements',
 
+  /** P64 Phase 4 §E.5 — the owner's integrity / sharing / quota reports. Academy-scoped by route like media and certificates. */
+  academyReports: '/dashboard/academy/:academyId/reports',
+
   /** The Website Management landing (Prompt 10) — `websiteSettings` moved to its own sub-path to make room for it. */
   websiteOverview: '/dashboard/academy/:academyId/website',
   websiteSettings: '/dashboard/academy/:academyId/website/settings',

@@ -152,6 +152,21 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
         matchNestedPaths: true,
       },
       {
+        // P64 Phase 4 §E.5 — the owner's integrity / sharing / quota
+        // reports for this academy. Same permission as the Student
+        // Analytics entry (the other management-analytics page); the
+        // backend enforces the owner/admin/manager rule itself.
+        id: 'academy-reports',
+        requiresEntitlement: true,
+        labelKey: 'navigation:items.academyReports',
+        path: buildPath(DASHBOARD_ROUTES.academyReports, {
+          academyId: activeAcademyId,
+        }),
+        icon: BarChart3,
+        requiresAuth: true,
+        requiredPermissions: ['tenant.dashboard.view'],
+      },
+      {
         id: 'academy-announcements',
         requiresEntitlement: true,
         labelKey: 'navigation:items.academyAnnouncements',

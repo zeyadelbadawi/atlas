@@ -68,6 +68,8 @@ export const QUERY_KEY_ROOTS = {
   learner: ['learner'] as const,
   courseOrder: ['course-order'] as const,
   courseReview: ['course-review'] as const,
+  /** P64 Phase 4 §E.5 — the owner's per-academy integrity and sharing reports. */
+  academyReports: ['academy-reports'] as const,
 } as const;
 
 /**
@@ -1075,6 +1077,20 @@ export const certificateKeys = {
     ] as const,
   template: (academyId: string) =>
     [...certificateKeys.all, 'template', academyId] as const,
+} as const;
+
+/**
+ * `AcademyReportsService` (P64 Phase 4 §E.5) — the owner's integrity and
+ * sharing reports. Academy-scoped like `mediaKeys`, and the window (`days`)
+ * is IN the key: 7-day and 90-day answers to the same academy are different
+ * data, and a cached 90-day figure must never be served for a 7-day view.
+ */
+export const academyReportKeys = {
+  all: QUERY_KEY_ROOTS.academyReports,
+  integrity: (academyId: string | undefined, days: number) =>
+    [...academyReportKeys.all, 'integrity', academyId, days] as const,
+  sharing: (academyId: string | undefined, days: number) =>
+    [...academyReportKeys.all, 'sharing', academyId, days] as const,
 } as const;
 
 /** `CompletionService` — the learner's evaluated state and the staff rule. */
