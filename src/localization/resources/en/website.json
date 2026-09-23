@@ -762,6 +762,24 @@
         "intermediate": "Intermediate",
         "advanced": "Advanced",
         "all_levels": "All levels"
+      },
+      "writeReviewTitle": "Write a review",
+      "yourReviewTitle": "Your review",
+      "yourRatingLabel": "Your rating",
+      "reviewBodyLabel": "Your review (optional)",
+      "reviewBodyPlaceholder": "Share what you found most useful…",
+      "submitReview": "Submit review",
+      "updateReview": "Update review",
+      "cancelReview": "Cancel",
+      "editReview": "Edit",
+      "deleteReview": "Delete",
+      "reviewSubmittedNote": "Thanks! Your review is awaiting moderation before it appears publicly.",
+      "ratingRequired": "Please choose a star rating.",
+      "reviewError": "Something went wrong. Please try again.",
+      "reviewStatus": {
+        "pending": "Awaiting review",
+        "approved": "Published",
+        "rejected": "Not approved"
       }
     }
   },

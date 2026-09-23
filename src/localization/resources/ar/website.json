@@ -774,7 +774,25 @@
       "reviewCount_two": "تقييمان",
       "reviewCount_few": "{{count}} تقييمات",
       "reviewCount_many": "{{count}} تقييمًا",
-      "reviewCount_other": "{{count}} تقييم"
+      "reviewCount_other": "{{count}} تقييم",
+      "writeReviewTitle": "اكتب تقييمًا",
+      "yourReviewTitle": "تقييمك",
+      "yourRatingLabel": "تقييمك",
+      "reviewBodyLabel": "تقييمك (اختياري)",
+      "reviewBodyPlaceholder": "شارك ما وجدته الأكثر فائدة…",
+      "submitReview": "إرسال التقييم",
+      "updateReview": "تحديث التقييم",
+      "cancelReview": "إلغاء",
+      "editReview": "تعديل",
+      "deleteReview": "حذف",
+      "reviewSubmittedNote": "شكرًا لك! تقييمك قيد المراجعة قبل ظهوره للعموم.",
+      "ratingRequired": "يرجى اختيار تقييم بالنجوم.",
+      "reviewError": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+      "reviewStatus": {
+        "pending": "قيد المراجعة",
+        "approved": "منشور",
+        "rejected": "غير معتمد"
+      }
     }
   },
   "common": {

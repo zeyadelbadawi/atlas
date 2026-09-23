@@ -83,3 +83,8 @@ export {
   useUpdateCertificateTemplate,
 } from './useCertificates';
 export type { UseAcademyCertificatesOptions } from './useCertificates';
+export {
+  useMyCourseReview,
+  useSubmitMyReview,
+  useDeleteMyReview,
+} from './useMyCourseReview';

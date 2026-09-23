@@ -67,6 +67,7 @@ export const QUERY_KEY_ROOTS = {
   /** P64 Phase 2 — the `/my/*` learner dashboard and the unified player. */
   learner: ['learner'] as const,
   courseOrder: ['course-order'] as const,
+  courseReview: ['course-review'] as const,
 } as const;
 
 /**
@@ -221,6 +222,17 @@ export const enrollmentKeys = {
     [...enrollmentKeys.all, 'list', studentId, query] as const,
   course: (studentId: string | undefined, courseId: string) =>
     [...enrollmentKeys.all, 'course', studentId, courseId] as const,
+} as const;
+
+/**
+ * P64 Phase 4 — the caller's OWN review of a course. Scoped by the
+ * signed-in student id (mirrors `enrollmentKeys`' rationale) so switching
+ * accounts never reuses a cached "my review".
+ */
+export const courseReviewKeys = {
+  all: QUERY_KEY_ROOTS.courseReview,
+  mine: (studentId: string | undefined, courseId: string | undefined) =>
+    [...courseReviewKeys.all, 'mine', studentId, courseId] as const,
 } as const;
 
 export const progressKeys = {

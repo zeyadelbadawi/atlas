@@ -50,6 +50,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CourseReviews } from './CourseReviews';
+import { MyCourseReviewForm } from './MyCourseReviewForm';
 import { RelatedCourses } from './RelatedCourses';
 import {
   Accordion,
@@ -344,6 +345,12 @@ export function CourseDetailsTemplate({
           ) : isLoadingCurriculum ? (
             <Skeleton className="h-32 w-full" />
           ) : null}
+
+          <MyCourseReviewForm
+            academyId={academyId}
+            courseId={courseId}
+            canReview={isAuthenticated && isEnrolled}
+          />
 
           <CourseReviews
             academyId={academyId}
