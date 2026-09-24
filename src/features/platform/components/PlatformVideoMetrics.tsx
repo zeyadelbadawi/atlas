@@ -1,31 +1,26 @@
 /**
- * Platform Video Metrics (P64 Phase 4 §E.5).
+ * Platform Video Metrics — the dashboard's compact summary (P64 Phase 4).
  *
- * The Platform Owner's video inventory: stored minutes per security tier,
- * assets per provider, and the processing pipeline's state. A rising
- * `failed` count is the provider-health signal, so it is the one row that
- * changes appearance — and it says so in words and an icon, never by
- * colour alone.
+ * The dashboard is an executive overview, so this card carries only the
+ * three headline numbers (assets, stored minutes, storage) plus the one
+ * signal that needs attention today — failed processing — and a link to
+ * the Content delivery report, where the per-tier, per-provider and
+ * pipeline breakdowns now live (`PlatformVideoInventory`).
  *
  * Fetches its own data (unlike `PlatformMetrics`, which is handed the
  * overview snapshot) because it answers a separate endpoint that the
  * seven-KPI overview contract deliberately excludes.
  */
 import { useTranslation } from 'react-i18next';
-import { AlertTriangle, Video } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { AlertTriangle, ArrowRight, Video } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@components/feedback';
+import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { formatNumber } from '@utils';
 import { useLanguage } from '@hooks';
 import { usePlatformVideoMetrics } from '../hooks';
-import type { PlatformVideoTier } from '@types';
-
-const TIER_LABEL_KEY: Record<PlatformVideoTier, string> = {
-  normal: 'platform:video.tierNormal',
-  premium: 'platform:video.tierPremium',
-  none: 'platform:video.tierNone',
-};
 
 export function PlatformVideoMetrics(): JSX.Element {
   const { t } = useTranslation();
@@ -45,7 +40,7 @@ export function PlatformVideoMetrics(): JSX.Element {
         <CardHeader>{title}</CardHeader>
         <CardContent className="space-y-3">
           <Skeleton className="h-8 w-2/3" />
-          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-4 w-1/3" />
         </CardContent>
       </Card>
     );
@@ -63,15 +58,12 @@ export function PlatformVideoMetrics(): JSX.Element {
   }
 
   const num = (value: number) => formatNumber(value, language);
-  const providers = Object.entries(data.byProvider).sort(([a], [b]) =>
-    a.localeCompare(b)
-  );
   const hasFailures = data.processing.failed > 0;
 
   return (
     <Card>
       <CardHeader>{title}</CardHeader>
-      <CardContent className="space-y-5">
+      <CardContent className="space-y-4">
         <dl className="grid grid-cols-3 gap-3">
           <div>
             <dt className="text-xs text-muted-foreground">
@@ -108,122 +100,23 @@ export function PlatformVideoMetrics(): JSX.Element {
           </div>
         </dl>
 
-        <section aria-labelledby="platform-video-tiers" className="space-y-2">
-          <h3
-            id="platform-video-tiers"
-            className="text-sm font-medium text-foreground"
+        {hasFailures ? (
+          <p
+            role="status"
+            className="flex items-start gap-1.5 text-xs font-medium text-destructive"
           >
-            {t('platform:video.byTier')}
-          </h3>
-          {data.byTier.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              {t('platform:video.empty')}
-            </p>
-          ) : (
-            <ul className="space-y-1.5">
-              {data.byTier.map((row) => (
-                <li
-                  key={row.tier}
-                  className="flex items-center justify-between text-sm"
-                >
-                  <span className="text-muted-foreground">
-                    {t(TIER_LABEL_KEY[row.tier])}
-                  </span>
-                  <span
-                    className="tabular-nums text-foreground"
-                    data-atlas-numeric="true"
-                  >
-                    {t('platform:video.tierSummary', {
-                      minutes: num(row.storedMinutes),
-                      assets: num(row.assets),
-                    })}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-
-        {providers.length > 0 ? (
-          <section
-            aria-labelledby="platform-video-providers"
-            className="space-y-2"
-          >
-            <h3
-              id="platform-video-providers"
-              className="text-sm font-medium text-foreground"
-            >
-              {t('platform:video.byProvider')}
-            </h3>
-            <ul className="space-y-1.5">
-              {providers.map(([provider, assets]) => (
-                <li
-                  key={provider}
-                  className="flex items-center justify-between text-sm"
-                >
-                  <span className="text-muted-foreground">{provider}</span>
-                  <span
-                    className="tabular-nums text-foreground"
-                    data-atlas-numeric="true"
-                  >
-                    {num(assets)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </section>
+            <AlertTriangle className="mt-0.5 size-3.5 shrink-0" aria-hidden />
+            {t('platform:video.failedNotice', { count: data.processing.failed })}
+          </p>
         ) : null}
 
-        <section
-          aria-labelledby="platform-video-processing"
-          className="space-y-2"
+        <Link
+          to={DASHBOARD_ROUTES.analyticsDelivery}
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-primary underline-offset-4 hover:underline"
         >
-          <h3
-            id="platform-video-processing"
-            className="text-sm font-medium text-foreground"
-          >
-            {t('platform:video.processing')}
-          </h3>
-          <ul className="space-y-1.5">
-            {(['ready', 'processing', 'pending', 'failed'] as const).map(
-              (key) => {
-                const isFailed = key === 'failed';
-                return (
-                  <li
-                    key={key}
-                    className="flex items-center justify-between text-sm"
-                  >
-                    <span
-                      className={
-                        isFailed && hasFailures
-                          ? 'flex items-center gap-1.5 font-medium text-destructive'
-                          : 'text-muted-foreground'
-                      }
-                    >
-                      {isFailed && hasFailures ? (
-                        <AlertTriangle className="size-3.5" aria-hidden />
-                      ) : null}
-                      {t(`platform:video.status.${key}`)}
-                    </span>
-                    <span
-                      className="tabular-nums text-foreground"
-                      data-atlas-numeric="true"
-                    >
-                      {num(data.processing[key])}
-                    </span>
-                  </li>
-                );
-              }
-            )}
-          </ul>
-          {hasFailures ? (
-            <p role="status" className="text-xs text-destructive">
-              {t('platform:video.failedNotice', {
-                count: data.processing.failed,
-              })}
-            </p>
-          ) : null}
-        </section>
+          {t('platform:video.openReport')}
+          <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />
+        </Link>
       </CardContent>
     </Card>
   );

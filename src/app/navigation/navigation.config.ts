@@ -605,6 +605,21 @@ export function getDashboardNavigation(
               requiresAuth: true,
               requiredRoles: ['platform_owner'],
             },
+            // P64 Phase 4 — operational reporting areas.
+            {
+              id: 'analytics-commerce',
+              labelKey: 'analytics:tabs.commerce',
+              path: DASHBOARD_ROUTES.analyticsCommerce,
+              requiresAuth: true,
+              requiredRoles: ['platform_owner'],
+            },
+            {
+              id: 'analytics-delivery',
+              labelKey: 'analytics:tabs.delivery',
+              path: DASHBOARD_ROUTES.analyticsDelivery,
+              requiresAuth: true,
+              requiredRoles: ['platform_owner'],
+            },
           ],
         },
         {

@@ -14,7 +14,10 @@
  */
 import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { computeDateRange } from '../utils/analytics-date-range.utils';
+import {
+  computeDateRange,
+  presetToDays,
+} from '../utils/analytics-date-range.utils';
 import type { AnalyticsDateRangePreset } from '../utils/analytics-date-range.utils';
 
 const VALID: readonly AnalyticsDateRangePreset[] = ['7d', '30d', '90d'];
@@ -24,6 +27,8 @@ export interface UseAnalyticsRangeResult {
   readonly preset: AnalyticsDateRangePreset;
   readonly setPreset: (next: AnalyticsDateRangePreset) => void;
   readonly query: { readonly dateRange: ReturnType<typeof computeDateRange> };
+  /** The same window as a day count, for `?days=` endpoints. */
+  readonly days: number;
 }
 
 export function useAnalyticsRange(): UseAnalyticsRangeResult {
@@ -47,5 +52,5 @@ export function useAnalyticsRange(): UseAnalyticsRangeResult {
     setSearchParams(params, { replace: true });
   };
 
-  return { preset, setPreset, query };
+  return { preset, setPreset, query, days: presetToDays(preset) };
 }

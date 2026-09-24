@@ -16,6 +16,16 @@ const PRESET_DAYS: Record<AnalyticsDateRangePreset, number> = {
   '90d': 90,
 };
 
+/**
+ * The preset as a trailing-window length, for endpoints that take `?days=`
+ * (the P64 Phase 4 platform-metrics reads) rather than a from/to pair.
+ * Same three numbers `computeDateRange` uses, so both kinds of page agree
+ * on what "Last 30 days" means.
+ */
+export function presetToDays(preset: AnalyticsDateRangePreset): number {
+  return PRESET_DAYS[preset];
+}
+
 function toIsoDate(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
