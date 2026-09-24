@@ -6,13 +6,14 @@
  * the session alive through token refresh and handles sign-in/sign-out.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { isTwoFactorChallenge } from '@types';
+import { isEmailOtpChallenge, isTwoFactorChallenge } from '@types';
 import type { ReactNode } from 'react';
 import { sessionService } from '@services/identity';
 import type {
   Session,
   SignInCredentials,
   TwoFactorVerifyInput,
+  EmailOtpVerifyInput,
 } from '@types';
 import { IdentityContext } from './identity.context';
 import type { IdentityContextValue } from './identity.context';
@@ -172,7 +173,7 @@ export function AtlasIdentityProvider({
   const signIn = useCallback(async (credentials: SignInCredentials) => {
     const result = await sessionService.signIn(credentials);
 
-    if (isTwoFactorChallenge(result)) {
+    if (isTwoFactorChallenge(result) || isEmailOtpChallenge(result)) {
       return result;
     }
 
@@ -183,6 +184,12 @@ export function AtlasIdentityProvider({
   /** Completes a challenged sign-in. Only here does the session become real. */
   const completeTwoFactor = useCallback(async (input: TwoFactorVerifyInput) => {
     const newSession = await sessionService.completeTwoFactor(input);
+    setSession(newSession);
+  }, []);
+
+  /** P66 — completes an email-code challenge. Only here does the session become real. */
+  const completeEmailOtp = useCallback(async (input: EmailOtpVerifyInput) => {
+    const newSession = await sessionService.completeEmailOtp(input);
     setSession(newSession);
   }, []);
 
@@ -238,6 +245,7 @@ export function AtlasIdentityProvider({
       isAuthenticated: session.status === 'authenticated',
       signIn,
       completeTwoFactor,
+      completeEmailOtp,
       signOut,
       switchOrganization,
       refreshSession,
@@ -247,6 +255,7 @@ export function AtlasIdentityProvider({
       isRestoring,
       signIn,
       completeTwoFactor,
+      completeEmailOtp,
       signOut,
       switchOrganization,
       refreshSession,

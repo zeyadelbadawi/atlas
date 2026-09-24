@@ -52,7 +52,26 @@
       "sessionRevokeFailed": "تعذّر تسجيل خروج ذلك الجهاز",
       "sessionRevokeFailedDescription": "الجلسة ما زالت نشطة. يرجى المحاولة مرة أخرى.",
       "unknownLocation": "الموقع غير متاح",
-      "ipAddress": "عنوان IP"
+      "ipAddress": "عنوان IP",
+      "trustedDevices": "الأجهزة المتذكَّرة",
+      "trustedDevicesDescription": "المتصفحات التي يمكنها تخطّي رمز تسجيل الدخول المُرسل بالبريد. نسيان جهاز لا يسجّل خروجه — سيُطلب منه رمز في المرة القادمة فحسب.",
+      "surface": {
+        "management": "أطلس",
+        "academy": "موقع الأكاديمية"
+      },
+      "trustedUntil": "متذكَّر حتى {{date}}",
+      "forgetDevice": "نسيان",
+      "forgetDeviceLabel": "نسيان {{device}}",
+      "forgetDeviceTitle": "نسيان هذا الجهاز؟",
+      "forgetDeviceDescription": "سيُطلب من هذا المتصفح رمز مُرسل بالبريد عند تسجيل الدخول التالي. لن يُسجَّل خروج أي جهاز.",
+      "forgetOtherDevices": "نسيان الأجهزة الأخرى",
+      "forgetOtherDevicesTitle": "نسيان كل الأجهزة الأخرى؟",
+      "forgetOtherDevicesDescription": "سيُطلب من كل متصفح متذكَّر غير هذا رمز مُرسل بالبريد عند تسجيل الدخول التالي.",
+      "trustedDeviceForgotten": "تم نسيان الجهاز",
+      "otherTrustedDevicesForgotten": "تم نسيان الأجهزة الأخرى",
+      "trustedDeviceForgetFailed": "تعذّر نسيان هذا الجهاز. يرجى المحاولة مجددًا.",
+      "noTrustedDevices": "لا توجد أجهزة متذكَّرة",
+      "noTrustedDevicesDescription": "عندما تختار «تذكّر هذا الجهاز» عند تسجيل الدخول، سيظهر ذلك المتصفح هنا."
     }
   },
   "fields": {

@@ -9,7 +9,7 @@ import { authenticationService } from './authentication.service';
 import { currentUserService } from './current-user.service';
 import { tokenService } from './token.service';
 import { STORAGE_KEYS } from '@constants';
-import { isTwoFactorChallenge } from '@types';
+import { isEmailOtpChallenge, isTwoFactorChallenge } from '@types';
 import { twoFactorService } from './two-factor.service';
 import type {
   AuthenticationResponse,
@@ -20,6 +20,8 @@ import type {
   OrganizationContext,
   TwoFactorChallenge,
   TwoFactorVerifyInput,
+  EmailOtpChallenge,
+  EmailOtpVerifyInput,
 } from '@types';
 
 export class SessionService {
@@ -48,8 +50,14 @@ export class SessionService {
    */
   public async signIn(
     credentials: SignInCredentials
-  ): Promise<Session | TwoFactorChallenge> {
+  ): Promise<Session | TwoFactorChallenge | EmailOtpChallenge> {
     const response = await authenticationService.signIn(credentials);
+
+    // P66 — same rule as the second factor below: an email-code
+    // challenge carries no token and is returned untouched.
+    if (isEmailOtpChallenge(response)) {
+      return response;
+    }
 
     // Phase 10.3 — the password alone was not enough. Return the
     // challenge UNCHANGED and store nothing: there is no token here, and
@@ -72,6 +80,12 @@ export class SessionService {
    */
   public async completeTwoFactor(input: TwoFactorVerifyInput): Promise<Session> {
     const response = await twoFactorService.verifyChallenge(input);
+    return this.establishSession(response);
+  }
+
+  /** P66 — completes a sign-in that stopped for an emailed code; same `establishSession`. */
+  public async completeEmailOtp(input: EmailOtpVerifyInput): Promise<Session> {
+    const response = await authenticationService.verifyEmailOtp(input);
     return this.establishSession(response);
   }
 

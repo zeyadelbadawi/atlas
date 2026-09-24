@@ -82,6 +82,8 @@ export const authKeys = {
   /** P64 Phase 1 — whether a password-reset token is currently usable. */
   passwordResetToken: (token: string) =>
     [...authKeys.all, 'password-reset-token', token] as const,
+  /** P66 — the browsers remembered at an email-code step. */
+  trustedDevices: () => [...authKeys.all, 'trusted-devices'] as const,
 } as const;
 
 /**
@@ -162,6 +164,17 @@ export const academyKeys = {
     ] as const,
   invites: (organizationId: string | undefined, academyId: string) =>
     [...academyKeys.all, 'invites', organizationId, academyId] as const,
+  /** P66 — email OTP policy, announcement email and digest default. */
+  communicationSettings: (
+    organizationId: string | undefined,
+    academyId: string
+  ) =>
+    [
+      ...academyKeys.all,
+      'communication-settings',
+      organizationId,
+      academyId,
+    ] as const,
 } as const;
 
 /**
@@ -977,6 +990,9 @@ export const notificationKeys = {
 export const platformSettingsKeys = {
   all: QUERY_KEY_ROOTS.platformSettings,
   configuration: () => [...platformSettingsKeys.all, 'configuration'] as const,
+  /** P66 — OTP defaults, trusted-device windows, digests, quota alerts, providers. */
+  communications: () =>
+    [...platformSettingsKeys.all, 'communications'] as const,
 } as const;
 
 /**

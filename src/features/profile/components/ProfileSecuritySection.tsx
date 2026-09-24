@@ -11,6 +11,9 @@
  *
  * Phase 10.3 replaced the permanently-disabled Two-Factor control with
  * the real `TwoFactorCard`, backed by `/auth/2fa/*`.
+ *
+ * P66 added `TrustedDevicesCard` beside the sessions — the browsers
+ * remembered at an email-code step, backed by `/auth/trusted-devices`.
  */
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -32,6 +35,7 @@ import { ErrorState } from '@components/feedback';
 import { useToast } from '@hooks';
 import { useChangePassword } from '../hooks';
 import { ProfileSessionsCard } from './ProfileSessionsCard';
+import { TrustedDevicesCard } from './TrustedDevicesCard';
 import { TwoFactorCard } from './TwoFactorCard';
 
 const passwordSchema = z
@@ -246,6 +250,8 @@ export function ProfileSecuritySection(): JSX.Element {
       <TwoFactorCard />
 
       <ProfileSessionsCard />
+
+      <TrustedDevicesCard />
     </div>
   );
 }

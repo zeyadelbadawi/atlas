@@ -57,10 +57,13 @@ import {
 import {
   SignInForm,
   TwoFactorChallengeForm,
+  EmailOtpChallengeForm,
   AUTH_ERROR_KEYS,
   isSafeReturnPath,
 } from '@features/auth';
-import type { TwoFactorChallenge } from '@types';
+import { isEmailOtpChallenge } from '@types';
+import type { SignInChallenge } from '@types';
+import { authenticationService } from '@services/identity';
 import { usePublicWebsiteData } from '../hooks/usePublicWebsiteData';
 import { PublicWebsiteStatus } from './PublicWebsiteStatus';
 import {
@@ -84,14 +87,23 @@ export function PublicWebsiteSignInPage({
   usePublicWebsiteDocumentDirection(locale);
   const data = usePublicWebsiteData(lookupKey);
   const { session } = useAuth();
-  const { signIn, completeTwoFactor, isLoading, error, clearError } =
-    useSignIn();
+  const {
+    signIn,
+    completeTwoFactor,
+    completeEmailOtp,
+    isLoading,
+    error,
+    clearError,
+  } = useSignIn();
   const { signOut } = useSignOut();
   // P64 Phase 1 — a correct password on an account with 2FA enabled
   // returns a CHALLENGE, not a session. Before this, the academy site
   // dropped the challenge on the floor: the form simply cleared and the
   // visitor stayed signed out with no error and no way forward.
-  const [challenge, setChallenge] = useState<TwoFactorChallenge | null>(null);
+  //
+  // P66 — the same slot also holds an emailed-code challenge; the two
+  // are told apart at render time and finished by different calls.
+  const [challenge, setChallenge] = useState<SignInChallenge | null>(null);
   const linkRenderer = usePublicWebsiteLinkRenderer(locale);
   const buildHref = usePublicWebsiteHrefBuilder(locale);
   const navigate = useNavigate();
@@ -189,6 +201,27 @@ export function PublicWebsiteSignInPage({
     }
   };
 
+  // P66 — the emailed-code step, carrying the ORIGINAL sign-in's surface
+  // and academy exactly as the second factor does.
+  const handleVerifyEmailOtp = async (input: {
+    code: string;
+    rememberDevice: boolean;
+  }) => {
+    if (!challenge || !isEmailOtpChallenge(challenge)) return;
+    clearError();
+    try {
+      await completeEmailOtp({
+        challengeId: challenge.challengeId,
+        code: input.code,
+        rememberDevice: input.rememberDevice,
+        surface: 'academy',
+        academyId: academy.academyId,
+      });
+    } catch {
+      // Error is already set by `useSignIn`; the form reads its messageKey.
+    }
+  };
+
   // `errors.auth.notAMemberOfAcademy` is the one sign-in failure with a
   // real next step that is not "try again": this academy does not accept
   // open sign-in joins, so the way in is its sign-up page.
@@ -253,6 +286,25 @@ export function PublicWebsiteSignInPage({
               })}
             </p>
           </div>
+        ) : challenge && isEmailOtpChallenge(challenge) ? (
+          <WebsiteBrandBridge>
+            <EmailOtpChallengeForm
+              challenge={challenge}
+              onSubmit={handleVerifyEmailOtp}
+              onResend={() =>
+                authenticationService.resendEmailOtp(challenge.challengeId)
+              }
+              onCancel={() => {
+                setChallenge(null);
+                clearError();
+              }}
+              isLoading={isLoading}
+              error={error}
+              // This site's own reset page, locale-prefixed like every
+              // other on-site link.
+              forgotPasswordHref={buildHref('/forgot-password')}
+            />
+          </WebsiteBrandBridge>
         ) : challenge ? (
           <WebsiteBrandBridge>
             <TwoFactorChallengeForm

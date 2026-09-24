@@ -534,5 +534,50 @@
     "deletedTitle": "Academy deleted",
     "deletedDescription": "{{name}} has been deleted and its website is offline.",
     "failedTitle": "The academy could not be deleted."
+  },
+  "communication": {
+    "sectionTitle": "Communication",
+    "title": "Email & sign-in codes",
+    "description": "When learners are asked for an emailed code at sign-in, and how your academy uses email.",
+    "otpPolicy": {
+      "label": "Emailed sign-in code",
+      "description": "A 6-digit code sent to the learner's email after a correct password.",
+      "options": {
+        "inherit": {
+          "label": "Use the platform default",
+          "description": "Follow whatever the platform currently recommends."
+        },
+        "new_device": {
+          "label": "New devices only",
+          "description": "Ask for a code the first time a browser signs in, then remember it."
+        },
+        "always": {
+          "label": "Every sign-in",
+          "description": "Ask for a code at every sign-in, even on remembered devices."
+        },
+        "off": {
+          "label": "Off",
+          "description": "Never ask learners for an emailed code."
+        }
+      },
+      "offWarningTitle": "Sign-in codes are off",
+      "offWarning": "A learner whose password leaks can be signed in from anywhere with no second check. Two-factor authentication on individual accounts still applies."
+    },
+    "announcementEmail": {
+      "label": "Announcements by email",
+      "description": "Allow announcements to be emailed to learners, in addition to appearing in the app."
+    },
+    "digestDefault": {
+      "label": "Default digest for new learners",
+      "description": "Learners can change this in their own notification settings.",
+      "options": {
+        "immediate": "Send each notification immediately",
+        "daily": "One daily digest",
+        "off": "No email digest"
+      }
+    },
+    "ownerOnly": "Only the account owner can change communication settings.",
+    "saved": "Communication settings updated",
+    "saveFailed": "The communication settings could not be saved."
   }
 }

@@ -12,3 +12,9 @@ export {
   SESSIONS_QUERY_KEY,
 } from './useSessions';
 export type { RevokeSessionVariables } from './useSessions';
+export {
+  useTrustedDevices,
+  useRevokeTrustedDevice,
+  useRevokeOtherTrustedDevices,
+  TRUSTED_DEVICES_QUERY_KEY,
+} from './useTrustedDevices';

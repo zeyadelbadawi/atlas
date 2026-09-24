@@ -20,6 +20,11 @@ export { ResetPasswordForm } from './components/ResetPasswordForm';
 export type { ResetPasswordFormProps } from './components/ResetPasswordForm';
 export { TwoFactorChallengeForm } from './components/TwoFactorChallengeForm';
 export type { TwoFactorChallengeFormProps } from './components/TwoFactorChallengeForm';
+export {
+  EmailOtpChallengeForm,
+  EMAIL_OTP_ERROR_KEYS,
+} from './components/EmailOtpChallengeForm';
+export type { EmailOtpChallengeFormProps } from './components/EmailOtpChallengeForm';
 export { AcademyLinkList } from './components/AcademyLinkList';
 export type { AcademyLinkListProps } from './components/AcademyLinkList';
 export { StudentSignInRefusal } from './components/StudentSignInRefusal';

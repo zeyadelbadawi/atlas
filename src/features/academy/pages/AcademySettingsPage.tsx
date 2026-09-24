@@ -47,6 +47,7 @@ import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useAcademy, useUpdateAcademy } from '../hooks';
 import { DeleteAcademyCard } from '../components/DeleteAcademyCard';
 import { RegistrationPolicyCard } from '../components/RegistrationPolicyCard';
+import { CommunicationSettingsCard } from '../components/CommunicationSettingsCard';
 import { AcademyInvitesCard } from '../components/AcademyInvitesCard';
 import { getAcademyAdminTabs } from '../utils/academy-navigation.utils';
 import {
@@ -522,6 +523,21 @@ export default function AcademySettingsPage(): JSX.Element {
         <AcademyInvitesCard
           academyId={academyId ?? ''}
           academyHost={academyHost}
+        />
+      </div>
+
+      {/*
+        Communication (P66) — emailed sign-in codes, announcement email
+        and the learner digest default. Owner-only like the registration
+        policy, and its own endpoint, so it also lives outside the form.
+      */}
+      <div className="mt-8 space-y-6">
+        <h2 className="text-lg font-semibold">
+          {t('academy:communication.sectionTitle')}
+        </h2>
+        <CommunicationSettingsCard
+          academyId={academyId ?? ''}
+          canEdit={canManageRegistrationPolicy}
         />
       </div>
 
