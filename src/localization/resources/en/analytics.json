@@ -156,6 +156,7 @@
         "share": "Share of created"
       },
       "status": {
+        "draft": "Draft",
         "created": "Created",
         "pendingPayment": "Pending payment",
         "paid": "Paid",

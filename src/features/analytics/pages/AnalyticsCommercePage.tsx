@@ -37,6 +37,7 @@ import { useAnalyticsRange } from './useAnalyticsRange';
 import type { LanguageCode, PlatformCommerceMetrics } from '@types';
 
 const ORDER_STATUSES = [
+  'draft',
   'pendingPayment',
   'paid',
   'expired',

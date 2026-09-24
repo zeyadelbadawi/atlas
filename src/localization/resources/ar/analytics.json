@@ -188,6 +188,7 @@
         "share": "النسبة من المُنشأ"
       },
       "status": {
+        "draft": "مسودة",
         "created": "مُنشأ",
         "pendingPayment": "بانتظار الدفع",
         "paid": "مدفوع",

@@ -10,6 +10,8 @@
 
 export interface PlatformCommerceOrderCounts {
   readonly created: number;
+  /** Orders opened but never advanced to a payment. Part of `created` so the buckets always sum to it. */
+  readonly draft: number;
   readonly pendingPayment: number;
   readonly paid: number;
   readonly expired: number;
