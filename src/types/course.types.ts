@@ -120,10 +120,25 @@ export interface AvailableCurriculumItem {
   readonly sectionId: string | null;
 }
 
-/** Curriculum-shape summary, used by list views that don't load full sections. */
+/**
+ * Curriculum-shape summary, used by list views that don't load full sections.
+ *
+ * The four optional fields mirror what the PUBLIC course list/detail
+ * (`GET /public/websites/:academyId/courses[/:id]`) adds for catalog cards
+ * (P64 Phase 4). They are optional because the tenant-scoped list does not
+ * compute them; a consumer must treat their absence as "unknown", not zero.
+ */
 export interface CourseStats {
   readonly totalSections: number;
   readonly totalLessons: number;
+  /** Sum of lesson durations; `null` when no lesson carries a duration. */
+  readonly durationSeconds?: number | null;
+  /** Whether at least one lesson is an open (free) preview. */
+  readonly hasPreview?: boolean;
+  /** Approved-review average, 0..5 to one decimal; `0` when there are none. */
+  readonly averageRating?: number;
+  /** Count of approved reviews behind `averageRating`. */
+  readonly totalReviews?: number;
 }
 
 /** A curriculum-preview lesson — the public Course Details page's pre-enrollment view: title/order/type only, never `contentUrl`/`description` (see backend `toPublicCourseCurriculumResponse`'s doc comment for why those stay gated). */

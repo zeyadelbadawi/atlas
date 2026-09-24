@@ -771,7 +771,12 @@
       "resultCount_many": "{{count}} دورةً",
       "resultCount_other": "{{count}} دورة",
       "noResults": "لا توجد دورات مطابقة لعوامل التصفية",
-      "noResultsDescription": "جرّب كلمة بحث مختلفة أو أزل أحد الفلاتر."
+      "noResultsDescription": "جرّب كلمة بحث مختلفة أو أزل أحد الفلاتر.",
+      "durationHours": "{{hours}} س {{minutes}} د",
+      "durationHoursOnly": "{{hours}} س",
+      "durationMinutes": "{{minutes}} د",
+      "durationLabel": "المدة",
+      "instructorLabel": "المدرّب"
     },
     "courseDetails": {
       "aboutTitle": "عن هذه الدورة",
