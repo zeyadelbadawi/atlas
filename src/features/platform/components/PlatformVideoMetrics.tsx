@@ -33,7 +33,7 @@ export function PlatformVideoMetrics(): JSX.Element {
   const { data, isLoading, error, refetch } = usePlatformVideoMetrics();
 
   const title = (
-    <CardTitle className="flex items-center gap-2">
+    <CardTitle as="h2" className="flex items-center gap-2">
       <Video className="size-4" aria-hidden />
       {t('platform:sections.video')}
     </CardTitle>

@@ -157,7 +157,7 @@ export default function CourseCheckoutPage(): JSX.Element {
         {header}
         <Card>
           <CardHeader>
-            <CardTitle>{t('course:checkout.unavailableTitle')}</CardTitle>
+            <CardTitle as="h2">{t('course:checkout.unavailableTitle')}</CardTitle>
             <CardDescription>
               {t('course:checkout.unavailableDescription')}
             </CardDescription>
@@ -181,7 +181,7 @@ export default function CourseCheckoutPage(): JSX.Element {
         {header}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle as="h2" className="flex items-center gap-2">
               <CheckCircle2 className="size-5 text-success" aria-hidden />
               {t('course:checkout.alreadyPurchasedTitle')}
             </CardTitle>
@@ -208,7 +208,7 @@ export default function CourseCheckoutPage(): JSX.Element {
       {/* Order summary */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('course:checkout.summaryTitle')}</CardTitle>
+          <CardTitle as="h2">{t('course:checkout.summaryTitle')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="flex items-center justify-between">
@@ -233,7 +233,7 @@ export default function CourseCheckoutPage(): JSX.Element {
       {step === 'submitted' ? (
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle as="h2" className="flex items-center gap-2">
               <CheckCircle2 className="size-5 text-success" aria-hidden />
               {t('course:checkout.submittedTitle')}
             </CardTitle>
@@ -253,7 +253,7 @@ export default function CourseCheckoutPage(): JSX.Element {
       ) : step === 'method' ? (
         <Card>
           <CardHeader>
-            <CardTitle>{t('course:checkout.methodTitle')}</CardTitle>
+            <CardTitle as="h2">{t('course:checkout.methodTitle')}</CardTitle>
             <CardDescription>
               {t('course:checkout.methodDescription')}
             </CardDescription>
@@ -309,7 +309,7 @@ export default function CourseCheckoutPage(): JSX.Element {
       ) : (
         <Card>
           <CardHeader>
-            <CardTitle>{t('course:checkout.proofTitle')}</CardTitle>
+            <CardTitle as="h2">{t('course:checkout.proofTitle')}</CardTitle>
             <CardDescription>
               {t('course:checkout.proofDescription')}
             </CardDescription>
