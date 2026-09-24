@@ -968,6 +968,9 @@ export const notificationKeys = {
     [...notificationKeys.all, 'unread-count', userId] as const,
   preferences: (userId: string | undefined) =>
     [...notificationKeys.all, 'preferences', userId] as const,
+  /** `users/me/communication-preferences` — user-scoped like the rest. */
+  communicationPreferences: (userId: string | undefined) =>
+    [...notificationKeys.all, 'communication-preferences', userId] as const,
 } as const;
 
 /** Platform Settings (Prompt 13) — a singleton, unscoped, mirrors `platformDomainKeys`. */

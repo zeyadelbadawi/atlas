@@ -25,6 +25,7 @@
  */
 import {
   Award,
+  Bell,
   ClipboardList,
   GraduationCap,
   LayoutDashboard,
@@ -43,6 +44,7 @@ export type LearnerSectionId =
   | 'assessments'
   | 'certificates'
   | 'purchases'
+  | 'notifications'
   | 'devices'
   | 'profile'
   | 'security';
@@ -98,6 +100,12 @@ export const LEARNER_NAVIGATION: readonly LearnerNavigationItem[] = [
     labelKey: 'learning:learnerDashboard.nav.purchases',
     path: LEARNER_ROUTES.purchases,
     icon: Receipt,
+  },
+  {
+    id: 'notifications',
+    labelKey: 'learning:learnerDashboard.nav.notifications',
+    path: LEARNER_ROUTES.notifications,
+    icon: Bell,
   },
   {
     id: 'devices',

@@ -28,6 +28,7 @@ import { SectionLoader } from '@components/loading';
 import { cn } from '@utils';
 import { LearnerBottomNav } from './LearnerBottomNav';
 import { LearnerNavigationDrawer } from './LearnerNavigationDrawer';
+import { LearnerNotificationBell } from './LearnerNotificationBell';
 import { LearnerNavigationList } from './LearnerNavigationList';
 import { LEARNER_NAVIGATION } from '../constants/learner-navigation.constants';
 import { useLearnerSurface } from '../context/LearnerSurface.context';
@@ -61,8 +62,13 @@ export function LearnerShell(): JSX.Element {
 
       {/* Below the rail breakpoint the sections live in a drawer, opened
           from here. Above it the rail is already on screen, so the button
-          would be a second way to reach what is permanently visible. */}
-      <LearnerNavigationDrawer className="mb-4 lg:hidden" />
+          would be a second way to reach what is permanently visible. The
+          bell stays at every breakpoint: the unread signal has no other
+          home once the bottom bar is full and the drawer is closed. */}
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <LearnerNavigationDrawer className="lg:hidden" />
+        <LearnerNotificationBell className="ms-auto" />
+      </div>
 
       <div className="lg:grid lg:grid-cols-[var(--layout-sidebar-width)_minmax(0,1fr)] lg:gap-8">
         <aside className="hidden lg:block">

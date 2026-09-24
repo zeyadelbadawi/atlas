@@ -16,11 +16,21 @@ import { BaseService } from '@services';
 import type { ReadOptions, WriteOptions } from '@services';
 import type {
   CollectionQuery,
+  CommunicationPreferences,
+  CommunicationPreferencesUpdate,
   Notification,
   NotificationPreferences,
   NotificationSummary,
   PaginatedResult,
 } from '@types';
+
+/**
+ * Communication preferences live under the USER resource, not under
+ * `notifications/` — they describe what mail the account receives, and
+ * the backend mounts them at `users/me/communication-preferences`. The
+ * path is therefore written out rather than built with `this.path()`.
+ */
+const COMMUNICATION_PREFERENCES_PATH = 'users/me/communication-preferences';
 
 export class NotificationService extends BaseService {
   protected readonly resource = 'notifications';
@@ -73,6 +83,25 @@ export class NotificationService extends BaseService {
       payload,
       options
     );
+  }
+
+  async getCommunicationPreferences(
+    options?: ReadOptions
+  ): Promise<CommunicationPreferences> {
+    return this.client.get<CommunicationPreferences>(
+      COMMUNICATION_PREFERENCES_PATH,
+      options
+    );
+  }
+
+  async updateCommunicationPreferences(
+    payload: CommunicationPreferencesUpdate,
+    options?: WriteOptions
+  ): Promise<CommunicationPreferences> {
+    return this.client.patch<
+      CommunicationPreferences,
+      CommunicationPreferencesUpdate
+    >(COMMUNICATION_PREFERENCES_PATH, payload, options);
   }
 }
 

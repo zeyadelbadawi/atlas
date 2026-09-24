@@ -456,6 +456,7 @@
       "assessments": "Assessments",
       "certificates": "Certificates",
       "purchases": "Purchases",
+      "notifications": "Notifications",
       "devices": "Devices",
       "profile": "Profile",
       "security": "Security"
@@ -584,6 +585,10 @@
         "cancelled": "Cancelled",
         "refunded": "Refunded"
       }
+    },
+    "notifications": {
+      "title": "Notifications",
+      "subtitle": "Grades, certificates, live sessions and purchases. Everything that happened in your courses, in one place."
     },
     "devices": {
       "title": "Devices",

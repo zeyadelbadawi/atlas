@@ -21,8 +21,7 @@
     },
     "preferences": {
       "title": "التفضيلات",
-      "description": "اللغة والمظهر وقنوات الإشعارات.",
-      "notifications": "قنوات الإشعارات"
+      "description": "اللغة والمظهر والرسائل الإلكترونية التي تصلك."
     },
     "security": {
       "changePassword": "تغيير كلمة المرور",
@@ -68,9 +67,7 @@
     "theme": "المظهر",
     "currentPassword": "كلمة المرور الحالية",
     "newPassword": "كلمة المرور الجديدة",
-    "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
-    "emailNotifications": "إشعارات البريد الإلكتروني",
-    "pushNotifications": "الإشعارات الفورية"
+    "confirmNewPassword": "تأكيد كلمة المرور الجديدة"
   },
   "placeholders": {
     "currentPassword": "أدخل كلمة مرورك الحالية",
@@ -89,10 +86,6 @@
     "light": "فاتح",
     "dark": "داكن",
     "system": "النظام"
-  },
-  "descriptions": {
-    "emailNotifications": "تلقي الإشعارات عبر البريد الإلكتروني.",
-    "pushNotifications": "تلقي الإشعارات الفورية في متصفحك."
   },
   "errors": {
     "firstNameRequired": "الاسم الأول مطلوب",
