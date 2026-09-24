@@ -23,8 +23,9 @@ import { useState, useCallback } from 'react';
 import { useAuth } from './useAuth';
 import type { ApiError } from '@api';
 import type {
+  EmailOtpVerifyInput,
+  SignInChallenge,
   SignInSurface,
-  TwoFactorChallenge,
   TwoFactorVerifyInput,
 } from '@types';
 
@@ -49,9 +50,11 @@ export interface UseSignInResult {
    */
   readonly signIn: (
     credentials: SignInCredentials
-  ) => Promise<TwoFactorChallenge | undefined>;
+  ) => Promise<SignInChallenge | undefined>;
   /** Completes a challenged sign-in. Only this establishes the session. */
   readonly completeTwoFactor: (input: TwoFactorVerifyInput) => Promise<void>;
+  /** P66 — completes an email-code challenge. Same post-success flow as 2FA. */
+  readonly completeEmailOtp: (input: EmailOtpVerifyInput) => Promise<void>;
   readonly isLoading: boolean;
   readonly error: ApiError | null;
   readonly clearError: () => void;
@@ -63,8 +66,11 @@ export interface UseSignInResult {
  * Wraps the authentication service sign-in method with state management.
  */
 export function useSignIn(): UseSignInResult {
-  const { signIn: establishSession, completeTwoFactor: finishTwoFactor } =
-    useAuth();
+  const {
+    signIn: establishSession,
+    completeTwoFactor: finishTwoFactor,
+    completeEmailOtp: finishEmailOtp,
+  } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
 
@@ -104,6 +110,24 @@ export function useSignIn(): UseSignInResult {
     [finishTwoFactor]
   );
 
+  const completeEmailOtp = useCallback(
+    async (input: EmailOtpVerifyInput) => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        await finishEmailOtp(input);
+      } catch (err) {
+        const apiError = err as ApiError;
+        setError(apiError);
+        throw apiError;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [finishEmailOtp]
+  );
+
   const clearError = useCallback(() => {
     setError(null);
   }, []);
@@ -111,6 +135,7 @@ export function useSignIn(): UseSignInResult {
   return {
     signIn,
     completeTwoFactor,
+    completeEmailOtp,
     isLoading,
     error,
     clearError,

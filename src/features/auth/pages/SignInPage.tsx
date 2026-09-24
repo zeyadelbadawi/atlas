@@ -10,8 +10,11 @@ import { useTranslation } from 'react-i18next';
 import { LogIn } from 'lucide-react';
 import { useAuth, useSignIn } from '@hooks';
 import { TwoFactorChallengeForm } from '../components/TwoFactorChallengeForm';
-import type { RefusedSignInAcademy, TwoFactorChallenge } from '@types';
+import { EmailOtpChallengeForm } from '../components/EmailOtpChallengeForm';
+import { isEmailOtpChallenge } from '@types';
+import type { RefusedSignInAcademy, SignInChallenge } from '@types';
 import type { ApiError } from '@api';
+import { authenticationService } from '@services/identity';
 import {
   AUTHENTICATED_ENTRY_ROUTE,
   AUTH_ROUTES,
@@ -36,9 +39,17 @@ export default function SignInPage(): JSX.Element {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { session } = useAuth();
-  const { signIn, completeTwoFactor, isLoading, error, clearError } =
-    useSignIn();
-  const [challenge, setChallenge] = useState<TwoFactorChallenge | null>(null);
+  const {
+    signIn,
+    completeTwoFactor,
+    completeEmailOtp,
+    isLoading,
+    error,
+    clearError,
+  } = useSignIn();
+  // Phase 10.3 / P66 — either interruption a sign-in can produce before
+  // a session exists: an authenticator challenge or an emailed code.
+  const [challenge, setChallenge] = useState<SignInChallenge | null>(null);
   // The academies a refused learner can sign in to; `null` while the form
   // is the thing on screen.
   const [refusedAcademies, setRefusedAcademies] = useState<
@@ -109,6 +120,26 @@ export default function SignInPage(): JSX.Element {
     }
   };
 
+  // P66 — the emailed-code step. Same post-success flow as 2FA: the
+  // session appears and the effect above navigates.
+  const handleVerifyEmailOtp = async (input: {
+    code: string;
+    rememberDevice: boolean;
+  }) => {
+    if (!challenge || !isEmailOtpChallenge(challenge)) return;
+    clearError();
+    try {
+      await completeEmailOtp({
+        challengeId: challenge.challengeId,
+        code: input.code,
+        rememberDevice: input.rememberDevice,
+        surface: SURFACE,
+      });
+    } catch {
+      // Error is already set by useSignIn; the form reads its messageKey.
+    }
+  };
+
   if (session.status === 'authenticated') {
     return <></>;
   }
@@ -135,6 +166,21 @@ export default function SignInPage(): JSX.Element {
               setRefusedAcademies(null);
               clearError();
             }}
+          />
+        ) : challenge && isEmailOtpChallenge(challenge) ? (
+          <EmailOtpChallengeForm
+            challenge={challenge}
+            onSubmit={handleVerifyEmailOtp}
+            onResend={() =>
+              authenticationService.resendEmailOtp(challenge.challengeId)
+            }
+            onCancel={() => {
+              setChallenge(null);
+              clearError();
+            }}
+            isLoading={isLoading}
+            error={error}
+            forgotPasswordHref={AUTH_ROUTES.forgotPassword}
           />
         ) : challenge ? (
           <TwoFactorChallengeForm

@@ -53,7 +53,26 @@
       "sessionRevokeFailed": "Could not sign out that device",
       "sessionRevokeFailedDescription": "The session is still active. Please try again.",
       "unknownLocation": "Location unavailable",
-      "ipAddress": "IP address"
+      "ipAddress": "IP address",
+      "trustedDevices": "Remembered Devices",
+      "trustedDevicesDescription": "Browsers that can skip the emailed sign-in code. Forgetting one doesn't sign it out — it will simply be asked for a code next time.",
+      "surface": {
+        "management": "Atlas",
+        "academy": "Academy website"
+      },
+      "trustedUntil": "Remembered until {{date}}",
+      "forgetDevice": "Forget",
+      "forgetDeviceLabel": "Forget {{device}}",
+      "forgetDeviceTitle": "Forget this device?",
+      "forgetDeviceDescription": "That browser will be asked for an emailed code the next time it signs in. Nothing is signed out.",
+      "forgetOtherDevices": "Forget other devices",
+      "forgetOtherDevicesTitle": "Forget every other device?",
+      "forgetOtherDevicesDescription": "Every remembered browser except this one will be asked for an emailed code the next time it signs in.",
+      "trustedDeviceForgotten": "Device forgotten",
+      "otherTrustedDevicesForgotten": "Other devices forgotten",
+      "trustedDeviceForgetFailed": "Could not forget that device. Please try again.",
+      "noTrustedDevices": "No remembered devices",
+      "noTrustedDevicesDescription": "When you tick “Remember this device” at sign-in, that browser will be listed here."
     }
   },
   "fields": {

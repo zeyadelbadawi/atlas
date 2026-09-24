@@ -3,3 +3,7 @@
  */
 export { usePlatformSettings } from './usePlatformSettings';
 export { useUpdatePlatformSettings } from './useUpdatePlatformSettings';
+export {
+  usePlatformCommunicationSettings,
+  useUpdatePlatformCommunicationSettings,
+} from './usePlatformCommunicationSettings';

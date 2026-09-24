@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { GeneralSettings } from '../components/GeneralSettings';
 import { NotificationSettings } from '../components/NotificationSettings';
 import { SecuritySettings } from '../components/SecuritySettings';
+import { CommunicationsSettings } from '../components/CommunicationsSettings';
 
 export default function SettingsPage(): JSX.Element {
   const { t } = useTranslation();
@@ -32,6 +33,9 @@ export default function SettingsPage(): JSX.Element {
           <TabsTrigger value="security">
             {t('settings:security.title')}
           </TabsTrigger>
+          <TabsTrigger value="communications">
+            {t('settings:communications.title')}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="general" className="space-y-6">
@@ -44,6 +48,11 @@ export default function SettingsPage(): JSX.Element {
 
         <TabsContent value="security" className="space-y-6">
           <SecuritySettings />
+        </TabsContent>
+
+        {/* P66 — emailed sign-in codes, trusted devices, digests, quota alerts, providers. */}
+        <TabsContent value="communications" className="space-y-6">
+          <CommunicationsSettings />
         </TabsContent>
       </Tabs>
     </PageContainer>

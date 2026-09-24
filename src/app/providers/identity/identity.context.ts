@@ -6,7 +6,8 @@
  */
 import { createContext } from 'react';
 import type {
-  TwoFactorChallenge,
+  EmailOtpVerifyInput,
+  SignInChallenge,
   TwoFactorVerifyInput,
   Session,
   CurrentUser,
@@ -41,10 +42,13 @@ export interface IdentityContextValue {
    */
   readonly signIn: (
     credentials: SignInCredentials
-  ) => Promise<TwoFactorChallenge | undefined>;
+  ) => Promise<SignInChallenge | undefined>;
 
   /** Completes a sign-in that stopped for a second factor (carrying the original sign-in's surface). */
   readonly completeTwoFactor: (input: TwoFactorVerifyInput) => Promise<void>;
+
+  /** P66 — completes a sign-in that stopped for an emailed one-time code. */
+  readonly completeEmailOtp: (input: EmailOtpVerifyInput) => Promise<void>;
 
   /** Signs out the current user. */
   readonly signOut: () => Promise<void>;

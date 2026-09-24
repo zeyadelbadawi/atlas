@@ -109,5 +109,58 @@
     "saveError": "Failed to save settings",
     "resetSuccess": "Settings reset to defaults",
     "unsavedChanges": "You have unsaved changes"
+  },
+  "communications": {
+    "title": "Communications",
+    "description": "Emailed sign-in codes, remembered devices, digests and email delivery across the platform.",
+    "otpPolicies": {
+      "new_device": "New devices only",
+      "always": "Every sign-in",
+      "off": "Off"
+    },
+    "emailOtpPolicyManagement": {
+      "label": "Sign-in code for Atlas staff",
+      "description": "When owners, managers and instructors signing in to Atlas are asked for an emailed code."
+    },
+    "emailOtpPolicyAcademyDefault": {
+      "label": "Default sign-in code for academies",
+      "description": "What an academy uses until its owner chooses otherwise."
+    },
+    "trustedDeviceDaysManagement": "Remember Atlas devices for (days)",
+    "trustedDeviceDaysAcademy": "Remember academy devices for (days)",
+    "trustedDeviceDaysHint": "Between 1 and 365 days. After this, a remembered browser is asked for a code again.",
+    "digestHourLocal": "Digest hour (local time)",
+    "digestHourHint": "0–23 in each recipient's local time. Daily digests go out at this hour.",
+    "quota": {
+      "title": "Email quota alerts",
+      "description": "Percentages of the monthly email quota at which the platform owner is alerted.",
+      "listLabel": "Alert thresholds",
+      "empty": "No thresholds yet — add at least one.",
+      "addLabel": "Add a threshold (%)",
+      "add": "Add",
+      "remove": "Remove {{value}}% threshold"
+    },
+    "providers": {
+      "title": "Email providers",
+      "description": "How outgoing email is delivered. Read-only — providers are configured on the server.",
+      "none": "No email provider is configured. Sign-in codes and digests cannot be sent.",
+      "order": "Order",
+      "noOrder": "None",
+      "active": "Active",
+      "noneActive": "None",
+      "fromEmail": "From",
+      "noFromEmail": "Not set",
+      "configured": "Configured",
+      "notConfigured": "Not configured"
+    },
+    "errors": {
+      "trustedDeviceDays": "Enter a whole number of days between 1 and 365.",
+      "digestHour": "Enter an hour between 0 and 23.",
+      "quotaThresholdRange": "Enter a whole percentage between 1 and 100.",
+      "quotaThresholdsRequired": "Add at least one threshold.",
+      "quotaThresholdsUnique": "That threshold is already in the list."
+    },
+    "saved": "Communication settings saved",
+    "saveFailed": "The communication settings could not be saved."
   }
 }

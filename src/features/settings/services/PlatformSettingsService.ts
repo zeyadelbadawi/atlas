@@ -6,7 +6,11 @@
  */
 import { BaseService } from '@services';
 import type { ReadOptions, WriteOptions } from '@services';
-import type { PlatformConfiguration } from '@types';
+import type {
+  PlatformCommunicationSettings,
+  PlatformConfiguration,
+  UpdatePlatformCommunicationSettingsPayload,
+} from '@types';
 
 export class PlatformSettingsService extends BaseService {
   protected readonly resource = 'platform-settings';
@@ -25,6 +29,27 @@ export class PlatformSettingsService extends BaseService {
       PlatformConfiguration,
       Partial<PlatformConfiguration>
     >(this.path(), payload, options);
+  }
+
+  /** P66 — `GET platform-settings/communications`. */
+  async getCommunications(
+    options?: ReadOptions
+  ): Promise<PlatformCommunicationSettings> {
+    return this.client.get<PlatformCommunicationSettings>(
+      this.path('communications'),
+      options
+    );
+  }
+
+  /** P66 — `PATCH platform-settings/communications`; `providerStatus` is never sent. */
+  async updateCommunications(
+    payload: UpdatePlatformCommunicationSettingsPayload,
+    options?: WriteOptions
+  ): Promise<PlatformCommunicationSettings> {
+    return this.client.patch<
+      PlatformCommunicationSettings,
+      UpdatePlatformCommunicationSettingsPayload
+    >(this.path('communications'), payload, options);
   }
 }
 

@@ -18,6 +18,11 @@ import type {
   PasswordResetTokenValidation,
   EmailVerificationRequest,
   UserSession,
+  AuthenticationResponse as OtpAuthenticationResponse,
+  EmailOtpVerifyInput,
+  EmailOtpResendResult,
+  TrustedDevice,
+  TrustedDeviceList,
 } from '@types';
 
 export class AuthenticationService {
@@ -156,6 +161,57 @@ export class AuthenticationService {
    */
   public async revokeSession(sessionId: string): Promise<void> {
     await apiClient.delete<void>(resourcePath('auth', 'sessions', sessionId));
+  }
+
+  /**
+   * P66 — completes a sign-in that stopped for an emailed one-time code.
+   *
+   * Mirrors `TwoFactorService.verifyChallenge`: the challenge id travels
+   * in the BODY, never as an Authorization header, and `surface`/
+   * `academyId` are the ORIGINAL sign-in's so the session minted here is
+   * shaped for the same surface. `rememberDevice` asks the backend to
+   * trust this browser for its configured window.
+   */
+  public async verifyEmailOtp(
+    input: EmailOtpVerifyInput
+  ): Promise<OtpAuthenticationResponse> {
+    return apiClient.post<OtpAuthenticationResponse, EmailOtpVerifyInput>(
+      '/auth/otp/verify',
+      input
+    );
+  }
+
+  /** P66 — a fresh code for the same challenge; returns the next cooldown. */
+  public async resendEmailOtp(
+    challengeId: string
+  ): Promise<EmailOtpResendResult> {
+    return apiClient.post<EmailOtpResendResult, { challengeId: string }>(
+      '/auth/otp/resend',
+      { challengeId }
+    );
+  }
+
+  /**
+   * P66 — the browsers this account chose to remember at an email-code
+   * step. Owner-scoped by the access token, like `listSessions`.
+   */
+  public async listTrustedDevices(): Promise<readonly TrustedDevice[]> {
+    const response = await apiClient.get<TrustedDeviceList>(
+      '/auth/trusted-devices'
+    );
+    return response.items ?? [];
+  }
+
+  /** P66 — forgets one remembered browser; its next sign-in asks for a code again. */
+  public async revokeTrustedDevice(deviceId: string): Promise<void> {
+    await apiClient.delete<void>(
+      resourcePath('auth', 'trusted-devices', deviceId)
+    );
+  }
+
+  /** P66 — forgets every remembered browser except the current one. */
+  public async revokeOtherTrustedDevices(): Promise<void> {
+    await apiClient.delete<void>('/auth/trusted-devices');
   }
 }
 

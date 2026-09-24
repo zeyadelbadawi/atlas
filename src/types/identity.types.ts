@@ -330,3 +330,70 @@ export function isTwoFactorChallenge(
 ): response is TwoFactorChallenge {
   return (response as TwoFactorChallenge).twoFactorRequired === true;
 }
+
+/**
+ * Email one-time-code step of sign-in (P66).
+ *
+ * Returned by `POST /auth/sign-in` when the password was right but the
+ * academy/platform policy wants a code from the account's inbox — on a
+ * new device, or always. Like `TwoFactorChallenge`, `challengeId` is NOT
+ * a token: it is accepted by `/auth/otp/verify` and `/auth/otp/resend`
+ * only, and confers no access.
+ */
+export interface EmailOtpChallenge {
+  readonly emailOtpRequired: true;
+  readonly challengeId: string;
+  /** ISO timestamp — when the code stops being accepted. */
+  readonly expiresAt: string;
+  /** ISO timestamp — when a fresh code may be requested. */
+  readonly resendAvailableAt: string;
+  readonly resendsRemaining: number;
+  /** e.g. `s•••@example.com` — the only address detail the client sees. */
+  readonly maskedEmail: string;
+}
+
+/** Discriminates an email-code challenge; see `isTwoFactorChallenge` for why the parameter is broad. */
+export function isEmailOtpChallenge(
+  response: object
+): response is EmailOtpChallenge {
+  return (response as EmailOtpChallenge).emailOtpRequired === true;
+}
+
+/** Either interruption a sign-in can produce before a session exists. */
+export type SignInChallenge = TwoFactorChallenge | EmailOtpChallenge;
+
+/** `POST /auth/otp/verify` — completes an email-code challenge. */
+export interface EmailOtpVerifyInput {
+  readonly challengeId: string;
+  /** Exactly six digits. */
+  readonly code: string;
+  readonly surface?: SignInSurface;
+  readonly academyId?: string;
+  /** Skip the code on this browser for the trusted-device window. */
+  readonly rememberDevice: boolean;
+}
+
+/** `POST /auth/otp/resend` — a fresh code, with the next cooldown. */
+export interface EmailOtpResendResult {
+  readonly resendAvailableAt: string;
+  readonly resendsRemaining: number;
+}
+
+/**
+ * A browser the account chose to remember at an email-code step
+ * (`GET /auth/trusted-devices`). Distinct from a session: a trusted
+ * device is not signed in, it is merely allowed to skip the code.
+ */
+export interface TrustedDevice {
+  readonly id: string;
+  readonly label: string;
+  readonly surface: SignInSurface;
+  readonly lastUsedAt: string;
+  readonly expiresAt: string;
+  /** The browser making the request. */
+  readonly current: boolean;
+}
+
+export interface TrustedDeviceList {
+  readonly items: readonly TrustedDevice[];
+}

@@ -95,7 +95,14 @@
     "inviteRequired": "This academy accepts new students by invitation only. Use the invitation link you were sent.",
     "inviteInvalid": "This invitation link is invalid, already used or expired. Ask the academy for a new one.",
     "managementSurfaceOnly": "This area is for academy staff only.",
-    "rateLimited": "Too many attempts. Please wait a few minutes and try again."
+    "rateLimited": "Too many attempts. Please wait a few minutes and try again.",
+    "otpInvalid": "That code didn't work. Check the latest email and try again.",
+    "otpExpired": "That code has expired. Request a new one.",
+    "otpAttemptsExceeded": "Too many wrong codes. Please sign in again.",
+    "otpSuppressedAddress": "We can't deliver email to this address right now.",
+    "otpResendCooldown": "Please wait a moment before requesting another code.",
+    "otpResendExhausted": "No more codes can be sent for this sign-in. Please sign in again.",
+    "otpResendFailed": "We couldn't send a new code. Please try again."
   },
   "subscription": {
     "required": "An active subscription is required to make this change."
