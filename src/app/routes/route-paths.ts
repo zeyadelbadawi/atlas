@@ -58,6 +58,11 @@ export const DASHBOARD_ROUTES = {
   analyticsUsers: '/dashboard/analytics/users',
   analyticsEngagement: '/dashboard/analytics/engagement',
   analyticsRevenue: '/dashboard/analytics/revenue',
+  /* P64 Phase 4 — the Platform Owner's operational reporting: checkout
+     commerce and content delivery each get a page, so the dashboard can
+     stay an executive overview. */
+  analyticsCommerce: '/dashboard/analytics/commerce',
+  analyticsDelivery: '/dashboard/analytics/delivery',
   /** Phase 9 — the Client Owner's student progress rollup (roadmap CO11). */
   studentAnalytics: '/dashboard/student-analytics',
   platform: '/dashboard/platform',

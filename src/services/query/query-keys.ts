@@ -935,6 +935,12 @@ export const platformMetricsKeys = {
   overview: () => [...platformMetricsKeys.all, 'overview'] as const,
   /** P64 Phase 4 §E.5 — video minutes / provider health. */
   video: () => [...platformMetricsKeys.all, 'video'] as const,
+  /** P64 Phase 4 — checkout orders, manual-payment approvals, refunds. */
+  commerce: (days: number) =>
+    [...platformMetricsKeys.all, 'commerce', days] as const,
+  /** P64 Phase 4 — content grants, video inventory, retention lag. */
+  delivery: (days: number) =>
+    [...platformMetricsKeys.all, 'delivery', days] as const,
 } as const;
 
 /** Platform Analytics (Prompt 13). */

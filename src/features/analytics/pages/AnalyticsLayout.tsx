@@ -50,6 +50,17 @@ const ANALYTICS_TABS: readonly NavigationItem[] = [
     labelKey: 'analytics:tabs.revenue',
     path: DASHBOARD_ROUTES.analyticsRevenue,
   },
+  // P64 Phase 4 — operational reporting areas fed by `/platform-metrics/*`.
+  {
+    id: 'analytics-commerce',
+    labelKey: 'analytics:tabs.commerce',
+    path: DASHBOARD_ROUTES.analyticsCommerce,
+  },
+  {
+    id: 'analytics-delivery',
+    labelKey: 'analytics:tabs.delivery',
+    path: DASHBOARD_ROUTES.analyticsDelivery,
+  },
 ];
 
 export default function AnalyticsLayout(): JSX.Element {

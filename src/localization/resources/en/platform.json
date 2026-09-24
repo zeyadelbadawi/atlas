@@ -328,6 +328,7 @@
     },
     "failedNotice_one": "{{count}} asset failed processing — check the provider.",
     "failedNotice_other": "{{count}} assets failed processing — check the provider.",
-    "empty": "No video assets yet."
+    "empty": "No video assets yet.",
+    "openReport": "Open the content delivery report"
   }
 }

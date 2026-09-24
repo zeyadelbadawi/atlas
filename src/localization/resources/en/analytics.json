@@ -5,7 +5,9 @@
     "overview": "Overview",
     "users": "Users",
     "engagement": "Engagement",
-    "revenue": "Revenue"
+    "revenue": "Revenue",
+    "commerce": "Commerce",
+    "delivery": "Content delivery"
   },
   "dateRange": {
     "label": "Date range",
@@ -115,5 +117,140 @@
     "min": "Minimum",
     "max": "Maximum",
     "count": "Count"
+  },
+  "report": {
+    "generatedAt": "Figures generated {{time}}"
+  },
+  "duration": {
+    "seconds_one": "{{count}} s",
+    "seconds_other": "{{count}} s",
+    "minutes_one": "{{count}} min",
+    "minutes_other": "{{count}} min",
+    "hours_one": "{{count}} h",
+    "hours_other": "{{count}} h",
+    "days_one": "{{count}} d",
+    "days_other": "{{count}} d"
+  },
+  "commerce": {
+    "headline": {
+      "paidOrders": "Paid orders",
+      "paidOrdersHint_one": "of {{count}} order created",
+      "paidOrdersHint_other": "of {{count}} orders created",
+      "revenue": "Paid revenue",
+      "revenueHint": "Paid orders in the window",
+      "revenueHintMulti_one": "Across {{count}} currency, not summed",
+      "revenueHintMulti_other": "Across {{count}} currencies, not summed",
+      "awaitingReview": "Awaiting review",
+      "awaitingReviewHint": "Current backlog, not limited to the window",
+      "approvalTime": "Median approval time",
+      "approvalTimeHint_one": "p95 {{p95}} · {{count}} approval",
+      "approvalTimeHint_other": "p95 {{p95}} · {{count}} approvals"
+    },
+    "orders": {
+      "title": "Orders by status",
+      "description_one": "{{count}} order created in the window, by where it stands now.",
+      "description_other": "{{count}} orders created in the window, by where each stands now.",
+      "columns": {
+        "status": "Status",
+        "count": "Orders",
+        "share": "Share of created"
+      },
+      "status": {
+        "created": "Created",
+        "pendingPayment": "Pending payment",
+        "paid": "Paid",
+        "expired": "Expired",
+        "refunded": "Refunded",
+        "cancelled": "Cancelled"
+      }
+    },
+    "payments": {
+      "title": "Manual payment reviews",
+      "description": "Bank-transfer and other manual payments an operator approved or rejected in the window, and how long approval took.",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "p50": "Median approval time",
+      "p95": "95th percentile",
+      "sampleSize_one": "From {{count}} approval",
+      "sampleSize_other": "From {{count}} approvals",
+      "truncated": "The latency sample was capped, so the median and 95th percentile describe the most recent approvals only."
+    },
+    "refunds": {
+      "title": "Refunds",
+      "description": "Refund requests raised and completed in the window.",
+      "requested": "Requested",
+      "completed": "Completed",
+      "refundedOrders": "Orders now refunded"
+    },
+    "revenue": {
+      "title": "Paid revenue by currency",
+      "description": "Amounts paid in the window, per currency. Currencies are listed separately, never converted or summed.",
+      "none": "No paid revenue in this window."
+    },
+    "empty": {
+      "title": "No commerce activity",
+      "description_one": "No orders, payment reviews or refunds were recorded in the last {{count}} day, and nothing is awaiting review.",
+      "description_other": "No orders, payment reviews or refunds were recorded in the last {{count}} days, and nothing is awaiting review."
+    }
+  },
+  "delivery": {
+    "headline": {
+      "granted": "Access granted",
+      "grantedHint": "{{value}} of access checks",
+      "refused": "Access refused",
+      "refusedHint": "{{value}} of access checks",
+      "storedMinutes": "Video minutes stored",
+      "storedMinutesHint_one": "Across {{count}} asset",
+      "storedMinutesHint_other": "Across {{count}} assets",
+      "failedProcessing": "Failed processing",
+      "failedProcessingHint": "Check the video provider",
+      "failedProcessingOk": "Pipeline healthy"
+    },
+    "grants": {
+      "title": "Access grants",
+      "description_one": "Lesson-access checks in the last {{count}} day: how many let the learner in, and why the rest did not.",
+      "description_other": "Lesson-access checks in the last {{count}} days: how many let the learner in, and why the rest did not.",
+      "granted": "Granted",
+      "refused": "Refused",
+      "byReason": "Refusals by reason",
+      "columns": {
+        "reason": "Reason",
+        "count": "Refusals",
+        "share": "Share of refusals"
+      },
+      "reasons": {
+        "notAuthenticated": "Not signed in",
+        "notEnrolled": "Not enrolled",
+        "accessEnded": "Access ended",
+        "courseUnavailable": "Course unavailable",
+        "lessonUnavailable": "Lesson unavailable",
+        "scheduled": "Not yet scheduled",
+        "deviceLimit": "Device limit reached",
+        "sessionConflict": "Another session active",
+        "suspended": "Account suspended",
+        "rateLimited": "Too many requests"
+      },
+      "truncated": "The reason list was shortened to its top entries. The granted and refused totals are complete.",
+      "none": "No lesson-access checks were recorded in this window."
+    },
+    "video": {
+      "title": "Video inventory",
+      "description": "Stored minutes per security tier, assets per provider, and the processing pipeline. Inventory figures are current, not window-bound."
+    },
+    "retention": {
+      "title": "Retention",
+      "description": "Rows older than their retention window that were still in the database when these figures were generated. Zero is the healthy reading; a number that grows between visits means the purge job is behind.",
+      "contentAccessLog": "Content access log rows past retention",
+      "quizAttemptEvents": "Quiz attempt events past retention",
+      "rowHint": "Still present",
+      "ok": "Nothing is past its retention window.",
+      "behind_one": "{{count}} row is past its retention window and still present — the purge job is behind.",
+      "behind_other": "{{count}} rows are past their retention window and still present — the purge job is behind."
+    },
+    "empty": {
+      "title": "No delivery activity",
+      "description_one": "No lesson-access checks, video assets or retention backlog were recorded in the last {{count}} day.",
+      "description_other": "No lesson-access checks, video assets or retention backlog were recorded in the last {{count}} days."
+    }
   }
 }

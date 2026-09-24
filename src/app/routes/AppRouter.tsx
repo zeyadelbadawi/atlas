@@ -88,6 +88,12 @@ const AnalyticsEngagementPage = lazy(
 const AnalyticsRevenuePage = lazy(
   () => import('@features/analytics/pages/AnalyticsRevenuePage')
 );
+const AnalyticsCommercePage = lazy(
+  () => import('@features/analytics/pages/AnalyticsCommercePage')
+);
+const AnalyticsDeliveryPage = lazy(
+  () => import('@features/analytics/pages/AnalyticsDeliveryPage')
+);
 const SearchPage = lazy(() => import('@features/search/pages/SearchPage'));
 const SupportCenterPage = lazy(
   () => import('@features/support/pages/SupportCenterPage')
@@ -583,6 +589,11 @@ export function AppRouter(): JSX.Element {
               <Route path="users" element={<AnalyticsUsersPage />} />
               <Route path="engagement" element={<AnalyticsEngagementPage />} />
               <Route path="revenue" element={<AnalyticsRevenuePage />} />
+              {/* P64 Phase 4 — operational reporting. Same guard as the
+                  siblings; `PlatformOwnerGuard` on `/platform-metrics/*`
+                  is the real control. */}
+              <Route path="commerce" element={<AnalyticsCommercePage />} />
+              <Route path="delivery" element={<AnalyticsDeliveryPage />} />
             </Route>
 
             {/* Phase 9 (roadmap CO11) — the Client Owner's student progress

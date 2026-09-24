@@ -1,13 +1,16 @@
 /**
- * PlatformVideoMetrics — the Platform Owner's video inventory card.
+ * PlatformVideoMetrics — the dashboard's compact video summary card
+ * (P64 Phase 4).
  *
  * Native DOM assertions only (this repo has no jest-dom). What is pinned:
- * the headline totals, the per-tier and per-provider breakdowns, and the
+ * the three headline totals, the link to the Content delivery report where
+ * the per-tier / per-provider / pipeline detail now lives, and the
  * provider-health signal — a failed count must be announced in words via a
  * status region, never by colour alone.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { PlatformVideoMetrics } from './PlatformVideoMetrics';
 
 const mockQuery = vi.fn();
@@ -29,6 +32,14 @@ afterEach(() => {
   mockQuery.mockReset();
 });
 
+function renderCard() {
+  return render(
+    <MemoryRouter>
+      <PlatformVideoMetrics />
+    </MemoryRouter>
+  );
+}
+
 const data = {
   totalVideoAssets: 5,
   totalStoredMinutes: 35,
@@ -46,31 +57,32 @@ const data = {
 describe('PlatformVideoMetrics', () => {
   it('renders a skeleton while loading', () => {
     mockQuery.mockReturnValue({ isLoading: true });
-    render(<PlatformVideoMetrics />);
-    expect(screen.queryByText('platform:video.byTier')).toBeNull();
+    renderCard();
+    expect(screen.queryByText('platform:video.totalAssets')).toBeNull();
+    expect(screen.queryByRole('link')).toBeNull();
   });
 
   it('renders the headline totals', () => {
     mockQuery.mockReturnValue({ data, isLoading: false });
-    render(<PlatformVideoMetrics />);
+    renderCard();
     expect(screen.getByText('5')).toBeTruthy();
     expect(screen.getByText('35')).toBeTruthy();
     expect(screen.getByText('platform:video.gb:4')).toBeTruthy();
   });
 
-  it('renders every tier and provider row', () => {
+  it('keeps the detail off the dashboard and links to the delivery report', () => {
     mockQuery.mockReturnValue({ data, isLoading: false });
-    render(<PlatformVideoMetrics />);
-    expect(screen.getByText('platform:video.tierNormal')).toBeTruthy();
-    expect(screen.getByText('platform:video.tierPremium')).toBeTruthy();
-    expect(screen.getByText('platform:video.tierNone')).toBeTruthy();
-    expect(screen.getByText('r2_worker')).toBeTruthy();
-    expect(screen.getByText('cloudflare_stream')).toBeTruthy();
+    renderCard();
+    // The per-tier / per-provider lists moved to Analysis › Content delivery.
+    expect(screen.queryByText('platform:video.tierNormal')).toBeNull();
+    expect(screen.queryByText('r2_worker')).toBeNull();
+    const link = screen.getByRole('link', { name: 'platform:video.openReport' });
+    expect(link.getAttribute('href')).toBe('/dashboard/analytics/delivery');
   });
 
   it('announces failed processing in a status region, not by colour alone', () => {
     mockQuery.mockReturnValue({ data, isLoading: false });
-    render(<PlatformVideoMetrics />);
+    renderCard();
     const status = screen.getByRole('status');
     expect(status.textContent).toContain('platform:video.failedNotice');
   });
@@ -80,7 +92,7 @@ describe('PlatformVideoMetrics', () => {
       data: { ...data, processing: { ...data.processing, failed: 0 } },
       isLoading: false,
     });
-    render(<PlatformVideoMetrics />);
+    renderCard();
     expect(screen.queryByRole('status')).toBeNull();
   });
 
@@ -91,7 +103,8 @@ describe('PlatformVideoMetrics', () => {
       isLoading: false,
       refetch,
     });
-    render(<PlatformVideoMetrics />);
-    expect(screen.queryByText('platform:video.byTier')).toBeNull();
+    renderCard();
+    expect(screen.queryByText('platform:video.totalAssets')).toBeNull();
+    expect(screen.queryByRole('link')).toBeNull();
   });
 });
