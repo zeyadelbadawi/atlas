@@ -13,6 +13,16 @@ const defaultConfig = {
 
 // Function to load runtime configuration
 export async function loadRuntimeConfig(): Promise<void> {
+  // A build that already carries its API base URL (every Atlas build does:
+  // `.env.production` sets `VITE_API_BASE_URL=/api/v1`) has nothing to
+  // learn from a runtime config endpoint, and this origin serves none —
+  // the probe answered 404 on every page load in production. The probe
+  // stays for a runtime-configured deployment, which is the only case
+  // where the answer could change anything.
+  if (import.meta.env.VITE_API_BASE_URL) {
+    configLoading = false;
+    return;
+  }
   try {
     // Try to load configuration from a config endpoint
     const response = await fetch('/api/config');
