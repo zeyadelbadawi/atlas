@@ -325,7 +325,11 @@ test.describe('J6 — catalog, details, reviews and paid checkout', () => {
       timeout: 30_000,
     });
     await expect(page.getByText(paidCourseTitle)).toBeVisible();
-    await page.getByRole('radio', { name: new RegExp(method.displayName) }).click();
+    // Selected by KEY, not display name: `seedPaymentMethod` sets
+    // `displayName` to its label, so two catalog rows seeded by
+    // different runs share a name and a name-based locator matches
+    // both. The key is unique and is what the radio's id is built from.
+    await page.locator(`#method-${method.key}`).click();
     await page.getByRole('button', { name: 'Continue' }).click();
 
     await expect(page.getByText('Upload payment proof')).toBeVisible({ timeout: 30_000 });
