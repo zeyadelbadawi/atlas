@@ -414,3 +414,117 @@ describe('CourseCatalogSection — results', () => {
     expect(screen.queryByText('No courses to show yet')).toBeNull();
   });
 });
+
+
+describe('CourseCatalogSection — card metadata from `stats`', () => {
+  const cardText = (container: HTMLElement, index = 0): string =>
+    container.querySelectorAll('article')[index]?.textContent ?? '';
+
+  it('renders duration, lesson count, free-preview badge and rating', () => {
+    page = pageOf([
+      course({
+        id: 'course-1',
+        title: 'Intro to Python',
+        level: 'beginner',
+        shortDescription: 'From zero to scripts.',
+        instructors: [{ id: 'i-1', name: 'Ada Lovelace' }],
+        stats: {
+          totalSections: 4,
+          totalLessons: 12,
+          durationSeconds: 4800,
+          hasPreview: true,
+          averageRating: 4.5,
+          totalReviews: 12,
+        },
+      }),
+    ]);
+    const { container } = renderSection();
+
+    const text = cardText(container);
+    expect(text).toContain('1h 20m');
+    expect(text).toContain('12 lessons');
+    expect(text).toContain('Free preview');
+    expect(text).toContain('Ada Lovelace');
+    expect(text).toContain('From zero to scripts.');
+    expect(text).toContain('4.5');
+    expect(text).toContain('(12)');
+    expect(text).toContain('12 reviews');
+
+    // The stars are one labelled image; the score is never colour-only.
+    const stars = screen.getByRole('img', { name: 'Rated 4.5 out of 5' });
+    expect(container.querySelector('article')?.contains(stars)).toBe(true);
+  });
+
+  it('formats a sub-hour duration as minutes only', () => {
+    page = pageOf([
+      course({
+        id: 'course-1',
+        title: 'Quick start',
+        stats: { totalSections: 1, totalLessons: 1, durationSeconds: 720 },
+      }),
+    ]);
+    const { container } = renderSection();
+
+    const text = cardText(container);
+    expect(text).toContain('12m');
+    expect(text).toContain('1 lesson');
+    expect(text).not.toContain('1h');
+  });
+
+  it('hides the rating entirely when there are no reviews', () => {
+    page = pageOf([
+      course({
+        id: 'course-1',
+        title: 'Unrated course',
+        stats: {
+          totalSections: 2,
+          totalLessons: 5,
+          durationSeconds: 600,
+          hasPreview: false,
+          averageRating: 0,
+          totalReviews: 0,
+        },
+      }),
+    ]);
+    const { container } = renderSection();
+
+    expect(screen.queryByRole('img', { name: /Rated/ })).toBeNull();
+    const text = cardText(container);
+    expect(text).not.toContain('0.0');
+    expect(text).not.toContain('(0)');
+    expect(text).not.toContain('Free preview');
+    expect(text).toContain('10m');
+  });
+
+  it('hides the duration when the backend has none', () => {
+    page = pageOf([
+      course({
+        id: 'course-1',
+        title: 'No duration yet',
+        stats: {
+          totalSections: 1,
+          totalLessons: 3,
+          durationSeconds: null,
+          hasPreview: false,
+          averageRating: 0,
+          totalReviews: 0,
+        },
+      }),
+    ]);
+    const { container } = renderSection();
+
+    const text = cardText(container);
+    expect(text).toContain('3 lessons');
+    expect(text).not.toMatch(/\d+m\b/);
+    expect(text).not.toContain('0m');
+  });
+
+  it('still renders a plain card when the list carries no `stats` at all', () => {
+    page = TWO_COURSES;
+    const { container } = renderSection();
+
+    expect(container.querySelectorAll('article')).toHaveLength(2);
+    expect(screen.queryByRole('img', { name: /Rated/ })).toBeNull();
+    expect(cardText(container)).not.toContain('Free preview');
+  });
+});

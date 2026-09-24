@@ -767,7 +767,12 @@
       "resultCount": "{{count}} course",
       "resultCount_other": "{{count}} courses",
       "noResults": "No courses match your filters",
-      "noResultsDescription": "Try a different search term or clear a filter."
+      "noResultsDescription": "Try a different search term or clear a filter.",
+      "durationHours": "{{hours}}h {{minutes}}m",
+      "durationHoursOnly": "{{hours}}h",
+      "durationMinutes": "{{minutes}}m",
+      "durationLabel": "Duration",
+      "instructorLabel": "Instructor"
     },
     "courseDetails": {
       "aboutTitle": "About this course",
