@@ -62,3 +62,60 @@ export interface NotificationTypePreferences {
   readonly activity: NotificationChannelPreferences;
   readonly announcement: NotificationChannelPreferences;
 }
+
+/**
+ * Communication preferences (`GET/PATCH users/me/communication-preferences`).
+ *
+ * Five categories, three of which are LOCKED: security, transactional and
+ * lifecycle mail is always sent because a person cannot opt out of "your
+ * password changed" or "your order was refunded" and still be safe. The
+ * `locked: true` literal is part of the wire shape so the UI renders the
+ * lock from the contract rather than from a hard-coded list of category
+ * names. `operational` is `null` for an account with nothing to operate
+ * (a learner), and the row is simply not shown.
+ */
+export type CommunicationDigest = 'immediate' | 'daily' | 'off';
+
+export type CommunicationLanguage = 'en' | 'ar';
+
+export interface LockedCommunicationCategory {
+  readonly email: true;
+  readonly locked: true;
+}
+
+export interface LifecycleCommunicationCategory
+  extends LockedCommunicationCategory {
+  /** Reminder mail (an upcoming session, an expiring trial) can be muted. */
+  readonly reminders: boolean;
+}
+
+export interface EngagementCommunicationCategory {
+  readonly email: boolean;
+  readonly digest: CommunicationDigest;
+}
+
+export interface OperationalCommunicationCategory {
+  readonly email: boolean;
+  readonly digest: Exclude<CommunicationDigest, 'off'>;
+}
+
+export interface CommunicationPreferences {
+  readonly language: CommunicationLanguage;
+  readonly categories: {
+    readonly security: LockedCommunicationCategory;
+    readonly transactional: LockedCommunicationCategory;
+    readonly lifecycle: LifecycleCommunicationCategory;
+    readonly engagement: EngagementCommunicationCategory;
+    readonly operational: OperationalCommunicationCategory | null;
+  };
+}
+
+/** The `PATCH` body — only what a person may change. */
+export interface CommunicationPreferencesUpdate {
+  readonly language?: CommunicationLanguage;
+  readonly lifecycle?: { readonly reminders: boolean };
+  readonly engagement?: EngagementCommunicationCategory;
+  readonly operational?: OperationalCommunicationCategory;
+}
+
+export type CommunicationCategoryId = keyof CommunicationPreferences['categories'];

@@ -1,13 +1,20 @@
 /**
  * Profile Preferences Section.
  *
- * Edit user preferences. Prompt 13 replacement for the Prompt 3A
- * scaffold — the form used to fake-save via `setTimeout` and collected a
- * `marketingEmails` toggle `UserPreferences.notifications` has no field
- * for (only `email`/`push`/`sms` exist, per `identity.types.ts`); that
- * toggle is removed rather than left half-fake. Language/theme apply
- * immediately via `useLanguage`/`useTheme` (unchanged, already real);
- * only the notification channels are persisted through this mutation.
+ * Two things live here, and they save differently on purpose.
+ *
+ * LANGUAGE AND THEME are a form with a Save button: they apply to the
+ * whole interface at once, and applying them the instant a select
+ * changes would re-render the page — in the other direction, for
+ * Arabic — under the person's pointer. On save they apply locally
+ * (`useLanguage`/`useTheme`) and persist through `useUpdatePreferences`
+ * so the next sign-in starts the same way.
+ *
+ * EMAIL PREFERENCES are the `CommunicationPreferencesPanel`: a matrix of
+ * per-category switches that save on change, optimistically, with a
+ * toast. The previous "email"/"push" switches are gone — push was never
+ * delivered anywhere, and a switch that does nothing teaches a person
+ * that none of the switches do anything.
  */
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -30,17 +37,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { ErrorState } from '@components/feedback';
-import { useToast, useLanguage, useTheme, useAuth } from '@hooks';
+import { useToast, useLanguage, useTheme } from '@hooks';
+import { CommunicationPreferencesPanel } from '@features/notifications';
 import { useUpdatePreferences } from '../hooks';
 
 const preferencesSchema = z.object({
   language: z.enum(['en', 'ar']),
   theme: z.enum(['light', 'dark', 'system']),
-  emailNotifications: z.boolean(),
-  pushNotifications: z.boolean(),
 });
 
 type PreferencesFormData = z.infer<typeof preferencesSchema>;
@@ -50,19 +55,15 @@ export function ProfilePreferencesSection(): JSX.Element {
   const { toast } = useToast();
   const { language, setLanguage } = useLanguage();
   const { preference, setPreference } = useTheme();
-  const { user } = useAuth();
   const updatePreferences = useUpdatePreferences();
 
-  const { register, handleSubmit, setValue, watch } =
-    useForm<PreferencesFormData>({
-      resolver: zodResolver(preferencesSchema),
-      defaultValues: {
-        language: language as 'en' | 'ar',
-        theme: preference as 'light' | 'dark' | 'system',
-        emailNotifications: user?.preferences?.notifications?.email ?? true,
-        pushNotifications: user?.preferences?.notifications?.push ?? false,
-      },
-    });
+  const { handleSubmit, setValue, watch } = useForm<PreferencesFormData>({
+    resolver: zodResolver(preferencesSchema),
+    defaultValues: {
+      language: language as 'en' | 'ar',
+      theme: preference as 'light' | 'dark' | 'system',
+    },
+  });
 
   const formValues = watch();
 
@@ -75,13 +76,7 @@ export function ProfilePreferencesSection(): JSX.Element {
     }
 
     updatePreferences.mutate(
-      {
-        notifications: {
-          email: data.emailNotifications,
-          push: data.pushNotifications,
-          sms: user?.preferences?.notifications?.sms ?? false,
-        },
-      },
+      { language: data.language, theme: data.theme },
       {
         onSuccess: () => {
           toast({
@@ -101,13 +96,13 @@ export function ProfilePreferencesSection(): JSX.Element {
           {t('profile:sections.preferences.description')}
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-6">
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
           {updatePreferences.error ? (
             <ErrorState onRetry={handleSubmit(handleFormSubmit)} />
           ) : null}
 
-          <div className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="language">{t('profile:fields.language')}</Label>
               <Select
@@ -162,52 +157,6 @@ export function ProfilePreferencesSection(): JSX.Element {
             </div>
           </div>
 
-          <Separator />
-
-          <div className="space-y-4">
-            <h3 className="text-sm font-medium">
-              {t('profile:sections.preferences.notifications')}
-            </h3>
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="emailNotifications" className="font-normal">
-                  {t('profile:fields.emailNotifications')}
-                </Label>
-                <p className="text-sm text-muted-foreground">
-                  {t('profile:descriptions.emailNotifications')}
-                </p>
-              </div>
-              <Switch
-                id="emailNotifications"
-                checked={formValues.emailNotifications}
-                onCheckedChange={(checked) =>
-                  setValue('emailNotifications', checked, { shouldDirty: true })
-                }
-                disabled={updatePreferences.isPending}
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="pushNotifications" className="font-normal">
-                  {t('profile:fields.pushNotifications')}
-                </Label>
-                <p className="text-sm text-muted-foreground">
-                  {t('profile:descriptions.pushNotifications')}
-                </p>
-              </div>
-              <Switch
-                id="pushNotifications"
-                checked={formValues.pushNotifications}
-                onCheckedChange={(checked) =>
-                  setValue('pushNotifications', checked, { shouldDirty: true })
-                }
-                disabled={updatePreferences.isPending}
-              />
-            </div>
-          </div>
-
           <Button type="submit" disabled={updatePreferences.isPending}>
             <Save className="me-2 size-4" aria-hidden />
             {updatePreferences.isPending
@@ -215,6 +164,26 @@ export function ProfilePreferencesSection(): JSX.Element {
               : t('common:actions.save')}
           </Button>
         </form>
+
+        <Separator />
+
+        <section
+          aria-labelledby="communication-preferences-heading"
+          className="space-y-4"
+        >
+          <div className="space-y-1">
+            <h3
+              id="communication-preferences-heading"
+              className="text-sm font-medium"
+            >
+              {t('notifications:communication.title')}
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {t('notifications:communication.description')}
+            </p>
+          </div>
+          <CommunicationPreferencesPanel />
+        </section>
       </CardContent>
     </Card>
   );

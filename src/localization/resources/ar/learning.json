@@ -506,6 +506,7 @@
       "assessments": "التقييمات",
       "certificates": "الشهادات",
       "purchases": "المشتريات",
+      "notifications": "الإشعارات",
       "devices": "الأجهزة",
       "profile": "الملف الشخصي",
       "security": "الأمان"
@@ -638,6 +639,10 @@
         "cancelled": "ملغى",
         "refunded": "مُسترَد"
       }
+    },
+    "notifications": {
+      "title": "الإشعارات",
+      "subtitle": "الدرجات والشهادات والجلسات المباشرة والمشتريات. كل ما حدث في دوراتك، في مكان واحد."
     },
     "devices": {
       "title": "الأجهزة",

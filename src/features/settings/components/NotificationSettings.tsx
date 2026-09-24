@@ -1,12 +1,22 @@
 /**
- * Notification Settings Component.
+ * Notification Settings — the PLATFORM-WIDE DEFAULTS.
  *
- * Prompt 13 replacement for the Prompt 3A scaffold — every `<Switch>` was
- * decorative (`defaultChecked`, no `onCheckedChange`, no persistence).
- * Now backed by the real `NotificationPreferences {email, push, sms}`
- * contract (`identity.types.ts`) and a real mutation.
+ * What a new account starts with, shown through the same
+ * `CommunicationPreferencesMatrix` a person sees on their own profile, so
+ * an operator setting the default looks at exactly the rows the person
+ * will. The locked categories are locked here too — a platform cannot
+ * default anyone out of security mail — and only the engagement row is
+ * a real control.
+ *
+ * THE DATA LAYER IS UNCHANGED: `useNotificationPreferences` and its
+ * mutation still carry the legacy `{email, push, sms}` triple, and this
+ * page maps the matrix's engagement email switch onto `email`. Digest,
+ * reminders and language have no backing field on this contract, so
+ * those controls are switched off rather than rendered as switches that
+ * would save nothing. `push` and `sms` are no longer shown: neither
+ * channel is delivered anywhere, and a default for a channel that does
+ * not exist is not a setting.
  */
-import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Card,
@@ -15,15 +25,35 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@components/feedback';
 import {
+  CommunicationPreferencesMatrix,
+  CommunicationPreferencesMatrixSkeleton,
   useNotificationPreferences,
   useUpdateNotificationPreferences,
 } from '@features/notifications';
-import type { NotificationPreferences } from '@types';
+import type {
+  CommunicationPreferences,
+  CommunicationPreferencesUpdate,
+  NotificationPreferences,
+} from '@types';
+
+/** The legacy triple, viewed as the matrix's shape. */
+function toMatrixValue(
+  preferences: NotificationPreferences
+): CommunicationPreferences {
+  return {
+    language: 'en',
+    categories: {
+      security: { email: true, locked: true },
+      transactional: { email: true, locked: true },
+      lifecycle: { email: true, locked: true, reminders: true },
+      engagement: { email: preferences.email, digest: 'immediate' },
+      // No operational default exists on this contract; the row is absent.
+      operational: null,
+    },
+  };
+}
 
 export function NotificationSettings(): JSX.Element {
   const { t } = useTranslation();
@@ -34,118 +64,50 @@ export function NotificationSettings(): JSX.Element {
     refetch,
   } = useNotificationPreferences();
   const updatePreferences = useUpdateNotificationPreferences();
-  const [draft, setDraft] = useState<NotificationPreferences | undefined>(
-    preferences
-  );
 
-  useEffect(() => {
-    setDraft(preferences);
-  }, [preferences]);
-
-  const handleToggle = (
-    channel: keyof NotificationPreferences,
-    value: boolean
-  ) => {
-    if (!draft) return;
-    const next = { ...draft, [channel]: value };
-    setDraft(next);
-    updatePreferences.mutate(next, { onError: () => setDraft(draft) });
+  const handleChange = (update: CommunicationPreferencesUpdate) => {
+    if (!preferences || !update.engagement) return;
+    updatePreferences.mutate({
+      ...preferences,
+      email: update.engagement.email,
+    });
   };
-
-  if (isLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('settings:notifications.title')}</CardTitle>
-          <CardDescription>
-            {t('settings:notifications.description')}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (error || !draft) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('settings:notifications.title')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ErrorState onRetry={() => refetch()} />
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t('settings:notifications.title')}</CardTitle>
+        <CardTitle>{t('notifications:communication.defaultsTitle')}</CardTitle>
         <CardDescription>
-          {t('settings:notifications.description')}
+          {t('notifications:communication.defaultsDescription')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {updatePreferences.error ? (
-          <ErrorState onRetry={() => updatePreferences.mutate(draft)} />
-        ) : null}
-
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
-            <Label htmlFor="notif-email">
-              {t('settings:notifications.emailNotifications')}
-            </Label>
-            <p className="text-sm text-muted-foreground">
-              {t('settings:notifications.emailNotificationsDescription')}
-            </p>
-          </div>
-          <Switch
-            id="notif-email"
-            checked={draft.email}
-            onCheckedChange={(checked) => handleToggle('email', checked)}
-            disabled={updatePreferences.isPending}
+        {isLoading ? (
+          <CommunicationPreferencesMatrixSkeleton />
+        ) : error || !preferences ? (
+          <ErrorState
+            titleKey="notifications:communication.loadFailed"
+            onRetry={() => refetch()}
           />
-        </div>
-
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
-            <Label htmlFor="notif-push">
-              {t('settings:notifications.pushNotifications')}
-            </Label>
-            <p className="text-sm text-muted-foreground">
-              {t('settings:notifications.pushNotificationsDescription')}
-            </p>
-          </div>
-          <Switch
-            id="notif-push"
-            checked={draft.push}
-            onCheckedChange={(checked) => handleToggle('push', checked)}
-            disabled={updatePreferences.isPending}
-          />
-        </div>
-
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
-            <Label htmlFor="notif-sms">
-              {t('settings:notifications.smsNotifications')}
-            </Label>
-            <p className="text-sm text-muted-foreground">
-              {t('settings:notifications.smsNotificationsDescription')}
-            </p>
-          </div>
-          <Switch
-            id="notif-sms"
-            checked={draft.sms}
-            onCheckedChange={(checked) => handleToggle('sms', checked)}
-            disabled={updatePreferences.isPending}
-          />
-        </div>
+        ) : (
+          <>
+            {updatePreferences.error ? (
+              <ErrorState
+                titleKey="notifications:communication.saveFailed"
+                onRetry={() => updatePreferences.reset()}
+              />
+            ) : null}
+            <CommunicationPreferencesMatrix
+              mode="defaults"
+              value={toMatrixValue(preferences)}
+              onChange={handleChange}
+              isPending={updatePreferences.isPending}
+              showLanguage={false}
+              showDigest={false}
+              showReminders={false}
+            />
+          </>
+        )}
       </CardContent>
     </Card>
   );

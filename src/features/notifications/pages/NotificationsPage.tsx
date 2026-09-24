@@ -1,55 +1,118 @@
 /**
- * Notifications Page.
+ * Notifications Page — the management notification centre.
  *
- * Prompt 13 replacement for the Prompt 3A scaffold — real list, real
- * unread count, a real "mark all read" mutation. The inert "Clear All"
- * button is removed (not wired to a fake call): no archive/clear
- * contract is specification-supported.
+ * FILTERS LIVE IN THE URL (`?status=unread&type=security&priority=high`).
+ * A filtered view is something a person copies to a colleague, comes
+ * back to after following an action link, and expects the browser's Back
+ * button to restore; component state does none of that. Every filter is
+ * a SERVER-SIDE query parameter (`ListNotificationsQueryDto`), so a
+ * filtered page is a page of matching rows, never a thinned page.
+ *
+ * Changing any filter returns to page one: page seven of "all" is a
+ * meaningless place to land inside "security only".
+ *
+ * The rows, their unread affordances and their action links come from
+ * `NotificationList`, shared with the learner surface and the bell.
  */
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Bell, Check } from 'lucide-react';
+import { CheckCheck } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
 import { usePagination } from '@hooks';
+import type { NotificationPriority, NotificationType } from '@types';
 import {
   useNotifications,
   useNotificationSummary,
   useMarkNotificationRead,
   useMarkAllNotificationsRead,
 } from '../hooks';
+import { NotificationList } from '../components/NotificationList';
+import {
+  NOTIFICATION_PRIORITY_OPTIONS,
+  NOTIFICATION_TYPE_OPTIONS,
+  NotificationFilters,
+} from '../components/NotificationFilters';
+
+type StatusFilter = 'all' | 'unread';
+
+/** Reads a query parameter only when it is one of the allowed values. */
+function readParam<T extends string>(
+  value: string | null,
+  allowed: readonly T[]
+): T | undefined {
+  return value !== null && (allowed as readonly string[]).includes(value)
+    ? (value as T)
+    : undefined;
+}
 
 export default function NotificationsPage(): JSX.Element {
-  const { t, i18n } = useTranslation();
-  const [filter, setFilter] = useState<'all' | 'unread'>('all');
+  const { t } = useTranslation();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const status: StatusFilter =
+    readParam(searchParams.get('status'), ['all', 'unread'] as const) ?? 'all';
+  const type = readParam(searchParams.get('type'), NOTIFICATION_TYPE_OPTIONS);
+  const priority = readParam(
+    searchParams.get('priority'),
+    NOTIFICATION_PRIORITY_OPTIONS
+  );
+
   const [totalItems, setTotalItems] = useState(0);
   const pagination = usePagination({ totalItems });
+  const { goToFirstPage } = pagination;
+
+  const setFilter = useCallback(
+    (key: 'status' | 'type' | 'priority', value: string | undefined) => {
+      setSearchParams(
+        (current) => {
+          const next = new URLSearchParams(current);
+          if (value === undefined || (key === 'status' && value === 'all')) {
+            next.delete(key);
+          } else {
+            next.set(key, value);
+          }
+          return next;
+        },
+        { replace: true }
+      );
+      goToFirstPage();
+    },
+    [setSearchParams, goToFirstPage]
+  );
+
+  const filters = useMemo(
+    () => ({
+      ...(status === 'unread' ? { isRead: false } : {}),
+      ...(type ? { type } : {}),
+      ...(priority ? { priority } : {}),
+    }),
+    [status, type, priority]
+  );
+  const isFiltered = Object.keys(filters).length > 0;
 
   const summaryQuery = useNotificationSummary();
   const notificationsQuery = useNotifications({
     query: {
       pagination: { page: pagination.page, pageSize: pagination.pageSize },
-      filters: filter === 'unread' ? { isRead: false } : undefined,
+      filters: isFiltered ? filters : undefined,
     },
   });
   const markAsRead = useMarkNotificationRead();
   const markAllAsRead = useMarkAllNotificationsRead();
 
   useEffect(() => {
-    if (notificationsQuery.data)
+    if (notificationsQuery.data) {
       setTotalItems(notificationsQuery.data.pagination.totalItems);
+    }
   }, [notificationsQuery.data]);
 
-  const notifications = useMemo(
-    () => notificationsQuery.data?.items ?? [],
-    [notificationsQuery.data]
-  );
+  const notifications = notificationsQuery.data?.items ?? [];
   const unreadCount = summaryQuery.data?.unread ?? 0;
 
   return (
@@ -57,32 +120,7 @@ export default function NotificationsPage(): JSX.Element {
       <PageHeader
         titleKey="notifications:title"
         descriptionKey="notifications:subtitle"
-      />
-
-      <Tabs
-        value={filter}
-        onValueChange={(value) => setFilter(value as 'all' | 'unread')}
-        className="space-y-4"
-      >
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <TabsList>
-            <TabsTrigger value="all">
-              {t('notifications:filters.all')}
-            </TabsTrigger>
-            <TabsTrigger value="unread">
-              {t('notifications:filters.unread')}
-              {!summaryQuery.isLoading ? (
-                <Badge
-                  variant="secondary"
-                  className="ms-2"
-                  data-atlas-numeric="true"
-                >
-                  {unreadCount}
-                </Badge>
-              ) : null}
-            </TabsTrigger>
-          </TabsList>
-
+        actions={
           <Button
             type="button"
             variant="outline"
@@ -90,84 +128,79 @@ export default function NotificationsPage(): JSX.Element {
             onClick={() => markAllAsRead.mutate()}
             disabled={markAllAsRead.isPending || unreadCount === 0}
           >
-            <Check className="me-2 h-4 w-4" />
+            <CheckCheck className="me-2 size-4" aria-hidden />
             {t('notifications:center.markAllRead')}
           </Button>
+        }
+      />
+
+      <div className="space-y-4">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <Tabs
+            value={status}
+            onValueChange={(value) => setFilter('status', value)}
+          >
+            <TabsList aria-label={t('notifications:filters.status')}>
+              <TabsTrigger value="all">
+                {t('notifications:filters.all')}
+              </TabsTrigger>
+              <TabsTrigger value="unread">
+                {t('notifications:filters.unread')}
+                {summaryQuery.data ? (
+                  <Badge
+                    variant="secondary"
+                    className="ms-2"
+                    data-atlas-numeric="true"
+                  >
+                    {unreadCount}
+                  </Badge>
+                ) : null}
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+
+          <NotificationFilters
+            type={type}
+            priority={priority}
+            onTypeChange={(next) => setFilter('type', next)}
+            onPriorityChange={(next) => setFilter('priority', next)}
+            onClear={() => {
+              setSearchParams(
+                (current) => {
+                  const next = new URLSearchParams(current);
+                  next.delete('type');
+                  next.delete('priority');
+                  return next;
+                },
+                { replace: true }
+              );
+              goToFirstPage();
+            }}
+          />
         </div>
 
-        <TabsContent value={filter} className="space-y-4">
-          {markAllAsRead.error ? (
-            <ErrorState onRetry={() => markAllAsRead.reset()} />
-          ) : null}
+        {markAllAsRead.error ? (
+          <ErrorState
+            titleKey="notifications:messages.actionError"
+            onRetry={() => markAllAsRead.mutate()}
+          />
+        ) : null}
 
-          <Card>
-            <CardContent className="p-6">
-              {notificationsQuery.isLoading ? (
-                <div className="space-y-3">
-                  {Array.from({ length: 4 }).map((_, index) => (
-                    <Skeleton key={index} className="h-16 w-full" />
-                  ))}
-                </div>
-              ) : notificationsQuery.error ? (
-                <ErrorState onRetry={() => notificationsQuery.refetch()} />
-              ) : notifications.length === 0 ? (
-                <div className="flex items-center justify-center py-12">
-                  <div className="text-center">
-                    <Bell className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                    <p className="text-sm text-muted-foreground">
-                      {t('notifications:center.empty')}
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <ScrollArea className="h-[600px]">
-                  <ul className="space-y-2">
-                    {notifications.map((notification) => (
-                      <li
-                        key={notification.id}
-                        className={`flex items-start justify-between gap-3 rounded-md border border-border p-3 ${
-                          notification.isRead ? '' : 'bg-accent/40'
-                        }`}
-                      >
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium text-foreground">
-                            {t(
-                              notification.titleKey,
-                              notification.values ?? {}
-                            )}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {t(
-                              notification.messageKey,
-                              notification.values ?? {}
-                            )}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {new Date(notification.createdAt).toLocaleString(
-                              i18n.language
-                            )}
-                          </p>
-                        </div>
-                        {!notification.isRead ? (
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => markAsRead.mutate(notification.id)}
-                            disabled={markAsRead.isPending}
-                          >
-                            {t('notifications:center.markAsRead')}
-                          </Button>
-                        ) : null}
-                      </li>
-                    ))}
-                  </ul>
-                </ScrollArea>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+        <Card>
+          <CardContent className="p-4 sm:p-6">
+            <NotificationList
+              notifications={notifications}
+              isLoading={notificationsQuery.isLoading}
+              error={notificationsQuery.error}
+              onRetry={() => notificationsQuery.refetch()}
+              onMarkRead={(id) => markAsRead.mutate(id)}
+              markingId={markAsRead.isPending ? markAsRead.variables : null}
+              pagination={pagination}
+              isFiltered={isFiltered}
+            />
+          </CardContent>
+        </Card>
+      </div>
     </PageContainer>
   );
 }

@@ -8,3 +8,5 @@ export { useMarkNotificationRead } from './useMarkNotificationRead';
 export { useMarkAllNotificationsRead } from './useMarkAllNotificationsRead';
 export { useNotificationPreferences } from './useNotificationPreferences';
 export { useUpdateNotificationPreferences } from './useUpdateNotificationPreferences';
+export { useCommunicationPreferences } from './useCommunicationPreferences';
+export { useUpdateCommunicationPreferences } from './useUpdateCommunicationPreferences';

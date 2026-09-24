@@ -11,6 +11,7 @@ export { default as LearnerAssessmentsPage } from './LearnerAssessmentsPage';
 export { default as LearnerCertificatesPage } from './LearnerCertificatesPage';
 export { default as LearnerPurchasesPage } from './LearnerPurchasesPage';
 export { default as LearnerDevicesPage } from './LearnerDevicesPage';
+export { default as LearnerNotificationsPage } from './LearnerNotificationsPage';
 export { default as LearnerProfilePage } from './LearnerProfilePage';
 export { default as LearnerSecurityPage } from './LearnerSecurityPage';
 /*

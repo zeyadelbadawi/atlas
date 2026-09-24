@@ -12,14 +12,25 @@
     "deleteAll": "Delete all",
     "deleteConfirm": "Are you sure you want to delete this notification?",
     "deleteAllConfirm": "Are you sure you want to delete all notifications?",
-    "viewAll": "View All"
+    "viewAll": "View All",
+    "unreadLabel": "Unread",
+    "latestUnread": "Latest unread notifications",
+    "noUnread": "No unread notifications. You're all caught up.",
+    "loading": "Loading notifications",
+    "markAsReadNamed": "Mark \"{{title}}\" as read",
+    "unreadCount_one": "{{count}} unread",
+    "unreadCount_other": "{{count}} unread"
   },
   "filters": {
     "all": "All",
     "unread": "Unread",
     "read": "Read",
     "type": "Type",
-    "priority": "Priority"
+    "priority": "Priority",
+    "allTypes": "All types",
+    "allPriorities": "All priorities",
+    "status": "Status",
+    "clear": "Clear filters"
   },
   "types": {
     "system": "System",
@@ -158,5 +169,51 @@
     "action": {
       "reconnect": "Reconnect Zoom"
     }
+  },
+  "communication": {
+    "title": "Email preferences",
+    "description": "What we email you about, and how often. Changes save as you make them.",
+    "defaultsTitle": "Platform email defaults",
+    "defaultsDescription": "What a new account receives until the person changes it. Accounts that already chose keep their own settings.",
+    "emailLanguage": "Email language",
+    "emailLanguageDescription": "The language your emails are written in.",
+    "alwaysOn": "Always on",
+    "lockedReason": "Security alerts, receipts and account changes can't be turned off. You need to know when they happen, even if you'd rather not hear from us.",
+    "lockedReasonDefaults": "Security alerts, receipts and account changes are sent to everyone. No default can switch them off.",
+    "emailToggle": "Email for {{category}}",
+    "digestLabel": "Delivery for {{category}}",
+    "digest": {
+      "immediate": "As it happens",
+      "daily": "Daily digest",
+      "off": "Off"
+    },
+    "reminders": "Reminders",
+    "remindersDescription": "Upcoming live sessions, deadlines and an expiring trial.",
+    "categories": {
+      "security": {
+        "title": "Security",
+        "description": "Sign-ins from new devices, password changes and two-factor events."
+      },
+      "transactional": {
+        "title": "Receipts and orders",
+        "description": "Purchases, payments, refunds and invoices."
+      },
+      "lifecycle": {
+        "title": "Account and courses",
+        "description": "Enrolments, grades, certificates and academy setup."
+      },
+      "engagement": {
+        "title": "Updates and announcements",
+        "description": "Announcements, discussion replies and new content in your courses."
+      },
+      "operational": {
+        "title": "Operations",
+        "description": "Support cases, integrations and academy health for the teams you manage."
+      }
+    },
+    "loading": "Loading email preferences",
+    "loadFailed": "Couldn't load your email preferences",
+    "saved": "Email preferences saved",
+    "saveFailed": "Couldn't save that change. Your previous setting is back."
   }
 }

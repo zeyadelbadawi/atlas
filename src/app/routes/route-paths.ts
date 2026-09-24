@@ -307,6 +307,8 @@ export const LEARNER_ROUTES = {
   /** P64 Phase 4 — the paid-course checkout (order → payment → proof). */
   courseCheckout: '/my/courses/:courseId/checkout',
   devices: '/my/devices',
+  /** The learner's own notification centre — grades, certificates, sessions, purchases. */
+  notifications: '/my/notifications',
   profile: '/my/profile',
   security: '/my/security',
 } as const;
