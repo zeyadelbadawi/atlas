@@ -34,6 +34,8 @@ export const AUTH_ROUTES = {
   register: '/auth/register',
   forgotPassword: '/auth/forgot-password',
   resetPassword: '/auth/reset-password',
+  /** P64 Communications C0 — verification links may land on either surface; the academy hosts mount theirs in `PublicWebsiteRouter`. */
+  verifyEmail: '/auth/verify-email',
   /**
    * P64 Phase 1 (AD-5 / AD-12) — where a `learner` principal holding a
    * platform-host session is sent instead of the dashboard. Rendered in the

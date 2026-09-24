@@ -35,6 +35,9 @@ const ForgotPasswordPage = lazy(
 const ResetPasswordPage = lazy(
   () => import('@features/auth/pages/ResetPasswordPage')
 );
+const VerifyEmailPage = lazy(
+  () => import('@features/auth/pages/VerifyEmailPage')
+);
 const AcademyChooserPage = lazy(
   () => import('@features/auth/pages/AcademyChooserPage')
 );
@@ -477,6 +480,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={AUTH_ROUTES.resetPassword}
               element={<ResetPasswordPage />}
+            />
+            <Route
+              path={AUTH_ROUTES.verifyEmail}
+              element={<VerifyEmailPage />}
             />
           </Route>
 
