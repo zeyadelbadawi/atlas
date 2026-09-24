@@ -42,6 +42,7 @@ const data: PlatformCommerceMetrics = {
   generatedAt: '2026-09-24T10:00:00.000Z',
   orders: {
     created: 40,
+    draft: 0,
     pendingPayment: 5,
     paid: 30,
     expired: 2,
@@ -63,6 +64,7 @@ const empty: PlatformCommerceMetrics = {
   ...data,
   orders: {
     created: 0,
+    draft: 0,
     pendingPayment: 0,
     paid: 0,
     expired: 0,
