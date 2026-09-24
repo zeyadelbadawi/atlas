@@ -132,6 +132,12 @@ export interface PublicCourseCurriculumLesson {
   readonly title: string;
   readonly order: number;
   readonly contentType: CourseLessonContentType;
+  /**
+   * The free sample. The backend serves this lesson's content to anonymous
+   * visitors (`LessonContentService.getContent`'s `isOpenPreview`
+   * short-circuit), so the page may offer to play it before enrolment.
+   */
+  readonly isPreview: boolean;
 }
 
 /** A curriculum-preview section, paired with `PublicCourseCurriculumLesson`. */

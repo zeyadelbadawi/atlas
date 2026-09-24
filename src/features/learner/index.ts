@@ -43,3 +43,19 @@ export type {
   LearnerNavigationItem,
   LearnerSectionId,
 } from './constants/learner-navigation.constants';
+
+/*
+ * P64 Phase 4 — the public course preview.
+ *
+ * The marketing Course Details page now offers the free sample lesson,
+ * which the server already served to anonymous visitors. That makes the
+ * website renderer a second legitimate consumer of two pieces that were
+ * previously internal: the grant hook, which is the single place that
+ * knows how a credential expires and how a refusal is classified, and the
+ * YouTube source, which builds its frame from a server-vetted video id
+ * rather than a raw URL. Exporting them is what stops the preview growing
+ * a second, weaker copy of either rule.
+ */
+export { useLessonGrant } from './hooks/useLessonGrant';
+export { YouTubeLessonPlayer } from './components/YouTubeLessonPlayer';
+export type { YouTubeLessonPlayerProps } from './components/YouTubeLessonPlayer';

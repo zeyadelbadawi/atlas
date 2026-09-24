@@ -812,7 +812,16 @@
         "approved": "Published",
         "rejected": "Not approved"
       },
-      "buyAction": "Buy this course"
+      "buyAction": "Buy this course",
+      "previewBadge": "Free preview",
+      "previewAction": "Preview",
+      "previewActionLabel": "Preview the lesson {{title}}",
+      "previewDialogTitle": "Free preview",
+      "previewDialogDescription": "A sample lesson from this course. You do not need to enrol to watch it.",
+      "previewLoading": "Loading the preview…",
+      "previewUnavailable": "This preview cannot be played right now. Please try again later.",
+      "previewNotPlayable": "This preview is not a video. Enrol to open the full lesson.",
+      "previewClose": "Close"
     }
   },
   "common": {

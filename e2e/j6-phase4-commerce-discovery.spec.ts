@@ -36,6 +36,7 @@ import {
 import { clearAuthRateLimits } from './support/global-setup';
 import {
   TINY_PNG,
+  addExternalPreviewLesson,
   approveCourseOrderPayment,
   createCourse,
   ensureAcademy,
@@ -62,6 +63,7 @@ test.describe('J6 — catalog, details, reviews and paid checkout', () => {
   let learner: Session;
   let learnerEmail: string;
   let method: PaymentMethodFixture;
+  const previewLessonTitle = 'Free sample: your first build';
   let freeCourseId: string;
   let freeCourseTitle: string;
   let paidCourseId: string;
@@ -101,6 +103,18 @@ test.describe('J6 — catalog, details, reviews and paid checkout', () => {
     });
     await publishCourse(request, owner, academyId, freeCourseId);
     await publishCourse(request, owner, academyId, paidCourseId);
+
+    // The paid course carries the free sample — that is what a preview is
+    // for. External/YouTube on purpose: a preview is public marketing
+    // content Atlas does not protect, so it needs none of the hosted-video
+    // infrastructure this environment does not have.
+    await addExternalPreviewLesson(
+      request,
+      owner,
+      academyId,
+      paidCourseId,
+      previewLessonTitle
+    );
 
     /* ---------- the owner adds the Course Catalog section and publishes ---------- */
     const pages = await apiGet(request, owner, `/academies/${academyId}/website/pages`);
@@ -222,6 +236,40 @@ test.describe('J6 — catalog, details, reviews and paid checkout', () => {
     // No approved reviews yet: the rating block is absent, not empty.
     await ratingLoaded;
     await expect(page.getByRole('heading', { name: 'Learner reviews' })).toHaveCount(0);
+  });
+
+  test('an anonymous visitor plays the free preview lesson without enrolling', async () => {
+    test.setTimeout(120_000);
+    await page.goto(academyPath(`/courses/${paidCourseId}`));
+    await expect(page.getByRole('heading', { name: paidCourseTitle })).toBeVisible({
+      timeout: 30_000,
+    });
+
+    // The curriculum accordion starts collapsed, so the sample is only
+    // offered once the visitor opens the section it lives in.
+    await page.getByRole('button', { name: /Free sample/ }).first().click();
+
+    const previewButton = page.getByRole('button', {
+      name: `Preview the lesson ${previewLessonTitle}`,
+    });
+    await expect(previewButton).toBeVisible({ timeout: 30_000 });
+    await previewButton.click();
+
+    // The dialog plays the sample for a visitor with no account at all.
+    const dialog = page.getByRole('dialog');
+    await expect(dialog).toBeVisible({ timeout: 30_000 });
+    await expect(dialog.getByText(previewLessonTitle)).toBeVisible();
+    const frame = dialog.locator('iframe[data-testid="youtube-lesson-player"]');
+    await expect(frame).toBeVisible({ timeout: 30_000 });
+    // Built from the server-vetted id on the privacy-enhanced host, never
+    // from the lesson's raw URL.
+    await expect(frame).toHaveAttribute(
+      'src',
+      /^https:\/\/www\.youtube-nocookie\.com\/embed\/dQw4w9WgXcQ\?/
+    );
+
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden({ timeout: 15_000 });
   });
 
   test('a learner registers, enrols in the free course, and writes a review that waits for moderation', async ({

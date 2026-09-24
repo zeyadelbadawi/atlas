@@ -422,6 +422,57 @@ export async function createCourse(
  * Owner adds one section with one published FILE lesson whose protected
  * body is a PDF in the protected tier — the content a grant is issued for.
  */
+/**
+ * A published, previewable lesson whose content is a YouTube embed
+ * (P64 Phase 4 §preview).
+ *
+ * External on purpose: a preview is public marketing content Atlas does
+ * not protect, and an embed needs none of the hosted-video infrastructure
+ * (`FLAG_VIDEO_*`, `BASIC_VIDEO_*`, Cloudflare Stream), which is what
+ * makes this journey runnable at all.
+ */
+export async function addExternalPreviewLesson(
+  request: APIRequestContext,
+  owner: Session,
+  academyId: string,
+  courseId: string,
+  lessonTitle: string,
+  youtubeUrl = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+): Promise<{ sectionId: string; lessonId: string }> {
+  const section = await apiPost(request, owner, `/academies/${academyId}/courses/${courseId}/sections`, {
+    title: 'Free sample',
+  });
+  expect(section.status(), await section.text()).toBe(201);
+  const sectionId = (await section.json()).id;
+
+  const lesson = await apiPost(
+    request,
+    owner,
+    `/academies/${academyId}/courses/${courseId}/sections/${sectionId}/lessons`,
+    {
+      title: lessonTitle,
+      contentType: 'video',
+      status: 'published',
+      completionRule: 'manual',
+      isPreview: true,
+    }
+  );
+  expect(lesson.status(), await lesson.text()).toBe(201);
+  const lessonId = (await lesson.json()).id;
+
+  const content = await apiPut(
+    request,
+    owner,
+    `/academies/${academyId}/courses/${courseId}/sections/${sectionId}/lessons/${lessonId}/content`,
+    { kind: 'external', externalUrl: youtubeUrl }
+  );
+  expect(
+    content.status() < 300,
+    `preview lesson content refused: ${content.status()} ${await content.text()}`
+  ).toBeTruthy();
+  return { sectionId, lessonId };
+}
+
 export async function addProtectedFileLesson(
   request: APIRequestContext,
   owner: Session,

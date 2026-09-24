@@ -828,7 +828,16 @@
         "approved": "منشور",
         "rejected": "غير معتمد"
       },
-      "buyAction": "اشترِ هذه الدورة"
+      "buyAction": "اشترِ هذه الدورة",
+      "previewBadge": "معاينة مجانية",
+      "previewAction": "معاينة",
+      "previewActionLabel": "معاينة الدرس {{title}}",
+      "previewDialogTitle": "معاينة مجانية",
+      "previewDialogDescription": "درس نموذجي من هذه الدورة. لا تحتاج إلى التسجيل لمشاهدته.",
+      "previewLoading": "جارٍ تحميل المعاينة…",
+      "previewUnavailable": "تعذّر تشغيل هذه المعاينة الآن. يُرجى المحاولة لاحقًا.",
+      "previewNotPlayable": "هذه المعاينة ليست مقطع فيديو. سجّل للوصول إلى الدرس كاملًا.",
+      "previewClose": "إغلاق"
     }
   },
   "common": {

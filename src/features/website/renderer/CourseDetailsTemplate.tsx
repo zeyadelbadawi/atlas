@@ -49,6 +49,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { CoursePreviewDialog } from './CoursePreviewDialog';
 import { CourseReviews } from './CourseReviews';
 import { MyCourseReviewForm } from './MyCourseReviewForm';
 import { RelatedCourses } from './RelatedCourses';
@@ -123,6 +124,14 @@ export function CourseDetailsTemplate({
   } = usePublicCourse(academyId, courseId);
   const { data: curriculum, isLoading: isLoadingCurriculum } =
     usePublicCourseCurriculum(academyId, courseId);
+
+  // The lesson whose free preview is open, or null. Holding the lesson
+  // rather than a boolean keeps the dialog's grant keyed to exactly the
+  // lesson the visitor clicked.
+  const [previewLesson, setPreviewLesson] = useState<{
+    id: string;
+    title: string;
+  } | null>(null);
   const { data: enrollment } = useEnrollment(courseId, {
     enabled: isAuthenticated,
   });
@@ -332,7 +341,28 @@ export function CourseDetailsTemplate({
                               className="flex items-center gap-2 text-sm text-muted-foreground"
                             >
                               <Icon className="size-4 shrink-0" aria-hidden />
-                              {lesson.title}
+                              <span className="flex-1">{lesson.title}</span>
+                              {lesson.isPreview ? (
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  className="h-9 shrink-0 gap-1.5"
+                                  onClick={() =>
+                                    setPreviewLesson({
+                                      id: lesson.id,
+                                      title: lesson.title,
+                                    })
+                                  }
+                                  aria-label={t(
+                                    'website:renderer.courseDetails.previewActionLabel',
+                                    { title: lesson.title }
+                                  )}
+                                >
+                                  <PlayCircle className="size-4" aria-hidden />
+                                  {t('website:renderer.courseDetails.previewAction')}
+                                </Button>
+                              ) : null}
                             </li>
                           );
                         })}
@@ -345,6 +375,15 @@ export function CourseDetailsTemplate({
           ) : isLoadingCurriculum ? (
             <Skeleton className="h-32 w-full" />
           ) : null}
+
+          <CoursePreviewDialog
+            courseId={courseId}
+            lessonId={previewLesson?.id ?? null}
+            lessonTitle={previewLesson?.title ?? ''}
+            onOpenChange={(open) => {
+              if (!open) setPreviewLesson(null);
+            }}
+          />
 
           <MyCourseReviewForm
             academyId={academyId}
