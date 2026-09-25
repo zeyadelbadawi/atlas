@@ -12,6 +12,8 @@ export { useEffectiveEntitlements } from './useEffectiveEntitlements';
 export type { UseEffectiveEntitlementsResult } from './useEffectiveEntitlements';
 export { useSubscriptionAccess } from './useSubscriptionAccess';
 export type { SubscriptionAccess, SubscriptionBlockReason } from './useSubscriptionAccess';
+export { useTenantRetention } from './useTenantRetention';
+export type { TenantRetentionQueryResult } from './useTenantRetention';
 export { useSubscriptionLifecycleState } from './useSubscriptionLifecycleState';
 export type { LifecycleQueryResult } from './useSubscriptionLifecycleState';
 export {

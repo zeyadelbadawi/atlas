@@ -11,4 +11,5 @@ export * from './feedback';
 export * from './layout';
 export * from './loading';
 export * from './navigation';
+export * from './reporting';
 export * from './table';

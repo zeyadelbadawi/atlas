@@ -196,3 +196,91 @@ export type ResourceLimitStatus =
  * backend remains the authority on what a Tenant may actually do.
  */
 export type EntitlementGapAction = 'upgradePlan' | 'addOn' | 'none';
+
+// ---------------------------------------------------------------------------
+// Hosted-video retention (P64 Communications C6 — plan §31/§32)
+// ---------------------------------------------------------------------------
+
+/**
+ * What this organization's hosted video is facing, decided by the backend
+ * (`GET /organizations/:id/retention`) and never re-derived here.
+ *
+ * The same rule `SubscriptionLifecycle` above documents applies with more
+ * force: the dates on this page decide whether a customer believes their
+ * content is about to be destroyed, and a second local copy of the
+ * retention arithmetic would eventually disagree with the sweep that
+ * actually performs the deletion.
+ */
+export type TenantRetentionState =
+  /** No retention window is open — nothing is scheduled. */
+  | 'not_scheduled'
+  /** A window is open and a date exists, but no warning has been sent yet. */
+  | 'scheduled'
+  /** At least one of W1–W4 has actually been sent. */
+  | 'warning'
+  /** A legal hold or an open support case is freezing the clock. */
+  | 'held'
+  /** The deletion date has passed. */
+  | 'elapsed';
+
+/** The platform-wide retention mode. `off` means nothing is scheduled anywhere. */
+export type TenantRetentionMode = 'off' | 'warn_only' | 'on';
+
+/** Why the clock is frozen. */
+export type TenantRetentionHoldReason = 'legal_hold' | 'support_case';
+
+/** The four warnings of §31, in the order the owner receives them. */
+export type TenantRetentionWarningStepId =
+  | 'retention_warning_30d'
+  | 'retention_warning_14d'
+  | 'retention_warning_7d'
+  | 'retention_warning_24h';
+
+/** One row of the W1 → W2 → W3 → W4 timeline. */
+export interface TenantRetentionWarningStep {
+  readonly step: TenantRetentionWarningStepId;
+  readonly dueAt: string;
+  /** Whether the warning was genuinely sent — outbox evidence, not a guess. */
+  readonly sent: boolean;
+}
+
+/** One course that would lose hosted video. */
+export interface TenantRetentionCourse {
+  readonly id: string;
+  readonly title: string;
+  readonly videoCount: number;
+  readonly storedMinutes: number;
+}
+
+export interface TenantRetentionVideoTally {
+  readonly assetCount: number;
+  readonly storedMinutes: number;
+  /** BigInt as a decimal string — JSON cannot carry one. */
+  readonly storedBytes: string;
+  /** `0` is the fact the page leads with: nothing has been deleted. */
+  readonly deletedAssetCount: number;
+  readonly lastDeletedAt: string | null;
+}
+
+/** The authoritative retention read behind `/dashboard/tenant/retention`. */
+export interface TenantRetention {
+  readonly organizationId: string;
+  readonly state: TenantRetentionState;
+  readonly mode: TenantRetentionMode;
+  readonly windowOpen: boolean;
+  /** `trial` → 90 days, `paid` → 180 days. */
+  readonly origin: 'trial' | 'paid' | null;
+  readonly windowDays: number | null;
+  readonly anchorAt: string | null;
+  readonly deletionAt: string | null;
+  readonly daysUntilDeletion: number | null;
+  readonly warnings: readonly TenantRetentionWarningStep[];
+  readonly hold: {
+    readonly held: boolean;
+    readonly reason: TenantRetentionHoldReason | null;
+  };
+  readonly video: TenantRetentionVideoTally;
+  readonly courses: readonly TenantRetentionCourse[];
+  readonly coursesTruncated: boolean;
+  readonly generatedAt: string;
+}

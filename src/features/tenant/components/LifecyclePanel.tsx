@@ -26,10 +26,33 @@
  * their dashboard: "your trial ended" must never read as "your data is
  * gone", which would be false and the worst thing this product could
  * imply. Reads keep working server-side for the same reason.
+ *
+ * ---------------------------------------------------------------------
+ * `retention_warning` (P64 C6, plan §31) — THE ONE STATE THAT IS NOT A
+ * SUBSCRIPTION LIFECYCLE.
+ * ---------------------------------------------------------------------
+ *
+ * It is an OVERLAY, not a ninth `lifecycle` value, because the backend's
+ * lifecycle read has no such value and inventing one here would be the
+ * local re-derivation this file's own history warns about. It comes from
+ * `GET /organizations/:id/retention`, and it takes precedence over
+ * `trial_expired`/`expired` when — and only when — a warning has ACTUALLY
+ * been sent. That trigger is the outbox row, not a date this component
+ * computed, so the panel and the customer's inbox always agree: if they
+ * have not been emailed, the dashboard does not tell them their content
+ * is going.
+ *
+ * TONE. `warning`, never `destructive`, for the same reason `grace_period`
+ * is: NOTHING HAS BEEN DELETED. The panel leads with that, gives the date,
+ * and links to `/dashboard/tenant/retention` — which is also where the
+ * warning email's own link lands, so both routes reach the same
+ * explanation. It replaces the lapsed-subscription message rather than
+ * stacking beside it: two alerts about the same lapse, one of which
+ * mentions deletion, is how a customer misses the one that matters.
  */
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@hooks';
+import { useAuth, usePermissions } from '@hooks';
 import {
   AlertTriangle,
   ArrowRight,
@@ -45,7 +68,13 @@ import { Button } from '@/components/ui/button';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { formatDate } from '@utils';
 import { useSubscriptionLifecycleState } from '../hooks/useSubscriptionLifecycleState';
-import type { LanguageCode, SubscriptionLifecycleState } from '@types';
+import { useTenantRetention } from '../hooks/useTenantRetention';
+import type {
+  LanguageCode,
+  SubscriptionLifecycle,
+  SubscriptionLifecycleState,
+  TenantRetention,
+} from '@types';
 import { resolvePlanName } from '../utils/plan-text.utils';
 
 /**
@@ -79,6 +108,65 @@ interface PanelContent {
   readonly secondary?: { readonly label: string; readonly to: string };
   /** Shown small, under the description — reassurance, dates, fine print. */
   readonly footnote?: string;
+}
+
+/**
+ * The owner-exclusive marker the retention endpoint itself requires.
+ * Checked here only so a Manager's dashboard does not fire a request that
+ * the server will refuse on every page load; it grants nothing.
+ */
+const RETENTION_VIEW_PERMISSION = 'tenant.subscription.view';
+
+/**
+ * The only lifecycles from which a retention window can be open at all —
+ * §31's "continuously inactive since the anchor". Everywhere else the
+ * retention read would be a guaranteed "nothing scheduled", so it is not
+ * made.
+ */
+const RETENTION_POSSIBLE_LIFECYCLES: ReadonlySet<SubscriptionLifecycle> =
+  new Set<SubscriptionLifecycle>(['trial_expired', 'expired']);
+
+/**
+ * The retention overlay's content.
+ *
+ * Nothing is computed here: the date, the minutes and whether the clock is
+ * frozen all come from the backend's own evaluator. The only decision
+ * this function makes is which sentence to use.
+ */
+function buildRetentionContent(
+  retention: TenantRetention,
+  t: (key: string, options?: Record<string, unknown>) => string,
+  language: LanguageCode
+): PanelContent {
+  const date = retention.deletionAt
+    ? formatDate(retention.deletionAt, language, 'short')
+    : '';
+  return {
+    // NOT destructive. Nothing has been deleted, and saying otherwise on a
+    // dashboard is the exact lie this workstream exists to prevent.
+    tone: 'warning',
+    icon: AlertTriangle,
+    title: t('tenant:lifecycle.retentionWarning.title'),
+    description: retention.hold.held
+      ? t('tenant:retention.state.held.description')
+      : date
+        ? t('tenant:lifecycle.retentionWarning.description', { date })
+        : t('tenant:lifecycle.retentionWarning.descriptionNoDate'),
+    primary: {
+      label: t('tenant:lifecycle.retentionWarning.action'),
+      to: DASHBOARD_ROUTES.tenantRetention,
+    },
+    secondary: {
+      label: t('tenant:retention.actions.reactivate'),
+      to: DASHBOARD_ROUTES.plans,
+    },
+    footnote:
+      retention.video.storedMinutes > 0
+        ? t('tenant:lifecycle.retentionWarning.minutes', {
+            minutes: retention.video.storedMinutes,
+          })
+        : undefined,
+  };
 }
 
 /**
@@ -268,7 +356,21 @@ export function LifecyclePanel(): JSX.Element | null {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { hasPermission } = usePermissions();
   const { state, isLoading } = useSubscriptionLifecycleState();
+
+  /*
+    Asked ONLY when it could possibly say something, and only of someone
+    allowed to hear it. Hooks cannot sit behind the early returns below,
+    so the gate is the `enabled` flag rather than a conditional call.
+  */
+  const isPlatformOwner = !!user?.roles?.includes('platform_owner');
+  const retentionPossible =
+    !isPlatformOwner &&
+    !!state &&
+    RETENTION_POSSIBLE_LIFECYCLES.has(state.lifecycle) &&
+    hasPermission(RETENTION_VIEW_PERMISSION);
+  const { data: retention } = useTenantRetention({ enabled: retentionPossible });
 
   /*
     A Platform/SaaS Owner is a platform operator, not a customer.
@@ -286,18 +388,34 @@ export function LifecyclePanel(): JSX.Element | null {
     never take. Returning null is the whole fix; nothing downstream needs to
     know, and a customer's panel is untouched.
   */
-  if (user?.roles?.includes('platform_owner')) return null;
+  if (isPlatformOwner) return null;
 
   // Never render on incomplete information: flashing "your subscription
   // ended" at a paying customer for one frame costs more trust than
   // showing nothing for one frame costs anything.
   if (isLoading || !state) return null;
 
-  const content = buildContent(
-    state,
-    t as (key: string, options?: Record<string, unknown>) => string,
-    i18n.language as LanguageCode
-  );
+  /*
+    THE TRIGGER IS THE OUTBOX, NOT THE CALENDAR. A warning the customer
+    actually received is what makes this panel speak about deletion; a
+    window that is merely open is the lapsed-subscription message's job.
+  */
+  const warned =
+    retention && retention.windowOpen && retention.warnings.some((w) => w.sent)
+      ? retention
+      : null;
+
+  const content = warned
+    ? buildRetentionContent(
+        warned,
+        t as (key: string, options?: Record<string, unknown>) => string,
+        i18n.language as LanguageCode
+      )
+    : buildContent(
+        state,
+        t as (key: string, options?: Record<string, unknown>) => string,
+        i18n.language as LanguageCode
+      );
   if (!content) return null;
 
   const Icon = content.icon;
@@ -307,7 +425,7 @@ export function LifecyclePanel(): JSX.Element | null {
       variant={TONE_VARIANT[content.tone]}
       className={TONE_CLASS[content.tone]}
       data-testid="lifecycle-panel"
-      data-lifecycle={state.lifecycle}
+      data-lifecycle={warned ? 'retention_warning' : state.lifecycle}
     >
       <Icon className="size-4" aria-hidden />
       <AlertTitle>{content.title}</AlertTitle>

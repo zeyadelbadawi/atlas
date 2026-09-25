@@ -147,6 +147,15 @@ export const DASHBOARD_ROUTES = {
   tenantSubscription: '/dashboard/tenant/subscription',
   tenantUsage: '/dashboard/tenant/usage',
   tenantAddOns: '/dashboard/tenant/add-ons',
+  /**
+   * P64 C6 — Data & retention. The destination every hosted-video warning
+   * email already linked to (`TENANT_RETENTION_PATH` in the backend's
+   * communication catalog); this constant is what finally gives that link
+   * somewhere to land. Changing it here without changing it there sends a
+   * warned customer to a 404, so the two are deliberately identical
+   * strings.
+   */
+  tenantRetention: '/dashboard/tenant/retention',
 
   /*
     Phase 12 — the Add-ons area.

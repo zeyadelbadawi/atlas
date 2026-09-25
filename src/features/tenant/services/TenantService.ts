@@ -26,6 +26,7 @@ import type {
   StartTrialResult,
   SubscriptionLifecycleState,
   TenantAddOn,
+  TenantRetention,
   TenantSubscription,
   TenantUsage,
 } from '@types';
@@ -58,6 +59,24 @@ export class TenantService extends BaseService {
   ): Promise<SubscriptionLifecycleState> {
     return this.client.get<SubscriptionLifecycleState>(
       this.path(organizationId, 'subscription', 'lifecycle'),
+      options
+    );
+  }
+
+  /**
+   * This Organization's hosted-video retention state (P64 C6, plan §31).
+   *
+   * THE READ BEHIND THE LINK IN THE WARNING EMAIL. Owner-only server-side
+   * (the endpoint requires the owner-exclusive billing permission), and
+   * every date in it is computed by the same evaluator the deletion sweep
+   * runs — so the page and the automation cannot quote different dates.
+   */
+  async getRetention(
+    organizationId: string,
+    options?: ReadOptions
+  ): Promise<TenantRetention> {
+    return this.client.get<TenantRetention>(
+      this.path(organizationId, 'retention'),
       options
     );
   }

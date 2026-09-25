@@ -28,7 +28,7 @@ import {
   ReportSection,
   StatTile,
   TruncatedNotice,
-} from '../components/AnalyticsReportPrimitives';
+} from '@components/reporting';
 import {
   NO_VALUE,
   formatApprovalDuration,
