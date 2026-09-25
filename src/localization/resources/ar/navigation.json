@@ -93,7 +93,8 @@
     "platformZoomEvents": "Webhooks والأحداث",
     "platformZoomHealth": "الصحة والحوادث",
     "platformZoomActivity": "النشاط",
-    "platformCourses": "الدورات العامة"
+    "platformCourses": "الدورات العامة",
+    "academyRevenue": "الإيرادات والمدفوعات"
   },
   "account": {
     "menu": "قائمة الحساب",

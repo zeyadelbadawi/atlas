@@ -25,9 +25,11 @@ import type {
   CheckoutPaymentMethod,
   CourseOrder,
   CourseOrderPayment,
+  CourseOrderRefund,
   CreateCourseOrderPayload,
   CreateCourseOrderPaymentPayload,
   PaginatedResult,
+  RequestCourseOrderRefundPayload,
 } from '@types';
 
 export class CourseOrderService extends BaseService {
@@ -127,6 +129,39 @@ export class CourseOrderService extends BaseService {
       CourseOrderPayment,
       { fileName: string; fileData: string; note?: string }
     >(this.path(orderId, 'payments', paymentId, 'proof'), payload, options);
+  }
+
+  /**
+   * P13 — request a full, self-service refund of a paid order.
+   *
+   * No review gate server-side: inside the refund window the order is
+   * refunded in the same request, it becomes `refunded`, and the learner's
+   * enrollment in the course is revoked. The body's `idempotencyKey` is
+   * what makes a replay of the same attempt safe (and what lets the HTTP
+   * client replay it after a transient failure); a second request for an
+   * already-refunded order returns the existing refund, never a second one.
+   */
+  async requestRefund(
+    orderId: string,
+    payload: RequestCourseOrderRefundPayload,
+    options?: WriteOptions
+  ): Promise<CourseOrderRefund> {
+    return this.client.post<CourseOrderRefund, RequestCourseOrderRefundPayload>(
+      this.path(orderId, 'refund'),
+      payload,
+      options
+    );
+  }
+
+  /** P13 — the refund recorded against an order; `null` (not 404) when none exists. */
+  async getRefund(
+    orderId: string,
+    options?: ReadOptions
+  ): Promise<CourseOrderRefund | null> {
+    return this.client.get<CourseOrderRefund | null>(
+      this.path(orderId, 'refund'),
+      options
+    );
   }
 }
 

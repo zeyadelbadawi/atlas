@@ -48,3 +48,12 @@ export {
   useCompleteLessonInPlayer,
   useUndoLessonCompletion,
 } from './useLessonCompletion';
+// P13 — self-service refund of a course purchase.
+export {
+  useCourseOrderRefund,
+  useRequestCourseOrderRefund,
+} from './useCourseOrderRefund';
+export type {
+  RequestCourseOrderRefundVariables,
+  UseCourseOrderRefundOptions,
+} from './useCourseOrderRefund';

@@ -93,7 +93,8 @@
     "platformZoomEvents": "Webhooks & events",
     "platformZoomHealth": "Health & incidents",
     "platformZoomActivity": "Activity",
-    "platformCourses": "Global Courses"
+    "platformCourses": "Global Courses",
+    "academyRevenue": "Revenue & payouts"
   },
   "account": {
     "menu": "Account menu",

@@ -123,6 +123,10 @@ const AcademyBrandingPage = lazy(
 const AcademyMembersPage = lazy(
   () => import('@features/academy/pages/AcademyMembersPage')
 );
+// P13 — the Organization Owner's academy revenue summary and payouts.
+const AcademyRevenuePage = lazy(
+  () => import('@features/academy/pages/AcademyRevenuePage')
+);
 const AcademyOnboardingPage = lazy(
   () => import('@features/academy/pages/AcademyOnboardingPage')
 );
@@ -654,6 +658,24 @@ export function AppRouter(): JSX.Element {
                   requiresEntitlement
                 >
                   <AcademyReportsPage />
+                </RouteGuard>
+              }
+            />
+
+            {/* P13 — academy revenue & payouts. Money is Organization-Owner
+                territory (`tenant.billing.view` is owner-only) and the backend
+                answers 403 to everyone else, which the page renders as a
+                permission state. NOT `requiresEntitlement`, like tenant
+                billing: an owner whose subscription lapsed is still owed
+                what their academy earned and must be able to see it. */}
+            <Route
+              path={DASHBOARD_ROUTES.academyRevenue}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['tenant.billing.view']}
+                >
+                  <AcademyRevenuePage />
                 </RouteGuard>
               }
             />
