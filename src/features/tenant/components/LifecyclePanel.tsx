@@ -13,6 +13,7 @@
  *   trialing         -> which plan, how long left, what happens next
  *   trial_expired    -> "continue with <the plan you trialed>"
  *   cancelled_active -> "your subscription ends on <date>" (still working)
+ *   grace_period     -> "payment is late; your site stays online until <date>"
  *   expired          -> "your subscription has expired" (a former payer)
  *   active           -> nothing at all
  *
@@ -165,7 +166,9 @@ function buildContent(
           : t('tenant:lifecycle.trialExpired.descriptionGeneric'),
         primary: {
           label: planName
-            ? t('tenant:lifecycle.trialExpired.continueWith', { plan: planName })
+            ? t('tenant:lifecycle.trialExpired.continueWith', {
+                plan: planName,
+              })
             : t('tenant:lifecycle.trialExpired.choosePlan'),
           to: DASHBOARD_ROUTES.plans,
         },
@@ -194,6 +197,36 @@ function buildContent(
         },
       };
 
+    case 'grace_period':
+      /*
+       * The most urgent state in the product, and until now it rendered
+       * as SILENCE — `grace_period` fell through to the `active` default,
+       * so an owner whose payment was late saw exactly what a healthy
+       * account sees. Meanwhile the lifecycle sequence emails them to say
+       * their site stays online for seven days, which made the dashboard
+       * and the inbox contradict each other.
+       *
+       * `warning`, never `destructive`: nothing of theirs is switched off
+       * yet and saying otherwise would be false. The one thing this must
+       * carry is the DEADLINE, because that is the only fact that decides
+       * what they do next.
+       */
+      return {
+        tone: 'warning',
+        icon: Clock,
+        title: t('tenant:lifecycle.gracePeriod.title'),
+        description: state.graceEndsAt
+          ? t('tenant:lifecycle.gracePeriod.description', {
+              date: formatDate(state.graceEndsAt, language, 'short'),
+            })
+          : t('tenant:lifecycle.gracePeriod.descriptionNoDate'),
+        primary: {
+          label: t('tenant:lifecycle.gracePeriod.action'),
+          to: DASHBOARD_ROUTES.tenantSubscription,
+        },
+        footnote: t('tenant:lifecycle.gracePeriod.footnote'),
+      };
+
     case 'expired':
       return {
         tone: 'destructive',
@@ -208,11 +241,19 @@ function buildContent(
           label: t('tenant:lifecycle.changePlan'),
           to: DASHBOARD_ROUTES.plans,
         },
-        footnote: state.currentPeriodEnd
-          ? t('tenant:lifecycle.expired.endedOn', {
-              date: formatDate(state.currentPeriodEnd, language, 'short'),
-            })
-          : t('tenant:lifecycle.dataSafe'),
+        // Prefer the GRACE end over the period end: on a row that went
+        // through grace, access ended when the grace window closed, not
+        // when the paid period did. Telling someone their access ended a
+        // week before it actually did is a small lie with a real cost —
+        // it is the date they will quote at support.
+        footnote: (() => {
+          const endedAt = state.graceEndsAt ?? state.currentPeriodEnd;
+          return endedAt
+            ? t('tenant:lifecycle.expired.endedOn', {
+                date: formatDate(endedAt, language, 'short'),
+              })
+            : t('tenant:lifecycle.dataSafe');
+        })(),
       };
 
     // A working subscription needs no banner at all. Silence is the
@@ -360,7 +401,9 @@ export function GettingStartedChecklist(): JSX.Element | null {
               aria-hidden
             />
             <span
-              className={step.done ? 'text-foreground' : 'text-muted-foreground'}
+              className={
+                step.done ? 'text-foreground' : 'text-muted-foreground'
+              }
             >
               {t(`tenant:lifecycle.gettingStarted.steps.${step.key}`)}
             </span>

@@ -258,6 +258,13 @@
         "plan": "Choose a plan",
         "academy": "Create your first academy"
       }
+    },
+    "gracePeriod": {
+      "title": "Your payment is late — your site is still online",
+      "description": "We haven't received payment for the new period. Everything keeps working until {{date}}. Pay before then and nothing changes.",
+      "descriptionNoDate": "We haven't received payment for the new period. Everything keeps working for a short grace window. Pay now and nothing changes.",
+      "action": "Complete payment",
+      "footnote": "Nothing has been switched off and nothing has been deleted. If you have already paid, it can take a day or two to be reviewed."
     }
   },
   "startTrial": {

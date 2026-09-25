@@ -80,6 +80,13 @@ export type SubscriptionLifecycle =
   | 'active'
   /** Cancelled, but still working through the period already paid for. */
   | 'cancelled_active'
+  /**
+   * The paid period ended and payment has not arrived, but the site is
+   * STILL ONLINE for a bounded window. Distinct from `expired` in the one
+   * way that matters to the customer: they can still fix it, and nothing
+   * of theirs is switched off yet.
+   */
+  | 'grace_period'
   | 'expired';
 
 /** The authoritative lifecycle read. Display truth for dashboard, sidebar and recovery screens. */
@@ -93,6 +100,20 @@ export interface SubscriptionLifecycleState {
   /** Whole days left in an active trial. 0 on the final day, never negative. */
   readonly trialDaysRemaining?: number;
   readonly currentPeriodEnd?: string;
+  /**
+   * Expiry enforcement — the status the row WOULD have if the sweep had
+   * run this instant, which is what `lifecycle` is derived from. Differs
+   * from `status` only between a dated transition and the next tick.
+   */
+  readonly effectiveStatus?: string;
+  /**
+   * End of the grace window: present while `lifecycle` is `grace_period`,
+   * and on an `expired` row that went through grace — so the recovery
+   * screen can say when access actually ended rather than guessing.
+   */
+  readonly graceEndsAt?: string;
+  /** When access ends if nothing changes. The date the customer must act by. */
+  readonly accessEndsAt?: string;
   /** Whether this ACCOUNT may still redeem its one lifetime Free Trial. Display only — the backend decides at redemption. */
   readonly trialAvailable: boolean;
 }
