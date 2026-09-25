@@ -206,6 +206,22 @@
       "title": "Attempt no longer counts",
       "message": "An attempt at “{{quizTitle}}” was voided and no longer counts toward your result."
     },
+    "exceptionGranted": {
+      "title": "Exception granted",
+      "message": "You have been given an exception on \u201c{{quizTitle}}\u201d. It is active now and applies to your next attempt."
+    },
+    "exceptionScheduled": {
+      "title": "Exception scheduled",
+      "message": "You have been given an exception on \u201c{{quizTitle}}\u201d. It becomes active on {{availableFromLabel}}; until then the quiz works as it normally does."
+    },
+    "exceptionActivated": {
+      "title": "Exception now active",
+      "message": "Your exception on \u201c{{quizTitle}}\u201d has just become active and applies to your next attempt."
+    },
+    "exceptionRevoked": {
+      "title": "Exception removed",
+      "message": "Your exception on \u201c{{quizTitle}}\u201d has been removed. The usual time limit and number of attempts apply again."
+    },
     "courseCompleted": {
       "title": "Course completed",
       "message": "You've completed “{{courseTitle}}”. Well done."
