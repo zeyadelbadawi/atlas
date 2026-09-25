@@ -233,6 +233,30 @@
     "reviewSubmitted": {
       "title": "A review needs moderating",
       "message": "A learner reviewed \"{{courseTitle}}\". It stays hidden until you approve it."
+    },
+    "retentionVideoWarning30d": {
+      "title": "Your hosted videos will be deleted on {{deletionAtDate}}",
+      "message": "Your subscription has been inactive since {{anchorAtDate}}. In 30 days we will permanently delete {{videoCount}} video file(s) ({{videoMinutes}} minutes). Your courses, students and certificates are not affected."
+    },
+    "retentionVideoWarning14d": {
+      "title": "14 days until your hosted videos are deleted",
+      "message": "On {{deletionAtDate}} we will permanently delete {{videoCount}} video file(s) across {{courseCount}} course(s). Reactivate your subscription, or download them first."
+    },
+    "retentionVideoWarning7d": {
+      "title": "Final warning: hosted videos deleted on {{deletionAtDate}}",
+      "message": "This is the last notice. In 7 days {{videoCount}} video file(s) ({{videoMinutes}} minutes) will be permanently deleted. This cannot be undone."
+    },
+    "retentionVideoWarning24h": {
+      "title": "Last call: your hosted videos are deleted tomorrow",
+      "message": "Tomorrow, on {{deletionAtDate}}, {{videoCount}} video file(s) will be permanently deleted. Reactivating today stops it."
+    },
+    "retentionVideoDeleted": {
+      "title": "Your hosted videos have been deleted",
+      "message": "{{deletedCount}} video file(s) ({{deletedMinutes}} minutes) were permanently deleted on {{deletedAtDate}}. Everything else was kept, and {{failedCount}} file(s) could not be removed and are still stored."
+    },
+    "retentionVideoDeletionFailed": {
+      "title": "Video retention: deletion failed",
+      "message": "Asset {{assetId}} of organisation {{organizationId}} exhausted all {{attempts}} attempts and was NOT marked deleted. Last error: {{lastError}}"
     }
   },
   "liveSession": {
