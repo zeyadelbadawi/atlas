@@ -51,7 +51,11 @@ export default function ResetPasswordPage(): JSX.Element {
         <div className="w-full max-w-md space-y-8">
           <Alert variant="destructive">
             <AlertDescription>
-              {t('auth:resetPassword.errors.invalidToken')}
+              {t(
+                isSetup
+                  ? 'auth:setPassword.errors.invalidToken'
+                  : 'auth:resetPassword.errors.invalidToken',
+              )}
             </AlertDescription>
           </Alert>
           <div className="text-center">
@@ -59,7 +63,11 @@ export default function ResetPasswordPage(): JSX.Element {
               to={AUTH_ROUTES.forgotPassword}
               className="text-sm font-medium text-primary hover:underline"
             >
-              {t('auth:resetPassword.requestNewLink')}
+              {t(
+                isSetup
+                  ? 'auth:setPassword.requestNewLink'
+                  : 'auth:resetPassword.requestNewLink',
+              )}
             </Link>
           </div>
         </div>

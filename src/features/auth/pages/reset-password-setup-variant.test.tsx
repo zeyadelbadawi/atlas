@@ -6,6 +6,18 @@
  * than two. But "Reset your password" is the wrong sentence for somebody
  * whose academy just created their account: they never had a password
  * and did not ask for anything. The only difference is the words.
+ *
+ * THE EXPIRED BRANCH IS HALF THE POINT, and the first version of this
+ * file missed it: the mock always reported a valid token, so the page's
+ * OTHER exit — the one that says the link is no longer good — was never
+ * rendered and quietly kept saying "reset link" to someone who never had
+ * a reset. A production browser check found it, which is the whole
+ * argument for looking at the real page and not only at the tests.
+ *
+ * It is not a rare path, either. A setup link lasts 72 hours and goes to
+ * someone who did not ask for it and may not open their mail today, so
+ * expiry is a NORMAL way to arrive here — more likely than it ever is
+ * for a reset link somebody requested seconds ago.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
@@ -15,8 +27,14 @@ import ResetPasswordPage from './ResetPasswordPage';
 // The page reads `validation.data === true` and `validation.isPending`,
 // and treats anything else as an invalid token — so the mock has to
 // match that shape exactly or every case renders the error branch.
+// Hoisted so each block can choose which of the page's two exits it is
+// actually testing.
+const tokenState = vi.hoisted(() => ({ valid: true as boolean }));
 vi.mock('../hooks', () => ({
-  useValidatePasswordResetToken: () => ({ data: true, isPending: false }),
+  useValidatePasswordResetToken: () => ({
+    data: tokenState.valid,
+    isPending: false,
+  }),
 }));
 vi.mock('../components/ResetPasswordForm', () => ({
   ResetPasswordForm: ({ token }: { token: string }) => (
@@ -30,7 +48,10 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  tokenState.valid = true;
+});
 
 function renderAt(search: string) {
   return render(
@@ -63,5 +84,31 @@ describe('ResetPasswordPage', () => {
     // into a claim about an account that was not just created.
     const { container } = renderAt('?token=abc&setup=true');
     expect(container.textContent).toContain('auth:resetPassword.title');
+  });
+
+  describe('when the link is no longer valid', () => {
+    it('says the SETUP link expired, not that a reset link did', () => {
+      tokenState.valid = false;
+      const { container } = renderAt('?token=stale&setup=1');
+      expect(container.textContent).toContain(
+        'auth:setPassword.errors.invalidToken',
+      );
+      expect(container.textContent).toContain('auth:setPassword.requestNewLink');
+      // Telling someone their "reset link" expired, when they never had
+      // one, is the same wrong sentence this whole variant exists to fix.
+      expect(container.textContent).not.toContain('auth:resetPassword.');
+    });
+
+    it('still says "reset link" for an ordinary recovery link', () => {
+      tokenState.valid = false;
+      const { container } = renderAt('?token=stale');
+      expect(container.textContent).toContain(
+        'auth:resetPassword.errors.invalidToken',
+      );
+      expect(container.textContent).toContain(
+        'auth:resetPassword.requestNewLink',
+      );
+      expect(container.textContent).not.toContain('auth:setPassword.');
+    });
   });
 });
