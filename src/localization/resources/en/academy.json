@@ -578,6 +578,7 @@
     },
     "ownerOnly": "Only the account owner can change communication settings.",
     "saved": "Communication settings updated",
-    "saveFailed": "The communication settings could not be saved."
+    "saveFailed": "The communication settings could not be saved.",
+    "readOnlyNotice": "These settings follow the platform's configuration and can't be changed per academy yet. Emailed sign-in codes currently apply: {{policy}}."
   }
 }

@@ -161,6 +161,7 @@
       "quotaThresholdsUnique": "That threshold is already in the list."
     },
     "saved": "Communication settings saved",
-    "saveFailed": "The communication settings could not be saved."
+    "saveFailed": "The communication settings could not be saved.",
+    "readOnlyNotice": "These settings are set by the platform's deployment configuration and are shown here as they are currently in force. They can't be changed from this page yet."
   }
 }

@@ -169,7 +169,8 @@
   },
   "course": {
     "slugTaken": "That web address is already used by another course in this academy. Please choose a different one.",
-    "insufficientRole": "Your role in this academy does not allow you to manage its courses."
+    "insufficientRole": "Your role in this academy does not allow you to manage its courses.",
+    "hasLearnerActivity": "Learners already have progress, attempts or submissions for this item, so it can't be deleted — that would erase their records. Unpublish it (set it to draft) to hide it from learners instead."
   },
   "support": {
     "caseClosed": "This ticket is closed. Please open a new ticket if you still need help."

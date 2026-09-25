@@ -106,7 +106,9 @@ describe('CommunicationSettingsCard', () => {
 
   it('saves the announcement switch as its own field', () => {
     renderCard(true);
-    fireEvent.click(screen.getByRole('switch', { name: /announcements by email/i }));
+    fireEvent.click(
+      screen.getByRole('switch', { name: /announcements by email/i })
+    );
     expect(mutate.mock.calls[0][0]).toEqual({
       announcementEmailAllowed: false,
     });
@@ -127,7 +129,9 @@ describe('CommunicationSettingsCard', () => {
       screen.getByText(/only the account owner can change communication/i)
     ).toBeTruthy();
     expect(
-      screen.getByRole('radio', { name: /every sign-in/i }).hasAttribute('disabled')
+      screen
+        .getByRole('radio', { name: /every sign-in/i })
+        .hasAttribute('disabled')
     ).toBe(true);
     expect(
       screen
@@ -157,5 +161,22 @@ describe('CommunicationSettingsCard', () => {
     expect(screen.getByRole('alert').textContent).toMatch(
       /role on this academy does not allow/i
     );
+  });
+
+  it('renders deployment-configured settings read-only, even for the owner, and never saves', () => {
+    settings = {
+      ...settings,
+      editable: false,
+      effectiveEmailOtpPolicy: 'new_device',
+    };
+    renderCard(true);
+
+    expect(
+      screen.getByText(/can't be changed per academy yet/i).textContent
+    ).toMatch(/new devices only/i);
+    const radio = screen.getByRole('radio', { name: /every sign-in/i });
+    expect(radio.hasAttribute('disabled')).toBe(true);
+    fireEvent.click(radio);
+    expect(mutate).not.toHaveBeenCalled();
   });
 });

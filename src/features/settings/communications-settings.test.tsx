@@ -29,7 +29,7 @@ if (!('ResizeObserver' in globalThis)) {
     };
 }
 
-const settings: PlatformCommunicationSettings = {
+const baseSettings: PlatformCommunicationSettings = {
   emailOtpPolicyManagement: 'new_device',
   emailOtpPolicyAcademyDefault: 'new_device',
   trustedDeviceDaysManagement: 90,
@@ -45,6 +45,8 @@ const settings: PlatformCommunicationSettings = {
     },
   ],
 };
+
+let settings: PlatformCommunicationSettings = baseSettings;
 
 const mutate = vi.fn(
   (
@@ -81,6 +83,7 @@ const i18n = createI18nInstance('en');
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
+  settings = baseSettings;
 });
 
 function renderTab() {
@@ -117,7 +120,9 @@ describe('CommunicationsSettings', () => {
     const days = await screen.findByLabelText(/remember atlas devices/i);
 
     fireEvent.change(days, { target: { value: '400' } });
-    await waitFor(() => expect(saveButton().hasAttribute('disabled')).toBe(false));
+    await waitFor(() =>
+      expect(saveButton().hasAttribute('disabled')).toBe(false)
+    );
     fireEvent.click(saveButton());
 
     const alert = await screen.findByRole('alert');
@@ -131,7 +136,9 @@ describe('CommunicationsSettings', () => {
     const hour = await screen.findByLabelText(/digest hour/i);
 
     fireEvent.change(hour, { target: { value: '24' } });
-    await waitFor(() => expect(saveButton().hasAttribute('disabled')).toBe(false));
+    await waitFor(() =>
+      expect(saveButton().hasAttribute('disabled')).toBe(false)
+    );
     fireEvent.click(saveButton());
 
     expect((await screen.findByRole('alert')).textContent).toMatch(
@@ -154,7 +161,9 @@ describe('CommunicationsSettings', () => {
     // A duplicate is refused beside the input, not silently dropped.
     fireEvent.change(draft, { target: { value: '80' } });
     fireEvent.click(screen.getByRole('button', { name: /^add$/i }));
-    expect(screen.getByRole('alert').textContent).toMatch(/already in the list/i);
+    expect(screen.getByRole('alert').textContent).toMatch(
+      /already in the list/i
+    );
 
     fireEvent.click(
       screen.getByRole('button', { name: /remove 50% threshold/i })
@@ -171,5 +180,22 @@ describe('CommunicationsSettings', () => {
       quotaAlertThresholds: [80, 95],
     });
     expect(notifySuccess).toHaveBeenCalledWith('settings:communications.saved');
+  });
+
+  it('renders deployment-configured settings read-only: notice shown, inputs disabled, no save', async () => {
+    settings = { ...baseSettings, editable: false };
+    renderTab();
+
+    await waitFor(() =>
+      expect(
+        screen.getByText(/can't be changed from this page yet/i)
+      ).toBeTruthy()
+    );
+    expect(
+      (screen.getByLabelText(/remember atlas devices/i) as HTMLInputElement)
+        .disabled
+    ).toBe(true);
+    expect(screen.queryByRole('button', { name: /^save$/i })).toBeNull();
+    expect(mutate).not.toHaveBeenCalled();
   });
 });

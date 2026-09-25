@@ -88,7 +88,10 @@ export function CommunicationSettingsCard({
     });
   };
 
-  const disabled = !canEdit || update.isPending;
+  // `editable: false` — deployment configuration, not stored data, until a
+  // per-academy override exists server-side; shown, never offered to save.
+  const readOnly = data?.editable === false;
+  const disabled = !canEdit || update.isPending || readOnly;
   const inlineErrorKey = update.error
     ? getRosterErrorKey(update.error, 'academy:communication.saveFailed')
     : null;
@@ -142,7 +145,9 @@ export function CommunicationSettingsCard({
                   className="flex-1 cursor-pointer space-y-1 font-normal"
                 >
                   <span className="block text-sm font-medium text-foreground">
-                    {t(`academy:communication.otpPolicy.options.${policy}.label`)}
+                    {t(
+                      `academy:communication.otpPolicy.options.${policy}.label`
+                    )}
                   </span>
                   <span className="block text-xs text-muted-foreground">
                     {t(
@@ -217,7 +222,16 @@ export function CommunicationSettingsCard({
           </Select>
         </div>
 
-        {!canEdit ? (
+        {readOnly ? (
+          <p className="text-xs text-muted-foreground" role="status">
+            {t('academy:communication.readOnlyNotice', {
+              policy: t(
+                `academy:communication.otpPolicy.options.${data.effectiveEmailOtpPolicy ?? 'new_device'}.label`,
+                { defaultValue: data.effectiveEmailOtpPolicy ?? '' }
+              ),
+            })}
+          </p>
+        ) : !canEdit ? (
           <p className="text-xs text-muted-foreground">
             {t('academy:communication.ownerOnly')}
           </p>

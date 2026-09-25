@@ -19,6 +19,13 @@ export interface AcademyCommunicationSettings {
   readonly emailOtpPolicy: AcademyEmailOtpPolicy;
   readonly announcementEmailAllowed: boolean;
   readonly learnerDigestDefault: LearnerDigestFrequency;
+  /**
+   * `false` while these are deployment configuration rather than stored
+   * data (no per-academy override exists yet) — the card renders read-only.
+   */
+  readonly editable?: boolean;
+  /** The platform default an `inherit` academy actually gets. */
+  readonly effectiveEmailOtpPolicy?: PlatformEmailOtpPolicy;
 }
 
 export type UpdateAcademyCommunicationSettingsPayload =
@@ -45,6 +52,8 @@ export interface PlatformCommunicationSettings {
   readonly quotaAlertThresholds: readonly number[];
   /** Read-only. */
   readonly providerStatus: readonly EmailProviderStatus[];
+  /** `false` while these are deployment configuration — the form renders read-only. */
+  readonly editable?: boolean;
 }
 
 /** Everything but the read-only provider status. */

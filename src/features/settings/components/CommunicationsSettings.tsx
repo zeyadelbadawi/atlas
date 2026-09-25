@@ -171,13 +171,17 @@ function ProviderStatusList({
 export function CommunicationsSettings(): JSX.Element {
   const { t } = useTranslation();
   const { notifySuccess, notifyError } = useToast();
-  const { data: settings, isLoading, error, refetch } =
-    usePlatformCommunicationSettings();
+  const {
+    data: settings,
+    isLoading,
+    error,
+    refetch,
+  } = usePlatformCommunicationSettings();
   const update = useUpdatePlatformCommunicationSettings();
   const [thresholdDraft, setThresholdDraft] = useState('');
-  const [thresholdDraftError, setThresholdDraftError] = useState<
-    string | null
-  >(null);
+  const [thresholdDraftError, setThresholdDraftError] = useState<string | null>(
+    null
+  );
 
   const form = useForm<CommunicationSettingsFormData>({
     resolver: zodResolver(communicationSettingsSchema),
@@ -218,7 +222,9 @@ export function CommunicationsSettings(): JSX.Element {
       parsed < 1 ||
       parsed > 100
     ) {
-      setThresholdDraftError('settings:communications.errors.quotaThresholdRange');
+      setThresholdDraftError(
+        'settings:communications.errors.quotaThresholdRange'
+      );
       return;
     }
     const current = getValues('quotaAlertThresholds');
@@ -293,6 +299,10 @@ export function CommunicationsSettings(): JSX.Element {
     );
   }
 
+  // Deployment configuration, not stored data, until these become
+  // editable server-side — shown as-is, never offered for saving.
+  const readOnly = settings.editable === false;
+
   const fieldError = (message: string | undefined): JSX.Element | null =>
     message ? (
       <p className="text-sm text-destructive" role="alert">
@@ -310,6 +320,13 @@ export function CommunicationsSettings(): JSX.Element {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+          {readOnly ? (
+            <Alert role="status">
+              <AlertDescription>
+                {t('settings:communications.readOnlyNotice')}
+              </AlertDescription>
+            </Alert>
+          ) : null}
           {update.error && update.error.kind !== 'validation' ? (
             <Alert variant="destructive" role="alert">
               <AlertDescription>
@@ -326,7 +343,7 @@ export function CommunicationsSettings(): JSX.Element {
                 name="emailOtpPolicyManagement"
                 value={field.value}
                 onChange={field.onChange}
-                disabled={isSaving}
+                disabled={isSaving || readOnly}
               />
             )}
           />
@@ -339,7 +356,7 @@ export function CommunicationsSettings(): JSX.Element {
                 name="emailOtpPolicyAcademyDefault"
                 value={field.value}
                 onChange={field.onChange}
-                disabled={isSaving}
+                disabled={isSaving || readOnly}
               />
             )}
           />
@@ -356,7 +373,7 @@ export function CommunicationsSettings(): JSX.Element {
                 min={1}
                 max={365}
                 step={1}
-                disabled={isSaving}
+                disabled={isSaving || readOnly}
                 aria-invalid={!!errors.trustedDeviceDaysManagement}
                 aria-describedby="trusted-device-days-hint"
                 {...register('trustedDeviceDaysManagement')}
@@ -374,7 +391,7 @@ export function CommunicationsSettings(): JSX.Element {
                 min={1}
                 max={365}
                 step={1}
-                disabled={isSaving}
+                disabled={isSaving || readOnly}
                 aria-invalid={!!errors.trustedDeviceDaysAcademy}
                 aria-describedby="trusted-device-days-hint"
                 {...register('trustedDeviceDaysAcademy')}
@@ -400,7 +417,7 @@ export function CommunicationsSettings(): JSX.Element {
               min={0}
               max={23}
               step={1}
-              disabled={isSaving}
+              disabled={isSaving || readOnly}
               aria-invalid={!!errors.digestHourLocal}
               aria-describedby="digest-hour-hint"
               {...register('digestHourLocal')}
@@ -441,7 +458,7 @@ export function CommunicationsSettings(): JSX.Element {
                       type="button"
                       className="rounded-pill p-0.5 hover:bg-background/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
                       onClick={() => removeThreshold(value)}
-                      disabled={isSaving}
+                      disabled={isSaving || readOnly}
                       aria-label={t('settings:communications.quota.remove', {
                         value,
                       })}
@@ -468,7 +485,7 @@ export function CommunicationsSettings(): JSX.Element {
                 step={1}
                 className="w-32"
                 value={thresholdDraft}
-                disabled={isSaving}
+                disabled={isSaving || readOnly}
                 aria-invalid={!!thresholdDraftError}
                 aria-describedby="quota-threshold-draft-error"
                 onChange={(event) => {
@@ -487,7 +504,7 @@ export function CommunicationsSettings(): JSX.Element {
               type="button"
               variant="outline"
               onClick={addThreshold}
-              disabled={isSaving}
+              disabled={isSaving || readOnly}
             >
               <Plus className="me-2 size-4" aria-hidden />
               {t('settings:communications.quota.add')}
@@ -512,7 +529,7 @@ export function CommunicationsSettings(): JSX.Element {
         </CardContent>
       </Card>
 
-      <div className="flex items-center justify-end gap-3">
+      <div className="flex items-center justify-end gap-3" hidden={readOnly}>
         <Button
           type="button"
           variant="outline"

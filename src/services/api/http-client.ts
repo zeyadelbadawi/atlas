@@ -11,6 +11,58 @@ import { tokenService } from '@services/identity';
 import type { ApiRequest, ApiResponse } from '@types';
 import { normalizeAxiosError, ApiError } from './api-error';
 
+/**
+ * HTTP methods whose repetition has the same effect as a single call
+ * (RFC 9110 §9.2.2). Only these may be replayed after an AMBIGUOUS failure.
+ */
+const IDEMPOTENT_METHODS = new Set(['get', 'head', 'options', 'put', 'delete']);
+
+/**
+ * Whether automatically replaying a failed request is safe.
+ *
+ * THE DEFECT THIS PREVENTS. Every method used to be retried up to three
+ * times on a network error, a 5xx or a 429. A network error or a 5xx is
+ * AMBIGUOUS for a write: the server may have committed it before the
+ * connection dropped or the proxy answered 502, and a replayed `POST`
+ * then creates a second submission, invitation, announcement or payment.
+ *
+ * The rule:
+ *   - idempotent methods — always replayable;
+ *   - any method on 429 — the rate limiter refused it before any handler
+ *     ran, so nothing was written;
+ *   - a write whose JSON body carries an `idempotencyKey` — the server
+ *     dedupes on it (checkouts, course orders, refunds, provisioning), so a
+ *     replay returns the original outcome instead of a duplicate;
+ *   - every other write — never replayed; the caller sees the error and
+ *     the user decides.
+ */
+export function isReplaySafe(
+  config: { method?: string; data?: unknown },
+  error: Pick<AxiosError, 'response'>
+): boolean {
+  const method = (config.method ?? 'get').toLowerCase();
+  if (IDEMPOTENT_METHODS.has(method)) return true;
+  if (error.response?.status === 429) return true;
+  return carriesIdempotencyKey(config.data);
+}
+
+function carriesIdempotencyKey(data: unknown): boolean {
+  let body = data;
+  if (typeof body === 'string') {
+    try {
+      body = JSON.parse(body);
+    } catch {
+      return false;
+    }
+  }
+  return (
+    typeof body === 'object' &&
+    body !== null &&
+    typeof (body as { idempotencyKey?: unknown }).idempotencyKey === 'string' &&
+    (body as { idempotencyKey: string }).idempotencyKey.length > 0
+  );
+}
+
 /** Default timeout for API requests, in milliseconds. */
 const DEFAULT_TIMEOUT_MS = 30_000;
 
@@ -191,8 +243,13 @@ export class HttpClient {
           }
         }
 
-        // Handle transient failures with retry.
-        if (this.shouldRetry(error) && originalRequest) {
+        // Handle transient failures with retry — only when replaying the
+        // request cannot duplicate a write (see `isReplaySafe`).
+        if (
+          originalRequest &&
+          this.shouldRetry(error) &&
+          isReplaySafe(originalRequest, error)
+        ) {
           const retryCount =
             (originalRequest.headers['X-Retry-Count'] as number) ?? 0;
 
