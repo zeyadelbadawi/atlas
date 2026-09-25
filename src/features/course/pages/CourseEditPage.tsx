@@ -48,6 +48,12 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { useFilePicker, useUnsavedChanges } from '@hooks';
+import { CourseLanguageSelect } from '../components/CourseLanguageSelect';
+import { LinesTextarea, normalizeLines } from '../components/LinesTextarea';
+import {
+  parseCourseLanguages,
+  serializeCourseLanguages,
+} from '../constants/course-languages';
 import { useServerValidation } from '@forms';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useCourse, useUpdateCourse, useCourseCategories } from '../hooks';
@@ -186,9 +192,15 @@ export default function CourseEditPage(): JSX.Element {
           pricing,
           visibility: data.visibility,
           level: data.level,
-          language: data.language || undefined,
-          outcomes: data.outcomes ?? [],
-          requirements: data.requirements ?? [],
+          // `LinesTextarea` normalises on blur; normalising again here
+          // covers the submit that never blurred (Enter, or a click the
+          // browser dispatched before the blur landed) so a half-typed
+          // blank line can never reach the API as an empty item.
+          language: serializeCourseLanguages(
+            parseCourseLanguages(data.language)
+          ),
+          outcomes: normalizeLines((data.outcomes ?? []).join('\n')),
+          requirements: normalizeLines((data.requirements ?? []).join('\n')),
         },
       });
       toast({
@@ -602,12 +614,19 @@ export default function CourseEditPage(): JSX.Element {
                     <FormItem>
                       <FormLabel>{t('course:edit.languageLabel')}</FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          value={field.value ?? ''}
-                          placeholder={t('course:edit.languagePlaceholder')}
+                        {/* The field stays the one comma-separated string
+                            the column has always held; the picker just
+                            stops anyone typing a malformed one. */}
+                        <CourseLanguageSelect
+                          value={parseCourseLanguages(field.value)}
+                          onChange={(next) =>
+                            field.onChange(serializeCourseLanguages(next) ?? '')
+                          }
                         />
                       </FormControl>
+                      <FormDescription>
+                        {t('course:edit.languageHelp')}
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -621,17 +640,10 @@ export default function CourseEditPage(): JSX.Element {
                   <FormItem>
                     <FormLabel>{t('course:edit.outcomesLabel')}</FormLabel>
                     <FormControl>
-                      <Textarea
+                      <LinesTextarea
                         rows={4}
-                        value={(field.value ?? []).join('\n')}
-                        onChange={(e) =>
-                          field.onChange(
-                            e.target.value
-                              .split('\n')
-                              .map((line) => line.trim())
-                              .filter(Boolean)
-                          )
-                        }
+                        value={field.value}
+                        onChange={field.onChange}
                         placeholder={t('course:edit.outcomesPlaceholder')}
                       />
                     </FormControl>
@@ -650,17 +662,10 @@ export default function CourseEditPage(): JSX.Element {
                   <FormItem>
                     <FormLabel>{t('course:edit.requirementsLabel')}</FormLabel>
                     <FormControl>
-                      <Textarea
+                      <LinesTextarea
                         rows={4}
-                        value={(field.value ?? []).join('\n')}
-                        onChange={(e) =>
-                          field.onChange(
-                            e.target.value
-                              .split('\n')
-                              .map((line) => line.trim())
-                              .filter(Boolean)
-                          )
-                        }
+                        value={field.value}
+                        onChange={field.onChange}
                         placeholder={t('course:edit.requirementsPlaceholder')}
                       />
                     </FormControl>

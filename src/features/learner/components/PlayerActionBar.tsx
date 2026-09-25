@@ -28,12 +28,17 @@
  */
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import {
+  Award,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
+  GraduationCap,
   Loader2,
+  ListChecks,
   RotateCcw,
+  Star,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -47,6 +52,25 @@ import {
 
 /** How long the learner has to cancel an auto-advance. */
 const AUTO_ADVANCE_SECONDS = 8;
+
+/**
+ * What the learner can do once there is nothing after this activity.
+ *
+ * Every destination is resolved by the PAGE from the real route table and
+ * real server state — a certificate href exists only when a certificate
+ * has actually been issued for this course. This component never decides
+ * eligibility and never builds a URL; it renders the ones it is handed.
+ */
+export interface PlayerCourseCompletion {
+  /** Server truth: every activity in the sequence is finished, not just this one. */
+  readonly isCourseComplete: boolean;
+  /** The course outline — always available, and the way back to anything unfinished. */
+  readonly courseHref: string;
+  /** Set only when an issued certificate for THIS course really exists. */
+  readonly certificateHref?: string;
+  /** Set only where the review experience is actually reachable. */
+  readonly reviewHref?: string;
+}
 
 export interface PlayerActionBarProps {
   readonly previous: CourseSequenceItem | undefined;
@@ -71,6 +95,11 @@ export interface PlayerActionBarProps {
   readonly hasFinishedPlaying?: boolean;
   /** A failed complete/undo, stated where the button is — never a silent no-op. */
   readonly errorMessage?: string;
+  /**
+   * Present on the learner surface. When this is the last activity and it
+   * is finished, the bar stops being navigation and becomes an ending.
+   */
+  readonly courseCompletion?: PlayerCourseCompletion;
 }
 
 export function PlayerActionBar({
@@ -87,10 +116,23 @@ export function PlayerActionBar({
   completionHintKey,
   hasFinishedPlaying,
   errorMessage,
+  courseCompletion,
 }: PlayerActionBarProps): JSX.Element {
   const { t } = useTranslation();
   const [autoAdvance, setAutoAdvance] = useState(false);
   const [countdown, setCountdown] = useState<number | null>(null);
+
+  /*
+    THE END OF THE COURSE, not merely the end of a lesson.
+
+    Previously this state rendered as a Next button that was simply
+    disabled: the learner pressed "Mark as complete" on the final lesson
+    and the only forward control on the screen went grey, with no
+    statement that anything had been achieved and nowhere to go. A
+    disabled control is a dead end wherever it appears, and this is the
+    one place in the course where the learner has most earned a next step.
+  */
+  const isTerminal = isCompleted && !next && !!courseCompletion;
 
   /*
    * Armed only when the learner has both turned it on AND finished the
@@ -122,7 +164,7 @@ export function PlayerActionBar({
 
   return (
     <div className="space-y-3 border-t border-border pt-4">
-      {isCompleted ? (
+      {isCompleted && !isTerminal ? (
         /*
          * The inline confirmation. `role="status"` so it is announced
          * once when it appears — completion is information, never an
@@ -150,6 +192,74 @@ export function PlayerActionBar({
             </span>
           )}
         </p>
+      ) : null}
+
+      {isTerminal && courseCompletion ? (
+        /*
+          `role="status"`, like the inline confirmation it replaces:
+          finishing a course is information the learner just caused, never
+          an interruption. The heading is an `h2` so a screen-reader user
+          can reach it by heading, and the actions are ordinary links —
+          this is navigation, so they must open in a new tab, be
+          bookmarkable, and say where they go.
+        */
+        <div
+          role="status"
+          className="rounded-lg border border-border bg-muted/40 p-4"
+        >
+          <div className="flex items-start gap-3">
+            {courseCompletion.isCourseComplete ? (
+              <GraduationCap className="mt-0.5 size-5 shrink-0 text-success" aria-hidden />
+            ) : (
+              <ListChecks className="mt-0.5 size-5 shrink-0 text-muted-foreground" aria-hidden />
+            )}
+            <div className="space-y-1">
+              <h2 className="text-sm font-semibold text-foreground">
+                {courseCompletion.isCourseComplete
+                  ? t('learning:player.courseComplete.title')
+                  : t('learning:player.courseEnd.title')}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {courseCompletion.isCourseComplete
+                  ? t('learning:player.courseComplete.description')
+                  : t('learning:player.courseEnd.description')}
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-3 flex flex-wrap gap-2">
+            {courseCompletion.isCourseComplete &&
+            courseCompletion.certificateHref ? (
+              <Button asChild>
+                <Link to={courseCompletion.certificateHref}>
+                  <Award className="size-4" aria-hidden />
+                  {t('learning:player.courseComplete.viewCertificate')}
+                </Link>
+              </Button>
+            ) : null}
+            {courseCompletion.isCourseComplete &&
+            courseCompletion.reviewHref ? (
+              <Button variant="outline" asChild>
+                <Link to={courseCompletion.reviewHref}>
+                  <Star className="size-4" aria-hidden />
+                  {t('learning:player.courseComplete.rateCourse')}
+                </Link>
+              </Button>
+            ) : null}
+            <Button
+              variant={
+                courseCompletion.isCourseComplete ? 'ghost' : 'default'
+              }
+              asChild
+            >
+              <Link to={courseCompletion.courseHref}>
+                {courseCompletion.isCourseComplete
+                  ? t('learning:player.courseComplete.backToCourse')
+                  : t('learning:player.courseEnd.backToCourse')}
+              </Link>
+            </Button>
+          </div>
+        </div>
       ) : null}
 
       {countdown !== null ? (
@@ -228,14 +338,19 @@ export function PlayerActionBar({
           ) : null}
         </div>
 
-        <Button
-          variant="outline"
-          disabled={!next || next.state === 'locked'}
-          onClick={() => next && onGoTo(next)}
-        >
-          {t('learning:player.next')}
-          <ChevronRight className={cn('size-4', MIRROR_IN_RTL)} aria-hidden />
-        </Button>
+        {/* Nothing follows this activity and it is finished, so there is
+            no Next to grey out — the completion panel above carries the
+            forward actions instead. */}
+        {isTerminal ? null : (
+          <Button
+            variant="outline"
+            disabled={!next || next.state === 'locked'}
+            onClick={() => next && onGoTo(next)}
+          >
+            {t('learning:player.next')}
+            <ChevronRight className={cn('size-4', MIRROR_IN_RTL)} aria-hidden />
+          </Button>
+        )}
       </div>
 
       {/* A disabled Next with no reason is a dead end; the reason is

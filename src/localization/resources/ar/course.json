@@ -136,13 +136,19 @@
     "levelLabel": "المستوى",
     "levelPlaceholder": "اختر مستوى",
     "languageLabel": "اللغة",
-    "languagePlaceholder": "مثال: English، العربية",
+    "languagePlaceholder": "اختر اللغات",
     "outcomesLabel": "ما سيحققه المتعلمون",
     "outcomesPlaceholder": "بناء واجهة برمجية\nالنشر إلى الإنتاج",
     "requirementsLabel": "المتطلبات",
     "requirementsPlaceholder": "أساسيات JavaScript\nمحرر أكواد",
     "onemPerLineHelp": "عنصر واحد لكل سطر.",
-    "goToReviews": "التقييمات"
+    "goToReviews": "التقييمات",
+    "languageSelected": "{{count}} مختارة",
+    "languageSearch": "ابحث عن لغة…",
+    "languageEmpty": "لا توجد لغة مطابقة",
+    "languageRemove": "إزالة {{language}}",
+    "languageLimitReached": "لا يمكن إضافة لغات أخرى.",
+    "languageHelp": "اللغات التي يُدرَّس بها هذا المقرر."
   },
   "instructors": {
     "title": "المدرّسون",

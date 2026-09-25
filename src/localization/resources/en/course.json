@@ -136,13 +136,19 @@
     "levelLabel": "Level",
     "levelPlaceholder": "Select a level",
     "languageLabel": "Language",
-    "languagePlaceholder": "e.g. English, العربية",
+    "languagePlaceholder": "Select languages",
     "outcomesLabel": "What learners will achieve",
     "outcomesPlaceholder": "Build a REST API\nDeploy to production",
     "requirementsLabel": "Requirements",
     "requirementsPlaceholder": "Basic JavaScript\nA code editor",
     "onemPerLineHelp": "One item per line.",
-    "goToReviews": "Reviews"
+    "goToReviews": "Reviews",
+    "languageSelected": "{{count}} selected",
+    "languageSearch": "Search languages…",
+    "languageEmpty": "No matching language",
+    "languageRemove": "Remove {{language}}",
+    "languageLimitReached": "No more languages will fit.",
+    "languageHelp": "The languages this course is taught in."
   },
   "instructors": {
     "title": "Instructors",

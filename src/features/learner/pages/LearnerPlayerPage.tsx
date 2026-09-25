@@ -61,6 +61,7 @@ import {
   useCompleteLessonInPlayer,
   useUndoLessonCompletion,
 } from '../hooks/useLessonCompletion';
+import { useMyCertificates } from '@features/learning';
 import { useLessonGrant } from '../hooks/useLessonGrant';
 import { usePlaybackHeartbeat } from '../hooks/usePlaybackHeartbeat';
 import {
@@ -72,7 +73,7 @@ import {
 export default function LearnerPlayerPage(): JSX.Element {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { buildHref } = useLearnerSurface();
+  const { academyId, buildHref } = useLearnerSurface();
   const { user } = useAuth();
   const language = i18n.language as LanguageCode;
 
@@ -236,6 +237,59 @@ export default function LearnerPlayerPage(): JSX.Element {
   /* ---------- completion ---------- */
 
   const isCompleted = current ? isSequenceItemFinished(current.state) : false;
+
+  /*
+    THE END OF THE COURSE.
+
+    `isTerminal` is "this is the last item in the sequence and it is
+    finished" — which is what the learner just did. Whether the COURSE is
+    complete is a different question and is answered by the server's own
+    counts, not by inference: a learner can finish the last lesson while
+    an earlier quiz is still open, and telling them the course is done
+    would be a lie they discover later.
+
+    The certificate CTA is shown only when an issued certificate for THIS
+    course actually exists. Eligibility is not re-derived here — the
+    certificates endpoint is the authority, the query only runs once the
+    learner is actually at the end, and `enabled: false` on the response
+    (the academy is not admitted by the certificates flag) yields no
+    certificate and therefore no button.
+  */
+  const isTerminal = isCompleted && !next;
+  const certificatesQuery = useMyCertificates(academyId, {
+    enabled: isTerminal && !!user?.id && !!academyId,
+  });
+  const courseCompletion = useMemo(() => {
+    if (!isTerminal) return undefined;
+    const totalCount = sequenceQuery.data?.totalCount ?? 0;
+    const completedCount = sequenceQuery.data?.completedCount ?? 0;
+    const isCourseComplete = totalCount > 0 && completedCount >= totalCount;
+    const certificate = certificatesQuery.data?.items.find(
+      (item) => item.courseId === courseId && item.status === 'issued'
+    );
+    return {
+      isCourseComplete,
+      courseHref: buildHref(
+        buildPath(LEARNER_ROUTES.courseProgress, { courseId })
+      ),
+      certificateHref: certificate
+        ? buildHref(LEARNER_ROUTES.certificates)
+        : undefined,
+      // The course details page is where an enrolled learner's review
+      // form lives, and `/courses/:courseId` is the same address the
+      // course catalogue already links to on this host.
+      reviewHref: isCourseComplete
+        ? buildHref(`/courses/${courseId}`)
+        : undefined,
+    };
+  }, [
+    isTerminal,
+    sequenceQuery.data?.totalCount,
+    sequenceQuery.data?.completedCount,
+    certificatesQuery.data?.items,
+    courseId,
+    buildHref,
+  ]);
   // Atlas observes its own players' playback; it cannot observe YouTube's.
   // A watched-ratio rule on an embedded lesson therefore can never be met,
   // and the bar says so instead of waiting for evidence that cannot come.
@@ -385,6 +439,7 @@ export default function LearnerPlayerPage(): JSX.Element {
               canComplete={canComplete && heartbeat.leaseHeld}
               completionHintKey={completionHintKey}
               hasFinishedPlaying={hasFinishedPlaying}
+              courseCompletion={courseCompletion}
               errorMessage={
                 completeLesson.error || undoCompletion.error
                   ? t('learning:player.completion.failed')
