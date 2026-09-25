@@ -237,6 +237,10 @@
     "reviewSubmitted": {
       "title": "مراجعة بانتظار الاعتماد",
       "message": "قام أحد المتعلمين بمراجعة «{{courseTitle}}». تبقى مخفية حتى تعتمدها."
+    },
+    "rosterStudentAwaitingApproval": {
+      "title": "هناك من ينتظر الانضمام",
+      "message": "سجّل متعلم جديد ويحتاج إلى موافقة قبل أن يتمكن من الوصول إلى أي دورة."
     }
   },
   "liveSession": {

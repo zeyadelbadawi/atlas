@@ -233,6 +233,10 @@
     "reviewSubmitted": {
       "title": "A review needs moderating",
       "message": "A learner reviewed \"{{courseTitle}}\". It stays hidden until you approve it."
+    },
+    "rosterStudentAwaitingApproval": {
+      "title": "Someone is waiting to join",
+      "message": "A new learner signed up and needs approval before they can reach any course."
     }
   },
   "liveSession": {
