@@ -185,6 +185,50 @@
     "emailOtp": {
       "title": "Your sign-in code",
       "message": "Use the code we emailed you. It expires in {{expiresInMinutes}} minutes."
+    },
+    "enrollmentSelfEnrolled": {
+      "title": "You're enrolled",
+      "message": "You enrolled yourself in “{{courseTitle}}” at {{academyName}}. It's open to you now."
+    },
+    "courseOrderCreated": {
+      "title": "Order started",
+      "message": "Your order for “{{courseTitle}}” ({{amount}} {{currency}}) is waiting for payment."
+    },
+    "courseOrderExpired": {
+      "title": "Order expired",
+      "message": "Your order for “{{courseTitle}}” was not paid in time and has been released. Nothing was charged."
+    },
+    "quizAutoSubmitted": {
+      "title": "Quiz submitted automatically",
+      "message": "Your attempt at “{{quizTitle}}” was submitted for you. The answers you had saved were kept."
+    },
+    "attemptInvalidated": {
+      "title": "Attempt no longer counts",
+      "message": "An attempt at “{{quizTitle}}” was voided and no longer counts toward your result."
+    },
+    "courseCompleted": {
+      "title": "Course completed",
+      "message": "You've completed “{{courseTitle}}”. Well done."
+    },
+    "deviceRegistered": {
+      "title": "New device added",
+      "message": "{{deviceLabel}} was added to your devices. If this wasn't you, remove it and change your password."
+    },
+    "deviceRemoved": {
+      "title": "Device removed",
+      "message": "{{deviceLabel}} was removed from your devices and signed out."
+    },
+    "deviceLimitReached": {
+      "title": "Device limit reached",
+      "message": "You can use {{maxDevices}} device(s) here, and this one is over the limit. Remove a device to carry on."
+    },
+    "sessionTakenOver": {
+      "title": "Learning moved to another device",
+      "message": "{{deviceLabel}} took over your learning session. Only one device can play lessons at a time."
+    },
+    "announcementPublished": {
+      "title": "New announcement",
+      "message": "{{academyName}} posted: “{{title}}”"
     }
   },
   "liveSession": {

@@ -189,6 +189,50 @@
     "emailOtp": {
       "title": "رمز تسجيل الدخول",
       "message": "استخدم الرمز الذي أرسلناه إلى بريدك. تنتهي صلاحيته خلال {{expiresInMinutes}} دقيقة."
+    },
+    "enrollmentSelfEnrolled": {
+      "title": "تم تسجيلك",
+      "message": "لقد سجّلت نفسك في «{{courseTitle}}» لدى {{academyName}}. الدورة متاحة لك الآن."
+    },
+    "courseOrderCreated": {
+      "title": "تم بدء الطلب",
+      "message": "طلبك لـ «{{courseTitle}}» بقيمة {{amount}} {{currency}} في انتظار الدفع."
+    },
+    "courseOrderExpired": {
+      "title": "انتهت صلاحية الطلب",
+      "message": "لم يُدفع طلبك لـ «{{courseTitle}}» في الوقت المحدد وتم إلغاؤه. لم يُخصم أي مبلغ."
+    },
+    "quizAutoSubmitted": {
+      "title": "تم تسليم الاختبار تلقائيًا",
+      "message": "تم تسليم محاولتك في «{{quizTitle}}» نيابة عنك، مع الاحتفاظ بالإجابات التي حفظتها."
+    },
+    "attemptInvalidated": {
+      "title": "لم تعد المحاولة محتسبة",
+      "message": "تم إلغاء محاولة في «{{quizTitle}}» ولم تعد تُحتسب ضمن نتيجتك."
+    },
+    "courseCompleted": {
+      "title": "اكتملت الدورة",
+      "message": "لقد أكملت «{{courseTitle}}». أحسنت."
+    },
+    "deviceRegistered": {
+      "title": "تمت إضافة جهاز جديد",
+      "message": "تمت إضافة {{deviceLabel}} إلى أجهزتك. إذا لم تكن أنت، فاحذفه وغيّر كلمة المرور."
+    },
+    "deviceRemoved": {
+      "title": "تم حذف جهاز",
+      "message": "تم حذف {{deviceLabel}} من أجهزتك وتسجيل خروجه."
+    },
+    "deviceLimitReached": {
+      "title": "بلغت الحد الأقصى للأجهزة",
+      "message": "يُسمح لك بـ {{maxDevices}} من الأجهزة هنا، وهذا الجهاز يتجاوز الحد. احذف جهازًا للمتابعة."
+    },
+    "sessionTakenOver": {
+      "title": "انتقل التعلم إلى جهاز آخر",
+      "message": "استلم {{deviceLabel}} جلسة التعلم الخاصة بك. يمكن لجهاز واحد فقط تشغيل الدروس في الوقت نفسه."
+    },
+    "announcementPublished": {
+      "title": "إعلان جديد",
+      "message": "نشرت {{academyName}}: «{{title}}»"
     }
   },
   "liveSession": {
