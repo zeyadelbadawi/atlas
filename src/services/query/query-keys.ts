@@ -956,6 +956,15 @@ export const platformMetricsKeys = {
     [...platformMetricsKeys.all, 'delivery', days] as const,
 } as const;
 
+/** P64 Communications C7 — the platform email pipeline console. */
+export const platformCommunicationsKeys = {
+  all: [...QUERY_KEY_ROOTS.platformMetrics, 'communications'] as const,
+  health: (days: number) =>
+    [...platformCommunicationsKeys.all, 'health', days] as const,
+  suppressions: (limit: number) =>
+    [...platformCommunicationsKeys.all, 'suppressions', limit] as const,
+} as const;
+
 /** Platform Analytics (Prompt 13). */
 export const analyticsKeys = {
   all: QUERY_KEY_ROOTS.analytics,

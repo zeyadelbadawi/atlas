@@ -94,6 +94,9 @@ const AnalyticsRevenuePage = lazy(
 const AnalyticsCommercePage = lazy(
   () => import('@features/analytics/pages/AnalyticsCommercePage')
 );
+const AnalyticsCommunicationsPage = lazy(
+  () => import('@features/analytics/pages/AnalyticsCommunicationsPage')
+);
 const AnalyticsDeliveryPage = lazy(
   () => import('@features/analytics/pages/AnalyticsDeliveryPage')
 );
@@ -601,6 +604,13 @@ export function AppRouter(): JSX.Element {
                   is the real control. */}
               <Route path="commerce" element={<AnalyticsCommercePage />} />
               <Route path="delivery" element={<AnalyticsDeliveryPage />} />
+              {/* P64 Communications C7 — email pipeline health. Same guard
+                  as the siblings; `PlatformOwnerGuard` on
+                  `/platform-communications/*` is the real control. */}
+              <Route
+                path="communications"
+                element={<AnalyticsCommunicationsPage />}
+              />
             </Route>
 
             {/* Phase 9 (roadmap CO11) — the Client Owner's student progress

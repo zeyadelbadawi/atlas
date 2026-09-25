@@ -11,5 +11,10 @@ export { default as PlatformDashboardPage } from './pages/PlatformDashboardPage'
 export {
   usePlatformCommerceMetrics,
   usePlatformDeliveryMetrics,
+  // P64 Communications C7 — the platform email pipeline console.
+  useCommunicationsHealth,
+  useCommunicationSuppressions,
+  useUnsuppressAddress,
 } from './hooks';
 export { PlatformVideoInventory } from './components/PlatformVideoInventory';
+export { platformCommunicationsService } from './services/PlatformCommunicationsService';

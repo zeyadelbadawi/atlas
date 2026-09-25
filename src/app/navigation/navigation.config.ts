@@ -620,6 +620,13 @@ export function getDashboardNavigation(
               requiresAuth: true,
               requiredRoles: ['platform_owner'],
             },
+            {
+              id: 'analytics-communications',
+              labelKey: 'analytics:tabs.communications',
+              path: DASHBOARD_ROUTES.analyticsCommunications,
+              requiresAuth: true,
+              requiredRoles: ['platform_owner'],
+            },
           ],
         },
         {

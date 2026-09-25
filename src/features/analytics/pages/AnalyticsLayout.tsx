@@ -61,6 +61,12 @@ const ANALYTICS_TABS: readonly NavigationItem[] = [
     labelKey: 'analytics:tabs.delivery',
     path: DASHBOARD_ROUTES.analyticsDelivery,
   },
+  // P64 Communications C7 — the email pipeline console.
+  {
+    id: 'analytics-communications',
+    labelKey: 'analytics:tabs.communications',
+    path: DASHBOARD_ROUTES.analyticsCommunications,
+  },
 ];
 
 export default function AnalyticsLayout(): JSX.Element {

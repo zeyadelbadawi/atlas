@@ -65,6 +65,8 @@ export const DASHBOARD_ROUTES = {
      stay an executive overview. */
   analyticsCommerce: '/dashboard/analytics/commerce',
   analyticsDelivery: '/dashboard/analytics/delivery',
+  /** P64 Communications C7 — the platform email pipeline console. */
+  analyticsCommunications: '/dashboard/analytics/communications',
   /** Phase 9 — the Client Owner's student progress rollup (roadmap CO11). */
   studentAnalytics: '/dashboard/student-analytics',
   platform: '/dashboard/platform',

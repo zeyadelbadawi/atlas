@@ -7,7 +7,8 @@
     "engagement": "Engagement",
     "revenue": "Revenue",
     "commerce": "Commerce",
-    "delivery": "Content delivery"
+    "delivery": "Content delivery",
+    "communications": "Communications"
   },
   "dateRange": {
     "label": "Date range",
@@ -252,6 +253,126 @@
       "title": "No delivery activity",
       "description_one": "No lesson-access checks, video assets or retention backlog were recorded in the last {{count}} day.",
       "description_other": "No lesson-access checks, video assets or retention backlog were recorded in the last {{count}} days."
+    }
+  },
+  "communications": {
+    "duration": {
+      "seconds_one": "{{count}} second",
+      "seconds_other": "{{count}} seconds",
+      "minutes_one": "{{count}} minute",
+      "minutes_other": "{{count}} minutes",
+      "hours_one": "{{count}} hour",
+      "hours_other": "{{count}} hours",
+      "days_one": "{{count}} day",
+      "days_other": "{{count}} days"
+    },
+    "headline": {
+      "queue": "Oldest message waiting",
+      "sending": "Sending through",
+      "sendingHint_one": "{{count}} provider configured",
+      "sendingHint_other": "{{count}} providers configured, in fallback order",
+      "sendingStubHint": "No real provider — nothing is being delivered",
+      "failed": "Gave up after retries",
+      "failedHint": "Each one is a message nobody received. Check the delivery table below.",
+      "failedNoneHint": "Nothing has exhausted its retries",
+      "suppressed": "Blocked addresses",
+      "suppressedHint": "Bounced or marked as spam; these are never mailed again"
+    },
+    "queue": {
+      "idle": {
+        "value": "Nothing waiting",
+        "hint": "The queue is empty — everything due has been handed to a provider.",
+        "announcement": "The email queue is empty. Everything due has been sent."
+      },
+      "flowing": {
+        "hint": "Normal. Messages are being picked up and delivered.",
+        "announcement": "The email queue is moving. The oldest message has been waiting {{duration}}."
+      },
+      "stalled": {
+        "hint": "Too long. Messages are due but nothing is collecting them — the dispatcher may have stopped.",
+        "announcement": "Warning: the email queue has stalled. The oldest message has been waiting {{duration}} and nothing is collecting it."
+      }
+    },
+    "providers": {
+      "brevo": "Brevo",
+      "resend": "Resend",
+      "stub": "Stub (delivers nothing)",
+      "none": "None"
+    },
+    "providerSection": {
+      "title": "Providers and remaining allowance",
+      "description": "Tried in order. If the first cannot take a message, the next one does.",
+      "caption": "Email providers in fallback order with their used and remaining allowance",
+      "empty": "No email provider is configured, so nothing can be delivered.",
+      "primary": "primary",
+      "fallback": "fallback {{position}}",
+      "used": "{{used}} of {{limit}}",
+      "columns": {
+        "provider": "Provider",
+        "daily": "Today",
+        "monthly": "This month"
+      }
+    },
+    "pipelineSection": {
+      "title": "Pipeline",
+      "description_one": "Messages created and delivery attempts made in the last {{count}} day.",
+      "description_other": "Messages created and delivery attempts made in the last {{count}} days.",
+      "outboxCaption": "Queued messages by state",
+      "deliveryCaption": "Delivery attempts by outcome",
+      "failureRatio": "{{value}} of completed attempts bounced, were marked as spam, or failed.",
+      "columns": {
+        "state": "State",
+        "status": "Outcome",
+        "count": "Messages",
+        "share": "Share"
+      }
+    },
+    "outboxStates": {
+      "pending": "Waiting to send",
+      "dispatched": "Handed to a provider",
+      "deferred": "Held back",
+      "suppressed": "Not sent — address blocked",
+      "failed": "Gave up after retries"
+    },
+    "deliveryStatuses": {
+      "queued": "Queued",
+      "sent": "Accepted by provider",
+      "delivered": "Delivered",
+      "bounced": "Bounced",
+      "complained": "Marked as spam",
+      "failed": "Failed",
+      "suppressed": "Blocked",
+      "deferred": "Delayed by provider"
+    },
+    "suppressionReasons": {
+      "hard_bounce": "Address does not exist",
+      "soft_bounce": "Temporarily undeliverable",
+      "complaint": "Marked as spam",
+      "manual": "Blocked manually",
+      "invalid": "Invalid address"
+    },
+    "suppressions": {
+      "title": "Blocked addresses",
+      "description": "An address that bounced permanently or reported spam is never mailed again. Addresses are stored as a one-way hash, so only the reason is shown here.",
+      "reasonCaption": "Blocked addresses by reason",
+      "listCaption": "Individual blocked addresses, shown as hashes",
+      "hashedOnly": "Stored hashed",
+      "lift": "Unblock",
+      "lifting": "Unblocking…",
+      "lifted": "That address can receive email again.",
+      "liftLabel": "Unblock an address",
+      "liftHelp": "Type the full address. Only unblock after the person has confirmed the mailbox works — mailing a dead address again damages delivery for everyone.",
+      "columns": {
+        "reason": "Reason",
+        "count": "Addresses",
+        "share": "Share",
+        "address": "Address (hashed)",
+        "action": ""
+      },
+      "empty": {
+        "title": "No blocked addresses",
+        "description": "Nothing has bounced permanently or been reported as spam."
+      }
     }
   }
 }

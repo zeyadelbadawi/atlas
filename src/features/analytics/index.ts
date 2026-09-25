@@ -12,3 +12,4 @@ export { default as AnalyticsRevenuePage } from './pages/AnalyticsRevenuePage';
 // P64 Phase 4 — operational reporting pages.
 export { default as AnalyticsCommercePage } from './pages/AnalyticsCommercePage';
 export { default as AnalyticsDeliveryPage } from './pages/AnalyticsDeliveryPage';
+export { default as AnalyticsCommunicationsPage } from './pages/AnalyticsCommunicationsPage';

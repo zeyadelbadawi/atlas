@@ -16,3 +16,10 @@ export { usePlatformMetrics } from './usePlatformMetrics';
 export { usePlatformVideoMetrics } from './usePlatformVideoMetrics';
 export { usePlatformCommerceMetrics } from './usePlatformCommerceMetrics';
 export { usePlatformDeliveryMetrics } from './usePlatformDeliveryMetrics';
+
+// P64 Communications C7 — the platform email pipeline console.
+export {
+  useCommunicationsHealth,
+  useCommunicationSuppressions,
+  useUnsuppressAddress,
+} from './usePlatformCommunications';
