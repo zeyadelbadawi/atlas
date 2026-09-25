@@ -42,8 +42,13 @@ export class PlatformCommunicationsService extends BaseService {
    * it is never stored or returned in plain text.
    */
   async unsuppress(email: string): Promise<{ lifted: boolean }> {
+    // Segments, NOT a pre-encoded string. `resourcePath` runs
+    // `encodeURIComponent` over every segment it is given, so passing
+    // `suppressions/${encodeURIComponent(email)}` as one segment encoded
+    // it twice AND encoded the separating slash — the request went to
+    // `suppressions%2Fa%2540b.com` and 404'd. The button never worked.
     return this.client.delete<{ lifted: boolean }>(
-      this.path(`suppressions/${encodeURIComponent(email)}`)
+      this.path('suppressions', email)
     );
   }
 }
