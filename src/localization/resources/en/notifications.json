@@ -237,6 +237,74 @@
     "rosterStudentAwaitingApproval": {
       "title": "Someone is waiting to join",
       "message": "A new learner signed up and needs approval before they can reach any course."
+    },
+    "lifecycleTrialStarted": {
+      "title": "Your {{planName}} trial has started",
+      "message": "Your trial runs until {{trialEndsAtDate}}. Choose a plan before then to keep your site online."
+    },
+    "lifecycleTrialEndingSoon": {
+      "title": "Your trial ends tomorrow",
+      "message": "Your {{planName}} trial ends {{trialEndsAtDate}}. Choose a plan to keep your site online."
+    },
+    "lifecycleTrialExpired": {
+      "title": "Your trial has ended",
+      "message": "Your {{planName}} trial ended {{endedAtDate}} and your site is now offline. Choose a plan to bring it back."
+    },
+    "lifecycleTrialFollowup3d": {
+      "title": "Your site is still offline",
+      "message": "Your trial ended {{endedAtDate}}. Everything you built is safe — choose a plan to put it back online."
+    },
+    "lifecycleTrialFollowup14d": {
+      "title": "Your courses are waiting",
+      "message": "Your trial ended {{endedAtDate}}. Your content is still here and choosing a plan restores it immediately."
+    },
+    "lifecycleTrialReactivation45d": {
+      "title": "Still here whenever you're ready",
+      "message": "Your trial ended {{endedAtDate}}. Your academy can be back online the moment you choose a plan."
+    },
+    "lifecycleSubscriptionActivated": {
+      "title": "Your {{planName}} subscription is active",
+      "message": "Your plan runs until {{periodEndDate}}."
+    },
+    "lifecycleSubscriptionPaymentSubmitted": {
+      "title": "We received your payment proof",
+      "message": "We received {{amount}} {{currency}} on {{submittedAtDate}}. We'll confirm once it's reviewed."
+    },
+    "lifecycleSubscriptionRenewalDue": {
+      "title": "Your plan renews soon",
+      "message": "Your {{planName}} period ends {{periodEndDate}}. Bank transfers take a few days to clear, so start now."
+    },
+    "lifecycleSubscriptionRenewalTomorrow": {
+      "title": "Your plan renews tomorrow",
+      "message": "Your {{planName}} period ends {{periodEndDate}} and payment hasn't arrived yet."
+    },
+    "lifecycleSubscriptionGraceStarted": {
+      "title": "Payment is late — your site is still online",
+      "message": "Your {{planName}} period ended {{periodEndDate}}. Everything keeps working until {{graceEndsAtDate}}."
+    },
+    "lifecycleSubscriptionGraceEnding": {
+      "title": "Your site goes offline tomorrow",
+      "message": "Payment is still outstanding. Your site stays online until {{graceEndsAtDate}}."
+    },
+    "lifecycleSubscriptionExpired": {
+      "title": "Your subscription has expired",
+      "message": "Your site went offline on {{graceEndsAtDate}}. Nothing has been deleted — pay to restore it."
+    },
+    "lifecycleSubscriptionCancelScheduled": {
+      "title": "Your cancellation is scheduled",
+      "message": "Your subscription ends {{effectiveAtDate}}. Everything keeps working until then."
+    },
+    "lifecycleSubscriptionCancelled": {
+      "title": "Your subscription has ended",
+      "message": "Your subscription ended {{effectiveAtDate}}. Your content is safe and resubscribing restores it."
+    },
+    "lifecycleSubscriptionFollowup7d": {
+      "title": "Your site is still offline",
+      "message": "Your subscription ended {{expiredAtDate}}. Everything you built is safe — resubscribe to bring it back."
+    },
+    "lifecycleSubscriptionFollowup30d": {
+      "title": "Your academy is still here",
+      "message": "Your subscription ended {{expiredAtDate}}. Your content is intact and resubscribing restores it immediately."
     }
   },
   "liveSession": {

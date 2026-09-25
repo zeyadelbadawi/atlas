@@ -241,6 +241,74 @@
     "rosterStudentAwaitingApproval": {
       "title": "هناك من ينتظر الانضمام",
       "message": "سجّل متعلم جديد ويحتاج إلى موافقة قبل أن يتمكن من الوصول إلى أي دورة."
+    },
+    "lifecycleTrialStarted": {
+      "title": "بدأت فترتك التجريبية على {{planName}}",
+      "message": "تستمر فترتك التجريبية حتى {{trialEndsAtDate}}. اختر خطة قبل ذلك لإبقاء موقعك متاحًا."
+    },
+    "lifecycleTrialEndingSoon": {
+      "title": "تنتهي فترتك التجريبية غدًا",
+      "message": "تنتهي فترتك التجريبية على {{planName}} في {{trialEndsAtDate}}. اختر خطة لإبقاء موقعك متاحًا."
+    },
+    "lifecycleTrialExpired": {
+      "title": "انتهت فترتك التجريبية",
+      "message": "انتهت فترتك التجريبية على {{planName}} في {{endedAtDate}} وأصبح موقعك غير متاح. اختر خطة لإعادته."
+    },
+    "lifecycleTrialFollowup3d": {
+      "title": "موقعك ما زال غير متاح",
+      "message": "انتهت فترتك التجريبية في {{endedAtDate}}. كل ما أنشأته محفوظ — اختر خطة لإعادته للعمل."
+    },
+    "lifecycleTrialFollowup14d": {
+      "title": "دوراتك في انتظارك",
+      "message": "انتهت فترتك التجريبية في {{endedAtDate}}. محتواك ما زال موجودًا واختيار خطة يعيده فورًا."
+    },
+    "lifecycleTrialReactivation45d": {
+      "title": "ما زلنا هنا متى استعددت",
+      "message": "انتهت فترتك التجريبية في {{endedAtDate}}. يمكن أن تعود أكاديميتك للعمل لحظة اختيارك خطة."
+    },
+    "lifecycleSubscriptionActivated": {
+      "title": "اشتراكك على {{planName}} فعّال",
+      "message": "تستمر خطتك حتى {{periodEndDate}}."
+    },
+    "lifecycleSubscriptionPaymentSubmitted": {
+      "title": "استلمنا إثبات دفعك",
+      "message": "استلمنا {{amount}} {{currency}} في {{submittedAtDate}}. سنؤكد لك بعد المراجعة."
+    },
+    "lifecycleSubscriptionRenewalDue": {
+      "title": "يقترب موعد تجديد خطتك",
+      "message": "تنتهي فترة {{planName}} في {{periodEndDate}}. تستغرق التحويلات البنكية أيامًا، لذا ابدأ الآن."
+    },
+    "lifecycleSubscriptionRenewalTomorrow": {
+      "title": "تتجدد خطتك غدًا",
+      "message": "تنتهي فترة {{planName}} في {{periodEndDate}} ولم تصل الدفعة بعد."
+    },
+    "lifecycleSubscriptionGraceStarted": {
+      "title": "تأخّر الدفع — موقعك ما زال متاحًا",
+      "message": "انتهت فترة {{planName}} في {{periodEndDate}}. كل شيء يستمر في العمل حتى {{graceEndsAtDate}}."
+    },
+    "lifecycleSubscriptionGraceEnding": {
+      "title": "يتوقف موقعك غدًا",
+      "message": "ما زالت الدفعة غير مسدّدة. يبقى موقعك متاحًا حتى {{graceEndsAtDate}}."
+    },
+    "lifecycleSubscriptionExpired": {
+      "title": "انتهى اشتراكك",
+      "message": "توقّف موقعك في {{graceEndsAtDate}}. لم يُحذف أي شيء — ادفع لاستعادته."
+    },
+    "lifecycleSubscriptionCancelScheduled": {
+      "title": "تم جدولة إلغاء اشتراكك",
+      "message": "ينتهي اشتراكك في {{effectiveAtDate}}. كل شيء يستمر في العمل حتى ذلك الحين."
+    },
+    "lifecycleSubscriptionCancelled": {
+      "title": "انتهى اشتراكك",
+      "message": "انتهى اشتراكك في {{effectiveAtDate}}. محتواك محفوظ وإعادة الاشتراك تستعيده."
+    },
+    "lifecycleSubscriptionFollowup7d": {
+      "title": "موقعك ما زال غير متاح",
+      "message": "انتهى اشتراكك في {{expiredAtDate}}. كل ما أنشأته محفوظ — أعد الاشتراك لإعادته."
+    },
+    "lifecycleSubscriptionFollowup30d": {
+      "title": "أكاديميتك ما زالت هنا",
+      "message": "انتهى اشتراكك في {{expiredAtDate}}. محتواك سليم وإعادة الاشتراك تستعيده فورًا."
     }
   },
   "liveSession": {
