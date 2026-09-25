@@ -1,0 +1,178 @@
+{
+  "coursePayments": {
+    "title": "Course payments",
+    "subtitle": "Learners' manual course payments across every academy. Approving one gives the learner access to the course.",
+    "detailTitle": "Review course payment",
+    "detailSubtitle": "Check the proof, then approve or reject this course payment.",
+    "filterLabel": "Review status",
+    "filterAll": "All",
+    "table": {
+      "academy": "Academy",
+      "amount": "Amount",
+      "method": "Method",
+      "status": "Status",
+      "reviewStatus": "Review",
+      "submittedAt": "Submitted"
+    },
+    "emptyTitle": "No course payments here",
+    "emptyDescription": "Course payments matching this filter will appear here.",
+    "reference": "Payment reference",
+    "courseOrder": "Course order",
+    "academy": "Academy",
+    "learner": "Learner",
+    "commission": "Atlas commission",
+    "commissionValue": "{{amount}} ({{rate}})",
+    "submittedAt": "Submitted",
+    "proofTitle": "Payment proof",
+    "viewProof": "View proof",
+    "noProof": "The learner hasn't uploaded proof of payment yet.",
+    "proofLoadError": "The proof file couldn't be opened. Try again.",
+    "reviewNotesTitle": "Review notes",
+    "alreadyReviewed": "This payment has already been reviewed and can no longer be approved or rejected.",
+    "approveTitle": "Approve",
+    "rejectTitle": "Reject",
+    "notesOptional": "Notes (optional)",
+    "notesRequired": "Reason for rejection",
+    "approveAction": "Approve payment",
+    "rejectAction": "Reject payment",
+    "confirmApprove": {
+      "title": "Approve this course payment?",
+      "description": "You confirm that {{amount}} was received. The learner gets access to the course immediately. This can't be undone.",
+      "confirm": "Approve"
+    },
+    "confirmReject": {
+      "title": "Reject this course payment?",
+      "description": "The {{amount}} payment will be marked as rejected and the learner will see your reason. This can't be undone.",
+      "confirm": "Reject"
+    },
+    "approvedToast": "Payment approved. The learner now has access to the course.",
+    "rejectedToast": "Payment rejected. The learner has been told why."
+  },
+  "payouts": {
+    "title": "Academy payouts",
+    "subtitle": "What Atlas has recorded as owed to, or paid to, each academy from course sales.",
+    "table": {
+      "academy": "Academy",
+      "amount": "Amount",
+      "period": "Period",
+      "status": "Status",
+      "paidAt": "Paid",
+      "actions": "Actions"
+    },
+    "periodRange": "{{start}} – {{end}}",
+    "status": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "paid": "Paid",
+      "failed": "Failed"
+    },
+    "emptyTitle": "No payouts yet",
+    "emptyDescription": "Create a payout to record what an academy is owed for a period.",
+    "create": {
+      "open": "Create payout",
+      "title": "Create payout",
+      "description": "Atlas calculates the amount from the academy's unsettled course revenue in this period. One payout is created per currency.",
+      "academySearch": "Find an academy",
+      "academySearchPlaceholder": "Search by academy name",
+      "academy": "Academy",
+      "academyPlaceholder": "Choose an academy",
+      "academyLoading": "Loading academies…",
+      "academyNone": "No academies match your search.",
+      "academyLoadError": "Academies couldn't be loaded.",
+      "periodStart": "From",
+      "periodEnd": "To",
+      "periodHint": "Dates are in UTC and include the whole of the last day.",
+      "nothingOwed": "Nothing to pay out: this academy has no unsettled revenue in this period.",
+      "submit": "Create payout",
+      "successTitle": "Payout created",
+      "successDescription_one": "{{count}} payout was recorded.",
+      "successDescription_other": "{{count}} payouts were recorded."
+    },
+    "markPaid": {
+      "action": "Mark paid",
+      "rowLabel": "Mark the {{amount}} payout as paid",
+      "title": "Mark this payout as paid?",
+      "description": "You confirm that {{amount}} has been sent to the academy. This can't be undone.",
+      "reference": "Transfer reference (optional)",
+      "confirm": "Mark as paid",
+      "success": "Payout marked as paid."
+    }
+  },
+  "commission": {
+    "title": "Commission",
+    "subtitle": "What Atlas keeps from each course sale collected through Atlas Payments.",
+    "hierarchyTitle": "How the rate is chosen",
+    "hierarchyDescription": "An organization's own setting wins, then its plan's rate, then the global default. Changes apply to new payments only — each payment keeps the rate it was created with. Organization settings are on each organization's page.",
+    "organizationsLink": "Go to organizations",
+    "notConfigured": "Not set",
+    "percentLabel": "Commission rate (%)",
+    "percentHint": "Between 0 and 100, up to two decimal places.",
+    "source": {
+      "custom": "organization's custom rate",
+      "exempt": "organization is exempt",
+      "plan": "plan rate",
+      "default": "global default"
+    },
+    "global": {
+      "title": "Global default",
+      "current": "Current default:",
+      "unsetNotice": "No global default is set. Organizations without a plan or organization rate have no commission until you set one. Once set, the default can be changed but not removed.",
+      "save": "Save default",
+      "confirmTitle": "Change the global commission?",
+      "confirmDescription": "The default changes from {{from}} to {{to}}. It applies to new course payments of every organization without its own or a plan rate.",
+      "saved": "Global commission saved."
+    },
+    "plans": {
+      "title": "Plan rates",
+      "subtitle": "Overrides the global default for organizations on a plan. A plan rate can be changed but not removed.",
+      "usesDefault": "Uses global default",
+      "editLabel": "Edit the commission for {{plan}}",
+      "loadErrorRetry": "Couldn't load — retry",
+      "empty": "No plans in the catalog",
+      "dialogTitle": "Commission for {{plan}}",
+      "dialogDescription": "Applies to new course payments of organizations on this plan, unless the organization has its own setting.",
+      "save": "Save rate",
+      "saved": "Commission for {{plan}} saved."
+    },
+    "organization": {
+      "title": "Commission",
+      "effective": "Rate in force",
+      "effectiveValue": "{{rate}} — {{source}}",
+      "unresolved": "No commission applies: no organization, plan or global rate is set.",
+      "mode": "Organization setting",
+      "modes": {
+        "default": {
+          "label": "Use plan or global rate",
+          "hint": "No override. The plan's rate applies, or the global default."
+        },
+        "custom": {
+          "label": "Custom rate",
+          "hint": "A specific rate for this organization only."
+        },
+        "exempt": {
+          "label": "Exempt",
+          "hint": "Atlas keeps no commission from this organization's course sales."
+        }
+      },
+      "save": "Save commission",
+      "confirmTitle": "Change this organization's commission?",
+      "confirmDescription": {
+        "default": "This organization will use its plan's rate or the global default for new course payments.",
+        "custom": "This organization will pay {{rate}} commission on new course payments.",
+        "exempt": "Atlas will keep no commission from this organization's new course payments."
+      },
+      "saved": "Organization commission saved."
+    }
+  },
+  "validation": {
+    "notesTooLong": "Notes must be 1000 characters or fewer.",
+    "rejectNotesTooShort": "Give the learner a reason of at least 10 characters.",
+    "academyRequired": "Choose an academy.",
+    "dateRequired": "Choose a date.",
+    "periodEndAfterStart": "The end date must be after the start date.",
+    "referenceTooLong": "The reference must be 255 characters or fewer.",
+    "percentRequired": "Enter a rate.",
+    "percentFormat": "Enter a number with up to two decimal places, like 12.5.",
+    "percentRange": "Enter a rate between 0 and 100."
+  }
+}

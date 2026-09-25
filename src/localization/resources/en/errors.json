@@ -232,5 +232,13 @@
   "progress": {
     "lessonLocked": "This lesson is locked. Finish the item before it in the course to unlock it.",
     "watchRequirementNotMet": "Watch more of this lesson before marking it complete."
+  },
+  "payment": {
+    "notPendingReview": "This payment is no longer waiting for review. Reload to see its current status.",
+    "cannotReviewOwnOrganization": "This payment belongs to an organization you're a member of. You can't review your own organization's payments."
+  },
+  "academyPayout": {
+    "invalidPeriod": "The payout period is not valid. The end date must be after the start date.",
+    "notPending": "This payout failed and can't be marked as paid."
   }
 }

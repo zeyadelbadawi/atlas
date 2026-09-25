@@ -72,6 +72,8 @@ export * from './learner-overview.types';
 export * from './course-sequence.types';
 export * from './lesson-content.types';
 export * from './course-order.types';
+// Platform Owner commerce management — payouts and the commission hierarchy.
+export * from './platform-commerce.types';
 // P64 Phase 4 — course reviews and rating aggregate.
 export * from './review.types';
 // P64 Communications C7 — the platform email pipeline console.

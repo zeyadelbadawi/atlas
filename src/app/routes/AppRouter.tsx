@@ -294,6 +294,19 @@ const PlatformPaymentReviewDetailPage = lazy(
 const AtlasSubscriptionPaymentProviderPage = lazy(
   () => import('@features/billing/pages/AtlasSubscriptionPaymentProviderPage')
 );
+const PlatformCoursePaymentListPage = lazy(
+  () => import('@features/platform-commerce/pages/PlatformCoursePaymentListPage')
+);
+const PlatformCoursePaymentDetailPage = lazy(
+  () =>
+    import('@features/platform-commerce/pages/PlatformCoursePaymentDetailPage')
+);
+const PlatformPayoutsPage = lazy(
+  () => import('@features/platform-commerce/pages/PlatformPayoutsPage')
+);
+const PlatformCommissionPage = lazy(
+  () => import('@features/platform-commerce/pages/PlatformCommissionPage')
+);
 
 const ProvisioningStartPage = lazy(
   () => import('@features/provisioning/pages/ProvisioningStartPage')
@@ -1593,6 +1606,54 @@ export function AppRouter(): JSX.Element {
                   requiredRoles={['platform_owner']}
                 >
                   <AtlasSubscriptionPaymentProviderPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformCoursePayments}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformCoursePaymentListPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformCoursePaymentDetail}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformCoursePaymentDetailPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformPayouts}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformPayoutsPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformCommission}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformCommissionPage />
                 </RouteGuard>
               }
             />

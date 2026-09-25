@@ -12,6 +12,7 @@ import { ErrorState, EmptyState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { OrganizationCommissionCard } from '@features/platform-commerce';
 import { usePlatformOrganization } from '../hooks';
 import { getPlatformOrganizationStatusTone } from '../utils/platform-status.utils';
 
@@ -197,6 +198,8 @@ export default function PlatformOrganizationDetailPage(): JSX.Element {
             )}
           </CardContent>
         </Card>
+
+        <OrganizationCommissionCard organizationId={organization.id} />
       </div>
     </PageContainer>
   );

@@ -185,6 +185,19 @@ export const DASHBOARD_ROUTES = {
   platformPaymentDetail: '/dashboard/platform/payments/:paymentId',
   platformAtlasPaymentProvider: '/dashboard/platform/atlas-payment-provider',
 
+  /*
+    Platform Owner commerce management — course-order payment review,
+    academy payouts and the commission hierarchy. Grouped under one
+    `commerce/` branch so the sidebar can nest them; deliberately separate
+    from `platform/payments`, which is the SUBSCRIPTION review queue (the
+    backend keeps the two route trees apart for the same reason).
+  */
+  platformCoursePayments: '/dashboard/platform/commerce/course-payments',
+  platformCoursePaymentDetail:
+    '/dashboard/platform/commerce/course-payments/:paymentId',
+  platformPayouts: '/dashboard/platform/commerce/payouts',
+  platformCommission: '/dashboard/platform/commerce/commission',
+
   provisioning: '/dashboard/provisioning',
   provisioningNew: '/dashboard/provisioning/new',
   provisioningStatus: '/dashboard/provisioning/:requestId',

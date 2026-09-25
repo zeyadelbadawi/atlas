@@ -9,6 +9,9 @@ export { default as PlatformDashboardPage } from './pages/PlatformDashboardPage'
 // read the platform-metrics endpoints through these; features depend on
 // each other only via this barrel (`@features/platform`), never deep paths.
 export {
+  // Platform commerce's create-payout dialog picks an academy from the
+  // same cross-tenant academy list the Academies console reads.
+  usePlatformAcademies,
   usePlatformCommerceMetrics,
   usePlatformDeliveryMetrics,
   // P64 Communications C7 — the platform email pipeline console.
