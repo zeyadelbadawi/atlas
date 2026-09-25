@@ -20,6 +20,43 @@ const MAX_RETRIES = 3;
 /** Delay between retries, in milliseconds. */
 const RETRY_DELAY_MS = 1_000;
 
+/**
+ * The auth-lifecycle endpoints, which must never trigger the 401
+ * refresh-and-retry below.
+ *
+ * THE DEADLOCK THIS PREVENTS. `performRefresh` issues `POST /auth/refresh`
+ * through this same axios instance, so its response passes back through
+ * this same interceptor. When the refresh token is itself already revoked
+ * — which is exactly the state account deletion leaves every session in —
+ * that request answers 401 too, re-enters the branch, finds
+ * `refreshPromise` already set, and awaits it. But `refreshPromise` can
+ * only settle once this very request settles. Neither side can move: a
+ * true circular await, with no rejection and no timeout, because it is
+ * the interceptor's own promise that is stuck rather than any socket.
+ *
+ * The visible symptom was the whole application freezing the moment a
+ * user deleted their account, and staying frozen after a reload —
+ * `restore()` hit the same deadlock through `/auth/validate`, so
+ * `isRestoring` never went false and `RouteGuard` rendered its pending
+ * fallback forever.
+ *
+ * Refreshing a session is meaningless for these four routes anyway: they
+ * are how a session is established, checked or ended. A 401 from any of
+ * them is a final answer, so it is returned as one.
+ */
+const AUTH_LIFECYCLE_PATHS = [
+  '/auth/refresh',
+  '/auth/sign-out',
+  '/auth/sign-in',
+  '/auth/validate',
+] as const;
+
+/** True when the request is one of the auth-lifecycle routes above. */
+function isAuthLifecycleRequest(url: string | undefined): boolean {
+  if (!url) return false;
+  return AUTH_LIFECYCLE_PATHS.some((path) => url.includes(path));
+}
+
 export class HttpClient {
   private readonly instance: AxiosInstance;
   private refreshPromise: Promise<void> | null = null;
@@ -129,7 +166,8 @@ export class HttpClient {
           // If we have a refresh token, attempt refresh.
           if (
             tokens?.refreshToken &&
-            !originalRequest.headers['X-Retry-After-Refresh']
+            !originalRequest.headers['X-Retry-After-Refresh'] &&
+            !isAuthLifecycleRequest(originalRequest.url)
           ) {
             try {
               // Use shared refresh promise to deduplicate concurrent refresh requests.
