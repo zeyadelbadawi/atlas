@@ -329,6 +329,14 @@
     "retentionVideoDeletionFailed": {
       "title": "Video retention: deletion failed",
       "message": "Asset {{assetId}} of organisation {{organizationId}} exhausted all {{attempts}} attempts and was NOT marked deleted. Last error: {{lastError}}"
+    },
+    "academyMemberInvited": {
+      "title": "Your account is ready",
+      "message": "An account was created for you at {{academyName}}. Set your password to get started."
+    },
+    "academyLearnerInvited": {
+      "title": "Your account is ready",
+      "message": "An account was created for you at {{academyName}}. Set your password to get started."
     }
   },
   "liveSession": {

@@ -16,6 +16,13 @@ export default function ResetPasswordPage(): JSX.Element {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
+  /*
+    `setup=1` marks a link from an account-setup email — somebody whose
+    academy created the account for them. Same token, same endpoint, same
+    rules; only the words change, because "Reset your password" is wrong
+    for a person who has never had one and did not ask for this.
+  */
+  const isSetup = searchParams.get('setup') === '1';
 
   // P64 Phase 1 — a real check against `POST /auth/password-reset/validate`
   // (this used to accept any non-empty token and only find out on submit).
@@ -68,8 +75,12 @@ export default function ResetPasswordPage(): JSX.Element {
             <ShieldCheck className="size-6" strokeWidth={2} aria-hidden />
           </div>
           <PageHeader
-            titleKey="auth:resetPassword.title"
-            descriptionKey="auth:resetPassword.subtitle"
+            titleKey={
+              isSetup ? 'auth:setPassword.title' : 'auth:resetPassword.title'
+            }
+            descriptionKey={
+              isSetup ? 'auth:setPassword.subtitle' : 'auth:resetPassword.subtitle'
+            }
             className="mt-6"
           />
         </div>

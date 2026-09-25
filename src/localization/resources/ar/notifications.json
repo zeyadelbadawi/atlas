@@ -333,6 +333,14 @@
     "retentionVideoDeletionFailed": {
       "title": "الاحتفاظ بالفيديو: فشل الحذف",
       "message": "استنفد الملف {{assetId}} للمؤسسة {{organizationId}} جميع المحاولات البالغة {{attempts}} ولم يُسجَّل كمحذوف. آخر خطأ: {{lastError}}"
+    },
+    "academyMemberInvited": {
+      "title": "حسابك جاهز",
+      "message": "تم إنشاء حساب لك في {{academyName}}. اختر كلمة المرور للبدء."
+    },
+    "academyLearnerInvited": {
+      "title": "حسابك جاهز",
+      "message": "تم إنشاء حساب لك في {{academyName}}. اختر كلمة المرور للبدء."
     }
   },
   "liveSession": {
