@@ -580,5 +580,57 @@
     "saved": "Communication settings updated",
     "saveFailed": "The communication settings could not be saved.",
     "readOnlyNotice": "These settings follow the platform's configuration and can't be changed per academy yet. Emailed sign-in codes currently apply: {{policy}}."
+  },
+  "revenue": {
+    "title": "Revenue & payouts",
+    "description": "What this academy has earned from course sales through Atlas Payments, and what Atlas has paid out to it.",
+    "forbidden": {
+      "title": "Only the organization owner can view this",
+      "description": "Academy revenue and payouts are visible to the organization owner only. Ask them if you need these figures."
+    },
+    "noAcademy": {
+      "title": "No academy selected",
+      "description": "Choose an academy to see its revenue and payouts."
+    },
+    "summary": {
+      "title": "Awaiting payout",
+      "description": "Net earnings not yet included in a payout: course sales after the Atlas platform fee, minus refunds. Each currency is shown separately.",
+      "currencyLabel": "Unsettled balance · {{currency}}",
+      "negative": "Refunds currently exceed sales in this currency, so nothing is paid out until new sales cover the difference.",
+      "empty": "Nothing is awaiting payout right now.",
+      "loading": "Loading the balance awaiting payout",
+      "error": {
+        "title": "We couldn't load the balance",
+        "description": "The balance awaiting payout could not be loaded. Please try again."
+      }
+    },
+    "payouts": {
+      "title": "Payout history",
+      "description": "Payouts Atlas has made, or is preparing, for this academy.",
+      "columns": {
+        "period": "Period",
+        "amount": "Amount",
+        "status": "Status",
+        "paidAt": "Paid on",
+        "reference": "Reference"
+      },
+      "periodRange": "{{from}} – {{to}}",
+      "status": {
+        "pending": "Pending",
+        "processing": "Processing",
+        "paid": "Paid",
+        "failed": "Failed"
+      },
+      "notPaidYet": "Not paid yet",
+      "noReference": "No reference",
+      "empty": {
+        "title": "No payouts yet",
+        "description": "Payouts appear here once Atlas settles your course sales collected through Atlas Payments. Sales collected through your own payment gateway are paid to you directly and are not listed here."
+      },
+      "error": {
+        "title": "We couldn't load payouts",
+        "description": "The payout history could not be loaded. Please try again."
+      }
+    }
   }
 }

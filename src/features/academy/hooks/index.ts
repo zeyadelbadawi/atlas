@@ -64,3 +64,8 @@ export {
   useAcademyCommunicationSettings,
   useUpdateAcademyCommunicationSettings,
 } from './useAcademyCommunicationSettings';
+// P13 — the Organization Owner's academy revenue summary and payouts.
+export {
+  useAcademyPayouts,
+  useAcademyRevenueSummary,
+} from './useAcademyPayouts';

@@ -584,6 +584,38 @@
         "expired": "Expired",
         "cancelled": "Cancelled",
         "refunded": "Refunded"
+      },
+      "refund": {
+        "action": "Request refund",
+        "actionFor": "Request a refund for “{{course}}”",
+        "eligibleUntil": "Refundable until {{when}}",
+        "windowClosed": "Refund period ended {{when}}",
+        "dialog": {
+          "title": "Refund “{{course}}”?",
+          "description": "You'll get a full refund of {{amount}}.",
+          "consequencesTitle": "What happens next",
+          "accessEnds": "Your access to this course ends immediately. You won't be able to open its lessons or activities.",
+          "progressKept": "Your progress is kept on record.",
+          "final": "A refund can't be undone.",
+          "reasonLabel": "Reason (optional)",
+          "reasonHint": "Up to {{max}} characters. Shared with the academy.",
+          "confirm": "Refund and end access",
+          "pending": "Processing refund…"
+        },
+        "errors": {
+          "notFound": "We couldn't find this order. Refresh the page and try again.",
+          "fallback": "The refund could not be completed. Please try again."
+        },
+        "done": "Refund complete. Your access to “{{course}}” has ended.",
+        "refundedOn": "Refunded {{amount}} on {{when}}",
+        "status": {
+          "pending": "Refund pending",
+          "succeeded": "Refund complete",
+          "failed": "Refund failed"
+        },
+        "loading": "Loading refund details",
+        "loadFailed": "Couldn't load the refund details.",
+        "retry": "Try again"
       }
     },
     "notifications": {

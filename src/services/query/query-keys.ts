@@ -70,6 +70,8 @@ export const QUERY_KEY_ROOTS = {
   courseReview: ['course-review'] as const,
   /** P64 Phase 4 §E.5 — the owner's per-academy integrity and sharing reports. */
   academyReports: ['academy-reports'] as const,
+  /** P13 — the Organization Owner's per-academy revenue summary and payouts. */
+  academyPayouts: ['academy-payouts'] as const,
 } as const;
 
 /**
@@ -329,6 +331,9 @@ export const courseOrderKeys = {
   /** P64 Phase 4 — the methods payable against one order (learner surface). */
   paymentMethods: (orderId: string | undefined) =>
     [...courseOrderKeys.all, 'payment-methods', orderId] as const,
+  /** P13 — the refund recorded against one order (`null` when none). */
+  refund: (orderId: string | undefined) =>
+    [...courseOrderKeys.all, 'refund', orderId] as const,
 } as const;
 
 export const quizKeys = {
@@ -1147,6 +1152,15 @@ export const academyReportKeys = {
     [...academyReportKeys.all, 'integrity', academyId, days] as const,
   sharing: (academyId: string | undefined, days: number) =>
     [...academyReportKeys.all, 'sharing', academyId, days] as const,
+} as const;
+
+/** `AcademyPayoutsService` — Organization-Owner-only money reads for one academy. */
+export const academyPayoutKeys = {
+  all: QUERY_KEY_ROOTS.academyPayouts,
+  list: (academyId: string | undefined, query?: CollectionQuery) =>
+    [...academyPayoutKeys.all, 'list', academyId, query] as const,
+  revenueSummary: (academyId: string | undefined) =>
+    [...academyPayoutKeys.all, 'revenue-summary', academyId] as const,
 } as const;
 
 /** `CompletionService` — the learner's evaluated state and the staff rule. */

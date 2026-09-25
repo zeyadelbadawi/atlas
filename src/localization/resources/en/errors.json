@@ -232,5 +232,9 @@
   "progress": {
     "lessonLocked": "This lesson is locked. Finish the item before it in the course to unlock it.",
     "watchRequirementNotMet": "Watch more of this lesson before marking it complete."
+  },
+  "courseOrder": {
+    "refundNotEligible": "This order can't be refunded. Only paid orders that haven't already been refunded are eligible.",
+    "refundWindowElapsed": "The refund period for this order has ended. Refunds are available within 30 days of purchase."
   }
 }

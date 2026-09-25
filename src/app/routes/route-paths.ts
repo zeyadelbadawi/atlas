@@ -260,6 +260,13 @@ export const DASHBOARD_ROUTES = {
   /** P64 Phase 4 §E.5 — the owner's integrity / sharing / quota reports. Academy-scoped by route like media and certificates. */
   academyReports: '/dashboard/academy/:academyId/reports',
 
+  /**
+   * P13 — the academy's net unsettled revenue and its payout history.
+   * Organization-Owner-only server-side (`assertCanViewAcademyFinance`), so
+   * the route is gated on the owner-only `tenant.billing.view`.
+   */
+  academyRevenue: '/dashboard/academy/:academyId/revenue',
+
   /** The Website Management landing (Prompt 10) — `websiteSettings` moved to its own sub-path to make room for it. */
   websiteOverview: '/dashboard/academy/:academyId/website',
   websiteSettings: '/dashboard/academy/:academyId/website/settings',

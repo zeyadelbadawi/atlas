@@ -39,6 +39,7 @@ import {
   Radio,
   PackageCheck,
   Award,
+  Wallet,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem, NavigationSection } from '@types';
@@ -168,6 +169,20 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
         // owner/administrator/manager rule — not the owner-only dashboard
         // permission the Student Analytics entry uses.
         requiredPermissions: ['academy.view'],
+      },
+      {
+        // P13 — this academy's net unsettled revenue and payout history.
+        // Owner-only, matching the backend (`assertCanViewAcademyFinance`);
+        // no entitlement gate, like tenant billing — money owed stays
+        // visible while a subscription is lapsed.
+        id: 'academy-revenue',
+        labelKey: 'navigation:items.academyRevenue',
+        path: buildPath(DASHBOARD_ROUTES.academyRevenue, {
+          academyId: activeAcademyId,
+        }),
+        icon: Wallet,
+        requiresAuth: true,
+        requiredPermissions: ['tenant.billing.view'],
       },
       {
         id: 'academy-announcements',
