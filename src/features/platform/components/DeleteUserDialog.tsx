@@ -239,9 +239,11 @@ export function DeleteUserDialog({
                     onChange={(event) => setConfirmation(event.target.value)}
                     autoComplete="off"
                     disabled={isDeleting}
-                    // The expected value is the email itself, so a manager
-                    // cannot muscle-memory their way through it.
-                    placeholder={userEmail}
+                    // NO placeholder. It used to be the email itself, which
+                    // rendered greyed inside the empty field and read as
+                    // already-filled — so the disabled button looked broken
+                    // rather than waiting (production, 26 Sep 2026). The
+                    // label and help text already say what to type.
                     aria-describedby="delete-user-confirm-help"
                   />
                   <p
