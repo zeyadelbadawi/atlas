@@ -16,8 +16,22 @@
  */
 import type { OrganizationMembership } from './identity.types';
 
-/** A user account's platform-level status. An operational lifecycle concept, not a permission/role — analogous to `AcademyStatus`/`PlatformOrganizationStatus`. */
-export type PlatformUserAccountStatus = 'active' | 'invited' | 'suspended';
+/**
+ * A user account's platform-level status. An operational lifecycle concept,
+ * not a permission/role — analogous to `AcademyStatus`/
+ * `PlatformOrganizationStatus`.
+ *
+ * `deleted` was missing here until 26 Sep 2026, although the backend's
+ * `UserAccountStatus` has carried it since Phase 10.6. A deleted account
+ * therefore rendered an untranslated `platform:users.status.deleted` in the
+ * directory and fell through the tone mapping to neutral. Irreversible, and
+ * distinct from `suspended`, which an administrator can undo.
+ */
+export type PlatformUserAccountStatus =
+  | 'active'
+  | 'invited'
+  | 'suspended'
+  | 'deleted';
 
 /** One row in the Platform Owner's user directory. */
 export interface PlatformUserSummary {

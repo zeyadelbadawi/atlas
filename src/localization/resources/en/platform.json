@@ -109,7 +109,66 @@
     "status": {
       "active": "Active",
       "invited": "Invited",
-      "suspended": "Suspended"
+      "suspended": "Suspended",
+      "deleted": "Deleted"
+    },
+    "delete": {
+      "action": "Delete account",
+      "confirmTitle": "Delete this account permanently",
+      "confirmDescription": "{{name}} ({{email}}) will lose access immediately. This cannot be undone.",
+      "impactTitle": "What this will do",
+      "role": {
+        "platform_owner": "This account administers Atlas.",
+        "client_owner": "This person owns an organization, so their whole tenant is torn down.",
+        "manager": "This person manages an academy.",
+        "instructor": "This person teaches courses. The courses themselves belong to the academy and are kept.",
+        "student": "This person is a learner.",
+        "member": "This person has no academy or organization data."
+      },
+      "treatment": {
+        "destroy": "Destroyed",
+        "deidentify": "De-identified",
+        "retain": "Kept",
+        "tombstone": "Kept as history",
+        "revoke": "Access ended"
+      },
+      "plan": {
+        "identity": "Name, email, avatar and preferences",
+        "credentials": "Password, two-factor secret and recovery codes",
+        "organizations_one": "{{count}} organization record",
+        "organizations_other": "{{count}} organization records",
+        "academies_one": "{{count}} academy, taken offline",
+        "academies_other": "{{count}} academies, taken offline",
+        "courses_one": "{{count}} course",
+        "courses_other": "{{count}} courses",
+        "mediaAssets_one": "{{count}} media file",
+        "mediaAssets_other": "{{count}} media files",
+        "mediaBytes_one": "{{count}} byte of stored media",
+        "mediaBytes_other": "{{count}} bytes of stored media",
+        "affectedLearners_one": "{{count}} learner loses access",
+        "affectedLearners_other": "{{count}} learners lose access",
+        "enrollments_one": "{{count}} enrolment, kept as history",
+        "enrollments_other": "{{count}} enrolments, kept as history",
+        "certificates_one": "{{count}} certificate keeps its record without the holder's name",
+        "certificates_other": "{{count}} certificates keep their records without the holder's name",
+        "sessions_one": "{{count}} active session",
+        "sessions_other": "{{count}} active sessions",
+        "financialRecords": "Payments, orders and refunds",
+        "auditRecords": "Audit history"
+      },
+      "confirmLabel": "Type {{email}} to confirm",
+      "confirmHelp": "The email must match exactly. This is what stops the wrong account being deleted.",
+      "confirmAction": "Delete permanently",
+      "deleting": "Deleting…",
+      "doneTitle": "Account deleted",
+      "doneDescription": "{{name}} can no longer sign in, and every session has been revoked.",
+      "academiesArchived_zero": "No academies were taken offline.",
+      "academiesArchived_one": "{{count}} academy was taken offline.",
+      "academiesArchived_other": "{{count}} academies were taken offline.",
+      "retainedNotice": "Payments, orders and audit history were kept, and now point at an anonymised subject.",
+      "planFailed": "We could not work out what this deletion would affect, so nothing has been deleted. Close this and try again.",
+      "alreadyDeleted": "This account has already been deleted. There is nothing left to do.",
+      "refused": "This account cannot be deleted here. Platform Owner accounts are only changed through server provisioning."
     }
   },
   "rolesPermissions": {

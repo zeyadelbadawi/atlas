@@ -48,6 +48,11 @@ export function getPlatformUserStatusTone(
   switch (status) {
     case 'active':
       return 'success';
+    // Terminal rather than wrong, so neutral like `archived` elsewhere.
+    // Destructive tone would read as "this account has a problem" when what
+    // it actually means is "this account is finished".
+    case 'deleted':
+      return 'neutral';
     case 'suspended':
       return 'destructive';
     case 'invited':

@@ -914,6 +914,14 @@ export const platformUserKeys = {
     [...platformUserKeys.all, 'list', query] as const,
   detail: (userId: string) =>
     [...platformUserKeys.all, 'detail', userId] as const,
+  /**
+   * What deleting this user would do. Nested under the same root as the
+   * directory so deleting somebody invalidates their detail, the list and
+   * this plan together — a stale plan for an account that no longer exists
+   * is exactly the kind of thing a destructive dialog must never show.
+   */
+  deletionPlan: (userId: string) =>
+    [...platformUserKeys.all, 'deletion-plan', userId] as const,
 } as const;
 
 /** Roles & Permissions catalog (Prompt 13) — unscoped, platform-wide. */

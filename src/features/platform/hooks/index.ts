@@ -23,3 +23,4 @@ export {
   useCommunicationSuppressions,
   useUnsuppressAddress,
 } from './usePlatformCommunications';
+export * from './useUserDeletion';

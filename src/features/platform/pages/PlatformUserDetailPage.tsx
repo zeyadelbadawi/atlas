@@ -1,10 +1,18 @@
 /**
  * Platform User — Detail Page (Prompt 13).
  *
- * Read-only. Deliberately narrow, per `platform-user.types.ts`'s doc
- * comment — no credentials, tokens, or raw session data are ever
- * requested or rendered here.
+ * Still deliberately narrow about what it READS: no credentials, tokens or
+ * raw session data are ever requested or rendered, per
+ * `platform-user.types.ts`'s doc comment.
+ *
+ * It is no longer read-only, though. The owner reversed that constraint on
+ * 25 Sep 2026, and the administrative deletion lives HERE rather than on
+ * the directory listing for one reason: this is the only screen that shows
+ * enough context — email, status, roles, organization memberships — for an
+ * operator to be sure they have the right person. A delete button on a
+ * paginated table row is how you remove the wrong account.
  */
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageContainer, PageHeader } from '@components/layout';
@@ -12,12 +20,16 @@ import { ErrorState, EmptyState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import { Trash2 } from 'lucide-react';
 import { usePlatformUser } from '../hooks';
+import { DeleteUserDialog } from '../components/DeleteUserDialog';
 import { getPlatformUserStatusTone } from '../utils/platform-status.utils';
 
 export default function PlatformUserDetailPage(): JSX.Element {
   const { t, i18n } = useTranslation();
   const { userId } = useParams<{ userId: string }>();
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const {
     data: user,
@@ -52,10 +64,30 @@ export default function PlatformUserDetailPage(): JSX.Element {
         titleKey="platform:users.detailTitle"
         title={user.name}
         actions={
-          <StatusBadge
-            labelKey={`platform:users.status.${user.status}`}
-            tone={getPlatformUserStatusTone(user.status)}
-          />
+          <div className="flex items-center gap-3">
+            <StatusBadge
+              labelKey={`platform:users.status.${user.status}`}
+              tone={getPlatformUserStatusTone(user.status)}
+            />
+            {/*
+              Separated from the status badge and styled destructive, per the
+              house rule that a dangerous action is never adjacent to or
+              shaped like an ordinary one. It opens a dialog that requires
+              the account's email typed out; nothing is destroyed by this
+              click alone.
+            */}
+            {user.status === 'deleted' ? null : (
+              <Button
+                type="button"
+                variant="destructive"
+                size="sm"
+                onClick={() => setDeleteOpen(true)}
+              >
+                <Trash2 className="size-4" aria-hidden />
+                {t('platform:users.delete.action')}
+              </Button>
+            )}
+          </div>
         }
       />
 
@@ -156,6 +188,14 @@ export default function PlatformUserDetailPage(): JSX.Element {
           </CardContent>
         </Card>
       </div>
+
+      <DeleteUserDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        userId={user.id}
+        userEmail={user.email}
+        userName={user.name}
+      />
     </PageContainer>
   );
 }

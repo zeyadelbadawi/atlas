@@ -48,6 +48,7 @@ export * from './platform-organization.types';
 export * from './platform-academy.types';
 export * from './platform-course.types';
 export * from './platform-user.types';
+export * from './deletion.types';
 export * from './rbac.types';
 export * from './platform-metrics.types';
 // P64 Phase 4 §E.5 — platform video minutes / provider health.
