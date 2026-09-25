@@ -229,6 +229,10 @@
     "announcementPublished": {
       "title": "New announcement",
       "message": "{{academyName}} posted: “{{title}}”"
+    },
+    "reviewSubmitted": {
+      "title": "A review needs moderating",
+      "message": "A learner reviewed \"{{courseTitle}}\". It stays hidden until you approve it."
     }
   },
   "liveSession": {

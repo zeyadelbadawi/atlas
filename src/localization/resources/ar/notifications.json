@@ -233,6 +233,10 @@
     "announcementPublished": {
       "title": "إعلان جديد",
       "message": "نشرت {{academyName}}: «{{title}}»"
+    },
+    "reviewSubmitted": {
+      "title": "مراجعة بانتظار الاعتماد",
+      "message": "قام أحد المتعلمين بمراجعة «{{courseTitle}}». تبقى مخفية حتى تعتمدها."
     }
   },
   "liveSession": {
