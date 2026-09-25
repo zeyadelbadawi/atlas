@@ -867,6 +867,18 @@
         "description": "Finish the item before it in the course to unlock this one. The course outline shows what comes first."
       }
     },
-    "nextLocked": "Next, “{{title}}”, is locked: {{reason}}"
+    "nextLocked": "Next, “{{title}}”, is locked: {{reason}}",
+    "courseComplete": {
+      "title": "Course complete",
+      "description": "You've finished every activity in this course.",
+      "viewCertificate": "View certificate",
+      "rateCourse": "Rate this course",
+      "backToCourse": "Back to course"
+    },
+    "courseEnd": {
+      "title": "You've reached the end",
+      "description": "This was the last activity, but some earlier ones are still open.",
+      "backToCourse": "See what's left"
+    }
   }
 }
