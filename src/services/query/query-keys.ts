@@ -606,6 +606,15 @@ export const tenantKeys = {
   /** Phase 11 — the authoritative lifecycle state (`useSubscriptionLifecycleState`). */
   lifecycle: (organizationId: string | undefined) =>
     [...tenantKeys.all, 'lifecycle', organizationId] as const,
+  /**
+   * P64 C6 — hosted-video retention state (`useTenantRetention`), the read
+   * behind `/dashboard/tenant/retention`. Separate from `lifecycle`
+   * deliberately: the lifecycle read is fetched on every dashboard page,
+   * and this one is far heavier (it counts every hosted video and the
+   * courses they belong to), so it must not be invalidated alongside it.
+   */
+  retention: (organizationId: string | undefined) =>
+    [...tenantKeys.all, 'retention', organizationId] as const,
 } as const;
 
 /**

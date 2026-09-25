@@ -1,6 +1,17 @@
 /**
- * Reporting primitives shared by the P64 Phase 4 operational pages
- * (Commerce, Content delivery).
+ * Reporting primitives — a headline tile, a breakdown table, a report
+ * section card, a capped-list notice and a generated-at line.
+ *
+ * SHARED, NOT ANALYTICS-OWNED. They began inside the Analytics feature
+ * for the P64 Phase 4 operational pages (Commerce, Content delivery,
+ * Communications) and moved here when P64 C6's tenant-facing Data &
+ * retention page needed the same vocabulary. A feature may not reach into
+ * another feature's internals, and the alternative — importing the
+ * Analytics barrel — would have closed a real module cycle
+ * (tenant → analytics → platform → tenant). These components are
+ * presentation only and carry no business logic, which is exactly the
+ * contract `@components` documents, so shared is where they belonged once
+ * a second feature needed them.
  *
  * Small on purpose: a headline tile, a "label · count · share" breakdown
  * table, a report section card, a capped-list notice and a generated-at

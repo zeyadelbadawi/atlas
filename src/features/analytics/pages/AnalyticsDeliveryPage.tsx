@@ -30,7 +30,7 @@ import {
   TruncatedNotice,
   shareOf,
   toSortedRows,
-} from '../components/AnalyticsReportPrimitives';
+} from '@components/reporting';
 import { useAnalyticsRange } from './useAnalyticsRange';
 import type { LanguageCode, PlatformDeliveryMetrics } from '@types';
 

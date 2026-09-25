@@ -265,6 +265,13 @@
       "descriptionNoDate": "We haven't received payment for the new period. Everything keeps working for a short grace window. Pay now and nothing changes.",
       "action": "Complete payment",
       "footnote": "Nothing has been switched off and nothing has been deleted. If you have already paid, it can take a day or two to be reviewed."
+    },
+    "retentionWarning": {
+      "title": "Your hosted video is scheduled to be deleted",
+      "description": "Nothing has been deleted. Your hosted video is scheduled for removal on {{date}} because your subscription has been inactive for a long time — subscribing again stops it.",
+      "descriptionNoDate": "Nothing has been deleted. Your hosted video is scheduled for removal because your subscription has been inactive for a long time — subscribing again stops it.",
+      "minutes": "{{minutes}} minutes of video across your courses are affected.",
+      "action": "See what's affected"
     }
   },
   "startTrial": {
@@ -279,5 +286,117 @@
     "factEntitlements": "Full access to everything on the {{plan}} plan.",
     "onePerAccount": "A free trial can be used once per account.",
     "confirm": "Start {{plan}} trial"
+  },
+  "retention": {
+    "title": "Data & retention",
+    "subtitle": "What Atlas keeps for your academy, what it removes after a long period without a subscription, and exactly when.",
+    "noOrganization": {
+      "title": "No organization yet",
+      "description": "Retention applies to an organization's hosted video. Create your organization and anything you upload will be listed here."
+    },
+    "empty": {
+      "title": "You have no hosted video",
+      "description": "Retention only ever removes hosted video. You haven't uploaded any, so there is nothing for it to act on. Your courses, students, certificates and site are kept regardless."
+    },
+    "error": {
+      "title": "We couldn't load your retention status",
+      "description": "Nothing has changed and nothing has been deleted — we just couldn't read your current status. Try again."
+    },
+    "summary": {
+      "nothingDeleted": "Nothing has been deleted.",
+      "someRemoved_one": "One hosted video has been removed after a long period without a subscription.",
+      "someRemoved_other": "{{count}} hosted videos have been removed after a long period without a subscription.",
+      "scheduled": "Your hosted video is scheduled to be deleted on {{date}}.",
+      "notEnabled": "Automatic deletion is not switched on, so nothing is scheduled. If it were, the date would be {{date}}.",
+      "held": "Your retention countdown is paused, so no deletion is scheduled right now.",
+      "notScheduled": "No deletion is scheduled."
+    },
+    "modeOff": "Automatic deletion is not switched on for Atlas at the moment. The dates below show what would apply if it were — nothing is going to happen on them today.",
+    "state": {
+      "not_scheduled": {
+        "title": "Your hosted video is safe",
+        "badge": "Nothing scheduled",
+        "description": "No retention window is open for your organization. Hosted video is only ever removed after a long, continuous period without a subscription — and never your courses, students, certificates or website."
+      },
+      "scheduled": {
+        "title": "A retention window is open",
+        "badge": "Scheduled",
+        "description": "Your subscription has been inactive long enough to start the {{days}}-day retention clock. You will receive four notices before anything is removed, and subscribing again at any point stops it completely."
+      },
+      "warning": {
+        "title": "Your hosted video is due to be deleted",
+        "badge": "Action needed",
+        "description": "We have written to you about this. Your video is still here, and subscribing again before {{date}} stops the deletion completely."
+      },
+      "held": {
+        "title": "Your retention countdown is paused",
+        "badge": "Paused",
+        "description": "Your retention clock is on hold, so nothing will be removed while it stays that way. We will write to you again if it resumes."
+      },
+      "elapsed": {
+        "title": "The retention date has passed",
+        "badge": "Needs attention",
+        "description": "The date set for removing your hosted video has passed. Subscribing again is still the fastest way to restore normal service; contact support if you would like this reviewed."
+      }
+    },
+    "tiles": {
+      "videos": "Hosted video",
+      "videosHint": "{{minutes}} minutes stored",
+      "deletionDate": "Deletion date",
+      "daysRemaining_one": "1 day from today",
+      "daysRemaining_other": "{{count}} days from today",
+      "noDate": "Not set",
+      "noDateHint": "Nothing is scheduled",
+      "window": "Retention window",
+      "windowValue_one": "{{count}} day",
+      "windowValue_other": "{{count}} days",
+      "noWindowHint": "No window is open",
+      "removed": "Already removed",
+      "removedNone": "Nothing has been deleted",
+      "removedOn": "Most recently on {{date}}"
+    },
+    "origin": {
+      "trial": "90 days, because this organization was last on a free trial",
+      "paid": "180 days, because this organization was last on a paid plan"
+    },
+    "timeline": {
+      "title": "What happens, and when",
+      "description": "You receive four notices before any hosted video is removed. Subscribing again at any stage stops the sequence.",
+      "progress": "{{sent}} of {{total}} notices sent so far.",
+      "steps": {
+        "retention_warning_30d": "First notice — 30 days before",
+        "retention_warning_14d": "Reminder — 14 days before",
+        "retention_warning_7d": "Final notice — 7 days before",
+        "retention_warning_24h": "Last call — 24 hours before",
+        "deletion": "Hosted video removed"
+      },
+      "sent": "Sent",
+      "upcoming": "Scheduled",
+      "paused": "Paused",
+      "due": "Date passed",
+      "notEnabled": "Not switched on"
+    },
+    "courses": {
+      "title": "Courses that would be affected",
+      "description": "These courses contain the hosted video in question. The courses themselves, and everything else in them, are kept.",
+      "caption": "Courses containing hosted video subject to retention",
+      "columns": {
+        "course": "Course",
+        "videos": "Videos",
+        "share": "Share"
+      },
+      "truncated": "Showing the {{count}} most affected courses.",
+      "untitledCourse": "Untitled course"
+    },
+    "keep": {
+      "title": "How to keep your video",
+      "description": "Subscribe again. That ends the retention window immediately, stops the notices, and nothing is removed.",
+      "kept": "Whatever happens, Atlas keeps your academies, courses, curriculum, students, enrolments, progress, certificates, orders and your public website. Only hosted video files are ever removed, and lessons then show that the video was removed rather than a broken player.",
+      "support": "If you need more time, contact support before the date above and we can put your account on hold."
+    },
+    "actions": {
+      "reactivate": "Subscribe again",
+      "manageSubscription": "Manage subscription"
+    }
   }
 }

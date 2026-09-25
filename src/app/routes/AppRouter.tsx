@@ -259,6 +259,14 @@ const TenantUsagePage = lazy(
 const TenantAddOnsPage = lazy(
   () => import('@features/tenant/pages/TenantAddOnsPage')
 );
+/*
+  P64 C6 — Data & retention. Lazy like its siblings: it is a page most
+  owners never open, reached from the lifecycle panel and from the link
+  inside a hosted-video warning email.
+*/
+const TenantRetentionPage = lazy(
+  () => import('@features/tenant/pages/TenantRetentionPage')
+);
 const PlatformTrialPolicyPage = lazy(
   () => import('@features/tenant/pages/PlatformTrialPolicyPage')
 );
@@ -1436,6 +1444,25 @@ export function AppRouter(): JSX.Element {
                   requiredPermissions={['tenant.addon.view']}
                 >
                   <TenantAddOnsPage />
+                </RouteGuard>
+              }
+            />
+
+            {/*
+              P64 C6 — the destination of every hosted-video warning email.
+              Guarded by `tenant.subscription.view`, the owner-exclusive
+              marker the backend endpoint itself requires, so the route and
+              the API agree about who may see it. The guard is UX only; the
+              endpoint refuses a non-owner independently, with RLS beneath.
+            */}
+            <Route
+              path={DASHBOARD_ROUTES.tenantRetention}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['tenant.subscription.view']}
+                >
+                  <TenantRetentionPage />
                 </RouteGuard>
               }
             />
