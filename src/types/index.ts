@@ -59,6 +59,7 @@ export * from './audit-log.types';
 export * from './support.types';
 export * from './platform-settings.types';
 export * from './communication-settings.types';
+export * from './academy-protection.types';
 export * from './media.types';
 export * from './dashboard.types';
 export * from './student-results.types';

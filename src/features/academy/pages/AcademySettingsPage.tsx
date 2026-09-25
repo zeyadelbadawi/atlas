@@ -49,6 +49,9 @@ import { DeleteAcademyCard } from '../components/DeleteAcademyCard';
 import { RegistrationPolicyCard } from '../components/RegistrationPolicyCard';
 import { CommunicationSettingsCard } from '../components/CommunicationSettingsCard';
 import { AcademyInvitesCard } from '../components/AcademyInvitesCard';
+import { ContentProtectionCard } from '../components/ContentProtectionCard';
+import { VideoTierCard } from '../components/VideoTierCard';
+import { DevicePolicyCard } from '../components/DevicePolicyCard';
 import { getAcademyAdminTabs } from '../utils/academy-navigation.utils';
 import {
   updateAcademySettingsSchema,
@@ -536,6 +539,33 @@ export default function AcademySettingsPage(): JSX.Element {
           {t('academy:communication.sectionTitle')}
         </h2>
         <CommunicationSettingsCard
+          academyId={academyId ?? ''}
+          canEdit={canManageRegistrationPolicy}
+        />
+      </div>
+
+      {/*
+        Content protection (P64 Phase 2, D8/D10) — watermark, the default
+        video tier for new uploads, and the learner device limits. Three
+        endpoints, all Client Owner only for READING as well as writing
+        (`assertCanManageSecurityPolicy` runs on every GET), so each card
+        is told `canEdit` and a Manager sees why they are empty instead of
+        a request that can only 403. Not behind a frontend feature flag:
+        the server is the boundary, and a flag would only hide the truth.
+      */}
+      <div className="mt-8 space-y-6">
+        <h2 className="text-lg font-semibold">
+          {t('academy:protection.sectionTitle')}
+        </h2>
+        <ContentProtectionCard
+          academyId={academyId ?? ''}
+          canEdit={canManageRegistrationPolicy}
+        />
+        <VideoTierCard
+          academyId={academyId ?? ''}
+          canEdit={canManageRegistrationPolicy}
+        />
+        <DevicePolicyCard
           academyId={academyId ?? ''}
           canEdit={canManageRegistrationPolicy}
         />

@@ -580,5 +580,105 @@
     "saved": "Communication settings updated",
     "saveFailed": "The communication settings could not be saved.",
     "readOnlyNotice": "These settings follow the platform's configuration and can't be changed per academy yet. Emailed sign-in codes currently apply: {{policy}}."
+  },
+  "protection": {
+    "sectionTitle": "Content protection",
+    "ownerOnly": "Only the academy owner can view or change content protection, video and device settings.",
+    "content": {
+      "title": "Video watermark and player",
+      "description": "How your academy's hosted videos are marked and played for learners.",
+      "watermark": {
+        "label": "Watermark videos",
+        "description": "Draws an identifying overlay on every hosted video a learner watches, so a recording can be traced back to the account it came from."
+      },
+      "watermarkText": {
+        "label": "Watermark text",
+        "placeholder": "Each learner's own ID",
+        "description": "Leave blank to show each learner their own short ID (for example “ID 1A2B3C4D”). Custom text replaces that ID for everyone, so the overlay no longer shows which learner was watching. Up to {{count}} characters.",
+        "tooLong": "Keep the watermark text to 80 characters or fewer."
+      },
+      "deterrents": {
+        "title": "Player restrictions",
+        "alwaysOn": "Always on",
+        "download": {
+          "label": "Download button hidden",
+          "description": "The player does not offer a download option."
+        },
+        "pip": {
+          "label": "Picture-in-picture blocked",
+          "description": "Videos cannot be popped out into a floating window."
+        },
+        "contextMenu": {
+          "label": "Right-click menu suppressed",
+          "description": "“Save video as” is not offered over the player."
+        },
+        "note": "The learner player always applies these, whatever the academy's settings. They discourage casual copying; they do not stop screen recording, and nothing in a browser can."
+      },
+      "confirmOn": {
+        "title": "Turn the watermark on?",
+        "description": "Every learner will see the watermark on every hosted video from their next lesson onwards.",
+        "action": "Turn on"
+      },
+      "confirmOff": {
+        "title": "Turn the watermark off?",
+        "description": "Learners will no longer see an identifying overlay on hosted videos, so a recording can no longer be traced back to the account it came from. This applies from their next lesson onwards.",
+        "action": "Turn off"
+      },
+      "save": "Save",
+      "saved": "Content protection updated",
+      "saveFailed": "The content protection settings could not be saved."
+    },
+    "videoTier": {
+      "title": "Video protection tier",
+      "description": "How videos you upload from now on are stored and delivered to learners.",
+      "options": {
+        "normal": {
+          "label": "Normal",
+          "description": "Basic video protection: Atlas stores and delivers the video itself, through short-lived links that are only issued to learners with access."
+        },
+        "premium": {
+          "label": "Premium",
+          "description": "Managed video delivery with signed playback, short-lived authorization, restricted playback sites and adaptive streaming quality."
+        }
+      },
+      "notInPlan": "Not included in your current plan — upgrade to a Premium plan to choose it.",
+      "newUploadsOnly": "Only new uploads use the tier you choose. Videos already uploaded keep the tier they were uploaded with. Neither tier is DRM.",
+      "planDefault": "Your academy is using your plan's default tier.",
+      "confirm": {
+        "title": "Switch new uploads to {{tier}}?",
+        "description": "Every video uploaded from now on will be delivered to learners on this tier. Videos already uploaded are not changed.",
+        "action": "Switch tier"
+      },
+      "save": "Save",
+      "saved": "Video tier updated",
+      "saveFailed": "The video tier could not be saved."
+    },
+    "devices": {
+      "title": "Learner devices",
+      "description": "Limits how many devices each learner can use, to make sharing an account inconvenient.",
+      "maxDevices": {
+        "label": "Devices per learner",
+        "description": "How many browsers a learner can keep signed in to this academy. The platform allows up to {{max}}."
+      },
+      "maxSessions": {
+        "label": "Concurrent sessions",
+        "description": "Shown to learners on their Devices page. Lessons play on one device at a time; opening a lesson elsewhere asks the learner to move playback there. The platform allows up to {{max}}."
+      },
+      "outOfRange": "Enter a whole number between 1 and the maximum shown.",
+      "source": {
+        "academy": "These limits are set for this academy.",
+        "plan": "Your academy is using your plan's default limits.",
+        "platform": "Your academy is using the platform's default limits.",
+        "default": "Your academy is using the platform's default limits."
+      },
+      "confirm": {
+        "title": "Lower the device limit?",
+        "description": "The new limit applies to devices learners have already registered. A learner using more than {{devices}} will be refused on their most recently added devices until they remove one from their Devices page.",
+        "action": "Lower limit"
+      },
+      "save": "Save",
+      "saved": "Device limits updated",
+      "saveFailed": "The device limits could not be saved."
+    }
   }
 }

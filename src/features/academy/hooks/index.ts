@@ -64,3 +64,13 @@ export {
   useAcademyCommunicationSettings,
   useUpdateAcademyCommunicationSettings,
 } from './useAcademyCommunicationSettings';
+// P64 Phase 2 — content protection, video tier and device policy (owner only).
+export {
+  useAcademyContentProtection,
+  useAcademyDevicePolicy,
+  useAcademyVideoTier,
+  useUpdateAcademyContentProtection,
+  useUpdateAcademyDevicePolicy,
+  useUpdateAcademyVideoTier,
+} from './useAcademyProtection';
+export type { UseAcademyProtectionQueryOptions } from './useAcademyProtection';

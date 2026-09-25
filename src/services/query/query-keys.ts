@@ -175,6 +175,20 @@ export const academyKeys = {
       organizationId,
       academyId,
     ] as const,
+  /** P64 Phase 2 — watermark and player deterrents (owner only). */
+  contentProtection: (organizationId: string | undefined, academyId: string) =>
+    [
+      ...academyKeys.all,
+      'content-protection',
+      organizationId,
+      academyId,
+    ] as const,
+  /** P64 Phase 2 (D10) — default video tier for new uploads and the plan ceiling. */
+  videoTier: (organizationId: string | undefined, academyId: string) =>
+    [...academyKeys.all, 'video-tier', organizationId, academyId] as const,
+  /** P64 Phase 2 — learner device and concurrent-session limits. */
+  devicePolicy: (organizationId: string | undefined, academyId: string) =>
+    [...academyKeys.all, 'device-policy', organizationId, academyId] as const,
 } as const;
 
 /**

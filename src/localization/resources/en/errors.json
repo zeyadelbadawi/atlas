@@ -59,7 +59,8 @@
     "noPlanAvailable": "No plan is currently available. Please contact support.",
     "planNotTrialEligible": "This plan isn't available as a free trial. You can subscribe to it directly, or start a trial on a plan that offers one.",
     "trialsDisabled": "Free trials aren't available right now.",
-    "videoStorageMinutesExceeded": "Adding this video would take the academy past its plan's video minutes. Upgrade the plan, or remove videos that are no longer needed, to make room."
+    "videoStorageMinutesExceeded": "Adding this video would take the academy past its plan's video minutes. Upgrade the plan, or remove videos that are no longer needed, to make room.",
+    "videoTierNotEntitled": "Your plan doesn't include Premium video. Upgrade to a Premium plan to use it, or keep new uploads on Normal."
   },
   "learning": {
     "deviceLimit": "You are already learning on the maximum number of devices allowed. Open Devices in your learner dashboard, remove one you no longer use, then try again.",
@@ -165,7 +166,8 @@
     "comingSoon": "Live Sessions is coming soon and can’t be installed yet."
   },
   "academy": {
-    "insufficientRole": "Your role in this academy does not allow that. Ask an academy owner or manager if you need access."
+    "insufficientRole": "Your role in this academy does not allow that. Ask an academy owner or manager if you need access.",
+    "devicePolicyAboveMaximum": "That limit is higher than the platform allows. Choose a number no higher than the maximum shown."
   },
   "course": {
     "slugTaken": "That web address is already used by another course in this academy. Please choose a different one.",
