@@ -137,6 +137,58 @@
     "certificateRevoked": {
       "title": "أُلغيت الشهادة",
       "message": "أُلغيت شهادتك لدورة «{{courseTitle}}». تواصل مع الأكاديمية إذا كنت ترى أن هذا خطأ."
+    },
+    "enrollmentGranted": {
+      "title": "تم تسجيلك",
+      "message": "أصبح لديك الآن حق الوصول إلى «{{courseTitle}}» في {{academyName}}."
+    },
+    "enrollmentRevoked": {
+      "title": "تم إلغاء الوصول",
+      "message": "أُلغي وصولك إلى «{{courseTitle}}» في {{academyName}}."
+    },
+    "enrollmentExpiryChanged": {
+      "title": "تغيّرت مدة الوصول",
+      "message": "يمتد وصولك إلى «{{courseTitle}}» حتى {{expiresAtDate}}."
+    },
+    "rosterStudentApproved": {
+      "title": "تمت الموافقة على طلبك",
+      "message": "تم تأكيد مقعدك في {{academyName}}. يمكنك بدء التعلّم الآن."
+    },
+    "rosterStudentRejected": {
+      "title": "لم تتم الموافقة على الطلب",
+      "message": "تعذّر على {{academyName}} الموافقة على طلب انضمامك."
+    },
+    "rosterStudentBlocked": {
+      "title": "تم تعليق الوصول",
+      "message": "عُلِّق وصولك إلى {{academyName}}. تواصل مع الأكاديمية إذا كنت ترى أن هذا خطأ."
+    },
+    "rosterStudentUnblocked": {
+      "title": "تمت استعادة الوصول",
+      "message": "أُعيد وصولك إلى {{academyName}}."
+    },
+    "courseOrderProofSubmitted": {
+      "title": "استلمنا إثبات الدفع",
+      "message": "استلمنا إثبات دفعك لـ«{{courseTitle}}» ({{amount}} {{currency}}). سنوافيك بالنتيجة بعد المراجعة."
+    },
+    "reviewModerated": {
+      "title": "تمت مراجعة تقييمك",
+      "message": "تقييمك لـ«{{courseTitle}}» أصبح {{status}}."
+    },
+    "emailVerification": {
+      "title": "أكّد بريدك الإلكتروني",
+      "message": "استخدم الرابط الذي أرسلناه إلى بريدك لتأكيد عنوانك."
+    },
+    "passwordReset": {
+      "title": "طلب إعادة تعيين كلمة المرور",
+      "message": "استخدم الرابط الذي أرسلناه إلى بريدك لاختيار كلمة مرور جديدة."
+    },
+    "passwordResetConfirmed": {
+      "title": "تم تغيير كلمة المرور",
+      "message": "تم تغيير كلمة مرورك. إذا لم تكن أنت، تواصل مع الدعم فورًا."
+    },
+    "emailOtp": {
+      "title": "رمز تسجيل الدخول",
+      "message": "استخدم الرمز الذي أرسلناه إلى بريدك. تنتهي صلاحيته خلال {{expiresInMinutes}} دقيقة."
     }
   },
   "liveSession": {

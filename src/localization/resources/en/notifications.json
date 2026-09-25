@@ -133,6 +133,58 @@
     "certificateRevoked": {
       "title": "Certificate revoked",
       "message": "Your certificate for \"{{courseTitle}}\" has been revoked. Contact the academy if you think this is a mistake."
+    },
+    "enrollmentGranted": {
+      "title": "You've been enrolled",
+      "message": "You now have access to \"{{courseTitle}}\" at {{academyName}}."
+    },
+    "enrollmentRevoked": {
+      "title": "Access removed",
+      "message": "Your access to \"{{courseTitle}}\" at {{academyName}} has been removed."
+    },
+    "enrollmentExpiryChanged": {
+      "title": "Access dates changed",
+      "message": "Your access to \"{{courseTitle}}\" now runs until {{expiresAtDate}}."
+    },
+    "rosterStudentApproved": {
+      "title": "You've been approved",
+      "message": "Your place at {{academyName}} is confirmed. You can start learning now."
+    },
+    "rosterStudentRejected": {
+      "title": "Request not approved",
+      "message": "{{academyName}} could not approve your request to join."
+    },
+    "rosterStudentBlocked": {
+      "title": "Access suspended",
+      "message": "Your access to {{academyName}} has been suspended. Contact the academy if you think this is a mistake."
+    },
+    "rosterStudentUnblocked": {
+      "title": "Access restored",
+      "message": "Your access to {{academyName}} has been restored."
+    },
+    "courseOrderProofSubmitted": {
+      "title": "Payment proof received",
+      "message": "We received your proof of payment for \"{{courseTitle}}\" ({{amount}} {{currency}}). You'll hear from us once it's reviewed."
+    },
+    "reviewModerated": {
+      "title": "Your review was reviewed",
+      "message": "Your review of \"{{courseTitle}}\" was {{status}}."
+    },
+    "emailVerification": {
+      "title": "Confirm your email",
+      "message": "Use the link we emailed you to confirm your address."
+    },
+    "passwordReset": {
+      "title": "Password reset requested",
+      "message": "Use the link we emailed you to choose a new password."
+    },
+    "passwordResetConfirmed": {
+      "title": "Password changed",
+      "message": "Your password was changed. If this wasn't you, contact support immediately."
+    },
+    "emailOtp": {
+      "title": "Your sign-in code",
+      "message": "Use the code we emailed you. It expires in {{expiresInMinutes}} minutes."
     }
   },
   "liveSession": {
