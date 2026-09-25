@@ -46,7 +46,18 @@ export function apiErrorMessage(
   if (!isApiError(error)) return t(fallbackKey);
 
   const specific = toTranslationKey(error.messageKey);
-  if (i18n.exists(specific)) return t(specific, options.values ?? {});
+  if (i18n.exists(specific)) {
+    // Some keys name a GROUP (`errors.notFound` is `{ title, description }`),
+    // and `t` on a group returns an object that renders as garbled text.
+    // Prefer the group's sentence; never hand back a non-string.
+    const described = `${specific}.description`;
+    if (i18n.exists(described)) return t(described, options.values ?? {});
+    const copy: unknown = t(specific, {
+      ...(options.values ?? {}),
+      returnObjects: true,
+    });
+    if (typeof copy === 'string') return copy;
+  }
 
   const byKind = `${ERROR_NAMESPACE}:${error.kind}.description`;
   if (i18n.exists(byKind)) return t(byKind);
