@@ -45,6 +45,12 @@ export interface SignInFormProps {
    * mounted on an academy host at all.
    */
   readonly forgotPasswordHref?: string;
+  /**
+   * New Customer Onboarding — pre-fills the email field, e.g. with the
+   * address an account was just created with. Absent, the field starts
+   * empty as before.
+   */
+  readonly defaultEmail?: string;
 }
 
 export function SignInForm({
@@ -52,6 +58,7 @@ export function SignInForm({
   isLoading,
   error,
   forgotPasswordHref = AUTH_ROUTES.forgotPassword,
+  defaultEmail,
 }: SignInFormProps): JSX.Element {
   const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
@@ -63,7 +70,7 @@ export function SignInForm({
   } = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
-      email: '',
+      email: defaultEmail ?? '',
       password: '',
       rememberMe: false,
     },

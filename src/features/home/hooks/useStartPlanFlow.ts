@@ -14,6 +14,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@hooks';
 import { AUTH_ROUTES, DASHBOARD_ROUTES } from '@app/routes/route-paths';
 
+/**
+ * The visitor's intended plan key. Read — and cleared — by the one-page
+ * sign-up (`RegistrationForm`), which pre-selects that plan's trial when
+ * it is eligible; `?plan=` on the sign-up URL carries the same intent and
+ * wins when both are present.
+ */
 export const INTENDED_PLAN_STORAGE_KEY = 'atlas:intendedPlanKey';
 
 export function useStartPlanFlow() {

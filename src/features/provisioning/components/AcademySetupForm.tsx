@@ -1,0 +1,396 @@
+/**
+ * Academy Setup Form.
+ *
+ * The provisioning request form — academy name, Atlas address (with live
+ * availability and the name-following suggestion), theme and website
+ * setup mode — extracted from `ProvisioningStartPage` so the New Customer
+ * Onboarding shell can render the SAME form rather than a second one.
+ *
+ * It only creates the `ProvisioningRequest`; what happens next is the
+ * caller's decision (`onCreated`): the page navigates to the status
+ * screen, the onboarding shell stays put and shows progress. Plan-limit
+ * gating stays with the caller too — the backend enforces the limit
+ * regardless, and a refusal surfaces through the form's error state.
+ */
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Check, CheckCircle2, Loader2, XCircle } from 'lucide-react';
+import { ErrorState } from '@components/feedback';
+import { StatusBadge } from '@components/data-display';
+import { Button } from '@/components/ui/button';
+import { cn } from '@utils';
+import { listWebsiteThemes } from '@features/website';
+import type { ProvisioningRequest, WebsiteThemeDefinition } from '@types';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { useSlugSuggestion, useUnsavedChanges } from '@hooks';
+import { useServerValidation } from '@forms';
+import { MAX_SUBDOMAIN_LENGTH } from '../constants/provisioning.constants';
+import {
+  useCheckSubdomainAvailability,
+  useCreateProvisioningRequest,
+} from '../hooks';
+import {
+  createProvisioningRequestSchema,
+  type CreateProvisioningRequestFormData,
+} from '../schemas/provisioning.schemas';
+import { generateProvisioningIdempotencyKey } from '../utils/idempotency.utils';
+
+export interface AcademySetupFormProps {
+  readonly organizationId: string;
+  /** Called with the created request once the backend accepted it. */
+  readonly onCreated: (request: ProvisioningRequest) => void;
+}
+
+export function AcademySetupForm({
+  organizationId,
+  onCreated,
+}: AcademySetupFormProps): JSX.Element {
+  const { t } = useTranslation();
+  const createRequest = useCreateProvisioningRequest();
+
+  const idempotencyKey = useState(() =>
+    generateProvisioningIdempotencyKey()
+  )[0];
+
+  const form = useForm<CreateProvisioningRequestFormData>({
+    resolver: zodResolver(createProvisioningRequestSchema),
+    // Phase 6 — `websiteSetupMode` is pre-selected to `'complete'`: the
+    // easiest action (submit without touching this field) should be the
+    // one that produces a presentable site, not an empty shell — see the
+    // Bilingual Academy Websites specification, §3.2 ("make the easiest
+    // action the correct action"). This is a UI default only; the
+    // backend's own schema default for an OMITTED value is `'empty'` —
+    // deliberately different, see `CreateProvisioningRequestPayload.
+    // websiteSetupMode`'s own doc comment.
+    defaultValues: {
+      academyName: '',
+      requestedSubdomain: '',
+      selectedThemeKey: undefined,
+      websiteSetupMode: 'complete',
+    },
+  });
+
+  // Warns before this editor is left with unsaved work — both on
+  // in-app navigation (via the shared registry the route blocker
+  // reads) and on tab close or refresh.
+  useUnsavedChanges({ isDirty: form.formState.isDirty });
+
+  const themes = listWebsiteThemes();
+  const selectedThemeKey = form.watch('selectedThemeKey');
+  const websiteSetupMode = form.watch('websiteSetupMode');
+
+  useServerValidation(form, createRequest.error);
+
+  const subdomainValue = form.watch('requestedSubdomain');
+  const availability = useCheckSubdomainAvailability(subdomainValue);
+
+  /*
+    P55 — the Atlas address follows the Academy name until the owner edits
+    it themselves. `MAX_SUBDOMAIN_LENGTH` is passed so a suggestion can
+    never be born failing the very schema that validates it, and the
+    existing availability check below then runs against the suggestion
+    exactly as it does against a typed value — there is no separate
+    "is this suggestion free?" path.
+  */
+  const academyNameValue = form.watch('academyName');
+  const slugSuggestion = useSlugSuggestion({
+    title: academyNameValue,
+    slug: subdomainValue,
+    maxLength: MAX_SUBDOMAIN_LENGTH,
+    onSuggest: (next) =>
+      // `shouldDirty` so the unsaved-changes guard treats a suggested
+      // address like any other unsaved input; `shouldValidate` so an
+      // out-of-bounds suggestion surfaces immediately rather than at submit.
+      form.setValue('requestedSubdomain', next, {
+        shouldDirty: true,
+        shouldValidate: true,
+      }),
+  });
+
+  const onSubmit = (data: CreateProvisioningRequestFormData) => {
+    createRequest.mutate(
+      {
+        organizationId,
+        payload: {
+          academyName: data.academyName,
+          requestedSubdomain: data.requestedSubdomain,
+          selectedThemeKey: data.selectedThemeKey,
+          websiteSetupMode: data.websiteSetupMode,
+          idempotencyKey,
+        },
+      },
+      {
+        onSuccess: onCreated,
+      }
+    );
+  };
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="academyName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                {t('provisioning:start.academyNameLabel')}
+              </FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="requestedSubdomain"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                {t('provisioning:start.subdomainLabel')}
+              </FormLabel>
+              <FormControl>
+                <div className="flex items-center gap-2">
+                  <Input
+                    {...field}
+                    className="flex-1"
+                    // `dir="ltr"` because a subdomain is always ASCII
+                    // and must read left-to-right even on an Arabic
+                    // page — otherwise the caret and the hyphens sit
+                    // on the wrong side of what the user is typing.
+                    dir="ltr"
+                    onChange={(event) => {
+                      // Latch FIRST, then apply: the edit must be
+                      // recorded before any re-render can let a
+                      // pending title change overwrite it.
+                      slugSuggestion.onSlugEdited();
+                      field.onChange(event);
+                    }}
+                  />
+                  {field.value ? (
+                    availability.isLoading ? (
+                      <Loader2
+                        className="size-4 shrink-0 animate-spin text-muted-foreground"
+                        aria-hidden
+                      />
+                    ) : availability.data?.status === 'available' ? (
+                      <CheckCircle2
+                        className="size-4 shrink-0 text-success"
+                        aria-hidden
+                      />
+                    ) : availability.data ? (
+                      <XCircle
+                        className="size-4 shrink-0 text-destructive"
+                        aria-hidden
+                      />
+                    ) : null
+                  ) : null}
+                </div>
+              </FormControl>
+              <FormDescription>
+                {t(
+                  slugSuggestion.isCustomized
+                    ? 'provisioning:start.subdomainHelp'
+                    : 'provisioning:start.subdomainSuggested'
+                )}
+              </FormDescription>
+              {field.value &&
+              availability.data?.status !== 'available' &&
+              availability.data ? (
+                <p className="text-sm text-destructive">
+                  {t(
+                    `provisioning:start.subdomainStatus.${availability.data.status}`
+                  )}
+                </p>
+              ) : null}
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Phase P19 — real theme selection during onboarding
+            (previously always skipped — see `Reports/
+            DEVELOPMENT_E2E_FLOW_AUDIT.md` P1-1). Optional: skipping
+            leaves the Website Builder's own bootstrap default in
+            place, applied the first time the Academy's website is
+            ever read (`WebsiteBootstrapService`). */}
+        <FormField
+          control={form.control}
+          name="selectedThemeKey"
+          render={() => (
+            <FormItem>
+              <FormLabel>{t('provisioning:start.themeLabel')}</FormLabel>
+              <FormDescription>
+                {t('provisioning:start.themeHelp')}
+              </FormDescription>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {themes.map((theme: WebsiteThemeDefinition) => {
+                  const isSelected = selectedThemeKey === theme.key;
+                  return (
+                    <button
+                      key={theme.key}
+                      type="button"
+                      onClick={() =>
+                        form.setValue(
+                          'selectedThemeKey',
+                          isSelected ? undefined : theme.key,
+                          { shouldDirty: true }
+                        )
+                      }
+                      className={cn(
+                        'flex flex-col gap-3 rounded-lg border p-4 text-start transition-colors',
+                        isSelected
+                          ? 'border-2 border-primary'
+                          : 'border-border hover:border-primary/50'
+                      )}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="flex gap-1.5">
+                          {[
+                            theme.tokens.defaultPrimary,
+                            theme.tokens.defaultSecondary,
+                            theme.tokens.defaultAccent,
+                          ].map((hsl, index) => (
+                            <span
+                              key={index}
+                              className="size-4 rounded-full border border-border"
+                              style={{ backgroundColor: `hsl(${hsl})` }}
+                              aria-hidden
+                            />
+                          ))}
+                        </span>
+                        {isSelected ? (
+                          <Check
+                            className="size-4 text-primary"
+                            strokeWidth={2}
+                            aria-hidden
+                          />
+                        ) : null}
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium">
+                          {t(theme.nameKey)}
+                        </p>
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                          {t(theme.descriptionKey)}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </FormItem>
+          )}
+        />
+
+        {/*
+          Phase 6 (Bilingual Academy Websites) — the setup-mode
+          choice lives directly beneath the existing theme picker,
+          on the SAME screen, rather than a new onboarding step
+          (see the specification's §3.1 for why this insertion
+          point was chosen over a bigger one). Two large, plain-
+          language cards — never "Empty Academy"/"Complete Website"
+          to the client, that framing is for engineering docs only.
+        */}
+        <FormField
+          control={form.control}
+          name="websiteSetupMode"
+          render={() => (
+            <FormItem>
+              <FormLabel>
+                {t('provisioning:start.setupModeLabel')}
+              </FormLabel>
+              <FormDescription>
+                {t('provisioning:start.setupModeHelp')}
+              </FormDescription>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {(['complete', 'empty'] as const).map((mode) => {
+                  const isSelected = websiteSetupMode === mode;
+                  return (
+                    <button
+                      key={mode}
+                      type="button"
+                      onClick={() =>
+                        form.setValue('websiteSetupMode', mode, {
+                          shouldDirty: true,
+                        })
+                      }
+                      className={cn(
+                        'flex flex-col gap-1.5 rounded-lg border p-4 text-start transition-colors',
+                        isSelected
+                          ? 'border-2 border-primary'
+                          : 'border-border hover:border-primary/50'
+                      )}
+                    >
+                      <span className="flex items-center justify-between">
+                        <span className="text-sm font-medium">
+                          {t(
+                            `provisioning:start.setupMode.${mode}.title`
+                          )}
+                        </span>
+                        {mode === 'complete' ? (
+                          <StatusBadge
+                            labelKey="provisioning:start.setupMode.recommended"
+                            tone="info"
+                          />
+                        ) : isSelected ? (
+                          <Check
+                            className="size-4 text-primary"
+                            strokeWidth={2}
+                            aria-hidden
+                          />
+                        ) : null}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {t(
+                          `provisioning:start.setupMode.${mode}.description`
+                        )}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </FormItem>
+          )}
+        />
+
+        <div className="flex items-center justify-end">
+          <Button
+            type="submit"
+            disabled={
+              createRequest.isPending ||
+              availability.data?.status !== 'available'
+            }
+          >
+            {createRequest.isPending ? (
+              <>
+                <Loader2 className="size-4 animate-spin" aria-hidden />
+                {t('provisioning:start.creating')}
+              </>
+            ) : (
+              t('provisioning:start.submit')
+            )}
+          </Button>
+        </div>
+
+        {createRequest.error ? (
+          <ErrorState onRetry={form.handleSubmit(onSubmit)} />
+        ) : null}
+      </form>
+    </Form>
+  );
+}

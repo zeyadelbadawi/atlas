@@ -44,7 +44,8 @@
     "continueToPayment": "Continue to payment",
     "noMethodsTitle": "No payment method available",
     "noMethodsDescription": "Your order is ready, but no payment method has been enabled for your organization yet. Contact support and we will set one up for you.",
-    "contactSupport": "Contact support"
+    "contactSupport": "Contact support",
+    "backToSetup": "Back to setup"
   },
   "paymentHistory": {
     "title": "Payment History",

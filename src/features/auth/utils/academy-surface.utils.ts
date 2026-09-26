@@ -35,6 +35,18 @@ export const AUTH_ERROR_KEYS = {
   emailNotAcceptable: 'errors.auth.emailNotAcceptable',
   /** A learner token reached a management controller (403). */
   managementSurfaceOnly: 'errors.auth.managementSurfaceOnly',
+  /** New Customer Onboarding — organization sign-up is switched off (400); the form falls back to account-only. */
+  organizationSignupDisabled: 'errors.auth.organizationSignupDisabled',
+  /** New Customer Onboarding — organization fields sent with `academyId` / on an academy host (400). */
+  signupFieldsNotAllowed: 'errors.auth.signupFieldsNotAllowed',
+  /** New Customer Onboarding — `planId` without `organizationName` (400). */
+  organizationNameRequired: 'errors.auth.organizationNameRequired',
+  /** New Customer Onboarding — a plan was sent while trials are disabled (400). */
+  signupTrialsUnavailable: 'errors.auth.signupTrialsUnavailable',
+  /** New Customer Onboarding — the chosen plan cannot be trialled (400). */
+  signupPlanUnavailable: 'errors.auth.signupPlanUnavailable',
+  /** The email already has an account (409). */
+  emailAlreadyRegistered: 'errors.auth.emailAlreadyRegistered',
 } as const;
 
 /*

@@ -27,13 +27,17 @@ import { apiErrorKind } from '@api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useDateFormatter, usePermissions, usePlatform } from '@hooks';
-import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
+import { useAuth, useDateFormatter, usePermissions, usePlatform } from '@hooks';
+import {
+  DASHBOARD_ROUTES,
+  ONBOARDING_ROUTES,
+  buildPath,
+} from '@app/routes/route-paths';
+import { isOnboardingPendingForActiveOrganization } from '@utils';
 import {
   useAcademies,
   useAcademyStats,
   useAcademyActivity,
-  useOnboardingProgress,
 } from '../hooks';
 import { AcademySwitcher } from '../components/AcademySwitcher';
 import {
@@ -94,8 +98,16 @@ export default function AcademyDashboardPage(): JSX.Element {
 
   const activities = activityData?.items ?? [];
 
-  const { isComplete: isOnboardingComplete } = useOnboardingProgress(
-    currentAcademy?.id ?? ''
+  /*
+    New Customer Onboarding — the "finish setup" nudge follows the SERVER's
+    answer for the organization (`onboardingPending` on the owner's
+    membership), not a per-browser checklist. It points at the one setup
+    shell, which resumes at whatever step is actually open.
+  */
+  const { user, organization } = useAuth();
+  const isOnboardingPending = isOnboardingPendingForActiveOrganization(
+    user,
+    organization
   );
 
   if (isLoadingAcademies) {
@@ -194,7 +206,7 @@ export default function AcademyDashboardPage(): JSX.Element {
       />
 
       <div className="space-y-6">
-        {!isOnboardingComplete && (
+        {isOnboardingPending && (
           <Card className="border-primary/30 bg-primary/5">
             <CardContent className="flex flex-col items-start justify-between gap-3 py-4 sm:flex-row sm:items-center">
               <p className="text-sm text-foreground">
@@ -203,13 +215,7 @@ export default function AcademyDashboardPage(): JSX.Element {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() =>
-                  navigate(
-                    buildPath(DASHBOARD_ROUTES.academyOnboarding, {
-                      academyId: currentAcademy.id,
-                    })
-                  )
-                }
+                onClick={() => navigate(ONBOARDING_ROUTES.root)}
               >
                 {t('academy:onboarding.resumeAction')}
               </Button>

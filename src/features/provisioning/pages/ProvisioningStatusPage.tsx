@@ -38,8 +38,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth, usePlatform } from '@hooks';
 import { useConfirmDialog } from '@app/providers';
-import { toErrorsNamespaceKey } from '@utils';
-import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
+import {
+  isOnboardingPendingForActiveOrganization,
+  toErrorsNamespaceKey,
+} from '@utils';
+import {
+  DASHBOARD_ROUTES,
+  ONBOARDING_ROUTES,
+  buildPath,
+} from '@app/routes/route-paths';
 import {
   useCancelProvisioning,
   useProvisioningRequest,
@@ -90,7 +97,7 @@ export default function ProvisioningStatusPage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { requestId } = useParams<{ requestId: string }>();
-  const { organization } = useAuth();
+  const { user, organization } = useAuth();
   const { setActiveAcademy } = usePlatform();
   const { confirm } = useConfirmDialog();
 
@@ -280,21 +287,21 @@ export default function ProvisioningStatusPage(): JSX.Element {
                   <Button
                     type="button"
                     onClick={() => {
-                      // Phase 5 — a customer who just completed real
-                      // payment and provisioning lands in the existing
-                      // Academy Onboarding wizard, never a bare profile
-                      // page (matches `AcademyCreatePage`'s own identical
-                      // post-create navigation for the legacy path, so
-                      // both real entry points into Academy creation end
-                      // up in the same one wizard). `setActiveAcademy`
-                      // mirrors that same call site too, so the header/
-                      // sidebar's academy context is already correct for
-                      // the duration of the wizard, not only after it.
+                      // New Customer Onboarding — an owner whose setup is
+                      // still open continues in the one setup shell (which
+                      // resumes at the next open step); everyone else goes
+                      // to the new academy's dashboard. The retired
+                      // client-side wizard is no longer a destination.
+                      // `setActiveAcademy` first, so the header/sidebar's
+                      // academy context is already correct either way.
                       setActiveAcademy(request.academyId!);
                       navigate(
-                        buildPath(DASHBOARD_ROUTES.academyOnboarding, {
-                          academyId: request.academyId!,
-                        }),
+                        isOnboardingPendingForActiveOrganization(
+                          user,
+                          organization
+                        )
+                          ? ONBOARDING_ROUTES.root
+                          : `${DASHBOARD_ROUTES.academy}?academyId=${request.academyId!}`,
                         { replace: true }
                       );
                     }}

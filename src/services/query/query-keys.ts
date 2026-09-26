@@ -43,6 +43,10 @@ export const QUERY_KEY_ROOTS = {
     'atlas-subscription-payment-provider',
   ] as const,
   provisioning: ['provisioning'] as const,
+  /** New Customer Onboarding — the owner's per-organization setup status. */
+  onboarding: ['onboarding'] as const,
+  /** New Customer Onboarding — the public sign-up options (no session). */
+  signupOptions: ['signup-options'] as const,
   subdomain: ['subdomain'] as const,
   platformProvisioning: ['platform-provisioning'] as const,
   website: ['website'] as const,
@@ -638,6 +642,20 @@ export const tenantKeys = {
    */
   retention: (organizationId: string | undefined) =>
     [...tenantKeys.all, 'retention', organizationId] as const,
+} as const;
+
+/**
+ * Query keys for New Customer Onboarding.
+ *
+ * `status` embeds the organization id like every tenant-scoped key, so an
+ * organization switch never shows one organization's setup to another's
+ * owner. `signupOptions` is platform-wide and read without a session.
+ */
+export const onboardingKeys = {
+  all: QUERY_KEY_ROOTS.onboarding,
+  status: (organizationId: string | undefined) =>
+    [...onboardingKeys.all, 'status', organizationId] as const,
+  signupOptions: () => [...QUERY_KEY_ROOTS.signupOptions] as const,
 } as const;
 
 /**

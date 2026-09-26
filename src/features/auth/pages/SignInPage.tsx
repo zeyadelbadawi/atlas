@@ -5,9 +5,10 @@
  * SessionService and AuthenticationService infrastructure.
  */
 import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LogIn } from 'lucide-react';
+import { CheckCircle2, LogIn } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useAuth, useSignIn } from '@hooks';
 import { TwoFactorChallengeForm } from '../components/TwoFactorChallengeForm';
 import { EmailOtpChallengeForm } from '../components/EmailOtpChallengeForm';
@@ -34,10 +35,30 @@ import {
  */
 const SURFACE = 'management' as const;
 
+/**
+ * New Customer Onboarding — what `RegistrationForm` hands over on success
+ * (`{ registered: true, email }`), or what its "Sign in instead" link
+ * carries (`{ email }`). Router state is untyped, so every field is read
+ * defensively.
+ */
+function readSignInHandOff(state: unknown): {
+  readonly registered: boolean;
+  readonly email?: string;
+} {
+  if (!state || typeof state !== 'object') return { registered: false };
+  const candidate = state as Record<string, unknown>;
+  return {
+    registered: candidate.registered === true,
+    email: typeof candidate.email === 'string' ? candidate.email : undefined,
+  };
+}
+
 export default function SignInPage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const handOff = readSignInHandOff(location.state);
   const { session } = useAuth();
   const {
     signIn,
@@ -159,6 +180,16 @@ export default function SignInPage(): JSX.Element {
           />
         </div>
 
+        {handOff.registered && !challenge && !refusedAcademies ? (
+          <Alert data-testid="account-created-notice">
+            <CheckCircle2 className="size-4" aria-hidden />
+            <AlertTitle>{t('auth:signIn.registeredNotice.title')}</AlertTitle>
+            <AlertDescription>
+              {t('auth:signIn.registeredNotice.description')}
+            </AlertDescription>
+          </Alert>
+        ) : null}
+
         {refusedAcademies ? (
           <StudentSignInRefusal
             academies={refusedAcademies}
@@ -199,6 +230,7 @@ export default function SignInPage(): JSX.Element {
             onSubmit={handleSignIn}
             isLoading={isLoading}
             error={error}
+            defaultEmail={handOff.email}
           />
         )}
 

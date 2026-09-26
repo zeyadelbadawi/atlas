@@ -442,32 +442,8 @@
     "loading": "Loading academies..."
   },
   "onboarding": {
-    "title": "Set Up {{academyName}}",
-    "subtitle": "A few quick steps to get your academy ready.",
-    "skipAll": "Skip for now",
-    "finish": "Go to dashboard",
-    "continueTo": "Continue to {{step}}",
-    "skipStep": "Skip this step",
     "resumeBanner": "Your academy setup isn't finished yet.",
-    "resumeAction": "Finish setup",
-    "steps": {
-      "basics": {
-        "title": "Basic information",
-        "description": "Your academy's name and details are set."
-      },
-      "branding": {
-        "title": "Add your branding",
-        "description": "Upload a logo and favicon so your academy looks like yours."
-      },
-      "settings": {
-        "title": "Review your settings",
-        "description": "Confirm your language, timezone, currency and status."
-      },
-      "complete": {
-        "title": "You're all set",
-        "description": "Your academy is ready. You can revisit branding and settings anytime."
-      }
-    }
+    "resumeAction": "Finish setup"
   },
   "activity": {
     "academyCreated": "Academy created",
