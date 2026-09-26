@@ -40,6 +40,7 @@ import {
   PackageCheck,
   Award,
   Wallet,
+  Store,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem, NavigationSection } from '@types';
@@ -742,6 +743,45 @@ export function getDashboardNavigation(
           requiresAuth: true,
           requiredRoles: ['platform_owner'],
           matchNestedPaths: true,
+        },
+        {
+          /*
+            Course commerce — a group, not three loose links: reviewing a
+            learner's course payment, paying an academy out and setting
+            what Atlas keeps are one money flow. Sits right after the
+            subscription Payments entry, and is deliberately a SEPARATE
+            queue from it (the backend keeps the two route trees apart).
+          */
+          id: 'platform-commerce',
+          labelKey: 'navigation:items.platformCommerce',
+          path: DASHBOARD_ROUTES.platformCoursePayments,
+          icon: Store,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+          children: [
+            {
+              id: 'platform-commerce-course-payments',
+              labelKey: 'navigation:items.platformCoursePayments',
+              path: DASHBOARD_ROUTES.platformCoursePayments,
+              requiresAuth: true,
+              requiredRoles: ['platform_owner'],
+              matchNestedPaths: true,
+            },
+            {
+              id: 'platform-commerce-payouts',
+              labelKey: 'navigation:items.platformPayouts',
+              path: DASHBOARD_ROUTES.platformPayouts,
+              requiresAuth: true,
+              requiredRoles: ['platform_owner'],
+            },
+            {
+              id: 'platform-commerce-commission',
+              labelKey: 'navigation:items.platformCommission',
+              path: DASHBOARD_ROUTES.platformCommission,
+              requiresAuth: true,
+              requiredRoles: ['platform_owner'],
+            },
+          ],
         },
         {
           id: 'platform-atlas-payment-provider',

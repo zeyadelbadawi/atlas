@@ -238,5 +238,13 @@
   "courseOrder": {
     "refundNotEligible": "This order can't be refunded. Only paid orders that haven't already been refunded are eligible.",
     "refundWindowElapsed": "The refund period for this order has ended. Refunds are available within 30 days of purchase."
+  },
+  "payment": {
+    "notPendingReview": "This payment is no longer waiting for review. Reload to see its current status.",
+    "cannotReviewOwnOrganization": "This payment belongs to an organization you're a member of. You can't review your own organization's payments."
+  },
+  "academyPayout": {
+    "invalidPeriod": "The payout period is not valid. The end date must be after the start date.",
+    "notPending": "This payout failed and can't be marked as paid."
   }
 }

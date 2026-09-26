@@ -94,7 +94,11 @@
     "platformZoomHealth": "Health & incidents",
     "platformZoomActivity": "Activity",
     "platformCourses": "Global Courses",
-    "academyRevenue": "Revenue & payouts"
+    "academyRevenue": "Revenue & payouts",
+    "platformCommerce": "Commerce",
+    "platformCoursePayments": "Course payments",
+    "platformPayouts": "Payouts",
+    "platformCommission": "Commission"
   },
   "account": {
     "menu": "Account menu",

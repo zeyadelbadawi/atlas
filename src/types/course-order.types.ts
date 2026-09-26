@@ -86,6 +86,10 @@ export interface CourseOrderPayment {
   readonly failureReason?: string;
   readonly reviewNotes?: string;
   readonly nextAction?: PaymentNextAction;
+  /** §4.1 snapshot — the payment-collection mode in force when this Payment was created. Never recomputed. */
+  readonly paymentCollectionModeSnapshot?:
+    'unconfigured' | 'atlas_payments' | 'organization_gateway';
+  /** §4.2 snapshot — absent under Organization-Owned Gateway mode (no Atlas commission applies there). */
   readonly commission?: {
     readonly rateBasisPoints: number;
     readonly amountMinorUnits: number;

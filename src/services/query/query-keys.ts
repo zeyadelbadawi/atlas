@@ -35,6 +35,10 @@ export const QUERY_KEY_ROOTS = {
   payment: ['payment'] as const,
   invoice: ['invoice'] as const,
   platformPayment: ['platform-payment'] as const,
+  /** Platform Owner course-order payment review — a separate queue from `platformPayment` (subscriptions). */
+  platformCourseOrderPayment: ['platform-course-order-payment'] as const,
+  platformAcademyPayout: ['platform-academy-payout'] as const,
+  platformCommission: ['platform-commission'] as const,
   atlasSubscriptionPaymentProvider: [
     'atlas-subscription-payment-provider',
   ] as const,
@@ -702,6 +706,39 @@ export const platformPaymentKeys = {
     [...platformPaymentKeys.all, 'list', query] as const,
   detail: (paymentId: string) =>
     [...platformPaymentKeys.all, 'detail', paymentId] as const,
+} as const;
+
+/**
+ * Platform Owner course-order payment review. Kept apart from
+ * `platformPaymentKeys` for the same reason the backend keeps the two route
+ * trees apart: approving a course payment must never invalidate (or be
+ * served from) the subscription review queue's cache, and vice versa.
+ * Cross-tenant, so organization-switch invalidation does not touch it.
+ */
+export const platformCourseOrderPaymentKeys = {
+  all: QUERY_KEY_ROOTS.platformCourseOrderPayment,
+  list: (query?: CollectionQuery) =>
+    [...platformCourseOrderPaymentKeys.all, 'list', query] as const,
+  detail: (paymentId: string) =>
+    [...platformCourseOrderPaymentKeys.all, 'detail', paymentId] as const,
+} as const;
+
+/** Platform Owner academy payouts (cross-tenant, Platform-Owner-only). */
+export const platformAcademyPayoutKeys = {
+  all: QUERY_KEY_ROOTS.platformAcademyPayout,
+  list: (query?: CollectionQuery) =>
+    [...platformAcademyPayoutKeys.all, 'list', query] as const,
+} as const;
+
+/** The §4.2 commission hierarchy: global default → plan → organization. */
+export const platformCommissionKeys = {
+  all: QUERY_KEY_ROOTS.platformCommission,
+  global: () => [...platformCommissionKeys.all, 'global'] as const,
+  plans: () => [...platformCommissionKeys.all, 'plan'] as const,
+  plan: (planKey: string) =>
+    [...platformCommissionKeys.all, 'plan', planKey] as const,
+  organization: (organizationId: string) =>
+    [...platformCommissionKeys.all, 'organization', organizationId] as const,
 } as const;
 
 /** Query keys for Atlas Subscription Payment provider configuration (2026-08-26). Platform-owned singleton — not organization-scoped, like `platformPaymentKeys`. */

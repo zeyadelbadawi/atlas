@@ -64,6 +64,7 @@ export const TRANSLATION_NAMESPACES = [
   'features',
   'pricing',
   'certificates',
+  'platformCommerce',
 ] as const;
 
 export type TranslationNamespace = (typeof TRANSLATION_NAMESPACES)[number];

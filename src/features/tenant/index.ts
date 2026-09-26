@@ -21,3 +21,6 @@ export {
   LifecyclePanel,
   GettingStartedChecklist,
 } from './components/LifecyclePanel';
+// Platform commerce's per-plan commission list names plans the same way
+// the catalog does (localized, English fallback).
+export { resolvePlanName } from './utils/plan-text.utils';

@@ -20,6 +20,13 @@
  * false the first time a currency needed a different minor-unit exponent.
  */
 export { formatMoney } from './utils/money.utils';
+// The Platform Owner's course-payment review (`@features/platform-commerce`)
+// badges the SAME payment lifecycle/review enums, so it reuses these tone
+// maps rather than copying them.
+export {
+  getManualReviewStatusTone,
+  getPaymentStatusTone,
+} from './utils/payment-status.utils';
 // P64 Phase 4 — the learner course-checkout reuses the platform-owned
 // payment-method catalog (not org-scoped), the same way it reuses formatMoney.
 export { usePaymentMethods } from './hooks/usePaymentMethods';
