@@ -63,9 +63,17 @@ export function OnboardingLayout({
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-16 lg:py-16">
-        {rail ? <aside className="lg:sticky lg:top-24 lg:self-start">{rail}</aside> : <span />}
-        <main className="mx-auto w-full max-w-2xl lg:mx-0">{children}</main>
+      <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)] gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-16 lg:py-16">
+        {rail ? (
+          <aside className="min-w-0 lg:sticky lg:top-24 lg:self-start">
+            {rail}
+          </aside>
+        ) : (
+          <span />
+        )}
+        <main className="mx-auto w-full min-w-0 max-w-2xl lg:mx-0">
+          {children}
+        </main>
       </div>
     </div>
   );

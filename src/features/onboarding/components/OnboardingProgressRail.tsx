@@ -6,15 +6,13 @@
  * words and with an icon. A locked step is listed but not linked — it
  * says why it is locked when opened from the summary instead.
  */
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ListChecks } from 'lucide-react';
 import { ONBOARDING_ROUTES, buildPath } from '@app/routes/route-paths';
 import { cn } from '@utils';
-import type {
-  OnboardingScreenKey,
-  OnboardingStatusResponse,
-} from '@types';
+import type { OnboardingScreenKey, OnboardingStatusResponse } from '@types';
 import { visibleSteps } from '../utils/onboarding-status.utils';
 import { StepStatusIcon, StepStatusText } from './StepStatusIndicator';
 
@@ -29,6 +27,18 @@ export function OnboardingProgressRail({
 }: OnboardingProgressRailProps): JSX.Element {
   const { t } = useTranslation();
   const steps = visibleSteps(status);
+  const listRef = useRef<HTMLOListElement>(null);
+
+  // On narrow screens the rail scrolls sideways: keep the current step in
+  // view. Skipped when nothing overflows (the desktop column), so the page
+  // itself never scrolls.
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list || list.scrollWidth <= list.clientWidth) return;
+    list
+      .querySelector<HTMLElement>('[aria-current="step"]')
+      ?.scrollIntoView?.({ block: 'nearest', inline: 'center' });
+  }, [current]);
 
   const itemClass = (isCurrent: boolean) =>
     cn(
@@ -38,7 +48,10 @@ export function OnboardingProgressRail({
 
   return (
     <nav aria-label={t('onboarding:shell.railLabel')}>
-      <ol className="flex gap-1 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0">
+      <ol
+        ref={listRef}
+        className="flex gap-1 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0"
+      >
         {steps.map((step) => {
           const isCurrent = step.key === current;
           const content = (
@@ -57,9 +70,9 @@ export function OnboardingProgressRail({
                 </span>
                 <span className="flex flex-wrap gap-x-1.5">
                   <StepStatusText status={step.status} />
-                  {step.requirement === 'recommended' ? (
+                  {step.requirement !== 'prerequisite' ? (
                     <span className="text-xs text-muted-foreground">
-                      · {t('onboarding:requirement.recommended')}
+                      · {t(`onboarding:requirement.${step.requirement}`)}
                     </span>
                   ) : null}
                 </span>

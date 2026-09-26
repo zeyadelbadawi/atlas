@@ -32,6 +32,14 @@ export function useOnboardingStatus(options: UseOnboardingStatusOptions = {}) {
     queryKey: onboardingKeys.status(organization?.id),
     queryFn: () => onboardingService.getStatus(organization!.id),
     enabled: (options.enabled ?? true) && isOwner && !!organization?.id,
+    // The server is the only source of truth for setup progress, and much of
+    // it changes OUTSIDE this page (a checkout, a payment approved by the
+    // Platform Owner, provisioning finishing). Never serve a cached answer
+    // when the shell or the dashboard card mounts again — the app-wide
+    // stale time would otherwise show a stale Plan step after returning
+    // from checkout, and never start the "awaiting confirmation" polling.
+    staleTime: 0,
+    refetchOnMount: 'always',
     refetchOnWindowFocus: true,
     refetchInterval: (activeQuery) =>
       isAwaitingServer(activeQuery.state.data)

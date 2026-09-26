@@ -220,16 +220,24 @@ beforeEach(() => {
   getStatus = vi.fn(async () => current);
   completeCall = vi.fn(async (_org: string, request: { mode: string }) => {
     events.push(`complete:${request.mode}`);
-    current = { ...current, pending: false, completedAt: '2026-09-26T12:00:00Z' };
+    current = {
+      ...current,
+      pending: false,
+      completedAt: '2026-09-26T12:00:00Z',
+    };
     return current;
   });
-  startTrial = vi.fn(async () => ({ started: true, trialEndsAt: '2026-10-10T00:00:00Z' }));
+  startTrial = vi.fn(async () => ({
+    started: true,
+    trialEndsAt: '2026-10-10T00:00:00Z',
+  }));
   refreshSession = vi.fn(async () => {
     events.push('refreshSession');
   });
 
   vi.spyOn(onboardingService, 'getStatus').mockImplementation(
-    (organizationId) => getStatus(organizationId) as Promise<OnboardingStatusResponse>
+    (organizationId) =>
+      getStatus(organizationId) as Promise<OnboardingStatusResponse>
   );
   vi.spyOn(onboardingService, 'complete').mockImplementation(
     (organizationId, request) =>
@@ -241,13 +249,17 @@ beforeEach(() => {
   ]);
   vi.spyOn(tenantService, 'startTrial').mockImplementation(
     (organizationId, input) =>
-      startTrial(organizationId, input) as ReturnType<typeof tenantService.startTrial>
+      startTrial(organizationId, input) as ReturnType<
+        typeof tenantService.startTrial
+      >
   );
   vi.spyOn(academyService, 'getAcademy').mockResolvedValue(ACADEMY);
   vi.spyOn(courseService, 'getCourseCategories').mockResolvedValue({
     items: [],
     pagination: { page: 1, pageSize: 20, totalItems: 0, totalPages: 1 },
-  } as unknown as Awaited<ReturnType<typeof courseService.getCourseCategories>>);
+  } as unknown as Awaited<
+    ReturnType<typeof courseService.getCourseCategories>
+  >);
 });
 
 afterEach(() => {
@@ -313,25 +325,31 @@ function renderShell(
   return render(
     <QueryClientProvider client={queryClient}>
       <AtlasLocalizationProvider>
-       <TooltipProvider>
-        <ToastContext.Provider value={toastValue}>
-          <IdentityContext.Provider value={identity(options.role)}>
-            <div data-testid="root">
-              <MemoryRouter initialEntries={[url]}>
-                <Routes>
-                  <Route path="/onboarding" element={<OnboardingPage />} />
-                  <Route path="/onboarding/:step" element={<OnboardingPage />} />
-                  <Route path="/dashboard" element={<Where testId="dashboard" />} />
-                  <Route
-                    path="/dashboard/*"
-                    element={<Where testId="elsewhere" />}
-                  />
-                </Routes>
-              </MemoryRouter>
-            </div>
-          </IdentityContext.Provider>
-        </ToastContext.Provider>
-       </TooltipProvider>
+        <TooltipProvider>
+          <ToastContext.Provider value={toastValue}>
+            <IdentityContext.Provider value={identity(options.role)}>
+              <div data-testid="root">
+                <MemoryRouter initialEntries={[url]}>
+                  <Routes>
+                    <Route path="/onboarding" element={<OnboardingPage />} />
+                    <Route
+                      path="/onboarding/:step"
+                      element={<OnboardingPage />}
+                    />
+                    <Route
+                      path="/dashboard"
+                      element={<Where testId="dashboard" />}
+                    />
+                    <Route
+                      path="/dashboard/*"
+                      element={<Where testId="elsewhere" />}
+                    />
+                  </Routes>
+                </MemoryRouter>
+              </div>
+            </IdentityContext.Provider>
+          </ToastContext.Provider>
+        </TooltipProvider>
       </AtlasLocalizationProvider>
     </QueryClientProvider>
   );
@@ -357,7 +375,27 @@ describe('onboarding shell — entry', () => {
     expect(currentLink?.textContent).toContain('To do');
     // A complete plan step is not listed at all.
     expect(within(nav).queryByText('Plan')).toBeNull();
-    expect(within(nav).getByTestId('rail-step-academy').textContent).toContain('Done');
+    expect(within(nav).getByTestId('rail-step-academy').textContent).toContain(
+      'Done'
+    );
+  });
+
+  it('tags required and recommended steps in the rail, in words', async () => {
+    renderShell('/onboarding/website');
+    await heading();
+    const nav = screen.getByRole('navigation', { name: 'Setup progress' });
+    expect(within(nav).getByTestId('rail-step-academy').textContent).toContain(
+      'Required'
+    );
+    expect(within(nav).getByTestId('rail-step-website').textContent).toContain(
+      'Required'
+    );
+    expect(within(nav).getByTestId('rail-step-branding').textContent).toContain(
+      'Recommended'
+    );
+    expect(within(nav).getByTestId('rail-step-course').textContent).toContain(
+      'Recommended'
+    );
   });
 
   it('focuses the heading on each step', async () => {
@@ -399,7 +437,9 @@ describe('onboarding shell — Plan step', () => {
     const user = userEvent.setup();
     renderShell('/onboarding');
     expect((await heading()).textContent).toBe('Choose how to start');
-    const start = await screen.findByRole('button', { name: 'Start free trial' });
+    const start = await screen.findByRole('button', {
+      name: 'Start free trial',
+    });
     expect((start as HTMLButtonElement).disabled).toBe(true);
 
     await user.click(screen.getByRole('radio', { name: 'Growth' }));
@@ -407,7 +447,9 @@ describe('onboarding shell — Plan step', () => {
     await user.click(start);
 
     await waitFor(() =>
-      expect(startTrial).toHaveBeenCalledWith('org-1', { planId: 'plan-growth' })
+      expect(startTrial).toHaveBeenCalledWith('org-1', {
+        planId: 'plan-growth',
+      })
     );
     expect((await heading()).textContent).toBe('Create your academy');
   });
@@ -419,7 +461,9 @@ describe('onboarding shell — Plan step', () => {
     expect(link.getAttribute('href')).toBe(
       '/dashboard/tenant/billing/checkout/plan_subscription/growth?returnTo=%2Fonboarding'
     );
-    expect(screen.queryByRole('button', { name: 'Start free trial' })).toBeNull();
+    expect(
+      screen.queryByRole('button', { name: 'Start free trial' })
+    ).toBeNull();
   });
 
   it('says a submitted payment is awaiting confirmation and links to it', async () => {
@@ -442,7 +486,9 @@ describe('onboarding shell — Plan step', () => {
       'Payment submitted — waiting for confirmation'
     );
     expect(
-      within(panel).getByRole('link', { name: 'View payment' }).getAttribute('href')
+      within(panel)
+        .getByRole('link', { name: 'View payment' })
+        .getAttribute('href')
     ).toBe('/dashboard/tenant/billing/payments/pay-1');
     expect(
       within(panel).getByRole('link', { name: 'Contact support' })
@@ -506,11 +552,39 @@ describe('onboarding shell — Academy step', () => {
     } as unknown as ProvisioningRequest;
   }
 
+  it('says "Create academy" on the submit button, not the provisioning wording', async () => {
+    current = status(
+      {
+        academy: 'incomplete',
+        branding: 'blocked',
+        website: 'blocked',
+        course: 'blocked',
+      },
+      { academy: null, provisioning: null, nextStep: 'academy' }
+    );
+    renderShell('/onboarding/academy');
+    expect((await heading()).textContent).toBe('Create your academy');
+    expect(
+      await screen.findByRole('button', { name: 'Create academy' })
+    ).toBeTruthy();
+    expect(screen.queryByRole('button', { name: /provisioning/i })).toBeNull();
+  });
+
   it('stays in the shell and follows provisioning while it runs', async () => {
     current = status(
-      { academy: 'in_progress', branding: 'blocked', website: 'blocked', course: 'blocked' },
       {
-        provisioning: { requestId: 'req-1', status: 'provisioning', currentStepKey: 'website', failed: false },
+        academy: 'in_progress',
+        branding: 'blocked',
+        website: 'blocked',
+        course: 'blocked',
+      },
+      {
+        provisioning: {
+          requestId: 'req-1',
+          status: 'provisioning',
+          currentStepKey: 'website',
+          failed: false,
+        },
         nextStep: 'academy',
       }
     );
@@ -525,9 +599,19 @@ describe('onboarding shell — Academy step', () => {
 
   it('offers retry when provisioning failed', async () => {
     current = status(
-      { academy: 'incomplete', branding: 'blocked', website: 'blocked', course: 'blocked' },
       {
-        provisioning: { requestId: 'req-1', status: 'failed', currentStepKey: 'website', failed: true },
+        academy: 'incomplete',
+        branding: 'blocked',
+        website: 'blocked',
+        course: 'blocked',
+      },
+      {
+        provisioning: {
+          requestId: 'req-1',
+          status: 'failed',
+          currentStepKey: 'website',
+          failed: true,
+        },
         nextStep: 'academy',
       }
     );
@@ -607,12 +691,16 @@ describe('onboarding shell — Summary', () => {
       'Setup incomplete — 1 required step left'
     );
     expect(
-      (screen.getByRole('button', { name: 'Finish' }) as HTMLButtonElement).disabled
+      (screen.getByRole('button', { name: 'Finish' }) as HTMLButtonElement)
+        .disabled
     ).toBe(true);
     expect(screen.queryByText('Your academy is ready')).toBeNull();
     expect(
-      (screen.getByRole('button', { name: 'Finish for now' }) as HTMLButtonElement)
-        .disabled
+      (
+        screen.getByRole('button', {
+          name: 'Finish for now',
+        }) as HTMLButtonElement
+      ).disabled
     ).toBe(false);
   });
 
@@ -634,11 +722,9 @@ describe('onboarding shell — Summary', () => {
 
     expect(await screen.findByTestId('dashboard')).toBeTruthy();
     expect(completeCall).toHaveBeenCalledWith('org-1', { mode: 'finish' });
-    expect(events.filter((event) => !event.startsWith('at:/onboarding'))).toEqual([
-      'complete:finish',
-      'refreshSession',
-      'at:/dashboard',
-    ]);
+    expect(
+      events.filter((event) => !event.startsWith('at:/onboarding'))
+    ).toEqual(['complete:finish', 'refreshSession', 'at:/dashboard']);
   });
 });
 
@@ -651,16 +737,18 @@ describe('onboarding shell — Finish for now', () => {
 
     expect(await screen.findByTestId('dashboard')).toBeTruthy();
     expect(completeCall).toHaveBeenCalledWith('org-1', { mode: 'defer' });
-    expect(events.filter((event) => !event.startsWith('at:/onboarding'))).toEqual([
-      'complete:defer',
-      'refreshSession',
-      'at:/dashboard',
-    ]);
+    expect(
+      events.filter((event) => !event.startsWith('at:/onboarding'))
+    ).toEqual(['complete:defer', 'refreshSession', 'at:/dashboard']);
   });
 
   it('stays in setup and says so when deferring fails', async () => {
     completeCall.mockRejectedValue(
-      new ApiError({ kind: 'server', messageKey: 'errors.server', retryable: true })
+      new ApiError({
+        kind: 'server',
+        messageKey: 'errors.server',
+        retryable: true,
+      })
     );
     const user = userEvent.setup();
     renderShell('/onboarding/website');

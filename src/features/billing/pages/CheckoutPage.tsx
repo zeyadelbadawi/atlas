@@ -18,7 +18,12 @@
  */
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom';
 import { ArrowLeft, CreditCard, Loader2 } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { EmptyState, ErrorState } from '@components/feedback';
@@ -171,10 +176,18 @@ export default function CheckoutPage(): JSX.Element {
       },
       {
         onSuccess: (payment) => {
-          navigate(
-            buildPath(DASHBOARD_ROUTES.tenantBillingPaymentDetail, {
+          const detailPath = buildPath(
+            DASHBOARD_ROUTES.tenantBillingPaymentDetail,
+            {
               paymentId: payment.id,
-            })
+            }
+          );
+          // Carry the setup return path onward, so the owner who uploads
+          // their proof still has a way back into onboarding.
+          navigate(
+            setupReturnPath
+              ? `${detailPath}?returnTo=${encodeURIComponent(setupReturnPath)}`
+              : detailPath
           );
         },
       }

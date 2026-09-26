@@ -45,15 +45,32 @@ function ProvisioningStepIcon({
 }): JSX.Element {
   switch (status) {
     case 'completed':
-      return <Check className="size-4 shrink-0 text-success" strokeWidth={2.5} aria-hidden />;
+      return (
+        <Check
+          className="size-4 shrink-0 text-success"
+          strokeWidth={2.5}
+          aria-hidden
+        />
+      );
     case 'running':
-      return <Loader2 className="size-4 shrink-0 animate-spin text-info" aria-hidden />;
+      return (
+        <Loader2
+          className="size-4 shrink-0 animate-spin text-info"
+          aria-hidden
+        />
+      );
     case 'failed':
-      return <XCircle className="size-4 shrink-0 text-destructive" aria-hidden />;
+      return (
+        <XCircle className="size-4 shrink-0 text-destructive" aria-hidden />
+      );
     case 'skipped':
-      return <Minus className="size-4 shrink-0 text-muted-foreground" aria-hidden />;
+      return (
+        <Minus className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+      );
     default:
-      return <Circle className="size-4 shrink-0 text-muted-foreground" aria-hidden />;
+      return (
+        <Circle className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+      );
   }
 }
 
@@ -222,9 +239,7 @@ export function AcademyStep({
       return (
         <ProvisioningProgress
           requestId={requestId}
-          academyName={
-            status.academy?.name ?? createdRequest?.name ?? ''
-          }
+          academyName={status.academy?.name ?? createdRequest?.name ?? ''}
           onSettled={() => void refresh()}
         />
       );
@@ -234,6 +249,7 @@ export function AcademyStep({
       <div className="rounded-xl border border-border bg-surface p-6">
         <AcademySetupForm
           organizationId={organization.id}
+          submitLabelKey="onboarding:steps.academy.submit"
           onCreated={(request) => {
             setCreatedRequest({
               id: request.id,

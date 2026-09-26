@@ -13,14 +13,16 @@
  */
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import {
+  ArrowLeft,
   CheckCircle2,
   ExternalLink,
   Loader2,
   Upload,
   XCircle,
 } from 'lucide-react';
+import { cn, isOnboardingReturnPath, MIRROR_IN_RTL } from '@utils';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
@@ -51,6 +53,11 @@ import {
 import { TERMINAL_PAYMENT_STATUSES } from '@types';
 
 export default function PaymentDetailsPage(): JSX.Element {
+  // New Customer Onboarding — the checkout forwards `?returnTo=/onboarding…`
+  // from the setup Plan step; only a path under `/onboarding` is honoured.
+  const [searchParams] = useSearchParams();
+  const returnTo = searchParams.get('returnTo');
+  const setupReturnPath = isOnboardingReturnPath(returnTo) ? returnTo : null;
   const { t, i18n } = useTranslation();
   const { paymentId } = useParams<{ paymentId: string }>();
   const { organization } = useAuth();
@@ -160,6 +167,16 @@ export default function PaymentDetailsPage(): JSX.Element {
 
   return (
     <PageContainer>
+      {setupReturnPath ? (
+        <Link
+          to={setupReturnPath}
+          data-testid="payment-back-to-setup"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+        >
+          <ArrowLeft className={cn('size-4', MIRROR_IN_RTL)} aria-hidden />
+          {t('payments:checkout.backToSetup')}
+        </Link>
+      ) : null}
       <PageHeader
         titleKey="payments:payment.title"
         descriptionKey="payments:payment.subtitle"

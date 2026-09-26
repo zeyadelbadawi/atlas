@@ -32,7 +32,9 @@
       "paused": "Paused",
       "grace_period": "Grace period",
       "cancelled": "Cancelled",
-      "expired": "Expired"
+      "expired": "Expired",
+      "no_plan": "No plan yet",
+      "trial_expired": "Trial ended"
     },
     "subscriptionStatusDescription": {
       "trialing": "Your organization is on a free trial.",
@@ -41,7 +43,9 @@
       "paused": "Your subscription is currently paused.",
       "grace_period": "Your subscription has lapsed and is in its grace period before access is restricted.",
       "cancelled": "Your subscription has been cancelled.",
-      "expired": "Your subscription has expired."
+      "expired": "Your subscription has expired.",
+      "no_plan": "Your organization is ready. Choose a plan to start building your academy.",
+      "trial_expired": "Your free trial has ended. Choose a plan to keep using Atlas."
     },
     "usageStatus": {
       "allowed": "Within limit",

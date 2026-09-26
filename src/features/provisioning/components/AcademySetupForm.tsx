@@ -50,11 +50,14 @@ export interface AcademySetupFormProps {
   readonly organizationId: string;
   /** Called with the created request once the backend accepted it. */
   readonly onCreated: (request: ProvisioningRequest) => void;
+  /** Primary action label; the provisioning page keeps its own default. */
+  readonly submitLabelKey?: string;
 }
 
 export function AcademySetupForm({
   organizationId,
   onCreated,
+  submitLabelKey = 'provisioning:start.submit',
 }: AcademySetupFormProps): JSX.Element {
   const { t } = useTranslation();
   const createRequest = useCreateProvisioningRequest();
@@ -144,9 +147,7 @@ export function AcademySetupForm({
           name="academyName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>
-                {t('provisioning:start.academyNameLabel')}
-              </FormLabel>
+              <FormLabel>{t('provisioning:start.academyNameLabel')}</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -160,9 +161,7 @@ export function AcademySetupForm({
           name="requestedSubdomain"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>
-                {t('provisioning:start.subdomainLabel')}
-              </FormLabel>
+              <FormLabel>{t('provisioning:start.subdomainLabel')}</FormLabel>
               <FormControl>
                 <div className="flex items-center gap-2">
                   <Input
@@ -311,9 +310,7 @@ export function AcademySetupForm({
           name="websiteSetupMode"
           render={() => (
             <FormItem>
-              <FormLabel>
-                {t('provisioning:start.setupModeLabel')}
-              </FormLabel>
+              <FormLabel>{t('provisioning:start.setupModeLabel')}</FormLabel>
               <FormDescription>
                 {t('provisioning:start.setupModeHelp')}
               </FormDescription>
@@ -338,9 +335,7 @@ export function AcademySetupForm({
                     >
                       <span className="flex items-center justify-between">
                         <span className="text-sm font-medium">
-                          {t(
-                            `provisioning:start.setupMode.${mode}.title`
-                          )}
+                          {t(`provisioning:start.setupMode.${mode}.title`)}
                         </span>
                         {mode === 'complete' ? (
                           <StatusBadge
@@ -356,9 +351,7 @@ export function AcademySetupForm({
                         ) : null}
                       </span>
                       <span className="text-xs text-muted-foreground">
-                        {t(
-                          `provisioning:start.setupMode.${mode}.description`
-                        )}
+                        {t(`provisioning:start.setupMode.${mode}.description`)}
                       </span>
                     </button>
                   );
@@ -382,7 +375,7 @@ export function AcademySetupForm({
                 {t('provisioning:start.creating')}
               </>
             ) : (
-              t('provisioning:start.submit')
+              t(submitLabelKey)
             )}
           </Button>
         </div>

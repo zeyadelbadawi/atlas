@@ -36,7 +36,8 @@
     "academy": {
       "label": "Academy",
       "title": "Create your academy",
-      "description": "Name your academy and pick its address. We'll set up its website for you."
+      "description": "Name your academy and pick its address. We'll set up its website for you.",
+      "submit": "Create academy"
     },
     "branding": {
       "label": "Branding",
