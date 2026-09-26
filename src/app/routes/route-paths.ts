@@ -244,6 +244,21 @@ export const DASHBOARD_ROUTES = {
   platformZoomActivity: '/dashboard/platform/zoom/activity',
   platformZoomAcademyDetail: '/dashboard/platform/zoom/academies/:academyId',
 
+  /*
+    Observability Center — Platform Owner only. `platformObservability` is
+    an index that redirects to Health. The rule-detail path is ALSO the
+    target of Alertmanager's Slack "View Alert" links, so its shape
+    (`/alerts/:ruleName`) is a public contract: do not rename it.
+  */
+  platformObservability: '/dashboard/platform/observability',
+  platformObservabilityHealth: '/dashboard/platform/observability/health',
+  platformObservabilityAlerts: '/dashboard/platform/observability/alerts',
+  platformObservabilityAlertRule:
+    '/dashboard/platform/observability/alerts/:ruleName',
+  platformObservabilityMetrics: '/dashboard/platform/observability/metrics',
+  platformObservabilityConfiguration:
+    '/dashboard/platform/observability/configuration',
+
   platformAuditLog: '/dashboard/platform/audit-log',
   platformAuditLogDetail: '/dashboard/platform/audit-log/:eventId',
 

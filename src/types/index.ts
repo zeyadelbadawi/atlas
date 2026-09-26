@@ -82,3 +82,5 @@ export * from './platform-commerce.types';
 export * from './review.types';
 // P64 Communications C7 — the platform email pipeline console.
 export * from './platform-communications.types';
+// Platform Owner Observability Center — transcribed verbatim from the backend contract.
+export * from './observability.types';

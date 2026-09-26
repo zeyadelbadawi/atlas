@@ -392,6 +392,26 @@ const ZoomAcademyDetailPage = lazy(
   () => import('@features/platform-zoom/pages/ZoomAcademyDetailPage')
 );
 
+/* Observability Center — Platform Owner only. */
+const ObservabilityHealthPage = lazy(
+  () => import('@features/platform-observability/pages/ObservabilityHealthPage')
+);
+const ObservabilityAlertsPage = lazy(
+  () => import('@features/platform-observability/pages/ObservabilityAlertsPage')
+);
+const ObservabilityAlertRulePage = lazy(
+  () =>
+    import('@features/platform-observability/pages/ObservabilityAlertRulePage')
+);
+const ObservabilityMetricsPage = lazy(
+  () =>
+    import('@features/platform-observability/pages/ObservabilityMetricsPage')
+);
+const ObservabilityConfigurationPage = lazy(
+  () =>
+    import('@features/platform-observability/pages/ObservabilityConfigurationPage')
+);
+
 const PlatformAuditLogListPage = lazy(
   () => import('@features/audit-log/pages/PlatformAuditLogListPage')
 );
@@ -1948,6 +1968,86 @@ export function AppRouter(): JSX.Element {
               element={
                 <RouteGuard requireAuthentication requiredRoles={['platform_owner']}>
                   <ZoomAcademyDetailPage />
+                </RouteGuard>
+              }
+            />
+
+            {/*
+              Observability Center. The index redirects to Health; every
+              child is registered on its own so a Slack "View Alert" deep
+              link to a rule resolves directly after sign-in.
+            */}
+            <Route
+              path={DASHBOARD_ROUTES.platformObservability}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <Navigate
+                    to={DASHBOARD_ROUTES.platformObservabilityHealth}
+                    replace
+                  />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformObservabilityHealth}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <ObservabilityHealthPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformObservabilityAlerts}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <ObservabilityAlertsPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformObservabilityAlertRule}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <ObservabilityAlertRulePage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformObservabilityMetrics}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <ObservabilityMetricsPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformObservabilityConfiguration}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <ObservabilityConfigurationPage />
                 </RouteGuard>
               }
             />

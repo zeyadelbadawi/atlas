@@ -7,6 +7,7 @@
  * here is hardcoded.
  */
 import {
+  Activity,
   Video,
   LayoutDashboard,
   User,
@@ -722,6 +723,52 @@ export function getDashboardNavigation(
               id: 'platform-zoom-activity',
               labelKey: 'navigation:items.platformZoomActivity',
               path: DASHBOARD_ROUTES.platformZoomActivity,
+              requiresAuth: true,
+              requiredRoles: ['platform_owner'],
+            },
+          ],
+        },
+        {
+          /*
+            OBSERVABILITY CENTER — system health, alerts, metrics and the
+            monitoring configuration. Same nested-branch shape as Zoom.
+            Platform-owner only at every level; the API
+            (`platform-observability/*`) is the real boundary.
+          */
+          id: 'platform-observability',
+          labelKey: 'navigation:items.platformObservability',
+          path: DASHBOARD_ROUTES.platformObservability,
+          icon: Activity,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+          matchNestedPaths: true,
+          children: [
+            {
+              id: 'platform-observability-health',
+              labelKey: 'navigation:items.platformObservabilityHealth',
+              path: DASHBOARD_ROUTES.platformObservabilityHealth,
+              requiresAuth: true,
+              requiredRoles: ['platform_owner'],
+            },
+            {
+              id: 'platform-observability-alerts',
+              labelKey: 'navigation:items.platformObservabilityAlerts',
+              path: DASHBOARD_ROUTES.platformObservabilityAlerts,
+              requiresAuth: true,
+              requiredRoles: ['platform_owner'],
+              matchNestedPaths: true,
+            },
+            {
+              id: 'platform-observability-metrics',
+              labelKey: 'navigation:items.platformObservabilityMetrics',
+              path: DASHBOARD_ROUTES.platformObservabilityMetrics,
+              requiresAuth: true,
+              requiredRoles: ['platform_owner'],
+            },
+            {
+              id: 'platform-observability-configuration',
+              labelKey: 'navigation:items.platformObservabilityConfiguration',
+              path: DASHBOARD_ROUTES.platformObservabilityConfiguration,
               requiresAuth: true,
               requiredRoles: ['platform_owner'],
             },

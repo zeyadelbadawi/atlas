@@ -1133,6 +1133,26 @@ export const platformZoomKeys = {
     [...platformZoomKeys.all, 'academy', academyId] as const,
 };
 
+/**
+ * Observability Center — Platform Owner surfaces (`platform-observability/*`).
+ *
+ * Every filter and range is part of the key, so one window's series is
+ * never served for another's.
+ */
+export const platformObservabilityKeys = {
+  all: ['platform-observability'] as const,
+  health: () => [...platformObservabilityKeys.all, 'health'] as const,
+  alerts: (query: unknown) =>
+    [...platformObservabilityKeys.all, 'alerts', query] as const,
+  alertRule: (ruleName: string | undefined, range: string) =>
+    [...platformObservabilityKeys.all, 'alert-rule', ruleName, range] as const,
+  metricCatalog: () => [...platformObservabilityKeys.all, 'metrics'] as const,
+  metricSeries: (metricId: string, range: string) =>
+    [...platformObservabilityKeys.all, 'metrics', metricId, range] as const,
+  configuration: () =>
+    [...platformObservabilityKeys.all, 'configuration'] as const,
+};
+
 export const platformAddOnKeys = {
   all: ['platform-add-ons'] as const,
   list: (query: unknown) => [...platformAddOnKeys.all, 'list', query] as const,

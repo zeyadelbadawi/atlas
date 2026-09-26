@@ -1,0 +1,465 @@
+{
+  "states": {
+    "loading": "Loading monitoring data…"
+  },
+  "freshness": {
+    "lastUpdated": "Last updated {{time}}",
+    "stale": "Data may be out of date — no successful refresh for over two intervals",
+    "refreshFailed": "Refresh failed — showing the last data received",
+    "refresh": "Refresh now",
+    "refreshShort": "Refresh",
+    "refreshing": "Refreshing…"
+  },
+  "range": {
+    "label": "Time range",
+    "options": {
+      "1h": "Last hour",
+      "6h": "Last 6 hours",
+      "24h": "Last 24 hours",
+      "7d": "Last 7 days",
+      "30d": "Last 30 days"
+    }
+  },
+  "sources": {
+    "names": {
+      "prometheus": "Prometheus",
+      "alertmanager": "Alertmanager",
+      "metrics": "The metrics registry"
+    },
+    "title": {
+      "unavailable": "{{source}} is unavailable",
+      "not_configured": "{{source}} is not configured"
+    },
+    "body": {
+      "unavailable": "{{source}} could not be reached, so figures that depend on it are not shown.",
+      "not_configured": "{{source}} is not set up in this environment, so figures that depend on it are not available."
+    }
+  },
+  "badges": {
+    "component": {
+      "healthy": "Healthy",
+      "degraded": "Degraded",
+      "down": "Down",
+      "unknown": "Unknown",
+      "not_configured": "Not configured"
+    },
+    "severity": {
+      "critical": "Critical",
+      "warning": "Warning",
+      "info": "Info",
+      "unknown": "Unknown severity"
+    },
+    "alertStatus": {
+      "firing": "Firing",
+      "pending": "Pending",
+      "silenced": "Silenced",
+      "resolved": "Resolved"
+    },
+    "ruleState": {
+      "firing": "Firing",
+      "pending": "Pending",
+      "inactive": "Not firing"
+    },
+    "ruleHealth": {
+      "ok": "Evaluating normally",
+      "err": "Evaluation error",
+      "unknown": "Evaluation unknown"
+    },
+    "overall": {
+      "operational": "Operational",
+      "degraded": "Degraded",
+      "outage": "Outage"
+    },
+    "source": {
+      "ok": "Connected",
+      "unavailable": "Unavailable",
+      "not_configured": "Not configured"
+    },
+    "channel": {
+      "connected": "Connected",
+      "not_connected": "Not connected"
+    }
+  },
+  "values": {
+    "notReported": "Not reported",
+    "none": "—",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "units": {
+    "ms": "{{value}} ms",
+    "secondsShort": "{{value}} s",
+    "perSecond": "{{value}}/s"
+  },
+  "duration": {
+    "seconds_one": "{{count}} s",
+    "seconds_other": "{{count}} s",
+    "minutes_one": "{{count}} min",
+    "minutes_other": "{{count}} min",
+    "hours_one": "{{count}} h",
+    "hours_other": "{{count}} h",
+    "days_one": "{{count}} d",
+    "days_other": "{{count}} d"
+  },
+  "components": {
+    "api": "API",
+    "database": "Database",
+    "redis": "Redis",
+    "queues": "Job queues",
+    "email": "Email delivery",
+    "video": "Video",
+    "storage": "Object storage",
+    "prometheus": "Prometheus",
+    "alertmanager": "Alertmanager"
+  },
+  "details": {
+    "uptimeSeconds": "Uptime",
+    "requestRate": "Request rate",
+    "errorRate5xx": "Server error rate (5xx)",
+    "latencyP95Ms": "p95 latency",
+    "probeLatencyMs": "Probe latency",
+    "usedMemoryBytes": "Memory used",
+    "connectedClients": "Connected clients",
+    "waiting": "Waiting jobs",
+    "active": "Active jobs",
+    "failed": "Failed jobs",
+    "delayed": "Delayed jobs",
+    "oldestWaitingSeconds": "Oldest waiting job",
+    "outboxOldestPendingSeconds": "Oldest pending email",
+    "deliveryFailureRatio": "Delivery failure rate",
+    "stalledProcessing": "Stalled in processing",
+    "providerStreamConfigured": "Stream provider configured",
+    "providerNormalConfigured": "Standard provider configured",
+    "publicBucketReachable": "Public bucket reachable",
+    "protectedBucketReachable": "Protected bucket reachable",
+    "activeAlerts": "Active alerts"
+  },
+  "reasons": {
+    "probeFailed": "The health probe failed.",
+    "backlog": "A backlog is building up.",
+    "stalled": "Work is stalled and not progressing.",
+    "highErrorRate": "The error rate is above its threshold.",
+    "highLatency": "Latency is above its threshold.",
+    "notConfigured": "This component is not configured in this environment.",
+    "sourceUnavailable": "The source for this check could not be reached.",
+    "failedJobs": "Jobs are failing.",
+    "deliveryFailures": "Deliveries are failing."
+  },
+  "health": {
+    "title": "System health",
+    "subtitle": "Live probes of every component Atlas depends on, and the alerts firing right now.",
+    "overall": {
+      "operational": "All systems operational",
+      "degraded": "Degraded performance",
+      "outage": "Service outage"
+    },
+    "overallDescription": {
+      "operational": "Every probed component answered within its limits.",
+      "degraded": "At least one component is degraded or could not be verified. See the components below.",
+      "outage": "At least one component is down. See the components below and the Alerts Center."
+    },
+    "lastChecked": "Last checked {{time}}",
+    "checkedAt": "Checked {{time}}",
+    "activeAlerts": {
+      "title": "Active alerts",
+      "viewAll_one": "View {{count}} active alert",
+      "viewAll_other": "View all {{count}} active alerts",
+      "tileLabel_one": "{{count}} active {{severity}} alert — view in Alerts",
+      "tileLabel_other": "{{count}} active {{severity}} alerts — view in Alerts"
+    },
+    "alertCountsImpact": "Active alert counts cannot be shown until it answers.",
+    "componentsTitle": "Components",
+    "probeLatency": "Probe latency",
+    "unverified": {
+      "unknown": "Status unknown — the check could not be completed, so this component has not been verified.",
+      "not_configured": "Not configured in this environment, so there is nothing to check."
+    },
+    "noComponents": {
+      "title": "No components reported",
+      "description": "The health endpoint answered without any component checks."
+    }
+  },
+  "alerts": {
+    "title": "Alerts",
+    "subtitle": "Every alert Prometheus raised in the selected period, from Alertmanager and Prometheus history.",
+    "filters": {
+      "label": "Filter alerts",
+      "status": "Status",
+      "statusOptions": {
+        "all": "All",
+        "active": "Active",
+        "resolved": "Resolved"
+      },
+      "severity": "Severity",
+      "anySeverity": "Any severity",
+      "rule": "Rule",
+      "rulePlaceholder": "Rule name",
+      "clear": "Clear filters"
+    },
+    "columns": {
+      "rule": "Rule",
+      "severity": "Severity",
+      "status": "Status",
+      "service": "Service",
+      "started": "Started",
+      "duration": "Duration",
+      "tenants": "Affected tenants"
+    },
+    "tableCaption": "Alerts in the selected period",
+    "historyFrom": "History available since {{time}}",
+    "count_one": "{{count}} alert",
+    "count_other": "{{count}} alerts",
+    "ongoing": "Ongoing · {{duration}}",
+    "noTenants": "None named",
+    "tenantCount_one": "{{formatted}} tenant",
+    "tenantCount_other": "{{formatted}} tenants",
+    "empty": {
+      "title": "No alerts in this period",
+      "description": "Nothing matching these filters fired in the selected time range."
+    },
+    "unavailable": {
+      "title": "Alert history unavailable",
+      "description": "Neither Alertmanager nor Prometheus answered, so it is not known whether any alerts fired. This is not the same as “no alerts”."
+    },
+    "impact": {
+      "alertmanager": "Currently active alerts may be missing from this list.",
+      "prometheus": "Resolved alert history may be missing from this list."
+    }
+  },
+  "rule": {
+    "title": "Alert rule",
+    "subtitle": "Definition, current state and history of this alert rule.",
+    "breadcrumb": "Rule",
+    "managedInCode": "Managed in code",
+    "sections": {
+      "overview": "Rule",
+      "currentValues": "Current value",
+      "chart": "Expression over time",
+      "instances": "Active instances",
+      "tenants": "Affected tenants",
+      "timeline": "Timeline"
+    },
+    "fields": {
+      "threshold": "Threshold",
+      "forDuration": "Fires after",
+      "group": "Group",
+      "service": "Service",
+      "lastEvaluation": "Last evaluated",
+      "lastTriggered": "Last triggered",
+      "lastResolved": "Last resolved",
+      "expression": "Expression"
+    },
+    "noThreshold": "No threshold annotation on this rule",
+    "immediately": "Immediately",
+    "lastError": "Last evaluation error: {{error}}",
+    "copyExpression": "Copy expression",
+    "copied": "Expression copied",
+    "noCurrentValues": "The expression currently returns no series — the condition is not met.",
+    "prometheusRequired": "Not available — Prometheus must answer to show this.",
+    "noLabels": "(no labels)",
+    "chartTitle": "Expression of {{rule}}",
+    "noInstances": "No instance of this rule is active.",
+    "startedAt": "Started {{time}}",
+    "noTenants": "No tenant is named by this alert's labels.",
+    "unnamedTenant": "Unnamed tenant",
+    "timeline": {
+      "empty": "No events in the selected period.",
+      "kinds": {
+        "triggered": "Triggered",
+        "resolved": "Resolved",
+        "pending": "Pending"
+      }
+    },
+    "impact": {
+      "prometheus": "The current value, chart and history cannot be shown.",
+      "alertmanager": "Active instances may be missing."
+    },
+    "notFound": {
+      "title": "Alert rule not found",
+      "description": "There is no alert rule named “{{rule}}”. It may have been renamed or removed from the monitoring configuration."
+    },
+    "backToAlerts": "Back to Alerts"
+  },
+  "metrics": {
+    "title": "Metrics",
+    "subtitle": "Operational metrics across Atlas, grouped by area. Each chart loads when it comes into view.",
+    "latest": "Latest",
+    "impact": "Metric series cannot be loaded until it answers.",
+    "unavailable": {
+      "title": "Not available",
+      "body": "not instrumented or not scraped yet."
+    },
+    "empty": {
+      "title": "No metrics in the catalog",
+      "description": "The metrics catalog is empty."
+    },
+    "units": {
+      "perSecond": "Per second",
+      "percent": "Percent",
+      "seconds": "Seconds",
+      "ms": "Milliseconds",
+      "bytes": "Bytes",
+      "count": "Count"
+    },
+    "domains": {
+      "api": "API",
+      "database": "Database",
+      "redis": "Redis",
+      "jobs": "Background jobs",
+      "video": "Video",
+      "email": "Email",
+      "learning": "Learning",
+      "commerce": "Commerce",
+      "catalog": "Catalog",
+      "retention": "Data retention",
+      "process": "Server process",
+      "alerting": "Alerting"
+    },
+    "names": {
+      "api": {
+        "requestRate": "Request rate",
+        "errorRate5xx": "Server error rate (5xx)",
+        "errorRate4xx": "Client error rate (4xx)",
+        "latencyP50": "Latency p50",
+        "latencyP95": "Latency p95",
+        "latencyP99": "Latency p99"
+      },
+      "database": {
+        "probeLatency": "Probe latency",
+        "up": "Database up"
+      },
+      "redis": {
+        "probeLatency": "Probe latency",
+        "usedMemory": "Memory used",
+        "connectedClients": "Connected clients"
+      },
+      "jobs": {
+        "waiting": "Waiting jobs",
+        "active": "Active jobs",
+        "failed": "Failed jobs",
+        "delayed": "Delayed jobs"
+      },
+      "video": {
+        "uploadCompletions": "Upload completions",
+        "tokenMintP95": "Playback token minting p95",
+        "webhookSignatureFailures": "Webhook signature failures",
+        "grantsIssued": "Playback grants issued"
+      },
+      "email": {
+        "outboxOldestPending": "Oldest pending email",
+        "outboxByState": "Outbox by state",
+        "deadLetters": "Dead letters",
+        "dispatchLatencyP95": "Dispatch latency p95",
+        "retries": "Retries"
+      },
+      "learning": {
+        "quizStarted": "Quizzes started",
+        "quizSubmitted": "Quizzes submitted",
+        "integrityEvents": "Integrity events",
+        "certificatesIssued": "Certificates issued"
+      },
+      "commerce": {
+        "ordersByState": "Orders by state",
+        "approvalLatencyP95": "Approval latency p95"
+      },
+      "catalog": {
+        "queryP95": "Catalog query p95"
+      },
+      "retention": {
+        "sweepRuns": "Sweep runs",
+        "prunedRows": "Rows pruned"
+      },
+      "process": {
+        "eventLoopLag": "Event loop lag",
+        "residentMemory": "Resident memory",
+        "cpu": "CPU usage"
+      },
+      "alerting": {
+        "notificationsSent": "Notifications sent",
+        "notificationsFailed": "Notifications failed"
+      }
+    }
+  },
+  "chart": {
+    "legend": "Series",
+    "showTable": "Show as table",
+    "showChart": "Show as chart",
+    "time": "Time",
+    "noData": "No data points in this period.",
+    "seriesFallback": "Series {{index}}",
+    "ariaLabel_one": "{{title}}: line chart of {{count}} series. Use “Show as table” for the values.",
+    "ariaLabel_other": "{{title}}: line chart of {{count}} series. Use “Show as table” for the values.",
+    "moreSeries_one": "{{count}} more series is listed in the table view.",
+    "moreSeries_other": "{{count}} more series are listed in the table view."
+  },
+  "configuration": {
+    "title": "Monitoring & alerts",
+    "subtitle": "How Atlas is monitored and where alerts are delivered. Rules are version-controlled and read-only here.",
+    "scrape": {
+      "title": "Metrics scrape authentication",
+      "description": "How Prometheus is allowed to read Atlas's metrics endpoint.",
+      "modes": {
+        "token": {
+          "label": "Bearer token",
+          "description": "Prometheus authenticates with a scrape token. The token itself is never shown here."
+        },
+        "platform_owner_only": {
+          "label": "Platform Owner session only",
+          "description": "No scrape token is configured, so the metrics endpoint is readable only by a signed-in Platform Owner."
+        }
+      }
+    },
+    "channels": {
+      "title": "Notification channels",
+      "description": "Where Alertmanager sends alerts. Counts are Alertmanager's own for the last 24 hours.",
+      "kinds": {
+        "slack": "Slack"
+      },
+      "sent24h": "Sent (24 h)",
+      "failed24h": "Failed (24 h)",
+      "none": "No notification channels are reported.",
+      "notConnectedBody": "Alertmanager has no Slack receiver, so alerts are not delivered to Slack.",
+      "impact": "Its connection and delivery counts cannot be shown."
+    },
+    "rules": {
+      "title": "Alert rules",
+      "description": "The rules Prometheus evaluates. They are defined in version-controlled configuration and cannot be edited here.",
+      "columns": {
+        "name": "Rule",
+        "group": "Group",
+        "severity": "Severity",
+        "state": "State",
+        "for": "Fires after",
+        "threshold": "Threshold"
+      },
+      "empty": "No alert rules are loaded."
+    },
+    "synthetic": {
+      "title": "Synthetic test alert",
+      "description": "Checks the whole alert path end to end: a real test alert fires through Prometheus → Alertmanager → Slack and resolves on its own when the time is up.",
+      "notArmed": "Not armed. No test alert is firing.",
+      "armedTitle": "Armed — a test alert is firing",
+      "expires": "Resolves automatically at {{time}} ({{relative}}).",
+      "armedAt": "Armed at {{time}}.",
+      "armedAtBy": "Armed at {{time}} by {{user}}.",
+      "minutesLabel": "Duration (minutes)",
+      "minutesHint": "Between {{min}} and {{max}} minutes.",
+      "minutesInvalid": "Enter a whole number of minutes from {{min}} to {{max}}.",
+      "arm": "Fire test alert",
+      "resolveNow": "Resolve now",
+      "armed": "Test alert armed",
+      "resolved": "Test alert resolved",
+      "confirmArm": {
+        "title": "Fire a real test alert?",
+        "description_one": "This fires a real alert through Prometheus → Alertmanager → Slack. Everyone subscribed to the alert channel will be notified. It resolves automatically after {{count}} minute.",
+        "description_other": "This fires a real alert through Prometheus → Alertmanager → Slack. Everyone subscribed to the alert channel will be notified. It resolves automatically after {{count}} minutes.",
+        "action": "Fire test alert"
+      },
+      "confirmResolve": {
+        "title": "Resolve the test alert now?",
+        "description": "The test alert stops firing now and a resolved notification is sent through Alertmanager to Slack.",
+        "action": "Resolve now"
+      }
+    }
+  }
+}

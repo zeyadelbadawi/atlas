@@ -14,6 +14,7 @@ import enLiveSessions from './en/liveSessions.json';
 import enPlatformZoom from './en/platformZoom.json';
 import enPlatformAddOns from './en/platformAddOns.json';
 import enPlatformCommerce from './en/platformCommerce.json';
+import enPlatformObservability from './en/platformObservability.json';
 import enValidation from './en/validation.json';
 import enErrors from './en/errors.json';
 import enLayout from './en/layout.json';
@@ -54,6 +55,7 @@ import arLiveSessions from './ar/liveSessions.json';
 import arPlatformZoom from './ar/platformZoom.json';
 import arPlatformAddOns from './ar/platformAddOns.json';
 import arPlatformCommerce from './ar/platformCommerce.json';
+import arPlatformObservability from './ar/platformObservability.json';
 import arValidation from './ar/validation.json';
 import arErrors from './ar/errors.json';
 import arLayout from './ar/layout.json';
@@ -101,6 +103,7 @@ export const TRANSLATION_RESOURCES: Readonly<
     platformZoom: enPlatformZoom,
     platformAddOns: enPlatformAddOns,
     platformCommerce: enPlatformCommerce,
+    platformObservability: enPlatformObservability,
     validation: enValidation,
     errors: enErrors,
     layout: enLayout,
@@ -142,6 +145,7 @@ export const TRANSLATION_RESOURCES: Readonly<
     platformZoom: arPlatformZoom,
     platformAddOns: arPlatformAddOns,
     platformCommerce: arPlatformCommerce,
+    platformObservability: arPlatformObservability,
     validation: arValidation,
     errors: arErrors,
     layout: arLayout,
