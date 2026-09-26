@@ -18,6 +18,7 @@ describe('apiErrorMessage', () => {
       kind: 'notFound',
       messageKey: 'errors.notFound',
       status: 404,
+      retryable: false,
     });
     const copy = apiErrorMessage(t, i18n, error);
     expect(typeof copy).toBe('string');
