@@ -357,6 +357,10 @@
     "academyLearnerInvited": {
       "title": "حسابك جاهز",
       "message": "تم إنشاء حساب لك في {{academyName}}. اختر كلمة المرور للبدء."
+    },
+    "academyJoined": {
+      "title": "انضم حسابك إلى أكاديمية جديدة",
+      "message": "أصبح لحسابك الآن وصول إلى {{academyName}}. إن لم تكن أنت، أعد تعيين كلمة المرور."
     }
   },
   "liveSession": {

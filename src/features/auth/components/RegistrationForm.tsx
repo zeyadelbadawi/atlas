@@ -22,6 +22,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import type { Resolver } from 'react-hook-form';
+import type { RegistrationResult } from '@types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Trans, useTranslation } from 'react-i18next';
@@ -170,7 +171,7 @@ export interface RegistrationFormProps {
    * not exist inside the public-website route tree. Absent, behavior is
    * unchanged.
    */
-  readonly onSuccess?: () => void;
+  readonly onSuccess?: (result: RegistrationResult) => void;
   /**
    * P64 Phase 1 — the invitation token from the sign-up link (`?invite=`).
    * Sent as-is; the backend decides whether this academy's registration
@@ -296,7 +297,8 @@ export function RegistrationForm({
 
   const failure = registerAccount.error;
   const failureKey = failure?.messageKey;
-  const isEmailNotAcceptable = failureKey === AUTH_ERROR_KEYS.emailNotAcceptable;
+  const isEmailNotAcceptable =
+    failureKey === AUTH_ERROR_KEYS.emailNotAcceptable;
   // Answered by re-reading the options (see `OPTIONS_REFRESH_ERROR_KEYS`),
   // never by the generic error card.
   const isStaleOptionsFailure =
@@ -344,13 +346,25 @@ export function RegistrationForm({
         ...(planId ? { planId } : {}),
       },
       {
-        onSuccess: () => {
+        onSuccess: (result) => {
+          // Launch Stabilization A4 — an academy sign-up with an email that
+          // already had an Atlas account added this academy to that account
+          // (its own password proven); nothing new was created.
+          const existing = result.account === 'existing';
           toast({
-            title: t('auth:register.success.title'),
-            description: t('auth:register.success.description'),
+            title: t(
+              existing
+                ? 'auth:register.success.existingAccountTitle'
+                : 'auth:register.success.title'
+            ),
+            description: t(
+              existing
+                ? 'auth:register.success.existingAccountDescription'
+                : 'auth:register.success.description'
+            ),
           });
           if (onSuccess) {
-            onSuccess();
+            onSuccess(result);
           } else {
             // The sign-in page greets the new owner and pre-fills the
             // address they just used — one less thing to type.
@@ -423,7 +437,16 @@ export function RegistrationForm({
           <div className="space-y-2">
             <ErrorState
               kind="conflict"
-              descriptionKey="auth:register.errors.emailTaken"
+              descriptionKey={
+                // Launch Stabilization A4 — on an academy website an existing
+                // account CAN join this academy; the refusal means either
+                // it already has, or the password was not that account's.
+                isManagementSurface
+                  ? 'auth:register.errors.emailTaken'
+                  : failureKey === AUTH_ERROR_KEYS.alreadyLearnerHere
+                    ? 'auth:register.errors.alreadyLearnerHere'
+                    : 'auth:register.errors.existingAccountAcademy'
+              }
               onRetry={handleSubmit(handleFormSubmit)}
             />
             {/* The fix for "this email already has an account" is to

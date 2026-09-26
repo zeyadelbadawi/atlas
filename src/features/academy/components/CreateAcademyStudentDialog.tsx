@@ -1,13 +1,12 @@
 /**
  * Create Academy Student Dialog.
  *
- * Creates a brand-new Atlas account for a test/real student
- * (`AcademyService.createAcademyStudent`). Unlike Manager/Instructor,
- * there is nothing to "grant" an existing user — a student is never an
- * academy/organization membership in this codebase (see
- * `CreateAcademyStudentPayload`'s doc comment) — so this dialog always
- * creates a fresh account and surfaces the credentials once, since there
- * is no invitation/email system to deliver them otherwise.
+ * Invites a brand-new student account (`AcademyService.createAcademyStudent`).
+ *
+ * Launch Stabilization A2 — staff never choose, see or hand over a
+ * student's password. The account is created `invited`, and the student
+ * receives an email with a link to set their own password; this dialog only
+ * confirms the invitation went out.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -50,7 +49,6 @@ export interface CreateAcademyStudentDialogProps {
 const DEFAULT_VALUES: CreateAcademyStudentFormData = {
   name: '',
   email: '',
-  password: '',
 };
 
 export function CreateAcademyStudentDialog({
@@ -61,13 +59,8 @@ export function CreateAcademyStudentDialog({
   const { t } = useTranslation();
   const { notifyError } = useToast();
   const createStudent = useCreateAcademyStudent();
-  // Shown once, in-dialog, after a successful create — there is no
-  // invitation/email system to deliver these credentials any other way,
-  // and the password is never retrievable again after this dialog closes.
-  const [created, setCreated] = useState<{
-    email: string;
-    password: string;
-  } | null>(null);
+  // The address the invitation was just sent to, shown as confirmation.
+  const [created, setCreated] = useState<{ email: string } | null>(null);
 
   const form = useForm<CreateAcademyStudentFormData>({
     resolver: zodResolver(createAcademyStudentSchema),
@@ -98,7 +91,7 @@ export function CreateAcademyStudentDialog({
       { academyId, payload: data },
       {
         onSuccess: () => {
-          setCreated({ email: data.email, password: data.password });
+          setCreated({ email: data.email });
         },
         onError: (error) => {
           if (
@@ -143,7 +136,7 @@ export function CreateAcademyStudentDialog({
                   {t('academy:members.createStudent.success')}
                 </p>
                 <p className="text-muted-foreground">
-                  {t('academy:members.createStudent.credentialsHint')}
+                  {t('academy:members.createStudent.inviteSentHint')}
                 </p>
               </div>
             </div>
@@ -154,14 +147,6 @@ export function CreateAcademyStudentDialog({
                 </span>
                 <span className="font-medium" dir="ltr">
                   {created.email}
-                </span>
-              </div>
-              <div className="flex justify-between gap-2">
-                <span className="text-muted-foreground">
-                  {t('academy:members.createStudent.passwordLabel')}
-                </span>
-                <span className="font-medium" dir="ltr">
-                  {created.password}
                 </span>
               </div>
             </div>
@@ -200,22 +185,6 @@ export function CreateAcademyStudentDialog({
                     </FormLabel>
                     <FormControl>
                       <Input type="email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('academy:members.createStudent.passwordLabel')}
-                    </FormLabel>
-                    <FormControl>
-                      <Input type="password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

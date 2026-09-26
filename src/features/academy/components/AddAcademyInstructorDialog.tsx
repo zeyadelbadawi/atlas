@@ -3,9 +3,10 @@
  *
  * Grants Instructor access to this academy
  * (`AcademyService.addAcademyInstructor`) — either to an already-registered
- * Atlas user (email alone), or to a brand-new account created in the same
- * action (email + name + password; there is no invitation system in
- * Atlas). Mirrors `AddAcademyManagerDialog` exactly; kept as a separate
+ * Atlas user (email alone), or to a brand-new account invited in the same
+ * action (email + name; Launch Stabilization A2 — the invitee sets their
+ * own password through the emailed setup link). Mirrors
+ * `AddAcademyManagerDialog` exactly; kept as a separate
  * component so the Manager flow (already verified end-to-end) is never at
  * risk from Instructor-specific changes.
  */
@@ -26,7 +27,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -50,7 +50,6 @@ export interface AddAcademyInstructorDialogProps {
 const DEFAULT_VALUES: AddAcademyInstructorFormData = {
   email: '',
   name: '',
-  password: '',
 };
 
 export function AddAcademyInstructorDialog({
@@ -90,7 +89,6 @@ export function AddAcademyInstructorDialog({
         payload: {
           email: data.email,
           name: data.name || undefined,
-          password: data.password || undefined,
         },
       },
       {
@@ -182,25 +180,6 @@ export function AddAcademyInstructorDialog({
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {t('academy:members.newAccount.passwordLabel')}
-                  </FormLabel>
-                  <FormControl>
-                    <Input type="password" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    {t('academy:members.newAccount.passwordHelp')}
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

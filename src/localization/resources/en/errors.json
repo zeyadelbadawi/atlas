@@ -109,7 +109,8 @@
     "organizationNameRequired": "Enter your organization name to start a trial.",
     "signupTrialsUnavailable": "Free trials aren't available right now. You'll choose a plan after signing in.",
     "signupPlanUnavailable": "That plan can no longer be trialled. Please choose another.",
-    "emailAlreadyRegistered": "An account with this email already exists. Try signing in instead."
+    "emailAlreadyRegistered": "An account with this email already exists. Try signing in instead.",
+    "alreadyLearnerHere": "You already have access to this academy. Sign in instead."
   },
   "subscription": {
     "required": "An active subscription is required to make this change."

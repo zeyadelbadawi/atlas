@@ -37,7 +37,7 @@ import {
   usePublicWebsiteHrefBuilder,
 } from '../utils/public-website-link-renderer';
 import { DEV_OVERRIDE_PARAM } from '../utils/hostname-resolution.utils';
-import type { PublicWebsiteLocale } from '@types';
+import type { PublicWebsiteLocale, RegistrationResult } from '@types';
 import { LEARNER_ROUTES } from '@app/routes/route-paths';
 
 export interface PublicWebsiteSignUpPageProps {
@@ -52,7 +52,11 @@ export function PublicWebsiteSignUpPage({
   const { t } = useTranslation();
   usePublicWebsiteDocumentDirection(locale);
   const data = usePublicWebsiteData(lookupKey);
-  const [registered, setRegistered] = useState(false);
+  // Launch Stabilization A4 — `'existing'` when the email already had an
+  // Atlas account and this academy was added to it (no new account).
+  const [registered, setRegistered] = useState<
+    RegistrationResult['account'] | null
+  >(null);
   const linkRenderer = usePublicWebsiteLinkRenderer(locale);
   const buildHref = usePublicWebsiteHrefBuilder(locale);
   const [searchParams] = useSearchParams();
@@ -130,7 +134,11 @@ export function PublicWebsiteSignUpPage({
               aria-hidden
             />
             <p className="font-medium text-foreground">
-              {t('publicWebsite:auth.signUp.success')}
+              {t(
+                registered === 'existing'
+                  ? 'publicWebsite:auth.signUp.successExistingAccount'
+                  : 'publicWebsite:auth.signUp.success'
+              )}
             </p>
             {linkRenderer({
               href: '/sign-in',
@@ -152,7 +160,7 @@ export function PublicWebsiteSignUpPage({
               <RegistrationForm
                 academyId={academy.academyId}
                 inviteToken={searchParams.get('invite') ?? undefined}
-                onSuccess={() => setRegistered(true)}
+                onSuccess={(result) => setRegistered(result.account)}
               />
             </WebsiteBrandBridge>
             <div className="mt-6 text-center text-sm">

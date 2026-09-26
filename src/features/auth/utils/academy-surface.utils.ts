@@ -45,8 +45,10 @@ export const AUTH_ERROR_KEYS = {
   signupTrialsUnavailable: 'errors.auth.signupTrialsUnavailable',
   /** New Customer Onboarding — the chosen plan cannot be trialled (400). */
   signupPlanUnavailable: 'errors.auth.signupPlanUnavailable',
-  /** The email already has an account (409). */
+  /** The email already has an account (409). On an academy website: the password was not that account's. */
   emailAlreadyRegistered: 'errors.auth.emailAlreadyRegistered',
+  /** Launch Stabilization A4 — the existing account already belongs to this academy (409, after its password was proven). */
+  alreadyLearnerHere: 'errors.auth.alreadyLearnerHere',
 } as const;
 
 /*
@@ -56,7 +58,11 @@ export const AUTH_ERROR_KEYS = {
  * Re-exported so this file stays the one import for everything
  * surface-related.
  */
-export { isLearnerPrincipal, isManagementPrincipal, MANAGEMENT_PRINCIPAL_KINDS };
+export {
+  isLearnerPrincipal,
+  isManagementPrincipal,
+  MANAGEMENT_PRINCIPAL_KINDS,
+};
 
 /**
  * An absolute link into an academy website. The backend hands over a bare
@@ -115,7 +121,9 @@ export function academiesWithHost(
  * `//host` forms and anything with a scheme — an open redirect would let a
  * phishing link bounce a freshly signed-in learner to a look-alike site.
  */
-export function isSafeReturnPath(value: string | null | undefined): value is string {
+export function isSafeReturnPath(
+  value: string | null | undefined
+): value is string {
   if (!value) return false;
   if (!value.startsWith('/')) return false;
   if (value.startsWith('//') || value.startsWith('/\\')) return false;

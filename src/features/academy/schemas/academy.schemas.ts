@@ -128,36 +128,21 @@ export type UpdateAcademyBrandingFormData = z.infer<
 
 /**
  * Add Academy Manager schema — `email` alone grants access to an
- * already-registered Atlas account; filling in `name` + `password`
- * together creates a brand-new account and grants it in the same action
- * (no invitation flow exists). Both new-account fields must be provided
- * together, or neither.
+ * already-registered Atlas account; adding a `name` invites a brand-new
+ * account. Launch Stabilization A2: nobody chooses a password for another
+ * person — the invitee sets their own through the emailed link.
  */
-export const addAcademyManagerSchema = z
-  .object({
-    email: z
-      .string()
-      .min(1, 'validation:required')
-      .email('validation:invalidEmail'),
-    name: z
-      .string()
-      .max(MAX_ACADEMY_NAME_LENGTH, 'validation:maxLength')
-      .optional()
-      .or(z.literal('')),
-    password: z.string().optional().or(z.literal('')),
-  })
-  .refine((data) => !data.password || data.password.length >= 8, {
-    message: 'validation:minLength',
-    path: ['password'],
-  })
-  .refine(
-    (data) =>
-      (!data.name && !data.password) || (!!data.name && !!data.password),
-    {
-      message: 'academy:members.newAccount.bothRequired',
-      path: ['password'],
-    }
-  );
+export const addAcademyManagerSchema = z.object({
+  email: z
+    .string()
+    .min(1, 'validation:required')
+    .email('validation:invalidEmail'),
+  name: z
+    .string()
+    .max(MAX_ACADEMY_NAME_LENGTH, 'validation:maxLength')
+    .optional()
+    .or(z.literal('')),
+});
 
 export type AddAcademyManagerFormData = z.infer<typeof addAcademyManagerSchema>;
 
@@ -168,7 +153,11 @@ export type AddAcademyInstructorFormData = z.infer<
   typeof addAcademyInstructorSchema
 >;
 
-/** Create Academy Student schema — always a brand-new account, so all three fields are required. */
+/**
+ * Create Academy Student schema — a brand-new, invited account. Launch
+ * Stabilization A2: no password field; the student sets their own through
+ * the emailed setup link.
+ */
 export const createAcademyStudentSchema = z.object({
   name: z
     .string()
@@ -178,7 +167,6 @@ export const createAcademyStudentSchema = z.object({
     .string()
     .min(1, 'validation:required')
     .email('validation:invalidEmail'),
-  password: z.string().min(8, 'validation:minLength'),
 });
 
 export type CreateAcademyStudentFormData = z.infer<
