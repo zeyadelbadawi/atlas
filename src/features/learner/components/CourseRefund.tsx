@@ -126,6 +126,12 @@ export function RequestRefundDialog({
               )}
             </li>
             <li>
+              {t(
+                'learning:learnerDashboard.purchases.refund.dialog.moneyNote',
+                { amount }
+              )}
+            </li>
+            <li>
               {t('learning:learnerDashboard.purchases.refund.dialog.final')}
             </li>
           </ul>

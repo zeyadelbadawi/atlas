@@ -193,11 +193,19 @@ describe('LearnerPurchasesPage refunds', () => {
       within(dialog).getByText('Refund “Network Security 101”?')
     ).toBeTruthy();
     expect(
-      within(dialog).getByText("A full refund of $49.00 will be recorded for this order.")
+      within(dialog).getByText(
+        'A full refund of $49.00 will be recorded for this order.'
+      )
     ).toBeTruthy();
     expect(
       within(dialog).getByText(/Your access to this course ends immediately/)
     ).toBeTruthy();
+    // Manual bank transfer: Atlas records the refund; it never claims the
+    // money has moved.
+    expect(within(dialog).getByText(/doesn't move money/)).toBeTruthy();
+    expect(
+      within(dialog).queryByText(/You'll get|refunded to you/i)
+    ).toBeNull();
     expect(mutate).not.toHaveBeenCalled();
   });
 
@@ -210,7 +218,7 @@ describe('LearnerPurchasesPage refunds', () => {
       target: { value: '  Not what I expected  ' },
     });
     const confirm = within(dialog).getByRole('button', {
-      name: 'Refund and end access',
+      name: 'Record refund and end access',
     });
     fireEvent.click(confirm);
     fireEvent.click(confirm);
@@ -232,13 +240,17 @@ describe('LearnerPurchasesPage refunds', () => {
 
     let dialog = openDialog();
     fireEvent.click(
-      within(dialog).getByRole('button', { name: 'Refund and end access' })
+      within(dialog).getByRole('button', {
+        name: 'Record refund and end access',
+      })
     );
     fireEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }));
 
     dialog = openDialog();
     fireEvent.click(
-      within(dialog).getByRole('button', { name: 'Refund and end access' })
+      within(dialog).getByRole('button', {
+        name: 'Record refund and end access',
+      })
     );
 
     const first = mutate.mock.calls[0]?.[0] as Record<string, string>;
@@ -254,7 +266,7 @@ describe('LearnerPurchasesPage refunds', () => {
 
     const dialog = openDialog();
     const confirm = within(dialog).getByRole('button', {
-      name: 'Processing refund…',
+      name: 'Recording refund…',
     }) as HTMLButtonElement;
     expect(confirm.disabled).toBe(true);
     expect(
@@ -304,7 +316,7 @@ describe('LearnerPurchasesPage refunds', () => {
 
     fireEvent.click(
       within(openDialog()).getByRole('button', {
-        name: 'Refund and end access',
+        name: 'Record refund and end access',
       })
     );
     expect(refetch).toHaveBeenCalledTimes(1);
@@ -321,13 +333,15 @@ describe('LearnerPurchasesPage refunds', () => {
     const dialog = openDialog();
     act(() => {
       fireEvent.click(
-        within(dialog).getByRole('button', { name: 'Refund and end access' })
+        within(dialog).getByRole('button', {
+          name: 'Record refund and end access',
+        })
       );
     });
     expect(screen.queryByRole('alertdialog')).toBeNull();
     expect(
       screen.getByText(
-        'Refund complete. Your access to “Network Security 101” has ended.'
+        'Refund recorded. Your access to “Network Security 101” has ended. The payment itself is returned separately by bank transfer.'
       )
     ).toBeTruthy();
   });
@@ -351,8 +365,8 @@ describe('LearnerPurchasesPage refunds', () => {
     renderPage();
 
     expect(useCourseOrderRefund).toHaveBeenCalledWith('order-1');
-    expect(screen.getByText(/^Refunded \$49\.00 on/)).toBeTruthy();
-    expect(screen.getByText('Refund complete')).toBeTruthy();
+    expect(screen.getByText(/^Refund of \$49\.00 recorded on/)).toBeTruthy();
+    expect(screen.getByText('Refund recorded')).toBeTruthy();
     expect(
       screen.queryByRole('button', { name: /request a refund/i })
     ).toBeNull();

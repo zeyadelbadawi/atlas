@@ -599,19 +599,20 @@
           "final": "A refund can't be undone.",
           "reasonLabel": "Reason (optional)",
           "reasonHint": "Up to {{max}} characters. Shared with the academy.",
-          "confirm": "Refund and end access",
-          "pending": "Processing refund…"
+          "confirm": "Record refund and end access",
+          "pending": "Recording refund…",
+          "moneyNote": "Atlas records your refund; it doesn't move money. The {{amount}} itself is returned to you separately by bank transfer, the same way you paid."
         },
         "errors": {
           "notFound": "We couldn't find this order. Refresh the page and try again.",
-          "fallback": "The refund could not be completed. Please try again."
+          "fallback": "The refund could not be recorded. Please try again."
         },
-        "done": "Refund complete. Your access to “{{course}}” has ended.",
-        "refundedOn": "Refunded {{amount}} on {{when}}",
+        "done": "Refund recorded. Your access to “{{course}}” has ended. The payment itself is returned separately by bank transfer.",
+        "refundedOn": "Refund of {{amount}} recorded on {{when}}",
         "status": {
-          "pending": "Refund pending",
-          "succeeded": "Refund complete",
-          "failed": "Refund failed"
+          "pending": "Refund requested",
+          "succeeded": "Refund recorded",
+          "failed": "Refund not recorded"
         },
         "loading": "Loading refund details",
         "loadFailed": "Couldn't load the refund details.",
