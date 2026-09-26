@@ -135,7 +135,8 @@
     "videoNotEnabled": "Video uploads are not part of this academy's current plan. Upgrade the plan to upload videos, or add the lesson as a YouTube link instead.",
     "uploadNotFound": "This upload could not be found — it may have expired. Start the upload again.",
     "uploadNotStarted": "The file did not finish uploading before it was submitted. Upload it again.",
-    "completionNotApplicable": "This upload cannot be finished from its current state. Start the upload again."
+    "completionNotApplicable": "This upload cannot be finished from its current state. Start the upload again.",
+    "inUse": "This file is still in use. Replace or remove it where it's used, then try again."
   },
   "tenancy": {
     "notAMember": "You don't have access to this workspace.",

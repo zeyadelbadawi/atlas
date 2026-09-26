@@ -16,7 +16,11 @@
 
 export type MediaAssetType = 'image' | 'video' | 'document' | 'other';
 
-/** Archiving is the only lifecycle mutation offered — there is no hard-delete contract. */
+/**
+ * `archived` is what the UI calls "deleted": the asset leaves the library
+ * immediately and its file is destroyed after the backend's 30-day grace
+ * period. There is no immediate hard-delete contract.
+ */
 export type MediaAssetStatus = 'active' | 'archived';
 
 /** Present only for `image`/`video` assets where the backend can determine it — never guessed client-side. */
@@ -53,4 +57,32 @@ export interface UploadMediaAssetPayload {
 
 export interface UpdateMediaAssetPayload {
   readonly altText?: string;
+}
+
+/** Where an asset is still referenced — the backend refuses to delete it while any of these hold. */
+export type MediaUsageKind =
+  | 'lessonVideo'
+  | 'lessonContent'
+  | 'lessonResource'
+  | 'courseIntroVideo'
+  | 'submissionAttachment'
+  | 'liveSessionRecording'
+  | 'academyLogo'
+  | 'courseThumbnail'
+  | 'certificateTemplateLogo'
+  | 'websiteContent';
+
+export interface MediaUsage {
+  readonly kind: MediaUsageKind;
+  readonly count: number;
+}
+
+/** `POST academies/:id/media/archive-batch` — every id is reported as archived or refused. */
+export interface MediaBulkArchiveResult {
+  readonly archived: readonly string[];
+  readonly refused: readonly {
+    readonly id: string;
+    readonly reason: 'inUse' | 'notFound';
+    readonly usages: readonly MediaUsage[];
+  }[];
 }

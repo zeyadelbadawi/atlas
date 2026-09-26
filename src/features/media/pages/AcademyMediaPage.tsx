@@ -24,16 +24,22 @@
  *     offered and the picker does not accept one.
  *   - UPLOADER. `media_assets` records no user, so "uploaded by" cannot be
  *     shown without making it up. The upload DATE is real and is shown.
+ *
+ * DELETE. Single (per item, or from the details dialog) and bulk (Select
+ * mode). "Delete" is the backend's archive: the item leaves the library now
+ * and its file is destroyed after a 30-day grace period. Media still in use
+ * is refused with the places using it, which the outcome banner names.
  */
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Grid2x2, List, Upload } from 'lucide-react';
+import { CheckSquare, Grid2x2, List, Trash2, Upload } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { EmptyState, ErrorState } from '@components/feedback';
 import { NumericExpression, StatusBadge } from '@components/data-display';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -44,14 +50,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
-import { useConfirmDialog } from '@app/providers';
 import { useFilePicker, usePermissions, useSearch } from '@hooks';
-import { formatBytes } from '@utils';
-import { useMediaAssets, useArchiveMediaAsset } from '../hooks';
+import { cn, formatBytes } from '@utils';
+import { useMediaAssets, useMediaDeletion } from '../hooks';
 import { useMediaUpload } from '../hooks/useMediaUpload';
 import { MediaUploadProgress } from '../components/MediaUploadProgress';
 import { useUpdateMediaAsset } from '../hooks/useUpdateMediaAsset';
 import { MediaAssetDetailsDialog } from '../components/MediaAssetDetailsDialog';
+import { MediaDeleteOutcome } from '../components/MediaDeleteOutcome';
+import { MediaSelectionToolbar } from '../components/MediaSelectionToolbar';
 
 import type { LanguageCode, MediaAssetStatus, MediaAssetSummary } from '@types';
 
@@ -61,7 +68,8 @@ import type { LanguageCode, MediaAssetStatus, MediaAssetSummary } from '@types';
  * server is certain to reject, which is a worse experience than not
  * offering it.
  */
-const ACCEPTED_UPLOAD_TYPES = 'image/jpeg,image/png,image/gif,image/webp,application/pdf';
+const ACCEPTED_UPLOAD_TYPES =
+  'image/jpeg,image/png,image/gif,image/webp,application/pdf';
 
 type ViewMode = 'grid' | 'list';
 
@@ -69,7 +77,6 @@ export default function AcademyMediaPage(): JSX.Element {
   const { t, i18n } = useTranslation();
   const { academyId } = useParams<{ academyId: string }>();
   const { hasPermission } = usePermissions();
-  const { confirm } = useConfirmDialog();
 
   /*
     Gates the CONTROLS only; every write below is independently authorised
@@ -89,7 +96,15 @@ export default function AcademyMediaPage(): JSX.Element {
   const [status, setStatus] = useState<MediaAssetStatus>('active');
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<MediaAssetSummary | null>(null);
-  const { query: searchTerm, setQuery: setSearchTerm, debouncedQuery } = useSearch({
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [checkedIds, setCheckedIds] = useState<ReadonlySet<string>>(
+    () => new Set()
+  );
+  const {
+    query: searchTerm,
+    setQuery: setSearchTerm,
+    debouncedQuery,
+  } = useSearch({
     debounceMs: 300,
   });
 
@@ -101,7 +116,7 @@ export default function AcademyMediaPage(): JSX.Element {
     },
   });
 
-  const archiveAsset = useArchiveMediaAsset();
+  const deletion = useMediaDeletion(academyId);
   const updateAsset = useUpdateMediaAsset();
   const filePicker = useFilePicker({ accept: ACCEPTED_UPLOAD_TYPES });
   const {
@@ -117,6 +132,9 @@ export default function AcademyMediaPage(): JSX.Element {
     [assetsQuery.data]
   );
   const totalPages = assetsQuery.data?.pagination?.totalPages ?? 1;
+
+  /* Deleting an archived ("deleted") item again would do nothing, so the controls live on active items only. */
+  const canDelete = canManage && status === 'active';
 
   /** `formatBytes` returns a value plus a unit KEY, so the unit stays translatable. */
   const renderSize = (bytes: number) => {
@@ -143,23 +161,64 @@ export default function AcademyMediaPage(): JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filePicker.files]);
 
-  const handleArchive = async (asset: MediaAssetSummary) => {
-    const confirmed = await confirm({
-      titleKey: 'media:page.archiveDialog.title',
-      descriptionKey: 'media:page.archiveDialog.description',
-      confirmLabelKey: 'media:page.archiveDialog.confirmLabel',
-      cancelLabelKey: 'media:page.archiveDialog.cancelLabel',
-      intent: 'destructive',
-    });
-    if (!confirmed || !academyId) return;
+  // A selection belongs to the page it was made on.
+  useEffect(() => {
+    setCheckedIds(new Set());
+  }, [page, status, debouncedQuery]);
 
-    try {
-      await archiveAsset.mutateAsync({ academyId, assetId: asset.id });
-      setSelected(null);
-      toast({ title: t('media:page.archiveSuccess') });
-    } catch {
-      toast({ title: t('media:page.archiveError'), variant: 'destructive' });
+  // Deleting the last items on a later page steps back instead of showing
+  // an empty page with a "Previous" button as the only way out.
+  useEffect(() => {
+    if (
+      page > 1 &&
+      !assetsQuery.isLoading &&
+      !assetsQuery.isFetching &&
+      assetsQuery.data &&
+      assets.length === 0
+    ) {
+      setPage((current) => Math.max(1, current - 1));
     }
+  }, [
+    assets.length,
+    assetsQuery.data,
+    assetsQuery.isFetching,
+    assetsQuery.isLoading,
+    page,
+  ]);
+
+  const toggleChecked = useCallback((assetId: string) => {
+    setCheckedIds((current) => {
+      const next = new Set(current);
+      if (next.has(assetId)) next.delete(assetId);
+      else next.add(assetId);
+      return next;
+    });
+  }, []);
+
+  const uncheck = useCallback((ids: readonly string[]) => {
+    if (ids.length === 0) return;
+    setCheckedIds((current) => {
+      const next = new Set(current);
+      ids.forEach((id) => next.delete(id));
+      return next;
+    });
+  }, []);
+
+  const handleDeleteOne = async (asset: MediaAssetSummary) => {
+    setSelected(null);
+    const deleted = await deletion.deleteOne(asset);
+    if (deleted) uncheck([asset.id]);
+  };
+
+  const handleDeleteSelected = async () => {
+    const chosen = assets.filter((asset) => checkedIds.has(asset.id));
+    const deleted = await deletion.deleteMany(chosen);
+    uncheck(deleted);
+  };
+
+  const exitSelectMode = () => {
+    setIsSelecting(false);
+    setCheckedIds(new Set());
   };
 
   if (assetsQuery.error) {
@@ -170,6 +229,36 @@ export default function AcademyMediaPage(): JSX.Element {
       </PageContainer>
     );
   }
+
+  const renderDeleteButton = (asset: MediaAssetSummary, className?: string) => (
+    <Button
+      type="button"
+      variant="secondary"
+      size="icon"
+      className={cn(
+        'size-8 text-destructive hover:text-destructive',
+        className
+      )}
+      onClick={() => void handleDeleteOne(asset)}
+      disabled={deletion.isDeleting}
+      aria-label={t('media:delete.actionFor', { fileName: asset.fileName })}
+      title={t('media:delete.action')}
+    >
+      <Trash2 className="size-4" aria-hidden />
+    </Button>
+  );
+
+  const renderCheckbox = (asset: MediaAssetSummary, className?: string) => (
+    <Checkbox
+      className={cn('size-5 bg-background', className)}
+      checked={checkedIds.has(asset.id)}
+      onCheckedChange={() => toggleChecked(asset.id)}
+      disabled={deletion.isDeleting}
+      aria-label={t('media:delete.selection.selectItem', {
+        fileName: asset.fileName,
+      })}
+    />
+  );
 
   return (
     <PageContainer>
@@ -188,7 +277,9 @@ export default function AcademyMediaPage(): JSX.Element {
 
       <MediaUploadProgress
         state={uploadState}
-        onRetry={() => void retryUpload().then((a) => a && assetsQuery.refetch())}
+        onRetry={() =>
+          void retryUpload().then((a) => a && assetsQuery.refetch())
+        }
         onDismiss={dismissUpload}
       />
 
@@ -200,7 +291,7 @@ export default function AcademyMediaPage(): JSX.Element {
             setPage(1);
           }}
           placeholder={t('media:page.searchPlaceholder')}
-          className="max-w-xs"
+          className="w-full sm:max-w-xs"
           aria-label={t('media:page.searchPlaceholder')}
         />
 
@@ -209,18 +300,35 @@ export default function AcademyMediaPage(): JSX.Element {
           onValueChange={(value) => {
             setStatus(value as MediaAssetStatus);
             setPage(1);
+            exitSelectMode();
           }}
         >
-          <SelectTrigger className="w-40" aria-label={t('media:page.statusFilter')}>
+          <SelectTrigger
+            className="w-40"
+            aria-label={t('media:page.statusFilter')}
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="active">{t('media:status.active')}</SelectItem>
-            <SelectItem value="archived">{t('media:status.archived')}</SelectItem>
+            <SelectItem value="archived">
+              {t('media:status.archived')}
+            </SelectItem>
           </SelectContent>
         </Select>
 
         <div className="ms-auto flex items-center gap-1">
+          {canDelete && assets.length > 0 && !isSelecting ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setIsSelecting(true)}
+            >
+              <CheckSquare className="size-4" aria-hidden />
+              {t('media:delete.selection.select')}
+            </Button>
+          ) : null}
           <Button
             variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
             size="sm"
@@ -241,6 +349,25 @@ export default function AcademyMediaPage(): JSX.Element {
           </Button>
         </div>
       </div>
+
+      {canDelete && isSelecting && assets.length > 0 ? (
+        <MediaSelectionToolbar
+          selectedCount={checkedIds.size}
+          pageCount={assets.length}
+          isDeleting={deletion.isDeleting}
+          onSelectAll={() =>
+            setCheckedIds(new Set(assets.map((asset) => asset.id)))
+          }
+          onClear={() => setCheckedIds(new Set())}
+          onDeleteSelected={() => void handleDeleteSelected()}
+          onDone={exitSelectMode}
+        />
+      ) : null}
+
+      <MediaDeleteOutcome
+        outcome={deletion.outcome}
+        onDismiss={deletion.dismissOutcome}
+      />
 
       {assetsQuery.isLoading ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -266,70 +393,100 @@ export default function AcademyMediaPage(): JSX.Element {
           className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
           data-testid="media-grid"
         >
-          {assets.map((asset) => (
-            <button
-              key={asset.id}
-              type="button"
-              onClick={() => setSelected(asset)}
-              className="group overflow-hidden rounded-lg border border-border text-start transition-colors hover:border-primary"
-            >
-              <div className="flex h-32 items-center justify-center bg-muted">
-                {asset.type === 'image' ? (
-                  <img
-                    src={asset.url}
-                    alt={asset.altText ?? asset.fileName}
-                    className="size-full object-cover"
-                    loading="lazy"
-                  />
-                ) : (
-                  <span className="text-xs font-medium uppercase text-muted-foreground">
-                    {asset.mimeType.split('/')[1]}
-                  </span>
+          {assets.map((asset) => {
+            const isChecked = checkedIds.has(asset.id);
+            const selecting = canDelete && isSelecting;
+            return (
+              <div
+                key={asset.id}
+                className={cn(
+                  'group relative overflow-hidden rounded-lg border border-border transition-colors hover:border-primary',
+                  selecting && isChecked && 'border-primary ring-2 ring-primary'
                 )}
+              >
+                <button
+                  type="button"
+                  // In Select mode the whole card toggles, so a finger does
+                  // not have to find the checkbox; the checkbox remains the
+                  // one control assistive technology is offered.
+                  tabIndex={selecting ? -1 : undefined}
+                  onClick={() =>
+                    selecting ? toggleChecked(asset.id) : setSelected(asset)
+                  }
+                  className="block w-full text-start"
+                >
+                  <div className="flex h-32 items-center justify-center bg-muted">
+                    {asset.type === 'image' ? (
+                      <img
+                        src={asset.url}
+                        alt={asset.altText ?? asset.fileName}
+                        className="size-full object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <span className="text-xs font-medium uppercase text-muted-foreground">
+                        {asset.mimeType.split('/')[1]}
+                      </span>
+                    )}
+                  </div>
+                  <div className="space-y-1 p-3">
+                    <p className="truncate text-sm font-medium text-foreground">
+                      {asset.fileName}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {renderSize(asset.sizeBytes)}
+                    </p>
+                  </div>
+                </button>
+                {selecting
+                  ? renderCheckbox(asset, 'absolute start-2 top-2')
+                  : canDelete
+                    ? renderDeleteButton(asset, 'absolute end-2 top-2')
+                    : null}
               </div>
-              <div className="space-y-1 p-3">
-                <p className="truncate text-sm font-medium text-foreground">
-                  {asset.fileName}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {renderSize(asset.sizeBytes)}
-                </p>
-              </div>
-            </button>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div className="space-y-2" data-testid="media-list">
-          {assets.map((asset) => (
-            <Card key={asset.id}>
-              <CardContent className="flex items-center justify-between gap-3 py-3">
-                <button
-                  type="button"
-                  onClick={() => setSelected(asset)}
-                  className="min-w-0 flex-1 text-start"
-                >
-                  <p className="truncate text-sm font-medium text-foreground">
-                    {asset.fileName}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {asset.mimeType} · {renderSize(asset.sizeBytes)}
-                    {asset.dimensions ? (
-                      <>
-                        {' · '}
-                        <NumericExpression>
-                          {asset.dimensions.width}×{asset.dimensions.height}
-                        </NumericExpression>
-                      </>
-                    ) : null}
-                  </p>
-                </button>
-                <StatusBadge
-                  labelKey={`media:status.${asset.status}`}
-                  tone={asset.status === 'active' ? 'success' : 'neutral'}
-                />
-              </CardContent>
-            </Card>
-          ))}
+          {assets.map((asset) => {
+            const selecting = canDelete && isSelecting;
+            return (
+              <Card key={asset.id}>
+                <CardContent className="flex items-center justify-between gap-3 py-3">
+                  {selecting ? renderCheckbox(asset) : null}
+                  <button
+                    type="button"
+                    tabIndex={selecting ? -1 : undefined}
+                    onClick={() =>
+                      selecting ? toggleChecked(asset.id) : setSelected(asset)
+                    }
+                    className="min-w-0 flex-1 text-start"
+                  >
+                    <p className="truncate text-sm font-medium text-foreground">
+                      {asset.fileName}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {asset.mimeType} · {renderSize(asset.sizeBytes)}
+                      {asset.dimensions ? (
+                        <>
+                          {' · '}
+                          <NumericExpression>
+                            {asset.dimensions.width}×{asset.dimensions.height}
+                          </NumericExpression>
+                        </>
+                      ) : null}
+                    </p>
+                  </button>
+                  <StatusBadge
+                    labelKey={`media:status.${asset.status}`}
+                    tone={asset.status === 'active' ? 'success' : 'neutral'}
+                  />
+                  {canDelete && !selecting ? renderDeleteButton(asset) : null}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
 
@@ -349,7 +506,9 @@ export default function AcademyMediaPage(): JSX.Element {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+            onClick={() =>
+              setPage((current) => Math.min(totalPages, current + 1))
+            }
             disabled={page >= totalPages}
           >
             {t('common:pagination.nextPage')}
@@ -378,8 +537,8 @@ export default function AcademyMediaPage(): JSX.Element {
             toast({ title: t('media:page.saveError'), variant: 'destructive' });
           }
         }}
-        onArchive={() => {
-          if (selected) void handleArchive(selected);
+        onDelete={() => {
+          if (selected) void handleDeleteOne(selected);
         }}
       />
     </PageContainer>

@@ -1084,6 +1084,9 @@ export const platformSettingsKeys = {
  */
 export const mediaKeys = {
   all: QUERY_KEY_ROOTS.media,
+  /** Prefix of every list query for one academy — used to drop deleted assets from all of them at once. */
+  lists: (academyId: string | undefined) =>
+    [...mediaKeys.all, 'list', academyId] as const,
   list: (academyId: string | undefined, query?: CollectionQuery) =>
     [...mediaKeys.all, 'list', academyId, query] as const,
   detail: (academyId: string | undefined, assetId: string) =>

@@ -31,6 +31,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -48,7 +49,8 @@ export interface MediaAssetDetailsDialogProps {
   readonly isSaving: boolean;
   readonly onOpenChange: (open: boolean) => void;
   readonly onSave: (payload: UpdateMediaAssetPayload) => void | Promise<void>;
-  readonly onArchive: () => void;
+  /** Starts the confirmed delete flow; the dialog closes first so its outcome is visible on the page. */
+  readonly onDelete: () => void;
 }
 
 export function MediaAssetDetailsDialog({
@@ -57,7 +59,7 @@ export function MediaAssetDetailsDialog({
   isSaving,
   onOpenChange,
   onSave,
-  onArchive,
+  onDelete,
 }: MediaAssetDetailsDialogProps): JSX.Element {
   const fmt = useDateFormatter();
   const { t, i18n } = useTranslation();
@@ -150,8 +152,14 @@ export function MediaAssetDetailsDialog({
         {canManage ? (
           <DialogFooter className="gap-2 sm:justify-between">
             {asset?.status === 'active' ? (
-              <Button variant="outline" onClick={onArchive} disabled={isSaving}>
-                {t('media:details.archive')}
+              <Button
+                variant="outline"
+                className="text-destructive hover:text-destructive"
+                onClick={onDelete}
+                disabled={isSaving}
+              >
+                <Trash2 className="size-4" aria-hidden />
+                {t('media:details.delete')}
               </Button>
             ) : (
               <span />

@@ -15,6 +15,7 @@ import type {
   CollectionQuery,
   MediaAssetDetail,
   MediaAssetSummary,
+  MediaBulkArchiveResult,
   PaginatedResult,
   UpdateMediaAssetPayload,
   UploadMediaAssetPayload,
@@ -125,6 +126,18 @@ export class MediaService extends BaseService {
       {},
       options
     );
+  }
+
+  /** Bulk delete (archive) of up to 50 assets; each is reported archived or refused. */
+  async archiveAssets(
+    academyId: string,
+    assetIds: readonly string[],
+    options?: WriteOptions
+  ): Promise<MediaBulkArchiveResult> {
+    return this.client.post<
+      MediaBulkArchiveResult,
+      { readonly assetIds: readonly string[] }
+    >(this.mediaPath(academyId, 'archive-batch'), { assetIds }, options);
   }
 }
 

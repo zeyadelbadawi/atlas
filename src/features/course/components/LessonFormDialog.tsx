@@ -305,6 +305,7 @@ export function LessonFormDialog({
                         open={isLibraryOpen}
                         onOpenChange={setIsLibraryOpen}
                         onSelect={(asset) => field.onChange(asset.url)}
+                        selectedUrl={field.value || undefined}
                         accept={contentType === 'video' ? 'video/*' : '*/*'}
                       />
                     ) : null}

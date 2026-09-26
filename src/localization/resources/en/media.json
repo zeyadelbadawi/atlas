@@ -15,9 +15,6 @@
       "limitReachedDescription": "You've reached your plan's storage limit. Upgrade your plan or free up space to upload more."
     }
   },
-  "actions": {
-    "archiveSuccess": "Asset archived"
-  },
   "page": {
     "title": "Academy Media",
     "subtitle": "Images and documents belonging to this academy.",
@@ -34,15 +31,7 @@
     "noResults": "No matching files",
     "noResultsDescription": "Try a different search term.",
     "saveSuccess": "Changes saved",
-    "saveError": "Those changes could not be saved",
-    "archiveSuccess": "File archived",
-    "archiveError": "That file could not be archived",
-    "archiveDialog": {
-      "title": "Archive this file?",
-      "description": "It will be hidden from the library. Pages already using it keep working.",
-      "confirmLabel": "Archive",
-      "cancelLabel": "Cancel"
-    }
+    "saveError": "Those changes could not be saved"
   },
   "details": {
     "title": "File details",
@@ -52,12 +41,12 @@
     "uploaded": "Uploaded",
     "altText": "Alt text",
     "altTextPlaceholder": "Describes the image for screen readers",
-    "archive": "Archive",
-    "save": "Save changes"
+    "save": "Save changes",
+    "delete": "Delete"
   },
   "status": {
     "active": "Active",
-    "archived": "Archived"
+    "archived": "Deleted"
   },
   "upload": {
     "stage": {
@@ -70,5 +59,73 @@
     "percent": "{{percent}}%",
     "retry": "Retry",
     "dismiss": "Dismiss"
+  },
+  "delete": {
+    "action": "Delete",
+    "actionFor": "Delete {{fileName}}",
+    "cancel": "Cancel",
+    "deleting": "Deleting…",
+    "confirmOne": {
+      "title": "Delete “{{fileName}}”?",
+      "description": "It will be removed from the library now, and the file will be permanently destroyed after 30 days. Media still used by a lesson, course, page or logo can't be deleted until you replace or remove it there.",
+      "confirmLabel": "Delete"
+    },
+    "confirmMany": {
+      "title_one": "Delete {{count}} media item?",
+      "title_other": "Delete {{count}} media items?",
+      "description": "They will be removed from the library now, and their files will be permanently destroyed after 30 days. Any item still used by a lesson, course, page or logo won't be deleted — you'll see which ones, so you can replace or remove them there first.",
+      "confirmLabel": "Delete"
+    },
+    "successOne": "“{{fileName}}” was deleted. Its file will be permanently removed after 30 days.",
+    "inUse": "“{{fileName}}” can't be deleted because it's used by {{usages}}. Replace or remove it there first, then try again.",
+    "submissionNote": "Files attached to learners' submissions are part of their records.",
+    "forbidden": "Only the academy's owner or a manager can delete media.",
+    "notFound": "“{{fileName}}” no longer exists. It may already have been deleted.",
+    "failed": "The file couldn't be deleted. Try again.",
+    "pickerCurrentDeleted": "“{{fileName}}” was deleted from the library but is still set in the form you're editing. Choose another file before saving.",
+    "summary": {
+      "deleted_one": "{{count}} deleted",
+      "deleted_other": "{{count}} deleted",
+      "refused_one": "{{count}} couldn't be deleted",
+      "refused_other": "{{count}} couldn't be deleted",
+      "headline": "{{deleted}}, {{refused}}:",
+      "refusedInUse": "“{{fileName}}” is used by {{usages}}. Replace or remove it there first.",
+      "refusedNotFound": "“{{fileName}}” wasn't found. It may already have been deleted.",
+      "graceNote": "Deleted files are permanently removed after 30 days.",
+      "dismiss": "Dismiss"
+    },
+    "selection": {
+      "select": "Select",
+      "selectItem": "Select {{fileName}}",
+      "selectedCount_one": "{{count}} selected",
+      "selectedCount_other": "{{count}} selected",
+      "selectAll": "Select all on this page",
+      "clear": "Clear selection",
+      "deleteSelected": "Delete selected",
+      "done": "Done"
+    },
+    "usage": {
+      "lessonVideo_one": "a lesson video",
+      "lessonVideo_other": "{{count}} lesson videos",
+      "lessonContent_one": "a lesson's content",
+      "lessonContent_other": "the content of {{count}} lessons",
+      "lessonResource_one": "a lesson resource",
+      "lessonResource_other": "{{count}} lesson resources",
+      "courseIntroVideo_one": "a course intro video",
+      "courseIntroVideo_other": "{{count}} course intro videos",
+      "submissionAttachment_one": "a learner's submission",
+      "submissionAttachment_other": "{{count}} learner submissions",
+      "liveSessionRecording_one": "a live session recording",
+      "liveSessionRecording_other": "{{count}} live session recordings",
+      "academyLogo_one": "the academy logo",
+      "academyLogo_other": "{{count}} academy logos",
+      "courseThumbnail_one": "a course thumbnail",
+      "courseThumbnail_other": "{{count}} course thumbnails",
+      "certificateTemplateLogo_one": "a certificate template",
+      "certificateTemplateLogo_other": "{{count}} certificate templates",
+      "websiteContent_one": "a website page",
+      "websiteContent_other": "{{count}} website pages",
+      "unknown": "other content in this academy"
+    }
   }
 }
