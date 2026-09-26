@@ -73,6 +73,12 @@ export const DASHBOARD_ROUTES = {
   search: '/dashboard/search',
   academy: '/dashboard/academy',
   academyCreate: '/dashboard/academy/create',
+  /**
+   * RETIRED — the old client-side academy wizard. Kept only as a
+   * forwarding address (`LegacyAcademyOnboardingRedirect`): an owner with
+   * setup still open goes to `ONBOARDING_ROUTES.root`, anyone else to the
+   * academy dashboard. Nothing should link here any more.
+   */
   academyOnboarding: '/dashboard/academy/:academyId/onboarding',
   academyProfile: '/dashboard/academy/:academyId/profile',
   academySettings: '/dashboard/academy/:academyId/settings',
@@ -475,6 +481,21 @@ export const RETIRED_DASHBOARD_LEARNER_ROUTES: readonly RetiredLearnerRoute[] =
     },
   ];
 
+/**
+ * New Customer Onboarding — the full-screen setup shell a new organization
+ * owner is sent to from `/dashboard` while `onboardingPending` is true.
+ *
+ * Deliberately OUTSIDE `/dashboard`: setup is one step per screen with no
+ * sidebar, and keeping it out of the dashboard subtree means no dashboard
+ * route (and no deep link into one) is ever captured by it. The dashboard
+ * card and the legacy `academyOnboarding` path link here.
+ */
+export const ONBOARDING_ROUTES = {
+  root: '/onboarding',
+  /** `:step` is an `OnboardingScreenKey` — a step key or `summary`. */
+  step: '/onboarding/:step',
+} as const;
+
 /** System paths that exist outside the product modules. */
 export const SYSTEM_ROUTES = {
   forbidden: '/403',
@@ -487,6 +508,7 @@ export const ROUTES = {
   auth: AUTH_ROUTES,
   dashboard: DASHBOARD_ROUTES,
   learner: LEARNER_ROUTES,
+  onboarding: ONBOARDING_ROUTES,
   system: SYSTEM_ROUTES,
 } as const;
 

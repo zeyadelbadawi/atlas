@@ -36,6 +36,8 @@ export * from './checkout.types';
 export * from './payment.types';
 export * from './atlas-subscription-payment-provider.types';
 export * from './provisioning.types';
+// New Customer Onboarding — sign-up options and the setup status.
+export * from './onboarding.types';
 export * from './website-theme.types';
 export * from './website-section.types';
 export * from './website.types';

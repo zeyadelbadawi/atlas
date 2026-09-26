@@ -103,7 +103,13 @@
     "otpSuppressedAddress": "We can't deliver email to this address right now.",
     "otpResendCooldown": "Please wait a moment before requesting another code.",
     "otpResendExhausted": "No more codes can be sent for this sign-in. Please sign in again.",
-    "otpResendFailed": "We couldn't send a new code. Please try again."
+    "otpResendFailed": "We couldn't send a new code. Please try again.",
+    "organizationSignupDisabled": "Creating an organization during sign-up isn't available right now. Please try again.",
+    "signupFieldsNotAllowed": "An organization can't be created from an academy's sign-up page.",
+    "organizationNameRequired": "Enter your organization name to start a trial.",
+    "signupTrialsUnavailable": "Free trials aren't available right now. You'll choose a plan after signing in.",
+    "signupPlanUnavailable": "That plan can no longer be trialled. Please choose another.",
+    "emailAlreadyRegistered": "An account with this email already exists. Try signing in instead."
   },
   "subscription": {
     "required": "An active subscription is required to make this change."
@@ -242,10 +248,14 @@
   },
   "payment": {
     "notPendingReview": "This payment is no longer waiting for review. Reload to see its current status.",
-    "cannotReviewOwnOrganization": "This payment belongs to an organization you're a member of. You can't review your own organization's payments."
+    "cannotReviewOwnOrganization": "This payment belongs to an organization you're a member of. You can't review your own organization's payments.",
+    "rejectedByReviewer": "Atlas reviewed this payment and couldn't accept it."
   },
   "academyPayout": {
     "invalidPeriod": "The payout period is not valid. The end date must be after the start date.",
     "notPending": "This payout failed and can't be marked as paid."
+  },
+  "onboarding": {
+    "requiredIncomplete": "Finish the required steps before completing setup, or choose Finish for now."
   }
 }

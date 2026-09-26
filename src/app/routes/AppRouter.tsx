@@ -15,6 +15,7 @@ import {
   DASHBOARD_ROUTES,
   RETIRED_DASHBOARD_LEARNER_ROUTES,
   AUTHENTICATED_ENTRY_ROUTE,
+  ONBOARDING_ROUTES,
 } from './route-paths';
 
 import { RouteGuard } from './guards';
@@ -55,6 +56,7 @@ const LiveSessionsConnectionPage = lazy(
   () => import('@features/live-sessions/pages/LiveSessionsConnectionPage')
 );
 import { DashboardIndexRoute } from './DashboardIndexRoute';
+import { LegacyAcademyOnboardingRedirect } from './LegacyAcademyOnboardingRedirect';
 
 const DashboardOverviewPage = lazy(
   () => import('@features/dashboard/pages/DashboardOverviewPage')
@@ -127,8 +129,11 @@ const AcademyMembersPage = lazy(
 const AcademyRevenuePage = lazy(
   () => import('@features/academy/pages/AcademyRevenuePage')
 );
-const AcademyOnboardingPage = lazy(
-  () => import('@features/academy/pages/AcademyOnboardingPage')
+// New Customer Onboarding — the full-screen setup shell (outside the
+// dashboard layout). The old `AcademyOnboardingPage` wizard is retired;
+// its address is served by `LegacyAcademyOnboardingRedirect`.
+const OnboardingPage = lazy(
+  () => import('@features/onboarding/pages/OnboardingPage')
 );
 
 const CourseListPage = lazy(
@@ -554,6 +559,29 @@ export function AppRouter(): JSX.Element {
             />
           </Route>
 
+          {/* New Customer Onboarding — the owner's full-screen setup
+              shell. A management-surface page, guarded like `/dashboard`,
+              but deliberately outside its layout (no sidebar: one step
+              per screen) and outside its subtree, so no dashboard route
+              or deep link is ever captured by it. The page itself sends
+              anyone who is not the active organization's owner back to
+              `/dashboard`. */}
+          {[ONBOARDING_ROUTES.root, ONBOARDING_ROUTES.step].map((path) => (
+            <Route
+              key={path}
+              path={path}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requireManagementPrincipal
+                  pendingFallback={<RouteFallback />}
+                >
+                  <OnboardingPage />
+                </RouteGuard>
+              }
+            />
+          ))}
+
           {/* Authenticated product surface — the MANAGEMENT surface. The
               principal check sits here, at the subtree root, so every
               nested route is covered (P64 Phase 1, AD-5). */}
@@ -839,17 +867,12 @@ export function AppRouter(): JSX.Element {
               }
             />
 
+            {/* Retired wizard — a forwarding address only. No permission
+                or entitlement check: it renders nothing, and both of its
+                destinations carry their own guards. */}
             <Route
               path={DASHBOARD_ROUTES.academyOnboarding}
-              element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['academy.view']}
-                  requiresEntitlement
-                >
-                  <AcademyOnboardingPage />
-                </RouteGuard>
-              }
+              element={<LegacyAcademyOnboardingRedirect />}
             />
 
             <Route

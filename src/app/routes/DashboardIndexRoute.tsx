@@ -19,10 +19,19 @@
  * The tenant dashboard arrives as `children` rather than being imported
  * here, so it stays the lazy chunk `AppRouter` declares — an operator who
  * is redirected never downloads it.
+ *
+ * NEW CUSTOMER ONBOARDING. The owner of an organization whose setup is
+ * still open (`onboardingPending`, computed by the server on the session
+ * user's membership) is sent to `/onboarding` instead — from THIS index
+ * route only. Every other `/dashboard/*` path, including a deep link, is
+ * left alone, so setup is where an owner lands, never a trap they cannot
+ * leave. Managers, instructors, learners and owners who finished or
+ * deferred setup are never routed.
  */
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@hooks';
-import { DASHBOARD_ROUTES } from './route-paths';
+import { isOnboardingPendingForActiveOrganization } from '@utils';
+import { DASHBOARD_ROUTES, ONBOARDING_ROUTES } from './route-paths';
 
 export interface DashboardIndexRouteProps {
   readonly children: React.ReactNode;
@@ -31,10 +40,14 @@ export interface DashboardIndexRouteProps {
 export function DashboardIndexRoute({
   children,
 }: DashboardIndexRouteProps): JSX.Element {
-  const { user } = useAuth();
+  const { user, organization } = useAuth();
 
   if (user?.roles?.includes('platform_owner')) {
     return <Navigate to={DASHBOARD_ROUTES.platform} replace />;
+  }
+
+  if (isOnboardingPendingForActiveOrganization(user, organization)) {
+    return <Navigate to={ONBOARDING_ROUTES.root} replace />;
   }
 
   return <>{children}</>;

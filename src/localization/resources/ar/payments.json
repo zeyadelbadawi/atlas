@@ -44,7 +44,8 @@
     "continueToPayment": "المتابعة إلى الدفع",
     "noMethodsTitle": "لا توجد طريقة دفع متاحة",
     "noMethodsDescription": "طلبك جاهز، لكن لم يتم تفعيل أي طريقة دفع لمؤسستك بعد. تواصل مع الدعم وسنقوم بإعدادها لك.",
-    "contactSupport": "تواصل مع الدعم"
+    "contactSupport": "تواصل مع الدعم",
+    "backToSetup": "العودة إلى الإعداد"
   },
   "paymentHistory": {
     "title": "سجل المدفوعات",

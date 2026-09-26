@@ -8,7 +8,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { isEmailOtpChallenge, isTwoFactorChallenge } from '@types';
 import type { ReactNode } from 'react';
-import { sessionService } from '@services/identity';
+import { currentUserService, sessionService } from '@services/identity';
 import type {
   Session,
   SignInCredentials,
@@ -227,13 +227,53 @@ export function AtlasIdentityProvider({
     [session.user]
   );
 
+  /**
+   * Re-reads the session user from the server — after a profile change,
+   * an organization create, or finishing onboarding (whose
+   * `onboardingPending` flag only the server computes).
+   *
+   * New Customer Onboarding made two gaps matter, and both are closed
+   * here: a session holding no refresh token used to make this a silent
+   * no-op (the user kept the stale flag and `/dashboard` bounced them
+   * back into setup), so it now falls back to `GET /users/me` with the
+   * current tokens; and a refresh used to reset the active organization
+   * to the primary one, so the active organization is kept whenever the
+   * refreshed user is still a member of it.
+   */
   const refreshSession = useCallback(async () => {
-    if (session.status !== 'authenticated' || !session.tokens?.refreshToken) {
+    if (session.status !== 'authenticated') {
+      return;
+    }
+
+    const activeOrganizationId = session.organization?.id;
+    const keepActiveOrganization = (next: Session): Session => {
+      if (!activeOrganizationId || !next.user) return next;
+      const organization = sessionService.switchOrganization(
+        next.user,
+        activeOrganizationId
+      );
+      return organization ? { ...next, organization } : next;
+    };
+
+    if (!session.tokens?.refreshToken) {
+      const user = await currentUserService.getCurrent();
+      const fallback =
+        user.organizations.find((membership) => membership.isPrimary) ??
+        user.organizations[0];
+      setSession((prev) =>
+        keepActiveOrganization({
+          ...prev,
+          user,
+          organization: fallback
+            ? sessionService.switchOrganization(user, fallback.organizationId)
+            : undefined,
+        })
+      );
       return;
     }
 
     const refreshed = await sessionService.refresh(session.tokens.refreshToken);
-    setSession(refreshed);
+    setSession(keepActiveOrganization(refreshed));
   }, [session]);
 
   const value: IdentityContextValue = useMemo(

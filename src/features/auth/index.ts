@@ -29,6 +29,10 @@ export { AcademyLinkList } from './components/AcademyLinkList';
 export type { AcademyLinkListProps } from './components/AcademyLinkList';
 export { StudentSignInRefusal } from './components/StudentSignInRefusal';
 export { AcademyChooser } from './components/AcademyChooser';
+// New Customer Onboarding — the trial plan cards, shared with the setup
+// shell's Plan step so both screens present a plan the same way.
+export { TrialPlanPicker } from './components/TrialPlanPicker';
+export type { TrialPlanPickerProps } from './components/TrialPlanPicker';
 
 // Hooks and helpers the academy website's own auth pages reuse.
 export {

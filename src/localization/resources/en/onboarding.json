@@ -1,0 +1,146 @@
+{
+  "shell": {
+    "title": "Set up your academy",
+    "railLabel": "Setup progress",
+    "stepOf": "Step {{current}} of {{total}}",
+    "loading": "Loading your setup…",
+    "loadError": "We couldn't load your setup. Please try again.",
+    "finishForNow": "Finish for now",
+    "finishForNowFailed": "We couldn't save your progress. Please try again."
+  },
+  "actions": {
+    "back": "Back",
+    "skip": "Skip for now",
+    "continue": "Continue",
+    "goToStep": "Go to step",
+    "retry": "Try again"
+  },
+  "requirement": {
+    "prerequisite": "Required first",
+    "required": "Required",
+    "recommended": "Recommended"
+  },
+  "status": {
+    "complete": "Done",
+    "in_progress": "In progress",
+    "incomplete": "To do",
+    "blocked": "Locked",
+    "awaiting_confirmation": "Awaiting confirmation"
+  },
+  "steps": {
+    "plan": {
+      "label": "Plan",
+      "title": "Choose how to start",
+      "description": "Start a free trial or choose a plan. Everything else in setup unlocks once your plan is active."
+    },
+    "academy": {
+      "label": "Academy",
+      "title": "Create your academy",
+      "description": "Name your academy and pick its address. We'll set up its website for you."
+    },
+    "branding": {
+      "label": "Branding",
+      "title": "Make it yours",
+      "description": "Add your logo and favicon so learners recognise your academy."
+    },
+    "website": {
+      "label": "Website",
+      "title": "Publish your website",
+      "description": "Your website is where learners find you, sign up and enrol."
+    },
+    "course": {
+      "label": "First course",
+      "title": "Create your first course",
+      "description": "Start with a draft. You can build lessons and publish it whenever you're ready."
+    },
+    "summary": {
+      "label": "Summary"
+    }
+  },
+  "blocked": {
+    "plan": "Start your trial or choose a plan first.",
+    "academy": "Create your academy first.",
+    "goToPlan": "Go to plan",
+    "goToAcademy": "Go to academy"
+  },
+  "plan": {
+    "trialTitle": "Start your free trial",
+    "trialDescription": "Pick the plan you'd like to try. No card required — you decide whether to continue when the trial ends.",
+    "startTrial": "Start free trial",
+    "starting": "Starting your trial…",
+    "trialStarted": "Your free trial has started",
+    "trialRefused": "Your free trial isn't available for this account. Choose a plan below to continue.",
+    "trialFailed": "We couldn't start your trial. Please try again.",
+    "chooseTrialPlan": "Choose a plan to try",
+    "paidTitle": "Choose a plan",
+    "paidDescription": "Your free trial has already been used or isn't available right now. Choose a plan to continue — you'll pay securely and come back here.",
+    "choosePlan": "Choose {{plan}}",
+    "noPlans": "No plans are available right now. Please contact support.",
+    "awaitingTitle": "Payment submitted — waiting for confirmation",
+    "awaitingDescription": "We'll unlock the rest of setup as soon as your payment is confirmed. This page updates on its own.",
+    "viewPayment": "View payment",
+    "contactSupport": "Contact support",
+    "failedTitle": "Your last payment didn't go through",
+    "failedGeneric": "The payment was not completed.",
+    "resubmit": "Submit a new payment",
+    "priceMonthly": "{{price}} / month",
+    "priceYearly": "{{price}} / year"
+  },
+  "academy": {
+    "provisioningTitle": "Setting up {{name}}",
+    "provisioningDescription": "This usually takes less than a minute. You can stay here — this page updates on its own.",
+    "failedTitle": "We couldn't finish setting up your academy",
+    "failedDescription": "Nothing you entered was lost. Try again, and contact support if it keeps failing.",
+    "readyTitle": "{{name}} is set up",
+    "readyDescription": "Your academy and its website have been created.",
+    "address": "Address"
+  },
+  "branding": {
+    "logoAdded": "Your logo is in place. You can change it any time.",
+    "save": "Save branding"
+  },
+  "website": {
+    "publishedTitle": "Your website is live",
+    "publishedDescription": "Learners can now visit your website, sign up and enrol.",
+    "unpublishedTitle": "Your website isn't published yet",
+    "unpublishedDescription": "Learners can't see your website until you publish it. Review it first if you like — you can keep editing after publishing.",
+    "publish": "Publish website",
+    "publishing": "Publishing…",
+    "publishFailed": "We couldn't publish your website. Please try again.",
+    "visit": "Visit website",
+    "preview": "Preview website",
+    "customize": "Customize website",
+    "noHost": "Your website address will appear here once it's ready."
+  },
+  "course": {
+    "createdTitle": "Your first course is ready to build",
+    "createdDescription": "It's saved as a draft. Add lessons in the course builder, then publish it when you're ready.",
+    "alreadyTitle": "You've created a course",
+    "alreadyDescription": "Build its lessons in the course builder, or add more courses from your academy.",
+    "openBuilder": "Open course builder",
+    "viewCourses": "View courses"
+  },
+  "summary": {
+    "readyTitle": "Your academy is ready",
+    "readyDescription": "Everything required is done. Recommended steps can be finished any time from your dashboard.",
+    "incompleteTitle_one": "Setup incomplete — {{count}} required step left",
+    "incompleteTitle_other": "Setup incomplete — {{count}} required steps left",
+    "incompleteDescription": "Finish the required steps to launch, or pick up where you left off later from your dashboard.",
+    "requiredHeading": "Required",
+    "recommendedHeading": "Recommended",
+    "finish": "Finish",
+    "finishing": "Finishing…",
+    "finishDisabledHint": "Finish becomes available once every required step is done.",
+    "finishFailed": "We couldn't finish setup. Please try again."
+  },
+  "card": {
+    "title": "Set up your academy",
+    "readyTitle": "Your academy is ready",
+    "incomplete_one": "Setup incomplete — {{count}} required step left",
+    "incomplete_other": "Setup incomplete — {{count}} required steps left",
+    "recommendedOnly": "A few recommended steps are left.",
+    "continue": "Continue setup",
+    "hide": "Hide",
+    "open": "Open"
+  }
+}

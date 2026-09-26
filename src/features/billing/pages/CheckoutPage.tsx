@@ -18,8 +18,8 @@
  */
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
-import { CreditCard, Loader2 } from 'lucide-react';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { ArrowLeft, CreditCard, Loader2 } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { EmptyState, ErrorState } from '@components/feedback';
 import { Button } from '@/components/ui/button';
@@ -39,7 +39,12 @@ import { generateIdempotencyKey } from '../utils/idempotency.utils';
 import { formatMoney } from '../utils/money.utils';
 import { PlanChangeSummary } from '../components/PlanChangeSummary';
 import { useTenantSubscription } from '@features/tenant';
-import { toErrorsNamespaceKey } from '@utils';
+import {
+  cn,
+  isOnboardingReturnPath,
+  MIRROR_IN_RTL,
+  toErrorsNamespaceKey,
+} from '@utils';
 import type { ApiError } from '@api';
 import type {
   CheckoutTarget,
@@ -78,6 +83,15 @@ export default function CheckoutPage(): JSX.Element {
     targetKey: string;
   }>();
   const { organization } = useAuth();
+  /*
+    New Customer Onboarding — the setup shell's Plan step sends the owner
+    here with `?returnTo=/onboarding…`. Only a path under `/onboarding` is
+    honoured (never an arbitrary URL), and it only adds a way back; the
+    checkout itself is unchanged.
+  */
+  const [searchParams] = useSearchParams();
+  const returnTo = searchParams.get('returnTo');
+  const setupReturnPath = isOnboardingReturnPath(returnTo) ? returnTo : null;
   /*
     The authoritative "from" side of the comparison. The hook resolves the
     session's active Organization itself — the same source the rest of the
@@ -169,6 +183,16 @@ export default function CheckoutPage(): JSX.Element {
 
   return (
     <PageContainer>
+      {setupReturnPath ? (
+        <Link
+          to={setupReturnPath}
+          data-testid="checkout-back-to-setup"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+        >
+          <ArrowLeft className={cn('size-4', MIRROR_IN_RTL)} aria-hidden />
+          {t('payments:checkout.backToSetup')}
+        </Link>
+      ) : null}
       <PageHeader
         titleKey="payments:checkout.title"
         descriptionKey="payments:checkout.subtitle"

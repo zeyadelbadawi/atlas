@@ -4,6 +4,7 @@
 export * from './pages';
 export * from './components/SectionFormDialog';
 export * from './components/LessonFormDialog';
+export * from './components/CourseCreateForm';
 export * from './hooks';
 export * from './services/CourseService';
 export * from './schemas/course.schemas';

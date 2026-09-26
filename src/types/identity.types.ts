@@ -92,6 +92,18 @@ export interface OrganizationMembership {
   readonly permissions: readonly string[];
   readonly isPrimary: boolean;
   readonly joinedAt: string;
+  /**
+   * New Customer Onboarding — `true` only for the OWNER of an organization
+   * whose setup has not been finished or deferred yet
+   * (`role === 'owner' AND organizations.onboarding_completed_at IS NULL`).
+   *
+   * COMPUTED SERVER-SIDE on every sign-in, OTP, refresh and `/users/me`
+   * response, and never stored or flipped here: after completing
+   * onboarding the client re-reads the session to learn the new value.
+   * Absent on a response that predates the field, which reads as "not
+   * pending", so an existing customer is never routed into setup.
+   */
+  readonly onboardingPending?: boolean;
 }
 
 /** The active organization context. */
@@ -194,6 +206,15 @@ export interface RegistrationRequest {
   readonly academyId?: string;
   /** P64 Phase 1 — the invitation token from the sign-up link (`?invite=`), required by academies with an invite-only registration policy. */
   readonly inviteToken?: string;
+  /**
+   * New Customer Onboarding — the organization created in the same
+   * transaction as the account (2–120 characters, trimmed). Management
+   * surface only, and only while `GET /public/signup-options` reports
+   * `organizationSignup: true`; never sent with `academyId`.
+   */
+  readonly organizationName?: string;
+  /** New Customer Onboarding — the trial plan's `id` (a UUID). Requires `organizationName`. */
+  readonly planId?: string;
 }
 
 /** `POST /auth/password-reset/validate` — whether a reset token is currently usable. */

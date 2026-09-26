@@ -93,6 +93,15 @@ export interface PlanPricingMetadata {
   readonly billingCycle?: 'monthly' | 'yearly';
 }
 
+/**
+ * P64 Phase 2 (D10) — the video-security capability class a plan belongs
+ * to. Catalog data from the plan row, never inferred from `key`.
+ */
+export type PlanFamily = 'normal' | 'premium';
+
+/** P64 Phase 2 (D10) — a plan's commercial tier within its family. */
+export type PlanTier = 'basic' | 'growth' | 'enterprise';
+
 /** A catalog Plan. */
 export interface Plan {
   readonly id: string;
@@ -122,6 +131,14 @@ export interface Plan {
   readonly descriptionLocalized?: LocalizedText;
   readonly status: PlanStatus;
   readonly displayOrder: number;
+  /**
+   * P64 Phase 2 (D10) — projected straight from the plan row by the
+   * backend's `PlanResponse`. Optional here because a cached response or
+   * fixture predating the field may lack it; readers treat absence as
+   * `normal` / no tier label.
+   */
+  readonly family?: PlanFamily;
+  readonly tier?: PlanTier;
   readonly limits: PlanResourceLimits;
   readonly features: PlanFeatures;
   readonly pricing?: PlanPricingMetadata;

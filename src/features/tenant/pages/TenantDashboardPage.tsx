@@ -34,6 +34,7 @@ import { formatLimitValue, getDaysRemaining } from '../utils/entitlement.utils';
 import { getSubscriptionStatusTone } from '../utils/subscription-status.utils';
 import { resolvePlanDescription, resolvePlanName } from '../utils/plan-text.utils';
 import { cn, MIRROR_IN_RTL } from '@utils';
+import { SetupChecklistCard } from '@features/onboarding';
 import type { LanguageCode } from '@types';
 
 export default function TenantDashboardPage(): JSX.Element {
@@ -139,6 +140,10 @@ export default function TenantDashboardPage(): JSX.Element {
       />
 
       <div className="space-y-6">
+        {/* New Customer Onboarding — open setup items, owners only (the
+            card renders nothing for anyone else or once all is done). */}
+        <SetupChecklistCard />
+
         <Card>
           <CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0">
             <div>

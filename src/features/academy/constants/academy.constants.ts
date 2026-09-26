@@ -42,9 +42,6 @@ export const ACADEMY_MEMBER_ROLES: readonly AcademyMemberRole[] = [
   'staff',
 ] as const;
 
-/** Academy onboarding steps count. */
-export const ACADEMY_ONBOARDING_STEPS_COUNT = 4;
-
 /** Maximum academy name length. */
 export const MAX_ACADEMY_NAME_LENGTH = 100;
 

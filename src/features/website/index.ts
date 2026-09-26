@@ -42,6 +42,11 @@ export { WebsiteBrandBridge } from './renderer/WebsiteBrandBridge';
 // same discipline as this barrel's own header comment: only what a
 // consumer outside this feature's dashboard pages genuinely needs.
 export { listWebsiteThemes } from './themes/website-theme.registry';
+
+// New Customer Onboarding — the Website step publishes through the SAME
+// mutation `WebsitePublishBar` uses, and reads the same configuration, so
+// "published" means exactly what it means in the Website Builder.
+export { usePublishWebsite } from './hooks/usePublishWebsite';
 export type { WebsiteThemeDefinition } from '@types';
 export type {
   WebsiteLinkRenderer,
