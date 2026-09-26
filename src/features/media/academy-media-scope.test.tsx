@@ -52,13 +52,25 @@ vi.mock('@app/providers', () => ({
   useConfirmDialog: () => ({ confirm: async () => true }),
 }));
 
-const idleMutation = { mutate: vi.fn(), mutateAsync: vi.fn(), isPending: false, error: null };
+const idleMutation = {
+  mutate: vi.fn(),
+  mutateAsync: vi.fn(),
+  isPending: false,
+  error: null,
+};
 
 vi.mock('./hooks', () => ({
   useMediaAssets: (academyId: string | undefined, options?: unknown) =>
     useMediaAssets(academyId, options) as unknown,
   useUploadMediaAsset: () => idleMutation,
   useArchiveMediaAsset: () => idleMutation,
+  useMediaDeletion: () => ({
+    deleteOne: vi.fn(),
+    deleteMany: vi.fn(),
+    isDeleting: false,
+    outcome: null,
+    dismissOutcome: vi.fn(),
+  }),
 }));
 vi.mock('./hooks/useUpdateMediaAsset', () => ({
   useUpdateMediaAsset: () => idleMutation,
@@ -93,7 +105,7 @@ function renderPage(items: MediaAssetSummary[]) {
   return render(
     <I18nextProvider i18n={i18n}>
       <AcademyMediaPage />
-    </I18nextProvider>,
+    </I18nextProvider>
   );
 }
 
@@ -116,7 +128,10 @@ describe('AcademyMediaPage — scope', () => {
     renderPage([asset('b1', 'logo-b.png')]);
 
     expect(useMediaAssets).toHaveBeenCalledWith('academy-b', expect.anything());
-    expect(useMediaAssets).not.toHaveBeenCalledWith('academy-a', expect.anything());
+    expect(useMediaAssets).not.toHaveBeenCalledWith(
+      'academy-a',
+      expect.anything()
+    );
   });
 
   it('renders only the assets the query returned', () => {

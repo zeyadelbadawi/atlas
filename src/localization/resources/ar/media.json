@@ -15,9 +15,6 @@
       "limitReachedDescription": "لقد وصلت إلى الحد الأقصى للتخزين في خطتك. قم بترقية خطتك أو حرّر مساحة لرفع المزيد."
     }
   },
-  "actions": {
-    "archiveSuccess": "تمت أرشفة الأصل"
-  },
   "page": {
     "title": "وسائط الأكاديمية",
     "subtitle": "الصور والمستندات الخاصة بهذه الأكاديمية.",
@@ -34,15 +31,7 @@
     "noResults": "لا توجد ملفات مطابقة",
     "noResultsDescription": "جرّب كلمة بحث مختلفة.",
     "saveSuccess": "تم حفظ التغييرات",
-    "saveError": "تعذّر حفظ التغييرات",
-    "archiveSuccess": "تمت أرشفة الملف",
-    "archiveError": "تعذّرت أرشفة الملف",
-    "archiveDialog": {
-      "title": "أرشفة هذا الملف؟",
-      "description": "سيتم إخفاؤه من المكتبة. الصفحات التي تستخدمه ستظل تعمل.",
-      "confirmLabel": "أرشفة",
-      "cancelLabel": "إلغاء"
-    }
+    "saveError": "تعذّر حفظ التغييرات"
   },
   "details": {
     "title": "تفاصيل الملف",
@@ -52,12 +41,12 @@
     "uploaded": "تاريخ الرفع",
     "altText": "النص البديل",
     "altTextPlaceholder": "يصف الصورة لقارئات الشاشة",
-    "archive": "أرشفة",
-    "save": "حفظ التغييرات"
+    "save": "حفظ التغييرات",
+    "delete": "حذف"
   },
   "status": {
     "active": "نشط",
-    "archived": "مؤرشف"
+    "archived": "محذوف"
   },
   "upload": {
     "stage": {
@@ -70,5 +59,129 @@
     "percent": "{{percent}}٪",
     "retry": "إعادة المحاولة",
     "dismiss": "إغلاق"
+  },
+  "delete": {
+    "action": "حذف",
+    "actionFor": "حذف {{fileName}}",
+    "cancel": "إلغاء",
+    "deleting": "جارٍ الحذف…",
+    "confirmOne": {
+      "title": "حذف «{{fileName}}»؟",
+      "description": "سيُزال من المكتبة الآن، وسيُتلف الملف نهائيًا بعد 30 يومًا. لا يمكن حذف وسائط لا تزال مستخدَمة في درس أو دورة أو صفحة أو شعار حتى تستبدلها أو تزيلها من هناك.",
+      "confirmLabel": "حذف"
+    },
+    "confirmMany": {
+      "title_zero": "حذف عناصر الوسائط؟",
+      "title_one": "حذف عنصر وسائط واحد؟",
+      "title_two": "حذف عنصرَي وسائط؟",
+      "title_few": "حذف {{count}} عناصر وسائط؟",
+      "title_many": "حذف {{count}} عنصرًا من الوسائط؟",
+      "title_other": "حذف {{count}} عنصر وسائط؟",
+      "description": "ستُزال من المكتبة الآن، وستُتلف ملفاتها نهائيًا بعد 30 يومًا. أي عنصر لا يزال مستخدَمًا في درس أو دورة أو صفحة أو شعار لن يُحذف، وسترى أيّها حتى تستبدله أو تزيله من هناك أولًا.",
+      "confirmLabel": "حذف"
+    },
+    "successOne": "تم حذف «{{fileName}}». سيُزال ملفه نهائيًا بعد 30 يومًا.",
+    "inUse": "لا يمكن حذف «{{fileName}}» لأنه مستخدَم في {{usages}}. استبدله أو أزِله من هناك أولًا، ثم حاول مرة أخرى.",
+    "submissionNote": "الملفات المرفقة بتسليمات المتعلّمين جزء من سجلاتهم.",
+    "forbidden": "يمكن لمالك الأكاديمية أو مديرها فقط حذف الوسائط.",
+    "notFound": "«{{fileName}}» لم يعد موجودًا. ربما حُذف بالفعل.",
+    "failed": "تعذّر حذف الملف. حاول مرة أخرى.",
+    "pickerCurrentDeleted": "تم حذف «{{fileName}}» من المكتبة لكنه لا يزال محدَّدًا في النموذج الذي تحرّره. اختر ملفًا آخر قبل الحفظ.",
+    "summary": {
+      "deleted_zero": "لم يُحذف أي عنصر",
+      "deleted_one": "تم حذف عنصر واحد",
+      "deleted_two": "تم حذف عنصرين",
+      "deleted_few": "تم حذف {{count}} عناصر",
+      "deleted_many": "تم حذف {{count}} عنصرًا",
+      "deleted_other": "تم حذف {{count}} عنصر",
+      "refused_zero": "لم يُرفض أي عنصر",
+      "refused_one": "تعذّر حذف عنصر واحد",
+      "refused_two": "تعذّر حذف عنصرين",
+      "refused_few": "تعذّر حذف {{count}} عناصر",
+      "refused_many": "تعذّر حذف {{count}} عنصرًا",
+      "refused_other": "تعذّر حذف {{count}} عنصر",
+      "headline": "{{deleted}}، {{refused}}:",
+      "refusedInUse": "«{{fileName}}» مستخدَم في {{usages}}. استبدله أو أزِله من هناك أولًا.",
+      "refusedNotFound": "لم يُعثر على «{{fileName}}». ربما حُذف بالفعل.",
+      "graceNote": "تُزال الملفات المحذوفة نهائيًا بعد 30 يومًا.",
+      "dismiss": "إغلاق"
+    },
+    "selection": {
+      "select": "تحديد",
+      "selectItem": "تحديد {{fileName}}",
+      "selectedCount_zero": "لم يُحدَّد أي عنصر",
+      "selectedCount_one": "عنصر واحد محدَّد",
+      "selectedCount_two": "عنصران محدَّدان",
+      "selectedCount_few": "{{count}} عناصر محدَّدة",
+      "selectedCount_many": "{{count}} عنصرًا محدَّدًا",
+      "selectedCount_other": "{{count}} عنصر محدَّد",
+      "selectAll": "تحديد الكل في هذه الصفحة",
+      "clear": "مسح التحديد",
+      "deleteSelected": "حذف المحدَّد",
+      "done": "تم"
+    },
+    "usage": {
+      "lessonVideo_zero": "أي فيديو درس",
+      "lessonVideo_one": "فيديو درس",
+      "lessonVideo_two": "فيديوهين لدرسين",
+      "lessonVideo_few": "{{count}} فيديوهات دروس",
+      "lessonVideo_many": "{{count}} فيديو دروس",
+      "lessonVideo_other": "{{count}} فيديو دروس",
+      "lessonContent_zero": "محتوى أي درس",
+      "lessonContent_one": "محتوى درس",
+      "lessonContent_two": "محتوى درسين",
+      "lessonContent_few": "محتوى {{count}} دروس",
+      "lessonContent_many": "محتوى {{count}} درسًا",
+      "lessonContent_other": "محتوى {{count}} درس",
+      "lessonResource_zero": "أي مورد درس",
+      "lessonResource_one": "مورد درس",
+      "lessonResource_two": "موردين للدروس",
+      "lessonResource_few": "{{count}} موارد للدروس",
+      "lessonResource_many": "{{count}} موردًا للدروس",
+      "lessonResource_other": "{{count}} مورد للدروس",
+      "courseIntroVideo_zero": "أي فيديو تعريفي لدورة",
+      "courseIntroVideo_one": "فيديو تعريفي لدورة",
+      "courseIntroVideo_two": "فيديوهين تعريفيين لدورتين",
+      "courseIntroVideo_few": "{{count}} فيديوهات تعريفية لدورات",
+      "courseIntroVideo_many": "{{count}} فيديو تعريفيًا لدورات",
+      "courseIntroVideo_other": "{{count}} فيديو تعريفي لدورات",
+      "submissionAttachment_zero": "أي تسليم لمتعلّم",
+      "submissionAttachment_one": "تسليم متعلّم",
+      "submissionAttachment_two": "تسليمين لمتعلّمين",
+      "submissionAttachment_few": "{{count}} تسليمات لمتعلّمين",
+      "submissionAttachment_many": "{{count}} تسليمًا لمتعلّمين",
+      "submissionAttachment_other": "{{count}} تسليم لمتعلّمين",
+      "liveSessionRecording_zero": "أي تسجيل لجلسة مباشرة",
+      "liveSessionRecording_one": "تسجيل جلسة مباشرة",
+      "liveSessionRecording_two": "تسجيلين لجلستين مباشرتين",
+      "liveSessionRecording_few": "{{count}} تسجيلات لجلسات مباشرة",
+      "liveSessionRecording_many": "{{count}} تسجيلًا لجلسات مباشرة",
+      "liveSessionRecording_other": "{{count}} تسجيل لجلسات مباشرة",
+      "academyLogo_zero": "أي شعار للأكاديمية",
+      "academyLogo_one": "شعار الأكاديمية",
+      "academyLogo_two": "شعارين للأكاديمية",
+      "academyLogo_few": "{{count}} شعارات للأكاديمية",
+      "academyLogo_many": "{{count}} شعارًا للأكاديمية",
+      "academyLogo_other": "{{count}} شعار للأكاديمية",
+      "courseThumbnail_zero": "أي صورة مصغّرة لدورة",
+      "courseThumbnail_one": "صورة مصغّرة لدورة",
+      "courseThumbnail_two": "صورتين مصغّرتين لدورتين",
+      "courseThumbnail_few": "{{count}} صور مصغّرة لدورات",
+      "courseThumbnail_many": "{{count}} صورة مصغّرة لدورات",
+      "courseThumbnail_other": "{{count}} صورة مصغّرة لدورات",
+      "certificateTemplateLogo_zero": "أي قالب شهادة",
+      "certificateTemplateLogo_one": "قالب شهادة",
+      "certificateTemplateLogo_two": "قالبين للشهادات",
+      "certificateTemplateLogo_few": "{{count}} قوالب شهادات",
+      "certificateTemplateLogo_many": "{{count}} قالبًا للشهادات",
+      "certificateTemplateLogo_other": "{{count}} قالب للشهادات",
+      "websiteContent_zero": "أي صفحة في الموقع",
+      "websiteContent_one": "صفحة في الموقع",
+      "websiteContent_two": "صفحتين في الموقع",
+      "websiteContent_few": "{{count}} صفحات في الموقع",
+      "websiteContent_many": "{{count}} صفحة في الموقع",
+      "websiteContent_other": "{{count}} صفحة في الموقع",
+      "unknown": "محتوى آخر في هذه الأكاديمية"
+    }
   }
 }
