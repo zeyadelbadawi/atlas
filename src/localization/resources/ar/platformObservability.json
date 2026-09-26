@@ -1,0 +1,509 @@
+{
+  "states": {
+    "loading": "جارٍ تحميل بيانات المراقبة…"
+  },
+  "freshness": {
+    "lastUpdated": "آخر تحديث {{time}}",
+    "stale": "قد تكون البيانات قديمة — لم يتم تحديث ناجح منذ أكثر من دورتي تحديث",
+    "refreshFailed": "فشل التحديث — تُعرض آخر بيانات تم استلامها",
+    "refresh": "التحديث الآن",
+    "refreshShort": "تحديث",
+    "refreshing": "جارٍ التحديث…"
+  },
+  "range": {
+    "label": "النطاق الزمني",
+    "options": {
+      "1h": "آخر ساعة",
+      "6h": "آخر 6 ساعات",
+      "24h": "آخر 24 ساعة",
+      "7d": "آخر 7 أيام",
+      "30d": "آخر 30 يومًا"
+    }
+  },
+  "sources": {
+    "names": {
+      "prometheus": "Prometheus",
+      "alertmanager": "Alertmanager",
+      "metrics": "سجل المقاييس"
+    },
+    "title": {
+      "unavailable": "{{source}} غير متاح",
+      "not_configured": "{{source}} غير مُهيّأ"
+    },
+    "body": {
+      "unavailable": "تعذّر الوصول إلى {{source}}، لذلك لا تُعرض الأرقام التي تعتمد عليه.",
+      "not_configured": "{{source}} غير مُعدّ في هذه البيئة، لذلك الأرقام التي تعتمد عليه غير متاحة."
+    }
+  },
+  "badges": {
+    "component": {
+      "healthy": "سليم",
+      "degraded": "متراجع",
+      "down": "متوقف",
+      "unknown": "غير معروف",
+      "not_configured": "غير مُهيّأ"
+    },
+    "severity": {
+      "critical": "حرج",
+      "warning": "تحذير",
+      "info": "معلومة",
+      "unknown": "خطورة غير معروفة"
+    },
+    "alertStatus": {
+      "firing": "نشط",
+      "pending": "قيد الانتظار",
+      "silenced": "مكتوم",
+      "resolved": "تمت معالجته"
+    },
+    "ruleState": {
+      "firing": "نشط",
+      "pending": "قيد الانتظار",
+      "inactive": "غير نشط"
+    },
+    "ruleHealth": {
+      "ok": "يُقيَّم بشكل طبيعي",
+      "err": "خطأ في التقييم",
+      "unknown": "حالة التقييم غير معروفة"
+    },
+    "overall": {
+      "operational": "يعمل",
+      "degraded": "متراجع",
+      "outage": "انقطاع"
+    },
+    "source": {
+      "ok": "متصل",
+      "unavailable": "غير متاح",
+      "not_configured": "غير مُهيّأ"
+    },
+    "channel": {
+      "connected": "متصل",
+      "not_connected": "غير متصل"
+    }
+  },
+  "values": {
+    "notReported": "غير مُبلَّغ عنه",
+    "none": "—",
+    "yes": "نعم",
+    "no": "لا"
+  },
+  "units": {
+    "ms": "{{value}} ملّي ث",
+    "secondsShort": "{{value}} ث",
+    "perSecond": "{{value}}/ث"
+  },
+  "duration": {
+    "seconds_zero": "0 ث",
+    "seconds_one": "ثانية واحدة",
+    "seconds_two": "ثانيتان",
+    "seconds_few": "{{count}} ثوانٍ",
+    "seconds_many": "{{count}} ثانية",
+    "seconds_other": "{{count}} ث",
+    "minutes_zero": "0 د",
+    "minutes_one": "دقيقة واحدة",
+    "minutes_two": "دقيقتان",
+    "minutes_few": "{{count}} دقائق",
+    "minutes_many": "{{count}} دقيقة",
+    "minutes_other": "{{count}} د",
+    "hours_zero": "0 س",
+    "hours_one": "ساعة واحدة",
+    "hours_two": "ساعتان",
+    "hours_few": "{{count}} ساعات",
+    "hours_many": "{{count}} ساعة",
+    "hours_other": "{{count}} س",
+    "days_zero": "0 ي",
+    "days_one": "يوم واحد",
+    "days_two": "يومان",
+    "days_few": "{{count}} أيام",
+    "days_many": "{{count}} يومًا",
+    "days_other": "{{count}} يوم"
+  },
+  "components": {
+    "api": "واجهة البرمجة (API)",
+    "database": "قاعدة البيانات",
+    "redis": "Redis",
+    "queues": "طوابير المهام",
+    "email": "تسليم البريد الإلكتروني",
+    "video": "الفيديو",
+    "storage": "تخزين الكائنات",
+    "prometheus": "Prometheus",
+    "alertmanager": "Alertmanager"
+  },
+  "details": {
+    "uptimeSeconds": "مدة التشغيل",
+    "requestRate": "معدل الطلبات",
+    "errorRate5xx": "معدل أخطاء الخادم (5xx)",
+    "latencyP95Ms": "زمن الاستجابة p95",
+    "probeLatencyMs": "زمن استجابة الفحص",
+    "usedMemoryBytes": "الذاكرة المستخدمة",
+    "connectedClients": "العملاء المتصلون",
+    "waiting": "مهام في الانتظار",
+    "active": "مهام قيد التنفيذ",
+    "failed": "مهام فاشلة",
+    "delayed": "مهام مؤجلة",
+    "oldestWaitingSeconds": "أقدم مهمة في الانتظار",
+    "outboxOldestPendingSeconds": "أقدم بريد معلّق",
+    "deliveryFailureRatio": "معدل فشل التسليم",
+    "stalledProcessing": "متوقفة أثناء المعالجة",
+    "providerStreamConfigured": "مزوّد البث مُهيّأ",
+    "providerNormalConfigured": "المزوّد القياسي مُهيّأ",
+    "publicBucketReachable": "الحاوية العامة قابلة للوصول",
+    "protectedBucketReachable": "الحاوية المحمية قابلة للوصول",
+    "activeAlerts": "التنبيهات النشطة"
+  },
+  "reasons": {
+    "probeFailed": "فشل فحص السلامة.",
+    "backlog": "هناك تراكم في الأعمال المعلّقة.",
+    "stalled": "العمل متوقف ولا يتقدّم.",
+    "highErrorRate": "معدل الأخطاء أعلى من الحد المسموح.",
+    "highLatency": "زمن الاستجابة أعلى من الحد المسموح.",
+    "notConfigured": "هذا المكوّن غير مُهيّأ في هذه البيئة.",
+    "sourceUnavailable": "تعذّر الوصول إلى مصدر هذا الفحص.",
+    "failedJobs": "هناك مهام تفشل.",
+    "deliveryFailures": "هناك عمليات تسليم تفشل."
+  },
+  "health": {
+    "title": "صحة النظام",
+    "subtitle": "فحوص حيّة لكل مكوّن يعتمد عليه أطلس، والتنبيهات النشطة الآن.",
+    "overall": {
+      "operational": "جميع الأنظمة تعمل",
+      "degraded": "أداء متراجع",
+      "outage": "انقطاع في الخدمة"
+    },
+    "overallDescription": {
+      "operational": "استجاب كل مكوّن تم فحصه ضمن حدوده.",
+      "degraded": "مكوّن واحد على الأقل متراجع أو تعذّر التحقق منه. راجع المكوّنات أدناه.",
+      "outage": "مكوّن واحد على الأقل متوقف. راجع المكوّنات أدناه ومركز التنبيهات."
+    },
+    "lastChecked": "آخر فحص {{time}}",
+    "checkedAt": "تم الفحص {{time}}",
+    "activeAlerts": {
+      "title": "التنبيهات النشطة",
+      "viewAll_zero": "لا توجد تنبيهات نشطة",
+      "viewAll_one": "عرض التنبيه النشط",
+      "viewAll_two": "عرض التنبيهين النشطين",
+      "viewAll_few": "عرض {{count}} تنبيهات نشطة",
+      "viewAll_many": "عرض {{count}} تنبيهًا نشطًا",
+      "viewAll_other": "عرض {{count}} تنبيه نشط",
+      "tileLabel_zero": "لا توجد تنبيهات نشطة بخطورة {{severity}} — عرض في التنبيهات",
+      "tileLabel_one": "تنبيه نشط واحد بخطورة {{severity}} — عرض في التنبيهات",
+      "tileLabel_two": "تنبيهان نشطان بخطورة {{severity}} — عرض في التنبيهات",
+      "tileLabel_few": "{{count}} تنبيهات نشطة بخطورة {{severity}} — عرض في التنبيهات",
+      "tileLabel_many": "{{count}} تنبيهًا نشطًا بخطورة {{severity}} — عرض في التنبيهات",
+      "tileLabel_other": "{{count}} تنبيه نشط بخطورة {{severity}} — عرض في التنبيهات"
+    },
+    "alertCountsImpact": "لا يمكن عرض أعداد التنبيهات النشطة حتى يستجيب.",
+    "componentsTitle": "المكوّنات",
+    "probeLatency": "زمن استجابة الفحص",
+    "unverified": {
+      "unknown": "الحالة غير معروفة — تعذّر إكمال الفحص، لذلك لم يتم التحقق من هذا المكوّن.",
+      "not_configured": "غير مُهيّأ في هذه البيئة، لذلك لا يوجد ما يمكن فحصه."
+    },
+    "noComponents": {
+      "title": "لم يتم الإبلاغ عن أي مكوّنات",
+      "description": "استجابت نقطة فحص السلامة دون أي فحوص للمكوّنات."
+    }
+  },
+  "alerts": {
+    "title": "التنبيهات",
+    "subtitle": "كل تنبيه أطلقه Prometheus في الفترة المحددة، من Alertmanager وسجل Prometheus.",
+    "filters": {
+      "label": "تصفية التنبيهات",
+      "status": "الحالة",
+      "statusOptions": {
+        "all": "الكل",
+        "active": "النشطة",
+        "resolved": "المعالَجة"
+      },
+      "severity": "الخطورة",
+      "anySeverity": "أي خطورة",
+      "rule": "القاعدة",
+      "rulePlaceholder": "اسم القاعدة",
+      "clear": "مسح عوامل التصفية"
+    },
+    "columns": {
+      "rule": "القاعدة",
+      "severity": "الخطورة",
+      "status": "الحالة",
+      "service": "الخدمة",
+      "started": "البداية",
+      "duration": "المدة",
+      "tenants": "المستأجرون المتأثرون"
+    },
+    "tableCaption": "التنبيهات في الفترة المحددة",
+    "historyFrom": "السجل متاح منذ {{time}}",
+    "count_zero": "لا توجد تنبيهات",
+    "count_one": "تنبيه واحد",
+    "count_two": "تنبيهان",
+    "count_few": "{{count}} تنبيهات",
+    "count_many": "{{count}} تنبيهًا",
+    "count_other": "{{count}} تنبيه",
+    "ongoing": "مستمر · {{duration}}",
+    "noTenants": "لم يُذكر أي مستأجر",
+    "tenantCount_zero": "لا يوجد مستأجرون",
+    "tenantCount_one": "مستأجر واحد",
+    "tenantCount_two": "مستأجران",
+    "tenantCount_few": "{{formatted}} مستأجرين",
+    "tenantCount_many": "{{formatted}} مستأجرًا",
+    "tenantCount_other": "{{formatted}} مستأجر",
+    "empty": {
+      "title": "لا توجد تنبيهات في هذه الفترة",
+      "description": "لم يُطلق أي تنبيه مطابق لعوامل التصفية هذه في النطاق الزمني المحدد."
+    },
+    "unavailable": {
+      "title": "سجل التنبيهات غير متاح",
+      "description": "لم يستجب Alertmanager ولا Prometheus، لذلك لا يُعرف ما إذا كانت هناك تنبيهات قد أُطلقت. وهذا ليس مثل «لا توجد تنبيهات»."
+    },
+    "impact": {
+      "alertmanager": "قد تكون التنبيهات النشطة حاليًا غير ظاهرة في هذه القائمة.",
+      "prometheus": "قد يكون سجل التنبيهات المعالَجة غير ظاهر في هذه القائمة."
+    }
+  },
+  "rule": {
+    "title": "قاعدة التنبيه",
+    "subtitle": "تعريف قاعدة التنبيه هذه وحالتها الحالية وسجلها.",
+    "breadcrumb": "القاعدة",
+    "managedInCode": "تُدار في الشيفرة",
+    "sections": {
+      "overview": "القاعدة",
+      "currentValues": "القيمة الحالية",
+      "chart": "التعبير عبر الزمن",
+      "instances": "الحالات النشطة",
+      "tenants": "المستأجرون المتأثرون",
+      "timeline": "الخط الزمني"
+    },
+    "fields": {
+      "threshold": "الحد",
+      "forDuration": "يُطلق بعد",
+      "group": "المجموعة",
+      "service": "الخدمة",
+      "lastEvaluation": "آخر تقييم",
+      "lastTriggered": "آخر إطلاق",
+      "lastResolved": "آخر معالجة",
+      "expression": "التعبير"
+    },
+    "noThreshold": "لا يوجد تعليق توضيحي للحد في هذه القاعدة",
+    "immediately": "فورًا",
+    "lastError": "خطأ آخر تقييم: {{error}}",
+    "copyExpression": "نسخ التعبير",
+    "copied": "تم نسخ التعبير",
+    "noCurrentValues": "لا يُرجع التعبير حاليًا أي سلسلة — الشرط غير متحقق.",
+    "prometheusRequired": "غير متاح — يجب أن يستجيب Prometheus لعرض هذا.",
+    "noLabels": "(بلا تسميات)",
+    "chartTitle": "تعبير {{rule}}",
+    "noInstances": "لا توجد حالة نشطة لهذه القاعدة.",
+    "startedAt": "بدأ {{time}}",
+    "noTenants": "لم تذكر تسميات هذا التنبيه أي مستأجر.",
+    "unnamedTenant": "مستأجر بلا اسم",
+    "timeline": {
+      "empty": "لا توجد أحداث في الفترة المحددة.",
+      "kinds": {
+        "triggered": "أُطلق",
+        "resolved": "تمت معالجته",
+        "pending": "قيد الانتظار"
+      }
+    },
+    "impact": {
+      "prometheus": "لا يمكن عرض القيمة الحالية والمخطط والسجل.",
+      "alertmanager": "قد تكون بعض الحالات النشطة غير ظاهرة."
+    },
+    "notFound": {
+      "title": "قاعدة التنبيه غير موجودة",
+      "description": "لا توجد قاعدة تنبيه باسم «{{rule}}». ربما أُعيدت تسميتها أو أُزيلت من إعدادات المراقبة."
+    },
+    "backToAlerts": "العودة إلى التنبيهات"
+  },
+  "metrics": {
+    "title": "المقاييس",
+    "subtitle": "المقاييس التشغيلية عبر أطلس، مجمّعة حسب المجال. يُحمَّل كل مخطط عند ظهوره.",
+    "latest": "الأحدث",
+    "impact": "لا يمكن تحميل سلاسل المقاييس حتى يستجيب.",
+    "unavailable": {
+      "title": "غير متاح",
+      "body": "لم تتم إضافة القياس بعد أو لم تُجمع بياناته بعد."
+    },
+    "empty": {
+      "title": "لا توجد مقاييس في الفهرس",
+      "description": "فهرس المقاييس فارغ."
+    },
+    "units": {
+      "perSecond": "في الثانية",
+      "percent": "نسبة مئوية",
+      "seconds": "ثوانٍ",
+      "ms": "ملّي ثانية",
+      "bytes": "بايت",
+      "count": "عدد"
+    },
+    "domains": {
+      "api": "واجهة البرمجة (API)",
+      "database": "قاعدة البيانات",
+      "redis": "Redis",
+      "jobs": "المهام الخلفية",
+      "video": "الفيديو",
+      "email": "البريد الإلكتروني",
+      "learning": "التعلّم",
+      "commerce": "التجارة",
+      "catalog": "الفهرس",
+      "retention": "الاحتفاظ بالبيانات",
+      "process": "عملية الخادم",
+      "alerting": "التنبيهات"
+    },
+    "names": {
+      "api": {
+        "requestRate": "معدل الطلبات",
+        "errorRate5xx": "معدل أخطاء الخادم (5xx)",
+        "errorRate4xx": "معدل أخطاء العميل (4xx)",
+        "latencyP50": "زمن الاستجابة p50",
+        "latencyP95": "زمن الاستجابة p95",
+        "latencyP99": "زمن الاستجابة p99"
+      },
+      "database": {
+        "probeLatency": "زمن استجابة الفحص",
+        "up": "قاعدة البيانات تعمل"
+      },
+      "redis": {
+        "probeLatency": "زمن استجابة الفحص",
+        "usedMemory": "الذاكرة المستخدمة",
+        "connectedClients": "العملاء المتصلون"
+      },
+      "jobs": {
+        "waiting": "مهام في الانتظار",
+        "active": "مهام قيد التنفيذ",
+        "failed": "مهام فاشلة",
+        "delayed": "مهام مؤجلة"
+      },
+      "video": {
+        "uploadCompletions": "اكتمال عمليات الرفع",
+        "tokenMintP95": "إصدار رموز التشغيل p95",
+        "webhookSignatureFailures": "إخفاقات توقيع Webhook",
+        "grantsIssued": "أذونات التشغيل الصادرة"
+      },
+      "email": {
+        "outboxOldestPending": "أقدم بريد معلّق",
+        "outboxByState": "صندوق الصادر حسب الحالة",
+        "deadLetters": "الرسائل المهملة",
+        "dispatchLatencyP95": "زمن الإرسال p95",
+        "retries": "إعادات المحاولة"
+      },
+      "learning": {
+        "quizStarted": "الاختبارات التي بدأت",
+        "quizSubmitted": "الاختبارات المُسلَّمة",
+        "integrityEvents": "أحداث النزاهة",
+        "certificatesIssued": "الشهادات الصادرة"
+      },
+      "commerce": {
+        "ordersByState": "الطلبات حسب الحالة",
+        "approvalLatencyP95": "زمن الموافقة p95"
+      },
+      "catalog": {
+        "queryP95": "زمن استعلام الفهرس p95"
+      },
+      "retention": {
+        "sweepRuns": "دورات التنظيف",
+        "prunedRows": "الصفوف المحذوفة"
+      },
+      "process": {
+        "eventLoopLag": "تأخر حلقة الأحداث",
+        "residentMemory": "الذاكرة المقيمة",
+        "cpu": "استخدام المعالج"
+      },
+      "alerting": {
+        "notificationsSent": "الإشعارات المُرسلة",
+        "notificationsFailed": "الإشعارات الفاشلة"
+      }
+    }
+  },
+  "chart": {
+    "legend": "السلاسل",
+    "showTable": "العرض كجدول",
+    "showChart": "العرض كمخطط",
+    "time": "الوقت",
+    "noData": "لا توجد نقاط بيانات في هذه الفترة.",
+    "seriesFallback": "السلسلة {{index}}",
+    "ariaLabel_zero": "{{title}}: مخطط خطي بلا سلاسل.",
+    "ariaLabel_one": "{{title}}: مخطط خطي لسلسلة واحدة. استخدم «العرض كجدول» لرؤية القيم.",
+    "ariaLabel_two": "{{title}}: مخطط خطي لسلسلتين. استخدم «العرض كجدول» لرؤية القيم.",
+    "ariaLabel_few": "{{title}}: مخطط خطي لـ{{count}} سلاسل. استخدم «العرض كجدول» لرؤية القيم.",
+    "ariaLabel_many": "{{title}}: مخطط خطي لـ{{count}} سلسلة. استخدم «العرض كجدول» لرؤية القيم.",
+    "ariaLabel_other": "{{title}}: مخطط خطي لـ{{count}} سلسلة. استخدم «العرض كجدول» لرؤية القيم.",
+    "moreSeries_zero": "لا توجد سلاسل إضافية.",
+    "moreSeries_one": "سلسلة إضافية واحدة مُدرجة في عرض الجدول.",
+    "moreSeries_two": "سلسلتان إضافيتان مُدرجتان في عرض الجدول.",
+    "moreSeries_few": "{{count}} سلاسل إضافية مُدرجة في عرض الجدول.",
+    "moreSeries_many": "{{count}} سلسلة إضافية مُدرجة في عرض الجدول.",
+    "moreSeries_other": "{{count}} سلسلة إضافية مُدرجة في عرض الجدول."
+  },
+  "configuration": {
+    "title": "المراقبة والتنبيهات",
+    "subtitle": "كيف تتم مراقبة أطلس وإلى أين تُرسل التنبيهات. القواعد خاضعة لإدارة الإصدارات وللقراءة فقط هنا.",
+    "scrape": {
+      "title": "مصادقة جمع المقاييس",
+      "description": "كيف يُسمح لـ Prometheus بقراءة نقطة مقاييس أطلس.",
+      "modes": {
+        "token": {
+          "label": "رمز Bearer",
+          "description": "يصادق Prometheus باستخدام رمز جمع. لا يُعرض الرمز نفسه هنا أبدًا."
+        },
+        "platform_owner_only": {
+          "label": "جلسة مالك المنصة فقط",
+          "description": "لم يُهيّأ رمز جمع، لذلك لا يمكن قراءة نقطة المقاييس إلا من قِبل مالك منصة مسجّل الدخول."
+        }
+      }
+    },
+    "channels": {
+      "title": "قنوات الإشعارات",
+      "description": "الجهات التي يرسل إليها Alertmanager التنبيهات. الأعداد من عدّادات Alertmanager نفسه لآخر 24 ساعة.",
+      "kinds": {
+        "slack": "Slack"
+      },
+      "sent24h": "المُرسلة (24 ساعة)",
+      "failed24h": "الفاشلة (24 ساعة)",
+      "none": "لم يتم الإبلاغ عن أي قنوات إشعارات.",
+      "notConnectedBody": "لا يملك Alertmanager مستقبِلًا لـ Slack، لذلك لا تُرسل التنبيهات إلى Slack.",
+      "impact": "لا يمكن عرض حالة الاتصال وأعداد التسليم."
+    },
+    "rules": {
+      "title": "قواعد التنبيه",
+      "description": "القواعد التي يقيّمها Prometheus. وهي معرّفة في إعدادات خاضعة لإدارة الإصدارات ولا يمكن تعديلها هنا.",
+      "columns": {
+        "name": "القاعدة",
+        "group": "المجموعة",
+        "severity": "الخطورة",
+        "state": "الحالة",
+        "for": "يُطلق بعد",
+        "threshold": "الحد"
+      },
+      "empty": "لا توجد قواعد تنبيه محمّلة."
+    },
+    "synthetic": {
+      "title": "تنبيه اختباري اصطناعي",
+      "description": "يتحقق من مسار التنبيه بالكامل: يُطلق تنبيه اختباري حقيقي عبر Prometheus ← Alertmanager ← Slack ويُعالَج تلقائيًا عند انتهاء المدة.",
+      "notArmed": "غير مُفعّل. لا يوجد تنبيه اختباري نشط.",
+      "armedTitle": "مُفعّل — تنبيه اختباري نشط الآن",
+      "expires": "يُعالَج تلقائيًا في {{time}} ({{relative}}).",
+      "armedAt": "فُعِّل في {{time}}.",
+      "armedAtBy": "فُعِّل في {{time}} بواسطة {{user}}.",
+      "minutesLabel": "المدة (بالدقائق)",
+      "minutesHint": "بين {{min}} و{{max}} دقيقة.",
+      "minutesInvalid": "أدخل عددًا صحيحًا من الدقائق من {{min}} إلى {{max}}.",
+      "arm": "إطلاق تنبيه اختباري",
+      "resolveNow": "المعالجة الآن",
+      "armed": "تم تفعيل التنبيه الاختباري",
+      "resolved": "تمت معالجة التنبيه الاختباري",
+      "confirmArm": {
+        "title": "إطلاق تنبيه اختباري حقيقي؟",
+        "description_zero": "سيُطلق هذا تنبيهًا حقيقيًا عبر Prometheus ← Alertmanager ← Slack، وسيُبلَّغ كل المشتركين في قناة التنبيهات.",
+        "description_one": "سيُطلق هذا تنبيهًا حقيقيًا عبر Prometheus ← Alertmanager ← Slack، وسيُبلَّغ كل المشتركين في قناة التنبيهات. يُعالَج تلقائيًا بعد دقيقة واحدة.",
+        "description_two": "سيُطلق هذا تنبيهًا حقيقيًا عبر Prometheus ← Alertmanager ← Slack، وسيُبلَّغ كل المشتركين في قناة التنبيهات. يُعالَج تلقائيًا بعد دقيقتين.",
+        "description_few": "سيُطلق هذا تنبيهًا حقيقيًا عبر Prometheus ← Alertmanager ← Slack، وسيُبلَّغ كل المشتركين في قناة التنبيهات. يُعالَج تلقائيًا بعد {{count}} دقائق.",
+        "description_many": "سيُطلق هذا تنبيهًا حقيقيًا عبر Prometheus ← Alertmanager ← Slack، وسيُبلَّغ كل المشتركين في قناة التنبيهات. يُعالَج تلقائيًا بعد {{count}} دقيقة.",
+        "description_other": "سيُطلق هذا تنبيهًا حقيقيًا عبر Prometheus ← Alertmanager ← Slack، وسيُبلَّغ كل المشتركين في قناة التنبيهات. يُعالَج تلقائيًا بعد {{count}} دقيقة.",
+        "action": "إطلاق تنبيه اختباري"
+      },
+      "confirmResolve": {
+        "title": "معالجة التنبيه الاختباري الآن؟",
+        "description": "سيتوقف التنبيه الاختباري الآن، ويُرسل إشعار بالمعالجة عبر Alertmanager إلى Slack.",
+        "action": "المعالجة الآن"
+      }
+    }
+  }
+}
