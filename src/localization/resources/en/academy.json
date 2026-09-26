@@ -725,7 +725,7 @@
       "noReference": "No reference",
       "empty": {
         "title": "No payouts yet",
-        "description": "Payouts appear here once Atlas settles your course sales collected through Atlas Payments. Sales collected through your own payment gateway are paid to you directly and are not listed here."
+        "description": "Payouts appear here once Atlas settles your course sales. Course payments are currently collected by bank transfer through Atlas; online payment gateways aren't available yet."
       },
       "error": {
         "title": "We couldn't load payouts",

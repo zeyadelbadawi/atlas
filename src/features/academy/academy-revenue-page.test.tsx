@@ -184,7 +184,7 @@ describe('AcademyRevenuePage', () => {
     expect(screen.getByText('No payouts yet')).toBeTruthy();
     expect(
       screen.getByText(
-        /once Atlas settles your course sales collected through Atlas Payments/
+        /online payment gateways aren't available yet/
       )
     ).toBeTruthy();
     expect(

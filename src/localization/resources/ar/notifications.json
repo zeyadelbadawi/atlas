@@ -99,8 +99,8 @@
       "message": "تعذر إتمام دفعتك لـ \"{{courseTitle}}\"."
     },
     "courseOrderRefunded": {
-      "title": "تمت معالجة الاسترداد",
-      "message": "تم استرداد قيمة شرائك لـ \"{{courseTitle}}\"."
+      "title": "تم تسجيل الاسترداد",
+      "message": "تم تسجيل استرداد قيمة \"{{courseTitle}}\". يُعاد المبلغ بشكل منفصل عبر تحويل بنكي."
     },
     "platformPaymentApproved": {
       "title": "تمت الموافقة على الدفعة",

@@ -95,8 +95,8 @@
       "message": "Your payment for \"{{courseTitle}}\" could not be completed."
     },
     "courseOrderRefunded": {
-      "title": "Refund processed",
-      "message": "Your purchase of \"{{courseTitle}}\" has been refunded."
+      "title": "Refund recorded",
+      "message": "Your refund for \"{{courseTitle}}\" has been recorded. The amount is returned separately by bank transfer."
     },
     "platformPaymentApproved": {
       "title": "Payment approved",
@@ -208,19 +208,19 @@
     },
     "exceptionGranted": {
       "title": "Exception granted",
-      "message": "You have been given an exception on \u201c{{quizTitle}}\u201d. It is active now and applies to your next attempt."
+      "message": "You have been given an exception on “{{quizTitle}}”. It is active now and applies to your next attempt."
     },
     "exceptionScheduled": {
       "title": "Exception scheduled",
-      "message": "You have been given an exception on \u201c{{quizTitle}}\u201d. It becomes active on {{availableFromLabel}}; until then the quiz works as it normally does."
+      "message": "You have been given an exception on “{{quizTitle}}”. It becomes active on {{availableFromLabel}}; until then the quiz works as it normally does."
     },
     "exceptionActivated": {
       "title": "Exception now active",
-      "message": "Your exception on \u201c{{quizTitle}}\u201d has just become active and applies to your next attempt."
+      "message": "Your exception on “{{quizTitle}}” has just become active and applies to your next attempt."
     },
     "exceptionRevoked": {
       "title": "Exception removed",
-      "message": "Your exception on \u201c{{quizTitle}}\u201d has been removed. The usual time limit and number of attempts apply again."
+      "message": "Your exception on “{{quizTitle}}” has been removed. The usual time limit and number of attempts apply again."
     },
     "courseCompleted": {
       "title": "Course completed",
