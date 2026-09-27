@@ -29,6 +29,7 @@ import {
   waitFor,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useSyncExternalStore } from 'react';
 import type { ReactNode } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';
@@ -48,6 +49,7 @@ import type {
   RegistrationResult,
 } from '@types';
 import { PublicWebsiteSignUpPage } from './components/PublicWebsiteSignUpPage';
+import { PublicWebsiteGuestRoute } from './components/PublicWebsiteGuestRoute';
 
 // jsdom has no layout; the code input places its caret with this.
 if (typeof document.elementFromPoint !== 'function') {
@@ -66,13 +68,34 @@ if (!('ResizeObserver' in globalThis)) {
 
 const ACADEMY_ID = 'academy-b';
 
+/*
+  The session is REACTIVE, as in the app: the guest-route guard around the
+  page re-renders when sign-in completes. A static stub hid exactly the bug
+  where the guard redirected to /my before the page could say anything.
+*/
 const session = { status: 'unauthenticated' as string };
+const sessionListeners = new Set<() => void>();
+function setSessionStatus(status: string): void {
+  session.status = status;
+  sessionListeners.forEach((listener) => listener());
+}
 const signIn = vi.fn();
 const completeEmailOtp = vi.fn();
 
 vi.mock('@/shared/hooks', async (importOriginal) => ({
   ...(await importOriginal<typeof SharedHooks>()),
-  useAuth: () => ({ session: { status: session.status, user: null } }),
+  useAuth: () => ({
+    session: {
+      status: useSyncExternalStore(
+        (listener) => {
+          sessionListeners.add(listener);
+          return () => sessionListeners.delete(listener);
+        },
+        () => session.status
+      ),
+      user: null,
+    },
+  }),
   useSignOut: () => ({ signOut: vi.fn() }),
   useSignIn: () => ({
     signIn,
@@ -154,7 +177,7 @@ function invalidCredentials(): ApiError {
 }
 
 beforeEach(() => {
-  session.status = 'unauthenticated';
+  setSessionStatus('unauthenticated');
   register = vi.fn(async (): Promise<RegistrationResult> => {
     throw new ApiError({
       kind: 'conflict',
@@ -204,10 +227,12 @@ function renderPage(language: 'en' | 'ar' = 'en') {
                 <Route
                   path="/sign-up"
                   element={
-                    <PublicWebsiteSignUpPage
-                      lookupKey="nile"
-                      locale={language}
-                    />
+                    <PublicWebsiteGuestRoute locale={language}>
+                      <PublicWebsiteSignUpPage
+                        lookupKey="nile"
+                        locale={language}
+                      />
+                    </PublicWebsiteGuestRoute>
                   }
                 />
                 <Route path="/my" element={<p>learner dashboard</p>} />
@@ -316,7 +341,7 @@ describe('smart academy signup — existing account', () => {
 
   it('goes straight to /my when no emailed code is needed', async () => {
     signIn.mockImplementation(async () => {
-      session.status = 'authenticated';
+      setSessionStatus('authenticated');
       return undefined;
     });
     const user = userEvent.setup();
@@ -444,7 +469,7 @@ describe('smart academy signup — existing account', () => {
 
   it('after the full sign-in, names the academies the account already uses — then /my', async () => {
     signIn.mockImplementation(async () => {
-      session.status = 'authenticated';
+      setSessionStatus('authenticated');
       return undefined;
     });
     joinSummary.mockResolvedValue({ otherAcademies: ['Al-Nogoom Academy'] });

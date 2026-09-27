@@ -40,6 +40,7 @@ import { isEmailOtpChallenge } from '@types';
 import type { SignInChallenge } from '@types';
 import { authenticationService } from '@services/identity';
 import { usePublicWebsiteData } from '../hooks/usePublicWebsiteData';
+import { useHoldGuestRedirect } from './PublicWebsiteGuestRoute';
 import { PublicWebsiteStatus } from './PublicWebsiteStatus';
 import {
   usePublicWebsiteLinkRenderer,
@@ -106,6 +107,7 @@ export function PublicWebsiteSignUpPage({
     clearError,
   } = useSignIn();
   const navigate = useNavigate();
+  const holdGuestRedirect = useHoldGuestRedirect();
   const linkRenderer = usePublicWebsiteLinkRenderer(locale);
   const buildHref = usePublicWebsiteHrefBuilder(locale);
   const [searchParams] = useSearchParams();
@@ -170,6 +172,9 @@ export function PublicWebsiteSignUpPage({
     credentials: AcademyJoinCredentials,
     name?: string
   ) => {
+    // This page, not the guest-route guard, decides where a session it
+    // signs in goes next (the "you already use Atlas with …" step).
+    holdGuestRedirect(true);
     setStep({ kind: 'continuing', name });
     clearError();
     try {
