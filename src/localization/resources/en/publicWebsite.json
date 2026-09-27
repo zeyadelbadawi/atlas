@@ -28,7 +28,12 @@
       "joinedVerify": "{{academyName}} has been added to your Atlas account. Confirm it's you to continue.",
       "joinedPending": "Your request to join {{academyName}} has been sent. You'll be able to sign in once the academy approves it.",
       "hasAtlasAccount": "Already have an Atlas account?",
-      "joinWithAtlasAccount": "Join with it"
+      "joinWithAtlasAccount": "Join with it",
+      "welcomeTitle": "You're all set — {{academyName}} has been added to your Atlas account",
+      "welcomeOtherAcademies": "You already use this Atlas account with {{academies}}. You don't need a separate account: {{academyName}} is now part of the same one.",
+      "welcomeSeparate": "Your courses, progress and certificates in each academy stay separate.",
+      "goToLearning": "Go to my learning",
+      "listSeparator": ", "
     },
     "forgotPassword": {
       "title": "Reset your password",

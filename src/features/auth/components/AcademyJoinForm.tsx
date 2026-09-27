@@ -22,7 +22,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
-import { Eye, EyeOff, UserCheck } from 'lucide-react';
+import { Eye, EyeOff, Lock, UserCheck } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -61,6 +61,8 @@ export interface AcademyJoinCredentials {
 
 export interface AcademyJoinFormProps {
   readonly academyId: string;
+  /** This academy's name — public; the explanation names it. */
+  readonly academyName: string;
   readonly inviteToken?: string;
   readonly defaultEmail?: string;
   /**
@@ -74,6 +76,11 @@ export interface AcademyJoinFormProps {
     credentials: AcademyJoinCredentials
   ) => void;
   readonly onBack: () => void;
+  /**
+   * `existing_email` only: the email is shown locked (it is the one the
+   * sign-up was answered for); this unlocks it by returning to the form.
+   */
+  readonly onChangeEmail?: (email: string) => void;
   readonly forgotPasswordHref?: string;
   readonly renderLink?: (props: {
     readonly href: string;
@@ -96,11 +103,13 @@ function joinErrorKey(error: ApiError): string {
 
 export function AcademyJoinForm({
   academyId,
+  academyName,
   inviteToken,
   defaultEmail,
   reason,
   onJoined,
   onBack,
+  onChangeEmail,
   forgotPasswordHref,
   renderLink,
 }: AcademyJoinFormProps): JSX.Element {
@@ -109,9 +118,14 @@ export function AcademyJoinForm({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
 
+  // The email the sign-up was answered for stays locked — a different
+  // address is a different question, answered by the sign-up form again.
+  const emailLocked = reason === 'existing_email' && !!defaultEmail;
+
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<JoinFormData>({
     resolver: zodResolver(joinSchema),
@@ -163,11 +177,17 @@ export function AcademyJoinForm({
                 : 'auth:academyJoin.proactiveTitle'
             )}
           </p>
+          {reason === 'existing_email' ? (
+            <p className="text-muted-foreground">
+              {t('auth:academyJoin.existingWhy', { academyName })}
+            </p>
+          ) : null}
           <p className="text-muted-foreground">
             {t(
               reason === 'existing_email'
                 ? 'auth:academyJoin.existingDescription'
-                : 'auth:academyJoin.proactiveDescription'
+                : 'auth:academyJoin.proactiveDescription',
+              { academyName }
             )}
           </p>
           <p className="text-muted-foreground">
@@ -185,18 +205,51 @@ export function AcademyJoinForm({
       <div className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="academy-join-email">{t('auth:signIn.email')}</Label>
-          <Input
-            id="academy-join-email"
-            type="email"
-            dir="ltr"
-            autoComplete="email"
-            disabled={isLoading}
-            {...register('email')}
-            aria-invalid={!!errors.email}
-            aria-describedby={
-              errors.email ? 'academy-join-email-error' : undefined
-            }
-          />
+          {emailLocked ? (
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              {/* The address reads left-to-right in every locale, so its
+                  box (icon + padding) is LTR too — otherwise, on an RTL
+                  page, the icon and the padding land on opposite sides. */}
+              <div className="relative min-w-0 flex-1" dir="ltr">
+                <Lock
+                  className="pointer-events-none absolute inset-y-0 start-3 my-auto size-4 text-muted-foreground"
+                  aria-hidden
+                />
+                <Input
+                  id="academy-join-email"
+                  type="email"
+                  dir="ltr"
+                  readOnly
+                  aria-readonly="true"
+                  className="bg-muted ps-9"
+                  {...register('email')}
+                />
+              </div>
+              {onChangeEmail ? (
+                <button
+                  type="button"
+                  className="text-sm font-medium text-primary hover:underline"
+                  onClick={() => onChangeEmail(getValues('email'))}
+                  disabled={isLoading}
+                >
+                  {t('auth:academyJoin.changeEmail')}
+                </button>
+              ) : null}
+            </div>
+          ) : (
+            <Input
+              id="academy-join-email"
+              type="email"
+              dir="ltr"
+              autoComplete="email"
+              disabled={isLoading}
+              {...register('email')}
+              aria-invalid={!!errors.email}
+              aria-describedby={
+                errors.email ? 'academy-join-email-error' : undefined
+              }
+            />
+          )}
           {errors.email ? (
             <p
               id="academy-join-email-error"
@@ -254,13 +307,14 @@ export function AcademyJoinForm({
             </p>
           ) : null}
           {forgotPasswordHref && renderLink ? (
-            <div className="text-end text-sm">
+            <p className="text-sm text-muted-foreground">
+              {t('auth:academyJoin.forgotPassword')}{' '}
               {renderLink({
                 href: forgotPasswordHref,
                 className: 'font-medium text-primary hover:underline',
-                children: t('auth:signIn.forgotPassword'),
+                children: t('auth:academyJoin.resetPassword'),
               })}
-            </div>
+            </p>
           ) : null}
         </div>
       </div>
@@ -276,15 +330,17 @@ export function AcademyJoinForm({
             ? t('common:actions.loading')
             : t('auth:academyJoin.submit')}
         </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          className="w-full"
-          onClick={onBack}
-          disabled={isLoading}
-        >
-          {t('auth:academyJoin.back')}
-        </Button>
+        {emailLocked ? null : (
+          <Button
+            type="button"
+            variant="ghost"
+            className="w-full"
+            onClick={onBack}
+            disabled={isLoading}
+          >
+            {t('auth:academyJoin.back')}
+          </Button>
+        )}
       </div>
     </form>
   );

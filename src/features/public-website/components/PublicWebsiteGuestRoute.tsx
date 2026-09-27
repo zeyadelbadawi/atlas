@@ -27,13 +27,34 @@
  * An unauthenticated invitee opening an invitation Sign Up link is passed
  * straight through (only an authenticated session is redirected), so
  * invitation redemption and first-time account creation are untouched.
+ *
+ * Smart academy signup: the Sign Up page signs an existing account in
+ * itself and then has one more thing to say before `/my` (which other
+ * academies the account already uses). While that continuation runs, the
+ * page HOLDS this redirect through `useHoldGuestRedirect` and navigates on
+ * its own when done. The hold lives in memory only: a reload, or any fresh
+ * visit to Sign In / Sign Up with a session, redirects exactly as before.
  */
+import { createContext, useContext, useState } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@hooks';
 import { isSafeReturnPath } from '@features/auth';
 import { LEARNER_ROUTES } from '@app/routes/route-paths';
 import { usePublicWebsiteHrefBuilder } from '../utils/public-website-link-renderer';
 import type { PublicWebsiteLocale } from '@types';
+
+const HoldGuestRedirectContext = createContext<(held: boolean) => void>(
+  () => undefined
+);
+
+/**
+ * For the guarded page itself: `hold(true)` before it signs a session in
+ * and still has something to show; `hold(false)` is implicit when the page
+ * navigates away (the guard unmounts with it).
+ */
+export function useHoldGuestRedirect(): (held: boolean) => void {
+  return useContext(HoldGuestRedirectContext);
+}
 
 export interface PublicWebsiteGuestRouteProps {
   readonly locale: PublicWebsiteLocale;
@@ -47,12 +68,13 @@ export function PublicWebsiteGuestRoute({
   const { session } = useAuth();
   const [searchParams] = useSearchParams();
   const buildHref = usePublicWebsiteHrefBuilder(locale);
+  const [held, setHeld] = useState(false);
 
   // Only a fully-resolved authenticated session redirects. While the
   // session is still `restoring` (and, of course, when it is
   // `unauthenticated`) the auth page renders normally — an unauthenticated
   // visitor must always be able to reach Sign In / Sign Up.
-  if (session.status === 'authenticated') {
+  if (session.status === 'authenticated' && !held) {
     const returnTo = searchParams.get('returnTo');
     // `returnTo` is honoured only when it is a same-site relative path
     // (`isSafeReturnPath`), never a caller-supplied absolute URL / `//host`
@@ -67,5 +89,9 @@ export function PublicWebsiteGuestRoute({
     );
   }
 
-  return <>{children}</>;
+  return (
+    <HoldGuestRedirectContext.Provider value={setHeld}>
+      {children}
+    </HoldGuestRedirectContext.Provider>
+  );
 }

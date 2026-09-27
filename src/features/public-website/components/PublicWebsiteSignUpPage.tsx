@@ -40,6 +40,7 @@ import { isEmailOtpChallenge } from '@types';
 import type { SignInChallenge } from '@types';
 import { authenticationService } from '@services/identity';
 import { usePublicWebsiteData } from '../hooks/usePublicWebsiteData';
+import { useHoldGuestRedirect } from './PublicWebsiteGuestRoute';
 import { PublicWebsiteStatus } from './PublicWebsiteStatus';
 import {
   usePublicWebsiteLinkRenderer,
@@ -56,17 +57,27 @@ import { LEARNER_ROUTES } from '@app/routes/route-paths';
  * that joined but could not be signed in here, or a join awaiting approval).
  */
 type SignUpStep =
-  | { readonly kind: 'register' }
+  | {
+      readonly kind: 'register';
+      readonly name?: string;
+      readonly email?: string;
+    }
   | {
       readonly kind: 'join';
       readonly reason: 'existing_email' | 'proactive';
       readonly email?: string;
+      readonly name?: string;
     }
   | { readonly kind: 'continuing'; readonly name?: string }
   | {
       readonly kind: 'challenge';
       readonly challenge: SignInChallenge;
       readonly name?: string;
+    }
+  | {
+      /** Signed in; the account already uses Atlas with these academies. */
+      readonly kind: 'welcome';
+      readonly otherAcademies: readonly string[];
     }
   | {
       readonly kind: 'done';
@@ -96,6 +107,7 @@ export function PublicWebsiteSignUpPage({
     clearError,
   } = useSignIn();
   const navigate = useNavigate();
+  const holdGuestRedirect = useHoldGuestRedirect();
   const linkRenderer = usePublicWebsiteLinkRenderer(locale);
   const buildHref = usePublicWebsiteHrefBuilder(locale);
   const [searchParams] = useSearchParams();
@@ -105,10 +117,33 @@ export function PublicWebsiteSignUpPage({
   // Smart academy signup — once the continuation below has signed the
   // existing account in (password, then this academy's emailed code), the
   // learner lands on their dashboard, exactly like the sign-in page.
+  //
+  // Just before that, the page asks which OTHER academies the account
+  // already belongs to — answered only now, to a session that proved both
+  // the password and this academy's emailed code — so the person sees why
+  // they "already had an account". No answer, or none: straight to /my.
   const continuing = step.kind === 'continuing' || step.kind === 'challenge';
   useEffect(() => {
     if (!continuing || session.status !== 'authenticated') return;
-    navigate(buildHref(LEARNER_ROUTES.root), { replace: true });
+    let cancelled = false;
+    const goToLearning = () =>
+      navigate(buildHref(LEARNER_ROUTES.root), { replace: true });
+    authenticationService
+      .academyJoinSummary()
+      .then((summary) => {
+        if (cancelled) return;
+        if (summary.otherAcademies.length > 0) {
+          setStep({ kind: 'welcome', otherAcademies: summary.otherAcademies });
+        } else {
+          goToLearning();
+        }
+      })
+      .catch(() => {
+        if (!cancelled) goToLearning();
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [continuing, session.status, navigate, buildHref]);
   const authState =
     session.status === 'authenticated' && session.user
@@ -137,6 +172,9 @@ export function PublicWebsiteSignUpPage({
     credentials: AcademyJoinCredentials,
     name?: string
   ) => {
+    // This page, not the guest-route guard, decides where a session it
+    // signs in goes next (the "you already use Atlas with …" step).
+    holdGuestRedirect(true);
     setStep({ kind: 'continuing', name });
     clearError();
     try {
@@ -265,7 +303,40 @@ export function PublicWebsiteSignUpPage({
           <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>
         </div>
 
-        {step.kind === 'done' ? (
+        {step.kind === 'welcome' ? (
+          <div
+            role="status"
+            className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card p-6 text-center"
+          >
+            <CheckCircle2
+              className="size-8 text-[var(--website-primary-solid)]"
+              aria-hidden
+            />
+            <p className="font-medium text-foreground">
+              {t('publicWebsite:auth.signUp.welcomeTitle', {
+                academyName: academy.academyName,
+              })}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {t('publicWebsite:auth.signUp.welcomeOtherAcademies', {
+                academies: step.otherAcademies.join(
+                  t('publicWebsite:auth.signUp.listSeparator')
+                ),
+                academyName: academy.academyName,
+              })}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {t('publicWebsite:auth.signUp.welcomeSeparate')}
+            </p>
+            {linkRenderer({
+              href: LEARNER_ROUTES.root,
+              external: false,
+              className:
+                'mt-2 inline-flex items-center justify-center rounded-md bg-[var(--website-primary-solid)] px-4 py-2 text-sm font-medium text-white hover:opacity-90',
+              children: t('publicWebsite:auth.signUp.goToLearning'),
+            })}
+          </div>
+        ) : step.kind === 'done' ? (
           <div
             role="status"
             className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card p-6 text-center"
@@ -367,6 +438,7 @@ export function PublicWebsiteSignUpPage({
             <AcademyJoinForm
               academyId={academy.academyId}
               inviteToken={searchParams.get('invite') ?? undefined}
+              academyName={academy.academyName}
               defaultEmail={step.email}
               reason={step.reason}
               onJoined={(result, credentials) =>
@@ -377,6 +449,9 @@ export function PublicWebsiteSignUpPage({
                 )
               }
               onBack={() => setStep({ kind: 'register' })}
+              onChangeEmail={(email) =>
+                setStep({ kind: 'register', email, name: step.name })
+              }
               forgotPasswordHref="/forgot-password"
               renderLink={({ href, className, children }) =>
                 linkRenderer({ href, external: false, className, children })
@@ -405,9 +480,16 @@ export function PublicWebsiteSignUpPage({
                     setStep({ kind: 'done', result: 'new' });
                   }
                 }}
-                onExistingAccount={(email) =>
-                  setStep({ kind: 'join', reason: 'existing_email', email })
+                onExistingAccount={(email, name) =>
+                  setStep({
+                    kind: 'join',
+                    reason: 'existing_email',
+                    email,
+                    name,
+                  })
                 }
+                defaultName={step.kind === 'register' ? step.name : undefined}
+                defaultEmail={step.kind === 'register' ? step.email : undefined}
               />
             </WebsiteBrandBridge>
             <div className="mt-6 space-y-2 text-center text-sm">

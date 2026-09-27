@@ -28,7 +28,12 @@
       "joinedVerify": "تمت إضافة {{academyName}} إلى حسابك في Atlas. أكّد هويتك للمتابعة.",
       "joinedPending": "تم إرسال طلب انضمامك إلى {{academyName}}. ستتمكن من تسجيل الدخول بعد موافقة الأكاديمية.",
       "hasAtlasAccount": "لديك حساب Atlas بالفعل؟",
-      "joinWithAtlasAccount": "انضم به"
+      "joinWithAtlasAccount": "انضم به",
+      "welcomeTitle": "تمّ! أُضيفت {{academyName}} إلى حسابك على Atlas",
+      "welcomeOtherAcademies": "أنت تستخدم حساب Atlas هذا بالفعل مع {{academies}}. لا تحتاج إلى حساب منفصل: أصبحت {{academyName}} جزءًا من الحساب نفسه.",
+      "welcomeSeparate": "تبقى دوراتك وتقدّمك وشهاداتك منفصلة في كل أكاديمية.",
+      "goToLearning": "الانتقال إلى تعلّمي",
+      "listSeparator": "، "
     },
     "forgotPassword": {
       "title": "إعادة تعيين كلمة المرور",

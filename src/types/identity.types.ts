@@ -219,6 +219,15 @@ export interface AcademyJoinRequest {
   readonly inviteToken?: string;
 }
 
+/**
+ * `GET /auth/academy-join/summary` — the account's OTHER academies, named
+ * only to a fully signed-in session (password + this academy's emailed
+ * code) on the academy it joined moments ago; empty otherwise.
+ */
+export interface AcademyJoinSummary {
+  readonly otherAcademies: readonly string[];
+}
+
 /** Returned only once the password has been proven. */
 export interface AcademyJoinResult {
   readonly account: 'existing';
