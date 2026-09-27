@@ -96,20 +96,18 @@ export interface AcademyMember {
 /**
  * Grants Manager access to an academy (`POST /academies/:id/members`) —
  * either to an already-registered Atlas user (`email` alone), or to a
- * brand-new account created in the same action (`email` + `name` +
- * `password` together; there is no invitation system in this codebase).
+ * brand-new, invited account (`email` + `name`). The invitee sets their
+ * own password through the emailed setup link (Launch Stabilization A2).
  */
 export interface AddAcademyManagerPayload {
   readonly email: string;
   readonly name?: string;
-  readonly password?: string;
 }
 
 /** Grants Instructor access to an academy (`POST /academies/:id/instructors`) — same shape/rationale as `AddAcademyManagerPayload`. */
 export interface AddAcademyInstructorPayload {
   readonly email: string;
   readonly name?: string;
-  readonly password?: string;
 }
 
 /**
@@ -122,7 +120,6 @@ export interface AddAcademyInstructorPayload {
 export interface CreateAcademyStudentPayload {
   readonly name: string;
   readonly email: string;
-  readonly password: string;
 }
 
 /** The account `createAcademyStudent` just created. */

@@ -353,6 +353,10 @@
     "academyLearnerInvited": {
       "title": "Your account is ready",
       "message": "An account was created for you at {{academyName}}. Set your password to get started."
+    },
+    "academyJoined": {
+      "title": "Your account joined a new academy",
+      "message": "Your account now has access to {{academyName}}. If this wasn't you, reset your password."
     }
   },
   "liveSession": {

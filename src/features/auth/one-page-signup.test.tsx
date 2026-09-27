@@ -38,7 +38,12 @@ import { ToastContext } from '@app/providers/toast/toast.context';
 import type { ToastContextValue } from '@app/providers/toast/toast.context';
 import { ApiError } from '@api';
 import { authenticationService } from '@services/identity';
-import type { Plan, RegistrationRequest, SignupOptionsResponse } from '@types';
+import type {
+  Plan,
+  RegistrationRequest,
+  RegistrationResult,
+  SignupOptionsResponse,
+} from '@types';
 import { INTENDED_PLAN_STORAGE_KEY } from '@features/home';
 import { signupOptionsService } from './services/SignupOptionsService';
 import { RegistrationForm } from './components/RegistrationForm';
@@ -60,7 +65,9 @@ const toastValue: ToastContextValue = {
   dismissAll: vi.fn(),
 };
 
-function plan(overrides: Partial<Plan> & Pick<Plan, 'id' | 'key' | 'name'>): Plan {
+function plan(
+  overrides: Partial<Plan> & Pick<Plan, 'id' | 'key' | 'name'>
+): Plan {
   return {
     status: 'active',
     displayOrder: 1,
@@ -121,7 +128,9 @@ const PREMIUM_GROWTH = plan({
   displayOrder: 5,
 });
 
-function options(over: Partial<SignupOptionsResponse> = {}): SignupOptionsResponse {
+function options(
+  over: Partial<SignupOptionsResponse> = {}
+): SignupOptionsResponse {
   return {
     organizationSignup: true,
     trialsEnabled: true,
@@ -135,12 +144,14 @@ let register: ReturnType<typeof vi.fn>;
 
 beforeEach(() => {
   getSignupOptions = vi.fn(async () => options());
-  register = vi.fn(async (_request: RegistrationRequest) => undefined);
+  register = vi.fn(async (_request: RegistrationRequest) => ({
+    account: 'new' as const,
+  }));
   vi.spyOn(signupOptionsService, 'getSignupOptions').mockImplementation(
     () => getSignupOptions() as Promise<SignupOptionsResponse>
   );
   vi.spyOn(authenticationService, 'register').mockImplementation(
-    (request) => register(request) as Promise<void>
+    (request) => register(request) as Promise<RegistrationResult>
   );
   window.sessionStorage.clear();
 });
@@ -226,14 +237,19 @@ describe('one-page sign-up — organization mode on', () => {
     expect(within(growth).getByText('14-day free trial')).toBeTruthy();
     expect(within(growth).getByText('No card required')).toBeTruthy();
     expect(within(growth).getByText('Then $79 / month')).toBeTruthy();
-    expect(within(growth).getByText('Growth', { selector: 'span.text-xs' })).toBeTruthy();
+    expect(
+      within(growth).getByText('Growth', { selector: 'span.text-xs' })
+    ).toBeTruthy();
   });
 
   it('sends organizationName and planId in ONE register call, then goes to sign-in with the email', async () => {
     const user = userEvent.setup();
     renderForm();
     await fillAccount(user);
-    await user.type(screen.getByLabelText('Organization name'), '  Nile Learning ');
+    await user.type(
+      screen.getByLabelText('Organization name'),
+      '  Nile Learning '
+    );
     await user.click(radio('Growth'));
     await user.click(screen.getByRole('button', { name: 'Create Account' }));
 
@@ -301,7 +317,11 @@ describe('one-page sign-up — the form falls back to today', () => {
 
   it('renders the account-only form when the options cannot be loaded', async () => {
     getSignupOptions.mockRejectedValue(
-      new ApiError({ kind: 'server', messageKey: 'errors.server', retryable: true })
+      new ApiError({
+        kind: 'server',
+        messageKey: 'errors.server',
+        retryable: true,
+      })
     );
     renderForm();
     await waitFor(() => expect(getSignupOptions).toHaveBeenCalled());
@@ -327,7 +347,10 @@ describe('one-page sign-up — trials disabled', () => {
     const user = userEvent.setup();
     renderForm();
     await fillAccount(user);
-    await user.type(await screen.findByLabelText('Organization name'), 'Nile Learning');
+    await user.type(
+      await screen.findByLabelText('Organization name'),
+      'Nile Learning'
+    );
     expect(screen.queryByRole('radiogroup')).toBeNull();
     expect(screen.getByTestId('choose-plan-later').textContent).toContain(
       "You'll choose a plan after signing in."
@@ -366,7 +389,9 @@ describe('one-page sign-up — the intended plan', () => {
     renderForm();
     await screen.findByRole('radiogroup');
     await waitFor(() =>
-      expect(window.sessionStorage.getItem(INTENDED_PLAN_STORAGE_KEY)).toBeNull()
+      expect(
+        window.sessionStorage.getItem(INTENDED_PLAN_STORAGE_KEY)
+      ).toBeNull()
     );
     for (const item of screen.getAllByRole('radio')) {
       expect(item.getAttribute('aria-checked')).toBe('false');

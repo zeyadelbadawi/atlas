@@ -21,7 +21,8 @@
       "success": "Your account has been created. Sign in to get started.",
       "goToSignIn": "Go to sign in",
       "hasAccount": "Already have an account?",
-      "signIn": "Sign in"
+      "signIn": "Sign in",
+      "successExistingAccount": "You already had an Atlas account with this email — it now has access to this academy. Sign in with your existing password."
     },
     "forgotPassword": {
       "title": "Reset your password",

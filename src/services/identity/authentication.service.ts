@@ -13,6 +13,7 @@ import type {
   TokenRefreshRequest,
   TokenRefreshResponse,
   RegistrationRequest,
+  RegistrationResult,
   PasswordResetRequest,
   PasswordResetConfirmation,
   PasswordResetTokenValidation,
@@ -89,8 +90,17 @@ export class AuthenticationService {
    * `RegistrationForm`'s existing "navigate to sign-in after success"
    * behavior, never an auto-login the form doesn't ask for.
    */
-  public async register(request: RegistrationRequest): Promise<void> {
-    await apiClient.post<void, RegistrationRequest>('/auth/register', request);
+  public async register(
+    request: RegistrationRequest
+  ): Promise<RegistrationResult> {
+    const response = await apiClient.post<
+      RegistrationResult | undefined,
+      RegistrationRequest
+    >('/auth/register', request);
+    // An older backend answered with an empty body — that was always a new account.
+    return response?.account === 'existing'
+      ? { account: 'existing' }
+      : { account: 'new' };
   }
 
   /** Requests a password-reset email be sent to the given address. */

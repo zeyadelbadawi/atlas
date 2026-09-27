@@ -194,6 +194,15 @@ export interface TokenRefreshResponse {
 }
 
 /**
+ * Launch Stabilization A4 — what `POST /auth/register` did: created a new
+ * account, or added the academy to an account that already existed (the
+ * existing password proven). Never a session either way.
+ */
+export interface RegistrationResult {
+  readonly account: 'new' | 'existing';
+}
+
+/**
  * Account registration (Prompt 13). Creates an account but does not
  * establish a session — the caller still signs in afterward, matching
  * `RegistrationForm`'s existing navigate-to-sign-in behavior.

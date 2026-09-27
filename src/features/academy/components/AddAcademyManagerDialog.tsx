@@ -3,9 +3,9 @@
  *
  * Grants Manager access to this academy (`AcademyService.addAcademyManager`)
  * — either to an already-registered Atlas user (email alone), or to a
- * brand-new account created in the same action (email + name + password;
- * there is no invitation system in Atlas — see `AddAcademyManagerPayload`'s
- * doc comment).
+ * brand-new account invited in the same action (email + name). Launch
+ * Stabilization A2: nobody chooses a password for someone else — the
+ * invitee sets their own through the emailed setup link.
  */
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
@@ -24,7 +24,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -48,7 +47,6 @@ export interface AddAcademyManagerDialogProps {
 const DEFAULT_VALUES: AddAcademyManagerFormData = {
   email: '',
   name: '',
-  password: '',
 };
 
 export function AddAcademyManagerDialog({
@@ -92,7 +90,6 @@ export function AddAcademyManagerDialog({
         payload: {
           email: data.email,
           name: data.name || undefined,
-          password: data.password || undefined,
         },
       },
       {
@@ -185,25 +182,6 @@ export function AddAcademyManagerDialog({
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {t('academy:members.newAccount.passwordLabel')}
-                  </FormLabel>
-                  <FormControl>
-                    <Input type="password" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    {t('academy:members.newAccount.passwordHelp')}
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
