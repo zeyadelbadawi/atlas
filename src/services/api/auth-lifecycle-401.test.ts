@@ -114,7 +114,13 @@ describe('401 handling against an already-revoked session', () => {
     expect(clear).toHaveBeenCalled();
   });
 
-  it.each(['/auth/refresh', '/auth/sign-out', '/auth/sign-in', '/auth/validate'])(
+  it.each([
+    '/auth/refresh',
+    '/auth/sign-out',
+    '/auth/sign-in',
+    '/auth/validate',
+    '/auth/academy-join',
+  ])(
     'answers a 401 on %s directly, attempting no refresh',
     async (url) => {
       expect(capturedOnRejected).toBeDefined();

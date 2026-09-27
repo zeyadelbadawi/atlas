@@ -154,20 +154,12 @@ export type AddAcademyInstructorFormData = z.infer<
 >;
 
 /**
- * Create Academy Student schema — a brand-new, invited account. Launch
- * Stabilization A2: no password field; the student sets their own through
- * the emailed setup link.
+ * Create Academy Student schema — the same shape as the staff dialogs: an
+ * email that already has an Atlas account needs nothing else; a new email
+ * needs a name (enforced once the lookup says it is new, and by the server).
+ * Launch Stabilization A2: no password field.
  */
-export const createAcademyStudentSchema = z.object({
-  name: z
-    .string()
-    .min(1, 'validation:required')
-    .max(MAX_ACADEMY_NAME_LENGTH, 'validation:maxLength'),
-  email: z
-    .string()
-    .min(1, 'validation:required')
-    .email('validation:invalidEmail'),
-});
+export const createAcademyStudentSchema = addAcademyManagerSchema;
 
 export type CreateAcademyStudentFormData = z.infer<
   typeof createAcademyStudentSchema

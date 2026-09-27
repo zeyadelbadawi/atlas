@@ -6,6 +6,7 @@
  */
 import { useApiMutation } from '@/shared/hooks';
 import { authenticationService } from '@services/identity';
+import { INLINE_ERRORS_META } from '@services/query';
 import type { ApiError } from '@api';
 import type { RegistrationRequest, RegistrationResult } from '@types';
 
@@ -14,5 +15,9 @@ export function useRegister() {
     mutationFn: (request) => authenticationService.register(request),
     showSuccessToast: false,
     showErrorToast: false,
+    // `RegistrationForm` renders every failure inline — and on an academy
+    // website turns "this email is registered" into the join step, which a
+    // global "try signing in instead" toast would contradict.
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }

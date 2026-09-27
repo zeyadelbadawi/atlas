@@ -8,7 +8,10 @@ import { useApiMutation, useInvalidate } from '@/shared/hooks';
 import { academyKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { academyService } from '../services/AcademyService';
-import type { AcademyMember, AddAcademyInstructorPayload } from '@types';
+import type {
+  AcademyMemberAddResult,
+  AddAcademyInstructorPayload,
+} from '@types';
 
 export interface AddAcademyInstructorVariables {
   readonly academyId: string;
@@ -18,15 +21,17 @@ export interface AddAcademyInstructorVariables {
 export function useAddAcademyInstructor() {
   const { invalidate } = useInvalidate();
 
-  return useApiMutation<AcademyMember, AddAcademyInstructorVariables, ApiError>(
-    {
-      mutationFn: ({ academyId, payload }) =>
-        academyService.addAcademyInstructor(academyId, payload),
-      showSuccessToast: false,
-      showErrorToast: false,
-      onSuccess: async () => {
-        await invalidate(academyKeys.all);
-      },
-    }
-  );
+  return useApiMutation<
+    AcademyMemberAddResult,
+    AddAcademyInstructorVariables,
+    ApiError
+  >({
+    mutationFn: ({ academyId, payload }) =>
+      academyService.addAcademyInstructor(academyId, payload),
+    showSuccessToast: false,
+    showErrorToast: false,
+    onSuccess: async () => {
+      await invalidate(academyKeys.all);
+    },
+  });
 }

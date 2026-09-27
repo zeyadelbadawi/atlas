@@ -357,6 +357,14 @@
     "academyJoined": {
       "title": "Your account joined a new academy",
       "message": "Your account now has access to {{academyName}}. If this wasn't you, reset your password."
+    },
+    "academyMemberAdded": {
+      "title": "You've been added to an academy",
+      "message": "You now have access to {{academyName}}. Sign in with your existing Atlas credentials."
+    },
+    "academyLearnerAdded": {
+      "title": "You've been added to an academy",
+      "message": "You're now a student at {{academyName}}. Sign in with your existing Atlas credentials."
     }
   },
   "liveSession": {

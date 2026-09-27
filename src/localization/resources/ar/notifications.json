@@ -361,6 +361,14 @@
     "academyJoined": {
       "title": "انضم حسابك إلى أكاديمية جديدة",
       "message": "أصبح لحسابك الآن وصول إلى {{academyName}}. إن لم تكن أنت، أعد تعيين كلمة المرور."
+    },
+    "academyMemberAdded": {
+      "title": "تمت إضافتك إلى أكاديمية",
+      "message": "أصبح لديك الآن وصول إلى {{academyName}}. سجّل الدخول ببيانات حسابك الحالية في Atlas."
+    },
+    "academyLearnerAdded": {
+      "title": "تمت إضافتك إلى أكاديمية",
+      "message": "أصبحت الآن طالبًا في {{academyName}}. سجّل الدخول ببيانات حسابك الحالية في Atlas."
     }
   },
   "liveSession": {

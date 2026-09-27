@@ -11,10 +11,13 @@ import type {
   UpdateAcademyPayload,
   UpdateAcademyBrandingPayload,
   AcademyMember,
+  AcademyMemberAddResult,
+  AcademyMemberLookupResult,
+  AcademyMemberLookupRole,
+  AcademyStudentAddResult,
   AddAcademyManagerPayload,
   AddAcademyInstructorPayload,
   CreateAcademyStudentPayload,
-  AcademyStudent,
   AcademyStats,
   AcademyActivity,
   CollectionQuery,
@@ -145,9 +148,26 @@ export class AcademyService extends BaseService {
   }
 
   /**
-   * Grants an already-registered Atlas user Manager access to this
-   * academy — see `AddAcademyManagerPayload`'s doc comment for why this
-   * is email-lookup-based rather than an invitation flow. Only the
+   * Smart member invitation — the Add Manager/Instructor/Student dialogs'
+   * debounced email check. Answers only a status (and the account's display
+   * name when one exists); it is a hint, and the add call re-checks
+   * everything. Owner-only and rate-limited server-side.
+   */
+  async lookupAcademyMember(
+    id: string,
+    email: string,
+    role: AcademyMemberLookupRole,
+    options?: ReadOptions
+  ): Promise<AcademyMemberLookupResult> {
+    return this.client.get<AcademyMemberLookupResult>(
+      this.path(id, 'member-lookup'),
+      { ...options, params: { email, role, ...options?.params } }
+    );
+  }
+
+  /**
+   * Grants Manager access to this academy to an existing Atlas account, or
+   * invites a new one (`name` required then). Only the
    * Academy Owner may call this (backend-enforced;
    * `errors.academy.insufficientRole` otherwise); `errors.academy.
    * managerUserNotFound` means no Atlas account exists for that email,
@@ -158,8 +178,8 @@ export class AcademyService extends BaseService {
     id: string,
     payload: AddAcademyManagerPayload,
     options?: WriteOptions
-  ): Promise<AcademyMember> {
-    return this.client.post<AcademyMember, AddAcademyManagerPayload>(
+  ): Promise<AcademyMemberAddResult> {
+    return this.client.post<AcademyMemberAddResult, AddAcademyManagerPayload>(
       this.path(id, 'members'),
       payload,
       options
@@ -176,30 +196,27 @@ export class AcademyService extends BaseService {
     id: string,
     payload: AddAcademyInstructorPayload,
     options?: WriteOptions
-  ): Promise<AcademyMember> {
-    return this.client.post<AcademyMember, AddAcademyInstructorPayload>(
-      this.path(id, 'instructors'),
-      payload,
-      options
-    );
+  ): Promise<AcademyMemberAddResult> {
+    return this.client.post<
+      AcademyMemberAddResult,
+      AddAcademyInstructorPayload
+    >(this.path(id, 'instructors'), payload, options);
   }
 
   /**
-   * Creates a brand-new Atlas account for a test/real student — see
-   * `CreateAcademyStudentPayload`'s doc comment for why this always
-   * creates a fresh account rather than granting an existing one. Only
-   * the Academy Owner may call this.
+   * Adds a learner to this academy — an existing Atlas account as-is, or a
+   * new invited account (see `CreateAcademyStudentPayload`). Only the
+   * Academy Owner may call this.
    */
   async createAcademyStudent(
     id: string,
     payload: CreateAcademyStudentPayload,
     options?: WriteOptions
-  ): Promise<AcademyStudent> {
-    return this.client.post<AcademyStudent, CreateAcademyStudentPayload>(
-      this.path(id, 'students'),
-      payload,
-      options
-    );
+  ): Promise<AcademyStudentAddResult> {
+    return this.client.post<
+      AcademyStudentAddResult,
+      CreateAcademyStudentPayload
+    >(this.path(id, 'students'), payload, options);
   }
 
   /**

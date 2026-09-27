@@ -20,6 +20,13 @@ import type { ApiError } from '@api';
 export type QueryErrorReporter = (error: ApiError) => void;
 
 /**
+ * Mutation `meta` flag: the component that runs this mutation renders every
+ * failure itself, so the app-wide error toast must stay quiet for it (it
+ * would only repeat — or, worse, contradict — what is already on screen).
+ */
+export const INLINE_ERRORS_META = 'inlineErrors';
+
+/**
  * Creates a configured query client.
  *
  * @param reportError Receives normalized failures so a provider can surface
@@ -34,7 +41,12 @@ export function createQueryClient(
 
   return new QueryClient({
     queryCache: new QueryCache({ onError: handleError }),
-    mutationCache: new MutationCache({ onError: handleError }),
+    mutationCache: new MutationCache({
+      onError: (error, _variables, _context, mutation) => {
+        if (mutation.meta?.[INLINE_ERRORS_META] === true) return;
+        handleError(error);
+      },
+    }),
     defaultOptions: {
       queries: {
         staleTime: QUERY_STALE_TIME_MS,

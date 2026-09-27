@@ -22,7 +22,13 @@
       "goToSignIn": "Go to sign in",
       "hasAccount": "Already have an account?",
       "signIn": "Sign in",
-      "successExistingAccount": "You already had an Atlas account with this email — it now has access to this academy. Sign in with your existing password."
+      "successExistingAccount": "You already had an Atlas account with this email — it now has access to this academy. Sign in with your existing password.",
+      "welcomeBack": "Welcome back, {{name}}.",
+      "continuing": "Signing you in to {{academyName}}…",
+      "joinedVerify": "{{academyName}} has been added to your Atlas account. Confirm it's you to continue.",
+      "joinedPending": "Your request to join {{academyName}} has been sent. You'll be able to sign in once the academy approves it.",
+      "hasAtlasAccount": "Already have an Atlas account?",
+      "joinWithAtlasAccount": "Join with it"
     },
     "forgotPassword": {
       "title": "Reset your password",

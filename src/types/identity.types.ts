@@ -200,6 +200,30 @@ export interface TokenRefreshResponse {
  */
 export interface RegistrationResult {
   readonly account: 'new' | 'existing';
+  /**
+   * Set when an existing account joined an academy: whether that new
+   * learner membership is already active or awaits the academy's approval.
+   */
+  readonly status?: 'active' | 'pending';
+}
+
+/**
+ * Smart academy signup — `POST /auth/academy-join`: an existing Atlas
+ * account joins the academy whose website this is, proven by its own
+ * password. Never creates an account; answered like a sign-in.
+ */
+export interface AcademyJoinRequest {
+  readonly email: string;
+  readonly password: string;
+  readonly academyId: string;
+  readonly inviteToken?: string;
+}
+
+/** Returned only once the password has been proven. */
+export interface AcademyJoinResult {
+  readonly account: 'existing';
+  readonly status: 'active' | 'pending';
+  readonly name: string;
 }
 
 /**

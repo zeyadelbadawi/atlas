@@ -140,6 +140,20 @@ export const academyKeys = {
     [...academyKeys.all, 'members', organizationId, academyId, query] as const,
   stats: (organizationId: string | undefined, academyId: string) =>
     [...academyKeys.all, 'stats', organizationId, academyId] as const,
+  memberLookup: (
+    organizationId: string | undefined,
+    academyId: string,
+    role: string,
+    email: string
+  ) =>
+    [
+      ...academyKeys.all,
+      'memberLookup',
+      organizationId,
+      academyId,
+      role,
+      email,
+    ] as const,
   activity: (
     organizationId: string | undefined,
     academyId: string,

@@ -6,6 +6,7 @@ export {
   getGlobalQueryClient,
   setGlobalQueryClient,
   clearGlobalQueryClient,
+  INLINE_ERRORS_META,
 } from './query-client';
 export type { QueryErrorReporter } from './query-client';
 export * from './query-keys';

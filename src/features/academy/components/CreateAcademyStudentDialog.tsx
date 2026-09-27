@@ -1,12 +1,15 @@
 /**
  * Create Academy Student Dialog.
  *
- * Invites a brand-new student account (`AcademyService.createAcademyStudent`).
+ * Adds a learner to this academy (`AcademyService.createAcademyStudent`).
+ * Smart member invitation: an email that already has an Atlas account is
+ * added as-is (its name shown read-only, the person told by email); a new
+ * email invites a new account.
  *
  * Launch Stabilization A2 — staff never choose, see or hand over a
- * student's password. The account is created `invited`, and the student
+ * student's password. A new account is created `invited`, and the student
  * receives an email with a link to set their own password; this dialog only
- * confirms the invitation went out.
+ * confirms what was sent.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,18 +26,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Form } from '@/components/ui/form';
 import { useToast } from '@app/providers/toast/useToast';
 import { useServerValidation } from '@forms';
 import { useCreateAcademyStudent } from '../hooks';
+import { useAcademyMemberLookup } from '../hooks/useAcademyMemberLookup';
+import { MemberAccountFields, isBlockedByLookup } from './MemberAccountFields';
+import {
+  isNameMissingForNewAccount,
+  memberAddErrorKey,
+  memberAddPayload,
+} from '../utils/member-add.utils';
+import type { AcademyMemberAddOutcome } from '@types';
 import {
   createAcademyStudentSchema,
   type CreateAcademyStudentFormData,
@@ -59,8 +62,11 @@ export function CreateAcademyStudentDialog({
   const { t } = useTranslation();
   const { notifyError } = useToast();
   const createStudent = useCreateAcademyStudent();
-  // The address the invitation was just sent to, shown as confirmation.
-  const [created, setCreated] = useState<{ email: string } | null>(null);
+  // The address just added, and what the add did, shown as confirmation.
+  const [created, setCreated] = useState<{
+    email: string;
+    outcome: AcademyMemberAddOutcome;
+  } | null>(null);
 
   const form = useForm<CreateAcademyStudentFormData>({
     resolver: zodResolver(createAcademyStudentSchema),
@@ -68,6 +74,12 @@ export function CreateAcademyStudentDialog({
   });
 
   const dirtyGuard = useDirtyGuard(form.formState.isDirty);
+  const lookup = useAcademyMemberLookup(
+    academyId,
+    'student',
+    form.watch('email'),
+    open && !created
+  );
 
   useServerValidation(form, createStudent.error);
 
@@ -87,11 +99,15 @@ export function CreateAcademyStudentDialog({
   };
 
   const onSubmit = (data: CreateAcademyStudentFormData) => {
+    if (isNameMissingForNewAccount(data, lookup)) {
+      form.setError('name', { message: 'validation:required' });
+      return;
+    }
     createStudent.mutate(
-      { academyId, payload: data },
+      { academyId, payload: memberAddPayload(data, lookup) },
       {
-        onSuccess: () => {
-          setCreated({ email: data.email });
+        onSuccess: (result) => {
+          setCreated({ email: data.email.trim(), outcome: result.outcome });
         },
         onError: (error) => {
           if (
@@ -102,13 +118,13 @@ export function CreateAcademyStudentDialog({
             return;
           }
 
-          const key =
-            error.kind === 'conflict'
-              ? 'academy:members.createStudent.errors.emailTaken'
-              : error.kind === 'forbidden'
-                ? 'academy:members.createStudent.errors.insufficientRole'
-                : 'academy:members.createStudent.errors.generic';
-          notifyError(key);
+          if (error.messageKey === 'errors.academy.nameRequiredForNewAccount') {
+            form.setError('name', { message: 'validation:required' });
+            return;
+          }
+          notifyError(
+            memberAddErrorKey(error, 'academy:members.createStudent')
+          );
         },
       }
     );
@@ -133,10 +149,14 @@ export function CreateAcademyStudentDialog({
               />
               <div className="space-y-1 text-sm">
                 <p className="font-medium text-foreground">
-                  {t('academy:members.createStudent.success')}
+                  {t(
+                    `academy:members.createStudent.outcome.${created.outcome}.title`
+                  )}
                 </p>
                 <p className="text-muted-foreground">
-                  {t('academy:members.createStudent.inviteSentHint')}
+                  {t(
+                    `academy:members.createStudent.outcome.${created.outcome}.hint`
+                  )}
                 </p>
               </div>
             </div>
@@ -159,36 +179,12 @@ export function CreateAcademyStudentDialog({
         ) : (
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
+              <MemberAccountFields
                 control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('academy:members.createStudent.nameLabel')}
-                    </FormLabel>
-                    <FormControl>
-                      <Input autoFocus {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('academy:members.createStudent.emailLabel')}
-                    </FormLabel>
-                    <FormControl>
-                      <Input type="email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                lookup={lookup}
+                copyPrefix="academy:members.createStudent"
+                role="student"
+                idPrefix="add-student"
               />
 
               <DialogFooter>
@@ -200,11 +196,20 @@ export function CreateAcademyStudentDialog({
                 >
                   {t('academy:members.createStudent.cancelButton')}
                 </Button>
-                <Button type="submit" disabled={createStudent.isPending}>
+                <Button
+                  type="submit"
+                  disabled={
+                    createStudent.isPending ||
+                    lookup.state === 'checking' ||
+                    isBlockedByLookup(lookup)
+                  }
+                >
                   {createStudent.isPending ? (
                     <Loader2 className="size-4 animate-spin" aria-hidden />
                   ) : null}
-                  {t('academy:members.createStudent.submitButton')}
+                  {lookup.state === 'existing'
+                    ? t('academy:members.createStudent.addButton')
+                    : t('academy:members.createStudent.submitButton')}
                 </Button>
               </DialogFooter>
             </form>
