@@ -171,7 +171,18 @@ export interface RegistrationFormProps {
    * not exist inside the public-website route tree. Absent, behavior is
    * unchanged.
    */
-  readonly onSuccess?: (result: RegistrationResult) => void;
+  readonly onSuccess?: (
+    result: RegistrationResult,
+    credentials: { readonly email: string; readonly password: string }
+  ) => void;
+  /**
+   * Smart academy signup — on an academy website, called instead of showing
+   * an error when the submitted email turns out to belong to an existing
+   * Atlas account whose password was not the one typed here, so the page
+   * can offer "enter your Atlas password to continue". The answer comes
+   * from this (rate-limited) sign-up itself, never from a lookup.
+   */
+  readonly onExistingAccount?: (email: string) => void;
   /**
    * P64 Phase 1 — the invitation token from the sign-up link (`?invite=`).
    * Sent as-is; the backend decides whether this academy's registration
@@ -192,6 +203,7 @@ export interface RegistrationFormProps {
 export function RegistrationForm({
   academyId,
   onSuccess,
+  onExistingAccount,
   inviteToken,
   legalLinks,
 }: RegistrationFormProps = {}): JSX.Element {
@@ -364,7 +376,7 @@ export function RegistrationForm({
             ),
           });
           if (onSuccess) {
-            onSuccess(result);
+            onSuccess(result, { email: data.email, password: data.password });
           } else {
             // The sign-in page greets the new owner and pre-fills the
             // address they just used — one less thing to type.
@@ -375,6 +387,14 @@ export function RegistrationForm({
         },
         onError: (error) => {
           const key = error.messageKey;
+          if (
+            !isManagementSurface &&
+            onExistingAccount &&
+            key === AUTH_ERROR_KEYS.emailAlreadyRegistered
+          ) {
+            onExistingAccount(data.email.trim());
+            return;
+          }
           if (!key || !OPTIONS_REFRESH_ERROR_KEYS.includes(key)) return;
           // The options the visitor saw are stale: re-read them, and drop
           // a plan choice the server has just refused.

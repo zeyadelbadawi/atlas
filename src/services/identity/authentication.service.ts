@@ -14,6 +14,8 @@ import type {
   TokenRefreshResponse,
   RegistrationRequest,
   RegistrationResult,
+  AcademyJoinRequest,
+  AcademyJoinResult,
   PasswordResetRequest,
   PasswordResetConfirmation,
   PasswordResetTokenValidation,
@@ -99,8 +101,26 @@ export class AuthenticationService {
     >('/auth/register', request);
     // An older backend answered with an empty body — that was always a new account.
     return response?.account === 'existing'
-      ? { account: 'existing' }
+      ? {
+          account: 'existing',
+          ...(response.status ? { status: response.status } : {}),
+        }
       : { account: 'new' };
+  }
+
+  /**
+   * Smart academy signup — an existing Atlas account joins this academy.
+   * Establishes no session: the caller signs in next, under the academy's
+   * emailed-code rules. Wrong or unknown credentials answer exactly like a
+   * sign-in (`errors.auth.invalidCredentials`).
+   */
+  public async joinAcademy(
+    request: AcademyJoinRequest
+  ): Promise<AcademyJoinResult> {
+    return apiClient.post<AcademyJoinResult, AcademyJoinRequest>(
+      '/auth/academy-join',
+      request
+    );
   }
 
   /** Requests a password-reset email be sent to the given address. */

@@ -92,15 +92,18 @@ const RETRY_DELAY_MS = 1_000;
  * `isRestoring` never went false and `RouteGuard` rendered its pending
  * fallback forever.
  *
- * Refreshing a session is meaningless for these four routes anyway: they
- * are how a session is established, checked or ended. A 401 from any of
- * them is a final answer, so it is returned as one.
+ * Refreshing a session is meaningless for these routes anyway: they are
+ * how a session is established, checked or ended. A 401 from any of them
+ * is a final answer, so it is returned as one. `/auth/academy-join` (smart
+ * academy signup) is a password check exactly like sign-in: its 401 means
+ * "wrong credentials", never "your session expired".
  */
 const AUTH_LIFECYCLE_PATHS = [
   '/auth/refresh',
   '/auth/sign-out',
   '/auth/sign-in',
   '/auth/validate',
+  '/auth/academy-join',
 ] as const;
 
 /** True when the request is one of the auth-lifecycle routes above. */

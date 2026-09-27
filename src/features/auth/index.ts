@@ -15,6 +15,11 @@ export { SignInForm } from './components/SignInForm';
 export type { SignInFormProps } from './components/SignInForm';
 export { RegistrationForm } from './components/RegistrationForm';
 export type { RegistrationFormProps } from './components/RegistrationForm';
+export { AcademyJoinForm } from './components/AcademyJoinForm';
+export type {
+  AcademyJoinFormProps,
+  AcademyJoinCredentials,
+} from './components/AcademyJoinForm';
 export { ForgotPasswordForm } from './components/ForgotPasswordForm';
 export { ResetPasswordForm } from './components/ResetPasswordForm';
 export type { ResetPasswordFormProps } from './components/ResetPasswordForm';
