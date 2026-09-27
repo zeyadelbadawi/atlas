@@ -253,6 +253,31 @@ describe('the Google button', () => {
   });
 });
 
+describe('leaving for Google and coming back with "Back"', () => {
+  it('re-enables the button when the browser restores the page from its back/forward cache', async () => {
+    vi.spyOn(authenticationService, 'authOptions').mockResolvedValue({
+      google: true,
+    });
+    const authorize = vi
+      .spyOn(authenticationService, 'googleAuthorize')
+      .mockImplementation(() => new Promise(() => undefined));
+    renderWith(
+      <GoogleSignInOption intent="sign_in" surface="management" />,
+      '/auth/sign-in'
+    );
+    const button = await screen.findByTestId('google-auth-button');
+    fireEvent.click(button);
+    await waitFor(() => expect(button).toHaveProperty('disabled', true));
+    const restored = new Event('pageshow');
+    Object.defineProperty(restored, 'persisted', { value: true });
+    window.dispatchEvent(restored);
+    await waitFor(() => expect(button).toHaveProperty('disabled', false));
+    // And it can start again.
+    fireEvent.click(button);
+    expect(authorize).toHaveBeenCalledTimes(2);
+  });
+});
+
 describe('the flow context', () => {
   it('ignores an off-site "from" or "next"', () => {
     saveGoogleFlowContext({
@@ -320,6 +345,7 @@ describe('the return page', () => {
   });
 
   it('says a cancellation plainly and offers the way back', async () => {
+    window.localStorage.setItem(STORAGE_KEYS.lastAuthMethod, 'password');
     arriveWithFragment('error=cancelled');
     const complete = vi.spyOn(authenticationService, 'googleComplete');
     renderWith(returnFlow, '/auth/google/return');
@@ -327,6 +353,10 @@ describe('the return page', () => {
       (await screen.findByTestId('google-return-failed')).textContent
     ).toContain('Google sign-in cancelled');
     expect(complete).not.toHaveBeenCalled();
+    // A cancelled flow is not a Google sign-in: "Last used" is untouched.
+    expect(window.localStorage.getItem(STORAGE_KEYS.lastAuthMethod)).toBe(
+      'password'
+    );
   });
 
   it('shows a management refusal of a learner as the way to their academy', async () => {
@@ -357,6 +387,7 @@ describe('the return page', () => {
     expect(
       (await screen.findByTestId('google-return-failed')).textContent
     ).toContain('expired or was already used');
+    expect(window.localStorage.getItem(STORAGE_KEYS.lastAuthMethod)).toBeNull();
   });
 
   it('asks the owner of an existing account for its password, and lets a wrong one be retried', async () => {
