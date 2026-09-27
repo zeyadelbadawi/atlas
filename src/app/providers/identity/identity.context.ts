@@ -13,6 +13,7 @@ import type {
   CurrentUser,
   OrganizationContext,
   SignInCredentials,
+  GoogleSignInResult,
 } from '@types';
 
 export interface IdentityContextValue {
@@ -45,6 +46,15 @@ export interface IdentityContextValue {
   ) => Promise<SignInChallenge | undefined>;
 
   /** Completes a sign-in that stopped for a second factor (carrying the original sign-in's surface). */
+  /**
+   * Google Identity — adopts the answer of a Google completion or step:
+   * a session is established; a challenge is returned for the caller to
+   * show, exactly like `signIn`.
+   */
+  readonly acceptSignInResult: (
+    result: GoogleSignInResult
+  ) => SignInChallenge | undefined;
+
   readonly completeTwoFactor: (input: TwoFactorVerifyInput) => Promise<void>;
 
   /** P66 — completes a sign-in that stopped for an emailed one-time code. */

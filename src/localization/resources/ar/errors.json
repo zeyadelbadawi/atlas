@@ -110,7 +110,16 @@
     "signupTrialsUnavailable": "التجارب المجانية غير متاحة حالياً. ستختار باقتك بعد تسجيل الدخول.",
     "signupPlanUnavailable": "لم تعد هذه الباقة متاحة للتجربة. يُرجى اختيار باقة أخرى.",
     "emailAlreadyRegistered": "يوجد حساب بهذا البريد الإلكتروني بالفعل. جرّب تسجيل الدخول بدلاً من ذلك.",
-    "alreadyLearnerHere": "لديك بالفعل وصول إلى هذه الأكاديمية. سجّل الدخول بدلًا من ذلك."
+    "alreadyLearnerHere": "لديك بالفعل وصول إلى هذه الأكاديمية. سجّل الدخول بدلًا من ذلك.",
+    "googleSignInExpired": "انتهت صلاحية تسجيل الدخول هذا باستخدام Google أو سبق استخدامه. يُرجى البدء من جديد.",
+    "googleEmailUnverified": "لم تتحقق Google من عنوان البريد الإلكتروني هذا، لذا لا يمكن استخدامه لتسجيل الدخول.",
+    "googleIdentityInUse": "حساب Google هذا مرتبط بالفعل بحساب Atlas آخر.",
+    "googleAlreadyLinked": "حساب Atlas هذا مرتبط بالفعل بحساب Google مختلف.",
+    "googleLinkFromSettings": "لاستخدام Google مع هذا الحساب، سجّل الدخول بكلمة المرور ثم اربط Google من إعدادات حسابك.",
+    "googleOriginRefused": "تسجيل الدخول باستخدام Google غير متاح على هذا العنوان.",
+    "setPasswordFirst": "عيّن كلمة مرور قبل إلغاء ربط Google، وإلا فلن تتمكن من تسجيل الدخول.",
+    "invalidCurrentPassword": "كلمة المرور الحالية غير صحيحة.",
+    "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة."
   },
   "subscription": {
     "required": "يلزم وجود اشتراك نشط لإجراء هذا التغيير."

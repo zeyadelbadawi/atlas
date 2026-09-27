@@ -27,6 +27,9 @@ const FeaturesPage = lazy(() => import('@features/home/pages/FeaturesPage'));
 const PricingPage = lazy(() => import('@features/home/pages/PricingPage'));
 
 const SignInPage = lazy(() => import('@features/auth/pages/SignInPage'));
+const GoogleReturnPage = lazy(
+  () => import('@features/auth/pages/GoogleReturnPage')
+);
 const RegistrationPage = lazy(
   () => import('@features/auth/pages/RegistrationPage')
 );
@@ -537,6 +540,10 @@ export function AppRouter(): JSX.Element {
             <Route
               path={AUTH_ROUTES.verifyEmail}
               element={<VerifyEmailPage />}
+            />
+            <Route
+              path={AUTH_ROUTES.googleReturn}
+              element={<GoogleReturnPage />}
             />
           </Route>
 

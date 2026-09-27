@@ -15,6 +15,7 @@ import {
 } from '@app/routes/route-paths';
 import { PageContainer, PageHeader } from '@components/layout';
 import { RegistrationForm } from '../components/RegistrationForm';
+import { GoogleSignInOption } from '../google/GoogleSignInOption';
 
 export default function RegistrationPage(): JSX.Element {
   const { t } = useTranslation();
@@ -53,6 +54,11 @@ export default function RegistrationPage(): JSX.Element {
             {t('auth:register.studentHint')}
           </p>
         </div>
+
+        {/* Google Identity — the same account (and organization) as the
+            form below, created only after the person confirms it on the
+            return page's create step. */}
+        <GoogleSignInOption intent="sign_up" surface="management" />
 
         <RegistrationForm
           legalLinks={{

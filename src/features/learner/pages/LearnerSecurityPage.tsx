@@ -32,7 +32,7 @@ import { useLearnerSurface } from '../context/LearnerSurface.context';
 
 export default function LearnerSecurityPage(): JSX.Element {
   const { t } = useTranslation();
-  const { buildHref } = useLearnerSurface();
+  const { buildHref, academyId, locale } = useLearnerSurface();
   const user = useCurrentUser();
 
   return (
@@ -51,7 +51,9 @@ export default function LearnerSecurityPage(): JSX.Element {
         not been loaded yet.
       */}
       {user ? (
-        <ProfileSecuritySection />
+        <ProfileSecuritySection
+          signInScope={{ surface: 'academy', academyId, locale }}
+        />
       ) : (
         <div role="status" aria-live="polite">
           <span className="sr-only">

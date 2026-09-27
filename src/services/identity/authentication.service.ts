@@ -27,6 +27,15 @@ import type {
   EmailOtpResendResult,
   TrustedDevice,
   TrustedDeviceList,
+  AuthOptions,
+  GoogleAuthorizeRequest,
+  GoogleAuthorizeResult,
+  GoogleCompleteResult,
+  GoogleSignInResult,
+  GoogleStepRequest,
+  GoogleLinkRequest,
+  GoogleCreateAccountRequest,
+  SignInMethods,
 } from '@types';
 
 export class AuthenticationService {
@@ -252,6 +261,81 @@ export class AuthenticationService {
   /** P66 — forgets every remembered browser except the current one. */
   public async revokeOtherTrustedDevices(): Promise<void> {
     await apiClient.delete<void>('/auth/trusted-devices');
+  }
+
+  /** Which sign-in methods this host offers. `academyId` only for a platform-host preview of an academy. */
+  public async authOptions(academyId?: string): Promise<AuthOptions> {
+    return apiClient.get<AuthOptions>('/auth/options', {
+      ...(academyId ? { params: { academyId } } : {}),
+    });
+  }
+
+  /**
+   * Starts a Google flow. The response sets the host-only binder cookie
+   * that ties this browser to the completion; the caller then navigates
+   * to `authorizationUrl`.
+   */
+  public async googleAuthorize(
+    request: GoogleAuthorizeRequest
+  ): Promise<GoogleAuthorizeResult> {
+    return apiClient.post<GoogleAuthorizeResult, GoogleAuthorizeRequest>(
+      '/auth/google/authorize',
+      request
+    );
+  }
+
+  /** Presents the single-use handoff from the return URL's fragment. */
+  public async googleComplete(request: {
+    readonly handoff: string;
+    readonly inviteToken?: string;
+  }): Promise<GoogleCompleteResult> {
+    return apiClient.post<GoogleCompleteResult>(
+      '/auth/google/complete',
+      request
+    );
+  }
+
+  /** `link_required` — the existing account's password connects Google and signs in. */
+  public async googleLink(
+    request: GoogleLinkRequest
+  ): Promise<GoogleSignInResult> {
+    return apiClient.post<GoogleSignInResult, GoogleLinkRequest>(
+      '/auth/google/link',
+      request
+    );
+  }
+
+  /** `create_account` — one new Atlas account with this Google identity. */
+  public async googleCreateAccount(
+    request: GoogleCreateAccountRequest
+  ): Promise<GoogleSignInResult> {
+    return apiClient.post<GoogleSignInResult, GoogleCreateAccountRequest>(
+      '/auth/google/create-account',
+      request
+    );
+  }
+
+  /** `activate_invited` — an invited account activated by its Google address. */
+  public async googleActivate(
+    request: GoogleStepRequest
+  ): Promise<GoogleSignInResult> {
+    return apiClient.post<GoogleSignInResult, GoogleStepRequest>(
+      '/auth/google/activate',
+      request
+    );
+  }
+
+  /** The caller's own sign-in methods (Account settings). */
+  public async signInMethods(): Promise<SignInMethods> {
+    return apiClient.get<SignInMethods>('/users/me/sign-in-methods');
+  }
+
+  /** Disconnects Google. Refused server-side while the account has no password. */
+  public async unlinkGoogle(currentPassword: string): Promise<void> {
+    await apiClient.deleteWithBody<void, { currentPassword: string }>(
+      '/users/me/sign-in-methods/google',
+      { currentPassword }
+    );
   }
 }
 

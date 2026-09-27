@@ -14,6 +14,14 @@ import { createI18nInstance } from '@/localization/i18n';
 import { IdentityContext } from '@app/providers/identity/identity.context';
 import type { IdentityContextValue } from '@app/providers/identity/identity.context';
 import SignInPage from './pages/SignInPage';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+// Google Identity — the page asks `/auth/options` whether to show the
+// Google button; with no answer here the button simply stays hidden.
+function testQueryClient(): QueryClient {
+  return new QueryClient({ defaultOptions: { queries: { retry: false } } });
+}
+
 
 afterEach(cleanup);
 
@@ -40,15 +48,17 @@ const identity = {
 
 function renderSignIn(state?: unknown, language: 'en' | 'ar' = 'en') {
   return render(
-    <I18nextProvider i18n={createI18nInstance(language)}>
-      <IdentityContext.Provider value={identity}>
-        <MemoryRouter initialEntries={[{ pathname: '/auth/sign-in', state }]}>
-          <Routes>
-            <Route path="/auth/sign-in" element={<SignInPage />} />
-          </Routes>
-        </MemoryRouter>
-      </IdentityContext.Provider>
-    </I18nextProvider>
+    <QueryClientProvider client={testQueryClient()}>
+      <I18nextProvider i18n={createI18nInstance(language)}>
+        <IdentityContext.Provider value={identity}>
+          <MemoryRouter initialEntries={[{ pathname: '/auth/sign-in', state }]}>
+            <Routes>
+              <Route path="/auth/sign-in" element={<SignInPage />} />
+            </Routes>
+          </MemoryRouter>
+        </IdentityContext.Provider>
+      </I18nextProvider>
+    </QueryClientProvider>
   );
 }
 

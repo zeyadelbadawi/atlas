@@ -18,3 +18,8 @@ export {
   useRevokeOtherTrustedDevices,
   TRUSTED_DEVICES_QUERY_KEY,
 } from './useTrustedDevices';
+export {
+  useSignInMethods,
+  useUnlinkGoogle,
+  SIGN_IN_METHODS_QUERY_KEY,
+} from './useSignInMethods';

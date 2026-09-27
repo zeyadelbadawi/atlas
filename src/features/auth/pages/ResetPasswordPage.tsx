@@ -9,6 +9,7 @@ import { ShieldCheck } from 'lucide-react';
 import { AUTH_ROUTES } from '@app/routes/route-paths';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ResetPasswordForm } from '../components/ResetPasswordForm';
+import { GoogleSignInOption } from '../google/GoogleSignInOption';
 import { useValidatePasswordResetToken } from '../hooks';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
@@ -92,6 +93,17 @@ export default function ResetPasswordPage(): JSX.Element {
             className="mt-6"
           />
         </div>
+
+        {/* Google Identity — an account somebody created for this person
+            can use Google instead of a password. Only on the setup link,
+            never on a password reset (that person asked for a password). */}
+        {isSetup ? (
+          <GoogleSignInOption
+            intent="setup"
+            surface="management"
+            setupToken={token!}
+          />
+        ) : null}
 
         <ResetPasswordForm token={token!} />
       </div>

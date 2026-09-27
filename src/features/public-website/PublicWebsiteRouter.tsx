@@ -31,6 +31,7 @@ import { PublicWebsiteRobotsRoute } from './components/PublicWebsiteRobotsRoute'
 import { PublicWebsiteSitemapRoute } from './components/PublicWebsiteSitemapRoute';
 import { PublicWebsiteSignInPage } from './components/PublicWebsiteSignInPage';
 import { PublicWebsiteSignUpPage } from './components/PublicWebsiteSignUpPage';
+import { PublicWebsiteGoogleReturnPage } from './components/PublicWebsiteGoogleReturnPage';
 import { PublicWebsiteGuestRoute } from './components/PublicWebsiteGuestRoute';
 import { PublicWebsiteForgotPasswordPage } from './components/PublicWebsiteForgotPasswordPage';
 import { PublicWebsiteResetPasswordPage } from './components/PublicWebsiteResetPasswordPage';
@@ -196,6 +197,18 @@ function PublicWebsiteLocaleRoutes({
         path="reset-password"
         element={
           <PublicWebsiteResetPasswordPage
+            lookupKey={lookupKey}
+            locale={locale}
+          />
+        }
+      />
+      {/* Google Identity — the one return URL the backend builds for this
+          origin. Not a guest route: Account settings' "Connect Google"
+          returns here signed in. */}
+      <Route
+        path="auth/google/return"
+        element={
+          <PublicWebsiteGoogleReturnPage
             lookupKey={lookupKey}
             locale={locale}
           />

@@ -94,6 +94,11 @@ export const authKeys = {
     [...authKeys.all, 'password-reset-token', token] as const,
   /** P66 — the browsers remembered at an email-code step. */
   trustedDevices: () => [...authKeys.all, 'trusted-devices'] as const,
+  /** Google Identity — which sign-in methods this host offers (no session). */
+  options: (academyId: string | undefined) =>
+    [...authKeys.all, 'options', academyId ?? null] as const,
+  /** Google Identity — the signed-in account's own sign-in methods. */
+  signInMethods: () => [...authKeys.all, 'sign-in-methods'] as const,
 } as const;
 
 /**

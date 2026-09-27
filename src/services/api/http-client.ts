@@ -96,7 +96,10 @@ const RETRY_DELAY_MS = 1_000;
  * how a session is established, checked or ended. A 401 from any of them
  * is a final answer, so it is returned as one. `/auth/academy-join` (smart
  * academy signup) is a password check exactly like sign-in: its 401 means
- * "wrong credentials", never "your session expired".
+ * "wrong credentials", never "your session expired". The Google completion
+ * and its steps are the same: a 401 there is a spent/expired flow or a
+ * wrong password. (`/auth/google/authorize` is NOT listed: for the
+ * Account-settings `link` intent it is a signed-in call like any other.)
  */
 const AUTH_LIFECYCLE_PATHS = [
   '/auth/refresh',
@@ -104,6 +107,10 @@ const AUTH_LIFECYCLE_PATHS = [
   '/auth/sign-in',
   '/auth/validate',
   '/auth/academy-join',
+  '/auth/google/complete',
+  '/auth/google/link',
+  '/auth/google/create-account',
+  '/auth/google/activate',
 ] as const;
 
 /** True when the request is one of the auth-lifecycle routes above. */

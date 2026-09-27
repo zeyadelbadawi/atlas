@@ -179,6 +179,8 @@ export interface AuthenticationResponse {
   readonly refreshToken?: string;
   readonly expiresIn: number;
   readonly user: CurrentUser;
+  /** How this session's first factor was proven — feeds the "Last used" hint. Older backends omit it. */
+  readonly authMethod?: AuthMethod;
 }
 
 /** Request to refresh an expired access token. */
@@ -459,4 +461,96 @@ export interface TrustedDevice {
 
 export interface TrustedDeviceList {
   readonly items: readonly TrustedDevice[];
+}
+
+/** The first factor a session was minted with. */
+export type AuthMethod = 'password' | 'google';
+
+/**
+ * Google Identity — what a Google flow is for:
+ *  - `sign_in` / `sign_up`: the signed-out pages;
+ *  - `link`: Account settings, the signed-in account connects Google;
+ *  - `setup`: the invitation/setup page, Google instead of a password.
+ */
+export type GoogleIntent = 'sign_in' | 'sign_up' | 'link' | 'setup';
+
+/** `GET /auth/options` — which sign-in methods this host offers. */
+export interface AuthOptions {
+  readonly google: boolean;
+}
+
+/** `POST /auth/google/authorize`. `academyId` on an academy host; `currentPassword` for `link`; `setupToken` for `setup`. */
+export interface GoogleAuthorizeRequest {
+  readonly intent: GoogleIntent;
+  readonly returnTo?: string;
+  readonly academyId?: string;
+  readonly currentPassword?: string;
+  readonly setupToken?: string;
+}
+
+export interface GoogleAuthorizeResult {
+  readonly authorizationUrl: string;
+  readonly expiresAt: string;
+}
+
+/**
+ * The step a Google sign-in needs before a session exists. `pending` is a
+ * single-use reference to the flow for that step's own endpoint — NOT a
+ * token, never stored beyond the page that shows the step.
+ */
+export interface GoogleStep {
+  readonly googleStep: 'link_required' | 'create_account' | 'activate_invited';
+  readonly pending: string;
+  readonly expiresAt: string;
+  /** The address just proven at Google — the person's own. */
+  readonly email: string;
+  /** `create_account` only: Google's display name, to prefill. */
+  readonly name?: string;
+  readonly returnPath?: string;
+}
+
+/** `link` intent: Google is now connected to the signed-in account. No session is minted. */
+export interface GoogleLinked {
+  readonly linked: true;
+  readonly email: string;
+  readonly returnPath?: string;
+}
+
+/** A session or a challenge — the same answers `POST /auth/sign-in` gives. */
+export type GoogleSignInResult = (
+  AuthenticationResponse | TwoFactorChallenge | EmailOtpChallenge
+) & { readonly returnPath?: string };
+
+export type GoogleCompleteResult =
+  GoogleSignInResult | GoogleStep | GoogleLinked;
+
+export function isGoogleStep(response: object): response is GoogleStep {
+  return typeof (response as GoogleStep).googleStep === 'string';
+}
+
+export function isGoogleLinked(response: object): response is GoogleLinked {
+  return (response as GoogleLinked).linked === true;
+}
+
+/** Step endpoints carry the pending reference and, on an invitation sign-up, its code. */
+export interface GoogleStepRequest {
+  readonly pending: string;
+  readonly inviteToken?: string;
+}
+
+export interface GoogleLinkRequest extends GoogleStepRequest {
+  readonly password: string;
+}
+
+export interface GoogleCreateAccountRequest extends GoogleStepRequest {
+  readonly name: string;
+  /** Management surface only. */
+  readonly organizationName?: string;
+  readonly planId?: string;
+}
+
+/** `GET /users/me/sign-in-methods`. */
+export interface SignInMethods {
+  readonly password: boolean;
+  readonly google: { readonly email: string; readonly linkedAt: string } | null;
 }

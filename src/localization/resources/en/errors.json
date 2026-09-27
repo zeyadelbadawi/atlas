@@ -110,7 +110,16 @@
     "signupTrialsUnavailable": "Free trials aren't available right now. You'll choose a plan after signing in.",
     "signupPlanUnavailable": "That plan can no longer be trialled. Please choose another.",
     "emailAlreadyRegistered": "An account with this email already exists. Try signing in instead.",
-    "alreadyLearnerHere": "You already have access to this academy. Sign in instead."
+    "alreadyLearnerHere": "You already have access to this academy. Sign in instead.",
+    "googleSignInExpired": "This Google sign-in has expired or was already used. Please start again.",
+    "googleEmailUnverified": "Google hasn't verified this email address, so it can't be used to sign in.",
+    "googleIdentityInUse": "This Google account is already connected to another Atlas account.",
+    "googleAlreadyLinked": "This Atlas account is already connected to a different Google account.",
+    "googleLinkFromSettings": "To use Google with this account, sign in with your password and connect Google in your account settings.",
+    "googleOriginRefused": "Google sign-in isn't available on this address.",
+    "setPasswordFirst": "Set a password before disconnecting Google — otherwise you couldn't sign in.",
+    "invalidCurrentPassword": "Your current password is incorrect.",
+    "invalidCredentials": "Invalid email or password."
   },
   "subscription": {
     "required": "An active subscription is required to make this change."

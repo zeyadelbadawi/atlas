@@ -22,6 +22,7 @@ import {
 } from '@app/routes/route-paths';
 import { PageContainer, PageHeader } from '@components/layout';
 import { SignInForm } from '../components/SignInForm';
+import { GoogleSignInOption } from '../google/GoogleSignInOption';
 import { StudentSignInRefusal } from '../components/StudentSignInRefusal';
 import {
   AUTH_ERROR_KEYS,
@@ -226,12 +227,22 @@ export default function SignInPage(): JSX.Element {
             error={error}
           />
         ) : (
-          <SignInForm
-            onSubmit={handleSignIn}
-            isLoading={isLoading}
-            error={error}
-            defaultEmail={handOff.email}
-          />
+          <div className="space-y-6">
+            {/* Google Identity — renders nothing while this host does not
+                offer Google. A new session goes where the password one
+                would (`?redirect=`). */}
+            <GoogleSignInOption
+              intent="sign_in"
+              surface={SURFACE}
+              next={searchParams.get('redirect') || undefined}
+            />
+            <SignInForm
+              onSubmit={handleSignIn}
+              isLoading={isLoading}
+              error={error}
+              defaultEmail={handOff.email}
+            />
+          </div>
         )}
 
         {refusedAcademies ? null : (

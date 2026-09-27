@@ -37,6 +37,12 @@ export const AUTH_ROUTES = {
   /** P64 Communications C0 — verification links may land on either surface; the academy hosts mount theirs in `PublicWebsiteRouter`. */
   verifyEmail: '/auth/verify-email',
   /**
+   * Google Identity — where Google's callback hands the flow back, on the
+   * origin it started from (the backend builds this exact path; academy
+   * hosts mount it in `PublicWebsiteRouter`).
+   */
+  googleReturn: '/auth/google/return',
+  /**
    * P64 Phase 1 (AD-5 / AD-12) — where a `learner` principal holding a
    * platform-host session is sent instead of the dashboard. Rendered in the
    * authentication layout (hence this group) but deliberately outside the

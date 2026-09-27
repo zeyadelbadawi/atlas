@@ -37,6 +37,8 @@ import { useChangePassword } from '../hooks';
 import { ProfileSessionsCard } from './ProfileSessionsCard';
 import { TrustedDevicesCard } from './TrustedDevicesCard';
 import { TwoFactorCard } from './TwoFactorCard';
+import { SignInMethodsCard } from './SignInMethodsCard';
+import type { SignInMethodsScope } from './SignInMethodsCard';
 
 const passwordSchema = z
   .object({
@@ -53,7 +55,14 @@ const passwordSchema = z
 
 type PasswordFormData = z.infer<typeof passwordSchema>;
 
-export function ProfileSecuritySection(): JSX.Element {
+export interface ProfileSecuritySectionProps {
+  /** Google Identity — where "Connect Google" starts from (defaults to management). */
+  readonly signInScope?: SignInMethodsScope;
+}
+
+export function ProfileSecuritySection({
+  signInScope,
+}: ProfileSecuritySectionProps = {}): JSX.Element {
   const { t } = useTranslation();
   const { toast } = useToast();
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
@@ -246,6 +255,8 @@ export function ProfileSecuritySection(): JSX.Element {
           </form>
         </CardContent>
       </Card>
+
+      <SignInMethodsCard scope={signInScope} />
 
       <TwoFactorCard />
 
