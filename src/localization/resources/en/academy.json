@@ -166,7 +166,6 @@
       "emailPlaceholder": "manager@example.com",
       "cancelButton": "Cancel",
       "submitButton": "Add Manager",
-      "success": "Manager added successfully",
       "errors": {
         "userNotFound": "No Atlas account exists for that email address.",
         "alreadyMember": "This person is already a member of this academy.",
@@ -182,7 +181,6 @@
       "emailPlaceholder": "instructor@example.com",
       "cancelButton": "Cancel",
       "submitButton": "Add Instructor",
-      "success": "Instructor added successfully",
       "errors": {
         "userNotFound": "No Atlas account exists for that email address.",
         "alreadyMember": "This person is already a member of this academy.",
@@ -195,18 +193,29 @@
       "triggerButton": "Add Student",
       "title": "Create a Student Account",
       "description": "This invites a brand-new Atlas account for the student. They'll get an email with a link to set their own password, then they can browse the course catalog and enroll.",
-      "nameLabel": "Full name",
       "emailLabel": "Email address",
       "cancelButton": "Cancel",
       "submitButton": "Send invitation",
       "doneButton": "Done",
-      "success": "Invitation sent",
       "errors": {
-        "emailTaken": "An Atlas account already exists for that email address.",
         "insufficientRole": "Only the academy owner can create a student account.",
         "generic": "Could not create this student account. Please try again."
       },
-      "inviteSentHint": "We've emailed the student a link to set their own password. You never need to share a password with them."
+      "addButton": "Add student",
+      "outcome": {
+        "invited": {
+          "title": "Invitation sent",
+          "hint": "We've emailed the student a link to set their own password. You never need to share a password with them."
+        },
+        "reinvited": {
+          "title": "Student added",
+          "hint": "This person hadn't finished setting up their Atlas account, so we've emailed them a fresh setup link."
+        },
+        "added": {
+          "title": "Student added",
+          "hint": "They already have an Atlas account, so they can sign in to this academy with their existing credentials. We've emailed them to let them know."
+        }
+      }
     },
     "newAccount": {
       "title": "New account (optional)",
@@ -216,6 +225,30 @@
     "tabs": {
       "team": "Team",
       "students": "Students"
+    },
+    "lookup": {
+      "checking": "Checking this email…",
+      "new": "No Atlas account uses this email yet. Enter their name and we'll email them an invitation to set up their account.",
+      "existingTitle": "This person already has an Atlas account",
+      "existingBody": "They'll be added to this academy as {{role}} and can sign in with their existing Atlas credentials. We'll email them to let them know. Their name, password and other academies won't change.",
+      "pendingTitle": "This person was invited to Atlas but hasn't set up their account yet",
+      "pendingBody": "They'll be added to this academy as {{role}}, and we'll email them a fresh link to finish setting up their account.",
+      "alreadyMember": "This person is already {{role}} in this academy.",
+      "unavailable": "This Atlas account can't be added right now.",
+      "rateLimited": "Too many checks in a short time — you can still continue, and we'll check this email when you submit.",
+      "error": "We couldn't check this email right now — you can still continue.",
+      "nameReadOnly": "This is the name on their Atlas account. Only they can change it.",
+      "nameRequired": "Enter a name to invite a new account.",
+      "roles": {
+        "manager": "a manager",
+        "instructor": "an instructor",
+        "student": "a student"
+      }
+    },
+    "outcome": {
+      "invited": "Invitation sent. They'll get an email to set up their account.",
+      "reinvited": "Added. We sent them a fresh link to finish setting up their account.",
+      "added": "Added. We've emailed them to let them know."
     }
   },
   "students": {

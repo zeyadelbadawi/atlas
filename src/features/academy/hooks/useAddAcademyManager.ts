@@ -8,7 +8,7 @@ import { useApiMutation, useInvalidate } from '@/shared/hooks';
 import { academyKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { academyService } from '../services/AcademyService';
-import type { AcademyMember, AddAcademyManagerPayload } from '@types';
+import type { AcademyMemberAddResult, AddAcademyManagerPayload } from '@types';
 
 export interface AddAcademyManagerVariables {
   readonly academyId: string;
@@ -18,7 +18,11 @@ export interface AddAcademyManagerVariables {
 export function useAddAcademyManager() {
   const { invalidate } = useInvalidate();
 
-  return useApiMutation<AcademyMember, AddAcademyManagerVariables, ApiError>({
+  return useApiMutation<
+    AcademyMemberAddResult,
+    AddAcademyManagerVariables,
+    ApiError
+  >({
     mutationFn: ({ academyId, payload }) =>
       academyService.addAcademyManager(academyId, payload),
     // The dialog shows its own contextual success/error toast and maps

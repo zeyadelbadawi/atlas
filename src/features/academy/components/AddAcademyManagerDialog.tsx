@@ -21,18 +21,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Form } from '@/components/ui/form';
 import { useToast } from '@app/providers/toast/useToast';
 import { useServerValidation } from '@forms';
 import { useAddAcademyManager } from '../hooks';
+import { useAcademyMemberLookup } from '../hooks/useAcademyMemberLookup';
+import { MemberAccountFields, isBlockedByLookup } from './MemberAccountFields';
+import {
+  isNameMissingForNewAccount,
+  memberAddErrorKey,
+  memberAddOutcomeKey,
+  memberAddPayload,
+} from '../utils/member-add.utils';
 import {
   addAcademyManagerSchema,
   type AddAcademyManagerFormData,
@@ -64,6 +64,12 @@ export function AddAcademyManagerDialog({
   });
 
   const dirtyGuard = useDirtyGuard(form.formState.isDirty);
+  const lookup = useAcademyMemberLookup(
+    academyId,
+    'manager',
+    form.watch('email'),
+    open
+  );
 
   // Maps a `validation` (400) mutation error's per-field violations onto
   // this form — e.g. the backend's `@MinLength(2)` on `name` versus this
@@ -84,17 +90,15 @@ export function AddAcademyManagerDialog({
   };
 
   const onSubmit = (data: AddAcademyManagerFormData) => {
+    if (isNameMissingForNewAccount(data, lookup)) {
+      form.setError('name', { message: 'validation:required' });
+      return;
+    }
     addManager.mutate(
+      { academyId, payload: memberAddPayload(data, lookup) },
       {
-        academyId,
-        payload: {
-          email: data.email,
-          name: data.name || undefined,
-        },
-      },
-      {
-        onSuccess: () => {
-          notifySuccess('academy:members.addManager.success');
+        onSuccess: (result) => {
+          notifySuccess(memberAddOutcomeKey(result.outcome));
           handleOpenChange(false);
         },
         onError: (error) => {
@@ -113,15 +117,7 @@ export function AddAcademyManagerDialog({
             return;
           }
 
-          const key =
-            error.kind === 'notFound'
-              ? 'academy:members.addManager.errors.userNotFound'
-              : error.kind === 'conflict'
-                ? 'academy:members.addManager.errors.alreadyMember'
-                : error.kind === 'forbidden'
-                  ? 'academy:members.addManager.errors.insufficientRole'
-                  : 'academy:members.addManager.errors.generic';
-          notifyError(key);
+          notifyError(memberAddErrorKey(error, 'academy:members.addManager'));
         },
       }
     );
@@ -139,52 +135,12 @@ export function AddAcademyManagerDialog({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
+            <MemberAccountFields
               control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {t('academy:members.addManager.emailLabel')}
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder={t(
-                        'academy:members.addManager.emailPlaceholder'
-                      )}
-                      autoFocus
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="space-y-1">
-              <p className="text-sm font-medium text-foreground">
-                {t('academy:members.newAccount.title')}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {t('academy:members.newAccount.description')}
-              </p>
-            </div>
-
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {t('academy:members.newAccount.nameLabel')}
-                  </FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              lookup={lookup}
+              copyPrefix="academy:members.addManager"
+              role="manager"
+              idPrefix="add-manager"
             />
 
             <DialogFooter>
@@ -196,7 +152,14 @@ export function AddAcademyManagerDialog({
               >
                 {t('academy:members.addManager.cancelButton')}
               </Button>
-              <Button type="submit" disabled={addManager.isPending}>
+              <Button
+                type="submit"
+                disabled={
+                  addManager.isPending ||
+                  lookup.state === 'checking' ||
+                  isBlockedByLookup(lookup)
+                }
+              >
                 {addManager.isPending ? (
                   <Loader2 className="size-4 animate-spin" aria-hidden />
                 ) : null}

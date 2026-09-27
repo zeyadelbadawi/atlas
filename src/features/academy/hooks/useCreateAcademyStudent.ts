@@ -7,7 +7,10 @@
 import { useApiMutation } from '@/shared/hooks';
 import type { ApiError } from '@api';
 import { academyService } from '../services/AcademyService';
-import type { AcademyStudent, CreateAcademyStudentPayload } from '@types';
+import type {
+  AcademyStudentAddResult,
+  CreateAcademyStudentPayload,
+} from '@types';
 
 export interface CreateAcademyStudentVariables {
   readonly academyId: string;
@@ -16,7 +19,7 @@ export interface CreateAcademyStudentVariables {
 
 export function useCreateAcademyStudent() {
   return useApiMutation<
-    AcademyStudent,
+    AcademyStudentAddResult,
     CreateAcademyStudentVariables,
     ApiError
   >({

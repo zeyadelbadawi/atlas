@@ -24,18 +24,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Form } from '@/components/ui/form';
 import { useToast } from '@app/providers/toast/useToast';
 import { useServerValidation } from '@forms';
 import { useAddAcademyInstructor } from '../hooks';
+import { useAcademyMemberLookup } from '../hooks/useAcademyMemberLookup';
+import { MemberAccountFields, isBlockedByLookup } from './MemberAccountFields';
+import {
+  isNameMissingForNewAccount,
+  memberAddErrorKey,
+  memberAddOutcomeKey,
+  memberAddPayload,
+} from '../utils/member-add.utils';
 import {
   addAcademyInstructorSchema,
   type AddAcademyInstructorFormData,
@@ -67,6 +67,12 @@ export function AddAcademyInstructorDialog({
   });
 
   const dirtyGuard = useDirtyGuard(form.formState.isDirty);
+  const lookup = useAcademyMemberLookup(
+    academyId,
+    'instructor',
+    form.watch('email'),
+    open
+  );
 
   useServerValidation(form, addInstructor.error);
 
@@ -83,17 +89,15 @@ export function AddAcademyInstructorDialog({
   };
 
   const onSubmit = (data: AddAcademyInstructorFormData) => {
+    if (isNameMissingForNewAccount(data, lookup)) {
+      form.setError('name', { message: 'validation:required' });
+      return;
+    }
     addInstructor.mutate(
+      { academyId, payload: memberAddPayload(data, lookup) },
       {
-        academyId,
-        payload: {
-          email: data.email,
-          name: data.name || undefined,
-        },
-      },
-      {
-        onSuccess: () => {
-          notifySuccess('academy:members.addInstructor.success');
+        onSuccess: (result) => {
+          notifySuccess(memberAddOutcomeKey(result.outcome));
           handleOpenChange(false);
         },
         onError: (error) => {
@@ -112,13 +116,7 @@ export function AddAcademyInstructorDialog({
           const key =
             error.code === 'ENTITLEMENT_LIMIT_REACHED'
               ? 'academy:members.addInstructor.errors.limitReached'
-              : error.kind === 'notFound'
-                ? 'academy:members.addInstructor.errors.userNotFound'
-                : error.kind === 'conflict'
-                  ? 'academy:members.addInstructor.errors.alreadyMember'
-                  : error.kind === 'forbidden'
-                    ? 'academy:members.addInstructor.errors.insufficientRole'
-                    : 'academy:members.addInstructor.errors.generic';
+              : memberAddErrorKey(error, 'academy:members.addInstructor');
           notifyError(key);
         },
       }
@@ -137,52 +135,12 @@ export function AddAcademyInstructorDialog({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
+            <MemberAccountFields
               control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {t('academy:members.addInstructor.emailLabel')}
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder={t(
-                        'academy:members.addInstructor.emailPlaceholder'
-                      )}
-                      autoFocus
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="space-y-1">
-              <p className="text-sm font-medium text-foreground">
-                {t('academy:members.newAccount.title')}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {t('academy:members.newAccount.description')}
-              </p>
-            </div>
-
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {t('academy:members.newAccount.nameLabel')}
-                  </FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              lookup={lookup}
+              copyPrefix="academy:members.addInstructor"
+              role="instructor"
+              idPrefix="add-instructor"
             />
 
             <DialogFooter>
@@ -194,7 +152,14 @@ export function AddAcademyInstructorDialog({
               >
                 {t('academy:members.addInstructor.cancelButton')}
               </Button>
-              <Button type="submit" disabled={addInstructor.isPending}>
+              <Button
+                type="submit"
+                disabled={
+                  addInstructor.isPending ||
+                  lookup.state === 'checking' ||
+                  isBlockedByLookup(lookup)
+                }
+              >
                 {addInstructor.isPending ? (
                   <Loader2 className="size-4 animate-spin" aria-hidden />
                 ) : null}

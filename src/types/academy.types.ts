@@ -111,16 +111,46 @@ export interface AddAcademyInstructorPayload {
 }
 
 /**
- * Creates a brand-new Atlas account for a test/real student
- * (`POST /academies/:id/students`). Always a fresh account — a student is
- * never an academy/organization membership, so there is nothing to
- * "grant" an existing user (see `AcademiesService.createStudent`'s
- * backend doc comment).
+ * Adds a learner to an academy (`POST /academies/:id/students`). An email
+ * that already has an Atlas account is added as-is; a new email becomes an
+ * invited account, which is the only case that needs `name`.
  */
 export interface CreateAcademyStudentPayload {
-  readonly name: string;
+  readonly name?: string;
   readonly email: string;
 }
+
+/**
+ * Smart member invitation — what an add actually did:
+ *  - `invited`: a new account was created and sent a setup link;
+ *  - `reinvited`: the account never finished setup, so a fresh link was sent;
+ *  - `added`: an existing account was added and told so.
+ */
+export type AcademyMemberAddOutcome = 'invited' | 'reinvited' | 'added';
+
+/** `POST /academies/:id/members|instructors` response. */
+export type AcademyMemberAddResult = AcademyMember & {
+  readonly outcome: AcademyMemberAddOutcome;
+};
+
+/** `POST /academies/:id/students` response. */
+export type AcademyStudentAddResult = AcademyStudent & {
+  readonly outcome: AcademyMemberAddOutcome;
+};
+
+/** The role an invitation dialog is adding. */
+export type AcademyMemberLookupRole = 'manager' | 'instructor' | 'student';
+
+/**
+ * `GET /academies/:id/member-lookup` — a UX hint for the invitation
+ * dialogs, never a decision (the add call re-checks everything).
+ */
+export type AcademyMemberLookupResult =
+  | { readonly status: 'new' }
+  | { readonly status: 'existing'; readonly name: string }
+  | { readonly status: 'existing_pending_setup'; readonly name: string }
+  | { readonly status: 'already_member' }
+  | { readonly status: 'unavailable' };
 
 /** The account `createAcademyStudent` just created. */
 export interface AcademyStudent {
