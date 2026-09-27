@@ -16,6 +16,7 @@ import type {
   RegistrationResult,
   AcademyJoinRequest,
   AcademyJoinResult,
+  AcademyJoinSummary,
   PasswordResetRequest,
   PasswordResetConfirmation,
   PasswordResetTokenValidation,
@@ -121,6 +122,15 @@ export class AuthenticationService {
       '/auth/academy-join',
       request
     );
+  }
+
+  /**
+   * After an existing account joined this academy and signed in here: the
+   * other academies it already belongs to, for the "you already use Atlas
+   * with …" confirmation. Empty unless the join just happened.
+   */
+  public async academyJoinSummary(): Promise<AcademyJoinSummary> {
+    return apiClient.get<AcademyJoinSummary>('/auth/academy-join/summary');
   }
 
   /** Requests a password-reset email be sent to the given address. */

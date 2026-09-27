@@ -182,7 +182,10 @@ export interface RegistrationFormProps {
    * can offer "enter your Atlas password to continue". The answer comes
    * from this (rate-limited) sign-up itself, never from a lookup.
    */
-  readonly onExistingAccount?: (email: string) => void;
+  readonly onExistingAccount?: (email: string, name: string) => void;
+  /** Pre-fills name and email, e.g. after "Change email" on the join step. */
+  readonly defaultName?: string;
+  readonly defaultEmail?: string;
   /**
    * P64 Phase 1 — the invitation token from the sign-up link (`?invite=`).
    * Sent as-is; the backend decides whether this academy's registration
@@ -204,6 +207,8 @@ export function RegistrationForm({
   academyId,
   onSuccess,
   onExistingAccount,
+  defaultName,
+  defaultEmail,
   inviteToken,
   legalLinks,
 }: RegistrationFormProps = {}): JSX.Element {
@@ -251,8 +256,8 @@ export function RegistrationForm({
   const form = useForm<RegistrationFormData>({
     resolver,
     defaultValues: {
-      name: '',
-      email: '',
+      name: defaultName ?? '',
+      email: defaultEmail ?? '',
       password: '',
       confirmPassword: '',
       acceptTerms: false,
@@ -392,7 +397,7 @@ export function RegistrationForm({
             onExistingAccount &&
             key === AUTH_ERROR_KEYS.emailAlreadyRegistered
           ) {
-            onExistingAccount(data.email.trim());
+            onExistingAccount(data.email.trim(), data.name);
             return;
           }
           if (!key || !OPTIONS_REFRESH_ERROR_KEYS.includes(key)) return;
@@ -518,6 +523,8 @@ export function RegistrationForm({
             type="email"
             placeholder={t('auth:register.emailPlaceholder')}
             autoComplete="email"
+            // Back from "Change email" on the join step: straight to the field.
+            autoFocus={!!defaultEmail}
             disabled={isLoading}
             {...register('email')}
             aria-invalid={!!errors.email}
