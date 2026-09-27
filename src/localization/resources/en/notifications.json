@@ -358,6 +358,14 @@
       "title": "Your account joined a new academy",
       "message": "Your account now has access to {{academyName}}. If this wasn't you, reset your password."
     },
+    "googleLinked": {
+      "title": "Google sign-in connected",
+      "message": "You can now sign in with Google. If this wasn't you, reset your password."
+    },
+    "googleUnlinked": {
+      "title": "Google sign-in removed",
+      "message": "Google can no longer be used to sign in to your account. If this wasn't you, reset your password."
+    },
     "academyMemberAdded": {
       "title": "You've been added to an academy",
       "message": "You now have access to {{academyName}}. Sign in with your existing Atlas credentials."
