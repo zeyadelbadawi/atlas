@@ -18,7 +18,7 @@
     "signUp": {
       "title": "Join {{academyName}}",
       "subtitle": "Create your student account to start learning with {{academyName}}.",
-      "success": "Your account has been created. Sign in to get started.",
+      "success": "Sign in to continue. If this email is new to Atlas, your account is ready. If you already have an Atlas account with this email, sign in with it — we've emailed you how to continue.",
       "goToSignIn": "Go to sign in",
       "hasAccount": "Already have an account?",
       "signIn": "Sign in",

@@ -182,6 +182,10 @@
       "title": "Password changed",
       "message": "Your password was changed. If this wasn't you, contact support immediately."
     },
+    "accountSignupAttempt": {
+      "title": "Sign-up attempt",
+      "message": "Someone tried to create an account with your email address."
+    },
     "accountDeletionCode": {
       "title": "Account deletion code",
       "message": "A code to confirm deleting your account was sent to your email."
