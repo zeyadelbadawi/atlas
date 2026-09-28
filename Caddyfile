@@ -25,17 +25,25 @@
 	}
 }
 
-# Authentication audit, Decision 4 — Content-Security-Policy, REPORT-ONLY.
+# Content-Security-Policy — ENFORCED (production-readiness pass; it ran
+# Report-Only first, audit Decision 4).
 #
-# Staged on purpose: `-Report-Only` blocks nothing. Browsers report each
-# would-be violation to `/api/v1/security/csp-reports` (the backend
-# normalises it — no URL query survives — logs it and counts it in
-# `atlas_csp_violations_total`). The policy is switched to the enforcing
-# `Content-Security-Policy` header only once that evidence shows it breaks
-# nothing real; see docs/CSP_AND_TOKEN_STORAGE.md in the backend repo.
+# Enforced because the evidence supports it: the built SPA has no inline
+# script, no eval/new Function and no third-party script host; a browser
+# sweep of platform, dashboard and academy pages (EN/AR, desktop/mobile) and
+# probes of every dynamic source (certificate PDF preview, builder srcdoc
+# preview, hls.js worker, YouTube, direct-to-storage uploads) raised zero
+# violations under this exact policy; production reported none. Browsers
+# still report every violation to `/api/v1/security/csp-reports` (the
+# backend normalises it — no URL query survives — logs it and counts it in
+# `atlas_csp_violations_total{disposition="enforce"}`), so anything missed
+# is visible at once. See docs/CSP_AND_TOKEN_STORAGE.md in the backend repo.
 #
-# What each source is for (from a sweep of the SPA's code and a browser
-# assessment of its pages):
+# `script-src 'self'` is the directive that matters: an injected script
+# cannot run, so it cannot act as the signed-in user (the refresh token is
+# an HttpOnly cookie and the access token lives only in page memory).
+#
+# What each source is for:
 #   script-src 'self'            Vite's hashed bundles only; no inline script,
 #                                no eval (JSON-LD blocks are data, not script)
 #   style-src 'unsafe-inline'    Radix/sonner/recharts inject <style> and
@@ -46,12 +54,16 @@
 #                                storage/CDN host, which is configuration
 #   connect-src https:           direct-to-storage uploads and HLS segments,
 #                                same reason
-#   frame-src                    YouTube lessons (nocookie first) and the
-#                                website builder's same-origin preview
+#   frame-src                    YouTube lessons (nocookie first), the website
+#                                builder's same-origin preview, and `blob:` for
+#                                the certificate template's PDF preview (an
+#                                object URL of the server-rendered PDF)
 #   worker-src blob:             hls.js
-(csp_report_only) {
+#   object-src 'none'            no plugins (Chromium's PDF viewer in a blob
+#                                frame is unaffected — verified)
+(csp) {
 	header Reporting-Endpoints `csp-endpoint="/api/v1/security/csp-reports"`
-	header Content-Security-Policy-Report-Only `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src 'self' https://www.youtube-nocookie.com https://www.youtube.com; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; report-uri /api/v1/security/csp-reports; report-to csp-endpoint`
+	header Content-Security-Policy `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src 'self' blob: https://www.youtube-nocookie.com https://www.youtube.com; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; report-uri /api/v1/security/csp-reports; report-to csp-endpoint`
 }
 
 # P63g — HSTS is split by ownership. Atlas owns the whole platform tree,
@@ -120,7 +132,7 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 
 	handle {
 		import security_headers
-		import csp_report_only
+		import csp
 		import hsts_platform
 		root * /srv
 		try_files {path} /index.html
@@ -164,7 +176,7 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 		# four. Same app, same files, weaker headers — purely because of
 		# which hostname the visitor arrived on.
 		import security_headers
-		import csp_report_only
+		import csp
 		import hsts_custom_domain
 		root * /srv
 		try_files {path} /index.html
