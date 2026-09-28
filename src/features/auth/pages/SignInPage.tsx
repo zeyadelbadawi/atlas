@@ -26,6 +26,7 @@ import { GoogleSignInOption } from '../google/GoogleSignInOption';
 import { StudentSignInRefusal } from '../components/StudentSignInRefusal';
 import {
   AUTH_ERROR_KEYS,
+  isSafeReturnPath,
   readRefusedAcademies,
 } from '../utils/academy-surface.utils';
 
@@ -81,8 +82,12 @@ export default function SignInPage(): JSX.Element {
   // Redirect authenticated users
   useEffect(() => {
     if (session.status === 'authenticated') {
-      const redirectTo =
-        searchParams.get('redirect') || AUTHENTICATED_ENTRY_ROUTE;
+      // Same-site relative paths only (never `//host`, a scheme or a
+      // backslash trick) — the same guard the academy sign-in uses.
+      const requested = searchParams.get('redirect');
+      const redirectTo = isSafeReturnPath(requested)
+        ? requested
+        : AUTHENTICATED_ENTRY_ROUTE;
       navigate(redirectTo, { replace: true });
     }
   }, [session.status, navigate, searchParams]);
@@ -234,7 +239,11 @@ export default function SignInPage(): JSX.Element {
             <GoogleSignInOption
               intent="sign_in"
               surface={SURFACE}
-              next={searchParams.get('redirect') || undefined}
+              next={
+                isSafeReturnPath(searchParams.get('redirect'))
+                  ? (searchParams.get('redirect') ?? undefined)
+                  : undefined
+              }
             />
             <SignInForm
               onSubmit={handleSignIn}

@@ -89,7 +89,10 @@ const ACCOUNT_ONLY_MODE: RegistrationMode = {
 function buildRegistrationSchema(mode: RegistrationMode) {
   return z
     .object({
-      name: z.string().min(2, 'auth:register.errors.nameRequired'),
+      name: z
+        .string()
+        .min(2, 'auth:register.errors.nameRequired')
+        .max(100, 'auth:register.errors.nameTooLong'),
       email: z
         .string()
         .min(1, 'auth:register.errors.emailRequired')
@@ -540,6 +543,7 @@ export function RegistrationForm({
             type="text"
             placeholder={t('auth:register.namePlaceholder')}
             autoComplete="name"
+            maxLength={100}
             disabled={isLoading}
             {...register('name')}
             aria-invalid={!!errors.name}

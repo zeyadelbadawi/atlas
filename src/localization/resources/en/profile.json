@@ -182,6 +182,14 @@
     "typeEmailLabel": "Type {{email}} to confirm",
     "confirmAction": "Permanently delete",
     "deleting": "Deleting…",
-    "failed": "Your account could not be deleted. Please try again."
+    "failed": "Your account could not be deleted. Please try again.",
+    "sendCode": "Email me a confirmation code",
+    "sendingCode": "Sending code…",
+    "codeTitle": "Enter the code we emailed you",
+    "codeDescription": "We sent a 6-digit code to {{email}}. Nothing is deleted until you enter it here. It expires in 10 minutes.",
+    "codeLabel": "Confirmation code",
+    "resend": "Send a new code",
+    "resendIn": "You can request a new code in {{seconds}} s",
+    "back": "Back"
   }
 }

@@ -66,8 +66,13 @@ describe('SignInPage after the one-page sign-up', () => {
   it('shows the "account created" notice and pre-fills the email', () => {
     renderSignIn({ registered: true, email: 'sara@example.com' });
     const notice = screen.getByTestId('account-created-notice');
-    expect(notice.textContent).toContain('Account created');
-    expect(notice.textContent).toContain('Sign in to set up your academy.');
+    // Audit Decision 3 — the notice is true whether or not the address
+    // already had an account (registration never says which).
+    expect(notice.textContent).toContain('Sign in to continue');
+    expect(notice.textContent).toContain(
+      'If you already had an account with this email, sign in with it'
+    );
+    expect(notice.textContent).not.toContain('Account created');
     expect(
       (screen.getByLabelText('Email') as HTMLInputElement).value
     ).toBe('sara@example.com');
@@ -96,7 +101,7 @@ describe('SignInPage after the one-page sign-up', () => {
   it('says it in Arabic', () => {
     renderSignIn({ registered: true, email: 'sara@example.com' }, 'ar');
     expect(screen.getByTestId('account-created-notice').textContent).toContain(
-      'سجّل الدخول لإعداد أكاديميتك.'
+      'سجّل الدخول للمتابعة'
     );
   });
 });
