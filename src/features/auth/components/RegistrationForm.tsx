@@ -201,6 +201,16 @@ export interface RegistrationFormProps {
     readonly terms: string;
     readonly privacy: string;
   };
+  /**
+   * Atlas sign-up — receives the organization name, the chosen plan and the
+   * plan the visitor arrived for whenever they change, so "Continue with
+   * Google" can carry them to the Google create step.
+   */
+  readonly onSignupDraftChange?: (draft: {
+    readonly organizationName?: string;
+    readonly planId?: string;
+    readonly planKey?: string;
+  }) => void;
 }
 
 export function RegistrationForm({
@@ -211,6 +221,7 @@ export function RegistrationForm({
   defaultEmail,
   inviteToken,
   legalLinks,
+  onSignupDraftChange,
 }: RegistrationFormProps = {}): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -305,6 +316,30 @@ export function RegistrationForm({
     intendedPlanKey,
     trialPlans,
     setValue,
+  ]);
+
+  /*
+    Atlas sign-up — keeps the page's "Continue with Google" up to date with
+    what is typed and chosen here (plus the plan the visitor arrived for,
+    whose storage hand-off is consumed above), so the Google create step
+    can start from it instead of from nothing.
+  */
+  const organizationNameValue = form.watch('organizationName');
+  const planIdValue = form.watch('planId');
+  useEffect(() => {
+    if (!isManagementSurface || !onSignupDraftChange) return;
+    const organizationName = (organizationNameValue ?? '').trim();
+    onSignupDraftChange({
+      ...(organizationName ? { organizationName } : {}),
+      ...(planIdValue ? { planId: planIdValue } : {}),
+      ...(intendedPlanKey ? { planKey: intendedPlanKey } : {}),
+    });
+  }, [
+    isManagementSurface,
+    onSignupDraftChange,
+    organizationNameValue,
+    planIdValue,
+    intendedPlanKey,
   ]);
 
   // Maps a validation (400) failure's per-field violations onto this

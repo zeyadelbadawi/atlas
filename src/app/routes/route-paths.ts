@@ -32,6 +32,8 @@ export const AUTH_ROUTES = {
   root: '/auth',
   signIn: '/auth/sign-in',
   register: '/auth/register',
+  /** The same sign-up page under the name the marketing site and people use. */
+  signUpAlias: '/auth/sign-up',
   forgotPassword: '/auth/forgot-password',
   resetPassword: '/auth/reset-password',
   /** P64 Communications C0 — verification links may land on either surface; the academy hosts mount theirs in `PublicWebsiteRouter`. */

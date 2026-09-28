@@ -3,7 +3,7 @@
  *
  * New user registration with email and password.
  */
-import { useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { UserPlus } from 'lucide-react';
@@ -16,11 +16,19 @@ import {
 import { PageContainer, PageHeader } from '@components/layout';
 import { RegistrationForm } from '../components/RegistrationForm';
 import { GoogleSignInOption } from '../google/GoogleSignInOption';
+import type { GoogleSignupDraft } from '../google/google-flow.storage';
 
 export default function RegistrationPage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { session } = useAuth();
+
+  // What the form below holds (organization name, plan) — handed to
+  // "Continue with Google" at the click, so the Google create step keeps it.
+  const signupDraftRef = useRef<GoogleSignupDraft>();
+  const rememberSignupDraft = useCallback((draft: GoogleSignupDraft) => {
+    signupDraftRef.current = draft;
+  }, []);
 
   // Redirect authenticated users
   useEffect(() => {
@@ -58,13 +66,18 @@ export default function RegistrationPage(): JSX.Element {
         {/* Google Identity — the same account (and organization) as the
             form below, created only after the person confirms it on the
             return page's create step. */}
-        <GoogleSignInOption intent="sign_up" surface="management" />
+        <GoogleSignInOption
+          intent="sign_up"
+          surface="management"
+          getSignupDraft={() => signupDraftRef.current}
+        />
 
         <RegistrationForm
           legalLinks={{
             terms: PUBLIC_ROUTES.terms,
             privacy: PUBLIC_ROUTES.privacyPolicy,
           }}
+          onSignupDraftChange={rememberSignupDraft}
         />
 
         <div className="text-center text-sm">

@@ -17,6 +17,23 @@ const FLOW_STORAGE_KEY = 'atlas:google-flow';
 /** A flow context older than this is ignored (the flow itself lives 10 minutes). */
 const FLOW_CONTEXT_MAX_AGE_MS = 30 * 60 * 1000;
 
+/** Mirrors the backend's `organizationName` limit; anything longer is dropped. */
+const SIGNUP_ORGANIZATION_NAME_MAX = 120;
+
+/**
+ * What the Atlas sign-up page already had when Google was chosen — restored
+ * on the return page's create step so nothing is typed or chosen twice.
+ * Only a pre-fill: the person confirms it there, and the server validates
+ * the organization name and plan exactly as for the password sign-up.
+ */
+export interface GoogleSignupDraft {
+  readonly organizationName?: string;
+  /** The plan picked in the form. */
+  readonly planId?: string;
+  /** The plan the visitor arrived for (`?plan=` / the pricing page hand-off). */
+  readonly planKey?: string;
+}
+
 export interface GoogleFlowContext {
   readonly intent: GoogleIntent;
   readonly surface: SignInSurface;
@@ -29,6 +46,8 @@ export interface GoogleFlowContext {
   readonly inviteToken?: string;
   /** Academy website locale — its return URL carries no `/ar` prefix. */
   readonly locale?: 'en' | 'ar';
+  /** Atlas sign-up: the organization/plan the page already had. */
+  readonly signup?: GoogleSignupDraft;
   readonly startedAt: number;
 }
 
@@ -47,6 +66,23 @@ export function saveGoogleFlowContext(
 
 function readString(value: unknown): string | undefined {
   return typeof value === 'string' && value.length > 0 ? value : undefined;
+}
+
+function readSignupDraft(value: unknown): GoogleSignupDraft | undefined {
+  if (!value || typeof value !== 'object') return undefined;
+  const raw = value as Record<string, unknown>;
+  const organizationName = readString(raw.organizationName);
+  const planId = readString(raw.planId);
+  const planKey = readString(raw.planKey);
+  const draft: GoogleSignupDraft = {
+    ...(organizationName &&
+    organizationName.length <= SIGNUP_ORGANIZATION_NAME_MAX
+      ? { organizationName }
+      : {}),
+    ...(planId ? { planId } : {}),
+    ...(planKey ? { planKey } : {}),
+  };
+  return Object.keys(draft).length > 0 ? draft : undefined;
 }
 
 /** Parsed defensively — the stored value is only ever trusted as a hint. */
@@ -78,6 +114,7 @@ export function readGoogleFlowContext(): GoogleFlowContext | null {
       return null;
     }
     const next = readString(parsed.next);
+    const signup = readSignupDraft(parsed.signup);
     return {
       intent,
       surface,
@@ -92,6 +129,7 @@ export function readGoogleFlowContext(): GoogleFlowContext | null {
           : parsed.locale === 'en'
             ? 'en'
             : undefined,
+      ...(signup ? { signup } : {}),
     };
   } catch {
     return null;

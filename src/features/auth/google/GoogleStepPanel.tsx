@@ -16,7 +16,7 @@
  * `onResult`; a wrong password can be retried (the backend releases the
  * step); anything else ends the flow via `onFailure`.
  */
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
@@ -33,6 +33,7 @@ import { useSignupOptions } from '../hooks';
 import { TrialPlanPicker } from '../components/TrialPlanPicker';
 import { GoogleLogo } from './GoogleAuthButton';
 import { GOOGLE_ERROR_KEYS, useGoogleErrorMessage } from './google-errors';
+import type { GoogleSignupDraft } from './google-flow.storage';
 
 /** Mirrors the password sign-up's rules (`RegistrationForm`). */
 const NAME_MIN = 2;
@@ -49,6 +50,8 @@ export interface GoogleStepPanelProps {
   readonly step: GoogleStep;
   readonly surface: SignInSurface;
   readonly inviteToken?: string;
+  /** Atlas sign-up: the organization/plan the starting page already had. */
+  readonly signupDraft?: GoogleSignupDraft;
   readonly forgotPasswordHref: string;
   /** Management sign-up: where the terms/privacy words link to. */
   readonly legalLinks?: { readonly terms: string; readonly privacy: string };
@@ -252,7 +255,8 @@ function ActivateStep(props: GoogleStepPanelProps): JSX.Element {
 
 function CreateStep(props: GoogleStepPanelProps): JSX.Element {
   const { t } = useTranslation();
-  const { step, surface, inviteToken, legalLinks, onCancel } = props;
+  const { step, surface, inviteToken, signupDraft, legalLinks, onCancel } =
+    props;
   const isManagement = surface === 'management';
   const signupOptionsQuery = useSignupOptions({ enabled: isManagement });
   const signupOptions = isManagement ? signupOptionsQuery.data : undefined;
@@ -264,8 +268,26 @@ function CreateStep(props: GoogleStepPanelProps): JSX.Element {
   const planRequired = trialPlans.length > 0;
 
   const [name, setName] = useState(step.name ?? '');
-  const [organizationName, setOrganizationName] = useState('');
+  const [organizationName, setOrganizationName] = useState(
+    isManagement ? (signupDraft?.organizationName ?? '') : ''
+  );
   const [planId, setPlanId] = useState<string>();
+
+  /*
+    The plan chosen before Google (in the form, or on the pricing page via
+    `?plan=`) is selected again once the eligible trial plans are known —
+    once, and only if it is still among them; anything else is left for
+    the person to choose. The server re-validates whatever is submitted.
+  */
+  const planPreselectedRef = useRef(false);
+  useEffect(() => {
+    if (!isManagement || planPreselectedRef.current || !signupOptions) return;
+    planPreselectedRef.current = true;
+    const intended =
+      trialPlans.find((plan) => plan.id === signupDraft?.planId) ??
+      trialPlans.find((plan) => plan.key === signupDraft?.planKey);
+    if (intended) setPlanId(intended.id);
+  }, [isManagement, signupOptions, trialPlans, signupDraft]);
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
