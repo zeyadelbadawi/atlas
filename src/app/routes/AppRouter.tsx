@@ -65,6 +65,12 @@ const DashboardOverviewPage = lazy(
   () => import('@features/dashboard/pages/DashboardOverviewPage')
 );
 
+/** `/auth/sign-up` → the sign-up page, keeping `?plan=` and any other query. */
+function SignUpAliasRedirect(): JSX.Element {
+  const { search } = useLocation();
+  return <Navigate to={`${AUTH_ROUTES.register}${search}`} replace />;
+}
+
 const ProfilePage = lazy(() => import('@features/profile/pages/ProfilePage'));
 const OrganizationOverviewPage = lazy(
   () => import('@features/organization/pages/OrganizationOverviewPage')
@@ -527,6 +533,10 @@ export function AppRouter(): JSX.Element {
             <Route path={AUTH_ROUTES.signIn} element={<SignInPage />} />
 
             <Route path={AUTH_ROUTES.register} element={<RegistrationPage />} />
+            <Route
+              path={AUTH_ROUTES.signUpAlias}
+              element={<SignUpAliasRedirect />}
+            />
 
             <Route
               path={AUTH_ROUTES.forgotPassword}

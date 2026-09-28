@@ -11,6 +11,7 @@ import { authenticationService } from '@services/identity';
 import type { ApiError } from '@api';
 import type { GoogleIntent, SignInSurface } from '@types';
 import { saveGoogleFlowContext } from './google-flow.storage';
+import type { GoogleSignupDraft } from './google-flow.storage';
 
 export interface GoogleStartInput {
   readonly intent: GoogleIntent;
@@ -25,6 +26,8 @@ export interface GoogleStartInput {
   readonly currentPassword?: string;
   /** `setup` only — the emailed setup token. */
   readonly setupToken?: string;
+  /** Atlas sign-up — restored on the create step (a pre-fill, never authoritative). */
+  readonly signup?: GoogleSignupDraft;
 }
 
 export interface UseGoogleStartResult {
@@ -66,6 +69,7 @@ export function useGoogleStart(): UseGoogleStartResult {
       ...(input.next ? { next: input.next } : {}),
       ...(input.inviteToken ? { inviteToken: input.inviteToken } : {}),
       ...(input.locale ? { locale: input.locale } : {}),
+      ...(input.signup ? { signup: input.signup } : {}),
     });
     try {
       const { authorizationUrl } = await authenticationService.googleAuthorize({

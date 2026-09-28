@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import type { SignInSurface } from '@types';
 import { AuthMethodDivider, GoogleAuthButton } from './GoogleAuthButton';
 import { readLastAuthMethod } from './google-flow.storage';
+import type { GoogleSignupDraft } from './google-flow.storage';
 import { useGoogleAuthOptions } from './useGoogleAuthOptions';
 import { useGoogleErrorMessage } from './google-errors';
 import { useGoogleStart } from './useGoogleStart';
@@ -28,6 +29,11 @@ export interface GoogleSignInOptionProps {
   readonly locale?: 'en' | 'ar';
   /** Wraps the button, e.g. `WebsiteBrandBridge` on an academy website. */
   readonly className?: string;
+  /**
+   * Atlas sign-up: what the form already holds (organization name, plan),
+   * read at the click so the Google create step starts from it.
+   */
+  readonly getSignupDraft?: () => GoogleSignupDraft | undefined;
 }
 
 export function GoogleSignInOption({
@@ -39,6 +45,7 @@ export function GoogleSignInOption({
   locale,
   setupToken,
   className,
+  getSignupDraft,
 }: GoogleSignInOptionProps): JSX.Element | null {
   const { googleEnabled } = useGoogleAuthOptions({ academyId });
   const { start, isStarting, error } = useGoogleStart();
@@ -63,6 +70,7 @@ export function GoogleSignInOption({
               inviteToken,
               locale,
               setupToken,
+              signup: getSignupDraft?.(),
             })
           }
           isLoading={isStarting}

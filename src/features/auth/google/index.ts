@@ -18,4 +18,7 @@ export {
   readGoogleFlowContext,
   readLastAuthMethod,
 } from './google-flow.storage';
-export type { GoogleFlowContext } from './google-flow.storage';
+export type {
+  GoogleFlowContext,
+  GoogleSignupDraft,
+} from './google-flow.storage';

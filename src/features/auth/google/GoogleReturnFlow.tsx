@@ -245,6 +245,7 @@ export function GoogleReturnFlow({
             step={state.step}
             surface={surface}
             inviteToken={inviteToken}
+            signupDraft={contextRef.current?.signup}
             forgotPasswordHref={forgotPasswordHref}
             legalLinks={legalLinks}
             onResult={adopt}
