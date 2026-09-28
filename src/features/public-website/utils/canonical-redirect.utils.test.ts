@@ -23,6 +23,22 @@ describe('canonical-redirect.utils (P63)', () => {
     ).toBe('https://learn.elzozo.com/ar/courses/x?utm=1#top');
   });
 
+  it('never moves a returning Google flow off the origin it started on', () => {
+    // The binder cookie is host-only and the handoff is refused elsewhere.
+    expect(
+      resolveCanonicalRedirect(
+        {
+          hostname: 'elzozo.atlass.dpdns.org',
+          pathname: '/auth/google/return',
+          search: '',
+          hash: '#h=abc',
+        },
+        'learn.elzozo.com',
+        false
+      )
+    ).toBeNull();
+  });
+
   it('does nothing on the canonical host itself, case-insensitively', () => {
     expect(
       resolveCanonicalRedirect(

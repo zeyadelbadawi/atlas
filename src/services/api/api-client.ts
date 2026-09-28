@@ -71,6 +71,20 @@ export class ApiClient {
     return this.send<TData>({ method: 'DELETE', path, ...options });
   }
 
+  /** Deletes a resource whose endpoint needs a body (e.g. a re-authentication password). */
+  public async deleteWithBody<TData = void, TBody = unknown>(
+    path: string,
+    body: TBody,
+    options?: WriteOptions
+  ): Promise<TData> {
+    return this.send<TData, TBody>({
+      method: 'DELETE',
+      path,
+      body,
+      ...options,
+    });
+  }
+
   /**
    * Uploads files as multipart form data.
    * The transport omits `Content-Type` so the browser sets the boundary.

@@ -14,6 +14,7 @@ import type {
   SignInCredentials,
   TwoFactorVerifyInput,
   EmailOtpVerifyInput,
+  GoogleSignInResult,
 } from '@types';
 import { IdentityContext } from './identity.context';
 import type { IdentityContextValue } from './identity.context';
@@ -181,6 +182,15 @@ export function AtlasIdentityProvider({
     return undefined;
   }, []);
 
+  /** Google Identity — the same split as `signIn`, for a response already in hand. */
+  const acceptSignInResult = useCallback((result: GoogleSignInResult) => {
+    if (isTwoFactorChallenge(result) || isEmailOtpChallenge(result)) {
+      return result;
+    }
+    setSession(sessionService.acceptAuthenticationResponse(result));
+    return undefined;
+  }, []);
+
   /** Completes a challenged sign-in. Only here does the session become real. */
   const completeTwoFactor = useCallback(async (input: TwoFactorVerifyInput) => {
     const newSession = await sessionService.completeTwoFactor(input);
@@ -284,6 +294,7 @@ export function AtlasIdentityProvider({
       organization: session.organization,
       isAuthenticated: session.status === 'authenticated',
       signIn,
+      acceptSignInResult,
       completeTwoFactor,
       completeEmailOtp,
       signOut,
@@ -294,6 +305,7 @@ export function AtlasIdentityProvider({
       session,
       isRestoring,
       signIn,
+      acceptSignInResult,
       completeTwoFactor,
       completeEmailOtp,
       signOut,

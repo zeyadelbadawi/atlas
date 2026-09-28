@@ -23,6 +23,13 @@ export const STORAGE_KEYS = Object.freeze({
   featureFlags: 'atlas:feature-flags',
   /** User preferences: JSON-serialized PlatformPreferences. */
   userPreferences: 'atlas:user-preferences',
+  /**
+   * First factor of the latest session minted in this browser:
+   * 'password' | 'google'. Only the sign-in pages' "Last used" hint reads
+   * it; written from a session response, never from a click. Kept across
+   * sign-out on purpose — that is when the hint is shown.
+   */
+  lastAuthMethod: 'atlas:last-auth-method',
 } as const);
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];

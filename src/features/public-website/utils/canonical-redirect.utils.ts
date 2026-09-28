@@ -12,6 +12,8 @@
  *
  * Pure so it is unit-testable; the caller performs the navigation.
  */
+import { AUTH_ROUTES } from '@app/routes/route-paths';
+
 export interface CanonicalRedirectLocation {
   readonly hostname: string;
   readonly pathname: string;
@@ -32,6 +34,10 @@ export function resolveCanonicalRedirect(
   isDevelopment: boolean
 ): string | null {
   if (!canonicalHost || isDevelopment) return null;
+  // Google Identity — a returning Google flow must finish on the origin it
+  // started from: its binder cookie is host-only, and the handoff in the
+  // fragment is refused anywhere else. Moving it would only break it.
+  if (location.pathname === AUTH_ROUTES.googleReturn) return null;
   const current = location.hostname.toLowerCase();
   const target = canonicalHost.toLowerCase();
   if (current === target || isLocalOrIpHost(current)) return null;

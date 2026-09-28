@@ -60,6 +60,7 @@ import {
   EmailOtpChallengeForm,
   AUTH_ERROR_KEYS,
   isSafeReturnPath,
+  GoogleSignInOption,
 } from '@features/auth';
 import { isEmailOtpChallenge } from '@types';
 import type { SignInChallenge } from '@types';
@@ -319,6 +320,19 @@ export function PublicWebsiteSignInPage({
           </WebsiteBrandBridge>
         ) : (
           <WebsiteBrandBridge>
+            {/* Google Identity — for THIS academy only (the flow carries
+                the host's own academy id; the backend re-checks it). A new
+                session lands where the password one would. */}
+            <GoogleSignInOption
+              intent="sign_in"
+              surface="academy"
+              academyId={academy.academyId}
+              locale={locale}
+              next={buildHref(
+                isSafeReturnPath(returnTo) ? returnTo : LEARNER_ROUTES.root
+              )}
+              className="mb-6"
+            />
             <SignInForm
               onSubmit={handleSubmit}
               isLoading={isLoading}

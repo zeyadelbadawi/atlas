@@ -33,6 +33,7 @@ import {
   EmailOtpChallengeForm,
   RegistrationForm,
   TwoFactorChallengeForm,
+  GoogleSignInOption,
 } from '@features/auth';
 import type { AcademyJoinCredentials } from '@features/auth';
 import { useAuth, useSignIn, useSignOut } from '@hooks';
@@ -461,6 +462,19 @@ export function PublicWebsiteSignUpPage({
         ) : (
           <>
             <WebsiteBrandBridge>
+              {/* Google Identity — the same academy, the same invitation
+                  code (`?invite=`), the same registration policy: the
+                  backend applies it at the return page's create step (or
+                  joins an existing Google-linked account directly). */}
+              <GoogleSignInOption
+                intent="sign_up"
+                surface="academy"
+                academyId={academy.academyId}
+                inviteToken={searchParams.get('invite') ?? undefined}
+                locale={locale}
+                next={buildHref(LEARNER_ROUTES.root)}
+                className="mb-6"
+              />
               {/* P64 Phase 1 (D3) — the invitation token from the link the
                   academy sent (`/sign-up?invite=…`). Passed through as-is:
                   the BACKEND decides whether this academy's registration

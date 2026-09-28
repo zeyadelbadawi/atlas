@@ -108,6 +108,14 @@ vi.mock('./hooks/usePublicWebsiteData', () => ({
 }));
 
 import { PublicWebsiteSignInPage } from './components/PublicWebsiteSignInPage';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+// Google Identity — the page asks `/auth/options` whether to show the
+// Google button; with no answer here the button simply stays hidden.
+function testQueryClient(): QueryClient {
+  return new QueryClient({ defaultOptions: { queries: { retry: false } } });
+}
+
 
 const i18n = createI18nInstance('en');
 
@@ -142,34 +150,36 @@ function renderPage({
   entry = '/sign-in',
 }: { authenticated?: boolean; entry?: string } = {}) {
   return render(
-    <I18nextProvider i18n={i18n}>
-      <IdentityContext.Provider value={identity(authenticated)}>
-        <MemoryRouter initialEntries={[entry]}>
-          <Routes>
-            <Route
-              path="/sign-in"
-              element={
-                <PublicWebsiteSignInPage lookupKey="elzozo" locale="en" />
-              }
-            />
-            {/* P64 Phase 2 (D2 / AD-12) — the fallback landing is the
-                learner dashboard at `/my`, not the retired `/my-learning`.
-                That URL still answers on the real site (it redirects), but
-                sign-in must not spend a redirect on every visit. */}
-            <Route
-              path="/my"
-              element={
-                <span data-testid="learner-dashboard">learner dashboard</span>
-              }
-            />
-            <Route
-              path="/my-learning/courses/:courseId"
-              element={<span data-testid="course">course</span>}
-            />
-          </Routes>
-        </MemoryRouter>
-      </IdentityContext.Provider>
-    </I18nextProvider>
+    <QueryClientProvider client={testQueryClient()}>
+      <I18nextProvider i18n={i18n}>
+        <IdentityContext.Provider value={identity(authenticated)}>
+          <MemoryRouter initialEntries={[entry]}>
+            <Routes>
+              <Route
+                path="/sign-in"
+                element={
+                  <PublicWebsiteSignInPage lookupKey="elzozo" locale="en" />
+                }
+              />
+              {/* P64 Phase 2 (D2 / AD-12) — the fallback landing is the
+                  learner dashboard at `/my`, not the retired `/my-learning`.
+                  That URL still answers on the real site (it redirects), but
+                  sign-in must not spend a redirect on every visit. */}
+              <Route
+                path="/my"
+                element={
+                  <span data-testid="learner-dashboard">learner dashboard</span>
+                }
+              />
+              <Route
+                path="/my-learning/courses/:courseId"
+                element={<span data-testid="course">course</span>}
+              />
+            </Routes>
+          </MemoryRouter>
+        </IdentityContext.Provider>
+      </I18nextProvider>
+    </QueryClientProvider>
   );
 }
 

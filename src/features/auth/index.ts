@@ -52,3 +52,7 @@ export {
   buildAcademyUrl,
   readRefusedAcademies,
 } from './utils/academy-surface.utils';
+
+// Google Identity.
+export * from './google';
+export { default as GoogleReturnPage } from './pages/GoogleReturnPage';

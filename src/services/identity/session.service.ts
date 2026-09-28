@@ -24,6 +24,16 @@ import type {
   EmailOtpVerifyInput,
 } from '@types';
 
+/** The "Last used" hint on the sign-in pages. Best effort: storage may be unavailable. */
+function rememberAuthMethod(method: AuthenticationResponse['authMethod']): void {
+  if (method !== 'password' && method !== 'google') return;
+  try {
+    localStorage.setItem(STORAGE_KEYS.lastAuthMethod, method);
+  } catch {
+    // Private mode or blocked storage — the hint is only a convenience.
+  }
+}
+
 export class SessionService {
   /**
    * Single-flight guard for token refresh (session-inactivity bug fix).
@@ -89,7 +99,16 @@ export class SessionService {
     return this.establishSession(response);
   }
 
+  /**
+   * Google Identity — adopts a session minted by a Google completion or
+   * step. The same `establishSession` as every other path.
+   */
+  public acceptAuthenticationResponse(response: AuthenticationResponse): Session {
+    return this.establishSession(response);
+  }
+
   private establishSession(response: AuthenticationResponse): Session {
+    rememberAuthMethod(response.authMethod);
     const tokens = tokenService.createMetadata(
       response.accessToken,
       response.expiresIn,

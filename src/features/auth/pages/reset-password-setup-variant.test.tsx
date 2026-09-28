@@ -23,6 +23,14 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import ResetPasswordPage from './ResetPasswordPage';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+// Google Identity — the page asks `/auth/options` whether to show the
+// Google button; with no answer here the button simply stays hidden.
+function testQueryClient(): QueryClient {
+  return new QueryClient({ defaultOptions: { queries: { retry: false } } });
+}
+
 
 // The page reads `validation.data === true` and `validation.isPending`,
 // and treats anything else as an invalid token — so the mock has to
@@ -55,9 +63,11 @@ afterEach(() => {
 
 function renderAt(search: string) {
   return render(
-    <MemoryRouter initialEntries={[`/auth/reset-password${search}`]}>
-      <ResetPasswordPage />
-    </MemoryRouter>,
+    <QueryClientProvider client={testQueryClient()}>
+      <MemoryRouter initialEntries={[`/auth/reset-password${search}`]}>
+        <ResetPasswordPage />
+      </MemoryRouter>
+    </QueryClientProvider>,
   );
 }
 
