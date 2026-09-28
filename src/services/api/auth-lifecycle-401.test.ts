@@ -44,6 +44,7 @@ vi.mock('axios', () => {
 });
 
 const retrieve = vi.fn();
+const mayHaveSession = vi.fn();
 const clear = vi.fn();
 
 /**
@@ -56,6 +57,7 @@ const clear = vi.fn();
 vi.mock('@services/identity', () => ({
   tokenService: {
     retrieve: () => retrieve(),
+    mayHaveSession: () => mayHaveSession(),
     clear: () => clear(),
   },
   sessionService: {
@@ -95,8 +97,9 @@ async function mustSettle(promise: Promise<unknown>, ms = 300): Promise<'settled
 
 beforeEach(() => {
   capturedOnRejected = undefined;
-  // A refresh token is present: the precondition for the retry branch.
-  retrieve.mockReturnValue({ accessToken: 'A0', refreshToken: 'R0' });
+  // A session cookie may exist: the precondition for the retry branch.
+  retrieve.mockReturnValue({ accessToken: 'A0' });
+  mayHaveSession.mockReturnValue(true);
   new HttpClient('https://example.test/api/v1');
 });
 

@@ -218,6 +218,10 @@ export async function registerLearnerThroughWebsite(
 
 /** Clears any session this browser context holds, so the next step starts signed out. */
 export async function signOutInBrowser(page: Page): Promise<void> {
+  // The session itself is the HttpOnly cookie; storage holds only a hint.
+  // Only the session cookie goes — a remembered-device cookie stays, as it
+  // would after a real sign-out.
+  await page.context().clearCookies({ name: /^(__Host-)?atlas_session$/ });
   await page.goto('/');
   await page.evaluate(() => {
     window.localStorage.clear();

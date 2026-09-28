@@ -223,18 +223,17 @@ export class HttpClient {
 
         // Handle 401 Unauthorized: token may have expired.
         if (error.response?.status === 401 && originalRequest) {
-          const tokens = tokenService.retrieve();
-
-          // If we have a refresh token, attempt refresh.
+          // The refresh token is an HttpOnly cookie script cannot see; try a
+          // refresh whenever this browser may hold a session here.
           if (
-            tokens?.refreshToken &&
+            tokenService.mayHaveSession() &&
             !originalRequest.headers['X-Retry-After-Refresh'] &&
             !isAuthLifecycleRequest(originalRequest.url)
           ) {
             try {
               // Use shared refresh promise to deduplicate concurrent refresh requests.
               if (!this.refreshPromise) {
-                this.refreshPromise = this.performRefresh(tokens.refreshToken);
+                this.refreshPromise = this.performRefresh();
               }
 
               await this.refreshPromise;
@@ -313,10 +312,10 @@ export class HttpClient {
    * Performs token refresh and notifies IdentityProvider of the change.
    * This ensures both tokenService storage and IdentityProvider state stay synchronized.
    */
-  private async performRefresh(refreshToken: string): Promise<void> {
+  private async performRefresh(): Promise<void> {
     // Import sessionService dynamically to avoid circular dependency.
     const { sessionService } = await import('@services/identity');
-    await sessionService.refresh(refreshToken);
+    await sessionService.refresh();
 
     // Notify IdentityProvider by dispatching a custom event.
     // IdentityProvider will listen for this event and update its state.

@@ -84,14 +84,12 @@ describe('cookie consent — P106-CON-001..012', () => {
     // Clearing these would sign the user out. Declining optional cookies
     // is not a request to be signed out, and a consent implementation
     // that does that is broken in a way users experience as data loss.
-    window.localStorage.setItem(STORAGE_KEYS.authTokens, '{"accessToken":"x"}');
+    window.localStorage.setItem(STORAGE_KEYS.sessionHint, '1');
     window.localStorage.setItem(STORAGE_KEYS.activeOrganization, '"org-1"');
 
     writeConsent(false);
 
-    expect(window.localStorage.getItem(STORAGE_KEYS.authTokens)).toBe(
-      '{"accessToken":"x"}'
-    );
+    expect(window.localStorage.getItem(STORAGE_KEYS.sessionHint)).toBe('1');
     expect(window.localStorage.getItem(STORAGE_KEYS.activeOrganization)).toBe(
       '"org-1"'
     );
@@ -119,7 +117,7 @@ describe('cookie consent — P106-CON-001..012', () => {
     writeConsent(false);
 
     expect(
-      writeStoredValue(STORAGE_KEYS.authTokens, { accessToken: 'x' })
+      writeStoredValue(STORAGE_KEYS.sessionHint, '1')
     ).toBe(true);
     expect(writeStoredValue(STORAGE_KEYS.activeOrganization, 'org-1')).toBe(
       true
@@ -161,7 +159,7 @@ describe('cookie consent — P106-CON-001..012', () => {
     // the preference list, declining would sign users out.
     expect(isPreferenceStorageKey(STORAGE_KEYS.theme)).toBe(true);
     expect(isPreferenceStorageKey(STORAGE_KEYS.language)).toBe(true);
-    expect(isPreferenceStorageKey(STORAGE_KEYS.authTokens)).toBe(false);
+    expect(isPreferenceStorageKey(STORAGE_KEYS.sessionHint)).toBe(false);
     expect(isPreferenceStorageKey(STORAGE_KEYS.activeOrganization)).toBe(false);
     expect(isPreferenceStorageKey(CONSENT_STORAGE_KEY)).toBe(false);
   });

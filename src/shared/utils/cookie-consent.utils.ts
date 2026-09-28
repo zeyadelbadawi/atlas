@@ -52,7 +52,7 @@ export interface CookieConsent {
  * Preference-category storage. Everything here is genuinely optional:
  * Atlas works without it, it just forgets how you like things.
  *
- * `authTokens`, `activeOrganization` and `activeAcademy` are deliberately
+ * `sessionHint`, `activeOrganization` and `activeAcademy` are deliberately
  * ABSENT — they are strictly necessary, and clearing them would sign the
  * user out.
  */

@@ -24,6 +24,19 @@ import type {
   EmailOtpVerifyInput,
 } from '@types';
 
+/**
+ * Runs `work` while holding a lock shared by every tab of this origin, so two
+ * tabs never refresh at once: the session cookie is shared, and each refresh
+ * ROTATES it, so a second concurrent refresh would present a token the first
+ * just retired. Browsers without the Web Locks API run `work` directly; the
+ * refresh then retries once on a 401 (see `performRefresh`).
+ */
+function withCrossTabRefreshLock<T>(work: () => Promise<T>): Promise<T> {
+  const locks = (globalThis.navigator as Navigator | undefined)?.locks;
+  if (!locks?.request) return work();
+  return locks.request('atlas:session-refresh', () => work()) as Promise<T>;
+}
+
 /** The "Last used" hint on the sign-in pages. Best effort: storage may be unavailable. */
 function rememberAuthMethod(method: AuthenticationResponse['authMethod']): void {
   if (method !== 'password' && method !== 'google') return;
@@ -109,10 +122,11 @@ export class SessionService {
 
   private establishSession(response: AuthenticationResponse): Session {
     rememberAuthMethod(response.authMethod);
+    // The refresh token was set as an HttpOnly cookie by the response itself;
+    // only the short-lived access token is kept, in memory.
     const tokens = tokenService.createMetadata(
       response.accessToken,
-      response.expiresIn,
-      response.refreshToken
+      response.expiresIn
     );
 
     tokenService.store(tokens);
@@ -133,6 +147,8 @@ export class SessionService {
    * Terminates the session both locally and on the backend.
    */
   public async signOut(): Promise<Session> {
+    // The server ends the session identified by the access token or, when
+    // that has lapsed, by the session cookie — and clears the cookie.
     await authenticationService.signOut();
     tokenService.clear();
     // The remembered academy belongs to the account that just left, never
@@ -145,53 +161,35 @@ export class SessionService {
   }
 
   /**
-   * Silently restores a session from stored tokens.
+   * Silently restores the session on application start.
    *
-   * Used during application startup to restore the user's session without
-   * requiring them to sign in again.
-   *
-   * @returns The restored session, or an unauthenticated session if restoration fails.
+   * The access token lives only in memory, so after a reload there is none:
+   * the session is re-obtained from the HttpOnly session cookie with one
+   * `POST /auth/refresh`. That call is skipped entirely when this browser has
+   * no sign of a session on this host (an anonymous visitor).
    */
   public async restore(): Promise<Session> {
-    const tokens = tokenService.retrieve();
-
-    if (!tokens) {
+    if (!tokenService.mayHaveSession()) {
       return { status: 'unauthenticated' };
     }
 
-    // If tokens are expired, attempt refresh.
-    if (tokenService.isExpired(tokens.expiresAt)) {
-      if (tokens.refreshToken) {
-        try {
-          return await this.refresh(tokens.refreshToken);
-        } catch {
-          tokenService.clear();
-          return { status: 'unauthenticated' };
-        }
-      } else {
-        tokenService.clear();
-        return { status: 'unauthenticated' };
+    const tokens = tokenService.retrieve();
+    if (tokens && !tokenService.isExpired(tokens.expiresAt)) {
+      try {
+        const user = await currentUserService.getCurrent();
+        return {
+          status: 'authenticated',
+          tokens,
+          user,
+          organization: this.selectPrimaryOrganization(user),
+        };
+      } catch {
+        // Fall through to a refresh.
       }
     }
 
-    // Validate session with backend.
-    const isValid = await authenticationService.validateSession();
-    if (!isValid) {
-      tokenService.clear();
-      return { status: 'unauthenticated' };
-    }
-
-    // Fetch current user.
     try {
-      const user = await currentUserService.getCurrent();
-      const organization = this.selectPrimaryOrganization(user);
-
-      return {
-        status: 'authenticated',
-        tokens,
-        user,
-        organization,
-      };
+      return await this.refresh();
     } catch {
       tokenService.clear();
       return { status: 'unauthenticated' };
@@ -199,30 +197,45 @@ export class SessionService {
   }
 
   /**
-   * Refreshes an expired access token.
-   *
-   * @param refreshToken The refresh token.
-   * @returns The new session with refreshed tokens.
+   * Obtains a new access token from the session cookie (rotating it).
+   * Concurrent callers in this tab share one request, and tabs take turns.
    */
-  public async refresh(refreshToken: string): Promise<Session> {
+  public async refresh(): Promise<Session> {
     // Coalesce concurrent refreshes (see `refreshInFlight`'s doc comment).
     if (this.refreshInFlight) {
       return this.refreshInFlight;
     }
-    this.refreshInFlight = this.performRefresh(refreshToken).finally(() => {
+    this.refreshInFlight = withCrossTabRefreshLock(() =>
+      this.performRefresh()
+    ).finally(() => {
       this.refreshInFlight = null;
     });
     return this.refreshInFlight;
   }
 
   /** The actual refresh round-trip — always invoked through the single-flight `refresh`. */
-  private async performRefresh(refreshToken: string): Promise<Session> {
-    const response = await authenticationService.refreshToken({ refreshToken });
+  private async performRefresh(): Promise<Session> {
+    // A session an older build left in localStorage is converted into the
+    // cookie by presenting its token once; it is deleted as it is read.
+    const legacy = tokenService.takeLegacyRefreshToken();
+    let response;
+    try {
+      response = await authenticationService.refreshToken(
+        legacy ? { refreshToken: legacy } : {}
+      );
+    } catch (error) {
+      // Without the Web Locks API another tab may have rotated the cookie a
+      // moment ago; the browser now holds the new one, so try once more.
+      if (legacy || (globalThis.navigator as Navigator | undefined)?.locks) {
+        throw error;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      response = await authenticationService.refreshToken({});
+    }
 
     const tokens = tokenService.createMetadata(
       response.accessToken,
-      response.expiresIn,
-      response.refreshToken
+      response.expiresIn
     );
 
     tokenService.store(tokens);
@@ -304,7 +317,7 @@ export class SessionService {
    * @param tokens Token metadata.
    */
   public shouldRefreshTokens(tokens: TokenMetadata): boolean {
-    return tokens.requiresRefresh && !!tokens.refreshToken;
+    return tokens.requiresRefresh;
   }
 }
 
