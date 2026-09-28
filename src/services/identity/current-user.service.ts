@@ -78,15 +78,42 @@ export class CurrentUserService {
    * Every session — not just this browser's — is dead once this returns,
    * so the caller must tear down local auth state immediately.
    */
+  /**
+   * Step one of deleting the account: the server emails a code to the
+   * account's verified address. Nothing is deleted.
+   */
+  public async requestAccountDeletion(): Promise<AccountDeletionChallenge> {
+    return apiClient.post<AccountDeletionChallenge, Record<string, never>>(
+      '/users/me/delete/request',
+      {}
+    );
+  }
+
   public async deleteAccount(input: {
+    readonly challengeId: string;
+    readonly code: string;
     readonly reason?: string;
     readonly feedback?: string;
   }): Promise<{ deleted: boolean; academiesArchived: number }> {
     return apiClient.post<
       { deleted: boolean; academiesArchived: number },
-      { confirm: true; reason?: string; feedback?: string }
+      {
+        confirm: true;
+        challengeId: string;
+        code: string;
+        reason?: string;
+        feedback?: string;
+      }
     >('/users/me/delete', { confirm: true, ...input });
   }
 }
 
 export const currentUserService = new CurrentUserService();
+
+/** `POST /users/me/delete/request` — the emailed deletion code's handle. */
+export interface AccountDeletionChallenge {
+  readonly challengeId: string;
+  readonly expiresAt: string;
+  readonly resendAvailableAt: string;
+  readonly maskedEmail: string;
+}

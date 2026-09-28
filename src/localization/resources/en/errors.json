@@ -267,5 +267,12 @@
   },
   "onboarding": {
     "requiredIncomplete": "Finish the required steps before completing setup, or choose Finish for now."
+  },
+  "account": {
+    "deletionCodeInvalid": "That code isn't right. Check the email and try again.",
+    "deletionCodeAttemptsExceeded": "Too many wrong codes. Request a new code to try again.",
+    "deletionCodeExpired": "This code has expired or was already used. Request a new code.",
+    "deletionCodeCooldown": "A code was just sent. Wait a moment before requesting another.",
+    "deletionEmailUnverified": "Verify your email address first — the confirmation code is sent there."
   }
 }
