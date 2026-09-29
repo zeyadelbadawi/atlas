@@ -1,10 +1,23 @@
 # Theme 1 ("Modern Education") — Academy Website Redesign Plan
 
-Status: **v2, approved for implementation (29 Sep 2026). Phase 0 complete (§M); Phase 1 complete (§N). Phases 2–9 not started.**
+Status: **v2.1, approved for implementation (29 Sep 2026). Phases 0–4 complete (§M, §N, §O, §P, §Q). Phase 4 is awaiting the Owner's approval; Phases 5–9 not started.**
 Scope:
 - Turn Theme 1 into a complete, launch-ready academy website that every Academy receives automatically.
 - Build the architecture so Themes 2–5 can later get their own identity and page composition.
 - Derive each Academy's website colours intelligently from its logo.
+
+---
+
+## Owner requirements added 29 Sep 2026 (v2.1)
+
+These were added during Phase 4. They don't change the phase order (Phase 0 → 9) or merge any phases.
+
+| Area | Requirement |
+|---|---|
+| §E.6 (new), §E.2, §E.3, §H | **Production image generation is deferred.** It runs only after the complete page composition is implemented and reviewed; the implemented website determines the final image requirements, never the other way round. |
+| §C.0 (new), §C.2–§C.7 | **Every major public page gets a deliberate, premium hero/banner.** `pageHeader` alone isn't enough, and About in particular gets a large premium hero. |
+| §H.1 (new), Phases 4–9 | **Phases are sequential and gated.** Each phase stops, reports and waits for explicit approval. The Phase 5 → 6 gate is spelled out. |
+| §J | New acceptance criterion 27 (page heroes); criterion 26 follows the deferred image timing. |
 
 ---
 
@@ -154,6 +167,34 @@ Legend for *Source*:
 - **asset** = a theme image the Academy can replace;
 - **sample** = preview-only content (§D.4).
 
+### C.0 Page heroes on every major public page (Owner requirement, 29 Sep 2026)
+
+Every major public page opens with a **deliberate, polished hero/banner** that reads as a real premium page hero and belongs to Theme 1.
+
+- **Not enough:** a page title followed immediately by the next section. The presence of a `pageHeader` section isn't automatically sufficient.
+- **Weak compositions get redesigned.** Don't keep a composition just because its section type already exists. If a section type can't carry the hero the page needs, the hero is redesigned. Any contract change this needs is surfaced before it's implemented.
+- **Every hero has:**
+  - a clear visual hierarchy with a large page title;
+  - supporting copy where appropriate;
+  - intentional spacing;
+  - a deliberate visual treatment (photograph, brand composition or both);
+  - a considered transition into the page's first section;
+  - designed desktop, tablet and mobile compositions;
+  - EN/AR with RTL mirroring.
+- The exact composition varies by page.
+- Image slots inside heroes follow §E.6: neutral placeholders until the final image stage.
+
+| Page | Hero requirement | Phase |
+|---|---|---|
+| Home | The Home hero (§C.1 #1) | 5 |
+| Courses | A designed catalog hero (title, supporting copy, search); not a bare title above the grid | 6 |
+| Course Details | A proper course-detail hero consistent with the Theme 1 design system (category, title, summary, meta, rating when reviews exist, the course's own media, the purchase action) | 6 |
+| About | **Especially important.** A large, premium hero/banner, not "About Us" followed by the next section. It needs a strong hierarchy, a large title, supporting copy, intentional spacing, a strong visual treatment and a clear transition into the Story section, with designed desktop/tablet/mobile compositions and EN/AR RTL. If the `about-header` concept isn't strong enough, it is redesigned. | 6 |
+| FAQs | A designed hero with the question filter | 6 |
+| Contact | A designed hero that leads into the contact methods and form | 6 |
+| Coming Soon | An intentional Theme 1 hero/banner, not a generic system page. **Known constraint:** today this page renders before any website configuration is available (only the Academy's name and logo), so it can't know the theme or palette. Phase 6 surfaces the options, which need a backend change, before implementing. | 6 |
+| 404 | An intentional Theme 1 hero/banner inside the Theme 1 chrome, not a generic system page | 6 |
+
 ### C.1 Home
 
 | # | Section (type) | Purpose | Content / layout / imagery | Interaction & motion | Responsive | Source / reuse |
@@ -174,14 +215,14 @@ Legend for *Source*:
 
 ### C.2 Courses
 
-- `pageHeader`: no photo, `brand-shape-page` instead, with search.
+- A designed catalog hero (§C.0) with search. The draft used `pageHeader` with no photo and `brand-shape-page`; Phase 6 confirms or redesigns it.
 - `courseCatalog`: T1 renderer with category chips, sticky toolbar, mobile filter sheet, URL state, skeletons and a no-results state.
 - `cta` → Contact.
 
 ### C.3 Course Details
 
 Template redesign on the existing data:
-- hero band with meta and rating (only when reviews exist);
+- a proper course-detail hero (§C.0) with meta and rating (only when reviews exist);
 - sticky purchase card on desktop, which becomes a sticky bottom bar on mobile;
 - outcomes, requirements, curriculum accordion with preview, instructors, reviews and related courses.
 
@@ -189,7 +230,7 @@ Cards without thumbnails use the code-generated `course-fallback-pattern` in the
 
 ### C.4 About
 
-1. `pageHeader` with `about-header`.
+1. **A large, premium About hero (§C.0).** The draft was `pageHeader` with `about-header`; it is redesigned if that concept isn't strong enough. The hero must lead clearly into the Story section.
 2. `featureSplit` with `about-story`.
 3. `features` values.
 4. `statistics` (live rule).
@@ -199,16 +240,16 @@ Cards without thumbnails use the code-generated `course-fallback-pattern` in the
 
 ### C.5 FAQs
 
-`pageHeader` (with FAQ filter) + `faq` (8 bilingual questions) + `cta` → Contact.
+A designed FAQs hero (§C.0) with the question filter + `faq` (8 bilingual questions) + `cta` → Contact.
 
 ### C.6 Contact
 
-`pageHeader` + `contact` (method cards from Academy data, existing form, success state) + `faq` teaser.
+A designed Contact hero (§C.0) + `contact` (method cards from Academy data, existing form, success state) + `faq` teaser.
 
 ### C.7 Other surfaces
 
 - The auth shell uses `auth-side`.
-- Coming Soon and 404 use `brand-shape-page` (no photo).
+- Coming Soon and 404 get intentional Theme 1 heroes/banners (§C.0), not generic system pages. The draft used `brand-shape-page` with no photo.
 - The learner area is out of scope.
 
 ### C.8 Not added
@@ -382,11 +423,13 @@ These must re-colour per Academy, so they're inline SVG/CSS driven by palette ro
 - **Testimonial portraits:** initials instead, so no pictures of people who didn't give the quote.
 - **Category illustrations:** lucide icons.
 
-**Total generation request: 12 images.** If the design changes during Phase 4–6 UI/UX Pro Max reviews, the matrix is updated first and only then generated.
+**This matrix is a planning reference, not the final generation request (§E.6).** It holds 12 images today. The final matrix (slots, ratios, crops, focal points, safe areas, count) is re-derived from the implemented website at the final image stage, and only then generated. Slots that the implementation adds or drops are added or dropped there.
 
 ### E.3 Magnific workflow (Phase 3), with the stop rule
 
-1. **Freeze the matrix.** Confirm E.2 against the approved Phase 4 design tokens and layouts (UI/UX Pro Max design review).
+*Timing: steps 1 and 3–8 run only at the final image stage (§E.6). Phase 3 ran step 2 and the `home-hero` pilot.*
+
+1. **Freeze the matrix.** Re-derive it from the implemented, reviewed website (§E.6 steps 7–9), not from planned layouts.
 2. **Check availability.** List the Magnific MCP tools in the session.
    - Not present → **STOP generation** and report (what's missing, how to connect, per §0). Continue with work that doesn't need images; every slot has a designed no-image state in the meantime.
    - Present but no text-to-image capability → **STOP** and report the same way.
@@ -425,6 +468,45 @@ These must re-colour per Academy, so they're inline SVG/CSS driven by palette ro
 ### E.5 Base64 upload fix (unchanged)
 
 Direct uploads go through the Academy's `MediaAsset` (R2) and store the URL. Legacy `data:` values still render.
+
+### E.6 Production image timing (Owner requirement, 29 Sep 2026)
+
+**Architectural and workflow requirement: the implemented website determines the final image requirements. Production imagery never determines the website layout.**
+
+Planning the asset matrix during the design phases is fine (§E.2 is that plan, and §P.7 records the planned compositions). **Magnific production generation doesn't happen after the visual-design freeze or Phase 4.** It is deferred until the website's complete page composition has been implemented and reviewed.
+
+**Workflow (in order):**
+1. Complete the relevant website implementation phases (5 Home, 6 inner pages; 7 composition in the template).
+2. Complete every Home and inner-page composition.
+3. Complete responsive behaviour.
+4. Complete EN/AR and RTL.
+5. Complete the actual spacing, sizing, containers, section heights and image slots.
+6. Review the complete website in context.
+7. Audit every real image slot in the implemented UI.
+8. Update and re-freeze the asset matrix from the actual implementation.
+9. For every image, determine the final aspect ratio, crop, focal point, safe area and responsive behaviour.
+10. Only then generate the production images with Magnific.
+11. Review every generated image inside the actual implemented website.
+12. Regenerate anything that doesn't work in context.
+13. Optimise, version, archive (private master archive, §P.7) and verify the final approved assets.
+
+**The final image audit (steps 7–9) covers, for every slot:**
+- mobile, tablet, desktop and large desktop;
+- EN, AR and RTL;
+- image position and whether RTL moves it (the photograph itself is never mirrored);
+- crop and focal point;
+- text-safe and overlay-safe areas;
+- visibility at each breakpoint;
+- stacking and repositioning behaviour.
+
+**Where it runs:** the **final image stage** is the first workstream of **Phase 8**, after Phases 5–7 are approved. It has its own checkpoint: the re-frozen matrix (the slot audit plus steps 8–9) is reported and approved **before** any generation. Every image then passes the §P.7 release gate.
+
+**Until the final image stage:**
+- zero new Magnific images and no production imagery from any other service;
+- every image slot shows a neutral placeholder so the layout can be judged;
+- the production matrix isn't finalised.
+
+The released `home-hero` pilot (§P.6) stays archived. It isn't final production imagery if the implemented hero changes its slot, ratio, crop or composition; in that case the final stage regenerates it as a new version.
 
 ---
 
@@ -664,12 +746,23 @@ The engine, the Brand Studio UI, the persisted palette, the validation and the t
 | 1 ThemePack architecture | Primitive API design (SectionShell, Heading, Reveal, ThemeImage, Carousel): spacing scales, focus styles, motion tokens, responsive breakpoints; accessibility review of the primitives |
 | 2 Contracts, categories, media, brand data | Editor UX for the new fields and section types (labels, grouping, help text, validation messages); Sample badge / confirm action design; Brand tab information architecture |
 | 3 Asset pipeline + Magnific readiness | Art-direction prompts; pilot (`home-hero`) candidate selection; in-context review at 3 widths × EN/AR × 4 brand palettes; crop and focal decisions |
-| 4 Visual system, chrome, **Brand Studio**, Magnific production run | Freezing the asset matrix against the approved layouts; review of all 12 generated assets in context; typography scale, spacing, colour-slot mapping (§F.5), header, footer, mobile navigation, auth shell; the Brand Studio UX (swatches, badges, preview, error/loading states); interaction and motion specs; responsive design review |
-| 5 Home renderers | Section-by-section component design, layout, hierarchy, motion, empty/sample states; design review of every section at 390/1024/1440 |
-| 6 Inner pages | Catalog UX (filters, search, mobile sheet), Course Details layout and sticky purchase, About/FAQs/Contact composition; responsive and interaction review |
+| 4 Visual system, chrome, **Brand Studio** | Planning the asset matrix (a reference, §E.6); typography scale, spacing, colour-slot mapping (§F.5), header, footer, mobile navigation, auth shell; the Brand Studio UX (swatches, badges, preview, error/loading states); interaction and motion specs; responsive design review |
+| 5 Home renderers | Home hero (§C.0) and section-by-section component design, layout, hierarchy, motion, empty/sample states; design review of every section and of Home as a whole page at 390/768/1024/1440/1920 |
+| 6 Inner pages | Every page hero (§C.0, About especially); catalog UX (filters, search, mobile sheet), Course Details layout and sticky purchase, About/FAQs/Contact composition, Coming Soon and 404; responsive and interaction review |
 | 7 Starter content & initialization | Copy hierarchy and tone review (EN/AR); setup-form "Logo & colours" flow review; publish-warning dialog UX |
-| 8 Hardening & verification | Full visual QA and responsive QA (matrix), accessibility review, motion review, brand identity review across the brand matrix; final design-review sign-off |
+| 8 Hardening & verification | Final image stage (§E.6): the slot audit, the re-frozen matrix, in-context review of every generated image; full visual QA and responsive QA (matrix), accessibility review, motion review, brand identity review across the brand matrix; final design-review sign-off |
 | 9 Release | Production visual QA on real hosts (EN/AR, desktop/mobile); post-release UX review of real Academy branding results |
+
+### H.1 Phase gates (Owner requirement, 29 Sep 2026)
+
+- Phases run **sequentially and are gated**. No phase is skipped, merged or started early.
+- A phase is complete only when its work is **implemented and verified**, not when its files exist.
+- At the end of each phase:
+  1. **STOP**;
+  2. report the phase results (recorded in this plan);
+  3. **wait for the Owner's explicit approval** before starting the next phase.
+- A phase's closing step (verify → record → commit) is part of the phase and is never dropped.
+- Work that belongs to a later phase isn't started early, even as groundwork.
 
 ### Phase 0 — Baseline, harness, decisions, tool checks
 
@@ -755,7 +848,7 @@ The engine, the Brand Studio UI, the persisted palette, the validation and the t
   - header, footer, mobile sheet, auth shell;
   - **Brand Studio**: the Worker analysis, the swatch UI, regenerate / adjust / accept / reset, and the live preview cross-fade;
   - wired into the **provisioning form** ("Logo & colours" + mini-preview), **the provisioning status page** (deferred persistence + retry card) and **the Website › Brand tab** (full preview).
-- **Magnific production run (end of phase):** once the UI/UX Pro Max design review freezes the §E.2 matrix against the approved layouts, run **E.3 steps 3–8** for all 12 assets (generate → review → prepare → store → provenance). The same stop rule applies, and a gap is reported rather than substituted.
+- **Magnific production run: deferred (§E.6).** Production images aren't generated in Phase 4. Phase 4 keeps the planning matrix with its planned compositions and adds the private master archive tool (§P.7). Generation happens at the final image stage (Phase 8).
 - **Tests:**
   - header and menu keyboard behaviour and focus trap;
   - RTL;
@@ -767,7 +860,9 @@ The engine, the Brand Studio UI, the persisted palette, the validation and the t
 
 ### Phase 5 — Theme 1 Home renderers
 
-- **Objective:** sections C.1 #1–11 as Theme 1 renderers, including the empty, sample and live-data states and the brand slots.
+- **Objective:** sections C.1 #1–11 as Theme 1 renderers, including the empty, sample and live-data states and the brand slots. The Home hero meets §C.0.
+- **Images:** no production images. Every image slot shows a neutral placeholder (§E.6).
+- **Scope:** Home only. No inner pages and no Phase 6 groundwork.
 - **Tests:**
   - each renderer with empty / typical / maximal fixtures;
   - live-data hiding rules (0 stats, fewer than 2 categories, no instructors);
@@ -777,10 +872,24 @@ The engine, the Brand Studio UI, the persisted palette, the validation and the t
   - the brand matrix on Home.
 - **Visual check:** the Home matrix in EN/AR at 1440/1024/390, empty Academy vs rich Academy, under 4 brand palettes.
 - **UI/UX Pro Max:** section-by-section design and review.
+- **Completion (Phase 5 → Phase 6 gate):** Phase 5 isn't complete just because the Home renderer files exist. It is complete only when all of the following are implemented **and verified**:
+  - all Home sections;
+  - responsive behaviour;
+  - EN/AR;
+  - RTL;
+  - interactions and motion;
+  - live-data behaviour and empty states;
+  - accessibility;
+  - tests;
+  - the UI/UX Pro Max review;
+  - visual verification.
+
+  Then **STOP**, report the Phase 5 results and **wait for explicit approval**. Phase 6 doesn't start before that.
 
 ### Phase 6 — Theme 1 inner pages
 
-- **Objective:** Courses (catalog renderer), Course Details (template redesign), About, FAQs, Contact, Coming Soon and 404.
+- **Objective:** Courses (catalog renderer), Course Details (template redesign), About, FAQs, Contact, Coming Soon and 404, **each with its page hero per §C.0** (About especially).
+- **Images:** no production images. Every image slot shows a neutral placeholder (§E.6).
 - **Files:**
   - `CourseDetailsTemplate.tsx` split into composable parts a pack can arrange (existing data hooks unchanged);
   - Theme 1 renderers for `courseCatalog`, `contact`, `gallery`, `pageHeader`, `featureSplit` and `steps`.
@@ -791,6 +900,7 @@ The engine, the Brand Studio UI, the persisted palette, the validation and the t
   - gallery lightbox keyboard support;
   - the brand matrix on each page.
 - **UI/UX Pro Max:** inner-page composition, interaction and responsive review.
+- **Gate:** STOP, report and wait for explicit approval before Phase 7.
 
 ### Phase 7 — Starter content & initialization
 
@@ -805,17 +915,28 @@ The engine, the Brand Studio UI, the persisted palette, the validation and the t
   - skip logo → theme default palette;
   - the sample chain end to end (§D.4).
 - **UI/UX Pro Max:** copy and flow review.
+- **Images:** the template references theme-asset keys; they still show placeholders until the final image stage (§E.6).
+- **Gate:** STOP, report and wait for explicit approval before Phase 8.
 
 ### Phase 8 — Hardening & verification
 
+- **Final image stage (first workstream, §E.6):**
+  1. review the complete website in context;
+  2. audit every real image slot;
+  3. re-freeze the matrix;
+  4. **report the re-frozen matrix and wait for approval before any generation**;
+  5. generate with Magnific;
+  6. review every candidate in context, regenerating failures (the §P.7 release gate);
+  7. optimise, version, archive and verify.
 - **Accessibility:** axe on every page state (0 serious/critical), keyboard walkthrough, landmark and heading audit, contrast, alt coverage.
 - **Performance:** Lighthouse CI budgets (§I.1).
 - **Responsive:** 360/390/768/1024/1280/1440/1920, in both EN and AR.
-- **Asset QA:** all 12 Magnific assets verified in context, weights within budget, provenance complete.
+- **Asset QA:** every asset in the re-frozen matrix verified in context, weights within budget, provenance complete, master archived.
 - The **full brand-system suite** (§I).
 - The **legacy-fixture verification for Decision 3**: every v1 content shape plus legacy colours under the new presentation, with no data written.
 - Themes 2–5 pixel diff 0.
 - Final UI/UX Pro Max design sign-off.
+- **Gate:** STOP, report and wait for explicit approval before Phase 9.
 
 ### Phase 9 — Release & production verification
 
@@ -918,7 +1039,8 @@ The engine, the Brand Studio UI, the persisted palette, the validation and the t
 23. **Isolation:** no Academy's logo, palette, assets or branding appear in another Academy's configuration, pages or public payloads (tests pass).
 24. **Sample rule:** no sample testimonial ever reaches a public payload; the Owner is warned at publish; stats and instructors are always real data.
 25. **Decision 3:** existing Theme 1 academies render with the new presentation and **zero data writes**; the legacy-fixture suite passes.
-26. **Assets:** all 12 photographic assets are generated via Magnific, reviewed, optimised, versioned, with complete provenance. **Or**, if Magnific is unavailable, the gap has been reported and no substitute imagery was produced.
+26. **Assets:** every photographic asset in the matrix re-frozen from the implemented website (§E.6) is generated via Magnific **after** the full composition was implemented and reviewed, then reviewed in context, optimised, versioned and archived, with complete provenance. **Or**, if Magnific is unavailable, the gap has been reported and no substitute imagery was produced.
+27. **Page heroes:** Home, Courses, Course Details, About, FAQs, Contact, Coming Soon and 404 each open with a deliberate Theme 1 hero/banner (§C.0), designed at mobile/tablet/desktop/large desktop in EN and AR. About has a large premium hero that leads into its Story section.
 
 ---
 
@@ -1310,7 +1432,7 @@ The asset pipeline is built, tested and served the production way, and the pilot
 
 ### P.5 Still open
 
-- Phase 4: freeze the matrix against the approved layouts, then generate the other 11 assets through the same pipeline.
+- ~~Phase 4: freeze the matrix against the approved layouts, then generate the other 11 assets.~~ Superseded by §E.6: the other assets are generated at the final image stage, from the implemented website.
 - Masters are not in the repo (§E.3 step 6): the pilot master is kept in the Owner's Magnific account (the generation record) and identified by its sha256 in the manifest. The private archive was chosen in Phase 4: see §P.7.
 - Carried over: the gated provenance migration deploy, the LCP/bundle decision before Phase 8, the "Powered by Atlas" ARIA fix.
 
@@ -1333,7 +1455,7 @@ The asset pipeline is built, tested and served the production way, and the pilot
 
 ### P.7 Phase 4 additions: frozen compositions, master archive, release gate (29 Sep 2026)
 
-Added at the Owner's request during Phase 4, before the 11 production images are generated.
+Added at the Owner's request during Phase 4. **Status after the Owner's 29 Sep 2026 decision (§E.6): the compositions below are a planning reference only.** The final matrix is re-derived from the implemented website at the final image stage. The archive tool and the release gate still apply.
 
 **Frozen compositions.** Every manifest entry now has a `composition` (schema-required and tested): target slot, crop per breakpoint (desktop ≥ 1024, tablet 768–1023, mobile < 768), safe area, overlay exclusion zone and RTL behaviour. The pending entries' `direction`, and so their prompts, now spell out the safe area. `home-hero`'s image, direction and recorded prompt are unchanged; only its composition metadata was added. Rules that apply to every asset:
 
@@ -1393,3 +1515,93 @@ Verified against a local S3 server:
 A failed candidate is rejected and regenerated. It is never released just because generation succeeded.
 
 **Tooling change.** `prepare.mjs` used to refuse the whole `modern-education/v1` folder once `home-hero` was released. It now refuses only an entry already released at that version, and still never overwrites a file. New keys can join `v1`, and released files stay immutable.
+
+## Q. Phase 4 results (recorded 29 Sep 2026)
+
+Commits:
+- `48b29c5` — visual system, brand mapping, chrome;
+- `59489ba` — Brand Studio;
+- `2c0da3e` — planning compositions and private master archive;
+- the Phase 4 completion commit — these results and the v2.1 plan requirements.
+
+### Q.1 What was built
+
+- **Theme 1 visual system (P4.1).** `src/features/website/modern-education/`:
+  - `modern-education.css`: type scale, rhythm, radius, elevation, motion, header and nav-link styles. Everything is scoped to `[data-theme-pack='modern-education']`, and no colours are declared in CSS.
+  - `mapModernEducationBrandPalette` (§F.5):
+    - the stored palette, else one derived from the legacy seeds (an unusable seed falls back to the theme default);
+    - the canvas capped at chroma 0.012;
+    - a hairline divider plus a separate 3:1 input border;
+    - the ink band (near-black carrying the brand hue) and its CTA;
+    - the chip composite, icon tile, shape and highlight slots;
+    - `--primary`/`--ring` mapped to cta/focus, and the base variable names mapped to safe roles.
+- **Chrome (P4.2).**
+  - A new `ThemePack.chrome` slot (Header, Footer, AuthFrame).
+  - **Header:** sticky, transparent → solid on scroll, `aria-current`, a mobile sheet from the logical end, and Sign in shown next to the CTA slot.
+  - **Footer:** link groups, live categories, the Academy's contact details, `<details>` groups on mobile, and the platform attribution row rendered through a prop that no theme can drop.
+  - **Auth frame:** the `auth-side` panel on desktop (ink band + glow until the image is released).
+  - `MobileBottomNav` account tabs.
+  - The Themes 2–5 chrome is unchanged.
+- **Brand Studio (P4.3).** `src/features/website/brand-studio/`:
+  - **Logo intake:** type sniffed from the file's bytes, dimensions read from the header before decoding, size limits, SVG rebuilt from a whitelist, a sha256 fingerprint.
+  - **Analysis:** runs in a Worker with a 3s timeout and a main-thread fallback; SVGs are rasterised on the main thread.
+  - **Draft state:** regenerate, seed edits, per-role overrides, "apply suggestion" repeated until every pair passes, accept, and reset to logo or theme default.
+  - **Live preview:** cross-fades in 180ms (instant under reduced motion).
+  - **Wired into:**
+    - the provisioning form (`SetupBrandStudio`);
+    - the provisioning status page and onboarding (`FinishBrandingCard`, deferred persistence retried at 1s/2s/4s);
+    - Website › Brand (full preview, dark-logo field).
+- **Asset planning (P4.4).**
+  - Every manifest entry got a planning `composition` (schema-required).
+  - `tools/theme-assets/archive-master.mjs` stores masters privately: never overwrites, verifies each write by reading it back, and refuses the public media bucket.
+  - Production generation was **deferred** by the Owner (§E.6), so these compositions are a planning reference only (§P.7).
+
+### Q.2 Verification (P4.5, run on the Phase 4 tree = `2c0da3e` + plan edits)
+
+| Check | Result |
+|---|---|
+| Frontend unit suite | **152 files, 1474 tests passed** |
+| Typecheck | 33 errors, all pre-existing (unchanged since Phase 0; none in Phase 4 files) |
+| Lint | clean (`eslint --quiet ./src`, exit 0) |
+| Theme baseline (fixture build, production CSP) | **559/559 passed**: screenshots for 5 themes × pages × EN/AR × 1440/1024/390, the 4-palette brand matrix, axe and palette injection |
+| Themes 2–5 pixel identity | No Themes 2–5 screenshot has changed since the Phase 0 baseline (`7382baf`); the run matched every one. The Phase 4 re-record (`48b29c5`) touched only Theme 1 snapshots and the Theme 1 first-visit (consent-banner) snapshots. |
+| Palette injection guard | passed (hostile palette values can't escape the theme scope) |
+| Phase 4 tests named in §H | header keyboard, focus trap, Escape and RTL (`modern-education-header.test.tsx`); brand mapping over the 12-brand matrix (`modern-education.brand-mapping.test.ts`); Brand Studio states, overrides and validation (`brand-studio.test.tsx`, `use-brand-studio.test.tsx`); Worker failure and timeout (`logo-analysis.test.ts`); hostile logo files (`logo-file.test.ts`); deferred persistence with retries (`deferred-branding.test.tsx`) — all pass |
+| Browser checks during Phase 4 | Worker analysis in Chromium (17ms, correct seeds); a hostile SVG made zero requests; archive tool round-trip against a local S3 server (§P.7) |
+
+**Accessibility (axe, Theme 1, recorded state).** Serious findings remain; none are critical.
+- `aria-prohibited-attr`, 48 page states: the footer attribution row. This is the carried-over "Powered by Atlas" ARIA fix.
+- `color-contrast`, 12 page states, all on **Home**: the **base** CTA band's title/description (white on the brand fill). Phase 5's Theme 1 ink band replaces it.
+
+Before Phase 4, Theme 1 brand pages had 4–5 contrast nodes each; they now have 1. §J.7's zero target is met in Phase 8, not Phase 4.
+
+### Q.3 UI/UX Pro Max review (Phase 4)
+
+- Visual system, colour slots and chrome reviewed against the §M.6 rubric: the canvas stays neutral for every brand, and the brand appears only in its slots (CTA, link, focus, chip, icon tile, ink glow).
+- Header: 44px targets, a visible focus ring on every control, and the sheet opens from the logical end.
+- Brand Studio: contrast badges carry text rather than colour alone; error and slow states are designed; reduced motion is respected.
+- Found and fixed during review:
+  - Sign in was hidden when a CTA was configured;
+  - "apply suggestion" fixed only the first failing pair;
+  - the hairline border was too heavy;
+  - hex legacy colours threw in the mapping.
+
+### Q.4 Process deviation during Phase 4 (surfaced, corrected)
+
+- After the Owner resequenced image production (29 Sep 2026), I dropped this closing step (P4.5) and started Phase 5 and Phase 6 work without the phase gates:
+  - Home renderers;
+  - page heroes, FAQ, contact, gallery;
+  - a refactor of the shared catalog.
+- None of it was committed. On the Owner's instruction it was **removed completely**: the working tree was restored to `2c0da3e`, and the 11 new files and 3 modified files were discarded.
+- The Owner's requirements were then written into this plan (v2.1: §C.0, §E.6, §H.1, Phases 4–9, §J.26–27).
+- Phase 4 was then closed properly (this section). **No Magnific image was generated at any point after the Phase 3 pilot.**
+
+### Q.5 Still open (carried forward)
+
+- The footer attribution-row ARIA fix ("Powered by Atlas"), still due as a small Phase 5 item.
+- The base CTA band's contrast on Theme 1 Home: resolved by the Phase 5 ink band.
+- The Brand tab's "logo changed elsewhere" suggestion (§F.4.6): not built in Phase 4; still to be scheduled.
+- **The private master archive bucket:** the Owner must create it (§P.7). Until then, archival isn't complete and the `home-hero` master exists only in the Magnific account.
+- The gated provenance migration deploy; the LCP/bundle decision before Phase 8.
+- The cookie banner covers part of the mobile hero: out of scope, noted.
+- **The 12-palette brand screenshots.** §H Phase 4 lists "brand-matrix screenshots (12 palettes)". Phase 4 has 4 palettes as screenshots plus the full 12-brand matrix as automated mapping tests (roles, contrast, invariant canvas). The 12-palette screenshot matrix is scheduled with the Home renderers (Phase 5 "brand matrix on Home") and the full brand suite (Phase 8).
