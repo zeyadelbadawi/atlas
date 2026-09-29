@@ -4,7 +4,9 @@
  * so a section added by one theme still renders after a theme switch.
  *
  * Each entry adapts the uniform `SectionRenderProps` to the section
- * component's own props — the components themselves are unchanged.
+ * component's own props. `linkRenderer` is present only on the public
+ * runtime, so it doubles as the "is this the public site" signal (e.g. the
+ * testimonials' sample filter, plan §D.4).
  */
 import { HeroSection } from '../sections/HeroSection';
 import { AboutSection } from '../sections/AboutSection';
@@ -18,6 +20,10 @@ import { InstructorsSection } from '../sections/InstructorsSection';
 import { GallerySection } from '../sections/GallerySection';
 import { ContactSection } from '../sections/ContactSection';
 import { CourseCatalogSection } from '../sections/CourseCatalogSection';
+import { PageHeaderSection } from '../sections/PageHeaderSection';
+import { CourseCategoriesSection } from '../sections/CourseCategoriesSection';
+import { StepsSection } from '../sections/StepsSection';
+import { FeatureSplitSection } from '../sections/FeatureSplitSection';
 import type { SectionRenderers } from './theme-pack.types';
 
 export const BASE_RENDERERS: SectionRenderers = {
@@ -48,11 +54,24 @@ export const BASE_RENDERERS: SectionRenderers = {
   features: function BaseFeatures({ config }) {
     return <FeaturesSection config={config} />;
   },
-  testimonials: function BaseTestimonials({ config, academyId }) {
-    return <TestimonialsSection config={config} academyId={academyId} />;
+  testimonials: function BaseTestimonials({ config, academyId, linkRenderer }) {
+    return (
+      <TestimonialsSection
+        config={config}
+        academyId={academyId}
+        isPublic={!!linkRenderer}
+      />
+    );
   },
-  faq: function BaseFaq({ config, academyId }) {
-    return <FaqSection config={config} academyId={academyId} />;
+  faq: function BaseFaq({ config, academyId, pages, linkRenderer }) {
+    return (
+      <FaqSection
+        config={config}
+        academyId={academyId}
+        pages={pages}
+        linkRenderer={linkRenderer}
+      />
+    );
   },
   cta: function BaseCta({ config, pages, linkRenderer }) {
     return (
@@ -77,6 +96,36 @@ export const BASE_RENDERERS: SectionRenderers = {
       <CourseCatalogSection
         config={config}
         academyId={academyId}
+        linkRenderer={linkRenderer}
+      />
+    );
+  },
+  pageHeader: function BasePageHeader({ config }) {
+    return <PageHeaderSection config={config} />;
+  },
+  courseCategories: function BaseCourseCategories({
+    config,
+    academyId,
+    pages,
+    linkRenderer,
+  }) {
+    return (
+      <CourseCategoriesSection
+        config={config}
+        academyId={academyId}
+        pages={pages}
+        linkRenderer={linkRenderer}
+      />
+    );
+  },
+  steps: function BaseSteps({ config }) {
+    return <StepsSection config={config} />;
+  },
+  featureSplit: function BaseFeatureSplit({ config, pages, linkRenderer }) {
+    return (
+      <FeatureSplitSection
+        config={config}
+        pages={pages}
         linkRenderer={linkRenderer}
       />
     );

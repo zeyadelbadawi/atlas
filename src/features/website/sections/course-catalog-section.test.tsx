@@ -53,6 +53,13 @@ vi.mock('@/shared/hooks/usePublicCourses', () => ({
   },
 }));
 
+// The category chip's name comes from the (cached) public categories.
+vi.mock('@/shared/hooks/usePublicCourseCategories', () => ({
+  usePublicCourseCategories: () => ({
+    data: [{ id: 'cat-1', name: 'Design', slug: 'design', courseCount: 2 }],
+  }),
+}));
+
 // `Pagination` formats numbers through the dashboard's localization
 // context; the section under test does not own that provider.
 vi.mock('@/shared/hooks/useLanguage', () => ({
@@ -222,6 +229,7 @@ afterEach(() => {
   calls.length = 0;
   page = null;
   vi.clearAllMocks();
+  window.history.replaceState(null, '', '/');
 });
 
 /* ------------------------------------------------------------------ */
@@ -415,7 +423,6 @@ describe('CourseCatalogSection — results', () => {
   });
 });
 
-
 describe('CourseCatalogSection — card metadata from `stats`', () => {
   const cardText = (container: HTMLElement, index = 0): string =>
     container.querySelectorAll('article')[index]?.textContent ?? '';
@@ -526,5 +533,89 @@ describe('CourseCatalogSection — card metadata from `stats`', () => {
     expect(container.querySelectorAll('article')).toHaveLength(2);
     expect(screen.queryByRole('img', { name: /Rated/ })).toBeNull();
     expect(cardText(container)).not.toContain('Free preview');
+  });
+});
+
+describe('CourseCatalogSection — URL state (Theme 1 plan §D.2)', () => {
+  const linkRenderer: React.ComponentProps<
+    typeof CourseCatalogSection
+  >['linkRenderer'] = ({ href, className, children }) => (
+    <a href={href} className={className}>
+      {children}
+    </a>
+  );
+
+  it('starts from the state in the URL, ignoring values it does not know', () => {
+    window.history.replaceState(
+      null,
+      '',
+      '/courses?q=python&category=cat-1&level=beginner&pricing=gratis&sort=title&page=2'
+    );
+    page = pageOf(TWO_COURSES.items, 30);
+    renderSection({}, linkRenderer);
+
+    const query = calls[0]?.options?.query;
+    expect(query?.search).toBe('python');
+    expect(query?.filters).toMatchObject({
+      categoryId: 'cat-1',
+      level: 'beginner',
+      pricingType: undefined,
+    });
+    expect(query?.sort).toEqual({ field: 'title', direction: 'asc' });
+    // A shared "page 2" link asks for page 2 straight away.
+    expect(query?.pagination?.page).toBe(2);
+  });
+
+  it('writes changes back by replacing the URL, keeping other parameters', async () => {
+    const user = userEvent.setup(USER_EVENT_OPTIONS);
+    window.history.replaceState(
+      null,
+      '',
+      '/courses?__atlas_academy_preview=demo'
+    );
+    const lengthBefore = window.history.length;
+    page = TWO_COURSES;
+    renderSection({}, linkRenderer);
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Level' }),
+      'advanced'
+    );
+
+    const params = new URLSearchParams(window.location.search);
+    expect(params.get('level')).toBe('advanced');
+    expect(params.get('__atlas_academy_preview')).toBe('demo');
+    // The default sort and page 1 are not written.
+    expect(params.has('sort')).toBe(false);
+    expect(params.has('page')).toBe(false);
+    expect(window.history.length).toBe(lengthBefore);
+  });
+
+  it('shows the category filter as a chip that clears it', async () => {
+    const user = userEvent.setup(USER_EVENT_OPTIONS);
+    window.history.replaceState(null, '', '/courses?category=cat-1');
+    page = TWO_COURSES;
+    renderSection({}, linkRenderer);
+
+    await user.click(
+      screen.getByRole('button', { name: 'Remove the category filter Design' })
+    );
+
+    expect(lastQuery()?.filters?.categoryId).toBeUndefined();
+    expect(window.location.search).toBe('');
+  });
+
+  it('never reads or writes the URL in the dashboard preview', async () => {
+    const user = userEvent.setup(USER_EVENT_OPTIONS);
+    window.history.replaceState(null, '', '/dashboard/website?level=advanced');
+    page = TWO_COURSES;
+    renderSection();
+
+    expect(calls[0]?.options?.query?.filters?.level).toBeUndefined();
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Level' }),
+      'beginner'
+    );
+    expect(window.location.search).toBe('?level=advanced');
   });
 });

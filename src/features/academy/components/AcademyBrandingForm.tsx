@@ -36,6 +36,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
 import { useFilePicker, useUnsavedChanges } from '@hooks';
 import { useServerValidation } from '@forms';
+import { useUploadMediaAsset } from '@features/media';
 import { useUpdateAcademyBranding } from '../hooks';
 import {
   updateAcademyBrandingSchema,
@@ -49,9 +50,10 @@ import {
   MAX_LOGO_FILE_SIZE,
 } from '../constants/academy.constants';
 
-/** Reads a File into a base64 data URL, the string shape the branding PATCH
- * contract accepts for `logo`/`favicon` — there is no separate media-upload
- * endpoint in this codebase, so this is the value the field must hold. */
+/** Reads a File into a base64 data URL. The logo is then uploaded as a
+ * `MediaAsset` (Theme 1 plan §F.4.3: no base64 in the Academy record) and
+ * the field holds the returned URL; the favicon keeps the data URL, because
+ * `.ico` is not a MediaAsset type. */
 function readFileAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -89,6 +91,7 @@ export function AcademyBrandingForm({
     isPending,
     error: mutationError,
   } = useUpdateAcademyBranding();
+  const uploadLogo = useUploadMediaAsset();
 
   const form = useForm<UpdateAcademyBrandingFormData>({
     resolver: zodResolver(updateAcademyBrandingSchema),
@@ -141,9 +144,34 @@ export function AcademyBrandingForm({
       return previewUrl;
     });
 
-    void readFileAsDataUrl(file).then((dataUrl) => {
-      form.setValue('logo', dataUrl, { shouldDirty: true });
-    });
+    void readFileAsDataUrl(file)
+      .then((dataUrl) =>
+        uploadLogo.mutateAsync({
+          academyId: academy.id,
+          payload: {
+            fileName: file.name,
+            mimeType: file.type,
+            sizeBytes: file.size,
+            dataUrl,
+          },
+        })
+      )
+      .then((asset) => {
+        form.setValue('logo', asset.url, { shouldDirty: true });
+      })
+      .catch(() => {
+        // Nothing is saved: the preview goes back to the stored logo and
+        // the field says why, so a failed upload never looks like it worked.
+        setLogoPreviewUrl((previous) => {
+          if (previous) logoPicker.revokePreviewUrl(previous);
+          return null;
+        });
+        form.setError('logo', {
+          type: 'validation',
+          message: 'academy:branding.errors.logoUploadFailed',
+        });
+      })
+      .finally(() => logoPicker.clearFiles());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [logoPicker.files]);
 
@@ -312,7 +340,14 @@ export function AcademyBrandingForm({
                         variant="outline"
                         size="sm"
                         onClick={logoPicker.openFilePicker}
+                        disabled={uploadLogo.isPending}
                       >
+                        {uploadLogo.isPending ? (
+                          <Loader2
+                            className="size-4 animate-spin"
+                            aria-hidden
+                          />
+                        ) : null}
                         {t('academy:branding.changeLogo')}
                       </Button>
                     </div>
@@ -322,11 +357,7 @@ export function AcademyBrandingForm({
                       variant="outline"
                       onClick={logoPicker.openFilePicker}
                     >
-                      <Upload
-                        className="size-4"
-                        strokeWidth={2}
-                        aria-hidden
-                      />
+                      <Upload className="size-4" strokeWidth={2} aria-hidden />
                       {t('academy:branding.uploadLogo')}
                     </Button>
                   )}
@@ -393,11 +424,7 @@ export function AcademyBrandingForm({
                       variant="outline"
                       onClick={faviconPicker.openFilePicker}
                     >
-                      <Upload
-                        className="size-4"
-                        strokeWidth={2}
-                        aria-hidden
-                      />
+                      <Upload className="size-4" strokeWidth={2} aria-hidden />
                       {t('academy:branding.uploadFavicon')}
                     </Button>
                   )}
@@ -420,7 +447,7 @@ export function AcademyBrandingForm({
               {t(cancelLabelKey)}
             </Button>
           ) : null}
-          <Button type="submit" disabled={isPending}>
+          <Button type="submit" disabled={isPending || uploadLogo.isPending}>
             {isPending ? (
               <>
                 <Loader2 className="size-4 animate-spin" aria-hidden />

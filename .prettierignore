@@ -5,3 +5,5 @@ public
 src/components/ui
 # Generated brand-engine golden vectors: copied byte-for-byte into atlas-backend
 src/features/website/brand-engine/__golden__
+# Section-contract parity cases: byte-identical copy in atlas-backend
+src/features/website/schemas/__parity__

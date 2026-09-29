@@ -23,6 +23,7 @@ import type {
   PaginatedResult,
   CollectionQuery,
   ReorderItemsPayload,
+  PublishWebsiteResponse,
   UpdateWebsiteConfigurationPayload,
   UpdateWebsitePagePayload,
   WebsiteConfiguration,
@@ -66,8 +67,8 @@ export class WebsiteConfigurationService extends BaseService {
   async publishConfiguration(
     academyId: string,
     options?: WriteOptions
-  ): Promise<WebsiteConfiguration> {
-    return this.client.post<WebsiteConfiguration, undefined>(
+  ): Promise<PublishWebsiteResponse> {
+    return this.client.post<PublishWebsiteResponse, undefined>(
       this.websitePath(academyId, 'publish'),
       undefined,
       options

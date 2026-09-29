@@ -9,13 +9,13 @@
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
 import { websiteKeys } from '@services/query';
 import type { ApiError } from '@api';
-import type { WebsiteConfiguration } from '@types';
+import type { PublishWebsiteResponse } from '@types';
 import { websiteConfigurationService } from '../services/WebsiteConfigurationService';
 
 export function usePublishWebsite() {
   const { invalidate } = useInvalidate();
 
-  return useApiMutation<WebsiteConfiguration, string, ApiError>({
+  return useApiMutation<PublishWebsiteResponse, string, ApiError>({
     mutationFn: (academyId) =>
       websiteConfigurationService.publishConfiguration(academyId),
     showSuccessToast: false,

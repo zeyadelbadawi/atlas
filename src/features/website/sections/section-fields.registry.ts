@@ -11,7 +11,9 @@
 import {
   FEATURE_ICON_OPTIONS,
   MAX_COURSE_CATALOG_PAGE_SIZE,
+  MAX_SECTION_ITEMS,
   MIN_COURSE_CATALOG_PAGE_SIZE,
+  MIN_COURSE_CATEGORIES,
 } from '../constants/website.constants';
 import type { SectionFieldSchema } from './section-field.types';
 import type { SectionType } from '@types';
@@ -62,7 +64,31 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
         kind: 'cta',
         labelKey: 'website:fields.secondaryCta',
       },
+      {
+        key: 'highlight',
+        kind: 'text',
+        labelKey: 'website:fields.highlight',
+        localized: true,
+      },
+      {
+        key: 'showSearch',
+        kind: 'boolean',
+        labelKey: 'website:fields.showCourseSearch',
+      },
     ],
+    repeatable: {
+      key: 'highlights',
+      labelKey: 'website:fields.heroHighlights',
+      itemLabelKey: 'website:fields.heroHighlight',
+      itemFields: [
+        {
+          key: 'label',
+          kind: 'text',
+          labelKey: 'website:fields.label',
+          localized: true,
+        },
+      ],
+    },
   },
   about: {
     type: 'about',
@@ -262,6 +288,14 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
           labelKey: 'website:fields.avatarAlt',
           localized: true,
         },
+        {
+          key: 'rating',
+          kind: 'number',
+          labelKey: 'website:fields.rating',
+          min: 1,
+          max: 5,
+          optional: true,
+        },
       ],
     },
   },
@@ -274,6 +308,15 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
         labelKey: 'website:fields.title',
         localized: true,
       },
+      {
+        key: 'maxItems',
+        kind: 'number',
+        labelKey: 'website:fields.faqMaxItems',
+        min: 1,
+        max: MAX_SECTION_ITEMS,
+        optional: true,
+      },
+      { key: 'cta', kind: 'cta', labelKey: 'website:fields.faqCta' },
     ],
     repeatable: {
       key: 'items',
@@ -311,6 +354,18 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
         localized: true,
       },
       { key: 'cta', kind: 'cta', labelKey: 'website:fields.primaryCta' },
+      {
+        key: 'secondaryCta',
+        kind: 'cta',
+        labelKey: 'website:fields.secondaryCta',
+      },
+      { key: 'image', kind: 'image', labelKey: 'website:fields.image' },
+      {
+        key: 'imageAlt',
+        kind: 'text',
+        labelKey: 'website:fields.imageAlt',
+        localized: true,
+      },
     ],
   },
   instructors: {
@@ -439,5 +494,173 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
       },
       { key: 'showSort', kind: 'boolean', labelKey: 'website:fields.showSort' },
     ],
+  },
+  // Theme 1 plan §D.2 — the four shared section types.
+  pageHeader: {
+    type: 'pageHeader',
+    fields: [
+      {
+        key: 'eyebrow',
+        kind: 'text',
+        labelKey: 'website:fields.eyebrow',
+        localized: true,
+      },
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+      },
+      { key: 'image', kind: 'image', labelKey: 'website:fields.image' },
+      {
+        key: 'imageAlt',
+        kind: 'text',
+        labelKey: 'website:fields.imageAlt',
+        localized: true,
+      },
+      {
+        key: 'search',
+        kind: 'select',
+        labelKey: 'website:fields.pageHeaderSearch',
+        options: [
+          { value: 'none', labelKey: 'website:fields.pageHeaderSearchNone' },
+          {
+            value: 'courses',
+            labelKey: 'website:fields.pageHeaderSearchCourses',
+          },
+          { value: 'faq', labelKey: 'website:fields.pageHeaderSearchFaq' },
+        ],
+      },
+    ],
+  },
+  courseCategories: {
+    type: 'courseCategories',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+      },
+      {
+        key: 'maxItems',
+        kind: 'number',
+        labelKey: 'website:fields.categoriesMaxItems',
+        min: MIN_COURSE_CATEGORIES,
+        max: MAX_SECTION_ITEMS,
+      },
+      {
+        key: 'showCounts',
+        kind: 'boolean',
+        labelKey: 'website:fields.showCourseCounts',
+      },
+    ],
+  },
+  steps: {
+    type: 'steps',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+      },
+    ],
+    repeatable: {
+      key: 'items',
+      labelKey: 'website:fields.stepItems',
+      itemLabelKey: 'website:fields.stepItem',
+      itemFields: [
+        {
+          key: 'title',
+          kind: 'text',
+          labelKey: 'website:fields.title',
+          localized: true,
+        },
+        {
+          key: 'description',
+          kind: 'longText',
+          labelKey: 'website:fields.description',
+          localized: true,
+        },
+      ],
+    },
+  },
+  featureSplit: {
+    type: 'featureSplit',
+    fields: [
+      {
+        key: 'eyebrow',
+        kind: 'text',
+        labelKey: 'website:fields.eyebrow',
+        localized: true,
+      },
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+      },
+      { key: 'image', kind: 'image', labelKey: 'website:fields.image' },
+      {
+        key: 'imageAlt',
+        kind: 'text',
+        labelKey: 'website:fields.imageAlt',
+        localized: true,
+      },
+      {
+        key: 'imagePosition',
+        kind: 'select',
+        labelKey: 'website:fields.imagePosition',
+        options: [
+          { value: 'start', labelKey: 'website:fields.imagePositionStart' },
+          { value: 'end', labelKey: 'website:fields.imagePositionEnd' },
+        ],
+      },
+      { key: 'cta', kind: 'cta', labelKey: 'website:fields.primaryCta' },
+    ],
+    repeatable: {
+      key: 'items',
+      labelKey: 'website:fields.benefitItems',
+      itemLabelKey: 'website:fields.benefitItem',
+      itemFields: [
+        {
+          key: 'title',
+          kind: 'text',
+          labelKey: 'website:fields.title',
+          localized: true,
+        },
+        {
+          key: 'description',
+          kind: 'longText',
+          labelKey: 'website:fields.description',
+          localized: true,
+        },
+      ],
+    },
   },
 };

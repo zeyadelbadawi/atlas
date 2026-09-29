@@ -1216,3 +1216,56 @@ Queries: reduced motion, compact label overflow, focus visibility, touch targets
 8. **Packs resolve synchronously.** The brand mapping is needed for the first paint; heavy renderer code will be split with `React.lazy` inside a pack.
 9. **Theme-specific contrast pairs** (Theme 1's ink band, §F.4.4 last row) are tested with Theme 1's mapping in Phase 4; the engine checks the theme-independent matrix.
 
+
+## O. Phase 2 results (recorded 29 Sep 2026)
+
+Contracts, categories, media and brand data are in both repos. Every existing Academy is unaffected: legacy section shapes parse to exactly themselves, and the Phase 0 baseline re-ran **559/559 identical** (zero pixel difference on all five themes, axe unchanged).
+
+### O.1 What was built
+
+| Area | Where | Notes |
+|---|---|---|
+| Section contracts (§D.2) | BE `section-config.schemas.ts`, FE `website-section.schemas.ts`, `website-section.types.ts` | New types `pageHeader`, `courseCategories`, `steps`, `featureSplit`; extensions `hero.highlight/highlights/showSearch`, `features.layout`, `faq.maxItems/cta`, `cta.secondaryCta/image/imageAlt`, testimonial `rating`/`sample`. All additive and optional. |
+| Image values (§E.4) | `image-value.util(s).ts` in both repos | Allowed: empty, `theme-asset:<theme>/<key>`, an Atlas MediaAsset path (`/api/v1/public/media/…`), absolute http(s), legacy `data:image/png|jpeg|webp;base64`. Everything else (`javascript:`, `data:text/html`, SVG data, `blob:`, other relative paths, `..`) is refused in every image field. |
+| Schema parity | `__parity__/section-contracts-theme1.cases.json`, byte-identical in both repos | 49 accept/reject cases; each repo's suite asserts the same outcome against its own schemas. |
+| Public categories | BE `GET public/websites/:id/categories`; FE `usePublicCourseCategories` | Only categories with a published public course, with counts, RLS-scoped. |
+| Sample social proof (§D.4) | BE strip + `collectSampleContent`; FE renderer filter, editor badge/action, publish warning | Public pages payload is stripped before caching; publish returns `sampleContent`; the base testimonials renderer also filters on the public route and labels samples in previews; the section tree and item header show **Sample**; only "This is a real testimonial" clears the flag (text edits never do); the publish dialog warns ("Publish anyway") using the saved pages. |
+| Brand palette persistence (§F.4.3/§F.4.6) | BE `brand/brand-palette-update.ts` | Inputs only; roles re-derived and validated server-side; legacy colours = seeds (both directions); server-stamped confirmation; `palette: null` removes it; the public read omits `confirmedBy`/`confirmedAt`/`extraction`. FE type `WebsiteBrandConfig.palette` (opaque in `@types`). No UI yet (Brand Studio is a later phase). |
+| Provenance | BE migration `20261024000000_website_template_provenance` | Nullable `template_key`/`template_version` on `website_configurations`; stamped once on the first generation that creates pages; never rewritten; no backfill. **Production needs the gated `apply_migrations` deploy.** |
+| Base renderers | FE `sections/{PageHeader,CourseCategories,Steps,FeatureSplit}Section.tsx`, `theme-packs/base-renderers.tsx` | Every theme can draw the new types. `courseCategories` is hidden publicly with < 2 categories (the preview explains why) and each tile opens the filtered catalog. Base support for `faq.maxItems/cta`, `cta.secondaryCta`, testimonial `rating` renders only when set. |
+| Editor | FE field + metadata registries, EN/AR i18n | Fields for every new property and type; the four types appear in "Add section". |
+| Media fix (§E.4) | FE `WebsiteImageField`, `AcademyBrandingForm` | Direct uploads go through `MediaAsset` and store the returned URL (with an uploading state and an inline error that keeps the previous value). The Academy logo is uploaded the same way. |
+| Catalog URL state | FE `utils/catalog-url.utils.ts`, `CourseCatalogSection` | `q`, `category`, `level`, `pricing`, `sort`, `page`; public route only; `replaceState` (no history spam); other parameters kept; unknown values ignored; a shared page number is requested directly; a removable category chip. |
+
+### O.2 Tests and measurements
+
+- **Frontend:** 1,379 unit tests pass (new: parity 49, base sections 9, URL state 4, catalog/sample utils 4, image upload 2, editor sample 2). Typecheck: the same 34 pre-existing errors; lint and Prettier clean.
+- **Backend unit:** 151 suites, 4,136 tests pass (including the two suites that read `../atlas-front`, run here against a local link to the frontend checkout).
+- **Backend e2e:** website, public website, RLS, provisioning, media, communications — 30 suites, 317 tests, **green on two consecutive runs** (Postgres 16, Redis, s3rver in place of MinIO). Includes categories isolation, the public payload never containing `sample: true`, publish listing samples, palette accept/reject/strip, and the new contracts.
+- **Migration:** `prisma migrate diff` against a shadow database shows no drift; the fixture exporter output is unchanged.
+- **Theme baseline:** 559/559 (327 screenshots, 216 axe, 16 palette checks).
+
+### O.3 UI/UX Pro Max review (editor fields, sample badge, publish warning, Brand tab IA)
+
+Queries: helper text and inline errors, compact label overflow, confirmation dialogs, target size (WCAG 2.2), progressive disclosure (the last returned no specific match; general rules used). Applied:
+- The "This is a real testimonial" action had a < 24 px target; it is now a ghost button with a ≥ 24 px minimum.
+- The section-tree hint was hover-only (`title`); it is now screen-reader text inside the badge. Badges never wrap.
+- Upload and category-filter feedback is inline and next to the control (`role="alert"` for upload errors); a failed upload never changes the value.
+- The publish warning names the pages, explains the consequence (samples are hidden, not published) and uses a named action ("Publish anyway"), not "OK".
+- Brand tab IA (for the Brand Studio phase): keep logo → proposed palette → preview → adjust → accept as one vertical flow; seeds editable up front, other roles under "Advanced"; contrast failures shown beside the offending role with the suggested value.
+
+### O.4 Engineering corrections and scope notes (surfaced, not silent)
+
+1. **MediaAsset URLs are relative.** Atlas stores `/api/v1/public/media/<key>` on purpose (one value works on every host). The first Phase 2 image validator would have refused these — breaking "Choose from library" and any page already holding one. Both validators now accept that exact path shape (no `..`, no query string); covered by the parity cases.
+2. **Email logos.** Uploading the logo as a MediaAsset makes `academy.logoUrl` relative, which means nothing inside an email. `CommunicationBrandingService` now resolves a relative logo against the Academy's host (else the platform URL); absolute and legacy values pass through. Certificates already did this. Small change outside the website module, required so the logo fix doesn't break emails.
+3. **Favicon stays as it was.** `.ico` isn't a MediaAsset type, so the favicon keeps its current upload; only the logo moved (as §F.4.3 specifies).
+4. **Base renderers stay minimal.** Hero `highlight/highlights/showSearch`, `features.layout`, `cta.image` and `pageHeader.search` are stored and validated but drawn only by Theme 1's renderers (Phase 5). "An empty testimonials section renders nothing" is also a Theme 1 renderer behaviour, so Themes 2–5 stay pixel-identical.
+5. **Pre-publish warning is computed client-side** from the saved pages (the frontend mirror of `collectSampleContent`), because the server's list arrives only after publishing; the publish response still carries the authoritative list.
+6. **Templates don't mark samples yet.** Seeding `sample: true` testimonials is part of Theme 1's starter content (Phase 3); the whole chain is in place for it.
+
+### O.5 Still open
+
+- Deploy the provenance migration through the gated `apply_migrations` run.
+- Magnific commercial-use and redistribution terms must be verified and recorded before Phase 3 production generation.
+- The LCP 2.5 s target versus the current ~560 KB main bundle needs a decision before Phase 8.
+- The shared "Powered by Atlas" ARIA fix (§M) is still pending.

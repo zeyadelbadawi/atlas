@@ -36,11 +36,15 @@ export const HSL_TRIPLET_REGEX = /^\d{1,3} \d{1,3}% \d{1,3}%$/;
 /** Every section type, in the order they appear in the "Add section" picker. */
 export const SECTION_TYPE_ORDER: readonly SectionType[] = [
   'hero',
+  'pageHeader',
   'about',
   'featuredCourses',
   'courseCatalog',
+  'courseCategories',
   'statistics',
   'features',
+  'featureSplit',
+  'steps',
   'testimonials',
   'instructors',
   'faq',
@@ -78,6 +82,23 @@ export const MAX_COURSE_CATALOG_PAGE_SIZE = 48;
 
 /** Same bound Course thumbnails and Academy branding already use for an image asset. */
 export const MAX_WEBSITE_IMAGE_FILE_SIZE = 5 * 1024 * 1024;
+/** Theme 1 plan §B density (one idea per section, 3–6 items) — mirrors the backend constants exactly. */
+export const MAX_SECTION_STEPS = 6;
+export const MAX_FEATURE_SPLIT_ITEMS = 6;
+export const MAX_HERO_HIGHLIGHTS = 4;
+export const MAX_CHIP_TEXT = 40;
+export const MIN_COURSE_CATEGORIES = 2;
+export const DEFAULT_COURSE_CATEGORIES_COUNT = 8;
+
+/** See `image-value.utils.ts` — mirrors the backend patterns exactly. */
+export const THEME_ASSET_REFERENCE_PATTERN =
+  /^theme-asset:[a-z0-9-]+\/[a-z0-9-]+$/;
+export const LEGACY_DATA_IMAGE_PATTERN =
+  /^data:image\/(png|jpeg|jpg|webp);base64,[A-Za-z0-9+/]+={0,2}$/;
+/** An Atlas MediaAsset URL — relative on purpose (see the backend's `toMediaAssetUrl`). No `.` before the extension, so no `..` segment. */
+export const MEDIA_ASSET_PATH_PATTERN =
+  /^\/api\/v1\/public\/media\/[A-Za-z0-9_-]+(\/[A-Za-z0-9_-]+)*\.[a-z0-9]+$/;
+
 export const ALLOWED_WEBSITE_IMAGE_TYPES = [
   'image/png',
   'image/jpeg',

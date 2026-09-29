@@ -39,6 +39,11 @@ export const SECTION_TYPES = [
   'gallery',
   'contact',
   'courseCatalog',
+  // Theme 1 plan §D.2 — shared by every theme, each with a base renderer.
+  'pageHeader',
+  'courseCategories',
+  'steps',
+  'featureSplit',
 ] as const;
 
 export type SectionType = (typeof SECTION_TYPES)[number];
@@ -84,6 +89,17 @@ export interface HeroSectionConfig {
   readonly imageAlt?: LocalizedText;
   readonly cta?: WebsiteCta;
   readonly secondaryCta?: WebsiteCta;
+  /** Theme 1 plan §D.2 — the one title phrase a theme may emphasise (ignored if no longer in the title). */
+  readonly highlight?: LocalizedText;
+  /** Short value chips under the hero (≤ 4). */
+  readonly highlights?: readonly HeroHighlight[];
+  /** Inline course search that submits to the catalog. */
+  readonly showSearch?: boolean;
+}
+
+export interface HeroHighlight {
+  readonly id: string;
+  readonly label: LocalizedText;
 }
 
 export interface AboutSectionConfig {
@@ -176,6 +192,8 @@ export interface FeaturesSectionConfig {
   readonly title?: LocalizedText;
   readonly description?: LocalizedText;
   readonly items: readonly FeatureItem[];
+  /** Theme 1 plan §D.2 — `strip` is a compact highlights band; absent means the usual cards. */
+  readonly layout?: 'cards' | 'strip';
 }
 
 export interface TestimonialItem {
@@ -186,6 +204,15 @@ export interface TestimonialItem {
   readonly authorRole?: LocalizedText;
   readonly avatar?: string;
   readonly avatarAlt?: LocalizedText;
+  /** 1–5. */
+  readonly rating?: number;
+  /**
+   * Theme 1 plan §D.4 — starter content for preview only: never public
+   * (the API strips it, the renderer filters it), shown with a "Sample"
+   * label in previews, cleared only by the Owner's explicit "This is a
+   * real testimonial".
+   */
+  readonly sample?: boolean;
 }
 
 export interface TestimonialsSectionConfig {
@@ -212,12 +239,19 @@ export interface FaqSectionConfig {
   readonly items: readonly FaqItem[];
   /** Same additive library-reference mechanism as `TestimonialsSectionConfig.libraryEntryIds` — see that field's doc comment. References `WebsiteFaqEntry` (Prompt 10). */
   readonly libraryEntryIds?: readonly string[];
+  /** Theme 1 plan §D.2 — show only the first N (a teaser). */
+  readonly maxItems?: number;
+  /** A link to the rest (e.g. the FAQs page). */
+  readonly cta?: WebsiteCta;
 }
 
 export interface CtaSectionConfig {
   readonly title: LocalizedText;
   readonly description?: LocalizedText;
   readonly cta: WebsiteCta;
+  readonly secondaryCta?: WebsiteCta;
+  readonly image?: string;
+  readonly imageAlt?: LocalizedText;
 }
 
 /** References the existing Course domain's instructor summaries — derived, never a parallel Instructor model. */
@@ -254,6 +288,56 @@ export interface ContactSectionConfig {
   readonly showForm: boolean;
 }
 
+/** Theme 1 plan §D.2 — an inner page's title band, optionally with that page's search. */
+export interface PageHeaderSectionConfig {
+  readonly eyebrow?: LocalizedText;
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly image?: string;
+  readonly imageAlt?: LocalizedText;
+  readonly search?: 'none' | 'courses' | 'faq';
+}
+
+/** Theme 1 plan §C.1 #3 — the Academy's real categories (live); hidden publicly with fewer than two. */
+export interface CourseCategoriesSectionConfig {
+  readonly title?: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly maxItems: number;
+  readonly showCounts: boolean;
+}
+
+export interface StepItem {
+  readonly id: string;
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+}
+
+/** Theme 1 plan §C.1 #6 — "How it works": an ordered, numbered sequence (≤ 6). */
+export interface StepsSectionConfig {
+  readonly title?: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly items: readonly StepItem[];
+}
+
+export interface FeatureSplitItem {
+  readonly id: string;
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+}
+
+/** Theme 1 plan §C.1 #5 — an image beside a title, lead and numbered benefits (≤ 6). */
+export interface FeatureSplitSectionConfig {
+  readonly eyebrow?: LocalizedText;
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly image?: string;
+  readonly imageAlt?: LocalizedText;
+  /** Logical side: `start` is left in English, right in Arabic. */
+  readonly imagePosition: 'start' | 'end';
+  readonly items: readonly FeatureSplitItem[];
+  readonly cta?: WebsiteCta;
+}
+
 /** Every section's config, keyed by its `SectionType`. */
 export interface SectionConfigMap {
   readonly hero: HeroSectionConfig;
@@ -268,6 +352,10 @@ export interface SectionConfigMap {
   readonly gallery: GallerySectionConfig;
   readonly contact: ContactSectionConfig;
   readonly courseCatalog: CourseCatalogSectionConfig;
+  readonly pageHeader: PageHeaderSectionConfig;
+  readonly courseCategories: CourseCategoriesSectionConfig;
+  readonly steps: StepsSectionConfig;
+  readonly featureSplit: FeatureSplitSectionConfig;
 }
 
 /**

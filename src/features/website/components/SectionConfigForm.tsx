@@ -16,7 +16,8 @@
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, Trash2 } from 'lucide-react';
+import { BadgeCheck, Plus, Trash2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -422,8 +423,16 @@ function ScalarField({
             type="number"
             min={descriptor.min ?? 1}
             max={descriptor.max ?? MAX_SECTION_ITEMS}
-            value={(value as number) ?? 0}
-            onChange={(e) => onChange(Number(e.target.value))}
+            value={
+              (value as number | undefined) ?? (descriptor.optional ? '' : 0)
+            }
+            onChange={(e) =>
+              onChange(
+                descriptor.optional && e.target.value === ''
+                  ? undefined
+                  : Number(e.target.value)
+              )
+            }
           />
         </div>
       );
@@ -549,6 +558,25 @@ export function SectionConfigForm<TType extends SectionType>({
     setField(schema.repeatable.key, next);
   };
 
+  /**
+   * Theme 1 plan §D.4 — the ONLY way a sample testimonial becomes real. An
+   * explicit Owner action, never a side effect of editing its text (a typo
+   * fix must not turn a placeholder quote into a published one).
+   */
+  const confirmItemReal = (index: number) => {
+    if (!schema.repeatable) return;
+    setField(
+      schema.repeatable.key,
+      items.map((item, i) => {
+        if (i !== index) return item;
+        const real = { ...item };
+        delete real.sample;
+        return real;
+      })
+    );
+  };
+  const hasSampleItems = items.some((item) => item.sample === true);
+
   const removeItem = (index: number) => {
     if (!schema.repeatable) return;
     setField(
@@ -609,15 +637,39 @@ export function SectionConfigForm<TType extends SectionType>({
                 {t('website:editor.addItem')}
               </Button>
             </div>
+            {hasSampleItems ? (
+              <p className="text-xs text-muted-foreground">
+                {t('website:editor.sampleHelp')}
+              </p>
+            ) : null}
             {items.map((item, index) => (
               <div
                 key={(item.id as string) ?? index}
                 className="space-y-3 rounded-md border border-border p-3"
               >
-                <div className="flex items-center justify-between">
-                  <p className="text-xs font-medium text-muted-foreground">
-                    {t(schema.repeatable!.itemLabelKey)} {index + 1}
-                  </p>
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="text-xs font-medium text-muted-foreground">
+                      {t(schema.repeatable!.itemLabelKey)} {index + 1}
+                    </p>
+                    {item.sample === true ? (
+                      <>
+                        <Badge variant="outline" className="whitespace-nowrap">
+                          {t('website:editor.sampleBadge')}
+                        </Badge>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="min-h-6 px-2 text-xs"
+                          onClick={() => confirmItemReal(index)}
+                        >
+                          <BadgeCheck className="size-3.5" aria-hidden />
+                          {t('website:editor.markTestimonialReal')}
+                        </Button>
+                      </>
+                    ) : null}
+                  </div>
                   <Button
                     type="button"
                     variant="ghost"

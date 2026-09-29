@@ -127,7 +127,8 @@
       "logoTooLarge": "يجب أن يكون حجم الشعار أقل من 5 ميجابايت.",
       "logoInvalidType": "يجب أن يكون الشعار بصيغة PNG أو JPG.",
       "faviconTooLarge": "يجب أن يكون حجم أيقونة المفضلة أقل من 1 ميجابايت.",
-      "faviconInvalidType": "يجب أن تكون أيقونة المفضلة بصيغة ICO أو PNG."
+      "faviconInvalidType": "يجب أن تكون أيقونة المفضلة بصيغة ICO أو PNG.",
+      "logoUploadFailed": "تعذّر رفع الشعار. يُرجى المحاولة مرة أخرى."
     }
   },
   "members": {

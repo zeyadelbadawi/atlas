@@ -22,6 +22,14 @@
  *     the public runtime); absent it (dashboard preview) a card is the same
  *     inert `<article>` every other section renders.
  *
+ * URL STATE (Theme 1 plan §D.2). On the public runtime the search, category,
+ * filters, sort and page live in the query string (`catalog-url.utils.ts`
+ * owns the names), so a filtered catalog can be shared, reloaded and linked
+ * to — the category tiles and hero search arrive here that way. The URL is
+ * REPLACED, not pushed (typing a search must not bury Back under one entry
+ * per keystroke), only the catalog's own parameters are touched, and the
+ * dashboard preview (no `linkRenderer`) never reads or writes the URL.
+ *
  * PAGE RESET RULE. Every filter/sort/search change returns to page 1 in the
  * SAME event handler that changes it (React 18 batches both state updates
  * into one render), so a request for "page 7 of the new filter" — which
@@ -30,7 +38,15 @@
 import { useCallback, useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
-import { BookOpen, Clock, PlayCircle, SearchX, UserRound } from 'lucide-react';
+import {
+  BookOpen,
+  Clock,
+  PlayCircle,
+  SearchX,
+  UserRound,
+  X,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import {
@@ -45,9 +61,18 @@ import { Pagination, SearchInput, StarRating } from '@components/data-display';
 import { EmptyState, ErrorState } from '@components/feedback';
 import { apiErrorKind } from '@api';
 import { formatCoursePricing } from '@features/course';
-import { usePagination, usePublicCourses } from '@hooks';
+import {
+  usePagination,
+  usePublicCourseCategories,
+  usePublicCourses,
+} from '@hooks';
 import { clamp } from '@utils';
 import { COURSE_CATALOG_SORT_VALUES, COURSE_LEVEL_VALUES } from '@types';
+import {
+  fromCatalogSearch,
+  mergeCatalogSearch,
+  type CatalogUrlState,
+} from '../utils/catalog-url.utils';
 import {
   DEFAULT_COURSE_CATALOG_PAGE_SIZE,
   MAX_COURSE_CATALOG_PAGE_SIZE,
@@ -79,6 +104,37 @@ export interface CourseCatalogSectionProps {
 
 /** The "any" option of a filter select. Radix `Select` rejects an empty-string item value, same sentinel convention as `CourseListPage`. */
 const ALL = 'all';
+
+const PRICING_VALUES: readonly CoursePricingType[] = ['free', 'paid'];
+
+function oneOf<T extends string>(
+  values: readonly T[],
+  value: string | undefined
+): T | undefined {
+  return values.find((candidate) => candidate === value);
+}
+
+/** The catalog state a visitor arrived with — anything unrecognised is ignored, never trusted. */
+function readInitialUrlState(enabled: boolean): {
+  readonly search: string;
+  readonly category?: string;
+  readonly level?: CourseLevel;
+  readonly pricing?: CoursePricingType;
+  readonly sort?: CourseCatalogSort;
+  readonly page: number;
+} {
+  if (!enabled || typeof window === 'undefined') return { search: '', page: 1 };
+  const state: CatalogUrlState = fromCatalogSearch(window.location.search);
+  const page = Number(state.page);
+  return {
+    search: state.search?.slice(0, 100) ?? '',
+    category: state.category?.slice(0, 64),
+    level: oneOf(COURSE_LEVEL_VALUES, state.level),
+    pricing: oneOf(PRICING_VALUES, state.pricing),
+    sort: oneOf(COURSE_CATALOG_SORT_VALUES, state.sort),
+    page: Number.isInteger(page) && page > 1 ? page : 1,
+  };
+}
 
 /**
  * The closed sort list → the backend's `sortBy`/`sortDirection` pair.
@@ -340,14 +396,27 @@ export function CourseCatalogSection({
   const controlId = useId();
 
   const pageSize = resolvePageSize(config.pageSize);
+  const syncUrl = !!linkRenderer;
+  const [initial] = useState(() => readInitialUrlState(syncUrl));
 
-  const [search, setSearch] = useState('');
-  const [level, setLevel] = useState<CourseLevel | typeof ALL>(ALL);
-  const [pricing, setPricing] = useState<CoursePricingType | typeof ALL>(ALL);
-  const [sort, setSort] = useState<CourseCatalogSort>(config.defaultSort);
+  const [search, setSearch] = useState(initial.search);
+  const [category, setCategory] = useState(initial.category);
+  const [level, setLevel] = useState<CourseLevel | typeof ALL>(
+    initial.level ?? ALL
+  );
+  const [pricing, setPricing] = useState<CoursePricingType | typeof ALL>(
+    initial.pricing ?? ALL
+  );
+  const [sort, setSort] = useState<CourseCatalogSort>(
+    initial.sort ?? config.defaultSort
+  );
 
   const [totalItems, setTotalItems] = useState(0);
-  const pagination = usePagination({ totalItems, initialPageSize: pageSize });
+  const pagination = usePagination({
+    totalItems,
+    initialPage: initial.page,
+    initialPageSize: pageSize,
+  });
   const { goToFirstPage, setPageSize } = pagination;
 
   // Editor live preview: an Owner changing `pageSize`/`defaultSort` in the
@@ -381,14 +450,23 @@ export function CourseCatalogSection({
     setSort(value as CourseCatalogSort);
     goToFirstPage();
   };
+  const handleClearCategory = () => {
+    setCategory(undefined);
+    goToFirstPage();
+  };
 
   const trimmedSearch = search.trim();
+  // Until the first response says how many pages exist, `pagination.page`
+  // is clamped to 1 — so a shared "page 3" link asks for page 3 directly.
+  const [hasTotals, setHasTotals] = useState(false);
+  const queryPage = hasTotals ? pagination.page : initial.page;
   const { data, isLoading, error, refetch } = usePublicCourses(academyId, {
     query: {
-      pagination: { page: pagination.page, pageSize: pagination.pageSize },
+      pagination: { page: queryPage, pageSize: pagination.pageSize },
       sort: COURSE_CATALOG_SORT_DESCRIPTORS[sort],
       search: trimmedSearch || undefined,
       filters: {
+        categoryId: category,
         level: level === ALL ? undefined : level,
         pricingType: pricing === ALL ? undefined : pricing,
       },
@@ -396,12 +474,57 @@ export function CourseCatalogSection({
   });
 
   useEffect(() => {
-    if (data) setTotalItems(data.pagination.totalItems);
+    if (!data) return;
+    setTotalItems(data.pagination.totalItems);
+    setHasTotals(true);
   }, [data]);
+
+  // The category's name, for the removable filter chip (same cached query
+  // the category tiles use).
+  const { data: categories } = usePublicCourseCategories(
+    category ? academyId : undefined
+  );
+  const categoryName = categories?.find(
+    (candidate) => candidate.id === category
+  )?.name;
+
+  // URL STATE — see the doc comment. Written only once totals are known,
+  // so the first render's clamp to page 1 never erases a shared page.
+  const requestedPage = pagination.page;
+  useEffect(() => {
+    if (!syncUrl || !hasTotals) return;
+    const next = mergeCatalogSearch(window.location.search, {
+      search: trimmedSearch,
+      category,
+      level: level === ALL ? undefined : level,
+      pricing: pricing === ALL ? undefined : pricing,
+      sort: sort === config.defaultSort ? undefined : sort,
+      page: requestedPage > 1 ? String(requestedPage) : undefined,
+    });
+    if (next === window.location.search) return;
+    window.history.replaceState(
+      window.history.state,
+      '',
+      `${window.location.pathname}${next}${window.location.hash}`
+    );
+  }, [
+    syncUrl,
+    hasTotals,
+    trimmedSearch,
+    category,
+    level,
+    pricing,
+    sort,
+    config.defaultSort,
+    requestedPage,
+  ]);
 
   const courses = data?.items ?? [];
   const hasActiveFilters =
-    trimmedSearch.length > 0 || level !== ALL || pricing !== ALL;
+    trimmedSearch.length > 0 ||
+    level !== ALL ||
+    pricing !== ALL ||
+    category !== undefined;
   const hasControls =
     config.showSearch ||
     config.showLevelFilter ||
@@ -424,6 +547,26 @@ export function CourseCatalogSection({
           </p>
         ) : null}
       </div>
+
+      {category ? (
+        <div className="mb-4 flex">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleClearCategory}
+            aria-label={t('website:renderer.courseCatalog.clearCategory', {
+              name: categoryName ?? '',
+            })}
+          >
+            <span dir="auto">
+              {categoryName ??
+                t('website:renderer.courseCatalog.categoryFilter')}
+            </span>
+            <X className="size-3.5" aria-hidden />
+          </Button>
+        </div>
+      ) : null}
 
       {hasControls ? (
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">

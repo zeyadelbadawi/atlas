@@ -583,7 +583,11 @@
     "optional": "optional",
     "translationComplete": "Complete",
     "translationIncomplete": "Not translated yet",
-    "invalidSections": "These sections need attention before this page can be saved: {{sections}}."
+    "invalidSections": "These sections need attention before this page can be saved: {{sections}}.",
+    "sampleBadge": "Sample",
+    "markTestimonialReal": "This is a real testimonial",
+    "sampleHelp": "Sample testimonials are placeholders to show the design. They're never shown on your live website. Replace the text with a real testimonial, then mark it as real.",
+    "sampleSectionHint": "Holds sample testimonials, which are hidden on your live website."
   },
   "preview": {
     "title": "Preview",
@@ -613,7 +617,10 @@
     "unpublishConfirmTitle": "Take the website offline?",
     "unpublishConfirmDescription": "Visitors will no longer be able to reach your academy's public website. You can publish it again at any time.",
     "unpublishConfirmAction": "Unpublish",
-    "unpublishedHint": "Your website is offline and not reachable by visitors."
+    "unpublishedHint": "Your website is offline and not reachable by visitors.",
+    "sampleWarningTitle": "Publish with sample testimonials?",
+    "sampleWarningDescription": "These pages still have sample testimonials: {{pages}}. Sample testimonials are never shown on your live website — replace them with real ones, or mark them as real, to show them.",
+    "sampleWarningAction": "Publish anyway"
   },
   "sections": {
     "hero": {
@@ -651,6 +658,18 @@
     },
     "contact": {
       "label": "Contact"
+    },
+    "pageHeader": {
+      "label": "Page header"
+    },
+    "courseCategories": {
+      "label": "Course categories"
+    },
+    "steps": {
+      "label": "How it works"
+    },
+    "featureSplit": {
+      "label": "Image with benefits"
     }
   },
   "fields": {
@@ -719,7 +738,28 @@
     "email": "Email",
     "phone": "Phone",
     "address": "Address",
-    "showForm": "Show contact form"
+    "showForm": "Show contact form",
+    "highlight": "Highlighted phrase",
+    "showCourseSearch": "Show course search",
+    "heroHighlights": "Highlights",
+    "heroHighlight": "Highlight",
+    "label": "Label",
+    "rating": "Rating (1–5)",
+    "faqMaxItems": "Show at most",
+    "faqCta": "Link to all questions",
+    "pageHeaderSearch": "Search",
+    "pageHeaderSearchNone": "No search",
+    "pageHeaderSearchCourses": "Course search",
+    "pageHeaderSearchFaq": "FAQ search",
+    "categoriesMaxItems": "Categories to show",
+    "showCourseCounts": "Show course counts",
+    "stepItems": "Steps",
+    "stepItem": "Step",
+    "imagePosition": "Image position",
+    "imagePositionStart": "Before the text",
+    "imagePositionEnd": "After the text",
+    "benefitItems": "Benefits",
+    "benefitItem": "Benefit"
   },
   "icons": {
     "GraduationCap": "Graduation cap",
@@ -772,7 +812,9 @@
       "durationHoursOnly": "{{hours}}h",
       "durationMinutes": "{{minutes}}m",
       "durationLabel": "Duration",
-      "instructorLabel": "Instructor"
+      "instructorLabel": "Instructor",
+      "categoryFilter": "Category",
+      "clearCategory": "Remove the category filter {{name}}"
     },
     "courseDetails": {
       "aboutTitle": "About this course",
@@ -827,6 +869,14 @@
       "previewUnavailable": "This preview cannot be played right now. Please try again later.",
       "previewNotPlayable": "This preview is not a video. Enrol to open the full lesson.",
       "previewClose": "Close"
+    },
+    "courseCategories": {
+      "courseCount": "{{count}} course",
+      "courseCount_other": "{{count}} courses",
+      "previewHidden": "Hidden on your website until at least {{count}} categories have published courses."
+    },
+    "testimonials": {
+      "sampleBadge": "Sample"
     }
   },
   "common": {
@@ -839,7 +889,9 @@
     "imageTooLarge": "The file is too large.",
     "imageInvalidType": "This file type isn't supported. Use PNG, JPG or WEBP.",
     "imageRecommendation": "Recommended: {{dimensions}} px ({{ratio}}) · {{formats}}",
-    "imageTransparencyHint": "Transparent background recommended."
+    "imageTransparencyHint": "Transparent background recommended.",
+    "uploadingImage": "Uploading…",
+    "imageUploadFailed": "The image couldn't be uploaded. Please try again."
   },
   "presence": {
     "oneEditing": "{{name}} ({{role}}) is currently editing this page.",

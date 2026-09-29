@@ -21,7 +21,13 @@ import { StatusBadge } from '@components/data-display';
 import { ErrorState } from '@components/feedback';
 import { useConfirmDialog } from '@app/providers';
 import { usePermissions } from '@hooks';
-import { usePublishWebsite, useUnpublishWebsite } from '../hooks';
+import {
+  usePublishWebsite,
+  useUnpublishWebsite,
+  useWebsitePages,
+} from '../hooks';
+import { CONTENT_LIST_PAGE_SIZE } from '../constants/website.constants';
+import { collectSampleContent } from '../utils/sample-content.utils';
 import type { StatusTone } from '@components/data-display';
 import type { WebsitePublishStatus } from '@types';
 
@@ -53,6 +59,11 @@ export function WebsitePublishBar({
   const { hasPermission } = usePermissions();
   const publish = usePublishWebsite();
   const unpublish = useUnpublishWebsite();
+  // Theme 1 plan §D.4 — the saved pages, to warn about sample testimonials
+  // before publishing. Same query key as the overview's page list.
+  const pagesQuery = useWebsitePages(academyId, {
+    query: { pagination: { page: 1, pageSize: CONTENT_LIST_PAGE_SIZE } },
+  });
   // Unpublishing takes a customer's site off the internet, so it is gated
   // on the same permission as publishing — never a weaker one.
   const canPublish = hasPermission('academy.website.publish');
@@ -67,19 +78,37 @@ export function WebsitePublishBar({
 
   const handleToggle = async () => {
     if (isBusy) return;
+    const samplePages = isPublished
+      ? []
+      : [
+          ...new Set(
+            collectSampleContent(pagesQuery.data?.items ?? []).map(
+              (entry) => entry.pageTitle
+            )
+          ),
+        ];
     const confirmed = await confirm(
-      isPublished
+      samplePages.length > 0
         ? {
-            titleKey: 'website:publish.unpublishConfirmTitle',
-            descriptionKey: 'website:publish.unpublishConfirmDescription',
-            confirmLabelKey: 'website:publish.unpublishConfirmAction',
-            intent: 'destructive',
+            // A warning, never a block: samples are stripped from the
+            // public site anyway, so publishing hides those testimonials.
+            titleKey: 'website:publish.sampleWarningTitle',
+            descriptionKey: 'website:publish.sampleWarningDescription',
+            confirmLabelKey: 'website:publish.sampleWarningAction',
+            values: { pages: samplePages.join(', ') },
           }
-        : {
-            titleKey: 'website:publish.confirmTitle',
-            descriptionKey: 'website:publish.confirmDescription',
-            confirmLabelKey: 'website:publish.confirmAction',
-          }
+        : isPublished
+          ? {
+              titleKey: 'website:publish.unpublishConfirmTitle',
+              descriptionKey: 'website:publish.unpublishConfirmDescription',
+              confirmLabelKey: 'website:publish.unpublishConfirmAction',
+              intent: 'destructive',
+            }
+          : {
+              titleKey: 'website:publish.confirmTitle',
+              descriptionKey: 'website:publish.confirmDescription',
+              confirmLabelKey: 'website:publish.confirmAction',
+            }
     );
     if (!confirmed) return;
     // `mutate` resolves into the query cache; the badge and the label both

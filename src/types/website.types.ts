@@ -31,6 +31,15 @@ export interface WebsiteBrandConfig {
   readonly primaryColor: HslColorTriplet;
   readonly secondaryColor: HslColorTriplet;
   readonly accentColor: HslColorTriplet;
+  /**
+   * Theme 1 plan §D.2/§F.4 — the semantic brand palette, when the Owner has
+   * one. The backend re-derives and validates it on every save and keeps
+   * the three colours above equal to its seeds, so a reader that ignores it
+   * stays correct. Its shape is the brand engine's `BrandPalette`
+   * (`@features/website/brand-engine`); kept opaque here so `@types` never
+   * depends on a feature module.
+   */
+  readonly palette?: Readonly<Record<string, unknown>>;
 }
 
 /**
@@ -247,3 +256,17 @@ export interface UpdateWebsitePagePayload {
    */
   readonly expectedVersion?: number;
 }
+
+/** Theme 1 plan §D.4 — a saved section that still holds sample testimonials. */
+export interface SampleContentEntry {
+  readonly pageId: string;
+  readonly pageTitle: string;
+  readonly sectionId: string;
+  readonly sectionType: string;
+  readonly sampleItems: number;
+}
+
+/** `POST …/website/publish` — the published configuration plus the sample content it still holds (a warning, never a block; the public API strips it). */
+export type PublishWebsiteResponse = WebsiteConfiguration & {
+  readonly sampleContent?: readonly SampleContentEntry[];
+};

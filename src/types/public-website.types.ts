@@ -25,6 +25,15 @@ export interface PublicWebsiteStatistics {
   readonly instructors: number;
 }
 
+/** Theme 1 plan §D.2 — `CourseCategoriesSection`'s live data (`GET public/websites/:academyId/categories`): only categories with at least one published public course. */
+export interface PublicCourseCategory {
+  readonly id: string;
+  readonly name: string;
+  readonly slug: string;
+  readonly description?: string;
+  readonly courseCount: number;
+}
+
 /** Phase 6 — the public Contact section's submission payload (`POST public/websites/:academyId/contact`). */
 export interface ContactMessagePayload {
   readonly name: string;

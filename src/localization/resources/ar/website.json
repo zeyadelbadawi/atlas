@@ -583,7 +583,11 @@
     "optional": "اختياري",
     "translationComplete": "مكتمل",
     "translationIncomplete": "لم تتم الترجمة بعد",
-    "invalidSections": "تحتاج هذه الأقسام إلى مراجعة قبل حفظ الصفحة: {{sections}}."
+    "invalidSections": "تحتاج هذه الأقسام إلى مراجعة قبل حفظ الصفحة: {{sections}}.",
+    "sampleBadge": "نموذج",
+    "markTestimonialReal": "هذا رأي حقيقي",
+    "sampleHelp": "الآراء النموذجية عناصر مؤقتة لعرض التصميم، ولا تظهر أبدًا في موقعك المباشر. استبدل النص برأي حقيقي، ثم حدّده كرأي حقيقي.",
+    "sampleSectionHint": "يحتوي على آراء نموذجية مخفية في موقعك المباشر."
   },
   "preview": {
     "title": "المعاينة",
@@ -613,7 +617,10 @@
     "unpublishConfirmTitle": "إيقاف الموقع؟",
     "unpublishConfirmDescription": "لن يتمكّن الزوّار من الوصول إلى الموقع العام لأكاديميتك. يمكنك نشره مرة أخرى في أي وقت.",
     "unpublishConfirmAction": "إلغاء النشر",
-    "unpublishedHint": "موقعك متوقّف وغير متاح للزوّار."
+    "unpublishedHint": "موقعك متوقّف وغير متاح للزوّار.",
+    "sampleWarningTitle": "النشر مع آراء نموذجية؟",
+    "sampleWarningDescription": "لا تزال هذه الصفحات تحتوي على آراء نموذجية: {{pages}}. لا تظهر الآراء النموذجية أبدًا في موقعك المباشر — استبدلها بآراء حقيقية، أو حدّدها كآراء حقيقية، لعرضها.",
+    "sampleWarningAction": "النشر على أي حال"
   },
   "sections": {
     "hero": {
@@ -651,6 +658,18 @@
     },
     "contact": {
       "label": "التواصل"
+    },
+    "pageHeader": {
+      "label": "ترويسة الصفحة"
+    },
+    "courseCategories": {
+      "label": "فئات الدورات"
+    },
+    "steps": {
+      "label": "كيف يعمل"
+    },
+    "featureSplit": {
+      "label": "صورة مع المزايا"
     }
   },
   "fields": {
@@ -719,7 +738,28 @@
     "email": "البريد الإلكتروني",
     "phone": "الهاتف",
     "address": "العنوان",
-    "showForm": "عرض نموذج التواصل"
+    "showForm": "عرض نموذج التواصل",
+    "highlight": "العبارة المميزة",
+    "showCourseSearch": "عرض البحث عن الدورات",
+    "heroHighlights": "النقاط البارزة",
+    "heroHighlight": "نقطة بارزة",
+    "label": "النص",
+    "rating": "التقييم (1–5)",
+    "faqMaxItems": "أقصى عدد للعرض",
+    "faqCta": "رابط لجميع الأسئلة",
+    "pageHeaderSearch": "البحث",
+    "pageHeaderSearchNone": "بدون بحث",
+    "pageHeaderSearchCourses": "البحث عن الدورات",
+    "pageHeaderSearchFaq": "البحث في الأسئلة الشائعة",
+    "categoriesMaxItems": "عدد الفئات المعروضة",
+    "showCourseCounts": "عرض عدد الدورات",
+    "stepItems": "الخطوات",
+    "stepItem": "خطوة",
+    "imagePosition": "موضع الصورة",
+    "imagePositionStart": "قبل النص",
+    "imagePositionEnd": "بعد النص",
+    "benefitItems": "المزايا",
+    "benefitItem": "ميزة"
   },
   "icons": {
     "GraduationCap": "قبعة التخرج",
@@ -776,7 +816,9 @@
       "durationHoursOnly": "{{hours}} س",
       "durationMinutes": "{{minutes}} د",
       "durationLabel": "المدة",
-      "instructorLabel": "المدرّب"
+      "instructorLabel": "المدرّب",
+      "categoryFilter": "الفئة",
+      "clearCategory": "إزالة عامل تصفية الفئة {{name}}"
     },
     "courseDetails": {
       "aboutTitle": "عن هذه الدورة",
@@ -843,6 +885,18 @@
       "previewUnavailable": "تعذّر تشغيل هذه المعاينة الآن. يُرجى المحاولة لاحقًا.",
       "previewNotPlayable": "هذه المعاينة ليست مقطع فيديو. سجّل للوصول إلى الدرس كاملًا.",
       "previewClose": "إغلاق"
+    },
+    "courseCategories": {
+      "courseCount_zero": "لا توجد دورات",
+      "courseCount_one": "دورة واحدة",
+      "courseCount_two": "دورتان",
+      "courseCount_few": "{{count}} دورات",
+      "courseCount_many": "{{count}} دورةً",
+      "courseCount_other": "{{count}} دورة",
+      "previewHidden": "مخفي في موقعك حتى تحتوي {{count}} فئات على الأقل على دورات منشورة."
+    },
+    "testimonials": {
+      "sampleBadge": "نموذج"
     }
   },
   "common": {
@@ -855,7 +909,9 @@
     "imageTooLarge": "حجم الملف كبير جدًا.",
     "imageInvalidType": "نوع الملف غير مدعوم. استخدم PNG أو JPG أو WEBP.",
     "imageRecommendation": "الحجم الموصى به: {{dimensions}} بكسل ({{ratio}}) · {{formats}}",
-    "imageTransparencyHint": "يُفضَّل استخدام خلفية شفافة."
+    "imageTransparencyHint": "يُفضَّل استخدام خلفية شفافة.",
+    "uploadingImage": "جارٍ الرفع…",
+    "imageUploadFailed": "تعذّر رفع الصورة. يُرجى المحاولة مرة أخرى."
   },
   "presence": {
     "oneEditing": "{{name}} ({{role}}) يقوم بتحرير هذه الصفحة الآن.",

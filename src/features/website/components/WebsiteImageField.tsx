@@ -2,10 +2,15 @@
  * Website Image Field.
  *
  * The one image-upload control every website form uses (dark logo, OG
- * image, hero image, gallery images, avatars, ...). Reuses the existing
- * `useFilePicker` + base64 pattern (no upload endpoint exists anywhere in
- * Atlas — the same convention Course thumbnails and Academy branding
- * already use), never a bespoke upload mechanism.
+ * image, hero image, gallery images, avatars, ...).
+ *
+ * Theme 1 plan §E.4 (the base64 fix): a direct upload goes through the
+ * Academy's `MediaAsset` store and the field keeps only the returned URL,
+ * so section JSON — and every public page payload — carries references,
+ * not image bytes. The file is still read to a data URL in the browser
+ * because that is what the media upload endpoint accepts. Legacy `data:`
+ * values already saved keep rendering; nothing produces new ones while an
+ * `academyId` is known (every caller today passes it).
  *
  * Prompt 13 adds an alternate "choose from library" path via
  * `MediaLibraryDialog` — reusing a previously-uploaded academy asset
@@ -15,12 +20,12 @@
  */
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FolderOpen, Upload, X } from 'lucide-react';
+import { FolderOpen, Loader2, Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useFilePicker } from '@hooks';
 import { isolateNumericExpression } from '@utils';
-import { MediaLibraryDialog } from '@features/media';
+import { MediaLibraryDialog, useUploadMediaAsset } from '@features/media';
 import {
   ALLOWED_WEBSITE_IMAGE_TYPES,
   MAX_WEBSITE_IMAGE_FILE_SIZE,
@@ -58,6 +63,8 @@ export function WebsiteImageField({
   const { t } = useTranslation();
   const [error, setError] = useState<string>();
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+  const uploadAsset = useUploadMediaAsset();
+  const isUploading = uploadAsset.isPending;
   const filePicker = useFilePicker({
     accept: ALLOWED_WEBSITE_IMAGE_TYPES.join(','),
   });
@@ -82,7 +89,28 @@ export function WebsiteImageField({
 
     setError(undefined);
     const reader = new FileReader();
-    reader.onload = () => onChange(reader.result as string);
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      filePicker.clearFiles();
+      if (!academyId) {
+        onChange(dataUrl);
+        return;
+      }
+      uploadAsset
+        .mutateAsync({
+          academyId,
+          payload: {
+            fileName: file.name,
+            mimeType: file.type,
+            sizeBytes: file.size,
+            dataUrl,
+          },
+        })
+        .then((asset) => onChange(asset.url))
+        // The field keeps its previous value: a failed upload must never
+        // look like it worked.
+        .catch(() => setError('website:common.imageUploadFailed'));
+    };
     reader.readAsDataURL(file);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filePicker.files]);
@@ -94,7 +122,12 @@ export function WebsiteImageField({
         <div
           className={`flex ${aspectClassName} w-32 items-center justify-center overflow-hidden rounded-md border border-dashed border-border bg-muted`}
         >
-          {value ? (
+          {isUploading ? (
+            <Loader2
+              className="size-5 animate-spin text-muted-foreground"
+              aria-hidden
+            />
+          ) : value ? (
             <img src={value} alt="" className="size-full object-contain" />
           ) : (
             <Upload className="size-5 text-muted-foreground" aria-hidden />
@@ -107,10 +140,13 @@ export function WebsiteImageField({
             variant="outline"
             size="sm"
             onClick={filePicker.openFilePicker}
+            disabled={isUploading}
           >
-            {value
-              ? t('website:common.replaceImage')
-              : t('website:common.chooseImage')}
+            {isUploading
+              ? t('website:common.uploadingImage')
+              : value
+                ? t('website:common.replaceImage')
+                : t('website:common.chooseImage')}
           </Button>
           {academyId ? (
             <Button
@@ -166,7 +202,11 @@ export function WebsiteImageField({
             : ''}
         </p>
       ) : null}
-      {error ? <p className="text-sm text-destructive">{t(error)}</p> : null}
+      {error ? (
+        <p className="text-sm text-destructive" role="alert">
+          {t(error)}
+        </p>
+      ) : null}
       {academyId ? (
         <MediaLibraryDialog
           academyId={academyId}

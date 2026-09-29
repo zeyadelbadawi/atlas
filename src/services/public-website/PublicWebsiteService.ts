@@ -32,6 +32,7 @@ import type {
   CourseReview,
   HostnameResolution,
   PaginatedResult,
+  PublicCourseCategory,
   PublicCourseCurriculumSection,
   PublicWebsiteStatistics,
   WebsiteConfiguration,
@@ -130,6 +131,22 @@ export class PublicWebsiteService extends BaseService {
     try {
       return await this.client.get<PublicWebsiteStatistics>(
         this.path('websites', academyId, 'statistics'),
+        options
+      );
+    } catch (error) {
+      if (isApiError(error) && error.kind === 'notFound') return null;
+      throw error;
+    }
+  }
+
+  /** Theme 1 plan §D.2 — the Academy's categories that hold at least one published public course, with counts. `null` for a genuinely unrecognized academyId, same convention as `resolveHostname`. */
+  async getPublicCategories(
+    academyId: string,
+    options?: ReadOptions
+  ): Promise<readonly PublicCourseCategory[] | null> {
+    try {
+      return await this.client.get<readonly PublicCourseCategory[]>(
+        this.path('websites', academyId, 'categories'),
         options
       );
     } catch (error) {

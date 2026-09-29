@@ -59,6 +59,7 @@ export { useToast, toast } from '@/hooks/use-toast';
 export { useAcademyIdentity } from './useAcademyIdentity';
 export { usePublicWebsiteStatistics } from './usePublicWebsiteStatistics';
 export { usePublicCourses } from './usePublicCourses';
+export { usePublicCourseCategories } from './usePublicCourseCategories';
 export type { UsePublicCoursesOptions } from './usePublicCourses';
 export { usePublicCourse, usePublicCourseCurriculum } from './usePublicCourse';
 export {
