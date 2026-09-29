@@ -1,0 +1,165 @@
+#!/usr/bin/env node
+/**
+ * Prepares one approved theme photograph for release (Theme 1 plan §E.3
+ * steps 5–6). Run from this folder after `npm ci`:
+ *
+ *   npm run prepare-asset -- --theme modern-education --key home-hero \
+ *     --master /path/to/home-hero.png [--version v1] [--out <dir>]
+ *
+ * What it does, from the manifest entry (the single source of sizes):
+ *   - checks the master is at least the manifest's master size and ratio;
+ *   - auto-orients, converts to sRGB and strips every metadata block
+ *     (sharp writes none unless asked);
+ *   - writes AVIF (q 50) and WebP (q 75) at each manifest width to
+ *     `<out>/<theme>/<version>/<key>-<width>.<format>`;
+ *   - makes the LQIP (24 px wide, blurred WebP, ≤ 300 bytes);
+ *   - fails if the ≤ 1200 w AVIF is over the entry's byte budget;
+ *   - prints the sha256 of the master and the manifest fields to fill in.
+ *
+ * It refuses to write into a released version folder: released files are
+ * immutable (a changed image is a new version).
+ *
+ * Masters are never committed to the app repo; archive them privately and
+ * record the sha256 printed here in the entry's provenance.
+ */
+import { createHash } from 'node:crypto';
+import { existsSync, mkdirSync, readFileSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { parseArgs } from 'node:util';
+import sharp from 'sharp';
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+const REPO = resolve(HERE, '../..');
+const ASSETS_SRC = join(REPO, 'src/features/website/theme-assets');
+
+const AVIF_QUALITY = 50;
+const WEBP_QUALITY = 75;
+const LQIP_WIDTH = 24;
+const LQIP_MAX_BYTES = 300;
+
+const { values: args } = parseArgs({
+  options: {
+    theme: { type: 'string' },
+    key: { type: 'string' },
+    master: { type: 'string' },
+    version: { type: 'string', default: 'v1' },
+    out: { type: 'string', default: join(REPO, 'public/theme-assets') },
+  },
+});
+
+function fail(message) {
+  console.error(`prepare-asset: ${message}`);
+  process.exit(1);
+}
+
+if (!args.theme || !args.key || !args.master) {
+  fail('--theme, --key and --master are required');
+}
+if (!/^v[1-9]\d*$/.test(args.version)) fail('--version must look like v1');
+
+const manifestModule = await import(
+  join(ASSETS_SRC, 'manifests', `${args.theme}.manifest.ts`)
+).catch(() => fail(`no manifest for theme "${args.theme}"`));
+const manifest = Object.values(manifestModule).find(
+  (value) => value && Array.isArray(value.assets)
+);
+const entry = manifest?.assets.find((asset) => asset.key === args.key);
+if (!entry) fail(`"${args.key}" is not in the ${args.theme} manifest`);
+
+const { RELEASED_THEME_ASSET_FOLDERS } = await import(
+  join(ASSETS_SRC, 'released-versions.ts')
+);
+const folder = `${args.theme}/${args.version}`;
+if (RELEASED_THEME_ASSET_FOLDERS.includes(folder)) {
+  fail(`${folder} is released and immutable; prepare into a new version`);
+}
+
+const masterBuffer = readFileSync(args.master);
+const source = sharp(masterBuffer, { failOn: 'error' }).rotate();
+const meta = await source.metadata();
+// `rotate()` swaps the reported size for EXIF orientations 5–8.
+const swapped = (meta.orientation ?? 1) >= 5;
+const width = swapped ? meta.height : meta.width;
+const height = swapped ? meta.width : meta.height;
+const [rw, rh] = entry.ratio.split(':').map(Number);
+if (Math.abs(width / height - rw / rh) > 0.01) {
+  fail(`master is ${width}×${height}; ${entry.key} needs ${entry.ratio}`);
+}
+if (width < entry.master.width) {
+  fail(`master is ${width}px wide; ${entry.key} needs ≥ ${entry.master.width}`);
+}
+
+const outDir = join(args.out, folder);
+mkdirSync(outDir, { recursive: true });
+
+const base = () =>
+  sharp(masterBuffer, { failOn: 'error' })
+    .rotate()
+    .toColourspace('srgb')
+    .resize({
+      width: entry.master.width,
+      height: entry.master.height,
+      fit: 'cover',
+    });
+
+const written = [];
+for (const targetWidth of entry.widths) {
+  for (const format of manifest.formats) {
+    const file = join(outDir, `${entry.key}-${targetWidth}.${format}`);
+    if (existsSync(file)) fail(`${file} already exists`);
+    const pipeline = base().resize({ width: targetWidth });
+    const info = await (
+      format === 'avif'
+        ? pipeline.avif({ quality: AVIF_QUALITY })
+        : pipeline.webp({ quality: WEBP_QUALITY })
+    ).toFile(file);
+    written.push({ file, width: targetWidth, format, bytes: info.size });
+  }
+}
+
+const budgetWidth =
+  [...entry.widths].reverse().find((w) => w <= 1200) ?? entry.widths[0];
+const budgetFile = written.find(
+  (f) => f.width === budgetWidth && f.format === 'avif'
+);
+if (budgetFile && budgetFile.bytes > entry.budgetBytes) {
+  fail(
+    `${budgetFile.file} is ${budgetFile.bytes} bytes; budget is ${entry.budgetBytes}`
+  );
+}
+
+const lqipBuffer = await base()
+  .resize({ width: LQIP_WIDTH })
+  .blur(1)
+  .webp({ quality: 40 })
+  .toBuffer();
+if (lqipBuffer.length > LQIP_MAX_BYTES) {
+  fail(`LQIP is ${lqipBuffer.length} bytes; limit is ${LQIP_MAX_BYTES}`);
+}
+
+const masterSha256 = createHash('sha256').update(masterBuffer).digest('hex');
+
+for (const f of written) {
+  console.log(
+    `${f.format} ${String(f.width).padStart(4)}w  ${f.bytes} B  ${f.file}`
+  );
+}
+console.log(
+  '\nManifest fields for this entry (fill in the rest of provenance):'
+);
+console.log(
+  JSON.stringify(
+    {
+      status: 'released',
+      version: args.version,
+      lqip: `data:image/webp;base64,${lqipBuffer.toString('base64')}`,
+      provenance: { masterSha256 },
+    },
+    null,
+    2
+  )
+);
+console.log(
+  `\nAlso add "${folder}" to released-versions.ts in the same commit.`
+);

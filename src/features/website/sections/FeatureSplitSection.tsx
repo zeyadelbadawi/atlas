@@ -14,6 +14,7 @@ import {
   isExternalHref,
   resolveWebsiteCtaHref,
 } from '../utils/link-resolution.utils';
+import { ThemeImage, hasRenderableImage } from '../theme-assets';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { FeatureSplitSectionConfig, WebsitePage } from '@types';
@@ -46,11 +47,12 @@ export function FeatureSplitSection({
   return (
     <section className={`${container} ${section}`}>
       <div
-        className={`grid items-center gap-10 ${config.image ? 'md:grid-cols-2' : ''}`}
+        className={`grid items-center gap-10 ${hasRenderableImage(config.image) ? 'md:grid-cols-2' : ''}`}
       >
-        {config.image ? (
-          <img
-            src={config.image}
+        {hasRenderableImage(config.image) ? (
+          <ThemeImage
+            value={config.image}
+            sizes="(min-width: 768px) 50vw, 100vw"
             alt={resolveLocalizedText(config.imageAlt, locale)}
             className={`aspect-[4/3] w-full object-cover ${config.imagePosition === 'end' ? 'md:order-last' : ''}`}
             style={{ borderRadius: 'var(--website-radius)' }}

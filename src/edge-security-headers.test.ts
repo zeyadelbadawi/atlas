@@ -142,9 +142,29 @@ describe('P63g — HSTS scope follows ownership', () => {
 describe('every document Caddy serves gets the headers', () => {
   it('imports the snippet in both static handlers', () => {
     const imports = directives.split('import security_headers').length - 1;
-    // One per site block: the main wildcard host, and the custom-domain
-    // catch-all that previously had none.
-    expect(imports).toBe(2);
+    // One per site block's document handler (the main wildcard host, and
+    // the custom-domain catch-all that previously had none), plus one in
+    // the shared `(theme_assets)` handler, which both site blocks import.
+    expect(imports).toBe(3);
+    expect(directives.split('import theme_assets').length - 1).toBe(2);
+    const catchAll = directives.slice(directives.indexOf('\n:443 {'));
+    expect(catchAll).toContain('import theme_assets');
+  });
+
+  /*
+   * Theme 1 plan §E.4 — versioned theme photographs are immutable, but
+   * only when the file exists: a cached 404 would outlive the deploy that
+   * adds the file.
+   */
+  it('marks only existing theme assets immutable, with no SPA fallback', () => {
+    const start = directives.indexOf('(theme_assets) {');
+    const block = directives.slice(start, directives.indexOf('\n}\n', start));
+    expect(block).toContain('handle /theme-assets/* {');
+    expect(block).toContain('@found file');
+    expect(block).toContain(
+      'header @found Cache-Control "public, max-age=31536000, immutable"'
+    );
+    expect(block).not.toContain('try_files');
   });
 
   it.each(SECURITY_HEADERS)('still defines %s', (header) => {

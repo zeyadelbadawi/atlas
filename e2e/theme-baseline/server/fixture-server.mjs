@@ -311,11 +311,17 @@ function serveStatic(req, res, url) {
     ''
   );
   let file = join(DIST, safePath);
-  if (
-    !file.startsWith(DIST) ||
-    !existsSync(file) ||
-    statSync(file).isDirectory()
-  ) {
+  const found =
+    file.startsWith(DIST) && existsSync(file) && !statSync(file).isDirectory();
+  // The Caddyfile's `(theme_assets)` block: versioned theme photographs are
+  // immutable when present and a real 404 when not (no SPA fallback).
+  const isThemeAsset = url.pathname.startsWith('/theme-assets/');
+  if (isThemeAsset && !found) {
+    res.writeHead(404, { 'X-Content-Type-Options': 'nosniff' });
+    res.end();
+    return;
+  }
+  if (!found) {
     file = join(DIST, 'index.html'); // try_files {path} /index.html
   }
   const extension = extname(file);
@@ -323,6 +329,9 @@ function serveStatic(req, res, url) {
     'Content-Type': CONTENT_TYPES[extension] ?? 'application/octet-stream',
     'Content-Security-Policy': CSP,
     'X-Content-Type-Options': 'nosniff',
+    ...(isThemeAsset
+      ? { 'Cache-Control': 'public, max-age=31536000, immutable' }
+      : {}),
   };
   if (COMPRESSIBLE.has(extension)) {
     send(req, res, 200, headers, readFileSync(file));

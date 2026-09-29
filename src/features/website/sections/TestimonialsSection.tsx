@@ -22,6 +22,7 @@ import {
   useWebsiteHeadingClass,
   useWebsiteSectionClass,
 } from '../renderer/renderer-style.utils';
+import { ThemeImage, hasRenderableImage } from '../theme-assets';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { TestimonialsSectionConfig } from '@types';
@@ -128,9 +129,10 @@ export function TestimonialsSection({
               “{item.quote}”
             </blockquote>
             <figcaption className="mt-4 flex items-center gap-3">
-              {item.avatar ? (
-                <img
-                  src={item.avatar}
+              {hasRenderableImage(item.avatar) ? (
+                <ThemeImage
+                  value={item.avatar}
+                  sizes="36px"
                   alt={item.avatarAlt ?? item.authorName}
                   className="size-9 shrink-0 rounded-full object-cover"
                 />

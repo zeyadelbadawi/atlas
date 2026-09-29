@@ -10,6 +10,7 @@ import {
   useWebsiteHeadingClass,
   useWebsiteSectionClass,
 } from '../renderer/renderer-style.utils';
+import { ThemeImage, hasRenderableImage } from '../theme-assets';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { PageHeaderSectionConfig } from '@types';
@@ -31,7 +32,7 @@ export function PageHeaderSection({
   return (
     <section className={`${container} ${section}`}>
       <div
-        className={`grid items-center gap-8 ${config.image ? 'md:grid-cols-2' : ''}`}
+        className={`grid items-center gap-8 ${hasRenderableImage(config.image) ? 'md:grid-cols-2' : ''}`}
       >
         <div className="space-y-3">
           {eyebrow ? (
@@ -50,9 +51,10 @@ export function PageHeaderSection({
             </p>
           ) : null}
         </div>
-        {config.image ? (
-          <img
-            src={config.image}
+        {hasRenderableImage(config.image) ? (
+          <ThemeImage
+            value={config.image}
+            sizes="(min-width: 768px) 50vw, 100vw"
             alt={resolveLocalizedText(config.imageAlt, locale)}
             className="aspect-[4/3] w-full object-cover"
             style={{ borderRadius: 'var(--website-radius)' }}

@@ -6,6 +6,7 @@ import {
   useWebsiteHeadingClass,
   useWebsiteSectionClass,
 } from '../renderer/renderer-style.utils';
+import { ThemeImage } from '../theme-assets';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { GallerySectionConfig } from '@types';
@@ -39,8 +40,9 @@ export function GallerySection({ config }: GallerySectionProps): JSX.Element {
             resolveLocalizedText(image.imageAlt, locale) || caption;
           return (
             <figure key={image.id} className="min-w-0 space-y-1.5">
-              <img
-                src={image.image}
+              <ThemeImage
+                value={image.image}
+                sizes="(min-width: 768px) 33vw, 100vw"
                 alt={imageAlt}
                 className="aspect-square w-full object-cover"
                 style={{ borderRadius: 'var(--website-radius)' }}

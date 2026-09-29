@@ -6,6 +6,7 @@ import {
   useWebsiteHeadingClass,
   useWebsiteSectionClass,
 } from '../renderer/renderer-style.utils';
+import { ThemeImage, hasRenderableImage } from '../theme-assets';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { AboutSectionConfig } from '@types';
@@ -23,9 +24,9 @@ export function AboutSection({ config }: AboutSectionProps): JSX.Element {
   return (
     <section className={`${container} ${section}`}>
       <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-        {config.image ? (
-          <img
-            src={config.image}
+        {hasRenderableImage(config.image) ? (
+          <ThemeImage
+            value={config.image}
             alt={resolveLocalizedText(config.imageAlt, locale)}
             className="aspect-[4/3] w-full object-cover"
             style={{ borderRadius: 'var(--website-radius)' }}

@@ -1269,3 +1269,45 @@ Queries: helper text and inline errors, compact label overflow, confirmation dia
 - Magnific commercial-use and redistribution terms must be verified and recorded before Phase 3 production generation.
 - The LCP 2.5 s target versus the current ~560 KB main bundle needs a decision before Phase 8.
 - The shared "Powered by Atlas" ARIA fix (§M) is still pending.
+
+## P. Phase 3 results (recorded 29 Sep 2026)
+
+The asset pipeline is built, tested and served the production way. **No image was generated:** the Phase 3 pilot is held at the Magnific terms gate (P.3). Per the stop rule, everything else ships, and every section referencing a not-yet-released asset draws its no-image layout. The Phase 0 baseline re-ran **559/559 identical**.
+
+### P.1 What was built
+
+| Area | Where | Notes |
+|---|---|---|
+| Manifest + contract | FE `src/features/website/theme-assets/` (`theme-asset.types.ts`, `theme-asset.schema.ts`, `manifests/modern-education.manifest.ts`) | The 12 §E.2 A assets: ratio, master size, widths, focal point, EN/AR alt text, direction (subject and composition), byte budget, `status`. Zod enforces well-formed entries, and that a `released` entry has `version`, LQIP (≤ 300 B) and full provenance (generator, tool, model, exact prompt, seed/job id, date, reviewer, outcome, **license basis**, master sha256). All 12 are `pending`. |
+| Prompt set (§E.3.2) | `buildThemeAssetPrompt` + the manifest | Each prompt = the entry's direction + framing ratio + the theme's shared art direction (natural light, warm-neutral low-saturation grade, diverse adults incl. modest attire, negative space for UI) + exclusions (no text, logos, readable screens, watermarks, illustration style, real people, anatomy defects). The exact prompt sent is recorded in provenance on release. |
+| Resolver + `<ThemeImage>` | `resolve-theme-asset.ts`, `ThemeImage.tsx` | `theme-asset:<theme>/<key>` → `<picture>` with AVIF/WebP `srcset` + `sizes`, intrinsic width/height (no layout shift), LQIP as a blurred background, focal point as `object-position`, lazy loading except the priority hero (`fetchpriority="high"`, eager). Pending/unknown → the section's fallback. Any other value renders the exact `<img>` sections always rendered (asserted byte-for-byte). |
+| Sections | Hero (split and full-bleed), About, Gallery, Testimonials avatar, Page header, Feature split | Draw images through `<ThemeImage>`; with-image layouts switch on `hasRenderableImage`, so a pending asset never leaves an empty column or white text on no picture. Themes 2–5 can draw Theme 1's references too. |
+| Version immutability | `released-versions.ts` | Released folders are listed; the test fails if one disappears, if a released entry points at an unlisted folder, or if an unlisted folder is served. |
+| Delivery | `Caddyfile` `(theme_assets)`, imported by both site blocks; fixture server mirrors it | `/theme-assets/*` served same-origin with the security headers; `Cache-Control: public, max-age=31536000, immutable` **only when the file exists**; a missing file is an uncached 404 (never the SPA's `index.html`). CSP unchanged. |
+| Preparation tool | `tools/theme-assets/` (own `package.json`/lock, `npm ci`; not in the app install or bundle) | `prepare.mjs` (sharp 0.35.5): reads sizes from the manifest; checks master size and ratio; auto-orients, converts to sRGB, strips metadata; writes AVIF q50 / WebP q75 at the manifest widths; LQIP ≤ 300 B; fails over budget; prints the master sha256 and the manifest fields; refuses to write into a released folder or overwrite a file. Kept out of the root pnpm install because sharp's install script would hit the Docker build's build-script policy. |
+
+### P.2 Tests and measurements
+
+- **New tests:** manifest contract per theme; exact §E.2 key set with one priority image; prompt contents; released-without-provenance and bad-ratio/width refusals; released files exist for every width × format and the ≤ 1200 w AVIF is within budget (runs per released entry); folder immutability; every `theme-asset:` reference in the exported templates names a manifest key; resolver output (srcsets, fallback, size, focal, LQIP, priority) and null cases; `<ThemeImage>` plain/released/pending rendering; the Caddyfile structure test extended (both site blocks import `(theme_assets)`, immutable only via `@found file`, no SPA fallback).
+- **Caddy:** `caddy validate` (v2.10.2) passes on the real file (minus the Cloudflare DNS module, which stock Caddy lacks). Served locally: an existing asset → 200 + immutable + `image/avif` + `nosniff`; a missing one → 404 with no cache header; SPA routes unchanged.
+- **Tool, end to end** (synthetic 2000×2500 master with EXIF): all 8 derivatives written; EXIF gone; sRGB; 1200 w AVIF 47.9 KB (budget 180 KB); LQIP 88 B; wrong ratio and overwrite refused.
+- **CSP, real browser:** a released-style `<picture>` + LQIP served by the fixture server under the production CSP → **0 violations**; the browser chose the AVIF; immutable header present; missing file 404. (Staged locally, not committed.)
+- **Suites:** frontend 1,394 unit tests pass; the production build succeeds; typecheck at the 34 pre-existing errors; lint and Prettier clean. Backend unchanged this phase (its image validator already accepts `theme-asset:` references).
+- **Baseline:** 559/559 (screenshots, axe, palette checks).
+
+### P.3 Magnific readiness (§E.3.2) and the terms gate
+
+- **Available:** the Magnific MCP is connected with text-to-image models (e.g. Seedream 5 Pro, Recraft V4.1, Nano Banana Pro); the account is on the **Premium+** plan with credits. Its "unlimited" mode does not apply in this session, so generations would consume credits.
+- **Terms:** magnific.com is blocked by this environment's network policy, so the primary Terms of Use and usage-rights pages could not be read. Search summaries of Magnific's own docs say paid plans include a commercial license for AI output (tied to an active paid subscription at generation time), prohibit redistributing Magnific content as downloadable/editable files, and — for templates sold to others — require Magnific resources to be secondary elements, while another page says AI-generated content has no main/secondary restriction. Atlas ships the images as optimised rasters inside a SaaS theme used by many Academies, which is exactly the case these summaries disagree on.
+- **Decision:** per the approved rule ("commercial use and redistribution rights must be verified and recorded before Phase 3 production generation"), **no generation was run, including the pilot.** Needed from the Owner: read [Usage rights: commercial and products](https://www.magnific.com/ai/docs/usage-rights-commercial-and-products) and the [Terms of use](https://www.magnific.com/legal/terms-of-use) (or ask Magnific support) and confirm that images generated on this plan may be shipped inside Atlas's theme to all Academies. The confirmation text becomes each asset's `licenseBasis`.
+
+### P.4 UI/UX Pro Max review
+
+- Art direction: a product-type query returned "claymorphism, playful colours" for education apps; not adopted — the approved v2 direction (photographic, calm, brand-neutral grade) stands, and changing it would be a product decision.
+- Applied: descriptive alt text for content images (the theme's EN/AR alt is used when the section has none); responsive `srcset`/`sizes` instead of one large file; explicit dimensions to reserve space (Tailwind's `height: auto` keeps the section's aspect classes in control); only the LCP image loads eagerly.
+- The in-context pilot review (3 widths × EN/AR × 4 palettes) waits for the pilot.
+
+### P.5 Still open
+
+- The Magnific terms confirmation (P.3) → then the `home-hero` pilot and its in-context review.
+- Carried over: the gated provenance migration deploy, the LCP/bundle decision before Phase 8, the "Powered by Atlas" ARIA fix.

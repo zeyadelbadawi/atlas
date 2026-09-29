@@ -1,0 +1,15 @@
+{
+  "name": "atlas-theme-assets-tooling",
+  "private": true,
+  "description": "Prepares theme photographs for release (plan §E.3 step 5). Not part of the app build: install with `npm ci` in this folder.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.6"
+  },
+  "scripts": {
+    "prepare-asset": "node --experimental-strip-types prepare.mjs"
+  },
+  "dependencies": {
+    "sharp": "0.35.5"
+  }
+}
