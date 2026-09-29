@@ -1272,13 +1272,13 @@ Queries: helper text and inline errors, compact label overflow, confirmation dia
 
 ## P. Phase 3 results (recorded 29 Sep 2026)
 
-The asset pipeline is built, tested and served the production way. **No image was generated:** the Phase 3 pilot is held at the Magnific terms gate (P.3). Per the stop rule, everything else ships, and every section referencing a not-yet-released asset draws its no-image layout. The Phase 0 baseline re-ran **559/559 identical**.
+The asset pipeline is built, tested and served the production way, and the pilot (`home-hero`) ran end to end: generated with Magnific, reviewed, prepared, released as `modern-education/v1` and reviewed in context (P.6). The other 11 assets are the Phase 4 production run. Every section referencing a not-yet-released asset draws its no-image layout. The Phase 0 baseline re-ran **559/559 identical**.
 
 ### P.1 What was built
 
 | Area | Where | Notes |
 |---|---|---|
-| Manifest + contract | FE `src/features/website/theme-assets/` (`theme-asset.types.ts`, `theme-asset.schema.ts`, `manifests/modern-education.manifest.ts`) | The 12 §E.2 A assets: ratio, master size, widths, focal point, EN/AR alt text, direction (subject and composition), byte budget, `status`. Zod enforces well-formed entries, and that a `released` entry has `version`, LQIP (≤ 300 B) and full provenance (generator, tool, model, exact prompt, seed/job id, date, reviewer, outcome, **license basis**, master sha256). All 12 are `pending`. |
+| Manifest + contract | FE `src/features/website/theme-assets/` (`theme-asset.types.ts`, `theme-asset.schema.ts`, `manifests/modern-education.manifest.ts`) | The 12 §E.2 A assets: ratio, master size, widths, focal point, EN/AR alt text, direction (subject and composition), byte budget, `status`. Zod enforces well-formed entries, and that a `released` entry has `version`, LQIP (≤ 300 B) and full provenance (generator, tool, model, exact prompt, seed/job id, date, reviewer, outcome, **license basis**, master sha256). All 12 were `pending` at build time; `home-hero` is now released (P.6). |
 | Prompt set (§E.3.2) | `buildThemeAssetPrompt` + the manifest | Each prompt = the entry's direction + framing ratio + the theme's shared art direction (natural light, warm-neutral low-saturation grade, diverse adults incl. modest attire, negative space for UI) + exclusions (no text, logos, readable screens, watermarks, illustration style, real people, anatomy defects). The exact prompt sent is recorded in provenance on release. |
 | Resolver + `<ThemeImage>` | `resolve-theme-asset.ts`, `ThemeImage.tsx` | `theme-asset:<theme>/<key>` → `<picture>` with AVIF/WebP `srcset` + `sizes`, intrinsic width/height (no layout shift), LQIP as a blurred background, focal point as `object-position`, lazy loading except the priority hero (`fetchpriority="high"`, eager). Pending/unknown → the section's fallback. Any other value renders the exact `<img>` sections always rendered (asserted byte-for-byte). |
 | Sections | Hero (split and full-bleed), About, Gallery, Testimonials avatar, Page header, Feature split | Draw images through `<ThemeImage>`; with-image layouts switch on `hasRenderableImage`, so a pending asset never leaves an empty column or white text on no picture. Themes 2–5 can draw Theme 1's references too. |
@@ -1292,14 +1292,15 @@ The asset pipeline is built, tested and served the production way. **No image wa
 - **Caddy:** `caddy validate` (v2.10.2) passes on the real file (minus the Cloudflare DNS module, which stock Caddy lacks). Served locally: an existing asset → 200 + immutable + `image/avif` + `nosniff`; a missing one → 404 with no cache header; SPA routes unchanged.
 - **Tool, end to end** (synthetic 2000×2500 master with EXIF): all 8 derivatives written; EXIF gone; sRGB; 1200 w AVIF 47.9 KB (budget 180 KB); LQIP 88 B; wrong ratio and overwrite refused.
 - **CSP, real browser:** a released-style `<picture>` + LQIP served by the fixture server under the production CSP → **0 violations**; the browser chose the AVIF; immutable header present; missing file 404. (Staged locally, not committed.)
-- **Suites:** frontend 1,394 unit tests pass; the production build succeeds; typecheck at the 34 pre-existing errors; lint and Prettier clean. Backend unchanged this phase (its image validator already accepts `theme-asset:` references).
+- **Suites:** frontend 1,394 unit tests pass (1,396 after the pilot release); the production build succeeds; typecheck at the 34 pre-existing errors; lint and Prettier clean. Backend unchanged this phase (its image validator already accepts `theme-asset:` references).
 - **Baseline:** 559/559 (screenshots, axe, palette checks).
 
 ### P.3 Magnific readiness (§E.3.2) and the terms gate
 
 - **Available:** the Magnific MCP is connected with text-to-image models (e.g. Seedream 5 Pro, Recraft V4.1, Nano Banana Pro); the account is on the **Premium+** plan with credits. Its "unlimited" mode does not apply in this session, so generations would consume credits.
 - **Terms:** magnific.com is blocked by this environment's network policy, so the primary Terms of Use and usage-rights pages could not be read. Search summaries of Magnific's own docs say paid plans include a commercial license for AI output (tied to an active paid subscription at generation time), prohibit redistributing Magnific content as downloadable/editable files, and — for templates sold to others — require Magnific resources to be secondary elements, while another page says AI-generated content has no main/secondary restriction. Atlas ships the images as optimised rasters inside a SaaS theme used by many Academies, which is exactly the case these summaries disagree on.
-- **Decision:** per the approved rule ("commercial use and redistribution rights must be verified and recorded before Phase 3 production generation"), **no generation was run, including the pilot.** Needed from the Owner: read [Usage rights: commercial and products](https://www.magnific.com/ai/docs/usage-rights-commercial-and-products) and the [Terms of use](https://www.magnific.com/legal/terms-of-use) (or ask Magnific support) and confirm that images generated on this plan may be shipped inside Atlas's theme to all Academies. The confirmation text becomes each asset's `licenseBasis`.
+- **First decision:** per the approved rule ("commercial use and redistribution rights must be verified and recorded before Phase 3 production generation"), generation was held and the question put to the Owner.
+- **Owner decision (29 Sep 2026):** the Owner explicitly approved using Atlas's paid Magnific subscription to generate Theme 1's production assets and lifted the licensing gate. That approval, with the paid plan active at generation, is recorded as each asset's `licenseBasis`.
 
 ### P.4 UI/UX Pro Max review
 
@@ -1309,5 +1310,23 @@ The asset pipeline is built, tested and served the production way. **No image wa
 
 ### P.5 Still open
 
-- The Magnific terms confirmation (P.3) → then the `home-hero` pilot and its in-context review.
+- Phase 4: freeze the matrix against the approved layouts, then generate the other 11 assets through the same pipeline.
+- Masters are not in the repo (§E.3 step 6): the pilot master is kept in the Owner's Magnific account (the generation record) and identified by its sha256 in the manifest; a private `atlas-theme-sources` archive (GitHub release asset or private R2) still needs to be chosen.
 - Carried over: the gated provenance migration deploy, the LCP/bundle decision before Phase 8, the "Powered by Atlas" ARIA fix.
+
+### P.6 Pilot: `home-hero` (29 Sep 2026)
+
+- **Generation:** one call, 4 candidates, Google Nano Banana Pro at 4K, 4:5 (the plan's master ratio; this model supports it exactly), 150 credits each (600 total). The prompt is `buildThemeAssetPrompt` verbatim; a test asserts the recorded prompt equals it. Masters: 3712×4608 PNG, sRGB, no metadata.
+- **Checklist review (§E.3 step 4):**
+
+| Candidate | Result | Why |
+|---|---|---|
+| 1 | Rejected | A brand logo on the laptop lid |
+| 2 | **Selected** | Natural hands (five fingers each, correct pen grip), natural face and eyes, unbranded laptop with the screen facing away, illegible notebook marks only, warm-neutral grade, modest attire, calm optimistic mood, clean negative space top-right |
+| 3 | Passed, not chosen | Clean, but a flatter mood than the brief's "calm and optimistic" |
+| 4 | Rejected | A brand logo on the laptop lid |
+
+- **Preparation:** master cropped to 2000×2500 (≈ 0.7 %), sRGB, metadata stripped. AVIF: 480w 9.3 KB, 800w 18.2 KB, **1200w 31.9 KB** (budget 180 KB), 1600w 47.9 KB. WebP: 13.8 / 26.8 / 46.8 / 70.6 KB. LQIP 152 B. At 1200w the AVIF shows no banding or blockiness on skin or fabric.
+- **Position:** the manifest's `focal` is applied as `object-position`. y = 76 % keeps both the face (y ≈ 0.39–0.60) and the writing hands (y ≈ 0.80–0.87) inside the 16:10 and 4:3 crops. The alt text now describes the chosen image (EN/AR).
+- **In context:** Modern Education Home rendered with the hero set to `theme-asset:modern-education/home-hero` (temporary fixture change, reverted) at 1440 / 1024 / 390 px × EN / AR × the default palette plus orange, purple, neon yellow and near-black (30 renders). Result: **0 CSP violations**; the browser chose the 800w AVIF on desktop/tablet and the 480w on mobile; eager + `fetchpriority="high"`; locale-correct alt; the face and hands stay in frame in the current 4:3 hero box; the image isn't mirrored in RTL (correct); the neutral grade sits well with every palette.
+- **Seen, not caused by the image (Phase 4 items):** white text on the neon-yellow CTA fails contrast (today's base colour mapping; Theme 1's brand-engine mapping replaces it); the cookie banner covers the lower half of the hero image at 390 px; the current hero box is 4:3 at every width, while §E.2 plans 4:5 on desktop, so the top-right negative space is only used once Theme 1's hero renderer lands.

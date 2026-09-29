@@ -1,12 +1,11 @@
 /**
  * Modern Education (Theme 1) asset manifest — the §E.2 A matrix.
  *
- * Every entry is `pending`: the art direction, crops, focal points, alt
- * text and budgets are fixed here, and the generation prompt is built from
- * them (`buildThemeAssetPrompt`), but no image has been generated yet —
- * Magnific output terms must be verified and recorded first (plan §O.5 /
- * §P). Until an entry is released, sections referencing it render their
- * designed no-image state.
+ * The art direction, crops, focal points, alt text and budgets are fixed
+ * here, and the generation prompt is built from them
+ * (`buildThemeAssetPrompt`). `home-hero` is released (the Phase 3 pilot);
+ * the others are generated in the Phase 4 production run. Until an entry is
+ * released, sections referencing it render their designed no-image state.
  *
  * Alt text is checked against the chosen image when an entry is released.
  *
@@ -36,16 +35,36 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
       ratio: '4:5',
       master: { width: 2000, height: 2500 },
       widths: [480, 800, 1200, 1600],
-      focal: { x: 0.45, y: 0.55 },
+      // y 76%: keeps the face and the writing hands in the 16:10 and 4:3 crops.
+      focal: { x: 0.46, y: 0.76 },
       alt: {
-        en: 'A learner studying at a bright table with a laptop and notebook',
-        ar: 'متعلّم يدرس على طاولة مضيئة مع حاسوب محمول ودفتر',
+        en: 'A learner writing in a notebook beside a laptop at a bright table',
+        ar: 'متعلّمة تكتب في دفتر بجوار حاسوب محمول على طاولة مضيئة',
       },
       direction:
         'An adult learner absorbed in study at a bright table, laptop and open notebook, warm window light from the side, calm and optimistic mood. Subject in the lower-left two thirds; clean empty space in the top-right quarter for an overlaid badge. Vertical 4:5 framing that still works cropped to 16:10 and 4:3 around the face and hands.',
       priority: true,
       budgetBytes: HERO_BUDGET,
-      status: 'pending',
+      status: 'released',
+      version: 'v1',
+      lqip: 'data:image/webp;base64,UklGRpAAAABXRUJQVlA4IIQAAACwBQCdASoYAB4APulkqk2pJaQiMBgMASAdCWUAxkBWSNkrO6IVDCBaD+4C0MaK4zbAkkJUQ7IA/vJnQhBPEh1c8wY0ujW0yOYE/t1o4YRYrzPZYueH18Pihb7tCduw+Y/rrg3Cy1COpWi+uCpeWqNW4qb0eVrMJ8zsq9Lf2F0z+QQ4AAA=',
+      provenance: {
+        generator: 'magnific',
+        tool: 'images_generate (text-to-image), Magnific MCP',
+        model: 'Google Nano Banana Pro (imagen-nano-banana-2), 4k, 4:5',
+        prompt:
+          'An adult learner absorbed in study at a bright table, laptop and open notebook, warm window light from the side, calm and optimistic mood. Subject in the lower-left two thirds; clean empty space in the top-right quarter for an overlaid badge. Vertical 4:5 framing that still works cropped to 16:10 and 4:3 around the face and hands. Framing: 4:5 aspect ratio. Editorial documentary photograph, photographic realism. Natural daylight, warm-neutral colour grade, low saturation and soft contrast so any brand colour can be the accent. Real, diverse adults suited to both English-speaking and Middle Eastern audiences, including modest attire. Genuine, unposed moments. Clean, uncluttered backgrounds with calm negative space where interface elements overlay. Strictly avoid: No text, letters or numbers anywhere; no logos, brand names or recognisable products; no readable screens or user interfaces (screens blurred or angled away); no watermarks; no illustration or 3D render style; no recognisable real people; no distorted hands, faces or eyes.',
+        seed: 959207,
+        jobId: 'VXHCpx2MMU',
+        generatedAt: '2026-09-29T15:09:20Z',
+        reviewer:
+          'Claude Code — plan §E.3 step 4 checklist and in-context review (plan §P.6); candidate 2 of 4 (1 and 4 rejected for a laptop logo)',
+        reviewOutcome: 'approved',
+        licenseBasis:
+          "Owner's explicit approval (29 Sep 2026) to use Atlas's paid Magnific Premium+ subscription, active at generation, for Atlas Theme 1 production assets",
+        masterSha256:
+          '13fdeb521975b45bc657db8202bf954502cb4ca06915fc758fbfb0f8eaa28d30',
+      },
     },
     {
       key: 'home-benefit',

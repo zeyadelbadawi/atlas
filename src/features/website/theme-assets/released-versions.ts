@@ -6,4 +6,6 @@
  * isn't listed. Add `<theme>/<version>` here in the same commit that adds
  * the files.
  */
-export const RELEASED_THEME_ASSET_FOLDERS: readonly string[] = [];
+export const RELEASED_THEME_ASSET_FOLDERS: readonly string[] = [
+  'modern-education/v1',
+];

@@ -82,7 +82,7 @@ describe('ThemeImage', () => {
   it('renders the fallback for a pending asset', () => {
     const { container } = render(
       <ThemeImage
-        value="theme-asset:modern-education/home-hero"
+        value="theme-asset:modern-education/home-cta"
         alt=""
         fallback={<span>no image yet</span>}
       />

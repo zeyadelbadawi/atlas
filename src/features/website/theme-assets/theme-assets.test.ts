@@ -72,10 +72,19 @@ describe('theme asset manifests', () => {
     expect(prompt).toContain('No text');
   });
 
+  it('records exactly the prompt the manifest builds for every released asset', () => {
+    for (const { manifest, entry } of released) {
+      expect(entry.provenance?.prompt, entry.key).toBe(
+        buildThemeAssetPrompt(manifest, entry)
+      );
+    }
+  });
+
   it('refuses a released entry without its version, LQIP and provenance', () => {
     const manifest = {
       ...MODERN_EDUCATION_ASSETS,
-      assets: [{ ...MODERN_EDUCATION_ASSETS.assets[0], status: 'released' }],
+      // A still-pending entry marked released without releasing it.
+      assets: [{ ...MODERN_EDUCATION_ASSETS.assets[2], status: 'released' }],
     };
     const result = themeAssetManifestSchema.safeParse(manifest);
     expect(result.success).toBe(false);
@@ -197,7 +206,7 @@ describe('resolveThemeAsset', () => {
     expect(asset).toMatchObject({
       width: 2000,
       height: 2500,
-      objectPosition: '45% 55%',
+      objectPosition: '46% 76%',
       priority: true,
       lqip: 'data:image/webp;base64,UklGRg==',
     });
@@ -205,7 +214,7 @@ describe('resolveThemeAsset', () => {
 
   it('resolves pending, unknown and malformed references to null', () => {
     expect(
-      resolveThemeAsset('theme-asset:modern-education/home-hero')
+      resolveThemeAsset('theme-asset:modern-education/home-cta')
     ).toBeNull();
     expect(
       resolveThemeAsset('theme-asset:modern-education/nope', manifests)
@@ -218,14 +227,17 @@ describe('resolveThemeAsset', () => {
     expect(hasRenderableImage('')).toBe(false);
     expect(hasRenderableImage('https://cdn.example/a.png')).toBe(true);
     expect(hasRenderableImage('/api/v1/public/media/a/b.png')).toBe(true);
-    expect(hasRenderableImage('theme-asset:modern-education/home-hero')).toBe(
+    expect(hasRenderableImage('theme-asset:modern-education/home-cta')).toBe(
       false
+    );
+    expect(hasRenderableImage('theme-asset:modern-education/home-hero')).toBe(
+      true
     );
     expect(resolveImageUrl('https://cdn.example/a.png')).toBe(
       'https://cdn.example/a.png'
     );
     expect(
-      resolveImageUrl('theme-asset:modern-education/home-hero')
+      resolveImageUrl('theme-asset:modern-education/home-cta')
     ).toBeUndefined();
   });
 });

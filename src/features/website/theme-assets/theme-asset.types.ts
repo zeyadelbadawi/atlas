@@ -10,8 +10,13 @@
  */
 export type ThemeAssetFormat = 'avif' | 'webp';
 
+/**
+ * Applied as CSS `object-position` (x% y%): the position that keeps the
+ * subject inside every crop the layouts use, chosen when the image is
+ * reviewed. Physical, not logical — crops don't mirror in RTL.
+ */
 export interface ThemeAssetFocalPoint {
-  /** 0–1 from the left (logical start is not used: crops are physical). */
+  /** 0–1 from the left. */
   readonly x: number;
   /** 0–1 from the top. */
   readonly y: number;
