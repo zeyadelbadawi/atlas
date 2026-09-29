@@ -8,10 +8,15 @@
 /** The lifecycle states of a session. */
 export type SessionStatus = 'authenticated' | 'unauthenticated' | 'restoring';
 
-/** Token metadata tracking expiration and refresh requirements. */
+/**
+ * Token metadata tracking expiration and refresh requirements.
+ *
+ * Only the short-lived ACCESS token is ever visible to the page, and only in
+ * memory. The refresh token lives in the HttpOnly session cookie and is never
+ * readable by script (production-readiness pass).
+ */
 export interface TokenMetadata {
   readonly accessToken: string;
-  readonly refreshToken?: string;
   /** ISO-8601 timestamp when the access token expires. */
   readonly expiresAt: string;
   /** True when the token should be refreshed before use. */
@@ -176,22 +181,24 @@ export interface TwoFactorVerifyInput {
 /** Response returned after successful authentication. */
 export interface AuthenticationResponse {
   readonly accessToken: string;
-  readonly refreshToken?: string;
   readonly expiresIn: number;
   readonly user: CurrentUser;
   /** How this session's first factor was proven — feeds the "Last used" hint. Older backends omit it. */
   readonly authMethod?: AuthMethod;
 }
 
-/** Request to refresh an expired access token. */
+/**
+ * Request to refresh an expired access token. Browsers send no token: the
+ * session cookie is the credential. `refreshToken` exists only to convert a
+ * pre-cookie session left in `localStorage` by an older build, once.
+ */
 export interface TokenRefreshRequest {
-  readonly refreshToken: string;
+  readonly refreshToken?: string;
 }
 
 /** Response returned after token refresh. */
 export interface TokenRefreshResponse {
   readonly accessToken: string;
-  readonly refreshToken?: string;
   readonly expiresIn: number;
 }
 

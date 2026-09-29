@@ -1,17 +1,22 @@
 /**
- * Token refresh is single-flight (session-inactivity bug fix).
+ * Token refresh is single-flight and cross-tab safe.
  *
- * Refresh tokens rotate server-side, so presenting the same token twice
- * concurrently makes the second call fail with a denylisted-token 401 —
- * the root cause of "the next request fails after the tab was idle, until a
- * reload". Every refresh initiator funnels through `sessionService.refresh`,
- * so concurrent calls MUST coalesce into exactly one backend round-trip.
+ * The refresh token is the HttpOnly session cookie and it ROTATES on every
+ * refresh, so two concurrent refreshes would present a token the first one
+ * just retired. Every refresh initiator funnels through
+ * `sessionService.refresh`, so:
+ *   - concurrent calls in one tab coalesce into exactly one round-trip;
+ *   - tabs take turns through the Web Locks API;
+ *   - no refresh token is ever sent from script — except a pre-cookie token
+ *     an older build left in localStorage, presented exactly once to convert
+ *     that session into the cookie.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const refreshToken = vi.fn();
 const getCurrent = vi.fn();
 const store = vi.fn();
+const takeLegacyRefreshToken = vi.fn();
 
 vi.mock('./authentication.service', () => ({
   authenticationService: { refreshToken: (...a: unknown[]) => refreshToken(...a) },
@@ -22,9 +27,9 @@ vi.mock('./current-user.service', () => ({
 vi.mock('./token.service', () => ({
   tokenService: {
     store: (...a: unknown[]) => store(...a),
-    createMetadata: (accessToken: string, expiresIn: number, rt?: string) => ({
+    takeLegacyRefreshToken: () => takeLegacyRefreshToken(),
+    createMetadata: (accessToken: string, expiresIn: number) => ({
       accessToken,
-      refreshToken: rt,
       expiresAt: new Date(Date.now() + expiresIn * 1000).toISOString(),
       requiresRefresh: false,
     }),
@@ -33,39 +38,67 @@ vi.mock('./token.service', () => ({
 
 import { sessionService } from './session.service';
 
-afterEach(() => vi.clearAllMocks());
+afterEach(() => {
+  vi.clearAllMocks();
+  vi.unstubAllGlobals();
+});
 
-describe('sessionService.refresh — single-flight', () => {
-  it('coalesces concurrent refreshes into ONE backend refresh call', async () => {
+describe('sessionService.refresh — single-flight, cookie session', () => {
+  it('coalesces concurrent refreshes into ONE call that sends no token from script', async () => {
     let resolveRefresh!: (v: unknown) => void;
     refreshToken.mockReturnValue(
       new Promise((res) => {
         resolveRefresh = res;
-      }),
+      })
     );
     getCurrent.mockResolvedValue({ id: 'u1', organizations: [] });
 
-    // Three initiators race with the SAME current refresh token.
-    const p1 = sessionService.refresh('R0');
-    const p2 = sessionService.refresh('R0');
-    const p3 = sessionService.refresh('R0');
+    const p1 = sessionService.refresh();
+    const p2 = sessionService.refresh();
+    const p3 = sessionService.refresh();
 
-    resolveRefresh({ accessToken: 'A1', refreshToken: 'R1', expiresIn: 900 });
+    resolveRefresh({ accessToken: 'A1', expiresIn: 900 });
     await Promise.all([p1, p2, p3]);
 
-    // Exactly one rotation happened — R0 was presented once, not three times.
     expect(refreshToken).toHaveBeenCalledTimes(1);
-    expect(refreshToken).toHaveBeenCalledWith({ refreshToken: 'R0' });
+    // The session cookie is the credential; the body carries no token.
+    expect(refreshToken).toHaveBeenCalledWith({});
+    expect(store).toHaveBeenCalledWith(
+      expect.not.objectContaining({ refreshToken: expect.anything() })
+    );
   });
 
   it('allows a fresh refresh again after the in-flight one settles', async () => {
-    refreshToken.mockResolvedValue({ accessToken: 'A', refreshToken: 'R', expiresIn: 900 });
+    refreshToken.mockResolvedValue({ accessToken: 'A', expiresIn: 900 });
     getCurrent.mockResolvedValue({ id: 'u1', organizations: [] });
 
-    await sessionService.refresh('R0');
-    await sessionService.refresh('R1');
+    await sessionService.refresh();
+    await sessionService.refresh();
 
-    // Two sequential (non-overlapping) refreshes each make their own call.
     expect(refreshToken).toHaveBeenCalledTimes(2);
+  });
+
+  it('converts a pre-cookie localStorage session exactly once', async () => {
+    takeLegacyRefreshToken.mockReturnValueOnce('LEGACY-R0');
+    refreshToken.mockResolvedValue({ accessToken: 'A', expiresIn: 900 });
+    getCurrent.mockResolvedValue({ id: 'u1', organizations: [] });
+
+    await sessionService.refresh();
+    await sessionService.refresh();
+
+    expect(refreshToken).toHaveBeenNthCalledWith(1, { refreshToken: 'LEGACY-R0' });
+    expect(refreshToken).toHaveBeenNthCalledWith(2, {});
+  });
+
+  it('takes the cross-tab lock before refreshing when Web Locks exist', async () => {
+    const request = vi.fn((_name: string, work: () => Promise<unknown>) => work());
+    vi.stubGlobal('navigator', { ...globalThis.navigator, locks: { request } });
+    refreshToken.mockResolvedValue({ accessToken: 'A', expiresIn: 900 });
+    getCurrent.mockResolvedValue({ id: 'u1', organizations: [] });
+
+    await sessionService.refresh();
+
+    expect(request).toHaveBeenCalledWith('atlas:session-refresh', expect.any(Function));
+    expect(refreshToken).toHaveBeenCalledTimes(1);
   });
 });

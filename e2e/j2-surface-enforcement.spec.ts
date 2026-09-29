@@ -99,10 +99,10 @@ test.describe('J2 — surface enforcement', () => {
 
     // And it is a refusal, not a redirect after a successful sign-in:
     // nothing was stored, so the browser holds no management session.
-    const stored = await page.evaluate(() =>
-      window.localStorage.getItem('atlas:auth-tokens')
-    );
-    expect(stored).toBeNull();
+    const hint = await page.evaluate(() => window.localStorage.getItem('atlas:session'));
+    expect(hint).toBeNull();
+    const cookies = await page.context().cookies();
+    expect(cookies.some((c) => /atlas_session$/.test(c.name))).toBe(false);
     await expect(page).toHaveURL(/\/auth\/sign-in/);
   });
 

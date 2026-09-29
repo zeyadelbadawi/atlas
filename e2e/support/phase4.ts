@@ -45,9 +45,6 @@ export const PROXIED_API_BASE = `${FRONTEND_BASE}/api/v1`;
 /** Seeded platform owner — `prisma/seed.ts`. Reviews course-order payments. */
 export const PLATFORM_OWNER_EMAIL = 'admin@atlas.dev';
 
-/** The browser's own token store (`storage.constants.ts`). */
-const AUTH_TOKENS_KEY = 'atlas:auth-tokens';
-
 export function apiPut(
   request: APIRequestContext,
   session: Session,
@@ -75,17 +72,25 @@ export async function signInOnWebsite(page: Page, email: string): Promise<void> 
   await expect(page).toHaveURL(/\/my/, { timeout: 30_000 });
 }
 
-/** The access token the signed-in browser holds, for API calls made AS that browser. */
+/**
+ * An access token for API calls made AS the signed-in browser.
+ *
+ * The page keeps its access token in memory only and the refresh token is the
+ * HttpOnly session cookie, so neither is readable from storage. The browser
+ * therefore asks for one the way the app itself does after a reload: a
+ * same-origin `POST /auth/refresh` carrying its session cookie.
+ */
 export async function browserAccessToken(page: Page): Promise<string> {
-  const token = await page.evaluate((key) => {
-    const raw = window.localStorage.getItem(key);
-    if (!raw) return null;
-    try {
-      return (JSON.parse(raw) as { accessToken?: string }).accessToken ?? null;
-    } catch {
-      return null;
-    }
-  }, AUTH_TOKENS_KEY);
+  const token = await page.evaluate(async () => {
+    const res = await fetch('/api/v1/auth/refresh', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{}',
+    });
+    if (!res.ok) return null;
+    return ((await res.json()) as { accessToken?: string }).accessToken ?? null;
+  });
   expect(token, 'the browser holds a learner session').toBeTruthy();
   return token!;
 }

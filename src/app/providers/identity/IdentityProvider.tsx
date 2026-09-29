@@ -136,12 +136,8 @@ export function AtlasIdentityProvider({
     let cancelled = false;
 
     async function refreshTokens() {
-      if (!session.tokens?.refreshToken) return;
-
       try {
-        const refreshed = await sessionService.refresh(
-          session.tokens.refreshToken
-        );
+        const refreshed = await sessionService.refresh();
         if (!cancelled) {
           setSession(refreshed);
         }
@@ -242,13 +238,9 @@ export function AtlasIdentityProvider({
    * an organization create, or finishing onboarding (whose
    * `onboardingPending` flag only the server computes).
    *
-   * New Customer Onboarding made two gaps matter, and both are closed
-   * here: a session holding no refresh token used to make this a silent
-   * no-op (the user kept the stale flag and `/dashboard` bounced them
-   * back into setup), so it now falls back to `GET /users/me` with the
-   * current tokens; and a refresh used to reset the active organization
-   * to the primary one, so the active organization is kept whenever the
-   * refreshed user is still a member of it.
+   * It is always `GET /users/me` with the current access token — re-reading
+   * the user never needs a session rotation — and the active organization
+   * is kept whenever the refreshed user is still a member of it.
    */
   const refreshSession = useCallback(async () => {
     if (session.status !== 'authenticated') {
@@ -265,25 +257,22 @@ export function AtlasIdentityProvider({
       return organization ? { ...next, organization } : next;
     };
 
-    if (!session.tokens?.refreshToken) {
-      const user = await currentUserService.getCurrent();
-      const fallback =
-        user.organizations.find((membership) => membership.isPrimary) ??
-        user.organizations[0];
-      setSession((prev) =>
-        keepActiveOrganization({
-          ...prev,
-          user,
-          organization: fallback
-            ? sessionService.switchOrganization(user, fallback.organizationId)
-            : undefined,
-        })
-      );
-      return;
-    }
-
-    const refreshed = await sessionService.refresh(session.tokens.refreshToken);
-    setSession(keepActiveOrganization(refreshed));
+    // Re-reading the user needs no token rotation: `GET /users/me` with the
+    // in-memory access token (the HTTP client refreshes it from the session
+    // cookie if it has lapsed).
+    const user = await currentUserService.getCurrent();
+    const fallback =
+      user.organizations.find((membership) => membership.isPrimary) ??
+      user.organizations[0];
+    setSession((prev) =>
+      keepActiveOrganization({
+        ...prev,
+        user,
+        organization: fallback
+          ? sessionService.switchOrganization(user, fallback.organizationId)
+          : undefined,
+      })
+    );
   }, [session]);
 
   const value: IdentityContextValue = useMemo(

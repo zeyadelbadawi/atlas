@@ -1,19 +1,25 @@
 /**
  * Token Service.
  *
- * Owns the lifecycle of authentication tokens: storage, retrieval, expiration
- * detection, and invalidation. This service abstracts token management so the
- * rest of the identity layer never touches storage directly.
+ * Owns the lifecycle of the ACCESS token: memory-only storage, expiry
+ * detection and invalidation.
+ *
+ * PRODUCTION-READINESS PASS — no token touches Web Storage any more:
+ *   - the refresh token lives only in the HttpOnly `__Host-atlas_session`
+ *     cookie, which script cannot read (the server never puts it in a body);
+ *   - the access token (15 minutes) lives only in this module's memory, so it
+ *     disappears with the page; a reload re-obtains it from the cookie via
+ *     `POST /auth/refresh`;
+ *   - `localStorage` holds only a non-secret '1' hint that a cookie session
+ *     probably exists on this host, so anonymous page loads do not call
+ *     `/auth/refresh` for nothing.
+ *
+ * Builds before this change kept both tokens in `localStorage`. The first
+ * load of this build takes that refresh token ONCE (`takeLegacyRefreshToken`)
+ * to convert the session into a cookie, and deletes it.
  */
 import { STORAGE_KEYS } from '@constants';
 import type { TokenMetadata } from '@types';
-
-/** Token storage shape persisted to localStorage. */
-interface StoredTokens {
-  readonly accessToken: string;
-  readonly refreshToken?: string;
-  readonly expiresAt: string;
-}
 
 /**
  * Threshold in milliseconds before expiration when a token should be refreshed.
@@ -21,50 +27,84 @@ interface StoredTokens {
  */
 const REFRESH_THRESHOLD_MS = 5 * 60 * 1000;
 
+function storageGet(key: string): string | null {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function storageSet(key: string, value: string): void {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // Blocked storage only costs the anonymous-page optimisation.
+  }
+}
+
+function storageRemove(key: string): void {
+  try {
+    localStorage.removeItem(key);
+  } catch {
+    // Nothing to remove.
+  }
+}
+
 export class TokenService {
-  /**
-   * Stores tokens securely.
-   *
-   * @param tokens Token metadata to persist.
-   */
+  private current: { accessToken: string; expiresAt: string } | null = null;
+
+  /** Keeps the access token in memory and records that a session exists here. */
   public store(tokens: TokenMetadata): void {
-    const stored: StoredTokens = {
-      accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
-      expiresAt: tokens.expiresAt,
-    };
-    localStorage.setItem(STORAGE_KEYS.authTokens, JSON.stringify(stored));
+    this.current = { accessToken: tokens.accessToken, expiresAt: tokens.expiresAt };
+    storageSet(STORAGE_KEYS.sessionHint, '1');
   }
 
-  /**
-   * Retrieves stored tokens.
-   *
-   * @returns Token metadata if available, null otherwise.
-   */
+  /** The in-memory access token, if this page holds one. */
   public retrieve(): TokenMetadata | null {
-    const raw = localStorage.getItem(STORAGE_KEYS.authTokens);
-    if (!raw) return null;
+    if (!this.current) return null;
+    return {
+      accessToken: this.current.accessToken,
+      expiresAt: this.current.expiresAt,
+      requiresRefresh: this.shouldRefresh(this.current.expiresAt),
+    };
+  }
 
-    try {
-      const stored = JSON.parse(raw) as StoredTokens;
-      return {
-        accessToken: stored.accessToken,
-        refreshToken: stored.refreshToken,
-        expiresAt: stored.expiresAt,
-        requiresRefresh: this.shouldRefresh(stored.expiresAt),
-      };
-    } catch {
-      // Corrupted storage; treat as missing.
-      this.clear();
-      return null;
-    }
+  /** Whether this page holds an access token. */
+  public exists(): boolean {
+    return this.current !== null;
   }
 
   /**
-   * Checks whether tokens exist without loading them.
+   * Whether a refresh is worth attempting: this page had a session, the
+   * browser says a cookie session probably exists on this host, or an older
+   * build left a token to convert.
    */
-  public exists(): boolean {
-    return localStorage.getItem(STORAGE_KEYS.authTokens) !== null;
+  public mayHaveSession(): boolean {
+    return (
+      this.current !== null ||
+      storageGet(STORAGE_KEYS.sessionHint) === '1' ||
+      storageGet(STORAGE_KEYS.legacyAuthTokens) !== null
+    );
+  }
+
+  /**
+   * The refresh token an older build left in `localStorage`, returned ONCE
+   * and deleted immediately — it is converted into a cookie session by the
+   * next refresh and never stored again.
+   */
+  public takeLegacyRefreshToken(): string | undefined {
+    const raw = storageGet(STORAGE_KEYS.legacyAuthTokens);
+    if (raw === null) return undefined;
+    storageRemove(STORAGE_KEYS.legacyAuthTokens);
+    try {
+      const parsed = JSON.parse(raw) as { refreshToken?: unknown };
+      return typeof parsed.refreshToken === 'string' && parsed.refreshToken.length > 0
+        ? parsed.refreshToken
+        : undefined;
+    } catch {
+      return undefined;
+    }
   }
 
   /**
@@ -86,11 +126,11 @@ export class TokenService {
     return expirationTime - Date.now() <= REFRESH_THRESHOLD_MS;
   }
 
-  /**
-   * Removes all stored tokens.
-   */
+  /** Forgets the access token, the session hint and any legacy token. */
   public clear(): void {
-    localStorage.removeItem(STORAGE_KEYS.authTokens);
+    this.current = null;
+    storageRemove(STORAGE_KEYS.sessionHint);
+    storageRemove(STORAGE_KEYS.legacyAuthTokens);
   }
 
   /**
@@ -98,17 +138,11 @@ export class TokenService {
    *
    * @param accessToken The access token string.
    * @param expiresIn Lifetime in seconds.
-   * @param refreshToken Optional refresh token.
    */
-  public createMetadata(
-    accessToken: string,
-    expiresIn: number,
-    refreshToken?: string
-  ): TokenMetadata {
+  public createMetadata(accessToken: string, expiresIn: number): TokenMetadata {
     const expiresAt = new Date(Date.now() + expiresIn * 1000).toISOString();
     return {
       accessToken,
-      refreshToken,
       expiresAt,
       requiresRefresh: false,
     };

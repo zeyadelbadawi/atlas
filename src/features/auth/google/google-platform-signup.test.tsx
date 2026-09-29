@@ -75,7 +75,6 @@ const USER = {
 
 const SESSION_RESPONSE: AuthenticationResponse = {
   accessToken: 'a',
-  refreshToken: 'r',
   expiresIn: 900,
   user: USER,
   authMethod: 'google',
