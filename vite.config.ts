@@ -159,6 +159,14 @@ export default defineConfig(({ command }) => {
                       'host',
                       process.env.VITE_DEV_PROXY_HOST as string
                     );
+                    // The session cookie is honoured only from the host's own
+                    // origin (CSRF gate on /auth/refresh and /auth/sign-out).
+                    // The browser's page IS that host in this simulated
+                    // topology, so present it as such. Local dev only.
+                    proxyReq.setHeader(
+                      'origin',
+                      `http://${process.env.VITE_DEV_PROXY_HOST}`
+                    );
                   });
                 },
               }
