@@ -34,6 +34,21 @@ export const themeAssetEntrySchema = z
     focal: z.object({ x: unit, y: unit }),
     alt: z.object({ en: z.string().min(3), ar: z.string().min(3) }),
     direction: z.string().min(20),
+    composition: z.object({
+      slot: z.string().min(3),
+      crops: z
+        .array(
+          z.object({
+            breakpoint: z.enum(['desktop', 'tablet', 'mobile']),
+            ratio: z.string().regex(/^(\d+:\d+|hidden)$/),
+            width: z.string().min(1),
+          })
+        )
+        .length(3),
+      safeArea: z.string().min(10),
+      exclusion: z.string().min(4),
+      rtl: z.string().min(10),
+    }),
     priority: z.boolean().optional(),
     budgetBytes: z.number().int().positive(),
     status: z.enum(['pending', 'released']),

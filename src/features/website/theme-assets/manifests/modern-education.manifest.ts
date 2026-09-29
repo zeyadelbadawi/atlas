@@ -43,6 +43,19 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
       },
       direction:
         'An adult learner absorbed in study at a bright table, laptop and open notebook, warm window light from the side, calm and optimistic mood. Subject in the lower-left two thirds; clean empty space in the top-right quarter for an overlaid badge. Vertical 4:5 framing that still works cropped to 16:10 and 4:3 around the face and hands.',
+      composition: {
+        slot: 'Home › Hero, the image column of the 55/45 split (brand shape behind it; live course-count chip floating over its top corner at the logical end)',
+        crops: [
+          { breakpoint: 'desktop', ratio: '4:5', width: '~560px' },
+          { breakpoint: 'tablet', ratio: '16:10', width: '100vw' },
+          { breakpoint: 'mobile', ratio: '4:3', width: '100vw' },
+        ],
+        safeArea:
+          'Face and writing hands inside y 0.39–0.87 and the central 80% of the width, so the 16:10 and 4:3 crops (object-position 46% 76%) keep both.',
+        exclusion:
+          'The top 22% band stays calm across the full width: the course-count chip sits in its end corner — top-right in English, top-left in Arabic.',
+        rtl: 'Layout mirrors (image column on the left in Arabic, chip at the top-left); the photograph is not mirrored.',
+      },
       priority: true,
       budgetBytes: HERO_BUDGET,
       status: 'released',
@@ -78,7 +91,20 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
         ar: 'مرشد يوجّه متعلّمًا أمام شاشة مشتركة',
       },
       direction:
-        'A mentor guiding a learner side by side at a shared laptop, screen content blurred and angled away, genuine encouragement and interaction, both faces visible in three-quarter view, bright modern room.',
+        'A mentor guiding a learner side by side at a shared laptop, screen content blurred and angled away, genuine encouragement and interaction, both faces visible in three-quarter view, bright modern room. Both people and the laptop centred in the frame with calm margins on every side; both people turned toward each other and the screen, never out of the frame.',
+      composition: {
+        slot: 'Home › Why us (featureSplit), image column at the logical start; brand-soft shape offset behind its bottom-start corner, outside the photo',
+        crops: [
+          { breakpoint: 'desktop', ratio: '4:3', width: '~600px' },
+          { breakpoint: 'tablet', ratio: '4:3', width: '~45vw' },
+          { breakpoint: 'mobile', ratio: '4:3', width: '100vw' },
+        ],
+        safeArea:
+          'Both faces and the shared screen inside the central 76% of the width and 80% of the height; nothing important within 8% of any edge (20px rounded corners).',
+        exclusion:
+          'None over the photo; text sits beside it (desktop/tablet) or below it (mobile).',
+        rtl: 'The image column moves to the right in Arabic; the photograph is not mirrored, so neither person may face out of the frame.',
+      },
       budgetBytes: DEFAULT_BUDGET,
       status: 'pending',
     },
@@ -94,7 +120,24 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
         ar: 'متعلّم مبتسم يحمل دفترًا',
       },
       direction:
-        'A smiling adult learner holding a closed notebook against the chest, waist-up portrait, lit with a soft key light against a deep charcoal studio background that fades to near-black at the edges so it blends into a dark band without a cut-out.',
+        'A smiling adult learner holding a closed notebook against the chest, waist-up portrait, subject centred, lit with a soft key light against a plain deep charcoal studio background that falls off to near-black at the left, right and bottom edges, with no gradient colour cast, so it blends into a dark band without a cut-out.',
+      composition: {
+        slot: "Home › Final CTA ink band, photo at the band's logical end, bottom-aligned so the subject rises from the band's lower edge",
+        crops: [
+          { breakpoint: 'desktop', ratio: '3:4', width: '~320px' },
+          { breakpoint: 'tablet', ratio: '3:4', width: '~280px' },
+          {
+            breakpoint: 'mobile',
+            ratio: 'hidden',
+            width: 'hidden under 480px (shown at 3:4 ~260px from 480–767px)',
+          },
+        ],
+        safeArea:
+          'Head and notebook inside the central 60% of the width and the top 75% of the height.',
+        exclusion:
+          'Left and right 15% and the bottom edge: plain near-black background, so the photo blends into the ink band on either side (LTR and RTL placements).',
+        rtl: "The photo moves to the band's left in Arabic; the photograph is not mirrored.",
+      },
       budgetBytes: DEFAULT_BUDGET,
       status: 'pending',
     },
@@ -110,7 +153,19 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
         ar: 'دفتر مفتوح وقلم وقهوة وحاسوب محمول مغلق على مكتب',
       },
       direction:
-        'Overhead flat lay on a light wooden desk: an open blank notebook, a pen, a cup of coffee and a closed laptop, soft natural shadows, a sense of getting ready to start. Centred arrangement with generous margins.',
+        'Overhead flat lay on a light wooden desk: an open blank notebook, a pen, a cup of coffee and a closed laptop with no logo, soft natural shadows, a sense of getting ready to start. Centred arrangement with generous empty margins on every side.',
+      composition: {
+        slot: "Home › Featured courses empty state: the illustration above the panel's heading and next step",
+        crops: [
+          { breakpoint: 'desktop', ratio: '16:9', width: '~720px' },
+          { breakpoint: 'tablet', ratio: '16:9', width: '~600px' },
+          { breakpoint: 'mobile', ratio: '16:9', width: '100vw' },
+        ],
+        safeArea:
+          'The whole arrangement inside the central 70% of the width and 76% of the height.',
+        exclusion: "None over the photo; the panel's text sits below it.",
+        rtl: 'Unchanged in Arabic (centred); the photograph is not mirrored.',
+      },
       budgetBytes: DEFAULT_BUDGET,
       status: 'pending',
     },
@@ -126,7 +181,20 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
         ar: 'مجموعة صغيرة تتناقش في قاعة دراسية مضيئة',
       },
       direction:
-        'A wide, bright workshop or classroom with a small group of adults mid-discussion around a table, shallow depth of field, people in the centre third so a 4:3 crop keeps them.',
+        'A wide, bright workshop or classroom with a small group of adults mid-discussion around a table, shallow depth of field. The group sits in the centre third of the frame; the outer thirds are soft, uncluttered room with windows and light.',
+      composition: {
+        slot: 'About › Page header: a full-bleed band directly under the page title (the title is never set on the photo)',
+        crops: [
+          { breakpoint: 'desktop', ratio: '21:9', width: '100vw' },
+          { breakpoint: 'tablet', ratio: '16:9', width: '100vw' },
+          { breakpoint: 'mobile', ratio: '4:3', width: '100vw' },
+        ],
+        safeArea:
+          'The group inside the central third of the width (the 4:3 phone crop keeps only the centre) and the middle 70% of the height.',
+        exclusion:
+          'None: text never overlays this photo, so it stays readable for every brand colour.',
+        rtl: 'Unchanged in Arabic (full-bleed, centred); the photograph is not mirrored.',
+      },
       budgetBytes: DEFAULT_BUDGET,
       status: 'pending',
     },
@@ -142,7 +210,19 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
         ar: 'فريق صغير يخطط معًا أمام سبورة بيضاء',
       },
       direction:
-        'A small team of three adults planning together at a whiteboard covered in abstract shapes and sticky notes with no legible writing, collaborative energy, natural office light.',
+        'A small team of three adults planning together at a whiteboard covered in abstract shapes and sticky notes with no legible writing, collaborative energy, natural office light. The group centred with calm margins on every side.',
+      composition: {
+        slot: 'About › Our story (featureSplit), image column at the logical start',
+        crops: [
+          { breakpoint: 'desktop', ratio: '4:3', width: '~600px' },
+          { breakpoint: 'tablet', ratio: '4:3', width: '~45vw' },
+          { breakpoint: 'mobile', ratio: '4:3', width: '100vw' },
+        ],
+        safeArea:
+          'The team and whiteboard inside the central 76% of the width and 80% of the height; nothing important within 8% of any edge.',
+        exclusion: 'None over the photo; text sits beside or below it.',
+        rtl: 'The image column moves to the right in Arabic; the photograph is not mirrored.',
+      },
       budgetBytes: DEFAULT_BUDGET,
       status: 'pending',
     },
@@ -158,7 +238,27 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
         ar: 'متعلّمون يعملون معًا في ورشة تطبيقية',
       },
       direction:
-        'A group workshop with a hands-on activity at a shared table, several adults leaning in, materials and tools without branding.',
+        'A group workshop with a hands-on activity at a shared table, several adults leaning in, materials and tools without branding. The action gathered in the centre of the frame, left and right edges quiet.',
+      composition: {
+        slot: 'About › Gallery bento (3×3 square cells): the 2×2 tile, top-start',
+        crops: [
+          {
+            breakpoint: 'desktop',
+            ratio: '1:1',
+            width: '~2/3 of the container',
+          },
+          {
+            breakpoint: 'tablet',
+            ratio: '1:1',
+            width: '~2/3 of the container',
+          },
+          { breakpoint: 'mobile', ratio: '4:3', width: '100vw' },
+        ],
+        safeArea:
+          'The activity and faces inside the central 75% of the width (the square crop trims 12.5% from each side).',
+        exclusion: 'None.',
+        rtl: 'The bento mirrors (the large tile moves to the top-right); the photograph is not mirrored.',
+      },
       budgetBytes: DEFAULT_BUDGET,
       status: 'pending',
     },
@@ -174,7 +274,27 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
         ar: 'متعلّم في مكالمة فيديو من المنزل',
       },
       direction:
-        'An adult learner at home on a video call, laptop screen blurred and angled away, relaxed and engaged, cosy living-room light.',
+        "An adult learner at home on a video call, laptop screen blurred and angled away, relaxed and engaged, cosy living-room light. Framed wide, with the learner's face and hands in the horizontal middle band of the frame.",
+      composition: {
+        slot: 'About › Gallery bento: the 2×1 tile, bottom-start',
+        crops: [
+          {
+            breakpoint: 'desktop',
+            ratio: '2:1',
+            width: '~2/3 of the container',
+          },
+          {
+            breakpoint: 'tablet',
+            ratio: '2:1',
+            width: '~2/3 of the container',
+          },
+          { breakpoint: 'mobile', ratio: '4:3', width: '100vw' },
+        ],
+        safeArea:
+          "The learner's face and hands inside the middle 66% of the height (the 2:1 crop trims about 17% from top and bottom).",
+        exclusion: 'None.',
+        rtl: 'The bento mirrors; the photograph is not mirrored.',
+      },
       budgetBytes: DEFAULT_BUDGET,
       status: 'pending',
     },
@@ -190,7 +310,26 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
         ar: 'يدان تكتبان ملاحظات في دفتر',
       },
       direction:
-        'Close-up of hands writing notes in a notebook with a pen, handwriting abstract and illegible, soft side light.',
+        'Close-up of hands writing notes in a notebook with a pen, handwriting abstract and illegible, soft side light. Hands centred in the frame.',
+      composition: {
+        slot: 'About › Gallery bento: a 1×1 tile',
+        crops: [
+          {
+            breakpoint: 'desktop',
+            ratio: '1:1',
+            width: '~1/3 of the container',
+          },
+          {
+            breakpoint: 'tablet',
+            ratio: '1:1',
+            width: '~1/3 of the container',
+          },
+          { breakpoint: 'mobile', ratio: '1:1', width: '~50vw' },
+        ],
+        safeArea: 'Hands and notebook inside the central 80%.',
+        exclusion: 'None.',
+        rtl: 'The bento mirrors; the photograph is not mirrored.',
+      },
       budgetBytes: DEFAULT_BUDGET,
       status: 'pending',
     },
@@ -206,7 +345,26 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
         ar: 'متعلّم يضع سماعات ويستخدم جهازًا لوحيًا في مقهى',
       },
       direction:
-        'An adult learner with headphones using a tablet in a quiet café, screen not visible, focused and content, window light.',
+        'An adult learner with headphones using a tablet in a quiet café, screen not visible, focused and content, window light. Learner centred in the frame.',
+      composition: {
+        slot: 'About › Gallery bento: a 1×1 tile',
+        crops: [
+          {
+            breakpoint: 'desktop',
+            ratio: '1:1',
+            width: '~1/3 of the container',
+          },
+          {
+            breakpoint: 'tablet',
+            ratio: '1:1',
+            width: '~1/3 of the container',
+          },
+          { breakpoint: 'mobile', ratio: '1:1', width: '~50vw' },
+        ],
+        safeArea: 'Face and tablet inside the central 80%.',
+        exclusion: 'None.',
+        rtl: 'The bento mirrors; the photograph is not mirrored.',
+      },
       budgetBytes: DEFAULT_BUDGET,
       status: 'pending',
     },
@@ -222,7 +380,26 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
         ar: 'متعلّمان يحتفلان بنجاح مشترك',
       },
       direction:
-        'A small celebration moment between two adult learners, a high-five or shared smile of success, no certificates or text, bright and warm.',
+        'A small celebration moment between two adult learners sharing a smile of success beside a laptop, a gesture that reads well in both English-speaking and Middle Eastern cultures, no certificates or text, bright and warm. Both people centred in the frame.',
+      composition: {
+        slot: 'About › Gallery bento: a 1×1 tile',
+        crops: [
+          {
+            breakpoint: 'desktop',
+            ratio: '1:1',
+            width: '~1/3 of the container',
+          },
+          {
+            breakpoint: 'tablet',
+            ratio: '1:1',
+            width: '~1/3 of the container',
+          },
+          { breakpoint: 'mobile', ratio: '1:1', width: '~50vw' },
+        ],
+        safeArea: 'Both people inside the central 80%.',
+        exclusion: 'None.',
+        rtl: 'The bento mirrors; the photograph is not mirrored.',
+      },
       budgetBytes: DEFAULT_BUDGET,
       status: 'pending',
     },
@@ -238,7 +415,20 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
         ar: 'مشهد دراسة هادئ في المساء مع مصباح مكتب',
       },
       direction:
-        'A calm evening study scene: an adult learner focused at a desk under a warm desk lamp, dark surroundings, peaceful concentration.',
+        'A calm evening study scene: an adult learner focused at a desk under a warm desk lamp, dark surroundings, peaceful concentration. Learner and lamp centred, dark calm edges on every side.',
+      composition: {
+        slot: 'Sign in / sign up › the side panel beside the form (desktop only)',
+        crops: [
+          { breakpoint: 'desktop', ratio: '3:4', width: '~45vw, max ~580px' },
+          { breakpoint: 'tablet', ratio: 'hidden', width: 'hidden' },
+          { breakpoint: 'mobile', ratio: 'hidden', width: 'hidden' },
+        ],
+        safeArea:
+          'The learner and lamp inside the central 70% of the width and 80% of the height (object-fit: cover trims up to ~10% at the sides).',
+        exclusion:
+          "None over the photo; the panel's rounded 20px corners stay dark and plain.",
+        rtl: 'The panel moves to the left in Arabic; the photograph is not mirrored.',
+      },
       budgetBytes: DEFAULT_BUDGET,
       status: 'pending',
     },

@@ -16,11 +16,13 @@
  *   - fails if the ≤ 1200 w AVIF is over the entry's byte budget;
  *   - prints the sha256 of the master and the manifest fields to fill in.
  *
- * It refuses to write into a released version folder: released files are
- * immutable (a changed image is a new version).
+ * It refuses to re-prepare an entry already released at that version and
+ * never overwrites a file: released files are immutable (a changed image
+ * is a new version).
  *
- * Masters are never committed to the app repo; archive them privately and
- * record the sha256 printed here in the entry's provenance.
+ * Masters are never committed to the app repo: record the sha256 printed
+ * here in the entry's provenance, then store the master with
+ * `npm run archive-master` (private bucket, §P.7).
  */
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync } from 'node:fs';
@@ -67,12 +69,14 @@ const manifest = Object.values(manifestModule).find(
 const entry = manifest?.assets.find((asset) => asset.key === args.key);
 if (!entry) fail(`"${args.key}" is not in the ${args.theme} manifest`);
 
-const { RELEASED_THEME_ASSET_FOLDERS } = await import(
-  join(ASSETS_SRC, 'released-versions.ts')
-);
 const folder = `${args.theme}/${args.version}`;
-if (RELEASED_THEME_ASSET_FOLDERS.includes(folder)) {
-  fail(`${folder} is released and immutable; prepare into a new version`);
+// Released files are immutable: an entry already released at this version
+// is never re-prepared (a changed image is a new version), and no existing
+// file is overwritten below. A new key may join a released folder.
+if (entry.status === 'released' && entry.version === args.version) {
+  fail(
+    `${args.key} ${args.version} is released and immutable; prepare a new version`
+  );
 }
 
 const masterBuffer = readFileSync(args.master);
@@ -161,5 +165,5 @@ console.log(
   )
 );
 console.log(
-  `\nAlso add "${folder}" to released-versions.ts in the same commit.`
+  `\nIf "${folder}" is not in released-versions.ts yet, add it in the same commit.`
 );

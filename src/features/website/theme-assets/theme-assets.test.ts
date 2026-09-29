@@ -63,6 +63,18 @@ describe('theme asset manifests', () => {
     ).toHaveLength(1);
   });
 
+  it('freezes every asset’s slot, crops, safe area, exclusion zone and RTL behaviour', () => {
+    for (const entry of MODERN_EDUCATION_ASSETS.assets) {
+      const { composition } = entry;
+      expect(
+        composition.crops.map((crop) => crop.breakpoint),
+        entry.key
+      ).toEqual(['desktop', 'tablet', 'mobile']);
+      expect(composition.crops[0].ratio, entry.key).not.toBe('hidden');
+      expect(composition.rtl, entry.key).toContain('not mirrored');
+    }
+  });
+
   it('builds a prompt with the subject, ratio, art direction and exclusions', () => {
     const [hero] = MODERN_EDUCATION_ASSETS.assets;
     const prompt = buildThemeAssetPrompt(MODERN_EDUCATION_ASSETS, hero);

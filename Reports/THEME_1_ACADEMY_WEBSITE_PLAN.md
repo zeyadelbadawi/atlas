@@ -1311,7 +1311,7 @@ The asset pipeline is built, tested and served the production way, and the pilot
 ### P.5 Still open
 
 - Phase 4: freeze the matrix against the approved layouts, then generate the other 11 assets through the same pipeline.
-- Masters are not in the repo (§E.3 step 6): the pilot master is kept in the Owner's Magnific account (the generation record) and identified by its sha256 in the manifest; a private `atlas-theme-sources` archive (GitHub release asset or private R2) still needs to be chosen.
+- Masters are not in the repo (§E.3 step 6): the pilot master is kept in the Owner's Magnific account (the generation record) and identified by its sha256 in the manifest. The private archive was chosen in Phase 4: see §P.7.
 - Carried over: the gated provenance migration deploy, the LCP/bundle decision before Phase 8, the "Powered by Atlas" ARIA fix.
 
 ### P.6 Pilot: `home-hero` (29 Sep 2026)
@@ -1330,3 +1330,66 @@ The asset pipeline is built, tested and served the production way, and the pilot
 - **Position:** the manifest's `focal` is applied as `object-position`. y = 76 % keeps both the face (y ≈ 0.39–0.60) and the writing hands (y ≈ 0.80–0.87) inside the 16:10 and 4:3 crops. The alt text now describes the chosen image (EN/AR).
 - **In context:** Modern Education Home rendered with the hero set to `theme-asset:modern-education/home-hero` (temporary fixture change, reverted) at 1440 / 1024 / 390 px × EN / AR × the default palette plus orange, purple, neon yellow and near-black (30 renders). Result: **0 CSP violations**; the browser chose the 800w AVIF on desktop/tablet and the 480w on mobile; eager + `fetchpriority="high"`; locale-correct alt; the face and hands stay in frame in the current 4:3 hero box; the image isn't mirrored in RTL (correct); the neutral grade sits well with every palette.
 - **Seen, not caused by the image (Phase 4 items):** white text on the neon-yellow CTA fails contrast (today's base colour mapping; Theme 1's brand-engine mapping replaces it); the cookie banner covers the lower half of the hero image at 390 px; the current hero box is 4:3 at every width, while §E.2 plans 4:5 on desktop, so the top-right negative space is only used once Theme 1's hero renderer lands.
+
+### P.7 Phase 4 additions: frozen compositions, master archive, release gate (29 Sep 2026)
+
+Added at the Owner's request during Phase 4, before the 11 production images are generated.
+
+**Frozen compositions.** Every manifest entry now has a `composition` (schema-required and tested): target slot, crop per breakpoint (desktop ≥ 1024, tablet 768–1023, mobile < 768), safe area, overlay exclusion zone and RTL behaviour. The pending entries' `direction`, and so their prompts, now spell out the safe area. `home-hero`'s image, direction and recorded prompt are unchanged; only its composition metadata was added. Rules that apply to every asset:
+
+- Text never sits on a photo. Headings, chips and CTAs go beside, above or below the image. The one overlay is the Home hero's course-count chip, which floats over the photo's top corner at the logical end.
+- Photos are never mirrored in RTL. The layout mirrors; the image doesn't. People must never face out of the frame on either side.
+- Each master's aspect ratio is its desktop crop. Other breakpoints crop with `object-fit: cover` around the manifest `focal`, so subjects stay inside the stated safe area.
+
+| Asset | Slot | Master | Desktop / tablet / mobile | Safe area; exclusion zone |
+|---|---|---|---|---|
+| home-hero (released) | Home hero, 55/45 image column | 4:5 | 4:5 ~560px / 16:10 full / 4:3 full | Face and hands y 0.39–0.87 inside the central 80%; top 22% band clear for the chip (top-right EN, top-left AR) |
+| home-benefit | Home featureSplit, image at logical start | 4:3 | 4:3 ~600px / 4:3 ~45vw / 4:3 full | Both faces and the screen inside the central 76% × 80%; no overlay |
+| home-cta | Home ink CTA band, logical end, bottom-aligned | 3:4 | 3:4 ~320px / 3:4 ~280px / hidden < 480px | Head and notebook inside the central 60% width, top 75%; outer 15% and bottom edge plain near-black so it blends into the band on either side |
+| courses-launching | Featured-courses empty state, above the text | 16:9 | 16:9 at every size | Arrangement inside the central 70% × 76% |
+| about-header | About band under the title | 21:9 | 21:9 full / 16:9 full / 4:3 full | Group inside the central third (the 4:3 phone crop keeps only that), middle 70% of the height |
+| about-story | About featureSplit, logical start | 4:3 | 4:3 at every size | Team inside the central 76% × 80% |
+| gallery-1 | Bento 2×2 tile | 4:3 | 1:1 / 1:1 / 4:3 | Action inside the central 75% width |
+| gallery-2 | Bento 2×1 tile | 4:3 | 2:1 / 2:1 / 4:3 | Face and hands in the middle 66% of the height |
+| gallery-3, -4, -5 | Bento 1×1 tiles | 1:1 | 1:1 at every size (about half width on mobile) | Subject inside the central 80% |
+| auth-side | Auth side panel, logical end | 3:4 | 3:4 up to 580px / hidden / hidden | Learner and lamp inside the central 70% × 80%; dark, plain corners |
+
+**Private master archive.** `tools/theme-assets/archive-master.mjs` has two commands:
+
+- `npm run archive-master` stores each released master with a `provenance.json` in a private S3-compatible bucket at `<theme>/<version>/<key>/`. The provenance records the prompt, model, seed, Magnific generation ID, generation date, version, licence basis, alt text, focal point, sha256, size and reviewer.
+  - The provenance is read from the manifest, which is the single source.
+  - A master whose sha256 isn't the recorded one is refused.
+  - Nothing is ever overwritten: the tool checks HEAD first, then writes with `If-None-Match: *`. An object that is already there must match byte for byte.
+  - Every write is read back and its checksum compared.
+  - The tool refuses to use the app's public media bucket.
+- `npm run verify-archive` checks that every released entry is archived with the recorded checksum.
+
+Verified against a local S3 server:
+
+- A wrong master was refused.
+- Archiving worked, and a second run was idempotent.
+- A conflicting provenance was refused (no overwrite).
+- Verify reported missing objects before archiving and ok afterwards.
+- Using the media bucket was refused.
+
+**Still needed (Owner):** a private R2 bucket `atlas-theme-sources`, with no r2.dev or custom domain, plus an API token scoped to that bucket only (Object Read & Write), stored outside the repo. Until it exists, archival is not complete. The masters then live only in the Magnific account and this session's scratchpad (ephemeral), so the bucket should exist before this session ends. After that, `home-hero` and every new release are archived, and `verify-archive` runs before each release commit.
+
+**Release gate (all 11 assets, same as home-hero).** Each candidate is checked for:
+
+- no logos or branding;
+- no readable or fake text, UI-like text or watermarks;
+- natural hands, faces and eyes;
+- culturally suitable people, clothing and setting;
+- composition, focal point and the frozen safe area and exclusion zone;
+- LTR and RTL placement;
+- desktop, tablet and mobile crops (rendered in context);
+- full-resolution quality;
+- AVIF/WebP budgets;
+- EN/AR alt text describing the chosen image;
+- 0 CSP violations;
+- the exact prompt, provenance and checksum recorded;
+- an immutable versioned path, archived.
+
+A failed candidate is rejected and regenerated. It is never released just because generation succeeded.
+
+**Tooling change.** `prepare.mjs` used to refuse the whole `modern-education/v1` folder once `home-hero` was released. It now refuses only an entry already released at that version, and still never overwrites a file. New keys can join `v1`, and released files stay immutable.

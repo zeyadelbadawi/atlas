@@ -43,6 +43,33 @@ export interface ThemeAssetProvenance {
   readonly masterSha256: string;
 }
 
+export type ThemeAssetBreakpoint = 'desktop' | 'tablet' | 'mobile';
+
+/** How one breakpoint shows the image (Phase 4 layout freeze). */
+export interface ThemeAssetCrop {
+  readonly breakpoint: ThemeAssetBreakpoint;
+  /** Displayed ratio (`w:h`), or `hidden`. */
+  readonly ratio: string;
+  /** Approximate rendered width, e.g. `~560px` or `100vw`. */
+  readonly width: string;
+}
+
+/**
+ * The frozen composition contract (plan §E.3 step 1): the layout the image
+ * is generated for, so art direction, crops and the renderer agree.
+ */
+export interface ThemeAssetComposition {
+  /** Section and layout slot. */
+  readonly slot: string;
+  readonly crops: readonly ThemeAssetCrop[];
+  /** Where the subject must stay so every crop keeps it. */
+  readonly safeArea: string;
+  /** Areas that must stay calm because UI sits over or against them. */
+  readonly exclusion: string;
+  /** Layout mirrors in Arabic; the photograph never does. */
+  readonly rtl: string;
+}
+
 export interface ThemeAssetEntry {
   readonly key: string;
   /** Where it is used (§E.2). */
@@ -56,6 +83,8 @@ export interface ThemeAssetEntry {
   readonly alt: { readonly en: string; readonly ar: string };
   /** The subject and composition this asset is generated from (§E.3 step 3). */
   readonly direction: string;
+  /** The frozen layout contract (Phase 4). */
+  readonly composition: ThemeAssetComposition;
   /** Loaded eagerly with high priority (the LCP image). */
   readonly priority?: boolean;
   /** Byte budget for the ≤ 1200 w AVIF (§E.3 step 5). */
