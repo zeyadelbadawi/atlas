@@ -1,6 +1,6 @@
 # Theme 1 ("Modern Education") — Academy Website Redesign Plan
 
-Status: **v2, approved for implementation (29 Sep 2026). Phase 0 complete — results in §M. Phases 1–9 not started.**
+Status: **v2, approved for implementation (29 Sep 2026). Phase 0 complete (§M); Phase 1 complete (§N). Phases 2–9 not started.**
 Scope:
 - Turn Theme 1 into a complete, launch-ready academy website that every Academy receives automatically.
 - Build the architecture so Themes 2–5 can later get their own identity and page composition.
@@ -687,6 +687,8 @@ The engine, the Brand Studio UI, the persisted palette, the validation and the t
 
 ### Phase 1 — ThemePack architecture, shared primitives, brand engine core
 
+**Status: done (29 Sep 2026) — results and engineering corrections in §N.**
+
 - **Objective:** the extension points, with no visual change.
 - **Frontend:**
   - ThemePack registry and dispatch;
@@ -1165,3 +1167,52 @@ The matrix still matches the design: every raster slot in §C has one master, an
 4. **Provenance columns** (§L.4 D): approved; evaluated in Phase 2. Phase 0 needed no schema change.
 5. **Fixture fidelity note.** `GET /auth/options` is answered `{ google: false }` (the backend's answer when Google sign-in is off for the Academy); auth-page snapshots therefore show the email/password form only.
 6. **Repository size.** The screenshot baseline adds 31 MB; every deliberate Theme 1 re-record adds up to ~7 MB more to history.
+
+---
+
+## N. Phase 1 results (recorded 29 Sep 2026)
+
+No visible change, as planned: the Phase 0 baseline re-ran **559/559 identical** (327 screenshots with zero pixel difference, 216 axe snapshots, 16 palette checks) on all five themes.
+
+### N.1 What was built
+
+| Area | Where | Notes |
+|---|---|---|
+| ThemePack registry and dispatch | FE `src/features/website/theme-packs/` | `pack.renderers[type] ?? BASE_RENDERERS[type]` in `SectionRenderer`; one module per redesigned theme (`packs/`); Themes 2–5 use the base pack; Theme 1's pack exists and redesigns nothing yet. |
+| `mapBrandPalette` hook | `WebsiteThemeScope` → `pack.mapBrandPalette` | The base mapping is today's variables moved verbatim; a snapshot test recorded **before** the refactor (15 cases, 5 themes × 3 brands) proves byte-identical output. |
+| Brand engine core | FE `src/features/website/brand-engine/` | OKLab/OKLCH, gamut mapping, WCAG contrast; logo analysis (mask, border-ring background, fringe, weighted k-means, classification, seeds, flags); role derivation (19 roles), the §F.4.4 validator, 4 deterministic alternatives, harmony score; `buildBrandPalette` produces the §D.2 shape. Not wired to any UI. |
+| Backend mirror | BE `src/website/brand-engine/` | Derivation + validation only (no pixel analysis, §F.4.3). |
+| Golden vectors | `__golden__/bp-1.golden.json` in both repos | 54 vectors: the §I.2 12-brand identity matrix × 4 alternatives, override cases, a different neutral cap. **Both repos reproduce all 54 exactly.** |
+| Shared primitives | FE `src/features/website/primitives/` | `SectionShell`, `Heading` (+ highlight phrase), `Reveal`/`useReveal`, `Chip`, `EmptyPanel`. Unused until Theme 1 renderers (Phase 4+). |
+
+### N.2 Tests and measurements
+
+- **Brand engine (FE):** 98 tests — colour-space reference values; the §I.2 cases (neon, extremely dark, extremely light, monochrome, multi-colour, transparent, anti-alias fringe, solid and noisy backgrounds, manual overrides, regeneration, hostile/oversized buffers); **500 random seed sets × all four alternatives: every §F.4.4 pair passes and every built palette validates**; golden vectors.
+- **Backend mirror:** 59 specs — the same golden file, the same 500-seed property run, and authority cases (crafted failing override, tampered role with a lying report, injection strings, unknown algorithm version).
+- **Theme packs:** 7 tests, including a test pack that redesigns one section while every other type falls back (§J.12's "Theme 2 without touching Theme 1").
+- **Primitives:** 11 tests (landmark naming, heading semantics, highlight in EN/AR, reveal under reduced motion / no IntersectionObserver / above the fold, chip toggle semantics, empty panel).
+- **Speed:** a palette derives in ≈ 1–9 ms; a 128 px logo analyses in ≈ 75 ms in the test runner (budget: ≤ 500 ms end to end, §J.13).
+- **Bundle:** the engine is in **no** public-route chunk; the main chunk grew by 952 bytes (pack registry and base-renderer adapters).
+- **Suites:** frontend 1,309 unit tests pass (lint clean; the 34 pre-existing type errors and one pre-existing Vitest worker timeout are unchanged); backend 3,883 unit tests pass (2 suites can't start in this container because they look for the frontend at `../atlas-front` — identical on the untouched base).
+
+### N.3 UI/UX Pro Max review of the primitives
+
+Queries: reduced motion, compact label overflow, focus visibility, touch targets and spacing, empty states, reveal/stagger motion (a React-stack query returned no match; the UX-domain rules were used). Applied:
+- `Reveal` never hides content that is already visible, and gives the final state under `prefers-reduced-motion` or without IntersectionObserver; content stays in the DOM for crawlers and assistive tech; 12 px rise, transform/opacity only, Atlas motion tokens.
+- `Chip` labels never wrap; interactive chips are `<button aria-pressed>` with a visible focus ring and a ≥ 32 px target (WCAG 2.5.8 needs ≥ 24 px); callers keep ≥ 8 px gaps.
+- `EmptyPanel` always has a visitor-language heading and an action slot (fixes the pattern behind §M.5 #7 once adopted).
+- `Heading` separates semantic level from visual size (fixes the pattern behind §M.5 #3 once adopted), uses §B's type scale and balanced wrapping.
+- `SectionShell` is a labelled landmark whose tones come only from theme variables.
+
+### N.4 Engineering corrections (within approved decisions — surfaced, not silent)
+
+1. **CTA boundary enforced during derivation.** §F.4.2 says the CTA label is white or ink, "whichever needs the smallest shift"; taken alone, that keeps a pastel or neon CTA with dark text, which contradicts §I.2 ("pastel → primary deepened to pass"; neon "preserved as accent… not used for text/backgrounds"). The engine therefore also requires the §F.4.4 `cta` vs `background` 3:1 pair while choosing the lightness. `ctaNeedsBorder` remains for Owner overrides that miss it.
+2. **`primary`/`secondary`/`accent` overrides are seed overrides.** §D.2's `overrides: Partial<seeds & roles>` has three names that are both; per §F.4.5 (seeds edited by the Owner, other roles under "Advanced"), those three always re-derive their dependents. Seed overrides are also stored in `seeds`.
+3. **Neon isn't "light".** §F.4.2 step 4's `L > 0.92 → light` would classify neon yellow (L ≈ 0.93) as a pale neutral and call the logo monochrome; `light` now also needs chroma < 0.1.
+4. **Colours are integer HSL triplets**, matching the existing `HSL_TRIPLET_REGEX` in both repos; every contrast check runs on the rounded value that will be stored.
+5. **Hover/pressed states are derived, not stored** (`deriveInteractionStates`), so the §D.2 shape is unchanged; the validator checks them. The chosen alternative is recorded in `report.variant`.
+6. **Header/footer/auth-shell pack overrides moved to Phase 4.** The footer carries the platform attribution that no theme may remove; that extension point is designed with Theme 1's chrome so the guarantee is part of it.
+7. **Primitives scope.** `ThemeImage` arrives with the asset resolver (Phase 3, as planned); carousel, rating, price and course-card parts are extracted from the working sections when Phases 5–6 first need them, rather than guessed now.
+8. **Packs resolve synchronously.** The brand mapping is needed for the first paint; heavy renderer code will be split with `React.lazy` inside a pack.
+9. **Theme-specific contrast pairs** (Theme 1's ink band, §F.4.4 last row) are tested with Theme 1's mapping in Phase 4; the engine checks the theme-independent matrix.
+

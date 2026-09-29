@@ -2,24 +2,21 @@
  * Section Renderer — the dispatcher.
  *
  * The ONE place a `SectionInstance` is turned into UI. Every page/preview
- * renders sections through this component; nothing else `switch`es on
- * `SectionInstance.type`. Adding a 12th section type means adding one
- * `case` here and one component file — never touching an existing case.
+ * renders sections through this component; nothing else chooses a section
+ * component by `SectionInstance.type`.
+ *
+ * Theme 1 plan §F.1: the renderer comes from the active theme pack —
+ * `pack.renderers[type] ?? BASE_RENDERERS[type]` — so a theme redesigns
+ * only the section types it wants and every other type still renders.
+ * Adding a section type means adding its config type and a base renderer
+ * (`theme-packs/base-renderers.tsx`).
  */
-import { HeroSection } from './HeroSection';
-import { AboutSection } from './AboutSection';
-import { FeaturedCoursesSection } from './FeaturedCoursesSection';
-import { StatisticsSection } from './StatisticsSection';
-import { FeaturesSection } from './FeaturesSection';
-import { TestimonialsSection } from './TestimonialsSection';
-import { FaqSection } from './FaqSection';
-import { CtaSection } from './CtaSection';
-import { InstructorsSection } from './InstructorsSection';
-import { GallerySection } from './GallerySection';
-import { ContactSection } from './ContactSection';
-import { CourseCatalogSection } from './CourseCatalogSection';
+import type { ComponentType } from 'react';
 import type { SectionInstance, WebsitePage } from '@types';
 import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
+import { resolveSectionRenderer } from '../theme-packs/theme-pack.registry';
+import { useThemePack } from '../theme-packs/ThemePackContext';
+import type { SectionRenderProps } from '../theme-packs/theme-pack.types';
 
 export interface SectionRendererProps {
   readonly instance: SectionInstance;
@@ -41,64 +38,23 @@ export function SectionRenderer({
   pages,
   linkRenderer,
 }: SectionRendererProps): JSX.Element | null {
+  const pack = useThemePack();
   if (!instance.enabled) return null;
 
-  switch (instance.type) {
-    case 'hero':
-      return (
-        <HeroSection
-          config={instance.config}
-          pages={pages}
-          linkRenderer={linkRenderer}
-        />
-      );
-    case 'about':
-      return <AboutSection config={instance.config} />;
-    case 'featuredCourses':
-      return (
-        <FeaturedCoursesSection
-          config={instance.config}
-          academyId={academyId}
-          linkRenderer={linkRenderer}
-        />
-      );
-    case 'statistics':
-      return (
-        <StatisticsSection config={instance.config} academyId={academyId} />
-      );
-    case 'features':
-      return <FeaturesSection config={instance.config} />;
-    case 'testimonials':
-      return (
-        <TestimonialsSection config={instance.config} academyId={academyId} />
-      );
-    case 'faq':
-      return <FaqSection config={instance.config} academyId={academyId} />;
-    case 'cta':
-      return (
-        <CtaSection
-          config={instance.config}
-          pages={pages}
-          linkRenderer={linkRenderer}
-        />
-      );
-    case 'instructors':
-      return (
-        <InstructorsSection config={instance.config} academyId={academyId} />
-      );
-    case 'gallery':
-      return <GallerySection config={instance.config} />;
-    case 'contact':
-      return <ContactSection config={instance.config} academyId={academyId} />;
-    case 'courseCatalog':
-      return (
-        <CourseCatalogSection
-          config={instance.config}
-          academyId={academyId}
-          linkRenderer={linkRenderer}
-        />
-      );
-    default:
-      return null;
-  }
+  // Keyed by `instance.type`, so the renderer and `instance.config` always
+  // belong to the same section type; the union just can't express that.
+  const Renderer = resolveSectionRenderer(pack, instance.type) as
+    ComponentType<SectionRenderProps<SectionInstance['type']>> | undefined;
+  // A type this build doesn't know (e.g. newer data on an older client)
+  // renders nothing rather than failing the page.
+  if (!Renderer) return null;
+
+  return (
+    <Renderer
+      config={instance.config as never}
+      academyId={academyId}
+      pages={pages}
+      linkRenderer={linkRenderer}
+    />
+  );
 }

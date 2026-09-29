@@ -3,3 +3,5 @@ node_modules
 pnpm-lock.yaml
 public
 src/components/ui
+# Generated brand-engine golden vectors: copied byte-for-byte into atlas-backend
+src/features/website/brand-engine/__golden__
