@@ -50,8 +50,12 @@ function ensureBuildOutDir() {
 }
 
 // https://vitejs.dev/config/
-export default defineConfig(({ command }) => {
+export default defineConfig(({ command, mode }) => {
   const blogPrerenderRoutes = command === 'build' ? getBlogRoutes() : [];
+  // Theme baseline fixture build (`pnpm theme-baseline:build`, Theme 1 plan
+  // Phase 0) — its own output folder, so it can never overwrite `dist/`.
+  // The sitemap plugin writes to a fixed folder, hence passing it too.
+  const outDir = mode === 'theme-fixtures' ? 'dist-theme-fixtures' : 'dist';
 
   return {
     plugins: [
@@ -94,6 +98,7 @@ export default defineConfig(({ command }) => {
         // Overridable via env for any environment that isn't the real
         // production domain (e.g. a future staging deploy).
         hostname: process.env.VITE_SITE_URL || 'https://atlass.dpdns.org',
+        outDir,
         lastmod: getSitemapLastmod(),
         readable: true,
         generateRobotsTxt: true,
@@ -176,6 +181,7 @@ export default defineConfig(({ command }) => {
       watch: { usePolling: true, interval: 600 },
     },
     build: {
+      outDir,
       rollupOptions: {
         output: {
           manualChunks: {

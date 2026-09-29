@@ -1,0 +1,25 @@
+{
+  "axeVersion": "4.13.0",
+  "violations": [
+    {
+      "id": "aria-prohibited-attr",
+      "impact": "serious",
+      "help": "Elements must only use permitted ARIA attributes",
+      "nodes": 1,
+      "targets": [
+        ".gap-0"
+      ]
+    },
+    {
+      "id": "color-contrast",
+      "impact": "serious",
+      "help": "Elements must meet minimum color contrast ratio thresholds",
+      "nodes": 4,
+      "targets": [
+        ".px-3",
+        ".uppercase",
+        ".bg-primary.hover\\:bg-primary\\/90.h-11"
+      ]
+    }
+  ]
+}

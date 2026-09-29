@@ -1,6 +1,6 @@
 # Theme 1 ("Modern Education") — Academy Website Redesign Plan
 
-Status: **v2, updated for approval. Nothing here is implemented.**
+Status: **v2, approved for implementation (29 Sep 2026). Phase 0 complete — results in §M. Phases 1–9 not started.**
 Scope:
 - Turn Theme 1 into a complete, launch-ready academy website that every Academy receives automatically.
 - Build the architecture so Themes 2–5 can later get their own identity and page composition.
@@ -31,8 +31,8 @@ Scope:
 
 | Tool | Status in this session | What I checked | Stop rule |
 |---|---|---|---|
-| **Magnific MCP** | **Not connected** | No Magnific tools are present. The session has **no connectors attached**. The connector directory has no Magnific entry (so it must be added as a custom connector). | Asset **generation** (the Phase 3 pilot and the Phase 4 production run, §E.3) stops and I report this. **No other image service is ever substituted, and I never generate images myself.** Every other phase continues. |
-| **UI/UX Pro Max skill** | **Not installed** | It isn't in the session's installed skills or in the organisation's plugin catalogue. | Before each phase, I verify the skill is loaded. If it isn't, **I don't start** the phase's design/QA work and report instead. Pure backend work in the same phase (for example Phase 2 contracts) may proceed. |
+| **Magnific MCP** | **Connected** (re-verified in Phase 0, §M.1). *Was "not connected" when v2 was written.* | Text-to-image models are listed, including photorealistic ones, plus upscaling. Read-only calls only; **nothing was generated.** | Asset **generation** (the Phase 3 pilot and the Phase 4 production run, §E.3) stops if it becomes unavailable, and I report this. **No other image service is ever substituted, and I never generate images myself.** Every other phase continues. **Also a Phase 3 gate:** the commercial-use / redistribution terms are verified and recorded before any production generation (§L.4 C). |
+| **UI/UX Pro Max skill** | **Installed and loaded** (project-scoped at `.claude/skills/ui-ux-pro-max/`, re-verified in Phase 0). *Was "not installed" when v2 was written.* | Loaded through the skill tool; its search script runs. | Before each phase, I verify the skill is loaded. If it isn't, **I don't start** the phase's design/QA work and report instead. Pure backend work in the same phase (for example Phase 2 contracts) may proceed. |
 
 **What you need to do for Magnific:**
 1. Connect it at **https://claude.ai/customize/connectors**. It isn't in the directory, so use *Add custom connector* with Magnific's MCP server URL and authorise it.
@@ -673,6 +673,8 @@ The engine, the Brand Studio UI, the persisted palette, the validation and the t
 
 ### Phase 0 — Baseline, harness, decisions, tool checks
 
+**Status: done (29 Sep 2026) — results, measurements, audit and rubric in §M.**
+
 - **Objective:** the regression reference and the tooling gates.
 - **Work:**
   - a dev-only fixture route rendering any theme with fixture data and an **injectable brand palette**;
@@ -1002,13 +1004,164 @@ The engine, the Brand Studio UI, the persisted palette, the validation and the t
 | 2 | Sample social proof | §D.4, end to end, with server-side stripping |
 | 3 | Existing Theme 1 academies | Presentation update only; no content migration (§D.5). Refresh Starter Content is out of scope |
 
-**Still needed from you:**
+**Follow-up items (status as of 29 Sep 2026):**
 
-| # | Item | Why | Blocks |
+| # | Item | Status | Blocks |
 |---|---|---|---|
-| A | **Connect Magnific** to your Claude account (custom connector at https://claude.ai/customize/connectors), enable it for Claude Code, and **start a new session** | It isn't connected to this session | Image generation only (the Phase 3 pilot and the Phase 4 production run) |
-| B | **Install UI/UX Pro Max** and start a new session | It isn't installed; your workflow requires it in every phase | The design/QA work of every phase (the phase gate) |
-| C | **Confirm Magnific's output terms** on your plan allow commercial use and redistribution of generated images inside Atlas's product (every Theme 1 Academy serves them) | Legal basis recorded in provenance | Shipping the assets (Phase 3 → release) |
-| D | **Approve the optional provenance columns** (`template_key`, `template_version`, additive migration) | Enables a future Refresh Starter Content; cheap now | Nothing (it can be skipped; I recommend including it) |
+| — | **The v2 plan itself** | **Approved** as the implementation baseline. Engineering corrections are allowed; any material deviation from an approved product decision is surfaced before it's implemented | — |
+| A | Connect Magnific | **Done** — connected and verified in Phase 0 (§M.1) | — |
+| B | Install UI/UX Pro Max | **Done** — installed and loaded (§M.1) | — |
+| C | **Magnific commercial terms**: confirm the plan's output terms allow commercial use and redistribution of generated images inside Atlas Academy websites | **Open — a Phase 3 gate.** Verified and recorded (in provenance) **before** any production generation. No images are generated before then | The Phase 3 pilot / Phase 4 production run |
+| D | Optional provenance columns (`template_key`, `template_version`) | **Approved**, only if the architecture confirms they're useful when Phase 2 reaches them; additive, backward compatible, non-destructive, and no existing Academy data is rewritten | Nothing |
 
-Phases 0–2 can start once you approve this plan: Phase 0's tool checks will simply report A/B if they're still open.
+---
+
+## M. Phase 0 results (recorded 29 Sep 2026)
+
+Phase 0 is done. Nothing in the application, the database, existing Academy data or Themes 1–5 changed: the harness renders today's code through today's public runtime and records it.
+
+### M.1 Tool verification
+
+| Tool | Result |
+|---|---|
+| UI/UX Pro Max | Loaded through the skill tool (project-scoped, `.claude/skills/ui-ux-pro-max/`); `search.py` runs (Python 3.11). Used for this phase's audit, rubric and art-direction review (M.5–M.7). |
+| Magnific MCP | Connected. Plan tier Premium+ with credits available; in this session generation consumes credits (unlimited mode doesn't apply here). Text-to-image is available, including photorealistic models (Seedream 5 Pro, Recraft V4.1, Google Nano Banana Pro), plus upscaling and image-editing tools. **Only read-only calls were made; no image was generated.** |
+| Magnific commercial terms | **Not verifiable through the MCP** (it reports the plan tier, not licence terms). Remains the Phase 3 gate (§L.4 C). |
+
+### M.2 What Phase 0 added
+
+**Frontend (`atlas`), all dev/test-only:**
+
+| Path | Purpose |
+|---|---|
+| `e2e/theme-baseline/fixtures/generated/*.json` | The website each theme's template generates for a new Academy (complete mode), exported by the backend's real generator. |
+| `e2e/theme-baseline/fixtures/live-data.mjs` | Live Academy data for two states — `new` (just provisioned: no courses, zero stats) and `rich` (6 courses, 3 categories, 3 instructors, reviews, curriculum) — and the injectable brand palettes (`default` = what a new Academy stores; `orange`, `purple`, `neon-yellow`, `near-black` from the §I.2 identity matrix). |
+| `e2e/theme-baseline/server/fixture-server.mjs` | Serves the fixture build and a fixture public API from one origin (like Caddy), gzip, with the **production CSP parsed from `Caddyfile`**. Flags any API call it has no fixture for. |
+| `e2e/theme-baseline/{matrix.ts, support/, playwright.config.ts}` | The baseline matrix and harness (own config; no backend or database needed). Google Fonts served from a committed cache (`fixtures/fonts/`, OFL) for determinism. |
+| `e2e/theme-baseline/screenshots.spec.ts` | Screenshot matrix (M.3). |
+| `e2e/theme-baseline/axe.spec.ts` | axe baseline as JSON snapshots (M.4.1). |
+| `e2e/theme-baseline/palette-injection.spec.ts` | Proves an injected palette reaches the renderer's CSS variables for all 5 themes, and that an unknown fixture resolves like an unknown host. |
+| `e2e/theme-baseline/lighthouse/run-lighthouse.mjs` + `baselines/lighthouse.json` | Lighthouse baseline (M.4.2). |
+| `.env.theme-fixtures`, `vite.config.ts` (fixture mode writes to `dist-theme-fixtures/`), `package.json` scripts, `.gitignore` | Build/run wiring. Production builds are unchanged. |
+| Dev dependencies | `@axe-core/playwright`, `lighthouse` (approved; dev-only). |
+
+**Backend (`atlas-backend`):** `scripts/export-website-template-fixtures.ts` + `npm run fixtures:website-templates` — runs the real `WebsiteGenerationService` against in-memory repositories (no database), deterministic output.
+
+**Engineering correction (not a product change): the "dev-only fixture route".** Instead of adding a new route to the app, the harness uses the public runtime's existing development-only entry point (`?__atlas_academy_preview=<slug>`, honoured only when the build mode isn't production/staging). The fixture slug `fx--<theme>--<state>[--<palette>]` selects theme, data state and injected palette. This renders through the unmodified production path (`PublicWebsiteRouter` → … → `WebsiteRenderer` → `WebsiteThemeScope`), needs **zero application code**, and can't ship to production. Phase 1+ injects the full semantic palette through the same slug.
+
+**How to run:**
+```
+pnpm theme-baseline:build
+THEME_BASELINE_CHROMIUM=<chromium> pnpm test:theme-baseline            # compare
+THEME_BASELINE_CHROMIUM=<chromium> pnpm test:theme-baseline --update-snapshots
+THEME_BASELINE_CHROMIUM=<chromium> pnpm theme-baseline:lighthouse
+(cd ../atlas-backend && npm run fixtures:website-templates -- ../atlas/e2e/theme-baseline/fixtures/generated)
+```
+
+### M.3 Screenshot baseline
+
+- **327 full-page PNGs** (31 MB), `e2e/theme-baseline/__screenshots__/`:
+  - 5 themes × `new` (Home, About, Courses, FAQs, Contact, Sign in, Sign up) and `rich` (Home, Courses, Course Details) × EN/AR × 1440/1024/390 = 300;
+  - shared, theme-independent surfaces (404, Coming Soon) × EN/AR × 3 widths = 12;
+  - Theme 1 Home under 4 brand palettes × 3 widths (EN) = 12;
+  - first visit with the consent banner × 3 widths = 3.
+- **Deterministic:** a second full run matched every snapshot (343/343 including palette checks).
+- Every captured page had **no unmocked API call, no CSP violation, no off-origin request and no page error**.
+
+### M.4 Baseline measurements
+
+#### M.4.1 axe (axe-core 4.13, WCAG 2.0/2.1/2.2 A+AA + best practices)
+
+216 cases (5 themes × 10 page-states × EN/AR × 1440/390, plus shared and brand cases). **212 of 216 have at least one serious violation; none are critical; none are clean.**
+
+| Rule | Impact | Cases | Where / cause |
+|---|---|---|---|
+| `aria-prohibited-attr` | serious | 208 | Every themed page: the "Powered by Atlas" mark is a `<span aria-label="Atlas">` (`AtlasPlatformAttribution` → `AtlasLogo`). Shared component. |
+| `page-has-heading-one` | moderate | 104 | About, Courses, FAQs, Contact in every theme, and the 404: no `h1` (page titles render as `h2`). |
+| `color-contrast` | serious | 24 | Default blue: CTA band supporting text 4.49:1 (modern-education, premium-academy, corporate-learning Home, EN). Orange brand: CTA buttons and eyebrow 2.85:1. Purple brand: CTA band heading dark-on-purple 2.32:1. Near-black brand: CTA band text. Coming Soon: "Powered by Atlas" 3.2:1. |
+| `landmark-one-main`, `region` | moderate | 8 each | Coming Soon (no `main` landmark). |
+
+#### M.4.2 Lighthouse 13.5 (mobile, simulated throttling, median of 3, first visit, Chromium 141)
+
+| Page | Theme 1 perf | LCP | CLS | TBT | Other themes (perf / LCP / CLS range) |
+|---|---|---|---|---|---|
+| Home, new Academy | 70 | 5.30 s | 0.016 | 58 ms | 69–73 / 4.58–5.35 s / 0.009–0.073 |
+| Home, rich | 72 | 4.69 s | 0.016 | 28 ms | 69–72 / 4.56–5.37 s / 0.009–0.025 |
+| Courses, rich | 72 | 4.69 s | 0.011 | 101 ms | 71–72 / 4.53–4.69 s / 0.009–0.012 |
+| Course Details, rich | **49** | 5.41 s | **0.464** | 62 ms | 50–57 / 4.96–5.44 s / **0.235–0.481** |
+
+- Accessibility 92–96, best practices 100, SEO 100 on every page.
+- **Every public page ships ~560 KB of gzipped JS** (≈660 KB total transfer, 18–22 requests); FCP ≈ 4.2–4.4 s. The SPA paints nothing until the application bundle runs, which is why LCP ≈ FCP + ~0.3–1 s on every theme.
+- Google Fonts were fetched live (through this environment's egress proxy). Lighthouse numbers are machine-dependent; compare only against a re-recording on the same machine.
+
+**Against the targets (§I.1/§J.8):** LCP ≤ 2.5 s — **fails everywhere today**; CLS ≤ 0.05 — passes except Course Details (and corporate-learning Home at 0.073); TBT ≤ 200 ms — passes.
+
+### M.5 UI/UX Pro Max audit of the current renders
+
+Method: the skill's priority table (accessibility → touch → performance → style → layout → typography/colour → animation → forms → navigation), its UX guideline database (queries: empty states, placeholder content, heading hierarchy, touch targets, line length, sticky navigation, focus states, reduced motion, colour-only meaning, contrast; landing pattern "Hero + Testimonials + CTA"), reviewed against the M.3 screenshots and M.4 measurements. A "hero CTA" landing query had no database match after a retry, so that point uses the skill's built-in priority rules (labelled fallback). The skill's generic design-system output (fonts/colours) was **not** adopted: §B's approved direction governs.
+
+Severity: **Blocker** = fails an accessibility or honesty rule; **Major** = clearly hurts comprehension/conversion; **Minor** = polish.
+
+| # | Finding (Theme 1 unless noted) | Evidence | Severity | Addressed by |
+|---|---|---|---|---|
+| 1 | Brand colours are used raw as UI colours: orange CTAs/eyebrow 2.85:1; neon-yellow makes CTA labels, eyebrow, stat numbers and the CTA band unreadable; purple CTA band heading 2.32:1 | `brand/` snapshots + axe | Blocker | Brand engine + Theme 1 mapping (Phases 1, 4), confirms §A.5 |
+| 2 | CTA band: heading uses the dark foreground on the brand fill while the body text is light; supporting text 4.49:1 even on the default blue | Home, all widths | Blocker | Phase 4/5 (ink band, §C.1 #11) |
+| 3 | No `h1` on About/Courses/FAQs/Contact (all themes) | axe 104 cases | Blocker (a11y) | Phase 6 (`pageHeader` renders the page `h1`) |
+| 4 | Public site shows fabricated-looking zeros: statistics "0 · 0 · 0" (AR mobile: Arabic-Indic zeros read as dots) | `new/home` | Blocker (honesty) | Phase 5 live-data rules (§C.1 #8) |
+| 5 | Testimonials heading with nothing under it — in both new and rich Academies; Bold Creative shows two consecutive empty headed sections | `*/home` | Blocker (honesty/empty container) | Phases 5, 7 (§D.4) |
+| 6 | Hero image slot is an empty tinted box at every width; on 390 it's a 4:3 empty block before the fold | `*/home--*--390` | Major | Phase 3/4 assets + §E designed no-image state |
+| 7 | Empty states speak dashboard language ("Once content is added it will appear in this view") with no next step, on a public page | Featured courses, Instructors | Major | Phase 5 (designed empty panels, §C.1 #4, #7) |
+| 8 | Course cards with no thumbnail collapse to a 32 px tinted strip with an icon (no aspect ratio); instructor fallback is a generic icon, not initials | `rich/home`, `rich/courses` | Major | `course-fallback-pattern`, `initials-avatar` (§E.2 B) |
+| 9 | Course Details on mobile: the purchase card ("Sign in to enroll") sits after the reviews, near the page bottom; no sticky action | `rich/course-details--*--390` | Major | Phase 6 (§C.3 sticky bar) |
+| 10 | Course Details layout shift CLS 0.24–0.48 (all themes) | Lighthouse | Major | Phase 6 + Phase 8 budget |
+| 11 | LCP ≈ 4.6–5.4 s on mobile for every page; ~560 KB gz JS on the public route (see M.8 item 1) | Lighthouse | Major | Phase 8 (budget); see M.8 |
+| 12 | Inner pages of a new Academy are one short section each (About, FAQs with 2 questions, Contact), leaving most of the viewport empty | `new/about`, `faqs`, `contact` | Major | Phases 6, 7 (§C.4–C.6) |
+| 13 | Catalog has no category chips although the Academy has categories | `rich/courses` | Minor | Phase 6 (§C.2) |
+| 14 | "Why {Academy}" is a half-width text block with an empty right column at 1440/1024; vertical rhythm is uneven (large, varying gaps) | Home 1440 | Minor | Phase 5 (`featureSplit`, 96/80/64 rhythm) |
+| 15 | Mobile header truncates the Academy name ("Horizon Acade…") at 390 | 390 snapshots | Minor | Phase 4 (chrome) |
+| 16 | The public mobile bottom bar offers "My Learning" and "Profile" to signed-out visitors | 390 snapshots | Minor | Phase 4 (chrome review) |
+| 17 | Themes read as colour/case variations of the same page (e.g. Bold Creative vs Modern Education) | cross-theme snapshots | Minor for Phase 0 | Architecture (§F), later themes |
+| 18 | Consent banner covers ~35 % of the first mobile viewport and uses the Atlas colour, not the Academy's | `shared/first-visit--en--390` | Minor | Out of Theme 1 scope — noted only |
+| 19 | "Powered by Atlas" mark fails `aria-prohibited-attr` on every page, and 3.2:1 contrast on Coming Soon | axe | Minor impact, serious rule | Shared component — see M.8 item 2 |
+
+What already works and should be kept: RTL mirroring of header, nav, footer and forms is correct; the catalog's search/filter/sort toolbar and the review summary are well structured; forms have visible labels; best-practices and SEO audits score 100.
+
+### M.6 Review rubric (used by every later phase)
+
+A phase passes design review when it has **0 open Blockers and 0 open Majors**; Minors are logged with an owner phase. Each review covers 1440/1024/390 × EN/AR, the `new` and `rich` states, and — from Phase 4 — the 4 brand palettes (Phase 8: all 12, §I.2).
+
+| # | Area (skill priority) | Pass criteria | Blocker if |
+|---|---|---|---|
+| R1 | Accessibility (1) | axe 0 serious/critical on the phase's pages; every §F.4.4 pair passes; one `h1`, no skipped levels; visible focus on every control; keyboard-complete; alt text EN/AR; status never by colour alone | any of these fail |
+| R2 | Touch & interaction (2) | WCAG 2.5.8 target size (≥ 24 px, primary mobile actions ≥ 44 px); hover and focus parity; no hover-only affordance | primary action below minimum |
+| R3 | Performance (3) | measured against `baselines/lighthouse.json` on the same machine; no regression on untouched themes; Theme 1 budgets §G/§J.8; images reserve space (CLS from images = 0) | regression > 5 perf points or any CLS added |
+| R4 | Theme identity & style (4) | §B invariants hold (layout, type scale, rhythm, radius/elevation, neutral canvas); brand only in the defined slots (§F.5) | brand colour on page background or body text |
+| R5 | Layout & responsive (5) | composed at 1440/1024/390 (not just stacked); no horizontal overflow 360–1920; ≤ 65ch body lines | horizontal overflow |
+| R6 | Typography & colour (6) | §B scale (display 64/56/40, titles 40/32/28, lead 18/17); only semantic tokens, no raw colours in components | failing text contrast |
+| R7 | Motion (7) | §G only: transform/opacity, one-time reveals, no autoplay; `prefers-reduced-motion` gives the static final state; LCP headline never faded | motion without reduced-motion handling |
+| R8 | Content honesty & states | no zero stats, no empty headed sections, no public sample content (§D.4); every live section has a designed empty state with a next step | any fabricated or empty public content |
+| R9 | Navigation & conversion (9) | every section ends with a next step; primary CTA ≤ one tap on mobile; header/mobile sheet complete and predictable | primary CTA unreachable on mobile |
+| R10 | RTL & bilingual | mirrored with logical properties; Arabic typography (line height, no clipped glyphs); no mixed-direction punctuation errors; EN/AR copy parity | broken RTL layout |
+| R11 | Imagery (from Phase 3) | §E.3 step 4 checklist; focal point holds at every crop; works with every palette; no text/logos/identifiable brands | any checklist failure |
+| R12 | Regression | Themes 2–5 snapshots unchanged; Theme 1 snapshot changes are intended and reviewed | unintended diff |
+
+### M.7 Asset art-direction review (§E.2)
+
+The matrix still matches the design: every raster slot in §C has one master, and every brand-coloured element is code (§E.2 B). The current renders confirm the need for each photographic slot (empty hero, half-empty "Why us", flat CTA band, empty-courses panel, one-section About, no auth imagery). **No change to the approved matrix**; these are refinements to carry into the Phase 3 prompts and the Phase 4 matrix freeze:
+
+1. **RTL composition (important).** Photos are never mirrored (hands, writing, text direction), but the layout is: in AR the hero image sits on the left and the floating course-count chip moves with the logical end. `home-hero`'s "empty space top-right" must therefore become **clean negative space across the whole top band** (or the chip is anchored to the side away from the subject in both directions). Record the focal point so both LTR and RTL crops keep the subject away from the chip.
+2. **Mobile crops.** `home-hero` goes 4:5 → 4:3 on phones (≈ 40 % of the height is lost): the subject's face and hands must sit in the central horizontal band. `about-header` 21:9 → 4:3 keeps only the centre third: the group must be centred.
+3. **`home-cta` background.** The ink band is near-black with a 6 % brand hue (§F.5), so the photo's backdrop should be a **neutral** charcoal (no colour cast) with a soft falloff at the edge that meets the band, so it blends under every brand hue.
+4. **Brand neutrality.** The brand matrix includes neon yellow, orange and purple: avoid strongly coloured props or clothing near the focal areas (plants, mugs, jackets), keep wardrobe neutral, and keep the low-saturation grade across all 12.
+5. **No readable marks.** `courses-launching` (laptop lid, cup) and the screen-based shots must carry no logos or legible UI.
+6. **Cultural range (EN + MENA).** Across the set: mixed genders and ages, modest attire represented, no alcohol, gestures that read well in both markets. `gallery-5` ("high-five") should also have a conservative alternative candidate (e.g. shared celebration at a laptop).
+7. **Weight budget.** Today's Home is ≈ 660 KB total with no images; the §I.1 Home budget (≤ 900 KB first mobile load) leaves ≈ 240 KB for images at current JS weight, so the hero must stay within its 180 KB AVIF budget and below-the-fold images must lazy-load.
+
+### M.8 Deviations, blockers and open items
+
+1. **Performance target vs the current bundle (material, needs your decision before Phase 8).** Every public page loads ~560 KB gz of JS today, including dashboard code, and first paint is ≈ 4.4 s on throttled mobile. The plan's budget only limits what Theme 1 *adds* (≤ 18 KB), but its LCP ≤ 2.5 s target (§I.1/§J.8) is not reachable by Theme 1 work alone. Options for later: split the public runtime into its own entry/chunks (outside the plan's current scope), or restate the LCP target relative to this baseline. No change made.
+2. **Shared "Powered by Atlas" accessibility fix.** The `aria-prohibited-attr` violation (every page, every theme) is in a shared component. The fix (e.g. `role="img"` on the labelled element) changes DOM, not pixels, but it is outside Theme 1 files. Recommended as a small, separate change; not made.
+3. **Commercial terms for Magnific** remain the Phase 3 gate (§L.4 C).
+4. **Provenance columns** (§L.4 D): approved; evaluated in Phase 2. Phase 0 needed no schema change.
+5. **Fixture fidelity note.** `GET /auth/options` is answered `{ google: false }` (the backend's answer when Google sign-in is off for the Academy); auth-page snapshots therefore show the email/password form only.
+6. **Repository size.** The screenshot baseline adds 31 MB; every deliberate Theme 1 re-record adds up to ~7 MB more to history.

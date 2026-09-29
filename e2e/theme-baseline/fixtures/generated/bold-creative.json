@@ -1,0 +1,490 @@
+{
+  "generatedBy": "atlas-backend scripts/export-website-template-fixtures.ts",
+  "themeKey": "bold-creative",
+  "setupMode": "complete",
+  "academy": {
+    "academyId": "fx-academy",
+    "academyName": "Horizon Academy"
+  },
+  "configuration": {
+    "id": "fx-academy",
+    "academyId": "fx-academy",
+    "themeKey": "bold-creative",
+    "themeVersion": 1,
+    "configVersion": 1,
+    "brand": {
+      "primaryColor": "221 83% 53%",
+      "secondaryColor": "221 83% 53%",
+      "accentColor": "221 83% 53%"
+    },
+    "seo": {},
+    "navigation": [
+      {
+        "id": "fx-bold-creative-item-1",
+        "label": {
+          "en": "About",
+          "ar": "من نحن"
+        },
+        "pageId": "fx-bold-creative-page-2",
+        "order": 0
+      },
+      {
+        "id": "fx-bold-creative-item-3",
+        "label": {
+          "en": "Courses",
+          "ar": "الدورات"
+        },
+        "pageId": "fx-bold-creative-page-4",
+        "order": 1
+      },
+      {
+        "id": "fx-bold-creative-item-5",
+        "label": {
+          "en": "FAQs",
+          "ar": "الأسئلة الشائعة"
+        },
+        "pageId": "fx-bold-creative-page-6",
+        "order": 2
+      },
+      {
+        "id": "fx-bold-creative-item-7",
+        "label": {
+          "en": "Contact",
+          "ar": "تواصل معنا"
+        },
+        "pageId": "fx-bold-creative-page-8",
+        "order": 3
+      }
+    ],
+    "header": {
+      "cta": {
+        "label": {
+          "en": "Sign Up",
+          "ar": "إنشاء حساب"
+        },
+        "authAction": "signUp"
+      }
+    },
+    "footer": {
+      "groups": [
+        {
+          "id": "fx-bold-creative-item-9",
+          "title": {
+            "en": "Quick Links",
+            "ar": "روابط سريعة"
+          },
+          "links": [
+            {
+              "id": "fx-bold-creative-item-10",
+              "label": {
+                "en": "About",
+                "ar": "من نحن"
+              },
+              "pageId": "fx-bold-creative-page-2"
+            },
+            {
+              "id": "fx-bold-creative-item-11",
+              "label": {
+                "en": "Courses",
+                "ar": "الدورات"
+              },
+              "pageId": "fx-bold-creative-page-4"
+            },
+            {
+              "id": "fx-bold-creative-item-12",
+              "label": {
+                "en": "FAQs",
+                "ar": "الأسئلة الشائعة"
+              },
+              "pageId": "fx-bold-creative-page-6"
+            },
+            {
+              "id": "fx-bold-creative-item-13",
+              "label": {
+                "en": "Contact",
+                "ar": "تواصل معنا"
+              },
+              "pageId": "fx-bold-creative-page-8"
+            }
+          ]
+        }
+      ],
+      "socialLinks": [],
+      "copyrightText": {
+        "en": "© 2026 Horizon Academy",
+        "ar": "© 2026 Horizon Academy"
+      }
+    },
+    "status": "draft",
+    "updatedAt": "2026-09-01T09:00:00.000Z"
+  },
+  "pages": [
+    {
+      "id": "fx-bold-creative-page-14",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "home",
+      "title": "Home",
+      "slug": "home",
+      "visible": true,
+      "seo": {},
+      "sections": [
+        {
+          "id": "fx-bold-creative-item-15",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "hero",
+          "config": {
+            "eyebrow": {
+              "en": "Make Something Real",
+              "ar": "اصنع شيئًا حقيقيًا"
+            },
+            "title": {
+              "en": "Create, Build, and Stand Out at Horizon Academy",
+              "ar": "أبدع وابنِ وتميّز مع Horizon Academy"
+            },
+            "description": {
+              "en": "Hands-on courses for makers, designers, and creators who want more than theory.",
+              "ar": "دورات عملية للمبدعين والمصممين وصنّاع المحتوى الذين يبحثون عن أكثر من مجرد النظرية."
+            },
+            "cta": {
+              "label": {
+                "en": "See What You Can Learn",
+                "ar": "اكتشف ما يمكنك تعلّمه"
+              },
+              "pageId": "fx-bold-creative-page-4"
+            }
+          }
+        },
+        {
+          "id": "fx-bold-creative-item-16",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "about",
+          "config": {
+            "title": {
+              "en": "Learn by Doing",
+              "ar": "تعلّم من خلال الممارسة"
+            },
+            "body": {
+              "en": "At Horizon Academy, every course is built around making real things — not just watching, but doing. That’s how skills that actually stick get built.",
+              "ar": "في Horizon Academy، كل دورة مبنية حول صنع أشياء حقيقية — ليس فقط المشاهدة، بل الممارسة الفعلية. هكذا تُبنى المهارات التي تدوم."
+            }
+          }
+        },
+        {
+          "id": "fx-bold-creative-item-17",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "featuredCourses",
+          "config": {
+            "title": {
+              "en": "Start Creating",
+              "ar": "ابدأ الإبداع"
+            },
+            "mode": "latest",
+            "layout": "carousel",
+            "count": 4,
+            "showPrice": true,
+            "showInstructor": true
+          }
+        },
+        {
+          "id": "fx-bold-creative-item-18",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "gallery",
+          "config": {
+            "title": {
+              "en": "From Our Students",
+              "ar": "من إبداع طلابنا"
+            },
+            "images": []
+          }
+        },
+        {
+          "id": "fx-bold-creative-item-19",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "testimonials",
+          "config": {
+            "title": {
+              "en": "Real Work, Real Voices",
+              "ar": "أعمال حقيقية، أصوات حقيقية"
+            },
+            "items": []
+          }
+        },
+        {
+          "id": "fx-bold-creative-item-20",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "features",
+          "config": {
+            "title": {
+              "en": "Why Learn With Us",
+              "ar": "لماذا تتعلّم معنا"
+            },
+            "items": [
+              {
+                "id": "feature-projects",
+                "title": {
+                  "en": "Real Projects",
+                  "ar": "مشاريع حقيقية"
+                },
+                "description": {
+                  "en": "Build a portfolio, not just a certificate.",
+                  "ar": "ابنِ معرض أعمال، لا مجرد شهادة."
+                },
+                "icon": "Sparkles"
+              },
+              {
+                "id": "feature-creators",
+                "title": {
+                  "en": "Taught by Creators",
+                  "ar": "يُقدَّم من قبل مبدعين"
+                },
+                "description": {
+                  "en": "Instructors who make a living doing this work.",
+                  "ar": "مدرّبون يعملون فعليًا في هذا المجال."
+                },
+                "icon": "Video"
+              }
+            ]
+          }
+        },
+        {
+          "id": "fx-bold-creative-item-21",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "cta",
+          "config": {
+            "title": {
+              "en": "Your Next Project Starts Here",
+              "ar": "مشروعك القادم يبدأ من هنا"
+            },
+            "cta": {
+              "label": {
+                "en": "Join Horizon Academy",
+                "ar": "انضم إلى Horizon Academy"
+              },
+              "authAction": "signUp"
+            }
+          }
+        }
+      ],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-bold-creative-page-2",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "about",
+      "title": "About",
+      "slug": "about",
+      "visible": true,
+      "seo": {},
+      "sections": [
+        {
+          "id": "fx-bold-creative-item-22",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "about",
+          "config": {
+            "title": {
+              "en": "About Horizon Academy",
+              "ar": "نبذة عن Horizon Academy"
+            },
+            "body": {
+              "en": "Welcome to Horizon Academy. We're dedicated to helping our students learn new skills, grow their expertise, and achieve their goals through high-quality courses and expert instruction.",
+              "ar": "مرحبًا بكم في Horizon Academy. نحن ملتزمون بمساعدة طلابنا على اكتساب مهارات جديدة وتطوير خبراتهم وتحقيق أهدافهم من خلال دورات عالية الجودة وتعليم احترافي."
+            }
+          }
+        }
+      ],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-bold-creative-page-4",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "courses",
+      "title": "Courses",
+      "slug": "courses",
+      "visible": true,
+      "seo": {},
+      "sections": [
+        {
+          "id": "fx-bold-creative-item-23",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "courseCatalog",
+          "config": {
+            "title": {
+              "en": "Our Courses",
+              "ar": "دوراتنا"
+            },
+            "description": {
+              "en": "Explore our full range of courses and find the right one for you.",
+              "ar": "استكشف مجموعتنا الكاملة من الدورات واختر الأنسب لك."
+            },
+            "pageSize": 12,
+            "defaultSort": "newest",
+            "showSearch": true,
+            "showLevelFilter": true,
+            "showPricingFilter": true,
+            "showSort": true
+          }
+        }
+      ],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-bold-creative-page-6",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "faqs",
+      "title": "FAQs",
+      "slug": "faqs",
+      "visible": true,
+      "seo": {},
+      "sections": [
+        {
+          "id": "fx-bold-creative-item-24",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "faq",
+          "config": {
+            "title": {
+              "en": "Frequently Asked Questions",
+              "ar": "الأسئلة الشائعة"
+            },
+            "items": [
+              {
+                "id": "faq-enroll",
+                "question": {
+                  "en": "How do I enroll in a course?",
+                  "ar": "كيف يمكنني التسجيل في دورة؟"
+                },
+                "answer": {
+                  "en": "Create an account, browse our course catalog, and click enroll on the course you'd like to join.",
+                  "ar": "أنشئ حسابًا، تصفّح كتالوج الدورات، ثم انقر على زر التسجيل في الدورة التي ترغب بالانضمام إليها."
+                }
+              },
+              {
+                "id": "faq-experience",
+                "question": {
+                  "en": "Do I need any prior experience?",
+                  "ar": "هل أحتاج إلى خبرة سابقة؟"
+                },
+                "answer": {
+                  "en": "Most of our courses are designed for learners of all levels — check each course's own description for specific requirements.",
+                  "ar": "معظم دوراتنا مصممة لمتعلمين من جميع المستويات، يرجى مراجعة وصف كل دورة للاطلاع على متطلباتها الخاصة."
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-bold-creative-page-8",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "contact",
+      "title": "Contact",
+      "slug": "contact",
+      "visible": true,
+      "seo": {},
+      "sections": [
+        {
+          "id": "fx-bold-creative-item-25",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "contact",
+          "config": {
+            "title": {
+              "en": "Get in Touch",
+              "ar": "تواصل معنا"
+            },
+            "description": {
+              "en": "Have a question? We'd love to hear from you.",
+              "ar": "هل لديك سؤال؟ يسعدنا التواصل معك."
+            },
+            "showForm": true
+          }
+        }
+      ],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-bold-creative-page-26",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "courseDetails",
+      "title": "Course Details",
+      "slug": "course-details",
+      "visible": true,
+      "seo": {},
+      "sections": [],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    }
+  ]
+}
