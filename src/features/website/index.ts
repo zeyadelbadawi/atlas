@@ -93,3 +93,10 @@ export {
   isPublicWebsiteLocale,
 } from './constants/locale.constants';
 export type { PublicWebsiteLocale } from './constants/locale.constants';
+
+// Theme 1 plan Phase 4 — Brand Studio: the setup form's "Logo & colours"
+// block and the deferred save that follows provisioning.
+export { SetupBrandStudio } from './brand-studio/SetupBrandStudio';
+export { FinishBrandingCard } from './brand-studio/FinishBrandingCard';
+export { pendingBrandingStore } from './brand-studio/pending-branding';
+export type { PendingBranding } from './brand-studio/pending-branding';

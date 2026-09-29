@@ -32,6 +32,7 @@ import {
   useRetryProvisioning,
 } from '@features/provisioning';
 import type { ProvisioningStepStatus } from '@types';
+import { FinishBrandingCard, pendingBrandingStore } from '@features/website';
 import { OnboardingStepFrame } from './OnboardingStepFrame';
 import { StepPanel } from './StepPanel';
 import { findStep } from '../utils/onboarding-status.utils';
@@ -177,8 +178,26 @@ function ProvisioningProgress({
       testId="academy-provisioning"
     >
       {checklist}
+      {request ? (
+        <div className="mt-4">
+          <FinishBrandingCard request={request} />
+        </div>
+      ) : null}
     </StepPanel>
   );
+}
+
+/**
+ * Theme 1 plan §F.4.3 — keeps saving the setup form's logo & colours after
+ * the progress view has handed over to the finished Academy panel.
+ */
+function FinishBrandingForRequest({
+  requestId,
+}: {
+  readonly requestId: string;
+}): JSX.Element | null {
+  const { data: request } = useProvisioningRequest(requestId);
+  return request ? <FinishBrandingCard request={request} /> : null;
 }
 
 export function AcademyStep({
@@ -231,6 +250,11 @@ export function AcademyStep({
                 {status.academy.host}
               </span>
             </p>
+          ) : null}
+          {createdRequest && pendingBrandingStore.get(createdRequest.id) ? (
+            <div className="mt-4">
+              <FinishBrandingForRequest requestId={createdRequest.id} />
+            </div>
           ) : null}
         </StepPanel>
       );

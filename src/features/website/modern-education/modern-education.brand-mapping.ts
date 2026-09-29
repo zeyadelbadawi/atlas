@@ -38,6 +38,9 @@ import type {
   BrandMappingInput,
   WebsiteBrandVariables,
 } from '../theme-packs/theme-pack.types';
+import { isUsablePalette } from '../theme-packs/brand-palette.utils';
+
+export { isUsablePalette };
 
 /** Theme 1's canvas chroma cap (§F.4.2 step 6). */
 export const MODERN_EDUCATION_NEUTRAL_CHROMA_CAP = 0.012;
@@ -62,12 +65,6 @@ function composite(
     g: a.g * alpha + b.g * (1 - alpha),
     b: a.b * alpha + b.b * (1 - alpha),
   });
-}
-
-/** A stored palette is used only when it carries every role in the stored format. */
-export function isUsablePalette(value: unknown): value is BrandPalette {
-  const roles = (value as { roles?: Record<string, unknown> } | null)?.roles;
-  return !!roles && BRAND_ROLE_NAMES.every((name) => isHslTriplet(roles[name]));
 }
 
 const derivedCache = new Map<string, { roles: BrandRoles; border: boolean }>();

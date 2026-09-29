@@ -132,7 +132,10 @@ export default function WebsiteSettingsPage(): JSX.Element {
           <TabsContent value="brand" className="pt-4">
             <WebsiteBrandTab
               academyId={academyId}
+              academyName={academy.name}
+              academyLogo={academy.logo}
               configuration={configuration}
+              pages={pages}
             />
           </TabsContent>
 

@@ -12,7 +12,7 @@
  * gating stays with the caller too — the backend enforces the limit
  * regardless, and a refusal surfaces through the form's error state.
  */
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -21,8 +21,17 @@ import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { Button } from '@/components/ui/button';
 import { cn } from '@utils';
-import { listWebsiteThemes } from '@features/website';
-import type { ProvisioningRequest, WebsiteThemeDefinition } from '@types';
+import {
+  listWebsiteThemes,
+  pendingBrandingStore,
+  SetupBrandStudio,
+  type PendingBranding,
+} from '@features/website';
+import type {
+  ProvisioningRequest,
+  WebsiteThemeDefinition,
+  WebsiteThemeKey,
+} from '@types';
 import {
   Form,
   FormControl,
@@ -121,6 +130,13 @@ export function AcademySetupForm({
       }),
   });
 
+  // Theme 1 plan §F.4.3 — branding chosen here waits in the page for its
+  // Academy; the request itself carries no new fields.
+  const pendingBranding = useRef<PendingBranding | null>(null);
+  const onBrandingChange = useCallback((value: PendingBranding | null) => {
+    pendingBranding.current = value;
+  }, []);
+
   const onSubmit = (data: CreateProvisioningRequestFormData) => {
     createRequest.mutate(
       {
@@ -134,7 +150,12 @@ export function AcademySetupForm({
         },
       },
       {
-        onSuccess: onCreated,
+        onSuccess: (request) => {
+          if (pendingBranding.current) {
+            pendingBrandingStore.set(request.id, pendingBranding.current);
+          }
+          onCreated(request);
+        },
       }
     );
   };
@@ -294,6 +315,17 @@ export function AcademySetupForm({
               </div>
             </FormItem>
           )}
+        />
+
+        {/* Theme 1 plan §F.4.3 — optional "Logo & colours", beside the
+            theme picker, with a live mini-preview of the chosen theme. */}
+        <SetupBrandStudio
+          themeKey={
+            (selectedThemeKey as WebsiteThemeKey | undefined) ??
+            'modern-education'
+          }
+          academyName={academyNameValue}
+          onChange={onBrandingChange}
         />
 
         {/*

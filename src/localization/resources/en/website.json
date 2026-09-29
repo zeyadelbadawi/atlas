@@ -488,7 +488,17 @@
     "primaryLogoNote": "Your primary logo and favicon are managed on your Academy's Branding page.",
     "manageInAcademyBranding": "Manage in Academy Branding",
     "saved": "Brand settings saved",
-    "saveError": "Failed to save brand settings"
+    "saveError": "Failed to save brand settings",
+    "validation": {
+      "invalidShape": "This palette is incomplete.",
+      "unsupportedSchemaVersion": "This palette was saved by a newer version.",
+      "unknownAlgorithmVersion": "This palette was made by an unknown version.",
+      "invalidColor": "This isn't a valid colour.",
+      "contrastFailure": "Not readable enough: {{ratio}}:1 (needs {{required}}:1).",
+      "decorativeUsageRequired": "This colour can only be used for decoration.",
+      "unknownOverride": "This colour can't be changed here.",
+      "overrideNotApplied": "This change couldn't be applied."
+    }
   },
   "seo": {
     "siteTitle": "Site title",
@@ -917,5 +927,93 @@
     "social": "Social links",
     "topCategories": "Top categories",
     "contact": "Contact"
+  },
+  "brandStudio": {
+    "title": "Brand colours",
+    "description": "Your logo suggests a palette. Every colour is checked so text stays readable, and you can adjust anything before you accept it.",
+    "setupTitle": "Logo & colours (optional)",
+    "setupHelp": "Add your logo to see your website in your own colours. You can also do this later.",
+    "logoTitle": "Logo",
+    "chooseLogo": "Choose logo",
+    "replaceLogo": "Replace logo",
+    "logoHelp": "PNG, JPG, WebP or SVG, up to 2 MB. A logo on a transparent background works best.",
+    "analyzing": "Reading your logo's colours…",
+    "proposed": "We suggested a palette from your logo. Review it, then accept.",
+    "retry": "Try again",
+    "manualHint": "You can try another file, or pick your colours below.",
+    "monochromeHint": "Your logo is black and white, so we used a theme colour for accents. Pick a brand colour below if you have one.",
+    "errors": {
+      "empty": "That file is empty.",
+      "tooLarge": "That file is larger than 2 MB.",
+      "unsupportedType": "That file type isn't supported. Use PNG, JPG, WebP or SVG.",
+      "corrupt": "That file couldn't be read.",
+      "dimensionsTooLarge": "That image is too large. Use a logo under 8000 pixels on its longest side.",
+      "analysisFailed": "We couldn't read the colours in that logo."
+    },
+    "brandColours": "Your brand colours",
+    "regenerate": "Try another combination",
+    "variants": {
+      "balanced": "Balanced",
+      "vivid": "Vivid",
+      "calm": "Calm",
+      "secondaryLed": "Secondary-led"
+    },
+    "seeds": {
+      "primary": "Primary",
+      "secondary": "Secondary",
+      "accent": "Accent"
+    },
+    "paletteTitle": "Your palette",
+    "groups": {
+      "brand": "Brand",
+      "surfaces": "Surfaces",
+      "text": "Text",
+      "feedback": "Feedback"
+    },
+    "roles": {
+      "primary": "Primary",
+      "primaryForeground": "Text on primary",
+      "secondary": "Secondary",
+      "secondaryForeground": "Text on secondary",
+      "accent": "Accent",
+      "accentForeground": "Text on accent",
+      "background": "Background",
+      "surface": "Surface",
+      "surfaceMuted": "Muted surface",
+      "foreground": "Text",
+      "foregroundMuted": "Secondary text",
+      "border": "Border",
+      "success": "Success",
+      "warning": "Warning",
+      "error": "Error",
+      "focus": "Focus ring",
+      "link": "Links",
+      "cta": "Buttons",
+      "ctaForeground": "Button text"
+    },
+    "badge": {
+      "pass": "Passes contrast",
+      "adjusted": "Adjusted to pass",
+      "decorative": "Decorative only"
+    },
+    "ratio": "Contrast {{ratio}}:1",
+    "advanced": "Advanced: adjust individual colours",
+    "advancedHelp": "Change any colour. Text colours must stay readable; if one doesn't, we'll say why and suggest the nearest colour that works.",
+    "useDerived": "Use suggested",
+    "useSuggestion": "Use the nearest readable colour",
+    "accept": "Accept palette",
+    "accepted": "Palette accepted",
+    "resetToLogo": "Reset to logo suggestion",
+    "resetToTheme": "Reset to theme default",
+    "cannotAccept": "Fix the highlighted colours before accepting.",
+    "preview": "Live preview",
+    "save": "Save brand colours",
+    "statusConfirmed": "Accepted palette",
+    "statusProposed": "Suggested palette — accept it to confirm your choice",
+    "savingLogo": "Saving your logo…",
+    "logoSaveError": "Your logo couldn't be saved. Please try again.",
+    "sampleName": "Your Academy",
+    "finishSaving": "Saving your logo and colours…",
+    "finishFailed": "We couldn't save your logo and colours yet."
   }
 }
