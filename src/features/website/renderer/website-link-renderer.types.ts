@@ -14,6 +14,8 @@ export interface WebsiteLinkRendererProps {
   readonly href: string;
   readonly external: boolean;
   readonly className?: string;
+  /** Marks the link for the page being shown (navigation). */
+  readonly ariaCurrent?: 'page';
   readonly children: ReactNode;
 }
 

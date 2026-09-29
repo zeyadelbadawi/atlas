@@ -310,6 +310,12 @@ export function buildLiveData(academyId, state) {
         }
       : { courses: 0, students: 0, instructors: 0 },
     courses,
+    // `GET public/websites/:id/categories`: categories holding a published
+    // public course, with counts (the real endpoint's rule).
+    categories: CATEGORIES.map((category) => ({
+      ...category,
+      courseCount: courses.filter((c) => c.categoryId === category.id).length,
+    })).filter((category) => category.courseCount > 0),
     curriculum: rich ? CURRICULUM : [],
     reviews: rich
       ? REVIEWS.map((review) => ({

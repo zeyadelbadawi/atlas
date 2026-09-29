@@ -22,6 +22,18 @@
  * components should wrap them in this bridge.
  */
 import { useWebsiteDesignSystem } from './WebsiteDesignSystemContext';
+import {
+  useThemePack,
+  useWebsiteBrandVariables,
+} from '../theme-packs/ThemePackContext';
+import { mapBaseBrandPalette } from '../theme-packs/base-brand-mapping';
+
+const BRIDGED_TOKENS = [
+  '--primary',
+  '--primary-foreground',
+  '--primary-hover',
+  '--ring',
+] as const;
 
 /** Darkens (light mode) or lightens (dark mode) an `"H S% L%"` triplet by a fixed amount for a `:hover` shade — approximates, rather than exactly reproduces, `--primary-hover`'s own light/dark-specific offset (see `index.css`); a minor, disclosed visual approximation, not a functional gap. */
 function shiftLightness(hslTriplet: string, deltaPercent: number): string {
@@ -38,6 +50,21 @@ export function WebsiteBrandBridge({
   readonly children: React.ReactNode;
 }): JSX.Element {
   const design = useWebsiteDesignSystem();
+  const pack = useThemePack();
+  const mapped = useWebsiteBrandVariables();
+  // A theme with its own brand mapping (Theme 1 plan §F.5) has already
+  // chosen accessible values for these tokens; re-deriving them from the
+  // raw brand colour here would undo that inside every bridged form.
+  if (pack.mapBrandPalette !== mapBaseBrandPalette && mapped) {
+    const bridged = Object.fromEntries(
+      BRIDGED_TOKENS.map((token) => [token, mapped[token]])
+    ) as React.CSSProperties;
+    return (
+      <div className="contents" style={bridged}>
+        {children}
+      </div>
+    );
+  }
   const isDark = document.documentElement.classList.contains('dark');
   const style = {
     '--primary': design.primary,

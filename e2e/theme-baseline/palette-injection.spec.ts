@@ -6,8 +6,14 @@
  * inject a full semantic palette the same way (the fixture server's
  * `--<palette>` slug suffix), so this guard proves the injection path
  * before anything depends on it.
+ *
+ * Since Phase 4, Theme 1 maps the seeds through its own semantic mapping
+ * (§F.5) instead of passing them through: for it, the guard checks the
+ * scope carries exactly what that mapping makes of the injected seeds.
  */
 import { FIXTURE_PALETTES } from './fixtures/live-data.mjs';
+import { mapModernEducationBrandPalette } from '../../src/features/website/modern-education/modern-education.brand-mapping';
+import { MODERN_EDUCATION_THEME } from '../../src/features/website/themes/modern-education.theme';
 import { fixtureSlug, fixtureUrl, THEMES } from './matrix';
 import {
   expect,
@@ -40,11 +46,27 @@ for (const theme of THEMES) {
           };
         });
       const seeds = FIXTURE_PALETTES[palette];
-      expect(scopeVariables).toEqual({
-        primary: seeds.primaryColor,
-        secondary: seeds.secondaryColor,
-        accent: seeds.accentColor,
-      });
+      if (theme === 'modern-education') {
+        const mapped = mapModernEducationBrandPalette({
+          theme: MODERN_EDUCATION_THEME,
+          seeds: {
+            primary: seeds.primaryColor,
+            secondary: seeds.secondaryColor,
+            accent: seeds.accentColor,
+          },
+        });
+        expect(scopeVariables).toEqual({
+          primary: mapped['--website-primary'],
+          secondary: mapped['--website-secondary'],
+          accent: mapped['--website-accent'],
+        });
+      } else {
+        expect(scopeVariables).toEqual({
+          primary: seeds.primaryColor,
+          secondary: seeds.secondaryColor,
+          accent: seeds.accentColor,
+        });
+      }
       expectNoIssues(issues);
     });
   }

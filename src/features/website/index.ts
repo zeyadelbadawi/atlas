@@ -36,6 +36,7 @@ export type { WebsiteChromeProps } from './renderer/WebsiteChrome';
 // not a per-component retheme.
 export { useWebsiteDesignSystem } from './renderer/WebsiteDesignSystemContext';
 export { WebsiteBrandBridge } from './renderer/WebsiteBrandBridge';
+export { WebsiteAuthFrame } from './renderer/WebsiteAuthFrame';
 
 // Phase P19 — `ProvisioningStartPage`'s theme-selection step needs the
 // real theme registry (never a second, invented catalog). Curated export,

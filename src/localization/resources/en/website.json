@@ -909,5 +909,13 @@
     "explainer": "Reload to see their version and start again from it, or keep your changes and apply them on top of theirs. Their work is never discarded either way.",
     "reload": "Reload latest",
     "keepMine": "Keep my changes"
+  },
+  "chrome": {
+    "primaryNavigation": "Main",
+    "openMenu": "Open menu",
+    "menuTitle": "{{name}} menu",
+    "social": "Social links",
+    "topCategories": "Top categories",
+    "contact": "Contact"
   }
 }

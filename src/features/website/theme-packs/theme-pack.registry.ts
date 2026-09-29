@@ -15,7 +15,7 @@
 import type { SectionType, WebsiteThemeKey } from '@types';
 import { BASE_RENDERERS } from './base-renderers';
 import { createBasePack } from './base-pack';
-import { MODERN_EDUCATION_PACK } from './packs/modern-education.pack';
+import { MODERN_EDUCATION_PACK } from '../modern-education/modern-education.pack';
 import type { SectionRendererComponent, ThemePack } from './theme-pack.types';
 
 const registry: Record<WebsiteThemeKey, ThemePack> = {

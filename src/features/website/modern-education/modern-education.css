@@ -1,0 +1,148 @@
+/*
+ * Theme 1 — Modern Education: the visual system (plan §B, §G).
+ *
+ * Scoped to `[data-theme-pack='modern-education']` on the theme scope, so
+ * nothing here can reach Themes 2–5 or the dashboard. Colours are never
+ * declared here: they come from the brand mapping (§F.5) as
+ * `--website-*` variables. This file holds only the theme's invariants —
+ * type scale, rhythm, radius, elevation, motion — which stay identical
+ * for every brand (§B "brand expression").
+ */
+
+.website-theme-scope[data-theme-pack='modern-education'] {
+  /* Type scale (§B): display 64/56/40, section titles 40/32/28, lead 18/17. */
+  --t1-display: 2.5rem;
+  --t1-title: 1.75rem;
+  --t1-lead: 1.0625rem;
+  --t1-measure: 65ch;
+
+  /* Vertical rhythm 96/80/64 (§B). */
+  --t1-rhythm: 4rem;
+
+  /* Shape and elevation (§B: cards 20px, hairline border, lift on hover). */
+  --t1-radius-card: 20px;
+  --t1-radius-control: 12px;
+  --t1-radius-pill: 999px;
+  --t1-shadow-rest: 0 1px 2px hsl(220 30% 12% / 0.05);
+  --t1-shadow-lift: 0 18px 40px -18px hsl(220 30% 12% / 0.28);
+  --t1-shadow-header: 0 6px 20px -12px hsl(220 30% 12% / 0.22);
+
+  /* Chrome. */
+  --t1-header-height: 4rem;
+
+  /* Motion (§G): Atlas motion tokens. */
+  --t1-duration: var(--duration-normal, 220ms);
+  --t1-ease: var(--ease-entrance, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+@media (min-width: 768px) {
+  .website-theme-scope[data-theme-pack='modern-education'] {
+    --t1-display: 3.5rem;
+    --t1-title: 2rem;
+    --t1-lead: 1.125rem;
+    --t1-rhythm: 5rem;
+    --t1-header-height: 4.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .website-theme-scope[data-theme-pack='modern-education'] {
+    --t1-display: 4rem;
+    --t1-title: 2.5rem;
+    --t1-rhythm: 6rem;
+  }
+}
+
+/* The header: transparent at the top, solid once the page scrolls (§G). */
+.t1-header {
+  background-color: transparent;
+  border-bottom: 1px solid transparent;
+  transition:
+    background-color var(--t1-duration) var(--t1-ease),
+    border-color var(--t1-duration) var(--t1-ease),
+    box-shadow var(--t1-duration) var(--t1-ease);
+}
+.t1-header[data-solid='true'] {
+  background-color: var(--website-background);
+  border-bottom-color: var(--website-border);
+  box-shadow: var(--t1-shadow-header);
+}
+
+/* Nav links: an underline that grows from the logical start (§G). */
+.t1-nav-link {
+  position: relative;
+  padding-block: 0.5rem;
+}
+.t1-nav-link::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-end: 0.125rem;
+  inline-size: 100%;
+  block-size: 2px;
+  border-radius: 2px;
+  background-color: var(--website-link);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--t1-duration) var(--t1-ease);
+}
+[dir='rtl'] .t1-nav-link::after {
+  transform-origin: right center;
+}
+.t1-nav-link:hover::after,
+.t1-nav-link:focus-visible::after,
+.t1-nav-link[aria-current='page']::after {
+  transform: scaleX(1);
+}
+
+/* The primary action — the only place the CTA fill appears in the chrome. */
+.t1-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-block-size: 2.75rem;
+  padding-inline: 1.25rem;
+  border-radius: var(--t1-radius-control);
+  border: 1px solid var(--website-cta-border);
+  background-color: var(--website-cta);
+  color: var(--website-cta-foreground);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  white-space: nowrap;
+  transition: background-color var(--t1-duration) var(--t1-ease);
+}
+.t1-cta:hover {
+  background-color: var(--website-cta-hover);
+}
+.t1-cta:active {
+  background-color: var(--website-cta-pressed);
+}
+
+/* Every focusable element in the chrome shows the brand focus ring. */
+.t1-focus:focus-visible,
+.t1-cta:focus-visible,
+.t1-nav-link:focus-visible {
+  outline: 2px solid var(--website-focus);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Footer links: underline on hover and focus (a non-colour cue, §F.4.4). */
+.t1-footer-link {
+  color: var(--website-foreground-muted);
+  text-underline-offset: 3px;
+}
+.t1-footer-link:hover,
+.t1-footer-link:focus-visible {
+  color: var(--website-foreground);
+  text-decoration: underline;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t1-header,
+  .t1-nav-link::after,
+  .t1-cta {
+    transition: none;
+  }
+}

@@ -26,13 +26,17 @@ import {
   WEBSITE_SHADOW_VALUES,
 } from '../utils/website-theme-tokens.utils';
 import { getThemePack } from '../theme-packs/theme-pack.registry';
-import { ThemePackContext } from '../theme-packs/ThemePackContext';
+import {
+  ThemePackContext,
+  WebsiteBrandVariablesContext,
+} from '../theme-packs/ThemePackContext';
+import type { BrandMappingInput } from '../theme-packs/theme-pack.types';
 
 export interface WebsiteThemeScopeProps {
   readonly theme: WebsiteThemeDefinition;
   readonly brand?: Pick<
     WebsiteBrandConfig,
-    'primaryColor' | 'secondaryColor' | 'accentColor'
+    'primaryColor' | 'secondaryColor' | 'accentColor' | 'palette'
   >;
   readonly children: ReactNode;
   readonly className?: string;
@@ -56,20 +60,30 @@ export function WebsiteThemeScope({
 
   const pack = useMemo(() => getThemePack(theme.key), [theme.key]);
 
+  // Theme 1 plan §F.4.6: the stored semantic palette when there is one;
+  // each pack decides what to do with it (the base mapping ignores it).
+  const palette = brand?.palette;
+  const brandVariables = useMemo(
+    () =>
+      pack.mapBrandPalette({
+        theme,
+        seeds: {
+          primary: resolved.primary,
+          secondary: resolved.secondary,
+          accent: resolved.accent,
+        },
+        palette: palette as BrandMappingInput['palette'],
+      }),
+    [pack, theme, resolved, palette]
+  );
+
   const style = useMemo<CSSProperties>(
     () =>
       ({
         // Colours: the theme pack's brand mapping (Theme 1 plan §F.5) —
         // see `base-brand-mapping.ts` for the variables and why each one
         // exists.
-        ...pack.mapBrandPalette({
-          theme,
-          seeds: {
-            primary: resolved.primary,
-            secondary: resolved.secondary,
-            accent: resolved.accent,
-          },
-        }),
+        ...brandVariables,
         // Shape and rhythm: the theme's own bounded tokens.
         '--website-radius': WEBSITE_RADIUS_VALUES[resolved.radius],
         '--website-shadow': WEBSITE_SHADOW_VALUES[resolved.shadow],
@@ -78,7 +92,7 @@ export function WebsiteThemeScope({
         '--website-container-width':
           WEBSITE_CONTAINER_WIDTH_VALUES[resolved.containerWidth],
       }) as CSSProperties,
-    [pack, theme, resolved]
+    [brandVariables, resolved]
   );
 
   // Portalled overlays (dialogs, sheets, popovers, selects) mount HERE,
@@ -93,18 +107,24 @@ export function WebsiteThemeScope({
   return (
     <WebsiteDesignSystemContext.Provider value={resolved}>
       <ThemePackContext.Provider value={pack}>
-        <div className={cn('website-theme-scope', className)} style={style}>
-          <PortalContainerProvider value={portalContainer}>
-            {children}
-          </PortalContainerProvider>
-          {/* `text-foreground` so text inside a portalled overlay inherits the
-            scope's colour rather than the body's (dark-mode) colour. */}
+        <WebsiteBrandVariablesContext.Provider value={brandVariables}>
           <div
-            ref={setPortalContainer}
-            data-website-portal-root
-            className="text-foreground"
-          />
-        </div>
+            className={cn('website-theme-scope', className)}
+            data-theme-pack={pack.key}
+            style={style}
+          >
+            <PortalContainerProvider value={portalContainer}>
+              {children}
+            </PortalContainerProvider>
+            {/* `text-foreground` so text inside a portalled overlay inherits the
+            scope's colour rather than the body's (dark-mode) colour. */}
+            <div
+              ref={setPortalContainer}
+              data-website-portal-root
+              className="text-foreground"
+            />
+          </div>
+        </WebsiteBrandVariablesContext.Provider>
       </ThemePackContext.Provider>
     </WebsiteDesignSystemContext.Provider>
   );

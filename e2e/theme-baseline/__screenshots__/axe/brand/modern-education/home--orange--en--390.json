@@ -14,11 +14,9 @@
       "id": "color-contrast",
       "impact": "serious",
       "help": "Elements must meet minimum color contrast ratio thresholds",
-      "nodes": 5,
+      "nodes": 1,
       "targets": [
-        ".px-3",
-        ".uppercase",
-        ".bg-primary.hover\\:bg-primary\\/90.h-11"
+        ".max-w-xl"
       ]
     }
   ]

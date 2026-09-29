@@ -16,7 +16,7 @@
       "help": "Elements must meet minimum color contrast ratio thresholds",
       "nodes": 1,
       "targets": [
-        ".py-16.gap-4.text-white > .max-w-2xl"
+        ".py-16.text-white.gap-4 > .max-w-2xl"
       ]
     }
   ]

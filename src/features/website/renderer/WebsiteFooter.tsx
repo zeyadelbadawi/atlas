@@ -23,6 +23,7 @@ import type { WebsiteLinkRenderer } from './website-link-renderer.types';
 
 export interface WebsiteFooterProps {
   readonly academyName: string;
+  readonly academyLogo?: string;
   readonly footer: WebsiteFooterConfig;
   readonly pages: readonly WebsitePage[];
   readonly onNavigate: (pageId: string) => void;
@@ -48,7 +49,7 @@ export interface WebsiteFooterProps {
  * It degrades correctly when the Academy has configured no footer content
  * at all: it is then simply the footer's only row.
  */
-function FooterAttributionRow({
+export function FooterAttributionRow({
   container,
 }: {
   readonly container: string;

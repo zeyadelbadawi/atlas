@@ -5,7 +5,7 @@
  */
 import { createContext, useContext } from 'react';
 import { createBasePack } from './base-pack';
-import type { ThemePack } from './theme-pack.types';
+import type { ThemePack, WebsiteBrandVariables } from './theme-pack.types';
 
 export const ThemePackContext = createContext<ThemePack>(
   createBasePack('modern-education')
@@ -13,4 +13,12 @@ export const ThemePackContext = createContext<ThemePack>(
 
 export function useThemePack(): ThemePack {
   return useContext(ThemePackContext);
+}
+
+/** The scope's mapped brand variables (what the active pack emitted), for components that must re-apply them (`WebsiteBrandBridge`). */
+export const WebsiteBrandVariablesContext =
+  createContext<WebsiteBrandVariables | null>(null);
+
+export function useWebsiteBrandVariables(): WebsiteBrandVariables | null {
+  return useContext(WebsiteBrandVariablesContext);
 }

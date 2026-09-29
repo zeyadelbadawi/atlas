@@ -10,11 +10,14 @@
  * switch can never meet a section it can't draw, and adding a theme never
  * touches another theme's pack.
  *
- * Header/footer/auth-shell overrides are deliberately not here yet: the
- * footer carries the platform attribution that no theme may remove, so that
- * extension point is designed with Theme 1's chrome (Phase 4).
+ * Chrome (Phase 4): a pack may also replace the header, the footer and the
+ * auth-page frame. A replacement footer receives the platform attribution
+ * row as a prop and must render it — no theme can remove it; the chrome
+ * test asserts it for every pack.
  */
-import type { ComponentType } from 'react';
+import type { ComponentType, ReactNode } from 'react';
+import type { WebsiteHeaderProps } from '../renderer/WebsiteHeader';
+import type { WebsiteFooterProps } from '../renderer/WebsiteFooter';
 import type {
   SectionConfigMap,
   SectionType,
@@ -61,10 +64,29 @@ export interface BrandMappingInput {
 /** CSS custom properties, applied on the theme scope only. */
 export type WebsiteBrandVariables = Readonly<Record<`--${string}`, string>>;
 
+/** A replacement footer: gets the Academy id (live data) and the attribution row it must render last. */
+export interface ThemeFooterProps extends WebsiteFooterProps {
+  readonly academyId?: string;
+  readonly attribution: ReactNode;
+}
+
+/** Wraps an auth page's body (sign in/up, reset…). The base frame renders it unchanged. */
+export interface ThemeAuthFrameProps {
+  readonly children: ReactNode;
+}
+
+export interface ThemeChrome {
+  readonly Header?: ComponentType<WebsiteHeaderProps>;
+  readonly Footer?: ComponentType<ThemeFooterProps>;
+  readonly AuthFrame?: ComponentType<ThemeAuthFrameProps>;
+}
+
 export interface ThemePack {
   readonly key: WebsiteThemeKey;
   /** Only the section types this theme redesigns. */
   readonly renderers: Partial<SectionRenderers>;
+  /** Only the chrome this theme redesigns. */
+  readonly chrome?: ThemeChrome;
   /**
    * Palette → this theme's CSS variables (§F.5). Carries no image or
    * extraction knowledge; the palette carries no theme knowledge.

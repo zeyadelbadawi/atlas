@@ -114,6 +114,7 @@ vi.mock('@features/website', () => ({
   WebsiteBrandBridge: ({ children }: { children: ReactNode }) => (
     <>{children}</>
   ),
+  WebsiteAuthFrame: ({ children }: { children: ReactNode }) => <>{children}</>,
   resolvePagePath: () => undefined,
   resolveLocalizedText: () => '',
   usePublicWebsiteDocumentDirection: () => undefined,

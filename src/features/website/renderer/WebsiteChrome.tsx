@@ -18,7 +18,8 @@ import { cn } from '@utils';
 import { getWebsiteTheme } from '../themes/website-theme.registry';
 import { WebsiteThemeScope } from './WebsiteThemeScope';
 import { WebsiteHeader, type WebsiteHeaderAuthState } from './WebsiteHeader';
-import { WebsiteFooter } from './WebsiteFooter';
+import { FooterAttributionRow, WebsiteFooter } from './WebsiteFooter';
+import { getThemePack } from '../theme-packs/theme-pack.registry';
 import { MobileBottomNav } from './MobileBottomNav';
 import { useMobileBottomNavVisibility } from './useMobileBottomNavVisibility';
 import { PublicWebsiteLocaleProvider } from './PublicWebsiteLocaleContext';
@@ -35,6 +36,8 @@ import type {
 import type { WebsiteLinkRenderer } from './website-link-renderer.types';
 
 export interface WebsiteChromeProps {
+  /** Lets a theme's own chrome read live Academy data (e.g. Theme 1's footer categories and contact details). */
+  readonly academyId?: string;
   readonly academyName: string;
   readonly academyLogo?: string;
   readonly configuration: Pick<
@@ -56,6 +59,7 @@ export interface WebsiteChromeProps {
 }
 
 export function WebsiteChrome({
+  academyId,
   academyName,
   academyLogo,
   configuration,
@@ -72,8 +76,13 @@ export function WebsiteChrome({
   const theme = getWebsiteTheme(configuration.themeKey);
   const brand: Pick<
     WebsiteBrandConfig,
-    'primaryColor' | 'secondaryColor' | 'accentColor'
+    'primaryColor' | 'secondaryColor' | 'accentColor' | 'palette'
   > = configuration.brand;
+  // A theme pack may redesign the header and footer (Theme 1 plan §C.1);
+  // otherwise the shared ones render exactly as before.
+  const chrome = getThemePack(theme.key).chrome;
+  const Header = chrome?.Header ?? WebsiteHeader;
+  const ThemeFooter = chrome?.Footer;
   // `linkRenderer` absent means dashboard preview (Theme gallery/Page
   // Editor) — `MobileBottomNav` itself already renders `null` there too;
   // computed once here as well so `<main>`'s bottom padding stays in sync
@@ -108,7 +117,7 @@ export function WebsiteChrome({
         once the Academy has real content, so a long page simply scrolls.
       */}
         <div className="flex min-h-[100dvh] flex-col bg-[var(--website-background)] text-[var(--website-foreground)]">
-          <WebsiteHeader
+          <Header
             logo={academyLogo}
             academyName={academyName}
             navigation={configuration.navigation}
@@ -151,18 +160,40 @@ export function WebsiteChrome({
           remove it. What moved is where the markup sits, not who controls
           it.
         */}
-          <WebsiteFooter
-            academyName={academyName}
-            footer={configuration.footer}
-            pages={pages}
-            onNavigate={onNavigate}
-            linkRenderer={linkRenderer}
-          />
+          {ThemeFooter ? (
+            <ThemeFooter
+              academyId={academyId}
+              academyName={academyName}
+              academyLogo={academyLogo}
+              footer={configuration.footer}
+              pages={pages}
+              onNavigate={onNavigate}
+              linkRenderer={linkRenderer}
+              // The platform attribution is handed to the theme's footer as
+              // a finished element: the theme places it, it can't change it.
+              attribution={
+                <FooterAttributionRow container="mx-auto w-full max-w-[var(--website-container-width)] px-4 sm:px-6 lg:px-8" />
+              }
+            />
+          ) : (
+            <WebsiteFooter
+              academyName={academyName}
+              footer={configuration.footer}
+              pages={pages}
+              onNavigate={onNavigate}
+              linkRenderer={linkRenderer}
+            />
+          )}
 
           <MobileBottomNav
             pages={pages}
             locale={locale}
             linkRenderer={linkRenderer}
+            // Theme 1 (plan §M.5 #16): a signed-out visitor is offered
+            // "Sign in" instead of account tabs they can't use yet.
+            accountTabs={
+              ThemeFooter ? (authState ? 'learner' : 'signIn') : undefined
+            }
           />
         </div>
       </WebsiteThemeScope>

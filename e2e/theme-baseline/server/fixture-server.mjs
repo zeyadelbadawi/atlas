@@ -183,6 +183,8 @@ function handlePublicWebsites(segments, url) {
       return { status: 200, body: live.identity };
     case 'statistics':
       return { status: 200, body: live.statistics };
+    case 'categories':
+      return { status: 200, body: live.categories };
     case 'courses': {
       if (!id) {
         return {

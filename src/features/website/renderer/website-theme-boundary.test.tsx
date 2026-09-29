@@ -11,12 +11,21 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, render } from '@testing-library/react';
 import { WebsiteThemeScope } from './WebsiteThemeScope';
 import { getWebsiteTheme } from '../themes/website-theme.registry';
+import { resolveModernEducationTokens } from '../modern-education/modern-education.brand-mapping';
 
-const theme = getWebsiteTheme('modern-education');
-
-function scopeStyle(brandPrimary: string): string {
+function scopeStyle(
+  brandPrimary: string,
+  themeKey: 'corporate-learning' | 'modern-education' = 'corporate-learning'
+): string {
   const { container } = render(
-    <WebsiteThemeScope theme={theme} brand={{ primaryColor: brandPrimary }}>
+    <WebsiteThemeScope
+      theme={getWebsiteTheme(themeKey)}
+      brand={{
+        primaryColor: brandPrimary,
+        secondaryColor: brandPrimary,
+        accentColor: brandPrimary,
+      }}
+    >
       <div>content</div>
     </WebsiteThemeScope>
   );
@@ -44,5 +53,32 @@ describe('WebsiteThemeScope — closed token boundary', () => {
     expect(a).toContain('--primary: 200 80% 40%');
     expect(b).toContain('--primary: 340 70% 45%');
     expect(a).not.toEqual(b);
+  });
+
+  /*
+   * Theme 1 (plan §F.5) maps the same tokens to the palette's accessible
+   * roles — still the Academy's own brand, never Atlas's, and still
+   * different per Academy — rather than the raw colour.
+   */
+  it('Theme 1: maps them to the derived CTA and focus roles, per Academy', () => {
+    const theme = getWebsiteTheme('modern-education');
+    const tokensFor = (primary: string) =>
+      resolveModernEducationTokens({
+        theme,
+        seeds: { primary, secondary: primary, accent: primary },
+      }).roles;
+    const a = scopeStyle('200 80% 40%', 'modern-education');
+    const aRoles = tokensFor('200 80% 40%');
+    expect(a).toContain(`--primary: ${aRoles.cta}`);
+    expect(a).toContain(`--ring: ${aRoles.focus}`);
+    expect(a).toContain(`--website-background: hsl(${aRoles.background})`);
+    cleanup();
+    const b = scopeStyle('340 70% 45%', 'modern-education');
+    expect(b).toContain(`--primary: ${tokensFor('340 70% 45%').cta}`);
+    expect(a).not.toEqual(b);
+  });
+
+  it('Theme 1: a stored colour that is not a valid triplet falls back instead of breaking the page', () => {
+    expect(() => scopeStyle('#1f6feb', 'modern-education')).not.toThrow();
   });
 });

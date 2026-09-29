@@ -35,7 +35,7 @@
  * are full-bleed video surfaces.
  */
 import { useLocation } from 'react-router-dom';
-import { Compass, GraduationCap, Home, User } from 'lucide-react';
+import { Compass, GraduationCap, Home, LogIn, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { LEARNER_ROUTES } from '@app/routes/route-paths';
@@ -48,12 +48,19 @@ export interface MobileBottomNavProps {
   readonly pages: readonly WebsitePage[];
   readonly locale: PublicWebsiteLocale;
   readonly linkRenderer?: WebsiteLinkRenderer;
+  /**
+   * Theme 1 plan §M.5 #16. `signIn`: a signed-out visitor gets one "Sign
+   * in" tab instead of "My Learning"/"Profile" (tabs that only lead to the
+   * sign-in page anyway). Absent: the four tabs every theme has always had.
+   */
+  readonly accountTabs?: 'learner' | 'signIn';
 }
 
 export function MobileBottomNav({
   pages,
   locale,
   linkRenderer,
+  accountTabs,
 }: MobileBottomNavProps): JSX.Element | null {
   const { t } = useTranslation();
   const location = useLocation();
@@ -71,7 +78,7 @@ export function MobileBottomNav({
   const coursesPage = pages.find((page) => page.coreType === 'courses');
   const coursesPath = coursesPage ? resolvePagePath(coursesPage) : '/courses';
 
-  const items = [
+  const allItems = [
     {
       key: 'home',
       href: '/',
@@ -106,7 +113,19 @@ export function MobileBottomNav({
       icon: User,
       isActive: unprefixedPathname.startsWith(LEARNER_ROUTES.profile),
     },
+    {
+      key: 'signIn',
+      href: '/sign-in',
+      label: t('publicWebsite:header.signIn'),
+      icon: LogIn,
+      isActive: unprefixedPathname.startsWith('/sign-in'),
+    },
   ] as const;
+  const items = allItems.filter((item) =>
+    accountTabs === 'signIn'
+      ? item.key === 'home' || item.key === 'courses' || item.key === 'signIn'
+      : item.key !== 'signIn'
+  );
 
   return (
     <nav
@@ -114,7 +133,12 @@ export function MobileBottomNav({
       className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 backdrop-blur md:hidden"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
-      <div className="grid grid-cols-4">
+      <div
+        className={cn(
+          'grid',
+          items.length === 3 ? 'grid-cols-3' : 'grid-cols-4'
+        )}
+      >
         {items.map(({ key, href, label, icon: Icon, isActive }) => (
           // `WebsiteLinkRenderer` returns the anchor/`Link` itself with
           // no `key` slot of its own — this wrapper (matching

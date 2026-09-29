@@ -44,11 +44,16 @@ describe('theme packs', () => {
       expect(BASE_RENDERERS[type]).toBeTypeOf('function');
   });
 
-  it('Themes 1–5 redesign nothing yet: base renderers and the base brand mapping', () => {
+  it('Themes 2–5 redesign nothing: base renderers and the base brand mapping', () => {
     for (const key of WEBSITE_THEME_KEYS) {
       const pack = getThemePack(key);
       expect(pack.renderers).toEqual({});
-      expect(pack.mapBrandPalette).toBe(mapBaseBrandPalette);
+      // Theme 1 has its own brand mapping since Phase 4 (§F.5).
+      if (key === 'modern-education') {
+        expect(pack.mapBrandPalette).not.toBe(mapBaseBrandPalette);
+      } else {
+        expect(pack.mapBrandPalette).toBe(mapBaseBrandPalette);
+      }
       for (const type of SECTION_TYPES) {
         expect(resolveSectionRenderer(pack, type)).toBe(BASE_RENDERERS[type]);
       }

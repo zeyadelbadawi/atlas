@@ -58,6 +58,7 @@ export function WebsiteRenderer({
 }: WebsiteRendererProps): JSX.Element {
   return (
     <WebsiteChrome
+      academyId={academyId}
       academyName={academyName}
       academyLogo={academyLogo}
       configuration={configuration}

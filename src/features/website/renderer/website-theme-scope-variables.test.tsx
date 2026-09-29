@@ -2,10 +2,12 @@
  * The exact CSS variables `WebsiteThemeScope` emits, per theme and brand.
  *
  * Recorded BEFORE the Theme 1 plan's Phase 1 moved brand application into
- * each theme pack's `mapBrandPalette` (§F.5): Themes 2–5 (and, until its
- * own mapping lands in Phase 4, Theme 1) must keep emitting these values
- * byte for byte. A change here is a visual change to every Academy on
- * that theme — re-record only on purpose.
+ * each theme pack's `mapBrandPalette` (§F.5): Themes 2–5 must keep
+ * emitting these values byte for byte. Theme 1's entries were re-recorded
+ * on purpose in Phase 4, when it got its own semantic mapping (see
+ * `modern-education.brand-mapping.test.ts` for what those values must
+ * satisfy). A change here is a visual change to every Academy on that
+ * theme — re-record only on purpose.
  */
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, render } from '@testing-library/react';
