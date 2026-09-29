@@ -18,6 +18,7 @@ import {
   BRAND_PALETTES,
   LOCALES,
   SHARED_CASES,
+  THEME1_HOME_C1_STATES,
   THEMED_PAGES,
   THEMES,
   fixtureSlug,
@@ -72,6 +73,7 @@ function axeCase(
     theme: ThemeKey;
     state: DataState;
     palette?: string;
+    composition?: 'c1';
   }
 ) {
   test(title, async ({ page, issues }) => {
@@ -80,7 +82,12 @@ function axeCase(
       fixtureUrl(
         target.page,
         target.locale,
-        fixtureSlug(target.theme, target.state, target.palette)
+        fixtureSlug(
+          target.theme,
+          target.state,
+          target.palette,
+          target.composition
+        )
       )
     );
     expect(await axeSummary(page)).toMatchSnapshot(snapshot);
@@ -131,6 +138,29 @@ for (const viewport of AXE_VIEWPORTS) {
       }
     }
 
+    for (const state of THEME1_HOME_C1_STATES) {
+      for (const locale of LOCALES) {
+        axeCase(
+          `modern-education c1 home ${state} ${locale}`,
+          [
+            'axe',
+            'themes',
+            'modern-education',
+            'c1',
+            `home--${state}--${locale}--${viewport.name}.json`,
+          ],
+          {
+            page: { name: 'home', path: '/' },
+            locale,
+            theme: 'modern-education',
+            state,
+            palette: 'default',
+            composition: 'c1',
+          }
+        );
+      }
+    }
+
     for (const palette of BRAND_PALETTES) {
       axeCase(
         `brand modern-education home ${palette}`,
@@ -144,8 +174,9 @@ for (const viewport of AXE_VIEWPORTS) {
           page: { name: 'home', path: '/' },
           locale: 'en',
           theme: 'modern-education',
-          state: 'new',
+          state: 'rich',
           palette,
+          composition: 'c1',
         }
       );
     }

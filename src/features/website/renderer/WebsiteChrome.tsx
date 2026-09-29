@@ -142,7 +142,14 @@ export function WebsiteChrome({
               the page's own last CTA/content — see that component's own doc
               comment for why this and its render condition must never
               disagree. */}
-          <main className={cn('flex-1', showBottomNav && 'pb-16 md:pb-0')}>
+          <main
+            className={cn(
+              'flex-1',
+              // A theme footer gets the clearance after the footer instead
+              // (below), so the page's last band meets the footer directly.
+              showBottomNav && !ThemeFooter && 'pb-16 md:pb-0'
+            )}
+          >
             {children}
           </main>
 
@@ -184,6 +191,14 @@ export function WebsiteChrome({
               linkRenderer={linkRenderer}
             />
           )}
+
+          {showBottomNav && ThemeFooter ? (
+            // Continues the footer surface under the fixed bar.
+            <div
+              aria-hidden
+              className="h-16 shrink-0 bg-[var(--website-surface)] md:hidden"
+            />
+          ) : null}
 
           <MobileBottomNav
             pages={pages}

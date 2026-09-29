@@ -68,21 +68,38 @@ export const SHARED_CASES = [
 
 /**
  * Brand colours are the one Academy input that changes a theme's look.
- * Theme 1's Home in `new` state under the plan's first brand-matrix
- * palettes (EN only): the "before" for the Brand System (§F.4, §I.2).
+ * Phase 0 recorded Theme 1's Home under the first four palettes; Phase 5
+ * widened this to the full §I.2 identity matrix (the fixture's `default`
+ * blue plus these 11), rendered on the §C.1 Home (EN only).
  */
 export const BRAND_PALETTES = [
   'orange',
   'purple',
   'neon-yellow',
   'near-black',
+  'pastel-pink',
+  'monochrome',
+  'red',
+  'teal',
+  'brown',
+  'multi-colour',
+  'no-logo',
 ] as const;
+
+/**
+ * Theme 1's Home with the plan's §C.1 composition (Phase 5): the fixture
+ * server's `c1` composition, in both data states. Provisioning still
+ * creates the v1 Home until Phase 7, so both are covered.
+ */
+export const THEME1_HOME_C1_STATES = ['new', 'rich'] as const;
 
 export function fixtureSlug(
   theme: ThemeKey,
   state: DataState,
-  palette = 'default'
+  palette = 'default',
+  composition?: 'c1'
 ): string {
+  if (composition) return `fx--${theme}--${state}--${palette}--${composition}`;
   return palette === 'default'
     ? `fx--${theme}--${state}`
     : `fx--${theme}--${state}--${palette}`;

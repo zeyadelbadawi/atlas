@@ -47,7 +47,7 @@ export function AtlasPlatformAttribution({
       )}
     >
       <span>{t('common:attribution.poweredBy')}</span>
-      <AtlasLogo size="sm" markOnly className="gap-0" />
+      <AtlasLogo size="sm" markOnly decorative className="gap-0" />
       <span className="font-medium text-foreground/80">
         {t('common:product.name')}
       </span>

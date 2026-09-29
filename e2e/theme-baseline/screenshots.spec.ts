@@ -14,6 +14,7 @@ import {
   BRAND_PALETTES,
   LOCALES,
   SHARED_CASES,
+  THEME1_HOME_C1_STATES,
   THEMED_PAGES,
   THEMES,
   VIEWPORTS,
@@ -82,6 +83,34 @@ for (const viewport of VIEWPORTS) {
       }
     }
 
+    for (const state of THEME1_HOME_C1_STATES) {
+      for (const locale of LOCALES) {
+        test(`modern-education c1 home ${state} ${locale}`, async ({
+          page: browserPage,
+          issues,
+        }) => {
+          await openFixture(
+            browserPage,
+            fixtureUrl(
+              { name: 'home', path: '/' },
+              locale,
+              fixtureSlug('modern-education', state, 'default', 'c1')
+            )
+          );
+          await expect(browserPage).toHaveScreenshot(
+            [
+              'themes',
+              'modern-education',
+              'c1',
+              `home--${state}--${locale}--${viewport.name}.png`,
+            ],
+            { fullPage: true }
+          );
+          expectNoIssues(issues);
+        });
+      }
+    }
+
     for (const palette of BRAND_PALETTES) {
       test(`brand modern-education home ${palette}`, async ({
         page: browserPage,
@@ -92,7 +121,7 @@ for (const viewport of VIEWPORTS) {
           fixtureUrl(
             { name: 'home', path: '/' },
             'en',
-            fixtureSlug('modern-education', 'new', palette)
+            fixtureSlug('modern-education', 'rich', palette, 'c1')
           )
         );
         await expect(browserPage).toHaveScreenshot(

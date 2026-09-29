@@ -1,14 +1,4 @@
 {
   "axeVersion": "4.13.0",
-  "violations": [
-    {
-      "id": "aria-prohibited-attr",
-      "impact": "serious",
-      "help": "Elements must only use permitted ARIA attributes",
-      "nodes": 1,
-      "targets": [
-        ".gap-0"
-      ]
-    }
-  ]
+  "violations": []
 }

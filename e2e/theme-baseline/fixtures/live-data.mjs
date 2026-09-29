@@ -49,6 +49,43 @@ export const FIXTURE_PALETTES = {
     secondaryColor: '220 10% 35%',
     accentColor: '220 10% 60%',
   },
+  // The rest of the §I.2 identity matrix (Phase 5 brand matrix on Home).
+  'pastel-pink': {
+    primaryColor: '340 80% 85%',
+    secondaryColor: '340 80% 85%',
+    accentColor: '340 80% 85%',
+  },
+  monochrome: {
+    primaryColor: '0 0% 20%',
+    secondaryColor: '0 0% 60%',
+    accentColor: '0 0% 40%',
+  },
+  red: {
+    primaryColor: '0 80% 50%',
+    secondaryColor: '0 80% 50%',
+    accentColor: '0 80% 50%',
+  },
+  teal: {
+    primaryColor: '175 70% 35%',
+    secondaryColor: '175 70% 35%',
+    accentColor: '175 70% 35%',
+  },
+  brown: {
+    primaryColor: '25 50% 30%',
+    secondaryColor: '35 60% 50%',
+    accentColor: '25 50% 30%',
+  },
+  'multi-colour': {
+    primaryColor: '200 90% 45%',
+    secondaryColor: '330 80% 55%',
+    accentColor: '45 95% 55%',
+  },
+  // No logo: Theme 1's own default seeds.
+  'no-logo': {
+    primaryColor: '217 91% 55%',
+    secondaryColor: '173 65% 40%',
+    accentColor: '38 92% 55%',
+  },
 };
 
 const TIMESTAMP = '2026-09-01T09:00:00.000Z';

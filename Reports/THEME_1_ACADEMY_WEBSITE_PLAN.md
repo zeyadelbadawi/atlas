@@ -1,6 +1,6 @@
 # Theme 1 ("Modern Education") — Academy Website Redesign Plan
 
-Status: **v2.1, approved for implementation (29 Sep 2026). Phases 0–4 complete (§M, §N, §O, §P, §Q). Phase 4 is awaiting the Owner's approval; Phases 5–9 not started.**
+Status: **v2.1, approved for implementation (29 Sep 2026). Phases 0–4 complete and approved (§M–§Q). Phase 5 complete (§R), awaiting the Owner's approval; Phases 6–9 not started.**
 Scope:
 - Turn Theme 1 into a complete, launch-ready academy website that every Academy receives automatically.
 - Build the architecture so Themes 2–5 can later get their own identity and page composition.
@@ -842,6 +842,8 @@ The engine, the Brand Studio UI, the persisted palette, the validation and the t
 
 ### Phase 4 — Theme 1 visual system, chrome, Brand Studio
 
+**Status: done and approved (29 Sep 2026) — results in §Q.**
+
 - **Frontend:**
   - Theme 1 tokens and CSS;
   - **the Theme 1 `mapBrandPalette`**;
@@ -859,6 +861,8 @@ The engine, the Brand Studio UI, the persisted palette, the validation and the t
 - **UI/UX Pro Max:** visual system, chrome and Brand Studio UX; responsive and interaction review.
 
 ### Phase 5 — Theme 1 Home renderers
+
+**Status: done (29 Sep 2026), awaiting the Owner's approval — results in §R.**
 
 - **Objective:** sections C.1 #1–11 as Theme 1 renderers, including the empty, sample and live-data states and the brand slots. The Home hero meets §C.0.
 - **Images:** no production images. Every image slot shows a neutral placeholder (§E.6).
@@ -1605,3 +1609,124 @@ Before Phase 4, Theme 1 brand pages had 4–5 contrast nodes each; they now have
 - The gated provenance migration deploy; the LCP/bundle decision before Phase 8.
 - The cookie banner covers part of the mobile hero: out of scope, noted.
 - **The 12-palette brand screenshots.** §H Phase 4 lists "brand-matrix screenshots (12 palettes)". Phase 4 has 4 palettes as screenshots plus the full 12-brand matrix as automated mapping tests (roles, contrast, invariant canvas). The 12-palette screenshot matrix is scheduled with the Home renderers (Phase 5 "brand matrix on Home") and the full brand suite (Phase 8).
+
+## R. Phase 5 results (recorded 29 Sep 2026)
+
+Scope: Home only (§H Phase 5). No inner-page composition, page hero or Phase 6 groundwork. No production images: every unreleased slot shows the neutral placeholder (§E.6). No Magnific call.
+
+### R.1 What was built
+
+**Theme 1 Home renderers.** `src/features/website/modern-education/`, registered in `modern-education.pack.ts`:
+
+| §C.1 | Type | Renderer | Behaviour |
+|---|---|---|---|
+| 1 | `hero` | `T1Hero` | Home hero (§C.0): eyebrow chip, display h1 with the highlight marker, lead, primary + secondary action, catalog search (opens `/courses?q=`, locale- and preview-aware), ≤ 4 highlight chips, photograph on the brand shape, live course-count chip (only when > 0). Orchestrated entrance; the h1 is never animated. Without an image it becomes a centred text hero (the v1 Home). |
+| 2 | `features` (`strip`) | `T1Features` | Soft band, icon tiles, sr-only heading. The same renderer draws `cards` (used by the v1 Home's "What you get"). |
+| 3 | `courseCategories` | `T1CourseCategories` | Live tiles → filtered catalog, "Browse all". Hidden publicly with < 2; the preview explains. |
+| 4 | `featuredCourses` | `T1FeaturedCourses` + `T1CourseCard` | Image-led cards (thumbnail or brand-tinted `course-fallback-pattern`), "View all". Empty state: "Courses launching soon" with the `courses-launching` slot and a Contact link. |
+| 5 | `featureSplit` | `T1FeatureSplit` | Image at the logical start/end on `brand-shape-soft`, numbered benefits, link CTA. |
+| 6 | `steps` | `T1Steps` | Ordered list with a per-step connector (vertical on phones, horizontal from 768px); no connector for 5–6 steps. |
+| 7 | `instructors` | `T1Instructors` | Derived from the catalog with course counts and initials avatars. Hidden publicly when there are none; the preview explains. |
+| 8 | `statistics` | `T1Statistics` | Live metrics only when > 0, hidden with < 2. Count-up ≤ 900ms once; final value at once under reduced motion; screen readers get the final number. |
+| 9 | `testimonials` | `T1Testimonials` | Large-quote carousel: arrows, dots, keyboard arrows (RTL-aware), no autoplay, instant under reduced motion. Sample items never public (second guard after the API); "Sample" badge in previews. |
+| 10 | `faq` (`maxItems`) | `T1Faq` | Teaser split (heading + "See all questions" / first N questions). Without `maxItems` it's the plain list; the FAQs-page hero and filter are Phase 6. |
+| 11 | `cta` | `T1Cta` | The ink band with the brand glow. Photo at the logical end, standing on the band's lower edge; hidden under 480px. Replaces the base CTA band, which failed contrast on Theme 1. |
+| — | `about` | `T1About` | The v1 text block existing Theme 1 Homes carry (Decision 3). |
+
+**Shared parts** (`t1-parts.tsx`):
+- section frame and header;
+- highlight heading;
+- media frame with the neutral placeholder (named `key · ratio` outside production builds);
+- actions and links (inert in previews);
+- brand shapes;
+- initials avatar (the contrast-checked chip pair).
+
+**Theme 1 CSS** (all scoped): type, rhythm, same-tone gap collapse, cards and hover lift, rails, connector, ink band, entrance, full reduced-motion coverage.
+
+**Cross-cutting changes:**
+- **i18n:** `website:theme1.*` in EN and AR, with Arabic plural forms.
+- **Chrome:** a theme footer now gets the mobile bottom-bar clearance *after* the footer, so the last band meets the footer. Base-footer themes are unchanged.
+- **Carried-over accessibility fix:** `AtlasLogo` no longer puts `aria-label` on a generic span. The attribution mark is decorative, because the name is written beside it. This is pixel-neutral and removes the `aria-prohibited-attr` serious finding from every page of every theme.
+
+**Scope note: renderers are per section type.** A Theme 1 renderer draws its type wherever the type appears, not just on Home. So the FAQs page's `faq` list and the v1 About page's `about` block now use the Theme 1 look. Their page heroes and composition remain Phase 6.
+
+**Verification fixture (not provisioning).** `e2e/theme-baseline/fixtures/theme1-home.mjs` is the §C.1 composition with EN/AR copy.
+- It's selected by the slug segment `--c1`.
+- The fixture palettes gained the rest of the §I.2 identity matrix.
+- Provisioning still creates the v1 Home until Phase 7 moves this composition into the backend template. Both Homes are covered by the baseline.
+
+### R.2 Home image slots as implemented (reference for the final image stage, §E.6 — not a frozen matrix)
+
+| Slot | Desktop ≥ 1024 | Tablet 768–1023 | Phone < 768 | Overlay / safe area | RTL |
+|---|---|---|---|---|---|
+| `home-hero` (released pilot; not final per §E.6) | 4:5, ≈ 560px column beside the text (right in EN) | 16:10, ≤ 672px, centred under the text | 4:3, full width under the text | Course-count chip over the top logical-end corner (≈ 25% of the width, top 20%); brand shape behind from 640px | Moves to the left; the photo isn't mirrored |
+| `home-benefit` | 4:3, half-width column (≈ 560px) | 4:3, ≤ 672px, above the text | 4:3, full width, above the text | None; brand block offset behind toward the page edge (≥ 640px) | Column moves; photo not mirrored |
+| `courses-launching` (empty state only) | Left half of a split card; height follows the text (≥ 18rem), so the crop is ≈ 16:10–2:1 | Same (split from 768px) | 16:9, full card width, above the text | None | Half moves to the right |
+| `home-cta` | 3:4, 320px, at the logical end, standing on the band's bottom edge (top corners rounded) | 3:4, 256px, same placement | 480–767px: 3:4, 240px, centred under the text, on the bottom edge; < 480px: hidden | Band background around it; photo edges meet the ink band | Moves to the left; photo not mirrored |
+
+No new photographic slots were needed. The planned `home-cta` "below the text on tablet" became side by side from 768px, because it fits and keeps the band shorter.
+
+### R.3 Verification
+
+| Check | Result |
+|---|---|
+| Unit tests | **153 files, 1505 tests passed** (quiet-machine run; an earlier run concurrent with Playwright had 4 load timeouts in unrelated files, which pass alone) |
+| New Phase 5 tests (`theme1-home-sections.test.tsx`, 30 cases) | every renderer's empty, typical and maximal state; hiding rules; sample exclusion; carousel ARIA, buttons, dots, keyboard LTR/RTL, no autoplay, reduced motion; count-up final value in Arabic-Indic digits; placeholders; hero search (EN and `/ar`); h1 not animated |
+| Pack test | Theme 1 registers exactly the 12 Home types; Themes 2–5 still register none |
+| Typecheck | 33 errors, all pre-existing (none new) |
+| Lint | clean |
+| Theme baseline | **614/614 passed** against the committed snapshots (screenshots, axe, palette injection, production CSP) |
+| Themes 2–5 | **no screenshot changed** (with reduced motion now on for every capture). Their axe snapshots changed only by removing `aria-prohibited-attr` (160 removals; 72 page states now have zero violations). |
+| Theme 1 re-recorded | v1 pages and first-visit (new renderers); new: §C.1 Home new/rich × EN/AR × 1440/1024/390; brand matrix = 11 palettes + default on the §C.1 rich Home × 1440/1024/390 |
+| Accessibility (axe) | **§C.1 Home: 0 violations** in all 8 states; **brand matrix: 0** in all 22. v1 Theme 1 pages: only the pre-existing *moderate* `page-has-heading-one` on the inner pages (About/Courses/FAQs/Contact have no h1 yet — Phase 6 heroes). |
+| Overflow and runtime | No horizontal page overflow at 390/768/1024/1440/1920 in EN and AR; no page errors; 0 CSP violations; no off-origin requests |
+
+Found and fixed during verification:
+- **Page overflow at 390px:** visually hidden labels inside a scrolling rail escaped it. Cards and rails are now containing blocks.
+- **Course-card media collapse:** the flex column shrank the 16:9 media.
+- **Axe contrast:** initials-avatar contrast.
+- **Axe scrolling:** a scrollable rail with no focusable content (now keyboard-scrollable and labelled).
+- **Duplicate names:** the carousel region repeated the section's name (now `roledescription="carousel"` with its own label).
+
+### R.4 UI/UX Pro Max review (Home)
+
+- **Hierarchy follows §B:** promise → proof → discovery → offer → reasons → process → people → proof → reassurance → action. Every section ends with a next step.
+- **Brand appears only in its slots:**
+  - CTA fill;
+  - highlight marker;
+  - chips, icon tiles, links and focus;
+  - brand shapes;
+  - ink glow.
+
+  Across the 12-palette matrix, layout, type and the neutral canvas are invariant. Neon yellow and pastel pink get engine-adjusted CTAs, and the decorative marker keeps the raw hue.
+- **Review changes:**
+  - The highlight changed from a solid underline (cut through descenders, heavy on blue brands) to a translucent marker.
+  - Stray accent dots on the hero shape were removed.
+  - Same-tone sections share one gap: the 192px double gaps are gone.
+  - Numbers moved to a soft panel on the canvas, so bands alternate.
+  - Numbers stay three-up on phones (no orphan).
+  - Category and instructor grids size to their count.
+- **UI/UX Pro Max rule checks:**
+  - no autoplay;
+  - visible focus on every control;
+  - 44px targets;
+  - no page-level horizontal scroll (rails scroll inside the page);
+  - reduced motion honoured everywhere.
+
+### R.5 Open items and decisions for the Owner
+
+- **JS budget (§G, carried "LCP/bundle decision before Phase 8").** Phase 5 adds **≈ 17.8 KB gzip** to the public main chunk: ≈ 10 KB Theme 1 renderers + **≈ 7.6 KB Embla**. §G assumed Embla was "already in the bundle"; it wasn't on the public route.
+
+  CSS grew ≈ 2.4 KB gzip (§G budget 12 KB).
+
+  With Phase 4's chrome, Theme 1 is likely over the 18 KB JS budget. Options for the pre-Phase-8 decision:
+  - a CSS scroll-snap carousel instead of Embla (≈ −7.6 KB);
+  - loading the Theme 1 renderers as a pack chunk (spares Themes 2–5, not Theme 1).
+
+  Not changed without your decision.
+- **Reduced motion in the baseline.** Captures now use reduced motion so reveals don't hide content in full-page screenshots; motion is verified by unit tests.
+- **Still open from §Q.5:**
+  - the private master archive bucket;
+  - the Brand tab's "logo changed elsewhere" suggestion;
+  - the provenance migration deploy;
+  - the cookie banner over the mobile hero (out of scope).

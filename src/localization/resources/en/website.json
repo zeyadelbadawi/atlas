@@ -1015,5 +1015,42 @@
     "sampleName": "Your Academy",
     "finishSaving": "Saving your logo and colours…",
     "finishFailed": "We couldn't save your logo and colours yet."
+  },
+  "theme1": {
+    "hero": {
+      "searchLabel": "Search courses",
+      "searchPlaceholder": "What would you like to learn?",
+      "searchSubmit": "Search",
+      "courseCount_one": "{{formatted}} course",
+      "courseCount_other": "{{formatted}} courses",
+      "courseCountNote": "Ready to start today"
+    },
+    "categories": {
+      "viewAll": "Browse all courses"
+    },
+    "courses": {
+      "viewAll": "View all courses",
+      "launchingTitle": "Courses launching soon",
+      "launchingDescription": "We're preparing our first courses. Get in touch and we'll let you know as soon as enrolment opens.",
+      "launchingAction": "Contact us"
+    },
+    "instructors": {
+      "courseCount_one": "{{count}} course",
+      "courseCount_other": "{{count}} courses",
+      "previewHidden": "Hidden on your public site until at least one published course has an instructor.",
+      "listLabel": "Instructors"
+    },
+    "statistics": {
+      "previewHidden": "Hidden on your public site until at least two numbers are above zero."
+    },
+    "testimonials": {
+      "carousel": "Testimonials",
+      "slide": "Testimonial",
+      "slideLabel": "{{position}} of {{total}}",
+      "previous": "Previous testimonial",
+      "next": "Next testimonial",
+      "goTo": "Show testimonial {{position}}",
+      "carouselRole": "carousel"
+    }
   }
 }

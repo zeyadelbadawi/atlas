@@ -46,17 +46,40 @@ describe('theme packs', () => {
 
   it('Themes 2–5 redesign nothing: base renderers and the base brand mapping', () => {
     for (const key of WEBSITE_THEME_KEYS) {
+      if (key === 'modern-education') continue;
       const pack = getThemePack(key);
       expect(pack.renderers).toEqual({});
-      // Theme 1 has its own brand mapping since Phase 4 (§F.5).
-      if (key === 'modern-education') {
-        expect(pack.mapBrandPalette).not.toBe(mapBaseBrandPalette);
-      } else {
-        expect(pack.mapBrandPalette).toBe(mapBaseBrandPalette);
-      }
+      expect(pack.mapBrandPalette).toBe(mapBaseBrandPalette);
       for (const type of SECTION_TYPES) {
         expect(resolveSectionRenderer(pack, type)).toBe(BASE_RENDERERS[type]);
       }
+    }
+  });
+
+  it('Theme 1 draws the Home sections itself (Phase 5) and keeps base renderers elsewhere', () => {
+    const pack = getThemePack('modern-education');
+    // Its own brand mapping since Phase 4 (§F.5).
+    expect(pack.mapBrandPalette).not.toBe(mapBaseBrandPalette);
+    const home = [
+      'hero',
+      'features',
+      'courseCategories',
+      'featuredCourses',
+      'featureSplit',
+      'steps',
+      'instructors',
+      'statistics',
+      'testimonials',
+      'faq',
+      'cta',
+      'about',
+    ] as const;
+    expect(Object.keys(pack.renderers).sort()).toEqual([...home].sort());
+    for (const type of SECTION_TYPES) {
+      const expected = (home as readonly string[]).includes(type)
+        ? pack.renderers[type]
+        : BASE_RENDERERS[type];
+      expect(resolveSectionRenderer(pack, type)).toBe(expected);
     }
   });
 

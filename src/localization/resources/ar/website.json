@@ -1035,5 +1035,50 @@
     "sampleName": "أكاديميتك",
     "finishSaving": "جارٍ حفظ شعارك وألوانك…",
     "finishFailed": "لم نتمكن من حفظ شعارك وألوانك بعد."
+  },
+  "theme1": {
+    "hero": {
+      "searchLabel": "ابحث في الدورات",
+      "searchPlaceholder": "ماذا تودّ أن تتعلّم؟",
+      "searchSubmit": "بحث",
+      "courseCount_zero": "{{formatted}} دورة",
+      "courseCount_one": "دورة واحدة",
+      "courseCount_two": "دورتان",
+      "courseCount_few": "{{formatted}} دورات",
+      "courseCount_many": "{{formatted}} دورة",
+      "courseCount_other": "{{formatted}} دورة",
+      "courseCountNote": "جاهزة لتبدأ اليوم"
+    },
+    "categories": {
+      "viewAll": "تصفّح كل الدورات"
+    },
+    "courses": {
+      "viewAll": "عرض كل الدورات",
+      "launchingTitle": "دوراتنا قادمة قريبًا",
+      "launchingDescription": "نُعدّ الآن دوراتنا الأولى. تواصل معنا وسنُعلمك فور فتح باب التسجيل.",
+      "launchingAction": "تواصل معنا"
+    },
+    "instructors": {
+      "courseCount_zero": "لا دورات",
+      "courseCount_one": "دورة واحدة",
+      "courseCount_two": "دورتان",
+      "courseCount_few": "{{count}} دورات",
+      "courseCount_many": "{{count}} دورة",
+      "courseCount_other": "{{count}} دورة",
+      "previewHidden": "مخفي في موقعك العام إلى أن يكون لدورة منشورة واحدة على الأقل مدرّب.",
+      "listLabel": "المدرّبون"
+    },
+    "statistics": {
+      "previewHidden": "مخفي في موقعك العام إلى أن يتجاوز رقمان على الأقل الصفر."
+    },
+    "testimonials": {
+      "carousel": "آراء المتعلّمين",
+      "slide": "رأي",
+      "slideLabel": "{{position}} من {{total}}",
+      "previous": "الرأي السابق",
+      "next": "الرأي التالي",
+      "goTo": "عرض الرأي {{position}}",
+      "carouselRole": "عرض متتابع"
+    }
   }
 }

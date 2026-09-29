@@ -53,6 +53,10 @@ export default defineConfig({
     browserName: 'chromium',
     deviceScaleFactor: 1,
     colorScheme: 'light',
+    // Full-page captures never scroll, so scroll-triggered reveals (Theme 1,
+    // plan §G) would stay hidden below the fold; reduced motion renders
+    // every section in its final state. Motion itself is unit-tested.
+    reducedMotion: 'reduce',
     locale: 'en-US',
     timezoneId: 'UTC',
     launchOptions: executablePath ? { executablePath } : {},

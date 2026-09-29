@@ -17,11 +17,13 @@
  * `PublicWebsiteRouter` → `usePublicWebsiteData` → `PublicWebsitePage` →
  * `WebsiteRenderer` → `WebsiteThemeScope` → sections.
  *
- * THE SLUG SELECTS THE FIXTURE:  fx--<theme>--<state>[--<palette>]
+ * THE SLUG SELECTS THE FIXTURE:  fx--<theme>--<state>[--<palette>[--c1]]
  *   theme    one of the five theme keys (`generated/<theme>.json`)
  *   state    `new` | `rich` | `unpublished`  (see `live-data.mjs`)
  *   palette  a `FIXTURE_PALETTES` name, injected as the stored brand
  *            (default: `default`, what a new Academy stores today)
+ *   c1       Theme 1 only: Home with the plan's §C.1 composition
+ *            (`fixtures/theme1-home.mjs`) instead of the provisioned v1 Home
  * Anything else resolves as an unknown hostname, exactly like production.
  *
  * Any API request this server has no fixture for is answered 404 in the
@@ -40,6 +42,7 @@ import {
   FIXTURE_PALETTES,
   buildLiveData,
 } from '../fixtures/live-data.mjs';
+import { buildTheme1HomeSections } from '../fixtures/theme1-home.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(HERE, '../../..');
@@ -76,13 +79,18 @@ const generatedByTheme = new Map(
 
 /** `fx--<theme>--<state>[--<palette>]` → fixture, or null for an unknown slug. */
 function parseSlug(slug) {
-  const [prefix, theme, state, palette = 'default', ...rest] = String(
-    slug ?? ''
-  ).split('--');
+  const [prefix, theme, state, palette = 'default', composition, ...rest] =
+    String(slug ?? '').split('--');
   if (prefix !== 'fx' || rest.length > 0) return null;
   if (!THEMES.includes(theme) || !STATES.includes(state)) return null;
-  if (!(palette in FIXTURE_PALETTES)) return null;
-  return { slug, theme, state, palette };
+  if (!Object.hasOwn(FIXTURE_PALETTES, palette)) return null;
+  if (
+    composition !== undefined &&
+    !(composition === 'c1' && theme === 'modern-education')
+  ) {
+    return null;
+  }
+  return { slug, theme, state, palette, composition };
 }
 
 function buildFixture(parsed) {
@@ -98,7 +106,13 @@ function buildFixture(parsed) {
     status: 'published',
     publishedAt: '2026-09-01T09:00:00.000Z',
   });
-  const pages = rebaseIds(generated.pages).filter((page) => page.visible);
+  const pages = rebaseIds(generated.pages)
+    .filter((page) => page.visible)
+    .map((page) =>
+      parsed.composition === 'c1' && page.coreType === 'home'
+        ? { ...page, sections: buildTheme1HomeSections(parsed.state) }
+        : page
+    );
   return {
     academyId,
     published: parsed.state !== 'unpublished',
