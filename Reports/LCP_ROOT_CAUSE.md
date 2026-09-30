@@ -68,22 +68,30 @@ Nothing visible changed: no content hidden, no UI removed, the same fonts and pi
 
 ## 9. Measured results
 
-Lighthouse 12, mobile, simulated throttling (150 ms RTT, 1.6 Mbps, 4× CPU), median of 3 runs per case, first visit, cold cache, the fixture build served like production. 20 cases (5 themes × Home new/rich, Courses, Course Details). "Before" is branch HEAD `8fa85c5` built in a separate worktree; "after" is this change.
+Lighthouse 12, mobile, simulated throttling (150 ms RTT, 1.6 Mbps, 4× CPU), median of 3 runs per case, first visit, cold cache, the fixture build served like production. 20 cases (5 themes × Home new/rich, Courses, Course Details).
+
+- **Before:** branch HEAD `8fa85c5` built in a separate worktree.
+- **After:** the final code of this session, with the released Theme 1 images, measured on an otherwise idle machine.
 
 **HTTP/2 + TLS (how production serves the site, Caddy):**
 
 | | Before (median) | After (median) | After (worst case) |
 |---|---|---|---|
-| Performance | 76 | **89.5** | 88 |
-| FCP | 3,838 ms | **2,549 ms** | 2,579 ms |
-| LCP | 4,237 ms | **3,045 ms** | 3,321 ms |
-| TBT | 59 ms | 86 ms | 173 ms |
-| CLS | 0.009 | 0.009 | 0.018 (Theme 1 Courses, unchanged from before) |
-| Script transferred | 485 KB | 385 KB | |
+| Performance | 76 | **90** | 88 |
+| FCP | 3,838 ms | **2,558 ms** | |
+| LCP | 4,237 ms | **3,024 ms** | 3,246 ms |
+| TBT | 59 ms | 66 ms | 181 ms |
+| CLS | 0.009 | 0.009 | 0.016 (Theme 1 Courses; 0.017 before) |
+| Script transferred | 485 KB | 388 KB | |
+| Accessibility score | 100 | 100 | |
 
-Theme 1: Home 77 → 89/90, LCP 4.22 → 3.07–3.10 s; Courses 77 → 90, LCP 4.24 → 3.05 s; Course Details 77 → 88, LCP 4.21 → 3.10 s.
+Theme 1: Home 76/77 → 90, LCP 4.22 → 3.04–3.10 s; Courses 77 → 90, LCP 4.24 → 3.09 s; Course Details 77 → 90, LCP 4.21 → 3.02 s. The released photographs don't change LCP: the LCP element is the hero heading, and every photograph below the hero is lazy.
 
-**HTTP/1.1 (the fixture server's default, 6 connections per origin):** FCP 3.84 → 3.31 s, LCP flat (4.39 → 4.37 s). The public page is now ~50 smaller requests instead of ~20 large ones, which HTTP/1.1's connection limit serialises; production is HTTP/2, so the HTTP/2 row is the one that applies. TBT rose in these runs (37 → 143 ms median). Other CPU work ran on the same machine during the "after" runs, so the TBT figures aren't clean. The final run after the image stage is taken on an otherwise idle machine (plan §V).
+**HTTP/1.1 (the fixture server's default, 6 connections per origin):**
+- FCP 3.84 → 3.24 s, LCP flat (4.39 → 4.35 s).
+- TBT rises (37 → 147 ms median, worst 256 ms): the public page is now ~50 smaller requests instead of ~20 large ones, which HTTP/1.1's connection limit serialises, so their evaluation lands in more separate tasks.
+
+Production is HTTP/2, so the HTTP/2 table is the one that applies. The committed `baselines/lighthouse.json` keeps its HTTP/1.1 method, for continuity with earlier phases.
 
 Unthrottled, Home now paints and reaches LCP at ≈ 0.24 s (was 0.56 / 0.76 s).
 
@@ -125,4 +133,4 @@ Risks and costs:
 - This avoids a request-time renderer.
 - But live sections go stale between publishes, and every course change has to trigger a re-render.
 
-**Decision requested:** approve (a) the two small steps above only, accepting ≈ 2.4–2.6 s; or (b) the SSR proposal as its own phase; or (c) accept the current ≈ 3.0 s (performance ≈ 89–90) for now.
+**Decision requested:** approve (a) the two small steps above only, accepting ≈ 2.4–2.6 s; or (b) the SSR proposal as its own phase; or (c) accept the current ≈ 3.0 s (performance 88–90 on HTTP/2) for now.
