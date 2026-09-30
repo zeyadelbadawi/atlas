@@ -10,6 +10,7 @@
  * - the gallery lightbox's keyboard, direction-aware;
  * - 404 and Coming Soon, with Themes 2–5 keeping the shared pages.
  */
+import type * as ThemeAssetRegistry from '../theme-assets/theme-asset.registry';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   act,
@@ -48,6 +49,36 @@ import { T1Contact, T1Gallery } from './t1-page-sections';
 import { T1Faq } from './T1Faq';
 import { T1NotFound } from './T1SystemPages';
 import { matchesFaqFilter, setFaqFilter } from './t1-faq-filter';
+
+/* ------------------------------------------------------------------ */
+/* Theme assets                                                         */
+/* ------------------------------------------------------------------ */
+
+// Every Theme 1 photograph is released (plan §V), but the designed
+// "not released yet" state is still real behaviour (a future asset or
+// theme). These slots are pinned to it here, as they were before release;
+// the released rendering is covered by `theme-assets/`, the visual
+// baseline and the in-context image QA.
+vi.mock('../theme-assets/theme-asset.registry', async (importOriginal) => {
+  const actual = await importOriginal<typeof ThemeAssetRegistry>();
+  const pending = new Set([
+    'about-header',
+    'gallery-1',
+    'gallery-2',
+    'gallery-3',
+    'gallery-4',
+    'gallery-5',
+  ]);
+  return {
+    ...actual,
+    findThemeAsset: (...args: Parameters<typeof actual.findThemeAsset>) => {
+      const found = actual.findThemeAsset(...args);
+      if (!found || !pending.has(found.entry.key)) return found;
+      const { version: _v, lqip: _l, provenance: _p, ...entry } = found.entry;
+      return { ...found, entry: { ...entry, status: 'pending' as const } };
+    },
+  };
+});
 
 /* ------------------------------------------------------------------ */
 /* Live data                                                            */

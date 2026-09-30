@@ -10,6 +10,7 @@
  * - placeholders for unreleased theme photographs;
  * - the hero entrance never animating the headline.
  */
+import type * as ThemeAssetRegistry from '../theme-assets/theme-asset.registry';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   cleanup,
@@ -46,6 +47,29 @@ import {
   T1Testimonials,
 } from './t1-live-sections';
 import { T1Faq } from './T1Faq';
+
+/* ------------------------------------------------------------------ */
+/* Theme assets                                                         */
+/* ------------------------------------------------------------------ */
+
+// Every Theme 1 photograph is released (plan §V), but the designed
+// "not released yet" state is still real behaviour (a future asset or
+// theme). These slots are pinned to it here, as they were before release;
+// the released rendering is covered by `theme-assets/`, the visual
+// baseline and the in-context image QA.
+vi.mock('../theme-assets/theme-asset.registry', async (importOriginal) => {
+  const actual = await importOriginal<typeof ThemeAssetRegistry>();
+  const pending = new Set(['home-benefit', 'courses-launching']);
+  return {
+    ...actual,
+    findThemeAsset: (...args: Parameters<typeof actual.findThemeAsset>) => {
+      const found = actual.findThemeAsset(...args);
+      if (!found || !pending.has(found.entry.key)) return found;
+      const { version: _v, lqip: _l, provenance: _p, ...entry } = found.entry;
+      return { ...found, entry: { ...entry, status: 'pending' as const } };
+    },
+  };
+});
 
 /* ------------------------------------------------------------------ */
 /* Live data                                                            */
