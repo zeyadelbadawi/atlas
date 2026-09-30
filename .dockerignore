@@ -1,5 +1,8 @@
 node_modules
 dist
+dist-ssr
+dist-theme-fixtures
+dist-theme-fixtures-ssr
 .git
 .env
 testsprite_tests

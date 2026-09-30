@@ -96,6 +96,68 @@
 	header Strict-Transport-Security "max-age=31536000"
 }
 
+# Phase 8 — server-rendered public Academy pages
+# (Reports/SSR_ARCHITECTURE_ANALYSIS.md). A page request for an Academy host
+# that matches no static file goes to the renderer (`ssr`, internal network
+# only). The renderer answers with the rendered page, or with
+# `X-Atlas-SSR: pass` for anything it does not render (sign-in, learner
+# pages, unknown hosts, files) — Caddy then serves `/srv/index.html`, the
+# exact single-page app it served before. A renderer 5xx, a timeout or a
+# stopped container is answered the same way (`ssr_unavailable` below), so
+# the website never depends on the renderer being up.
+#
+# Off unless the container's ATLAS_SSR is `on` (compose passes it from
+# /opt/atlas/.env; the default is off): with it off, every request takes
+# exactly the route it took before server rendering existed.
+#
+# The renderer receives the visitor's IP (the API's per-visitor rate
+# limits) and the request as sent; it forwards no cookie or credential to
+# the API and never renders a signed-in view. `/assets/*` reaches it only
+# when this image lacks the file (a rollout where the renderer is a build
+# ahead); it serves its own build's hashed chunks, else a real 404.
+(ssr_proxy) {
+	vars atlas_ssr 1
+	reverse_proxy ssr:3100 {
+		header_up X-Real-IP {client_ip}
+		transport http {
+			dial_timeout 1s
+			response_header_timeout 3s
+		}
+		@pass header X-Atlas-SSR pass
+		handle_response @pass {
+			rewrite * /index.html
+			file_server
+		}
+		@failed status 5xx
+		handle_response @failed {
+			rewrite * /index.html
+			file_server
+		}
+	}
+}
+
+# The renderer could not be reached or timed out: the single-page app,
+# with the headers the document always carries (`{args[0]}` is the site's
+# HSTS snippet). Only for requests that went to the renderer — an API 502
+# stays a 502, and a missing chunk is never answered with HTML.
+(ssr_unavailable) {
+	@ssr_unavailable {
+		vars atlas_ssr 1
+		not path /assets/*
+		expression `{err.status_code} in [502, 503, 504]`
+	}
+	handle @ssr_unavailable {
+		import security_headers
+		import csp
+		import {args[0]}
+		root * /srv
+		rewrite * /index.html
+		file_server {
+			status 200
+		}
+	}
+}
+
 # Global options.
 #
 # fallback_sni (P63d): Cloudflare for SaaS connects to this origin for a
@@ -155,8 +217,25 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 		import csp
 		import hsts_platform
 		root * /srv
-		try_files {path} /index.html
-		file_server
+		# Academy subdomains only: the platform itself (apex, www) is the
+		# dashboard and is never server-rendered.
+		@academy_page {
+			expression {env.ATLAS_SSR} == "on"
+			not host atlass.dpdns.org www.atlass.dpdns.org
+			method GET HEAD
+			not file
+		}
+		handle @academy_page {
+			import ssr_proxy
+		}
+		handle {
+			try_files {path} /index.html
+			file_server
+		}
+	}
+
+	handle_errors {
+		import ssr_unavailable hsts_platform
 	}
 }
 
@@ -201,7 +280,22 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 		import csp
 		import hsts_custom_domain
 		root * /srv
-		try_files {path} /index.html
-		file_server
+		# Every host here is an Academy's connected domain.
+		@academy_page {
+			expression {env.ATLAS_SSR} == "on"
+			method GET HEAD
+			not file
+		}
+		handle @academy_page {
+			import ssr_proxy
+		}
+		handle {
+			try_files {path} /index.html
+			file_server
+		}
+	}
+
+	handle_errors {
+		import ssr_unavailable hsts_custom_domain
 	}
 }
