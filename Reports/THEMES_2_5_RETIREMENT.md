@@ -34,7 +34,13 @@ The full file-by-file sweep, including tests, fixtures, baselines and docs, is k
 
 **Rendering compatibility.** Theme 1's pack draws **all 16 section types itself** (`website-theme.registry.test.ts` asserts it), and every section config is validated by one theme-agnostic schema. So no section type a Themes 2–5 website can hold is unmappable. Header, footer, navigation, SEO and brand are theme-agnostic too: they have no variant fields.
 
-**What changes visually for a moved website:** the theme's look (typography, spacing, hero and chrome layout), by design.
+**What changes visually for a moved website:**
+- The theme's look (typography, spacing, hero and chrome layout), by design.
+- **Empty sections stop showing a bare heading.** Theme 1 applies the honest-public-site rules (plan §D.4): testimonials without a real quote, a gallery without images, statistics with fewer than two real values, and instructors when there are none are not drawn on the public site. Themes 2–5 drew such a section's title over nothing.
+  - The section, its title and settings stay stored, and the section appears as soon as it has content. The editor still shows it.
+  - The dry run lists every such testimonials and gallery section (`hiddenUntilContent`) so the Owner sees them before the move. Statistics and instructors depend on live data, which a dry run can't know.
+
+These points apply to every moved website:
 - Brand colours are always stored (`primaryColor`/`secondaryColor`/`accentColor` are schema-required), so they don't fall back to a theme default.
 - The stored palette and logos are untouched.
 
@@ -102,10 +108,12 @@ Rendering, in the browser (`e2e/theme-baseline/theme-retirement.spec.ts`). Each 
 - no page errors, unmocked calls or CSP violations;
 - no horizontal overflow;
 - `dir` correct;
-- **no Owner-authored text that the current theme shows is missing after the move**;
+- **no Owner-authored text that the current theme shows is missing after the move**, except the headings of sections in their "nothing to show yet" state, whose four rules the spec encodes explicitly;
 - no serious or critical axe violation.
 
-Before/after screenshots are attached to the run for review. Results are in plan §V.
+Before/after screenshots are attached to the run for review.
+
+**Result: 160/160.** The first run failed 20 Home cases on exactly those empty-section headings (for example Premium's empty "In Their Words" testimonials, or Corporate's zero-value statistics on a new Academy). That is how the rule above was found and made explicit: in the `rich` state, where the Academy has data, the statistics and instructors headings must and do still show.
 
 ## 4. Retired from selection (this change)
 
