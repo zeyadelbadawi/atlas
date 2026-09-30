@@ -10,6 +10,8 @@ import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 import { loadRuntimeConfig } from './lib/config.ts';
+import { preloadLanguages } from '@localization';
+import { languagesForFirstRender } from './app/providers/localization/initial-language';
 
 /** Id of the mount node declared in `index.html`. */
 const ROOT_ELEMENT_ID = 'root';
@@ -36,6 +38,15 @@ async function initializeApp(): Promise<void> {
   } catch {
     // A missing or malformed runtime config must never block startup: the
     // configuration layer already falls back to its compiled defaults.
+  }
+
+  try {
+    // Only the language(s) this page shows are downloaded (P-2); load them
+    // before mounting so nothing renders untranslated.
+    await preloadLanguages(languagesForFirstRender(window.location.pathname));
+  } catch {
+    // A failed chunk load must not block startup; the provider retries
+    // when it applies the language.
   }
 
   const rootElement = document.getElementById(ROOT_ELEMENT_ID);

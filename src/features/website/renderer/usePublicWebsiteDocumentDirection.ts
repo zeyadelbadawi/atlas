@@ -28,6 +28,7 @@
  */
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ensureLanguageLoaded } from '@localization';
 import {
   PUBLIC_WEBSITE_LOCALE_DIRECTION,
   type PublicWebsiteLocale,
@@ -43,11 +44,18 @@ export function usePublicWebsiteDocumentDirection(
     const previousDir = document.documentElement.dir;
     const previousI18nLanguage = i18n.language;
 
+    let active = true;
+
     document.documentElement.lang = locale;
     document.documentElement.dir = PUBLIC_WEBSITE_LOCALE_DIRECTION[locale];
-    void i18n.changeLanguage(locale);
+    // The locale's bundle may not be loaded yet (P-2): load, then switch,
+    // unless the page has already moved on.
+    void ensureLanguageLoaded(i18n, locale).then(() => {
+      if (active) void i18n.changeLanguage(locale);
+    });
 
     return () => {
+      active = false;
       document.documentElement.lang = previousLang;
       document.documentElement.dir = previousDir;
       void i18n.changeLanguage(previousI18nLanguage);

@@ -10,35 +10,19 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { I18nextProvider } from 'react-i18next';
 import type { i18n as I18nInstance } from 'i18next';
-import { APP_CONFIG } from '@config';
 import { STORAGE_KEYS } from '@constants';
 import {
+  DEFAULT_NAMESPACE,
   LANGUAGE_LIST,
   createI18nInstance,
-  isSupportedLanguage,
+  ensureLanguageLoaded,
 } from '@localization';
 import { LANGUAGES } from '@localization';
 import type { LanguageCode } from '@types';
-import { readStoredValue, writeStoredValue } from '@utils';
+import { writeStoredValue } from '@utils';
+import { readInitialLanguage } from './initial-language';
 import { LocalizationContext } from './localization.context';
 import type { LocalizationContextValue } from './localization.context';
-
-/** Reads the persisted language, falling back to the browser then the default. */
-function readInitialLanguage(): LanguageCode {
-  const stored = readStoredValue<unknown>(
-    STORAGE_KEYS.language,
-    APP_CONFIG.defaultLanguage
-  );
-
-  if (typeof stored === 'string' && isSupportedLanguage(stored)) {
-    return stored;
-  }
-
-  const browserLanguage = navigator.language?.split('-')[0] ?? '';
-  return isSupportedLanguage(browserLanguage)
-    ? browserLanguage
-    : APP_CONFIG.defaultLanguage;
-}
 
 export interface AtlasLocalizationProviderProps {
   readonly children: ReactNode;
@@ -60,8 +44,16 @@ export function AtlasLocalizationProvider({
   const languageDefinition = LANGUAGES[language];
 
   useEffect(() => {
-    if (i18n.language !== language) {
-      void i18n.changeLanguage(language);
+    let current = true;
+    // Also when the preload failed and this language has no bundle yet.
+    if (
+      i18n.language !== language ||
+      !i18n.hasResourceBundle(language, DEFAULT_NAMESPACE)
+    ) {
+      // Load the language's bundle first, so the switch never shows keys.
+      void ensureLanguageLoaded(i18n, language).then(() => {
+        if (current) void i18n.changeLanguage(language);
+      });
     }
 
     // Direction and language live on the document root so the entire tree —
@@ -69,6 +61,9 @@ export function AtlasLocalizationProvider({
     const root = document.documentElement;
     root.lang = language;
     root.dir = languageDefinition.direction;
+    return () => {
+      current = false;
+    };
   }, [i18n, language, languageDefinition.direction]);
 
   const setLanguage = useCallback((next: LanguageCode) => {

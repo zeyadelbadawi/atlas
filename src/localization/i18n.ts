@@ -12,19 +12,20 @@ import { APP_CONFIG, ENV } from '@config';
 import { TRANSLATION_NAMESPACES } from '@types';
 import type { LanguageCode } from '@types';
 import { SUPPORTED_LANGUAGE_CODES } from '@types';
-import { TRANSLATION_RESOURCES } from './resources';
+import { registeredLanguageResources } from './language-resources';
 
 /** Namespace loaded when a translation key carries no explicit namespace. */
 export const DEFAULT_NAMESPACE = 'common' as const;
 
+/**
+ * The languages loaded so far (`language-resources.ts`): the app preloads
+ * the ones the first render needs, and loads others before switching.
+ */
 function buildResources() {
-  const resources: Record<string, Record<string, Record<string, unknown>>> = {};
-
-  for (const code of SUPPORTED_LANGUAGE_CODES) {
-    resources[code] = TRANSLATION_RESOURCES[code];
-  }
-
-  return resources;
+  return registeredLanguageResources() as Record<
+    string,
+    Record<string, Record<string, unknown>>
+  >;
 }
 
 /**
