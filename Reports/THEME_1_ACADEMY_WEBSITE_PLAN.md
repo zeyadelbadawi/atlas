@@ -1913,7 +1913,7 @@ Scope: starter content and initialization only (§H Phase 7). No redesign: every
 | Backend unit tests | **152 suites, 4151 tests passed** (including `modern-education.template.spec.ts`: composition, metric-only statistics, samples with initials only, asset references, `{{academyName}}`-only interpolation, both generation modes valid, CTA intents resolved, Themes 2–5 still v1; and 4 statistics parity cases) |
 | Backend typecheck / lint / format | clean |
 | Backend e2e — provisioning | **26/26**, including the new **3f** (Theme 1 v2 provisioned through the real worker → composition correct → provenance v2 → re-generation idempotent with an Owner edit preserved → publish lists the 3 samples → public payload holds none → confirming one makes exactly that one public) |
-| Backend e2e — full run | **1994 of 2000 passed.** The 6 failures are in 3 suites Phase 7 doesn't touch, and none is caused by it: `p64-phase2-security` (1, local s3rver, accepted in Phase 6); `p63-domain-operations` (4) fail **identically with the Phase 7 changes removed** (Phase 6 code) — a platform base domain left in the reused e2e database by earlier runs; `p64-comm-events` (1, a digest count inflated by accumulated events) passes when rerun, on both Phase 6 and Phase 7 code |
+| Backend e2e — full run | **1994 of 2000 passed.** The 6 failures are in 3 suites Phase 7 doesn't touch, and none is caused by it: `p64-phase2-security` (1, local s3rver, accepted in Phase 6); `p63-domain-operations` (4) fail **identically with the Phase 7 changes removed** (Phase 6 code) — a platform base domain left in the reused e2e database by earlier runs (**corrected in §U.I:** the real cause is the missing seeded platform owner); `p64-comm-events` (1, a digest count inflated by accumulated events) passes when rerun, on both Phase 6 and Phase 7 code |
 | Browser E2E (`e2e/j7-theme1-starter-content.spec.ts`, real stack: Vite + Nest API + PostgreSQL + Redis + s3rver) | **3/3 passed** on a freshly seeded development database: **J7a** logo in the setup form → palette proposed and accepted → Academy created → logo and palette persisted from the status page → public buttons in the logo's hue; **J7b** no logo → no stored palette → Theme 1's default blue; **J7c** checklist lists the samples → Review opens the section → preview shows 3 "Sample" badges and the instructor/number preview samples → publish warns and lists them → public site shows none (and no preview samples) → confirming one makes exactly that one public |
 | Visual review | Checklist, publish warning and preview samples at 1280 EN and 390 AR (RTL mirrored, Arabic dual forms) |
 
@@ -1924,3 +1924,189 @@ Scope: starter content and initialization only (§H Phase 7). No redesign: every
 - **Local-stack observations (not changed, outside Phase 7):** on the local dev stack a full page reload in the dashboard hit `invalidRefreshToken` (the journeys navigate in-app instead); relative MediaAsset logo URLs don't resolve across the dev ports (:3001 vs :3000) — production serves both from one host.
 - **Still open:** the Phase 5 + Phase 6 bundle increase (pre-Phase-8 review); the provenance and presentation migrations to deploy through the gated `apply_migrations` run; §R.5/§Q.5 items (private master archive bucket, the Brand tab's "logo changed elsewhere" suggestion, the cookie banner over the mobile hero).
 
+
+## U. Phase 8 results — hardening, QA, security, performance, accessibility (recorded 30 Sep 2026)
+
+Scope: hardening and verification of the approved Phases 5–7 (Owner instruction of 30 Sep 2026, 20 workstreams). No redesign, no new features, no Themes 2–5 visual change, no production images, no Magnific call, no production migration.
+
+**Plan conflict, recorded:** §H lists the final image stage (Magnific) as Phase 8's first workstream. The Owner's Phase 8 instruction forbids generating production images, so the image stage stays deferred behind its own approval (§E.6). Everything else in §H Phase 8 is covered below.
+
+### U.0 Test environment (Workstream 14)
+
+- **Isolated stacks:** a fresh `atlas_e2e` database per full run (migrate **and seed**, exactly as CI), e2e Redis on its own port (6380, BullMQ prefix `bull-test`), the dev stack on its own database and Redis (6379), and a second throwaway stack (`atlas_side` + Redis 6381) for targeted re-runs while a full run owns the first.
+- **Real S3 semantics:** MinIO built from source (the CI image was unreachable from this environment) with CI's credentials and bucket, replacing the local s3rver used in Phases 6–7. Run as a detached daemon; see U.I for the one outage this caused.
+- **Environment vs application:** every failure below was reproduced or cleared against the approved baseline before it was classified.
+
+### U.A Security audit
+
+| Area | Result |
+|---|---|
+| Route inventory | Every Theme 1 route reviewed: website configuration (incl. brand palette), publish/unpublish, pages CRUD / reorder / editing session, FAQ and testimonial library, media list/get/upload/patch/archive/archive-batch, provisioning (Organization and platform), public website and public media |
+| Authorization layers | `JwtAuthGuard` → `ManagementSurfaceGuard` → `AcademyScopeGuard` (membership via RLS-scoped lookups), then the services' `assertCanManage` (owner/administrator/manager of **that** Academy). Provisioning: `OrganizationMembershipGuard` / `PlatformOwnerGuard`. Nothing relies on frontend hiding |
+| Brand authority (WS 6) | The backend re-derives every palette from its inputs; client-sent roles/report/`confirmedBy` are ignored; failing overrides are refused with the pair and a suggestion; `confirmedAt/By` come from the server; the public config and the hostname presentation strip `confirmedBy`, `confirmedAt` and `extraction` (covered by `website-theme1-phase2` and `phase10-4` e2e; golden vectors byte-identical, parity specs green) |
+| Sample content (WS 3) | Stripped from the public pages payload **before caching** (`stripSampleContent`, the only public path that serves sections); the backend schema keeps `sample` on save, so an edit can never drop it; only the explicit "This is a real testimonial" action removes it; the renderer filters too. Proven end to end in the browser (J8a: a sample edited → still 3 samples on publish → public payload has no `"sample":true` and none of the texts) |
+| Real vs placeholder data (WS 4) | The template has no numbers, ratings or named people outside the three stripped samples (initials only); statistics are metric-only; instructors and numbers show labelled preview samples in the editor only. Starter copy is qualitative and Owner-editable |
+| Injection / XSS (WS 9) | Theme 1 has no `dangerouslySetInnerHTML`, `innerHTML`, `eval` or external origins; JSON-LD is written via `textContent`; links go through `isSafeExternalUrl` (both repos) or fixed `mailto:`/`tel:` prefixes; image fields accept only theme assets, media paths, http(s) and legacy raster data URLs (`javascript:`, `blob:`, malformed refused); uploads are typed by magic bytes; SVG logos are rebuilt from a whitelist and only rasterised for colour analysis |
+| CSP (production `Caddyfile`) | Enforced: `script-src 'self'`, `object-src 'none'`, `frame-ancestors 'self'`, `base-uri 'self'`, `form-action 'self'`. The 878-case baseline runs under this exact CSP (parsed from the Caddyfile) with 0 violations |
+| Public API exposure | Public config = colours only from the palette (no provenance); `lastPublishError` is only ever written as null; the hostname presentation returns theme key + colour fields only (SECURITY DEFINER, archived/suspended excluded) |
+| Cache isolation | Keys: `public:hostname:v1:<host>`, `public:config|pages:v1:<academyId>:<configVersion>`, `public:serving:v1:<orgId>` — no cross-tenant key |
+| **Fixed: Academy logo accepted any string** | `PATCH /academies/:id/branding` stored `javascript:alert(1)` (reproduced on the approved code). The logo is rendered publicly, in emails and fetched server-side for certificates. Now validated (`IsLogoReference`): uploaded media path, http(s), a legacy inline raster (still re-sent by the branding form), or empty. Favicon unchanged (stored as a data URL by design). Proven by the new e2e (fails on the approved code, passes now) |
+
+### U.B Multi-tenancy / RLS
+
+New adversarial suite `test/phase8-theme1-tenant-isolation.e2e-spec.ts` (real HTTP, guards and RLS; every refused write also checked for "nothing changed" in the database):
+
+| Probe | Result |
+|---|---|
+| Another Organization's owner on all 23 Theme 1 routes of A1 (+ media reads) | 403 everywhere, A1 unchanged |
+| Organization member with no Academy role, and an Instructor, on every website read/write | 403, unchanged |
+| Manager of sibling Academy A2 (same Organization) on A1 | 403 everywhere; their own A2 works (200) |
+| ID smuggling: B1's page / media / FAQ ids under A1's own path (get, patch, delete, archive, archive-batch) | 404; B1's rows unchanged |
+| Sections referencing another Academy's course, FAQ entry or page | 400; positive control with A1's own ids → 200 |
+| Public media: B1's object under A1's id; uploads into another tenant's library | 404; 403 before any storage write |
+| Provisioning requests across Organizations (list, read, retry, cancel); platform console by an owner | 403 / 404 / 403 |
+| Public: another Academy's course under A1; an unpublished site; unknown, malformed and SQL-looking ids; unknown hostname | 404, never 500 |
+| Academy logo values | see U.A |
+
+**Result: 9/9 passed.** The existing RLS / isolation suites run in the full backend e2e (U.F).
+
+### U.C Accessibility
+
+- **Theme 1: 0 axe violations** on every recorded state (EN/AR, 390/1440, new/rich, every brand palette) — unchanged from Phase 7, re-verified in the 878 run.
+- **Fixed: the public status page** (`PublicWebsiteStatus` — unknown host, unavailable, unpublished; reachable from Theme 1 hosts before a theme is known) had no `main` landmark and no `h1`. Now `<main>` and an `h1` title. axe (same tags as the baseline), approved code → now: `landmark-one-main`, `page-has-heading-one`, `region` → **none**, at 390 and 1440. **Pixel-compared against the approved build: 0 differing bytes** at both widths. (The first attempt differed by 3,989 bytes — the global `h1` style adds tight tracking — caught by that comparison and neutralised; recorded because a unit test alone would not have caught it.)
+- **Fixed: the page editor's server-refusal message** showed a literal `{{sections}}`: `ErrorState` never passed interpolation values (pre-existing since the base commit; hit more often now that Theme 1 validates more on the server). `ErrorState` now takes `values`; unit-tested in EN and AR (fails without the fix).
+- **Keyboard / focus:** J8d — the first Tab stops on the public site are on screen with a visible focus indicator; J8b — the mobile menu opens, closes on Escape, returns focus to its button (Arabic, 390).
+- **Targets:** "This is a real testimonial" measured in the browser at ≥ 24 × 24 px (J8a).
+- **Dialogs:** the publish warning is an AlertDialog, RTL and translated in Arabic (J8c); the preview iframe is titled "Website preview".
+- **"Powered by Atlas":** the ARIA fix landed in Phase 5 (`AtlasLogo`: `role="img"` + label, or hidden when decorative); no `aria-prohibited-attr` anywhere in the baseline.
+- **Remaining (outside Theme 1, recorded since Phase 0, unchanged):** Themes 2–5 `page-has-heading-one` (84 states) and `color-contrast` (8 states on premium-academy/corporate-learning); premium-academy's own 404/Coming Soon `landmark-one-main`/`region`/contrast (the baseline's "shared" cases). Fixing them changes Themes 2–5, which Phase 8 forbids — they need their own approval.
+
+### U.D Performance (measured; findings only — no optimisation implemented)
+
+**Bundle (production build, this tree):** the main public chunk is **398.4 KB gzip** (Phase 6: 395.2; Phase 7 added ≈ 3 KB). The route preloads `router-`, `ui-`, `utils-`, `i18n-`, `query-`, `form-vendor` and `app.config` (≈ 180 KB gzip more).
+
+Attribution of the main chunk (sourcemap, by original source):
+
+| Cost | Size (gzip) | Share of main chunk | Owner |
+|---|---|---|---|
+| **All translation resources, 41 namespaces × EN + AR**, statically imported (`localization/resources`) | **≈ 218 KB** | **≈ 56 %** | Platform (pre-Theme 1) |
+| Theme 1 renderers + Embla (Phases 5–7) | ≈ 32 KB | ≈ 8 % | Theme 1 |
+| Everything else (router, auth/sign-up forms, shared UI, sonner, cmdk, input-otp, …) | remainder | | Platform |
+
+**Lighthouse 13.5** (same method and machine class as §M.4.2: mobile, simulated throttling, median of 3, first visit; raw output kept out of the repo so the Phase 0 baseline file is unchanged):
+
+| Page | Theme 1 perf | LCP | CLS | TBT | Phase 0 Theme 1 (perf / LCP / CLS) | Themes 2–5 now (perf / LCP / CLS) |
+|---|---|---|---|---|---|---|
+| Home, new | 69 | 5.24 s | 0 | 107 ms | 70 / 5.30 s / 0.016 | 70–71 / 4.75–5.18 s / 0 |
+| Home, rich | 70 | 5.13 s | 0 | 35 ms | 72 / 4.69 s / 0.016 | 70–72 / 4.73–5.17 s / 0–0.001 |
+| Courses, rich | 71 | 4.71 s | 0.007 | 105 ms | 72 / 4.69 s / 0.011 | 68–70 / 4.70–4.81 s / 0 |
+| Course Details, rich | 55 | 4.74 s | **0.335** | 90 ms | 49 / 5.41 s / 0.464 | 49–58 / 5.14–5.19 s / 0.226–0.454 |
+
+- JS transferred: 612 KB on every page, every theme (the SPA's shared payload).
+- **Against §I.1:** LCP ≤ 2.5 s — **fails on every page of every theme** (unchanged since Phase 0; see the finding below). CLS ≤ 0.05 — passes everywhere except **Course Details** (all themes; Theme 1 improved 0.464 → 0.335 but still fails). TBT ≤ 200 ms — passes on Theme 1 (corporate-learning Courses 214 ms).
+- **Course Details CLS (open, Major, all themes):** the page lays out before the course and curriculum arrive, so content shifts down. The fix is reserving the loaded layout (skeletons at final dimensions) — a visual change to Course Details, so it goes to the Owner rather than into Phase 8.
+
+**Finding (architectural — needs the Owner's decision before any change):** the dominant cost is not Theme 1: every visitor downloads every dashboard/LMS translation in both languages. Loading translations per language and per namespace (public site: `publicWebsite`, `website`, `common`, `errors` for one language ≈ 15–20 KB) would remove roughly **180–200 KB gzip** from the public route, more than Theme 1's entire footprint several times over. Theme 1-only levers (Embla → scroll-snap ≈ −7.6 KB; lazy Course Details) are an order of magnitude smaller. §I.1's LCP ≤ 2.5 s cannot be met while the SPA ships this payload before first paint. Not implemented (Owner rule: document before implementing).
+
+Minor: the brand engine's colour-space helpers (`solveLightness`, ≈ 1.5 KB gzip) are on the public route since Phase 4 — Theme 1's mapping uses them for legacy colours. The engine's derivation and the Worker stay dashboard-only.
+
+### U.E Browser journeys (real stack: Vite + Nest API + PostgreSQL + Redis + MinIO, freshly seeded dev database)
+
+**Final run: 10/10 passed** (`e2e/j7-theme1-starter-content.spec.ts` + `e2e/j8-theme1-hardening.spec.ts`, one worker, freshly seeded dev database, MinIO):
+
+- **J7a–c** (Phase 7, re-run): logo → palette → Theme 1; no logo → default blue; sample lifecycle and publish warning.
+- **J8a** editing a sample keeps it private (payload and page); the confirm action ≥ 24 px.
+- **J8b** the public site in **Arabic at 390, 1024, 1440**: Home, Courses, About, FAQs, Contact, 404 — `dir="rtl"`, `lang="ar"`, **no horizontal overflow**; mobile menu open/Escape/focus return (390). Screenshots kept with the run.
+- **J8c** the dashboard in Arabic at 390: launch checklist and publish warning RTL, translated («آراء نموذجية»), no overflow.
+- **J8d** keyboard focus visible on the public site.
+- **J8e** a Theme 2 (premium-academy) Academy still provisions, publishes and renders with **no Theme 1 output** and no page errors.
+- Not runnable here: J1–J6 need a published website for the seeded Academy, which `prisma/seed.ts` does not create (pre-existing fixture gap; unrelated to Theme 1).
+
+### U.F Regression and baselines
+
+| Check | Result |
+|---|---|
+| Theme baseline (screenshots, axe, palette injection, production CSP) | **878/878 passed** on the final tree — Themes 2–5 **pixel diff 0**; Theme 1 unchanged; **Decision 3 legacy fixtures** (the plain Theme 1 slug renders the v1 export existing Academies have) unchanged. No screenshot or axe baseline file updated. One assertion updated (U.K) |
+| Responsive (§H widths the matrix does not screenshot) | **360 / 768 / 1280 / 1920 × EN / AR**, every Theme 1 `c1` page (rich and new), Course Details, 404 and Coming Soon: **112 page states, no horizontal overflow, `dir="rtl"` in Arabic** (390/1024/1440 are covered by the matrix and J8b) |
+| Frontend unit tests | **156 files, 1550 tests passed** (Phase 7: 1547 + 3 new). Vitest reports one `[vitest-worker]: Timeout calling …` RPC error and exits 1 — **also on the approved Phase 7 tree** (worktree at `e2d2d02`: 1547 passed, same error): a test-runner timing issue, not a test failure |
+| Frontend typecheck / lint | 31 errors, all pre-existing (33 before; the 2 in the page editor fixed); lint clean |
+| Backend unit tests | **152 suites, 4151 tests passed** (brand-engine golden vectors and section-contract parity included) |
+| Backend typecheck / lint | clean |
+| Backend e2e — Phase 8 isolation suite | **9/9** |
+| Backend e2e — full run (fresh, seeded, MinIO, nothing else running) | **166/166 suites, 2009/2009 tests passed** — every RLS / tenant-isolation / website / provisioning / media suite included. `p64-phase2-security`, accepted as an s3rver limitation in Phases 6–7, **passes on real S3 semantics (MinIO)**, confirming that classification |
+| Migrations vs schema | no difference (U.G) |
+
+### U.G Migration readiness
+
+| Migration | Content | Safety |
+|---|---|---|
+| `20261024000000_website_template_provenance` | `website_configurations.template_key TEXT`, `template_version INTEGER`, both nullable | Additive; no backfill (NULL = unknown); stamped once by generation, never rewritten; existing RLS/grants cover it; older code ignores it |
+| `20261030000000_public_website_presentation` | `resolve_public_presentation(text)` SECURITY DEFINER, `search_path = public`, EXECUTE revoked from PUBLIC, granted to `atlas_app` | Additive; returns theme key + four colour fields only; rollback = `DROP FUNCTION` |
+
+- `prisma migrate diff --from-migrations … --to-schema-datamodel … --exit-code` → **no difference** (migrations match the schema).
+- **Deployment requirement:** `deploy.yml` applies migrations only on a manual dispatch with `apply_migrations=true` **and** approval of the protected `production-migrations` environment; a push that carries a pending migration makes `deploy.sh` abort before touching the schema. Both Theme 1 migrations are pending in production, and the Phase 6–7 code depends on them (provenance columns; Coming Soon presentation). **Deploy order:** gated migration run first (or together), then the application. No production migration was run in Phase 8.
+
+### U.H Production configuration and security checks
+
+- CSP enforced as above; theme assets immutable-cached (Phase 3 Caddy block).
+- **BullMQ** builds its Redis connection from `REDIS_URL` host/port/password only — a database index and TLS (`rediss://`) in the URL are dropped. Harmless on today's single-DB, non-TLS Redis; must be fixed before pointing production at a managed Redis that requires TLS or a non-zero DB (pre-existing; not changed).
+- `R2_*` production settings must be the real bucket (MinIO/s3rver are local only); public media serves only `academies/<uuid>/<uuid>.<png|jpeg|jpg|gif|webp|pdf>` with `nosniff`.
+- `.env.production` uses the same-origin `/api/v1`, which the session cookie and relative media URLs require (see U.I, local issues).
+
+### U.I Known pre-existing issues (each reproduced against the approved baseline)
+
+| Issue | Evidence | Classification |
+|---|---|---|
+| **Correction of §T.3:** `p63-domain-operations` (DOM-003, DOM-011) | Post-commit provider release runs as the first Platform Owner and silently skips when there is none. Fresh unseeded DB, approved code: 36/38; same DB with one platform owner: **38/38**. CI seeds (creating one), so CI is unaffected. §T.3's "stale base domain" explanation was wrong | Test fixture expectation (seeded DB), not Theme 1 |
+| `plans-catalog` on an unseeded DB | Expects the seeded catalog; CI seeds first | Environment (my first run skipped the seed) |
+| First full e2e run in this phase: 16 suites failed at 10:43 | `ECONNREFUSED 127.0.0.1:9000` — MinIO was killed by the harness's background-task lifetime; re-run after moving MinIO to a daemon | Environment |
+| `P61-GRANT-018` once `ECONNRESET` (concurrent enrolments) | Happened while the dev stack was being rebuilt (CPU contention); 16/16 twice in isolation, and green in the final uncontended full run | Environment (load) |
+| Local only: a full reload ends the dashboard session; relative logo URLs broken | A/B on the same stack: checked-in `.env` (API cross-origin at :3000) → no cookie stored, `/auth/refresh` 401, reload → sign-in, logo `naturalWidth` 0; same-origin `/api/v1` through Vite's proxy (production's shape) → `atlas_session` stored, refresh 200, stays on `/dashboard`, logo renders | **Dev configuration, not an application bug.** Recommendation: `.env` → `VITE_API_BASE_URL=/api/v1` with `BACKEND_PORT=3000` (not changed: it changes every developer's setup) |
+| Frontend typecheck: 31 errors | Platform add-ons/zoom/tenant tests and one website test file, all from the base commit (33 before Phase 8; the 2 in the page editor are fixed) | Pre-existing |
+| Themes 2–5 axe violations | U.C | Pre-existing, outside scope |
+
+### U.J New issues found in Phase 8 and their severity
+
+| # | Issue | Severity | Status |
+|---|---|---|---|
+| 1 | Academy logo accepted `javascript:`, `blob:`, arbitrary schemes (pre-existing DTO, now on a Theme 1 flow) | Medium | **Fixed** |
+| 2 | **Certificate renderer fetches the Academy logo URL server-side** (any http(s) host, redirects followed) — a blind SSRF for managing roles; nothing returned except an image embedded in the PDF (pre-existing, certificates) | Medium | **Open — needs the Owner's decision** (restricting it changes whether external logos on arbitrary hosts keep working on certificates) |
+| 3 | Status page without `main`/`h1` | Minor (a11y) | **Fixed**, pixel-identical |
+| 4 | Editor refusal message shows `{{sections}}` | Minor (UX) | **Fixed** |
+| 5 | Translations are ≈ 56 % of the public main chunk | Major (performance target) | **Open — architectural finding for the Owner** (U.D) |
+| 6 | BullMQ drops Redis DB index/TLS | Low today | Open, recorded (U.H) |
+| 7 | Course Details CLS 0.23–0.45 on every theme (Theme 1 0.335) — carried from Phase 0 | Major (performance target) | Open — needs a visual change (reserved layout), Owner decision (U.D) |
+
+### U.K Exact changes
+
+**Backend** (`atlas-backend`):
+- `src/academy/dto/update-academy-branding.dto.ts` — `IsLogoReference` on `logo`.
+- `test/phase8-theme1-tenant-isolation.e2e-spec.ts` — new (9 tests).
+
+**Frontend** (`atlas`):
+- `src/features/public-website/components/PublicWebsiteStatus.tsx` — `<main>`, `h1` title.
+- `src/shared/components/feedback/ErrorState.tsx` — `headingLevel` (default `h3`; `h1` neutralises the global h1 tracking) and `values` for the description.
+- `src/shared/components/feedback/ErrorState.test.tsx` — new (interpolation EN/AR; heading levels).
+- `tsconfig.app.json` — `ES2021.Intl` lib (types `Intl.ListFormat`, already used by the editor; type-level only).
+- `e2e/theme-baseline/palette-injection.spec.ts` — the unknown-slug test expects the status title at `h1` (was `h3`): the intended consequence of the landmark fix, not a weakened assertion.
+- `e2e/j8-theme1-hardening.spec.ts` — new (J8a–e).
+- No screenshot, axe or Lighthouse baseline file changed.
+
+### U.L Remaining risks
+
+- The SSRF (J.2) until decided; the performance target (J.5) until the translation-loading decision.
+- The two pending migrations must go through the gated run before (or with) the Phase 6–7 application deploy.
+- Theme 1 is visually complete but still shows neutral placeholders for every image except the released `home-hero` pilot: the final image stage is deferred.
+- The BullMQ Redis URL handling before any TLS/managed Redis.
+
+### U.M Phase 9 readiness
+
+**Ready, with four Owner decisions and one deferred stage:**
+
+1. **Decide the certificate-logo SSRF fix (U.J #2).** Recommended: fetch only from the platform's own public-media origin (read the object from storage directly) and refuse other hosts, or keep external hosts but block private/loopback/link-local ranges and disable redirects.
+2. **Decide the performance route (U.D).** Recommended: per-language, per-namespace translation loading for the public route first (≈ 180–200 KB gzip), then re-measure LCP before any Theme 1-specific trimming. Course Details CLS (U.J #7) needs a reserved-layout change on every theme.
+3. **Decide the Themes 2–5 accessibility items (U.C)**, which change those themes and therefore need their own approval.
+4. **Optional dev fix:** `.env` → same-origin `/api/v1` through the Vite proxy (U.I).
+5. **Deferred:** the final image stage (§E.6), behind its own approval, before production launch of Theme 1 imagery. The final UI/UX Pro Max sign-off accompanies it, because it reviews the site with its real images.
+
+**Deployment prerequisites for Phase 9:** the gated `apply_migrations` run for the two additive migrations (U.G); production `R2_*`; a Redis URL without DB index/TLS until U.H is fixed.

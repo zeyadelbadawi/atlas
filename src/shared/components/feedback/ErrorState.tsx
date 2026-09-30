@@ -20,12 +20,20 @@ export interface ErrorStateProps {
   readonly titleKey?: string;
   /** Overrides the description translation key. */
   readonly descriptionKey?: string;
+  /** Interpolation values for the description (e.g. `{{sections}}`). */
+  readonly values?: Record<string, unknown>;
   /** Reference shown so support can trace the failure. */
   readonly requestId?: string;
   /** Invoked by the retry action. Omit when the action cannot be retried. */
   readonly onRetry?: () => void;
   /** Invoked by the support action. */
   readonly onContactSupport?: () => void;
+  /**
+   * The title's heading level. `h3` inside a page; a full-page error that
+   * IS the page (the public website's status page) passes `h1`, so the
+   * document has its one top-level heading. Styling is identical.
+   */
+  readonly headingLevel?: 'h1' | 'h2' | 'h3';
   readonly className?: string;
 }
 
@@ -33,9 +41,11 @@ export function ErrorState({
   kind = 'unknown',
   titleKey,
   descriptionKey,
+  values,
   requestId,
   onRetry,
   onContactSupport,
+  headingLevel: Heading = 'h3',
   className,
 }: ErrorStateProps): JSX.Element {
   const { t } = useTranslation();
@@ -53,11 +63,18 @@ export function ErrorState({
       </span>
 
       <div className="space-y-1.5">
-        <h3 className="font-display text-base font-semibold text-foreground">
+        <Heading
+          className={cn(
+            'font-display text-base font-semibold text-foreground',
+            // The global `h1` style adds tight tracking; an `h1` title here
+            // must look exactly like the default `h3`.
+            Heading === 'h1' && 'tracking-normal'
+          )}
+        >
           {t(titleKey ?? errorTitleKey(kind))}
-        </h3>
+        </Heading>
         <p className="mx-auto max-w-prose text-sm text-muted-foreground">
-          {t(descriptionKey ?? errorMessageKey(kind))}
+          {t(descriptionKey ?? errorMessageKey(kind), values)}
         </p>
       </div>
 

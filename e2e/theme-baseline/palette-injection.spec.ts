@@ -77,8 +77,10 @@ test('an unknown fixture slug resolves like an unknown hostname', async ({
 }) => {
   await openFixture(page, '/?__atlas_academy_preview=fx--no-such-theme--new');
   // `PublicWebsiteStatus` 'not-found' — the same state a real unknown host gets.
+  // Its title is the page's `h1` (Theme 1 plan Phase 8: the status page is
+  // the whole document, so it carries the top-level heading).
   await expect(page.getByRole('alert')).toBeVisible();
-  await expect(page.getByRole('heading', { level: 3 })).toHaveText(
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
     'Website not found'
   );
   await expect(page.getByText('Horizon Academy')).toHaveCount(0);

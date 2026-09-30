@@ -55,8 +55,11 @@ export function PublicWebsiteStatus({
     },
   }[state.status];
 
+  // The whole document here: `main` and an `h1` give it the landmark and
+  // top-level heading every page needs (axe `region`, `landmark-one-main`,
+  // `page-has-heading-one`). Same classes, so it looks exactly as before.
   return (
-    <div className="website-theme-scope flex min-h-screen items-center justify-center bg-background p-6">
+    <main className="website-theme-scope flex min-h-screen items-center justify-center bg-background p-6">
       <div className="w-full max-w-md space-y-4 text-center">
         <span className="mx-auto flex size-12 items-center justify-center rounded-pill bg-muted text-muted-foreground">
           <Globe className="size-6" strokeWidth={1.75} aria-hidden />
@@ -65,11 +68,12 @@ export function PublicWebsiteStatus({
           kind={state.status === 'unavailable' ? 'server' : 'notFound'}
           titleKey={copy.titleKey}
           descriptionKey={copy.descriptionKey}
+          headingLevel="h1"
         />
         <p className="text-xs text-muted-foreground">
           {t('website:public.poweredBy')}
         </p>
       </div>
-    </div>
+    </main>
   );
 }
