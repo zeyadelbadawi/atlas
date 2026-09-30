@@ -136,10 +136,12 @@ export default defineConfig(({ command, mode }) => {
     },
     server: {
       host: '0.0.0.0', // Listen on all network interfaces.
-      port: parseInt(process.env.VITE_PORT || '3000'),
+      // 3001 by default: the API's own default port is 3000, which the
+      // /api proxy below targets (override with VITE_PORT / BACKEND_PORT).
+      port: parseInt(process.env.VITE_PORT || '3001'),
       proxy: {
         '/api': {
-          target: `http://localhost:${process.env.BACKEND_PORT || '8000'}`,
+          target: `http://localhost:${process.env.BACKEND_PORT || '3000'}`,
           changeOrigin: true,
           // Local-only: learner endpoints resolve the academy from the
           // request HOST (the frontend never sends an academy id by
