@@ -38,6 +38,12 @@
  * backend's normalised error shape and recorded, so a new, unmocked call
  * shows up in `GET /__fixture/report` instead of silently hanging a test.
  *
+ * `THEME_BASELINE_SSR=1`: page requests are server-rendered in-process by
+ * the SAME handler the production renderer uses (`server/ssr/handler.mjs`,
+ * with the fixture SSR bundle from `pnpm theme-baseline:build:ssr`), so every
+ * suite here runs against server-rendered, hydrated pages. The renderer
+ * reaches this server's fixture API over an internal plain-HTTP listener.
+ *
  * Usage: node e2e/theme-baseline/server/fixture-server.mjs [--port 4173]
  */
 import { createServer } from 'node:http';
@@ -59,6 +65,8 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(HERE, '../../..');
 const DIST = resolve(REPO_ROOT, 'dist-theme-fixtures');
 const GENERATED = resolve(HERE, '../fixtures/generated');
+const SSR = process.env.THEME_BASELINE_SSR === '1';
+const DIST_SSR = resolve(REPO_ROOT, 'dist-theme-fixtures-ssr');
 
 const portFlag = process.argv.indexOf('--port');
 const PORT = Number(portFlag > -1 ? process.argv[portFlag + 1] : 4173);
@@ -373,6 +381,44 @@ function send(req, res, status, headers, body) {
   res.end(body ?? undefined);
 }
 
+/** Whether `url` names a file in the build (what Caddy's `try_files {path}` finds). */
+function staticFileFor(url) {
+  const safePath = normalize(decodeURIComponent(url.pathname)).replace(
+    /^(\.\.[/\\])+/,
+    ''
+  );
+  const file = join(DIST, safePath);
+  return file.startsWith(DIST) &&
+    existsSync(file) &&
+    !statSync(file).isDirectory()
+    ? file
+    : null;
+}
+
+let ssrHandler = null;
+
+async function serveServerRendered(req, res, url) {
+  const result = await ssrHandler.handle({
+    method: req.method,
+    url: `${url.pathname}${url.search}`,
+    host: req.headers.host ?? req.headers[':authority'],
+    protocol: HTTP2 ? 'https' : 'http',
+    cookieHeader: req.headers.cookie,
+    clientIp: req.socket.remoteAddress,
+  });
+  send(
+    req,
+    res,
+    result.status,
+    {
+      ...result.headers,
+      'Content-Security-Policy': CSP,
+      'X-Content-Type-Options': 'nosniff',
+    },
+    req.method === 'HEAD' ? null : Buffer.from(result.body)
+  );
+}
+
 function serveStatic(req, res, url) {
   const safePath = normalize(decodeURIComponent(url.pathname)).replace(
     /^(\.\.[/\\])+/,
@@ -499,7 +545,47 @@ function handle(req, res) {
       );
       return;
     }
+    if (
+      SSR &&
+      !url.pathname.startsWith('/theme-assets/') &&
+      !staticFileFor(url)
+    ) {
+      void serveServerRendered(req, res, url);
+      return;
+    }
     serveStatic(req, res, url);
+  });
+}
+
+if (SSR) {
+  // React's production build, as the production renderer runs it.
+  process.env.NODE_ENV ??= 'production';
+  if (!existsSync(join(DIST_SSR, 'entry-server.js'))) {
+    console.error(
+      `No SSR fixture build at ${DIST_SSR}. Run \`pnpm theme-baseline:build:ssr\` first.`
+    );
+    process.exit(1);
+  }
+  // The renderer calls the fixture API like the production renderer calls
+  // the backend: plain HTTP on an internal listener.
+  const internal = createServer(handle);
+  await new Promise((done) => internal.listen(0, '127.0.0.1', done));
+  const { createSsrHandler } = await import(
+    resolve(REPO_ROOT, 'server/ssr/handler.mjs')
+  );
+  ssrHandler = await createSsrHandler({
+    distDir: DIST,
+    entryPath: join(DIST_SSR, 'entry-server.js'),
+    apiOrigin: `http://127.0.0.1:${internal.address().port}`,
+    // Fixture pages must render deterministically: no cache between runs'
+    // pages (each test is a fresh visit), generous budgets.
+    cacheTtlMs: Number(process.env.THEME_BASELINE_SSR_CACHE_MS ?? 0),
+    renderBudgetMs: 10_000,
+    apiTimeoutMs: 5_000,
+    log:
+      process.env.THEME_BASELINE_SSR_LOG === '1'
+        ? (event) => console.log(JSON.stringify(event))
+        : undefined,
   });
 }
 
