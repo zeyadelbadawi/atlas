@@ -12,6 +12,30 @@ Evidence labels used below:
 
 ---
 
+## ★★ Status update — Phase 8 decisions session (30 Sep 2026). Read this first.
+
+Same branch (`claude/practical-wozniak-pjcdhe`, both repos, nothing on `main`, no production change). Full record: plan §W. It supersedes the "Blocked — images" and "Owner decisions" bullets of the ★ section below.
+
+- **LCP:** root-cause report `Reports/LCP_ROOT_CAUSE.md`. Fixes A–D shipped with no SSR and no visible change (FE `e5a9baa`).
+  - HTTP/2 Lighthouse: performance 76 → 90; LCP 4.24 → 3.02 s.
+  - **LCP ≤ 2.5 s not reached.** The report proposes the minimum HTML-first change (SSR of the public routes only) with its risks, and asks the Owner to choose (a) two small steps, (b) SSR as its own phase, or (c) accept 3.0 s. Not implemented, per instruction.
+- **Themes 2–5:** retired from selection (API `400`, the pickers offer Theme 1; a website still on a retired theme renders unchanged). Report: `Reports/THEMES_2_5_RETIREMENT.md`.
+  - Gated migration tooling: `atlas-backend` `npm run db:retire-website-themes`, with dry run → `--apply --plan` → `--rollback`. It was verified on a copy of the dev database and by `theme-retirement.spec.ts` (160/160).
+  - **Not run in production.** Next: the production dry run and review, a backup, apply, verify. Then a separate change deletes the retired code.
+- **Images:** all 12 released (v1) from the 44 existing candidates; no new credits. The §P.7 gate and in-context QA passed (48 cases, EN/AR, 390–1440). Exactly 82 image-slot snapshots were re-recorded (FE `c4cd90e`, `c4597bf`).
+- **R2 archive:** the tool was rehearsed end to end against a local private bucket. **Owner:** create `atlas-theme-sources` (private, no `r2.dev` or custom domain, an indefinite bucket lock, a bucket-scoped token), then run `archive-master` × 12 and `verify-archive` (plan §W.C).
+- **Regression (final code):**
+  - theme baseline 1,047/1,047;
+  - FE unit 159 files / 1,573 tests (the known Vitest RPC-timeout message remains);
+  - FE typecheck 31, identical to the session start; lint clean;
+  - BE unit 156 suites / 4,194 tests. The two cross-repo suites need `ATLAS_FRONTEND_ROOT=/home/user/atlas` in this container layout.
+  - BE e2e (provisioning, website) 50/50.
+- **Phase status:** Phases 0–7 closed. Phase 8: all in-scope work done except the LCP ≤ 2.5 s target (needs the Owner's decision); the production migration and the R2 archival are prepared, waiting on the Owner. **Phase 9 not started.**
+- **Environment notes:**
+  - `pgrep -f`/`pkill -f` with a pattern that also appears in your own command line kills your own shell; kill by PID.
+  - Run the theme baseline with `THEME_BASELINE_CHROMIUM=/opt/pw-browsers/chromium`.
+  - The baseline's full-page shots don't scroll, so lazy images far below the fold show their LQIP. That is expected; use a scrolled capture for in-context QA.
+
 ## ★ Status update — continuation session (30 Sep 2026). Read this first.
 
 The sections below describe the state at the first handover. Since then, on the same branch (`claude/practical-wozniak-pjcdhe`, both repos, nothing on `main`):

@@ -2172,3 +2172,113 @@ Continued from `docs/ATLAS-CLAUDE-HANDOVER.md` on `claude/practical-wozniak-pjcd
 | 25 | Decision 3 (legacy academies, no writes) | Met | §S |
 
 **Phases 0–7: closed. Phase 8: not closed** — criteria 3/26 (images) wait on the network allowlist, and criterion 8's LCP target needs an architectural decision. Phase 9 has not started: it follows Phase 8 closure and needs the Owner's authorisation for the gated production migration and deploy.
+
+## W. Phase 8 decisions session (recorded 30 Sep 2026)
+
+The Owner's instructions, in order:
+1. the LCP root cause first, then the safest fix;
+2. retire Themes 2–5 safely;
+3. the private R2 archive (approved);
+4. the Magnific network was now open: download and release the images;
+5. the final regression and this matrix;
+6. then stop. No Phase 9, no production deployment, no production migration.
+
+### W.A LCP — root cause, fixes A–D, decision needed
+
+Report: `Reports/LCP_ROOT_CAUSE.md`. The critical path was traced stage by stage. The public site downloaded the whole dashboard app before it could paint (a barrel import defeated the lazy boundary), discovered its translations serially, fetched data only after mount, and chained a render-blocking third-party font stylesheet.
+
+Fixed without SSR and without any visible change (FE `e5a9baa`):
+- **A:** router split and chunking;
+- **B:** boot-time parallel prefetch;
+- **C:** self-hosted fonts, with the CSP tightened;
+- **D:** core/rest translation split.
+
+The visual baseline caught one regression on the way: the lazy theme stylesheet landing after Tailwind's utilities. It was fixed by restoring the original CSS order.
+
+Lighthouse mobile, HTTP/2 as production, 20 cases, idle machine, with the released images:
+
+| | Before | After |
+|---|---|---|
+| Performance (median) | 76 | 90 (min 88) |
+| FCP | 3.84 s | 2.56 s |
+| LCP | 4.24 s | 3.02 s (worst 3.25 s) |
+| TBT | 59 ms | 66 ms |
+| CLS | ≤ 0.017 | ≤ 0.016 |
+
+LCP ≤ 2.5 s is **not** reached. The remaining FCP is JavaScript that must run before paint, and the remaining FCP → LCP gap is the data wave. The report lists two small steps (estimated 2.4–2.6 s) and the minimum HTML-first change: server-rendering the public routes only, with its risks. Per the instruction, **nothing architectural was implemented: the Owner's decision is needed.**
+
+### W.B Themes 2–5 — retired from selection, gated migration ready
+
+Report: `Reports/THEMES_2_5_RETIREMENT.md` (FE `974774c`, `4070c8c`, `a0414f4`; BE `20cb0bf`, `4b4cbde`).
+
+- **Scan:** no DB constraint names the keys. There are two enforcement arrays (one per repo), two DTOs, the provisioning theme step, the template and theme registries, and the pickers. Theme 1 draws all 16 section types, so nothing is unmappable by type.
+- **Selection:** only Theme 1 is selectable (API `400` for a retired key; the pickers offer Theme 1). A website still on a retired theme keeps rendering it until migrated, so deploying changes no live site. The ThemePack architecture is unchanged.
+- **Migration tooling:** `npm run db:retire-website-themes`. It is a dry run by default. `--apply` applies only a reviewed plan, skipping anything changed since. It writes `theme_key` and `config_version` only, with a content fingerprint re-checked in the same transaction. It never moves a website with an unmappable section. It is idempotent, and `--rollback` restores previous keys unless edited since. Writes go through each Academy's owner under RLS.
+- **Verified locally** on a copy of the dev database: the plan, apply, re-apply and rollback all behave as specified, and all content is byte-identical.
+- **Rendering verified** (`theme-retirement.spec.ts`): 160/160 cases, before vs after, EN/AR, 1440/390; no authored text lost; RTL, overflow, CSP and axe clean.
+  - One real difference found and documented: Theme 1 does not draw an empty testimonials/gallery/statistics/instructors section (§D.4), where Themes 2–5 drew a bare heading. The dry run lists these per website.
+- **Not done (needs production access and authorisation):** the production dry run, apply and verification; then a separate change deleting the retired code.
+
+### W.C Private master archive (R2)
+
+The archive tooling is ready and was rehearsed against a local private bucket. MinIO stood in for R2, as there are no production credentials here.
+
+- All 12 masters were archived and read back, and a re-run was a no-op.
+- A wrong master was refused, and so was the media bucket.
+- `verify-archive` passes for all 12, and an anonymous read returns 403.
+
+**Production configuration for the Owner:**
+1. A private bucket `atlas-theme-sources` with no `r2.dev` URL and no custom domain (check with `wrangler r2 bucket dev-url get` / `domain list`).
+2. An indefinite bucket lock for archive safety (`wrangler r2 bucket lock add atlas-theme-sources --name masters-forever --retention-indefinite`). R2 has no S3 object versioning; the versioned key layout plus the lock is the guarantee.
+3. A token scoped to that bucket only, stored outside the repository.
+4. Then `archive-master` × 12 and `verify-archive` (commands in `tools/theme-assets/archive-master.mjs`). The masters are in the Owner's Magnific account, identified by `jobId` and `masterSha256`.
+
+The public asset contract is unchanged, and no archive URL appears anywhere public.
+
+### W.D Images — all 12 released (FE `c4cd90e`, `c4597bf`)
+
+- **Candidates:** the 44 existing candidates were downloaded, and each fully decoded and was hashed. No new credits were spent; none was unusable.
+- **Selection:** one per slot against the frozen manifest and the §P.7 gate: logos, readable text, hands and faces, cultural fit, safe areas, crops, edge darkness. Each entry's provenance records why the others were rejected.
+- **Derivatives:** `prepare.mjs` produced the AVIF/WebP derivatives (the largest ≤ 1200w AVIF is 43 KB against a 120 KB budget). The ratio check is now relative, 2%, because the model's 16:9 and 21:9 outputs are 0.8–1.0% off the named ratio.
+- **Provenance:** prompt, model, seed, Magnific id, date, licence, sha256 and reviewer.
+- **Alt text:** Arabic alt uses feminine forms where the chosen image shows a woman learner.
+- **In-context QA,** scrolled so lazy images load: 6 pages × EN/AR × 1440/1024/768/390 = 48 cases.
+  - Every visible theme image decoded and was served as AVIF, with the right alt text.
+  - 0 overflow, 0 CSP violations, 0 page errors.
+  - `home-cta` below 480px and the auth panel on mobile are hidden and never downloaded, as designed.
+  - Visually reviewed in EN and AR.
+- **Baseline:** exactly 82 snapshots changed, all image slots: Theme 1 v2 Home/About, sign-in/up on desktop, the v1 launching state and the brand matrix. They were re-recorded. Nothing else changed.
+
+### W.E Regression (final code)
+
+| Check | Result |
+|---|---|
+| Theme baseline (screenshots, axe, palette injection, identity, CSP, retirement) | **1,047/1,047** (887 existing cases incl. 82 image-slot snapshots re-recorded, plus 160 retirement cases) |
+| Frontend unit | 159 files / 1,573 tests (the known Vitest RPC-timeout message remains) |
+| Frontend typecheck / lint (`src`) | 31 errors, identical to the session start / clean |
+| Backend unit | 156 suites / 4,194 tests (the two cross-repo suites run with `ATLAS_FRONTEND_ROOT`) |
+| Backend e2e (changed suites: provisioning, website) | 2 suites, 50/50 |
+| Lighthouse (HTTP/2) | W.A |
+| Migrations | none added; M-1 (Phases 2 and 6) still pending in production |
+
+### W.F Phase 0–8 closure matrix (§J), updated
+
+| # | Criterion | Status | Evidence |
+|---|---|---|---|
+| 1, 2, 24 | Completeness, honest public site, sample rule | Met | §T, §U, W.B |
+| 3, 26 | Images | **Met** (12/12 released, gate passed in context); archival to production R2 waits on the Owner's bucket | W.C, W.D |
+| 4 | Visual quality | Met, including the review with real images | W.D |
+| 5, 6, 27 | Motion, responsive, page heroes | Met | §R–§S, W.D |
+| 7, 16 | Accessibility (Theme 1) | Met (axe 0 on Theme 1 and the brand matrix; Lighthouse a11y 100) | W.E |
+| 8 | Performance | CLS, CSP, third-party origins and JS budget met; performance 88–90. **LCP ≤ 2.5 s not met (3.0 s)**: needs the Owner's decision on HTML-first rendering (W.A) | `Reports/LCP_ROOT_CAUSE.md` |
+| 9, 12, 13–15, 17–19, 22 | Editing, architecture, palette engine | Met; ThemePack architecture kept for future themes | §N–§Q, W.B |
+| 20, 21 | Overrides, identity audit | Met | §V |
+| 10, 23 | Multi-tenancy, isolation | Met (the migration writes under RLS as each Academy's owner) | §U.B, W.B |
+| 11 | Regression safety | Met | W.E |
+| 25 | Decision 3 (legacy academies, no writes) | Met: the retirement migration writes nothing until the Owner runs it | W.B |
+
+**Phase 8: everything in scope is done except criterion 8's LCP target, which needs an architectural decision.** Two Owner-side steps are prepared but not run:
+- the production Themes 2–5 migration (dry run, then apply);
+- the R2 bucket, then archival.
+
+Phase 9 has not started. No production deployment or migration was performed.
