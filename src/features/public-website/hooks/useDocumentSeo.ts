@@ -25,7 +25,7 @@
  * engines discover the `/ar/...` twin of every page instead of treating
  * the two languages as unrelated, duplicate-content URLs.
  */
-import { useEffect } from 'react';
+import { createContext, useContext, useEffect } from 'react';
 import type { ResolvedSeoMetadata } from '@types';
 import {
   usePublicWebsiteDocumentDirection,
@@ -64,6 +64,92 @@ function upsertMeta(
   if (!existing) document.head.appendChild(tag);
 }
 
+/**
+ * Server rendering only (Reports/SSR_ARCHITECTURE_ANALYSIS.md §4 #6): a
+ * per-request holder the renderer provides. Effects never run on a
+ * server, so the hook reports what it WOULD write, and the renderer puts
+ * the same tags in the page's head with `renderSeoHeadHtml`.
+ */
+export const SeoHeadCollectorContext = createContext<{
+  current: UseDocumentSeoOptions | null;
+} | null>(null);
+
+function escapeAttribute(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function escapeText(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+/** JSON that cannot end the script element or be read as HTML. */
+function safeJson(value: unknown): string {
+  return JSON.stringify(value)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
+}
+
+/**
+ * The head tags `useDocumentSeo` writes, as HTML — the same set, the same
+ * values, the same `data-atlas-seo` marker, so the browser's effect adopts
+ * them instead of adding a second copy.
+ */
+export function renderSeoHeadHtml({
+  seo,
+  siteTitle,
+  canonicalUrl,
+  structuredData,
+}: UseDocumentSeoOptions): string {
+  const tags: string[] = [];
+  const title = siteTitle ? `${seo.title} · ${siteTitle}` : seo.title;
+  tags.push(`<title>${escapeText(title)}</title>`);
+  const meta = (attr: 'name' | 'property', key: string, content?: string) => {
+    if (content) {
+      tags.push(
+        `<meta ${attr}="${key}" content="${escapeAttribute(content)}" ${MANAGED_ATTR}="true">`
+      );
+    }
+  };
+  meta('name', 'description', seo.description);
+  meta('name', 'robots', seo.indexable ? 'index,follow' : 'noindex,nofollow');
+  meta('property', 'og:title', seo.ogTitle);
+  meta('property', 'og:description', seo.ogDescription);
+  meta('property', 'og:type', 'website');
+  meta('property', 'og:image', seo.ogImage);
+  meta('property', 'og:url', canonicalUrl);
+  meta('name', 'twitter:card', seo.ogImage ? 'summary_large_image' : 'summary');
+  meta('name', 'twitter:title', seo.ogTitle);
+  meta('name', 'twitter:description', seo.ogDescription);
+  meta('name', 'twitter:image', seo.ogImage);
+  if (canonicalUrl) {
+    tags.push(
+      `<link rel="canonical" href="${escapeAttribute(canonicalUrl)}" ${MANAGED_ATTR}="true">`
+    );
+    const origin = new URL(canonicalUrl).origin;
+    for (const alternate of seo.hreflangAlternates) {
+      tags.push(
+        `<link rel="alternate" hreflang="${escapeAttribute(alternate.locale)}" href="${escapeAttribute(`${origin}${alternate.path}`)}" ${MANAGED_ATTR}="true">`
+      );
+    }
+  }
+  for (const entry of structuredData ?? []) {
+    tags.push(
+      `<script type="application/ld+json" ${MANAGED_ATTR}="true">${safeJson(entry)}</script>`
+    );
+  }
+  return tags.join('');
+}
+
 export function useDocumentSeo({
   seo,
   siteTitle,
@@ -73,7 +159,27 @@ export function useDocumentSeo({
 }: UseDocumentSeoOptions): void {
   usePublicWebsiteDocumentDirection(locale);
 
+  const collector = useContext(SeoHeadCollectorContext);
+  if (collector) {
+    collector.current = {
+      seo,
+      siteTitle,
+      canonicalUrl,
+      structuredData,
+      locale,
+    };
+  }
+
   useEffect(() => {
+    // A server-rendered page arrives with these tags already in the head
+    // (Reports/SSR_ARCHITECTURE_ANALYSIS.md §4 #6). Meta and canonical tags
+    // are reused below; the list-like ones are replaced, never duplicated.
+    document.head
+      .querySelectorAll(
+        `link[rel="alternate"][${MANAGED_ATTR}], script[type="application/ld+json"][${MANAGED_ATTR}]`
+      )
+      .forEach((node) => node.remove());
+
     const previousTitle = document.title;
     document.title = siteTitle ? `${seo.title} · ${siteTitle}` : seo.title;
 

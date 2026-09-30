@@ -5,6 +5,7 @@
  * token-driven-variant pattern as `WebsiteHeader`.
  */
 import { AtlasPlatformAttribution } from '@components/branding';
+import { useCurrentYear } from '@hooks';
 import { useWebsiteDesignSystem } from './WebsiteDesignSystemContext';
 import { useWebsiteContainerClass } from './renderer-style.utils';
 import {
@@ -109,9 +110,10 @@ export function WebsiteFooter({
   const design = useWebsiteDesignSystem();
   const container = useWebsiteContainerClass();
   const { locale } = usePublicWebsiteLocale();
+  const currentYear = useCurrentYear();
   const copyright =
     resolveLocalizedText(footer.copyrightText, locale) ||
-    `© ${new Date().getFullYear()} ${academyName}`;
+    `© ${currentYear} ${academyName}`;
 
   // `footer.groups` (titled link columns) and `footer.socialLinks` (the
   // flat list the settings UI's "Social links" section actually edits)

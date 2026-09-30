@@ -30,7 +30,11 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@utils';
-import { usePublicCourseCategories, usePublicWebsiteStatistics } from '@hooks';
+import {
+  usePublicCourseCategories,
+  usePublicWebsiteStatistics,
+  useRequestLocation,
+} from '@hooks';
 import { useWebsiteContainerClass } from '../renderer/renderer-style.utils';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
@@ -126,8 +130,9 @@ function RoutedCatalogSearch({
   readonly pages: readonly WebsitePage[];
 }): JSX.Element {
   const navigate = useT1Navigate();
+  const requestSearch = useRequestLocation().search;
   const [initial] = useState(
-    () => fromCatalogSearch(window.location.search).search ?? ''
+    () => fromCatalogSearch(requestSearch).search ?? ''
   );
   return (
     <CatalogSearchForm

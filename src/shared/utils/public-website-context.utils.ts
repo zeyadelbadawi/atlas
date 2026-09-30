@@ -114,9 +114,11 @@ export function getCurrentPublicWebsiteContext(
  * both ask for exactly the same resolution.
  */
 export function publicWebsiteLookupKey(
-  context: Extract<PublicWebsiteContext, { mode: 'academy-website' }>
+  context: Extract<PublicWebsiteContext, { mode: 'academy-website' }>,
+  /** The request's host; the browser's when omitted (server rendering passes it). */
+  hostname?: string
 ): string {
   return context.lookupType === 'dev-override'
     ? context.value
-    : window.location.hostname;
+    : (hostname ?? window.location.hostname);
 }

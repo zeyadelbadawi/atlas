@@ -34,6 +34,9 @@ export const prefetchKeys = {
 
 /** Starts resolve → configuration + pages for this page load. */
 export function startPublicWebsitePrefetch(lookupKey: string): void {
+  // Browser only: this map is module state, which on a server would be
+  // shared by every request (Reports/SSR_ARCHITECTURE_ANALYSIS.md §4 #7).
+  if (typeof window === 'undefined') return;
   if (!lookupKey || inFlight.has(prefetchKeys.resolve(lookupKey))) return;
   const resolved = remember(
     prefetchKeys.resolve(lookupKey),
@@ -57,6 +60,7 @@ export function startPublicWebsitePrefetch(lookupKey: string): void {
 
 /** The early request for `key`, once; `undefined` when there is none. */
 export function takePrefetched<T>(key: string): Promise<T> | undefined {
+  if (typeof window === 'undefined') return undefined;
   const request = inFlight.get(key) as Promise<T> | undefined;
   inFlight.delete(key);
   return request;

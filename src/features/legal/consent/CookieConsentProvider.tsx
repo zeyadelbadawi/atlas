@@ -17,11 +17,18 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from 'react';
-import { readConsent, writeConsent, type CookieConsent } from '@utils';
+import {
+  readConsent,
+  syncConsentDecidedCookie,
+  writeConsent,
+  type CookieConsent,
+} from '@utils';
+import { useHydrationSnapshot } from '@hooks';
 
 interface CookieConsentContextValue {
   /** The decision in force, or null if the user has not decided. */
@@ -46,6 +53,17 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
   );
   const [isPreferencesOpen, setPreferencesOpen] = useState(false);
 
+  // A server-rendered public page decided the banner from the consent
+  // cookie; the first render must show the same, then the stored decision
+  // takes over (and the cookie is brought in line with it for next time).
+  // Without a snapshot (every other page) this is exactly as before.
+  const snapshot = useHydrationSnapshot();
+  const [hydrating, setHydrating] = useState(snapshot !== null);
+  useEffect(() => {
+    setHydrating(false);
+    syncConsentDecidedCookie(readConsent() !== null);
+  }, []);
+
   const decide = useCallback((allowPreferences: boolean) => {
     // `writeConsent` also calls `applyConsent`, so declining clears
     // stored preference values here and not merely on the next load.
@@ -56,13 +74,14 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
   const value = useMemo<CookieConsentContextValue>(
     () => ({
       consent,
-      needsDecision: consent === null,
+      needsDecision:
+        hydrating && snapshot ? !snapshot.consentDecided : consent === null,
       isPreferencesOpen,
       openPreferences: () => setPreferencesOpen(true),
       closePreferences: () => setPreferencesOpen(false),
       decide,
     }),
-    [consent, isPreferencesOpen, decide]
+    [consent, isPreferencesOpen, decide, hydrating, snapshot]
   );
 
   return (

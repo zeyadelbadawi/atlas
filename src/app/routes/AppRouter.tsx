@@ -7,27 +7,39 @@
  * dependencies) before it can paint, and the dashboard never downloads
  * the website runtime (Reports/LCP_ROOT_CAUSE.md).
  */
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ENV } from '@config';
-import { getCurrentPublicWebsiteContext } from '@utils';
+import { resolvePublicWebsiteContext } from '@utils';
+import { useRequestLocation } from '@hooks';
 import { ErrorBoundary } from '@app/providers/error/ErrorBoundary';
 import { RouteFallback } from './RouteFallback';
+import {
+  loadedPublicWebsiteRouter,
+  preloadPublicWebsiteRouter,
+} from './public-website-router-loader';
 
-const PublicWebsiteRouter = lazy(
-  () => import('@features/public-website/PublicWebsiteRouter')
+const LazyPublicWebsiteRouter = lazy(() =>
+  preloadPublicWebsiteRouter().then((component) => ({ default: component }))
 );
 const AtlasAppRoutes = lazy(() => import('./AtlasAppRoutes'));
 
 export function AppRouter(): JSX.Element {
   const location = useLocation();
+  const requestLocation = useRequestLocation();
+  // Chosen once per mount: switching from the lazy wrapper to the loaded
+  // component later would remount the whole website.
+  // (`public-website-router-loader.ts` explains why it matters.)
+  const [LoadedPublicWebsiteRouter] = useState(loadedPublicWebsiteRouter);
 
   // Resolved ONCE per page load — the hostname a visitor is on cannot
   // change while this SPA instance is running. When no Platform base
   // domain is configured, this always resolves to `{ mode: 'atlas-app' }`
   // — see `Reports/ARCHITECTURE.md`, Prompt 11, "No Real Atlas Domain
   // Yet".
-  const publicWebsiteContext = getCurrentPublicWebsiteContext(
+  const publicWebsiteContext = resolvePublicWebsiteContext(
+    requestLocation.hostname,
+    requestLocation.search,
     ENV.platformBaseDomain,
     ENV.isDevelopment
   );
@@ -35,9 +47,13 @@ export function AppRouter(): JSX.Element {
   if (publicWebsiteContext.mode === 'academy-website') {
     return (
       <ErrorBoundary resetKey={location.pathname}>
-        <Suspense fallback={<RouteFallback />}>
-          <PublicWebsiteRouter context={publicWebsiteContext} />
-        </Suspense>
+        {LoadedPublicWebsiteRouter ? (
+          <LoadedPublicWebsiteRouter context={publicWebsiteContext} />
+        ) : (
+          <Suspense fallback={<RouteFallback />}>
+            <LazyPublicWebsiteRouter context={publicWebsiteContext} />
+          </Suspense>
+        )}
       </ErrorBoundary>
     );
   }

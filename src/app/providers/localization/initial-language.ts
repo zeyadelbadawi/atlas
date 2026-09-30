@@ -19,7 +19,10 @@ export function readInitialLanguage(): LanguageCode {
     return stored;
   }
 
-  const browserLanguage = navigator.language?.split('-')[0] ?? '';
+  const browserLanguage =
+    typeof navigator === 'undefined'
+      ? ''
+      : (navigator.language?.split('-')[0] ?? '');
   return isSupportedLanguage(browserLanguage)
     ? browserLanguage
     : APP_CONFIG.defaultLanguage;

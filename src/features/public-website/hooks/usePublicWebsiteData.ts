@@ -73,6 +73,27 @@ function isNotFound(error: unknown): boolean {
   return apiError.kind === 'notFound' || apiError.status === 404;
 }
 
+/** The three queries' states, as `classifyPublicWebsiteData` reads them. */
+export interface PublicWebsiteQueryStates {
+  readonly hostname: {
+    readonly isLoading: boolean;
+    readonly isError: boolean;
+    readonly data: HostnameResolution | null | undefined;
+  };
+  readonly config: {
+    readonly isLoading: boolean;
+    readonly isError: boolean;
+    readonly error: unknown;
+    readonly data: WebsiteConfiguration | undefined;
+  };
+  readonly pages: {
+    readonly isLoading: boolean;
+    readonly isError: boolean;
+    readonly error: unknown;
+    readonly data: readonly WebsitePage[] | undefined;
+  };
+}
+
 export function usePublicWebsiteData(
   lookupKey: string
 ): PublicWebsiteDataState {
@@ -82,6 +103,23 @@ export function usePublicWebsiteData(
   const configQuery = usePublishedWebsite(academyId);
   const pagesQuery = usePublishedPages(academyId);
 
+  return classifyPublicWebsiteData({
+    hostname: hostnameQuery,
+    config: configQuery,
+    pages: pagesQuery,
+  });
+}
+
+/**
+ * What the public website shows for these query states. Pure, so the
+ * server renderer decides from its own query cache exactly as the page
+ * does (Reports/SSR_ARCHITECTURE_ANALYSIS.md §5).
+ */
+export function classifyPublicWebsiteData({
+  hostname: hostnameQuery,
+  config: configQuery,
+  pages: pagesQuery,
+}: PublicWebsiteQueryStates): PublicWebsiteDataState {
   if (hostnameQuery.isLoading) return { status: 'loading' };
   if (hostnameQuery.isError) return { status: 'unavailable' };
   if (!hostnameQuery.data) return { status: 'not-found' };

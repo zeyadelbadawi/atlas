@@ -14,6 +14,7 @@ import {
   usePagination,
   usePublicCourseCategories,
   usePublicCourses,
+  useRequestLocation,
 } from '@hooks';
 import { clamp } from '@utils';
 import { COURSE_CATALOG_SORT_VALUES, COURSE_LEVEL_VALUES } from '@types';
@@ -50,7 +51,11 @@ function oneOf<T extends string>(
 }
 
 /** The catalog state a visitor arrived with — anything unrecognised is ignored, never trusted. */
-function readInitialUrlState(enabled: boolean): {
+function readInitialUrlState(
+  enabled: boolean,
+  /** The request's query string (`useRequestLocation`), so the server renders the same state. */
+  search: string
+): {
   readonly search: string;
   readonly category?: string;
   readonly level?: CourseLevel;
@@ -58,8 +63,8 @@ function readInitialUrlState(enabled: boolean): {
   readonly sort?: CourseCatalogSort;
   readonly page: number;
 } {
-  if (!enabled || typeof window === 'undefined') return { search: '', page: 1 };
-  const state: CatalogUrlState = fromCatalogSearch(window.location.search);
+  if (!enabled) return { search: '', page: 1 };
+  const state: CatalogUrlState = fromCatalogSearch(search);
   const page = Number(state.page);
   return {
     search: state.search?.slice(0, 100) ?? '',
@@ -110,7 +115,8 @@ export function useCourseCatalog({
   syncUrl,
 }: UseCourseCatalogOptions) {
   const pageSize = resolvePageSize(config.pageSize);
-  const [initial] = useState(() => readInitialUrlState(syncUrl));
+  const requestSearch = useRequestLocation().search;
+  const [initial] = useState(() => readInitialUrlState(syncUrl, requestSearch));
 
   const [search, setSearch] = useState(initial.search);
   const [category, setCategory] = useState(initial.category);

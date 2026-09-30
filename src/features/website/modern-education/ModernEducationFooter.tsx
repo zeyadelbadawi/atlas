@@ -14,7 +14,11 @@ import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, Mail, MapPin, Phone } from 'lucide-react';
 import { cn } from '@utils';
-import { useAcademyIdentity, usePublicCourseCategories } from '@hooks';
+import {
+  useAcademyIdentity,
+  useCurrentYear,
+  usePublicCourseCategories,
+} from '@hooks';
 import { useWebsiteContainerClass } from '../renderer/renderer-style.utils';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import {
@@ -127,9 +131,10 @@ export function ModernEducationFooter({
     </ul>
   );
 
+  const currentYear = useCurrentYear();
   const copyright =
     resolveLocalizedText(footer.copyrightText, locale) ||
-    `© ${new Date().getFullYear()} ${academyName}`;
+    `© ${currentYear} ${academyName}`;
 
   return (
     <footer className="mt-auto border-t border-[var(--website-border)] bg-[var(--website-surface)] pb-6 pt-14 sm:pt-16">

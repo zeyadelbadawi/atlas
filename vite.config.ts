@@ -50,12 +50,19 @@ function ensureBuildOutDir() {
 }
 
 // https://vitejs.dev/config/
-export default defineConfig(({ command, mode }) => {
-  const blogPrerenderRoutes = command === 'build' ? getBlogRoutes() : [];
+export default defineConfig(({ command, mode, isSsrBuild }) => {
+  // The server renderer's bundle (`--ssr src/ssr/entry-server.tsx`,
+  // Reports/SSR_ARCHITECTURE_ANALYSIS.md): its own output folder, and none
+  // of the client build's page generators.
+  const ssr = isSsrBuild === true;
+  const blogPrerenderRoutes =
+    command === 'build' && !ssr ? getBlogRoutes() : [];
   // Theme baseline fixture build (`pnpm theme-baseline:build`, Theme 1 plan
   // Phase 0) — its own output folder, so it can never overwrite `dist/`.
   // The sitemap plugin writes to a fixed folder, hence passing it too.
-  const outDir = mode === 'theme-fixtures' ? 'dist-theme-fixtures' : 'dist';
+  const outDir =
+    (mode === 'theme-fixtures' ? 'dist-theme-fixtures' : 'dist') +
+    (ssr ? '-ssr' : '');
 
   return {
     plugins: [
@@ -92,17 +99,21 @@ export default defineConfig(({ command, mode }) => {
       react(),
       ...(command === 'serve' ? [atoms()] : []),
       ensureBuildOutDir(),
-      Sitemap({
-        // Phase 7 — was a leftover scaffold placeholder nobody owns
-        // (baked verbatim into the shipped sitemap.xml/robots.txt).
-        // Overridable via env for any environment that isn't the real
-        // production domain (e.g. a future staging deploy).
-        hostname: process.env.VITE_SITE_URL || 'https://atlass.dpdns.org',
-        outDir,
-        lastmod: getSitemapLastmod(),
-        readable: true,
-        generateRobotsTxt: true,
-      }),
+      ...(ssr
+        ? []
+        : [
+            Sitemap({
+              // Phase 7 — was a leftover scaffold placeholder nobody owns
+              // (baked verbatim into the shipped sitemap.xml/robots.txt).
+              // Overridable via env for any environment that isn't the real
+              // production domain (e.g. a future staging deploy).
+              hostname: process.env.VITE_SITE_URL || 'https://atlass.dpdns.org',
+              outDir,
+              lastmod: getSitemapLastmod(),
+              readable: true,
+              generateRobotsTxt: true,
+            }),
+          ]),
       ...(blogPrerenderRoutes.length > 0
         ? vitePrerenderPlugin({
             renderTarget: '#root',
@@ -184,6 +195,11 @@ export default defineConfig(({ command, mode }) => {
     },
     build: {
       outDir,
+      // The server renderer reads it to preload the public router's chunk
+      // with the page it renders.
+      manifest: !ssr,
+      // `public/` belongs to the client build only.
+      copyPublicDir: !ssr,
       rollupOptions: {
         // The app's own TypeScript modules are side-effect free (the only
         // import-for-effect statements are CSS). Declaring it lets Rollup
@@ -201,28 +217,30 @@ export default defineConfig(({ command, mode }) => {
               /\.(ts|tsx)$/.test(id)
             ),
         },
-        output: {
-          manualChunks: {
-            // Vendor chunks
-            'react-vendor': ['react', 'react-dom'],
-            'router-vendor': ['react-router-dom'],
-            // Radix primitives, the form libraries, date-fns and the icon
-            // set are NOT pinned: Rollup places each where it is used, so
-            // an Academy website doesn't download the dashboard's
-            // components before it can paint (Reports/LCP_ROOT_CAUSE.md).
-            'utils-vendor': [
-              'axios',
-              'clsx',
-              'tailwind-merge',
-              'class-variance-authority',
-            ],
-            'query-vendor': ['@tanstack/react-query'],
-            'table-vendor': ['@tanstack/react-table'],
-            'chart-vendor': ['recharts'],
-            'motion-vendor': ['framer-motion'],
-            'i18n-vendor': ['i18next', 'react-i18next'],
-          },
-        },
+        output: ssr
+          ? {}
+          : {
+              manualChunks: {
+                // Vendor chunks
+                'react-vendor': ['react', 'react-dom'],
+                'router-vendor': ['react-router-dom'],
+                // Radix primitives, the form libraries, date-fns and the icon
+                // set are NOT pinned: Rollup places each where it is used, so
+                // an Academy website doesn't download the dashboard's
+                // components before it can paint (Reports/LCP_ROOT_CAUSE.md).
+                'utils-vendor': [
+                  'axios',
+                  'clsx',
+                  'tailwind-merge',
+                  'class-variance-authority',
+                ],
+                'query-vendor': ['@tanstack/react-query'],
+                'table-vendor': ['@tanstack/react-table'],
+                'chart-vendor': ['recharts'],
+                'motion-vendor': ['framer-motion'],
+                'i18n-vendor': ['i18next', 'react-i18next'],
+              },
+            },
       },
       chunkSizeWarningLimit: 1000,
     },

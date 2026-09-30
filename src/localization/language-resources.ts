@@ -92,6 +92,10 @@ export function registeredLanguageResources(): Partial<
 
 /** A live instance receives every half that loads after it was created. */
 export function attachI18nInstance(instance: I18nInstance): void {
+  // A server render creates an instance per request; holding them here
+  // would keep every one alive (and shared). The server renders with the
+  // halves already registered and never loads more mid-render.
+  if (typeof window === 'undefined') return;
   instances.add(instance);
 }
 

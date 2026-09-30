@@ -765,9 +765,11 @@ export function T1Testimonials({
   if (items.length === 0) return null;
   const title = resolveLocalizedText(config.title, locale);
   // Embla needs `matchMedia` (every browser has it); anywhere without it,
-  // the quotes render as a plain list.
+  // the quotes render as a plain list. A server render assumes a browser
+  // (there is none to ask), so the markup it sends is the carousel every
+  // real visitor's browser renders (Reports/SSR_ARCHITECTURE_ANALYSIS.md).
   const canCarousel =
-    typeof window !== 'undefined' && typeof window.matchMedia === 'function';
+    typeof window === 'undefined' || typeof window.matchMedia === 'function';
 
   return canCarousel ? (
     <QuoteCarousel

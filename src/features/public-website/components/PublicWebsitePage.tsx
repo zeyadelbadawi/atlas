@@ -32,7 +32,7 @@ import { useDocumentSeo } from '../hooks/useDocumentSeo';
 import { resolveCanonicalOrigin } from '../utils/canonical-redirect.utils';
 import { usePublicCourse } from '@hooks';
 import { resolvePathToPage } from '../utils/page-resolution.utils';
-import { useAuth, useSignOut } from '@hooks';
+import { useAuth, useRequestLocation, useSignOut } from '@hooks';
 import {
   usePublicWebsiteLinkRenderer,
   usePublicWebsiteHrefBuilder,
@@ -54,6 +54,7 @@ export function PublicWebsitePage({
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
+  const requestLocation = useRequestLocation();
   const linkRenderer = usePublicWebsiteLinkRenderer(locale);
   const buildHref = usePublicWebsiteHrefBuilder(locale);
   const { session } = useAuth();
@@ -139,7 +140,7 @@ export function PublicWebsitePage({
   // connected custom domain, otherwise its Atlas subdomain), so both
   // live hosts advertise the same single URL to search engines.
   const canonicalOrigin = resolveCanonicalOrigin(
-    window.location.origin,
+    requestLocation.origin,
     academy.canonicalHost
   );
   const canonicalUrl = `${canonicalOrigin}${withLocale(pagePath)}`;

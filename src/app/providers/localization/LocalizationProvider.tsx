@@ -26,13 +26,22 @@ import type { LocalizationContextValue } from './localization.context';
 
 export interface AtlasLocalizationProviderProps {
   readonly children: ReactNode;
+  /**
+   * The first render's language, when the page decides it: an Academy
+   * website renders in its URL locale, on the server and in the browser
+   * alike (Reports/SSR_ARCHITECTURE_ANALYSIS.md §4 #4). Omitted, the
+   * stored preference, then the browser language, as before.
+   */
+  readonly initialLanguage?: LanguageCode;
 }
 
 export function AtlasLocalizationProvider({
   children,
+  initialLanguage,
 }: AtlasLocalizationProviderProps): JSX.Element {
-  const [language, setLanguageState] =
-    useState<LanguageCode>(readInitialLanguage);
+  const [language, setLanguageState] = useState<LanguageCode>(
+    () => initialLanguage ?? readInitialLanguage()
+  );
 
   // The instance is created once; language changes are applied to it in place.
   const i18nRef = useRef<I18nInstance>();

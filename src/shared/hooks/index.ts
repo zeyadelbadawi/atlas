@@ -46,6 +46,17 @@ export type {
 export { useFilePicker } from './useFilePicker';
 export type { FilePickerOptions, UseFilePickerResult } from './useFilePicker';
 export { useSearch } from './useSearch';
+export {
+  RequestLocationProvider,
+  useRequestLocation,
+} from './useRequestLocation';
+export type { RequestLocation } from './useRequestLocation';
+export {
+  HydrationSnapshotProvider,
+  useCurrentYear,
+  useHydrationSnapshot,
+} from './useHydrationSnapshot';
+export type { HydrationSnapshot } from './useHydrationSnapshot';
 export type { UseSearchOptions, UseSearchResult } from './useSearch';
 export { useToast, toast } from '@/hooks/use-toast';
 

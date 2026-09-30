@@ -5,7 +5,12 @@
  */
 export { ApiClient, apiClient } from './api-client';
 export type { ReadOptions, WriteOptions } from './api-client';
-export { HttpClient, httpClient } from './http-client';
+export {
+  HttpClient,
+  httpClient,
+  setServerRequestContextProvider,
+} from './http-client';
+export type { ServerRequestContext } from './http-client';
 export {
   ApiError,
   createApiError,
