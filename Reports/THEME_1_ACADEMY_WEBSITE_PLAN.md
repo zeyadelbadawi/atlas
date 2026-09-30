@@ -2110,3 +2110,65 @@ Minor: the brand engine's colour-space helpers (`solveLightness`, ≈ 1.5 KB gzi
 5. **Deferred:** the final image stage (§E.6), behind its own approval, before production launch of Theme 1 imagery. The final UI/UX Pro Max sign-off accompanies it, because it reviews the site with its real images.
 
 **Deployment prerequisites for Phase 9:** the gated `apply_migrations` run for the two additive migrations (U.G); production `R2_*`; a Redis URL without DB index/TLS until U.H is fixed.
+
+---
+
+## V. Phase 8 closure work (recorded 30 Sep 2026, continuation session)
+
+Continued from `docs/ATLAS-CLAUDE-HANDOVER.md` on `claude/practical-wozniak-pjcdhe`. The Owner's instruction: close the remaining Phase 8 work (audit findings, SSRF, performance, acceptance gaps, tests, images, regression), then Phase 9. Technical decisions were made in-session; §U.M items 1, 2 and 4 are therefore decided and implemented below.
+
+### V.A Changes
+
+| Item | Change | Commit (FE / BE) | Evidence |
+|---|---|---|---|
+| P-1 Course Details CLS (§U.J #7) | Both loading states (Theme 1 page slot, base template) reserve `100svh`, so the footer starts below the fold | `d6f01ba` | Layout-shift trace: 0.335 → 0 (the footer shift reproduced before the fix). Lighthouse Course Details CLS 0 on all 5 themes |
+| S-1 Certificate SSRF (§U.J #2) | `CertificateImageLoader`: own public media read from storage (no HTTP); `data:image/*` decoded in-process; other URLs only standard ports, no credentials, every resolved address public unicast, socket pinned to the vetted address, no redirects, 2 MB streamed cap, timeout. The service no longer absolutises media URLs (also fixes S-3) | `f7cb5a5` | 14 unit tests (loopback, metadata, private, IPv6, redirect, cap, schemes, strict media shape) + e2e: a preview never reaches an internal listener and embeds an uploaded logo read from storage |
+| BR-1 "Your logo changed" (§F.4.6, §J.20) | The Brand tab compares the current logo's sha256 with `extraction.logoFingerprint`; on a mismatch it offers "preview a matching palette" (proposed draft, never saved without the Owner) or "keep current colours". EN/AR | `82f63b9` | 5 component tests |
+| A-1 Themes 2–5 a11y (DOM-only) | sr-only page-title `h1` where a page has no intro and no opening hero; shared 404 in `<main>` with an `h1` (`EmptyState` gains `headingLevel`); shared Coming Soon root is `<main>` | `35fdcf1` | Every screenshot unchanged (pixel-identical); axe diff only removes violations: 84 `page-has-heading-one`, 8 `landmark-one-main`, 8 `region`. **Still open (visual, Owner):** `color-contrast` on premium-academy and corporate-learning Home and the shared Coming Soon attribution |
+| J-21 identity audit (§J.21) | `e2e/theme-baseline/identity.spec.ts`: for every brand-matrix page, 12 palettes vs the default — element boxes and typography identical, canvas background/surface within C 0.012, any colour that moves is painted from a defined slot variable (sentinel repaint) or stays a capped neutral (ink ≤ C 0.02, §F.4.2) | `d77a452` | 9/9, stable 3/3 runs; fails when a non-slot role is mapped to a brand colour (mutation check) |
+| GEN-1 | Generation matrix: 5 themes × {complete, empty} through `WebsiteGenerationService`: pages validate, links resolve, no tokens left, idempotent, no samples in empty mode | BE `3ff090e` | 16 tests |
+| J-ENV | `npm run e2e:prepare-journeys` (local/CI only): assigns the seeded Academies' subdomains, generates and publishes their Theme 1 websites as each Academy's owner. Journey drift fixed test-side (sign-up copy, `/my?…`, walkthrough course authored, certificates toggle, Theme 1 catalog/details differences, J7 sign-out) | BE `9b2d406`, `5dd37f6`; FE `9cf86bd` | J1 6, J2 9, J3 9, J4 3, J5 3, J6 7, J7 3, J8 7 — all pass on a fresh migrated + seeded database |
+| Checkout commission (found by J5; pre-existing, not Theme 1) | Payment creation and method listing resolved the commission on the learner's transaction, where RLS hides the Organization's override and subscription: no payment possible without a global default, and with one the Organization's custom/plan rate was ignored. Now resolved in the Organization's tenant context | BE `5264331` | New e2e 10b fails without the fix (1000 bp charged instead of 500 bp), passes with it |
+| P-2 translations (§U.D) | Each language is its own chunk; `main.tsx` preloads the first render's language(s) (preference, plus Arabic on `/ar/`), language switches load first | `f48ff2a` | Main chunk 398 → 171 KB gzip. Lighthouse (mobile, 5 themes × 4 pages): perf 74–76 (was 55–71), LCP 4.3–4.8 s (was 4.7–5.2), JS 491 KB (was 612), CLS ≤ 0.007 |
+| E-1 dev config | `.env` → `/api/v1` via the Vite proxy; Vite defaults to 3001, the proxy to the API's 3000 | `849ffa6` | Plain `vite`: same-origin calls, cookie stored, reload keeps the session |
+| OPS-1 BullMQ Redis | `bullConnectionFromRedisUrl`: DB index, `rediss://` TLS, ACL username, decoded password | BE `bec84be` | 5 unit tests; plain URLs unchanged |
+| Images §E.6 steps 7–9 | Slot audit of every theme-asset slot at 390/768/1024/1280/1440/1920 × EN/AR; matrix re-frozen: `courses-launching` safe area; `gallery-1` landscape crops; `gallery-2` master 21:9; `gallery-3/4/5` masters 4:3. `home-hero` v1 still matches its slot | `03ee99a` | Asset tests 17/17 |
+
+### V.B Images (§E.6 step 10 onward) — BLOCKED
+
+- Magnific re-checked: Premium+ plan, credits available, unlimited mode not active in this session (credits consumed). Model: Google Nano Banana Pro, 4K, the prompts exactly `buildThemeAssetPrompt` from the re-frozen manifest, fixed seeds recorded.
+- Generated: 4 candidates for each of the 11 pending keys (44 images, 6,600 credits). They exist in the Owner's Magnific account (Personal project).
+- **Blocked:** this session's network policy denies `pikaso.cdnpk.net` (Magnific's file CDN), so the candidates cannot be downloaded for the §P.7 release gate, `prepare.mjs`, in-context QA or release. Owner action: allow that host in the environment's network access. No image was released; every slot except `home-hero` still shows its designed placeholder.
+- IMG-3 (private archive bucket) still needs the Owner.
+
+### V.C Regression (this session, final code)
+
+| Check | Result |
+|---|---|
+| Theme baseline (screenshots, axe, palette injection, identity, production CSP) | **887/887** (878 + 9 identity) |
+| Frontend unit | 157 files / 1,555 tests + new suites pass (the pre-existing vitest RPC-timeout message remains) |
+| Frontend typecheck / lint | 31 errors, all pre-existing (unchanged) / clean |
+| Backend unit | 155 suites / 4,186 tests |
+| Backend e2e (fresh DB, migrate + seed, MinIO) | 166/166 suites |
+| Backend lint / format / typecheck | 0 errors (3 pre-existing `no-console` warnings) / clean / clean |
+| Browser journeys J1–J8 | all pass (real stack) |
+| Migrations | none added this session; the two additive migrations from Phases 2 and 6 remain pending in production (M-1) |
+
+### V.D Phase 0–8 closure matrix (§J)
+
+| # | Criterion | Status | Evidence |
+|---|---|---|---|
+| 1, 2, 24 | Completeness, honest public site, sample rule | Met | §T, §U; J7; GEN-1 |
+| 3, 26 | Images | **Not met** — generated, blocked on download (V.B) | V.B |
+| 4 | Visual quality | Met for layout; the final UI/UX review with real images waits on V.B | §Q–§S |
+| 5, 6, 27 | Motion, responsive, page heroes | Met | §R–§S, §U |
+| 7, 16 | Accessibility (Theme 1) | Met: 0 axe violations on Theme 1 and the brand matrix | axe snapshots |
+| 8 | Performance | CLS, CSP, third-party origins and JS budget met (491 KB vs the 560 KB Phase 0 payload); **LCP ≤ 2.5 s not met** (4.3–4.8 s): the SPA paints nothing before its JavaScript runs; reaching 2.5 s needs prerendering/SSR of the public site or a namespace-level split of the public route's translations (the next lever, ≈ 80 KB) | V.A |
+| 9, 12, 13–15, 17–19, 22 | Editing, architecture, palette engine | Met | §N–§Q |
+| 20 | Authoritative overrides | Met (BR-1 completes the UI half) | V.A |
+| 21 | Theme identity audit | Met | V.A |
+| 10, 23 | Multi-tenancy, isolation | Met | §U.B |
+| 11 | Regression safety | Met | V.C |
+| 25 | Decision 3 (legacy academies, no writes) | Met | §S |
+
+**Phases 0–7: closed. Phase 8: not closed** — criteria 3/26 (images) wait on the network allowlist, and criterion 8's LCP target needs an architectural decision. Phase 9 has not started: it follows Phase 8 closure and needs the Owner's authorisation for the gated production migration and deploy.
