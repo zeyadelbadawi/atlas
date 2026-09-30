@@ -614,6 +614,11 @@ describe('T1Instructors', () => {
       <T1Instructors config={config} academyId="a1" pages={PAGES} />
     );
     expect(preview.container.querySelector('[data-preview-note]')).toBeTruthy();
+    // Labelled sample cards (§D.4): placeholders, never invented people.
+    const sample = preview.container.querySelector('[data-preview-sample]')!;
+    expect(sample.textContent).toContain('Sample');
+    expect(sample.querySelectorAll('li')).toHaveLength(4);
+    expect(sample.textContent).toContain('Instructor name');
   });
 
   it('derives instructors from the catalog, with their course counts and initials', () => {
@@ -685,6 +690,13 @@ describe('T1Statistics', () => {
       <T1Statistics config={config} academyId="a1" pages={PAGES} />
     );
     expect(preview.container.querySelector('[data-preview-note]')).toBeTruthy();
+    // Labelled placeholders (§D.4): each configured label, no number.
+    const sample = preview.container.querySelector('[data-preview-sample]')!;
+    expect(sample.textContent).toContain('Sample');
+    expect(sample.querySelectorAll('dd')).toHaveLength(config.items.length);
+    for (const value of sample.querySelectorAll('dd')) {
+      expect(value.textContent).toBe('—');
+    }
   });
 
   it("shows the final numbers at once under reduced motion, in the locale's digits", () => {

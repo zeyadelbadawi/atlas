@@ -7,7 +7,9 @@
  *   metrics;
  * - sample testimonials never reach the public site.
  * The dashboard preview (no `linkRenderer`) explains a hidden section
- * instead of leaving an unexplained gap.
+ * instead of leaving an unexplained gap: instructors and numbers show
+ * labelled sample placeholders there (§D.4) — never invented names or
+ * numbers, and never on the public route.
  */
 import { useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -25,6 +27,7 @@ import {
   Quote,
   Shapes,
   Star,
+  UserRound,
 } from 'lucide-react';
 import { cn } from '@utils';
 import {
@@ -65,6 +68,48 @@ function PreviewNote({ children }: { readonly children: string }) {
       >
         {children}
       </p>
+    </T1Section>
+  );
+}
+
+/**
+ * The preview-only frame for a live section with no data yet (§D.4): the
+ * section's own heading, a "Sample" note saying why visitors don't see it,
+ * then labelled placeholders. Never rendered on the public route.
+ */
+function PreviewSample({
+  headingId,
+  title,
+  description,
+  note,
+  children,
+}: {
+  readonly headingId: string;
+  readonly title: string;
+  readonly description?: string;
+  readonly note: string;
+  readonly children: React.ReactNode;
+}) {
+  const { t } = useTranslation();
+  return (
+    <T1Section labelledBy={title ? headingId : undefined}>
+      <div data-preview-sample="">
+        <T1SectionHeader
+          id={headingId}
+          title={title}
+          description={description}
+        />
+        <p
+          data-preview-note=""
+          className="mb-6 flex flex-wrap items-center gap-2 text-sm text-[var(--website-foreground-muted)]"
+        >
+          <span className="rounded-full border border-dashed border-[var(--website-input-border)] px-2.5 py-0.5 text-xs font-semibold">
+            {t('website:renderer.testimonials.sampleBadge')}
+          </span>
+          {note}
+        </p>
+        {children}
+      </div>
     </T1Section>
   );
 }
@@ -320,12 +365,43 @@ export function T1Instructors({
     }
   }
   const instructors = [...byId.values()].slice(0, config.count);
+  const title = resolveLocalizedText(config.title, locale);
   if (instructors.length === 0) {
-    return linkRenderer ? null : (
-      <PreviewNote>{t('website:theme1.instructors.previewHidden')}</PreviewNote>
+    if (linkRenderer) return null;
+    const placeholders = Math.min(config.count, 4);
+    return (
+      <PreviewSample
+        headingId={headingId}
+        title={title}
+        description={resolveLocalizedText(config.description, locale)}
+        note={t('website:theme1.instructors.previewHidden')}
+      >
+        <ul
+          className={cn(
+            'grid grid-cols-2 gap-4 md:gap-6',
+            placeholders >= 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'
+          )}
+        >
+          {Array.from({ length: placeholders }).map((_, index) => (
+            <li
+              key={index}
+              className="flex flex-col items-center rounded-[var(--t1-radius-card)] border border-dashed border-[var(--website-input-border)] px-4 py-8 text-center"
+            >
+              <span className="flex size-20 items-center justify-center rounded-full bg-[var(--website-surface-muted)] text-[var(--website-foreground-muted)]">
+                <UserRound className="size-8" strokeWidth={1.5} aria-hidden />
+              </span>
+              <p className="mt-4 font-semibold text-[var(--website-foreground-muted)]">
+                {t('website:theme1.instructors.sampleName')}
+              </p>
+              <p className="mt-1 text-sm text-[var(--website-foreground-muted)]">
+                {t('website:theme1.instructors.sampleCourses')}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </PreviewSample>
     );
   }
-  const title = resolveLocalizedText(config.title, locale);
 
   return (
     <T1Section labelledBy={title ? headingId : undefined}>
@@ -474,12 +550,53 @@ export function T1Statistics({
     })
     .filter((item): item is NonNullable<typeof item> => item !== null);
 
+  const title = resolveLocalizedText(config.title, locale);
   if (items.length < 2) {
-    return linkRenderer ? null : (
-      <PreviewNote>{t('website:theme1.statistics.previewHidden')}</PreviewNote>
+    if (linkRenderer) return null;
+    const labels = config.items.slice(0, 4).map((item) => ({
+      id: item.id,
+      label: resolveLocalizedText(item.label, locale),
+    }));
+    if (labels.length === 0) {
+      return (
+        <PreviewNote>
+          {t('website:theme1.statistics.previewHidden')}
+        </PreviewNote>
+      );
+    }
+    return (
+      <PreviewSample
+        headingId={headingId}
+        title={title}
+        note={t('website:theme1.statistics.previewHidden')}
+      >
+        <dl
+          className={cn(
+            'grid gap-4',
+            labels.length === 3 ? 'grid-cols-3' : 'grid-cols-2',
+            labels.length >= 4 && 'md:grid-cols-4'
+          )}
+        >
+          {labels.map((item) => (
+            <div
+              key={item.id}
+              className="flex min-w-0 flex-col-reverse items-center gap-2 rounded-[var(--t1-radius-card)] border border-dashed border-[var(--website-input-border)] px-3 py-6 text-center"
+            >
+              <dt className="break-words text-sm font-medium text-[var(--website-foreground-muted)]">
+                {item.label}
+              </dt>
+              <dd
+                className="font-display text-3xl font-bold text-[var(--website-foreground-muted)]"
+                aria-label={t('website:theme1.statistics.sampleValue')}
+              >
+                —
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </PreviewSample>
     );
   }
-  const title = resolveLocalizedText(config.title, locale);
 
   return (
     <T1Section labelledBy={title ? headingId : undefined}>

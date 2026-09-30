@@ -22,9 +22,13 @@
  *   state    `new` | `rich` | `unpublished`  (see `live-data.mjs`)
  *   palette  a `FIXTURE_PALETTES` name, injected as the stored brand
  *            (default: `default`, what a new Academy stores today)
- *   c1       Theme 1 only: the plan's compositions (§C.1 Home, §C.2–§C.6
- *            inner pages; `fixtures/theme1-home.mjs`) instead of the
- *            provisioned v1 pages
+ *   c1       Theme 1 only: what template v2 provisions today (§C.1 Home,
+ *            §C.2–§C.6 inner pages; `generated/modern-education.json`).
+ *            Without it, Theme 1 renders `generated/legacy/
+ *            modern-education.v1.json`: the v1 website every Theme 1
+ *            Academy created before v2 still has (existing-Academy
+ *            compatibility). In the `rich` state the v2 sample
+ *            testimonials count as confirmed by the Owner.
  * Anything else resolves as an unknown hostname, exactly like production.
  *
  * Any API request this server has no fixture for is answered 404 in the
@@ -43,7 +47,6 @@ import {
   FIXTURE_PALETTES,
   buildLiveData,
 } from '../fixtures/live-data.mjs';
-import { buildTheme1PageSections } from '../fixtures/theme1-home.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(HERE, '../../..');
@@ -71,12 +74,18 @@ function readProductionCsp() {
 }
 const CSP = readProductionCsp();
 
+const readGenerated = (file) =>
+  JSON.parse(readFileSync(join(GENERATED, file), 'utf8'));
 const generatedByTheme = new Map(
   THEMES.map((theme) => [
     theme,
-    JSON.parse(readFileSync(join(GENERATED, `${theme}.json`), 'utf8')),
+    theme === 'modern-education'
+      ? readGenerated('legacy/modern-education.v1.json')
+      : readGenerated(`${theme}.json`),
   ])
 );
+/** Theme 1 template v2, as a new Academy receives it (the `c1` slug). */
+const theme1V2 = readGenerated('modern-education.json');
 
 /** `fx--<theme>--<state>[--<palette>]` → fixture, or null for an unknown slug. */
 function parseSlug(slug) {
@@ -94,8 +103,30 @@ function parseSlug(slug) {
   return { slug, theme, state, palette, composition };
 }
 
+/** An established Academy has confirmed its testimonials: `sample` cleared. */
+function confirmSampleTestimonials(page) {
+  return {
+    ...page,
+    sections: page.sections.map((section) =>
+      section.type === 'testimonials'
+        ? {
+            ...section,
+            config: {
+              ...section.config,
+              items: section.config.items.map((item) => ({
+                ...item,
+                sample: false,
+              })),
+            },
+          }
+        : section
+    ),
+  };
+}
+
 function buildFixture(parsed) {
-  const generated = generatedByTheme.get(parsed.theme);
+  const generated =
+    parsed.composition === 'c1' ? theme1V2 : generatedByTheme.get(parsed.theme);
   const academyId = parsed.slug;
   const rebaseIds = (value) =>
     JSON.parse(
@@ -110,13 +141,8 @@ function buildFixture(parsed) {
   const pages = rebaseIds(generated.pages)
     .filter((page) => page.visible)
     .map((page) =>
-      parsed.composition === 'c1'
-        ? {
-            ...page,
-            sections:
-              buildTheme1PageSections(page.coreType, parsed.state) ??
-              page.sections,
-          }
+      parsed.composition === 'c1' && parsed.state === 'rich'
+        ? confirmSampleTestimonials(page)
         : page
     );
   return {

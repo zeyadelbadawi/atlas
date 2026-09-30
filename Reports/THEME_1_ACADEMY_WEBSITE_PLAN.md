@@ -1,6 +1,6 @@
 # Theme 1 ("Modern Education") — Academy Website Redesign Plan
 
-Status: **v2.1, approved for implementation (29 Sep 2026). Phases 0–5 complete and approved (§M–§R). Phase 6 complete (§S), awaiting the Owner's approval; Phases 7–9 not started.**
+Status: **v2.1, approved for implementation (29 Sep 2026). Phases 0–6 complete and approved (§M–§S). Phase 7 complete (§T), awaiting the Owner's approval; Phases 8–9 not started.**
 Scope:
 - Turn Theme 1 into a complete, launch-ready academy website that every Academy receives automatically.
 - Build the architecture so Themes 2–5 can later get their own identity and page composition.
@@ -892,7 +892,7 @@ The engine, the Brand Studio UI, the persisted palette, the validation and the t
 
 ### Phase 6 — Theme 1 inner pages
 
-**Status: done (30 Sep 2026), awaiting the Owner's approval — results in §S.**
+**Status: done and approved (30 Sep 2026) — results in §S.**
 
 - **Objective:** Courses (catalog renderer), Course Details (template redesign), About, FAQs, Contact, Coming Soon and 404, **each with its page hero per §C.0** (About especially).
 - **Images:** no production images. Every image slot shows a neutral placeholder (§E.6).
@@ -909,6 +909,8 @@ The engine, the Brand Studio UI, the persisted palette, the validation and the t
 - **Gate:** STOP, report and wait for explicit approval before Phase 7.
 
 ### Phase 7 — Starter content & initialization
+
+**Status: done (30 Sep 2026), awaiting the Owner's approval — results in §T.**
 
 - **Backend:** `modern-education.template.ts` v2 (compositions, bilingual copy, asset refs, **sample testimonials**, **metric-only statistics**, CTA intents); the generation service handles assets, sample and provenance.
 - **Frontend:**
@@ -1846,6 +1848,8 @@ Found and fixed during verification:
 ### S.5 Open items and decisions for the Owner
 
 - **JS budget.** Phase 6 adds ≈ 11.3 KiB gzip to the public main chunk (Phase 5: ≈ 17.8 KB), so Theme 1 is further over the 18 KB §G budget. This goes to the pre-Phase-8 bundle/performance review, alongside the Embla decision. The main candidate is loading Theme 1's page renderers and page slots as a pack chunk. Not changed without your decision.
+
+  **Owner decision (30 Sep 2026):** Phase 6 approved and closed. Keep the implementation unchanged (no Embla replacement, no CSS scroll-snap, no Theme 1 code splitting now). The Phase 5 + Phase 6 increase stays an open performance item for the pre-Phase-8 bundle review. The one failing backend e2e (`p64-phase2-security`, local s3rver) is accepted as a pre-existing local-environment issue and stays documented; storage behaviour is not altered for it.
 - **DB change to deploy:** migration `20261030000000_public_website_presentation` (one `SECURITY DEFINER` function; see S.1). It is additive and can be rolled back with one `DROP FUNCTION`.
 - **Coming Soon freshness:** colours come through the cached hostname lookup (60 s).
 - **Fallback page heroes are render-only.** Phase 7's template gives new Academies real `pageHeader` sections, with copy the Owner can edit. Existing Academies keep the fallback until they add one.
@@ -1855,4 +1859,68 @@ Found and fixed during verification:
   - the Brand tab's "logo changed elsewhere" suggestion;
   - the provenance migration deploy;
   - the cookie banner over the mobile hero (out of scope).
+
+## T. Phase 7 results (recorded 30 Sep 2026)
+
+Scope: starter content and initialization only (§H Phase 7). No redesign: every page and section renders with the Phase 5–6 renderers. No production images: the template references theme assets, which show the neutral placeholder until the final image stage (§E.6). No Magnific call.
+
+### T.1 What was built
+
+**Backend — Theme 1 template v2** (`src/website/templates/modern-education.template.ts`, `version: 2`). The approved §C composition, moved from the verification fixture into the template:
+- **Home** — the 11 §C.1 sections in order.
+- **About, Courses, FAQs, Contact** — Theme 1's own pages (§C.2–§C.6), each opening with its page hero. Themes 2–5 keep their v1 templates and the shared support pages, byte-for-byte (their fixture exports are unchanged).
+- **Copy:** bilingual EN/AR; interpolates only `{{academyName}}` (e.g. "Why {{academyName}}", "About {{academyName}}", "{{academyName}} in numbers"). No counts, names or other Academy facts are baked in.
+- **Sample testimonials (§D.4):** three `sample: true` items, initials only (Sara M., James W., Nour H.), no photos of people. Complete mode only.
+- **Metric-only statistics (§D.4):** every item carries its `metric`; the authored `value` is empty — no hand-typed number anywhere in the template (spec-tested).
+- **Theme images:** a new per-section `assets` field (§D.2 "per-section asset references"), applied in **both** setup modes, so an "Empty Academy" keeps the same composition. Values are `theme-asset:modern-education/<key>`; each is a normal, replaceable image field.
+- **CTA intents:** `ctaTargets` for Courses, Contact, About, FAQs and Sign Up, resolved to the Academy's own page ids during generation.
+- **Provenance:** `template_version = 2` recorded on first generation (never rewritten).
+
+**Backend — generation service.** Applies `assets` in both modes; "empty" mode gets honest minimums for the v2 types (a page hero is titled with its own page's name; the benefit split gets "Why {{academyName}}"); `steps` and `featureSplit` get empty lists by default. Idempotency and Owner-edit preservation are unchanged (existing pages are never touched).
+
+**Contract change (both repos, additive).** A statistics item's `value` may now be empty **when `metric` is set** — required by the plan's metric-only rule; without a metric the value is still required. Existing pages parse exactly as before; the TypeScript type is unchanged; 4 new parity cases (byte-identical in both repos).
+
+**Frontend — dashboard:**
+- **Publish warning with the sample list** (`WebsitePublishBar`): a dedicated dialog listing every section that still holds sample testimonials (page · section · count), each with a **Review** link straight to that section in the Page Editor, plus **Publish anyway** / Cancel. A warning, never a block. Without samples the ordinary confirmation is unchanged.
+- **Launch checklist** on the website overview (`WebsiteLaunchChecklist`): brand colours confirmed → sample testimonials replaced (the same list, with Review links) → website published. Every step is derived from saved state; "N of 3 done".
+- **Deep links:** the Page Editor opens a section from `?section=<id>`; Website Settings opens a tab from `?tab=<tab>` (used by the checklist's "Open Brand").
+- **Editor preview samples for live sections (§D.4):** in previews only, Theme 1's instructors section with no instructors shows labelled placeholder cards ("Sample", a neutral avatar, "Instructor name / Their published courses") and the numbers section with fewer than two live values shows each configured label with a dash. Never rendered on the public route (unit- and E2E-tested); no invented names or numbers.
+
+**Frontend — setup form fixes found by the Phase 7 browser E2E** (the "Logo & colours" flow review):
+- the "Atlas address" input had no accessible name (`FormControl` wrapped its container, not the input) — now labelled, with its description and errors linked;
+- after a successful "Start provisioning", the unsaved-changes guard still considered the form dirty and interrupted the move to the status page with "Leave without saving?" — the form is now reset on success.
+
+**Verification harness.**
+- The theme baseline's Theme 1 `c1` slug now renders the **real template v2 export** (`fixtures/generated/modern-education.json`, from the backend exporter) instead of the hand-written composition, which is removed. The v1 export is kept as `generated/legacy/modern-education.v1.json`: the plain Theme 1 slug still renders the website existing Academies have (compatibility coverage).
+- `playwright.config.ts` accepts `E2E_CHROMIUM` (a local Chromium path) where Chrome isn't installed; Chrome stays the default.
+
+### T.2 UI/UX Pro Max review (copy, flow, publish warning)
+
+- **Copy hierarchy and tone (EN/AR):** plain, second-person, benefit-first; no superlatives or unverifiable claims ("thousands of learners" from v1 is gone). Arabic reviewed for consistent terms: sample testimonials are «آراء نموذجية» everywhere (dialog, checklist, editor), with correct dual forms («رأيان نموذجيان»).
+- **Sample identities:** initials-style names, so a preview never presents a full fabricated person.
+- **Publish warning:** says what happens (samples are hidden, not published), lists exactly where they are, and offers a way to review each — the plan's "publish anyway, or review". Named actions; full-width stacked buttons on phones; RTL mirrored.
+- **Checklist:** progress up front, one short sentence per step, one action per step; pluralisation counts testimonials, not sections (fixed during review).
+- **Setup flow:** logo → proposed palette → live preview → accept → create → status page persists the logo and palette — verified end to end in the browser, with the two fixes above.
+
+### T.3 Verification
+
+| Check | Result |
+|---|---|
+| Frontend unit tests | **155 files, 1547 tests passed** |
+| New / extended Phase 7 tests (frontend) | `starter-content.test.tsx` (publish warning lists each section with a Review deep link, publishes anyway, cancel publishes nothing, no samples → ordinary confirmation; launch checklist fresh vs launched, counts testimonials); Theme 1 preview samples for instructors and numbers (never on the public route); 4 statistics parity cases |
+| Typecheck / lint (frontend) | 33 errors, all pre-existing (none new); lint clean |
+| Theme baseline | **878/878 passed** (screenshots, axe, palette injection, production CSP). Theme 1 `c1` now renders the real template v2 export; Themes 2–5 unchanged; 191 Theme 1 axe states still 0 violations |
+| Backend unit tests | **152 suites, 4151 tests passed** (including `modern-education.template.spec.ts`: composition, metric-only statistics, samples with initials only, asset references, `{{academyName}}`-only interpolation, both generation modes valid, CTA intents resolved, Themes 2–5 still v1; and 4 statistics parity cases) |
+| Backend typecheck / lint / format | clean |
+| Backend e2e — provisioning | **26/26**, including the new **3f** (Theme 1 v2 provisioned through the real worker → composition correct → provenance v2 → re-generation idempotent with an Owner edit preserved → publish lists the 3 samples → public payload holds none → confirming one makes exactly that one public) |
+| Backend e2e — full run | **1994 of 2000 passed.** The 6 failures are in 3 suites Phase 7 doesn't touch, and none is caused by it: `p64-phase2-security` (1, local s3rver, accepted in Phase 6); `p63-domain-operations` (4) fail **identically with the Phase 7 changes removed** (Phase 6 code) — a platform base domain left in the reused e2e database by earlier runs; `p64-comm-events` (1, a digest count inflated by accumulated events) passes when rerun, on both Phase 6 and Phase 7 code |
+| Browser E2E (`e2e/j7-theme1-starter-content.spec.ts`, real stack: Vite + Nest API + PostgreSQL + Redis + s3rver) | **3/3 passed** on a freshly seeded development database: **J7a** logo in the setup form → palette proposed and accepted → Academy created → logo and palette persisted from the status page → public buttons in the logo's hue; **J7b** no logo → no stored palette → Theme 1's default blue; **J7c** checklist lists the samples → Review opens the section → preview shows 3 "Sample" badges and the instructor/number preview samples → publish warns and lists them → public site shows none (and no preview samples) → confirming one makes exactly that one public |
+| Visual review | Checklist, publish warning and preview samples at 1280 EN and 390 AR (RTL mirrored, Arabic dual forms) |
+
+### T.4 Open items and notes for the Owner
+
+- **Existing Academies are untouched** (§D.5): only new provisioning receives template v2; v1 websites keep rendering with the Phase 5–6 renderers and the Phase 6 fallback page heroes. "Refresh Starter Content" remains out of scope.
+- **Images:** v2 references `home-hero`, `home-benefit`, `home-cta`, `about-header`, `about-story`, `gallery-1…5`; all except the released `home-hero` pilot show placeholders until the final image stage.
+- **Local-stack observations (not changed, outside Phase 7):** on the local dev stack a full page reload in the dashboard hit `invalidRefreshToken` (the journeys navigate in-app instead); relative MediaAsset logo URLs don't resolve across the dev ports (:3001 vs :3000) — production serves both from one host.
+- **Still open:** the Phase 5 + Phase 6 bundle increase (pre-Phase-8 review); the provenance and presentation migrations to deploy through the gated `apply_migrations` run; §R.5/§Q.5 items (private master archive bucket, the Brand tab's "logo changed elsewhere" suggestion, the cookie banner over the mobile hero).
 

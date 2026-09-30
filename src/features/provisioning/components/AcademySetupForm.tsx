@@ -154,6 +154,9 @@ export function AcademySetupForm({
           if (pendingBranding.current) {
             pendingBrandingStore.set(request.id, pendingBranding.current);
           }
+          // Submitted means saved: clear the unsaved-changes guard so the
+          // move to the status page isn't met with "Leave without saving?".
+          form.reset(data);
           onCreated(request);
         },
       }
@@ -183,8 +186,10 @@ export function AcademySetupForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>{t('provisioning:start.subdomainLabel')}</FormLabel>
-              <FormControl>
-                <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
+                {/* `FormControl` wires the label, description and error to
+                    its direct child, so it wraps the input itself. */}
+                <FormControl>
                   <Input
                     {...field}
                     className="flex-1"
@@ -201,26 +206,26 @@ export function AcademySetupForm({
                       field.onChange(event);
                     }}
                   />
-                  {field.value ? (
-                    availability.isLoading ? (
-                      <Loader2
-                        className="size-4 shrink-0 animate-spin text-muted-foreground"
-                        aria-hidden
-                      />
-                    ) : availability.data?.status === 'available' ? (
-                      <CheckCircle2
-                        className="size-4 shrink-0 text-success"
-                        aria-hidden
-                      />
-                    ) : availability.data ? (
-                      <XCircle
-                        className="size-4 shrink-0 text-destructive"
-                        aria-hidden
-                      />
-                    ) : null
-                  ) : null}
-                </div>
-              </FormControl>
+                </FormControl>
+                {field.value ? (
+                  availability.isLoading ? (
+                    <Loader2
+                      className="size-4 shrink-0 animate-spin text-muted-foreground"
+                      aria-hidden
+                    />
+                  ) : availability.data?.status === 'available' ? (
+                    <CheckCircle2
+                      className="size-4 shrink-0 text-success"
+                      aria-hidden
+                    />
+                  ) : availability.data ? (
+                    <XCircle
+                      className="size-4 shrink-0 text-destructive"
+                      aria-hidden
+                    />
+                  ) : null
+                ) : null}
+              </div>
               <FormDescription>
                 {t(
                   slugSuggestion.isCustomized

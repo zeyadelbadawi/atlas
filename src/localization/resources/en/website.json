@@ -629,7 +629,7 @@
     "unpublishConfirmAction": "Unpublish",
     "unpublishedHint": "Your website is offline and not reachable by visitors.",
     "sampleWarningTitle": "Publish with sample testimonials?",
-    "sampleWarningDescription": "These pages still have sample testimonials: {{pages}}. Sample testimonials are never shown on your live website — replace them with real ones, or mark them as real, to show them.",
+    "sampleWarningDescription": "Sample testimonials are never shown on your live website. Replace them with real ones, or mark them as real, to show them. You can publish now and review them later.",
     "sampleWarningAction": "Publish anyway"
   },
   "sections": {
@@ -1038,10 +1038,13 @@
       "courseCount_one": "{{count}} course",
       "courseCount_other": "{{count}} courses",
       "previewHidden": "Hidden on your public site until at least one published course has an instructor.",
-      "listLabel": "Instructors"
+      "listLabel": "Instructors",
+      "sampleName": "Instructor name",
+      "sampleCourses": "Their published courses"
     },
     "statistics": {
-      "previewHidden": "Hidden on your public site until at least two numbers are above zero."
+      "previewHidden": "Hidden on your public site until at least two numbers are above zero.",
+      "sampleValue": "Live number, shown once above zero"
     },
     "testimonials": {
       "carousel": "Testimonials",
@@ -1133,6 +1136,35 @@
       "contact": {
         "lead": "Questions about a course or enrolling? We are here to help."
       }
+    }
+  },
+  "sampleContent": {
+    "count_one": "{{count}} sample testimonial",
+    "count_other": "{{count}} sample testimonials",
+    "review": "Review",
+    "reviewLabel": "Review the sample testimonials on {{page}}"
+  },
+  "launchChecklist": {
+    "title": "Launch checklist",
+    "progress": "{{done}} of {{total}} done",
+    "stateDone": "done",
+    "stateTodo": "to do",
+    "brand": {
+      "title": "Confirm your brand colours",
+      "todo": "Review the colours generated for your website and confirm them, or adjust them first.",
+      "done": "Your brand colours are confirmed.",
+      "action": "Open Brand"
+    },
+    "samples": {
+      "title": "Replace the sample testimonials",
+      "todo_one": "Your starter website has a sample testimonial. Samples appear only in previews: replace it with a real one, or mark it as real if it is.",
+      "todo_other": "Your starter website has sample testimonials. Samples appear only in previews: replace them with real ones, or mark them as real if they are.",
+      "done": "No sample testimonials left."
+    },
+    "publish": {
+      "title": "Publish your website",
+      "todo": "Visitors see a Coming Soon page until you publish.",
+      "done": "Your website is live."
     }
   }
 }

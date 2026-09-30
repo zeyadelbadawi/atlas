@@ -92,9 +92,10 @@ export const BRAND_PALETTES = [
 ] as const;
 
 /**
- * Theme 1's Home with the plan's §C.1 composition (Phase 5): the fixture
- * server's `c1` composition, in both data states. Provisioning still
- * creates the v1 Home until Phase 7, so both are covered.
+ * Theme 1's Home with the plan's §C.1 composition: the fixture server's
+ * `c1` slug, which since Phase 7 is exactly what template v2 provisions
+ * (`generated/modern-education.json`), in both data states. The v1 Home
+ * existing Academies still have stays covered by `THEMED_PAGES`.
  */
 export const THEME1_HOME_C1_STATES = ['new', 'rich'] as const;
 

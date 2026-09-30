@@ -117,20 +117,28 @@ export const featuredCoursesSectionSchema = z.object({
   showInstructor: z.boolean(),
 });
 
-const statisticItemSchema = z.object({
-  id: z.string(),
-  // Phase 6 — the form's `metric` select uses `'none'` as its "no live
-  // data" option (Radix `Select` rejects an empty-string item value); this
-  // preprocess step is the one place that sentinel is translated back to
-  // `undefined` before anything is persisted, matching the "validate at
-  // the boundary" rule this schema file already follows.
-  metric: z.preprocess(
-    (value) => (value === 'none' || value === '' ? undefined : value),
-    z.enum(['courses', 'students', 'instructors']).optional()
-  ),
-  value: localizedRequired(20),
-  label: localizedRequired(MAX_SHORT_TEXT),
-});
+const statisticItemSchema = z
+  .object({
+    id: z.string(),
+    // Phase 6 — the form's `metric` select uses `'none'` as its "no live
+    // data" option (Radix `Select` rejects an empty-string item value); this
+    // preprocess step is the one place that sentinel is translated back to
+    // `undefined` before anything is persisted, matching the "validate at
+    // the boundary" rule this schema file already follows.
+    metric: z.preprocess(
+      (value) => (value === 'none' || value === '' ? undefined : value),
+      z.enum(['courses', 'students', 'instructors']).optional()
+    ),
+    // Theme 1 plan §D.4 — a live item (`metric` set) needs no authored
+    // number, so starter content carries none; without `metric` the value
+    // is the item and stays required.
+    value: localizedOptional(20),
+    label: localizedRequired(MAX_SHORT_TEXT),
+  })
+  .refine((item) => !!item.metric || item.value.en.trim().length > 0, {
+    message: 'validation:required',
+    path: ['value', 'en'],
+  });
 
 export const statisticsSectionSchema = z.object({
   title: localizedOptional(MAX_SHORT_TEXT).optional(),

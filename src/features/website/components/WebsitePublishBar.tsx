@@ -14,9 +14,20 @@
  * client-side state to drift. There is deliberately no `useState` mirror
  * of the published flag anywhere in this component.
  */
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CloudOff, CloudUpload, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { StatusBadge } from '@components/data-display';
 import { ErrorState } from '@components/feedback';
 import { useConfirmDialog } from '@app/providers';
@@ -28,8 +39,9 @@ import {
 } from '../hooks';
 import { CONTENT_LIST_PAGE_SIZE } from '../constants/website.constants';
 import { collectSampleContent } from '../utils/sample-content.utils';
+import { SampleContentList } from './SampleContentList';
 import type { StatusTone } from '@components/data-display';
-import type { WebsitePublishStatus } from '@types';
+import type { SampleContentEntry, WebsitePublishStatus } from '@types';
 
 const STATUS_TONE: Record<WebsitePublishStatus, StatusTone> = {
   draft: 'neutral',
@@ -76,39 +88,37 @@ export function WebsitePublishBar({
   const isBusy =
     publish.isPending || unpublish.isPending || status === 'publishing';
 
+  // Theme 1 plan §D.4 — the sections still holding sample testimonials,
+  // while the warning is open.
+  const [sampleWarning, setSampleWarning] = useState<
+    readonly SampleContentEntry[] | null
+  >(null);
+
   const handleToggle = async () => {
     if (isBusy) return;
-    const samplePages = isPublished
+    const samples = isPublished
       ? []
-      : [
-          ...new Set(
-            collectSampleContent(pagesQuery.data?.items ?? []).map(
-              (entry) => entry.pageTitle
-            )
-          ),
-        ];
+      : collectSampleContent(pagesQuery.data?.items ?? []);
+    if (samples.length > 0) {
+      // A warning, never a block: samples are stripped from the public
+      // site anyway, so publishing hides those testimonials. The dialog
+      // lists them, each with a way to review it.
+      setSampleWarning(samples);
+      return;
+    }
     const confirmed = await confirm(
-      samplePages.length > 0
+      isPublished
         ? {
-            // A warning, never a block: samples are stripped from the
-            // public site anyway, so publishing hides those testimonials.
-            titleKey: 'website:publish.sampleWarningTitle',
-            descriptionKey: 'website:publish.sampleWarningDescription',
-            confirmLabelKey: 'website:publish.sampleWarningAction',
-            values: { pages: samplePages.join(', ') },
+            titleKey: 'website:publish.unpublishConfirmTitle',
+            descriptionKey: 'website:publish.unpublishConfirmDescription',
+            confirmLabelKey: 'website:publish.unpublishConfirmAction',
+            intent: 'destructive',
           }
-        : isPublished
-          ? {
-              titleKey: 'website:publish.unpublishConfirmTitle',
-              descriptionKey: 'website:publish.unpublishConfirmDescription',
-              confirmLabelKey: 'website:publish.unpublishConfirmAction',
-              intent: 'destructive',
-            }
-          : {
-              titleKey: 'website:publish.confirmTitle',
-              descriptionKey: 'website:publish.confirmDescription',
-              confirmLabelKey: 'website:publish.confirmAction',
-            }
+        : {
+            titleKey: 'website:publish.confirmTitle',
+            descriptionKey: 'website:publish.confirmDescription',
+            confirmLabelKey: 'website:publish.confirmAction',
+          }
     );
     if (!confirmed) return;
     // `mutate` resolves into the query cache; the badge and the label both
@@ -165,6 +175,42 @@ export function WebsitePublishBar({
       {action.error ? (
         <ErrorState onRetry={handleToggle} className="w-full" />
       ) : null}
+
+      <AlertDialog
+        open={sampleWarning !== null}
+        onOpenChange={(open) => {
+          if (!open) setSampleWarning(null);
+        }}
+      >
+        <AlertDialogContent data-testid="publish-sample-warning">
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t('website:publish.sampleWarningTitle')}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('website:publish.sampleWarningDescription')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {sampleWarning ? (
+            <SampleContentList
+              academyId={academyId}
+              entries={sampleWarning}
+              onNavigate={() => setSampleWarning(null)}
+            />
+          ) : null}
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common:actions.cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setSampleWarning(null);
+                publish.mutate(academyId);
+              }}
+            >
+              {t('website:publish.sampleWarningAction')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

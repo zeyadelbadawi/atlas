@@ -27,6 +27,7 @@ import { useAcademy } from '@features/academy';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useWebsiteConfiguration, useWebsitePages } from '../hooks';
 import { WebsitePublishBar } from '../components/WebsitePublishBar';
+import { WebsiteLaunchChecklist } from '../components/WebsiteLaunchChecklist';
 import { buildSitemapEntries } from '../utils/sitemap.utils';
 import { getAcademyPublicWebsiteUrl } from '../utils/public-website-link.utils';
 import { getWebsiteTabs } from '../utils/website-navigation.utils';
@@ -158,6 +159,12 @@ export default function WebsiteOverviewPage(): JSX.Element {
           academyId={academyId}
           status={configQuery.data.status}
           lastPublishedAt={configQuery.data.publishedAt}
+        />
+
+        <WebsiteLaunchChecklist
+          academyId={academyId}
+          configuration={configQuery.data}
+          pages={pagesQuery.data?.items ?? []}
         />
 
         {/* A clear, obvious place to see and open the academy's public
