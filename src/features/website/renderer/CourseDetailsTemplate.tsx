@@ -32,10 +32,9 @@
  *    pass's completion report; showing a broken/fake button would be
  *    worse than showing none).
  */
-import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LEARNER_ROUTES, buildPath } from '@app/routes/route-paths';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   BookOpen,
   CheckCircle2,
@@ -53,6 +52,7 @@ import { CoursePreviewDialog } from './CoursePreviewDialog';
 import { CourseReviews } from './CourseReviews';
 import { MyCourseReviewForm } from './MyCourseReviewForm';
 import { RelatedCourses } from './RelatedCourses';
+import { useCourseDetails } from './useCourseDetails';
 import {
   Accordion,
   AccordionContent,
@@ -60,12 +60,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { ErrorState } from '@components/feedback';
-import { toast } from '@/hooks/use-toast';
 import { formatCoursePricing } from '@features/course';
-import { usePublicCourse, usePublicCourseCurriculum } from '@hooks';
-import { DEV_OVERRIDE_PARAM } from '@features/public-website';
-import { useAuth } from '@hooks';
-import { useEnrollment, useEnroll } from '@features/learning';
 import {
   useWebsiteContainerClass,
   useWebsiteHeadingClass,
@@ -94,49 +89,23 @@ export function CourseDetailsTemplate({
   const navigate = useNavigate();
   const container = useWebsiteContainerClass();
   const heading = useWebsiteHeadingClass();
-  const [searchParams] = useSearchParams();
-  // Same locale-prefix + dev-preview-param rule `usePublicWebsiteHrefBuilder`
-  // (`@features/public-website`) applies — reimplemented locally rather
-  // than imported, since that hook lives one layer up in a feature this
-  // one must not depend on (`@features/website` → `@features/public-website`
-  // → `@features/website` would cycle back on itself). `DEV_OVERRIDE_PARAM`
-  // itself IS a real, shared barrel export (see `public-website-link.utils.ts`'s
-  // identical precedent), so only the two-line prefixing rule is
-  // duplicated, not the constant.
-  const buildHref = useCallback(
-    (path: string): string => {
-      const localized = locale === 'en' ? path : `/ar${path}`;
-      const devSlug = searchParams.get(DEV_OVERRIDE_PARAM);
-      if (!devSlug) return localized;
-      const separator = localized.includes('?') ? '&' : '?';
-      return `${localized}${separator}${DEV_OVERRIDE_PARAM}=${encodeURIComponent(devSlug)}`;
-    },
-    [locale, searchParams]
-  );
-  const { session } = useAuth();
-  const isAuthenticated = session.status === 'authenticated';
-
   const {
-    data: course,
+    course,
     isLoading,
     error,
     refetch,
-  } = usePublicCourse(academyId, courseId);
-  const { data: curriculum, isLoading: isLoadingCurriculum } =
-    usePublicCourseCurriculum(academyId, courseId);
-
-  // The lesson whose free preview is open, or null. Holding the lesson
-  // rather than a boolean keeps the dialog's grant keyed to exactly the
-  // lesson the visitor clicked.
-  const [previewLesson, setPreviewLesson] = useState<{
-    id: string;
-    title: string;
-  } | null>(null);
-  const { data: enrollment } = useEnrollment(courseId, {
-    enabled: isAuthenticated,
-  });
-  const { mutateAsync: enroll, isPending: isEnrolling } = useEnroll();
-  const [enrollError, setEnrollError] = useState(false);
+    curriculum,
+    isLoadingCurriculum,
+    previewLesson,
+    setPreviewLesson,
+    isAuthenticated,
+    isEnrolled,
+    isFree,
+    isEnrolling,
+    enrollError,
+    handleEnroll,
+    buildHref,
+  } = useCourseDetails(academyId, courseId, locale);
 
   if (isLoading) {
     return (
@@ -155,25 +124,6 @@ export function CourseDetailsTemplate({
       </div>
     );
   }
-
-  const isFree = course.pricing.type === 'free';
-  const isEnrolled = !!enrollment && enrollment.status !== 'available';
-
-  const handleEnroll = async () => {
-    setEnrollError(false);
-    try {
-      await enroll({ courseId });
-      navigate(
-        buildHref(buildPath(LEARNER_ROUTES.courseProgress, { courseId }))
-      );
-    } catch {
-      setEnrollError(true);
-      toast({
-        title: t('website:renderer.courseDetails.enrollError'),
-        variant: 'destructive',
-      });
-    }
-  };
 
   return (
     <article className={`${container} space-y-10 py-16`}>
@@ -360,7 +310,9 @@ export function CourseDetailsTemplate({
                                   )}
                                 >
                                   <PlayCircle className="size-4" aria-hidden />
-                                  {t('website:renderer.courseDetails.previewAction')}
+                                  {t(
+                                    'website:renderer.courseDetails.previewAction'
+                                  )}
                                 </Button>
                               ) : null}
                             </li>

@@ -60,7 +60,12 @@ export const THEMED_PAGES: Record<'new' | 'rich', readonly BaselinePage[]> = {
 /**
  * Surfaces that don't use the theme (they render outside
  * `WebsiteThemeScope`), captured once rather than five identical times.
+ * Rendered with a Themes 2–5 Academy (`SHARED_CASE_THEME`): since Phase 6
+ * Theme 1 draws its own 404 and Coming Soon (`THEME1_C1_PAGES`,
+ * `THEME1_COMING_SOON`), and these snapshots keep proving the shared pages
+ * the other themes still use are unchanged.
  */
+export const SHARED_CASE_THEME: ThemeKey = 'premium-academy';
 export const SHARED_CASES = [
   { name: 'not-found', state: 'new', page: NOT_FOUND },
   { name: 'coming-soon', state: 'unpublished', page: HOME },
@@ -92,6 +97,38 @@ export const BRAND_PALETTES = [
  * creates the v1 Home until Phase 7, so both are covered.
  */
 export const THEME1_HOME_C1_STATES = ['new', 'rich'] as const;
+
+/**
+ * Theme 1's inner pages with their Phase 6 compositions (the fixture
+ * server's `c1` pages: page heroes, catalog, contact, gallery, FAQ filter),
+ * plus its own 404. The v1 pages in `THEMED_PAGES` stay covered too: they
+ * are what existing Academies have (Phase 6's fallback page hero).
+ */
+export const THEME1_C1_PAGES: Record<'new' | 'rich', readonly BaselinePage[]> =
+  {
+    new: [ABOUT, COURSES, FAQS, CONTACT, NOT_FOUND],
+    rich: [ABOUT, COURSES, COURSE_DETAILS, FAQS, CONTACT],
+  };
+
+/** Theme 1's own Coming Soon (Phase 6), before the website is published. */
+export const THEME1_COMING_SOON = {
+  name: 'coming-soon',
+  state: 'unpublished',
+  page: HOME,
+} as const;
+
+/**
+ * The brand matrix on every Theme 1 inner page (Phase 6), EN at 1440: the
+ * rich `c1` pages, the 404 and Coming Soon under each palette.
+ */
+export const THEME1_BRAND_PAGES: readonly {
+  readonly page: BaselinePage;
+  readonly state: DataState;
+}[] = [
+  ...THEME1_C1_PAGES.rich.map((page) => ({ page, state: 'rich' as const })),
+  { page: NOT_FOUND, state: 'rich' },
+  { page: { name: 'coming-soon', path: '/' }, state: 'unpublished' },
+];
 
 export function fixtureSlug(
   theme: ThemeKey,

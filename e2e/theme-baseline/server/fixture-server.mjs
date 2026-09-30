@@ -22,8 +22,9 @@
  *   state    `new` | `rich` | `unpublished`  (see `live-data.mjs`)
  *   palette  a `FIXTURE_PALETTES` name, injected as the stored brand
  *            (default: `default`, what a new Academy stores today)
- *   c1       Theme 1 only: Home with the plan's §C.1 composition
- *            (`fixtures/theme1-home.mjs`) instead of the provisioned v1 Home
+ *   c1       Theme 1 only: the plan's compositions (§C.1 Home, §C.2–§C.6
+ *            inner pages; `fixtures/theme1-home.mjs`) instead of the
+ *            provisioned v1 pages
  * Anything else resolves as an unknown hostname, exactly like production.
  *
  * Any API request this server has no fixture for is answered 404 in the
@@ -42,7 +43,7 @@ import {
   FIXTURE_PALETTES,
   buildLiveData,
 } from '../fixtures/live-data.mjs';
-import { buildTheme1HomeSections } from '../fixtures/theme1-home.mjs';
+import { buildTheme1PageSections } from '../fixtures/theme1-home.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(HERE, '../../..');
@@ -109,8 +110,13 @@ function buildFixture(parsed) {
   const pages = rebaseIds(generated.pages)
     .filter((page) => page.visible)
     .map((page) =>
-      parsed.composition === 'c1' && page.coreType === 'home'
-        ? { ...page, sections: buildTheme1HomeSections(parsed.state) }
+      parsed.composition === 'c1'
+        ? {
+            ...page,
+            sections:
+              buildTheme1PageSections(page.coreType, parsed.state) ??
+              page.sections,
+          }
         : page
     );
   return {
@@ -171,6 +177,12 @@ function handlePublicWebsites(segments, url) {
         academyId: parsed.slug,
         academyName: FIXTURE_ACADEMY_NAME,
         academySlug: parsed.slug,
+        // Theme 1 plan Phase 6 — the theme and public colours, published or
+        // not (what the real lookup now returns).
+        presentation: {
+          themeKey: parsed.theme,
+          brand: { ...FIXTURE_PALETTES[parsed.palette] },
+        },
       },
     };
   }

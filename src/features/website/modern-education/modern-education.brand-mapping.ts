@@ -26,6 +26,7 @@ import {
   formatHslTriplet,
   oklchToTriplet,
   parseHslTriplet,
+  relativeLuminance,
   solveLightness,
   tripletToOklch,
   BRAND_ROLE_NAMES,
@@ -44,6 +45,21 @@ export { isUsablePalette };
 
 /** Theme 1's canvas chroma cap (§F.4.2 step 6). */
 export const MODERN_EDUCATION_NEUTRAL_CHROMA_CAP = 0.012;
+
+/**
+ * Contrast as the browser renders the pair: each channel rounded to 8 bits,
+ * the precision an `hsl()` colour is painted (and measured by axe) at. The
+ * engine checks exact values; a pair at 4.51:1 can paint at 4.48:1.
+ */
+function renderedContrast(a: HslTriplet, b: HslTriplet): number {
+  const luminance = (triplet: HslTriplet) => {
+    const { r, g, b: blue } = parseHslTriplet(triplet);
+    const q = (channel: number) => Math.round(channel * 255) / 255;
+    return relativeLuminance({ r: q(r), g: q(g), b: q(blue) });
+  };
+  const [la, lb] = [luminance(a), luminance(b)];
+  return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+}
 
 /** The ink band: fixed near-black, faintly tinted with the brand hue (§F.5). */
 const INK_LIGHTNESS = 0.2;
@@ -128,7 +144,27 @@ export interface ModernEducationBrandTokens {
 export function resolveModernEducationTokens(
   input: BrandMappingInput
 ): ModernEducationBrandTokens {
-  const { roles, ctaNeedsBorder } = rolesFor(input);
+  const derived = rolesFor(input);
+  const { ctaNeedsBorder } = derived;
+  // Theme 1 sets links and eyebrows on the soft surface band too (page
+  // heroes), not only on the background the engine checks them against.
+  // A hue that clears 4.5:1 by a hair (e.g. teal: exactly 4.52:1 on the
+  // surface, 4.48:1 as painted) is darkened just enough to clear it there
+  // as painted.
+  const roles: BrandRoles =
+    renderedContrast(derived.roles.link, derived.roles.surface) >= 4.5
+      ? derived.roles
+      : {
+          ...derived.roles,
+          link:
+            solveLightness(
+              tripletToOklch(derived.roles.link),
+              (candidate) =>
+                renderedContrast(candidate, derived.roles.surface) >= 4.5 &&
+                contrastRatio(candidate, derived.roles.background) >= 4.5,
+              'darker'
+            ) ?? derived.roles.link,
+        };
   const { ctaHover, ctaPressed } = deriveInteractionStates(
     roles.cta,
     roles.ctaForeground

@@ -568,6 +568,139 @@
   border-radius: 8px;
 }
 
+/* Catalog filters (§C.2): chips that toggle, native selects styled as
+   inputs (a chevron at the logical end), and a sideways rail on phones. */
+.t1-chip-rail {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-block: 0.25rem;
+}
+.t1-chip-rail::-webkit-scrollbar {
+  display: none;
+}
+.t1-chip-rail > * {
+  flex-shrink: 0;
+}
+.t1-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-block-size: 2.5rem;
+  padding-inline: 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--website-input-border);
+  background-color: var(--website-background);
+  color: var(--website-foreground);
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    background-color var(--t1-duration) var(--t1-ease),
+    border-color var(--t1-duration) var(--t1-ease);
+}
+.t1-filter-chip:hover {
+  background-color: var(--website-surface);
+}
+.t1-filter-chip[aria-pressed='true'] {
+  background-color: var(--website-chip-bg);
+  border-color: transparent;
+  color: var(--website-chip-fg);
+}
+.t1-filter-chip:focus-visible {
+  outline: 2px solid var(--website-focus);
+  outline-offset: 2px;
+}
+.t1-filter-chip-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: 1.5rem;
+  block-size: 1.5rem;
+  padding-inline: 0.375rem;
+  border-radius: 999px;
+  background-color: var(--website-surface-muted);
+  color: var(--website-foreground);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.t1-select {
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-size:
+    5px 5px,
+    5px 5px;
+  background-position:
+    calc(100% - 1.125rem) 55%,
+    calc(100% - 0.8125rem) 55%;
+  background-repeat: no-repeat;
+}
+[dir='rtl'] .t1-select {
+  background-position:
+    0.8125rem 55%,
+    1.125rem 55%;
+}
+
+/* The five-image gallery bento (§C.3). Phones: the large tile (4:3), the
+   three squares in one row, then the wide tile (4:3). Tablet and up: a
+   three-column grid with fixed row heights — large 2 × 2 at the top start,
+   wide 2 × 1 below it, the squares down the end column. Cells fill their
+   grid area; the image covers it. */
+.t1-bento {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.t1-bento > li:nth-child(1),
+.t1-bento > li:nth-child(2) {
+  grid-column: 1 / -1;
+  aspect-ratio: 4 / 3;
+}
+.t1-bento > li:nth-child(n + 3) {
+  aspect-ratio: 1;
+}
+.t1-bento > li:nth-child(2) {
+  order: 1;
+}
+@media (min-width: 768px) {
+  .t1-bento {
+    grid-template-rows: repeat(3, clamp(10rem, 17vw, 16rem));
+  }
+  .t1-bento > li:nth-child(n) {
+    aspect-ratio: auto;
+    order: 0;
+  }
+  .t1-bento > li:nth-child(1) {
+    grid-column: 1 / span 2;
+    grid-row: 1 / span 2;
+  }
+  .t1-bento > li:nth-child(2) {
+    grid-column: 1 / span 2;
+    grid-row: 3;
+  }
+  .t1-bento > li:nth-child(n + 3) {
+    grid-column: 3;
+  }
+}
+
+/* The About hero (§C.0): the soft band ends behind the photograph, which
+   straddles the edge into the page — the transition into the Story. */
+.t1-hero-editorial {
+  background: linear-gradient(
+    to bottom,
+    var(--website-surface) 0,
+    var(--website-surface) calc(100% - clamp(4rem, 12vw, 10rem)),
+    var(--website-background) calc(100% - clamp(4rem, 12vw, 10rem))
+  );
+}
+/* Its title reads one step larger than a section display on wide screens. */
+@media (min-width: 1280px) {
+  .t1-display-xl {
+    font-size: 4.5rem;
+  }
+}
+
 /* The hero's one orchestrated entrance (§G): supporting elements rise
    12px and fade in with a 60ms stagger, the image 150ms after the text.
    The headline (the LCP element) is never animated. */
@@ -600,7 +733,8 @@
   .t1-card-link,
   .t1-card-media img,
   .t1-ink-cta,
-  .t1-ink-secondary {
+  .t1-ink-secondary,
+  .t1-filter-chip {
     transition: none;
   }
   .t1-card-link:hover,

@@ -342,6 +342,27 @@ export function BrandShapeSoft({
   );
 }
 
+/** Inner-page heroes, Coming Soon and 404 (`brand-shape-page`). */
+export function BrandShapePage({
+  className,
+}: {
+  readonly className?: string;
+}): JSX.Element {
+  return (
+    <svg
+      aria-hidden
+      focusable="false"
+      viewBox="0 0 520 360"
+      className={cn('t1-shape rtl:-scale-x-100', className)}
+    >
+      <path
+        fill="currentColor"
+        d="M372 12c84 10 140 70 146 146 6 80-44 150-120 180-82 32-176 28-250-10C76 296 10 236 2 168-6 94 56 34 136 16c76-18 160-12 236-4Z"
+      />
+    </svg>
+  );
+}
+
 /* ------------------------------------------------------------------ */
 /* People and numbers                                                   */
 /* ------------------------------------------------------------------ */

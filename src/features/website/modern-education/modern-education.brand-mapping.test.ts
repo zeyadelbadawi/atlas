@@ -8,6 +8,8 @@ import { describe, expect, it } from 'vitest';
 import {
   buildBrandPalette,
   contrastRatio,
+  parseHslTriplet,
+  relativeLuminance,
   tripletToOklch,
   type HslTriplet,
 } from '../brand-engine';
@@ -92,6 +94,20 @@ describe.each(Object.entries(IDENTITY_MATRIX))(
   (_name, seeds) => {
     const t = resolveModernEducationTokens({ theme, seeds });
     const r = t.roles;
+
+    it('keeps links readable on the soft surface as painted (8-bit channels)', () => {
+      // Page heroes set eyebrows and links on the surface band; axe measures
+      // the painted colours, so the check rounds each channel as they are.
+      const painted = (triplet: HslTriplet) => {
+        const { r: red, g, b } = parseHslTriplet(triplet);
+        const q = (channel: number) => Math.round(channel * 255) / 255;
+        return relativeLuminance({ r: q(red), g: q(g), b: q(b) });
+      };
+      const [link, surface] = [painted(r.link), painted(r.surface)];
+      const ratio =
+        (Math.max(link, surface) + 0.05) / (Math.min(link, surface) + 0.05);
+      expect(ratio).toBeGreaterThanOrEqual(4.5);
+    });
 
     it('keeps every emitted text/fill pair readable', () => {
       const pairs: [HslTriplet, HslTriplet, number, string][] = [

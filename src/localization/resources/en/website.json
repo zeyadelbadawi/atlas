@@ -1051,6 +1051,88 @@
       "next": "Next testimonial",
       "goTo": "Show testimonial {{position}}",
       "carouselRole": "carousel"
+    },
+    "pageHeader": {
+      "catalogSummary_one": "{{courses}} course across {{categories}} categories",
+      "catalogSummary_other": "{{courses}} courses across {{categories}} categories"
+    },
+    "faq": {
+      "filterLabel": "Search the questions",
+      "filterPlaceholder": "Search the questions…",
+      "resultCount_one": "{{count}} question matches",
+      "resultCount_other": "{{count}} questions match",
+      "noMatchTitle": "No questions match your search",
+      "noMatchDescription": "Try different words, or contact us and we'll help.",
+      "listTitle": "All questions"
+    },
+    "catalog": {
+      "categories": "Categories",
+      "allCategories": "All",
+      "filters": "Filters",
+      "filtersDescription": "Narrow the courses by level and price, or change the order.",
+      "showResults_one": "Show {{formatted}} course",
+      "showResults_other": "Show {{formatted}} courses",
+      "close": "Close",
+      "removeFilter": "Remove the filter {{name}}",
+      "clearAll": "Clear all",
+      "errorTitle": "We couldn't load the courses",
+      "errorDescription": "Please check your connection and try again.",
+      "retry": "Try again",
+      "pagination": "Course pages",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "page": "Page {{page}}"
+    },
+    "courseDetails": {
+      "errorTitle": "We couldn't load this course",
+      "errorDescription": "Please check your connection and try again.",
+      "hasPreview": "Free preview lessons",
+      "breadcrumb": "Breadcrumb",
+      "allCourses": "All courses",
+      "taughtBy": "Taught by",
+      "purchase": "Enrol in this course",
+      "includes": "This course includes"
+    },
+    "contact": {
+      "phoneLabel": "Phone",
+      "addressLabel": "Address",
+      "formTitle": "Send us a message",
+      "successTitle": "Message sent",
+      "sendAnother": "Send another message"
+    },
+    "gallery": {
+      "title": "Gallery",
+      "open": "Open image: {{name}}",
+      "previous": "Previous image",
+      "next": "Next image",
+      "close": "Close"
+    },
+    "notFound": {
+      "eyebrow": "Error 404",
+      "title": "We can't find that page",
+      "description": "The page may have moved, or the link may be out of date. These are good places to continue.",
+      "home": "Back to home",
+      "courses": "Browse courses",
+      "contact": "Contact us"
+    },
+    "comingSoon": {
+      "eyebrow": "Opening soon",
+      "title": "{{name}} is getting ready",
+      "description": "Our website is being prepared. Please check back soon."
+    },
+    "pageIntro": {
+      "about": {
+        "lead": "The people, purpose and approach behind our courses."
+      },
+      "courses": {
+        "lead": "Browse every course, filter by what you need and start learning."
+      },
+      "faqs": {
+        "lead": "Answers to the questions learners ask us most."
+      },
+      "contact": {
+        "lead": "Questions about a course or enrolling? We are here to help."
+      }
     }
   }
 }

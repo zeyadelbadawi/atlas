@@ -6,10 +6,13 @@
  *   (`modern-education.css`) and its chrome (header, footer, auth frame).
  * - **Phase 5:** the Home renderers (§C.1 #1–11), plus the v1 `about`
  *   block existing Theme 1 Homes carry.
+ * - **Phase 6:** the inner pages — page heroes (`pageHeader`), catalog,
+ *   contact and gallery renderers; Course Details, "page not found" and
+ *   Coming Soon pages; and a hero for existing pages that open without one.
  *
- * A renderer serves its section type wherever it appears. Page heroes and
- * the inner-page compositions are Phase 6. Every other type keeps its base
- * renderer (`pack.renderers[type] ?? BASE_RENDERERS[type]`).
+ * A renderer serves its section type wherever it appears; every type
+ * Theme 1 doesn't redesign keeps its base renderer
+ * (`pack.renderers[type] ?? BASE_RENDERERS[type]`).
  */
 import type { ThemePack } from '../theme-packs/theme-pack.types';
 import './modern-education.css';
@@ -33,6 +36,11 @@ import {
   T1Testimonials,
 } from './t1-live-sections';
 import { T1Faq } from './T1Faq';
+import { T1PageHeader, T1PageIntro } from './T1PageHeader';
+import { T1CourseCatalog } from './T1CourseCatalog';
+import { T1Contact, T1Gallery } from './t1-page-sections';
+import { T1CourseDetails } from './T1CourseDetails';
+import { T1ComingSoon, T1NotFound } from './T1SystemPages';
 
 export const MODERN_EDUCATION_PACK: ThemePack = {
   key: 'modern-education',
@@ -49,6 +57,16 @@ export const MODERN_EDUCATION_PACK: ThemePack = {
     faq: T1Faq,
     cta: T1Cta,
     about: T1About,
+    pageHeader: T1PageHeader,
+    courseCatalog: T1CourseCatalog,
+    contact: T1Contact,
+    gallery: T1Gallery,
+  },
+  pages: {
+    PageIntro: T1PageIntro,
+    CourseDetails: T1CourseDetails,
+    NotFound: T1NotFound,
+    ComingSoon: T1ComingSoon,
   },
   chrome: {
     Header: ModernEducationHeader,

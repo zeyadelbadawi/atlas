@@ -73,7 +73,7 @@ function CardBody({
 
   return (
     <>
-      <div className="t1-card-media relative aspect-video shrink-0 rounded-t-[calc(var(--t1-radius-card)-1px)]">
+      <div className="t1-card-media relative aspect-[16/9] shrink-0 rounded-t-[calc(var(--t1-radius-card)-1px)]">
         {course.thumbnail ? (
           <img
             src={course.thumbnail}
@@ -228,7 +228,7 @@ export function T1CourseCard({
 export function T1CourseCardSkeleton(): JSX.Element {
   return (
     <div aria-hidden className="t1-card flex h-full flex-col overflow-hidden">
-      <div className="aspect-video animate-pulse bg-[var(--website-surface-muted)] motion-reduce:animate-none" />
+      <div className="aspect-[16/9] animate-pulse bg-[var(--website-surface-muted)] motion-reduce:animate-none" />
       <div className="space-y-3 p-6">
         <div className="h-3 w-1/4 rounded bg-[var(--website-surface-muted)]" />
         <div className="h-5 w-4/5 rounded bg-[var(--website-surface-muted)]" />

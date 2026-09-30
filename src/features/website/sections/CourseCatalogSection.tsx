@@ -35,7 +35,7 @@
  * into one render), so a request for "page 7 of the new filter" — which
  * would be empty and strand the visitor — is never issued.
  */
-import { useCallback, useEffect, useId, useState } from 'react';
+import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import {
@@ -61,23 +61,8 @@ import { Pagination, SearchInput, StarRating } from '@components/data-display';
 import { EmptyState, ErrorState } from '@components/feedback';
 import { apiErrorKind } from '@api';
 import { formatCoursePricing } from '@features/course';
-import {
-  usePagination,
-  usePublicCourseCategories,
-  usePublicCourses,
-} from '@hooks';
-import { clamp } from '@utils';
 import { COURSE_CATALOG_SORT_VALUES, COURSE_LEVEL_VALUES } from '@types';
-import {
-  fromCatalogSearch,
-  mergeCatalogSearch,
-  type CatalogUrlState,
-} from '../utils/catalog-url.utils';
-import {
-  DEFAULT_COURSE_CATALOG_PAGE_SIZE,
-  MAX_COURSE_CATALOG_PAGE_SIZE,
-  MIN_COURSE_CATALOG_PAGE_SIZE,
-} from '../constants/website.constants';
+import { ALL, useCourseCatalog } from './useCourseCatalog';
 import {
   useWebsiteCardClass,
   useWebsiteContainerClass,
@@ -90,9 +75,6 @@ import type {
   Course,
   CourseCatalogSectionConfig,
   CourseCatalogSort,
-  CourseLevel,
-  CoursePricingType,
-  SortDescriptor,
 } from '@types';
 import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
 
@@ -102,57 +84,7 @@ export interface CourseCatalogSectionProps {
   readonly linkRenderer?: WebsiteLinkRenderer;
 }
 
-/** The "any" option of a filter select. Radix `Select` rejects an empty-string item value, same sentinel convention as `CourseListPage`. */
-const ALL = 'all';
-
-const PRICING_VALUES: readonly CoursePricingType[] = ['free', 'paid'];
-
-function oneOf<T extends string>(
-  values: readonly T[],
-  value: string | undefined
-): T | undefined {
-  return values.find((candidate) => candidate === value);
-}
-
-/** The catalog state a visitor arrived with — anything unrecognised is ignored, never trusted. */
-function readInitialUrlState(enabled: boolean): {
-  readonly search: string;
-  readonly category?: string;
-  readonly level?: CourseLevel;
-  readonly pricing?: CoursePricingType;
-  readonly sort?: CourseCatalogSort;
-  readonly page: number;
-} {
-  if (!enabled || typeof window === 'undefined') return { search: '', page: 1 };
-  const state: CatalogUrlState = fromCatalogSearch(window.location.search);
-  const page = Number(state.page);
-  return {
-    search: state.search?.slice(0, 100) ?? '',
-    category: state.category?.slice(0, 64),
-    level: oneOf(COURSE_LEVEL_VALUES, state.level),
-    pricing: oneOf(PRICING_VALUES, state.pricing),
-    sort: oneOf(COURSE_CATALOG_SORT_VALUES, state.sort),
-    page: Number.isInteger(page) && page > 1 ? page : 1,
-  };
-}
-
-/**
- * The closed sort list → the backend's `sortBy`/`sortDirection` pair.
- * `newest` sorts by `createdAt` rather than `publishedAt`: the public
- * catalog only ever returns published courses, and `createdAt` is set on
- * every row, so the order is total and deterministic.
- */
-const COURSE_CATALOG_SORT_DESCRIPTORS: Record<
-  CourseCatalogSort,
-  SortDescriptor
-> = {
-  newest: { field: 'createdAt', direction: 'desc' },
-  title: { field: 'title', direction: 'asc' },
-  priceAsc: { field: 'price', direction: 'asc' },
-  priceDesc: { field: 'price', direction: 'desc' },
-};
-
-const SORT_LABEL_KEYS: Record<CourseCatalogSort, string> = {
+export const SORT_LABEL_KEYS: Record<CourseCatalogSort, string> = {
   newest: 'website:renderer.courseCatalog.sortNewest',
   title: 'website:renderer.courseCatalog.sortTitle',
   priceAsc: 'website:renderer.courseCatalog.sortPriceAsc',
@@ -166,7 +98,7 @@ const SORT_LABEL_KEYS: Record<CourseCatalogSort, string> = {
  * `0m` for a course that does have content; `null`/non-positive means the
  * backend has no lesson durations and the card simply omits the cell.
  */
-function formatCatalogDuration(
+export function formatCatalogDuration(
   seconds: number | null | undefined,
   t: TFunction
 ): string | null {
@@ -372,16 +304,6 @@ function CatalogCardBody({ course, t }: CatalogCardBodyProps): JSX.Element {
   );
 }
 
-/** Defends the render against a persisted config outside the schema's bounds (the Zod schema validates saves; this is the read side). */
-function resolvePageSize(pageSize: number): number {
-  if (!Number.isFinite(pageSize)) return DEFAULT_COURSE_CATALOG_PAGE_SIZE;
-  return clamp(
-    Math.trunc(pageSize),
-    MIN_COURSE_CATALOG_PAGE_SIZE,
-    MAX_COURSE_CATALOG_PAGE_SIZE
-  );
-}
-
 export function CourseCatalogSection({
   config,
   academyId,
@@ -395,141 +317,28 @@ export function CourseCatalogSection({
   const { locale } = usePublicWebsiteLocale();
   const controlId = useId();
 
-  const pageSize = resolvePageSize(config.pageSize);
-  const syncUrl = !!linkRenderer;
-  const [initial] = useState(() => readInitialUrlState(syncUrl));
-
-  const [search, setSearch] = useState(initial.search);
-  const [category, setCategory] = useState(initial.category);
-  const [level, setLevel] = useState<CourseLevel | typeof ALL>(
-    initial.level ?? ALL
-  );
-  const [pricing, setPricing] = useState<CoursePricingType | typeof ALL>(
-    initial.pricing ?? ALL
-  );
-  const [sort, setSort] = useState<CourseCatalogSort>(
-    initial.sort ?? config.defaultSort
-  );
-
-  const [totalItems, setTotalItems] = useState(0);
-  const pagination = usePagination({
-    totalItems,
-    initialPage: initial.page,
-    initialPageSize: pageSize,
-  });
-  const { goToFirstPage, setPageSize } = pagination;
-
-  // Editor live preview: an Owner changing `pageSize`/`defaultSort` in the
-  // Section Editor must show without a remount. Both are no-ops on the
-  // public runtime, where a mounted section's config never changes.
-  useEffect(() => {
-    if (pagination.pageSize !== pageSize) setPageSize(pageSize);
-  }, [pageSize, pagination.pageSize, setPageSize]);
-  useEffect(() => {
-    setSort(config.defaultSort);
-  }, [config.defaultSort]);
-
-  // See the doc comment's "PAGE RESET RULE" for why each handler also
-  // returns to page 1 itself rather than an effect doing it afterwards.
-  const handleSearch = useCallback(
-    (value: string) => {
-      setSearch(value);
-      goToFirstPage();
-    },
-    [goToFirstPage]
-  );
-  const handleLevel = (value: string) => {
-    setLevel(value as CourseLevel | typeof ALL);
-    goToFirstPage();
-  };
-  const handlePricing = (value: string) => {
-    setPricing(value as CoursePricingType | typeof ALL);
-    goToFirstPage();
-  };
-  const handleSort = (value: string) => {
-    setSort(value as CourseCatalogSort);
-    goToFirstPage();
-  };
-  const handleClearCategory = () => {
-    setCategory(undefined);
-    goToFirstPage();
-  };
-
-  const trimmedSearch = search.trim();
-  // Until the first response says how many pages exist, `pagination.page`
-  // is clamped to 1 — so a shared "page 3" link asks for page 3 directly.
-  const [hasTotals, setHasTotals] = useState(false);
-  const queryPage = hasTotals ? pagination.page : initial.page;
-  const { data, isLoading, error, refetch } = usePublicCourses(academyId, {
-    query: {
-      pagination: { page: queryPage, pageSize: pagination.pageSize },
-      sort: COURSE_CATALOG_SORT_DESCRIPTORS[sort],
-      search: trimmedSearch || undefined,
-      filters: {
-        categoryId: category,
-        level: level === ALL ? undefined : level,
-        pricingType: pricing === ALL ? undefined : pricing,
-      },
-    },
-  });
-
-  useEffect(() => {
-    if (!data) return;
-    setTotalItems(data.pagination.totalItems);
-    setHasTotals(true);
-  }, [data]);
-
-  // The category's name, for the removable filter chip (same cached query
-  // the category tiles use).
-  const { data: categories } = usePublicCourseCategories(
-    category ? academyId : undefined
-  );
-  const categoryName = categories?.find(
-    (candidate) => candidate.id === category
-  )?.name;
-
-  // URL STATE — see the doc comment. Written only once totals are known,
-  // so the first render's clamp to page 1 never erases a shared page.
-  const requestedPage = pagination.page;
-  useEffect(() => {
-    if (!syncUrl || !hasTotals) return;
-    const next = mergeCatalogSearch(window.location.search, {
-      search: trimmedSearch,
-      category,
-      level: level === ALL ? undefined : level,
-      pricing: pricing === ALL ? undefined : pricing,
-      sort: sort === config.defaultSort ? undefined : sort,
-      page: requestedPage > 1 ? String(requestedPage) : undefined,
-    });
-    if (next === window.location.search) return;
-    window.history.replaceState(
-      window.history.state,
-      '',
-      `${window.location.pathname}${next}${window.location.hash}`
-    );
-  }, [
-    syncUrl,
-    hasTotals,
-    trimmedSearch,
+  const {
+    pageSize,
+    search,
+    handleSearch,
     category,
+    categoryName,
+    handleClearCategory,
     level,
+    handleLevel,
     pricing,
+    handlePricing,
     sort,
-    config.defaultSort,
-    requestedPage,
-  ]);
-
-  const courses = data?.items ?? [];
-  const hasActiveFilters =
-    trimmedSearch.length > 0 ||
-    level !== ALL ||
-    pricing !== ALL ||
-    category !== undefined;
-  const hasControls =
-    config.showSearch ||
-    config.showLevelFilter ||
-    config.showPricingFilter ||
-    config.showSort;
+    handleSort,
+    pagination,
+    data,
+    isLoading,
+    error,
+    refetch,
+    courses,
+    hasActiveFilters,
+    hasControls,
+  } = useCourseCatalog({ config, academyId, syncUrl: !!linkRenderer });
 
   const levelId = `${controlId}-level`;
   const pricingId = `${controlId}-pricing`;

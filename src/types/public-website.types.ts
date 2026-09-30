@@ -16,6 +16,23 @@ export interface HostnameResolution {
   readonly academyLogo?: string;
   /** P63 — the one host this website advertises (connected custom domain, otherwise the Atlas subdomain). The public runtime sets `rel="canonical"` to it and moves a visitor on the other host there. */
   readonly canonicalHost?: string;
+  /**
+   * Theme 1 plan Phase 6 — the website's theme and public colours,
+   * whatever its publication state, so Coming Soon can wear them. Absent
+   * when the Academy has no website configuration (or from an older
+   * backend); the shared Coming Soon is shown then.
+   */
+  readonly presentation?: HostnamePresentation;
+}
+
+export interface HostnamePresentation {
+  readonly themeKey: string;
+  readonly brand: {
+    readonly primaryColor?: string;
+    readonly secondaryColor?: string;
+    readonly accentColor?: string;
+    readonly palette?: Record<string, unknown>;
+  };
 }
 
 /** Phase 6 — `StatisticsSection`'s real, live, Academy-scoped counts (`GET public/websites/:academyId/statistics`). Never revenue or any other private figure. */

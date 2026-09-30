@@ -76,3 +76,25 @@ export function resolveCatalogHref(
   const path = catalogPage ? resolvePagePath(catalogPage) : undefined;
   return path ? `${path}${toCatalogSearch(state)}` : undefined;
 }
+
+/**
+ * Sent (cancelable) on `window` by a search box outside the catalog — the
+ * Courses page hero. A catalog on the same page applies it and cancels the
+ * event; not cancelled means there's no catalog here, and the sender
+ * navigates to the catalog instead.
+ */
+export const CATALOG_SEARCH_EVENT = 'atlas:catalog-search';
+
+export interface CatalogSearchEventDetail {
+  readonly search: string;
+}
+
+/** Hands a search to a catalog on this page; `false` when there isn't one. */
+export function sendSearchToCatalog(search: string): boolean {
+  return !window.dispatchEvent(
+    new CustomEvent<CatalogSearchEventDetail>(CATALOG_SEARCH_EVENT, {
+      detail: { search },
+      cancelable: true,
+    })
+  );
+}

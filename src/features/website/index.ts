@@ -28,6 +28,15 @@ export type { WebsiteHeaderAuthState } from './renderer/WebsiteHeader';
 // doc comment.
 export { WebsiteChrome } from './renderer/WebsiteChrome';
 export type { WebsiteChromeProps } from './renderer/WebsiteChrome';
+// Theme 1 plan Phase 6 — theme-owned "page not found" and Coming Soon (a
+// theme without its own renders `null`, and the caller keeps the shared
+// screen).
+export {
+  WebsiteComingSoon,
+  WebsiteNotFound,
+  hasThemeComingSoon,
+  hasThemeNotFound,
+} from './renderer/WebsiteSystemPages';
 
 // The Academy-website-embedded Student Learning experience (`@features/
 // learning`'s `WebsiteLearningRoute`) needs the resolved theme's brand

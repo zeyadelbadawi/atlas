@@ -247,7 +247,7 @@ export function T1FeaturedCourses({
             value={COURSES_LAUNCHING}
             alt=""
             sizes="(min-width: 768px) 50vw, 100vw"
-            className="aspect-video !rounded-none md:aspect-auto md:min-h-[18rem]"
+            className="aspect-[16/9] !rounded-none md:aspect-[auto] md:min-h-[18rem]"
           />
           <div className="flex flex-col justify-center gap-4 p-7 md:p-10">
             <h3 className="font-display text-2xl font-bold text-[var(--website-foreground)]">

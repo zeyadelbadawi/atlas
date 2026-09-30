@@ -19,8 +19,10 @@ import type { ComponentType, ReactNode } from 'react';
 import type { WebsiteHeaderProps } from '../renderer/WebsiteHeader';
 import type { WebsiteFooterProps } from '../renderer/WebsiteFooter';
 import type {
+  PublicWebsiteLocale,
   SectionConfigMap,
   SectionType,
+  WebsiteNavigationItem,
   WebsitePage,
   WebsiteThemeDefinition,
   WebsiteThemeKey,
@@ -81,12 +83,49 @@ export interface ThemeChrome {
   readonly AuthFrame?: ComponentType<ThemeAuthFrameProps>;
 }
 
+/** Drawn above an existing page's sections when the page opens with no hero of its own. */
+export interface ThemePageIntroProps {
+  readonly page: WebsitePage;
+  readonly navigation: readonly WebsiteNavigationItem[];
+}
+
+/** The Course Details page body (not composed of sections). */
+export interface ThemeCourseDetailsProps {
+  readonly academyId: string;
+  readonly courseId: string;
+  readonly locale?: PublicWebsiteLocale;
+  readonly pages: readonly WebsitePage[];
+  readonly linkRenderer?: WebsiteLinkRenderer;
+}
+
+/** The body of the published site's "page not found", inside the theme's chrome. */
+export interface ThemeNotFoundProps {
+  readonly pages: readonly WebsitePage[];
+  readonly linkRenderer?: WebsiteLinkRenderer;
+}
+
+/** An unpublished Academy's Coming Soon page (identity + brand only). */
+export interface ThemeComingSoonProps {
+  readonly academyName: string;
+  readonly academyLogo?: string;
+}
+
+/** Pages a theme may redesign; absent ones use the shared design. */
+export interface ThemePages {
+  readonly PageIntro?: ComponentType<ThemePageIntroProps>;
+  readonly CourseDetails?: ComponentType<ThemeCourseDetailsProps>;
+  readonly NotFound?: ComponentType<ThemeNotFoundProps>;
+  readonly ComingSoon?: ComponentType<ThemeComingSoonProps>;
+}
+
 export interface ThemePack {
   readonly key: WebsiteThemeKey;
   /** Only the section types this theme redesigns. */
   readonly renderers: Partial<SectionRenderers>;
   /** Only the chrome this theme redesigns. */
   readonly chrome?: ThemeChrome;
+  /** Only the pages this theme redesigns (Phase 6). */
+  readonly pages?: ThemePages;
   /**
    * Palette → this theme's CSS variables (§F.5). Carries no image or
    * extraction knowledge; the palette carries no theme knowledge.

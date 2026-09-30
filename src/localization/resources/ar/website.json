@@ -1079,6 +1079,100 @@
       "next": "الرأي التالي",
       "goTo": "عرض الرأي {{position}}",
       "carouselRole": "عرض متتابع"
+    },
+    "pageHeader": {
+      "catalogSummary_zero": "{{courses}} دورة في {{categories}} تصنيفات",
+      "catalogSummary_one": "دورة واحدة في {{categories}} تصنيفات",
+      "catalogSummary_two": "دورتان في {{categories}} تصنيفات",
+      "catalogSummary_few": "{{courses}} دورات في {{categories}} تصنيفات",
+      "catalogSummary_many": "{{courses}} دورة في {{categories}} تصنيفات",
+      "catalogSummary_other": "{{courses}} دورة في {{categories}} تصنيفات"
+    },
+    "faq": {
+      "filterLabel": "ابحث في الأسئلة",
+      "filterPlaceholder": "ابحث في الأسئلة…",
+      "resultCount_zero": "لا توجد أسئلة مطابقة",
+      "resultCount_one": "سؤال واحد مطابق",
+      "resultCount_two": "سؤالان مطابقان",
+      "resultCount_few": "{{count}} أسئلة مطابقة",
+      "resultCount_many": "{{count}} سؤالًا مطابقًا",
+      "resultCount_other": "{{count}} سؤال مطابق",
+      "noMatchTitle": "لا توجد أسئلة تطابق بحثك",
+      "noMatchDescription": "جرّب كلمات أخرى، أو تواصل معنا وسنساعدك.",
+      "listTitle": "جميع الأسئلة"
+    },
+    "catalog": {
+      "categories": "التصنيفات",
+      "allCategories": "الكل",
+      "filters": "التصفية",
+      "filtersDescription": "صفِّ الدورات حسب المستوى والسعر، أو غيّر الترتيب.",
+      "showResults_zero": "لا توجد دورات",
+      "showResults_one": "عرض دورة واحدة",
+      "showResults_two": "عرض دورتين",
+      "showResults_few": "عرض {{formatted}} دورات",
+      "showResults_many": "عرض {{formatted}} دورة",
+      "showResults_other": "عرض {{formatted}} دورة",
+      "close": "إغلاق",
+      "removeFilter": "إزالة التصفية {{name}}",
+      "clearAll": "مسح الكل",
+      "errorTitle": "تعذّر تحميل الدورات",
+      "errorDescription": "يُرجى التحقق من اتصالك والمحاولة مجددًا.",
+      "retry": "أعد المحاولة",
+      "pagination": "صفحات الدورات",
+      "previousPage": "الصفحة السابقة",
+      "nextPage": "الصفحة التالية",
+      "page": "الصفحة {{page}}"
+    },
+    "courseDetails": {
+      "errorTitle": "تعذّر تحميل هذه الدورة",
+      "errorDescription": "يُرجى التحقق من اتصالك والمحاولة مجددًا.",
+      "hasPreview": "دروس معاينة مجانية",
+      "breadcrumb": "مسار التنقّل",
+      "allCourses": "كل الدورات",
+      "taughtBy": "يقدّمها",
+      "purchase": "سجّل في هذه الدورة",
+      "includes": "تتضمّن هذه الدورة"
+    },
+    "contact": {
+      "phoneLabel": "الهاتف",
+      "addressLabel": "العنوان",
+      "formTitle": "أرسل لنا رسالة",
+      "successTitle": "تم إرسال رسالتك",
+      "sendAnother": "إرسال رسالة أخرى"
+    },
+    "gallery": {
+      "title": "معرض الصور",
+      "open": "فتح الصورة: {{name}}",
+      "previous": "الصورة السابقة",
+      "next": "الصورة التالية",
+      "close": "إغلاق"
+    },
+    "notFound": {
+      "eyebrow": "خطأ 404",
+      "title": "لم نعثر على هذه الصفحة",
+      "description": "ربما نُقلت الصفحة أو أصبح الرابط قديمًا. هذه أماكن مناسبة للمتابعة.",
+      "home": "العودة إلى الرئيسية",
+      "courses": "تصفّح الدورات",
+      "contact": "تواصل معنا"
+    },
+    "comingSoon": {
+      "eyebrow": "قريبًا",
+      "title": "{{name}} تستعدّ للانطلاق",
+      "description": "نُعدّ موقعنا الآن. يُرجى زيارتنا قريبًا."
+    },
+    "pageIntro": {
+      "about": {
+        "lead": "تعرّف على الأشخاص والرؤية والنهج وراء دوراتنا."
+      },
+      "courses": {
+        "lead": "تصفّح جميع الدورات، واختر ما يناسبك، وابدأ التعلّم."
+      },
+      "faqs": {
+        "lead": "إجابات عن أكثر الأسئلة التي يطرحها المتعلّمون علينا."
+      },
+      "contact": {
+        "lead": "لديك سؤال عن دورة أو عن التسجيل؟ نحن هنا للمساعدة."
+      }
     }
   }
 }

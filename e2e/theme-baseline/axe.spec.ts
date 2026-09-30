@@ -18,6 +18,10 @@ import {
   BRAND_PALETTES,
   LOCALES,
   SHARED_CASES,
+  SHARED_CASE_THEME,
+  THEME1_BRAND_PAGES,
+  THEME1_C1_PAGES,
+  THEME1_COMING_SOON,
   THEME1_HOME_C1_STATES,
   THEMED_PAGES,
   THEMES,
@@ -131,7 +135,7 @@ for (const viewport of AXE_VIEWPORTS) {
           {
             page: sharedCase.page,
             locale,
-            theme: 'modern-education',
+            theme: SHARED_CASE_THEME,
             state: sharedCase.state,
           }
         );
@@ -161,6 +165,50 @@ for (const viewport of AXE_VIEWPORTS) {
       }
     }
 
+    for (const state of ['new', 'rich'] as const) {
+      for (const page of THEME1_C1_PAGES[state]) {
+        for (const locale of LOCALES) {
+          axeCase(
+            `modern-education c1 ${page.name} ${state} ${locale}`,
+            [
+              'axe',
+              'themes',
+              'modern-education',
+              'c1',
+              `${page.name}--${state}--${locale}--${viewport.name}.json`,
+            ],
+            {
+              page,
+              locale,
+              theme: 'modern-education',
+              state,
+              palette: 'default',
+              composition: 'c1',
+            }
+          );
+        }
+      }
+    }
+
+    for (const locale of LOCALES) {
+      axeCase(
+        `modern-education coming-soon ${locale}`,
+        [
+          'axe',
+          'themes',
+          'modern-education',
+          'unpublished',
+          `coming-soon--${locale}--${viewport.name}.json`,
+        ],
+        {
+          page: THEME1_COMING_SOON.page,
+          locale,
+          theme: 'modern-education',
+          state: THEME1_COMING_SOON.state,
+        }
+      );
+    }
+
     for (const palette of BRAND_PALETTES) {
       axeCase(
         `brand modern-education home ${palette}`,
@@ -182,3 +230,29 @@ for (const viewport of AXE_VIEWPORTS) {
     }
   });
 }
+
+test.describe('axe brand matrix, Theme 1 inner pages (1440)', () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  for (const palette of BRAND_PALETTES) {
+    for (const { page, state } of THEME1_BRAND_PAGES) {
+      axeCase(
+        `brand modern-education ${page.name} ${palette}`,
+        [
+          'axe',
+          'brand',
+          'modern-education',
+          `${page.name}--${palette}--en--1440.json`,
+        ],
+        {
+          page,
+          locale: 'en',
+          theme: 'modern-education',
+          state,
+          palette,
+          composition: state === 'unpublished' ? undefined : 'c1',
+        }
+      );
+    }
+  }
+});

@@ -362,3 +362,316 @@ export function buildTheme1HomeSections(state) {
     }),
   ];
 }
+
+/* ------------------------------------------------------------------ */
+/* Inner pages (§C.2–§C.6), Phase 6                                    */
+/* ------------------------------------------------------------------ */
+
+const FAQ_PAGE_ITEMS = [
+  [
+    'Do I need any experience to start?',
+    'هل أحتاج إلى خبرة سابقة للبدء؟',
+    'No. Each course lists what you need before you start, and most begin with the basics.',
+    'لا. تذكر كل دورة ما تحتاجه قبل البدء، وتبدأ معظمها من الأساسيات.',
+  ],
+  [
+    'How long do I have access to a course?',
+    'ما مدة وصولي إلى الدورة؟',
+    'Once you enrol you can learn at your own pace and come back to the lessons whenever you need them.',
+    'بعد التسجيل يمكنك التعلّم بالسرعة التي تناسبك والعودة إلى الدروس متى احتجت إليها.',
+  ],
+  [
+    'Can I learn on my phone?',
+    'هل يمكنني التعلّم من هاتفي؟',
+    'Yes. Lessons work on phones, tablets and computers, and your progress is saved everywhere.',
+    'نعم. تعمل الدروس على الهواتف والأجهزة اللوحية والحواسيب، ويُحفظ تقدّمك في كل مكان.',
+  ],
+  [
+    'How do I get help if I am stuck?',
+    'كيف أحصل على المساعدة إذا واجهتني صعوبة؟',
+    'Send your question through the course or contact us, and an instructor will get back to you.',
+    'أرسل سؤالك عبر الدورة أو تواصل معنا، وسيعود إليك أحد المدرّبين.',
+  ],
+  [
+    'Do you offer free courses?',
+    'هل تقدّمون دورات مجانية؟',
+    'Some courses are free. Look for the "Free" label in the catalog.',
+    'بعض الدورات مجانية. ابحث عن علامة «مجاني» في قائمة الدورات.',
+  ],
+  [
+    'Can I preview a course before enrolling?',
+    'هل يمكنني معاينة الدورة قبل التسجيل؟',
+    'Many courses include free preview lessons. Open a course and look for "Preview" in its content.',
+    'تتضمّن دورات كثيرة دروس معاينة مجانية. افتح الدورة وابحث عن «معاينة» في محتواها.',
+  ],
+  [
+    'How do I pay for a course?',
+    'كيف أدفع ثمن الدورة؟',
+    'Create your account, open the course and choose Buy. You can pay securely online.',
+    'أنشئ حسابك، ثم افتح الدورة واختر «شراء». يمكنك الدفع بأمان عبر الإنترنت.',
+  ],
+  [
+    'Can my company enrol a team?',
+    'هل يمكن لشركتي تسجيل فريق؟',
+    'Yes. Contact us with the size of your team and the courses you are interested in.',
+    'نعم. تواصل معنا واذكر عدد أفراد فريقك والدورات التي تهمّكم.',
+  ],
+];
+
+function faqItems(count) {
+  return FAQ_PAGE_ITEMS.slice(0, count).map(([qEn, qAr, aEn, aAr]) => ({
+    id: id('q'),
+    question: lt(qEn, qAr),
+    answer: lt(aEn, aAr),
+  }));
+}
+
+function aboutSections() {
+  return [
+    section('pageHeader', {
+      eyebrow: lt('About Horizon Academy', 'عن Horizon Academy'),
+      title: lt(
+        'We help people learn the skills that open new doors',
+        'نساعد الناس على تعلّم المهارات التي تفتح أبوابًا جديدة'
+      ),
+      description: lt(
+        'Horizon Academy brings practical, expert-led learning to anyone ready to grow — at their own pace, with real support along the way.',
+        'تقدّم Horizon Academy تعلّمًا عمليًا يقوده خبراء لكل من يستعدّ للنمو، بالسرعة التي تناسبه ومع دعم حقيقي على طول الطريق.'
+      ),
+      image: 'theme-asset:modern-education/about-header',
+      imageAlt: lt('', ''),
+      search: 'none',
+    }),
+    section('featureSplit', {
+      eyebrow: lt('Our story', 'قصّتنا'),
+      title: lt(
+        'Started by practitioners who love to teach',
+        'بدأها ممارسون يحبّون التعليم'
+      ),
+      description: lt(
+        'We began with a simple idea: the best way to learn a skill is from people who use it every day. Today our instructors bring that same practical focus to every course.',
+        'بدأنا بفكرة بسيطة: أفضل طريقة لتعلّم مهارة هي من أشخاص يستخدمونها كل يوم. واليوم يحمل مدرّبونا هذا التركيز العملي نفسه إلى كل دورة.'
+      ),
+      image: 'theme-asset:modern-education/about-story',
+      imagePosition: 'start',
+      items: [
+        {
+          id: id('m'),
+          title: lt('Built on real practice', 'قائمة على الممارسة الفعلية'),
+          description: lt(
+            'Every lesson comes from work our instructors do.',
+            'كل درس مأخوذ من عمل يؤديه مدرّبونا.'
+          ),
+        },
+        {
+          id: id('m'),
+          title: lt('Designed around learners', 'مصمَّمة حول المتعلّمين'),
+          description: lt(
+            'Short lessons, clear projects and honest feedback.',
+            'دروس قصيرة ومشاريع واضحة وملاحظات صادقة.'
+          ),
+        },
+        {
+          id: id('m'),
+          title: lt('Growing with our community', 'ننمو مع مجتمعنا'),
+          description: lt(
+            'New courses follow what our learners ask for.',
+            'تتبع الدورات الجديدة ما يطلبه متعلّمونا.'
+          ),
+        },
+      ],
+    }),
+    section('features', {
+      title: lt('What we value', 'ما نؤمن به'),
+      description: lt(
+        'The principles behind every course we make.',
+        'المبادئ التي تقوم عليها كل دورة نقدّمها.'
+      ),
+      items: [
+        {
+          id: id('v'),
+          icon: 'Award',
+          title: lt('Quality first', 'الجودة أولًا'),
+          description: lt(
+            'We would rather publish fewer courses that truly teach.',
+            'نفضّل نشر دورات أقل تُعلّم حقًا.'
+          ),
+        },
+        {
+          id: id('v'),
+          icon: 'Users',
+          title: lt('Learning together', 'نتعلّم معًا'),
+          description: lt(
+            'Questions are welcome, and nobody learns alone.',
+            'الأسئلة مرحّب بها، ولا أحد يتعلّم وحده.'
+          ),
+        },
+        {
+          id: id('v'),
+          icon: 'Sparkles',
+          title: lt('Practical outcomes', 'نتائج عملية'),
+          description: lt(
+            'You finish every course able to do something new.',
+            'تُنهي كل دورة وأنت قادر على فعل شيء جديد.'
+          ),
+        },
+      ],
+    }),
+    section('statistics', {
+      title: lt('Horizon Academy in numbers', 'Horizon Academy بالأرقام'),
+      items: [
+        {
+          id: id('st'),
+          metric: 'courses',
+          value: lt('', ''),
+          label: lt('Courses', 'دورة'),
+        },
+        {
+          id: id('st'),
+          metric: 'students',
+          value: lt('', ''),
+          label: lt('Learners', 'متعلّم'),
+        },
+        {
+          id: id('st'),
+          metric: 'instructors',
+          value: lt('', ''),
+          label: lt('Instructors', 'مدرّب'),
+        },
+      ],
+    }),
+    section('instructors', {
+      title: lt('Meet the team', 'تعرّف على الفريق'),
+      description: lt(
+        'The instructors behind our courses.',
+        'المدرّبون الذين يقفون خلف دوراتنا.'
+      ),
+      count: 8,
+    }),
+    section('gallery', {
+      title: lt('Life at Horizon Academy', 'الحياة في Horizon Academy'),
+      images: [1, 2, 3, 4, 5].map((n) => ({
+        id: id('g'),
+        image: `theme-asset:modern-education/gallery-${n}`,
+      })),
+    }),
+    section('cta', {
+      title: lt('Learn with us', 'تعلّم معنا'),
+      description: lt(
+        'Find a course that fits your goals and start today.',
+        'اعثر على دورة تناسب أهدافك وابدأ اليوم.'
+      ),
+      cta: {
+        label: lt('Browse courses', 'تصفّح الدورات'),
+        pageId: PAGES.courses,
+      },
+      secondaryCta: {
+        label: lt('Contact us', 'تواصل معنا'),
+        pageId: PAGES.contact,
+      },
+    }),
+  ];
+}
+
+function coursesSections() {
+  return [
+    section('pageHeader', {
+      eyebrow: lt('Courses', 'الدورات'),
+      title: lt('Find your next course', 'اعثر على دورتك التالية'),
+      description: lt(
+        'Practical courses taught by experienced instructors. Search, filter by category and level, and start learning today.',
+        'دورات عملية يقدّمها مدرّبون ذوو خبرة. ابحث وصفِّ حسب التصنيف والمستوى، وابدأ التعلّم اليوم.'
+      ),
+      search: 'courses',
+    }),
+    section('courseCatalog', {
+      title: lt('All courses', 'كل الدورات'),
+      pageSize: 9,
+      defaultSort: 'newest',
+      showSearch: false,
+      showLevelFilter: true,
+      showPricingFilter: true,
+      showSort: true,
+    }),
+    section('cta', {
+      title: lt('Not sure where to start?', 'لا تعرف من أين تبدأ؟'),
+      description: lt(
+        'Tell us what you want to learn and we will point you to the right course.',
+        'أخبرنا بما تريد تعلّمه وسنرشدك إلى الدورة المناسبة.'
+      ),
+      cta: { label: lt('Talk to us', 'تحدّث إلينا'), pageId: PAGES.contact },
+    }),
+  ];
+}
+
+function faqsSections() {
+  return [
+    section('pageHeader', {
+      eyebrow: lt('Help centre', 'مركز المساعدة'),
+      title: lt('Frequently asked questions', 'الأسئلة الشائعة'),
+      description: lt(
+        'Answers to the questions learners ask us most.',
+        'إجابات عن الأسئلة التي يطرحها المتعلّمون علينا أكثر من غيرها.'
+      ),
+      search: 'faq',
+    }),
+    section('faq', { items: faqItems(8) }),
+    section('cta', {
+      title: lt('Still have a question?', 'هل لديك سؤال آخر؟'),
+      description: lt(
+        'Our team is happy to help — send us a message.',
+        'يسعد فريقنا بمساعدتك، أرسل لنا رسالة.'
+      ),
+      cta: { label: lt('Contact us', 'تواصل معنا'), pageId: PAGES.contact },
+    }),
+  ];
+}
+
+function contactSections() {
+  return [
+    section('pageHeader', {
+      eyebrow: lt('Contact', 'تواصل معنا'),
+      title: lt("We'd love to hear from you", 'يسعدنا أن نسمع منك'),
+      description: lt(
+        'Questions about a course, enrolling a team or anything else — send us a message and we will get back to you.',
+        'أسئلة عن دورة أو تسجيل فريق أو أي أمر آخر؟ أرسل لنا رسالة وسنعود إليك.'
+      ),
+      search: 'none',
+    }),
+    section('contact', {
+      title: lt('Get in touch', 'تواصل معنا'),
+      description: lt(
+        'Reach us directly, or use the form and we will reply by email.',
+        'تواصل معنا مباشرة، أو استخدم النموذج وسنردّ عليك عبر البريد الإلكتروني.'
+      ),
+      showForm: true,
+    }),
+    section('faq', {
+      title: lt('Quick answers', 'إجابات سريعة'),
+      maxItems: 3,
+      cta: {
+        label: lt('See all questions', 'عرض كل الأسئلة'),
+        pageId: PAGES.faqs,
+      },
+      items: faqItems(5),
+    }),
+  ];
+}
+
+/** The §C composition for one core page, or `null` to keep the provisioned one. */
+export function buildTheme1PageSections(coreType, state) {
+  switch (coreType) {
+    case 'home':
+      return buildTheme1HomeSections(state);
+    case 'about':
+      return aboutSections();
+    case 'courses':
+      return coursesSections();
+    case 'faqs':
+      return faqsSections();
+    case 'contact':
+      return contactSections();
+    default:
+      return null;
+  }
+}

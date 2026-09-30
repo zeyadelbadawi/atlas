@@ -1,6 +1,6 @@
 # Theme 1 ("Modern Education") — Academy Website Redesign Plan
 
-Status: **v2.1, approved for implementation (29 Sep 2026). Phases 0–4 complete and approved (§M–§Q). Phase 5 complete (§R), awaiting the Owner's approval; Phases 6–9 not started.**
+Status: **v2.1, approved for implementation (29 Sep 2026). Phases 0–5 complete and approved (§M–§R). Phase 6 complete (§S), awaiting the Owner's approval; Phases 7–9 not started.**
 Scope:
 - Turn Theme 1 into a complete, launch-ready academy website that every Academy receives automatically.
 - Build the architecture so Themes 2–5 can later get their own identity and page composition.
@@ -862,7 +862,7 @@ The engine, the Brand Studio UI, the persisted palette, the validation and the t
 
 ### Phase 5 — Theme 1 Home renderers
 
-**Status: done (29 Sep 2026), awaiting the Owner's approval — results in §R.**
+**Status: done and approved (30 Sep 2026) — results in §R.**
 
 - **Objective:** sections C.1 #1–11 as Theme 1 renderers, including the empty, sample and live-data states and the brand slots. The Home hero meets §C.0.
 - **Images:** no production images. Every image slot shows a neutral placeholder (§E.6).
@@ -891,6 +891,8 @@ The engine, the Brand Studio UI, the persisted palette, the validation and the t
   Then **STOP**, report the Phase 5 results and **wait for explicit approval**. Phase 6 doesn't start before that.
 
 ### Phase 6 — Theme 1 inner pages
+
+**Status: done (30 Sep 2026), awaiting the Owner's approval — results in §S.**
 
 - **Objective:** Courses (catalog renderer), Course Details (template redesign), About, FAQs, Contact, Coming Soon and 404, **each with its page hero per §C.0** (About especially).
 - **Images:** no production images. Every image slot shows a neutral placeholder (§E.6).
@@ -1724,9 +1726,133 @@ Found and fixed during verification:
   - loading the Theme 1 renderers as a pack chunk (spares Themes 2–5, not Theme 1).
 
   Not changed without your decision.
+
+  **Owner decision (30 Sep 2026):** keep Embla unchanged for now. The measured contribution stands as recorded above (≈ 7.6 KB gzip Embla, ≈ 10 KB gzip Theme 1 Home renderers). The final carousel/bundle optimisation — Embla vs CSS scroll-snap vs code-splitting — is deferred to the planned pre-Phase-8 bundle/performance review, using production measurements. Not a Phase 5 blocker.
 - **Reduced motion in the baseline.** Captures now use reduced motion so reveals don't hide content in full-page screenshots; motion is verified by unit tests.
 - **Still open from §Q.5:**
   - the private master archive bucket;
   - the Brand tab's "logo changed elsewhere" suggestion;
   - the provenance migration deploy;
   - the cookie banner over the mobile hero (out of scope).
+
+## S. Phase 6 results (recorded 30 Sep 2026)
+
+Scope: Theme 1 inner pages (§H Phase 6) — Courses, Course Details, About, FAQs, Contact, Coming Soon and 404, each with its page hero (§C.0). No production images: every unreleased slot shows the neutral placeholder (§E.6). No Magnific call. Auth pages are unchanged: they keep the Phase 4 auth frame; no auth work was assigned to Phase 6.
+
+### S.1 What was built
+
+**Theme 1 inner-page renderers** (`src/features/website/modern-education/`, registered in `modern-education.pack.ts`). Theme 1 now draws 16 section types; Themes 2–5 still draw none.
+
+| Page | Type / slot | Renderer | Behaviour |
+|---|---|---|---|
+| All inner pages | `pageHeader` | `T1PageHeader` | The page hero (§C.0), with the page's h1. Three compositions: **editorial** (with an image — the About hero), **centred with a filter** (`search: 'faq'`) and **standard** (soft band, brand shape and icon card at the logical end; with `search: 'courses'` it adds the catalog search and a live "N courses across M categories" summary). |
+| About | `pageHeader` + image | `T1PageHeader` (editorial) | The premium About hero: eyebrow, `t1-display-xl` title in 7/12 columns, lead in 5/12, and the `about-header` photograph (4:3 → 16:9 → 21:9) straddling the band's lower edge into the Story section. Then `featureSplit` (`about-story`), `features`, `statistics`, `instructors`, `gallery`, `cta` — all Theme 1 renderers. |
+| Courses | `courseCatalog` | `T1CourseCatalog` | Sticky toolbar under the header: category chips (`aria-pressed`, counts), native level/price/sort selects, and on phones a "Filters" bottom sheet. Live result count, removable filter chips, "Clear all", pagination. Loading skeletons, an error state with retry, a no-results state. **An Academy with no courses** sees only the "Courses launching soon" panel (no filters to use). The hero's search is handed to the catalog on the same page (no navigation). State shared with the base catalog through `useCourseCatalog` (URL state unchanged). |
+| Course Details | `pages.CourseDetails` | `T1CourseDetails` | Soft hero (breadcrumb, h1, lead, level, rating → reviews, lessons, duration, instructors, 16:9 media or the course fallback pattern). Body: about, outcomes, curriculum accordion with free-preview buttons, requirements, instructors, reviews. Sticky purchase card from 1024px; below it a fixed purchase bar above the mobile bottom nav (§M.5 #9). Related courses. Data and the primary action come from `useCourseDetails`, extracted unchanged from `CourseDetailsTemplate` (which still renders Themes 2–5 identically). |
+| FAQs | `pageHeader` (`faq`) + `faq` | `T1PageHeader`, `T1Faq` | The hero filter narrows the list below as you type (case-, Arabic-diacritic- and letter-variant-insensitive), with a live result count for screen readers and a no-match panel. |
+| Contact | `contact` | `T1Contact` | Method cards (the section's values, else the Academy's real email, phone and address) and the form with visible labels, sending, success and error states (the message is kept on error). |
+| About (and any page) | `gallery` | `T1Gallery` | Five images form a bento (large, wide and three side tiles); any other count is an even grid. Lightbox dialog with previous/next buttons and arrow keys, mirrored in RTL. Unreleased theme photographs show the placeholder and don't open the lightbox. |
+| 404 | `pages.NotFound` | `T1NotFound` | Inside the Academy's Theme 1 chrome: eyebrow, h1, a large brand-tinted "404" on the page shape, and the next places (Home, Courses, Contact). |
+| Coming Soon | `pages.ComingSoon` | `T1ComingSoon` | The Academy's logo (or name) card, an eyebrow, "{name} is getting ready" as the h1 and a holding line, on the brand shapes in the Academy's colours. No invented dates or content. |
+| Existing (v1) pages | `pages.PageIntro` | `T1PageIntro` | **Existing-Academy compatibility.** A page whose first section isn't a hero or `pageHeader` gets a standard page hero titled from its navigation label (else the page title), with a neutral localized lead for the core pages. Rendered only — **no data is written**; Phase 7 gives new Academies real `pageHeader` sections. |
+
+**Architecture.** `ThemePack` gained an optional `pages` slot (`PageIntro`, `CourseDetails`, `NotFound`, `ComingSoon`). `WebsiteRenderer` uses the pack's Course Details and page intro when present; `PublicWebsitePage` and `AcademyComingSoon` use the pack's 404 and Coming Soon only when the Academy's theme has one (`hasThemeNotFound` / `hasThemeComingSoon`, restricted to known theme keys). Themes 2–5 define no `pages`, so they keep the shared screens.
+
+**Coming Soon — backend (Owner decision, 30 Sep 2026: "Extend lookup").** The hostname lookup (`GET public/websites/resolve`) now also returns `presentation: { themeKey, brand: { primaryColor?, secondaryColor?, accentColor?, palette? } }`, whatever the publication state.
+- **DB change (function only):** migration `20261030000000_public_website_presentation` adds `resolve_public_presentation(academy_id)`, a narrow `SECURITY DEFINER` read in the same shape as `resolve_public_hostname` / `resolve_academy_organization`. It is needed because tenant RLS lets an anonymous request see only a *published* configuration. It returns exactly the theme key and the four colour fields; archived/suspended Academies return nothing. `EXECUTE` is granted to `atlas_app` only. No table, column or policy changes. Rollback: `DROP FUNCTION resolve_public_presentation(text);`
+- Palette provenance (`confirmedBy`, `confirmedAt`, `extraction`) is stripped by `toPublicBrand`, as for a published site. No content, navigation, pages, SEO, logo or contact data is exposed.
+- The response is cached with the lookup (60 s TTL), so a colour change reaches Coming Soon within a minute.
+- An Academy whose configuration row doesn't exist yet (the website surface was never opened) gets no `presentation` and keeps the shared Coming Soon.
+
+**Shared-source fixes (carried, Theme 1 only in effect):**
+- **Aspect ratios.** `@tailwindcss/aspect-ratio` disables Tailwind's core `aspect-*` utilities, so the named classes (`aspect-video`, `aspect-square`, `aspect-auto`) generated nothing; only arbitrary values (`aspect-[16/9]`) work. The Theme 1 files now use arbitrary values. This corrects the course-card and testimonial media from Phase 5 (course cards were a short strip instead of 16:9), so Theme 1's Home snapshots changed. Base components keep their classes (Themes 2–5 unchanged).
+- The gallery bento layout lives in `modern-education.css` (`.t1-bento`), not in utilities.
+- **Links on the soft surface (Theme 1 brand mapping).** The engine guarantees the link colour at 4.5:1 on the *background*; Theme 1's page heroes also set eyebrows and links on the tinted *surface*. Teal measured exactly 4.52:1 there but painted at 4.48:1 (browsers paint `hsl()` at 8 bits per channel), a serious axe finding. The mapping now checks link-on-surface as painted and, only when it fails, darkens the link just enough. Of the 12 identity palettes only teal changes; the default and all other palettes emit the same variables as before. A mapping test covers all 12.
+
+**i18n:** `website:theme1.*` gained `pageHeader`, `pageIntro`, `faq`, `catalog`, `courseDetails`, `contact`, `gallery`, `notFound` and `comingSoon`, in EN and AR with Arabic plural forms.
+
+**Verification fixture (not provisioning).** `e2e/theme-baseline/fixtures/theme1-home.mjs` gained the §C.4–C.6 compositions for About, Courses, FAQs and Contact (`buildTheme1PageSections`), selected by the same `--c1` slug segment. The fixture server's lookup returns `presentation` like the backend.
+
+### S.2 Inner-page image slots as implemented (reference for the final image stage, §E.6 — not a frozen matrix)
+
+Measured on the About page (EN; RTL mirrors columns, never photographs).
+
+| Slot | Desktop 1440 | 1024 | Tablet 768 | Phone 390 | Overlay / safe area |
+|---|---|---|---|---|---|
+| `about-header` | 21:9, full container width (≈ 1088×466), lower third over the page canvas | 21:9 (≈ 960×411) | 16:9 (≈ 720×405) | 4:3, full width | None; the soft band ends behind the photo's lower third |
+| `about-story` | 4:3, half column (≈ 484×363) on the brand block | 4:3 (≈ 420×315) | 4:3 (≈ 652×489), above the text | 4:3, full width | None |
+| `gallery-1` (large) | ≈ 720×506 (≈ 7:5), 2×2 | ≈ 635×364 (≈ 7:4) | ≈ 475×336 (≈ 7:5) | 4:3, full width, first | None; covers its cell |
+| `gallery-2` (wide) | ≈ 720×245 (≈ 3:1), 2×1 | ≈ 635×174 (≈ 3.6:1) | ≈ 475×160 (≈ 3:1) | 4:3, full width, last | None |
+| `gallery-3…5` (side) | ≈ 352×245 (≈ 3:2) | ≈ 309×174 (≈ 16:9) | ≈ 229×160 (≈ 3:2) | 1:1, three in a row | None |
+| Course media (card and Course Details) | Courses' own thumbnails, 16:9 (brand-tinted fallback pattern when missing) | — | — | — | Free-preview badge top-start on cards |
+
+Gallery tiles are cells of a fixed-row grid and the photo covers each cell, so the delivered crops differ from the §E.3 table's 4:3/1:1 at tablet and desktop. The final image stage should frame each gallery subject for a centre crop between 3:1 and 1:1. The Courses page's empty state is text-only (the `courses-launching` photo is used by the Home's featured-courses empty state). No new photographic slots were added.
+
+### S.3 Verification
+
+| Check | Result |
+|---|---|
+| Frontend unit tests | **154 files, 1538 tests passed** (quiet-machine run) |
+| New Phase 6 tests (`theme1-inner-pages.test.tsx`, 21 cases) | About editorial hero (h1, placeholder); the Courses hero handing its search to the catalog without navigating; FAQ filter (case, Arabic diacritics and letter variants, no-match, hidden h2); fallback page hero (nav label, lead, not a region); catalog filters, URL state (write and read), the no-courses state; Course Details action for signed out / enrolled / free / paid, with exact destinations; contact success and error (message kept); gallery lightbox keys LTR and RTL, bento, placeholders not opening; 404 links; Coming Soon only for Theme 1 and only for known theme keys |
+| Pack test | Theme 1 registers exactly 16 section types plus the four page slots; Themes 2–5 register no renderers and no pages |
+| Brand mapping | 51 tests, including link-on-surface as painted for all 12 identity palettes |
+| Existing behaviour | `CourseCatalogSection` (33 tests) and `CourseDetailsTemplate` behaviour unchanged after extracting `useCourseCatalog` / `useCourseDetails` |
+| Typecheck | 33 errors, all pre-existing (none new) |
+| Lint | clean |
+| Theme baseline | **878/878 passed** against the recorded snapshots (screenshots, axe, palette injection, production CSP) |
+| Themes 2–5 | **No screenshot or axe snapshot changed.** The shared 404 and Coming Soon cases now render with a Themes 2–5 Academy (`SHARED_CASE_THEME`) and match their existing snapshots exactly. |
+| Theme 1 re-recorded / added | v1 pages (fallback heroes, inner-page renderers) and Home (course-card media aspect fix); new: §C inner pages `c1` (About, Courses, FAQs, Contact × new/rich, Course Details rich, 404 new) × EN/AR × 1440/1024/390; Theme 1 Coming Soon × EN/AR × 3 widths; brand matrix on every inner page, the 404 and Coming Soon × 11 palettes at 1440 |
+| Accessibility (axe) | **All 191 Theme 1 axe states: 0 violations** (v1 and `c1` pages, Home, 404, Coming Soon, brand matrix). The v1 inner pages' `page-has-heading-one` from Phase 5 is resolved by the page heroes. |
+| Overflow and runtime | No horizontal overflow at 390/768/1024/1440/1920 in EN and AR on every inner page; no page errors |
+| Backend unit tests | **151 suites, 3971 tests passed.** Two suites read the frontend from a sibling `atlas-front` checkout; run against this checkout they pass (676 tests). |
+| Backend e2e | **165 suites: 1998 of 1999 tests passed.** New: P104-SUB-009 (the lookup's `presentation` for an unpublished Academy, no provenance or content) and two `rls-domain` cases for `resolve_public_presentation` (draft-only read, only theme key and colour fields; nothing for archived or fabricated ids). The one failure, `p64-phase2-security` "refuses an unsigned read", is environmental: the local s3rver doesn't enforce bucket privacy. It fails identically with the Phase 6 changes removed. |
+| Bundle (production build vs Phase 5 commit) | Public main chunk **+11.3 KiB gzip JS** (383.7 → 395.2 KiB), **+1.2 KiB gzip CSS** (26.3 → 27.5 KiB) |
+
+Found and fixed during verification:
+- **Named aspect utilities generated nothing** (see S.1): course media were short strips instead of 16:9.
+- **Gallery bento collapsed** at tablet/desktop: moved to `.t1-bento`.
+- **Coming Soon:** the eyebrow sat beside the logo card.
+- **The presentation read was blocked by RLS** for unpublished sites: the first implementation passed typecheck but returned nothing. The e2e test caught it; fixed with `resolve_public_presentation`.
+- **Axe:** teal link contrast on the soft surface (serious); the FAQs list's question `h3`s directly under the h1 (heading order); the fallback hero repeating the first section's region name in Arabic (unique landmarks).
+- **Coming Soon for unknown theme keys:** `getThemePack` falls back to Theme 1, so an unknown key would have shown Theme 1's Coming Soon; now restricted to known keys.
+
+### S.4 UI/UX Pro Max review (inner pages)
+
+- **Every page opens with an intentional hero** (§C.0). About has the premium editorial composition; Courses and FAQs heroes are functional (search/filter); Contact and the fallback hero use the page shape and an icon card; 404 and Coming Soon are designed compositions, not system screens.
+- **Hierarchy per page:**
+  - About: identity → story → values → proof → people → life → action;
+  - Courses: find → filter → choose → help;
+  - Course Details: decide (summary + price always in view) → learn more → proof → next courses;
+  - FAQs: search → answers → contact;
+  - Contact: reach us → quick answers.
+- **Brand only in its slots**, as on Home. Across the 11-palette matrix the inner pages keep layout, type and the neutral canvas; only teal needed the surface-contrast adjustment.
+- **Mobile:**
+  - the catalog filters move into a bottom sheet;
+  - Course Details keeps price and action in a fixed bar above the bottom nav;
+  - the gallery becomes large / three squares / wide;
+  - the About photo drops to 4:3.
+- **UI/UX Pro Max rule checks:**
+  - 44px targets;
+  - visible focus;
+  - live regions for result counts;
+  - `aria-pressed` chips;
+  - labelled native selects;
+  - keyboard lightbox;
+  - no autoplay;
+  - reduced motion honoured;
+  - no page-level horizontal scroll.
+- **Existing Academies:** v1 pages get a compact hero from their navigation label with no data written. Pages whose first section is already a hero are left as they are.
+
+### S.5 Open items and decisions for the Owner
+
+- **JS budget.** Phase 6 adds ≈ 11.3 KiB gzip to the public main chunk (Phase 5: ≈ 17.8 KB), so Theme 1 is further over the 18 KB §G budget. This goes to the pre-Phase-8 bundle/performance review, alongside the Embla decision. The main candidate is loading Theme 1's page renderers and page slots as a pack chunk. Not changed without your decision.
+- **DB change to deploy:** migration `20261030000000_public_website_presentation` (one `SECURITY DEFINER` function; see S.1). It is additive and can be rolled back with one `DROP FUNCTION`.
+- **Coming Soon freshness:** colours come through the cached hostname lookup (60 s).
+- **Fallback page heroes are render-only.** Phase 7's template gives new Academies real `pageHeader` sections, with copy the Owner can edit. Existing Academies keep the fallback until they add one.
+- **Auth pages** were not part of Phase 6 and are unchanged; they keep the Phase 4 frame.
+- **Still open from §R.5 / §Q.5:**
+  - the private master archive bucket;
+  - the Brand tab's "logo changed elsewhere" suggestion;
+  - the provenance migration deploy;
+  - the cookie banner over the mobile hero (out of scope).
+

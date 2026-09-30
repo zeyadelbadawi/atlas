@@ -1,10 +1,12 @@
 /**
  * Theme 1 FAQ (plan §C.1 #10). With `maxItems` it's the Home teaser: a
  * split with the heading and a link to the rest on one side and the first
- * questions on the other. Without it, it's the plain list. The FAQs page's
- * own hero and question filter are Phase 6 (§C.0, §C.5).
+ * questions on the other. Without it, it's the full list, which the FAQs
+ * page hero's question filter narrows (§C.5).
  */
 import { useId } from 'react';
+import { useTranslation } from 'react-i18next';
+import { SearchX } from 'lucide-react';
 import {
   Accordion,
   AccordionContent,
@@ -17,6 +19,7 @@ import { resolveLocalizedText } from '../utils/localized-text.utils';
 import { resolveWebsiteCtaHref } from '../utils/link-resolution.utils';
 import type { SectionRenderProps } from '../theme-packs/theme-pack.types';
 import { T1Arrow, T1Heading, T1Link, T1Section } from './t1-parts';
+import { matchesFaqFilter, useFaqFilter } from './t1-faq-filter';
 
 interface FaqEntry {
   readonly id: string;
@@ -55,8 +58,10 @@ export function T1Faq({
   pages,
   linkRenderer,
 }: SectionRenderProps<'faq'>): JSX.Element | null {
+  const { t } = useTranslation();
   const { locale } = usePublicWebsiteLocale();
   const headingId = useId();
+  const filter = useFaqFilter();
   const libraryIds = config.libraryEntryIds ?? [];
   const { data } = useWebsiteFaqEntries(academyId, {
     query: { filters: { status: 'published' } },
@@ -109,15 +114,50 @@ export function T1Faq({
     );
   }
 
+  // The FAQs page: the hero's question filter narrows the list (Phase 6).
+  const visible = all.filter(
+    (item) =>
+      matchesFaqFilter(item.question, filter) ||
+      matchesFaqFilter(item.answer, filter)
+  );
   return (
-    <T1Section labelledBy={title ? headingId : undefined}>
+    <T1Section labelledBy={headingId}>
       <div className="mx-auto max-w-3xl">
         {title ? (
           <T1Heading id={headingId} className="mb-10 text-center md:mb-12">
             {title}
           </T1Heading>
-        ) : null}
-        <FaqList items={all} />
+        ) : (
+          // Untitled (the FAQs page, under its hero): a hidden h2 keeps the
+          // outline h1 → h2 → question h3s and names the section.
+          <h2 id={headingId} className="sr-only">
+            {t('website:theme1.faq.listTitle')}
+          </h2>
+        )}
+        <p role="status" aria-live="polite" className="sr-only">
+          {filter.trim()
+            ? t('website:theme1.faq.resultCount', { count: visible.length })
+            : ''}
+        </p>
+        {visible.length > 0 ? (
+          <FaqList items={visible} />
+        ) : (
+          <div
+            data-faq-no-match=""
+            className="t1-card flex flex-col items-center gap-3 px-6 py-12 text-center"
+          >
+            <SearchX
+              className="size-8 text-[var(--website-foreground-muted)]"
+              aria-hidden
+            />
+            <p className="font-semibold text-[var(--website-foreground)]">
+              {t('website:theme1.faq.noMatchTitle')}
+            </p>
+            <p className="text-sm text-[var(--website-foreground-muted)]">
+              {t('website:theme1.faq.noMatchDescription')}
+            </p>
+          </div>
+        )}
         {more ? <div className="mt-8 flex justify-center">{more}</div> : null}
       </div>
     </T1Section>

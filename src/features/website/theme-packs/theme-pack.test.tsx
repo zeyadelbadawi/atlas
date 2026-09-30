@@ -49,6 +49,7 @@ describe('theme packs', () => {
       if (key === 'modern-education') continue;
       const pack = getThemePack(key);
       expect(pack.renderers).toEqual({});
+      expect(pack.pages).toBeUndefined();
       expect(pack.mapBrandPalette).toBe(mapBaseBrandPalette);
       for (const type of SECTION_TYPES) {
         expect(resolveSectionRenderer(pack, type)).toBe(BASE_RENDERERS[type]);
@@ -56,7 +57,7 @@ describe('theme packs', () => {
     }
   });
 
-  it('Theme 1 draws the Home sections itself (Phase 5) and keeps base renderers elsewhere', () => {
+  it('Theme 1 draws the Home (Phase 5) and inner-page (Phase 6) sections itself and keeps base renderers elsewhere', () => {
     const pack = getThemePack('modern-education');
     // Its own brand mapping since Phase 4 (§F.5).
     expect(pack.mapBrandPalette).not.toBe(mapBaseBrandPalette);
@@ -73,8 +74,21 @@ describe('theme packs', () => {
       'faq',
       'cta',
       'about',
+      // Phase 6: inner pages.
+      'pageHeader',
+      'courseCatalog',
+      'contact',
+      'gallery',
     ] as const;
     expect(Object.keys(pack.renderers).sort()).toEqual([...home].sort());
+    // Page-level slots: the fallback page hero, Course Details, 404 and
+    // Coming Soon.
+    expect(Object.keys(pack.pages ?? {}).sort()).toEqual([
+      'ComingSoon',
+      'CourseDetails',
+      'NotFound',
+      'PageIntro',
+    ]);
     for (const type of SECTION_TYPES) {
       const expected = (home as readonly string[]).includes(type)
         ? pack.renderers[type]
