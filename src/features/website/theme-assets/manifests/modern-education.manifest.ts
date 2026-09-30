@@ -19,7 +19,7 @@ import type { ThemeAssetManifest } from '../theme-asset.types';
 const HERO_BUDGET = 180_000;
 const DEFAULT_BUDGET = 120_000;
 const W_4_3 = [480, 800, 1200, 1600];
-const W_SQUARE = [400, 800, 1200];
+const W_SMALL_TILE = [400, 800, 1200];
 
 export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
   theme: 'modern-education',
@@ -153,16 +153,22 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
         ar: 'دفتر مفتوح وقلم وقهوة وحاسوب محمول مغلق على مكتب',
       },
       direction:
-        'Overhead flat lay on a light wooden desk: an open blank notebook, a pen, a cup of coffee and a closed laptop with no logo, soft natural shadows, a sense of getting ready to start. Centred arrangement with generous empty margins on every side.',
+        'Overhead flat lay on a light wooden desk: an open blank notebook, a pen, a cup of coffee and a closed laptop with no logo, soft natural shadows, a sense of getting ready to start. Centred arrangement kept within the middle 60% of the width, with generous empty margins on every side.',
       composition: {
         slot: "Home › Featured courses empty state: the illustration above the panel's heading and next step",
+        // Re-frozen from the implemented slot (§E.6 step 8): 16:9 from
+        // 1280px up, ~5:3 at 1024, ~6:5 on tablet, 16:9 on phones.
         crops: [
-          { breakpoint: 'desktop', ratio: '16:9', width: '~720px' },
-          { breakpoint: 'tablet', ratio: '16:9', width: '~600px' },
+          {
+            breakpoint: 'desktop',
+            ratio: '16:9',
+            width: '~540px (~5:3 at 1024px)',
+          },
+          { breakpoint: 'tablet', ratio: '6:5', width: '~360px' },
           { breakpoint: 'mobile', ratio: '16:9', width: '100vw' },
         ],
         safeArea:
-          'The whole arrangement inside the central 70% of the width and 76% of the height.',
+          'The whole arrangement inside the central 60% of the width (the 6:5 tablet crop keeps 67%) and 76% of the height.',
         exclusion: "None over the photo; the panel's text sits below it.",
         rtl: 'Unchanged in Arabic (centred); the photograph is not mirrored.',
       },
@@ -238,24 +244,18 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
         ar: 'متعلّمون يعملون معًا في ورشة تطبيقية',
       },
       direction:
-        'A group workshop with a hands-on activity at a shared table, several adults leaning in, materials and tools without branding. The action gathered in the centre of the frame, left and right edges quiet.',
+        'A group workshop with a hands-on activity at a shared table, several adults leaning in, materials and tools without branding. The action gathered in the centre of the frame; the outer edges, including the top and bottom, quiet.',
       composition: {
-        slot: 'About › Gallery bento (3×3 square cells): the 2×2 tile, top-start',
+        slot: 'About › Gallery bento: the large tile, top-start',
+        // Re-frozen from the implemented slot (§E.6 step 8): the tile is
+        // landscape, 1.36–1.75 wide on desktop depending on the viewport.
         crops: [
-          {
-            breakpoint: 'desktop',
-            ratio: '1:1',
-            width: '~2/3 of the container',
-          },
-          {
-            breakpoint: 'tablet',
-            ratio: '1:1',
-            width: '~2/3 of the container',
-          },
+          { breakpoint: 'desktop', ratio: '7:4', width: '~720px (4:3 to 7:4)' },
+          { breakpoint: 'tablet', ratio: '7:5', width: '~475px' },
           { breakpoint: 'mobile', ratio: '4:3', width: '100vw' },
         ],
         safeArea:
-          'The activity and faces inside the central 75% of the width (the square crop trims 12.5% from each side).',
+          'The activity and faces inside the central 75% of the width and the middle 72% of the height (the 7:4 crop keeps 76% of the height).',
         exclusion: 'None.',
         rtl: 'The bento mirrors (the large tile moves to the top-right); the photograph is not mirrored.',
       },
@@ -265,33 +265,32 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
     {
       key: 'gallery-2',
       purpose: 'About › Gallery (wide tile)',
-      ratio: '4:3',
-      master: { width: 2400, height: 1800 },
-      widths: W_4_3,
+      // Re-frozen (§E.6 step 8): the tile renders 2.8–3.65 wide, so a 4:3
+      // master would keep barely a third of its height. 21:9 balances the
+      // panoramic desktop crop against the 4:3 phone crop.
+      ratio: '21:9',
+      master: { width: 2800, height: 1200 },
+      widths: [640, 1024, 1600],
       focal: { x: 0.5, y: 0.5 },
       alt: {
         en: 'A learner on a video call at home',
         ar: 'متعلّم في مكالمة فيديو من المنزل',
       },
       direction:
-        "An adult learner at home on a video call, laptop screen blurred and angled away, relaxed and engaged, cosy living-room light. Framed wide, with the learner's face and hands in the horizontal middle band of the frame.",
+        'An adult learner at home on a video call, laptop screen blurred and angled away, relaxed and engaged, cosy living-room light. Panoramic framing: the learner, face and hands in the centre of the frame and in its middle band, with calm room on the left and right.',
       composition: {
-        slot: 'About › Gallery bento: the 2×1 tile, bottom-start',
+        slot: 'About › Gallery bento: the wide strip, bottom-start',
         crops: [
           {
             breakpoint: 'desktop',
-            ratio: '2:1',
-            width: '~2/3 of the container',
+            ratio: '3:1',
+            width: '~720px (2.8:1 to 3.65:1)',
           },
-          {
-            breakpoint: 'tablet',
-            ratio: '2:1',
-            width: '~2/3 of the container',
-          },
+          { breakpoint: 'tablet', ratio: '3:1', width: '~475px' },
           { breakpoint: 'mobile', ratio: '4:3', width: '100vw' },
         ],
         safeArea:
-          "The learner's face and hands inside the middle 66% of the height (the 2:1 crop trims about 17% from top and bottom).",
+          "The learner's face and hands inside the central 55% of the width (the 4:3 phone crop keeps 57%) and the middle 60% of the height (the widest crop keeps 64%).",
         exclusion: 'None.',
         rtl: 'The bento mirrors; the photograph is not mirrored.',
       },
@@ -301,9 +300,13 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
     {
       key: 'gallery-3',
       purpose: 'About › Gallery (square)',
-      ratio: '1:1',
-      master: { width: 1600, height: 1600 },
-      widths: W_SQUARE,
+      // Re-frozen (§E.6 step 8): landscape tiles (1.37–1.78) on tablet and
+      // desktop, square only in the three-up phone row. A 4:3 master keeps
+      // ≥ 75% of either side in every crop; a square one lost 44% of the
+      // height on desktop.
+      ratio: '4:3',
+      master: { width: 2400, height: 1800 },
+      widths: W_SMALL_TILE,
       focal: { x: 0.5, y: 0.5 },
       alt: {
         en: 'Hands writing notes in a notebook',
@@ -312,21 +315,22 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
       direction:
         'Close-up of hands writing notes in a notebook with a pen, handwriting abstract and illegible, soft side light. Hands centred in the frame.',
       composition: {
-        slot: 'About › Gallery bento: a 1×1 tile',
+        slot: 'About › Gallery bento: a small tile',
         crops: [
           {
             breakpoint: 'desktop',
-            ratio: '1:1',
-            width: '~1/3 of the container',
+            ratio: '7:4',
+            width: '~352px (1.37:1 to 1.78:1)',
           },
+          { breakpoint: 'tablet', ratio: '7:5', width: '~230px' },
           {
-            breakpoint: 'tablet',
+            breakpoint: 'mobile',
             ratio: '1:1',
-            width: '~1/3 of the container',
+            width: '~30vw (three in a row)',
           },
-          { breakpoint: 'mobile', ratio: '1:1', width: '~50vw' },
         ],
-        safeArea: 'Hands and notebook inside the central 80%.',
+        safeArea:
+          'Hands and notebook inside the central 70% of the width and the middle 72% of the height, so both the 7:4 and the square crops keep them.',
         exclusion: 'None.',
         rtl: 'The bento mirrors; the photograph is not mirrored.',
       },
@@ -336,9 +340,13 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
     {
       key: 'gallery-4',
       purpose: 'About › Gallery (square)',
-      ratio: '1:1',
-      master: { width: 1600, height: 1600 },
-      widths: W_SQUARE,
+      // Re-frozen (§E.6 step 8): landscape tiles (1.37–1.78) on tablet and
+      // desktop, square only in the three-up phone row. A 4:3 master keeps
+      // ≥ 75% of either side in every crop; a square one lost 44% of the
+      // height on desktop.
+      ratio: '4:3',
+      master: { width: 2400, height: 1800 },
+      widths: W_SMALL_TILE,
       focal: { x: 0.5, y: 0.45 },
       alt: {
         en: 'A learner with headphones using a tablet in a café',
@@ -347,21 +355,22 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
       direction:
         'An adult learner with headphones using a tablet in a quiet café, screen not visible, focused and content, window light. Learner centred in the frame.',
       composition: {
-        slot: 'About › Gallery bento: a 1×1 tile',
+        slot: 'About › Gallery bento: a small tile',
         crops: [
           {
             breakpoint: 'desktop',
-            ratio: '1:1',
-            width: '~1/3 of the container',
+            ratio: '7:4',
+            width: '~352px (1.37:1 to 1.78:1)',
           },
+          { breakpoint: 'tablet', ratio: '7:5', width: '~230px' },
           {
-            breakpoint: 'tablet',
+            breakpoint: 'mobile',
             ratio: '1:1',
-            width: '~1/3 of the container',
+            width: '~30vw (three in a row)',
           },
-          { breakpoint: 'mobile', ratio: '1:1', width: '~50vw' },
         ],
-        safeArea: 'Face and tablet inside the central 80%.',
+        safeArea:
+          'Face and tablet inside the central 70% of the width and the middle 72% of the height, so both the 7:4 and the square crops keep them.',
         exclusion: 'None.',
         rtl: 'The bento mirrors; the photograph is not mirrored.',
       },
@@ -371,9 +380,13 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
     {
       key: 'gallery-5',
       purpose: 'About › Gallery (square)',
-      ratio: '1:1',
-      master: { width: 1600, height: 1600 },
-      widths: W_SQUARE,
+      // Re-frozen (§E.6 step 8): landscape tiles (1.37–1.78) on tablet and
+      // desktop, square only in the three-up phone row. A 4:3 master keeps
+      // ≥ 75% of either side in every crop; a square one lost 44% of the
+      // height on desktop.
+      ratio: '4:3',
+      master: { width: 2400, height: 1800 },
+      widths: W_SMALL_TILE,
       focal: { x: 0.5, y: 0.45 },
       alt: {
         en: 'Two learners celebrating a shared success',
@@ -382,21 +395,22 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
       direction:
         'A small celebration moment between two adult learners sharing a smile of success beside a laptop, a gesture that reads well in both English-speaking and Middle Eastern cultures, no certificates or text, bright and warm. Both people centred in the frame.',
       composition: {
-        slot: 'About › Gallery bento: a 1×1 tile',
+        slot: 'About › Gallery bento: a small tile',
         crops: [
           {
             breakpoint: 'desktop',
-            ratio: '1:1',
-            width: '~1/3 of the container',
+            ratio: '7:4',
+            width: '~352px (1.37:1 to 1.78:1)',
           },
+          { breakpoint: 'tablet', ratio: '7:5', width: '~230px' },
           {
-            breakpoint: 'tablet',
+            breakpoint: 'mobile',
             ratio: '1:1',
-            width: '~1/3 of the container',
+            width: '~30vw (three in a row)',
           },
-          { breakpoint: 'mobile', ratio: '1:1', width: '~50vw' },
         ],
-        safeArea: 'Both people inside the central 80%.',
+        safeArea:
+          'Both people inside the central 70% of the width and the middle 72% of the height, so both the 7:4 and the square crops keep them.',
         exclusion: 'None.',
         rtl: 'The bento mirrors; the photograph is not mirrored.',
       },
