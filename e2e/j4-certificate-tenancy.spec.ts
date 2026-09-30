@@ -69,7 +69,7 @@ test.describe('J4 — certificate tenancy', () => {
     const email = uniqueLearnerEmail('j4');
     await registerLearnerThroughWebsite(page, email, 'J4 Learner');
     await expect(
-      page.getByText(/check your (email|inbox)|account created|verify/i).first()
+      page.getByText(/check your (email|inbox)|account created|your account is ready|verify/i).first()
     ).toBeVisible({ timeout: 20_000 });
     await context.close();
 
@@ -101,6 +101,17 @@ test.describe('J4 — certificate tenancy', () => {
       (await detail.json()).enrollments as { id: string; courseId: string }[]
     ).find((e) => e.courseId === course.id);
     expect(enrollment).toBeTruthy();
+
+    // Force-issue still requires the course to award certificates at all
+    // (P4 Issue F: readiness follows the course's own toggle).
+    const rule = await request.put(
+      `${API_BASE}/academies/${academyId}/courses/${course.id}/completion-rule`,
+      {
+        headers: { Authorization: `Bearer ${owner.accessToken}` },
+        data: { certificatesEnabled: true },
+      }
+    );
+    expect(rule.status(), await rule.text()).toBe(200);
 
     const issued = await apiPost(
       request,

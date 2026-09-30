@@ -23,6 +23,7 @@ import {
   apiSignIn,
   declineCookies,
   signInThroughDashboard,
+  signOutInBrowser,
   type Session,
 } from './support/atlas';
 
@@ -91,8 +92,13 @@ async function goInApp(page: Page, path: string): Promise<void> {
   await page.waitForURL((url) => `${url.pathname}${url.search}` === path);
 }
 
-/** Signs in on the dashboard and waits for it. */
+/**
+ * Signs in on the dashboard and waits for it. Starts signed out: with the
+ * session cookie kept (same-origin API), a second sign-in would otherwise
+ * be redirected past the form.
+ */
 async function signIn(page: Page): Promise<void> {
+  await signOutInBrowser(page);
   await signInThroughDashboard(page, SEED.owner, SEED.password);
   await page.waitForURL(/\/dashboard/);
 }

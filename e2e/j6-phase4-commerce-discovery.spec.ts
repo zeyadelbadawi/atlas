@@ -49,6 +49,20 @@ import {
   type PaymentMethodFixture,
 } from './support/phase4';
 
+/**
+ * Picks a catalog level. Theme 1 renders a native `<select>`; the base
+ * catalog renders a listbox (open it, click the option).
+ */
+async function chooseLevel(page: Page, label: string): Promise<void> {
+  const level = page.getByRole('combobox', { name: 'Level' });
+  if ((await level.evaluate((element) => element.tagName)) === 'SELECT') {
+    await level.selectOption({ label });
+    return;
+  }
+  await level.click();
+  await page.getByRole('option', { name: label, exact: true }).click();
+}
+
 test.describe.configure({ mode: 'serial' });
 
 const CATALOG_TITLE = 'Browse our courses';
@@ -130,39 +144,52 @@ test.describe('J6 — catalog, details, reviews and paid checkout', () => {
     ).find((p) => p.slug === 'courses');
     expect(coursesPage, 'the website has its core "courses" page').toBeTruthy();
 
-    if (!coursesPage!.sections.some((s) => s.type === 'courseCatalog')) {
-      const updated = await apiPatch(
-        request,
-        owner,
-        `/academies/${academyId}/website/pages/${coursesPage!.id}`,
-        {
-          expectedVersion: coursesPage!.version,
-          sections: [
-            ...coursesPage!.sections,
-            {
-              id: `e2e-course-catalog-${stamp}`,
-              type: 'courseCatalog',
-              enabled: true,
-              visibility: { desktop: true, tablet: true, mobile: true },
-              config: {
-                title: { en: CATALOG_TITLE, ar: 'تصفح دوراتنا' },
-                description: {
-                  en: 'Search and filter every course we publish.',
-                  ar: 'ابحث وصفِّ كل الدورات التي ننشرها.',
-                },
-                pageSize: 12,
-                defaultSort: 'newest',
-                showSearch: true,
-                showLevelFilter: true,
-                showPricingFilter: true,
-                showSort: true,
+    // The catalog this journey asserts on. A generated website may already
+    // have one (Theme 1's Courses page does), so it is configured either
+    // way rather than only added when missing.
+    const catalogConfig = {
+      title: { en: CATALOG_TITLE, ar: 'تصفح دوراتنا' },
+      description: {
+        en: 'Search and filter every course we publish.',
+        ar: 'ابحث وصفِّ كل الدورات التي ننشرها.',
+      },
+      pageSize: 12,
+      defaultSort: 'newest',
+      showSearch: true,
+      showLevelFilter: true,
+      showPricingFilter: true,
+      showSort: true,
+    };
+    const sections = coursesPage!.sections as {
+      type: string;
+      config?: Record<string, unknown>;
+    }[];
+    const hasCatalog = sections.some((s) => s.type === 'courseCatalog');
+    const updated = await apiPatch(
+      request,
+      owner,
+      `/academies/${academyId}/website/pages/${coursesPage!.id}`,
+      {
+        expectedVersion: coursesPage!.version,
+        sections: hasCatalog
+          ? sections.map((s) =>
+              s.type === 'courseCatalog'
+                ? { ...s, config: { ...s.config, ...catalogConfig } }
+                : s
+            )
+          : [
+              ...sections,
+              {
+                id: `e2e-course-catalog-${stamp}`,
+                type: 'courseCatalog',
+                enabled: true,
+                visibility: { desktop: true, tablet: true, mobile: true },
+                config: catalogConfig,
               },
-            },
-          ],
-        }
-      );
-      expect(updated.ok(), `page update refused: ${updated.status()} ${await updated.text()}`).toBeTruthy();
-    }
+            ],
+      }
+    );
+    expect(updated.ok(), `page update refused: ${updated.status()} ${await updated.text()}`).toBeTruthy();
     // Publishing bumps the configuration version the public cache is keyed by.
     const published = await apiPost(request, owner, `/academies/${academyId}/website/publish`);
     expect(published.ok(), `website publish refused: ${published.status()} ${await published.text()}`).toBeTruthy();
@@ -186,20 +213,20 @@ test.describe('J6 — catalog, details, reviews and paid checkout', () => {
     await expect(page.getByRole('status')).toContainText(/\d+ courses?/);
 
     // Level: Beginner keeps the free course and drops the advanced one.
-    await page.getByRole('combobox', { name: 'Level' }).click();
-    await page.getByRole('option', { name: 'Beginner', exact: true }).click();
+    await chooseLevel(page, 'Beginner');
     await expect(page.getByText(paidCourseTitle)).toHaveCount(0, { timeout: 30_000 });
     await expect(page.getByText(freeCourseTitle)).toBeVisible();
 
-    await page.getByRole('combobox', { name: 'Level' }).click();
-    await page.getByRole('option', { name: 'Any level' }).click();
+    await chooseLevel(page, 'Any level');
     await expect(page.getByText(paidCourseTitle)).toBeVisible({ timeout: 30_000 });
 
     // Search narrows to the paid course.
-    const search = page.getByLabel('Search courses');
+    // The catalog's own search (Theme 1's page header has one too).
+    const search = page.getByLabel('Search courses').last();
     await search.fill(paidCourseTitle);
     await expect(page.getByText(freeCourseTitle)).toHaveCount(0, { timeout: 30_000 });
-    await expect(page.getByText(paidCourseTitle)).toBeVisible();
+    // The card's title (Theme 1 also echoes the term in a filter chip).
+    await expect(page.getByRole('heading', { name: paidCourseTitle })).toBeVisible();
 
     // A search nothing matches says so.
     await search.fill('zzz-no-such-course-zzz');
@@ -224,7 +251,8 @@ test.describe('J6 — catalog, details, reviews and paid checkout', () => {
       timeout: 30_000,
     });
 
-    await expect(page.getByText('Beginner', { exact: true })).toBeVisible();
+    // The course's own level comes first; Theme 1's related-course cards repeat levels below.
+    await expect(page.getByText('Beginner', { exact: true }).first()).toBeVisible();
     await expect(page.getByRole('heading', { name: "What you'll learn" })).toBeVisible();
     await expect(page.getByText(OUTCOME)).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Requirements' })).toBeVisible();
@@ -245,9 +273,14 @@ test.describe('J6 — catalog, details, reviews and paid checkout', () => {
       timeout: 30_000,
     });
 
-    // The curriculum accordion starts collapsed, so the sample is only
-    // offered once the visitor opens the section it lives in.
-    await page.getByRole('button', { name: /Free sample/ }).first().click();
+    // The sample is offered inside its curriculum section. The base theme
+    // starts that section collapsed; Theme 1 opens the first section by
+    // default, so open it only when it is closed.
+    const sectionTrigger = page.getByRole('button', { name: /Free sample/ }).first();
+    await expect(sectionTrigger).toBeVisible({ timeout: 30_000 });
+    if ((await sectionTrigger.getAttribute('aria-expanded')) !== 'true') {
+      await sectionTrigger.click();
+    }
 
     const previewButton = page.getByRole('button', {
       name: `Preview the lesson ${previewLessonTitle}`,
@@ -279,7 +312,7 @@ test.describe('J6 — catalog, details, reviews and paid checkout', () => {
     learnerEmail = uniqueLearnerEmail('j6');
     await registerLearnerThroughWebsite(page, learnerEmail, 'J6 Learner');
     await expect(
-      page.getByText(/check your (email|inbox)|account created|verify/i).first()
+      page.getByText(/check your (email|inbox)|account created|your account is ready|verify/i).first()
     ).toBeVisible({ timeout: 20_000 });
     learner = await apiSignIn(request, {
       email: learnerEmail,
@@ -346,8 +379,11 @@ test.describe('J6 — catalog, details, reviews and paid checkout', () => {
     await expect(page.getByRole('heading', { name: 'Learner reviews' })).toBeVisible({
       timeout: 30_000,
     });
-    await expect(page.getByText('5.0', { exact: true })).toBeVisible();
-    await expect(page.getByText('1 review', { exact: true })).toBeVisible();
+    // Scoped to the reviews region: Theme 1's course hero repeats the
+    // rating and count as a link to it.
+    const reviews = page.getByRole('region', { name: 'Learner reviews' });
+    await expect(reviews.getByText('5.0', { exact: true })).toBeVisible();
+    await expect(reviews.getByText('1 review', { exact: true })).toBeVisible();
     // Scoped to the PUBLIC list: once approved the body legitimately
     // appears twice — the learner's own card in `MyCourseReviewForm`
     // still shows it too — so an unscoped match is ambiguous.
@@ -363,7 +399,8 @@ test.describe('J6 — catalog, details, reviews and paid checkout', () => {
     await expect(page.getByRole('heading', { name: paidCourseTitle })).toBeVisible({
       timeout: 30_000,
     });
-    await expect(page.getByText('Advanced', { exact: true })).toBeVisible();
+    // The course's own level comes first; Theme 1's related-course cards repeat levels below.
+    await expect(page.getByText('Advanced', { exact: true }).first()).toBeVisible();
     await page.getByRole('button', { name: 'Buy this course' }).click();
     await expect(page).toHaveURL(new RegExp(`/my/courses/${paidCourseId}/checkout`), {
       timeout: 30_000,
