@@ -108,8 +108,10 @@ export function CourseDetailsTemplate({
   } = useCourseDetails(academyId, courseId, locale);
 
   if (isLoading) {
+    // Reserve a full viewport so the footer doesn't start in view and then
+    // shift when the course loads (Course Details CLS).
     return (
-      <div className={`${container} space-y-6 py-16`}>
+      <div className={`${container} min-h-[100svh] space-y-6 py-16`}>
         <Skeleton className="aspect-video w-full" />
         <Skeleton className="h-10 w-2/3" />
         <Skeleton className="h-24 w-full" />

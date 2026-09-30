@@ -147,8 +147,13 @@ export function T1CourseDetails({
   } = details;
 
   if (isLoading) {
+    // The loading state reserves a full viewport so the footer starts below
+    // the fold; otherwise the loaded course pushes it down (CLS ≈ 0.33).
     return (
-      <div aria-busy="true" className="bg-[var(--website-surface)]">
+      <div
+        aria-busy="true"
+        className="min-h-[100svh] bg-[var(--website-surface)]"
+      >
         <div className={cn(container, 'grid gap-10 py-14 lg:grid-cols-2')}>
           <div className="space-y-4">
             <div className="h-4 w-1/3 animate-pulse rounded bg-[var(--website-surface-muted)] motion-reduce:animate-none" />
