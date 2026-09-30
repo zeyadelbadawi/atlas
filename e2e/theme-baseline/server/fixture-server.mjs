@@ -582,6 +582,8 @@ if (SSR) {
     cacheTtlMs: Number(process.env.THEME_BASELINE_SSR_CACHE_MS ?? 0),
     renderBudgetMs: 10_000,
     apiTimeoutMs: 5_000,
+    // As production (off) unless an experiment asks for it.
+    preloadRouterChunks: process.env.THEME_BASELINE_SSR_PRELOAD === '1',
     log:
       process.env.THEME_BASELINE_SSR_LOG === '1'
         ? (event) => console.log(JSON.stringify(event))

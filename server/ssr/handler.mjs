@@ -86,6 +86,12 @@ export class RenderCache {
  * @param {number} [options.cacheTtlMs]
  * @param {number} [options.cacheMaxEntries]
  * @param {(event: object) => void} [options.log]
+ * @param {boolean} [options.preloadRouterChunks] off by default (measured):
+ *   preloading the public router's chunks (≈ 290 KB gzip) from the head
+ *   made them compete with the render-blocking stylesheet, so the server
+ *   HTML painted later — Lighthouse mobile FCP +200–490 ms. Without them
+ *   the page paints as soon as the CSS arrives and `main.tsx` still starts
+ *   the chunk at boot (Reports/SSR_ARCHITECTURE_ANALYSIS.md §12.6).
  */
 export async function createSsrHandler({
   distDir,
@@ -96,6 +102,7 @@ export async function createSsrHandler({
   cacheTtlMs = 30_000,
   cacheMaxEntries = 500,
   log = () => {},
+  preloadRouterChunks = false,
 }) {
   const entry = await import(pathToFileURL(entryPath).href);
   const template = readFileSync(join(distDir, 'index.html'), 'utf8');
@@ -111,7 +118,9 @@ export async function createSsrHandler({
     });
   }
   const preloadHtml = (
-    routerChunk ? collectPreloads(manifest, routerChunk) : []
+    routerChunk && preloadRouterChunks
+      ? collectPreloads(manifest, routerChunk)
+      : []
   )
     .map((file) => `<link rel="modulepreload" crossorigin href="/${file}">`)
     .join('');

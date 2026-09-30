@@ -320,18 +320,18 @@ describe('server-rendered public pages', () => {
     assert.equal(result.headers['Cache-Control'], 'private, no-cache');
   });
 
-  it('preloads the public router chunk the page hydrates with', async () => {
+  it('does not preload the router chunks unless asked (they would delay the first paint)', async () => {
     const manifest = JSON.parse(
       readFileSync(join(DIST, '.vite', 'manifest.json'), 'utf8')
     );
     const key = findPublicRouterChunk(manifest);
     assert.ok(key, 'the router chunk is in the manifest');
-    const result = await get(handler, ALPHA, '/');
-    assert.ok(
-      result.body.includes(
-        `<link rel="modulepreload" crossorigin href="/${manifest[key].file}">`
-      )
-    );
+    const tag = `<link rel="modulepreload" crossorigin href="/${manifest[key].file}">`;
+    const byDefault = await get(handler, ALPHA, '/');
+    assert.equal(byDefault.headers['X-Atlas-SSR'], 'render');
+    assert.ok(!byDefault.body.includes(tag));
+    const preloading = await makeHandler({ preloadRouterChunks: true });
+    assert.ok((await get(preloading, ALPHA, '/')).body.includes(tag));
   });
 
   it('renders Arabic pages right to left', async () => {
