@@ -135,7 +135,7 @@ export function fixtureSlug(
   theme: ThemeKey,
   state: DataState,
   palette = 'default',
-  composition?: 'c1'
+  composition?: 'c1' | 'migrated'
 ): string {
   if (composition) return `fx--${theme}--${state}--${palette}--${composition}`;
   return palette === 'default'

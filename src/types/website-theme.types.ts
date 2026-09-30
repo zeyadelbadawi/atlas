@@ -18,13 +18,30 @@
  * Content").
  */
 
-/** The five built-in themes shipped in this prompt. Adding a sixth means adding a new key here and one new definition module — never touching an existing one (see `WebsiteThemeRegistry`). */
-export const WEBSITE_THEME_KEYS = [
-  'modern-education',
+/**
+ * The themes an Owner can select (the Theme tab, provisioning). Matches the
+ * backend's `SELECTABLE_WEBSITE_THEME_KEYS` exactly. Adding a theme means a
+ * new key here and in `WEBSITE_THEME_KEYS`, one definition module and one
+ * pack — never touching an existing one (see `WebsiteThemeRegistry`).
+ */
+export const SELECTABLE_WEBSITE_THEME_KEYS = ['modern-education'] as const;
+
+/**
+ * Themes 2–5, retired from selection (Reports/THEMES_2_5_RETIREMENT.md).
+ * Still registered so a website on one renders exactly as before until the
+ * gated migration moves it to Theme 1; removed after that is verified.
+ */
+export const RETIRED_WEBSITE_THEME_KEYS = [
   'premium-academy',
   'corporate-learning',
   'minimal-editorial',
   'bold-creative',
+] as const;
+
+/** Every theme the renderer knows: selectable, then retired. */
+export const WEBSITE_THEME_KEYS = [
+  ...SELECTABLE_WEBSITE_THEME_KEYS,
+  ...RETIRED_WEBSITE_THEME_KEYS,
 ] as const;
 
 export type WebsiteThemeKey = (typeof WEBSITE_THEME_KEYS)[number];

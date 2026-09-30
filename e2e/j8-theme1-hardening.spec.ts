@@ -323,54 +323,32 @@ test.describe('J8 — Theme 1 hardening', () => {
     }
   });
 
-  test('J8e: a Theme 2 Academy still provisions and renders its own theme, with no Theme 1 output', async ({
+  test('J8e: Themes 2–5 are retired: provisioning refuses them', async ({
     page,
   }) => {
-    const other = `j8-t2-${Date.now() % 1e8}`;
-    const created = await apiPost(
-      page.request,
-      owner,
-      `/organizations/${organizationId}/provisioning-requests`,
-      {
-        academyName: 'J8 Premium',
-        requestedSubdomain: other,
-        selectedThemeKey: 'premium-academy',
-        websiteSetupMode: 'complete',
-        idempotencyKey: `j8-${other}`,
-      }
-    );
-    expect(created.status(), await created.text()).toBe(201);
-    const requestId = (await created.json()).id as string;
-    const statusOf = async () =>
-      (
-        await apiGet(
-          page.request,
-          owner,
-          `/organizations/${organizationId}/provisioning-requests/${requestId}`
-        )
-      ).json();
-    await expect
-      .poll(async () => (await statusOf()).status, { timeout: 60_000 })
-      .toBe('ready');
-    const otherId = (await statusOf()).academyId as string;
-    const configuration = await (
-      await apiGet(
+    // Websites already on one keep rendering it until the gated migration
+    // moves them (Reports/THEMES_2_5_RETIREMENT.md); the theme baseline
+    // covers that rendering. No new website can pick one.
+    for (const selectedThemeKey of [
+      'premium-academy',
+      'corporate-learning',
+      'minimal-editorial',
+      'bold-creative',
+    ]) {
+      const other = `j8-t2-${Date.now() % 1e8}`;
+      const created = await apiPost(
         page.request,
         owner,
-        `/academies/${otherId}/website/configuration`
-      )
-    ).json();
-    expect(configuration.themeKey).toBe('premium-academy');
-    await apiPost(page.request, owner, `/academies/${otherId}/website/publish`);
-
-    const errors: string[] = [];
-    page.on('pageerror', (error) => errors.push(error.message));
-    await page.goto(`/?${ACADEMY_PREVIEW_PARAM}=${other}`);
-    await declineCookies(page);
-    // Themes 2–5 carry their recorded `page-has-heading-one` baseline, so
-    // any heading proves the page rendered.
-    await expect(page.locator('h1, h2').first()).toBeVisible();
-    await expect(page.locator('[class*="t1-"]')).toHaveCount(0);
-    expect(errors).toEqual([]);
+        `/organizations/${organizationId}/provisioning-requests`,
+        {
+          academyName: 'J8 Retired',
+          requestedSubdomain: other,
+          selectedThemeKey,
+          websiteSetupMode: 'complete',
+          idempotencyKey: `j8-${other}-${selectedThemeKey}`,
+        }
+      );
+      expect(created.status(), await created.text()).toBe(400);
+    }
   });
 });

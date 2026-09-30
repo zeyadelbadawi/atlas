@@ -9,6 +9,7 @@
  * which only ever consume a `ResolvedWebsiteDesignSystem`, never a theme
  * key directly.
  */
+import { SELECTABLE_WEBSITE_THEME_KEYS } from '@types';
 import type { WebsiteThemeDefinition, WebsiteThemeKey } from '@types';
 import { MODERN_EDUCATION_THEME } from './modern-education.theme';
 import { PREMIUM_ACADEMY_THEME } from './premium-academy.theme';
@@ -16,6 +17,7 @@ import { CORPORATE_LEARNING_THEME } from './corporate-learning.theme';
 import { MINIMAL_EDITORIAL_THEME } from './minimal-editorial.theme';
 import { BOLD_CREATIVE_THEME } from './bold-creative.theme';
 
+/** Every theme the renderer knows, selectable or retired. */
 const registry: Record<WebsiteThemeKey, WebsiteThemeDefinition> = {
   'modern-education': MODERN_EDUCATION_THEME,
   'premium-academy': PREMIUM_ACADEMY_THEME,
@@ -29,13 +31,18 @@ export function getWebsiteTheme(key: WebsiteThemeKey): WebsiteThemeDefinition {
   return registry[key] ?? MODERN_EDUCATION_THEME;
 }
 
-/** Every registered theme, in a stable display order — used by the Theme gallery. */
-export function listWebsiteThemes(): readonly WebsiteThemeDefinition[] {
-  return [
-    MODERN_EDUCATION_THEME,
-    PREMIUM_ACADEMY_THEME,
-    CORPORATE_LEARNING_THEME,
-    MINIMAL_EDITORIAL_THEME,
-    BOLD_CREATIVE_THEME,
-  ];
+/**
+ * The themes an Owner can pick, in display order — the Theme gallery and
+ * provisioning. `current` adds the website's own theme when it is a retired
+ * one (Themes 2–5), so the gallery still shows it as active until the
+ * retirement migration moves the website to Theme 1.
+ */
+export function listWebsiteThemes(
+  current?: WebsiteThemeKey
+): readonly WebsiteThemeDefinition[] {
+  const keys: readonly WebsiteThemeKey[] = SELECTABLE_WEBSITE_THEME_KEYS;
+  const selectable = keys.map((key) => registry[key]);
+  return current && !keys.includes(current) && registry[current]
+    ? [...selectable, registry[current]]
+    : selectable;
 }
