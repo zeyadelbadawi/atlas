@@ -127,8 +127,14 @@ const PAGE_OPENING_TYPES = new Set(['hero', 'pageHeader']);
  */
 function PageIntroSlot({ page, navigation }: ThemePageIntroProps) {
   const PageIntro = useThemePack().pages?.PageIntro;
-  if (!PageIntro || page.coreType === 'home') return null;
   const first = page.sections.find((instance) => instance.enabled);
-  if (first && PAGE_OPENING_TYPES.has(first.type)) return null;
-  return <PageIntro page={page} navigation={navigation} />;
+  const opensWithHero = !!first && PAGE_OPENING_TYPES.has(first.type);
+  if (PageIntro) {
+    if (page.coreType === 'home' || opensWithHero) return null;
+    return <PageIntro page={page} navigation={navigation} />;
+  }
+  // Without an intro, a page that doesn't open with a hero has no <h1>.
+  // Name it for assistive tech only, so the page looks exactly as before.
+  if (opensWithHero || !page.title) return null;
+  return <h1 className="sr-only">{page.title}</h1>;
 }

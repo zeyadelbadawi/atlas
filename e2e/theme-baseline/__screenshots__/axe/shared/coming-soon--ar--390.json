@@ -9,26 +9,6 @@
       "targets": [
         ".text-xs"
       ]
-    },
-    {
-      "id": "landmark-one-main",
-      "impact": "moderate",
-      "help": "Document should have one main landmark",
-      "nodes": 1,
-      "targets": [
-        "html"
-      ]
-    },
-    {
-      "id": "region",
-      "impact": "moderate",
-      "help": "All page content should be contained by landmarks",
-      "nodes": 3,
-      "targets": [
-        ".space-y-3",
-        ".max-w-md",
-        ".text-xs"
-      ]
     }
   ]
 }

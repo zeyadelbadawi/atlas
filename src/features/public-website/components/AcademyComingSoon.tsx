@@ -85,7 +85,8 @@ export function AcademyComingSoon({
   }
 
   return (
-    <div
+    // `main`: the page's one landmark (axe `landmark-one-main`, `region`).
+    <main
       dir={direction}
       lang={locale}
       data-testid="academy-coming-soon"
@@ -154,6 +155,6 @@ export function AcademyComingSoon({
           {t('publicWebsite:comingSoon.attribution')}
         </p>
       </div>
-    </div>
+    </main>
   );
 }

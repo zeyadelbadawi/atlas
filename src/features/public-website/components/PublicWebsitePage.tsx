@@ -213,9 +213,11 @@ export function PublicWebsitePage({
   if (!page) {
     return (
       // Outside `WebsiteRenderer`/`WebsiteChrome`, so the scope class is applied
-      // here by hand — see `PublicWebsiteStatus` for why.
-      <div className="website-theme-scope flex min-h-screen items-center justify-center bg-background p-6">
+      // here by hand — see `PublicWebsiteStatus` for why. `main` and an `h1`
+      // give the page its landmark and top-level heading; same look.
+      <main className="website-theme-scope flex min-h-screen items-center justify-center bg-background p-6">
         <EmptyState
+          headingLevel="h1"
           titleKey="website:public.pageNotFound.title"
           descriptionKey="website:public.pageNotFound.description"
           primaryAction={{
@@ -223,7 +225,7 @@ export function PublicWebsitePage({
             onAction: () => navigate(withLocale('/')),
           }}
         />
-      </div>
+      </main>
     );
   }
 

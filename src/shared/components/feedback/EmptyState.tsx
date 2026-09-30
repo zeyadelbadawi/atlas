@@ -29,6 +29,12 @@ export interface EmptyStateProps {
   readonly secondaryAction?: EmptyStateAction;
   /** Interpolation values shared by the title and description. */
   readonly values?: Record<string, string | number>;
+  /**
+   * The title's heading level. `h3` inside a page; an empty state that IS
+   * the page (the public website's shared 404) passes `h1`, so the document
+   * has its one top-level heading. Styling is identical.
+   */
+  readonly headingLevel?: 'h1' | 'h2' | 'h3';
   readonly className?: string;
 }
 
@@ -39,6 +45,7 @@ export function EmptyState({
   primaryAction,
   secondaryAction,
   values,
+  headingLevel: Heading = 'h3',
   className,
 }: EmptyStateProps): JSX.Element {
   const { t } = useTranslation();
@@ -57,9 +64,16 @@ export function EmptyState({
       </span>
 
       <div className="space-y-1.5">
-        <h3 className="font-display text-base font-semibold text-foreground">
+        <Heading
+          className={cn(
+            'font-display text-base font-semibold text-foreground',
+            // The global `h1` style adds tight tracking; an `h1` title here
+            // must look exactly like the default `h3`.
+            Heading === 'h1' && 'tracking-normal'
+          )}
+        >
           {t(titleKey, values ?? {})}
-        </h3>
+        </Heading>
         <p className="mx-auto max-w-prose text-sm text-muted-foreground">
           {t(descriptionKey, values ?? {})}
         </p>
