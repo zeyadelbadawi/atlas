@@ -47,8 +47,9 @@
 #   script-src 'self'            Vite's hashed bundles only; no inline script,
 #                                no eval (JSON-LD blocks are data, not script)
 #   style-src 'unsafe-inline'    Radix/sonner/recharts inject <style> and
-#                                style attributes at runtime; fonts.googleapis
-#                                serves the @import in index.css
+#                                style attributes at runtime
+#   font-src 'self' data:        fonts are self-hosted (src/styles/fonts.css);
+#                                no third-party font origin
 #   img-src/media-src https:     academy logos, course media and video
 #                                segments come from each academy's own
 #                                storage/CDN host, which is configuration
@@ -63,7 +64,7 @@
 #                                frame is unaffected — verified)
 (csp) {
 	header Reporting-Endpoints `csp-endpoint="/api/v1/security/csp-reports"`
-	header Content-Security-Policy `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src 'self' blob: https://www.youtube-nocookie.com https://www.youtube.com; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; report-uri /api/v1/security/csp-reports; report-to csp-endpoint`
+	header Content-Security-Policy `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src 'self' blob: https://www.youtube-nocookie.com https://www.youtube.com; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; report-uri /api/v1/security/csp-reports; report-to csp-endpoint`
 }
 
 # Theme 1 plan §E.4 — theme photographs. Every file lives in a versioned

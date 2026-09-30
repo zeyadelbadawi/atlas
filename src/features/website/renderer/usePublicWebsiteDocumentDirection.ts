@@ -48,9 +48,10 @@ export function usePublicWebsiteDocumentDirection(
 
     document.documentElement.lang = locale;
     document.documentElement.dir = PUBLIC_WEBSITE_LOCALE_DIRECTION[locale];
-    // The locale's bundle may not be loaded yet (P-2): load, then switch,
-    // unless the page has already moved on.
-    void ensureLanguageLoaded(i18n, locale).then(() => {
+    // The locale's core translations may not be loaded yet (P-2): load,
+    // then switch, unless the page has already moved on. The rest follows
+    // (language-resources.ts).
+    void ensureLanguageLoaded(i18n, locale, 'core').then(() => {
       if (active) void i18n.changeLanguage(locale);
     });
 

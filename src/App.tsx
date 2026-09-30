@@ -26,7 +26,9 @@ import {
   ScrollRestoration,
 } from 'react-router-dom';
 import { AppProviders } from '@app/providers';
-import { AppRouter } from '@app/routes';
+// The module itself, not the `@app/routes` barrel (which re-exports the
+// dashboard's guards).
+import { AppRouter } from '@app/routes/AppRouter';
 import {
   NavigationBlockDialog,
   UnsavedChangesProvider,

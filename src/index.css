@@ -7,7 +7,8 @@
  * Token naming follows the semantic role of the value, never its appearance,
  * so a token keeps its meaning across Light Mode, Dark Mode, LTR and RTL.
  */
-@import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&family=Rubik:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+/* Self-hosted fonts (same files Google Fonts serves; see the file). */
+@import './styles/fonts.css';
 
 @tailwind base;
 @tailwind components;

@@ -185,48 +185,36 @@ export default defineConfig(({ command, mode }) => {
     build: {
       outDir,
       rollupOptions: {
+        // The app's own TypeScript modules are side-effect free (the only
+        // import-for-effect statements are CSS). Declaring it lets Rollup
+        // drop modules a barrel re-exports but a chunk never uses, so an
+        // Academy website no longer ships the dashboard code its barrels
+        // reach (Reports/LCP_ROOT_CAUSE.md). Dependencies keep their own
+        // package.json `sideEffects`.
+        treeshake: {
+          // `main.tsx` is the exception: its whole job is the side effect
+          // of mounting the app.
+          moduleSideEffects: (id: string) =>
+            id === path.resolve(__dirname, 'src/main.tsx') ||
+            !(
+              id.startsWith(path.resolve(__dirname, 'src')) &&
+              /\.(ts|tsx)$/.test(id)
+            ),
+        },
         output: {
           manualChunks: {
             // Vendor chunks
             'react-vendor': ['react', 'react-dom'],
             'router-vendor': ['react-router-dom'],
-            'ui-vendor': [
-              '@radix-ui/react-accordion',
-              '@radix-ui/react-alert-dialog',
-              '@radix-ui/react-aspect-ratio',
-              '@radix-ui/react-avatar',
-              '@radix-ui/react-checkbox',
-              '@radix-ui/react-collapsible',
-              '@radix-ui/react-context-menu',
-              '@radix-ui/react-dialog',
-              '@radix-ui/react-dropdown-menu',
-              '@radix-ui/react-hover-card',
-              '@radix-ui/react-label',
-              '@radix-ui/react-menubar',
-              '@radix-ui/react-navigation-menu',
-              '@radix-ui/react-popover',
-              '@radix-ui/react-progress',
-              '@radix-ui/react-radio-group',
-              '@radix-ui/react-scroll-area',
-              '@radix-ui/react-select',
-              '@radix-ui/react-separator',
-              '@radix-ui/react-slider',
-              '@radix-ui/react-slot',
-              '@radix-ui/react-switch',
-              '@radix-ui/react-tabs',
-              '@radix-ui/react-toast',
-              '@radix-ui/react-toggle',
-              '@radix-ui/react-toggle-group',
-              '@radix-ui/react-tooltip',
-            ],
-            'form-vendor': ['react-hook-form', '@hookform/resolvers', 'zod'],
+            // Radix primitives, the form libraries, date-fns and the icon
+            // set are NOT pinned: Rollup places each where it is used, so
+            // an Academy website doesn't download the dashboard's
+            // components before it can paint (Reports/LCP_ROOT_CAUSE.md).
             'utils-vendor': [
               'axios',
               'clsx',
               'tailwind-merge',
               'class-variance-authority',
-              'date-fns',
-              'lucide-react',
             ],
             'query-vendor': ['@tanstack/react-query'],
             'table-vendor': ['@tanstack/react-table'],

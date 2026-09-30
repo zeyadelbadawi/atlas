@@ -20,7 +20,7 @@
  */
 import { spawn } from 'node:child_process';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import lighthouse from 'lighthouse';
 import { chromium } from 'playwright';
@@ -32,11 +32,16 @@ const LIGHTHOUSE_VERSION = JSON.parse(
     'utf8'
   )
 ).version;
-const OUTPUT = resolve(HERE, '../baselines/lighthouse.json');
+const OUTPUT =
+  process.env.THEME_BASELINE_LIGHTHOUSE_OUT ??
+  resolve(HERE, '../baselines/lighthouse.json');
 const PORT = Number(process.env.THEME_BASELINE_PORT ?? 4175);
 const DEBUG_PORT = 9333;
 const RUNS = Number(process.env.THEME_BASELINE_LIGHTHOUSE_RUNS ?? 3);
-const BASE = `http://127.0.0.1:${PORT}`;
+// THEME_BASELINE_HTTP2=1 serves over HTTP/2 + TLS like production
+// (fixture-server.mjs); the browser then accepts its self-signed certificate.
+const HTTP2 = process.env.THEME_BASELINE_HTTP2 === '1';
+const BASE = `${HTTP2 ? 'https' : 'http'}://127.0.0.1:${PORT}`;
 
 const THEMES = [
   'modern-education',
@@ -121,7 +126,7 @@ async function main() {
       // Only needed where outbound HTTPS is intercepted by a proxy with its
       // own CA (e.g. a sandboxed CI container) — Google Fonts would
       // otherwise fail and the fallback font would skew LCP.
-      ...(process.env.THEME_BASELINE_IGNORE_CERT_ERRORS === '1'
+      ...(process.env.THEME_BASELINE_IGNORE_CERT_ERRORS === '1' || HTTP2
         ? ['--ignore-certificate-errors']
         : []),
     ],
@@ -173,16 +178,14 @@ async function main() {
         recordedAt: new Date().toISOString().slice(0, 10),
         lighthouseVersion: LIGHTHOUSE_VERSION,
         chromium: chromiumVersion,
-        method: `mobile, simulated throttling, median of ${RUNS} runs by performance score; first visit (no consent seeded, cold cache)`,
+        method: `mobile, simulated throttling, median of ${RUNS} runs by performance score; first visit (no consent seeded, cold cache); ${HTTP2 ? 'HTTP/2 + TLS (as production)' : 'HTTP/1.1'}`,
         results,
       },
       null,
       2
     )}\n`
   );
-  console.log(
-    `wrote ${join('e2e/theme-baseline/baselines', 'lighthouse.json')}`
-  );
+  console.log(`wrote ${OUTPUT}`);
 }
 
 main().catch((error) => {

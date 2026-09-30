@@ -22,22 +22,15 @@
  * locale split — they are site-wide infrastructure files, never
  * duplicated per locale.
  */
-import { lazy, useEffect } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { PublicWebsiteStatus } from './components/PublicWebsiteStatus';
 import { AcademyComingSoon } from './components/AcademyComingSoon';
 import { PublicWebsitePage } from './components/PublicWebsitePage';
 import { PublicWebsiteRobotsRoute } from './components/PublicWebsiteRobotsRoute';
 import { PublicWebsiteSitemapRoute } from './components/PublicWebsiteSitemapRoute';
-import { PublicWebsiteSignInPage } from './components/PublicWebsiteSignInPage';
-import { PublicWebsiteSignUpPage } from './components/PublicWebsiteSignUpPage';
-import { PublicWebsiteGoogleReturnPage } from './components/PublicWebsiteGoogleReturnPage';
 import { PublicWebsiteGuestRoute } from './components/PublicWebsiteGuestRoute';
-import { PublicWebsiteForgotPasswordPage } from './components/PublicWebsiteForgotPasswordPage';
-import { PublicWebsiteResetPasswordPage } from './components/PublicWebsiteResetPasswordPage';
-import { PublicWebsiteVerifyEmailPage } from './components/PublicWebsiteVerifyEmailPage';
 import { PublicWebsiteAuthShell } from './components/PublicWebsiteAuthShell';
-import { PublicWebsiteLearningRoute } from './components/PublicWebsiteLearningRoute';
 import { PublicWebsiteRetiredLearnerRedirect } from './components/PublicWebsiteRetiredLearnerRedirect';
 import { usePublicWebsiteData } from './hooks/usePublicWebsiteData';
 import { RETIRED_ACADEMY_LEARNER_ROUTES } from '@app/routes/route-paths';
@@ -47,7 +40,64 @@ import {
   resolveCanonicalRedirect,
 } from './utils/canonical-redirect.utils';
 import { ENV } from '@config';
+import { publicWebsiteLookupKey } from '@utils';
+import { withCompleteTranslations } from '@localization';
 import type { PublicWebsiteLocale } from '@types';
+
+// Account pages and the learning route load with their own routes, so a
+// visitor reading the site never downloads the auth forms, their form
+// libraries or the learner code (Reports/LCP_ROOT_CAUSE.md). Each waits
+// for the complete translations too: the site's first paint loads only
+// the namespaces it needs (fix D), and these routes use others.
+const PublicWebsiteSignInPage = lazy(
+  withCompleteTranslations(() =>
+    import('./components/PublicWebsiteSignInPage').then((m) => ({
+      default: m.PublicWebsiteSignInPage,
+    }))
+  )
+);
+const PublicWebsiteSignUpPage = lazy(
+  withCompleteTranslations(() =>
+    import('./components/PublicWebsiteSignUpPage').then((m) => ({
+      default: m.PublicWebsiteSignUpPage,
+    }))
+  )
+);
+const PublicWebsiteGoogleReturnPage = lazy(
+  withCompleteTranslations(() =>
+    import('./components/PublicWebsiteGoogleReturnPage').then((m) => ({
+      default: m.PublicWebsiteGoogleReturnPage,
+    }))
+  )
+);
+const PublicWebsiteForgotPasswordPage = lazy(
+  withCompleteTranslations(() =>
+    import('./components/PublicWebsiteForgotPasswordPage').then((m) => ({
+      default: m.PublicWebsiteForgotPasswordPage,
+    }))
+  )
+);
+const PublicWebsiteResetPasswordPage = lazy(
+  withCompleteTranslations(() =>
+    import('./components/PublicWebsiteResetPasswordPage').then((m) => ({
+      default: m.PublicWebsiteResetPasswordPage,
+    }))
+  )
+);
+const PublicWebsiteVerifyEmailPage = lazy(
+  withCompleteTranslations(() =>
+    import('./components/PublicWebsiteVerifyEmailPage').then((m) => ({
+      default: m.PublicWebsiteVerifyEmailPage,
+    }))
+  )
+);
+const PublicWebsiteLearningRoute = lazy(
+  withCompleteTranslations(() =>
+    import('./components/PublicWebsiteLearningRoute').then((m) => ({
+      default: m.PublicWebsiteLearningRoute,
+    }))
+  )
+);
 
 // The Student Learning experience, reused unmodified from
 // `@features/learning` — see `PublicWebsiteLearningRoute`'s own doc
@@ -63,12 +113,16 @@ import type { PublicWebsiteLocale } from '@types';
 // P64 Phase 2 §E.1 — the learner dashboard: one lazy chunk for the whole
 // `/my/*` tree, which then splits again per section (`LearnerRouter`). A
 // visitor who never signs in never downloads any of it.
-const LearnerRouter = lazy(() => import('@features/learner/LearnerRouter'));
+const LearnerRouter = lazy(
+  withCompleteTranslations(() => import('@features/learner/LearnerRouter'))
+);
 // P64 Phase 3 §E.6 (D6) — the public certificate verification sheet, the
 // same component the platform host mounts at `PUBLIC_ROUTES.verify`, here
 // framed in this academy's own chrome. No session needed.
 const CertificateVerifyPage = lazy(
-  () => import('@features/certificates/pages/CertificateVerifyPage')
+  withCompleteTranslations(
+    () => import('@features/certificates/pages/CertificateVerifyPage')
+  )
 );
 
 export interface PublicWebsiteRouterProps {
@@ -79,9 +133,7 @@ export interface PublicWebsiteRouterProps {
 function resolveLookupKey(
   context: PublicWebsiteRouterProps['context']
 ): string {
-  return context.lookupType === 'dev-override'
-    ? context.value
-    : window.location.hostname;
+  return publicWebsiteLookupKey(context);
 }
 
 /**
@@ -152,29 +204,31 @@ function PublicWebsiteLocaleRoutes({
   readonly locale: PublicWebsiteLocale;
 }): JSX.Element {
   return (
-    <Routes>
-      {/* Phase 1 (Extended Scope, Decision 11, dependency C) — two
+    // The site's own loading state while a lazily loaded route arrives.
+    <Suspense fallback={<PublicWebsiteStatus state={{ status: 'loading' }} />}>
+      <Routes>
+        {/* Phase 1 (Extended Scope, Decision 11, dependency C) — two
           separate pages, matching the confirmed product requirement,
           reached before the data-driven catch-all so they are never
           shadowed by a Custom Page happening to share the same slug. */}
-      <Route
-        path="sign-in"
-        element={
-          <PublicWebsiteGuestRoute locale={locale}>
-            <PublicWebsiteSignInPage lookupKey={lookupKey} locale={locale} />
-          </PublicWebsiteGuestRoute>
-        }
-      />
-      <Route
-        path="sign-up"
-        element={
-          <PublicWebsiteGuestRoute locale={locale}>
-            <PublicWebsiteSignUpPage lookupKey={lookupKey} locale={locale} />
-          </PublicWebsiteGuestRoute>
-        }
-      />
+        <Route
+          path="sign-in"
+          element={
+            <PublicWebsiteGuestRoute locale={locale}>
+              <PublicWebsiteSignInPage lookupKey={lookupKey} locale={locale} />
+            </PublicWebsiteGuestRoute>
+          }
+        />
+        <Route
+          path="sign-up"
+          element={
+            <PublicWebsiteGuestRoute locale={locale}>
+              <PublicWebsiteSignUpPage lookupKey={lookupKey} locale={locale} />
+            </PublicWebsiteGuestRoute>
+          }
+        />
 
-      {/* P64 Phase 1 — the rest of the account-recovery/verification set,
+        {/* P64 Phase 1 — the rest of the account-recovery/verification set,
           on the academy host itself. Atlas's own `/auth/*` tree is not
           mounted here at all (`AppRouter` swaps the entire route tree for
           an academy hostname), so before this a "Forgot password?" click
@@ -184,67 +238,70 @@ function PublicWebsiteLocaleRoutes({
           both the `/` (English) and `/ar/` trees, and — like sign-in and
           sign-up — ahead of the data-driven catch-all so a Custom Page
           sharing one of these slugs can never shadow account recovery. */}
-      <Route
-        path="forgot-password"
-        element={
-          <PublicWebsiteForgotPasswordPage
-            lookupKey={lookupKey}
-            locale={locale}
-          />
-        }
-      />
-      <Route
-        path="reset-password"
-        element={
-          <PublicWebsiteResetPasswordPage
-            lookupKey={lookupKey}
-            locale={locale}
-          />
-        }
-      />
-      {/* Google Identity — the one return URL the backend builds for this
+        <Route
+          path="forgot-password"
+          element={
+            <PublicWebsiteForgotPasswordPage
+              lookupKey={lookupKey}
+              locale={locale}
+            />
+          }
+        />
+        <Route
+          path="reset-password"
+          element={
+            <PublicWebsiteResetPasswordPage
+              lookupKey={lookupKey}
+              locale={locale}
+            />
+          }
+        />
+        {/* Google Identity — the one return URL the backend builds for this
           origin. Not a guest route: Account settings' "Connect Google"
           returns here signed in. */}
-      <Route
-        path="auth/google/return"
-        element={
-          <PublicWebsiteGoogleReturnPage
-            lookupKey={lookupKey}
-            locale={locale}
-          />
-        }
-      />
-      <Route
-        path="verify-email"
-        element={
-          <PublicWebsiteVerifyEmailPage lookupKey={lookupKey} locale={locale} />
-        }
-      />
+        <Route
+          path="auth/google/return"
+          element={
+            <PublicWebsiteGoogleReturnPage
+              lookupKey={lookupKey}
+              locale={locale}
+            />
+          }
+        />
+        <Route
+          path="verify-email"
+          element={
+            <PublicWebsiteVerifyEmailPage
+              lookupKey={lookupKey}
+              locale={locale}
+            />
+          }
+        />
 
-      {/* P64 Phase 3 §E.6 (D6) — `/verify/:code` on the academy host, ahead
+        {/* P64 Phase 3 §E.6 (D6) — `/verify/:code` on the academy host, ahead
           of `my/*` and the catch-all so a Custom Page can never shadow a
           printed verification link. Framed exactly like verify-email; the
           sheet itself is the one the platform host renders. */}
-      <Route
-        path="verify/:code"
-        element={
-          <CertificateVerifyPage
-            renderFrame={({ title, subtitle, path, content }) => (
-              <PublicWebsiteAuthShell
-                lookupKey={lookupKey}
-                locale={locale}
-                path={path}
-                title={title}
-                subtitle={subtitle}
-              >
-                {() => content}
-              </PublicWebsiteAuthShell>
-            )}
-          />
-        }
-      />
+        <Route
+          path="verify/:code"
+          element={
+            <CertificateVerifyPage
+              renderFrame={({ title, subtitle, path, content }) => (
+                <PublicWebsiteAuthShell
+                  lookupKey={lookupKey}
+                  locale={locale}
+                  path={path}
+                  title={title}
+                  subtitle={subtitle}
+                >
+                  {() => content}
+                </PublicWebsiteAuthShell>
+              )}
+            />
+          }
+        />
 
-      {/* P64 Phase 2 §E.1 (D2 / AD-12) — THE learner surface. Reached
+        {/* P64 Phase 2 §E.1 (D2 / AD-12) — THE learner surface. Reached
           before the data-driven catch-all for the same reason sign-in is:
           a Custom Page authored at one of these slugs must never be able
           to shadow a learner's own dashboard.
@@ -252,22 +309,22 @@ function PublicWebsiteLocaleRoutes({
           `my/*`, not nine sibling routes: `LearnerRouter` owns the
           sections below it, so adding one is a change in that feature
           rather than a second edit here that someone will forget. */}
-      <Route
-        path="my/*"
-        element={
-          <PublicWebsiteLearningRoute lookupKey={lookupKey} locale={locale}>
-            {({ academyId, buildHref }) => (
-              <LearnerRouter
-                academyId={academyId}
-                locale={locale}
-                buildHref={buildHref}
-              />
-            )}
-          </PublicWebsiteLearningRoute>
-        }
-      />
+        <Route
+          path="my/*"
+          element={
+            <PublicWebsiteLearningRoute lookupKey={lookupKey} locale={locale}>
+              {({ academyId, buildHref }) => (
+                <LearnerRouter
+                  academyId={academyId}
+                  locale={locale}
+                  buildHref={buildHref}
+                />
+              )}
+            </PublicWebsiteLearningRoute>
+          }
+        />
 
-      {/* The URLs the learner dashboard replaced. Bookmarked, emailed and
+        {/* The URLs the learner dashboard replaced. Bookmarked, emailed and
           linked from the academy's own chrome, so they keep answering —
           as permanent redirects, never as a second copy of the page. The
           table itself lives in `route-paths.ts` with every other path
@@ -278,20 +335,21 @@ function PublicWebsiteLocaleRoutes({
           as well: the unified player and the course outline under `/my/*`
           own those screens, and the ids are carried across so a bookmark
           lands on that lesson or activity. */}
-      {RETIRED_ACADEMY_LEARNER_ROUTES.map(({ from }) => (
-        <Route
-          key={from}
-          // Bare, because these are relative to this locale's subtree.
-          path={from.replace(/^\//, '')}
-          element={<PublicWebsiteRetiredLearnerRedirect locale={locale} />}
-        />
-      ))}
+        {RETIRED_ACADEMY_LEARNER_ROUTES.map(({ from }) => (
+          <Route
+            key={from}
+            // Bare, because these are relative to this locale's subtree.
+            path={from.replace(/^\//, '')}
+            element={<PublicWebsiteRetiredLearnerRedirect locale={locale} />}
+          />
+        ))}
 
-      <Route
-        path="*"
-        element={<PublicWebsiteShell lookupKey={lookupKey} locale={locale} />}
-      />
-    </Routes>
+        <Route
+          path="*"
+          element={<PublicWebsiteShell lookupKey={lookupKey} locale={locale} />}
+        />
+      </Routes>
+    </Suspense>
   );
 }
 

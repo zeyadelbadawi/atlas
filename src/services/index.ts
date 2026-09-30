@@ -22,4 +22,12 @@ export * from './identity';
  * cycle. Moving the data layer to the shared package removes the cycle rather
  * than working around it.
  */
-export { PublicWebsiteService, publicWebsiteService } from './public-website/PublicWebsiteService';
+export {
+  PublicWebsiteService,
+  publicWebsiteService,
+} from './public-website/PublicWebsiteService';
+export {
+  prefetchKeys,
+  startPublicWebsitePrefetch,
+  takePrefetched,
+} from './public-website/public-website-prefetch';

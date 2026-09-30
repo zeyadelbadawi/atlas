@@ -29,6 +29,9 @@
  *            Academy created before v2 still has (existing-Academy
  *            compatibility). In the `rich` state the v2 sample
  *            testimonials count as confirmed by the Owner.
+ *   migrated Themes 2–5 only: the same website after the retirement
+ *            migration (Reports/THEMES_2_5_RETIREMENT.md) — its own pages,
+ *            sections and brand, with the theme key set to Theme 1.
  * Anything else resolves as an unknown hostname, exactly like production.
  *
  * Any API request this server has no fixture for is answered 404 in the
@@ -38,6 +41,10 @@
  * Usage: node e2e/theme-baseline/server/fixture-server.mjs [--port 4173]
  */
 import { createServer } from 'node:http';
+import { createSecureServer } from 'node:http2';
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { readFileSync, existsSync, statSync, createReadStream } from 'node:fs';
 import { extname, join, normalize, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -96,7 +103,8 @@ function parseSlug(slug) {
   if (!Object.hasOwn(FIXTURE_PALETTES, palette)) return null;
   if (
     composition !== undefined &&
-    !(composition === 'c1' && theme === 'modern-education')
+    !(composition === 'c1' && theme === 'modern-education') &&
+    !(composition === 'migrated' && theme !== 'modern-education')
   ) {
     return null;
   }
@@ -124,6 +132,11 @@ function confirmSampleTestimonials(page) {
   };
 }
 
+/** The key the website is stored with: Theme 1 once a retired theme's website is migrated. */
+function renderedThemeKey(parsed) {
+  return parsed.composition === 'migrated' ? 'modern-education' : parsed.theme;
+}
+
 function buildFixture(parsed) {
   const generated =
     parsed.composition === 'c1' ? theme1V2 : generatedByTheme.get(parsed.theme);
@@ -134,6 +147,7 @@ function buildFixture(parsed) {
     );
   const configuration = rebaseIds({
     ...generated.configuration,
+    themeKey: renderedThemeKey(parsed),
     brand: { ...FIXTURE_PALETTES[parsed.palette] },
     status: 'published',
     publishedAt: '2026-09-01T09:00:00.000Z',
@@ -206,7 +220,7 @@ function handlePublicWebsites(segments, url) {
         // Theme 1 plan Phase 6 — the theme and public colours, published or
         // not (what the real lookup now returns).
         presentation: {
-          themeKey: parsed.theme,
+          themeKey: renderedThemeKey(parsed),
           brand: { ...FIXTURE_PALETTES[parsed.palette] },
         },
       },
@@ -402,8 +416,46 @@ if (!existsSync(join(DIST, 'index.html'))) {
   process.exit(1);
 }
 
-createServer((req, res) => {
-  const url = new URL(req.url, `http://${req.headers.host}`);
+/**
+ * `THEME_BASELINE_HTTP2=1`: serve over HTTP/2 + TLS like production (Caddy,
+ * and Cloudflare for custom hostnames, multiplex every request over one
+ * connection). Used for Lighthouse runs; the screenshot/axe baseline keeps
+ * plain HTTP/1.1. The certificate is self-signed and generated per run, so
+ * the browser needs `--ignore-certificate-errors`.
+ */
+const HTTP2 = process.env.THEME_BASELINE_HTTP2 === '1';
+
+function selfSignedCertificate() {
+  const dir = mkdtempSync(join(tmpdir(), 'fixture-tls-'));
+  const key = join(dir, 'key.pem');
+  const cert = join(dir, 'cert.pem');
+  execFileSync(
+    'openssl',
+    [
+      'req',
+      '-x509',
+      '-newkey',
+      'rsa:2048',
+      '-nodes',
+      '-days',
+      '1',
+      '-subj',
+      '/CN=127.0.0.1',
+      '-keyout',
+      key,
+      '-out',
+      cert,
+    ],
+    { stdio: 'ignore' }
+  );
+  return { key: readFileSync(key), cert: readFileSync(cert) };
+}
+
+function handle(req, res) {
+  const url = new URL(
+    req.url,
+    `http://${req.headers.host ?? req.headers[':authority']}`
+  );
   const chunks = [];
   req.on('data', (chunk) => chunks.push(chunk));
   req.on('end', () => {
@@ -449,6 +501,13 @@ createServer((req, res) => {
     }
     serveStatic(req, res, url);
   });
-}).listen(PORT, '127.0.0.1', () => {
-  console.log(`theme fixture server on http://127.0.0.1:${PORT}`);
+}
+
+(HTTP2
+  ? createSecureServer({ ...selfSignedCertificate(), allowHTTP1: true }, handle)
+  : createServer(handle)
+).listen(PORT, '127.0.0.1', () => {
+  console.log(
+    `theme fixture server on ${HTTP2 ? 'https' : 'http'}://127.0.0.1:${PORT}`
+  );
 });
