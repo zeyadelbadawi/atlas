@@ -21,7 +21,16 @@ vi.mock('./theme-asset.registry', async (importOriginal) => {
             version: 'v1' as const,
             lqip: 'data:image/webp;base64,UklGRg==',
           }
-        : entry
+        : entry.key === 'home-cta'
+          ? // As it was before release: the pending case.
+            {
+              ...entry,
+              status: 'pending' as const,
+              version: undefined,
+              lqip: undefined,
+              provenance: undefined,
+            }
+          : entry
     ),
   };
   return {

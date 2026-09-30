@@ -18,7 +18,7 @@ import {
 } from './resolve-theme-asset';
 import { RELEASED_THEME_ASSET_FOLDERS } from './released-versions';
 import { MODERN_EDUCATION_ASSETS } from './manifests/modern-education.manifest';
-import type { ThemeAssetManifest } from './theme-asset.types';
+import type { ThemeAssetEntry, ThemeAssetManifest } from './theme-asset.types';
 
 const REPO = resolve(__dirname, '../../../..');
 const PUBLIC_ROOT = join(REPO, 'public', 'theme-assets');
@@ -95,8 +95,10 @@ describe('theme asset manifests', () => {
   it('refuses a released entry without its version, LQIP and provenance', () => {
     const manifest = {
       ...MODERN_EDUCATION_ASSETS,
-      // A still-pending entry marked released without releasing it.
-      assets: [{ ...MODERN_EDUCATION_ASSETS.assets[2], status: 'released' }],
+      // A pending entry marked released without releasing it.
+      assets: [
+        { ...asPending(MODERN_EDUCATION_ASSETS.assets[2]), status: 'released' },
+      ],
     };
     const result = themeAssetManifestSchema.safeParse(manifest);
     expect(result.success).toBe(false);
@@ -182,6 +184,12 @@ describe('template references', () => {
   });
 });
 
+/** An entry as it was before release: no version, LQIP or provenance. */
+function asPending(entry: ThemeAssetEntry): ThemeAssetEntry {
+  const { version: _v, lqip: _l, provenance: _p, ...rest } = entry;
+  return { ...rest, status: 'pending' };
+}
+
 describe('resolveThemeAsset', () => {
   const RELEASED: ThemeAssetManifest = {
     ...MODERN_EDUCATION_ASSETS,
@@ -192,6 +200,11 @@ describe('resolveThemeAsset', () => {
         version: 'v1',
         lqip: 'data:image/webp;base64,UklGRg==',
       },
+      asPending(
+        MODERN_EDUCATION_ASSETS.assets.find(
+          (entry) => entry.key === 'home-cta'
+        )!
+      ),
     ],
   };
   const manifests = { 'modern-education': RELEASED };
@@ -226,7 +239,7 @@ describe('resolveThemeAsset', () => {
 
   it('resolves pending, unknown and malformed references to null', () => {
     expect(
-      resolveThemeAsset('theme-asset:modern-education/home-cta')
+      resolveThemeAsset('theme-asset:modern-education/home-cta', manifests)
     ).toBeNull();
     expect(
       resolveThemeAsset('theme-asset:modern-education/nope', manifests)
@@ -234,14 +247,16 @@ describe('resolveThemeAsset', () => {
     expect(resolveThemeAsset('theme-asset:../x', manifests)).toBeNull();
   });
 
-  it('only a pending theme asset changes whether an image draws', () => {
+  it('only an unresolved theme asset changes whether an image draws', () => {
     expect(hasRenderableImage(undefined)).toBe(false);
     expect(hasRenderableImage('')).toBe(false);
     expect(hasRenderableImage('https://cdn.example/a.png')).toBe(true);
     expect(hasRenderableImage('/api/v1/public/media/a/b.png')).toBe(true);
-    expect(hasRenderableImage('theme-asset:modern-education/home-cta')).toBe(
-      false
-    );
+    // Every shipped entry is released; an unknown key stands in for one
+    // that isn't (the pending case is covered with a manifest above).
+    expect(
+      hasRenderableImage('theme-asset:modern-education/not-released')
+    ).toBe(false);
     expect(hasRenderableImage('theme-asset:modern-education/home-hero')).toBe(
       true
     );
@@ -249,7 +264,7 @@ describe('resolveThemeAsset', () => {
       'https://cdn.example/a.png'
     );
     expect(
-      resolveImageUrl('theme-asset:modern-education/home-cta')
+      resolveImageUrl('theme-asset:modern-education/not-released')
     ).toBeUndefined();
   });
 });

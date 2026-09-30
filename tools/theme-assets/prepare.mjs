@@ -87,7 +87,11 @@ const swapped = (meta.orientation ?? 1) >= 5;
 const width = swapped ? meta.height : meta.width;
 const height = swapped ? meta.width : meta.height;
 const [rw, rh] = entry.ratio.split(':').map(Number);
-if (Math.abs(width / height - rw / rh) > 0.01) {
+// Relative, not absolute: the generator's fixed output sizes are close to,
+// not exactly, the named ratio (Nano Banana Pro's 16:9 is 5504×3072, 0.8%
+// wider; its 21:9 is 6336×2688, 1.0% wider). The cover resize below trims
+// that difference evenly, and the master stays the untouched original.
+if (Math.abs(width / height / (rw / rh) - 1) > 0.02) {
   fail(`master is ${width}×${height}; ${entry.key} needs ${entry.ratio}`);
 }
 if (width < entry.master.width) {
