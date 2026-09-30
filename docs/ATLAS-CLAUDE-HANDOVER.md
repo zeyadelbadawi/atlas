@@ -12,6 +12,30 @@ Evidence labels used below:
 
 ---
 
+## ★ Status update — continuation session (30 Sep 2026). Read this first.
+
+The sections below describe the state at the first handover. Since then, on the same branch (`claude/practical-wozniak-pjcdhe`, both repos, nothing on `main`):
+
+- **Done and pushed** (details and evidence: plan §V): P-1 CLS, S-1 SSRF (+ S-3), BR-1, A-1 (DOM-only part), J-21, GEN-1, J-ENV (+ J1–J8 all green), P-2 (language-split translations), E-1, OPS-1, image slot audit + manifest re-freeze, and a pre-existing checkout-commission bug found by J5 (BE `5264331`).
+- **Regression on the final code:** theme baseline 887/887; FE unit pass; BE unit 155/4,186; BE e2e 166/166; J1–J8 pass.
+- **Blocked — images:** 44 candidates (4 × 11 keys) are generated in the Owner's Magnific account, with the seeds and prompts recorded in the manifest's recipe. This environment's network policy denies `pikaso.cdnpk.net` (Magnific's CDN), so they can't be downloaded. Once allowed: fetch the URLs with `mcp__MAG__creations_get`, then run the §P.7 release gate per key, `tools/theme-assets/prepare.mjs`, record provenance (generator, model `imagen-nano-banana-2` = Nano Banana Pro, prompt from `buildThemeAssetPrompt`, seed, creation id, date, licence basis) in the manifest, set `released` / `v1`, and run in-context QA (390–1920 × EN/AR) and the baseline. Creation ids per key (candidates 1–4; `seed` + index):
+  - home-benefit (seed 20260910): ks3BB4h16B, 1lRooN7r4r, cpu77aK0eP, TdFOOC3VNR
+  - home-cta (20260920): 1lRooRir4r, xS2II2mjfW, JNVQQVwOq4, tCsAAljmZJ
+  - courses-launching (20260930): rgZ88n4xtc, SyWffMvUb8, LwGmm0wswO, EbJ00NNuuO
+  - about-header (20260940): WDEww1rcXe, Xm1iiwTBfo, gOYaaX6SXO, lJnvvd8gv9
+  - about-story (20260950): 1lRoopMr4r, hugzzRpvqL, JNVQQfGOq4, xS2IIXDjfW
+  - gallery-1 (20260960): bxNeepC5Y2, p85999Lehw, cpu777R0eP, dtk66ivXSL
+  - gallery-2 (20260970): tCsAYEtmZJ, s7zhCOYl8e, JNVQbiQOq4, lJnvEPPgv9
+  - gallery-3 (20260980): lJnvEiigv9, ks3BtOX16B, xS2Iv9UjfW, O6MF5ntynm
+  - gallery-4 (20260990): VXHyNEHMMU, P3pqkTr42C, Cq7cMSHEEy, 5j6d84dKxe
+  - gallery-5 (20261000): LwGmfYfswO, 1lRomGPr4r, hugzc7RvqL, ovxRGld829
+  - auth-side (20261010): JNVQb8POq4, VXHyNjgMMU, ovxRGJt829, 3z8rsuBREY
+- **Owner decisions still open:** the network allowlist (above); IMG-3 archive bucket; A-1 colour-contrast on Themes 2–5 (visual change); LCP ≤ 2.5 s needs prerender/SSR or a namespace-level split (plan §V.D #8); M-1 gated production migration + deploy (Phase 9).
+- **Phase status:** Phases 0–7 closed; Phase 8 not closed (images, LCP); Phase 9 not started.
+- **Environment notes learned this session:** Docker Hub pulls are blocked (build MinIO with `go install github.com/minio/minio@latest`); run journeys with the stack from §K plus `npm run e2e:prepare-journeys` in atlas-backend; plain `vite` now serves on :3001 and proxies `/api` to :3000; harness background tasks can be killed mid-run (the full BE e2e was, at 164/166; the last two were re-run).
+
+---
+
 ## 0. Quick start for the next Claude
 
 1. Both repos are on branch **`claude/practical-wozniak-pjcdhe`**. Stay on it: commit and push only there, never to `main`.
