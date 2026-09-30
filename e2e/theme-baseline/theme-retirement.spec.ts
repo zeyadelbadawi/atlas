@@ -72,11 +72,59 @@ function authoredStrings(value: unknown, locale: Locale, into: string[]): void {
   for (const item of Object.values(record)) authoredStrings(item, locale, into);
 }
 
+/**
+ * Theme 1's honest-public-site rules (plan §D.4, `t1-live-sections.tsx`,
+ * `t1-page-sections.tsx`): a section with nothing real to show is not
+ * drawn on the public site — testimonials without a real quote, a gallery
+ * without images, statistics with fewer than two real values, instructors
+ * when there are none. Themes 2–5 drew such a section's heading over
+ * nothing. The section stays stored and appears once it has content, so
+ * its heading is not counted as lost; everything else still is. In the
+ * fixture's `new` state the Academy has no courses, learners or
+ * instructors; in `rich` it has them, so statistics and instructors must
+ * still show there.
+ */
+function hiddenUntilContent(
+  section: FixtureSection,
+  state: 'new' | 'rich',
+  locale: Locale
+): boolean {
+  const config = section.config as {
+    items?: {
+      quote?: Record<string, string>;
+      sample?: boolean;
+      metric?: string;
+      value?: Record<string, string>;
+    }[];
+    images?: unknown[];
+  };
+  switch (section.type) {
+    case 'testimonials':
+      return !(config.items ?? []).some(
+        (item) => !item.sample && item.quote?.[locale]?.trim()
+      );
+    case 'gallery':
+      return (config.images ?? []).length === 0;
+    case 'statistics':
+      return (
+        state === 'new' &&
+        (config.items ?? []).filter(
+          (item) => !item.metric && item.value?.[locale]?.trim()
+        ).length < 2
+      );
+    case 'instructors':
+      return state === 'new';
+    default:
+      return false;
+  }
+}
+
 function pageStrings(
   theme: string,
   path: string,
   locale: Locale,
-  device: string
+  device: string,
+  state: 'new' | 'rich'
 ): string[] {
   const fixture = JSON.parse(
     readFileSync(join(GENERATED, `${theme}.json`), 'utf8')
@@ -91,6 +139,7 @@ function pageStrings(
   const strings: string[] = [];
   for (const section of page?.sections ?? []) {
     if (!section.enabled || section.visibility?.[device] === false) continue;
+    if (hiddenUntilContent(section, state, locale)) continue;
     authoredStrings(section.config, locale, strings);
   }
   return [...new Set(strings)];
@@ -164,7 +213,8 @@ for (const viewport of VIEWPORTS) {
                 theme,
                 page.path,
                 locale,
-                viewport.device
+                viewport.device,
+                state
               ).filter((text) => before.includes(normalise(text)));
               const lost = shownBefore.filter(
                 (text) => !after.includes(normalise(text))
