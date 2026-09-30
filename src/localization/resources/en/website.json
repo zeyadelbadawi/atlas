@@ -942,6 +942,12 @@
     "retry": "Try again",
     "manualHint": "You can try another file, or pick your colours below.",
     "monochromeHint": "Your logo is black and white, so we used a theme colour for accents. Pick a brand colour below if you have one.",
+    "logoChanged": {
+      "title": "Your logo changed — preview a matching palette?",
+      "description": "Your saved colours stay as they are. Preview a palette from the new logo, then accept and save it if you like it.",
+      "preview": "Preview matching palette",
+      "keep": "Keep current colours"
+    },
     "errors": {
       "empty": "That file is empty.",
       "tooLarge": "That file is larger than 2 MB.",

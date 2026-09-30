@@ -13,7 +13,7 @@
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Loader2, Save } from 'lucide-react';
+import { Loader2, RefreshCw, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -32,6 +32,7 @@ import { BrandStudio } from '../brand-studio/BrandStudio';
 import { BrandPreviewFrame } from '../brand-studio/BrandPreviewFrame';
 import { brandPreviewSample } from '../brand-studio/brand-preview-sample';
 import { toPaletteInput, useBrandStudio } from '../brand-studio/useBrandStudio';
+import { useLogoChangeCheck } from '../brand-studio/useLogoChangeCheck';
 import { isUsablePalette } from '../theme-packs/brand-palette.utils';
 import type { WebsiteConfiguration, WebsitePage } from '@types';
 
@@ -69,6 +70,15 @@ export function WebsiteBrandTab({
     : undefined;
   const studio = useBrandStudio({ theme, initialPalette: storedPalette });
   const [logoUrl, setLogoUrl] = useState(academyLogo);
+  // §F.4.6: the logo was replaced elsewhere since this palette was built.
+  // Offer a review; the stored palette is never overwritten without Save.
+  const logoChange = useLogoChangeCheck(
+    logoUrl,
+    studio.draft.extraction?.logoFingerprint
+  );
+  const [logoChangeDismissed, setLogoChangeDismissed] = useState(false);
+  const showLogoChange =
+    logoChange.changed && !!logoChange.logo && !logoChangeDismissed;
 
   const saveBrand = (brand: Partial<WebsiteConfiguration['brand']>) =>
     updateConfig.mutate(
@@ -124,6 +134,42 @@ export function WebsiteBrandTab({
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+          {showLogoChange ? (
+            <div
+              role="status"
+              className="flex flex-col gap-3 rounded-md bg-muted px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <div className="space-y-1">
+                <p className="text-sm font-semibold text-foreground">
+                  {t('website:brandStudio.logoChanged.title')}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {t('website:brandStudio.logoChanged.description')}
+                </p>
+              </div>
+              <div className="flex shrink-0 flex-wrap gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => {
+                    if (logoChange.logo)
+                      void studio.actions.analyzeFile(logoChange.logo);
+                  }}
+                >
+                  <RefreshCw className="size-4" aria-hidden />
+                  {t('website:brandStudio.logoChanged.preview')}
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setLogoChangeDismissed(true)}
+                >
+                  {t('website:brandStudio.logoChanged.keep')}
+                </Button>
+              </div>
+            </div>
+          ) : null}
           <BrandStudio
             studio={studio}
             logoPreviewUrl={logoUrl}
