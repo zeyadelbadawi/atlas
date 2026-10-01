@@ -513,3 +513,39 @@ Residual, pre-existing (§10): the public API exposes `instructors[].id`, `intro
    - set `ATLAS_SSR=off` and run `deploy.sh --frontend-only` (Caddy returns to the previous routing and the renderer is stopped);
    - `docker compose stop ssr` (Caddy serves the SPA on the next request, no deploy);
    - `deploy.sh --rollback` (previous images, including `SSR_IMAGE`).
+
+## 15. Production-readiness remediation, H1–H4 (1 Oct 2026; nothing run in production)
+
+The read-only production verification (Step 1) found four gates to close before any merge, migration or `ATLAS_SSR=on`. Commits: frontend `d7a128d`, backend `1b0d3e5`.
+
+| Gate | Finding in production | Change | Evidence |
+|---|---|---|---|
+| H1 rollback | `.last-good` had empty `BACKEND_IMAGE`/`CADDY_IMAGE`: `record_last_good` read `RepoDigests` from the container object, which has none | Digest resolved from each running container's image (`<repo>@sha256:…`); the previous record is kept if any digest cannot be resolved; `--rollback` validates the whole record, pulls first, re-tags and verifies the running digests | `deploy/test/deploy-script.test.sh` §1, §3–§5 (backend) |
+| H2 postgres/redis | Both tags newer than the running containers; a full deploy would recreate both before the migration gate and the backup | Only application services are pulled; postgres/redis start with `--no-recreate`; application services roll with `--no-deps`; drift is logged, never acted on | harness §2, including a control that the old flow recreates |
+| H3 inline images | 12 inline logos (largest 3.4 MB) and a 1.9 MB inline section image | 1 MiB HTML budget; an API response over it stops the render before rendering (`api response over budget`); a page over it after rendering passes (`html over budget`); the cache is bounded by memory (64 MiB) and never holds an over-budget page; `ssr` gets `mem_limit: 384m` and `--max-old-space-size=256` | `server/ssr/ssr.test.mjs` "size budget"; `tools/ssr-memory/measure.mjs` |
+| H4 zombies | 12,196 zombies, all children of Caddy | `init: true` on `caddy` and `ssr` | harness §6: 10 https probes leave 10 zombies without init, 0 with it; SIGTERM still exits 0 |
+
+**How the budget was derived (measured, not chosen).**
+- **Largest real page:** 106,039 B (Course Details AR, rich fixture).
+- **Inline images multiply:** an inline logo appears **four** times in a page (JSON-LD `Organization.logo`, header, footer and hydration data), and a section image twice. Both counts are asserted by the tests.
+- **The resulting gap:**
+  - production's active Academies (inline logos under 100 KB) stay under about 506 KB;
+  - its logos of 1 MB or more and its 1.9 MB section image produce pages of at least 3.8 MB.
+- **The budget:** 1 MiB is about 2× the former and under a third of the latter. Oversized pages are served by the SPA, exactly as today.
+
+**Memory measurements.** `tools/ssr-memory/measure.mjs` runs the production `server.mjs` in `node:20-alpine` under `--init`, against a mock API. It covers 720 distinct pages, the same pages with about 99 KB inline logos, and 16 oversized Academies.
+
+| Run | Peak memory |
+|---|---|
+| No limit | grows to about 580 MiB (V8 collects lazily when nothing pressures it) |
+| 384 MiB limit, concurrency 16 | 185 MiB |
+| 384 MiB limit, concurrency 64 | 213 MiB |
+
+There was no OOM and no restart under the limit. Two earlier variants failed under a 256 MiB limit, which is what led to the current design:
+- rendering oversized pages before checking them;
+- counting the cache in UTF-8 rather than heap bytes.
+
+**H4 does not change behaviour.**
+- The Caddyfile and routing are untouched.
+- Under init, the real renderer still answers its healthcheck and still passes non-Academy hosts, and SIGTERM exits 0 in 89 ms (95 ms without init).
+- Caddy stays healthy and stops on SIGTERM with exit 0.

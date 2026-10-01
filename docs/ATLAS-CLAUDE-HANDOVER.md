@@ -5,6 +5,14 @@ Written 30 Sep 2026 at the end of a Claude Code session that ran out of credit, 
 Companion file: `atlas-backend/docs/ATLAS-CLAUDE-HANDOVER.md` (backend specifics).
 Source of truth for scope: `Reports/THEME_1_ACADEMY_WEBSITE_PLAN.md` in this repo (the approved plan; phase results in §M–§U).
 
+## ★★★★ Status update — H1–H4 remediation (1 Oct 2026)
+
+The read-only production verification (Step 1, done by the Owner as the execution bridge) found four gates. All four are implemented and verified on this branch; nothing ran in production. Details: `Reports/SSR_ARCHITECTURE_ANALYSIS.md` §15.
+- **Frontend `d7a128d`:** SSR HTML budget of 1 MiB, early cut-off on over-budget API responses, memory-bounded page cache, `tools/ssr-memory/measure.mjs`.
+- **Backend `1b0d3e5`:** real rollback digests; postgres/redis never recreated by a deploy; `init: true` on caddy/ssr; ssr `mem_limit: 384m`; `deploy/test/deploy-script.test.sh` (48 checks) plus a CI job.
+
+**Next:** Step 2 (merge, migrations, deploy) only on the Owner's explicit approval. The Owner should also rotate the `atlas_vps` SSH key that was pasted into chat.
+
 Evidence labels used below:
 - **VERIFIED (session)**: run and observed in this session on the exact commits named in §I.
 - **VERIFIED (static)**: confirmed by reading the code or git in this session; not executed.
