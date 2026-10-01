@@ -4,7 +4,15 @@
  * from start on every row, connection checks out of the way — and no
  * score, verdict or likelihood anywhere.
  */
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
 import { cleanup, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -17,7 +25,12 @@ import InstructorQuizAttemptPage from './pages/InstructorQuizAttemptPage';
 let review: QuizAttemptReview;
 
 vi.mock('./hooks', () => ({
-  useQuizAttemptReview: () => ({ data: review, isLoading: false, error: null, refetch: vi.fn() }),
+  useQuizAttemptReview: () => ({
+    data: review,
+    isLoading: false,
+    error: null,
+    refetch: vi.fn(),
+  }),
   useGradeQuizAttempt: () => ({ mutateAsync: vi.fn(), isPending: false }),
   useInvalidateQuizAttempt: () => ({ mutateAsync: vi.fn(), isPending: false }),
 }));
@@ -32,7 +45,12 @@ vi.mock('@hooks', async (importOriginal) => ({
 
 const t0 = Date.parse('2026-03-01T10:00:00.000Z');
 const iso = (s: number) => new Date(t0 + s * 1000).toISOString();
-const event = (id: string, type: QuizAttemptReview['events'][number]['type'], s: number, counted = false) => ({
+const event = (
+  id: string,
+  type: QuizAttemptReview['events'][number]['type'],
+  s: number,
+  counted = false
+) => ({
   id,
   type,
   counted,
@@ -41,7 +59,9 @@ const event = (id: string, type: QuizAttemptReview['events'][number]['type'], s:
   payload: null,
 });
 
-function makeReview(overrides: Partial<QuizAttemptReview> = {}): QuizAttemptReview {
+function makeReview(
+  overrides: Partial<QuizAttemptReview> = {}
+): QuizAttemptReview {
   return {
     id: 'a1',
     quizId: 'q1',
@@ -79,10 +99,34 @@ function makeReview(overrides: Partial<QuizAttemptReview> = {}): QuizAttemptRevi
     gradedByName: null,
     invalidatedByName: null,
     integrityMode: 'warn',
-    requireFullscreen: false,
+    requireFullscreen: true,
+    maxViolations: 3,
     signals: [
-      { key: 'time_away', level: 'review', occurrences: 1, totalSeconds: 45, longestSeconds: 45, eventIds: ['e2', 'e3'] },
-      { key: 'copy', level: 'info', occurrences: 1, eventIds: ['e5'] },
+      {
+        key: 'time_away',
+        level: 'review',
+        category: 'behaviour',
+        occurrences: 1,
+        totalSeconds: 45,
+        longestSeconds: 45,
+        eventIds: ['e2', 'e3'],
+      },
+      {
+        key: 'connection_gap',
+        level: 'info',
+        category: 'technical',
+        occurrences: 1,
+        totalSeconds: 200,
+        longestSeconds: 200,
+        eventIds: [],
+      },
+      {
+        key: 'copy',
+        level: 'info',
+        category: 'behaviour',
+        occurrences: 1,
+        eventIds: ['e5'],
+      },
     ],
     ...overrides,
   };
@@ -93,7 +137,10 @@ function renderPage(locale: 'en' | 'ar' = 'en') {
     <AtlasLocalizationProvider initialLanguage={locale}>
       <MemoryRouter initialEntries={['/review/c1/q1/a1']}>
         <Routes>
-          <Route path="/review/:courseId/:quizId/:attemptId" element={<InstructorQuizAttemptPage />} />
+          <Route
+            path="/review/:courseId/:quizId/:attemptId"
+            element={<InstructorQuizAttemptPage />}
+          />
         </Routes>
       </MemoryRouter>
     </AtlasLocalizationProvider>
@@ -113,9 +160,33 @@ describe('integrity signals on the attempt review', () => {
     renderPage();
     const worth = screen.getByTestId('integrity-signals-review');
     expect(within(worth).getByText('Quiz page hidden')).toBeTruthy();
-    expect(within(worth).getByText(/The quiz tab was hidden once, for .*0:45/)).toBeTruthy();
-    expect(within(worth).getByText(/Locking the screen, a phone call/)).toBeTruthy();
-    expect(within(screen.getByTestId('integrity-signals-context')).getByText('Copied text')).toBeTruthy();
+    expect(
+      within(worth).getByText(/The quiz tab was hidden once, for .*0:45/)
+    ).toBeTruthy();
+    expect(
+      within(worth).getByText(/Locking the screen, a phone call/)
+    ).toBeTruthy();
+    expect(
+      within(screen.getByTestId('integrity-signals-context')).getByText(
+        'Copied text'
+      )
+    ).toBeTruthy();
+  });
+
+  it('states the policy the attempt ran under, and keeps technical interruptions apart from conduct', () => {
+    renderPage();
+    expect(screen.getByTestId('integrity-policy').textContent).toBe(
+      'This attempt ran in warn mode: the learner was warned from the first recorded event (limit 3 events). Full screen was required.'
+    );
+    const technical = screen.getByTestId('integrity-signals-technical');
+    expect(
+      within(technical).getByText('No contact from the browser')
+    ).toBeTruthy();
+    expect(
+      within(screen.getByTestId('integrity-signals-context')).queryByText(
+        'No contact from the browser'
+      )
+    ).toBeNull();
   });
 
   it('never presents a score, likelihood or verdict', () => {
@@ -129,13 +200,22 @@ describe('integrity signals on the attempt review', () => {
     renderPage();
     expect(document.getElementById('attempt-event-e1')).toBeNull();
     await userEvent.click(
-      within(screen.getByTestId('integrity-signal-time_away')).getByRole('button', { name: 'Show in timeline' })
+      within(screen.getByTestId('integrity-signal-time_away')).getByRole(
+        'button',
+        { name: 'Show in timeline' }
+      )
     );
-    const highlighted = [...document.querySelectorAll('[data-highlighted]')].map((el) => el.id);
+    const highlighted = [
+      ...document.querySelectorAll('[data-highlighted]'),
+    ].map((el) => el.id);
     expect(highlighted).toEqual(['attempt-event-e2', 'attempt-event-e3']);
-    expect(screen.getByText('Highlighted: evidence for “Quiz page hidden”')).toBeTruthy();
+    expect(
+      screen.getByText('Highlighted: evidence for “Quiz page hidden”')
+    ).toBeTruthy();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Show 2 connection checks' }));
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Show 2 connection checks' })
+    );
     expect(document.getElementById('attempt-event-e1')).toBeTruthy();
   });
 
@@ -148,7 +228,9 @@ describe('integrity signals on the attempt review', () => {
   it('nothing stood out → says so plainly', () => {
     review = makeReview({ signals: [] });
     renderPage();
-    expect(screen.getByText('Nothing in this attempt’s timeline stood out.')).toBeTruthy();
+    expect(
+      screen.getByText('Nothing in this attempt’s timeline stood out.')
+    ).toBeTruthy();
   });
 
   it('integrity off → no signals panel at all', () => {

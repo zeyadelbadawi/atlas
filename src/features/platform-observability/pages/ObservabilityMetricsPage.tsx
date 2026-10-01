@@ -27,6 +27,7 @@ import {
   RangeSelect,
   SeriesChart,
   SourceNotice,
+  WebVitalsPanel,
 } from '../components';
 import {
   REFRESH_INTERVAL_MS,
@@ -227,6 +228,8 @@ export default function ObservabilityMetricsPage(): JSX.Element {
         ) : null
       }
     >
+      <WebVitalsPanel />
+
       <div className="flex flex-wrap items-end gap-3">
         <RangeSelect value={range} onChange={setRange} />
       </div>

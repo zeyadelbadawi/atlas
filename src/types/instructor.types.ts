@@ -176,6 +176,8 @@ export interface QuizAttemptReview extends QuizAttempt {
   readonly integrityMode: 'off' | 'monitor' | 'warn' | 'strict';
   /** Whether this attempt required full screen (its settings snapshot). */
   readonly requireFullscreen: boolean;
+  /** The event limit in force for this attempt (its settings snapshot). */
+  readonly maxViolations: number;
   /** P5 — explainable signals derived server-side from `events`. Never a score or a verdict. */
   readonly signals: readonly IntegritySignal[];
 }
@@ -196,6 +198,8 @@ export type IntegritySignalKey =
 export interface IntegritySignal {
   readonly key: IntegritySignalKey;
   readonly level: 'review' | 'info';
+  /** `technical`: an interruption or browser limit, not conduct. */
+  readonly category: 'behaviour' | 'technical';
   readonly occurrences: number;
   readonly totalSeconds?: number;
   readonly longestSeconds?: number;

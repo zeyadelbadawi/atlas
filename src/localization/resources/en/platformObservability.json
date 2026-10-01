@@ -461,5 +461,50 @@
         "action": "Resolve now"
       }
     }
+  },
+  "webVitals": {
+    "title": "Real-user performance",
+    "description": "Core Web Vitals from a sample of real visits. Each figure is the 75th percentile (p75): three in four sampled visits were at least this fast. Only the page type and whether the screen is phone-sized are recorded — no addresses, accounts or URLs.",
+    "rangeLabel": "Period",
+    "range": {
+      "24h": "Last 24 hours",
+      "7d": "Last 7 days"
+    },
+    "loading": "Loading real-user measurements…",
+    "empty": "No samples in this period. Collection is off unless the frontend build sets VITE_RUM_SAMPLE_RATE and the API sets RUM_ENABLED=true.",
+    "columns": {
+      "route": "Page type",
+      "device": "Device",
+      "LCP": "LCP · loading",
+      "INP": "INP · responsiveness",
+      "CLS": "CLS · layout stability"
+    },
+    "device": {
+      "mobile": "Phone-sized",
+      "desktop": "Larger screens"
+    },
+    "rating": {
+      "good": "Good",
+      "needs-improvement": "Needs improvement",
+      "poor": "Poor",
+      "too-few-samples": "Too few samples to rate"
+    },
+    "samples_one": "{{formatted}} sample",
+    "samples_other": "{{formatted}} samples",
+    "routes": {
+      "public_home": "Academy site · Home",
+      "public_courses": "Academy site · Course catalog",
+      "public_course": "Academy site · Course details",
+      "public_page": "Academy site · Other pages",
+      "public_auth": "Academy site · Sign in / sign up",
+      "public_learn": "Academy site · Learning",
+      "app_dashboard": "Dashboard",
+      "app_learn": "Learning (course player, quizzes)",
+      "app_builder": "Website builder",
+      "app_instructor": "Instructor",
+      "app_platform": "Platform administration",
+      "app_auth": "Sign in / sign up",
+      "app_other": "Other pages"
+    }
   }
 }

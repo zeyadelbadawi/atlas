@@ -870,6 +870,11 @@ export default function InstructorQuizAttemptPage(): JSX.Element {
         {attempt.integrityMode !== 'off' ? (
           <IntegritySignalsCard
             signals={attempt.signals}
+            policy={{
+              mode: attempt.integrityMode,
+              maxViolations: attempt.maxViolations,
+              requireFullscreen: attempt.requireFullscreen,
+            }}
             formatPart={formatPart}
             highlighted={highlighted?.key ?? null}
             onShowEvidence={setHighlighted}

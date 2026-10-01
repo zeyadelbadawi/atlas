@@ -302,6 +302,7 @@
       "description": "Facts from this attempt’s timeline that a reviewer may want to check, each with the events behind it. They are prompts for a conversation, not proof: Atlas does not decide whether anyone broke the rules, and some ways of breaking them — a phone, another person in the room — leave no trace here.",
       "none": "Nothing in this attempt’s timeline stood out.",
       "reviewHeading": "Worth a look",
+      "technicalHeading": "Technical interruptions",
       "contextHeading": "For context",
       "otherExplanations": "Other explanations",
       "showEvidence": "Show in timeline",
@@ -369,6 +370,16 @@
           "summary_other": "Nothing arrived from the browser {{count}} times, {{total}} in total (longest {{longest}}).",
           "innocent": "A dropped connection, a laptop going to sleep, a closed tab, a battery saver pausing the page."
         }
+      },
+      "policy": {
+        "monitor_one": "This attempt ran in monitor mode: events were recorded silently (limit {{count}} event).",
+        "monitor_other": "This attempt ran in monitor mode: events were recorded silently (limit {{count}} events).",
+        "warn_one": "This attempt ran in warn mode: the learner was warned from the first recorded event (limit {{count}} event).",
+        "warn_other": "This attempt ran in warn mode: the learner was warned from the first recorded event (limit {{count}} events).",
+        "strict_one": "This attempt ran in strict mode: it was to be submitted automatically at {{count}} recorded event.",
+        "strict_other": "This attempt ran in strict mode: it was to be submitted automatically at {{count}} recorded events.",
+        "fullscreenRequired": "Full screen was required.",
+        "fullscreenNotRequired": "Full screen was not required."
       }
     },
     "events": {

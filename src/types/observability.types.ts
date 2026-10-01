@@ -223,3 +223,26 @@ export interface SyntheticAlertState {
   readonly expiresAt: string | null;
   readonly armedBy: string | null;
 }
+
+/* ------------------------- Real-user monitoring (P6) ------------------------ */
+
+export type WebVitalMetric = 'LCP' | 'INP' | 'CLS';
+export type WebVitalsRange = '24h' | '7d';
+
+/** One p75 figure: a metric for one route template on one device class. */
+export interface WebVitalsRow {
+  readonly metric: WebVitalMetric;
+  readonly route: string;
+  readonly device: 'mobile' | 'desktop';
+  /** ms for LCP/INP, unitless for CLS. */
+  readonly p75: number;
+  readonly samples: number;
+  readonly rating: 'good' | 'needs-improvement' | 'poor' | 'too-few-samples';
+}
+
+/** `GET platform-observability/web-vitals`. */
+export interface WebVitalsResponse {
+  readonly state: SourceState;
+  readonly range: WebVitalsRange;
+  readonly rows: readonly WebVitalsRow[];
+}
