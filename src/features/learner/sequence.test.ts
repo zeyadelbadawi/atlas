@@ -54,13 +54,7 @@ function item(
 }
 
 const SEQUENCE: readonly CourseSequenceItem[] = [
-  item({
-    id: 'a',
-    unitNumber: 1,
-    itemNumber: 1,
-    position: 1,
-    state: 'completed',
-  }),
+  item({ id: 'a', unitNumber: 1, itemNumber: 1, position: 1, state: 'completed' }),
   item({
     id: 'b',
     unitNumber: 1,

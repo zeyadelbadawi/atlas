@@ -157,9 +157,7 @@ export default function CourseCheckoutPage(): JSX.Element {
         {header}
         <Card>
           <CardHeader>
-            <CardTitle as="h2">
-              {t('course:checkout.unavailableTitle')}
-            </CardTitle>
+            <CardTitle as="h2">{t('course:checkout.unavailableTitle')}</CardTitle>
             <CardDescription>
               {t('course:checkout.unavailableDescription')}
             </CardDescription>

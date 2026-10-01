@@ -149,12 +149,7 @@ export function findSequenceNeighbours(
     : -1;
 
   if (index < 0) {
-    return {
-      index: -1,
-      current: undefined,
-      previous: undefined,
-      next: undefined,
-    };
+    return { index: -1, current: undefined, previous: undefined, next: undefined };
   }
 
   return {

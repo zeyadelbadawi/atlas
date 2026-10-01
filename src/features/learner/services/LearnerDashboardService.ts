@@ -91,7 +91,10 @@ export class LearnerDashboardService extends BaseService {
 
   /** Revokes one registered device. 204 — the caller re-reads the list. */
   async removeDevice(deviceId: string, options?: WriteOptions): Promise<void> {
-    await this.client.delete<void>(this.path('devices', deviceId), options);
+    await this.client.delete<void>(
+      this.path('devices', deviceId),
+      options
+    );
   }
 
   /**

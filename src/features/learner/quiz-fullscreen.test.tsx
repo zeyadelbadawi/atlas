@@ -206,24 +206,14 @@ describe('QuizFullscreenGate focus', () => {
   it('takes focus when it appears (the questions just disappeared); the unsupported notice does not', () => {
     render(
       <I18nextProvider i18n={createI18nInstance('en')}>
-        <QuizFullscreenGate
-          view="gate"
-          onEnter={vi.fn()}
-          onContinueWithout={vi.fn()}
-        />
+        <QuizFullscreenGate view="gate" onEnter={vi.fn()} onContinueWithout={vi.fn()} />
       </I18nextProvider>
     );
-    expect(document.activeElement).toBe(
-      screen.getByTestId('quiz-fullscreen-gate')
-    );
+    expect(document.activeElement).toBe(screen.getByTestId('quiz-fullscreen-gate'));
     cleanup();
     render(
       <I18nextProvider i18n={createI18nInstance('en')}>
-        <QuizFullscreenGate
-          view="unsupported"
-          onEnter={vi.fn()}
-          onContinueWithout={vi.fn()}
-        />
+        <QuizFullscreenGate view="unsupported" onEnter={vi.fn()} onContinueWithout={vi.fn()} />
       </I18nextProvider>
     );
     expect(document.activeElement).toBe(document.body);

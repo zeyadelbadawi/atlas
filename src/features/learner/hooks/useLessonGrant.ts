@@ -185,8 +185,7 @@ export function useLessonGrant(
   }, [refetch]);
 
   const classified = useMemo(
-    () =>
-      error ? classifyPlayerFailure(error, { sequenceSaysAvailable }) : null,
+    () => (error ? classifyPlayerFailure(error, { sequenceSaysAvailable }) : null),
     [error, sequenceSaysAvailable]
   );
 
@@ -205,8 +204,7 @@ export function useLessonGrant(
    */
   const failure = useMemo<PlayerFailure | null>(() => {
     if (!grant) return classified;
-    if (classified && isAccessRevokedFailure(classified.kind))
-      return classified;
+    if (classified && isAccessRevokedFailure(classified.kind)) return classified;
     if (hasExpired && !isFetching) return { kind: 'expired' };
     return null;
   }, [grant, classified, hasExpired, isFetching]);

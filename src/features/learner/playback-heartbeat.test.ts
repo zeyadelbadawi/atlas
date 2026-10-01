@@ -26,10 +26,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
 import type { PlaybackHeartbeatResponse, PlaybackLease } from '@types';
 
-const recordHeartbeat =
-  vi.fn<
-    (courseId: string, payload: unknown) => Promise<PlaybackHeartbeatResponse>
-  >();
+const recordHeartbeat = vi.fn<
+  (courseId: string, payload: unknown) => Promise<PlaybackHeartbeatResponse>
+>();
 const releaseLease = vi.fn(async () => undefined);
 
 vi.mock('./services/LessonContentService', () => ({

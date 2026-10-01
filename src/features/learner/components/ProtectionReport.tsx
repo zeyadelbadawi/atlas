@@ -160,9 +160,7 @@ export function ProtectionReport({
                   )}
                   <span
                     className={
-                      fact.enforced
-                        ? 'text-foreground'
-                        : 'text-muted-foreground'
+                      fact.enforced ? 'text-foreground' : 'text-muted-foreground'
                     }
                   >
                     {t(

@@ -36,7 +36,10 @@ export class LessonContentService extends BaseService {
   protected readonly resource = 'learning';
 
   /** Builds a path inside one course's learner tree. */
-  private coursePath(courseId: string, ...segments: readonly string[]): string {
+  private coursePath(
+    courseId: string,
+    ...segments: readonly string[]
+  ): string {
     return this.path('courses', courseId, ...segments);
   }
 

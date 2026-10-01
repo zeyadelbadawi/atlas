@@ -107,99 +107,77 @@ function open(protection: ContentProtectionReport): void {
 afterEach(cleanup);
 
 describe('protection report', () => {
-  it(
-    'says plainly that Premium playback is not bound to the device',
-    () => {
-      open(PREMIUM);
+  it('says plainly that Premium playback is not bound to the device', () => {
+    open(PREMIUM);
 
-      expect(screen.getByText(/not tied to this device/i)).toBeTruthy();
-      expect(screen.getByText(/does not re-check your sign-in/i)).toBeTruthy();
-      expect(
-        screen.getByText(/cannot be withdrawn before the link expires/i)
-      ).toBeTruthy();
-    },
-    RENDER_TIMEOUT
-  );
+    expect(
+      screen.getByText(/not tied to this device/i)
+    ).toBeTruthy();
+    expect(
+      screen.getByText(/does not re-check your sign-in/i)
+    ).toBeTruthy();
+    expect(
+      screen.getByText(/cannot be withdrawn before the link expires/i)
+    ).toBeTruthy();
+  }, RENDER_TIMEOUT);
 
-  it(
-    'reports the Normal tier as the stronger one where it actually is',
-    () => {
-      open(NORMAL);
+  it('reports the Normal tier as the stronger one where it actually is', () => {
+    open(NORMAL);
 
-      expect(
-        screen.getByText(/re-checks your sign-in on every request/i)
-      ).toBeTruthy();
-      expect(
-        screen.getByText(/re-checks this device on every request/i)
-      ).toBeTruthy();
-      expect(screen.getByText(/can be withdrawn immediately/i)).toBeTruthy();
-    },
-    RENDER_TIMEOUT
-  );
+    expect(
+      screen.getByText(/re-checks your sign-in on every request/i)
+    ).toBeTruthy();
+    expect(
+      screen.getByText(/re-checks this device on every request/i)
+    ).toBeTruthy();
+    expect(
+      screen.getByText(/can be withdrawn immediately/i)
+    ).toBeTruthy();
+  }, RENDER_TIMEOUT);
 
-  it(
-    'never renders a marketing verdict on either tier',
-    () => {
-      for (const protection of [PREMIUM, NORMAL]) {
-        open(protection);
+  it('never renders a marketing verdict on either tier', () => {
+    for (const protection of [PREMIUM, NORMAL]) {
+      open(protection);
 
-        const text = document.body.textContent ?? '';
-        expect(text).not.toMatch(/\bsecure\b/i);
-        expect(text).not.toMatch(/\bsafe\b/i);
-        expect(text).not.toMatch(/piracy/i);
-        // "protected" may appear nowhere as a verdict either — the tiers are
-        // named by how they are delivered, not by how good they are.
-        expect(text).toMatch(
-          /self-managed delivery|platform-managed delivery/i
-        );
+      const text = document.body.textContent ?? '';
+      expect(text).not.toMatch(/\bsecure\b/i);
+      expect(text).not.toMatch(/\bsafe\b/i);
+      expect(text).not.toMatch(/piracy/i);
+      // "protected" may appear nowhere as a verdict either — the tiers are
+      // named by how they are delivered, not by how good they are.
+      expect(text).toMatch(/self-managed delivery|platform-managed delivery/i);
 
-        cleanup();
-      }
-    },
-    RENDER_TIMEOUT
-  );
+      cleanup();
+    }
+  }, RENDER_TIMEOUT);
 
-  it(
-    'states the absence of DRM on every grant',
-    () => {
-      for (const protection of [PREMIUM, NORMAL]) {
-        open(protection);
+  it('states the absence of DRM on every grant', () => {
+    for (const protection of [PREMIUM, NORMAL]) {
+      open(protection);
 
-        expect(screen.getByText(/no DRM/i)).toBeTruthy();
-        expect(screen.getByText(/prevents screen recording/i)).toBeTruthy();
+      expect(screen.getByText(/no DRM/i)).toBeTruthy();
+      expect(screen.getByText(/prevents screen recording/i)).toBeTruthy();
 
-        cleanup();
-      }
-    },
-    RENDER_TIMEOUT
-  );
+      cleanup();
+    }
+  }, RENDER_TIMEOUT);
 
-  it(
-    'tells the learner when the academy does not host the content at all',
-    () => {
-      open(EXTERNAL);
+  it('tells the learner when the academy does not host the content at all', () => {
+    open(EXTERNAL);
 
-      expect(
-        screen.getByText(/links to this content rather than hosting it/i)
-      ).toBeTruthy();
-      // None of the per-capability claims may appear for an external embed:
-      // there is nothing there for them to be true of.
-      expect(screen.queryByText(/re-checks this device/i)).toBeNull();
-      expect(screen.queryByText(/watermark/i)).toBeNull();
-    },
-    RENDER_TIMEOUT
-  );
+    expect(screen.getByText(/links to this content rather than hosting it/i)).toBeTruthy();
+    // None of the per-capability claims may appear for an external embed:
+    // there is nothing there for them to be true of.
+    expect(screen.queryByText(/re-checks this device/i)).toBeNull();
+    expect(screen.queryByText(/watermark/i)).toBeNull();
+  }, RENDER_TIMEOUT);
 
-  it(
-    'shows the credential’s real remaining life, not an optimistic one',
-    () => {
-      open(NORMAL);
+  it('shows the credential’s real remaining life, not an optimistic one', () => {
+    open(NORMAL);
 
-      // 600 seconds is ten minutes, and that is what a learner is told —
-      // finding D-3 is the case where an optimistic figure was printed
-      // instead of the real one.
-      expect(screen.getByText(/about 10 minutes/i)).toBeTruthy();
-    },
-    RENDER_TIMEOUT
-  );
+    // 600 seconds is ten minutes, and that is what a learner is told —
+    // finding D-3 is the case where an optimistic figure was printed
+    // instead of the real one.
+    expect(screen.getByText(/about 10 minutes/i)).toBeTruthy();
+  }, RENDER_TIMEOUT);
 });

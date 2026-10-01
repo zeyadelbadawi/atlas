@@ -34,8 +34,7 @@ vi.mock('@features/notifications', async (importOriginal) => {
   const actual = await importOriginal<Record<string, unknown>>();
   return {
     ...actual,
-    useNotifications: (options: unknown) =>
-      useNotifications(options) as unknown,
+    useNotifications: (options: unknown) => useNotifications(options) as unknown,
     useNotificationSummary: () => useNotificationSummary() as unknown,
     useMarkNotificationRead: () => ({
       mutate: markRead,
@@ -134,12 +133,7 @@ function listOf(items: readonly Notification[]) {
   return {
     data: {
       items,
-      pagination: {
-        page: 1,
-        pageSize: 20,
-        totalItems: items.length,
-        totalPages: 1,
-      },
+      pagination: { page: 1, pageSize: 20, totalItems: items.length, totalPages: 1 },
     },
     isLoading: false,
     error: null,
@@ -154,9 +148,7 @@ afterEach(() => {
 
 describe('learner notifications', () => {
   it('is a navigation section, but not one of the four bottom-bar items', () => {
-    const item = LEARNER_NAVIGATION.find(
-      (entry) => entry.id === 'notifications'
-    );
+    const item = LEARNER_NAVIGATION.find((entry) => entry.id === 'notifications');
     expect(item?.path).toBe('/my/notifications');
     expect(item?.labelKey).toBe('learning:learnerDashboard.nav.notifications');
   });
@@ -170,11 +162,7 @@ describe('learner notifications', () => {
     renderLearner('/my/notifications');
 
     expect(
-      await screen.findByRole(
-        'heading',
-        { level: 1, name: 'Notifications' },
-        LAZY_CHUNK_TIMEOUT
-      )
+      await screen.findByRole('heading', { level: 1, name: 'Notifications' }, LAZY_CHUNK_TIMEOUT)
     ).toBeTruthy();
     // Scoped to the notifications list: the learner shell's navigation is
     // also a list, so an unscoped `listitem` query matches its items too.
@@ -182,9 +170,7 @@ describe('learner notifications', () => {
     const [row] = within(list).getAllByRole('listitem');
     expect(row!.textContent).toContain('Certificate issued');
     expect(
-      within(row!)
-        .getByRole('link', { name: /View Details/ })
-        .getAttribute('href')
+      within(row!).getByRole('link', { name: /View Details/ }).getAttribute('href')
     ).toBe('/my/certificates');
   });
 
@@ -202,9 +188,7 @@ describe('learner notifications', () => {
       LAZY_CHUNK_TIMEOUT
     );
     expect(bell.getAttribute('href')).toBe('/my/notifications');
-    expect(screen.getByTestId('learner-notification-badge').textContent).toBe(
-      '3'
-    );
+    expect(screen.getByTestId('learner-notification-badge').textContent).toBe('3');
   });
 
   it('keeps the /ar prefix on the bell and on every action link', async () => {
@@ -217,15 +201,9 @@ describe('learner notifications', () => {
 
     renderLearner('/my/notifications', 'ar');
 
-    await screen.findByRole(
-      'heading',
-      { level: 1, name: 'الإشعارات' },
-      LAZY_CHUNK_TIMEOUT
-    );
+    await screen.findByRole('heading', { level: 1, name: 'الإشعارات' }, LAZY_CHUNK_TIMEOUT);
 
-    const hrefs = screen
-      .getAllByRole('link')
-      .map((link) => link.getAttribute('href'));
+    const hrefs = screen.getAllByRole('link').map((link) => link.getAttribute('href'));
     expect(hrefs).toContain('/ar/my/courses/c-1');
     expect(hrefs).toContain('/ar/my/notifications');
     for (const href of hrefs) {

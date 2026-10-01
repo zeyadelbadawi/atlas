@@ -209,15 +209,9 @@ export function PlayerActionBar({
         >
           <div className="flex items-start gap-3">
             {courseCompletion.isCourseComplete ? (
-              <GraduationCap
-                className="mt-0.5 size-5 shrink-0 text-success"
-                aria-hidden
-              />
+              <GraduationCap className="mt-0.5 size-5 shrink-0 text-success" aria-hidden />
             ) : (
-              <ListChecks
-                className="mt-0.5 size-5 shrink-0 text-muted-foreground"
-                aria-hidden
-              />
+              <ListChecks className="mt-0.5 size-5 shrink-0 text-muted-foreground" aria-hidden />
             )}
             <div className="space-y-1">
               <h2 className="text-sm font-semibold text-foreground">
@@ -253,7 +247,9 @@ export function PlayerActionBar({
               </Button>
             ) : null}
             <Button
-              variant={courseCompletion.isCourseComplete ? 'ghost' : 'default'}
+              variant={
+                courseCompletion.isCourseComplete ? 'ghost' : 'default'
+              }
               asChild
             >
               <Link to={courseCompletion.courseHref}>
