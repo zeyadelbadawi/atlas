@@ -25,6 +25,7 @@ import {
   Lightbulb,
   Palette,
   Quote,
+  RotateCw,
   Shapes,
   Star,
   UserRound,
@@ -35,7 +36,10 @@ import {
   usePublicCourses,
   usePublicWebsiteStatistics,
 } from '@hooks';
-import { MIN_COURSE_CATEGORIES } from '../constants/website.constants';
+import {
+  MAX_SELECTED_COURSES,
+  MIN_COURSE_CATEGORIES,
+} from '../constants/website.constants';
 import { PUBLIC_WEBSITE_LOCALE_DIRECTION } from '../constants/locale.constants';
 import { useWebsiteTestimonialEntries } from '../hooks';
 import { ThemeImage, hasRenderableImage } from '../theme-assets';
@@ -69,6 +73,23 @@ function PreviewNote({ children }: { readonly children: string }) {
         {children}
       </p>
     </T1Section>
+  );
+}
+
+/**
+ * A live section whose data could not be loaded. Never presented as "no
+ * data": on the public site the section is left out (it makes no claim),
+ * and a preview says plainly that the live data failed to load.
+ */
+function LiveDataUnavailable({
+  linkRenderer,
+}: {
+  readonly linkRenderer: unknown;
+}): JSX.Element | null {
+  const { t } = useTranslation();
+  if (linkRenderer) return null;
+  return (
+    <PreviewNote>{t('website:theme1.liveData.previewUnavailable')}</PreviewNote>
   );
 }
 
@@ -138,8 +159,11 @@ export function T1CourseCategories({
   const { t } = useTranslation();
   const { locale } = usePublicWebsiteLocale();
   const headingId = useId();
-  const { data, isLoading } = usePublicCourseCategories(academyId);
+  const { data, isLoading, isError } = usePublicCourseCategories(academyId);
   if (isLoading) return null;
+  if (isError && !data) {
+    return <LiveDataUnavailable linkRenderer={linkRenderer} />;
+  }
   const categories = (data ?? []).slice(0, config.maxItems);
   if (categories.length < MIN_COURSE_CATEGORIES) {
     return linkRenderer ? null : (
@@ -243,15 +267,29 @@ export function T1FeaturedCourses({
   const { t } = useTranslation();
   const { locale } = usePublicWebsiteLocale();
   const headingId = useId();
-  const { data, isLoading } = usePublicCourses(academyId, {
-    query: { pagination: { page: 1, pageSize: Math.max(config.count, 1) } },
+  // "Selected": exactly the courses the Owner picked, in their order (the
+  // public endpoint returns only published, public ones). With nothing
+  // picked yet it shows the latest courses, as it always has.
+  const selectedIds =
+    config.mode === 'selected' && config.courseIds?.length
+      ? config.courseIds.slice(0, MAX_SELECTED_COURSES)
+      : undefined;
+  const { data, isLoading, isError, refetch } = usePublicCourses(academyId, {
+    query: selectedIds
+      ? {
+          pagination: { page: 1, pageSize: selectedIds.length },
+          filters: { ids: selectedIds.join(',') },
+        }
+      : { pagination: { page: 1, pageSize: Math.max(config.count, 1) } },
   });
-  const courses =
-    config.mode === 'selected' && config.courseIds
-      ? (data?.items ?? []).filter((course) =>
-          config.courseIds!.includes(course.id)
-        )
-      : (data?.items ?? []);
+  const fetched = data?.items ?? [];
+  const courses = selectedIds
+    ? selectedIds
+        .map((id) => fetched.find((course) => course.id === id))
+        .filter((course): course is NonNullable<typeof course> => !!course)
+        .slice(0, Math.max(config.count, 1))
+    : fetched;
+  const failed = isError && !data;
   const catalogHref = linkRenderer ? resolveCatalogHref(pages) : undefined;
   const contactPage = pages.find((page) => page.coreType === 'contact');
   const contactHref =
@@ -264,7 +302,7 @@ export function T1FeaturedCourses({
         title={resolveLocalizedText(config.title, locale)}
         description={resolveLocalizedText(config.description, locale)}
         action={
-          catalogHref && courses.length > 0 ? (
+          catalogHref && courses.length > 0 && !failed ? (
             <T1Link
               href={catalogHref}
               linkRenderer={linkRenderer}
@@ -281,6 +319,28 @@ export function T1FeaturedCourses({
           {Array.from({ length: 3 }).map((_, index) => (
             <T1CourseCardSkeleton key={index} />
           ))}
+        </div>
+      ) : failed ? (
+        // A failed request is not "no courses": say so, offer a retry,
+        // and never claim the Academy's courses are still to come.
+        <div
+          data-courses-error=""
+          className="t1-card flex flex-col items-center gap-4 px-6 py-12 text-center"
+        >
+          <p className="font-display text-xl font-bold text-[var(--website-foreground)]">
+            {t('website:theme1.courses.errorTitle')}
+          </p>
+          <p className="text-[var(--website-foreground-muted)]">
+            {t('website:theme1.courses.errorDescription')}
+          </p>
+          <button
+            type="button"
+            className="t1-btn-secondary"
+            onClick={() => void refetch()}
+          >
+            <RotateCw className="size-4" aria-hidden />
+            {t('website:theme1.catalog.retry')}
+          </button>
         </div>
       ) : courses.length === 0 ? (
         // The designed empty state (§C.1 #4): "courses launching soon".
@@ -346,10 +406,13 @@ export function T1Instructors({
   const { t } = useTranslation();
   const { locale } = usePublicWebsiteLocale();
   const headingId = useId();
-  const { data, isLoading } = usePublicCourses(academyId, {
+  const { data, isLoading, isError } = usePublicCourses(academyId, {
     query: { pagination: { page: 1, pageSize: 50 } },
   });
   if (isLoading) return null;
+  if (isError && !data) {
+    return <LiveDataUnavailable linkRenderer={linkRenderer} />;
+  }
 
   // Derived from the real catalog (never a parallel instructor model),
   // with how many published courses each teaches.
@@ -531,10 +594,15 @@ export function T1Statistics({
   const { locale } = usePublicWebsiteLocale();
   const headingId = useId();
   const hasLive = config.items.some((item) => !!item.metric);
-  const { data, isLoading } = usePublicWebsiteStatistics(
+  const { data, isLoading, isError } = usePublicWebsiteStatistics(
     hasLive ? academyId : undefined
   );
   if (hasLive && isLoading) return null;
+  // Live numbers that failed to load are not zeros: rather than show a
+  // partial set as if it were the whole picture, the section steps aside.
+  if (hasLive && isError && !data) {
+    return <LiveDataUnavailable linkRenderer={linkRenderer} />;
+  }
 
   // Live metrics show only real, non-zero numbers; a hand-typed value
   // shows as written (the Owner's own claim).
@@ -696,6 +764,7 @@ function QuoteCard({ item }: { readonly item: QuoteItem }): JSX.Element {
           <ThemeImage
             value={item.avatar}
             sizes="48px"
+            loading="lazy"
             alt=""
             className="size-12 shrink-0 rounded-full object-cover"
           />

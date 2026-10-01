@@ -4,6 +4,8 @@ last_updated: 2026-08-24T00:00:00Z
 
 # Requirements & Progress
 
+> **Update, 1 Oct 2026.** The public Academy website now ships **Theme 1 (Modern Education)** as the only selectable theme; Themes 2–5 are retired from selection but still render for the 18 websites that use them. Record, production evidence and open items: `Reports/THEME_1_ACADEMY_WEBSITE_PLAN.md` §Z. Entries below that describe five selectable themes (e.g. US-54) are historical.
+
 ## Requirements Overview
 
 Prompt 3 Part A - Platform Core Completion

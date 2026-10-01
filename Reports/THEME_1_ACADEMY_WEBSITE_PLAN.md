@@ -1,6 +1,7 @@
 # Theme 1 ("Modern Education") — Academy Website Redesign Plan
 
-Status: **v2.1, approved for implementation (29 Sep 2026). Phases 0–6 complete and approved (§M–§S). Phase 7 complete (§T), awaiting the Owner's approval; Phases 8–9 not started.**
+Status (1 Oct 2026, current): **Theme 1 is in production** (frontend `main` `0f4a21f`, Gate E; backend `main` `3053b3b`, Gates B/C). The final audit's remediation (F-1–F-14) and the logo → Home link are implemented on `claude/practical-wozniak-pjcdhe`, uncommitted and awaiting the Owner's review. SSR is off; the single-page app's ≈ 3.0 s LCP is accepted as a documented limitation. Production-complete is the Owner's decision — see **§Z**.
+Earlier status line (29 Sep 2026, kept as history): v2.1, approved for implementation. Phases 0–6 complete and approved (§M–§S). Phase 7 complete (§T), awaiting the Owner's approval; Phases 8–9 not started.
 Scope:
 - Turn Theme 1 into a complete, launch-ready academy website that every Academy receives automatically.
 - Build the architecture so Themes 2–5 can later get their own identity and page composition.
@@ -2365,3 +2366,130 @@ The Owner created the private bucket `atlas-theme-sources` (no public access, no
 | Idempotency | a second full run gives 24 × "already archived"; 0 objects changed (ETag, timestamp, size) |
 | Overwrite guards | a wrong master is refused (sha256); a different provenance for an archived key is refused ("archive a new version"); 0 objects changed |
 | **Bucket Lock** | **Enabled by the Owner in the dashboard** after approving this archive. The object token cannot read lock rules (`GetObjectLockConfiguration` 403; R2 Bucket Lock is not S3 Object Lock), so the lock is Owner-confirmed. After the lock, a read-only re-audit found 24/24 objects byte-identical with 0 changes, and `verify-archive` passed 12/12 |
+
+## Z. Production deployment record and closure remediation (recorded 1 Oct 2026)
+
+This section records what reached production, the Owner's decisions, and the remediation of the final production-readiness audit. Earlier sections are kept as written; where they describe a state that has since changed (e.g. "migrations pending", "`main` not touched", "Phase 7 awaiting approval"), this section supersedes them.
+
+Evidence labels: **VERIFIED** = observed by Claude (repository, GitHub API, local runs); **OWNER-RUN** = read-only VPS output the Owner ran and pasted, compared by Claude; **OWNER-MANUAL** = the Owner's own browser checks; **NOT VERIFIED** = no evidence yet.
+
+### Z.1 What is in production
+
+| Gate | Record | Evidence |
+|---|---|---|
+| A | Backup `atlas-20261001T070325Z.sql.gz`; first valid `.last-good` (bootstrap) | OWNER-RUN |
+| B | Backend `zeyadelbadawi/atlas-backend#16` merged → `main` `3053b3b` | VERIFIED |
+| C | Deploy run #231 (`migrate-and-deploy`): `20261024000000_website_template_provenance` and `20261030000000_public_website_presentation` applied (132 / 0 unfinished); backup `atlas-20261001T105333Z.sql.gz`; backend `atlas-backend@sha256:5f49760b…` | VERIFIED (run) + OWNER-RUN (C-POST) |
+| E | Frontend `zeyadelbadawi/atlas#11` merged → `main` `0f4a21f` (parents `4a3f5f6`, `443e456`; tree = `443e456`). Deploy run #128: frontend image 20 m 48 s, **first CI build of the SSR image** 2 m 28 s, `deploy.sh --frontend-only` 18 s — Caddy only, now `atlas-frontend@sha256:cb1d0469…` | VERIFIED (run, log) + OWNER-RUN (E-PRE/E-POST) |
+
+**After Gate E (OWNER-RUN, E-POST):**
+- **Containers:** Caddy is a new container, healthy, `init=true`. Backend, postgres, redis, prometheus and alertmanager keep the same container IDs and start times.
+- **SSR:** `ATLAS_SSR` is unset; 0 `ssr` containers; 0 zombies.
+- **Database:** identical to before:
+  - 30 website configurations: 12 `modern-education`, 9 `bold-creative`, 6 `corporate-learning`, 2 `minimal-editorial`, 1 `premium-academy`;
+  - 24 published / 6 draft;
+  - Academies 24 draft / 6 archived / 3 active;
+  - 0 template values.
+- **Edge:** security headers match the baseline. Six public URLs return 200 with CSP and no `x-atlas-ssr`. The entry script returns 200. The retired-theme host still resolves `bold-creative`.
+- **Errors:** 0 in backend and Caddy.
+- **Rollback record:** `.last-good` = backend `5f49760b…` + Caddy `cb1d0469…`. `.last-good.after-gate-c` (Caddy `814cfcc3…`) is preserved, and `814cfcc3…` is still in GHCR (no longer stored locally, so a rollback pulls it).
+- **Same build:** the production entry chunk `index-DMGViHHL.js` equals a local build of `443e456` (VERIFIED).
+
+**OWNER-MANUAL:** all seven Gate E browser checks passed. They covered:
+- the Theme tab on Theme 1 and retired-theme sites;
+- retired-theme and Theme 1 public pages;
+- Arabic RTL;
+- sign-in and sign-out;
+- the builder;
+- DevTools (no console errors, failed requests or CSP violations).
+
+### Z.2 Owner decisions (1 Oct 2026)
+
+- **Performance (criterion 8):** the single-page app's lab LCP of ≈ 3.0 s (`baselines/lighthouse-ssr-comparison.json`, mobile, simulated) is **accepted as a documented limitation**.
+  - The 2.5 s target is **not met** for the single-page app.
+  - The SSR figures (EN ≈ 2.25 s) are separate evidence and are not in production.
+  - SSR stays off. Enabling it (Gate H) is a separate, optional decision, not a condition of Theme 1's closure.
+- **F-1 production check** (OWNER-RUN, read-only):
+  - published, visible pages using FAQ/testimonial `libraryEntryIds`: **0** (across **0** Academies);
+  - entries in the library: 1 FAQ and 1 testimonial.
+
+### Z.3 Audit findings and their remediation
+
+The remediation is on `claude/practical-wozniak-pjcdhe` in both repositories, **uncommitted, not merged, not deployed**.
+
+| # | Finding | Status | Change (files) | Evidence |
+|---|---|---|---|---|
+| F-1 | FAQ/testimonial library entries are read from a management-only endpoint on the public site | **Not applicable to current production use** (0 pages use it). The limitation remains: entries attached later would not show to visitors. A future fix should expand published entries server-side or add a public read; it must not open the management endpoint. | none | OWNER-RUN query |
+| F-2 | Links to hidden pages were inert controls | Fixed | `T1Link` and the header, footer and section actions render nothing on the public site when the target doesn't resolve; footer groups left empty are dropped; previews unchanged | `theme1-remediation.test.tsx` |
+| F-3 | Unknown or unpublished course showed a connection error | Fixed | Theme 1 shows its "page not found"; the page is `noindex`; real failures say "Something went wrong" with a retry (`T1CourseDetails`, `PublicWebsitePage`) | unit tests |
+| F-4 | Featured Courses "selected" had no picker and filtered the latest N | Fixed (Theme 1) | Editor picker of published, public courses in pick order, capped at 12, which flags picks that are no longer eligible (`SectionConfigForm`). Theme 1 fetches the `ids` in pick order; with nothing picked it shows the latest courses as before. The shared/legacy `FeaturedCoursesSection` is unchanged. | `featured-courses-picker.test.tsx`, `theme1-remediation.test.tsx` |
+| F-5 | Live sections showed API failure as "empty" or "launching soon" | Fixed (Theme 1) | Featured Courses shows an error with a retry. Categories, instructors and statistics leave the section out publicly, and previews say the live data failed to load. | unit tests |
+| F-6 | One h1 per page was not guaranteed | Fixed (Theme 1) | `PageHeadingContext`: one page-opening section owns the h1, others render h2 (same look); a Home page with no hero gets an sr-only h1 with the Academy name | unit tests |
+| F-7 | Skip link target wrapped the header | Fixed | The target is now `<main id="main-content" tabindex="-1">` on the public site only; the wrapper `div`s are removed (`WebsiteChrome`, `PublicWebsitePage`). This shared runtime change is an accessibility fix with no visual change. | unit + browser (`logo-home.spec.ts`) |
+| F-8 | Public contact endpoint abuse | Fixed | Backend: `@Throttle` 5 per 10 min per IP; `company` honeypot (filled → same 201, nothing stored); published websites only (else 404). Frontend: hidden honeypot field and `maxLength` 200/320/5000. | backend specs (58); unit tests |
+| F-9 | Stale documentation | Fixed | This section, both handovers, retirement §5, the SSR report §14 note, `PROGRESS.md`, `ARCHITECTURE.md` note | — |
+| F-10 | Owner-uploaded images not lazy | Fixed (Theme 1) | `ThemeImage` takes an opt-in `loading`. Theme 1: lazy + `decoding=async`; hero images eager + `fetchpriority=high`. Legacy sections pass nothing, so their markup is unchanged. | unit tests |
+| F-11 | Public student count included inactive and blocked students | Fixed | `countActiveForAcademy` (`status: 'active'`, `blockedAt: null`), matching the access rules. The admin dashboard count is unchanged. Public numbers may drop. | backend spec |
+| F-12 | One-way switch from a retired theme was not explained | Fixed | Theme tab notice plus a confirmation dialog (draft only; can't switch back). No new technical restriction: the backend already accepts only `modern-education`. | `website-theme-tab-retired.test.tsx` |
+| F-13 | Starter copy asserted unverified facts | Fixed (new websites only) | 40 EN+AR strings made neutral; a spec bans the old claims; stored content untouched | backend template spec |
+| F-14 | Test/CI reliability | Fixed, with a limitation | Root cause of the Vitest `onTaskUpdate` timeout: nwsapi 2.2.27 recurses until stack overflow on `:modal`, which Floating UI checks on every popover position update. `src/test/setup-jsdom.ts` answers jsdom's top-layer pseudo-classes (`false`, the same answer); `protection-report.test.tsx` 309 s → 3.9 s, full suite exit 0. New `.github/workflows/ci.yml` (lint, unit tests, both builds, SSR tests; axe/retirement/identity/palette/logo browser checks; never deploys). Two website-test type errors fixed. **Limitation:** 29 type errors remain, all in platform Zoom / add-ons / tenant (not the public website), so typecheck is not yet a CI gate. Screenshot baselines are compared locally on the pinned Chromium, not in CI. | runs below |
+
+**New feature — Academy logo → Home.**
+- **Where:** the header logo (one element at every breakpoint) and the footer logo.
+- **Target:** this Academy's Home, locale-aware (`/` or `/ar`). The link's accessible name is "{Academy} home" / "الصفحة الرئيسية لـ {Academy}". It has a visible focus ring and `aria-current="page"` on Home.
+- **Not a link** while Home isn't a visible page.
+- **Previews:** a button that opens Home in the preview.
+- **Tests:** unit tests, plus browser tests at 1440 and 390, EN and AR (`e2e/theme-baseline/logo-home.spec.ts`).
+
+**Legacy Themes 2–5:**
+- No legacy theme definition, pack, section renderer or stored data changed.
+- Their screenshot, axe and retirement baselines pass unchanged (Z.5).
+- Two shared-runtime changes reach every theme invisibly: the skip-link target (F-7) and `noindex` on missing courses (F-3).
+
+### Z.4 Phase 9 QA evidence
+
+- **Production (existing evidence; not re-run):** Gate E E-PRE/E-POST (Z.1) and the Owner's seven browser checks.
+- **Local, this remediation (production build + fixture server, Chromium 1194):** the full theme-baseline suite passes, **1056/1056**:
+  - 359 axe;
+  - 160 Themes 2–5 retirement;
+  - 9 identity;
+  - 16 palette injection;
+  - **503 screenshots, every committed baseline unchanged, Themes 2–5 included**;
+  - 9 new logo → Home / skip-link tests.
+
+  The first full run caught one regression in this remediation: on Arabic pages the footer's Latin-script Academy name moved to the other side (14 screenshots). It was fixed by keeping the name's own `dir="auto"` paragraph and linking only its text, and the full suite was then re-run.
+- **Supported:**
+  - production visual QA of the deployed build, at the level of the Owner's checks plus E-POST;
+  - local visual, accessibility (axe WCAG 2.2 AA, 0 violations recorded), RTL and retirement matrices at 390/1024/1440.
+- **Not verified:**
+  - widths of 360 and 1920 px (criterion 6);
+  - assistive-technology runs (NVDA/JAWS/VoiceOver, EN and AR);
+  - interaction states axe doesn't scan (open menu, lightbox, form errors);
+  - production Core Web Vitals (no field data);
+  - backend-dependent journeys J1–J8 (need the dev stack and database);
+  - this remediation in production (not deployed).
+- **Decision needed:** whether the evidence above is enough to mark Phase 9 "production visual QA" satisfied with these limitations.
+
+### Z.5 Verification of this remediation (1 Oct 2026)
+
+- **Frontend:**
+  - `pnpm test` exit 0, 163/163 files, 1626/1626 tests (+46 new; was exit 1 on the worker timeout); exit 0 again when run alongside the browser suite under load;
+  - theme-baseline (Playwright, `THEME_BASELINE_CHROMIUM=/opt/pw-browsers/chromium`): 1056/1056 (Z.4);
+  - `pnpm lint` 0;
+  - `pnpm typecheck` exit 2 with 29 errors, all pre-existing and outside the public website (was 31);
+  - `pnpm build` 0; `pnpm build:ssr` 0; `pnpm test:ssr` 67/67.
+- **Backend:**
+  - focused specs 58/58;
+  - `npx jest` (with `ATLAS_FRONTEND_ROOT` set for the two cross-repo suites) 160/160 suites, 4217/4217 tests;
+  - `tsc` 0; eslint on changed files clean.
+
+### Z.6 Open items
+
+1. Review and commit this remediation, then merge and deploy it through the usual gated steps (not authorised yet).
+2. Pre-merge impact check — **done** (OWNER-RUN, read-only, 1 Oct 2026). F-4: 0 published, visible Featured Courses sections use "selected" mode (0 with picked courses, 0 Academies), so no live site's output changes. F-11: **1** published Academy's public student count will drop once deployed, because it has inactive, pending or blocked students. That is the intended correction; tell its Owner if the number is visible to them.
+3. Regenerate `e2e/theme-baseline/fixtures/generated/modern-education.json` from the new starter copy (`npm run fixtures:website-templates`, backend) and re-record the "new Academy" visual baselines after a visual review. Until then those baselines show the previous starter copy.
+4. Fix the 29 type errors (platform Zoom / add-ons / tenant), then make `pnpm typecheck` a CI gate. Re-enable backend CI separately.
+5. Themes 2–5 production migration and code removal: still gated (`THEMES_2_5_RETIREMENT.md` §5).
+6. Gate H (SSR): optional, separate.
+7. Rotate the `atlas_vps` SSH key that was pasted into chat.
+8. Not implemented and not tracked before: the OG image crop of `home-hero` (§E.2).

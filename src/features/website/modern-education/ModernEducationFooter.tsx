@@ -23,6 +23,7 @@ import { useWebsiteContainerClass } from '../renderer/renderer-style.utils';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import {
   isExternalHref,
+  resolvePagePath,
   resolveWebsiteCtaHref,
 } from '../utils/link-resolution.utils';
 import { resolveCatalogHref } from '../utils/catalog-url.utils';
@@ -101,9 +102,12 @@ export function ModernEducationFooter({
   const hasContact =
     !!identity?.contactEmail || !!identity?.contactPhone || !!address;
 
-  const renderFooterLink = (link: WebsiteFooterLink): JSX.Element => {
+  const renderFooterLink = (link: WebsiteFooterLink): JSX.Element | null => {
     const label = resolveLocalizedText(link.label, locale);
     const href = linkRenderer ? resolveWebsiteCtaHref(link, pages) : undefined;
+    // On the public site a link whose target resolves to nothing (a hidden
+    // or deleted page) is left out rather than shown as a dead control.
+    if (linkRenderer && !href) return null;
     if (href) {
       return linkRenderer!({
         href,
@@ -123,12 +127,72 @@ export function ModernEducationFooter({
     );
   };
 
+  /** The links that render here: all in previews, resolvable ones on the public site. */
+  const usableLinks = (links: readonly WebsiteFooterLink[]) =>
+    linkRenderer
+      ? links.filter((link) => !!resolveWebsiteCtaHref(link, pages))
+      : links;
+
   const linkList = (links: readonly WebsiteFooterLink[]) => (
     <ul className="flex flex-col gap-3">
       {links.map((link) => (
         <li key={link.id}>{renderFooterLink(link)}</li>
       ))}
     </ul>
+  );
+
+  const socialLinks = usableLinks(footer.socialLinks);
+  const groups = footer.groups
+    .map((group) => ({ ...group, links: usableLinks(group.links) }))
+    .filter((group) => group.links.length > 0);
+
+  // The logo (or name) leads to this Academy's own Home page, as in the
+  // header — only while Home is a visible page.
+  const homePage = pages.find((page) => page.coreType === 'home');
+  const homeHref =
+    linkRenderer && homePage ? resolvePagePath(homePage) : undefined;
+  const homeLabel = t('website:chrome.homeLink', { name: academyName });
+  const focusClass = 't1-focus rounded-[var(--t1-radius-control)]';
+  /** The logo, or the name, as a link to Home where one is possible. */
+  const homeLink = (children: ReactNode, className: string) =>
+    homeHref ? (
+      linkRenderer!({
+        href: homeHref,
+        external: false,
+        className,
+        ariaLabel: homeLabel,
+        children,
+      })
+    ) : homePage && !linkRenderer ? (
+      <button
+        type="button"
+        className={cn(className, 'text-start')}
+        aria-label={homeLabel}
+        onClick={() => onNavigate(homePage.id)}
+      >
+        {children}
+      </button>
+    ) : (
+      <>{children}</>
+    );
+  // The name keeps its own `dir="auto"` paragraph (its placement in
+  // either reading direction is unchanged); only its text becomes the link.
+  const brandMark = academyLogo ? (
+    homeLink(
+      <img
+        src={academyLogo}
+        alt={academyName}
+        className="h-10 w-auto max-w-[12rem] object-contain"
+      />,
+      cn(focusClass, 'flex w-fit max-w-full')
+    )
+  ) : (
+    <p
+      className="break-words font-display text-xl font-bold text-[var(--website-foreground)]"
+      dir="auto"
+    >
+      {homeLink(academyName, focusClass)}
+    </p>
   );
 
   const currentYear = useCurrentYear();
@@ -145,33 +209,20 @@ export function ModernEducationFooter({
         )}
       >
         <div className="min-w-0 space-y-4 pb-6 sm:pb-0">
-          {academyLogo ? (
-            <img
-              src={academyLogo}
-              alt={academyName}
-              className="h-10 w-auto max-w-[12rem] object-contain"
-            />
-          ) : (
-            <p
-              className="break-words font-display text-xl font-bold text-[var(--website-foreground)]"
-              dir="auto"
-            >
-              {academyName}
-            </p>
-          )}
-          {footer.socialLinks.length > 0 ? (
+          {brandMark}
+          {socialLinks.length > 0 ? (
             <ul
               className="flex flex-wrap gap-x-5 gap-y-2"
               aria-label={t('website:chrome.social')}
             >
-              {footer.socialLinks.map((link) => (
+              {socialLinks.map((link) => (
                 <li key={link.id}>{renderFooterLink(link)}</li>
               ))}
             </ul>
           ) : null}
         </div>
 
-        {footer.groups.map((group) => (
+        {groups.map((group) => (
           <FooterColumn
             key={group.id}
             title={resolveLocalizedText(group.title, locale)}

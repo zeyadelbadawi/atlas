@@ -70,6 +70,12 @@ export const FEATURE_ICON_OPTIONS: readonly string[] = [
 export const DEFAULT_FEATURED_COURSES_COUNT = 6;
 export const DEFAULT_INSTRUCTORS_COUNT = 4;
 export const MAX_SECTION_ITEMS = 12;
+/**
+ * Featured Courses "selected" mode: how many courses an Owner can pick —
+ * the most the section can show (`count` ≤ `MAX_SECTION_ITEMS`), and well
+ * inside the public courses endpoint's 50-id bound.
+ */
+export const MAX_SELECTED_COURSES = MAX_SECTION_ITEMS;
 
 /**
  * P64 Phase 4 §E.1 — `CourseCatalogSection` page-size bounds. The catalog
@@ -88,6 +94,10 @@ export const MAX_FEATURE_SPLIT_ITEMS = 6;
 export const MAX_HERO_HIGHLIGHTS = 4;
 export const MAX_CHIP_TEXT = 40;
 export const MIN_COURSE_CATEGORIES = 2;
+/** The public Contact form's field limits — the backend's `SubmitContactMessageDto` bounds exactly. */
+export const CONTACT_NAME_MAX_LENGTH = 200;
+export const CONTACT_EMAIL_MAX_LENGTH = 320;
+export const CONTACT_MESSAGE_MAX_LENGTH = 5000;
 export const DEFAULT_COURSE_CATEGORIES_COUNT = 8;
 
 /** See `image-value.utils.ts` — mirrors the backend patterns exactly. */

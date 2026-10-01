@@ -209,6 +209,12 @@ export interface CourseFilters {
   readonly priceMin?: number;
   /** Inclusive price bound, in minor units (e.g. cents). */
   readonly priceMax?: number;
+  /**
+   * Exactly these course ids, comma-separated (a Featured Courses block in
+   * "selected" mode). The public catalog bounds it to 50 and still returns
+   * only published, public courses.
+   */
+  readonly ids?: string;
 }
 
 /** Course collection query, narrowing `filters` to the course domain. */

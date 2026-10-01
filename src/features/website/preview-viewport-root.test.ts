@@ -48,9 +48,9 @@ function applyDirectionUnguarded(
 ): boolean {
   const doc = iframe?.contentDocument;
   if (!doc) return false;
-  // @ts-expect-error deliberately reproducing the unguarded access
+  // Deliberately unguarded. It type-checks — the DOM typings declare
+  // `documentElement` non-null — which is how the bug got past review.
   doc.documentElement.setAttribute('dir', dir);
-  // @ts-expect-error deliberately reproducing the unguarded access
   doc.documentElement.setAttribute('lang', lang);
   return true;
 }

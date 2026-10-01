@@ -28,6 +28,7 @@ import { useDisclosure } from '@hooks';
 import { useWebsiteContainerClass } from '../renderer/renderer-style.utils';
 import {
   isExternalHref,
+  resolvePagePath,
   resolveWebsiteCtaHref,
 } from '../utils/link-resolution.utils';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
@@ -97,14 +98,19 @@ export function ModernEducationHeader({
   const direction = PUBLIC_WEBSITE_LOCALE_DIRECTION[locale];
   const items = [...navigation].sort((a, b) => a.order - b.order);
 
-  /** A link when the public runtime can navigate, a button otherwise. */
+  /**
+   * A link when the public runtime can navigate, a button in previews.
+   * On the public site a target that resolves to nothing (a hidden or
+   * deleted page) renders nothing — never a control that does nothing.
+   */
   const renderLink = (
     target: { href?: string; pageId?: string },
     className: string,
     children: React.ReactNode,
-    extra: { current?: boolean; onClick?: () => void } = {}
-  ): JSX.Element => {
-    if (target.href && linkRenderer) {
+    extra: { current?: boolean; onClick?: () => void; label?: string } = {}
+  ): JSX.Element | null => {
+    if (linkRenderer) {
+      if (!target.href) return null;
       return (
         // `contents`: no box of its own; only here to close the sheet
         // when a link inside it is followed.
@@ -114,6 +120,7 @@ export function ModernEducationHeader({
             external: isExternalHref(target.href),
             className,
             ariaCurrent: extra.current ? 'page' : undefined,
+            ariaLabel: extra.label,
             children,
           })}
         </span>
@@ -124,6 +131,7 @@ export function ModernEducationHeader({
         type="button"
         className={className}
         aria-current={extra.current ? 'page' : undefined}
+        aria-label={extra.label}
         onClick={() => {
           if (target.pageId) onNavigate(target.pageId);
           extra.onClick?.();
@@ -140,6 +148,7 @@ export function ModernEducationHeader({
       const href = linkRenderer
         ? resolveWebsiteCtaHref(item, pages)
         : undefined;
+      if (linkRenderer && !href) return null;
       return (
         <li key={item.id}>
           {renderLink(
@@ -268,8 +277,8 @@ export function ModernEducationHeader({
       </div>
     );
 
-  const brandMark = (
-    <div className="flex min-w-0 items-center">
+  const brandContent = (
+    <>
       {logo ? (
         <img
           src={logo}
@@ -285,6 +294,28 @@ export function ModernEducationHeader({
           {academyName}
         </span>
       )}
+    </>
+  );
+  // The logo (or name) leads to this Academy's own Home page — a link
+  // only while Home is among the visible pages, so it never points at a
+  // page the visitor can't open.
+  const homePage = pages.find((page) => page.coreType === 'home');
+  const brandMark = (
+    <div className="flex min-w-0 items-center">
+      {homePage
+        ? renderLink(
+            {
+              href: linkRenderer ? resolvePagePath(homePage) : undefined,
+              pageId: homePage.id,
+            },
+            't1-focus flex min-w-0 items-center rounded-[var(--t1-radius-control)]',
+            brandContent,
+            {
+              current: homePage.id === activePageId,
+              label: t('website:chrome.homeLink', { name: academyName }),
+            }
+          )
+        : brandContent}
     </div>
   );
 

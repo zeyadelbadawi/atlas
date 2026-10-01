@@ -1029,6 +1029,8 @@ engineering trade-off, not an oversight: it is what makes a 6th theme
 addable as one new `WebsiteThemeDefinition` registry entry, not a new set
 of section components.
 
+> Update (1 Oct 2026): Theme 1 now has its own theme pack and section designs, and Themes 2–5 are retired from selection (still rendered for existing sites). See `Reports/THEME_1_ACADEMY_WEBSITE_PLAN.md` §F and §Z.
+
 ### The font-reuse decision
 
 No new web font was loaded. Every theme reuses Atlas's already-loaded

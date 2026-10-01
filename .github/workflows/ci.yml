@@ -1,0 +1,100 @@
+name: CI
+
+# Verification only — this workflow never builds images, never pushes and
+# never deploys (that is `deploy.yml`, on push to `main`, unchanged). It
+# runs on pull requests into `main` and on `main` itself, so a change is
+# checked before it merges and the merged result is checked again.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Lint, unit tests, builds, SSR tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      # Typecheck is not a gate yet: 29 errors predate it, all outside the
+      # public website (platform Zoom / add-ons admin and one tenant test —
+      # `Reports/THEME_1_ACADEMY_WEBSITE_PLAN.md` §Z). Add `pnpm typecheck`
+      # here once those are fixed, rather than gating on a known-red step.
+
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Build (single-page app)
+        run: pnpm build
+
+      - name: Build (public website renderer)
+        run: pnpm build:ssr
+
+      - name: Renderer tests
+        run: pnpm test:ssr
+
+  theme-baseline:
+    name: Public website accessibility & theme checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm exec playwright install --with-deps chromium
+
+      - name: Build the fixture site
+        run: pnpm theme-baseline:build
+
+      # axe (WCAG 2.2 AA + best practice, EN/AR, 390/1440), the Themes 2–5
+      # retirement rendering, the brand-identity audit, palette injection
+      # and the logo → Home navigation. The pixel baselines
+      # (`screenshots.spec.ts`) are not run here: they were recorded with
+      # one Chromium build and fonts, and a CI runner's differ, so they are
+      # compared locally on that pinned browser instead.
+      - name: Theme checks
+        run: >-
+          pnpm exec playwright test
+          --config e2e/theme-baseline/playwright.config.ts
+          axe.spec.ts theme-retirement.spec.ts identity.spec.ts
+          palette-injection.spec.ts logo-home.spec.ts
+
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: theme-baseline-report
+          path: e2e/theme-baseline/.results
+          retention-days: 7

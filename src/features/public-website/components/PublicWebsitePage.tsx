@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { EmptyState } from '@components/feedback';
 import {
+  PUBLIC_WEBSITE_MAIN_ID,
   WebsiteNotFound,
   WebsiteRenderer,
   hasThemeNotFound,
@@ -110,7 +111,11 @@ export function PublicWebsitePage({
     title: academy.academyName,
     description: academy.academyName,
   };
-  const seo =
+  // A course that doesn't exist here (unknown, unpublished or not public —
+  // the public endpoint's 404, returned as `null`) renders a "not found"
+  // page, which search engines must not index.
+  const isMissingCourse = isCourseDetailsPage && course === null;
+  const resolvedSeo =
     isCourseDetailsPage && course
       ? resolveCourseSeo(course, configuration, fallback, locale)
       : page
@@ -126,6 +131,9 @@ export function PublicWebsitePage({
             locale,
             hreflangAlternates: [],
           };
+  const seo = isMissingCourse
+    ? { ...resolvedSeo, indexable: false }
+    : resolvedSeo;
 
   const pagePath =
     isCourseDetailsPage && course
@@ -184,29 +192,27 @@ export function PublicWebsitePage({
     return (
       <>
         <a
-          href="#main-content"
+          href={`#${PUBLIC_WEBSITE_MAIN_ID}`}
           className="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:shadow-lg"
         >
           {t('navigation:skipToContent')}
         </a>
-        <div id="main-content">
-          <WebsiteNotFound
-            academyId={academy.academyId}
-            academyName={academy.academyName}
-            academyLogo={academy.academyLogo}
-            configuration={configuration}
-            pages={pages}
-            onNavigate={onNavigate}
-            linkRenderer={linkRenderer}
-            locale={locale}
-            onLocaleChange={(targetLocale) =>
-              navigate(
-                `${targetLocale === 'en' ? unprefixedPathname : `/ar${unprefixedPathname}`}${location.search}`
-              )
-            }
-            authState={authState}
-          />
-        </div>
+        <WebsiteNotFound
+          academyId={academy.academyId}
+          academyName={academy.academyName}
+          academyLogo={academy.academyLogo}
+          configuration={configuration}
+          pages={pages}
+          onNavigate={onNavigate}
+          linkRenderer={linkRenderer}
+          locale={locale}
+          onLocaleChange={(targetLocale) =>
+            navigate(
+              `${targetLocale === 'en' ? unprefixedPathname : `/ar${unprefixedPathname}`}${location.search}`
+            )
+          }
+          authState={authState}
+        />
       </>
     );
   }
@@ -233,45 +239,43 @@ export function PublicWebsitePage({
   return (
     <>
       <a
-        href="#main-content"
+        href={`#${PUBLIC_WEBSITE_MAIN_ID}`}
         className="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:shadow-lg"
       >
         {t('navigation:skipToContent')}
       </a>
-      <div id="main-content">
-        <WebsiteRenderer
-          academyId={academy.academyId}
-          academyName={academy.academyName}
-          academyLogo={academy.academyLogo}
-          configuration={configuration}
-          pages={pages}
-          page={page}
-          previewCourseId={courseId}
-          locale={locale}
-          onNavigate={onNavigate}
-          linkRenderer={linkRenderer}
-          // Switches locale on the ACTUAL current route (`unprefixedPathname`),
-          // never `pagePath` — `pagePath` is the SEO-canonical path (a
-          // real, pre-existing, deliberate divergence for Course Details:
-          // `seo.canonicalPath` is slug-based, e.g. `/courses/yoga`, for
-          // search engines, while the actual route only ever resolves a
-          // COURSE ID, e.g. `/courses/405cc388-...` —
-          // `resolvePathToPage`'s course-details matcher has no slug
-          // lookup at all). Using `pagePath` here reproduced live as a
-          // real "Unexpected error" the moment a visitor switched locale
-          // from a Course Details page: the slug-based canonical path
-          // isn't a resolvable route. `unprefixedPathname` is always the
-          // literal path the visitor is actually looking at, so switching
-          // locale can never land anywhere it didn't already know how to
-          // render.
-          onLocaleChange={(targetLocale) =>
-            navigate(
-              `${targetLocale === 'en' ? unprefixedPathname : `/ar${unprefixedPathname}`}${location.search}`
-            )
-          }
-          authState={authState}
-        />
-      </div>
+      <WebsiteRenderer
+        academyId={academy.academyId}
+        academyName={academy.academyName}
+        academyLogo={academy.academyLogo}
+        configuration={configuration}
+        pages={pages}
+        page={page}
+        previewCourseId={courseId}
+        locale={locale}
+        onNavigate={onNavigate}
+        linkRenderer={linkRenderer}
+        // Switches locale on the ACTUAL current route (`unprefixedPathname`),
+        // never `pagePath` — `pagePath` is the SEO-canonical path (a
+        // real, pre-existing, deliberate divergence for Course Details:
+        // `seo.canonicalPath` is slug-based, e.g. `/courses/yoga`, for
+        // search engines, while the actual route only ever resolves a
+        // COURSE ID, e.g. `/courses/405cc388-...` —
+        // `resolvePathToPage`'s course-details matcher has no slug
+        // lookup at all). Using `pagePath` here reproduced live as a
+        // real "Unexpected error" the moment a visitor switched locale
+        // from a Course Details page: the slug-based canonical path
+        // isn't a resolvable route. `unprefixedPathname` is always the
+        // literal path the visitor is actually looking at, so switching
+        // locale can never land anywhere it didn't already know how to
+        // render.
+        onLocaleChange={(targetLocale) =>
+          navigate(
+            `${targetLocale === 'en' ? unprefixedPathname : `/ar${unprefixedPathname}`}${location.search}`
+          )
+        }
+        authState={authState}
+      />
     </>
   );
 }

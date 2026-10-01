@@ -11,7 +11,9 @@
  *     designed no-image state; nothing by default).
  *   - Any other value (MediaAsset path, URL, legacy data URL) renders the
  *     plain `<img>` sections always rendered — same attributes, so existing
- *     pages are unchanged.
+ *     pages are unchanged — unless the caller opts into `loading`: then it
+ *     also decodes off the main thread, and an eager (above-the-fold) image
+ *     is fetched at high priority.
  */
 import type { CSSProperties, ReactNode } from 'react';
 import {
@@ -28,6 +30,12 @@ export interface ThemeImageProps {
   /** The rendered width, for choosing a `srcset` candidate. */
   readonly sizes?: string;
   readonly fallback?: ReactNode;
+  /**
+   * For an Owner-uploaded image (not a theme asset): `lazy` below the fold,
+   * `eager` for the page's lead image. Omitted, the `<img>` is exactly as
+   * before (the shared sections don't pass it).
+   */
+  readonly loading?: 'lazy' | 'eager';
 }
 
 export function ThemeImage({
@@ -37,11 +45,24 @@ export function ThemeImage({
   style,
   sizes = '100vw',
   fallback = null,
+  loading,
 }: ThemeImageProps): JSX.Element | null {
   const { locale } = usePublicWebsiteLocale();
   if (!value) return <>{fallback}</>;
   if (!isThemeAssetReference(value)) {
-    return <img src={value} alt={alt} className={className} style={style} />;
+    return loading ? (
+      <img
+        src={value}
+        alt={alt}
+        loading={loading}
+        decoding="async"
+        {...(loading === 'eager' ? { fetchpriority: 'high' } : {})}
+        className={className}
+        style={style}
+      />
+    ) : (
+      <img src={value} alt={alt} className={className} style={style} />
+    );
   }
 
   const asset = resolveThemeAsset(value);
