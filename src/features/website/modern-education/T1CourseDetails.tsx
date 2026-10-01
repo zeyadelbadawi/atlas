@@ -51,6 +51,7 @@ import type { ThemeCourseDetailsProps } from '../theme-packs/theme-pack.types';
 import type { Course } from '@types';
 import { InitialsAvatar, T1Heading, T1Link, formatT1Number } from './t1-parts';
 import { CourseFallbackPattern, T1CourseCard } from './T1CourseCard';
+import { T1NotFound } from './T1SystemPages';
 
 const CONTENT_TYPE_ICON = {
   video: PlayCircle,
@@ -164,6 +165,14 @@ export function T1CourseDetails({
         </div>
       </div>
     );
+  }
+
+  // No such course here — unknown, unpublished or not public (the public
+  // endpoint answers 404, which the service turns into `null`): the
+  // theme's own "page not found", not a connection error (the page is
+  // also marked noindex — `PublicWebsitePage`).
+  if (!error && !course) {
+    return <T1NotFound pages={pages} linkRenderer={linkRenderer} />;
   }
 
   if (error || !course) {
@@ -355,6 +364,8 @@ export function T1CourseDetails({
                           key={instructor.id}
                           src={instructor.avatar}
                           alt=""
+                          loading="lazy"
+                          decoding="async"
                           className="size-9 rounded-full border-2 border-[var(--website-surface)] object-cover"
                         />
                       ) : (
@@ -383,6 +394,7 @@ export function T1CourseDetails({
               <img
                 src={course.thumbnail}
                 alt=""
+                decoding="async"
                 className="size-full object-cover"
               />
             ) : (
@@ -556,6 +568,8 @@ export function T1CourseDetails({
                       <img
                         src={instructor.avatar}
                         alt=""
+                        loading="lazy"
+                        decoding="async"
                         className="size-14 rounded-full object-cover"
                       />
                     ) : (

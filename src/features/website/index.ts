@@ -26,7 +26,10 @@ export type { WebsiteHeaderAuthState } from './renderer/WebsiteHeader';
 // `WebsiteRenderer` builds, extracted so this one other real consumer can
 // reuse it instead of duplicating the wiring — see that component's own
 // doc comment.
-export { WebsiteChrome } from './renderer/WebsiteChrome';
+export {
+  WebsiteChrome,
+  PUBLIC_WEBSITE_MAIN_ID,
+} from './renderer/WebsiteChrome';
 export type { WebsiteChromeProps } from './renderer/WebsiteChrome';
 // Theme 1 plan Phase 6 — theme-owned "page not found" and Coming Soon (a
 // theme without its own renders `null`, and the caller keeps the shared

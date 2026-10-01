@@ -5,6 +5,23 @@ Written 30 Sep 2026 at the end of a Claude Code session that ran out of credit, 
 Companion file: `atlas-backend/docs/ATLAS-CLAUDE-HANDOVER.md` (backend specifics).
 Source of truth for scope: `Reports/THEME_1_ACADEMY_WEBSITE_PLAN.md` in this repo (the approved plan; phase results in §M–§U).
 
+## ★★★★★ Status update — in production; closure remediation pending review (1 Oct 2026). Read this first.
+
+Full record: `Reports/THEME_1_ACADEMY_WEBSITE_PLAN.md` **§Z**. Everything below this section describes earlier states and is kept as history; where it disagrees with §Z, §Z wins.
+
+- **Production:** Gate A (backup), B (backend `main` `3053b3b`), C (2 migrations applied, run #231) and E (frontend `main` `0f4a21f`, run #128, Caddy only) are done and verified (§Z.1).
+  - `ATLAS_SSR` is off, with no `ssr` container.
+  - 18 websites still run on retired Themes 2–5 and render as before.
+- **Rollback:**
+  - `.last-good` = backend `5f49760b…` + Caddy `cb1d0469…`;
+  - `.last-good.after-gate-c` = Caddy `814cfcc3…`, in GHCR, no longer stored locally;
+  - `deploy.sh --check-rollback-record` validates the record read-only;
+  - a rollback needs the Owner's separate approval.
+- **Owner decisions:** the single-page app's ≈ 3.0 s LCP is accepted as a documented limitation; Gate H (SSR) is separate and optional.
+- **Uncommitted on `claude/practical-wozniak-pjcdhe` (both repos):** the audit remediation F-1–F-14 and the logo → Home link (§Z.3), verified locally (§Z.5). Nothing is committed, pushed, merged or deployed.
+- **Next:** the Owner reviews; then commit, the pre-merge read-only query (§Z.6 #2), PR, merge and deploy, each only with explicit approval.
+- **Still open:** rotate the `atlas_vps` SSH key; remove `/home/deploy/step2/deploy.sh` from the VPS.
+
 ## ★★★★ Status update — H1–H4 remediation (1 Oct 2026)
 
 The read-only production verification (Step 1, done by the Owner as the execution bridge) found four gates. All four are implemented and verified on this branch; nothing ran in production. Details: `Reports/SSR_ARCHITECTURE_ANALYSIS.md` §15.

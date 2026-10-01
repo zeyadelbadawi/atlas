@@ -91,7 +91,7 @@ export function usePublicWebsiteLinkRenderer(
 ): WebsiteLinkRenderer {
   const buildHref = usePublicWebsiteHrefBuilder(locale);
 
-  return ({ href, external, className, ariaCurrent, children }) => {
+  return ({ href, external, className, ariaCurrent, ariaLabel, children }) => {
     if (external) {
       return (
         <a
@@ -100,6 +100,7 @@ export function usePublicWebsiteLinkRenderer(
           rel="noopener noreferrer"
           className={className}
           aria-current={ariaCurrent}
+          aria-label={ariaLabel}
         >
           {children}
         </a>
@@ -111,6 +112,7 @@ export function usePublicWebsiteLinkRenderer(
         to={buildHref(href)}
         className={className}
         aria-current={ariaCurrent}
+        aria-label={ariaLabel}
       >
         {children}
       </Link>

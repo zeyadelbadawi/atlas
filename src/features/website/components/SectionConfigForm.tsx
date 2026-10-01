@@ -43,7 +43,10 @@ import {
 import { useWebsiteFaqEntries, useWebsiteTestimonialEntries } from '../hooks';
 import { SECTION_FIELD_SCHEMAS } from '../sections/section-fields.registry';
 import { getSectionConfigSchema } from '../schemas/website-section.schemas';
-import { MAX_SECTION_ITEMS } from '../constants/website.constants';
+import {
+  MAX_SECTION_ITEMS,
+  MAX_SELECTED_COURSES,
+} from '../constants/website.constants';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
 import { useCourses } from '@features/course';
 import { getWebsiteTheme } from '../themes/website-theme.registry';
@@ -189,6 +192,110 @@ function TestimonialLibraryField({
       selectedIds={selectedIds}
       onChange={onChange}
     />
+  );
+}
+
+/**
+ * Featured Courses "selected" mode: the Owner picks which courses show, in
+ * pick order (the public site renders them in that order). Offers only
+ * courses the public site can actually show — published and public — and
+ * names any earlier pick that no longer qualifies, so nothing silently
+ * disappears.
+ */
+function FeaturedCoursesPicker({
+  academyId,
+  selectedIds,
+  onChange,
+}: {
+  readonly academyId: string;
+  readonly selectedIds: readonly string[];
+  readonly onChange: (ids: string[]) => void;
+}): JSX.Element {
+  const { t } = useTranslation();
+  const { data } = useCourses(academyId, {
+    query: {
+      pagination: { page: 1, pageSize: 100 },
+      filters: { status: 'published', visibility: 'public' },
+    },
+  });
+  const options = data?.items ?? [];
+  const unavailable = data
+    ? selectedIds.filter((id) => !options.some((course) => course.id === id))
+    : [];
+  const atLimit = selectedIds.length >= MAX_SELECTED_COURSES;
+
+  const toggle = (id: string, checked: boolean) =>
+    onChange(
+      checked
+        ? [...selectedIds, id]
+        : selectedIds.filter((existing) => existing !== id)
+    );
+
+  return (
+    <div className="space-y-2 border-t border-border pt-4">
+      <p className="text-sm font-medium text-foreground">
+        {t('website:editor.featuredCoursesTitle')}
+      </p>
+      <p className="text-xs text-muted-foreground">
+        {t('website:editor.featuredCoursesHelp')}
+      </p>
+      {data && options.length === 0 ? (
+        <p className="text-sm text-muted-foreground">
+          {t('website:editor.featuredCoursesEmpty')}
+        </p>
+      ) : (
+        <ul className="space-y-2">
+          {options.map((course) => {
+            const position = selectedIds.indexOf(course.id);
+            const checked = position >= 0;
+            return (
+              <li key={course.id}>
+                <label className="flex items-center gap-2 text-sm">
+                  <Checkbox
+                    checked={checked}
+                    disabled={!checked && atLimit}
+                    onCheckedChange={(next) => toggle(course.id, next === true)}
+                  />
+                  <span className="line-clamp-1 flex-1">{course.title}</span>
+                  {checked ? (
+                    <Badge variant="secondary" aria-hidden>
+                      {position + 1}
+                    </Badge>
+                  ) : null}
+                </label>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+      {atLimit ? (
+        <p className="text-xs text-muted-foreground">
+          {t('website:editor.featuredCoursesLimit', {
+            count: MAX_SELECTED_COURSES,
+          })}
+        </p>
+      ) : null}
+      {unavailable.length > 0 ? (
+        <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+          <span>
+            {t('website:editor.featuredCoursesUnavailable', {
+              count: unavailable.length,
+            })}
+          </span>
+          <Button
+            type="button"
+            variant="link"
+            size="sm"
+            className="h-auto p-0 text-xs"
+            onClick={() =>
+              onChange(selectedIds.filter((id) => !unavailable.includes(id)))
+            }
+          >
+            {t('website:editor.featuredCoursesRemoveUnavailable')}
+          </Button>
+        </div>
+      ) : null}
+    </div>
   );
 }
 
@@ -695,6 +802,13 @@ export function SectionConfigForm<TType extends SectionType>({
           </div>
         ) : null}
 
+        {type === 'featuredCourses' && draft.mode === 'selected' ? (
+          <FeaturedCoursesPicker
+            academyId={academyId}
+            selectedIds={(draft.courseIds as string[] | undefined) ?? []}
+            onChange={(ids) => setField('courseIds', ids)}
+          />
+        ) : null}
         {type === 'faq' ? (
           <FaqLibraryField
             academyId={academyId}

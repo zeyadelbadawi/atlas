@@ -452,6 +452,11 @@
     }
   },
   "theme": {
+    "retiredTitle": "{{theme}} is no longer offered",
+    "retiredDescription": "Your website keeps using {{theme}} until you choose another theme. Modern Education is the theme available now. Switching to it can't be undone, because {{theme}} can't be selected again.",
+    "switchConfirmTitle": "Switch to {{theme}}?",
+    "switchConfirmDescription": "This changes your draft to {{theme}}. {{current}} is no longer offered, so you won't be able to switch back. Your live website doesn't change until you publish.",
+    "switchConfirmAction": "Switch theme",
     "currentTheme": "Current theme",
     "selectTheme": "Select theme",
     "noHomePage": "No Home page found"
@@ -558,6 +563,13 @@
     "deleteConfirmDescription": "\"{{title}}\" and its content will be permanently deleted. This cannot be undone."
   },
   "editor": {
+    "featuredCoursesTitle": "Courses to feature",
+    "featuredCoursesHelp": "Pick the courses to show, in the order you pick them. Only published, public courses appear on your website. With none picked, your latest courses show.",
+    "featuredCoursesEmpty": "You have no published, public courses to pick yet.",
+    "featuredCoursesLimit": "You can feature up to {{count}} courses.",
+    "featuredCoursesUnavailable_one": "{{count}} picked course is no longer published or public, so it won't show.",
+    "featuredCoursesUnavailable_other": "{{count}} picked courses are no longer published or public, so they won't show.",
+    "featuredCoursesRemoveUnavailable": "Remove from the list",
     "title": "Page Editor",
     "subtitle": "Compose this page from sections, then save your changes.",
     "compositionTitle": "Composition",
@@ -926,7 +938,8 @@
     "menuTitle": "{{name}} menu",
     "social": "Social links",
     "topCategories": "Top categories",
-    "contact": "Contact"
+    "contact": "Contact",
+    "homeLink": "{{name}} home"
   },
   "brandStudio": {
     "title": "Brand colours",
@@ -1023,6 +1036,9 @@
     "finishFailed": "We couldn't save your logo and colours yet."
   },
   "theme1": {
+    "liveData": {
+      "previewUnavailable": "Live data couldn't be loaded, so visitors don't see this section right now."
+    },
     "hero": {
       "searchLabel": "Search courses",
       "searchPlaceholder": "What would you like to learn?",
@@ -1036,6 +1052,8 @@
     },
     "courses": {
       "viewAll": "View all courses",
+      "errorTitle": "Courses couldn't be loaded right now",
+      "errorDescription": "Please try again in a moment.",
       "launchingTitle": "Courses launching soon",
       "launchingDescription": "We're preparing our first courses. Get in touch and we'll let you know as soon as enrolment opens.",
       "launchingAction": "Contact us"
@@ -1094,7 +1112,7 @@
     },
     "courseDetails": {
       "errorTitle": "We couldn't load this course",
-      "errorDescription": "Please check your connection and try again.",
+      "errorDescription": "Something went wrong while loading this course. Please try again.",
       "hasPreview": "Free preview lessons",
       "breadcrumb": "Breadcrumb",
       "allCourses": "All courses",

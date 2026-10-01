@@ -56,6 +56,8 @@ export interface ContactMessagePayload {
   readonly name: string;
   readonly email: string;
   readonly message: string;
+  /** The form's hidden spam trap: people leave it empty; when filled, the backend accepts and discards the message. */
+  readonly company?: string;
 }
 
 /**

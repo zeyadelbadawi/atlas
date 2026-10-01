@@ -194,6 +194,7 @@ export function T1Media({
   sizes,
   className,
   children,
+  priority = false,
 }: {
   readonly value: string | undefined;
   readonly alt: string;
@@ -201,6 +202,8 @@ export function T1Media({
   /** The ratio per breakpoint, e.g. `aspect-[4/3] lg:aspect-[4/5]`. */
   readonly className?: string;
   readonly children?: ReactNode;
+  /** The page's lead image (a hero): an uploaded one loads eagerly, at high priority; every other uploaded image loads lazily. */
+  readonly priority?: boolean;
 }): JSX.Element {
   return (
     <div className={cn('t1-media', className)}>
@@ -210,6 +213,7 @@ export function T1Media({
         sizes={sizes}
         className="size-full object-cover"
         fallback={<T1ImagePlaceholder reference={value} />}
+        loading={priority ? 'eager' : 'lazy'}
       />
       {children}
     </div>
@@ -231,7 +235,11 @@ const ACTION_CLASSES: Record<T1ActionVariant, string> = {
   inkSecondary: 't1-ink-secondary',
 };
 
-/** A path as a link when the runtime can navigate, else an inert button (previews). */
+/**
+ * A path as a link when the runtime can navigate, else an inert button
+ * (previews). On the public site a target that resolves to nothing (a
+ * hidden or deleted page) renders nothing — never a dead control.
+ */
 export function T1Link({
   href,
   linkRenderer,
@@ -242,8 +250,9 @@ export function T1Link({
   readonly linkRenderer?: WebsiteLinkRenderer;
   readonly className?: string;
   readonly children: ReactNode;
-}): JSX.Element {
-  if (href && linkRenderer) {
+}): JSX.Element | null {
+  if (linkRenderer) {
+    if (!href) return null;
     return linkRenderer({
       href,
       external: isExternalHref(href),

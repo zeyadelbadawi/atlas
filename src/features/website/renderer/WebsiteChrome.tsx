@@ -35,6 +35,9 @@ import type {
 } from '@types';
 import type { WebsiteLinkRenderer } from './website-link-renderer.types';
 
+/** The id of the public site's `<main>`, the target of its skip link. */
+export const PUBLIC_WEBSITE_MAIN_ID = 'main-content';
+
 export interface WebsiteChromeProps {
   /** Lets a theme's own chrome read live Academy data (e.g. Theme 1's footer categories and contact details). */
   readonly academyId?: string;
@@ -142,9 +145,15 @@ export function WebsiteChrome({
               the page's own last CTA/content — see that component's own doc
               comment for why this and its render condition must never
               disagree. */}
+          {/* The public runtime's skip link (`PublicWebsitePage`) lands
+              here — past the header, at the page's own content. Only on
+              the real public site: a dashboard can show several previews
+              at once and has its own skip target. */}
           <main
+            id={linkRenderer ? PUBLIC_WEBSITE_MAIN_ID : undefined}
+            tabIndex={linkRenderer ? -1 : undefined}
             className={cn(
-              'flex-1',
+              'flex-1 focus:outline-none',
               // A theme footer gets the clearance after the footer instead
               // (below), so the page's last band meets the footer directly.
               showBottomNav && !ThemeFooter && 'pb-16 md:pb-0'

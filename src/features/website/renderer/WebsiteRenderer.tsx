@@ -14,6 +14,7 @@ import type { WebsiteHeaderAuthState } from './WebsiteHeader';
 import { SectionRenderer } from '../sections';
 import { CourseDetailsTemplate } from './CourseDetailsTemplate';
 import { useThemePack } from '../theme-packs/ThemePackContext';
+import { PageHeadingProvider } from './PageHeadingContext';
 import type {
   ThemeCourseDetailsProps,
   ThemePageIntroProps,
@@ -87,18 +88,14 @@ export function WebsiteRenderer({
           />
         ) : null
       ) : (
-        <>
-          <PageIntroSlot page={page} navigation={configuration.navigation} />
-          {page.sections.map((instance) => (
-            <SectionRenderer
-              key={instance.id}
-              instance={instance}
-              academyId={academyId}
-              pages={pages}
-              linkRenderer={linkRenderer}
-            />
-          ))}
-        </>
+        <PageSections
+          page={page}
+          navigation={configuration.navigation}
+          academyId={academyId}
+          academyName={academyName}
+          pages={pages}
+          linkRenderer={linkRenderer}
+        />
       )}
     </WebsiteChrome>
   );
@@ -121,16 +118,88 @@ function CourseDetailsSlot(props: ThemeCourseDetailsProps): JSX.Element {
 const PAGE_OPENING_TYPES = new Set(['hero', 'pageHeader']);
 
 /**
+ * The page's sections, with its one `<h1>`: a page that opens with a hero
+ * gives it to that hero; otherwise the theme's intro carries it on inner
+ * pages, and on Home (which gets no intro) the first hero further down
+ * does — or, with none at all, a visually hidden heading naming the
+ * Academy. Every other hero on the page uses `<h2>`.
+ */
+function PageSections({
+  page,
+  navigation,
+  academyId,
+  academyName,
+  pages,
+  linkRenderer,
+}: {
+  readonly page: WebsitePage;
+  readonly navigation: ThemePageIntroProps['navigation'];
+  readonly academyId: string;
+  readonly academyName: string;
+  readonly pages: readonly WebsitePage[];
+  readonly linkRenderer?: WebsiteLinkRenderer;
+}): JSX.Element {
+  const PageIntro = useThemePack().pages?.PageIntro;
+  const enabled = page.sections.filter((instance) => instance.enabled);
+  const first = enabled[0];
+  const opensWithHero = !!first && PAGE_OPENING_TYPES.has(first.type);
+  const introCarriesH1 =
+    !!PageIntro && !opensWithHero && page.coreType !== 'home';
+  const h1Owner = opensWithHero
+    ? first
+    : introCarriesH1
+      ? undefined
+      : enabled.find((instance) => PAGE_OPENING_TYPES.has(instance.type));
+
+  return (
+    <>
+      <PageIntroSlot
+        page={page}
+        navigation={navigation}
+        academyName={academyName}
+        hasH1Owner={!!h1Owner}
+      />
+      {page.sections.map((instance) => (
+        <PageHeadingProvider
+          key={instance.id}
+          value={instance.id === h1Owner?.id ? 'h1' : 'h2'}
+        >
+          <SectionRenderer
+            instance={instance}
+            academyId={academyId}
+            pages={pages}
+            linkRenderer={linkRenderer}
+          />
+        </PageHeadingProvider>
+      ))}
+    </>
+  );
+}
+
+/**
  * A theme may draw a hero above a page that opens without one (Theme 1
  * §C.0, for pages created before page heroes existed). Nothing is written
  * to the page; a theme without an intro renders the page as it always did.
  */
-function PageIntroSlot({ page, navigation }: ThemePageIntroProps) {
+function PageIntroSlot({
+  page,
+  navigation,
+  academyName,
+  hasH1Owner,
+}: ThemePageIntroProps & {
+  readonly academyName: string;
+  readonly hasH1Owner: boolean;
+}) {
   const PageIntro = useThemePack().pages?.PageIntro;
   const first = page.sections.find((instance) => instance.enabled);
   const opensWithHero = !!first && PAGE_OPENING_TYPES.has(first.type);
   if (PageIntro) {
-    if (page.coreType === 'home' || opensWithHero) return null;
+    if (opensWithHero) return null;
+    if (page.coreType === 'home') {
+      // Home gets no visible intro; without any hero it still needs its
+      // one top-level heading, for assistive tech only.
+      return hasH1Owner ? null : <h1 className="sr-only">{academyName}</h1>;
+    }
     return <PageIntro page={page} navigation={navigation} />;
   }
   // Without an intro, a page that doesn't open with a hero has no <h1>.

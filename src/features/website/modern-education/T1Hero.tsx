@@ -16,6 +16,7 @@
  */
 import { useId, useState, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
+import { usePageOpeningHeading } from '../renderer/PageHeadingContext';
 import { useInRouterContext } from 'react-router-dom';
 import { BookOpen, CheckCircle2, Search } from 'lucide-react';
 import { usePublicWebsiteStatistics } from '@hooks';
@@ -152,6 +153,7 @@ export function T1Hero({
   const { locale } = usePublicWebsiteLocale();
   const inRouter = useInRouterContext();
   const headingId = useId();
+  const headingLevel = usePageOpeningHeading();
   const eyebrow = resolveLocalizedText(config.eyebrow, locale);
   const subtitle = resolveLocalizedText(config.subtitle, locale);
   const description = resolveLocalizedText(config.description, locale);
@@ -197,7 +199,7 @@ export function T1Hero({
             </p>
           ) : null}
           <T1Heading
-            as="h1"
+            as={headingLevel}
             id={headingId}
             size="display"
             highlight={resolveLocalizedText(config.highlight, locale)}
@@ -274,6 +276,7 @@ export function T1Hero({
           <div className="t1-enter-media relative mx-auto w-full max-w-2xl lg:max-w-[35rem]">
             <BrandShapeHero className="-top-8 start-10 hidden h-[calc(100%+4rem)] w-[calc(100%-1rem)] sm:block" />
             <T1Media
+              priority
               value={config.image}
               alt={resolveLocalizedText(config.imageAlt, locale)}
               sizes="(min-width: 1024px) 560px, (min-width: 672px) 672px, 100vw"

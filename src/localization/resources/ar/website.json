@@ -452,6 +452,11 @@
     }
   },
   "theme": {
+    "retiredTitle": "لم يعد مظهر {{theme}} متاحًا",
+    "retiredDescription": "يواصل موقعك استخدام مظهر {{theme}} إلى أن تختار مظهرًا آخر. المظهر المتاح الآن هو «التعليم الحديث». لا يمكن التراجع عن التبديل إليه، لأنه لن يكون بالإمكان اختيار {{theme}} مجددًا.",
+    "switchConfirmTitle": "التبديل إلى مظهر {{theme}}؟",
+    "switchConfirmDescription": "سيغيّر هذا المسودة إلى مظهر {{theme}}. لم يعد مظهر {{current}} متاحًا، لذلك لن تتمكن من العودة إليه. لن يتغير موقعك المنشور حتى تنشر التغييرات.",
+    "switchConfirmAction": "تبديل المظهر",
     "currentTheme": "القالب الحالي",
     "selectTheme": "اختيار القالب",
     "noHomePage": "لم يتم العثور على الصفحة الرئيسية"
@@ -558,6 +563,17 @@
     "deleteConfirmDescription": "سيتم حذف \"{{title}}\" ومحتواها نهائيًا. لا يمكن التراجع عن هذا الإجراء."
   },
   "editor": {
+    "featuredCoursesTitle": "الدورات المميّزة",
+    "featuredCoursesHelp": "اختر الدورات التي تريد عرضها، وستظهر بالترتيب الذي تختاره. لا تظهر على موقعك إلا الدورات المنشورة والعامة. إن لم تختر أي دورة، تظهر أحدث دوراتك.",
+    "featuredCoursesEmpty": "لا توجد لديك بعدُ دورات منشورة وعامة لاختيارها.",
+    "featuredCoursesLimit": "يمكنك إبراز {{count}} دورة كحدٍّ أقصى.",
+    "featuredCoursesUnavailable_zero": "لا توجد دورات مختارة غير متاحة.",
+    "featuredCoursesUnavailable_one": "دورة مختارة واحدة لم تعد منشورة أو عامة، لذلك لن تظهر.",
+    "featuredCoursesUnavailable_two": "دورتان مختارتان لم تعودا منشورتين أو عامتين، لذلك لن تظهرا.",
+    "featuredCoursesUnavailable_few": "{{count}} دورات مختارة لم تعد منشورة أو عامة، لذلك لن تظهر.",
+    "featuredCoursesUnavailable_many": "{{count}} دورةً مختارة لم تعد منشورة أو عامة، لذلك لن تظهر.",
+    "featuredCoursesUnavailable_other": "{{count}} دورة مختارة لم تعد منشورة أو عامة، لذلك لن تظهر.",
+    "featuredCoursesRemoveUnavailable": "إزالتها من القائمة",
     "title": "محرر الصفحة",
     "subtitle": "قم بتكوين هذه الصفحة من أقسام، ثم احفظ تغييراتك.",
     "compositionTitle": "التكوين",
@@ -946,7 +962,8 @@
     "menuTitle": "قائمة {{name}}",
     "social": "روابط التواصل الاجتماعي",
     "topCategories": "أبرز الفئات",
-    "contact": "تواصل معنا"
+    "contact": "تواصل معنا",
+    "homeLink": "الصفحة الرئيسية لـ {{name}}"
   },
   "brandStudio": {
     "title": "ألوان العلامة التجارية",
@@ -1043,6 +1060,9 @@
     "finishFailed": "لم نتمكن من حفظ شعارك وألوانك بعد."
   },
   "theme1": {
+    "liveData": {
+      "previewUnavailable": "تعذّر تحميل البيانات المباشرة، لذلك لا يرى الزوار هذا القسم حاليًا."
+    },
     "hero": {
       "searchLabel": "ابحث في الدورات",
       "searchPlaceholder": "ماذا تودّ أن تتعلّم؟",
@@ -1060,6 +1080,8 @@
     },
     "courses": {
       "viewAll": "عرض كل الدورات",
+      "errorTitle": "تعذّر تحميل الدورات الآن",
+      "errorDescription": "يُرجى المحاولة مجددًا بعد قليل.",
       "launchingTitle": "دوراتنا قادمة قريبًا",
       "launchingDescription": "نُعدّ الآن دوراتنا الأولى. تواصل معنا وسنُعلمك فور فتح باب التسجيل.",
       "launchingAction": "تواصل معنا"
@@ -1134,7 +1156,7 @@
     },
     "courseDetails": {
       "errorTitle": "تعذّر تحميل هذه الدورة",
-      "errorDescription": "يُرجى التحقق من اتصالك والمحاولة مجددًا.",
+      "errorDescription": "حدث خطأ أثناء تحميل هذه الدورة. يُرجى المحاولة مجددًا.",
       "hasPreview": "دروس معاينة مجانية",
       "breadcrumb": "مسار التنقّل",
       "allCourses": "كل الدورات",

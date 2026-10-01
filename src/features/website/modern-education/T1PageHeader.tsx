@@ -36,6 +36,7 @@ import {
   useRequestLocation,
 } from '@hooks';
 import { useWebsiteContainerClass } from '../renderer/renderer-style.utils';
+import { usePageOpeningHeading } from '../renderer/PageHeadingContext';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import {
@@ -224,6 +225,7 @@ function StandardHero({
   Icon,
   children,
   landmark = true,
+  headingLevel = 'h1',
 }: {
   readonly headingId: string;
   readonly eyebrow?: string;
@@ -237,6 +239,8 @@ function StandardHero({
    * one name aren't distinguishable.
    */
   readonly landmark?: boolean;
+  /** `h2` when another section already carries the page's `h1`. */
+  readonly headingLevel?: 'h1' | 'h2';
 }): JSX.Element {
   const container = useWebsiteContainerClass();
   const Root = landmark ? 'section' : 'div';
@@ -255,7 +259,7 @@ function StandardHero({
       >
         <div className="min-w-0 max-w-2xl space-y-5">
           {eyebrow ? <p className="t1-eyebrow">{eyebrow}</p> : null}
-          <T1Heading as="h1" id={headingId} size="display">
+          <T1Heading as={headingLevel} id={headingId} size="display">
             {title}
           </T1Heading>
           {description ? <p className="t1-lead">{description}</p> : null}
@@ -281,6 +285,7 @@ export function T1PageHeader({
   const container = useWebsiteContainerClass();
   const inRouter = useInRouterContext();
   const headingId = useId();
+  const headingLevel = usePageOpeningHeading();
   const eyebrow = resolveLocalizedText(config.eyebrow, locale);
   const title = resolveLocalizedText(config.title, locale);
   const description = resolveLocalizedText(config.description, locale);
@@ -306,7 +311,7 @@ export function T1PageHeader({
             <div className="min-w-0 space-y-5 lg:col-span-7">
               {eyebrow ? <p className="t1-eyebrow">{eyebrow}</p> : null}
               <T1Heading
-                as="h1"
+                as={headingLevel}
                 id={headingId}
                 size="display"
                 className="t1-display-xl"
@@ -319,6 +324,7 @@ export function T1PageHeader({
             ) : null}
           </div>
           <T1Media
+            priority
             value={config.image}
             alt={resolveLocalizedText(config.imageAlt, locale)}
             sizes="(min-width: 1280px) 1216px, 100vw"
@@ -345,7 +351,7 @@ export function T1PageHeader({
             <p className="t1-eyebrow justify-center">{eyebrow}</p>
           ) : null}
           <T1Heading
-            as="h1"
+            as={headingLevel}
             id={headingId}
             size="display"
             className="mx-auto max-w-3xl"
@@ -370,6 +376,7 @@ export function T1PageHeader({
     Sparkles;
   return (
     <StandardHero
+      headingLevel={headingLevel}
       headingId={headingId}
       eyebrow={eyebrow}
       title={title}

@@ -133,6 +133,8 @@ Before/after screenshots are attached to the run for review.
 
 ## 5. Production order (gated; nothing here has been run)
 
+> **Status, 1 Oct 2026 (see `THEME_1_ACADEMY_WEBSITE_PLAN.md` §Z).** Step 1 is done: the retirement code reached production with Gate E (frontend `main` `0f4a21f`, deploy run #128; backend `main` `3053b3b`, Gate B/C). Read-only production counts after Gate E: 30 website configurations — 12 on Theme 1 and **18 still on retired themes** (9 `bold-creative`, 6 `corporate-learning`, 2 `minimal-editorial`, 1 `premium-academy`) — all rendering as before. Steps 2–5 (dry run, apply, verify) and the separate code removal have **not** run and still need the Owner's approval. Since 1 Oct (uncommitted remediation, audit F-12) an Owner on a retired theme is told in the Theme tab that leaving it is one-way, and confirms before switching.
+
 1. Deploy this code. It changes no website's look: retired themes still render.
 2. Run the dry run against production. Review `plan.json`: the counts per theme, every unmappable section, the pending provisioning requests.
 3. Resolve any unmappable section with the Owner concerned.

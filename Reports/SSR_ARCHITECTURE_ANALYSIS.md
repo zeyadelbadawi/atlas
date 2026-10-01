@@ -502,6 +502,8 @@ Residual, pre-existing (§10): the public API exposes `instructors[].id`, `intro
 
 ## 14. Rollout and rollback runbook (nothing here has been run in production)
 
+> **Status, 1 Oct 2026.** Step 1 below is done: the renderer code merged to `main` (`0f4a21f`, Gate E) and its image was built and pushed by CI for the first time (deploy run #128, `atlas-frontend-ssr:0f4a21f…`, `linux/arm64`). **SSR is still off**: `ATLAS_SSR` is unset in production and no `ssr` container runs (E-POST). The Owner accepted the single-page app's ≈3.0 s lab LCP as a documented limitation, so enabling SSR (Gate H) is a separate, optional decision — not a condition of Theme 1's closure. See `THEME_1_ACADEMY_WEBSITE_PLAN.md` §Z.
+
 1. Merge to `main` with `ATLAS_SSR` unset. The frontend workflow builds and pushes both images; Caddy loads the new Caddyfile and every request keeps its previous route.
 2. Confirm `ghcr.io/zeyadelbadawi/atlas-frontend-ssr:<sha>` exists.
 3. Set `ATLAS_SSR=on` in `/opt/atlas/.env`, then run `deploy.sh --frontend-only`. That pulls and starts `ssr`, then Caddy (recreated with the new environment), then checks health. An unhealthy renderer is reported but is not fatal.

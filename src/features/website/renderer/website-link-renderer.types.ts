@@ -16,6 +16,8 @@ export interface WebsiteLinkRendererProps {
   readonly className?: string;
   /** Marks the link for the page being shown (navigation). */
   readonly ariaCurrent?: 'page';
+  /** An accessible name that replaces the visible content's (e.g. a logo link). */
+  readonly ariaLabel?: string;
   readonly children: ReactNode;
 }
 
