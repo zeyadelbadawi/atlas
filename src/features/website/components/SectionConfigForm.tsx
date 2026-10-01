@@ -16,7 +16,7 @@
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BadgeCheck, Plus, Trash2 } from 'lucide-react';
+import { ArrowDown, ArrowUp, BadgeCheck, Plus, Trash2, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -62,6 +62,7 @@ import type {
   SectionInstance,
   SectionType,
   WebsiteConfiguration,
+  WebsiteContentStatus,
   WebsiteCta,
   WebsitePage,
 } from '@types';
@@ -88,9 +89,32 @@ export interface SectionConfigFormProps<TType extends SectionType> {
 interface LibraryOption {
   readonly id: string;
   readonly label: string;
+  readonly status: WebsiteContentStatus;
+  readonly visible: boolean;
 }
 
-function LibraryEntryPicker({
+/** Why a picked entry will not show publicly — `null` when it will. */
+function libraryEntryProblem(
+  option: LibraryOption | undefined
+): 'missing' | 'archived' | 'draft' | 'hidden' | null {
+  if (!option) return 'missing';
+  if (option.status === 'archived') return 'archived';
+  if (option.status === 'draft') return 'draft';
+  if (!option.visible) return 'hidden';
+  return null;
+}
+
+/**
+ * Content-library picker for a FAQ / Testimonials section.
+ *
+ * The section shows the picked entries in the order listed here
+ * (`libraryEntryIds`), so the picked list is the editor: reorder, remove.
+ * Every pick stays listed even after it stops qualifying (unpublished,
+ * hidden, archived, deleted) — labelled with why it won't show and
+ * removable — so nothing disappears from the site without the Owner
+ * seeing why. Only published, visible entries can be added.
+ */
+export function LibraryEntryPicker({
   titleKey,
   helpKey,
   options,
@@ -99,41 +123,169 @@ function LibraryEntryPicker({
 }: {
   readonly titleKey: string;
   readonly helpKey: string;
-  readonly options: readonly LibraryOption[];
+  /** Every library entry, any status; `undefined` while loading. */
+  readonly options: readonly LibraryOption[] | undefined;
   readonly selectedIds: readonly string[];
   readonly onChange: (ids: string[]) => void;
 }): JSX.Element | null {
   const { t } = useTranslation();
-  if (options.length === 0) return null;
+  if (!options) return null;
+  if (options.length === 0 && selectedIds.length === 0) return null;
 
-  const toggle = (id: string, checked: boolean) => {
-    onChange(
-      checked
-        ? [...selectedIds, id]
-        : selectedIds.filter((existing) => existing !== id)
-    );
+  const byId = new Map(options.map((option) => [option.id, option]));
+  const available = options.filter(
+    (option) =>
+      libraryEntryProblem(option) === null && !selectedIds.includes(option.id)
+  );
+  const unavailable = selectedIds.filter(
+    (id) => libraryEntryProblem(byId.get(id)) !== null
+  );
+  const atLimit = selectedIds.length >= MAX_SECTION_ITEMS;
+
+  const move = (index: number, delta: -1 | 1) => {
+    const next = [...selectedIds];
+    const [moved] = next.splice(index, 1);
+    next.splice(index + delta, 0, moved);
+    onChange(next);
   };
 
   return (
-    <div className="space-y-2 border-t border-border pt-4">
+    <div className="space-y-3 border-t border-border pt-4">
       <p className="text-sm font-medium text-foreground">{t(titleKey)}</p>
       <p className="text-xs text-muted-foreground">{t(helpKey)}</p>
-      <div className="space-y-2">
-        {options.map((option) => (
-          <label key={option.id} className="flex items-center gap-2 text-sm">
-            <Checkbox
-              checked={selectedIds.includes(option.id)}
-              onCheckedChange={(checked) => toggle(option.id, checked === true)}
-            />
-            <span className="line-clamp-1">{option.label}</span>
-          </label>
-        ))}
-      </div>
+
+      <p className="text-xs font-medium text-foreground">
+        {t('website:editor.libraryEntriesSelected')}
+      </p>
+      {selectedIds.length === 0 ? (
+        <p className="text-sm text-muted-foreground">
+          {t('website:editor.libraryEntriesNoneSelected')}
+        </p>
+      ) : (
+        <ol className="space-y-2" data-testid="library-selected">
+          {selectedIds.map((id, index) => {
+            const option = byId.get(id);
+            const problem = libraryEntryProblem(option);
+            const label =
+              option?.label || t('website:editor.libraryEntriesUnknownLabel');
+            return (
+              <li
+                key={id}
+                className="flex items-center gap-2 rounded-md border border-border p-2 text-sm"
+              >
+                <Badge variant="secondary" aria-hidden>
+                  {index + 1}
+                </Badge>
+                <span className="min-w-0 flex-1">
+                  <span className="line-clamp-1">{label}</span>
+                  {problem ? (
+                    <span className="block text-xs text-destructive">
+                      {t(`website:editor.libraryEntriesProblem.${problem}`)}
+                    </span>
+                  ) : null}
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  disabled={index === 0}
+                  aria-label={t('website:editor.libraryEntriesMoveUp', {
+                    label,
+                  })}
+                  onClick={() => move(index, -1)}
+                >
+                  <ArrowUp className="size-4" aria-hidden />
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  disabled={index === selectedIds.length - 1}
+                  aria-label={t('website:editor.libraryEntriesMoveDown', {
+                    label,
+                  })}
+                  onClick={() => move(index, 1)}
+                >
+                  <ArrowDown className="size-4" aria-hidden />
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  aria-label={t('website:editor.libraryEntriesRemove', {
+                    label,
+                  })}
+                  onClick={() =>
+                    onChange(selectedIds.filter((existing) => existing !== id))
+                  }
+                >
+                  <X className="size-4" aria-hidden />
+                </Button>
+              </li>
+            );
+          })}
+        </ol>
+      )}
+      {unavailable.length > 0 ? (
+        <Button
+          type="button"
+          variant="link"
+          size="sm"
+          className="h-auto p-0 text-xs"
+          onClick={() =>
+            onChange(selectedIds.filter((id) => !unavailable.includes(id)))
+          }
+        >
+          {t('website:editor.libraryEntriesRemoveUnavailable', {
+            count: unavailable.length,
+          })}
+        </Button>
+      ) : null}
+
+      {available.length > 0 ? (
+        <>
+          <p className="text-xs font-medium text-foreground">
+            {t('website:editor.libraryEntriesAvailable')}
+          </p>
+          <ul className="space-y-2" data-testid="library-available">
+            {available.map((option) => (
+              <li key={option.id} className="flex items-center gap-2 text-sm">
+                <span className="line-clamp-1 flex-1">{option.label}</span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={atLimit}
+                  aria-label={t('website:editor.libraryEntriesAddLabel', {
+                    label: option.label,
+                  })}
+                  onClick={() => onChange([...selectedIds, option.id])}
+                >
+                  <Plus className="size-4" aria-hidden />
+                  {t('website:editor.libraryEntriesAdd')}
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : null}
+      {atLimit ? (
+        <p className="text-xs text-muted-foreground">
+          {t('website:editor.libraryEntriesLimit', {
+            count: MAX_SECTION_ITEMS,
+          })}
+        </p>
+      ) : null}
     </div>
   );
 }
 
-/** Fetches and adapts the Academy's published FAQ library — kept separate from `TestimonialLibraryField` so each calls its own hook unconditionally, never behind a runtime branch. */
+/** Every entry, any status: a pick that stopped qualifying must stay visible (and removable) in the picker. */
+const LIBRARY_PICKER_QUERY = {
+  pagination: { page: 1, pageSize: 100 },
+} as const;
+
+/** Fetches and adapts the Academy's FAQ library — kept separate from `TestimonialLibraryField` so each calls its own hook unconditionally, never behind a runtime branch. */
 function FaqLibraryField({
   academyId,
   selectedIds,
@@ -146,11 +298,13 @@ function FaqLibraryField({
   const { i18n } = useTranslation();
   const language = i18n.language as LanguageCode;
   const { data } = useWebsiteFaqEntries(academyId, {
-    query: { filters: { status: 'published' } },
+    query: LIBRARY_PICKER_QUERY,
   });
-  const options: LibraryOption[] = (data?.items ?? []).map((entry) => ({
+  const options: LibraryOption[] | undefined = data?.items.map((entry) => ({
     id: entry.id,
     label: entry.question[language] || entry.question.en,
+    status: entry.status,
+    visible: entry.visible,
   }));
 
   return (
@@ -177,11 +331,13 @@ function TestimonialLibraryField({
   const { i18n } = useTranslation();
   const language = i18n.language as LanguageCode;
   const { data } = useWebsiteTestimonialEntries(academyId, {
-    query: { filters: { status: 'published' } },
+    query: LIBRARY_PICKER_QUERY,
   });
-  const options: LibraryOption[] = (data?.items ?? []).map((entry) => ({
+  const options: LibraryOption[] | undefined = data?.items.map((entry) => ({
     id: entry.id,
     label: `${entry.quote[language] || entry.quote.en} — ${entry.authorName}`,
+    status: entry.status,
+    visible: entry.visible,
   }));
 
   return (

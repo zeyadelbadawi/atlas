@@ -14,6 +14,8 @@ import type { TestimonialsSectionConfig } from '@types';
 vi.mock('../hooks', () => ({
   useWebsiteFaqEntries: () => ({ data: undefined }),
   useWebsiteTestimonialEntries: () => ({ data: undefined }),
+  useFaqLibraryEntries: () => [],
+  useTestimonialLibraryEntries: () => [],
 }));
 vi.mock('@features/course', () => ({
   useCourses: () => ({ data: undefined }),

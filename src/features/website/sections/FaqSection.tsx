@@ -3,9 +3,8 @@
  *
  * Reuses Atlas's existing accessible `Accordion` primitive — never a
  * hand-rolled disclosure widget. Renders TWO sources of FAQ content,
- * additively and in this fixed order: library entries resolved live from
- * the Academy's reusable FAQ content (Prompt 10, `WebsiteFaqEntry`) come
- * first, followed by the page's own inline `items` (Prompt 9, now also
+ * additively and in this fixed order: the Academy's reusable FAQ library
+ * entries (Prompt 10, resolved by `useFaqLibraryEntries`) come first, followed by the page's own inline `items` (Prompt 9, now also
  * `LocalizedText` — Phase 6). A page saved before Prompt 10 has no
  * `libraryEntryIds`, so it renders exactly as it always has.
  *
@@ -20,7 +19,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
-import { useWebsiteFaqEntries } from '../hooks';
+import { useFaqLibraryEntries } from '../hooks';
 import {
   useWebsiteContainerClass,
   useWebsiteHeadingClass,
@@ -53,22 +52,16 @@ export function FaqSection({
   const heading = useWebsiteHeadingClass();
   const { locale } = usePublicWebsiteLocale();
 
-  const libraryEntryIds = config.libraryEntryIds ?? [];
-  const { data } = useWebsiteFaqEntries(academyId, {
-    query: { filters: { status: 'published' } },
-    enabled: libraryEntryIds.length > 0,
-  });
-
-  const libraryItems = libraryEntryIds
-    .map((id) => data?.items.find((entry) => entry.id === id))
-    .filter(
-      (entry): entry is NonNullable<typeof entry> => !!entry && entry.visible
-    )
-    .map((entry) => ({
-      id: entry.id,
-      question: resolveLocalizedText(entry.question, locale),
-      answer: resolveLocalizedText(entry.answer, locale),
-    }));
+  // Server-resolved on the public site; the preview resolves them itself.
+  const libraryItems = useFaqLibraryEntries(
+    config,
+    academyId,
+    !linkRenderer
+  ).map((entry) => ({
+    id: entry.id,
+    question: resolveLocalizedText(entry.question, locale),
+    answer: resolveLocalizedText(entry.answer, locale),
+  }));
 
   const inlineItems = config.items.map((item) => ({
     id: item.id,
