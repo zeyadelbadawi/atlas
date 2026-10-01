@@ -356,7 +356,16 @@ export function QuizSettingsEditor(): JSX.Element {
               descriptionKey="course:quizAuthoring.settings.fields.requireFullscreen.description"
             />
           </>
-        ) : null}
+        ) : (
+          <p
+            className="text-sm text-muted-foreground"
+            data-testid="fullscreen-requires-integrity"
+          >
+            {t(
+              'course:quizAuthoring.settings.fields.requireFullscreen.offHint'
+            )}
+          </p>
+        )}
       </SettingsCard>
 
       {/* Progression */}

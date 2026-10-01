@@ -654,8 +654,9 @@
           "descriptionStrict": "Enforced: reaching this count submits the attempt automatically and flags it for reviewers."
         },
         "requireFullscreen": {
-          "label": "Ask for fullscreen",
-          "description": "The attempt requests fullscreen when it starts. Leaving fullscreen is recorded as an event; it is not blocked."
+          "label": "Require full screen",
+          "description": "Start opens the quiz in full screen. If the learner leaves it, the questions wait until they return — their answers and the time are kept — and leaving is recorded. Browsers that cannot use full screen (most phones) take the quiz as usual, and you will see that full screen was unavailable.",
+          "offHint": "Full screen is part of integrity: choose Monitor, Warn or Strict above to require it."
         },
         "requiredToProgress": {
           "label": "Required to continue",

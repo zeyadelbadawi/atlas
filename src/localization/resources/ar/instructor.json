@@ -133,7 +133,7 @@
       "integrity": "النزاهة"
     },
     "gradingStatus": {
-      "auto": "تلقائي",
+      "not_required": "تلقائي",
       "pending": "قيد الانتظار",
       "graded": "تم التصحيح"
     },

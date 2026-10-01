@@ -102,7 +102,8 @@ export type QuizAttemptStatus =
   | 'expired'
   | 'invalidated';
 
-export type QuizAttemptGradingStatus = 'auto' | 'pending' | 'graded';
+/** Matches the API's `AttemptGradingStatus`: `not_required` = graded automatically. */
+export type QuizAttemptGradingStatus = 'not_required' | 'pending' | 'graded';
 
 /** One answer: option ids for choice questions, text for typed ones. */
 export interface QuizAnswer {

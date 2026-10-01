@@ -133,7 +133,7 @@
       "integrity": "Integrity"
     },
     "gradingStatus": {
-      "auto": "Automatic",
+      "not_required": "Automatic",
       "pending": "Pending",
       "graded": "Graded"
     },
