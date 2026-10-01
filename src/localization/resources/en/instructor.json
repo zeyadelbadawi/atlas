@@ -297,6 +297,80 @@
       "complete": "Every manual grade is in; this attempt is finalised.",
       "unavailable": "Grading is not available for a voided attempt."
     },
+    "signals": {
+      "title": "Worth a look",
+      "description": "Facts from this attempt’s timeline that a reviewer may want to check, each with the events behind it. They are prompts for a conversation, not proof: Atlas does not decide whether anyone broke the rules, and some ways of breaking them — a phone, another person in the room — leave no trace here.",
+      "none": "Nothing in this attempt’s timeline stood out.",
+      "reviewHeading": "Worth a look",
+      "contextHeading": "For context",
+      "otherExplanations": "Other explanations",
+      "showEvidence": "Show in timeline",
+      "hideEvidence": "Clear highlight",
+      "key": {
+        "time_away": {
+          "title": "Quiz page hidden",
+          "summary_one": "The quiz tab was hidden once, for {{total}}.",
+          "summary_other": "The quiz tab was hidden {{count}} times, {{total}} in total (longest {{longest}}).",
+          "innocent": "Locking the screen, a phone call, a break, briefly switching to another app."
+        },
+        "focus_lost": {
+          "title": "Another window in front",
+          "summary_one": "Another window had focus once while the quiz stayed visible, for {{total}}.",
+          "summary_other": "Another window had focus {{count}} times while the quiz stayed visible, {{total}} in total (longest {{longest}}).",
+          "innocent": "Notifications, a second monitor, screen readers or magnifiers, system dialogs."
+        },
+        "fullscreen_left": {
+          "title": "Left full screen",
+          "summary_one": "Full screen was left once, for {{total}}.",
+          "summary_other": "Full screen was left {{count}} times, {{total}} outside it in total (longest {{longest}}).",
+          "innocent": "Pressing Esc by accident, a system prompt, the operating system taking over the screen."
+        },
+        "fullscreen_never_entered": {
+          "title": "Never in full screen",
+          "summary": "The quiz required full screen, but the browser never reported entering it.",
+          "innocent": "An outdated app or a browser extension; or the learner continued without full screen after their browser refused it."
+        },
+        "fullscreen_unavailable": {
+          "title": "Full screen unavailable",
+          "summary": "The browser reported that full screen was not available ({{reasons}}).",
+          "innocent": "Phones and some tablets have no full screen for web pages, and a browser setting can block it. A modified browser could also claim this.",
+          "reason": {
+            "unsupported": "not supported",
+            "refused": "refused"
+          }
+        },
+        "paste_without_copy": {
+          "title": "Pasted text from elsewhere",
+          "summary_one": "Text was pasted once without being copied in this quiz first.",
+          "summary_other": "Text was pasted {{count}} times without being copied in this quiz first.",
+          "innocent": "Dictation and other assistive input tools, text prepared earlier where allowed."
+        },
+        "paste_after_copy": {
+          "title": "Pasted own text",
+          "summary_one": "Text was pasted once after being copied within this quiz.",
+          "summary_other": "Text was pasted {{count}} times after being copied within this quiz.",
+          "innocent": "Usually moving one’s own words between answers."
+        },
+        "copy": {
+          "title": "Copied text",
+          "summary_one": "Text was copied or cut once.",
+          "summary_other": "Text was copied or cut {{count}} times.",
+          "innocent": "Copying one’s own answer; selecting text while reading."
+        },
+        "print": {
+          "title": "Printing",
+          "summary_one": "Printing was started once.",
+          "summary_other": "Printing was started {{count}} times.",
+          "innocent": "Pressing Ctrl+P by mistake."
+        },
+        "connection_gap": {
+          "title": "No contact from the browser",
+          "summary_one": "Nothing arrived from the browser for {{total}}.",
+          "summary_other": "Nothing arrived from the browser {{count}} times, {{total}} in total (longest {{longest}}).",
+          "innocent": "A dropped connection, a laptop going to sleep, a closed tab, a battery saver pausing the page."
+        }
+      }
+    },
     "events": {
       "title": "Event timeline",
       "description": "Everything recorded during this attempt, in the order the server received it. Ignored events fell inside the warm-up or debounce window and did not count.",
@@ -312,6 +386,7 @@
         "focus": "Window regained focus",
         "fullscreen_exit": "Left fullscreen",
         "fullscreen_enter": "Entered fullscreen",
+        "fullscreen_unavailable": "Full screen unavailable",
         "copy": "Copy",
         "paste": "Paste",
         "cut": "Cut",
@@ -322,7 +397,12 @@
         "device_change": "Device changed",
         "warning_acknowledged": "Warning acknowledged"
       },
-      "notMonitored": "Integrity monitoring was not enabled for this attempt, so nothing was recorded. This is different from a monitored attempt with no events — enable integrity on the quiz (and, if it is not yet available for this academy, ask the platform to turn it on) to record tab switches, copying, pasting, printing and leaving fullscreen."
+      "notMonitored": "Integrity monitoring was not enabled for this attempt, so nothing was recorded. This is different from a monitored attempt with no events — enable integrity on the quiz (and, if it is not yet available for this academy, ask the platform to turn it on) to record tab switches, copying, pasting, printing and leaving fullscreen.",
+      "elapsed": "+{{time}} from start",
+      "showHeartbeats_one": "Show {{count}} connection check",
+      "showHeartbeats_other": "Show {{count}} connection checks",
+      "hideHeartbeats": "Hide connection checks",
+      "highlighted": "Highlighted: evidence for “{{signal}}”"
     },
     "actionsTitle": "Actions",
     "void": {

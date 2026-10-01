@@ -209,6 +209,7 @@
         "focus": "استعادت النافذة التركيز",
         "fullscreen_exit": "الخروج من ملء الشاشة",
         "fullscreen_enter": "الدخول إلى ملء الشاشة",
+        "fullscreen_unavailable": "ملء الشاشة غير متاح",
         "copy": "نسخ",
         "paste": "لصق",
         "cut": "قص",

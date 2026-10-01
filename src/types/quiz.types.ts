@@ -220,6 +220,7 @@ export const QUIZ_ATTEMPT_EVENT_TYPES = [
   'focus',
   'fullscreen_exit',
   'fullscreen_enter',
+  'fullscreen_unavailable',
   'copy',
   'paste',
   'cut',
