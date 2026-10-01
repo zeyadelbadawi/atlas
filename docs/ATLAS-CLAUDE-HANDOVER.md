@@ -12,6 +12,16 @@ Evidence labels used below:
 
 ---
 
+## ★★★★ Status update — production R2 archive (1 Oct 2026). Read this first.
+
+- The Owner approved four decisions:
+  - accept the 26 SSR screenshot differences;
+  - accept About AR CLS ~0.066, with the Arabic font preload kept off (localized performance debt);
+  - accept the current SSR LCP;
+  - enable SSR only after the R2 archive is verified.
+- **R2 archive done and verified:** 12/12 masters plus 12 provenance records in `atlas-theme-sources`, byte-identical; idempotent; anonymous access refused. Plan §Y. **Bucket Lock not enabled yet**, waiting on the Owner.
+- **SSR not enabled.** This environment has no VPS access. The access needed is listed in plan §Y's companion report to the Owner (the deploy user over SSH, `/opt/atlas`, the new compose file and `deploy.sh`, and a merge to `main` so the workflow builds both images).
+
 ## ★★★ Status update — Phase 8 SSR session (1 Oct 2026). Read this first.
 
 Same branch (`claude/practical-wozniak-pjcdhe`, both repos). Nothing on `main`, nothing deployed, no production data or migration touched. Full record: plan §X and `Reports/SSR_ARCHITECTURE_ANALYSIS.md` §12–§14. This supersedes the LCP decision bullet of the ★★ section below.

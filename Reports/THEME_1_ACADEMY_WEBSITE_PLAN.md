@@ -2348,3 +2348,20 @@ The Owner authorised server-side rendering for **only** the anonymous public Aca
 | R2 private archive in production | **OWNER ACTION REQUIRED**: create the bucket, lock and token, then `archive-master` × 12 and `verify-archive` | W.C |
 
 Phase 9 has not started. Nothing was deployed, no production migration or data change was made, and `main` was not touched.
+
+## Y. Private master archive in production R2 (recorded 1 Oct 2026)
+
+The Owner created the private bucket `atlas-theme-sources` (no public access, no `r2.dev` URL, no custom domain, location hint WEUR) and an Object Read & Write token scoped to it. The 12 released Theme 1 masters were archived with the existing tool (`tools/theme-assets/archive-master.mjs`), its key layout unchanged: `modern-education/v1/<key>/master.png` plus `provenance.json`. The credentials were used only from a private, untracked file, which was then deleted.
+
+| Check | Result |
+|---|---|
+| Endpoint / jurisdiction | `HeadBucket` 200 on the account's default endpoint |
+| Token scope | the account-level `ListBuckets` is denied (403). Exact scope is visible only in the dashboard; it was not probed against any other bucket |
+| Sources | 12 released entries → 12 local masters; every sha256 equals the manifest's `masterSha256`; sources are read-only to the tool |
+| Upload | 24 objects written (12 masters, 12 provenance records), each read back by the tool |
+| `verify-archive` | 12/12 ok |
+| Independent audit | exactly the 24 expected keys, 0 unexpected, 0 missing. Every master byte-identical to its source and equal to the manifest sha256, the stored sha256 metadata and its provenance record |
+| Anonymous access | object GET/HEAD and listing → 400 `InvalidArgument: Authorization`, no data. `r2.dev`/custom-domain status cannot be read with an object token (Owner's dashboard: disabled) |
+| Idempotency | a second full run gives 24 × "already archived"; 0 objects changed (ETag, timestamp, size) |
+| Overwrite guards | a wrong master is refused (sha256); a different provenance for an archived key is refused ("archive a new version"); 0 objects changed |
+| **Bucket Lock** | **not enabled.** It waits on the Owner's approval of this verified archive. It needs the dashboard or an admin token (`wrangler r2 bucket lock add atlas-theme-sources --name masters-forever --retention-indefinite`); an object token cannot set it |
