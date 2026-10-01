@@ -6,6 +6,7 @@
  * forbids console statements in production code, and configuration failures are
  * handled by falling back to compiled defaults rather than by logging.
  */
+import { startTransition } from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import type { DehydratedState } from '@tanstack/react-query';
 import App from './App.tsx';
@@ -118,27 +119,32 @@ async function initializeApp(): Promise<void> {
   if (ssr && rootElement.hasChildNodes()) {
     // The route's code first, so hydration does not wait on it.
     await routerChunk;
-    hydrateRoot(
-      rootElement,
-      <App
-        initialLanguage={ssr.locale}
-        dehydratedState={ssr.queries as DehydratedState}
-        hydrationSnapshot={{
-          renderYear: ssr.renderYear,
-          consentDecided: ssr.consentDecided,
-        }}
-      />,
-      {
-        // React recovers from a mismatch by rendering that part again in
-        // the browser. Still correct for the visitor, but a defect: mark
-        // it where the SSR tests look, and keep React's own reporting.
-        onRecoverableError(error) {
-          rootElement.dataset.hydrationRecovered = 'true';
-          if (typeof window.reportError === 'function')
-            window.reportError(error);
-        },
-      }
-    );
+    // In a transition, hydration is time-sliced: React 18 otherwise
+    // hydrates the whole page in one blocking task. The page is already
+    // painted from the server, so nothing waits on it visually.
+    startTransition(() => {
+      hydrateRoot(
+        rootElement,
+        <App
+          initialLanguage={ssr.locale}
+          dehydratedState={ssr.queries as DehydratedState}
+          hydrationSnapshot={{
+            renderYear: ssr.renderYear,
+            consentDecided: ssr.consentDecided,
+          }}
+        />,
+        {
+          // React recovers from a mismatch by rendering that part again in
+          // the browser. Still correct for the visitor, but a defect: mark
+          // it where the SSR tests look, and keep React's own reporting.
+          onRecoverableError(error) {
+            rootElement.dataset.hydrationRecovered = 'true';
+            if (typeof window.reportError === 'function')
+              window.reportError(error);
+          },
+        }
+      );
+    });
   } else {
     createRoot(rootElement).render(
       <App initialLanguage={isAcademyWebsite ? urlLocale : undefined} />

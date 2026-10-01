@@ -49,6 +49,7 @@ import {
 } from '@features/public-website';
 import type {
   HostnameResolution,
+  PublicWebsiteLocale,
   WebsiteConfiguration,
   WebsitePage,
 } from '@types';
@@ -81,8 +82,10 @@ export interface SsrCache {
 export interface SsrOptions {
   /** The client build's `index.html`. */
   readonly template: string;
-  /** `<link rel="modulepreload">` tags for the public router's chunks. */
+  /** Preload tags for every page (may be empty). */
   readonly preloadHtml: string;
+  /** Preload tags for pages in one locale only (e.g. that script's fonts). */
+  readonly localePreloadHtml?: Partial<Record<PublicWebsiteLocale, string>>;
   /** Where the public API is reachable from the renderer, e.g. `http://backend:3000`. */
   readonly apiOrigin: string;
   /** Per API call. */
@@ -404,7 +407,8 @@ export async function renderPublicWebsitePage(
         headHtml: seoCollector.current
           ? renderSeoHeadHtml(seoCollector.current)
           : '',
-        preloadHtml: options.preloadHtml,
+        preloadHtml:
+          options.preloadHtml + (options.localePreloadHtml?.[locale] ?? ''),
         appHtml,
         payloadJson: serializePayload({
           v: SSR_PAYLOAD_VERSION,

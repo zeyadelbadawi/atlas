@@ -334,6 +334,18 @@ describe('server-rendered public pages', () => {
     assert.ok((await get(preloading, ALPHA, '/')).body.includes(tag));
   });
 
+  it('preloads the Arabic font subsets on Arabic pages only, and only when asked', async () => {
+    const fontPreload =
+      /<link rel="preload" as="font" type="font\/woff2" crossorigin href="\/assets\/(rubik|readex-pro)-arabic-/g;
+    assert.doesNotMatch((await get(handler, ALPHA, '/ar/')).body, fontPreload);
+    const withFonts = await makeHandler({ preloadArabicFonts: true });
+    assert.equal(
+      (await get(withFonts, ALPHA, '/ar/')).body.match(fontPreload)?.length,
+      2
+    );
+    assert.doesNotMatch((await get(withFonts, ALPHA, '/')).body, fontPreload);
+  });
+
   it('renders Arabic pages right to left', async () => {
     const result = await get(handler, ALPHA, '/ar/');
     assert.equal(result.headers['X-Atlas-SSR'], 'render', result.reason);

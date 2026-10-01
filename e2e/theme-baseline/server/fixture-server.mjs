@@ -584,6 +584,7 @@ if (SSR) {
     apiTimeoutMs: 5_000,
     // As production (off) unless an experiment asks for it.
     preloadRouterChunks: process.env.THEME_BASELINE_SSR_PRELOAD === '1',
+    preloadArabicFonts: process.env.THEME_BASELINE_SSR_AR_FONTS === '1',
     log:
       process.env.THEME_BASELINE_SSR_LOG === '1'
         ? (event) => console.log(JSON.stringify(event))

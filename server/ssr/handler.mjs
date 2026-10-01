@@ -10,7 +10,7 @@
  * own copy of that shell whenever this process fails, times out or is
  * down, so server rendering is never the only way a page can load.
  */
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
@@ -92,6 +92,8 @@ export class RenderCache {
  *   HTML painted later — Lighthouse mobile FCP +200–490 ms. Without them
  *   the page paints as soon as the CSS arrives and `main.tsx` still starts
  *   the chunk at boot (Reports/SSR_ARCHITECTURE_ANALYSIS.md §12.6).
+ * @param {boolean} [options.preloadArabicFonts] Arabic pages preload the
+ *   Arabic subsets of the theme fonts (see §12.6 for the measurement).
  */
 export async function createSsrHandler({
   distDir,
@@ -103,6 +105,7 @@ export async function createSsrHandler({
   cacheMaxEntries = 500,
   log = () => {},
   preloadRouterChunks = false,
+  preloadArabicFonts = false,
 }) {
   const entry = await import(pathToFileURL(entryPath).href);
   const template = readFileSync(join(distDir, 'index.html'), 'utf8');
@@ -124,6 +127,21 @@ export async function createSsrHandler({
   )
     .map((file) => `<link rel="modulepreload" crossorigin href="/${file}">`)
     .join('');
+  // The Arabic subsets the theme's fonts load on an Arabic page; without a
+  // preload they are found only once the stylesheet is parsed.
+  const arabicFonts = preloadArabicFonts
+    ? readdirSync(join(distDir, 'assets')).filter((file) =>
+        /^(rubik|readex-pro)-arabic-[\w-]+\.woff2$/.test(file)
+      )
+    : [];
+  const localePreloadHtml = {
+    ar: arabicFonts
+      .map(
+        (file) =>
+          `<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/${file}">`
+      )
+      .join(''),
+  };
   const cache = new RenderCache({
     ttlMs: cacheTtlMs,
     maxEntries: cacheMaxEntries,
@@ -160,7 +178,14 @@ export async function createSsrHandler({
             cookieHeader: request.cookieHeader,
             clientIp: request.clientIp,
           },
-          { template, preloadHtml, apiOrigin, apiTimeoutMs, cache }
+          {
+            template,
+            preloadHtml,
+            localePreloadHtml,
+            apiOrigin,
+            apiTimeoutMs,
+            cache,
+          }
         ),
         new Promise((resolve) => {
           timer = setTimeout(
