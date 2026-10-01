@@ -19,7 +19,7 @@ Evidence labels used below:
   - accept About AR CLS ~0.066, with the Arabic font preload kept off (localized performance debt);
   - accept the current SSR LCP;
   - enable SSR only after the R2 archive is verified.
-- **R2 archive done and verified:** 12/12 masters plus 12 provenance records in `atlas-theme-sources`, byte-identical; idempotent; anonymous access refused. Plan §Y. **Bucket Lock not enabled yet**, waiting on the Owner.
+- **R2 archive done and verified:** 12/12 masters plus 12 provenance records in `atlas-theme-sources`, byte-identical; idempotent; anonymous access refused. Plan §Y. **Bucket Lock enabled by the Owner** (dashboard). Re-audited after the lock: unchanged. The Owner approved continued use of the existing R2 credentials for this bucket: do not ask to rotate them unless they stop working.
 - **SSR not enabled.** This environment has no VPS access. The access needed is listed in plan §Y's companion report to the Owner (the deploy user over SSH, `/opt/atlas`, the new compose file and `deploy.sh`, and a merge to `main` so the workflow builds both images).
 
 ## ★★★ Status update — Phase 8 SSR session (1 Oct 2026). Read this first.

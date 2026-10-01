@@ -2351,7 +2351,7 @@ Phase 9 has not started. Nothing was deployed, no production migration or data c
 
 ## Y. Private master archive in production R2 (recorded 1 Oct 2026)
 
-The Owner created the private bucket `atlas-theme-sources` (no public access, no `r2.dev` URL, no custom domain, location hint WEUR) and an Object Read & Write token scoped to it. The 12 released Theme 1 masters were archived with the existing tool (`tools/theme-assets/archive-master.mjs`), its key layout unchanged: `modern-education/v1/<key>/master.png` plus `provenance.json`. The credentials were used only from a private, untracked file, which was then deleted.
+The Owner created the private bucket `atlas-theme-sources` (no public access, no `r2.dev` URL, no custom domain, location hint WEUR) and an Object Read & Write token scoped to it. The 12 released Theme 1 masters were archived with the existing tool (`tools/theme-assets/archive-master.mjs`), its key layout unchanged: `modern-education/v1/<key>/master.png` plus `provenance.json`. The credentials are used only from a private, untracked file outside the repositories (never printed or committed). The Owner approved their continued use for this bucket.
 
 | Check | Result |
 |---|---|
@@ -2364,4 +2364,4 @@ The Owner created the private bucket `atlas-theme-sources` (no public access, no
 | Anonymous access | object GET/HEAD and listing → 400 `InvalidArgument: Authorization`, no data. `r2.dev`/custom-domain status cannot be read with an object token (Owner's dashboard: disabled) |
 | Idempotency | a second full run gives 24 × "already archived"; 0 objects changed (ETag, timestamp, size) |
 | Overwrite guards | a wrong master is refused (sha256); a different provenance for an archived key is refused ("archive a new version"); 0 objects changed |
-| **Bucket Lock** | **not enabled.** It waits on the Owner's approval of this verified archive. It needs the dashboard or an admin token (`wrangler r2 bucket lock add atlas-theme-sources --name masters-forever --retention-indefinite`); an object token cannot set it |
+| **Bucket Lock** | **Enabled by the Owner in the dashboard** after approving this archive. The object token cannot read lock rules (`GetObjectLockConfiguration` 403; R2 Bucket Lock is not S3 Object Lock), so the lock is Owner-confirmed. After the lock, a read-only re-audit found 24/24 objects byte-identical with 0 changes, and `verify-archive` passed 12/12 |
