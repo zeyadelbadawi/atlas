@@ -81,12 +81,38 @@ function startServer(port, env) {
   });
 }
 
+/**
+ * The longest critical request chain (Lighthouse 13 reports it in the
+ * network dependency tree insight): its length in requests, when its last
+ * request ended (observed, not simulated) and the bytes along it.
+ */
+function longestChain(lhr) {
+  const items =
+    lhr.audits['network-dependency-tree-insight']?.details?.items ?? [];
+  const chains = items.find((item) => item.value?.type === 'network-tree')
+    ?.value?.chains;
+  if (!chains) return null;
+  let length = 0;
+  let durationMs = 0;
+  let transferBytes = 0;
+  let level = Object.values(chains);
+  for (;;) {
+    const next = level.find((node) => node.isLongest);
+    if (!next) break;
+    length += 1;
+    durationMs = Math.round(next.navStartToEndTime);
+    transferBytes += next.transferSize ?? 0;
+    level = Object.values(next.children ?? {});
+  }
+  return { length, durationMs, transferBytes };
+}
+
 function summarise(lhr) {
   const audit = (id) => lhr.audits[id]?.numericValue ?? null;
   const resources = lhr.audits['resource-summary']?.details?.items ?? [];
   const bytes = (type) =>
     resources.find((item) => item.resourceType === type)?.transferSize ?? null;
-  const chain = lhr.audits['critical-request-chains']?.details?.longestChain;
+  const chain = longestChain(lhr);
   const documentRequest = (
     lhr.audits['network-requests']?.details?.items ?? []
   ).find((item) => item.resourceType === 'Document');
@@ -120,13 +146,7 @@ function summarise(lhr) {
     requests:
       resources.find((item) => item.resourceType === 'total')?.requestCount ??
       null,
-    criticalChain: chain
-      ? {
-          length: chain.length,
-          durationMs: Math.round(chain.duration),
-          transferBytes: chain.transferSize,
-        }
-      : null,
+    criticalChain: chain,
   };
 }
 

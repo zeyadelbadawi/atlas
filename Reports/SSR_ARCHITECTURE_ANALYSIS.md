@@ -215,3 +215,301 @@ On the client, if hydration ever mismatches, React 18 recovers by client-renderi
 2. The server entry and renderer, and the client hydration path.
 3. The fixture server's SSR mode, then the full baseline, axe, isolation tests and Lighthouse.
 4. Caddy route, compose service and deploy script changes (no production deploy).
+
+---
+
+## 12. Implementation and verification (recorded 30 Sep 2026)
+
+Commits: FE `144aa3f` (renderer and hydration), `41ddb34` (tests, fixture SSR mode), `6617da1` (edge, image, workflow); BE `73d620a` (compose service, deploy script). Branch `claude/practical-wozniak-pjcdhe`. Nothing was deployed.
+
+### 12.1 What was built
+
+- **Renderer** (`src/ssr/entry-server.tsx`, `server/ssr/`): as designed in §5. Bounded passes: 6, not the 5 planned (Course Details needs five waves; 6 leaves one spare). Budget: 2.5 s per request, 2 s per API call.
+- **Page cache key:** the full request **origin** (protocol + Host as sent, port included) | academyId | configVersion or `unpublished` | locale | path | query | consent decision. §7 said "normalised host"; that was changed after an adversarial test showed why (12.3 #4).
+- **Edge** (`Caddyfile`): the route only applies while the Caddy container's `ATLAS_SSR` is `on` (default `off`). Off, every request takes exactly its previous route. This is the rollback switch.
+- **Two changes made from measurements (§12.6):**
+  - The router-chunk `modulepreload`s planned in §5 are **off**; `main.tsx` still starts that chunk at boot.
+  - Hydration runs inside `startTransition`, so it is time-sliced.
+  - An Arabic-font preload exists as an option and is off.
+- **Deployment:** image `atlas-frontend-ssr` (Dockerfile `--target ssr`: Node 20, production dependencies, non-root, read-only filesystem, health check). Compose service `ssr` sits behind the `ssr` profile, which `deploy.sh` enables only when `ATLAS_SSR=on`. It has no published port and no `env_file`, holds no secret, and Caddy does not depend on it. Renderer health is checked on deploy but never fails one, since Caddy serves the SPA while the renderer is unhealthy. `SSR_IMAGE` is recorded in `.last-good` for `--rollback`.
+
+### 12.2 Tests added
+
+- **`pnpm test:ssr`** (`server/ssr/ssr.test.mjs`, 56 tests) runs the production bundles against a mock public API. The mock answers with the theme baseline's own generated website and live data. It serves two published Academies with different palettes, hero text, identity and courses, and one unpublished Academy.
+  - **Pages:** every public page in EN and AR/RTL, Course Details, 404, Coming Soon.
+  - **Isolation:** sequential, 12 interleaved concurrent renders, and through the cache.
+  - **Cache:** keys for locale, query, consent and Host port/protocol; publish and unpublish take effect at once; expiry.
+  - **Pass list:** every entry, plus methods other than GET/HEAD.
+  - **Failures:** API 5xx, malformed data, budget exceeded, backend unreachable.
+  - **Credentials:** none forwarded, and a session cookie renders byte-identical to anonymous.
+  - **Escaping:** script, markup and U+2028 in owner text.
+  - **Payload:** public-only.
+  - **Preloads:** no router-chunk preloads by default; Arabic font preloads only on Arabic pages and only when enabled.
+  - **Resources:** no timers remain after a request.
+- **`src/edge-security-headers.test.ts`:** 7 new assertions against the shipped Caddyfile:
+  - the `ATLAS_SSR` gate in both site blocks;
+  - apex and www are never rendered;
+  - only GET/HEAD for missing files;
+  - `client_ip` is forwarded;
+  - pass and 5xx fall back to the SPA;
+  - the fallback carries the document headers, CSP and the site's own HSTS;
+  - the API is never routed to the renderer.
+- **Fixture server SSR mode** (`THEME_BASELINE_SSR=1`): the whole visual, axe, identity, CSP and retirement suite runs unchanged against server-rendered pages.
+
+### 12.3 Defects found during verification, and fixed
+
+1. **Hydration discarded the server HTML (React error #421).**
+   - **Symptom:** 76 occurrences in 570 stress runs.
+   - **Cause** (React 18.3.1 source, `mountDehydratedSuspenseComponent`): `hydrateRoot` always leaves a `<Suspense>` boundary's content for a later, offscreen-priority pass. The providers above it (identity, consent, localization) update state as soon as the shell commits, and a not-yet-hydrated boundary receiving an update is thrown away and client-rendered.
+   - **Fix:** the public route tree is preloaded before rendering on both sides and rendered without a Suspense boundary. The lazy auth and learner routes keep their own boundary each.
+   - **Result:** 0 in 570 runs. No `suppressHydrationWarning` anywhere.
+2. **Coming Soon was server-rendered as an empty loading state.**
+   - **Cause:** TanStack Query's `retryOnMount` reports an errored query without data as `pending` to a mounting component. The browser then refetched both 404s.
+   - **Fix:** public queries do not retry on mount *while hydrating*, and the default is restored in `QueryProvider`'s mount effect, which runs after every hydrated observer has subscribed. The server renders with the same setting. SPA behaviour is unchanged.
+3. **Per-request memory retention.**
+   - **Cause:** the app's explicit `gcTime` (5 min) overrides TanStack's server default (`Infinity`). Every server request left a GC timer per query, holding its whole cache for 5 minutes (hundreds of timers after 52 requests).
+   - **Fix:** the server client uses `gcTime: Infinity` and is cleared when the request ends. A test asserts that no timer remains.
+4. **Cache poisoning through the Host port.**
+   - **Cause:** the lookup strips the port but the canonical and social URLs use the Host as sent. `Host: alpha…:6666` could plant a canonical pointing at `:6666` into the entry every other visitor received.
+   - **Fix:** the key uses the full origin. A test first failed against the old bundle, then passed.
+5. **Router modulepreload silently missing.**
+   - **Cause:** Rollup keys a facade-less chunk as `_Name-hash.js`, not by source path.
+   - **Fix:** the lookup also goes through `index.html`'s dynamic imports. A test asserts the preload is present.
+
+### 12.4 Container and edge, verified locally
+
+- **The real Caddyfile:** only TLS, hostnames, ports and upstream addresses were substituted. It was run with Caddy built from source against a stub renderer, with `ATLAS_SSR` on, off and unset.
+  - **On:** Academy pages render.
+  - Apex, www and sign-in get the SPA.
+  - Renderer pass, 5xx, timeout and down all give the SPA with 200 and CSP, XFO and the right HSTS (platform vs custom domain).
+  - A spoofed `X-Real-IP` is overwritten with the real client address.
+  - API errors pass through unchanged.
+  - A missing hashed chunk is never answered with HTML.
+  - **Off or unset:** byte-for-byte the previous routing.
+- **The `ssr` image:** built from the real Dockerfile. The only change was injecting this sandbox's proxy CA into the Node stages, because the sandbox intercepts HTTPS; the stock `build` stage fails here the same way.
+  - The container runs as `node` with a read-only root filesystem and renders EN and AR.
+  - It forwards the visitor IP, never a cookie or `Authorization`.
+  - Traversal attempts on `/assets` get the SPA shell or 404, never a file outside the build.
+
+### 12.5 Regression and visual baseline
+
+| Suite | Result |
+|---|---|
+| Theme baseline, SPA (as served today), final code | **1,047/1,047** (run twice): the hydration seams changed nothing for the SPA |
+| Theme baseline, server-rendered (`THEME_BASELINE_SSR=1`) | **1,021/1,047**. All axe, CSP, off-origin, page-error, identity, palette-injection and retirement cases pass. The 26 failures are screenshots, identical (same tests, same pixel counts) in four full runs, including on the final code; see below |
+| `pnpm test:ssr` (production bundles) | 56/56 |
+| Frontend unit | 159 files / **1,580** tests (1,573 + 7 edge-routing). The vitest-worker `onTaskUpdate` RPC-timeout message also occurs on an untouched HEAD worktree (pre-existing) |
+| Typecheck / lint | 31 errors, identical to before / clean (one pre-existing warning) |
+
+**The 26 screenshot differences.** They were investigated per the rule (stop → investigate), and **no snapshot was updated**. Every diff's bounding box was computed from the diff image:
+- All 26 are Theme 1 v2 rich **Home**: the page itself in EN/AR, and the brand matrix, which uses that page, at 1440 and 1024.
+- 25 of them are exactly the "Learning designed around real progress" photo:
+  - 1440: x 176–659, y 2666–3028;
+  - 1024: x 32–450;
+  - AR 1024: mirrored for RTL.
+- The 26th (AR 1440) is that photo plus the features strip.
+
+Two mechanisms, measured in the browser (`useReveal` and resource timing, 3 runs per mode). Neither is a rendering difference, and in both, SSR follows the components' own contracts:
+
+1. **Native lazy loading.**
+   - **SPA:** the photo's `<img loading="lazy">` is inserted while the page's data sections are still arriving and the layout is short. It is briefly inside Chrome's lazy-load distance, so it is requested at ≈ 0.9 s and the baseline shows it loaded.
+   - **SSR:** the complete layout exists from the first parse. The photo sits 1,766 px below the viewport, beyond that distance, so it is correctly not requested until the visitor scrolls, and the full-page shot shows its LQIP.
+   - (The CTA photo further down shows its LQIP in both modes.)
+2. **Scroll reveal at the fold (AR 1440 only).**
+   - `useReveal` decides once, at mount: already in the viewport → revealed; otherwise → hidden until 15 % is visible.
+   - **SPA:** it measures the strip at top 982, before the data sections have laid out, so it hides it. The strip then settles at top 896, **4 px inside** the 900 px viewport, and stays hidden, because 4 px is less than 15 %.
+   - **SSR:** hydration measures the final layout (896), so the strip stays visible, which is what the hook documents ("nothing above the fold ever blinks out").
+
+Making SSR reproduce these would mean loading off-screen images eagerly or hiding content that is in view. That is worse for visitors and would only serve the snapshots. **Owner decision (§13):** keep the SPA baseline as the reference and accept these 26 as the server-rendered expectation, or ask for another option.
+
+### 12.6 Performance: before (SPA) and after (SSR)
+
+**Method.** It is `run-lighthouse.mjs`'s methodology, unchanged:
+- Lighthouse 13.5 defaults (mobile) plus Lighthouse's own desktop preset;
+- simulated throttling, median of 3 runs by performance score;
+- the minified fixture build served like production (same origin, gzip, enforced CSP, HTTP/2 + TLS).
+
+Both modes use **the same build and the same server**: "before" is served as the SPA (as production serves it today), "after" is server-rendered by the shipped renderer.
+- **Cold:** storage and cache reset, renderer page cache off.
+- **Warm:** browser cache primed and kept, renderer page cache 30 s (its production lifetime).
+
+Script: `e2e/theme-baseline/lighthouse/run-ssr-comparison.mjs`. Raw results: `e2e/theme-baseline/baselines/lighthouse-ssr-comparison.json`. Same machine, run back to back; numbers vary between machines, so re-measure on the machine you compare on.
+
+**Two design changes came from these measurements, each A/B-tested on the same pages before being kept:**
+
+1. **Router-chunk modulepreloads removed.**
+   - As first built, the head preloaded the public router chunk and its imports (≈ 290 KB gzip beyond the SPA's own). They competed with the render-blocking stylesheet, so the server HTML painted *later* than the SPA: mobile FCP +200 to +490 ms, and LCP only −200 to −330 ms.
+   - Without them, mobile LCP fell to 2.28 s (EN) / 2.57 s (AR) on Home and Courses.
+2. **Hydration inside `startTransition`.**
+   - React 18 hydrates a root at a blocking lane, so the page hydrated in one long task (mobile TBT 117–360 ms; Course Details above the 200 ms budget).
+   - As a transition it is time-sliced: TBT 0–38 ms.
+
+(An Arabic-font preload was also measured: About AR CLS 0.066 → 0.021, but Arabic LCP about 450 ms later. Kept off; §13.)
+
+**Results (final code).**
+- **Mobile LCP:**
+  - EN 3.04–3.06 s → **2.25–2.28 s** on Home, Courses, About, FAQs and Contact (≤ 2.5 s **met**);
+  - Course Details EN 3.05 → **2.57 s**;
+  - AR 3.17–3.32 s → **2.57–2.59 s** (just above 2.5 s);
+  - Course Details AR 3.31 → **2.87 s**.
+- **Mobile performance** 79–90 → **90–96**, and **TBT** 51–220 → **0–38 ms**.
+- **CLS:** Contact goes 0.172/0.155 → 0.028/0.009, so the SPA's failure of the 0.05 budget is fixed. Rises, all from the web-font swap: About AR 0.007 → **0.066** (above 0.05), Home AR 0.036, Course Details desktop 0.038, FAQs EN 0.024.
+- **Desktop:** performance 100 → 100; LCP equal or better on every page except Contact EN warm (+7 ms, noise).
+- **Cost:**
+  - TTFB 1 → 21–55 ms cold (the render; 210 ms on a never-warmed first request in an earlier run), 12–23 ms warm (cache hit);
+  - HTML 1 → 9–15 KB gzip;
+  - total bytes +4–7 KB;
+  - 5–10 fewer requests (no client data waterfall before paint).
+
+**Mobile, cold** (SPA → SSR)
+
+| Page | Perf | TTFB ms | FCP ms | LCP ms | CLS | TBT ms |
+|---|---|---|---|---|---|---|
+| home EN | 88 → 96 | 1 → 43 | 2511 → 2272 | 3054 → 2272 | 0.009 → 0.013 | 163 → 4 |
+| home AR | 87 → 93 | 1 → 40 | 2707 → 2590 | 3170 → 2590 | 0.003 → 0.036 | 142 → 16 |
+| courses EN | 89 → 96 | 1 → 32 | 2504 → 2272 | 3046 → 2272 | 0.016 → 0.01 | 146 → 24 |
+| courses AR | 85 → 93 | 1 → 34 | 2726 → 2584 | 3189 → 2584 | 0.007 → 0.001 | 220 → 2 |
+| course-details EN | 89 → 93 | 1 → 46 | 2533 → 2565 | 3049 → 2565 | 0.009 → 0.012 | 141 → 38 |
+| course-details AR | 87 → 90 | 1 → 36 | 2710 → 2872 | 3314 → 2872 | 0 → 0.001 | 133 → 9 |
+| about EN | 90 → 96 | 2 → 27 | 2549 → 2251 | 3058 → 2251 | 0.014 → 0.014 | 108 → 1 |
+| about AR | 87 → 92 | 1 → 24 | 2701 → 2577 | 3318 → 2577 | 0.007 → 0.066 | 100 → 0 |
+| faqs EN | 90 → 96 | 1 → 30 | 2538 → 2262 | 3043 → 2262 | 0.009 → 0.024 | 106 → 0 |
+| faqs AR | 87 → 93 | 1 → 32 | 2694 → 2571 | 3286 → 2571 | 0 → 0 | 149 → 1 |
+| contact EN | 83 → 96 | 1 → 28 | 2546 → 2276 | 3058 → 2276 | 0.172 → 0.028 | 51 → 0 |
+| contact AR | 79 → 93 | 1 → 21 | 2707 → 2581 | 3307 → 2581 | 0.155 → 0.009 | 184 → 0 |
+
+**Mobile, warm** (SPA → SSR)
+
+| Page | Perf | TTFB ms | FCP ms | LCP ms | CLS | TBT ms |
+|---|---|---|---|---|---|---|
+| home EN | 89 → 96 | 1 → 19 | 2551 → 2280 | 3075 → 2280 | 0.009 → 0.013 | 133 → 5 |
+| home AR | 86 → 93 | 1 → 21 | 2692 → 2587 | 3210 → 2587 | 0.003 → 0.036 | 183 → 11 |
+| courses EN | 90 → 96 | 1 → 19 | 2489 → 2279 | 2949 → 2279 | 0.016 → 0.01 | 146 → 15 |
+| courses AR | 87 → 93 | 1 → 18 | 2701 → 2557 | 3222 → 2557 | 0.007 → 0.001 | 145 → 13 |
+| course-details EN | 90 → 93 | 1 → 17 | 2541 → 2564 | 3050 → 2564 | 0.009 → 0.012 | 93 → 16 |
+| course-details AR | 86 → 90 | 1 → 19 | 2707 → 2874 | 3231 → 2874 | 0 → 0.001 | 162 → 19 |
+| about EN | 90 → 96 | 1 → 16 | 2557 → 2281 | 3076 → 2281 | 0.014 → 0.014 | 104 → 6 |
+| about AR | 88 → 92 | 1 → 16 | 2700 → 2572 | 3241 → 2572 | 0.007 → 0.066 | 103 → 0 |
+| faqs EN | 90 → 96 | 1 → 12 | 2575 → 2273 | 3114 → 2273 | 0.009 → 0.024 | 83 → 0 |
+| faqs AR | 87 → 93 | 1 → 19 | 2698 → 2573 | 3217 → 2573 | 0 → 0 | 132 → 0 |
+| contact EN | 81 → 96 | 1 → 18 | 2545 → 2273 | 3063 → 2273 | 0.172 → 0.028 | 169 → 1 |
+| contact AR | 81 → 93 | 1 → 17 | 2705 → 2571 | 3223 → 2571 | 0.155 → 0.009 | 112 → 0 |
+
+**Desktop, cold** (SPA → SSR)
+
+| Page | Perf | TTFB ms | FCP ms | LCP ms | CLS | TBT ms |
+|---|---|---|---|---|---|---|
+| home EN | 100 → 100 | 1 → 34 | 528 → 527 | 628 → 527 | 0.001 → 0.025 | 0 → 0 |
+| home AR | 100 → 100 | 1 → 36 | 562 → 551 | 627 → 571 | 0.003 → 0.002 | 0 → 0 |
+| courses EN | 100 → 100 | 1 → 45 | 527 → 500 | 612 → 520 | 0.005 → 0.001 | 0 → 0 |
+| courses AR | 100 → 100 | 1 → 30 | 563 → 545 | 646 → 545 | 0.005 → 0.001 | 0 → 0 |
+| course-details EN | 100 → 100 | 1 → 55 | 537 → 595 | 687 → 595 | 0 → 0.038 | 0 → 0 |
+| course-details AR | 100 → 100 | 1 → 43 | 552 → 586 | 702 → 606 | 0 → 0.038 | 0 → 0 |
+| about EN | 100 → 100 | 1 → 23 | 518 → 537 | 614 → 577 | 0 → 0 | 0 → 0 |
+| about AR | 100 → 100 | 1 → 22 | 564 → 548 | 648 → 568 | 0 → 0.002 | 0 → 0 |
+| faqs EN | 100 → 100 | 1 → 23 | 532 → 552 | 626 → 612 | 0 → 0.002 | 0 → 0 |
+| faqs AR | 100 → 100 | 1 → 23 | 562 → 546 | 649 → 566 | 0 → 0.001 | 0 → 0 |
+| contact EN | 100 → 100 | 2 → 23 | 541 → 505 | 659 → 525 | 0 → 0.001 | 0 → 0 |
+| contact AR | 100 → 100 | 1 → 26 | 552 → 556 | 634 → 556 | 0 → 0.002 | 0 → 0 |
+
+**Desktop, warm** (SPA → SSR)
+
+| Page | Perf | TTFB ms | FCP ms | LCP ms | CLS | TBT ms |
+|---|---|---|---|---|---|---|
+| home EN | 100 → 100 | 0 → 22 | 534 → 511 | 633 → 531 | 0.001 → 0.025 | 0 → 0 |
+| home AR | 100 → 100 | 1 → 22 | 555 → 551 | 622 → 551 | 0.003 → 0.002 | 0 → 0 |
+| courses EN | 100 → 100 | 1 → 25 | 518 → 529 | 601 → 549 | 0.005 → 0.001 | 1 → 0 |
+| courses AR | 100 → 100 | 1 → 20 | 564 → 587 | 627 → 627 | 0.005 → 0.001 | 0 → 0 |
+| course-details EN | 100 → 100 | 1 → 17 | 530 → 597 | 657 → 597 | 0 → 0.038 | 0 → 0 |
+| course-details AR | 100 → 100 | 1 → 23 | 556 → 603 | 701 → 623 | 0 → 0.038 | 0 → 0 |
+| about EN | 100 → 100 | 1 → 14 | 512 → 527 | 610 → 547 | 0 → 0 | 0 → 0 |
+| about AR | 100 → 100 | 1 → 19 | 564 → 579 | 626 → 579 | 0 → 0.002 | 0 → 0 |
+| faqs EN | 100 → 100 | 1 → 15 | 533 → 511 | 629 → 531 | 0 → 0.002 | 0 → 0 |
+| faqs AR | 100 → 100 | 1 → 16 | 566 → 537 | 630 → 537 | 0 → 0.001 | 0 → 0 |
+| contact EN | 100 → 100 | 1 → 18 | 521 → 571 | 624 → 631 | 0 → 0.001 | 0 → 0 |
+| contact AR | 100 → 100 | 1 → 17 | 560 → 526 | 625 → 526 | 0 → 0.002 | 0 → 0 |
+
+**Bytes and requests** (mobile, cold; KB transferred, SPA → SSR)
+
+| Page | HTML | JS | Total | Requests | Critical chain |
+|---|---|---|---|---|---|
+| home EN | 1 → 12 | 390 → 390 | 495 → 499 | 53 → 45 | see below |
+| home AR | 1 → 12 | 412 → 412 | 570 → 576 | 55 → 47 | see below |
+| courses EN | 1 → 12 | 390 → 390 | 494 → 500 | 51 → 45 | see below |
+| courses AR | 1 → 12 | 412 → 412 | 569 → 576 | 53 → 47 | see below |
+| course-details EN | 1 → 15 | 390 → 390 | 495 → 502 | 55 → 45 | see below |
+| course-details AR | 1 → 15 | 412 → 412 | 571 → 578 | 57 → 47 | see below |
+| about EN | 1 → 9 | 390 → 390 | 492 → 496 | 50 → 45 | see below |
+| about AR | 1 → 9 | 412 → 412 | 568 → 572 | 52 → 47 | see below |
+| faqs EN | 1 → 9 | 390 → 390 | 492 → 496 | 50 → 45 | see below |
+| faqs AR | 1 → 9 | 412 → 412 | 568 → 572 | 52 → 47 | see below |
+| contact EN | 1 → 9 | 390 → 390 | 492 → 497 | 50 → 45 | see below |
+| contact AR | 1 → 9 | 412 → 412 | 568 → 572 | 52 → 47 | see below |
+
+
+
+
+**Critical request chain** (mobile, cold; single run; Lighthouse 13 network dependency tree, observed end time)
+
+| Page | SPA | SSR |
+|---|---|---|
+| home EN | 3 requests, 530 ms, 132 KB | 3 requests, 655 ms, 143 KB |
+| home AR | 3 requests, 501 ms, 145 KB | 3 requests, 479 ms, 157 KB |
+| courses EN | 3 requests, 479 ms, 131 KB | 3 requests, 416 ms, 143 KB |
+| courses AR | 3 requests, 426 ms, 145 KB | 3 requests, 487 ms, 157 KB |
+| course-details EN | 3 requests, 436 ms, 131 KB | 3 requests, 506 ms, 145 KB |
+| course-details AR | 3 requests, 531 ms, 145 KB | 3 requests, 476 ms, 160 KB |
+| about EN | 3 requests, 404 ms, 131 KB | 3 requests, 391 ms, 139 KB |
+| about AR | 3 requests, 415 ms, 145 KB | 3 requests, 393 ms, 154 KB |
+| faqs EN | 3 requests, 416 ms, 131 KB | 3 requests, 364 ms, 140 KB |
+| faqs AR | 3 requests, 390 ms, 145 KB | 3 requests, 341 ms, 154 KB |
+| contact EN | 3 requests, 377 ms, 131 KB | 3 requests, 449 ms, 140 KB |
+| contact AR | 3 requests, 414 ms, 145 KB | 3 requests, 421 ms, 154 KB |
+
+
+### 12.7 Security review: what was verified
+
+| Concern | Control | Evidence |
+|---|---|---|
+| **Host handling** | The Host decides only which hostname is resolved. An unknown host costs one public `resolve` (rate-limited per visitor IP) and then passes. A Host carrying a path, `@` or a suffix resolves nothing. | `ssr.test.mjs` (Host tricks); container probe with `evil.example` |
+| **Cache poisoning** | The key is origin \| academyId \| configVersion \| locale \| path \| query \| consent. A Host port or protocol can't shape another visitor's page. Failed renders and passes are never cached. | `ssr.test.mjs` (poison test failed before the fix); "caches nothing" test |
+| **XSS** | React escapes markup. The hydration data is JSON in `type="application/json"` with `< > & U+2028 U+2029` escaped. Head tags are escaped. The only scripts are the module entry, the JSON data and JSON-LD. | `ssr.test.mjs` (owner-authored `</script>`, `<img onerror>`, U+2028) |
+| **CSP** | Unchanged and enforced; no inline executable script. Every fallback carries CSP. | SSR baseline: 0 CSP violations in every case that reached the check (in the 26 screenshot failures the check runs after the screenshot assertion, but those pages' own axe cases run it and pass); `edge-security-headers.test.ts`; local Caddy run |
+| **Payload minimisation** | Only `['public-website', …]` queries, success or a plain "not found". Errors are reduced to `{kind, status}`. | `ssr.test.mjs` (public-only data) |
+| **SSRF** | One fixed internal origin (`SSR_API_ORIGIN`, validated at start). Paths come from the app's own API client and the resolved academyId, never from the request. | `server.mjs`; "calls only the public website API" test |
+| **Auth leakage** | No cookie, `Authorization`, token service or refresh on the server; only `X-Real-IP` is forwarded. A request with session cookies renders byte-identical to an anonymous one. `Cache-Control: private, no-cache`, so Cloudflare never stores tenant HTML. | `ssr.test.mjs`; container probe (backend saw no cookie or auth) |
+| **Renderer surface** | No published port, no secrets (no `env_file`), runs as `node`, read-only root filesystem. `/assets` serves only files inside the build (traversal → SPA shell or 404). | compose; container probe |
+| **Availability** | Renderer slow, failing or stopped → Caddy serves the SPA, with the API untouched. One switch (`ATLAS_SSR`) turns it off. | local Caddy run in all three switch states |
+| **Resource exhaustion** | Bounded passes (6) and budget (2.5 s); per-request query cache cleared, no timers left; page cache LRU-capped (500). | timer test |
+
+Residual, pre-existing (§10): the public API exposes `instructors[].id`, `introVideoAssetId` and review `studentId`. SSR places exactly the public responses into the page, so these remain as public as they already are. Removing them is an API change for the Owner.
+
+## 13. Owner decisions (from this implementation)
+
+1. **Enable it in production, and when.** It ships off. To enable:
+   - set `ATLAS_SSR=on` in `/opt/atlas/.env` **after** the frontend workflow has published `atlas-frontend-ssr`;
+   - run `deploy.sh --frontend-only`.
+2. **The 26 server-rendered screenshot differences (§12.5).** Recommended: keep the SPA baseline as the reference and record these 26 as the server-rendered expectation, because SSR follows the components' own lazy-load and reveal contracts. They have not been re-recorded.
+3. **About (AR, mobile) CLS 0.066**, above the plan's 0.05, caused by the Arabic font swap. Options:
+   - (a) accept it;
+   - (b) `preloadArabicFonts`: CLS 0.021 but Arabic LCP about 450 ms later;
+   - (c) metric-matched fallback fonts (a CSS change; needs a visual review).
+4. **Carried from §10:**
+   - the `atlas_consent` cookie;
+   - `en-US` currency formatting;
+   - the three public API identifiers;
+   - the FAQ/testimonial library endpoints that need authentication.
+
+## 14. Rollout and rollback runbook (nothing here has been run in production)
+
+1. Merge to `main` with `ATLAS_SSR` unset. The frontend workflow builds and pushes both images; Caddy loads the new Caddyfile and every request keeps its previous route.
+2. Confirm `ghcr.io/zeyadelbadawi/atlas-frontend-ssr:<sha>` exists.
+3. Set `ATLAS_SSR=on` in `/opt/atlas/.env`, then run `deploy.sh --frontend-only`. That pulls and starts `ssr`, then Caddy (recreated with the new environment), then checks health. An unhealthy renderer is reported but is not fatal.
+4. **Verify:**
+   - `curl -sI https://<academy-host>/` shows `x-atlas-ssr: render`, and a repeat shows `hit`;
+   - `/sign-in` shows no `x-atlas-ssr` header (the SPA);
+   - `docker compose logs ssr` shows the JSON render/pass events.
+5. **Roll back**, choosing one:
+   - set `ATLAS_SSR=off` and run `deploy.sh --frontend-only` (Caddy returns to the previous routing and the renderer is stopped);
+   - `docker compose stop ssr` (Caddy serves the SPA on the next request, no deploy);
+   - `deploy.sh --rollback` (previous images, including `SSR_IMAGE`).

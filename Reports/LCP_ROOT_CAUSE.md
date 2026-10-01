@@ -134,3 +134,25 @@ Risks and costs:
 - But live sections go stale between publishes, and every course change has to trigger a re-render.
 
 **Decision requested:** approve (a) the two small steps above only, accepting ≈ 2.4–2.6 s; or (b) the SSR proposal as its own phase; or (c) accept the current ≈ 3.0 s (performance 88–90 on HTTP/2) for now.
+
+---
+
+## Addendum (1 Oct 2026): server rendering of the public site, implemented and measured
+
+The HTML-first option above (server rendering of the public routes only) was authorised and built. Report: `Reports/SSR_ARCHITECTURE_ANALYSIS.md` §12. It ships **off** (`ATLAS_SSR`); nothing was deployed.
+
+Lighthouse (this report's methodology: mobile, simulated, median of 3, HTTP/2), same build served as the SPA vs server-rendered, Theme 1:
+
+| | SPA | SSR |
+|---|---|---|
+| LCP, EN (Home, Courses, About, FAQs, Contact) | 3.04–3.06 s | **2.25–2.28 s** (≤ 2.5 s met) |
+| LCP, AR (same pages) | 3.17–3.32 s | **2.57–2.59 s** |
+| LCP, Course Details EN / AR | 3.05 / 3.31 s | **2.57 / 2.87 s** |
+| Performance | 79–90 | **90–96** |
+| TBT | 51–220 ms | **0–38 ms** |
+
+Two lessons came out of the measurements:
+- **Preloading the route's JavaScript from the server HTML made first paint slower.** It competes with the render-blocking stylesheet.
+- **Hydration must run as a transition**, or it is one long task.
+
+What remains above 2.5 s is Arabic, which carries about 22 KB more script (translations) and one more font file, and Course Details, the heaviest page.

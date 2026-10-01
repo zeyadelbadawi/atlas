@@ -2282,3 +2282,69 @@ The public asset contract is unchanged, and no archive URL appears anywhere publ
 - the R2 bucket, then archival.
 
 Phase 9 has not started. No production deployment or migration was performed.
+
+## X. Phase 8 SSR session (recorded 1 Oct 2026)
+
+The Owner authorised server-side rendering for **only** the anonymous public Academy website. The conditions were: analysis first; isolation proven, not assumed; stop on any architectural risk; no production change. Full record: `Reports/SSR_ARCHITECTURE_ANALYSIS.md` (§1–§11 analysis, §12 implementation and verification, §13 decisions, §14 runbook).
+
+### X.A What changed
+
+- **FE `82b8db6`:** the analysis. Verdict: no stop rule hit, because SSR is additive. Unchanged: tenant, RLS, auth, payment, learner and provisioning architecture; API contracts; the ThemePack model (the same App, routes and theme packs render on the server); Theme 1.
+- **FE `144aa3f`:** the renderer and the hydration path. The SPA stays the fallback for everything.
+- **FE `41ddb34`:** the 56-test adversarial suite and the fixture server's SSR mode.
+- **FE `6617da1`:** Caddy routing behind `ATLAS_SSR` (default off), the `ssr` image target and the workflow.
+- **FE `c1cb85b`, `997a959`:** the measured performance changes (no router-chunk preloads; transition hydration; an optional Arabic font preload, off).
+- **BE `73d620a`:** the profile-gated `ssr` compose service, plus `deploy.sh` support (frontend-only rollout, last-good/rollback, non-fatal health).
+
+### X.B Verification (final code)
+
+| Check | Result |
+|---|---|
+| Adversarial SSR suite (2 published Academies × 2 palettes + 1 unpublished; isolation, cache, publish, failures, security) | 56/56 |
+| Theme baseline, SPA | 1,047/1,047 (twice) |
+| Theme baseline, SSR | 1,021/1,047. All axe, CSP, page-error, identity, palette and retirement cases pass. 26 screenshot differences, identical in 4 runs, explained; **no snapshot updated** (SSR §12.5) |
+| Hydration probe (11 page types incl. Coming Soon, 404, EN/AR) | 0 recovered hydrations, 0 errors, 0 API calls after hydration |
+| Frontend unit / typecheck / lint | 1,580 / 31 (unchanged) / clean |
+| Real Caddyfile, switch on/off/unset, renderer up/down/slow/5xx | as designed (SSR §12.4) |
+| `ssr` image | builds; runs non-root, read-only; renders; forwards no credential |
+| Compose | parses; `ssr` exists only with the profile; `ATLAS_SSR` defaults to `off` |
+
+**Defects found and fixed during verification:**
+- React #421 hydration discard (76/570 → 0/570);
+- Coming Soon rendering as a loading state;
+- per-request cache retention through query GC timers;
+- Host-port cache poisoning;
+- a silently missing preload.
+
+### X.C Lighthouse, SPA → SSR (mobile, cold, median of 3, HTTP/2)
+
+- **LCP EN:** 3.04–3.06 s → **2.25–2.28 s** (Home, Courses, About, FAQs, Contact).
+- **LCP AR:** 3.17–3.32 s → **2.57–2.59 s**.
+- **Course Details:** EN 2.57 s, AR 2.87 s.
+- **Performance** 79–90 → 90–96, and **TBT** 51–220 → 0–38 ms.
+- **CLS:** Contact 0.172 → 0.028 (fixed); About AR 0.007 → 0.066 (font swap).
+- **Desktop:** 100/100.
+- Full tables, warm cache and desktop: SSR §12.6.
+
+### X.D Phase 8 closure matrix (this session's scope)
+
+| Item | Status | Evidence |
+|---|---|---|
+| SSR of Home, Courses, Course Details, About, FAQs, Contact, Coming Soon and 404 in EN/AR (RTL) | **PASS** | SSR §12.2, X.B |
+| Nothing authenticated or private is server-rendered; the SPA fallback is kept | **PASS** | pass-list tests, Caddy §12.4 |
+| Tenant isolation (HTML, configuration, pages, branding, courses; cache) | **PASS** | `ssr.test.mjs` isolation and cache groups |
+| Cache design (keys, publish invalidation, no authenticated caching) | **PASS** | SSR §7, §12.1, tests |
+| No single point of failure | **PASS** | Caddy fallback in every failure mode; `ATLAS_SSR` switch |
+| Hydration (no suppression, no discard, no refetch) | **PASS** | §12.3 #1–2, hydration probe |
+| Accessibility (axe) under SSR | **PASS** | SSR baseline axe cases, 0 violations |
+| CSP and security review | **PASS** | SSR §12.7 |
+| Visual baseline under SSR | **OWNER ACTION REQUIRED**: accept 26 explained differences as the SSR expectation (lazy image, reveal at the fold); not re-recorded | SSR §12.5, §13 #2 |
+| Criterion 8, LCP ≤ 2.5 s | **OWNER ACTION REQUIRED**: met on EN Home/Courses/About/FAQs/Contact (2.25–2.28 s); AR 2.57–2.59 s and Course Details 2.57/2.87 s are above it. Accept, or commission the Arabic payload/Course Details work | X.C |
+| Criterion 8, CLS ≤ 0.05 | **OWNER ACTION REQUIRED**: met everywhere except About AR mobile (0.066; options in SSR §13 #3). Contact now meets it (it did not as the SPA) | X.C |
+| Criterion 8, TBT ≤ 200 ms | **PASS** (0–38 ms) | X.C |
+| SSR enabled in production | **OWNER ACTION REQUIRED**: merge, then `ATLAS_SSR=on` and `deploy.sh --frontend-only` (SSR §14) | — |
+| Themes 2–5 production dry run, apply, verify | **BLOCKED**: no production database access in this environment. Tooling verified locally (W.B); runbook in `Reports/THEMES_2_5_RETIREMENT.md` §5 | W.B |
+| Themes 2–5 code removal | **BLOCKED**: waits on the verified production migration (kept for rollback) | W.B |
+| R2 private archive in production | **OWNER ACTION REQUIRED**: create the bucket, lock and token, then `archive-master` × 12 and `verify-archive` | W.C |
+
+Phase 9 has not started. Nothing was deployed, no production migration or data change was made, and `main` was not touched.

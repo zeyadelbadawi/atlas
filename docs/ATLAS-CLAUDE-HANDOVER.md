@@ -12,6 +12,38 @@ Evidence labels used below:
 
 ---
 
+## ★★★ Status update — Phase 8 SSR session (1 Oct 2026). Read this first.
+
+Same branch (`claude/practical-wozniak-pjcdhe`, both repos). Nothing on `main`, nothing deployed, no production data or migration touched. Full record: plan §X and `Reports/SSR_ARCHITECTURE_ANALYSIS.md` §12–§14. This supersedes the LCP decision bullet of the ★★ section below.
+
+- **SSR of the anonymous public Academy website is implemented and ships OFF.**
+  - Caddy routes Academy page requests to the `ssr` renderer only when `ATLAS_SSR=on`. Every failure, and everything not public, falls back to the unchanged SPA.
+  - Code: FE `144aa3f`, `41ddb34`, `6617da1`, `c1cb85b`, `997a959`; BE `73d620a`.
+- **Verified:**
+  - `pnpm test:ssr` 56/56 (needs `VITE_PLATFORM_BASE_DOMAIN=atlass.dpdns.org pnpm build && … pnpm build:ssr` first);
+  - SPA theme baseline 1,047/1,047;
+  - SSR theme baseline (`THEME_BASELINE_SSR=1`) 1,021/1,047. The 26 are explained screenshot differences (lazy image, reveal at the fold). They were **not** re-recorded and are an Owner decision.
+  - FE unit 1,580; typecheck 31 (unchanged).
+- **Lighthouse** (`e2e/theme-baseline/lighthouse/run-ssr-comparison.mjs`), mobile:
+  - LCP EN 3.05 → 2.27 s;
+  - LCP AR 3.2–3.3 → 2.58 s;
+  - Course Details 2.57 / 2.87 s;
+  - TBT → 0–38 ms;
+  - About AR CLS 0.066 (font swap; options in SSR §13).
+- **Owner actions:**
+  - enable SSR (§14 runbook);
+  - accept the 26 SSR screenshots;
+  - About AR CLS option;
+  - accept or commission the AR / Course Details LCP gap;
+  - the Themes 2–5 production migration (BLOCKED here: no production access);
+  - the R2 bucket.
+- **Phase 9 not started.**
+- **Environment notes:**
+  - `ss` is not installed: kill by port with `lsof -t -iTCP:<port> -sTCP:LISTEN`.
+  - The theme baseline reuses an existing server on :4173 (`reuseExistingServer`), so free the port first or you test a stale bundle.
+  - Docker works after `dockerd` is started manually. Builds need this sandbox's proxy CA injected into the Node stages (the stock Dockerfile fails here identically).
+  - Caddy can be built from source (`go install`).
+
 ## ★★ Status update — Phase 8 decisions session (30 Sep 2026). Read this first.
 
 Same branch (`claude/practical-wozniak-pjcdhe`, both repos, nothing on `main`, no production change). Full record: plan §W. It supersedes the "Blocked — images" and "Owner decisions" bullets of the ★ section below.
