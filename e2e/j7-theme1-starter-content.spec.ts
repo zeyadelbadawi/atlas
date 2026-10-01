@@ -13,6 +13,7 @@
  *        site shows none → confirming one makes exactly that one public.
  */
 import { deflateSync, crc32 } from 'node:zlib';
+import { clearAuthRateLimits } from './support/global-setup';
 import { test, expect, type Page } from '@playwright/test';
 import {
   ACADEMY_PREVIEW_PARAM,
@@ -25,6 +26,7 @@ import {
   signInThroughDashboard,
   signOutInBrowser,
   type Session,
+  seedCookieDecision,
 } from './support/atlas';
 
 test.describe.configure({ mode: 'serial' });
@@ -192,7 +194,15 @@ const SAMPLE_QUOTES = [
 test.describe('J7 — Theme 1 starter content', () => {
   let skipped: Provisioned;
 
+  test.beforeEach(async ({ page }) => {
+    await seedCookieDecision(page);
+  });
+
   test.beforeAll(async ({ request }) => {
+    // Each journey file starts from a clear sign-in limiter (as J1–J6 do):
+    // the limiter is a real 10-per-15-minutes protection, and this file
+    // signs the owner in several times after the earlier journeys did.
+    await clearAuthRateLimits();
     owner = await apiSignIn(request, {
       email: SEED.owner,
       password: SEED.password,

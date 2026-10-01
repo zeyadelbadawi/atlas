@@ -10,6 +10,7 @@ import type {
   JsonValue,
   PaginatedResult,
   PaginationMeta,
+  QueryParamValue,
   QueryParams,
 } from '@types';
 
@@ -66,6 +67,33 @@ export function toCollectionParams<
     params[key] = value as QueryParams[string];
   }
 
+  return params;
+}
+
+/**
+ * A flat, typed query object (`{ page?: number; status?: 'a' | 'b'; … }`) as
+ * request params. The constraint keeps every field a valid query-string
+ * value, so an interface without an index signature is accepted while a
+ * nested object or a function is a compile error. Absent fields are
+ * dropped rather than sent as `key=undefined` (a backend `@IsIn` would
+ * reject that); `dropEmptyStrings` also drops `''`, for filters where an
+ * empty value means "no filter".
+ */
+export function toQueryParams<
+  T extends { readonly [K in keyof T]?: QueryParamValue },
+>(
+  query: T,
+  options: { readonly dropEmptyStrings?: boolean } = {}
+): QueryParams {
+  const params: Record<string, QueryParamValue> = {};
+  for (const [key, value] of Object.entries(query) as [
+    string,
+    QueryParamValue,
+  ][]) {
+    if (value === undefined) continue;
+    if (options.dropEmptyStrings && value === '') continue;
+    params[key] = value;
+  }
   return params;
 }
 

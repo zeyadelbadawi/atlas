@@ -29,4 +29,5 @@ export {
   emptyPaginatedResult,
   resourcePath,
   toCollectionParams,
+  toQueryParams,
 } from './request.utils';

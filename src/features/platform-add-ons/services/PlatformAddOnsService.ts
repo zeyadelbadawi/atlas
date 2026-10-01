@@ -10,9 +10,9 @@
  * the CATALOG publication state, the tenant routes install/enable per
  * academy.
  */
-import { BaseService } from '@services';
+import { BaseService, toQueryParams } from '@services';
 import type { ReadOptions, WriteOptions } from '@services';
-import type { PaginatedResponse } from '@types';
+import type { PaginatedResult } from '@types';
 import type {
   PlatformAddOnRow,
   PlatformAddOnQuery,
@@ -24,31 +24,25 @@ export class PlatformAddOnsService extends BaseService {
 
   async list(
     query: PlatformAddOnQuery,
-    options?: ReadOptions,
-  ): Promise<PaginatedResponse<PlatformAddOnRow>> {
-    return this.client.get<PaginatedResponse<PlatformAddOnRow>>(this.path(), {
+    options?: ReadOptions
+  ): Promise<PaginatedResult<PlatformAddOnRow>> {
+    return this.client.get<PaginatedResult<PlatformAddOnRow>>(this.path(), {
       ...options,
-      params: { ...(options?.params ?? {}), ...stripUndefined(query) },
+      params: { ...(options?.params ?? {}), ...toQueryParams(query) },
     });
   }
 
   async updateCatalogStatus(
     key: string,
     input: UpdateAddOnCatalogStatusInput,
-    options?: WriteOptions,
+    options?: WriteOptions
   ): Promise<PlatformAddOnRow> {
     return this.client.patch<PlatformAddOnRow, UpdateAddOnCatalogStatusInput>(
       this.path(key, 'status'),
       input,
-      options,
+      options
     );
   }
-}
-
-function stripUndefined(query: Record<string, unknown>): Record<string, unknown> {
-  return Object.fromEntries(
-    Object.entries(query).filter(([, value]) => value !== undefined),
-  );
 }
 
 export const platformAddOnsService = new PlatformAddOnsService();

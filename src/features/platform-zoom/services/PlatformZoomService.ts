@@ -10,7 +10,7 @@
  * tenant-scoped `academies/:id/live-sessions/*` routes, matching how
  * `platform-academies` differs from `academies`.
  */
-import { BaseService } from '@services';
+import { BaseService, toQueryParams } from '@services';
 import type { ReadOptions } from '@services';
 import type {
   ZoomConnectionRow,
@@ -27,7 +27,7 @@ import type {
   ZoomAcademyDetail,
   ZoomListQuery,
 } from '../types';
-import type { PaginatedResponse } from '@types';
+import type { PaginatedResult } from '@types';
 
 export class PlatformZoomService extends BaseService {
   protected readonly resource = 'platform-zoom';
@@ -39,52 +39,81 @@ export class PlatformZoomService extends BaseService {
 
   async listConnections(
     query: ZoomConnectionsQuery,
-    options?: ReadOptions,
-  ): Promise<PaginatedResponse<ZoomConnectionRow>> {
-    return this.client.get<PaginatedResponse<ZoomConnectionRow>>(this.path('connections'), {
-      ...options,
-      params: { ...(options?.params ?? {}), ...stripUndefined(query) },
-    });
+    options?: ReadOptions
+  ): Promise<PaginatedResult<ZoomConnectionRow>> {
+    return this.client.get<PaginatedResult<ZoomConnectionRow>>(
+      this.path('connections'),
+      {
+        ...options,
+        params: {
+          ...(options?.params ?? {}),
+          ...toQueryParams(query, { dropEmptyStrings: true }),
+        },
+      }
+    );
   }
 
   async listSessions(
     query: ZoomSessionsQuery,
-    options?: ReadOptions,
-  ): Promise<PaginatedResponse<ZoomLiveSessionRow>> {
-    return this.client.get<PaginatedResponse<ZoomLiveSessionRow>>(this.path('live-sessions'), {
-      ...options,
-      params: { ...(options?.params ?? {}), ...stripUndefined(query) },
-    });
+    options?: ReadOptions
+  ): Promise<PaginatedResult<ZoomLiveSessionRow>> {
+    return this.client.get<PaginatedResult<ZoomLiveSessionRow>>(
+      this.path('live-sessions'),
+      {
+        ...options,
+        params: {
+          ...(options?.params ?? {}),
+          ...toQueryParams(query, { dropEmptyStrings: true }),
+        },
+      }
+    );
   }
 
   async listAttendance(
     query: ZoomListQuery,
-    options?: ReadOptions,
-  ): Promise<PaginatedResponse<ZoomAttendanceRow>> {
-    return this.client.get<PaginatedResponse<ZoomAttendanceRow>>(this.path('attendance'), {
-      ...options,
-      params: { ...(options?.params ?? {}), ...stripUndefined(query) },
-    });
+    options?: ReadOptions
+  ): Promise<PaginatedResult<ZoomAttendanceRow>> {
+    return this.client.get<PaginatedResult<ZoomAttendanceRow>>(
+      this.path('attendance'),
+      {
+        ...options,
+        params: {
+          ...(options?.params ?? {}),
+          ...toQueryParams(query, { dropEmptyStrings: true }),
+        },
+      }
+    );
   }
 
   async listRecordings(
     query: ZoomListQuery,
-    options?: ReadOptions,
-  ): Promise<PaginatedResponse<ZoomRecordingRow>> {
-    return this.client.get<PaginatedResponse<ZoomRecordingRow>>(this.path('recordings'), {
-      ...options,
-      params: { ...(options?.params ?? {}), ...stripUndefined(query) },
-    });
+    options?: ReadOptions
+  ): Promise<PaginatedResult<ZoomRecordingRow>> {
+    return this.client.get<PaginatedResult<ZoomRecordingRow>>(
+      this.path('recordings'),
+      {
+        ...options,
+        params: {
+          ...(options?.params ?? {}),
+          ...toQueryParams(query, { dropEmptyStrings: true }),
+        },
+      }
+    );
   }
 
   async listEvents(
     query: ZoomListQuery,
-    options?: ReadOptions,
-  ): Promise<PaginatedResponse<ZoomEventRow> & { health: ZoomEventHealth }> {
-    return this.client.get<PaginatedResponse<ZoomEventRow> & { health: ZoomEventHealth }>(
-      this.path('events'),
-      { ...options, params: { ...(options?.params ?? {}), ...stripUndefined(query) } },
-    );
+    options?: ReadOptions
+  ): Promise<PaginatedResult<ZoomEventRow> & { health: ZoomEventHealth }> {
+    return this.client.get<
+      PaginatedResult<ZoomEventRow> & { health: ZoomEventHealth }
+    >(this.path('events'), {
+      ...options,
+      params: {
+        ...(options?.params ?? {}),
+        ...toQueryParams(query, { dropEmptyStrings: true }),
+      },
+    });
   }
 
   async getHealth(options?: ReadOptions): Promise<ZoomHealthResponse> {
@@ -93,27 +122,29 @@ export class PlatformZoomService extends BaseService {
 
   async listActivity(
     query: ZoomListQuery,
-    options?: ReadOptions,
-  ): Promise<PaginatedResponse<ZoomActivityRow>> {
-    return this.client.get<PaginatedResponse<ZoomActivityRow>>(this.path('activity'), {
-      ...options,
-      params: { ...(options?.params ?? {}), ...stripUndefined(query) },
-    });
+    options?: ReadOptions
+  ): Promise<PaginatedResult<ZoomActivityRow>> {
+    return this.client.get<PaginatedResult<ZoomActivityRow>>(
+      this.path('activity'),
+      {
+        ...options,
+        params: {
+          ...(options?.params ?? {}),
+          ...toQueryParams(query, { dropEmptyStrings: true }),
+        },
+      }
+    );
   }
 
-  async getAcademyDetail(academyId: string, options?: ReadOptions): Promise<ZoomAcademyDetail> {
-    return this.client.get<ZoomAcademyDetail>(this.path('academies', academyId), options);
+  async getAcademyDetail(
+    academyId: string,
+    options?: ReadOptions
+  ): Promise<ZoomAcademyDetail> {
+    return this.client.get<ZoomAcademyDetail>(
+      this.path('academies', academyId),
+      options
+    );
   }
-}
-
-/**
- * Drops absent filters rather than sending `status=undefined`, which the
- * backend's `@IsIn` validator would reject as a malformed value.
- */
-function stripUndefined(query: Record<string, unknown>): Record<string, unknown> {
-  return Object.fromEntries(
-    Object.entries(query).filter(([, value]) => value !== undefined && value !== ''),
-  );
 }
 
 export const platformZoomService = new PlatformZoomService();

@@ -39,10 +39,8 @@ jobs:
       - name: Lint
         run: pnpm lint
 
-      # Typecheck is not a gate yet: 29 errors predate it, all outside the
-      # public website (platform Zoom / add-ons admin and one tenant test —
-      # `Reports/THEME_1_ACADEMY_WEBSITE_PLAN.md` §Z). Add `pnpm typecheck`
-      # here once those are fixed, rather than gating on a known-red step.
+      - name: Typecheck
+        run: pnpm typecheck
 
       - name: Unit tests
         run: pnpm test

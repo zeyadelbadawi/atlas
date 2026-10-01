@@ -5,6 +5,7 @@
  * error normalization, retries and cancellation. Every API request goes through
  * this client; features never call axios directly.
  */
+import { withDevHostAcademy } from './dev-host-academy';
 import axios, { type AxiosInstance, type AxiosError } from 'axios';
 import { ENV } from '@config';
 import { tokenService } from '@services/identity';
@@ -255,6 +256,10 @@ export class HttpClient {
 
         // Attach correlation ID for request tracing.
         config.headers['X-Correlation-ID'] = this.generateCorrelationId();
+
+        // Local development: name the dev-preview Academy on the routes that
+        // resolve it from the host (no-op in a production build).
+        config.params = withDevHostAcademy(config.url, config.params);
 
         // Attach client metadata.
         config.headers['X-Client-Version'] = ENV.version ?? '1.0.0';
