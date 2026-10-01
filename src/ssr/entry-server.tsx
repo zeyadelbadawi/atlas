@@ -90,6 +90,8 @@ export interface SsrOptions {
   readonly apiOrigin: string;
   /** Per API call. */
   readonly apiTimeoutMs: number;
+  /** The largest API response accepted (bytes); a larger one passes the page. */
+  readonly maxResponseBytes?: number;
   readonly cache?: SsrCache;
   /** Render passes before giving up (each fetches one wave of queries). */
   readonly maxPasses?: number;
@@ -260,9 +262,16 @@ export async function renderPublicWebsitePage(
   const renderYear = new Date().getUTCFullYear();
 
   const origin = `${request.protocol}://${request.host}`;
+  // Set when the API refused a response for exceeding the page budget: the
+  // page would be over budget too, so it passes before rendering further.
+  let responseTooLarge = false;
   const apiContext: ServerRequestContext = {
     apiOrigin: options.apiOrigin,
     timeoutMs: options.apiTimeoutMs,
+    maxResponseBytes: options.maxResponseBytes,
+    onResponseTooLarge: () => {
+      responseTooLarge = true;
+    },
     headers: {
       ...(request.clientIp ? { 'X-Real-IP': request.clientIp } : {}),
       'X-Atlas-SSR': '1',
@@ -330,6 +339,7 @@ export async function renderPublicWebsitePage(
         return pass(`render failed: ${(error as Error).message}`);
       }
 
+      if (responseTooLarge) return pass('api response over budget');
       const state = classify(queryClient, lookupKey);
       if (state.status === 'not-found' || state.status === 'unavailable') {
         return pass(state.status);

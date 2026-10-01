@@ -76,6 +76,15 @@ export interface ServerRequestContext {
   readonly headers: Readonly<Record<string, string>>;
   /** Per-request timeout, in milliseconds. */
   readonly timeoutMs: number;
+  /**
+   * The largest response body accepted, in bytes. A larger one aborts the
+   * download and fails the request. The renderer passes its page budget:
+   * the page embeds every response it renders from, so one response over
+   * the budget already means the page would be.
+   */
+  readonly maxResponseBytes?: number;
+  /** Called when a response was refused for exceeding `maxResponseBytes`. */
+  readonly onResponseTooLarge?: () => void;
 }
 
 let serverRequestContext: (() => ServerRequestContext | undefined) | undefined;
@@ -228,6 +237,9 @@ export class HttpClient {
           // nothing that could carry an identity.
           config.baseURL = `${server.apiOrigin}${config.baseURL ?? ''}`;
           config.timeout = server.timeoutMs;
+          if (server.maxResponseBytes !== undefined) {
+            config.maxContentLength = server.maxResponseBytes;
+          }
           for (const [name, value] of Object.entries(server.headers)) {
             config.headers[name] = value;
           }
@@ -258,7 +270,16 @@ export class HttpClient {
       async (error: AxiosError) => {
         // A server render never refreshes a session or replays a request:
         // it has no session, and its time budget is short.
-        if (serverRequestContext?.()) return Promise.reject(error);
+        const server = serverRequestContext?.();
+        if (server) {
+          if (
+            error.code === 'ERR_BAD_RESPONSE' &&
+            error.message.startsWith('maxContentLength')
+          ) {
+            server.onResponseTooLarge?.();
+          }
+          return Promise.reject(error);
+        }
 
         const originalRequest = error.config;
 

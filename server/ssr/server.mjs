@@ -19,11 +19,18 @@
  *   SSR_API_TIMEOUT_MS   per API call (default 2000)
  *   SSR_CACHE_TTL_MS     rendered-page cache lifetime (default 30000; 0 disables)
  *   SSR_CACHE_MAX        rendered-page cache entries (default 500)
+ *   SSR_CACHE_MAX_BYTES  rendered-page cache memory (default 64 MiB)
+ *   SSR_MAX_HTML_BYTES   largest page sent or cached (default 1 MiB); a
+ *                        larger one passes to the single-page app
  */
 import { createServer } from 'node:http';
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import { extname, join, normalize, resolve, sep } from 'node:path';
-import { createSsrHandler } from './handler.mjs';
+import {
+  DEFAULT_CACHE_MAX_BYTES,
+  DEFAULT_MAX_HTML_BYTES,
+  createSsrHandler,
+} from './handler.mjs';
 
 process.env.NODE_ENV ??= 'production';
 
@@ -51,6 +58,8 @@ const { handle } = await createSsrHandler({
   renderBudgetMs: Number(env('SSR_RENDER_BUDGET_MS', 2_500)),
   cacheTtlMs: Number(env('SSR_CACHE_TTL_MS', 30_000)),
   cacheMaxEntries: Number(env('SSR_CACHE_MAX', 500)),
+  cacheMaxBytes: Number(env('SSR_CACHE_MAX_BYTES', DEFAULT_CACHE_MAX_BYTES)),
+  maxHtmlBytes: Number(env('SSR_MAX_HTML_BYTES', DEFAULT_MAX_HTML_BYTES)),
   log,
 });
 

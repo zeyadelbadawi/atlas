@@ -22,6 +22,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   createSsrHandler,
+  DEFAULT_MAX_HTML_BYTES,
   findPublicRouterChunk,
   RenderCache,
 } from './handler.mjs';
@@ -608,6 +609,217 @@ describe('caching and publishing', () => {
     const disabled = new RenderCache({ ttlMs: 0, maxEntries: 5 });
     disabled.set('a', 'A');
     assert.equal(disabled.size, 0);
+  });
+});
+
+/** A legacy inline image (`data:image/png;base64,…`) of about `bytes` bytes. */
+function inlineImage(bytes) {
+  return `data:image/png;base64,iVBORw0KGgo${'A'.repeat(Math.max(0, bytes - 33))}`;
+}
+
+const occurrences = (haystack, needle) => haystack.split(needle).length - 1;
+
+function withHomeHeroImage(pages, image) {
+  return pages.map((page) =>
+    page.coreType === 'home'
+      ? {
+          ...page,
+          sections: page.sections.map((section) =>
+            section.type === 'hero'
+              ? { ...section, config: { ...section.config, image } }
+              : section
+          ),
+        }
+      : page
+  );
+}
+
+describe('size budget (inline images)', () => {
+  const PAGES = [
+    '/',
+    '/courses',
+    '/courses/fx-course-1',
+    '/about',
+    '/faqs',
+    '/contact',
+  ];
+
+  it('the budget leaves at least 2.5× headroom over every real page', async () => {
+    let largest = 0;
+    for (const path of PAGES) {
+      for (const locale of ['', '/ar']) {
+        const url = locale ? `${locale}${path === '/' ? '/' : path}` : path;
+        const result = await get(handler, ALPHA, url);
+        assert.equal(result.headers['X-Atlas-SSR'], 'render', url);
+        largest = Math.max(largest, Buffer.byteLength(result.body));
+      }
+    }
+    assert.ok(
+      largest * 2.5 <= DEFAULT_MAX_HTML_BYTES,
+      `largest page ${largest} B leaves less than 2.5x headroom under ${DEFAULT_MAX_HTML_BYTES} B`
+    );
+  });
+
+  it('a page carries an inline logo four times and an inline section image twice', async () => {
+    const big = await makeHandler({ maxHtmlBytes: Infinity });
+    const logo = inlineImage(20_000);
+    state.academies[ALPHA_ID].resolve.academyLogo = logo;
+    const withLogo = await get(big, ALPHA, '/');
+    assert.equal(withLogo.headers['X-Atlas-SSR'], 'render');
+    assert.equal(
+      occurrences(withLogo.body, logo),
+      4,
+      'JSON-LD, header, footer and hydration data'
+    );
+
+    resetState();
+    const image = inlineImage(20_000);
+    state.academies[ALPHA_ID].pages = withHomeHeroImage(
+      state.academies[ALPHA_ID].pages,
+      image
+    );
+    const withImage = await get(big, ALPHA, '/');
+    assert.equal(withImage.headers['X-Atlas-SSR'], 'render');
+    assert.equal(
+      occurrences(withImage.body, image),
+      2,
+      'the section and hydration data'
+    );
+  });
+
+  it('still renders an Academy whose inline logo is just under 100 KB (production’s active Academies)', async () => {
+    state.academies[ALPHA_ID].resolve.academyLogo = inlineImage(100 * 1024 - 1);
+    for (const url of [
+      '/',
+      '/ar/',
+      '/courses/fx-course-1',
+      '/ar/courses/fx-course-1',
+    ]) {
+      const result = await get(handler, ALPHA, url);
+      assert.equal(result.headers['X-Atlas-SSR'], 'render', url);
+      assert.ok(Buffer.byteLength(result.body) <= DEFAULT_MAX_HTML_BYTES, url);
+    }
+  });
+
+  // Two layers, both failing closed: an API response over the budget stops
+  // the render before anything is rendered (the page embeds the data, so it
+  // would be over budget too); a page that only crosses the budget once
+  // rendered (an inline image repeated) passes on its final size.
+  for (const [label, reason, mutate] of [
+    [
+      'a 1 MB inline logo',
+      'api response over budget',
+      () => {
+        state.academies[ALPHA_ID].resolve.academyLogo = inlineImage(
+          1024 * 1024
+        );
+      },
+    ],
+    [
+      'production’s largest inline logo (3.4 MB)',
+      'api response over budget',
+      () => {
+        state.academies[ALPHA_ID].resolve.academyLogo = inlineImage(3_473_306);
+      },
+    ],
+    [
+      'production’s 1.9 MB inline section image',
+      'api response over budget',
+      () => {
+        state.academies[ALPHA_ID].pages = withHomeHeroImage(
+          state.academies[ALPHA_ID].pages,
+          inlineImage(1_938_534)
+        );
+      },
+    ],
+    [
+      'a 300 KB inline logo (no response over budget, the page is: 4 copies)',
+      'html over budget',
+      () => {
+        state.academies[ALPHA_ID].resolve.academyLogo = inlineImage(300 * 1024);
+      },
+    ],
+  ]) {
+    it(`fails closed to the single-page app for ${label}, and caches nothing`, async () => {
+      const cached = await makeHandler({ cacheTtlMs: 30_000 });
+      mutate();
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        const result = await get(cached, ALPHA, '/');
+        assert.equal(result.headers['X-Atlas-SSR'], 'pass');
+        assert.equal(result.reason, reason);
+        assert.equal(
+          result.body,
+          cached.template,
+          'the unchanged single-page app shell'
+        );
+      }
+      assert.equal(cached.cache.size, 0);
+      assert.equal(cached.cache.bytes, 0);
+      // The same handler keeps rendering other Academies normally.
+      const other = await get(cached, BETA, '/');
+      assert.equal(other.headers['X-Atlas-SSR'], 'render');
+    });
+  }
+
+  it('stops downloading an over-budget API response instead of reading it whole', async () => {
+    const small = await makeHandler({ maxHtmlBytes: 64 * 1024 });
+    state.academies[ALPHA_ID].resolve.academyLogo = inlineImage(128 * 1024);
+    const result = await get(small, ALPHA, '/');
+    assert.equal(result.reason, 'api response over budget');
+    // Nothing past the resolve call was requested: the render stopped there.
+    assert.deepEqual(
+      state.requests.map((r) => r.path.replace(/\?.*$/, '')),
+      ['/api/v1/public/websites/resolve']
+    );
+  });
+
+  it('passes exactly when a page is one byte over the budget', async () => {
+    const size = Buffer.byteLength((await get(handler, ALPHA, '/')).body);
+    const atBudget = await makeHandler({ maxHtmlBytes: size });
+    assert.equal(
+      (await get(atBudget, ALPHA, '/')).headers['X-Atlas-SSR'],
+      'render'
+    );
+    const underBudget = await makeHandler({ maxHtmlBytes: size - 1 });
+    const result = await get(underBudget, ALPHA, '/');
+    assert.equal(result.headers['X-Atlas-SSR'], 'pass');
+    assert.equal(result.reason, 'html over budget');
+  });
+
+  it('counts UTF-8 bytes, not characters (Arabic pages)', async () => {
+    const result = await get(handler, ALPHA, '/ar/');
+    const bytes = Buffer.byteLength(result.body);
+    assert.ok(
+      bytes > result.body.length,
+      'the Arabic page has multi-byte characters'
+    );
+    const tight = await makeHandler({ maxHtmlBytes: result.body.length });
+    assert.equal((await get(tight, ALPHA, '/ar/')).reason, 'html over budget');
+  });
+
+  it('RenderCache is bounded by memory and never stores an over-budget page', () => {
+    // Counted at two bytes per character (worst-case V8 heap): 'aaaa' = 8.
+    const cache = new RenderCache({
+      ttlMs: 1_000,
+      maxEntries: 10,
+      maxBytes: 20,
+      maxEntryBytes: 6,
+    });
+    cache.set('a', 'aaaa');
+    cache.set('b', 'bbbb');
+    assert.equal(cache.bytes, 16);
+    cache.get('a'); // a is now the most recent
+    cache.set('c', 'cccc'); // 24 > 20: evicts b, the least recent
+    assert.equal(cache.get('b'), undefined);
+    assert.equal(cache.get('a'), 'aaaa');
+    assert.equal(cache.bytes, 16);
+    cache.set('big', 'xxxxxxx'); // 7 UTF-8 bytes > maxEntryBytes
+    assert.equal(cache.get('big'), undefined);
+    cache.set('a', 'aa'); // replacing an entry re-counts it
+    assert.equal(cache.bytes, 4 + 8);
+    cache.set('ar', 'ععع'); // 6 UTF-8 bytes (in budget), 6 bytes of heap
+    assert.equal(cache.get('ar'), 'ععع');
+    assert.equal(cache.bytes, 4 + 8 + 6);
   });
 });
 

@@ -40,20 +40,70 @@ export function collectPreloads(manifest, entryKey) {
   return [...files].filter((file) => file.endsWith('.js'));
 }
 
-/** A small TTL + LRU cache for rendered pages (per process, in memory). */
+/**
+ * The largest server-rendered page this process will send or cache, in
+ * UTF-8 bytes. Past it the page passes to the single-page app.
+ *
+ * Measured, not chosen: the largest page the renderer produces from the
+ * theme baseline's rich data is Course Details (AR), 106,039 bytes
+ * (e2e/theme-baseline/baselines/lighthouse-ssr-comparison.json). The only
+ * thing that inflates a page beyond that is an image stored inline as a
+ * `data:` URI (logos uploaded before media uploads existed, and one
+ * section image, are still stored that way in production): the page then
+ * carries it once per place it appears. A logo appears four times (the
+ * JSON-LD Organization, header, footer and hydration data) and a section
+ * image twice (the section and the data) — measured by ssr.test.mjs
+ * ("size budget"). Production's inline logos on active Academies are all
+ * under 100 KB, so their pages stay under 106 KB + 4 × 100 KB ≈ 506 KB;
+ * its two logos over 1 MB and its 1.9 MB section image make pages of
+ * 3.8 MB or more. 1 MiB sits between the two with margin on each side
+ * (about 2× the largest legitimate page, under a third of the smallest
+ * oversized one), and those oversized pages stay exactly as they are
+ * today: served by the single-page app.
+ */
+export const DEFAULT_MAX_HTML_BYTES = 1024 * 1024;
+
+/**
+ * The rendered-page cache's total MEMORY, in bytes. V8 keeps a page that
+ * contains any non-Latin-1 character (every Arabic page) as a two-byte
+ * string, so an entry is counted at two bytes per character — its
+ * worst-case heap size, not its UTF-8 size. This is what bounds the cache's
+ * share of the renderer's memory limit (deploy/docker-compose.prod.yml in
+ * the backend repo; measured with tools/ssr-memory/measure.mjs).
+ */
+export const DEFAULT_CACHE_MAX_BYTES = 64 * 1024 * 1024;
+
+const byteLength = (html) => Buffer.byteLength(html, 'utf8');
+/** Worst-case V8 heap size of a string: two bytes per UTF-16 code unit. */
+const heapSize = (html) => html.length * 2;
+
+/**
+ * A small TTL + LRU cache for rendered pages (per process, in memory),
+ * bounded by entries and by memory (`maxBytes`, counted with `heapSize`).
+ * A page over `maxEntryBytes` (UTF-8, the page budget) is never stored.
+ */
 export class RenderCache {
-  constructor({ ttlMs, maxEntries, now = Date.now }) {
+  constructor({
+    ttlMs,
+    maxEntries,
+    maxBytes = Infinity,
+    maxEntryBytes = Infinity,
+    now = Date.now,
+  }) {
     this.ttlMs = ttlMs;
     this.maxEntries = maxEntries;
+    this.maxBytes = maxBytes;
+    this.maxEntryBytes = maxEntryBytes;
     this.now = now;
     this.entries = new Map();
+    this.bytes = 0;
   }
 
   get(key) {
     const entry = this.entries.get(key);
     if (!entry) return undefined;
     if (entry.expiresAt <= this.now()) {
-      this.entries.delete(key);
+      this.#remove(key);
       return undefined;
     }
     // Refresh recency.
@@ -64,11 +114,21 @@ export class RenderCache {
 
   set(key, html) {
     if (this.ttlMs <= 0 || this.maxEntries <= 0) return;
-    this.entries.delete(key);
-    this.entries.set(key, { html, expiresAt: this.now() + this.ttlMs });
-    while (this.entries.size > this.maxEntries) {
-      this.entries.delete(this.entries.keys().next().value);
+    this.#remove(key);
+    const bytes = heapSize(html);
+    if (byteLength(html) > this.maxEntryBytes || bytes > this.maxBytes) return;
+    this.entries.set(key, { html, bytes, expiresAt: this.now() + this.ttlMs });
+    this.bytes += bytes;
+    while (this.entries.size > this.maxEntries || this.bytes > this.maxBytes) {
+      this.#remove(this.entries.keys().next().value);
     }
+  }
+
+  #remove(key) {
+    const entry = this.entries.get(key);
+    if (!entry) return;
+    this.entries.delete(key);
+    this.bytes -= entry.bytes;
   }
 
   get size() {
@@ -85,6 +145,9 @@ export class RenderCache {
  * @param {number} [options.renderBudgetMs] whole request; past it the page passes
  * @param {number} [options.cacheTtlMs]
  * @param {number} [options.cacheMaxEntries]
+ * @param {number} [options.cacheMaxBytes] the cache's total memory (see DEFAULT_CACHE_MAX_BYTES)
+ * @param {number} [options.maxHtmlBytes] the largest page sent or cached;
+ *   a larger one passes to the single-page app (see DEFAULT_MAX_HTML_BYTES)
  * @param {(event: object) => void} [options.log]
  * @param {boolean} [options.preloadRouterChunks] off by default (measured):
  *   preloading the public router's chunks (≈ 290 KB gzip) from the head
@@ -103,6 +166,8 @@ export async function createSsrHandler({
   renderBudgetMs = 2_500,
   cacheTtlMs = 30_000,
   cacheMaxEntries = 500,
+  cacheMaxBytes = DEFAULT_CACHE_MAX_BYTES,
+  maxHtmlBytes = DEFAULT_MAX_HTML_BYTES,
   log = () => {},
   preloadRouterChunks = false,
   preloadArabicFonts = false,
@@ -145,6 +210,9 @@ export async function createSsrHandler({
   const cache = new RenderCache({
     ttlMs: cacheTtlMs,
     maxEntries: cacheMaxEntries,
+    maxBytes: cacheMaxBytes,
+    // An over-budget page is never cached, so a cache hit is always in budget.
+    maxEntryBytes: maxHtmlBytes,
   });
 
   const shell = (reason) => ({
@@ -184,6 +252,10 @@ export async function createSsrHandler({
             localePreloadHtml,
             apiOrigin,
             apiTimeoutMs,
+            // A response larger than the page budget means the page would
+            // be too (it embeds the data): stop downloading and pass early,
+            // before rendering anything.
+            maxResponseBytes: maxHtmlBytes,
             cache,
           }
         ),
@@ -197,6 +269,18 @@ export async function createSsrHandler({
       if (result.kind !== 'html') {
         log({ event: 'pass', reason: result.reason, ms: Date.now() - started });
         return shell(result.reason);
+      }
+      // Fail closed on an oversized page (an inline image, typically): the
+      // single-page app serves it, exactly as with server rendering off.
+      const bytes = byteLength(result.html);
+      if (bytes > maxHtmlBytes) {
+        log({
+          event: 'pass',
+          reason: 'html over budget',
+          bytes,
+          ms: Date.now() - started,
+        });
+        return shell('html over budget');
       }
       log({
         event: 'render',
