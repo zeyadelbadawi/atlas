@@ -73,7 +73,8 @@ export function formatDuration(
   seconds: number | null,
   language: LanguageCode
 ): string | null {
-  if (seconds === null || !Number.isFinite(seconds) || seconds <= 0) return null;
+  if (seconds === null || !Number.isFinite(seconds) || seconds <= 0)
+    return null;
   const total = Math.round(seconds);
   const hours = Math.floor(total / 3600);
   const minutes = Math.floor((total % 3600) / 60);
@@ -160,7 +161,9 @@ export function PlayerShell({
         <Button variant="ghost" size="sm" asChild className="-ms-2">
           <Link to={backHref}>
             <ChevronLeft className={cn('size-4', MIRROR_IN_RTL)} aria-hidden />
-            <span className="max-w-[16rem] truncate">{courseTitle}</span>
+            <span dir="auto" className="max-w-[16rem] truncate">
+              {courseTitle}
+            </span>
           </Link>
         </Button>
 

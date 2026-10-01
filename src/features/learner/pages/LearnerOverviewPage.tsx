@@ -140,7 +140,10 @@ export default function LearnerOverviewPage(): JSX.Element {
                 : courseHref;
 
               return (
-                <Card key={item.courseId}>
+                // `min-w-0`: a grid item is otherwise at least as wide as its
+                // content's min-content, so a long title widened the page on
+                // phones instead of truncating (J13: 56 px overflow at 360).
+                <Card key={item.courseId} className="min-w-0">
                   <CardContent className="flex items-center gap-4 pt-6">
                     <LearnerProgressRing
                       value={item.percentage}
@@ -153,6 +156,7 @@ export default function LearnerOverviewPage(): JSX.Element {
                       <h3 className="truncate font-display text-sm font-semibold text-foreground">
                         <Link
                           to={courseHref}
+                          dir="auto"
                           className="rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                         >
                           {item.courseTitle}

@@ -79,7 +79,10 @@ export function OrganizationSwitcher({
             strokeWidth={1.75}
             aria-hidden
           />
-          <span className="truncate">{activeLabel}</span>
+          {/* Phones: icon only (the name is in the menu, and the button
+              keeps its accessible name) — the full label pushed the top bar
+              28 px past a 360 px screen (J13). */}
+          <span className="hidden truncate sm:inline">{activeLabel}</span>
           <ChevronsUpDown
             className="size-3.5 shrink-0 text-muted-foreground"
             strokeWidth={1.75}

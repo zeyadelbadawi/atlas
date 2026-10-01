@@ -75,7 +75,7 @@ export function QuizQuestionCard({
                   })
                 }
               />
-              <span>{option.label}</span>
+              <span dir="auto">{option.label}</span>
             </Label>
           );
         })}
@@ -109,7 +109,7 @@ export function QuizQuestionCard({
               )}
             >
               <RadioGroupItem value={option.id} id={inputId} />
-              <span>{option.label}</span>
+              <span dir="auto">{option.label}</span>
             </Label>
           );
         })}
@@ -184,8 +184,12 @@ export function QuizQuestionCard({
             {' · '}
             {t('learning:quiz.runner.points', { count: question.points })}
           </p>
+          {/* Author content can be in either language whatever the
+              interface's: `auto` lets the browser order it by its own text
+              (an English question in the Arabic UI read "?Which planet…"). */}
           <h3
             id={headingId}
+            dir="auto"
             className="mt-1 whitespace-pre-line text-base font-medium text-foreground"
           >
             {question.prompt}

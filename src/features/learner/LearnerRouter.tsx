@@ -31,9 +31,7 @@ import type { PublicWebsiteLocale } from '@types';
 import { LearnerShell } from './components/LearnerShell';
 import { LearnerSurfaceProvider } from './context/LearnerSurface.context';
 
-const LearnerOverviewPage = lazy(
-  () => import('./pages/LearnerOverviewPage')
-);
+const LearnerOverviewPage = lazy(() => import('./pages/LearnerOverviewPage'));
 const LearnerCoursesPage = lazy(() => import('./pages/LearnerCoursesPage'));
 const LearnerCourseProgressPage = lazy(
   () => import('./pages/LearnerCourseProgressPage')
@@ -95,59 +93,56 @@ export function LearnerRouter({
       buildHref={buildHref}
     >
       <Routes>
-          {/* The player, ahead of the shell's own `courses/:courseId` so
+        {/* The player, ahead of the shell's own `courses/:courseId` so
               a deeper path is never swallowed by the course page. Its own
               Suspense boundary, because it is not inside the shell's. */}
-          <Route
-            path="courses/:courseId/learn/:lessonId"
-            element={
-              <Suspense fallback={<SectionLoader />}>
-                <LearnerPlayerPage />
-              </Suspense>
-            }
-          />
-          <Route
-            path="courses/:courseId/activities/:itemId"
-            element={
-              <Suspense fallback={<SectionLoader />}>
-                <LearnerPlayerPage />
-              </Suspense>
-            }
-          />
+        <Route
+          path="courses/:courseId/learn/:lessonId"
+          element={
+            <Suspense fallback={<SectionLoader />}>
+              <LearnerPlayerPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="courses/:courseId/activities/:itemId"
+          element={
+            <Suspense fallback={<SectionLoader />}>
+              <LearnerPlayerPage />
+            </Suspense>
+          }
+        />
 
-          {/* A layout route: the shell renders once and survives every
+        {/* A layout route: the shell renders once and survives every
               move between sections, so the rail and the bottom bar do not
               unmount and remount (and re-announce) on each navigation. */}
-          <Route element={<LearnerShell />}>
-            <Route index element={<LearnerOverviewPage />} />
-            <Route path="courses" element={<LearnerCoursesPage />} />
-            <Route
-              path="courses/:courseId"
-              element={<LearnerCourseProgressPage />}
-            />
-            <Route
-              path="courses/:courseId/checkout"
-              element={<CourseCheckoutPage />}
-            />
-            <Route path="assessments" element={<LearnerAssessmentsPage />} />
-            <Route path="certificates" element={<LearnerCertificatesPage />} />
-            <Route path="purchases" element={<LearnerPurchasesPage />} />
-            <Route path="devices" element={<LearnerDevicesPage />} />
-            <Route
-              path="notifications"
-              element={<LearnerNotificationsPage />}
-            />
-            <Route path="profile" element={<LearnerProfilePage />} />
-            <Route path="security" element={<LearnerSecurityPage />} />
+        <Route element={<LearnerShell />}>
+          <Route index element={<LearnerOverviewPage />} />
+          <Route path="courses" element={<LearnerCoursesPage />} />
+          <Route
+            path="courses/:courseId"
+            element={<LearnerCourseProgressPage />}
+          />
+          <Route
+            path="courses/:courseId/checkout"
+            element={<CourseCheckoutPage />}
+          />
+          <Route path="assessments" element={<LearnerAssessmentsPage />} />
+          <Route path="certificates" element={<LearnerCertificatesPage />} />
+          <Route path="purchases" element={<LearnerPurchasesPage />} />
+          <Route path="devices" element={<LearnerDevicesPage />} />
+          <Route path="notifications" element={<LearnerNotificationsPage />} />
+          <Route path="profile" element={<LearnerProfilePage />} />
+          <Route path="security" element={<LearnerSecurityPage />} />
 
-            {/* An unknown `/my/...` path is a learner's mistyped or stale
+          {/* An unknown `/my/...` path is a learner's mistyped or stale
                 bookmark, not a missing website page — the academy's own
                 404 would be the wrong answer, and the CMS catch-all never
                 sees these paths anyway. Send them to their overview. */}
-            <Route
-              path="*"
-              element={<Navigate to={buildHref(LEARNER_ROUTES.root)} replace />}
-            />
+          <Route
+            path="*"
+            element={<Navigate to={buildHref(LEARNER_ROUTES.root)} replace />}
+          />
         </Route>
       </Routes>
     </LearnerSurfaceProvider>

@@ -72,14 +72,14 @@ describe('the last activity, once it is finished', () => {
   it('offers the certificate and review only as real destinations', () => {
     renderBar({ courseCompletion: complete });
 
-    const certificate = screen.getByText(
-      'learning:player.courseComplete.viewCertificate'
-    ).closest('a');
+    const certificate = screen
+      .getByText('learning:player.courseComplete.viewCertificate')
+      .closest('a');
     expect(certificate?.getAttribute('href')).toBe('/my/certificates');
 
-    const review = screen.getByText(
-      'learning:player.courseComplete.rateCourse'
-    ).closest('a');
+    const review = screen
+      .getByText('learning:player.courseComplete.rateCourse')
+      .closest('a');
     expect(review?.getAttribute('href')).toBe('/courses/c1');
   });
 

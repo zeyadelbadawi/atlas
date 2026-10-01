@@ -166,7 +166,10 @@ function QuestionCard({ question, index }: QuestionCardProps): JSX.Element {
               points: formatNumber(question.points, language),
             })}
           </p>
-          <p className="whitespace-pre-wrap text-sm font-medium text-foreground">
+          <p
+            dir="auto"
+            className="whitespace-pre-wrap text-sm font-medium text-foreground"
+          >
             {question.prompt}
           </p>
         </div>
@@ -258,7 +261,9 @@ function QuestionCard({ question, index }: QuestionCardProps): JSX.Element {
                   />
                   <span className="text-foreground">{option.label}</span>
                 </span>
-                <span className={cn('shrink-0 text-xs', marker.className)}>
+                {/* The words carry the meaning and the icon the colour: small
+                    coloured text on the tinted row fell below 4.5:1 (axe). */}
+                <span className="shrink-0 text-xs font-medium text-foreground">
                   {t(`instructor:attemptReview.answers.${marker.key}`)}
                 </span>
               </li>

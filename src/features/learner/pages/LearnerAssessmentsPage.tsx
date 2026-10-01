@@ -108,7 +108,7 @@ function AssessmentList({
                   {item.title}
                 </Link>
               </h3>
-              <p className="truncate text-xs text-muted-foreground">
+              <p dir="auto" className="truncate text-xs text-muted-foreground">
                 {item.courseTitle}
               </p>
             </div>

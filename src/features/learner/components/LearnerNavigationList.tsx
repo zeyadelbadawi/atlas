@@ -42,7 +42,11 @@ export function LearnerNavigationList({
   return (
     <ul className={cn('space-y-1', className)}>
       {LEARNER_NAVIGATION.map((item) => {
-        const isActive = isPathActive(pathname, item.path, item.matchNestedPaths);
+        const isActive = isPathActive(
+          pathname,
+          item.path,
+          item.matchNestedPaths
+        );
 
         return (
           <li key={item.id}>

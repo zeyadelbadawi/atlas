@@ -65,7 +65,9 @@ describe('lesson body sanitiser', () => {
   });
 
   it('is not fooled by a control character inside the scheme', () => {
-    const html = sanitizeLessonHtml('<a href="java\tscript:alert(1)">Click</a>');
+    const html = sanitizeLessonHtml(
+      '<a href="java\tscript:alert(1)">Click</a>'
+    );
 
     expect(html).not.toContain('script:');
   });

@@ -59,10 +59,7 @@ export function TextLessonView({
       return;
     }
 
-    const scrolled = Math.min(
-      Math.max(viewport - rect.top, 0),
-      rect.height
-    );
+    const scrolled = Math.min(Math.max(viewport - rect.top, 0), rect.height);
     const next = Math.round((scrolled / rect.height) * 100);
     setPercentage(next);
     reportRef.current?.(next);

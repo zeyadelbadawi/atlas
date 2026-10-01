@@ -57,9 +57,7 @@ export function LearnerProgressRing({
   const { t } = useTranslation();
   const percentage = value === undefined ? undefined : clampPercentage(value);
   const isIndeterminate = percentage === undefined;
-  const dash = isIndeterminate
-    ? 0
-    : (percentage / 100) * CIRCUMFERENCE;
+  const dash = isIndeterminate ? 0 : (percentage / 100) * CIRCUMFERENCE;
 
   return (
     <div
@@ -74,7 +72,10 @@ export function LearnerProgressRing({
           : t('learning:learnerDashboard.progress.valueText', { percentage })
       }
       aria-busy={isIndeterminate || undefined}
-      className={cn('relative inline-flex size-16 items-center justify-center', className)}
+      className={cn(
+        'relative inline-flex size-16 items-center justify-center',
+        className
+      )}
     >
       <svg viewBox="0 0 36 36" className="size-full -rotate-90" aria-hidden>
         <circle

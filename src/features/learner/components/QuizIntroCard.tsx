@@ -62,7 +62,9 @@ export function QuizIntroCard({
   // `maxAttempts` only when talking to an older server that omits it.
   // `null` means unlimited; `undefined` means "unknown / unlimited".
   const effectiveAllowance =
-    quiz.attemptsAllowed !== undefined ? quiz.attemptsAllowed : (quiz.maxAttempts ?? null);
+    quiz.attemptsAllowed !== undefined
+      ? quiz.attemptsAllowed
+      : (quiz.maxAttempts ?? null);
   const attemptsLeft =
     effectiveAllowance === null
       ? null

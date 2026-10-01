@@ -161,14 +161,21 @@ export function ProtectedVideoPlayer({
        * rate `<select>` owns its own arrows.
        */
       const target = event.target as HTMLElement | null;
-      if (target && target !== event.currentTarget && target.closest('button, select, a, input, [role="combobox"]')) {
+      if (
+        target &&
+        target !== event.currentTarget &&
+        target.closest('button, select, a, input, [role="combobox"]')
+      ) {
         return;
       }
 
       const seekBy = (seconds: number) => {
         element.currentTime = Math.max(
           0,
-          Math.min(element.duration || Number.MAX_SAFE_INTEGER, element.currentTime + seconds)
+          Math.min(
+            element.duration || Number.MAX_SAFE_INTEGER,
+            element.currentTime + seconds
+          )
         );
       };
 
