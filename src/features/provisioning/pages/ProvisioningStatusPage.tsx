@@ -31,6 +31,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
+import { FinishBrandingCard } from '@features/website';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { Button } from '@/components/ui/button';
@@ -175,6 +176,8 @@ export default function ProvisioningStatusPage(): JSX.Element {
       />
 
       <div className="space-y-6">
+        {/* Theme 1 plan §F.4.3 — saves the setup form's logo & colours. */}
+        <FinishBrandingCard request={request} />
         <Card>
           <CardHeader>
             <CardTitle className="text-base">

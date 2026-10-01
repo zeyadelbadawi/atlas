@@ -14,16 +14,34 @@
  * client-side state to drift. There is deliberately no `useState` mirror
  * of the published flag anywhere in this component.
  */
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CloudOff, CloudUpload, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { StatusBadge } from '@components/data-display';
 import { ErrorState } from '@components/feedback';
 import { useConfirmDialog } from '@app/providers';
 import { usePermissions } from '@hooks';
-import { usePublishWebsite, useUnpublishWebsite } from '../hooks';
+import {
+  usePublishWebsite,
+  useUnpublishWebsite,
+  useWebsitePages,
+} from '../hooks';
+import { CONTENT_LIST_PAGE_SIZE } from '../constants/website.constants';
+import { collectSampleContent } from '../utils/sample-content.utils';
+import { SampleContentList } from './SampleContentList';
 import type { StatusTone } from '@components/data-display';
-import type { WebsitePublishStatus } from '@types';
+import type { SampleContentEntry, WebsitePublishStatus } from '@types';
 
 const STATUS_TONE: Record<WebsitePublishStatus, StatusTone> = {
   draft: 'neutral',
@@ -53,6 +71,11 @@ export function WebsitePublishBar({
   const { hasPermission } = usePermissions();
   const publish = usePublishWebsite();
   const unpublish = useUnpublishWebsite();
+  // Theme 1 plan §D.4 — the saved pages, to warn about sample testimonials
+  // before publishing. Same query key as the overview's page list.
+  const pagesQuery = useWebsitePages(academyId, {
+    query: { pagination: { page: 1, pageSize: CONTENT_LIST_PAGE_SIZE } },
+  });
   // Unpublishing takes a customer's site off the internet, so it is gated
   // on the same permission as publishing — never a weaker one.
   const canPublish = hasPermission('academy.website.publish');
@@ -65,8 +88,24 @@ export function WebsitePublishBar({
   const isBusy =
     publish.isPending || unpublish.isPending || status === 'publishing';
 
+  // Theme 1 plan §D.4 — the sections still holding sample testimonials,
+  // while the warning is open.
+  const [sampleWarning, setSampleWarning] = useState<
+    readonly SampleContentEntry[] | null
+  >(null);
+
   const handleToggle = async () => {
     if (isBusy) return;
+    const samples = isPublished
+      ? []
+      : collectSampleContent(pagesQuery.data?.items ?? []);
+    if (samples.length > 0) {
+      // A warning, never a block: samples are stripped from the public
+      // site anyway, so publishing hides those testimonials. The dialog
+      // lists them, each with a way to review it.
+      setSampleWarning(samples);
+      return;
+    }
     const confirmed = await confirm(
       isPublished
         ? {
@@ -136,6 +175,42 @@ export function WebsitePublishBar({
       {action.error ? (
         <ErrorState onRetry={handleToggle} className="w-full" />
       ) : null}
+
+      <AlertDialog
+        open={sampleWarning !== null}
+        onOpenChange={(open) => {
+          if (!open) setSampleWarning(null);
+        }}
+      >
+        <AlertDialogContent data-testid="publish-sample-warning">
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t('website:publish.sampleWarningTitle')}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('website:publish.sampleWarningDescription')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {sampleWarning ? (
+            <SampleContentList
+              academyId={academyId}
+              entries={sampleWarning}
+              onNavigate={() => setSampleWarning(null)}
+            />
+          ) : null}
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common:actions.cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setSampleWarning(null);
+                publish.mutate(academyId);
+              }}
+            >
+              {t('website:publish.sampleWarningAction')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

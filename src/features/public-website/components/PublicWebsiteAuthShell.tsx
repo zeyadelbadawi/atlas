@@ -24,6 +24,7 @@ import type { ReactNode } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   WebsiteChrome,
+  WebsiteAuthFrame,
   WebsiteBrandBridge,
   resolvePagePath,
   usePublicWebsiteDocumentDirection,
@@ -93,6 +94,7 @@ export function PublicWebsiteAuthShell({
 
   return (
     <WebsiteChrome
+      academyId={academy.academyId}
       academyName={academy.academyName}
       academyLogo={academy.academyLogo}
       configuration={configuration}
@@ -111,23 +113,25 @@ export function PublicWebsiteAuthShell({
       }}
       authState={authState}
     >
-      <div className="mx-auto flex min-h-[60vh] w-full max-w-md flex-col justify-center px-4 py-16">
-        <div className="mb-8 text-center">
-          <h1 className="font-display text-2xl font-bold text-foreground">
-            {title}
-          </h1>
-          {subtitle ? (
-            <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>
-          ) : null}
-        </div>
+      <WebsiteAuthFrame>
+        <div className="mx-auto flex min-h-[60vh] w-full max-w-md flex-col justify-center px-4 py-16">
+          <div className="mb-8 text-center">
+            <h1 className="font-display text-2xl font-bold text-foreground">
+              {title}
+            </h1>
+            {subtitle ? (
+              <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>
+            ) : null}
+          </div>
 
-        <WebsiteBrandBridge>
-          {children({
-            academyId: academy.academyId,
-            academyName: academy.academyName,
-          })}
-        </WebsiteBrandBridge>
-      </div>
+          <WebsiteBrandBridge>
+            {children({
+              academyId: academy.academyId,
+              academyName: academy.academyName,
+            })}
+          </WebsiteBrandBridge>
+        </div>
+      </WebsiteAuthFrame>
     </WebsiteChrome>
   );
 }

@@ -63,6 +63,39 @@ function carriesIdempotencyKey(data: unknown): boolean {
   );
 }
 
+/**
+ * Server rendering of the public Academy website
+ * (Reports/SSR_ARCHITECTURE_ANALYSIS.md): the renderer calls the same
+ * public API over the internal network. Its per-request context gives the
+ * absolute origin and the headers to forward (the visitor's `X-Real-IP`),
+ * and marks the request as anonymous: no token, no refresh, no retry.
+ * Never set in the browser.
+ */
+export interface ServerRequestContext {
+  readonly apiOrigin: string;
+  readonly headers: Readonly<Record<string, string>>;
+  /** Per-request timeout, in milliseconds. */
+  readonly timeoutMs: number;
+  /**
+   * The largest response body accepted, in bytes. A larger one aborts the
+   * download and fails the request. The renderer passes its page budget:
+   * the page embeds every response it renders from, so one response over
+   * the budget already means the page would be.
+   */
+  readonly maxResponseBytes?: number;
+  /** Called when a response was refused for exceeding `maxResponseBytes`. */
+  readonly onResponseTooLarge?: () => void;
+}
+
+let serverRequestContext: (() => ServerRequestContext | undefined) | undefined;
+
+/** Installed once by the server renderer (an AsyncLocalStorage lookup). */
+export function setServerRequestContextProvider(
+  provider: () => ServerRequestContext | undefined
+): void {
+  serverRequestContext = provider;
+}
+
 /** Default timeout for API requests, in milliseconds. */
 const DEFAULT_TIMEOUT_MS = 30_000;
 
@@ -198,6 +231,22 @@ export class HttpClient {
     // Request interceptor: attach authentication and infrastructure headers.
     this.instance.interceptors.request.use(
       (config) => {
+        const server = serverRequestContext?.();
+        if (server) {
+          // Server render: the internal origin, the forwarded headers, and
+          // nothing that could carry an identity.
+          config.baseURL = `${server.apiOrigin}${config.baseURL ?? ''}`;
+          config.timeout = server.timeoutMs;
+          if (server.maxResponseBytes !== undefined) {
+            config.maxContentLength = server.maxResponseBytes;
+          }
+          for (const [name, value] of Object.entries(server.headers)) {
+            config.headers[name] = value;
+          }
+          delete config.headers.Authorization;
+          return config;
+        }
+
         // Attach access token if available.
         const tokens = tokenService.retrieve();
         if (tokens?.accessToken) {
@@ -219,6 +268,19 @@ export class HttpClient {
     this.instance.interceptors.response.use(
       (response) => response,
       async (error: AxiosError) => {
+        // A server render never refreshes a session or replays a request:
+        // it has no session, and its time budget is short.
+        const server = serverRequestContext?.();
+        if (server) {
+          if (
+            error.code === 'ERR_BAD_RESPONSE' &&
+            error.message.startsWith('maxContentLength')
+          ) {
+            server.onResponseTooLarge?.();
+          }
+          return Promise.reject(error);
+        }
+
         const originalRequest = error.config;
 
         // Handle 401 Unauthorized: token may have expired.

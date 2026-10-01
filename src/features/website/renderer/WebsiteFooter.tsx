@@ -5,6 +5,7 @@
  * token-driven-variant pattern as `WebsiteHeader`.
  */
 import { AtlasPlatformAttribution } from '@components/branding';
+import { useCurrentYear } from '@hooks';
 import { useWebsiteDesignSystem } from './WebsiteDesignSystemContext';
 import { useWebsiteContainerClass } from './renderer-style.utils';
 import {
@@ -23,6 +24,7 @@ import type { WebsiteLinkRenderer } from './website-link-renderer.types';
 
 export interface WebsiteFooterProps {
   readonly academyName: string;
+  readonly academyLogo?: string;
   readonly footer: WebsiteFooterConfig;
   readonly pages: readonly WebsitePage[];
   readonly onNavigate: (pageId: string) => void;
@@ -48,7 +50,7 @@ export interface WebsiteFooterProps {
  * It degrades correctly when the Academy has configured no footer content
  * at all: it is then simply the footer's only row.
  */
-function FooterAttributionRow({
+export function FooterAttributionRow({
   container,
 }: {
   readonly container: string;
@@ -108,9 +110,10 @@ export function WebsiteFooter({
   const design = useWebsiteDesignSystem();
   const container = useWebsiteContainerClass();
   const { locale } = usePublicWebsiteLocale();
+  const currentYear = useCurrentYear();
   const copyright =
     resolveLocalizedText(footer.copyrightText, locale) ||
-    `© ${new Date().getFullYear()} ${academyName}`;
+    `© ${currentYear} ${academyName}`;
 
   // `footer.groups` (titled link columns) and `footer.socialLinks` (the
   // flat list the settings UI's "Social links" section actually edits)

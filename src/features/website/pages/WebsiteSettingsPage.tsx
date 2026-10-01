@@ -6,7 +6,7 @@
  * never one enormous page component.
  */
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { SectionTabs } from '@components/navigation';
@@ -24,9 +24,24 @@ import { WebsiteNavigationTab } from '../components/WebsiteNavigationTab';
 import { getWebsiteTabs } from '../utils/website-navigation.utils';
 import type { BreadcrumbItem } from '@types';
 
+const SETTINGS_TABS = [
+  'theme',
+  'brand',
+  'seo',
+  'navigation',
+  'domain',
+] as const;
+type SettingsTab = (typeof SETTINGS_TABS)[number];
+
 export default function WebsiteSettingsPage(): JSX.Element {
   const { t } = useTranslation();
   const { academyId } = useParams<{ academyId: string }>();
+  // `?tab=brand` (etc.) opens that tab — the launch checklist links here.
+  const [searchParams] = useSearchParams();
+  const requestedTab = searchParams.get('tab');
+  const initialTab = SETTINGS_TABS.includes(requestedTab as SettingsTab)
+    ? (requestedTab as SettingsTab)
+    : 'theme';
 
   const academyQuery = useAcademy(academyId ?? '');
   const configQuery = useWebsiteConfiguration(academyId ?? '');
@@ -100,7 +115,7 @@ export default function WebsiteSettingsPage(): JSX.Element {
           lastPublishedAt={configuration.publishedAt}
         />
 
-        <Tabs defaultValue="theme">
+        <Tabs defaultValue={initialTab}>
           <TabsList>
             <TabsTrigger value="theme">
               {t('website:settings.tabs.theme')}
@@ -132,7 +147,10 @@ export default function WebsiteSettingsPage(): JSX.Element {
           <TabsContent value="brand" className="pt-4">
             <WebsiteBrandTab
               academyId={academyId}
+              academyName={academy.name}
+              academyLogo={academy.logo}
               configuration={configuration}
+              pages={pages}
             />
           </TabsContent>
 

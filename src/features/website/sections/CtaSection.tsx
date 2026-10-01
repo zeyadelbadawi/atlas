@@ -35,6 +35,25 @@ export function CtaSection({
     ? resolveWebsiteCtaHref(config.cta, pages)
     : undefined;
   const ctaLabel = resolveLocalizedText(config.cta.label, locale);
+  const secondaryHref = linkRenderer
+    ? resolveWebsiteCtaHref(config.secondaryCta, pages)
+    : undefined;
+  const secondaryLabel = config.secondaryCta
+    ? resolveLocalizedText(config.secondaryCta.label, locale)
+    : '';
+  const primaryButton = href ? (
+    <Button size="lg" variant="secondary" asChild>
+      {linkRenderer!({
+        href,
+        external: isExternalHref(href),
+        children: ctaLabel,
+      })}
+    </Button>
+  ) : (
+    <Button size="lg" variant="secondary">
+      {ctaLabel}
+    </Button>
+  );
 
   return (
     <section className={section}>
@@ -53,18 +72,36 @@ export function CtaSection({
             {resolveLocalizedText(config.description, locale)}
           </p>
         ) : null}
-        {href ? (
-          <Button size="lg" variant="secondary" asChild>
-            {linkRenderer!({
-              href,
-              external: isExternalHref(href),
-              children: ctaLabel,
-            })}
-          </Button>
+        {/* Theme 1 plan §D.2 — the optional second action; without one the
+            markup is exactly what it always was. */}
+        {config.secondaryCta && secondaryLabel ? (
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {primaryButton}
+            {secondaryHref ? (
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white bg-transparent text-white hover:bg-white/10 hover:text-white"
+                asChild
+              >
+                {linkRenderer!({
+                  href: secondaryHref,
+                  external: isExternalHref(secondaryHref),
+                  children: secondaryLabel,
+                })}
+              </Button>
+            ) : (
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white bg-transparent text-white hover:bg-white/10 hover:text-white"
+              >
+                {secondaryLabel}
+              </Button>
+            )}
+          </div>
         ) : (
-          <Button size="lg" variant="secondary">
-            {ctaLabel}
-          </Button>
+          primaryButton
         )}
       </div>
     </section>

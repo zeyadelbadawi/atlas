@@ -28,6 +28,15 @@ export type { WebsiteHeaderAuthState } from './renderer/WebsiteHeader';
 // doc comment.
 export { WebsiteChrome } from './renderer/WebsiteChrome';
 export type { WebsiteChromeProps } from './renderer/WebsiteChrome';
+// Theme 1 plan Phase 6 — theme-owned "page not found" and Coming Soon (a
+// theme without its own renders `null`, and the caller keeps the shared
+// screen).
+export {
+  WebsiteComingSoon,
+  WebsiteNotFound,
+  hasThemeComingSoon,
+  hasThemeNotFound,
+} from './renderer/WebsiteSystemPages';
 
 // The Academy-website-embedded Student Learning experience (`@features/
 // learning`'s `WebsiteLearningRoute`) needs the resolved theme's brand
@@ -36,6 +45,7 @@ export type { WebsiteChromeProps } from './renderer/WebsiteChrome';
 // not a per-component retheme.
 export { useWebsiteDesignSystem } from './renderer/WebsiteDesignSystemContext';
 export { WebsiteBrandBridge } from './renderer/WebsiteBrandBridge';
+export { WebsiteAuthFrame } from './renderer/WebsiteAuthFrame';
 
 // Phase P19 — `ProvisioningStartPage`'s theme-selection step needs the
 // real theme registry (never a second, invented catalog). Curated export,
@@ -92,3 +102,10 @@ export {
   isPublicWebsiteLocale,
 } from './constants/locale.constants';
 export type { PublicWebsiteLocale } from './constants/locale.constants';
+
+// Theme 1 plan Phase 4 — Brand Studio: the setup form's "Logo & colours"
+// block and the deferred save that follows provisioning.
+export { SetupBrandStudio } from './brand-studio/SetupBrandStudio';
+export { FinishBrandingCard } from './brand-studio/FinishBrandingCard';
+export { pendingBrandingStore } from './brand-studio/pending-branding';
+export type { PendingBranding } from './brand-studio/pending-branding';

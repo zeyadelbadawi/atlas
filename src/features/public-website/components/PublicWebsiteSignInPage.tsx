@@ -49,6 +49,7 @@ import { CheckCircle2 } from 'lucide-react';
 import { useAuth, useSignIn, useSignOut } from '@hooks';
 import {
   WebsiteChrome,
+  WebsiteAuthFrame,
   WebsiteBrandBridge,
   resolvePagePath,
   resolveLocalizedText,
@@ -132,9 +133,7 @@ export function PublicWebsiteSignInPage({
   useEffect(() => {
     if (session.status !== 'authenticated') return;
     navigate(
-      buildHref(
-        isSafeReturnPath(returnTo) ? returnTo : LEARNER_ROUTES.root
-      ),
+      buildHref(isSafeReturnPath(returnTo) ? returnTo : LEARNER_ROUTES.root),
       { replace: true }
     );
   }, [session.status, returnTo, navigate, buildHref]);
@@ -249,6 +248,7 @@ export function PublicWebsiteSignInPage({
 
   return (
     <WebsiteChrome
+      academyId={academy.academyId}
       academyName={academy.academyName}
       academyLogo={academy.academyLogo}
       configuration={configuration}
@@ -267,108 +267,110 @@ export function PublicWebsiteSignInPage({
       }}
       authState={authState}
     >
-      <div className="mx-auto flex min-h-[60vh] w-full max-w-md flex-col justify-center px-4 py-16">
-        <div className="mb-8 text-center">
-          <h1 className="font-display text-2xl font-bold text-foreground">
-            {title}
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>
-        </div>
-
-        {session.status === 'authenticated' ? (
-          <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card p-6 text-center">
-            <CheckCircle2
-              className="size-8 text-[var(--website-primary-solid)]"
-              aria-hidden
-            />
-            <p className="font-medium text-foreground">
-              {t('publicWebsite:auth.signIn.success', {
-                name: session.user?.name ?? '',
-              })}
-            </p>
+      <WebsiteAuthFrame>
+        <div className="mx-auto flex min-h-[60vh] w-full max-w-md flex-col justify-center px-4 py-16">
+          <div className="mb-8 text-center">
+            <h1 className="font-display text-2xl font-bold text-foreground">
+              {title}
+            </h1>
+            <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>
           </div>
-        ) : challenge && isEmailOtpChallenge(challenge) ? (
-          <WebsiteBrandBridge>
-            <EmailOtpChallengeForm
-              challenge={challenge}
-              onSubmit={handleVerifyEmailOtp}
-              onResend={() =>
-                authenticationService.resendEmailOtp(challenge.challengeId)
-              }
-              onCancel={() => {
-                setChallenge(null);
-                clearError();
-              }}
-              isLoading={isLoading}
-              error={error}
-              // This site's own reset page, locale-prefixed like every
-              // other on-site link.
-              forgotPasswordHref={buildHref('/forgot-password')}
-            />
-          </WebsiteBrandBridge>
-        ) : challenge ? (
-          <WebsiteBrandBridge>
-            <TwoFactorChallengeForm
-              onSubmit={(input) => void handleVerify(input)}
-              onCancel={() => {
-                setChallenge(null);
-                clearError();
-              }}
-              isLoading={isLoading}
-              error={error}
-            />
-          </WebsiteBrandBridge>
-        ) : (
-          <WebsiteBrandBridge>
-            {/* Google Identity — for THIS academy only (the flow carries
+
+          {session.status === 'authenticated' ? (
+            <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card p-6 text-center">
+              <CheckCircle2
+                className="size-8 text-[var(--website-primary-solid)]"
+                aria-hidden
+              />
+              <p className="font-medium text-foreground">
+                {t('publicWebsite:auth.signIn.success', {
+                  name: session.user?.name ?? '',
+                })}
+              </p>
+            </div>
+          ) : challenge && isEmailOtpChallenge(challenge) ? (
+            <WebsiteBrandBridge>
+              <EmailOtpChallengeForm
+                challenge={challenge}
+                onSubmit={handleVerifyEmailOtp}
+                onResend={() =>
+                  authenticationService.resendEmailOtp(challenge.challengeId)
+                }
+                onCancel={() => {
+                  setChallenge(null);
+                  clearError();
+                }}
+                isLoading={isLoading}
+                error={error}
+                // This site's own reset page, locale-prefixed like every
+                // other on-site link.
+                forgotPasswordHref={buildHref('/forgot-password')}
+              />
+            </WebsiteBrandBridge>
+          ) : challenge ? (
+            <WebsiteBrandBridge>
+              <TwoFactorChallengeForm
+                onSubmit={(input) => void handleVerify(input)}
+                onCancel={() => {
+                  setChallenge(null);
+                  clearError();
+                }}
+                isLoading={isLoading}
+                error={error}
+              />
+            </WebsiteBrandBridge>
+          ) : (
+            <WebsiteBrandBridge>
+              {/* Google Identity — for THIS academy only (the flow carries
                 the host's own academy id; the backend re-checks it). A new
                 session lands where the password one would. */}
-            <GoogleSignInOption
-              intent="sign_in"
-              surface="academy"
-              academyId={academy.academyId}
-              locale={locale}
-              next={buildHref(
-                isSafeReturnPath(returnTo) ? returnTo : LEARNER_ROUTES.root
-              )}
-              className="mb-6"
-            />
-            <SignInForm
-              onSubmit={handleSubmit}
-              isLoading={isLoading}
-              error={error}
-              // Atlas's own `/auth/forgot-password` is not mounted on an
-              // academy host — this site has its own.
-              forgotPasswordHref={buildHref('/forgot-password')}
-            />
-          </WebsiteBrandBridge>
-        )}
+              <GoogleSignInOption
+                intent="sign_in"
+                surface="academy"
+                academyId={academy.academyId}
+                locale={locale}
+                next={buildHref(
+                  isSafeReturnPath(returnTo) ? returnTo : LEARNER_ROUTES.root
+                )}
+                className="mb-6"
+              />
+              <SignInForm
+                onSubmit={handleSubmit}
+                isLoading={isLoading}
+                error={error}
+                // Atlas's own `/auth/forgot-password` is not mounted on an
+                // academy host — this site has its own.
+                forgotPasswordHref={buildHref('/forgot-password')}
+              />
+            </WebsiteBrandBridge>
+          )}
 
-        {showSignUpRecovery ? (
-          <div className="mt-4 text-center text-sm">
+          {showSignUpRecovery ? (
+            <div className="mt-4 text-center text-sm">
+              {linkRenderer({
+                href: '/sign-up',
+                external: false,
+                className:
+                  'font-medium text-[var(--website-primary-solid)] hover:underline',
+                children: t('publicWebsite:auth.signIn.notAMemberCta'),
+              })}
+            </div>
+          ) : null}
+
+          <div className="mt-6 text-center text-sm">
+            <span className="text-muted-foreground">
+              {t('publicWebsite:auth.signIn.noAccount')}{' '}
+            </span>
             {linkRenderer({
               href: '/sign-up',
               external: false,
               className:
                 'font-medium text-[var(--website-primary-solid)] hover:underline',
-              children: t('publicWebsite:auth.signIn.notAMemberCta'),
+              children: t('publicWebsite:auth.signIn.signUp'),
             })}
           </div>
-        ) : null}
-
-        <div className="mt-6 text-center text-sm">
-          <span className="text-muted-foreground">
-            {t('publicWebsite:auth.signIn.noAccount')}{' '}
-          </span>
-          {linkRenderer({
-            href: '/sign-up',
-            external: false,
-            className:
-              'font-medium text-[var(--website-primary-solid)] hover:underline',
-            children: t('publicWebsite:auth.signIn.signUp'),
-          })}
         </div>
-      </div>
+      </WebsiteAuthFrame>
     </WebsiteChrome>
   );
 }

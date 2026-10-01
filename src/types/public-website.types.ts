@@ -16,6 +16,23 @@ export interface HostnameResolution {
   readonly academyLogo?: string;
   /** P63 — the one host this website advertises (connected custom domain, otherwise the Atlas subdomain). The public runtime sets `rel="canonical"` to it and moves a visitor on the other host there. */
   readonly canonicalHost?: string;
+  /**
+   * Theme 1 plan Phase 6 — the website's theme and public colours,
+   * whatever its publication state, so Coming Soon can wear them. Absent
+   * when the Academy has no website configuration (or from an older
+   * backend); the shared Coming Soon is shown then.
+   */
+  readonly presentation?: HostnamePresentation;
+}
+
+export interface HostnamePresentation {
+  readonly themeKey: string;
+  readonly brand: {
+    readonly primaryColor?: string;
+    readonly secondaryColor?: string;
+    readonly accentColor?: string;
+    readonly palette?: Record<string, unknown>;
+  };
 }
 
 /** Phase 6 — `StatisticsSection`'s real, live, Academy-scoped counts (`GET public/websites/:academyId/statistics`). Never revenue or any other private figure. */
@@ -23,6 +40,15 @@ export interface PublicWebsiteStatistics {
   readonly courses: number;
   readonly students: number;
   readonly instructors: number;
+}
+
+/** Theme 1 plan §D.2 — `CourseCategoriesSection`'s live data (`GET public/websites/:academyId/categories`): only categories with at least one published public course. */
+export interface PublicCourseCategory {
+  readonly id: string;
+  readonly name: string;
+  readonly slug: string;
+  readonly description?: string;
+  readonly courseCount: number;
 }
 
 /** Phase 6 — the public Contact section's submission payload (`POST public/websites/:academyId/contact`). */

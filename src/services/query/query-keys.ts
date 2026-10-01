@@ -917,6 +917,9 @@ export const publicWebsiteKeys = {
   /** Phase 6 — `StatisticsSection`'s real, live counts. */
   statistics: (academyId: string | undefined) =>
     [...publicWebsiteKeys.all, 'statistics', academyId] as const,
+  /** Theme 1 plan §D.2 — `CourseCategoriesSection`'s live categories. */
+  categories: (academyId: string | undefined) =>
+    [...publicWebsiteKeys.all, 'categories', academyId] as const,
   /** Phase 6 — the combined Academy Identity/Branding read. */
   identity: (academyId: string | undefined) =>
     [...publicWebsiteKeys.all, 'identity', academyId] as const,

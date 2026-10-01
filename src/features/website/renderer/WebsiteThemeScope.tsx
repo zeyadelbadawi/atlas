@@ -25,25 +25,18 @@ import {
   WEBSITE_SECTION_PADDING_VALUES,
   WEBSITE_SHADOW_VALUES,
 } from '../utils/website-theme-tokens.utils';
-
-/**
- * Shifts an `"H S% L%"` triplet's lightness for a hover shade — matches
- * `WebsiteBrandBridge`'s own approach so scope-level and bridge-level hover
- * shades agree.
- */
-function shiftLightness(hslTriplet: string, deltaPercent: number): string {
-  const match = /^(-?[\d.]+)\s+([\d.]+)%\s+([\d.]+)%$/.exec(hslTriplet.trim());
-  if (!match) return hslTriplet;
-  const [, h, sat, l] = match;
-  const nextLightness = Math.min(100, Math.max(0, Number(l) + deltaPercent));
-  return `${h} ${sat}% ${nextLightness}%`;
-}
+import { getThemePack } from '../theme-packs/theme-pack.registry';
+import {
+  ThemePackContext,
+  WebsiteBrandVariablesContext,
+} from '../theme-packs/ThemePackContext';
+import type { BrandMappingInput } from '../theme-packs/theme-pack.types';
 
 export interface WebsiteThemeScopeProps {
   readonly theme: WebsiteThemeDefinition;
   readonly brand?: Pick<
     WebsiteBrandConfig,
-    'primaryColor' | 'secondaryColor' | 'accentColor'
+    'primaryColor' | 'secondaryColor' | 'accentColor' | 'palette'
   >;
   readonly children: ReactNode;
   readonly className?: string;
@@ -65,71 +58,41 @@ export function WebsiteThemeScope({
     [theme, brand]
   );
 
+  const pack = useMemo(() => getThemePack(theme.key), [theme.key]);
+
+  // Theme 1 plan §F.4.6: the stored semantic palette when there is one;
+  // each pack decides what to do with it (the base mapping ignores it).
+  const palette = brand?.palette;
+  const brandVariables = useMemo(
+    () =>
+      pack.mapBrandPalette({
+        theme,
+        seeds: {
+          primary: resolved.primary,
+          secondary: resolved.secondary,
+          accent: resolved.accent,
+        },
+        palette: palette as BrandMappingInput['palette'],
+      }),
+    [pack, theme, resolved, palette]
+  );
+
   const style = useMemo<CSSProperties>(
     () =>
       ({
-        /**
-         * THE PUBLIC SITE OWNS ITS OWN PAGE COLOURS.
-         *
-         * These used to come from Atlas's `bg-background`/`text-foreground`
-         * dashboard tokens, which caused two real problems. First, that
-         * palette deliberately tints every neutral toward the ATLAS brand
-         * hue ("Pure white and pure black are never used" — `index.css`),
-         * so every academy website inherited a blue-green cast that had
-         * nothing to do with that academy's own branding. Second, the
-         * tokens flip with the dashboard's `.dark` class, so an admin who
-         * preferred dark mode previewed — and, on shared surfaces, showed
-         * visitors — a dark version of a site whose owner never chose one.
-         *
-         * A customer's public website is white because that is what its
-         * design calls for, not because of anything the Atlas dashboard
-         * happens to be set to.
-         */
-        '--website-background': '#ffffff',
-        '--website-foreground': 'hsl(222 22% 12%)',
-        /** A neutral separation surface — never a brand wash. */
-        '--website-surface': 'hsl(210 20% 97%)',
-        '--website-border': 'hsl(214 20% 91%)',
-
-        '--website-primary': resolved.primary,
-        '--website-primary-solid': `hsl(${resolved.primary})`,
-        '--website-primary-muted': `hsl(${resolved.primary} / 0.3)`,
-        /**
-         * An 8% wash of the academy's brand colour. Correct for SMALL,
-         * deliberately branded elements — image placeholders, avatar
-         * fallbacks, icon tiles. It is NOT a page background: applied to a
-         * full-width band it turns a whole screen the brand colour, which
-         * is exactly how the hero ended up reading as a green page rather
-         * than a white page with green accents.
-         */
-        '--website-primary-surface': `hsl(${resolved.primary} / 0.08)`,
-        '--website-secondary': resolved.secondary,
-        '--website-secondary-solid': `hsl(${resolved.secondary})`,
-        '--website-accent': resolved.accent,
-        '--website-accent-solid': `hsl(${resolved.accent})`,
+        // Colours: the theme pack's brand mapping (Theme 1 plan §F.5) —
+        // see `base-brand-mapping.ts` for the variables and why each one
+        // exists.
+        ...brandVariables,
+        // Shape and rhythm: the theme's own bounded tokens.
         '--website-radius': WEBSITE_RADIUS_VALUES[resolved.radius],
         '--website-shadow': WEBSITE_SHADOW_VALUES[resolved.shadow],
         '--website-section-padding':
           WEBSITE_SECTION_PADDING_VALUES[resolved.spacing],
         '--website-container-width':
           WEBSITE_CONTAINER_WIDTH_VALUES[resolved.containerWidth],
-
-        /**
-         * BRAND COLOUR ONTO THE GENERIC ACCENT TOKENS. Dashboard-origin
-         * components (Button/Badge/etc.) rendered on the public site read
-         * these; mapping them to the academy's own brand here — for the whole
-         * scope, not just where `WebsiteBrandBridge` wraps — is what stops
-         * them from showing the Atlas brand colour (or a dark-mode version of
-         * it). Per-academy by construction: `resolved.primary` is this
-         * academy's own brand, so no two academies share a palette. Neutral
-         * accent tokens (`--secondary`/`--accent`/`--destructive`) are set
-         * statically on `.website-theme-scope` in `index.css`.
-         */
-        '--primary': resolved.primary,
-        '--primary-hover': shiftLightness(resolved.primary, -6),
-        '--ring': resolved.primary,
       }) as CSSProperties,
-    [resolved]
+    [brandVariables, resolved]
   );
 
   // Portalled overlays (dialogs, sheets, popovers, selects) mount HERE,
@@ -143,18 +106,26 @@ export function WebsiteThemeScope({
 
   return (
     <WebsiteDesignSystemContext.Provider value={resolved}>
-      <div className={cn('website-theme-scope', className)} style={style}>
-        <PortalContainerProvider value={portalContainer}>
-          {children}
-        </PortalContainerProvider>
-        {/* `text-foreground` so text inside a portalled overlay inherits the
+      <ThemePackContext.Provider value={pack}>
+        <WebsiteBrandVariablesContext.Provider value={brandVariables}>
+          <div
+            className={cn('website-theme-scope', className)}
+            data-theme-pack={pack.key}
+            style={style}
+          >
+            <PortalContainerProvider value={portalContainer}>
+              {children}
+            </PortalContainerProvider>
+            {/* `text-foreground` so text inside a portalled overlay inherits the
             scope's colour rather than the body's (dark-mode) colour. */}
-        <div
-          ref={setPortalContainer}
-          data-website-portal-root
-          className="text-foreground"
-        />
-      </div>
+            <div
+              ref={setPortalContainer}
+              data-website-portal-root
+              className="text-foreground"
+            />
+          </div>
+        </WebsiteBrandVariablesContext.Provider>
+      </ThemePackContext.Provider>
     </WebsiteDesignSystemContext.Provider>
   );
 }

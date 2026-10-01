@@ -31,14 +31,17 @@ function aliasesFromTsconfig(): Record<string, string> {
   const raw = readFileSync(resolve(__dirname, 'tsconfig.app.json'), 'utf8');
   // The tsconfig carries comments, which `JSON.parse` rejects.
   const json = JSON.parse(
-    raw.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|\s)\/\/.*$/gm, '$1'),
+    raw.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|\s)\/\/.*$/gm, '$1')
   ) as { compilerOptions?: { paths?: Record<string, string[]> } };
 
   const paths = json.compilerOptions?.paths ?? {};
   const aliases: Record<string, string> = {};
   for (const [key, [target]] of Object.entries(paths)) {
     if (!target) continue;
-    aliases[key.replace(/\/\*$/, '')] = resolve(__dirname, target.replace(/\/\*$/, ''));
+    aliases[key.replace(/\/\*$/, '')] = resolve(
+      __dirname,
+      target.replace(/\/\*$/, '')
+    );
   }
   return aliases;
 }
@@ -48,6 +51,8 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
+    // Registers both translation bundles (the app loads one per language).
+    setupFiles: ['src/test/setup-i18n.ts'],
     restoreMocks: true,
   },
 });

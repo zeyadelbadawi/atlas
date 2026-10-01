@@ -44,7 +44,14 @@ export default defineConfig({
   projects: [
     {
       name: 'chrome',
-      use: { ...devices['Desktop Chrome'], channel: 'chrome' },
+      // `E2E_CHROMIUM` points at a local Chromium where Chrome isn't
+      // installed (e.g. a CI container); Chrome stays the default.
+      use: process.env.E2E_CHROMIUM
+        ? {
+            ...devices['Desktop Chrome'],
+            launchOptions: { executablePath: process.env.E2E_CHROMIUM },
+          }
+        : { ...devices['Desktop Chrome'], channel: 'chrome' },
     },
   ],
 });

@@ -11,7 +11,10 @@
  * with which language a public visitor is looking at (see
  * `PublicWebsiteLocaleContext`'s own doc comment).
  */
+import { useTranslation } from 'react-i18next';
 import { Quote } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { StarRating } from '@components/data-display';
 import { useWebsiteTestimonialEntries } from '../hooks';
 import {
   useWebsiteCardClass,
@@ -19,6 +22,7 @@ import {
   useWebsiteHeadingClass,
   useWebsiteSectionClass,
 } from '../renderer/renderer-style.utils';
+import { ThemeImage, hasRenderableImage } from '../theme-assets';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { TestimonialsSectionConfig } from '@types';
@@ -26,12 +30,20 @@ import type { TestimonialsSectionConfig } from '@types';
 export interface TestimonialsSectionProps {
   readonly config: TestimonialsSectionConfig;
   readonly academyId: string;
+  /**
+   * Theme 1 plan §D.4 — the public runtime. Sample (starter) testimonials
+   * are never shown there (the API already strips them; this is the second
+   * guard); previews show them labelled "Sample".
+   */
+  readonly isPublic?: boolean;
 }
 
 export function TestimonialsSection({
   config,
   academyId,
+  isPublic = false,
 }: TestimonialsSectionProps): JSX.Element {
+  const { t } = useTranslation();
   const container = useWebsiteContainerClass();
   const section = useWebsiteSectionClass();
   const heading = useWebsiteHeadingClass();
@@ -59,18 +71,25 @@ export function TestimonialsSection({
       avatar: entry.avatar,
       // Library entries have no dedicated `avatarAlt` field (Prompt 10) — the author's own name is a reasonable, honest alt for a portrait photo.
       avatarAlt: entry.authorName,
+      rating: undefined as number | undefined,
+      sample: false,
     }));
 
-  const inlineItems = config.items.map((item) => ({
-    id: item.id,
-    quote: resolveLocalizedText(item.quote, locale),
-    authorName: item.authorName,
-    authorRole: item.authorRole
-      ? resolveLocalizedText(item.authorRole, locale)
-      : undefined,
-    avatar: item.avatar,
-    avatarAlt: resolveLocalizedText(item.avatarAlt, locale) || item.authorName,
-  }));
+  const inlineItems = config.items
+    .filter((item) => !(isPublic && item.sample))
+    .map((item) => ({
+      id: item.id,
+      quote: resolveLocalizedText(item.quote, locale),
+      authorName: item.authorName,
+      authorRole: item.authorRole
+        ? resolveLocalizedText(item.authorRole, locale)
+        : undefined,
+      avatar: item.avatar,
+      avatarAlt:
+        resolveLocalizedText(item.avatarAlt, locale) || item.authorName,
+      rating: item.rating,
+      sample: item.sample === true,
+    }));
 
   const allItems = [...libraryItems, ...inlineItems];
   const title = resolveLocalizedText(config.title, locale);
@@ -87,17 +106,33 @@ export function TestimonialsSection({
       <div className="grid grid-cols-[repeat(auto-fit,minmax(17rem,1fr))] gap-6">
         {allItems.map((item) => (
           <figure key={item.id} className={cardClass}>
+            {item.sample ? (
+              <Badge variant="outline" className="mb-2">
+                {t('website:renderer.testimonials.sampleBadge')}
+              </Badge>
+            ) : null}
             <Quote
               className="size-5 text-[var(--website-primary-solid)]"
               aria-hidden
             />
+            {item.rating ? (
+              <StarRating
+                value={item.rating}
+                size="sm"
+                className="mt-2"
+                label={t('website:renderer.courseDetails.ratingLabel', {
+                  rating: item.rating,
+                })}
+              />
+            ) : null}
             <blockquote className="mt-3 break-words text-sm leading-relaxed text-foreground">
               “{item.quote}”
             </blockquote>
             <figcaption className="mt-4 flex items-center gap-3">
-              {item.avatar ? (
-                <img
-                  src={item.avatar}
+              {hasRenderableImage(item.avatar) ? (
+                <ThemeImage
+                  value={item.avatar}
+                  sizes="36px"
                   alt={item.avatarAlt ?? item.authorName}
                   className="size-9 shrink-0 rounded-full object-cover"
                 />

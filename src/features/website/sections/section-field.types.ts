@@ -45,6 +45,8 @@ export interface NumberFieldDescriptor extends FieldDescriptorBase {
   /** Input bounds. Default to `1`/`MAX_SECTION_ITEMS` — the "how many items" fields every section had before `courseCatalog.pageSize` needed its own range. The Zod schema remains the real validation. */
   readonly min?: number;
   readonly max?: number;
+  /** An empty input means "not set" (the key is omitted) instead of 0. */
+  readonly optional?: boolean;
 }
 
 export interface SelectFieldDescriptor extends FieldDescriptorBase {

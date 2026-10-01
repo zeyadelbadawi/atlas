@@ -31,6 +31,8 @@ import { useTranslation } from 'react-i18next';
 import type { HostnameResolution } from '@types';
 import {
   PUBLIC_WEBSITE_LOCALE_DIRECTION,
+  WebsiteComingSoon,
+  hasThemeComingSoon,
   usePublicWebsiteDocumentDirection,
   type PublicWebsiteLocale,
 } from '@features/website';
@@ -66,8 +68,25 @@ export function AcademyComingSoon({
    */
   usePublicWebsiteDocumentDirection(locale);
 
+  // Theme 1 plan Phase 6 — a theme with its own Coming Soon draws it in the
+  // Academy's theme and public colours (the lookup's `presentation`); every
+  // other case keeps this shared page.
+  if (hasThemeComingSoon(academy.presentation)) {
+    return (
+      <div dir={direction} lang={locale}>
+        <WebsiteComingSoon
+          presentation={academy.presentation}
+          academyName={academy.academyName}
+          academyLogo={academy.academyLogo}
+          locale={locale}
+        />
+      </div>
+    );
+  }
+
   return (
-    <div
+    // `main`: the page's one landmark (axe `landmark-one-main`, `region`).
+    <main
       dir={direction}
       lang={locale}
       data-testid="academy-coming-soon"
@@ -136,6 +155,6 @@ export function AcademyComingSoon({
           {t('publicWebsite:comingSoon.attribution')}
         </p>
       </div>
-    </div>
+    </main>
   );
 }

@@ -3,8 +3,8 @@
  *
  * The rule-detail path is a PUBLIC contract (Slack "View Alert" links), so
  * it is pinned literally. Every route is guarded for `platform_owner`; the
- * router source is read as text because rendering `AppRouter` would mount
- * the whole application.
+ * router source (`AtlasAppRoutes`, the dashboard's routes) is read as text
+ * because rendering it would mount the whole application.
  */
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -55,7 +55,7 @@ describe('Observability routes', () => {
 
   it('guards every Observability route for platform owners only', () => {
     const router = readFileSync(
-      resolve(__dirname, '../../app/routes/AppRouter.tsx'),
+      resolve(__dirname, '../../app/routes/AtlasAppRoutes.tsx'),
       'utf8'
     );
     for (const key of ROUTE_KEYS) {

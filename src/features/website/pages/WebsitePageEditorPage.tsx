@@ -12,7 +12,7 @@
  */
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { Loader2, Save, Search } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
@@ -98,7 +98,12 @@ export default function WebsitePageEditorPage(): JSX.Element {
   const updatePage = useUpdateWebsitePage();
 
   const [draftSections, setDraftSections] = useState<SectionInstance[]>([]);
-  const [selectedId, setSelectedId] = useState<string>();
+  // `?section=<id>` opens that section's editor once the page loads (the
+  // launch checklist and the publish warning link straight to a section).
+  const [searchParams] = useSearchParams();
+  const [selectedId, setSelectedId] = useState<string | undefined>(
+    () => searchParams.get('section') ?? undefined
+  );
   // THE PAGE EDITOR PREVIEW USED TO BE HARDCODED TO ENGLISH. This page
   // never passed `locale` to `WebsiteRenderer`, so it fell back to
   // `DEFAULT_PUBLIC_WEBSITE_LOCALE` ('en') — meaning an admin editing the

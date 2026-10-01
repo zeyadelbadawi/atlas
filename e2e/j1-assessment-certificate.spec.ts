@@ -243,7 +243,7 @@ test.describe('J1 — assessment and certificate', () => {
     learnerEmail = uniqueLearnerEmail('j1');
     await registerLearnerThroughWebsite(page, learnerEmail, 'J1 Learner');
     await expect(
-      page.getByText(/check your (email|inbox)|account created|verify/i).first()
+      page.getByText(/check your (email|inbox)|account created|your account is ready|verify/i).first()
     ).toBeVisible({ timeout: 20_000 });
 
     learner = await apiSignIn(request, {

@@ -39,6 +39,37 @@ export const CONSENT_STORAGE_KEY = 'atlas:cookie-consent';
 /** Bumped only if the categories change meaningfully, which re-asks for consent. */
 export const CONSENT_VERSION = 1;
 
+/**
+ * A strictly necessary first-party cookie recording only THAT a decision
+ * exists — never what was chosen (that stays in `localStorage`). It lets a
+ * server-rendered public page know whether to render the banner, so a
+ * returning visitor never sees it flash (Reports/SSR_ARCHITECTURE_ANALYSIS.md
+ * §4 #5).
+ */
+export const CONSENT_DECIDED_COOKIE = 'atlas_consent';
+
+/** Whether a `Cookie` request header carries the decision marker. */
+export function hasConsentDecidedCookie(
+  cookieHeader: string | undefined
+): boolean {
+  if (!cookieHeader) return false;
+  return cookieHeader
+    .split(';')
+    .some((part) => part.trim() === `${CONSENT_DECIDED_COOKIE}=1`);
+}
+
+/** Sets or clears the decision marker to match the stored decision. */
+export function syncConsentDecidedCookie(decided: boolean): void {
+  try {
+    const secure = window.location.protocol === 'https:' ? '; secure' : '';
+    document.cookie = decided
+      ? `${CONSENT_DECIDED_COOKIE}=1; path=/; max-age=31536000; samesite=lax${secure}`
+      : `${CONSENT_DECIDED_COOKIE}=; path=/; max-age=0; samesite=lax${secure}`;
+  } catch {
+    // Cookies refused: the banner then shows until hydration, as before.
+  }
+}
+
 export interface CookieConsent {
   readonly version: number;
   /** Always true. Present for completeness of the record, never togglable. */
@@ -96,6 +127,7 @@ export function writeConsent(preferences: boolean): CookieConsent {
     // Storage refused (private mode, quota). The choice still applies for
     // this page load via `applyConsent`; it simply will not persist.
   }
+  syncConsentDecidedCookie(true);
   applyConsent(consent);
   return consent;
 }

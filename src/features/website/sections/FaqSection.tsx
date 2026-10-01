@@ -19,6 +19,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
 import { useWebsiteFaqEntries } from '../hooks';
 import {
   useWebsiteContainerClass,
@@ -27,16 +28,25 @@ import {
 } from '../renderer/renderer-style.utils';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
-import type { FaqSectionConfig } from '@types';
+import {
+  isExternalHref,
+  resolveWebsiteCtaHref,
+} from '../utils/link-resolution.utils';
+import type { FaqSectionConfig, WebsitePage } from '@types';
+import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
 
 export interface FaqSectionProps {
   readonly config: FaqSectionConfig;
   readonly academyId: string;
+  readonly pages?: readonly WebsitePage[];
+  readonly linkRenderer?: WebsiteLinkRenderer;
 }
 
 export function FaqSection({
   config,
   academyId,
+  pages = [],
+  linkRenderer,
 }: FaqSectionProps): JSX.Element {
   const container = useWebsiteContainerClass();
   const section = useWebsiteSectionClass();
@@ -66,8 +76,18 @@ export function FaqSection({
     answer: resolveLocalizedText(item.answer, locale),
   }));
 
-  const allItems = [...libraryItems, ...inlineItems];
+  // Theme 1 plan §D.2 — `maxItems` makes the section a teaser (absent: all).
+  const allItems = [...libraryItems, ...inlineItems].slice(
+    0,
+    config.maxItems ?? undefined
+  );
   const title = resolveLocalizedText(config.title, locale);
+  const ctaLabel = config.cta
+    ? resolveLocalizedText(config.cta.label, locale)
+    : '';
+  const ctaHref = linkRenderer
+    ? resolveWebsiteCtaHref(config.cta, pages)
+    : undefined;
 
   return (
     <section className={`${container} ${section}`}>
@@ -86,6 +106,21 @@ export function FaqSection({
           </AccordionItem>
         ))}
       </Accordion>
+      {config.cta && ctaLabel ? (
+        <div className="mt-8 flex justify-center">
+          {ctaHref ? (
+            <Button variant="outline" asChild>
+              {linkRenderer!({
+                href: ctaHref,
+                external: isExternalHref(ctaHref),
+                children: ctaLabel,
+              })}
+            </Button>
+          ) : (
+            <Button variant="outline">{ctaLabel}</Button>
+          )}
+        </div>
+      ) : null}
     </section>
   );
 }

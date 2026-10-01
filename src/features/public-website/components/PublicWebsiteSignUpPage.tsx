@@ -23,6 +23,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle2, Loader2 } from 'lucide-react';
 import {
   WebsiteChrome,
+  WebsiteAuthFrame,
   WebsiteBrandBridge,
   resolvePagePath,
   resolveLocalizedText,
@@ -278,6 +279,7 @@ export function PublicWebsiteSignUpPage({
 
   return (
     <WebsiteChrome
+      academyId={academy.academyId}
       academyName={academy.academyName}
       academyLogo={academy.academyLogo}
       configuration={configuration}
@@ -296,244 +298,250 @@ export function PublicWebsiteSignUpPage({
       }}
       authState={authState}
     >
-      <div className="mx-auto flex min-h-[60vh] w-full max-w-md flex-col justify-center px-4 py-16">
-        <div className="mb-8 text-center">
-          <h1 className="font-display text-2xl font-bold text-foreground">
-            {title}
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>
-        </div>
+      <WebsiteAuthFrame>
+        <div className="mx-auto flex min-h-[60vh] w-full max-w-md flex-col justify-center px-4 py-16">
+          <div className="mb-8 text-center">
+            <h1 className="font-display text-2xl font-bold text-foreground">
+              {title}
+            </h1>
+            <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>
+          </div>
 
-        {step.kind === 'welcome' ? (
-          <div
-            role="status"
-            className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card p-6 text-center"
-          >
-            <CheckCircle2
-              className="size-8 text-[var(--website-primary-solid)]"
-              aria-hidden
-            />
-            <p className="font-medium text-foreground">
-              {t('publicWebsite:auth.signUp.welcomeTitle', {
-                academyName: academy.academyName,
-              })}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              {t('publicWebsite:auth.signUp.welcomeOtherAcademies', {
-                academies: step.otherAcademies.join(
-                  t('publicWebsite:auth.signUp.listSeparator')
-                ),
-                academyName: academy.academyName,
-              })}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              {t('publicWebsite:auth.signUp.welcomeSeparate')}
-            </p>
-            {linkRenderer({
-              href: LEARNER_ROUTES.root,
-              external: false,
-              className:
-                'mt-2 inline-flex items-center justify-center rounded-md bg-[var(--website-primary-solid)] px-4 py-2 text-sm font-medium text-white hover:opacity-90',
-              children: t('publicWebsite:auth.signUp.goToLearning'),
-            })}
-          </div>
-        ) : step.kind === 'done' ? (
-          <div
-            role="status"
-            className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card p-6 text-center"
-          >
-            <CheckCircle2
-              className="size-8 text-[var(--website-primary-solid)]"
-              aria-hidden
-            />
-            {step.name ? (
-              <p className="font-medium text-foreground">
-                {t('publicWebsite:auth.signUp.welcomeBack', {
-                  name: step.name,
-                })}
-              </p>
-            ) : null}
-            <p className="text-foreground">
-              {t(
-                step.result === 'new'
-                  ? 'publicWebsite:auth.signUp.success'
-                  : step.result === 'pending'
-                    ? 'publicWebsite:auth.signUp.joinedPending'
-                    : 'publicWebsite:auth.signUp.successExistingAccount',
-                { academyName: academy.academyName }
-              )}
-            </p>
-            {step.result === 'pending'
-              ? null
-              : linkRenderer({
-                  href: '/sign-in',
-                  external: false,
-                  className: primaryLinkClass,
-                  children: t('publicWebsite:auth.signUp.goToSignIn'),
-                })}
-          </div>
-        ) : step.kind === 'continuing' ? (
-          <div
-            role="status"
-            className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card p-6 text-center"
-          >
-            <Loader2
-              className="size-6 animate-spin text-[var(--website-primary-solid)]"
-              aria-hidden
-            />
-            {step.name ? (
-              <p className="font-medium text-foreground">
-                {t('publicWebsite:auth.signUp.welcomeBack', {
-                  name: step.name,
-                })}
-              </p>
-            ) : null}
-            <p className="text-sm text-muted-foreground">
-              {t('publicWebsite:auth.signUp.continuing', {
-                academyName: academy.academyName,
-              })}
-            </p>
-          </div>
-        ) : step.kind === 'challenge' ? (
-          <div className="space-y-4">
-            <p
+          {step.kind === 'welcome' ? (
+            <div
               role="status"
-              className="text-center text-sm text-muted-foreground"
+              className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card p-6 text-center"
             >
-              {step.name
-                ? `${t('publicWebsite:auth.signUp.welcomeBack', {
-                    name: step.name,
-                  })} `
-                : ''}
-              {t('publicWebsite:auth.signUp.joinedVerify', {
-                academyName: academy.academyName,
+              <CheckCircle2
+                className="size-8 text-[var(--website-primary-solid)]"
+                aria-hidden
+              />
+              <p className="font-medium text-foreground">
+                {t('publicWebsite:auth.signUp.welcomeTitle', {
+                  academyName: academy.academyName,
+                })}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {t('publicWebsite:auth.signUp.welcomeOtherAcademies', {
+                  academies: step.otherAcademies.join(
+                    t('publicWebsite:auth.signUp.listSeparator')
+                  ),
+                  academyName: academy.academyName,
+                })}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {t('publicWebsite:auth.signUp.welcomeSeparate')}
+              </p>
+              {linkRenderer({
+                href: LEARNER_ROUTES.root,
+                external: false,
+                className:
+                  'mt-2 inline-flex items-center justify-center rounded-md bg-[var(--website-primary-solid)] px-4 py-2 text-sm font-medium text-white hover:opacity-90',
+                children: t('publicWebsite:auth.signUp.goToLearning'),
               })}
-            </p>
+            </div>
+          ) : step.kind === 'done' ? (
+            <div
+              role="status"
+              className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card p-6 text-center"
+            >
+              <CheckCircle2
+                className="size-8 text-[var(--website-primary-solid)]"
+                aria-hidden
+              />
+              {step.name ? (
+                <p className="font-medium text-foreground">
+                  {t('publicWebsite:auth.signUp.welcomeBack', {
+                    name: step.name,
+                  })}
+                </p>
+              ) : null}
+              <p className="text-foreground">
+                {t(
+                  step.result === 'new'
+                    ? 'publicWebsite:auth.signUp.success'
+                    : step.result === 'pending'
+                      ? 'publicWebsite:auth.signUp.joinedPending'
+                      : 'publicWebsite:auth.signUp.successExistingAccount',
+                  { academyName: academy.academyName }
+                )}
+              </p>
+              {step.result === 'pending'
+                ? null
+                : linkRenderer({
+                    href: '/sign-in',
+                    external: false,
+                    className: primaryLinkClass,
+                    children: t('publicWebsite:auth.signUp.goToSignIn'),
+                  })}
+            </div>
+          ) : step.kind === 'continuing' ? (
+            <div
+              role="status"
+              className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card p-6 text-center"
+            >
+              <Loader2
+                className="size-6 animate-spin text-[var(--website-primary-solid)]"
+                aria-hidden
+              />
+              {step.name ? (
+                <p className="font-medium text-foreground">
+                  {t('publicWebsite:auth.signUp.welcomeBack', {
+                    name: step.name,
+                  })}
+                </p>
+              ) : null}
+              <p className="text-sm text-muted-foreground">
+                {t('publicWebsite:auth.signUp.continuing', {
+                  academyName: academy.academyName,
+                })}
+              </p>
+            </div>
+          ) : step.kind === 'challenge' ? (
+            <div className="space-y-4">
+              <p
+                role="status"
+                className="text-center text-sm text-muted-foreground"
+              >
+                {step.name
+                  ? `${t('publicWebsite:auth.signUp.welcomeBack', {
+                      name: step.name,
+                    })} `
+                  : ''}
+                {t('publicWebsite:auth.signUp.joinedVerify', {
+                  academyName: academy.academyName,
+                })}
+              </p>
+              <WebsiteBrandBridge>
+                {isEmailOtpChallenge(step.challenge) ? (
+                  <EmailOtpChallengeForm
+                    challenge={step.challenge}
+                    onSubmit={handleVerifyEmailOtp}
+                    onResend={() =>
+                      authenticationService.resendEmailOtp(
+                        step.challenge.challengeId
+                      )
+                    }
+                    onCancel={abandonChallenge}
+                    isLoading={signInLoading}
+                    error={signInError}
+                    forgotPasswordHref={buildHref('/forgot-password')}
+                  />
+                ) : (
+                  <TwoFactorChallengeForm
+                    onSubmit={(input) => void handleVerify(input)}
+                    onCancel={abandonChallenge}
+                    isLoading={signInLoading}
+                    error={signInError}
+                  />
+                )}
+              </WebsiteBrandBridge>
+            </div>
+          ) : step.kind === 'join' ? (
             <WebsiteBrandBridge>
-              {isEmailOtpChallenge(step.challenge) ? (
-                <EmailOtpChallengeForm
-                  challenge={step.challenge}
-                  onSubmit={handleVerifyEmailOtp}
-                  onResend={() =>
-                    authenticationService.resendEmailOtp(
-                      step.challenge.challengeId
-                    )
-                  }
-                  onCancel={abandonChallenge}
-                  isLoading={signInLoading}
-                  error={signInError}
-                  forgotPasswordHref={buildHref('/forgot-password')}
-                />
-              ) : (
-                <TwoFactorChallengeForm
-                  onSubmit={(input) => void handleVerify(input)}
-                  onCancel={abandonChallenge}
-                  isLoading={signInLoading}
-                  error={signInError}
-                />
-              )}
+              <AcademyJoinForm
+                academyId={academy.academyId}
+                inviteToken={searchParams.get('invite') ?? undefined}
+                academyName={academy.academyName}
+                defaultEmail={step.email}
+                reason={step.reason}
+                onJoined={(result, credentials) =>
+                  onExistingAccountJoined(
+                    result?.status,
+                    credentials,
+                    result?.name
+                  )
+                }
+                onBack={() => setStep({ kind: 'register' })}
+                onChangeEmail={(email) =>
+                  setStep({ kind: 'register', email, name: step.name })
+                }
+                forgotPasswordHref="/forgot-password"
+                renderLink={({ href, className, children }) =>
+                  linkRenderer({ href, external: false, className, children })
+                }
+              />
             </WebsiteBrandBridge>
-          </div>
-        ) : step.kind === 'join' ? (
-          <WebsiteBrandBridge>
-            <AcademyJoinForm
-              academyId={academy.academyId}
-              inviteToken={searchParams.get('invite') ?? undefined}
-              academyName={academy.academyName}
-              defaultEmail={step.email}
-              reason={step.reason}
-              onJoined={(result, credentials) =>
-                onExistingAccountJoined(
-                  result?.status,
-                  credentials,
-                  result?.name
-                )
-              }
-              onBack={() => setStep({ kind: 'register' })}
-              onChangeEmail={(email) =>
-                setStep({ kind: 'register', email, name: step.name })
-              }
-              forgotPasswordHref="/forgot-password"
-              renderLink={({ href, className, children }) =>
-                linkRenderer({ href, external: false, className, children })
-              }
-            />
-          </WebsiteBrandBridge>
-        ) : (
-          <>
-            <WebsiteBrandBridge>
-              {/* Google Identity — the same academy, the same invitation
+          ) : (
+            <>
+              <WebsiteBrandBridge>
+                {/* Google Identity — the same academy, the same invitation
                   code (`?invite=`), the same registration policy: the
                   backend applies it at the return page's create step (or
                   joins an existing Google-linked account directly). */}
-              <GoogleSignInOption
-                intent="sign_up"
-                surface="academy"
-                academyId={academy.academyId}
-                inviteToken={searchParams.get('invite') ?? undefined}
-                locale={locale}
-                next={buildHref(LEARNER_ROUTES.root)}
-                className="mb-6"
-              />
-              {/* P64 Phase 1 (D3) — the invitation token from the link the
+                <GoogleSignInOption
+                  intent="sign_up"
+                  surface="academy"
+                  academyId={academy.academyId}
+                  inviteToken={searchParams.get('invite') ?? undefined}
+                  locale={locale}
+                  next={buildHref(LEARNER_ROUTES.root)}
+                  className="mb-6"
+                />
+                {/* P64 Phase 1 (D3) — the invitation token from the link the
                   academy sent (`/sign-up?invite=…`). Passed through as-is:
                   the BACKEND decides whether this academy's registration
                   policy needs one and whether it is still valid, and
                   `RegistrationForm` renders the invite-required /
                   invalid-invite answers it gives. */}
-              <RegistrationForm
-                academyId={academy.academyId}
-                inviteToken={searchParams.get('invite') ?? undefined}
-                onSuccess={(result, credentials) => {
-                  // Launch Stabilization A4 — the email already had an
-                  // Atlas account and its password was typed here, so this
-                  // academy was added to it: continue exactly like a join.
-                  if (result.account === 'existing') {
-                    onExistingAccountJoined(result.status, credentials);
-                  } else {
-                    setStep({ kind: 'done', result: 'new' });
+                <RegistrationForm
+                  academyId={academy.academyId}
+                  inviteToken={searchParams.get('invite') ?? undefined}
+                  onSuccess={(result, credentials) => {
+                    // Launch Stabilization A4 — the email already had an
+                    // Atlas account and its password was typed here, so this
+                    // academy was added to it: continue exactly like a join.
+                    if (result.account === 'existing') {
+                      onExistingAccountJoined(result.status, credentials);
+                    } else {
+                      setStep({ kind: 'done', result: 'new' });
+                    }
+                  }}
+                  onExistingAccount={(email, name) =>
+                    setStep({
+                      kind: 'join',
+                      reason: 'existing_email',
+                      email,
+                      name,
+                    })
                   }
-                }}
-                onExistingAccount={(email, name) =>
-                  setStep({
-                    kind: 'join',
-                    reason: 'existing_email',
-                    email,
-                    name,
-                  })
-                }
-                defaultName={step.kind === 'register' ? step.name : undefined}
-                defaultEmail={step.kind === 'register' ? step.email : undefined}
-              />
-            </WebsiteBrandBridge>
-            <div className="mt-6 space-y-2 text-center text-sm">
-              <p>
-                <span className="text-muted-foreground">
-                  {t('publicWebsite:auth.signUp.hasAtlasAccount')}{' '}
-                </span>
-                <button
-                  type="button"
-                  className={primaryLinkClass}
-                  onClick={() => setStep({ kind: 'join', reason: 'proactive' })}
-                >
-                  {t('publicWebsite:auth.signUp.joinWithAtlasAccount')}
-                </button>
-              </p>
-              <p>
-                <span className="text-muted-foreground">
-                  {t('publicWebsite:auth.signUp.hasAccount')}{' '}
-                </span>
-                {linkRenderer({
-                  href: '/sign-in',
-                  external: false,
-                  className: primaryLinkClass,
-                  children: t('publicWebsite:auth.signUp.signIn'),
-                })}
-              </p>
-            </div>
-          </>
-        )}
-      </div>
+                  defaultName={step.kind === 'register' ? step.name : undefined}
+                  defaultEmail={
+                    step.kind === 'register' ? step.email : undefined
+                  }
+                />
+              </WebsiteBrandBridge>
+              <div className="mt-6 space-y-2 text-center text-sm">
+                <p>
+                  <span className="text-muted-foreground">
+                    {t('publicWebsite:auth.signUp.hasAtlasAccount')}{' '}
+                  </span>
+                  <button
+                    type="button"
+                    className={primaryLinkClass}
+                    onClick={() =>
+                      setStep({ kind: 'join', reason: 'proactive' })
+                    }
+                  >
+                    {t('publicWebsite:auth.signUp.joinWithAtlasAccount')}
+                  </button>
+                </p>
+                <p>
+                  <span className="text-muted-foreground">
+                    {t('publicWebsite:auth.signUp.hasAccount')}{' '}
+                  </span>
+                  {linkRenderer({
+                    href: '/sign-in',
+                    external: false,
+                    className: primaryLinkClass,
+                    children: t('publicWebsite:auth.signUp.signIn'),
+                  })}
+                </p>
+              </div>
+            </>
+          )}
+        </div>
+      </WebsiteAuthFrame>
     </WebsiteChrome>
   );
 }

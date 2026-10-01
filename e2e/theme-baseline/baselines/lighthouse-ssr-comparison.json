@@ -1,0 +1,2601 @@
+{
+  "recordedAt": "2026-10-01",
+  "lighthouseVersion": "13.5.0",
+  "chromium": "141.0.7390.37",
+  "method": "Lighthouse defaults (mobile) and Lighthouse desktop preset, simulated throttling, median of 3 runs by performance score, HTTP/2 + TLS; cold = storage/cache reset and renderer page cache off, warm = browser cache primed and kept, renderer page cache 30 s; before = same build as the SPA, after = server-rendered",
+  "page": "fx--modern-education--rich",
+  "results": {
+    "home/en/mobile/cold": {
+      "before": {
+        "performance": 88,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2511,
+          "largestContentfulPaintMs": 3054,
+          "totalBlockingTimeMs": 163,
+          "cumulativeLayoutShift": 0.009,
+          "speedIndexMs": 2511
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 506420,
+          "script": 399350,
+          "document": 672,
+          "image": 0,
+          "font": 66867,
+          "stylesheet": 31502
+        },
+        "requests": 53,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 96,
+        "metrics": {
+          "serverResponseTimeMs": 43,
+          "firstContentfulPaintMs": 2272,
+          "largestContentfulPaintMs": 2272,
+          "totalBlockingTimeMs": 4,
+          "cumulativeLayoutShift": 0.013,
+          "speedIndexMs": 2272
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 12213,
+          "resourceBytes": 69069
+        },
+        "transferBytes": {
+          "total": 511462,
+          "script": 399350,
+          "document": 12213,
+          "image": 0,
+          "font": 66867,
+          "stylesheet": 31502
+        },
+        "requests": 45,
+        "criticalChain": null
+      }
+    },
+    "home/en/mobile/warm": {
+      "before": {
+        "performance": 89,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2551,
+          "largestContentfulPaintMs": 3075,
+          "totalBlockingTimeMs": 133,
+          "cumulativeLayoutShift": 0.009,
+          "speedIndexMs": 2551
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 504867,
+          "script": 399350,
+          "document": 672,
+          "image": 0,
+          "font": 66867,
+          "stylesheet": 31502
+        },
+        "requests": 52,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 96,
+        "metrics": {
+          "serverResponseTimeMs": 19,
+          "firstContentfulPaintMs": 2280,
+          "largestContentfulPaintMs": 2280,
+          "totalBlockingTimeMs": 5,
+          "cumulativeLayoutShift": 0.013,
+          "speedIndexMs": 2280
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 12223,
+          "resourceBytes": 69069
+        },
+        "transferBytes": {
+          "total": 509942,
+          "script": 399350,
+          "document": 12223,
+          "image": 0,
+          "font": 66867,
+          "stylesheet": 31502
+        },
+        "requests": 44,
+        "criticalChain": null
+      }
+    },
+    "home/en/desktop/cold": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 528,
+          "largestContentfulPaintMs": 628,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.001,
+          "speedIndexMs": 573
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 538929,
+          "script": 399350,
+          "document": 672,
+          "image": 0,
+          "font": 99376,
+          "stylesheet": 31502
+        },
+        "requests": 54,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 34,
+          "firstContentfulPaintMs": 527,
+          "largestContentfulPaintMs": 527,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.025,
+          "speedIndexMs": 527
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 12218,
+          "resourceBytes": 69069
+        },
+        "transferBytes": {
+          "total": 543999,
+          "script": 399350,
+          "document": 12218,
+          "image": 0,
+          "font": 99399,
+          "stylesheet": 31502
+        },
+        "requests": 46,
+        "criticalChain": null
+      }
+    },
+    "home/en/desktop/warm": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 0,
+          "firstContentfulPaintMs": 534,
+          "largestContentfulPaintMs": 633,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.001,
+          "speedIndexMs": 569
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 537376,
+          "script": 399350,
+          "document": 672,
+          "image": 0,
+          "font": 99376,
+          "stylesheet": 31502
+        },
+        "requests": 53,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 22,
+          "firstContentfulPaintMs": 511,
+          "largestContentfulPaintMs": 531,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.025,
+          "speedIndexMs": 511
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 12224,
+          "resourceBytes": 69069
+        },
+        "transferBytes": {
+          "total": 542452,
+          "script": 399350,
+          "document": 12224,
+          "image": 0,
+          "font": 99376,
+          "stylesheet": 31502
+        },
+        "requests": 45,
+        "criticalChain": null
+      }
+    },
+    "home/ar/mobile/cold": {
+      "before": {
+        "performance": 87,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2707,
+          "largestContentfulPaintMs": 3170,
+          "totalBlockingTimeMs": 142,
+          "cumulativeLayoutShift": 0.003,
+          "speedIndexMs": 2707
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 584011,
+          "script": 421529,
+          "document": 672,
+          "image": 0,
+          "font": 122290,
+          "stylesheet": 31502
+        },
+        "requests": 55,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 93,
+        "metrics": {
+          "serverResponseTimeMs": 40,
+          "firstContentfulPaintMs": 2590,
+          "largestContentfulPaintMs": 2590,
+          "totalBlockingTimeMs": 16,
+          "cumulativeLayoutShift": 0.036,
+          "speedIndexMs": 2590
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 12519,
+          "resourceBytes": 70233
+        },
+        "transferBytes": {
+          "total": 589384,
+          "script": 421529,
+          "document": 12519,
+          "image": 0,
+          "font": 122304,
+          "stylesheet": 31502
+        },
+        "requests": 47,
+        "criticalChain": null
+      }
+    },
+    "home/ar/mobile/warm": {
+      "before": {
+        "performance": 86,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2692,
+          "largestContentfulPaintMs": 3210,
+          "totalBlockingTimeMs": 183,
+          "cumulativeLayoutShift": 0.003,
+          "speedIndexMs": 2692
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 582460,
+          "script": 421529,
+          "document": 672,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 54,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 93,
+        "metrics": {
+          "serverResponseTimeMs": 21,
+          "firstContentfulPaintMs": 2587,
+          "largestContentfulPaintMs": 2587,
+          "totalBlockingTimeMs": 11,
+          "cumulativeLayoutShift": 0.036,
+          "speedIndexMs": 2587
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 12519,
+          "resourceBytes": 70233
+        },
+        "transferBytes": {
+          "total": 587854,
+          "script": 421552,
+          "document": 12519,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 46,
+        "criticalChain": null
+      }
+    },
+    "home/ar/desktop/cold": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 562,
+          "largestContentfulPaintMs": 627,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.003,
+          "speedIndexMs": 619
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 583990,
+          "script": 421529,
+          "document": 672,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 55,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 36,
+          "firstContentfulPaintMs": 551,
+          "largestContentfulPaintMs": 571,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.002,
+          "speedIndexMs": 551
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 12515,
+          "resourceBytes": 70233
+        },
+        "transferBytes": {
+          "total": 589357,
+          "script": 421529,
+          "document": 12515,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 47,
+        "criticalChain": null
+      }
+    },
+    "home/ar/desktop/warm": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 555,
+          "largestContentfulPaintMs": 622,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.003,
+          "speedIndexMs": 625
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 582890,
+          "script": 421529,
+          "document": 672,
+          "image": 0,
+          "font": 122695,
+          "stylesheet": 31502
+        },
+        "requests": 54,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 22,
+          "firstContentfulPaintMs": 551,
+          "largestContentfulPaintMs": 551,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.002,
+          "speedIndexMs": 551
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 12529,
+          "resourceBytes": 70233
+        },
+        "transferBytes": {
+          "total": 587864,
+          "script": 421552,
+          "document": 12529,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 46,
+        "criticalChain": null
+      }
+    },
+    "courses/en/mobile/cold": {
+      "before": {
+        "performance": 89,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2504,
+          "largestContentfulPaintMs": 3046,
+          "totalBlockingTimeMs": 146,
+          "cumulativeLayoutShift": 0.016,
+          "speedIndexMs": 2504
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 505402,
+          "script": 399350,
+          "document": 672,
+          "image": 0,
+          "font": 66876,
+          "stylesheet": 31502
+        },
+        "requests": 51,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 96,
+        "metrics": {
+          "serverResponseTimeMs": 32,
+          "firstContentfulPaintMs": 2272,
+          "largestContentfulPaintMs": 2272,
+          "totalBlockingTimeMs": 24,
+          "cumulativeLayoutShift": 0.01,
+          "speedIndexMs": 2272
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 12359,
+          "resourceBytes": 67349
+        },
+        "transferBytes": {
+          "total": 511608,
+          "script": 399350,
+          "document": 12359,
+          "image": 0,
+          "font": 66867,
+          "stylesheet": 31502
+        },
+        "requests": 45,
+        "criticalChain": null
+      }
+    },
+    "courses/en/mobile/warm": {
+      "before": {
+        "performance": 90,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2489,
+          "largestContentfulPaintMs": 2949,
+          "totalBlockingTimeMs": 146,
+          "cumulativeLayoutShift": 0.016,
+          "speedIndexMs": 2489
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 503874,
+          "script": 399373,
+          "document": 672,
+          "image": 0,
+          "font": 66867,
+          "stylesheet": 31502
+        },
+        "requests": 50,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 96,
+        "metrics": {
+          "serverResponseTimeMs": 19,
+          "firstContentfulPaintMs": 2279,
+          "largestContentfulPaintMs": 2279,
+          "totalBlockingTimeMs": 15,
+          "cumulativeLayoutShift": 0.01,
+          "speedIndexMs": 2279
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 12359,
+          "resourceBytes": 67349
+        },
+        "transferBytes": {
+          "total": 510101,
+          "script": 399373,
+          "document": 12359,
+          "image": 0,
+          "font": 66867,
+          "stylesheet": 31502
+        },
+        "requests": 44,
+        "criticalChain": null
+      }
+    },
+    "courses/en/desktop/cold": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 527,
+          "largestContentfulPaintMs": 612,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.005,
+          "speedIndexMs": 577
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 537890,
+          "script": 399350,
+          "document": 672,
+          "image": 0,
+          "font": 99376,
+          "stylesheet": 31502
+        },
+        "requests": 52,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 45,
+          "firstContentfulPaintMs": 500,
+          "largestContentfulPaintMs": 520,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.001,
+          "speedIndexMs": 500
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 12367,
+          "resourceBytes": 67349
+        },
+        "transferBytes": {
+          "total": 544148,
+          "script": 399373,
+          "document": 12367,
+          "image": 0,
+          "font": 99376,
+          "stylesheet": 31502
+        },
+        "requests": 46,
+        "criticalChain": null
+      }
+    },
+    "courses/en/desktop/warm": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 518,
+          "largestContentfulPaintMs": 601,
+          "totalBlockingTimeMs": 1,
+          "cumulativeLayoutShift": 0.005,
+          "speedIndexMs": 543
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 536767,
+          "script": 399350,
+          "document": 672,
+          "image": 0,
+          "font": 99376,
+          "stylesheet": 31909
+        },
+        "requests": 51,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 25,
+          "firstContentfulPaintMs": 529,
+          "largestContentfulPaintMs": 549,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.001,
+          "speedIndexMs": 529
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 12361,
+          "resourceBytes": 67349
+        },
+        "transferBytes": {
+          "total": 542589,
+          "script": 399350,
+          "document": 12361,
+          "image": 0,
+          "font": 99376,
+          "stylesheet": 31502
+        },
+        "requests": 45,
+        "criticalChain": null
+      }
+    },
+    "courses/ar/mobile/cold": {
+      "before": {
+        "performance": 85,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2726,
+          "largestContentfulPaintMs": 3189,
+          "totalBlockingTimeMs": 220,
+          "cumulativeLayoutShift": 0.007,
+          "speedIndexMs": 2726
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 582974,
+          "script": 421529,
+          "document": 672,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 53,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 93,
+        "metrics": {
+          "serverResponseTimeMs": 34,
+          "firstContentfulPaintMs": 2584,
+          "largestContentfulPaintMs": 2584,
+          "totalBlockingTimeMs": 2,
+          "cumulativeLayoutShift": 0.001,
+          "speedIndexMs": 2584
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 12701,
+          "resourceBytes": 68372
+        },
+        "transferBytes": {
+          "total": 589543,
+          "script": 421529,
+          "document": 12701,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 47,
+        "criticalChain": null
+      }
+    },
+    "courses/ar/mobile/warm": {
+      "before": {
+        "performance": 87,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2701,
+          "largestContentfulPaintMs": 3222,
+          "totalBlockingTimeMs": 145,
+          "cumulativeLayoutShift": 0.007,
+          "speedIndexMs": 2701
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 581444,
+          "script": 421529,
+          "document": 672,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 52,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 93,
+        "metrics": {
+          "serverResponseTimeMs": 18,
+          "firstContentfulPaintMs": 2557,
+          "largestContentfulPaintMs": 2557,
+          "totalBlockingTimeMs": 13,
+          "cumulativeLayoutShift": 0.001,
+          "speedIndexMs": 2557
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 12733,
+          "resourceBytes": 68372
+        },
+        "transferBytes": {
+          "total": 588452,
+          "script": 421529,
+          "document": 12733,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31909
+        },
+        "requests": 46,
+        "criticalChain": null
+      }
+    },
+    "courses/ar/desktop/cold": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 563,
+          "largestContentfulPaintMs": 646,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.005,
+          "speedIndexMs": 563
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 582974,
+          "script": 421529,
+          "document": 672,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 53,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 30,
+          "firstContentfulPaintMs": 545,
+          "largestContentfulPaintMs": 545,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.001,
+          "speedIndexMs": 545
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 12699,
+          "resourceBytes": 68372
+        },
+        "transferBytes": {
+          "total": 589564,
+          "script": 421552,
+          "document": 12699,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 47,
+        "criticalChain": null
+      }
+    },
+    "courses/ar/desktop/warm": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 564,
+          "largestContentfulPaintMs": 627,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.005,
+          "speedIndexMs": 578
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 581467,
+          "script": 421529,
+          "document": 672,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 52,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 20,
+          "firstContentfulPaintMs": 587,
+          "largestContentfulPaintMs": 627,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.001,
+          "speedIndexMs": 587
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 12704,
+          "resourceBytes": 68372
+        },
+        "transferBytes": {
+          "total": 588016,
+          "script": 421529,
+          "document": 12704,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 46,
+        "criticalChain": null
+      }
+    },
+    "course-details/en/mobile/cold": {
+      "before": {
+        "performance": 89,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2533,
+          "largestContentfulPaintMs": 3049,
+          "totalBlockingTimeMs": 141,
+          "cumulativeLayoutShift": 0.009,
+          "speedIndexMs": 2533
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 507072,
+          "script": 399373,
+          "document": 672,
+          "image": 0,
+          "font": 66867,
+          "stylesheet": 31502
+        },
+        "requests": 55,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 93,
+        "metrics": {
+          "serverResponseTimeMs": 46,
+          "firstContentfulPaintMs": 2565,
+          "largestContentfulPaintMs": 2565,
+          "totalBlockingTimeMs": 38,
+          "cumulativeLayoutShift": 0.012,
+          "speedIndexMs": 2565
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 14933,
+          "resourceBytes": 105088
+        },
+        "transferBytes": {
+          "total": 514182,
+          "script": 399350,
+          "document": 14933,
+          "image": 0,
+          "font": 66867,
+          "stylesheet": 31502
+        },
+        "requests": 45,
+        "criticalChain": null
+      }
+    },
+    "course-details/en/mobile/warm": {
+      "before": {
+        "performance": 90,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2541,
+          "largestContentfulPaintMs": 3050,
+          "totalBlockingTimeMs": 93,
+          "cumulativeLayoutShift": 0.009,
+          "speedIndexMs": 2541
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 505542,
+          "script": 399350,
+          "document": 672,
+          "image": 0,
+          "font": 66890,
+          "stylesheet": 31502
+        },
+        "requests": 54,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 93,
+        "metrics": {
+          "serverResponseTimeMs": 17,
+          "firstContentfulPaintMs": 2564,
+          "largestContentfulPaintMs": 2564,
+          "totalBlockingTimeMs": 16,
+          "cumulativeLayoutShift": 0.012,
+          "speedIndexMs": 2564
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 14937,
+          "resourceBytes": 105088
+        },
+        "transferBytes": {
+          "total": 512656,
+          "script": 399350,
+          "document": 14937,
+          "image": 0,
+          "font": 66867,
+          "stylesheet": 31502
+        },
+        "requests": 44,
+        "criticalChain": null
+      }
+    },
+    "course-details/en/desktop/cold": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 537,
+          "largestContentfulPaintMs": 687,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 554
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 539558,
+          "script": 399350,
+          "document": 672,
+          "image": 0,
+          "font": 99376,
+          "stylesheet": 31502
+        },
+        "requests": 56,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 55,
+          "firstContentfulPaintMs": 595,
+          "largestContentfulPaintMs": 595,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.038,
+          "speedIndexMs": 595
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 14931,
+          "resourceBytes": 105088
+        },
+        "transferBytes": {
+          "total": 546712,
+          "script": 399350,
+          "document": 14931,
+          "image": 0,
+          "font": 99376,
+          "stylesheet": 31502
+        },
+        "requests": 46,
+        "criticalChain": null
+      }
+    },
+    "course-details/en/desktop/warm": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 530,
+          "largestContentfulPaintMs": 657,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 589
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 538060,
+          "script": 399350,
+          "document": 672,
+          "image": 0,
+          "font": 99385,
+          "stylesheet": 31502
+        },
+        "requests": 55,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 17,
+          "firstContentfulPaintMs": 597,
+          "largestContentfulPaintMs": 597,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.038,
+          "speedIndexMs": 597
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 14938,
+          "resourceBytes": 105088
+        },
+        "transferBytes": {
+          "total": 545166,
+          "script": 399350,
+          "document": 14938,
+          "image": 0,
+          "font": 99376,
+          "stylesheet": 31502
+        },
+        "requests": 45,
+        "criticalChain": null
+      }
+    },
+    "course-details/ar/mobile/cold": {
+      "before": {
+        "performance": 87,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2710,
+          "largestContentfulPaintMs": 3314,
+          "totalBlockingTimeMs": 133,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 2710
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 584677,
+          "script": 421529,
+          "document": 672,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 57,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 90,
+        "metrics": {
+          "serverResponseTimeMs": 36,
+          "firstContentfulPaintMs": 2872,
+          "largestContentfulPaintMs": 2872,
+          "totalBlockingTimeMs": 9,
+          "cumulativeLayoutShift": 0.001,
+          "speedIndexMs": 2872
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 15307,
+          "resourceBytes": 106039
+        },
+        "transferBytes": {
+          "total": 592172,
+          "script": 421529,
+          "document": 15307,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 47,
+        "criticalChain": null
+      }
+    },
+    "course-details/ar/mobile/warm": {
+      "before": {
+        "performance": 86,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2707,
+          "largestContentfulPaintMs": 3231,
+          "totalBlockingTimeMs": 162,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 2707
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 583135,
+          "script": 421529,
+          "document": 672,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 56,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 90,
+        "metrics": {
+          "serverResponseTimeMs": 19,
+          "firstContentfulPaintMs": 2874,
+          "largestContentfulPaintMs": 2874,
+          "totalBlockingTimeMs": 19,
+          "cumulativeLayoutShift": 0.001,
+          "speedIndexMs": 2874
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 15304,
+          "resourceBytes": 106039
+        },
+        "transferBytes": {
+          "total": 590639,
+          "script": 421529,
+          "document": 15304,
+          "image": 0,
+          "font": 122304,
+          "stylesheet": 31502
+        },
+        "requests": 46,
+        "criticalChain": null
+      }
+    },
+    "course-details/ar/desktop/cold": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 552,
+          "largestContentfulPaintMs": 702,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 590
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 584665,
+          "script": 421552,
+          "document": 672,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 57,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 43,
+          "firstContentfulPaintMs": 586,
+          "largestContentfulPaintMs": 606,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.038,
+          "speedIndexMs": 586
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 15305,
+          "resourceBytes": 106039
+        },
+        "transferBytes": {
+          "total": 592170,
+          "script": 421529,
+          "document": 15305,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 47,
+        "criticalChain": null
+      }
+    },
+    "course-details/ar/desktop/warm": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 556,
+          "largestContentfulPaintMs": 701,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 614
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 583135,
+          "script": 421529,
+          "document": 672,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 56,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 23,
+          "firstContentfulPaintMs": 603,
+          "largestContentfulPaintMs": 623,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.038,
+          "speedIndexMs": 603
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 15319,
+          "resourceBytes": 106039
+        },
+        "transferBytes": {
+          "total": 590654,
+          "script": 421552,
+          "document": 15319,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 46,
+        "criticalChain": null
+      }
+    },
+    "about/en/mobile/cold": {
+      "before": {
+        "performance": 90,
+        "metrics": {
+          "serverResponseTimeMs": 2,
+          "firstContentfulPaintMs": 2549,
+          "largestContentfulPaintMs": 3058,
+          "totalBlockingTimeMs": 108,
+          "cumulativeLayoutShift": 0.014,
+          "speedIndexMs": 2549
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 504155,
+          "script": 399373,
+          "document": 672,
+          "image": 0,
+          "font": 66867,
+          "stylesheet": 31502
+        },
+        "requests": 50,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 96,
+        "metrics": {
+          "serverResponseTimeMs": 27,
+          "firstContentfulPaintMs": 2251,
+          "largestContentfulPaintMs": 2251,
+          "totalBlockingTimeMs": 1,
+          "cumulativeLayoutShift": 0.014,
+          "speedIndexMs": 2251
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 8820,
+          "resourceBytes": 39214
+        },
+        "transferBytes": {
+          "total": 508081,
+          "script": 399350,
+          "document": 8820,
+          "image": 0,
+          "font": 66867,
+          "stylesheet": 31502
+        },
+        "requests": 45,
+        "criticalChain": null
+      }
+    },
+    "about/en/mobile/warm": {
+      "before": {
+        "performance": 90,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2557,
+          "largestContentfulPaintMs": 3076,
+          "totalBlockingTimeMs": 104,
+          "cumulativeLayoutShift": 0.014,
+          "speedIndexMs": 2557
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 502590,
+          "script": 399350,
+          "document": 672,
+          "image": 0,
+          "font": 66867,
+          "stylesheet": 31502
+        },
+        "requests": 49,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 96,
+        "metrics": {
+          "serverResponseTimeMs": 16,
+          "firstContentfulPaintMs": 2281,
+          "largestContentfulPaintMs": 2281,
+          "totalBlockingTimeMs": 6,
+          "cumulativeLayoutShift": 0.014,
+          "speedIndexMs": 2281
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 8824,
+          "resourceBytes": 39214
+        },
+        "transferBytes": {
+          "total": 506543,
+          "script": 399350,
+          "document": 8824,
+          "image": 0,
+          "font": 66867,
+          "stylesheet": 31502
+        },
+        "requests": 44,
+        "criticalChain": null
+      }
+    },
+    "about/en/desktop/cold": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 518,
+          "largestContentfulPaintMs": 614,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 527
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 536652,
+          "script": 399350,
+          "document": 672,
+          "image": 0,
+          "font": 99376,
+          "stylesheet": 31502
+        },
+        "requests": 51,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 23,
+          "firstContentfulPaintMs": 537,
+          "largestContentfulPaintMs": 577,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 537
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 8824,
+          "resourceBytes": 39214
+        },
+        "transferBytes": {
+          "total": 540582,
+          "script": 399350,
+          "document": 8824,
+          "image": 0,
+          "font": 99376,
+          "stylesheet": 31502
+        },
+        "requests": 46,
+        "criticalChain": null
+      }
+    },
+    "about/en/desktop/warm": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 512,
+          "largestContentfulPaintMs": 610,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 528
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 535099,
+          "script": 399350,
+          "document": 672,
+          "image": 0,
+          "font": 99376,
+          "stylesheet": 31502
+        },
+        "requests": 50,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 14,
+          "firstContentfulPaintMs": 527,
+          "largestContentfulPaintMs": 547,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 527
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 8824,
+          "resourceBytes": 39214
+        },
+        "transferBytes": {
+          "total": 539075,
+          "script": 399350,
+          "document": 8824,
+          "image": 0,
+          "font": 99399,
+          "stylesheet": 31502
+        },
+        "requests": 45,
+        "criticalChain": null
+      }
+    },
+    "about/ar/mobile/cold": {
+      "before": {
+        "performance": 87,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2701,
+          "largestContentfulPaintMs": 3318,
+          "totalBlockingTimeMs": 100,
+          "cumulativeLayoutShift": 0.007,
+          "speedIndexMs": 2701
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 581713,
+          "script": 421529,
+          "document": 672,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 52,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 92,
+        "metrics": {
+          "serverResponseTimeMs": 24,
+          "firstContentfulPaintMs": 2577,
+          "largestContentfulPaintMs": 2577,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.066,
+          "speedIndexMs": 2577
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 8982,
+          "resourceBytes": 39962
+        },
+        "transferBytes": {
+          "total": 585824,
+          "script": 421529,
+          "document": 8982,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 47,
+        "criticalChain": null
+      }
+    },
+    "about/ar/mobile/warm": {
+      "before": {
+        "performance": 88,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2700,
+          "largestContentfulPaintMs": 3241,
+          "totalBlockingTimeMs": 103,
+          "cumulativeLayoutShift": 0.007,
+          "speedIndexMs": 2700
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 580183,
+          "script": 421529,
+          "document": 672,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 51,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 92,
+        "metrics": {
+          "serverResponseTimeMs": 16,
+          "firstContentfulPaintMs": 2572,
+          "largestContentfulPaintMs": 2572,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.066,
+          "speedIndexMs": 2572
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 8985,
+          "resourceBytes": 39962
+        },
+        "transferBytes": {
+          "total": 584297,
+          "script": 421529,
+          "document": 8985,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 46,
+        "criticalChain": null
+      }
+    },
+    "about/ar/desktop/cold": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 564,
+          "largestContentfulPaintMs": 648,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 564
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 581736,
+          "script": 421552,
+          "document": 672,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 52,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 22,
+          "firstContentfulPaintMs": 548,
+          "largestContentfulPaintMs": 568,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.002,
+          "speedIndexMs": 548
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 8982,
+          "resourceBytes": 39962
+        },
+        "transferBytes": {
+          "total": 585824,
+          "script": 421529,
+          "document": 8982,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 47,
+        "criticalChain": null
+      }
+    },
+    "about/ar/desktop/warm": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 564,
+          "largestContentfulPaintMs": 626,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 564
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 580206,
+          "script": 421529,
+          "document": 672,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 51,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 19,
+          "firstContentfulPaintMs": 579,
+          "largestContentfulPaintMs": 579,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.002,
+          "speedIndexMs": 579
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 8984,
+          "resourceBytes": 39962
+        },
+        "transferBytes": {
+          "total": 584296,
+          "script": 421529,
+          "document": 8984,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 46,
+        "criticalChain": null
+      }
+    },
+    "faqs/en/mobile/cold": {
+      "before": {
+        "performance": 90,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2538,
+          "largestContentfulPaintMs": 3043,
+          "totalBlockingTimeMs": 106,
+          "cumulativeLayoutShift": 0.009,
+          "speedIndexMs": 2538
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 504155,
+          "script": 399350,
+          "document": 672,
+          "image": 0,
+          "font": 66867,
+          "stylesheet": 31502
+        },
+        "requests": 50,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 96,
+        "metrics": {
+          "serverResponseTimeMs": 30,
+          "firstContentfulPaintMs": 2262,
+          "largestContentfulPaintMs": 2262,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.024,
+          "speedIndexMs": 2262
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 9074,
+          "resourceBytes": 41650
+        },
+        "transferBytes": {
+          "total": 508346,
+          "script": 399350,
+          "document": 9074,
+          "image": 0,
+          "font": 66890,
+          "stylesheet": 31502
+        },
+        "requests": 45,
+        "criticalChain": null
+      }
+    },
+    "faqs/en/mobile/warm": {
+      "before": {
+        "performance": 90,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2575,
+          "largestContentfulPaintMs": 3114,
+          "totalBlockingTimeMs": 83,
+          "cumulativeLayoutShift": 0.009,
+          "speedIndexMs": 2575
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 502997,
+          "script": 399757,
+          "document": 672,
+          "image": 0,
+          "font": 66867,
+          "stylesheet": 31502
+        },
+        "requests": 49,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 96,
+        "metrics": {
+          "serverResponseTimeMs": 12,
+          "firstContentfulPaintMs": 2273,
+          "largestContentfulPaintMs": 2273,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.024,
+          "speedIndexMs": 2273
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 9075,
+          "resourceBytes": 41650
+        },
+        "transferBytes": {
+          "total": 506844,
+          "script": 399373,
+          "document": 9075,
+          "image": 0,
+          "font": 66876,
+          "stylesheet": 31520
+        },
+        "requests": 44,
+        "criticalChain": null
+      }
+    },
+    "faqs/en/desktop/cold": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 532,
+          "largestContentfulPaintMs": 626,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 532
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 536652,
+          "script": 399373,
+          "document": 672,
+          "image": 0,
+          "font": 99376,
+          "stylesheet": 31502
+        },
+        "requests": 51,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 23,
+          "firstContentfulPaintMs": 552,
+          "largestContentfulPaintMs": 612,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.002,
+          "speedIndexMs": 552
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 9080,
+          "resourceBytes": 41650
+        },
+        "transferBytes": {
+          "total": 540861,
+          "script": 399373,
+          "document": 9080,
+          "image": 0,
+          "font": 99376,
+          "stylesheet": 31502
+        },
+        "requests": 46,
+        "criticalChain": null
+      }
+    },
+    "faqs/en/desktop/warm": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 533,
+          "largestContentfulPaintMs": 629,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 533
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 535099,
+          "script": 399350,
+          "document": 672,
+          "image": 0,
+          "font": 99376,
+          "stylesheet": 31502
+        },
+        "requests": 50,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 15,
+          "firstContentfulPaintMs": 511,
+          "largestContentfulPaintMs": 531,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.002,
+          "speedIndexMs": 511
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 9077,
+          "resourceBytes": 41650
+        },
+        "transferBytes": {
+          "total": 539328,
+          "script": 399373,
+          "document": 9077,
+          "image": 0,
+          "font": 99376,
+          "stylesheet": 31502
+        },
+        "requests": 45,
+        "criticalChain": null
+      }
+    },
+    "faqs/ar/mobile/cold": {
+      "before": {
+        "performance": 87,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2694,
+          "largestContentfulPaintMs": 3286,
+          "totalBlockingTimeMs": 149,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 2694
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 581736,
+          "script": 421552,
+          "document": 672,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 52,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 93,
+        "metrics": {
+          "serverResponseTimeMs": 32,
+          "firstContentfulPaintMs": 2571,
+          "largestContentfulPaintMs": 2571,
+          "totalBlockingTimeMs": 1,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 2571
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 9252,
+          "resourceBytes": 42384
+        },
+        "transferBytes": {
+          "total": 586117,
+          "script": 421529,
+          "document": 9252,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 47,
+        "criticalChain": null
+      }
+    },
+    "faqs/ar/mobile/warm": {
+      "before": {
+        "performance": 87,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2698,
+          "largestContentfulPaintMs": 3217,
+          "totalBlockingTimeMs": 132,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 2698
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 580183,
+          "script": 421529,
+          "document": 672,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 51,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 93,
+        "metrics": {
+          "serverResponseTimeMs": 19,
+          "firstContentfulPaintMs": 2573,
+          "largestContentfulPaintMs": 2573,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 2573
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 9253,
+          "resourceBytes": 42384
+        },
+        "transferBytes": {
+          "total": 584565,
+          "script": 421529,
+          "document": 9253,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 46,
+        "criticalChain": null
+      }
+    },
+    "faqs/ar/desktop/cold": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 562,
+          "largestContentfulPaintMs": 649,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 562
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 581736,
+          "script": 421552,
+          "document": 672,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 52,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 23,
+          "firstContentfulPaintMs": 546,
+          "largestContentfulPaintMs": 566,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.001,
+          "speedIndexMs": 546
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 9261,
+          "resourceBytes": 42384
+        },
+        "transferBytes": {
+          "total": 586103,
+          "script": 421529,
+          "document": 9261,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 47,
+        "criticalChain": null
+      }
+    },
+    "faqs/ar/desktop/warm": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 566,
+          "largestContentfulPaintMs": 630,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 566
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 580183,
+          "script": 421529,
+          "document": 672,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 51,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 16,
+          "firstContentfulPaintMs": 537,
+          "largestContentfulPaintMs": 537,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.001,
+          "speedIndexMs": 537
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 9253,
+          "resourceBytes": 42384
+        },
+        "transferBytes": {
+          "total": 584638,
+          "script": 421575,
+          "document": 9253,
+          "image": 0,
+          "font": 122290,
+          "stylesheet": 31520
+        },
+        "requests": 46,
+        "criticalChain": null
+      }
+    },
+    "contact/en/mobile/cold": {
+      "before": {
+        "performance": 83,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2546,
+          "largestContentfulPaintMs": 3058,
+          "totalBlockingTimeMs": 51,
+          "cumulativeLayoutShift": 0.172,
+          "speedIndexMs": 2546
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 504132,
+          "script": 399350,
+          "document": 672,
+          "image": 0,
+          "font": 66867,
+          "stylesheet": 31502
+        },
+        "requests": 50,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 96,
+        "metrics": {
+          "serverResponseTimeMs": 28,
+          "firstContentfulPaintMs": 2276,
+          "largestContentfulPaintMs": 2276,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.028,
+          "speedIndexMs": 2276
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 9153,
+          "resourceBytes": 42255
+        },
+        "transferBytes": {
+          "total": 508425,
+          "script": 399373,
+          "document": 9153,
+          "image": 0,
+          "font": 66867,
+          "stylesheet": 31502
+        },
+        "requests": 45,
+        "criticalChain": null
+      }
+    },
+    "contact/en/mobile/warm": {
+      "before": {
+        "performance": 81,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2545,
+          "largestContentfulPaintMs": 3063,
+          "totalBlockingTimeMs": 169,
+          "cumulativeLayoutShift": 0.172,
+          "speedIndexMs": 2545
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 502590,
+          "script": 399350,
+          "document": 672,
+          "image": 0,
+          "font": 66867,
+          "stylesheet": 31502
+        },
+        "requests": 49,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 96,
+        "metrics": {
+          "serverResponseTimeMs": 18,
+          "firstContentfulPaintMs": 2273,
+          "largestContentfulPaintMs": 2273,
+          "totalBlockingTimeMs": 1,
+          "cumulativeLayoutShift": 0.028,
+          "speedIndexMs": 2273
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 9157,
+          "resourceBytes": 42255
+        },
+        "transferBytes": {
+          "total": 506876,
+          "script": 399350,
+          "document": 9157,
+          "image": 0,
+          "font": 66867,
+          "stylesheet": 31502
+        },
+        "requests": 44,
+        "criticalChain": null
+      }
+    },
+    "contact/en/desktop/cold": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 2,
+          "firstContentfulPaintMs": 541,
+          "largestContentfulPaintMs": 659,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 541
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 536661,
+          "script": 399350,
+          "document": 672,
+          "image": 0,
+          "font": 99408,
+          "stylesheet": 31502
+        },
+        "requests": 51,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 23,
+          "firstContentfulPaintMs": 505,
+          "largestContentfulPaintMs": 525,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.001,
+          "speedIndexMs": 505
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 9150,
+          "resourceBytes": 42255
+        },
+        "transferBytes": {
+          "total": 540931,
+          "script": 399373,
+          "document": 9150,
+          "image": 0,
+          "font": 99376,
+          "stylesheet": 31502
+        },
+        "requests": 46,
+        "criticalChain": null
+      }
+    },
+    "contact/en/desktop/warm": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 521,
+          "largestContentfulPaintMs": 624,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 521
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 535122,
+          "script": 399373,
+          "document": 672,
+          "image": 0,
+          "font": 99376,
+          "stylesheet": 31502
+        },
+        "requests": 50,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 18,
+          "firstContentfulPaintMs": 571,
+          "largestContentfulPaintMs": 631,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.001,
+          "speedIndexMs": 571
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 9154,
+          "resourceBytes": 42255
+        },
+        "transferBytes": {
+          "total": 539382,
+          "script": 399350,
+          "document": 9154,
+          "image": 0,
+          "font": 99376,
+          "stylesheet": 31502
+        },
+        "requests": 45,
+        "criticalChain": null
+      }
+    },
+    "contact/ar/mobile/cold": {
+      "before": {
+        "performance": 79,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2707,
+          "largestContentfulPaintMs": 3307,
+          "totalBlockingTimeMs": 184,
+          "cumulativeLayoutShift": 0.155,
+          "speedIndexMs": 2707
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 581736,
+          "script": 421529,
+          "document": 672,
+          "image": 0,
+          "font": 122304,
+          "stylesheet": 31502
+        },
+        "requests": 52,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 93,
+        "metrics": {
+          "serverResponseTimeMs": 21,
+          "firstContentfulPaintMs": 2581,
+          "largestContentfulPaintMs": 2581,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.009,
+          "speedIndexMs": 2581
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 9355,
+          "resourceBytes": 43042
+        },
+        "transferBytes": {
+          "total": 586197,
+          "script": 421529,
+          "document": 9355,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 47,
+        "criticalChain": null
+      }
+    },
+    "contact/ar/mobile/warm": {
+      "before": {
+        "performance": 81,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 2705,
+          "largestContentfulPaintMs": 3223,
+          "totalBlockingTimeMs": 112,
+          "cumulativeLayoutShift": 0.155,
+          "speedIndexMs": 2705
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 580183,
+          "script": 421529,
+          "document": 672,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 51,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 93,
+        "metrics": {
+          "serverResponseTimeMs": 17,
+          "firstContentfulPaintMs": 2571,
+          "largestContentfulPaintMs": 2571,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.009,
+          "speedIndexMs": 2571
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 9355,
+          "resourceBytes": 43042
+        },
+        "transferBytes": {
+          "total": 584667,
+          "script": 421529,
+          "document": 9355,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 46,
+        "criticalChain": null
+      }
+    },
+    "contact/ar/desktop/cold": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 552,
+          "largestContentfulPaintMs": 634,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 552
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 581713,
+          "script": 421529,
+          "document": 672,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 52,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 26,
+          "firstContentfulPaintMs": 556,
+          "largestContentfulPaintMs": 556,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.002,
+          "speedIndexMs": 556
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 9352,
+          "resourceBytes": 43042
+        },
+        "transferBytes": {
+          "total": 586217,
+          "script": 421529,
+          "document": 9352,
+          "image": 0,
+          "font": 122304,
+          "stylesheet": 31502
+        },
+        "requests": 47,
+        "criticalChain": null
+      }
+    },
+    "contact/ar/desktop/warm": {
+      "before": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 1,
+          "firstContentfulPaintMs": 560,
+          "largestContentfulPaintMs": 625,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0,
+          "speedIndexMs": 560
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 672,
+          "resourceBytes": 1487
+        },
+        "transferBytes": {
+          "total": 580206,
+          "script": 421552,
+          "document": 672,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 51,
+        "criticalChain": null
+      },
+      "after": {
+        "performance": 100,
+        "metrics": {
+          "serverResponseTimeMs": 17,
+          "firstContentfulPaintMs": 526,
+          "largestContentfulPaintMs": 526,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.002,
+          "speedIndexMs": 526
+        },
+        "lcpElement": null,
+        "html": {
+          "transferBytes": 9353,
+          "resourceBytes": 43042
+        },
+        "transferBytes": {
+          "total": 584665,
+          "script": 421529,
+          "document": 9353,
+          "image": 0,
+          "font": 122281,
+          "stylesheet": 31502
+        },
+        "requests": 46,
+        "criticalChain": null
+      }
+    }
+  }
+}

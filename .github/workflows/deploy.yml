@@ -54,6 +54,23 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      # Phase 8 — the public website's server renderer, from the same
+      # Dockerfile (`--target ssr`). Built on every push so it always
+      # matches the Caddy image above; the VPS runs it only while
+      # ATLAS_SSR=on in /opt/atlas/.env (deploy.sh).
+      - name: Build and push public website renderer image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: ssr
+          platforms: linux/arm64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/atlas-frontend-ssr:latest
+            ghcr.io/${{ github.repository_owner }}/atlas-frontend-ssr:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
       - name: Deploy to VPS
         env:
           SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}

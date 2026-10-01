@@ -50,6 +50,10 @@ export function AtlasPlatformProvider({
       and restored only after authentication is confirmed, which is a
       different and stricter contract.
     */
+    // No storage when the public website is rendered on the server
+    // (Reports/SSR_ARCHITECTURE_ANALYSIS.md §4 #3); nothing here is shown there.
+    if (typeof window === 'undefined') return INITIAL_STATE;
+
     const restoredAcademyId =
       localStorage.getItem(STORAGE_KEYS.activeAcademy) ?? undefined;
 

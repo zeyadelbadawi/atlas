@@ -34,3 +34,8 @@ ATLAS_HANDOVER_SECRETS.local.md
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Theme baseline (Theme 1 plan, Phase 0) — fixture build and run output
+/dist-theme-fixtures/
+/dist-theme-fixtures-ssr/
+/e2e/theme-baseline/.results/

@@ -17,7 +17,13 @@
  * API session. That is the learner genuinely doing it, not a mock, and it
  * keeps the journey's sign-in count inside the real rate limiter's budget.
  */
-import { test, expect, type BrowserContext, type Page } from '@playwright/test';
+import {
+  test,
+  expect,
+  type APIRequestContext,
+  type BrowserContext,
+  type Page,
+} from '@playwright/test';
 import {
   API_BASE,
   LEARNER_PASSWORD,
@@ -35,6 +41,91 @@ import {
   type Session,
 } from './support/atlas';
 import { clearAuthRateLimits } from './support/global-setup';
+
+/** The course the Manager reviews: a published quiz and assignment. */
+const REVIEW_COURSE_TITLE = 'Atlas Walkthrough Course';
+
+/**
+ * Finds the review course, or authors it through the owner's API session
+ * (the seed has never created it). Idempotent across runs.
+ */
+async function ensureReviewCourse(
+  request: APIRequestContext,
+  owner: Session,
+  academyId: string
+): Promise<string> {
+  const listed = await apiGet(request, owner, `/academies/${academyId}/courses`, {
+    pageSize: '100',
+  });
+  expect(listed.ok(), await listed.text()).toBeTruthy();
+  const listedBody = await listed.json();
+  const existing = ((listedBody.items ?? listedBody) as { id: string; title: string }[]).find(
+    (course) => course.title === REVIEW_COURSE_TITLE
+  );
+  if (existing) return existing.id;
+
+  const created = await apiPost(request, owner, `/academies/${academyId}/courses`, {
+    title: REVIEW_COURSE_TITLE,
+    slug: `atlas-walkthrough-course-${Date.now()}`,
+    shortDescription: 'Playwright journey J3 review course.',
+    pricing: { type: 'free' },
+    visibility: 'public',
+  });
+  expect(created.status(), await created.text()).toBe(201);
+  const courseId = (await created.json()).id as string;
+  const section = await apiPost(
+    request,
+    owner,
+    `/academies/${academyId}/courses/${courseId}/sections`,
+    { title: 'Review' }
+  );
+  expect(section.status(), await section.text()).toBe(201);
+  const sectionId = (await section.json()).id;
+
+  const quiz = await apiPost(request, owner, `/courses/${courseId}/quizzes`, {
+    title: 'Walkthrough quiz',
+    status: 'published',
+    passingScore: 50,
+    maxAttempts: 3,
+    questions: [
+      {
+        prompt: 'What is 2 + 2?',
+        type: 'single_choice',
+        points: 1,
+        options: [
+          { label: '4', isCorrect: true },
+          { label: '5', isCorrect: false },
+        ],
+      },
+    ],
+  });
+  expect(quiz.status(), await quiz.text()).toBe(201);
+  const assignment = await apiPost(request, owner, `/courses/${courseId}/assignments`, {
+    title: 'Walkthrough reflection',
+    instructions: 'Write two sentences about what you learned.',
+    status: 'published',
+  });
+  expect(assignment.status(), await assignment.text()).toBe(201);
+  for (const [type, itemId] of [
+    ['quiz', (await quiz.json()).id],
+    ['assignment', (await assignment.json()).id],
+  ] as const) {
+    const attached = await apiPost(
+      request,
+      owner,
+      `/academies/${academyId}/courses/${courseId}/sections/${sectionId}/items/attach`,
+      { type, itemId }
+    );
+    expect(attached.status(), await attached.text()).toBeLessThan(300);
+  }
+  const published = await apiPost(
+    request,
+    owner,
+    `/academies/${academyId}/courses/${courseId}/publish`
+  );
+  expect(published.status(), await published.text()).toBeLessThan(300);
+  return courseId;
+}
 
 test.describe.configure({ mode: 'serial' });
 
@@ -88,7 +179,7 @@ test.describe('J3 — roster and RBAC', () => {
   test('a learner signs up on the academy website', async ({ request }) => {
     await registerLearnerThroughWebsite(page, learnerEmail, 'J3 Learner');
     await expect(
-      page.getByText(/check your (email|inbox)|account created|verify/i).first()
+      page.getByText(/check your (email|inbox)|account created|your account is ready|verify/i).first()
     ).toBeVisible({ timeout: 20_000 });
 
     learner = await apiSignIn(request, {
@@ -160,9 +251,7 @@ test.describe('J3 — roster and RBAC', () => {
   }) => {
     // The Manager's review and grading steps need real learner work to
     // look at. The learner does it, through the learner's own session.
-    reviewCourseId = (
-      await findCourseByTitle(request, owner, academyId, 'Atlas Walkthrough Course')
-    ).id;
+    reviewCourseId = await ensureReviewCourse(request, owner, academyId);
 
     await apiPost(request, owner, `/academies/${academyId}/students/${learner.userId}/enrollments`, {
       courseId: reviewCourseId,

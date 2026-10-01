@@ -67,7 +67,7 @@ test.describe('J2 — surface enforcement', () => {
     // bound to THIS academy — the two halves of "registered on the academy
     // website", checked independently of each other.
     await expect(
-      page.getByText(/check your (email|inbox)|account created|verify/i).first()
+      page.getByText(/check your (email|inbox)|account created|your account is ready|verify/i).first()
     ).toBeVisible({ timeout: 20_000 });
 
     const session = await apiSignIn(request, {
@@ -117,7 +117,7 @@ test.describe('J2 — surface enforcement', () => {
     // dashboard; sign-in lands on its Overview. `/my-learning` still
     // answers as a permanent redirect, which is exactly why this asserts
     // the destination rather than the old URL.
-    await expect(page).toHaveURL(/\/my(\/|$)/, { timeout: 20_000 });
+    await expect(page).toHaveURL(/\/my(\/|\?|$)/, { timeout: 20_000 });
     await expect(page.getByRole('heading', { name: /overview/i })).toBeVisible();
   });
 

@@ -164,6 +164,7 @@ export function PublicWebsiteLearningRoute({
 
   return (
     <WebsiteChrome
+      academyId={academy.academyId}
       academyName={academy.academyName}
       academyLogo={academy.academyLogo}
       configuration={configuration}

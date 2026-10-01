@@ -19,6 +19,7 @@ import {
   Tablet,
   Trash2,
 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import {
@@ -30,6 +31,7 @@ import {
 import { EmptyState } from '@components/feedback';
 import { SECTION_METADATA, listSectionMetadata } from '../sections';
 import { SECTION_TYPE_ORDER } from '../constants/website.constants';
+import { countSampleItems } from '../utils/sample-content.utils';
 import type {
   ResponsiveVisibility,
   SectionInstance,
@@ -104,6 +106,17 @@ export function SectionTree({
                   >
                     {t(metadata.labelKey)}
                   </button>
+                  {/* Theme 1 plan §D.4 — preview-only content is flagged
+                      where the Owner scans the page, not only inside it. */}
+                  {countSampleItems(instance) > 0 ? (
+                    <Badge variant="outline" className="whitespace-nowrap">
+                      {t('website:editor.sampleBadge')}
+                      <span className="sr-only">
+                        {' '}
+                        {t('website:editor.sampleSectionHint')}
+                      </span>
+                    </Badge>
+                  ) : null}
                   <Switch
                     checked={instance.enabled}
                     disabled={!canManage}

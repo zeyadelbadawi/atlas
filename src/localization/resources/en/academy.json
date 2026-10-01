@@ -127,7 +127,8 @@
       "logoTooLarge": "Logo must be smaller than 5MB.",
       "logoInvalidType": "Logo must be a PNG or JPG image.",
       "faviconTooLarge": "Favicon must be smaller than 1MB.",
-      "faviconInvalidType": "Favicon must be an ICO or PNG image."
+      "faviconInvalidType": "Favicon must be an ICO or PNG image.",
+      "logoUploadFailed": "The logo couldn't be uploaded. Please try again."
     }
   },
   "members": {

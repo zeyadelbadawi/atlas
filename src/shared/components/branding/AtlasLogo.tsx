@@ -27,12 +27,15 @@ export interface AtlasLogoProps {
   readonly size?: LogoSize;
   /** Hides the wordmark, leaving only the mark. Used by the collapsed sidebar. */
   readonly markOnly?: boolean;
+  /** Hidden from assistive tech — for a mark whose name is already written beside it. */
+  readonly decorative?: boolean;
   readonly className?: string;
 }
 
 export function AtlasLogo({
   size = 'md',
   markOnly = false,
+  decorative = false,
   className,
 }: AtlasLogoProps): JSX.Element {
   const { t } = useTranslation();
@@ -41,7 +44,14 @@ export function AtlasLogo({
   return (
     <span
       className={cn('flex items-center gap-2.5 text-foreground', className)}
-      aria-label={productName}
+      // A generic `<span>` may not carry `aria-label`: the mark alone is an
+      // image named by the product; with the wordmark, the visible text
+      // names it; a decorative mark is hidden.
+      {...(decorative
+        ? { 'aria-hidden': true }
+        : markOnly
+          ? { role: 'img', 'aria-label': productName }
+          : {})}
     >
       <svg
         viewBox="0 0 32 32"

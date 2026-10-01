@@ -17,7 +17,9 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { EmptyState } from '@components/feedback';
 import {
+  WebsiteNotFound,
   WebsiteRenderer,
+  hasThemeNotFound,
   buildBreadcrumbJsonLd,
   buildOrganizationJsonLd,
   buildCourseJsonLd,
@@ -30,7 +32,7 @@ import { useDocumentSeo } from '../hooks/useDocumentSeo';
 import { resolveCanonicalOrigin } from '../utils/canonical-redirect.utils';
 import { usePublicCourse } from '@hooks';
 import { resolvePathToPage } from '../utils/page-resolution.utils';
-import { useAuth, useSignOut } from '@hooks';
+import { useAuth, useRequestLocation, useSignOut } from '@hooks';
 import {
   usePublicWebsiteLinkRenderer,
   usePublicWebsiteHrefBuilder,
@@ -52,6 +54,7 @@ export function PublicWebsitePage({
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
+  const requestLocation = useRequestLocation();
   const linkRenderer = usePublicWebsiteLinkRenderer(locale);
   const buildHref = usePublicWebsiteHrefBuilder(locale);
   const { session } = useAuth();
@@ -137,7 +140,7 @@ export function PublicWebsitePage({
   // connected custom domain, otherwise its Atlas subdomain), so both
   // live hosts advertise the same single URL to search engines.
   const canonicalOrigin = resolveCanonicalOrigin(
-    window.location.origin,
+    requestLocation.origin,
     academy.canonicalHost
   );
   const canonicalUrl = `${canonicalOrigin}${withLocale(pagePath)}`;
@@ -169,12 +172,53 @@ export function PublicWebsitePage({
     locale,
   });
 
+  const onNavigate = (pageId: string) => {
+    const target = pages.find((candidate) => candidate.id === pageId);
+    const path = target ? resolvePagePath(target) : undefined;
+    if (path) navigate(withLocale(path));
+  };
+
+  // Theme 1 plan Phase 6 — a theme with its own "page not found" draws it
+  // inside its chrome; every other theme keeps the shared screen below.
+  if (!page && hasThemeNotFound(configuration.themeKey)) {
+    return (
+      <>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:shadow-lg"
+        >
+          {t('navigation:skipToContent')}
+        </a>
+        <div id="main-content">
+          <WebsiteNotFound
+            academyId={academy.academyId}
+            academyName={academy.academyName}
+            academyLogo={academy.academyLogo}
+            configuration={configuration}
+            pages={pages}
+            onNavigate={onNavigate}
+            linkRenderer={linkRenderer}
+            locale={locale}
+            onLocaleChange={(targetLocale) =>
+              navigate(
+                `${targetLocale === 'en' ? unprefixedPathname : `/ar${unprefixedPathname}`}${location.search}`
+              )
+            }
+            authState={authState}
+          />
+        </div>
+      </>
+    );
+  }
+
   if (!page) {
     return (
       // Outside `WebsiteRenderer`/`WebsiteChrome`, so the scope class is applied
-      // here by hand — see `PublicWebsiteStatus` for why.
-      <div className="website-theme-scope flex min-h-screen items-center justify-center bg-background p-6">
+      // here by hand — see `PublicWebsiteStatus` for why. `main` and an `h1`
+      // give the page its landmark and top-level heading; same look.
+      <main className="website-theme-scope flex min-h-screen items-center justify-center bg-background p-6">
         <EmptyState
+          headingLevel="h1"
           titleKey="website:public.pageNotFound.title"
           descriptionKey="website:public.pageNotFound.description"
           primaryAction={{
@@ -182,15 +226,9 @@ export function PublicWebsitePage({
             onAction: () => navigate(withLocale('/')),
           }}
         />
-      </div>
+      </main>
     );
   }
-
-  const onNavigate = (pageId: string) => {
-    const target = pages.find((candidate) => candidate.id === pageId);
-    const path = target ? resolvePagePath(target) : undefined;
-    if (path) navigate(withLocale(path));
-  };
 
   return (
     <>

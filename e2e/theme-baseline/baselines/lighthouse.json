@@ -1,0 +1,508 @@
+{
+  "recordedAt": "2026-09-30",
+  "lighthouseVersion": "13.5.0",
+  "chromium": "141.0.7390.37",
+  "method": "mobile, simulated throttling, median of 3 runs by performance score; first visit (no consent seeded, cold cache); HTTP/1.1",
+  "results": {
+    "modern-education/home-new": {
+      "url": "/?__atlas_academy_preview=fx--modern-education--new",
+      "scores": {
+        "performance": 77,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3257,
+        "largestContentfulPaintMs": 4267,
+        "totalBlockingTimeMs": 146,
+        "cumulativeLayoutShift": 0.009,
+        "speedIndexMs": 3257
+      },
+      "transferBytes": {
+        "total": 543859,
+        "script": 424356,
+        "stylesheet": 32183,
+        "font": 68154,
+        "image": 10098,
+        "document": 1341
+      },
+      "requests": 54
+    },
+    "modern-education/home-rich": {
+      "url": "/?__atlas_academy_preview=fx--modern-education--rich",
+      "scores": {
+        "performance": 76,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3280,
+        "largestContentfulPaintMs": 4319,
+        "totalBlockingTimeMs": 181,
+        "cumulativeLayoutShift": 0.009,
+        "speedIndexMs": 3280
+      },
+      "transferBytes": {
+        "total": 536176,
+        "script": 424356,
+        "stylesheet": 32183,
+        "font": 68154,
+        "image": 0,
+        "document": 1341
+      },
+      "requests": 53
+    },
+    "modern-education/courses-rich": {
+      "url": "/courses?__atlas_academy_preview=fx--modern-education--rich",
+      "scores": {
+        "performance": 77,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3235,
+        "largestContentfulPaintMs": 4403,
+        "totalBlockingTimeMs": 120,
+        "cumulativeLayoutShift": 0.016,
+        "speedIndexMs": 3235
+      },
+      "transferBytes": {
+        "total": 534797,
+        "script": 424356,
+        "stylesheet": 32183,
+        "font": 68154,
+        "image": 0,
+        "document": 1341
+      },
+      "requests": 51
+    },
+    "modern-education/course-details-rich": {
+      "url": "/courses/fx-course-1?__atlas_academy_preview=fx--modern-education--rich",
+      "scores": {
+        "performance": 76,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3267,
+        "largestContentfulPaintMs": 4286,
+        "totalBlockingTimeMs": 175,
+        "cumulativeLayoutShift": 0.009,
+        "speedIndexMs": 3267
+      },
+      "transferBytes": {
+        "total": 537191,
+        "script": 424356,
+        "stylesheet": 32183,
+        "font": 68154,
+        "image": 0,
+        "document": 1341
+      },
+      "requests": 55
+    },
+    "premium-academy/home-new": {
+      "url": "/?__atlas_academy_preview=fx--premium-academy--new",
+      "scores": {
+        "performance": 78,
+        "accessibility": 96,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3229,
+        "largestContentfulPaintMs": 4350,
+        "totalBlockingTimeMs": 105,
+        "cumulativeLayoutShift": 0.009,
+        "speedIndexMs": 3229
+      },
+      "transferBytes": {
+        "total": 532180,
+        "script": 424356,
+        "stylesheet": 32183,
+        "font": 68154,
+        "image": 0,
+        "document": 1341
+      },
+      "requests": 49
+    },
+    "premium-academy/home-rich": {
+      "url": "/?__atlas_academy_preview=fx--premium-academy--rich",
+      "scores": {
+        "performance": 78,
+        "accessibility": 96,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3221,
+        "largestContentfulPaintMs": 4331,
+        "totalBlockingTimeMs": 84,
+        "cumulativeLayoutShift": 0.009,
+        "speedIndexMs": 3221
+      },
+      "transferBytes": {
+        "total": 533049,
+        "script": 424356,
+        "stylesheet": 32183,
+        "font": 68154,
+        "image": 0,
+        "document": 1341
+      },
+      "requests": 49
+    },
+    "premium-academy/courses-rich": {
+      "url": "/courses?__atlas_academy_preview=fx--premium-academy--rich",
+      "scores": {
+        "performance": 75,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3262,
+        "largestContentfulPaintMs": 4225,
+        "totalBlockingTimeMs": 242,
+        "cumulativeLayoutShift": 0.009,
+        "speedIndexMs": 3262
+      },
+      "transferBytes": {
+        "total": 533375,
+        "script": 424356,
+        "stylesheet": 32183,
+        "font": 68154,
+        "image": 0,
+        "document": 1341
+      },
+      "requests": 49
+    },
+    "premium-academy/course-details-rich": {
+      "url": "/courses/fx-course-1?__atlas_academy_preview=fx--premium-academy--rich",
+      "scores": {
+        "performance": 74,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3266,
+        "largestContentfulPaintMs": 4807,
+        "totalBlockingTimeMs": 151,
+        "cumulativeLayoutShift": 0.009,
+        "speedIndexMs": 3266
+      },
+      "transferBytes": {
+        "total": 535768,
+        "script": 424356,
+        "stylesheet": 32183,
+        "font": 68154,
+        "image": 0,
+        "document": 1341
+      },
+      "requests": 53
+    },
+    "corporate-learning/home-new": {
+      "url": "/?__atlas_academy_preview=fx--corporate-learning--new",
+      "scores": {
+        "performance": 78,
+        "accessibility": 96,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3211,
+        "largestContentfulPaintMs": 4351,
+        "totalBlockingTimeMs": 89,
+        "cumulativeLayoutShift": 0.009,
+        "speedIndexMs": 3211
+      },
+      "transferBytes": {
+        "total": 533154,
+        "script": 424356,
+        "stylesheet": 32183,
+        "font": 68154,
+        "image": 0,
+        "document": 1341
+      },
+      "requests": 51
+    },
+    "corporate-learning/home-rich": {
+      "url": "/?__atlas_academy_preview=fx--corporate-learning--rich",
+      "scores": {
+        "performance": 77,
+        "accessibility": 96,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3240,
+        "largestContentfulPaintMs": 4420,
+        "totalBlockingTimeMs": 148,
+        "cumulativeLayoutShift": 0.01,
+        "speedIndexMs": 3240
+      },
+      "transferBytes": {
+        "total": 535221,
+        "script": 424356,
+        "stylesheet": 32183,
+        "font": 68154,
+        "image": 0,
+        "document": 1341
+      },
+      "requests": 51
+    },
+    "corporate-learning/courses-rich": {
+      "url": "/courses?__atlas_academy_preview=fx--corporate-learning--rich",
+      "scores": {
+        "performance": 75,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3288,
+        "largestContentfulPaintMs": 4274,
+        "totalBlockingTimeMs": 207,
+        "cumulativeLayoutShift": 0.009,
+        "speedIndexMs": 3288
+      },
+      "transferBytes": {
+        "total": 533838,
+        "script": 424356,
+        "stylesheet": 32183,
+        "font": 68154,
+        "image": 0,
+        "document": 1341
+      },
+      "requests": 49
+    },
+    "corporate-learning/course-details-rich": {
+      "url": "/courses/fx-course-1?__atlas_academy_preview=fx--corporate-learning--rich",
+      "scores": {
+        "performance": 76,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3249,
+        "largestContentfulPaintMs": 4383,
+        "totalBlockingTimeMs": 190,
+        "cumulativeLayoutShift": 0.009,
+        "speedIndexMs": 3249
+      },
+      "transferBytes": {
+        "total": 536236,
+        "script": 424356,
+        "stylesheet": 32183,
+        "font": 68154,
+        "image": 0,
+        "document": 1341
+      },
+      "requests": 53
+    },
+    "minimal-editorial/home-new": {
+      "url": "/?__atlas_academy_preview=fx--minimal-editorial--new",
+      "scores": {
+        "performance": 78,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3210,
+        "largestContentfulPaintMs": 4313,
+        "totalBlockingTimeMs": 71,
+        "cumulativeLayoutShift": 0.009,
+        "speedIndexMs": 3210
+      },
+      "transferBytes": {
+        "total": 531765,
+        "script": 424356,
+        "stylesheet": 32183,
+        "font": 68154,
+        "image": 0,
+        "document": 1341
+      },
+      "requests": 49
+    },
+    "minimal-editorial/home-rich": {
+      "url": "/?__atlas_academy_preview=fx--minimal-editorial--rich",
+      "scores": {
+        "performance": 78,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3264,
+        "largestContentfulPaintMs": 4427,
+        "totalBlockingTimeMs": 69,
+        "cumulativeLayoutShift": 0.009,
+        "speedIndexMs": 3264
+      },
+      "transferBytes": {
+        "total": 532753,
+        "script": 424356,
+        "stylesheet": 32183,
+        "font": 68154,
+        "image": 0,
+        "document": 1341
+      },
+      "requests": 49
+    },
+    "minimal-editorial/courses-rich": {
+      "url": "/courses?__atlas_academy_preview=fx--minimal-editorial--rich",
+      "scores": {
+        "performance": 74,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3217,
+        "largestContentfulPaintMs": 4329,
+        "totalBlockingTimeMs": 256,
+        "cumulativeLayoutShift": 0.009,
+        "speedIndexMs": 3217
+      },
+      "transferBytes": {
+        "total": 532962,
+        "script": 424356,
+        "stylesheet": 32183,
+        "font": 68154,
+        "image": 0,
+        "document": 1341
+      },
+      "requests": 49
+    },
+    "minimal-editorial/course-details-rich": {
+      "url": "/courses/fx-course-1?__atlas_academy_preview=fx--minimal-editorial--rich",
+      "scores": {
+        "performance": 73,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3297,
+        "largestContentfulPaintMs": 4859,
+        "totalBlockingTimeMs": 176,
+        "cumulativeLayoutShift": 0.009,
+        "speedIndexMs": 3297
+      },
+      "transferBytes": {
+        "total": 535358,
+        "script": 424356,
+        "stylesheet": 32183,
+        "font": 68154,
+        "image": 0,
+        "document": 1341
+      },
+      "requests": 53
+    },
+    "bold-creative/home-new": {
+      "url": "/?__atlas_academy_preview=fx--bold-creative--new",
+      "scores": {
+        "performance": 78,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3223,
+        "largestContentfulPaintMs": 4341,
+        "totalBlockingTimeMs": 97,
+        "cumulativeLayoutShift": 0.009,
+        "speedIndexMs": 3223
+      },
+      "transferBytes": {
+        "total": 532466,
+        "script": 424356,
+        "stylesheet": 32183,
+        "font": 68154,
+        "image": 0,
+        "document": 1341
+      },
+      "requests": 49
+    },
+    "bold-creative/home-rich": {
+      "url": "/?__atlas_academy_preview=fx--bold-creative--rich",
+      "scores": {
+        "performance": 77,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3218,
+        "largestContentfulPaintMs": 4534,
+        "totalBlockingTimeMs": 121,
+        "cumulativeLayoutShift": 0.009,
+        "speedIndexMs": 3218
+      },
+      "transferBytes": {
+        "total": 533453,
+        "script": 424356,
+        "stylesheet": 32183,
+        "font": 68154,
+        "image": 0,
+        "document": 1341
+      },
+      "requests": 49
+    },
+    "bold-creative/courses-rich": {
+      "url": "/courses?__atlas_academy_preview=fx--bold-creative--rich",
+      "scores": {
+        "performance": 74,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3263,
+        "largestContentfulPaintMs": 4227,
+        "totalBlockingTimeMs": 248,
+        "cumulativeLayoutShift": 0.009,
+        "speedIndexMs": 3263
+      },
+      "transferBytes": {
+        "total": 533660,
+        "script": 424356,
+        "stylesheet": 32183,
+        "font": 68154,
+        "image": 0,
+        "document": 1341
+      },
+      "requests": 49
+    },
+    "bold-creative/course-details-rich": {
+      "url": "/courses/fx-course-1?__atlas_academy_preview=fx--bold-creative--rich",
+      "scores": {
+        "performance": 76,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3231,
+        "largestContentfulPaintMs": 4619,
+        "totalBlockingTimeMs": 135,
+        "cumulativeLayoutShift": 0.009,
+        "speedIndexMs": 3231
+      },
+      "transferBytes": {
+        "total": 536052,
+        "script": 424356,
+        "stylesheet": 32183,
+        "font": 68154,
+        "image": 0,
+        "document": 1341
+      },
+      "requests": 53
+    }
+  }
+}

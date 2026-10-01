@@ -488,7 +488,17 @@
     "primaryLogoNote": "يتم إدارة شعارك الأساسي وأيقونة الموقع من صفحة الهوية البصرية لأكاديميتك.",
     "manageInAcademyBranding": "الإدارة من الهوية البصرية للأكاديمية",
     "saved": "تم حفظ إعدادات الهوية البصرية",
-    "saveError": "فشل حفظ إعدادات الهوية البصرية"
+    "saveError": "فشل حفظ إعدادات الهوية البصرية",
+    "validation": {
+      "invalidShape": "لوحة الألوان غير مكتملة.",
+      "unsupportedSchemaVersion": "حُفظت هذه اللوحة بإصدار أحدث.",
+      "unknownAlgorithmVersion": "أُنشئت هذه اللوحة بإصدار غير معروف.",
+      "invalidColor": "هذا ليس لونًا صالحًا.",
+      "contrastFailure": "غير مقروء بما يكفي: {{ratio}}:1 (المطلوب {{required}}:1).",
+      "decorativeUsageRequired": "يمكن استخدام هذا اللون للزينة فقط.",
+      "unknownOverride": "لا يمكن تغيير هذا اللون هنا.",
+      "overrideNotApplied": "تعذّر تطبيق هذا التغيير."
+    }
   },
   "seo": {
     "siteTitle": "عنوان الموقع",
@@ -583,7 +593,11 @@
     "optional": "اختياري",
     "translationComplete": "مكتمل",
     "translationIncomplete": "لم تتم الترجمة بعد",
-    "invalidSections": "تحتاج هذه الأقسام إلى مراجعة قبل حفظ الصفحة: {{sections}}."
+    "invalidSections": "تحتاج هذه الأقسام إلى مراجعة قبل حفظ الصفحة: {{sections}}.",
+    "sampleBadge": "نموذج",
+    "markTestimonialReal": "هذا رأي حقيقي",
+    "sampleHelp": "الآراء النموذجية عناصر مؤقتة لعرض التصميم، ولا تظهر أبدًا في موقعك المباشر. استبدل النص برأي حقيقي، ثم حدّده كرأي حقيقي.",
+    "sampleSectionHint": "يحتوي على آراء نموذجية مخفية في موقعك المباشر."
   },
   "preview": {
     "title": "المعاينة",
@@ -613,7 +627,10 @@
     "unpublishConfirmTitle": "إيقاف الموقع؟",
     "unpublishConfirmDescription": "لن يتمكّن الزوّار من الوصول إلى الموقع العام لأكاديميتك. يمكنك نشره مرة أخرى في أي وقت.",
     "unpublishConfirmAction": "إلغاء النشر",
-    "unpublishedHint": "موقعك متوقّف وغير متاح للزوّار."
+    "unpublishedHint": "موقعك متوقّف وغير متاح للزوّار.",
+    "sampleWarningTitle": "النشر مع آراء نموذجية؟",
+    "sampleWarningDescription": "لا تظهر الآراء النموذجية أبدًا في موقعك المباشر. استبدلها بآراء حقيقية، أو حدّدها كآراء حقيقية، لعرضها. يمكنك النشر الآن ومراجعتها لاحقًا.",
+    "sampleWarningAction": "النشر على أي حال"
   },
   "sections": {
     "hero": {
@@ -651,6 +668,18 @@
     },
     "contact": {
       "label": "التواصل"
+    },
+    "pageHeader": {
+      "label": "ترويسة الصفحة"
+    },
+    "courseCategories": {
+      "label": "فئات الدورات"
+    },
+    "steps": {
+      "label": "كيف يعمل"
+    },
+    "featureSplit": {
+      "label": "صورة مع المزايا"
     }
   },
   "fields": {
@@ -719,7 +748,28 @@
     "email": "البريد الإلكتروني",
     "phone": "الهاتف",
     "address": "العنوان",
-    "showForm": "عرض نموذج التواصل"
+    "showForm": "عرض نموذج التواصل",
+    "highlight": "العبارة المميزة",
+    "showCourseSearch": "عرض البحث عن الدورات",
+    "heroHighlights": "النقاط البارزة",
+    "heroHighlight": "نقطة بارزة",
+    "label": "النص",
+    "rating": "التقييم (1–5)",
+    "faqMaxItems": "أقصى عدد للعرض",
+    "faqCta": "رابط لجميع الأسئلة",
+    "pageHeaderSearch": "البحث",
+    "pageHeaderSearchNone": "بدون بحث",
+    "pageHeaderSearchCourses": "البحث عن الدورات",
+    "pageHeaderSearchFaq": "البحث في الأسئلة الشائعة",
+    "categoriesMaxItems": "عدد الفئات المعروضة",
+    "showCourseCounts": "عرض عدد الدورات",
+    "stepItems": "الخطوات",
+    "stepItem": "خطوة",
+    "imagePosition": "موضع الصورة",
+    "imagePositionStart": "قبل النص",
+    "imagePositionEnd": "بعد النص",
+    "benefitItems": "المزايا",
+    "benefitItem": "ميزة"
   },
   "icons": {
     "GraduationCap": "قبعة التخرج",
@@ -776,7 +826,9 @@
       "durationHoursOnly": "{{hours}} س",
       "durationMinutes": "{{minutes}} د",
       "durationLabel": "المدة",
-      "instructorLabel": "المدرّب"
+      "instructorLabel": "المدرّب",
+      "categoryFilter": "الفئة",
+      "clearCategory": "إزالة عامل تصفية الفئة {{name}}"
     },
     "courseDetails": {
       "aboutTitle": "عن هذه الدورة",
@@ -843,6 +895,18 @@
       "previewUnavailable": "تعذّر تشغيل هذه المعاينة الآن. يُرجى المحاولة لاحقًا.",
       "previewNotPlayable": "هذه المعاينة ليست مقطع فيديو. سجّل للوصول إلى الدرس كاملًا.",
       "previewClose": "إغلاق"
+    },
+    "courseCategories": {
+      "courseCount_zero": "لا توجد دورات",
+      "courseCount_one": "دورة واحدة",
+      "courseCount_two": "دورتان",
+      "courseCount_few": "{{count}} دورات",
+      "courseCount_many": "{{count}} دورةً",
+      "courseCount_other": "{{count}} دورة",
+      "previewHidden": "مخفي في موقعك حتى تحتوي {{count}} فئات على الأقل على دورات منشورة."
+    },
+    "testimonials": {
+      "sampleBadge": "نموذج"
     }
   },
   "common": {
@@ -855,7 +919,9 @@
     "imageTooLarge": "حجم الملف كبير جدًا.",
     "imageInvalidType": "نوع الملف غير مدعوم. استخدم PNG أو JPG أو WEBP.",
     "imageRecommendation": "الحجم الموصى به: {{dimensions}} بكسل ({{ratio}}) · {{formats}}",
-    "imageTransparencyHint": "يُفضَّل استخدام خلفية شفافة."
+    "imageTransparencyHint": "يُفضَّل استخدام خلفية شفافة.",
+    "uploadingImage": "جارٍ الرفع…",
+    "imageUploadFailed": "تعذّر رفع الصورة. يُرجى المحاولة مرة أخرى."
   },
   "presence": {
     "oneEditing": "{{name}} ({{role}}) يقوم بتحرير هذه الصفحة الآن.",
@@ -873,5 +939,286 @@
     "explainer": "أعد التحميل لعرض نسختهم والبدء منها، أو احتفظ بتغييراتك لتطبيقها فوق نسختهم. لن يتم حذف عملهم في الحالتين.",
     "reload": "إعادة تحميل الأحدث",
     "keepMine": "الاحتفاظ بتغييراتي"
+  },
+  "chrome": {
+    "primaryNavigation": "الرئيسية",
+    "openMenu": "فتح القائمة",
+    "menuTitle": "قائمة {{name}}",
+    "social": "روابط التواصل الاجتماعي",
+    "topCategories": "أبرز الفئات",
+    "contact": "تواصل معنا"
+  },
+  "brandStudio": {
+    "title": "ألوان العلامة التجارية",
+    "description": "يقترح شعارك لوحة ألوان. نتحقق من كل لون ليبقى النص واضحًا، ويمكنك تعديل أي شيء قبل اعتماده.",
+    "setupTitle": "الشعار والألوان (اختياري)",
+    "setupHelp": "أضف شعارك لترى موقعك بألوانك الخاصة. يمكنك فعل ذلك لاحقًا أيضًا.",
+    "logoTitle": "الشعار",
+    "chooseLogo": "اختر الشعار",
+    "replaceLogo": "استبدال الشعار",
+    "logoHelp": "PNG أو JPG أو WebP أو SVG، حتى 2 ميغابايت. يفضَّل شعار بخلفية شفافة.",
+    "analyzing": "جارٍ قراءة ألوان شعارك…",
+    "proposed": "اقترحنا لوحة ألوان من شعارك. راجعها ثم اعتمدها.",
+    "retry": "أعد المحاولة",
+    "manualHint": "يمكنك تجربة ملف آخر، أو اختيار ألوانك أدناه.",
+    "monochromeHint": "شعارك بالأبيض والأسود، لذلك استخدمنا لونًا من القالب للتمييز. اختر لون علامتك أدناه إن وُجد.",
+    "logoChanged": {
+      "title": "تغيّر شعارك — هل تريد معاينة ألوان تناسبه؟",
+      "description": "ستبقى ألوانك المحفوظة كما هي. عاين ألوانًا مستخرجة من الشعار الجديد، ثم اقبلها واحفظها إن أعجبتك.",
+      "preview": "معاينة ألوان مناسبة",
+      "keep": "الإبقاء على الألوان الحالية"
+    },
+    "errors": {
+      "empty": "الملف فارغ.",
+      "tooLarge": "حجم الملف أكبر من 2 ميغابايت.",
+      "unsupportedType": "نوع الملف غير مدعوم. استخدم PNG أو JPG أو WebP أو SVG.",
+      "corrupt": "تعذّرت قراءة الملف.",
+      "dimensionsTooLarge": "الصورة كبيرة جدًا. استخدم شعارًا أقل من 8000 بكسل في أطول ضلع.",
+      "analysisFailed": "تعذّرت قراءة ألوان هذا الشعار."
+    },
+    "brandColours": "ألوان علامتك",
+    "regenerate": "جرّب تركيبة أخرى",
+    "variants": {
+      "balanced": "متوازنة",
+      "vivid": "زاهية",
+      "calm": "هادئة",
+      "secondaryLed": "بقيادة اللون الثانوي"
+    },
+    "seeds": {
+      "primary": "الأساسي",
+      "secondary": "الثانوي",
+      "accent": "المميّز"
+    },
+    "paletteTitle": "لوحة ألوانك",
+    "groups": {
+      "brand": "العلامة",
+      "surfaces": "الأسطح",
+      "text": "النص",
+      "feedback": "التنبيهات"
+    },
+    "roles": {
+      "primary": "الأساسي",
+      "primaryForeground": "النص على الأساسي",
+      "secondary": "الثانوي",
+      "secondaryForeground": "النص على الثانوي",
+      "accent": "المميّز",
+      "accentForeground": "النص على المميّز",
+      "background": "الخلفية",
+      "surface": "السطح",
+      "surfaceMuted": "سطح خافت",
+      "foreground": "النص",
+      "foregroundMuted": "النص الثانوي",
+      "border": "الحدود",
+      "success": "نجاح",
+      "warning": "تحذير",
+      "error": "خطأ",
+      "focus": "حلقة التركيز",
+      "link": "الروابط",
+      "cta": "الأزرار",
+      "ctaForeground": "نص الأزرار"
+    },
+    "badge": {
+      "pass": "تباين مناسب",
+      "adjusted": "عُدِّل ليصبح مقروءًا",
+      "decorative": "للزينة فقط"
+    },
+    "ratio": "التباين {{ratio}}:1",
+    "advanced": "متقدم: تعديل الألوان منفردة",
+    "advancedHelp": "غيّر أي لون. يجب أن تبقى ألوان النص مقروءة؛ وإن لم تكن، سنوضح السبب ونقترح أقرب لون مناسب.",
+    "useDerived": "استخدم المقترح",
+    "useSuggestion": "استخدم أقرب لون مقروء",
+    "accept": "اعتماد اللوحة",
+    "accepted": "تم اعتماد اللوحة",
+    "resetToLogo": "العودة إلى اقتراح الشعار",
+    "resetToTheme": "العودة إلى ألوان القالب",
+    "cannotAccept": "صحّح الألوان المحددة قبل الاعتماد.",
+    "preview": "معاينة مباشرة",
+    "save": "حفظ ألوان العلامة",
+    "statusConfirmed": "لوحة معتمدة",
+    "statusProposed": "لوحة مقترحة — اعتمدها لتأكيد اختيارك",
+    "savingLogo": "جارٍ حفظ شعارك…",
+    "logoSaveError": "تعذّر حفظ شعارك. يُرجى المحاولة مرة أخرى.",
+    "sampleName": "أكاديميتك",
+    "finishSaving": "جارٍ حفظ شعارك وألوانك…",
+    "finishFailed": "لم نتمكن من حفظ شعارك وألوانك بعد."
+  },
+  "theme1": {
+    "hero": {
+      "searchLabel": "ابحث في الدورات",
+      "searchPlaceholder": "ماذا تودّ أن تتعلّم؟",
+      "searchSubmit": "بحث",
+      "courseCount_zero": "{{formatted}} دورة",
+      "courseCount_one": "دورة واحدة",
+      "courseCount_two": "دورتان",
+      "courseCount_few": "{{formatted}} دورات",
+      "courseCount_many": "{{formatted}} دورة",
+      "courseCount_other": "{{formatted}} دورة",
+      "courseCountNote": "جاهزة لتبدأ اليوم"
+    },
+    "categories": {
+      "viewAll": "تصفّح كل الدورات"
+    },
+    "courses": {
+      "viewAll": "عرض كل الدورات",
+      "launchingTitle": "دوراتنا قادمة قريبًا",
+      "launchingDescription": "نُعدّ الآن دوراتنا الأولى. تواصل معنا وسنُعلمك فور فتح باب التسجيل.",
+      "launchingAction": "تواصل معنا"
+    },
+    "instructors": {
+      "courseCount_zero": "لا دورات",
+      "courseCount_one": "دورة واحدة",
+      "courseCount_two": "دورتان",
+      "courseCount_few": "{{count}} دورات",
+      "courseCount_many": "{{count}} دورة",
+      "courseCount_other": "{{count}} دورة",
+      "previewHidden": "مخفي في موقعك العام إلى أن يكون لدورة منشورة واحدة على الأقل مدرّب.",
+      "listLabel": "المدرّبون",
+      "sampleName": "اسم المدرّب",
+      "sampleCourses": "دوراته المنشورة"
+    },
+    "statistics": {
+      "previewHidden": "مخفي في موقعك العام إلى أن يتجاوز رقمان على الأقل الصفر.",
+      "sampleValue": "رقم حيّ يظهر عندما يتجاوز الصفر"
+    },
+    "testimonials": {
+      "carousel": "آراء المتعلّمين",
+      "slide": "رأي",
+      "slideLabel": "{{position}} من {{total}}",
+      "previous": "الرأي السابق",
+      "next": "الرأي التالي",
+      "goTo": "عرض الرأي {{position}}",
+      "carouselRole": "عرض متتابع"
+    },
+    "pageHeader": {
+      "catalogSummary_zero": "{{courses}} دورة في {{categories}} تصنيفات",
+      "catalogSummary_one": "دورة واحدة في {{categories}} تصنيفات",
+      "catalogSummary_two": "دورتان في {{categories}} تصنيفات",
+      "catalogSummary_few": "{{courses}} دورات في {{categories}} تصنيفات",
+      "catalogSummary_many": "{{courses}} دورة في {{categories}} تصنيفات",
+      "catalogSummary_other": "{{courses}} دورة في {{categories}} تصنيفات"
+    },
+    "faq": {
+      "filterLabel": "ابحث في الأسئلة",
+      "filterPlaceholder": "ابحث في الأسئلة…",
+      "resultCount_zero": "لا توجد أسئلة مطابقة",
+      "resultCount_one": "سؤال واحد مطابق",
+      "resultCount_two": "سؤالان مطابقان",
+      "resultCount_few": "{{count}} أسئلة مطابقة",
+      "resultCount_many": "{{count}} سؤالًا مطابقًا",
+      "resultCount_other": "{{count}} سؤال مطابق",
+      "noMatchTitle": "لا توجد أسئلة تطابق بحثك",
+      "noMatchDescription": "جرّب كلمات أخرى، أو تواصل معنا وسنساعدك.",
+      "listTitle": "جميع الأسئلة"
+    },
+    "catalog": {
+      "categories": "التصنيفات",
+      "allCategories": "الكل",
+      "filters": "التصفية",
+      "filtersDescription": "صفِّ الدورات حسب المستوى والسعر، أو غيّر الترتيب.",
+      "showResults_zero": "لا توجد دورات",
+      "showResults_one": "عرض دورة واحدة",
+      "showResults_two": "عرض دورتين",
+      "showResults_few": "عرض {{formatted}} دورات",
+      "showResults_many": "عرض {{formatted}} دورة",
+      "showResults_other": "عرض {{formatted}} دورة",
+      "close": "إغلاق",
+      "removeFilter": "إزالة التصفية {{name}}",
+      "clearAll": "مسح الكل",
+      "errorTitle": "تعذّر تحميل الدورات",
+      "errorDescription": "يُرجى التحقق من اتصالك والمحاولة مجددًا.",
+      "retry": "أعد المحاولة",
+      "pagination": "صفحات الدورات",
+      "previousPage": "الصفحة السابقة",
+      "nextPage": "الصفحة التالية",
+      "page": "الصفحة {{page}}"
+    },
+    "courseDetails": {
+      "errorTitle": "تعذّر تحميل هذه الدورة",
+      "errorDescription": "يُرجى التحقق من اتصالك والمحاولة مجددًا.",
+      "hasPreview": "دروس معاينة مجانية",
+      "breadcrumb": "مسار التنقّل",
+      "allCourses": "كل الدورات",
+      "taughtBy": "يقدّمها",
+      "purchase": "سجّل في هذه الدورة",
+      "includes": "تتضمّن هذه الدورة"
+    },
+    "contact": {
+      "phoneLabel": "الهاتف",
+      "addressLabel": "العنوان",
+      "formTitle": "أرسل لنا رسالة",
+      "successTitle": "تم إرسال رسالتك",
+      "sendAnother": "إرسال رسالة أخرى"
+    },
+    "gallery": {
+      "title": "معرض الصور",
+      "open": "فتح الصورة: {{name}}",
+      "previous": "الصورة السابقة",
+      "next": "الصورة التالية",
+      "close": "إغلاق"
+    },
+    "notFound": {
+      "eyebrow": "خطأ 404",
+      "title": "لم نعثر على هذه الصفحة",
+      "description": "ربما نُقلت الصفحة أو أصبح الرابط قديمًا. هذه أماكن مناسبة للمتابعة.",
+      "home": "العودة إلى الرئيسية",
+      "courses": "تصفّح الدورات",
+      "contact": "تواصل معنا"
+    },
+    "comingSoon": {
+      "eyebrow": "قريبًا",
+      "title": "{{name}} تستعدّ للانطلاق",
+      "description": "نُعدّ موقعنا الآن. يُرجى زيارتنا قريبًا."
+    },
+    "pageIntro": {
+      "about": {
+        "lead": "تعرّف على الأشخاص والرؤية والنهج وراء دوراتنا."
+      },
+      "courses": {
+        "lead": "تصفّح جميع الدورات، واختر ما يناسبك، وابدأ التعلّم."
+      },
+      "faqs": {
+        "lead": "إجابات عن أكثر الأسئلة التي يطرحها المتعلّمون علينا."
+      },
+      "contact": {
+        "lead": "لديك سؤال عن دورة أو عن التسجيل؟ نحن هنا للمساعدة."
+      }
+    }
+  },
+  "sampleContent": {
+    "count_zero": "لا توجد آراء نموذجية",
+    "count_one": "رأي نموذجي واحد",
+    "count_two": "رأيان نموذجيان",
+    "count_few": "{{count}} آراء نموذجية",
+    "count_many": "{{count}} رأيًا نموذجيًا",
+    "count_other": "{{count}} رأي نموذجي",
+    "review": "مراجعة",
+    "reviewLabel": "مراجعة الآراء النموذجية في {{page}}"
+  },
+  "launchChecklist": {
+    "title": "قائمة الإطلاق",
+    "progress": "أُنجز {{done}} من {{total}}",
+    "stateDone": "مكتمل",
+    "stateTodo": "غير مكتمل",
+    "brand": {
+      "title": "أكّد ألوان علامتك التجارية",
+      "todo": "راجع الألوان التي أُنشئت لموقعك وأكّدها، أو عدّلها أولًا.",
+      "done": "تم تأكيد ألوان علامتك التجارية.",
+      "action": "فتح العلامة التجارية"
+    },
+    "samples": {
+      "title": "استبدل الآراء النموذجية",
+      "todo_zero": "لا توجد آراء نموذجية.",
+      "todo_one": "يحتوي موقعك المبدئي على رأي نموذجي. تظهر الآراء النموذجية في المعاينة فقط: استبدله برأي حقيقي، أو حدّده كرأي حقيقي إن كان كذلك.",
+      "todo_two": "يحتوي موقعك المبدئي على آراء نموذجية. تظهر الآراء النموذجية في المعاينة فقط: استبدلها بآراء حقيقية، أو حدّدها كآراء حقيقية إن كانت كذلك.",
+      "todo_few": "يحتوي موقعك المبدئي على آراء نموذجية. تظهر الآراء النموذجية في المعاينة فقط: استبدلها بآراء حقيقية، أو حدّدها كآراء حقيقية إن كانت كذلك.",
+      "todo_many": "يحتوي موقعك المبدئي على آراء نموذجية. تظهر الآراء النموذجية في المعاينة فقط: استبدلها بآراء حقيقية، أو حدّدها كآراء حقيقية إن كانت كذلك.",
+      "todo_other": "يحتوي موقعك المبدئي على آراء نموذجية. تظهر الآراء النموذجية في المعاينة فقط: استبدلها بآراء حقيقية، أو حدّدها كآراء حقيقية إن كانت كذلك.",
+      "done": "لم تتبقَّ آراء نموذجية."
+    },
+    "publish": {
+      "title": "انشر موقعك",
+      "todo": "يرى الزوار صفحة «قريبًا» حتى تنشر موقعك.",
+      "done": "موقعك منشور الآن."
+    }
   }
 }

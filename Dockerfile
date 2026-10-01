@@ -18,6 +18,38 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm run build
 
+# Phase 8 — the public Academy website's server renderer
+# (Reports/SSR_ARCHITECTURE_ANALYSIS.md): the same build, plus the SSR
+# bundle, run by Node on the internal network only. Caddy (below) stays
+# the edge and serves the single-page app whenever this is off, slow,
+# failing or stopped. Built with `--target ssr`; the default target is
+# still the Caddy image below.
+FROM build AS ssr-build
+RUN pnpm run build:ssr
+
+FROM node:20-alpine AS ssr-deps
+WORKDIR /app
+RUN corepack enable
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+# Runtime packages only (the SSR bundle imports React, the router, i18n
+# and the other app dependencies from node_modules). No lifecycle
+# scripts: nothing the renderer loads needs a build step.
+RUN pnpm install --frozen-lockfile --prod --ignore-scripts
+
+FROM node:20-alpine AS ssr
+WORKDIR /app
+ENV NODE_ENV=production
+COPY package.json ./
+COPY --from=ssr-deps /app/node_modules ./node_modules
+COPY --from=ssr-build /app/dist ./dist
+COPY --from=ssr-build /app/dist-ssr ./dist-ssr
+COPY server/ssr/handler.mjs server/ssr/server.mjs ./server/ssr/
+USER node
+EXPOSE 3100
+HEALTHCHECK --interval=15s --timeout=3s --start-period=10s --retries=3 \
+  CMD wget -qO- http://127.0.0.1:3100/__ssr/health || exit 1
+CMD ["node", "server/ssr/server.mjs"]
+
 FROM caddy:2-builder-alpine AS caddy-build
 RUN xcaddy build --with github.com/caddy-dns/cloudflare
 

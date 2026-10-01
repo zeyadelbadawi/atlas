@@ -1,0 +1,564 @@
+{
+  "generatedBy": "atlas-backend scripts/export-website-template-fixtures.ts",
+  "themeKey": "modern-education",
+  "setupMode": "complete",
+  "academy": {
+    "academyId": "fx-academy",
+    "academyName": "Horizon Academy"
+  },
+  "configuration": {
+    "id": "fx-academy",
+    "academyId": "fx-academy",
+    "themeKey": "modern-education",
+    "themeVersion": 1,
+    "configVersion": 1,
+    "brand": {
+      "primaryColor": "221 83% 53%",
+      "secondaryColor": "221 83% 53%",
+      "accentColor": "221 83% 53%"
+    },
+    "seo": {},
+    "navigation": [
+      {
+        "id": "fx-modern-education-item-1",
+        "label": {
+          "en": "About",
+          "ar": "من نحن"
+        },
+        "pageId": "fx-modern-education-page-2",
+        "order": 0
+      },
+      {
+        "id": "fx-modern-education-item-3",
+        "label": {
+          "en": "Courses",
+          "ar": "الدورات"
+        },
+        "pageId": "fx-modern-education-page-4",
+        "order": 1
+      },
+      {
+        "id": "fx-modern-education-item-5",
+        "label": {
+          "en": "FAQs",
+          "ar": "الأسئلة الشائعة"
+        },
+        "pageId": "fx-modern-education-page-6",
+        "order": 2
+      },
+      {
+        "id": "fx-modern-education-item-7",
+        "label": {
+          "en": "Contact",
+          "ar": "تواصل معنا"
+        },
+        "pageId": "fx-modern-education-page-8",
+        "order": 3
+      }
+    ],
+    "header": {
+      "cta": {
+        "label": {
+          "en": "Sign Up",
+          "ar": "إنشاء حساب"
+        },
+        "authAction": "signUp"
+      }
+    },
+    "footer": {
+      "groups": [
+        {
+          "id": "fx-modern-education-item-9",
+          "title": {
+            "en": "Quick Links",
+            "ar": "روابط سريعة"
+          },
+          "links": [
+            {
+              "id": "fx-modern-education-item-10",
+              "label": {
+                "en": "About",
+                "ar": "من نحن"
+              },
+              "pageId": "fx-modern-education-page-2"
+            },
+            {
+              "id": "fx-modern-education-item-11",
+              "label": {
+                "en": "Courses",
+                "ar": "الدورات"
+              },
+              "pageId": "fx-modern-education-page-4"
+            },
+            {
+              "id": "fx-modern-education-item-12",
+              "label": {
+                "en": "FAQs",
+                "ar": "الأسئلة الشائعة"
+              },
+              "pageId": "fx-modern-education-page-6"
+            },
+            {
+              "id": "fx-modern-education-item-13",
+              "label": {
+                "en": "Contact",
+                "ar": "تواصل معنا"
+              },
+              "pageId": "fx-modern-education-page-8"
+            }
+          ]
+        }
+      ],
+      "socialLinks": [],
+      "copyrightText": {
+        "en": "© 2026 Horizon Academy",
+        "ar": "© 2026 Horizon Academy"
+      }
+    },
+    "status": "draft",
+    "updatedAt": "2026-09-01T09:00:00.000Z"
+  },
+  "pages": [
+    {
+      "id": "fx-modern-education-page-14",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "home",
+      "title": "Home",
+      "slug": "home",
+      "visible": true,
+      "seo": {},
+      "sections": [
+        {
+          "id": "fx-modern-education-item-15",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "hero",
+          "config": {
+            "eyebrow": {
+              "en": "Welcome",
+              "ar": "مرحبًا بكم"
+            },
+            "title": {
+              "en": "Learn Something New at Horizon Academy",
+              "ar": "تعلّم شيئًا جديدًا في Horizon Academy"
+            },
+            "description": {
+              "en": "Join thousands of learners building real skills through practical, expert-led courses.",
+              "ar": "انضم إلى آلاف المتعلمين الذين يكتسبون مهارات حقيقية من خلال دورات عملية يقدّمها خبراء."
+            },
+            "cta": {
+              "label": {
+                "en": "Browse Courses",
+                "ar": "تصفّح الدورات"
+              },
+              "pageId": "fx-modern-education-page-4"
+            }
+          }
+        },
+        {
+          "id": "fx-modern-education-item-16",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "about",
+          "config": {
+            "title": {
+              "en": "Why Horizon Academy",
+              "ar": "لماذا Horizon Academy"
+            },
+            "body": {
+              "en": "We believe learning should be practical, engaging, and built around real outcomes. Our courses are designed by experienced instructors who care about your progress every step of the way.",
+              "ar": "نؤمن بأن التعلّم يجب أن يكون عمليًا وممتعًا ومبنيًا على نتائج حقيقية. تم تصميم دوراتنا من قبل مدرّبين ذوي خبرة يهتمون بتقدّمك في كل خطوة."
+            }
+          }
+        },
+        {
+          "id": "fx-modern-education-item-17",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "featuredCourses",
+          "config": {
+            "title": {
+              "en": "Featured Courses",
+              "ar": "دورات مميزة"
+            },
+            "description": {
+              "en": "A few of our most popular courses to get you started.",
+              "ar": "بعض من أكثر دوراتنا شهرة لتبدأ رحلتك."
+            },
+            "mode": "latest",
+            "layout": "grid",
+            "count": 3,
+            "showPrice": true,
+            "showInstructor": true
+          }
+        },
+        {
+          "id": "fx-modern-education-item-18",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "statistics",
+          "config": {
+            "items": [
+              {
+                "id": "stat-courses",
+                "value": {
+                  "en": "0",
+                  "ar": ""
+                },
+                "label": {
+                  "en": "Courses",
+                  "ar": "دورة"
+                },
+                "metric": "courses"
+              },
+              {
+                "id": "stat-students",
+                "value": {
+                  "en": "0",
+                  "ar": ""
+                },
+                "label": {
+                  "en": "Students",
+                  "ar": "طالب"
+                },
+                "metric": "students"
+              },
+              {
+                "id": "stat-instructors",
+                "value": {
+                  "en": "0",
+                  "ar": ""
+                },
+                "label": {
+                  "en": "Instructors",
+                  "ar": "مدرّب"
+                },
+                "metric": "instructors"
+              }
+            ]
+          }
+        },
+        {
+          "id": "fx-modern-education-item-19",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "features",
+          "config": {
+            "title": {
+              "en": "What You Get",
+              "ar": "ما الذي ستحصل عليه"
+            },
+            "items": [
+              {
+                "id": "feature-expert",
+                "title": {
+                  "en": "Expert Instructors",
+                  "ar": "مدرّبون خبراء"
+                },
+                "description": {
+                  "en": "Learn from instructors with real, hands-on experience in their field.",
+                  "ar": "تعلّم من مدرّبين لديهم خبرة عملية حقيقية في مجالهم."
+                },
+                "icon": "GraduationCap"
+              },
+              {
+                "id": "feature-flexible",
+                "title": {
+                  "en": "Learn at Your Pace",
+                  "ar": "تعلّم بالسرعة التي تناسبك"
+                },
+                "description": {
+                  "en": "Access your courses anytime and move through the material on your own schedule.",
+                  "ar": "يمكنك الوصول إلى دوراتك في أي وقت والتقدّم في المحتوى وفق جدولك الخاص."
+                },
+                "icon": "Clock"
+              },
+              {
+                "id": "feature-community",
+                "title": {
+                  "en": "Supportive Community",
+                  "ar": "مجتمع داعم"
+                },
+                "description": {
+                  "en": "Join a community of learners working toward the same goals as you.",
+                  "ar": "انضم إلى مجتمع من المتعلمين يسعون لتحقيق نفس أهدافك."
+                },
+                "icon": "Users"
+              }
+            ]
+          }
+        },
+        {
+          "id": "fx-modern-education-item-20",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "instructors",
+          "config": {
+            "title": {
+              "en": "Meet Our Instructors",
+              "ar": "تعرّف على مدرّبينا"
+            },
+            "description": {
+              "en": "The people behind the courses.",
+              "ar": "الأشخاص وراء دوراتنا."
+            },
+            "count": 4
+          }
+        },
+        {
+          "id": "fx-modern-education-item-21",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "testimonials",
+          "config": {
+            "title": {
+              "en": "What Our Students Say",
+              "ar": "ماذا يقول طلابنا"
+            },
+            "items": []
+          }
+        },
+        {
+          "id": "fx-modern-education-item-22",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "cta",
+          "config": {
+            "title": {
+              "en": "Ready to Start Learning?",
+              "ar": "هل أنت مستعد لبدء التعلّم؟"
+            },
+            "description": {
+              "en": "Create your account and enroll in your first course today.",
+              "ar": "أنشئ حسابك وسجّل في أول دورة لك اليوم."
+            },
+            "cta": {
+              "label": {
+                "en": "Get Started",
+                "ar": "ابدأ الآن"
+              },
+              "authAction": "signUp"
+            }
+          }
+        }
+      ],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-modern-education-page-2",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "about",
+      "title": "About",
+      "slug": "about",
+      "visible": true,
+      "seo": {},
+      "sections": [
+        {
+          "id": "fx-modern-education-item-23",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "about",
+          "config": {
+            "title": {
+              "en": "About Horizon Academy",
+              "ar": "نبذة عن Horizon Academy"
+            },
+            "body": {
+              "en": "Welcome to Horizon Academy. We're dedicated to helping our students learn new skills, grow their expertise, and achieve their goals through high-quality courses and expert instruction.",
+              "ar": "مرحبًا بكم في Horizon Academy. نحن ملتزمون بمساعدة طلابنا على اكتساب مهارات جديدة وتطوير خبراتهم وتحقيق أهدافهم من خلال دورات عالية الجودة وتعليم احترافي."
+            }
+          }
+        }
+      ],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-modern-education-page-4",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "courses",
+      "title": "Courses",
+      "slug": "courses",
+      "visible": true,
+      "seo": {},
+      "sections": [
+        {
+          "id": "fx-modern-education-item-24",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "courseCatalog",
+          "config": {
+            "title": {
+              "en": "Our Courses",
+              "ar": "دوراتنا"
+            },
+            "description": {
+              "en": "Explore our full range of courses and find the right one for you.",
+              "ar": "استكشف مجموعتنا الكاملة من الدورات واختر الأنسب لك."
+            },
+            "pageSize": 12,
+            "defaultSort": "newest",
+            "showSearch": true,
+            "showLevelFilter": true,
+            "showPricingFilter": true,
+            "showSort": true
+          }
+        }
+      ],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-modern-education-page-6",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "faqs",
+      "title": "FAQs",
+      "slug": "faqs",
+      "visible": true,
+      "seo": {},
+      "sections": [
+        {
+          "id": "fx-modern-education-item-25",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "faq",
+          "config": {
+            "title": {
+              "en": "Frequently Asked Questions",
+              "ar": "الأسئلة الشائعة"
+            },
+            "items": [
+              {
+                "id": "faq-enroll",
+                "question": {
+                  "en": "How do I enroll in a course?",
+                  "ar": "كيف يمكنني التسجيل في دورة؟"
+                },
+                "answer": {
+                  "en": "Create an account, browse our course catalog, and click enroll on the course you'd like to join.",
+                  "ar": "أنشئ حسابًا، تصفّح كتالوج الدورات، ثم انقر على زر التسجيل في الدورة التي ترغب بالانضمام إليها."
+                }
+              },
+              {
+                "id": "faq-experience",
+                "question": {
+                  "en": "Do I need any prior experience?",
+                  "ar": "هل أحتاج إلى خبرة سابقة؟"
+                },
+                "answer": {
+                  "en": "Most of our courses are designed for learners of all levels — check each course's own description for specific requirements.",
+                  "ar": "معظم دوراتنا مصممة لمتعلمين من جميع المستويات، يرجى مراجعة وصف كل دورة للاطلاع على متطلباتها الخاصة."
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-modern-education-page-8",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "contact",
+      "title": "Contact",
+      "slug": "contact",
+      "visible": true,
+      "seo": {},
+      "sections": [
+        {
+          "id": "fx-modern-education-item-26",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "contact",
+          "config": {
+            "title": {
+              "en": "Get in Touch",
+              "ar": "تواصل معنا"
+            },
+            "description": {
+              "en": "Have a question? We'd love to hear from you.",
+              "ar": "هل لديك سؤال؟ يسعدنا التواصل معك."
+            },
+            "showForm": true
+          }
+        }
+      ],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-modern-education-page-27",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "courseDetails",
+      "title": "Course Details",
+      "slug": "course-details",
+      "visible": true,
+      "seo": {},
+      "sections": [],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    }
+  ]
+}

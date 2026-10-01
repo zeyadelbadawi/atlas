@@ -26,6 +26,9 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { WEBSITE_THEME_KEYS } from '@types';
+import type { WebsiteThemeKey } from '@types';
 import { I18nextProvider } from 'react-i18next';
 import { createI18nInstance } from '@/localization/i18n';
 import { WebsiteChrome } from './WebsiteChrome';
@@ -56,21 +59,26 @@ const CONFIGURATION: Pick<
 
 function renderChrome(
   children: React.ReactNode,
-  pages: readonly WebsitePage[] = []
+  pages: readonly WebsitePage[] = [],
+  themeKey?: WebsiteThemeKey
 ) {
   return render(
-    <I18nextProvider i18n={i18n}>
-      <MemoryRouter>
-        <WebsiteChrome
-          academyName="Elzozo Academy"
-          configuration={CONFIGURATION}
-          pages={pages}
-          onNavigate={() => undefined}
-        >
-          {children}
-        </WebsiteChrome>
-      </MemoryRouter>
-    </I18nextProvider>
+    <QueryClientProvider client={new QueryClient()}>
+      <I18nextProvider i18n={i18n}>
+        <MemoryRouter>
+          <WebsiteChrome
+            academyName="Elzozo Academy"
+            configuration={
+              themeKey ? { ...CONFIGURATION, themeKey } : CONFIGURATION
+            }
+            pages={pages}
+            onNavigate={() => undefined}
+          >
+            {children}
+          </WebsiteChrome>
+        </MemoryRouter>
+      </I18nextProvider>
+    </QueryClientProvider>
   );
 }
 
@@ -181,3 +189,24 @@ describe('WebsiteChrome — one footer', () => {
     expect(screen.getByTestId('atlas-platform-attribution')).toBeTruthy();
   });
 });
+
+/*
+ * Theme 1 plan Phase 4 — a theme may replace the footer, never the
+ * attribution: every theme's chrome still renders exactly one footer with
+ * the Atlas attribution as its last row.
+ */
+describe.each(WEBSITE_THEME_KEYS)(
+  'WebsiteChrome — %s keeps the attribution',
+  (themeKey) => {
+    it('renders one footer whose last row is the attribution', () => {
+      const { container } = renderChrome(<p>content</p>, [], themeKey);
+      const footers = container.querySelectorAll('footer');
+      expect(footers).toHaveLength(1);
+      const attribution = footers[0].querySelector(
+        '[data-testid="atlas-platform-attribution"]'
+      );
+      expect(attribution).not.toBeNull();
+      expect(footers[0].lastElementChild?.contains(attribution!)).toBe(true);
+    });
+  }
+);

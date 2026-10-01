@@ -19,14 +19,32 @@
  * it was outside `<BrowserRouter>` too, and nothing inside it uses a
  * router hook (verified before making this change), so its position is
  * unchanged rather than newly risky.
+ *
+ * SERVER RENDERING (public Academy website only,
+ * Reports/SSR_ARCHITECTURE_ANALYSIS.md). The browser router is created on
+ * first use rather than at import, so this module can be imported on the
+ * server, which passes a memory router over the SAME `appRoutes` and the
+ * request's location and snapshot. In the browser, with no props, this is
+ * exactly the tree it always was.
  */
 import {
   createBrowserRouter,
   RouterProvider,
   ScrollRestoration,
+  type RouteObject,
 } from 'react-router-dom';
+import type { DehydratedState, QueryClient } from '@tanstack/react-query';
+import {
+  HydrationSnapshotProvider,
+  RequestLocationProvider,
+  type HydrationSnapshot,
+  type RequestLocation,
+} from '@hooks';
+import type { LanguageCode } from '@types';
 import { AppProviders } from '@app/providers';
-import { AppRouter } from '@app/routes';
+// The module itself, not the `@app/routes` barrel (which re-exports the
+// dashboard's guards).
+import { AppRouter } from '@app/routes/AppRouter';
 import {
   NavigationBlockDialog,
   UnsavedChangesProvider,
@@ -66,12 +84,50 @@ function RootRoute(): JSX.Element {
   );
 }
 
-const router = createBrowserRouter([{ path: '*', element: <RootRoute /> }]);
+export const appRoutes: RouteObject[] = [{ path: '*', element: <RootRoute /> }];
 
-export default function App(): JSX.Element {
+type AppRouterInstance = ReturnType<typeof createBrowserRouter>;
+
+let browserRouter: AppRouterInstance | undefined;
+
+function getBrowserRouter(): AppRouterInstance {
+  browserRouter ??= createBrowserRouter(appRoutes);
+  return browserRouter;
+}
+
+export interface AppProps {
+  /** Server only: a memory router over `appRoutes` at the request's URL. */
+  readonly router?: AppRouterInstance;
+  /** Server only: the request's host, origin and query. */
+  readonly requestLocation?: RequestLocation;
+  /** What the page was server-rendered with (server, and the browser while it hydrates). */
+  readonly hydrationSnapshot?: HydrationSnapshot | null;
+  readonly initialLanguage?: LanguageCode;
+  readonly queryClient?: QueryClient;
+  readonly dehydratedState?: DehydratedState;
+}
+
+export default function App({
+  router,
+  requestLocation,
+  hydrationSnapshot = null,
+  initialLanguage,
+  queryClient,
+  dehydratedState,
+}: AppProps = {}): JSX.Element {
+  // The same wrappers on the server and in the browser, so the two trees
+  // match exactly when a server-rendered page hydrates.
   return (
-    <AppProviders>
-      <RouterProvider router={router} />
-    </AppProviders>
+    <RequestLocationProvider value={requestLocation ?? null}>
+      <HydrationSnapshotProvider value={hydrationSnapshot}>
+        <AppProviders
+          initialLanguage={initialLanguage}
+          queryClient={queryClient}
+          dehydratedState={dehydratedState}
+        >
+          <RouterProvider router={router ?? getBrowserRouter()} />
+        </AppProviders>
+      </HydrationSnapshotProvider>
+    </RequestLocationProvider>
   );
 }

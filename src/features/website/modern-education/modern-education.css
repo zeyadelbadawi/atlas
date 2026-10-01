@@ -1,0 +1,749 @@
+/*
+ * Theme 1 — Modern Education: the visual system (plan §B, §G).
+ *
+ * Scoped to `[data-theme-pack='modern-education']` on the theme scope, so
+ * nothing here can reach Themes 2–5 or the dashboard. Colours are never
+ * declared here: they come from the brand mapping (§F.5) as
+ * `--website-*` variables. This file holds only the theme's invariants —
+ * type scale, rhythm, radius, elevation, motion — which stay identical
+ * for every brand (§B "brand expression").
+ */
+
+.website-theme-scope[data-theme-pack='modern-education'] {
+  /* Type scale (§B): display 64/56/40, section titles 40/32/28, lead 18/17. */
+  --t1-display: 2.5rem;
+  --t1-title: 1.75rem;
+  --t1-lead: 1.0625rem;
+  --t1-measure: 65ch;
+
+  /* Vertical rhythm 96/80/64 (§B). */
+  --t1-rhythm: 4rem;
+
+  /* Shape and elevation (§B: cards 20px, hairline border, lift on hover). */
+  --t1-radius-card: 20px;
+  --t1-radius-control: 12px;
+  --t1-radius-pill: 999px;
+  --t1-shadow-rest: 0 1px 2px hsl(220 30% 12% / 0.05);
+  --t1-shadow-lift: 0 18px 40px -18px hsl(220 30% 12% / 0.28);
+  --t1-shadow-header: 0 6px 20px -12px hsl(220 30% 12% / 0.22);
+
+  /* Chrome. */
+  --t1-header-height: 4rem;
+
+  /* Motion (§G): Atlas motion tokens. */
+  --t1-duration: var(--duration-normal, 220ms);
+  --t1-ease: var(--ease-entrance, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+@media (min-width: 768px) {
+  .website-theme-scope[data-theme-pack='modern-education'] {
+    --t1-display: 3.5rem;
+    --t1-title: 2rem;
+    --t1-lead: 1.125rem;
+    --t1-rhythm: 5rem;
+    --t1-header-height: 4.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .website-theme-scope[data-theme-pack='modern-education'] {
+    --t1-display: 4rem;
+    --t1-title: 2.5rem;
+    --t1-rhythm: 6rem;
+  }
+}
+
+/* The header: transparent at the top, solid once the page scrolls (§G). */
+.t1-header {
+  background-color: transparent;
+  border-bottom: 1px solid transparent;
+  transition:
+    background-color var(--t1-duration) var(--t1-ease),
+    border-color var(--t1-duration) var(--t1-ease),
+    box-shadow var(--t1-duration) var(--t1-ease);
+}
+.t1-header[data-solid='true'] {
+  background-color: var(--website-background);
+  border-bottom-color: var(--website-border);
+  box-shadow: var(--t1-shadow-header);
+}
+
+/* Nav links: an underline that grows from the logical start (§G). */
+.t1-nav-link {
+  position: relative;
+  padding-block: 0.5rem;
+}
+.t1-nav-link::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-end: 0.125rem;
+  inline-size: 100%;
+  block-size: 2px;
+  border-radius: 2px;
+  background-color: var(--website-link);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--t1-duration) var(--t1-ease);
+}
+[dir='rtl'] .t1-nav-link::after {
+  transform-origin: right center;
+}
+.t1-nav-link:hover::after,
+.t1-nav-link:focus-visible::after,
+.t1-nav-link[aria-current='page']::after {
+  transform: scaleX(1);
+}
+
+/* The primary action — the only place the CTA fill appears in the chrome. */
+.t1-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-block-size: 2.75rem;
+  padding-inline: 1.25rem;
+  border-radius: var(--t1-radius-control);
+  border: 1px solid var(--website-cta-border);
+  background-color: var(--website-cta);
+  color: var(--website-cta-foreground);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  white-space: nowrap;
+  transition: background-color var(--t1-duration) var(--t1-ease);
+}
+.t1-cta:hover {
+  background-color: var(--website-cta-hover);
+}
+.t1-cta:active {
+  background-color: var(--website-cta-pressed);
+}
+
+/* Every focusable element in the chrome shows the brand focus ring. */
+.t1-focus:focus-visible,
+.t1-cta:focus-visible,
+.t1-nav-link:focus-visible {
+  outline: 2px solid var(--website-focus);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Footer links: underline on hover and focus (a non-colour cue, §F.4.4). */
+.t1-footer-link {
+  color: var(--website-foreground-muted);
+  text-underline-offset: 3px;
+}
+.t1-footer-link:hover,
+.t1-footer-link:focus-visible {
+  color: var(--website-foreground);
+  text-decoration: underline;
+}
+
+/* ------------------------------------------------------------------ */
+/* Sections (Phase 5): rhythm, tones, type, actions, cards, media.      */
+/* ------------------------------------------------------------------ */
+
+.t1-section {
+  padding-block: var(--t1-rhythm);
+}
+.t1-section[data-tone='soft'] {
+  background-color: var(--website-surface);
+}
+/* Two sections of the same tone in a row share one gap, not two. */
+.t1-section[data-tone='default'] + .t1-section[data-tone='default'],
+.t1-section[data-tone='soft'] + .t1-section[data-tone='soft'] {
+  padding-block-start: 0;
+}
+
+.t1-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  color: var(--website-link);
+}
+/* The accent dot: one of the brand's slots (§B). */
+.t1-eyebrow::before {
+  content: '';
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: 999px;
+  background-color: var(--website-highlight);
+  flex-shrink: 0;
+}
+
+.t1-display {
+  font-size: var(--t1-display);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--website-foreground);
+}
+.t1-title {
+  font-size: var(--t1-title);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--website-foreground);
+}
+/* Arabic script needs more leading and no negative tracking. */
+[dir='rtl'] .t1-display,
+[dir='rtl'] .t1-title {
+  line-height: 1.35;
+  letter-spacing: 0;
+}
+.t1-lead {
+  font-size: var(--t1-lead);
+  line-height: 1.65;
+  color: var(--website-foreground-muted);
+  max-inline-size: var(--t1-measure);
+}
+
+/* The highlight stroke under one heading phrase (§B slot): a background,
+   so the words never change colour or position. */
+.website-theme-scope[data-theme-pack='modern-education'] .website-highlight {
+  /* A translucent marker behind the lower part of the words: it never
+     cuts through descenders and never lowers the text's contrast. */
+  background-image: linear-gradient(
+    color-mix(in srgb, var(--website-highlight) 32%, transparent),
+    color-mix(in srgb, var(--website-highlight) 32%, transparent)
+  );
+  background-repeat: no-repeat;
+  background-size: 100% 0.34em;
+  background-position: 0 88%;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.t1-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-block-size: 2.75rem;
+  padding-inline: 1.25rem;
+  border-radius: var(--t1-radius-control);
+  border: 1px solid var(--website-input-border);
+  background-color: var(--website-background);
+  color: var(--website-foreground);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  white-space: nowrap;
+  transition:
+    background-color var(--t1-duration) var(--t1-ease),
+    border-color var(--t1-duration) var(--t1-ease);
+}
+.t1-btn-secondary:hover {
+  background-color: var(--website-surface);
+}
+.t1-btn-secondary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.t1-btn-lg {
+  min-block-size: 3.25rem;
+  padding-inline: 1.625rem;
+  font-size: 1rem;
+}
+.t1-btn-secondary:focus-visible,
+.t1-link:focus-visible,
+.t1-card-link:focus-visible,
+.t1-input:focus-visible {
+  outline: 2px solid var(--website-focus);
+  outline-offset: 3px;
+}
+
+/* The arrow inside an action nudges toward the reading direction. */
+.t1-arrow {
+  transition: transform var(--t1-duration) var(--t1-ease);
+}
+[dir='rtl'] .t1-arrow {
+  transform: scaleX(-1);
+}
+.t1-cta:hover .t1-arrow,
+.t1-ink-cta:hover .t1-arrow,
+.t1-link:hover .t1-arrow {
+  transform: translateX(3px);
+}
+[dir='rtl'] .t1-cta:hover .t1-arrow,
+[dir='rtl'] .t1-ink-cta:hover .t1-arrow,
+[dir='rtl'] .t1-link:hover .t1-arrow {
+  transform: scaleX(-1) translateX(3px);
+}
+
+/* A text action ("View all courses"). */
+.t1-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-block-size: 2.75rem;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--website-link);
+  text-underline-offset: 4px;
+  border-radius: 6px;
+}
+.t1-link:hover {
+  text-decoration: underline;
+}
+
+/* Cards: 20px radius, hairline border, lift on hover (§B, §G). */
+.t1-card {
+  /* A containing block, so visually hidden labels inside a card stay
+     inside a scrolling rail instead of widening the page. */
+  position: relative;
+  border: 1px solid var(--website-border);
+  border-radius: var(--t1-radius-card);
+  background-color: var(--website-background);
+  box-shadow: var(--t1-shadow-rest);
+}
+.t1-card-link {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  border-radius: var(--t1-radius-card);
+  transition:
+    transform var(--t1-duration) var(--t1-ease),
+    box-shadow var(--t1-duration) var(--t1-ease);
+}
+.t1-card-link:hover,
+.t1-card-link:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: var(--t1-shadow-lift);
+}
+.t1-card-media {
+  overflow: hidden;
+}
+.t1-card-media img {
+  transition: transform 400ms var(--t1-ease);
+}
+.t1-card-link:hover .t1-card-media img {
+  transform: scale(1.03);
+}
+
+/* The icon tile (§B slot). */
+.t1-icon-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  inline-size: 3rem;
+  block-size: 3rem;
+  border-radius: 14px;
+  background-color: var(--website-icon-tile);
+  color: var(--website-icon-fg);
+}
+
+/* Numbered markers (steps, benefits). */
+.t1-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  border-radius: 999px;
+  background-color: var(--website-background);
+  border: 1px solid var(--website-border);
+  color: var(--website-link);
+  font-weight: 700;
+  box-shadow: var(--t1-shadow-rest);
+}
+
+/* Media frames: a fixed ratio with the image covering it. */
+.t1-media {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--t1-radius-card);
+  background-color: var(--website-surface-muted);
+}
+.t1-media picture,
+.t1-media img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+/* The neutral block standing in for an unreleased theme photograph
+   (§E.6). Neutral by design: no brand colour and no fake content. */
+.t1-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--website-surface-muted);
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0 14px,
+    hsl(220 14% 50% / 0.07) 14px 15px
+  );
+  color: var(--website-foreground-muted);
+}
+.t1-placeholder-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
+  background-color: var(--website-background);
+  border: 1px solid var(--website-border);
+}
+.t1-ink .t1-media {
+  background-color: hsl(0 0% 100% / 0.06);
+}
+.t1-ink .t1-placeholder {
+  background-color: hsl(0 0% 100% / 0.06);
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0 14px,
+    hsl(0 0% 100% / 0.06) 14px 15px
+  );
+  color: var(--website-ink-muted);
+}
+.t1-ink .t1-placeholder-label {
+  background-color: var(--website-ink);
+  border-color: hsl(0 0% 100% / 0.2);
+}
+
+/* The brand shape behind imagery (§E.2 B). */
+.t1-shape {
+  position: absolute;
+  pointer-events: none;
+  color: var(--website-shape);
+}
+
+/* Inputs inside Theme 1 sections. */
+.t1-input {
+  inline-size: 100%;
+  min-block-size: 3.25rem;
+  border-radius: var(--t1-radius-control);
+  border: 1px solid var(--website-input-border);
+  background-color: var(--website-background);
+  color: var(--website-foreground);
+  padding-inline: 1rem;
+  font-size: 1rem;
+}
+.t1-input::placeholder {
+  color: var(--website-foreground-muted);
+  opacity: 1;
+}
+.t1-input:focus-visible {
+  outline-offset: 1px;
+}
+
+/* A horizontal rail on phones (cards that scroll sideways). */
+.t1-rail {
+  position: relative;
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  margin-inline: -1rem;
+  padding-inline: 1rem;
+  padding-block: 0.25rem 0.75rem;
+  scroll-padding-inline: 1rem;
+}
+.t1-rail::-webkit-scrollbar {
+  display: none;
+}
+.t1-rail > * {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+@media (min-width: 640px) {
+  .t1-rail {
+    display: grid;
+    overflow: visible;
+    margin-inline: 0;
+    padding-inline: 0;
+    padding-block: 0;
+    gap: 1.5rem;
+  }
+  .t1-rail > * {
+    inline-size: auto;
+  }
+}
+
+/* The steps connector (§E.2 B `steps-connector`): a line from each
+   number to the next — vertical on phones (grid gap 2rem), horizontal from
+   tablets up (grid gap 1.5rem). Logical properties, so it follows RTL. */
+.t1-step {
+  position: relative;
+}
+.t1-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  background-color: var(--website-input-border);
+  inset-inline-start: calc(1.25rem - 1px);
+  inset-block-start: 2.75rem;
+  inline-size: 2px;
+  block-size: calc(100% + 2rem - 3rem);
+}
+@media (min-width: 768px) {
+  .t1-step:not(:last-child)::after {
+    inset-inline-start: 2.75rem;
+    inset-block-start: calc(1.25rem - 1px);
+    inline-size: calc(100% + 1.5rem - 3rem);
+    block-size: 2px;
+  }
+}
+
+/* The ink band (§B): the final CTA, with the brand glow. */
+.t1-ink {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: var(--website-ink);
+  color: var(--website-ink-foreground);
+}
+.t1-ink::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(
+      55% 75% at 88% 8%,
+      var(--website-ink-glow),
+      transparent 70%
+    ),
+    radial-gradient(
+      40% 60% at 6% 100%,
+      var(--website-ink-glow-detail),
+      transparent 70%
+    );
+}
+[dir='rtl'] .t1-ink::before {
+  transform: scaleX(-1);
+}
+.t1-ink-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-block-size: 3.25rem;
+  padding-inline: 1.625rem;
+  border-radius: var(--t1-radius-control);
+  background-color: var(--website-ink-cta);
+  color: var(--website-ink-cta-foreground);
+  font-weight: 600;
+  white-space: nowrap;
+  transition: filter var(--t1-duration) var(--t1-ease);
+}
+.t1-ink-cta:hover {
+  filter: brightness(0.94);
+}
+.t1-ink-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 3.25rem;
+  padding-inline: 1.5rem;
+  border-radius: var(--t1-radius-control);
+  border: 1px solid hsl(0 0% 100% / 0.45);
+  color: var(--website-ink-foreground);
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color var(--t1-duration) var(--t1-ease);
+}
+.t1-ink-secondary:hover {
+  background-color: hsl(0 0% 100% / 0.1);
+}
+.t1-ink-cta:focus-visible,
+.t1-ink-secondary:focus-visible {
+  outline: 2px solid var(--website-ink-foreground);
+  outline-offset: 3px;
+}
+
+/* Carousel dots and accordion triggers: the brand focus ring. */
+.t1-focus-rail:focus-visible,
+.t1-focus-dot:focus-visible,
+.t1-faq-trigger:focus-visible {
+  outline: 2px solid var(--website-focus);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Catalog filters (§C.2): chips that toggle, native selects styled as
+   inputs (a chevron at the logical end), and a sideways rail on phones. */
+.t1-chip-rail {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-block: 0.25rem;
+}
+.t1-chip-rail::-webkit-scrollbar {
+  display: none;
+}
+.t1-chip-rail > * {
+  flex-shrink: 0;
+}
+.t1-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-block-size: 2.5rem;
+  padding-inline: 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--website-input-border);
+  background-color: var(--website-background);
+  color: var(--website-foreground);
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    background-color var(--t1-duration) var(--t1-ease),
+    border-color var(--t1-duration) var(--t1-ease);
+}
+.t1-filter-chip:hover {
+  background-color: var(--website-surface);
+}
+.t1-filter-chip[aria-pressed='true'] {
+  background-color: var(--website-chip-bg);
+  border-color: transparent;
+  color: var(--website-chip-fg);
+}
+.t1-filter-chip:focus-visible {
+  outline: 2px solid var(--website-focus);
+  outline-offset: 2px;
+}
+.t1-filter-chip-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: 1.5rem;
+  block-size: 1.5rem;
+  padding-inline: 0.375rem;
+  border-radius: 999px;
+  background-color: var(--website-surface-muted);
+  color: var(--website-foreground);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.t1-select {
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-size:
+    5px 5px,
+    5px 5px;
+  background-position:
+    calc(100% - 1.125rem) 55%,
+    calc(100% - 0.8125rem) 55%;
+  background-repeat: no-repeat;
+}
+[dir='rtl'] .t1-select {
+  background-position:
+    0.8125rem 55%,
+    1.125rem 55%;
+}
+
+/* The five-image gallery bento (§C.3). Phones: the large tile (4:3), the
+   three squares in one row, then the wide tile (4:3). Tablet and up: a
+   three-column grid with fixed row heights — large 2 × 2 at the top start,
+   wide 2 × 1 below it, the squares down the end column. Cells fill their
+   grid area; the image covers it. */
+.t1-bento {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.t1-bento > li:nth-child(1),
+.t1-bento > li:nth-child(2) {
+  grid-column: 1 / -1;
+  aspect-ratio: 4 / 3;
+}
+.t1-bento > li:nth-child(n + 3) {
+  aspect-ratio: 1;
+}
+.t1-bento > li:nth-child(2) {
+  order: 1;
+}
+@media (min-width: 768px) {
+  .t1-bento {
+    grid-template-rows: repeat(3, clamp(10rem, 17vw, 16rem));
+  }
+  .t1-bento > li:nth-child(n) {
+    aspect-ratio: auto;
+    order: 0;
+  }
+  .t1-bento > li:nth-child(1) {
+    grid-column: 1 / span 2;
+    grid-row: 1 / span 2;
+  }
+  .t1-bento > li:nth-child(2) {
+    grid-column: 1 / span 2;
+    grid-row: 3;
+  }
+  .t1-bento > li:nth-child(n + 3) {
+    grid-column: 3;
+  }
+}
+
+/* The About hero (§C.0): the soft band ends behind the photograph, which
+   straddles the edge into the page — the transition into the Story. */
+.t1-hero-editorial {
+  background: linear-gradient(
+    to bottom,
+    var(--website-surface) 0,
+    var(--website-surface) calc(100% - clamp(4rem, 12vw, 10rem)),
+    var(--website-background) calc(100% - clamp(4rem, 12vw, 10rem))
+  );
+}
+/* Its title reads one step larger than a section display on wide screens. */
+@media (min-width: 1280px) {
+  .t1-display-xl {
+    font-size: 4.5rem;
+  }
+}
+
+/* The hero's one orchestrated entrance (§G): supporting elements rise
+   12px and fade in with a 60ms stagger, the image 150ms after the text.
+   The headline (the LCP element) is never animated. */
+@keyframes t1-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+@keyframes t1-fade {
+  from {
+    opacity: 0;
+  }
+}
+.t1-enter {
+  animation: t1-rise 520ms var(--t1-ease) both;
+  animation-delay: calc(var(--t1-enter-index, 0) * 60ms);
+}
+.t1-enter-media {
+  animation: t1-fade 600ms var(--t1-ease) both;
+  animation-delay: 390ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t1-header,
+  .t1-nav-link::after,
+  .t1-cta,
+  .t1-btn-secondary,
+  .t1-arrow,
+  .t1-card-link,
+  .t1-card-media img,
+  .t1-ink-cta,
+  .t1-ink-secondary,
+  .t1-filter-chip {
+    transition: none;
+  }
+  .t1-card-link:hover,
+  .t1-card-link:focus-visible,
+  .t1-card-link:hover .t1-card-media img {
+    transform: none;
+  }
+  .t1-enter,
+  .t1-enter-media {
+    animation: none;
+  }
+}

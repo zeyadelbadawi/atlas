@@ -12,6 +12,10 @@
  */
 import {
   Award,
+  Columns2,
+  Heading1,
+  ListOrdered,
+  Shapes,
   Contact as ContactIcon,
   Grid3x3,
   HelpCircle,
@@ -28,6 +32,7 @@ import type { SectionConfigMap, SectionType } from '@types';
 import { EMPTY_LOCALIZED_TEXT } from '../utils/localized-text.utils';
 import {
   DEFAULT_COURSE_CATALOG_PAGE_SIZE,
+  DEFAULT_COURSE_CATEGORIES_COUNT,
   DEFAULT_FEATURED_COURSES_COUNT,
   DEFAULT_INSTRUCTORS_COUNT,
 } from '../constants/website.constants';
@@ -95,6 +100,26 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadataEntry> = {
     labelKey: 'website:sections.courseCatalog.label',
     icon: LibraryBig,
   },
+  pageHeader: {
+    type: 'pageHeader',
+    labelKey: 'website:sections.pageHeader.label',
+    icon: Heading1,
+  },
+  courseCategories: {
+    type: 'courseCategories',
+    labelKey: 'website:sections.courseCategories.label',
+    icon: Shapes,
+  },
+  steps: {
+    type: 'steps',
+    labelKey: 'website:sections.steps.label',
+    icon: ListOrdered,
+  },
+  featureSplit: {
+    type: 'featureSplit',
+    labelKey: 'website:sections.featureSplit.label',
+    icon: Columns2,
+  },
 };
 
 /** Every registered section type's metadata, in the Page Composer's "Add section" display order. */
@@ -135,6 +160,17 @@ export function getDefaultSectionConfig<TType extends SectionType>(
       showLevelFilter: true,
       showPricingFilter: true,
       showSort: true,
+    },
+    pageHeader: { title: EMPTY_LOCALIZED_TEXT },
+    courseCategories: {
+      maxItems: DEFAULT_COURSE_CATEGORIES_COUNT,
+      showCounts: true,
+    },
+    steps: { items: [] },
+    featureSplit: {
+      title: EMPTY_LOCALIZED_TEXT,
+      imagePosition: 'start',
+      items: [],
     },
   };
 

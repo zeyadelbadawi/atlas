@@ -18,10 +18,16 @@
 import { z } from 'zod';
 import {
   FEATURE_ICON_OPTIONS,
+  MAX_CHIP_TEXT,
   MAX_COURSE_CATALOG_PAGE_SIZE,
+  MAX_FEATURE_SPLIT_ITEMS,
+  MAX_HERO_HIGHLIGHTS,
   MAX_SECTION_ITEMS,
+  MAX_SECTION_STEPS,
   MIN_COURSE_CATALOG_PAGE_SIZE,
+  MIN_COURSE_CATEGORIES,
 } from '../constants/website.constants';
+import { isAllowedImageValue } from '../utils/image-value.utils';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
 import { COURSE_CATALOG_SORT_VALUES, type SectionType } from '@types';
 
@@ -69,21 +75,34 @@ const websiteCtaSchema = z.object({
     .or(z.literal('')),
 });
 
+/** Any image field — see `image-value.utils.ts`. */
+const imageValueSchema = z
+  .string()
+  .refine(isAllowedImageValue, { message: 'validation:invalidImage' });
+
+const heroHighlightSchema = z.object({
+  id: z.string(),
+  label: localizedRequired(MAX_CHIP_TEXT),
+});
+
 export const heroSectionSchema = z.object({
   eyebrow: localizedOptional(MAX_SHORT_TEXT).optional(),
   title: localizedRequired(MAX_SHORT_TEXT),
   subtitle: localizedOptional(MAX_SHORT_TEXT).optional(),
   description: localizedOptional(MAX_LONG_TEXT).optional(),
-  image: z.string().optional(),
+  image: imageValueSchema.optional(),
   imageAlt: localizedOptional(MAX_SHORT_TEXT).optional(),
   cta: websiteCtaSchema.optional(),
   secondaryCta: websiteCtaSchema.optional(),
+  highlight: localizedOptional(MAX_SHORT_TEXT).optional(),
+  highlights: z.array(heroHighlightSchema).max(MAX_HERO_HIGHLIGHTS).optional(),
+  showSearch: z.boolean().optional(),
 });
 
 export const aboutSectionSchema = z.object({
   title: localizedRequired(MAX_SHORT_TEXT),
   body: localizedRequired(MAX_LONG_TEXT),
-  image: z.string().optional(),
+  image: imageValueSchema.optional(),
   imageAlt: localizedOptional(MAX_SHORT_TEXT).optional(),
 });
 
@@ -98,20 +117,28 @@ export const featuredCoursesSectionSchema = z.object({
   showInstructor: z.boolean(),
 });
 
-const statisticItemSchema = z.object({
-  id: z.string(),
-  // Phase 6 — the form's `metric` select uses `'none'` as its "no live
-  // data" option (Radix `Select` rejects an empty-string item value); this
-  // preprocess step is the one place that sentinel is translated back to
-  // `undefined` before anything is persisted, matching the "validate at
-  // the boundary" rule this schema file already follows.
-  metric: z.preprocess(
-    (value) => (value === 'none' || value === '' ? undefined : value),
-    z.enum(['courses', 'students', 'instructors']).optional()
-  ),
-  value: localizedRequired(20),
-  label: localizedRequired(MAX_SHORT_TEXT),
-});
+const statisticItemSchema = z
+  .object({
+    id: z.string(),
+    // Phase 6 — the form's `metric` select uses `'none'` as its "no live
+    // data" option (Radix `Select` rejects an empty-string item value); this
+    // preprocess step is the one place that sentinel is translated back to
+    // `undefined` before anything is persisted, matching the "validate at
+    // the boundary" rule this schema file already follows.
+    metric: z.preprocess(
+      (value) => (value === 'none' || value === '' ? undefined : value),
+      z.enum(['courses', 'students', 'instructors']).optional()
+    ),
+    // Theme 1 plan §D.4 — a live item (`metric` set) needs no authored
+    // number, so starter content carries none; without `metric` the value
+    // is the item and stays required.
+    value: localizedOptional(20),
+    label: localizedRequired(MAX_SHORT_TEXT),
+  })
+  .refine((item) => !!item.metric || item.value.en.trim().length > 0, {
+    message: 'validation:required',
+    path: ['value', 'en'],
+  });
 
 export const statisticsSectionSchema = z.object({
   title: localizedOptional(MAX_SHORT_TEXT).optional(),
@@ -129,6 +156,7 @@ export const featuresSectionSchema = z.object({
   title: localizedOptional(MAX_SHORT_TEXT).optional(),
   description: localizedOptional(MAX_LONG_TEXT).optional(),
   items: z.array(featureItemSchema).max(MAX_SECTION_ITEMS),
+  layout: z.enum(['cards', 'strip']).optional(),
 });
 
 const testimonialItemSchema = z.object({
@@ -139,8 +167,10 @@ const testimonialItemSchema = z.object({
     .min(1, 'validation:required')
     .max(MAX_SHORT_TEXT, 'validation:maxLength'),
   authorRole: localizedOptional(MAX_SHORT_TEXT).optional(),
-  avatar: z.string().optional(),
+  avatar: imageValueSchema.optional(),
   avatarAlt: localizedOptional(MAX_SHORT_TEXT).optional(),
+  rating: z.number().int().min(1).max(5).optional(),
+  sample: z.boolean().optional(),
 });
 
 export const testimonialsSectionSchema = z.object({
@@ -161,12 +191,17 @@ export const faqSectionSchema = z.object({
   items: z.array(faqItemSchema).max(MAX_SECTION_ITEMS),
   /** References into the Prompt 10 FAQ content library — see `FaqSectionConfig.libraryEntryIds`'s doc comment. */
   libraryEntryIds: z.array(z.string()).max(MAX_SECTION_ITEMS).optional(),
+  maxItems: z.number().int().min(1).max(MAX_SECTION_ITEMS).optional(),
+  cta: websiteCtaSchema.optional(),
 });
 
 export const ctaSectionSchema = z.object({
   title: localizedRequired(MAX_SHORT_TEXT),
   description: localizedOptional(MAX_LONG_TEXT).optional(),
   cta: websiteCtaSchema,
+  secondaryCta: websiteCtaSchema.optional(),
+  image: imageValueSchema.optional(),
+  imageAlt: localizedOptional(MAX_SHORT_TEXT).optional(),
 });
 
 export const instructorsSectionSchema = z.object({
@@ -177,7 +212,7 @@ export const instructorsSectionSchema = z.object({
 
 const galleryImageSchema = z.object({
   id: z.string(),
-  image: z.string().min(1, 'validation:required'),
+  image: imageValueSchema.pipe(z.string().min(1, 'validation:required')),
   caption: localizedOptional(MAX_SHORT_TEXT).optional(),
   imageAlt: localizedOptional(MAX_SHORT_TEXT).optional(),
 });
@@ -216,6 +251,51 @@ export const courseCatalogSectionSchema = z.object({
   showSort: z.boolean(),
 });
 
+export const pageHeaderSectionSchema = z.object({
+  eyebrow: localizedOptional(MAX_SHORT_TEXT).optional(),
+  title: localizedRequired(MAX_SHORT_TEXT),
+  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  image: imageValueSchema.optional(),
+  imageAlt: localizedOptional(MAX_SHORT_TEXT).optional(),
+  search: z.enum(['none', 'courses', 'faq']).optional(),
+});
+
+export const courseCategoriesSectionSchema = z.object({
+  title: localizedOptional(MAX_SHORT_TEXT).optional(),
+  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  maxItems: z.number().int().min(MIN_COURSE_CATEGORIES).max(MAX_SECTION_ITEMS),
+  showCounts: z.boolean(),
+});
+
+const stepItemSchema = z.object({
+  id: z.string(),
+  title: localizedRequired(MAX_SHORT_TEXT),
+  description: localizedOptional(MAX_LONG_TEXT).optional(),
+});
+
+export const stepsSectionSchema = z.object({
+  title: localizedOptional(MAX_SHORT_TEXT).optional(),
+  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  items: z.array(stepItemSchema).max(MAX_SECTION_STEPS),
+});
+
+const featureSplitItemSchema = z.object({
+  id: z.string(),
+  title: localizedRequired(MAX_SHORT_TEXT),
+  description: localizedOptional(MAX_LONG_TEXT).optional(),
+});
+
+export const featureSplitSectionSchema = z.object({
+  eyebrow: localizedOptional(MAX_SHORT_TEXT).optional(),
+  title: localizedRequired(MAX_SHORT_TEXT),
+  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  image: imageValueSchema.optional(),
+  imageAlt: localizedOptional(MAX_SHORT_TEXT).optional(),
+  imagePosition: z.enum(['start', 'end']),
+  items: z.array(featureSplitItemSchema).max(MAX_FEATURE_SPLIT_ITEMS),
+  cta: websiteCtaSchema.optional(),
+});
+
 const SECTION_SCHEMAS = {
   hero: heroSectionSchema,
   about: aboutSectionSchema,
@@ -229,6 +309,10 @@ const SECTION_SCHEMAS = {
   gallery: gallerySectionSchema,
   contact: contactSectionSchema,
   courseCatalog: courseCatalogSectionSchema,
+  pageHeader: pageHeaderSectionSchema,
+  courseCategories: courseCategoriesSectionSchema,
+  steps: stepsSectionSchema,
+  featureSplit: featureSplitSectionSchema,
 } satisfies Record<SectionType, z.ZodTypeAny>;
 
 /** Resolves the right Zod schema for a section type. The Section Editor's ONE dynamic-form entry point — no section's validation is ever hand-rolled inline in a component. */

@@ -11,6 +11,11 @@ import { useTranslation } from 'react-i18next';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useWebsiteDesignSystem } from '../renderer/WebsiteDesignSystemContext';
+import {
+  ThemeImage,
+  hasRenderableImage,
+  resolveImageUrl,
+} from '../theme-assets';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import {
   useWebsiteContainerClass,
@@ -111,6 +116,10 @@ export function HeroSection({
   const title = resolveLocalizedText(config.title, locale);
   const description = resolveLocalizedText(config.description, locale);
   const imageAlt = resolveLocalizedText(config.imageAlt, locale);
+  // A pending theme asset draws nothing, so it must not switch the layout
+  // to its with-image variant (the text would turn white on no picture).
+  const hasImage = hasRenderableImage(config.image);
+  const backgroundUrl = resolveImageUrl(config.image);
 
   if (design.heroVariant === 'split') {
     return (
@@ -148,12 +157,13 @@ export function HeroSection({
           className="aspect-[4/3] w-full bg-[var(--website-primary-surface)]"
           style={{ borderRadius: 'var(--website-radius)' }}
         >
-          {config.image ? (
-            <img
-              src={config.image}
+          {hasImage ? (
+            <ThemeImage
+              value={config.image}
               alt={imageAlt}
               className="size-full object-cover"
               style={{ borderRadius: 'var(--website-radius)' }}
+              sizes="(min-width: 1024px) 50vw, 100vw"
             />
           ) : null}
         </div>
@@ -176,20 +186,20 @@ export function HeroSection({
         // background image; it no longer paints the whole band.
         className="relative flex min-h-[18rem] items-end overflow-hidden bg-[var(--website-surface)] py-16 sm:min-h-[22rem] lg:min-h-[28rem]"
         style={
-          config.image
+          backgroundUrl
             ? {
-                backgroundImage: `url(${config.image})`,
+                backgroundImage: `url(${backgroundUrl})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }
             : undefined
         }
       >
-        {config.image ? (
+        {backgroundUrl ? (
           <div className="absolute inset-0 bg-black/45" aria-hidden />
         ) : null}
         <div
-          className={`${container} relative space-y-5 ${config.image ? 'text-white' : 'text-foreground'}`}
+          className={`${container} relative space-y-5 ${backgroundUrl ? 'text-white' : 'text-foreground'}`}
         >
           {eyebrow ? (
             <p className="text-sm font-semibold uppercase tracking-wide opacity-90">

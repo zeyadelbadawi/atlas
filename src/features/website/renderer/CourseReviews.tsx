@@ -45,10 +45,13 @@ export function CourseReviews({
     return null;
   }
 
+  // UTC, so the date is the same wherever the page is rendered (the
+  // server or the visitor's browser) — reviews carry a UTC timestamp.
   const dateFmt = new Intl.DateTimeFormat(locale === 'ar' ? 'ar' : 'en', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
+    timeZone: 'UTC',
   });
   const maxCount = Math.max(
     1,

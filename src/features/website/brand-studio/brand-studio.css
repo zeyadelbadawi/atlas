@@ -1,0 +1,21 @@
+/*
+ * Brand Studio live preview (Theme 1 plan §G "Brand Studio preview"): a
+ * palette change cross-fades the preview's colours over 180 ms — colour
+ * properties only — and swaps instantly under reduced motion.
+ */
+.brand-studio-preview *,
+.brand-studio-preview *::before,
+.brand-studio-preview *::after {
+  transition-property:
+    color, background-color, border-color, fill, stroke, outline-color;
+  transition-duration: 180ms;
+  transition-timing-function: ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-studio-preview *,
+  .brand-studio-preview *::before,
+  .brand-studio-preview *::after {
+    transition: none;
+  }
+}

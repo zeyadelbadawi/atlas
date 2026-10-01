@@ -50,8 +50,19 @@ function ensureBuildOutDir() {
 }
 
 // https://vitejs.dev/config/
-export default defineConfig(({ command }) => {
-  const blogPrerenderRoutes = command === 'build' ? getBlogRoutes() : [];
+export default defineConfig(({ command, mode, isSsrBuild }) => {
+  // The server renderer's bundle (`--ssr src/ssr/entry-server.tsx`,
+  // Reports/SSR_ARCHITECTURE_ANALYSIS.md): its own output folder, and none
+  // of the client build's page generators.
+  const ssr = isSsrBuild === true;
+  const blogPrerenderRoutes =
+    command === 'build' && !ssr ? getBlogRoutes() : [];
+  // Theme baseline fixture build (`pnpm theme-baseline:build`, Theme 1 plan
+  // Phase 0) — its own output folder, so it can never overwrite `dist/`.
+  // The sitemap plugin writes to a fixed folder, hence passing it too.
+  const outDir =
+    (mode === 'theme-fixtures' ? 'dist-theme-fixtures' : 'dist') +
+    (ssr ? '-ssr' : '');
 
   return {
     plugins: [
@@ -88,16 +99,21 @@ export default defineConfig(({ command }) => {
       react(),
       ...(command === 'serve' ? [atoms()] : []),
       ensureBuildOutDir(),
-      Sitemap({
-        // Phase 7 — was a leftover scaffold placeholder nobody owns
-        // (baked verbatim into the shipped sitemap.xml/robots.txt).
-        // Overridable via env for any environment that isn't the real
-        // production domain (e.g. a future staging deploy).
-        hostname: process.env.VITE_SITE_URL || 'https://atlass.dpdns.org',
-        lastmod: getSitemapLastmod(),
-        readable: true,
-        generateRobotsTxt: true,
-      }),
+      ...(ssr
+        ? []
+        : [
+            Sitemap({
+              // Phase 7 — was a leftover scaffold placeholder nobody owns
+              // (baked verbatim into the shipped sitemap.xml/robots.txt).
+              // Overridable via env for any environment that isn't the real
+              // production domain (e.g. a future staging deploy).
+              hostname: process.env.VITE_SITE_URL || 'https://atlass.dpdns.org',
+              outDir,
+              lastmod: getSitemapLastmod(),
+              readable: true,
+              generateRobotsTxt: true,
+            }),
+          ]),
       ...(blogPrerenderRoutes.length > 0
         ? vitePrerenderPlugin({
             renderTarget: '#root',
@@ -131,10 +147,12 @@ export default defineConfig(({ command }) => {
     },
     server: {
       host: '0.0.0.0', // Listen on all network interfaces.
-      port: parseInt(process.env.VITE_PORT || '3000'),
+      // 3001 by default: the API's own default port is 3000, which the
+      // /api proxy below targets (override with VITE_PORT / BACKEND_PORT).
+      port: parseInt(process.env.VITE_PORT || '3001'),
       proxy: {
         '/api': {
-          target: `http://localhost:${process.env.BACKEND_PORT || '8000'}`,
+          target: `http://localhost:${process.env.BACKEND_PORT || '3000'}`,
           changeOrigin: true,
           // Local-only: learner endpoints resolve the academy from the
           // request HOST (the frontend never sends an academy id by
@@ -176,57 +194,53 @@ export default defineConfig(({ command }) => {
       watch: { usePolling: true, interval: 600 },
     },
     build: {
+      outDir,
+      // The server renderer reads it to preload the public router's chunk
+      // with the page it renders.
+      manifest: !ssr,
+      // `public/` belongs to the client build only.
+      copyPublicDir: !ssr,
       rollupOptions: {
-        output: {
-          manualChunks: {
-            // Vendor chunks
-            'react-vendor': ['react', 'react-dom'],
-            'router-vendor': ['react-router-dom'],
-            'ui-vendor': [
-              '@radix-ui/react-accordion',
-              '@radix-ui/react-alert-dialog',
-              '@radix-ui/react-aspect-ratio',
-              '@radix-ui/react-avatar',
-              '@radix-ui/react-checkbox',
-              '@radix-ui/react-collapsible',
-              '@radix-ui/react-context-menu',
-              '@radix-ui/react-dialog',
-              '@radix-ui/react-dropdown-menu',
-              '@radix-ui/react-hover-card',
-              '@radix-ui/react-label',
-              '@radix-ui/react-menubar',
-              '@radix-ui/react-navigation-menu',
-              '@radix-ui/react-popover',
-              '@radix-ui/react-progress',
-              '@radix-ui/react-radio-group',
-              '@radix-ui/react-scroll-area',
-              '@radix-ui/react-select',
-              '@radix-ui/react-separator',
-              '@radix-ui/react-slider',
-              '@radix-ui/react-slot',
-              '@radix-ui/react-switch',
-              '@radix-ui/react-tabs',
-              '@radix-ui/react-toast',
-              '@radix-ui/react-toggle',
-              '@radix-ui/react-toggle-group',
-              '@radix-ui/react-tooltip',
-            ],
-            'form-vendor': ['react-hook-form', '@hookform/resolvers', 'zod'],
-            'utils-vendor': [
-              'axios',
-              'clsx',
-              'tailwind-merge',
-              'class-variance-authority',
-              'date-fns',
-              'lucide-react',
-            ],
-            'query-vendor': ['@tanstack/react-query'],
-            'table-vendor': ['@tanstack/react-table'],
-            'chart-vendor': ['recharts'],
-            'motion-vendor': ['framer-motion'],
-            'i18n-vendor': ['i18next', 'react-i18next'],
-          },
+        // The app's own TypeScript modules are side-effect free (the only
+        // import-for-effect statements are CSS). Declaring it lets Rollup
+        // drop modules a barrel re-exports but a chunk never uses, so an
+        // Academy website no longer ships the dashboard code its barrels
+        // reach (Reports/LCP_ROOT_CAUSE.md). Dependencies keep their own
+        // package.json `sideEffects`.
+        treeshake: {
+          // `main.tsx` is the exception: its whole job is the side effect
+          // of mounting the app.
+          moduleSideEffects: (id: string) =>
+            id === path.resolve(__dirname, 'src/main.tsx') ||
+            !(
+              id.startsWith(path.resolve(__dirname, 'src')) &&
+              /\.(ts|tsx)$/.test(id)
+            ),
         },
+        output: ssr
+          ? {}
+          : {
+              manualChunks: {
+                // Vendor chunks
+                'react-vendor': ['react', 'react-dom'],
+                'router-vendor': ['react-router-dom'],
+                // Radix primitives, the form libraries, date-fns and the icon
+                // set are NOT pinned: Rollup places each where it is used, so
+                // an Academy website doesn't download the dashboard's
+                // components before it can paint (Reports/LCP_ROOT_CAUSE.md).
+                'utils-vendor': [
+                  'axios',
+                  'clsx',
+                  'tailwind-merge',
+                  'class-variance-authority',
+                ],
+                'query-vendor': ['@tanstack/react-query'],
+                'table-vendor': ['@tanstack/react-table'],
+                'chart-vendor': ['recharts'],
+                'motion-vendor': ['framer-motion'],
+                'i18n-vendor': ['i18next', 'react-i18next'],
+              },
+            },
       },
       chunkSizeWarningLimit: 1000,
     },

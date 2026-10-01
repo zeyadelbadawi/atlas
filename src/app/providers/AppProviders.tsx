@@ -17,6 +17,8 @@
  * inside this composition, not around it.
  */
 import type { ReactNode } from 'react';
+import type { DehydratedState, QueryClient } from '@tanstack/react-query';
+import type { LanguageCode } from '@types';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/toaster';
 import { ErrorBoundary } from './error/ErrorBoundary';
@@ -31,17 +33,34 @@ import { AtlasLoadingProvider } from './loading/LoadingProvider';
 
 export interface AppProvidersProps {
   readonly children: ReactNode;
+  /**
+   * The first render's language when the page decides it (an Academy
+   * website: its URL locale). Omitted, the provider reads the preference.
+   */
+  readonly initialLanguage?: LanguageCode;
+  /** Server rendering only: the request's own query client. */
+  readonly queryClient?: QueryClient;
+  /** Client only: the server-rendered page's query cache, hydrated before the first render. */
+  readonly dehydratedState?: DehydratedState;
 }
 
-export function AppProviders({ children }: AppProvidersProps): JSX.Element {
+export function AppProviders({
+  children,
+  initialLanguage,
+  queryClient,
+  dehydratedState,
+}: AppProvidersProps): JSX.Element {
   return (
     <ErrorBoundary>
       <AtlasThemeProvider>
-        <AtlasLocalizationProvider>
+        <AtlasLocalizationProvider initialLanguage={initialLanguage}>
           <AtlasIdentityProvider>
             <AtlasPlatformProvider>
               <AtlasToastProvider>
-                <AtlasQueryProvider>
+                <AtlasQueryProvider
+                  client={queryClient}
+                  dehydratedState={dehydratedState}
+                >
                   <AtlasDialogProvider>
                     <AtlasLoadingProvider>
                       <TooltipProvider delayDuration={200}>

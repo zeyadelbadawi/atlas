@@ -7,14 +7,18 @@
  */
 import { useApiQuery } from '@/shared/hooks';
 import { publicWebsiteKeys } from '@services/query';
-import { publicWebsiteService } from '@services';
+// The early request `main.tsx` started, if any (Reports/LCP_ROOT_CAUSE.md).
+import { prefetchKeys, publicWebsiteService, takePrefetched } from '@services';
 import type { HostnameResolution } from '@types';
 import type { ApiError } from '@api';
 
 export function useResolveHostname(hostname: string) {
   return useApiQuery<HostnameResolution | null, ApiError>({
     queryKey: publicWebsiteKeys.hostnameResolution(hostname),
-    queryFn: () => publicWebsiteService.resolveHostname(hostname),
+    queryFn: () =>
+      takePrefetched<HostnameResolution | null>(
+        prefetchKeys.resolve(hostname)
+      ) ?? publicWebsiteService.resolveHostname(hostname),
     enabled: !!hostname,
     // P63g — a hostname's answer changes rarely but it DOES change (a
     // customer fixes DNS, a domain goes live): re-read after a minute of

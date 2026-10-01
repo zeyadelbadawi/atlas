@@ -17,7 +17,10 @@ export function formatCoursePricing(
   }
 
   try {
-    return new Intl.NumberFormat(undefined, {
+    // A fixed locale, not the runtime's default: a price must read the same
+    // whether the page is rendered on the server or in the browser
+    // (Reports/SSR_ARCHITECTURE_ANALYSIS.md §4 #11).
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: pricing.currency ?? 'USD',
     }).format(pricing.amount);

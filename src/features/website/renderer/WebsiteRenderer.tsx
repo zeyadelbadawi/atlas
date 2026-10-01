@@ -13,6 +13,11 @@ import { WebsiteChrome } from './WebsiteChrome';
 import type { WebsiteHeaderAuthState } from './WebsiteHeader';
 import { SectionRenderer } from '../sections';
 import { CourseDetailsTemplate } from './CourseDetailsTemplate';
+import { useThemePack } from '../theme-packs/ThemePackContext';
+import type {
+  ThemeCourseDetailsProps,
+  ThemePageIntroProps,
+} from '../theme-packs/theme-pack.types';
 import type { PublicWebsiteLocale } from '../constants/locale.constants';
 import type { WebsiteConfiguration, WebsitePage } from '@types';
 import type { WebsiteLinkRenderer } from './website-link-renderer.types';
@@ -58,6 +63,7 @@ export function WebsiteRenderer({
 }: WebsiteRendererProps): JSX.Element {
   return (
     <WebsiteChrome
+      academyId={academyId}
       academyName={academyName}
       academyLogo={academyLogo}
       configuration={configuration}
@@ -72,23 +78,63 @@ export function WebsiteRenderer({
     >
       {page.coreType === 'courseDetails' ? (
         previewCourseId ? (
-          <CourseDetailsTemplate
+          <CourseDetailsSlot
             academyId={academyId}
             courseId={previewCourseId}
             locale={locale}
-          />
-        ) : null
-      ) : (
-        page.sections.map((instance) => (
-          <SectionRenderer
-            key={instance.id}
-            instance={instance}
-            academyId={academyId}
             pages={pages}
             linkRenderer={linkRenderer}
           />
-        ))
+        ) : null
+      ) : (
+        <>
+          <PageIntroSlot page={page} navigation={configuration.navigation} />
+          {page.sections.map((instance) => (
+            <SectionRenderer
+              key={instance.id}
+              instance={instance}
+              academyId={academyId}
+              pages={pages}
+              linkRenderer={linkRenderer}
+            />
+          ))}
+        </>
       )}
     </WebsiteChrome>
   );
+}
+
+/** The theme's Course Details page when it has one, else the shared template. */
+function CourseDetailsSlot(props: ThemeCourseDetailsProps): JSX.Element {
+  const Theme = useThemePack().pages?.CourseDetails;
+  if (Theme) return <Theme {...props} />;
+  return (
+    <CourseDetailsTemplate
+      academyId={props.academyId}
+      courseId={props.courseId}
+      locale={props.locale}
+    />
+  );
+}
+
+/** Heroes that open a page; a page starting with one needs no intro. */
+const PAGE_OPENING_TYPES = new Set(['hero', 'pageHeader']);
+
+/**
+ * A theme may draw a hero above a page that opens without one (Theme 1
+ * §C.0, for pages created before page heroes existed). Nothing is written
+ * to the page; a theme without an intro renders the page as it always did.
+ */
+function PageIntroSlot({ page, navigation }: ThemePageIntroProps) {
+  const PageIntro = useThemePack().pages?.PageIntro;
+  const first = page.sections.find((instance) => instance.enabled);
+  const opensWithHero = !!first && PAGE_OPENING_TYPES.has(first.type);
+  if (PageIntro) {
+    if (page.coreType === 'home' || opensWithHero) return null;
+    return <PageIntro page={page} navigation={navigation} />;
+  }
+  // Without an intro, a page that doesn't open with a hero has no <h1>.
+  // Name it for assistive tech only, so the page looks exactly as before.
+  if (opensWithHero || !page.title) return null;
+  return <h1 className="sr-only">{page.title}</h1>;
 }

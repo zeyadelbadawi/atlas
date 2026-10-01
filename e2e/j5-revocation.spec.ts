@@ -113,7 +113,7 @@ test.describe('J5 — revocation after refund', () => {
     // state the API sign-in below races the registration request and
     // fails with `invalidCredentials`.
     await expect(
-      page.getByText(/check your (email|inbox)|account created|verify/i).first()
+      page.getByText(/check your (email|inbox)|account created|your account is ready|verify/i).first()
     ).toBeVisible({ timeout: 20_000 });
 
     learner = await apiSignIn(request, {
