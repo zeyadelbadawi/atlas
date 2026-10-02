@@ -48,12 +48,17 @@ async function visitAndLeave(page: Page, path: string): Promise<string[]> {
   await seedCookieDecision(page);
   await page.goto(academyPath(path));
   await page.waitForLoadState('networkidle');
-  // One interaction, so INP has something to measure.
+  // One interaction, so INP has something to measure; it also makes LCP
+  // final, so its beacon is sent now, while the page is still open.
   await page.locator('main').click({ position: { x: 5, y: 5 } });
-  await page.waitForTimeout(500);
+  await expect.poll(() => beacons.length, { timeout: 10_000 }).toBeGreaterThan(0);
+  // Detach before leaving: a beacon sent while the page unloads (CLS, INP)
+  // is lost when a route interceptor holds it — measured here: CLS 0 of 5
+  // visits, INP 2 of 5 with the interceptor, 10 of 10 without. The API's
+  // counters are the witness for those.
+  await page.unroute('**/rum/vitals');
   // Leaving the page is when final values are reported.
   await page.goto('about:blank');
-  await expect.poll(() => beacons.length, { timeout: 10_000 }).toBeGreaterThan(0);
   return beacons;
 }
 
@@ -64,8 +69,8 @@ test.describe('J10 — real-user monitoring', () => {
     const before = await metricsText(request);
     const beacons = await visitAndLeave(page, '/courses');
     // What the browser sent (LCP is final at the first interaction, so it is
-    // caught here; CLS/INP leave as the page unloads, when the interceptor
-    // has detached — the API below is the witness for those).
+    // caught here; CLS/INP leave as the page unloads, after the interceptor
+    // is detached — the API below is the witness for those).
     const samples = beacons.flatMap((b) => (JSON.parse(b) as { samples: Record<string, unknown>[] }).samples);
     expect(samples.map((s) => s.metric)).toContain('LCP');
     for (const sample of samples) {
