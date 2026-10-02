@@ -18,6 +18,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import { usePermissions } from '@hooks';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { SectionTabs } from '@components/navigation';
@@ -50,6 +51,7 @@ import type { BreadcrumbItem } from '@types';
 export default function WebsitePreviewPage(): JSX.Element {
   const { t } = useTranslation();
   const { academyId } = useParams<{ academyId: string }>();
+  const { hasPermission } = usePermissions();
 
   const academyQuery = useAcademy(academyId ?? '');
   const configQuery = useWebsiteConfiguration(academyId ?? '');
@@ -163,7 +165,11 @@ export default function WebsitePreviewPage(): JSX.Element {
           }
         />
 
-        <SectionTabs items={getWebsiteTabs(academyId)} />
+        <SectionTabs
+          items={getWebsiteTabs(academyId, {
+            canManage: hasPermission('academy.website.manage'),
+          })}
+        />
 
         {activePage ? (
           <PreviewViewport

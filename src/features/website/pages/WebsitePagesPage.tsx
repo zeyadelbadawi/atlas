@@ -248,7 +248,7 @@ export default function WebsitePagesPage(): JSX.Element {
         }
       />
 
-      <SectionTabs items={getWebsiteTabs(academyId)} />
+      <SectionTabs items={getWebsiteTabs(academyId, { canManage })} />
 
       <Card>
         <CardContent className="divide-y divide-border p-0">

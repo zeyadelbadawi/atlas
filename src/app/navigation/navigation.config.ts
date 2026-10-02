@@ -42,6 +42,7 @@ import {
   Award,
   Wallet,
   Store,
+  Inbox,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem, NavigationSection } from '@types';
@@ -213,6 +214,23 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
         requiresAuth: true,
         requiredPermissions: ['academy.website.view'],
         matchNestedPaths: true,
+      },
+      {
+        // Messages visitors send through the website's Contact form.
+        // Placed right under Website, which it belongs to, as its own
+        // entry because an inbox is somewhere people go directly. Gated
+        // on `academy.website.manage` (Owner + Manager) — the backend
+        // serves contact submissions to that tier only, and a plain
+        // member's `academy.website.view` must not advertise it.
+        id: 'academy-website-messages',
+        requiresEntitlement: true,
+        labelKey: 'navigation:items.academyWebsiteMessages',
+        path: buildPath(DASHBOARD_ROUTES.websiteMessages, {
+          academyId: activeAcademyId,
+        }),
+        icon: Inbox,
+        requiresAuth: true,
+        requiredPermissions: ['academy.website.manage'],
       }
     );
   }

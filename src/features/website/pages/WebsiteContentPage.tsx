@@ -9,6 +9,7 @@
  */
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import { usePermissions } from '@hooks';
 import { PageContainer, PageHeader } from '@components/layout';
 import { SectionTabs } from '@components/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -22,6 +23,7 @@ import type { BreadcrumbItem } from '@types';
 export default function WebsiteContentPage(): JSX.Element {
   const { t } = useTranslation();
   const { academyId } = useParams<{ academyId: string }>();
+  const { hasPermission } = usePermissions();
 
   if (!academyId)
     return (
@@ -46,7 +48,11 @@ export default function WebsiteContentPage(): JSX.Element {
         breadcrumbs={breadcrumbs}
       />
 
-      <SectionTabs items={getWebsiteTabs(academyId)} />
+      <SectionTabs
+        items={getWebsiteTabs(academyId, {
+          canManage: hasPermission('academy.website.manage'),
+        })}
+      />
 
       <Tabs defaultValue="faqs">
         <TabsList>

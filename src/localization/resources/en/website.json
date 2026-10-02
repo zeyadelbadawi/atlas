@@ -1230,5 +1230,78 @@
       "todo": "Visitors see a Coming Soon page until you publish.",
       "done": "Your website is live."
     }
+  },
+  "messages": {
+    "title": "Messages",
+    "subtitle": "Messages visitors send through your website's Contact form.",
+    "newCount_one": "{{formatted}} new",
+    "newCount_other": "{{formatted}} new",
+    "searchLabel": "Search by name, email or message",
+    "filters": {
+      "label": "Filter messages",
+      "status": "Filter by status",
+      "all": "All",
+      "dateRange": "Received date",
+      "from": "Received from",
+      "to": "Received to",
+      "clear": "Clear filters"
+    },
+    "status": {
+      "new": "New",
+      "read": "Read",
+      "archived": "Archived"
+    },
+    "sort": {
+      "label": "Sort by",
+      "createdAt_desc": "Newest first",
+      "createdAt_asc": "Oldest first",
+      "name_asc": "Name A–Z",
+      "name_desc": "Name Z–A",
+      "email_asc": "Email A–Z"
+    },
+    "table": {
+      "caption": "Website messages",
+      "name": "Name",
+      "email": "Email",
+      "message": "Message",
+      "status": "Status",
+      "received": "Received"
+    },
+    "resultRange_one": "Showing {{from}}–{{to}} of {{total}} message",
+    "resultRange_other": "Showing {{from}}–{{to}} of {{total}} messages",
+    "openMessage": "Open message from {{name}}",
+    "empty": {
+      "title": "No messages yet",
+      "description": "When visitors send a message through your website's Contact form, it will appear here."
+    },
+    "noResults": {
+      "title": "No messages match these filters",
+      "description": "Try a different search or date range, or clear the filters to see every message."
+    },
+    "drawer": {
+      "title": "Message",
+      "description": "Received through your website's Contact form.",
+      "from": "From",
+      "email": "Email",
+      "received": "Received",
+      "status": "Status",
+      "message": "Message",
+      "reply": "Reply by email",
+      "actions": "Message actions"
+    },
+    "actions": {
+      "markRead": "Mark as read",
+      "markUnread": "Mark as unread",
+      "archive": "Archive",
+      "restore": "Restore"
+    },
+    "toasts": {
+      "markedRead": "Marked as read",
+      "markedUnread": "Marked as unread",
+      "archived": "Message archived",
+      "restored": "Message restored",
+      "undo": "Undo",
+      "failed": "Couldn't update the message"
+    }
   }
 }

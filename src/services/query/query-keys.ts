@@ -9,6 +9,7 @@ import type {
   AcademyRosterQuery,
   AnalyticsQuery,
   CollectionQuery,
+  ContactSubmissionListQuery,
   CourseListQuery,
 } from '@types';
 
@@ -884,6 +885,23 @@ export const websiteKeys = {
   ) => [...websiteKeys.all, 'testimonial-entries', academyId, query] as const,
   testimonialEntry: (academyId: string | undefined, entryId: string) =>
     [...websiteKeys.all, 'testimonial-entry', academyId, entryId] as const,
+  /**
+   * Website Contact form messages — one cache entry per filter/sort/page
+   * combination (the query object is IN the key).
+   */
+  contactSubmissions: (
+    academyId: string | undefined,
+    query?: ContactSubmissionListQuery
+  ) => [...websiteKeys.all, 'contact-submissions', academyId, query] as const,
+  /**
+   * Every message list of an Academy, whatever its query — the prefix to
+   * invalidate after a status change (same reasoning as `allPages`).
+   */
+  allContactSubmissions: (academyId: string | undefined) =>
+    [...websiteKeys.all, 'contact-submissions', academyId] as const,
+  /** Whole-academy message counts by status (filter-independent). */
+  contactSubmissionSummary: (academyId: string | undefined) =>
+    [...websiteKeys.all, 'contact-submission-summary', academyId] as const,
 } as const;
 
 /**

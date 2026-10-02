@@ -43,6 +43,8 @@ export * from './website-section.types';
 export * from './website.types';
 export * from './website-content.types';
 export * from './website-seo.types';
+// Website Contact form submissions — the dashboard's website "Messages".
+export * from './contact-submission.types';
 export * from './public-website-locale.types';
 export * from './domain.types';
 export * from './public-website.types';

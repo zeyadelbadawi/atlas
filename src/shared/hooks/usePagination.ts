@@ -23,6 +23,19 @@ export interface UsePaginationOptions {
   readonly initialPageSize?: number;
   /** Numbered pages rendered on each side of the current page. */
   readonly siblingCount?: number;
+  /**
+   * CONTROLLED MODE — for a list whose page lives somewhere else (the URL).
+   * When `page`/`pageSize` are given they are the source of truth and the
+   * navigation callbacks report the requested value through
+   * `onPageChange`/`onPageSizeChange` instead of updating internal state.
+   * A page-size change does NOT also report a page change: the owner of
+   * the state resets the page itself. Omitted, the hook behaves exactly as
+   * before (uncontrolled).
+   */
+  readonly page?: number;
+  readonly pageSize?: number;
+  readonly onPageChange?: (page: number) => void;
+  readonly onPageSizeChange?: (pageSize: number) => void;
 }
 
 export interface PaginationState {
@@ -96,10 +109,16 @@ export function usePagination(options: UsePaginationOptions): PaginationState {
     initialPage = DEFAULT_PAGE,
     initialPageSize = DEFAULT_PAGE_SIZE,
     siblingCount = PAGINATION_SIBLING_COUNT,
+    page: controlledPage,
+    pageSize: controlledPageSize,
+    onPageChange,
+    onPageSizeChange,
   } = options;
 
-  const [page, setPage] = useState(initialPage);
-  const [pageSize, setPageSizeState] = useState(initialPageSize);
+  const [internalPage, setPage] = useState(initialPage);
+  const [internalPageSize, setPageSizeState] = useState(initialPageSize);
+  const page = controlledPage ?? internalPage;
+  const pageSize = controlledPageSize ?? internalPageSize;
 
   const safeTotalItems = Math.max(0, totalItems);
   const totalPages = Math.max(1, Math.ceil(safeTotalItems / pageSize));
@@ -108,27 +127,45 @@ export function usePagination(options: UsePaginationOptions): PaginationState {
   const currentPage = clamp(page, 1, totalPages);
 
   const goToPage = useCallback(
-    (nextPage: number) => setPage(clamp(nextPage, 1, totalPages)),
-    [totalPages]
+    (nextPage: number) => {
+      const target = clamp(nextPage, 1, totalPages);
+      if (onPageChange) onPageChange(target);
+      else setPage(target);
+    },
+    [totalPages, onPageChange]
   );
 
-  const goToNextPage = useCallback(
-    () => setPage((previous) => clamp(previous + 1, 1, totalPages)),
-    [totalPages]
+  const goToNextPage = useCallback(() => {
+    if (onPageChange) onPageChange(clamp(currentPage + 1, 1, totalPages));
+    else setPage((previous) => clamp(previous + 1, 1, totalPages));
+  }, [totalPages, onPageChange, currentPage]);
+
+  const goToPreviousPage = useCallback(() => {
+    if (onPageChange) onPageChange(clamp(currentPage - 1, 1, totalPages));
+    else setPage((previous) => clamp(previous - 1, 1, totalPages));
+  }, [totalPages, onPageChange, currentPage]);
+
+  const goToFirstPage = useCallback(() => {
+    if (onPageChange) onPageChange(1);
+    else setPage(1);
+  }, [onPageChange]);
+  const goToLastPage = useCallback(() => {
+    if (onPageChange) onPageChange(totalPages);
+    else setPage(totalPages);
+  }, [totalPages, onPageChange]);
+
+  const setPageSize = useCallback(
+    (nextPageSize: number) => {
+      const size = Math.max(1, nextPageSize);
+      if (onPageSizeChange) {
+        onPageSizeChange(size);
+        return;
+      }
+      setPageSizeState(size);
+      setPage(DEFAULT_PAGE);
+    },
+    [onPageSizeChange]
   );
-
-  const goToPreviousPage = useCallback(
-    () => setPage((previous) => clamp(previous - 1, 1, totalPages)),
-    [totalPages]
-  );
-
-  const goToFirstPage = useCallback(() => setPage(1), []);
-  const goToLastPage = useCallback(() => setPage(totalPages), [totalPages]);
-
-  const setPageSize = useCallback((nextPageSize: number) => {
-    setPageSizeState(Math.max(1, nextPageSize));
-    setPage(DEFAULT_PAGE);
-  }, []);
 
   const entries = useMemo(
     () => buildEntries(currentPage, totalPages, siblingCount),

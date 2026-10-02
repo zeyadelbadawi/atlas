@@ -462,6 +462,9 @@ const WebsitePageEditorPage = lazy(
 const WebsitePreviewPage = lazy(
   () => import('@features/website/pages/WebsitePreviewPage')
 );
+const WebsiteMessagesPage = lazy(
+  () => import('@features/website/pages/WebsiteMessagesPage')
+);
 
 const ForbiddenPage = lazy(
   () => import('@features/system/pages/ForbiddenPage')
@@ -2253,6 +2256,22 @@ export default function AtlasAppRoutes(): JSX.Element {
                   requiresEntitlement
                 >
                   <WebsitePreviewPage />
+                </RouteGuard>
+              }
+            />
+
+            {/* The website Contact form inbox. `manage`, not `view`: the
+                backend serves it to Owners/Managers only, and a plain
+                member holds `academy.website.view`. */}
+            <Route
+              path={DASHBOARD_ROUTES.websiteMessages}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.website.manage']}
+                  requiresEntitlement
+                >
+                  <WebsiteMessagesPage />
                 </RouteGuard>
               }
             />
