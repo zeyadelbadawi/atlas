@@ -67,6 +67,8 @@ function CardBody({
   const { t } = useTranslation();
   const stats = course.stats;
   const lessons = stats?.totalLessons ?? 0;
+  // A quiz-only course has no lessons; say what it does contain.
+  const quizzes = stats?.totalQuizzes ?? 0;
   const reviews = stats?.totalReviews ?? 0;
   const rating = stats?.averageRating ?? 0;
   const instructor = showInstructor ? course.instructors[0]?.name : undefined;
@@ -115,7 +117,7 @@ function CardBody({
             {course.shortDescription}
           </p>
         ) : null}
-        {course.level || lessons > 0 || reviews > 0 ? (
+        {course.level || lessons > 0 || quizzes > 0 || reviews > 0 ? (
           <div
             className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-[var(--website-foreground-muted)]"
             data-atlas-numeric="true"
@@ -129,6 +131,13 @@ function CardBody({
               <span>
                 {t('website:renderer.courseDetails.lessonCount', {
                   count: lessons,
+                })}
+              </span>
+            ) : null}
+            {quizzes > 0 ? (
+              <span>
+                {t('website:renderer.courseDetails.quizCount', {
+                  count: quizzes,
                 })}
               </span>
             ) : null}

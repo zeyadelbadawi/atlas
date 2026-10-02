@@ -36,6 +36,7 @@ import {
 } from '../hooks';
 import { useLearningPaths } from '../context/LearningPaths.context';
 import { getCourseCompletionTone } from '../utils/learning-status.utils';
+import { progressCounts } from '@utils';
 
 export default function StudentCourseDetailsPage(): JSX.Element {
   const { t } = useTranslation();
@@ -189,6 +190,20 @@ export default function StudentCourseDetailsPage(): JSX.Element {
                     count: course.stats?.totalLessons ?? 0,
                   })}
                 </span>
+                {course.stats?.totalQuizzes ? (
+                  <span>
+                    {t('learning:details.quizCount', {
+                      count: course.stats.totalQuizzes,
+                    })}
+                  </span>
+                ) : null}
+                {course.stats?.totalAssignments ? (
+                  <span>
+                    {t('learning:details.assignmentCount', {
+                      count: course.stats.totalAssignments,
+                    })}
+                  </span>
+                ) : null}
                 <span className="font-medium text-foreground">
                   {formatCoursePricing(course.pricing, t)}
                 </span>
@@ -302,10 +317,12 @@ export default function StudentCourseDetailsPage(): JSX.Element {
             </CardHeader>
             <CardContent className="space-y-2">
               <p className="text-sm text-muted-foreground">
-                {t('learning:progress.completedOf', {
-                  completed: progress.completedLessons,
-                  total: progress.totalLessons,
-                })}
+                {t(
+                  progressCounts(progress).unit === 'items'
+                    ? 'learning:progress.completedOfItems'
+                    : 'learning:progress.completedOf',
+                  progressCounts(progress)
+                )}
               </p>
               <div className="h-2 w-full overflow-hidden rounded-pill bg-muted">
                 <div

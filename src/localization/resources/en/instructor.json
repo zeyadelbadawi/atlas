@@ -76,6 +76,7 @@
     "title": "Student Progress",
     "courseProgress": "Course Progress",
     "lessonsCompleted": "{{completed}} of {{total}} lessons completed",
+    "itemsCompleted": "{{completed}} of {{total}} activities completed",
     "quizAttempts": "Quiz Attempts",
     "noQuizAttempts": "No quiz attempts yet.",
     "attemptNumber": "Attempt {{number}}",

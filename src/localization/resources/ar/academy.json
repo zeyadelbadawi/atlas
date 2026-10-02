@@ -321,6 +321,7 @@
       "revokedOn": "أُلغي في {{date}}",
       "progress": "تقدّم الدورة",
       "progressSummary": "{{percentage}}% · {{completed}} من {{total}} درساً",
+      "progressSummaryItems": "{{percentage}}% · {{completed}} من {{total}} نشاطًا",
       "quizOutcomes": "نتائج الاختبارات",
       "noQuizOutcomes": "لا توجد محاولات اختبار بعد.",
       "assignmentOutcomes": "نتائج الواجبات",

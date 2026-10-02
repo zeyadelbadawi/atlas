@@ -49,6 +49,7 @@ import { LearnerProgressBar } from '../components/LearnerProgressBar';
 import { LearnerSectionPlaceholder } from '../components/LearnerSectionPlaceholder';
 import { useLearnerSurface } from '../context/LearnerSurface.context';
 import { useLearnerOverview } from '../hooks';
+import { hasFinishedAnything, progressCounts } from '@utils';
 
 type CourseFilter = 'all' | 'inProgress' | 'completed';
 
@@ -65,7 +66,7 @@ function matchesFilter(enrollment: Enrollment, filter: CourseFilter): boolean {
     case 'inProgress':
       return (
         enrollment.status !== 'completed' &&
-        (enrollment.progress?.completedLessons ?? 0) > 0
+        hasFinishedAnything(enrollment.progress)
       );
     case 'completed':
       return enrollment.status === 'completed';
@@ -255,7 +256,7 @@ export default function LearnerCoursesPage(): JSX.Element {
                       </Link>
                     </h3>
 
-                    {progress && progress.totalLessons > 0 ? (
+                    {progress && progressCounts(progress).total > 0 ? (
                       <div className="space-y-1.5 pt-1">
                         <LearnerProgressBar
                           value={progress.percentage}
@@ -264,10 +265,12 @@ export default function LearnerCoursesPage(): JSX.Element {
                           })}
                         />
                         <p className="text-xs text-muted-foreground">
-                          {t('learning:progress.completedOf', {
-                            completed: progress.completedLessons,
-                            total: progress.totalLessons,
-                          })}
+                          {t(
+                            progressCounts(progress).unit === 'items'
+                              ? 'learning:progress.completedOfItems'
+                              : 'learning:progress.completedOf',
+                            progressCounts(progress)
+                          )}
                         </p>
                       </div>
                     ) : null}
@@ -297,7 +300,7 @@ export default function LearnerCoursesPage(): JSX.Element {
                           ? t('learning:learnerDashboard.actions.accessEnded')
                           : isCompleted
                             ? t('learning:learnerDashboard.actions.review')
-                            : (progress?.completedLessons ?? 0) > 0
+                            : hasFinishedAnything(progress)
                               ? t('learning:learnerDashboard.actions.continue')
                               : t('learning:learnerDashboard.actions.start')}
                       </Button>

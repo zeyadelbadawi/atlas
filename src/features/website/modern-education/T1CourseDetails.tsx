@@ -25,6 +25,7 @@ import {
   FileText,
   Globe,
   Layers,
+  ListChecks,
   Loader2,
   PlayCircle,
   RotateCw,
@@ -202,6 +203,8 @@ export function T1CourseDetails({
   const reviews = stats?.totalReviews ?? 0;
   const rating = stats?.averageRating ?? 0;
   const lessons = stats?.totalLessons ?? 0;
+  const quizzes = stats?.totalQuizzes ?? 0;
+  const assignments = stats?.totalAssignments ?? 0;
   const sections = stats?.totalSections ?? 0;
   const duration = formatCatalogDuration(stats?.durationSeconds, t);
   const price = formatCoursePricing(course.pricing, t);
@@ -235,6 +238,22 @@ export function T1CourseDetails({
           Icon: PlayCircle,
           text: t('website:renderer.courseDetails.lessonCount', {
             count: lessons,
+          }),
+        }
+      : null,
+    quizzes > 0
+      ? {
+          Icon: ListChecks,
+          text: t('website:renderer.courseDetails.quizCount', {
+            count: quizzes,
+          }),
+        }
+      : null,
+    assignments > 0
+      ? {
+          Icon: FileText,
+          text: t('website:renderer.courseDetails.assignmentCount', {
+            count: assignments,
           }),
         }
       : null,
@@ -340,6 +359,14 @@ export function T1CourseDetails({
                   <PlayCircle className="size-4" aria-hidden />
                   {t('website:renderer.courseDetails.lessonCount', {
                     count: lessons,
+                  })}
+                </span>
+              ) : null}
+              {quizzes > 0 ? (
+                <span className="inline-flex items-center gap-1.5">
+                  <ListChecks className="size-4" aria-hidden />
+                  {t('website:renderer.courseDetails.quizCount', {
+                    count: quizzes,
                   })}
                 </span>
               ) : null}

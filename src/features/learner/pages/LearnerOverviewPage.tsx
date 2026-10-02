@@ -43,6 +43,7 @@ import { LearnerSectionPlaceholder } from '../components/LearnerSectionPlacehold
 import { useLearnerSurface } from '../context/LearnerSurface.context';
 import { useLearnerOverview } from '../hooks';
 import { learnerAssessmentStateLabel } from '../utils/assessment-state.utils';
+import { progressCounts } from '@utils';
 
 export default function LearnerOverviewPage(): JSX.Element {
   const { t } = useTranslation();
@@ -168,10 +169,12 @@ export default function LearnerOverviewPage(): JSX.Element {
                               'learning:learnerDashboard.overview.continue.nextIs',
                               { title: item.nextItemTitle }
                             )
-                          : t('learning:progress.completedOf', {
-                              completed: item.completedLessons,
-                              total: item.totalLessons,
-                            })}
+                          : t(
+                              progressCounts(item).unit === 'items'
+                                ? 'learning:progress.completedOfItems'
+                                : 'learning:progress.completedOf',
+                              progressCounts(item)
+                            )}
                       </p>
 
                       <Button

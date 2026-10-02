@@ -66,6 +66,8 @@ export type AcademyRosterPage = PaginatedResult<AcademyRosterStudent>;
 export interface RosterEnrollmentProgress {
   readonly completedLessons: number;
   readonly totalLessons: number;
+  readonly completedItems?: number;
+  readonly totalItems?: number;
   readonly percentage: number;
   readonly completionState: CourseCompletionState;
   readonly certificateStatus: string;

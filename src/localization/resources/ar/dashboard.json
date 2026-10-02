@@ -155,6 +155,7 @@
       "title": "طلاب قد يحتاجون للمساعدة",
       "description": "طلاب لم ينهوا دورتهم، يتم تمييزهم بعد {{days}} يومًا دون تقدّم أو عند عدم اجتياز اختبار.",
       "lessonsDone": "{{completed}} من {{total}} درسًا",
+      "itemsDone": "{{completed}} من {{total}} نشاطًا",
       "reasons": {
         "no_progress": "لم يبدأ بعد",
         "stalled": "لا يوجد تقدّم حديث",

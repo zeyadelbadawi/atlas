@@ -40,6 +40,8 @@ export interface StudentCourseResults {
   readonly progress: {
     readonly completedLessons: number;
     readonly totalLessons: number;
+    readonly completedItems?: number;
+    readonly totalItems?: number;
     readonly percentage: number;
     readonly completionState: string;
   } | null;

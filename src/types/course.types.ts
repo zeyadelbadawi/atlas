@@ -139,6 +139,9 @@ export interface CourseStats {
   readonly averageRating?: number;
   /** Count of approved reviews behind `averageRating`. */
   readonly totalReviews?: number;
+  /** Published quizzes / assignments — a course can be quizzes only. */
+  readonly totalQuizzes?: number;
+  readonly totalAssignments?: number;
 }
 
 /** A curriculum-preview lesson — the public Course Details page's pre-enrollment view: title/order/type only, never `contentUrl`/`description` (see backend `toPublicCourseCurriculumResponse`'s doc comment for why those stay gated). */

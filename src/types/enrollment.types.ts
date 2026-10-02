@@ -19,6 +19,9 @@ export type EnrollmentStatus =
 export interface EnrollmentProgressSummary {
   readonly totalLessons: number;
   readonly completedLessons: number;
+  /** Lessons, quizzes and assignments together — what `percentage` is computed from. Absent from older responses. */
+  readonly totalItems?: number;
+  readonly completedItems?: number;
   readonly percentage: number;
   readonly currentLessonId?: string;
   readonly completionState: CourseCompletionState;

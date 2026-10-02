@@ -39,6 +39,9 @@ export interface CourseProgress {
   readonly courseId: string;
   readonly totalLessons: number;
   readonly completedLessons: number;
+  /** Lessons, quizzes and assignments together — what `percentage` is computed from. Absent from older responses. */
+  readonly totalItems?: number;
+  readonly completedItems?: number;
   /** 0–100. */
   readonly percentage: number;
   /** The lesson the student should resume at, if any. */

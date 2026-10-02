@@ -22,6 +22,7 @@ import { SectionLoader } from '@components/loading';
 import type { StatusTone } from '@components/data-display';
 import { useStudentResults } from '../hooks/useStudentResults';
 import type { StudentAssignmentResult, StudentQuizResult } from '@types';
+import { progressCounts } from '@utils';
 
 function quizTone(result: StudentQuizResult): StatusTone {
   if (result.passed === true) return 'success';
@@ -133,12 +134,18 @@ export default function StudentMyResultsPage(): JSX.Element {
                the card body instead of being forced through a key. */
             descriptionKey={
               course.progress
-                ? 'learning:results.course.progressSummary'
+                ? progressCounts(course.progress).unit === 'items'
+                  ? 'learning:results.course.progressSummaryItems'
+                  : 'learning:results.course.progressSummary'
                 : undefined
             }
             values={{
-              completed: course.progress?.completedLessons ?? 0,
-              total: course.progress?.totalLessons ?? 0,
+              completed: course.progress
+                ? progressCounts(course.progress).completed
+                : 0,
+              total: course.progress
+                ? progressCounts(course.progress).total
+                : 0,
               percentage: Math.round(course.progress?.percentage ?? 0),
             }}
           >
