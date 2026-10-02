@@ -42,6 +42,13 @@ export interface EnvironmentConfig {
    * `DEFAULT_TRIAL_POLICY`.
    */
   readonly platformBaseDomain?: string;
+
+  /**
+   * P6 — share of visits measured by real-user monitoring (0–1). 0 (the
+   * default) turns it off entirely: no code is downloaded, nothing sent.
+   * Reports/REAL_USER_MONITORING.md.
+   */
+  readonly rumSampleRate: number;
 }
 
 function getEnvironment(): Environment {
@@ -76,6 +83,12 @@ function getPlatformBaseDomain(): string | undefined {
     : undefined;
 }
 
+/** `VITE_RUM_SAMPLE_RATE` clamped to 0–1; anything unparsable is 0 (off). */
+export function parseRumSampleRate(value: unknown): number {
+  const rate = typeof value === 'string' ? Number(value) : NaN;
+  return Number.isFinite(rate) ? Math.min(1, Math.max(0, rate)) : 0;
+}
+
 export const ENV: EnvironmentConfig = Object.freeze({
   environment: getEnvironment(),
   isProduction: getEnvironment() === 'production',
@@ -84,4 +97,5 @@ export const ENV: EnvironmentConfig = Object.freeze({
   version: import.meta.env.VITE_APP_VERSION ?? '1.0.0',
   enableDebugLogging: import.meta.env.VITE_ENABLE_DEBUG_LOGGING === 'true',
   platformBaseDomain: getPlatformBaseDomain(),
+  rumSampleRate: parseRumSampleRate(import.meta.env.VITE_RUM_SAMPLE_RATE),
 });

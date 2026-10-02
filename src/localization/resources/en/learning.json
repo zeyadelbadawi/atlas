@@ -193,12 +193,12 @@
     },
     "integrity": {
       "disclosureTitle": "What is recorded during this quiz",
-      "disclosureRecorded": "While the quiz is open, switching tabs or windows, leaving fullscreen, copying, pasting and printing are recorded with the time they happened, and your reviewer can see them.",
+      "disclosureRecorded": "While the quiz is open, these are recorded with the time they happened: switching to another tab or window, leaving full screen, copying, pasting and printing on this page, and a connection check once a minute. Your reviewer sees them with plain explanations — they are prompts for a conversation, not proof of anything.",
       "disclosureMonitor": "You will not be interrupted. The record is shown to your reviewer with your attempt.",
       "disclosureWarn": "You will be warned each time one is recorded. The limit is {{count}}; reaching it flags the attempt for review.",
       "disclosureStrict": "You will be warned each time one is recorded. When {{count}} have been recorded, the quiz is submitted automatically with the answers you have saved.",
-      "disclosureFullscreen": "The quiz asks to open in fullscreen. Leaving fullscreen is recorded.",
-      "disclosureHonest": "Nothing is blocked and nothing on your device is monitored beyond this page.",
+      "disclosureFullscreen": "This quiz opens in full screen when you press Start. If you leave full screen, the questions are hidden until you return — your answers and the timer are kept — and leaving is recorded. If your browser can’t use full screen, you can still take the quiz; your instructor will see that it wasn’t available.",
+      "disclosureHonest": "Atlas never uses your camera or microphone, never records your screen or what you type, and sees nothing outside this page. Nothing is blocked.",
       "acknowledge": "I understand what is recorded during this quiz.",
       "bannerTitle": "An event was recorded",
       "bannerWarn": "{{count}} event has been recorded on this attempt. Stay on this page until you submit.",
@@ -210,9 +210,7 @@
       "dialogWarnConsequence": "Your reviewer will see the record alongside your answers.",
       "dialogStrictConsequence": "{{count}} more and the quiz is submitted automatically with the answers you have saved.",
       "dialogStrictConsequence_other": "{{count}} more and the quiz is submitted automatically with the answers you have saved.",
-      "continue": "Continue quiz",
-      "fullscreenHint": "This quiz is meant to run in fullscreen. Leaving fullscreen is recorded.",
-      "enterFullscreen": "Enter fullscreen"
+      "continue": "Continue quiz"
     },
     "runner": {
       "saving": "Saving…",
@@ -295,6 +293,15 @@
       "reviewLesson": "Review the lesson",
       "historyTitle": "Your attempts",
       "continue": "Continue to the next activity"
+    },
+    "fullscreen": {
+      "gateTitle": "Return to full screen to continue",
+      "gateBody": "This quiz is taken in full screen. Your answers are saved and the timer keeps running.",
+      "enter": "Enter full screen",
+      "refused": "Your browser didn’t allow full screen.",
+      "continueWithout": "Continue without full screen",
+      "unsupportedTitle": "Full screen isn’t available in this browser",
+      "unsupportedBody": "You can take the quiz as it is. Your instructor will see that full screen wasn’t available."
     }
   },
   "assignment": {

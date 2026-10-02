@@ -215,20 +215,46 @@ export interface TestimonialItem {
   readonly sample?: boolean;
 }
 
+/**
+ * A testimonial library entry as the PUBLIC pages payload carries it
+ * (`TestimonialsSectionConfig.libraryEntries`): public fields only.
+ */
+export interface PublicTestimonialLibraryEntry {
+  readonly id: string;
+  readonly quote: LocalizedText;
+  readonly authorName: string;
+  readonly authorRole?: LocalizedText;
+  readonly avatar?: string;
+}
+
 export interface TestimonialsSectionConfig {
   readonly title?: LocalizedText;
   readonly items: readonly TestimonialItem[];
   /**
    * Optional references into the Academy's reusable Testimonial content
-   * library (Prompt 10, `WebsiteTestimonialEntry`). Resolved live at
-   * render time and shown ADDITIVELY alongside `items` — never a
+   * library (Prompt 10, `WebsiteTestimonialEntry`), in the order the
+   * Owner picked them, shown ADDITIVELY before `items` — never a
    * migration or replacement of existing inline data, so every page
    * saved before Prompt 10 renders identically (empty/absent list).
    */
   readonly libraryEntryIds?: readonly string[];
+  /**
+   * Server-supplied, read-only: the referenced entries resolved by the
+   * public pages API — published, visible and this Academy's only, in
+   * `libraryEntryIds` order. Present on the public site; absent in
+   * dashboard reads (the preview resolves them itself). Never saved.
+   */
+  readonly libraryEntries?: readonly PublicTestimonialLibraryEntry[];
 }
 
 export interface FaqItem {
+  readonly id: string;
+  readonly question: LocalizedText;
+  readonly answer: LocalizedText;
+}
+
+/** A FAQ library entry as the PUBLIC pages payload carries it — see `PublicTestimonialLibraryEntry`. */
+export interface PublicFaqLibraryEntry {
   readonly id: string;
   readonly question: LocalizedText;
   readonly answer: LocalizedText;
@@ -239,6 +265,8 @@ export interface FaqSectionConfig {
   readonly items: readonly FaqItem[];
   /** Same additive library-reference mechanism as `TestimonialsSectionConfig.libraryEntryIds` — see that field's doc comment. References `WebsiteFaqEntry` (Prompt 10). */
   readonly libraryEntryIds?: readonly string[];
+  /** Server-supplied, read-only — see `TestimonialsSectionConfig.libraryEntries`. */
+  readonly libraryEntries?: readonly PublicFaqLibraryEntry[];
   /** Theme 1 plan §D.2 — show only the first N (a teaser). */
   readonly maxItems?: number;
   /** A link to the rest (e.g. the FAQs page). */

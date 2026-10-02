@@ -2485,10 +2485,10 @@ The remediation is on `claude/practical-wozniak-pjcdhe` in both repositories, **
 
 ### Z.6 Open items
 
-1. Review and commit this remediation, then merge and deploy it through the usual gated steps (not authorised yet).
+1. ~~Review and commit this remediation, then merge and deploy it.~~ **Done 1 Oct 2026:** frontend `a5a18f3` → `main` `b3f7a4d` (run #129), backend `a45fd17` → `main` `dafa461` (run #232); see `docs/ATLAS-CLAUDE-HANDOVER.md`.
 2. Pre-merge impact check — **done** (OWNER-RUN, read-only, 1 Oct 2026). F-4: 0 published, visible Featured Courses sections use "selected" mode (0 with picked courses, 0 Academies), so no live site's output changes. F-11: **1** published Academy's public student count will drop once deployed, because it has inactive, pending or blocked students. That is the intended correction; tell its Owner if the number is visible to them.
 3. Regenerate `e2e/theme-baseline/fixtures/generated/modern-education.json` from the new starter copy (`npm run fixtures:website-templates`, backend) and re-record the "new Academy" visual baselines after a visual review. Until then those baselines show the previous starter copy.
-4. Fix the 29 type errors (platform Zoom / add-ons / tenant), then make `pnpm typecheck` a CI gate. Re-enable backend CI separately.
+4. ~~Fix the 29 type errors, then make `pnpm typecheck` a CI gate.~~ Done on the feature branch (P2, `Reports/P1_P8_REMEDIATION_REPORT.md`), not yet merged. Re-enable backend CI separately — still open.
 5. Themes 2–5 production migration and code removal: still gated (`THEMES_2_5_RETIREMENT.md` §5).
 6. Gate H (SSR): optional, separate.
 7. Rotate the `atlas_vps` SSH key that was pasted into chat.

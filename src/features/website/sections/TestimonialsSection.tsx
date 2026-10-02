@@ -1,8 +1,8 @@
 /**
  * Testimonials Section.
  *
- * Renders library entries (Prompt 10, `WebsiteTestimonialEntry`,
- * resolved live) additively alongside the page's own inline `items`
+ * Renders library entries (Prompt 10, resolved by
+ * `useTestimonialLibraryEntries`) additively alongside the page's own inline `items`
  * (Prompt 9, now also `LocalizedText` — Phase 6) — same order/backward-
  * compatibility contract as `FaqSection`. Both sources are normalized to
  * the same plain-string shape up front via `resolveLocalizedText`, using
@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { Quote } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { StarRating } from '@components/data-display';
-import { useWebsiteTestimonialEntries } from '../hooks';
+import { useTestimonialLibraryEntries } from '../hooks';
 import {
   useWebsiteCardClass,
   useWebsiteContainerClass,
@@ -50,30 +50,24 @@ export function TestimonialsSection({
   const cardClass = useWebsiteCardClass();
   const { locale } = usePublicWebsiteLocale();
 
-  const libraryEntryIds = config.libraryEntryIds ?? [];
-  const { data } = useWebsiteTestimonialEntries(academyId, {
-    query: { filters: { status: 'published' } },
-    enabled: libraryEntryIds.length > 0,
-  });
-
-  const libraryItems = libraryEntryIds
-    .map((id) => data?.items.find((entry) => entry.id === id))
-    .filter(
-      (entry): entry is NonNullable<typeof entry> => !!entry && entry.visible
-    )
-    .map((entry) => ({
-      id: entry.id,
-      quote: resolveLocalizedText(entry.quote, locale),
-      authorName: entry.authorName,
-      authorRole: entry.authorRole
-        ? resolveLocalizedText(entry.authorRole, locale)
-        : undefined,
-      avatar: entry.avatar,
-      // Library entries have no dedicated `avatarAlt` field (Prompt 10) — the author's own name is a reasonable, honest alt for a portrait photo.
-      avatarAlt: entry.authorName,
-      rating: undefined as number | undefined,
-      sample: false,
-    }));
+  // Server-resolved on the public site; the preview resolves them itself.
+  const libraryItems = useTestimonialLibraryEntries(
+    config,
+    academyId,
+    !isPublic
+  ).map((entry) => ({
+    id: entry.id,
+    quote: resolveLocalizedText(entry.quote, locale),
+    authorName: entry.authorName,
+    authorRole: entry.authorRole
+      ? resolveLocalizedText(entry.authorRole, locale)
+      : undefined,
+    avatar: entry.avatar,
+    // Library entries have no dedicated `avatarAlt` field (Prompt 10) — the author's own name is a reasonable, honest alt for a portrait photo.
+    avatarAlt: entry.authorName,
+    rating: undefined as number | undefined,
+    sample: false,
+  }));
 
   const inlineItems = config.items
     .filter((item) => !(isPublic && item.sample))

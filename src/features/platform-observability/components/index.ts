@@ -9,3 +9,4 @@ export * from './FilterSelect';
 export * from './AlertDuration';
 export * from './CopyableCode';
 export * from './SyntheticAlertControl';
+export * from './WebVitalsPanel';

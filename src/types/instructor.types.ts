@@ -174,6 +174,37 @@ export interface QuizAttemptReview extends QuizAttempt {
    * nothing" — an empty event list means different things (P4 Issue 5).
    */
   readonly integrityMode: 'off' | 'monitor' | 'warn' | 'strict';
+  /** Whether this attempt required full screen (its settings snapshot). */
+  readonly requireFullscreen: boolean;
+  /** The event limit in force for this attempt (its settings snapshot). */
+  readonly maxViolations: number;
+  /** P5 — explainable signals derived server-side from `events`. Never a score or a verdict. */
+  readonly signals: readonly IntegritySignal[];
+}
+
+export type IntegritySignalKey =
+  | 'time_away'
+  | 'focus_lost'
+  | 'fullscreen_left'
+  | 'fullscreen_never_entered'
+  | 'fullscreen_unavailable'
+  | 'paste_without_copy'
+  | 'paste_after_copy'
+  | 'copy'
+  | 'print'
+  | 'connection_gap';
+
+/** One fact worth a look (`review`) or context (`info`), with the events behind it. */
+export interface IntegritySignal {
+  readonly key: IntegritySignalKey;
+  readonly level: 'review' | 'info';
+  /** `technical`: an interruption or browser limit, not conduct. */
+  readonly category: 'behaviour' | 'technical';
+  readonly occurrences: number;
+  readonly totalSeconds?: number;
+  readonly longestSeconds?: number;
+  readonly reasons?: readonly string[];
+  readonly eventIds: readonly string[];
 }
 
 export interface GradeQuizAttemptPayload {

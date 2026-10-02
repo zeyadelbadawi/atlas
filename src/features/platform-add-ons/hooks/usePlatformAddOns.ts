@@ -15,11 +15,11 @@ import type {
   PlatformAddOnQuery,
   UpdateAddOnCatalogStatusInput,
 } from '../types';
-import type { PaginatedResponse } from '@types';
+import type { PaginatedResult } from '@types';
 import type { ApiError } from '@api';
 
 export function usePlatformAddOns(query: PlatformAddOnQuery) {
-  return useApiQuery<PaginatedResponse<PlatformAddOnRow>, ApiError>({
+  return useApiQuery<PaginatedResult<PlatformAddOnRow>, ApiError>({
     queryKey: platformAddOnKeys.list(query),
     queryFn: () => platformAddOnsService.list(query),
   });

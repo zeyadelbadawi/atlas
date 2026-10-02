@@ -7,16 +7,18 @@
  * range; multi-label series get a legend; the table view prints values
  * (percent ratios as %) and a null point as "Not reported", not 0.
  */
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, screen, within } from '@testing-library/react';
-import type { MetricCatalogResponse } from '@types';
+import type { MetricCatalogResponse, WebVitalsResponse } from '@types';
 import { catalogFixture, seriesFixture } from './test-support/fixtures';
 import { queryResult, renderPage } from './test-support/render';
 
 const useMetricCatalog = vi.fn();
 const useMetricSeries = vi.fn();
+const useWebVitals = vi.fn();
 vi.mock('./hooks/usePlatformObservability', () => ({
   REFRESH_INTERVAL_MS: { metrics: 60_000 },
+  useWebVitals: (range: string) => useWebVitals(range) as unknown,
   useMetricCatalog: () => useMetricCatalog() as unknown,
   useMetricSeries: (id: string, range: string, enabled: boolean) =>
     useMetricSeries(id, range, enabled) as unknown,
@@ -27,6 +29,12 @@ const { default: MetricsPage } =
   await import('./pages/ObservabilityMetricsPage');
 
 const URL = '/dashboard/platform/observability/metrics';
+
+beforeEach(() => {
+  useWebVitals.mockReturnValue(
+    queryResult<WebVitalsResponse>({ state: 'ok', range: '7d', rows: [] })
+  );
+});
 
 function setup(catalog: MetricCatalogResponse = catalogFixture) {
   useMetricCatalog.mockReturnValue(queryResult(catalog));
@@ -146,5 +154,54 @@ describe('ObservabilityMetricsPage', () => {
     expect(container.textContent).not.toMatch(
       /platformObservability:|navigation:/
     );
+  });
+});
+
+describe('Real-user performance panel (P6)', () => {
+  const rows: WebVitalsResponse['rows'] = [
+    { metric: 'LCP', route: 'public:home', device: 'mobile', p75: 3100, samples: 240, rating: 'needs-improvement' },
+    { metric: 'INP', route: 'public:home', device: 'mobile', p75: 180, samples: 240, rating: 'good' },
+    { metric: 'CLS', route: 'public:home', device: 'mobile', p75: 0.31, samples: 12, rating: 'too-few-samples' },
+  ];
+
+  it('shows p75 per page type and device with samples and the rating in words', () => {
+    setup();
+    useWebVitals.mockReturnValue(queryResult<WebVitalsResponse>({ state: 'ok', range: '7d', rows }));
+    renderPage(<MetricsPage />, { url: URL });
+    const panel = within(screen.getByTestId('web-vitals-panel'));
+    expect(panel.getByRole('rowheader', { name: 'Academy site · Home' })).toBeTruthy();
+    expect(screen.getByTestId('web-vital-public:home|mobile-LCP').textContent).toBe(
+      '3,100 msNeeds improvement · 240 samples'
+    );
+    expect(screen.getByTestId('web-vital-public:home|mobile-CLS').textContent).toMatch(
+      /0\.31.*Too few samples to rate · 12 samples/
+    );
+    expect(useWebVitals).toHaveBeenLastCalledWith('7d');
+    fireEvent.click(panel.getByRole('button', { name: 'Last 24 hours' }));
+    expect(useWebVitals).toHaveBeenLastCalledWith('24h');
+  });
+
+  it('no samples → says collection is off unless enabled', () => {
+    setup();
+    renderPage(<MetricsPage />, { url: URL });
+    expect(screen.getByTestId('web-vitals-panel').textContent).toMatch(/RUM_ENABLED=true/);
+  });
+
+  it('Prometheus not configured → the console’s source notice, never an empty table', () => {
+    setup();
+    useWebVitals.mockReturnValue(
+      queryResult<WebVitalsResponse>({ state: 'not_configured', range: '7d', rows: [] })
+    );
+    renderPage(<MetricsPage />, { url: URL });
+    expect(screen.getByTestId('web-vitals-panel').textContent).toMatch('Prometheus is not configured');
+    expect(within(screen.getByTestId('web-vitals-panel')).queryByRole('table')).toBeNull();
+  });
+
+  it('Arabic', () => {
+    setup();
+    useWebVitals.mockReturnValue(queryResult<WebVitalsResponse>({ state: 'ok', range: '7d', rows }));
+    renderPage(<MetricsPage />, { url: URL, language: 'ar' });
+    expect(screen.getByText('أداء المستخدمين الفعلي')).toBeTruthy();
+    expect(screen.getByRole('rowheader', { name: 'موقع الأكاديمية · الرئيسية' })).toBeTruthy();
   });
 });

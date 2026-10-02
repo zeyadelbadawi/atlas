@@ -13,6 +13,7 @@ import { cleanup, render, screen } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
 import { createI18nInstance } from '@/localization/i18n';
+import type { PaginatedResult } from '@types';
 
 const useZoomOverview = vi.fn();
 const useZoomConnections = vi.fn();
@@ -201,7 +202,7 @@ describe('Zoom Operations — Live Sessions', () => {
 });
 
 describe('Zoom Operations — Part 2 pages', () => {
-  const paged = (items) => ({ items, pagination: { page: 1, pageSize: 20, totalItems: items.length, totalPages: 1 } });
+  const paged = <T,>(items: readonly T[]): PaginatedResult<T> => ({ items, pagination: { page: 1, pageSize: 20, totalItems: items.length, totalPages: 1 } });
 
   it('Attendance renders derived reconciliation state, no raw keys', () => {
     useZoomAttendance.mockReturnValue({ data: paged([{

@@ -23,6 +23,9 @@ const FRONTEND = process.env.E2E_BASE_URL ?? 'http://localhost:3001';
 
 export default defineConfig({
   testDir: './e2e',
+  // The theme baseline is a separate suite with its own config and fixture
+  // server (`e2e/theme-baseline/playwright.config.ts`); never collect it here.
+  testIgnore: ['theme-baseline/**'],
   // Clears the auth rate-limiter first; see the setup file's own comment.
   globalSetup: './e2e/support/global-setup.ts',
   // Each journey seeds its own accounts through the real API, so files can

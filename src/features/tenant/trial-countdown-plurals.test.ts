@@ -118,9 +118,8 @@ describe('language parity', () => {
       ['en', en],
       ['ar', ar],
     ] as const) {
-      const dashboard = (bundle as Record<string, Record<string, string>>)
-        .dashboard;
-      const keys = Object.keys(dashboard);
+      // Only the key names matter here; both bundles are typed JSON.
+      const keys = Object.keys(bundle.dashboard);
       expect(
         keys.some((k) => k.startsWith('trialDaysRemaining')),
         `${name} is missing the trial countdown`,

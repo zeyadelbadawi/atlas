@@ -13,7 +13,9 @@
  * WHAT IT DOES NOT DO: block copying, keyboard shortcuts or leaving the
  * page. In `strict` mode the server auto-submits at the threshold and
  * says so in its response; the caller then shows the results with the
- * reason. A learner who declines fullscreen is recorded, not stopped.
+ * reason. Full screen itself is `useQuizFullscreen`'s (the request must
+ * come from a click); this hook only records entering, leaving, and the
+ * browser being unable to (`fullscreen_unavailable`).
  *
  * Mode `off` attaches nothing at all.
  */
@@ -51,11 +53,12 @@ export interface UseQuizIntegrityOptions {
 export interface UseQuizIntegrityResult {
   readonly violationCount: number;
   readonly maxViolations: number;
-  /** Ask for fullscreen on the container; a refusal is recorded, not enforced. */
-  readonly requestFullscreen: () => Promise<void>;
   /** Record that the learner dismissed a warning (the reviewer sees the acknowledgement). */
   readonly acknowledgeWarning: () => void;
-  readonly isFullscreen: boolean;
+  /** Record that the browser could not go full screen (context for the reviewer; never a violation). */
+  readonly recordFullscreenUnavailable: (
+    reason: 'unsupported' | 'refused'
+  ) => void;
 }
 
 export function useQuizIntegrity({
@@ -83,7 +86,6 @@ export function useQuizIntegrity({
   const [maxViolations, setMaxViolations] = useState(
     settings?.maxViolations ?? 0
   );
-  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const active = enabled && !!settings && integrityActive(settings);
 
@@ -160,11 +162,11 @@ export function useQuizIntegrity({
       );
     const onBlur = () => push('blur');
     const onFocus = () => push('focus');
-    const onFullscreen = () => {
-      const inFullscreen = !!document.fullscreenElement;
-      setIsFullscreen(inFullscreen);
-      push(inFullscreen ? 'fullscreen_enter' : 'fullscreen_exit');
-    };
+    const onFullscreen = () =>
+      push(document.fullscreenElement ? 'fullscreen_enter' : 'fullscreen_exit');
+    // Full screen is usually entered by the Start click, before this
+    // listener exists: record the state the attempt opened in.
+    if (document.fullscreenElement) push('fullscreen_enter');
     const onBeforePrint = () => push('print');
     const onClipboard = (event: ClipboardEvent) =>
       push(event.type as 'copy' | 'cut' | 'paste');
@@ -206,26 +208,23 @@ export function useQuizIntegrity({
     };
   }, [active, containerRef, push, flush]);
 
-  const requestFullscreen = useCallback(async () => {
-    const element = containerRef.current;
-    if (!element || !element.requestFullscreen) return;
-    try {
-      await element.requestFullscreen();
-    } catch {
-      // Refused or unsupported: the exit/enter events already tell the story.
-    }
-  }, [containerRef]);
-
   const acknowledgeWarning = useCallback(() => {
     push('warning_acknowledged');
     void flush();
   }, [push, flush]);
 
+  const recordFullscreenUnavailable = useCallback(
+    (reason: 'unsupported' | 'refused') => {
+      push('fullscreen_unavailable', { reason });
+      void flush();
+    },
+    [push, flush]
+  );
+
   return {
     violationCount,
     maxViolations,
-    requestFullscreen,
     acknowledgeWarning,
-    isFullscreen,
+    recordFullscreenUnavailable,
   };
 }

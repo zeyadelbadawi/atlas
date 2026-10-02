@@ -16,6 +16,7 @@
  *        output (legacy v1 content is covered by the baseline's legacy
  *        fixtures and the backend e2e).
  */
+import { clearAuthRateLimits } from './support/global-setup';
 import { test, expect, type Page } from '@playwright/test';
 import {
   ACADEMY_PREVIEW_PARAM,
@@ -27,6 +28,7 @@ import {
   declineCookies,
   signInThroughDashboard,
   type Session,
+  seedCookieDecision,
 } from './support/atlas';
 
 test.describe.configure({ mode: 'serial' });
@@ -67,7 +69,15 @@ async function useArabic(page: Page) {
 }
 
 test.describe('J8 — Theme 1 hardening', () => {
+  test.beforeEach(async ({ page }) => {
+    await seedCookieDecision(page);
+  });
+
   test.beforeAll(async ({ request }) => {
+    // Each journey file starts from a clear sign-in limiter (as J1–J6 do):
+    // the limiter is a real 10-per-15-minutes protection, and this file
+    // signs the owner in several times after the earlier journeys did.
+    await clearAuthRateLimits();
     owner = await apiSignIn(request, {
       email: SEED.owner,
       password: SEED.password,

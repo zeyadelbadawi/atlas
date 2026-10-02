@@ -5,7 +5,17 @@ Written 30 Sep 2026 at the end of a Claude Code session that ran out of credit, 
 Companion file: `atlas-backend/docs/ATLAS-CLAUDE-HANDOVER.md` (backend specifics).
 Source of truth for scope: `Reports/THEME_1_ACADEMY_WEBSITE_PLAN.md` in this repo (the approved plan; phase results in §M–§U).
 
-## ★★★★★ Status update — in production; closure remediation pending review (1 Oct 2026). Read this first.
+## ★★★★★★ Status update — P1–P8 on the feature branch; baseline in production (2 Oct 2026). Read this first.
+
+Full record: `Reports/P1_P8_REMEDIATION_REPORT.md` (root causes, test evidence, integrity, production readiness, remaining work, commits).
+
+- **In production since 1 Oct (the closure remediation below, now merged):** frontend `a5a18f3` via [atlas#12](https://github.com/zeyadelbadawi/atlas/pull/12) → `main` `b3f7a4d`, deploy run #129 (Caddy only, `bb1da23e…`); backend `a45fd17` via [atlas-backend#17](https://github.com/zeyadelbadawi/atlas-backend/pull/17) → `main` `dafa461`, deploy run #232 (no migrations, backend `13a1da70…`). `.last-good` = `13a1da70…` + `bb1da23e…`; `.last-good.after-gate-e` preserved. Verified by the Owner's read-only VPS output.
+- **Live public-site checks are blocked, not failing:** all 25 published sites belong to `trial_expired` organizations, so the API withholds their data by design (404/403). Live verification needs one eligible organization — a production data decision for the Owner.
+- **On `claude/practical-wozniak-pjcdhe` (both repos), pushed, NOT merged or deployed:** P1 disposable stack, P2 typecheck to zero (+ CI gate), P3 public content library (backend migration `20261101000000`), P4 full-screen exams (migration `20261101000100`), P5 explainable integrity signals + evaluation, P6 self-hosted RUM (off by default), P7 journeys J9–J13 and the accessibility audit, P8 full regression.
+- **Next, each only with explicit approval:** the read-only impact queries (report §D), PRs, merge, backend deploy with the two migrations, frontend deploy; RUM needs a privacy-copy decision and configuration.
+- **Still open:** rotate the `atlas_vps` SSH key; remove `/home/deploy/step2/deploy.sh` from the VPS.
+
+## ★★★★★ Status update — in production; closure remediation pending review — superseded: merged and deployed, see above (1 Oct 2026).
 
 Full record: `Reports/THEME_1_ACADEMY_WEBSITE_PLAN.md` **§Z**. Everything below this section describes earlier states and is kept as history; where it disagrees with §Z, §Z wins.
 

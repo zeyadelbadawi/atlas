@@ -86,7 +86,12 @@ import {
   sortEventsByServerTime,
 } from '../utils/attempt-review.utils';
 import { TEXT_QUESTION_TYPES } from '@types';
-import type { QuizAttemptReview, QuizReviewAnswer } from '@types';
+import type {
+  IntegritySignal,
+  QuizAttemptReview,
+  QuizReviewAnswer,
+} from '@types';
+import { IntegritySignalsCard } from '../components/IntegritySignalsCard';
 
 /* ---------- small presentational pieces ---------- */
 
@@ -161,7 +166,10 @@ function QuestionCard({ question, index }: QuestionCardProps): JSX.Element {
               points: formatNumber(question.points, language),
             })}
           </p>
-          <p className="whitespace-pre-wrap text-sm font-medium text-foreground">
+          <p
+            dir="auto"
+            className="whitespace-pre-wrap text-sm font-medium text-foreground"
+          >
             {question.prompt}
           </p>
         </div>
@@ -253,7 +261,9 @@ function QuestionCard({ question, index }: QuestionCardProps): JSX.Element {
                   />
                   <span className="text-foreground">{option.label}</span>
                 </span>
-                <span className={cn('shrink-0 text-xs', marker.className)}>
+                {/* The words carry the meaning and the icon the colour: small
+                    coloured text on the tinted row fell below 4.5:1 (axe). */}
+                <span className="shrink-0 text-xs font-medium text-foreground">
                   {t(`instructor:attemptReview.answers.${marker.key}`)}
                 </span>
               </li>
@@ -601,6 +611,8 @@ export default function InstructorQuizAttemptPage(): JSX.Element {
     attemptId: string;
   }>();
   const [voidOpen, setVoidOpen] = useState(false);
+  const [highlighted, setHighlighted] = useState<IntegritySignal | null>(null);
+  const [showHeartbeats, setShowHeartbeats] = useState(false);
 
   const {
     data: attempt,
@@ -613,6 +625,24 @@ export default function InstructorQuizAttemptPage(): JSX.Element {
     () => (attempt ? sortEventsByServerTime(attempt.events) : []),
     [attempt]
   );
+  const highlightedIds = useMemo(
+    () => new Set(highlighted?.eventIds ?? []),
+    [highlighted]
+  );
+  const heartbeatCount = events.filter((e) => e.type === 'heartbeat').length;
+  // Heartbeats are connection checks: hidden unless asked for, or evidence.
+  const shownEvents = events.filter(
+    (e) => showHeartbeats || e.type !== 'heartbeat' || highlightedIds.has(e.id)
+  );
+  // Bring the first piece of evidence into view.
+  useEffect(() => {
+    const first = highlighted?.eventIds[0];
+    if (first) {
+      document
+        .getElementById(`attempt-event-${first}`)
+        ?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }
+  }, [highlighted]);
 
   const resultsPath =
     courseId && quizId
@@ -842,6 +872,20 @@ export default function InstructorQuizAttemptPage(): JSX.Element {
           canGrade={canGrade}
         />
 
+        {attempt.integrityMode !== 'off' ? (
+          <IntegritySignalsCard
+            signals={attempt.signals}
+            policy={{
+              mode: attempt.integrityMode,
+              maxViolations: attempt.maxViolations,
+              requireFullscreen: attempt.requireFullscreen,
+            }}
+            formatPart={formatPart}
+            highlighted={highlighted?.key ?? null}
+            onShowEvidence={setHighlighted}
+          />
+        ) : null}
+
         <Card>
           <CardHeader>
             <CardTitle>{t('instructor:attemptReview.events.title')}</CardTitle>
@@ -857,57 +901,106 @@ export default function InstructorQuizAttemptPage(): JSX.Element {
                   : t('instructor:attemptReview.events.empty')}
               </p>
             ) : (
-              <ol className="divide-y divide-border">
-                {events.map((event) => (
-                  <li
-                    key={event.id}
-                    className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1 py-2 text-sm"
+              <>
+                {highlighted ? (
+                  <p role="status" className="text-xs text-foreground">
+                    {t('instructor:attemptReview.events.highlighted', {
+                      signal: t(
+                        `instructor:attemptReview.signals.key.${highlighted.key}.title`
+                      ),
+                    })}
+                  </p>
+                ) : null}
+                {heartbeatCount > 0 ? (
+                  <Button
+                    type="button"
+                    variant="link"
+                    size="sm"
+                    className="h-auto p-0 text-xs"
+                    aria-pressed={showHeartbeats}
+                    onClick={() => setShowHeartbeats((value) => !value)}
                   >
-                    <div className="space-y-0.5">
-                      <p className="font-medium text-foreground">
-                        {t(attemptEventLabelKey(event.type))}
-                      </p>
-                      <p
-                        className={cn(
-                          'inline-flex items-center gap-1 text-xs',
-                          event.counted
-                            ? 'text-warning'
-                            : 'text-muted-foreground'
-                        )}
-                      >
-                        {event.counted ? (
-                          <Flag className="size-3" aria-hidden />
-                        ) : (
-                          <MinusCircle className="size-3" aria-hidden />
-                        )}
-                        {event.counted
-                          ? t('instructor:attemptReview.events.counted')
-                          : t('instructor:attemptReview.events.ignored')}
-                      </p>
-                    </div>
-                    <dl className="grid gap-x-4 gap-y-0.5 text-xs text-muted-foreground sm:grid-cols-2">
-                      <div>
-                        <dt className="inline">
-                          {t('instructor:attemptReview.events.serverAt')}:{' '}
-                        </dt>
-                        <dd className="inline">
-                          {fmt.dateTime(event.serverAt)}
-                        </dd>
+                    {showHeartbeats
+                      ? t('instructor:attemptReview.events.hideHeartbeats')
+                      : t('instructor:attemptReview.events.showHeartbeats', {
+                          count: heartbeatCount,
+                        })}
+                  </Button>
+                ) : null}
+                <ol className="divide-y divide-border">
+                  {shownEvents.map((event) => (
+                    <li
+                      key={event.id}
+                      id={`attempt-event-${event.id}`}
+                      data-highlighted={
+                        highlightedIds.has(event.id) || undefined
+                      }
+                      className={cn(
+                        'flex flex-wrap items-start justify-between gap-x-4 gap-y-1 py-2 text-sm',
+                        highlightedIds.has(event.id) &&
+                          'rounded-sm bg-accent px-2 ring-1 ring-ring'
+                      )}
+                    >
+                      <div className="space-y-0.5">
+                        <p className="font-medium text-foreground">
+                          {t(attemptEventLabelKey(event.type))}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {t('instructor:attemptReview.events.elapsed', {
+                            time: isolateNumericExpression(
+                              formatAttemptDuration(
+                                attempt.startedAt,
+                                event.serverAt,
+                                null,
+                                formatPart
+                              ) ?? '0:00'
+                            ),
+                          })}
+                        </p>
+                        <p
+                          className={cn(
+                            'inline-flex items-center gap-1 text-xs',
+                            event.counted
+                              ? 'text-warning'
+                              : 'text-muted-foreground'
+                          )}
+                        >
+                          {event.counted ? (
+                            <Flag className="size-3" aria-hidden />
+                          ) : (
+                            <MinusCircle className="size-3" aria-hidden />
+                          )}
+                          {event.counted
+                            ? t('instructor:attemptReview.events.counted')
+                            : t('instructor:attemptReview.events.ignored')}
+                        </p>
                       </div>
-                      <div>
-                        <dt className="inline">
-                          {t('instructor:attemptReview.events.clientAt')}:{' '}
-                        </dt>
-                        <dd className="inline">
-                          {event.clientAt
-                            ? fmt.dateTime(event.clientAt)
-                            : notAvailable}
-                        </dd>
-                      </div>
-                    </dl>
-                  </li>
-                ))}
-              </ol>
+                      <dl className="grid gap-x-4 gap-y-0.5 text-xs text-muted-foreground sm:grid-cols-2">
+                        <div>
+                          <dt className="inline">
+                            {t('instructor:attemptReview.events.serverAt')}
+                            :{' '}
+                          </dt>
+                          <dd className="inline">
+                            {fmt.dateTime(event.serverAt)}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt className="inline">
+                            {t('instructor:attemptReview.events.clientAt')}
+                            :{' '}
+                          </dt>
+                          <dd className="inline">
+                            {event.clientAt
+                              ? fmt.dateTime(event.clientAt)
+                              : notAvailable}
+                          </dd>
+                        </div>
+                      </dl>
+                    </li>
+                  ))}
+                </ol>
+              </>
             )}
           </CardContent>
         </Card>

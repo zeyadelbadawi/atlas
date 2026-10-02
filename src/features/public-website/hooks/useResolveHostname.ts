@@ -9,16 +9,30 @@ import { useApiQuery } from '@/shared/hooks';
 import { publicWebsiteKeys } from '@services/query';
 // The early request `main.tsx` started, if any (Reports/LCP_ROOT_CAUSE.md).
 import { prefetchKeys, publicWebsiteService, takePrefetched } from '@services';
+import { setDevHostAcademyId } from '@/services/api/dev-host-academy';
+import { DEV_OVERRIDE_PARAM } from '@utils';
 import type { HostnameResolution } from '@types';
 import type { ApiError } from '@api';
 
 export function useResolveHostname(hostname: string) {
   return useApiQuery<HostnameResolution | null, ApiError>({
     queryKey: publicWebsiteKeys.hostnameResolution(hostname),
-    queryFn: () =>
-      takePrefetched<HostnameResolution | null>(
+    queryFn: async () => {
+      const resolution = await (takePrefetched<HostnameResolution | null>(
         prefetchKeys.resolve(hostname)
-      ) ?? publicWebsiteService.resolveHostname(hostname),
+      ) ?? publicWebsiteService.resolveHostname(hostname));
+      // Local development: remember the dev-preview Academy for the
+      // host-resolved learner routes (see `dev-host-academy.ts`).
+      if (
+        import.meta.env.DEV &&
+        typeof window !== 'undefined' &&
+        new URLSearchParams(window.location.search).get(DEV_OVERRIDE_PARAM) ===
+          hostname
+      ) {
+        setDevHostAcademyId(resolution?.academyId);
+      }
+      return resolution;
+    },
     enabled: !!hostname,
     // P63g — a hostname's answer changes rarely but it DOES change (a
     // customer fixes DNS, a domain goes live): re-read after a minute of

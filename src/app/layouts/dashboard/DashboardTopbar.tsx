@@ -68,7 +68,7 @@ export function DashboardTopbar({
         ) : null}
       </div>
 
-      <div className="flex items-center gap-1">
+      <div className="flex min-w-0 items-center gap-1">
         {actions}
         <LanguageSwitcher />
         <ThemeSwitcher />

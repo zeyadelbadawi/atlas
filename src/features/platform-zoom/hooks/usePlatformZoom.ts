@@ -9,13 +9,21 @@ import { useApiQuery } from '@/shared/hooks';
 import { platformZoomKeys } from '@services/query';
 import { platformZoomService } from '../services/PlatformZoomService';
 import type {
+  ZoomAcademyDetail,
+  ZoomActivityRow,
+  ZoomAttendanceRow,
   ZoomConnectionRow,
   ZoomConnectionsQuery,
+  ZoomEventHealth,
+  ZoomEventRow,
+  ZoomHealthResponse,
+  ZoomListQuery,
   ZoomLiveSessionRow,
   ZoomOverview,
+  ZoomRecordingRow,
   ZoomSessionsQuery,
 } from '../types';
-import type { PaginatedResponse } from '@types';
+import type { PaginatedResult } from '@types';
 import type { ApiError } from '@api';
 
 export function useZoomOverview() {
@@ -26,46 +34,37 @@ export function useZoomOverview() {
 }
 
 export function useZoomConnections(query: ZoomConnectionsQuery) {
-  return useApiQuery<PaginatedResponse<ZoomConnectionRow>, ApiError>({
+  return useApiQuery<PaginatedResult<ZoomConnectionRow>, ApiError>({
     queryKey: platformZoomKeys.connections(query),
     queryFn: () => platformZoomService.listConnections(query),
   });
 }
 
 export function useZoomSessions(query: ZoomSessionsQuery) {
-  return useApiQuery<PaginatedResponse<ZoomLiveSessionRow>, ApiError>({
+  return useApiQuery<PaginatedResult<ZoomLiveSessionRow>, ApiError>({
     queryKey: platformZoomKeys.sessions(query),
     queryFn: () => platformZoomService.listSessions(query),
   });
 }
 
 /* ---- Part 2 hooks ---- */
-import type {
-  ZoomAttendanceRow,
-  ZoomRecordingRow,
-  ZoomEventRow,
-  ZoomEventHealth,
-  ZoomHealthResponse,
-  ZoomAcademyDetail,
-  ZoomListQuery,
-} from '../types';
 
 export function useZoomAttendance(query: ZoomListQuery) {
-  return useApiQuery<PaginatedResponse<ZoomAttendanceRow>, ApiError>({
+  return useApiQuery<PaginatedResult<ZoomAttendanceRow>, ApiError>({
     queryKey: platformZoomKeys.attendance(query),
     queryFn: () => platformZoomService.listAttendance(query),
   });
 }
 
 export function useZoomRecordings(query: ZoomListQuery) {
-  return useApiQuery<PaginatedResponse<ZoomRecordingRow>, ApiError>({
+  return useApiQuery<PaginatedResult<ZoomRecordingRow>, ApiError>({
     queryKey: platformZoomKeys.recordings(query),
     queryFn: () => platformZoomService.listRecordings(query),
   });
 }
 
 export function useZoomEvents(query: ZoomListQuery) {
-  return useApiQuery<PaginatedResponse<ZoomEventRow> & { health: ZoomEventHealth }, ApiError>({
+  return useApiQuery<PaginatedResult<ZoomEventRow> & { health: ZoomEventHealth }, ApiError>({
     queryKey: platformZoomKeys.events(query),
     queryFn: () => platformZoomService.listEvents(query),
   });
@@ -79,7 +78,7 @@ export function useZoomHealth() {
 }
 
 export function useZoomActivity(query: ZoomListQuery) {
-  return useApiQuery<PaginatedResponse<ZoomActivityRow>, ApiError>({
+  return useApiQuery<PaginatedResult<ZoomActivityRow>, ApiError>({
     queryKey: platformZoomKeys.activity(query),
     queryFn: () => platformZoomService.listActivity(query),
   });

@@ -15,6 +15,14 @@
  *
  * SUBMIT IS THE ONE CONFIRMATION, and it lists how many questions are
  * unanswered because that is the fact the learner needs to decide.
+ *
+ * FULL SCREEN (P4) is requested by the Start click (a user gesture —
+ * browsers refuse it from an effect, which is why the old on-mount
+ * request never worked) and owned by the parent's `useQuizFullscreen`.
+ * Here: the exit policy (`fullscreenView`) — out of full screen, the
+ * questions wait behind a gate until the learner returns; answers, autosave
+ * and the timer carry on. Unsupported or refused is recorded for the
+ * reviewer and never traps the learner.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +30,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Loader2,
-  Maximize2,
   Send,
   ShieldAlert,
 } from 'lucide-react';
@@ -35,6 +42,11 @@ import type { LanguageCode, QuizAnswer, QuizAttemptSession } from '@types';
 import { useAttemptClock } from '../hooks/useAttemptClock';
 import { useQuizAutosave } from '../hooks/useQuizAutosave';
 import { useQuizIntegrity } from '../hooks/useQuizIntegrity';
+import {
+  fullscreenView,
+  type QuizFullscreenControl,
+} from '../hooks/useQuizFullscreen';
+import { QuizFullscreenGate } from './QuizFullscreenGate';
 import {
   answeredCount,
   answersEqual,
@@ -64,6 +76,8 @@ export interface QuizAttemptRunnerProps {
   /** The server says the attempt is over (expired, auto-submitted, invalidated). */
   readonly onFinished: (reason: 'timeout' | 'integrity' | 'terminal') => void;
   readonly submitError?: string;
+  /** Full-screen state and request, owned by the parent (the Start click requests it). */
+  readonly fullscreen: QuizFullscreenControl;
 }
 
 export function QuizAttemptRunner({
@@ -74,6 +88,7 @@ export function QuizAttemptRunner({
   isSubmitting,
   onFinished,
   submitError,
+  fullscreen,
 }: QuizAttemptRunnerProps): JSX.Element {
   const { t, i18n } = useTranslation();
   const language = i18n.language as LanguageCode;
@@ -198,17 +213,44 @@ export function QuizAttemptRunner({
     onAutoSubmitted: () => finish('integrity'),
   });
 
-  const requestedFullscreenRef = useRef(false);
+  /* ---------- full screen ---------- */
+
+  const fullscreenRequired =
+    session.settings.requireFullscreen &&
+    session.settings.integrityMode !== 'off';
+  const [continuedWithout, setContinuedWithout] = useState(false);
+  const view = fullscreenView({
+    required: fullscreenRequired,
+    supported: fullscreen.supported,
+    active: fullscreen.active,
+    lastResult: fullscreen.lastResult,
+    continuedWithout,
+  });
+  // Unsupported, or the Start click's request refused: tell the reviewer once.
+  const reportedUnavailableRef = useRef(false);
+  const { recordFullscreenUnavailable } = integrity;
   useEffect(() => {
-    if (
-      session.settings.requireFullscreen &&
-      session.settings.integrityMode !== 'off' &&
-      !requestedFullscreenRef.current
-    ) {
-      requestedFullscreenRef.current = true;
-      void integrity.requestFullscreen();
-    }
-  }, [session.settings, integrity]);
+    if (!fullscreenRequired || reportedUnavailableRef.current) return;
+    const reason = !fullscreen.supported
+      ? 'unsupported'
+      : fullscreen.lastResult === 'refused'
+        ? 'refused'
+        : null;
+    if (!reason) return;
+    reportedUnavailableRef.current = true;
+    recordFullscreenUnavailable(reason);
+  }, [
+    fullscreenRequired,
+    fullscreen.supported,
+    fullscreen.lastResult,
+    recordFullscreenUnavailable,
+  ]);
+  const enterFullscreen = () => {
+    void fullscreen.request().then((result) => {
+      if (result === 'refused') recordFullscreenUnavailable('refused');
+    });
+  };
+  const gated = view === 'gate' || view === 'gate-refused';
 
   /* ---------- submit ---------- */
 
@@ -305,100 +347,98 @@ export function QuizAttemptRunner({
         </Alert>
       ) : null}
 
-      {session.settings.requireFullscreen &&
-      session.settings.integrityMode !== 'off' &&
-      !integrity.isFullscreen ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-dashed border-border px-3 py-2 text-sm text-muted-foreground">
-          <span>{t('learning:quiz.integrity.fullscreenHint')}</span>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => void integrity.requestFullscreen()}
-          >
-            <Maximize2 className="size-4" aria-hidden />
-            {t('learning:quiz.integrity.enterFullscreen')}
-          </Button>
-        </div>
+      {view !== 'none' ? (
+        <QuizFullscreenGate
+          view={view}
+          onEnter={enterFullscreen}
+          onContinueWithout={() => setContinuedWithout(true)}
+        />
       ) : null}
 
-      <QuizNavigator
-        questions={questions}
-        answers={answers}
-        flagged={flagged}
-        currentIndex={currentIndex}
-        onSelect={goTo}
-      />
+      {gated ? null : (
+        <>
+          <QuizNavigator
+            questions={questions}
+            answers={answers}
+            flagged={flagged}
+            currentIndex={currentIndex}
+            onSelect={goTo}
+          />
 
-      <div className="relative z-[1] space-y-4">
-        {visible.map((question) => {
-          const index = questions.indexOf(question);
-          return (
-            <QuizQuestionCard
-              key={question.id}
-              question={question}
-              index={index}
-              total={questions.length}
-              answer={answers[question.id]}
-              flagged={flagged.has(question.id)}
-              disabled={isSubmitting}
-              onChange={handleAnswer}
-              onToggleFlag={() => toggleFlag(question.id)}
-            />
-          );
-        })}
-      </div>
+          <div className="relative z-[1] space-y-4">
+            {visible.map((question) => {
+              const index = questions.indexOf(question);
+              return (
+                <QuizQuestionCard
+                  key={question.id}
+                  question={question}
+                  index={index}
+                  total={questions.length}
+                  answer={answers[question.id]}
+                  flagged={flagged.has(question.id)}
+                  disabled={isSubmitting}
+                  onChange={handleAnswer}
+                  onToggleFlag={() => toggleFlag(question.id)}
+                />
+              );
+            })}
+          </div>
 
-      {submitError ? (
-        <p role="alert" className="text-sm text-destructive">
-          {submitError}
-        </p>
-      ) : null}
-
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
-        {paged ? (
-          <Button
-            type="button"
-            variant="outline"
-            disabled={currentIndex === 0}
-            onClick={() => goTo(currentIndex - 1)}
-          >
-            <ChevronLeft className={cn('size-4', MIRROR_IN_RTL)} aria-hidden />
-            {t('learning:quiz.previousQuestion')}
-          </Button>
-        ) : (
-          <span />
-        )}
-
-        <div className="flex flex-wrap items-center gap-2">
-          {paged && !isLast ? (
-            <Button type="button" onClick={() => goTo(currentIndex + 1)}>
-              {t('learning:quiz.nextQuestion')}
-              <ChevronRight
-                className={cn('size-4', MIRROR_IN_RTL)}
-                aria-hidden
-              />
-            </Button>
+          {submitError ? (
+            <p role="alert" className="text-sm text-destructive">
+              {submitError}
+            </p>
           ) : null}
-          <Button
-            type="button"
-            variant={paged && !isLast ? 'outline' : 'default'}
-            onClick={() => void handleSubmit()}
-            disabled={isSubmitting}
-            data-testid="quiz-submit"
-          >
-            {isSubmitting ? (
-              <Loader2
-                className="size-4 animate-spin motion-reduce:animate-none"
-                aria-hidden
-              />
+
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
+            {paged ? (
+              <Button
+                type="button"
+                variant="outline"
+                disabled={currentIndex === 0}
+                onClick={() => goTo(currentIndex - 1)}
+              >
+                <ChevronLeft
+                  className={cn('size-4', MIRROR_IN_RTL)}
+                  aria-hidden
+                />
+                {t('learning:quiz.previousQuestion')}
+              </Button>
             ) : (
-              <Send className="size-4" aria-hidden />
+              <span />
             )}
-            {t('learning:quiz.submitAction')}
-          </Button>
-        </div>
-      </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              {paged && !isLast ? (
+                <Button type="button" onClick={() => goTo(currentIndex + 1)}>
+                  {t('learning:quiz.nextQuestion')}
+                  <ChevronRight
+                    className={cn('size-4', MIRROR_IN_RTL)}
+                    aria-hidden
+                  />
+                </Button>
+              ) : null}
+              <Button
+                type="button"
+                variant={paged && !isLast ? 'outline' : 'default'}
+                onClick={() => void handleSubmit()}
+                disabled={isSubmitting}
+                data-testid="quiz-submit"
+              >
+                {isSubmitting ? (
+                  <Loader2
+                    className="size-4 animate-spin motion-reduce:animate-none"
+                    aria-hidden
+                  />
+                ) : (
+                  <Send className="size-4" aria-hidden />
+                )}
+                {t('learning:quiz.submitAction')}
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
 
       <IntegrityWarningDialog
         open={dialogOpen}

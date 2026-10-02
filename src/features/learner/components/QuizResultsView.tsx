@@ -360,7 +360,10 @@ export function QuizResultsView({
                         {' · '}
                         {t(verdictKey)}
                       </p>
-                      <p className="mt-1 whitespace-pre-line text-sm font-medium text-foreground">
+                      <p
+                        dir="auto"
+                        className="mt-1 whitespace-pre-line text-sm font-medium text-foreground"
+                      >
                         {question.prompt}
                       </p>
                       <AnswerLine question={question} language={language} />

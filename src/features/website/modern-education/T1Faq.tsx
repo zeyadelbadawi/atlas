@@ -13,7 +13,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { useWebsiteFaqEntries } from '../hooks';
+import { useFaqLibraryEntries } from '../hooks';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import { resolveWebsiteCtaHref } from '../utils/link-resolution.utils';
@@ -62,21 +62,16 @@ export function T1Faq({
   const { locale } = usePublicWebsiteLocale();
   const headingId = useId();
   const filter = useFaqFilter();
-  const libraryIds = config.libraryEntryIds ?? [];
-  const { data } = useWebsiteFaqEntries(academyId, {
-    query: { filters: { status: 'published' } },
-    enabled: libraryIds.length > 0,
-  });
-  const libraryItems: FaqEntry[] = libraryIds
-    .map((id) => data?.items.find((entry) => entry.id === id))
-    .filter(
-      (entry): entry is NonNullable<typeof entry> => !!entry && entry.visible
-    )
-    .map((entry) => ({
-      id: entry.id,
-      question: resolveLocalizedText(entry.question, locale),
-      answer: resolveLocalizedText(entry.answer, locale),
-    }));
+  // Server-resolved on the public site; the preview resolves them itself.
+  const libraryItems: FaqEntry[] = useFaqLibraryEntries(
+    config,
+    academyId,
+    !linkRenderer
+  ).map((entry) => ({
+    id: entry.id,
+    question: resolveLocalizedText(entry.question, locale),
+    answer: resolveLocalizedText(entry.answer, locale),
+  }));
   const inlineItems: FaqEntry[] = config.items.map((item) => ({
     id: item.id,
     question: resolveLocalizedText(item.question, locale),

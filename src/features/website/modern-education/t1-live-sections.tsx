@@ -41,7 +41,7 @@ import {
   MIN_COURSE_CATEGORIES,
 } from '../constants/website.constants';
 import { PUBLIC_WEBSITE_LOCALE_DIRECTION } from '../constants/locale.constants';
-import { useWebsiteTestimonialEntries } from '../hooks';
+import { useTestimonialLibraryEntries } from '../hooks';
 import { ThemeImage, hasRenderableImage } from '../theme-assets';
 import { resolveCatalogHref } from '../utils/catalog-url.utils';
 import { resolvePagePath } from '../utils/link-resolution.utils';
@@ -799,24 +799,19 @@ export function T1Testimonials({
   const direction = PUBLIC_WEBSITE_LOCALE_DIRECTION[locale];
   const headingId = useId();
   const isPublic = !!linkRenderer;
-  const libraryIds = config.libraryEntryIds ?? [];
-  const { data } = useWebsiteTestimonialEntries(academyId, {
-    query: { filters: { status: 'published' } },
-    enabled: libraryIds.length > 0,
-  });
-  const libraryItems: QuoteItem[] = libraryIds
-    .map((id) => data?.items.find((entry) => entry.id === id))
-    .filter(
-      (entry): entry is NonNullable<typeof entry> => !!entry && entry.visible
-    )
-    .map((entry) => ({
-      id: entry.id,
-      quote: resolveLocalizedText(entry.quote, locale),
-      authorName: entry.authorName,
-      authorRole: resolveLocalizedText(entry.authorRole, locale),
-      avatar: entry.avatar,
-      sample: false,
-    }));
+  // Server-resolved on the public site; the preview resolves them itself.
+  const libraryItems: QuoteItem[] = useTestimonialLibraryEntries(
+    config,
+    academyId,
+    !isPublic
+  ).map((entry) => ({
+    id: entry.id,
+    quote: resolveLocalizedText(entry.quote, locale),
+    authorName: entry.authorName,
+    authorRole: resolveLocalizedText(entry.authorRole, locale),
+    avatar: entry.avatar,
+    sample: false,
+  }));
   // §D.4: sample (starter) testimonials never reach the public site.
   const inlineItems: QuoteItem[] = config.items
     .filter((item) => !(isPublic && item.sample))

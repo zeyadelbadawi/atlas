@@ -21,6 +21,8 @@ import type {
   MonitoringConfigurationResponse,
   SyntheticAlertState,
   SystemHealthResponse,
+  WebVitalsRange,
+  WebVitalsResponse,
 } from '@types';
 
 /** The alert list's server-side filters. Absent fields are not sent. */
@@ -90,6 +92,17 @@ export class PlatformObservabilityService extends BaseService {
       this.path('configuration'),
       options
     );
+  }
+
+  /** Real-user Core Web Vitals, p75 by route template and device (P6). */
+  async getWebVitals(
+    range: WebVitalsRange,
+    options?: ReadOptions
+  ): Promise<WebVitalsResponse> {
+    return this.client.get<WebVitalsResponse>(this.path('web-vitals'), {
+      ...options,
+      params: { ...(options?.params ?? {}), range },
+    });
   }
 
   /** Fires a REAL test alert through Prometheus → Alertmanager → Slack. */

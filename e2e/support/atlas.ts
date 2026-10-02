@@ -21,7 +21,8 @@
  */
 import { expect, type APIRequestContext, type Page } from '@playwright/test';
 
-export const API_BASE = process.env.E2E_API_BASE_URL ?? 'http://localhost:3000/api/v1';
+export const API_BASE =
+  process.env.E2E_API_BASE_URL ?? 'http://localhost:3000/api/v1';
 
 /**
  * Local development serves every academy website from the same origin as
@@ -31,7 +32,8 @@ export const API_BASE = process.env.E2E_API_BASE_URL ?? 'http://localhost:3000/a
  * ignored.
  */
 export const ACADEMY_PREVIEW_PARAM = '__atlas_academy_preview';
-export const ACADEMY_SLUG = process.env.E2E_ACADEMY_SLUG ?? 'web-development-academy';
+export const ACADEMY_SLUG =
+  process.env.E2E_ACADEMY_SLUG ?? 'web-development-academy';
 
 /** Seeded staff — see `atlas-backend/prisma/seed.ts`. */
 export const SEED = {
@@ -91,7 +93,9 @@ export async function apiSignIn(
     academyId?: string;
   }
 ): Promise<Session> {
-  const response = await request.post(`${API_BASE}/auth/sign-in`, { data: body });
+  const response = await request.post(`${API_BASE}/auth/sign-in`, {
+    data: body,
+  });
   expect(
     response.ok(),
     `sign-in failed for ${body.email}: ${response.status()} ${await response.text()}`
@@ -111,7 +115,10 @@ export function apiGet(
   path: string,
   params?: Record<string, string>
 ) {
-  return request.get(`${API_BASE}${path}`, { headers: authHeader(session), params });
+  return request.get(`${API_BASE}${path}`, {
+    headers: authHeader(session),
+    params,
+  });
 }
 
 export function apiPost(
@@ -178,10 +185,18 @@ export async function findCourseByTitle(
   academyId: string,
   title: string
 ): Promise<{ id: string; title: string }> {
-  const response = await apiGet(request, session, `/academies/${academyId}/courses`, {
-    pageSize: '100',
-  });
-  expect(response.ok(), `could not list courses: ${response.status()}`).toBeTruthy();
+  const response = await apiGet(
+    request,
+    session,
+    `/academies/${academyId}/courses`,
+    {
+      pageSize: '100',
+    }
+  );
+  expect(
+    response.ok(),
+    `could not list courses: ${response.status()}`
+  ).toBeTruthy();
   const json = await response.json();
   const items: { id: string; title: string }[] = json.items ?? json;
   const course = items.find((item) => item.title === title);
@@ -213,7 +228,9 @@ export async function registerLearnerThroughWebsite(
   if (await terms.count()) {
     await terms.check();
   }
-  await page.getByRole('button', { name: /sign up|create account|register/i }).click();
+  await page
+    .getByRole('button', { name: /sign up|create account|register/i })
+    .click();
 }
 
 /** Clears any session this browser context holds, so the next step starts signed out. */
@@ -229,11 +246,35 @@ export async function signOutInBrowser(page: Page): Promise<void> {
   });
 }
 
+/**
+ * Records the most privacy-preserving cookie decision (necessary only)
+ * before any page of this test loads — what a returning visitor who chose
+ * "Reject optional" has. Language-neutral, unlike clicking the banner, and
+ * the banner can no longer sit over a form's submit button at phone width.
+ * Same record the theme baseline seeds (`atlas:cookie-consent`).
+ */
+export async function seedCookieDecision(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    window.localStorage.setItem(
+      'atlas:cookie-consent',
+      JSON.stringify({
+        version: 1,
+        necessary: true,
+        preferences: false,
+        decidedAt: '2026-09-01T09:00:00.000Z',
+      })
+    );
+  });
+}
+
 /** Dismisses the cookie banner with the most privacy-preserving option, when it is showing. */
 export async function declineCookies(page: Page): Promise<void> {
   const reject = page.getByRole('button', { name: /reject optional/i });
   if (await reject.count()) {
-    await reject.first().click({ timeout: 5_000 }).catch(() => undefined);
+    await reject
+      .first()
+      .click({ timeout: 5_000 })
+      .catch(() => undefined);
   }
 }
 

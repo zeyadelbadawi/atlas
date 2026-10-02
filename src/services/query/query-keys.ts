@@ -1191,6 +1191,8 @@ export const platformObservabilityKeys = {
     [...platformObservabilityKeys.all, 'metrics', metricId, range] as const,
   configuration: () =>
     [...platformObservabilityKeys.all, 'configuration'] as const,
+  webVitals: (range: string) =>
+    [...platformObservabilityKeys.all, 'web-vitals', range] as const,
 };
 
 export const platformAddOnKeys = {

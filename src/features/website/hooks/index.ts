@@ -37,3 +37,9 @@ export { useUpdateWebsiteTestimonialEntry } from './useUpdateWebsiteTestimonialE
 export type { UpdateWebsiteTestimonialEntryVariables } from './useUpdateWebsiteTestimonialEntry';
 export { usePublishWebsiteTestimonialEntry } from './usePublishWebsiteTestimonialEntry';
 export { useArchiveWebsiteTestimonialEntry } from './useArchiveWebsiteTestimonialEntry';
+export {
+  useFaqLibraryEntries,
+  useTestimonialLibraryEntries,
+  selectPublicEntries,
+  LIBRARY_PREVIEW_QUERY,
+} from './useSectionLibraryEntries';

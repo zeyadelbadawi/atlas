@@ -23,6 +23,8 @@ import type {
   MonitoringConfigurationResponse,
   SyntheticAlertState,
   SystemHealthResponse,
+  WebVitalsRange,
+  WebVitalsResponse,
 } from '@types';
 import {
   platformObservabilityService,
@@ -36,7 +38,19 @@ export const REFRESH_INTERVAL_MS = {
   alertRule: 30_000,
   metrics: 60_000,
   configuration: 30_000,
+  webVitals: 300_000,
 } as const;
+
+/** P6 — real-user p75s; a slow-moving aggregate, refreshed every five minutes. */
+export function useWebVitals(range: WebVitalsRange) {
+  return useApiQuery<WebVitalsResponse, ApiError>({
+    queryKey: platformObservabilityKeys.webVitals(range),
+    queryFn: () => platformObservabilityService.getWebVitals(range),
+    refetchInterval: REFRESH_INTERVAL_MS.webVitals,
+    staleTime: 0,
+    placeholderData: keepPreviousData,
+  });
+}
 
 export function useSystemHealth() {
   return useApiQuery<SystemHealthResponse, ApiError>({

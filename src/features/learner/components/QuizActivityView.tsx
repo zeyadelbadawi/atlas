@@ -13,6 +13,12 @@
  * learner presses Retake so the intro can show attempts left before a
  * new attempt is created.
  *
+ * FULL SCREEN: when the quiz requires it, the Start click requests it
+ * BEFORE the start request is awaited — the click is the user gesture the
+ * browser insists on. Whether the attempt then requires it is the
+ * server's snapshot (the runner reads `session.settings`). The view leaves
+ * full screen when the results show.
+ *
  * SUBMIT FAILURES ARE READ, NOT GUESSED. A submit refused with
  * `attemptExpired` / `attemptAlreadySubmitted` means the server already
  * finalised the attempt; the view moves to results and the results
@@ -36,6 +42,7 @@ import {
   useSubmitQuizAttempt,
 } from '@features/learning';
 import { readErrorKind } from '../utils/read-error-kind';
+import { useQuizFullscreen } from '../hooks/useQuizFullscreen';
 import { QuizAttemptRunner } from './QuizAttemptRunner';
 import { QuizIntroCard } from './QuizIntroCard';
 import { QuizResultsView } from './QuizResultsView';
@@ -98,12 +105,19 @@ export function QuizActivityView({
     setSubmitError(undefined);
   }, [quizId]);
 
+  const fullscreen = useQuizFullscreen();
   const startAttempt = useStartQuizAttempt(courseId, quizId);
   const submitAttempt = useSubmitQuizAttempt(courseId, quizId);
 
   const resultsAttemptId =
     finishedAttemptId ??
     (latest && !openAttempt && !wantsIntro ? latest.id : undefined);
+
+  // The attempt is over: give the learner their screen back.
+  const { exit: exitFullscreen } = fullscreen;
+  useEffect(() => {
+    if (resultsAttemptId) exitFullscreen();
+  }, [resultsAttemptId, exitFullscreen]);
 
   const sessionQuery = useQuizAttemptSession(
     courseId,
@@ -126,6 +140,11 @@ export function QuizActivityView({
   const handleStart = async () => {
     setSubmitError(undefined);
     setFinishedAttemptId(null);
+    const settings = quizQuery.data?.settings;
+    // Inside the click, before any await: the gesture full screen needs.
+    if (settings?.requireFullscreen && settings.integrityMode !== 'off') {
+      void fullscreen.request();
+    }
     try {
       await startAttempt.mutateAsync();
       setWantsIntro(false);
@@ -277,6 +296,7 @@ export function QuizActivityView({
         isSubmitting={submitAttempt.isPending}
         onFinished={() => void handleFinished()}
         submitError={submitError}
+        fullscreen={fullscreen}
       />
     );
   }

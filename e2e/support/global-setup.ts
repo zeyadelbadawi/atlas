@@ -11,7 +11,7 @@
  * The backend's own Jest e2e suites solve this the same way, with a
  * `flushRateLimitKeys` helper. This is that helper for Playwright: it
  * removes only the `ratelimit:*` keys, touches nothing else in Redis, and
- * is a no-op outside a local Docker environment.
+ * is a no-op without a local Redis (Docker, or `E2E_REDIS_URL`).
  */
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
@@ -37,18 +37,26 @@ const BACKEND_DIR =
 export async function clearAuthRateLimits(): Promise<void> {
   if (process.env.E2E_SKIP_RATE_LIMIT_FLUSH === 'true') return;
 
+  // `E2E_REDIS_URL` (the disposable stack, `atlas-backend/scripts/
+  // e2e-local-stack.sh`) talks to that Redis directly; otherwise the local
+  // Docker Compose Redis. Only ever a loopback Redis.
+  const redisUrl = process.env.E2E_REDIS_URL;
+  if (redisUrl && !/^redis:\/\/(127\.0\.0\.1|localhost):\d+\/?$/.test(redisUrl)) {
+    throw new Error(`E2E_REDIS_URL must be a loopback Redis, got ${redisUrl}`);
+  }
+  const redisCli = (...args: string[]) =>
+    redisUrl
+      ? run('redis-cli', ['-u', redisUrl, ...args])
+      : run('docker', ['compose', 'exec', '-T', 'redis', 'redis-cli', ...args], {
+          cwd: BACKEND_DIR,
+        });
+
   try {
-    const { stdout } = await run(
-      'docker',
-      ['compose', 'exec', '-T', 'redis', 'redis-cli', '--scan', '--pattern', 'ratelimit:*'],
-      { cwd: BACKEND_DIR },
-    );
+    const { stdout } = await redisCli('--scan', '--pattern', 'ratelimit:*');
     const keys = stdout.split('\n').map((key) => key.trim()).filter(Boolean);
     if (keys.length === 0) return;
 
-    await run('docker', ['compose', 'exec', '-T', 'redis', 'redis-cli', 'del', ...keys], {
-      cwd: BACKEND_DIR,
-    });
+    await redisCli('del', ...keys);
     console.log(`[e2e] cleared ${keys.length} auth rate-limit keys before the run`);
   } catch (error) {
     // Never fail the run for this. If the keys cannot be cleared the

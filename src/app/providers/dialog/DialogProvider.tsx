@@ -34,6 +34,10 @@ export function AtlasDialogProvider({
 
   // Holds the pending promise resolver for the dialog currently on screen.
   const resolverRef = useRef<((confirmed: boolean) => void) | null>(null);
+  // Where keyboard focus was when the dialog opened. The dialog is opened
+  // by a call, not by a trigger element, so Radix has nothing to return
+  // focus to and would leave it on <body> (J13 keyboard check).
+  const returnFocusRef = useRef<HTMLElement | null>(null);
 
   const settle = useCallback((confirmed: boolean) => {
     resolverRef.current?.(confirmed);
@@ -45,6 +49,10 @@ export function AtlasDialogProvider({
     // A second request while one is open would orphan the first promise.
     resolverRef.current?.(false);
 
+    returnFocusRef.current =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
     setRequest(next);
     return new Promise<boolean>((resolve) => {
       resolverRef.current = resolve;
@@ -67,7 +75,17 @@ export function AtlasDialogProvider({
     <DialogContext.Provider value={value}>
       {children}
       <AlertDialog open={request !== null} onOpenChange={handleOpenChange}>
-        <AlertDialogContent className="rounded-xl border-border">
+        <AlertDialogContent
+          className="rounded-xl border-border"
+          onCloseAutoFocus={(event) => {
+            const target = returnFocusRef.current;
+            returnFocusRef.current = null;
+            if (target?.isConnected) {
+              event.preventDefault();
+              target.focus();
+            }
+          }}
+        >
           {request ? (
             <>
               <AlertDialogHeader>

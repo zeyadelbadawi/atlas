@@ -151,6 +151,20 @@ async function initializeApp(): Promise<void> {
     );
   }
 
+  // Real-user monitoring (P6): off unless the build sets a sample rate.
+  // When on, a small module loads after the first render, and only sampled
+  // visits download the measuring library.
+  if (ENV.rumSampleRate > 0) {
+    const surface = websiteContext.mode;
+    void import('./lib/rum/rum').then(({ startRum }) =>
+      startRum({
+        sampleRate: ENV.rumSampleRate,
+        apiBaseUrl: ENV.apiBaseUrl,
+        surface,
+      })
+    );
+  }
+
   if (websiteContext.mode === 'academy-website') {
     // The rest of the translations, once the page has painted.
     const completeTranslations = () => void completeLoadedLanguages();
