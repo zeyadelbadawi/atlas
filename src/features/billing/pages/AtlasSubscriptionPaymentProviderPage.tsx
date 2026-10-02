@@ -19,9 +19,10 @@
  * received back — `AtlasSubscriptionPaymentProviderConfig` has no field
  * capable of holding one.
  *
- * Below the provider configuration, `BankTransferMethodsCard` (2 Oct 2026)
- * manages the bank accounts the Manual Transfer provider tells
- * Organizations to pay into.
+ * Below the provider configuration, `ManualPaymentMethodsCard` (2 Oct 2026)
+ * manages the manual methods the Manual Transfer provider tells
+ * Organizations to pay into — Bank Transfer accounts, E-Wallets and
+ * InstaPay, one tab each.
  */
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -79,7 +80,7 @@ import {
   useSetAtlasSubscriptionPaymentProviderEnabled,
   useTestAtlasSubscriptionPaymentProviderConnection,
 } from '../hooks';
-import { BankTransferMethodsCard } from '../components/BankTransferMethodsCard';
+import { ManualPaymentMethodsCard } from '../components/ManualPaymentMethodsCard';
 import type { AtlasSubscriptionPaymentProviderStatus } from '@types';
 
 const configFormSchema = z.object({
@@ -438,7 +439,7 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
           </CardContent>
         </Card>
 
-        <BankTransferMethodsCard />
+        <ManualPaymentMethodsCard />
       </div>
     </PageContainer>
   );

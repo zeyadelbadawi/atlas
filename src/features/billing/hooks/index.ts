@@ -34,5 +34,7 @@ export { useSetAtlasSubscriptionPaymentProviderEnabled } from './useSetAtlasSubs
 export { usePlatformPaymentMethods } from './usePlatformPaymentMethods';
 export type { UsePlatformPaymentMethodsOptions } from './usePlatformPaymentMethods';
 export { useCreateBankTransferMethod } from './useCreateBankTransferMethod';
+export { useCreateWalletMethod } from './useCreateWalletMethod';
+export { useCreateInstapayMethod } from './useCreateInstapayMethod';
 export { useUpdatePlatformPaymentMethod } from './useUpdatePlatformPaymentMethod';
 export type { UpdatePlatformPaymentMethodVariables } from './useUpdatePlatformPaymentMethod';

@@ -1,5 +1,6 @@
 /**
- * Bank Transfer accounts (Platform Owner, 2 Oct 2026).
+ * Bank Transfer accounts (Platform Owner, 2 Oct 2026) — the Bank transfer
+ * tab of `ManualPaymentMethodsCard`, which opens on it.
  *
  * Pinned here: an empty list says Bank Transfer is NOT offered until an
  * account is added and enabled; the create dialog starts empty and refuses
@@ -33,6 +34,16 @@ vi.mock('../hooks', () => ({
     isPending: false,
     error: null,
   }),
+  useCreateWalletMethod: () => ({
+    mutateAsync: vi.fn(),
+    isPending: false,
+    error: null,
+  }),
+  useCreateInstapayMethod: () => ({
+    mutateAsync: vi.fn(),
+    isPending: false,
+    error: null,
+  }),
   useUpdatePlatformPaymentMethod: () => ({
     mutateAsync: updateMutateAsync,
     isPending: false,
@@ -44,7 +55,9 @@ vi.mock('@/hooks/use-toast', () => ({
   toast: (...args: unknown[]) => toast(...args) as unknown,
 }));
 
-const { BankTransferMethodsCard } = await import('./BankTransferMethodsCard');
+const { ManualPaymentMethodsCard } = await import(
+  './ManualPaymentMethodsCard'
+);
 
 /** Test-only values — obviously not a real account. */
 const METHOD: PlatformPaymentMethod = {
@@ -100,7 +113,7 @@ function listOf(items: readonly PlatformPaymentMethod[]) {
 function renderCard() {
   return render(
     <I18nextProvider i18n={createI18nInstance('en')}>
-      <BankTransferMethodsCard />
+      <ManualPaymentMethodsCard />
     </I18nextProvider>
   );
 }
@@ -119,7 +132,7 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-describe('BankTransferMethodsCard', () => {
+describe('ManualPaymentMethodsCard — Bank transfer', () => {
   it('explains that Bank Transfer is not offered while no account exists', () => {
     usePlatformPaymentMethods.mockReturnValue(listOf([]));
     renderCard();

@@ -267,7 +267,10 @@
   },
   "paymentMethod": {
     "incompleteInstructions": "Enter the bank name, account holder name, account number, transfer instructions and reference instructions before saving or enabling this account.",
-    "notBankTransfer": "Bank details can only be set on a bank-transfer method."
+    "notBankTransfer": "Bank details can only be set on a bank-transfer method.",
+    "placeholderDetails": "This method still has placeholder details, so it cannot be enabled or paid with. Replace them with the real details first.",
+    "walletProviderNameRequired": "Enter the wallet provider’s name.",
+    "instructionsTypeMismatch": "These details don’t match this payment method’s type. Reload the page and try again."
   },
   "academyPayout": {
     "invalidPeriod": "The payout period is not valid. The end date must be after the start date.",

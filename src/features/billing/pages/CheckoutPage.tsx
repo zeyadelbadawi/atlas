@@ -24,7 +24,13 @@ import {
   useParams,
   useSearchParams,
 } from 'react-router-dom';
-import { ArrowLeft, CreditCard, Hourglass, Loader2 } from 'lucide-react';
+import {
+  AlertTriangle,
+  ArrowLeft,
+  CreditCard,
+  Hourglass,
+  Loader2,
+} from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { EmptyState, ErrorState } from '@components/feedback';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -44,6 +50,7 @@ import { getPaymentProvider } from '../providers/PaymentProviderRegistry';
 import { generateIdempotencyKey } from '../utils/idempotency.utils';
 import { formatMoney } from '../utils/money.utils';
 import { PlanChangeSummary } from '../components/PlanChangeSummary';
+import { ManualPaymentBrandChip } from '../components/ManualPaymentBrandChip';
 import { usePlanCatalog, useTenantSubscription } from '@features/tenant';
 import {
   cn,
@@ -464,12 +471,50 @@ export default function CheckoutPage(): JSX.Element {
                             htmlFor={`method-${method.key}`}
                             className="flex-1 cursor-pointer font-normal"
                           >
-                            <span className="block font-medium text-foreground">
-                              {method.displayName}
+                            {/*
+                              Bank Transfer, E-Wallet and InstaPay share this
+                              one list and flow; the kind (and a wallet's
+                              provider, e.g. "Vodafone Cash") is spelled out
+                              so a customer never has to guess from the name.
+                            */}
+                            <span className="flex flex-wrap items-center gap-2">
+                              <span className="font-medium text-foreground">
+                                {method.displayName}
+                              </span>
+                              <span
+                                className="rounded-pill bg-muted px-2 py-0.5 text-xs text-muted-foreground"
+                                data-testid={`checkout-method-type-${method.key}`}
+                              >
+                                {t(`payments:common.methodType.${method.type}`)}
+                              </span>
+                              {method.manualInstructions?.type ===
+                              'manual_wallet_transfer' ? (
+                                <ManualPaymentBrandChip
+                                  instructions={method.manualInstructions}
+                                  testId={`checkout-method-provider-${method.key}`}
+                                />
+                              ) : null}
                             </span>
                             {method.description ? (
                               <span className="block text-sm text-muted-foreground">
                                 {method.description}
+                              </span>
+                            ) : null}
+                            {method.manualInstructions?.placeholder ? (
+                              /*
+                                Only reachable in development/staging, where
+                                a seeded placeholder may be enabled for
+                                testing; production refuses to enable one.
+                              */
+                              <span
+                                className="mt-1 flex items-start gap-1.5 text-sm font-medium text-warning"
+                                data-testid={`checkout-method-placeholder-${method.key}`}
+                              >
+                                <AlertTriangle
+                                  className="mt-0.5 size-4 shrink-0"
+                                  aria-hidden
+                                />
+                                {t('payments:checkout.placeholderWarning')}
                               </span>
                             ) : null}
                             {!available ? (

@@ -10,9 +10,21 @@
  */
 import type { Money } from './money.types';
 
-/** The three payment-method shapes Prompt 7's architecture supports. Only the two `manual_*` ones are ever enabled today — `gateway` exists so the type system, UI and services are ready before a real gateway is connected. */
+/**
+ * The payment-method shapes Prompt 7's architecture supports. Only the
+ * `manual_*` ones are ever enabled today — `gateway` exists so the type
+ * system, UI and services are ready before a real gateway is connected.
+ * `manual_wallet_transfer` covers Egyptian mobile wallets (Vodafone Cash,
+ * Orange Cash, Etisalat Cash, WE Pay, …); `manual_instapay` is InstaPay.
+ */
 export type PaymentMethodType =
-  'manual_bank_transfer' | 'manual_wallet_transfer' | 'gateway';
+  | 'manual_bank_transfer'
+  | 'manual_wallet_transfer'
+  | 'manual_instapay'
+  | 'gateway';
+
+/** The manual (human-reviewed, receipt-based) method types. */
+export type ManualPaymentMethodType = Exclude<PaymentMethodType, 'gateway'>;
 
 /**
  * What a payment method can actually do. The UI reads these flags —
@@ -33,31 +45,68 @@ export interface PaymentMethodCapabilities {
   readonly supportsCancellation: boolean;
 }
 
+/**
+ * The account holder and customer-facing texts every manual method
+ * carries. English is required and is the fallback; each `…Ar` text is
+ * optional and shown instead when the UI is in Arabic.
+ */
+export interface ManualInstructionTexts {
+  readonly accountName: string;
+  readonly accountNameAr?: string;
+  readonly instructions: string;
+  readonly instructionsAr?: string;
+  readonly referenceInstructions: string;
+  readonly referenceInstructionsAr?: string;
+  /**
+   * True for the seeded rows whose details are NOT real (e.g.
+   * `PLACEHOLDER-NOT-A-WALLET`). Saving details through the API always
+   * clears it; production refuses to enable or pay against one.
+   */
+  readonly placeholder?: boolean;
+}
+
 /** Configurable manual bank-transfer instructions. Backend-supplied — never hardcoded real banking details in the frontend. */
-export interface BankTransferInstructions {
+export interface BankTransferInstructions extends ManualInstructionTexts {
   readonly type: 'manual_bank_transfer';
   readonly bankName: string;
-  readonly accountName: string;
   readonly accountNumber: string;
   readonly iban?: string;
   /** Optional SWIFT/BIC code (8 or 11 characters). */
   readonly swiftCode?: string;
-  readonly instructions: string;
-  readonly referenceInstructions: string;
 }
 
+/** The wallet providers Atlas names; `other` carries `walletProviderName`. */
+export const WALLET_PROVIDERS = [
+  'vodafone_cash',
+  'orange_cash',
+  'etisalat_cash',
+  'we_pay',
+  'other',
+] as const;
+export type WalletProvider = (typeof WALLET_PROVIDERS)[number];
+
 /** Configurable manual wallet-transfer instructions. Backend-supplied — never hardcoded real wallet details in the frontend. */
-export interface WalletTransferInstructions {
+export interface WalletTransferInstructions extends ManualInstructionTexts {
   readonly type: 'manual_wallet_transfer';
+  /** A `WalletProvider`; older development rows may hold free text. */
   readonly walletProvider: string;
+  /** The provider's name as customers know it — set for `other`. */
+  readonly walletProviderName?: string;
+  /** Stored normalized as `01XXXXXXXXX`. */
   readonly walletNumber: string;
-  readonly accountName: string;
-  readonly instructions: string;
-  readonly referenceInstructions: string;
+}
+
+/** Configurable InstaPay instructions. Backend-supplied — never hardcoded real addresses in the frontend. */
+export interface InstapayInstructions extends ManualInstructionTexts {
+  readonly type: 'manual_instapay';
+  /** `name@instapay`, stored lowercase. */
+  readonly instapayAddress: string;
 }
 
 export type ManualPaymentInstructions =
-  BankTransferInstructions | WalletTransferInstructions;
+  | BankTransferInstructions
+  | WalletTransferInstructions
+  | InstapayInstructions;
 
 /**
  * A payment method as a first-class catalog object — never a hardcoded
@@ -78,7 +127,7 @@ export interface CheckoutPaymentMethod {
   /** Provider key this method is handled by — see `PaymentProviderAdapter.providerKey`. */
   readonly provider: string;
   readonly capabilities: PaymentMethodCapabilities;
-  /** Present only for `manual_bank_transfer`/`manual_wallet_transfer`; never populated for `gateway`. */
+  /** Present only for the `manual_*` types; never populated for `gateway`. */
   readonly manualInstructions?: ManualPaymentInstructions;
 }
 
@@ -93,28 +142,68 @@ export interface PlatformPaymentMethod extends CheckoutPaymentMethod {
 }
 
 /**
- * The bank details a Platform Owner enters for a bank-transfer method. The
- * server fixes `type`, `provider` and `capabilities`; they are never sent.
+ * The details a Platform Owner enters for a manual method. The server
+ * fixes `type`, `provider` and `capabilities`, and clears `placeholder`
+ * whenever details are saved; none of them is ever sent.
  */
 export type BankTransferInstructionsPayload = Omit<
   BankTransferInstructions,
-  'type'
+  'type' | 'placeholder'
 >;
 
-/** Creates a bank-transfer method. The backend saves it disabled unless `enabled` is sent. */
-export interface CreateBankTransferMethodPayload {
+/** Wallet details as sent. `walletProviderName` is required for `other`. */
+export interface WalletInstructionsPayload
+  extends Omit<
+    WalletTransferInstructions,
+    'type' | 'placeholder' | 'walletProvider'
+  > {
+  readonly walletProvider: WalletProvider;
+}
+
+export type InstapayInstructionsPayload = Omit<
+  InstapayInstructions,
+  'type' | 'placeholder'
+>;
+
+/** Fields shared by every create request. The backend saves a new method disabled unless `enabled` is sent. */
+interface CreateManualMethodPayloadBase {
   readonly displayName: string;
   readonly description?: string;
-  readonly instructions: BankTransferInstructionsPayload;
   readonly enabled?: boolean;
   readonly displayOrder?: number;
 }
 
-/** Any subset of a method's editable fields. `instructions` always replaces the whole object. */
+/** `POST /platform-payment-methods/bank-transfer`. */
+export interface CreateBankTransferMethodPayload
+  extends CreateManualMethodPayloadBase {
+  readonly instructions: BankTransferInstructionsPayload;
+}
+
+/** `POST /platform-payment-methods/wallet`. */
+export interface CreateWalletMethodPayload
+  extends CreateManualMethodPayloadBase {
+  readonly instructions: WalletInstructionsPayload;
+}
+
+/** `POST /platform-payment-methods/instapay`. */
+export interface CreateInstapayMethodPayload
+  extends CreateManualMethodPayloadBase {
+  readonly instructions: InstapayInstructionsPayload;
+}
+
+/**
+ * Any subset of a method's editable fields. Each details object replaces
+ * the whole object and must match the method's own type — `instructions`
+ * for bank transfer, `walletInstructions` for a wallet,
+ * `instapayInstructions` for InstaPay — or the server answers 400
+ * `errors.paymentMethod.instructionsTypeMismatch`.
+ */
 export interface UpdatePlatformPaymentMethodPayload {
   readonly displayName?: string;
   readonly description?: string;
   readonly instructions?: BankTransferInstructionsPayload;
+  readonly walletInstructions?: WalletInstructionsPayload;
+  readonly instapayInstructions?: InstapayInstructionsPayload;
   readonly enabled?: boolean;
   readonly displayOrder?: number;
 }

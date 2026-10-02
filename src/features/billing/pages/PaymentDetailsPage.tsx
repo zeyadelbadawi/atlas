@@ -47,6 +47,11 @@ import {
 } from '../utils/payment-status.utils';
 import { formatMoney } from '../utils/money.utils';
 import {
+  ManualPaymentInstructionsPanel,
+  PlaceholderPaymentBanner,
+} from '../components/ManualPaymentInstructionsPanel';
+import { ManualPaymentBrandChip } from '../components/ManualPaymentBrandChip';
+import {
   ALLOWED_PAYMENT_PROOF_TYPES,
   MAX_PAYMENT_PROOF_FILE_SIZE,
 } from '../constants/billing.constants';
@@ -129,6 +134,24 @@ export default function PaymentDetailsPage(): JSX.Element {
     );
   }
 
+  /*
+    The API answers 403/404 for a payment this Organization cannot read —
+    most often another Organization's payment. That is "not found" for
+    this user, not an unexpected failure a retry could fix.
+  */
+  if (error?.kind === 'notFound' || error?.kind === 'forbidden') {
+    return (
+      <PageContainer>
+        <PageHeader titleKey="payments:payment.title" />
+        <ErrorState
+          kind="notFound"
+          titleKey="payments:payment.notFoundTitle"
+          descriptionKey="payments:payment.notFoundDescription"
+        />
+      </PageContainer>
+    );
+  }
+
   if (error || !payment || !organization?.id) {
     return (
       <PageContainer>
@@ -201,6 +224,7 @@ export default function PaymentDetailsPage(): JSX.Element {
       />
 
       <div className="space-y-6">
+        {instructions?.placeholder ? <PlaceholderPaymentBanner /> : null}
         <Card>
           <CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0">
             <div>
@@ -210,8 +234,11 @@ export default function PaymentDetailsPage(): JSX.Element {
               >
                 {formatMoney(payment.money, i18n.language)}
               </CardTitle>
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                 {t(`payments:common.methodType.${payment.methodType}`)}
+                {instructions?.type === 'manual_wallet_transfer' ? (
+                  <ManualPaymentBrandChip instructions={instructions} />
+                ) : null}
               </p>
             </div>
             <div className="flex flex-col items-end gap-2">
@@ -358,93 +385,14 @@ export default function PaymentDetailsPage(): JSX.Element {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {instructions?.type === 'manual_bank_transfer' ? (
-                <dl className="grid gap-2 text-sm sm:grid-cols-2">
-                  <div>
-                    <dt className="text-muted-foreground">
-                      {t('payments:payment.bankName')}
-                    </dt>
-                    <dd className="font-medium text-foreground">
-                      {instructions.bankName}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted-foreground">
-                      {t('payments:payment.accountName')}
-                    </dt>
-                    <dd className="font-medium text-foreground">
-                      {instructions.accountName}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted-foreground">
-                      {t('payments:payment.accountNumber')}
-                    </dt>
-                    <dd className="font-mono text-foreground" dir="ltr">
-                      {instructions.accountNumber}
-                    </dd>
-                  </div>
-                  {instructions.iban ? (
-                    <div>
-                      <dt className="text-muted-foreground">
-                        {t('payments:payment.iban')}
-                      </dt>
-                      <dd className="font-mono text-foreground" dir="ltr">
-                        {instructions.iban}
-                      </dd>
-                    </div>
-                  ) : null}
-                  {instructions.swiftCode ? (
-                    <div>
-                      <dt className="text-muted-foreground">
-                        {t('payments:payment.swiftCode')}
-                      </dt>
-                      <dd
-                        className="font-mono text-foreground"
-                        dir="ltr"
-                        data-testid="payment-instructions-swift"
-                      >
-                        {instructions.swiftCode}
-                      </dd>
-                    </div>
-                  ) : null}
-                </dl>
-              ) : instructions?.type === 'manual_wallet_transfer' ? (
-                <dl className="grid gap-2 text-sm sm:grid-cols-2">
-                  <div>
-                    <dt className="text-muted-foreground">
-                      {t('payments:payment.walletProvider')}
-                    </dt>
-                    <dd className="font-medium text-foreground">
-                      {instructions.walletProvider}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted-foreground">
-                      {t('payments:payment.walletNumber')}
-                    </dt>
-                    <dd className="font-mono text-foreground">
-                      {instructions.walletNumber}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted-foreground">
-                      {t('payments:payment.accountName')}
-                    </dt>
-                    <dd className="font-medium text-foreground">
-                      {instructions.accountName}
-                    </dd>
-                  </div>
-                </dl>
-              ) : null}
-
+              {/*
+                Every manual type — Bank Transfer, E-Wallet, InstaPay —
+                renders its own destination here; the proof upload below
+                is the same for all of them (gated on the method's
+                `supportsProof` capability, never on its type).
+              */}
               {instructions ? (
-                <div className="space-y-1 text-sm">
-                  <p className="text-foreground">{instructions.instructions}</p>
-                  <p className="text-muted-foreground">
-                    {instructions.referenceInstructions}
-                  </p>
-                </div>
+                <ManualPaymentInstructionsPanel instructions={instructions} />
               ) : null}
 
               <div className="space-y-3 border-t border-border pt-4">

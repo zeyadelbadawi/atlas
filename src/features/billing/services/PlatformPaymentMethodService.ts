@@ -5,17 +5,20 @@
  * `/platform-payment-methods`, a flat platform-owned resource like
  * `PlatformPaymentService`, never nested under `organizations/:id`.
  *
- * Only bank-transfer methods can be created: `type`, `provider` and
+ * Manual methods only — bank transfer, Egyptian mobile wallets and
+ * InstaPay — each through its own create endpoint: `type`, `provider` and
  * `capabilities` are fixed by the server and never sent. A method is never
  * deleted (existing payments keep its key); it is disabled instead. Every
- * bank detail comes from what the Platform Owner typed — this service
- * never fills one in.
+ * detail comes from what the Platform Owner typed — this service never
+ * fills one in.
  */
 import { BaseService } from '@services';
 import type { ReadOptions, WriteOptions } from '@services';
 import type {
   CollectionQuery,
   CreateBankTransferMethodPayload,
+  CreateInstapayMethodPayload,
+  CreateWalletMethodPayload,
   PaginatedResult,
   PlatformPaymentMethod,
   UpdatePlatformPaymentMethodPayload,
@@ -41,6 +44,29 @@ export class PlatformPaymentMethodService extends BaseService {
       PlatformPaymentMethod,
       CreateBankTransferMethodPayload
     >(this.path('bank-transfer'), payload, options);
+  }
+
+  /** Creates an e-wallet method (Vodafone Cash, Orange Cash, …). Saved disabled unless `enabled` is sent. */
+  async createWalletMethod(
+    payload: CreateWalletMethodPayload,
+    options?: WriteOptions
+  ): Promise<PlatformPaymentMethod> {
+    return this.client.post<PlatformPaymentMethod, CreateWalletMethodPayload>(
+      this.path('wallet'),
+      payload,
+      options
+    );
+  }
+
+  /** Creates an InstaPay method. Saved disabled unless `enabled` is sent. */
+  async createInstapayMethod(
+    payload: CreateInstapayMethodPayload,
+    options?: WriteOptions
+  ): Promise<PlatformPaymentMethod> {
+    return this.client.post<
+      PlatformPaymentMethod,
+      CreateInstapayMethodPayload
+    >(this.path('instapay'), payload, options);
   }
 
   /** Updates any subset of a method's fields — including enabling or disabling it. */

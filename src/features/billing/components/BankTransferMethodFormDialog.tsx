@@ -10,6 +10,10 @@
  * Client validation mirrors the backend DTO (`bankTransferMethodSchema`);
  * the server stays the authority, and its field violations are mapped back
  * onto the form with `useServerValidation`.
+ *
+ * The account holder and both instruction texts have an optional Arabic
+ * version (`ManualMethodTextsFields`), shown to customers using Atlas in
+ * Arabic; English stays required and is the fallback.
  */
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -37,7 +41,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
-import { useServerValidation } from '@forms';
 import { toErrorsNamespaceKey } from '@utils';
 import { isApiError } from '@api';
 import type {
@@ -52,6 +55,13 @@ import {
   bankTransferMethodSchema,
   type BankTransferMethodFormData,
 } from '../schemas/billing.schemas';
+import {
+  ManualMethodTextsFields,
+  PlaceholderDetailsNotice,
+  toTextsFormValues,
+  toTextsPayload,
+  useManualMethodServerValidation,
+} from './ManualMethodFormFields';
 
 export interface BankTransferMethodFormDialogProps {
   readonly open: boolean;
@@ -65,12 +75,10 @@ const EMPTY_VALUES: BankTransferMethodFormData = {
   description: '',
   instructions: {
     bankName: '',
-    accountName: '',
     accountNumber: '',
     iban: '',
     swiftCode: '',
-    instructions: '',
-    referenceInstructions: '',
+    ...toTextsFormValues(undefined),
   },
 };
 
@@ -88,12 +96,11 @@ function toFormValues(
     description: method.description ?? '',
     instructions: {
       bankName: saved?.bankName ?? '',
-      accountName: saved?.accountName ?? '',
-      accountNumber: saved?.accountNumber ?? '',
+      // A placeholder's account number is not a real one: start it blank.
+      accountNumber: saved?.placeholder ? '' : (saved?.accountNumber ?? ''),
       iban: saved?.iban ?? '',
       swiftCode: saved?.swiftCode ?? '',
-      instructions: saved?.instructions ?? '',
-      referenceInstructions: saved?.referenceInstructions ?? '',
+      ...toTextsFormValues(saved),
     },
   };
 }
@@ -104,27 +111,21 @@ function toInstructionsPayload(
 ): BankTransferInstructionsPayload {
   return {
     bankName: values.bankName,
-    accountName: values.accountName,
     accountNumber: values.accountNumber,
     ...(values.iban ? { iban: values.iban } : {}),
     ...(values.swiftCode ? { swiftCode: values.swiftCode } : {}),
-    instructions: values.instructions,
-    referenceInstructions: values.referenceInstructions,
+    ...toTextsPayload(values),
   };
 }
 
 type TextFieldName =
   | 'displayName'
   | 'instructions.bankName'
-  | 'instructions.accountName'
   | 'instructions.accountNumber'
   | 'instructions.iban'
   | 'instructions.swiftCode';
 
-type LongTextFieldName =
-  | 'description'
-  | 'instructions.instructions'
-  | 'instructions.referenceInstructions';
+type LongTextFieldName = 'description';
 
 export function BankTransferMethodFormDialog({
   open,
@@ -143,7 +144,7 @@ export function BankTransferMethodFormDialog({
     defaultValues: toFormValues(method),
   });
 
-  useServerValidation(form, activeMutation.error);
+  useManualMethodServerValidation(form, activeMutation.error, 'instructions');
 
   // Re-seed on every open, so one method's details never carry into
   // another's editor (or into a new bank account).
@@ -270,6 +271,10 @@ export function BankTransferMethodFormDialog({
           </DialogDescription>
         </DialogHeader>
 
+        {method?.manualInstructions?.placeholder ? (
+          <PlaceholderDetailsNotice testId="bank-method-placeholder-notice" />
+        ) : null}
+
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -297,11 +302,6 @@ export function BankTransferMethodFormDialog({
                 { testId: 'bank-method-bank-name' }
               )}
               {renderTextField(
-                'instructions.accountName',
-                'payments:bankTransferMethods.fields.accountName',
-                { testId: 'bank-method-account-name' }
-              )}
-              {renderTextField(
                 'instructions.accountNumber',
                 'payments:bankTransferMethods.fields.accountNumber',
                 { ltr: true, testId: 'bank-method-account-number' }
@@ -325,24 +325,11 @@ export function BankTransferMethodFormDialog({
                 }
               )}
             </div>
-            {renderLongTextField(
-              'instructions.instructions',
-              'payments:bankTransferMethods.fields.instructions',
-              {
-                helpKey: 'payments:bankTransferMethods.fields.instructionsHelp',
-                testId: 'bank-method-instructions',
-              }
-            )}
-            {renderLongTextField(
-              'instructions.referenceInstructions',
-              'payments:bankTransferMethods.fields.referenceInstructions',
-              {
-                rows: 2,
-                helpKey:
-                  'payments:bankTransferMethods.fields.referenceInstructionsHelp',
-                testId: 'bank-method-reference-instructions',
-              }
-            )}
+            <ManualMethodTextsFields
+              control={form.control}
+              section="bankTransferMethods"
+              testIdPrefix="bank-method"
+            />
 
             {!isEdit ? (
               <p className="text-xs text-muted-foreground">

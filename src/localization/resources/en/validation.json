@@ -11,6 +11,8 @@
   "invalidAccountNumber": "Use only letters, numbers, spaces and hyphens.",
   "invalidIban": "Enter a valid IBAN: two letters, two check digits, then the account characters.",
   "invalidSwift": "Enter a valid SWIFT/BIC code of 8 or 11 characters.",
+  "invalidWalletNumber": "Enter an Egyptian mobile wallet number: 010, 011, 012 or 015 followed by 8 digits.",
+  "invalidInstapayAddress": "Enter a valid InstaPay address, like name@instapay.",
   "minLength": "{{field}} must be at least {{count}} characters",
   "maxLength": "{{field}} must be {{count}} characters or fewer",
   "min": "{{field}} must be {{min}} or more",
