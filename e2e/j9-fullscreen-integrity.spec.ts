@@ -6,7 +6,9 @@
  * (the browser grants it only inside that gesture), leaving full screen
  * through the browser's own API, the gate, re-entering from its button, a
  * real Ctrl+V paste of text from the system clipboard, and the server's
- * signals read back through the reviewer API.
+ * signals read back through the reviewer API; in strict mode, leaving full
+ * screen up to the limit submits the attempt automatically (and the
+ * reviewer sees every exit, including the one that ended the attempt).
  *
  * What is EMULATED, and why:
  * - "Unsupported" and "refused" full screen: an init script removes or
@@ -50,7 +52,7 @@ interface Signal {
   eventIds: string[];
 }
 
-const QUIZ = (title: string) => ({
+const QUIZ = (title: string, overrides: Record<string, unknown> = {}) => ({
   title,
   description: 'Full-screen exam (J9).',
   status: 'published',
@@ -80,6 +82,7 @@ const QUIZ = (title: string) => ({
       ],
     },
   ],
+  ...overrides,
 });
 
 test.describe('J9 — full-screen exam and integrity signals', () => {
@@ -87,10 +90,11 @@ test.describe('J9 — full-screen exam and integrity signals', () => {
   let owner: Session;
   let learnerEmail: string;
   let courseId: string;
-  const quizIds: Record<'main' | 'unsupported' | 'refused', string> = {
+  const quizIds: Record<'main' | 'unsupported' | 'refused' | 'strict', string> = {
     main: '',
     unsupported: '',
     refused: '',
+    strict: '',
   };
 
   async function reviewOf(request: APIRequestContext, quizId: string) {
@@ -113,6 +117,8 @@ test.describe('J9 — full-screen exam and integrity signals', () => {
     );
     expect(review.status(), await review.text()).toBe(200);
     return (await review.json()) as {
+      autoSubmitted: boolean;
+      autoSubmittedReason: string | null;
       requireFullscreen: boolean;
       signals: Signal[];
       events: { id: string; type: string; payload: unknown }[];
@@ -174,7 +180,9 @@ test.describe('J9 — full-screen exam and integrity signals', () => {
         request,
         owner,
         `/courses/${courseId}/quizzes`,
-        QUIZ(`J9 ${key}`)
+        key === 'strict'
+          ? QUIZ(`J9 ${key}`, { integrityMode: 'strict', maxViolations: 2 })
+          : QUIZ(`J9 ${key}`)
       );
       expect(quiz.status(), await quiz.text()).toBe(201);
       quizIds[key] = (await quiz.json()).id;
@@ -346,6 +354,51 @@ test.describe('J9 — full-screen exam and integrity signals', () => {
     const review = await reviewOf(request, quizIds.refused);
     expect(review.signals.find((s) => s.key === 'fullscreen_unavailable')).toMatchObject({
       reasons: ['refused'],
+    });
+  });
+  test('strict: leaving full screen up to the limit submits the attempt automatically', async ({
+    browser,
+    request,
+  }, testInfo) => {
+    test.setTimeout(150_000);
+    const page = await openQuiz(browser, quizIds.strict);
+    await page.getByTestId('quiz-start').click();
+    await expect(page.getByTestId('quiz-runner')).toBeVisible({ timeout: 30_000 });
+    await expect.poll(() => inFullscreen(page)).toBe(true);
+    await page.getByTestId('quiz-question-2').getByText('4', { exact: true }).click();
+    // Past the 5 s warm-up, so the first exit counts.
+    await page.waitForTimeout(6_000);
+
+    // Exit 1 of 2: the gate, and the warning; the attempt continues.
+    await page.evaluate(() => document.exitFullscreen());
+    await expect(page.getByTestId('quiz-fullscreen-gate')).toBeVisible();
+    await page.waitForTimeout(3_000);
+    const warning = page.getByRole('alertdialog');
+    if (await warning.isVisible()) {
+      await warning.getByRole('button', { name: 'Continue quiz' }).click();
+    }
+    await page.getByRole('button', { name: 'Enter full screen' }).click();
+    await expect.poll(() => inFullscreen(page)).toBe(true);
+    await page.screenshot({ path: testInfo.outputPath('strict-1-back.png') });
+
+    // Exit 2 of 2 (past the 2 s debounce): the server auto-submits.
+    await page.waitForTimeout(3_000);
+    await page.evaluate(() => document.exitFullscreen());
+    await expect(page.getByTestId('auto-submit-notice')).toContainText('Submitted automatically', {
+      timeout: 30_000,
+    });
+    await page.screenshot({ path: testInfo.outputPath('strict-2-auto-submitted.png') });
+    await page.close();
+
+    // One sign-in for the learner here (reviewOf); a second would trip the
+    // per-account sign-in limit.
+    const review = await reviewOf(request, quizIds.strict);
+    expect(review).toMatchObject({
+      autoSubmitted: true,
+      autoSubmittedReason: 'integrity',
+    });
+    expect(review.signals.find((s) => s.key === 'fullscreen_left')).toMatchObject({
+      occurrences: 2,
     });
   });
 });

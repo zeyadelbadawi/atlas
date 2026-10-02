@@ -3,8 +3,8 @@
 Recorded 2 Oct 2026. Branch `claude/practical-wozniak-pjcdhe` in both
 repositories, on top of the baseline already in production (frontend
 `a5a18f3` → `main` `b3f7a4d`; backend `a45fd17` → `main` `dafa461`).
-**Nothing in this report is merged, released or deployed.** Commit hashes
-are in §F.
+**Update, 2 Oct 2026: merged and deployed to production on the Owner's
+authorization — see §G.** Commit hashes are in §F.
 
 Everything under §B was run locally in this session on disposable
 stacks; nothing was run against production (§D says what that needs).
@@ -106,6 +106,7 @@ default; enabling needs approval (§D).
 | `p63-domain-operations` P63-DOM-021, run 2 only (`sslStatus` "provisioning", expected "active") | The test runs the global domain sweep once and expects its own row processed. The sweep takes at most 200 rows per tick; this DB held 466 due `verifying` rows left by three runs against it, so the row can fall outside the tick. Same class as above (shared-DB accumulation); file unchanged from `main`. | Not changed here; proposed fix in §E. |
 | 1 × `p64-phase2-security` (anonymous read of a protected object: 200, expected 403) | The local stack's S3 mock (s3rver) does not enforce signatures; CI uses MinIO, which does. MinIO could not be run here: no Docker daemon, and `dl.min.io` is blocked by this environment's network policy. | Not verifiable in this sandbox; it needs CI or a MinIO-backed run. |
 | Backend unit `p64-phase2-defects` (600.001 s > 600 s) | Test arithmetic: the ticket's ceiling was measured from a timestamp taken before the call, so any elapsed millisecond failed it (seen under load). Pre-existing. | Fixed: ceiling from after the call, floor from before; a 30-minute ticket still fails (`f051d40`). |
+| New J9 strict-mode test (added 2 Oct, the first real-browser run of strict auto-submit): the reviewer saw "left full screen 1 time" for an attempt auto-submitted after 2 exits | The exit that submitted the attempt was still open when the attempt ended, ~0.3 s later, and fell under the 2 s blip filter | Fixed in the signal rules ([atlas-backend#19](https://github.com/zeyadelbadawi/atlas-backend/pull/19)): an interval still open at the end is always kept; regression unit test; evaluation unchanged; J9 4/4 |
 | J10 desktop visit: CLS not recorded | Harness: a Playwright route interceptor loses beacons sent during unload (measured CLS 0/5, INP 2/5 with it; 10/10 without). | Fixed in the test (`4d4d233`); product unchanged. |
 
 ### B.9 Not completed
@@ -183,8 +184,8 @@ event types with no producer.
 |---|---|
 | **Verified locally** | Everything in §B, on both repositories' branch heads (§F). |
 | **Verified in an isolated environment** | The disposable stacks above (fresh migrations from zero, seed, real PostgreSQL RLS, Redis, S3 mock). No staging environment exists. |
-| **Not verified in production** | Public library rendering, full-screen exams, reviewer signals, RUM — none of it is deployed. The baseline's public-site features are also unverified live, because all 25 published sites belong to `trial_expired` organizations (owner-run read-only query, 1 Oct). |
-| **Needs your approval** | (1) Merge each branch to `main` (PRs not opened). (2) Backend deploy **with migrations** — `20261101000000_public_content_library_read` (RLS SELECT policies gain an anonymous published-and-visible branch) and `20261101000100_quiz_event_fullscreen_unavailable` (additive enum value): `apply_migrations=true` plus the `production-migrations` environment. (3) Frontend deploy. (4) Before merging, the read-only impact queries below. (5) RUM: the privacy-copy change, `RUM_ENABLED=true`, a frontend rebuild with `VITE_RUM_SAMPLE_RATE` — each a production configuration change. (6) An eligible (active or trialing) organization for live verification, which is a production data decision. |
+| **Not verified in production** | Deployed 2 Oct (§G). Signed-in behaviour (public library with picks, full-screen exams, reviewer signals) is not yet verified live: no browser here can reach production, and automated sign-in was refused (§G.1). Covered by the Owner's checklist and the read-only VPS script. RUM is off. |
+| **Needs your approval** | Done 2 Oct (§G): merge, backend deploy with both migrations, frontend deploy; the read-only impact queries were run first (results below). Still open: (1) RUM — privacy-copy decision, `RUM_ENABLED=true`, a frontend build with `VITE_RUM_SAMPLE_RATE`. (2) Run the live checklist (needs your mailbox for sign-in codes). |
 | **Accepted limitations** | Single-page app LCP ≈ 3.0 s (Owner decision, unchanged; SSR untouched). No screen-reader test. Chromium only. Integrity evaluation on designed scenarios only. |
 
 **Behaviour changes on deploy** (to confirm with the read-only queries):
@@ -194,6 +195,13 @@ event types with no producer.
 - A quiz with "require full screen" stored while integrity is off stops
   requiring it; quizzes with integrity on now genuinely enter full screen
   on Start, and attempts in progress show the gate after a reload.
+
+**Results (owner-run, read-only, 2 Oct, before the merge):** 0 library picks
+(no public output changes); quiz flags `on`; 2 published quizzes will
+genuinely enter full screen (`warn` in an active Academy, `strict` in a draft
+Academy, both in trial-expired test organizations, last attempts 22–24 Sep);
+0 quizzes with full screen stored under integrity off; 0 attempts in
+progress; both migrations absent.
 
 Read-only queries (PostgreSQL in a read-only transaction):
 
@@ -297,3 +305,161 @@ documentation commit that adds this report follows these in each repo.
 | `4b3fe80` | Prettier on the P3–P6 files (lint to 0 errors) |
 | `69e95da` | E2E harness: two stacks, flags pinned, worker memory limit |
 | `f051d40` | Media spec: upload-ticket ceiling measured after the call |
+
+## G. Production deployment (2 Oct 2026)
+
+Authorized by the Owner (all production data is test data). Order:
+backend with migrations first, then the frontend (the new frontend sends
+the `fullscreen_unavailable` event, which only the new backend accepts).
+
+| Step | Record | Evidence |
+|---|---|---|
+| Backend PR | [atlas-backend#18](https://github.com/zeyadelbadawi/atlas-backend/pull/18) merged → `main` `336891d` | GitHub |
+| Backend deploy with migrations | [Run #234](https://github.com/zeyadelbadawi/atlas-backend/actions/runs/36977559664), `apply_migrations=true`, `production-migrations` approved. Backup `atlas-20261002T073437Z.sql.gz` (uploaded off-host); pre-check 0 attempts in progress; **both migrations applied** (134 total); backend recreated, healthy; Caddy healthy; rollback record backend `b9278250…` + Caddy `bb1da23e…` | run log |
+| Frontend PR | [atlas#13](https://github.com/zeyadelbadawi/atlas/pull/13), CI green (lint, typecheck gate, unit, builds, SSR tests, theme/axe checks) → `main` `a973d03` | GitHub |
+| Frontend deploy | [Run #130](https://github.com/zeyadelbadawi/atlas/actions/runs/36979552346): frontend image 41 min (the lockfile changed, so the dependency layer was rebuilt under arm64 emulation), renderer image 4 min, `deploy.sh --frontend-only` 18 s — **Caddy only**, backend untouched; backend and Caddy healthy; rollback record backend `2d09a9ce…` + Caddy `e940e827…`. The renderer image is built but not run (`ATLAS_SSR` unset) | run log |
+| Follow-up fix (found by the strict-mode browser run) | [atlas-backend#19](https://github.com/zeyadelbadawi/atlas-backend/pull/19) → `main` `3d00417`: the exit an attempt ended in is kept by the reviewer's signals. Deployed by [run #235](https://github.com/zeyadelbadawi/atlas-backend/actions/runs/36980513908) (no migrations; migration job skipped): backend healthy, Caddy healthy, rollback record backend `2d09a9ce…` + Caddy `bb1da23e…`. | run log |
+| Push-triggered backend run for `336891d` | [Run #233](https://github.com/zeyadelbadawi/atlas-backend/actions/runs/36977479462) cancelled on purpose: it would have stopped at the migration gate; run #234 replaced it | GitHub |
+
+**Not changed:** `ATLAS_SSR` (unset), Themes 2–5, RUM (`RUM_ENABLED`
+unset, `VITE_RUM_SAMPLE_RATE` unset — off), credentials, infrastructure.
+**No data was reset or deleted.**
+
+### G.1 Live verification — what was and was not possible here
+
+- **Verified from the deploy logs:** migrations applied, backend and Caddy
+  health, rollback record (above).
+- **This sandbox cannot reach production** (the environment's network
+  policy denies `atlass.dpdns.org`), so no browser here can open the live
+  site.
+- **Automated signed-in journeys in production were not run.** They need
+  the emailed sign-in code; automating its retrieval from the production
+  outbox was refused by this session's safety controls, and was not worked
+  around. The signed-in checks (learner quiz in warn and strict mode,
+  reviewer signals, the owner's library picker) are therefore a short
+  manual checklist for the Owner, and the read-only VPS script covers the
+  rest (migration state, RLS policies, enum, health, logs, SSR off, public
+  routes, RUM endpoint).
+- **The same behaviours were verified in a real browser locally** against
+  the same code: J9 (full screen, gate, strict auto-submit, signals), J11
+  (15-step lifecycle across roles), J12 (library on the public site).
+
+### G.2 Live checklist for the signed-in flows (Owner)
+
+Use plus-addresses of your own mailbox, e.g. `you+p8owner@gmail.com` (owner) and
+`you+p8learner@gmail.com` (learner). The sign-in codes arrive in that mailbox.
+
+#### 0. Make one test organization eligible (test data only)
+
+After step 1a, run on the VPS (replace the address). It gives that one test
+organization a 7-day trial so the subscription gate does not stop the checks.
+
+```bash
+sudo -u deploy -H bash -s <<'EOF'
+cd /opt/atlas && docker compose exec -T postgres sh -c 'psql -X -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' <<'SQL'
+WITH o AS (SELECT m.organization_id AS id FROM organization_memberships m JOIN users u ON u.id = m.user_id
+           WHERE u.email = 'you+p8owner@gmail.com' AND m.role = 'owner' ORDER BY m.created_at LIMIT 1)
+INSERT INTO tenant_subscriptions (organization_id, plan_id, status, trial_ends_at, updated_at)
+SELECT o.id, COALESCE((SELECT plan_id FROM tenant_subscriptions WHERE organization_id = o.id),
+                      (SELECT plan_id FROM tenant_subscriptions GROUP BY plan_id ORDER BY count(*) DESC LIMIT 1)),
+       'trialing', now() + interval '7 days', now() FROM o
+ON CONFLICT (organization_id) DO UPDATE SET status = 'trialing', trial_ends_at = now() + interval '7 days', grace_ends_at = NULL, updated_at = now()
+RETURNING organization_id, status, trial_ends_at;
+SQL
+EOF
+```
+
+#### 1. Owner (https://atlass.dpdns.org)
+
+a. Sign up with the owner address and an organization name ("P8 Verify"). Sign in with the code. Run step 0.
+b. Finish onboarding: create the Academy (Theme 1, complete starter website). Publish the website.
+c. Website → Content → FAQs: add two entries, publish both. Website → Pages → FAQs → edit the FAQ
+   section → add both from the library, move the second one up → Apply → Save → Publish.
+   **Expect:** the picker lists only published entries, with move up/down and remove.
+d. Courses → new free public course → add a section → add two quizzes, each with 2 questions:
+   - "Warn exam": Integrity = Warn, Require full screen = on, max violations 10.
+   - "Strict exam": Integrity = Strict, Require full screen = on, max violations 2.
+   Attach both to the section; publish the course.
+   **Expect:** with Integrity = Off the full-screen switch is hidden, and a hint says why.
+
+#### 2. Visitor (any browser, signed out)
+
+Open `https://<your-academy>.atlass.dpdns.org/faqs` and `/ar/faqs`.
+**Expect:** both library questions, in the order you set, in English and Arabic; the questions in
+English keep left-to-right direction inside the Arabic page.
+
+#### 3. Learner (academy site, Chrome or Edge on a desktop)
+
+a. Sign up on the academy site with the learner address; sign in with the code.
+b. As the owner, enrol the learner in the course (Students → the learner → grant course).
+c. Learner → My learning → the course → "Warn exam".
+   **Expect:** the intro says it opens in full screen and lists what is and is not recorded.
+   Tick the box, press Start → the page goes full screen.
+   Press Esc → the questions are hidden behind "Return to full screen" (answers kept).
+   Press the button → full screen again. Switch tab for ~5 s and back → a warning dialog.
+   Submit → results; full screen ends.
+d. "Strict exam": Start → full screen. Wait ~6 s, press Esc, return with the button, wait ~3 s,
+   press Esc again.
+   **Expect:** after the second exit the attempt is submitted automatically
+   ("Submitted automatically … the recorded-event limit was reached").
+e. On an iPhone (Safari) open the Warn exam: a notice that full screen is unavailable, no gate.
+
+#### 4. Owner reviews
+
+Courses → the course → quiz results → open the learner's attempts.
+**Expect (Warn exam):** a policy line ("Warn, full screen required"), "Worth a look" / "For
+context" groups with "Full screen left" (count and seconds) and the innocent explanations; "Show
+in timeline" highlights the rows. **Strict exam:** auto-submitted, reason integrity.
+
+Send me: pass/fail per step, and a screenshot of any failure.
+
+### G.3 Read-only post-deploy check (VPS)
+
+```bash
+sudo -u deploy -H bash -s <<'EOF'
+{
+cd /opt/atlas || exit 1
+psqlro() { docker compose exec -T -e PGOPTIONS='-c default_transaction_read_only=on' postgres \
+  sh -c 'psql -X -t -A -F" | " -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' ; }
+
+echo "== 1 containers"
+for svc in backend caddy postgres redis; do
+  cid=$(docker compose ps -q "$svc")
+  echo "$svc cid=${cid:0:12} started=$(docker inspect -f '{{.State.StartedAt}}' "$cid") image=$(docker inspect -f '{{.Image}}' "$cid" | cut -c1-19) health=$(docker inspect -f '{{if .State.Health}}{{.State.Health.Status}}{{else}}n/a{{end}}' "$cid") restarts=$(docker inspect -f '{{.RestartCount}}' "$cid")"
+done
+v=$(grep -E '^ATLAS_SSR=' .env | tail -1 | cut -d= -f2-); echo "ATLAS_SSR=${v:-<unset>}  ssr containers: $(docker compose --profile ssr ps -aq ssr | wc -l)"
+r=$(grep -E '^RUM_ENABLED=' .env | tail -1 | cut -d= -f2-); echo "RUM_ENABLED=${r:-<unset>}"
+
+echo; echo "== 2 rollback record"
+cat .last-good; bash /opt/atlas/deploy.sh --check-rollback-record; echo "check exit=$?"
+
+echo; echo "== 3 database (read-only)"
+psqlro <<'SQL'
+SELECT 'migrations applied|unfinished', count(*) FILTER (WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL),
+       count(*) FILTER (WHERE finished_at IS NULL OR rolled_back_at IS NOT NULL) FROM _prisma_migrations;
+SELECT 'new migration', migration_name, finished_at IS NOT NULL AND rolled_back_at IS NULL AS applied
+  FROM _prisma_migrations WHERE migration_name IN ('20261101000000_public_content_library_read','20261101000100_quiz_event_fullscreen_unavailable');
+SELECT 'enum fullscreen_unavailable', 'fullscreen_unavailable' = ANY(enum_range(NULL::quiz_attempt_event_type)::text[]);
+SELECT 'faq select policy has anonymous branch', position('published' in qual) > 0 FROM pg_policies WHERE policyname='website_faq_entries_tenant_select';
+SELECT 'testimonial select policy has anonymous branch', position('published' in qual) > 0 FROM pg_policies WHERE policyname='website_testimonial_entries_tenant_select';
+SQL
+
+echo; echo "== 4 backend health and logs"
+docker compose exec -T backend node -e "fetch('http://localhost:3000/health').then(async r=>console.log('health', r.status, (await r.text()).slice(0,200))).catch(e=>console.log('health 000', e.message))"
+since=$(docker inspect -f '{{.State.StartedAt}}' "$(docker compose ps -q backend)")
+logs=$(docker compose logs --no-color --since "$since" backend 2>/dev/null)
+echo "backend error lines since start: $(printf '%s\n' "$logs" | grep -cE '"level":50|"level":60| ERROR ')"
+printf '%s\n' "$logs" | grep -E '"level":50|"level":60| ERROR ' | tail -5 | cut -c1-300
+echo "caddy 5xx since backend start: $(docker compose logs --no-color --since "$since" caddy 2>/dev/null | grep -cE '"status":5[0-9][0-9]')"
+
+echo; echo "== 5 public routes (anonymous)"
+API=https://atlass.dpdns.org/api/v1
+for url in "https://atlass.dpdns.org/" "$API/health"; do
+  echo "$url -> $(curl -s -o /dev/null -w '%{http_code}' --max-time 15 "$url")"
+done
+echo "RUM beacon (accepted, dropped while RUM is off): $(curl -s -o /dev/null -w '%{http_code}' --max-time 15 -X POST -H 'content-type: application/json' -d '{"samples":[{"metric":"LCP","value":1200,"route":"public:home","device":"desktop"}]}' "$API/rum/vitals")"
+echo "RUM hostile beacon: $(curl -s -o /dev/null -w '%{http_code}' --max-time 15 -X POST -H 'content-type: application/json' -d '{"samples":[{"metric":"EVIL","value":1,"route":"/x?email=a@b.c","device":"desktop"}]}' "$API/rum/vitals")"
+echo "entry script: $(curl -s --max-time 15 https://atlass.dpdns.org/ | grep -o '/assets/index-[^"]*\.js' | head -1)"
+} 2>&1
+EOF
+```

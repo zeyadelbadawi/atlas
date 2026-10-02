@@ -5,15 +5,15 @@ Written 30 Sep 2026 at the end of a Claude Code session that ran out of credit, 
 Companion file: `atlas-backend/docs/ATLAS-CLAUDE-HANDOVER.md` (backend specifics).
 Source of truth for scope: `Reports/THEME_1_ACADEMY_WEBSITE_PLAN.md` in this repo (the approved plan; phase results in §M–§U).
 
-## ★★★★★★ Status update — P1–P8 on the feature branch; baseline in production (2 Oct 2026). Read this first.
+## ★★★★★★★ Status update — P1–P8 in production (2 Oct 2026). Read this first.
 
-Full record: `Reports/P1_P8_REMEDIATION_REPORT.md` (root causes, test evidence, integrity, production readiness, remaining work, commits).
+Full record: `Reports/P1_P8_REMEDIATION_REPORT.md` (§G is the deployment record).
 
-- **In production since 1 Oct (the closure remediation below, now merged):** frontend `a5a18f3` via [atlas#12](https://github.com/zeyadelbadawi/atlas/pull/12) → `main` `b3f7a4d`, deploy run #129 (Caddy only, `bb1da23e…`); backend `a45fd17` via [atlas-backend#17](https://github.com/zeyadelbadawi/atlas-backend/pull/17) → `main` `dafa461`, deploy run #232 (no migrations, backend `13a1da70…`). `.last-good` = `13a1da70…` + `bb1da23e…`; `.last-good.after-gate-e` preserved. Verified by the Owner's read-only VPS output.
-- **Live public-site checks are blocked, not failing:** all 25 published sites belong to `trial_expired` organizations, so the API withholds their data by design (404/403). Live verification needs one eligible organization — a production data decision for the Owner.
-- **On `claude/practical-wozniak-pjcdhe` (both repos), pushed, NOT merged or deployed:** P1 disposable stack, P2 typecheck to zero (+ CI gate), P3 public content library (backend migration `20261101000000`), P4 full-screen exams (migration `20261101000100`), P5 explainable integrity signals + evaluation, P6 self-hosted RUM (off by default), P7 journeys J9–J13 and the accessibility audit, P8 full regression.
-- **Next, each only with explicit approval:** the read-only impact queries (report §D), PRs, merge, backend deploy with the two migrations, frontend deploy; RUM needs a privacy-copy decision and configuration.
-- **Still open:** rotate the `atlas_vps` SSH key; remove `/home/deploy/step2/deploy.sh` from the VPS.
+- **Backend:** [atlas-backend#18](https://github.com/zeyadelbadawi/atlas-backend/pull/18) → `main` `336891d`. Deploy run #234 (`apply_migrations=true`) took backup `atlas-20261002T073437Z.sql.gz`, applied `20261101000000_public_content_library_read` and `20261101000100_quiz_event_fullscreen_unavailable`, and both containers were healthy. Follow-up [atlas-backend#19](https://github.com/zeyadelbadawi/atlas-backend/pull/19) → `3d00417` (reviewer signals keep the exit an attempt ended in).
+- **Frontend:** [atlas#13](https://github.com/zeyadelbadawi/atlas/pull/13) → `main` `a973d03`, deploy run #130 (Caddy only).
+- **Unchanged:** `ATLAS_SSR` unset; RUM off (`RUM_ENABLED` and `VITE_RUM_SAMPLE_RATE` unset); Themes 2–5 untouched; no data reset.
+- **Live verification:** the deploy logs prove the migrations and health. Signed-in journeys were not automated in production (no network path from the session, and automated sign-in-code retrieval was refused by its safety controls); the Owner's checklist and a read-only VPS script cover them (report §G.1).
+- **Still open:** RUM enablement (privacy copy plus config); rotate the `atlas_vps` SSH key; remove `/home/deploy/step2/deploy.sh` from the VPS; report §E.
 
 ## ★★★★★ Status update — in production; closure remediation pending review — superseded: merged and deployed, see above (1 Oct 2026).
 
