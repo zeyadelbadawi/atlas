@@ -30,3 +30,9 @@ export { useAvailableAtlasSubscriptionPaymentProviders } from './useAvailableAtl
 export { useSaveAtlasSubscriptionPaymentProviderConfig } from './useSaveAtlasSubscriptionPaymentProviderConfig';
 export { useTestAtlasSubscriptionPaymentProviderConnection } from './useTestAtlasSubscriptionPaymentProviderConnection';
 export { useSetAtlasSubscriptionPaymentProviderEnabled } from './useSetAtlasSubscriptionPaymentProviderEnabled';
+
+export { usePlatformPaymentMethods } from './usePlatformPaymentMethods';
+export type { UsePlatformPaymentMethodsOptions } from './usePlatformPaymentMethods';
+export { useCreateBankTransferMethod } from './useCreateBankTransferMethod';
+export { useUpdatePlatformPaymentMethod } from './useUpdatePlatformPaymentMethod';
+export type { UpdatePlatformPaymentMethodVariables } from './useUpdatePlatformPaymentMethod';

@@ -19,6 +19,9 @@
  * 3. PRICING IS CATALOG PRICING. Editing it never rewrites a past charge:
  *    `Payment` snapshots its own amount. The dialog says so, because the
  *    natural fear when changing a price is that history moves with it.
+ *    A monthly plan may also carry an optional whole-year price
+ *    (`pricing.yearlyAmount`, 2 Oct 2026): only when it is set can a
+ *    customer choose yearly billing, and they are charged exactly it.
  */
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -37,8 +40,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useDateFormatter } from '@hooks';
+import { formatNumber } from '@utils';
 import { PLAN_FEATURE_KEYS, PLAN_LIMIT_KEYS } from '@features/tenant';
-import { usePreviewLimitImpact, useUpdatePlan } from '../hooks/usePlatformPlans';
+import {
+  usePreviewLimitImpact,
+  useUpdatePlan,
+} from '../hooks/usePlatformPlans';
 import {
   UNLIMITED,
   draftToLimits,
@@ -47,7 +54,17 @@ import {
   limitsToDraft,
 } from '../utils/plan-limit-changes.utils';
 import type { LimitDraft } from '../utils/plan-limit-changes.utils';
-import type { Plan, PlanLimitImpact } from '@types';
+import type { LanguageCode, Plan, PlanLimitImpact } from '@types';
+
+/** The backend's ceiling for `pricing.yearlyAmount` (`PlanPricingDto`). */
+const MAX_YEARLY_AMOUNT = 10_000_000;
+
+/** Empty (no yearly option) or a whole number from 0 to the ceiling. */
+function isValidYearlyAmount(value: string): boolean {
+  const trimmed = value.trim();
+  if (trimmed === '') return true;
+  return /^\d+$/.test(trimmed) && Number(trimmed) <= MAX_YEARLY_AMOUNT;
+}
 
 export interface PlanEditorDialogProps {
   readonly plan: Plan | null;
@@ -58,7 +75,7 @@ export function PlanEditorDialog({
   plan,
   onOpenChange,
 }: PlanEditorDialogProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const fmt = useDateFormatter();
   const updatePlan = useUpdatePlan();
   const previewImpact = usePreviewLimitImpact();
@@ -67,6 +84,7 @@ export function PlanEditorDialog({
   const [features, setFeatures] = useState<Record<string, boolean>>({});
   const [amount, setAmount] = useState('');
   const [currency, setCurrency] = useState('USD');
+  const [yearlyAmount, setYearlyAmount] = useState('');
   const [trialEligible, setTrialEligible] = useState(false);
   const [trialDays, setTrialDays] = useState('');
   const [impact, setImpact] = useState<PlanLimitImpact | null>(null);
@@ -78,8 +96,15 @@ export function PlanEditorDialog({
     if (!plan) return;
     setLimits(limitsToDraft(plan.limits, PLAN_LIMIT_KEYS));
     setFeatures({ ...(plan.features as unknown as Record<string, boolean>) });
-    setAmount(plan.pricing?.amount !== undefined ? String(plan.pricing.amount) : '');
+    setAmount(
+      plan.pricing?.amount !== undefined ? String(plan.pricing.amount) : ''
+    );
     setCurrency(plan.pricing?.currency ?? 'USD');
+    setYearlyAmount(
+      plan.pricing?.yearlyAmount !== undefined
+        ? String(plan.pricing.yearlyAmount)
+        : ''
+    );
     setTrialEligible(plan.trialEligible);
     setTrialDays(plan.trialDurationDays ? String(plan.trialDurationDays) : '');
     setImpact(null);
@@ -107,6 +132,13 @@ export function PlanEditorDialog({
     [limits]
   );
 
+  // A yearly price is offered only beside a MONTHLY price — a plan priced
+  // per year has no second price to add.
+  const billingCycle = plan?.pricing?.billingCycle ?? 'monthly';
+  const offersYearlyPrice = billingCycle === 'monthly';
+  const yearlyAmountValid =
+    !offersYearlyPrice || isValidYearlyAmount(yearlyAmount);
+
   const hasReduction = reducedLimitKeys.length > 0;
   // A reduction must be checked and then explicitly confirmed. Everything
   // else saves directly.
@@ -133,7 +165,11 @@ export function PlanEditorDialog({
           ? {
               amount: Number(amount),
               currency: currency.toUpperCase(),
-              billingCycle: plan.pricing?.billingCycle ?? 'monthly',
+              billingCycle,
+              // Omitted when empty: the plan then has no yearly option.
+              ...(offersYearlyPrice && yearlyAmount.trim() !== ''
+                ? { yearlyAmount: Number(yearlyAmount.trim()) }
+                : {}),
             }
           : undefined,
         trialEligible,
@@ -203,6 +239,42 @@ export function PlanEditorDialog({
                 />
               </div>
             </div>
+            {offersYearlyPrice ? (
+              <div className="space-y-1.5">
+                <Label htmlFor="plan-yearly-amount">
+                  {t('platform:planAdmin.editor.yearlyAmount')}
+                </Label>
+                <Input
+                  id="plan-yearly-amount"
+                  data-testid="plan-yearly-amount"
+                  inputMode="numeric"
+                  dir="ltr"
+                  aria-invalid={!yearlyAmountValid}
+                  aria-describedby="plan-yearly-amount-help"
+                  value={yearlyAmount}
+                  onChange={(event) => setYearlyAmount(event.target.value)}
+                />
+                <p
+                  id="plan-yearly-amount-help"
+                  className="text-xs text-muted-foreground"
+                >
+                  {t('platform:planAdmin.editor.yearlyAmountHelp')}
+                </p>
+                {!yearlyAmountValid ? (
+                  <p
+                    className="text-sm font-medium text-destructive"
+                    data-testid="plan-yearly-amount-error"
+                  >
+                    {t('platform:planAdmin.editor.yearlyAmountInvalid', {
+                      max: formatNumber(
+                        MAX_YEARLY_AMOUNT,
+                        i18n.language as LanguageCode
+                      ),
+                    })}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
             <p className="text-xs text-muted-foreground">
               {t('platform:planAdmin.editor.pricingNote')}
             </p>
@@ -234,7 +306,9 @@ export function PlanEditorDialog({
                   data-testid="plan-trial-days"
                   inputMode="numeric"
                   dir="ltr"
-                  placeholder={t('platform:planAdmin.editor.trialDaysPlaceholder')}
+                  placeholder={t(
+                    'platform:planAdmin.editor.trialDaysPlaceholder'
+                  )}
                   value={trialDays}
                   onChange={(event) => setTrialDays(event.target.value)}
                 />
@@ -262,7 +336,10 @@ export function PlanEditorDialog({
                     dir="ltr"
                     value={limits[key] ?? ''}
                     onChange={(event) => {
-                      setLimits((prev) => ({ ...prev, [key]: event.target.value }));
+                      setLimits((prev) => ({
+                        ...prev,
+                        [key]: event.target.value,
+                      }));
                       // Any limit edit invalidates a previous impact check.
                       setImpact(null);
                       setConfirmed(false);
@@ -283,8 +360,14 @@ export function PlanEditorDialog({
             </h3>
             <div className="grid gap-2 sm:grid-cols-2">
               {PLAN_FEATURE_KEYS.map((key) => (
-                <div key={key} className="flex items-center justify-between gap-3">
-                  <Label htmlFor={`plan-feature-${key}`} className="text-sm font-normal">
+                <div
+                  key={key}
+                  className="flex items-center justify-between gap-3"
+                >
+                  <Label
+                    htmlFor={`plan-feature-${key}`}
+                    className="text-sm font-normal"
+                  >
                     {t(`tenant:common.features.${key}`)}
                   </Label>
                   <Switch
@@ -333,7 +416,10 @@ export function PlanEditorDialog({
                         the count below reads as "everyone else is fine",
                         which is a different and weaker claim. */}
                     {impact.protectedSubscriptions > 0 ? (
-                      <p className="text-sm" data-testid="plan-impact-protected">
+                      <p
+                        className="text-sm"
+                        data-testid="plan-impact-protected"
+                      >
                         {t('platform:planAdmin.editor.impactProtected', {
                           count: impact.protectedSubscriptions,
                         })}
@@ -402,7 +488,9 @@ export function PlanEditorDialog({
                         onChange={(event) => setConfirmed(event.target.checked)}
                         className="mt-1"
                       />
-                      <span>{t('platform:planAdmin.editor.confirmReduction')}</span>
+                      <span>
+                        {t('platform:planAdmin.editor.confirmReduction')}
+                      </span>
                     </label>
                   </div>
                 )}
@@ -431,7 +519,12 @@ export function PlanEditorDialog({
           <Button
             type="button"
             data-testid="plan-save"
-            disabled={updatePlan.isPending || needsConfirmation || !isComplete}
+            disabled={
+              updatePlan.isPending ||
+              needsConfirmation ||
+              !isComplete ||
+              !yearlyAmountValid
+            }
             onClick={() => void handleSave()}
           >
             {updatePlan.isPending ? (

@@ -18,6 +18,10 @@
  * Raw credential values are only ever sent in a save request, never
  * received back — `AtlasSubscriptionPaymentProviderConfig` has no field
  * capable of holding one.
+ *
+ * Below the provider configuration, `BankTransferMethodsCard` (2 Oct 2026)
+ * manages the bank accounts the Manual Transfer provider tells
+ * Organizations to pay into.
  */
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -75,6 +79,7 @@ import {
   useSetAtlasSubscriptionPaymentProviderEnabled,
   useTestAtlasSubscriptionPaymentProviderConnection,
 } from '../hooks';
+import { BankTransferMethodsCard } from '../components/BankTransferMethodsCard';
 import type { AtlasSubscriptionPaymentProviderStatus } from '@types';
 
 const configFormSchema = z.object({
@@ -432,6 +437,8 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
             </div>
           </CardContent>
         </Card>
+
+        <BankTransferMethodsCard />
       </div>
     </PageContainer>
   );

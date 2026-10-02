@@ -35,6 +35,8 @@ export const QUERY_KEY_ROOTS = {
   payment: ['payment'] as const,
   invoice: ['invoice'] as const,
   platformPayment: ['platform-payment'] as const,
+  /** Platform Owner configuration of payment methods (bank-transfer accounts). */
+  platformPaymentMethod: ['platform-payment-method'] as const,
   /** Platform Owner course-order payment review — a separate queue from `platformPayment` (subscriptions). */
   platformCourseOrderPayment: ['platform-course-order-payment'] as const,
   platformAcademyPayout: ['platform-academy-payout'] as const,
@@ -743,6 +745,20 @@ export const platformPaymentKeys = {
     [...platformPaymentKeys.all, 'list', query] as const,
   detail: (paymentId: string) =>
     [...platformPaymentKeys.all, 'detail', paymentId] as const,
+} as const;
+
+/**
+ * Query keys for the Platform Owner's payment-method configuration
+ * (`/platform-payment-methods`). Not organization-scoped: the catalog is
+ * platform-owned. Mutations invalidate `lists()` — a prefix WITHOUT the
+ * trailing query, because TanStack's partial matching does not match a
+ * key ending in `undefined` against a cached key holding a query object.
+ */
+export const platformPaymentMethodKeys = {
+  all: QUERY_KEY_ROOTS.platformPaymentMethod,
+  lists: () => [...platformPaymentMethodKeys.all, 'list'] as const,
+  list: (query?: CollectionQuery) =>
+    [...platformPaymentMethodKeys.lists(), query] as const,
 } as const;
 
 /**

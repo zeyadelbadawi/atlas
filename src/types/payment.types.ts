@@ -40,6 +40,8 @@ export interface BankTransferInstructions {
   readonly accountName: string;
   readonly accountNumber: string;
   readonly iban?: string;
+  /** Optional SWIFT/BIC code (8 or 11 characters). */
+  readonly swiftCode?: string;
   readonly instructions: string;
   readonly referenceInstructions: string;
 }
@@ -78,6 +80,43 @@ export interface CheckoutPaymentMethod {
   readonly capabilities: PaymentMethodCapabilities;
   /** Present only for `manual_bank_transfer`/`manual_wallet_transfer`; never populated for `gateway`. */
   readonly manualInstructions?: ManualPaymentInstructions;
+}
+
+/**
+ * The Platform Owner's view of a payment method (`/platform-payment-methods`):
+ * every method, enabled or not, with its ordering and timestamps.
+ */
+export interface PlatformPaymentMethod extends CheckoutPaymentMethod {
+  readonly displayOrder: number;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+}
+
+/**
+ * The bank details a Platform Owner enters for a bank-transfer method. The
+ * server fixes `type`, `provider` and `capabilities`; they are never sent.
+ */
+export type BankTransferInstructionsPayload = Omit<
+  BankTransferInstructions,
+  'type'
+>;
+
+/** Creates a bank-transfer method. The backend saves it disabled unless `enabled` is sent. */
+export interface CreateBankTransferMethodPayload {
+  readonly displayName: string;
+  readonly description?: string;
+  readonly instructions: BankTransferInstructionsPayload;
+  readonly enabled?: boolean;
+  readonly displayOrder?: number;
+}
+
+/** Any subset of a method's editable fields. `instructions` always replaces the whole object. */
+export interface UpdatePlatformPaymentMethodPayload {
+  readonly displayName?: string;
+  readonly description?: string;
+  readonly instructions?: BankTransferInstructionsPayload;
+  readonly enabled?: boolean;
+  readonly displayOrder?: number;
 }
 
 /**
@@ -178,6 +217,12 @@ export interface Payment {
   /** The latest manual review's notes, denormalized onto the Payment for convenience — the Tenant needs to see why a rejection happened without a second fetch. */
   readonly reviewNotes?: string;
   readonly nextAction?: PaymentNextAction;
+  /**
+   * The manual-transfer instructions as they were when this payment was
+   * created. Editing or disabling the method later never changes them, so
+   * this is what the customer must be shown for an existing payment.
+   */
+  readonly instructions?: ManualPaymentInstructions;
   /** Set only once a provider (gateway) has acknowledged the payment. Never present for a manual payment. */
   readonly providerReference?: string;
   readonly createdAt: string;

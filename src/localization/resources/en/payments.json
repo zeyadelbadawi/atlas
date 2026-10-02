@@ -45,7 +45,10 @@
     "noMethodsTitle": "No payment method available",
     "noMethodsDescription": "Your order is ready, but no payment method has been enabled for your organization yet. Contact support and we will set one up for you.",
     "contactSupport": "Contact support",
-    "backToSetup": "Back to setup"
+    "backToSetup": "Back to setup",
+    "catalogPriceLabel": "Price:",
+    "alreadyUnderReviewTitle": "A payment is already awaiting review",
+    "viewExistingPayment": "View that payment"
   },
   "paymentHistory": {
     "title": "Payment History",
@@ -121,6 +124,7 @@
     "accountName": "Account name",
     "accountNumber": "Account number",
     "iban": "IBAN",
+    "swiftCode": "SWIFT/BIC",
     "walletProvider": "Wallet",
     "walletNumber": "Wallet number",
     "uploadProofTitle": "Proof of payment",
@@ -201,6 +205,50 @@
       "configured": "Configured",
       "verified": "Verified",
       "disabled": "Disabled"
+    }
+  },
+  "bankTransferMethods": {
+    "title": "Bank transfer accounts",
+    "description": "The bank accounts Organizations transfer their Atlas subscription payments to. Only enabled accounts are offered at checkout.",
+    "add": "Add bank account",
+    "emptyTitle": "No bank account configured",
+    "emptyDescription": "Bank Transfer is not offered to Organizations until you add a bank account here and enable it.",
+    "missingDetails": "Bank details are missing. Edit this account to add them.",
+    "enabledLabel": "Enabled",
+    "disabledLabel": "Disabled",
+    "enable": "Enable",
+    "disable": "Disable",
+    "enableSuccess": "Bank account enabled. Organizations can now choose it at checkout.",
+    "disableSuccess": "Bank account disabled. Existing payments keep their instructions.",
+    "enableError": "Could not enable the bank account",
+    "disableError": "Could not disable the bank account",
+    "createTitle": "Add bank account",
+    "createDescription": "Enter the account Organizations should transfer subscription payments to. Check every detail carefully — customers see it exactly as entered.",
+    "editTitle": "Edit bank account",
+    "editDescription": "Changes apply to new payments only. Payments already created keep the instructions they were given.",
+    "createdDisabledNote": "New bank accounts are saved disabled. Enable it from the list when you are ready to offer it.",
+    "createSuccess": "Bank account added",
+    "createError": "Could not add the bank account",
+    "updateSuccess": "Bank account updated",
+    "updateError": "Could not update the bank account",
+    "fields": {
+      "displayName": "Name shown at checkout",
+      "displayNameHelp": "Organizations see this name when they choose how to pay.",
+      "description": "Short description (optional)",
+      "bankName": "Bank name",
+      "accountName": "Account holder name",
+      "accountNumber": "Account number",
+      "iban": "IBAN",
+      "swiftCode": "SWIFT/BIC code",
+      "optional": "Optional.",
+      "instructions": "Transfer instructions",
+      "instructionsHelp": "Shown to the Organization with the bank details — for example, how to make the transfer and what to upload as proof.",
+      "referenceInstructions": "Payment reference instructions",
+      "referenceInstructionsHelp": "Tell the Organization what to write in the transfer reference so you can match the payment."
+    },
+    "validation": {
+      "required": "This field is required.",
+      "tooLong": "This is longer than allowed."
     }
   },
   "planChange": {

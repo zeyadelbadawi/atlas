@@ -262,7 +262,12 @@
   "payment": {
     "notPendingReview": "This payment is no longer waiting for review. Reload to see its current status.",
     "cannotReviewOwnOrganization": "This payment belongs to an organization you're a member of. You can't review your own organization's payments.",
-    "rejectedByReviewer": "Atlas reviewed this payment and couldn't accept it."
+    "rejectedByReviewer": "Atlas reviewed this payment and couldn't accept it.",
+    "alreadyUnderReview": "A payment for this order is already awaiting review. Open it to follow its status — you don't need to pay again."
+  },
+  "paymentMethod": {
+    "incompleteInstructions": "Enter the bank name, account holder name, account number, transfer instructions and reference instructions before saving or enabling this account.",
+    "notBankTransfer": "Bank details can only be set on a bank-transfer method."
   },
   "academyPayout": {
     "invalidPeriod": "The payout period is not valid. The end date must be after the start date.",

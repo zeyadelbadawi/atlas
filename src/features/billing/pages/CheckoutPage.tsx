@@ -24,9 +24,10 @@ import {
   useParams,
   useSearchParams,
 } from 'react-router-dom';
-import { ArrowLeft, CreditCard, Loader2 } from 'lucide-react';
+import { ArrowLeft, CreditCard, Hourglass, Loader2 } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { EmptyState, ErrorState } from '@components/feedback';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -43,9 +44,10 @@ import { getPaymentProvider } from '../providers/PaymentProviderRegistry';
 import { generateIdempotencyKey } from '../utils/idempotency.utils';
 import { formatMoney } from '../utils/money.utils';
 import { PlanChangeSummary } from '../components/PlanChangeSummary';
-import { useTenantSubscription } from '@features/tenant';
+import { usePlanCatalog, useTenantSubscription } from '@features/tenant';
 import {
   cn,
+  formatCurrency,
   isOnboardingReturnPath,
   MIRROR_IN_RTL,
   toErrorsNamespaceKey,
@@ -54,13 +56,58 @@ import type { ApiError } from '@api';
 import type {
   CheckoutTarget,
   CheckoutTargetType,
+  LanguageCode,
+  PlanPricingMetadata,
   SubscriptionBillingCycle,
 } from '@types';
 
-const BILLING_CYCLES: readonly SubscriptionBillingCycle[] = [
-  'monthly',
-  'yearly',
-];
+/**
+ * The billing cycles the plan's catalog pricing can actually be bought at —
+ * the same rule the backend's checkout pricing applies, so the page never
+ * offers a cycle the server will refuse (or, worse, would accept while
+ * charging the other cycle's amount):
+ *
+ * - a plan priced per year is bought yearly;
+ * - a plan priced per month is bought monthly, and ALSO yearly when the
+ *   Platform Owner set a whole-year price (`yearlyAmount`) beside it;
+ * - anything else (no cycle recorded, no pricing yet) is offered monthly
+ *   only, and an unpriced plan is explained by the backend's own
+ *   `pricingUnavailable` error.
+ */
+function availableBillingCycles(
+  pricing: PlanPricingMetadata | undefined
+): readonly SubscriptionBillingCycle[] {
+  if (pricing?.billingCycle === 'yearly') return ['yearly'];
+  if (
+    pricing?.billingCycle === 'monthly' &&
+    typeof pricing.yearlyAmount === 'number' &&
+    Number.isFinite(pricing.yearlyAmount)
+  ) {
+    return ['monthly', 'yearly'];
+  }
+  return ['monthly'];
+}
+
+/** The catalog price (major units) for one cycle, or `undefined` when there is none. */
+function catalogPriceFor(
+  pricing: PlanPricingMetadata | undefined,
+  cycle: SubscriptionBillingCycle
+): number | undefined {
+  if (!pricing?.currency) return undefined;
+  if (cycle === 'yearly' && pricing.billingCycle === 'monthly') {
+    return pricing.yearlyAmount;
+  }
+  return pricing.amount;
+}
+
+/** The existing payment a 409 `alreadyUnderReview` points at, if the error carries one. */
+function paymentUnderReviewId(error: ApiError | null): string | undefined {
+  if (error?.messageKey !== 'errors.payment.alreadyUnderReview') {
+    return undefined;
+  }
+  const paymentId = error.details?.paymentId;
+  return typeof paymentId === 'string' && paymentId ? paymentId : undefined;
+}
 
 /**
  * The specific translation key for a backend error's own `messageKey`
@@ -116,6 +163,7 @@ export default function CheckoutPage(): JSX.Element {
   const createCheckout = useCreateCheckout();
   const createPayment = useCreatePayment();
   const paymentMethodsQuery = usePaymentMethods();
+  const plansQuery = usePlanCatalog();
 
   /*
     Derived once and used by BOTH the empty check and the list below, so the
@@ -135,6 +183,18 @@ export default function CheckoutPage(): JSX.Element {
       : { type: 'add_on', addOnKey: targetKey };
   }, [targetType, targetKey]);
 
+  const planPricing =
+    target?.type === 'plan_subscription'
+      ? plansQuery.data?.find((plan) => plan.key === target.planKey)?.pricing
+      : undefined;
+  const billingCycles = availableBillingCycles(planPricing);
+  // A cycle chosen before the catalog loaded (or one this plan doesn't
+  // offer) never reaches the request.
+  const effectiveBillingCycle = billingCycles.includes(billingCycle)
+    ? billingCycle
+    : billingCycles[0];
+  const cyclePrice = catalogPriceFor(planPricing, effectiveBillingCycle);
+
   if (!target || !organization?.id) {
     return (
       <PageContainer>
@@ -152,11 +212,26 @@ export default function CheckoutPage(): JSX.Element {
       payload: {
         target,
         billingCycle:
-          target.type === 'plan_subscription' ? billingCycle : undefined,
+          target.type === 'plan_subscription'
+            ? effectiveBillingCycle
+            : undefined,
         idempotencyKey,
       },
     });
   };
+
+  // Carry the setup return path onward, so the owner who uploads their
+  // proof still has a way back into onboarding.
+  const paymentDetailPath = (paymentId: string): string => {
+    const detailPath = buildPath(DASHBOARD_ROUTES.tenantBillingPaymentDetail, {
+      paymentId,
+    });
+    return setupReturnPath
+      ? `${detailPath}?returnTo=${encodeURIComponent(setupReturnPath)}`
+      : detailPath;
+  };
+
+  const existingPaymentId = paymentUnderReviewId(createPayment.error);
 
   const handleContinueToPayment = () => {
     if (!checkout || !selectedMethodKey) return;
@@ -176,19 +251,7 @@ export default function CheckoutPage(): JSX.Element {
       },
       {
         onSuccess: (payment) => {
-          const detailPath = buildPath(
-            DASHBOARD_ROUTES.tenantBillingPaymentDetail,
-            {
-              paymentId: payment.id,
-            }
-          );
-          // Carry the setup return path onward, so the owner who uploads
-          // their proof still has a way back into onboarding.
-          navigate(
-            setupReturnPath
-              ? `${detailPath}?returnTo=${encodeURIComponent(setupReturnPath)}`
-              : detailPath
-          );
+          navigate(paymentDetailPath(payment.id));
         },
       }
     );
@@ -232,13 +295,13 @@ export default function CheckoutPage(): JSX.Element {
                 <div className="space-y-2">
                   <Label>{t('payments:checkout.billingCycleLabel')}</Label>
                   <RadioGroup
-                    value={billingCycle}
+                    value={effectiveBillingCycle}
                     onValueChange={(value) =>
                       setBillingCycle(value as SubscriptionBillingCycle)
                     }
                     className="flex gap-4"
                   >
-                    {BILLING_CYCLES.map((cycle) => (
+                    {billingCycles.map((cycle) => (
                       <div key={cycle} className="flex items-center gap-2">
                         <RadioGroupItem value={cycle} id={`cycle-${cycle}`} />
                         <Label
@@ -250,6 +313,30 @@ export default function CheckoutPage(): JSX.Element {
                       </div>
                     ))}
                   </RadioGroup>
+                  {cyclePrice !== undefined && planPricing?.currency ? (
+                    <p
+                      className="text-sm text-muted-foreground"
+                      data-testid="checkout-cycle-price"
+                    >
+                      {t('payments:checkout.catalogPriceLabel')}{' '}
+                      <span
+                        className="font-semibold text-foreground"
+                        data-atlas-numeric="true"
+                      >
+                        {formatCurrency(
+                          cyclePrice,
+                          i18n.language as LanguageCode,
+                          planPricing.currency
+                        )}
+                        <span className="ms-1 font-normal text-muted-foreground">
+                          /
+                          {t(
+                            `payments:common.billingCycleShort.${effectiveBillingCycle}`
+                          )}
+                        </span>
+                      </span>
+                    </p>
+                  ) : null}
                 </div>
               ) : null}
 
@@ -397,7 +484,28 @@ export default function CheckoutPage(): JSX.Element {
                   </RadioGroup>
                 )}
 
-                {createPayment.error ? (
+                {existingPaymentId ? (
+                  /*
+                    A payment for this checkout is already awaiting review:
+                    the backend never replaces it (409
+                    `alreadyUnderReview`), so the useful answer is the way to
+                    that payment, not a retry button that can only fail again.
+                  */
+                  <Alert data-testid="checkout-payment-under-review">
+                    <Hourglass className="size-4" aria-hidden />
+                    <AlertTitle>
+                      {t('payments:checkout.alreadyUnderReviewTitle')}
+                    </AlertTitle>
+                    <AlertDescription className="space-y-3">
+                      <p>{t('errors:payment.alreadyUnderReview')}</p>
+                      <Button asChild size="sm" variant="outline">
+                        <Link to={paymentDetailPath(existingPaymentId)}>
+                          {t('payments:checkout.viewExistingPayment')}
+                        </Link>
+                      </Button>
+                    </AlertDescription>
+                  </Alert>
+                ) : createPayment.error ? (
                   <ErrorState
                     kind={createPayment.error.kind}
                     descriptionKey={specificDescriptionKey(

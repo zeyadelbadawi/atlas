@@ -142,6 +142,24 @@ export default function PaymentDetailsPage(): JSX.Element {
     (candidate) => candidate.key === payment.methodKey
   );
   const provider = getPaymentProvider(payment.provider);
+  /*
+    The instructions this payment was created with come first: editing or
+    disabling the method later never changes what the customer was told to
+    pay into. The method's current instructions are only a fallback for a
+    payment created before the backend kept that copy.
+
+    `usePaymentMethods` lists ENABLED methods only, so a method disabled
+    after this payment was made is simply absent — its capabilities then
+    come from the payment's own provider adapter, rather than the absence
+    hiding the instructions and the proof upload.
+  */
+  const instructions = payment.instructions ?? method?.manualInstructions;
+  const supportsProof = method
+    ? method.capabilities.supportsProof
+    : !!provider?.capabilities.supportsProof;
+  const supportsCancellation = method
+    ? method.capabilities.supportsCancellation
+    : !!provider?.capabilities.supportsCancellation;
   const isTerminal = TERMINAL_PAYMENT_STATUSES.includes(payment.status);
   const proofFile = filePicker.files?.[0];
 
@@ -332,7 +350,7 @@ export default function PaymentDetailsPage(): JSX.Element {
               ) : null}
             </CardContent>
           </Card>
-        ) : method?.capabilities.supportsProof && !payment.proof ? (
+        ) : supportsProof && !payment.proof ? (
           <Card>
             <CardHeader>
               <CardTitle className="text-base">
@@ -340,14 +358,14 @@ export default function PaymentDetailsPage(): JSX.Element {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {method.manualInstructions?.type === 'manual_bank_transfer' ? (
+              {instructions?.type === 'manual_bank_transfer' ? (
                 <dl className="grid gap-2 text-sm sm:grid-cols-2">
                   <div>
                     <dt className="text-muted-foreground">
                       {t('payments:payment.bankName')}
                     </dt>
                     <dd className="font-medium text-foreground">
-                      {method.manualInstructions.bankName}
+                      {instructions.bankName}
                     </dd>
                   </div>
                   <div>
@@ -355,37 +373,50 @@ export default function PaymentDetailsPage(): JSX.Element {
                       {t('payments:payment.accountName')}
                     </dt>
                     <dd className="font-medium text-foreground">
-                      {method.manualInstructions.accountName}
+                      {instructions.accountName}
                     </dd>
                   </div>
                   <div>
                     <dt className="text-muted-foreground">
                       {t('payments:payment.accountNumber')}
                     </dt>
-                    <dd className="font-mono text-foreground">
-                      {method.manualInstructions.accountNumber}
+                    <dd className="font-mono text-foreground" dir="ltr">
+                      {instructions.accountNumber}
                     </dd>
                   </div>
-                  {method.manualInstructions.iban ? (
+                  {instructions.iban ? (
                     <div>
                       <dt className="text-muted-foreground">
                         {t('payments:payment.iban')}
                       </dt>
-                      <dd className="font-mono text-foreground">
-                        {method.manualInstructions.iban}
+                      <dd className="font-mono text-foreground" dir="ltr">
+                        {instructions.iban}
+                      </dd>
+                    </div>
+                  ) : null}
+                  {instructions.swiftCode ? (
+                    <div>
+                      <dt className="text-muted-foreground">
+                        {t('payments:payment.swiftCode')}
+                      </dt>
+                      <dd
+                        className="font-mono text-foreground"
+                        dir="ltr"
+                        data-testid="payment-instructions-swift"
+                      >
+                        {instructions.swiftCode}
                       </dd>
                     </div>
                   ) : null}
                 </dl>
-              ) : method.manualInstructions?.type ===
-                'manual_wallet_transfer' ? (
+              ) : instructions?.type === 'manual_wallet_transfer' ? (
                 <dl className="grid gap-2 text-sm sm:grid-cols-2">
                   <div>
                     <dt className="text-muted-foreground">
                       {t('payments:payment.walletProvider')}
                     </dt>
                     <dd className="font-medium text-foreground">
-                      {method.manualInstructions.walletProvider}
+                      {instructions.walletProvider}
                     </dd>
                   </div>
                   <div>
@@ -393,7 +424,7 @@ export default function PaymentDetailsPage(): JSX.Element {
                       {t('payments:payment.walletNumber')}
                     </dt>
                     <dd className="font-mono text-foreground">
-                      {method.manualInstructions.walletNumber}
+                      {instructions.walletNumber}
                     </dd>
                   </div>
                   <div>
@@ -401,19 +432,17 @@ export default function PaymentDetailsPage(): JSX.Element {
                       {t('payments:payment.accountName')}
                     </dt>
                     <dd className="font-medium text-foreground">
-                      {method.manualInstructions.accountName}
+                      {instructions.accountName}
                     </dd>
                   </div>
                 </dl>
               ) : null}
 
-              {method.manualInstructions ? (
+              {instructions ? (
                 <div className="space-y-1 text-sm">
-                  <p className="text-foreground">
-                    {method.manualInstructions.instructions}
-                  </p>
+                  <p className="text-foreground">{instructions.instructions}</p>
                   <p className="text-muted-foreground">
-                    {method.manualInstructions.referenceInstructions}
+                    {instructions.referenceInstructions}
                   </p>
                 </div>
               ) : null}
@@ -507,7 +536,7 @@ export default function PaymentDetailsPage(): JSX.Element {
               {t('payments:payment.refreshStatus')}
             </Button>
           ) : null}
-          {!isTerminal && method?.capabilities.supportsCancellation ? (
+          {!isTerminal && supportsCancellation ? (
             <Button
               type="button"
               variant="ghost"
