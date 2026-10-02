@@ -1,7 +1,7 @@
 name: CI
 
 # Verification only — this workflow never builds images, never pushes and
-# never deploys (that is `deploy.yml`, on push to `main`, unchanged). It
+# never deploys (that is `deploy.yml`, which runs only after this workflow succeeds for a push to `main`). It
 # runs on pull requests into `main` and on `main` itself, so a change is
 # checked before it merges and the merged result is checked again.
 on:
