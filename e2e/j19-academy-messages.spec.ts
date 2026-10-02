@@ -20,7 +20,7 @@ import {
   signInThroughDashboard,
   type Session,
 } from './support/atlas';
-import { clearAuthRateLimits } from './support/global-setup';
+import { clearRateLimitsAndThrottles } from './support/global-setup';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -35,7 +35,7 @@ test.describe('J19 — Academy Messages', () => {
   let owner: Session;
 
   test.beforeAll(async ({ request }) => {
-    await clearAuthRateLimits();
+    await clearRateLimitsAndThrottles();
     ({ academyId, owner } = await requireSeed(request));
   });
 
