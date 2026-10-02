@@ -159,6 +159,7 @@ export default function WebsiteOverviewPage(): JSX.Element {
           academyId={academyId}
           status={configQuery.data.status}
           lastPublishedAt={configQuery.data.publishedAt}
+          unpublishedChanges={configQuery.data.unpublishedChanges}
         />
 
         <WebsiteLaunchChecklist

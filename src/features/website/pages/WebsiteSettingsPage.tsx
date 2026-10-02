@@ -113,6 +113,7 @@ export default function WebsiteSettingsPage(): JSX.Element {
           academyId={academyId}
           status={configuration.status}
           lastPublishedAt={configuration.publishedAt}
+          unpublishedChanges={configuration.unpublishedChanges}
         />
 
         <Tabs defaultValue={initialTab}>

@@ -152,6 +152,17 @@ export interface WebsiteConfiguration {
   readonly publishedAt?: string;
   readonly lastPublishError?: WebsitePublishError;
   readonly updatedAt: string;
+  /**
+   * Saved but not yet published: whether the site-wide settings (theme,
+   * brand, SEO, navigation, header, footer) differ from what visitors see,
+   * and how many pages do. Visitors only ever see the published copy.
+   */
+  readonly unpublishedChanges?: WebsiteUnpublishedChanges;
+}
+
+export interface WebsiteUnpublishedChanges {
+  readonly configuration: boolean;
+  readonly pages: number;
 }
 
 export interface UpdateWebsiteConfigurationPayload {
@@ -223,6 +234,10 @@ export interface WebsitePage {
   readonly version: number;
   readonly createdAt: string;
   readonly updatedAt: string;
+  /** When this page was last published (on its own or with the site); absent if never. */
+  readonly publishedAt?: string;
+  /** The saved page differs from what visitors see — it needs publishing. */
+  readonly hasUnpublishedChanges?: boolean;
 }
 
 /** Someone with this page's editor open right now. Advisory only — see `useEditingPresence`. */

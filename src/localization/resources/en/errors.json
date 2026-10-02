@@ -142,7 +142,9 @@
     "invalidSectionOrder": "The new section order doesn't match the sections on this page. Reload and try again.",
     "faqEntryNotFound": "That FAQ entry no longer exists.",
     "testimonialEntryNotFound": "That testimonial no longer exists.",
-    "insufficientRole": "You don't have permission to change this academy's website."
+    "insufficientRole": "You don't have permission to change this academy's website.",
+    "publishedSlugTaken": "Another live page still uses this page's address. Publish that page first, or publish the whole site.",
+    "pageChangedDuringPublish": "This page was saved again while it was being published. Reload it and publish again."
   },
   "media": {
     "unsupportedFileType": "That file type isn't supported. Upload a JPG, PNG, GIF, WebP or PDF.",

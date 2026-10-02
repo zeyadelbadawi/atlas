@@ -28,7 +28,9 @@ export function useUpdateWebsitePage() {
     showErrorToast: false,
     onSuccess: async (_data, variables) => {
       await invalidate(websiteKeys.page(variables.academyId, variables.pageId));
-      await invalidate(websiteKeys.pages(variables.academyId));
+      await invalidate(websiteKeys.allPages(variables.academyId));
+      // A saved page is a pending change until published: refresh the count.
+      await invalidate(websiteKeys.configuration(variables.academyId));
     },
   });
 }

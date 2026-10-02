@@ -23,7 +23,7 @@ export function useDeleteWebsitePage() {
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async (_data, variables) => {
-      await invalidate(websiteKeys.pages(variables.academyId));
+      await invalidate(websiteKeys.allPages(variables.academyId));
     },
   });
 }

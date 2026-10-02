@@ -844,6 +844,17 @@ export const websiteKeys = {
     [...websiteKeys.all, 'configuration', academyId] as const,
   pages: (academyId: string | undefined, query?: CollectionQuery) =>
     [...websiteKeys.all, 'pages', academyId, query] as const,
+  /**
+   * Every page list of an Academy, whatever its query — the prefix to
+   * invalidate. `pages(academyId)` ends in `undefined`, which TanStack's
+   * partial match compares against the cached query object and never
+   * matches.
+   */
+  allPages: (academyId: string | undefined) =>
+    [...websiteKeys.all, 'pages', academyId] as const,
+  /** Every page detail of an Academy — the prefix to invalidate after a site publish. */
+  allPageDetails: (academyId: string | undefined) =>
+    [...websiteKeys.all, 'page', academyId] as const,
   page: (academyId: string | undefined, pageId: string) =>
     [...websiteKeys.all, 'page', academyId, pageId] as const,
   /** CMS content (Prompt 10) — same academy-scoping technique as `configuration`/`pages` above. */

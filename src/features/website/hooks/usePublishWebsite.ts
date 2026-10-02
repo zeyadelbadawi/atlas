@@ -22,6 +22,9 @@ export function usePublishWebsite() {
     showErrorToast: false,
     onSuccess: async (_data, academyId) => {
       await invalidate(websiteKeys.configuration(academyId));
+      // Every page's "unpublished changes" flag clears with a site publish.
+      await invalidate(websiteKeys.allPages(academyId));
+      await invalidate(websiteKeys.allPageDetails(academyId));
     },
   });
 }
