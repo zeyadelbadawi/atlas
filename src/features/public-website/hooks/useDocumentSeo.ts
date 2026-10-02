@@ -32,6 +32,10 @@ import {
   type PublicWebsiteLocale,
 } from '@features/website';
 import { ACADEMY_FAVICON_ATTR } from './useAcademyFavicon';
+import {
+  AcademyTitleBaselineContext,
+  composeDocumentTitle,
+} from './useAcademyDocumentTitle';
 
 const MANAGED_ATTR = 'data-atlas-seo';
 
@@ -120,7 +124,7 @@ export function renderSeoHeadHtml({
       `<link rel="icon" href="${escapeAttribute(faviconHref)}" ${ACADEMY_FAVICON_ATTR}="true">`
     );
   }
-  const title = siteTitle ? `${seo.title} · ${siteTitle}` : seo.title;
+  const title = composeDocumentTitle(seo.title, siteTitle);
   tags.push(`<title>${escapeText(title)}</title>`);
   const meta = (attr: 'name' | 'property', key: string, content?: string) => {
     if (content) {
@@ -169,6 +173,7 @@ export function useDocumentSeo({
 }: UseDocumentSeoOptions): void {
   usePublicWebsiteDocumentDirection(locale);
 
+  const titleBaseline = useContext(AcademyTitleBaselineContext);
   const collector = useContext(SeoHeadCollectorContext);
   if (collector) {
     collector.current = {
@@ -192,7 +197,7 @@ export function useDocumentSeo({
       .forEach((node) => node.remove());
 
     const previousTitle = document.title;
-    document.title = siteTitle ? `${seo.title} · ${siteTitle}` : seo.title;
+    document.title = composeDocumentTitle(seo.title, siteTitle);
 
     upsertMeta('name', 'description', seo.description);
     upsertMeta(
@@ -252,11 +257,20 @@ export function useDocumentSeo({
     });
 
     return () => {
-      document.title = previousTitle;
+      // On an Academy's site the title to fall back to is the Academy's
+      // name, never whatever happened to be there before (e.g. "Atlas").
+      document.title = titleBaseline ?? previousTitle;
       document.head
         .querySelectorAll(`[${MANAGED_ATTR}]`)
         .forEach((node) => node.remove());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [seo, siteTitle, canonicalUrl, locale, JSON.stringify(structuredData)]);
+  }, [
+    seo,
+    siteTitle,
+    canonicalUrl,
+    locale,
+    titleBaseline,
+    JSON.stringify(structuredData),
+  ]);
 }

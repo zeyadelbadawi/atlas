@@ -175,7 +175,11 @@ export function PublicWebsitePage({
 
   useDocumentSeo({
     seo,
-    siteTitle: resolveLocalizedText(configuration.seo.siteTitle, locale),
+    // The Academy's name when no site title is configured: a page title
+    // alone ("Home") never says whose site this is.
+    siteTitle:
+      resolveLocalizedText(configuration.seo.siteTitle, locale) ||
+      academy.academyName,
     canonicalUrl,
     structuredData,
     faviconHref: academyFaviconHref(academy),

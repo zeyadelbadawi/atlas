@@ -67,6 +67,7 @@ import { isEmailOtpChallenge } from '@types';
 import type { SignInChallenge } from '@types';
 import { authenticationService } from '@services/identity';
 import { usePublicWebsiteData } from '../hooks/usePublicWebsiteData';
+import { AcademyPageTitle } from './AcademyPageTitle';
 import { PublicWebsiteStatus } from './PublicWebsiteStatus';
 import {
   usePublicWebsiteLinkRenderer,
@@ -267,6 +268,7 @@ export function PublicWebsiteSignInPage({
       }}
       authState={authState}
     >
+      <AcademyPageTitle title={title} academyName={academy.academyName} />
       <WebsiteAuthFrame>
         <div className="mx-auto flex min-h-[60vh] w-full max-w-md flex-col justify-center px-4 py-16">
           <div className="mb-8 text-center">

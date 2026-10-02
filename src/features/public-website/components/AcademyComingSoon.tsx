@@ -27,13 +27,15 @@
  * anything less lets the surrounding app's background show through on a
  * customer's domain.
  */
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { HostnameResolution } from '@types';
+import type { HostnameResolution, ResolvedSeoMetadata } from '@types';
+import { useDocumentSeo } from '../hooks/useDocumentSeo';
+import { academyFaviconHref } from '../hooks/useAcademyFavicon';
 import {
   PUBLIC_WEBSITE_LOCALE_DIRECTION,
   WebsiteComingSoon,
   hasThemeComingSoon,
-  usePublicWebsiteDocumentDirection,
   type PublicWebsiteLocale,
 } from '@features/website';
 
@@ -66,7 +68,32 @@ export function AcademyComingSoon({
    * with that disable documented in place, which is precisely what makes
    * it stable. One mechanism, not two that drift.
    */
-  usePublicWebsiteDocumentDirection(locale);
+  // The Academy's own title and description — in the browser and in the
+  // server-rendered head — never Atlas's (2 Oct 2026). `useDocumentSeo`
+  // also sets <html lang/dir>, as the direction hook alone did before.
+  const comingSoonTitle = t('publicWebsite:comingSoon.title');
+  const seo = useMemo<ResolvedSeoMetadata>(() => {
+    const description = t('publicWebsite:comingSoon.metaDescription', {
+      academyName: academy.academyName,
+    });
+    return {
+      title: comingSoonTitle,
+      description,
+      ogTitle: academy.academyName,
+      ogDescription: description,
+      indexable: true,
+      titleSource: 'fallback',
+      descriptionSource: 'fallback',
+      locale,
+      hreflangAlternates: [],
+    };
+  }, [t, comingSoonTitle, academy.academyName, locale]);
+  useDocumentSeo({
+    seo,
+    siteTitle: academy.academyName,
+    faviconHref: academyFaviconHref(academy),
+    locale,
+  });
 
   // Theme 1 plan Phase 6 — a theme with its own Coming Soon draws it in the
   // Academy's theme and public colours (the lookup's `presentation`); every
