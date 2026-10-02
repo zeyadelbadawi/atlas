@@ -30,6 +30,7 @@ import {
   resolveLocalizedText,
 } from '@features/website';
 import { useDocumentSeo } from '../hooks/useDocumentSeo';
+import { academyFaviconHref } from '../hooks/useAcademyFavicon';
 import { resolveCanonicalOrigin } from '../utils/canonical-redirect.utils';
 import { usePublicCourse } from '@hooks';
 import { resolvePathToPage } from '../utils/page-resolution.utils';
@@ -177,6 +178,7 @@ export function PublicWebsitePage({
     siteTitle: resolveLocalizedText(configuration.seo.siteTitle, locale),
     canonicalUrl,
     structuredData,
+    faviconHref: academyFaviconHref(academy),
     locale,
   });
 

@@ -70,6 +70,10 @@ export function buildSsrDocument(
   if (parts.headHtml) {
     for (const pattern of DEFAULT_HEAD_TAGS)
       html = html.replace(pattern, () => '');
+    // The Academy's own favicon replaces the platform icon, never sits
+    // beside it (browsers differ in which of two icons they pick).
+    if (parts.headHtml.includes('data-atlas-favicon'))
+      html = html.replace(/<link rel="icon"[^>]*>\s*/, () => '');
   }
   html = html.replace(
     '</head>',
