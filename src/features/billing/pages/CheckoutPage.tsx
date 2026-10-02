@@ -330,11 +330,13 @@ export default function CheckoutPage(): JSX.Element {
                         className="font-semibold text-foreground"
                         data-atlas-numeric="true"
                       >
-                        {formatCurrency(
-                          cyclePrice,
-                          i18n.language as LanguageCode,
-                          planPricing.currency
-                        )}
+                        <span dir="ltr">
+                          {formatCurrency(
+                            cyclePrice,
+                            i18n.language as LanguageCode,
+                            planPricing.currency
+                          )}
+                        </span>
                         <span className="ms-1 font-normal text-muted-foreground">
                           /
                           {t(
@@ -391,7 +393,9 @@ export default function CheckoutPage(): JSX.Element {
                   className="text-2xl font-semibold text-foreground"
                   data-atlas-numeric="true"
                 >
-                  {formatMoney(checkout.snapshot.price, i18n.language)}
+                  <span dir="ltr">
+                    {formatMoney(checkout.snapshot.price, i18n.language)}
+                  </span>
                   {checkout.snapshot.billingCycle ? (
                     <span className="ms-1 text-sm font-normal text-muted-foreground">
                       /

@@ -80,7 +80,6 @@ import { ManualPaymentBrandChip } from './ManualPaymentBrandChip';
 import { WARNING_ALERT_CLASS } from './ManualMethodFormFields';
 
 /** Enough for every configured method on one page; the backend's maximum is higher. */
-const METHODS_QUERY = { pagination: { page: 1, pageSize: 100 } } as const;
 
 interface KindConfig {
   /** The `payments:` section holding this kind's copy. */
@@ -222,7 +221,7 @@ function MethodDetails({
 
 export function ManualPaymentMethodsCard(): JSX.Element {
   const { t, i18n } = useTranslation();
-  const methodsQuery = usePlatformPaymentMethods({ query: METHODS_QUERY });
+  const methodsQuery = usePlatformPaymentMethods();
   const updateMethod = useUpdatePlatformPaymentMethod();
   const [activeKind, setActiveKind] = useState<ManualPaymentMethodType>(
     'manual_bank_transfer'

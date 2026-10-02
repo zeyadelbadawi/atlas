@@ -232,7 +232,11 @@ export default function PaymentDetailsPage(): JSX.Element {
                 className="text-2xl font-semibold"
                 data-atlas-numeric="true"
               >
-                {formatMoney(payment.money, i18n.language)}
+                {/* LTR isolate: Arabic currency formatting otherwise
+                    renders as "$US 39.00" inside an RTL page. */}
+                <span dir="ltr">
+                  {formatMoney(payment.money, i18n.language)}
+                </span>
               </CardTitle>
               <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                 {t(`payments:common.methodType.${payment.methodType}`)}

@@ -24,20 +24,14 @@
  * the bank account is disabled again and the plan is archived, so neither
  * is offered to anyone after the run.
  *
- * One LOCAL-ONLY step, documented at `moveToFirstCatalogPage`: when the
- * local catalog holds more than 100 payment methods (backend Jest
- * leftovers), this journey's own account is moved onto the first page in
- * the loopback test database, because both screens show one page only.
- * Needs `psql` on PATH; `E2E_DATABASE_URL` overrides the stack's default.
+ * Both screens read every page of the catalog (the paging fix), so the
+ * new account is found however many methods the local database holds.
  */
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
 import {
   test,
   expect,
   type APIRequestContext,
   type Page,
-  type TestInfo,
 } from '@playwright/test';
 import {
   API_BASE,
@@ -56,12 +50,6 @@ import { clearAuthRateLimits } from './support/global-setup';
 import { TINY_PNG, dataUrl, signInPlatformOwner } from './support/phase4';
 
 test.describe.configure({ mode: 'serial' });
-
-const run = promisify(execFile);
-/** The disposable stack's database (`atlas-backend/scripts/e2e-local-stack.sh`). */
-const LOCAL_DATABASE_URL =
-  process.env.E2E_DATABASE_URL ??
-  'postgresql://atlas@127.0.0.1:54329/atlas_e2e';
 
 const stamp = `${Date.now()}`;
 const BANK = {
@@ -173,45 +161,6 @@ test.describe('J16 — Bank Transfer: configure, checkout, review', () => {
       if (page >= body.pagination.totalPages) return null;
     }
     return null;
-  }
-
-  /**
-   * LOCAL ENVIRONMENT STEP — not a product step.
-   *
-   * Both the Platform Owner's bank-account card and the checkout's method
-   * list read ONE page of 100 payment methods, ordered displayOrder then
-   * OLDEST first, with no paging (reported as a product bug). A catalog
-   * that fits one page — any real one, and a fresh `e2e-local-stack.sh up`
-   * database (2 seeded methods) — shows a new account at once. This local
-   * database also carries a few hundred methods the backend's Jest suites
-   * leave behind, so a new account lands on page 3 and neither screen can
-   * show it. Only then, and only for THIS journey's own row, its
-   * `created_at` is moved back in the local (loopback-only) test database
-   * so it sorts onto page 1; every assertion is unchanged.
-   */
-  async function moveToFirstCatalogPage(
-    request: APIRequestContext,
-    testInfo: TestInfo
-  ): Promise<void> {
-    const method = await findMethod(request);
-    expect(method, 'the bank account exists').toBeTruthy();
-    if (method!.page === 1) return;
-    expect(
-      LOCAL_DATABASE_URL,
-      'E2E_DATABASE_URL must be a loopback database'
-    ).toMatch(/^postgres(ql)?:\/\/[^@]+@(127\.0\.0\.1|localhost):\d+\//);
-    await run('psql', [
-      LOCAL_DATABASE_URL,
-      '-v',
-      'ON_ERROR_STOP=1',
-      '-c',
-      `UPDATE payment_methods SET created_at = '2000-01-01T00:00:00Z' WHERE id = '${method!.id}' AND display_name = '${BANK.displayName}'`,
-    ]);
-    testInfo.annotations.push({
-      type: 'local-environment',
-      description: `bank account moved from catalog page ${method!.page} to page 1 (catalog overflows the 100-row list; reported bug)`,
-    });
-    expect((await findMethod(request))!.page).toBe(1);
   }
 
   test.beforeAll(async ({ request }) => {
@@ -359,11 +308,6 @@ test.describe('J16 — Bank Transfer: configure, checkout, review', () => {
     test.setTimeout(120_000);
     // Each step signs in afresh; the limiter allows 10 per 15 minutes.
     await clearAuthRateLimits();
-    // The card lists ONE page (100) of the catalog, oldest first — see
-    // `moveToFirstCatalogPage` for why this local database needs the new
-    // account moved onto that page first.
-    await moveToFirstCatalogPage(request, testInfo);
-
     await seedCookieDecision(page);
     await signInThroughDashboard(page, 'admin@atlas.dev', SEED.password);
     await page.waitForURL(/\/dashboard/, { timeout: 30_000 });

@@ -35,6 +35,39 @@ export class PlatformPaymentMethodService extends BaseService {
     return this.fetchCollection<PlatformPaymentMethod>(query, options);
   }
 
+  /**
+   * Every method, all pages (100 each, bounded) — the console manages the
+   * whole catalog, so a method on a later page must not be invisible.
+   */
+  async getAllPaymentMethods(
+    options?: ReadOptions
+  ): Promise<PaginatedResult<PlatformPaymentMethod>> {
+    // Read the API's own `pagination` (fetchCollection's normalization
+    // looks for top-level totals, which this endpoint nests).
+    const items: PlatformPaymentMethod[] = [];
+    let totalItems = 0;
+    for (let page = 1; page <= 20; page += 1) {
+      const result = await this.client.get<
+        PaginatedResult<PlatformPaymentMethod>
+      >(this.path(), {
+        ...options,
+        params: { page, pageSize: 100, ...options?.params },
+      });
+      items.push(...result.items);
+      totalItems = result.pagination?.totalItems ?? items.length;
+      if (page >= (result.pagination?.totalPages ?? 1)) break;
+    }
+    return {
+      items,
+      pagination: {
+        page: 1,
+        pageSize: items.length,
+        totalItems,
+        totalPages: 1,
+      },
+    };
+  }
+
   /** Creates a bank-transfer method. Saved disabled unless `enabled` is sent. */
   async createBankTransferMethod(
     payload: CreateBankTransferMethodPayload,
@@ -63,10 +96,11 @@ export class PlatformPaymentMethodService extends BaseService {
     payload: CreateInstapayMethodPayload,
     options?: WriteOptions
   ): Promise<PlatformPaymentMethod> {
-    return this.client.post<
-      PlatformPaymentMethod,
-      CreateInstapayMethodPayload
-    >(this.path('instapay'), payload, options);
+    return this.client.post<PlatformPaymentMethod, CreateInstapayMethodPayload>(
+      this.path('instapay'),
+      payload,
+      options
+    );
   }
 
   /** Updates any subset of a method's fields — including enabling or disabling it. */

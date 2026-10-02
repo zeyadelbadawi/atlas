@@ -25,7 +25,11 @@ export function usePlatformPaymentMethods(
 
   return useApiQuery<PaginatedResult<PlatformPaymentMethod>, ApiError>({
     queryKey: platformPaymentMethodKeys.list(query),
-    queryFn: () => platformPaymentMethodService.getPaymentMethods(query),
+    // No query: the whole catalog, every page.
+    queryFn: () =>
+      query
+        ? platformPaymentMethodService.getPaymentMethods(query)
+        : platformPaymentMethodService.getAllPaymentMethods(),
     enabled,
   });
 }
