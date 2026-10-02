@@ -7,6 +7,7 @@
  */
 import { useTranslation } from 'react-i18next';
 import { useParams, useSearchParams } from 'react-router-dom';
+import { usePermissions } from '@hooks';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { SectionTabs } from '@components/navigation';
@@ -36,6 +37,7 @@ type SettingsTab = (typeof SETTINGS_TABS)[number];
 export default function WebsiteSettingsPage(): JSX.Element {
   const { t } = useTranslation();
   const { academyId } = useParams<{ academyId: string }>();
+  const { hasPermission } = usePermissions();
   // `?tab=brand` (etc.) opens that tab — the launch checklist links here.
   const [searchParams] = useSearchParams();
   const requestedTab = searchParams.get('tab');
@@ -106,13 +108,18 @@ export default function WebsiteSettingsPage(): JSX.Element {
         breadcrumbs={breadcrumbs}
       />
 
-      <SectionTabs items={getWebsiteTabs(academyId)} />
+      <SectionTabs
+        items={getWebsiteTabs(academyId, {
+          canManage: hasPermission('academy.website.manage'),
+        })}
+      />
 
       <div className="space-y-6">
         <WebsitePublishBar
           academyId={academyId}
           status={configuration.status}
           lastPublishedAt={configuration.publishedAt}
+          unpublishedChanges={configuration.unpublishedChanges}
         />
 
         <Tabs defaultValue={initialTab}>

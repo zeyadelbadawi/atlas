@@ -91,6 +91,12 @@ export interface PlanPricingMetadata {
   readonly amount?: number;
   readonly currency?: string;
   readonly billingCycle?: 'monthly' | 'yearly';
+  /**
+   * A whole year's price (major units) beside a MONTHLY `amount`, set by the
+   * Platform Owner. Absent means the plan has no yearly option: the backend
+   * prices a yearly checkout from this value and refuses one without it.
+   */
+  readonly yearlyAmount?: number;
 }
 
 /**

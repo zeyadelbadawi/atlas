@@ -41,7 +41,10 @@ import { StatusBadge } from '@components/data-display';
 import { EmptyState, ErrorState } from '@components/feedback';
 import { useDateFormatter } from '@hooks';
 import { useToast, useConfirmDialog } from '@app/providers';
-import { getQuizAttemptStatusTone, getSubmissionStatusTone } from '@features/learning';
+import {
+  getQuizAttemptStatusTone,
+  getSubmissionStatusTone,
+} from '@features/learning';
 // The feature barrel, never its internals (`no-restricted-imports`).
 import {
   IssueCertificateDialog,
@@ -73,6 +76,7 @@ import {
 } from './AcademyStudentActionDialogs';
 import type { ApiError } from '@api';
 import type { RosterEnrollment } from '@types';
+import { progressCounts } from '@utils';
 
 export interface AcademyStudentDrawerProps {
   readonly academyId: string;
@@ -247,8 +251,7 @@ export function AcademyStudentDrawer({
     );
   };
 
-  const isActing =
-    approve.isPending || reject.isPending || unblock.isPending;
+  const isActing = approve.isPending || reject.isPending || unblock.isPending;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -268,10 +271,7 @@ export function AcademyStudentDrawer({
           </div>
         ) : error || !data || !student ? (
           <div className="p-6">
-            <ErrorState
-              kind={error?.kind}
-              onRetry={() => refetch()}
-            />
+            <ErrorState kind={error?.kind} onRetry={() => refetch()} />
           </div>
         ) : (
           <div className="space-y-6 p-6">
@@ -281,13 +281,18 @@ export function AcademyStudentDrawer({
                 {student.avatar ? (
                   <AvatarImage src={student.avatar} alt="" />
                 ) : null}
-                <AvatarFallback>{initialsOf(student.name) || '?'}</AvatarFallback>
+                <AvatarFallback>
+                  {initialsOf(student.name) || '?'}
+                </AvatarFallback>
               </Avatar>
               <div className="min-w-0 flex-1 space-y-1">
                 <p className="truncate text-base font-semibold" dir="auto">
                   {student.name}
                 </p>
-                <p className="truncate text-sm text-muted-foreground" dir="auto">
+                <p
+                  className="truncate text-sm text-muted-foreground"
+                  dir="auto"
+                >
                   {student.email}
                 </p>
                 <div className="flex flex-wrap items-center gap-2 pt-1">
@@ -330,7 +335,10 @@ export function AcademyStudentDrawer({
                 {t('academy:students.drawer.activeSessions')}
               </dt>
               <dd className="inline-flex items-center gap-1">
-                <MonitorSmartphone className="size-3.5 text-muted-foreground" aria-hidden />
+                <MonitorSmartphone
+                  className="size-3.5 text-muted-foreground"
+                  aria-hidden
+                />
                 {data.activeSessionCount}
               </dd>
               {student.blocked && student.blockedReason ? (
@@ -438,7 +446,10 @@ export function AcademyStudentDrawer({
                     >
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <div className="min-w-0 space-y-1">
-                          <p className="truncate text-sm font-medium" dir="auto">
+                          <p
+                            className="truncate text-sm font-medium"
+                            dir="auto"
+                          >
                             {enrollment.courseTitle}
                           </p>
                           <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
@@ -518,11 +529,18 @@ export function AcademyStudentDrawer({
                             aria-label={t('academy:students.drawer.progress')}
                           />
                           <p className="text-xs text-muted-foreground">
-                            {t('academy:students.drawer.progressSummary', {
-                              percentage: Math.round(enrollment.progress.percentage),
-                              completed: enrollment.progress.completedLessons,
-                              total: enrollment.progress.totalLessons,
-                            })}
+                            {t(
+                              progressCounts(enrollment.progress).unit ===
+                                'items'
+                                ? 'academy:students.drawer.progressSummaryItems'
+                                : 'academy:students.drawer.progressSummary',
+                              {
+                                percentage: Math.round(
+                                  enrollment.progress.percentage
+                                ),
+                                ...progressCounts(enrollment.progress),
+                              }
+                            )}
                           </p>
                         </div>
                       ) : null}
@@ -634,7 +652,11 @@ export function AcademyStudentDrawer({
                         />
                         <StatusBadge
                           labelKey={`instructor:grading.status.${outcome.gradingStatus}`}
-                          tone={outcome.gradingStatus === 'graded' ? 'success' : 'warning'}
+                          tone={
+                            outcome.gradingStatus === 'graded'
+                              ? 'success'
+                              : 'warning'
+                          }
                         />
                       </div>
                     </li>

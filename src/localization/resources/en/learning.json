@@ -62,6 +62,10 @@
     "title": "Course Overview",
     "curriculum": "Curriculum",
     "lessonCount": "{{count}} lessons",
+    "quizCount": "{{count}} quiz",
+    "quizCount_other": "{{count}} quizzes",
+    "assignmentCount": "{{count}} assignment",
+    "assignmentCount_other": "{{count}} assignments",
     "sectionCount": "{{count}} sections",
     "instructors": "Instructors",
     "aboutCourse": "About this course",
@@ -116,6 +120,7 @@
   "progress": {
     "overallTitle": "Your Progress",
     "completedOf": "{{completed}} of {{total}} lessons completed",
+    "completedOfItems": "{{completed}} of {{total}} activities completed",
     "state": {
       "incomplete": "Not started",
       "in_progress": "In progress",
@@ -430,6 +435,7 @@
     },
     "course": {
       "progressSummary": "{{completed}} of {{total}} lessons complete ({{percentage}}%)",
+      "progressSummaryItems": "{{completed}} of {{total}} activities complete ({{percentage}}%)",
       "quizzes": "Quizzes",
       "assignments": "Assignments",
       "attemptNumber": "Attempt {{number}}",

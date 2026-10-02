@@ -13,7 +13,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { Loader2, Save, Search } from 'lucide-react';
+import { Loader2, Save, Search, UploadCloud } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { Button } from '@/components/ui/button';
@@ -31,6 +31,7 @@ import { useAcademy } from '@features/academy';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { BreadcrumbItem } from '@types';
 import {
+  usePublishWebsitePage,
   useUpdateWebsitePage,
   useWebsiteConfiguration,
   useWebsitePage,
@@ -96,6 +97,8 @@ export default function WebsitePageEditorPage(): JSX.Element {
   });
   const pageQuery = useWebsitePage(academyId ?? '', pageId ?? '');
   const updatePage = useUpdateWebsitePage();
+  const publishPage = usePublishWebsitePage();
+  const canPublish = hasPermission('academy.website.publish');
 
   const [draftSections, setDraftSections] = useState<SectionInstance[]>([]);
   // `?section=<id>` opens that section's editor once the page loads (the
@@ -304,6 +307,17 @@ export default function WebsitePageEditorPage(): JSX.Element {
    * reported, so the colleague's committed save is built on rather than
    * erased. It is never a way to skip the check.
    */
+  const handlePublishPage = async () => {
+    if (!academyId || !pageId || isDirty || publishPage.isPending) return;
+    const confirmed = await confirm({
+      titleKey: 'website:editor.publishPageConfirmTitle',
+      descriptionKey: 'website:editor.publishPageConfirmDescription',
+      confirmLabelKey: 'website:editor.publishPageAction',
+    });
+    if (!confirmed) return;
+    publishPage.mutate({ academyId, pageId });
+  };
+
   const handleSaveChanges = (overrideVersion?: number) => {
     const expectedVersion =
       overrideVersion ?? versionForSave(pageQuery.data?.version, null);
@@ -393,6 +407,40 @@ export default function WebsitePageEditorPage(): JSX.Element {
                   )}
                   {t('website:editor.saveChanges')}
                 </Button>
+                {/* One page goes live without republishing the site. Only
+                    while the site is live (publishing the site publishes
+                    every page anyway), and only what is SAVED — unsaved
+                    edits must be saved first, so the button says so. */}
+                {canPublish && configuration.status === 'published' ? (
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    data-testid="website-publish-page"
+                    onClick={handlePublishPage}
+                    disabled={
+                      isDirty ||
+                      !page.hasUnpublishedChanges ||
+                      publishPage.isPending ||
+                      updatePage.isPending
+                    }
+                    title={
+                      isDirty
+                        ? t('website:editor.publishPageSaveFirst')
+                        : undefined
+                    }
+                  >
+                    {publishPage.isPending ? (
+                      <Loader2 className="size-4 animate-spin" aria-hidden />
+                    ) : (
+                      <UploadCloud
+                        className="size-4"
+                        strokeWidth={2}
+                        aria-hidden
+                      />
+                    )}
+                    {t('website:editor.publishPageAction')}
+                  </Button>
+                ) : null}
               </div>
             ) : undefined
           }
@@ -402,7 +450,36 @@ export default function WebsitePageEditorPage(): JSX.Element {
           academyId={academyId}
           status={configuration.status}
           lastPublishedAt={configuration.publishedAt}
+          unpublishedChanges={configuration.unpublishedChanges}
         />
+        {configuration.status === 'published' ? (
+          <p
+            className="text-sm text-muted-foreground"
+            data-testid="website-page-publish-state"
+          >
+            {page.hasUnpublishedChanges
+              ? t('website:editor.pageHasUnpublishedChanges')
+              : t('website:editor.pageUpToDate')}
+          </p>
+        ) : null}
+        {publishPage.error ? (
+          publishPage.error.messageKey ===
+          'errors.website.publishedSlugTaken' ? (
+            <ErrorState
+              kind="conflict"
+              descriptionKey="website:editor.publishedSlugTaken"
+              values={{
+                title: String(publishPage.error.details?.title ?? ''),
+                slug: page.slug,
+              }}
+            />
+          ) : (
+            <ErrorState
+              kind={publishPage.error.kind}
+              onRetry={handlePublishPage}
+            />
+          )
+        ) : null}
         {/*
           A conflict is NOT an error state — it has its own dialog with real
           choices. Showing the generic retry strip for it would offer

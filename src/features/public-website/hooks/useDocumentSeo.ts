@@ -31,6 +31,11 @@ import {
   usePublicWebsiteDocumentDirection,
   type PublicWebsiteLocale,
 } from '@features/website';
+import { ACADEMY_FAVICON_ATTR } from './useAcademyFavicon';
+import {
+  AcademyTitleBaselineContext,
+  composeDocumentTitle,
+} from './useAcademyDocumentTitle';
 
 const MANAGED_ATTR = 'data-atlas-seo';
 
@@ -41,6 +46,8 @@ export interface UseDocumentSeoOptions {
   readonly canonicalUrl?: string;
   /** Plain schema.org objects (`OrganizationJsonLd`, `CourseJsonLd`, ...) — each emitted as its own `<script type="application/ld+json">`. Typed as `unknown` only because it accepts a union of several distinct JSON-LD interfaces; every entry is still real, typed Atlas data produced by `@features/website`'s structured-data builders, never an arbitrary/untyped value. */
   readonly structuredData?: readonly unknown[];
+  /** The Academy's own favicon URL (`academyFaviconHref`), when it has one. The browser's `<link rel="icon">` is managed by `useAcademyFavicon`; this only puts the same tag in a server-rendered head. */
+  readonly faviconHref?: string;
   /** The locale this render is for — sets `<html lang>`/`<html dir>` and is used to build each hreflang alternate's absolute URL from `seo.hreflangAlternates`' paths. */
   readonly locale: PublicWebsiteLocale;
 }
@@ -109,9 +116,15 @@ export function renderSeoHeadHtml({
   siteTitle,
   canonicalUrl,
   structuredData,
+  faviconHref,
 }: UseDocumentSeoOptions): string {
   const tags: string[] = [];
-  const title = siteTitle ? `${seo.title} · ${siteTitle}` : seo.title;
+  if (faviconHref) {
+    tags.push(
+      `<link rel="icon" href="${escapeAttribute(faviconHref)}" ${ACADEMY_FAVICON_ATTR}="true">`
+    );
+  }
+  const title = composeDocumentTitle(seo.title, siteTitle);
   tags.push(`<title>${escapeText(title)}</title>`);
   const meta = (attr: 'name' | 'property', key: string, content?: string) => {
     if (content) {
@@ -155,10 +168,12 @@ export function useDocumentSeo({
   siteTitle,
   canonicalUrl,
   structuredData,
+  faviconHref,
   locale,
 }: UseDocumentSeoOptions): void {
   usePublicWebsiteDocumentDirection(locale);
 
+  const titleBaseline = useContext(AcademyTitleBaselineContext);
   const collector = useContext(SeoHeadCollectorContext);
   if (collector) {
     collector.current = {
@@ -166,6 +181,7 @@ export function useDocumentSeo({
       siteTitle,
       canonicalUrl,
       structuredData,
+      faviconHref,
       locale,
     };
   }
@@ -181,7 +197,7 @@ export function useDocumentSeo({
       .forEach((node) => node.remove());
 
     const previousTitle = document.title;
-    document.title = siteTitle ? `${seo.title} · ${siteTitle}` : seo.title;
+    document.title = composeDocumentTitle(seo.title, siteTitle);
 
     upsertMeta('name', 'description', seo.description);
     upsertMeta(
@@ -241,11 +257,20 @@ export function useDocumentSeo({
     });
 
     return () => {
-      document.title = previousTitle;
+      // On an Academy's site the title to fall back to is the Academy's
+      // name, never whatever happened to be there before (e.g. "Atlas").
+      document.title = titleBaseline ?? previousTitle;
       document.head
         .querySelectorAll(`[${MANAGED_ATTR}]`)
         .forEach((node) => node.remove());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [seo, siteTitle, canonicalUrl, locale, JSON.stringify(structuredData)]);
+  }, [
+    seo,
+    siteTitle,
+    canonicalUrl,
+    locale,
+    titleBaseline,
+    JSON.stringify(structuredData),
+  ]);
 }

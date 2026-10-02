@@ -321,6 +321,7 @@
       "revokedOn": "Revoked {{date}}",
       "progress": "Course progress",
       "progressSummary": "{{percentage}}% · {{completed}} of {{total}} lessons",
+      "progressSummaryItems": "{{percentage}}% · {{completed}} of {{total}} activities",
       "quizOutcomes": "Quiz outcomes",
       "noQuizOutcomes": "No quiz attempts yet.",
       "assignmentOutcomes": "Assignment outcomes",

@@ -16,6 +16,8 @@ export interface HostnameResolution {
   readonly academyLogo?: string;
   /** P63 — the one host this website advertises (connected custom domain, otherwise the Atlas subdomain). The public runtime sets `rel="canonical"` to it and moves a visitor on the other host there. */
   readonly canonicalHost?: string;
+  /** The Academy's own favicon, when it has one: linked as `public/websites/:academyId/favicon?v=<faviconVersion>`. Absent: the platform's default icon stays. */
+  readonly faviconVersion?: string;
   /**
    * Theme 1 plan Phase 6 — the website's theme and public colours,
    * whatever its publication state, so Coming Soon can wear them. Absent

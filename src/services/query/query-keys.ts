@@ -9,6 +9,7 @@ import type {
   AcademyRosterQuery,
   AnalyticsQuery,
   CollectionQuery,
+  ContactSubmissionListQuery,
   CourseListQuery,
 } from '@types';
 
@@ -35,6 +36,8 @@ export const QUERY_KEY_ROOTS = {
   payment: ['payment'] as const,
   invoice: ['invoice'] as const,
   platformPayment: ['platform-payment'] as const,
+  /** Platform Owner configuration of payment methods (bank-transfer accounts). */
+  platformPaymentMethod: ['platform-payment-method'] as const,
   /** Platform Owner course-order payment review — a separate queue from `platformPayment` (subscriptions). */
   platformCourseOrderPayment: ['platform-course-order-payment'] as const,
   platformAcademyPayout: ['platform-academy-payout'] as const,
@@ -746,6 +749,20 @@ export const platformPaymentKeys = {
 } as const;
 
 /**
+ * Query keys for the Platform Owner's payment-method configuration
+ * (`/platform-payment-methods`). Not organization-scoped: the catalog is
+ * platform-owned. Mutations invalidate `lists()` — a prefix WITHOUT the
+ * trailing query, because TanStack's partial matching does not match a
+ * key ending in `undefined` against a cached key holding a query object.
+ */
+export const platformPaymentMethodKeys = {
+  all: QUERY_KEY_ROOTS.platformPaymentMethod,
+  lists: () => [...platformPaymentMethodKeys.all, 'list'] as const,
+  list: (query?: CollectionQuery) =>
+    [...platformPaymentMethodKeys.lists(), query] as const,
+} as const;
+
+/**
  * Platform Owner course-order payment review. Kept apart from
  * `platformPaymentKeys` for the same reason the backend keeps the two route
  * trees apart: approving a course payment must never invalidate (or be
@@ -844,6 +861,17 @@ export const websiteKeys = {
     [...websiteKeys.all, 'configuration', academyId] as const,
   pages: (academyId: string | undefined, query?: CollectionQuery) =>
     [...websiteKeys.all, 'pages', academyId, query] as const,
+  /**
+   * Every page list of an Academy, whatever its query — the prefix to
+   * invalidate. `pages(academyId)` ends in `undefined`, which TanStack's
+   * partial match compares against the cached query object and never
+   * matches.
+   */
+  allPages: (academyId: string | undefined) =>
+    [...websiteKeys.all, 'pages', academyId] as const,
+  /** Every page detail of an Academy — the prefix to invalidate after a site publish. */
+  allPageDetails: (academyId: string | undefined) =>
+    [...websiteKeys.all, 'page', academyId] as const,
   page: (academyId: string | undefined, pageId: string) =>
     [...websiteKeys.all, 'page', academyId, pageId] as const,
   /** CMS content (Prompt 10) — same academy-scoping technique as `configuration`/`pages` above. */
@@ -857,6 +885,23 @@ export const websiteKeys = {
   ) => [...websiteKeys.all, 'testimonial-entries', academyId, query] as const,
   testimonialEntry: (academyId: string | undefined, entryId: string) =>
     [...websiteKeys.all, 'testimonial-entry', academyId, entryId] as const,
+  /**
+   * Website Contact form messages — one cache entry per filter/sort/page
+   * combination (the query object is IN the key).
+   */
+  contactSubmissions: (
+    academyId: string | undefined,
+    query?: ContactSubmissionListQuery
+  ) => [...websiteKeys.all, 'contact-submissions', academyId, query] as const,
+  /**
+   * Every message list of an Academy, whatever its query — the prefix to
+   * invalidate after a status change (same reasoning as `allPages`).
+   */
+  allContactSubmissions: (academyId: string | undefined) =>
+    [...websiteKeys.all, 'contact-submissions', academyId] as const,
+  /** Whole-academy message counts by status (filter-independent). */
+  contactSubmissionSummary: (academyId: string | undefined) =>
+    [...websiteKeys.all, 'contact-submission-summary', academyId] as const,
 } as const;
 
 /**

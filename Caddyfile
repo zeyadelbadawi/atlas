@@ -84,6 +84,37 @@
 	}
 }
 
+# Browser caching for the app's own static files (2 Oct 2026). Before this,
+# nothing under /assets/ or the HTML shell carried a Cache-Control header,
+# so every visit revalidated (or heuristically cached) everything.
+#   * /assets/* — Vite's build output; every file name carries a content
+#     hash, so a changed file is a new URL. Only a file that exists is
+#     marked immutable; a 404 stays uncached.
+#   * Everything else this block serves from disk is the SPA shell
+#     (index.html via try_files, also in place of a missing /assets/ file)
+#     or a root file such as robots.txt: always revalidated, so a deploy is
+#     picked up on the next request. `?` sets it only when the response has
+#     none (the server renderer sets its own).
+# API responses are routed elsewhere and never pass through here; nothing
+# per-user or per-tenant is ever marked cacheable.
+(static_cache) {
+	@hashed_asset {
+		path /assets/*
+		file
+	}
+	header @hashed_asset Cache-Control "public, max-age=31536000, immutable"
+	# Everything else, including the shell served in place of a MISSING
+	# /assets/ file (which must never be cached as if it were the chunk).
+	@app_shell {
+		not path /theme-assets/*
+		not {
+			path /assets/*
+			file
+		}
+	}
+	header @app_shell ?Cache-Control "no-cache"
+}
+
 # P63g — HSTS is split by ownership. Atlas owns the whole platform tree,
 # so `includeSubDomains` is right there. A customer's custom domain is
 # NOT Atlas's to make policy for: asserting `includeSubDomains` on
@@ -217,6 +248,7 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 		import csp
 		import hsts_platform
 		root * /srv
+		import static_cache
 		# Academy subdomains only: the platform itself (apex, www) is the
 		# dashboard and is never server-rendered.
 		@academy_page {
@@ -280,6 +312,7 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 		import csp
 		import hsts_custom_domain
 		root * /srv
+		import static_cache
 		# Every host here is an Academy's connected domain.
 		@academy_page {
 			expression {env.ATLAS_SSR} == "on"

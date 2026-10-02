@@ -4,12 +4,18 @@ name: Deploy
 # linux/arm64 (the Oracle VPS is an Ampere/ARM instance — cross-built via
 # QEMU since GitHub's runners are x86_64), pushes it to GHCR, then SSHes
 # into the VPS as the restricted `deploy` user (never a personal key,
-# never root) to pull and roll out the full stack. This repo has no
-# separate test workflow today, so this triggers directly on push to
-# `main` rather than via workflow_run.
+# never root) to pull and roll out the full stack.
+#
+# Gated on CI (2 Oct 2026): it runs only after the `CI` workflow completed
+# SUCCESSFULLY for a push to `main`, and builds exactly the commit CI
+# checked — a red CI never reaches production. `workflow_dispatch` remains
+# for a deliberate manual redeploy of `main`.
 on:
-  push:
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
     branches: [main]
+  workflow_dispatch:
 
 # P63g — one deploy at a time against the single VPS. The backend
 # workflow uses the same group name; GitHub scopes groups per repository,
@@ -25,9 +31,15 @@ permissions:
 
 jobs:
   build-and-deploy:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -50,7 +62,7 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/atlas-frontend:latest
-            ghcr.io/${{ github.repository_owner }}/atlas-frontend:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/atlas-frontend:${{ github.event.workflow_run.head_sha || github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -67,7 +79,7 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/atlas-frontend-ssr:latest
-            ghcr.io/${{ github.repository_owner }}/atlas-frontend-ssr:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/atlas-frontend-ssr:${{ github.event.workflow_run.head_sha || github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

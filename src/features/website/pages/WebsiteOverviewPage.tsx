@@ -9,6 +9,7 @@
 import { useTranslation } from 'react-i18next';
 import { useAcademyDomain } from '@features/domain';
 import { useNavigate, useParams } from 'react-router-dom';
+import { usePermissions } from '@hooks';
 import {
   ExternalLink,
   FileText,
@@ -38,6 +39,7 @@ export default function WebsiteOverviewPage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { academyId } = useParams<{ academyId: string }>();
+  const { hasPermission } = usePermissions();
 
   const academyQuery = useAcademy(academyId ?? '');
 
@@ -152,13 +154,18 @@ export default function WebsiteOverviewPage(): JSX.Element {
         }
       />
 
-      <SectionTabs items={getWebsiteTabs(academyId)} />
+      <SectionTabs
+        items={getWebsiteTabs(academyId, {
+          canManage: hasPermission('academy.website.manage'),
+        })}
+      />
 
       <div className="space-y-6">
         <WebsitePublishBar
           academyId={academyId}
           status={configQuery.data.status}
           lastPublishedAt={configQuery.data.publishedAt}
+          unpublishedChanges={configQuery.data.unpublishedChanges}
         />
 
         <WebsiteLaunchChecklist

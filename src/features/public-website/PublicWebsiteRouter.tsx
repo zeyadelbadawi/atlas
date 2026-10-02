@@ -33,6 +33,15 @@ import { PublicWebsiteGuestRoute } from './components/PublicWebsiteGuestRoute';
 import { PublicWebsiteAuthShell } from './components/PublicWebsiteAuthShell';
 import { PublicWebsiteRetiredLearnerRedirect } from './components/PublicWebsiteRetiredLearnerRedirect';
 import { usePublicWebsiteData } from './hooks/usePublicWebsiteData';
+import { useResolveHostname } from './hooks/useResolveHostname';
+import {
+  academyFaviconHref,
+  useAcademyFavicon,
+} from './hooks/useAcademyFavicon';
+import {
+  AcademyTitleBaselineContext,
+  useAcademyHeadDefaults,
+} from './hooks/useAcademyDocumentTitle';
 import { RETIRED_ACADEMY_LEARNER_ROUTES } from '@app/routes/route-paths';
 import type { PublicWebsiteContext } from './utils/hostname-resolution.utils';
 import {
@@ -392,30 +401,40 @@ export function PublicWebsiteRouter({
 }: PublicWebsiteRouterProps): JSX.Element {
   const { hostname } = useRequestLocation();
   const lookupKey = resolveLookupKey(context, hostname);
+  // Every page of the Academy's site — website, sign-in, learner area —
+  // wears its own favicon. The resolution is the cached query every route
+  // already reads.
+  const resolution = useResolveHostname(lookupKey);
+  useAcademyFavicon(academyFaviconHref(resolution.data ?? undefined));
+  // …and its own name as the browser title, never "Atlas".
+  const academyName = resolution.data?.academyName;
+  useAcademyHeadDefaults(academyName);
 
   return (
-    <Routes>
-      <Route
-        path="/robots.txt"
-        element={<PublicWebsiteRobotsRoute lookupKey={lookupKey} />}
-      />
-      <Route
-        path="/sitemap.xml"
-        element={<PublicWebsiteSitemapRoute lookupKey={lookupKey} />}
-      />
-      <Route
-        path="/ar/*"
-        element={
-          <PublicWebsiteLocaleRoutes lookupKey={lookupKey} locale="ar" />
-        }
-      />
-      <Route
-        path="/*"
-        element={
-          <PublicWebsiteLocaleRoutes lookupKey={lookupKey} locale="en" />
-        }
-      />
-    </Routes>
+    <AcademyTitleBaselineContext.Provider value={academyName}>
+      <Routes>
+        <Route
+          path="/robots.txt"
+          element={<PublicWebsiteRobotsRoute lookupKey={lookupKey} />}
+        />
+        <Route
+          path="/sitemap.xml"
+          element={<PublicWebsiteSitemapRoute lookupKey={lookupKey} />}
+        />
+        <Route
+          path="/ar/*"
+          element={
+            <PublicWebsiteLocaleRoutes lookupKey={lookupKey} locale="ar" />
+          }
+        />
+        <Route
+          path="/*"
+          element={
+            <PublicWebsiteLocaleRoutes lookupKey={lookupKey} locale="en" />
+          }
+        />
+      </Routes>
+    </AcademyTitleBaselineContext.Provider>
   );
 }
 

@@ -316,6 +316,8 @@ export const DASHBOARD_ROUTES = {
   websitePages: '/dashboard/academy/:academyId/website/pages',
   websitePageEditor: '/dashboard/academy/:academyId/website/pages/:pageId',
   websitePreview: '/dashboard/academy/:academyId/website/preview',
+  /** Messages visitors sent through the website's Contact form — Owner/Manager inbox. */
+  websiteMessages: '/dashboard/academy/:academyId/website/messages',
 } as const;
 
 /**

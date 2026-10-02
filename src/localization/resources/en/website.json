@@ -627,7 +627,14 @@
     "sampleBadge": "Sample",
     "markTestimonialReal": "This is a real testimonial",
     "sampleHelp": "Sample testimonials are placeholders to show the design. They're never shown on your live website. Replace the text with a real testimonial, then mark it as real.",
-    "sampleSectionHint": "Holds sample testimonials, which are hidden on your live website."
+    "sampleSectionHint": "Holds sample testimonials, which are hidden on your live website.",
+    "publishPageAction": "Publish page",
+    "publishPageSaveFirst": "Save your changes first, then publish the page.",
+    "publishPageConfirmTitle": "Publish this page?",
+    "publishPageConfirmDescription": "The saved version of this page will replace what visitors see. Other pages and the site settings stay as they are published.",
+    "pageHasUnpublishedChanges": "This page has saved changes that visitors don't see yet. Publish the page to make them live.",
+    "pageUpToDate": "Visitors see the saved version of this page.",
+    "publishedSlugTaken": "Another live page (“{{title}}”) still uses the address /{{slug}}. Publish that page first, or publish the whole site."
   },
   "preview": {
     "title": "Preview",
@@ -643,9 +650,9 @@
   "publish": {
     "action": "Publish",
     "confirmTitle": "Publish this website?",
-    "confirmDescription": "Your draft configuration will become live for every visitor.",
+    "confirmDescription": "Everything you have saved — site settings and every page — will become live for every visitor.",
     "confirmAction": "Publish",
-    "draftHint": "You have unpublished changes.",
+    "draftHint": "Your website is not published yet. Visitors see a Coming Soon page.",
     "publishedHint": "This website is live.",
     "status": {
       "draft": "Draft",
@@ -660,7 +667,18 @@
     "unpublishedHint": "Your website is offline and not reachable by visitors.",
     "sampleWarningTitle": "Publish with sample testimonials?",
     "sampleWarningDescription": "Sample testimonials are never shown on your live website. Replace them with real ones, or mark them as real, to show them. You can publish now and review them later.",
-    "sampleWarningAction": "Publish anyway"
+    "sampleWarningAction": "Publish anyway",
+    "upToDateHint": "This website is live and shows everything you have saved.",
+    "publishChangesAction": "Publish changes",
+    "publishChangesConfirmTitle": "Publish your changes?",
+    "publishChangesConfirmDescription": "Everything you have saved — site settings and every page — will replace what visitors see now.",
+    "pending": {
+      "settings": "Site settings have unpublished changes.",
+      "settingsAndPages_one": "Site settings and {{count}} page have unpublished changes.",
+      "settingsAndPages_other": "Site settings and {{count}} pages have unpublished changes.",
+      "pages_one": "{{count}} page has unpublished changes.",
+      "pages_other": "{{count}} pages have unpublished changes."
+    }
   },
   "sections": {
     "hero": {
@@ -863,6 +881,10 @@
       "sectionCount_other": "{{count}} sections",
       "lessonCount": "{{count}} lesson",
       "lessonCount_other": "{{count}} lessons",
+      "quizCount": "{{count}} quiz",
+      "quizCount_other": "{{count}} quizzes",
+      "assignmentCount": "{{count}} assignment",
+      "assignmentCount_other": "{{count}} assignments",
       "enrollAction": "Enroll for free",
       "continueAction": "Continue Learning",
       "signInToEnrollAction": "Sign in to enroll",
@@ -1207,6 +1229,79 @@
       "title": "Publish your website",
       "todo": "Visitors see a Coming Soon page until you publish.",
       "done": "Your website is live."
+    }
+  },
+  "messages": {
+    "title": "Messages",
+    "subtitle": "Messages visitors send through your website's Contact form.",
+    "newCount_one": "{{formatted}} new",
+    "newCount_other": "{{formatted}} new",
+    "searchLabel": "Search by name, email or message",
+    "filters": {
+      "label": "Filter messages",
+      "status": "Filter by status",
+      "all": "All",
+      "dateRange": "Received date",
+      "from": "Received from",
+      "to": "Received to",
+      "clear": "Clear filters"
+    },
+    "status": {
+      "new": "New",
+      "read": "Read",
+      "archived": "Archived"
+    },
+    "sort": {
+      "label": "Sort by",
+      "createdAt_desc": "Newest first",
+      "createdAt_asc": "Oldest first",
+      "name_asc": "Name A–Z",
+      "name_desc": "Name Z–A",
+      "email_asc": "Email A–Z"
+    },
+    "table": {
+      "caption": "Website messages",
+      "name": "Name",
+      "email": "Email",
+      "message": "Message",
+      "status": "Status",
+      "received": "Received"
+    },
+    "resultRange_one": "Showing {{from}}–{{to}} of {{total}} message",
+    "resultRange_other": "Showing {{from}}–{{to}} of {{total}} messages",
+    "openMessage": "Open message from {{name}}",
+    "empty": {
+      "title": "No messages yet",
+      "description": "When visitors send a message through your website's Contact form, it will appear here."
+    },
+    "noResults": {
+      "title": "No messages match these filters",
+      "description": "Try a different search or date range, or clear the filters to see every message."
+    },
+    "drawer": {
+      "title": "Message",
+      "description": "Received through your website's Contact form.",
+      "from": "From",
+      "email": "Email",
+      "received": "Received",
+      "status": "Status",
+      "message": "Message",
+      "reply": "Reply by email",
+      "actions": "Message actions"
+    },
+    "actions": {
+      "markRead": "Mark as read",
+      "markUnread": "Mark as unread",
+      "archive": "Archive",
+      "restore": "Restore"
+    },
+    "toasts": {
+      "markedRead": "Marked as read",
+      "markedUnread": "Marked as unread",
+      "archived": "Message archived",
+      "restored": "Message restored",
+      "undo": "Undo",
+      "failed": "Couldn't update the message"
     }
   }
 }

@@ -26,6 +26,7 @@ import { MetricCard, StatusBadge } from '@components/data-display';
 import { SectionLoader } from '@components/loading';
 import { useStudentAnalytics } from '../hooks/useStudentAnalytics';
 import { useDashboardScope } from '../hooks/useDashboardScope';
+import { progressCounts } from '@utils';
 
 /** Share of `value` within `total`, guarding the empty-cohort case so an empty academy reads 0% rather than NaN. */
 function share(value: number, total: number): number {
@@ -256,10 +257,12 @@ export default function StudentAnalyticsPage(): JSX.Element {
                   </span>
                   <span className="truncate text-sm text-muted-foreground">
                     {student.courseTitle} ·{' '}
-                    {t('dashboard:studentAnalytics.atRisk.lessonsDone', {
-                      completed: student.completedLessons,
-                      total: student.totalLessons,
-                    })}
+                    {t(
+                      progressCounts(student).unit === 'items'
+                        ? 'dashboard:studentAnalytics.atRisk.itemsDone'
+                        : 'dashboard:studentAnalytics.atRisk.lessonsDone',
+                      progressCounts(student)
+                    )}
                   </span>
                 </div>
                 {/* Every flag states its own reason — never an opaque score. */}

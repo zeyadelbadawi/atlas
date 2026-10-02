@@ -148,6 +148,24 @@ export class WebsiteConfigurationService extends BaseService {
   }
 
   /**
+   * Publishes ONE page: its saved title, address, visibility, SEO and
+   * sections become what visitors see. The rest of the site — other pages
+   * and the site-wide settings — keeps its published state. Refused (409)
+   * when another live page still holds this page's address.
+   */
+  async publishPage(
+    academyId: string,
+    pageId: string,
+    options?: WriteOptions
+  ): Promise<WebsitePage> {
+    return this.client.post<WebsitePage, undefined>(
+      this.websitePath(academyId, 'pages', pageId, 'publish'),
+      undefined,
+      options
+    );
+  }
+
+  /**
    * Announces (or refreshes) an editing session on a page and returns
    * everyone ELSE currently editing it.
    *

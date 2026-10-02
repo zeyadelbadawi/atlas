@@ -28,6 +28,9 @@ import type {
   TenantInvoice,
 } from '@types';
 
+/** Upper bound on payment-method pages read (100 per page). */
+const MAX_METHOD_PAGES = 20;
+
 export class PaymentService extends BaseService {
   protected readonly resource = 'organizations';
 
@@ -61,13 +64,20 @@ export class PaymentService extends BaseService {
     // `payment-methods` is the same manually-built-path exception the
     // class doc comment already describes for this one method, so the
     // request is built and normalized explicitly instead.
-    const result = await this.client.get<
-      PaginatedResult<CheckoutPaymentMethod>
-    >(resourcePath('payment-methods'), {
-      ...options,
-      params: { page: 1, pageSize: 100, ...options?.params },
-    });
-    return result.items;
+    // Every page (100 each, bounded): the catalog is small in production,
+    // but a method on a later page was simply never offered.
+    const items: CheckoutPaymentMethod[] = [];
+    for (let page = 1; page <= MAX_METHOD_PAGES; page += 1) {
+      const result = await this.client.get<
+        PaginatedResult<CheckoutPaymentMethod>
+      >(resourcePath('payment-methods'), {
+        ...options,
+        params: { page, pageSize: 100, ...options?.params },
+      });
+      items.push(...result.items);
+      if (page >= (result.pagination?.totalPages ?? 1)) break;
+    }
+    return items;
   }
 
   /** Creates a Payment against an existing Checkout, for a chosen payment method. */

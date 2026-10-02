@@ -34,6 +34,8 @@ export interface AtRiskStudent {
   readonly academyId: string;
   readonly completedLessons: number;
   readonly totalLessons: number;
+  readonly completedItems?: number;
+  readonly totalItems?: number;
   readonly lastProgressAt: string | null;
   readonly reasons: readonly AtRiskReason[];
 }

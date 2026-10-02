@@ -22,6 +22,7 @@ import {
   getSubmissionStatusTone,
 } from '@features/learning';
 import { useStudentProgress } from '../hooks';
+import { progressCounts } from '@utils';
 
 export default function InstructorStudentProgressPage(): JSX.Element {
   const { t } = useTranslation();
@@ -79,10 +80,12 @@ export default function InstructorStudentProgressPage(): JSX.Element {
           <CardContent className="space-y-3">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">
-                {t('instructor:studentProgress.lessonsCompleted', {
-                  completed: data.progress.completedLessons,
-                  total: data.progress.totalLessons,
-                })}
+                {t(
+                  progressCounts(data.progress).unit === 'items'
+                    ? 'instructor:studentProgress.itemsCompleted'
+                    : 'instructor:studentProgress.lessonsCompleted',
+                  progressCounts(data.progress)
+                )}
               </span>
               <StatusBadge
                 labelKey={`instructor:students.completionState.${data.progress.completionState}`}

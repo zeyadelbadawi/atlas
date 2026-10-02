@@ -13,6 +13,9 @@
  *   - audit trail             -> `audit_log_entries`
  *   - support                 -> `support_cases`, `support_case_messages`
  *   - payments                -> `payments` (no card data — see §5)
+ *   - page performance (RUM)  -> `atlas_rum_*` Prometheus histograms: page
+ *                                template + phone/desktop only, aggregate,
+ *                                15-day retention (Reports/REAL_USER_MONITORING.md)
  *
  * THINGS DELIBERATELY NOT CLAIMED, because they are not true of Atlas:
  * no advertising, no analytics product, no marketing pixels, no
@@ -32,7 +35,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
   summary:
     'How Atlas collects, uses, and protects personal data when you use the Atlas platform.',
   effectiveDate: '11 September 2026',
-  lastUpdated: '11 September 2026',
+  lastUpdated: '2 October 2026',
   sections: [
     {
       id: 'who-we-are',
@@ -123,6 +126,11 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
               detail:
                 'Server logs of requests made to Atlas, containing the request path, response status, timestamp, and a request identifier. Credentials, tokens, and passwords are removed from these logs before they are written.',
             },
+            {
+              term: 'Page performance measurements',
+              detail:
+                'For a sample of visits, three page-speed timings (how long the main content took to appear, how quickly the page responded to a tap or click, and how much the layout shifted), the type of page (for example “course page”, never its address), and whether the screen is phone-sized. Nothing that identifies you, your account, your academy, your device or the page address is sent or stored with them; they are kept only as aggregate counts and deleted after 15 days. Browsers that send Global Privacy Control or Do Not Track are never measured.',
+            },
           ],
         },
       ],
@@ -152,7 +160,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
         },
         {
           kind: 'paragraph',
-          text: 'Atlas does not use analytics cookies, advertising cookies, marketing pixels, or any third-party tracking script. There is no such technology in the product, so there is nothing of that kind for you to consent to.',
+          text: 'Atlas does not use analytics cookies, advertising cookies, marketing pixels, or any third-party tracking script. The page-speed measurement described in section 3 stores nothing in your browser and uses no identifier, so it is neither a cookie nor a tracking technology; it runs on Atlas’s own servers, is never used to profile anyone, and is skipped entirely for browsers that send Global Privacy Control or Do Not Track.',
         },
         {
           kind: 'paragraph',
@@ -209,7 +217,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
             {
               term: 'Legitimate interests',
               detail:
-                'Security, fraud and abuse prevention, and keeping the platform reliable — balanced against your rights, which is why our anti-abuse record stores a one-way hash rather than your email address.',
+                'Security, fraud and abuse prevention, and keeping the platform reliable and fast (including the sampled page-speed measurement in section 3) — balanced against your rights, which is why our anti-abuse record stores a one-way hash rather than your email address.',
             },
             {
               term: 'Consent',
@@ -309,6 +317,11 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
               term: 'Anti-abuse records',
               detail:
                 'The one-way hash recording that a free trial was used is retained even after an account or organization is deleted. This is deliberate: without it, deleting an account would reset the free-trial limit and the rule would be unenforceable. It contains no readable personal data.',
+            },
+            {
+              term: 'Page performance measurements',
+              detail:
+                'Aggregate counts only, deleted automatically after 15 days.',
             },
             {
               term: 'Billing, audit and security records',

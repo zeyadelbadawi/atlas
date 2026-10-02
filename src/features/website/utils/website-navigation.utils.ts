@@ -1,9 +1,11 @@
 /**
  * Website sibling navigation.
  *
- * Overview, Pages, Content, Settings, and Preview are five closely related
- * pages for the same Academy website — reachable from the sidebar only via
- * one entry (`academy-website`, which lands on Overview). `getWebsiteTabs`
+ * Overview, Pages, Content, Settings, Preview and (for those who manage
+ * the website) Messages are closely related pages for the same Academy
+ * website — reachable from the sidebar via the `academy-website` entry
+ * (which lands on Overview; Messages also has its own entry, since an
+ * inbox is somewhere people go directly). `getWebsiteTabs`
  * is the one place their `SectionTabs` entries are declared, reused by
  * every one of those pages, so a client editing Settings can jump straight
  * to Pages or Preview without detouring back through Overview each time.
@@ -11,6 +13,7 @@
 import {
   FileText,
   Globe,
+  Inbox,
   LayoutDashboard,
   MessageSquareQuote,
   Settings2,
@@ -18,7 +21,19 @@ import {
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem } from '@types';
 
-export function getWebsiteTabs(academyId: string): readonly NavigationItem[] {
+export interface WebsiteTabsOptions {
+  /**
+   * Whether the viewer manages the website (`academy.website.manage`) —
+   * the Contact form Messages inbox is shown only then, matching the
+   * backend's Owner/Manager rule and the sidebar entry's own gate.
+   */
+  readonly canManage?: boolean;
+}
+
+export function getWebsiteTabs(
+  academyId: string,
+  { canManage = false }: WebsiteTabsOptions = {}
+): readonly NavigationItem[] {
   return [
     {
       id: 'website-tab-overview',
@@ -52,5 +67,15 @@ export function getWebsiteTabs(academyId: string): readonly NavigationItem[] {
       path: buildPath(DASHBOARD_ROUTES.websitePreview, { academyId }),
       icon: Globe,
     },
+    ...(canManage
+      ? [
+          {
+            id: 'website-tab-messages',
+            labelKey: 'website:messages.title',
+            path: buildPath(DASHBOARD_ROUTES.websiteMessages, { academyId }),
+            icon: Inbox,
+          },
+        ]
+      : []),
   ];
 }

@@ -47,6 +47,11 @@ import {
 } from '../utils/payment-status.utils';
 import { formatMoney } from '../utils/money.utils';
 import {
+  ManualPaymentInstructionsPanel,
+  PlaceholderPaymentBanner,
+} from '../components/ManualPaymentInstructionsPanel';
+import { ManualPaymentBrandChip } from '../components/ManualPaymentBrandChip';
+import {
   ALLOWED_PAYMENT_PROOF_TYPES,
   MAX_PAYMENT_PROOF_FILE_SIZE,
 } from '../constants/billing.constants';
@@ -129,6 +134,24 @@ export default function PaymentDetailsPage(): JSX.Element {
     );
   }
 
+  /*
+    The API answers 403/404 for a payment this Organization cannot read —
+    most often another Organization's payment. That is "not found" for
+    this user, not an unexpected failure a retry could fix.
+  */
+  if (error?.kind === 'notFound' || error?.kind === 'forbidden') {
+    return (
+      <PageContainer>
+        <PageHeader titleKey="payments:payment.title" />
+        <ErrorState
+          kind="notFound"
+          titleKey="payments:payment.notFoundTitle"
+          descriptionKey="payments:payment.notFoundDescription"
+        />
+      </PageContainer>
+    );
+  }
+
   if (error || !payment || !organization?.id) {
     return (
       <PageContainer>
@@ -142,6 +165,24 @@ export default function PaymentDetailsPage(): JSX.Element {
     (candidate) => candidate.key === payment.methodKey
   );
   const provider = getPaymentProvider(payment.provider);
+  /*
+    The instructions this payment was created with come first: editing or
+    disabling the method later never changes what the customer was told to
+    pay into. The method's current instructions are only a fallback for a
+    payment created before the backend kept that copy.
+
+    `usePaymentMethods` lists ENABLED methods only, so a method disabled
+    after this payment was made is simply absent — its capabilities then
+    come from the payment's own provider adapter, rather than the absence
+    hiding the instructions and the proof upload.
+  */
+  const instructions = payment.instructions ?? method?.manualInstructions;
+  const supportsProof = method
+    ? method.capabilities.supportsProof
+    : !!provider?.capabilities.supportsProof;
+  const supportsCancellation = method
+    ? method.capabilities.supportsCancellation
+    : !!provider?.capabilities.supportsCancellation;
   const isTerminal = TERMINAL_PAYMENT_STATUSES.includes(payment.status);
   const proofFile = filePicker.files?.[0];
 
@@ -183,6 +224,7 @@ export default function PaymentDetailsPage(): JSX.Element {
       />
 
       <div className="space-y-6">
+        {instructions?.placeholder ? <PlaceholderPaymentBanner /> : null}
         <Card>
           <CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0">
             <div>
@@ -190,10 +232,17 @@ export default function PaymentDetailsPage(): JSX.Element {
                 className="text-2xl font-semibold"
                 data-atlas-numeric="true"
               >
-                {formatMoney(payment.money, i18n.language)}
+                {/* LTR isolate: Arabic currency formatting otherwise
+                    renders as "$US 39.00" inside an RTL page. */}
+                <span dir="ltr">
+                  {formatMoney(payment.money, i18n.language)}
+                </span>
               </CardTitle>
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                 {t(`payments:common.methodType.${payment.methodType}`)}
+                {instructions?.type === 'manual_wallet_transfer' ? (
+                  <ManualPaymentBrandChip instructions={instructions} />
+                ) : null}
               </p>
             </div>
             <div className="flex flex-col items-end gap-2">
@@ -332,7 +381,7 @@ export default function PaymentDetailsPage(): JSX.Element {
               ) : null}
             </CardContent>
           </Card>
-        ) : method?.capabilities.supportsProof && !payment.proof ? (
+        ) : supportsProof && !payment.proof ? (
           <Card>
             <CardHeader>
               <CardTitle className="text-base">
@@ -340,82 +389,14 @@ export default function PaymentDetailsPage(): JSX.Element {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {method.manualInstructions?.type === 'manual_bank_transfer' ? (
-                <dl className="grid gap-2 text-sm sm:grid-cols-2">
-                  <div>
-                    <dt className="text-muted-foreground">
-                      {t('payments:payment.bankName')}
-                    </dt>
-                    <dd className="font-medium text-foreground">
-                      {method.manualInstructions.bankName}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted-foreground">
-                      {t('payments:payment.accountName')}
-                    </dt>
-                    <dd className="font-medium text-foreground">
-                      {method.manualInstructions.accountName}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted-foreground">
-                      {t('payments:payment.accountNumber')}
-                    </dt>
-                    <dd className="font-mono text-foreground">
-                      {method.manualInstructions.accountNumber}
-                    </dd>
-                  </div>
-                  {method.manualInstructions.iban ? (
-                    <div>
-                      <dt className="text-muted-foreground">
-                        {t('payments:payment.iban')}
-                      </dt>
-                      <dd className="font-mono text-foreground">
-                        {method.manualInstructions.iban}
-                      </dd>
-                    </div>
-                  ) : null}
-                </dl>
-              ) : method.manualInstructions?.type ===
-                'manual_wallet_transfer' ? (
-                <dl className="grid gap-2 text-sm sm:grid-cols-2">
-                  <div>
-                    <dt className="text-muted-foreground">
-                      {t('payments:payment.walletProvider')}
-                    </dt>
-                    <dd className="font-medium text-foreground">
-                      {method.manualInstructions.walletProvider}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted-foreground">
-                      {t('payments:payment.walletNumber')}
-                    </dt>
-                    <dd className="font-mono text-foreground">
-                      {method.manualInstructions.walletNumber}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted-foreground">
-                      {t('payments:payment.accountName')}
-                    </dt>
-                    <dd className="font-medium text-foreground">
-                      {method.manualInstructions.accountName}
-                    </dd>
-                  </div>
-                </dl>
-              ) : null}
-
-              {method.manualInstructions ? (
-                <div className="space-y-1 text-sm">
-                  <p className="text-foreground">
-                    {method.manualInstructions.instructions}
-                  </p>
-                  <p className="text-muted-foreground">
-                    {method.manualInstructions.referenceInstructions}
-                  </p>
-                </div>
+              {/*
+                Every manual type — Bank Transfer, E-Wallet, InstaPay —
+                renders its own destination here; the proof upload below
+                is the same for all of them (gated on the method's
+                `supportsProof` capability, never on its type).
+              */}
+              {instructions ? (
+                <ManualPaymentInstructionsPanel instructions={instructions} />
               ) : null}
 
               <div className="space-y-3 border-t border-border pt-4">
@@ -507,7 +488,7 @@ export default function PaymentDetailsPage(): JSX.Element {
               {t('payments:payment.refreshStatus')}
             </Button>
           ) : null}
-          {!isTerminal && method?.capabilities.supportsCancellation ? (
+          {!isTerminal && supportsCancellation ? (
             <Button
               type="button"
               variant="ghost"

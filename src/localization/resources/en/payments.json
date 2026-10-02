@@ -11,8 +11,9 @@
     "methodType": {
       "label": "Method",
       "manual_bank_transfer": "Bank transfer",
-      "manual_wallet_transfer": "Wallet transfer",
-      "gateway": "Online payment"
+      "manual_wallet_transfer": "E-wallet",
+      "gateway": "Online payment",
+      "manual_instapay": "InstaPay"
     }
   },
   "overview": {
@@ -45,7 +46,11 @@
     "noMethodsTitle": "No payment method available",
     "noMethodsDescription": "Your order is ready, but no payment method has been enabled for your organization yet. Contact support and we will set one up for you.",
     "contactSupport": "Contact support",
-    "backToSetup": "Back to setup"
+    "backToSetup": "Back to setup",
+    "catalogPriceLabel": "Price:",
+    "alreadyUnderReviewTitle": "A payment is already awaiting review",
+    "viewExistingPayment": "View that payment",
+    "placeholderWarning": "Placeholder details — do not send money. This method is configured for testing only."
   },
   "paymentHistory": {
     "title": "Payment History",
@@ -121,6 +126,7 @@
     "accountName": "Account name",
     "accountNumber": "Account number",
     "iban": "IBAN",
+    "swiftCode": "SWIFT/BIC",
     "walletProvider": "Wallet",
     "walletNumber": "Wallet number",
     "uploadProofTitle": "Proof of payment",
@@ -135,7 +141,14 @@
     "continueToProvider": "Continue to secure payment",
     "processingMessage": "This payment is being processed. This page updates automatically.",
     "refreshStatus": "Refresh status",
-    "cancelPayment": "Cancel payment"
+    "cancelPayment": "Cancel payment",
+    "accountHolder": "Account holder",
+    "instapayAddress": "InstaPay address",
+    "copyValue": "Copy {{label}}",
+    "placeholderTitle": "Placeholder details — do not send money",
+    "placeholderDescription": "The payment details below are placeholders for testing, not a real account. Do not transfer any money to them. Contact support if you see this outside a test environment.",
+    "notFoundTitle": "Payment not found",
+    "notFoundDescription": "This payment doesn't exist, or it belongs to another organization."
   },
   "platformReview": {
     "title": "Payment Review",
@@ -201,6 +214,139 @@
       "configured": "Configured",
       "verified": "Verified",
       "disabled": "Disabled"
+    }
+  },
+  "bankTransferMethods": {
+    "title": "Bank transfer accounts",
+    "description": "The bank accounts Organizations transfer their Atlas subscription payments to. Only enabled accounts are offered at checkout.",
+    "add": "Add bank account",
+    "emptyTitle": "No bank account configured",
+    "emptyDescription": "Bank Transfer is not offered to Organizations until you add a bank account here and enable it.",
+    "missingDetails": "Bank details are missing. Edit this account to add them.",
+    "enabledLabel": "Enabled",
+    "disabledLabel": "Disabled",
+    "enable": "Enable",
+    "disable": "Disable",
+    "enableSuccess": "Bank account enabled. Organizations can now choose it at checkout.",
+    "disableSuccess": "Bank account disabled. Existing payments keep their instructions.",
+    "enableError": "Could not enable the bank account",
+    "disableError": "Could not disable the bank account",
+    "createTitle": "Add bank account",
+    "createDescription": "Enter the account Organizations should transfer subscription payments to. Check every detail carefully — customers see it exactly as entered.",
+    "editTitle": "Edit bank account",
+    "editDescription": "Changes apply to new payments only. Payments already created keep the instructions they were given.",
+    "createdDisabledNote": "New bank accounts are saved disabled. Enable it from the list when you are ready to offer it.",
+    "createSuccess": "Bank account added",
+    "createError": "Could not add the bank account",
+    "updateSuccess": "Bank account updated",
+    "updateError": "Could not update the bank account",
+    "fields": {
+      "displayName": "Name shown at checkout",
+      "displayNameHelp": "Organizations see this name when they choose how to pay.",
+      "description": "Short description (optional)",
+      "bankName": "Bank name",
+      "accountName": "Account holder name",
+      "accountNumber": "Account number",
+      "iban": "IBAN",
+      "swiftCode": "SWIFT/BIC code",
+      "optional": "Optional.",
+      "instructions": "Transfer instructions",
+      "instructionsHelp": "Shown to the Organization with the bank details — for example, how to make the transfer and what to upload as proof.",
+      "referenceInstructions": "Payment reference instructions",
+      "referenceInstructionsHelp": "Tell the Organization what to write in the transfer reference so you can match the payment."
+    },
+    "validation": {
+      "required": "This field is required.",
+      "tooLong": "This is longer than allowed."
+    }
+  },
+  "manualMethods": {
+    "title": "Manual payment methods",
+    "description": "How Organizations pay their Atlas subscription by transfer: bank accounts, e-wallets and InstaPay. Each payment is confirmed by reviewing the receipt the Organization uploads. Only enabled methods are offered at checkout.",
+    "tabs": {
+      "bank": "Bank transfer",
+      "wallet": "E-wallets",
+      "instapay": "InstaPay"
+    },
+    "placeholderBadge": "Placeholder — replace before enabling",
+    "placeholderRowNotice": "These details are placeholders, not a real account. Edit this method and enter the real details before enabling it.",
+    "placeholderEditNotice": "This method still has placeholder details. Enter the real details below — saving replaces the placeholder.",
+    "placeholderSummary_one": "{{count}} method still has placeholder details. Replace them before enabling it.",
+    "placeholderSummary_other": "{{count}} methods still have placeholder details. Replace them before enabling any of them.",
+    "enablePlaceholderTitle": "Enable a method with placeholder details?",
+    "enablePlaceholderDescription": "“{{name}}” still has placeholder details. Once enabled, customers would see them at checkout and could try to send money to a destination that does not exist. Production refuses this; only do it to test in development or staging.",
+    "enablePlaceholderConfirm": "Enable anyway",
+    "fields": {
+      "accountNameAr": "Account holder name (Arabic)",
+      "instructionsAr": "Transfer instructions (Arabic)",
+      "referenceInstructionsAr": "Payment reference instructions (Arabic)",
+      "arabicHelp": "Optional. Shown instead of the English text to customers using Atlas in Arabic."
+    }
+  },
+  "walletMethods": {
+    "title": "E-wallets",
+    "description": "Egyptian mobile wallets Organizations transfer their Atlas subscription payments to — Vodafone Cash, Orange Cash, Etisalat Cash, WE Pay or another provider. Only enabled wallets are offered at checkout.",
+    "add": "Add e-wallet",
+    "emptyTitle": "No e-wallet configured",
+    "emptyDescription": "E-wallet payments are not offered to Organizations until you add a wallet here and enable it.",
+    "missingDetails": "Wallet details are missing. Edit this wallet to add them.",
+    "enableSuccess": "E-wallet enabled. Organizations can now choose it at checkout.",
+    "disableSuccess": "E-wallet disabled. Existing payments keep their instructions.",
+    "enableError": "Could not enable the e-wallet",
+    "disableError": "Could not disable the e-wallet",
+    "createTitle": "Add e-wallet",
+    "createDescription": "Enter the wallet Organizations should transfer subscription payments to. Check every detail carefully — customers see it exactly as entered.",
+    "editTitle": "Edit e-wallet",
+    "editDescription": "Changes apply to new payments only. Payments already created keep the instructions they were given.",
+    "createdDisabledNote": "New e-wallets are saved disabled. Enable it from the list when you are ready to offer it.",
+    "createSuccess": "E-wallet added",
+    "createError": "Could not add the e-wallet",
+    "updateSuccess": "E-wallet updated",
+    "updateError": "Could not update the e-wallet",
+    "providerOther": "Other provider",
+    "fields": {
+      "displayName": "Name shown at checkout",
+      "walletProvider": "Wallet provider",
+      "walletProviderName": "Provider name",
+      "walletProviderNameHelp": "The wallet’s name as customers know it.",
+      "walletNumber": "Wallet number",
+      "walletNumberHelp": "An Egyptian mobile number: 010, 011, 012 or 015 followed by 8 digits. +20 is accepted.",
+      "accountName": "Account holder name",
+      "instructions": "Transfer instructions",
+      "instructionsHelp": "Shown to the Organization with the wallet details — for example, how to send the transfer and what to upload as proof.",
+      "referenceInstructions": "Payment reference instructions",
+      "referenceInstructionsHelp": "Tell the Organization what to write in the transfer note so you can match the payment."
+    }
+  },
+  "instapayMethods": {
+    "title": "InstaPay",
+    "description": "The InstaPay addresses Organizations transfer their Atlas subscription payments to. Only enabled addresses are offered at checkout.",
+    "add": "Add InstaPay address",
+    "emptyTitle": "No InstaPay address configured",
+    "emptyDescription": "InstaPay is not offered to Organizations until you add an address here and enable it.",
+    "missingDetails": "InstaPay details are missing. Edit this method to add them.",
+    "enableSuccess": "InstaPay enabled. Organizations can now choose it at checkout.",
+    "disableSuccess": "InstaPay disabled. Existing payments keep their instructions.",
+    "enableError": "Could not enable InstaPay",
+    "disableError": "Could not disable InstaPay",
+    "createTitle": "Add InstaPay address",
+    "createDescription": "Enter the InstaPay address Organizations should transfer subscription payments to. Check every detail carefully — customers see it exactly as entered.",
+    "editTitle": "Edit InstaPay address",
+    "editDescription": "Changes apply to new payments only. Payments already created keep the instructions they were given.",
+    "createdDisabledNote": "New InstaPay addresses are saved disabled. Enable it from the list when you are ready to offer it.",
+    "createSuccess": "InstaPay address added",
+    "createError": "Could not add the InstaPay address",
+    "updateSuccess": "InstaPay address updated",
+    "updateError": "Could not update the InstaPay address",
+    "fields": {
+      "displayName": "Name shown at checkout",
+      "instapayAddress": "InstaPay address",
+      "instapayAddressHelp": "Your payment address, like name@instapay.",
+      "accountName": "Account holder name",
+      "instructions": "Transfer instructions",
+      "instructionsHelp": "Shown to the Organization with the InstaPay address — for example, how to send the transfer and what to upload as proof.",
+      "referenceInstructions": "Payment reference instructions",
+      "referenceInstructionsHelp": "Tell the Organization what to write in the transfer note so you can match the payment."
     }
   },
   "planChange": {

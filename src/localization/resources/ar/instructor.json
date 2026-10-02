@@ -76,6 +76,7 @@
     "title": "تقدّم الطالب",
     "courseProgress": "تقدّم الدورة",
     "lessonsCompleted": "تم إكمال {{completed}} من {{total}} دروس",
+    "itemsCompleted": "تم إكمال {{completed}} من {{total}} أنشطة",
     "quizAttempts": "محاولات الاختبار",
     "noQuizAttempts": "لا توجد محاولات اختبار بعد.",
     "attemptNumber": "المحاولة {{number}}",

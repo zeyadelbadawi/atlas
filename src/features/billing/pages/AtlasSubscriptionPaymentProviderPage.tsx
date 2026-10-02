@@ -18,6 +18,11 @@
  * Raw credential values are only ever sent in a save request, never
  * received back — `AtlasSubscriptionPaymentProviderConfig` has no field
  * capable of holding one.
+ *
+ * Below the provider configuration, `ManualPaymentMethodsCard` (2 Oct 2026)
+ * manages the manual methods the Manual Transfer provider tells
+ * Organizations to pay into — Bank Transfer accounts, E-Wallets and
+ * InstaPay, one tab each.
  */
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -75,6 +80,7 @@ import {
   useSetAtlasSubscriptionPaymentProviderEnabled,
   useTestAtlasSubscriptionPaymentProviderConnection,
 } from '../hooks';
+import { ManualPaymentMethodsCard } from '../components/ManualPaymentMethodsCard';
 import type { AtlasSubscriptionPaymentProviderStatus } from '@types';
 
 const configFormSchema = z.object({
@@ -432,6 +438,8 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
             </div>
           </CardContent>
         </Card>
+
+        <ManualPaymentMethodsCard />
       </div>
     </PageContainer>
   );

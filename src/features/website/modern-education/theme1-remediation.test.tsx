@@ -88,6 +88,7 @@ let coursesState: QueryState<{ items: Course[] }>;
 let categoriesState: QueryState<unknown[]>;
 let statisticsState: QueryState<Record<string, number>>;
 let courseState: QueryState<Course | null>;
+let curriculumData: unknown[] | undefined;
 const courseQueries: unknown[] = [];
 
 vi.mock('@/shared/hooks/usePublicCourses', () => ({
@@ -107,7 +108,7 @@ vi.mock('@/shared/hooks/useAcademyIdentity', () => ({
 }));
 vi.mock('@/shared/hooks/usePublicCourse', () => ({
   usePublicCourse: () => courseState,
-  usePublicCourseCurriculum: () => ({ data: undefined, isLoading: false }),
+  usePublicCourseCurriculum: () => ({ data: curriculumData, isLoading: false }),
 }));
 vi.mock('@/shared/hooks/useAuth', () => ({
   useAuth: () => ({ session: { status: 'anonymous' } }),
@@ -115,6 +116,9 @@ vi.mock('@/shared/hooks/useAuth', () => ({
 vi.mock('@features/learning', () => ({
   useEnrollment: () => ({ data: undefined }),
   useEnroll: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  useMyCourseReview: () => ({ data: undefined }),
+  useSubmitMyReview: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  useDeleteMyReview: () => ({ mutateAsync: vi.fn(), isPending: false }),
 }));
 
 /* ------------------------------------------------------------------ */
@@ -231,6 +235,7 @@ beforeEach(() => {
   categoriesState = state([]);
   statisticsState = state({});
   courseState = state<Course | null>(null);
+  curriculumData = undefined;
   courseQueries.length = 0;
 });
 afterEach(cleanup);
@@ -463,6 +468,19 @@ describe('F-3: Course Details states', () => {
     );
     expect(screen.queryByText(/couldn't load this course/i)).toBeNull();
     expect(screen.queryByRole('button', { name: 'Try again' })).toBeNull();
+  });
+
+  it('a quiz-only course\'s content block counts its quizzes, never "0 lessons"', () => {
+    courseState = state<Course | null>({
+      ...course('c1'),
+      stats: { totalSections: 1, totalLessons: 0, totalQuizzes: 2, totalAssignments: 0 },
+    } as unknown as Course);
+    curriculumData = [{ id: 's1', title: 'Checkpoints', order: 0, lessons: [] }];
+    wrap(details, { path: '/courses/c1' });
+    const block = screen.getByRole('heading', { name: 'Course content' })
+      .closest('section') as HTMLElement;
+    expect(block.textContent).toContain('1 section · 2 quizzes');
+    expect(block.textContent).not.toMatch(/0 lessons/);
   });
 
   it('a failed request says so plainly and offers a retry', async () => {

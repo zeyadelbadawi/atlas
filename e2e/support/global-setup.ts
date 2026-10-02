@@ -34,30 +34,59 @@ const BACKEND_DIR =
  * enough — the second file would fail on rate limiting rather than on
  * anything it asserts.
  */
-export async function clearAuthRateLimits(): Promise<void> {
+/**
+ * Also clears the API's request-throttle counters (`@nestjs/throttler`,
+ * `{…}:hits` / `{…}:blocked`) — e.g. the public Contact form's 5 messages
+ * per 10 minutes — so a journey that submits it can be re-run at once.
+ * Loopback Redis only (same guard as below); production limits untouched.
+ */
+export async function clearRateLimitsAndThrottles(): Promise<void> {
+  await clearAuthRateLimits(['ratelimit:*', '{*}:hits', '{*}:blocked']);
+}
+
+export async function clearAuthRateLimits(
+  patterns: readonly string[] = ['ratelimit:*']
+): Promise<void> {
   if (process.env.E2E_SKIP_RATE_LIMIT_FLUSH === 'true') return;
 
   // `E2E_REDIS_URL` (the disposable stack, `atlas-backend/scripts/
   // e2e-local-stack.sh`) talks to that Redis directly; otherwise the local
   // Docker Compose Redis. Only ever a loopback Redis.
   const redisUrl = process.env.E2E_REDIS_URL;
-  if (redisUrl && !/^redis:\/\/(127\.0\.0\.1|localhost):\d+\/?$/.test(redisUrl)) {
+  if (
+    redisUrl &&
+    !/^redis:\/\/(127\.0\.0\.1|localhost):\d+\/?$/.test(redisUrl)
+  ) {
     throw new Error(`E2E_REDIS_URL must be a loopback Redis, got ${redisUrl}`);
   }
   const redisCli = (...args: string[]) =>
     redisUrl
       ? run('redis-cli', ['-u', redisUrl, ...args])
-      : run('docker', ['compose', 'exec', '-T', 'redis', 'redis-cli', ...args], {
-          cwd: BACKEND_DIR,
-        });
+      : run(
+          'docker',
+          ['compose', 'exec', '-T', 'redis', 'redis-cli', ...args],
+          {
+            cwd: BACKEND_DIR,
+          }
+        );
 
   try {
-    const { stdout } = await redisCli('--scan', '--pattern', 'ratelimit:*');
-    const keys = stdout.split('\n').map((key) => key.trim()).filter(Boolean);
+    const keys: string[] = [];
+    for (const pattern of patterns) {
+      const { stdout } = await redisCli('--scan', '--pattern', pattern);
+      keys.push(
+        ...stdout
+          .split('\n')
+          .map((key) => key.trim())
+          .filter(Boolean)
+      );
+    }
     if (keys.length === 0) return;
 
     await redisCli('del', ...keys);
-    console.log(`[e2e] cleared ${keys.length} auth rate-limit keys before the run`);
+    console.log(
+      `[e2e] cleared ${keys.length} auth rate-limit keys before the run`
+    );
   } catch (error) {
     // Never fail the run for this. If the keys cannot be cleared the
     // journeys still work from a cold limiter; they only become fragile
@@ -65,7 +94,7 @@ export async function clearAuthRateLimits(): Promise<void> {
     console.warn(
       `[e2e] could not clear auth rate-limit keys (${
         error instanceof Error ? error.message : String(error)
-      }). A rapid re-run may hit the sign-in limiter.`,
+      }). A rapid re-run may hit the sign-in limiter.`
     );
   }
 }

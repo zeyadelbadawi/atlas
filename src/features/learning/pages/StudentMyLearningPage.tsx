@@ -44,6 +44,7 @@ import { useLearningPaths } from '../context/LearningPaths.context';
 import { isEnrollmentAccessEnded } from '../utils/learning-status.utils';
 import { formatCoursePricing } from '@features/course';
 import type { Enrollment, EnrollmentStatus } from '@types';
+import { hasFinishedAnything, progressCounts } from '@utils';
 
 export interface StudentMyLearningPageProps {
   /**
@@ -79,7 +80,7 @@ function matchesFilter(
     case 'inProgress':
       return (
         enrollment.status !== 'completed' &&
-        (enrollment.progress?.completedLessons ?? 0) > 0
+        hasFinishedAnything(enrollment.progress)
       );
     case 'completed':
       return enrollment.status === 'completed';
@@ -260,7 +261,7 @@ export default function StudentMyLearningPage({
               {filteredEnrollments.map((enrollment) => {
                 const course = enrollment.course;
                 const progress = enrollment.progress;
-                const hasStarted = (progress?.completedLessons ?? 0) > 0;
+                const hasStarted = hasFinishedAnything(progress);
                 const isCompleted = enrollment.status === 'completed';
                 // P64 Phase 1 — the card must not offer an action the
                 // backend will refuse. `isActive` is the backend's own
@@ -336,7 +337,7 @@ export default function StudentMyLearningPage({
                         </p>
                       ) : null}
 
-                      {progress && progress.totalLessons > 0 ? (
+                      {progress && progressCounts(progress).total > 0 ? (
                         <div className="space-y-1.5 pt-1">
                           <div className="h-1.5 overflow-hidden rounded-pill bg-muted">
                             <div
@@ -345,10 +346,12 @@ export default function StudentMyLearningPage({
                             />
                           </div>
                           <p className="text-xs text-muted-foreground">
-                            {t('learning:progress.completedOf', {
-                              completed: progress.completedLessons,
-                              total: progress.totalLessons,
-                            })}
+                            {t(
+                              progressCounts(progress).unit === 'items'
+                                ? 'learning:progress.completedOfItems'
+                                : 'learning:progress.completedOf',
+                              progressCounts(progress)
+                            )}
                           </p>
                         </div>
                       ) : null}

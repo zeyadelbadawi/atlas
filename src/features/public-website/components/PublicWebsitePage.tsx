@@ -30,6 +30,7 @@ import {
   resolveLocalizedText,
 } from '@features/website';
 import { useDocumentSeo } from '../hooks/useDocumentSeo';
+import { academyFaviconHref } from '../hooks/useAcademyFavicon';
 import { resolveCanonicalOrigin } from '../utils/canonical-redirect.utils';
 import { usePublicCourse } from '@hooks';
 import { resolvePathToPage } from '../utils/page-resolution.utils';
@@ -174,9 +175,14 @@ export function PublicWebsitePage({
 
   useDocumentSeo({
     seo,
-    siteTitle: resolveLocalizedText(configuration.seo.siteTitle, locale),
+    // The Academy's name when no site title is configured: a page title
+    // alone ("Home") never says whose site this is.
+    siteTitle:
+      resolveLocalizedText(configuration.seo.siteTitle, locale) ||
+      academy.academyName,
     canonicalUrl,
     structuredData,
+    faviconHref: academyFaviconHref(academy),
     locale,
   });
 

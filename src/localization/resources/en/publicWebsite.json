@@ -62,6 +62,7 @@
   "comingSoon": {
     "title": "Coming soon",
     "description": "This academy's website hasn't been published yet. Please check back soon — there will be something here shortly.",
-    "attribution": "Powered by Atlas"
+    "attribution": "Powered by Atlas",
+    "metaDescription": "{{academyName}} — our website is coming soon."
   }
 }

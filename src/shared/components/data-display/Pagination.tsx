@@ -5,6 +5,7 @@
  * "Showing 21–40 of 312" tells the user more than a page number alone. Directional
  * icons mirror in RTL so "next" always points forward in the reading direction.
  */
+import type { ReactNode } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
@@ -26,12 +27,18 @@ export interface PaginationProps {
   readonly pagination: PaginationState;
   /** Hides the rows-per-page selector on space-constrained surfaces. */
   readonly hidePageSize?: boolean;
+  /**
+   * Replaces the default "Showing 21–40 of 312" sentence — e.g. with one
+   * that names (and correctly pluralizes) what is being counted.
+   */
+  readonly summary?: ReactNode;
   readonly className?: string;
 }
 
 export function Pagination({
   pagination,
   hidePageSize = false,
+  summary,
   className,
 }: PaginationProps): JSX.Element {
   const { t } = useTranslation();
@@ -62,11 +69,12 @@ export function Pagination({
       )}
     >
       <p className="text-sm text-muted-foreground" data-atlas-numeric="true">
-        {t('common:pagination.summary', {
-          from: formatNumber(rangeStart, language),
-          to: formatNumber(rangeEnd, language),
-          total: formatNumber(totalItems, language),
-        })}
+        {summary ??
+          t('common:pagination.summary', {
+            from: formatNumber(rangeStart, language),
+            to: formatNumber(rangeEnd, language),
+            total: formatNumber(totalItems, language),
+          })}
       </p>
 
       <div className="flex flex-wrap items-center gap-3">

@@ -25,6 +25,7 @@ import {
   FileText,
   Globe,
   Layers,
+  ListChecks,
   Loader2,
   PlayCircle,
   RotateCw,
@@ -202,8 +203,12 @@ export function T1CourseDetails({
   const reviews = stats?.totalReviews ?? 0;
   const rating = stats?.averageRating ?? 0;
   const lessons = stats?.totalLessons ?? 0;
+  const quizzes = stats?.totalQuizzes ?? 0;
+  const assignments = stats?.totalAssignments ?? 0;
   const sections = stats?.totalSections ?? 0;
   const duration = formatCatalogDuration(stats?.durationSeconds, t);
+  const curriculumLessons =
+    curriculum?.reduce((sum, section) => sum + section.lessons.length, 0) ?? 0;
   const price = formatCoursePricing(course.pricing, t);
   const catalogHref = linkRenderer ? resolveCatalogHref(pages) : undefined;
   const categoryHref =
@@ -235,6 +240,22 @@ export function T1CourseDetails({
           Icon: PlayCircle,
           text: t('website:renderer.courseDetails.lessonCount', {
             count: lessons,
+          }),
+        }
+      : null,
+    quizzes > 0
+      ? {
+          Icon: ListChecks,
+          text: t('website:renderer.courseDetails.quizCount', {
+            count: quizzes,
+          }),
+        }
+      : null,
+    assignments > 0
+      ? {
+          Icon: FileText,
+          text: t('website:renderer.courseDetails.assignmentCount', {
+            count: assignments,
           }),
         }
       : null,
@@ -343,6 +364,14 @@ export function T1CourseDetails({
                   })}
                 </span>
               ) : null}
+              {quizzes > 0 ? (
+                <span className="inline-flex items-center gap-1.5">
+                  <ListChecks className="size-4" aria-hidden />
+                  {t('website:renderer.courseDetails.quizCount', {
+                    count: quizzes,
+                  })}
+                </span>
+              ) : null}
               {duration ? (
                 <span className="inline-flex items-center gap-1.5">
                   <Clock className="size-4" aria-hidden />
@@ -448,12 +477,24 @@ export function T1CourseDetails({
                   t('website:renderer.courseDetails.sectionCount', {
                     count: curriculum.length,
                   }),
-                  t('website:renderer.courseDetails.lessonCount', {
-                    count: curriculum.reduce(
-                      (sum, section) => sum + section.lessons.length,
-                      0
-                    ),
-                  }),
+                  // The curriculum lists lessons only; quizzes and
+                  // assignments come from the course's own counts, so a
+                  // quiz-only course never reads "0 lessons".
+                  curriculumLessons > 0
+                    ? t('website:renderer.courseDetails.lessonCount', {
+                        count: curriculumLessons,
+                      })
+                    : null,
+                  quizzes > 0
+                    ? t('website:renderer.courseDetails.quizCount', {
+                        count: quizzes,
+                      })
+                    : null,
+                  assignments > 0
+                    ? t('website:renderer.courseDetails.assignmentCount', {
+                        count: assignments,
+                      })
+                    : null,
                   duration,
                 ]
                   .filter(Boolean)
@@ -479,11 +520,13 @@ export function T1CourseDetails({
                           {section.title}
                         </span>
                       </span>
-                      <span className="me-2 whitespace-nowrap text-xs font-normal text-[var(--website-foreground-muted)]">
-                        {t('website:renderer.courseDetails.lessonCount', {
-                          count: section.lessons.length,
-                        })}
-                      </span>
+                      {section.lessons.length > 0 ? (
+                        <span className="me-2 whitespace-nowrap text-xs font-normal text-[var(--website-foreground-muted)]">
+                          {t('website:renderer.courseDetails.lessonCount', {
+                            count: section.lessons.length,
+                          })}
+                        </span>
+                      ) : null}
                     </AccordionTrigger>
                     <AccordionContent>
                       <ul className="space-y-1 pb-2">

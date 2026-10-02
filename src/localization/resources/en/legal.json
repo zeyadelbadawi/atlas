@@ -12,7 +12,7 @@
     "rejectAll": "Reject optional",
     "managePreferences": "Manage preferences",
     "dialogTitle": "Cookie preferences",
-    "dialogBody": "Atlas uses no analytics, advertising or third-party tracking technologies. These are the only two categories that exist.",
+    "dialogBody": "Atlas uses no advertising or third-party tracking technologies and no analytics cookies. For a sample of visits we measure page speed on our own servers, without cookies or identifiers (see the Privacy Policy); browsers that send Global Privacy Control or Do Not Track are never measured. These are the only two categories that exist.",
     "save": "Save preferences",
     "cancel": "Cancel",
     "necessaryTitle": "Strictly necessary",

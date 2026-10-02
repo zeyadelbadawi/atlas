@@ -16,7 +16,7 @@
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CloudOff, CloudUpload, Loader2 } from 'lucide-react';
+import { CloudOff, CloudUpload, Loader2, UploadCloud } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
@@ -41,7 +41,11 @@ import { CONTENT_LIST_PAGE_SIZE } from '../constants/website.constants';
 import { collectSampleContent } from '../utils/sample-content.utils';
 import { SampleContentList } from './SampleContentList';
 import type { StatusTone } from '@components/data-display';
-import type { SampleContentEntry, WebsitePublishStatus } from '@types';
+import type {
+  SampleContentEntry,
+  WebsitePublishStatus,
+  WebsiteUnpublishedChanges,
+} from '@types';
 
 const STATUS_TONE: Record<WebsitePublishStatus, StatusTone> = {
   draft: 'neutral',
@@ -59,12 +63,15 @@ export interface WebsitePublishBarProps {
    * are `status: 'draft'`.
    */
   readonly lastPublishedAt?: string;
+  /** What is saved but not yet live (from `WebsiteConfiguration`). */
+  readonly unpublishedChanges?: WebsiteUnpublishedChanges;
 }
 
 export function WebsitePublishBar({
   academyId,
   status,
   lastPublishedAt,
+  unpublishedChanges,
 }: WebsitePublishBarProps): JSX.Element {
   const { t } = useTranslation();
   const { confirm } = useConfirmDialog();
@@ -81,8 +88,15 @@ export function WebsitePublishBar({
   const canPublish = hasPermission('academy.website.publish');
 
   const isPublished = status === 'published';
-  const action = isPublished ? unpublish : publish;
-  // One in-flight guard covering both mutations: the button is disabled
+  const pendingPages = unpublishedChanges?.pages ?? 0;
+  const pendingSettings = unpublishedChanges?.configuration ?? false;
+  const hasPendingChanges = pendingSettings || pendingPages > 0;
+  // The last action taken, for the error strip and its retry.
+  const [lastAction, setLastAction] = useState<'publish' | 'unpublish'>(
+    'publish'
+  );
+  const failed = lastAction === 'publish' ? publish.error : unpublish.error;
+  // One in-flight guard covering both mutations: every button is disabled
   // while either is pending, so a double click cannot queue a publish
   // behind an unpublish.
   const isBusy =
@@ -94,11 +108,10 @@ export function WebsitePublishBar({
     readonly SampleContentEntry[] | null
   >(null);
 
-  const handleToggle = async () => {
+  const handlePublish = async () => {
     if (isBusy) return;
-    const samples = isPublished
-      ? []
-      : collectSampleContent(pagesQuery.data?.items ?? []);
+    setLastAction('publish');
+    const samples = collectSampleContent(pagesQuery.data?.items ?? []);
     if (samples.length > 0) {
       // A warning, never a block: samples are stripped from the public
       // site anyway, so publishing hides those testimonials. The dialog
@@ -109,10 +122,9 @@ export function WebsitePublishBar({
     const confirmed = await confirm(
       isPublished
         ? {
-            titleKey: 'website:publish.unpublishConfirmTitle',
-            descriptionKey: 'website:publish.unpublishConfirmDescription',
-            confirmLabelKey: 'website:publish.unpublishConfirmAction',
-            intent: 'destructive',
+            titleKey: 'website:publish.publishChangesConfirmTitle',
+            descriptionKey: 'website:publish.publishChangesConfirmDescription',
+            confirmLabelKey: 'website:publish.publishChangesAction',
           }
         : {
             titleKey: 'website:publish.confirmTitle',
@@ -124,8 +136,27 @@ export function WebsitePublishBar({
     // `mutate` resolves into the query cache; the badge and the label both
     // re-derive from the refetched persisted status, so nothing here
     // claims success on its own.
-    action.mutate(academyId);
+    publish.mutate(academyId);
   };
+
+  const handleUnpublish = async () => {
+    if (isBusy) return;
+    setLastAction('unpublish');
+    const confirmed = await confirm({
+      titleKey: 'website:publish.unpublishConfirmTitle',
+      descriptionKey: 'website:publish.unpublishConfirmDescription',
+      confirmLabelKey: 'website:publish.unpublishConfirmAction',
+      intent: 'destructive',
+    });
+    if (!confirmed) return;
+    unpublish.mutate(academyId);
+  };
+
+  const pendingSummary = pendingSettings
+    ? pendingPages > 0
+      ? t('website:publish.pending.settingsAndPages', { count: pendingPages })
+      : t('website:publish.pending.settings')
+    : t('website:publish.pending.pages', { count: pendingPages });
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-card p-4">
@@ -134,7 +165,10 @@ export function WebsitePublishBar({
           labelKey={`website:publish.status.${status}`}
           tone={STATUS_TONE[status]}
         />
-        <span className="text-sm text-muted-foreground">
+        <span
+          className="text-sm text-muted-foreground"
+          data-testid="website-publish-hint"
+        >
           {status === 'draft'
             ? // A site that has been published before and then taken
               // offline is also `draft`, but "not published yet" would be
@@ -143,37 +177,69 @@ export function WebsitePublishBar({
               ? t('website:publish.unpublishedHint')
               : t('website:publish.draftHint')
             : status === 'published'
-              ? t('website:publish.publishedHint')
+              ? hasPendingChanges
+                ? `${t('website:publish.publishedHint')} ${pendingSummary}`
+                : t('website:publish.upToDateHint')
               : null}
         </span>
       </div>
       {canPublish ? (
-        <Button
-          type="button"
-          data-testid="website-publish-toggle"
-          variant={isPublished ? 'outline' : 'default'}
-          onClick={handleToggle}
-          disabled={isBusy}
-        >
-          {isBusy ? (
-            <Loader2 className="size-4 animate-spin" aria-hidden />
-          ) : isPublished ? (
-            <CloudOff className="size-4" strokeWidth={2} aria-hidden />
+        <div className="flex flex-wrap items-center gap-2">
+          {isPublished ? (
+            <>
+              <Button
+                type="button"
+                data-testid="website-publish-changes"
+                onClick={handlePublish}
+                disabled={isBusy || !hasPendingChanges}
+              >
+                {publish.isPending ? (
+                  <Loader2 className="size-4 animate-spin" aria-hidden />
+                ) : (
+                  <UploadCloud className="size-4" strokeWidth={2} aria-hidden />
+                )}
+                {t('website:publish.publishChangesAction')}
+              </Button>
+              <Button
+                type="button"
+                data-testid="website-publish-toggle"
+                variant="outline"
+                onClick={handleUnpublish}
+                disabled={isBusy}
+              >
+                {unpublish.isPending ? (
+                  <Loader2 className="size-4 animate-spin" aria-hidden />
+                ) : (
+                  <CloudOff className="size-4" strokeWidth={2} aria-hidden />
+                )}
+                {t('website:publish.unpublishAction')}
+              </Button>
+            </>
           ) : (
-            <CloudUpload className="size-4" strokeWidth={2} aria-hidden />
+            <Button
+              type="button"
+              data-testid="website-publish-toggle"
+              onClick={handlePublish}
+              disabled={isBusy}
+            >
+              {isBusy ? (
+                <Loader2 className="size-4 animate-spin" aria-hidden />
+              ) : (
+                <CloudUpload className="size-4" strokeWidth={2} aria-hidden />
+              )}
+              {t('website:publish.action')}
+            </Button>
           )}
-          {t(
-            isPublished
-              ? 'website:publish.unpublishAction'
-              : 'website:publish.action'
-          )}
-        </Button>
+        </div>
       ) : null}
       {/* A failed publish or unpublish must never look like it worked: the
           badge still shows the real persisted status, and the error is
           surfaced with a retry rather than swallowed. */}
-      {action.error ? (
-        <ErrorState onRetry={handleToggle} className="w-full" />
+      {failed ? (
+        <ErrorState
+          onRetry={lastAction === 'publish' ? handlePublish : handleUnpublish}
+          className="w-full"
+        />
       ) : null}
 
       <AlertDialog
