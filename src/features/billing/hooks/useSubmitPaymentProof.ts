@@ -7,8 +7,9 @@
  * implies the payment succeeded, so this mutation shows no "success"
  * messaging beyond "submitted for review" (the page owns that copy).
  */
-import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { paymentKeys } from '@services/query';
+import { useQueryClient } from '@tanstack/react-query';
+import { useApiMutation } from '@/shared/hooks';
+import { invalidateTenantPayments } from '@services/query';
 import type { ApiError } from '@api';
 import type { Payment } from '@types';
 import type { ManualReviewPaymentProviderAdapter } from '../providers/PaymentProviderAdapter';
@@ -22,7 +23,7 @@ export interface SubmitPaymentProofVariables {
 }
 
 export function useSubmitPaymentProof() {
-  const { invalidate } = useInvalidate();
+  const queryClient = useQueryClient();
 
   return useApiMutation<Payment, SubmitPaymentProofVariables, ApiError>({
     mutationFn: ({ organizationId, paymentId, file, note, provider }) =>
@@ -30,10 +31,11 @@ export function useSubmitPaymentProof() {
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async (_data, variables) => {
-      await invalidate(
-        paymentKeys.detail(variables.organizationId, variables.paymentId)
+      await invalidateTenantPayments(
+        queryClient,
+        variables.organizationId,
+        variables.paymentId
       );
-      await invalidate(paymentKeys.list(variables.organizationId));
     },
   });
 }

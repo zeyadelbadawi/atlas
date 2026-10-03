@@ -6,8 +6,9 @@
  * never has to know which provider handled it. Not auto-retried: a
  * duplicate submit must be an explicit user action.
  */
-import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { paymentKeys } from '@services/query';
+import { useQueryClient } from '@tanstack/react-query';
+import { useApiMutation } from '@/shared/hooks';
+import { invalidateTenantPayments } from '@services/query';
 import type { ApiError } from '@api';
 import type { Checkout, Payment } from '@types';
 import type { PaymentProviderAdapter } from '../providers/PaymentProviderAdapter';
@@ -20,7 +21,7 @@ export interface CreatePaymentVariables {
 }
 
 export function useCreatePayment() {
-  const { invalidate } = useInvalidate();
+  const queryClient = useQueryClient();
 
   return useApiMutation<Payment, CreatePaymentVariables, ApiError>({
     mutationFn: ({ checkout, methodKey, provider }) =>
@@ -28,7 +29,9 @@ export function useCreatePayment() {
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async (_data, variables) => {
-      await invalidate(paymentKeys.list(variables.organizationId));
+      // Every history list of this organization (`lists`, not `list(org)`,
+      // whose trailing `undefined` never matched the screen's query key).
+      await invalidateTenantPayments(queryClient, variables.organizationId);
     },
   });
 }

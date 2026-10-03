@@ -5,21 +5,21 @@
  * action — the frontend never assumes what publishing enables beyond
  * updating the course's own status.
  */
-import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { courseKeys } from '@services/query';
+import { useApiMutation } from '@/shared/hooks';
 import type { ApiError } from '@api';
+import { useCourseCatalogInvalidation } from './useCourseCatalogInvalidation';
 import { courseService } from '../services/CourseService';
 import type { Course } from '@types';
 
 export function usePublishCourse(academyId: string) {
-  const { invalidate } = useInvalidate();
+  const invalidateCatalog = useCourseCatalogInvalidation(academyId);
 
   return useApiMutation<Course, string, ApiError>({
     mutationFn: (courseId) => courseService.publishCourse(academyId, courseId),
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: async () => {
-      await invalidate(courseKeys.all);
+    onSuccess: async (_course, courseId) => {
+      await invalidateCatalog(courseId);
     },
   });
 }

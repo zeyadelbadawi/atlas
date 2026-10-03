@@ -6,14 +6,16 @@
  * confirms it (the mutation's resolved `WebsiteConfiguration.status` is
  * the only source of truth `WebsitePublishBar` reads).
  */
+import { useQueryClient } from '@tanstack/react-query';
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { websiteKeys } from '@services/query';
+import { invalidatePublicWebsiteSite, websiteKeys } from '@services/query';
 import type { ApiError } from '@api';
 import type { PublishWebsiteResponse } from '@types';
 import { websiteConfigurationService } from '../services/WebsiteConfigurationService';
 
 export function usePublishWebsite() {
   const { invalidate } = useInvalidate();
+  const queryClient = useQueryClient();
 
   return useApiMutation<PublishWebsiteResponse, string, ApiError>({
     mutationFn: (academyId) =>
@@ -25,6 +27,8 @@ export function usePublishWebsite() {
       // Every page's "unpublished changes" flag clears with a site publish.
       await invalidate(websiteKeys.allPages(academyId));
       await invalidate(websiteKeys.allPageDetails(academyId));
+      // The live site's own reads (preview tabs on the same browser).
+      await invalidatePublicWebsiteSite(queryClient, academyId);
     },
   });
 }

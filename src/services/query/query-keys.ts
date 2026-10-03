@@ -6,6 +6,7 @@
  * invalidation can target exactly the affected queries.
  */
 import type {
+  AcademyCourseOrderListQuery,
   AcademyRosterQuery,
   AnalyticsQuery,
   CollectionQuery,
@@ -83,6 +84,16 @@ export const QUERY_KEY_ROOTS = {
   academyReports: ['academy-reports'] as const,
   /** P13 — the Organization Owner's per-academy revenue summary and payouts. */
   academyPayouts: ['academy-payouts'] as const,
+  /** Academy Orders — the Organization Owner's per-academy course order list/detail. */
+  academyCourseOrders: ['academy-course-orders'] as const,
+  /** Phase 8 — the server-side dashboard aggregation (organization or academy scope). */
+  dashboard: ['dashboard'] as const,
+  /** Phase 8 — the dashboard's "my support tickets" list (organization or academy scope). */
+  tenantSupportCases: ['tenant-support-cases'] as const,
+  /** The marketing site's public plan list (no session). */
+  publicPlans: ['public-plans'] as const,
+  /** The Platform Owner's plan editor reads (version history). */
+  platformPlans: ['platform-plans'] as const,
 } as const;
 
 /**
@@ -175,6 +186,15 @@ export const academyKeys = {
     query?: AcademyRosterQuery
   ) =>
     [...academyKeys.all, 'roster', organizationId, academyId, query] as const,
+  /** Every roster page/filter of one academy — the prefix to invalidate. */
+  rosterAll: (organizationId: string | undefined, academyId: string) =>
+    [...academyKeys.all, 'roster', organizationId, academyId] as const,
+  /** Every academy list of one organization — the prefix to invalidate. */
+  lists: (organizationId: string | undefined) =>
+    [...academyKeys.all, 'list', organizationId] as const,
+  /** Every member list of one academy — the prefix to invalidate. */
+  membersAll: (organizationId: string | undefined, academyId: string) =>
+    [...academyKeys.all, 'members', organizationId, academyId] as const,
   rosterStudent: (
     organizationId: string | undefined,
     academyId: string,
@@ -236,8 +256,14 @@ export const courseKeys = {
   all: QUERY_KEY_ROOTS.course,
   list: (academyId: string | undefined, query?: CourseListQuery) =>
     [...courseKeys.all, 'list', academyId, query] as const,
+  /** Every course list of one academy, whatever its query — the prefix to invalidate. */
+  lists: (academyId: string | undefined) =>
+    [...courseKeys.all, 'list', academyId] as const,
   detail: (academyId: string | undefined, courseId: string) =>
     [...courseKeys.all, 'detail', academyId, courseId] as const,
+  /** Every course detail of one academy — the prefix to invalidate. */
+  details: (academyId: string | undefined) =>
+    [...courseKeys.all, 'detail', academyId] as const,
   categories: (academyId: string | undefined) =>
     [...courseKeys.all, 'categories', academyId] as const,
   sections: (academyId: string | undefined, courseId: string) =>
@@ -698,6 +724,56 @@ export const planKeys = {
 } as const;
 
 /**
+ * The marketing site's public plan list (`usePublicPlans`) — a separate
+ * root from `planKeys` because it is read without a session from a
+ * different endpoint; plan mutations invalidate both.
+ */
+export const publicPlanKeys = {
+  all: QUERY_KEY_ROOTS.publicPlans,
+  list: () => [...publicPlanKeys.all, 'list'] as const,
+} as const;
+
+/** The Platform Owner plan editor's version history (`usePlanHistory`). */
+export const platformPlanKeys = {
+  all: QUERY_KEY_ROOTS.platformPlans,
+  history: (key: string, query?: CollectionQuery) =>
+    [...platformPlanKeys.all, 'history', key, query ?? {}] as const,
+  /** Every history page of one plan — the prefix to invalidate. */
+  historyAll: (key: string) =>
+    [...platformPlanKeys.all, 'history', key] as const,
+} as const;
+
+/**
+ * The Phase 8 dashboard aggregation. One overview per scope (the
+ * Organization Owner's organization or a Manager's academy); a course,
+ * roster or member change affects whichever is cached, so mutations
+ * invalidate `overviews()` — at most two small entries.
+ */
+export const dashboardOverviewKeys = {
+  all: QUERY_KEY_ROOTS.dashboard,
+  overviews: () => [...dashboardOverviewKeys.all, 'overview'] as const,
+  organization: (organizationId: string) =>
+    [
+      ...dashboardOverviewKeys.overviews(),
+      'organization',
+      organizationId,
+    ] as const,
+  academy: (academyId: string) =>
+    [...dashboardOverviewKeys.overviews(), 'academy', academyId] as const,
+  none: () => [...dashboardOverviewKeys.overviews(), 'none'] as const,
+} as const;
+
+/** The dashboard's "my support tickets" list, per scope (Phase 8). */
+export const tenantSupportCaseKeys = {
+  all: QUERY_KEY_ROOTS.tenantSupportCases,
+  organization: (organizationId: string) =>
+    [...tenantSupportCaseKeys.all, 'organization', organizationId] as const,
+  academy: (academyId: string) =>
+    [...tenantSupportCaseKeys.all, 'academy', academyId] as const,
+  none: () => [...tenantSupportCaseKeys.all, 'none'] as const,
+} as const;
+
+/**
  * Query keys for Checkout (Prompt 7).
  *
  * Embeds `organizationId` — the same technique `tenantKeys` (Prompt 6)
@@ -721,6 +797,9 @@ export const paymentKeys = {
   all: QUERY_KEY_ROOTS.payment,
   list: (organizationId: string | undefined, query?: CollectionQuery) =>
     [...paymentKeys.all, 'list', organizationId, query] as const,
+  /** Every payment-history list of one organization — the prefix to invalidate. */
+  lists: (organizationId: string | undefined) =>
+    [...paymentKeys.all, 'list', organizationId] as const,
   detail: (organizationId: string | undefined, paymentId: string) =>
     [...paymentKeys.all, 'detail', organizationId, paymentId] as const,
 } as const;
@@ -818,6 +897,9 @@ export const provisioningKeys = {
   all: QUERY_KEY_ROOTS.provisioning,
   list: (organizationId: string | undefined, query?: CollectionQuery) =>
     [...provisioningKeys.all, 'list', organizationId, query] as const,
+  /** Every provisioning-request list of one organization — the prefix to invalidate. */
+  lists: (organizationId: string | undefined) =>
+    [...provisioningKeys.all, 'list', organizationId] as const,
   detail: (organizationId: string | undefined, requestId: string) =>
     [...provisioningKeys.all, 'detail', organizationId, requestId] as const,
 } as const;
@@ -877,12 +959,18 @@ export const websiteKeys = {
   /** CMS content (Prompt 10) — same academy-scoping technique as `configuration`/`pages` above. */
   faqEntries: (academyId: string | undefined, query?: CollectionQuery) =>
     [...websiteKeys.all, 'faq-entries', academyId, query] as const,
+  /** Every FAQ library list of an Academy, whatever its query — the prefix to invalidate (same reasoning as `allPages`). */
+  faqEntriesAll: (academyId: string | undefined) =>
+    [...websiteKeys.all, 'faq-entries', academyId] as const,
   faqEntry: (academyId: string | undefined, entryId: string) =>
     [...websiteKeys.all, 'faq-entry', academyId, entryId] as const,
   testimonialEntries: (
     academyId: string | undefined,
     query?: CollectionQuery
   ) => [...websiteKeys.all, 'testimonial-entries', academyId, query] as const,
+  /** Every testimonial library list of an Academy, whatever its query — the prefix to invalidate. */
+  testimonialEntriesAll: (academyId: string | undefined) =>
+    [...websiteKeys.all, 'testimonial-entries', academyId] as const,
   testimonialEntry: (academyId: string | undefined, entryId: string) =>
     [...websiteKeys.all, 'testimonial-entry', academyId, entryId] as const,
   /**
@@ -971,6 +1059,9 @@ export const publicWebsiteKeys = {
   /** `FeaturedCoursesSection`/`InstructorsSection`'s real, public course list — see `usePublicCourses`'s own doc comment. */
   courses: (academyId: string | undefined, query?: CourseListQuery) =>
     [...publicWebsiteKeys.all, 'courses', academyId, query] as const,
+  /** Every public course list of an Academy, whatever its query — the prefix to invalidate. */
+  coursesAll: (academyId: string | undefined) =>
+    [...publicWebsiteKeys.all, 'courses', academyId] as const,
   /** The public Course Details page's real course + curriculum preview — see `usePublicCourse`'s own doc comment. */
   course: (academyId: string | undefined, courseId: string | undefined) =>
     [...publicWebsiteKeys.all, 'course', academyId, courseId] as const,
@@ -1080,6 +1171,13 @@ export const auditLogKeys = {
     [...auditLogKeys.all, 'list', query] as const,
   detail: (eventId: string) =>
     [...auditLogKeys.all, 'detail', eventId] as const,
+  /** Task 3 — the Platform cursor feed (infinite query; the cursor is the page param). */
+  feed: (filters?: unknown) => [...auditLogKeys.all, 'feed', filters] as const,
+  /** Task 3 — an Academy owner's activity log, scoped by academy. */
+  academyFeed: (academyId: string, filters?: unknown) =>
+    [...auditLogKeys.all, 'academy', academyId, 'feed', filters] as const,
+  academyEntry: (academyId: string, entryId: string) =>
+    [...auditLogKeys.all, 'academy', academyId, 'entry', entryId] as const,
 } as const;
 
 /** Support Operations (Prompt 13) — unscoped, platform-wide. */
@@ -1098,6 +1196,18 @@ export const supportKeys = {
     [...supportKeys.all, 'mine', 'list', organizationId, query] as const,
   mineDetail: (caseId: string) =>
     [...supportKeys.all, 'mine', 'detail', caseId] as const,
+} as const;
+
+/**
+ * TASK 7 — the Platform Owner's inbox for the marketing contact form.
+ * Platform-wide (no tenant scope); `all` is the prefix every status change
+ * or delete invalidates, so the list and the counts never disagree.
+ */
+export const platformContactSubmissionKeys = {
+  all: ['platform-contact-submissions'] as const,
+  list: (query?: unknown) =>
+    [...platformContactSubmissionKeys.all, 'list', query] as const,
+  summary: () => [...platformContactSubmissionKeys.all, 'summary'] as const,
 } as const;
 
 /** Platform-wide command-center metrics (Prompt 13). */
@@ -1322,6 +1432,29 @@ export const academyPayoutKeys = {
     [...academyPayoutKeys.all, 'list', academyId, query] as const,
   revenueSummary: (academyId: string | undefined) =>
     [...academyPayoutKeys.all, 'revenue-summary', academyId] as const,
+} as const;
+
+/**
+ * `AcademyCourseOrdersService` — Organization-Owner-only course order reads
+ * for one academy. The academy id is IN every key (index 2), so one
+ * academy's orders are never served for another.
+ */
+export const academyCourseOrderKeys = {
+  all: QUERY_KEY_ROOTS.academyCourseOrders,
+  list: (academyId: string | undefined, query?: AcademyCourseOrderListQuery) =>
+    [...academyCourseOrderKeys.all, 'list', academyId, query] as const,
+  detail: (academyId: string | undefined, orderId: string) =>
+    [...academyCourseOrderKeys.all, 'detail', academyId, orderId] as const,
+} as const;
+
+/**
+ * The Platform Owner's subscriptions overview (`AdminSubscriptionsPage`).
+ * Same key value the page used inline, so invalidating it here refreshes
+ * that page whether or not it reads the factory.
+ */
+export const platformSubscriptionKeys = {
+  all: ['platform', 'subscriptions'] as const,
+  overview: () => [...platformSubscriptionKeys.all, 'overview'] as const,
 } as const;
 
 /** `CompletionService` — the learner's evaluated state and the staff rule. */

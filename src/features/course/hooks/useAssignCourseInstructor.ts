@@ -3,9 +3,9 @@
  *
  * Mutation hook for granting course-level instructor access (Phase 3).
  */
-import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { courseKeys } from '@services/query';
+import { useApiMutation } from '@/shared/hooks';
 import type { ApiError } from '@api';
+import { useCourseCatalogInvalidation } from './useCourseCatalogInvalidation';
 import { courseService } from '../services/CourseService';
 import type { AssignCourseInstructorPayload, Course } from '@types';
 
@@ -15,15 +15,15 @@ export interface AssignCourseInstructorVariables {
 }
 
 export function useAssignCourseInstructor(academyId: string) {
-  const { invalidate } = useInvalidate();
+  const invalidateCatalog = useCourseCatalogInvalidation(academyId);
 
   return useApiMutation<Course, AssignCourseInstructorVariables, ApiError>({
     mutationFn: ({ courseId, payload }) =>
       courseService.assignCourseInstructor(academyId, courseId, payload),
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: async () => {
-      await invalidate(courseKeys.all);
+    onSuccess: async (_course, { courseId }) => {
+      await invalidateCatalog(courseId);
     },
   });
 }

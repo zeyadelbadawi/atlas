@@ -12,6 +12,27 @@ export const QUERY_STALE_TIME_MS = 60_000;
 /** How long unused data stays in the cache before garbage collection. */
 export const QUERY_GC_TIME_MS = 5 * 60_000;
 
+/**
+ * Refresh cadence for lists and queues that OTHER people change (a learner
+ * accepting an invite, a visitor sending a contact message, support
+ * replying to a ticket). The backend has no push channel, so these screens
+ * poll while mounted. TanStack pauses the interval while the tab is in the
+ * background (`refetchIntervalInBackground` stays false), so an idle tab
+ * costs nothing. Kept deliberately conservative.
+ */
+export const LIVE_LIST_REFETCH_INTERVAL_MS = 45_000;
+
+/**
+ * Query options for a list/queue that other people change: poll while
+ * mounted and refetch when the window regains focus. Never used on detail
+ * editors, where a background refetch could fight the person's edits.
+ */
+export const LIVE_LIST_QUERY_OPTIONS = {
+  refetchInterval: LIVE_LIST_REFETCH_INTERVAL_MS,
+  refetchIntervalInBackground: false,
+  refetchOnWindowFocus: true,
+} as const;
+
 /** Maximum automatic retries for a failed query. */
 export const QUERY_MAX_RETRIES = 2;
 

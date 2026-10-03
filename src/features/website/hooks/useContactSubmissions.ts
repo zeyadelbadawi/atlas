@@ -7,6 +7,7 @@
  */
 import { keepPreviousData } from '@tanstack/react-query';
 import { useApiQuery } from '@/shared/hooks';
+import { LIVE_LIST_QUERY_OPTIONS } from '@config';
 import { websiteKeys } from '@services/query';
 import type { ApiError } from '@api';
 import type {
@@ -34,5 +35,7 @@ export function useContactSubmissions(
     // Typing in the search box or flipping a filter keeps the previous
     // rows on screen instead of collapsing the table to a skeleton.
     placeholderData: keepPreviousData,
+    // Visitors send messages from the public site; poll while shown.
+    ...LIVE_LIST_QUERY_OPTIONS,
   });
 }

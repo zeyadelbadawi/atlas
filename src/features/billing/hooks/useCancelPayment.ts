@@ -5,8 +5,9 @@
  * page gates the action on that flag, not on `methodType`. Never
  * auto-retried.
  */
-import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { paymentKeys } from '@services/query';
+import { useQueryClient } from '@tanstack/react-query';
+import { useApiMutation } from '@/shared/hooks';
+import { invalidateTenantPayments } from '@services/query';
 import type { ApiError } from '@api';
 import type { Payment } from '@types';
 import type { PaymentProviderAdapter } from '../providers/PaymentProviderAdapter';
@@ -18,7 +19,7 @@ export interface CancelPaymentVariables {
 }
 
 export function useCancelPayment() {
-  const { invalidate } = useInvalidate();
+  const queryClient = useQueryClient();
 
   return useApiMutation<Payment, CancelPaymentVariables, ApiError>({
     mutationFn: ({ organizationId, paymentId, provider }) =>
@@ -26,10 +27,11 @@ export function useCancelPayment() {
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async (_data, variables) => {
-      await invalidate(
-        paymentKeys.detail(variables.organizationId, variables.paymentId)
+      await invalidateTenantPayments(
+        queryClient,
+        variables.organizationId,
+        variables.paymentId
       );
-      await invalidate(paymentKeys.list(variables.organizationId));
     },
   });
 }

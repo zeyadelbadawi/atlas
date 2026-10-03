@@ -20,7 +20,12 @@
  */
 import { useEffect, useRef } from 'react';
 import { useApiQuery, useAuth, useInvalidate } from '@/shared/hooks';
-import { academyKeys, provisioningKeys, tenantKeys } from '@services/query';
+import {
+  academyKeys,
+  dashboardOverviewKeys,
+  provisioningKeys,
+  tenantKeys,
+} from '@services/query';
 import { provisioningService } from '../services/ProvisioningService';
 import { PROVISIONING_STATUS_POLL_INTERVAL_MS } from '../constants/provisioning.constants';
 import { TERMINAL_PROVISIONING_STATUSES } from '@types';
@@ -55,6 +60,9 @@ export function useProvisioningRequest(requestId: string) {
     if (current === 'ready' && previous !== 'ready' && previous !== undefined) {
       void invalidate(academyKeys.all);
       void invalidate(tenantKeys.usage(organization?.id));
+      // The new academy is counted on the dashboard and listed as ready.
+      void invalidate(dashboardOverviewKeys.overviews());
+      void invalidate(provisioningKeys.lists(organization?.id));
     }
   }, [query.data?.status, invalidate, organization?.id]);
 

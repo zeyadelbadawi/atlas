@@ -11,6 +11,7 @@ import type {
 } from '@tanstack/react-query';
 import { useToast } from '@app/providers';
 import { useTranslation } from 'react-i18next';
+import { invalidateQueryPrefixes } from '@services/query/query-utils';
 
 export interface UseApiMutationOptions<
   TData,
@@ -65,13 +66,11 @@ export function useApiMutation<
         notifySuccess(successMessageKey, undefined, undefined);
       }
 
-      // Invalidate specified queries.
+      // Invalidate specified queries. Each key is treated as a prefix with
+      // trailing `undefined`s dropped, so `list(scope)` also matches the
+      // `list(scope, query)` entries a screen actually cached.
       if (invalidateKeys) {
-        await Promise.all(
-          invalidateKeys.map((key) =>
-            queryClient.invalidateQueries({ queryKey: key as unknown[] })
-          )
-        );
+        await invalidateQueryPrefixes(queryClient, invalidateKeys);
       }
 
       // Call user-provided onSuccess.

@@ -42,6 +42,7 @@ import {
   useArchiveWebsiteFaqEntry,
   useCreateWebsiteFaqEntry,
   usePublishWebsiteFaqEntry,
+  useSwapWebsiteFaqEntryOrder,
   useUpdateWebsiteFaqEntry,
   useWebsiteFaqEntries,
 } from '../hooks';
@@ -220,6 +221,7 @@ export function WebsiteFaqContentTab({
   const updateEntry = useUpdateWebsiteFaqEntry();
   const publishEntry = usePublishWebsiteFaqEntry();
   const archiveEntry = useArchiveWebsiteFaqEntry();
+  const swapOrder = useSwapWebsiteFaqEntryOrder();
 
   if (isLoading) return <Skeleton className="h-64 w-full" />;
   if (error || !data) return <ErrorState onRetry={() => refetch()} />;
@@ -236,20 +238,27 @@ export function WebsiteFaqContentTab({
     dialog.open();
   };
 
+  // One move = two sequential order writes in ONE mutation (see
+  // `useSwapWebsiteFaqEntryOrder`); every move control is disabled until
+  // it settles, so a second click can never race the first.
+  const isReordering = swapOrder.isPending;
+  const movingEntryId = isReordering
+    ? swapOrder.variables?.entry.id
+    : undefined;
+  const movingTargetId = isReordering
+    ? swapOrder.variables?.target.id
+    : undefined;
+
   const moveItem = (index: number, direction: -1 | 1) => {
+    if (isReordering) return;
     const targetIndex = index + direction;
     if (targetIndex < 0 || targetIndex >= entries.length) return;
     const current = entries[index];
     const target = entries[targetIndex];
-    updateEntry.mutate({
+    swapOrder.mutate({
       academyId,
-      entryId: current.id,
-      payload: { order: target.order },
-    });
-    updateEntry.mutate({
-      academyId,
-      entryId: target.id,
-      payload: { order: current.order },
+      entry: { id: current.id, order: current.order },
+      target: { id: target.id, order: target.order },
     });
   };
 
@@ -283,6 +292,10 @@ export function WebsiteFaqContentTab({
         ) : null}
       </div>
 
+      <span className="sr-only" role="status" aria-live="polite">
+        {isReordering ? t('website:content.reordering') : ''}
+      </span>
+
       {entries.length === 0 ? (
         <EmptyState titleKey="website:content.faq.empty" />
       ) : (
@@ -292,6 +305,7 @@ export function WebsiteFaqContentTab({
               <div
                 key={entry.id}
                 className="flex items-center justify-between gap-3 p-4"
+                aria-busy={movingEntryId === entry.id || undefined}
               >
                 <button
                   type="button"
@@ -312,21 +326,33 @@ export function WebsiteFaqContentTab({
                     type="button"
                     variant="outline"
                     size="icon"
-                    disabled={!canManage || index === 0}
+                    disabled={!canManage || index === 0 || isReordering}
                     onClick={() => moveItem(index, -1)}
                     aria-label={t('website:editor.moveUp')}
                   >
-                    <ArrowUp className="size-4" aria-hidden />
+                    {movingEntryId === entry.id &&
+                    movingTargetId === entries[index - 1]?.id ? (
+                      <Loader2 className="size-4 animate-spin" aria-hidden />
+                    ) : (
+                      <ArrowUp className="size-4" aria-hidden />
+                    )}
                   </Button>
                   <Button
                     type="button"
                     variant="outline"
                     size="icon"
-                    disabled={!canManage || index === entries.length - 1}
+                    disabled={
+                      !canManage || index === entries.length - 1 || isReordering
+                    }
                     onClick={() => moveItem(index, 1)}
                     aria-label={t('website:editor.moveDown')}
                   >
-                    <ArrowDown className="size-4" aria-hidden />
+                    {movingEntryId === entry.id &&
+                    movingTargetId === entries[index + 1]?.id ? (
+                      <Loader2 className="size-4 animate-spin" aria-hidden />
+                    ) : (
+                      <ArrowDown className="size-4" aria-hidden />
+                    )}
                   </Button>
                 </div>
                 <Switch

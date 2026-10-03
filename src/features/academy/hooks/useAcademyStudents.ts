@@ -7,6 +7,7 @@
  */
 import { keepPreviousData } from '@tanstack/react-query';
 import { useApiQuery, useAuth } from '@/shared/hooks';
+import { LIVE_LIST_QUERY_OPTIONS } from '@config';
 import { academyKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { academyRosterService } from '../services/AcademyRosterService';
@@ -31,5 +32,8 @@ export function useAcademyStudents(
     // Typing in the search box or flipping a filter keeps the previous
     // rows on screen instead of collapsing the table to a skeleton.
     placeholderData: keepPreviousData,
+    // Learners register, accept invites and enroll from their own
+    // browsers; poll while shown (paused in background tabs).
+    ...LIVE_LIST_QUERY_OPTIONS,
   });
 }

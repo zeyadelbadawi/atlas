@@ -8,8 +8,9 @@
  * replaying the SAME `idempotencyKey` the caller generated once per
  * attempt.
  */
-import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { provisioningKeys } from '@services/query';
+import { useQueryClient } from '@tanstack/react-query';
+import { useApiMutation } from '@/shared/hooks';
+import { invalidateProvisioning } from '@services/query';
 import type { ApiError } from '@api';
 import type {
   CreateProvisioningRequestPayload,
@@ -23,7 +24,7 @@ export interface CreateProvisioningRequestVariables {
 }
 
 export function useCreateProvisioningRequest() {
-  const { invalidate } = useInvalidate();
+  const queryClient = useQueryClient();
 
   return useApiMutation<
     ProvisioningRequest,
@@ -35,7 +36,9 @@ export function useCreateProvisioningRequest() {
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async (_data, variables) => {
-      await invalidate(provisioningKeys.list(variables.organizationId));
+      // Every list of this organization (`lists`, not `list(org)`, whose
+      // trailing `undefined` never matched the screen's query-bearing key).
+      await invalidateProvisioning(queryClient, variables.organizationId);
     },
   });
 }

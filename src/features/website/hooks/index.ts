@@ -41,6 +41,14 @@ export type { UpdateWebsiteTestimonialEntryVariables } from './useUpdateWebsiteT
 export { usePublishWebsiteTestimonialEntry } from './usePublishWebsiteTestimonialEntry';
 export { useArchiveWebsiteTestimonialEntry } from './useArchiveWebsiteTestimonialEntry';
 export {
+  useSwapWebsiteFaqEntryOrder,
+  useSwapWebsiteTestimonialEntryOrder,
+} from './useSwapWebsiteContentOrder';
+export type {
+  ContentOrderSlot,
+  SwapWebsiteContentOrderVariables,
+} from './useSwapWebsiteContentOrder';
+export {
   useFaqLibraryEntries,
   useTestimonialLibraryEntries,
   selectPublicEntries,

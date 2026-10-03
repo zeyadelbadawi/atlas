@@ -6,14 +6,16 @@
  * the backend is the only thing that moves the UI. The frontend never
  * decides on its own that a site went offline.
  */
+import { useQueryClient } from '@tanstack/react-query';
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { websiteKeys } from '@services/query';
+import { invalidatePublicWebsiteSite, websiteKeys } from '@services/query';
 import type { ApiError } from '@api';
 import type { WebsiteConfiguration } from '@types';
 import { websiteConfigurationService } from '../services/WebsiteConfigurationService';
 
 export function useUnpublishWebsite() {
   const { invalidate } = useInvalidate();
+  const queryClient = useQueryClient();
 
   return useApiMutation<WebsiteConfiguration, string, ApiError>({
     mutationFn: (academyId) =>
@@ -22,6 +24,7 @@ export function useUnpublishWebsite() {
     showErrorToast: false,
     onSuccess: async (_data, academyId) => {
       await invalidate(websiteKeys.configuration(academyId));
+      await invalidatePublicWebsiteSite(queryClient, academyId);
     },
   });
 }

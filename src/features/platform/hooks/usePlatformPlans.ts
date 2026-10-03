@@ -6,8 +6,9 @@
  * Plans page — leaving that cached would show two different prices in one
  * session.
  */
-import { useApiMutation, useApiQuery, useInvalidate } from '@/shared/hooks';
-import { planKeys } from '@services/query';
+import { useQueryClient } from '@tanstack/react-query';
+import { useApiMutation, useApiQuery } from '@/shared/hooks';
+import { invalidatePlans, platformPlanKeys } from '@services/query';
 import { platformPlansService } from '../services/PlatformPlansService';
 import type {
   CollectionQuery,
@@ -21,11 +22,8 @@ import type {
 } from '@types';
 import type { ApiError } from '@api';
 
-/** Query keys for the platform-side plan surfaces, alongside the existing `planKeys`. */
-export const platformPlanKeys = {
-  history: (key: string, query?: CollectionQuery) =>
-    ['platform-plans', 'history', key, query ?? {}] as const,
-};
+/** Query keys for the platform-side plan surfaces — now declared in the shared factory (same shape). */
+export { platformPlanKeys };
 
 export function usePlanHistory(key: string, query?: CollectionQuery) {
   return useApiQuery<PaginatedResult<PlanHistoryEntry>, ApiError>({
@@ -40,24 +38,24 @@ export interface UpdatePlanVariables {
   readonly payload: UpdatePlanPayload;
 }
 
+// Plan mutations refresh every plan read — the authenticated catalog, the
+// plan's own detail and history, and the marketing site's public list —
+// through `invalidatePlans`, so a change is visible wherever plans render.
 export function useUpdatePlan() {
-  const { invalidate } = useInvalidate();
+  const queryClient = useQueryClient();
   return useApiMutation<Plan, UpdatePlanVariables, ApiError>({
-    mutationFn: ({ key, payload }) => platformPlansService.updatePlan(key, payload),
-    onSuccess: (_plan, variables) => {
-      void invalidate(planKeys.list());
-      void invalidate(['platform-plans', 'history', variables.key]);
-    },
+    mutationFn: ({ key, payload }) =>
+      platformPlansService.updatePlan(key, payload),
+    onSuccess: (_plan, variables) =>
+      invalidatePlans(queryClient, variables.key),
   });
 }
 
 export function useCreatePlan() {
-  const { invalidate } = useInvalidate();
+  const queryClient = useQueryClient();
   return useApiMutation<Plan, CreatePlanPayload, ApiError>({
     mutationFn: (payload) => platformPlansService.createPlan(payload),
-    onSuccess: () => {
-      void invalidate(planKeys.list());
-    },
+    onSuccess: (plan) => invalidatePlans(queryClient, plan.key),
   });
 }
 
@@ -67,14 +65,12 @@ export interface ArchivePlanVariables {
 }
 
 export function useArchivePlan() {
-  const { invalidate } = useInvalidate();
+  const queryClient = useQueryClient();
   return useApiMutation<Plan, ArchivePlanVariables, ApiError>({
     mutationFn: ({ key, expectedVersion }) =>
       platformPlansService.archivePlan(key, expectedVersion),
-    onSuccess: (_plan, variables) => {
-      void invalidate(planKeys.list());
-      void invalidate(['platform-plans', 'history', variables.key]);
-    },
+    onSuccess: (_plan, variables) =>
+      invalidatePlans(queryClient, variables.key),
   });
 }
 

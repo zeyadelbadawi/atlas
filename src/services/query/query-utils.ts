@@ -7,7 +7,32 @@
 import type { QueryClient } from '@tanstack/react-query';
 
 /**
+ * Turns a key into the prefix it was meant to be by dropping trailing
+ * `undefined` elements.
+ *
+ * Every list factory takes an optional trailing `query` (`list(scope,
+ * query?)`), so `list(scope)` builds `[..., scope, undefined]`. TanStack's
+ * partial matching compares that `undefined` against the cached query
+ * object (`{ pagination: … }`), finds the types differ and never matches —
+ * so "invalidate every list of this scope" silently invalidated nothing
+ * whenever the screen had fetched with a query. Dropping the trailing
+ * `undefined`s gives the prefix the caller intended; elements in the middle
+ * of a key are left alone (an `undefined` scope id there is real data).
+ */
+export function normalizeKeyPrefix(
+  keyPrefix: readonly unknown[]
+): readonly unknown[] {
+  let end = keyPrefix.length;
+  while (end > 0 && keyPrefix[end - 1] === undefined) end -= 1;
+  return end === keyPrefix.length ? keyPrefix : keyPrefix.slice(0, end);
+}
+
+/**
  * Invalidates all queries matching a key prefix.
+ *
+ * Trailing `undefined` elements are dropped first (see
+ * `normalizeKeyPrefix`), so `list(scope)` matches every `list(scope,
+ * query)` cache entry.
  *
  * @param queryClient The query client.
  * @param keyPrefix The key prefix to invalidate.
@@ -17,8 +42,23 @@ export async function invalidateQueries(
   keyPrefix: readonly unknown[]
 ): Promise<void> {
   await queryClient.invalidateQueries({
-    queryKey: keyPrefix as unknown[],
+    queryKey: normalizeKeyPrefix(keyPrefix) as unknown[],
   });
+}
+
+/**
+ * Invalidates several key prefixes at once (each normalized as above).
+ *
+ * @param queryClient The query client.
+ * @param keyPrefixes The key prefixes to invalidate.
+ */
+export async function invalidateQueryPrefixes(
+  queryClient: QueryClient,
+  keyPrefixes: readonly (readonly unknown[])[]
+): Promise<void> {
+  await Promise.all(
+    keyPrefixes.map((keyPrefix) => invalidateQueries(queryClient, keyPrefix))
+  );
 }
 
 /**

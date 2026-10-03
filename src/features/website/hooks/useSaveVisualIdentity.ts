@@ -6,8 +6,8 @@
  * the Academy reads elsewhere (switcher, sidebar, dashboard) refresh.
  */
 import { useQueryClient } from '@tanstack/react-query';
-import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { academyKeys, websiteKeys } from '@services/query';
+import { useApiMutation } from '@/shared/hooks';
+import { invalidateBranding, websiteKeys } from '@services/query';
 import type { ApiError } from '@api';
 import type {
   SaveVisualIdentityPayload,
@@ -21,7 +21,6 @@ export interface SaveVisualIdentityVariables {
 }
 
 export function useSaveVisualIdentity() {
-  const { invalidate } = useInvalidate();
   const queryClient = useQueryClient();
 
   return useApiMutation<
@@ -38,8 +37,9 @@ export function useSaveVisualIdentity() {
         websiteKeys.configuration(academyId),
         data.configuration
       );
-      await invalidate(websiteKeys.configuration(academyId));
-      await invalidate(academyKeys.all);
+      // Academy list/detail (switcher, sidebar, settings), the website
+      // configuration, and the identity read behind the LMS/public logo.
+      await invalidateBranding(queryClient, academyId);
     },
   });
 }

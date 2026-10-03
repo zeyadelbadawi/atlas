@@ -8,8 +8,9 @@
  * `messageKey`s (`errors.academy.studentBlocked`, ...) to friendly copy;
  * the generic per-mutation toast would only duplicate that.
  */
-import { useApiMutation, useAuth, useInvalidate } from '@/shared/hooks';
-import { academyKeys } from '@services/query';
+import { useQueryClient } from '@tanstack/react-query';
+import { useApiMutation } from '@/shared/hooks';
+import { invalidateRoster as invalidateRosterQueries } from '@services/query';
 import type { ApiError } from '@api';
 import { academyRosterService } from '../services/AcademyRosterService';
 import type {
@@ -21,20 +22,15 @@ import type {
   UpdateRosterEnrollmentExpiryPayload,
 } from '@types';
 
-/** Shared invalidation: the whole roster tree for this academy. */
+/**
+ * Shared invalidation: every roster page/filter of this academy, the open
+ * learner's detail, and the counts a roster change moves (academy stats,
+ * dashboard overview) — see `invalidateRoster`.
+ */
 function useRosterInvalidation(academyId: string) {
-  const { invalidate } = useInvalidate();
-  const { organization } = useAuth();
-  return async (userId?: string) => {
-    // Prefix without the `query` element so every filter/page variant of
-    // the roster list is refetched, not just one exact query object.
-    await invalidate([...academyKeys.all, 'roster', organization?.id, academyId]);
-    if (userId) {
-      await invalidate(
-        academyKeys.rosterStudent(organization?.id, academyId, userId)
-      );
-    }
-  };
+  const queryClient = useQueryClient();
+  return (userId?: string) =>
+    invalidateRosterQueries(queryClient, { academyId, userId });
 }
 
 export interface StudentActionVariables {
@@ -58,35 +54,41 @@ export function useBlockAcademyStudent(academyId: string) {
 
 export function useUnblockAcademyStudent(academyId: string) {
   const invalidateRoster = useRosterInvalidation(academyId);
-  return useApiMutation<AcademyRosterStudent, StudentActionVariables, ApiError>({
-    mutationFn: ({ userId }) =>
-      academyRosterService.unblockStudent(academyId, userId),
-    showSuccessToast: false,
-    showErrorToast: false,
-    onSuccess: (_data, { userId }) => invalidateRoster(userId),
-  });
+  return useApiMutation<AcademyRosterStudent, StudentActionVariables, ApiError>(
+    {
+      mutationFn: ({ userId }) =>
+        academyRosterService.unblockStudent(academyId, userId),
+      showSuccessToast: false,
+      showErrorToast: false,
+      onSuccess: (_data, { userId }) => invalidateRoster(userId),
+    }
+  );
 }
 
 export function useApproveAcademyStudent(academyId: string) {
   const invalidateRoster = useRosterInvalidation(academyId);
-  return useApiMutation<AcademyRosterStudent, StudentActionVariables, ApiError>({
-    mutationFn: ({ userId }) =>
-      academyRosterService.approveStudent(academyId, userId),
-    showSuccessToast: false,
-    showErrorToast: false,
-    onSuccess: (_data, { userId }) => invalidateRoster(userId),
-  });
+  return useApiMutation<AcademyRosterStudent, StudentActionVariables, ApiError>(
+    {
+      mutationFn: ({ userId }) =>
+        academyRosterService.approveStudent(academyId, userId),
+      showSuccessToast: false,
+      showErrorToast: false,
+      onSuccess: (_data, { userId }) => invalidateRoster(userId),
+    }
+  );
 }
 
 export function useRejectAcademyStudent(academyId: string) {
   const invalidateRoster = useRosterInvalidation(academyId);
-  return useApiMutation<AcademyRosterStudent, StudentActionVariables, ApiError>({
-    mutationFn: ({ userId }) =>
-      academyRosterService.rejectStudent(academyId, userId),
-    showSuccessToast: false,
-    showErrorToast: false,
-    onSuccess: (_data, { userId }) => invalidateRoster(userId),
-  });
+  return useApiMutation<AcademyRosterStudent, StudentActionVariables, ApiError>(
+    {
+      mutationFn: ({ userId }) =>
+        academyRosterService.rejectStudent(academyId, userId),
+      showSuccessToast: false,
+      showErrorToast: false,
+      onSuccess: (_data, { userId }) => invalidateRoster(userId),
+    }
+  );
 }
 
 export interface EnrollStudentVariables extends StudentActionVariables {
@@ -125,8 +127,7 @@ export function useRevokeRosterEnrollment(academyId: string) {
   });
 }
 
-export interface UpdateEnrollmentExpiryVariables
-  extends EnrollmentActionVariables {
+export interface UpdateEnrollmentExpiryVariables extends EnrollmentActionVariables {
   readonly payload: UpdateRosterEnrollmentExpiryPayload;
 }
 

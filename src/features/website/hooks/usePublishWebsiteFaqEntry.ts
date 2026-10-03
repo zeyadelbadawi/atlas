@@ -1,8 +1,9 @@
 /**
  * usePublishWebsiteFaqEntry hook.
  */
-import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { websiteKeys } from '@services/query';
+import { useQueryClient } from '@tanstack/react-query';
+import { useApiMutation } from '@/shared/hooks';
+import { invalidateFaqEntries } from '@services/query';
 import type { ApiError } from '@api';
 import type { WebsiteFaqEntry } from '@types';
 import { websiteContentService } from '../services/WebsiteContentService';
@@ -13,7 +14,7 @@ export interface PublishWebsiteFaqEntryVariables {
 }
 
 export function usePublishWebsiteFaqEntry() {
-  const { invalidate } = useInvalidate();
+  const queryClient = useQueryClient();
 
   return useApiMutation<
     WebsiteFaqEntry,
@@ -25,10 +26,11 @@ export function usePublishWebsiteFaqEntry() {
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async (_data, variables) => {
-      await invalidate(
-        websiteKeys.faqEntry(variables.academyId, variables.entryId)
+      await invalidateFaqEntries(
+        queryClient,
+        variables.academyId,
+        variables.entryId
       );
-      await invalidate(websiteKeys.faqEntries(variables.academyId));
     },
   });
 }

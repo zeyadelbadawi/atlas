@@ -11,3 +11,5 @@ export {
 export type { QueryErrorReporter } from './query-client';
 export * from './query-keys';
 export * from './query-utils';
+export * from './invalidation';
+export * from './placeholder';
