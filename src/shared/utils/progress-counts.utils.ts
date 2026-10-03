@@ -1,3 +1,4 @@
+import type { LearningState } from '@types';
 /**
  * Which counts to show next to a course's progress percentage.
  *
@@ -47,4 +48,25 @@ export function hasFinishedAnything(
   source: Partial<ProgressCountsSource> | null | undefined
 ): boolean {
   return (source?.completedItems ?? source?.completedLessons ?? 0) > 0;
+}
+
+/**
+ * Start / Continue / Completed for a course (Task E): the backend's own
+ * answer when it sent one; otherwise (an older response) the same rule
+ * from what is here — completed, anything finished, or nothing yet.
+ */
+export function learningStateOf(
+  progress:
+    | (Partial<ProgressCountsSource> & {
+        readonly learningState?: LearningState;
+        readonly completionState?: string;
+      })
+    | null
+    | undefined,
+  fallback: { readonly completed?: boolean } = {}
+): LearningState {
+  if (progress?.learningState) return progress.learningState;
+  if (fallback.completed || progress?.completionState === 'completed')
+    return 'completed';
+  return hasFinishedAnything(progress) ? 'in_progress' : 'not_started';
 }

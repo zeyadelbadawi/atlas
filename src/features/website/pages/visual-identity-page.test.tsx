@@ -49,16 +49,22 @@ vi.mock('../brand-studio/BrandPreviewFrame', () => ({
     <div data-testid="preview" data-logo={academyLogo ?? ''} />
   ),
 }));
+/** When set, logo analysis waits for it (a slow analysis). */
+let analysisGate: Promise<void> | null = null;
+
 vi.mock('../brand-studio/logo-analysis', async (importOriginal) => ({
   ...(await importOriginal<object>()),
-  analyzeLogo: vi.fn(async () => ({
-    ok: true,
-    analysis: {
-      seeds: { primary: '24 95% 53%', secondary: '199 89% 38%' },
-      candidates: [{ color: '24 95% 53%', share: 0.7, class: 'chromatic' }],
-      flags: [],
-    },
-  })),
+  analyzeLogo: vi.fn(async () => {
+    if (analysisGate) await analysisGate;
+    return {
+      ok: true,
+      analysis: {
+        seeds: { primary: '24 95% 53%', secondary: '199 89% 38%' },
+        candidates: [{ color: '24 95% 53%', share: 0.7, class: 'chromatic' }],
+        flags: [],
+      },
+    };
+  }),
 }));
 
 const i18n = createI18nInstance('en');
@@ -145,6 +151,7 @@ beforeEach(() => {
   );
   saveMutateAsync.mockReset();
   uploadMutateAsync.mockReset();
+  analysisGate = null;
 });
 afterEach(() => {
   cleanup();
@@ -196,6 +203,23 @@ describe('Visual Identity — one save', () => {
     expect(screen.getByTestId('visual-identity-state').textContent).toBe(
       'Everything is saved and live.'
     );
+  });
+
+  it('cannot save while a new logo is still being analysed (its colours would be missing)', async () => {
+    let finishAnalysis: () => void = () => undefined;
+    analysisGate = new Promise<void>((resolve) => (finishAnalysis = resolve));
+    uploadMutateAsync.mockResolvedValue({ url: '/media/new-logo.png' });
+    renderEditor();
+    await pickLogo('new.png');
+    await waitFor(() =>
+      expect(screen.getByTestId('preview').dataset.logo).toBe(
+        '/media/new-logo.png'
+      )
+    );
+    // Uploaded, but its palette is not ready: Save waits for it.
+    expect(saveButton()).toHaveProperty('disabled', true);
+    await act(async () => finishAnalysis());
+    await waitFor(() => expect(saveButton()).toHaveProperty('disabled', false));
   });
 
   it('an empty name is refused before anything is sent', async () => {

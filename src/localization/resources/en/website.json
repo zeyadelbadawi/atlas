@@ -889,6 +889,8 @@
       "assignmentCount_other": "{{count}} assignments",
       "enrollAction": "Enroll for free",
       "continueAction": "Continue Learning",
+      "startAction": "Start course",
+      "completedAction": "Course completed · Review",
       "signInToEnrollAction": "Sign in to enroll",
       "enrollError": "We couldn't enroll you in this course. Please try again.",
       "outcomesTitle": "What you'll learn",

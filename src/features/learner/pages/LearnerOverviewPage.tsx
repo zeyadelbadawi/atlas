@@ -43,7 +43,7 @@ import { LearnerSectionPlaceholder } from '../components/LearnerSectionPlacehold
 import { useLearnerSurface } from '../context/LearnerSurface.context';
 import { useLearnerOverview } from '../hooks';
 import { learnerAssessmentStateLabel } from '../utils/assessment-state.utils';
-import { progressCounts } from '@utils';
+import { learningStateOf, progressCounts } from '@utils';
 
 export default function LearnerOverviewPage(): JSX.Element {
   const { t } = useTranslation();
@@ -183,7 +183,12 @@ export default function LearnerOverviewPage(): JSX.Element {
                         onClick={() => navigate(continueHref)}
                       >
                         <PlayCircle className="size-4" aria-hidden />
-                        {t('learning:learnerDashboard.actions.continue')}
+                        {/* Start until the learner has begun (Task E). */}
+                        {t(
+                          learningStateOf(item) === 'not_started'
+                            ? 'learning:learnerDashboard.actions.start'
+                            : 'learning:learnerDashboard.actions.continue'
+                        )}
                       </Button>
                     </div>
                   </CardContent>

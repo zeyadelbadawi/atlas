@@ -265,8 +265,14 @@ export function VisualIdentityEditor({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [faviconPicker.files]);
 
+  // A new logo's palette is still being worked out: saving now would put
+  // the new logo live on the old colours — the very mismatch this page
+  // exists to prevent.
+  const isAnalysingLogo = studio.analysis.kind === 'analyzing';
+
   const save = async (): Promise<boolean> => {
-    if (saveIdentity.isPending || isUploadingLogo) return false;
+    if (saveIdentity.isPending || isUploadingLogo || isAnalysingLogo)
+      return false;
     const trimmed = name.trim();
     if (!trimmed) {
       setNameError(true);
@@ -337,6 +343,7 @@ export function VisualIdentityEditor({
     isDirty &&
     !isSaving &&
     !isUploadingLogo &&
+    !isAnalysingLogo &&
     (!changes.palette || studio.validation.valid);
 
   const breadcrumbs: readonly BreadcrumbItem[] = [

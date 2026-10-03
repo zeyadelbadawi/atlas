@@ -104,9 +104,7 @@ export interface InstapayInstructions extends ManualInstructionTexts {
 }
 
 export type ManualPaymentInstructions =
-  | BankTransferInstructions
-  | WalletTransferInstructions
-  | InstapayInstructions;
+  BankTransferInstructions | WalletTransferInstructions | InstapayInstructions;
 
 /**
  * A payment method as a first-class catalog object — never a hardcoded
@@ -152,11 +150,10 @@ export type BankTransferInstructionsPayload = Omit<
 >;
 
 /** Wallet details as sent. `walletProviderName` is required for `other`. */
-export interface WalletInstructionsPayload
-  extends Omit<
-    WalletTransferInstructions,
-    'type' | 'placeholder' | 'walletProvider'
-  > {
+export interface WalletInstructionsPayload extends Omit<
+  WalletTransferInstructions,
+  'type' | 'placeholder' | 'walletProvider'
+> {
   readonly walletProvider: WalletProvider;
 }
 
@@ -174,20 +171,17 @@ interface CreateManualMethodPayloadBase {
 }
 
 /** `POST /platform-payment-methods/bank-transfer`. */
-export interface CreateBankTransferMethodPayload
-  extends CreateManualMethodPayloadBase {
+export interface CreateBankTransferMethodPayload extends CreateManualMethodPayloadBase {
   readonly instructions: BankTransferInstructionsPayload;
 }
 
 /** `POST /platform-payment-methods/wallet`. */
-export interface CreateWalletMethodPayload
-  extends CreateManualMethodPayloadBase {
+export interface CreateWalletMethodPayload extends CreateManualMethodPayloadBase {
   readonly instructions: WalletInstructionsPayload;
 }
 
 /** `POST /platform-payment-methods/instapay`. */
-export interface CreateInstapayMethodPayload
-  extends CreateManualMethodPayloadBase {
+export interface CreateInstapayMethodPayload extends CreateManualMethodPayloadBase {
   readonly instructions: InstapayInstructionsPayload;
 }
 

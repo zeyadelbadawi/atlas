@@ -83,8 +83,7 @@ export interface LockedCommunicationCategory {
   readonly locked: true;
 }
 
-export interface LifecycleCommunicationCategory
-  extends LockedCommunicationCategory {
+export interface LifecycleCommunicationCategory extends LockedCommunicationCategory {
   /** Reminder mail (an upcoming session, an expiring trial) can be muted. */
   readonly reminders: boolean;
 }
@@ -118,4 +117,5 @@ export interface CommunicationPreferencesUpdate {
   readonly operational?: OperationalCommunicationCategory;
 }
 
-export type CommunicationCategoryId = keyof CommunicationPreferences['categories'];
+export type CommunicationCategoryId =
+  keyof CommunicationPreferences['categories'];

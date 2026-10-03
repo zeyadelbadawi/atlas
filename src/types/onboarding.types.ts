@@ -30,11 +30,7 @@ export interface SignupOptionsResponse {
 
 /** The setup steps, in the backend's vocabulary. */
 export type OnboardingStepKey =
-  | 'plan'
-  | 'academy'
-  | 'branding'
-  | 'website'
-  | 'course';
+  'plan' | 'academy' | 'branding' | 'website' | 'course';
 
 /** Where the shell can be: a real step, or the closing summary. */
 export type OnboardingScreenKey = OnboardingStepKey | 'summary';
@@ -48,9 +44,7 @@ export type OnboardingStepStatus =
 
 /** How much a step matters. `prerequisite` is the plan: nothing else can start without it. */
 export type OnboardingStepRequirement =
-  | 'prerequisite'
-  | 'required'
-  | 'recommended';
+  'prerequisite' | 'required' | 'recommended';
 
 export interface OnboardingStep {
   readonly key: OnboardingStepKey;

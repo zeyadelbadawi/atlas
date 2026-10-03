@@ -28,10 +28,7 @@ import type { OrganizationMembership } from './identity.types';
  * distinct from `suspended`, which an administrator can undo.
  */
 export type PlatformUserAccountStatus =
-  | 'active'
-  | 'invited'
-  | 'suspended'
-  | 'deleted';
+  'active' | 'invited' | 'suspended' | 'deleted';
 
 /** One row in the Platform Owner's user directory. */
 export interface PlatformUserSummary {

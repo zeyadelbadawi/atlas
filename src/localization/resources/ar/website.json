@@ -925,6 +925,8 @@
       "assignmentCount_other": "{{count}} واجب",
       "enrollAction": "التسجيل مجانًا",
       "continueAction": "متابعة التعلّم",
+      "startAction": "ابدأ الدورة",
+      "completedAction": "أكملت الدورة · راجعها",
       "signInToEnrollAction": "سجّل الدخول للتسجيل",
       "enrollError": "تعذّر تسجيلك في هذه الدورة. يرجى المحاولة مرة أخرى.",
       "outcomesTitle": "ما ستتعلمه",

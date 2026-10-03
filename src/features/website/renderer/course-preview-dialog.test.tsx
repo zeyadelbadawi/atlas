@@ -72,7 +72,9 @@ describe('CoursePreviewDialog', () => {
       externalUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
     };
     renderDialog();
-    expect(screen.getByTestId('youtube-player').textContent).toBe('dQw4w9WgXcQ');
+    expect(screen.getByTestId('youtube-player').textContent).toBe(
+      'dQw4w9WgXcQ'
+    );
     // The raw address never reaches the DOM.
     expect(document.body.innerHTML).not.toContain('youtube.com/watch');
   });
@@ -81,7 +83,11 @@ describe('CoursePreviewDialog', () => {
     grantState.grant = {
       kind: 'video',
       title: 'Intro to Hooks',
-      video: { format: 'mp4', url: 'https://cdn.example/v.mp4', downloadable: false },
+      video: {
+        format: 'mp4',
+        url: 'https://cdn.example/v.mp4',
+        downloadable: false,
+      },
     };
     renderDialog();
     const video = screen.getByTestId('course-preview-video');
@@ -101,7 +107,11 @@ describe('CoursePreviewDialog', () => {
   });
 
   it('says plainly when a preview lesson is not a video', () => {
-    grantState.grant = { kind: 'text', title: 'Intro to Hooks', bodyHtml: '<p>hi</p>' };
+    grantState.grant = {
+      kind: 'text',
+      title: 'Intro to Hooks',
+      bodyHtml: '<p>hi</p>',
+    };
     renderDialog();
     expect(screen.getByRole('status').textContent).toContain(
       'website:renderer.courseDetails.previewNotPlayable'

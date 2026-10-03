@@ -49,27 +49,30 @@ import { LearnerProgressBar } from '../components/LearnerProgressBar';
 import { LearnerSectionPlaceholder } from '../components/LearnerSectionPlaceholder';
 import { useLearnerSurface } from '../context/LearnerSurface.context';
 import { useLearnerOverview } from '../hooks';
-import { hasFinishedAnything, progressCounts } from '@utils';
+import { learningStateOf, progressCounts } from '@utils';
 
 type CourseFilter = 'all' | 'inProgress' | 'completed';
 
 /**
  * Whether one enrolment belongs in a tab.
  *
- * Deliberately the same rule the server counts with: "in progress" is
- * started but not finished, "completed" is the enrolment's own completed
- * status. Inventing a third definition here is how a tab labelled "3"
+ * Deliberately the same rule the server counts with (`learningState`,
+ * Task E): "in progress" is started but not finished, "completed" is
+ * completed. Inventing a third definition here is how a tab labelled "3"
  * ends up listing two rows.
  */
+function stateOf(enrollment: Enrollment) {
+  return learningStateOf(enrollment.progress, {
+    completed: enrollment.status === 'completed',
+  });
+}
+
 function matchesFilter(enrollment: Enrollment, filter: CourseFilter): boolean {
   switch (filter) {
     case 'inProgress':
-      return (
-        enrollment.status !== 'completed' &&
-        hasFinishedAnything(enrollment.progress)
-      );
+      return stateOf(enrollment) === 'in_progress';
     case 'completed':
-      return enrollment.status === 'completed';
+      return stateOf(enrollment) === 'completed';
     case 'all':
     default:
       return true;
@@ -215,7 +218,8 @@ export default function LearnerCoursesPage(): JSX.Element {
             {visible.map((enrollment) => {
               const course = enrollment.course;
               const progress = enrollment.progress;
-              const isCompleted = enrollment.status === 'completed';
+              const learningState = stateOf(enrollment);
+              const isCompleted = learningState === 'completed';
               // The backend's own access answer, never re-derived here.
               const accessEnded = enrollment.isActive === false;
               const courseHref = buildHref(
@@ -300,7 +304,7 @@ export default function LearnerCoursesPage(): JSX.Element {
                           ? t('learning:learnerDashboard.actions.accessEnded')
                           : isCompleted
                             ? t('learning:learnerDashboard.actions.review')
-                            : hasFinishedAnything(progress)
+                            : learningState === 'in_progress'
                               ? t('learning:learnerDashboard.actions.continue')
                               : t('learning:learnerDashboard.actions.start')}
                       </Button>
