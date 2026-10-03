@@ -71,8 +71,14 @@ async function registerLearnerViaApi(
   return email;
 }
 
-async function fillWebsiteSignUp(page: Page, name: string): Promise<void> {
-  await page.goto(academyPath('/sign-up'));
+async function fillWebsiteSignUp(
+  page: Page,
+  name: string,
+  language: 'en' | 'ar' = 'en'
+): Promise<void> {
+  // The public website's language is in its address (`/ar/…`), not in the
+  // dashboard's stored preference.
+  await page.goto(academyPath(language === 'ar' ? '/ar/sign-up' : '/sign-up'));
   await declineCookies(page);
   await page.locator('#name').fill(name);
   await page.locator('#email').fill(uniqueLearnerEmail('j38-dup'));
@@ -129,7 +135,7 @@ test.describe('J38 — unique names', () => {
 
     await seedCookieDecision(page);
     await setLanguage(page, 'ar');
-    await fillWebsiteSignUp(page, `محـــمد احمد ${tag}`);
+    await fillWebsiteSignUp(page, `محـــمد احمد ${tag}`, 'ar');
 
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
     await expect(
@@ -189,7 +195,7 @@ test.describe('J38 — unique names', () => {
 
     const field = page.getByRole('textbox').first();
     await field.fill(orgName.toLowerCase());
-    await page.getByRole('button', { name: /create/i }).click();
+    await page.locator('main form button[type="submit"]').click();
 
     await expect(
       page.getByText(
@@ -255,7 +261,7 @@ test.describe('J38 — unique names', () => {
     await page.getByRole('button', { name: /^edit$/i }).click();
     await page.locator('#firstName').fill(takenFirst.toLowerCase());
     await page.locator('#lastName').fill(takenLast.toUpperCase());
-    await page.getByRole('button', { name: /^save$/i }).click();
+    await page.getByRole('button', { name: /^save( changes)?$/i }).click();
 
     const message = page.locator('#lastName-error');
     await expect(message).toContainText(
@@ -282,7 +288,7 @@ test.describe('J38 — unique names', () => {
         await registerLearnerViaApi(page, academyId, held);
         await seedCookieDecision(page);
         await setLanguage(page, variant.language);
-        await fillWebsiteSignUp(page, held.toUpperCase());
+        await fillWebsiteSignUp(page, held.toUpperCase(), variant.language);
         await expect(page.locator('html')).toHaveAttribute(
           'dir',
           variant.language === 'ar' ? 'rtl' : 'ltr'

@@ -51,6 +51,7 @@ import {
   captureEvidence,
   expectNoSidewaysScroll,
   setStoredLanguage,
+  waitForSessionRestore,
 } from './support/evidence';
 
 test.describe.configure({ mode: 'serial' });
@@ -165,14 +166,14 @@ async function signInOwnerPage(
   email: string,
   language: 'en' | 'ar' = 'en'
 ): Promise<void> {
-  if (language === 'ar') {
-    await page.addInitScript(() => {
-      window.localStorage.setItem('atlas:language', JSON.stringify('ar'));
-    });
-  }
   await seedCookieDecision(page);
+  // The sign-in form is driven in English (its selectors are English);
+  // the language is switched afterwards, for the pages under test.
   await signInThroughDashboard(page, email, LEARNER_PASSWORD);
   await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 30_000 });
+  // Let the post-sign-in session restore finish before the next full load.
+  await waitForSessionRestore(page);
+  if (language === 'ar') await setStoredLanguage(page, 'ar');
 }
 
 test.describe('J41 — gifted setup days on the first paid subscription', () => {

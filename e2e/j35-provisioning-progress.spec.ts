@@ -29,6 +29,7 @@ import { randomUUID } from 'node:crypto';
 import { test, expect, type Page } from '@playwright/test';
 import { clearAuthRateLimits } from './support/global-setup';
 import { adminSql } from './support/admin-db';
+import { createTrialOrganizationOwner } from './support/trial-owner';
 import {
   API_BASE,
   SEED,
@@ -37,8 +38,6 @@ import {
   apiSignIn,
   LEARNER_PASSWORD,
   seedCookieDecision,
-  uniqueLearnerEmail,
-  uniqueLearnerName,
   signInThroughDashboard,
   signOutInBrowser,
   type Session,
@@ -152,40 +151,10 @@ test.describe('J35 — provisioning progress', () => {
 
     // This run's own owner and organization, on a Growth trial: J35 creates
     // up to three Academies per run.
-    ownerEmail = uniqueLearnerEmail('j35-owner');
-    const registered = await request.post(`${API_BASE}/auth/register`, {
-      data: {
-        name: uniqueLearnerName('J35 Owner'),
-        email: ownerEmail,
-        password: LEARNER_PASSWORD,
-      },
-    });
-    expect(registered.status(), await registered.text()).toBe(201);
-    owner = await apiSignIn(request, {
-      email: ownerEmail,
-      password: LEARNER_PASSWORD,
-      surface: 'management',
-    });
-    const created = await apiPost(request, owner, '/organizations', {
-      name: uniqueLearnerName('J35 Org'),
-    });
-    expect(created.status(), await created.text()).toBe(201);
-    organizationId = (await created.json()).id as string;
-    // A fresh token carries the new membership.
-    owner = await apiSignIn(request, {
-      email: ownerEmail,
-      password: LEARNER_PASSWORD,
-      surface: 'management',
-    });
-    const growth = await (await apiGet(request, owner, '/plans/growth')).json();
-    const trial = await apiPost(
-      request,
-      owner,
-      `/organizations/${organizationId}/subscription/trial`,
-      { confirm: true, planId: growth.id }
-    );
-    expect(trial.status(), await trial.text()).toBe(200);
-    expect((await trial.json()).started, 'the Growth trial started').toBe(true);
+    const trialOwner = await createTrialOrganizationOwner(request, 'j35');
+    ownerEmail = trialOwner.email;
+    owner = trialOwner.session;
+    organizationId = trialOwner.organizationId;
   });
 
   test('J35a: logo + palette travel with the request; real stages; a reload restores the same state', async ({

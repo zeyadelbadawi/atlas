@@ -24,8 +24,8 @@
  *   6. Phone (390 px), Arabic: the academy bar shows the current academy
  *      and role, opens with the keyboard, and the page does not scroll
  *      sideways.
- *   7. The seeded Instructor (staff of A only) is not offered B, and a
- *      direct URL to B is refused.
+ *   7. The seeded Instructor (staff of A only): the academy list holds A
+ *      only, B's scope check answers 403, and a direct URL to B is refused.
  *   8. The owner's academy bar, open, in EN and AR on a desktop and a
  *      phone: both academies listed, translated role, no sideways scroll.
  *
@@ -37,6 +37,8 @@
 import { test, expect as baseExpect, type Page } from '@playwright/test';
 import {
   SEED,
+  apiGet,
+  apiSignIn,
   seedCookieDecision,
   signInThroughDashboard,
 } from './support/atlas';
@@ -369,26 +371,45 @@ test.describe('J39 — academy switching', () => {
     }
   });
 
-  test('instructor of A: B is not offered, and a direct URL to B is refused', async ({
+  test('instructor of A: only A is listed for her, B is refused by the API and in the browser', async ({
     page,
+    request,
   }) => {
-    await signIn(page, SEED.instructor);
-    await page.goto(`/dashboard/academy/${academyA}`);
-    await expect(
-      page.getByTestId('academy-switcher-current').first()
-    ).toHaveText(ACADEMY_A_NAME, { timeout: 120_000 });
-    await page.getByTestId('academy-switcher').first().click();
-    await expect(
-      page.getByTestId(`academy-switcher-option-${academyA}`)
-    ).toBeVisible();
-    await expect(
-      page.getByTestId(`academy-switcher-option-${academyB}`)
-    ).toHaveCount(0);
-    await page.keyboard.press('Escape');
+    // Instructors work from the Teaching dashboard, not the academy-scoped
+    // pages the switcher lives on; the switching contract for them is the
+    // filtered academy list, the scope check, and the browser refusal.
+    await clearAuthRateLimits();
+    const instructor = await apiSignIn(request, {
+      email: SEED.instructor,
+      password: SEED.password,
+      surface: 'management',
+    });
+    const [{ organization_id: organizationId }] = await adminQuery<{
+      organization_id: string;
+    }>(`select organization_id from academies where id = :'id'`, {
+      id: academyA,
+    });
+    const listed = await apiGet(request, instructor, '/academies', {
+      organizationId,
+    });
+    expect(listed.ok(), await listed.text()).toBeTruthy();
+    const body = await listed.json();
+    const ids = (
+      (Array.isArray(body) ? body : body.items) as { id: string }[]
+    ).map((academy) => academy.id);
+    expect(ids).toContain(academyA);
+    expect(ids).not.toContain(academyB);
+    expect(
+      (await apiGet(request, instructor, `/academies/${academyA}/me`)).status()
+    ).toBe(200);
+    expect(
+      (await apiGet(request, instructor, `/academies/${academyB}/me`)).status()
+    ).toBe(403);
 
+    await signIn(page, SEED.instructor);
     await page.goto(`/dashboard/academy/${academyB}/courses`);
-    await expect(page.getByTestId('academy-access-lost')).toBeVisible();
-    await expect(page).toHaveURL(new RegExp(`/dashboard/academy/${academyA}$`));
+    await expect(page).not.toHaveURL(new RegExp(academyB), { timeout: 60_000 });
+    expect(await showsAnyACourse(page)).toBe(false);
   });
 
   test('owner: the academy bar, open, in EN and AR on a desktop and a phone', async ({

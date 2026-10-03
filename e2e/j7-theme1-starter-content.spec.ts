@@ -1,8 +1,9 @@
 /**
  * J7 — Theme 1 starter content and initialization (Theme 1 plan Phase 7).
  *
- * Against the real running stack (see `playwright.config.ts`), as the
- * seeded Organization owner:
+ * Against the real running stack (see `playwright.config.ts`), as a new
+ * Organization owner on a Growth trial (its own organization, so the
+ * seeded organization's Academy allowance is never used up):
  *
  *   J7a  logo chosen in the setup form → palette previewed → Academy
  *        created → palette applied by the server's branding step, logo
@@ -15,14 +16,12 @@
  */
 import { deflateSync, crc32 } from 'node:zlib';
 import { clearAuthRateLimits } from './support/global-setup';
+import { createTrialOrganizationOwner } from './support/trial-owner';
 import { test, expect, type Page } from '@playwright/test';
 import {
   ACADEMY_PREVIEW_PARAM,
-  API_BASE,
-  SEED,
   apiGet,
   apiPost,
-  apiSignIn,
   declineCookies,
   signInThroughDashboard,
   signOutInBrowser,
@@ -102,7 +101,7 @@ async function goInApp(page: Page, path: string): Promise<void> {
  */
 async function signIn(page: Page): Promise<void> {
   await signOutInBrowser(page);
-  await signInThroughDashboard(page, SEED.owner, SEED.password);
+  await signInThroughDashboard(page, ownerEmail, ownerPassword);
   await page.waitForURL(/\/dashboard/);
 }
 
@@ -165,6 +164,8 @@ async function provisionThroughForm(
 
 let owner: Session;
 let organizationId: string;
+let ownerEmail: string;
+let ownerPassword: string;
 
 async function academyIdFor(page: Page, requestId: string): Promise<string> {
   const response = await apiGet(
@@ -204,24 +205,14 @@ test.describe('J7 — Theme 1 starter content', () => {
     // the limiter is a real 10-per-15-minutes protection, and this file
     // signs the owner in several times after the earlier journeys did.
     await clearAuthRateLimits();
-    owner = await apiSignIn(request, {
-      email: SEED.owner,
-      password: SEED.password,
-    });
-    const signIn = await request.post(`${API_BASE}/auth/sign-in`, {
-      data: { email: SEED.owner, password: SEED.password },
-    });
-    const memberships = (await signIn.json()).user.organizations as Array<{
-      organizationId: string;
-      role: string;
-    }>;
-    organizationId = memberships.find(
-      (entry) => entry.role === 'owner'
-    )!.organizationId;
-    expect(
-      organizationId,
-      'the seeded owner owns an organization'
-    ).toBeTruthy();
+    // A new owner with their own organization on a Growth trial, not the
+    // seeded one: this file provisions two Academies per run, and the
+    // seeded organization's Academy allowance is shared with other suites.
+    const trialOwner = await createTrialOrganizationOwner(request, 'j7');
+    owner = trialOwner.session;
+    organizationId = trialOwner.organizationId;
+    ownerEmail = trialOwner.email;
+    ownerPassword = trialOwner.password;
   });
 
   test('J7a: a logo chosen in the setup form becomes the website palette', async ({

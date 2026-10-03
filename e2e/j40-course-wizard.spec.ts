@@ -261,7 +261,7 @@ test.describe('J40 — guided course wizard', () => {
     ).toBeVisible();
     await page.reload();
     await expect(heading(page)).toHaveText('Course image', { timeout: 90_000 });
-    await page.getByRole('button', { name: 'Back' }).click();
+    await page.locator('main').getByRole('button', { name: 'Back' }).click();
     await page.waitForURL(/step=details$/);
     await expect(
       page.getByRole('textbox', { name: 'Description' })
@@ -452,7 +452,9 @@ test.describe('J40 — guided course wizard', () => {
     await page.goto(`/dashboard/academy/${academyId}/courses`);
     await setLanguage(page, 'ar');
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
-    const row = page.getByRole('row').filter({ hasText: arabicTitle });
+    // A clickable row is exposed as a button named by its cells, not as a
+    // `row`, so the table row is found by its element.
+    const row = page.locator('tbody tr', { hasText: arabicTitle });
     await expect(row).toBeVisible({ timeout: 90_000 });
     await row.getByRole('button').last().click();
     await page.getByRole('menuitem', { name: 'متابعة الإعداد' }).click();
@@ -469,7 +471,9 @@ test.describe('J40 — guided course wizard', () => {
     await expect(
       nav.getByRole('button', { name: '1. الأساسيات, مكتملة' })
     ).toBeVisible();
-    await expect(page.getByRole('button', { name: 'رجوع' })).toBeVisible();
+    await expect(
+      page.locator('main').getByRole('button', { name: 'رجوع' })
+    ).toBeVisible();
     await page.screenshot({
       path: testInfo.outputPath('continue-setup-ar.png'),
     });

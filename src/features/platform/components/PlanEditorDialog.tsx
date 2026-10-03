@@ -49,6 +49,7 @@ import {
 import {
   UNLIMITED,
   draftToLimits,
+  withUneditedLimits,
   findReducedLimitKeys,
   isCompleteDraft,
   limitsToDraft,
@@ -191,7 +192,12 @@ export function PlanEditorDialog({
       payload: {
         expectedVersion: plan.version,
         limits: withMonthlyEmails(
-          draftToLimits(limits, PLAN_LIMIT_KEYS),
+          withUneditedLimits(
+            draftToLimits(limits, PLAN_LIMIT_KEYS),
+            plan.limits,
+            PLAN_LIMIT_KEYS,
+            ['monthlyEmails']
+          ),
           monthlyEmails
         ),
         features: features as never,

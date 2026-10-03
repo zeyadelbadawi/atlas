@@ -9,6 +9,7 @@
  */
 import { useApiMutation, useAuth } from '@/shared/hooks';
 import { currentUserService } from '@services/identity';
+import { INLINE_ERRORS_META } from '@services/query';
 import type { ApiError } from '@api';
 import type { CurrentUser } from '@types';
 
@@ -24,6 +25,10 @@ export function useUpdateProfile() {
     mutationFn: (updates) => currentUserService.updateProfile(updates),
     showSuccessToast: false,
     showErrorToast: false,
+    // The form renders every failure itself (fields, a taken name on the
+    // name field — W4 — or its own message), so the app-wide error toast
+    // stays quiet instead of repeating it.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await refreshSession();
     },

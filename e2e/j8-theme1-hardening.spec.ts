@@ -1,6 +1,7 @@
 /**
  * J8 — Theme 1 hardening (Theme 1 plan Phase 8), against the real running
- * stack (see `playwright.config.ts`), as the seeded Organization owner.
+ * stack (see `playwright.config.ts`), as a new Organization owner on a Growth
+ * trial (its own organization: the seeded one's Academy allowance is shared).
  *
  *   J8a  editing a sample testimonial's text does not make it real: it
  *        stays out of the public payload and page; the "This is a real
@@ -17,14 +18,13 @@
  *        fixtures and the backend e2e).
  */
 import { clearAuthRateLimits } from './support/global-setup';
+import { createTrialOrganizationOwner } from './support/trial-owner';
 import { test, expect, type Page } from '@playwright/test';
 import {
   ACADEMY_PREVIEW_PARAM,
   API_BASE,
-  SEED,
   apiGet,
   apiPost,
-  apiSignIn,
   declineCookies,
   signInThroughDashboard,
   type Session,
@@ -42,6 +42,8 @@ const EDITED_SAMPLE = 'Edited sample quote that must stay private';
 
 let owner: Session;
 let organizationId: string;
+let ownerEmail: string;
+let ownerPassword: string;
 let academyId: string;
 let slug: string;
 
@@ -78,20 +80,13 @@ test.describe('J8 — Theme 1 hardening', () => {
     // the limiter is a real 10-per-15-minutes protection, and this file
     // signs the owner in several times after the earlier journeys did.
     await clearAuthRateLimits();
-    owner = await apiSignIn(request, {
-      email: SEED.owner,
-      password: SEED.password,
-    });
-    const signIn = await request.post(`${API_BASE}/auth/sign-in`, {
-      data: { email: SEED.owner, password: SEED.password },
-    });
-    const memberships = (await signIn.json()).user.organizations as Array<{
-      organizationId: string;
-      role: string;
-    }>;
-    organizationId = memberships.find(
-      (entry) => entry.role === 'owner'
-    )!.organizationId;
+    // A new owner with their own organization on a Growth trial, not the
+    // seeded one, whose Academy allowance other suites use up.
+    const trialOwner = await createTrialOrganizationOwner(request, 'j8');
+    owner = trialOwner.session;
+    organizationId = trialOwner.organizationId;
+    ownerEmail = trialOwner.email;
+    ownerPassword = trialOwner.password;
 
     // A ready-made Theme 1 Academy, provisioned through the API.
     slug = `j8-${Date.now() % 1e8}`;
@@ -156,7 +151,7 @@ test.describe('J8 — Theme 1 hardening', () => {
       (section: { type: string }) => section.type === 'testimonials'
     );
 
-    await signInThroughDashboard(page, SEED.owner, SEED.password);
+    await signInThroughDashboard(page, ownerEmail, ownerPassword);
     await page.waitForURL(/\/dashboard/);
     await goInApp(
       page,
@@ -267,8 +262,8 @@ test.describe('J8 — Theme 1 hardening', () => {
     await useArabic(page);
     // The same dashboard sign-in form, in Arabic: language-neutral selectors.
     await page.goto('/auth/sign-in');
-    await page.locator('input[type="email"]').fill(SEED.owner);
-    await page.locator('input[type="password"]').fill(SEED.password);
+    await page.locator('input[type="email"]').fill(ownerEmail);
+    await page.locator('input[type="password"]').fill(ownerPassword);
     await page.locator('form button[type="submit"]').click();
     await page.waitForURL(/\/dashboard/);
     await goInApp(page, `/dashboard/academy/${academyId}/website`);

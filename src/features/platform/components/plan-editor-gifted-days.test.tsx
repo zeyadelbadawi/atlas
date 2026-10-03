@@ -20,6 +20,7 @@ import {
   giftedDaysInputToPayload,
   isValidGiftedDaysInput,
 } from '../utils/gifted-days.utils';
+import { withUneditedLimits } from '../utils/plan-limit-changes.utils';
 
 const updateMutateAsync = vi.fn();
 
@@ -163,5 +164,50 @@ describe('PlanEditorDialog — gifted setup days', () => {
     await field('plan-gifted-monthly');
     expect(screen.getByText('أيام الإعداد المُهداة')).toBeTruthy();
     expect(screen.getByLabelText('الفوترة الشهرية')).toBeTruthy();
+  });
+});
+
+describe('PlanEditorDialog — limits the editor has no field for', () => {
+  const fullLimits = {
+    academies: 1,
+    students: 20,
+    instructors: 2,
+    staff: 2,
+    courses: 5,
+    generalStorage: 2,
+    videoStorage: 2,
+    videoStorageMinutes: 500,
+    recordedSessions: 3,
+  };
+
+  it('carries unedited keys, lets edited keys win, and never resurrects excluded ones', () => {
+    expect(
+      withUneditedLimits(
+        { academies: 3 } as never,
+        { academies: 1, videoStorageMinutes: 500, monthlyEmails: 80 } as never,
+        ['academies'],
+        ['monthlyEmails']
+      )
+    ).toEqual({ academies: 3, videoStorageMinutes: 500 });
+    expect(
+      withUneditedLimits({ academies: 3 } as never, undefined, [])
+    ).toEqual({ academies: 3 });
+  });
+
+  it('saves videoStorageMinutes unchanged (the API requires every limit)', async () => {
+    renderEditor({
+      ...planWith({ giftedDaysMonthly: null, giftedDaysYearly: null }),
+      limits: fullLimits,
+    } as unknown as Plan);
+    fireEvent.change(await field('plan-gifted-monthly'), {
+      target: { value: '7' },
+    });
+    fireEvent.click(saveButton());
+
+    await waitFor(() => expect(updateMutateAsync).toHaveBeenCalledTimes(1));
+    const sent = updateMutateAsync.mock.calls[0][0].payload.limits;
+    expect(sent.videoStorageMinutes).toBe(500);
+    expect(sent.academies).toBe(1);
+    expect(sent).not.toHaveProperty('monthlyEmails');
   });
 });
