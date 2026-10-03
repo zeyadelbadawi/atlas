@@ -487,7 +487,8 @@
         "revoked": "{{actor}} revoked a student invite link"
       },
       "message": {
-        "sent": "{{actor}} sent a message to {{recipientCount}} people"
+        "sent": "{{actor}} sent a message",
+        "sent_full": "{{actor}} sent a message to {{recipientCount}} people"
       }
     },
     "enrollment": {
@@ -674,7 +675,8 @@
         "deleted": "{{actor}} deleted a contact enquiry"
       },
       "campaign": {
-        "sent": "{{actor}} sent a platform message to {{recipientCount}} people"
+        "sent": "{{actor}} sent a platform message",
+        "sent_full": "{{actor}} sent a platform message to {{recipientCount}} people"
       }
     }
   }

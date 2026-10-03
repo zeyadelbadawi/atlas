@@ -31,7 +31,9 @@ const ACTIVE_REFETCH_MS = 10_000;
 
 function refetchWhileActive(data: InfiniteData<CampaignPage> | undefined) {
   const first = data?.pages[0]?.items ?? [];
-  return first.some((item) => isActiveCampaign(item.status)) ? ACTIVE_REFETCH_MS : false;
+  return first.some((item) => isActiveCampaign(item.status))
+    ? ACTIVE_REFETCH_MS
+    : false;
 }
 
 export function useAcademyMessageQuota(academyId: string) {
@@ -73,7 +75,10 @@ export function usePlatformCampaignHistory() {
   >({
     queryKey: messagingKeys.platformHistory(),
     queryFn: ({ pageParam }) =>
-      platformCampaignsService.history({ cursor: pageParam, limit: HISTORY_PAGE_SIZE }),
+      platformCampaignsService.history({
+        cursor: pageParam,
+        limit: HISTORY_PAGE_SIZE,
+      }),
     initialPageParam: undefined,
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
     refetchInterval: (query) => refetchWhileActive(query.state.data),

@@ -72,7 +72,12 @@ export function safeMessageHref(raw: string): string | null {
   }
 }
 
-function sanitizeChildren(source: Node, target: Node, doc: Document, depth: number): void {
+function sanitizeChildren(
+  source: Node,
+  target: Node,
+  doc: Document,
+  depth: number
+): void {
   for (const child of Array.from(source.childNodes)) {
     if (child.nodeType === Node.TEXT_NODE) {
       target.appendChild(doc.createTextNode(child.textContent ?? ''));
@@ -111,7 +116,10 @@ function sanitizeChildren(source: Node, target: Node, doc: Document, depth: numb
 /** Allowlist HTML for the editor value. Returns '' for content with no text. */
 export function sanitizeMessageHtml(html: string): string {
   if (!html) return '';
-  const parsed = new DOMParser().parseFromString(`<body>${html}</body>`, 'text/html');
+  const parsed = new DOMParser().parseFromString(
+    `<body>${html}</body>`,
+    'text/html'
+  );
   const out = document.implementation.createHTMLDocument('');
   const container = out.createElement('div');
   sanitizeChildren(parsed.body, container, out, 0);
@@ -122,7 +130,10 @@ export function sanitizeMessageHtml(html: string): string {
 /** The visible text of a body — what the server's length limit counts. */
 export function messagePlainText(html: string): string {
   if (!html) return '';
-  const parsed = new DOMParser().parseFromString(`<body>${html}</body>`, 'text/html');
+  const parsed = new DOMParser().parseFromString(
+    `<body>${html}</body>`,
+    'text/html'
+  );
   return (parsed.body.textContent ?? '').replace(/\s+/g, ' ').trim();
 }
 
@@ -134,6 +145,8 @@ export function newIdempotencyKey(): string {
   cryptoApi?.getRandomValues?.(bytes);
   bytes[6] = (bytes[6] & 0x0f) | 0x40;
   bytes[8] = (bytes[8] & 0x3f) | 0x80;
-  const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+  const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join(
+    ''
+  );
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }

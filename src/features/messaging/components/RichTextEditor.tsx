@@ -20,7 +20,14 @@
  */
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bold, Italic, Link2, List, ListOrdered, Underline } from 'lucide-react';
+import {
+  Bold,
+  Italic,
+  Link2,
+  List,
+  ListOrdered,
+  Underline,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -38,22 +45,35 @@ export interface RichTextEditorProps {
   readonly placeholder?: string;
 }
 
-type Mark = 'bold' | 'italic' | 'underline' | 'insertUnorderedList' | 'insertOrderedList';
+type Mark =
+  'bold' | 'italic' | 'underline' | 'insertUnorderedList' | 'insertOrderedList';
 
-const MARKS: readonly { command: Mark; icon: typeof Bold; labelKey: string }[] = [
-  { command: 'bold', icon: Bold, labelKey: 'messaging:editor.bold' },
-  { command: 'italic', icon: Italic, labelKey: 'messaging:editor.italic' },
-  { command: 'underline', icon: Underline, labelKey: 'messaging:editor.underline' },
-  { command: 'insertUnorderedList', icon: List, labelKey: 'messaging:editor.bulletList' },
-  {
-    command: 'insertOrderedList',
-    icon: ListOrdered,
-    labelKey: 'messaging:editor.numberedList',
-  },
-];
+const MARKS: readonly { command: Mark; icon: typeof Bold; labelKey: string }[] =
+  [
+    { command: 'bold', icon: Bold, labelKey: 'messaging:editor.bold' },
+    { command: 'italic', icon: Italic, labelKey: 'messaging:editor.italic' },
+    {
+      command: 'underline',
+      icon: Underline,
+      labelKey: 'messaging:editor.underline',
+    },
+    {
+      command: 'insertUnorderedList',
+      icon: List,
+      labelKey: 'messaging:editor.bulletList',
+    },
+    {
+      command: 'insertOrderedList',
+      icon: ListOrdered,
+      labelKey: 'messaging:editor.numberedList',
+    },
+  ];
 
 function canExec(): boolean {
-  return typeof document !== 'undefined' && typeof document.execCommand === 'function';
+  return (
+    typeof document !== 'undefined' &&
+    typeof document.execCommand === 'function'
+  );
 }
 
 export function RichTextEditor({
@@ -106,7 +126,8 @@ export function RichTextEditor({
     if (!canExec() || typeof document.queryCommandState !== 'function') return;
     const element = editorRef.current;
     const selection = document.getSelection();
-    if (!element || !selection || !element.contains(selection.anchorNode)) return;
+    if (!element || !selection || !element.contains(selection.anchorNode))
+      return;
     setActive({
       bold: document.queryCommandState('bold'),
       italic: document.queryCommandState('italic'),

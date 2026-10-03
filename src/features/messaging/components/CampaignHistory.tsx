@@ -49,7 +49,11 @@ function audienceKey(audience: CampaignAudience): string {
   return `messaging:audience.summary.${audience.type}`;
 }
 
-function CampaignCard({ item }: { readonly item: CampaignSummary }): JSX.Element {
+function CampaignCard({
+  item,
+}: {
+  readonly item: CampaignSummary;
+}): JSX.Element {
   const { t, i18n } = useTranslation();
   const { dateTime } = useDateFormatter();
   const language = i18n.language as LanguageCode;
@@ -106,24 +110,45 @@ function CampaignCard({ item }: { readonly item: CampaignSummary }): JSX.Element
               </dd>
             </div>
             <div>
-              <dt className="text-muted-foreground">{t('messaging:history.queued')}</dt>
-              <dd className="font-semibold">{n(p.queued + p.awaitingRelease)}</dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">{t('messaging:history.notSent')}</dt>
+              <dt className="text-muted-foreground">
+                {t('messaging:history.queued')}
+              </dt>
               <dd className="font-semibold">
-                {n(p.skipped + item.excluded.optedOut + item.excluded.suppressed + item.excluded.quota)}
+                {n(p.queued + p.awaitingRelease)}
               </dd>
             </div>
             <div>
-              <dt className="text-muted-foreground">{t('messaging:history.failed')}</dt>
-              <dd className={p.failed > 0 ? 'font-semibold text-destructive' : 'font-semibold'}>
+              <dt className="text-muted-foreground">
+                {t('messaging:history.notSent')}
+              </dt>
+              <dd className="font-semibold">
+                {n(
+                  p.skipped +
+                    item.excluded.optedOut +
+                    item.excluded.suppressed +
+                    item.excluded.quota
+                )}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-muted-foreground">
+                {t('messaging:history.failed')}
+              </dt>
+              <dd
+                className={
+                  p.failed > 0
+                    ? 'font-semibold text-destructive'
+                    : 'font-semibold'
+                }
+              >
                 {n(p.failed)}
               </dd>
             </div>
             {p.delivered > 0 || p.bounced > 0 ? (
               <div className="col-span-2 sm:col-span-4">
-                <dt className="sr-only">{t('messaging:history.providerReports')}</dt>
+                <dt className="sr-only">
+                  {t('messaging:history.providerReports')}
+                </dt>
                 <dd className="text-muted-foreground">
                   {t('messaging:history.delivered', {
                     delivered: n(p.delivered),
@@ -164,7 +189,11 @@ export function CampaignHistory({
 
   if (isLoading) {
     return (
-      <div className="space-y-3" aria-busy="true" aria-label={t('messaging:history.loading')}>
+      <div
+        className="space-y-3"
+        aria-busy="true"
+        aria-label={t('messaging:history.loading')}
+      >
         {[0, 1, 2].map((key) => (
           <Skeleton key={key} className="h-24 w-full" />
         ))}
@@ -172,7 +201,13 @@ export function CampaignHistory({
     );
   }
   if (error && items.length === 0) {
-    return <ErrorState kind={error.kind} requestId={error.requestId} onRetry={onRetry} />;
+    return (
+      <ErrorState
+        kind={error.kind}
+        requestId={error.requestId}
+        onRetry={onRetry}
+      />
+    );
   }
   if (items.length === 0) {
     return (
@@ -200,7 +235,9 @@ export function CampaignHistory({
             disabled={isFetchingNextPage}
             aria-busy={isFetchingNextPage}
           >
-            {isFetchingNextPage ? t('messaging:history.loadingMore') : t('messaging:history.loadMore')}
+            {isFetchingNextPage
+              ? t('messaging:history.loadingMore')
+              : t('messaging:history.loadMore')}
           </Button>
         </div>
       ) : null}

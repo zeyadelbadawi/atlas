@@ -487,7 +487,8 @@
         "revoked": "{{actor}} ألغى رابط دعوة للطلاب"
       },
       "message": {
-        "sent": "أرسل {{actor}} رسالة إلى {{recipientCount}} شخصًا"
+        "sent": "أرسل {{actor}} رسالة",
+        "sent_full": "أرسل {{actor}} رسالة إلى {{recipientCount}} شخصًا"
       }
     },
     "enrollment": {
@@ -674,7 +675,8 @@
         "deleted": "{{actor}} حذف استفسار تواصل"
       },
       "campaign": {
-        "sent": "أرسل {{actor}} رسالة من المنصة إلى {{recipientCount}} شخصًا"
+        "sent": "أرسل {{actor}} رسالة من المنصة",
+        "sent_full": "أرسل {{actor}} رسالة من المنصة إلى {{recipientCount}} شخصًا"
       }
     }
   }

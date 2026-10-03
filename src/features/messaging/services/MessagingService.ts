@@ -38,7 +38,10 @@ export class AcademyMessagesService extends BaseService {
     );
   }
 
-  send(academyId: string, payload: CampaignSendRequest): Promise<CampaignAccepted> {
+  send(
+    academyId: string,
+    payload: CampaignSendRequest
+  ): Promise<CampaignAccepted> {
     return this.client.post<CampaignAccepted, CampaignSendRequest>(
       this.path(academyId, 'messages'),
       payload
@@ -87,7 +90,9 @@ export class PlatformCampaignsService extends BaseService {
 
 function compact(params: object): Record<string, string | number> {
   return Object.fromEntries(
-    Object.entries(params).filter(([, value]) => value !== undefined && value !== '')
+    Object.entries(params).filter(
+      ([, value]) => value !== undefined && value !== ''
+    )
   ) as Record<string, string | number>;
 }
 

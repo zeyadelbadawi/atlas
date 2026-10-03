@@ -18,12 +18,12 @@ import type { BreadcrumbItem } from '@types';
 import { MessageComposer } from '../components/MessageComposer';
 import { QuotaMeter } from '../components/QuotaMeter';
 import { CampaignHistory } from '../components/CampaignHistory';
+import { AcademyAudiencePicker } from '../components/AcademyAudiencePicker';
 import {
-  AcademyAudiencePicker,
   INITIAL_ACADEMY_AUDIENCE,
   toAcademyAudience,
   type AcademyAudienceDraft,
-} from '../components/AcademyAudiencePicker';
+} from '../utils/academy-audience';
 import {
   useAcademyMessageHistory,
   useAcademyMessagePreview,
@@ -34,7 +34,9 @@ import {
 export default function AcademyMessagesPage(): JSX.Element {
   const { t } = useTranslation();
   const { academyId = '' } = useParams<{ academyId: string }>();
-  const [draft, setDraft] = useState<AcademyAudienceDraft>(INITIAL_ACADEMY_AUDIENCE);
+  const [draft, setDraft] = useState<AcademyAudienceDraft>(
+    INITIAL_ACADEMY_AUDIENCE
+  );
 
   const quota = useAcademyMessageQuota(academyId);
   const history = useAcademyMessageHistory(academyId);
@@ -60,14 +62,20 @@ export default function AcademyMessagesPage(): JSX.Element {
       <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">{t('messaging:composer.title')}</CardTitle>
+            <CardTitle className="text-lg">
+              {t('messaging:composer.title')}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <MessageComposer
               idPrefix="academy-message"
               audience={toAcademyAudience(draft)}
               audienceSlot={
-                <AcademyAudiencePicker academyId={academyId} value={draft} onChange={setDraft} />
+                <AcademyAudiencePicker
+                  academyId={academyId}
+                  value={draft}
+                  onChange={setDraft}
+                />
               }
               onPreview={preview.mutateAsync}
               isPreviewing={preview.isPending}
@@ -80,22 +88,32 @@ export default function AcademyMessagesPage(): JSX.Element {
 
         <Card className="h-fit">
           <CardHeader>
-            <CardTitle className="text-lg">{t('messaging:quota.title')}</CardTitle>
+            <CardTitle className="text-lg">
+              {t('messaging:quota.title')}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {quota.isLoading ? (
               <Skeleton className="h-10 w-full" />
             ) : quota.error ? (
-              <ErrorState kind={quota.error.kind} onRetry={() => void quota.refetch()} />
+              <ErrorState
+                kind={quota.error.kind}
+                onRetry={() => void quota.refetch()}
+              />
             ) : quota.data ? (
               <QuotaMeter quota={quota.data} />
             ) : null}
-            <p className="text-xs text-muted-foreground">{t('messaging:quota.explainer')}</p>
+            <p className="text-xs text-muted-foreground">
+              {t('messaging:quota.explainer')}
+            </p>
           </CardContent>
         </Card>
       </div>
 
-      <section aria-labelledby="academy-message-history" className="mt-8 space-y-3">
+      <section
+        aria-labelledby="academy-message-history"
+        className="mt-8 space-y-3"
+      >
         <h2 id="academy-message-history" className="text-lg font-semibold">
           {t('messaging:history.title')}
         </h2>

@@ -20,7 +20,11 @@ export interface QuotaMeterProps {
   readonly className?: string;
 }
 
-export function QuotaMeter({ quota, pending = 0, className }: QuotaMeterProps): JSX.Element {
+export function QuotaMeter({
+  quota,
+  pending = 0,
+  className,
+}: QuotaMeterProps): JSX.Element {
   const { t, i18n } = useTranslation();
   const { date } = useDateFormatter();
   const language = i18n.language as LanguageCode;
@@ -29,10 +33,15 @@ export function QuotaMeter({ quota, pending = 0, className }: QuotaMeterProps): 
 
   if (quota.limit === null) {
     return (
-      <div className={cn('flex items-center gap-2 text-sm', className)} data-testid="quota-meter">
+      <div
+        className={cn('flex items-center gap-2 text-sm', className)}
+        data-testid="quota-meter"
+      >
         <Mail className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
         <span>
-          {t('messaging:quota.unlimited', { used: formatNumber(quota.used, language) })}
+          {t('messaging:quota.unlimited', {
+            used: formatNumber(quota.used, language),
+          })}
         </span>
       </div>
     );
@@ -41,7 +50,9 @@ export function QuotaMeter({ quota, pending = 0, className }: QuotaMeterProps): 
   const limit = quota.limit;
   const usedPct = limit === 0 ? 100 : Math.min(100, (quota.used / limit) * 100);
   const pendingPct =
-    limit === 0 ? 0 : Math.min(100 - usedPct, (Math.max(0, pending) / limit) * 100);
+    limit === 0
+      ? 0
+      : Math.min(100 - usedPct, (Math.max(0, pending) / limit) * 100);
   const exhausted = quota.remaining === 0;
   const label = t('messaging:quota.usage', {
     used: formatNumber(quota.used, language),
@@ -53,7 +64,12 @@ export function QuotaMeter({ quota, pending = 0, className }: QuotaMeterProps): 
     <div className={cn('space-y-2', className)} data-testid="quota-meter">
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 text-sm">
         <span className="font-medium">{label}</span>
-        <span className={cn('text-xs', exhausted ? 'text-destructive' : 'text-muted-foreground')}>
+        <span
+          className={cn(
+            'text-xs',
+            exhausted ? 'text-destructive' : 'text-muted-foreground'
+          )}
+        >
           {t('messaging:quota.remaining', {
             count: quota.remaining ?? 0,
             formatted: formatNumber(quota.remaining ?? 0, language),
@@ -74,7 +90,10 @@ export function QuotaMeter({ quota, pending = 0, className }: QuotaMeterProps): 
           style={{ width: `${usedPct}%` }}
         />
         {pendingPct > 0 ? (
-          <div className="h-full bg-primary/40" style={{ width: `${pendingPct}%` }} />
+          <div
+            className="h-full bg-primary/40"
+            style={{ width: `${pendingPct}%` }}
+          />
         ) : null}
       </div>
     </div>

@@ -23,7 +23,8 @@ export const NAME_CONFLICT_ERROR_KEYS = {
   organizationNameUnavailable: 'errors.organization.nameUnavailable',
   academyNameTaken: 'errors.academy.nameTaken',
   learnerNameTaken: 'errors.academy.learnerNameTaken',
-  learnerNameTakenExistingAccount: 'errors.academy.learnerNameTakenExistingAccount',
+  learnerNameTakenExistingAccount:
+    'errors.academy.learnerNameTakenExistingAccount',
   profileNameTakenInAcademy: 'errors.profile.nameTakenInAcademy',
   nameInvalid: 'errors.validation.nameInvalid',
 } as const;
@@ -42,14 +43,18 @@ export interface NameConflict {
 export function nameConflictFromError(error: unknown): NameConflict | null {
   if (!isApiError(error) || !KEYS.includes(error.messageKey)) return null;
   const field =
-    error.violations?.find((violation) => violation.messageKey === error.messageKey)
-      ?.field ??
+    error.violations?.find(
+      (violation) => violation.messageKey === error.messageKey
+    )?.field ??
     error.violations?.[0]?.field ??
     'name';
   const rawAcademies = error.details?.academies;
   const academies = Array.isArray(rawAcademies)
     ? rawAcademies.flatMap((row) =>
-        row && typeof row === 'object' && !Array.isArray(row) && typeof row.name === 'string'
+        row &&
+        typeof row === 'object' &&
+        !Array.isArray(row) &&
+        typeof row.name === 'string'
           ? [row.name]
           : []
       )
@@ -59,9 +64,10 @@ export function nameConflictFromError(error: unknown): NameConflict | null {
 
 function formatList(language: string, items: readonly string[]): string {
   try {
-    return new Intl.ListFormat(language, { style: 'long', type: 'conjunction' }).format(
-      items
-    );
+    return new Intl.ListFormat(language, {
+      style: 'long',
+      type: 'conjunction',
+    }).format(items);
   } catch {
     return items.join(', ');
   }
@@ -88,8 +94,7 @@ export function useNameConflictError<TValues extends FieldValues>(
   const { setError } = form;
   const mapped = conflict ? options.fields?.[conflict.field] : undefined;
   const target = (mapped ?? options.fallbackField ?? conflict?.field) as
-    | Path<TValues>
-    | undefined;
+    Path<TValues> | undefined;
   const messageKey = conflict?.messageKey;
   const academies = conflict?.academies.join('\u0000');
 

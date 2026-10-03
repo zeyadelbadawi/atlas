@@ -19,19 +19,19 @@ import { PageContainer, PageHeader } from '@components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import type { BreadcrumbItem } from '@types';
-import { MessageComposer } from '@features/messaging/components/MessageComposer';
-import { CampaignHistory } from '@features/messaging/components/CampaignHistory';
 import {
-  INITIAL_PLATFORM_AUDIENCE,
-  PlatformAudiencePicker,
-  toPlatformAudience,
-  type PlatformAudienceDraft,
-} from '@features/messaging/components/PlatformAudiencePicker';
-import {
+  CampaignHistory,
+  MessageComposer,
   usePlatformCampaignHistory,
   usePlatformCampaignPreview,
   useSendPlatformCampaign,
-} from '@features/messaging/hooks/useMessaging';
+} from '@features/messaging';
+import { PlatformAudiencePicker } from './PlatformAudiencePicker';
+import {
+  INITIAL_PLATFORM_AUDIENCE,
+  toPlatformAudience,
+  type PlatformAudienceDraft,
+} from './platform-audience';
 
 const BREADCRUMBS: readonly BreadcrumbItem[] = [
   {
@@ -43,7 +43,9 @@ const BREADCRUMBS: readonly BreadcrumbItem[] = [
 
 export default function ComposeAndSendPage(): JSX.Element {
   const { t } = useTranslation();
-  const [draft, setDraft] = useState<PlatformAudienceDraft>(INITIAL_PLATFORM_AUDIENCE);
+  const [draft, setDraft] = useState<PlatformAudienceDraft>(
+    INITIAL_PLATFORM_AUDIENCE
+  );
   const preview = usePlatformCampaignPreview();
   const send = useSendPlatformCampaign();
   const history = usePlatformCampaignHistory();
@@ -58,13 +60,17 @@ export default function ComposeAndSendPage(): JSX.Element {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">{t('messaging:composer.title')}</CardTitle>
+          <CardTitle className="text-lg">
+            {t('messaging:composer.title')}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <MessageComposer
             idPrefix="platform-campaign"
             audience={toPlatformAudience(draft)}
-            audienceSlot={<PlatformAudiencePicker value={draft} onChange={setDraft} />}
+            audienceSlot={
+              <PlatformAudiencePicker value={draft} onChange={setDraft} />
+            }
             onPreview={preview.mutateAsync}
             isPreviewing={preview.isPending}
             onSend={send.mutateAsync}
@@ -73,7 +79,10 @@ export default function ComposeAndSendPage(): JSX.Element {
         </CardContent>
       </Card>
 
-      <section aria-labelledby="platform-campaign-history" className="mt-8 space-y-3">
+      <section
+        aria-labelledby="platform-campaign-history"
+        className="mt-8 space-y-3"
+      >
         <h2 id="platform-campaign-history" className="text-lg font-semibold">
           {t('messaging:history.title')}
         </h2>

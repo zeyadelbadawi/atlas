@@ -53,7 +53,11 @@ vi.mock('@hooks', async (importOriginal) => ({
 vi.mock('@features/domain', () => ({
   useAcademyDomain: () => ({ data: undefined }),
 }));
-vi.mock('@forms', () => ({ useServerValidation: () => undefined }));
+vi.mock('@forms', () => ({
+  useServerValidation: () => undefined,
+  useNameConflictError: () => null,
+  nameConflictFromError: () => null,
+}));
 // Task 3 — the dashboard's activity widget reads the audit-log feature.
 vi.mock('@features/audit-log', () => ({
   useAcademyActivityLog: () => ({

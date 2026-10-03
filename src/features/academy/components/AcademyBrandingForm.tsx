@@ -35,7 +35,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
 import { useFilePicker, useUnsavedChanges } from '@hooks';
-import { nameConflictFromError, useNameConflictError, useServerValidation } from '@forms';
+import {
+  nameConflictFromError,
+  useNameConflictError,
+  useServerValidation,
+} from '@forms';
 import { useUploadMediaAsset } from '@features/media';
 import { useUpdateAcademyBranding } from '../hooks';
 import {

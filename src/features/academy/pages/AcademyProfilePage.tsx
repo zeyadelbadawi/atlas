@@ -34,7 +34,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { saveViaForm } from '@utils';
 import { useUnsavedChanges } from '@hooks';
-import { nameConflictFromError, useNameConflictError, useServerValidation } from '@forms';
+import {
+  nameConflictFromError,
+  useNameConflictError,
+  useServerValidation,
+} from '@forms';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useAcademy, useUpdateAcademy } from '../hooks';
 import {

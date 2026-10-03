@@ -27,16 +27,28 @@ export function PreviewSummary({
   const n = (value: number) => formatNumber(value, language);
   const exclusions = [
     channels.email && preview.excluded.optedOut > 0
-      ? t('messaging:preview.optedOut', { count: preview.excluded.optedOut, formatted: n(preview.excluded.optedOut) })
+      ? t('messaging:preview.optedOut', {
+          count: preview.excluded.optedOut,
+          formatted: n(preview.excluded.optedOut),
+        })
       : null,
     channels.email && preview.excluded.suppressed > 0
-      ? t('messaging:preview.suppressed', { count: preview.excluded.suppressed, formatted: n(preview.excluded.suppressed) })
+      ? t('messaging:preview.suppressed', {
+          count: preview.excluded.suppressed,
+          formatted: n(preview.excluded.suppressed),
+        })
       : null,
     showLearnerExclusions && preview.excluded.blocked > 0
-      ? t('messaging:preview.blocked', { count: preview.excluded.blocked, formatted: n(preview.excluded.blocked) })
+      ? t('messaging:preview.blocked', {
+          count: preview.excluded.blocked,
+          formatted: n(preview.excluded.blocked),
+        })
       : null,
     showLearnerExclusions && preview.excluded.pending > 0
-      ? t('messaging:preview.pending', { count: preview.excluded.pending, formatted: n(preview.excluded.pending) })
+      ? t('messaging:preview.pending', {
+          count: preview.excluded.pending,
+          formatted: n(preview.excluded.pending),
+        })
       : null,
   ].filter((line): line is string => line !== null);
 
@@ -53,25 +65,46 @@ export function PreviewSummary({
       <dl className="grid gap-3 sm:grid-cols-3">
         <div className="flex items-center gap-2">
           <Users className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-          <dt className="text-sm text-muted-foreground">{t('messaging:preview.recipients')}</dt>
-          <dd className="ms-auto text-sm font-semibold sm:ms-0" data-testid="preview-recipients">
+          <dt className="text-sm text-muted-foreground">
+            {t('messaging:preview.recipients')}
+          </dt>
+          <dd
+            className="ms-auto text-sm font-semibold sm:ms-0"
+            data-testid="preview-recipients"
+          >
             {n(preview.recipientCount)}
           </dd>
         </div>
         {channels.email ? (
           <div className="flex items-center gap-2">
-            <Mail className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-            <dt className="text-sm text-muted-foreground">{t('messaging:preview.emails')}</dt>
-            <dd className="ms-auto text-sm font-semibold sm:ms-0" data-testid="preview-emails">
+            <Mail
+              className="h-4 w-4 text-muted-foreground"
+              aria-hidden="true"
+            />
+            <dt className="text-sm text-muted-foreground">
+              {t('messaging:preview.emails')}
+            </dt>
+            <dd
+              className="ms-auto text-sm font-semibold sm:ms-0"
+              data-testid="preview-emails"
+            >
               {n(preview.emailCount)}
             </dd>
           </div>
         ) : null}
         {channels.inApp ? (
           <div className="flex items-center gap-2">
-            <BellRing className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-            <dt className="text-sm text-muted-foreground">{t('messaging:preview.inApp')}</dt>
-            <dd className="ms-auto text-sm font-semibold sm:ms-0" data-testid="preview-in-app">
+            <BellRing
+              className="h-4 w-4 text-muted-foreground"
+              aria-hidden="true"
+            />
+            <dt className="text-sm text-muted-foreground">
+              {t('messaging:preview.inApp')}
+            </dt>
+            <dd
+              className="ms-auto text-sm font-semibold sm:ms-0"
+              data-testid="preview-in-app"
+            >
               {n(preview.inAppCount)}
             </dd>
           </div>
@@ -79,7 +112,9 @@ export function PreviewSummary({
       </dl>
       {exclusions.length > 0 ? (
         <div className="space-y-1">
-          <p className="text-xs font-medium text-muted-foreground">{t('messaging:preview.notEmailed')}</p>
+          <p className="text-xs font-medium text-muted-foreground">
+            {t('messaging:preview.notEmailed')}
+          </p>
           <ul className="list-disc space-y-0.5 ps-5 text-xs text-muted-foreground">
             {exclusions.map((line) => (
               <li key={line}>{line}</li>
@@ -88,7 +123,9 @@ export function PreviewSummary({
         </div>
       ) : null}
       {preview.recipientCount === 0 ? (
-        <p className="text-sm text-muted-foreground">{t('messaging:preview.nobody')}</p>
+        <p className="text-sm text-muted-foreground">
+          {t('messaging:preview.nobody')}
+        </p>
       ) : null}
       {channels.email && preview.overBy > 0 && preview.quota ? (
         <Alert variant="destructive" data-testid="preview-over-quota">

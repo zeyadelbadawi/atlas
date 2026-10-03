@@ -154,7 +154,9 @@ export function ProfilePersonalSection({
                 disabled={!isEditing || updateProfile.isPending}
                 {...register('lastName')}
                 aria-invalid={!!errors.lastName}
-                aria-describedby={errors.lastName ? 'lastName-error' : undefined}
+                aria-describedby={
+                  errors.lastName ? 'lastName-error' : undefined
+                }
               />
               {errors.lastName ? (
                 <p

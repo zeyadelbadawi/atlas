@@ -62,29 +62,56 @@ export function ConfirmSendDialog({
       : null;
 
   return (
-    <AlertDialog open={open} onOpenChange={(next) => !isSending && onOpenChange(next)}>
+    <AlertDialog
+      open={open}
+      onOpenChange={(next) => !isSending && onOpenChange(next)}
+    >
       <AlertDialogContent data-testid="confirm-send-dialog">
         <AlertDialogHeader>
           <AlertDialogTitle>{t('messaging:confirm.title')}</AlertDialogTitle>
           <AlertDialogDescription asChild>
             <div className="space-y-2 text-sm">
               <p>
-                <span className="font-medium">{t('messaging:confirm.subject')}</span>{' '}
+                <span className="font-medium">
+                  {t('messaging:confirm.subject')}
+                </span>{' '}
                 <span dir="auto">{subject}</span>
               </p>
               <ul className="list-disc space-y-1 ps-5">
-                <li>{t('messaging:confirm.recipients', { count: preview.recipientCount, formatted: n(preview.recipientCount) })}</li>
+                <li>
+                  {t('messaging:confirm.recipients', {
+                    count: preview.recipientCount,
+                    formatted: n(preview.recipientCount),
+                  })}
+                </li>
                 {channels.email ? (
-                  <li>{t('messaging:confirm.emails', { count: preview.emailCount, formatted: n(preview.emailCount) })}</li>
+                  <li>
+                    {t('messaging:confirm.emails', {
+                      count: preview.emailCount,
+                      formatted: n(preview.emailCount),
+                    })}
+                  </li>
                 ) : null}
                 {channels.inApp ? (
-                  <li>{t('messaging:confirm.inApp', { count: preview.inAppCount, formatted: n(preview.inAppCount) })}</li>
+                  <li>
+                    {t('messaging:confirm.inApp', {
+                      count: preview.inAppCount,
+                      formatted: n(preview.inAppCount),
+                    })}
+                  </li>
                 ) : null}
                 {remainingAfter !== null ? (
-                  <li>{t('messaging:confirm.quotaAfter', { count: remainingAfter, formatted: n(remainingAfter) })}</li>
+                  <li>
+                    {t('messaging:confirm.quotaAfter', {
+                      count: remainingAfter,
+                      formatted: n(remainingAfter),
+                    })}
+                  </li>
                 ) : null}
               </ul>
-              <p className="text-muted-foreground">{t('messaging:confirm.irreversible')}</p>
+              <p className="text-muted-foreground">
+                {t('messaging:confirm.irreversible')}
+              </p>
             </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -98,7 +125,9 @@ export function ConfirmSendDialog({
               data-testid="confirm-large-audience"
             />
             <label htmlFor={checkboxId} className="text-sm">
-              {t('messaging:confirm.largeAudience', { formatted: n(preview.recipientCount) })}
+              {t('messaging:confirm.largeAudience', {
+                formatted: n(preview.recipientCount),
+              })}
             </label>
           </div>
         ) : null}
@@ -116,7 +145,10 @@ export function ConfirmSendDialog({
           >
             {isSending ? (
               <>
-                <Loader2 className="me-2 h-4 w-4 animate-spin" aria-hidden="true" />
+                <Loader2
+                  className="me-2 h-4 w-4 animate-spin"
+                  aria-hidden="true"
+                />
                 {t('messaging:confirm.sending')}
               </>
             ) : (

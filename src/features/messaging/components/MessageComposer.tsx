@@ -19,7 +19,14 @@
  *     second click after an ambiguous error all resolve to the same message.
  *     The key is renewed only when the draft changes or after a success.
  */
-import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react';
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { AlertTriangle, Eye, Loader2, Send } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -52,7 +59,9 @@ export interface MessageComposerProps {
   readonly audienceSlot: ReactNode;
   /** `null` while the picker is incomplete (e.g. no course chosen yet). */
   readonly audience: CampaignAudience | null;
-  readonly onPreview: (request: CampaignPreviewRequest) => Promise<CampaignPreview>;
+  readonly onPreview: (
+    request: CampaignPreviewRequest
+  ) => Promise<CampaignPreview>;
   readonly isPreviewing: boolean;
   readonly onSend: (request: CampaignSendRequest) => Promise<CampaignAccepted>;
   readonly isSending: boolean;
@@ -63,8 +72,16 @@ export interface MessageComposerProps {
 
 type Notice =
   | { readonly kind: 'audienceChanged' }
-  | { readonly kind: 'quota'; readonly remaining: number; readonly requested: number }
-  | { readonly kind: 'error'; readonly messageKey: string; readonly requestId?: string };
+  | {
+      readonly kind: 'quota';
+      readonly remaining: number;
+      readonly requested: number;
+    }
+  | {
+      readonly kind: 'error';
+      readonly messageKey: string;
+      readonly requestId?: string;
+    };
 
 function detailNumber(error: ApiError, key: string): number {
   const value = error.details?.[key];
@@ -89,7 +106,10 @@ export function MessageComposer({
   const [contentLocale, setContentLocale] = useState<'en' | 'ar'>(
     i18n.language === 'ar' ? 'ar' : 'en'
   );
-  const [channels, setChannels] = useState<CampaignChannels>({ email: true, inApp: true });
+  const [channels, setChannels] = useState<CampaignChannels>({
+    email: true,
+    inApp: true,
+  });
   const [preview, setPreview] = useState<CampaignPreview | null>(null);
   const [notice, setNotice] = useState<Notice | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -106,9 +126,12 @@ export function MessageComposer({
   const audienceVersion = JSON.stringify(audience);
   const bodyText = useMemo(() => messagePlainText(bodyHtml), [bodyHtml]);
   const subjectTrimmed = subject.trim();
-  const subjectValid = subjectTrimmed.length > 0 && subjectTrimmed.length <= SUBJECT_MAX;
+  const subjectValid =
+    subjectTrimmed.length > 0 && subjectTrimmed.length <= SUBJECT_MAX;
   const bodyValid =
-    bodyText.length > 0 && bodyText.length <= BODY_TEXT_MAX && bodyHtml.length <= BODY_HTML_MAX;
+    bodyText.length > 0 &&
+    bodyText.length <= BODY_TEXT_MAX &&
+    bodyHtml.length <= BODY_HTML_MAX;
   const hasChannel = channels.email || channels.inApp;
 
   // Numbers seen for ANOTHER audience or channel set are not numbers for this one.
@@ -119,7 +142,14 @@ export function MessageComposer({
   // A changed draft is a different message: it gets a new idempotency key.
   useEffect(() => {
     idempotencyKey.current = null;
-  }, [audienceVersion, channels.email, channels.inApp, subject, bodyHtml, contentLocale]);
+  }, [
+    audienceVersion,
+    channels.email,
+    channels.inApp,
+    subject,
+    bodyHtml,
+    contentLocale,
+  ]);
 
   const runPreview = async (): Promise<CampaignPreview | null> => {
     if (!audience || !hasChannel) return null;
@@ -130,7 +160,11 @@ export function MessageComposer({
     } catch (error) {
       const apiError = error as ApiError;
       setPreview(null);
-      setNotice({ kind: 'error', messageKey: apiError.messageKey, requestId: apiError.requestId });
+      setNotice({
+        kind: 'error',
+        messageKey: apiError.messageKey,
+        requestId: apiError.requestId,
+      });
       return null;
     }
   };
@@ -171,9 +205,13 @@ export function MessageComposer({
         ...(confirmLargeAudience ? { confirmLargeAudience: true } : {}),
       });
       setConfirmOpen(false);
-      notifySuccess('messaging:toast.sentTitle', 'messaging:toast.sentDescription', {
-        count: accepted.recipientCount,
-      });
+      notifySuccess(
+        'messaging:toast.sentTitle',
+        'messaging:toast.sentDescription',
+        {
+          count: accepted.recipientCount,
+        }
+      );
       setSubject('');
       setBodyHtml('');
       setPreview(null);
@@ -203,7 +241,11 @@ export function MessageComposer({
       }
       // Anything else (network, server, rate limit): keep the key, so trying
       // again cannot create a second message if the first one landed.
-      setNotice({ kind: 'error', messageKey: apiError.messageKey, requestId: apiError.requestId });
+      setNotice({
+        kind: 'error',
+        messageKey: apiError.messageKey,
+        requestId: apiError.requestId,
+      });
     }
   };
 
@@ -222,8 +264,12 @@ export function MessageComposer({
           {notice.kind === 'audienceChanged' ? (
             <Alert>
               <AlertTriangle className="h-4 w-4" aria-hidden="true" />
-              <AlertTitle>{t('messaging:notice.audienceChangedTitle')}</AlertTitle>
-              <AlertDescription>{t('messaging:notice.audienceChanged')}</AlertDescription>
+              <AlertTitle>
+                {t('messaging:notice.audienceChangedTitle')}
+              </AlertTitle>
+              <AlertDescription>
+                {t('messaging:notice.audienceChanged')}
+              </AlertDescription>
             </Alert>
           ) : notice.kind === 'quota' ? (
             <Alert variant="destructive" data-testid="quota-exceeded-alert">
@@ -241,7 +287,9 @@ export function MessageComposer({
               <AlertTriangle className="h-4 w-4" aria-hidden="true" />
               <AlertTitle>{t('messaging:notice.errorTitle')}</AlertTitle>
               <AlertDescription>
-                {t(notice.messageKey, { defaultValue: t('messaging:notice.error') })}
+                {t(notice.messageKey, {
+                  defaultValue: t('messaging:notice.error'),
+                })}
                 {notice.requestId ? (
                   <span className="mt-1 block text-xs opacity-80" dir="ltr">
                     {t('messaging:notice.reference', { id: notice.requestId })}
@@ -254,17 +302,23 @@ export function MessageComposer({
       ) : null}
 
       <fieldset className="space-y-3">
-        <legend className="text-sm font-semibold">{t('messaging:composer.audience')}</legend>
+        <legend className="text-sm font-semibold">
+          {t('messaging:composer.audience')}
+        </legend>
         {audienceSlot}
       </fieldset>
 
       <fieldset className="space-y-2">
-        <legend className="text-sm font-semibold">{t('messaging:composer.channels')}</legend>
+        <legend className="text-sm font-semibold">
+          {t('messaging:composer.channels')}
+        </legend>
         <div className="flex flex-col gap-2 sm:flex-row sm:gap-6">
           <label className="flex min-h-11 items-center gap-3 text-sm">
             <Checkbox
               checked={channels.email}
-              onCheckedChange={(value) => setChannels((c) => ({ ...c, email: value === true }))}
+              onCheckedChange={(value) =>
+                setChannels((c) => ({ ...c, email: value === true }))
+              }
               data-testid="channel-email"
             />
             {t('messaging:composer.channelEmail')}
@@ -272,14 +326,18 @@ export function MessageComposer({
           <label className="flex min-h-11 items-center gap-3 text-sm">
             <Checkbox
               checked={channels.inApp}
-              onCheckedChange={(value) => setChannels((c) => ({ ...c, inApp: value === true }))}
+              onCheckedChange={(value) =>
+                setChannels((c) => ({ ...c, inApp: value === true }))
+              }
               data-testid="channel-in-app"
             />
             {t('messaging:composer.channelInApp')}
           </label>
         </div>
         {!hasChannel ? (
-          <p className="text-xs text-destructive">{t('messaging:composer.channelRequired')}</p>
+          <p className="text-xs text-destructive">
+            {t('messaging:composer.channelRequired')}
+          </p>
         ) : null}
       </fieldset>
 
@@ -298,12 +356,17 @@ export function MessageComposer({
         <p
           id={subjectHelpId}
           className={
-            attempted && !subjectValid ? 'text-xs text-destructive' : 'text-xs text-muted-foreground'
+            attempted && !subjectValid
+              ? 'text-xs text-destructive'
+              : 'text-xs text-muted-foreground'
           }
         >
           {attempted && !subjectValid
             ? t('messaging:composer.subjectRequired')
-            : t('messaging:composer.subjectCount', { count: subject.length, max: SUBJECT_MAX })}
+            : t('messaging:composer.subjectCount', {
+                count: subject.length,
+                max: SUBJECT_MAX,
+              })}
         </p>
       </div>
 
@@ -313,14 +376,19 @@ export function MessageComposer({
             {t('messaging:composer.body')}
           </span>
           <div className="flex items-center gap-2">
-            <Label htmlFor={languageId} className="text-xs text-muted-foreground">
+            <Label
+              htmlFor={languageId}
+              className="text-xs text-muted-foreground"
+            >
               {t('messaging:composer.language')}
             </Label>
             <select
               id={languageId}
               className="min-h-11 rounded-md border border-input bg-background px-2 text-sm"
               value={contentLocale}
-              onChange={(event) => setContentLocale(event.target.value === 'ar' ? 'ar' : 'en')}
+              onChange={(event) =>
+                setContentLocale(event.target.value === 'ar' ? 'ar' : 'en')
+              }
             >
               <option value="en">{t('messaging:composer.languageEn')}</option>
               <option value="ar">{t('messaging:composer.languageAr')}</option>
@@ -347,7 +415,10 @@ export function MessageComposer({
         >
           {attempted && bodyText.length === 0
             ? t('messaging:composer.bodyRequired')
-            : t('messaging:composer.bodyCount', { count: bodyText.length, max: BODY_TEXT_MAX })}
+            : t('messaging:composer.bodyCount', {
+                count: bodyText.length,
+                max: BODY_TEXT_MAX,
+              })}
         </p>
       </div>
 
@@ -374,7 +445,9 @@ export function MessageComposer({
           ) : (
             <Eye className="me-2 h-4 w-4" aria-hidden="true" />
           )}
-          {preview ? t('messaging:composer.refreshPreview') : t('messaging:composer.preview')}
+          {preview
+            ? t('messaging:composer.refreshPreview')
+            : t('messaging:composer.preview')}
         </Button>
         <Button
           type="submit"
@@ -388,7 +461,10 @@ export function MessageComposer({
         </Button>
       </div>
       {!preview ? (
-        <p id={`${idPrefix}-send-help`} className="text-end text-xs text-muted-foreground">
+        <p
+          id={`${idPrefix}-send-help`}
+          className="text-end text-xs text-muted-foreground"
+        >
           {t('messaging:composer.previewFirst')}
         </p>
       ) : null}

@@ -43,7 +43,11 @@ import { toast } from '@/hooks/use-toast';
 import { saveViaForm } from '@utils';
 import { useAuth, useUnsavedChanges } from '@hooks';
 import { useAcademyDomain } from '@features/domain';
-import { nameConflictFromError, useNameConflictError, useServerValidation } from '@forms';
+import {
+  nameConflictFromError,
+  useNameConflictError,
+  useServerValidation,
+} from '@forms';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useAcademy, useUpdateAcademy } from '../hooks';
 import { DeleteAcademyCard } from '../components/DeleteAcademyCard';

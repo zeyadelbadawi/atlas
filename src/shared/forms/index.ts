@@ -15,4 +15,7 @@ export {
   nameConflictFromError,
   NAME_CONFLICT_ERROR_KEYS,
 } from './useNameConflictError';
-export type { NameConflict, UseNameConflictErrorOptions } from './useNameConflictError';
+export type {
+  NameConflict,
+  UseNameConflictErrorOptions,
+} from './useNameConflictError';

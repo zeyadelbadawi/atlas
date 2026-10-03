@@ -21,7 +21,10 @@ function conflict(
   details?: Record<string, unknown>
 ): ApiError {
   return new ApiError({
-    kind: messageKey === NAME_CONFLICT_ERROR_KEYS.nameInvalid ? 'validation' : 'conflict',
+    kind:
+      messageKey === NAME_CONFLICT_ERROR_KEYS.nameInvalid
+        ? 'validation'
+        : 'conflict',
     messageKey,
     status: messageKey === NAME_CONFLICT_ERROR_KEYS.nameInvalid ? 400 : 409,
     violations: [{ field, messageKey }],
@@ -36,7 +39,10 @@ describe('nameConflictFromError', () => {
   it('recognises every W4 key and reads the server field', () => {
     expect(
       nameConflictFromError(
-        conflict(NAME_CONFLICT_ERROR_KEYS.organizationNameUnavailable, 'organizationName')
+        conflict(
+          NAME_CONFLICT_ERROR_KEYS.organizationNameUnavailable,
+          'organizationName'
+        )
       )
     ).toEqual({
       field: 'organizationName',
@@ -44,16 +50,22 @@ describe('nameConflictFromError', () => {
       academies: [],
     });
     expect(
-      nameConflictFromError(conflict(NAME_CONFLICT_ERROR_KEYS.academyNameTaken, 'academyName'))
-        ?.field
+      nameConflictFromError(
+        conflict(NAME_CONFLICT_ERROR_KEYS.academyNameTaken, 'academyName')
+      )?.field
     ).toBe('academyName');
     expect(
       nameConflictFromError(
-        conflict(NAME_CONFLICT_ERROR_KEYS.learnerNameTakenExistingAccount, 'email')
+        conflict(
+          NAME_CONFLICT_ERROR_KEYS.learnerNameTakenExistingAccount,
+          'email'
+        )
       )?.field
     ).toBe('email');
     expect(
-      nameConflictFromError(conflict(NAME_CONFLICT_ERROR_KEYS.nameInvalid, 'name'))?.messageKey
+      nameConflictFromError(
+        conflict(NAME_CONFLICT_ERROR_KEYS.nameInvalid, 'name')
+      )?.messageKey
     ).toBe('errors.validation.nameInvalid');
   });
 
@@ -71,7 +83,9 @@ describe('nameConflictFromError', () => {
   });
 
   it('ignores every other error', () => {
-    expect(nameConflictFromError(conflict('errors.academy.slugTaken', 'slug'))).toBeNull();
+    expect(
+      nameConflictFromError(conflict('errors.academy.slugTaken', 'slug'))
+    ).toBeNull();
     expect(nameConflictFromError(new Error('boom'))).toBeNull();
     expect(nameConflictFromError(null)).toBeNull();
   });
@@ -91,7 +105,9 @@ function Harness({
   readonly fields?: Partial<Record<string, keyof Values>>;
 }): JSX.Element {
   const { t } = useTranslation();
-  const form = useForm<Values>({ defaultValues: { name: '', lastName: '', email: '' } });
+  const form = useForm<Values>({
+    defaultValues: { name: '', lastName: '', email: '' },
+  });
   useNameConflictError(form, error, { fields });
   const { errors } = form.formState;
   return (
@@ -121,30 +137,44 @@ describe('useNameConflictError', () => {
   it('puts a taken learner name on the name field and focuses it (EN)', async () => {
     renderIn(
       'en',
-      <Harness error={conflict(NAME_CONFLICT_ERROR_KEYS.learnerNameTaken, 'name')} />
+      <Harness
+        error={conflict(NAME_CONFLICT_ERROR_KEYS.learnerNameTaken, 'name')}
+      />
     );
     const message = await screen.findByTestId('name-error');
-    expect(message.textContent).toContain('A learner in this academy already has this name');
-    await waitFor(() => expect(document.activeElement).toBe(screen.getByLabelText('name')));
+    expect(message.textContent).toContain(
+      'A learner in this academy already has this name'
+    );
+    await waitFor(() =>
+      expect(document.activeElement).toBe(screen.getByLabelText('name'))
+    );
   });
 
   it('maps a server field onto the form field and renders Arabic copy', async () => {
     renderIn(
       'ar',
       <Harness
-        error={conflict(NAME_CONFLICT_ERROR_KEYS.academyNameTaken, 'academyName')}
+        error={conflict(
+          NAME_CONFLICT_ERROR_KEYS.academyNameTaken,
+          'academyName'
+        )}
         fields={{ academyName: 'name' }}
       />
     );
     const message = await screen.findByTestId('name-error');
-    expect(message.textContent).toContain('هذا الاسم مستخدم بالفعل لأكاديمية أخرى');
+    expect(message.textContent).toContain(
+      'هذا الاسم مستخدم بالفعل لأكاديمية أخرى'
+    );
   });
 
   it('keeps the organization message generic', async () => {
     renderIn(
       'en',
       <Harness
-        error={conflict(NAME_CONFLICT_ERROR_KEYS.organizationNameUnavailable, 'name')}
+        error={conflict(
+          NAME_CONFLICT_ERROR_KEYS.organizationNameUnavailable,
+          'name'
+        )}
       />
     );
     expect((await screen.findByTestId('name-error')).textContent).toBe(
@@ -156,12 +186,16 @@ describe('useNameConflictError', () => {
     renderIn(
       'en',
       <Harness
-        error={conflict(NAME_CONFLICT_ERROR_KEYS.profileNameTakenInAcademy, 'name', {
-          academies: [
-            { academyId: 'a1', name: 'Nile Academy' },
-            { academyId: 'a2', name: 'Cairo Coding' },
-          ],
-        })}
+        error={conflict(
+          NAME_CONFLICT_ERROR_KEYS.profileNameTakenInAcademy,
+          'name',
+          {
+            academies: [
+              { academyId: 'a1', name: 'Nile Academy' },
+              { academyId: 'a2', name: 'Cairo Coding' },
+            ],
+          }
+        )}
         fields={{ name: 'lastName' }}
       />
     );
@@ -174,7 +208,10 @@ describe('useNameConflictError', () => {
     renderIn(
       'ar',
       <Harness
-        error={conflict(NAME_CONFLICT_ERROR_KEYS.learnerNameTakenExistingAccount, 'email')}
+        error={conflict(
+          NAME_CONFLICT_ERROR_KEYS.learnerNameTakenExistingAccount,
+          'email'
+        )}
       />
     );
     expect((await screen.findByTestId('email-error')).textContent).toContain(
@@ -183,7 +220,10 @@ describe('useNameConflictError', () => {
   });
 
   it('does nothing for an unrelated error', () => {
-    renderIn('en', <Harness error={conflict('errors.academy.slugTaken', 'slug')} />);
+    renderIn(
+      'en',
+      <Harness error={conflict('errors.academy.slugTaken', 'slug')} />
+    );
     expect(screen.queryByTestId('name-error')).toBeNull();
   });
 });
