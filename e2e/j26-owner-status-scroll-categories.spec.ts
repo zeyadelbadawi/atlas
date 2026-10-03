@@ -61,8 +61,13 @@ test.describe('J26 — website status, no categories, scroll', () => {
     });
     await expect(page.getByText('Academy Status')).toHaveCount(0);
 
-    // Arabic, RTL.
+    // Arabic, RTL. The page has finished loading (its session restore
+    // included) before the reload: reloading mid-refresh would abort the
+    // rotated refresh token's response and sign the owner out.
     await page.goto(`/dashboard/academy/${academyId}`);
+    await expect(page.getByTestId('academy-website-status')).toBeVisible({
+      timeout: 30_000,
+    });
     await page.evaluate(() =>
       localStorage.setItem('atlas:language', JSON.stringify('ar'))
     );

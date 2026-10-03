@@ -2,8 +2,9 @@
  * J35 — Academy provisioning: honest progress, server-side branding,
  * resilience (W2).
  *
- * Against the real running stack, as the seeded Organization owner, at a
- * 390 px phone viewport:
+ * Against the real running stack, as a NEW Organization owner on a Growth
+ * trial (5 Academies) created for this run — never the seeded organization,
+ * whose Academy allowance other suites use up — at a 390 px phone viewport:
  *
  *   J35a  logo + palette chosen in the setup form travel WITH the request:
  *         the status page shows the four real stages (no percentages), the
@@ -34,7 +35,10 @@ import {
   apiGet,
   apiPost,
   apiSignIn,
+  LEARNER_PASSWORD,
   seedCookieDecision,
+  uniqueLearnerEmail,
+  uniqueLearnerName,
   signInThroughDashboard,
   signOutInBrowser,
   type Session,
@@ -85,8 +89,12 @@ function logoPng([r, g, b]: readonly [number, number, number]): Buffer {
 
 const TEAL: readonly [number, number, number] = [13, 148, 136];
 
+/** This run's own Organization owner (password `LEARNER_PASSWORD`). */
+let ownerEmail: string;
 let owner: Session;
 let organizationId: string;
+/** The seeded organization, for the Manager/Instructor refusal (J35f). */
+let seedOrganizationId: string;
 let readyRequestId: string;
 
 async function goInApp(page: Page, path: string): Promise<void> {
@@ -99,7 +107,7 @@ async function goInApp(page: Page, path: string): Promise<void> {
 
 async function signIn(page: Page): Promise<void> {
   await signOutInBrowser(page);
-  await signInThroughDashboard(page, SEED.owner, SEED.password);
+  await signInThroughDashboard(page, ownerEmail, LEARNER_PASSWORD);
   await page.waitForURL(/\/dashboard/);
 }
 
@@ -129,21 +137,55 @@ test.describe('J35 — provisioning progress', () => {
 
   test.beforeAll(async ({ request }) => {
     await clearAuthRateLimits();
-    owner = await apiSignIn(request, {
-      email: SEED.owner,
-      password: SEED.password,
-    });
-    const signIn = await request.post(`${API_BASE}/auth/sign-in`, {
+    // The seeded organization (for J35f only).
+    const seeded = await request.post(`${API_BASE}/auth/sign-in`, {
       data: { email: SEED.owner, password: SEED.password },
     });
-    const memberships = (await signIn.json()).user.organizations as Array<{
+    const memberships = (await seeded.json()).user.organizations as Array<{
       organizationId: string;
       role: string;
     }>;
-    organizationId = memberships.find(
+    seedOrganizationId = memberships.find(
       (entry) => entry.role === 'owner'
     )!.organizationId;
-    expect(organizationId).toBeTruthy();
+    expect(seedOrganizationId).toBeTruthy();
+
+    // This run's own owner and organization, on a Growth trial: J35 creates
+    // up to three Academies per run.
+    ownerEmail = uniqueLearnerEmail('j35-owner');
+    const registered = await request.post(`${API_BASE}/auth/register`, {
+      data: {
+        name: uniqueLearnerName('J35 Owner'),
+        email: ownerEmail,
+        password: LEARNER_PASSWORD,
+      },
+    });
+    expect(registered.status(), await registered.text()).toBe(201);
+    owner = await apiSignIn(request, {
+      email: ownerEmail,
+      password: LEARNER_PASSWORD,
+      surface: 'management',
+    });
+    const created = await apiPost(request, owner, '/organizations', {
+      name: uniqueLearnerName('J35 Org'),
+    });
+    expect(created.status(), await created.text()).toBe(201);
+    organizationId = (await created.json()).id as string;
+    // A fresh token carries the new membership.
+    owner = await apiSignIn(request, {
+      email: ownerEmail,
+      password: LEARNER_PASSWORD,
+      surface: 'management',
+    });
+    const growth = await (await apiGet(request, owner, '/plans/growth')).json();
+    const trial = await apiPost(
+      request,
+      owner,
+      `/organizations/${organizationId}/subscription/trial`,
+      { confirm: true, planId: growth.id }
+    );
+    expect(trial.status(), await trial.text()).toBe(200);
+    expect((await trial.json()).started, 'the Growth trial started').toBe(true);
   });
 
   test('J35a: logo + palette travel with the request; real stages; a reload restores the same state', async ({
@@ -166,11 +208,20 @@ test.describe('J35 — provisioning progress', () => {
         mimeType: 'image/png',
         buffer: logoPng(TEAL),
       });
+    // The palette is suggested from the logo asynchronously; accepting
+    // before the suggestion lands would accept the theme default, which the
+    // suggestion then replaces (and un-accepts).
+    await expect(
+      page.getByText('We suggested a palette from your logo', { exact: false })
+    ).toBeVisible();
     await page.getByRole('button', { name: 'Accept palette' }).click();
     await expect(
       page.getByRole('button', { name: 'Palette accepted' })
     ).toBeVisible();
     await noSidewaysScroll(page);
+    await captureEvidence(page, 'provisioning-start-palette-en-phone', {
+      fullPage: true,
+    });
 
     const createdResponse = page.waitForResponse(
       (response) =>
@@ -282,7 +333,7 @@ test.describe('J35 — provisioning progress', () => {
     const subdomain = `j35-stall-${Date.now() % 1e8}`;
     const ownerId = (
       await adminSql(`SELECT id FROM users WHERE email = :'email'`, {
-        email: SEED.owner,
+        email: ownerEmail,
       })
     ).trim();
     await adminSql(
@@ -350,6 +401,7 @@ test.describe('J35 — provisioning progress', () => {
     page,
   }) => {
     test.skip(!readyRequestId, 'needs the J35a request');
+    test.setTimeout(180_000);
     await signIn(page);
     await page.goto(`/dashboard/provisioning/${readyRequestId}`);
     try {
@@ -378,6 +430,7 @@ test.describe('J35 — provisioning progress', () => {
     page,
     request,
   }) => {
+    test.setTimeout(150_000);
     for (const email of [SEED.manager, SEED.instructor]) {
       await clearAuthRateLimits();
       const session = await apiSignIn(request, {
@@ -388,7 +441,7 @@ test.describe('J35 — provisioning progress', () => {
       const refused = await apiPost(
         request,
         session,
-        `/organizations/${organizationId}/provisioning-requests`,
+        `/organizations/${seedOrganizationId}/provisioning-requests`,
         {
           academyName: `J35 Refused ${Date.now() % 1e7}`,
           requestedSubdomain: `j35-refused-${Date.now() % 1e8}`,
@@ -402,7 +455,11 @@ test.describe('J35 — provisioning progress', () => {
       await signOutInBrowser(page);
       await signInThroughDashboard(page, email, SEED.password);
       await page.waitForURL(/\/dashboard/);
-      await goInApp(page, '/dashboard/provisioning/new');
+      await page.goto('/dashboard/provisioning/new');
+      // The route guard sends them away; the form never renders.
+      await expect(page).not.toHaveURL(/\/dashboard\/provisioning\/new/, {
+        timeout: 30_000,
+      });
       await expect(page.getByLabel('Academy name')).toHaveCount(0);
       await expect(
         page.getByRole('button', { name: 'Start provisioning' })

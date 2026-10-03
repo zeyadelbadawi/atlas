@@ -97,4 +97,20 @@ describe('BrandStudio', () => {
       ).disabled
     ).toBe(true);
   });
+
+  it('shrinks to a narrow container: one shrinkable column, a wrapping colours header', () => {
+    // jsdom has no layout, so this pins the classes that keep the studio
+    // inside the provisioning form at 390 px (it overflowed by 19 px when
+    // the single column was an implicit `auto` track sized to its widest
+    // unbreakable child, the "Try another combination" button).
+    const { container } = render(<Harness onPreview={() => undefined} />);
+    const root = container.firstElementChild as HTMLElement;
+    expect(root.className).toContain('grid-cols-[minmax(0,1fr)]');
+    const regenerate = screen.getByRole('button', {
+      name: /Try another combination/,
+    });
+    expect(regenerate.className).toContain('whitespace-normal');
+    expect(regenerate.className).not.toContain('whitespace-nowrap');
+    expect(regenerate.parentElement!.className).toContain('flex-wrap');
+  });
 });

@@ -41,6 +41,20 @@ export async function setStoredLanguage(
 }
 
 /**
+ * Waits (up to 15 s) for the page's network to go quiet — on a signed-in
+ * load that includes the session restore (`POST /auth/refresh`). Reloading
+ * while that request is in flight aborts it after the server has already
+ * rotated the refresh token, so the next load presents the retired token,
+ * gets 401 and lands on sign-in. (Resource Timing cannot be used to see the
+ * refresh: Vite's dev modules fill its 250-entry buffer first.)
+ */
+export async function waitForSessionRestore(page: Page): Promise<void> {
+  await page
+    .waitForLoadState('networkidle', { timeout: 15_000 })
+    .catch(() => undefined);
+}
+
+/**
  * Puts an already-open page into `variant` and reloads it. The page must
  * be on the app's origin (localStorage is per origin).
  */
@@ -48,6 +62,7 @@ export async function applyVariant(
   page: Page,
   variant: Variant
 ): Promise<void> {
+  await waitForSessionRestore(page);
   await page.setViewportSize({ width: variant.width, height: variant.height });
   await setStoredLanguage(page, variant.language);
   await page.reload();

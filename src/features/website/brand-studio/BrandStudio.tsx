@@ -196,7 +196,10 @@ export function BrandStudio({
   return (
     <div
       className={cn(
-        'grid gap-8 xl:grid-cols-[minmax(0,26rem)_minmax(0,1fr)]',
+        // `minmax(0,1fr)` below xl too: an implicit `auto` column grows to
+        // its widest unbreakable child and pushes the studio past a narrow
+        // container (the provisioning form's 390 px layout).
+        'grid grid-cols-[minmax(0,1fr)] gap-8 xl:grid-cols-[minmax(0,26rem)_minmax(0,1fr)]',
         className
       )}
     >
@@ -290,7 +293,7 @@ export function BrandStudio({
 
         {/* 2 · Seeds */}
         <section aria-labelledby={`${id}-seeds`} className="space-y-4">
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <h3
               id={`${id}-seeds`}
               className="text-sm font-semibold text-foreground"
@@ -301,6 +304,7 @@ export function BrandStudio({
               type="button"
               variant="ghost"
               size="sm"
+              className="h-auto min-h-9 whitespace-normal text-start"
               onClick={actions.regenerate}
             >
               <Sparkles className="size-4" aria-hidden />
