@@ -234,6 +234,16 @@ export default function LearnerPlayerPage(): JSX.Element {
     [hrefFor, navigate]
   );
 
+  // A lesson opened on the activity route (a hand-typed or stale link)
+  // moves to its own path, where its player is — never the generic
+  // activity card.
+  const lessonOnActivityRoute = !isLessonRoute && current?.type === 'lesson';
+  useEffect(() => {
+    if (!lessonOnActivityRoute || !current) return;
+    const href = hrefFor(current);
+    if (href) navigate(href, { replace: true });
+  }, [lessonOnActivityRoute, current, hrefFor, navigate]);
+
   /* ---------- completion ---------- */
 
   const isCompleted = current ? isSequenceItemFinished(current.state) : false;
@@ -349,7 +359,7 @@ export default function LearnerPlayerPage(): JSX.Element {
         onFinished={() => setHasFinishedPlaying(true)}
       />
     );
-  } else if (!isLessonRoute && current) {
+  } else if (!isLessonRoute && current && !lessonOnActivityRoute) {
     content = (
       <AssessmentActivityView
         courseId={courseId}
@@ -370,7 +380,7 @@ export default function LearnerPlayerPage(): JSX.Element {
         }
       />
     );
-  } else if (sequenceQuery.isLoading) {
+  } else if (sequenceQuery.isLoading || lessonOnActivityRoute) {
     content = <Skeleton className="h-48 w-full" />;
   } else {
     /*

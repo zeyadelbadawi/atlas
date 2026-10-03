@@ -255,7 +255,7 @@ test.describe('J24 — the learner portal follows the Academy palette', () => {
       },
       {
         name: 'lesson',
-        path: `/my/courses/${course.id}/activities/${course.lesson}`,
+        path: `/my/courses/${course.id}/learn/${course.lesson}`,
         ready: '[data-testid="player-action-bar"], main',
       },
       {
