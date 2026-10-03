@@ -33,7 +33,7 @@ import { useConfirmDialog } from '@app/providers';
 import { toast } from '@/hooks/use-toast';
 import { useDateFormatter, useDebounce, usePagination } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
-import { useCourses, useCourseCategories, useDeleteCourse } from '../hooks';
+import { useCourses, useDeleteCourse } from '../hooks';
 import {
   getCourseStatusLabelKey,
   getCourseStatusTone,
@@ -61,7 +61,6 @@ export default function CourseListPage(): JSX.Element {
   const [visibilityFilter, setVisibilityFilter] = useState<
     CourseVisibility | 'all'
   >('all');
-  const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [pricingFilter, setPricingFilter] = useState<CoursePricingType | 'all'>(
     'all'
   );
@@ -70,7 +69,6 @@ export default function CourseListPage(): JSX.Element {
     debouncedSearch.trim().length > 0 ||
     statusFilter !== 'all' ||
     visibilityFilter !== 'all' ||
-    categoryFilter !== 'all' ||
     pricingFilter !== 'all';
 
   const [totalItems, setTotalItems] = useState(0);
@@ -89,14 +87,10 @@ export default function CourseListPage(): JSX.Element {
       filters: {
         status: statusFilter === 'all' ? undefined : statusFilter,
         visibility: visibilityFilter === 'all' ? undefined : visibilityFilter,
-        categoryId: categoryFilter === 'all' ? undefined : categoryFilter,
         pricingType: pricingFilter === 'all' ? undefined : pricingFilter,
       },
     },
   });
-
-  const { data: categoriesData } = useCourseCategories(academyId ?? '');
-  const categories = categoriesData?.items ?? [];
 
   useEffect(() => {
     if (coursesData) setTotalItems(coursesData.pagination.totalItems);
@@ -157,16 +151,6 @@ export default function CourseListPage(): JSX.Element {
             <span className="font-medium">{row.original.title}</span>
           </div>
         ),
-      },
-      {
-        accessorKey: 'category',
-        header: t('course:list.table.category'),
-        cell: ({ row }) =>
-          row.original.category?.name ?? (
-            <span className="text-muted-foreground">
-              {t('course:list.uncategorized')}
-            </span>
-          ),
       },
       {
         accessorKey: 'status',
@@ -344,22 +328,6 @@ export default function CourseListPage(): JSX.Element {
               <SelectItem value="private">
                 {t('course:visibility.private')}
               </SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder={t('course:list.filterByCategory')} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">
-                {t('course:list.allCategories')}
-              </SelectItem>
-              {categories.map((category) => (
-                <SelectItem key={category.id} value={category.id}>
-                  {category.name}
-                </SelectItem>
-              ))}
             </SelectContent>
           </Select>
 

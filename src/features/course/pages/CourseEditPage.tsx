@@ -1,7 +1,7 @@
 /**
  * Course Edit Page.
  *
- * Edits an existing course's identity, thumbnail, category, pricing and
+ * Edits an existing course's identity, thumbnail, pricing and
  * visibility, and links onward to the Builder and Settings for this course.
  */
 import { useEffect, useState } from 'react';
@@ -57,7 +57,7 @@ import {
 } from '../constants/course-languages';
 import { useServerValidation } from '@forms';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
-import { useCourse, useUpdateCourse, useCourseCategories } from '../hooks';
+import { useCourse, useUpdateCourse } from '../hooks';
 import { CourseInstructorsCard } from '../components/CourseInstructorsCard';
 import { getCourseEditorTabs } from '../utils/course-navigation.utils';
 import {
@@ -92,8 +92,6 @@ export default function CourseEditPage(): JSX.Element {
     isPending,
     error: mutationError,
   } = useUpdateCourse(academyId ?? '');
-  const { data: categoriesData } = useCourseCategories(academyId ?? '');
-  const categories = categoriesData?.items ?? [];
 
   const form = useForm<UpdateCourseFormData>({
     resolver: zodResolver(updateCourseSchema),
@@ -104,7 +102,6 @@ export default function CourseEditPage(): JSX.Element {
           shortDescription: course.shortDescription ?? '',
           description: course.description ?? '',
           thumbnail: course.thumbnail,
-          categoryId: course.categoryId,
           visibility: course.visibility,
           pricingType: course.pricing.type,
           pricingAmount: course.pricing.amount,
@@ -187,7 +184,9 @@ export default function CourseEditPage(): JSX.Element {
           shortDescription: data.shortDescription || undefined,
           description: data.description || undefined,
           thumbnail: data.thumbnail,
-          categoryId: data.categoryId,
+          // No `categoryId`: the field is not shown to Academy Owners and
+          // Managers (Task 9). Omitting it keeps the course's existing
+          // category — sending '' would disconnect it.
           pricing,
           visibility: data.visibility,
           level: data.level,
@@ -421,38 +420,6 @@ export default function CourseEditPage(): JSX.Element {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name="categoryId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('course:create.categoryLabel')}</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue
-                              placeholder={t(
-                                'course:create.categoryPlaceholder'
-                              )}
-                            />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {categories.map((category) => (
-                            <SelectItem key={category.id} value={category.id}>
-                              {category.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
                 <FormField
                   control={form.control}
                   name="visibility"

@@ -2,7 +2,7 @@
  * Course Create Form.
  *
  * The course creation form — title, slug (following the title until
- * edited), descriptions, thumbnail, category, visibility and pricing —
+ * edited), descriptions, thumbnail, visibility and pricing —
  * extracted from `CourseCreatePage` so the New Customer Onboarding
  * shell's First-course step creates a course with the SAME form. The
  * course is created as the backend's default (a draft); what happens next
@@ -38,7 +38,7 @@ import { toast } from '@/hooks/use-toast';
 import { useFilePicker, useSlugSuggestion, useUnsavedChanges } from '@hooks';
 import { useServerValidation } from '@forms';
 import { isApiError } from '@api';
-import { useCreateCourse, useCourseCategories } from '../hooks';
+import { useCreateCourse } from '../hooks';
 import {
   createCourseSchema,
   type CreateCourseFormData,
@@ -75,8 +75,6 @@ export function CourseCreateForm({
     isPending,
     error: mutationError,
   } = useCreateCourse(academyId);
-  const { data: categoriesData } = useCourseCategories(academyId);
-  const categories = categoriesData?.items ?? [];
 
   const form = useForm<CreateCourseFormData>({
     resolver: zodResolver(createCourseSchema),
@@ -85,7 +83,6 @@ export function CourseCreateForm({
       slug: '',
       shortDescription: '',
       description: '',
-      categoryId: undefined,
       visibility: DEFAULT_COURSE_VISIBILITY,
       pricingType: 'free',
       pricingAmount: undefined,
@@ -184,7 +181,6 @@ export function CourseCreateForm({
         shortDescription: data.shortDescription || undefined,
         description: data.description || undefined,
         thumbnail: data.thumbnail,
-        categoryId: data.categoryId,
         pricing,
         visibility: data.visibility,
       });
@@ -353,11 +349,7 @@ export function CourseCreateForm({
                       variant="outline"
                       onClick={thumbnailPicker.openFilePicker}
                     >
-                      <Upload
-                        className="size-4"
-                        strokeWidth={2}
-                        aria-hidden
-                      />
+                      <Upload className="size-4" strokeWidth={2} aria-hidden />
                       {t('course:create.uploadThumbnail')}
                     </Button>
                   )}
@@ -374,43 +366,6 @@ export function CourseCreateForm({
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="categoryId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('course:create.categoryLabel')}{' '}
-                      <span className="text-xs text-muted-foreground">
-                        ({t('course:create.optional')})
-                      </span>
-                    </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue
-                            placeholder={t(
-                              'course:create.categoryPlaceholder'
-                            )}
-                          />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {categories.map((category) => (
-                          <SelectItem key={category.id} value={category.id}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <FormField
                 control={form.control}
                 name="visibility"
