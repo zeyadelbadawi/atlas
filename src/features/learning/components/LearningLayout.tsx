@@ -141,7 +141,11 @@ export function LearningLayout({
           </Sheet>
         )}
 
-        <main className="min-w-0 flex-1 overflow-y-auto p-4 sm:p-6">
+        <main
+          className="min-w-0 flex-1 overflow-y-auto p-4 sm:p-6"
+          // Reset to the top on page changes with the window (AppScrollManager).
+          data-scroll-container
+        >
           {children}
           {/* Phase 6 — mandatory, platform-owned; never a CMS-editable field. */}
           <footer className="mt-8 border-t border-border pt-4">

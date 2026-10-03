@@ -6,6 +6,7 @@ export { useLanguage } from './useLanguage';
 export { useBreakpoint } from './useBreakpoint';
 export type { BreakpointState } from './useBreakpoint';
 export { useMediaQuery } from './useMediaQuery';
+export { useResetScrollOnReveal } from './useResetScrollOnReveal';
 export { useDisclosure } from './useDisclosure';
 export type { DisclosureState } from './useDisclosure';
 export { useDebounce } from './useDebounce';

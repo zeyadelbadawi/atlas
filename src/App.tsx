@@ -4,7 +4,8 @@
  * WHY A DATA ROUTER. This used the classic `<BrowserRouter>`, under which
  * react-router-dom v6 exposes **no** in-app navigation-blocking API:
  * `useBlocker` and `unstable_usePrompt` both throw "useBlocker must be
- * used within a data router", and `<ScrollRestoration>` is inert. That is
+ * used within a data router", and scroll handling had no navigation
+ * lifecycle to hook into. That is
  * why unsaved-changes protection only ever covered tab close and refresh,
  * and why every internal navigation left the new page scrolled wherever
  * the previous one had been.
@@ -13,7 +14,7 @@
  * looks: the single splat route below renders the existing `<AppRouter>`
  * tree unchanged, and all ~98 routes keep working as descendant
  * `<Routes>`. Nothing about the route table moved. What changes is that
- * `useBlocker` and `<ScrollRestoration>` now actually function.
+ * `useBlocker` and route-aware scroll handling (`AppScrollManager`) work.
  *
  * `AppProviders` stays OUTSIDE the router, exactly where it already was —
  * it was outside `<BrowserRouter>` too, and nothing inside it uses a
@@ -30,7 +31,6 @@
 import {
   createBrowserRouter,
   RouterProvider,
-  ScrollRestoration,
   type RouteObject,
 } from 'react-router-dom';
 import type { DehydratedState, QueryClient } from '@tanstack/react-query';
@@ -45,6 +45,7 @@ import { AppProviders } from '@app/providers';
 // The module itself, not the `@app/routes` barrel (which re-exports the
 // dashboard's guards).
 import { AppRouter } from '@app/routes/AppRouter';
+import { AppScrollManager } from '@app/routes/AppScrollManager';
 import {
   NavigationBlockDialog,
   UnsavedChangesProvider,
@@ -70,11 +71,11 @@ function RootRoute(): JSX.Element {
     <UnsavedChangesProvider>
       <CookieConsentProvider>
         {/*
-          Resets scroll to the top on PUSH navigation and restores the
-          saved offset on POP (back/forward). Only functions under a data
-          router, which is the other half of why this file changed.
+          Top on a new page, untouched on a query-only change (tabs,
+          filters), the saved offset on Back/Forward once the page is tall
+          enough to hold it — see AppScrollManager.
         */}
-        <ScrollRestoration />
+        <AppScrollManager />
         <AppRouter />
         <CookieConsentBanner />
         <CookiePreferencesDialog />

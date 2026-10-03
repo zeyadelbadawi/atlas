@@ -25,3 +25,12 @@ Element.prototype.matches = function matches(
   if (TOP_LAYER_ONLY.has(String(selectors).trim())) return false;
   return nativeMatches.call(this, selectors);
 };
+
+/**
+ * jsdom implements no layout, and its `window.scrollTo` only reports "Not
+ * implemented" to the virtual console. Pages now reset the scroll when a
+ * view replaces another in place (Task 5), so every test rendering one
+ * would log that error. A no-op keeps the output clean; tests that assert
+ * on scrolling stub it themselves.
+ */
+window.scrollTo = (() => undefined) as typeof window.scrollTo;
