@@ -371,10 +371,8 @@ test.describe('J7 — Theme 1 starter content', () => {
       .first()
       .click();
     await dialog.getByRole('button', { name: 'Apply changes' }).click();
-    await page.getByRole('button', { name: 'Save changes' }).click();
-    await expect(
-      page.getByRole('button', { name: 'Save changes' })
-    ).toBeDisabled({
+    await page.getByTestId('website-save-page').click();
+    await expect(page.getByTestId('website-save-page')).toBeDisabled({
       timeout: 15_000,
     });
     const republish = await apiPost(
