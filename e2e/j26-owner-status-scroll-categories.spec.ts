@@ -161,17 +161,34 @@ test.describe('J26 — website status, no categories, scroll', () => {
     const before = await scrollY(page);
     expect(before).toBeGreaterThan(50);
 
-    // Same page, only `?tab=` changes (setSearchParams replace): stays —
-    // unless the new tab's content is shorter, when the browser can only
-    // clamp to the new bottom. Either way nothing scrolls to the top.
+    // Same page, only `?tab=` changes (setSearchParams replace): the app
+    // does not move the scroll. The browser may still CLAMP it if the page
+    // is briefly shorter (the new tab's loading skeleton, or shorter
+    // content), so the expected offset is bounded by the shortest the
+    // page got during the switch — sampled every frame.
+    await page.evaluate(() => {
+      const w = window as unknown as { __minMax: number; __sample: boolean };
+      w.__minMax = Infinity;
+      w.__sample = true;
+      const tick = () => {
+        w.__minMax = Math.min(
+          w.__minMax,
+          document.documentElement.scrollHeight - window.innerHeight
+        );
+        if (w.__sample) requestAnimationFrame(tick);
+      };
+      tick();
+    });
     await studentsTab.click();
     await expect(page).toHaveURL(/tab=students/);
     await page.waitForLoadState('networkidle');
-    const maxScroll = await page.evaluate(
-      () => document.documentElement.scrollHeight - window.innerHeight
-    );
+    const minMax = await page.evaluate(() => {
+      const w = window as unknown as { __minMax: number; __sample: boolean };
+      w.__sample = false;
+      return w.__minMax;
+    });
     const afterTab = await scrollY(page);
-    expect(Math.abs(afterTab - Math.min(before, maxScroll))).toBeLessThan(5);
+    expect(Math.abs(afterTab - Math.min(before, minMax))).toBeLessThan(5);
     expect(afterTab).toBeGreaterThan(50);
 
     // A new page opens at the top; Back returns to the previous offset.

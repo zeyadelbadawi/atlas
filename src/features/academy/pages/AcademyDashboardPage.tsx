@@ -251,8 +251,10 @@ export default function AcademyDashboardPage(): JSX.Element {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
+            {/* Stacks on phones: side by side, the buttons pushed the page
+                wider than a 390px screen. */}
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0 space-y-1">
                 <p className="text-sm text-muted-foreground">
                   {currentAcademy.description ||
                     t('academy:dashboard.overview')}
@@ -275,7 +277,7 @@ export default function AcademyDashboardPage(): JSX.Element {
                   </div>
                 ) : null}
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Button
                   variant="outline"
                   size="sm"
