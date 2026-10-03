@@ -455,9 +455,10 @@ test.describe('J6 — catalog, details, reviews and paid checkout', () => {
     );
     expect((await enrollmentForCourse(request, learner, paidCourseId))?.status).toBe('enrolled');
 
-    // What the learner sees: the paid course is now theirs to continue.
+    // What the learner sees: the paid course is now theirs — to START, as
+    // nothing in it has been opened yet ("Continue" means real progress).
     await page.goto(academyPath(`/courses/${paidCourseId}`));
-    await expect(page.getByRole('button', { name: 'Continue Learning' })).toBeVisible({
+    await expect(page.getByRole('button', { name: 'Start course' })).toBeVisible({
       timeout: 30_000,
     });
     await page.goto(academyPath('/my/courses'));
