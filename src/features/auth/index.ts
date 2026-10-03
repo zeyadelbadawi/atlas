@@ -43,7 +43,12 @@ export type { TrialPlanPickerProps } from './components/TrialPlanPicker';
 export {
   useValidatePasswordResetToken,
   useVerifyEmail,
+  useVerifyEmailFlow,
+  useResendEmailVerification,
 } from './hooks';
+export type { VerifyEmailFlow, VerifyEmailState } from './hooks';
+export { VerifyEmailResend } from './components/VerifyEmailResend';
+export type { VerifyEmailResendProps } from './components/VerifyEmailResend';
 export {
   AUTH_ERROR_KEYS,
   isSafeReturnPath,

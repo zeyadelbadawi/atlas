@@ -1,22 +1,25 @@
 /**
  * `/verify-email?token=…` on an academy website (P64 Phase 1).
  *
- * The landing page for the verification email a new student receives
- * after registering on this academy's site. Fires once on arrival — the
- * token IS the credential, and the recipient is by definition not signed
- * in yet — then points them at this academy's own sign-in.
+ * The landing page for the verification email a student receives after
+ * registering on this academy's site (the backend builds that link on the
+ * academy's own host). Shares `useVerifyEmailFlow` with the management
+ * host's page: the token is read once and removed from the address bar,
+ * the referrer policy is `no-referrer` while the page is open, the token
+ * is submitted exactly once, and the page says what actually happened —
+ * verified, invalid, expired, already used, rate limited or unreachable.
  *
- * The effect is guarded by a ref rather than by the mutation's own
- * `isIdle`: React 18's StrictMode double-invokes effects in development,
- * and a verification token is single-use, so the second call would report
- * "already used" for a link that had just worked.
+ * A signed-in learner whose link is missing, invalid or expired can send
+ * a new one from here; a signed-out one is sent to this academy's sign-in
+ * and brought back (`returnTo`), where the same button is waiting.
  */
-import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom';
-import { CheckCircle2, Loader2 } from 'lucide-react';
-import { useVerifyEmail } from '@features/auth';
+import { CheckCircle2, Loader2, MailCheck } from 'lucide-react';
+import { useAuth } from '@hooks';
+import { useVerifyEmailFlow, VerifyEmailResend } from '@features/auth';
+import type { VerifyEmailState } from '@features/auth';
 import { ErrorState } from '@components/feedback';
+import { LEARNER_ROUTES } from '@app/routes/route-paths';
 import { PublicWebsiteAuthShell } from './PublicWebsiteAuthShell';
 import { usePublicWebsiteLinkRenderer } from '../utils/public-website-link-renderer';
 import type { PublicWebsiteLocale } from '@types';
@@ -26,60 +29,97 @@ export interface PublicWebsiteVerifyEmailPageProps {
   readonly locale: PublicWebsiteLocale;
 }
 
+const PAGE_PATH = '/verify-email';
+const KEYS = 'publicWebsite:auth.verifyEmail';
+
+const FAILURE_COPY: Record<
+  Exclude<VerifyEmailState, 'pending' | 'success'>,
+  { readonly title: string; readonly description: string }
+> = {
+  missing: {
+    title: `${KEYS}.invalidTitle`,
+    description: `${KEYS}.missingDescription`,
+  },
+  invalid: {
+    title: `${KEYS}.invalidTitle`,
+    description: `${KEYS}.invalidDescription`,
+  },
+  expired: {
+    title: `${KEYS}.expiredTitle`,
+    description: `${KEYS}.expiredDescription`,
+  },
+  used: { title: `${KEYS}.usedTitle`, description: `${KEYS}.usedDescription` },
+  rateLimited: {
+    title: `${KEYS}.rateLimitedTitle`,
+    description: `${KEYS}.rateLimitedDescription`,
+  },
+  network: {
+    title: `${KEYS}.networkTitle`,
+    description: `${KEYS}.networkDescription`,
+  },
+};
+
+/** States a new link would fix. */
+const RESENDABLE: ReadonlySet<VerifyEmailState> = new Set([
+  'missing',
+  'invalid',
+  'expired',
+]);
+
 export function PublicWebsiteVerifyEmailPage({
   lookupKey,
   locale,
 }: PublicWebsiteVerifyEmailPageProps): JSX.Element {
   const { t } = useTranslation();
-  const [searchParams] = useSearchParams();
+  const { isAuthenticated } = useAuth();
   const linkRenderer = usePublicWebsiteLinkRenderer(locale);
-  const token = searchParams.get('token');
-  const verifyEmail = useVerifyEmail();
+  const { state, requestId, canRetry, retry } = useVerifyEmailFlow();
 
-  const { mutate } = verifyEmail;
-  const requested = useRef(false);
-  useEffect(() => {
-    if (!token || requested.current) return;
-    requested.current = true;
-    mutate({ token });
-  }, [token, mutate]);
-
+  const linkClass =
+    'font-medium text-[var(--website-primary-solid)] hover:underline';
   const signInLink = linkRenderer({
-    href: '/sign-in',
+    // Bare path; the renderer applies the locale prefix. Sign-in brings
+    // the learner back here, where a new link can be requested.
+    href: `/sign-in?returnTo=${encodeURIComponent(PAGE_PATH)}`,
     external: false,
-    className:
-      'font-medium text-[var(--website-primary-solid)] hover:underline',
-    children: t('publicWebsite:auth.verifyEmail.goToSignIn'),
+    className: linkClass,
+    children: t(`${KEYS}.goToSignIn`),
   });
-
-  const failed = !token || verifyEmail.isError;
+  const proceed = isAuthenticated
+    ? linkRenderer({
+        href: LEARNER_ROUTES.root,
+        external: false,
+        className: linkClass,
+        children: t(`${KEYS}.continue`),
+      })
+    : signInLink;
 
   return (
     <PublicWebsiteAuthShell
       lookupKey={lookupKey}
       locale={locale}
-      path="/verify-email"
-      title={t('publicWebsite:auth.verifyEmail.title')}
+      path={PAGE_PATH}
+      title={t(`${KEYS}.title`)}
     >
       {() => {
-        if (failed) {
+        if (state === 'pending') {
           return (
-            <div className="space-y-4" data-testid="verify-email-error">
-              <ErrorState
-                kind={verifyEmail.error?.kind ?? 'validation'}
-                titleKey="publicWebsite:auth.verifyEmail.errorTitle"
-                descriptionKey="publicWebsite:auth.verifyEmail.errorDescription"
-                requestId={verifyEmail.error?.requestId}
-              />
-              <div className="text-center text-sm">{signInLink}</div>
+            <div
+              className="flex items-center justify-center gap-3 rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground"
+              role="status"
+              data-testid="verify-email-pending"
+            >
+              <Loader2 className="size-4 animate-spin" aria-hidden />
+              {t(`${KEYS}.verifying`)}
             </div>
           );
         }
 
-        if (verifyEmail.isSuccess) {
+        if (state === 'success') {
           return (
             <div
               className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card p-6 text-center"
+              role="status"
               data-testid="verify-email-success"
             >
               <CheckCircle2
@@ -87,23 +127,63 @@ export function PublicWebsiteVerifyEmailPage({
                 aria-hidden
               />
               <p className="font-medium text-foreground">
-                {t('publicWebsite:auth.verifyEmail.successTitle')}
+                {t(`${KEYS}.successTitle`)}
               </p>
               <p className="text-sm text-muted-foreground">
-                {t('publicWebsite:auth.verifyEmail.successDescription')}
+                {t(
+                  isAuthenticated
+                    ? `${KEYS}.successDescriptionSignedIn`
+                    : `${KEYS}.successDescription`
+                )}
               </p>
-              {signInLink}
+              {proceed}
             </div>
           );
         }
 
+        if (state === 'missing' && isAuthenticated) {
+          return (
+            <div
+              className="flex flex-col items-center gap-4 rounded-lg border border-border bg-card p-6 text-center"
+              data-testid="verify-email-request"
+            >
+              <MailCheck
+                className="size-8 text-[var(--website-primary-solid)]"
+                aria-hidden
+              />
+              <p className="text-sm text-muted-foreground">
+                {t(`${KEYS}.requestDescription`)}
+              </p>
+              <VerifyEmailResend keyPrefix={`${KEYS}.resend`} />
+            </div>
+          );
+        }
+
+        const copy = FAILURE_COPY[state];
         return (
           <div
-            className="flex items-center justify-center gap-3 rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground"
-            data-testid="verify-email-pending"
+            className="space-y-4"
+            data-testid="verify-email-error"
+            data-state={state}
           >
-            <Loader2 className="size-4 animate-spin" aria-hidden />
-            {t('publicWebsite:auth.verifyEmail.verifying')}
+            <ErrorState
+              kind={state === 'rateLimited' ? 'rateLimited' : 'validation'}
+              titleKey={copy.title}
+              descriptionKey={copy.description}
+              requestId={state === 'network' ? requestId : undefined}
+              onRetry={canRetry ? retry : undefined}
+            />
+            {RESENDABLE.has(state) ? (
+              isAuthenticated ? (
+                <VerifyEmailResend keyPrefix={`${KEYS}.resend`} />
+              ) : (
+                <p className="text-center text-sm text-muted-foreground">
+                  {t(`${KEYS}.signInToResend`)} {signInLink}
+                </p>
+              )
+            ) : (
+              <div className="text-center text-sm">{proceed}</div>
+            )}
           </div>
         );
       }}
