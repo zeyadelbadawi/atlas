@@ -1,0 +1,260 @@
+/**
+ * J38 — unique names (W4), Chromium against the real stack and database.
+ *
+ *  - Academy website sign-up: a learner name already used in this academy
+ *    (any case, accents, Arabic marks) is refused with a message ON the name
+ *    field, which is marked invalid and focused. EN on desktop, AR on a
+ *    390 px phone (RTL, Arabic copy).
+ *  - Organization create: a name already used anywhere on Atlas gets the
+ *    generic "isn't available" message on the name field, never the holder.
+ *  - Academy settings: renaming to another academy's name (another
+ *    organization's, different case) is refused on the name field and the
+ *    stored name is unchanged.
+ *  - Learner profile: a rename that clashes with another learner of the
+ *    learner's academy is refused on the family-name field, naming that
+ *    academy.
+ *
+ * NEEDS THE INTEGRATED REBUILD: the API serves a prebuilt dist, and these
+ * refusals come from the W4 backend code. Every name is unique per run (the
+ * database persists between runs and names are now unique).
+ */
+import { test, expect as baseExpect, type Page } from '@playwright/test';
+import {
+  API_BASE,
+  LEARNER_PASSWORD,
+  SEED,
+  academyPath,
+  apiPost,
+  apiSignIn,
+  declineCookies,
+  requireSeed,
+  resolveAcademy,
+  seedCookieDecision,
+  signInThroughDashboard,
+  uniqueLearnerEmail,
+  uniqueLearnerName,
+} from './support/atlas';
+import { clearAuthRateLimits } from './support/global-setup';
+import { adminQuery } from './support/admin-db';
+
+test.describe.configure({ mode: 'serial', timeout: 240_000 });
+const expect = baseExpect.configure({ timeout: 45_000 });
+
+const PHONE = { width: 390, height: 844 };
+
+async function setLanguage(page: Page, language: 'en' | 'ar'): Promise<void> {
+  await page.addInitScript((lang) => {
+    window.localStorage.setItem('atlas:language', JSON.stringify(lang));
+  }, language);
+}
+
+/** Registers a learner in the seeded academy through the API. */
+async function registerLearnerViaApi(
+  page: Page,
+  academyId: string,
+  name: string,
+  email = uniqueLearnerEmail('j38')
+): Promise<string> {
+  const res = await page.request.post(`${API_BASE}/auth/register`, {
+    data: { name, email, password: LEARNER_PASSWORD, academyId },
+  });
+  expect(res.status(), await res.text()).toBe(201);
+  return email;
+}
+
+async function fillWebsiteSignUp(page: Page, name: string): Promise<void> {
+  await page.goto(academyPath('/sign-up'));
+  await declineCookies(page);
+  await page.locator('#name').fill(name);
+  await page.locator('#email').fill(uniqueLearnerEmail('j38-dup'));
+  await page.locator('#password').fill(LEARNER_PASSWORD);
+  await page.locator('#confirmPassword').fill(LEARNER_PASSWORD);
+  const terms = page.locator('#acceptTerms');
+  if (await terms.count()) await terms.check();
+  await page
+    .getByRole('button', {
+      name: /sign up|create account|register|إنشاء حساب|تسجيل/i,
+    })
+    .click();
+}
+
+test.describe('J38 — unique names', () => {
+  let academyId: string;
+
+  test.beforeAll(async ({ request }) => {
+    await clearAuthRateLimits();
+    await requireSeed(request);
+    academyId = (await resolveAcademy(request)).id;
+  });
+
+  test('J38a: a learner name already used in this academy is refused on the name field (EN desktop)', async ({
+    page,
+  }) => {
+    const held = uniqueLearnerName('José Ruiz');
+    await registerLearnerViaApi(page, academyId, held);
+
+    await seedCookieDecision(page);
+    await setLanguage(page, 'en');
+    // Same person-name, different case and no accents.
+    await fillWebsiteSignUp(
+      page,
+      held.toUpperCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+    );
+
+    const name = page.locator('#name');
+    await expect(
+      page.getByText(
+        'A learner in this academy already has this name. Add a middle or family name so it is unique here.'
+      )
+    ).toBeVisible();
+    await expect(name).toHaveAttribute('aria-invalid', 'true');
+    await expect(name).toBeFocused();
+  });
+
+  test('J38b: the same refusal in Arabic on a phone, right-to-left', async ({
+    page,
+  }) => {
+    await page.setViewportSize(PHONE);
+    const tag = uniqueLearnerName('x').split(' ')[1];
+    await registerLearnerViaApi(page, academyId, `مُحَمَّد أَحْمَد ${tag}`);
+
+    await seedCookieDecision(page);
+    await setLanguage(page, 'ar');
+    await fillWebsiteSignUp(page, `محـــمد احمد ${tag}`);
+
+    await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+    await expect(
+      page.getByText('يوجد متعلّم في هذه الأكاديمية يحمل هذا الاسم بالفعل', {
+        exact: false,
+      })
+    ).toBeVisible();
+    await expect(page.locator('#name')).toHaveAttribute('aria-invalid', 'true');
+    // No horizontal scroll at 390 px.
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - window.innerWidth
+    );
+    expect(overflow).toBeLessThanOrEqual(1);
+  });
+
+  test('J38c: organization create — a taken name gets the generic message on the field', async ({
+    page,
+  }) => {
+    // Somebody else's organization, created through the API.
+    const holderEmail = uniqueLearnerEmail('j38-holder');
+    const holderReg = await page.request.post(`${API_BASE}/auth/register`, {
+      data: {
+        name: uniqueLearnerName('J38 Holder'),
+        email: holderEmail,
+        password: LEARNER_PASSWORD,
+      },
+    });
+    expect(holderReg.status(), await holderReg.text()).toBe(201);
+    const holder = await apiSignIn(page.request, {
+      email: holderEmail,
+      password: LEARNER_PASSWORD,
+      surface: 'management',
+    });
+    const orgName = uniqueLearnerName('J38 Nile Learning');
+    const created = await apiPost(page.request, holder, '/organizations', {
+      name: orgName,
+    });
+    expect(created.status(), await created.text()).toBe(201);
+
+    // A second person tries the same name, differently cased.
+    const email = uniqueLearnerEmail('j38-org');
+    const reg = await page.request.post(`${API_BASE}/auth/register`, {
+      data: {
+        name: uniqueLearnerName('J38 Founder'),
+        email,
+        password: LEARNER_PASSWORD,
+      },
+    });
+    expect(reg.status(), await reg.text()).toBe(201);
+    await seedCookieDecision(page);
+    await setLanguage(page, 'en');
+    await signInThroughDashboard(page, email, LEARNER_PASSWORD);
+    await page.waitForURL(/\/dashboard|\/onboarding|\/welcome/, {
+      timeout: 60_000,
+    });
+    await page.goto('/dashboard/organization/create');
+
+    const field = page.getByRole('textbox').first();
+    await field.fill(orgName.toLowerCase());
+    await page.getByRole('button', { name: /create/i }).click();
+
+    await expect(
+      page.getByText(
+        "This organization name isn't available. Please try another."
+      )
+    ).toBeVisible();
+    await expect(field).toHaveAttribute('aria-invalid', 'true');
+    // Nothing about the holder is shown.
+    await expect(page.getByText(holderEmail)).toHaveCount(0);
+  });
+
+  test('J38d: academy settings — another academy’s name is refused on the name field', async ({
+    page,
+  }) => {
+    await seedCookieDecision(page);
+    await setLanguage(page, 'en');
+    await signInThroughDashboard(page, SEED.owner, SEED.password);
+    await page.waitForURL(/\/dashboard/, { timeout: 60_000 });
+    await page.goto(`/dashboard/academy/${academyId}/settings`);
+
+    const name = page.getByLabel(/academy name/i).first();
+    await expect(name).toBeVisible();
+    // Another organization's academy, in a different case.
+    await name.fill(SEED.otherAcademyName.toUpperCase());
+    await page.getByRole('button', { name: /^save/i }).first().click();
+
+    await expect(
+      page.getByText(
+        'Another academy already uses this name. Please choose a different one.'
+      )
+    ).toBeVisible();
+    await expect(name).toHaveAttribute('aria-invalid', 'true');
+
+    const [row] = await adminQuery<{ name: string }>(
+      `select name from academies where id = :'id'`,
+      { id: academyId }
+    );
+    expect(row.name).toBe(SEED.academyName);
+  });
+
+  test('J38e: learner profile — a clashing rename is refused and names the academy', async ({
+    page,
+  }) => {
+    const takenFirst = 'Taken';
+    const takenLast = uniqueLearnerName('Clash').replace(/\s+/g, '');
+    await registerLearnerViaApi(page, academyId, `${takenFirst} ${takenLast}`);
+    const email = await registerLearnerViaApi(
+      page,
+      academyId,
+      uniqueLearnerName('J38 Renamer')
+    );
+
+    await seedCookieDecision(page);
+    await setLanguage(page, 'en');
+    await page.goto(academyPath('/sign-in'));
+    await declineCookies(page);
+    await page.locator('input[type="email"]').fill(email);
+    await page.locator('input[type="password"]').fill(LEARNER_PASSWORD);
+    await page.getByRole('button', { name: /sign in/i }).click();
+    await expect(page).toHaveURL(/\/my(\/|\?|$)/, { timeout: 60_000 });
+
+    await page.goto(academyPath('/my/profile'));
+    await page.getByRole('button', { name: /^edit$/i }).click();
+    await page.locator('#firstName').fill(takenFirst.toLowerCase());
+    await page.locator('#lastName').fill(takenLast.toUpperCase());
+    await page.getByRole('button', { name: /^save$/i }).click();
+
+    const message = page.locator('#lastName-error');
+    await expect(message).toContainText(
+      `Another learner already uses this name in ${SEED.academyName}.`
+    );
+    await expect(page.locator('#lastName')).toHaveAttribute(
+      'aria-invalid',
+      'true'
+    );
+  });
+});
