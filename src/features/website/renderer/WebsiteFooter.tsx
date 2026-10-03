@@ -4,7 +4,9 @@
  * Three structural variants (`columns`/`simple`/`stacked`), same
  * token-driven-variant pattern as `WebsiteHeader`.
  */
+import type { ReactNode } from 'react';
 import { AtlasPlatformAttribution } from '@components/branding';
+import { cn } from '@utils';
 import { useCurrentYear } from '@hooks';
 import { useWebsiteDesignSystem } from './WebsiteDesignSystemContext';
 import { useWebsiteContainerClass } from './renderer-style.utils';
@@ -34,30 +36,32 @@ export interface WebsiteFooterProps {
 }
 
 /**
- * The Atlas attribution row — the LAST row of the Academy's own footer.
+ * The footer's closing line: the Academy's copyright with the mandatory
+ * Atlas attribution beside it (Phase 6: platform-owned, rendered from
+ * component code, no CMS field or prop can hide it).
  *
- * Phase 11 post-production fix. This used to be a separate bordered strip
- * rendered after `<WebsiteFooter/>`, which visitors read as a second
- * footer stacked under the Academy's. It is now the closing row of the
- * same `<footer>` element, separated only by a hairline, so it reads as
- * part of the Academy's footer while staying visually subordinate.
- *
- * STILL PLATFORM-OWNED. It is rendered from component code and takes no
- * props from `configuration.footer`, so no CMS field, toggle or prop can
- * hide it — the Phase 6 requirement is unchanged. Only its position in
- * the markup moved.
- *
- * It degrades correctly when the Academy has configured no footer content
- * at all: it is then simply the footer's only row.
+ * It used to be a separate bordered row under the copyright, which read as
+ * a second footer stacked beneath the Academy's. It now shares the
+ * copyright's line on wide screens and stacks under it, centred, on phones
+ * — part of the Academy's footer, visually secondary to its identity.
  */
-export function FooterAttributionRow({
-  container,
+export function FooterLegalLine({
+  copyright,
+  className,
 }: {
-  readonly container: string;
+  readonly copyright: ReactNode;
+  readonly className?: string;
 }): JSX.Element {
   return (
-    <div className={`${container} mt-6 border-t border-border pt-4`}>
-      <AtlasPlatformAttribution />
+    <div
+      data-testid="website-footer-legal"
+      className={cn(
+        'flex flex-col items-center gap-x-4 gap-y-1.5 sm:flex-row sm:flex-wrap',
+        className
+      )}
+    >
+      {copyright}
+      <AtlasPlatformAttribution className="shrink-0" />
     </div>
   );
 }
@@ -128,7 +132,11 @@ export function WebsiteFooter({
         <div
           className={`${container} flex flex-col items-center gap-3 text-center sm:flex-row sm:justify-between sm:text-start`}
         >
-          <p className="text-sm text-muted-foreground">{copyright}</p>
+          <FooterLegalLine
+            copyright={
+              <p className="text-sm text-muted-foreground">{copyright}</p>
+            }
+          />
           <div className="flex flex-wrap items-center gap-4">
             {[...groupLinks, ...footer.socialLinks].map((link) => (
               <FooterLinkButton
@@ -142,7 +150,6 @@ export function WebsiteFooter({
             ))}
           </div>
         </div>
-        <FooterAttributionRow container={container} />
       </footer>
     );
   }
@@ -169,9 +176,13 @@ export function WebsiteFooter({
               />
             ))}
           </div>
-          <p className="text-xs text-muted-foreground">{copyright}</p>
+          <FooterLegalLine
+            className="sm:justify-center"
+            copyright={
+              <p className="text-xs text-muted-foreground">{copyright}</p>
+            }
+          />
         </div>
-        <FooterAttributionRow container={container} />
       </footer>
     );
   }
@@ -216,7 +227,9 @@ export function WebsiteFooter({
       <div
         className={`${container} mt-8 flex flex-col items-center gap-3 border-t border-border pt-6 text-center sm:flex-row sm:justify-between sm:text-start`}
       >
-        <p className="text-xs text-muted-foreground">{copyright}</p>
+        <FooterLegalLine
+          copyright={<p className="text-xs text-muted-foreground">{copyright}</p>}
+        />
         {footer.socialLinks.length > 0 ? (
           <div className="flex flex-wrap items-center gap-4">
             {footer.socialLinks.map((link) => (
@@ -232,7 +245,6 @@ export function WebsiteFooter({
           </div>
         ) : null}
       </div>
-      <FooterAttributionRow container={container} />
     </footer>
   );
 }

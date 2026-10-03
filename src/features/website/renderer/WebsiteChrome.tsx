@@ -18,7 +18,8 @@ import { cn } from '@utils';
 import { getWebsiteTheme } from '../themes/website-theme.registry';
 import { WebsiteThemeScope } from './WebsiteThemeScope';
 import { WebsiteHeader, type WebsiteHeaderAuthState } from './WebsiteHeader';
-import { FooterAttributionRow, WebsiteFooter } from './WebsiteFooter';
+import { AtlasPlatformAttribution } from '@components/branding';
+import { WebsiteFooter } from './WebsiteFooter';
 import { getThemePack } from '../theme-packs/theme-pack.registry';
 import { MobileBottomNav } from './MobileBottomNav';
 import { useMobileBottomNavVisibility } from './useMobileBottomNavVisibility';
@@ -163,18 +164,12 @@ export function WebsiteChrome({
           </main>
 
           {/*
-          ONE footer region, not two. The mandatory Atlas attribution used
-          to be a SEPARATE bordered strip rendered here, directly beneath
-          `WebsiteFooter`, which read to visitors as two stacked footers —
-          the Academy's, then the platform's.
-
-          It now renders INSIDE `WebsiteFooter`'s own `<footer>` element as
-          its bottom row. The Phase 6 requirement that it be
-          platform-owned and un-hideable is unchanged and unchanged-able:
-          it is still emitted from component code, never from
-          `configuration.footer`, so no CMS field, prop or toggle can
-          remove it. What moved is where the markup sits, not who controls
-          it.
+          ONE footer region, not two. The mandatory Atlas attribution is
+          platform-owned (Phase 6): emitted from component code, never from
+          `configuration.footer`, so no CMS field, prop or toggle removes
+          it. It sits on the footer's copyright line (`FooterLegalLine`, or
+          the theme footer's own copyright row), not in a row of its own —
+          a separate strip read to visitors as a second footer.
         */}
           {ThemeFooter ? (
             <ThemeFooter
@@ -187,9 +182,7 @@ export function WebsiteChrome({
               linkRenderer={linkRenderer}
               // The platform attribution is handed to the theme's footer as
               // a finished element: the theme places it, it can't change it.
-              attribution={
-                <FooterAttributionRow container="mx-auto w-full max-w-[var(--website-container-width)] px-4 sm:px-6 lg:px-8" />
-              }
+              attribution={<AtlasPlatformAttribution className="shrink-0" />}
             />
           ) : (
             <WebsiteFooter
