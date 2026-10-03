@@ -7,9 +7,14 @@
  * the same server state — a deleted enquiry that still showed in a count
  * would read as a failed action. Mutation feedback (toasts, Undo) is the
  * page's job, so the shared toast behaviour is switched off here.
+ *
+ * The list and the counts poll while shown (`LIVE_LIST_QUERY_OPTIONS`,
+ * paused in background tabs), like an academy's own Messages inbox:
+ * visitors send enquiries from the marketing site at any time.
  */
 import { keepPreviousData } from '@tanstack/react-query';
 import { useApiMutation, useApiQuery } from '@/shared/hooks';
+import { LIVE_LIST_QUERY_OPTIONS } from '@config';
 import { platformContactSubmissionKeys } from '@services/query';
 import type { ApiError } from '@api';
 import type { PaginatedResult } from '@types';
@@ -30,6 +35,7 @@ export function usePlatformContactSubmissions(
     // Typing in search or flipping a filter keeps the previous rows on
     // screen instead of collapsing the table to a skeleton.
     placeholderData: keepPreviousData,
+    ...LIVE_LIST_QUERY_OPTIONS,
   });
 }
 
@@ -37,6 +43,7 @@ export function usePlatformContactSubmissionSummary() {
   return useApiQuery<PlatformContactSubmissionSummary, ApiError>({
     queryKey: platformContactSubmissionKeys.summary(),
     queryFn: () => platformContactSubmissionService.summary(),
+    ...LIVE_LIST_QUERY_OPTIONS,
   });
 }
 

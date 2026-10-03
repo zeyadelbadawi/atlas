@@ -127,9 +127,9 @@ describe('CourseBuilderPage — sections', () => {
     renderPage();
     await screen.findByText('1. Basics');
 
-    const moveDown = screen.getAllByRole('button', {
-      name: /move section down/i,
-    })[0];
+    const moveDown = screen.getByRole('button', {
+      name: 'Move section "Basics" down',
+    });
     await user.dblClick(moveDown);
 
     await waitFor(() =>
@@ -144,7 +144,7 @@ describe('CourseBuilderPage — sections', () => {
     const basicsCard = screen.getByText('2. Basics').closest('li')!;
     expect(within(basicsCard).getByText(/Saving order/)).toBeTruthy();
     screen
-      .getAllByRole('button', { name: /move section (up|down)/i })
+      .getAllByRole('button', { name: /^Move section ".+" (up|down)$/ })
       .forEach((button) => {
         if (!(button as HTMLButtonElement).disabled) {
           expect(button.getAttribute('aria-disabled')).toBe('true');

@@ -379,7 +379,9 @@ export function UnitCurriculum({
                     disabled={index === 0 || rowBusy}
                     aria-disabled={reorderLocked || undefined}
                     onClick={() => handleMove(index, 'up')}
-                    aria-label={t('course:builder.lessonMenu.moveUp')}
+                    aria-label={t('course:builder.lessonMenu.moveUp', {
+                      title: item.title,
+                    })}
                   >
                     <ArrowUp className="size-4" aria-hidden />
                   </Button>
@@ -391,7 +393,9 @@ export function UnitCurriculum({
                     disabled={index === items.length - 1 || rowBusy}
                     aria-disabled={reorderLocked || undefined}
                     onClick={() => handleMove(index, 'down')}
-                    aria-label={t('course:builder.lessonMenu.moveDown')}
+                    aria-label={t('course:builder.lessonMenu.moveDown', {
+                      title: item.title,
+                    })}
                   >
                     <ArrowDown className="size-4" aria-hidden />
                   </Button>

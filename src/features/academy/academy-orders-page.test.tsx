@@ -7,6 +7,8 @@
  *     badges for order, payment and refund status (EN and AR, no raw keys);
  *   - search and sort are sent to the server (the hook receives them), and
  *     a returned page is rendered as-is;
+ *   - the filters, sort and page come from and go to the URL (Back from an
+ *     order restores them), and a placeholder page shows as busy;
  *   - empty (with and without filters), loading, a retryable error, and a
  *     403 rendered as ONE permission state;
  *   - the detail lists every payment attempt, shows the refund, and turns a
@@ -24,6 +26,7 @@ import {
   waitFor,
 } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
+import { MemoryRouter, useLocation } from 'react-router-dom';
 import { createI18nInstance } from '@/localization/i18n';
 import { createApiError } from '@api';
 import type { ApiClient } from '@services';
@@ -35,10 +38,10 @@ const params: { academyId?: string; orderId?: string } = {
   orderId: 'order-1',
 };
 const navigate = vi.fn();
-vi.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
   useParams: () => params,
   useNavigate: () => navigate,
-  Link: ({ children }: { children: unknown }) => children,
 }));
 
 const useAcademyCourseOrders = vi.fn();
@@ -104,10 +107,23 @@ function page(items: AcademyCourseOrder[]) {
   };
 }
 
-function renderWith(node: JSX.Element, language: 'en' | 'ar' = 'en') {
+let currentSearch = '';
+function LocationProbe(): null {
+  currentSearch = useLocation().search;
+  return null;
+}
+
+function renderWith(
+  node: JSX.Element,
+  language: 'en' | 'ar' = 'en',
+  url = '/orders'
+) {
   return render(
     <I18nextProvider i18n={createI18nInstance(language)}>
-      {node}
+      <MemoryRouter initialEntries={[url]}>
+        {node}
+        <LocationProbe />
+      </MemoryRouter>
     </I18nextProvider>
   );
 }
@@ -195,6 +211,52 @@ describe('AcademyOrdersPage', () => {
     );
     expect(await screen.findByText('No orders match')).toBeTruthy();
     expect(screen.getByRole('button', { name: /Clear filters/ })).toBeTruthy();
+  });
+
+  it('reads the filters, sort and page from the URL and writes changes back to it', async () => {
+    useAcademyCourseOrders.mockReturnValue(ready(page([order()])));
+    renderWith(
+      <AcademyOrdersPage />,
+      'en',
+      '/orders?status=paid&sort=amount_asc&page=3&methodType=bogus&from=2026-02-31'
+    );
+    // Valid values are applied; unknown ones fall back to their defaults.
+    const [, query] = useAcademyCourseOrders.mock.calls[0] as [
+      string,
+      { pagination: unknown; sort: unknown; filters?: unknown },
+    ];
+    expect(query.pagination).toEqual({ page: 3, pageSize: 20 });
+    expect(query.sort).toEqual({ field: 'amount', direction: 'asc' });
+    expect(query.filters).toEqual({ status: 'paid' });
+
+    // A change is written to the URL (replace) and returns to page 1.
+    fireEvent.change(
+      screen.getByRole('searchbox', {
+        name: 'Search by student, course or order ID',
+      }),
+      { target: { value: 'sara' } }
+    );
+    await waitFor(() => expect(currentSearch).toContain('search=sara'));
+    expect(currentSearch).toContain('status=paid');
+    expect(currentSearch).not.toContain('page=');
+    expect(useAcademyCourseOrders).toHaveBeenLastCalledWith(
+      'academy-1',
+      expect.objectContaining({
+        search: 'sara',
+        pagination: { page: 1, pageSize: 20 },
+      })
+    );
+  });
+
+  it('dims the previous rows and marks the table busy while a new filter loads', () => {
+    useAcademyCourseOrders.mockReturnValue({
+      ...ready(page([order()])),
+      isFetching: true,
+      isPlaceholderData: true,
+    });
+    const { container } = renderWith(<AcademyOrdersPage />);
+    const busy = container.querySelector('[aria-busy="true"]');
+    expect(busy?.querySelector('table')).toBeTruthy();
   });
 
   it('opens the order detail on row select', () => {

@@ -1,13 +1,18 @@
 /**
- * The Platform Owner contact inbox toolbar: status tabs with whole-inbox
- * counts, search, topic, received-date range, sort and Clear filters.
+ * The Platform Owner contact inbox toolbar: a status filter with
+ * whole-inbox counts, search, topic, received-date range, sort and Clear
+ * filters.
+ *
+ * The status filter is a single-choice toggle group (a radio group to
+ * assistive tech), not tabs: it filters one list and has no tab panels.
+ * It scrolls sideways on a phone rather than wrapping or clipping.
  *
  * Purely presentational — every value comes from, and every change goes
  * to, the URL-backed state in `usePlatformContactSubmissionFilters`.
  */
 import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -80,39 +85,47 @@ export function PlatformContactSubmissionsToolbar({
       aria-label={t(`${K}.filters.label`)}
       className="space-y-3"
     >
-      <div className="overflow-x-auto">
-        <Tabs
+      <div className="max-w-full overflow-x-auto">
+        <ToggleGroup
+          type="single"
           value={filters.status ?? 'all'}
-          onValueChange={(value) =>
+          onValueChange={(value) => {
+            // Pressing the active option again would clear the choice;
+            // one status (or All) is always selected.
+            if (!value) return;
             onStatusChange(
               value === 'all'
                 ? undefined
                 : (value as PlatformContactSubmissionStatus)
-            )
-          }
+            );
+          }}
+          aria-label={t(`${K}.filters.status`)}
+          className="inline-flex w-max justify-start rounded-md bg-muted p-1 text-muted-foreground"
         >
-          <TabsList aria-label={t(`${K}.filters.status`)}>
-            {STATUS_TABS.map((tab) => {
-              const count = countFor(tab);
-              return (
-                <TabsTrigger key={tab} value={tab}>
-                  {tab === 'all'
-                    ? t(`${K}.filters.all`)
-                    : t(`${K}.status.${tab}`)}
-                  {count !== undefined ? (
-                    <Badge
-                      variant="secondary"
-                      className="ms-2"
-                      data-atlas-numeric="true"
-                    >
-                      {formatNumber(count, language)}
-                    </Badge>
-                  ) : null}
-                </TabsTrigger>
-              );
-            })}
-          </TabsList>
-        </Tabs>
+          {STATUS_TABS.map((tab) => {
+            const count = countFor(tab);
+            return (
+              <ToggleGroupItem
+                key={tab}
+                value={tab}
+                className="h-8 whitespace-nowrap rounded-sm px-3 data-[state=on]:bg-background data-[state=on]:text-foreground data-[state=on]:shadow-sm"
+              >
+                {tab === 'all'
+                  ? t(`${K}.filters.all`)
+                  : t(`${K}.status.${tab}`)}
+                {count !== undefined ? (
+                  <Badge
+                    variant="secondary"
+                    className="ms-2"
+                    data-atlas-numeric="true"
+                  >
+                    {formatNumber(count, language)}
+                  </Badge>
+                ) : null}
+              </ToggleGroupItem>
+            );
+          })}
+        </ToggleGroup>
       </div>
 
       <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-end">

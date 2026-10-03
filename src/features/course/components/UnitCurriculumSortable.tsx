@@ -6,10 +6,14 @@
  *   - Dragging starts ONLY from the dedicated handle button (it carries the
  *     dnd-kit listeners and an `aria-label` naming the row). Every other
  *     interactive child — move buttons, menus, links — never starts a drag.
- *   - Pointer (with an activation distance, so a click on the handle is not
- *     a drag), touch (with a press delay, so scrolling a page on a phone is
- *     not a drag) and keyboard (Space/Enter to pick up, arrows to move,
- *     Space/Enter to drop, Escape to cancel) all work.
+ *   - Pointer and keyboard both work. The PointerSensor handles mouse, pen
+ *     AND touch pointers, with an activation distance so a tap or click on
+ *     the handle is not a drag; the handle is `touch-none`, so a finger on
+ *     it drags instead of scrolling, while scrolling anywhere else on a
+ *     phone never starts a drag (only the handle carries the listeners).
+ *     The TouchSensor's press delay only matters in a browser without
+ *     pointer events. Keyboard: Space/Enter to pick up, arrows to move,
+ *     Space/Enter to drop, Escape to cancel.
  *   - Every phase is announced to screen readers in the current language
  *     (dnd-kit's live region + our translated announcements and
  *     instructions); dnd-kit restores focus to the handle after a drop.
@@ -284,6 +288,18 @@ function SortableRow({
       : 'after'
     : null;
 
+  // Stable while dnd-kit's own values are, so the handle's ref callback
+  // is not detached and re-attached on every render.
+  const handle = useMemo<DragHandleBindings>(
+    () => ({
+      setActivatorNodeRef,
+      attributes: attributes as unknown as Record<string, unknown>,
+      listeners: listeners as Record<string, unknown> | undefined,
+      disabled,
+    }),
+    [setActivatorNodeRef, attributes, listeners, disabled]
+  );
+
   const style: CSSProperties = {
     transform: CSS.Translate.toString(transform),
     transition: reducedMotion ? undefined : transition,
@@ -313,15 +329,7 @@ function SortableRow({
           )}
         />
       ) : null}
-      {children({
-        handle: {
-          setActivatorNodeRef,
-          attributes: attributes as unknown as Record<string, unknown>,
-          listeners: listeners as Record<string, unknown> | undefined,
-          disabled,
-        },
-        isDragging,
-      })}
+      {children({ handle, isDragging })}
     </li>
   );
 }
@@ -341,12 +349,13 @@ export function DragHandle({
   isDragging,
   focusRef,
 }: DragHandleProps): JSX.Element {
+  const { setActivatorNodeRef } = handle;
   const setRefs = useCallback(
     (element: HTMLButtonElement | null) => {
-      handle.setActivatorNodeRef(element);
+      setActivatorNodeRef(element);
       focusRef?.(element);
     },
-    [handle, focusRef]
+    [setActivatorNodeRef, focusRef]
   );
 
   return (

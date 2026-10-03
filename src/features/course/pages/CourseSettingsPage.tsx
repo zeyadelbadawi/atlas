@@ -3,9 +3,11 @@
  *
  * Course-level lifecycle management: status/visibility summary, the
  * publish/unpublish workflow, and course deletion. Identity fields (title,
- * descriptions, thumbnail, category, pricing) are edited on the Course Edit
- * page — this page owns lifecycle, not content, the same way Academy
- * Settings stays separate from Academy Profile.
+ * descriptions, thumbnail, pricing) are edited on the Course Edit page —
+ * this page owns lifecycle, not content, the same way Academy Settings
+ * stays separate from Academy Profile. The category is not editable by
+ * Academy Owners or Managers anywhere (Task 9): it is hidden on create and
+ * edit, and an edit keeps the course's existing category.
  *
  * P64 Phase 3 (AD-11, D6) adds the "Completion and certificate" card:
  * what completing the course means and whether a certificate is issued.

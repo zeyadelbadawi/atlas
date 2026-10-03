@@ -15,9 +15,10 @@
  * Opening a `new` enquiry marks it read (one PATCH). Archive is reversible
  * (Undo toast, no confirmation); Delete is permanent and always confirmed
  * first in an alert dialog. Every status change and delete is audited
- * server-side.
+ * server-side. After a delete, focus moves to the results card (the row
+ * that opened the sheet is gone) instead of falling back to the body.
  */
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Inbox, SearchX, X } from 'lucide-react';
@@ -128,6 +129,14 @@ export default function PlatformContactSubmissionsPage(): JSX.Element {
   const [toDelete, setToDelete] = useState<PlatformContactSubmission | null>(
     null
   );
+  const resultsRef = useRef<HTMLDivElement>(null);
+  /** Set by a successful delete; the closing sheet and dialog then focus the results. */
+  const focusResultsOnClose = useRef(false);
+  const restoreFocusAfterDelete = (event: Event) => {
+    if (!focusResultsOnClose.current) return;
+    event.preventDefault();
+    resultsRef.current?.focus({ preventScroll: true });
+  };
 
   const changeStatus = (
     submission: PlatformContactSubmission,
@@ -165,6 +174,7 @@ export default function PlatformContactSubmissionsPage(): JSX.Element {
   };
 
   const openSubmission = (submission: PlatformContactSubmission) => {
+    focusResultsOnClose.current = false;
     setSelected(submission);
     setIsSheetOpen(true);
     // Opening an enquiry is reading it — one PATCH, no toast.
@@ -178,6 +188,7 @@ export default function PlatformContactSubmissionsPage(): JSX.Element {
     if (!target) return;
     deleteSubmission.mutate(target.id, {
       onSuccess: () => {
+        focusResultsOnClose.current = true;
         setToDelete(null);
         setIsSheetOpen(false);
         setSelected((current) => (current?.id === target.id ? null : current));
@@ -444,7 +455,11 @@ export default function PlatformContactSubmissionsPage(): JSX.Element {
           onClearFilters={clearFilters}
         />
 
-        <Card>
+        <Card
+          ref={resultsRef}
+          tabIndex={-1}
+          className="focus-visible:outline-none"
+        >
           <CardContent className="p-0">{renderBody()}</CardContent>
         </Card>
       </div>
@@ -459,6 +474,7 @@ export default function PlatformContactSubmissionsPage(): JSX.Element {
         onRequestDelete={setToDelete}
         pendingStatus={pendingStatus}
         isDeleting={deleteSubmission.isPending}
+        onCloseAutoFocus={restoreFocusAfterDelete}
       />
 
       <AlertDialog
@@ -467,7 +483,7 @@ export default function PlatformContactSubmissionsPage(): JSX.Element {
           if (!open && !deleteSubmission.isPending) setToDelete(null);
         }}
       >
-        <AlertDialogContent>
+        <AlertDialogContent onCloseAutoFocus={restoreFocusAfterDelete}>
           <AlertDialogHeader>
             <AlertDialogTitle>{t(`${K}.deleteDialog.title`)}</AlertDialogTitle>
             <AlertDialogDescription>

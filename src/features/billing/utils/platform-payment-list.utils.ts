@@ -5,6 +5,7 @@
  * which applies them before paging. Nothing here filters rows client-side.
  */
 import type { TFunction } from 'i18next';
+import type { UrlListStateConfig } from '@hooks';
 import type {
   CollectionQuery,
   ManualReviewStatus,
@@ -91,6 +92,24 @@ export const DEFAULT_PLATFORM_PAYMENT_LIST_STATE: PlatformPaymentListState = {
   to: '',
   sort: 'createdAt_desc',
 };
+
+/**
+ * How the list state is read from and written to the URL
+ * (`useUrlListState`): every enumerated field against its own options, the
+ * range as real dates. Shared by both review lists, so Back from a detail
+ * page restores the queue the reviewer was working through.
+ */
+export const PLATFORM_PAYMENT_LIST_URL_CONFIG: UrlListStateConfig<PlatformPaymentListState> =
+  {
+    defaults: DEFAULT_PLATFORM_PAYMENT_LIST_STATE,
+    allowed: {
+      reviewStatus: PLATFORM_REVIEW_FILTERS,
+      status: ['all', ...PLATFORM_PAYMENT_STATUS_OPTIONS],
+      methodType: ['all', ...PLATFORM_PAYMENT_METHOD_OPTIONS],
+      sort: PLATFORM_PAYMENT_SORT_OPTIONS,
+    },
+    dates: ['from', 'to'],
+  };
 
 export function hasActivePlatformPaymentFilters(
   state: PlatformPaymentListState

@@ -182,7 +182,8 @@
     "addOnPlan": "إضافة: {{name}}",
     "plan": "الخطة",
     "billingCycle": "دورة الفوترة",
-    "unknownOrganization": "المؤسسة غير متاحة"
+    "unknownOrganization": "المؤسسة غير متاحة",
+    "noPlan": "لا توجد خطة مسجلة"
   },
   "listFilters": {
     "label": "عوامل التصفية",

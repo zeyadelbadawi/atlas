@@ -4,7 +4,9 @@
  * Pinned here: the list renders real rows (academy name, course title,
  * order and refund status — never raw ids) / an empty state / a retryable
  * error; search, filters and sort go to the SERVER and the returned page
- * is rendered as-is (no client-side re-filter); approve and reject are
+ * is rendered as-is (no client-side re-filter); the filters, sort and
+ * page come from and go to the URL, and a placeholder page shows as busy;
+ * approve and reject are
  * CONFIRMED before any request, send exactly the DTO shape the backend
  * validates, reject enforces the 10-character reason floor, and while one
  * decision is in flight neither can be sent.
@@ -19,7 +21,7 @@ import {
   waitFor,
 } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { createI18nInstance } from '@/localization/i18n';
 import type { CourseOrderPayment } from '@types';
 
@@ -106,11 +108,18 @@ function page(items: readonly CourseOrderPayment[]) {
   };
 }
 
-function renderList(language: 'en' | 'ar' = 'en') {
+let currentSearch = '';
+function LocationProbe(): null {
+  currentSearch = useLocation().search;
+  return null;
+}
+
+function renderList(language: 'en' | 'ar' = 'en', url = '/course-payments') {
   return render(
     <I18nextProvider i18n={createI18nInstance(language)}>
-      <MemoryRouter>
+      <MemoryRouter initialEntries={[url]}>
         <ListPage />
+        <LocationProbe />
       </MemoryRouter>
     </I18nextProvider>
   );
@@ -204,6 +213,42 @@ describe('PlatformCoursePaymentListPage', () => {
         })
       )
     );
+  });
+
+  it('reads the filters, sort and page from the URL and writes changes back to it', async () => {
+    useCourseOrderPayments.mockReturnValue(page([payment()]));
+    renderList(
+      'en',
+      '/course-payments?reviewStatus=approved&methodType=manual_instapay&page=4&to=2026-13-01'
+    );
+    expect(useCourseOrderPayments).toHaveBeenCalledWith({
+      query: {
+        pagination: { page: 4, pageSize: 20 },
+        sort: { field: 'createdAt', direction: 'desc' },
+        filters: { reviewStatus: 'approved', methodType: 'manual_instapay' },
+      },
+    });
+
+    fireEvent.change(
+      screen.getByRole('searchbox', {
+        name: 'Search by academy, course, reference or payment ID',
+      }),
+      { target: { value: 'Cairo' } }
+    );
+    await waitFor(() => expect(currentSearch).toContain('search=Cairo'));
+    expect(currentSearch).toContain('reviewStatus=approved');
+    expect(currentSearch).not.toContain('page=');
+  });
+
+  it('dims the previous rows and marks the table busy while a new filter loads', () => {
+    useCourseOrderPayments.mockReturnValue({
+      ...page([payment()]),
+      isFetching: true,
+      isPlaceholderData: true,
+    });
+    const { container } = renderList();
+    const busy = container.querySelector('[aria-busy="true"]');
+    expect(busy?.querySelector('table')).toBeTruthy();
   });
 
   it('names a missing academy instead of showing a raw id', () => {

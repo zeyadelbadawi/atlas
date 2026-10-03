@@ -333,7 +333,7 @@ describe('Platform contact inbox — list', () => {
     expect(within(table).getByText('Account help')).toBeTruthy();
     expect(within(table).getAllByText('New').length).toBeGreaterThan(0);
     await waitFor(() =>
-      expect(screen.getByRole('tab', { name: /^All/ }).textContent).toContain(
+      expect(screen.getByRole('radio', { name: /^All/ }).textContent).toContain(
         '2'
       )
     );
@@ -450,6 +450,12 @@ describe('Platform contact inbox — reading and deleting', () => {
       expect(
         within(screen.getByRole('table')).queryByText('Omar Said')
       ).toBeNull()
+    );
+    // The row that opened the sheet is gone: focus lands on the results,
+    // not on <body>.
+    await waitFor(() => expect(document.activeElement).not.toBe(document.body));
+    expect(document.activeElement?.contains(screen.getByRole('table'))).toBe(
+      true
     );
   });
 

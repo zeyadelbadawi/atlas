@@ -20,6 +20,10 @@
  *    unknown or malformed token is always plain `invalid`), and a network
  *    or rate-limit failure can be retried with the same token because the
  *    token was never spent.
+ *  - When the state changes (the outcome replacing "verifying…", or a
+ *    retry's outcome replacing the Retry button), focus moves to the
+ *    element the page attaches `outcomeRef` to, so the outcome is
+ *    announced and focus does not fall back to the document body.
  */
 import {
   useCallback,
@@ -51,6 +55,8 @@ export interface VerifyEmailFlow {
   /** Whether `retry` can do anything (a network or rate-limit failure, token still held). */
   readonly canRetry: boolean;
   readonly retry: () => void;
+  /** Attach to the outcome's heading/message (`tabIndex={-1}`); focused when the state changes. */
+  readonly outcomeRef: (element: HTMLElement | null) => void;
 }
 
 const EXPIRED_KEY = 'errors.auth.verificationTokenExpired';
@@ -75,9 +81,14 @@ function failureState(error: ApiError | null): VerifyEmailState {
   return 'invalid';
 }
 
+// The academy-host page is also rendered on the server, where
+// `useLayoutEffect` warns; the effect itself only ever runs in a browser.
+const useIsomorphicLayoutEffect =
+  typeof window === 'undefined' ? useEffect : useLayoutEffect;
+
 /** `<meta name="referrer" content="no-referrer">` for as long as the caller is mounted. */
 function useNoReferrerPolicy(): void {
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const meta = document.createElement('meta');
     meta.name = 'referrer';
     meta.content = 'no-referrer';
@@ -142,10 +153,22 @@ export function useVerifyEmailFlow(): VerifyEmailFlow {
     submit();
   }, [canRetry, reset, submit]);
 
+  const outcomeNode = useRef<HTMLElement | null>(null);
+  const previousState = useRef(state);
+  useEffect(() => {
+    if (previousState.current === state) return;
+    previousState.current = state;
+    outcomeNode.current?.focus({ preventScroll: true });
+  }, [state]);
+  const outcomeRef = useCallback((element: HTMLElement | null) => {
+    outcomeNode.current = element;
+  }, []);
+
   return {
     state,
     requestId: verifyEmail.error?.requestId,
     canRetry,
     retry,
+    outcomeRef,
   };
 }

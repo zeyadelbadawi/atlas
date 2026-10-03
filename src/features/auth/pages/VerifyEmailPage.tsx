@@ -70,7 +70,8 @@ const RESENDABLE: ReadonlySet<VerifyEmailState> = new Set([
 export default function VerifyEmailPage(): JSX.Element {
   const { t } = useTranslation();
   const { isAuthenticated } = useAuth();
-  const { state, requestId, canRetry, retry } = useVerifyEmailFlow();
+  const { state, requestId, canRetry, retry, outcomeRef } =
+    useVerifyEmailFlow();
 
   const linkClass =
     'font-medium text-primary underline-offset-4 hover:underline';
@@ -114,7 +115,11 @@ export default function VerifyEmailPage(): JSX.Element {
         data-testid="verify-email-success"
       >
         <CheckCircle2 className="size-8 text-primary" aria-hidden />
-        <h1 className="text-2xl font-semibold text-foreground">
+        <h1
+          ref={outcomeRef}
+          tabIndex={-1}
+          className="text-2xl font-semibold text-foreground focus-visible:outline-none"
+        >
           {t('auth:verifyEmail.successTitle')}
         </h1>
         <p className="text-sm text-muted-foreground">
@@ -138,7 +143,11 @@ export default function VerifyEmailPage(): JSX.Element {
         data-testid="verify-email-request"
       >
         <MailCheck className="size-8 text-primary" aria-hidden />
-        <h1 className="text-2xl font-semibold text-foreground">
+        <h1
+          ref={outcomeRef}
+          tabIndex={-1}
+          className="text-2xl font-semibold text-foreground focus-visible:outline-none"
+        >
           {t('auth:verifyEmail.title')}
         </h1>
         <p className="text-sm text-muted-foreground">
@@ -152,7 +161,9 @@ export default function VerifyEmailPage(): JSX.Element {
   const copy = FAILURE_COPY[state];
   return shell(
     <div
-      className="space-y-4"
+      ref={outcomeRef}
+      tabIndex={-1}
+      className="space-y-4 focus-visible:outline-none"
       data-testid="verify-email-error"
       data-state={state}
     >
@@ -160,7 +171,9 @@ export default function VerifyEmailPage(): JSX.Element {
         {t('auth:verifyEmail.title')}
       </h1>
       <ErrorState
-        kind={state === 'rateLimited' ? 'rateLimited' : 'validation'}
+        kind={
+          state === 'rateLimited' || state === 'network' ? state : 'validation'
+        }
         titleKey={copy.title}
         descriptionKey={copy.description}
         requestId={state === 'network' ? requestId : undefined}

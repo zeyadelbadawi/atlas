@@ -75,7 +75,9 @@ beforeEach(() => {
   createCourse = vi
     .spyOn(courseService, 'createCourse')
     .mockResolvedValue({ ...course, id: 'course-9' } as Course);
-  updateCourse = vi.spyOn(courseService, 'updateCourse').mockResolvedValue(course);
+  updateCourse = vi
+    .spyOn(courseService, 'updateCourse')
+    .mockResolvedValue(course);
   vi.spyOn(courseService, 'getCourse').mockResolvedValue(course);
   vi.spyOn(courseService, 'getCourses').mockResolvedValue({
     items: [course],
@@ -91,7 +93,9 @@ afterEach(() => {
 function renderAt(path: string, pattern: string, element: JSX.Element) {
   return render(
     <QueryClientProvider
-      client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}
+      client={
+        new QueryClient({ defaultOptions: { queries: { retry: false } } })
+      }
     >
       <I18nextProvider i18n={createI18nInstance('en')}>
         <ToastContext.Provider value={toastValue}>

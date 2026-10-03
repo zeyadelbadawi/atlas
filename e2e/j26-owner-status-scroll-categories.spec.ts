@@ -161,10 +161,18 @@ test.describe('J26 — website status, no categories, scroll', () => {
     const before = await scrollY(page);
     expect(before).toBeGreaterThan(50);
 
-    // Same page, only `?tab=` changes (setSearchParams replace): stays.
+    // Same page, only `?tab=` changes (setSearchParams replace): stays —
+    // unless the new tab's content is shorter, when the browser can only
+    // clamp to the new bottom. Either way nothing scrolls to the top.
     await studentsTab.click();
     await expect(page).toHaveURL(/tab=students/);
-    expect(Math.abs((await scrollY(page)) - before)).toBeLessThan(5);
+    await page.waitForLoadState('networkidle');
+    const maxScroll = await page.evaluate(
+      () => document.documentElement.scrollHeight - window.innerHeight
+    );
+    const afterTab = await scrollY(page);
+    expect(Math.abs(afterTab - Math.min(before, maxScroll))).toBeLessThan(5);
+    expect(afterTab).toBeGreaterThan(50);
 
     // A new page opens at the top; Back returns to the previous offset.
     await page.goto(`/dashboard/academy/${academyId}/courses`);
@@ -173,6 +181,6 @@ test.describe('J26 — website status, no categories, scroll', () => {
     await expect(page).toHaveURL(/members\?tab=students/);
     await expect
       .poll(() => scrollY(page), { timeout: 5_000 })
-      .toBeGreaterThan(before - 5);
+      .toBeGreaterThan(afterTab - 5);
   });
 });

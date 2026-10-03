@@ -15,6 +15,11 @@
  * client-side re-filter of the page is gone now that the backend honours
  * `reviewStatus`). Rows name the academy and course and show the order's
  * own status and refund status instead of raw ids.
+ *
+ * The search, filters, sort and page live in the URL (the same
+ * `PLATFORM_PAYMENT_LIST_URL_CONFIG` as the subscription review), so Back
+ * from a payment returns to the same slice of the queue. While a new
+ * slice loads, the previous rows stay on screen dimmed and `aria-busy`.
  */
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -25,10 +30,11 @@ import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { DataTable } from '@components/table';
 import { Card, CardContent } from '@/components/ui/card';
-import { usePagination } from '@hooks';
+import { useDateFormatter, usePagination, useUrlListState } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
+import { LANGUAGES } from '@localization';
 import {
-  DEFAULT_PLATFORM_PAYMENT_LIST_STATE,
+  PLATFORM_PAYMENT_LIST_URL_CONFIG,
   PlatformPaymentListToolbar,
   formatMoney,
   getCourseOrderStatusTone,
@@ -36,31 +42,52 @@ import {
   getPaymentStatusTone,
   getRefundStatusTone,
   toPlatformPaymentQuery,
-  type PlatformPaymentListState,
 } from '@features/billing';
 import { useCourseOrderPayments } from '../hooks';
-import type { CourseOrderPayment } from '@types';
+import type { CourseOrderPayment, LanguageCode } from '@types';
 
 export default function PlatformCoursePaymentListPage(): JSX.Element {
   const { t, i18n } = useTranslation();
+  const fmt = useDateFormatter();
   const navigate = useNavigate();
-  const [filters, setFilters] = useState<PlatformPaymentListState>(
-    DEFAULT_PLATFORM_PAYMENT_LIST_STATE
-  );
+  const locale =
+    LANGUAGES[i18n.language as LanguageCode]?.locale ?? i18n.language;
+  const {
+    state: filters,
+    page,
+    pageSize,
+    setState: setFilters,
+    setPage,
+    setPageSize,
+  } = useUrlListState(PLATFORM_PAYMENT_LIST_URL_CONFIG);
 
   const [totalItems, setTotalItems] = useState(0);
-  const pagination = usePagination({ totalItems });
-
-  const { data, isLoading, error, refetch } = useCourseOrderPayments({
-    query: toPlatformPaymentQuery(filters, {
-      page: pagination.page,
-      pageSize: pagination.pageSize,
-    }),
+  const pagination = usePagination({
+    totalItems,
+    page,
+    pageSize,
+    onPageChange: setPage,
+    onPageSizeChange: setPageSize,
   });
+
+  const query = useMemo(
+    () => toPlatformPaymentQuery(filters, { page, pageSize }),
+    [filters, page, pageSize]
+  );
+  const { data, isLoading, isFetching, isPlaceholderData, error, refetch } =
+    useCourseOrderPayments({ query });
 
   useEffect(() => {
     if (data) setTotalItems(data.pagination.totalItems);
   }, [data]);
+
+  // A restored URL can point past the end: land on the real last page.
+  useEffect(() => {
+    if (!data || isPlaceholderData) return;
+    const total = data.pagination.totalItems;
+    const lastPage = Math.max(1, Math.ceil(total / pageSize));
+    if (total > 0 && page > lastPage) setPage(lastPage);
+  }, [data, isPlaceholderData, page, pageSize, setPage]);
 
   const payments = data?.items ?? [];
 
@@ -130,7 +157,7 @@ export default function PlatformCoursePaymentListPage(): JSX.Element {
         header: t('platformCommerce:coursePayments.table.amount'),
         cell: ({ row }) => (
           <span className="font-medium" data-atlas-numeric="true">
-            {formatMoney(row.original.money, i18n.language)}
+            {formatMoney(row.original.money, locale)}
           </span>
         ),
       },
@@ -171,13 +198,16 @@ export default function PlatformCoursePaymentListPage(): JSX.Element {
         enableSorting: false,
         header: t('platformCommerce:coursePayments.table.submittedAt'),
         cell: ({ row }) => (
-          <span className="text-muted-foreground">
-            {new Date(row.original.createdAt).toLocaleDateString(i18n.language)}
-          </span>
+          <time
+            dateTime={row.original.createdAt}
+            className="whitespace-nowrap text-muted-foreground"
+          >
+            {fmt.date(row.original.createdAt)}
+          </time>
         ),
       },
     ],
-    [t, i18n.language]
+    [t, fmt, locale]
   );
 
   return (
@@ -192,10 +222,7 @@ export default function PlatformCoursePaymentListPage(): JSX.Element {
           <PlatformPaymentListToolbar
             idPrefix="course-payments"
             value={filters}
-            onChange={(next) => {
-              setFilters(next);
-              pagination.goToFirstPage();
-            }}
+            onChange={setFilters}
             searchLabelKey="platformCommerce:coursePayments.searchLabel"
           />
 
@@ -206,6 +233,7 @@ export default function PlatformCoursePaymentListPage(): JSX.Element {
               columns={columns}
               data={payments}
               isLoading={isLoading}
+              isBusy={isFetching && isPlaceholderData}
               pagination={pagination}
               emptyTitleKey="platformCommerce:coursePayments.emptyTitle"
               emptyDescriptionKey="platformCommerce:coursePayments.emptyDescription"

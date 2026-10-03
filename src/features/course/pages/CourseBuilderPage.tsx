@@ -489,7 +489,9 @@ export default function CourseBuilderPage(): JSX.Element {
                         disabled={sectionIndex === 0 || isDeleting}
                         aria-disabled={sectionReorderLocked || undefined}
                         onClick={() => handleMoveSection(sectionIndex, 'up')}
-                        aria-label={t('course:builder.sectionMenu.moveUp')}
+                        aria-label={t('course:builder.sectionMenu.moveUp', {
+                          title: section.title,
+                        })}
                       >
                         <ArrowUp className="size-4" aria-hidden />
                       </Button>
@@ -503,7 +505,9 @@ export default function CourseBuilderPage(): JSX.Element {
                         }
                         aria-disabled={sectionReorderLocked || undefined}
                         onClick={() => handleMoveSection(sectionIndex, 'down')}
-                        aria-label={t('course:builder.sectionMenu.moveDown')}
+                        aria-label={t('course:builder.sectionMenu.moveDown', {
+                          title: section.title,
+                        })}
                       >
                         <ArrowDown className="size-4" aria-hidden />
                       </Button>

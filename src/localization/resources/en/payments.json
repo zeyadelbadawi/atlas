@@ -182,7 +182,8 @@
     "addOnPlan": "Add-on: {{name}}",
     "plan": "Plan",
     "billingCycle": "Billing cycle",
-    "unknownOrganization": "Organization unavailable"
+    "unknownOrganization": "Organization unavailable",
+    "noPlan": "No plan recorded"
   },
   "listFilters": {
     "label": "Filters",

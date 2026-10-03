@@ -16,6 +16,10 @@
  *   - NO SENSITIVE DATA ARRIVES. The student is a name and a masked email;
  *     payment instructions, proofs and the Atlas commission are never sent.
  *   - Status is never carried by colour alone: every badge has its text.
+ *   - THE VIEW LIVES IN THE URL (`useUrlListState`): search, filters, sort
+ *     and page survive Back from an order, a refresh and a shared link.
+ *     While a new page/filter loads, the previous rows stay on screen
+ *     dimmed and the table is `aria-busy`.
  */
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -36,7 +40,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useDateFormatter, usePagination } from '@hooks';
+import {
+  useDateFormatter,
+  usePagination,
+  useUrlListState,
+  type UrlListStateConfig,
+} from '@hooks';
 import {
   formatMoney,
   getCourseOrderStatusTone,
@@ -107,6 +116,18 @@ const DEFAULT_FILTERS: OrdersFilterState = {
   from: '',
   to: '',
   sort: 'createdAt_desc',
+};
+
+const URL_CONFIG: UrlListStateConfig<OrdersFilterState> = {
+  defaults: DEFAULT_FILTERS,
+  allowed: {
+    status: ['all', ...COURSE_ORDER_STATUSES],
+    reviewStatus: ['all', ...REVIEW_FILTERS],
+    methodType: ['all', ...METHOD_FILTERS],
+    refundStatus: ['all', ...REFUND_FILTERS],
+    sort: SORT_OPTIONS,
+  },
+  dates: ['from', 'to'],
 };
 
 function hasActiveFilters(state: OrdersFilterState): boolean {
@@ -201,16 +222,25 @@ export default function AcademyOrdersPage(): JSX.Element {
   const locale =
     LANGUAGES[i18n.language as LanguageCode]?.locale ?? i18n.language;
 
-  const [filters, setFilters] = useState<OrdersFilterState>(DEFAULT_FILTERS);
+  const {
+    state: filters,
+    page,
+    pageSize,
+    setState: setFilters,
+    setPage,
+    setPageSize,
+  } = useUrlListState(URL_CONFIG);
   const [totalItems, setTotalItems] = useState(0);
-  const pagination = usePagination({ totalItems });
+  const pagination = usePagination({
+    totalItems,
+    page,
+    pageSize,
+    onPageChange: setPage,
+    onPageSizeChange: setPageSize,
+  });
   const query = useMemo(
-    () =>
-      toQuery(filters, {
-        page: pagination.page,
-        pageSize: pagination.pageSize,
-      }),
-    [filters, pagination.page, pagination.pageSize]
+    () => toQuery(filters, { page, pageSize }),
+    [filters, page, pageSize]
   );
 
   const orders = useAcademyCourseOrders(academyId, query);
@@ -219,10 +249,17 @@ export default function AcademyOrdersPage(): JSX.Element {
     if (orders.data) setTotalItems(orders.data.pagination.totalItems);
   }, [orders.data]);
 
-  const update = (patch: Partial<OrdersFilterState>) => {
-    setFilters((current) => ({ ...current, ...patch }));
-    pagination.goToFirstPage();
-  };
+  // A restored URL can point past the end: land on the real last page.
+  useEffect(() => {
+    if (!orders.data || orders.isPlaceholderData) return;
+    const total = orders.data.pagination.totalItems;
+    const lastPage = Math.max(1, Math.ceil(total / pageSize));
+    if (total > 0 && page > lastPage) setPage(lastPage);
+  }, [orders.data, orders.isPlaceholderData, page, pageSize, setPage]);
+
+  /** Any filter change returns to page 1 (`setFilters` drops the page). */
+  const update = (patch: Partial<OrdersFilterState>) =>
+    setFilters({ ...filters, ...patch });
 
   const columns = useMemo<ColumnDef<AcademyCourseOrder, unknown>[]>(
     () => [
@@ -517,10 +554,7 @@ export default function AcademyOrdersPage(): JSX.Element {
               <Button
                 type="button"
                 variant="ghost"
-                onClick={() => {
-                  setFilters(DEFAULT_FILTERS);
-                  pagination.goToFirstPage();
-                }}
+                onClick={() => setFilters(DEFAULT_FILTERS)}
                 className="self-start sm:self-auto"
               >
                 <X className="size-4" strokeWidth={2} aria-hidden />
@@ -545,6 +579,7 @@ export default function AcademyOrdersPage(): JSX.Element {
             columns={columns}
             data={orders.data?.items ?? []}
             isLoading={orders.isLoading}
+            isBusy={orders.isFetching && orders.isPlaceholderData}
             pagination={totalItems > 0 ? pagination : undefined}
             emptyTitleKey={
               filtered

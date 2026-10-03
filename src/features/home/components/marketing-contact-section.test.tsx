@@ -10,7 +10,8 @@
  *     errors are tied to their fields and nothing is sent while invalid;
  *   - a valid form sends the trimmed values plus `locale`, `sourcePath`
  *     and `startedAt`, and never the honeypot unless a bot filled it;
- *   - the pending state disables the form and the button;
+ *   - the pending state disables the form and the button, and a rapid
+ *     double click sends exactly one request;
  *   - success replaces the form with one honest "received" state, and
  *     failure keeps the visitor's text and says so (rate limit included).
  */
@@ -195,6 +196,23 @@ describe('MarketingContactSection', () => {
       screen.getByRole('button', { name: 'home:contact.success.again' })
     );
     expect(field('home:contact.form.name').value).toBe('');
+  });
+
+  it('sends exactly one request when the button is clicked twice quickly', async () => {
+    // Never settles: the first submission is still in flight for the second click.
+    mockSubmit.mockImplementation(() => new Promise(() => undefined));
+    const user = userEvent.setup();
+    renderSection();
+    await fillValid(user);
+    const button = submitButton();
+    // Both clicks land before React re-renders the button as disabled.
+    act(() => {
+      fireEvent.click(button);
+      fireEvent.click(button);
+    });
+    await waitFor(() => expect(mockSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(submitButton().disabled).toBe(true));
+    expect(mockSubmit).toHaveBeenCalledTimes(1);
   });
 
   it('sends the honeypot only when something filled it', async () => {

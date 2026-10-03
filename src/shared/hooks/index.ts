@@ -14,6 +14,8 @@ export { useLocalStorage } from './useLocalStorage';
 export type { StoredValueState } from './useLocalStorage';
 export { usePagination, PAGE_GAP } from './usePagination';
 export type { PaginationState, PaginationEntry } from './usePagination';
+export { useUrlListState, parseUrlListState } from './useUrlListState';
+export type { UrlListState, UrlListStateConfig } from './useUrlListState';
 export { useCopyToClipboard } from './useCopyToClipboard';
 export type { CopyToClipboardState } from './useCopyToClipboard';
 export { useOnlineStatus } from './useOnlineStatus';

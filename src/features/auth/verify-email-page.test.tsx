@@ -3,7 +3,8 @@
  * removed from it, submitted once under a `no-referrer` policy, and every
  * outcome the backend can report has its own state — with a way forward
  * (resend when signed in, sign-in-and-return when not, retry when the
- * token was never spent).
+ * token was never spent). When the outcome (or "sent") replaces what was
+ * on screen, focus moves to it instead of falling back to the body.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
@@ -85,13 +86,17 @@ function LocationProbe(): null {
   return null;
 }
 
-function renderAt(url: string) {
-  return render(
+function tree(url: string) {
+  return (
     <MemoryRouter initialEntries={[url]}>
       <VerifyEmailPage />
       <LocationProbe />
     </MemoryRouter>
   );
+}
+
+function renderAt(url: string) {
+  return render(tree(url));
 }
 
 const referrerMeta = () =>
@@ -221,6 +226,40 @@ describe('VerifyEmailPage (management host)', () => {
     );
     renderAt('/auth/verify-email?token=abc');
     expect(screen.queryByText('common:actions.retry')).toBeNull();
+  });
+
+  it('moves focus to the outcome when it replaces "verifying…" or the Retry button', () => {
+    const view = renderAt('/auth/verify-email?token=abc');
+    expect(screen.getByTestId('verify-email-pending')).toBeTruthy();
+
+    fail(createApiError('network'));
+    view.rerender(tree('/auth/verify-email?token=abc'));
+    expect(document.activeElement).toBe(
+      screen.getByTestId('verify-email-error')
+    );
+
+    // Retry: the button disappears while pending, then the outcome takes focus.
+    act(() => {
+      fireEvent.click(screen.getByText('common:actions.retry'));
+    });
+    reset(verify);
+    view.rerender(tree('/auth/verify-email?token=abc'));
+    verify.isSuccess = true;
+    view.rerender(tree('/auth/verify-email?token=abc'));
+    expect(document.activeElement?.textContent).toBe(
+      'auth:verifyEmail.successTitle'
+    );
+  });
+
+  it('moves focus to "sent" when it replaces the resend button', () => {
+    auth.isAuthenticated = true;
+    const view = renderAt('/auth/verify-email');
+    fireEvent.click(screen.getByText('auth:verifyEmail.resend.action'));
+    resend.isSuccess = true;
+    view.rerender(tree('/auth/verify-email'));
+    expect(document.activeElement).toBe(
+      screen.getByTestId('verify-email-resend-sent')
+    );
   });
 
   it('resend outcomes: sent, and rate limited', () => {

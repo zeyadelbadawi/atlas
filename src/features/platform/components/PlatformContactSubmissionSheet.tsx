@@ -57,6 +57,12 @@ export interface PlatformContactSubmissionSheetProps {
   /** The status currently being applied, while its request is in flight. */
   readonly pendingStatus?: PlatformContactSubmissionStatus;
   readonly isDeleting?: boolean;
+  /**
+   * Where focus goes when the sheet closes. Call `event.preventDefault()`
+   * to move it yourself — e.g. after a delete, when the row that opened
+   * the sheet is about to disappear.
+   */
+  readonly onCloseAutoFocus?: (event: Event) => void;
 }
 
 const K = 'platform:contactSubmissions';
@@ -69,6 +75,7 @@ export function PlatformContactSubmissionSheet({
   onRequestDelete,
   pendingStatus,
   isDeleting = false,
+  onCloseAutoFocus,
 }: PlatformContactSubmissionSheetProps): JSX.Element {
   const { t } = useTranslation();
   const fmt = useDateFormatter();
@@ -99,7 +106,10 @@ export function PlatformContactSubmissionSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="flex w-full flex-col gap-0 overflow-y-auto p-0 sm:max-w-xl">
+      <SheetContent
+        className="flex w-full flex-col gap-0 overflow-y-auto p-0 sm:max-w-xl"
+        onCloseAutoFocus={onCloseAutoFocus}
+      >
         <SheetHeader className="space-y-1 border-b border-border p-6 text-start">
           <SheetTitle>{t(`${K}.drawer.title`)}</SheetTitle>
           <SheetDescription>{t(`${K}.drawer.description`)}</SheetDescription>

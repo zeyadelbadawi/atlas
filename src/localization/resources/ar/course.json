@@ -175,14 +175,14 @@
     "sectionMenu": {
       "edit": "تعديل القسم",
       "delete": "حذف القسم",
-      "moveUp": "نقل القسم لأعلى",
-      "moveDown": "نقل القسم لأسفل"
+      "moveUp": "نقل القسم «{{title}}» لأعلى",
+      "moveDown": "نقل القسم «{{title}}» لأسفل"
     },
     "lessonMenu": {
       "edit": "تعديل الدرس",
       "delete": "حذف الدرس",
-      "moveUp": "نقل الدرس لأعلى",
-      "moveDown": "نقل الدرس لأسفل"
+      "moveUp": "نقل «{{title}}» لأعلى",
+      "moveDown": "نقل «{{title}}» لأسفل"
     },
     "sectionDialog": {
       "createTitle": "إضافة قسم",

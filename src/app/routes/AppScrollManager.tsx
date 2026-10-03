@@ -16,10 +16,19 @@
  *    `[data-scroll-container]`.
  *  - Same page, only the query or state changed (tabs, filters,
  *    pagination in the URL) → leave the scroll where it is.
- *  - A `#hash` → that element, retried briefly while lazy content mounts.
+ *  - A `#hash` → that element, retried briefly while lazy content mounts
+ *    (and focused when it can take focus). A hash on a DIFFERENT page
+ *    resets to the top first, so a target that never mounts does not
+ *    leave the new page at the old page's offset.
  *  - Back/Forward (POP) → the offset that entry had, applied once the page
  *    is tall enough to hold it (or after a short cap), and never against
- *    the user: any wheel/touch/key input cancels the pending restore.
+ *    the user: any wheel/touch/key input cancels the pending restore. A
+ *    saved offset wins over the entry's hash.
+ *  - A fresh document load whose history entry has no state is reported
+ *    as POP with the key `'default'` — shared by EVERY such load, so an
+ *    offset saved for one would land another (an OAuth return, a link
+ *    opened from an email) mid-page. Offsets are stored per
+ *    `default:<path>` instead, and the first render never restores one.
  *
  * In-page view swaps that are not navigations (a form replaced by its
  * success card) are not routing events; they use `useResetScrollOnReveal`.
@@ -34,8 +43,12 @@ import { useLocation, useNavigationType } from 'react-router-dom';
 const STORAGE_KEY = 'atlas:scroll-positions';
 /** Entries kept in sessionStorage; older ones are dropped. */
 const MAX_ENTRIES = 100;
-/** How long a Back/Forward restore waits for the page to grow. */
-const RESTORE_WAIT_MS = 1500;
+/**
+ * How long a Back/Forward restore waits for the page to grow: long enough
+ * for a lazy route chunk plus its data on a slow phone connection. Any
+ * user input cancels it, so it never fights the reader.
+ */
+const RESTORE_WAIT_MS = 5000;
 /** How long a `#hash` waits for its target to mount. */
 const HASH_WAIT_MS = 1000;
 
@@ -77,6 +90,27 @@ function resetToTop(): void {
     .forEach((element) => {
       element.scrollTop = 0;
     });
+}
+
+/**
+ * The sessionStorage key for an entry's offset. react-router gives every
+ * entry without history state the key `'default'`, so those are told
+ * apart by their URL.
+ */
+function positionKey(location: {
+  readonly key: string;
+  readonly pathname: string;
+  readonly search: string;
+}): string {
+  return location.key === 'default'
+    ? `default:${location.pathname}${location.search}`
+    : location.key;
+}
+
+/** Focuses a hash target that can take focus, without a second scroll. */
+function focusTarget(target: HTMLElement): void {
+  if (target.tabIndex >= 0 || target.hasAttribute('tabindex'))
+    target.focus({ preventScroll: true });
 }
 
 /** Retries `attempt` every frame until it returns true or `waitMs` passes. */
@@ -121,7 +155,7 @@ export function AppScrollManager(): null {
   // below switches synchronously BEFORE it resets or restores, so a reset
   // is never recorded as the previous page's position. A plain assignment
   // per scroll event, persisted only when the page is hidden or left.
-  const currentKey = useRef(location.key);
+  const currentKey = useRef(positionKey(location));
   useEffect(() => {
     const remember = () => {
       positions.current ??= readPositions();
@@ -147,7 +181,8 @@ export function AppScrollManager(): null {
     const prev = previous.current;
     previous.current = { key: location.key, pathname: location.pathname };
     if (prev?.key === location.key) return;
-    currentKey.current = location.key;
+    const key = positionKey(location);
+    currentKey.current = key;
 
     let cancel: (() => void) | undefined;
     const stop = () => cancel?.();
@@ -157,33 +192,44 @@ export function AppScrollManager(): null {
       window.addEventListener(type, stop, { passive: true, once: true })
     );
 
-    if (location.hash) {
+    // A fresh load with no history state never restores: its key is
+    // shared by every such load (see `positionKey`).
+    const restorable =
+      navigationType === 'POP' &&
+      !(prev === null && location.key === 'default');
+    positions.current ??= readPositions();
+    const saved = restorable ? positions.current[key] : undefined;
+    const changedPage = prev !== null && prev.pathname !== location.pathname;
+
+    if (saved !== undefined || (restorable && !location.hash)) {
+      const top = saved ?? 0;
+      const fits = () =>
+        document.documentElement.scrollHeight - window.innerHeight >= top;
+      cancel = retryEachFrame(
+        () => {
+          if (!fits()) return false;
+          scrollWindowTo(top);
+          return true;
+        },
+        RESTORE_WAIT_MS,
+        () => scrollWindowTo(top)
+      );
+    } else if (location.hash) {
+      // A new page starts at the top even if its target never mounts.
+      if (changedPage) resetToTop();
       const id = decodeURIComponent(location.hash.slice(1));
       cancel = retryEachFrame(() => {
         const target = document.getElementById(id);
         if (!target) return false;
         target.scrollIntoView();
+        focusTarget(target);
         return true;
       }, HASH_WAIT_MS);
-    } else if (navigationType === 'POP') {
-      positions.current ??= readPositions();
-      const saved = positions.current[location.key] ?? 0;
-      const fits = () =>
-        document.documentElement.scrollHeight - window.innerHeight >= saved;
-      cancel = retryEachFrame(
-        () => {
-          if (!fits()) return false;
-          scrollWindowTo(saved);
-          return true;
-        },
-        RESTORE_WAIT_MS,
-        () => scrollWindowTo(saved)
-      );
-    } else if (!prev || prev.pathname !== location.pathname) {
-      // A first load on a fresh URL stays at the top; a new page goes there.
-      if (prev) resetToTop();
+    } else if (changedPage) {
+      resetToTop();
     }
-    // Otherwise the same page with a new query or state: stay put.
+    // Otherwise a first load (stays at the top) or the same page with a new
+    // query or state: stay put.
 
     return () => {
       stop();

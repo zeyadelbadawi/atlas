@@ -175,14 +175,14 @@
     "sectionMenu": {
       "edit": "Edit section",
       "delete": "Delete section",
-      "moveUp": "Move section up",
-      "moveDown": "Move section down"
+      "moveUp": "Move section \"{{title}}\" up",
+      "moveDown": "Move section \"{{title}}\" down"
     },
     "lessonMenu": {
       "edit": "Edit lesson",
       "delete": "Delete lesson",
-      "moveUp": "Move lesson up",
-      "moveDown": "Move lesson down"
+      "moveUp": "Move \"{{title}}\" up",
+      "moveDown": "Move \"{{title}}\" down"
     },
     "sectionDialog": {
       "createTitle": "Add Section",

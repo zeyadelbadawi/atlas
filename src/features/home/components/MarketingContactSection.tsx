@@ -82,6 +82,9 @@ export function MarketingContactSection(): JSX.Element {
   const submit = useSubmitPlatformContact();
   const startedAt = useRef<number>(Date.now());
   const successHeadingRef = useRef<HTMLHeadingElement>(null);
+  // Set synchronously on the first submit: two clicks in the same frame
+  // both pass validation before `isPending` re-renders the button.
+  const inFlight = useRef(false);
   const [isSent, setIsSent] = useState(false);
 
   const {
@@ -90,7 +93,7 @@ export function MarketingContactSection(): JSX.Element {
     handleSubmit,
     reset,
     watch,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<MarketingContactValues, unknown, MarketingContactParsed>({
     resolver: zodResolver(marketingContactSchema),
     defaultValues: EMPTY_VALUES,
@@ -108,11 +111,13 @@ export function MarketingContactSection(): JSX.Element {
   const isPending = submit.isPending;
   const messageLength = (watch('message') ?? '').length;
 
-  const onSubmit = (values: MarketingContactParsed) => {
+  const onSubmit = async (values: MarketingContactParsed) => {
+    if (inFlight.current) return;
+    inFlight.current = true;
     const company = values.company.trim();
     const sourcePath = toSourcePath(location.pathname);
-    submit.mutate(
-      {
+    try {
+      await submit.mutateAsync({
         name: values.name,
         email: values.email,
         ...(values.organizationName
@@ -124,14 +129,14 @@ export function MarketingContactSection(): JSX.Element {
         ...(sourcePath ? { sourcePath } : {}),
         ...(company ? { company } : {}),
         startedAt: startedAt.current,
-      },
-      {
-        onSuccess: () => {
-          reset(EMPTY_VALUES);
-          setIsSent(true);
-        },
-      }
-    );
+      });
+      reset(EMPTY_VALUES);
+      setIsSent(true);
+    } catch {
+      // Shown by the failure alert (`submit.isError`); the text is kept.
+    } finally {
+      inFlight.current = false;
+    }
   };
 
   const startOver = () => {
@@ -392,7 +397,8 @@ export function MarketingContactSection(): JSX.Element {
                 <Button
                   type="submit"
                   size="lg"
-                  disabled={isPending}
+                  // Also off while validating, before the request starts.
+                  disabled={isPending || isSubmitting}
                   aria-busy={isPending}
                   className="w-full shrink-0 sm:w-auto"
                 >

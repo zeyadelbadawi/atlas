@@ -360,7 +360,7 @@
     },
     "platformContactSubmissionReceived": {
       "title": "استفسار تواصل جديد",
-      "message": "أرسل {{name}} رسالة عبر نموذج التواصل في موقع Atlas."
+      "message": "وصلت رسالة جديدة عبر نموذج التواصل في موقع Atlas."
     },
     "academyMemberInvited": {
       "title": "حسابك جاهز",

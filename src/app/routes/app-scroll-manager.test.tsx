@@ -60,7 +60,9 @@ function renderAt(initial: string): MemoryRouter {
             <Outlet />
           </>
         ),
-        children: [{ path: '*', element: <section id="reviews" /> }],
+        children: [
+          { path: '*', element: <section id="reviews" tabIndex={-1} /> },
+        ],
       },
     ],
     { initialEntries: [initial] }
@@ -69,10 +71,9 @@ function renderAt(initial: string): MemoryRouter {
   return router;
 }
 
-const lastTop = () => {
-  const call = scrollTo.mock.calls.at(-1)?.[0];
-  return typeof call === 'number' ? call : call?.top;
-};
+const lastTopOf = (call: ScrollToOptions | number | undefined) =>
+  typeof call === 'number' ? call : call?.top;
+const lastTop = () => lastTopOf(scrollTo.mock.calls.at(-1)?.[0]);
 
 describe('AppScrollManager', () => {
   it('a new page opens at the top', async () => {
@@ -86,7 +87,9 @@ describe('AppScrollManager', () => {
     const router = renderAt('/members');
     userScrollsTo(400);
     scrollTo.mockClear();
-    await act(() => router.navigate('/members?tab=students', { replace: true }));
+    await act(() =>
+      router.navigate('/members?tab=students', { replace: true })
+    );
     expect(scrollTo).not.toHaveBeenCalled();
   });
 
@@ -119,12 +122,65 @@ describe('AppScrollManager', () => {
     expect(lastTop()).toBe(3000);
   });
 
-  it('a hash goes to its target', async () => {
+  it('a hash goes to its target and focuses it without a second scroll', async () => {
     const scrollIntoView = vi.fn();
     Element.prototype.scrollIntoView = scrollIntoView;
     const router = renderAt('/courses/c1');
     await act(() => router.navigate('/courses/c1#reviews'));
     expect(scrollIntoView).toHaveBeenCalled();
+    expect(document.activeElement?.id).toBe('reviews');
+  });
+
+  it('a fresh load never restores an offset saved under the shared "default" key', () => {
+    // Every load without history state is POP with key 'default': an
+    // offset saved by one such page (old or new format) must not land
+    // another one — e.g. an OAuth return — mid-page.
+    window.sessionStorage.setItem(
+      'atlas:scroll-positions',
+      JSON.stringify({ default: 1500, 'default:/settings': 1500 })
+    );
+    renderAt('/settings');
+    expect(
+      scrollTo.mock.calls.some(([options]) => lastTopOf(options) === 1500)
+    ).toBe(false);
+  });
+
+  it('the first entry is remembered per URL, not under the shared "default" key', async () => {
+    const router = renderAt('/courses');
+    userScrollsTo(700);
+    window.dispatchEvent(new Event('pagehide'));
+    const stored = JSON.parse(
+      window.sessionStorage.getItem('atlas:scroll-positions') ?? '{}'
+    ) as Record<string, number>;
+    expect(stored['default:/courses']).toBe(700);
+    expect(stored).not.toHaveProperty('default');
+
+    // …and Back to that entry still restores it.
+    await act(() => router.navigate('/courses/c1'));
+    await act(() => router.navigate(-1));
+    expect(lastTop()).toBe(700);
+  });
+
+  it('a hash link to another page resets to the top even if the target never mounts', async () => {
+    const router = renderAt('/courses');
+    userScrollsTo(900);
+    // The target is missing for the whole wait: frames never complete.
+    vi.mocked(window.requestAnimationFrame).mockImplementation(() => 1);
+    await act(() => router.navigate('/guide#missing'));
+    expect(lastTop()).toBe(0);
+  });
+
+  it('Back to an entry with a hash restores its saved offset rather than jumping to the target', async () => {
+    const scrollIntoView = vi.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+    const router = renderAt('/courses');
+    await act(() => router.navigate('/guide#reviews'));
+    userScrollsTo(600);
+    await act(() => router.navigate('/courses/c1'));
+    scrollIntoView.mockClear();
+    await act(() => router.navigate(-1));
+    expect(lastTop()).toBe(600);
+    expect(scrollIntoView).not.toHaveBeenCalled();
   });
 });
 

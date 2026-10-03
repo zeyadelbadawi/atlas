@@ -73,7 +73,8 @@ export function PublicWebsiteVerifyEmailPage({
   const { t } = useTranslation();
   const { isAuthenticated } = useAuth();
   const linkRenderer = usePublicWebsiteLinkRenderer(locale);
-  const { state, requestId, canRetry, retry } = useVerifyEmailFlow();
+  const { state, requestId, canRetry, retry, outcomeRef } =
+    useVerifyEmailFlow();
 
   const linkClass =
     'font-medium text-[var(--website-primary-solid)] hover:underline';
@@ -126,7 +127,11 @@ export function PublicWebsiteVerifyEmailPage({
                 className="size-8 text-[var(--website-primary-solid)]"
                 aria-hidden
               />
-              <p className="font-medium text-foreground">
+              <p
+                ref={outcomeRef}
+                tabIndex={-1}
+                className="font-medium text-foreground focus-visible:outline-none"
+              >
                 {t(`${KEYS}.successTitle`)}
               </p>
               <p className="text-sm text-muted-foreground">
@@ -151,7 +156,11 @@ export function PublicWebsiteVerifyEmailPage({
                 className="size-8 text-[var(--website-primary-solid)]"
                 aria-hidden
               />
-              <p className="text-sm text-muted-foreground">
+              <p
+                ref={outcomeRef}
+                tabIndex={-1}
+                className="text-sm text-muted-foreground focus-visible:outline-none"
+              >
                 {t(`${KEYS}.requestDescription`)}
               </p>
               <VerifyEmailResend keyPrefix={`${KEYS}.resend`} />
@@ -162,12 +171,18 @@ export function PublicWebsiteVerifyEmailPage({
         const copy = FAILURE_COPY[state];
         return (
           <div
-            className="space-y-4"
+            ref={outcomeRef}
+            tabIndex={-1}
+            className="space-y-4 focus-visible:outline-none"
             data-testid="verify-email-error"
             data-state={state}
           >
             <ErrorState
-              kind={state === 'rateLimited' ? 'rateLimited' : 'validation'}
+              kind={
+                state === 'rateLimited' || state === 'network'
+                  ? state
+                  : 'validation'
+              }
               titleKey={copy.title}
               descriptionKey={copy.description}
               requestId={state === 'network' ? requestId : undefined}

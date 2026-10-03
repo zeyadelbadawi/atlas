@@ -356,7 +356,7 @@
     },
     "platformContactSubmissionReceived": {
       "title": "New contact enquiry",
-      "message": "{{name}} sent a message through the Atlas website contact form."
+      "message": "A new message arrived through the Atlas website contact form."
     },
     "academyMemberInvited": {
       "title": "Your account is ready",

@@ -5,7 +5,6 @@
  * and paging are all server-side — the query object is embedded in the
  * key so every distinct filter combination is its own cache entry.
  */
-import { keepPreviousData } from '@tanstack/react-query';
 import { useApiQuery, useAuth } from '@/shared/hooks';
 import { LIVE_LIST_QUERY_OPTIONS } from '@config';
 import { academyKeys } from '@services/query';
@@ -29,9 +28,10 @@ export function useAcademyStudents(
     queryKey: academyKeys.roster(organization?.id, academyId, query),
     queryFn: () => academyRosterService.getStudents(academyId, query),
     enabled: enabled && !!academyId,
-    // Typing in the search box or flipping a filter keeps the previous
-    // rows on screen instead of collapsing the table to a skeleton.
-    placeholderData: keepPreviousData,
+    // No `placeholderData` override: `useApiQuery`'s key-aware default
+    // keeps the previous rows while search, filters or the page change,
+    // and drops them when the academy changes (another academy's
+    // learners must never show under this one).
     // Learners register, accept invites and enroll from their own
     // browsers; poll while shown (paused in background tabs).
     ...LIVE_LIST_QUERY_OPTIONS,

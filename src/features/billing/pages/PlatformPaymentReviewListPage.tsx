@@ -10,6 +10,11 @@
  * pages (`toPlatformPaymentQuery`); rows name the organization and the
  * plan + billing cycle instead of raw ids. List rows never carry the
  * manual-transfer instructions — only the detail page does.
+ *
+ * The search, filters, sort and page live in the URL
+ * (`PLATFORM_PAYMENT_LIST_URL_CONFIG`), so Back from a payment returns to
+ * the same slice of the queue. While a new slice loads, the previous rows
+ * stay on screen dimmed and the table is `aria-busy`.
  */
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,8 +25,9 @@ import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { DataTable } from '@components/table';
 import { Card, CardContent } from '@/components/ui/card';
-import { usePagination } from '@hooks';
+import { useDateFormatter, usePagination, useUrlListState } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
+import { LANGUAGES } from '@localization';
 import { usePlatformPayments } from '../hooks';
 import {
   getManualReviewStatusTone,
@@ -30,38 +36,60 @@ import {
 import { formatMoney } from '../utils/money.utils';
 import { PlatformPaymentListToolbar } from '../components/PlatformPaymentListToolbar';
 import {
-  DEFAULT_PLATFORM_PAYMENT_LIST_STATE,
+  PLATFORM_PAYMENT_LIST_URL_CONFIG,
   formatCheckoutSummary,
   toPlatformPaymentQuery,
-  type PlatformPaymentListState,
 } from '../utils/platform-payment-list.utils';
-import type { Payment } from '@types';
+import type { LanguageCode, Payment } from '@types';
 
 export default function PlatformPaymentReviewListPage(): JSX.Element {
   const { t, i18n } = useTranslation();
+  const fmt = useDateFormatter();
   const navigate = useNavigate();
-  const [filters, setFilters] = useState<PlatformPaymentListState>(
-    DEFAULT_PLATFORM_PAYMENT_LIST_STATE
-  );
+  const locale =
+    LANGUAGES[i18n.language as LanguageCode]?.locale ?? i18n.language;
+  const {
+    state: filters,
+    page,
+    pageSize,
+    setState: setFilters,
+    setPage,
+    setPageSize,
+  } = useUrlListState(PLATFORM_PAYMENT_LIST_URL_CONFIG);
 
   const [totalItems, setTotalItems] = useState(0);
-  const pagination = usePagination({ totalItems });
+  const pagination = usePagination({
+    totalItems,
+    page,
+    pageSize,
+    onPageChange: setPage,
+    onPageSizeChange: setPageSize,
+  });
 
+  const query = useMemo(
+    () => toPlatformPaymentQuery(filters, { page, pageSize }),
+    [filters, page, pageSize]
+  );
   const {
     data: paymentsData,
     isLoading,
+    isFetching,
+    isPlaceholderData,
     error,
     refetch,
-  } = usePlatformPayments({
-    query: toPlatformPaymentQuery(filters, {
-      page: pagination.page,
-      pageSize: pagination.pageSize,
-    }),
-  });
+  } = usePlatformPayments({ query });
 
   useEffect(() => {
     if (paymentsData) setTotalItems(paymentsData.pagination.totalItems);
   }, [paymentsData]);
+
+  // A restored URL can point past the end: land on the real last page.
+  useEffect(() => {
+    if (!paymentsData || isPlaceholderData) return;
+    const total = paymentsData.pagination.totalItems;
+    const lastPage = Math.max(1, Math.ceil(total / pageSize));
+    if (total > 0 && page > lastPage) setPage(lastPage);
+  }, [paymentsData, isPlaceholderData, page, pageSize, setPage]);
 
   const payments = paymentsData?.items ?? [];
 
@@ -88,7 +116,14 @@ export default function PlatformPaymentReviewListPage(): JSX.Element {
         header: t('payments:platformReview.planColumn'),
         cell: ({ row }) => (
           <span className="whitespace-nowrap text-muted-foreground" dir="auto">
-            {formatCheckoutSummary(t, row.original.checkoutSummary) ?? '—'}
+            {formatCheckoutSummary(t, row.original.checkoutSummary) ?? (
+              <>
+                <span aria-hidden>—</span>
+                <span className="sr-only">
+                  {t('payments:platformReview.noPlan')}
+                </span>
+              </>
+            )}
           </span>
         ),
       },
@@ -98,7 +133,7 @@ export default function PlatformPaymentReviewListPage(): JSX.Element {
         header: t('payments:platformReview.table.amount'),
         cell: ({ row }) => (
           <span className="font-medium" data-atlas-numeric="true">
-            {formatMoney(row.original.money, i18n.language)}
+            {formatMoney(row.original.money, locale)}
           </span>
         ),
       },
@@ -139,13 +174,16 @@ export default function PlatformPaymentReviewListPage(): JSX.Element {
         enableSorting: false,
         header: t('payments:platformReview.table.submittedAt'),
         cell: ({ row }) => (
-          <span className="text-muted-foreground">
-            {new Date(row.original.createdAt).toLocaleDateString(i18n.language)}
-          </span>
+          <time
+            dateTime={row.original.createdAt}
+            className="whitespace-nowrap text-muted-foreground"
+          >
+            {fmt.date(row.original.createdAt)}
+          </time>
         ),
       },
     ],
-    [t, i18n.language]
+    [t, fmt, locale]
   );
 
   return (
@@ -160,10 +198,7 @@ export default function PlatformPaymentReviewListPage(): JSX.Element {
           <PlatformPaymentListToolbar
             idPrefix="platform-payments"
             value={filters}
-            onChange={(next) => {
-              setFilters(next);
-              pagination.goToFirstPage();
-            }}
+            onChange={setFilters}
             searchLabelKey="payments:platformReview.searchLabel"
           />
 
@@ -174,6 +209,7 @@ export default function PlatformPaymentReviewListPage(): JSX.Element {
               columns={columns}
               data={payments}
               isLoading={isLoading}
+              isBusy={isFetching && isPlaceholderData}
               pagination={pagination}
               emptyTitleKey="payments:platformReview.emptyState"
               emptyDescriptionKey="payments:platformReview.emptyStateDescription"

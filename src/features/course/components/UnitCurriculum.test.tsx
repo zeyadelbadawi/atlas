@@ -221,9 +221,8 @@ describe('UnitCurriculum', () => {
     renderComp();
     await screen.findByText(/1\. Intro/);
 
-    const moveDown = screen.getAllByRole('button', {
-      name: /move lesson down/i,
-    })[0];
+    // The name says which item moves, not just "move down".
+    const moveDown = screen.getByRole('button', { name: 'Move "Intro" down' });
     await user.click(moveDown);
 
     // In place before the server answers…
@@ -234,7 +233,7 @@ describe('UnitCurriculum', () => {
     const introRow = screen.getByText(/2\. Intro/).closest('li')!;
     await waitFor(() =>
       expect(document.activeElement).toBe(
-        within(introRow).getByRole('button', { name: /move lesson down/i })
+        within(introRow).getByRole('button', { name: 'Move "Intro" down' })
       )
     );
     // …and the save is announced and shown on the row.
@@ -254,7 +253,7 @@ describe('UnitCurriculum', () => {
     await screen.findByText(/1\. Intro/);
 
     await user.click(
-      screen.getAllByRole('button', { name: /move lesson down/i })[0]
+      screen.getAllByRole('button', { name: /^Move ".+" down$/ })[0]
     );
     await waitFor(() =>
       expect(
@@ -263,7 +262,7 @@ describe('UnitCurriculum', () => {
     );
 
     // Move buttons stay focusable but refuse (no second, stale reorder).
-    const moveUps = screen.getAllByRole('button', { name: /move lesson up/i });
+    const moveUps = screen.getAllByRole('button', { name: /^Move ".+" up$/ });
     expect(moveUps[1].getAttribute('aria-disabled')).toBe('true');
     await user.click(moveUps[1]);
     expect(service.reorderUnitItems).toHaveBeenCalledTimes(1);
@@ -284,7 +283,7 @@ describe('UnitCurriculum', () => {
     await waitFor(() => expect(addContentButton().disabled).toBe(false));
     expect(
       screen
-        .getAllByRole('button', { name: /move lesson up/i })[1]
+        .getAllByRole('button', { name: /^Move ".+" up$/ })[1]
         .hasAttribute('aria-disabled')
     ).toBe(false);
   });
@@ -297,7 +296,7 @@ describe('UnitCurriculum', () => {
     await screen.findByText(/1\. Intro/);
 
     await user.click(
-      screen.getAllByRole('button', { name: /move lesson down/i })[0]
+      screen.getAllByRole('button', { name: /^Move ".+" down$/ })[0]
     );
     await waitFor(() =>
       expect(rowTitles()).toEqual(['Quiz', 'Intro', 'Homework'])
@@ -335,7 +334,7 @@ describe('UnitCurriculum', () => {
     service.getUnitItems.mockResolvedValue([ITEMS[2], ITEMS[0], ITEMS[1]]);
 
     await user.click(
-      screen.getAllByRole('button', { name: /move lesson down/i })[0]
+      screen.getAllByRole('button', { name: /^Move ".+" down$/ })[0]
     );
 
     await waitFor(() =>

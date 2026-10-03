@@ -38,6 +38,7 @@ export {
 export { PlatformPaymentListToolbar } from './components/PlatformPaymentListToolbar';
 export {
   DEFAULT_PLATFORM_PAYMENT_LIST_STATE,
+  PLATFORM_PAYMENT_LIST_URL_CONFIG,
   toPlatformPaymentQuery,
   type PlatformPaymentListState,
 } from './utils/platform-payment-list.utils';
