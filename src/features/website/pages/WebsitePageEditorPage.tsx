@@ -5,12 +5,17 @@
  * Editor dialog (`SectionConfigForm`) + `PreviewViewport` (the real
  * `WebsiteRenderer`, desktop/tablet/mobile). All composition changes
  * (add/remove/hide/reorder/edit/duplicate) are held in local draft state
- * and persisted together via one "Save changes" action — the draft is
- * never auto-saved, and nothing is sent to the backend until the Tenant
- * Owner explicitly confirms (see `Reports/ARCHITECTURE.md`, Prompt 9,
- * "Draft / Publish Model").
+ * and persisted together — the draft is never auto-saved, and nothing is
+ * sent to the backend until the Tenant Owner explicitly confirms (see
+ * `Reports/ARCHITECTURE.md`, Prompt 9, "Draft / Publish Model").
+ *
+ * ONE ACTION TO GO LIVE. On a published site, "Publish page" saves the
+ * local edits and publishes this page in one step, pinned to the exact
+ * version just saved, so a colleague's later save is never put live
+ * unseen. "Save draft" stays for work that should not go live yet. Before
+ * the site is first published, "Save changes" is the only page action.
  */
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Loader2, Save, Search, UploadCloud } from 'lucide-react';
@@ -29,7 +34,8 @@ import { useConfirmDialog } from '@app/providers';
 import { useDisclosure, useUnsavedChanges, usePermissions } from '@hooks';
 import { useAcademy } from '@features/academy';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
-import type { BreadcrumbItem } from '@types';
+import type { ApiError } from '@api';
+import type { BreadcrumbItem, WebsitePage } from '@types';
 import {
   usePublishWebsitePage,
   useUpdateWebsitePage,
@@ -66,9 +72,9 @@ import { EditingPresenceBanner } from '../components/EditingPresenceBanner';
 import { SaveConflictDialog } from '../components/SaveConflictDialog';
 import {
   readSaveConflict,
-  versionForSave,
   type SaveConflict,
 } from '../utils/save-conflict.utils';
+import { stableJsonKey } from '../utils/stable-json.utils';
 import {
   isContentValidationFailure,
   rejectedSections,
@@ -79,6 +85,16 @@ import type {
   SectionInstance,
   SectionType,
 } from '@types';
+
+/** Which action a conflict interrupted, so "keep my changes" can finish it. */
+type ConflictIntent = 'save' | 'publish';
+
+interface PendingConflict {
+  readonly value: SaveConflict;
+  readonly intent: ConflictIntent;
+  /** False when there is no local work left to re-apply. */
+  readonly canKeepMine: boolean;
+}
 
 export default function WebsitePageEditorPage(): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -136,18 +152,110 @@ export default function WebsitePageEditorPage(): JSX.Element {
     pageId: pageId ?? '',
     enabled: canManage,
   });
-  const [conflict, setConflict] = useState<SaveConflict | null>(null);
+  const [conflict, setConflict] = useState<PendingConflict | null>(null);
+
+  /*
+    THE DRAFT AND THE SERVER COPY IT WAS STARTED FROM.
+
+    The draft used to be overwritten by every refetch of the page — after
+    an SEO save, a site publish, a window refocus — silently discarding
+    unsaved edits. Now a refetch only replaces the draft when there is
+    nothing local to lose. `baseRef` is the server copy the draft is based
+    on: its version is what a save is checked against. When the server
+    copy moves under unsaved edits, the version is only moved along if the
+    sections did not change (your own SEO save, say); if a colleague
+    changed the sections, the draft keeps its old base so the save
+    surfaces the conflict instead of overwriting their work.
+  */
+  const draftRef = useRef<SectionInstance[]>(draftSections);
+  const baseRef = useRef<{ version: number; key: string } | null>(null);
+  useEffect(() => {
+    draftRef.current = draftSections;
+  }, [draftSections]);
+
+  const adoptServerPage = useCallback((data: WebsitePage) => {
+    const sections = data.sections as SectionInstance[];
+    baseRef.current = { version: data.version, key: stableJsonKey(sections) };
+    draftRef.current = sections;
+    setDraftSections(sections);
+  }, []);
 
   useEffect(() => {
-    if (pageQuery.data)
-      setDraftSections(pageQuery.data.sections as SectionInstance[]);
-  }, [pageQuery.data]);
+    const data = pageQuery.data;
+    if (!data) return;
+    const base = baseRef.current;
+    if (!base || stableJsonKey(draftRef.current) === base.key) {
+      adoptServerPage(data);
+    } else if (stableJsonKey(data.sections) === base.key) {
+      baseRef.current = { version: data.version, key: base.key };
+    }
+  }, [pageQuery.data, adoptServerPage]);
 
-  const isDirty =
-    !!pageQuery.data &&
-    JSON.stringify(draftSections) !== JSON.stringify(pageQuery.data.sections);
+  const serverKey = useMemo(
+    () => (pageQuery.data ? stableJsonKey(pageQuery.data.sections) : null),
+    [pageQuery.data]
+  );
+  const draftKey = useMemo(() => stableJsonKey(draftSections), [draftSections]);
+  const isDirty = serverKey !== null && draftKey !== serverKey;
 
-  useUnsavedChanges({ isDirty, messageKey: 'website:editor.unsavedChanges' });
+  // One save or publish at a time, whichever button started it.
+  const busyRef = useRef(false);
+
+  /**
+   * Saves the draft against the version it was based on. Resolves the
+   * saved page, or `null` when the save failed (the error or the conflict
+   * dialog is already showing).
+   *
+   * `overrideVersion` is supplied only by "keep my changes" after a
+   * conflict: it re-bases this editor's work on the version the server
+   * just reported, so the colleague's committed save is built on rather
+   * than erased. It is never a way to skip the check.
+   */
+  const saveSections = async (
+    intent: ConflictIntent,
+    overrideVersion?: number
+  ): Promise<WebsitePage | null> => {
+    if (!academyId || !pageId) return null;
+    const sections = draftRef.current;
+    const sentKey = stableJsonKey(sections);
+    try {
+      const saved = await updatePage.mutateAsync({
+        academyId,
+        pageId,
+        payload: {
+          sections,
+          expectedVersion: overrideVersion ?? baseRef.current?.version,
+        },
+      });
+      setConflict(null);
+      if (stableJsonKey(draftRef.current) === sentKey) {
+        adoptServerPage(saved);
+      } else {
+        // Edited again while the save was in flight: keep those edits,
+        // based on the version that was just saved.
+        baseRef.current = {
+          version: saved.version,
+          key: stableJsonKey(saved.sections),
+        };
+      }
+      return saved;
+    } catch (error) {
+      // A 409 that is NOT a stale version (a duplicate slug, say) reads
+      // as `null` here and falls through to ordinary error handling —
+      // see `readSaveConflict`.
+      const stale = readSaveConflict(error as ApiError);
+      setConflict(stale ? { value: stale, intent, canKeepMine: true } : null);
+      return null;
+    }
+  };
+
+  useUnsavedChanges({
+    isDirty,
+    messageKey: 'website:editor.unsavedChanges',
+    onSave: canManage
+      ? async () => (await saveSections('save')) !== null
+      : undefined,
+  });
 
   const isLoading =
     academyQuery.isLoading ||
@@ -300,59 +408,82 @@ export default function WebsitePageEditorPage(): JSX.Element {
     setSelectedId(undefined);
   };
 
+  const handleSaveDraft = async (overrideVersion?: number) => {
+    if (busyRef.current) return;
+    busyRef.current = true;
+    try {
+      await saveSections('save', overrideVersion);
+    } finally {
+      busyRef.current = false;
+    }
+  };
+
   /**
-   * `expectedVersion` is what turns a silent overwrite into a conversation.
-   * `overrideVersion` is supplied only by "keep my changes" after a
-   * conflict: it re-bases this editor's work on the version the server just
-   * reported, so the colleague's committed save is built on rather than
-   * erased. It is never a way to skip the check.
+   * Saves (when there is anything to save), then publishes THIS page,
+   * pinned to the version just saved — or, with nothing to save, to the
+   * version on screen. If anyone saved the page in between, the publish is
+   * refused and the conflict dialog says who; nothing unseen goes live.
    */
+  const publishThisPage = async (overrideVersion?: number) => {
+    if (!academyId || !pageId || busyRef.current) return;
+    busyRef.current = true;
+    try {
+      let version = baseRef.current?.version;
+      if (isDirty || overrideVersion !== undefined) {
+        const saved = await saveSections('publish', overrideVersion);
+        if (!saved) return;
+        version = saved.version;
+      }
+      try {
+        await publishPage.mutateAsync({
+          academyId,
+          pageId,
+          expectedVersion: version,
+        });
+      } catch (error) {
+        const stale = readSaveConflict(error as ApiError);
+        // A colleague's save landed after the copy being published: there
+        // is nothing of this editor's left to re-apply, so the only
+        // honest choice is to look at their version first.
+        if (stale)
+          setConflict({ value: stale, intent: 'publish', canKeepMine: false });
+      }
+    } finally {
+      busyRef.current = false;
+    }
+  };
+
   const handlePublishPage = async () => {
-    if (!academyId || !pageId || isDirty || publishPage.isPending) return;
+    if (busyRef.current) return;
     const confirmed = await confirm({
       titleKey: 'website:editor.publishPageConfirmTitle',
       descriptionKey: 'website:editor.publishPageConfirmDescription',
       confirmLabelKey: 'website:editor.publishPageAction',
     });
     if (!confirmed) return;
-    publishPage.mutate({ academyId, pageId });
-  };
-
-  const handleSaveChanges = (overrideVersion?: number) => {
-    const expectedVersion =
-      overrideVersion ?? versionForSave(pageQuery.data?.version, null);
-
-    updatePage.mutate(
-      {
-        academyId,
-        pageId,
-        payload: { sections: draftSections, expectedVersion },
-      },
-      {
-        onSuccess: () => setConflict(null),
-        // A 409 that is NOT a stale version (a duplicate slug, say) reads
-        // as `null` here and falls through to ordinary error handling —
-        // see `readSaveConflict`.
-        onError: (error) => setConflict(readSaveConflict(error)),
-      }
-    );
+    await publishThisPage();
   };
 
   /** Throws this editor's local work away and shows the server's copy. */
   const handleReloadLatest = async () => {
     setConflict(null);
     const refreshed = await pageQuery.refetch();
-    if (refreshed.data) {
-      setDraftSections(refreshed.data.sections as SectionInstance[]);
-    }
+    if (refreshed.data) adoptServerPage(refreshed.data);
   };
 
   /** Re-applies this editor's work ON TOP of the newer version — never over it. */
   const handleKeepMine = () => {
-    const target = conflict?.currentVersion;
+    if (!conflict?.canKeepMine) return;
+    const { value, intent } = conflict;
     setConflict(null);
-    if (target !== undefined) handleSaveChanges(target);
+    if (intent === 'publish') void publishThisPage(value.currentVersion);
+    else void handleSaveDraft(value.currentVersion);
   };
+
+  const isSiteLive = configuration.status === 'published';
+  const showPublishPage = canPublish && isSiteLive;
+  const isBusy = updatePage.isPending || publishPage.isPending;
+  const publishConflict = readSaveConflict(publishPage.error);
 
   return (
     <PageContainer fullWidth>
@@ -397,36 +528,31 @@ export default function WebsitePageEditorPage(): JSX.Element {
                 </Button>
                 <Button
                   type="button"
-                  onClick={() => handleSaveChanges()}
-                  disabled={!isDirty || updatePage.isPending}
+                  variant={showPublishPage ? 'outline' : 'default'}
+                  data-testid="website-save-page"
+                  onClick={() => void handleSaveDraft()}
+                  disabled={!isDirty || isBusy}
                 >
-                  {updatePage.isPending ? (
+                  {updatePage.isPending && !publishPage.isPending ? (
                     <Loader2 className="size-4 animate-spin" aria-hidden />
                   ) : (
                     <Save className="size-4" strokeWidth={2} aria-hidden />
                   )}
-                  {t('website:editor.saveChanges')}
+                  {showPublishPage
+                    ? t('website:editor.saveDraft')
+                    : t('website:editor.saveChanges')}
                 </Button>
-                {/* One page goes live without republishing the site. Only
+                {/* One page goes live without republishing the site — only
                     while the site is live (publishing the site publishes
-                    every page anyway), and only what is SAVED — unsaved
-                    edits must be saved first, so the button says so. */}
-                {canPublish && configuration.status === 'published' ? (
+                    every page anyway). Unsaved edits are saved first, in
+                    the same click. */}
+                {showPublishPage ? (
                   <Button
                     type="button"
-                    variant="secondary"
                     data-testid="website-publish-page"
-                    onClick={handlePublishPage}
+                    onClick={() => void handlePublishPage()}
                     disabled={
-                      isDirty ||
-                      !page.hasUnpublishedChanges ||
-                      publishPage.isPending ||
-                      updatePage.isPending
-                    }
-                    title={
-                      isDirty
-                        ? t('website:editor.publishPageSaveFirst')
-                        : undefined
+                      (!isDirty && !page.hasUnpublishedChanges) || isBusy
                     }
                   >
                     {publishPage.isPending ? (
@@ -451,18 +577,25 @@ export default function WebsitePageEditorPage(): JSX.Element {
           status={configuration.status}
           lastPublishedAt={configuration.publishedAt}
           unpublishedChanges={configuration.unpublishedChanges}
+          pendingLocalEdits={isDirty}
+          onBeforePublish={async () =>
+            !isDirty || (await saveSections('save')) !== null
+          }
         />
-        {configuration.status === 'published' ? (
+        {isSiteLive ? (
           <p
             className="text-sm text-muted-foreground"
             data-testid="website-page-publish-state"
           >
-            {page.hasUnpublishedChanges
-              ? t('website:editor.pageHasUnpublishedChanges')
-              : t('website:editor.pageUpToDate')}
+            {isDirty
+              ? t('website:editor.pageHasLocalChanges')
+              : page.hasUnpublishedChanges
+                ? t('website:editor.pageHasUnpublishedChanges')
+                : t('website:editor.pageUpToDate')}
           </p>
         ) : null}
-        {publishPage.error ? (
+        {/* A stale publish has the conflict dialog, not a retry strip. */}
+        {publishPage.error && !publishConflict ? (
           publishPage.error.messageKey ===
           'errors.website.publishedSlugTaken' ? (
             <ErrorState
@@ -476,7 +609,7 @@ export default function WebsitePageEditorPage(): JSX.Element {
           ) : (
             <ErrorState
               kind={publishPage.error.kind}
-              onRetry={handlePublishPage}
+              onRetry={() => void handlePublishPage()}
             />
           )
         ) : null}
@@ -518,7 +651,7 @@ export default function WebsitePageEditorPage(): JSX.Element {
           ) : (
             <ErrorState
               kind={updatePage.error.kind}
-              onRetry={() => handleSaveChanges()}
+              onRetry={() => void handleSaveDraft()}
             />
           )
         ) : null}
@@ -604,13 +737,14 @@ export default function WebsitePageEditorPage(): JSX.Element {
         />
       ) : null}
       <SaveConflictDialog
-        conflict={conflict}
+        conflict={conflict?.value ?? null}
+        canKeepMine={conflict?.canKeepMine ?? true}
         onReload={() => void handleReloadLatest()}
         onKeepMine={handleKeepMine}
         onOpenChange={(open) => {
           if (!open) setConflict(null);
         }}
-        isSaving={updatePage.isPending}
+        isSaving={isBusy}
       />
     </PageContainer>
   );

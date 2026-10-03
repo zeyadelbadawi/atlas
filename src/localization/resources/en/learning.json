@@ -766,7 +766,12 @@
       "speed": "Speed",
       "rate": "{{rate}}×",
       "shortcutsHint": "Space or K play and pause · arrows seek 5s · J and L seek 10s · M mutes · F is full screen",
-      "decodeError": "This video could not be played on this device. Try another browser, and tell the academy if it keeps happening."
+      "decodeError": "This video could not be played on this device. Try another browser, and tell the academy if it keeps happening.",
+      "buffering": "Buffering",
+      "slow": "This is taking longer than usual.",
+      "loadError": "The video couldn’t be loaded. Check your connection and try again.",
+      "retry": "Try again",
+      "youtubeUnavailable": "This YouTube video can’t be played here. It may have been removed, made private, or its owner doesn’t allow it to be embedded."
     },
     "text": {
       "readingProgress": "Reading progress",
@@ -925,6 +930,19 @@
       "title": "You've reached the end",
       "description": "This was the last activity, but some earlier ones are still open.",
       "backToCourse": "See what's left"
-    }
+    },
+    "finishCourse": "Finish course",
+    "finishing": "Finishing…"
+  },
+  "completePage": {
+    "fallbackTitle": "Course",
+    "breadcrumb": "Completion",
+    "title": "You’ve completed {{course}}",
+    "completedOn": "Completed on {{date}}",
+    "certificatePreparing": "Your certificate is being prepared…",
+    "certificateLater": "Your certificate is taking longer than usual. It will appear under Certificates as soon as it is ready.",
+    "notYetTitle": "You’re nearly there",
+    "notYetDescription": "This was your last activity, but the course still needs the items below before it counts as completed.",
+    "backToCourse": "Back to course"
   }
 }

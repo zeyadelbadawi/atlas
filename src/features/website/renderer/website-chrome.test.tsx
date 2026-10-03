@@ -192,21 +192,28 @@ describe('WebsiteChrome — one footer', () => {
 
 /*
  * Theme 1 plan Phase 4 — a theme may replace the footer, never the
- * attribution: every theme's chrome still renders exactly one footer with
- * the Atlas attribution as its last row.
+ * attribution: every theme's chrome renders exactly one footer with the
+ * Atlas attribution on the copyright line — not in a separate row, which
+ * read to visitors as a second footer under the Academy's.
  */
 describe.each(WEBSITE_THEME_KEYS)(
   'WebsiteChrome — %s keeps the attribution',
   (themeKey) => {
-    it('renders one footer whose last row is the attribution', () => {
+    it('renders one footer with the attribution on the copyright line', () => {
       const { container } = renderChrome(<p>content</p>, [], themeKey);
       const footers = container.querySelectorAll('footer');
       expect(footers).toHaveLength(1);
-      const attribution = footers[0].querySelector(
+      const attributions = footers[0].querySelectorAll(
         '[data-testid="atlas-platform-attribution"]'
       );
-      expect(attribution).not.toBeNull();
-      expect(footers[0].lastElementChild?.contains(attribution!)).toBe(true);
+      expect(attributions).toHaveLength(1);
+
+      const legal = attributions[0].parentElement!;
+      expect(legal.getAttribute('data-testid')).toBe('website-footer-legal');
+      // The copyright (default "© {year} {academy}") shares that line.
+      expect(legal.textContent).toMatch(/©/);
+      // No bordered row exists just for the attribution.
+      expect(legal.children.length).toBeGreaterThan(1);
     });
   }
 );

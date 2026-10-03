@@ -85,7 +85,10 @@ function FaqEntryDialog({
   // Warns before this editor is left with unsaved work — both on
   // in-app navigation (via the shared registry the route blocker
   // reads) and on tab close or refresh.
-  useUnsavedChanges({ isDirty: form.formState.isDirty });
+  // Only an OPEN dialog holds work. The dialog stays mounted after it
+  // closes, and its form used to keep reporting dirty — so the next
+  // navigation asked about edits that were already dismissed.
+  useUnsavedChanges({ isDirty: open && form.formState.isDirty });
   useServerValidation(form, createEntry.error ?? updateEntry.error);
 
   const onSubmit = (data: FaqEntryFormData) => {
@@ -104,7 +107,14 @@ function FaqEntryDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        // Closing discards the dialog's edits, as it always did on screen.
+        if (!next) form.reset();
+        onOpenChange(next);
+      }}
+    >
       <DialogContent className="max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>

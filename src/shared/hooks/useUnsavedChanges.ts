@@ -29,53 +29,82 @@
  * still unused — browsers ignore custom `beforeunload` text, and the
  * in-app dialog is deliberately worded identically everywhere.
  */
-import { useEffect, useId, useRef } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef } from 'react';
 import { useUnsavedChangesRegistry } from '@features/unsaved-changes';
 
 export interface UseUnsavedChangesOptions {
   /** Whether the form has unsaved changes. */
   readonly isDirty: boolean;
-
   /**
    * Translation key for the confirmation message. Retained for call-site
    * compatibility; unused (see the note above).
    */
   readonly messageKey?: string;
-
   /**
-   * Optional save used by the dialog's "Save changes" button. Resolve
-   * true on success and false on failure — returning true after a failed
-   * save would navigate away and destroy the work.
+   * The save used by the dialog's "Save and leave". It must run the form's
+   * normal validation and persistence WITHOUT navigating (the dialog
+   * continues to the destination the user picked), and resolve true only
+   * when the save succeeded — true after a failure would navigate away
+   * and destroy the work. Omit it and the dialog offers only Stay/Leave.
    */
   readonly onSave?: () => Promise<boolean>;
+}
+
+export interface UnsavedChangesControls {
+  /**
+   * Call after a successful save, BEFORE navigating or closing. Marks the
+   * form clean synchronously, so a `navigate()` in the same tick is not
+   * blocked by the dirt that was just saved (the `isDirty` prop only
+   * catches up after the next render). Protection re-arms by itself the
+   * next time the form reports dirty after having reported clean.
+   */
+  readonly markSaved: () => void;
 }
 
 export function useUnsavedChanges({
   isDirty,
   onSave,
-}: UseUnsavedChangesOptions): void {
+}: UseUnsavedChangesOptions): UnsavedChangesControls {
   const registry = useUnsavedChangesRegistry();
   // Stable per mounted component, so two instances of the same form
   // (a list row editor, say) never collide in the registry.
   const id = useId();
 
-  useEffect(() => {
-    if (!isDirty) return;
+  // After `markSaved`, a still-true `isDirty` is the saved state not yet
+  // re-rendered, not new work: ignore it until the form reports clean.
+  const savedRef = useRef(false);
+  if (!isDirty) savedRef.current = false;
+  const effectiveDirty = isDirty && !savedRef.current;
 
+  useEffect(() => {
+    if (!effectiveDirty) return;
     const handleBeforeUnload = (event: BeforeUnloadEvent): void => {
       event.preventDefault();
       // Chrome requires `returnValue` for the native prompt to appear; the
       // value itself is ignored by every modern browser.
       event.returnValue = '';
     };
-
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [isDirty]);
+  }, [effectiveDirty]);
+
+  // The registry holds one stable wrapper that calls the latest `onSave`,
+  // so a form re-creating its save callback on every render does not
+  // re-register on every render.
+  const onSaveRef = useRef(onSave);
+  onSaveRef.current = onSave;
+  const hasSave = Boolean(onSave);
+  const handlers = useMemo(
+    () =>
+      hasSave
+        ? { save: () => onSaveRef.current?.() ?? Promise.resolve(false) }
+        : undefined,
+    [hasSave]
+  );
 
   useEffect(() => {
-    registry?.setDirty(id, isDirty, onSave ? { save: onSave } : undefined);
-  }, [registry, id, isDirty, onSave]);
+    registry?.setDirty(id, effectiveDirty, handlers);
+  }, [registry, id, effectiveDirty, handlers]);
 
   // Deregister on unmount. Without this, navigating away from a dirty form
   // via the dialog's "Leave" would leave its id in the registry and block
@@ -91,4 +120,11 @@ export function useUnsavedChanges({
   const registryRef = useRef(registry);
   registryRef.current = registry;
   useEffect(() => () => registryRef.current?.clear(id), [id]);
+
+  const markSaved = useCallback(() => {
+    savedRef.current = true;
+    registryRef.current?.setDirty(id, false);
+  }, [id]);
+
+  return useMemo(() => ({ markSaved }), [markSaved]);
 }

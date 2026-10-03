@@ -12,8 +12,8 @@
  *
  * Chrome (Phase 4): a pack may also replace the header, the footer and the
  * auth-page frame. A replacement footer receives the platform attribution
- * row as a prop and must render it — no theme can remove it; the chrome
- * test asserts it for every pack.
+ * auth-page frame. A replacement footer receives the platform attribution
+ * as a prop and must render it on its copyright line — no theme can remove it; the chrome
  */
 import type { ComponentType, ReactNode } from 'react';
 import type { WebsiteHeaderProps } from '../renderer/WebsiteHeader';
@@ -66,7 +66,7 @@ export interface BrandMappingInput {
 /** CSS custom properties, applied on the theme scope only. */
 export type WebsiteBrandVariables = Readonly<Record<`--${string}`, string>>;
 
-/** A replacement footer: gets the Academy id (live data) and the attribution row it must render last. */
+/** A replacement footer: gets the Academy id (live data) and the platform attribution, which it must render on its copyright line. */
 export interface ThemeFooterProps extends WebsiteFooterProps {
   readonly academyId?: string;
   readonly attribution: ReactNode;

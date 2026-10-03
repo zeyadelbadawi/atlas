@@ -289,5 +289,32 @@ export function mapModernEducationBrandPalette(
     '--primary-foreground': roles.ctaForeground,
     '--primary-hover': t.ctaHover,
     '--ring': roles.focus,
+
+    // The learner portal (Task A) is built from the same dashboard-origin
+    // components — cards, badges, tabs, inputs, alerts — which read these
+    // generic tokens. Mapped from the Academy's palette rather than left on
+    // the scope's fixed neutrals, so My Learn, the player, quizzes and the
+    // completion page wear this Academy's own surfaces, borders, text and
+    // feedback colours. Every role here already passed the palette's
+    // contrast matrix (text ≥ 4.5:1, borders ≥ 3:1 on the background).
+    '--background': roles.background,
+    '--foreground': roles.foreground,
+    '--card': roles.background,
+    '--card-foreground': roles.foreground,
+    '--popover': roles.background,
+    '--popover-foreground': roles.foreground,
+    '--muted': roles.surfaceMuted,
+    '--muted-foreground': roles.foregroundMuted,
+    '--secondary': roles.surface,
+    '--secondary-foreground': roles.foreground,
+    '--accent': roles.surfaceMuted,
+    '--accent-foreground': roles.foreground,
+    '--border': t.divider,
+    '--input': t.border,
+    '--border-strong': t.border,
+    '--success': roles.success,
+    '--warning': roles.warning,
+    '--destructive': roles.error,
+    '--destructive-foreground': '0 0% 100%',
   };
 }

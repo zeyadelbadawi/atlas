@@ -67,7 +67,7 @@ import {
 import { useServerValidation } from '@forms';
 import { useConfirmDialog } from '@app/providers';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
-import { formatNumber } from '@utils';
+import { formatNumber, saveViaForm } from '@utils';
 import {
   useCheckPlatformDomain,
   useReleasePlatformDomain,
@@ -275,21 +275,29 @@ export default function PlatformDomainSettingsPage(): JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadedBaseDomain]);
   useServerValidation(form, updateConfig.error);
-  useUnsavedChanges({
-    isDirty: !environmentManaged && form.formState.isDirty,
-    messageKey: 'website:platformDomain.unsavedChanges',
-  });
-  const onSubmit = async (data: PlatformDomainFormData) => {
+  // Resolves false after a failure it already reported, so the Save button
+  // and the unsaved-changes dialog's "Save and leave" share it.
+  async function onSubmit(data: PlatformDomainFormData): Promise<boolean> {
     try {
       await updateConfig.mutateAsync(data);
+      // The saved value is the new baseline. Without this the form stayed
+      // dirty after a successful save (the seeding effect above only runs
+      // while the form is clean), so leaving asked about saved work.
+      form.reset(data);
       toast({ title: t('website:platformDomain.success') });
+      return true;
     } catch {
       toast({
         title: t('website:platformDomain.error'),
         variant: 'destructive',
       });
+      return false;
     }
-  };
+  }
+  useUnsavedChanges({
+    isDirty: !environmentManaged && form.formState.isDirty,
+    onSave: () => saveViaForm(form, onSubmit),
+  });
 
   const handleCheck = (row: PlatformDomainRow) =>
     checkDomain.mutate(row.academyId, {

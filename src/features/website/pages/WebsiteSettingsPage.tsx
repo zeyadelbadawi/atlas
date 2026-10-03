@@ -5,9 +5,12 @@
  * each tab is its own component (`WebsiteThemeTab`, etc.), composed here,
  * never one enormous page component.
  */
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { usePermissions } from '@hooks';
+import { useConfirmDialog } from '@app/providers';
+import { useUnsavedChangesRegistry } from '@features/unsaved-changes';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { SectionTabs } from '@components/navigation';
@@ -15,23 +18,16 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAcademy } from '@features/academy';
 import { WebsiteDomainTab } from '@features/domain';
-import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
+import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useWebsiteConfiguration, useWebsitePages } from '../hooks';
 import { WebsitePublishBar } from '../components/WebsitePublishBar';
 import { WebsiteThemeTab } from '../components/WebsiteThemeTab';
-import { WebsiteBrandTab } from '../components/WebsiteBrandTab';
 import { WebsiteSeoTab } from '../components/WebsiteSeoTab';
 import { WebsiteNavigationTab } from '../components/WebsiteNavigationTab';
 import { getWebsiteTabs } from '../utils/website-navigation.utils';
 import type { BreadcrumbItem } from '@types';
 
-const SETTINGS_TABS = [
-  'theme',
-  'brand',
-  'seo',
-  'navigation',
-  'domain',
-] as const;
+const SETTINGS_TABS = ['theme', 'seo', 'navigation', 'domain'] as const;
 type SettingsTab = (typeof SETTINGS_TABS)[number];
 
 export default function WebsiteSettingsPage(): JSX.Element {
@@ -44,6 +40,30 @@ export default function WebsiteSettingsPage(): JSX.Element {
   const initialTab = SETTINGS_TABS.includes(requestedTab as SettingsTab)
     ? (requestedTab as SettingsTab)
     : 'theme';
+  const [tab, setTab] = useState<SettingsTab>(initialTab);
+  const { confirm } = useConfirmDialog();
+  const unsaved = useUnsavedChangesRegistry();
+
+  /*
+    Each tab's form unmounts when another tab opens, so switching away
+    from unsaved edits used to drop them without a word — the route
+    blocker never saw it, because no navigation happened. Ask first, the
+    same question leaving the page asks.
+  */
+  const handleTabChange = async (next: string) => {
+    if (next === tab) return;
+    if (unsaved?.isDirtyNow()) {
+      const leave = await confirm({
+        titleKey: 'common:unsavedChanges.title',
+        descriptionKey: 'common:unsavedChanges.description',
+        confirmLabelKey: 'common:unsavedChanges.leave',
+        cancelLabelKey: 'common:unsavedChanges.stay',
+        intent: 'destructive',
+      });
+      if (!leave) return;
+    }
+    setTab(next as SettingsTab);
+  };
 
   const academyQuery = useAcademy(academyId ?? '');
   const configQuery = useWebsiteConfiguration(academyId ?? '');
@@ -60,6 +80,17 @@ export default function WebsiteSettingsPage(): JSX.Element {
     void configQuery.refetch();
     void pagesQuery.refetch();
   };
+
+  // The logo and colours moved to the one Visual Identity page (Task G);
+  // old `?tab=brand` links (bookmarks, the checklist) land there.
+  if (requestedTab === 'brand' && academyId) {
+    return (
+      <Navigate
+        replace
+        to={buildPath(DASHBOARD_ROUTES.academyBranding, { academyId })}
+      />
+    );
+  }
 
   if (isLoading) {
     return (
@@ -122,13 +153,10 @@ export default function WebsiteSettingsPage(): JSX.Element {
           unpublishedChanges={configuration.unpublishedChanges}
         />
 
-        <Tabs defaultValue={initialTab}>
+        <Tabs value={tab} onValueChange={(next) => void handleTabChange(next)}>
           <TabsList>
             <TabsTrigger value="theme">
               {t('website:settings.tabs.theme')}
-            </TabsTrigger>
-            <TabsTrigger value="brand">
-              {t('website:settings.tabs.brand')}
             </TabsTrigger>
             <TabsTrigger value="seo">
               {t('website:settings.tabs.seo')}
@@ -143,16 +171,6 @@ export default function WebsiteSettingsPage(): JSX.Element {
 
           <TabsContent value="theme" className="pt-4">
             <WebsiteThemeTab
-              academyId={academyId}
-              academyName={academy.name}
-              academyLogo={academy.logo}
-              configuration={configuration}
-              pages={pages}
-            />
-          </TabsContent>
-
-          <TabsContent value="brand" className="pt-4">
-            <WebsiteBrandTab
               academyId={academyId}
               academyName={academy.name}
               academyLogo={academy.logo}

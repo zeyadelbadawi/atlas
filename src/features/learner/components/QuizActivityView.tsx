@@ -43,6 +43,7 @@ import {
 } from '@features/learning';
 import { readErrorKind } from '../utils/read-error-kind';
 import { useQuizFullscreen } from '../hooks/useQuizFullscreen';
+import { useRefreshCourseProgress } from '../hooks/useRefreshCourseProgress';
 import { QuizAttemptRunner } from './QuizAttemptRunner';
 import { QuizIntroCard } from './QuizIntroCard';
 import { QuizResultsView } from './QuizResultsView';
@@ -133,9 +134,19 @@ export function QuizActivityView({
     resultsAttemptId
   );
 
+  const refreshCourseProgress = useRefreshCourseProgress(courseId);
+  /*
+   * A submitted attempt changes the course too (passed, failed, the next
+   * item unlocked, maybe the course completed), not just this quiz's
+   * attempts — refreshing only those left a quiz finished as the last
+   * activity on a stale sequence, with no way forward (Task C).
+   */
   const refreshAttempts = useCallback(async () => {
-    await invalidate(quizKeys.attempts(user?.id, courseId, quizId));
-  }, [invalidate, user?.id, courseId, quizId]);
+    await Promise.all([
+      invalidate(quizKeys.attempts(user?.id, courseId, quizId)),
+      refreshCourseProgress(),
+    ]);
+  }, [invalidate, user?.id, courseId, quizId, refreshCourseProgress]);
 
   const handleStart = async () => {
     setSubmitError(undefined);

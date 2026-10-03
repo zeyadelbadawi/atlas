@@ -169,9 +169,9 @@ describe('launch checklist', () => {
     expect(step('brand').dataset.done).toBe('false');
     expect(
       within(step('brand'))
-        .getByRole('link', { name: 'Open Brand' })
+        .getByRole('link', { name: 'Open Visual Identity' })
         .getAttribute('href')
-    ).toBe('/dashboard/academy/a1/website/settings?tab=brand');
+    ).toBe('/dashboard/academy/a1/branding');
     expect(step('samples').dataset.done).toBe('false');
     expect(within(step('samples')).getByRole('link').getAttribute('href')).toBe(
       '/dashboard/academy/a1/website/pages/p-home?section=s-home'

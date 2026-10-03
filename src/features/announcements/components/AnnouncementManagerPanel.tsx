@@ -138,6 +138,9 @@ export function AnnouncementManagerPanel({
     // holding the previous announcement's values.
     setEditing(null);
     onCreateOpenChange(false);
+    // The form stays mounted while the dialog is closed; resetting it here
+    // keeps a closed dialog from blocking the next navigation.
+    form.reset({ title: '', body: '', scheduledAt: '' });
   };
 
   const form = useForm<AnnouncementFormData>({
@@ -147,7 +150,9 @@ export function AnnouncementManagerPanel({
 
   // Warns before this editor is left with unsaved work — both on in-app
   // navigation and on tab close or refresh.
-  useUnsavedChanges({ isDirty: form.formState.isDirty });
+  // Only an OPEN dialog holds work: the form stays mounted after closing,
+  // and counting it then made the next sidebar click ask about nothing.
+  useUnsavedChanges({ isDirty: dialogOpen && form.formState.isDirty });
 
   useServerValidation(form, saveError);
 

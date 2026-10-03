@@ -96,7 +96,9 @@ export function CourseCreateForm({
   // Warns before this editor is left with unsaved work — both on
   // in-app navigation (via the shared registry the route blocker
   // reads) and on tab close or refresh.
-  useUnsavedChanges({ isDirty: form.formState.isDirty });
+  const { markSaved } = useUnsavedChanges({
+    isDirty: form.formState.isDirty,
+  });
 
   useServerValidation(form, mutationError);
 
@@ -190,6 +192,9 @@ export function CourseCreateForm({
         title: t('course:create.success'),
         description: t('common:states.success.description'),
       });
+      // Created: the caller navigates to the new course; the guard must not
+      // ask about the form that was just submitted.
+      markSaved();
       onCreated(course);
     } catch (caughtError) {
       // Phase 2 — a plan-limit rejection has its own stable `code`, never

@@ -16,6 +16,13 @@ export type EnrollmentStatus =
   'available' | 'pending' | 'enrolled' | 'completed' | 'unavailable';
 
 /** A slim progress summary for list views — see `EnrollmentResponse.progress`'s doc comment on the backend for why this is a totals-only projection, not the full per-lesson `CourseProgress`. */
+/**
+ * Start / Continue / Completed (Task E), decided by the backend from the
+ * course progress (`deriveLearningState`) — never from the enrolment's own
+ * pointer to a first lesson.
+ */
+export type LearningState = 'not_started' | 'in_progress' | 'completed';
+
 export interface EnrollmentProgressSummary {
   readonly totalLessons: number;
   readonly completedLessons: number;
@@ -26,6 +33,8 @@ export interface EnrollmentProgressSummary {
   readonly currentLessonId?: string;
   readonly completionState: CourseCompletionState;
   readonly certificateStatus: CertificateStatus;
+  /** Absent from responses older than Task E — see `learningStateOf`. */
+  readonly learningState?: LearningState;
 }
 
 /** Enrollment entity. */

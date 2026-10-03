@@ -6,8 +6,11 @@
  * and the one primary action come from here, so a theme changes only the
  * layout — never who may enrol, buy or continue.
  *
- * The primary action (unchanged from the template it came from):
- *   - enrolled → "Continue Learning" (the learner's course progress);
+ * The primary action:
+ *   - enrolled → "Start course", "Continue learning" or "Course completed"
+ *     (Task E), from the backend's learning state on the enrolment itself
+ *     (`GET /enrollments/by-course` carries its progress — no second
+ *     request), all leading to the learner's course progress;
  *   - signed in, free → "Enroll for free" (the real free-enrolment flow);
  *   - signed in, paid → "Buy" (the checkout);
  *   - signed out → "Sign in to enroll" (returns to this course).
@@ -19,10 +22,23 @@ import { LEARNER_ROUTES, buildPath } from '@app/routes/route-paths';
 import { toast } from '@/hooks/use-toast';
 import { usePublicCourse, usePublicCourseCurriculum, useAuth } from '@hooks';
 import { DEV_OVERRIDE_PARAM } from '@features/public-website';
+import { learningStateOf } from '@utils';
 import { useEnrollment, useEnroll } from '@features/learning';
 import type { PublicWebsiteLocale } from '@types';
 
-export type CourseDetailsActionKind = 'continue' | 'enroll' | 'buy' | 'signIn';
+export type CourseDetailsActionKind =
+  'start' | 'continue' | 'completed' | 'enroll' | 'buy' | 'signIn';
+
+const ENROLLED_ACTION_LABELS = {
+  not_started: 'website:renderer.courseDetails.startAction',
+  in_progress: 'website:renderer.courseDetails.continueAction',
+  completed: 'website:renderer.courseDetails.completedAction',
+} as const;
+const ENROLLED_ACTION_KINDS = {
+  not_started: 'start',
+  in_progress: 'continue',
+  completed: 'completed',
+} as const;
 
 export interface CourseDetailsAction {
   readonly kind: CourseDetailsActionKind;
@@ -84,6 +100,9 @@ export function useCourseDetails(
 
   const isFree = course?.pricing.type === 'free';
   const isEnrolled = !!enrollment && enrollment.status !== 'available';
+  const learningState = learningStateOf(enrollment?.progress, {
+    completed: enrollment?.status === 'completed',
+  });
 
   const handleEnroll = async () => {
     setEnrollError(false);
@@ -103,8 +122,8 @@ export function useCourseDetails(
 
   const action: CourseDetailsAction = isEnrolled
     ? {
-        kind: 'continue',
-        labelKey: 'website:renderer.courseDetails.continueAction',
+        kind: ENROLLED_ACTION_KINDS[learningState],
+        labelKey: ENROLLED_ACTION_LABELS[learningState],
         busy: false,
         onSelect: () =>
           navigate(

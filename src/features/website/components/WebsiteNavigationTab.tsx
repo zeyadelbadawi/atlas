@@ -28,12 +28,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
+import { useInvalidate } from '@/shared/hooks';
+import { websiteKeys } from '@services/query';
 import { useUpdateWebsiteConfiguration } from '../hooks';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
 import { LocalizedTextField } from './LocalizedTextField';
 import {} from '../utils/auth-page-copy.utils';
 import type {
   LocalizedText,
+  UpdateWebsiteConfigurationPayload,
   WebsiteConfiguration,
   WebsiteFooterLink,
   WebsiteNavigationItem,
@@ -67,6 +70,39 @@ export function WebsiteNavigationTab({
 }: WebsiteNavigationTabProps): JSX.Element {
   const { t } = useTranslation();
   const updateConfig = useUpdateWebsiteConfiguration();
+  const { invalidate } = useInvalidate();
+
+  /**
+   * Every change on this tab is a full replace of navigation, header or
+   * footer, built from the copy on screen. It carries that copy's
+   * `updatedAt`, so a save based on a copy a colleague has since changed is
+   * refused rather than silently replacing their work; the latest copy is
+   * then loaded and the change can be made again on top of it.
+   */
+  const save = (payload: UpdateWebsiteConfigurationPayload) => {
+    updateConfig.mutate(
+      {
+        academyId,
+        payload: { ...payload, expectedUpdatedAt: configuration.updatedAt },
+      },
+      {
+        onError: (error) => {
+          if (error.kind === 'conflict') {
+            toast({
+              title: t('website:navigation.staleConflict'),
+              variant: 'destructive',
+            });
+            void invalidate(websiteKeys.configuration(academyId));
+            return;
+          }
+          toast({
+            title: t('website:navigation.saveError'),
+            variant: 'destructive',
+          });
+        },
+      }
+    );
+  };
 
   const navPageIds = new Set(
     configuration.navigation.map((item) => item.pageId)
@@ -79,24 +115,12 @@ export function WebsiteNavigationTab({
   );
 
   const persistNavigation = (navigation: readonly WebsiteNavigationItem[]) => {
-    updateConfig.mutate(
-      {
-        academyId,
-        payload: {
-          navigation: navigation.map((item, index) => ({
-            ...item,
-            order: index,
-          })),
-        },
-      },
-      {
-        onError: () =>
-          toast({
-            title: t('website:navigation.saveError'),
-            variant: 'destructive',
-          }),
-      }
-    );
+    save({
+      navigation: navigation.map((item, index) => ({
+        ...item,
+        order: index,
+      })),
+    });
   };
 
   const togglePageInNav = (page: WebsitePage, inNav: boolean) => {
@@ -160,31 +184,19 @@ export function WebsiteNavigationTab({
    * already set, and vice versa.
    */
   const updateHeaderCtaLabel = (label: LocalizedText) => {
-    updateConfig.mutate(
-      {
-        academyId,
-        payload: {
-          header: label.en.trim()
-            ? {
-                cta: {
-                  label,
-                  pageId: currentCta?.pageId,
-                  url: currentCta?.url,
-                  authAction: currentCta?.authAction,
-                },
-                authPages: currentAuthPages,
-              }
-            : { authPages: currentAuthPages },
-        },
-      },
-      {
-        onError: () =>
-          toast({
-            title: t('website:navigation.saveError'),
-            variant: 'destructive',
-          }),
-      }
-    );
+    save({
+      header: label.en.trim()
+        ? {
+            cta: {
+              label,
+              pageId: currentCta?.pageId,
+              url: currentCta?.url,
+              authAction: currentCta?.authAction,
+            },
+            authPages: currentAuthPages,
+          }
+        : { authPages: currentAuthPages },
+    });
   };
 
   /**
@@ -227,44 +239,17 @@ export function WebsiteNavigationTab({
           ar: currentCta?.label?.ar ?? '',
         };
 
-    updateConfig.mutate(
-      {
-        academyId,
-        payload: {
-          header: { cta: { label, ...target }, authPages: currentAuthPages },
-        },
-      },
-      {
-        onError: () =>
-          toast({
-            title: t('website:navigation.saveError'),
-            variant: 'destructive',
-          }),
-      }
-    );
-  };
-
-  const updateFooterCopyright = (value: LocalizedText) => {
-    updateConfig.mutate({
-      academyId,
-      payload: { footer: { ...configuration.footer, copyrightText: value } },
+    save({
+      header: { cta: { label, ...target }, authPages: currentAuthPages },
     });
   };
 
+  const updateFooterCopyright = (value: LocalizedText) => {
+    save({ footer: { ...configuration.footer, copyrightText: value } });
+  };
+
   const persistSocialLinks = (links: readonly WebsiteFooterLink[]) => {
-    updateConfig.mutate(
-      {
-        academyId,
-        payload: { footer: { ...configuration.footer, socialLinks: links } },
-      },
-      {
-        onError: () =>
-          toast({
-            title: t('website:navigation.saveError'),
-            variant: 'destructive',
-          }),
-      }
-    );
+    save({ footer: { ...configuration.footer, socialLinks: links } });
   };
 
   /**

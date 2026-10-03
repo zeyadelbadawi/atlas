@@ -227,7 +227,7 @@ export function T1CourseDetails({
     >
       {action.busy ? (
         <Loader2 className="size-4 animate-spin" aria-hidden />
-      ) : action.kind === 'continue' ? (
+      ) : action.kind === 'completed' ? (
         <CheckCircle2 className="size-4" aria-hidden />
       ) : null}
       {t(action.labelKey)}

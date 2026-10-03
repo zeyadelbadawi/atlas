@@ -69,6 +69,14 @@ export interface UseVideoSourceResult {
   readonly hasMediaError: boolean;
   /** Adopts the newest granted URL now, preserving position and play state. */
   readonly adoptLatestSource: () => void;
+  /**
+   * The learner's Retry: re-attaches the newest granted URL even if it is
+   * the one already attached (a load that hung or failed), preserving
+   * position and play state.
+   */
+  readonly reload: () => void;
+  /** The URL currently attached — changes on every (re)attach. */
+  readonly attachedUrl: string | null;
 }
 
 export function useVideoSource({
@@ -95,6 +103,16 @@ export function useVideoSource({
   const hlsRef = useRef<{ destroy: () => void } | null>(null);
   /** Applied once per lesson — a resume that re-applied on every refresh would rewind the learner. */
   const hasResumedRef = useRef(false);
+  /** The pending `loadedmetadata` restore of the last attach, removed by the next. */
+  const restoreListenerRef = useRef<(() => void) | null>(null);
+  /**
+   * Set when the attached source FAILED. Its replacement must then be
+   * adopted the moment a new grant lands — waiting for the old credential
+   * to expire (the silent-refresh rule) would leave a dead video on screen
+   * whenever it failed for any other reason than expiry.
+   */
+  const failedRef = useRef(false);
+  const [attachedUrl, setAttachedUrl] = useState<string | null>(null);
   const onCredentialFailureRef = useRef(onCredentialFailure);
   onCredentialFailureRef.current = onCredentialFailure;
 
@@ -125,12 +143,22 @@ export function useVideoSource({
       const rate = element.playbackRate;
 
       destroyHls();
+      if (restoreListenerRef.current) {
+        element.removeEventListener(
+          'loadedmetadata',
+          restoreListenerRef.current
+        );
+        restoreListenerRef.current = null;
+      }
+      failedRef.current = false;
       setIsAttaching(true);
       setHasMediaError(false);
+      setAttachedUrl(url);
       attachedExpiresAtRef.current = latestExpiresAtRef.current;
       setAttachGeneration((generation) => generation + 1);
 
       const restore = () => {
+        restoreListenerRef.current = null;
         if (resumeFrom > 0 && Number.isFinite(resumeFrom)) {
           // `fastSeek` where available: on a long lesson it avoids the
           // full-accuracy seek that makes the restore visible.
@@ -152,6 +180,7 @@ export function useVideoSource({
         }
       };
 
+      restoreListenerRef.current = restore;
       element.addEventListener('loadedmetadata', restore, { once: true });
 
       if (format === 'mp4' || supportsNativeHls(element)) {
@@ -181,6 +210,8 @@ export function useVideoSource({
           if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
             // A 403 on a segment is what an expired token looks like from
             // inside hls.js. A new grant is the fix, not a retry.
+            failedRef.current = true;
+            setIsAttaching(false);
             onCredentialFailureRef.current();
             return;
           }
@@ -188,6 +219,7 @@ export function useVideoSource({
             instance.recoverMediaError();
             return;
           }
+          setIsAttaching(false);
           setHasMediaError(true);
         });
         instance.loadSource(url);
@@ -209,6 +241,12 @@ export function useVideoSource({
     const url = latestUrlRef.current;
     if (!url || !video) return;
     if (url === attachedUrlRef.current) return;
+    void attach(url, video.format);
+  }, [attach, video]);
+
+  const reload = useCallback(() => {
+    const url = latestUrlRef.current;
+    if (!url || !video) return;
     void attach(url, video.format);
   }, [attach, video]);
 
@@ -270,8 +308,13 @@ export function useVideoSource({
    * the timer above has already fired and found nothing newer to take.
    */
   useEffect(() => {
+    if (failedRef.current) {
+      // The attached source failed: take the replacement at once.
+      adoptLatestSource();
+      return;
+    }
     swapIfCredentialDead();
-  }, [swapIfCredentialDead, video?.url]);
+  }, [adoptLatestSource, swapIfCredentialDead, video?.url]);
 
   /*
    * The element's own failure path. `MEDIA_ERR_NETWORK` and
@@ -285,11 +328,15 @@ export function useVideoSource({
     if (!element) return;
 
     const handleError = () => {
+      // Never leave the attach "in progress" behind a failure: that was an
+      // endless spinner whenever the source failed before its metadata.
+      setIsAttaching(false);
       const code = element.error?.code;
       if (code === MediaError.MEDIA_ERR_DECODE) {
         setHasMediaError(true);
         return;
       }
+      failedRef.current = true;
       onCredentialFailureRef.current();
     };
 
@@ -297,5 +344,5 @@ export function useVideoSource({
     return () => element.removeEventListener('error', handleError);
   }, [videoRef]);
 
-  return { isAttaching, hasMediaError, adoptLatestSource };
+  return { isAttaching, hasMediaError, adoptLatestSource, reload, attachedUrl };
 }

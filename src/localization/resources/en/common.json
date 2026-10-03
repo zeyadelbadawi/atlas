@@ -46,7 +46,8 @@
     "goToHome": "Go to home",
     "contactSupport": "Contact support",
     "loading": "Loading…",
-    "saving": "Saving…"
+    "saving": "Saving…",
+    "saveFailed": "Your changes couldn't be saved. Fix any errors on the page and try again, or stay to keep editing."
   },
   "states": {
     "loading": "Loading your content…",

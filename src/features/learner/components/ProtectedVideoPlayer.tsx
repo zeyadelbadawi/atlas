@@ -45,7 +45,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Loader2 } from 'lucide-react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import {
   Select,
@@ -57,6 +56,8 @@ import {
 import { cn } from '@utils';
 import type { GrantedResource, GrantedVideo } from '@types';
 import { useVideoSource } from '../hooks/useVideoSource';
+import { useMediaReadiness } from '../hooks/useMediaReadiness';
+import { VideoStatusOverlay } from './VideoStatusOverlay';
 import { WatermarkOverlay } from './WatermarkOverlay';
 
 /** Seek step for the arrow keys, in seconds. The convention every video UI uses. */
@@ -120,13 +121,19 @@ export function ProtectedVideoPlayer({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playbackRate, setPlaybackRate] = useState(1);
 
-  const { isAttaching, hasMediaError } = useVideoSource({
+  const { hasMediaError, reload, attachedUrl } = useVideoSource({
     videoRef,
     video,
     credentialExpiresAt: expiresAt,
     resumePositionSeconds,
     lessonId,
     onCredentialFailure,
+  });
+
+  // Task D: loading / buffering / failed, from the element's own events.
+  const readiness = useMediaReadiness(videoRef, {
+    sourceKey: attachedUrl ?? undefined,
+    externalError: hasMediaError,
   });
 
   const captions = findCaptionTrack(resources);
@@ -161,14 +168,21 @@ export function ProtectedVideoPlayer({
        * rate `<select>` owns its own arrows.
        */
       const target = event.target as HTMLElement | null;
-      if (target && target !== event.currentTarget && target.closest('button, select, a, input, [role="combobox"]')) {
+      if (
+        target &&
+        target !== event.currentTarget &&
+        target.closest('button, select, a, input, [role="combobox"]')
+      ) {
         return;
       }
 
       const seekBy = (seconds: number) => {
         element.currentTime = Math.max(
           0,
-          Math.min(element.duration || Number.MAX_SAFE_INTEGER, element.currentTime + seconds)
+          Math.min(
+            element.duration || Number.MAX_SAFE_INTEGER,
+            element.currentTime + seconds
+          )
         );
       };
 
@@ -255,29 +269,16 @@ export function ProtectedVideoPlayer({
 
           {watermarkText ? <WatermarkOverlay text={watermarkText} /> : null}
 
-          {isAttaching ? (
-            <div
-              className="absolute inset-0 flex items-center justify-center bg-black/40"
-              role="status"
-              aria-live="polite"
-            >
-              <Loader2
-                className="size-6 animate-spin text-white motion-reduce:animate-none"
-                aria-hidden
-              />
-              <span className="sr-only">
-                {t('learning:player.video.loading')}
-              </span>
-            </div>
-          ) : null}
+          <VideoStatusOverlay
+            phase={readiness.phase}
+            slow={readiness.slow}
+            onRetry={reload}
+            errorMessage={
+              hasMediaError ? t('learning:player.video.decodeError') : undefined
+            }
+          />
         </AspectRatio>
       </div>
-
-      {hasMediaError ? (
-        <p role="alert" className="text-sm text-destructive">
-          {t('learning:player.video.decodeError')}
-        </p>
-      ) : null}
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         {/* The native rate control is suppressed by `controlsList` so this

@@ -317,11 +317,18 @@ export function ModernEducationFooter({
           'mt-10 border-t border-[var(--website-border)] pt-6'
         )}
       >
-        <p className="text-center text-xs text-[var(--website-foreground-muted)] sm:text-start">
-          {copyright}
-        </p>
+        {/* The Atlas attribution shares the copyright's line (stacked and
+            centred on phones) instead of a bordered row of its own. */}
+        <div
+          data-testid="website-footer-legal"
+          className="flex flex-col items-center gap-x-4 gap-y-1.5 sm:flex-row sm:flex-wrap sm:justify-between"
+        >
+          <p className="text-center text-xs text-[var(--website-foreground-muted)] sm:text-start">
+            {copyright}
+          </p>
+          {attribution}
+        </div>
       </div>
-      {attribution}
     </footer>
   );
 }

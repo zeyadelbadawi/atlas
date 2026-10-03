@@ -193,6 +193,12 @@ export function useBrandStudio({
           extraction,
         }));
         setAnalysis({ kind: 'done', flags: result.analysis.flags });
+      } catch {
+        // A throw anywhere above (an unreadable file, a worker that failed
+        // to start) used to leave the studio "analyzing" for good — the
+        // logo picker stayed disabled and the palette could not be redone.
+        if (run.current === ticket)
+          setAnalysis({ kind: 'error', error: 'analysisFailed' });
       } finally {
         clearTimeout(slowTimer);
       }

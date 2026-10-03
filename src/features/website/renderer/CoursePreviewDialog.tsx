@@ -53,9 +53,13 @@ export function CoursePreviewDialog({
 
   // `sequenceSaysAvailable` is a learner-sequence concept; a visitor has
   // no sequence, and the preview short-circuit is the authority here.
-  const { grant, isLoading, failure } = useLessonGrant(courseId, lessonId ?? '', {
-    enabled: open,
-  });
+  const { grant, isLoading, failure } = useLessonGrant(
+    courseId,
+    lessonId ?? '',
+    {
+      enabled: open,
+    }
+  );
 
   const body = (): JSX.Element => {
     if (isLoading) {
@@ -76,14 +80,19 @@ export function CoursePreviewDialog({
     // restating a reason here would undo that.
     if (failure || !grant) {
       return (
-        <p className="py-10 text-center text-sm text-muted-foreground" role="status">
+        <p
+          className="py-10 text-center text-sm text-muted-foreground"
+          role="status"
+        >
           {t('website:renderer.courseDetails.previewUnavailable')}
         </p>
       );
     }
 
     if (grant.kind === 'external' && grant.externalEmbed) {
-      return <YouTubeLessonPlayer embed={grant.externalEmbed} title={grant.title} />;
+      return (
+        <YouTubeLessonPlayer embed={grant.externalEmbed} title={grant.title} />
+      );
     }
 
     if (grant.video) {
@@ -113,7 +122,10 @@ export function CoursePreviewDialog({
     // a video preview, and pretending to play one would be worse than
     // saying plainly what this is.
     return (
-      <p className="py-10 text-center text-sm text-muted-foreground" role="status">
+      <p
+        className="py-10 text-center text-sm text-muted-foreground"
+        role="status"
+      >
         {t('website:renderer.courseDetails.previewNotPlayable')}
       </p>
     );

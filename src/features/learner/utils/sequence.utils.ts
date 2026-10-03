@@ -113,15 +113,38 @@ export function sequenceLockReasonKey(reason: SequenceLockReason): string {
   return `learning:player.lockReason.${reason}`;
 }
 
-/** States that mean the learner has finished with this item. */
+/**
+ * States that mean the learner has finished with this item — the SERVER's
+ * set (`course-sequence.service.ts` `isFinished`), which `completedCount`
+ * is counted with. A submitted assignment is finished: it is out of the
+ * learner's hands until it is graded. Leaving `submitted` out here (it
+ * used to be) disagreed with the server's own counts, so an assignment
+ * submitted as the last activity never reached the end of the course.
+ */
 const FINISHED_STATES: ReadonlySet<SequenceItemState> = new Set([
   'completed',
   'passed',
   'graded',
+  'submitted',
 ]);
 
 export function isSequenceItemFinished(state: SequenceItemState): boolean {
   return FINISHED_STATES.has(state);
+}
+
+/**
+ * Whether `current` is the activity that finishes the course (Task C):
+ * every OTHER activity is already finished. True for the last item in the
+ * order, and equally for an earlier one the learner left until last.
+ */
+export function isFinalActivity(
+  items: readonly CourseSequenceItem[],
+  current: CourseSequenceItem | undefined
+): boolean {
+  if (!current) return false;
+  return items.every(
+    (item) => item.id === current.id || isSequenceItemFinished(item.state)
+  );
 }
 
 export interface SequenceNeighbours {
@@ -149,7 +172,12 @@ export function findSequenceNeighbours(
     : -1;
 
   if (index < 0) {
-    return { index: -1, current: undefined, previous: undefined, next: undefined };
+    return {
+      index: -1,
+      current: undefined,
+      previous: undefined,
+      next: undefined,
+    };
   }
 
   return {

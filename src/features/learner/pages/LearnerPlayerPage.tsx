@@ -61,12 +61,12 @@ import {
   useCompleteLessonInPlayer,
   useUndoLessonCompletion,
 } from '../hooks/useLessonCompletion';
-import { useMyCertificates } from '@features/learning';
 import { useLessonGrant } from '../hooks/useLessonGrant';
 import { usePlaybackHeartbeat } from '../hooks/usePlaybackHeartbeat';
 import {
   findSequenceNeighbours,
   formatSequenceOrdinal,
+  isFinalActivity,
   isSequenceItemFinished,
 } from '../utils/sequence.utils';
 
@@ -234,62 +234,20 @@ export default function LearnerPlayerPage(): JSX.Element {
     [hrefFor, navigate]
   );
 
+  // A lesson opened on the activity route (a hand-typed or stale link)
+  // moves to its own path, where its player is — never the generic
+  // activity card.
+  const lessonOnActivityRoute = !isLessonRoute && current?.type === 'lesson';
+  useEffect(() => {
+    if (!lessonOnActivityRoute || !current) return;
+    const href = hrefFor(current);
+    if (href) navigate(href, { replace: true });
+  }, [lessonOnActivityRoute, current, hrefFor, navigate]);
+
   /* ---------- completion ---------- */
 
   const isCompleted = current ? isSequenceItemFinished(current.state) : false;
 
-  /*
-    THE END OF THE COURSE.
-
-    `isTerminal` is "this is the last item in the sequence and it is
-    finished" — which is what the learner just did. Whether the COURSE is
-    complete is a different question and is answered by the server's own
-    counts, not by inference: a learner can finish the last lesson while
-    an earlier quiz is still open, and telling them the course is done
-    would be a lie they discover later.
-
-    The certificate CTA is shown only when an issued certificate for THIS
-    course actually exists. Eligibility is not re-derived here — the
-    certificates endpoint is the authority, the query only runs once the
-    learner is actually at the end, and `enabled: false` on the response
-    (the academy is not admitted by the certificates flag) yields no
-    certificate and therefore no button.
-  */
-  const isTerminal = isCompleted && !next;
-  const certificatesQuery = useMyCertificates(academyId, {
-    enabled: isTerminal && !!user?.id && !!academyId,
-  });
-  const courseCompletion = useMemo(() => {
-    if (!isTerminal) return undefined;
-    const totalCount = sequenceQuery.data?.totalCount ?? 0;
-    const completedCount = sequenceQuery.data?.completedCount ?? 0;
-    const isCourseComplete = totalCount > 0 && completedCount >= totalCount;
-    const certificate = certificatesQuery.data?.items.find(
-      (item) => item.courseId === courseId && item.status === 'issued'
-    );
-    return {
-      isCourseComplete,
-      courseHref: buildHref(
-        buildPath(LEARNER_ROUTES.courseProgress, { courseId })
-      ),
-      certificateHref: certificate
-        ? buildHref(LEARNER_ROUTES.certificates)
-        : undefined,
-      // The course details page is where an enrolled learner's review
-      // form lives, and `/courses/:courseId` is the same address the
-      // course catalogue already links to on this host.
-      reviewHref: isCourseComplete
-        ? buildHref(`/courses/${courseId}`)
-        : undefined,
-    };
-  }, [
-    isTerminal,
-    sequenceQuery.data?.totalCount,
-    sequenceQuery.data?.completedCount,
-    certificatesQuery.data?.items,
-    courseId,
-    buildHref,
-  ]);
   // Atlas observes its own players' playback; it cannot observe YouTube's.
   // A watched-ratio rule on an embedded lesson therefore can never be met,
   // and the bar says so instead of waiting for evidence that cannot come.
@@ -307,6 +265,45 @@ export default function LearnerPlayerPage(): JSX.Element {
   const handleComplete = () => {
     if (!isLessonRoute || !currentId) return;
     completeLesson.mutate({ lessonId: currentId });
+  };
+
+  /*
+    FINISH COURSE (Task C).
+
+    Offered on the activity that finishes the course — every other one is
+    already finished — whatever its type, and equally when the learner
+    comes back to it, refreshes, or opens it directly (it is derived from
+    the server's sequence, never from session state). Finishing a lesson
+    that is not yet complete completes it first (the backend's completion
+    is idempotent: a second call is a no-op, not an error), then opens the
+    completion page, which reads the server's verdict — so a quiz still
+    failed or an assignment awaiting grading is reported there, never a
+    dead end here. A second click while finishing does nothing.
+  */
+  const isFinal = isFinalActivity(items, current);
+  const finishingRef = useRef(false);
+  const [isFinishing, setIsFinishing] = useState(false);
+  const completeHref = buildHref(
+    buildPath(LEARNER_ROUTES.courseComplete, { courseId })
+  );
+  const needsLessonCompletion = isLessonRoute && !isCompleted;
+  const canFinish =
+    !needsLessonCompletion || (!!grant && canComplete && heartbeat.leaseHeld);
+  const handleFinish = async () => {
+    if (finishingRef.current || !canFinish) return;
+    finishingRef.current = true;
+    setIsFinishing(true);
+    try {
+      if (needsLessonCompletion && currentId) {
+        await completeLesson.mutateAsync({ lessonId: currentId });
+      }
+      navigate(completeHref);
+    } catch {
+      // `completeLesson.error` carries the message to the bar.
+    } finally {
+      finishingRef.current = false;
+      setIsFinishing(false);
+    }
   };
 
   const handleUndo = () => {
@@ -362,7 +359,7 @@ export default function LearnerPlayerPage(): JSX.Element {
         onFinished={() => setHasFinishedPlaying(true)}
       />
     );
-  } else if (!isLessonRoute && current) {
+  } else if (!isLessonRoute && current && !lessonOnActivityRoute) {
     content = (
       <AssessmentActivityView
         courseId={courseId}
@@ -383,7 +380,7 @@ export default function LearnerPlayerPage(): JSX.Element {
         }
       />
     );
-  } else if (sequenceQuery.isLoading) {
+  } else if (sequenceQuery.isLoading || lessonOnActivityRoute) {
     content = <Skeleton className="h-48 w-full" />;
   } else {
     /*
@@ -439,7 +436,16 @@ export default function LearnerPlayerPage(): JSX.Element {
               canComplete={canComplete && heartbeat.leaseHeld}
               completionHintKey={completionHintKey}
               hasFinishedPlaying={hasFinishedPlaying}
-              courseCompletion={courseCompletion}
+              finish={
+                isFinal && items.length > 0
+                  ? {
+                      onFinish: () => void handleFinish(),
+                      isFinishing: isFinishing || completeLesson.isPending,
+                      canFinish,
+                      hintKey: completionHintKey,
+                    }
+                  : undefined
+              }
               errorMessage={
                 completeLesson.error || undoCompletion.error
                   ? t('learning:player.completion.failed')

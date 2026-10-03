@@ -155,7 +155,7 @@ test.describe('J12 — content library on the public site', () => {
     await expect(picked.nth(1)).toContainText(Q('first').en);
     await dialog.screenshot({ path: testInfo.outputPath('picker.png') });
     await dialog.getByRole('button', { name: 'Apply changes' }).click();
-    await page.getByRole('button', { name: 'Save changes' }).click();
+    await page.getByTestId('website-save-page').click();
     await expect
       .poll(
         async () => {

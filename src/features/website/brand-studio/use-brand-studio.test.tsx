@@ -154,4 +154,26 @@ describe('useBrandStudio', () => {
       ['overrides', 'seeds', 'source', 'status', 'variant'].sort()
     );
   });
+
+  // Reported as "the preview gets stuck": a throw during analysis left the
+  // studio "analyzing" for good, which disables the logo picker.
+  it('a file that cannot be read ends as a failure, never stuck "analyzing"', async () => {
+    const { result } = renderHook(() =>
+      useBrandStudio({
+        theme,
+        analysisOptions: { createWorker: workerAnswering(ORANGE_LOGO) },
+      })
+    );
+    const unreadable = pngFile();
+    unreadable.arrayBuffer = () => Promise.reject(new Error('read failed'));
+    await act(async () => {
+      await result.current.actions.analyzeFile(unreadable).catch(() => {});
+    });
+    await waitFor(() =>
+      expect(result.current.analysis).toEqual({
+        kind: 'error',
+        error: 'analysisFailed',
+      })
+    );
+  });
 });

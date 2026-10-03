@@ -100,10 +100,8 @@ export function CourseDetailsTemplate({
     setPreviewLesson,
     isAuthenticated,
     isEnrolled,
-    isFree,
-    isEnrolling,
     enrollError,
-    handleEnroll,
+    action,
     buildHref,
   } = useCourseDetails(academyId, courseId, locale);
 
@@ -357,60 +355,21 @@ export function CourseDetailsTemplate({
             {formatCoursePricing(course.pricing, t)}
           </p>
 
-          {isEnrolled ? (
-            <Button
-              className="w-full"
-              onClick={() =>
-                navigate(
-                  buildHref(
-                    buildPath(LEARNER_ROUTES.courseProgress, { courseId })
-                  )
-                )
-              }
-            >
+          {/* The one primary action, decided once in `useCourseDetails`
+              (Start / Continue / Completed for an enrolled learner). */}
+          <Button
+            className="w-full"
+            onClick={action.onSelect}
+            disabled={action.busy}
+            data-course-action={action.kind}
+          >
+            {action.busy ? (
+              <Loader2 className="size-4 animate-spin" aria-hidden />
+            ) : action.kind === 'completed' ? (
               <CheckCircle2 className="size-4" strokeWidth={2} aria-hidden />
-              {t('website:renderer.courseDetails.continueAction')}
-            </Button>
-          ) : isAuthenticated ? (
-            isFree ? (
-              <Button
-                className="w-full"
-                onClick={handleEnroll}
-                disabled={isEnrolling}
-              >
-                {isEnrolling ? (
-                  <Loader2 className="size-4 animate-spin" aria-hidden />
-                ) : null}
-                {t('website:renderer.courseDetails.enrollAction')}
-              </Button>
-            ) : (
-              <Button
-                className="w-full"
-                onClick={() =>
-                  navigate(
-                    buildHref(
-                      buildPath(LEARNER_ROUTES.courseCheckout, { courseId })
-                    )
-                  )
-                }
-              >
-                {t('website:renderer.courseDetails.buyAction')}
-              </Button>
-            )
-          ) : (
-            <Button
-              className="w-full"
-              onClick={() =>
-                navigate(
-                  buildHref(
-                    `/sign-in?returnTo=${encodeURIComponent(`/courses/${courseId}`)}`
-                  )
-                )
-              }
-            >
-              {t('website:renderer.courseDetails.signInToEnrollAction')}
-            </Button>
-          )}
+            ) : null}
+            {t(action.labelKey)}
+          </Button>
 
           {enrollError ? (
             <p className="text-sm text-destructive">

@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/card';
 import { ErrorState } from '@components/feedback';
 import { useUnsavedChanges } from '@hooks';
+import { saveViaForm } from '@utils';
 import { useUpdateProfile } from '../hooks';
 import type { CurrentUser } from '@types';
 
@@ -61,11 +62,6 @@ export function ProfilePersonalSection({
     },
   });
 
-  useUnsavedChanges({
-    isDirty: isDirty && isEditing,
-    messageKey: 'profile:unsavedChanges',
-  });
-
   useEffect(() => {
     reset({
       firstName: user.name.split(' ')[0] || '',
@@ -85,6 +81,24 @@ export function ProfilePersonalSection({
       }
     );
   };
+
+  // "Save and leave" in the unsaved-changes dialog: the same save, awaited,
+  // without leaving edit mode on failure.
+  useUnsavedChanges({
+    isDirty: isDirty && isEditing,
+    onSave: () =>
+      saveViaForm({ handleSubmit }, async (data: PersonalFormData) => {
+        try {
+          await updateProfile.mutateAsync({
+            name: `${data.firstName} ${data.lastName}`.trim(),
+          });
+          setIsEditing(false);
+          return true;
+        } catch {
+          return false;
+        }
+      }),
+  });
 
   const handleCancel = () => {
     reset();

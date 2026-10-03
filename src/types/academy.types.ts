@@ -56,10 +56,11 @@ export interface CreateAcademyPayload {
 export interface UpdateAcademyPayload {
   readonly name?: string;
   readonly slug?: string;
-  readonly description?: string;
-  readonly contactEmail?: string;
-  readonly contactPhone?: string;
-  readonly website?: string;
+  // `null` clears the field; `undefined` leaves it unchanged.
+  readonly description?: string | null;
+  readonly contactEmail?: string | null;
+  readonly contactPhone?: string | null;
+  readonly website?: string | null;
   readonly address?: Partial<AcademyAddress>;
   readonly language?: string;
   readonly timezone?: string;

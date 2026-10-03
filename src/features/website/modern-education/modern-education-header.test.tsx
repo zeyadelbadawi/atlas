@@ -115,9 +115,12 @@ describe('Theme 1 header', () => {
     expect(screen.getAllByRole('button', { name: 'Sign up' }).length).toBe(2);
   });
 
-  it('a signed-in visitor sees their greeting, never Sign in / Sign up', () => {
+  it('a signed-in visitor sees their account menu, never Sign in / Sign up', () => {
     renderHeader({ authState: { name: 'Mona', onSignOut: () => undefined } });
-    expect(screen.getAllByText('Welcome, Mona').length).toBeGreaterThan(0);
+    // Task B: the name opens the account menu (it replaced the greeting).
+    expect(
+      screen.getByRole('button', { name: 'Account menu for Mona' })
+    ).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Sign up' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'Sign in' })).toBeNull();
   });

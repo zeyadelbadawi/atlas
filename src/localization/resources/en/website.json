@@ -547,6 +547,7 @@
     "removeSocialLink": "Remove link",
     "socialLabelPlaceholder": "Label",
     "saveError": "Failed to save navigation",
+    "staleConflict": "Someone else changed these settings in the meantime. Their version is now shown — make your change again.",
     "itemLabel": "Menu item label"
   },
   "pages": {
@@ -578,6 +579,7 @@
     "removeItem": "Remove",
     "applyChanges": "Apply changes",
     "saveChanges": "Save changes",
+    "saveDraft": "Save draft",
     "unsavedChanges": "You have unsaved changes to this page.",
     "toggleEnabled": "Enabled",
     "editSection": "Edit section",
@@ -629,10 +631,10 @@
     "sampleHelp": "Sample testimonials are placeholders to show the design. They're never shown on your live website. Replace the text with a real testimonial, then mark it as real.",
     "sampleSectionHint": "Holds sample testimonials, which are hidden on your live website.",
     "publishPageAction": "Publish page",
-    "publishPageSaveFirst": "Save your changes first, then publish the page.",
     "publishPageConfirmTitle": "Publish this page?",
-    "publishPageConfirmDescription": "The saved version of this page will replace what visitors see. Other pages and the site settings stay as they are published.",
+    "publishPageConfirmDescription": "Your changes to this page will be saved and replace what visitors see. Other pages and the site settings stay as they are published.",
     "pageHasUnpublishedChanges": "This page has saved changes that visitors don't see yet. Publish the page to make them live.",
+    "pageHasLocalChanges": "You have unsaved changes to this page. “Publish page” saves them and makes them live; “Save draft” keeps them hidden from visitors.",
     "pageUpToDate": "Visitors see the saved version of this page.",
     "publishedSlugTaken": "Another live page (“{{title}}”) still uses the address /{{slug}}. Publish that page first, or publish the whole site."
   },
@@ -835,7 +837,7 @@
     "label": "Mobile navigation",
     "home": "Home",
     "courses": "Courses",
-    "myLearning": "My Learning",
+    "myLearning": "My Learn",
     "profile": "Profile"
   },
   "renderer": {
@@ -887,6 +889,8 @@
       "assignmentCount_other": "{{count}} assignments",
       "enrollAction": "Enroll for free",
       "continueAction": "Continue Learning",
+      "startAction": "Start course",
+      "completedAction": "Course completed · Review",
       "signInToEnrollAction": "Sign in to enroll",
       "enrollError": "We couldn't enroll you in this course. Please try again.",
       "outcomesTitle": "What you'll learn",
@@ -992,6 +996,7 @@
     "logoHelp": "PNG, JPG, WebP or SVG, up to 2 MB. A logo on a transparent background works best.",
     "analyzing": "Reading your logo's colours…",
     "proposed": "We suggested a palette from your logo. Review it, then accept.",
+    "proposedSave": "We suggested a palette from your logo. Review it, then save.",
     "retry": "Try again",
     "manualHint": "You can try another file, or pick your colours below.",
     "monochromeHint": "Your logo is black and white, so we used a theme colour for accents. Pick a brand colour below if you have one.",
@@ -1065,6 +1070,7 @@
     "resetToLogo": "Reset to logo suggestion",
     "resetToTheme": "Reset to theme default",
     "cannotAccept": "Fix the highlighted colours before accepting.",
+    "cannotSave": "Fix the highlighted colours before saving.",
     "preview": "Live preview",
     "save": "Save brand colours",
     "statusConfirmed": "Accepted palette",
@@ -1217,7 +1223,7 @@
       "title": "Confirm your brand colours",
       "todo": "Review the colours generated for your website and confirm them, or adjust them first.",
       "done": "Your brand colours are confirmed.",
-      "action": "Open Brand"
+      "action": "Open Visual Identity"
     },
     "samples": {
       "title": "Replace the sample testimonials",
@@ -1303,5 +1309,20 @@
       "undo": "Undo",
       "failed": "Couldn't update the message"
     }
+  },
+  "visualIdentity": {
+    "title": "Visual identity",
+    "subtitle": "Your academy’s name, logo, favicon and colours — saved together, live on your website as soon as you save.",
+    "basicsTitle": "Name and favicon",
+    "logoAndColoursTitle": "Logo and colours",
+    "logoAndColoursDescription": "Your logo suggests a palette. Every colour is checked so text stays readable, and you can adjust anything before you save.",
+    "save": "Save visual identity",
+    "saved": "Visual identity saved. Your website shows it now.",
+    "saveError": "Your visual identity couldn’t be saved. Please try again.",
+    "conflict": "Someone else changed these settings in the meantime. Reload the page to see their version, then make your change again.",
+    "unsavedChanges": "You have unsaved changes to your visual identity.",
+    "unsavedHint": "You have unsaved changes.",
+    "savedHint": "Everything is saved and live.",
+    "nameRequired": "Enter your academy’s name."
   }
 }

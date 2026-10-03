@@ -130,7 +130,12 @@ vi.mock('@/shared/hooks/useAcademyIdentity', () => ({
 // Course Details: the public course, the visitor's session and enrolment.
 let publicCourse: Partial<Course> | undefined;
 let authenticated = false;
-let enrollment: { status: string } | undefined;
+let enrollment:
+  | {
+      status: string;
+      progress?: { learningState?: string; completionState?: string };
+    }
+  | undefined;
 const enroll = vi.fn();
 vi.mock('@/shared/hooks/usePublicCourse', () => ({
   usePublicCourse: () => ({
@@ -458,7 +463,7 @@ describe('T1CourseCatalog', () => {
 /* Course Details                                                       */
 /* ------------------------------------------------------------------ */
 
-describe('useCourseDetails — the primary action (unchanged behaviour)', () => {
+describe('useCourseDetails — the primary action', () => {
   const run = () => {
     const result = renderHook(
       () => ({
@@ -481,17 +486,44 @@ describe('useCourseDetails — the primary action (unchanged behaviour)', () => 
     );
   });
 
-  it('enrolled → continue learning', () => {
-    publicCourse = course('c1');
-    authenticated = true;
-    enrollment = { status: 'active' };
-    const result = run();
-    expect(result.current.details.action.kind).toBe('continue');
-    act(() => result.current.details.action.onSelect());
-    expect(result.current.location.pathname).toBe(
-      buildPath(LEARNER_ROUTES.courseProgress, { courseId: 'c1' })
-    );
-  });
+  // Task E: "Continue" used to be shown for ANY enrolment, including one
+  // with nothing started. The backend's learning state now decides.
+  it.each([
+    ['not started', { learningState: 'not_started' }, 'start', 'Start course'],
+    [
+      'started',
+      { learningState: 'in_progress' },
+      'continue',
+      'Continue Learning',
+    ],
+    [
+      'completed',
+      { learningState: 'completed' },
+      'completed',
+      'Course completed · Review',
+    ],
+    // An older response without the field: nothing finished → Start.
+    [
+      'older response',
+      { completionState: 'incomplete' },
+      'start',
+      'Start course',
+    ],
+  ])(
+    'enrolled, %s → %s, to the course progress',
+    (_label, progress, kind, label) => {
+      publicCourse = course('c1');
+      authenticated = true;
+      enrollment = { status: 'enrolled', progress };
+      const result = run();
+      expect(result.current.details.action.kind).toBe(kind);
+      expect(i18nEn.t(result.current.details.action.labelKey)).toBe(label);
+      act(() => result.current.details.action.onSelect());
+      expect(result.current.location.pathname).toBe(
+        buildPath(LEARNER_ROUTES.courseProgress, { courseId: 'c1' })
+      );
+    }
+  );
 
   it('signed in, free → the real free enrolment', async () => {
     publicCourse = course('c1', {

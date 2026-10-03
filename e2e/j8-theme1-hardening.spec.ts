@@ -175,10 +175,8 @@ test.describe('J8 — Theme 1 hardening', () => {
     await expect(quote).toHaveValue(new RegExp(SAMPLE_QUOTES[0]));
     await quote.fill(EDITED_SAMPLE);
     await dialog.getByRole('button', { name: 'Apply changes' }).click();
-    await page.getByRole('button', { name: 'Save changes' }).click();
-    await expect(
-      page.getByRole('button', { name: 'Save changes' })
-    ).toBeDisabled({
+    await page.getByTestId('website-save-page').click();
+    await expect(page.getByTestId('website-save-page')).toBeDisabled({
       timeout: 15_000,
     });
 

@@ -32,6 +32,7 @@ import {
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
+import { saveViaForm } from '@utils';
 import { useUnsavedChanges } from '@hooks';
 import { useServerValidation } from '@forms';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
@@ -81,13 +82,10 @@ export default function AcademyProfilePage(): JSX.Element {
   });
 
   useServerValidation(form, mutationError);
-  useUnsavedChanges({
-    isDirty: form.formState.isDirty,
-    messageKey: 'academy:profile.unsavedChanges',
-  });
-
-  const onSubmit = async (data: UpdateAcademyProfileFormData) => {
-    if (!academyId) return;
+  // `save` resolves false after a failure it already reported, so both the
+  // Save button and the unsaved-changes dialog's "Save and leave" share it.
+  const save = async (data: UpdateAcademyProfileFormData): Promise<boolean> => {
+    if (!academyId) return false;
 
     try {
       await updateAcademy({
@@ -95,10 +93,10 @@ export default function AcademyProfilePage(): JSX.Element {
         payload: {
           name: data.name,
           slug: data.slug,
-          description: data.description || undefined,
-          contactEmail: data.contactEmail || undefined,
-          contactPhone: data.contactPhone || undefined,
-          website: data.website || undefined,
+          description: data.description || null,
+          contactEmail: data.contactEmail || null,
+          contactPhone: data.contactPhone || null,
+          website: data.website || null,
           address: {
             street: data.street,
             city: data.city,
@@ -111,18 +109,32 @@ export default function AcademyProfilePage(): JSX.Element {
           currency: data.currency,
         },
       });
+      // The saved values are the new baseline: clean now, not after the
+      // refetch — and still clean if the server echoes them back unchanged.
+      form.reset(data);
       toast({
         title: t('academy:profile.success'),
         description: t('common:states.success.description'),
       });
-    } catch (error) {
+      return true;
+    } catch {
       toast({
         title: t('academy:profile.error'),
         description: t('errors:generic.description'),
         variant: 'destructive',
       });
+      return false;
     }
   };
+
+  const onSubmit = async (data: UpdateAcademyProfileFormData) => {
+    await save(data);
+  };
+
+  useUnsavedChanges({
+    isDirty: form.formState.isDirty,
+    onSave: () => saveViaForm(form, save),
+  });
 
   const handleCancel = () => {
     navigate(DASHBOARD_ROUTES.academy + `?academyId=${academyId}`);

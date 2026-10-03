@@ -54,7 +54,13 @@ function item(
 }
 
 const SEQUENCE: readonly CourseSequenceItem[] = [
-  item({ id: 'a', unitNumber: 1, itemNumber: 1, position: 1, state: 'completed' }),
+  item({
+    id: 'a',
+    unitNumber: 1,
+    itemNumber: 1,
+    position: 1,
+    state: 'completed',
+  }),
   item({
     id: 'b',
     unitNumber: 1,
@@ -139,14 +145,17 @@ describe('sequence grouping and progress', () => {
     expect(units[1].items.map((entry) => entry.id)).toEqual(['c']);
   });
 
-  it('treats a passed quiz and a graded assignment as finished, like a completed lesson', () => {
+  it('treats a passed quiz and a submitted or graded assignment as finished, like a completed lesson — the server’s set', () => {
     // One vocabulary across four types is the point of the state enum —
-    // the sidebar renders them side by side.
+    // the sidebar renders them side by side. It must be the SERVER's set
+    // (course-sequence.service.ts isFinished), which completedCount uses:
+    // `submitted` used to be excluded here, so an assignment submitted as
+    // the last activity never reached the end of the course (Task C).
     expect(isSequenceItemFinished('completed')).toBe(true);
     expect(isSequenceItemFinished('passed')).toBe(true);
     expect(isSequenceItemFinished('graded')).toBe(true);
+    expect(isSequenceItemFinished('submitted')).toBe(true);
 
-    expect(isSequenceItemFinished('submitted')).toBe(false);
     expect(isSequenceItemFinished('failed')).toBe(false);
     expect(isSequenceItemFinished('locked')).toBe(false);
   });

@@ -18,6 +18,7 @@
  */
 import type { WebsiteThemeKey } from './website-theme.types';
 import type { SectionInstance } from './website-section.types';
+import type { Academy } from './academy.types';
 import type { LocalizedText } from './website-content.types';
 
 export type WebsitePublishStatus =
@@ -172,6 +173,12 @@ export interface UpdateWebsiteConfigurationPayload {
   readonly navigation?: readonly WebsiteNavigationItem[];
   readonly header?: WebsiteHeaderConfig;
   readonly footer?: WebsiteFooterConfig;
+  /**
+   * The `updatedAt` of the copy this edit was based on. The save is refused
+   * (409 `stale_resource_version`) if anyone has saved since — used where a
+   * field is a full replace (navigation, header, footer).
+   */
+  readonly expectedUpdatedAt?: string;
 }
 
 /** The six core page contracts every theme supports. `courseDetails` is a template driven entirely by the existing Course domain — it is not composed of sections and is not part of the visibility/navigation toggle set (a course's own existence is what gates reachability). */
@@ -285,3 +292,22 @@ export interface SampleContentEntry {
 export type PublishWebsiteResponse = WebsiteConfiguration & {
   readonly sampleContent?: readonly SampleContentEntry[];
 };
+
+/**
+ * `PUT academies/:id/visual-identity` — name, logo, favicon and website
+ * colours saved together, live on save. Absent fields are left as they
+ * are; `null` removes the logo or favicon.
+ */
+export interface SaveVisualIdentityPayload {
+  readonly name?: string;
+  readonly logo?: string | null;
+  readonly favicon?: string | null;
+  readonly brand?: Partial<WebsiteBrandConfig>;
+  /** The configuration's `updatedAt` this edit was based on. */
+  readonly expectedUpdatedAt?: string;
+}
+
+export interface SaveVisualIdentityResponse {
+  readonly academy: Academy;
+  readonly configuration: WebsiteConfiguration;
+}

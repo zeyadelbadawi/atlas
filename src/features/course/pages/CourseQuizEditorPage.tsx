@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useUnsavedChanges } from '@hooks';
+import { saveViaForm } from '@utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, Loader2, Pencil, Trash2 } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
@@ -197,7 +198,12 @@ export default function CourseQuizEditorPage(): JSX.Element {
   // Warns before this editor is left with unsaved work — both on
   // in-app navigation (via the shared registry the route blocker
   // reads) and on tab close or refresh.
-  useUnsavedChanges({ isDirty: form.formState.isDirty });
+  // `persist` is the save without the navigation, so "Save and leave" can
+  // reuse it and then continue to wherever the user was going.
+  const { markSaved } = useUnsavedChanges({
+    isDirty: form.formState.isDirty,
+    onSave: () => saveViaForm(form, persist),
+  });
 
   const goToList = () => {
     if (!academyId || !courseId) return;
@@ -211,7 +217,7 @@ export default function CourseQuizEditorPage(): JSX.Element {
 
   useServerValidation(form, mutationError ?? null);
 
-  const onSubmit = async (data: QuizAuthoringFormData) => {
+  async function persist(data: QuizAuthoringFormData): Promise<boolean> {
     const payload = {
       title: data.title,
       description: data.description || undefined,
@@ -230,21 +236,31 @@ export default function CourseQuizEditorPage(): JSX.Element {
         await createQuiz.mutateAsync(payload);
         toast({ title: t('course:quizAuthoring.created') });
       }
-      goToList();
+      form.reset(data);
+      return true;
     } catch (error) {
       if (
         isApiError(error) &&
         error.kind === 'validation' &&
         error.violations?.length
       ) {
-        return;
+        return false;
       }
       toast({
         title: t('course:quizAuthoring.error'),
         description: t('errors:generic.description'),
         variant: 'destructive',
       });
+      return false;
     }
+  }
+
+  const onSubmit = async (data: QuizAuthoringFormData) => {
+    if (!(await persist(data))) return;
+    // Saved: leave without the unsaved-changes dialog asking about the
+    // work that was just saved.
+    markSaved();
+    goToList();
   };
 
   const handleDelete = async () => {

@@ -36,6 +36,13 @@ import { CurriculumSidebar } from '../components/CurriculumSidebar';
 import { CourseCompletionCard } from '../components/CourseCompletionCard';
 import { sequenceCompletionPercentage } from '../utils/sequence.utils';
 
+/** Item states that mean the learner has not begun the item yet. */
+const NOT_YET_BEGUN = new Set<CourseSequenceItem['state']>([
+  'available',
+  'locked',
+  'overdue',
+]);
+
 export default function LearnerCourseProgressPage(): JSX.Element {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -63,6 +70,11 @@ export default function LearnerCourseProgressPage(): JSX.Element {
   const continueItem = data?.continueItemId
     ? data.items.find((item) => item.id === data.continueItemId)
     : undefined;
+  // Start until anything has been begun or finished (Task E): the same
+  // course reads "Start" here, on its details page and in My Courses.
+  const hasStarted = !!data?.items.some(
+    (item) => !NOT_YET_BEGUN.has(item.state)
+  );
 
   const header = (
     <LearnerPageHeader
@@ -81,7 +93,11 @@ export default function LearnerCourseProgressPage(): JSX.Element {
         continueItem ? (
           <Button onClick={() => navigate(hrefFor(continueItem))}>
             <PlayCircle className="size-4" aria-hidden />
-            {t('learning:learnerDashboard.actions.continue')}
+            {t(
+              hasStarted
+                ? 'learning:learnerDashboard.actions.continue'
+                : 'learning:learnerDashboard.actions.start'
+            )}
           </Button>
         ) : undefined
       }

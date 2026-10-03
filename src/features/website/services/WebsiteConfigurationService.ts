@@ -24,6 +24,8 @@ import type {
   CollectionQuery,
   ReorderItemsPayload,
   PublishWebsiteResponse,
+  SaveVisualIdentityPayload,
+  SaveVisualIdentityResponse,
   UpdateWebsiteConfigurationPayload,
   UpdateWebsitePagePayload,
   WebsiteConfiguration,
@@ -61,6 +63,22 @@ export class WebsiteConfigurationService extends BaseService {
       WebsiteConfiguration,
       UpdateWebsiteConfigurationPayload
     >(this.websitePath(academyId, 'configuration'), payload, options);
+  }
+
+  /**
+   * The one "Save Visual Identity": name, logo, favicon and website colours
+   * in one transaction, live on save (see the backend's
+   * `saveVisualIdentity`). `null` removes the logo or favicon.
+   */
+  async saveVisualIdentity(
+    academyId: string,
+    payload: SaveVisualIdentityPayload,
+    options?: WriteOptions
+  ): Promise<SaveVisualIdentityResponse> {
+    return this.client.put<
+      SaveVisualIdentityResponse,
+      SaveVisualIdentityPayload
+    >(this.path(academyId, 'visual-identity'), payload, options);
   }
 
   /** Promotes the current draft to published. The backend is the sole authority on when this actually succeeds — the frontend never marks a website "Published" itself. */
@@ -152,15 +170,20 @@ export class WebsiteConfigurationService extends BaseService {
    * sections become what visitors see. The rest of the site — other pages
    * and the site-wide settings — keeps its published state. Refused (409)
    * when another live page still holds this page's address.
+   *
+   * With `expectedVersion`, the publish is pinned to the version the
+   * editor saw: if anyone saved the page since, it is refused (409
+   * `stale_resource_version`) instead of putting their edit live unseen.
    */
   async publishPage(
     academyId: string,
     pageId: string,
+    expectedVersion?: number,
     options?: WriteOptions
   ): Promise<WebsitePage> {
-    return this.client.post<WebsitePage, undefined>(
+    return this.client.post<WebsitePage, { expectedVersion?: number }>(
       this.websitePath(academyId, 'pages', pageId, 'publish'),
-      undefined,
+      expectedVersion === undefined ? {} : { expectedVersion },
       options
     );
   }

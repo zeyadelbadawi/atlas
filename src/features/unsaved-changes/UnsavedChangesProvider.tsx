@@ -37,6 +37,20 @@ export interface DirtyFormHandlers {
 
 interface UnsavedChangesContextValue {
   readonly isDirty: boolean;
+  /**
+   * True only when EVERY dirty form registered a save handler. "Save and
+   * leave" is offered only then: saving some forms and silently dropping
+   * the others would lose work behind a button that promised to keep it.
+   */
+  readonly canSaveAll: boolean;
+  /**
+   * The live answer, read synchronously. Navigation is decided against
+   * this, not `isDirty`: React state reaches the router's blocker one
+   * effect late, so a form that saves and navigates in the same tick
+   * (`markSaved()` then `navigate()`) would otherwise be blocked by the
+   * dirt it just saved.
+   */
+  readonly isDirtyNow: () => boolean;
   /** Marks an id dirty or clean. Safe to call on every render. */
   readonly setDirty: (
     id: string,
@@ -45,7 +59,7 @@ interface UnsavedChangesContextValue {
   ) => void;
   /** Removes an id entirely — used on unmount. */
   readonly clear: (id: string) => void;
-  /** Saves every dirty form that can save itself. Returns false if any failed. */
+  /** Saves every dirty form. Returns false if any failed or cannot save. */
   readonly saveAll: () => Promise<boolean>;
   /** Forgets all dirty state without saving — used after "Leave without saving". */
   readonly discardAll: () => void;
@@ -57,13 +71,24 @@ const UnsavedChangesContext = createContext<UnsavedChangesContextValue | null>(
 
 export function UnsavedChangesProvider({ children }: { children: ReactNode }) {
   const [dirtyIds, setDirtyIds] = useState<readonly string[]>([]);
+  // The same set, updated synchronously (see `isDirtyNow`). State drives
+  // rendering; the ref drives navigation decisions.
+  const liveDirtyRef = useRef(new Set<string>());
   // Handlers live in a ref, not state: they change identity on every
   // render of the consuming form, and storing them in state would loop.
   const handlersRef = useRef(new Map<string, DirtyFormHandlers>());
+  // Bumped when a form gains or loses a save handler without its dirty
+  // flag changing, so `canSaveAll` (derived from the ref) re-renders.
+  const [, setHandlerTick] = useState(0);
 
   const setDirty = useCallback(
     (id: string, dirty: boolean, handlers?: DirtyFormHandlers) => {
+      const couldSave = !!handlersRef.current.get(id)?.save;
       if (handlers) handlersRef.current.set(id, handlers);
+      else handlersRef.current.delete(id);
+      if (couldSave !== !!handlers?.save) setHandlerTick((tick) => tick + 1);
+      if (dirty) liveDirtyRef.current.add(id);
+      else liveDirtyRef.current.delete(id);
       setDirtyIds((current) => {
         const has = current.includes(id);
         if (dirty === has) return current; // No change — do not re-render.
@@ -77,22 +102,24 @@ export function UnsavedChangesProvider({ children }: { children: ReactNode }) {
 
   const clear = useCallback((id: string) => {
     handlersRef.current.delete(id);
+    liveDirtyRef.current.delete(id);
     setDirtyIds((current) =>
       current.includes(id) ? current.filter((value) => value !== id) : current
     );
   }, []);
 
-  // `saveAll` reads the dirty list through a ref rather than closing over
-  // it, so the callback identity never changes. See the note on `value`
-  // below for why that matters so much here.
-  const dirtyIdsRef = useRef(dirtyIds);
-  dirtyIdsRef.current = dirtyIds;
+  const isDirtyNow = useCallback(() => liveDirtyRef.current.size > 0, []);
 
   const saveAll = useCallback(async () => {
     let allSucceeded = true;
-    for (const id of dirtyIdsRef.current) {
+    for (const id of [...liveDirtyRef.current]) {
       const save = handlersRef.current.get(id)?.save;
-      if (!save) continue;
+      // A dirty form that cannot save is a failure, never a skip: skipping
+      // it made "Save and leave" discard that form's work.
+      if (!save) {
+        allSucceeded = false;
+        continue;
+      }
       // A save that throws is a failure, not a crash: the dialog stays
       // open and the user keeps their work.
       try {
@@ -106,26 +133,36 @@ export function UnsavedChangesProvider({ children }: { children: ReactNode }) {
 
   const discardAll = useCallback(() => {
     handlersRef.current.clear();
+    liveDirtyRef.current.clear();
     setDirtyIds([]);
   }, []);
 
   const isDirty = dirtyIds.length > 0;
+  const canSaveAll =
+    isDirty && dirtyIds.every((id) => !!handlersRef.current.get(id)?.save);
 
   /**
-   * KEYED ON `isDirty`, NOT ON `dirtyIds` — THIS IS LOAD-BEARING.
+   * KEYED ON BOOLEANS, NOT ON `dirtyIds` — THIS IS LOAD-BEARING.
    *
    * A first version depended on the `dirtyIds` array, so the context value
    * got a new identity every time any id was added or removed. Consumers
    * depend on this value in effects, and an effect whose cleanup calls
    * `clear` then re-runs on the new identity, clearing again — an infinite
    * render loop that hung the test runner outright the moment a single
-   * form became dirty. Every callback above is now identity-stable, so the
-   * value changes only when the answer to "should navigation be blocked?"
-   * actually changes.
+   * form became dirty. Every callback above is identity-stable, so the
+   * value changes only when what the dialog shows actually changes.
    */
   const value = useMemo<UnsavedChangesContextValue>(
-    () => ({ isDirty, setDirty, clear, saveAll, discardAll }),
-    [isDirty, setDirty, clear, saveAll, discardAll]
+    () => ({
+      isDirty,
+      canSaveAll,
+      isDirtyNow,
+      setDirty,
+      clear,
+      saveAll,
+      discardAll,
+    }),
+    [isDirty, canSaveAll, isDirtyNow, setDirty, clear, saveAll, discardAll]
   );
 
   return (

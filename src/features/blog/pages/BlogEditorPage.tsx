@@ -30,6 +30,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { useFilePicker, useUnsavedChanges } from '@hooks';
+import { saveViaForm } from '@utils';
 import { useServerValidation } from '@forms';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useBlogPost, useCreateBlogPost, useUpdateBlogPost } from '../hooks';
@@ -94,9 +95,12 @@ export default function BlogEditorPage(): JSX.Element {
   });
 
   useServerValidation(form, isEditMode ? updateError : createError);
-  useUnsavedChanges({
+  // `persist` saves without navigating, so "Save and leave" reuses it and
+  // then continues to wherever the user was going.
+  const { markSaved } = useUnsavedChanges({
     isDirty: form.formState.isDirty,
-    messageKey: 'common:unsavedChanges.description',
+    onSave: () =>
+      saveViaForm(form, async (data) => (await persist(data)) !== null),
   });
 
   useEffect(() => {
@@ -161,7 +165,8 @@ export default function BlogEditorPage(): JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imagePicker.files]);
 
-  const onSubmit = async (data: BlogPostFormData) => {
+  /** Saves the post and resolves its id, or null after a reported failure. */
+  async function persist(data: BlogPostFormData): Promise<string | null> {
     const tags = data.tags
       ? data.tags
           .split(',')
@@ -195,7 +200,8 @@ export default function BlogEditorPage(): JSX.Element {
           title: t('blog:editor.updateSuccess'),
           description: t('common:states.success.description'),
         });
-        navigate(buildPath(DASHBOARD_ROUTES.blogPost, { postId }));
+        form.reset(data);
+        return postId;
       } else {
         const created = await createPost({
           title: data.title,
@@ -214,7 +220,8 @@ export default function BlogEditorPage(): JSX.Element {
           title: t('blog:editor.createSuccess'),
           description: t('common:states.success.description'),
         });
-        navigate(buildPath(DASHBOARD_ROUTES.blogPost, { postId: created.id }));
+        form.reset(data);
+        return created.id;
       }
     } catch {
       toast({
@@ -222,7 +229,17 @@ export default function BlogEditorPage(): JSX.Element {
         description: t('errors:generic.description'),
         variant: 'destructive',
       });
+      return null;
     }
+  }
+
+  const onSubmit = async (data: BlogPostFormData) => {
+    const savedId = await persist(data);
+    if (!savedId) return;
+    // Saved: open the post without the unsaved-changes dialog asking about
+    // the work that was just saved.
+    markSaved();
+    navigate(buildPath(DASHBOARD_ROUTES.blogPost, { postId: savedId }));
   };
 
   if (isEditMode && isLoadingPost) {

@@ -30,6 +30,7 @@ import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { useUnsavedChanges } from '@hooks';
+import { saveViaForm } from '@utils';
 import { useServerValidation } from '@forms';
 import { useTrialPolicy, useUpdateTrialPolicy } from '../hooks';
 import {
@@ -55,28 +56,33 @@ export default function PlatformTrialPolicyPage(): JSX.Element {
   });
 
   useServerValidation(form, mutationError);
-  useUnsavedChanges({
-    isDirty: form.formState.isDirty,
-    messageKey: 'tenant:platformAdmin.trialPolicy.unsavedChanges',
-  });
-
   const enabled = form.watch('enabled');
 
-  const onSubmit = async (data: UpdateTrialPolicyFormData) => {
+  // Resolves false after a failure it already reported, so the Save button
+  // and the unsaved-changes dialog's "Save and leave" share it.
+  async function onSubmit(data: UpdateTrialPolicyFormData): Promise<boolean> {
     try {
       await updateTrialPolicy(data);
+      form.reset(data);
       toast({
         title: t('tenant:platformAdmin.trialPolicy.success'),
         description: t('common:states.success.description'),
       });
+      return true;
     } catch {
       toast({
         title: t('tenant:platformAdmin.trialPolicy.error'),
         description: t('errors:generic.description'),
         variant: 'destructive',
       });
+      return false;
     }
-  };
+  }
+
+  useUnsavedChanges({
+    isDirty: form.formState.isDirty,
+    onSave: () => saveViaForm(form, onSubmit),
+  });
 
   if (isLoading) {
     return (

@@ -48,6 +48,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { useFilePicker, useUnsavedChanges } from '@hooks';
+import { saveViaForm } from '@utils';
 import { CourseLanguageSelect } from '../components/CourseLanguageSelect';
 import { LinesTextarea, normalizeLines } from '../components/LinesTextarea';
 import {
@@ -118,10 +119,6 @@ export default function CourseEditPage(): JSX.Element {
   });
 
   useServerValidation(form, mutationError);
-  useUnsavedChanges({
-    isDirty: form.formState.isDirty,
-    messageKey: 'course:edit.unsavedChanges',
-  });
 
   const thumbnailPicker = useFilePicker({
     accept: ALLOWED_COURSE_THUMBNAIL_TYPES.join(','),
@@ -167,8 +164,10 @@ export default function CourseEditPage(): JSX.Element {
 
   const pricingType = form.watch('pricingType');
 
-  const onSubmit = async (data: UpdateCourseFormData) => {
-    if (!academyId || !courseId) return;
+  // `save` resolves false after a failure it already reported, so both the
+  // Save button and the unsaved-changes dialog's "Save and leave" share it.
+  const save = async (data: UpdateCourseFormData): Promise<boolean> => {
+    if (!academyId || !courseId) return false;
 
     const pricing: CoursePricing =
       data.pricingType === 'paid'
@@ -203,18 +202,32 @@ export default function CourseEditPage(): JSX.Element {
           requirements: normalizeLines((data.requirements ?? []).join('\n')),
         },
       });
+      // The saved values are the new baseline: clean now, not after the
+      // refetch catches up.
+      form.reset(data);
       toast({
         title: t('course:edit.success'),
         description: t('common:states.success.description'),
       });
+      return true;
     } catch {
       toast({
         title: t('course:edit.error'),
         description: t('errors:generic.description'),
         variant: 'destructive',
       });
+      return false;
     }
   };
+
+  const onSubmit = async (data: UpdateCourseFormData) => {
+    await save(data);
+  };
+
+  useUnsavedChanges({
+    isDirty: form.formState.isDirty,
+    onSave: () => saveViaForm(form, save),
+  });
 
   const handleCancel = () => {
     if (academyId) {

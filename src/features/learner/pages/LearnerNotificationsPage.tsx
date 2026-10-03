@@ -90,7 +90,9 @@ export default function LearnerNotificationsPage(): JSX.Element {
         }}
       >
         <TabsList aria-label={t('notifications:filters.status')}>
-          <TabsTrigger value="all">{t('notifications:filters.all')}</TabsTrigger>
+          <TabsTrigger value="all">
+            {t('notifications:filters.all')}
+          </TabsTrigger>
           <TabsTrigger value="unread">
             {t('notifications:filters.unread')}
             {summaryQuery.data ? (
