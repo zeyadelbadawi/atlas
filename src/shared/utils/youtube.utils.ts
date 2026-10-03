@@ -80,7 +80,15 @@ export function isYouTubeUrl(rawUrl: string): boolean {
  */
 export function buildYouTubeEmbedUrl(
   videoId: string,
-  options?: { readonly startSeconds?: number }
+  options?: {
+    readonly startSeconds?: number;
+    /**
+     * Turns on the embed's postMessage events (ready, error) for this
+     * page's origin, so the lesson player can tell a loaded video from a
+     * failed one instead of guessing.
+     */
+    readonly jsApiOrigin?: string;
+  }
 ): string | null {
   // Defence in depth: the server vets the id, and so does this. An id that
   // is not exactly YouTube's alphabet never reaches an `src`.
@@ -89,6 +97,10 @@ export function buildYouTubeEmbedUrl(
   const start = options?.startSeconds;
   if (start !== undefined && Number.isInteger(start) && start > 0) {
     params.set('start', String(start));
+  }
+  if (options?.jsApiOrigin) {
+    params.set('enablejsapi', '1');
+    params.set('origin', options.jsApiOrigin);
   }
   return `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
 }

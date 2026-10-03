@@ -78,9 +78,18 @@ describe('LessonActivityView — external sources', () => {
 
       const frame = screen.getByTestId('youtube-lesson-player');
       expect(frame.tagName).toBe('IFRAME');
-      expect(frame.getAttribute('src')).toBe(
-        'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?rel=0&modestbranding=1&start=90'
+      const src = new URL(frame.getAttribute('src') ?? '');
+      expect(`${src.origin}${src.pathname}`).toBe(
+        'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'
       );
+      expect(Object.fromEntries(src.searchParams)).toEqual({
+        rel: '0',
+        modestbranding: '1',
+        start: '90',
+        // The embed's ready/error events, for this page only (Task D).
+        enablejsapi: '1',
+        origin: window.location.origin,
+      });
       expect(frame.getAttribute('title')).toMatch(/Numbers 1-10/);
       expect(frame.getAttribute('sandbox')).toContain('allow-scripts');
       // The learner is told, on the page, what this source is and is not.
