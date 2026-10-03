@@ -110,7 +110,7 @@ test.describe('J26 — website status, no categories, scroll', () => {
     // W6 — "Create Course" is the guided wizard's first step (Basics). A
     // short window keeps its submit below the fold, so creating really
     // happens "from the bottom of the form".
-    await page.setViewportSize({ width: 1280, height: 420 });
+    await page.setViewportSize({ width: 1280, height: 320 });
     await signIn(page);
     await page.goto(`/dashboard/academy/${academyId}/courses/create`);
     await expect(page.getByLabel('Course Title')).toBeVisible({

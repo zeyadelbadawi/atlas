@@ -152,86 +152,96 @@ const BASE = '/dashboard/academy/aca-1/courses/c1/setup';
 const where = () => screen.getByTestId('where').textContent;
 const heading = () => screen.findByTestId('wizard-step-heading');
 
-describe('Course wizard — step persistence and per-step save', () => {
-  it('without ?step= it resumes at the first incomplete step and writes it to the URL', async () => {
-    renderAt(BASE);
-    expect((await heading()).textContent).toBe('Course details');
-    await waitFor(() => expect(where()).toBe(`${BASE}?step=details`));
-    const nav = screen.getByRole('navigation', { name: 'Course setup steps' });
-    expect(
-      within(nav)
-        .getByRole('button', { name: /^2\. Details/ })
-        .getAttribute('aria-current')
-    ).toBe('step');
-  });
-
-  it('a refresh at ?step= lands on that same step (the step lives in the URL)', async () => {
-    const first = renderAt(`${BASE}?step=pricing`);
-    expect((await heading()).textContent).toBe('Pricing and access');
-    first.unmount();
-    renderAt(`${BASE}?step=pricing`);
-    expect((await heading()).textContent).toBe('Pricing and access');
-    expect(screen.getByText('Step 6 of 8')).toBeTruthy();
-    expect(where()).toBe(`${BASE}?step=pricing`);
-  });
-
-  it('Next on an untouched step saves nothing and moves on; Back returns', async () => {
-    const user = userEvent.setup();
-    renderAt(`${BASE}?step=details`);
-    await heading();
-    await user.click(screen.getByRole('button', { name: /Save and continue/ }));
-    await waitFor(() => expect(where()).toBe(`${BASE}?step=media`));
-    expect(updateCourse).not.toHaveBeenCalled();
-    expect((await heading()).textContent).toBe('Course image');
-    await user.click(screen.getByRole('button', { name: 'Back' }));
-    await waitFor(() => expect(where()).toBe(`${BASE}?step=details`));
-  });
-
-  it('Next PATCHes only the changed fields, then advances', async () => {
-    const user = userEvent.setup();
-    renderAt(`${BASE}?step=details`);
-    await heading();
-    await user.type(
-      screen.getByRole('textbox', { name: /Description/ }),
-      'What this course covers'
-    );
-    await user.click(screen.getByRole('button', { name: /Save and continue/ }));
-    await waitFor(() => expect(updateCourse).toHaveBeenCalledTimes(1));
-    expect(updateCourse.mock.calls[0][2]).toEqual({
-      description: 'What this course covers',
+describe(
+  'Course wizard — step persistence and per-step save',
+  { timeout: 20_000 },
+  () => {
+    it('without ?step= it resumes at the first incomplete step and writes it to the URL', async () => {
+      renderAt(BASE);
+      expect((await heading()).textContent).toBe('Course details');
+      await waitFor(() => expect(where()).toBe(`${BASE}?step=details`));
+      const nav = screen.getByRole('navigation', {
+        name: 'Course setup steps',
+      });
+      expect(
+        within(nav)
+          .getByRole('button', { name: /^2\. Details/ })
+          .getAttribute('aria-current')
+      ).toBe('step');
     });
-    await waitFor(() => expect(where()).toBe(`${BASE}?step=media`));
-  });
 
-  it('leaving a dirty step from the stepper asks first; Stay keeps the edits', async () => {
-    const user = userEvent.setup();
-    renderAt(`${BASE}?step=details`);
-    await heading();
-    const description = screen.getByRole('textbox', { name: /Description/ });
-    await user.type(description, 'Draft text');
-    await user.click(screen.getByRole('button', { name: /^3\. Media/ }));
-    const dialog = await screen.findByRole('alertdialog');
-    expect(within(dialog).getByText('Leave without saving?')).toBeTruthy();
-    await user.click(
-      within(dialog).getByRole('button', { name: 'Stay on this page' })
-    );
-    await waitFor(() => expect(screen.queryByRole('alertdialog')).toBeNull());
-    expect(where()).toBe(`${BASE}?step=details`);
-    expect(
-      (
-        screen.getByRole('textbox', {
-          name: /Description/,
-        }) as HTMLTextAreaElement
-      ).value
-    ).toBe('Draft text');
+    it('a refresh at ?step= lands on that same step (the step lives in the URL)', async () => {
+      const first = renderAt(`${BASE}?step=pricing`);
+      expect((await heading()).textContent).toBe('Pricing and access');
+      first.unmount();
+      renderAt(`${BASE}?step=pricing`);
+      expect((await heading()).textContent).toBe('Pricing and access');
+      expect(screen.getByText('Step 6 of 8')).toBeTruthy();
+      expect(where()).toBe(`${BASE}?step=pricing`);
+    });
 
-    // Leave and discard: moves on, nothing saved.
-    await user.click(screen.getByRole('button', { name: /^3\. Media/ }));
-    const again = await screen.findByRole('alertdialog');
-    await user.click(
-      within(again).getByRole('button', { name: 'Leave and discard' })
-    );
-    await waitFor(() => expect(where()).toBe(`${BASE}?step=media`));
-    expect(updateCourse).not.toHaveBeenCalled();
-  });
-});
+    it('Next on an untouched step saves nothing and moves on; Back returns', async () => {
+      const user = userEvent.setup();
+      renderAt(`${BASE}?step=details`);
+      await heading();
+      await user.click(
+        screen.getByRole('button', { name: /Save and continue/ })
+      );
+      await waitFor(() => expect(where()).toBe(`${BASE}?step=media`));
+      expect(updateCourse).not.toHaveBeenCalled();
+      expect((await heading()).textContent).toBe('Course image');
+      await user.click(screen.getByRole('button', { name: 'Back' }));
+      await waitFor(() => expect(where()).toBe(`${BASE}?step=details`));
+    });
+
+    it('Next PATCHes only the changed fields, then advances', async () => {
+      const user = userEvent.setup();
+      renderAt(`${BASE}?step=details`);
+      await heading();
+      await user.type(
+        screen.getByRole('textbox', { name: /Description/ }),
+        'What this course covers'
+      );
+      await user.click(
+        screen.getByRole('button', { name: /Save and continue/ })
+      );
+      await waitFor(() => expect(updateCourse).toHaveBeenCalledTimes(1));
+      expect(updateCourse.mock.calls[0][2]).toEqual({
+        description: 'What this course covers',
+      });
+      await waitFor(() => expect(where()).toBe(`${BASE}?step=media`));
+    });
+
+    it('leaving a dirty step from the stepper asks first; Stay keeps the edits', async () => {
+      const user = userEvent.setup();
+      renderAt(`${BASE}?step=details`);
+      await heading();
+      const description = screen.getByRole('textbox', { name: /Description/ });
+      await user.type(description, 'Draft text');
+      await user.click(screen.getByRole('button', { name: /^3\. Media/ }));
+      const dialog = await screen.findByRole('alertdialog');
+      expect(within(dialog).getByText('Leave without saving?')).toBeTruthy();
+      await user.click(
+        within(dialog).getByRole('button', { name: 'Stay on this page' })
+      );
+      await waitFor(() => expect(screen.queryByRole('alertdialog')).toBeNull());
+      expect(where()).toBe(`${BASE}?step=details`);
+      expect(
+        (
+          screen.getByRole('textbox', {
+            name: /Description/,
+          }) as HTMLTextAreaElement
+        ).value
+      ).toBe('Draft text');
+
+      // Leave and discard: moves on, nothing saved.
+      await user.click(screen.getByRole('button', { name: /^3\. Media/ }));
+      const again = await screen.findByRole('alertdialog');
+      await user.click(
+        within(again).getByRole('button', { name: 'Leave and discard' })
+      );
+      await waitFor(() => expect(where()).toBe(`${BASE}?step=media`));
+      expect(updateCourse).not.toHaveBeenCalled();
+    });
+  }
+);

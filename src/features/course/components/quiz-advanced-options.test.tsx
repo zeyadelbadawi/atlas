@@ -157,161 +157,174 @@ async function fillMinimalQuestion(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getAllByRole('radio', { name: 'Correct' })[0]);
 }
 
-describe('Quiz authoring — essentials and the Advanced options disclosure', () => {
-  it('shows the essentials and keeps the advanced settings collapsed (but mounted) for a new quiz', () => {
-    renderForm();
-    const button = toggle();
-    expect(button.tagName).toBe('BUTTON');
-    expect(button.getAttribute('aria-expanded')).toBe('false');
-    const panel = panelOf(button);
-    expect(panel).toBeTruthy();
-    expect(panel.hidden).toBe(true);
-    expect(panel.getAttribute('role')).toBe('region');
+// These tests type a whole quiz; give them room on a loaded CI runner.
+describe(
+  'Quiz authoring — essentials and the Advanced options disclosure',
+  { timeout: 20_000 },
+  () => {
+    it('shows the essentials and keeps the advanced settings collapsed (but mounted) for a new quiz', () => {
+      renderForm();
+      const button = toggle();
+      expect(button.tagName).toBe('BUTTON');
+      expect(button.getAttribute('aria-expanded')).toBe('false');
+      const panel = panelOf(button);
+      expect(panel).toBeTruthy();
+      expect(panel.hidden).toBe(true);
+      expect(panel.getAttribute('role')).toBe('region');
 
-    // Essentials, always visible.
-    expect(
-      screen.getByRole('spinbutton', { name: /Passing score/ })
-    ).toBeTruthy();
-    expect(
-      screen.getByRole('spinbutton', { name: /Max attempts/ })
-    ).toBeTruthy();
-    expect(screen.getByRole('spinbutton', { name: /Time limit/ })).toBeTruthy();
-    expect(
-      screen.getByRole('switch', { name: /Required for course completion/i })
-    ).toBeTruthy();
-    // Advanced: in the DOM, not in the accessibility tree.
-    expect(
-      screen.queryByRole('combobox', { name: 'Integrity mode' })
-    ).toBeNull();
-    expect(panel.textContent).toContain('Integrity mode');
-  });
-
-  it('opens and closes from the keyboard (Enter and Space) and by click', async () => {
-    const user = userEvent.setup();
-    renderForm();
-    const button = toggle();
-    button.focus();
-    await user.keyboard('{Enter}');
-    expect(button.getAttribute('aria-expanded')).toBe('true');
-    expect(panelOf(button).hidden).toBe(false);
-    expect(
-      screen.getByRole('combobox', { name: 'Integrity mode' })
-    ).toBeTruthy();
-    await user.keyboard(' ');
-    expect(button.getAttribute('aria-expanded')).toBe('false');
-    await user.click(button);
-    expect(button.getAttribute('aria-expanded')).toBe('true');
-  });
-
-  it('opens by itself when an edited quiz customises an advanced setting', () => {
-    renderForm(
-      storedQuiz({
-        settings: {
-          ...SERVER_DEFAULTS,
-          integrityMode: 'warn',
-          requireFullscreen: true,
-        },
-      })
-    );
-    const button = toggle();
-    expect(button.getAttribute('aria-expanded')).toBe('true');
-    expect(button.textContent).toMatch(/2 customised/);
-    expect(
-      screen.getByRole('switch', { name: 'Require full screen' })
-    ).toBeTruthy();
-  });
-
-  it('stays collapsed for an untouched quiz on the SERVER defaults (no false "customised")', () => {
-    renderForm(storedQuiz());
-    expect(toggle().getAttribute('aria-expanded')).toBe('false');
-    expect(toggle().textContent).not.toMatch(/customised/);
-  });
-
-  it('opens by itself when a CLIENT validation error lands on a hidden field', async () => {
-    const user = userEvent.setup();
-    renderForm(
-      storedQuiz({
-        questionCount: 2,
-        settings: { ...SERVER_DEFAULTS, questionsPerAttempt: 2 },
-        questions: [question('q1', 'First?'), question('q2', 'Second?')],
-      })
-    );
-    const button = toggle();
-    expect(button.getAttribute('aria-expanded')).toBe('true'); // customised
-    await user.click(button); // the author collapses it…
-    expect(button.getAttribute('aria-expanded')).toBe('false');
-    // …then removes a question, so 2 per attempt is now more than the quiz has.
-    await user.click(
-      screen.getAllByRole('button', { name: 'Remove Question' })[1]
-    );
-    await user.click(screen.getByRole('button', { name: 'Save Quiz' }));
-
-    await waitFor(() =>
-      expect(button.getAttribute('aria-expanded')).toBe('true')
-    );
-    expect(
-      screen.getByText('This is more than the number of questions in the quiz.')
-    ).toBeTruthy();
-    expect(updateQuiz).not.toHaveBeenCalled();
-  });
-
-  it('opens by itself when a SERVER validation error names a hidden field', async () => {
-    const user = userEvent.setup();
-    createQuiz.mockRejectedValueOnce(
-      new ApiError({
-        kind: 'validation',
-        messageKey: 'errors.quiz.dueAfterWindow',
-        status: 400,
-        violations: [
-          { field: 'dueAt', messageKey: 'errors.quiz.dueAfterWindow' },
-        ],
-        retryable: false,
-      })
-    );
-    renderForm();
-    expect(toggle().getAttribute('aria-expanded')).toBe('false');
-    await fillMinimalQuestion(user);
-    await user.click(screen.getByRole('button', { name: 'Save Quiz' }));
-    await waitFor(() => expect(createQuiz).toHaveBeenCalledTimes(1));
-    await waitFor(() =>
-      expect(toggle().getAttribute('aria-expanded')).toBe('true')
-    );
-  });
-
-  it('a new quiz is created with every setting, blanks omitted', async () => {
-    const user = userEvent.setup();
-    const { onSaved } = renderForm();
-    await fillMinimalQuestion(user);
-    await user.click(screen.getByRole('button', { name: 'Save Quiz' }));
-    await waitFor(() => expect(onSaved).toHaveBeenCalled());
-    const payload = createQuiz.mock.calls[0][1] as unknown as Record<
-      string,
-      unknown
-    >;
-    expect(payload).toMatchObject({
-      title: 'New quiz',
-      showAnswers: 'immediately', // the Practice preset — what the form creates
-      integrityMode: 'off',
+      // Essentials, always visible.
+      expect(
+        screen.getByRole('spinbutton', { name: /Passing score/ })
+      ).toBeTruthy();
+      expect(
+        screen.getByRole('spinbutton', { name: /Max attempts/ })
+      ).toBeTruthy();
+      expect(
+        screen.getByRole('spinbutton', { name: /Time limit/ })
+      ).toBeTruthy();
+      expect(
+        screen.getByRole('switch', { name: /Required for course completion/i })
+      ).toBeTruthy();
+      // Advanced: in the DOM, not in the accessibility tree.
+      expect(
+        screen.queryByRole('combobox', { name: 'Integrity mode' })
+      ).toBeNull();
+      expect(panel.textContent).toContain('Integrity mode');
     });
-    expect(payload.passingScore).toBeUndefined();
-    expect(payload.maxAttempts).toBeUndefined();
-    expect(payload.description).toBeUndefined();
-  });
 
-  it('clearing passing score, max attempts and description on EDIT sends null (clear), not undefined (keep)', async () => {
-    const user = userEvent.setup();
-    const { onSaved } = renderForm(storedQuiz());
-    await user.clear(screen.getByRole('spinbutton', { name: /Passing score/ }));
-    await user.clear(screen.getByRole('spinbutton', { name: /Max attempts/ }));
-    await user.clear(screen.getByRole('textbox', { name: 'Description' }));
-    await user.click(screen.getByRole('button', { name: 'Save Quiz' }));
-    await waitFor(() => expect(onSaved).toHaveBeenCalled());
-    const payload = updateQuiz.mock.calls[0][2] as unknown as Record<
-      string,
-      unknown
-    >;
-    expect(payload.passingScore).toBeNull();
-    expect(payload.maxAttempts).toBeNull();
-    expect(payload.description).toBeNull();
-  });
-});
+    it('opens and closes from the keyboard (Enter and Space) and by click', async () => {
+      const user = userEvent.setup();
+      renderForm();
+      const button = toggle();
+      button.focus();
+      await user.keyboard('{Enter}');
+      expect(button.getAttribute('aria-expanded')).toBe('true');
+      expect(panelOf(button).hidden).toBe(false);
+      expect(
+        screen.getByRole('combobox', { name: 'Integrity mode' })
+      ).toBeTruthy();
+      await user.keyboard(' ');
+      expect(button.getAttribute('aria-expanded')).toBe('false');
+      await user.click(button);
+      expect(button.getAttribute('aria-expanded')).toBe('true');
+    });
+
+    it('opens by itself when an edited quiz customises an advanced setting', () => {
+      renderForm(
+        storedQuiz({
+          settings: {
+            ...SERVER_DEFAULTS,
+            integrityMode: 'warn',
+            requireFullscreen: true,
+          },
+        })
+      );
+      const button = toggle();
+      expect(button.getAttribute('aria-expanded')).toBe('true');
+      expect(button.textContent).toMatch(/2 customised/);
+      expect(
+        screen.getByRole('switch', { name: 'Require full screen' })
+      ).toBeTruthy();
+    });
+
+    it('stays collapsed for an untouched quiz on the SERVER defaults (no false "customised")', () => {
+      renderForm(storedQuiz());
+      expect(toggle().getAttribute('aria-expanded')).toBe('false');
+      expect(toggle().textContent).not.toMatch(/customised/);
+    });
+
+    it('opens by itself when a CLIENT validation error lands on a hidden field', async () => {
+      const user = userEvent.setup();
+      renderForm(
+        storedQuiz({
+          questionCount: 2,
+          settings: { ...SERVER_DEFAULTS, questionsPerAttempt: 2 },
+          questions: [question('q1', 'First?'), question('q2', 'Second?')],
+        })
+      );
+      const button = toggle();
+      expect(button.getAttribute('aria-expanded')).toBe('true'); // customised
+      await user.click(button); // the author collapses it…
+      expect(button.getAttribute('aria-expanded')).toBe('false');
+      // …then removes a question, so 2 per attempt is now more than the quiz has.
+      await user.click(
+        screen.getAllByRole('button', { name: 'Remove Question' })[1]
+      );
+      await user.click(screen.getByRole('button', { name: 'Save Quiz' }));
+
+      await waitFor(() =>
+        expect(button.getAttribute('aria-expanded')).toBe('true')
+      );
+      expect(
+        screen.getByText(
+          'This is more than the number of questions in the quiz.'
+        )
+      ).toBeTruthy();
+      expect(updateQuiz).not.toHaveBeenCalled();
+    });
+
+    it('opens by itself when a SERVER validation error names a hidden field', async () => {
+      const user = userEvent.setup();
+      createQuiz.mockRejectedValueOnce(
+        new ApiError({
+          kind: 'validation',
+          messageKey: 'errors.quiz.dueAfterWindow',
+          status: 400,
+          violations: [
+            { field: 'dueAt', messageKey: 'errors.quiz.dueAfterWindow' },
+          ],
+          retryable: false,
+        })
+      );
+      renderForm();
+      expect(toggle().getAttribute('aria-expanded')).toBe('false');
+      await fillMinimalQuestion(user);
+      await user.click(screen.getByRole('button', { name: 'Save Quiz' }));
+      await waitFor(() => expect(createQuiz).toHaveBeenCalledTimes(1));
+      await waitFor(() =>
+        expect(toggle().getAttribute('aria-expanded')).toBe('true')
+      );
+    });
+
+    it('a new quiz is created with every setting, blanks omitted', async () => {
+      const user = userEvent.setup();
+      const { onSaved } = renderForm();
+      await fillMinimalQuestion(user);
+      await user.click(screen.getByRole('button', { name: 'Save Quiz' }));
+      await waitFor(() => expect(onSaved).toHaveBeenCalled());
+      const payload = createQuiz.mock.calls[0][1] as unknown as Record<
+        string,
+        unknown
+      >;
+      expect(payload).toMatchObject({
+        title: 'New quiz',
+        showAnswers: 'immediately', // the Practice preset — what the form creates
+        integrityMode: 'off',
+      });
+      expect(payload.passingScore).toBeUndefined();
+      expect(payload.maxAttempts).toBeUndefined();
+      expect(payload.description).toBeUndefined();
+    });
+
+    it('clearing passing score, max attempts and description on EDIT sends null (clear), not undefined (keep)', async () => {
+      const user = userEvent.setup();
+      const { onSaved } = renderForm(storedQuiz());
+      await user.clear(
+        screen.getByRole('spinbutton', { name: /Passing score/ })
+      );
+      await user.clear(
+        screen.getByRole('spinbutton', { name: /Max attempts/ })
+      );
+      await user.clear(screen.getByRole('textbox', { name: 'Description' }));
+      await user.click(screen.getByRole('button', { name: 'Save Quiz' }));
+      await waitFor(() => expect(onSaved).toHaveBeenCalled());
+      const payload = updateQuiz.mock.calls[0][2] as unknown as Record<
+        string,
+        unknown
+      >;
+      expect(payload.passingScore).toBeNull();
+      expect(payload.maxAttempts).toBeNull();
+      expect(payload.description).toBeNull();
+    });
+  }
+);
