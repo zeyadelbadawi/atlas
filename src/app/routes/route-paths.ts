@@ -370,6 +370,12 @@ export const LEARNER_ROUTES = {
   purchases: '/my/purchases',
   /** P64 Phase 4 — the paid-course checkout (order → payment → proof). */
   courseCheckout: '/my/courses/:courseId/checkout',
+  /**
+   * Where "Finish course" leads (Task C): the server's own completion
+   * evaluation — completed (and a certificate only if one really exists or
+   * is being issued), or exactly what is still missing.
+   */
+  courseComplete: '/my/courses/:courseId/complete',
   devices: '/my/devices',
   /** The learner's own notification centre — grades, certificates, sessions, purchases. */
   notifications: '/my/notifications',

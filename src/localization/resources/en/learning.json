@@ -930,6 +930,19 @@
       "title": "You've reached the end",
       "description": "This was the last activity, but some earlier ones are still open.",
       "backToCourse": "See what's left"
-    }
+    },
+    "finishCourse": "Finish course",
+    "finishing": "Finishing…"
+  },
+  "completePage": {
+    "fallbackTitle": "Course",
+    "breadcrumb": "Completion",
+    "title": "You’ve completed {{course}}",
+    "completedOn": "Completed on {{date}}",
+    "certificatePreparing": "Your certificate is being prepared…",
+    "certificateLater": "Your certificate is taking longer than usual. It will appear under Certificates as soon as it is ready.",
+    "notYetTitle": "You’re nearly there",
+    "notYetDescription": "This was your last activity, but the course still needs the items below before it counts as completed.",
+    "backToCourse": "Back to course"
   }
 }
