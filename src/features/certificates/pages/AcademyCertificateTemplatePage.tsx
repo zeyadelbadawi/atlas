@@ -50,7 +50,7 @@ import {
   useUpdateCertificateTemplate,
 } from '@features/learning';
 import { MediaLibraryDialog } from '@features/media';
-import { apiErrorMessage } from '@utils';
+import { apiErrorMessage, saveViaForm } from '@utils';
 import type { CertificateTemplate } from '@types';
 import {
   certificateTemplateSchema,
@@ -122,9 +122,11 @@ export default function AcademyCertificateTemplatePage(): JSX.Element {
   });
 
   useServerValidation(form, update.error);
+  // `onSubmit` resolves false after a failure, so "Save and leave" in the
+  // unsaved-changes dialog stays on the page instead of dropping the edit.
   useUnsavedChanges({
     isDirty: form.formState.isDirty,
-    messageKey: 'certificates:template.unsavedChanges',
+    onSave: () => saveViaForm(form, onSubmit),
   });
 
   const watched = form.watch();
@@ -215,7 +217,7 @@ export default function AcademyCertificateTemplatePage(): JSX.Element {
     []
   );
 
-  const onSubmit = async (values: CertificateTemplateFormData) => {
+  async function onSubmit(values: CertificateTemplateFormData): Promise<boolean> {
     try {
       const saved = await update.mutateAsync({
         name: values.name,
@@ -234,11 +236,13 @@ export default function AcademyCertificateTemplatePage(): JSX.Element {
         'certificates:template.toast.saved',
         'certificates:template.toast.savedDescription'
       );
+      return true;
     } catch {
       // Field violations land through `useServerValidation`; anything else
       // is rendered below from `update.error`.
+      return false;
     }
-  };
+  }
 
   const header = (
     <PageHeader

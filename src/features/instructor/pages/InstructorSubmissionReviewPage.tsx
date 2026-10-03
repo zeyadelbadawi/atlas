@@ -80,9 +80,8 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
   });
 
   useServerValidation(form, mutationError);
-  useUnsavedChanges({
+  const { markSaved } = useUnsavedChanges({
     isDirty: form.formState.isDirty,
-    messageKey: 'common:unsavedChanges.description',
   });
 
   useEffect(() => {
@@ -106,6 +105,9 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
         title: t('instructor:grading.success'),
         description: t('common:states.success.description'),
       });
+      // Graded: going back must not ask about the grade just saved.
+      form.reset(data);
+      markSaved();
       navigate(-1);
     } catch {
       toast({

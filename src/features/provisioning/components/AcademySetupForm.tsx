@@ -96,7 +96,9 @@ export function AcademySetupForm({
   // Warns before this editor is left with unsaved work — both on
   // in-app navigation (via the shared registry the route blocker
   // reads) and on tab close or refresh.
-  useUnsavedChanges({ isDirty: form.formState.isDirty });
+  const { markSaved } = useUnsavedChanges({
+    isDirty: form.formState.isDirty,
+  });
 
   const themes = listWebsiteThemes();
   const selectedThemeKey = form.watch('selectedThemeKey');
@@ -156,7 +158,10 @@ export function AcademySetupForm({
           }
           // Submitted means saved: clear the unsaved-changes guard so the
           // move to the status page isn't met with "Leave without saving?".
+          // `reset` alone reaches the guard only after the next render;
+          // `markSaved` clears it before `onCreated` navigates.
           form.reset(data);
+          markSaved();
           onCreated(request);
         },
       }

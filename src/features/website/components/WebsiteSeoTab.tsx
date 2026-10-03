@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { useUnsavedChanges } from '@hooks';
+import { saveViaForm } from '@utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -62,26 +63,41 @@ export function WebsiteSeoTab({
     },
   });
 
-  // Warns before this editor is left with unsaved work — both on
-  // in-app navigation (via the shared registry the route blocker
-  // reads) and on tab close or refresh.
-  useUnsavedChanges({ isDirty: form.formState.isDirty });
-
   useServerValidation(form, updateConfig.error);
 
-  const onSubmit = (data: GlobalSeoFormData) => {
-    updateConfig.mutate(
-      {
+  // The share image lives outside the form, so it is compared separately —
+  // a new image with no text edits is still unsaved work.
+  const savedOgImage = configuration.seo.ogImage;
+  const ogImageChanged = (ogImage ?? null) !== (savedOgImage ?? null);
+
+  // Resolves false after a failure it already reported, so the Save button
+  // and the unsaved-changes dialog's "Save and leave" share it.
+  async function save(data: GlobalSeoFormData): Promise<boolean> {
+    try {
+      await updateConfig.mutateAsync({
         academyId,
         payload: { seo: { ...data, ogImage } },
-      },
-      {
-        onSuccess: () => toast({ title: t('website:seo.saved') }),
-        onError: () =>
-          toast({ title: t('website:seo.saveError'), variant: 'destructive' }),
-      }
-    );
+      });
+      form.reset(data);
+      toast({ title: t('website:seo.saved') });
+      return true;
+    } catch {
+      toast({ title: t('website:seo.saveError'), variant: 'destructive' });
+      return false;
+    }
+  }
+
+  const onSubmit = async (data: GlobalSeoFormData) => {
+    await save(data);
   };
+
+  // Warns before this editor is left with unsaved work — both on in-app
+  // navigation (via the shared registry the route blocker reads) and on
+  // tab close or refresh.
+  useUnsavedChanges({
+    isDirty: form.formState.isDirty || ogImageChanged,
+    onSave: () => saveViaForm(form, save),
+  });
 
   return (
     <div className="space-y-6">

@@ -59,7 +59,9 @@ export default function OrganizationCreatePage(): JSX.Element {
   // Warns before this editor is left with unsaved work — both on
   // in-app navigation (via the shared registry the route blocker
   // reads) and on tab close or refresh.
-  useUnsavedChanges({ isDirty: form.formState.isDirty });
+  const { markSaved } = useUnsavedChanges({
+    isDirty: form.formState.isDirty,
+  });
 
   useServerValidation(form, error);
 
@@ -75,6 +77,9 @@ export default function OrganizationCreatePage(): JSX.Element {
       // route the rest of the journey needs is immediately usable, not
       // stale until the next natural session refresh.
       await refreshSession();
+      // Created: continue without the unsaved-changes dialog asking about
+      // the form that was just submitted.
+      markSaved();
       navigate(DASHBOARD_ROUTES.plans, { replace: true });
     } catch (caughtError) {
       if (
