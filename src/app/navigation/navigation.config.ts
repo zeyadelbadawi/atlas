@@ -188,6 +188,18 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
         requiredPermissions: ['tenant.billing.view'],
       },
       {
+        // Academy Orders — this academy's course orders, read-only. Same
+        // owner-only gate and no entitlement gate, like Revenue & payouts.
+        id: 'academy-orders',
+        labelKey: 'navigation:items.academyOrders',
+        path: buildPath(DASHBOARD_ROUTES.academyOrders, {
+          academyId: activeAcademyId,
+        }),
+        icon: Receipt,
+        requiresAuth: true,
+        requiredPermissions: ['tenant.billing.view'],
+      },
+      {
         id: 'academy-announcements',
         requiresEntitlement: true,
         labelKey: 'navigation:items.academyAnnouncements',
@@ -928,6 +940,17 @@ export function getDashboardNavigation(
           requiresAuth: true,
           requiredRoles: ['platform_owner'],
           matchNestedPaths: true,
+        },
+        {
+          // TASK 7 — enquiries from the Atlas marketing contact form.
+          // `PlatformContactSubmissionsController` (PlatformOwnerGuard + RLS)
+          // is the server-side boundary; this entry only decides visibility.
+          id: 'platform-contact-submissions',
+          labelKey: 'navigation:items.platformContactSubmissions',
+          path: DASHBOARD_ROUTES.platformContactSubmissions,
+          icon: Inbox,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
         },
         {
           // Add-ons Catalog Management (P51). Platform-owner only at every

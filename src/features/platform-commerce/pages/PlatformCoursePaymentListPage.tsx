@@ -9,11 +9,12 @@
  * (`RouteGuard`) — a UX gate; `PlatformOwnerGuard` on the backend is the
  * authority.
  *
- * REVIEW-STATUS FILTER. The backend's list DTO accepts `reviewStatus` but
- * (as of this writing) its repository query ignores it. The filter is
- * still SENT, so the server does the work the moment it honours it, and
- * the returned page is also filtered here so a "Pending" view can never
- * show an already-approved row in the meantime.
+ * SERVER-SIDE FILTERING. Search, the review/payment-status/method/date
+ * filters and the sort are all sent to the backend, which applies them
+ * before paging — the returned page is rendered as-is (an earlier
+ * client-side re-filter of the page is gone now that the backend honours
+ * `reviewStatus`). Rows name the academy and course and show the order's
+ * own status and refund status instead of raw ids.
  */
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,75 +25,108 @@ import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { DataTable } from '@components/table';
 import { Card, CardContent } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { usePagination } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import {
+  DEFAULT_PLATFORM_PAYMENT_LIST_STATE,
+  PlatformPaymentListToolbar,
   formatMoney,
+  getCourseOrderStatusTone,
   getManualReviewStatusTone,
   getPaymentStatusTone,
+  getRefundStatusTone,
+  toPlatformPaymentQuery,
+  type PlatformPaymentListState,
 } from '@features/billing';
 import { useCourseOrderPayments } from '../hooks';
-import type { CourseOrderPayment, ManualReviewStatus } from '@types';
-
-type ReviewFilter = Exclude<ManualReviewStatus, 'not_required'> | 'all';
-
-const REVIEW_FILTERS: readonly ReviewFilter[] = [
-  'pending',
-  'approved',
-  'rejected',
-  'all',
-];
+import type { CourseOrderPayment } from '@types';
 
 export default function PlatformCoursePaymentListPage(): JSX.Element {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const [reviewFilter, setReviewFilter] = useState<ReviewFilter>('pending');
+  const [filters, setFilters] = useState<PlatformPaymentListState>(
+    DEFAULT_PLATFORM_PAYMENT_LIST_STATE
+  );
 
   const [totalItems, setTotalItems] = useState(0);
   const pagination = usePagination({ totalItems });
 
   const { data, isLoading, error, refetch } = useCourseOrderPayments({
-    query: {
-      pagination: { page: pagination.page, pageSize: pagination.pageSize },
-      filters:
-        reviewFilter === 'all' ? undefined : { reviewStatus: reviewFilter },
-    },
+    query: toPlatformPaymentQuery(filters, {
+      page: pagination.page,
+      pageSize: pagination.pageSize,
+    }),
   });
 
   useEffect(() => {
     if (data) setTotalItems(data.pagination.totalItems);
   }, [data]);
 
-  const payments = useMemo(
-    () =>
-      (data?.items ?? []).filter(
-        (payment) =>
-          reviewFilter === 'all' || payment.reviewStatus === reviewFilter
-      ),
-    [data, reviewFilter]
-  );
+  const payments = data?.items ?? [];
 
   const columns = useMemo<ColumnDef<CourseOrderPayment, unknown>[]>(
     () => [
       {
-        accessorKey: 'payeeAcademyId',
+        id: 'academy',
+        enableSorting: false,
         header: t('platformCommerce:coursePayments.table.academy'),
+        cell: ({ row }) =>
+          row.original.academy ? (
+            <span className="font-medium text-foreground" dir="auto">
+              {row.original.academy.name}
+            </span>
+          ) : (
+            <span className="text-muted-foreground">
+              {t('platformCommerce:coursePayments.unknownAcademy')}
+            </span>
+          ),
+      },
+      {
+        id: 'course',
+        enableSorting: false,
+        header: t('platformCommerce:coursePayments.table.course'),
         cell: ({ row }) => (
-          <span className="font-mono text-xs text-muted-foreground" dir="ltr">
-            {row.original.payeeAcademyId}
+          <span className="text-muted-foreground" dir="auto">
+            {row.original.course?.title ?? '—'}
           </span>
         ),
       },
       {
+        id: 'orderStatus',
+        enableSorting: false,
+        header: t('platformCommerce:coursePayments.table.orderStatus'),
+        cell: ({ row }) =>
+          row.original.courseOrderStatus ? (
+            <StatusBadge
+              labelKey={`payments:courseOrder.status.${row.original.courseOrderStatus}`}
+              tone={getCourseOrderStatusTone(row.original.courseOrderStatus)}
+            />
+          ) : (
+            <span className="text-muted-foreground">—</span>
+          ),
+      },
+      {
+        id: 'refund',
+        enableSorting: false,
+        header: t('platformCommerce:coursePayments.table.refund'),
+        cell: ({ row }) =>
+          row.original.refundStatus ? (
+            <StatusBadge
+              labelKey={`payments:refund.status.${row.original.refundStatus}`}
+              tone={getRefundStatusTone(row.original.refundStatus)}
+            />
+          ) : (
+            <span className="text-muted-foreground">
+              <span aria-hidden>—</span>
+              <span className="sr-only">
+                {t('payments:refund.status.none')}
+              </span>
+            </span>
+          ),
+      },
+      {
         accessorKey: 'money',
+        enableSorting: false,
         header: t('platformCommerce:coursePayments.table.amount'),
         cell: ({ row }) => (
           <span className="font-medium" data-atlas-numeric="true">
@@ -102,6 +136,7 @@ export default function PlatformCoursePaymentListPage(): JSX.Element {
       },
       {
         accessorKey: 'methodType',
+        enableSorting: false,
         header: t('platformCommerce:coursePayments.table.method'),
         cell: ({ row }) => (
           <span className="text-muted-foreground">
@@ -111,6 +146,7 @@ export default function PlatformCoursePaymentListPage(): JSX.Element {
       },
       {
         accessorKey: 'status',
+        enableSorting: false,
         header: t('platformCommerce:coursePayments.table.status'),
         cell: ({ row }) => (
           <StatusBadge
@@ -121,6 +157,7 @@ export default function PlatformCoursePaymentListPage(): JSX.Element {
       },
       {
         accessorKey: 'reviewStatus',
+        enableSorting: false,
         header: t('platformCommerce:coursePayments.table.reviewStatus'),
         cell: ({ row }) => (
           <StatusBadge
@@ -131,6 +168,7 @@ export default function PlatformCoursePaymentListPage(): JSX.Element {
       },
       {
         accessorKey: 'createdAt',
+        enableSorting: false,
         header: t('platformCommerce:coursePayments.table.submittedAt'),
         cell: ({ row }) => (
           <span className="text-muted-foreground">
@@ -151,34 +189,15 @@ export default function PlatformCoursePaymentListPage(): JSX.Element {
 
       <Card>
         <CardContent className="space-y-4 p-4">
-          <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-3">
-            <Label htmlFor="course-payments-review-filter">
-              {t('platformCommerce:coursePayments.filterLabel')}
-            </Label>
-            <Select
-              value={reviewFilter}
-              onValueChange={(value) => {
-                setReviewFilter(value as ReviewFilter);
-                pagination.goToFirstPage();
-              }}
-            >
-              <SelectTrigger
-                id="course-payments-review-filter"
-                className="w-full sm:w-[220px]"
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {REVIEW_FILTERS.map((filter) => (
-                  <SelectItem key={filter} value={filter}>
-                    {filter === 'all'
-                      ? t('platformCommerce:coursePayments.filterAll')
-                      : t(`payments:payment.reviewStatus.${filter}`)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <PlatformPaymentListToolbar
+            idPrefix="course-payments"
+            value={filters}
+            onChange={(next) => {
+              setFilters(next);
+              pagination.goToFirstPage();
+            }}
+            searchLabelKey="platformCommerce:coursePayments.searchLabel"
+          />
 
           {error ? (
             <ErrorState onRetry={() => void refetch()} />

@@ -5,6 +5,11 @@
  * this is the ONE payment listing in Atlas that intentionally spans every
  * organization. Only reachable by the Platform Owner role (`RouteGuard`),
  * mirroring the Prompt 6 Trial Policy precedent.
+ *
+ * Search, every filter and the sort are applied by the SERVER before it
+ * pages (`toPlatformPaymentQuery`); rows name the organization and the
+ * plan + billing cycle instead of raw ids. List rows never carry the
+ * manual-transfer instructions — only the detail page does.
  */
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,13 +20,6 @@ import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { DataTable } from '@components/table';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { usePagination } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { usePlatformPayments } from '../hooks';
@@ -30,13 +28,20 @@ import {
   getPaymentStatusTone,
 } from '../utils/payment-status.utils';
 import { formatMoney } from '../utils/money.utils';
-import type { ManualReviewStatus, Payment } from '@types';
+import { PlatformPaymentListToolbar } from '../components/PlatformPaymentListToolbar';
+import {
+  DEFAULT_PLATFORM_PAYMENT_LIST_STATE,
+  formatCheckoutSummary,
+  toPlatformPaymentQuery,
+  type PlatformPaymentListState,
+} from '../utils/platform-payment-list.utils';
+import type { Payment } from '@types';
 
 export default function PlatformPaymentReviewListPage(): JSX.Element {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const [reviewFilter, setReviewFilter] = useState<ManualReviewStatus | 'all'>(
-    'pending'
+  const [filters, setFilters] = useState<PlatformPaymentListState>(
+    DEFAULT_PLATFORM_PAYMENT_LIST_STATE
   );
 
   const [totalItems, setTotalItems] = useState(0);
@@ -48,11 +53,10 @@ export default function PlatformPaymentReviewListPage(): JSX.Element {
     error,
     refetch,
   } = usePlatformPayments({
-    query: {
-      pagination: { page: pagination.page, pageSize: pagination.pageSize },
-      filters:
-        reviewFilter === 'all' ? undefined : { reviewStatus: reviewFilter },
-    },
+    query: toPlatformPaymentQuery(filters, {
+      page: pagination.page,
+      pageSize: pagination.pageSize,
+    }),
   });
 
   useEffect(() => {
@@ -64,16 +68,33 @@ export default function PlatformPaymentReviewListPage(): JSX.Element {
   const columns = useMemo<ColumnDef<Payment, unknown>[]>(
     () => [
       {
-        accessorKey: 'organizationId',
+        id: 'organization',
+        enableSorting: false,
         header: t('payments:platformReview.table.organization'),
+        cell: ({ row }) =>
+          row.original.organization ? (
+            <span className="font-medium text-foreground" dir="auto">
+              {row.original.organization.name}
+            </span>
+          ) : (
+            <span className="text-muted-foreground">
+              {t('payments:platformReview.unknownOrganization')}
+            </span>
+          ),
+      },
+      {
+        id: 'plan',
+        enableSorting: false,
+        header: t('payments:platformReview.planColumn'),
         cell: ({ row }) => (
-          <span className="font-mono text-xs text-muted-foreground">
-            {row.original.organizationId}
+          <span className="whitespace-nowrap text-muted-foreground" dir="auto">
+            {formatCheckoutSummary(t, row.original.checkoutSummary) ?? '—'}
           </span>
         ),
       },
       {
         accessorKey: 'money',
+        enableSorting: false,
         header: t('payments:platformReview.table.amount'),
         cell: ({ row }) => (
           <span className="font-medium" data-atlas-numeric="true">
@@ -83,6 +104,7 @@ export default function PlatformPaymentReviewListPage(): JSX.Element {
       },
       {
         accessorKey: 'methodType',
+        enableSorting: false,
         header: t('payments:platformReview.table.method'),
         cell: ({ row }) => (
           <span className="text-muted-foreground">
@@ -92,6 +114,7 @@ export default function PlatformPaymentReviewListPage(): JSX.Element {
       },
       {
         accessorKey: 'status',
+        enableSorting: false,
         header: t('payments:platformReview.table.status'),
         cell: ({ row }) => (
           <StatusBadge
@@ -102,6 +125,7 @@ export default function PlatformPaymentReviewListPage(): JSX.Element {
       },
       {
         accessorKey: 'reviewStatus',
+        enableSorting: false,
         header: t('payments:platformReview.table.reviewStatus'),
         cell: ({ row }) => (
           <StatusBadge
@@ -112,6 +136,7 @@ export default function PlatformPaymentReviewListPage(): JSX.Element {
       },
       {
         accessorKey: 'createdAt',
+        enableSorting: false,
         header: t('payments:platformReview.table.submittedAt'),
         cell: ({ row }) => (
           <span className="text-muted-foreground">
@@ -132,33 +157,18 @@ export default function PlatformPaymentReviewListPage(): JSX.Element {
 
       <Card>
         <CardContent className="space-y-4 p-4">
-          <Select
-            value={reviewFilter}
-            onValueChange={(value) =>
-              setReviewFilter(value as ManualReviewStatus | 'all')
-            }
-          >
-            <SelectTrigger className="w-full sm:w-[220px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">
-                {t('payments:platformReview.filterAll')}
-              </SelectItem>
-              <SelectItem value="pending">
-                {t('payments:payment.reviewStatus.pending')}
-              </SelectItem>
-              <SelectItem value="approved">
-                {t('payments:payment.reviewStatus.approved')}
-              </SelectItem>
-              <SelectItem value="rejected">
-                {t('payments:payment.reviewStatus.rejected')}
-              </SelectItem>
-            </SelectContent>
-          </Select>
+          <PlatformPaymentListToolbar
+            idPrefix="platform-payments"
+            value={filters}
+            onChange={(next) => {
+              setFilters(next);
+              pagination.goToFirstPage();
+            }}
+            searchLabelKey="payments:platformReview.searchLabel"
+          />
 
           {error ? (
-            <ErrorState onRetry={() => refetch()} />
+            <ErrorState onRetry={() => void refetch()} />
           ) : (
             <DataTable
               columns={columns}

@@ -136,6 +136,13 @@ const AcademyMembersPage = lazy(
 const AcademyRevenuePage = lazy(
   () => import('@features/academy/pages/AcademyRevenuePage')
 );
+// Academy Orders — the Organization Owner's read-only course orders.
+const AcademyOrdersPage = lazy(
+  () => import('@features/academy/pages/AcademyOrdersPage')
+);
+const AcademyOrdersDetailPage = lazy(
+  () => import('@features/academy/pages/AcademyOrdersDetailPage')
+);
 // New Customer Onboarding — the full-screen setup shell (outside the
 // dashboard layout). The old `AcademyOnboardingPage` wizard is retired;
 // its address is served by `LegacyAcademyOnboardingRedirect`.
@@ -436,6 +443,10 @@ const PlatformSupportListPage = lazy(
 );
 const PlatformSupportDetailPage = lazy(
   () => import('@features/support/pages/PlatformSupportDetailPage')
+);
+// TASK 7 — the Atlas marketing contact form's Platform Owner inbox.
+const PlatformContactSubmissionsPage = lazy(
+  () => import('@features/platform/pages/PlatformContactSubmissionsPage')
 );
 const PlatformPlanCatalogPage = lazy(
   () => import('@features/platform/pages/PlatformPlanCatalogPage')
@@ -745,6 +756,32 @@ export default function AtlasAppRoutes(): JSX.Element {
                   requiredPermissions={['tenant.billing.view']}
                 >
                   <AcademyRevenuePage />
+                </RouteGuard>
+              }
+            />
+
+            {/* Academy Orders — same gate as Revenue & payouts: owner-only
+                money data (`tenant.billing.view`), backend 403 rendered as a
+                permission state, and no entitlement gate. */}
+            <Route
+              path={DASHBOARD_ROUTES.academyOrders}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['tenant.billing.view']}
+                >
+                  <AcademyOrdersPage />
+                </RouteGuard>
+              }
+            />
+            <Route
+              path={DASHBOARD_ROUTES.academyOrderDetail}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['tenant.billing.view']}
+                >
+                  <AcademyOrdersDetailPage />
                 </RouteGuard>
               }
             />
@@ -2154,6 +2191,18 @@ export default function AtlasAppRoutes(): JSX.Element {
                   requiredRoles={['platform_owner']}
                 >
                   <PlatformSupportDetailPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformContactSubmissions}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformContactSubmissionsPage />
                 </RouteGuard>
               }
             />

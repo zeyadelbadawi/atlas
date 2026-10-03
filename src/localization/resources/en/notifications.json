@@ -354,6 +354,10 @@
       "title": "Video retention: deletion failed",
       "message": "Asset {{assetId}} of organisation {{organizationId}} exhausted all {{attempts}} attempts and was NOT marked deleted. Last error: {{lastError}}"
     },
+    "platformContactSubmissionReceived": {
+      "title": "New contact enquiry",
+      "message": "{{name}} sent a message through the Atlas website contact form."
+    },
     "academyMemberInvited": {
       "title": "Your account is ready",
       "message": "An account was created for you at {{academyName}}. Set your password to get started."

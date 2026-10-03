@@ -311,7 +311,37 @@ export interface Payment {
   readonly createdAt: string;
   readonly updatedAt: string;
   readonly expiresAt?: string;
+  /**
+   * Platform review only (`GET /payments[/:id]`) — the paying organization.
+   * Absent on the tenant's own payment reads.
+   */
+  readonly organization?: { readonly id: string; readonly name: string };
+  /**
+   * Platform review only — what the checkout was for: the plan/add-on key,
+   * its display name as frozen on the checkout, and the billing cycle.
+   */
+  readonly checkoutSummary?: PlatformPaymentCheckoutSummary;
 }
+
+/** `Payment.checkoutSummary` (Platform review lists/detail). */
+export interface PlatformPaymentCheckoutSummary {
+  readonly targetType: 'plan_subscription' | 'add_on';
+  readonly targetKey: string;
+  readonly displayName?: string;
+  readonly billingCycle?: 'monthly' | 'yearly';
+}
+
+/** Server-side filters of the Platform review lists (`/payments`, `/platform-course-order-payments`). Dates are `YYYY-MM-DD`, inclusive, UTC. */
+export interface PlatformPaymentListFilters {
+  readonly reviewStatus?: Exclude<ManualReviewStatus, 'not_required'>;
+  readonly status?: PaymentLifecycleStatus;
+  readonly methodType?: PaymentMethodType;
+  readonly from?: string;
+  readonly to?: string;
+}
+
+/** The Platform review lists' `sortBy` allow-list (`amount` = the payment amount). */
+export type PlatformPaymentSortField = 'createdAt' | 'updatedAt' | 'amount';
 
 /**
  * Gateway-ready payment-intent semantics (see `GatewayPaymentProviderAdapter`).

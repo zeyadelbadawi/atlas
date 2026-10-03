@@ -12,8 +12,16 @@
       "method": "الطريقة",
       "status": "الحالة",
       "reviewStatus": "المراجعة",
-      "submittedAt": "تاريخ الإرسال"
+      "submittedAt": "تاريخ الإرسال",
+      "course": "الدورة",
+      "orderStatus": "الطلب",
+      "refund": "الاسترداد"
     },
+    "searchLabel": "ابحث باسم الأكاديمية أو الدورة أو المرجع أو رقم الدفعة",
+    "course": "الدورة",
+    "orderStatus": "حالة الطلب",
+    "refundStatus": "الاسترداد",
+    "unknownAcademy": "الأكاديمية غير متاحة",
     "emptyTitle": "لا توجد مدفوعات دورات هنا",
     "emptyDescription": "ستظهر هنا مدفوعات الدورات المطابقة لهذه التصفية.",
     "reference": "مرجع الدفعة",

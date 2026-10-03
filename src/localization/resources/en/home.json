@@ -100,6 +100,58 @@
     "description": "Create your organization in minutes — no credit card required to start.",
     "action": "Get started free"
   },
+  "contact": {
+    "nav": "Contact",
+    "eyebrow": "Contact",
+    "title": "Talk to the Atlas team",
+    "description": "Questions about plans, moving an existing academy, or working together? Send us a message and we will reply by email.",
+    "points": {
+      "reply": "Every message is read by a person on the Atlas team.",
+      "privacy": "We use your details only to reply to you."
+    },
+    "form": {
+      "label": "Contact the Atlas team",
+      "name": "Your name",
+      "email": "Work email",
+      "organization": "Organization (optional)",
+      "topic": "Topic",
+      "topicPlaceholder": "Choose a topic",
+      "message": "Message",
+      "messageCount": "{{count}} / {{max}}",
+      "privacyNote": "We reply to the email address you enter here.",
+      "submit": "Send message",
+      "submitting": "Sending…"
+    },
+    "topics": {
+      "sales": "Plans and pricing",
+      "support": "Help with my account",
+      "partnership": "Partnership",
+      "other": "Something else"
+    },
+    "errors": {
+      "nameRequired": "Enter your name.",
+      "nameTooShort": "Use at least {{nameMin}} characters.",
+      "nameTooLong": "Use {{nameMax}} characters or fewer.",
+      "emailRequired": "Enter your email address.",
+      "emailInvalid": "Enter a valid email address, like name@company.com.",
+      "emailTooLong": "Use {{emailMax}} characters or fewer.",
+      "organizationTooLong": "Use {{organizationMax}} characters or fewer.",
+      "topicRequired": "Choose a topic.",
+      "messageRequired": "Enter a message.",
+      "messageTooShort": "Tell us a little more — at least {{messageMin}} characters.",
+      "messageTooLong": "Use {{messageMax}} characters or fewer."
+    },
+    "success": {
+      "title": "Message sent",
+      "description": "Thank you — we have received your message and will reply by email.",
+      "again": "Send another message"
+    },
+    "failure": {
+      "title": "Your message was not sent",
+      "description": "Something went wrong on our side or with the connection. Your text is still here — please try again.",
+      "rateLimited": "You have sent several messages in a short time. Please wait a few minutes, then try again."
+    }
+  },
   "structure": {
     "organization": {
       "title": "Your organization",

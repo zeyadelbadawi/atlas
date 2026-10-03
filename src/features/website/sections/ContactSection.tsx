@@ -28,6 +28,11 @@ import {
 } from '../renderer/renderer-style.utils';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
+import {
+  CONTACT_EMAIL_MAX_LENGTH,
+  CONTACT_MESSAGE_MAX_LENGTH,
+  CONTACT_NAME_MAX_LENGTH,
+} from '../constants/website.constants';
 import type { ContactSectionConfig } from '@types';
 
 export interface ContactSectionProps {
@@ -71,6 +76,7 @@ export function ContactSection({
     const name = String(formData.get('name') ?? '').trim();
     const submitterEmail = String(formData.get('email') ?? '').trim();
     const message = String(formData.get('message') ?? '').trim();
+    const company = String(formData.get('company') ?? '').trim();
     if (!name || !submitterEmail || !message) return;
 
     setSubmitState('submitting');
@@ -79,6 +85,8 @@ export function ContactSection({
         name,
         email: submitterEmail,
         message,
+        // Sent only when filled — i.e. by a bot (see the field below).
+        ...(company ? { company } : {}),
       });
       setSubmitState('success');
       form.reset();
@@ -153,7 +161,7 @@ export function ContactSection({
           ) : null}
         </dl>
         {config.showForm ? (
-          <form className="space-y-4" onSubmit={handleSubmit}>
+          <form className="relative space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-1.5">
               <Label htmlFor="website-contact-name">
                 {t('website:renderer.contactNameLabel')}
@@ -162,6 +170,7 @@ export function ContactSection({
                 id="website-contact-name"
                 name="name"
                 autoComplete="name"
+                maxLength={CONTACT_NAME_MAX_LENGTH}
                 required
               />
             </div>
@@ -174,6 +183,7 @@ export function ContactSection({
                 name="email"
                 type="email"
                 autoComplete="email"
+                maxLength={CONTACT_EMAIL_MAX_LENGTH}
                 required
               />
             </div>
@@ -185,7 +195,25 @@ export function ContactSection({
                 id="website-contact-message"
                 name="message"
                 rows={4}
+                maxLength={CONTACT_MESSAGE_MAX_LENGTH}
                 required
+              />
+            </div>
+            {/* Spam trap: out of sight, out of the tab order and hidden
+                from assistive tech, so only a bot fills it in. Same field
+                as Theme 1's contact form (`t1-page-sections.tsx`). */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -start-[10000px] size-px overflow-hidden"
+            >
+              <label htmlFor="website-contact-company">Company</label>
+              <input
+                id="website-contact-company"
+                name="company"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                defaultValue=""
               />
             </div>
             <Button type="submit" disabled={submitState === 'submitting'}>

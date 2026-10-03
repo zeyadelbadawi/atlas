@@ -6,3 +6,5 @@ export { default as AcademyProfilePage } from './AcademyProfilePage';
 export { default as AcademySettingsPage } from './AcademySettingsPage';
 export { default as AcademyMembersPage } from './AcademyMembersPage';
 export { default as AcademyRevenuePage } from './AcademyRevenuePage';
+export { default as AcademyOrdersPage } from './AcademyOrdersPage';
+export { default as AcademyOrdersDetailPage } from './AcademyOrdersDetailPage';

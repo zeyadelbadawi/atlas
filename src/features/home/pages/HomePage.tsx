@@ -10,7 +10,7 @@
  * Design system: `design-system/atlas-marketing/MASTER.md` (Editorial Grid,
  * generated with UI/UX Pro Max and reconciled against the Atlas token layer).
  * Structure follows that document's §3: hero → value prop → asymmetric
- * capability grid → how-it-works → plans → closing CTA.
+ * capability grid → how-it-works → plans → contact (TASK 7) → closing CTA.
  */
 import {
   ArrowRight,
@@ -45,7 +45,14 @@ import { useAuth } from '@hooks';
 import { usePublicPlans } from '../hooks/usePublicPlans';
 import { useStartPlanFlow } from '../hooks/useStartPlanFlow';
 import { formatPlanPrice } from '../utils/formatPlanPrice';
-import { MarketingSection, SectionHeading } from '../components/MarketingSection';
+import {
+  MarketingSection,
+  SectionHeading,
+} from '../components/MarketingSection';
+import {
+  MARKETING_CONTACT_ANCHOR,
+  MarketingContactSection,
+} from '../components/MarketingContactSection';
 import { CinematicHero } from '../components/cinematic-hero';
 import { PlatformStructureFigure } from '../components/PlatformStructureFigure';
 import platformConvergence from '../assets/platform-convergence.webp';
@@ -333,7 +340,12 @@ export default function HomePage(): JSX.Element {
             </div>
           ) : plansQuery.isError || plans.length === 0 ? (
             <p className="text-sm leading-relaxed text-muted-foreground">
-              {t('home:pricingPreview.contactUs')}
+              <a
+                href={`#${MARKETING_CONTACT_ANCHOR}`}
+                className="rounded-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                {t('home:pricingPreview.contactUs')}
+              </a>
             </p>
           ) : (
             <ul className="grid gap-4 sm:grid-cols-3">
@@ -373,6 +385,9 @@ export default function HomePage(): JSX.Element {
           </Link>
         </div>
       </MarketingSection>
+
+      {/* ── Contact — the Atlas team's inbox (`#contact`) ───────────────── */}
+      <MarketingContactSection />
 
       {/* ── Closing CTA — the one tinted block on the page ──────────────── */}
       <MarketingSection compact>

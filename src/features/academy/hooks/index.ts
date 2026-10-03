@@ -78,3 +78,8 @@ export {
   useAcademyPayouts,
   useAcademyRevenueSummary,
 } from './useAcademyPayouts';
+// Academy Orders — the Organization Owner's read-only course orders.
+export {
+  useAcademyCourseOrder,
+  useAcademyCourseOrders,
+} from './useAcademyCourseOrders';

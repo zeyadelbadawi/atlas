@@ -31,6 +31,7 @@ import { EmptyState, ErrorState } from '@components/feedback';
 import { SectionLoader } from '@components/loading';
 import { Badge } from '@/components/ui/badge';
 import { useApiQuery } from '@/shared/hooks';
+import { platformSubscriptionKeys } from '@services/query';
 import { adminSubscriptionsService } from '../services/AdminSubscriptionsService';
 import { formatDate } from '@/shared/utils/date.utils';
 import type { LanguageCode, AdminSubscriptionOverview } from '@types';
@@ -41,7 +42,7 @@ export function AdminSubscriptionsPage(): JSX.Element {
   const language = i18n.language as LanguageCode;
 
   const overview = useApiQuery<AdminSubscriptionOverview, ApiError>({
-    queryKey: ['platform', 'subscriptions', 'overview'],
+    queryKey: platformSubscriptionKeys.overview(),
     queryFn: () => adminSubscriptionsService.getOverview(),
     staleTime: 60_000,
   });

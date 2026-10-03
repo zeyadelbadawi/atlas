@@ -1,11 +1,13 @@
 /**
  * Course payment review — what the Platform Owner sees and what is sent.
  *
- * Pinned here: the list renders real rows / an empty state / a retryable
- * error; the "Pending" filter never shows an already-reviewed row (the
- * backend accepts `reviewStatus` but does not yet apply it); approve and
- * reject are CONFIRMED before any request, send exactly the DTO shape the
- * backend validates, and reject enforces the 10-character reason floor.
+ * Pinned here: the list renders real rows (academy name, course title,
+ * order and refund status — never raw ids) / an empty state / a retryable
+ * error; search, filters and sort go to the SERVER and the returned page
+ * is rendered as-is (no client-side re-filter); approve and reject are
+ * CONFIRMED before any request, send exactly the DTO shape the backend
+ * validates, reject enforces the 10-character reason floor, and while one
+ * decision is in flight neither can be sent.
  * Authorization is not tested here — `PlatformOwnerGuard` decides it.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -28,6 +30,7 @@ const rejectMutate = vi.fn();
 const confirm = vi.fn<(request: unknown) => Promise<boolean>>();
 const notifySuccess = vi.fn();
 const refetch = vi.fn();
+const pending = { approve: false, reject: false };
 
 vi.mock('./hooks', () => ({
   useCourseOrderPayments: (options: unknown) =>
@@ -35,12 +38,12 @@ vi.mock('./hooks', () => ({
   useCourseOrderPayment: (id: string) => useCourseOrderPayment(id) as unknown,
   useApproveCourseOrderPayment: () => ({
     mutate: approveMutate,
-    isPending: false,
+    isPending: pending.approve,
     error: null,
   }),
   useRejectCourseOrderPayment: () => ({
     mutate: rejectMutate,
-    isPending: false,
+    isPending: pending.reject,
     error: null,
   }),
 }));
@@ -79,6 +82,9 @@ function payment(over: Partial<CourseOrderPayment> = {}): CourseOrderPayment {
     commission: { rateBasisPoints: 1000, amountMinorUnits: 15000 },
     createdAt: '2026-09-20T10:00:00Z',
     updatedAt: '2026-09-20T10:00:00Z',
+    academy: { id: 'academy-1', name: 'Cairo Coding Academy' },
+    course: { id: 'course-1', title: 'Intro to Algebra' },
+    courseOrderStatus: 'pending_payment',
     ...over,
   };
 }
@@ -129,39 +135,84 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
+  pending.approve = false;
+  pending.reject = false;
 });
 
 describe('PlatformCoursePaymentListPage', () => {
-  it('renders course payments and asks the server for the pending queue', () => {
-    useCourseOrderPayments.mockReturnValue(page([payment()]));
-    const { container } = renderList();
-
-    expect(screen.getByText('academy-1')).toBeTruthy();
-    expect(screen.getByText(/1,500\.00/)).toBeTruthy();
-    expect(useCourseOrderPayments).toHaveBeenCalledWith(
-      expect.objectContaining({
-        query: expect.objectContaining({
-          filters: { reviewStatus: 'pending' },
-        }),
-      })
-    );
-    expect(container.textContent).not.toMatch(/platformCommerce:/);
-  });
-
-  it('never shows an already-reviewed row under the Pending filter', () => {
+  it('renders academy, course, order and refund status and asks the server for the pending queue', () => {
     useCourseOrderPayments.mockReturnValue(
       page([
         payment(),
         payment({
           id: 'pay-2',
-          payeeAcademyId: 'academy-approved',
+          courseOrderStatus: 'refunded',
+          refundStatus: 'succeeded',
+          course: { id: 'course-2', title: 'Advanced Physics' },
+        }),
+      ])
+    );
+    const { container } = renderList();
+
+    expect(screen.getAllByText('Cairo Coding Academy')).toHaveLength(2);
+    expect(screen.getByText('Intro to Algebra')).toBeTruthy();
+    expect(screen.getByText('Awaiting payment')).toBeTruthy();
+    expect(screen.getByText('Refunded')).toBeTruthy();
+    expect(screen.getByText('Refund completed')).toBeTruthy();
+    expect(screen.queryByText('academy-1')).toBeNull();
+    expect(screen.getAllByText(/1,500\.00/).length).toBeGreaterThan(0);
+    expect(useCourseOrderPayments).toHaveBeenCalledWith(
+      expect.objectContaining({
+        query: expect.objectContaining({
+          filters: { reviewStatus: 'pending' },
+          sort: { field: 'createdAt', direction: 'desc' },
+        }),
+      })
+    );
+    expect(container.textContent).not.toMatch(/platformCommerce:|payments:/);
+  });
+
+  it('renders the server page as-is — no client-side re-filter of reviewed rows', () => {
+    useCourseOrderPayments.mockReturnValue(
+      page([
+        payment(),
+        payment({
+          id: 'pay-2',
+          academy: { id: 'academy-2', name: 'Alexandria Academy' },
           reviewStatus: 'approved',
         }),
       ])
     );
     renderList();
-    expect(screen.getByText('academy-1')).toBeTruthy();
-    expect(screen.queryByText('academy-approved')).toBeNull();
+    expect(screen.getByText('Cairo Coding Academy')).toBeTruthy();
+    expect(screen.getByText('Alexandria Academy')).toBeTruthy();
+  });
+
+  it('sends the search to the server', async () => {
+    useCourseOrderPayments.mockReturnValue(page([payment()]));
+    renderList();
+    fireEvent.change(
+      screen.getByRole('searchbox', {
+        name: 'Search by academy, course, reference or payment ID',
+      }),
+      { target: { value: 'Cairo' } }
+    );
+    await waitFor(() =>
+      expect(useCourseOrderPayments).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          query: expect.objectContaining({ search: 'Cairo' }),
+        })
+      )
+    );
+  });
+
+  it('names a missing academy instead of showing a raw id', () => {
+    useCourseOrderPayments.mockReturnValue(
+      page([payment({ academy: undefined })])
+    );
+    renderList();
+    expect(screen.getByText('Academy unavailable')).toBeTruthy();
+    expect(screen.queryByText('academy-1')).toBeNull();
   });
 
   it('shows the empty state when there is nothing to review', () => {
@@ -282,6 +333,45 @@ describe('PlatformCoursePaymentDetailPage', () => {
     ).toBeNull();
     expect(screen.queryByRole('button', { name: 'Reject payment' })).toBeNull();
   });
+
+  it('names the academy and course and shows the order status', () => {
+    useCourseOrderPayment.mockReturnValue({
+      data: payment(),
+      isLoading: false,
+      error: null,
+      refetch,
+    });
+    renderDetail();
+    expect(screen.getByText('Cairo Coding Academy')).toBeTruthy();
+    expect(screen.getByText('Intro to Algebra')).toBeTruthy();
+    expect(screen.getByText('Awaiting payment')).toBeTruthy();
+  });
+
+  it.each([
+    ['an approval', 'approve'],
+    ['a rejection', 'reject'],
+  ] as const)(
+    'disables BOTH decisions while %s is in flight',
+    (_label, which) => {
+      pending[which] = true;
+      useCourseOrderPayment.mockReturnValue({
+        data: payment(),
+        isLoading: false,
+        error: null,
+        refetch,
+      });
+      renderDetail();
+      const buttons = screen
+        .getAllByRole('button')
+        .filter((b) =>
+          /Approve payment|Reject payment/.test(b.textContent ?? '')
+        );
+      expect(buttons).toHaveLength(2);
+      for (const button of buttons) {
+        expect((button as HTMLButtonElement).disabled).toBe(true);
+      }
+    }
+  );
 
   it('shows a retryable error when the payment cannot be loaded', () => {
     useCourseOrderPayment.mockReturnValue({

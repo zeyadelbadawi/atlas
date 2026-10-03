@@ -97,4 +97,12 @@ export interface CourseOrderPayment {
   readonly createdAt: string;
   readonly updatedAt: string;
   readonly expiresAt?: string;
+  /** Platform review only (`/platform-course-order-payments`) — the academy paid. */
+  readonly academy?: { readonly id: string; readonly name: string };
+  /** Platform review only — the course, with the title frozen on the order. */
+  readonly course?: { readonly id: string; readonly title: string };
+  /** Platform review only — the order's own status. */
+  readonly courseOrderStatus?: CourseOrderStatus;
+  /** Platform review only — present once a refund was ever requested for the order. */
+  readonly refundStatus?: 'pending' | 'succeeded' | 'failed';
 }

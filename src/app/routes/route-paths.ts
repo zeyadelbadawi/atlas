@@ -283,6 +283,9 @@ export const DASHBOARD_ROUTES = {
   platformSupport: '/dashboard/platform/support',
   platformSupportDetail: '/dashboard/platform/support/:caseId',
 
+  /** TASK 7 — enquiries sent through the Atlas marketing homepage's contact form. Platform Owner only. */
+  platformContactSubmissions: '/dashboard/platform/contact-submissions',
+
   platformPlanCatalog: '/dashboard/platform/plans',
 
   /** Add-ons Catalog Management (P51) — Platform Owner controls the customer-store publication state of every add-on. */
@@ -308,6 +311,14 @@ export const DASHBOARD_ROUTES = {
    * the route is gated on the owner-only `tenant.billing.view`.
    */
   academyRevenue: '/dashboard/academy/:academyId/revenue',
+
+  /**
+   * Academy Orders — the academy's course orders (read-only) and one
+   * order's detail. Organization-Owner-only server-side, same gate as
+   * `academyRevenue`.
+   */
+  academyOrders: '/dashboard/academy/:academyId/orders',
+  academyOrderDetail: '/dashboard/academy/:academyId/orders/:orderId',
 
   /** The Website Management landing (Prompt 10) — `websiteSettings` moved to its own sub-path to make room for it. */
   websiteOverview: '/dashboard/academy/:academyId/website',

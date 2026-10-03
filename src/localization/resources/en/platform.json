@@ -392,5 +392,98 @@
     "failedNotice_other": "{{count}} assets failed processing — check the provider.",
     "empty": "No video assets yet.",
     "openReport": "Open the content delivery report"
+  },
+  "contactSubmissions": {
+    "title": "Contact enquiries",
+    "subtitle": "Messages visitors send through the contact form on the Atlas website.",
+    "newCount": "New: {{formatted}}",
+    "searchLabel": "Search name, email, organization or message",
+    "resultRange": "{{from}}–{{to}} of {{total}}",
+    "filters": {
+      "label": "Filter enquiries",
+      "status": "Status",
+      "all": "All",
+      "topic": "Topic",
+      "allTopics": "All topics",
+      "dateRange": "Received between",
+      "from": "From",
+      "to": "To",
+      "clear": "Clear filters"
+    },
+    "status": {
+      "new": "New",
+      "read": "Read",
+      "archived": "Archived"
+    },
+    "topics": {
+      "sales": "Plans and pricing",
+      "support": "Account help",
+      "partnership": "Partnership",
+      "other": "Other"
+    },
+    "sort": {
+      "label": "Sort enquiries",
+      "createdAt_desc": "Newest first",
+      "createdAt_asc": "Oldest first",
+      "name_asc": "Name A–Z",
+      "name_desc": "Name Z–A",
+      "email_asc": "Email A–Z"
+    },
+    "table": {
+      "caption": "Contact enquiries",
+      "name": "Name",
+      "email": "Email",
+      "organization": "Organization",
+      "topic": "Topic",
+      "status": "Status",
+      "received": "Received"
+    },
+    "empty": {
+      "title": "No enquiries yet",
+      "description": "Messages sent through the contact form on the Atlas website will appear here."
+    },
+    "noResults": {
+      "title": "No enquiries match",
+      "description": "Try a different search, or clear the filters."
+    },
+    "drawer": {
+      "title": "Enquiry",
+      "description": "Sent through the Atlas website contact form.",
+      "email": "Email",
+      "organization": "Organization",
+      "noOrganization": "Not provided",
+      "topic": "Topic",
+      "received": "Received",
+      "readAt": "First read",
+      "source": "Sent from",
+      "language": "Language",
+      "status": "Status",
+      "message": "Message",
+      "actions": "Enquiry actions",
+      "reply": "Reply by email"
+    },
+    "actions": {
+      "markRead": "Mark as read",
+      "markUnread": "Mark as unread",
+      "archive": "Archive",
+      "restore": "Restore",
+      "delete": "Delete"
+    },
+    "deleteDialog": {
+      "title": "Delete this enquiry?",
+      "description": "The enquiry from {{name}} will be removed permanently. This cannot be undone. Archive it instead if you may need it later.",
+      "confirm": "Delete permanently",
+      "cancel": "Cancel"
+    },
+    "toasts": {
+      "markedRead": "Marked as read",
+      "markedUnread": "Marked as unread",
+      "archived": "Enquiry archived",
+      "restored": "Enquiry restored",
+      "deleted": "Enquiry deleted",
+      "failed": "The enquiry could not be updated",
+      "deleteFailed": "The enquiry could not be deleted",
+      "undo": "Undo"
+    }
   }
 }

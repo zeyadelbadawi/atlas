@@ -358,6 +358,10 @@
       "title": "الاحتفاظ بالفيديو: فشل الحذف",
       "message": "استنفد الملف {{assetId}} للمؤسسة {{organizationId}} جميع المحاولات البالغة {{attempts}} ولم يُسجَّل كمحذوف. آخر خطأ: {{lastError}}"
     },
+    "platformContactSubmissionReceived": {
+      "title": "استفسار تواصل جديد",
+      "message": "أرسل {{name}} رسالة عبر نموذج التواصل في موقع Atlas."
+    },
     "academyMemberInvited": {
       "title": "حسابك جاهز",
       "message": "تم إنشاء حساب لك في {{academyName}}. اختر كلمة المرور للبدء."

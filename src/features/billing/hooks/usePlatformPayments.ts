@@ -5,6 +5,7 @@
  * organization-scoped — see `platformPaymentKeys`'s doc comment.
  */
 import { useApiQuery } from '@/shared/hooks';
+import { LIVE_LIST_QUERY_OPTIONS } from '@config';
 import { platformPaymentKeys } from '@services/query';
 import { platformPaymentService } from '../services/PlatformPaymentService';
 import type { CollectionQuery, PaginatedResult, Payment } from '@types';
@@ -22,5 +23,8 @@ export function usePlatformPayments(options?: UsePlatformPaymentsOptions) {
     queryKey: platformPaymentKeys.list(query),
     queryFn: () => platformPaymentService.getPayments(query),
     enabled,
+    // Academy Owners submit payments from their own browsers; poll while
+    // the review queue is shown (paused in background tabs).
+    ...LIVE_LIST_QUERY_OPTIONS,
   });
 }
