@@ -125,9 +125,7 @@ export function MobileBottomNav({
     },
   ] as const;
   const items = allItems.filter((item) =>
-    accountTabs === 'signIn'
-      ? item.key !== 'profile'
-      : item.key !== 'signIn'
+    accountTabs === 'signIn' ? item.key !== 'profile' : item.key !== 'signIn'
   );
 
   return (
