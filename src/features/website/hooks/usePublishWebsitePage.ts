@@ -14,14 +14,20 @@ import { websiteConfigurationService } from '../services/WebsiteConfigurationSer
 export interface PublishWebsitePageVariables {
   readonly academyId: string;
   readonly pageId: string;
+  /** Pins the publish to this saved version (see `publishPage`). */
+  readonly expectedVersion?: number;
 }
 
 export function usePublishWebsitePage() {
   const { invalidate } = useInvalidate();
 
   return useApiMutation<WebsitePage, PublishWebsitePageVariables, ApiError>({
-    mutationFn: ({ academyId, pageId }) =>
-      websiteConfigurationService.publishPage(academyId, pageId),
+    mutationFn: ({ academyId, pageId, expectedVersion }) =>
+      websiteConfigurationService.publishPage(
+        academyId,
+        pageId,
+        expectedVersion
+      ),
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async (_data, { academyId, pageId }) => {

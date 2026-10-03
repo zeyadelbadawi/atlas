@@ -62,7 +62,6 @@ export function ProfilePersonalSection({
     },
   });
 
-
   useEffect(() => {
     reset({
       firstName: user.name.split(' ')[0] || '',

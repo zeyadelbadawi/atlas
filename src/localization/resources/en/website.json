@@ -547,6 +547,7 @@
     "removeSocialLink": "Remove link",
     "socialLabelPlaceholder": "Label",
     "saveError": "Failed to save navigation",
+    "staleConflict": "Someone else changed these settings in the meantime. Their version is now shown — make your change again.",
     "itemLabel": "Menu item label"
   },
   "pages": {
@@ -578,6 +579,7 @@
     "removeItem": "Remove",
     "applyChanges": "Apply changes",
     "saveChanges": "Save changes",
+    "saveDraft": "Save draft",
     "unsavedChanges": "You have unsaved changes to this page.",
     "toggleEnabled": "Enabled",
     "editSection": "Edit section",
@@ -629,10 +631,10 @@
     "sampleHelp": "Sample testimonials are placeholders to show the design. They're never shown on your live website. Replace the text with a real testimonial, then mark it as real.",
     "sampleSectionHint": "Holds sample testimonials, which are hidden on your live website.",
     "publishPageAction": "Publish page",
-    "publishPageSaveFirst": "Save your changes first, then publish the page.",
     "publishPageConfirmTitle": "Publish this page?",
-    "publishPageConfirmDescription": "The saved version of this page will replace what visitors see. Other pages and the site settings stay as they are published.",
+    "publishPageConfirmDescription": "Your changes to this page will be saved and replace what visitors see. Other pages and the site settings stay as they are published.",
     "pageHasUnpublishedChanges": "This page has saved changes that visitors don't see yet. Publish the page to make them live.",
+    "pageHasLocalChanges": "You have unsaved changes to this page. “Publish page” saves them and makes them live; “Save draft” keeps them hidden from visitors.",
     "pageUpToDate": "Visitors see the saved version of this page.",
     "publishedSlugTaken": "Another live page (“{{title}}”) still uses the address /{{slug}}. Publish that page first, or publish the whole site."
   },

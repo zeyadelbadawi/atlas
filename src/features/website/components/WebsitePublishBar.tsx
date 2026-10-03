@@ -65,6 +65,14 @@ export interface WebsitePublishBarProps {
   readonly lastPublishedAt?: string;
   /** What is saved but not yet live (from `WebsiteConfiguration`). */
   readonly unpublishedChanges?: WebsiteUnpublishedChanges;
+  /**
+   * The surface holds edits that are not saved yet (the page editor). They
+   * count as pending changes, and `onBeforePublish` saves them before the
+   * site is published — "Publish changes" publishes what is on screen.
+   */
+  readonly pendingLocalEdits?: boolean;
+  /** Runs after the confirmation, before publishing; false cancels it. */
+  readonly onBeforePublish?: () => Promise<boolean>;
 }
 
 export function WebsitePublishBar({
@@ -72,6 +80,8 @@ export function WebsitePublishBar({
   status,
   lastPublishedAt,
   unpublishedChanges,
+  pendingLocalEdits = false,
+  onBeforePublish,
 }: WebsitePublishBarProps): JSX.Element {
   const { t } = useTranslation();
   const { confirm } = useConfirmDialog();
@@ -90,7 +100,8 @@ export function WebsitePublishBar({
   const isPublished = status === 'published';
   const pendingPages = unpublishedChanges?.pages ?? 0;
   const pendingSettings = unpublishedChanges?.configuration ?? false;
-  const hasPendingChanges = pendingSettings || pendingPages > 0;
+  const hasPendingChanges =
+    pendingSettings || pendingPages > 0 || pendingLocalEdits;
   // The last action taken, for the error strip and its retry.
   const [lastAction, setLastAction] = useState<'publish' | 'unpublish'>(
     'publish'
@@ -99,8 +110,25 @@ export function WebsitePublishBar({
   // One in-flight guard covering both mutations: every button is disabled
   // while either is pending, so a double click cannot queue a publish
   // behind an unpublish.
+  const [isSaving, setIsSaving] = useState(false);
   const isBusy =
-    publish.isPending || unpublish.isPending || status === 'publishing';
+    isSaving ||
+    publish.isPending ||
+    unpublish.isPending ||
+    status === 'publishing';
+
+  /** Saves the surface's local edits (if any), then publishes. */
+  const saveThenPublish = async () => {
+    if (onBeforePublish) {
+      setIsSaving(true);
+      try {
+        if (!(await onBeforePublish())) return;
+      } finally {
+        setIsSaving(false);
+      }
+    }
+    publish.mutate(academyId);
+  };
 
   // Theme 1 plan §D.4 — the sections still holding sample testimonials,
   // while the warning is open.
@@ -136,7 +164,7 @@ export function WebsitePublishBar({
     // `mutate` resolves into the query cache; the badge and the label both
     // re-derive from the refetched persisted status, so nothing here
     // claims success on its own.
-    publish.mutate(academyId);
+    await saveThenPublish();
   };
 
   const handleUnpublish = async () => {
@@ -152,11 +180,15 @@ export function WebsitePublishBar({
     unpublish.mutate(academyId);
   };
 
+  // Unsaved edits are at least the page on screen.
+  const pagesToPublish = Math.max(pendingPages, pendingLocalEdits ? 1 : 0);
   const pendingSummary = pendingSettings
-    ? pendingPages > 0
-      ? t('website:publish.pending.settingsAndPages', { count: pendingPages })
+    ? pagesToPublish > 0
+      ? t('website:publish.pending.settingsAndPages', {
+          count: pagesToPublish,
+        })
       : t('website:publish.pending.settings')
-    : t('website:publish.pending.pages', { count: pendingPages });
+    : t('website:publish.pending.pages', { count: pagesToPublish });
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-card p-4">
@@ -193,7 +225,7 @@ export function WebsitePublishBar({
                 onClick={handlePublish}
                 disabled={isBusy || !hasPendingChanges}
               >
-                {publish.isPending ? (
+                {publish.isPending || isSaving ? (
                   <Loader2 className="size-4 animate-spin" aria-hidden />
                 ) : (
                   <UploadCloud className="size-4" strokeWidth={2} aria-hidden />
@@ -269,7 +301,7 @@ export function WebsitePublishBar({
             <AlertDialogAction
               onClick={() => {
                 setSampleWarning(null);
-                publish.mutate(academyId);
+                void saveThenPublish();
               }}
             >
               {t('website:publish.sampleWarningAction')}

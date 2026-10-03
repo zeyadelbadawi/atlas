@@ -9,7 +9,13 @@
  * guard; the noted assertions failed before the fix.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from '@testing-library/react';
 import { useState, type ReactNode } from 'react';
 import {
   createMemoryRouter,
@@ -93,7 +99,14 @@ function renderGuard(props: EditorProps = {}) {
   const router = createMemoryRouter(
     [
       { path: '/start', element: <Shell>start</Shell> },
-      { path: '/edit', element: <Shell><Editor {...props} /></Shell> },
+      {
+        path: '/edit',
+        element: (
+          <Shell>
+            <Editor {...props} />
+          </Shell>
+        ),
+      },
       { path: '/elsewhere', element: <Shell>elsewhere</Shell> },
     ],
     { initialEntries: ['/start', '/edit'], initialIndex: 1 }

@@ -122,7 +122,9 @@ export default function AcademySettingsPage(): JSX.Element {
   useServerValidation(form, mutationError);
   // `save` resolves false after a failure it already reported, so both the
   // Save button and the unsaved-changes dialog's "Save and leave" share it.
-  const save = async (data: UpdateAcademySettingsFormData): Promise<boolean> => {
+  const save = async (
+    data: UpdateAcademySettingsFormData
+  ): Promise<boolean> => {
     if (!academyId) return false;
 
     try {

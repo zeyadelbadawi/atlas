@@ -172,6 +172,12 @@ export interface UpdateWebsiteConfigurationPayload {
   readonly navigation?: readonly WebsiteNavigationItem[];
   readonly header?: WebsiteHeaderConfig;
   readonly footer?: WebsiteFooterConfig;
+  /**
+   * The `updatedAt` of the copy this edit was based on. The save is refused
+   * (409 `stale_resource_version`) if anyone has saved since — used where a
+   * field is a full replace (navigation, header, footer).
+   */
+  readonly expectedUpdatedAt?: string;
 }
 
 /** The six core page contracts every theme supports. `courseDetails` is a template driven entirely by the existing Course domain — it is not composed of sections and is not part of the visibility/navigation toggle set (a course's own existence is what gates reachability). */

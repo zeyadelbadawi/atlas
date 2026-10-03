@@ -228,7 +228,9 @@ export function WebsiteFooter({
         className={`${container} mt-8 flex flex-col items-center gap-3 border-t border-border pt-6 text-center sm:flex-row sm:justify-between sm:text-start`}
       >
         <FooterLegalLine
-          copyright={<p className="text-xs text-muted-foreground">{copyright}</p>}
+          copyright={
+            <p className="text-xs text-muted-foreground">{copyright}</p>
+          }
         />
         {footer.socialLinks.length > 0 ? (
           <div className="flex flex-wrap items-center gap-4">

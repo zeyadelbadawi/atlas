@@ -5,9 +5,12 @@
  * each tab is its own component (`WebsiteThemeTab`, etc.), composed here,
  * never one enormous page component.
  */
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { usePermissions } from '@hooks';
+import { useConfirmDialog } from '@app/providers';
+import { useUnsavedChangesRegistry } from '@features/unsaved-changes';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { SectionTabs } from '@components/navigation';
@@ -44,6 +47,30 @@ export default function WebsiteSettingsPage(): JSX.Element {
   const initialTab = SETTINGS_TABS.includes(requestedTab as SettingsTab)
     ? (requestedTab as SettingsTab)
     : 'theme';
+  const [tab, setTab] = useState<SettingsTab>(initialTab);
+  const { confirm } = useConfirmDialog();
+  const unsaved = useUnsavedChangesRegistry();
+
+  /*
+    Each tab's form unmounts when another tab opens, so switching away
+    from unsaved edits used to drop them without a word — the route
+    blocker never saw it, because no navigation happened. Ask first, the
+    same question leaving the page asks.
+  */
+  const handleTabChange = async (next: string) => {
+    if (next === tab) return;
+    if (unsaved?.isDirtyNow()) {
+      const leave = await confirm({
+        titleKey: 'common:unsavedChanges.title',
+        descriptionKey: 'common:unsavedChanges.description',
+        confirmLabelKey: 'common:unsavedChanges.leave',
+        cancelLabelKey: 'common:unsavedChanges.stay',
+        intent: 'destructive',
+      });
+      if (!leave) return;
+    }
+    setTab(next as SettingsTab);
+  };
 
   const academyQuery = useAcademy(academyId ?? '');
   const configQuery = useWebsiteConfiguration(academyId ?? '');
@@ -122,7 +149,7 @@ export default function WebsiteSettingsPage(): JSX.Element {
           unpublishedChanges={configuration.unpublishedChanges}
         />
 
-        <Tabs defaultValue={initialTab}>
+        <Tabs value={tab} onValueChange={(next) => void handleTabChange(next)}>
           <TabsList>
             <TabsTrigger value="theme">
               {t('website:settings.tabs.theme')}

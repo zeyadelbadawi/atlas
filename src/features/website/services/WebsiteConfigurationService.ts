@@ -152,15 +152,20 @@ export class WebsiteConfigurationService extends BaseService {
    * sections become what visitors see. The rest of the site — other pages
    * and the site-wide settings — keeps its published state. Refused (409)
    * when another live page still holds this page's address.
+   *
+   * With `expectedVersion`, the publish is pinned to the version the
+   * editor saw: if anyone saved the page since, it is refused (409
+   * `stale_resource_version`) instead of putting their edit live unseen.
    */
   async publishPage(
     academyId: string,
     pageId: string,
+    expectedVersion?: number,
     options?: WriteOptions
   ): Promise<WebsitePage> {
-    return this.client.post<WebsitePage, undefined>(
+    return this.client.post<WebsitePage, { expectedVersion?: number }>(
       this.websitePath(academyId, 'pages', pageId, 'publish'),
-      undefined,
+      expectedVersion === undefined ? {} : { expectedVersion },
       options
     );
   }

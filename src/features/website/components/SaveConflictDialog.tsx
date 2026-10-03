@@ -34,6 +34,12 @@ export interface SaveConflictDialogProps {
   readonly onKeepMine: () => void;
   readonly onOpenChange: (open: boolean) => void;
   readonly isSaving: boolean;
+  /**
+   * False when there is no local work to re-apply — a publish refused
+   * because a colleague saved after the copy being published. Then the
+   * only honest choice is to look at their version first.
+   */
+  readonly canKeepMine?: boolean;
 }
 
 export function SaveConflictDialog({
@@ -42,6 +48,7 @@ export function SaveConflictDialog({
   onKeepMine,
   onOpenChange,
   isSaving,
+  canKeepMine = true,
 }: SaveConflictDialogProps): JSX.Element {
   const { t } = useTranslation();
 
@@ -68,9 +75,11 @@ export function SaveConflictDialog({
             Secondary, and honestly labelled: it re-applies this editor's
             changes ON TOP of the newer version, it does not discard it.
           */}
-          <Button variant="outline" onClick={onKeepMine} disabled={isSaving}>
-            {t('website:conflict.keepMine')}
-          </Button>
+          {canKeepMine ? (
+            <Button variant="outline" onClick={onKeepMine} disabled={isSaving}>
+              {t('website:conflict.keepMine')}
+            </Button>
+          ) : null}
           <Button onClick={onReload} disabled={isSaving}>
             {t('website:conflict.reload')}
           </Button>
