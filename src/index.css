@@ -323,6 +323,13 @@
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
     --primary-foreground: 0 0% 100%;
+    /* The neutral brand fallback for a scope with no Academy palette inline
+       (status pages, the consent layer before its data): near-black, 16:1
+       under the white label above, so no public surface ever falls through
+       to the dashboard's teal. Every themed scope overrides these inline. */
+    --primary: 222 22% 12%;
+    --primary-hover: 222 22% 20%;
+    --ring: 222 22% 12%;
 
     /* ------------------------------------------------------------------
      * STATUS TOKENS (P64 Phase 3 production validation, 22 Sep 2026).

@@ -572,6 +572,47 @@ describe('caching and publishing', () => {
     assert.ok(!decided.body.includes(CONSENT_BANNER));
   });
 
+  it('the undecided banner is server-rendered inside its Academy’s palette scope', async () => {
+    // The banner's test id: its aria-label is translated on `/ar`.
+    const BANNER_ID = 'data-testid="cookie-consent-banner"';
+    /** The overlay scope's `--primary`, and whether the banner sits inside it. */
+    const overlayOf = (html) => {
+      const markup = markupOf(html);
+      const open = markup.search(
+        /<div[^>]*data-website-overlay-scope=""[^>]*>/
+      );
+      assert.ok(open > -1, 'the page has a consent overlay scope');
+      const tag = markup.slice(open, markup.indexOf('>', open) + 1);
+      assert.match(tag, /class="website-theme-scope contents text-foreground"/);
+      assert.match(tag, /color-scheme:light/);
+      const portal = markup.indexOf('data-website-overlay-portal-root', open);
+      const banner = markup.indexOf(BANNER_ID, open);
+      assert.ok(
+        banner > open && banner < portal,
+        'the banner is inside the overlay scope'
+      );
+      assert.equal(markup.split(BANNER_ID).length - 1, 1, 'exactly one banner');
+      // The page's own theme scope, rendered before the overlay.
+      const page =
+        /class="website-theme-scope [^"]*"[^>]*style="[^"]*--primary:([^;"]+)/.exec(
+          markup.slice(0, open)
+        );
+      assert.ok(page, 'the page has its own palette scope');
+      return {
+        primary: /--primary:([^;"]+)/.exec(tag)?.[1],
+        pagePrimary: page[1],
+      };
+    };
+    const alpha = overlayOf((await get(handler, ALPHA, '/')).body);
+    const beta = overlayOf((await get(handler, BETA, '/ar/about')).body);
+    // Each banner wears exactly its own page's primary, and the two differ.
+    assert.equal(alpha.primary, alpha.pagePrimary);
+    assert.equal(beta.primary, beta.pagePrimary);
+    assert.notEqual(alpha.primary, beta.primary);
+    // The neutral fallback, not Atlas Deep Teal, while nothing is themed.
+    assert.notEqual(alpha.primary, '184 68% 26%');
+  });
+
   it('leaves no timer behind after a request (no per-request cache outlives it)', async () => {
     const timers = () =>
       process.getActiveResourcesInfo().filter((kind) => kind === 'Timeout')
