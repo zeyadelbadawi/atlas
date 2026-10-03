@@ -1,10 +1,12 @@
 /**
  * useDeleteCourseLesson hook.
  *
- * Mutation hook for deleting a lesson.
+ * Mutation hook for deleting a lesson. Invalidates the whole builder
+ * curriculum so the row disappears from its unit without a refresh.
  */
-import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { courseKeys } from '@services/query';
+import { useQueryClient } from '@tanstack/react-query';
+import { useApiMutation } from '@/shared/hooks';
+import { invalidateCourseCurriculum } from '@services/query/curriculum-invalidation';
 import type { ApiError } from '@api';
 import { courseService } from '../services/CourseService';
 
@@ -14,7 +16,7 @@ export interface DeleteCourseLessonVariables {
 }
 
 export function useDeleteCourseLesson(academyId: string, courseId: string) {
-  const { invalidate } = useInvalidate();
+  const queryClient = useQueryClient();
 
   return useApiMutation<void, DeleteCourseLessonVariables, ApiError>({
     mutationFn: ({ sectionId, lessonId }) =>
@@ -27,7 +29,7 @@ export function useDeleteCourseLesson(academyId: string, courseId: string) {
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async () => {
-      await invalidate(courseKeys.sections(academyId, courseId));
+      await invalidateCourseCurriculum(queryClient, { academyId, courseId });
     },
   });
 }

@@ -262,8 +262,37 @@
       "emptyDescription": "Every quiz or assignment for this course is already in a unit. Create more from their own pages.",
       "inAnotherUnit": "In another unit",
       "addAction": "Add",
+      "adding": "Adding…",
+      "addActionFor": "Add \"{{title}}\" to this unit",
       "error": "Couldn't update the unit"
-    }
+    },
+    "reorderConflict": "Someone else changed this order while you were editing. The latest order has been loaded — please try again.",
+    "order": {
+      "saving": "Saving order…",
+      "saved": "Order saved",
+      "failed": "Couldn't save the order. The previous order has been restored.",
+      "moved": "{{title}} moved to position {{position}} of {{total}}."
+    },
+    "dnd": {
+      "sectionHandle": "Reorder section {{title}}",
+      "itemHandle": "Reorder {{title}}",
+      "roleDescription": "sortable item",
+      "instructions": "To pick up an item, press Space or Enter. While dragging, use the up and down arrow keys to move it. Press Space or Enter again to drop it in its new position, or press Escape to cancel.",
+      "pickedUp": "Picked up {{title}}. It is in position {{position}} of {{total}}.",
+      "movedOver": "{{title}} is now in position {{position}} of {{total}}.",
+      "dropped": "{{title}} was dropped in position {{position}} of {{total}}.",
+      "droppedUnchanged": "{{title}} was dropped in its original position.",
+      "cancelled": "Reordering cancelled. {{title}} returned to position {{position}} of {{total}}."
+    },
+    "detachConfirm": {
+      "title": "Remove from this unit?",
+      "description": "\"{{title}}\" will be removed from this unit but not deleted. You can add it back to any unit later.",
+      "confirmLabel": "Remove from unit",
+      "cancelLabel": "Cancel"
+    },
+    "itemDetached": "Removed from unit",
+    "removing": "Removing…",
+    "deleting": "Deleting…"
   },
   "settings": {
     "title": "Course Settings",

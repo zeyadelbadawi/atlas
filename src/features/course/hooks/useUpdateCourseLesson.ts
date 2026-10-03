@@ -1,10 +1,12 @@
 /**
  * useUpdateCourseLesson hook.
  *
- * Mutation hook for updating a lesson.
+ * Mutation hook for updating a lesson. Invalidates the whole builder
+ * curriculum so the unit row shows the new title/status without a refresh.
  */
-import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { courseKeys } from '@services/query';
+import { useQueryClient } from '@tanstack/react-query';
+import { useApiMutation } from '@/shared/hooks';
+import { invalidateCourseCurriculum } from '@services/query/curriculum-invalidation';
 import type { ApiError } from '@api';
 import { courseService } from '../services/CourseService';
 import type { CourseLesson, UpdateCourseLessonPayload } from '@types';
@@ -16,7 +18,7 @@ export interface UpdateCourseLessonVariables {
 }
 
 export function useUpdateCourseLesson(academyId: string, courseId: string) {
-  const { invalidate } = useInvalidate();
+  const queryClient = useQueryClient();
 
   return useApiMutation<CourseLesson, UpdateCourseLessonVariables, ApiError>({
     mutationFn: ({ sectionId, lessonId, payload }) =>
@@ -30,7 +32,7 @@ export function useUpdateCourseLesson(academyId: string, courseId: string) {
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async () => {
-      await invalidate(courseKeys.sections(academyId, courseId));
+      await invalidateCourseCurriculum(queryClient, { academyId, courseId });
     },
   });
 }
