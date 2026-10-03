@@ -129,7 +129,8 @@ test.describe('J26 — website status, no categories, scroll', () => {
     const builderUrl = page.url();
 
     // Edit: no Select Category.
-    await page.goto(builderUrl.replace(/\/builder$/, '/edit'));
+    // The Edit page is the course detail address (`academyCourseDetail`).
+    await page.goto(builderUrl.replace(/\/builder$/, ''));
     await expect(page.getByLabel('Course Title')).toBeVisible({
       timeout: 30_000,
     });
