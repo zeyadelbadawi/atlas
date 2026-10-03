@@ -27,7 +27,10 @@ import {
   usePlatformProvisioningRequest,
   usePlatformRetryProvisioning,
 } from '../hooks';
-import { getProvisioningStatusTone } from '../utils/provisioning-status.utils';
+import {
+  getProvisioningHeadingKeys,
+  getProvisioningStatusTone,
+} from '../utils/provisioning-status.utils';
 import { PROVISIONING_STEP_KEYS } from '../constants/provisioning.constants';
 import type { ProvisioningStep, ProvisioningStepStatus } from '@types';
 
@@ -182,7 +185,7 @@ export default function PlatformProvisioningDetailPage(): JSX.Element {
         <Card>
           <CardHeader>
             <CardTitle className="text-base">
-              {t('provisioning:status.checklistTitle')}
+              {t(getProvisioningHeadingKeys(request.status).checklistTitleKey)}
             </CardTitle>
           </CardHeader>
           <CardContent>

@@ -1,10 +1,14 @@
 /**
  * J38 — unique names (W4), Chromium against the real stack and database.
  *
- *  - Academy website sign-up: a learner name already used in this academy
- *    (any case, accents, Arabic marks) is refused with a message ON the name
- *    field, which is marked invalid and focused. EN on desktop, AR on a
- *    390 px phone (RTL, Arabic copy).
+ *  - Academy website sign-up (security review finding M2): a learner name
+ *    already used in this academy (any case, accents, Arabic marks) is NOT
+ *    revealed at registration — the answer an unauthenticated caller gets
+ *    is byte-for-byte the one a free name gets, and the form shows the same
+ *    success state. The clash is admitted exempt; once the address is
+ *    verified, the learner's profile asks them to choose a different
+ *    display name (`nameChangeSuggested`), and a rename to another taken
+ *    name is refused. EN on desktop, AR on a 390 px phone (RTL, Arabic).
  *  - Organization create: a name already used anywhere on Atlas gets the
  *    generic "isn't available" message on the name field, never the holder.
  *  - Academy settings: renaming to another academy's name (another
@@ -13,13 +17,15 @@
  *  - Learner profile: a rename that clashes with another learner of the
  *    learner's academy is refused on the family-name field, naming that
  *    academy.
- *  - The website sign-up refusal and the academy-settings refusal in EN and
- *    AR, on a desktop and a 390 px phone (evidence matrix).
+ *  - The website sign-up (accepted, no oracle) and the academy-settings
+ *    refusal in EN and AR, on a desktop and a 390 px phone (evidence matrix).
  *
- * NEEDS THE INTEGRATED REBUILD: the API serves a prebuilt dist, and these
- * refusals come from the W4 backend code. Every name is unique per run (the
- * database persists between runs and names are now unique).
+ * Verification uses the real `/verify-email` link page: as J31 does, the
+ * journey writes a known token's SHA-256 digest for its own learner, since
+ * the emailed link cannot be read from the browser. Every name is unique
+ * per run (the database persists between runs and names are now unique).
  */
+import { createHash, randomBytes } from 'node:crypto';
 import { test, expect as baseExpect, type Page } from '@playwright/test';
 import {
   API_BASE,
@@ -37,7 +43,7 @@ import {
   uniqueLearnerName,
 } from './support/atlas';
 import { clearAuthRateLimits } from './support/global-setup';
-import { adminQuery } from './support/admin-db';
+import { adminQuery, adminSql } from './support/admin-db';
 import {
   VARIANTS,
   applyVariant,
@@ -71,17 +77,31 @@ async function registerLearnerViaApi(
   return email;
 }
 
+/** `/auth/register` with an academy, as an unauthenticated caller would send it. */
+async function registerRaw(
+  page: Page,
+  academyId: string,
+  name: string,
+  email = uniqueLearnerEmail('j38-raw')
+): Promise<{ status: number; body: string }> {
+  const res = await page.request.post(`${API_BASE}/auth/register`, {
+    data: { name, email, password: LEARNER_PASSWORD, academyId },
+  });
+  return { status: res.status(), body: await res.text() };
+}
+
 async function fillWebsiteSignUp(
   page: Page,
   name: string,
-  language: 'en' | 'ar' = 'en'
+  language: 'en' | 'ar' = 'en',
+  email = uniqueLearnerEmail('j38-dup')
 ): Promise<void> {
   // The public website's language is in its address (`/ar/…`), not in the
   // dashboard's stored preference.
   await page.goto(academyPath(language === 'ar' ? '/ar/sign-up' : '/sign-up'));
   await declineCookies(page);
   await page.locator('#name').fill(name);
-  await page.locator('#email').fill(uniqueLearnerEmail('j38-dup'));
+  await page.locator('#email').fill(email);
   await page.locator('#password').fill(LEARNER_PASSWORD);
   await page.locator('#confirmPassword').fill(LEARNER_PASSWORD);
   const terms = page.locator('#acceptTerms');
@@ -93,6 +113,85 @@ async function fillWebsiteSignUp(
     .click();
 }
 
+const SIGN_UP_SUCCESS = {
+  en: 'Sign in to continue. If this email is new to Atlas, your account is ready.',
+  ar: 'سجّل الدخول للمتابعة. إذا كان هذا البريد الإلكتروني جديدًا على أطلس، فحسابك جاهز.',
+} as const;
+
+const NAME_PROMPT = {
+  en: 'Please choose a different display name',
+  ar: 'يُرجى اختيار اسم عرض مختلف',
+} as const;
+
+/**
+ * The website accepted the sign-up exactly as it accepts a free name: the
+ * same success state, and nothing on the name field.
+ */
+async function expectSignUpAccepted(
+  page: Page,
+  language: 'en' | 'ar'
+): Promise<void> {
+  await expect(
+    page.getByText(SIGN_UP_SUCCESS[language], { exact: false })
+  ).toBeVisible();
+  await expect(page.locator('#name')).toHaveCount(0);
+  await expect(
+    page.getByText(
+      language === 'ar'
+        ? 'يوجد متعلّم في هذه الأكاديمية يحمل هذا الاسم بالفعل'
+        : 'A learner in this academy already has this name',
+      { exact: false }
+    )
+  ).toHaveCount(0);
+}
+
+/** Verifies the learner's address through the real `/verify-email` link page. */
+async function verifyThroughLink(
+  page: Page,
+  email: string,
+  language: 'en' | 'ar'
+): Promise<void> {
+  const [user] = await adminQuery<{ id: string }>(
+    `select id from users where email = :'email'`,
+    { email }
+  );
+  expect(user, `the account for ${email} exists`).toBeTruthy();
+  const raw = randomBytes(32).toString('base64url');
+  const hash = createHash('sha256').update(raw).digest('hex');
+  await adminSql(
+    `insert into email_verification_tokens (id, user_id, token_hash, expires_at)
+     values (gen_random_uuid()::text, :'user', :'hash', now() + interval '1 hour');`,
+    { user: user.id, hash }
+  );
+  await page.goto(
+    academyPath(`${language === 'ar' ? '/ar' : ''}/verify-email?token=${raw}`)
+  );
+  await expect(page.getByTestId('verify-email-success')).toBeVisible({
+    timeout: 90_000,
+  });
+  const [after] = await adminQuery<{ verified: string | null }>(
+    `select email_verified_at as verified from users where id = :'id'`,
+    { id: user.id }
+  );
+  expect(after.verified).not.toBeNull();
+}
+
+/** Signs in on the academy website (either language) and opens the profile. */
+async function openLearnerProfile(
+  page: Page,
+  email: string,
+  language: 'en' | 'ar'
+): Promise<void> {
+  const prefix = language === 'ar' ? '/ar' : '';
+  await page.goto(academyPath(`${prefix}/sign-in`));
+  await declineCookies(page);
+  await page.locator('input[type="email"]').fill(email);
+  await page.locator('input[type="password"]').fill(LEARNER_PASSWORD);
+  await page.locator('form button[type="submit"]').first().click();
+  await expect(page).toHaveURL(/\/my(\/|\?|$)/, { timeout: 60_000 });
+  await page.goto(academyPath(`${prefix}/my/profile`));
+}
+
 test.describe('J38 — unique names', () => {
   let academyId: string;
 
@@ -102,31 +201,66 @@ test.describe('J38 — unique names', () => {
     academyId = (await resolveAcademy(request)).id;
   });
 
-  test('J38a: a learner name already used in this academy is refused on the name field (EN desktop)', async ({
+  test('J38a: a taken learner name is not revealed at sign-up; after verification the profile asks for another name (EN desktop)', async ({
     page,
   }) => {
     const held = uniqueLearnerName('José Ruiz');
     await registerLearnerViaApi(page, academyId, held);
 
+    // The API answer for a taken name is the answer for a free one.
+    const clashing = held.toUpperCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const taken = await registerRaw(page, academyId, clashing);
+    const free = await registerRaw(
+      page,
+      academyId,
+      uniqueLearnerName('J38 Free Name')
+    );
+    expect(taken.status, taken.body).toBe(201);
+    expect(taken).toEqual(free);
+    expect(taken.body).not.toMatch(/nameTaken|learnerName/i);
+
+    // The website form: same success state, nothing on the name field.
     await seedCookieDecision(page);
     await setLanguage(page, 'en');
+    const email = uniqueLearnerEmail('j38a-clash');
     // Same person-name, different case and no accents.
-    await fillWebsiteSignUp(
-      page,
-      held.toUpperCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+    await fillWebsiteSignUp(page, clashing, 'en', email);
+    await expectSignUpAccepted(page, 'en');
+
+    // Only the verified account itself is told, in its profile.
+    await verifyThroughLink(page, email, 'en');
+    await openLearnerProfile(page, email, 'en');
+    const prompt = page.getByTestId('name-change-suggested');
+    await expect(prompt).toBeVisible();
+    await expect(prompt).toContainText(NAME_PROMPT.en);
+    await expect(prompt).toContainText(SEED.academyName);
+
+    // A rename to another taken name is refused on the field...
+    const otherFirst = 'Taken';
+    const otherLast = uniqueLearnerName('Other').replace(/\s+/g, '');
+    await registerLearnerViaApi(page, academyId, `${otherFirst} ${otherLast}`);
+    await prompt.getByRole('button', { name: 'Change name' }).click();
+    await page.locator('#firstName').fill(otherFirst);
+    await page.locator('#lastName').fill(otherLast.toLowerCase());
+    await page.getByRole('button', { name: /^save( changes)?$/i }).click();
+    await expect(page.locator('#lastName-error')).toContainText(
+      `Another learner already uses this name in ${SEED.academyName}.`
+    );
+    await expect(page.locator('#lastName')).toHaveAttribute(
+      'aria-invalid',
+      'true'
     );
 
-    const name = page.locator('#name');
-    await expect(
-      page.getByText(
-        'A learner in this academy already has this name. Add a middle or family name so it is unique here.'
-      )
-    ).toBeVisible();
-    await expect(name).toHaveAttribute('aria-invalid', 'true');
-    await expect(name).toBeFocused();
+    // ...and a free one is saved and ends the prompt.
+    await page.locator('#firstName').fill('José');
+    await page
+      .locator('#lastName')
+      .fill(uniqueLearnerName('Ruiz Hassan').replace(/\s+/g, ''));
+    await page.getByRole('button', { name: /^save( changes)?$/i }).click();
+    await expect(page.getByTestId('name-change-suggested')).toHaveCount(0);
   });
 
-  test('J38b: the same refusal in Arabic on a phone, right-to-left', async ({
+  test('J38b: the same in Arabic on a phone, right-to-left', async ({
     page,
   }) => {
     await page.setViewportSize(PHONE);
@@ -135,20 +269,24 @@ test.describe('J38 — unique names', () => {
 
     await seedCookieDecision(page);
     await setLanguage(page, 'ar');
-    await fillWebsiteSignUp(page, `محـــمد احمد ${tag}`, 'ar');
+    const email = uniqueLearnerEmail('j38b-clash');
+    await fillWebsiteSignUp(page, `محـــمد احمد ${tag}`, 'ar', email);
 
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+    await expectSignUpAccepted(page, 'ar');
+    await expectNoSidewaysScroll(page);
+
+    await verifyThroughLink(page, email, 'ar');
+    await openLearnerProfile(page, email, 'ar');
+    await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+    const prompt = page.getByTestId('name-change-suggested');
+    await expect(prompt).toBeVisible();
+    await expect(prompt).toContainText(NAME_PROMPT.ar);
     await expect(
-      page.getByText('يوجد متعلّم في هذه الأكاديمية يحمل هذا الاسم بالفعل', {
-        exact: false,
-      })
+      prompt.getByRole('button', { name: 'تغيير الاسم' })
     ).toBeVisible();
-    await expect(page.locator('#name')).toHaveAttribute('aria-invalid', 'true');
     // No horizontal scroll at 390 px.
-    const overflow = await page.evaluate(
-      () => document.documentElement.scrollWidth - window.innerWidth
-    );
-    expect(overflow).toBeLessThanOrEqual(1);
+    await expectNoSidewaysScroll(page);
   });
 
   test('J38c: organization create — a taken name gets the generic message on the field', async ({
@@ -273,9 +411,10 @@ test.describe('J38 — unique names', () => {
     );
   });
 
-  test('J38f: website sign-up refusal in EN and AR, desktop and phone', async ({
+  test('J38f: website sign-up with a taken name is accepted like any other, EN and AR, desktop and phone', async ({
     browser,
   }) => {
+    await clearAuthRateLimits();
     for (const variant of VARIANTS) {
       const context = await browser.newContext({
         viewport: { width: variant.width, height: variant.height },
@@ -293,18 +432,7 @@ test.describe('J38 — unique names', () => {
           'dir',
           variant.language === 'ar' ? 'rtl' : 'ltr'
         );
-        await expect(
-          page.getByText(
-            variant.language === 'ar'
-              ? 'يوجد متعلّم في هذه الأكاديمية يحمل هذا الاسم بالفعل'
-              : 'A learner in this academy already has this name.',
-            { exact: false }
-          )
-        ).toBeVisible();
-        await expect(page.locator('#name')).toHaveAttribute(
-          'aria-invalid',
-          'true'
-        );
+        await expectSignUpAccepted(page, variant.language);
         await expectNoSidewaysScroll(page);
         await captureEvidence(page, `unique-name-signup-${variant.name}`);
       } finally {

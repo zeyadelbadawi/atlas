@@ -24,8 +24,10 @@ import {
   type Page,
 } from '@playwright/test';
 import {
+  API_BASE,
   LEARNER_PASSWORD,
   academyPath,
+  authHeader,
   apiGet,
   apiPost,
   apiSignIn,
@@ -289,8 +291,19 @@ test.describe('J23 — Start, Continue, Completed and Finish course', () => {
     await signInOnWebsite(page, learnerEmail);
   });
 
-  test.afterAll(async () => {
+  test.afterAll(async ({ request }) => {
     await context?.close();
+    // Archive this run's two courses (the same DELETE the dashboard uses):
+    // left active, every run added two courses to the seeded academy until
+    // its plan's course limit refused the next run's setup with 409.
+    for (const courseId of [lessonsCourse?.id, quizCourse?.id]) {
+      if (!courseId || !owner) continue;
+      await request
+        .delete(`${API_BASE}/academies/${academyId}/courses/${courseId}`, {
+          headers: authHeader(owner),
+        })
+        .catch(() => undefined);
+    }
   });
 
   test('Start → Continue on the course page, and the outline agrees', async () => {

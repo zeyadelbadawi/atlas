@@ -49,7 +49,10 @@ import {
 } from '@app/routes/route-paths';
 import { useCancelProvisioning, useProvisioningProgress } from '../hooks';
 import { ProvisioningProgress } from '../components/ProvisioningProgress';
-import { getProvisioningStatusTone } from '../utils/provisioning-status.utils';
+import {
+  getProvisioningHeadingKeys,
+  getProvisioningStatusTone,
+} from '../utils/provisioning-status.utils';
 
 export default function ProvisioningStatusPage(): JSX.Element {
   const { t } = useTranslation();
@@ -88,6 +91,7 @@ export default function ProvisioningStatusPage(): JSX.Element {
     request.status === 'failed' ||
     request.status === 'cancelled';
   const isCancellable = !isTerminal;
+  const headings = getProvisioningHeadingKeys(request.status);
 
   const handleRetry = () => progress.retry();
 
@@ -109,7 +113,7 @@ export default function ProvisioningStatusPage(): JSX.Element {
     <PageContainer>
       <PageHeader
         titleKey="provisioning:status.title"
-        descriptionKey="provisioning:status.subtitle"
+        descriptionKey={headings.subtitleKey}
         values={{ academyName: request.requestedAcademyName }}
         actions={
           <StatusBadge
@@ -123,7 +127,7 @@ export default function ProvisioningStatusPage(): JSX.Element {
         <Card>
           <CardHeader>
             <CardTitle className="text-base">
-              {t('provisioning:status.checklistTitle')}
+              {t(headings.checklistTitleKey)}
             </CardTitle>
           </CardHeader>
           <CardContent>

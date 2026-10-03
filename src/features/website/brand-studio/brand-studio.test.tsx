@@ -51,6 +51,15 @@ describe('BrandStudio', () => {
     ).toBeGreaterThan(0);
   });
 
+  it('palette labels wrap instead of truncating (390 px, two columns)', () => {
+    render(<Harness onPreview={() => undefined} />);
+    for (const label of ['Secondary text', 'Muted surface']) {
+      const [element] = screen.getAllByText(label);
+      expect(element.className).not.toContain('truncate');
+      expect(element.className).toContain('break-words');
+    }
+  });
+
   it('re-renders the preview with the new palette when a seed changes', () => {
     const previews: BrandPalette[] = [];
     render(<Harness onPreview={(p) => previews.push(p)} />);

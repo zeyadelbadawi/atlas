@@ -361,13 +361,16 @@ export function BrandStudio({
                           backgroundColor: `hsl(${palette.roles[role]})`,
                         }}
                       />
-                      <span className="min-w-0">
-                        <span className="block truncate text-xs font-medium text-foreground">
+                      {/* Labels wrap instead of truncating: at 390 px two
+                          columns leave ~90 px, and "Secondary text" /
+                          "عُدِّل ليصبح مقروءًا" must stay readable whole. */}
+                      <span className="min-w-0 flex-1">
+                        <span className="block break-words text-xs font-medium leading-snug text-foreground">
                           {t(`website:brandStudio.roles.${role}`)}
                         </span>
                         <span
                           className={cn(
-                            'block text-[11px]',
+                            'block break-words text-[11px] leading-snug',
                             status.state === 'decorative'
                               ? 'text-warning'
                               : 'text-muted-foreground'

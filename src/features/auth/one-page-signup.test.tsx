@@ -339,6 +339,18 @@ describe('one-page sign-up — the form falls back to today', () => {
   });
 });
 
+describe('one-page sign-up — the email field direction', () => {
+  it('keeps the email address left-to-right in the Arabic (RTL) form', async () => {
+    renderForm('/auth/register', { academyId: 'academy-1' }, 'ar');
+    const email = document.getElementById('email');
+    expect(email).not.toBeNull();
+    expect(email?.getAttribute('type')).toBe('email');
+    expect(email?.getAttribute('dir')).toBe('ltr');
+    // The name stays in the reading direction of the page.
+    expect(document.getElementById('name')?.getAttribute('dir')).toBeNull();
+  });
+});
+
 describe('one-page sign-up — trials disabled', () => {
   it('still creates the organization, explains the plan comes later, and sends no planId', async () => {
     getSignupOptions.mockResolvedValue(

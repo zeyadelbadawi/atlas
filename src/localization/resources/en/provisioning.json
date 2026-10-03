@@ -56,6 +56,8 @@
   "status": {
     "title": "Provisioning",
     "subtitle": "Preparing {{academyName}}",
+    "subtitleReady": "{{academyName}} is ready",
+    "subtitleStopped": "Setting up {{academyName}}",
     "lifecycle": {
       "payment_success": "Payment confirmed",
       "tenant_created": "Organization confirmed",
@@ -71,6 +73,8 @@
       "cancelled": "Cancelled"
     },
     "checklistTitle": "Preparing your Academy",
+    "checklistTitleReady": "Your Academy is set up",
+    "checklistTitleStopped": "Setup progress",
     "failedTitle": "Provisioning could not be completed",
     "failedGenericDescription": "Something went wrong while setting up your Academy.",
     "retryAction": "Retry",

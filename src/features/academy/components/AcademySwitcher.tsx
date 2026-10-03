@@ -131,8 +131,13 @@ export function AcademySwitcher({
             strokeWidth={1.75}
             aria-hidden
           />
+          {/* `dir="auto"`: an academy name is user content in its own
+              script — an English name in the Arabic dashboard must keep its
+              beginning and lose its END to the ellipsis, not the reverse. */}
           <span
-            className="min-w-0 truncate font-medium"
+            dir="auto"
+            title={currentName ?? undefined}
+            className="min-w-0 truncate font-medium ltr:text-left rtl:text-right"
             data-testid="academy-switcher-current"
           >
             {currentName ?? t('academy:switcher.selectAcademy')}
@@ -194,8 +199,10 @@ export function AcademySwitcher({
                       aria-hidden
                     />
                     <span
+                      dir="auto"
+                      title={academy.name}
                       className={cn(
-                        'min-w-0 flex-1 truncate',
+                        'min-w-0 flex-1 truncate ltr:text-left rtl:text-right',
                         isCurrent && 'font-semibold'
                       )}
                     >

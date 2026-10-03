@@ -567,6 +567,9 @@ export function RegistrationForm({
           <Input
             id="email"
             type="email"
+            // An address is always left-to-right, in Arabic too (the same
+            // rule as the other email and URL inputs, e.g. AcademyJoinForm).
+            dir="ltr"
             placeholder={t('auth:register.emailPlaceholder')}
             autoComplete="email"
             // Back from "Change email" on the join step: straight to the field.

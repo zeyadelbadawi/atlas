@@ -317,6 +317,35 @@ describe('ProvisioningStatusPage — honest progress (W2)', () => {
     expect(liveRegion().textContent).toBe('Nile Academy is ready.');
   });
 
+  it('a ready Academy no longer says "Preparing": the headings say it is ready (EN and AR)', async () => {
+    getRequest.mockResolvedValue(
+      request({
+        status: 'ready',
+        currentStepKey: 'finalization',
+        academyId: 'acad-1',
+        steps: steps(ALL_DONE),
+      })
+    );
+    const { unmount } = renderPage();
+    await screen.findByText('Your Academy is ready');
+    expect(screen.getByText('Your Academy is set up')).toBeTruthy();
+    expect(screen.getByText('Nile Academy is ready')).toBeTruthy();
+    expect(screen.queryByText('Preparing your Academy')).toBeNull();
+    expect(screen.queryByText(/^Preparing /)).toBeNull();
+    unmount();
+
+    renderPage('ar');
+    await screen.findByText('أكاديميتك جاهزة');
+    expect(screen.getByText('اكتمل إعداد أكاديميتك')).toBeTruthy();
+    expect(screen.queryByText('جارٍ تجهيز أكاديميتك')).toBeNull();
+  });
+
+  it('while running, the checklist heading still reads "Preparing your Academy"', async () => {
+    getRequest.mockResolvedValue(request({}));
+    renderPage();
+    expect(await screen.findByText('Preparing your Academy')).toBeTruthy();
+  });
+
   it('attaches the logo from the form once the Academy exists, inline on the brand stage', async () => {
     const file = new File([new Uint8Array([137, 80, 78, 71])], 'logo.png', {
       type: 'image/png',

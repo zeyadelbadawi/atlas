@@ -56,6 +56,8 @@
   "status": {
     "title": "التهيئة",
     "subtitle": "جارٍ تجهيز {{academyName}}",
+    "subtitleReady": "{{academyName}} جاهزة",
+    "subtitleStopped": "إعداد {{academyName}}",
     "lifecycle": {
       "payment_success": "تم تأكيد الدفع",
       "tenant_created": "تم تأكيد المؤسسة",
@@ -71,6 +73,8 @@
       "cancelled": "ألغيت"
     },
     "checklistTitle": "جارٍ تجهيز أكاديميتك",
+    "checklistTitleReady": "اكتمل إعداد أكاديميتك",
+    "checklistTitleStopped": "تقدّم الإعداد",
     "failedTitle": "تعذّر إكمال التهيئة",
     "failedGenericDescription": "حدث خطأ ما أثناء إعداد أكاديميتك.",
     "retryAction": "إعادة المحاولة",
