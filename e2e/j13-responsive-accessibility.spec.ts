@@ -40,6 +40,7 @@ import {
   signInThroughDashboard,
   uniqueLearnerEmail,
   type Session,
+  uniqueLearnerName,
 } from './support/atlas';
 import { clearAuthRateLimits } from './support/global-setup';
 
@@ -203,7 +204,7 @@ test.describe('J13 — responsive and accessibility matrix', () => {
     learnerEmail = uniqueLearnerEmail('j13');
     const page = await browser.newPage();
     await seedCookieDecision(page);
-    await registerLearnerThroughWebsite(page, learnerEmail, 'J13 Learner');
+    await registerLearnerThroughWebsite(page, learnerEmail, uniqueLearnerName('J13 Learner'));
     await expect(
       page
         .getByText(

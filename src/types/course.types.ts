@@ -240,6 +240,64 @@ export interface CreateCoursePayload {
   readonly language?: string;
   readonly outcomes?: readonly string[];
   readonly requirements?: readonly string[];
+  /**
+   * W6 — optional client key (one UUID per create attempt). A replay with
+   * the same key returns the course the first request made, and lets the
+   * http client safely retry an ambiguous failure.
+   */
+  readonly idempotencyKey?: string;
+}
+
+/** W6 — the wizard step a readiness check deep-links to. */
+export type CourseReadinessStep =
+  'basics' | 'details' | 'media' | 'curriculum' | 'assessments' | 'pricing';
+
+export type CourseReadinessCheckKey =
+  | 'title'
+  | 'publishedActivity'
+  | 'paidPrice'
+  | 'shortDescription'
+  | 'description'
+  | 'thumbnail'
+  | 'outcomes'
+  | 'draftItems'
+  | 'emptySections'
+  | 'paymentSetup'
+  | 'visibilityPrivate';
+
+export interface CourseReadinessCheck {
+  readonly key: CourseReadinessCheckKey;
+  readonly status: 'pass' | 'fail';
+  /** `blocking` failures make `ready` false; warnings and info never do. */
+  readonly severity: 'blocking' | 'warning' | 'info';
+  readonly step: CourseReadinessStep;
+  readonly details?: Readonly<Record<string, number | string | boolean>>;
+}
+
+export interface CourseReadinessCounts {
+  readonly sections: number;
+  readonly emptySections: number;
+  readonly lessons: number;
+  readonly publishedLessons: number;
+  readonly quizzes: number;
+  readonly publishedQuizzes: number;
+  readonly assignments: number;
+  readonly publishedAssignments: number;
+  readonly publishedLiveSessions: number;
+  readonly draftItems: number;
+}
+
+/**
+ * W6 — `GET /academies/:id/courses/:courseId/publish-readiness`. Advisory
+ * in Phase 1 (`enforced: false`): the wizard blocks its own Publish button
+ * on `ready`; the server does not refuse an unready publish.
+ */
+export interface CoursePublishReadiness {
+  readonly courseId: string;
+  readonly ready: boolean;
+  readonly enforced: boolean;
+  readonly checks: readonly CourseReadinessCheck[];
+  readonly counts: CourseReadinessCounts;
 }
 
 /**

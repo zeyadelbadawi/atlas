@@ -8,6 +8,51 @@
     "domain": "Connecting your custom domain",
     "finalization": "Finalizing setup"
   },
+  "stages": {
+    "listLabel": "Setup progress",
+    "academy": { "label": "Create your Academy and reserve its address" },
+    "website": {
+      "label": "Build your website",
+      "labelComplete": "Build your website with starter pages"
+    },
+    "brand": {
+      "label": "Apply your logo and colours",
+      "themeDefault": "Use the theme's default colours",
+      "logoUploading": "Adding your logo…",
+      "logoFailed": "Your logo couldn't be added.",
+      "logoRetry": "Try adding the logo again",
+      "logoMissing": "Your logo wasn't added because the page was closed or reloaded before it uploaded.",
+      "logoAddLater": "Add your logo in Branding"
+    },
+    "ready": { "label": "Ready" },
+    "state": {
+      "pending": "waiting",
+      "current": "in progress",
+      "done": "done",
+      "failed": "failed",
+      "skipped": "not needed",
+      "attention": "needs your attention"
+    }
+  },
+  "announce": {
+    "queued": "Setup of {{academyName}} is about to start.",
+    "academy": "Creating {{academyName}} and reserving its address.",
+    "website": "Building the website for {{academyName}}.",
+    "brand": "Applying the logo and colours for {{academyName}}.",
+    "ready": "{{academyName}} is ready.",
+    "readyBrandFailed": "{{academyName}} is ready, but its branding could not be applied. You can retry.",
+    "stalled": "Setup of {{academyName}} has stopped making progress. You can retry.",
+    "failed": "Setup of {{academyName}} could not be completed.",
+    "cancelled": "Setup of {{academyName}} was cancelled."
+  },
+  "progress": {
+    "queued": "Waiting for setup to start.",
+    "reconnecting": "Reconnecting… your setup keeps running on our side.",
+    "stalled": "Setup hasn't made progress for a while. Retrying continues from the last finished stage.",
+    "brandingFailed": "Your Academy is ready, but your branding could not be applied.",
+    "brandingRetry": "Retry branding",
+    "retryFailed": "That didn't go through. Please try again."
+  },
   "status": {
     "title": "Provisioning",
     "subtitle": "Preparing {{academyName}}",
@@ -75,7 +120,9 @@
         "description": "We'll set up the right pages and structure for your theme, ready for you to fill in. Best if you already know exactly what you want to say."
       }
     },
-    "subdomainSuggested": "Suggested from your Academy name. Edit it if you would prefer a different address."
+    "subdomainSuggested": "Suggested from your Academy name. Edit it if you would prefer a different address.",
+    "addressInProgress": "This address is already being set up from another tab or an earlier attempt.",
+    "followInProgress": "Follow that setup"
   },
   "history": {
     "title": "Academy Provisioning",

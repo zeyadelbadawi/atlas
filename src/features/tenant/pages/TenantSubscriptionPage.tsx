@@ -34,7 +34,11 @@ import {
 } from '../utils/entitlement.utils';
 import { getSubscriptionStatusTone } from '../utils/subscription-status.utils';
 import { PlanComparisonDialog } from '../components/PlanComparisonDialog';
-import { resolvePlanDescription, resolvePlanName } from '../utils/plan-text.utils';
+import { SubscriptionGiftDetails } from '../components/SubscriptionGiftDetails';
+import {
+  resolvePlanDescription,
+  resolvePlanName,
+} from '../utils/plan-text.utils';
 import type { LanguageCode } from '@types';
 
 export default function TenantSubscriptionPage(): JSX.Element {
@@ -171,6 +175,10 @@ export default function TenantSubscriptionPage(): JSX.Element {
                 {t('tenant:subscription.cancelAtPeriodEnd')}
               </p>
             ) : null}
+
+            {/* W8 — "Includes N gifted setup days", with the gift and the
+                paid period it precedes. Only when the backend granted one. */}
+            <SubscriptionGiftDetails subscription={subscription} />
 
             {/* Phase 10.2 — the subscription lifecycle controls.
                 Rendered from the REAL backend status, never from local

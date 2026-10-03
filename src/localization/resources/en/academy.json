@@ -471,7 +471,27 @@
     "selectAcademy": "Select Academy",
     "noAcademies": "No academies available",
     "createNew": "Create New Academy",
-    "loading": "Loading academies..."
+    "loading": "Loading academies...",
+    "label": "Academy",
+    "triggerLabel": "Current academy: {{name}}. Switch academy",
+    "searchPlaceholder": "Search academies…",
+    "yourRole": "Your role",
+    "switching": "Opening academy…",
+    "switchingTo": "Opening {{name}}…",
+    "roles": {
+      "owner": "Owner",
+      "administrator": "Administrator",
+      "manager": "Manager",
+      "instructor": "Instructor",
+      "staff": "Staff"
+    },
+    "accessLost": {
+      "title": "You no longer have access to that academy",
+      "goneTitle": "That academy is no longer available",
+      "description": "Your access was removed or the academy was deleted. You have been taken to an academy you can open.",
+      "namedDescription": "Your access to {{name}} was removed or the academy was deleted. You have been taken to an academy you can open.",
+      "dismiss": "Dismiss"
+    }
   },
   "onboarding": {
     "resumeBanner": "Your academy setup isn't finished yet.",

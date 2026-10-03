@@ -5,7 +5,8 @@
  * curriculum so the unit row shows the new title/status without a refresh.
  */
 import { useQueryClient } from '@tanstack/react-query';
-import { useApiMutation } from '@/shared/hooks';
+import { useApiMutation, useAcademyBoundMutation } from '@/shared/hooks';
+import type { AcademyScopedVariables } from '@/shared/hooks';
 import { invalidateCourseCurriculum } from '@services/query/curriculum-invalidation';
 import type { ApiError } from '@api';
 import { courseService } from '../services/CourseService';
@@ -20,8 +21,12 @@ export interface UpdateCourseLessonVariables {
 export function useUpdateCourseLesson(academyId: string, courseId: string) {
   const queryClient = useQueryClient();
 
-  return useApiMutation<CourseLesson, UpdateCourseLessonVariables, ApiError>({
-    mutationFn: ({ sectionId, lessonId, payload }) =>
+  const mutation = useApiMutation<
+    CourseLesson,
+    AcademyScopedVariables<UpdateCourseLessonVariables>,
+    ApiError
+  >({
+    mutationFn: ({ academyId, payload: { sectionId, lessonId, payload } }) =>
       courseService.updateCourseLesson(
         academyId,
         courseId,
@@ -31,8 +36,10 @@ export function useUpdateCourseLesson(academyId: string, courseId: string) {
       ),
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: async () => {
+    onSuccess: async (_data, { academyId }) => {
       await invalidateCourseCurriculum(queryClient, { academyId, courseId });
     },
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }

@@ -34,6 +34,7 @@ import {
   seedCookieDecision,
   uniqueLearnerEmail,
   type Session,
+  uniqueLearnerName,
 } from './support/atlas';
 import { clearAuthRateLimits } from './support/global-setup';
 import { signInOnWebsite } from './support/phase4';
@@ -258,7 +259,7 @@ test.describe('J23 — Start, Continue, Completed and Finish course', () => {
     context = await browser.newContext();
     page = await context.newPage();
     await seedCookieDecision(page);
-    await registerLearnerThroughWebsite(page, learnerEmail, 'J23 Learner');
+    await registerLearnerThroughWebsite(page, learnerEmail, uniqueLearnerName('J23 Learner'));
     await expect(
       page
         .getByText(

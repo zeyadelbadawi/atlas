@@ -106,6 +106,7 @@ export const AUDIT_ACTION_CATEGORIES: Readonly<Record<string, AuditCategory>> =
     'academy.student.created': 'students',
     'academy.student.added': 'students',
     'academy.student.joined': 'students',
+    'academy.student.name_clash_exempted': 'students',
     'academy.student.blocked': 'students',
     'academy.student.unblocked': 'students',
     'academy.student.approved': 'students',
@@ -158,6 +159,7 @@ export const AUDIT_ACTION_CATEGORIES: Readonly<Record<string, AuditCategory>> =
     'organization.onboarding.completed': 'subscription',
     'provisioning_request.created': 'subscription',
     'subscription.trial.redeemed': 'subscription',
+    'subscription.gift.granted': 'subscription',
     'subscription.trial.cancelled': 'subscription',
     'subscription.cancelled': 'subscription',
     'subscription.grace_started': 'subscription',
@@ -201,6 +203,8 @@ export const AUDIT_ACTION_CATEGORIES: Readonly<Record<string, AuditCategory>> =
     'observability.synthetic_alert.resolved': 'platform',
     'platform.contact_submission.status_changed': 'platform',
     'platform.contact_submission.deleted': 'platform',
+    'platform.campaign.sent': 'platform',
+    'academy.message.sent': 'academy',
   };
 
 export const AUDIT_ACTIONS: readonly string[] = Object.keys(

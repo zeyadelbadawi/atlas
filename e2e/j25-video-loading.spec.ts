@@ -38,6 +38,7 @@ import {
   seedCookieDecision,
   uniqueLearnerEmail,
   type Session,
+  uniqueLearnerName,
 } from './support/atlas';
 import { clearAuthRateLimits } from './support/global-setup';
 import { signInOnWebsite } from './support/phase4';
@@ -129,7 +130,7 @@ test.describe('J25 — video loading, slow, failed and ready', () => {
     context = await browser.newContext();
     page = await context.newPage();
     await seedCookieDecision(page);
-    await registerLearnerThroughWebsite(page, learnerEmail, 'J25 Learner');
+    await registerLearnerThroughWebsite(page, learnerEmail, uniqueLearnerName('J25 Learner'));
     await expect(
       page
         .getByText(

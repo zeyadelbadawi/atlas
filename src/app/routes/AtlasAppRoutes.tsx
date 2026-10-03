@@ -162,6 +162,9 @@ const CourseEditPage = lazy(
 const CourseBuilderPage = lazy(
   () => import('@features/course/pages/CourseBuilderPage')
 );
+const CourseWizardPage = lazy(
+  () => import('@features/course/pages/CourseWizardPage')
+);
 const CourseSettingsPage = lazy(
   () => import('@features/course/pages/CourseSettingsPage')
 );
@@ -436,6 +439,9 @@ const PlatformAuditLogListPage = lazy(
   () => import('@features/audit-log/pages/PlatformAuditLogListPage')
 );
 // Task 3 — the academy owner's activity log.
+const AcademyMessagesPage = lazy(
+  () => import('@features/messaging/pages/AcademyMessagesPage')
+);
 const AcademyActivityLogPage = lazy(
   () => import('@features/audit-log/pages/AcademyActivityLogPage')
 );
@@ -451,6 +457,18 @@ const PlatformSupportDetailPage = lazy(
 // TASK 7 — the Atlas marketing contact form's Platform Owner inbox.
 const PlatformContactSubmissionsPage = lazy(
   () => import('@features/platform/pages/PlatformContactSubmissionsPage')
+);
+// W3 — Email & Notifications (Platform Owner). Compose and Send is owned by
+// W3-compose; the other two are the read-only monitoring consoles.
+const ComposeAndSendPage = lazy(
+  () => import('@features/platform/communications/compose/ComposeAndSendPage')
+);
+const EmailActivityPage = lazy(
+  () => import('@features/platform/communications/activity/EmailActivityPage')
+);
+const SecurityMonitoringPage = lazy(
+  () =>
+    import('@features/platform/communications/security/SecurityMonitoringPage')
 );
 const PlatformPlanCatalogPage = lazy(
   () => import('@features/platform/pages/PlatformPlanCatalogPage')
@@ -762,6 +780,23 @@ export default function AtlasAppRoutes(): JSX.Element {
               }
             />
 
+            {/* W3-compose — academy Messages. Owner/administrator only
+                server-side (an ACTIVE academy membership with that role);
+                the route reuses the activity log's owner-tier permission so
+                a manager is not offered a page that answers 403. */}
+            <Route
+              path={DASHBOARD_ROUTES.academyMessages}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['tenant.dashboard.view']}
+                  requiresEntitlement
+                >
+                  <AcademyMessagesPage />
+                </RouteGuard>
+              }
+            />
+
             {/* P13 — academy revenue & payouts. Money is Organization-Owner
                 territory (`tenant.billing.view` is owner-only) and the backend
                 answers 403 to everyone else, which the page renders as a
@@ -909,6 +944,22 @@ export default function AtlasAppRoutes(): JSX.Element {
               }
             />
 
+            {/* W5 — one academy's overview, addressed by the URL (the single
+                source of truth for the active academy). The bare path above
+                redirects here. */}
+            <Route
+              path={DASHBOARD_ROUTES.academyOverview}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.view']}
+                  requiresEntitlement
+                >
+                  <AcademyDashboardPage />
+                </RouteGuard>
+              }
+            />
+
             {/*
               Phase 10.6 — the direct academy-create form is GONE, and this
               path now redirects to Academy Provisioning.
@@ -1027,6 +1078,26 @@ export default function AtlasAppRoutes(): JSX.Element {
                   requiresEntitlement
                 >
                   <CourseEditPage />
+                </RouteGuard>
+              }
+            />
+
+            {/*
+              W6 — the guided course wizard (Create → Publish). Same door as
+              the course edit page: owners and managers (`course.update`);
+              the API re-checks the academy role on every save. Instructors
+              keep the classic builder below. The create address
+              (`academyCourseCreate`) renders the wizard's first step.
+            */}
+            <Route
+              path={DASHBOARD_ROUTES.academyCourseWizard}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['course.update']}
+                  requiresEntitlement
+                >
+                  <CourseWizardPage />
                 </RouteGuard>
               }
             />
@@ -2223,6 +2294,44 @@ export default function AtlasAppRoutes(): JSX.Element {
                   requiredRoles={['platform_owner']}
                 >
                   <PlatformContactSubmissionsPage />
+                </RouteGuard>
+              }
+            />
+
+            {/* W3 — Email & Notifications. Operator-only at the route; the
+                APIs' PlatformOwnerGuard + RLS are the real control. */}
+            <Route
+              path={DASHBOARD_ROUTES.platformEmailCompose}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <ComposeAndSendPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformEmailActivity}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <EmailActivityPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformSecurityMonitoring}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <SecurityMonitoringPage />
                 </RouteGuard>
               }
             />

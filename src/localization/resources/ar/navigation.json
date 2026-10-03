@@ -28,7 +28,8 @@
     "workspace": "مساحة العمل",
     "administration": "الإدارة",
     "addOns": "الإضافات",
-    "platformCommerce": "الاشتراكات والتجارب"
+    "platformCommerce": "الاشتراكات والتجارب",
+    "platformEmail": "البريد والإشعارات"
   },
   "items": {
     "home": "الرئيسية",
@@ -72,12 +73,16 @@
     "platformAuditLog": "سجل التدقيق",
     "platformSupport": "الدعم",
     "platformContactSubmissions": "استفسارات التواصل",
+    "platformEmailCompose": "إنشاء وإرسال",
+    "platformEmailActivity": "نشاط بريد الأكاديميات",
+    "platformSecurityMonitoring": "مراقبة رموز التحقق والأمان",
     "platformPlanCatalog": "الخطط والإضافات",
     "platformAddOns": "إدارة الإضافات",
     "myResults": "نتائجي",
     "studentAnalytics": "تحليلات الطلاب",
     "academyReports": "التقارير",
     "academyActivityLog": "سجل النشاط",
+    "academyMessages": "الرسائل",
     "platformSubscriptions": "الاشتراكات والفترات التجريبية",
     "support": "الدعم",
     "academyAnnouncements": "الإعلانات",

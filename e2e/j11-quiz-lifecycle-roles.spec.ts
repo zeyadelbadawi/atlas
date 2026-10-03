@@ -37,6 +37,7 @@ import {
   signInThroughDashboard,
   uniqueLearnerEmail,
   type Session,
+  uniqueLearnerName,
 } from './support/atlas';
 import { clearAuthRateLimits } from './support/global-setup';
 
@@ -114,7 +115,11 @@ test.describe('J11 — quiz lifecycle across roles (EN dashboard, AR student)', 
     learnerEmail = uniqueLearnerEmail('j11');
     const page = await browser.newPage();
     await seedCookieDecision(page);
-    await registerLearnerThroughWebsite(page, learnerEmail, 'طالب J11');
+    await registerLearnerThroughWebsite(
+      page,
+      learnerEmail,
+      uniqueLearnerName('طالب J11')
+    );
     await expect(
       page
         .getByText(
@@ -148,6 +153,12 @@ test.describe('J11 — quiz lifecycle across roles (EN dashboard, AR student)', 
     await page.getByRole('textbox', { name: 'Title' }).fill(title);
     await page.getByRole('combobox', { name: /^Status/ }).click();
     await page.getByRole('option', { name: 'Published' }).click();
+    // W7 — integrity and full screen live behind "Advanced options",
+    // collapsed by default for a new quiz. Open it first.
+    const advanced = page.getByRole('button', { name: /Advanced options/ });
+    await expect(advanced).toHaveAttribute('aria-expanded', 'false');
+    await advanced.click();
+    await expect(advanced).toHaveAttribute('aria-expanded', 'true');
     // Integrity off → the full-screen switch is not offered, and the form says why.
     await expect(
       page.getByTestId('fullscreen-requires-integrity')
@@ -212,12 +223,16 @@ test.describe('J11 — quiz lifecycle across roles (EN dashboard, AR student)', 
       requireFullscreen: true,
     });
 
-    // Reload the editor: the switch is still on.
+    // Reload the editor: the switch is still on — and "Advanced options"
+    // opened by itself, because this quiz customises integrity (W7).
     const editUrl = `/dashboard/academy/${academyId}/courses/${courseId}/quizzes/${quizId}`;
     await page.goto(editUrl);
     await expect(
       page.getByRole('switch', { name: 'Require full screen' })
     ).toBeChecked({ timeout: 30_000 });
+    await expect(
+      page.getByRole('button', { name: /Advanced options/ })
+    ).toHaveAttribute('aria-expanded', 'true');
     await expect(
       page.getByRole('combobox', { name: 'Integrity mode' })
     ).toContainText('Warn');

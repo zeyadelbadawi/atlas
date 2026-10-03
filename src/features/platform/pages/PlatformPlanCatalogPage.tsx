@@ -97,6 +97,19 @@ export default function PlatformPlanCatalogPage(): JSX.Element {
                           {plan.description}
                         </p>
                       ) : null}
+                      {/* W8 — the configured gift per cycle, at a glance. */}
+                      <p
+                        className="text-xs text-muted-foreground"
+                        data-testid={`plan-gift-summary-${plan.key}`}
+                      >
+                        {t('tenant:gift.adminPlanSummary', {
+                          monthly:
+                            plan.giftedDaysMonthly ??
+                            t('tenant:gift.adminNone'),
+                          yearly:
+                            plan.giftedDaysYearly ?? t('tenant:gift.adminNone'),
+                        })}
+                      </p>
                     </div>
                     <div className="flex items-center gap-3">
                       {plan.pricing?.amount !== undefined &&

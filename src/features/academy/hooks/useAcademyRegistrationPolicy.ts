@@ -10,7 +10,14 @@
  * non-owners up front AND still maps the 403, because the role on the
  * session is a hint — the server decides.
  */
-import { useApiMutation, useApiQuery, useAuth, useInvalidate } from '@/shared/hooks';
+import {
+  useApiMutation,
+  useApiQuery,
+  useAuth,
+  useInvalidate,
+  useAcademyBoundMutation,
+} from '@/shared/hooks';
+import type { AcademyScopedVariables } from '@/shared/hooks';
 import { academyKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { academyRosterService } from '../services/AcademyRosterService';
@@ -41,19 +48,21 @@ export function useUpdateAcademyRegistrationPolicy(academyId: string) {
   const { invalidate } = useInvalidate();
   const { organization } = useAuth();
 
-  return useApiMutation<
+  const mutation = useApiMutation<
     AcademyRegistrationPolicySettings,
-    UpdateAcademyRegistrationPolicyPayload,
+    AcademyScopedVariables<UpdateAcademyRegistrationPolicyPayload>,
     ApiError
   >({
-    mutationFn: (payload) =>
+    mutationFn: ({ academyId, payload }) =>
       academyRosterService.updateRegistrationPolicy(academyId, payload),
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: async () => {
+    onSuccess: async (_data, { academyId }) => {
       await invalidate(
         academyKeys.registrationPolicy(organization?.id, academyId)
       );
     },
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }

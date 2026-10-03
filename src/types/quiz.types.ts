@@ -357,11 +357,15 @@ export interface CreateQuizPayload extends QuizSettingsInput {
 
 export interface UpdateQuizPayload extends QuizSettingsInput {
   readonly title?: string;
-  readonly description?: string;
-  readonly sectionId?: string;
+  /** `null` clears it; omitted keeps it (W7). */
+  readonly description?: string | null;
+  /** `null` detaches the quiz from its unit; omitted keeps it (W7). */
+  readonly sectionId?: string | null;
   readonly status?: QuizStatus;
-  readonly passingScore?: number;
-  readonly maxAttempts?: number;
+  /** `null` clears the passing threshold; omitted keeps it (W7). */
+  readonly passingScore?: number | null;
+  /** `null` clears the limit (unlimited); omitted keeps it (W7). */
+  readonly maxAttempts?: number | null;
   readonly questions?: readonly QuizQuestionInput[];
 }
 

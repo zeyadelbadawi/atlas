@@ -16,10 +16,15 @@
  * page did own — a Quick Action to the Academy's own Website — is added
  * below; it needs no new fetch, since it is pure navigation.
  */
-import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Building2, Users, UserCheck, BookOpen, Plus } from 'lucide-react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import {
+  Navigate,
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom';
 import { PageContainer, PageHeader } from '@components/layout';
 import { MetricCard, StatusBadge } from '@components/data-display';
 import { EmptyState, ErrorState } from '@components/feedback';
@@ -27,7 +32,7 @@ import { apiErrorKind } from '@api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useAuth, usePermissions, usePlatform } from '@hooks';
+import { useAuth, usePermissions } from '@hooks';
 import {
   DASHBOARD_ROUTES,
   ONBOARDING_ROUTES,
@@ -44,15 +49,30 @@ import {
   tenantEntryToRow,
   useAcademyActivityLog,
 } from '@features/audit-log';
-import { AcademySwitcher } from '../components/AcademySwitcher';
 import { WEBSITE_STATUS_TONE } from '../utils/academy-status.utils';
+import { useAcademyScope } from '../scope/academy-scope.context';
+import { readLastAcademy } from '../scope/last-academy';
+import type { Academy } from '@types';
 
+/**
+ * W5 — two addresses, one page:
+ *   - `/dashboard/academy/:academyId` is one academy's overview. The URL is
+ *     the only source of truth for which academy that is (it used to be a
+ *     `?academyId=` search param, a context value and a localStorage key,
+ *     which disagreed — F1–F4).
+ *   - the bare `/dashboard/academy` is the chooser: it redirects to the
+ *     legacy `?academyId=` target, else the "last academy" preference, else
+ *     the first academy the caller staffs — or shows the empty state when
+ *     there is none (also where a revoked user lands).
+ */
 export default function AcademyDashboardPage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
-  const activeAcademyId = searchParams.get('academyId');
-  const { setActiveAcademy } = usePlatform();
+  const { academyId: routeAcademyId } = useParams<{ academyId?: string }>();
+  const legacyAcademyId = searchParams.get('academyId');
+  const { membership, lostAcademyIds, isResolving } = useAcademyScope();
   const { hasPermission } = usePermissions();
   // Phase 5 — `academy.provisioning.create` is Organization-Owner-only
   // (`ORGANIZATION_OWNER_PERMISSIONS`, never granted to a Manager/
@@ -69,24 +89,28 @@ export default function AcademyDashboardPage(): JSX.Element {
     error: academiesError,
     refetch: refetchAcademies,
   } = useAcademies();
-  const academies = academiesData?.items ?? [];
+  const academies = (academiesData?.items ?? []).filter(
+    (academy) => !lostAcademyIds.has(academy.id)
+  );
   const hasAcademies = academies.length > 0;
 
-  const currentAcademy = activeAcademyId
-    ? academies.find((a) => a.id === activeAcademyId)
-    : academies[0];
+  const listedAcademy = routeAcademyId
+    ? academies.find((a) => a.id === routeAcademyId)
+    : undefined;
+  // The list is paginated; the membership check (already run by the
+  // academy scope for this URL) always knows the academy it answered for.
+  const currentAcademy:
+    Pick<Academy, 'id' | 'name' | 'description'> | undefined =
+    listedAcademy ??
+    (routeAcademyId && membership?.academy.id === routeAcademyId
+      ? membership.academy
+      : undefined);
   // Only for members who may see the website; a member without
   // `academy.website.view` gets no status line rather than a 403.
   const { status: websiteStatus } = useAcademyWebsiteStatus(
     currentAcademy?.id,
     { enabled: hasPermission('academy.website.view') }
   );
-
-  // Keeps the sidebar's notion of "active academy" (which has no route params
-  // of its own to read) in sync with whichever academy this page resolved to.
-  useEffect(() => {
-    setActiveAcademy(currentAcademy?.id);
-  }, [currentAcademy?.id, setActiveAcademy]);
 
   const {
     data: stats,
@@ -125,7 +149,10 @@ export default function AcademyDashboardPage(): JSX.Element {
     organization
   );
 
-  if (isLoadingAcademies) {
+  if (
+    isLoadingAcademies ||
+    (!!routeAcademyId && !currentAcademy && isResolving)
+  ) {
     return (
       <PageContainer>
         <div className="space-y-6">
@@ -187,6 +214,33 @@ export default function AcademyDashboardPage(): JSX.Element {
     );
   }
 
+  if (!routeAcademyId) {
+    const selectable = academies.filter((a) => a.status !== 'archived');
+    const isListed = (id: string | null | undefined): id is string =>
+      !!id && selectable.some((academy) => academy.id === id);
+    const remembered = readLastAcademy({
+      userId: user?.id,
+      organizationId: organization?.id,
+    });
+    const target = isListed(legacyAcademyId)
+      ? legacyAcademyId
+      : isListed(remembered)
+        ? remembered
+        : selectable[0]?.id;
+    if (target) {
+      return (
+        <Navigate
+          to={buildPath(DASHBOARD_ROUTES.academyOverview, {
+            academyId: target,
+          })}
+          replace
+          // Carries the "access lost" explanation through the redirect.
+          state={location.state}
+        />
+      );
+    }
+  }
+
   if (!currentAcademy) {
     return (
       <PageContainer>
@@ -213,14 +267,6 @@ export default function AcademyDashboardPage(): JSX.Element {
         // is Academy Provisioning. A second entry point is exactly what
         // the two-creation-path defect was, so it is not re-introduced in
         // a different shape.
-        actions={
-          academies.length > 1 ? (
-            <AcademySwitcher
-              academies={academies}
-              currentAcademy={currentAcademy}
-            />
-          ) : undefined
-        }
       />
 
       <div className="space-y-6">

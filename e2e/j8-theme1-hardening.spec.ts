@@ -100,7 +100,7 @@ test.describe('J8 — Theme 1 hardening', () => {
       owner,
       `/organizations/${organizationId}/provisioning-requests`,
       {
-        academyName: 'J8 Hardening',
+        academyName: `J8 Hardening ${slug}`,
         requestedSubdomain: slug,
         selectedThemeKey: 'modern-education',
         websiteSetupMode: 'complete',
@@ -349,7 +349,7 @@ test.describe('J8 — Theme 1 hardening', () => {
         owner,
         `/organizations/${organizationId}/provisioning-requests`,
         {
-          academyName: 'J8 Retired',
+          academyName: `J8 Retired ${other}`,
           requestedSubdomain: other,
           selectedThemeKey,
           websiteSetupMode: 'complete',

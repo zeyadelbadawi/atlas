@@ -1078,9 +1078,7 @@
     "statusProposed": "Suggested palette — accept it to confirm your choice",
     "savingLogo": "Saving your logo…",
     "logoSaveError": "Your logo couldn't be saved. Please try again.",
-    "sampleName": "Your Academy",
-    "finishSaving": "Saving your logo and colours…",
-    "finishFailed": "We couldn't save your logo and colours yet."
+    "sampleName": "Your Academy"
   },
   "theme1": {
     "liveData": {

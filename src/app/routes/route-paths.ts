@@ -82,6 +82,12 @@ export const DASHBOARD_ROUTES = {
   academy: '/dashboard/academy',
   academyCreate: '/dashboard/academy/create',
   /**
+   * W5 — one academy's overview. The URL is the single source of truth for
+   * the active academy; the bare `academy` path above only redirects here
+   * (the last academy used, else the first the caller staffs).
+   */
+  academyOverview: '/dashboard/academy/:academyId',
+  /**
    * RETIRED — the old client-side academy wizard. Kept only as a
    * forwarding address (`LegacyAcademyOnboardingRedirect`): an owner with
    * setup still open goes to `ONBOARDING_ROUTES.root`, anyone else to the
@@ -97,6 +103,8 @@ export const DASHBOARD_ROUTES = {
   academyCourseDetail: '/dashboard/academy/:academyId/courses/:courseId',
   academyCourseBuilder:
     '/dashboard/academy/:academyId/courses/:courseId/builder',
+  /** W6 — the guided course wizard (`?step=`); owners/managers. */
+  academyCourseWizard: '/dashboard/academy/:academyId/courses/:courseId/setup',
   academyCourseSettings:
     '/dashboard/academy/:academyId/courses/:courseId/settings',
   academyCourseReviews:
@@ -259,6 +267,18 @@ export const DASHBOARD_ROUTES = {
   platformZoomAcademyDetail: '/dashboard/platform/zoom/academies/:academyId',
 
   /*
+    W3 — EMAIL & NOTIFICATIONS, a Platform Owner sidebar section with
+    exactly three pages. Compose and Send is filled by the W3-compose
+    workstream (`features/platform/communications/compose`); Academy Email
+    Activity and OTP & Security Monitoring are read-only consoles whose
+    real boundary is `PlatformOwnerGuard` + RLS on
+    `platform-communications/email-activity` and `platform-security/*`.
+  */
+  platformEmailCompose: '/dashboard/platform/email/compose',
+  platformEmailActivity: '/dashboard/platform/email/activity',
+  platformSecurityMonitoring: '/dashboard/platform/email/security',
+
+  /*
     Observability Center — Platform Owner only. `platformObservability` is
     an index that redirects to Health. The rule-detail path is ALSO the
     target of Alertmanager's Slack "View Alert" links, so its shape
@@ -307,6 +327,9 @@ export const DASHBOARD_ROUTES = {
 
   /** Task 3 — the academy owner's activity log (who changed what, and when). */
   academyActivityLog: '/dashboard/academy/:academyId/activity',
+
+  /** W3-compose — the academy owner/administrator's Messages composer and history. */
+  academyMessages: '/dashboard/academy/:academyId/messages',
 
   /**
    * P13 — the academy's net unsettled revenue and its payout history.

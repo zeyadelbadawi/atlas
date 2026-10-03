@@ -27,6 +27,32 @@ export interface Academy {
   readonly address?: AcademyAddress;
   readonly createdAt: string;
   readonly updatedAt: string;
+  /**
+   * W5 — the caller's role in this academy, present on `GET /academies`
+   * rows (`owner` for the organization owner). The list only ever holds
+   * academies the caller staffs.
+   */
+  readonly viewerRole?: AcademyStaffRole;
+}
+
+/** W5 — a staff role inside one academy (`academy_members.role`). */
+export type AcademyStaffRole =
+  'owner' | 'administrator' | 'manager' | 'instructor' | 'staff';
+
+/** W5 — `GET /academies/:id/me`: the caller's standing in one academy. */
+export interface AcademyMembership {
+  readonly academy: {
+    readonly id: string;
+    readonly organizationId: string;
+    readonly name: string;
+    readonly slug: string;
+    readonly status: AcademyStatus;
+    readonly logo?: string;
+    readonly language: string;
+  };
+  readonly role: AcademyStaffRole;
+  readonly roleSource: 'organization_owner' | 'academy_membership';
+  readonly permissions: readonly string[];
 }
 
 /** Academy address information. */

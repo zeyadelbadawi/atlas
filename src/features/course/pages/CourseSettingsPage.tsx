@@ -239,7 +239,9 @@ export default function CourseSettingsPage(): JSX.Element {
                 size="sm"
                 onClick={() =>
                   academyId &&
-                  navigate(`${DASHBOARD_ROUTES.academy}?academyId=${academyId}`)
+                  navigate(
+                    buildPath(DASHBOARD_ROUTES.academyOverview, { academyId })
+                  )
                 }
               >
                 {t('course:settings.backToAcademy')}

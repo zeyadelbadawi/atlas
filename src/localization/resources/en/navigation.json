@@ -28,7 +28,8 @@
     "workspace": "Workspace",
     "administration": "Administration",
     "addOns": "Add-ons",
-    "platformCommerce": "Subscriptions & Trials"
+    "platformCommerce": "Subscriptions & Trials",
+    "platformEmail": "Email & Notifications"
   },
   "items": {
     "home": "Home",
@@ -72,12 +73,16 @@
     "platformAuditLog": "Audit Log",
     "platformSupport": "Support",
     "platformContactSubmissions": "Contact Enquiries",
+    "platformEmailCompose": "Compose and Send",
+    "platformEmailActivity": "Academy Email Activity",
+    "platformSecurityMonitoring": "OTP & Security Monitoring",
     "platformPlanCatalog": "Plans & Add-ons",
     "platformAddOns": "Add-ons Management",
     "myResults": "My Results",
     "studentAnalytics": "Student Analytics",
     "academyReports": "Reports",
     "academyActivityLog": "Activity log",
+    "academyMessages": "Messages",
     "platformSubscriptions": "Subscriptions & Trials",
     "support": "Support",
     "academyAnnouncements": "Announcements",

@@ -194,7 +194,7 @@ test.describe('J28 — activity log', () => {
     }, testInfo) => {
       await signIn(page, SEED[role]);
       if (role === 'manager') {
-        await page.goto(`/dashboard/academy?academyId=${academyId}`);
+        await page.goto(`/dashboard/academy/${academyId}`);
         // Wait for the sidebar's academy section before asserting an absence.
         await expect(
           page.getByRole('link', { name: 'Courses', exact: true }).first()

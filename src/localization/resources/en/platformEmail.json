@@ -1,0 +1,214 @@
+{
+  "common": {
+    "loadMore": "Load more",
+    "loadingMore": "Loading…",
+    "endOfList": "You have reached the end of the list.",
+    "range": {
+      "label": "Period",
+      "1": "Last 24 hours",
+      "7": "Last 7 days",
+      "30": "Last 30 days",
+      "90": "Last 90 days"
+    },
+    "all": "All",
+    "clearFilters": "Clear filters",
+    "notAvailable": "—",
+    "privacyNote": "Addresses are masked and IP addresses are never shown. No email content, codes or links are stored or displayed here."
+  },
+  "activity": {
+    "title": "Academy Email Activity",
+    "subtitle": "What Atlas emailed on behalf of each academy, and what happened to it.",
+    "filters": {
+      "academy": "Academy",
+      "allAcademies": "All academies",
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "type": "Email type",
+      "allTypes": "All email types"
+    },
+    "summary": {
+      "heading": "Summary",
+      "total": "Emails",
+      "totalHint": "Academy emails in this period",
+      "delivered": "Delivered",
+      "deliveredHint": "Confirmed by the provider",
+      "deliveredUnconfirmed": "No delivery confirmations received in this period",
+      "sent": "Sent to provider",
+      "sentHint": "Accepted, not yet confirmed",
+      "problems": "Failed or bounced",
+      "problemsHint": "Needs attention",
+      "notSent": "Not sent",
+      "notSentHint": "Preference, daily limit or suppressed address"
+    },
+    "academies": {
+      "heading": "Busiest academies",
+      "description": "Select an academy to see only its emails.",
+      "emails_one": "{{formatted}} email",
+      "emails_other": "{{formatted}} emails",
+      "problems_one": "{{formatted}} problem",
+      "problems_other": "{{formatted}} problems",
+      "unnamed": "Academy {{id}}",
+      "view": "Show emails for {{name}}"
+    },
+    "table": {
+      "caption": "Academy emails, newest first",
+      "when": "When",
+      "academy": "Academy",
+      "type": "Email type",
+      "recipient": "Recipient",
+      "status": "Status",
+      "delivery": "Provider",
+      "issue": "Issue",
+      "security": "Security email",
+      "attempts_one": "{{count}} attempt",
+      "attempts_other": "{{count}} attempts",
+      "unknownRecipient": "Account removed"
+    },
+    "statuses": {
+      "queued": "Queued",
+      "retrying": "Retrying",
+      "waiting": "Waiting (cooldown or digest)",
+      "sent": "Sent to provider",
+      "delivered": "Delivered",
+      "delayed": "Delayed by recipient server",
+      "bounced": "Bounced",
+      "complained": "Marked as spam",
+      "not_sent": "Not sent",
+      "in_app_only": "In-app only",
+      "suppressed": "Suppressed",
+      "failed": "Failed"
+    },
+    "errors": {
+      "recipient_preference": "Recipient turned these emails off",
+      "daily_limit": "Recipient's daily email limit reached",
+      "address_suppressed": "Address is on the do-not-mail list",
+      "recipient_unavailable": "Recipient account unavailable",
+      "source_deleted": "Source was deleted before sending",
+      "configuration": "Configuration problem",
+      "quota": "Provider quota or rate limit",
+      "provider_rejected": "Provider rejected the message",
+      "provider_unavailable": "Provider unavailable",
+      "bounce_hard": "Permanent bounce",
+      "bounce_soft": "Temporary bounce",
+      "complaint": "Spam complaint",
+      "unknown": "Unclassified error"
+    },
+    "empty": {
+      "title": "No academy emails in this period",
+      "description": "Emails sent on behalf of academies will appear here."
+    },
+    "noResults": {
+      "title": "No emails match these filters",
+      "description": "Try another status, email type or period."
+    }
+  },
+  "security": {
+    "title": "OTP & Security Monitoring",
+    "subtitle": "Sign-in codes, account-deletion codes and rate-limit activity across Atlas.",
+    "filters": {
+      "surface": "Surface",
+      "allSurfaces": "All surfaces",
+      "management": "Management",
+      "academy": "Academy websites",
+      "type": "Event",
+      "allTypes": "All events",
+      "email": "Email address",
+      "emailHint": "Matched by keyed hash. The address is not stored.",
+      "ip": "IP address",
+      "ipHint": "Matched by keyed hash. The IP is not stored.",
+      "apply": "Apply",
+      "invalidEmail": "Enter a valid email address.",
+      "invalidIp": "Enter a valid IPv4 or IPv6 address."
+    },
+    "tiles": {
+      "sent": "Codes sent",
+      "sentHint": "Sign-in codes, including resends",
+      "verifyRate": "Verify rate",
+      "verifyRateHint": "Verified codes ÷ codes sent",
+      "verifyRateNone": "No codes sent",
+      "failed": "Failed attempts",
+      "failedHint": "Wrong or expired codes",
+      "locked": "Lockouts",
+      "lockedHint": "Challenges destroyed after too many attempts",
+      "rateLimited": "Rate-limit hits",
+      "rateLimitedHint": "Sign-in and code requests refused"
+    },
+    "deletion": {
+      "heading": "Account-deletion codes",
+      "sent": "Sent",
+      "verified": "Confirmed",
+      "failed": "Failed",
+      "locked": "Locked",
+      "rateLimited": "Rate-limited"
+    },
+    "chart": {
+      "heading": "Activity over time",
+      "description": "Daily counts (UTC).",
+      "title": "Daily security events",
+      "showTable": "Show as table",
+      "showChart": "Show as chart",
+      "date": "Date",
+      "series": {
+        "sent": "Sent",
+        "verified": "Verified",
+        "failed": "Failed",
+        "locked": "Locked",
+        "rateLimited": "Rate-limited"
+      }
+    },
+    "events": {
+      "heading": "Recent events",
+      "caption": "Security events, newest first",
+      "when": "When",
+      "event": "Event",
+      "account": "Account",
+      "surface": "Surface",
+      "network": "Network",
+      "details": "Details",
+      "preAuth": "Before sign-in (ref {{ref}})",
+      "unknownAccount": "Unknown account",
+      "ipRef": "IP ref {{ref}}",
+      "occurrences_one": "{{count}} time",
+      "occurrences_other": "{{count}} times",
+      "attemptsLeft_one": "{{count}} attempt left",
+      "attemptsLeft_other": "{{count}} attempts left"
+    },
+    "types": {
+      "otp_sent": "Code sent",
+      "otp_resent": "Code resent",
+      "otp_verified": "Code verified",
+      "otp_failed": "Code failed",
+      "otp_expired": "Code expired",
+      "otp_locked": "Locked out",
+      "otp_rate_limited": "Code requests rate-limited",
+      "otp_suppressed": "Undeliverable address",
+      "deletion_code_sent": "Deletion code sent",
+      "deletion_code_verified": "Deletion confirmed",
+      "deletion_code_failed": "Deletion code failed",
+      "deletion_code_locked": "Deletion locked out",
+      "deletion_code_rate_limited": "Deletion requests rate-limited",
+      "signin_rate_limited": "Sign-in rate-limited"
+    },
+    "reasons": {
+      "invalid_code": "Wrong code",
+      "context_mismatch": "Code used on the wrong site",
+      "expired": "Expired",
+      "dead_challenge": "Challenge no longer valid",
+      "attempts_exhausted": "Too many attempts",
+      "account_budget": "Account limit",
+      "ip_budget": "Network limit",
+      "resend_budget": "Resend limit",
+      "hourly_budget": "Hourly limit",
+      "cooldown": "Too soon",
+      "address_suppressed": "Address suppressed"
+    },
+    "empty": {
+      "title": "No security events in this period",
+      "description": "Sign-in codes, deletion codes and rate-limit hits will appear here."
+    },
+    "noResults": {
+      "title": "No events match these filters",
+      "description": "Try another event, surface or period."
+    }
+  }
+}

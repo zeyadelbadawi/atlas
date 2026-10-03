@@ -2,8 +2,12 @@
  * The setup form's optional "Logo & colours" block (Theme 1 plan §F.4.3
  * step 1): pick a logo, see the proposed palette on a live mini-preview of
  * the chosen theme, regenerate / adjust / accept — all before the Academy
- * exists. Nothing is uploaded here; the caller hands the result to
- * `pendingBrandingStore` once the provisioning request is created.
+ * exists. Nothing is uploaded here.
+ *
+ * W2 — the caller sends the palette WITH the provisioning request (applied
+ * server-side by its `branding` step, so it survives a refresh); only the
+ * logo file waits in the page until the Academy exists, then is attached by
+ * media-asset id (`pendingLogoStore`, provisioning feature).
  */
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -14,13 +18,18 @@ import { BrandStudio } from './BrandStudio';
 import { BrandPreviewFrame } from './BrandPreviewFrame';
 import { brandPreviewSample } from './brand-preview-sample';
 import { toPaletteInput, useBrandStudio } from './useBrandStudio';
-import type { PendingBranding } from './pending-branding';
+
+/** What the Owner chose here: a logo file and/or the palette inputs. */
+export interface SetupBrandingChoice {
+  readonly logoFile?: File;
+  readonly palette?: ReturnType<typeof toPaletteInput>;
+}
 
 export interface SetupBrandStudioProps {
   readonly themeKey: WebsiteThemeKey;
   readonly academyName: string;
   /** The latest choice, or `null` while the Owner hasn't touched this block. */
-  readonly onChange: (value: PendingBranding | null) => void;
+  readonly onChange: (value: SetupBrandingChoice | null) => void;
 }
 
 export function SetupBrandStudio({

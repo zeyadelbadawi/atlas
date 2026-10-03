@@ -3,7 +3,8 @@
  *
  * Mutation hook for updating an existing course.
  */
-import { useApiMutation } from '@/shared/hooks';
+import { useApiMutation, useAcademyBoundMutation } from '@/shared/hooks';
+import type { AcademyScopedVariables } from '@/shared/hooks';
 import type { ApiError } from '@api';
 import { useCourseCatalogInvalidation } from './useCourseCatalogInvalidation';
 import { courseService } from '../services/CourseService';
@@ -15,15 +16,21 @@ export interface UpdateCourseVariables {
 }
 
 export function useUpdateCourse(academyId: string) {
-  const invalidateCatalog = useCourseCatalogInvalidation(academyId);
+  const invalidateCatalog = useCourseCatalogInvalidation();
 
-  return useApiMutation<Course, UpdateCourseVariables, ApiError>({
-    mutationFn: ({ courseId, payload }) =>
+  const mutation = useApiMutation<
+    Course,
+    AcademyScopedVariables<UpdateCourseVariables>,
+    ApiError
+  >({
+    mutationFn: ({ academyId, payload: { courseId, payload } }) =>
       courseService.updateCourse(academyId, courseId, payload),
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: async (_course, { courseId }) => {
-      await invalidateCatalog(courseId);
+    onSuccess: async (_course, { academyId, payload: { courseId } }) => {
+      await invalidateCatalog(academyId, courseId);
     },
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }

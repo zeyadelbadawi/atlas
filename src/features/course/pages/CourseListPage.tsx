@@ -31,7 +31,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useConfirmDialog } from '@app/providers';
 import { toast } from '@/hooks/use-toast';
-import { useDateFormatter, useDebounce, usePagination } from '@hooks';
+import {
+  useDateFormatter,
+  useDebounce,
+  usePagination,
+  usePermissions,
+} from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useCourses, useDeleteCourse } from '../hooks';
 import {
@@ -100,6 +105,11 @@ export default function CourseListPage(): JSX.Element {
   const hasAnyCourses = totalItems > 0 || hasActiveFilters;
 
   const { mutateAsync: deleteCourse } = useDeleteCourse(academyId ?? '');
+
+  // W6 — the guided wizard is for the course managers (same door as the
+  // wizard route); instructors keep the builder.
+  const { hasPermission } = usePermissions();
+  const canContinueSetup = hasPermission('course.update');
 
   const goTo = (path: string) =>
     academyId && navigate(buildPath(path, { academyId }));
@@ -205,6 +215,19 @@ export default function CourseListPage(): JSX.Element {
               align="end"
               onClick={(e) => e.stopPropagation()}
             >
+              {canContinueSetup && row.original.status === 'draft' ? (
+                <DropdownMenuItem
+                  onClick={() =>
+                    // No `step`: the wizard resumes at the first incomplete one.
+                    goToCourse(
+                      DASHBOARD_ROUTES.academyCourseWizard,
+                      row.original.id
+                    )
+                  }
+                >
+                  {t('course:list.actions.continueSetup')}
+                </DropdownMenuItem>
+              ) : null}
               <DropdownMenuItem
                 onClick={() =>
                   goToCourse(
@@ -247,7 +270,7 @@ export default function CourseListPage(): JSX.Element {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [t, academyId]
+    [t, academyId, canContinueSetup]
   );
 
   if (error) {

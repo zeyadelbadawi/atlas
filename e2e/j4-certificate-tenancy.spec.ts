@@ -25,6 +25,7 @@ import {
   requireSeed,
   uniqueLearnerEmail,
   type Session,
+  uniqueLearnerName,
 } from './support/atlas';
 import { clearAuthRateLimits } from './support/global-setup';
 
@@ -67,7 +68,7 @@ test.describe('J4 — certificate tenancy', () => {
     const context = await browser.newContext();
     const page = await context.newPage();
     const email = uniqueLearnerEmail('j4');
-    await registerLearnerThroughWebsite(page, email, 'J4 Learner');
+    await registerLearnerThroughWebsite(page, email, uniqueLearnerName('J4 Learner'));
     await expect(
       page.getByText(/check your (email|inbox)|account created|your account is ready|verify/i).first()
     ).toBeVisible({ timeout: 20_000 });

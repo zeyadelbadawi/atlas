@@ -1,0 +1,234 @@
+{
+  "common": {
+    "loadMore": "عرض المزيد",
+    "loadingMore": "جارٍ التحميل…",
+    "endOfList": "وصلت إلى نهاية القائمة.",
+    "range": {
+      "label": "الفترة",
+      "1": "آخر 24 ساعة",
+      "7": "آخر 7 أيام",
+      "30": "آخر 30 يومًا",
+      "90": "آخر 90 يومًا"
+    },
+    "all": "الكل",
+    "clearFilters": "مسح عوامل التصفية",
+    "notAvailable": "—",
+    "privacyNote": "عناوين البريد مخفية جزئيًا ولا تُعرض عناوين IP أبدًا. لا يُخزَّن هنا أي محتوى بريد أو رموز أو روابط ولا يُعرض."
+  },
+  "activity": {
+    "title": "نشاط بريد الأكاديميات",
+    "subtitle": "الرسائل التي أرسلتها أطلس نيابةً عن كل أكاديمية، وما حدث لها.",
+    "filters": {
+      "academy": "الأكاديمية",
+      "allAcademies": "كل الأكاديميات",
+      "status": "الحالة",
+      "allStatuses": "كل الحالات",
+      "type": "نوع الرسالة",
+      "allTypes": "كل أنواع الرسائل"
+    },
+    "summary": {
+      "heading": "الملخص",
+      "total": "الرسائل",
+      "totalHint": "رسائل الأكاديميات في هذه الفترة",
+      "delivered": "تم التسليم",
+      "deliveredHint": "بتأكيد من مزوّد البريد",
+      "deliveredUnconfirmed": "لم تصل تأكيدات تسليم في هذه الفترة",
+      "sent": "أُرسلت إلى المزوّد",
+      "sentHint": "قُبلت ولم يُؤكَّد تسليمها بعد",
+      "problems": "فشلت أو ارتدّت",
+      "problemsHint": "تحتاج إلى متابعة",
+      "notSent": "لم تُرسل",
+      "notSentHint": "تفضيل المستلم أو الحد اليومي أو عنوان محظور"
+    },
+    "academies": {
+      "heading": "الأكاديميات الأكثر نشاطًا",
+      "description": "اختر أكاديمية لعرض رسائلها فقط.",
+      "emails_zero": "{{formatted}} رسالة",
+      "emails_one": "رسالة واحدة",
+      "emails_two": "رسالتان",
+      "emails_few": "{{formatted}} رسائل",
+      "emails_many": "{{formatted}} رسالة",
+      "emails_other": "{{formatted}} رسالة",
+      "problems_zero": "{{formatted}} مشكلة",
+      "problems_one": "مشكلة واحدة",
+      "problems_two": "مشكلتان",
+      "problems_few": "{{formatted}} مشكلات",
+      "problems_many": "{{formatted}} مشكلة",
+      "problems_other": "{{formatted}} مشكلة",
+      "unnamed": "أكاديمية {{id}}",
+      "view": "عرض رسائل {{name}}"
+    },
+    "table": {
+      "caption": "رسائل الأكاديميات، الأحدث أولًا",
+      "when": "الوقت",
+      "academy": "الأكاديمية",
+      "type": "نوع الرسالة",
+      "recipient": "المستلم",
+      "status": "الحالة",
+      "delivery": "المزوّد",
+      "issue": "المشكلة",
+      "security": "رسالة أمان",
+      "attempts_zero": "{{count}} محاولة",
+      "attempts_one": "محاولة واحدة",
+      "attempts_two": "محاولتان",
+      "attempts_few": "{{count}} محاولات",
+      "attempts_many": "{{count}} محاولة",
+      "attempts_other": "{{count}} محاولة",
+      "unknownRecipient": "حساب محذوف"
+    },
+    "statuses": {
+      "queued": "في الانتظار",
+      "retrying": "إعادة المحاولة",
+      "waiting": "مؤجلة (فترة تهدئة أو ملخص)",
+      "sent": "أُرسلت إلى المزوّد",
+      "delivered": "تم التسليم",
+      "delayed": "أخّرها خادم المستلم",
+      "bounced": "ارتدّت",
+      "complained": "عُلّمت كرسالة مزعجة",
+      "not_sent": "لم تُرسل",
+      "in_app_only": "داخل التطبيق فقط",
+      "suppressed": "محظورة",
+      "failed": "فشلت"
+    },
+    "errors": {
+      "recipient_preference": "أوقف المستلم هذا النوع من الرسائل",
+      "daily_limit": "بلغ المستلم الحد اليومي للرسائل",
+      "address_suppressed": "العنوان في قائمة عدم الإرسال",
+      "recipient_unavailable": "حساب المستلم غير متاح",
+      "source_deleted": "حُذف المصدر قبل الإرسال",
+      "configuration": "مشكلة في الإعدادات",
+      "quota": "حصة المزوّد أو حد المعدل",
+      "provider_rejected": "رفض المزوّد الرسالة",
+      "provider_unavailable": "المزوّد غير متاح",
+      "bounce_hard": "ارتداد دائم",
+      "bounce_soft": "ارتداد مؤقت",
+      "complaint": "شكوى رسائل مزعجة",
+      "unknown": "خطأ غير مصنّف"
+    },
+    "empty": {
+      "title": "لا توجد رسائل أكاديميات في هذه الفترة",
+      "description": "ستظهر هنا الرسائل المرسلة نيابةً عن الأكاديميات."
+    },
+    "noResults": {
+      "title": "لا توجد رسائل تطابق عوامل التصفية",
+      "description": "جرّب حالة أو نوع رسالة أو فترة أخرى."
+    }
+  },
+  "security": {
+    "title": "مراقبة رموز التحقق والأمان",
+    "subtitle": "رموز تسجيل الدخول ورموز حذف الحساب ونشاط حدود المعدل في أطلس.",
+    "filters": {
+      "surface": "الواجهة",
+      "allSurfaces": "كل الواجهات",
+      "management": "لوحة الإدارة",
+      "academy": "مواقع الأكاديميات",
+      "type": "الحدث",
+      "allTypes": "كل الأحداث",
+      "email": "البريد الإلكتروني",
+      "emailHint": "تتم المطابقة عبر بصمة مشفّرة بمفتاح. لا يُخزَّن العنوان.",
+      "ip": "عنوان IP",
+      "ipHint": "تتم المطابقة عبر بصمة مشفّرة بمفتاح. لا يُخزَّن عنوان IP.",
+      "apply": "تطبيق",
+      "invalidEmail": "أدخل بريدًا إلكترونيًا صالحًا.",
+      "invalidIp": "أدخل عنوان IPv4 أو IPv6 صالحًا."
+    },
+    "tiles": {
+      "sent": "الرموز المرسلة",
+      "sentHint": "رموز تسجيل الدخول، بما فيها إعادات الإرسال",
+      "verifyRate": "معدل التحقق",
+      "verifyRateHint": "الرموز المُتحقَّق منها ÷ الرموز المرسلة",
+      "verifyRateNone": "لم تُرسل رموز",
+      "failed": "محاولات فاشلة",
+      "failedHint": "رموز خاطئة أو منتهية",
+      "locked": "حالات الإيقاف",
+      "lockedHint": "تحديات أُلغيت بعد محاولات كثيرة",
+      "rateLimited": "تجاوزات حد المعدل",
+      "rateLimitedHint": "طلبات دخول ورموز رُفضت"
+    },
+    "deletion": {
+      "heading": "رموز حذف الحساب",
+      "sent": "أُرسلت",
+      "verified": "تأكدت",
+      "failed": "فشلت",
+      "locked": "أُوقفت",
+      "rateLimited": "تجاوزت حد المعدل"
+    },
+    "chart": {
+      "heading": "النشاط عبر الزمن",
+      "description": "أعداد يومية (بتوقيت UTC).",
+      "title": "أحداث الأمان اليومية",
+      "showTable": "عرض كجدول",
+      "showChart": "عرض كرسم بياني",
+      "date": "التاريخ",
+      "series": {
+        "sent": "مرسلة",
+        "verified": "مُتحقَّق منها",
+        "failed": "فاشلة",
+        "locked": "موقوفة",
+        "rateLimited": "تجاوزت حد المعدل"
+      }
+    },
+    "events": {
+      "heading": "أحدث الأحداث",
+      "caption": "أحداث الأمان، الأحدث أولًا",
+      "when": "الوقت",
+      "event": "الحدث",
+      "account": "الحساب",
+      "surface": "الواجهة",
+      "network": "الشبكة",
+      "details": "التفاصيل",
+      "preAuth": "قبل تسجيل الدخول (مرجع {{ref}})",
+      "unknownAccount": "حساب غير معروف",
+      "ipRef": "مرجع IP {{ref}}",
+      "occurrences_zero": "{{count}} مرة",
+      "occurrences_one": "مرة واحدة",
+      "occurrences_two": "مرتان",
+      "occurrences_few": "{{count}} مرات",
+      "occurrences_many": "{{count}} مرة",
+      "occurrences_other": "{{count}} مرة",
+      "attemptsLeft_zero": "لم تتبقَّ محاولات",
+      "attemptsLeft_one": "تبقّت محاولة واحدة",
+      "attemptsLeft_two": "تبقّت محاولتان",
+      "attemptsLeft_few": "تبقّت {{count}} محاولات",
+      "attemptsLeft_many": "تبقّت {{count}} محاولة",
+      "attemptsLeft_other": "تبقّت {{count}} محاولة"
+    },
+    "types": {
+      "otp_sent": "أُرسل رمز",
+      "otp_resent": "أُعيد إرسال رمز",
+      "otp_verified": "تم التحقق من الرمز",
+      "otp_failed": "فشل الرمز",
+      "otp_expired": "انتهت صلاحية الرمز",
+      "otp_locked": "إيقاف بعد محاولات كثيرة",
+      "otp_rate_limited": "تجاوز حد طلبات الرموز",
+      "otp_suppressed": "عنوان لا يمكن الإرسال إليه",
+      "deletion_code_sent": "أُرسل رمز حذف",
+      "deletion_code_verified": "تأكيد الحذف",
+      "deletion_code_failed": "فشل رمز الحذف",
+      "deletion_code_locked": "إيقاف الحذف",
+      "deletion_code_rate_limited": "تجاوز حد طلبات الحذف",
+      "signin_rate_limited": "تجاوز حد تسجيل الدخول"
+    },
+    "reasons": {
+      "invalid_code": "رمز خاطئ",
+      "context_mismatch": "استُخدم الرمز في موقع آخر",
+      "expired": "منتهي الصلاحية",
+      "dead_challenge": "التحدي لم يعد صالحًا",
+      "attempts_exhausted": "محاولات كثيرة",
+      "account_budget": "حد الحساب",
+      "ip_budget": "حد الشبكة",
+      "resend_budget": "حد إعادة الإرسال",
+      "hourly_budget": "الحد الساعي",
+      "cooldown": "مبكر جدًا",
+      "address_suppressed": "عنوان محظور"
+    },
+    "empty": {
+      "title": "لا توجد أحداث أمان في هذه الفترة",
+      "description": "ستظهر هنا رموز تسجيل الدخول ورموز الحذف وتجاوزات حد المعدل."
+    },
+    "noResults": {
+      "title": "لا توجد أحداث تطابق عوامل التصفية",
+      "description": "جرّب حدثًا أو واجهة أو فترة أخرى."
+    }
+  }
+}

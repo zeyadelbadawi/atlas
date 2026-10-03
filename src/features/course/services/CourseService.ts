@@ -16,6 +16,7 @@ import type {
   Course,
   CourseCategory,
   CourseLesson,
+  CoursePublishReadiness,
   CurriculumItem,
   CourseListQuery,
   CourseSection,
@@ -150,6 +151,22 @@ export class CourseService extends BaseService {
     return this.client.post<Course, undefined>(
       this.coursesPath(academyId, courseId, 'publish'),
       undefined,
+      options
+    );
+  }
+
+  /**
+   * W6 — publish readiness (blocking checks + warnings) for the guided
+   * course wizard. Advisory: `publishCourse` is not refused by the server
+   * when `ready` is false (Phase 1).
+   */
+  async getPublishReadiness(
+    academyId: string,
+    courseId: string,
+    options?: ReadOptions
+  ): Promise<CoursePublishReadiness> {
+    return this.client.get<CoursePublishReadiness>(
+      this.coursesPath(academyId, courseId, 'publish-readiness'),
       options
     );
   }
@@ -405,7 +422,14 @@ export class CourseService extends BaseService {
     options?: WriteOptions
   ): Promise<CurriculumItem[]> {
     return this.client.post<CurriculumItem[], typeof payload>(
-      this.coursesPath(academyId, courseId, 'sections', sectionId, 'items', 'attach'),
+      this.coursesPath(
+        academyId,
+        courseId,
+        'sections',
+        sectionId,
+        'items',
+        'attach'
+      ),
       payload,
       options
     );
@@ -420,7 +444,14 @@ export class CourseService extends BaseService {
     options?: WriteOptions
   ): Promise<CurriculumItem[]> {
     return this.client.post<CurriculumItem[], typeof payload>(
-      this.coursesPath(academyId, courseId, 'sections', sectionId, 'items', 'detach'),
+      this.coursesPath(
+        academyId,
+        courseId,
+        'sections',
+        sectionId,
+        'items',
+        'detach'
+      ),
       payload,
       options
     );
@@ -435,7 +466,14 @@ export class CourseService extends BaseService {
     options?: WriteOptions
   ): Promise<void> {
     await this.client.patch<void, ReorderItemsPayload>(
-      this.coursesPath(academyId, courseId, 'sections', sectionId, 'items', 'order'),
+      this.coursesPath(
+        academyId,
+        courseId,
+        'sections',
+        sectionId,
+        'items',
+        'order'
+      ),
       payload,
       options
     );

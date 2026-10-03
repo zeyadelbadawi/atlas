@@ -17,7 +17,8 @@
   },
   "validation": {
     "title": "Check the highlighted fields",
-    "description": "Some information needs to be corrected before saving."
+    "description": "Some information needs to be corrected before saving.",
+    "nameInvalid": "Enter a name that includes at least one letter or number."
   },
   "unauthorized": {
     "title": "Your session has expired",
@@ -74,7 +75,14 @@
     "lessonLocked": "Finish the earlier lessons in this course first. This one unlocks when the item before it is complete."
   },
   "provisioning": {
-    "stepFailed": "Something went wrong while setting up your Academy. Please try again or contact support if the problem continues."
+    "stepFailed": "Something went wrong while setting up your Academy. Please try again or contact support if the problem continues.",
+    "subdomainUnavailable": "This address is already taken. Please choose another one.",
+    "subdomainRequestInProgress": "This address is already being set up.",
+    "brandDataUriRejected": "Branding can't include embedded files. Upload your logo instead.",
+    "brandUnknownField": "The branding you chose couldn't be read. Please choose it again.",
+    "logoAssetInvalid": "That logo couldn't be used. Please upload an image.",
+    "academyNotReady": "Your Academy isn't ready for this yet. Please wait a moment.",
+    "notRetryable": "There's nothing to retry for this setup."
   },
   "checkout": {
     "expired": "This checkout has expired. Please start again.",
@@ -190,12 +198,18 @@
   "academy": {
     "insufficientRole": "Your role in this academy does not allow that. Ask an academy owner or manager if you need access.",
     "statusLocked": "This academy's status can't be changed here. If it was suspended, contact Atlas support.",
-    "devicePolicyAboveMaximum": "That limit is higher than the platform allows. Choose a number no higher than the maximum shown."
+    "devicePolicyAboveMaximum": "That limit is higher than the platform allows. Choose a number no higher than the maximum shown.",
+    "nameTaken": "Another academy already uses this name. Please choose a different one.",
+    "learnerNameTaken": "A learner in this academy already has this name. Add a middle or family name so it is unique here.",
+    "learnerNameTakenExistingAccount": "This person's account name matches a learner already in this academy. Ask them to add a middle or family name in their profile, then add them again."
   },
   "course": {
     "slugTaken": "That web address is already used by another course in this academy. Please choose a different one.",
     "insufficientRole": "Your role in this academy does not allow you to manage its courses.",
-    "hasLearnerActivity": "Learners already have progress, attempts or submissions for this item, so it can't be deleted — that would erase their records. Unpublish it (set it to draft) to hide it from learners instead."
+    "hasLearnerActivity": "Learners already have progress, attempts or submissions for this item, so it can't be deleted — that would erase their records. Unpublish it (set it to draft) to hide it from learners instead.",
+    "idempotencyKeyConflict": "This request was already used to create a different course. Reload the page and try again.",
+    "invalidIdempotencyKey": "This request couldn't be processed. Reload the page and try again.",
+    "notReady": "This course isn't ready to publish yet. Check the Review step for what is missing."
   },
   "support": {
     "caseClosed": "This ticket is closed. Please open a new ticket if you still need help."
@@ -232,7 +246,11 @@
     "choiceRequiresTwoOptions": "A choice question needs at least two options.",
     "shortAnswerRequiresAcceptedAnswer": "A short-answer question needs at least one accepted answer.",
     "pointsExceedMaximum": "Points per question cannot exceed 100.",
-    "locked": "This quiz is locked until you finish the item before it in the course."
+    "locked": "This quiz is locked until you finish the item before it in the course.",
+    "windowOrder": "The closing time must be after the opening time.",
+    "dueAfterWindow": "The due date can't be after the closing time.",
+    "questionsPerAttemptExceedsCount": "Questions per attempt can't be more than the {{questionCount}} questions in the quiz.",
+    "sectionNotInCourse": "That unit belongs to a different course."
   },
   "assignment": {
     "alreadySubmitted": "This assignment has already been submitted and does not allow resubmission.",
@@ -288,5 +306,11 @@
     "deletionCodeExpired": "This code has expired or was already used. Request a new code.",
     "deletionCodeCooldown": "A code was just sent. Wait a moment before requesting another.",
     "deletionEmailUnverified": "Verify your email address first — the confirmation code is sent there."
+  },
+  "organization": {
+    "nameUnavailable": "This organization name isn't available. Please try another."
+  },
+  "profile": {
+    "nameTakenInAcademy": "Another learner already uses this name in {{academies}}. Add a middle or family name so your name stays unique there."
   }
 }

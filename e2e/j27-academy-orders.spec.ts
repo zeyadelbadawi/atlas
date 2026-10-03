@@ -290,7 +290,7 @@ test.describe('J27 — Academy Orders and Platform payment lists', () => {
     page,
   }, testInfo) => {
     await signIn(page, SEED.manager);
-    await page.goto(`/dashboard/academy?academyId=${academyId}`);
+    await page.goto(`/dashboard/academy/${academyId}`);
     const nav = page.getByRole('navigation').first();
     await expect(nav).toBeVisible({ timeout: 90_000 });
     // The sidebar has rendered its academy section (Courses is a manager entry).

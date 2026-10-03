@@ -8,6 +8,7 @@ import { BaseService } from '@services';
 import { toCollectionParams } from '@api';
 import type {
   Academy,
+  AcademyMembership,
   UpdateAcademyPayload,
   UpdateAcademyBrandingPayload,
   AcademyMember,
@@ -63,6 +64,20 @@ export class AcademyService extends BaseService {
       ...options,
       params: { organizationId, ...options?.params },
     });
+  }
+
+  /**
+   * W5 — the caller's role, permissions and the academy summary for one
+   * academy. A 403 means the caller is not (or no longer) staff of it.
+   */
+  async getMyMembership(
+    academyId: string,
+    options?: ReadOptions
+  ): Promise<AcademyMembership> {
+    return this.client.get<AcademyMembership>(
+      this.path(academyId, 'me'),
+      options
+    );
   }
 
   /**

@@ -53,6 +53,7 @@ function renderAt(role: string, onboardingPending: boolean) {
           />
           <Route path="/onboarding" element={<Where />} />
           <Route path="/dashboard/academy" element={<Where />} />
+          <Route path="/dashboard/academy/:academyId" element={<Where />} />
         </Routes>
       </MemoryRouter>
     </IdentityContext.Provider>
@@ -68,14 +69,14 @@ describe('LegacyAcademyOnboardingRedirect', () => {
   it('sends an owner who finished setup to the academy dashboard', () => {
     renderAt('owner', false);
     expect(screen.getByTestId('where').textContent).toBe(
-      '/dashboard/academy?academyId=aca-1'
+      '/dashboard/academy/aca-1'
     );
   });
 
   it('sends a manager to the academy dashboard', () => {
     renderAt('manager', true);
     expect(screen.getByTestId('where').textContent).toBe(
-      '/dashboard/academy?academyId=aca-1'
+      '/dashboard/academy/aca-1'
     );
   });
 });

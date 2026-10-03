@@ -46,7 +46,7 @@ test.describe('J26 — website status, no categories, scroll', () => {
     request,
   }, testInfo) => {
     await signIn(page);
-    await page.goto(`/dashboard/academy?academyId=${academyId}`);
+    await page.goto(`/dashboard/academy/${academyId}`);
     const status = page.getByTestId('academy-website-status');
     await expect(status).toBeVisible({ timeout: 30_000 });
     await expect(status).toContainText('Website');
@@ -62,7 +62,7 @@ test.describe('J26 — website status, no categories, scroll', () => {
     await expect(page.getByText('Academy Status')).toHaveCount(0);
 
     // Arabic, RTL.
-    await page.goto(`/dashboard/academy?academyId=${academyId}`);
+    await page.goto(`/dashboard/academy/${academyId}`);
     await page.evaluate(() =>
       localStorage.setItem('atlas:language', JSON.stringify('ar'))
     );
@@ -104,9 +104,13 @@ test.describe('J26 — website status, no categories, scroll', () => {
     expect(refused.status()).toBe(400);
   });
 
-  test('Tasks 5 and 9: create from the bottom of the form → success at the top, builder at the top, no category anywhere', async ({
+  test('Tasks 5 and 9: create from the bottom of the form → the next step at the top, builder at the top, no category anywhere', async ({
     page,
   }, testInfo) => {
+    // W6 — "Create Course" is the guided wizard's first step (Basics). A
+    // short window keeps its submit below the fold, so creating really
+    // happens "from the bottom of the form".
+    await page.setViewportSize({ width: 1280, height: 420 });
     await signIn(page);
     await page.goto(`/dashboard/academy/${academyId}/courses/create`);
     await expect(page.getByLabel('Course Title')).toBeVisible({
@@ -117,16 +121,29 @@ test.describe('J26 — website status, no categories, scroll', () => {
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     expect(await scrollY(page)).toBeGreaterThan(300);
     await page.getByRole('button', { name: 'Create Course' }).click();
-    const cont = page.getByRole('button', {
-      name: 'Continue to Course Builder',
-    });
-    await expect(cont).toBeInViewport({ timeout: 30_000 });
+    // The wizard continues at Details: its heading is on screen, at the top.
+    await page.waitForURL(/\/setup\?step=details/, { timeout: 30_000 });
+    const nextStep = page.getByTestId('wizard-step-heading');
+    await expect(nextStep).toHaveText('Course details');
+    await expect(nextStep).toBeInViewport();
     expect(await scrollY(page)).toBe(0);
+    await expect(page.getByText('Category', { exact: true })).toHaveCount(0);
     await page.screenshot({ path: testInfo.outputPath('created.png') });
-    await cont.click();
-    await page.waitForURL(/\/builder/);
+    // Continuing into the curriculum (the builder, embedded) from the
+    // bottom of a step also starts at the top.
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    expect(await scrollY(page)).toBeGreaterThan(0);
+    await page
+      .getByRole('navigation', { name: 'Course setup steps' })
+      .getByRole('button', { name: /^4\. Curriculum/ })
+      .click();
+    await page.waitForURL(/\/setup\?step=curriculum/);
+    await expect(page.getByTestId('wizard-step-heading')).toHaveText(
+      'Curriculum'
+    );
     await expect.poll(() => scrollY(page)).toBe(0);
-    const builderUrl = page.url();
+    await expect(page.getByTestId('wizard-step-heading')).toBeInViewport();
+    const builderUrl = page.url().replace(/\/setup\?.*$/, '/builder');
 
     // Edit: no Select Category.
     // The Edit page is the course detail address (`academyCourseDetail`).

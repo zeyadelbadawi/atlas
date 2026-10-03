@@ -1122,9 +1122,7 @@
     "statusProposed": "لوحة مقترحة — اعتمدها لتأكيد اختيارك",
     "savingLogo": "جارٍ حفظ شعارك…",
     "logoSaveError": "تعذّر حفظ شعارك. يُرجى المحاولة مرة أخرى.",
-    "sampleName": "أكاديميتك",
-    "finishSaving": "جارٍ حفظ شعارك وألوانك…",
-    "finishFailed": "لم نتمكن من حفظ شعارك وألوانك بعد."
+    "sampleName": "أكاديميتك"
   },
   "theme1": {
     "liveData": {

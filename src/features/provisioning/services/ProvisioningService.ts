@@ -100,6 +100,24 @@ export class ProvisioningService extends BaseService {
     );
   }
 
+  /**
+   * W2 — attaches the setup form's logo, already uploaded to the new
+   * Academy's media library, by media-asset id (never bytes). The backend
+   * checks the asset belongs to this request's Academy and applies it.
+   */
+  async attachProvisioningLogo(
+    organizationId: string,
+    requestId: string,
+    mediaAssetId: string,
+    options?: WriteOptions
+  ): Promise<ProvisioningRequest> {
+    return this.client.put<ProvisioningRequest, { mediaAssetId: string }>(
+      this.requestsPath(organizationId, requestId, 'brand-logo'),
+      { mediaAssetId },
+      options
+    );
+  }
+
   /** Cancels a provisioning request, where it is still in a cancellable state. */
   async cancelProvisioning(
     organizationId: string,

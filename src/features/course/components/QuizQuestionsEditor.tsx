@@ -12,11 +12,15 @@
  * `QuizAuthoringFormData` form via `useFormContext` — only the lesson
  * list is passed down, because it comes from a different query.
  *
+ * W7 — the optional explanation and related lesson sit behind a per-question
+ * "More options" disclosure, opened by itself when either has a value (an
+ * edited quiz) or an error.
+ *
  * `QuizStudentPreview` is the read-only "preview as student" rendering of
  * the same form values: no correct answer is highlighted, options keep
  * their authored order and every input is disabled.
  */
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Plus, Trash2 } from 'lucide-react';
@@ -54,6 +58,7 @@ import {
   type QuizQuestionFormData,
 } from '@features/learning';
 import { TEXT_QUESTION_TYPES, type QuizQuestionType } from '@types';
+import { AdvancedOptionsDisclosure } from './AdvancedOptionsDisclosure';
 
 /** A lesson the related-lesson select can point at. */
 export interface RelatedLessonOption {
@@ -131,7 +136,8 @@ function QuestionCard({
   onRemove,
 }: QuestionCardProps): JSX.Element {
   const { t } = useTranslation();
-  const { control, watch, setValue } = useFormContext<QuizAuthoringFormData>();
+  const { control, watch, setValue, formState } =
+    useFormContext<QuizAuthoringFormData>();
 
   const options = useFieldArray({
     control,
@@ -143,6 +149,21 @@ function QuestionCard({
   });
 
   const type = watch(`questions.${questionIndex}.type`);
+
+  // "More options" (explanation, related lesson): open when either already
+  // has a value (an edited quiz) or carries an error.
+  const explanation = watch(`questions.${questionIndex}.explanation`);
+  const relatedLessonId = watch(`questions.${questionIndex}.relatedLessonId`);
+  const [moreOpen, setMoreOpen] = useState(
+    () => !!explanation?.trim() || !!relatedLessonId
+  );
+  const questionErrors = formState.errors.questions?.[questionIndex];
+  const hasMoreError = !!(
+    questionErrors?.explanation || questionErrors?.relatedLessonId
+  );
+  useEffect(() => {
+    if (hasMoreError) setMoreOpen(true);
+  }, [hasMoreError, formState.submitCount]);
 
   /**
    * Switching type re-shapes the option list to match what that type
@@ -272,7 +293,7 @@ function QuestionCard({
           )}
         />
 
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2">
           <FormField
             control={control}
             name={`questions.${questionIndex}.type`}
@@ -329,44 +350,6 @@ function QuestionCard({
                     }
                   />
                 </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={control}
-            name={`questions.${questionIndex}.relatedLessonId`}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex items-center gap-1.5">
-                  {t('course:quizAuthoring.editor.relatedLessonLabel')}
-                  <FieldHelp contentKey="course:quizAuthoring.editor.help.relatedLesson" />
-                </FormLabel>
-                <Select
-                  value={field.value ? field.value : NO_LESSON}
-                  onValueChange={(value) =>
-                    field.onChange(value === NO_LESSON ? '' : value)
-                  }
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value={NO_LESSON}>
-                      {t('course:quizAuthoring.editor.relatedLessonNone')}
-                    </SelectItem>
-                    {lessons.map((lesson) => (
-                      <SelectItem key={lesson.id} value={lesson.id}>
-                        {lesson.sectionTitle
-                          ? `${lesson.sectionTitle} · ${lesson.title}`
-                          : lesson.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
                 <FormMessage />
               </FormItem>
             )}
@@ -536,29 +519,73 @@ function QuestionCard({
           </div>
         )}
 
-        <FormField
-          control={control}
-          name={`questions.${questionIndex}.explanation`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="flex items-center gap-1.5">
-                {t('course:quizAuthoring.editor.explanationLabel')}
-                <FieldHelp contentKey="course:quizAuthoring.editor.help.explanation" />
-              </FormLabel>
-              <FormControl>
-                <Textarea
-                  rows={2}
-                  {...field}
-                  value={field.value ?? ''}
-                  placeholder={t(
-                    'course:quizAuthoring.editor.explanationPlaceholder'
-                  )}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <AdvancedOptionsDisclosure
+          open={moreOpen}
+          onOpenChange={setMoreOpen}
+          label={t('course:quizAuthoring.editor.moreOptions')}
+          testId={`question-${questionIndex}-more-options`}
+        >
+          <FormField
+            control={control}
+            name={`questions.${questionIndex}.explanation`}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center gap-1.5">
+                  {t('course:quizAuthoring.editor.explanationLabel')}
+                  <FieldHelp contentKey="course:quizAuthoring.editor.help.explanation" />
+                </FormLabel>
+                <FormControl>
+                  <Textarea
+                    rows={2}
+                    {...field}
+                    value={field.value ?? ''}
+                    placeholder={t(
+                      'course:quizAuthoring.editor.explanationPlaceholder'
+                    )}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name={`questions.${questionIndex}.relatedLessonId`}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center gap-1.5">
+                  {t('course:quizAuthoring.editor.relatedLessonLabel')}
+                  <FieldHelp contentKey="course:quizAuthoring.editor.help.relatedLesson" />
+                </FormLabel>
+                <Select
+                  value={field.value ? field.value : NO_LESSON}
+                  onValueChange={(value) =>
+                    field.onChange(value === NO_LESSON ? '' : value)
+                  }
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value={NO_LESSON}>
+                      {t('course:quizAuthoring.editor.relatedLessonNone')}
+                    </SelectItem>
+                    {lessons.map((lesson) => (
+                      <SelectItem key={lesson.id} value={lesson.id}>
+                        {lesson.sectionTitle
+                          ? `${lesson.sectionTitle} · ${lesson.title}`
+                          : lesson.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </AdvancedOptionsDisclosure>
       </CardContent>
     </Card>
   );

@@ -26,6 +26,7 @@ import {
   signOutInBrowser,
   uniqueLearnerEmail,
   type Session,
+  uniqueLearnerName,
 } from './support/atlas';
 import { clearAuthRateLimits } from './support/global-setup';
 
@@ -61,7 +62,7 @@ test.describe('J2 — surface enforcement', () => {
   });
 
   test('a learner is created through the academy website', async ({ request }) => {
-    await registerLearnerThroughWebsite(page, learnerEmail, 'J2 Learner');
+    await registerLearnerThroughWebsite(page, learnerEmail, uniqueLearnerName('J2 Learner'));
 
     // The page confirms the account, and the backend has the membership
     // bound to THIS academy — the two halves of "registered on the academy

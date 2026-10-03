@@ -44,6 +44,9 @@ import {
   Wallet,
   Store,
   Inbox,
+  Send,
+  Mail,
+  ShieldAlert,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem, NavigationSection } from '@types';
@@ -61,7 +64,13 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
       id: 'academy-overview',
       requiresEntitlement: true,
       labelKey: 'navigation:items.academyOverview',
-      path: DASHBOARD_ROUTES.academy,
+      // W5 (F3) — the overview of the CURRENT academy. The bare
+      // `/dashboard/academy` (no academy yet) redirects to the last one.
+      path: activeAcademyId
+        ? buildPath(DASHBOARD_ROUTES.academyOverview, {
+            academyId: activeAcademyId,
+          })
+        : DASHBOARD_ROUTES.academy,
       icon: GraduationCap,
       requiresAuth: true,
       requiredPermissions: ['academy.view'],
@@ -228,6 +237,21 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
         // the create/edit/publish controls, and the backend checks the
         // caller's real `academy_members` row regardless.
         requiredPermissions: ['announcement.view'],
+      },
+      {
+        // W3-compose — email and/or in-app messages to this academy's
+        // learners or staff. Owner/administrator only (backend: an ACTIVE
+        // academy membership with one of those roles), so the entry uses
+        // the same owner-tier permission as the activity log.
+        id: 'academy-messages',
+        requiresEntitlement: true,
+        labelKey: 'navigation:items.academyMessages',
+        path: buildPath(DASHBOARD_ROUTES.academyMessages, {
+          academyId: activeAcademyId,
+        }),
+        icon: Send,
+        requiresAuth: true,
+        requiredPermissions: ['tenant.dashboard.view'],
       },
       {
         id: 'academy-website',
@@ -610,6 +634,43 @@ export function getDashboardNavigation(
           requiresAuth: true,
           requiredRoles: ['platform_owner'],
           matchNestedPaths: true,
+        },
+      ],
+      showDivider: true,
+    },
+    {
+      /*
+        W3 — EMAIL & NOTIFICATIONS: exactly three Platform-Owner pages.
+        Compose and Send (W3-compose) and two read-only consoles. The APIs
+        (`platform-communications/*`, `platform-security/*`) enforce
+        PlatformOwnerGuard + RLS; these entries only decide visibility.
+      */
+      id: 'platform-email',
+      labelKey: 'navigation:sections.platformEmail',
+      items: [
+        {
+          id: 'platform-email-compose',
+          labelKey: 'navigation:items.platformEmailCompose',
+          path: DASHBOARD_ROUTES.platformEmailCompose,
+          icon: Send,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+        },
+        {
+          id: 'platform-email-activity',
+          labelKey: 'navigation:items.platformEmailActivity',
+          path: DASHBOARD_ROUTES.platformEmailActivity,
+          icon: Mail,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+        },
+        {
+          id: 'platform-security-monitoring',
+          labelKey: 'navigation:items.platformSecurityMonitoring',
+          path: DASHBOARD_ROUTES.platformSecurityMonitoring,
+          icon: ShieldAlert,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
         },
       ],
       showDivider: true,

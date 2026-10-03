@@ -10,15 +10,15 @@
  *
  *   - the owner of an organization whose setup is still open → `/onboarding`,
  *     which resumes at the next open step;
- *   - anyone else → that academy's dashboard, where they were headed anyway
- *     (it syncs the sidebar's active academy from `?academyId=` itself).
+ *   - anyone else → that academy's overview, where they were headed anyway
+ *     (W5: addressed by the URL, the single source of truth for the academy).
  *
  * `replace`, so the dead address never sits in history.
  */
 import { Navigate, useParams } from 'react-router-dom';
 import { useAuth } from '@hooks';
 import { isOnboardingPendingForActiveOrganization } from '@utils';
-import { DASHBOARD_ROUTES, ONBOARDING_ROUTES } from './route-paths';
+import { DASHBOARD_ROUTES, ONBOARDING_ROUTES, buildPath } from './route-paths';
 
 export function LegacyAcademyOnboardingRedirect(): JSX.Element {
   const { academyId } = useParams<{ academyId: string }>();
@@ -32,7 +32,7 @@ export function LegacyAcademyOnboardingRedirect(): JSX.Element {
     <Navigate
       to={
         academyId
-          ? `${DASHBOARD_ROUTES.academy}?academyId=${encodeURIComponent(academyId)}`
+          ? buildPath(DASHBOARD_ROUTES.academyOverview, { academyId })
           : DASHBOARD_ROUTES.academy
       }
       replace

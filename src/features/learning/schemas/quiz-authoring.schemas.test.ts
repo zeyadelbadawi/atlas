@@ -10,8 +10,12 @@
 import { describe, expect, it } from 'vitest';
 import {
   blankQuizQuestion,
+  customisedAdvancedSettings,
   defaultQuizSettingsFormValues,
+  isAdvancedSettingCustomised,
   quizAuthoringSchema,
+  QUIZ_ADVANCED_SETTING_KEYS,
+  QUIZ_SERVER_DEFAULT_SETTINGS,
   QUIZ_SETTINGS_PRESETS,
   type QuizAuthoringFormData,
   type QuizQuestionFormData,
@@ -252,7 +256,9 @@ describe('quizAuthoringSchema — settings bounds', () => {
   it('questionsPerAttempt is a positive whole number or empty', () => {
     expect(
       quizAuthoringSchema.safeParse(
-        quiz([choiceQuestion()], { questionsPerAttempt: 3 })
+        quiz([choiceQuestion(), choiceQuestion(), choiceQuestion()], {
+          questionsPerAttempt: 3,
+        })
       ).success
     ).toBe(true);
     expect(
@@ -276,6 +282,104 @@ describe('quizAuthoringSchema — settings bounds', () => {
       expect(
         quizAuthoringSchema.safeParse(quiz([choiceQuestion()], preset)).success
       ).toBe(true);
+    }
+  });
+});
+
+describe('W7 — client validation the server used to be the only one to enforce', () => {
+  it('passing score and max attempts are whole numbers (blank = no limit)', () => {
+    expect(
+      issuePaths(quiz([choiceQuestion()], { passingScore: 70.5 }))
+    ).toContain('passingScore');
+    expect(
+      issuePaths(quiz([choiceQuestion()], { maxAttempts: 1.5 }))
+    ).toContain('maxAttempts');
+    expect(
+      quizAuthoringSchema.safeParse(
+        quiz([choiceQuestion()], {
+          passingScore: '' as never,
+          maxAttempts: '' as never,
+        })
+      ).success
+    ).toBe(true);
+    expect(
+      quizAuthoringSchema.safeParse(
+        quiz([choiceQuestion()], { passingScore: 70, maxAttempts: 3 })
+      ).success
+    ).toBe(true);
+  });
+
+  it('the due date cannot be after the closing time', () => {
+    expect(
+      issuePaths(
+        quiz([choiceQuestion()], {
+          availableUntil: '2026-10-01T10:00',
+          dueAt: '2026-10-01T11:00',
+        })
+      )
+    ).toContain('dueAt');
+    expect(
+      quizAuthoringSchema.safeParse(
+        quiz([choiceQuestion()], {
+          availableUntil: '2026-10-01T10:00',
+          dueAt: '2026-10-01T10:00',
+        })
+      ).success
+    ).toBe(true);
+  });
+
+  it('questions per attempt cannot exceed the number of questions', () => {
+    expect(
+      issuePaths(quiz([choiceQuestion()], { questionsPerAttempt: 2 }))
+    ).toContain('questionsPerAttempt');
+    expect(
+      quizAuthoringSchema.safeParse(
+        quiz([choiceQuestion(), choiceQuestion()], { questionsPerAttempt: 2 })
+      ).success
+    ).toBe(true);
+  });
+});
+
+describe('W7 — one baseline for "customised" advanced settings', () => {
+  it('a new quiz (Practice) and an untouched server-default quiz have nothing customised', () => {
+    expect(customisedAdvancedSettings(defaultQuizSettingsFormValues())).toEqual(
+      []
+    );
+    expect(customisedAdvancedSettings(QUIZ_SERVER_DEFAULT_SETTINGS)).toEqual(
+      []
+    );
+  });
+
+  it('Practice deliberately differs from the server defaults only on review', () => {
+    const differing = QUIZ_ADVANCED_SETTING_KEYS.filter(
+      (key) =>
+        String(QUIZ_SETTINGS_PRESETS.practice[key] ?? '') !==
+        String(QUIZ_SERVER_DEFAULT_SETTINGS[key] ?? '')
+    );
+    expect(differing.sort()).toEqual(['showAnswers', 'showExplanations']);
+  });
+
+  it('the Exam preset and an integrity change count as customised', () => {
+    expect(customisedAdvancedSettings(QUIZ_SETTINGS_PRESETS.exam)).toEqual(
+      expect.arrayContaining(['mode', 'integrityMode', 'requireFullscreen'])
+    );
+    expect(isAdvancedSettingCustomised('integrityMode', 'warn')).toBe(true);
+    expect(isAdvancedSettingCustomised('integrityMode', 'off')).toBe(false);
+    // Number inputs hand back strings; blanks are blanks.
+    expect(isAdvancedSettingCustomised('maxViolations', '3')).toBe(false);
+    expect(isAdvancedSettingCustomised('questionsPerAttempt', '')).toBe(false);
+  });
+
+  it('nothing required is hidden: essentials are not advanced keys', () => {
+    for (const key of [
+      'passingScore',
+      'maxAttempts',
+      'timeLimitMinutes',
+      'requiredForCompletion',
+    ]) {
+      expect(QUIZ_ADVANCED_SETTING_KEYS as readonly string[]).not.toContain(
+        key
+      );
     }
   });
 });

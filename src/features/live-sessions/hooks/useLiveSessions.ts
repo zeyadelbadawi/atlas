@@ -7,7 +7,12 @@
  * say WHICH one is missing instead of failing generically.
  */
 import { useQueryClient } from '@tanstack/react-query';
-import { useApiMutation, useApiQuery } from '@/shared/hooks';
+import {
+  useApiMutation,
+  useApiQuery,
+  useAcademyBoundMutation,
+} from '@/shared/hooks';
+import type { AcademyScopedVariables } from '@/shared/hooks';
 import { liveSessionKeys } from '@services/query';
 import { liveSessionService } from '../services/LiveSessionService';
 import type {
@@ -30,7 +35,7 @@ export function useLiveSessionsStatus(academyId: string | undefined) {
 
 export function useCourseLiveSessions(
   academyId: string | undefined,
-  courseId: string | undefined,
+  courseId: string | undefined
 ) {
   return useApiQuery<readonly LiveSession[], ApiError>({
     queryKey: liveSessionKeys.forCourse(academyId, courseId),
@@ -41,7 +46,7 @@ export function useCourseLiveSessions(
 
 export function useSessionAttendance(
   academyId: string | undefined,
-  liveSessionId: string | undefined,
+  liveSessionId: string | undefined
 ) {
   return useApiQuery<readonly ParticipantAttendance[], ApiError>({
     queryKey: liveSessionKeys.attendance(academyId, liveSessionId),
@@ -57,12 +62,11 @@ export function useSessionAttendance(
  * moves the recording allowance — leaving that stale would show a
  * customer a quota that has already been spent.
  */
-function useInvalidateLiveSessions(
-  academyId: string | undefined,
-  courseId: string | undefined,
-) {
+function useInvalidateLiveSessions(courseId: string | undefined) {
   const queryClient = useQueryClient();
-  return () => {
+  // W5 (F9) — the academy comes from the mutation's variables (the academy
+  // the session was saved in), never from the render current at settle time.
+  return (_data: unknown, { academyId }: { readonly academyId: string }) => {
     void queryClient.invalidateQueries({
       queryKey: liveSessionKeys.forCourse(academyId, courseId),
     });
@@ -74,31 +78,43 @@ function useInvalidateLiveSessions(
 
 export function useCreateLiveSession(
   academyId: string | undefined,
-  courseId: string | undefined,
+  courseId: string | undefined
 ) {
-  const invalidate = useInvalidateLiveSessions(academyId, courseId);
-  return useApiMutation<LiveSession, CreateLiveSessionInput, ApiError>({
-    mutationFn: (input) => liveSessionService.create(academyId!, courseId!, input),
+  const invalidate = useInvalidateLiveSessions(courseId);
+  const mutation = useApiMutation<
+    LiveSession,
+    AcademyScopedVariables<CreateLiveSessionInput>,
+    ApiError
+  >({
+    mutationFn: ({ academyId, payload: input }) =>
+      liveSessionService.create(academyId, courseId!, input),
     onSuccess: invalidate,
     successMessageKey: 'liveSessions:toast.created',
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }
 
 export function useUpdateLiveSession(
   academyId: string | undefined,
-  courseId: string | undefined,
+  courseId: string | undefined
 ) {
-  const invalidate = useInvalidateLiveSessions(academyId, courseId);
-  return useApiMutation<
+  const invalidate = useInvalidateLiveSessions(courseId);
+  const mutation = useApiMutation<
     LiveSession,
-    { readonly liveSessionId: string; readonly input: UpdateLiveSessionInput },
+    AcademyScopedVariables<{
+      readonly liveSessionId: string;
+      readonly input: UpdateLiveSessionInput;
+    }>,
     ApiError
   >({
-    mutationFn: ({ liveSessionId, input }) =>
-      liveSessionService.update(academyId!, liveSessionId, input),
+    mutationFn: ({ academyId, payload: { liveSessionId, input } }) =>
+      liveSessionService.update(academyId, liveSessionId, input),
     onSuccess: invalidate,
     successMessageKey: 'liveSessions:toast.updated',
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }
 
 /**
@@ -111,15 +127,21 @@ export function useUpdateLiveSession(
  */
 export function usePublishLiveSession(
   academyId: string | undefined,
-  courseId: string | undefined,
+  courseId: string | undefined
 ) {
-  const invalidate = useInvalidateLiveSessions(academyId, courseId);
-  return useApiMutation<LiveSession, { readonly liveSessionId: string }, ApiError>({
-    mutationFn: ({ liveSessionId }) =>
-      liveSessionService.publish(academyId!, liveSessionId),
+  const invalidate = useInvalidateLiveSessions(courseId);
+  const mutation = useApiMutation<
+    LiveSession,
+    AcademyScopedVariables<{ readonly liveSessionId: string }>,
+    ApiError
+  >({
+    mutationFn: ({ academyId, payload: { liveSessionId } }) =>
+      liveSessionService.publish(academyId, liveSessionId),
     onSuccess: invalidate,
     successMessageKey: 'liveSessions:toast.published',
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }
 
 /** Provider connection health for one academy. */
@@ -154,14 +176,20 @@ export function useZoomConnectionActions(academyId: string | undefined) {
     "connected" before the customer has even seen Zoom's consent screen
     would be a lie the UI tells itself.
   */
-  const connect = useApiMutation<
-    { authorizationUrl: string; expiresAt: string },
-    void,
-    ApiError
-  >({
-    mutationFn: () => liveSessionService.startAuthorization(academyId!),
-    showSuccessToast: false,
-  });
+  // W5 — the academy is bound into each action's variables when the user
+  // clicks, like every academy-scoped mutation (`useAcademyBoundMutation`).
+  const connect = useAcademyBoundMutation(
+    useApiMutation<
+      { authorizationUrl: string; expiresAt: string },
+      AcademyScopedVariables<void>,
+      ApiError
+    >({
+      mutationFn: ({ academyId: id }) =>
+        liveSessionService.startAuthorization(id),
+      showSuccessToast: false,
+    }),
+    academyId
+  );
 
   /*
     COMPLETING THE AUTHORIZATION, back on the Atlas page Zoom returned to.
@@ -184,17 +212,27 @@ export function useZoomConnectionActions(academyId: string | undefined) {
     successMessageKey: 'liveSessions:toast.connected',
   });
 
-  const check = useApiMutation<{ healthy: boolean }, void, ApiError>({
-    mutationFn: () => liveSessionService.checkConnection(academyId!),
-    onSuccess: invalidate,
-    showSuccessToast: false,
-  });
+  const check = useAcademyBoundMutation(
+    useApiMutation<
+      { healthy: boolean },
+      AcademyScopedVariables<void>,
+      ApiError
+    >({
+      mutationFn: ({ academyId: id }) => liveSessionService.checkConnection(id),
+      onSuccess: invalidate,
+      showSuccessToast: false,
+    }),
+    academyId
+  );
 
-  const disconnect = useApiMutation<{ status: string }, void, ApiError>({
-    mutationFn: () => liveSessionService.disconnect(academyId!),
-    onSuccess: invalidate,
-    successMessageKey: 'liveSessions:toast.disconnected',
-  });
+  const disconnect = useAcademyBoundMutation(
+    useApiMutation<{ status: string }, AcademyScopedVariables<void>, ApiError>({
+      mutationFn: ({ academyId: id }) => liveSessionService.disconnect(id),
+      onSuccess: invalidate,
+      successMessageKey: 'liveSessions:toast.disconnected',
+    }),
+    academyId
+  );
 
   return { connect, completeAuthorization, check, disconnect };
 }

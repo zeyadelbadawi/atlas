@@ -33,7 +33,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
 import { useAuth, useUnsavedChanges } from '@hooks';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
-import { useServerValidation } from '@forms';
+import { nameConflictFromError, useNameConflictError, useServerValidation } from '@forms';
 import { isApiError } from '@api';
 import { useCreateOrganization } from '../hooks';
 import {
@@ -64,6 +64,9 @@ export default function OrganizationCreatePage(): JSX.Element {
   });
 
   useServerValidation(form, error);
+  // W4 — a taken name is shown on the name field (generic wording: it never
+  // says who holds it), not as a toast.
+  useNameConflictError(form, error);
 
   const onSubmit = async (data: CreateOrganizationFormData) => {
     try {
@@ -90,6 +93,7 @@ export default function OrganizationCreatePage(): JSX.Element {
       ) {
         return;
       }
+      if (nameConflictFromError(caughtError)) return;
       toast({
         title: t('organization:create.error'),
         description: t('errors:generic.description'),

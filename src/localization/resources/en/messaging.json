@@ -1,0 +1,185 @@
+{
+  "academy": {
+    "title": "Messages",
+    "description": "Send an email and/or an in-app notification to your learners or staff. Every message is previewed and confirmed before it is sent."
+  },
+  "platform": {
+    "description": "Send an email and/or an in-app notification to organization and academy owners. Broadcasts never count against an academy’s monthly email allowance."
+  },
+  "composer": {
+    "title": "New message",
+    "audience": "Recipients",
+    "channels": "Send as",
+    "channelEmail": "Email",
+    "channelInApp": "In-app notification",
+    "channelRequired": "Choose at least one way to send.",
+    "subject": "Subject",
+    "subjectRequired": "Enter a subject (up to 150 characters).",
+    "subjectCount": "{{count}} / {{max}} characters",
+    "body": "Message",
+    "language": "Written in",
+    "languageEn": "English",
+    "languageAr": "Arabic",
+    "bodyPlaceholder": "Write your message…",
+    "bodyRequired": "Write a message before sending.",
+    "bodyCount": "{{count}} / {{max}} characters",
+    "preview": "Preview recipients",
+    "refreshPreview": "Refresh preview",
+    "send": "Review and send",
+    "previewFirst": "Preview the recipients first — you will see exactly who receives this before anything is sent."
+  },
+  "editor": {
+    "toolbar": "Formatting",
+    "bold": "Bold",
+    "italic": "Italic",
+    "underline": "Underline",
+    "bulletList": "Bulleted list",
+    "numberedList": "Numbered list",
+    "link": "Add link",
+    "linkUrl": "Link address",
+    "linkInvalid": "Use a full https:// address or a mailto: link.",
+    "linkAdd": "Add link"
+  },
+  "audience": {
+    "academy": {
+      "learners": "All active learners",
+      "learnersHelp": "Everyone enrolled in this academy, except blocked or pending learners.",
+      "courses": "Learners in selected courses",
+      "coursesHelp": "Active learners enrolled in, or who completed, the courses you choose.",
+      "staff": "Academy staff",
+      "staffHelp": "Active team members with the roles you choose.",
+      "chooseCourses": "Courses",
+      "noCourses": "This academy has no courses yet.",
+      "chooseRoles": "Roles"
+    },
+    "platform": {
+      "org_owners": "All organization owners",
+      "org_ownersHelp": "The owner of every active organization.",
+      "academy_owners": "Academy owners by plan or status",
+      "academy_ownersHelp": "Owners of academies on the plans and subscription statuses you choose.",
+      "academy_owners_admins": "All academy owners and administrators",
+      "academy_owners_adminsHelp": "Every active academy owner and administrator.",
+      "organization": "A specific organization",
+      "organizationHelp": "That organization’s members and its academies’ owners and administrators.",
+      "plans": "Plans",
+      "statuses": "Subscription status",
+      "anyIfNone": "Leave all unticked to include every one.",
+      "searchOrganization": "Search organizations",
+      "selectedOrganization": "Selected: {{name}}",
+      "results": "Organizations",
+      "memberCount_one": "{{count}} member",
+      "memberCount_other": "{{count}} members"
+    },
+    "summary": {
+      "learners": "All active learners",
+      "courses_one": "Learners in {{count}} course",
+      "courses_other": "Learners in {{count}} courses",
+      "staff_one": "Staff in {{count}} role",
+      "staff_other": "Staff in {{count}} roles",
+      "org_owners": "All organization owners",
+      "academy_owners": "Academy owners (filtered)",
+      "academy_owners_admins": "Academy owners and administrators",
+      "organization": "One organization"
+    }
+  },
+  "roles": {
+    "owner": "Owner",
+    "administrator": "Administrator",
+    "manager": "Manager",
+    "instructor": "Instructor",
+    "staff": "Staff"
+  },
+  "subscriptionStatus": {
+    "trialing": "Trial",
+    "active": "Active",
+    "past_due": "Past due",
+    "grace_period": "Grace period",
+    "paused": "Paused",
+    "trial_expired": "Trial ended",
+    "cancelled": "Cancelled",
+    "expired": "Expired"
+  },
+  "preview": {
+    "title": "Who will receive this",
+    "recipients": "People",
+    "emails": "Emails",
+    "inApp": "In-app notifications",
+    "notEmailed": "Not emailed (they still get the in-app notification if it is on):",
+    "optedOut_one": "{{formatted}} person turned these emails off",
+    "optedOut_other": "{{formatted}} people turned these emails off",
+    "suppressed_one": "{{formatted}} address cannot receive email (bounced or reported spam)",
+    "suppressed_other": "{{formatted}} addresses cannot receive email (bounced or reported spam)",
+    "blocked_one": "{{formatted}} blocked learner is not included",
+    "blocked_other": "{{formatted}} blocked learners are not included",
+    "pending_one": "{{formatted}} learner awaiting approval is not included",
+    "pending_other": "{{formatted}} learners awaiting approval are not included",
+    "nobody": "Nobody matches these recipients yet.",
+    "overQuotaTitle": "Not enough emails left this month",
+    "overQuota": "This message needs {{emails}} emails and {{remaining}} are left. Send it as an in-app notification only, choose fewer recipients, or upgrade your plan. Nothing is sent partially."
+  },
+  "confirm": {
+    "title": "Send this message?",
+    "subject": "Subject:",
+    "recipients_one": "Reaches {{formatted}} person",
+    "recipients_other": "Reaches {{formatted}} people",
+    "emails_one": "{{formatted}} email will be queued",
+    "emails_other": "{{formatted}} emails will be queued",
+    "inApp_one": "{{formatted}} in-app notification",
+    "inApp_other": "{{formatted}} in-app notifications",
+    "quotaAfter_one": "{{formatted}} email left this month after sending",
+    "quotaAfter_other": "{{formatted}} emails left this month after sending",
+    "irreversible": "A sent message cannot be recalled.",
+    "largeAudience": "I understand this message goes to {{formatted}} people.",
+    "sending": "Sending…",
+    "send": "Send now"
+  },
+  "quota": {
+    "title": "Monthly email allowance",
+    "usage": "{{used}} of {{limit}} emails used this month, resets {{date}}",
+    "unlimited": "Unlimited emails this month ({{used}} sent)",
+    "remaining_one": "{{formatted}} left",
+    "remaining_other": "{{formatted}} left",
+    "ariaLabel": "Emails used this month",
+    "explainer": "Each email queued from Messages counts once. In-app notifications are free. Emails that fail before reaching the email provider are given back."
+  },
+  "history": {
+    "title": "Sent messages",
+    "meta": "{{date}} · {{author}}",
+    "unknownAuthor": "Former member",
+    "recipients_one": "{{formatted}} recipient",
+    "recipients_other": "{{formatted}} recipients",
+    "sent": "Sent to provider",
+    "queued": "Waiting",
+    "notSent": "Not sent",
+    "failed": "Failed",
+    "providerReports": "Provider reports",
+    "delivered": "Delivered: {{delivered}} · Bounced: {{bounced}}",
+    "inApp": "In-app",
+    "loading": "Loading sent messages",
+    "emptyTitle": "No messages yet",
+    "emptyDescription": "Messages you send appear here with their delivery progress.",
+    "loadMore": "Load more",
+    "loadingMore": "Loading…"
+  },
+  "status": {
+    "queued": "Queued",
+    "expanding": "Preparing",
+    "sending": "Sending",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "failed": "Failed"
+  },
+  "notice": {
+    "audienceChangedTitle": "The recipients changed",
+    "audienceChanged": "The number of recipients changed since your preview, so nothing was sent. Review the updated numbers below and send again.",
+    "quotaTitle": "Not enough emails left",
+    "quota": "This message needs {{requested}} emails but only {{remaining}} are left this month. Nothing was sent.",
+    "errorTitle": "The message was not sent",
+    "error": "Something went wrong. Try again — your message will not be sent twice.",
+    "reference": "Reference: {{id}}"
+  },
+  "toast": {
+    "sentTitle": "Message accepted",
+    "sentDescription": "It is on its way to {{count}} recipients. Progress appears below."
+  }
+}

@@ -28,6 +28,7 @@ import {
 import { ErrorState } from '@components/feedback';
 import { useUnsavedChanges } from '@hooks';
 import { saveViaForm } from '@utils';
+import { useNameConflictError } from '@forms';
 import { useUpdateProfile } from '../hooks';
 import type { CurrentUser } from '@types';
 
@@ -49,17 +50,24 @@ export function ProfilePersonalSection({
   const [isEditing, setIsEditing] = useState(false);
   const updateProfile = useUpdateProfile();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isDirty },
-    reset,
-  } = useForm<PersonalFormData>({
+  const form = useForm<PersonalFormData>({
     resolver: zodResolver(personalSchema),
     defaultValues: {
       firstName: user.name.split(' ')[0] || '',
       lastName: user.name.split(' ').slice(1).join(' ') || '',
     },
+  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isDirty },
+    reset,
+  } = form;
+  // W4 — a learner name is unique inside each academy; a rename that clashes
+  // is refused and names the user's own academies. Shown on the family-name
+  // field (the copy suggests adding a middle or family name).
+  const nameConflict = useNameConflictError(form, updateProfile.error, {
+    fields: { name: 'lastName' },
   });
 
   useEffect(() => {
@@ -116,7 +124,7 @@ export function ProfilePersonalSection({
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
-          {updateProfile.error ? (
+          {updateProfile.error && !nameConflict ? (
             <ErrorState onRetry={handleSubmit(handleFormSubmit)} />
           ) : null}
 
@@ -146,12 +154,24 @@ export function ProfilePersonalSection({
                 disabled={!isEditing || updateProfile.isPending}
                 {...register('lastName')}
                 aria-invalid={!!errors.lastName}
+                aria-describedby={errors.lastName ? 'lastName-error' : undefined}
               />
               {errors.lastName ? (
-                <p className="text-sm text-destructive">
-                  {t(
-                    errors.lastName.message || 'profile:errors.lastNameRequired'
-                  )}
+                <p
+                  id="lastName-error"
+                  role="alert"
+                  className="text-sm text-destructive"
+                >
+                  {/* A server message arrives already translated (it names
+                      the user's academies); anything else is a key. */}
+                  {errors.lastName.type === 'server' &&
+                  errors.lastName.message &&
+                  !errors.lastName.message.startsWith('errors:')
+                    ? errors.lastName.message
+                    : t(
+                        errors.lastName.message ||
+                          'profile:errors.lastNameRequired'
+                      )}
                 </p>
               ) : null}
             </div>

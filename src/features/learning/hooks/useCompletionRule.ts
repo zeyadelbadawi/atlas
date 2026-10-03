@@ -1,7 +1,13 @@
 /**
  * Staff hooks over the course completion rule (P64 Phase 3, AD-11).
  */
-import { useApiMutation, useApiQuery, useInvalidate } from '@/shared/hooks';
+import {
+  useApiMutation,
+  useApiQuery,
+  useInvalidate,
+  useAcademyBoundMutation,
+} from '@/shared/hooks';
+import type { AcademyScopedVariables } from '@/shared/hooks';
 import { completionKeys, quizKeys, assignmentKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { completionService } from '../services/CompletionService';
@@ -28,20 +34,22 @@ export function useCompletionRule(
 export function useUpdateCompletionRule(academyId: string, courseId: string) {
   const { invalidate } = useInvalidate();
 
-  return useApiMutation<
+  const mutation = useApiMutation<
     CourseCompletionRule,
-    UpdateCompletionRulePayload,
+    AcademyScopedVariables<UpdateCompletionRulePayload>,
     ApiError
   >({
-    mutationFn: (payload) =>
+    mutationFn: ({ academyId, payload }) =>
       completionService.updateCompletionRule(academyId, courseId, payload),
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: async () => {
+    onSuccess: async (_data, { academyId }) => {
       await invalidate(completionKeys.rule(academyId, courseId));
       // Required flags live on the quizzes and assignments themselves.
       await invalidate(quizKeys.all);
       await invalidate(assignmentKeys.all);
     },
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }

@@ -15,7 +15,13 @@
  * controls are not offered to someone who cannot use them — that is
  * ergonomics, not security, and a 403 is still the real answer.
  */
-import { useApiQuery, useApiMutation, useInvalidate } from '@/shared/hooks';
+import {
+  useApiQuery,
+  useApiMutation,
+  useInvalidate,
+  useAcademyBoundMutation,
+} from '@/shared/hooks';
+import type { AcademyScopedVariables } from '@/shared/hooks';
 import { announcementKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { announcementService } from '../services/AnnouncementService';
@@ -42,30 +48,39 @@ export function useAcademyAnnouncements(
 export function useCreateAcademyAnnouncement(academyId: string) {
   const { invalidate } = useInvalidate();
 
-  return useApiMutation<Announcement, CreateAnnouncementPayload, ApiError>({
-    mutationFn: (payload) =>
+  const mutation = useApiMutation<
+    Announcement,
+    AcademyScopedVariables<CreateAnnouncementPayload>,
+    ApiError
+  >({
+    mutationFn: ({ academyId, payload }) =>
       announcementService.createAcademyAnnouncement(academyId, payload),
     // The page renders its own contextual messages; a generic toast on top
     // of an inline form error reads as two failures for one problem.
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: async () => {
+    onSuccess: async (_data, { academyId }) => {
       // The whole root: a new academy announcement also belongs in every
       // reader's feed, which is cached under a different key.
       await invalidate(announcementKeys.all);
     },
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }
 
 export function useUpdateAcademyAnnouncement(academyId: string) {
   const { invalidate } = useInvalidate();
 
-  return useApiMutation<
+  const mutation = useApiMutation<
     Announcement,
-    { readonly announcementId: string; readonly payload: UpdateAnnouncementPayload },
+    AcademyScopedVariables<{
+      readonly announcementId: string;
+      readonly payload: UpdateAnnouncementPayload;
+    }>,
     ApiError
   >({
-    mutationFn: ({ announcementId, payload }) =>
+    mutationFn: ({ academyId, payload: { announcementId, payload } }) =>
       announcementService.updateAcademyAnnouncement(
         academyId,
         announcementId,
@@ -73,36 +88,50 @@ export function useUpdateAcademyAnnouncement(academyId: string) {
       ),
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: async () => {
+    onSuccess: async (_data, { academyId }) => {
       await invalidate(announcementKeys.all);
     },
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }
 
 export function usePublishAcademyAnnouncement(academyId: string) {
   const { invalidate } = useInvalidate();
 
-  return useApiMutation<Announcement, string, ApiError>({
-    mutationFn: (announcementId) =>
+  const mutation = useApiMutation<
+    Announcement,
+    AcademyScopedVariables<string>,
+    ApiError
+  >({
+    mutationFn: ({ academyId, payload: announcementId }) =>
       announcementService.publishAcademyAnnouncement(academyId, announcementId),
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: async () => {
+    onSuccess: async (_data, { academyId }) => {
       await invalidate(announcementKeys.all);
     },
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }
 
 export function useArchiveAcademyAnnouncement(academyId: string) {
   const { invalidate } = useInvalidate();
 
-  return useApiMutation<Announcement, string, ApiError>({
-    mutationFn: (announcementId) =>
+  const mutation = useApiMutation<
+    Announcement,
+    AcademyScopedVariables<string>,
+    ApiError
+  >({
+    mutationFn: ({ academyId, payload: announcementId }) =>
       announcementService.archiveAcademyAnnouncement(academyId, announcementId),
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: async () => {
+    onSuccess: async (_data, { academyId }) => {
       await invalidate(announcementKeys.all);
     },
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }

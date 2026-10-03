@@ -19,19 +19,18 @@
  * place of a pre-creation preview: real, rendered, honest, reusing the
  * existing in-dashboard `WebsitePreviewPage` pipeline, not a second
  * preview mechanism.
+ *
+ * W2 — the checklist is now four real stages (`ProvisioningProgress`), each
+ * tied to the server's step states; the branding chosen in the form is
+ * applied server-side (no "saving your branding" card that died on
+ * refresh), a stalled request offers Retry, and a branding failure shows a
+ * warning with Retry on an otherwise ready Academy. "View your website" is
+ * offered whenever the website was built — which is now always.
  */
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  Check,
-  CheckCircle2,
-  Circle,
-  Loader2,
-  Minus,
-  XCircle,
-} from 'lucide-react';
+import { CheckCircle2, Loader2 } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
-import { FinishBrandingCard } from '@features/website';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { Button } from '@/components/ui/button';
@@ -48,51 +47,9 @@ import {
   ONBOARDING_ROUTES,
   buildPath,
 } from '@app/routes/route-paths';
-import {
-  useCancelProvisioning,
-  useProvisioningRequest,
-  useRetryProvisioning,
-} from '../hooks';
+import { useCancelProvisioning, useProvisioningProgress } from '../hooks';
+import { ProvisioningProgress } from '../components/ProvisioningProgress';
 import { getProvisioningStatusTone } from '../utils/provisioning-status.utils';
-import { PROVISIONING_STEP_KEYS } from '../constants/provisioning.constants';
-import type { ProvisioningStep, ProvisioningStepStatus } from '@types';
-
-function StepIcon({
-  status,
-}: {
-  readonly status: ProvisioningStepStatus;
-}): JSX.Element {
-  switch (status) {
-    case 'completed':
-      return (
-        <Check
-          className="size-4 shrink-0 text-success"
-          strokeWidth={2.5}
-          aria-hidden
-        />
-      );
-    case 'running':
-      return (
-        <Loader2
-          className="size-4 shrink-0 animate-spin text-info"
-          aria-hidden
-        />
-      );
-    case 'failed':
-      return (
-        <XCircle className="size-4 shrink-0 text-destructive" aria-hidden />
-      );
-    case 'skipped':
-      return (
-        <Minus className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-      );
-    case 'pending':
-    default:
-      return (
-        <Circle className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-      );
-  }
-}
 
 export default function ProvisioningStatusPage(): JSX.Element {
   const { t } = useTranslation();
@@ -102,16 +59,11 @@ export default function ProvisioningStatusPage(): JSX.Element {
   const { setActiveAcademy } = usePlatform();
   const { confirm } = useConfirmDialog();
 
-  const {
-    data: request,
-    isLoading,
-    error,
-    refetch,
-  } = useProvisioningRequest(requestId ?? '');
-  const retryProvisioning = useRetryProvisioning();
+  const progress = useProvisioningProgress(requestId ?? '');
+  const { request, query } = progress;
   const cancelProvisioning = useCancelProvisioning();
 
-  if (isLoading) {
+  if (query.isLoading) {
     return (
       <PageContainer>
         <div className="space-y-6">
@@ -122,30 +74,22 @@ export default function ProvisioningStatusPage(): JSX.Element {
     );
   }
 
-  if (error || !request || !organization?.id) {
+  if (!request || !organization?.id) {
     return (
       <PageContainer>
         <PageHeader titleKey="provisioning:status.title" />
-        <ErrorState onRetry={() => refetch()} />
+        <ErrorState onRetry={() => query.refetch()} />
       </PageContainer>
     );
   }
 
-  const stepByKey = new Map<string, ProvisioningStep>(
-    request.steps.map((step) => [step.key, step])
-  );
   const isTerminal =
     request.status === 'ready' ||
     request.status === 'failed' ||
     request.status === 'cancelled';
   const isCancellable = !isTerminal;
 
-  const handleRetry = () => {
-    retryProvisioning.mutate({
-      organizationId: organization.id,
-      requestId: request.id,
-    });
-  };
+  const handleRetry = () => progress.retry();
 
   const handleCancel = async () => {
     const confirmed = await confirm({
@@ -176,8 +120,6 @@ export default function ProvisioningStatusPage(): JSX.Element {
       />
 
       <div className="space-y-6">
-        {/* Theme 1 plan §F.4.3 — saves the setup form's logo & colours. */}
-        <FinishBrandingCard request={request} />
         <Card>
           <CardHeader>
             <CardTitle className="text-base">
@@ -185,33 +127,14 @@ export default function ProvisioningStatusPage(): JSX.Element {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-3">
-              {PROVISIONING_STEP_KEYS.map((stepKey) => {
-                const step = stepByKey.get(stepKey);
-                const status = step?.status ?? 'pending';
-                return (
-                  <li key={stepKey} className="flex items-start gap-3">
-                    <StepIcon status={status} />
-                    <div className="flex-1">
-                      <p
-                        className={
-                          status === 'completed' || status === 'skipped'
-                            ? 'text-sm text-muted-foreground'
-                            : 'text-sm font-medium text-foreground'
-                        }
-                      >
-                        {t(`provisioning:step.${stepKey}`)}
-                      </p>
-                      {status === 'failed' && step?.error ? (
-                        <p className="mt-0.5 text-sm text-destructive">
-                          {t(toErrorsNamespaceKey(step.error.messageKey))}
-                        </p>
-                      ) : null}
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
+            <ProvisioningProgress
+              request={request}
+              logo={progress.logo}
+              onRetry={handleRetry}
+              isRetrying={progress.isRetrying}
+              retryFailed={!!progress.retryError && request.status !== 'failed'}
+              isReconnecting={progress.isReconnecting}
+            />
           </CardContent>
         </Card>
 
@@ -228,16 +151,16 @@ export default function ProvisioningStatusPage(): JSX.Element {
                   ? t(toErrorsNamespaceKey(request.lastError.messageKey))
                   : t('provisioning:status.failedGenericDescription')}
               </p>
-              {retryProvisioning.error ? (
+              {progress.retryError ? (
                 <ErrorState onRetry={handleRetry} />
               ) : (
                 <div className="flex flex-wrap gap-2">
                   <Button
                     type="button"
                     onClick={handleRetry}
-                    disabled={retryProvisioning.isPending}
+                    disabled={progress.isRetrying}
                   >
-                    {retryProvisioning.isPending ? (
+                    {progress.isRetrying ? (
                       <Loader2 className="size-4 animate-spin" aria-hidden />
                     ) : null}
                     {t('provisioning:status.retryAction')}
@@ -271,7 +194,10 @@ export default function ProvisioningStatusPage(): JSX.Element {
               </div>
               {request.academyId ? (
                 <div className="flex flex-wrap items-center justify-center gap-2">
-                  {request.selectedThemeKey ? (
+                  {request.steps.some(
+                    (step) =>
+                      step.key === 'theme' && step.status === 'completed'
+                  ) ? (
                     <Button
                       type="button"
                       variant="outline"
@@ -304,7 +230,9 @@ export default function ProvisioningStatusPage(): JSX.Element {
                           organization
                         )
                           ? ONBOARDING_ROUTES.root
-                          : `${DASHBOARD_ROUTES.academy}?academyId=${request.academyId!}`,
+                          : buildPath(DASHBOARD_ROUTES.academyOverview, {
+                              academyId: request.academyId!,
+                            }),
                         { replace: true }
                       );
                     }}

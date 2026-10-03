@@ -8,6 +8,11 @@
  */
 export { AcademySetupForm } from './components/AcademySetupForm';
 export type { AcademySetupFormProps } from './components/AcademySetupForm';
-export { useProvisioningRequest, useRetryProvisioning } from './hooks';
+export {
+  useProvisioningProgress,
+  useProvisioningRequest,
+  useRetryProvisioning,
+} from './hooks';
 export type { RetryProvisioningVariables } from './hooks';
-export { PROVISIONING_STEP_KEYS } from './constants/provisioning.constants';
+export { ProvisioningProgress } from './components/ProvisioningProgress';
+export { isBrandingFailure } from './utils/provisioning-stages';

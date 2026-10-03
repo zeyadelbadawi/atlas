@@ -22,6 +22,8 @@ export interface DashboardTopbarProps {
   readonly onGoBack?: () => void;
   /** Slot for module-owned controls such as account or notification menus. */
   readonly actions?: ReactNode;
+  /** Slot at the start of the bar, after navigation (W5 — the academy switcher). */
+  readonly leading?: ReactNode;
 }
 
 export function DashboardTopbar({
@@ -30,6 +32,7 @@ export function DashboardTopbar({
   canGoBack,
   onGoBack,
   actions,
+  leading,
 }: DashboardTopbarProps): JSX.Element {
   const { t } = useTranslation();
 
@@ -66,6 +69,7 @@ export function DashboardTopbar({
             />
           </Button>
         ) : null}
+        {leading}
       </div>
 
       <div className="flex min-w-0 items-center gap-1">

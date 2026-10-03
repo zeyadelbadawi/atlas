@@ -15,12 +15,17 @@ import { useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { invalidateCourseCatalog } from '@services/query';
 
-export function useCourseCatalogInvalidation(academyId: string) {
+/**
+ * W5 (F9) — the academy is an ARGUMENT, supplied from the mutation's
+ * variables, so a course saved in academy A refreshes A's catalog even if
+ * the screen has moved to academy B by the time the request settles.
+ */
+export function useCourseCatalogInvalidation() {
   const queryClient = useQueryClient();
 
   return useCallback(
-    (courseId?: string) =>
+    (academyId: string, courseId?: string) =>
       invalidateCourseCatalog(queryClient, { academyId, courseId }),
-    [queryClient, academyId]
+    [queryClient]
   );
 }

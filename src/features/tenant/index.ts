@@ -24,3 +24,8 @@ export {
 // Platform commerce's per-plan commission list names plans the same way
 // the catalog does (localized, English fallback).
 export { resolvePlanName } from './utils/plan-text.utils';
+// W8 — gifted setup days: owner subscription details, the first-purchase
+// offer (plans/checkout) and the per-cycle helper the platform admin reuses.
+export { SubscriptionGiftDetails } from './components/SubscriptionGiftDetails';
+export { PlanGiftOffer } from './components/PlanGiftOffer';
+export { planGiftedDaysFor } from './utils/gifted-days.utils';

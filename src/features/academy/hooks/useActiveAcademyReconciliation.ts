@@ -1,30 +1,50 @@
 /**
- * Keeps `usePlatform().activeAcademyId` honest: once the academies of the
- * active organization are known, a remembered id that is not among them
- * (another account's academy left in this browser, or one since archived)
- * is replaced by the first reachable academy, or cleared.
+ * Keeps `usePlatform().activeAcademyId` honest OUTSIDE the academy scope.
  *
- * Mounted once, in the dashboard layout, so every academy-scoped link and
- * scope derivation in the shell reads a reconciled id. See
- * `reconcileActiveAcademy` for the rule and the incident behind it.
+ * W5: inside `/dashboard/academy/:academyId/*` the URL is the only truth and
+ * `AcademyScopeProvider` mirrors it — this hook stays out of the way there.
+ * On every other dashboard screen the sidebar still needs an academy to
+ * build its academy links from, so it is seeded from the "last academy"
+ * preference (per user + organization) and reconciled against the
+ * academies the server lists for the caller — which, since W5, are only
+ * the academies they staff. A remembered id that is not among them
+ * (another account's academy, one since archived, one whose access was
+ * revoked) is replaced by the first reachable academy, or cleared.
  *
- * With no active organization (a Platform Owner, a brand-new account) the
+ * Mounted once, in the dashboard layout. With no active organization the
  * list query is disabled and this does nothing.
  */
 import { useEffect } from 'react';
-import { usePlatform } from '@hooks';
+import { useLocation } from 'react-router-dom';
+import { useAuth, usePlatform } from '@hooks';
 import { useAcademies } from './useAcademies';
 import { reconcileActiveAcademy } from '../utils/active-academy.utils';
+import { academyIdFromPath } from '../scope/academy-scope-path';
+import { readLastAcademy } from '../scope/last-academy';
 
 export function useActiveAcademyReconciliation(): void {
   const { activeAcademyId, setActiveAcademy } = usePlatform();
+  const { user, organization } = useAuth();
+  const { pathname } = useLocation();
+  const urlAcademyId = academyIdFromPath(pathname);
   const { data } = useAcademies();
   const academies = data?.items;
 
   useEffect(() => {
-    const next = reconcileActiveAcademy(activeAcademyId, academies);
-    if (next.changed) {
+    if (urlAcademyId) return;
+    const remembered =
+      activeAcademyId ??
+      readLastAcademy({ userId: user?.id, organizationId: organization?.id });
+    const next = reconcileActiveAcademy(remembered, academies);
+    if (next.academyId !== activeAcademyId) {
       setActiveAcademy(next.academyId);
     }
-  }, [activeAcademyId, academies, setActiveAcademy]);
+  }, [
+    urlAcademyId,
+    activeAcademyId,
+    academies,
+    setActiveAcademy,
+    user?.id,
+    organization?.id,
+  ]);
 }

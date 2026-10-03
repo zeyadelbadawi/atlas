@@ -12,7 +12,12 @@
  * mutation `scope` so they run strictly in click order.
  */
 import { useQueryClient } from '@tanstack/react-query';
-import { useApiMutation, useApiQuery } from '@/shared/hooks';
+import {
+  useApiMutation,
+  useApiQuery,
+  useAcademyBoundMutation,
+} from '@/shared/hooks';
+import type { AcademyScopedVariables } from '@/shared/hooks';
 import { courseKeys } from '@services/query';
 import { invalidateCourseCurriculum } from '@services/query/curriculum-invalidation';
 import type { ApiError } from '@api';
@@ -57,8 +62,12 @@ interface AttachVariables {
 
 export function useAttachUnitItem(academyId: string, courseId: string) {
   const queryClient = useQueryClient();
-  return useApiMutation<CurriculumItem[], AttachVariables, ApiError>({
-    mutationFn: ({ sectionId, type, itemId }) =>
+  const mutation = useApiMutation<
+    CurriculumItem[],
+    AcademyScopedVariables<AttachVariables>,
+    ApiError
+  >({
+    mutationFn: ({ academyId, payload: { sectionId, type, itemId } }) =>
       courseService.attachUnitItem(academyId, courseId, sectionId, {
         type,
         itemId,
@@ -67,26 +76,34 @@ export function useAttachUnitItem(academyId: string, courseId: string) {
     // The caller shows its own localized toast; a second generic one would
     // just repeat it.
     showErrorToast: false,
-    onSuccess: async () => {
+    onSuccess: async (_data, { academyId }) => {
       await invalidateCourseCurriculum(queryClient, { academyId, courseId });
     },
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }
 
 export function useDetachUnitItem(academyId: string, courseId: string) {
   const queryClient = useQueryClient();
-  return useApiMutation<CurriculumItem[], AttachVariables, ApiError>({
-    mutationFn: ({ sectionId, type, itemId }) =>
+  const mutation = useApiMutation<
+    CurriculumItem[],
+    AcademyScopedVariables<AttachVariables>,
+    ApiError
+  >({
+    mutationFn: ({ academyId, payload: { sectionId, type, itemId } }) =>
       courseService.detachUnitItem(academyId, courseId, sectionId, {
         type,
         itemId,
       }),
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: async () => {
+    onSuccess: async (_data, { academyId }) => {
       await invalidateCourseCurriculum(queryClient, { academyId, courseId });
     },
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }
 
 export interface ReorderUnitItemsContext {
@@ -109,22 +126,22 @@ export function useReorderUnitItems(
   sectionId: string
 ) {
   const queryClient = useQueryClient();
-  const itemsKey = courseKeys.unitItems(academyId, courseId, sectionId);
   const mutationKey = reorderUnitItemsMutationKey(sectionId);
 
-  return useApiMutation<
+  const mutation = useApiMutation<
     void,
-    ReorderItemsPayload,
+    AcademyScopedVariables<ReorderItemsPayload>,
     ApiError,
     ReorderUnitItemsContext
   >({
     mutationKey,
     scope: { id: `unit-items-order:${sectionId}` },
-    mutationFn: (payload) =>
+    mutationFn: ({ academyId, payload }) =>
       courseService.reorderUnitItems(academyId, courseId, sectionId, payload),
     showSuccessToast: false,
     showErrorToast: false,
-    onMutate: async (payload) => {
+    onMutate: async ({ academyId, payload }) => {
+      const itemsKey = courseKeys.unitItems(academyId, courseId, sectionId);
       await queryClient.cancelQueries({ queryKey: itemsKey });
       const previous = queryClient.getQueryData<CurriculumItem[]>(itemsKey);
       if (previous) {
@@ -135,12 +152,15 @@ export function useReorderUnitItems(
       }
       return { previous };
     },
-    onError: (_error, _payload, context) => {
+    onError: (_error, { academyId }, context) => {
       if (context?.previous) {
-        queryClient.setQueryData(itemsKey, context.previous);
+        queryClient.setQueryData(
+          courseKeys.unitItems(academyId, courseId, sectionId),
+          context.previous
+        );
       }
     },
-    onSettled: async () => {
+    onSettled: async (_data, _error, { academyId }) => {
       // `isMutating` still counts this mutation while its onSettled runs:
       // only the last queued reorder of the unit refetches.
       if (queryClient.isMutating({ mutationKey }) <= 1) {
@@ -148,4 +168,6 @@ export function useReorderUnitItems(
       }
     },
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }

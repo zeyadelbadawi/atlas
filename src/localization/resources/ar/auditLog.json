@@ -156,7 +156,8 @@
     "add_on": "إضافة",
     "observability": "المراقبة",
     "platform_contact_submission": "استفسار تواصل",
-    "lesson": "درس"
+    "lesson": "درس",
+    "communication_campaign": "رسالة"
   },
   "fields": {
     "title": "العنوان",
@@ -233,6 +234,8 @@
     "pricing": "التسعير",
     "trialEligible": "التجربة متاحة",
     "trialDurationDays": "مدة التجربة (بالأيام)",
+    "giftedDaysMonthly": "أيام الإعداد المُهداة (شهري)",
+    "giftedDaysYearly": "أيام الإعداد المُهداة (سنوي)",
     "limits": "الحدود"
   },
   "values": {
@@ -469,6 +472,7 @@
         "added": "{{actor}} أضاف طالبًا إلى الأكاديمية",
         "added_withName": "{{actor}} أضاف {{name}} طالبًا",
         "joined": "{{actor}} انضم إلى الأكاديمية كطالب",
+        "name_clash_exempted": "{{actor}} انضم إلى الأكاديمية كطالب (اسمه مطابق لاسم طالب آخر هنا)",
         "blocked": "{{actor}} حظر طالبًا",
         "blocked_withName": "{{actor}} حظر الطالب {{name}}",
         "unblocked": "{{actor}} رفع الحظر عن طالب",
@@ -481,6 +485,9 @@
       "invite": {
         "created": "{{actor}} أنشأ رابط دعوة للطلاب",
         "revoked": "{{actor}} ألغى رابط دعوة للطلاب"
+      },
+      "message": {
+        "sent": "أرسل {{actor}} رسالة إلى {{recipientCount}} شخصًا"
       }
     },
     "enrollment": {
@@ -581,6 +588,9 @@
       "created": "{{actor}} طلب إنشاء أكاديمية جديدة «{{target}}»"
     },
     "subscription": {
+      "gift": {
+        "granted": "{{actor}} وافق على أول اشتراك يتضمن أيام إعداد مُهداة"
+      },
       "trial": {
         "redeemed": "{{actor}} بدأ فترة تجربة مجانية",
         "cancelled": "{{actor}} ألغى فترة التجربة المجانية"
@@ -662,6 +672,9 @@
       "contact_submission": {
         "status_changed": "{{actor}} غيّر حالة استفسار تواصل",
         "deleted": "{{actor}} حذف استفسار تواصل"
+      },
+      "campaign": {
+        "sent": "أرسل {{actor}} رسالة من المنصة إلى {{recipientCount}} شخصًا"
       }
     }
   }

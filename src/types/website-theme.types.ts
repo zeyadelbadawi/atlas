@@ -26,6 +26,10 @@
  */
 export const SELECTABLE_WEBSITE_THEME_KEYS = ['modern-education'] as const;
 
+/** W2 — the platform's default theme (the backend's `DEFAULT_WEBSITE_THEME_KEY`): pre-selected in the setup form, and what provisioning applies when none is named. */
+export const DEFAULT_WEBSITE_THEME_KEY: (typeof SELECTABLE_WEBSITE_THEME_KEYS)[number] =
+  SELECTABLE_WEBSITE_THEME_KEYS[0];
+
 /**
  * Themes 2–5, retired from selection (Reports/THEMES_2_5_RETIREMENT.md).
  * Still registered so a website on one renders exactly as before until the

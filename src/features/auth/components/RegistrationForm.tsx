@@ -36,7 +36,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ErrorState } from '@components/feedback';
 import { useToast } from '@hooks';
 import { AUTH_ROUTES } from '@app/routes/route-paths';
-import { useServerValidation } from '@forms';
+import { useNameConflictError, useServerValidation } from '@forms';
 import { toErrorsNamespaceKey } from '@utils';
 import { INTENDED_PLAN_STORAGE_KEY } from '@features/home';
 import { useRegister, useSignupOptions } from '../hooks';
@@ -349,6 +349,9 @@ export function RegistrationForm({
   // form — e.g. a stricter server-side password rule than this schema's
   // client-side one — instead of only the generic `ErrorState` below.
   useServerValidation(form, registerAccount.error);
+  // W4 — a taken organization name (management signup) or learner name
+  // (academy signup) is shown on its own input, like `emailNotAcceptable`.
+  const nameConflict = useNameConflictError(form, registerAccount.error);
 
   const failure = registerAccount.error;
   const failureKey = failure?.messageKey;
@@ -487,6 +490,7 @@ export function RegistrationForm({
         />
       ) : registerAccount.error &&
         !isEmailNotAcceptable &&
+        !nameConflict &&
         !isStaleOptionsFailure &&
         // A validation error with real field violations is shown inline,
         // on the field that caused it, via `useServerValidation` above —

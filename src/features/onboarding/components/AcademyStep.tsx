@@ -10,73 +10,32 @@
  * The step is complete when the SERVER says so (academy exists and its
  * provisioning is `ready`); the shell re-reads the status as provisioning
  * finishes, and only then is Continue offered.
+ *
+ * W2 — the progress is the shared four-stage `ProvisioningProgress` (real
+ * step states only, a live-region announcement, Retry when stalled), and
+ * the branding chosen in the form is applied server-side; the finished
+ * panel shows a brand follow-up only when something still needs the owner.
  */
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  AlertTriangle,
-  Check,
-  CheckCircle2,
-  Circle,
-  Loader2,
-  Minus,
-  XCircle,
-} from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@hooks';
 import { toErrorsNamespaceKey } from '@utils';
 import {
   AcademySetupForm,
-  PROVISIONING_STEP_KEYS,
-  useProvisioningRequest,
-  useRetryProvisioning,
+  isBrandingFailure,
+  ProvisioningProgress,
+  useProvisioningProgress,
 } from '@features/provisioning';
-import type { ProvisioningStepStatus } from '@types';
-import { FinishBrandingCard, pendingBrandingStore } from '@features/website';
 import { OnboardingStepFrame } from './OnboardingStepFrame';
 import { StepPanel } from './StepPanel';
 import { findStep } from '../utils/onboarding-status.utils';
 import { BlockedNotice } from './BlockedNotice';
 import type { OnboardingStepProps } from './step.types';
 
-function ProvisioningStepIcon({
-  status,
-}: {
-  readonly status: ProvisioningStepStatus;
-}): JSX.Element {
-  switch (status) {
-    case 'completed':
-      return (
-        <Check
-          className="size-4 shrink-0 text-success"
-          strokeWidth={2.5}
-          aria-hidden
-        />
-      );
-    case 'running':
-      return (
-        <Loader2
-          className="size-4 shrink-0 animate-spin text-info"
-          aria-hidden
-        />
-      );
-    case 'failed':
-      return (
-        <XCircle className="size-4 shrink-0 text-destructive" aria-hidden />
-      );
-    case 'skipped':
-      return (
-        <Minus className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-      );
-    default:
-      return (
-        <Circle className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-      );
-  }
-}
-
-/** Live progress of one provisioning request, with retry on failure. */
-function ProvisioningProgress({
+/** Live progress of one provisioning request, with retry on failure or a stall. */
+function ProvisioningRun({
   requestId,
   academyName,
   onSettled,
@@ -87,10 +46,8 @@ function ProvisioningProgress({
   readonly onSettled: () => void;
 }): JSX.Element {
   const { t } = useTranslation();
-  const { organization } = useAuth();
-  const requestQuery = useProvisioningRequest(requestId);
-  const retry = useRetryProvisioning();
-  const request = requestQuery.data;
+  const progress = useProvisioningProgress(requestId);
+  const request = progress.request;
   const requestStatus = request?.status;
 
   useEffect(() => {
@@ -105,34 +62,18 @@ function ProvisioningProgress({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [requestStatus]);
 
-  const stepByKey = new Map(
-    (request?.steps ?? []).map((step) => [step.key, step] as const)
-  );
-  const isFailed = requestStatus === 'failed';
+  const stages = request ? (
+    <ProvisioningProgress
+      request={request}
+      logo={progress.logo}
+      onRetry={() => progress.retry({ onSuccess: onSettled })}
+      isRetrying={progress.isRetrying}
+      retryFailed={!!progress.retryError && requestStatus !== 'failed'}
+      isReconnecting={progress.isReconnecting}
+    />
+  ) : null;
 
-  const checklist = (
-    <ul className="space-y-2.5" aria-live="polite">
-      {PROVISIONING_STEP_KEYS.map((stepKey) => {
-        const stepStatus = stepByKey.get(stepKey)?.status ?? 'pending';
-        return (
-          <li key={stepKey} className="flex items-center gap-3 text-sm">
-            <ProvisioningStepIcon status={stepStatus} />
-            <span
-              className={
-                stepStatus === 'completed' || stepStatus === 'skipped'
-                  ? 'text-muted-foreground'
-                  : 'text-foreground'
-              }
-            >
-              {t(`provisioning:step.${stepKey}`)}
-            </span>
-          </li>
-        );
-      })}
-    </ul>
-  );
-
-  if (isFailed) {
+  if (requestStatus === 'failed') {
     return (
       <StepPanel
         icon={AlertTriangle}
@@ -147,23 +88,17 @@ function ProvisioningProgress({
         actions={
           <Button
             type="button"
-            onClick={() => {
-              if (!organization?.id) return;
-              retry.mutate(
-                { organizationId: organization.id, requestId },
-                { onSuccess: () => onSettled() }
-              );
-            }}
-            disabled={retry.isPending}
+            onClick={() => progress.retry({ onSuccess: onSettled })}
+            disabled={progress.isRetrying}
           >
-            {retry.isPending ? (
+            {progress.isRetrying ? (
               <Loader2 className="size-4 animate-spin" aria-hidden />
             ) : null}
             {t('onboarding:actions.retry')}
           </Button>
         }
       >
-        {checklist}
+        {stages}
       </StepPanel>
     );
   }
@@ -177,27 +112,40 @@ function ProvisioningProgress({
       description={t('onboarding:academy.provisioningDescription')}
       testId="academy-provisioning"
     >
-      {checklist}
-      {request ? (
-        <div className="mt-4">
-          <FinishBrandingCard request={request} />
-        </div>
-      ) : null}
+      {stages}
     </StepPanel>
   );
 }
 
 /**
- * Theme 1 plan §F.4.3 — keeps saving the setup form's logo & colours after
- * the progress view has handed over to the finished Academy panel.
+ * W2 — on the finished Academy panel: only when something about the brand
+ * still needs the owner (branding could not be applied, or the logo is
+ * still being attached / was not added), the same stage view with its
+ * inline Retry. Nothing otherwise.
  */
-function FinishBrandingForRequest({
+function BrandFollowUp({
   requestId,
 }: {
   readonly requestId: string;
 }): JSX.Element | null {
-  const { data: request } = useProvisioningRequest(requestId);
-  return request ? <FinishBrandingCard request={request} /> : null;
+  const progress = useProvisioningProgress(requestId);
+  const request = progress.request;
+  if (!request) return null;
+  const needsAttention =
+    isBrandingFailure(request) ||
+    ['waiting', 'uploading', 'failed', 'missing'].includes(progress.logo.state);
+  if (!needsAttention) return null;
+  return (
+    <div className="mt-4">
+      <ProvisioningProgress
+        request={request}
+        logo={progress.logo}
+        onRetry={() => progress.retry()}
+        isRetrying={progress.isRetrying}
+        retryFailed={!!progress.retryError}
+      />
+    </div>
+  );
 }
 
 export function AcademyStep({
@@ -251,17 +199,19 @@ export function AcademyStep({
               </span>
             </p>
           ) : null}
-          {createdRequest && pendingBrandingStore.get(createdRequest.id) ? (
-            <div className="mt-4">
-              <FinishBrandingForRequest requestId={createdRequest.id} />
-            </div>
+          {status.provisioning?.requestId || createdRequest ? (
+            <BrandFollowUp
+              requestId={
+                (status.provisioning?.requestId ?? createdRequest?.id)!
+              }
+            />
           ) : null}
         </StepPanel>
       );
     }
     if (showProgress && requestId) {
       return (
-        <ProvisioningProgress
+        <ProvisioningRun
           requestId={requestId}
           academyName={status.academy?.name ?? createdRequest?.name ?? ''}
           onSettled={() => void refresh()}

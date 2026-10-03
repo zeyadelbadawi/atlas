@@ -51,7 +51,8 @@
       "edit": "Edit",
       "builder": "Curriculum",
       "settings": "Settings",
-      "delete": "Delete"
+      "delete": "Delete",
+      "continueSetup": "Continue setup"
     },
     "uncategorized": "Uncategorized"
   },
@@ -521,7 +522,8 @@
       "acceptedAnswersHelp": "Any one of these counts as correct. Matching ignores capitalisation and surrounding spaces.",
       "acceptedAnswerPlaceholder": "Accepted answer {{number}}",
       "addAcceptedAnswer": "Add accepted answer",
-      "removeAcceptedAnswer": "Remove accepted answer"
+      "removeAcceptedAnswer": "Remove accepted answer",
+      "moreOptions": "More options"
     },
     "validation": {
       "trueFalseOptionCount": "A True/False question needs exactly two options.",
@@ -529,12 +531,23 @@
       "atLeastOneCorrect": "Mark at least one option as correct.",
       "minTwoOptions": "Add at least two options.",
       "acceptedAnswerRequired": "Add at least one accepted answer.",
-      "availabilityOrder": "The closing time must be after the opening time."
+      "availabilityOrder": "The closing time must be after the opening time.",
+      "dueAfterWindow": "The due date can't be after the closing time.",
+      "questionsPerAttemptExceedsCount": "This is more than the number of questions in the quiz."
     },
     "settings": {
       "title": "Settings",
       "presetsLabel": "Presets",
       "presetsHelp": "Start from a preset, then change anything below.",
+      "essentials": {
+        "title": "Scoring and attempts",
+        "description": "The settings most quizzes need. Leave a field blank for no limit."
+      },
+      "advanced": {
+        "toggle": "Advanced options",
+        "description": "Availability, grading, review, integrity and progression. Hidden settings keep their values and are saved with the quiz.",
+        "customised": "{{count}} customised"
+      },
       "presets": {
         "practice": {
           "label": "Practice",
@@ -744,6 +757,173 @@
     "ratingLabel": "Rated {{rating}} out of 5",
     "emptyTitle": "No reviews yet",
     "emptyDescription": "Reviews from enrolled learners will appear here for moderation."
+  },
+  "wizard": {
+    "title": "Set up your course",
+    "createTitle": "Create a course",
+    "subtitle": "Work through each step. A step is saved when you continue, so you can leave and pick up where you stopped.",
+    "stepperLabel": "Course setup steps",
+    "stepOf": "Step {{current}} of {{total}}",
+    "steps": {
+      "basics": {
+        "label": "Basics",
+        "title": "Course basics",
+        "description": "Name your course. It is saved as a private draft, and nobody else sees it until you publish."
+      },
+      "details": {
+        "label": "Details",
+        "title": "Course details",
+        "description": "Tell learners what the course covers and what they will be able to do."
+      },
+      "media": {
+        "label": "Media",
+        "title": "Course image",
+        "description": "Choose the image shown on the course card and the course page."
+      },
+      "curriculum": {
+        "label": "Curriculum",
+        "title": "Curriculum",
+        "description": "Add units and lessons. Each change here is saved as you make it."
+      },
+      "assessments": {
+        "label": "Assessments",
+        "title": "Assessments",
+        "description": "Add quizzes to check understanding. This step is optional, and a course can also be quizzes only."
+      },
+      "pricing": {
+        "label": "Pricing",
+        "title": "Pricing and access",
+        "description": "Decide who can find the course and whether it is free or paid."
+      },
+      "review": {
+        "label": "Review",
+        "title": "Review",
+        "description": "See what is ready and what still needs attention before you publish."
+      },
+      "publish": {
+        "label": "Publish",
+        "title": "Publish",
+        "description": "Make the course available to learners."
+      }
+    },
+    "status": {
+      "complete": "Completed",
+      "incomplete": "Not completed",
+      "optional": "Optional",
+      "locked": "Available after the course is created"
+    },
+    "back": "Back",
+    "next": "Save and continue",
+    "continue": "Continue",
+    "saving": "Saving…",
+    "saveError": "We couldn't save this step. Please try again.",
+    "loadError": "We couldn't load this course.",
+    "curriculumHint": "Learners only see lessons, quizzes and assignments whose status is Published.",
+    "media": {
+      "none": "No image yet",
+      "choose": "Choose image",
+      "change": "Change image",
+      "remove": "Remove image",
+      "help": "Pick an image from your media library, or upload a new one there. PNG or JPEG works best.",
+      "previewAlt": "Course image preview"
+    },
+    "assessments": {
+      "createQuiz": "Create quiz",
+      "edit": "Edit",
+      "editQuiz": "Edit {{title}}",
+      "quizzesTitle": "Quizzes",
+      "emptyTitle": "No quizzes yet",
+      "emptyDescription": "Create a quiz to check what learners have understood.",
+      "unitLabel": "Place in unit",
+      "unitNone": "Not in a unit",
+      "unitHelp": "The quiz is added at the end of the unit you choose.",
+      "notPlaced": "Not in a unit",
+      "inUnit": "In {{unit}}",
+      "sheetCreateTitle": "Create quiz",
+      "sheetEditTitle": "Edit quiz",
+      "sheetDescription": "A quiz created here starts as Published, so learners can take it once the course is live.",
+      "attached": "Quiz added to {{unit}}.",
+      "attachError": "The quiz was saved but could not be added to the unit. Add it from the Curriculum step.",
+      "assignmentsTitle": "Assignments",
+      "assignmentsDescription": "Assignments are created and graded on their own page.",
+      "manageAssignments": "Manage assignments",
+      "loadError": "We couldn't load the quizzes."
+    },
+    "review": {
+      "ready": "Ready to publish",
+      "readyDescription": "Everything required is in place. Recommendations are optional.",
+      "notReady": "Not ready to publish yet",
+      "notReadyDescription": "Fix the required items below, then publish.",
+      "blockingTitle": "Required before publishing",
+      "warningsTitle": "Recommended",
+      "infoTitle": "Good to know",
+      "passedTitle": "Done",
+      "fix": "Go to {{step}}",
+      "unavailable": "We couldn't check whether the course is ready. Try again.",
+      "checks": {
+        "title": {
+          "pass": "The course has a title and a web address.",
+          "fail": "Add a title and a web address."
+        },
+        "publishedActivity": {
+          "pass": "At least one lesson, quiz or assignment is published.",
+          "fail": "Publish at least one lesson, quiz or assignment. Learners only see published items."
+        },
+        "paidPrice": {
+          "pass": "The price is set.",
+          "fail": "Set a price above zero and a currency for this paid course."
+        },
+        "shortDescription": {
+          "pass": "The course has a short description.",
+          "fail": "Add a short description. It appears on the course card."
+        },
+        "description": {
+          "pass": "The course has a full description.",
+          "fail": "Add a full description so learners know what the course covers."
+        },
+        "thumbnail": {
+          "pass": "The course has an image.",
+          "fail": "Add a course image."
+        },
+        "outcomes": {
+          "pass": "Learning outcomes are listed.",
+          "fail": "List what learners will be able to do after the course."
+        },
+        "draftItems": {
+          "pass": "No content is left in draft.",
+          "fail": "Items still in draft and hidden from learners: {{count}}."
+        },
+        "emptySections": {
+          "pass": "Every unit has content.",
+          "fail": "Units with no content: {{count}}."
+        },
+        "paymentSetup": {
+          "pass": "Payment collection is set up.",
+          "fail": "Your organization hasn't set up payment collection, so learners can't buy this course yet."
+        },
+        "visibilityPrivate": {
+          "pass": "The course is public and will appear in the catalog.",
+          "fail": "The course is private. It won't appear in the public catalog."
+        }
+      }
+    },
+    "publish": {
+      "readyDescription": "Everything required is in place. Publishing makes the course available to learners according to its visibility.",
+      "blockedDescription": "Some required items are missing. Fix them on the Review step first.",
+      "goToReview": "Go to Review",
+      "button": "Publish course",
+      "publishing": "Publishing…",
+      "confirmTitle": "Publish this course?",
+      "confirmDescription": "Learners will be able to see it according to its visibility. You can unpublish it later from the course settings.",
+      "confirmLabel": "Publish",
+      "cancelLabel": "Cancel",
+      "success": "Course published",
+      "error": "We couldn't publish the course. Please try again.",
+      "publishedTitle": "This course is published",
+      "publishedDescription": "Learners can now find it according to its visibility.",
+      "viewCourses": "Back to courses",
+      "openSettings": "Course settings"
+    }
   },
   "checkout": {
     "title": "Checkout",

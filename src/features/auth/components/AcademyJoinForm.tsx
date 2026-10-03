@@ -93,6 +93,11 @@ function joinErrorKey(error: ApiError): string {
   if (error.kind === 'unauthorized') {
     return 'auth:signIn.errors.invalidCredentials';
   }
+  // W4 — the ACCOUNT's name is already a learner's name here; this form has
+  // no name field, so the copy says where to change it.
+  if (error.messageKey === 'errors.academy.learnerNameTaken') {
+    return 'auth:academyJoin.errors.nameTaken';
+  }
   if (error.messageKey && SPECIFIC_ERROR_KEYS.includes(error.messageKey)) {
     return toErrorsNamespaceKey(error.messageKey);
   }

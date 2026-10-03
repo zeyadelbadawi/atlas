@@ -6,7 +6,6 @@
  * inside this shell, which is what makes separately built modules feel like one
  * product.
  */
-import { Outlet } from 'react-router-dom';
 import { LifecyclePanel } from '@features/tenant';
 import { useTranslation } from 'react-i18next';
 import { OfflineNotice } from '@components/feedback';
@@ -21,7 +20,12 @@ import {
 } from '@hooks';
 import { AccountMenu, OrganizationSwitcher } from '@components/controls';
 import { NotificationBell } from '@features/notifications';
-import { useActiveAcademyReconciliation } from '@features/academy';
+import {
+  AcademyScopeProvider,
+  AcademySwitcher,
+  useActiveAcademyReconciliation,
+} from '@features/academy';
+import { AcademyScopeRoute } from '@app/routes/AcademyScopeRoute';
 import { DashboardSidebar } from './DashboardSidebar';
 import { DashboardTopbar } from './DashboardTopbar';
 import { useSmartBack } from './useSmartBack';
@@ -29,7 +33,20 @@ import { useSmartBack } from './useSmartBack';
 /** Id of the main landmark, targeted by the skip link. */
 const MAIN_CONTENT_ID = 'atlas-dashboard-content';
 
+/**
+ * W5 — the academy scope (URL-derived active academy, membership check,
+ * revocation handling) wraps the whole shell, so the sidebar, the top-bar
+ * switcher and the content all read the same academy in the same render.
+ */
 export function DashboardLayout(): JSX.Element {
+  return (
+    <AcademyScopeProvider>
+      <DashboardShell />
+    </AcademyScopeProvider>
+  );
+}
+
+function DashboardShell(): JSX.Element {
   const { t } = useTranslation();
   const { isBelow } = useBreakpoint();
   const isOnline = useOnlineStatus();
@@ -68,6 +85,7 @@ export function DashboardLayout(): JSX.Element {
           isMobile={isMobile}
           canGoBack={smartBack.canGoBack}
           onGoBack={smartBack.goBack}
+          leading={isMobile ? null : <AcademySwitcher />}
           actions={
             <>
               <OrganizationSwitcher />
@@ -76,6 +94,14 @@ export function DashboardLayout(): JSX.Element {
             </>
           }
         />
+        {/* Phones: the top bar has no room for the academy switcher at
+            390 px, so it gets its own slim bar — the current academy and
+            your role stay visible on every screen. */}
+        {isMobile ? (
+          <div className="border-b border-border bg-background px-2 empty:hidden">
+            <AcademySwitcher variant="bar" />
+          </div>
+        ) : null}
         {!isOnline ? <OfflineNotice /> : null}
 
         {/*
@@ -104,7 +130,9 @@ export function DashboardLayout(): JSX.Element {
           aria-label={t('layout:dashboard.contentLabel')}
           className="flex-1 bg-background"
         >
-          <Outlet />
+          {/* W5 — the content outlet is the academy remount boundary
+              (`<Outlet key={academyId} />`) and hosts the switch overlay. */}
+          <AcademyScopeRoute />
         </main>
       </div>
     </div>

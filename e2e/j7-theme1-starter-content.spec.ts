@@ -5,8 +5,9 @@
  * seeded Organization owner:
  *
  *   J7a  logo chosen in the setup form → palette previewed → Academy
- *        created → logo + palette persisted from the status page → the
- *        public website renders with that palette;
+ *        created → palette applied by the server's branding step, logo
+ *        attached once the Academy exists (W2) → the public website renders
+ *        with that palette;
  *   J7b  logo skipped → the theme's default palette;
  *   J7c  the sample chain (§D.4) on the J7b Academy: the preview labels the
  *        sample testimonials → publishing warns and lists them → the public
@@ -118,7 +119,8 @@ async function provisionThroughForm(
 ): Promise<Provisioned> {
   await goInApp(page, '/dashboard/provisioning/new');
   await page.getByLabel('Academy name').fill(name);
-  await page.getByRole('button', { name: /Modern Education/ }).click();
+  // W2 — a single-choice radio, the default theme pre-selected.
+  await page.getByRole('radio', { name: /Modern Education/ }).click();
 
   if (withLogo) {
     await page.getByText('Logo & colours (optional)').click();
@@ -148,14 +150,13 @@ async function provisionThroughForm(
   await expect(page.getByText('Your Academy is ready')).toBeVisible({
     timeout: 60_000,
   });
-  // The status page persists the pending logo and palette (deferred
-  // branding) once the Academy exists.
+  // W2 — the palette travelled with the request (the server's branding
+  // step applied it); the logo is attached inline once the Academy exists.
   if (withLogo) {
-    await expect(page.getByText('Saving your logo and colours…')).toHaveCount(
-      0,
-      {
-        timeout: 30_000,
-      }
+    await expect(page.getByTestId('provisioning-stage-brand')).toHaveAttribute(
+      'data-state',
+      'done',
+      { timeout: 30_000 }
     );
   }
   const requestId = new URL(page.url()).pathname.split('/').pop()!;
