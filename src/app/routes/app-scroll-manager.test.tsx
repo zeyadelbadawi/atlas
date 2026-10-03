@@ -5,17 +5,12 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, render } from '@testing-library/react';
-import {
-  createMemoryRouter,
-  Outlet,
-  RouterProvider,
-  type Router,
-} from 'react-router-dom';
+import { createMemoryRouter, Outlet, RouterProvider } from 'react-router-dom';
 import { useRef } from 'react';
 import { AppScrollManager } from './AppScrollManager';
 import { useResetScrollOnReveal } from '@hooks';
 
-type MemoryRouter = ReturnType<typeof createMemoryRouter> & Router;
+type MemoryRouter = ReturnType<typeof createMemoryRouter>;
 
 let scrollY = 0;
 let scrollHeight = 5000;
@@ -69,7 +64,7 @@ function renderAt(initial: string): MemoryRouter {
       },
     ],
     { initialEntries: [initial] }
-  ) as MemoryRouter;
+  );
   render(<RouterProvider router={router} />);
   return router;
 }

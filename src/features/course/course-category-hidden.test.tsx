@@ -65,9 +65,10 @@ const course = {
   updatedAt: '2026-10-01T00:00:00.000Z',
 } as unknown as Course;
 
-let getCategories: ReturnType<typeof vi.spyOn>;
-let createCourse: ReturnType<typeof vi.spyOn>;
-let updateCourse: ReturnType<typeof vi.spyOn>;
+// Loosely typed: only call arguments are inspected.
+let getCategories: { mock: { calls: unknown[][] } };
+let createCourse: { mock: { calls: unknown[][] } };
+let updateCourse: { mock: { calls: unknown[][] } };
 
 beforeEach(() => {
   getCategories = vi.spyOn(courseService, 'getCourseCategories');
