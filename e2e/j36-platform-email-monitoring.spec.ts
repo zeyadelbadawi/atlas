@@ -12,6 +12,10 @@
  *    no full address or IP is rendered. Arabic at phone width is RTL.
  *  - An organisation owner sees none of the three entries, is refused by
  *    the route guard in the browser, and gets 403 from both APIs.
+ *  - All three pages in EN and AR, on a desktop and a 390 px phone: the
+ *    translated heading, the document direction, no sideways scroll.
+ *  - The seeded Manager and Instructor get 403 from both APIs, and the
+ *    Manager is not offered the section.
  *
  * NEEDS THE INTEGRATED REBUILD: the API on :3000 serves a prebuilt dist, and
  * the W3 endpoints (`platform-communications/email-activity`,
@@ -29,6 +33,13 @@ import {
 import { clearAuthRateLimits } from './support/global-setup';
 import { PLATFORM_OWNER_EMAIL } from './support/phase4';
 import { adminQuery, adminSql } from './support/admin-db';
+import {
+  VARIANTS,
+  applyVariant,
+  captureEvidence,
+  expectNoSidewaysScroll,
+  setStoredLanguage,
+} from './support/evidence';
 
 test.describe.configure({ mode: 'serial', timeout: 240_000 });
 const expect = baseExpect.configure({ timeout: 45_000 });
@@ -232,5 +243,96 @@ test.describe('J36 — Platform Owner email & security monitoring', () => {
       const body = (await page.locator('body').textContent()) ?? '';
       expect(body).not.toContain(masked(SEED.owner));
     }
+  });
+
+  test('platform owner: the three pages in EN and AR, desktop and phone', async ({
+    page,
+  }) => {
+    await clearAuthRateLimits();
+    await seedCookieDecision(page);
+    await signInThroughDashboard(page, PLATFORM_OWNER_EMAIL, SEED.password);
+    await page.waitForURL(/\/dashboard/, { timeout: 120_000 });
+    const pages = [
+      {
+        slug: 'compose',
+        path: '/dashboard/platform/email/compose',
+        en: 'Compose and Send',
+        ar: 'إنشاء وإرسال',
+      },
+      {
+        slug: 'activity',
+        path: '/dashboard/platform/email/activity',
+        en: 'Academy Email Activity',
+        ar: 'نشاط بريد الأكاديميات',
+      },
+      {
+        slug: 'security',
+        path: '/dashboard/platform/email/security',
+        en: 'OTP & Security Monitoring',
+        ar: 'مراقبة رموز التحقق والأمان',
+      },
+    ];
+    try {
+      for (const entry of pages) {
+        await page.goto(entry.path);
+        for (const variant of VARIANTS) {
+          await applyVariant(page, variant);
+          await expect(
+            page.getByRole('heading', {
+              name: entry[variant.language],
+              exact: true,
+            })
+          ).toBeVisible({ timeout: 90_000 });
+          await expectNoSidewaysScroll(page);
+          const body = (await page.locator('main').textContent()) ?? '';
+          expect(body).not.toContain(SEED.owner);
+          await captureEvidence(
+            page,
+            `platform-email-${entry.slug}-${variant.name}`
+          );
+        }
+      }
+    } finally {
+      await setStoredLanguage(page, 'en');
+    }
+  });
+
+  test('manager and instructor: 403 from both APIs; the manager is not offered the section', async ({
+    page,
+    request,
+  }) => {
+    for (const email of [SEED.manager, SEED.instructor]) {
+      await clearAuthRateLimits();
+      const session = await apiSignIn(request, {
+        email,
+        password: SEED.password,
+        surface: 'management',
+      });
+      for (const path of [
+        '/platform-communications/email-activity',
+        '/platform-security/summary',
+        '/platform-security/events',
+      ]) {
+        expect(
+          (await apiGet(request, session, path)).status(),
+          `${email} ${path}`
+        ).toBe(403);
+      }
+    }
+
+    await clearAuthRateLimits();
+    await seedCookieDecision(page);
+    await signInThroughDashboard(page, SEED.manager, SEED.password);
+    await page.waitForURL(/\/dashboard/, { timeout: 120_000 });
+    await expect(
+      page.getByText('Email & Notifications', { exact: true })
+    ).toHaveCount(0);
+    await page.goto('/dashboard/platform/email/security');
+    await expect(
+      page.getByRole('heading', {
+        name: 'OTP & Security Monitoring',
+        exact: true,
+      })
+    ).toHaveCount(0);
   });
 });

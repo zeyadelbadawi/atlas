@@ -39,6 +39,7 @@ import {
   type Session,
 } from './support/atlas';
 import { clearAuthRateLimits } from './support/global-setup';
+import { captureEvidence } from './support/evidence';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -295,6 +296,10 @@ test.describe('J34 — the cookie banner follows each Academy’s palette', () =
           label
         ).toEqual([]);
 
+        await captureEvidence(
+          page,
+          `cookie-banner-${academy.slug}-${variant.name.replace(/\s+/g, '-')}`
+        );
         painted.push(seen.acceptBackground);
         await page.context().close();
       }

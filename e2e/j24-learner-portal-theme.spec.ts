@@ -221,7 +221,11 @@ test.describe('J24 — the learner portal follows the Academy palette', () => {
     context = await browser.newContext();
     let page = await context.newPage();
     await seedCookieDecision(page);
-    await registerLearnerThroughWebsite(page, learnerEmail, uniqueLearnerName('J24 Learner'));
+    await registerLearnerThroughWebsite(
+      page,
+      learnerEmail,
+      uniqueLearnerName('J24 Learner')
+    );
     await expect(
       page
         .getByText(

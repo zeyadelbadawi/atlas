@@ -349,8 +349,11 @@ export function RegistrationForm({
   // form — e.g. a stricter server-side password rule than this schema's
   // client-side one — instead of only the generic `ErrorState` below.
   useServerValidation(form, registerAccount.error);
-  // W4 — a taken organization name (management signup) or learner name
-  // (academy signup) is shown on its own input, like `emailNotAcceptable`.
+  // W4 — a taken organization name (management signup) is shown on its own
+  // input, like `emailNotAcceptable`. A learner name is answered here only
+  // for an EXISTING account that proved its password (academy join); a new
+  // account is never refused for its name (security review finding 2) — the
+  // profile asks it for a different one once signed in and verified.
   const nameConflict = useNameConflictError(form, registerAccount.error);
 
   const failure = registerAccount.error;

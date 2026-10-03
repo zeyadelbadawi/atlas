@@ -16,7 +16,11 @@
  *      7 days after approval;
  *   3  the Platform Owner sees the gift on the organization's detail page;
  *   4  the same owner's SECOND organization is not offered the gift, and its
- *      approved payment grants none (one gift per customer identity).
+ *      approved payment grants none (one gift per customer identity);
+ *   2b the owner's billing overview with the gift in EN and AR, desktop and
+ *      phone (before the second organization exists);
+ *   5  the plan editor's gifted-days section (Platform Owner) in EN and AR,
+ *      desktop and phone.
  *
  * The plan is this journey's own and is archived afterwards.
  */
@@ -41,6 +45,13 @@ import {
 } from './support/atlas';
 import { clearAuthRateLimits } from './support/global-setup';
 import { TINY_PNG, dataUrl, signInPlatformOwner } from './support/phase4';
+import {
+  VARIANTS,
+  applyVariant,
+  captureEvidence,
+  expectNoSidewaysScroll,
+  setStoredLanguage,
+} from './support/evidence';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -362,6 +373,35 @@ test.describe('J41 — gifted setup days on the first paid subscription', () => 
     await context.close();
   });
 
+  test('2b: the billing overview shows the gift in EN and AR, desktop and phone', async ({
+    browser,
+  }) => {
+    test.setTimeout(180_000);
+    await clearAuthRateLimits();
+    const ownerContext = await browser.newContext();
+    const page = await ownerContext.newPage();
+    try {
+      await signInOwnerPage(page, owner.email);
+      await page.goto(ROUTES.billing);
+      for (const variant of VARIANTS) {
+        await applyVariant(page, variant);
+        const gift = page.getByTestId('subscription-gift');
+        await expect(gift).toContainText(
+          variant.language === 'ar'
+            ? 'يتضمن 7 أيام إعداد مُهداة'
+            : 'Includes 7 gifted setup days',
+          { timeout: 30_000 }
+        );
+        await gift.scrollIntoViewIfNeeded();
+        await expectNoSidewaysScroll(page);
+        await captureEvidence(page, `billing-gift-${variant.name}`);
+      }
+    } finally {
+      await setStoredLanguage(page, 'en');
+      await ownerContext.close();
+    }
+  });
+
   test('3: the Platform Owner sees the gift on the organization detail page', async ({
     page,
   }) => {
@@ -413,5 +453,45 @@ test.describe('J41 — gifted setup days on the first paid subscription', () => 
       )
     ).json();
     expect(first.giftedDays).toBe(7);
+  });
+
+  test('5: the plan editor’s gifted-days section in EN and AR, desktop and phone', async ({
+    browser,
+  }) => {
+    test.setTimeout(240_000);
+    await clearAuthRateLimits();
+
+    const adminContext = await browser.newContext();
+    const admin = await adminContext.newPage();
+    try {
+      await seedCookieDecision(admin);
+      await signInThroughDashboard(admin, 'admin@atlas.dev', SEED.password);
+      await admin.waitForURL(/\/dashboard/, { timeout: 30_000 });
+      await admin.goto(ROUTES.plans);
+      for (const variant of VARIANTS) {
+        await applyVariant(admin, variant);
+        await admin
+          .getByTestId(`plan-edit-${PLAN.key}`)
+          .click({ timeout: 30_000 });
+        const dialog = admin.getByRole('dialog');
+        await expect(
+          dialog.getByRole('heading', {
+            name:
+              variant.language === 'ar'
+                ? 'أيام الإعداد المُهداة'
+                : 'Gifted setup days',
+          })
+        ).toBeVisible();
+        await expect(admin.getByTestId('plan-gifted-monthly')).toHaveValue('7');
+        await admin.getByTestId('plan-gifted-monthly').scrollIntoViewIfNeeded();
+        await expectNoSidewaysScroll(admin);
+        await captureEvidence(admin, `plan-admin-gift-${variant.name}`);
+        await admin.keyboard.press('Escape');
+        await expect(dialog).toBeHidden();
+      }
+    } finally {
+      await setStoredLanguage(admin, 'en');
+      await adminContext.close();
+    }
   });
 });

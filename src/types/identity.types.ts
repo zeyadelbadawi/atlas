@@ -60,6 +60,12 @@ export interface LearnerAcademy {
   /** e.g. `active` | `pending` (awaiting approval) — rendered, never switched on exhaustively. */
   readonly membershipStatus: string;
   readonly blocked: boolean;
+  /**
+   * W4 — true when the account was admitted here while another learner
+   * already used its display name; the profile asks for a different one.
+   * Reported only to the account itself, once its email is verified.
+   */
+  readonly nameChangeSuggested?: boolean;
 }
 
 /** The authenticated user's profile. */

@@ -15,7 +15,10 @@
  *   J35c  a request that stopped making progress is reported "stalled" with
  *         Retry, and Retry resumes it to ready;
  *   J35d  the same status page in Arabic: RTL, translated stages, no
- *         sideways scroll at 390 px.
+ *         sideways scroll at 390 px;
+ *   J35e  the status page in EN and AR, on a desktop and a phone (evidence);
+ *   J35f  the seeded Manager and Instructor are not offered provisioning,
+ *         and the API refuses them (403).
  *
  * NEEDS THE INTEGRATED REBUILD: the brand/stall/stage contract and the
  * logo-attach endpoint are new backend code (W2).
@@ -36,6 +39,13 @@ import {
   signOutInBrowser,
   type Session,
 } from './support/atlas';
+import {
+  VARIANTS,
+  applyVariant,
+  captureEvidence,
+  expectNoSidewaysScroll,
+  setStoredLanguage,
+} from './support/evidence';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -334,5 +344,69 @@ test.describe('J35 — provisioning progress', () => {
     await page.evaluate(() =>
       localStorage.setItem('atlas:language', JSON.stringify('en'))
     );
+  });
+
+  test('J35e: the status page in EN and AR, desktop and phone — heading, direction, no sideways scroll', async ({
+    page,
+  }) => {
+    test.skip(!readyRequestId, 'needs the J35a request');
+    await signIn(page);
+    await page.goto(`/dashboard/provisioning/${readyRequestId}`);
+    try {
+      for (const variant of VARIANTS) {
+        await applyVariant(page, variant);
+        await expect(
+          page.getByText(
+            variant.language === 'ar'
+              ? 'أكاديميتك جاهزة'
+              : 'Your Academy is ready'
+          )
+        ).toBeVisible({ timeout: 30_000 });
+        await expect(stage(page, 'brand')).toHaveAttribute(
+          'data-state',
+          'done'
+        );
+        await expectNoSidewaysScroll(page);
+        await captureEvidence(page, `provisioning-status-${variant.name}`);
+      }
+    } finally {
+      await setStoredLanguage(page, 'en');
+    }
+  });
+
+  test('J35f: the Manager and the Instructor are not offered provisioning; the API refuses them', async ({
+    page,
+    request,
+  }) => {
+    for (const email of [SEED.manager, SEED.instructor]) {
+      await clearAuthRateLimits();
+      const session = await apiSignIn(request, {
+        email,
+        password: SEED.password,
+        surface: 'management',
+      });
+      const refused = await apiPost(
+        request,
+        session,
+        `/organizations/${organizationId}/provisioning-requests`,
+        {
+          academyName: `J35 Refused ${Date.now() % 1e7}`,
+          requestedSubdomain: `j35-refused-${Date.now() % 1e8}`,
+          selectedThemeKey: 'modern-education',
+          websiteSetupMode: 'complete',
+          idempotencyKey: `j35-refused-${randomUUID()}`,
+        }
+      );
+      expect(refused.status(), email).toBe(403);
+
+      await signOutInBrowser(page);
+      await signInThroughDashboard(page, email, SEED.password);
+      await page.waitForURL(/\/dashboard/);
+      await goInApp(page, '/dashboard/provisioning/new');
+      await expect(page.getByLabel('Academy name')).toHaveCount(0);
+      await expect(
+        page.getByRole('button', { name: 'Start provisioning' })
+      ).toHaveCount(0);
+    }
   });
 });

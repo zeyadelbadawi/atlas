@@ -12,7 +12,10 @@
  *  - The same page on a phone (390×844) in Arabic: RTL, no horizontal
  *    scroll, the quota meter and the composer visible.
  *  - The seeded Manager is not offered Messages, and the API refuses their
- *    preview with 403 (owner/administrator only, server-side).
+ *    preview with 403 (owner/administrator only, server-side). The same
+ *    for the seeded Instructor.
+ *  - Academy owner: the Messages page in EN and AR, desktop and phone
+ *    (heading, direction, quota meter, composer, no sideways scroll).
  *  - Platform Owner: Email & Notifications → Compose and send previews an
  *    audience and sends an in-app-only broadcast; it shows in the history
  *    and creates no email outbox rows and no academy quota usage.
@@ -31,6 +34,12 @@ import {
 import { clearAuthRateLimits } from './support/global-setup';
 import { PLATFORM_OWNER_EMAIL } from './support/phase4';
 import { adminQuery } from './support/admin-db';
+import {
+  VARIANTS,
+  applyVariant,
+  captureEvidence,
+  expectNoSidewaysScroll,
+} from './support/evidence';
 
 test.describe.configure({ mode: 'serial', timeout: 240_000 });
 const expect = baseExpect.configure({ timeout: 45_000 });
@@ -266,5 +275,63 @@ test.describe('J37 — email composer', () => {
       `select coalesce(sum(used), 0)::int as used from tenant_email_usage_periods`
     );
     expect(usageAfter[0].used).toBe(usageBefore[0].used);
+  });
+
+  test('academy owner: Messages in EN and AR, desktop and phone', async ({
+    page,
+  }) => {
+    await signIn(page, SEED.owner);
+    await page.goto(`/dashboard/academy/${academyId}/messages`);
+    try {
+      for (const variant of VARIANTS) {
+        await applyVariant(page, variant);
+        await expect(
+          page.getByRole('heading', {
+            name: variant.language === 'ar' ? 'الرسائل' : 'Messages',
+            exact: true,
+          })
+        ).toBeVisible({ timeout: 90_000 });
+        await expect(page.getByTestId('quota-meter')).toBeVisible();
+        await expect(page.getByTestId('message-subject')).toBeVisible();
+        await expect(page.getByTestId('message-preview-button')).toBeVisible();
+        await expectNoSidewaysScroll(page);
+        await captureEvidence(page, `academy-messages-${variant.name}`);
+      }
+    } finally {
+      await setLanguage(page, 'en');
+    }
+  });
+
+  test('instructor: not offered Messages; the API refuses the preview (403)', async ({
+    page,
+    request,
+  }) => {
+    await signIn(page, SEED.instructor);
+    await page.goto(`/dashboard/academy/${academyId}`);
+    const nav = page.getByRole('navigation').first();
+    await expect(nav.getByRole('link').first()).toBeVisible({
+      timeout: 90_000,
+    });
+    await expect(
+      nav.getByRole('link', { name: 'Messages', exact: true })
+    ).toHaveCount(0);
+
+    await clearAuthRateLimits();
+    const instructor = await apiSignIn(request, {
+      email: SEED.instructor,
+      password: SEED.password,
+      surface: 'management',
+    });
+    const res = await request.post(
+      `${API_BASE}/academies/${academyId}/messages/preview`,
+      {
+        headers: authHeader(instructor),
+        data: {
+          audience: { type: 'learners' },
+          channels: { email: true, inApp: true },
+        },
+      }
+    );
+    expect(res.status()).toBe(403);
   });
 });

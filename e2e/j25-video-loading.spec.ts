@@ -130,7 +130,11 @@ test.describe('J25 — video loading, slow, failed and ready', () => {
     context = await browser.newContext();
     page = await context.newPage();
     await seedCookieDecision(page);
-    await registerLearnerThroughWebsite(page, learnerEmail, uniqueLearnerName('J25 Learner'));
+    await registerLearnerThroughWebsite(
+      page,
+      learnerEmail,
+      uniqueLearnerName('J25 Learner')
+    );
     await expect(
       page
         .getByText(

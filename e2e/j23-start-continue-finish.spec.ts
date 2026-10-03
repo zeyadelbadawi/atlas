@@ -259,7 +259,11 @@ test.describe('J23 — Start, Continue, Completed and Finish course', () => {
     context = await browser.newContext();
     page = await context.newPage();
     await seedCookieDecision(page);
-    await registerLearnerThroughWebsite(page, learnerEmail, uniqueLearnerName('J23 Learner'));
+    await registerLearnerThroughWebsite(
+      page,
+      learnerEmail,
+      uniqueLearnerName('J23 Learner')
+    );
     await expect(
       page
         .getByText(

@@ -219,7 +219,11 @@ test.describe('J15 — quiz-only and mixed course progress (EN and AR)', () => {
     context = await browser.newContext();
     page = await context.newPage();
     await seedCookieDecision(page);
-    await registerLearnerThroughWebsite(page, learnerEmail, uniqueLearnerName('J15 Learner'));
+    await registerLearnerThroughWebsite(
+      page,
+      learnerEmail,
+      uniqueLearnerName('J15 Learner')
+    );
     await expect(
       page
         .getByText(

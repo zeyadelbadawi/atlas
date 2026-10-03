@@ -24,6 +24,10 @@
  *   6. Phone (390 px), Arabic: the academy bar shows the current academy
  *      and role, opens with the keyboard, and the page does not scroll
  *      sideways.
+ *   7. The seeded Instructor (staff of A only) is not offered B, and a
+ *      direct URL to B is refused.
+ *   8. The owner's academy bar, open, in EN and AR on a desktop and a
+ *      phone: both academies listed, translated role, no sideways scroll.
  *
  * NEEDS THE INTEGRATED BUILD: the API must serve W5's backend (the academy
  * scope guard, the filtered `GET /academies`, `GET /academies/:id/me`).
@@ -38,6 +42,13 @@ import {
 } from './support/atlas';
 import { clearAuthRateLimits } from './support/global-setup';
 import { adminQuery, adminSql } from './support/admin-db';
+import {
+  VARIANTS,
+  applyVariant,
+  captureEvidence,
+  expectNoSidewaysScroll,
+  setStoredLanguage,
+} from './support/evidence';
 
 test.describe.configure({ mode: 'serial', timeout: 240_000 });
 const expect = baseExpect.configure({ timeout: 45_000 });
@@ -355,6 +366,57 @@ test.describe('J39 — academy switching', () => {
       await page.evaluate(() =>
         localStorage.setItem('atlas:language', JSON.stringify('en'))
       );
+    }
+  });
+
+  test('instructor of A: B is not offered, and a direct URL to B is refused', async ({
+    page,
+  }) => {
+    await signIn(page, SEED.instructor);
+    await page.goto(`/dashboard/academy/${academyA}`);
+    await expect(
+      page.getByTestId('academy-switcher-current').first()
+    ).toHaveText(ACADEMY_A_NAME, { timeout: 120_000 });
+    await page.getByTestId('academy-switcher').first().click();
+    await expect(
+      page.getByTestId(`academy-switcher-option-${academyA}`)
+    ).toBeVisible();
+    await expect(
+      page.getByTestId(`academy-switcher-option-${academyB}`)
+    ).toHaveCount(0);
+    await page.keyboard.press('Escape');
+
+    await page.goto(`/dashboard/academy/${academyB}/courses`);
+    await expect(page.getByTestId('academy-access-lost')).toBeVisible();
+    await expect(page).toHaveURL(new RegExp(`/dashboard/academy/${academyA}$`));
+  });
+
+  test('owner: the academy bar, open, in EN and AR on a desktop and a phone', async ({
+    page,
+  }) => {
+    await signIn(page, SEED.owner);
+    await page.goto(`/dashboard/academy/${academyA}`);
+    try {
+      for (const variant of VARIANTS) {
+        await applyVariant(page, variant);
+        const trigger = page.getByTestId('academy-switcher').first();
+        await expect(trigger).toBeVisible({ timeout: 120_000 });
+        await expect(trigger.getByTestId('academy-role-badge')).toHaveText(
+          variant.language === 'ar' ? 'المالك' : 'Owner'
+        );
+        await trigger.click();
+        await expect(
+          page.getByTestId(`academy-switcher-option-${academyA}`)
+        ).toBeVisible();
+        await expect(
+          page.getByTestId(`academy-switcher-option-${academyB}`)
+        ).toBeVisible();
+        await expectNoSidewaysScroll(page);
+        await captureEvidence(page, `academy-switcher-${variant.name}`);
+        await page.keyboard.press('Escape');
+      }
+    } finally {
+      await setStoredLanguage(page, 'en');
     }
   });
 });

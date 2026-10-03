@@ -16,6 +16,9 @@
  *    movement in the stepper, and a client-side price check on Pricing.
  *  - Arabic smoke (RTL): "Continue setup" from the course list resumes a
  *    draft at its first incomplete step with translated copy.
+ *  - Matrix: the Assessments step and the quiz sheet's collapsed
+ *    "Advanced options" in EN and AR, desktop and phone, for the Owner; the
+ *    Manager in Arabic on a phone; the Instructor is refused the wizard.
  *
  * NEEDS THE INTEGRATED REBUILD: idempotent create (`idempotencyKey`) and
  * `GET …/publish-readiness` are new backend code (W6).
@@ -39,6 +42,14 @@ import {
 } from './support/atlas';
 import { clearAuthRateLimits } from './support/global-setup';
 import { createCourse } from './support/phase4';
+import {
+  VARIANTS,
+  applyVariant,
+  captureEvidence,
+  expectNoSidewaysScroll,
+  setStoredLanguage,
+  type Variant,
+} from './support/evidence';
 
 test.describe.configure({ mode: 'serial', timeout: 300_000 });
 const expect = baseExpect.configure({ timeout: 45_000 });
@@ -126,6 +137,50 @@ async function courseStatus(
   );
   expect(res.ok(), await res.text()).toBeTruthy();
   return (await res.json()).status as string;
+}
+
+/**
+ * The Assessments step, then the quiz sheet: advanced settings start
+ * collapsed (no integrity control) and the toggle reveals them.
+ */
+async function checkAssessmentsAndAdvanced(
+  page: Page,
+  variant: Variant,
+  evidencePrefix: string
+): Promise<void> {
+  const ar = variant.language === 'ar';
+  await expect(heading(page)).toHaveText(ar ? 'التقييمات' : 'Assessments', {
+    timeout: 90_000,
+  });
+  await expect(
+    stepper(page, ar ? 'خطوات إعداد الدورة' : 'Course setup steps')
+  ).toBeVisible();
+  await expectNoSidewaysScroll(page);
+  await captureEvidence(page, `${evidencePrefix}-wizard-${variant.name}`);
+
+  await page
+    .getByRole('button', { name: ar ? 'إنشاء اختبار' : 'Create quiz' })
+    .click();
+  const sheet = page.getByRole('dialog', {
+    name: ar ? 'إنشاء اختبار' : 'Create quiz',
+  });
+  await expect(sheet).toBeVisible();
+  const advanced = sheet.getByRole('button', {
+    name: ar ? /خيارات متقدمة/ : /Advanced options/,
+  });
+  const integrity = sheet.getByRole('combobox', {
+    name: ar ? 'وضع النزاهة' : 'Integrity mode',
+  });
+  await expect(advanced).toHaveAttribute('aria-expanded', 'false');
+  await expect(integrity).toHaveCount(0);
+  await advanced.click();
+  await expect(advanced).toHaveAttribute('aria-expanded', 'true');
+  await expect(integrity).toBeVisible();
+  await expectNoSidewaysScroll(page);
+  await captureEvidence(
+    page,
+    `${evidencePrefix}-quiz-advanced-${variant.name}`
+  );
 }
 
 test.describe('J40 — guided course wizard', () => {
@@ -419,5 +474,85 @@ test.describe('J40 — guided course wizard', () => {
       path: testInfo.outputPath('continue-setup-ar.png'),
     });
     await setLanguage(page, 'en');
+  });
+
+  test('matrix (Owner): Assessments step and the quiz Advanced toggle in EN and AR, desktop and phone', async ({
+    page,
+    request,
+  }) => {
+    const courseId = await createCourse(request, owner, academyId, {
+      title: `J40 Matrix ${stamp}`,
+      pricing: { type: 'free' },
+      description: 'Created by J40 for the locale and viewport matrix.',
+    });
+    toArchive.push(courseId);
+    page.on('dialog', (dialog) => void dialog.accept());
+    await signIn(page);
+    await page.goto(
+      `/dashboard/academy/${academyId}/courses/${courseId}/setup?step=assessments`
+    );
+    try {
+      for (const variant of VARIANTS) {
+        await applyVariant(page, variant);
+        await checkAssessmentsAndAdvanced(page, variant, 'course');
+      }
+    } finally {
+      await setStoredLanguage(page, 'en');
+    }
+  });
+
+  test('Manager (AR phone) works in the wizard and sees the Advanced toggle; the Instructor is refused', async ({
+    page,
+    request,
+  }) => {
+    const courseId = await createCourse(request, owner, academyId, {
+      title: `J40 Manager ${stamp}`,
+      pricing: { type: 'free' },
+      description: 'Created by J40 for the manager check.',
+    });
+    toArchive.push(courseId);
+    const wizardUrl = `/dashboard/academy/${academyId}/courses/${courseId}/setup?step=assessments`;
+
+    await clearAuthRateLimits();
+    await seedCookieDecision(page);
+    await signInThroughDashboard(page, SEED.manager, SEED.password);
+    await page.waitForURL(/\/dashboard/, { timeout: 120_000 });
+    await page.goto(wizardUrl);
+    const arPhone = VARIANTS.find((v) => v.name === 'ar-phone')!;
+    try {
+      await applyVariant(page, arPhone);
+      await checkAssessmentsAndAdvanced(page, arPhone, 'course-manager');
+    } finally {
+      await setStoredLanguage(page, 'en');
+    }
+
+    // The Instructor keeps the classic builder: no wizard for her.
+    const context = await page.context().browser()!.newContext();
+    const instructorPage = await context.newPage();
+    try {
+      await clearAuthRateLimits();
+      await seedCookieDecision(instructorPage);
+      await signInThroughDashboard(
+        instructorPage,
+        SEED.instructor,
+        SEED.password
+      );
+      await instructorPage.waitForURL(/\/dashboard/, { timeout: 120_000 });
+      await instructorPage.goto(wizardUrl);
+      // The route guard sends her away from the wizard's address.
+      await expect(instructorPage).not.toHaveURL(/\/setup\?step=/, {
+        timeout: 60_000,
+      });
+      await expect(
+        instructorPage.getByTestId('wizard-step-heading')
+      ).toHaveCount(0, {
+        timeout: 30_000,
+      });
+      await expect(
+        instructorPage.getByRole('navigation', { name: 'Course setup steps' })
+      ).toHaveCount(0);
+    } finally {
+      await context.close();
+    }
   });
 });

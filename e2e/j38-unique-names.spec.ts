@@ -13,6 +13,8 @@
  *  - Learner profile: a rename that clashes with another learner of the
  *    learner's academy is refused on the family-name field, naming that
  *    academy.
+ *  - The website sign-up refusal and the academy-settings refusal in EN and
+ *    AR, on a desktop and a 390 px phone (evidence matrix).
  *
  * NEEDS THE INTEGRATED REBUILD: the API serves a prebuilt dist, and these
  * refusals come from the W4 backend code. Every name is unique per run (the
@@ -36,6 +38,13 @@ import {
 } from './support/atlas';
 import { clearAuthRateLimits } from './support/global-setup';
 import { adminQuery } from './support/admin-db';
+import {
+  VARIANTS,
+  applyVariant,
+  captureEvidence,
+  expectNoSidewaysScroll,
+  setStoredLanguage,
+} from './support/evidence';
 
 test.describe.configure({ mode: 'serial', timeout: 240_000 });
 const expect = baseExpect.configure({ timeout: 45_000 });
@@ -256,5 +265,97 @@ test.describe('J38 — unique names', () => {
       'aria-invalid',
       'true'
     );
+  });
+
+  test('J38f: website sign-up refusal in EN and AR, desktop and phone', async ({
+    browser,
+  }) => {
+    for (const variant of VARIANTS) {
+      const context = await browser.newContext({
+        viewport: { width: variant.width, height: variant.height },
+      });
+      const page = await context.newPage();
+      try {
+        const held = uniqueLearnerName(
+          variant.language === 'ar' ? 'سارة' : 'Maria'
+        );
+        await registerLearnerViaApi(page, academyId, held);
+        await seedCookieDecision(page);
+        await setLanguage(page, variant.language);
+        await fillWebsiteSignUp(page, held.toUpperCase());
+        await expect(page.locator('html')).toHaveAttribute(
+          'dir',
+          variant.language === 'ar' ? 'rtl' : 'ltr'
+        );
+        await expect(
+          page.getByText(
+            variant.language === 'ar'
+              ? 'يوجد متعلّم في هذه الأكاديمية يحمل هذا الاسم بالفعل'
+              : 'A learner in this academy already has this name.',
+            { exact: false }
+          )
+        ).toBeVisible();
+        await expect(page.locator('#name')).toHaveAttribute(
+          'aria-invalid',
+          'true'
+        );
+        await expectNoSidewaysScroll(page);
+        await captureEvidence(page, `unique-name-signup-${variant.name}`);
+      } finally {
+        await context.close();
+      }
+    }
+  });
+
+  test('J38g: academy settings refusal in EN and AR, desktop and phone', async ({
+    page,
+  }) => {
+    await clearAuthRateLimits();
+    await seedCookieDecision(page);
+    await setLanguage(page, 'en');
+    await signInThroughDashboard(page, SEED.owner, SEED.password);
+    await page.waitForURL(/\/dashboard/, { timeout: 60_000 });
+    await page.goto(`/dashboard/academy/${academyId}/settings`);
+    // Each reload leaves a refused (unsaved) edit behind: leave it.
+    page.on('dialog', (dialog) => void dialog.accept());
+    try {
+      for (const variant of VARIANTS) {
+        // The init script pins a language on every load; this one wins.
+        await page.addInitScript((lang) => {
+          window.localStorage.setItem('atlas:language', JSON.stringify(lang));
+        }, variant.language);
+        await applyVariant(page, variant);
+        const ar = variant.language === 'ar';
+        const name = page
+          .getByLabel(ar ? 'اسم الأكاديمية' : /academy name/i)
+          .first();
+        await expect(name).toHaveValue(SEED.academyName, { timeout: 60_000 });
+        await name.fill(SEED.otherAcademyName.toLowerCase());
+        await page
+          .getByRole('button', { name: ar ? /^حفظ/ : /^save/i })
+          .first()
+          .click();
+        await expect(
+          page.getByText(
+            ar
+              ? 'هذا الاسم مستخدم بالفعل لأكاديمية أخرى. يُرجى اختيار اسم مختلف.'
+              : 'Another academy already uses this name. Please choose a different one.'
+          )
+        ).toBeVisible();
+        await expect(name).toHaveAttribute('aria-invalid', 'true');
+        await expectNoSidewaysScroll(page);
+        await captureEvidence(page, `unique-name-settings-${variant.name}`);
+      }
+    } finally {
+      await page.addInitScript(() => {
+        window.localStorage.setItem('atlas:language', JSON.stringify('en'));
+      });
+      await setStoredLanguage(page, 'en');
+    }
+    const [row] = await adminQuery<{ name: string }>(
+      `select name from academies where id = :'id'`,
+      { id: academyId }
+    );
+    expect(row.name).toBe(SEED.academyName);
   });
 });

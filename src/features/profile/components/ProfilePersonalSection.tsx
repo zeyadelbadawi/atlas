@@ -14,7 +14,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
-import { Save, X } from 'lucide-react';
+import { Save, UserPen, X } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -46,7 +47,7 @@ export interface ProfilePersonalSectionProps {
 export function ProfilePersonalSection({
   user,
 }: ProfilePersonalSectionProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const updateProfile = useUpdateProfile();
 
@@ -108,6 +109,13 @@ export function ProfilePersonalSection({
       }),
   });
 
+  // W4 — registration no longer refuses a learner name another learner
+  // already uses (that answer went to anyone, unauthenticated); the account
+  // was admitted and is asked here, once signed in, to pick a different one.
+  const clashAcademies = user.academies
+    .filter((academy) => academy.nameChangeSuggested)
+    .map((academy) => academy.name);
+
   const handleCancel = () => {
     reset();
     setIsEditing(false);
@@ -124,6 +132,33 @@ export function ProfilePersonalSection({
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+          {clashAcademies.length > 0 ? (
+            <Alert role="status" data-testid="name-change-suggested">
+              <UserPen className="size-4" aria-hidden />
+              <AlertTitle>
+                {t('profile:sections.personal.nameChangeSuggested.title')}
+              </AlertTitle>
+              <AlertDescription className="space-y-3">
+                <p>
+                  {t('profile:sections.personal.nameChangeSuggested.body', {
+                    academies: new Intl.ListFormat(i18n.language, {
+                      type: 'conjunction',
+                    }).format(clashAcademies),
+                  })}
+                </p>
+                {!isEditing ? (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    {t('profile:sections.personal.nameChangeSuggested.action')}
+                  </Button>
+                ) : null}
+              </AlertDescription>
+            </Alert>
+          ) : null}
           {updateProfile.error && !nameConflict ? (
             <ErrorState onRetry={handleSubmit(handleFormSubmit)} />
           ) : null}

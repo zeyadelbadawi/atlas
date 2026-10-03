@@ -85,6 +85,8 @@ interface OrgOwner {
   email: string;
   session: Session;
   organizationId: string;
+  /** Unique per run; the review queue and detail show it (not the id). */
+  organizationName: string;
 }
 
 /**
@@ -106,8 +108,9 @@ async function createOrganizationOwner(
     password: LEARNER_PASSWORD,
     surface: 'management',
   });
+  const organizationName = `J16 ${label} Org ${stamp}`;
   const created = await apiPost(request, session, '/organizations', {
-    name: `J16 ${label} Org ${stamp}`,
+    name: organizationName,
   });
   expect(created.status(), await created.text()).toBe(201);
   const organizationId: string = (await created.json()).id;
@@ -117,7 +120,7 @@ async function createOrganizationOwner(
     password: LEARNER_PASSWORD,
     surface: 'management',
   });
-  return { email, session, organizationId };
+  return { email, session, organizationId, organizationName };
 }
 
 async function signInOwner(page: Page, email: string): Promise<void> {
@@ -520,7 +523,7 @@ test.describe('J16 — Bank Transfer: configure, checkout, review', () => {
     await page.getByRole('option', { name: 'Awaiting review' }).click();
     // A selectable row is exposed as a button named by its cells.
     const row = page.getByRole('button', {
-      name: new RegExp(`^${ownerA.organizationId} `),
+      name: new RegExp(`^${ownerA.organizationName} `),
     });
     await expect(row).toBeVisible({ timeout: 30_000 });
     await page.screenshot({
@@ -532,7 +535,7 @@ test.describe('J16 — Bank Transfer: configure, checkout, review', () => {
       timeout: 30_000,
     });
 
-    await expect(page.getByText(ownerA.organizationId).first()).toBeVisible({
+    await expect(page.getByText(ownerA.organizationName).first()).toBeVisible({
       timeout: 30_000,
     });
     await page

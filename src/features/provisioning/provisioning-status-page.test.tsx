@@ -331,12 +331,10 @@ describe('ProvisioningStatusPage — honest progress (W2)', () => {
         steps: steps(ALL_DONE),
       })
     );
-    const upload = vi
-      .spyOn(mediaService, 'uploadAsset')
-      .mockResolvedValue({
-        id: 'asset-1',
-        url: '/api/v1/public/media/x.png',
-      } as never);
+    const upload = vi.spyOn(mediaService, 'uploadAsset').mockResolvedValue({
+      id: 'asset-1',
+      url: '/api/v1/public/media/x.png',
+    } as never);
     const attach = vi
       .spyOn(provisioningService, 'attachProvisioningLogo')
       .mockResolvedValue(
@@ -381,15 +379,13 @@ describe('ProvisioningStatusPage — honest progress (W2)', () => {
   });
 
   it('a failed refetch while running reads "Reconnecting…", never a failure', async () => {
-    getRequest
-      .mockResolvedValueOnce(request())
-      .mockRejectedValue(
-        new ApiError({
-          kind: 'network',
-          messageKey: 'errors.network',
-          retryable: true,
-        })
-      );
+    getRequest.mockResolvedValueOnce(request()).mockRejectedValue(
+      new ApiError({
+        kind: 'network',
+        messageKey: 'errors.network',
+        retryable: true,
+      })
+    );
     renderPage();
     await screen.findByTestId('provisioning-progress');
     expect(
