@@ -126,8 +126,8 @@ const AcademyProfilePage = lazy(
 const AcademySettingsPage = lazy(
   () => import('@features/academy/pages/AcademySettingsPage')
 );
-const AcademyBrandingPage = lazy(
-  () => import('@features/academy/pages/AcademyBrandingPage')
+const VisualIdentityPage = lazy(
+  () => import('@features/website/pages/VisualIdentityPage')
 );
 const AcademyMembersPage = lazy(
   () => import('@features/academy/pages/AcademyMembersPage')
@@ -917,7 +917,7 @@ export default function AtlasAppRoutes(): JSX.Element {
                   requiredPermissions={['academy.branding.update']}
                   requiresEntitlement
                 >
-                  <AcademyBrandingPage />
+                  <VisualIdentityPage />
                 </RouteGuard>
               }
             />

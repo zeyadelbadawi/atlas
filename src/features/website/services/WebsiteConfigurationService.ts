@@ -24,6 +24,8 @@ import type {
   CollectionQuery,
   ReorderItemsPayload,
   PublishWebsiteResponse,
+  SaveVisualIdentityPayload,
+  SaveVisualIdentityResponse,
   UpdateWebsiteConfigurationPayload,
   UpdateWebsitePagePayload,
   WebsiteConfiguration,
@@ -61,6 +63,22 @@ export class WebsiteConfigurationService extends BaseService {
       WebsiteConfiguration,
       UpdateWebsiteConfigurationPayload
     >(this.websitePath(academyId, 'configuration'), payload, options);
+  }
+
+  /**
+   * The one "Save Visual Identity": name, logo, favicon and website colours
+   * in one transaction, live on save (see the backend's
+   * `saveVisualIdentity`). `null` removes the logo or favicon.
+   */
+  async saveVisualIdentity(
+    academyId: string,
+    payload: SaveVisualIdentityPayload,
+    options?: WriteOptions
+  ): Promise<SaveVisualIdentityResponse> {
+    return this.client.put<
+      SaveVisualIdentityResponse,
+      SaveVisualIdentityPayload
+    >(this.path(academyId, 'visual-identity'), payload, options);
   }
 
   /** Promotes the current draft to published. The backend is the sole authority on when this actually succeeds — the frontend never marks a website "Published" itself. */

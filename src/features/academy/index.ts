@@ -9,3 +9,4 @@ export * from './services/AcademyService';
 export * from './services/AcademyRosterService';
 export * from './schemas/academy.schemas';
 export * from './constants/academy.constants';
+export { getAcademyAdminTabs } from './utils/academy-navigation.utils';

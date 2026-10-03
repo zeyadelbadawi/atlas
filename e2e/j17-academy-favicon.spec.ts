@@ -93,13 +93,16 @@ test.describe('J17 — the Academy favicon', () => {
       mimeType: 'image/png',
       buffer: png,
     });
-    await expect(page.getByAltText('Academy favicon')).toBeVisible();
+    // The favicon is saved with the rest of the visual identity, by its
+    // one "Save visual identity" (Task G).
+    const save = page.getByTestId('visual-identity-save');
+    await expect(save).toBeEnabled();
     const saved = page.waitForResponse(
       (r) =>
-        r.url().includes(`/academies/${academyId}/branding`) &&
-        r.request().method() === 'PATCH'
+        r.url().includes(`/academies/${academyId}/visual-identity`) &&
+        r.request().method() === 'PUT'
     );
-    await page.getByRole('button', { name: 'Save Branding' }).click();
+    await save.click();
     expect((await saved).status()).toBe(200);
   }
 

@@ -150,6 +150,12 @@ export interface BrandStudioProps {
   readonly onLogoPicked?: (file: File) => void;
   /** Where the logo currently is, for the picker's thumbnail. */
   readonly logoPreviewUrl?: string;
+  /**
+   * The "Accept palette" step. The onboarding wizard keeps it (the Owner
+   * approves the suggestion); the Visual Identity page does not — its one
+   * "Save Visual Identity" is the approval.
+   */
+  readonly showAccept?: boolean;
   readonly className?: string;
 }
 
@@ -158,6 +164,7 @@ export function BrandStudio({
   renderPreview,
   onLogoPicked,
   logoPreviewUrl,
+  showAccept = true,
   className,
 }: BrandStudioProps): JSX.Element {
   const { t } = useTranslation();
@@ -179,7 +186,11 @@ export function BrandStudio({
       : analysis.kind === 'error'
         ? t(`website:brandStudio.errors.${analysis.error}`)
         : analysis.kind === 'done'
-          ? t('website:brandStudio.proposed')
+          ? t(
+              showAccept
+                ? 'website:brandStudio.proposed'
+                : 'website:brandStudio.proposedSave'
+            )
           : '';
 
   return (
@@ -305,7 +316,13 @@ export function BrandStudio({
                 key={name}
                 id={`${id}-seed-${name}`}
                 label={t(`website:brandStudio.seeds.${name}`)}
-                value={draft.seeds[name] ?? palette.seeds[name]}
+                // A logo often seeds only the primary; the others are
+                // derived — show those rather than an empty black field.
+                value={
+                  draft.seeds[name] ??
+                  palette.seeds[name] ??
+                  palette.roles[name]
+                }
                 onChange={(value) => actions.setSeed(name, value)}
               />
             ))}
@@ -426,16 +443,18 @@ export function BrandStudio({
 
         {/* 5 · Actions */}
         <div className="flex flex-wrap items-center gap-2">
-          <Button
-            type="button"
-            onClick={actions.accept}
-            disabled={!validation.valid || draft.status === 'confirmed'}
-          >
-            <CheckCircle2 className="size-4" aria-hidden />
-            {draft.status === 'confirmed'
-              ? t('website:brandStudio.accepted')
-              : t('website:brandStudio.accept')}
-          </Button>
+          {showAccept ? (
+            <Button
+              type="button"
+              onClick={actions.accept}
+              disabled={!validation.valid || draft.status === 'confirmed'}
+            >
+              <CheckCircle2 className="size-4" aria-hidden />
+              {draft.status === 'confirmed'
+                ? t('website:brandStudio.accepted')
+                : t('website:brandStudio.accept')}
+            </Button>
+          ) : null}
           {studio.hasLogoSuggestion ? (
             <Button
               type="button"
@@ -456,7 +475,9 @@ export function BrandStudio({
         </div>
         {!validation.valid ? (
           <p className="text-sm text-destructive">
-            {t('website:brandStudio.cannotAccept')}
+            {showAccept
+              ? t('website:brandStudio.cannotAccept')
+              : t('website:brandStudio.cannotSave')}
           </p>
         ) : null}
       </div>

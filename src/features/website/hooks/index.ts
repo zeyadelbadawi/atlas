@@ -4,6 +4,8 @@
 export { useWebsiteConfiguration } from './useWebsiteConfiguration';
 export { useUpdateWebsiteConfiguration } from './useUpdateWebsiteConfiguration';
 export type { UpdateWebsiteConfigurationVariables } from './useUpdateWebsiteConfiguration';
+export { useSaveVisualIdentity } from './useSaveVisualIdentity';
+export type { SaveVisualIdentityVariables } from './useSaveVisualIdentity';
 export { usePublishWebsite } from './usePublishWebsite';
 export { usePublishWebsitePage } from './usePublishWebsitePage';
 export { useUnpublishWebsite } from './useUnpublishWebsite';

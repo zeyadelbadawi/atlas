@@ -994,6 +994,7 @@
     "logoHelp": "PNG, JPG, WebP or SVG, up to 2 MB. A logo on a transparent background works best.",
     "analyzing": "Reading your logo's colours…",
     "proposed": "We suggested a palette from your logo. Review it, then accept.",
+    "proposedSave": "We suggested a palette from your logo. Review it, then save.",
     "retry": "Try again",
     "manualHint": "You can try another file, or pick your colours below.",
     "monochromeHint": "Your logo is black and white, so we used a theme colour for accents. Pick a brand colour below if you have one.",
@@ -1067,6 +1068,7 @@
     "resetToLogo": "Reset to logo suggestion",
     "resetToTheme": "Reset to theme default",
     "cannotAccept": "Fix the highlighted colours before accepting.",
+    "cannotSave": "Fix the highlighted colours before saving.",
     "preview": "Live preview",
     "save": "Save brand colours",
     "statusConfirmed": "Accepted palette",
@@ -1219,7 +1221,7 @@
       "title": "Confirm your brand colours",
       "todo": "Review the colours generated for your website and confirm them, or adjust them first.",
       "done": "Your brand colours are confirmed.",
-      "action": "Open Brand"
+      "action": "Open Visual Identity"
     },
     "samples": {
       "title": "Replace the sample testimonials",
@@ -1305,5 +1307,20 @@
       "undo": "Undo",
       "failed": "Couldn't update the message"
     }
+  },
+  "visualIdentity": {
+    "title": "Visual identity",
+    "subtitle": "Your academy’s name, logo, favicon and colours — saved together, live on your website as soon as you save.",
+    "basicsTitle": "Name and favicon",
+    "logoAndColoursTitle": "Logo and colours",
+    "logoAndColoursDescription": "Your logo suggests a palette. Every colour is checked so text stays readable, and you can adjust anything before you save.",
+    "save": "Save visual identity",
+    "saved": "Visual identity saved. Your website shows it now.",
+    "saveError": "Your visual identity couldn’t be saved. Please try again.",
+    "conflict": "Someone else changed these settings in the meantime. Reload the page to see their version, then make your change again.",
+    "unsavedChanges": "You have unsaved changes to your visual identity.",
+    "unsavedHint": "You have unsaved changes.",
+    "savedHint": "Everything is saved and live.",
+    "nameRequired": "Enter your academy’s name."
   }
 }

@@ -61,7 +61,7 @@ export function WebsiteLaunchChecklist({
         ? undefined
         : {
             labelKey: 'website:launchChecklist.brand.action',
-            to: `${buildPath(DASHBOARD_ROUTES.websiteSettings, { academyId })}?tab=brand`,
+            to: buildPath(DASHBOARD_ROUTES.academyBranding, { academyId }),
           },
     },
     {

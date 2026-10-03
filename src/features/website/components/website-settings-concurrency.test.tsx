@@ -75,7 +75,6 @@ vi.mock('@features/academy', () => ({
 vi.mock('@features/domain', () => ({ WebsiteDomainTab: () => null }));
 vi.mock('./WebsitePublishBar', () => ({ WebsitePublishBar: () => null }));
 vi.mock('./WebsiteThemeTab', () => ({ WebsiteThemeTab: () => null }));
-vi.mock('./WebsiteBrandTab', () => ({ WebsiteBrandTab: () => null }));
 // A dirty-able SEO form stands in for any tab with unsaved edits.
 vi.mock('./WebsiteSeoTab', () => ({
   WebsiteSeoTab: function SeoStub() {
