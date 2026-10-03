@@ -10,7 +10,20 @@ import type {
   AcademyStatus,
   AcademyMemberRole,
   AcademyMemberStatus,
+  WebsitePublishStatus,
 } from '@types';
+
+/**
+ * The Academy website's publish state → tone, as the website editor's own
+ * publish bar shows it. This — not the Academy's internal lifecycle
+ * status — is the status the Academy dashboard presents (Task 1).
+ */
+export const WEBSITE_STATUS_TONE: Record<WebsitePublishStatus, StatusTone> = {
+  draft: 'neutral',
+  published: 'success',
+  publishing: 'info',
+  failed: 'destructive',
+};
 
 /**
  * Maps an academy's lifecycle status to its translation key.

@@ -22,11 +22,27 @@ import type {
   AcademyActivity,
   CollectionQuery,
   PaginatedResult,
+  WebsiteConfiguration,
 } from '@types';
 import type { ReadOptions, WriteOptions } from '@services';
 
 export class AcademyService extends BaseService {
   protected readonly resource = 'academies';
+
+  /**
+   * The Academy website's configuration — read here only for its publish
+   * state, which is what the Academy dashboard shows as the client-facing
+   * status (Task 1). Same endpoint and cache key as the website feature.
+   */
+  async getWebsiteConfiguration(
+    academyId: string,
+    options?: ReadOptions
+  ): Promise<WebsiteConfiguration> {
+    return this.client.get<WebsiteConfiguration>(
+      this.path(academyId, 'website', 'configuration'),
+      options
+    );
+  }
 
   /**
    * Retrieves all academies for the active organization.

@@ -95,7 +95,6 @@ export const updateAcademySettingsSchema = z.object({
     .string()
     .max(MAX_ACADEMY_DESCRIPTION_LENGTH, 'validation:maxLength')
     .optional(),
-  status: z.enum(['draft', 'active', 'suspended', 'archived']),
   language: z.string().min(1, 'validation:required'),
   timezone: z.string().min(1, 'validation:required'),
   currency: z.string().min(1, 'validation:required'),

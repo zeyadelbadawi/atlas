@@ -5,6 +5,7 @@ export { useAcademies } from './useAcademies';
 export type { UseAcademiesOptions } from './useAcademies';
 export { useAcademy } from './useAcademy';
 export type { UseAcademyOptions } from './useAcademy';
+export { useAcademyWebsiteStatus } from './useAcademyWebsiteStatus';
 export { useUpdateAcademy } from './useUpdateAcademy';
 export type { UpdateAcademyVariables } from './useUpdateAcademy';
 export { useUpdateAcademyBranding } from './useUpdateAcademyBranding';

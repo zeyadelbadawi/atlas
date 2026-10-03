@@ -38,12 +38,10 @@ import {
   useAcademies,
   useAcademyStats,
   useAcademyActivity,
+  useAcademyWebsiteStatus,
 } from '../hooks';
 import { AcademySwitcher } from '../components/AcademySwitcher';
-import {
-  getAcademyStatusLabelKey,
-  getAcademyStatusTone,
-} from '../utils/academy-status.utils';
+import { WEBSITE_STATUS_TONE } from '../utils/academy-status.utils';
 
 export default function AcademyDashboardPage(): JSX.Element {
   const fmt = useDateFormatter();
@@ -74,6 +72,12 @@ export default function AcademyDashboardPage(): JSX.Element {
   const currentAcademy = activeAcademyId
     ? academies.find((a) => a.id === activeAcademyId)
     : academies[0];
+  // Only for members who may see the website; a member without
+  // `academy.website.view` gets no status line rather than a 403.
+  const { status: websiteStatus } = useAcademyWebsiteStatus(
+    currentAcademy?.id,
+    { enabled: hasPermission('academy.website.view') }
+  );
 
   // Keeps the sidebar's notion of "active academy" (which has no route params
   // of its own to read) in sync with whichever academy this page resolved to.
@@ -134,7 +138,10 @@ export default function AcademyDashboardPage(): JSX.Element {
           titleKey="academy:dashboard.title"
           descriptionKey="academy:dashboard.subtitle"
         />
-        <ErrorState kind={apiErrorKind(academiesError)} onRetry={() => refetchAcademies()} />
+        <ErrorState
+          kind={apiErrorKind(academiesError)}
+          onRetry={() => refetchAcademies()}
+        />
       </PageContainer>
     );
   }
@@ -239,10 +246,23 @@ export default function AcademyDashboardPage(): JSX.Element {
                   {currentAcademy.description ||
                     t('academy:dashboard.overview')}
                 </p>
-                <StatusBadge
-                  labelKey={getAcademyStatusLabelKey(currentAcademy.status)}
-                  tone={getAcademyStatusTone(currentAcademy.status)}
-                />
+                {/* The website's publish state is the status an owner acts
+                    on; the Academy's internal lifecycle status is not
+                    shown here (Task 1). */}
+                {websiteStatus ? (
+                  <div
+                    className="flex items-center gap-2"
+                    data-testid="academy-website-status"
+                  >
+                    <span className="text-sm text-muted-foreground">
+                      {t('academy:dashboard.websiteStatus')}
+                    </span>
+                    <StatusBadge
+                      labelKey={`website:publish.status.${websiteStatus}`}
+                      tone={WEBSITE_STATUS_TONE[websiteStatus]}
+                    />
+                  </div>
+                ) : null}
               </div>
               <div className="flex gap-2">
                 <Button
@@ -289,7 +309,10 @@ export default function AcademyDashboardPage(): JSX.Element {
             </>
           ) : statsError ? (
             <div className="col-span-full">
-              <ErrorState kind={apiErrorKind(statsError)} onRetry={() => refetchStats()} />
+              <ErrorState
+                kind={apiErrorKind(statsError)}
+                onRetry={() => refetchStats()}
+              />
             </div>
           ) : (
             <>

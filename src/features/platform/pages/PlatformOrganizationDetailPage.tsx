@@ -158,7 +158,7 @@ export default function PlatformOrganizationDetailPage(): JSX.Element {
                   >
                     <span className="text-foreground">{academy.name}</span>
                     <span className="text-xs text-muted-foreground">
-                      {academy.status}
+                      {t(`platform:academies.status.${academy.status}`)}
                     </span>
                   </li>
                 ))}
