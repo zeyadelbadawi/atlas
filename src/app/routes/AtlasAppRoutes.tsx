@@ -435,6 +435,10 @@ const ObservabilityConfigurationPage = lazy(
 const PlatformAuditLogListPage = lazy(
   () => import('@features/audit-log/pages/PlatformAuditLogListPage')
 );
+// Task 3 — the academy owner's activity log.
+const AcademyActivityLogPage = lazy(
+  () => import('@features/audit-log/pages/AcademyActivityLogPage')
+);
 const PlatformAuditLogDetailPage = lazy(
   () => import('@features/audit-log/pages/PlatformAuditLogDetailPage')
 );
@@ -738,6 +742,22 @@ export default function AtlasAppRoutes(): JSX.Element {
                   requiresEntitlement
                 >
                   <AcademyReportsPage />
+                </RouteGuard>
+              }
+            />
+
+            {/* Task 3 — the academy activity log. Owner-only server-side
+                (organization owner, or an owner/administrator academy
+                member); the route uses the owner-only `tenant.dashboard.view`
+                so a manager is not offered a page that answers 403. */}
+            <Route
+              path={DASHBOARD_ROUTES.academyActivityLog}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['tenant.dashboard.view']}
+                >
+                  <AcademyActivityLogPage />
                 </RouteGuard>
               }
             />

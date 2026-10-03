@@ -1,18 +1,668 @@
 {
-  "title": "Audit Log",
+  "title": "Audit log",
   "subtitle": "Every recorded event across Atlas, across all organizations.",
-  "searchPlaceholder": "Search by actor, action or target",
+  "searchPlaceholder": "Search by item or person",
   "emptyState": "No audit log entries found",
-  "emptyStateDescription": "No events match your search.",
+  "emptyStateDescription": "No events match your filters.",
   "detailTitle": "Audit event",
   "overviewTitle": "Overview",
-  "contextTitle": "Context",
-  "noContext": "No additional context was recorded for this event.",
+  "contextTitle": "Additional details",
+  "noContext": "No additional details were recorded for this event.",
+  "untitled": "untitled",
   "table": {
-    "occurredAt": "Occurred at",
-    "actor": "Actor",
-    "action": "Action",
-    "target": "Target",
-    "organization": "Organization"
+    "occurredAt": "When",
+    "actor": "Who",
+    "action": "What happened",
+    "target": "Item",
+    "organization": "Organization",
+    "academy": "Academy"
+  },
+  "academyLog": {
+    "title": "Activity log",
+    "subtitle": "Who changed what in this academy, and when.",
+    "empty": {
+      "title": "No activity yet",
+      "description": "Changes to courses, the website, your team and settings will appear here as they happen."
+    },
+    "emptyFiltered": {
+      "title": "No activity matches these filters",
+      "description": "Try a different category or date range, or clear the filters."
+    },
+    "forbidden": {
+      "title": "Only the academy owner can view the activity log",
+      "description": "Ask the academy owner if you need to know who changed something."
+    }
+  },
+  "dashboardWidget": {
+    "viewAll": "View full activity log"
+  },
+  "filters": {
+    "label": "Filter activity",
+    "category": "Category",
+    "allCategories": "All categories",
+    "from": "From",
+    "to": "To",
+    "search": "Search",
+    "searchPlaceholder": "Search by item or person",
+    "clear": "Clear filters",
+    "actorChip": "Person: {{name}}",
+    "academyChip": "Academy: {{name}}",
+    "organizationChip": "Organization: {{name}}",
+    "removeFilter": "Remove filter: {{label}}",
+    "filterByActor": "Show only activity by {{name}}",
+    "filterByAcademy": "Show only activity in {{name}}"
+  },
+  "list": {
+    "loadMore": "Load more",
+    "loadingMore": "Loading…",
+    "end": "You have reached the oldest recorded activity.",
+    "viewDetails": "View details",
+    "inAcademy": "in {{name}}",
+    "byRole": "{{role}}",
+    "loadMoreError": "More activity could not be loaded."
+  },
+  "details": {
+    "title": "Activity details",
+    "description": "The full record of this change.",
+    "who": "Who",
+    "when": "When",
+    "what": "What happened",
+    "academy": "Academy",
+    "organization": "Organization",
+    "role": "Role",
+    "category": "Category",
+    "item": "Item",
+    "changesTitle": "What changed",
+    "field": "Field",
+    "before": "Before",
+    "after": "After",
+    "noChanges": "No field-by-field changes were recorded for this event.",
+    "back": "Back to audit log",
+    "loadError": "This activity could not be loaded."
+  },
+  "categories": {
+    "courses": "Courses",
+    "assessments": "Quizzes & assignments",
+    "website": "Website",
+    "academy": "Academy settings",
+    "team": "Team",
+    "students": "Students",
+    "certificates": "Certificates",
+    "reviews": "Reviews",
+    "media": "Media",
+    "domains": "Domains",
+    "live_sessions": "Live sessions",
+    "payments": "Payments",
+    "subscription": "Subscription",
+    "support": "Support",
+    "security": "Security",
+    "platform": "Platform",
+    "other": "Other"
+  },
+  "roles": {
+    "owner": "Owner",
+    "administrator": "Administrator",
+    "manager": "Manager",
+    "instructor": "Instructor",
+    "staff": "Staff",
+    "student": "Student",
+    "platform_owner": "Atlas team"
+  },
+  "actor": {
+    "atlas": "Atlas",
+    "someone": "Someone"
+  },
+  "targetTypes": {
+    "course": "course",
+    "course_section": "unit",
+    "course_lesson": "lesson",
+    "curriculum_item": "curriculum item",
+    "quiz": "quiz",
+    "assignment": "assignment",
+    "assignment_submission": "submission",
+    "quiz_attempt": "quiz attempt",
+    "quiz_student_override": "quiz exception",
+    "website_configuration": "website",
+    "website_page": "page",
+    "website_faq_entry": "FAQ",
+    "website_testimonial_entry": "testimonial",
+    "academy": "academy",
+    "academy_member": "team member",
+    "academy_invite": "invite link",
+    "user": "person",
+    "enrollment": "enrollment",
+    "student_device": "device",
+    "certificate": "certificate",
+    "certificate_template": "certificate template",
+    "course_review": "review",
+    "media_asset": "file",
+    "domain_connection": "domain",
+    "live_session": "live session",
+    "academy_live_provider_connection": "video provider connection",
+    "organization_payment_settings": "payment settings",
+    "organization_gateway_credential": "payment gateway",
+    "payment": "payment",
+    "course_order": "order",
+    "organization": "organization",
+    "provisioning_request": "academy setup request",
+    "tenant_subscription": "subscription",
+    "tenant_add_on": "add-on",
+    "support_case": "support ticket",
+    "trusted_device": "trusted device",
+    "plan": "plan",
+    "platform_settings": "platform settings",
+    "payment_method": "payment method",
+    "atlas_commission_config": "commission settings",
+    "add_on": "add-on",
+    "observability": "monitoring",
+    "platform_contact_submission": "contact enquiry",
+    "lesson": "lesson"
+  },
+  "fields": {
+    "title": "Title",
+    "slug": "URL slug",
+    "shortDescription": "Short description",
+    "description": "Description",
+    "thumbnailUrl": "Thumbnail",
+    "visibility": "Visibility",
+    "status": "Status",
+    "categoryId": "Category",
+    "pricingType": "Pricing",
+    "pricingAmountMinorUnits": "Price (smallest currency unit)",
+    "pricingCurrency": "Currency",
+    "level": "Level",
+    "language": "Language",
+    "outcomes": "Learning outcomes",
+    "requirements": "Requirements",
+    "introVideoAssetId": "Intro video",
+    "sectionId": "Unit",
+    "lessonId": "Lesson",
+    "passingScore": "Passing score",
+    "maxAttempts": "Attempts allowed",
+    "mode": "Mode",
+    "timeLimitSeconds": "Time limit (seconds)",
+    "availableFrom": "Available from",
+    "availableUntil": "Available until",
+    "dueAt": "Due date",
+    "latePolicy": "Late submissions",
+    "gradingPolicy": "Grading",
+    "shuffleQuestions": "Shuffle questions",
+    "shuffleOptions": "Shuffle answers",
+    "questionsPerAttempt": "Questions per attempt",
+    "layout": "Layout",
+    "showScore": "Show score",
+    "showAnswers": "Show answers",
+    "showExplanations": "Show explanations",
+    "integrityMode": "Integrity mode",
+    "maxViolations": "Allowed violations",
+    "requireFullscreen": "Require full screen",
+    "requiredToProgress": "Required to progress",
+    "requiredForCompletion": "Required for completion",
+    "hideTimer": "Hide timer",
+    "instructions": "Instructions",
+    "allowResubmission": "Allow resubmission",
+    "themeKey": "Theme",
+    "name": "Name",
+    "logoUrl": "Logo",
+    "faviconUrl": "Browser icon",
+    "visible": "Visible",
+    "seo": "Search engine settings",
+    "question": "Question",
+    "answer": "Answer",
+    "order": "Position",
+    "quote": "Quote",
+    "authorName": "Author",
+    "authorRole": "Author role",
+    "avatar": "Photo",
+    "contactEmail": "Contact email",
+    "contactPhone": "Contact phone",
+    "websiteUrl": "Website",
+    "timezone": "Time zone",
+    "currency": "Currency",
+    "address": "Address",
+    "registrationPolicy": "Student registration",
+    "expiresAt": "Access ends",
+    "paymentCollectionMode": "Payment collection",
+    "hostname": "Domain",
+    "sslStatus": "Certificate status",
+    "sectionOrder": "Section order",
+    "isPreview": "Free preview",
+    "durationSeconds": "Duration (seconds)",
+    "completionRule": "Completion rule",
+    "displayOrder": "Display order",
+    "pricing": "Pricing",
+    "trialEligible": "Trial available",
+    "trialDurationDays": "Trial length (days)",
+    "limits": "Limits"
+  },
+  "values": {
+    "empty": "—",
+    "yes": "Yes",
+    "no": "No",
+    "redacted": "Hidden for security",
+    "emailHidden": "Email address hidden",
+    "itemCount": "{{n}} items",
+    "status": {
+      "draft": "Draft",
+      "published": "Published",
+      "archived": "Archived",
+      "active": "Active",
+      "suspended": "Suspended",
+      "unlisted": "Unlisted",
+      "open": "Open",
+      "in_progress": "In progress",
+      "resolved": "Resolved",
+      "closed": "Closed",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "pending": "Pending",
+      "cancelled": "Cancelled",
+      "scheduled": "Scheduled",
+      "live": "Live",
+      "ended": "Ended",
+      "new": "New",
+      "read": "Read",
+      "not_configured": "Not configured",
+      "verified": "Verified",
+      "failed": "Failed",
+      "trialing": "Trial",
+      "grace_period": "Grace period",
+      "expired": "Expired"
+    },
+    "visibility": {
+      "public": "Public",
+      "private": "Private",
+      "unlisted": "Unlisted"
+    },
+    "pricingType": {
+      "free": "Free",
+      "paid": "Paid"
+    },
+    "paymentCollectionMode": {
+      "unconfigured": "Not set up",
+      "atlas_payments": "Atlas collects payments",
+      "organization_gateway": "Your own payment gateway",
+      "external": "Outside Atlas",
+      "manual": "Manual"
+    },
+    "registrationPolicy": {
+      "open": "Anyone can join",
+      "approval": "Requires approval",
+      "approval_required": "Requires approval",
+      "invite_only": "Invitation only",
+      "closed": "Closed"
+    },
+    "pageType": {
+      "core": "Core page",
+      "custom": "Custom page"
+    },
+    "mediaType": {
+      "image": "image",
+      "video": "video",
+      "document": "document",
+      "audio": "audio file",
+      "file": "file"
+    },
+    "configAreas": {
+      "brand": "colours and fonts",
+      "seo": "search engine settings",
+      "navigation": "navigation menu",
+      "header": "header",
+      "footer": "footer"
+    },
+    "providers": {
+      "zoom": "Zoom"
+    },
+    "itemType": {
+      "lesson": "lesson",
+      "quiz": "quiz",
+      "assignment": "assignment"
+    }
+  },
+  "summary": {
+    "sections": "Sections: {{added}} added, {{removed}} removed, {{updated}} edited ({{total}} on the page).",
+    "questions": "Questions: {{added}} added, {{removed}} removed, {{changed}} changed ({{total}} in total).",
+    "configAreas": "Changed: {{areas}}.",
+    "changedFields": "Changed: {{fields}}.",
+    "reason": "Reason: {{reason}}",
+    "notes": "Note: {{notes}}"
+  },
+  "fallback": {
+    "withTarget": "{{actor}} changed the {{targetType}} “{{target}}”",
+    "noTarget": "{{actor}} changed a {{targetType}}",
+    "category": "{{actor}} made a change in {{category}}"
+  },
+  "events": {
+    "course": {
+      "created": "{{actor}} created the course “{{target}}”",
+      "updated": "{{actor}} updated the course “{{target}}”",
+      "published": "{{actor}} published the course “{{target}}”",
+      "unpublished": "{{actor}} unpublished the course “{{target}}”",
+      "archived": "{{actor}} archived the course “{{target}}”",
+      "instructor_assigned": "{{actor}} assigned an instructor to the course “{{target}}”",
+      "instructor_assigned_withName": "{{actor}} assigned {{name}} to teach the course “{{target}}”",
+      "instructor_removed": "{{actor}} removed an instructor from the course “{{target}}”",
+      "instructor_removed_withName": "{{actor}} removed {{name}} from teaching the course “{{target}}”",
+      "completion_rule": {
+        "updated": "{{actor}} changed the completion requirements of the course “{{target}}”"
+      },
+      "curriculum": {
+        "item_attached": "{{actor}} added “{{target}}” to the curriculum",
+        "item_attached_inSection": "{{actor}} added “{{target}}” to the unit “{{sectionTitle}}”",
+        "item_detached": "{{actor}} removed “{{target}}” from the curriculum",
+        "item_detached_inSection": "{{actor}} removed “{{target}}” from the unit “{{sectionTitle}}”",
+        "items_reordered": "{{actor}} reordered the items in the unit “{{target}}”",
+        "items_reordered_inCourse": "{{actor}} reordered the items in the unit “{{target}}” of the course “{{courseTitle}}”"
+      }
+    },
+    "course_section": {
+      "created": "{{actor}} added the unit “{{target}}”",
+      "created_inCourse": "{{actor}} added the unit “{{target}}” to the course “{{courseTitle}}”",
+      "updated": "{{actor}} updated the unit “{{target}}”",
+      "updated_inCourse": "{{actor}} updated the unit “{{target}}” in the course “{{courseTitle}}”",
+      "deleted": "{{actor}} deleted the unit “{{target}}”",
+      "deleted_inCourse": "{{actor}} deleted the unit “{{target}}” from the course “{{courseTitle}}”",
+      "reordered": "{{actor}} reordered the units of the course “{{target}}”",
+      "reordered_inCourse": "{{actor}} reordered the units of the course “{{courseTitle}}”"
+    },
+    "course_lesson": {
+      "created": "{{actor}} created the lesson “{{target}}”",
+      "created_inSection": "{{actor}} created the lesson “{{target}}” in the unit “{{sectionTitle}}”",
+      "updated": "{{actor}} updated the lesson “{{target}}”",
+      "updated_inSection": "{{actor}} updated the lesson “{{target}}” in the unit “{{sectionTitle}}”",
+      "content_updated": "{{actor}} updated the content of a lesson",
+      "content_updated_inSection": "{{actor}} updated the content of a lesson in the unit “{{sectionTitle}}”",
+      "deleted": "{{actor}} deleted the lesson “{{target}}”",
+      "deleted_inSection": "{{actor}} deleted the lesson “{{target}}” from the unit “{{sectionTitle}}”"
+    },
+    "quiz": {
+      "created": "{{actor}} created the quiz “{{target}}”",
+      "created_inCourse": "{{actor}} created the quiz “{{target}}” in the course “{{courseTitle}}”",
+      "updated": "{{actor}} updated the quiz “{{target}}”",
+      "updated_inCourse": "{{actor}} updated the quiz “{{target}}” in the course “{{courseTitle}}”",
+      "deleted": "{{actor}} deleted the quiz “{{target}}”",
+      "deleted_inCourse": "{{actor}} deleted the quiz “{{target}}” from the course “{{courseTitle}}”",
+      "override": {
+        "updated": "{{actor}} gave a student extra time or attempts on a quiz",
+        "updated_withName": "{{actor}} gave {{name}} extra time or attempts on a quiz",
+        "removed": "{{actor}} removed a student’s quiz exception",
+        "removed_withName": "{{actor}} removed the quiz exception for {{name}}"
+      }
+    },
+    "quiz_attempt": {
+      "graded": "{{actor}} graded a quiz attempt",
+      "graded_inCourse": "{{actor}} graded a quiz attempt in the course “{{courseTitle}}”",
+      "invalidated": "{{actor}} invalidated a quiz attempt",
+      "invalidated_inCourse": "{{actor}} invalidated a quiz attempt in the course “{{courseTitle}}”"
+    },
+    "assignment": {
+      "created": "{{actor}} created the assignment “{{target}}”",
+      "created_inCourse": "{{actor}} created the assignment “{{target}}” in the course “{{courseTitle}}”",
+      "updated": "{{actor}} updated the assignment “{{target}}”",
+      "updated_inCourse": "{{actor}} updated the assignment “{{target}}” in the course “{{courseTitle}}”",
+      "deleted": "{{actor}} deleted the assignment “{{target}}”",
+      "deleted_inCourse": "{{actor}} deleted the assignment “{{target}}” from the course “{{courseTitle}}”"
+    },
+    "assignment_submission": {
+      "graded": "{{actor}} graded an assignment submission",
+      "graded_inCourse": "{{actor}} graded an assignment submission in the course “{{courseTitle}}”"
+    },
+    "website": {
+      "configuration": {
+        "updated": "{{actor}} changed the website settings"
+      },
+      "visual_identity": {
+        "updated": "{{actor}} updated the academy’s logo, name or colours"
+      },
+      "published": "{{actor}} published the website",
+      "unpublished": "{{actor}} took the website offline"
+    },
+    "website_page": {
+      "created": "{{actor}} created the website page “{{target}}”",
+      "updated": "{{actor}} edited the website page “{{target}}”",
+      "deleted": "{{actor}} deleted the website page “{{target}}”",
+      "published": "{{actor}} published the website page “{{target}}”",
+      "sections_reordered": "{{actor}} reordered the sections of the website page “{{target}}”"
+    },
+    "website_faq": {
+      "created": "{{actor}} added the FAQ “{{target}}”",
+      "updated": "{{actor}} edited the FAQ “{{target}}”",
+      "published": "{{actor}} published the FAQ “{{target}}”",
+      "archived": "{{actor}} archived the FAQ “{{target}}”"
+    },
+    "website_testimonial": {
+      "created": "{{actor}} added a testimonial from {{target}}",
+      "updated": "{{actor}} edited the testimonial from {{target}}",
+      "published": "{{actor}} published the testimonial from {{target}}",
+      "archived": "{{actor}} archived the testimonial from {{target}}"
+    },
+    "academy": {
+      "created": "{{actor}} created the academy “{{target}}”",
+      "updated": "{{actor}} updated the academy details",
+      "branding": {
+        "updated": "{{actor}} updated the academy’s name, logo or browser icon"
+      },
+      "archived": "{{actor}} deleted the academy “{{target}}”",
+      "content_protection": {
+        "updated": "{{actor}} changed the content protection settings"
+      },
+      "video_tier": {
+        "updated": "{{actor}} changed the video security level"
+      },
+      "device_policy": {
+        "updated": "{{actor}} changed the device and session limits for students"
+      },
+      "registration_policy": {
+        "updated": "{{actor}} changed who can register as a student"
+      },
+      "manager": {
+        "added": "{{actor}} added a manager to the academy",
+        "added_withName": "{{actor}} added {{name}} as a manager"
+      },
+      "instructor": {
+        "added": "{{actor}} added an instructor to the academy",
+        "added_withName": "{{actor}} added {{name}} as an instructor"
+      },
+      "student": {
+        "created": "{{actor}} created a student account",
+        "created_withName": "{{actor}} created a student account for {{name}}",
+        "added": "{{actor}} added a student to the academy",
+        "added_withName": "{{actor}} added {{name}} as a student",
+        "joined": "{{actor}} joined the academy as a student",
+        "blocked": "{{actor}} blocked a student",
+        "blocked_withName": "{{actor}} blocked the student {{name}}",
+        "unblocked": "{{actor}} unblocked a student",
+        "unblocked_withName": "{{actor}} unblocked the student {{name}}",
+        "approved": "{{actor}} approved a student’s registration",
+        "approved_withName": "{{actor}} approved {{name}}’s registration",
+        "rejected": "{{actor}} declined a student’s registration",
+        "rejected_withName": "{{actor}} declined {{name}}’s registration"
+      },
+      "invite": {
+        "created": "{{actor}} created a student invite link",
+        "revoked": "{{actor}} revoked a student invite link"
+      }
+    },
+    "enrollment": {
+      "granted": "{{actor}} enrolled a student in the course “{{target}}”",
+      "granted_full": "{{actor}} enrolled {{name}} in the course “{{courseTitle}}”",
+      "revoked": "{{actor}} removed a student’s access to a course",
+      "revoked_full": "{{actor}} removed {{name}}’s access to the course “{{courseTitle}}”",
+      "revoked_inCourse": "{{actor}} removed a student’s access to the course “{{courseTitle}}”",
+      "expiry_updated": "{{actor}} changed when a student’s course access ends",
+      "expiry_updated_inCourse": "{{actor}} changed when a student’s access to the course “{{courseTitle}}” ends"
+    },
+    "learning": {
+      "device_session_takeover": "{{actor}} continued learning on a new device, ending the session on another device"
+    },
+    "certificate": {
+      "issued": "{{actor}} issued a certificate",
+      "issued_full": "{{actor}} issued a certificate to {{name}} for the course “{{courseTitle}}”",
+      "issued_inCourse": "{{actor}} issued a certificate for the course “{{courseTitle}}”",
+      "reissued": "{{actor}} reissued a certificate",
+      "reissued_inCourse": "{{actor}} reissued a certificate for the course “{{courseTitle}}”",
+      "revoked": "{{actor}} revoked a certificate",
+      "revoked_inCourse": "{{actor}} revoked a certificate for the course “{{courseTitle}}”",
+      "regenerated": "{{actor}} regenerated a certificate"
+    },
+    "certificate_template": {
+      "updated": "{{actor}} updated the certificate template"
+    },
+    "course_review": {
+      "created": "{{actor}} reviewed a course",
+      "created_inCourse": "{{actor}} reviewed the course “{{courseTitle}}”",
+      "updated": "{{actor}} edited a course review",
+      "updated_inCourse": "{{actor}} edited a review of the course “{{courseTitle}}”",
+      "deleted": "{{actor}} deleted a course review",
+      "approved": "{{actor}} approved a course review",
+      "approved_inCourse": "{{actor}} approved a review of the course “{{courseTitle}}”",
+      "rejected": "{{actor}} rejected a course review",
+      "rejected_inCourse": "{{actor}} rejected a review of the course “{{courseTitle}}”",
+      "removed": "{{actor}} removed a course review",
+      "removed_inCourse": "{{actor}} removed a review of the course “{{courseTitle}}”"
+    },
+    "media": {
+      "uploaded": "{{actor}} uploaded the file “{{target}}”",
+      "archived": "{{actor}} deleted the file “{{target}}” from the media library",
+      "asset": {
+        "purged": "Atlas permanently removed a deleted file after its grace period"
+      },
+      "video": {
+        "deleted": "Atlas removed a video under the retention policy"
+      }
+    },
+    "domain": {
+      "custom_domain_added": "{{actor}} connected the domain “{{target}}”",
+      "custom_domain_removed": "{{actor}} disconnected the domain “{{target}}”",
+      "verification_checked": "{{actor}} checked the domain “{{target}}”",
+      "platform_check": "Atlas checked the domain “{{target}}”",
+      "platform_release": "Atlas released the domain “{{target}}”"
+    },
+    "live_session": {
+      "created": "{{actor}} scheduled the live session “{{target}}”",
+      "created_inCourse": "{{actor}} scheduled the live session “{{target}}” for the course “{{courseTitle}}”",
+      "updated": "{{actor}} updated the live session “{{target}}”",
+      "cancelled": "{{actor}} cancelled the live session “{{target}}”",
+      "published": "{{actor}} published the live session “{{target}}”"
+    },
+    "live_provider": {
+      "connected": "{{actor}} connected the video provider {{provider}}",
+      "disconnected": "{{actor}} disconnected the video provider {{provider}}",
+      "deauthorized": "The video provider {{provider}} was disconnected from its own side"
+    },
+    "organization": {
+      "created": "{{actor}} created the organization “{{target}}”",
+      "onboarding": {
+        "completed": "{{actor}} finished setting up the organization"
+      },
+      "payment_settings": {
+        "updated": "{{actor}} changed how payments are collected"
+      },
+      "payment_gateway": {
+        "credentials_saved": "{{actor}} saved new payment gateway credentials for {{provider}}",
+        "connection_tested": "{{actor}} tested the payment gateway connection for {{provider}}",
+        "enabled": "{{actor}} turned on the payment gateway {{provider}}",
+        "disabled": "{{actor}} turned off the payment gateway {{provider}}"
+      }
+    },
+    "payment": {
+      "proof_submitted": "{{actor}} submitted proof of payment",
+      "approved": "{{actor}} approved a subscription payment",
+      "rejected": "{{actor}} rejected a subscription payment"
+    },
+    "course_order_payment": {
+      "approved": "{{actor}} approved a course payment",
+      "rejected": "{{actor}} rejected a course payment"
+    },
+    "course_order": {
+      "refund_recorded": "{{actor}} recorded a refund for a course order"
+    },
+    "provisioning_request": {
+      "created": "{{actor}} requested a new academy “{{target}}”"
+    },
+    "subscription": {
+      "trial": {
+        "redeemed": "{{actor}} started a free trial",
+        "cancelled": "{{actor}} cancelled the free trial"
+      },
+      "cancelled": "{{actor}} cancelled the subscription",
+      "grace_started": "The subscription entered its grace period",
+      "expired": "The subscription expired",
+      "cancelled_at_period_end": "The subscription ended at the close of its billing period"
+    },
+    "add_on": {
+      "install": "{{actor}} added the add-on {{addOn}}",
+      "enable": "{{actor}} turned on the add-on {{addOn}}",
+      "disable": "{{actor}} turned off the add-on {{addOn}}",
+      "uninstall": "{{actor}} removed the add-on {{addOn}}",
+      "catalog_status_changed": "{{actor}} changed the availability of the add-on {{addOn}}"
+    },
+    "support_case": {
+      "created": "{{actor}} opened the support ticket “{{target}}”",
+      "replied": "{{actor}} replied to the support ticket “{{target}}”",
+      "status_changed": "{{actor}} changed the status of the support ticket “{{target}}”",
+      "auto_created": "A support ticket was opened automatically: “{{target}}”"
+    },
+    "auth": {
+      "otp": {
+        "issued": "A sign-in code was sent to {{actor}}",
+        "failed": "{{actor}} entered a wrong sign-in code",
+        "locked_out": "{{actor}} was locked out after too many wrong sign-in codes",
+        "verified": "{{actor}} confirmed a sign-in code"
+      },
+      "device": {
+        "trusted": "{{actor}} trusted a device for sign-in",
+        "revoked": "{{actor}} removed trusted devices"
+      },
+      "identity": {
+        "linked": "{{actor}} linked a sign-in provider",
+        "unlinked": "{{actor}} unlinked a sign-in provider"
+      },
+      "sessions": {
+        "revoked": "{{actor}}’s other sessions were signed out"
+      }
+    },
+    "password_reset": {
+      "confirmed": "{{actor}} reset their password"
+    },
+    "account": {
+      "deletion": {
+        "requested": "{{actor}} asked to delete their account",
+        "code_failed": "{{actor}} entered a wrong account-deletion code",
+        "locked_out": "{{actor}} was locked out of account deletion",
+        "confirmed": "{{actor}} confirmed account deletion"
+      },
+      "deleted": "{{actor}} deleted their account",
+      "deleted_by_platform_owner": "{{actor}} deleted a user account"
+    },
+    "plan": {
+      "created": "{{actor}} created the plan “{{target}}”",
+      "updated": "{{actor}} updated the plan “{{target}}”",
+      "pricing_changed": "{{actor}} changed the pricing of the plan “{{target}}”",
+      "trial_config_changed": "{{actor}} changed the trial settings of the plan “{{target}}”",
+      "archived": "{{actor}} archived the plan “{{target}}”"
+    },
+    "platform_settings": {
+      "updated": "{{actor}} updated the platform settings"
+    },
+    "payment_method": {
+      "created": "{{actor}} added the payment method “{{target}}”",
+      "updated": "{{actor}} updated the payment method “{{target}}”"
+    },
+    "commission_config": {
+      "global_default_updated": "{{actor}} changed the default commission rate"
+    },
+    "observability": {
+      "synthetic_alert": {
+        "armed": "{{actor}} started a monitoring test alert",
+        "resolved": "{{actor}} ended the monitoring test alert"
+      }
+    },
+    "platform": {
+      "contact_submission": {
+        "status_changed": "{{actor}} changed the status of a contact enquiry",
+        "deleted": "{{actor}} deleted a contact enquiry"
+      }
+    }
   }
 }

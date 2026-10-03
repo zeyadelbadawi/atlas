@@ -1,34 +1,40 @@
 /**
  * Platform Activity Component.
  *
- * Shows the 5 most recent Audit Log entries (Prompt 13) — the same real
- * contract `PlatformAuditLogListPage` reads, filtered to a small page
- * size for this summary panel. Distinct SURFACE, same underlying data;
- * never a separate invented "activity feed" endpoint.
+ * The 5 most recent audit entries — the same real cursor feed
+ * `PlatformAuditLogListPage` reads (`GET audit-log/feed`, one small page),
+ * rendered with the same readable sentence row (Task 3) instead of a raw
+ * action code. Distinct SURFACE, same underlying data.
  */
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ErrorState } from '@components/feedback';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useAuditLogEntries } from '@features/audit-log';
+import { apiErrorKind } from '@api';
+import {
+  AuditEntryRow,
+  platformEntryToRow,
+  useAuditLogFeed,
+} from '@features/audit-log';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 
 const RECENT_ACTIVITY_PAGE_SIZE = 5;
 
 export function PlatformActivity(): JSX.Element {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { data, isLoading, error, refetch } = useAuditLogEntries({
-    query: {
-      pagination: { page: 1, pageSize: RECENT_ACTIVITY_PAGE_SIZE },
-      sort: { field: 'occurredAt', direction: 'desc' },
-    },
-  });
-
-  const entries = data?.items ?? [];
+  const { data, isLoading, error, refetch } = useAuditLogFeed(
+    {},
+    { limit: RECENT_ACTIVITY_PAGE_SIZE }
+  );
+  const rows = useMemo(
+    () => (data?.pages[0]?.items ?? []).map(platformEntryToRow),
+    [data]
+  );
 
   return (
     <Card>
@@ -44,36 +50,32 @@ export function PlatformActivity(): JSX.Element {
               ))}
             </div>
           ) : error ? (
-            <ErrorState onRetry={() => refetch()} />
-          ) : entries.length === 0 ? (
+            <ErrorState
+              kind={apiErrorKind(error)}
+              onRetry={() => void refetch()}
+            />
+          ) : rows.length === 0 ? (
             <div className="flex items-center justify-center py-12">
               <p className="text-sm text-muted-foreground">
                 {t('platform:activity.empty')}
               </p>
             </div>
           ) : (
-            <ul className="space-y-3">
-              {entries.map((entry) => (
-                <li
-                  key={entry.id}
-                  className="cursor-pointer rounded-md p-2 text-sm hover:bg-accent"
-                  onClick={() =>
+            <ul className="flex flex-col divide-y divide-border pe-3">
+              {rows.map((row) => (
+                <AuditEntryRow
+                  key={row.id}
+                  row={row}
+                  compact
+                  showAcademy
+                  onOpen={(selected) =>
                     navigate(
                       buildPath(DASHBOARD_ROUTES.platformAuditLogDetail, {
-                        eventId: entry.id,
+                        eventId: selected.id,
                       })
                     )
                   }
-                >
-                  <p className="font-medium text-foreground">
-                    {entry.actor.name}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    <code className="font-mono">{entry.action}</code>
-                    {' · '}
-                    {new Date(entry.occurredAt).toLocaleString(i18n.language)}
-                  </p>
-                </li>
+                />
               ))}
             </ul>
           )}

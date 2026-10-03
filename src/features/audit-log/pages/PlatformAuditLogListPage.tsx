@@ -1,101 +1,43 @@
 /**
- * Platform Audit Log — List Page (Prompt 13).
+ * Platform Audit Log — List Page (Prompt 13, rebuilt for Task 3).
  *
- * The Platform Owner's cross-tenant event feed — read-only. Mirrors the
- * established `DataTable` + `usePagination` + `useSearch` pattern.
+ * The Platform Owner's cross-tenant event feed, read-only. Each event reads
+ * as a sentence (`formatAuditEntry`) with who / role / academy / when,
+ * instead of a raw action code. Filters: category (including the
+ * operator-only Security and Platform groups), date range, free text, and —
+ * from any row — "only this person" or "only this academy". Pagination is
+ * the backend's cursor feed (`GET audit-log/feed`), so no page ever pays
+ * for a full `count()` over the ever-growing table.
  */
-import { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { ColumnDef } from '@tanstack/react-table';
-import { PageContainer, PageHeader } from '@components/layout';
-import { ErrorState } from '@components/feedback';
-import { DataTable } from '@components/table';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { usePagination, useSearch } from '@hooks';
+import { PageContainer, PageHeader, SectionCard } from '@components/layout';
+import { useDebounce } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
-import { useAuditLogEntries } from '../hooks';
-import type { AuditLogEntrySummary } from '@types';
+import { AUDIT_CATEGORIES } from '../utils/audit-event-catalog';
+import { platformEntryToRow } from '../utils/audit-rows';
+import { useAuditLogFeed } from '../hooks/useAuditLogFeed';
+import { AuditLogFilters } from '../components/AuditLogFilters';
+import {
+  EMPTY_AUDIT_FILTERS,
+  hasActiveAuditFilters,
+  toAuditFeedFilters,
+  type AuditFilterState,
+} from '../utils/audit-filters';
+import { AuditFeedList } from '../components/AuditFeedList';
 
 export default function PlatformAuditLogListPage(): JSX.Element {
-  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const {
-    query: searchQuery,
-    setQuery: setSearchQuery,
-    debouncedQuery,
-  } = useSearch({
-    debounceMs: 300,
-  });
+  const [filters, setFilters] = useState<AuditFilterState>(EMPTY_AUDIT_FILTERS);
+  const debouncedSearch = useDebounce(filters.search, 300);
 
-  const [totalItems, setTotalItems] = useState(0);
-  const pagination = usePagination({ totalItems });
-
-  const {
-    data: entriesData,
-    isLoading,
-    error,
-    refetch,
-  } = useAuditLogEntries({
-    query: {
-      pagination: { page: pagination.page, pageSize: pagination.pageSize },
-      search: debouncedQuery || undefined,
-      sort: { field: 'occurredAt', direction: 'desc' },
-    },
-  });
-
-  useEffect(() => {
-    if (entriesData) setTotalItems(entriesData.pagination.totalItems);
-  }, [entriesData]);
-
-  const entries = entriesData?.items ?? [];
-
-  const columns = useMemo<ColumnDef<AuditLogEntrySummary, unknown>[]>(
-    () => [
-      {
-        accessorKey: 'occurredAt',
-        header: t('auditLog:table.occurredAt'),
-        cell: ({ row }) => (
-          <span className="text-muted-foreground">
-            {new Date(row.original.occurredAt).toLocaleString(i18n.language)}
-          </span>
-        ),
-      },
-      {
-        accessorKey: 'actor',
-        header: t('auditLog:table.actor'),
-        cell: ({ row }) => (
-          <span className="font-medium">{row.original.actor.name}</span>
-        ),
-      },
-      {
-        accessorKey: 'action',
-        header: t('auditLog:table.action'),
-        cell: ({ row }) => (
-          <code className="font-mono text-xs">{row.original.action}</code>
-        ),
-      },
-      {
-        accessorKey: 'targetLabel',
-        header: t('auditLog:table.target'),
-        cell: ({ row }) => (
-          <span className="text-muted-foreground">
-            {row.original.targetLabel ?? row.original.targetId}
-          </span>
-        ),
-      },
-      {
-        accessorKey: 'organizationName',
-        header: t('auditLog:table.organization'),
-        cell: ({ row }) => (
-          <span className="text-muted-foreground">
-            {row.original.organizationName ?? '—'}
-          </span>
-        ),
-      },
-    ],
-    [t, i18n.language]
+  const feed = useAuditLogFeed(toAuditFeedFilters(filters, debouncedSearch));
+  const rows = useMemo(
+    () =>
+      (feed.data?.pages ?? []).flatMap((page) =>
+        page.items.map(platformEntryToRow)
+      ),
+    [feed.data]
   );
 
   return (
@@ -106,40 +48,55 @@ export default function PlatformAuditLogListPage(): JSX.Element {
       />
 
       <div className="space-y-4">
-        <Input
-          value={searchQuery}
-          onChange={(event) => setSearchQuery(event.target.value)}
-          placeholder={t('auditLog:searchPlaceholder')}
-          className="max-w-sm"
-          aria-label={t('auditLog:searchPlaceholder')}
-        />
+        <SectionCard>
+          <AuditLogFilters
+            value={filters}
+            onChange={setFilters}
+            categories={AUDIT_CATEGORIES}
+            idPrefix="platform-audit"
+          />
+        </SectionCard>
 
-        <Card>
-          <CardContent className="p-0">
-            {error ? (
-              <div className="p-6">
-                <ErrorState onRetry={() => refetch()} />
-              </div>
-            ) : (
-              <DataTable
-                columns={columns}
-                data={entries}
-                isLoading={isLoading}
-                pagination={pagination}
-                emptyTitleKey="auditLog:emptyState"
-                emptyDescriptionKey="auditLog:emptyStateDescription"
-                getRowId={(entry) => entry.id}
-                onRowSelect={(entry) =>
-                  navigate(
-                    buildPath(DASHBOARD_ROUTES.platformAuditLogDetail, {
-                      eventId: entry.id,
-                    })
-                  )
-                }
-              />
-            )}
-          </CardContent>
-        </Card>
+        <SectionCard>
+          <AuditFeedList
+            rows={rows}
+            isLoading={feed.isLoading}
+            error={feed.error}
+            onRetry={() => void feed.refetch()}
+            hasNextPage={feed.hasNextPage}
+            isFetchingNextPage={feed.isFetchingNextPage}
+            onLoadMore={() => void feed.fetchNextPage()}
+            filtered={hasActiveAuditFilters(filters)}
+            emptyTitleKey="auditLog:emptyState"
+            emptyDescriptionKey="auditLog:emptyStateDescription"
+            filteredEmptyTitleKey="auditLog:emptyState"
+            filteredEmptyDescriptionKey="auditLog:emptyStateDescription"
+            showAcademy
+            onOpen={(row) =>
+              navigate(
+                buildPath(DASHBOARD_ROUTES.platformAuditLogDetail, {
+                  eventId: row.id,
+                })
+              )
+            }
+            onFilterActor={(row) =>
+              row.actorId
+                ? setFilters({
+                    ...filters,
+                    actor: { id: row.actorId, name: row.input.actorName ?? '' },
+                  })
+                : undefined
+            }
+            onFilterAcademy={(row) =>
+              row.academyId
+                ? setFilters({
+                    ...filters,
+                    academy: { id: row.academyId, name: row.academyName ?? '' },
+                  })
+                : undefined
+            }
+          />
+        </SectionCard>
       </div>
     </PageContainer>
   );

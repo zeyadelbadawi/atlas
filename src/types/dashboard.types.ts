@@ -44,10 +44,18 @@ export interface DashboardRevenue {
 
 export interface DashboardActivityItem {
   readonly id: string;
-  /** A dotted event name, e.g. `"course.published"` — rendered through a translation key, never shown raw. */
+  /** A dotted event name, e.g. `"course.published"` — rendered through `formatAuditEntry`, never shown raw. */
   readonly action: string;
+  /** Task 3 — audit catalogue category (`'other'` for pre-catalogue actions). */
+  readonly category?: string;
   readonly targetType: string;
+  readonly targetId?: string;
   readonly targetLabel?: string;
+  /** Task 3 — allowlisted, email-free context (names such as `courseTitle`). */
+  readonly context?: Readonly<Record<string, string | number | boolean | null>>;
+  readonly changedFields?: readonly string[];
+  /** Task 3 — `true` when an Atlas operator did this (the name is then "Atlas"). */
+  readonly actorIsPlatformStaff?: boolean;
   readonly actorName: string;
   readonly actorRole?: string;
   readonly academyId?: string;

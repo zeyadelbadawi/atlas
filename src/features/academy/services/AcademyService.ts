@@ -19,7 +19,6 @@ import type {
   AddAcademyInstructorPayload,
   CreateAcademyStudentPayload,
   AcademyStats,
-  AcademyActivity,
   CollectionQuery,
   PaginatedResult,
   WebsiteConfiguration,
@@ -245,23 +244,9 @@ export class AcademyService extends BaseService {
     return this.client.get<AcademyStats>(this.path(id, 'stats'), options);
   }
 
-  /**
-   * Retrieves academy activity (paginated).
-   */
-  async getAcademyActivity(
-    id: string,
-    query?: CollectionQuery,
-    options?: ReadOptions
-  ): Promise<PaginatedResult<AcademyActivity>> {
-    const response = await this.client.get<PaginatedResult<AcademyActivity>>(
-      this.path(id, 'activity'),
-      {
-        ...options,
-        params: { ...toCollectionParams(query), ...options?.params },
-      }
-    );
-    return response;
-  }
+  // Task 3 — `GET academies/:id/activity` is now the Academy activity log
+  // (a cursor feed); it is read through `AcademyActivityLogService` in the
+  // audit-log feature, not here.
 }
 
 /** Singleton instance following Atlas service pattern. */

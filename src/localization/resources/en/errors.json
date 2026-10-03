@@ -189,6 +189,7 @@
   },
   "academy": {
     "insufficientRole": "Your role in this academy does not allow that. Ask an academy owner or manager if you need access.",
+    "statusLocked": "This academy's status can't be changed here. If it was suspended, contact Atlas support.",
     "devicePolicyAboveMaximum": "That limit is higher than the platform allows. Choose a number no higher than the maximum shown."
   },
   "course": {

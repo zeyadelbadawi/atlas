@@ -20,8 +20,6 @@ export { useCreateAcademyStudent } from './useCreateAcademyStudent';
 export type { CreateAcademyStudentVariables } from './useCreateAcademyStudent';
 export { useAcademyStats } from './useAcademyStats';
 export type { UseAcademyStatsOptions } from './useAcademyStats';
-export { useAcademyActivity } from './useAcademyActivity';
-export type { UseAcademyActivityOptions } from './useAcademyActivity';
 export { useDeleteAcademy } from './useDeleteAcademy';
 export type { DeleteAcademyVariables } from './useDeleteAcademy';
 // P64 Phase 1 — learner roster, registration policy and invites.

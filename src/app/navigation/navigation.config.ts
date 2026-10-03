@@ -8,6 +8,7 @@
  */
 import {
   Activity,
+  History,
   Video,
   LayoutDashboard,
   User,
@@ -172,6 +173,19 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
         // owner/administrator/manager rule — not the owner-only dashboard
         // permission the Student Analytics entry uses.
         requiredPermissions: ['academy.view'],
+      },
+      {
+        // Task 3 — the academy activity log (who changed what). Owner-only,
+        // matching the backend (organization owner or owner/administrator
+        // academy member); managers are not offered it.
+        id: 'academy-activity-log',
+        labelKey: 'navigation:items.academyActivityLog',
+        path: buildPath(DASHBOARD_ROUTES.academyActivityLog, {
+          academyId: activeAcademyId,
+        }),
+        icon: History,
+        requiresAuth: true,
+        requiredPermissions: ['tenant.dashboard.view'],
       },
       {
         // P13 — this academy's net unsettled revenue and payout history.

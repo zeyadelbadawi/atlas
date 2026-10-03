@@ -5,7 +5,7 @@
  *
  * Prompt 13 health-view audit: `AcademyStats` (`totalMembers`/
  * `activeStaff`/`activeInstructors`/`publishedCourses`) and the real
- * `useAcademyActivity` feed below already cover this page's "aggregated
+ * Academy activity log feed (Task 3) below already cover this page's "aggregated
  * health view" and "activity/audit trail" requirements — neither is a
  * scaffold. "Active students" and "completion rate" are NOT added here:
  * no `AcademyStats`, Course, Enrollment, or Progress type anywhere in
@@ -27,7 +27,7 @@ import { apiErrorKind } from '@api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useAuth, useDateFormatter, usePermissions, usePlatform } from '@hooks';
+import { useAuth, usePermissions, usePlatform } from '@hooks';
 import {
   DASHBOARD_ROUTES,
   ONBOARDING_ROUTES,
@@ -37,14 +37,17 @@ import { isOnboardingPendingForActiveOrganization } from '@utils';
 import {
   useAcademies,
   useAcademyStats,
-  useAcademyActivity,
   useAcademyWebsiteStatus,
 } from '../hooks';
+import {
+  AuditEntryRow,
+  tenantEntryToRow,
+  useAcademyActivityLog,
+} from '@features/audit-log';
 import { AcademySwitcher } from '../components/AcademySwitcher';
 import { WEBSITE_STATUS_TONE } from '../utils/academy-status.utils';
 
 export default function AcademyDashboardPage(): JSX.Element {
-  const fmt = useDateFormatter();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -94,13 +97,21 @@ export default function AcademyDashboardPage(): JSX.Element {
     enabled: !!currentAcademy?.id,
   });
 
+  // Task 3 — the latest entries of the Academy activity log. Owner-only on
+  // the server (organization owner or owner/administrator academy member),
+  // so the widget is shown only to callers holding the owner-only
+  // `tenant.dashboard.view` — a manager is never shown a card that 403s.
+  const canViewActivityLog = hasPermission('tenant.dashboard.view');
   const { data: activityData, isLoading: isLoadingActivity } =
-    useAcademyActivity(currentAcademy?.id ?? '', {
-      enabled: !!currentAcademy?.id,
-      query: { pagination: { page: 1, pageSize: 5 } },
-    });
+    useAcademyActivityLog(
+      currentAcademy?.id ?? '',
+      {},
+      { limit: 5, enabled: !!currentAcademy?.id && canViewActivityLog }
+    );
 
-  const activities = activityData?.items ?? [];
+  const activities = (activityData?.pages[0]?.items ?? []).map(
+    tenantEntryToRow
+  );
 
   /*
     New Customer Onboarding — the "finish setup" nudge follows the SERVER's
@@ -340,53 +351,48 @@ export default function AcademyDashboardPage(): JSX.Element {
           )}
         </div>
 
-        {/* Recent Activity */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('academy:dashboard.recentActivity')}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {isLoadingActivity ? (
-              <div className="space-y-3">
-                <Skeleton className="h-12" />
-                <Skeleton className="h-12" />
-                <Skeleton className="h-12" />
-              </div>
-            ) : activities.length === 0 ? (
-              <EmptyState
-                titleKey="academy:empty.noActivity"
-                descriptionKey="academy:empty.noActivityDescription"
-                className="py-8"
-              />
-            ) : (
-              <div className="space-y-3">
-                {activities.map((activity) => (
-                  <div
-                    key={activity.id}
-                    className="flex items-start justify-between rounded-lg border border-border p-3"
-                  >
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium text-foreground">
-                        {t(`academy:activity.${activity.type}`)}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {activity.description}
-                      </p>
-                      {activity.userName && (
-                        <p className="text-xs text-muted-foreground">
-                          {t('common:by')} {activity.userName}
-                        </p>
-                      )}
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      {fmt.date(activity.timestamp)}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        {/* Recent Activity — Task 3: readable sentences from the activity log */}
+        {canViewActivityLog ? (
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
+              <CardTitle>{t('academy:dashboard.recentActivity')}</CardTitle>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() =>
+                  navigate(
+                    buildPath(DASHBOARD_ROUTES.academyActivityLog, {
+                      academyId: currentAcademy.id,
+                    })
+                  )
+                }
+              >
+                {t('auditLog:dashboardWidget.viewAll')}
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {isLoadingActivity ? (
+                <div className="space-y-3">
+                  <Skeleton className="h-12" />
+                  <Skeleton className="h-12" />
+                  <Skeleton className="h-12" />
+                </div>
+              ) : activities.length === 0 ? (
+                <EmptyState
+                  titleKey="academy:empty.noActivity"
+                  descriptionKey="academy:empty.noActivityDescription"
+                  className="py-8"
+                />
+              ) : (
+                <ul className="flex flex-col divide-y divide-border">
+                  {activities.map((row) => (
+                    <AuditEntryRow key={row.id} row={row} compact />
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
+        ) : null}
 
         {/* Quick Actions */}
         <Card>

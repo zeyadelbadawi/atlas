@@ -305,6 +305,9 @@ export const DASHBOARD_ROUTES = {
   /** P64 Phase 4 §E.5 — the owner's integrity / sharing / quota reports. Academy-scoped by route like media and certificates. */
   academyReports: '/dashboard/academy/:academyId/reports',
 
+  /** Task 3 — the academy owner's activity log (who changed what, and when). */
+  academyActivityLog: '/dashboard/academy/:academyId/activity',
+
   /**
    * P13 — the academy's net unsettled revenue and its payout history.
    * Organization-Owner-only server-side (`assertCanViewAcademyFinance`), so
