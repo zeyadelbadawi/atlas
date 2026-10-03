@@ -6,7 +6,13 @@
  * authenticated requester), so it is safe to show in full; nothing is
  * filtered client-side.
  */
+import { useQueryClient } from '@tanstack/react-query';
 import { useApiMutation, useApiQuery } from '@/shared/hooks';
+import { LIVE_LIST_QUERY_OPTIONS } from '@config';
+import {
+  invalidateSupportCases,
+  tenantSupportCaseKeys as sharedTenantSupportCaseKeys,
+} from '@services/query';
 import { tenantSupportCaseService } from '../services/TenantSupportCaseService';
 import { useDashboardScope } from './useDashboardScope';
 import type { DashboardScopeSelection } from './useDashboardScope';
@@ -18,17 +24,14 @@ import type {
 } from '@types';
 import type { ApiError } from '@api';
 
+/** Built on the shared `tenantSupportCaseKeys` factory (same key shape as before). */
 export const tenantSupportCaseKeys = {
   mine: (scope: DashboardScopeSelection) =>
     scope.kind === 'organization'
-      ? ([
-          'tenant-support-cases',
-          'organization',
-          scope.organizationId,
-        ] as const)
+      ? sharedTenantSupportCaseKeys.organization(scope.organizationId)
       : scope.kind === 'academy'
-        ? (['tenant-support-cases', 'academy', scope.academyId] as const)
-        : (['tenant-support-cases', 'none'] as const),
+        ? sharedTenantSupportCaseKeys.academy(scope.academyId)
+        : sharedTenantSupportCaseKeys.none(),
 };
 
 export function useMySupportCases() {
@@ -43,11 +46,14 @@ export function useMySupportCases() {
             (scope as { academyId: string }).academyId
           ),
     enabled: scope.kind !== 'none',
+    // Support replies and status changes come from someone else.
+    ...LIVE_LIST_QUERY_OPTIONS,
   });
 }
 
 export function useSubmitSupportCase() {
   const scope = useDashboardScope();
+  const queryClient = useQueryClient();
 
   return useApiMutation<SupportCaseDetail, CreateSupportCasePayload, ApiError>({
     mutationFn: (payload) =>
@@ -65,6 +71,7 @@ export function useSubmitSupportCase() {
     // toast is raised here on either path.
     showSuccessToast: false,
     showErrorToast: false,
-    invalidateKeys: [tenantSupportCaseKeys.mine(scope)],
+    // Both "my tickets" lists — this tracker and the Support page's.
+    onSuccess: () => invalidateSupportCases(queryClient),
   });
 }

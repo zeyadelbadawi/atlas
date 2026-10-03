@@ -4,7 +4,7 @@
  * Mutation hook for updating an existing academy.
  */
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { academyKeys } from '@services/query';
+import { academyKeys, publicWebsiteKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { academyService } from '../services/AcademyService';
 import type { Academy, UpdateAcademyPayload } from '@types';
@@ -24,8 +24,11 @@ export function useUpdateAcademy() {
     // suppressed to avoid showing the user two messages for one failure.
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: async () => {
+    onSuccess: async (_academy, { id }) => {
       await invalidate(academyKeys.all);
+      // The academy name shown by the LMS/public shell comes from the
+      // identity read, cached for five minutes unless told otherwise.
+      await invalidate(publicWebsiteKeys.identity(id));
     },
   });
 }

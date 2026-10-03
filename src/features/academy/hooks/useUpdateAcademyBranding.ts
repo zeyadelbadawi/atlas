@@ -3,8 +3,9 @@
  *
  * Mutation hook for updating academy branding.
  */
-import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { academyKeys } from '@services/query';
+import { useQueryClient } from '@tanstack/react-query';
+import { useApiMutation } from '@/shared/hooks';
+import { invalidateBranding } from '@services/query';
 import type { ApiError } from '@api';
 import { academyService } from '../services/AcademyService';
 import type { Academy, UpdateAcademyBrandingPayload } from '@types';
@@ -15,7 +16,7 @@ export interface UpdateAcademyBrandingVariables {
 }
 
 export function useUpdateAcademyBranding() {
-  const { invalidate } = useInvalidate();
+  const queryClient = useQueryClient();
 
   return useApiMutation<Academy, UpdateAcademyBrandingVariables, ApiError>({
     mutationFn: ({ id, payload }) =>
@@ -25,8 +26,10 @@ export function useUpdateAcademyBranding() {
     // suppressed to avoid showing the user two messages for one failure.
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: async () => {
-      await invalidate(academyKeys.all);
+    onSuccess: async (_academy, { id }) => {
+      // Not just the academy reads: the LMS/public logo comes from the
+      // identity read, cached for five minutes unless told otherwise.
+      await invalidateBranding(queryClient, id);
     },
   });
 }

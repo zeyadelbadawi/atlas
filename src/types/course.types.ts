@@ -305,4 +305,11 @@ export interface UpdateCourseLessonPayload {
 export interface ReorderItemsPayload {
   /** Item ids in their new order. */
   readonly orderedIds: readonly string[];
+  /**
+   * The order the client was looking at when it computed `orderedIds`. The
+   * server refuses the write with 409 `stale_resource_version` when the
+   * stored order no longer matches, instead of overwriting a concurrent
+   * reorder.
+   */
+  readonly expectedOrderedIds?: readonly string[];
 }

@@ -6,7 +6,7 @@
  * replayed.
  */
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { platformPaymentKeys } from '@services/query';
+import { subscriptionPaymentDecisionKeys } from './platform-payment-decision.keys';
 import type { ApiError } from '@api';
 import type { ApprovePaymentPayload, Payment } from '@types';
 import { platformPaymentService } from '../services/PlatformPaymentService';
@@ -24,9 +24,13 @@ export function useApprovePayment() {
       platformPaymentService.approvePayment(paymentId, payload),
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: async (_data, variables) => {
-      await invalidate(platformPaymentKeys.detail(variables.paymentId));
-      await invalidate(platformPaymentKeys.all);
+    onSuccess: async (data, variables) => {
+      await Promise.all(
+        subscriptionPaymentDecisionKeys(
+          variables.paymentId,
+          data?.organizationId
+        ).map((key) => invalidate(key))
+      );
     },
   });
 }

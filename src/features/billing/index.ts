@@ -27,6 +27,21 @@ export {
   getManualReviewStatusTone,
   getPaymentStatusTone,
 } from './utils/payment-status.utils';
+// Course order / refund badges — the academy Orders page and the Platform
+// course-payment review show the same statuses.
+export {
+  getCourseOrderStatusTone,
+  getRefundStatusTone,
+} from './utils/course-order-status.utils';
+// The Platform review lists' shared server-side search/filter/sort model,
+// reused by the course-payment review in `@features/platform-commerce`.
+export { PlatformPaymentListToolbar } from './components/PlatformPaymentListToolbar';
+export {
+  DEFAULT_PLATFORM_PAYMENT_LIST_STATE,
+  PLATFORM_PAYMENT_LIST_URL_CONFIG,
+  toPlatformPaymentQuery,
+  type PlatformPaymentListState,
+} from './utils/platform-payment-list.utils';
 // P64 Phase 4 — the learner course-checkout reuses the platform-owned
 // payment-method catalog (not org-scoped), the same way it reuses formatMoney.
 export { usePaymentMethods } from './hooks/usePaymentMethods';

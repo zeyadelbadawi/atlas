@@ -1,8 +1,9 @@
 /**
  * usePublishWebsiteTestimonialEntry hook.
  */
-import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { websiteKeys } from '@services/query';
+import { useQueryClient } from '@tanstack/react-query';
+import { useApiMutation } from '@/shared/hooks';
+import { invalidateTestimonialEntries } from '@services/query';
 import type { ApiError } from '@api';
 import type { WebsiteTestimonialEntry } from '@types';
 import { websiteContentService } from '../services/WebsiteContentService';
@@ -13,7 +14,7 @@ export interface PublishWebsiteTestimonialEntryVariables {
 }
 
 export function usePublishWebsiteTestimonialEntry() {
-  const { invalidate } = useInvalidate();
+  const queryClient = useQueryClient();
 
   return useApiMutation<
     WebsiteTestimonialEntry,
@@ -25,10 +26,11 @@ export function usePublishWebsiteTestimonialEntry() {
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async (_data, variables) => {
-      await invalidate(
-        websiteKeys.testimonialEntry(variables.academyId, variables.entryId)
+      await invalidateTestimonialEntries(
+        queryClient,
+        variables.academyId,
+        variables.entryId
       );
-      await invalidate(websiteKeys.testimonialEntries(variables.academyId));
     },
   });
 }

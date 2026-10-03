@@ -1,15 +1,18 @@
 /**
  * useDeleteCourseSection hook.
  *
- * Mutation hook for deleting a course section and its lessons.
+ * Mutation hook for deleting a course section and its lessons. Quizzes and
+ * assignments it held fall back to course level, so the attach picker and
+ * authoring lists are invalidated along with the sections.
  */
-import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { courseKeys } from '@services/query';
+import { useQueryClient } from '@tanstack/react-query';
+import { useApiMutation } from '@/shared/hooks';
+import { invalidateCourseCurriculum } from '@services/query/curriculum-invalidation';
 import type { ApiError } from '@api';
 import { courseService } from '../services/CourseService';
 
 export function useDeleteCourseSection(academyId: string, courseId: string) {
-  const { invalidate } = useInvalidate();
+  const queryClient = useQueryClient();
 
   return useApiMutation<void, string, ApiError>({
     mutationFn: (sectionId) =>
@@ -17,8 +20,7 @@ export function useDeleteCourseSection(academyId: string, courseId: string) {
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async () => {
-      await invalidate(courseKeys.sections(academyId, courseId));
-      await invalidate(courseKeys.detail(academyId, courseId));
+      await invalidateCourseCurriculum(queryClient, { academyId, courseId });
     },
   });
 }

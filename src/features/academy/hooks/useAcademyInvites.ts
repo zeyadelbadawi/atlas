@@ -7,7 +7,13 @@
  * once, on creation — the list read never carries it, so the create
  * dialog is the only place it can be copied from.
  */
-import { useApiMutation, useApiQuery, useAuth, useInvalidate } from '@/shared/hooks';
+import {
+  useApiMutation,
+  useApiQuery,
+  useAuth,
+  useInvalidate,
+} from '@/shared/hooks';
+import { LIVE_LIST_QUERY_OPTIONS } from '@config';
 import { academyKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { academyRosterService } from '../services/AcademyRosterService';
@@ -32,6 +38,9 @@ export function useAcademyInvites(
     queryKey: academyKeys.invites(organization?.id, academyId),
     queryFn: () => academyRosterService.getInvites(academyId),
     enabled: enabled && !!academyId,
+    // Learners accept invites from their own browser; poll while shown so
+    // the "used" count and status catch up without a manual refresh.
+    ...LIVE_LIST_QUERY_OPTIONS,
   });
 }
 

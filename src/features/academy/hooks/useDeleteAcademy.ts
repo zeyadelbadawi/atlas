@@ -7,7 +7,11 @@
  * deletes their only academy and the plan still shows the slot as used.
  */
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { academyKeys, tenantKeys } from '@services/query';
+import {
+  academyKeys,
+  dashboardOverviewKeys,
+  tenantKeys,
+} from '@services/query';
 import type { ApiError } from '@api';
 import { academyService } from '../services/AcademyService';
 
@@ -30,6 +34,8 @@ export function useDeleteAcademy() {
     onSuccess: async () => {
       await invalidate(academyKeys.all);
       await invalidate(tenantKeys.all);
+      // The organization dashboard counts academies.
+      await invalidate(dashboardOverviewKeys.overviews());
     },
   });
 }

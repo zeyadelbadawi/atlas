@@ -177,6 +177,16 @@ export class AuthenticationService {
     );
   }
 
+  /**
+   * Emails the signed-in account a fresh verification link, retiring any
+   * earlier one. Always `202` (also for an already-verified account);
+   * `429` once the per-account or per-network budget is spent. An
+   * academy-website session gets a link to its academy's own verify page.
+   */
+  public async resendEmailVerification(): Promise<void> {
+    await apiClient.post<void>('/auth/verify-email/resend');
+  }
+
   /** Completes a password reset using the token from the reset email. */
   public async confirmPasswordReset(
     request: PasswordResetConfirmation

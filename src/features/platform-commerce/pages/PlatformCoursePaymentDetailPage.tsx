@@ -45,8 +45,10 @@ import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { apiErrorMessage } from '@utils';
 import {
   formatMoney,
+  getCourseOrderStatusTone,
   getManualReviewStatusTone,
   getPaymentStatusTone,
+  getRefundStatusTone,
 } from '@features/billing';
 import {
   useApproveCourseOrderPayment,
@@ -244,12 +246,41 @@ export default function PlatformCoursePaymentDetailPage(): JSX.Element {
                   to={buildPath(DASHBOARD_ROUTES.platformAcademyDetail, {
                     academyId: payment.payeeAcademyId,
                   })}
-                  className="font-mono text-xs text-primary hover:underline"
-                  dir="ltr"
+                  className={
+                    payment.academy
+                      ? 'text-primary hover:underline'
+                      : 'font-mono text-xs text-primary hover:underline'
+                  }
+                  dir={payment.academy ? 'auto' : 'ltr'}
                 >
-                  {payment.payeeAcademyId}
+                  {payment.academy?.name ?? payment.payeeAcademyId}
                 </Link>
               </DetailRow>
+              {payment.course ? (
+                <DetailRow label={t('platformCommerce:coursePayments.course')}>
+                  <span dir="auto">{payment.course.title}</span>
+                </DetailRow>
+              ) : null}
+              {payment.courseOrderStatus ? (
+                <DetailRow
+                  label={t('platformCommerce:coursePayments.orderStatus')}
+                >
+                  <StatusBadge
+                    labelKey={`payments:courseOrder.status.${payment.courseOrderStatus}`}
+                    tone={getCourseOrderStatusTone(payment.courseOrderStatus)}
+                  />
+                </DetailRow>
+              ) : null}
+              {payment.refundStatus ? (
+                <DetailRow
+                  label={t('platformCommerce:coursePayments.refundStatus')}
+                >
+                  <StatusBadge
+                    labelKey={`payments:refund.status.${payment.refundStatus}`}
+                    tone={getRefundStatusTone(payment.refundStatus)}
+                  />
+                </DetailRow>
+              ) : null}
               <DetailRow label={t('platformCommerce:coursePayments.learner')}>
                 <Link
                   to={buildPath(DASHBOARD_ROUTES.platformUserDetail, {

@@ -175,7 +175,143 @@
     "approveAction": "Approve payment",
     "rejectTitle": "Reject",
     "notesRequiredLabel": "Reason for rejection",
-    "rejectAction": "Reject payment"
+    "rejectAction": "Reject payment",
+    "searchLabel": "Search by organization, reference or payment ID",
+    "planColumn": "Plan",
+    "planWithCycle": "{{plan}} · {{cycle}}",
+    "addOnPlan": "Add-on: {{name}}",
+    "plan": "Plan",
+    "billingCycle": "Billing cycle",
+    "unknownOrganization": "Organization unavailable",
+    "noPlan": "No plan recorded"
+  },
+  "listFilters": {
+    "label": "Filters",
+    "all": "All",
+    "reviewStatus": "Review",
+    "status": "Payment status",
+    "methodType": "Method",
+    "from": "From",
+    "to": "To",
+    "sort": "Sort by",
+    "clear": "Clear filters",
+    "sortOptions": {
+      "createdAt_desc": "Newest first",
+      "createdAt_asc": "Oldest first",
+      "amount_desc": "Highest amount",
+      "amount_asc": "Lowest amount",
+      "updatedAt_desc": "Recently updated"
+    }
+  },
+  "courseOrder": {
+    "status": {
+      "draft": "Draft",
+      "pending_payment": "Awaiting payment",
+      "paid": "Paid",
+      "expired": "Expired",
+      "cancelled": "Cancelled",
+      "refunded": "Refunded"
+    }
+  },
+  "refund": {
+    "status": {
+      "pending": "Refund requested",
+      "succeeded": "Refund completed",
+      "failed": "Refund failed",
+      "none": "No refund"
+    }
+  },
+  "academyOrders": {
+    "title": "Orders",
+    "description": "Course purchases from this academy's students. Read-only: manual payments are reviewed by Atlas.",
+    "searchLabel": "Search by student, course or order ID",
+    "filters": {
+      "status": "Order status",
+      "reviewStatus": "Payment review",
+      "methodType": "Method",
+      "refundStatus": "Refund",
+      "from": "From",
+      "to": "To",
+      "sort": "Sort by",
+      "all": "All",
+      "clear": "Clear filters"
+    },
+    "sortOptions": {
+      "createdAt_desc": "Newest first",
+      "createdAt_asc": "Oldest first",
+      "paidAt_desc": "Recently paid",
+      "amount_desc": "Highest amount",
+      "amount_asc": "Lowest amount"
+    },
+    "columns": {
+      "order": "Order",
+      "student": "Student",
+      "course": "Course",
+      "amount": "Amount",
+      "status": "Status",
+      "payment": "Payment",
+      "refund": "Refund",
+      "placedAt": "Placed"
+    },
+    "noPayment": "No payment yet",
+    "noRefund": "No refund",
+    "empty": {
+      "title": "No orders yet",
+      "description": "Course purchases from this academy will appear here."
+    },
+    "emptyFiltered": {
+      "title": "No orders match",
+      "description": "Try clearing a filter or searching for something else."
+    },
+    "error": {
+      "title": "Couldn't load orders",
+      "description": "Something went wrong while loading this academy's orders."
+    },
+    "forbidden": {
+      "title": "Only the organization owner can see orders",
+      "description": "Orders show what students paid. Ask your organization owner if you need this information."
+    },
+    "noAcademy": {
+      "title": "No academy selected",
+      "description": "Choose an academy to see its orders."
+    },
+    "detail": {
+      "title": "Order details",
+      "description": "What the student bought and every payment made toward it.",
+      "breadcrumb": "Orders",
+      "summaryTitle": "Summary",
+      "orderId": "Order ID",
+      "placedAt": "Placed",
+      "paidAt": "Paid",
+      "notPaid": "Not paid",
+      "expiresAt": "Payment due by",
+      "student": "Student",
+      "course": "Course",
+      "amount": "Amount",
+      "paymentsTitle": "Payment attempts",
+      "paymentsEmpty": "No payment has been made for this order yet.",
+      "paymentColumns": {
+        "createdAt": "Date",
+        "method": "Method",
+        "status": "Status",
+        "review": "Review",
+        "reference": "Reference",
+        "amount": "Amount"
+      },
+      "noReference": "No reference",
+      "refundTitle": "Refund",
+      "refundRequestedAt": "Requested",
+      "refundProcessedAt": "Processed",
+      "refundAmount": "Amount",
+      "notFound": {
+        "title": "Order not found",
+        "description": "This order doesn't exist or belongs to another academy."
+      },
+      "error": {
+        "title": "Couldn't load this order",
+        "description": "Something went wrong while loading the order."
+      }
+    }
   },
   "atlasPaymentProvider": {
     "title": "Atlas Payment Provider",

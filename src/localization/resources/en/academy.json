@@ -11,7 +11,8 @@
     "manageSettings": "Manage Settings",
     "viewMembers": "View Members",
     "updateBranding": "Update Branding",
-    "viewWebsite": "View Website"
+    "viewWebsite": "View Website",
+    "websiteStatus": "Website"
   },
   "stats": {
     "totalMembers": "Total Members",

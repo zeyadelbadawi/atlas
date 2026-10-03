@@ -42,6 +42,9 @@ const NAV_ITEMS: readonly { readonly to: string; readonly labelKey: string }[] =
   [
     { to: PUBLIC_ROUTES.features, labelKey: 'layout:public.nav.product' },
     { to: PUBLIC_ROUTES.pricing, labelKey: 'layout:public.nav.pricing' },
+    // TASK 7 — the homepage contact form (`MarketingContactSection`,
+    // anchor `#contact`); `AppScrollManager` scrolls to the hash.
+    { to: `${PUBLIC_ROUTES.home}#contact`, labelKey: 'home:contact.nav' },
   ];
 
 export function PublicLayout(): JSX.Element {

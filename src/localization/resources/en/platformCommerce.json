@@ -12,8 +12,16 @@
       "method": "Method",
       "status": "Status",
       "reviewStatus": "Review",
-      "submittedAt": "Submitted"
+      "submittedAt": "Submitted",
+      "course": "Course",
+      "orderStatus": "Order",
+      "refund": "Refund"
     },
+    "searchLabel": "Search by academy, course, reference or payment ID",
+    "course": "Course",
+    "orderStatus": "Order status",
+    "refundStatus": "Refund",
+    "unknownAcademy": "Academy unavailable",
     "emptyTitle": "No course payments here",
     "emptyDescription": "Course payments matching this filter will appear here.",
     "reference": "Payment reference",

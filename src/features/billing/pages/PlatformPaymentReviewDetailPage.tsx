@@ -45,6 +45,7 @@ import {
   getPaymentStatusTone,
 } from '../utils/payment-status.utils';
 import { formatMoney } from '../utils/money.utils';
+import { formatCheckoutSummary } from '../utils/platform-payment-list.utils';
 import {
   approvePaymentSchema,
   rejectPaymentSchema,
@@ -120,6 +121,10 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
   const canApprove = hasPermission('platform.payment.approve');
   const canReject = hasPermission('platform.payment.reject');
   const isPendingReview = payment.reviewStatus === 'pending';
+  // One decision at a time: while either request is in flight BOTH actions
+  // are disabled, so an approve and a reject can never race each other.
+  const isDeciding = approvePayment.isPending || rejectPayment.isPending;
+  const planSummary = formatCheckoutSummary(t, payment.checkoutSummary);
 
   const onApprove = (data: ApprovePaymentFormData) => {
     approvePayment.mutate({
@@ -152,9 +157,12 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
               >
                 {formatMoney(payment.money, i18n.language)}
               </CardTitle>
-              <p className="mt-1 font-mono text-xs text-muted-foreground">
+              <p className="mt-1 text-sm text-muted-foreground">
                 {t('payments:platformReview.organization')}:{' '}
-                {payment.organizationId}
+                <span className="font-medium text-foreground" dir="auto">
+                  {payment.organization?.name ??
+                    t('payments:platformReview.unknownOrganization')}
+                </span>
               </p>
             </div>
             <div className="flex flex-col items-end gap-2">
@@ -175,6 +183,16 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
               </span>
               <span className="font-mono text-xs">{payment.id}</span>
             </div>
+            {planSummary ? (
+              <div className="flex justify-between gap-4">
+                <span className="text-muted-foreground">
+                  {t('payments:platformReview.plan')}
+                </span>
+                <span className="text-end" dir="auto">
+                  {planSummary}
+                </span>
+              </div>
+            ) : null}
             <div className="flex justify-between">
               <span className="text-muted-foreground">
                 {t('payments:common.methodType.label')}
@@ -288,7 +306,7 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
                           onRetry={approveForm.handleSubmit(onApprove)}
                         />
                       ) : null}
-                      <Button type="submit" disabled={approvePayment.isPending}>
+                      <Button type="submit" disabled={isDeciding}>
                         {approvePayment.isPending ? (
                           <Loader2
                             className="size-4 animate-spin"
@@ -345,7 +363,7 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
                       <Button
                         type="submit"
                         variant="destructive"
-                        disabled={rejectPayment.isPending}
+                        disabled={isDeciding}
                       >
                         {rejectPayment.isPending ? (
                           <Loader2

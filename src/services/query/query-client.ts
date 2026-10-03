@@ -59,8 +59,11 @@ export function createQueryClient(
         refetchOnWindowFocus: false,
         // Reconnecting should recover data the user was already looking at.
         refetchOnReconnect: true,
-        // Keeping the previous page visible avoids layout collapse while paging.
-        placeholderData: <TData>(previous: TData): TData => previous,
+        // No global `placeholderData`: a default function never sees the new
+        // key, so it kept the PREVIOUS entity on screen when a detail page's
+        // id changed. `useApiQuery` applies a key-aware policy instead
+        // (`keepPreviousForSameResource`): paging a list keeps its rows,
+        // changing entity/scope shows the loading state.
         throwOnError: false,
       },
       mutations: {

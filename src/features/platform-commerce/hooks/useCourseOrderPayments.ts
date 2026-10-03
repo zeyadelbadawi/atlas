@@ -7,7 +7,17 @@
  * `useApprovePayment`/`useRejectPayment` in `features/billing`).
  */
 import { useApiMutation, useApiQuery, useInvalidate } from '@/shared/hooks';
-import { platformCourseOrderPaymentKeys } from '@services/query';
+import { LIVE_LIST_QUERY_OPTIONS } from '@config';
+import {
+  academyCourseOrderKeys,
+  academyPayoutKeys,
+  analyticsKeys,
+  platformAcademyKeys,
+  platformAcademyPayoutKeys,
+  platformCourseKeys,
+  platformCourseOrderPaymentKeys,
+  platformMetricsKeys,
+} from '@services/query';
 import type { ApiError } from '@api';
 import type {
   ApprovePaymentPayload,
@@ -17,6 +27,25 @@ import type {
   RejectPaymentPayload,
 } from '@types';
 import { platformCourseOrderPaymentService } from '../services/PlatformCourseOrderPaymentService';
+
+/**
+ * What an approve/reject of a COURSE payment changes beyond the review
+ * queue: an approval marks the order paid, writes the academy's revenue
+ * ledger (payouts, revenue summary, the academy's Orders page), counts as
+ * paid access on the course and moves the platform commerce metrics and
+ * analytics; a rejection moves the same order and metrics. Prefixes from
+ * the query-key factory only.
+ */
+const COURSE_PAYMENT_DECISION_KEYS: readonly (readonly unknown[])[] = [
+  platformCourseOrderPaymentKeys.all,
+  platformMetricsKeys.all,
+  analyticsKeys.all,
+  academyPayoutKeys.all,
+  academyCourseOrderKeys.all,
+  platformAcademyPayoutKeys.all,
+  platformAcademyKeys.all,
+  platformCourseKeys.all,
+];
 
 export interface UseCourseOrderPaymentsOptions {
   readonly query?: CollectionQuery;
@@ -31,6 +60,9 @@ export function useCourseOrderPayments(
     queryKey: platformCourseOrderPaymentKeys.list(query),
     queryFn: () => platformCourseOrderPaymentService.getPayments(query),
     enabled,
+    // Learners submit course payments from their own browsers; poll while
+    // the review queue is shown (paused in background tabs).
+    ...LIVE_LIST_QUERY_OPTIONS,
   });
 }
 
@@ -59,7 +91,9 @@ export function useApproveCourseOrderPayment() {
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async () => {
-      await invalidate(platformCourseOrderPaymentKeys.all);
+      await Promise.all(
+        COURSE_PAYMENT_DECISION_KEYS.map((key) => invalidate(key))
+      );
     },
   });
 }
@@ -81,7 +115,9 @@ export function useRejectCourseOrderPayment() {
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: async () => {
-      await invalidate(platformCourseOrderPaymentKeys.all);
+      await Promise.all(
+        COURSE_PAYMENT_DECISION_KEYS.map((key) => invalidate(key))
+      );
     },
   });
 }

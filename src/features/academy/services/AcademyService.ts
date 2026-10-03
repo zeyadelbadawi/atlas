@@ -19,14 +19,29 @@ import type {
   AddAcademyInstructorPayload,
   CreateAcademyStudentPayload,
   AcademyStats,
-  AcademyActivity,
   CollectionQuery,
   PaginatedResult,
+  WebsiteConfiguration,
 } from '@types';
 import type { ReadOptions, WriteOptions } from '@services';
 
 export class AcademyService extends BaseService {
   protected readonly resource = 'academies';
+
+  /**
+   * The Academy website's configuration — read here only for its publish
+   * state, which is what the Academy dashboard shows as the client-facing
+   * status (Task 1). Same endpoint and cache key as the website feature.
+   */
+  async getWebsiteConfiguration(
+    academyId: string,
+    options?: ReadOptions
+  ): Promise<WebsiteConfiguration> {
+    return this.client.get<WebsiteConfiguration>(
+      this.path(academyId, 'website', 'configuration'),
+      options
+    );
+  }
 
   /**
    * Retrieves all academies for the active organization.
@@ -229,23 +244,9 @@ export class AcademyService extends BaseService {
     return this.client.get<AcademyStats>(this.path(id, 'stats'), options);
   }
 
-  /**
-   * Retrieves academy activity (paginated).
-   */
-  async getAcademyActivity(
-    id: string,
-    query?: CollectionQuery,
-    options?: ReadOptions
-  ): Promise<PaginatedResult<AcademyActivity>> {
-    const response = await this.client.get<PaginatedResult<AcademyActivity>>(
-      this.path(id, 'activity'),
-      {
-        ...options,
-        params: { ...toCollectionParams(query), ...options?.params },
-      }
-    );
-    return response;
-  }
+  // Task 3 — `GET academies/:id/activity` is now the Academy activity log
+  // (a cursor feed); it is read through `AcademyActivityLogService` in the
+  // audit-log feature, not here.
 }
 
 /** Singleton instance following Atlas service pattern. */

@@ -2,14 +2,22 @@
  * Hooks for the unified unit curriculum (P52).
  *
  * `useUnitItems` reads one unit's mixed, ordered sequence. The mutation
- * hooks (attach/detach/reorder) persist changes and invalidate both the
- * unit's item list and the section list, so the builder stays authoritative
- * — ordering is never kept only in browser state.
+ * hooks (attach/detach/reorder) persist changes and invalidate the course's
+ * whole builder curriculum (`invalidateCourseCurriculum`), so the builder
+ * stays authoritative — ordering is never kept only in browser state.
+ *
+ * The reorder is optimistic (the moved row is in place immediately) but
+ * still server-authoritative: it is rolled back on failure, refetched once
+ * the last queued reorder settles, and every reorder of one unit shares a
+ * mutation `scope` so they run strictly in click order.
  */
-import { useApiMutation, useApiQuery, useInvalidate } from '@/shared/hooks';
+import { useQueryClient } from '@tanstack/react-query';
+import { useApiMutation, useApiQuery } from '@/shared/hooks';
 import { courseKeys } from '@services/query';
+import { invalidateCourseCurriculum } from '@services/query/curriculum-invalidation';
 import type { ApiError } from '@api';
 import { courseService } from '../services/CourseService';
+import { applyOrder } from '../utils/reorder.utils';
 import type {
   AvailableCurriculumItem,
   CurriculumItem,
@@ -48,47 +56,96 @@ interface AttachVariables {
 }
 
 export function useAttachUnitItem(academyId: string, courseId: string) {
-  const { invalidate } = useInvalidate();
+  const queryClient = useQueryClient();
   return useApiMutation<CurriculumItem[], AttachVariables, ApiError>({
     mutationFn: ({ sectionId, type, itemId }) =>
-      courseService.attachUnitItem(academyId, courseId, sectionId, { type, itemId }),
+      courseService.attachUnitItem(academyId, courseId, sectionId, {
+        type,
+        itemId,
+      }),
     showSuccessToast: false,
-    onSuccess: async (_data, { sectionId }) => {
-      await invalidate(courseKeys.unitItems(academyId, courseId, sectionId));
-      await invalidate(courseKeys.availableContent(academyId, courseId));
-      await invalidate(courseKeys.sections(academyId, courseId));
+    // The caller shows its own localized toast; a second generic one would
+    // just repeat it.
+    showErrorToast: false,
+    onSuccess: async () => {
+      await invalidateCourseCurriculum(queryClient, { academyId, courseId });
     },
   });
 }
 
 export function useDetachUnitItem(academyId: string, courseId: string) {
-  const { invalidate } = useInvalidate();
+  const queryClient = useQueryClient();
   return useApiMutation<CurriculumItem[], AttachVariables, ApiError>({
     mutationFn: ({ sectionId, type, itemId }) =>
-      courseService.detachUnitItem(academyId, courseId, sectionId, { type, itemId }),
+      courseService.detachUnitItem(academyId, courseId, sectionId, {
+        type,
+        itemId,
+      }),
     showSuccessToast: false,
-    onSuccess: async (_data, { sectionId }) => {
-      await invalidate(courseKeys.unitItems(academyId, courseId, sectionId));
-      await invalidate(courseKeys.availableContent(academyId, courseId));
-      await invalidate(courseKeys.sections(academyId, courseId));
+    showErrorToast: false,
+    onSuccess: async () => {
+      await invalidateCourseCurriculum(queryClient, { academyId, courseId });
     },
   });
 }
 
-interface ReorderVariables {
-  readonly sectionId: string;
-  readonly payload: ReorderItemsPayload;
+export interface ReorderUnitItemsContext {
+  readonly previous: CurriculumItem[] | undefined;
 }
 
-export function useReorderUnitItems(academyId: string, courseId: string) {
-  const { invalidate } = useInvalidate();
-  return useApiMutation<void, ReorderVariables, ApiError>({
-    mutationFn: ({ sectionId, payload }) =>
+/** Mutation key shared by every item reorder of one unit. */
+export const reorderUnitItemsMutationKey = (sectionId: string) =>
+  [...courseKeys.all, 'reorder-unit-items', sectionId] as const;
+
+/**
+ * Persists a new item order for ONE unit (items never move across units —
+ * the data model has no cross-unit move). `payload.expectedOrderedIds`
+ * should carry the order the author saw, so a concurrent change is refused
+ * (409) instead of overwritten.
+ */
+export function useReorderUnitItems(
+  academyId: string,
+  courseId: string,
+  sectionId: string
+) {
+  const queryClient = useQueryClient();
+  const itemsKey = courseKeys.unitItems(academyId, courseId, sectionId);
+  const mutationKey = reorderUnitItemsMutationKey(sectionId);
+
+  return useApiMutation<
+    void,
+    ReorderItemsPayload,
+    ApiError,
+    ReorderUnitItemsContext
+  >({
+    mutationKey,
+    scope: { id: `unit-items-order:${sectionId}` },
+    mutationFn: (payload) =>
       courseService.reorderUnitItems(academyId, courseId, sectionId, payload),
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: async (_data, { sectionId }) => {
-      await invalidate(courseKeys.unitItems(academyId, courseId, sectionId));
+    onMutate: async (payload) => {
+      await queryClient.cancelQueries({ queryKey: itemsKey });
+      const previous = queryClient.getQueryData<CurriculumItem[]>(itemsKey);
+      if (previous) {
+        queryClient.setQueryData<CurriculumItem[]>(
+          itemsKey,
+          applyOrder(previous, payload.orderedIds)
+        );
+      }
+      return { previous };
+    },
+    onError: (_error, _payload, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(itemsKey, context.previous);
+      }
+    },
+    onSettled: async () => {
+      // `isMutating` still counts this mutation while its onSettled runs:
+      // only the last queued reorder of the unit refetches.
+      if (queryClient.isMutating({ mutationKey }) <= 1) {
+        await invalidateCourseCurriculum(queryClient, { academyId, courseId });
+      }
     },
   });
 }

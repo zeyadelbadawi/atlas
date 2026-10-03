@@ -2,7 +2,7 @@
  * Academy Settings Page.
  *
  * Configure academy preferences including general settings, localization,
- * contact information, and status management.
+ * contact information. The internal lifecycle status is not edited here (Task 1): the website publish state is the client-facing status.
  */
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -108,7 +108,6 @@ export default function AcademySettingsPage(): JSX.Element {
           name: academy.name,
           slug: academy.slug,
           description: academy.description ?? '',
-          status: academy.status,
           language: academy.language,
           timezone: academy.timezone,
           currency: academy.currency,
@@ -134,7 +133,6 @@ export default function AcademySettingsPage(): JSX.Element {
           name: data.name,
           slug: data.slug,
           description: data.description || null,
-          status: data.status,
           language: data.language,
           timezone: data.timezone,
           currency: data.currency,
@@ -278,38 +276,6 @@ export default function AcademySettingsPage(): JSX.Element {
                     <FormControl>
                       <Textarea rows={3} {...field} />
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('academy:settings.statusLabel')}</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="draft">
-                          {t('academy:settings.statusDraft')}
-                        </SelectItem>
-                        <SelectItem value="active">
-                          {t('academy:settings.statusActive')}
-                        </SelectItem>
-                        <SelectItem value="suspended">
-                          {t('academy:settings.statusSuspended')}
-                        </SelectItem>
-                        <SelectItem value="archived">
-                          {t('academy:settings.statusArchived')}
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

@@ -6,7 +6,7 @@
  * relationship through the abstract service contract.
  */
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { enrollmentKeys } from '@services/query';
+import { enrollmentKeys, learnerKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { enrollmentService } from '../services/EnrollmentService';
 import type { CreateEnrollmentPayload, Enrollment } from '@types';
@@ -20,6 +20,9 @@ export function useEnroll() {
     showErrorToast: false,
     onSuccess: async () => {
       await invalidate(enrollmentKeys.all);
+      // The `/my` dashboard lists enrolled courses from its own overview
+      // read (the `overview` branch only — never the lesson-grant key).
+      await invalidate([...learnerKeys.all, 'overview']);
     },
   });
 }

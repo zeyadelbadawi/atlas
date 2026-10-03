@@ -7,11 +7,16 @@
  * THIS unit, and attaches the chosen one to the end of the unit's sequence.
  */
 import { useTranslation } from 'react-i18next';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
-import { Boxes } from 'lucide-react';
+import { Boxes, Loader2 } from 'lucide-react';
 import type { AvailableCurriculumItem } from '@types';
 
 export interface AttachContentDialogProps {
@@ -21,6 +26,8 @@ export interface AttachContentDialogProps {
   readonly sectionId: string;
   readonly available: readonly AvailableCurriculumItem[];
   readonly isAttaching: boolean;
+  /** The row being attached right now — it shows a spinner; the others wait. */
+  readonly attachingItemId?: string;
   readonly onAttach: (itemId: string) => void;
 }
 
@@ -31,13 +38,14 @@ export function AttachContentDialog({
   sectionId,
   available,
   isAttaching,
+  attachingItemId,
   onAttach,
 }: AttachContentDialogProps): JSX.Element {
   const { t } = useTranslation();
 
   // Only content of the chosen type that is NOT already in this unit.
   const candidates = available.filter(
-    (item) => item.type === type && item.sectionId !== sectionId,
+    (item) => item.type === type && item.sectionId !== sectionId
   );
 
   return (
@@ -59,42 +67,66 @@ export function AttachContentDialog({
             className="py-6"
           />
         ) : (
-          <ul className="max-h-80 space-y-2 overflow-y-auto">
-            {candidates.map((item) => (
-              <li
-                key={item.id}
-                className="flex items-center justify-between gap-3 rounded-lg border border-border p-3"
-              >
-                <div className="flex min-w-0 items-center gap-2">
-                  <span className="truncate text-sm font-medium text-foreground">
-                    {item.title}
-                  </span>
-                  <StatusBadge
-                    labelKey={
-                      item.status === 'published'
-                        ? 'course:status.published'
-                        : 'course:status.draft'
-                    }
-                    tone={item.status === 'published' ? 'success' : 'neutral'}
-                  />
-                  {item.sectionId ? (
-                    <span className="text-xs text-muted-foreground">
-                      {t('course:builder.attach.inAnotherUnit')}
-                    </span>
-                  ) : null}
-                </div>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={isAttaching}
-                  onClick={() => onAttach(item.id)}
+          <ul
+            className="max-h-80 space-y-2 overflow-y-auto"
+            aria-busy={isAttaching || undefined}
+          >
+            {candidates.map((item) => {
+              const isThisAttaching = attachingItemId === item.id;
+              return (
+                <li
+                  key={item.id}
+                  aria-busy={isThisAttaching || undefined}
+                  className="flex items-center justify-between gap-3 rounded-lg border border-border p-3"
                 >
-                  {t('course:builder.attach.addAction')}
-                </Button>
-              </li>
-            ))}
+                  <div className="flex min-w-0 items-center gap-2">
+                    <span className="truncate text-sm font-medium text-foreground">
+                      {item.title}
+                    </span>
+                    <StatusBadge
+                      labelKey={
+                        item.status === 'published'
+                          ? 'course:status.published'
+                          : 'course:status.draft'
+                      }
+                      tone={item.status === 'published' ? 'success' : 'neutral'}
+                    />
+                    {item.sectionId ? (
+                      <span className="text-xs text-muted-foreground">
+                        {t('course:builder.attach.inAnotherUnit')}
+                      </span>
+                    ) : null}
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={isAttaching}
+                    onClick={() => onAttach(item.id)}
+                    aria-label={t('course:builder.attach.addActionFor', {
+                      title: item.title,
+                    })}
+                  >
+                    {isThisAttaching ? (
+                      <>
+                        <Loader2
+                          className="size-4 animate-spin motion-reduce:animate-none"
+                          aria-hidden
+                        />
+                        {t('course:builder.attach.adding')}
+                      </>
+                    ) : (
+                      t('course:builder.attach.addAction')
+                    )}
+                  </Button>
+                </li>
+              );
+            })}
           </ul>
         )}
+        {/* Announces the in-flight attach without moving focus. */}
+        <p className="sr-only" role="status" aria-live="polite">
+          {attachingItemId ? t('course:builder.attach.adding') : ''}
+        </p>
       </DialogContent>
     </Dialog>
   );

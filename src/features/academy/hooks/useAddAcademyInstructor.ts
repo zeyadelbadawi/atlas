@@ -5,7 +5,7 @@
  * (`AcademyService.addAcademyInstructor`).
  */
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { academyKeys } from '@services/query';
+import { academyKeys, dashboardOverviewKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { academyService } from '../services/AcademyService';
 import type {
@@ -32,6 +32,8 @@ export function useAddAcademyInstructor() {
     showErrorToast: false,
     onSuccess: async () => {
       await invalidate(academyKeys.all);
+      // The dashboard's member counts live outside the academy tree.
+      await invalidate(dashboardOverviewKeys.overviews());
     },
   });
 }

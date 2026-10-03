@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { CourseCreateForm } from '@features/course';
 import type { Course } from '@types';
+import { useResetScrollOnReveal } from '@hooks';
 import { OnboardingStepFrame } from './OnboardingStepFrame';
 import { StepPanel } from './StepPanel';
 import { findStep } from '../utils/onboarding-status.utils';
@@ -31,6 +32,8 @@ export function CourseStep({
   const step = findStep(status, 'course');
   const academy = status.academy;
   const [createdCourse, setCreatedCourse] = useState<Course | null>(null);
+  // The success panel replaces the long form in place (Task 5).
+  useResetScrollOnReveal(!!createdCourse);
   const isBlocked = step?.status === 'blocked' || !academy;
   const isComplete = step?.status === 'complete' || !!createdCourse;
 

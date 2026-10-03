@@ -5,6 +5,7 @@ export { useAcademies } from './useAcademies';
 export type { UseAcademiesOptions } from './useAcademies';
 export { useAcademy } from './useAcademy';
 export type { UseAcademyOptions } from './useAcademy';
+export { useAcademyWebsiteStatus } from './useAcademyWebsiteStatus';
 export { useUpdateAcademy } from './useUpdateAcademy';
 export type { UpdateAcademyVariables } from './useUpdateAcademy';
 export { useUpdateAcademyBranding } from './useUpdateAcademyBranding';
@@ -19,8 +20,6 @@ export { useCreateAcademyStudent } from './useCreateAcademyStudent';
 export type { CreateAcademyStudentVariables } from './useCreateAcademyStudent';
 export { useAcademyStats } from './useAcademyStats';
 export type { UseAcademyStatsOptions } from './useAcademyStats';
-export { useAcademyActivity } from './useAcademyActivity';
-export type { UseAcademyActivityOptions } from './useAcademyActivity';
 export { useDeleteAcademy } from './useDeleteAcademy';
 export type { DeleteAcademyVariables } from './useDeleteAcademy';
 // P64 Phase 1 — learner roster, registration policy and invites.
@@ -77,3 +76,8 @@ export {
   useAcademyPayouts,
   useAcademyRevenueSummary,
 } from './useAcademyPayouts';
+// Academy Orders — the Organization Owner's read-only course orders.
+export {
+  useAcademyCourseOrder,
+  useAcademyCourseOrders,
+} from './useAcademyCourseOrders';

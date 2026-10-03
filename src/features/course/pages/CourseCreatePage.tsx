@@ -5,7 +5,7 @@
  * the Course Builder once the course exists. The form itself is
  * `CourseCreateForm`, shared with the New Customer Onboarding shell.
  */
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowRight, BookOpen } from 'lucide-react';
@@ -16,12 +16,18 @@ import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { CourseCreateForm } from '../components/CourseCreateForm';
 import type { BreadcrumbItem, Course } from '@types';
 import { cn, MIRROR_IN_RTL } from '@utils';
+import { useResetScrollOnReveal } from '@hooks';
 
 export default function CourseCreatePage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { academyId } = useParams<{ academyId: string }>();
   const [createdCourse, setCreatedCourse] = useState<Course | null>(null);
+  // The form's submit sits at the bottom of a long page; the success card
+  // replaces it in place, so without this the card renders above the
+  // viewport and the user sees an empty page (Task 5).
+  const successHeadingRef = useRef<HTMLHeadingElement>(null);
+  useResetScrollOnReveal(!!createdCourse, successHeadingRef);
 
   const handleCancel = () => {
     if (academyId)
@@ -41,7 +47,11 @@ export default function CourseCreatePage(): JSX.Element {
               <BookOpen className="size-6" strokeWidth={1.75} aria-hidden />
             </span>
             <div className="space-y-1.5">
-              <h3 className="font-display text-base font-semibold text-foreground">
+              <h3
+                ref={successHeadingRef}
+                tabIndex={-1}
+                className="font-display text-base font-semibold text-foreground focus:outline-none"
+              >
                 {t('course:create.success')}
               </h3>
               <p className="text-sm font-medium text-muted-foreground">
@@ -62,7 +72,11 @@ export default function CourseCreatePage(): JSX.Element {
               }
             >
               {t('course:create.continueToBuilder')}
-              <ArrowRight className={cn('size-4', MIRROR_IN_RTL)} strokeWidth={2} aria-hidden />
+              <ArrowRight
+                className={cn('size-4', MIRROR_IN_RTL)}
+                strokeWidth={2}
+                aria-hidden
+              />
             </Button>
           </CardContent>
         </Card>

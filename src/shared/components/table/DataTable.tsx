@@ -41,6 +41,11 @@ export interface DataTableProps<TData> {
   readonly data: readonly TData[];
   /** Shows a skeleton table sized to the current column count. */
   readonly isLoading?: boolean;
+  /**
+   * The rows on screen are a placeholder while a new page/filter loads:
+   * dims them and marks the table `aria-busy`. Off by default.
+   */
+  readonly isBusy?: boolean;
   /** Pagination state from `usePagination`. Omit for unpaged tables. */
   readonly pagination?: PaginationState;
   /** Translation key for the empty-state heading. */
@@ -60,6 +65,7 @@ export function DataTable<TData>({
   columns,
   data,
   isLoading = false,
+  isBusy = false,
   pagination,
   emptyTitleKey = 'common:states.empty.title',
   emptyDescriptionKey = 'common:states.empty.description',
@@ -104,10 +110,19 @@ export function DataTable<TData>({
   }
 
   return (
-    <div className={cn('flex flex-col', className)}>
+    <div
+      className={cn('flex flex-col', className)}
+      aria-busy={isBusy || undefined}
+    >
       {/* Horizontal scrolling is contained so a wide table never stretches
           the page shell. */}
-      <div className="w-full overflow-x-auto">
+      <div
+        className={cn(
+          'w-full overflow-x-auto',
+          isBusy &&
+            'opacity-60 transition-opacity motion-reduce:transition-none'
+        )}
+      >
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

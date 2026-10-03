@@ -175,7 +175,143 @@
     "approveAction": "الموافقة على الدفعة",
     "rejectTitle": "الرفض",
     "notesRequiredLabel": "سبب الرفض",
-    "rejectAction": "رفض الدفعة"
+    "rejectAction": "رفض الدفعة",
+    "searchLabel": "ابحث باسم المؤسسة أو المرجع أو رقم الدفعة",
+    "planColumn": "الخطة",
+    "planWithCycle": "{{plan}} · {{cycle}}",
+    "addOnPlan": "إضافة: {{name}}",
+    "plan": "الخطة",
+    "billingCycle": "دورة الفوترة",
+    "unknownOrganization": "المؤسسة غير متاحة",
+    "noPlan": "لا توجد خطة مسجلة"
+  },
+  "listFilters": {
+    "label": "عوامل التصفية",
+    "all": "الكل",
+    "reviewStatus": "المراجعة",
+    "status": "حالة الدفعة",
+    "methodType": "الطريقة",
+    "from": "من",
+    "to": "إلى",
+    "sort": "الترتيب حسب",
+    "clear": "مسح عوامل التصفية",
+    "sortOptions": {
+      "createdAt_desc": "الأحدث أولًا",
+      "createdAt_asc": "الأقدم أولًا",
+      "amount_desc": "الأعلى مبلغًا",
+      "amount_asc": "الأقل مبلغًا",
+      "updatedAt_desc": "المحدَّثة مؤخرًا"
+    }
+  },
+  "courseOrder": {
+    "status": {
+      "draft": "مسودة",
+      "pending_payment": "بانتظار الدفع",
+      "paid": "مدفوع",
+      "expired": "منتهي الصلاحية",
+      "cancelled": "ملغى",
+      "refunded": "مُسترَد"
+    }
+  },
+  "refund": {
+    "status": {
+      "pending": "تم طلب الاسترداد",
+      "succeeded": "اكتمل الاسترداد",
+      "failed": "فشل الاسترداد",
+      "none": "لا يوجد استرداد"
+    }
+  },
+  "academyOrders": {
+    "title": "الطلبات",
+    "description": "مشتريات الدورات من طلاب هذه الأكاديمية. للعرض فقط: تراجع أطلس المدفوعات اليدوية.",
+    "searchLabel": "ابحث باسم الطالب أو الدورة أو رقم الطلب",
+    "filters": {
+      "status": "حالة الطلب",
+      "reviewStatus": "مراجعة الدفع",
+      "methodType": "الطريقة",
+      "refundStatus": "الاسترداد",
+      "from": "من",
+      "to": "إلى",
+      "sort": "الترتيب حسب",
+      "all": "الكل",
+      "clear": "مسح عوامل التصفية"
+    },
+    "sortOptions": {
+      "createdAt_desc": "الأحدث أولًا",
+      "createdAt_asc": "الأقدم أولًا",
+      "paidAt_desc": "المدفوعة مؤخرًا",
+      "amount_desc": "الأعلى مبلغًا",
+      "amount_asc": "الأقل مبلغًا"
+    },
+    "columns": {
+      "order": "الطلب",
+      "student": "الطالب",
+      "course": "الدورة",
+      "amount": "المبلغ",
+      "status": "الحالة",
+      "payment": "الدفع",
+      "refund": "الاسترداد",
+      "placedAt": "تاريخ الطلب"
+    },
+    "noPayment": "لا توجد دفعة بعد",
+    "noRefund": "لا يوجد استرداد",
+    "empty": {
+      "title": "لا توجد طلبات بعد",
+      "description": "ستظهر هنا مشتريات الدورات من هذه الأكاديمية."
+    },
+    "emptyFiltered": {
+      "title": "لا توجد طلبات مطابقة",
+      "description": "جرّب مسح أحد عوامل التصفية أو البحث عن شيء آخر."
+    },
+    "error": {
+      "title": "تعذّر تحميل الطلبات",
+      "description": "حدث خطأ أثناء تحميل طلبات هذه الأكاديمية."
+    },
+    "forbidden": {
+      "title": "مالك المؤسسة وحده يمكنه رؤية الطلبات",
+      "description": "تعرض الطلبات ما دفعه الطلاب. اطلب هذه المعلومات من مالك مؤسستك إذا احتجت إليها."
+    },
+    "noAcademy": {
+      "title": "لم يتم اختيار أكاديمية",
+      "description": "اختر أكاديمية لعرض طلباتها."
+    },
+    "detail": {
+      "title": "تفاصيل الطلب",
+      "description": "ما اشتراه الطالب وكل دفعة تمت لهذا الطلب.",
+      "breadcrumb": "الطلبات",
+      "summaryTitle": "الملخص",
+      "orderId": "رقم الطلب",
+      "placedAt": "تاريخ الطلب",
+      "paidAt": "تاريخ الدفع",
+      "notPaid": "غير مدفوع",
+      "expiresAt": "آخر موعد للدفع",
+      "student": "الطالب",
+      "course": "الدورة",
+      "amount": "المبلغ",
+      "paymentsTitle": "محاولات الدفع",
+      "paymentsEmpty": "لم تتم أي دفعة لهذا الطلب بعد.",
+      "paymentColumns": {
+        "createdAt": "التاريخ",
+        "method": "الطريقة",
+        "status": "الحالة",
+        "review": "المراجعة",
+        "reference": "المرجع",
+        "amount": "المبلغ"
+      },
+      "noReference": "لا يوجد مرجع",
+      "refundTitle": "الاسترداد",
+      "refundRequestedAt": "تاريخ الطلب",
+      "refundProcessedAt": "تاريخ التنفيذ",
+      "refundAmount": "المبلغ",
+      "notFound": {
+        "title": "الطلب غير موجود",
+        "description": "هذا الطلب غير موجود أو ينتمي إلى أكاديمية أخرى."
+      },
+      "error": {
+        "title": "تعذّر تحميل هذا الطلب",
+        "description": "حدث خطأ أثناء تحميل الطلب."
+      }
+    }
   },
   "atlasPaymentProvider": {
     "title": "مزوّد الدفع الخاص بأطلس",

@@ -11,7 +11,8 @@
     "manageSettings": "إدارة الإعدادات",
     "viewMembers": "عرض الأعضاء",
     "updateBranding": "تحديث العلامة التجارية",
-    "viewWebsite": "عرض الموقع الإلكتروني"
+    "viewWebsite": "عرض الموقع الإلكتروني",
+    "websiteStatus": "الموقع الإلكتروني"
   },
   "stats": {
     "totalMembers": "إجمالي الأعضاء",

@@ -49,6 +49,7 @@
     "archiveAction": "Archive",
     "archiveConfirmTitle": "Archive this entry?",
     "archiveConfirmDescription": "It will no longer appear on your website, even where it's referenced from a page. This does not delete it and can be reversed later.",
+    "reordering": "Saving the new order…",
     "status": {
       "draft": "Draft",
       "published": "Published",

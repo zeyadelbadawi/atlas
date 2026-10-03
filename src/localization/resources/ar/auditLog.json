@@ -1,18 +1,668 @@
 {
   "title": "سجل التدقيق",
   "subtitle": "كل حدث مسجّل عبر أطلس، عبر جميع المؤسسات.",
-  "searchPlaceholder": "ابحث حسب الفاعل أو الإجراء أو الهدف",
+  "searchPlaceholder": "ابحث باسم العنصر أو الشخص",
   "emptyState": "لم يتم العثور على إدخالات في سجل التدقيق",
-  "emptyStateDescription": "لا توجد أحداث مطابقة لبحثك.",
+  "emptyStateDescription": "لا توجد أحداث مطابقة للفلاتر.",
   "detailTitle": "حدث التدقيق",
   "overviewTitle": "نظرة عامة",
-  "contextTitle": "السياق",
-  "noContext": "لم يتم تسجيل سياق إضافي لهذا الحدث.",
+  "contextTitle": "تفاصيل إضافية",
+  "noContext": "لم تُسجَّل تفاصيل إضافية لهذا الحدث.",
+  "untitled": "بدون عنوان",
   "table": {
-    "occurredAt": "وقت الحدوث",
-    "actor": "الفاعل",
-    "action": "الإجراء",
-    "target": "الهدف",
-    "organization": "المؤسسة"
+    "occurredAt": "متى",
+    "actor": "من",
+    "action": "ماذا حدث",
+    "target": "العنصر",
+    "organization": "المؤسسة",
+    "academy": "الأكاديمية"
+  },
+  "academyLog": {
+    "title": "سجل النشاط",
+    "subtitle": "من غيّر ماذا في هذه الأكاديمية، ومتى.",
+    "empty": {
+      "title": "لا يوجد نشاط بعد",
+      "description": "ستظهر هنا التغييرات على الدورات والموقع والفريق والإعدادات فور حدوثها."
+    },
+    "emptyFiltered": {
+      "title": "لا يوجد نشاط يطابق هذه الفلاتر",
+      "description": "جرّب فئة أو نطاقًا زمنيًا مختلفًا، أو امسح الفلاتر."
+    },
+    "forbidden": {
+      "title": "سجل النشاط متاح لمالك الأكاديمية فقط",
+      "description": "تواصل مع مالك الأكاديمية إذا احتجت إلى معرفة من غيّر شيئًا ما."
+    }
+  },
+  "dashboardWidget": {
+    "viewAll": "عرض سجل النشاط الكامل"
+  },
+  "filters": {
+    "label": "تصفية النشاط",
+    "category": "الفئة",
+    "allCategories": "كل الفئات",
+    "from": "من",
+    "to": "إلى",
+    "search": "بحث",
+    "searchPlaceholder": "ابحث باسم العنصر أو الشخص",
+    "clear": "مسح الفلاتر",
+    "actorChip": "الشخص: {{name}}",
+    "academyChip": "الأكاديمية: {{name}}",
+    "organizationChip": "المؤسسة: {{name}}",
+    "removeFilter": "إزالة الفلتر: {{label}}",
+    "filterByActor": "عرض نشاط {{name}} فقط",
+    "filterByAcademy": "عرض النشاط في {{name}} فقط"
+  },
+  "list": {
+    "loadMore": "تحميل المزيد",
+    "loadingMore": "جارٍ التحميل…",
+    "end": "وصلت إلى أقدم نشاط مسجّل.",
+    "viewDetails": "عرض التفاصيل",
+    "inAcademy": "في {{name}}",
+    "byRole": "{{role}}",
+    "loadMoreError": "تعذّر تحميل المزيد من النشاط."
+  },
+  "details": {
+    "title": "تفاصيل النشاط",
+    "description": "السجل الكامل لهذا التغيير.",
+    "who": "من",
+    "when": "متى",
+    "what": "ماذا حدث",
+    "academy": "الأكاديمية",
+    "organization": "المؤسسة",
+    "role": "الدور",
+    "category": "الفئة",
+    "item": "العنصر",
+    "changesTitle": "ما الذي تغيّر",
+    "field": "الحقل",
+    "before": "قبل",
+    "after": "بعد",
+    "noChanges": "لم تُسجَّل تغييرات تفصيلية على الحقول لهذا الحدث.",
+    "back": "العودة إلى سجل التدقيق",
+    "loadError": "تعذّر تحميل هذا النشاط."
+  },
+  "categories": {
+    "courses": "الدورات",
+    "assessments": "الاختبارات والواجبات",
+    "website": "الموقع",
+    "academy": "إعدادات الأكاديمية",
+    "team": "الفريق",
+    "students": "الطلاب",
+    "certificates": "الشهادات",
+    "reviews": "التقييمات",
+    "media": "الوسائط",
+    "domains": "النطاقات",
+    "live_sessions": "الجلسات المباشرة",
+    "payments": "المدفوعات",
+    "subscription": "الاشتراك",
+    "support": "الدعم",
+    "security": "الأمان",
+    "platform": "المنصة",
+    "other": "أخرى"
+  },
+  "roles": {
+    "owner": "المالك",
+    "administrator": "مسؤول",
+    "manager": "مدير",
+    "instructor": "مدرّس",
+    "staff": "موظف",
+    "student": "طالب",
+    "platform_owner": "فريق أطلس"
+  },
+  "actor": {
+    "atlas": "أطلس",
+    "someone": "شخص ما"
+  },
+  "targetTypes": {
+    "course": "دورة",
+    "course_section": "وحدة",
+    "course_lesson": "درس",
+    "curriculum_item": "عنصر منهج",
+    "quiz": "اختبار",
+    "assignment": "واجب",
+    "assignment_submission": "تسليم",
+    "quiz_attempt": "محاولة اختبار",
+    "quiz_student_override": "استثناء اختبار",
+    "website_configuration": "الموقع",
+    "website_page": "صفحة",
+    "website_faq_entry": "سؤال شائع",
+    "website_testimonial_entry": "شهادة عميل",
+    "academy": "أكاديمية",
+    "academy_member": "عضو فريق",
+    "academy_invite": "رابط دعوة",
+    "user": "شخص",
+    "enrollment": "تسجيل في دورة",
+    "student_device": "جهاز",
+    "certificate": "شهادة",
+    "certificate_template": "قالب شهادة",
+    "course_review": "تقييم",
+    "media_asset": "ملف",
+    "domain_connection": "نطاق",
+    "live_session": "جلسة مباشرة",
+    "academy_live_provider_connection": "ربط مزوّد الفيديو",
+    "organization_payment_settings": "إعدادات الدفع",
+    "organization_gateway_credential": "بوابة الدفع",
+    "payment": "دفعة",
+    "course_order": "طلب",
+    "organization": "مؤسسة",
+    "provisioning_request": "طلب إنشاء أكاديمية",
+    "tenant_subscription": "اشتراك",
+    "tenant_add_on": "إضافة",
+    "support_case": "تذكرة دعم",
+    "trusted_device": "جهاز موثوق",
+    "plan": "باقة",
+    "platform_settings": "إعدادات المنصة",
+    "payment_method": "طريقة دفع",
+    "atlas_commission_config": "إعدادات العمولة",
+    "add_on": "إضافة",
+    "observability": "المراقبة",
+    "platform_contact_submission": "استفسار تواصل",
+    "lesson": "درس"
+  },
+  "fields": {
+    "title": "العنوان",
+    "slug": "الرابط المختصر",
+    "shortDescription": "الوصف المختصر",
+    "description": "الوصف",
+    "thumbnailUrl": "الصورة المصغّرة",
+    "visibility": "الظهور",
+    "status": "الحالة",
+    "categoryId": "التصنيف",
+    "pricingType": "التسعير",
+    "pricingAmountMinorUnits": "السعر (بأصغر وحدة عملة)",
+    "pricingCurrency": "العملة",
+    "level": "المستوى",
+    "language": "اللغة",
+    "outcomes": "مخرجات التعلّم",
+    "requirements": "المتطلبات",
+    "introVideoAssetId": "الفيديو التعريفي",
+    "sectionId": "الوحدة",
+    "lessonId": "الدرس",
+    "passingScore": "درجة النجاح",
+    "maxAttempts": "عدد المحاولات المسموح",
+    "mode": "النمط",
+    "timeLimitSeconds": "المدة المحددة (بالثواني)",
+    "availableFrom": "متاح من",
+    "availableUntil": "متاح حتى",
+    "dueAt": "موعد التسليم",
+    "latePolicy": "التسليم المتأخر",
+    "gradingPolicy": "طريقة الاحتساب",
+    "shuffleQuestions": "ترتيب الأسئلة عشوائيًا",
+    "shuffleOptions": "ترتيب الإجابات عشوائيًا",
+    "questionsPerAttempt": "عدد الأسئلة في كل محاولة",
+    "layout": "طريقة العرض",
+    "showScore": "إظهار الدرجة",
+    "showAnswers": "إظهار الإجابات",
+    "showExplanations": "إظهار الشروحات",
+    "integrityMode": "وضع النزاهة",
+    "maxViolations": "المخالفات المسموحة",
+    "requireFullscreen": "اشتراط ملء الشاشة",
+    "requiredToProgress": "مطلوب للتقدّم",
+    "requiredForCompletion": "مطلوب لإتمام الدورة",
+    "hideTimer": "إخفاء المؤقت",
+    "instructions": "التعليمات",
+    "allowResubmission": "السماح بإعادة التسليم",
+    "themeKey": "القالب",
+    "name": "الاسم",
+    "logoUrl": "الشعار",
+    "faviconUrl": "أيقونة المتصفح",
+    "visible": "ظاهر",
+    "seo": "إعدادات محركات البحث",
+    "question": "السؤال",
+    "answer": "الإجابة",
+    "order": "الترتيب",
+    "quote": "النص",
+    "authorName": "صاحب الشهادة",
+    "authorRole": "صفة صاحب الشهادة",
+    "avatar": "الصورة",
+    "contactEmail": "بريد التواصل",
+    "contactPhone": "هاتف التواصل",
+    "websiteUrl": "الموقع الإلكتروني",
+    "timezone": "المنطقة الزمنية",
+    "currency": "العملة",
+    "address": "العنوان",
+    "registrationPolicy": "تسجيل الطلاب",
+    "expiresAt": "انتهاء الوصول",
+    "paymentCollectionMode": "طريقة تحصيل المدفوعات",
+    "hostname": "النطاق",
+    "sslStatus": "حالة الشهادة الأمنية",
+    "sectionOrder": "ترتيب الأقسام",
+    "isPreview": "معاينة مجانية",
+    "durationSeconds": "المدة (بالثواني)",
+    "completionRule": "شرط الإتمام",
+    "displayOrder": "ترتيب العرض",
+    "pricing": "التسعير",
+    "trialEligible": "التجربة متاحة",
+    "trialDurationDays": "مدة التجربة (بالأيام)",
+    "limits": "الحدود"
+  },
+  "values": {
+    "empty": "—",
+    "yes": "نعم",
+    "no": "لا",
+    "redacted": "مخفي لأسباب أمنية",
+    "emailHidden": "البريد الإلكتروني مخفي",
+    "itemCount": "{{n}} عنصر",
+    "status": {
+      "draft": "مسودة",
+      "published": "منشور",
+      "archived": "مؤرشف",
+      "active": "نشط",
+      "suspended": "موقوف",
+      "unlisted": "غير مدرج",
+      "open": "مفتوحة",
+      "in_progress": "قيد المعالجة",
+      "resolved": "تم الحل",
+      "closed": "مغلقة",
+      "approved": "مقبول",
+      "rejected": "مرفوض",
+      "pending": "قيد الانتظار",
+      "cancelled": "ملغى",
+      "scheduled": "مجدول",
+      "live": "مباشر",
+      "ended": "منتهٍ",
+      "new": "جديد",
+      "read": "مقروء",
+      "not_configured": "غير مُعدّ",
+      "verified": "تم التحقق",
+      "failed": "فشل",
+      "trialing": "تجربة",
+      "grace_period": "فترة سماح",
+      "expired": "منتهٍ"
+    },
+    "visibility": {
+      "public": "عام",
+      "private": "خاص",
+      "unlisted": "غير مدرج"
+    },
+    "pricingType": {
+      "free": "مجاني",
+      "paid": "مدفوع"
+    },
+    "paymentCollectionMode": {
+      "unconfigured": "غير مُعدّ",
+      "atlas_payments": "أطلس يحصّل المدفوعات",
+      "organization_gateway": "بوابة الدفع الخاصة بك",
+      "external": "خارج أطلس",
+      "manual": "يدوي"
+    },
+    "registrationPolicy": {
+      "open": "يمكن لأي شخص الانضمام",
+      "approval": "يتطلب موافقة",
+      "approval_required": "يتطلب موافقة",
+      "invite_only": "بالدعوة فقط",
+      "closed": "مغلق"
+    },
+    "pageType": {
+      "core": "صفحة أساسية",
+      "custom": "صفحة مخصّصة"
+    },
+    "mediaType": {
+      "image": "صورة",
+      "video": "فيديو",
+      "document": "مستند",
+      "audio": "ملف صوتي",
+      "file": "ملف"
+    },
+    "configAreas": {
+      "brand": "الألوان والخطوط",
+      "seo": "إعدادات محركات البحث",
+      "navigation": "قائمة التنقل",
+      "header": "الترويسة",
+      "footer": "التذييل"
+    },
+    "providers": {
+      "zoom": "Zoom"
+    },
+    "itemType": {
+      "lesson": "درس",
+      "quiz": "اختبار",
+      "assignment": "واجب"
+    }
+  },
+  "summary": {
+    "sections": "الأقسام: أُضيف {{added}}، وحُذف {{removed}}، وعُدّل {{updated}} ({{total}} في الصفحة).",
+    "questions": "الأسئلة: أُضيف {{added}}، وحُذف {{removed}}، وتغيّر {{changed}} ({{total}} إجمالًا).",
+    "configAreas": "تم تغيير: {{areas}}.",
+    "changedFields": "تم تغيير: {{fields}}.",
+    "reason": "السبب: {{reason}}",
+    "notes": "ملاحظة: {{notes}}"
+  },
+  "fallback": {
+    "withTarget": "{{actor}} غيّر {{targetType}} «{{target}}»",
+    "noTarget": "{{actor}} غيّر {{targetType}}",
+    "category": "{{actor}} أجرى تغييرًا في {{category}}"
+  },
+  "events": {
+    "course": {
+      "created": "{{actor}} أنشأ دورة بعنوان «{{target}}»",
+      "updated": "{{actor}} حدّث الدورة «{{target}}»",
+      "published": "{{actor}} نشر الدورة «{{target}}»",
+      "unpublished": "{{actor}} ألغى نشر الدورة «{{target}}»",
+      "archived": "{{actor}} أرشف الدورة «{{target}}»",
+      "instructor_assigned": "{{actor}} عيّن مدرّسًا للدورة «{{target}}»",
+      "instructor_assigned_withName": "{{actor}} عيّن {{name}} لتدريس الدورة «{{target}}»",
+      "instructor_removed": "{{actor}} أزال مدرّسًا من الدورة «{{target}}»",
+      "instructor_removed_withName": "{{actor}} أزال {{name}} من تدريس الدورة «{{target}}»",
+      "completion_rule": {
+        "updated": "{{actor}} غيّر شروط إتمام الدورة «{{target}}»"
+      },
+      "curriculum": {
+        "item_attached": "{{actor}} أضاف «{{target}}» إلى المنهج",
+        "item_attached_inSection": "{{actor}} أضاف «{{target}}» إلى وحدة «{{sectionTitle}}»",
+        "item_detached": "{{actor}} أزال «{{target}}» من المنهج",
+        "item_detached_inSection": "{{actor}} أزال «{{target}}» من وحدة «{{sectionTitle}}»",
+        "items_reordered": "{{actor}} أعاد ترتيب عناصر وحدة «{{target}}»",
+        "items_reordered_inCourse": "{{actor}} أعاد ترتيب عناصر وحدة «{{target}}» في الدورة «{{courseTitle}}»"
+      }
+    },
+    "course_section": {
+      "created": "{{actor}} أضاف وحدة بعنوان «{{target}}»",
+      "created_inCourse": "{{actor}} أضاف وحدة بعنوان «{{target}}» إلى الدورة «{{courseTitle}}»",
+      "updated": "{{actor}} حدّث وحدة «{{target}}»",
+      "updated_inCourse": "{{actor}} حدّث وحدة «{{target}}» في الدورة «{{courseTitle}}»",
+      "deleted": "{{actor}} حذف وحدة «{{target}}»",
+      "deleted_inCourse": "{{actor}} حذف وحدة «{{target}}» من الدورة «{{courseTitle}}»",
+      "reordered": "{{actor}} أعاد ترتيب وحدات الدورة «{{target}}»",
+      "reordered_inCourse": "{{actor}} أعاد ترتيب وحدات الدورة «{{courseTitle}}»"
+    },
+    "course_lesson": {
+      "created": "{{actor}} أنشأ درسًا بعنوان «{{target}}»",
+      "created_inSection": "{{actor}} أنشأ درسًا بعنوان «{{target}}» داخل وحدة «{{sectionTitle}}»",
+      "updated": "{{actor}} حدّث الدرس «{{target}}»",
+      "updated_inSection": "{{actor}} حدّث الدرس «{{target}}» داخل وحدة «{{sectionTitle}}»",
+      "content_updated": "{{actor}} حدّث محتوى أحد الدروس",
+      "content_updated_inSection": "{{actor}} حدّث محتوى أحد الدروس داخل وحدة «{{sectionTitle}}»",
+      "deleted": "{{actor}} حذف الدرس «{{target}}»",
+      "deleted_inSection": "{{actor}} حذف الدرس «{{target}}» من وحدة «{{sectionTitle}}»"
+    },
+    "quiz": {
+      "created": "{{actor}} أنشأ اختبارًا بعنوان «{{target}}»",
+      "created_inCourse": "{{actor}} أنشأ اختبارًا بعنوان «{{target}}» في الدورة «{{courseTitle}}»",
+      "updated": "{{actor}} حدّث الاختبار «{{target}}»",
+      "updated_inCourse": "{{actor}} حدّث الاختبار «{{target}}» في الدورة «{{courseTitle}}»",
+      "deleted": "{{actor}} حذف الاختبار «{{target}}»",
+      "deleted_inCourse": "{{actor}} حذف الاختبار «{{target}}» من الدورة «{{courseTitle}}»",
+      "override": {
+        "updated": "{{actor}} منح طالبًا وقتًا أو محاولات إضافية في اختبار",
+        "updated_withName": "{{actor}} منح {{name}} وقتًا أو محاولات إضافية في اختبار",
+        "removed": "{{actor}} ألغى استثناء اختبار لأحد الطلاب",
+        "removed_withName": "{{actor}} ألغى استثناء الاختبار الخاص بـ {{name}}"
+      }
+    },
+    "quiz_attempt": {
+      "graded": "{{actor}} صحّح محاولة اختبار",
+      "graded_inCourse": "{{actor}} صحّح محاولة اختبار في الدورة «{{courseTitle}}»",
+      "invalidated": "{{actor}} ألغى محاولة اختبار",
+      "invalidated_inCourse": "{{actor}} ألغى محاولة اختبار في الدورة «{{courseTitle}}»"
+    },
+    "assignment": {
+      "created": "{{actor}} أنشأ واجبًا بعنوان «{{target}}»",
+      "created_inCourse": "{{actor}} أنشأ واجبًا بعنوان «{{target}}» في الدورة «{{courseTitle}}»",
+      "updated": "{{actor}} حدّث الواجب «{{target}}»",
+      "updated_inCourse": "{{actor}} حدّث الواجب «{{target}}» في الدورة «{{courseTitle}}»",
+      "deleted": "{{actor}} حذف الواجب «{{target}}»",
+      "deleted_inCourse": "{{actor}} حذف الواجب «{{target}}» من الدورة «{{courseTitle}}»"
+    },
+    "assignment_submission": {
+      "graded": "{{actor}} صحّح تسليم واجب",
+      "graded_inCourse": "{{actor}} صحّح تسليم واجب في الدورة «{{courseTitle}}»"
+    },
+    "website": {
+      "configuration": {
+        "updated": "{{actor}} غيّر إعدادات الموقع"
+      },
+      "visual_identity": {
+        "updated": "{{actor}} حدّث شعار الأكاديمية أو اسمها أو ألوانها"
+      },
+      "published": "{{actor}} نشر الموقع",
+      "unpublished": "{{actor}} أوقف الموقع عن العمل"
+    },
+    "website_page": {
+      "created": "{{actor}} أنشأ صفحة الموقع «{{target}}»",
+      "updated": "{{actor}} عدّل صفحة الموقع «{{target}}»",
+      "deleted": "{{actor}} حذف صفحة الموقع «{{target}}»",
+      "published": "{{actor}} نشر صفحة الموقع «{{target}}»",
+      "sections_reordered": "{{actor}} أعاد ترتيب أقسام صفحة الموقع «{{target}}»"
+    },
+    "website_faq": {
+      "created": "{{actor}} أضاف السؤال الشائع «{{target}}»",
+      "updated": "{{actor}} عدّل السؤال الشائع «{{target}}»",
+      "published": "{{actor}} نشر السؤال الشائع «{{target}}»",
+      "archived": "{{actor}} أرشف السؤال الشائع «{{target}}»"
+    },
+    "website_testimonial": {
+      "created": "{{actor}} أضاف شهادة من {{target}}",
+      "updated": "{{actor}} عدّل الشهادة المقدّمة من {{target}}",
+      "published": "{{actor}} نشر الشهادة المقدّمة من {{target}}",
+      "archived": "{{actor}} أرشف الشهادة المقدّمة من {{target}}"
+    },
+    "academy": {
+      "created": "{{actor}} أنشأ الأكاديمية «{{target}}»",
+      "updated": "{{actor}} حدّث بيانات الأكاديمية",
+      "branding": {
+        "updated": "{{actor}} حدّث اسم الأكاديمية أو شعارها أو أيقونة المتصفح"
+      },
+      "archived": "{{actor}} حذف الأكاديمية «{{target}}»",
+      "content_protection": {
+        "updated": "{{actor}} غيّر إعدادات حماية المحتوى"
+      },
+      "video_tier": {
+        "updated": "{{actor}} غيّر مستوى أمان الفيديو"
+      },
+      "device_policy": {
+        "updated": "{{actor}} غيّر حدود الأجهزة والجلسات للطلاب"
+      },
+      "registration_policy": {
+        "updated": "{{actor}} غيّر من يمكنه التسجيل كطالب"
+      },
+      "manager": {
+        "added": "{{actor}} أضاف مديرًا إلى الأكاديمية",
+        "added_withName": "{{actor}} أضاف {{name}} مديرًا"
+      },
+      "instructor": {
+        "added": "{{actor}} أضاف مدرّسًا إلى الأكاديمية",
+        "added_withName": "{{actor}} أضاف {{name}} مدرّسًا"
+      },
+      "student": {
+        "created": "{{actor}} أنشأ حساب طالب",
+        "created_withName": "{{actor}} أنشأ حساب طالب لـ {{name}}",
+        "added": "{{actor}} أضاف طالبًا إلى الأكاديمية",
+        "added_withName": "{{actor}} أضاف {{name}} طالبًا",
+        "joined": "{{actor}} انضم إلى الأكاديمية كطالب",
+        "blocked": "{{actor}} حظر طالبًا",
+        "blocked_withName": "{{actor}} حظر الطالب {{name}}",
+        "unblocked": "{{actor}} رفع الحظر عن طالب",
+        "unblocked_withName": "{{actor}} رفع الحظر عن الطالب {{name}}",
+        "approved": "{{actor}} وافق على تسجيل طالب",
+        "approved_withName": "{{actor}} وافق على تسجيل {{name}}",
+        "rejected": "{{actor}} رفض تسجيل طالب",
+        "rejected_withName": "{{actor}} رفض تسجيل {{name}}"
+      },
+      "invite": {
+        "created": "{{actor}} أنشأ رابط دعوة للطلاب",
+        "revoked": "{{actor}} ألغى رابط دعوة للطلاب"
+      }
+    },
+    "enrollment": {
+      "granted": "{{actor}} سجّل طالبًا في الدورة «{{target}}»",
+      "granted_full": "{{actor}} سجّل {{name}} في الدورة «{{courseTitle}}»",
+      "revoked": "{{actor}} ألغى وصول طالب إلى دورة",
+      "revoked_full": "{{actor}} ألغى وصول {{name}} إلى الدورة «{{courseTitle}}»",
+      "revoked_inCourse": "{{actor}} ألغى وصول طالب إلى الدورة «{{courseTitle}}»",
+      "expiry_updated": "{{actor}} غيّر موعد انتهاء وصول طالب إلى دورة",
+      "expiry_updated_inCourse": "{{actor}} غيّر موعد انتهاء وصول طالب إلى الدورة «{{courseTitle}}»"
+    },
+    "learning": {
+      "device_session_takeover": "{{actor}} تابع التعلّم من جهاز جديد، فانتهت الجلسة على جهاز آخر"
+    },
+    "certificate": {
+      "issued": "{{actor}} أصدر شهادة",
+      "issued_full": "{{actor}} أصدر شهادة لـ {{name}} عن الدورة «{{courseTitle}}»",
+      "issued_inCourse": "{{actor}} أصدر شهادة عن الدورة «{{courseTitle}}»",
+      "reissued": "{{actor}} أعاد إصدار شهادة",
+      "reissued_inCourse": "{{actor}} أعاد إصدار شهادة عن الدورة «{{courseTitle}}»",
+      "revoked": "{{actor}} ألغى شهادة",
+      "revoked_inCourse": "{{actor}} ألغى شهادة عن الدورة «{{courseTitle}}»",
+      "regenerated": "{{actor}} أعاد توليد شهادة"
+    },
+    "certificate_template": {
+      "updated": "{{actor}} حدّث قالب الشهادة"
+    },
+    "course_review": {
+      "created": "{{actor}} قيّم دورة",
+      "created_inCourse": "{{actor}} قيّم الدورة «{{courseTitle}}»",
+      "updated": "{{actor}} عدّل تقييم دورة",
+      "updated_inCourse": "{{actor}} عدّل تقييمًا للدورة «{{courseTitle}}»",
+      "deleted": "{{actor}} حذف تقييم دورة",
+      "approved": "{{actor}} وافق على تقييم دورة",
+      "approved_inCourse": "{{actor}} وافق على تقييم للدورة «{{courseTitle}}»",
+      "rejected": "{{actor}} رفض تقييم دورة",
+      "rejected_inCourse": "{{actor}} رفض تقييمًا للدورة «{{courseTitle}}»",
+      "removed": "{{actor}} أزال تقييم دورة",
+      "removed_inCourse": "{{actor}} أزال تقييمًا للدورة «{{courseTitle}}»"
+    },
+    "media": {
+      "uploaded": "{{actor}} رفع الملف «{{target}}»",
+      "archived": "{{actor}} حذف الملف «{{target}}» من مكتبة الوسائط",
+      "asset": {
+        "purged": "أطلس أزال نهائيًا ملفًا محذوفًا بعد انتهاء فترة الاحتفاظ"
+      },
+      "video": {
+        "deleted": "أطلس أزال فيديو وفق سياسة الاحتفاظ"
+      }
+    },
+    "domain": {
+      "custom_domain_added": "{{actor}} ربط النطاق «{{target}}»",
+      "custom_domain_removed": "{{actor}} ألغى ربط النطاق «{{target}}»",
+      "verification_checked": "{{actor}} فحص النطاق «{{target}}»",
+      "platform_check": "أطلس فحص النطاق «{{target}}»",
+      "platform_release": "أطلس حرّر النطاق «{{target}}»"
+    },
+    "live_session": {
+      "created": "{{actor}} جدول الجلسة المباشرة «{{target}}»",
+      "created_inCourse": "{{actor}} جدول الجلسة المباشرة «{{target}}» للدورة «{{courseTitle}}»",
+      "updated": "{{actor}} حدّث الجلسة المباشرة «{{target}}»",
+      "cancelled": "{{actor}} ألغى الجلسة المباشرة «{{target}}»",
+      "published": "{{actor}} نشر الجلسة المباشرة «{{target}}»"
+    },
+    "live_provider": {
+      "connected": "{{actor}} ربط مزوّد الفيديو {{provider}}",
+      "disconnected": "{{actor}} ألغى ربط مزوّد الفيديو {{provider}}",
+      "deauthorized": "تم فصل مزوّد الفيديو {{provider}} من جهته"
+    },
+    "organization": {
+      "created": "{{actor}} أنشأ المؤسسة «{{target}}»",
+      "onboarding": {
+        "completed": "{{actor}} أكمل إعداد المؤسسة"
+      },
+      "payment_settings": {
+        "updated": "{{actor}} غيّر طريقة تحصيل المدفوعات"
+      },
+      "payment_gateway": {
+        "credentials_saved": "{{actor}} حفظ بيانات اعتماد جديدة لبوابة الدفع {{provider}}",
+        "connection_tested": "{{actor}} اختبر الاتصال ببوابة الدفع {{provider}}",
+        "enabled": "{{actor}} فعّل بوابة الدفع {{provider}}",
+        "disabled": "{{actor}} أوقف بوابة الدفع {{provider}}"
+      }
+    },
+    "payment": {
+      "proof_submitted": "{{actor}} أرسل إثبات دفع",
+      "approved": "{{actor}} وافق على دفعة اشتراك",
+      "rejected": "{{actor}} رفض دفعة اشتراك"
+    },
+    "course_order_payment": {
+      "approved": "{{actor}} وافق على دفعة دورة",
+      "rejected": "{{actor}} رفض دفعة دورة"
+    },
+    "course_order": {
+      "refund_recorded": "{{actor}} سجّل استردادًا لطلب دورة"
+    },
+    "provisioning_request": {
+      "created": "{{actor}} طلب إنشاء أكاديمية جديدة «{{target}}»"
+    },
+    "subscription": {
+      "trial": {
+        "redeemed": "{{actor}} بدأ فترة تجربة مجانية",
+        "cancelled": "{{actor}} ألغى فترة التجربة المجانية"
+      },
+      "cancelled": "{{actor}} ألغى الاشتراك",
+      "grace_started": "دخل الاشتراك فترة السماح",
+      "expired": "انتهى الاشتراك",
+      "cancelled_at_period_end": "انتهى الاشتراك بنهاية فترة الفوترة"
+    },
+    "add_on": {
+      "install": "{{actor}} أضاف الإضافة {{addOn}}",
+      "enable": "{{actor}} فعّل الإضافة {{addOn}}",
+      "disable": "{{actor}} أوقف الإضافة {{addOn}}",
+      "uninstall": "{{actor}} أزال الإضافة {{addOn}}",
+      "catalog_status_changed": "{{actor}} غيّر إتاحة الإضافة {{addOn}}"
+    },
+    "support_case": {
+      "created": "{{actor}} فتح تذكرة الدعم «{{target}}»",
+      "replied": "{{actor}} ردّ على تذكرة الدعم «{{target}}»",
+      "status_changed": "{{actor}} غيّر حالة تذكرة الدعم «{{target}}»",
+      "auto_created": "فُتحت تذكرة دعم تلقائيًا: «{{target}}»"
+    },
+    "auth": {
+      "otp": {
+        "issued": "أُرسل رمز تسجيل دخول إلى {{actor}}",
+        "failed": "{{actor}} أدخل رمز تسجيل دخول خاطئًا",
+        "locked_out": "تم إيقاف {{actor}} مؤقتًا بعد عدة رموز تسجيل دخول خاطئة",
+        "verified": "{{actor}} أكّد رمز تسجيل الدخول"
+      },
+      "device": {
+        "trusted": "{{actor}} وثّق جهازًا لتسجيل الدخول",
+        "revoked": "{{actor}} أزال أجهزة موثوقة"
+      },
+      "identity": {
+        "linked": "{{actor}} ربط مزوّد تسجيل دخول",
+        "unlinked": "{{actor}} ألغى ربط مزوّد تسجيل دخول"
+      },
+      "sessions": {
+        "revoked": "تم تسجيل خروج الجلسات الأخرى لـ {{actor}}"
+      }
+    },
+    "password_reset": {
+      "confirmed": "{{actor}} أعاد تعيين كلمة المرور"
+    },
+    "account": {
+      "deletion": {
+        "requested": "{{actor}} طلب حذف حسابه",
+        "code_failed": "{{actor}} أدخل رمز حذف حساب خاطئًا",
+        "locked_out": "تم إيقاف {{actor}} مؤقتًا عن حذف الحساب",
+        "confirmed": "{{actor}} أكّد حذف الحساب"
+      },
+      "deleted": "{{actor}} حذف حسابه",
+      "deleted_by_platform_owner": "{{actor}} حذف حساب مستخدم"
+    },
+    "plan": {
+      "created": "{{actor}} أنشأ الباقة «{{target}}»",
+      "updated": "{{actor}} حدّث الباقة «{{target}}»",
+      "pricing_changed": "{{actor}} غيّر تسعير الباقة «{{target}}»",
+      "trial_config_changed": "{{actor}} غيّر إعدادات التجربة للباقة «{{target}}»",
+      "archived": "{{actor}} أرشف الباقة «{{target}}»"
+    },
+    "platform_settings": {
+      "updated": "{{actor}} حدّث إعدادات المنصة"
+    },
+    "payment_method": {
+      "created": "{{actor}} أضاف طريقة الدفع «{{target}}»",
+      "updated": "{{actor}} حدّث طريقة الدفع «{{target}}»"
+    },
+    "commission_config": {
+      "global_default_updated": "{{actor}} غيّر نسبة العمولة الافتراضية"
+    },
+    "observability": {
+      "synthetic_alert": {
+        "armed": "{{actor}} بدأ تنبيه مراقبة تجريبيًا",
+        "resolved": "{{actor}} أنهى تنبيه المراقبة التجريبي"
+      }
+    },
+    "platform": {
+      "contact_submission": {
+        "status_changed": "{{actor}} غيّر حالة استفسار تواصل",
+        "deleted": "{{actor}} حذف استفسار تواصل"
+      }
+    }
   }
 }

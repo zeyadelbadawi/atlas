@@ -8,6 +8,7 @@
  */
 import {
   Activity,
+  History,
   Video,
   LayoutDashboard,
   User,
@@ -174,6 +175,19 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
         requiredPermissions: ['academy.view'],
       },
       {
+        // Task 3 — the academy activity log (who changed what). Owner-only,
+        // matching the backend (organization owner or owner/administrator
+        // academy member); managers are not offered it.
+        id: 'academy-activity-log',
+        labelKey: 'navigation:items.academyActivityLog',
+        path: buildPath(DASHBOARD_ROUTES.academyActivityLog, {
+          academyId: activeAcademyId,
+        }),
+        icon: History,
+        requiresAuth: true,
+        requiredPermissions: ['tenant.dashboard.view'],
+      },
+      {
         // P13 — this academy's net unsettled revenue and payout history.
         // Owner-only, matching the backend (`assertCanViewAcademyFinance`);
         // no entitlement gate, like tenant billing — money owed stays
@@ -184,6 +198,18 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
           academyId: activeAcademyId,
         }),
         icon: Wallet,
+        requiresAuth: true,
+        requiredPermissions: ['tenant.billing.view'],
+      },
+      {
+        // Academy Orders — this academy's course orders, read-only. Same
+        // owner-only gate and no entitlement gate, like Revenue & payouts.
+        id: 'academy-orders',
+        labelKey: 'navigation:items.academyOrders',
+        path: buildPath(DASHBOARD_ROUTES.academyOrders, {
+          academyId: activeAcademyId,
+        }),
+        icon: Receipt,
         requiresAuth: true,
         requiredPermissions: ['tenant.billing.view'],
       },
@@ -928,6 +954,17 @@ export function getDashboardNavigation(
           requiresAuth: true,
           requiredRoles: ['platform_owner'],
           matchNestedPaths: true,
+        },
+        {
+          // TASK 7 — enquiries from the Atlas marketing contact form.
+          // `PlatformContactSubmissionsController` (PlatformOwnerGuard + RLS)
+          // is the server-side boundary; this entry only decides visibility.
+          id: 'platform-contact-submissions',
+          labelKey: 'navigation:items.platformContactSubmissions',
+          path: DASHBOARD_ROUTES.platformContactSubmissions,
+          icon: Inbox,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
         },
         {
           // Add-ons Catalog Management (P51). Platform-owner only at every

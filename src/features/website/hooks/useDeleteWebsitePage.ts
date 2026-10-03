@@ -24,6 +24,9 @@ export function useDeleteWebsitePage() {
     showErrorToast: false,
     onSuccess: async (_data, variables) => {
       await invalidate(websiteKeys.allPages(variables.academyId));
+      // The publish bar counts pages with unpublished changes; the deleted
+      // page may have been one of them.
+      await invalidate(websiteKeys.configuration(variables.academyId));
     },
   });
 }

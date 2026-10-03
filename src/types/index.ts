@@ -80,6 +80,7 @@ export * from './course-order.types';
 // P13 — learner self-service refunds and the owner's academy payouts.
 export * from './course-order-refund.types';
 export * from './academy-payout.types';
+export * from './academy-course-order.types';
 // Platform Owner commerce management — payouts and the commission hierarchy.
 export * from './platform-commerce.types';
 // P64 Phase 4 — course reviews and rating aggregate.

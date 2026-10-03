@@ -8,8 +8,10 @@
  * from, and would share a query cache between cross-tenant and
  * own-tickets views.
  */
+import { useQueryClient } from '@tanstack/react-query';
 import { useApiMutation, useApiQuery, useInvalidate } from '@/shared/hooks';
-import { supportKeys } from '@services/query';
+import { LIVE_LIST_QUERY_OPTIONS } from '@config';
+import { invalidateSupportCases, supportKeys } from '@services/query';
 import { mySupportService } from '../services/SupportService';
 import type {
   CollectionQuery,
@@ -29,6 +31,8 @@ export function useMySupportCases(
     queryKey: supportKeys.mineList(organizationId, query),
     queryFn: () => mySupportService.getMyCases(organizationId!, query),
     enabled: !!organizationId,
+    // Support replies and status changes come from someone else.
+    ...LIVE_LIST_QUERY_OPTIONS,
   });
 }
 
@@ -46,7 +50,7 @@ export interface CreateSupportCaseVariables {
 }
 
 export function useCreateSupportCase() {
-  const { invalidate } = useInvalidate();
+  const queryClient = useQueryClient();
 
   return useApiMutation<
     SupportCaseDetail,
@@ -59,9 +63,8 @@ export function useCreateSupportCase() {
     // ticket, so a generic toast would be a second message for one event.
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: async () => {
-      await invalidate(supportKeys.all);
-    },
+    // Both "my tickets" lists — this page's and the dashboard tracker's.
+    onSuccess: () => invalidateSupportCases(queryClient),
   });
 }
 
@@ -72,6 +75,7 @@ export interface ReplyToMySupportCaseVariables {
 
 export function useReplyToMySupportCase() {
   const { invalidate } = useInvalidate();
+  const queryClient = useQueryClient();
 
   return useApiMutation<
     SupportCaseDetail,
@@ -85,7 +89,7 @@ export function useReplyToMySupportCase() {
     onSuccess: async (_data, { caseId }) => {
       // Both the thread and the list's "last activity" column change.
       await invalidate(supportKeys.mineDetail(caseId));
-      await invalidate(supportKeys.all);
+      await invalidateSupportCases(queryClient);
     },
   });
 }

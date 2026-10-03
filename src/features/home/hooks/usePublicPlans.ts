@@ -7,13 +7,15 @@
  * two are never invalidated together.
  */
 import { useApiQuery } from '@/shared/hooks';
+import { publicPlanKeys } from '@services/query';
 import { publicPlanService } from '../services/PublicPlanService';
 import type { Plan } from '@types';
 import type { ApiError } from '@api';
 
 export function usePublicPlans() {
   return useApiQuery<readonly Plan[], ApiError>({
-    queryKey: ['public-plans', 'list'],
+    // Declared in the shared factory so plan mutations can invalidate it.
+    queryKey: publicPlanKeys.list(),
     queryFn: () => publicPlanService.getPlans(),
   });
 }

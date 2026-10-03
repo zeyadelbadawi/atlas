@@ -1,30 +1,34 @@
 /**
  * Course Builder Page.
  *
- * Visualizes and manages a course's curriculum: sections containing lessons,
- * with create/edit/delete and explicit (keyboard-accessible) reordering.
- * Only content authoring is implemented here — student consumption of a
- * course's content is a separate, future module.
+ * Visualizes and manages a course's curriculum: sections (units) containing
+ * one ordered sequence of lessons/quizzes/assignments each, with
+ * create/edit/delete and two equivalent ways to reorder: drag-and-drop
+ * (handle; pointer, touch or keyboard) and explicit move up/down buttons
+ * (the always-available accessible alternative). Reorders are optimistic,
+ * serialized, carry the order the author saw (409 on a concurrent change)
+ * and report their progress inline and to screen readers. Only content
+ * authoring is implemented here — student consumption of a course's
+ * content is a separate module.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import { useIsMutating } from '@tanstack/react-query';
 import {
   ArrowDown,
   ArrowUp,
-  FileText,
-  Link as LinkIcon,
+  Loader2,
   MoreHorizontal,
   Plus,
-  Video,
 } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { SectionTabs } from '@components/navigation';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { BreadcrumbItem } from '@types';
 import { EmptyState, ErrorState } from '@components/feedback';
-import { StatusBadge } from '@components/data-display';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -46,17 +50,18 @@ import {
   useCreateCourseLesson,
   useUpdateCourseLesson,
   useDeleteCourseLesson,
-  useReorderCourseLessons,
 } from '../hooks';
+import { reorderSectionsMutationKey } from '../hooks/useReorderCourseSections';
 import { SectionFormDialog } from '../components/SectionFormDialog';
 import { LessonFormDialog } from '../components/LessonFormDialog';
 import { UnitCurriculum } from '../components/UnitCurriculum';
-import { LiveSessionCurriculumBlock } from '@features/live-sessions';
 import {
-  getLessonStatusLabelKey,
-  getLessonStatusTone,
-} from '../utils/course-status.utils';
-import { moveItem } from '../utils/reorder.utils';
+  CurriculumSortableList,
+  DragHandle,
+} from '../components/UnitCurriculumSortable';
+import { useReorderFocus } from '../hooks/useReorderFocus';
+import { LiveSessionCurriculumBlock } from '@features/live-sessions';
+import { isStaleOrderError, moveItem } from '../utils/reorder.utils';
 import { getCourseEditorTabs } from '../utils/course-navigation.utils';
 import type {
   CourseLessonFormData,
@@ -78,11 +83,9 @@ type LessonDialogState =
     }
   | null;
 
-const CONTENT_TYPE_ICON = {
-  text: FileText,
-  video: Video,
-  file: LinkIcon,
-} as const;
+/** Move buttons stay focusable while a reorder is saving (focus must not drop to <body>). */
+const SOFT_DISABLED =
+  'aria-disabled:cursor-not-allowed aria-disabled:opacity-50';
 
 export default function CourseBuilderPage(): JSX.Element {
   const { t } = useTranslation();
@@ -144,10 +147,25 @@ export default function CourseBuilderPage(): JSX.Element {
   const createLesson = useCreateCourseLesson(academyId ?? '', courseId ?? '');
   const updateLesson = useUpdateCourseLesson(academyId ?? '', courseId ?? '');
   const deleteLesson = useDeleteCourseLesson(academyId ?? '', courseId ?? '');
-  const reorderLessons = useReorderCourseLessons(
-    academyId ?? '',
-    courseId ?? ''
-  );
+
+  // Every queued section reorder of this course (not only the latest call).
+  const isReorderingSections =
+    useIsMutating({
+      mutationKey: reorderSectionsMutationKey(courseId ?? ''),
+    }) > 0;
+  const deletingSectionId = deleteSection.isPending
+    ? deleteSection.variables
+    : undefined;
+  const deletingLessonId = deleteLesson.isPending
+    ? deleteLesson.variables?.lessonId
+    : undefined;
+  // Deleting a section changes the set being ordered, so the two exclude
+  // each other.
+  const sectionReorderLocked = isReorderingSections || !!deletingSectionId;
+  const sectionIds = sections.map((section) => section.id);
+  const sectionFocus = useReorderFocus(sectionIds);
+  const [movingSectionId, setMovingSectionId] = useState<string | null>(null);
+  const [sectionAnnouncement, setSectionAnnouncement] = useState('');
 
   const handleSectionSubmit = async (data: CourseSectionFormData) => {
     try {
@@ -201,19 +219,68 @@ export default function CourseBuilderPage(): JSX.Element {
     }
   };
 
-  const handleMoveSection = async (index: number, direction: 'up' | 'down') => {
-    const reordered = moveItem(sections, index, direction);
+  const persistSectionOrder = async (
+    orderedIds: string[],
+    movedId: string,
+    focusCandidates: readonly string[]
+  ) => {
+    const previousIds = sectionIds;
+    const moved = sections.find((section) => section.id === movedId);
+    setMovingSectionId(movedId);
+    setSectionAnnouncement(
+      `${t('course:builder.order.moved', {
+        title: moved?.title ?? '',
+        position: orderedIds.indexOf(movedId) + 1,
+        total: orderedIds.length,
+      })} ${t('course:builder.order.saving')}`
+    );
+    sectionFocus.requestFocus(focusCandidates, orderedIds);
     try {
       await reorderSections.mutateAsync({
-        orderedIds: reordered.map((section) => section.id),
+        orderedIds,
+        expectedOrderedIds: previousIds,
       });
-    } catch {
-      toast({
-        title: t('course:builder.reorderError'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+      setSectionAnnouncement(t('course:builder.order.saved'));
+    } catch (error) {
+      if (isStaleOrderError(error)) {
+        // Rolled back by the hook, which also refetches the current order.
+        setSectionAnnouncement(t('course:builder.reorderConflict'));
+        toast({
+          title: t('course:builder.reorderConflict'),
+          variant: 'destructive',
+        });
+        sectionFocus.requestFocus(focusCandidates, null);
+      } else {
+        setSectionAnnouncement(t('course:builder.order.failed'));
+        toast({
+          title: t('course:builder.reorderError'),
+          description: t('course:builder.order.failed'),
+          variant: 'destructive',
+        });
+        sectionFocus.requestFocus(focusCandidates, previousIds);
+      }
+    } finally {
+      setMovingSectionId(null);
     }
+  };
+
+  const handleMoveSection = (index: number, direction: 'up' | 'down') => {
+    // Double-clicks while a reorder is saving are ignored rather than sent
+    // as a second reorder built on the same (now stale) order.
+    if (sectionReorderLocked) return;
+    const section = sections[index];
+    const reordered = moveItem(sections, index, direction).map((s) => s.id);
+    const opposite = direction === 'up' ? 'down' : 'up';
+    void persistSectionOrder(reordered, section.id, [
+      `${section.id}:${direction}`,
+      `${section.id}:${opposite}`,
+      `${section.id}:handle`,
+    ]);
+  };
+
+  const handleDropSection = (orderedIds: string[], movedId: string) => {
+    if (sectionReorderLocked) return;
+    void persistSectionOrder(orderedIds, movedId, [`${movedId}:handle`]);
   };
 
   const handleLessonSubmit = async (data: CourseLessonFormData) => {
@@ -288,29 +355,6 @@ export default function CourseBuilderPage(): JSX.Element {
     }
   };
 
-  const handleMoveLesson = async (
-    section: CourseSection,
-    lessonIndex: number,
-    direction: 'up' | 'down'
-  ) => {
-    const sortedLessons = [...section.lessons].sort(
-      (a, b) => a.order - b.order
-    );
-    const reordered = moveItem(sortedLessons, lessonIndex, direction);
-    try {
-      await reorderLessons.mutateAsync({
-        sectionId: section.id,
-        payload: { orderedIds: reordered.map((lesson) => lesson.id) },
-      });
-    } catch {
-      toast({
-        title: t('course:builder.reorderError'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
-    }
-  };
-
   if (isLoading) {
     return (
       <PageContainer>
@@ -366,43 +410,104 @@ export default function CourseBuilderPage(): JSX.Element {
           }}
         />
       ) : (
-        <ol className="space-y-4">
-          {sections.map((section, sectionIndex) => {
-            const lessons = [...section.lessons].sort(
-              (a, b) => a.order - b.order
-            );
-
-            return (
-              <li key={section.id}>
-                <Card>
-                  <CardHeader className="flex-row items-start justify-between space-y-0">
-                    <div className="space-y-1">
-                      <h3 className="font-display text-base font-semibold text-foreground">
-                        {sectionIndex + 1}. {section.title}
-                      </h3>
-                      {section.description ? (
-                        <p className="text-sm text-muted-foreground">
-                          {section.description}
-                        </p>
-                      ) : null}
+        <>
+          {/* One persistent polite region for section moves/saves/failures. */}
+          <p
+            className="sr-only"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            {sectionAnnouncement}
+          </p>
+          <CurriculumSortableList
+            items={sections}
+            getLabel={(section) => section.title}
+            onReorder={handleDropSection}
+            disabled={sectionReorderLocked}
+            className="space-y-4"
+            ariaLabel={t('course:builder.title')}
+            ariaBusy={isReorderingSections || !!deletingSectionId}
+            rowClassName={(section) =>
+              section.id === deletingSectionId
+                ? 'pointer-events-none opacity-60'
+                : undefined
+            }
+          >
+            {(section, sectionIndex, { handle, isDragging }) => {
+              const isDeleting = section.id === deletingSectionId;
+              const isSaving = section.id === movingSectionId;
+              return (
+                <Card
+                  aria-busy={isDeleting || isSaving || undefined}
+                  className={cn(
+                    'transition-colors motion-reduce:transition-none',
+                    isSaving && 'border-primary/40',
+                    isDragging && 'border-primary/60'
+                  )}
+                >
+                  <CardHeader className="flex-row items-start justify-between gap-2 space-y-0">
+                    <div className="flex min-w-0 items-start gap-2">
+                      <DragHandle
+                        handle={handle}
+                        isDragging={isDragging}
+                        label={t('course:builder.dnd.sectionHandle', {
+                          title: section.title,
+                        })}
+                        focusRef={sectionFocus.register(`${section.id}:handle`)}
+                      />
+                      <div className="min-w-0 space-y-1">
+                        <h3 className="font-display text-base font-semibold text-foreground">
+                          {sectionIndex + 1}. {section.title}
+                        </h3>
+                        {section.description ? (
+                          <p className="text-sm text-muted-foreground">
+                            {section.description}
+                          </p>
+                        ) : null}
+                        {isSaving || isDeleting ? (
+                          // Visible twin of the live region (announced there).
+                          <p
+                            aria-hidden
+                            className="inline-flex items-center gap-1 text-xs text-muted-foreground"
+                          >
+                            <Loader2 className="size-3 animate-spin motion-reduce:animate-none" />
+                            {isSaving
+                              ? t('course:builder.order.saving')
+                              : t('course:builder.deleting')}
+                          </p>
+                        ) : null}
+                      </div>
                     </div>
 
-                    <div className="flex items-center gap-1">
+                    <div className="flex shrink-0 items-center gap-1">
                       <Button
+                        ref={sectionFocus.register(`${section.id}:up`)}
                         variant="ghost"
                         size="icon"
-                        disabled={sectionIndex === 0}
+                        className={SOFT_DISABLED}
+                        disabled={sectionIndex === 0 || isDeleting}
+                        aria-disabled={sectionReorderLocked || undefined}
                         onClick={() => handleMoveSection(sectionIndex, 'up')}
-                        aria-label={t('course:builder.sectionMenu.moveUp')}
+                        aria-label={t('course:builder.sectionMenu.moveUp', {
+                          title: section.title,
+                        })}
                       >
                         <ArrowUp className="size-4" aria-hidden />
                       </Button>
                       <Button
+                        ref={sectionFocus.register(`${section.id}:down`)}
                         variant="ghost"
                         size="icon"
-                        disabled={sectionIndex === sections.length - 1}
+                        className={SOFT_DISABLED}
+                        disabled={
+                          sectionIndex === sections.length - 1 || isDeleting
+                        }
+                        aria-disabled={sectionReorderLocked || undefined}
                         onClick={() => handleMoveSection(sectionIndex, 'down')}
-                        aria-label={t('course:builder.sectionMenu.moveDown')}
+                        aria-label={t('course:builder.sectionMenu.moveDown', {
+                          title: section.title,
+                        })}
                       >
                         <ArrowDown className="size-4" aria-hidden />
                       </Button>
@@ -411,6 +516,7 @@ export default function CourseBuilderPage(): JSX.Element {
                           <Button
                             variant="ghost"
                             size="icon"
+                            disabled={isDeleting || isReorderingSections}
                             aria-label={t('course:builder.sectionMenu.edit')}
                           >
                             <MoreHorizontal className="size-4" aria-hidden />
@@ -446,6 +552,12 @@ export default function CourseBuilderPage(): JSX.Element {
                       academyId={academyId ?? ''}
                       courseId={courseId ?? ''}
                       section={section}
+                      pendingLessonId={
+                        deleteLesson.variables?.sectionId === section.id
+                          ? deletingLessonId
+                          : undefined
+                      }
+                      locked={isDeleting}
                       onAddLesson={(sectionId) =>
                         setLessonDialog({ mode: 'create', sectionId })
                       }
@@ -471,10 +583,10 @@ export default function CourseBuilderPage(): JSX.Element {
                     />
                   </CardContent>
                 </Card>
-              </li>
-            );
-          })}
-        </ol>
+              );
+            }}
+          </CurriculumSortableList>
+        </>
       )}
 
       <SectionFormDialog

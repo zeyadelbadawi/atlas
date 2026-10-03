@@ -1,19 +1,19 @@
 /**
- * RecentActivityList (Phase 8) — real audit-trail activity, newest first.
+ * RecentActivityList (Phase 8, rebuilt for Task 3) — real audit-trail
+ * activity, newest first.
  *
  * Every row is a real `audit_log_entries` row the backend already scoped
- * (organization always; academy too, for a Manager's dashboard) — this
- * component never filters, and never sees another scope's rows to filter.
+ * (organization always; academy too, for an academy dashboard) and already
+ * restricted to tenant-visible actions — this component never filters.
  *
- * `action` is a dotted event name (`course.published`), rendered through
- * a translation key so a user never reads a raw internal identifier. An
- * action with no translation yet falls back to a generic sentence rather
- * than leaking the dotted string — new audited actions can ship from the
- * backend before their copy lands without the UI showing internals.
+ * Each row reads as a full sentence through the shared `formatAuditEntry`
+ * (every audited action has English and Arabic copy, with a target-aware
+ * fallback), replacing the old 27-action table whose fallback was the
+ * contentless "{{actor}} made a change".
  */
-import { useTranslation } from 'react-i18next';
 import { History } from 'lucide-react';
 import { EmptyState } from '@components/feedback';
+import { AuditEntryRow, dashboardItemToRow } from '@features/audit-log';
 import type { DashboardActivityItem } from '@types';
 
 export interface RecentActivityListProps {
@@ -23,8 +23,6 @@ export interface RecentActivityListProps {
 export function RecentActivityList({
   items,
 }: RecentActivityListProps): JSX.Element {
-  const { t, i18n } = useTranslation();
-
   if (items.length === 0) {
     return (
       <EmptyState
@@ -37,28 +35,9 @@ export function RecentActivityList({
 
   return (
     <ul className="flex flex-col divide-y divide-border">
-      {items.map((item) => {
-        const actionKey = `dashboard:activity.actions.${item.action}`;
-        const hasCopy = i18n.exists(actionKey);
-
-        return (
-          <li key={item.id} className="flex flex-col gap-1 py-3">
-            <span className="text-sm text-foreground">
-              {hasCopy
-                ? t(actionKey, {
-                    actor: item.actorName,
-                    target: item.targetLabel ?? '',
-                  })
-                : t('dashboard:activity.actions.generic', {
-                    actor: item.actorName,
-                  })}
-            </span>
-            <span className="text-xs text-muted-foreground">
-              {new Date(item.occurredAt).toLocaleString(i18n.language)}
-            </span>
-          </li>
-        );
-      })}
+      {items.map((item) => (
+        <AuditEntryRow key={item.id} row={dashboardItemToRow(item)} compact />
+      ))}
     </ul>
   );
 }
