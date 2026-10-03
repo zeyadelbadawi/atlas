@@ -3,7 +3,11 @@
     "greeting": "Welcome, {{name}}",
     "signOut": "Sign out",
     "signIn": "Sign in",
-    "signUp": "Sign up"
+    "signUp": "Sign up",
+    "myLearn": "My Learn",
+    "myCourses": "My Courses",
+    "profileSettings": "Profile & settings",
+    "accountMenu": "Account menu for {{name}}"
   },
   "auth": {
     "signIn": {

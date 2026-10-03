@@ -3,7 +3,11 @@
     "greeting": "مرحبًا، {{name}}",
     "signOut": "تسجيل الخروج",
     "signIn": "تسجيل الدخول",
-    "signUp": "إنشاء حساب"
+    "signUp": "إنشاء حساب",
+    "myLearn": "تعلّمي",
+    "myCourses": "دوراتي",
+    "profileSettings": "الملف الشخصي والإعدادات",
+    "accountMenu": "قائمة حساب {{name}}"
   },
   "auth": {
     "signIn": {

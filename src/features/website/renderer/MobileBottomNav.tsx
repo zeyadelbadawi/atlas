@@ -41,6 +41,7 @@ import { cn } from '@/lib/utils';
 import { LEARNER_ROUTES } from '@app/routes/route-paths';
 import { resolvePagePath } from '../utils/link-resolution.utils';
 import { useMobileBottomNavVisibility } from './useMobileBottomNavVisibility';
+import { MY_LEARN_SIGN_IN_HREF } from './WebsiteAccountMenu';
 import type { WebsiteLinkRenderer } from './website-link-renderer.types';
 import type { PublicWebsiteLocale, WebsitePage } from '@types';
 
@@ -49,9 +50,10 @@ export interface MobileBottomNavProps {
   readonly locale: PublicWebsiteLocale;
   readonly linkRenderer?: WebsiteLinkRenderer;
   /**
-   * Theme 1 plan §M.5 #16. `signIn`: a signed-out visitor gets one "Sign
-   * in" tab instead of "My Learning"/"Profile" (tabs that only lead to the
-   * sign-in page anyway). Absent: the four tabs every theme has always had.
+   * Theme 1 plan §M.5 #16. `signIn`: a signed-out visitor gets "Sign in"
+   * instead of "Profile". "My Learn" stays (Task B: it is mandatory) and
+   * leads to sign-in with a `returnTo` back to it. Absent: the four tabs
+   * every theme has always had.
    */
   readonly accountTabs?: 'learner' | 'signIn';
 }
@@ -95,7 +97,8 @@ export function MobileBottomNav({
     },
     {
       key: 'myLearning',
-      href: LEARNER_ROUTES.root,
+      href:
+        accountTabs === 'signIn' ? MY_LEARN_SIGN_IN_HREF : LEARNER_ROUTES.root,
       label: t('website:mobileNav.myLearning'),
       icon: GraduationCap,
       // This bar stands down entirely across `/my/*`
@@ -123,7 +126,7 @@ export function MobileBottomNav({
   ] as const;
   const items = allItems.filter((item) =>
     accountTabs === 'signIn'
-      ? item.key === 'home' || item.key === 'courses' || item.key === 'signIn'
+      ? item.key !== 'profile'
       : item.key !== 'signIn'
   );
 

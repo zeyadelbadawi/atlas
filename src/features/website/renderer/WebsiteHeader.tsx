@@ -17,10 +17,15 @@
  * behaving exactly as it did before Prompt 11 (see
  * `Reports/ARCHITECTURE.md`, Prompt 11, "Header/Footer Real Navigation").
  */
-import { Globe, LogOut, Menu } from 'lucide-react';
+import { Globe, Menu } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 import { useDisclosure } from '@hooks';
 import { useWebsiteDesignSystem } from './WebsiteDesignSystemContext';
 import { useWebsiteContainerClass } from './renderer-style.utils';
@@ -41,6 +46,11 @@ import type {
   WebsitePage,
 } from '@types';
 import type { WebsiteLinkRenderer } from './website-link-renderer.types';
+import {
+  WebsiteAccountMenu,
+  WebsiteAccountSheetLinks,
+  myLearnHref,
+} from './WebsiteAccountMenu';
 
 /**
  * The real visitor's session, supplied only by the public runtime (see
@@ -136,6 +146,8 @@ function NavLinks({
   linkRenderer,
   locale = DEFAULT_PUBLIC_WEBSITE_LOCALE,
   className,
+  authState,
+  onLinkFollowed,
 }: Pick<
   WebsiteHeaderProps,
   | 'navigation'
@@ -144,11 +156,22 @@ function NavLinks({
   | 'onNavigate'
   | 'linkRenderer'
   | 'locale'
+  | 'authState'
 > & {
   readonly className?: string;
+  /** Closes the mobile sheet when a link in it is followed. */
+  readonly onLinkFollowed?: () => void;
 }): JSX.Element {
+  const { t } = useTranslation();
+  const linkClass =
+    'text-sm font-medium text-foreground/80 hover:text-foreground';
   return (
-    <nav className={className}>
+    <nav
+      className={className}
+      onClickCapture={(event) => {
+        if ((event.target as HTMLElement).closest('a')) onLinkFollowed?.();
+      }}
+    >
       {[...navigation]
         .sort((a, b) => a.order - b.order)
         .map((item) => {
@@ -184,6 +207,19 @@ function NavLinks({
             </button>
           );
         })}
+      {/* "My Learn" — fixed, after the Owner's own items (Task B). */}
+      {linkRenderer ? (
+        <span>
+          {linkRenderer({
+            href: myLearnHref(authState),
+            external: false,
+            className: linkClass,
+            children: t('publicWebsite:header.myLearn'),
+          })}
+        </span>
+      ) : (
+        <span className={linkClass}>{t('publicWebsite:header.myLearn')}</span>
+      )}
     </nav>
   );
 }
@@ -245,47 +281,15 @@ export function WebsiteHeader({
   // real public runtime (never dashboard/preview callers), so an Owner
   // editing their own site is never shown their own admin session here.
   const cta = authState ? (
-    // `min-w-0` on the row + `truncate` on the greeting (never
-    // `whitespace-normal`'s default wrap) — a long real name, or the
-    // longer Arabic greeting string, shrinks to an ellipsis instead of
-    // wrapping the header to two or three lines on a narrow phone, which
-    // is what a plain `<span>` here did before this fix (reproduced live
-    // at 375px: "Welcome, Atlas Admin" wrapped across 3 lines next to the
-    // language switcher and hamburger). "Sign out" drops to an icon-only
-    // button below `sm` for the same reason, matching the language
-    // switcher's identical treatment just above.
-    <div className="flex min-w-0 items-center gap-2">
-      {authState.myLearningHref && linkRenderer ? (
-        linkRenderer({
-          href: authState.myLearningHref,
-          external: false,
-          className:
-            'max-w-[6rem] truncate text-sm font-medium text-[var(--website-primary-solid)] hover:underline sm:max-w-[10rem]',
-          children: t('publicWebsite:header.greeting', {
-            name: authState.name,
-          }),
-        })
-      ) : (
-        <span className="max-w-[6rem] truncate text-sm font-medium text-foreground/80 sm:max-w-[10rem]">
-          {t('publicWebsite:header.greeting', { name: authState.name })}
-        </span>
-      )}
-      {authState.onSignOut ? (
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={authState.onSignOut}
-          className="shrink-0 px-2 sm:px-3"
-          aria-label={t('publicWebsite:header.signOut')}
-        >
-          <LogOut className="size-4 sm:hidden" aria-hidden />
-          <span className="hidden sm:inline">
-            {t('publicWebsite:header.signOut')}
-          </span>
-        </Button>
-      ) : null}
-    </div>
+    // The account menu (Task B) — name beside the initials from `sm` up,
+    // initials alone on a phone, so the row never wraps.
+    <WebsiteAccountMenu
+      authState={authState}
+      linkRenderer={linkRenderer}
+      compact
+      avatarClassName="bg-[var(--website-primary-solid)] text-white"
+      triggerClassName="text-foreground hover:bg-muted"
+    />
   ) : header.cta ? (
     ctaHref ? (
       <Button {...ctaButtonProps} asChild>
@@ -353,12 +357,15 @@ export function WebsiteHeader({
           variant="ghost"
           size="icon"
           className="lg:hidden"
-          aria-label="Menu"
+          aria-label={t('website:chrome.openMenu')}
         >
           <Menu className="size-5" aria-hidden />
         </Button>
       </SheetTrigger>
       <SheetContent side="top">
+        <SheetTitle className="sr-only">
+          {t('website:chrome.menuTitle', { name: academyName })}
+        </SheetTitle>
         <NavLinks
           navigation={navigation}
           pages={pages}
@@ -367,10 +374,22 @@ export function WebsiteHeader({
             onNavigate(pageId);
             mobileMenu.close();
           }}
+          onLinkFollowed={mobileMenu.close}
           linkRenderer={linkRenderer}
           locale={locale}
+          authState={authState}
           className="flex flex-col gap-4 pt-8"
         />
+        {authState ? (
+          <div className="mt-4 border-t border-border pt-4">
+            <WebsiteAccountSheetLinks
+              authState={authState}
+              linkRenderer={linkRenderer}
+              onNavigate={mobileMenu.close}
+              linkClassName="text-foreground hover:bg-muted"
+            />
+          </div>
+        ) : null}
         {languageSwitcher}
       </SheetContent>
     </Sheet>
@@ -389,6 +408,7 @@ export function WebsiteHeader({
               onNavigate={onNavigate}
               linkRenderer={linkRenderer}
               locale={locale}
+              authState={authState}
               // `flex-wrap` — the Owner-authored item count/label length is
               // unbounded (longer still under Arabic), so this row must be
               // able to grow to a second line instead of forcing horizontal
@@ -417,6 +437,7 @@ export function WebsiteHeader({
               onNavigate={onNavigate}
               linkRenderer={linkRenderer}
               locale={locale}
+              authState={authState}
               // `flex-wrap` — the Owner-authored item count/label length is
               // unbounded (longer still under Arabic), so this row must be
               // able to grow to a second line instead of forcing horizontal
@@ -455,6 +476,7 @@ export function WebsiteHeader({
           activePageId={activePageId}
           onNavigate={onNavigate}
           linkRenderer={linkRenderer}
+          authState={authState}
           className="hidden min-w-0 flex-wrap items-center gap-x-6 gap-y-2 lg:flex"
         />
         <div className="flex items-center gap-2">

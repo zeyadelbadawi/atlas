@@ -9,14 +9,15 @@
  * opens from the logical end, traps focus, closes on Escape and returns
  * focus to the menu button (Radix Dialog).
  *
- * Behaviour matches the shared header exactly — a signed-in visitor sees
- * their greeting instead of any CTA; a configured `header.cta` wins over
+ * Behaviour matches the shared header exactly — "My Learn" is always in
+ * the navigation (Task B, `WebsiteAccountMenu`), a signed-in visitor sees
+ * their account menu instead of any CTA; a configured `header.cta` wins over
  * the default Sign in / Sign up pair; without `linkRenderer` (dashboard
  * previews) nothing navigates. Only the presentation is Theme 1's.
  */
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Globe, LogOut, Menu } from 'lucide-react';
+import { Globe, Menu } from 'lucide-react';
 import { cn } from '@utils';
 import {
   Sheet,
@@ -26,6 +27,11 @@ import {
 } from '@/components/ui/sheet';
 import { useDisclosure } from '@hooks';
 import { useWebsiteContainerClass } from '../renderer/renderer-style.utils';
+import {
+  WebsiteAccountMenu,
+  WebsiteAccountSheetLinks,
+  myLearnHref,
+} from '../renderer/WebsiteAccountMenu';
 import {
   isExternalHref,
   resolvePagePath,
@@ -142,8 +148,35 @@ export function ModernEducationHeader({
     );
   };
 
-  const navLinks = (variant: 'bar' | 'sheet') =>
-    items.map((item) => {
+  const navLinkClass = (variant: 'bar' | 'sheet', current: boolean) =>
+    variant === 'bar'
+      ? cn(
+          't1-nav-link text-[0.9375rem] font-medium',
+          current
+            ? 'text-[var(--website-foreground)]'
+            : 'text-[var(--website-foreground-muted)] hover:text-[var(--website-foreground)]'
+        )
+      : cn(
+          't1-focus flex min-h-11 w-full items-center rounded-[var(--t1-radius-control)] px-3 text-base font-medium',
+          current
+            ? 'bg-[var(--website-chip-bg)] text-[var(--website-chip-fg)]'
+            : 'text-[var(--website-foreground)] hover:bg-[var(--website-surface)]'
+        );
+
+  // "My Learn" — fixed, after the Owner's own items (see `WebsiteAccountMenu`).
+  const myLearnLink = (variant: 'bar' | 'sheet') => (
+    <li key="my-learn">
+      {renderLink(
+        { href: linkRenderer ? myLearnHref(authState) : undefined },
+        navLinkClass(variant, false),
+        t('publicWebsite:header.myLearn'),
+        { onClick: variant === 'sheet' ? menu.close : undefined }
+      )}
+    </li>
+  );
+
+  const navLinks = (variant: 'bar' | 'sheet') => [
+    ...items.map((item) => {
       const current = item.pageId === activePageId;
       const href = linkRenderer
         ? resolveWebsiteCtaHref(item, pages)
@@ -153,19 +186,7 @@ export function ModernEducationHeader({
         <li key={item.id}>
           {renderLink(
             { href, pageId: item.pageId },
-            variant === 'bar'
-              ? cn(
-                  't1-nav-link text-[0.9375rem] font-medium',
-                  current
-                    ? 'text-[var(--website-foreground)]'
-                    : 'text-[var(--website-foreground-muted)] hover:text-[var(--website-foreground)]'
-                )
-              : cn(
-                  't1-focus flex min-h-11 w-full items-center rounded-[var(--t1-radius-control)] px-3 text-base font-medium',
-                  current
-                    ? 'bg-[var(--website-chip-bg)] text-[var(--website-chip-fg)]'
-                    : 'text-[var(--website-foreground)] hover:bg-[var(--website-surface)]'
-                ),
+            navLinkClass(variant, current),
             navLabel(item, pages, locale),
             {
               current,
@@ -174,7 +195,9 @@ export function ModernEducationHeader({
           )}
         </li>
       );
-    });
+    }),
+    myLearnLink(variant),
+  ];
 
   // The primary action: configured CTA → it; otherwise Sign up.
   const configuredLabel = header.cta
@@ -224,39 +247,23 @@ export function ModernEducationHeader({
       </button>
     ) : null;
 
-  const greeting = authState
-    ? t('publicWebsite:header.greeting', { name: authState.name })
-    : '';
   const account = (layout: 'bar' | 'sheet') =>
     authState ? (
-      <div
-        className={cn(
-          'flex min-w-0 items-center gap-2',
-          layout === 'sheet' && 'flex-col items-stretch'
-        )}
-      >
-        {authState.myLearningHref && linkRenderer ? (
-          renderLink(
-            { href: authState.myLearningHref },
-            't1-focus max-w-[12rem] truncate text-sm font-semibold text-[var(--website-link)] hover:underline',
-            greeting
-          )
-        ) : (
-          <span className="max-w-[12rem] truncate text-sm font-medium text-[var(--website-foreground-muted)]">
-            {greeting}
-          </span>
-        )}
-        {authState.onSignOut ? (
-          <button
-            type="button"
-            onClick={authState.onSignOut}
-            className="t1-focus inline-flex min-h-11 items-center gap-2 px-2 text-sm font-medium text-[var(--website-foreground-muted)] hover:text-[var(--website-foreground)]"
-          >
-            <LogOut className="size-4" aria-hidden />
-            {t('publicWebsite:header.signOut')}
-          </button>
-        ) : null}
-      </div>
+      layout === 'bar' ? (
+        <WebsiteAccountMenu
+          authState={authState}
+          linkRenderer={linkRenderer}
+          avatarClassName="bg-[var(--website-chip-bg)] text-[var(--website-chip-fg)]"
+          triggerClassName="text-[var(--website-foreground)] hover:bg-[var(--website-surface)]"
+        />
+      ) : (
+        <WebsiteAccountSheetLinks
+          authState={authState}
+          linkRenderer={linkRenderer}
+          onNavigate={menu.close}
+          linkClassName="t1-focus text-[var(--website-foreground)] hover:bg-[var(--website-surface)]"
+        />
+      )
     ) : layout === 'bar' ? (
       <div className="flex items-center gap-4">
         {showSignIn
