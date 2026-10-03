@@ -83,7 +83,11 @@ vi.mock('./hooks', () => ({
     refetch: vi.fn(),
   }),
   useAcademyStats: () => ({ data: undefined, isLoading: false, error: null }),
-  useAcademyActivity: () => ({ data: undefined, isLoading: false, error: null }),
+  useAcademyActivity: () => ({
+    data: undefined,
+    isLoading: false,
+    error: null,
+  }),
   useAcademyWebsiteStatus: (_id: string, options: { enabled?: boolean }) => ({
     status: options.enabled === false ? undefined : websiteStatus,
   }),
