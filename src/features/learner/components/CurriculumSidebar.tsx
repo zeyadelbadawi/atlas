@@ -115,7 +115,9 @@ export function CurriculumSidebar({
               const rowClass = cn(
                 'flex w-full items-start gap-2 rounded-md px-2 py-2 text-start',
                 isCurrent && 'bg-accent text-accent-foreground',
-                isLocked && 'opacity-70'
+                // Not `opacity-70`: that took the muted state text below
+                // 4.5:1. The lock icon, "Locked" and the reason say it.
+                isLocked && 'text-muted-foreground'
               );
 
               return (

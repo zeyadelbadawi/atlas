@@ -87,7 +87,7 @@ test.describe('J21 — one Visual Identity, live on save', () => {
   let original: {
     name: string;
     logo?: string;
-    palette?: Record<string, unknown>;
+    brand: Record<string, unknown>;
   };
 
   test.beforeAll(async ({ request }) => {
@@ -110,7 +110,7 @@ test.describe('J21 — one Visual Identity, live on save', () => {
     original = {
       name: academy.name,
       logo: academy.logo,
-      palette: config.brand.palette,
+      brand: config.brand,
     };
   });
 
@@ -122,7 +122,15 @@ test.describe('J21 — one Visual Identity, live on save', () => {
         data: {
           name: original.name,
           logo: original.logo ?? null,
-          ...(original.palette ? { brand: { palette: original.palette } } : {}),
+          // Exactly what was there — including NO palette when the seed
+          // had only legacy colours, so later journeys do not inherit the
+          // palette this one saved.
+          brand: {
+            palette: original.brand.palette ?? null,
+            primaryColor: original.brand.primaryColor,
+            secondaryColor: original.brand.secondaryColor,
+            accentColor: original.brand.accentColor,
+          },
         },
       }
     );

@@ -36,7 +36,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ErrorState } from '@components/feedback';
 import { Pagination } from '@components/data-display';
 import { readErrorKind } from '../utils/read-error-kind';
@@ -153,11 +153,14 @@ export default function LearnerCoursesPage(): JSX.Element {
     <>
       {header}
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <Tabs
-          value={filter}
-          onValueChange={(value) => setFilter(value as CourseFilter)}
-        >
+      {/* The tabs filter one list: it is the selected tab's panel, so the
+          tab's `aria-controls` names a real element. */}
+      <Tabs
+        value={filter}
+        onValueChange={(value) => setFilter(value as CourseFilter)}
+        className="space-y-6 lg:space-y-8"
+      >
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <TabsList>
             {(['all', 'inProgress', 'completed'] as const).map((value) => (
               <TabsTrigger key={value} value={value}>
@@ -168,154 +171,166 @@ export default function LearnerCoursesPage(): JSX.Element {
               </TabsTrigger>
             ))}
           </TabsList>
-        </Tabs>
 
-        <div className="relative w-full sm:w-64">
-          <Search
-            className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-            aria-hidden
-          />
-          <Input
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder={t(
-              'learning:learnerDashboard.courses.searchPlaceholder'
-            )}
-            aria-label={t('learning:learnerDashboard.courses.searchLabel')}
-            className="ps-9"
-          />
-        </div>
-      </div>
-
-      {enrollmentsQuery.isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Skeleton className="h-64" />
-          <Skeleton className="h-64" />
-          <Skeleton className="h-64" />
-        </div>
-      ) : enrollments.length === 0 ? (
-        <LearnerSectionPlaceholder
-          icon={GraduationCap}
-          titleKey="learning:learnerDashboard.courses.empty.title"
-          descriptionKey="learning:learnerDashboard.courses.empty.description"
-        />
-      ) : visible.length === 0 ? (
-        <LearnerSectionPlaceholder
-          icon={Search}
-          titleKey="learning:learnerDashboard.courses.filterEmpty.title"
-          descriptionKey="learning:learnerDashboard.courses.filterEmpty.description"
-        />
-      ) : (
-        <>
-          {/* A screen reader hears how many courses the search or tab
-              left, not the whole grid re-read on every keystroke. */}
-          <p role="status" aria-live="polite" className="sr-only">
-            {t('learning:learnerDashboard.courses.resultsCount', {
-              count: visible.length,
-            })}
-          </p>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {visible.map((enrollment) => {
-              const course = enrollment.course;
-              const progress = enrollment.progress;
-              const learningState = stateOf(enrollment);
-              const isCompleted = learningState === 'completed';
-              // The backend's own access answer, never re-derived here.
-              const accessEnded = enrollment.isActive === false;
-              const courseHref = buildHref(
-                buildPath(LEARNER_ROUTES.courseProgress, {
-                  courseId: enrollment.courseId,
-                })
-              );
-
-              return (
-                <Card
-                  key={enrollment.id}
-                  className="flex flex-col overflow-hidden"
-                >
-                  {course?.thumbnail ? (
-                    <img
-                      src={course.thumbnail}
-                      alt=""
-                      className="h-36 w-full object-cover"
-                    />
-                  ) : (
-                    <div className="h-36 w-full bg-muted" />
-                  )}
-
-                  <CardContent className="flex flex-1 flex-col gap-2 pt-4">
-                    <div className="flex items-center justify-between gap-2">
-                      <Badge variant={isCompleted ? 'default' : 'secondary'}>
-                        {t(`learning:myLearning.status.${enrollment.status}`)}
-                      </Badge>
-                    </div>
-
-                    <h3 className="font-display text-base font-semibold text-foreground">
-                      {/* The whole card is not a control; the title is. */}
-                      <Link
-                        to={courseHref}
-                        className="rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                      >
-                        {course?.title ?? enrollment.courseId}
-                      </Link>
-                    </h3>
-
-                    {progress && progressCounts(progress).total > 0 ? (
-                      <div className="space-y-1.5 pt-1">
-                        <LearnerProgressBar
-                          value={progress.percentage}
-                          label={t('learning:player.progress.label', {
-                            course: course?.title ?? '',
-                          })}
-                        />
-                        <p className="text-xs text-muted-foreground">
-                          {t(
-                            progressCounts(progress).unit === 'items'
-                              ? 'learning:progress.completedOfItems'
-                              : 'learning:progress.completedOf',
-                            progressCounts(progress)
-                          )}
-                        </p>
-                      </div>
-                    ) : null}
-
-                    <div className="mt-auto flex items-center justify-end pt-2">
-                      <Button
-                        size="sm"
-                        variant={isCompleted ? 'outline' : 'default'}
-                        disabled={accessEnded}
-                        onClick={() => {
-                          if (accessEnded) return;
-                          if (progress?.currentLessonId) {
-                            navigate(
-                              buildHref(
-                                buildPath(LEARNER_ROUTES.playerLesson, {
-                                  courseId: enrollment.courseId,
-                                  lessonId: progress.currentLessonId,
-                                })
-                              )
-                            );
-                            return;
-                          }
-                          navigate(courseHref);
-                        }}
-                      >
-                        {accessEnded
-                          ? t('learning:learnerDashboard.actions.accessEnded')
-                          : isCompleted
-                            ? t('learning:learnerDashboard.actions.review')
-                            : learningState === 'in_progress'
-                              ? t('learning:learnerDashboard.actions.continue')
-                              : t('learning:learnerDashboard.actions.start')}
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
+          <div className="relative w-full sm:w-64">
+            <Search
+              className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+              aria-hidden
+            />
+            <Input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder={t(
+                'learning:learnerDashboard.courses.searchPlaceholder'
+              )}
+              aria-label={t('learning:learnerDashboard.courses.searchLabel')}
+              className="ps-9"
+            />
           </div>
-        </>
-      )}
+        </div>
+
+        <TabsContent value={filter} className="mt-0">
+          {enrollmentsQuery.isLoading ? (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <Skeleton className="h-64" />
+              <Skeleton className="h-64" />
+              <Skeleton className="h-64" />
+            </div>
+          ) : enrollments.length === 0 ? (
+            <LearnerSectionPlaceholder
+              icon={GraduationCap}
+              titleKey="learning:learnerDashboard.courses.empty.title"
+              descriptionKey="learning:learnerDashboard.courses.empty.description"
+            />
+          ) : visible.length === 0 ? (
+            <LearnerSectionPlaceholder
+              icon={Search}
+              titleKey="learning:learnerDashboard.courses.filterEmpty.title"
+              descriptionKey="learning:learnerDashboard.courses.filterEmpty.description"
+            />
+          ) : (
+            <>
+              {/* A screen reader hears how many courses the search or tab
+              left, not the whole grid re-read on every keystroke. */}
+              <p role="status" aria-live="polite" className="sr-only">
+                {t('learning:learnerDashboard.courses.resultsCount', {
+                  count: visible.length,
+                })}
+              </p>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {visible.map((enrollment) => {
+                  const course = enrollment.course;
+                  const progress = enrollment.progress;
+                  const learningState = stateOf(enrollment);
+                  const isCompleted = learningState === 'completed';
+                  // The backend's own access answer, never re-derived here.
+                  const accessEnded = enrollment.isActive === false;
+                  const courseHref = buildHref(
+                    buildPath(LEARNER_ROUTES.courseProgress, {
+                      courseId: enrollment.courseId,
+                    })
+                  );
+
+                  return (
+                    <Card
+                      key={enrollment.id}
+                      className="flex flex-col overflow-hidden"
+                    >
+                      {course?.thumbnail ? (
+                        <img
+                          src={course.thumbnail}
+                          alt=""
+                          className="h-36 w-full object-cover"
+                        />
+                      ) : (
+                        <div className="h-36 w-full bg-muted" />
+                      )}
+
+                      <CardContent className="flex flex-1 flex-col gap-2 pt-4">
+                        <div className="flex items-center justify-between gap-2">
+                          <Badge
+                            variant={isCompleted ? 'default' : 'secondary'}
+                          >
+                            {t(
+                              `learning:myLearning.status.${enrollment.status}`
+                            )}
+                          </Badge>
+                        </div>
+
+                        <h3 className="font-display text-base font-semibold text-foreground">
+                          {/* The whole card is not a control; the title is. */}
+                          <Link
+                            to={courseHref}
+                            className="rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          >
+                            {course?.title ?? enrollment.courseId}
+                          </Link>
+                        </h3>
+
+                        {progress && progressCounts(progress).total > 0 ? (
+                          <div className="space-y-1.5 pt-1">
+                            <LearnerProgressBar
+                              value={progress.percentage}
+                              label={t('learning:player.progress.label', {
+                                course: course?.title ?? '',
+                              })}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                              {t(
+                                progressCounts(progress).unit === 'items'
+                                  ? 'learning:progress.completedOfItems'
+                                  : 'learning:progress.completedOf',
+                                progressCounts(progress)
+                              )}
+                            </p>
+                          </div>
+                        ) : null}
+
+                        <div className="mt-auto flex items-center justify-end pt-2">
+                          <Button
+                            size="sm"
+                            variant={isCompleted ? 'outline' : 'default'}
+                            disabled={accessEnded}
+                            onClick={() => {
+                              if (accessEnded) return;
+                              if (progress?.currentLessonId) {
+                                navigate(
+                                  buildHref(
+                                    buildPath(LEARNER_ROUTES.playerLesson, {
+                                      courseId: enrollment.courseId,
+                                      lessonId: progress.currentLessonId,
+                                    })
+                                  )
+                                );
+                                return;
+                              }
+                              navigate(courseHref);
+                            }}
+                          >
+                            {accessEnded
+                              ? t(
+                                  'learning:learnerDashboard.actions.accessEnded'
+                                )
+                              : isCompleted
+                                ? t('learning:learnerDashboard.actions.review')
+                                : learningState === 'in_progress'
+                                  ? t(
+                                      'learning:learnerDashboard.actions.continue'
+                                    )
+                                  : t(
+                                      'learning:learnerDashboard.actions.start'
+                                    )}
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            </>
+          )}
+        </TabsContent>
+      </Tabs>
 
       {/* The list is server-paged at DEFAULT_PAGE_SIZE; without this a
           learner with more courses than one page could never reach them. */}

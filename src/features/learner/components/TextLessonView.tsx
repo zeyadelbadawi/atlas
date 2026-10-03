@@ -98,7 +98,11 @@ export function TextLessonView({
       {safeHtml ? (
         <div
           ref={bodyRef}
-          className="prose prose-sm max-w-none text-foreground dark:prose-invert"
+          // Coloured from the surrounding tokens, never `dark:prose-invert`:
+          // on an Academy site the surface stays light even when the
+          // visitor's dashboard is dark, and inverting turned the lesson
+          // into light text on a light page (Task A).
+          className="prose prose-sm max-w-none text-foreground prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground prose-blockquote:text-muted-foreground prose-a:text-primary prose-code:text-foreground"
           // Sanitised above. See `lesson-html.utils.ts` — the allowlist is
           // the security boundary, and it fails closed.
           dangerouslySetInnerHTML={{ __html: safeHtml }}
