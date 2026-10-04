@@ -17,7 +17,10 @@ import { getWebsiteTheme, listWebsiteThemes } from './website-theme.registry';
 
 describe('theme selection after the Themes 2–5 retirement', () => {
   it('offers Theme 1 (the default) and Atelier, never a retired theme', () => {
-    expect(SELECTABLE_WEBSITE_THEME_KEYS).toEqual(['modern-education', 'atelier']);
+    expect(SELECTABLE_WEBSITE_THEME_KEYS).toEqual([
+      'modern-education',
+      'atelier',
+    ]);
     expect(listWebsiteThemes().map((theme) => theme.key)).toEqual([
       'modern-education',
       'atelier',
