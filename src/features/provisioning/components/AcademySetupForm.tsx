@@ -35,11 +35,7 @@ import {
   type SetupBrandingChoice,
 } from '@features/website';
 import { DEFAULT_WEBSITE_THEME_KEY } from '@types';
-import type {
-  ProvisioningRequest,
-  WebsiteThemeDefinition,
-  WebsiteThemeKey,
-} from '@types';
+import type { ProvisioningRequest, WebsiteThemeKey } from '@types';
 import { isApiError } from '@api';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import {
@@ -65,6 +61,7 @@ import {
 } from '../schemas/provisioning.schemas';
 import { generateProvisioningIdempotencyKey } from '../utils/idempotency.utils';
 import { pendingLogoStore } from '../logo/pending-logo';
+import { SetupThemePicker } from './SetupThemePicker';
 
 export interface AcademySetupFormProps {
   readonly organizationId: string;
@@ -150,9 +147,13 @@ export function AcademySetupForm({
 
   // W2 — the latest "Logo & colours" choice; its palette travels with the
   // request, its logo file is attached once the Academy exists.
+  // The same choice also colours the theme picker's live previews.
   const branding = useRef<SetupBrandingChoice | null>(null);
+  const [brandingChoice, setBrandingChoice] =
+    useState<SetupBrandingChoice | null>(null);
   const onBrandingChange = useCallback((value: SetupBrandingChoice | null) => {
     branding.current = value;
+    setBrandingChoice(value);
   }, []);
 
   // Another tab (or an earlier submit with a different form) already set
@@ -300,7 +301,8 @@ export function AcademySetupForm({
         {/* Phase P19 — real theme selection during onboarding. W2: a
             single-choice radio group with the platform default
             pre-selected — a theme can be changed, never cleared, so the
-            website is always built with starter pages. */}
+            website is always built with starter pages. Theme 2 — each
+            option is a live preview of the real site in that theme. */}
         <FormField
           control={form.control}
           name="selectedThemeKey"
@@ -310,66 +312,16 @@ export function AcademySetupForm({
               <FormDescription>
                 {t('provisioning:start.themeHelp')}
               </FormDescription>
-              <div
-                role="radiogroup"
-                aria-label={t('provisioning:start.themeLabel')}
-                className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
-              >
-                {themes.map((theme: WebsiteThemeDefinition) => {
-                  const isSelected = selectedThemeKey === theme.key;
-                  return (
-                    <button
-                      key={theme.key}
-                      type="button"
-                      role="radio"
-                      aria-checked={isSelected}
-                      onClick={() =>
-                        form.setValue('selectedThemeKey', theme.key, {
-                          shouldDirty: !isSelected,
-                        })
-                      }
-                      className={cn(
-                        'flex flex-col gap-3 rounded-lg border p-4 text-start transition-colors',
-                        isSelected
-                          ? 'border-2 border-primary'
-                          : 'border-border hover:border-primary/50'
-                      )}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="flex gap-1.5">
-                          {[
-                            theme.tokens.defaultPrimary,
-                            theme.tokens.defaultSecondary,
-                            theme.tokens.defaultAccent,
-                          ].map((hsl, index) => (
-                            <span
-                              key={index}
-                              className="size-4 rounded-full border border-border"
-                              style={{ backgroundColor: `hsl(${hsl})` }}
-                              aria-hidden
-                            />
-                          ))}
-                        </span>
-                        {isSelected ? (
-                          <Check
-                            className="size-4 text-primary"
-                            strokeWidth={2}
-                            aria-hidden
-                          />
-                        ) : null}
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium">
-                          {t(theme.nameKey)}
-                        </p>
-                        <p className="mt-0.5 text-xs text-muted-foreground">
-                          {t(theme.descriptionKey)}
-                        </p>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+              <SetupThemePicker
+                themes={themes}
+                value={selectedThemeKey}
+                onChange={(key) =>
+                  form.setValue('selectedThemeKey', key, { shouldDirty: true })
+                }
+                label={t('provisioning:start.themeLabel')}
+                academyName={academyNameValue}
+                branding={brandingChoice}
+              />
             </FormItem>
           )}
         />

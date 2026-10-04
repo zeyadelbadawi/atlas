@@ -1058,6 +1058,35 @@ the point at which type correctness actually matters. Adding a 12th
 section type means adding one metadata entry, one config type, one Zod
 schema, and one field-descriptor list — never touching the editor itself.
 
+### Content limits (section copy)
+
+Character caps per language (`en` and `ar` each) on the shared section
+contract — every theme, because a section's config survives a theme switch.
+The numbers are named constants in both repos' `website.constants.ts`
+("Section content limits"); the shared parity cases prove the frontend and
+backend schemas agree at every boundary.
+
+| Field | Limit |
+| --- | --- |
+| hero eyebrow | 60 |
+| hero title, and its emphasised `highlight` | 70 |
+| hero subtitle | 140 |
+| hero description | 280 |
+| hero highlight chip label | 40 |
+| every section CTA label | 40 |
+| steps title / description | 80 / 240 |
+| step title / description | 60 / 240 |
+| statistics title / statistic label | 80 / 40 |
+| other short text / long text | 100 / 2000 |
+
+Counted as zod counts (`string.length`; an Arabic diacritic is a character).
+Enforced on every write — the Section Editor's Apply (live counter, field
+errors) and every page write on the API (path-level violations such as
+`0.config.title.en`). Reads never re-validate: content saved under an older,
+looser limit keeps rendering, the editor flags it ("Needs shortening") and
+the page can be saved once it is shortened. Header CTA and navigation/footer
+labels are site settings and keep the 100-character limit.
+
 ### The Course-domain-reuse decision
 
 `FeaturedCoursesSection`, `InstructorsSection`, and

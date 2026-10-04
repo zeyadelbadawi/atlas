@@ -14,6 +14,8 @@ export const THEMES = [
   'corporate-learning',
   'minimal-editorial',
   'bold-creative',
+  // Theme 2 — Atelier (Reports/THEME_2_ATELIER_PLAN.md).
+  'atelier',
 ] as const;
 export type ThemeKey = (typeof THEMES)[number];
 
@@ -131,11 +133,43 @@ export const THEME1_BRAND_PAGES: readonly {
   { page: { name: 'coming-soon', path: '/' }, state: 'unpublished' },
 ];
 
+/**
+ * Atelier (Theme 2) beyond `THEMED_PAGES`: its rich inner pages and 404,
+ * its own Coming Soon, and the identity matrix on its Home.
+ */
+export const ATELIER_PAGES: readonly BaselinePage[] = [
+  ABOUT,
+  FAQS,
+  CONTACT,
+  NOT_FOUND,
+];
+export const ATELIER_COMING_SOON = THEME1_COMING_SOON;
+
+/**
+ * The motion preference the Theme 1 and Themes 2–5 snapshot cases were
+ * recorded under. Until Oct 2026 the config's `use.reducedMotion` never
+ * reached the browser, so those baselines were captured with motion on
+ * (below-the-fold reveals still pending). They keep that condition so the
+ * committed baselines stay comparable; Atelier cases run with real reduced
+ * motion. `THEME_BASELINE_LEGACY_MOTION=reduce` runs the legacy cases under
+ * real reduced motion to investigate the difference (never to re-record
+ * silently).
+ */
+export const LEGACY_REDUCED_MOTION: 'reduce' | 'no-preference' =
+  process.env.THEME_BASELINE_LEGACY_MOTION === 'reduce'
+    ? 'reduce'
+    : 'no-preference';
+
 export function fixtureSlug(
   theme: ThemeKey,
   state: DataState,
   palette = 'default',
-  composition?: 'c1' | 'migrated'
+  composition?:
+    | 'c1'
+    | 'migrated'
+    // Atelier content-limit compositions (fixture-server.mjs): `long`,
+    // `legacy`, `edge`, `std` with optional `-s<n>`, `-img`/`-noimg`, `-k<n>`.
+    | `${'long' | 'legacy' | 'edge' | 'std'}${string}`
 ): string {
   if (composition) return `fx--${theme}--${state}--${palette}--${composition}`;
   return palette === 'default'

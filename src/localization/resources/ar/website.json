@@ -454,7 +454,7 @@
   },
   "theme": {
     "retiredTitle": "لم يعد مظهر {{theme}} متاحًا",
-    "retiredDescription": "يواصل موقعك استخدام مظهر {{theme}} إلى أن تختار مظهرًا آخر. المظهر المتاح الآن هو «التعليم الحديث». لا يمكن التراجع عن التبديل إليه، لأنه لن يكون بالإمكان اختيار {{theme}} مجددًا.",
+    "retiredDescription": "يواصل موقعك استخدام مظهر {{theme}} إلى أن تختار مظهرًا آخر. لا يمكن التراجع عن التبديل إلى أحد المظاهر المتاحة الآن، لأنه لن يكون بالإمكان اختيار {{theme}} مجددًا.",
     "switchConfirmTitle": "التبديل إلى مظهر {{theme}}؟",
     "switchConfirmDescription": "سيغيّر هذا المسودة إلى مظهر {{theme}}. لم يعد مظهر {{current}} متاحًا، لذلك لن تتمكن من العودة إليه. لن يتغير موقعك المنشور حتى تنشر التغييرات.",
     "switchConfirmAction": "تبديل المظهر",
@@ -482,6 +482,10 @@
     "boldCreative": {
       "name": "الإبداعي الجريء",
       "description": "نابض بالحياة ومعبّر، للأكاديميات التي تريد أن تتميّز."
+    },
+    "atelier": {
+      "name": "أتيليه",
+      "description": "موقع تحريري بإخراج فني: خط عرض بأسلوب كلاسيكي، وخلفية ورقية دافئة، وفصول مرقّمة، وخيط بلون علامتك يُرسم على طول الصفحة أثناء التمرير."
     }
   },
   "brand": {
@@ -593,7 +597,6 @@
     "deleteConfirmTitle": "هل تريد حذف هذا القسم؟",
     "deleteConfirmDescription": "سيتم إزالة هذا القسم ومحتواه من الصفحة. لا يمكن التراجع عن هذا الإجراء.",
     "noSections": "لا توجد أقسام بعد",
-    "invalidConfig": "بعض القيم تحتاج إلى تصحيح قبل أن يمكن حفظ هذا.",
     "livePreview": "معاينة مباشرة",
     "moveUp": "تحريك للأعلى",
     "moveDown": "تحريك للأسفل",
@@ -645,7 +648,40 @@
     "pageHasUnpublishedChanges": "لهذه الصفحة تغييرات محفوظة لا يراها الزوار بعد. انشر الصفحة لجعلها مباشرة.",
     "pageHasLocalChanges": "لديك تغييرات غير محفوظة على هذه الصفحة. «نشر الصفحة» يحفظها ويجعلها مباشرة؛ و«حفظ كمسودة» يبقيها مخفية عن الزوار.",
     "pageUpToDate": "يرى الزوار النسخة المحفوظة من هذه الصفحة.",
-    "publishedSlugTaken": "ما زالت صفحة مباشرة أخرى («{{title}}») تستخدم العنوان ‎/{{slug}}‎. انشر تلك الصفحة أولًا، أو انشر الموقع كاملًا."
+    "publishedSlugTaken": "ما زالت صفحة مباشرة أخرى («{{title}}») تستخدم العنوان ‎/{{slug}}‎. انشر تلك الصفحة أولًا، أو انشر الموقع كاملًا.",
+    "characterCount": "{{count}} / {{max}}",
+    "characterCountLabel": "الأحرف المستخدمة: {{count}} من {{max}}",
+    "shortenTo_zero": "اختصر النص",
+    "shortenTo_one": "اختصر النص إلى حرف واحد أو أقل",
+    "shortenTo_two": "اختصر النص إلى حرفين أو أقل",
+    "shortenTo_few": "اختصر النص إلى {{count}} أحرف أو أقل",
+    "shortenTo_many": "اختصر النص إلى {{count}} حرفًا أو أقل",
+    "shortenTo_other": "اختصر النص إلى {{count}} حرف أو أقل",
+    "shortenText": "اختصر هذا النص",
+    "fieldInvalid": "تحقّق من هذه القيمة",
+    "sectionSettings": "إعدادات القسم",
+    "fieldIssuesSummary_zero": "لا توجد مشكلات.",
+    "fieldIssuesSummary_one": "أصلِح مشكلة واحدة قبل تطبيق هذه التغييرات:",
+    "fieldIssuesSummary_two": "أصلِح مشكلتين قبل تطبيق هذه التغييرات:",
+    "fieldIssuesSummary_few": "أصلِح {{count}} مشكلات قبل تطبيق هذه التغييرات:",
+    "fieldIssuesSummary_many": "أصلِح {{count}} مشكلةً قبل تطبيق هذه التغييرات:",
+    "fieldIssuesSummary_other": "أصلِح {{count}} مشكلة قبل تطبيق هذه التغييرات:",
+    "overLimitSummary_zero": "لا توجد نصوص أطول من المسموح.",
+    "overLimitSummary_one": "نص واحد أطول مما يسمح به هذا القسم الآن. لا يزال يظهر على موقعك، لكن يجب اختصاره قبل أن يمكن حفظ هذه الصفحة:",
+    "overLimitSummary_two": "نصّان أطول مما يسمح به هذا القسم الآن. لا يزالان يظهران على موقعك، لكن يجب اختصارهما قبل أن يمكن حفظ هذه الصفحة:",
+    "overLimitSummary_few": "{{count}} نصوص أطول مما يسمح به هذا القسم الآن. لا تزال تظهر على موقعك، لكن يجب اختصارها قبل أن يمكن حفظ هذه الصفحة:",
+    "overLimitSummary_many": "{{count}} نصًّا أطول مما يسمح به هذا القسم الآن. لا تزال تظهر على موقعك، لكن يجب اختصارها قبل أن يمكن حفظ هذه الصفحة:",
+    "overLimitSummary_other": "{{count}} نص أطول مما يسمح به هذا القسم الآن. لا تزال تظهر على موقعك، لكن يجب اختصارها قبل أن يمكن حفظ هذه الصفحة:",
+    "needsShortening": "يحتاج إلى اختصار",
+    "needsShorteningHint": "بعض النصوص في هذا القسم أطول من الحد المسموح به.",
+    "pageOverLimitTitle": "اختصر النصوص قبل الحفظ",
+    "pageOverLimit_zero": "لا توجد أقسام تحتوي على نصوص أطول من الحدود الحالية.",
+    "pageOverLimit_one": "يحتوي قسم واحد على نص أطول من الحدود الحالية. لا يزال يظهر على موقعك، لكن الصفحة كلها تُفحص عند كل حفظ، لذا لا يمكن حفظ هذه الصفحة حتى يُختصر ذلك النص.",
+    "pageOverLimit_two": "يحتوي قسمان على نصوص أطول من الحدود الحالية. لا تزال تظهر على موقعك، لكن الصفحة كلها تُفحص عند كل حفظ، لذا لا يمكن حفظ هذه الصفحة حتى تُختصر تلك النصوص.",
+    "pageOverLimit_few": "تحتوي {{count}} أقسام على نصوص أطول من الحدود الحالية. لا تزال تظهر على موقعك، لكن الصفحة كلها تُفحص عند كل حفظ، لذا لا يمكن حفظ هذه الصفحة حتى تُختصر تلك النصوص.",
+    "pageOverLimit_many": "يحتوي {{count}} قسمًا على نصوص أطول من الحدود الحالية. لا تزال تظهر على موقعك، لكن الصفحة كلها تُفحص عند كل حفظ، لذا لا يمكن حفظ هذه الصفحة حتى تُختصر تلك النصوص.",
+    "pageOverLimit_other": "يحتوي {{count}} قسم على نصوص أطول من الحدود الحالية. لا تزال تظهر على موقعك، لكن الصفحة كلها تُفحص عند كل حفظ، لذا لا يمكن حفظ هذه الصفحة حتى تُختصر تلك النصوص.",
+    "openSectionToShorten": "تحرير {{section}}"
   },
   "preview": {
     "title": "المعاينة",
@@ -1403,5 +1439,165 @@
     "unsavedHint": "لديك تغييرات غير محفوظة.",
     "savedHint": "كل شيء محفوظ ومنشور.",
     "nameRequired": "أدخل اسم أكاديميتك."
+  },
+  "atelier": {
+    "home": {
+      "liveData": {
+        "previewUnavailable": "تعذّر تحميل البيانات المباشرة، لذلك لا يرى الزوار هذا القسم حاليًا."
+      },
+      "hero": {
+        "searchLabel": "ابحث في الدورات",
+        "searchPlaceholder": "ماذا تودّ أن تتعلّم؟",
+        "searchSubmit": "بحث"
+      },
+      "categories": {
+        "viewAll": "تصفّح كل الدورات",
+        "courseCount_zero": "لا دورات",
+        "courseCount_one": "دورة واحدة",
+        "courseCount_two": "دورتان",
+        "courseCount_few": "{{formatted}} دورات",
+        "courseCount_many": "{{formatted}} دورة",
+        "courseCount_other": "{{formatted}} دورة"
+      },
+      "courses": {
+        "viewAll": "عرض كل الدورات",
+        "listLabel": "دورات مختارة",
+        "taughtBy": "مع {{name}}",
+        "errorTitle": "تعذّر تحميل الدورات الآن",
+        "errorDescription": "يُرجى المحاولة مجددًا بعد قليل.",
+        "retry": "أعد المحاولة",
+        "launchingTitle": "دوراتنا الأولى قيد الإعداد",
+        "launchingDescription": "نُعدّ دوراتنا الأولى الآن. تواصل معنا وسنُعلمك فور فتح باب التسجيل.",
+        "launchingAction": "تواصل معنا"
+      },
+      "instructors": {
+        "listLabel": "المدرّبون",
+        "courseCount_zero": "لا دورات",
+        "courseCount_one": "دورة واحدة",
+        "courseCount_two": "دورتان",
+        "courseCount_few": "{{formatted}} دورات",
+        "courseCount_many": "{{formatted}} دورة",
+        "courseCount_other": "{{formatted}} دورة",
+        "previewHidden": "مخفي في موقعك العام إلى أن يكون لدورة منشورة واحدة على الأقل مدرّب.",
+        "sampleName": "اسم المدرّب",
+        "sampleCourses": "دوراته المنشورة"
+      },
+      "statistics": {
+        "label": "بالأرقام",
+        "previewHidden": "مخفي في موقعك العام إلى أن يتجاوز رقمان على الأقل الصفر.",
+        "sampleValue": "رقم حيّ يظهر عندما يتجاوز الصفر"
+      },
+      "testimonials": {
+        "label": "آراء المتعلّمين",
+        "roleDescription": "اقتباسات",
+        "position": "الرأي {{position}} من {{total}}",
+        "previous": "الرأي السابق",
+        "next": "الرأي التالي",
+        "rating": "التقييم {{rating}} من ٥"
+      },
+      "faq": {
+        "listTitle": "جميع الأسئلة",
+        "resultCount_zero": "لا توجد أسئلة مطابقة",
+        "resultCount_one": "سؤال واحد مطابق",
+        "resultCount_two": "سؤالان مطابقان",
+        "resultCount_few": "{{count}} أسئلة مطابقة",
+        "resultCount_many": "{{count}} سؤالًا مطابقًا",
+        "resultCount_other": "{{count}} سؤال مطابق",
+        "noMatchTitle": "لا توجد أسئلة تطابق بحثك",
+        "noMatchDescription": "جرّب كلمات أخرى، أو تواصل معنا وسنساعدك."
+      },
+      "gallery": {
+        "label": "معرض الصور"
+      }
+    },
+    "chrome": {
+      "closeMenu": "إغلاق القائمة",
+      "social": "تابعونا"
+    },
+    "pages": {
+      "trail": {
+        "label": "مسار التنقل",
+        "home": "الرئيسية"
+      },
+      "search": {
+        "placeholder": "ماذا تودّ أن تتعلّم؟",
+        "submit": "بحث",
+        "faqLabel": "ابحث في الأسئلة",
+        "faqPlaceholder": "اكتب كلمة من سؤالك"
+      },
+      "summary": {
+        "courses_zero": "{{formatted}} دورة",
+        "courses_one": "دورة واحدة",
+        "courses_two": "دورتان",
+        "courses_few": "{{formatted}} دورات",
+        "courses_many": "{{formatted}} دورة",
+        "courses_other": "{{formatted}} دورة",
+        "catalog_zero": "{{courses}} دورة في {{categories}} تصنيفات",
+        "catalog_one": "دورة واحدة في {{categories}} تصنيفات",
+        "catalog_two": "دورتان في {{categories}} تصنيفات",
+        "catalog_few": "{{courses}} دورات في {{categories}} تصنيفات",
+        "catalog_many": "{{courses}} دورة في {{categories}} تصنيفات",
+        "catalog_other": "{{courses}} دورة في {{categories}} تصنيفات"
+      },
+      "intro": {
+        "about": "الأشخاص والغاية والحِرفة التي تقف وراء دوراتنا.",
+        "courses": "كل الدورات التي نقدّمها، مجموعة في فهرس واحد.",
+        "faqs": "إجابات عن أكثر الأسئلة التي يطرحها المتعلّمون علينا.",
+        "contact": "لديك سؤال عن دورة أو عن التسجيل؟ راسلنا."
+      },
+      "catalog": {
+        "filters": "تنقيح الفهرس",
+        "categories": "التصنيفات",
+        "allCategories": "الكل",
+        "removeFilter": "إزالة عامل التصفية {{name}}",
+        "clearAll": "مسح الكل",
+        "loading": "جارٍ تحميل الدورات",
+        "errorTitle": "تعذّر تحميل الفهرس",
+        "errorDescription": "انقطع الاتصال لسبب ما. يُرجى المحاولة مرة أخرى.",
+        "retry": "إعادة المحاولة",
+        "launchingTitle": "نُعدّ دوراتنا الأولى",
+        "launchingDescription": "ما زلنا نكتب فهرسنا. عُد قريبًا، أو تواصل معنا لنخبرك حين يُفتح باب التسجيل.",
+        "pagination": "صفحات الدورات",
+        "previousPage": "الصفحة السابقة",
+        "nextPage": "الصفحة التالية",
+        "page": "الصفحة {{page}}",
+        "by": "تقديم {{name}}"
+      },
+      "contact": {
+        "channels": "طرق التواصل",
+        "emailLabel": "البريد الإلكتروني",
+        "phoneLabel": "الهاتف",
+        "addressLabel": "العنوان",
+        "formTitle": "راسلنا",
+        "formNote": "جميع الحقول مطلوبة.",
+        "successTitle": "رسالتك في طريقها إلينا",
+        "sendAnother": "كتابة رسالة أخرى"
+      },
+      "courseDetails": {
+        "breadcrumb": "مسار التنقل",
+        "allCourses": "كل الدورات",
+        "taughtBy": "يقدّمها",
+        "purchase": "التسجيل في هذه الدورة",
+        "includes": "تتضمّن هذه الدورة",
+        "hasPreview": "دروس معاينة مجانية",
+        "contents": "المحتويات",
+        "errorTitle": "تعذّر تحميل هذه الدورة",
+        "errorDescription": "حدث خطأ أثناء تحميل الدورة. يُرجى المحاولة مرة أخرى.",
+        "retry": "إعادة المحاولة"
+      },
+      "notFound": {
+        "eyebrow": "خطأ ٤٠٤",
+        "title": "هذه الصفحة ليست في فهرسنا",
+        "description": "ربما نُقلت، أو ربما أصبح الرابط قديمًا. هذه أماكن جيدة لمتابعة القراءة.",
+        "home": "العودة إلى الرئيسية",
+        "courses": "تصفّح الدورات",
+        "contact": "تواصل معنا"
+      },
+      "comingSoon": {
+        "eyebrow": "نفتتح قريبًا",
+        "title": "نُعِدّ موقع {{name}}",
+        "description": "يجري إعداد موقعنا الآن. يُرجى العودة قريبًا."
+      }
+    }
   }
 }

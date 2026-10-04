@@ -16,10 +16,12 @@ import type { SectionType, WebsiteThemeKey } from '@types';
 import { BASE_RENDERERS } from './base-renderers';
 import { createBasePack } from './base-pack';
 import { MODERN_EDUCATION_PACK } from '../modern-education/modern-education.pack';
+import { ATELIER_PACK } from '../atelier/atelier.pack';
 import type { SectionRendererComponent, ThemePack } from './theme-pack.types';
 
 const registry: Record<WebsiteThemeKey, ThemePack> = {
   'modern-education': MODERN_EDUCATION_PACK,
+  atelier: ATELIER_PACK,
   'premium-academy': createBasePack('premium-academy'),
   'corporate-learning': createBasePack('corporate-learning'),
   'minimal-editorial': createBasePack('minimal-editorial'),

@@ -73,7 +73,10 @@ describe('Theme tab — retired themes (F-12)', () => {
   it('asks for confirmation; Cancel writes nothing', async () => {
     const user = userEvent.setup({ delay: null });
     renderTab('bold-creative');
-    await user.click(screen.getByRole('button', { name: 'Select theme' }));
+    // One card per selectable theme; each action names its theme.
+    await user.click(
+      screen.getByRole('button', { name: 'Select theme Modern Education' })
+    );
     const dialog = screen.getByRole('alertdialog');
     expect(
       within(dialog).getByText('Switch to Modern Education?')
@@ -91,7 +94,9 @@ describe('Theme tab — retired themes (F-12)', () => {
   it('switches the draft only after confirming', async () => {
     const user = userEvent.setup({ delay: null });
     renderTab('premium-academy');
-    await user.click(screen.getByRole('button', { name: 'Select theme' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Select theme Modern Education' })
+    );
     await user.click(
       within(screen.getByRole('alertdialog')).getByRole('button', {
         name: 'Switch theme',

@@ -13,8 +13,18 @@
  * "validate at the boundary, stay loose in a genuinely generic renderer"
  * pattern used nowhere else in Atlas because nowhere else needs a
  * runtime-driven form; it is not a general license for `any`.
+ *
+ * FIELD-LEVEL ERRORS. A refused Apply marks each offending field (per
+ * item, per language) from the zod issues' paths, focuses the first one
+ * and keeps a short summary at the top — never a single generic "some
+ * values need correcting". Text over a content limit is shown from the
+ * moment the section opens, untruncated: limits tightened after some
+ * content was written (`website.constants.ts`), so a section can arrive
+ * holding text the next save will refuse. The same path-level messages
+ * cover what the API refused on the last page save (`serverIssues`), in
+ * case the server found something this check did not.
  */
-import { useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowDown, ArrowUp, BadgeCheck, Plus, Trash2, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -32,7 +42,10 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { WebsiteImageField } from './WebsiteImageField';
 import { resolveSectionImagePurpose } from '../constants/image-recommendations.constants';
-import { LocalizedTextField } from './LocalizedTextField';
+import {
+  LocalizedTextField,
+  type LocalizedFieldErrors,
+} from './LocalizedTextField';
 import { PublicWebsiteLocaleProvider } from '../renderer/PublicWebsiteLocaleContext';
 import {
   PUBLIC_WEBSITE_LOCALES,
@@ -44,6 +57,12 @@ import { useWebsiteFaqEntries, useWebsiteTestimonialEntries } from '../hooks';
 import { SECTION_FIELD_SCHEMAS } from '../sections/section-fields.registry';
 import { getSectionConfigSchema } from '../schemas/website-section.schemas';
 import {
+  collectSectionIssues,
+  isOverLimitIssue,
+  type SectionContentIssue,
+} from '../schemas/section-content-issues';
+import {
+  MAX_CTA_LABEL_LENGTH,
   MAX_SECTION_ITEMS,
   MAX_SELECTED_COURSES,
 } from '../constants/website.constants';
@@ -53,7 +72,10 @@ import { getWebsiteTheme } from '../themes/website-theme.registry';
 import { EMPTY_LOCALIZED_TEXT } from '../utils/localized-text.utils';
 import { WebsiteThemeScope } from '../renderer/WebsiteThemeScope';
 import { SectionRenderer } from '../sections/SectionRenderer';
-import type { SectionFieldDescriptor } from '../sections/section-field.types';
+import type {
+  SectionFieldDescriptor,
+  SectionFieldSchema,
+} from '../sections/section-field.types';
 import { DEFAULT_RESPONSIVE_VISIBILITY } from '@types';
 import type {
   LanguageCode,
@@ -84,6 +106,100 @@ export interface SectionConfigFormProps<TType extends SectionType> {
   readonly onSave: (config: SectionConfigMap[TType]) => void;
   readonly onCancel: () => void;
   readonly isSaving: boolean;
+  /** What the API refused in this section on the last page save (config-relative paths); shown until the section is edited. */
+  readonly serverIssues?: readonly SectionContentIssue[];
+}
+
+/**
+ * The translated message for one field path, or `undefined` when it has
+ * none. `maxLength` is the field's own limit: a field that has one reports
+ * its over-limit text itself (live counter), so that issue is skipped here.
+ */
+type FieldErrorLookup = (
+  path: string,
+  labelKey: string,
+  maxLength?: number
+) => string | undefined;
+
+/** Both languages' messages for a localized field at `path`. */
+function localizedErrors(
+  errorFor: FieldErrorLookup,
+  path: string,
+  labelKey: string,
+  maxLength?: number
+): LocalizedFieldErrors {
+  return {
+    en: errorFor(`${path}.en`, labelKey, maxLength),
+    ar: errorFor(`${path}.ar`, labelKey, maxLength),
+  };
+}
+
+/** Whether a descriptor is offered under this theme (see `SectionFieldDescriptor.themes`). */
+function isOfferedFor(
+  descriptor: SectionFieldDescriptor,
+  themeKey: WebsiteConfiguration['themeKey']
+): boolean {
+  return !descriptor.themes || descriptor.themes.includes(themeKey);
+}
+
+/**
+ * Which field an issue path belongs to — the label a person reads in the
+ * summary and the limit an over-length message names.
+ */
+function resolveIssueField(
+  schema: SectionFieldSchema,
+  path: string
+): {
+  readonly labelKeys: readonly string[];
+  readonly itemNumber?: number;
+  readonly language?: 'en' | 'ar';
+  readonly maxLength?: number;
+} {
+  const parts = path.split('.');
+  const last = parts[parts.length - 1];
+  const language =
+    parts.length > 1 && (last === 'en' || last === 'ar') ? last : undefined;
+  if (language) parts.pop();
+  const [head, second, third] = parts;
+
+  const field = schema.fields.find((candidate) => candidate.key === head);
+  if (field) {
+    if (field.kind === 'cta') {
+      return {
+        labelKeys:
+          second === 'label'
+            ? [field.labelKey, 'website:fields.ctaLabelPlaceholder']
+            : [field.labelKey],
+        language,
+        maxLength: second === 'label' ? MAX_CTA_LABEL_LENGTH : undefined,
+      };
+    }
+    return {
+      labelKeys: [field.labelKey],
+      language,
+      maxLength: 'maxLength' in field ? field.maxLength : undefined,
+    };
+  }
+
+  const group = schema.repeatable;
+  if (group && head === group.key) {
+    const index = Number(second);
+    if (!Number.isInteger(index)) return { labelKeys: [group.labelKey] };
+    const itemField = group.itemFields.find(
+      (candidate) => candidate.key === third
+    );
+    return {
+      labelKeys: itemField
+        ? [group.itemLabelKey, itemField.labelKey]
+        : [group.itemLabelKey],
+      itemNumber: index + 1,
+      language,
+      maxLength:
+        itemField && 'maxLength' in itemField ? itemField.maxLength : undefined,
+    };
+  }
+
+  return { labelKeys: ['website:editor.sectionSettings'], language };
 }
 
 interface LibraryOption {
@@ -484,19 +600,26 @@ function CtaFieldEditor({
   value,
   onChange,
   labelKey,
+  path,
+  errorFor,
   pages,
   academyId,
 }: {
   readonly value: Partial<WebsiteCta> | undefined;
   readonly onChange: (next: Partial<WebsiteCta> | undefined) => void;
   readonly labelKey: string;
+  /** The CTA's key in the section config, e.g. `cta` or `secondaryCta`. */
+  readonly path: string;
+  readonly errorFor: FieldErrorLookup;
   readonly pages: readonly WebsitePage[];
   readonly academyId: string;
 }): JSX.Element {
   const { t } = useTranslation();
   const linkType = inferLinkType(value);
   const urlValue = value?.url ?? '';
-  const urlError = urlValue && !isSafeExternalUrl(urlValue);
+  const urlError =
+    (urlValue && !isSafeExternalUrl(urlValue)) ||
+    Boolean(errorFor(`${path}.url`, labelKey));
 
   const { data: coursesData } = useCourses(academyId, {
     query: {
@@ -520,12 +643,20 @@ function CtaFieldEditor({
   return (
     <div className="space-y-3 rounded-md border border-border p-3">
       <p className="text-sm font-medium text-foreground">{t(labelKey)}</p>
+      {/* Every section CTA shares one label limit (`websiteCtaSchema`). */}
       <LocalizedTextField
-        id={`cta-label-${labelKey}`}
+        id={`cta-label-${path}`}
         labelKey="website:fields.ctaLabelPlaceholder"
         value={value?.label as Partial<LocalizedText> | undefined}
         onChange={(label) => onChange({ ...value, label })}
         required
+        maxLength={MAX_CTA_LABEL_LENGTH}
+        errors={localizedErrors(
+          errorFor,
+          `${path}.label`,
+          'website:fields.ctaLabelPlaceholder',
+          MAX_CTA_LABEL_LENGTH
+        )}
       />
 
       <div className="space-y-1.5">
@@ -600,6 +731,8 @@ function CtaFieldEditor({
           <Input
             dir="ltr"
             placeholder="https://example.com"
+            aria-invalid={urlError || undefined}
+            data-field-error={urlError || undefined}
             value={urlValue}
             onChange={(event) =>
               onChange({
@@ -624,20 +757,24 @@ function CtaFieldEditor({
 
 function ScalarField({
   descriptor,
+  path,
+  errorFor,
   value,
   onChange,
   academyId,
   sectionType,
 }: {
   readonly descriptor: SectionFieldDescriptor;
+  /** Where the value lives in the section config, e.g. `title` or `items.2.title`. */
+  readonly path: string;
+  readonly errorFor: FieldErrorLookup;
   readonly value: unknown;
   readonly onChange: (value: unknown) => void;
   readonly academyId: string;
   /** Which section this field belongs to — decides the image recommendation. */
   readonly sectionType: SectionType;
 }): JSX.Element {
-  const { t } = useTranslation();
-  const id = `section-field-${descriptor.key}`;
+  const id = `section-field-${path.replace(/\./g, '-')}`;
 
   if (
     (descriptor.kind === 'text' || descriptor.kind === 'longText') &&
@@ -650,10 +787,73 @@ function ScalarField({
         value={value as Partial<LocalizedText> | undefined}
         onChange={onChange}
         multiline={descriptor.kind === 'longText'}
+        maxLength={descriptor.maxLength}
+        errors={localizedErrors(
+          errorFor,
+          path,
+          descriptor.labelKey,
+          descriptor.maxLength
+        )}
       />
     );
   }
 
+  const error = errorFor(path, descriptor.labelKey);
+  const errorId = `${id}-message`;
+  return (
+    <div className="space-y-1">
+      <ScalarControl
+        descriptor={descriptor}
+        id={id}
+        value={value}
+        onChange={onChange}
+        academyId={academyId}
+        sectionType={sectionType}
+        invalidProps={
+          error
+            ? {
+                'aria-invalid': true,
+                'aria-describedby': errorId,
+                'data-field-error': true,
+              }
+            : {}
+        }
+      />
+      {error ? (
+        <p id={errorId} className="text-xs text-destructive">
+          {error}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+/** What marks a plain control invalid — spread onto the focusable element. */
+interface InvalidControlProps {
+  readonly 'aria-invalid'?: true;
+  readonly 'aria-describedby'?: string;
+  readonly 'data-field-error'?: true;
+}
+
+/** The input for one non-localized field (`ScalarField` adds its error message). */
+function ScalarControl({
+  descriptor,
+  id,
+  value,
+  onChange,
+  academyId,
+  sectionType,
+  invalidProps,
+}: {
+  readonly descriptor: SectionFieldDescriptor;
+  readonly id: string;
+  readonly value: unknown;
+  readonly onChange: (value: unknown) => void;
+  readonly academyId: string;
+  readonly sectionType: SectionType;
+  readonly invalidProps: InvalidControlProps;
+}): JSX.Element {
+  const { t } = useTranslation();
   switch (descriptor.kind) {
     case 'longText':
       return (
@@ -664,6 +864,7 @@ function ScalarField({
             rows={3}
             value={(value as string) ?? ''}
             onChange={(e) => onChange(e.target.value)}
+            {...invalidProps}
           />
         </div>
       );
@@ -673,6 +874,7 @@ function ScalarField({
           <Checkbox
             checked={!!value}
             onCheckedChange={(checked) => onChange(checked === true)}
+            {...invalidProps}
           />
           {t(descriptor.labelKey)}
         </label>
@@ -696,6 +898,7 @@ function ScalarField({
                   : Number(e.target.value)
               )
             }
+            {...invalidProps}
           />
         </div>
       );
@@ -704,7 +907,7 @@ function ScalarField({
         <div className="space-y-1.5">
           <Label>{t(descriptor.labelKey)}</Label>
           <Select value={(value as string) ?? ''} onValueChange={onChange}>
-            <SelectTrigger>
+            <SelectTrigger {...invalidProps}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -719,17 +922,24 @@ function ScalarField({
       );
     case 'image':
       return (
-        <WebsiteImageField
-          id={id}
-          labelKey={descriptor.labelKey}
-          value={value as string | undefined}
-          onChange={onChange}
-          academyId={academyId}
-          // Section fields are generically named (`image`, `avatar`), so the
-          // SECTION is what says whether this is a full-bleed hero band or a
-          // 64px round avatar — they want very different files.
-          purpose={resolveSectionImagePurpose(sectionType, descriptor.key)}
-        />
+        // The picker has several controls; the wrapper is what an error
+        // focuses, so it takes focus programmatically only.
+        <div
+          tabIndex={invalidProps['data-field-error'] ? -1 : undefined}
+          {...invalidProps}
+        >
+          <WebsiteImageField
+            id={id}
+            labelKey={descriptor.labelKey}
+            value={value as string | undefined}
+            onChange={onChange}
+            academyId={academyId}
+            // Section fields are generically named (`image`, `avatar`), so the
+            // SECTION is what says whether this is a full-bleed hero band or a
+            // 64px round avatar — they want very different files.
+            purpose={resolveSectionImagePurpose(sectionType, descriptor.key)}
+          />
+        </div>
       );
     case 'text':
     default:
@@ -740,6 +950,7 @@ function ScalarField({
             id={id}
             value={(value as string) ?? ''}
             onChange={(e) => onChange(e.target.value)}
+            {...invalidProps}
           />
         </div>
       );
@@ -755,13 +966,107 @@ export function SectionConfigForm<TType extends SectionType>({
   onSave,
   onCancel,
   isSaving,
+  serverIssues,
 }: SectionConfigFormProps<TType>): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const schema = SECTION_FIELD_SCHEMAS[type];
-  const [draft, setDraft] = useState<DraftValue>(
-    initialConfig as unknown as DraftValue
+  const initialDraft = initialConfig as unknown as DraftValue;
+  const [draft, setDraft] = useState<DraftValue>(initialDraft);
+  const fields = schema.fields.filter((field) =>
+    isOfferedFor(field, configuration.themeKey)
   );
-  const [error, setError] = useState<string>();
+  const itemFields =
+    schema.repeatable?.itemFields.filter((field) =>
+      isOfferedFor(field, configuration.themeKey)
+    ) ?? [];
+
+  /*
+   * Which problems are on screen. Over-limit text always is — from the
+   * moment the section opens, since it may predate the limit. Everything
+   * else (a required title still empty, an unsafe URL) appears once Apply
+   * has been tried, so a fresh section doesn't open covered in red. The
+   * API's issues from the last refused page save stay until the section
+   * is edited.
+   */
+  const [attempted, setAttempted] = useState(false);
+  const [focusRequest, setFocusRequest] = useState(0);
+  const formRef = useRef<HTMLDivElement>(null);
+  const summaryRef = useRef<HTMLDivElement>(null);
+  const issues = useMemo(() => {
+    const own = collectSectionIssues(type, draft).filter(
+      (issue) => attempted || isOverLimitIssue(issue)
+    );
+    if (draft !== initialDraft || !serverIssues?.length) return own;
+    const known = new Set(own.map((issue) => issue.path));
+    return [...own, ...serverIssues.filter((issue) => !known.has(issue.path))];
+  }, [type, draft, initialDraft, attempted, serverIssues]);
+
+  const messageFor = (
+    issue: SectionContentIssue,
+    labelKey: string,
+    max?: number
+  ) => {
+    const limit = issue.maximum ?? max;
+    if (isOverLimitIssue(issue)) {
+      return limit === undefined
+        ? t('website:editor.shortenText')
+        : t('website:editor.shortenTo', { count: limit });
+    }
+    return issue.messageKey.startsWith('validation:') &&
+      i18n.exists(issue.messageKey)
+      ? t(issue.messageKey, { field: t(labelKey) })
+      : t('website:editor.fieldInvalid');
+  };
+
+  const errorFor: FieldErrorLookup = (path, labelKey, maxLength) => {
+    const issue = issues.find((candidate) => candidate.path === path);
+    if (!issue) return undefined;
+    // A field with its own limit already says "shorten to N" under its
+    // counter for what this editor's check found (`maximum` is set); an
+    // over-limit only the API reported still needs saying here.
+    if (
+      maxLength !== undefined &&
+      isOverLimitIssue(issue) &&
+      issue.maximum !== undefined
+    ) {
+      return undefined;
+    }
+    return messageFor(issue, labelKey, maxLength);
+  };
+
+  const summary = issues.map((issue) => {
+    const field = resolveIssueField(schema, issue.path);
+    const [first, ...rest] = field.labelKeys.map((key) => t(key));
+    const name = [
+      field.itemNumber !== undefined ? `${first} ${field.itemNumber}` : first,
+      ...rest,
+      ...(field.language
+        ? [
+            t(
+              field.language === 'en'
+                ? 'website:editor.languageEnglish'
+                : 'website:editor.languageArabic'
+            ),
+          ]
+        : []),
+    ].join(' · ');
+    return {
+      key: issue.path,
+      text: `${name}: ${messageFor(issue, field.labelKeys[field.labelKeys.length - 1], field.maxLength)}`,
+    };
+  });
+
+  // After a refused Apply, take the author to the first field to fix.
+  useEffect(() => {
+    if (focusRequest === 0) return;
+    const target =
+      formRef.current?.querySelector<HTMLElement>('[data-field-error]') ??
+      summaryRef.current;
+    if (!target) return;
+    if ('scrollIntoView' in target) target.scrollIntoView({ block: 'center' });
+    target.focus({ preventScroll: true });
+  }, [focusRequest]);
+
   // Phase 6 — which language the live preview shows. Independent of the
   // admin's own dashboard chrome language (`i18n.language`) and of which
   // side of the editor fields the admin is currently typing into — a
@@ -800,7 +1105,7 @@ export function SectionConfigForm<TType extends SectionType>({
   const addItem = () => {
     if (!schema.repeatable) return;
     const blank: DraftValue = { id: crypto.randomUUID() };
-    for (const field of schema.repeatable.itemFields) {
+    for (const field of itemFields) {
       const isLocalized =
         (field.kind === 'text' || field.kind === 'longText') && field.localized;
       blank[field.key] =
@@ -851,21 +1156,48 @@ export function SectionConfigForm<TType extends SectionType>({
   const handleSave = () => {
     const result = getSectionConfigSchema(type).safeParse(draft);
     if (!result.success) {
-      setError('website:editor.invalidConfig');
+      setAttempted(true);
+      setFocusRequest((count) => count + 1);
       return;
     }
-    setError(undefined);
     onSave(result.data as SectionConfigMap[TType]);
   };
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
-      <div className="space-y-5">
-        {schema.fields.map((field) =>
+      <div ref={formRef} className="space-y-5">
+        {summary.length > 0 ? (
+          <div
+            ref={summaryRef}
+            tabIndex={-1}
+            role={attempted ? 'alert' : 'status'}
+            data-testid="section-form-issues"
+            className="space-y-1 rounded-md border border-destructive/50 bg-destructive/5 p-3 text-sm"
+          >
+            <p className="font-medium text-destructive">
+              {attempted
+                ? t('website:editor.fieldIssuesSummary', {
+                    count: summary.length,
+                  })
+                : t('website:editor.overLimitSummary', {
+                    count: summary.length,
+                  })}
+            </p>
+            <ul className="list-disc space-y-0.5 ps-5 text-xs text-foreground">
+              {summary.map((entry) => (
+                <li key={entry.key}>{entry.text}</li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+
+        {fields.map((field) =>
           field.kind === 'cta' ? (
             <CtaFieldEditor
               key={field.key}
               labelKey={field.labelKey}
+              path={field.key}
+              errorFor={errorFor}
               pages={pages}
               academyId={academyId}
               value={draft[field.key] as Partial<WebsiteCta> | undefined}
@@ -875,6 +1207,8 @@ export function SectionConfigForm<TType extends SectionType>({
             <ScalarField
               key={field.key}
               descriptor={field}
+              path={field.key}
+              errorFor={errorFor}
               value={draft[field.key]}
               onChange={(value) => setField(field.key, value)}
               academyId={academyId}
@@ -894,7 +1228,10 @@ export function SectionConfigForm<TType extends SectionType>({
                 size="sm"
                 variant="outline"
                 onClick={addItem}
-                disabled={items.length >= MAX_SECTION_ITEMS}
+                disabled={
+                  items.length >=
+                  (schema.repeatable.maxItems ?? MAX_SECTION_ITEMS)
+                }
               >
                 <Plus className="size-3.5" aria-hidden />
                 {t('website:editor.addItem')}
@@ -943,10 +1280,12 @@ export function SectionConfigForm<TType extends SectionType>({
                     <Trash2 className="size-4" aria-hidden />
                   </Button>
                 </div>
-                {schema.repeatable!.itemFields.map((field) => (
+                {itemFields.map((field) => (
                   <ScalarField
                     key={field.key}
                     descriptor={field}
+                    path={`${schema.repeatable!.key}.${index}.${field.key}`}
+                    errorFor={errorFor}
                     value={item[field.key]}
                     onChange={(value) => updateItem(index, field.key, value)}
                     academyId={academyId}
@@ -979,8 +1318,6 @@ export function SectionConfigForm<TType extends SectionType>({
             onChange={(ids) => setField('libraryEntryIds', ids)}
           />
         ) : null}
-
-        {error ? <p className="text-sm text-destructive">{t(error)}</p> : null}
 
         <div className="flex justify-end gap-2 border-t border-border pt-4">
           <Button type="button" variant="outline" onClick={onCancel}>

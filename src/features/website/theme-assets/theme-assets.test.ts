@@ -18,6 +18,7 @@ import {
 } from './resolve-theme-asset';
 import { RELEASED_THEME_ASSET_FOLDERS } from './released-versions';
 import { MODERN_EDUCATION_ASSETS } from './manifests/modern-education.manifest';
+import { ATELIER_ASSETS } from './manifests/atelier.manifest';
 import type { ThemeAssetEntry, ThemeAssetManifest } from './theme-asset.types';
 
 const REPO = resolve(__dirname, '../../../..');
@@ -37,6 +38,24 @@ const MATRIX_KEYS = [
   'gallery-4',
   'gallery-5',
   'auth-side',
+];
+
+/** Atelier's asset keys (Reports/THEME_2_ATELIER_PLAN.md §5). */
+const ATELIER_KEYS = [
+  'home-hero',
+  'home-philosophy',
+  'home-method',
+  'home-cta',
+  'courses-launching',
+  'about-header',
+  'about-story',
+  'gallery-1',
+  'gallery-2',
+  'gallery-3',
+  'gallery-4',
+  'gallery-5',
+  'auth-side',
+  'course-fallback',
 ];
 
 const released = Object.values(THEME_ASSET_MANIFESTS).flatMap((manifest) =>
@@ -63,8 +82,43 @@ describe('theme asset manifests', () => {
     ).toHaveLength(1);
   });
 
+  it('Atelier holds exactly its plan keys, once each, with one LCP image', () => {
+    expect(ATELIER_ASSETS.assets.map((a) => a.key)).toEqual(ATELIER_KEYS);
+    expect(
+      ATELIER_ASSETS.assets.filter((a) => a.priority).map((a) => a.key)
+    ).toEqual(['home-hero']);
+  });
+
+  it('releases Atelier’s hero at full-window widths (v2) from the same approved master, v1 kept', () => {
+    const hero = ATELIER_ASSETS.assets.find((a) => a.key === 'home-hero')!;
+    expect(hero.version).toBe('v2');
+    // The opening scene's full window at 1440, 1920 and 2560 CSS px (1x),
+    // and 2x up to the widest the 3712 px master allows; never upscaled.
+    expect(hero.widths).toEqual([480, 800, 1200, 1600, 2000, 2560, 3200]);
+    expect(hero.master).toEqual({ width: 3680, height: 4600 });
+    expect(hero.provenance?.masterSha256).toBe(
+      '9ffb23f0e9b3ea066ba5348b19840970d2bb92d82a737caecf3c5367d7323e03'
+    );
+    expect(RELEASED_THEME_ASSET_FOLDERS).toEqual(
+      expect.arrayContaining(['atelier/v1', 'atelier/v2'])
+    );
+    // v1 stays served for anything that still references it.
+    for (const width of [480, 800, 1200, 1600]) {
+      for (const format of ATELIER_ASSETS.formats) {
+        expect(
+          existsSync(
+            join(PUBLIC_ROOT, 'atelier', 'v1', `home-hero-${width}.${format}`)
+          )
+        ).toBe(true);
+      }
+    }
+  });
+
   it('freezes every asset’s slot, crops, safe area, exclusion zone and RTL behaviour', () => {
-    for (const entry of MODERN_EDUCATION_ASSETS.assets) {
+    for (const entry of [
+      ...MODERN_EDUCATION_ASSETS.assets,
+      ...ATELIER_ASSETS.assets,
+    ]) {
       const { composition } = entry;
       expect(
         composition.crops.map((crop) => crop.breakpoint),

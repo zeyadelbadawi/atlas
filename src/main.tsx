@@ -16,6 +16,12 @@ import App from './App.tsx';
 // these imports Vite would ship them in a chunk stylesheet that loads after
 // `index.css` and overrides the utilities (Reports/LCP_ROOT_CAUSE.md §8).
 import './features/website/modern-education/modern-education.css';
+// Atelier (Theme 2): in the entry stylesheet too, so a server-rendered
+// Atelier page is styled at first paint instead of when its chunk arrives.
+import './features/website/atelier/atelier.css';
+import './features/website/atelier/atelier-sections.css';
+import './features/website/atelier/atelier-pages.css';
+import './features/website/atelier/atelier-cinematic.css';
 import './features/website/brand-studio/brand-studio.css';
 import './index.css';
 import { loadRuntimeConfig } from './lib/config.ts';

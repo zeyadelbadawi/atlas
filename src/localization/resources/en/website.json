@@ -454,7 +454,7 @@
   },
   "theme": {
     "retiredTitle": "{{theme}} is no longer offered",
-    "retiredDescription": "Your website keeps using {{theme}} until you choose another theme. Modern Education is the theme available now. Switching to it can't be undone, because {{theme}} can't be selected again.",
+    "retiredDescription": "Your website keeps using {{theme}} until you choose another theme. Switching to one of the themes offered now can't be undone, because {{theme}} can't be selected again.",
     "switchConfirmTitle": "Switch to {{theme}}?",
     "switchConfirmDescription": "This changes your draft to {{theme}}. {{current}} is no longer offered, so you won't be able to switch back. Your live website doesn't change until you publish.",
     "switchConfirmAction": "Switch theme",
@@ -482,6 +482,10 @@
     "boldCreative": {
       "name": "Bold Creative",
       "description": "Energetic and expressive, for academies that want to stand out."
+    },
+    "atelier": {
+      "name": "Atelier",
+      "description": "An editorial, art-directed site: a serif display face, a warm paper canvas, numbered chapters and a brand thread that draws down the page as visitors scroll."
     }
   },
   "brand": {
@@ -589,7 +593,6 @@
     "deleteConfirmTitle": "Delete this section?",
     "deleteConfirmDescription": "This section and its content will be removed from the page. This cannot be undone.",
     "noSections": "No sections yet",
-    "invalidConfig": "Some values need to be corrected before this can be saved.",
     "livePreview": "Live preview",
     "moveUp": "Move up",
     "moveDown": "Move down",
@@ -637,7 +640,24 @@
     "pageHasUnpublishedChanges": "This page has saved changes that visitors don't see yet. Publish the page to make them live.",
     "pageHasLocalChanges": "You have unsaved changes to this page. “Publish page” saves them and makes them live; “Save draft” keeps them hidden from visitors.",
     "pageUpToDate": "Visitors see the saved version of this page.",
-    "publishedSlugTaken": "Another live page (“{{title}}”) still uses the address /{{slug}}. Publish that page first, or publish the whole site."
+    "publishedSlugTaken": "Another live page (“{{title}}”) still uses the address /{{slug}}. Publish that page first, or publish the whole site.",
+    "characterCount": "{{count}} / {{max}}",
+    "characterCountLabel": "Characters used: {{count}} of {{max}}",
+    "shortenTo_one": "Shorten to {{count}} character or fewer",
+    "shortenTo_other": "Shorten to {{count}} characters or fewer",
+    "shortenText": "Shorten this text",
+    "fieldInvalid": "Check this value",
+    "sectionSettings": "Section settings",
+    "fieldIssuesSummary_one": "Fix {{count}} problem before applying these changes:",
+    "fieldIssuesSummary_other": "Fix {{count}} problems before applying these changes:",
+    "overLimitSummary_one": "One text is longer than this section now allows. Your website still shows it, but it has to be shortened before this page can be saved:",
+    "overLimitSummary_other": "{{count}} texts are longer than this section now allows. Your website still shows them, but they have to be shortened before this page can be saved:",
+    "needsShortening": "Needs shortening",
+    "needsShorteningHint": "Some text in this section is longer than its limit.",
+    "pageOverLimitTitle": "Shorten text before saving",
+    "pageOverLimit_one": "One section has text longer than the current limits. Your website still shows it, but the whole page is checked on every save, so this page can't be saved until that text is shortened.",
+    "pageOverLimit_other": "{{count}} sections have text longer than the current limits. Your website still shows it, but the whole page is checked on every save, so this page can't be saved until that text is shortened.",
+    "openSectionToShorten": "Edit {{section}}"
   },
   "preview": {
     "title": "Preview",
@@ -1323,5 +1343,145 @@
     "unsavedHint": "You have unsaved changes.",
     "savedHint": "Everything is saved and live.",
     "nameRequired": "Enter your academy’s name."
+  },
+  "atelier": {
+    "home": {
+      "liveData": {
+        "previewUnavailable": "Live data couldn't be loaded, so visitors don't see this section right now."
+      },
+      "hero": {
+        "searchLabel": "Search the courses",
+        "searchPlaceholder": "What would you like to learn?",
+        "searchSubmit": "Search"
+      },
+      "categories": {
+        "viewAll": "Browse all courses",
+        "courseCount_one": "{{formatted}} course",
+        "courseCount_other": "{{formatted}} courses"
+      },
+      "courses": {
+        "viewAll": "View all courses",
+        "listLabel": "Featured courses",
+        "taughtBy": "With {{name}}",
+        "errorTitle": "The courses couldn't be loaded right now",
+        "errorDescription": "Please try again in a moment.",
+        "retry": "Try again",
+        "launchingTitle": "Our first courses are in the making",
+        "launchingDescription": "We're preparing the first courses now. Get in touch and we'll tell you as soon as enrolment opens.",
+        "launchingAction": "Contact us"
+      },
+      "instructors": {
+        "listLabel": "Instructors",
+        "courseCount_one": "{{formatted}} course",
+        "courseCount_other": "{{formatted}} courses",
+        "previewHidden": "Hidden on your public site until at least one published course has an instructor.",
+        "sampleName": "Instructor name",
+        "sampleCourses": "Their published courses"
+      },
+      "statistics": {
+        "label": "In numbers",
+        "previewHidden": "Hidden on your public site until at least two numbers are above zero.",
+        "sampleValue": "Live number, shown once above zero"
+      },
+      "testimonials": {
+        "label": "Testimonials",
+        "roleDescription": "quotes",
+        "position": "Testimonial {{position}} of {{total}}",
+        "previous": "Previous testimonial",
+        "next": "Next testimonial",
+        "rating": "Rated {{rating}} out of 5"
+      },
+      "faq": {
+        "listTitle": "All questions",
+        "resultCount_one": "{{count}} question matches",
+        "resultCount_other": "{{count}} questions match",
+        "noMatchTitle": "No questions match your search",
+        "noMatchDescription": "Try different words, or contact us and we'll help."
+      },
+      "gallery": {
+        "label": "Gallery"
+      }
+    },
+    "chrome": {
+      "closeMenu": "Close menu",
+      "social": "Elsewhere"
+    },
+    "pages": {
+      "trail": {
+        "label": "Breadcrumb",
+        "home": "Home"
+      },
+      "search": {
+        "placeholder": "What would you like to learn?",
+        "submit": "Search",
+        "faqLabel": "Search the questions",
+        "faqPlaceholder": "Type a word from your question"
+      },
+      "summary": {
+        "courses_one": "{{formatted}} course",
+        "courses_other": "{{formatted}} courses",
+        "catalog_one": "{{courses}} course in {{categories}} categories",
+        "catalog_other": "{{courses}} courses in {{categories}} categories"
+      },
+      "intro": {
+        "about": "The people, purpose and craft behind our courses.",
+        "courses": "Every course we teach, gathered in one index.",
+        "faqs": "Answers to the questions learners ask us most.",
+        "contact": "A question about a course or enrolling? Write to us."
+      },
+      "catalog": {
+        "filters": "Refine the index",
+        "categories": "Categories",
+        "allCategories": "All",
+        "removeFilter": "Remove the filter {{name}}",
+        "clearAll": "Clear all",
+        "loading": "Loading courses",
+        "errorTitle": "The index could not be loaded",
+        "errorDescription": "Something interrupted the connection. Please try again.",
+        "retry": "Try again",
+        "launchingTitle": "The first courses are in preparation",
+        "launchingDescription": "Our index is still being written. Check back soon, or get in touch to hear when enrolment opens.",
+        "pagination": "Course pages",
+        "previousPage": "Previous page",
+        "nextPage": "Next page",
+        "page": "Page {{page}}",
+        "by": "by {{name}}"
+      },
+      "contact": {
+        "channels": "Reach us",
+        "emailLabel": "Email",
+        "phoneLabel": "Telephone",
+        "addressLabel": "Address",
+        "formTitle": "Write to us",
+        "formNote": "Every field is required.",
+        "successTitle": "Your letter is on its way",
+        "sendAnother": "Write another message"
+      },
+      "courseDetails": {
+        "breadcrumb": "Breadcrumb",
+        "allCourses": "All courses",
+        "taughtBy": "Taught by",
+        "purchase": "Enrol in this course",
+        "includes": "This course includes",
+        "hasPreview": "Free preview lessons",
+        "contents": "Contents",
+        "errorTitle": "This course could not be loaded",
+        "errorDescription": "Something went wrong while loading the course. Please try again.",
+        "retry": "Try again"
+      },
+      "notFound": {
+        "eyebrow": "Error 404",
+        "title": "This page is not in our index",
+        "description": "It may have moved, or the link may be out of date. These are good places to continue reading.",
+        "home": "Back to home",
+        "courses": "Browse the courses",
+        "contact": "Contact us"
+      },
+      "comingSoon": {
+        "eyebrow": "Opening soon",
+        "title": "{{name}} is being prepared",
+        "description": "Our website is being set in type. Please come back soon."
+      }
+    }
   }
 }

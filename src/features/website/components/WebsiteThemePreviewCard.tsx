@@ -5,7 +5,13 @@
  * content and current brand — at a miniature scale, never a static
  * screenshot or unrelated placeholder content (see
  * `Reports/ARCHITECTURE.md`, Prompt 9, "Theme Preview").
+ *
+ * The miniature is a picture of the site, not a second copy of its links:
+ * hidden from assistive tech and unreachable by keyboard. Each card's action
+ * is named with its theme ("Select theme Atelier"), so several cards never
+ * offer identical, ambiguous buttons.
  */
+import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -31,6 +37,8 @@ export interface WebsiteThemePreviewCardProps {
 
 const PREVIEW_CANVAS_WIDTH = 1200;
 const PREVIEW_SCALE = 0.22;
+/** The miniature's own box: the scaled canvas, centred in the card. */
+const PREVIEW_WIDTH = PREVIEW_CANVAS_WIDTH * PREVIEW_SCALE;
 
 export function WebsiteThemePreviewCard({
   theme,
@@ -45,6 +53,8 @@ export function WebsiteThemePreviewCard({
   isSelecting,
 }: WebsiteThemePreviewCardProps): JSX.Element {
   const { t } = useTranslation();
+  const nameId = useId();
+  const actionId = useId();
 
   return (
     <div
@@ -54,29 +64,41 @@ export function WebsiteThemePreviewCard({
           : 'overflow-hidden rounded-lg border border-border'
       }
     >
-      <div className="relative h-52 w-full overflow-hidden bg-muted">
-        <div
-          className="pointer-events-none"
-          style={{
-            width: `${PREVIEW_CANVAS_WIDTH}px`,
-            transform: `scale(${PREVIEW_SCALE})`,
-            transformOrigin: 'top',
-          }}
-        >
-          <WebsiteRenderer
-            academyId={academyId}
-            academyName={academyName}
-            academyLogo={academyLogo}
-            configuration={{ ...configuration, themeKey: theme.key }}
-            pages={pages}
-            page={homePage}
-            onNavigate={() => undefined}
-          />
+      <div
+        data-testid="theme-preview-frame"
+        className="flex h-52 w-full justify-center overflow-hidden bg-muted"
+        aria-hidden
+        // `inert` — React 18's types don't know it yet.
+        {...{ inert: '' }}
+      >
+        {/* The scaled canvas keeps its 1200 px layout box, so it sits in a
+            box of its scaled width, anchored at the inline start: the
+            miniature then shows whole and centred in either direction. */}
+        <div className="shrink-0" style={{ width: PREVIEW_WIDTH }}>
+          <div
+            className="pointer-events-none origin-top-left rtl:origin-top-right"
+            style={{
+              width: `${PREVIEW_CANVAS_WIDTH}px`,
+              transform: `scale(${PREVIEW_SCALE})`,
+            }}
+          >
+            <WebsiteRenderer
+              academyId={academyId}
+              academyName={academyName}
+              academyLogo={academyLogo}
+              configuration={{ ...configuration, themeKey: theme.key }}
+              pages={pages}
+              page={homePage}
+              onNavigate={() => undefined}
+            />
+          </div>
         </div>
       </div>
       <div className="space-y-2 p-4">
         <div className="flex items-center justify-between gap-2">
-          <h3 className="font-medium text-foreground">{t(theme.nameKey)}</h3>
+          <h3 id={nameId} className="font-medium text-foreground">
+            {t(theme.nameKey)}
+          </h3>
           {isActive ? (
             <Check className="size-4 shrink-0 text-success" aria-hidden />
           ) : null}
@@ -91,10 +113,13 @@ export function WebsiteThemePreviewCard({
           disabled={isActive || isSelecting}
           onClick={onSelect}
           className="w-full"
+          aria-labelledby={`${actionId} ${nameId}`}
         >
-          {isActive
-            ? t('website:theme.currentTheme')
-            : t('website:theme.selectTheme')}
+          <span id={actionId}>
+            {isActive
+              ? t('website:theme.currentTheme')
+              : t('website:theme.selectTheme')}
+          </span>
         </Button>
       </div>
     </div>

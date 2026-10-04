@@ -5,12 +5,17 @@
  *   themes/<theme>/<state>/<page>--<locale>--<width>.png
  *   shared/<case>--<locale>--<width>.png
  *   brand/modern-education/home--<palette>--en--<width>.png
+ *   themes/atelier/{rich,unpublished}/… (Theme 2's extra pages)
+ *   brand/atelier/home--<palette>--en--<width>.png
  *
  * Every later phase is compared with these. Themes 2–5 must stay
  * pixel-identical through the whole Theme 1 plan (§G, §J.11); Theme 1's
  * snapshots are expected to change, and are re-recorded deliberately.
  */
 import {
+  ATELIER_COMING_SOON,
+  LEGACY_REDUCED_MOTION,
+  ATELIER_PAGES,
   BRAND_PALETTES,
   LOCALES,
   SHARED_CASES,
@@ -32,11 +37,16 @@ import {
   test,
 } from './support/baseline-test';
 
+// Theme 1 and Themes 2–5 keep the motion condition their baselines were
+// recorded under; the Atelier describe below overrides it with real reduced
+// motion.
+test.use({ contextOptions: { reducedMotion: LEGACY_REDUCED_MOTION } });
+
 for (const viewport of VIEWPORTS) {
   test.describe(`${viewport.name}px`, () => {
     test.use({ viewport: { width: viewport.width, height: viewport.height } });
 
-    for (const theme of THEMES) {
+    for (const theme of THEMES.filter((key) => key !== 'atelier')) {
       for (const state of ['new', 'rich'] as const) {
         for (const page of THEMED_PAGES[state]) {
           for (const locale of LOCALES) {
@@ -195,6 +205,111 @@ for (const viewport of VIEWPORTS) {
         expectNoIssues(issues);
       });
     }
+    // Atelier (Theme 2) is captured in its final state: real reduced
+    // motion (`contextOptions` — the config's `use.reducedMotion` never
+    // reaches the browser), so below-the-fold reveals are drawn and the
+    // scroll scenes render their static layout. The scenes themselves are
+    // covered by atelier-cinematic.spec.ts.
+    test.describe('atelier', () => {
+      test.use({ contextOptions: { reducedMotion: 'reduce' } });
+
+      for (const state of ['new', 'rich'] as const) {
+        for (const page of THEMED_PAGES[state]) {
+          for (const locale of LOCALES) {
+            test(`atelier ${state} ${page.name} ${locale}`, async ({
+              page: browserPage,
+              issues,
+            }) => {
+              await openFixture(
+                browserPage,
+                fixtureUrl(page, locale, fixtureSlug('atelier', state))
+              );
+              await expect(browserPage).toHaveScreenshot(
+                [
+                  'themes',
+                  'atelier',
+                  state,
+                  `${page.name}--${locale}--${viewport.name}.png`,
+                ],
+                { fullPage: true }
+              );
+              expectNoIssues(issues);
+            });
+          }
+        }
+      }
+
+      for (const page of ATELIER_PAGES) {
+        for (const locale of LOCALES) {
+          test(`atelier rich ${page.name} ${locale}`, async ({
+            page: browserPage,
+            issues,
+          }) => {
+            await openFixture(
+              browserPage,
+              fixtureUrl(page, locale, fixtureSlug('atelier', 'rich'))
+            );
+            await expect(browserPage).toHaveScreenshot(
+              [
+                'themes',
+                'atelier',
+                'rich',
+                `${page.name}--${locale}--${viewport.name}.png`,
+              ],
+              { fullPage: true }
+            );
+            expectNoIssues(issues);
+          });
+        }
+      }
+
+      for (const locale of LOCALES) {
+        test(`atelier coming-soon ${locale}`, async ({
+          page: browserPage,
+          issues,
+        }) => {
+          await openFixture(
+            browserPage,
+            fixtureUrl(
+              ATELIER_COMING_SOON.page,
+              locale,
+              fixtureSlug('atelier', ATELIER_COMING_SOON.state)
+            )
+          );
+          await expect(browserPage).toHaveScreenshot(
+            [
+              'themes',
+              'atelier',
+              'unpublished',
+              `coming-soon--${locale}--${viewport.name}.png`,
+            ],
+            { fullPage: true }
+          );
+          expectNoIssues(issues);
+        });
+      }
+
+      for (const palette of BRAND_PALETTES) {
+        test(`brand atelier home ${palette}`, async ({
+          page: browserPage,
+          issues,
+        }) => {
+          await openFixture(
+            browserPage,
+            fixtureUrl(
+              { name: 'home', path: '/' },
+              'en',
+              fixtureSlug('atelier', 'rich', palette)
+            )
+          );
+          await expect(browserPage).toHaveScreenshot(
+            ['brand', 'atelier', `home--${palette}--en--${viewport.name}.png`],
+            { fullPage: true }
+          );
+          expectNoIssues(issues);
+        });
+      }
+    });
   });
 }
 

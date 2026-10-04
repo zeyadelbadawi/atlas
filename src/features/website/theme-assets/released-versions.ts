@@ -8,4 +8,6 @@
  */
 export const RELEASED_THEME_ASSET_FOLDERS: readonly string[] = [
   'modern-education/v1',
+  'atelier/v1',
+  'atelier/v2',
 ];

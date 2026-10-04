@@ -366,3 +366,265 @@ export function buildLiveData(academyId, state) {
       : [],
   };
 }
+
+/* -------------------------------------------------------------------- */
+/* Atelier content limits (renderer hardening)                          */
+/* -------------------------------------------------------------------- */
+
+/**
+ * The hardening contract's per-language caps (the lead's
+ * HARDENING_CONTRACT, mirrored by the shared section schemas), and the
+ * limits every page saved before them could still hold (legacy).
+ */
+const CAPS = {
+  eyebrow: 60,
+  title: 70,
+  subtitle: 140,
+  description: 280,
+  chip: 40,
+  cta: 40,
+  stepsTitle: 80,
+  stepsDescription: 240,
+  stepTitle: 60,
+  stepDescription: 240,
+  statsTitle: 80,
+  statLabel: 40,
+  alt: 100,
+};
+const LEGACY = {
+  eyebrow: 100,
+  title: 100,
+  subtitle: 100,
+  description: 2000,
+  chip: 40,
+  cta: 100,
+  stepsTitle: 100,
+  stepsDescription: 2000,
+  stepTitle: 100,
+  stepDescription: 2000,
+  statsTitle: 100,
+  statLabel: 100,
+  alt: 100,
+};
+
+/** Wide Latin capitals (W, M) in realistic, long words. */
+const EN_WORDS = [
+  'Wholehearted',
+  'Workmanship',
+  'Masterworks',
+  'Methodical',
+  'Mentorship',
+  'Woodworking',
+  'Multidisciplinary',
+  'Watercolour',
+  'Wayfinding',
+  'Meaningful',
+  'Momentum',
+  'Worldwide',
+  'Memorable',
+  'Mindfulness',
+  'Workshops',
+  'Microcredentials',
+];
+/** Realistic Arabic with diacritics (they count as characters). */
+const AR_WORDS = [
+  'ورشُ',
+  'عملٍ',
+  'مُتخصِّصةٌ',
+  'للمحترفين',
+  'والمبتدئين',
+  'مع',
+  'مُدرِّبين',
+  'خبراءَ',
+  'في',
+  'التَّصميم',
+  'والكتابة',
+  'الإبداعيّة',
+  'والحِرَف',
+  'اليدويّة',
+  'منذ',
+  'اليوم',
+  'الأوَّل',
+  'بإتقانٍ',
+  'وصبر',
+];
+
+/** Exactly `length` characters of running words, starting at `offset`. */
+function fill(words, length, offset = 0) {
+  let text = '';
+  for (let i = offset; text.length < length; i++) {
+    text += (text ? ' ' : '') + words[i % words.length];
+  }
+  text = text.slice(0, length);
+  return text.endsWith(' ') ? `${text.slice(0, -1)}${words[0][0]}` : text;
+}
+const localized = (length, offset = 0) => ({
+  en: fill(EN_WORDS, length, offset),
+  ar: fill(AR_WORDS, length, offset),
+});
+/** The title's closing words, from a word boundary (the highlight must be part of the title). */
+function tail(text, share) {
+  const from = text.indexOf(' ', Math.floor(text.length * (1 - share)));
+  return from < 0 ? text : text.slice(from + 1);
+}
+
+const STAT_VALUES = [
+  '98%',
+  '24/7',
+  '4.9/5',
+  '12,500+',
+  '35',
+  '7',
+  '2010',
+  '60+',
+  '15',
+  '3',
+];
+
+/**
+ * `<base>[-s<1–6>][-img|-noimg][-k<2–12>]`, Atelier only:
+ *   base   `long` (every field at its cap, EN and AR), `legacy` (the limits
+ *          before the caps, so over budget), `edge` (the generated Home with
+ *          a hero title that fits a 1440×900 stage but not a 1024×720 one:
+ *          49 wide-glyph English characters, 70 Arabic) or `std` (the
+ *          generated Home);
+ *   s<n>   the steps chapter's item count (long/legacy: 6, std: as generated);
+ *   img    the method plate (`theme-asset:atelier/home-method`); `long` and
+ *          `legacy` have it unless `noimg`;
+ *   k<n>   the statistics chapter's item count: the three live metrics,
+ *          then typed values.
+ * Returns null for anything else.
+ */
+export function parseAtelierLimitsComposition(composition) {
+  const [base, ...modifiers] = String(composition).split('-');
+  if (!['long', 'legacy', 'edge', 'std'].includes(base)) return null;
+  const options = {
+    base,
+    steps: undefined,
+    image: base === 'long' || base === 'legacy',
+    stats: undefined,
+    /* The generated Home's own steps and figures (std, edge). */
+    generated: base === 'std' || base === 'edge',
+  };
+  for (const modifier of modifiers) {
+    let match;
+    if ((match = /^s([1-6])$/.exec(modifier))) options.steps = Number(match[1]);
+    else if (modifier === 'img') options.image = true;
+    else if (modifier === 'noimg') options.image = false;
+    else if ((match = /^k([2-9]|1[0-2])$/.exec(modifier)))
+      options.stats = Number(match[1]);
+    else return null;
+  }
+  return options;
+}
+
+function limitsHero(config, caps) {
+  const title = localized(caps.title);
+  return {
+    ...config,
+    eyebrow: localized(caps.eyebrow, 3),
+    title,
+    highlight: { en: tail(title.en, 0.45), ar: tail(title.ar, 0.45) },
+    subtitle: localized(caps.subtitle, 5),
+    description: localized(caps.description, 7),
+    cta: { ...config.cta, label: localized(caps.cta, 2) },
+    secondaryCta: { ...config.secondaryCta, label: localized(caps.cta, 9) },
+    highlights: [0, 1, 2, 3].map((index) => ({
+      id: `hl-limit-${index}`,
+      label: localized(caps.chip, index * 3 + 1),
+    })),
+    showSearch: true,
+  };
+}
+
+function limitsSteps(config, options, caps) {
+  const count = options.steps ?? (options.generated ? config.items.length : 6);
+  const items = options.generated
+    ? Array.from({ length: count }, (_, index) => {
+        const source = config.items[index % config.items.length];
+        return { ...source, id: `${source.id}-${index}` };
+      })
+    : Array.from({ length: count }, (_, index) => ({
+        id: `step-limit-${index}`,
+        title: localized(caps.stepTitle, index * 2),
+        description: localized(caps.stepDescription, index * 2 + 1),
+      }));
+  const { image: _image, imageAlt: _alt, ...rest } = config;
+  return {
+    ...rest,
+    ...(options.generated
+      ? {}
+      : {
+          title: localized(caps.stepsTitle, 4),
+          description: localized(caps.stepsDescription, 6),
+        }),
+    ...(options.image
+      ? {
+          image: 'theme-asset:atelier/home-method',
+          imageAlt: options.generated
+            ? { en: '', ar: '' }
+            : localized(caps.alt, 8),
+        }
+      : {}),
+    items,
+  };
+}
+
+function limitsStatistics(config, options, caps) {
+  const count = options.stats ?? config.items.length;
+  const live = config.items.filter((item) => item.metric);
+  const items = Array.from({ length: count }, (_, index) => {
+    const label = options.generated
+      ? undefined
+      : localized(caps.statLabel, index);
+    if (index < live.length)
+      return { ...live[index], ...(label ? { label } : {}) };
+    const value = STAT_VALUES[(index - live.length) % STAT_VALUES.length];
+    return {
+      id: `stat-limit-${index}`,
+      value: { en: value, ar: value },
+      label: label ?? localized(14, index),
+    };
+  });
+  return {
+    ...config,
+    ...(options.generated ? {} : { title: localized(caps.statsTitle, 2) }),
+    items,
+  };
+}
+
+/** The Atelier Home's sections under a limits composition (other pages are untouched). */
+export function applyAtelierLimitsComposition(page, options) {
+  if (page.slug !== 'home') return page;
+  const caps = options.base === 'legacy' ? LEGACY : CAPS;
+  return {
+    ...page,
+    sections: page.sections.map((section) => {
+      if (section.type === 'hero' && options.base === 'edge')
+        return {
+          ...section,
+          config: {
+            ...section.config,
+            title: { en: fill(EN_WORDS, 49), ar: fill(AR_WORDS, 70) },
+            highlight: { en: '', ar: '' },
+          },
+        };
+      if (section.type === 'hero' && !options.generated)
+        return { ...section, config: limitsHero(section.config, caps) };
+      if (section.type === 'steps')
+        return {
+          ...section,
+          config: limitsSteps(section.config, options, caps),
+        };
+      if (
+        section.type === 'statistics' &&
+        (!options.generated || options.stats)
+      )
+        return {
+          ...section,
+          config: limitsStatistics(section.config, options, caps),
+        };
+      return section;
+    }),
+  };
+}

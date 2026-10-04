@@ -34,7 +34,8 @@ import {
   test,
 } from './support/baseline-test';
 
-const RETIRED = THEMES.filter((theme) => theme !== 'modern-education');
+const SELECTABLE: readonly string[] = ['modern-education', 'atelier'];
+const RETIRED = THEMES.filter((theme) => !SELECTABLE.includes(theme));
 const GENERATED = join(
   dirname(fileURLToPath(import.meta.url)),
   'fixtures/generated'

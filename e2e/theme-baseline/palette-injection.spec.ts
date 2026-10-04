@@ -10,10 +10,13 @@
  * Since Phase 4, Theme 1 maps the seeds through its own semantic mapping
  * (§F.5) instead of passing them through: for it, the guard checks the
  * scope carries exactly what that mapping makes of the injected seeds.
+ * Atelier (Theme 2) is checked the same way against its own mapping.
  */
 import { FIXTURE_PALETTES } from './fixtures/live-data.mjs';
 import { mapModernEducationBrandPalette } from '../../src/features/website/modern-education/modern-education.brand-mapping';
 import { MODERN_EDUCATION_THEME } from '../../src/features/website/themes/modern-education.theme';
+import { mapAtelierBrandPalette } from '../../src/features/website/atelier/atelier.brand-mapping';
+import { ATELIER_THEME } from '../../src/features/website/themes/atelier.theme';
 import { fixtureSlug, fixtureUrl, THEMES } from './matrix';
 import {
   expect,
@@ -46,15 +49,19 @@ for (const theme of THEMES) {
           };
         });
       const seeds = FIXTURE_PALETTES[palette];
-      if (theme === 'modern-education') {
-        const mapped = mapModernEducationBrandPalette({
-          theme: MODERN_EDUCATION_THEME,
-          seeds: {
-            primary: seeds.primaryColor,
-            secondary: seeds.secondaryColor,
-            accent: seeds.accentColor,
-          },
-        });
+      const seedRoles = {
+        primary: seeds.primaryColor,
+        secondary: seeds.secondaryColor,
+        accent: seeds.accentColor,
+      };
+      if (theme === 'modern-education' || theme === 'atelier') {
+        const mapped =
+          theme === 'atelier'
+            ? mapAtelierBrandPalette({ theme: ATELIER_THEME, seeds: seedRoles })
+            : mapModernEducationBrandPalette({
+                theme: MODERN_EDUCATION_THEME,
+                seeds: seedRoles,
+              });
         expect(scopeVariables).toEqual({
           primary: mapped['--website-primary'],
           secondary: mapped['--website-secondary'],

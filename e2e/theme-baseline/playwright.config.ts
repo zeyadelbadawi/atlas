@@ -53,10 +53,14 @@ export default defineConfig({
     browserName: 'chromium',
     deviceScaleFactor: 1,
     colorScheme: 'light',
-    // Full-page captures never scroll, so scroll-triggered reveals (Theme 1,
-    // plan §G) would stay hidden below the fold; reduced motion renders
-    // every section in its final state. Motion itself is unit-tested.
-    reducedMotion: 'reduce',
+    // Full-page captures never scroll, so scroll-triggered reveals would stay
+    // hidden below the fold; reduced motion renders every section in its
+    // final state. Set through `contextOptions`: Playwright has no top-level
+    // `reducedMotion` test option, so the earlier `use.reducedMotion` never
+    // reached the browser (`harness.spec.ts` now asserts the real media
+    // query). Cases recorded before this fix pin the condition they were
+    // recorded under (`LEGACY_REDUCED_MOTION` in matrix.ts).
+    contextOptions: { reducedMotion: 'reduce' },
     locale: 'en-US',
     timezoneId: 'UTC',
     launchOptions: executablePath ? { executablePath } : {},

@@ -113,3 +113,5 @@ export type { PublicWebsiteLocale } from './constants/locale.constants';
 // block and the deferred save that follows provisioning.
 export { SetupBrandStudio } from './brand-studio/SetupBrandStudio';
 export type { SetupBrandingChoice } from './brand-studio/SetupBrandStudio';
+export { SetupThemePreview } from './brand-studio/SetupThemePreview';
+export type { SetupThemePreviewProps } from './brand-studio/SetupThemePreview';

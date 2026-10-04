@@ -19,8 +19,15 @@
  * single plain input — the ONE place that decision is made, so a field
  * can never drift out of sync between "the schema treats this as
  * bilingual" and "the editor lets you edit it bilingually."
+ *
+ * `maxLength` is the field's content limit, taken from the same constant
+ * the schema uses (`website.constants.ts`), so the editor's character
+ * counter and the save-time validation can never disagree. `themes`
+ * limits a field to the themes that actually draw it (e.g. the steps
+ * plate, drawn only by Atelier); the value itself is theme-agnostic and
+ * survives a theme switch untouched.
  */
-import type { SectionType } from '@types';
+import type { SectionType, WebsiteThemeKey } from '@types';
 
 export type SectionFieldKind =
   'text' | 'longText' | 'boolean' | 'number' | 'select' | 'image' | 'cta';
@@ -28,12 +35,16 @@ export type SectionFieldKind =
 interface FieldDescriptorBase {
   readonly key: string;
   readonly labelKey: string;
+  /** Offered only when the website's theme is one of these; absent = every theme. */
+  readonly themes?: readonly WebsiteThemeKey[];
 }
 
 export interface TextFieldDescriptor extends FieldDescriptorBase {
   readonly kind: 'text' | 'longText' | 'image' | 'cta';
   /** Only meaningful for `kind: 'text' | 'longText'` — see this file's own doc comment. */
   readonly localized?: boolean;
+  /** Characters per language — see this file's own doc comment. Only meaningful for a localized `text`/`longText` field. */
+  readonly maxLength?: number;
 }
 
 export interface BooleanFieldDescriptor extends FieldDescriptorBase {
@@ -69,6 +80,8 @@ export interface RepeatableFieldGroup {
   readonly labelKey: string;
   readonly itemLabelKey: string;
   readonly itemFields: readonly SectionFieldDescriptor[];
+  /** The schema's item cap when it is below `MAX_SECTION_ITEMS`. */
+  readonly maxItems?: number;
 }
 
 export interface SectionFieldSchema {

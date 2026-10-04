@@ -1,0 +1,834 @@
+/*
+ * Atelier — cinematic scenes (Reports/THEME_2_ATELIER_PLAN.md §2–§4).
+ *
+ * Four Home chapters play as scroll-scrubbed scenes on the public site
+ * (`cinematic/AtelierScene.tsx` marks them with `data-at-cinematic`, only
+ * when the runtime can navigate, so previews never move):
+ *
+ * - opening: the hero pins; the arch opens into the full window while the
+ *   copy recedes, then Chapter I slides over the photograph like a sheet.
+ * - method: the steps chapter pins; the syllabus travels sideways under a
+ *   window that starts at the margin thread, the thread draws through each
+ *   knot and the reached step lights up; the chapter's plate (optional) is
+ *   uncovered a step's share at a time.
+ * - ink: the statistics chapter pins; ink rises through an arched window
+ *   until the page has turned dark, then the figures rise in order.
+ * - closing: the CTA plate pulls back into its frame and the thread's last
+ *   knot fills (not pinned; every screen size).
+ *
+ * Engineering rules:
+ * - Native scroll-driven animations only (`view-timeline`, `animation-range`)
+ *   and `position: sticky` for pinning — no scroll listeners, no JavaScript
+ *   per frame. Only transform, opacity and clip-path animate.
+ * - Pinned scenes live entirely inside the gate below (support, no
+ *   reduced-motion preference, a screen large enough to pin). Outside it a
+ *   scene is its static chapter: runways and scene layers are not drawn, so
+ *   there is no extra scroll and no empty space.
+ * - Nothing focusable is moved: the opening scene drops its motion (and
+ *   rises above the next chapter) while focus is inside it; the method and
+ *   ink scenes hold no interactive elements; the closing scene never moves
+ *   its actions.
+ * - Right-to-left: horizontal motion is multiplied by `--atc-dir`, which
+ *   `:dir(rtl)` flips (the `dir` attribute sits above the theme scope).
+ */
+
+[data-theme-pack='atelier'] .atc-scene {
+  position: relative;
+  --atc-dir: 1;
+}
+[data-theme-pack='atelier'] .atc-scene:dir(rtl) {
+  --atc-dir: -1;
+}
+
+/* Scene-only layers: absent unless a scene is playing. */
+[data-theme-pack='atelier'] .atc-runway,
+[data-theme-pack='atelier'] .atc-ink-window,
+[data-theme-pack='atelier'] .atc-track-guide,
+[data-theme-pack='atelier'] .atc-track-line {
+  display: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* Keyframes                                                            */
+/* ------------------------------------------------------------------ */
+
+/* The copy steps back as the window opens. */
+@keyframes atc-recede {
+  to {
+    opacity: 0;
+    transform: translateY(-5%) scale(0.965);
+  }
+}
+
+/*
+ * The arch becomes the window. The frame keeps its layout; a perspective
+ * push (`perspective(U) translateZ(U - F)` scales by exactly U / F, the
+ * window's width over the frame's) carries it to the full width while it
+ * slides to the centre, and the arch's rounding flattens to a rectangle.
+ */
+@keyframes atc-window {
+  from {
+    transform: translate(0, 0) perspective(100cqw) translateZ(0);
+    clip-path: inset(0 round 50% 50% 0 0 / 40% 40% 0 0);
+  }
+  to {
+    transform: translate(var(--atc-dx), var(--atc-dy)) perspective(100cqw)
+      translateZ(var(--atc-z));
+    clip-path: inset(0 round 0 0 0 0 / 0 0 0 0);
+  }
+}
+
+/* The photograph settles inside its frame as the window opens, then
+   drifts up while Chapter I slides over it (a slower layer than the
+   sheet, so the handover has depth). */
+@keyframes atc-lens {
+  0% {
+    transform: scale(1.06) translateY(0);
+  }
+  46% {
+    transform: scale(1) translateY(0);
+  }
+  100% {
+    transform: scale(1) translateY(-18%);
+  }
+}
+
+/* The syllabus travels along its track. */
+@keyframes atc-travel {
+  to {
+    transform: translateX(calc(var(--atc-dir) * -1 * var(--atc-travel)));
+  }
+}
+
+/* The thread is drawn up to the pen. */
+@keyframes atc-pen {
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* A knot fills when the thread reaches it. */
+@keyframes atc-fill {
+  to {
+    transform: scale(1);
+  }
+}
+
+/* A reached step's numeral lights up. */
+@keyframes atc-light {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Ink rises through an arched window until the page is dark. The arch
+   stays an arch (its rounding is always half its width) and grows past
+   the stage's corners, so it ends covering the whole stage. */
+@keyframes atc-ink {
+  from {
+    clip-path: inset(32% calc(50% - 7rem) 0 round 7rem 7rem 0 0);
+  }
+  to {
+    clip-path: inset(-60% -40cqw 0 round 90cqw 90cqw 0 0);
+  }
+}
+
+/* The method plate is uncovered in the reading direction (the start
+   state is set on the plate: its first step's share). */
+@keyframes atc-uncover {
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* The method photograph settles as the syllabus advances. */
+@keyframes atc-plate-settle {
+  from {
+    transform: scale(1.12);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* A line of type rises into place. */
+@keyframes atc-rise {
+  from {
+    opacity: 0;
+    transform: translateY(2.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The closing plate pulls back from a close-up. */
+@keyframes atc-pullback {
+  from {
+    transform: scale(1.28);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@keyframes atc-plate {
+  from {
+    clip-path: inset(6% 5% 6% 5%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Pinned scenes: the gates                                             */
+/* ------------------------------------------------------------------ */
+
+/*
+ * Three layers keep a pinned stage from clipping or trapping content
+ * (the scene components and `cinematic/cinematic-budget.ts` hold the
+ * first and third):
+ * 1. A content budget on the server: a chapter whose copy cannot fit one
+ *    window is never marked as a scene, so it renders static everywhere.
+ * 2. These gates, in `em` so a larger default font size (or zoom) asks
+ *    for a proportionally larger window before anything pins.
+ * 3. A fit check after hydration: a stage whose content is taller than
+ *    its window is marked `data-at-fit`, and every pinning rule below
+ *    (the sticky stage, the runway, the timeline and what it drives)
+ *    requires `:not([data-at-fit])`. The opening keeps its stage geometry
+ *    (the first frame) when it lets go, so dropping the pin never moves
+ *    the top of the page; the method and ink stages are released in place
+ *    for a frame (`release`) before becoming static (`overflow`).
+ */
+
+/*
+ * Opening — the studio window opens. Its own gate asks for a landscape
+ * viewport (the open window — the arch's 4:5 frame at the full width —
+ * only covers a stage no taller than it is wide) at least 720px (45em)
+ * tall.
+ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) and (min-width: 64em) and (min-height: 45em) and (min-aspect-ratio: 1/1) {
+    /* The stage: one window tall, the spread centred in it. Type and
+       spacing follow the window's height as well as its width, so longer
+       copy on a short screen shrinks before it stops fitting. */
+    [data-theme-pack='atelier'] [data-at-cinematic='opening'] > .ath-hero {
+      --at-display: clamp(
+        2.5rem,
+        min(1.35rem + 5.6vw, 15svh - 2.0625rem),
+        7.25rem
+      );
+      --at-subtitle: clamp(1.25rem, min(1.1rem + 0.9vw, 3.4svh), 1.875rem);
+      --at-lead: clamp(1rem, min(0.98rem + 0.3vw, 2.5svh), 1.25rem);
+      min-height: calc(100svh - var(--at-header-height));
+      display: flex;
+      flex-direction: column;
+      justify-content: safe center;
+      /* Centring gives the spread its air; the padding only keeps it off
+         the edges. */
+      padding-block: clamp(1rem, 3svh, 2rem);
+      container-type: inline-size;
+      overflow-x: clip;
+      /* The thread leaves the stage at its foot, over the photograph. */
+      --at-thread-start: calc(100% - 3rem);
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='opening']
+      > .ath-hero
+      > .at-thread {
+      z-index: 1;
+      animation: none;
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='opening']
+      .ath-hero-copy
+      > :not([hidden])
+      ~ :not([hidden]) {
+      margin-block-start: clamp(1.25rem, 3.6svh, 2.5rem);
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='opening']
+      .ath-hero-copy
+      > :first-child
+      > :not([hidden])
+      ~ :not([hidden]) {
+      margin-block-start: clamp(0.75rem, 2.2svh, 1.5rem);
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='opening']
+      .ath-hero-highlights
+      > li {
+      padding-block: clamp(0.5rem, 1.3svh, 0.875rem);
+    }
+
+    /* The frame's geometry, from the hero grid (12 columns, 2.5rem gaps,
+       the arch across the last four): its width, the distance from its
+       centre to the window's centre, and the final framing, lowered to
+       the photograph's focal point (60% down a 4:5 frame that is then
+       1.25 windows tall). The arch is its clip, so the window can open. */
+    [data-theme-pack='atelier']
+      [data-at-cinematic='opening']
+      .ath-hero-media.at-frame {
+      --atc-c: min(100cqw, var(--at-container));
+      --atc-f: calc(
+        (var(--atc-c) - 2 * var(--at-gutter) - var(--at-margin) - 27.5rem) / 3 +
+          7.5rem
+      );
+      --atc-dx: calc(
+        var(--atc-dir) *
+          (var(--atc-f) / 2 + var(--at-gutter) - var(--atc-c) / 2)
+      );
+      --atc-dy: -12.5cqw;
+      --atc-z: calc(100cqw - var(--atc-f));
+      align-self: center;
+      border-radius: 0;
+      clip-path: inset(0 round 50% 50% 0 0 / 40% 40% 0 0);
+      transform-origin: 50% 50%;
+    }
+
+    /* The scene itself, while the stage fits its window. */
+    [data-theme-pack='atelier']
+      [data-at-cinematic='opening']:not([data-at-fit]) {
+      view-timeline: --atc-opening block;
+      view-timeline-inset: var(--at-header-height) 0px;
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='opening']:not([data-at-fit])
+      > .atc-runway {
+      display: block;
+      height: 170svh;
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='opening']:not([data-at-fit])
+      > .ath-hero {
+      position: sticky;
+      inset-block-start: var(--at-header-height);
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='opening']:not([data-at-fit])
+      .ath-hero-copy {
+      transform-origin: 0 100%;
+      animation: atc-recede linear both;
+      animation-timeline: --atc-opening;
+      animation-range: contain 0% contain 30%;
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='opening']:not([data-at-fit])
+      .ath-hero-copy:dir(rtl) {
+      transform-origin: 100% 100%;
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='opening']:not([data-at-fit])
+      .ath-hero-media.at-frame {
+      animation: atc-window linear both;
+      animation-timeline: --atc-opening;
+      animation-range: contain 0% contain 46%;
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='opening']:not([data-at-fit])
+      .ath-hero-media
+      img {
+      animation: atc-lens linear both;
+      animation-timeline: --atc-opening;
+      animation-range: contain 0% contain 100%;
+    }
+
+    /* The handover: Chapter I slides up over the open window and covers
+       it exactly as the stage lets go. */
+    [data-theme-pack='atelier']
+      [data-at-cinematic='opening']:not([data-at-fit])
+      + :is(.at-chapter, .atc-scene) {
+      margin-block-start: calc(var(--at-header-height) - 100svh);
+    }
+
+    /* The pinned stage keeps the hero's controls geometrically on screen
+       after it has scrolled up under the sticky header, so the browser
+       would not scroll a control focused there back into view. Reserving
+       the header's height makes it do so. */
+    html:has(
+      [data-theme-pack='atelier']
+        [data-at-cinematic='opening']:not([data-at-fit])
+    ) {
+      scroll-padding-block-start: 5rem;
+    }
+
+    /* Focus inside the hero: the spread holds its first frame, above
+       whatever has slid over it, so the focused control is never covered. */
+    [data-theme-pack='atelier']
+      [data-at-cinematic='opening']:not([data-at-fit]):focus-within
+      > .ath-hero {
+      z-index: 1;
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='opening']:not([data-at-fit]):focus-within
+      :is(.ath-hero-copy, .ath-hero-media.at-frame, .ath-hero-media img) {
+      animation: none;
+    }
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) and (min-width: 64em) and (min-height: 40em) {
+    /* The method and ink scenes: the scene is the timeline (its scroll
+       range, measured below the sticky header), the chapter is the stage.
+       The pin itself (the timeline, the sticky stage, the runway) holds
+       only while the stage fits (`:not([data-at-fit])`). A stage that does
+       not fit is first released in place (`data-at-fit='release'`, for a
+       frame, its layout unchanged), then becomes its static chapter
+       (`data-at-fit='overflow'`), so the change of layout never happens
+       to a pinned element. */
+    [data-theme-pack='atelier']
+      :is([data-at-cinematic='method'], [data-at-cinematic='ink']):not(
+        [data-at-fit]
+      ) {
+      view-timeline-inset: var(--at-header-height) 0px;
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit]) {
+      view-timeline-name: --atc-method;
+    }
+    [data-theme-pack='atelier'] [data-at-cinematic='ink']:not([data-at-fit]) {
+      view-timeline-name: --atc-ink;
+    }
+    [data-theme-pack='atelier']
+      :is([data-at-cinematic='method'], [data-at-cinematic='ink']):not(
+        [data-at-fit]
+      )
+      > .at-chapter {
+      position: sticky;
+      inset-block-start: var(--at-header-height);
+    }
+    [data-theme-pack='atelier']
+      :is([data-at-cinematic='method'], [data-at-cinematic='ink']):not(
+        [data-at-fit]
+      )
+      > .atc-runway {
+      display: block;
+    }
+    /* The stage: one window tall, its content centred. */
+    [data-theme-pack='atelier']
+      :is([data-at-cinematic='method'], [data-at-cinematic='ink']):not(
+        [data-at-fit='overflow']
+      )
+      > .at-chapter {
+      min-height: calc(100svh - var(--at-header-height));
+      display: flex;
+      flex-direction: column;
+      justify-content: safe center;
+      /* Short windows tighten the chapter's own rhythm first. */
+      padding-block: clamp(1.5rem, 6svh, 4rem);
+      container-type: inline-size;
+      overflow-x: clip;
+    }
+    /* A pinned stage's thread is drawn whole: it holds still while pinned. */
+    [data-theme-pack='atelier']
+      :is([data-at-cinematic='method'], [data-at-cinematic='ink']):not(
+        [data-at-fit]
+      )
+      > .at-chapter
+      > .at-thread {
+      animation: none;
+    }
+    /* Chapter headers sit closer to their content on a short stage. */
+    [data-theme-pack='atelier']
+      :is([data-at-cinematic='method'], [data-at-cinematic='ink']):not(
+        [data-at-fit='overflow']
+      )
+      .at-body
+      > header {
+      margin-block-end: clamp(1.5rem, 5svh, 4rem);
+    }
+
+    /* -------------------------------------------------------------- */
+    /* Method — the syllabus travels along the thread                   */
+    /* -------------------------------------------------------------- */
+
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      > .atc-runway {
+      height: calc(var(--at-steps) * 40svh);
+    }
+
+    /* The window the track slides under: from the margin thread to the
+       page's end edge. Steps fade out as they pass into the margin column;
+       the thread there is the frame's own static link to the margin
+       thread, so it never fades. */
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      .atc-track-frame {
+      --atc-m: calc(var(--at-margin) * 0.62);
+      position: relative;
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      .atc-track-frame::before {
+      content: '';
+      position: absolute;
+      z-index: 1;
+      inset-block-start: calc(0.8125rem - var(--at-thread-width) / 2);
+      inset-inline-start: calc(-1 * var(--atc-m));
+      width: var(--atc-m);
+      height: var(--at-thread-width);
+      background: var(--atelier-thread);
+      pointer-events: none;
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      .atc-track-window {
+      margin-inline-start: calc(-1 * var(--atc-m));
+      margin-inline-end: calc(
+        -1 *
+          (var(--at-gutter) + (100cqw - min(100cqw, var(--at-container))) / 2)
+      );
+      padding-inline-start: var(--atc-m);
+      padding-block-start: 0.5rem;
+      overflow-x: clip;
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent calc(var(--atc-m) * 0.2),
+        currentColor var(--atc-m)
+      );
+      mask-image: linear-gradient(
+        to right,
+        transparent calc(var(--atc-m) * 0.2),
+        currentColor var(--atc-m)
+      );
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      .atc-track-window:dir(rtl) {
+      -webkit-mask-image: linear-gradient(
+        to left,
+        transparent calc(var(--atc-m) * 0.2),
+        currentColor var(--atc-m)
+      );
+      mask-image: linear-gradient(
+        to left,
+        transparent calc(var(--atc-m) * 0.2),
+        currentColor var(--atc-m)
+      );
+    }
+
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      .atc-track {
+      --atc-step: clamp(20rem, 36cqw, 34rem);
+      --atc-gap: clamp(3rem, 7cqw, 7.5rem);
+      --atc-pitch: calc(var(--atc-step) + var(--atc-gap));
+      --atc-body: calc(
+        min(100cqw, var(--at-container)) - 2 * var(--at-gutter) -
+          var(--at-margin)
+      );
+      --atc-travel: max(
+        0px,
+        var(--at-steps) * var(--atc-pitch) - var(--atc-gap) - var(--atc-body)
+      );
+      position: relative;
+      width: max-content;
+    }
+
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit])
+      .atc-track {
+      animation: atc-travel linear both;
+      animation-timeline: --atc-method;
+      animation-range: contain var(--atc-start) contain
+        calc(var(--atc-start) + var(--atc-span));
+    }
+    /* The scene's progress window: the travel, the pen, the knots and the
+       plate all play over the same stretch of the runway. */
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      > .at-chapter {
+      --atc-start: 8%;
+      --atc-span: 84%;
+    }
+
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      .ath-syllabus {
+      display: flex;
+      gap: var(--atc-gap);
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      .ath-syllabus-step {
+      flex: 0 0 var(--atc-step);
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      .ath-syllabus-step::before {
+      display: none;
+    }
+    /* In the scene each step is a plate: a poster numeral, a title and a
+       lead-sized description. The numeral gives way first on a short
+       window. */
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      .atc-track
+      .ath-syllabus-step {
+      padding-block-start: clamp(1.75rem, 4.5svh, 3rem);
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      .atc-track
+      .ath-syllabus-no {
+      font-size: clamp(3rem, min(2rem + 6cqw, 11svh), 8.5rem);
+      line-height: 0.9;
+      font-weight: 200;
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      .atc-track
+      .ath-item-title {
+      font-size: var(--at-subtitle);
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      .atc-track
+      .ath-item-text {
+      max-width: 36ch;
+      font-size: clamp(1rem, min(0.98rem + 0.3vw, 2.5svh), 1.25rem);
+    }
+
+    /* The path ahead (a hairline) and the thread drawn so far, from the
+       margin thread to the last knot. */
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      :is(.atc-track-guide, .atc-track-line) {
+      display: block;
+      position: absolute;
+      inset-block-start: calc(0.3125rem - var(--at-thread-width) / 2);
+      inset-inline-start: calc(-1 * var(--atc-m));
+      width: calc(var(--atc-m) + (var(--at-steps) - 1) * var(--atc-pitch));
+      height: var(--at-thread-width);
+      pointer-events: none;
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      .atc-track-guide {
+      background: var(--atelier-hairline);
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      .atc-track-line {
+      --atc-ahead: calc((var(--at-steps) - 1) * var(--atc-pitch));
+      background: var(--atelier-thread);
+      clip-path: inset(0 var(--atc-ahead) 0 0);
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit])
+      .atc-track-line {
+      animation: atc-pen linear both;
+      animation-timeline: --atc-method;
+      animation-range: contain var(--atc-start) contain
+        calc(var(--atc-start) + var(--atc-span));
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      .atc-track-line:dir(rtl) {
+      clip-path: inset(0 0 0 var(--atc-ahead));
+    }
+
+    /* Each knot fills, and its numeral lights, as the pen reaches it. */
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      .ath-syllabus-step {
+      --atc-at: calc(
+        var(--atc-start) + var(--atc-span) * var(--at-i) / (var(--at-steps) - 1)
+      );
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      .ath-syllabus-knot {
+      z-index: 1;
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      .ath-syllabus-knot::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: var(--atelier-thread);
+      transform: scale(0);
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit])
+      .ath-syllabus-knot::after {
+      animation: atc-fill linear both;
+      animation-timeline: --atc-method;
+      animation-range: contain calc(var(--atc-at) - 1.5%) contain
+        calc(var(--atc-at) + 1%);
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      .ath-syllabus-no {
+      opacity: 0.3;
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit])
+      .ath-syllabus-no {
+      animation: atc-light linear both;
+      animation-timeline: --atc-method;
+      animation-range: contain calc(var(--atc-at) - 1.5%) contain
+        calc(var(--atc-at) + 5%);
+    }
+
+    /* The plate takes the header's height rather than adding its own: a
+       letterbox beside the title (the photograph covers it from its focal
+       point), never shorter than a band of the window. It is uncovered
+       with the syllabus — each step reveals its share of the photograph,
+       in the reading direction, as the pen reaches it, while the
+       photograph settles — and its hairline outline holds its place from
+       the first frame. */
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      .ath-method-figure {
+      position: relative;
+      align-self: stretch;
+      min-height: clamp(7rem, 22svh, 15rem);
+      box-shadow: inset 0 0 0 1px var(--atelier-hairline);
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      .ath-method-plate {
+      position: absolute;
+      inset: 0;
+      aspect-ratio: auto;
+      --atc-hide: calc(100% - 100% / var(--at-steps));
+      clip-path: inset(0 var(--atc-hide) 0 0);
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit])
+      .ath-method-plate {
+      animation: atc-uncover linear both;
+      animation-timeline: --atc-method;
+      animation-range: contain var(--atc-start) contain
+        calc(var(--atc-start) + var(--atc-span));
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit='overflow'])
+      .ath-method-plate:dir(rtl) {
+      clip-path: inset(0 0 0 var(--atc-hide));
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='method']:not([data-at-fit])
+      .ath-method-plate
+      img {
+      animation: atc-plate-settle linear both;
+      animation-timeline: --atc-method;
+      animation-range: contain 0% contain 100%;
+    }
+
+    /* -------------------------------------------------------------- */
+    /* Ink — the page turns dark through a window                       */
+    /* -------------------------------------------------------------- */
+
+    [data-theme-pack='atelier']
+      [data-at-cinematic='ink']:not([data-at-fit='overflow'])
+      > .atc-runway {
+      height: 150svh;
+    }
+    /* The stage itself is clear (the ink is its window layer) and does
+       not also play the chapter's unveil. */
+    [data-theme-pack='atelier']
+      [data-at-cinematic='ink']:not([data-at-fit='overflow'])
+      > .at-chapter[data-env='ink'][data-unveil] {
+      background-color: transparent;
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='ink']:not([data-at-fit])
+      > .at-chapter[data-env='ink'][data-unveil] {
+      animation: none;
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='ink']:not([data-at-fit='overflow'])
+      .atc-ink-window {
+      display: block;
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: var(--atelier-ink);
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='ink']:not([data-at-fit])
+      .atc-ink-window {
+      animation: atc-ink linear both;
+      animation-timeline: --atc-ink;
+      animation-range: entry 30% contain 34%;
+    }
+    /* The figures give way to a short window before the labels do. */
+    [data-theme-pack='atelier']
+      [data-at-cinematic='ink']:not([data-at-fit='overflow'])
+      .ath-stat-value {
+      font-size: clamp(2.75rem, min(1.6rem + 6vw, 14svh), 8rem);
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='ink']:not([data-at-fit='overflow'])
+      .ath-stats[data-rows]
+      .ath-stat-value {
+      font-size: clamp(2.5rem, min(1rem + 3.6vw, 9svh), 5.5rem);
+    }
+    /* Light type arrives only once the ink is there to carry it. */
+    [data-theme-pack='atelier']
+      [data-at-cinematic='ink']:not([data-at-fit])
+      .at-body
+      > header {
+      animation: atc-rise linear both;
+      animation-timeline: --atc-ink;
+      animation-range: contain 28% contain 40%;
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='ink']:not([data-at-fit])
+      .ath-stat {
+      animation: atc-rise linear both;
+      animation-timeline: --atc-ink;
+      --atc-stagger: min(8%, 32% / var(--at-stats));
+      animation-range: contain calc(34% + var(--at-i) * var(--atc-stagger))
+        contain calc(46% + var(--at-i) * var(--atc-stagger));
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Closing — every screen size, not pinned                              */
+/* ------------------------------------------------------------------ */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-theme-pack='atelier'] [data-at-cinematic='closing'] {
+      view-timeline: --atc-closing block;
+    }
+    [data-theme-pack='atelier'] [data-at-cinematic='closing'] .ath-cta-plate {
+      animation: atc-plate linear both;
+      animation-timeline: --atc-closing;
+      animation-range: entry 0% cover 50%;
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='closing']
+      .ath-cta-plate
+      img {
+      animation: atc-pullback linear both;
+      animation-timeline: --atc-closing;
+      animation-range: entry 0% cover 55%;
+    }
+    /* The last knot fills as the thread (drawn over the same stretch,
+       `at-draw`) arrives at it. */
+    [data-theme-pack='atelier'] [data-at-cinematic='closing'] .ath-cta-knot {
+      transform: scale(0);
+      animation: atc-fill linear both;
+      animation-timeline: view();
+      animation-range: cover 36% cover 46%;
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='closing']
+      .ath-cta-text
+      :is(.at-display, .at-lead) {
+      animation: atc-rise linear both;
+      animation-timeline: --atc-closing;
+      animation-range: entry 0% entry 75%;
+    }
+  }
+}

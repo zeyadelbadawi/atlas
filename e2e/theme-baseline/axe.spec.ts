@@ -17,6 +17,7 @@ import AxeBuilder from '@axe-core/playwright';
 import {
   BRAND_PALETTES,
   LOCALES,
+  LEGACY_REDUCED_MOTION,
   SHARED_CASES,
   SHARED_CASE_THEME,
   THEME1_BRAND_PAGES,
@@ -99,11 +100,15 @@ function axeCase(
   });
 }
 
+// Theme 1 and Themes 2–5 keep the motion condition their snapshots were
+// recorded under (see LEGACY_REDUCED_MOTION).
+test.use({ contextOptions: { reducedMotion: LEGACY_REDUCED_MOTION } });
+
 for (const viewport of AXE_VIEWPORTS) {
   test.describe(`axe ${viewport.name}px`, () => {
     test.use({ viewport: { width: viewport.width, height: viewport.height } });
 
-    for (const theme of THEMES) {
+    for (const theme of THEMES.filter((key) => key !== 'atelier')) {
       for (const state of ['new', 'rich'] as const) {
         for (const page of THEMED_PAGES[state]) {
           for (const locale of LOCALES) {
@@ -122,6 +127,29 @@ for (const viewport of AXE_VIEWPORTS) {
         }
       }
     }
+
+    // Atelier is audited in its final state, under real reduced motion.
+    test.describe('atelier', () => {
+      test.use({ contextOptions: { reducedMotion: 'reduce' } });
+
+      for (const state of ['new', 'rich'] as const) {
+        for (const page of THEMED_PAGES[state]) {
+          for (const locale of LOCALES) {
+            axeCase(
+              `atelier ${state} ${page.name} ${locale}`,
+              [
+                'axe',
+                'themes',
+                'atelier',
+                state,
+                `${page.name}--${locale}--${viewport.name}.json`,
+              ],
+              { page, locale, theme: 'atelier', state }
+            );
+          }
+        }
+      }
+    });
 
     for (const sharedCase of SHARED_CASES) {
       for (const locale of LOCALES) {
