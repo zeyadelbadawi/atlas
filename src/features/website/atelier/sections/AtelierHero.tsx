@@ -15,7 +15,14 @@
  * the full window as the copy recedes, then Chapter I slides over it. Its
  * first frame is this spread exactly.
  */
-import { useId, useState, type CSSProperties } from 'react';
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type CSSProperties,
+  type RefObject,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useInRouterContext } from 'react-router-dom';
 import { cn } from '@utils';
@@ -47,6 +54,38 @@ import '../atelier-sections.css';
  */
 const HERO_SIZES = '(min-width: 1024px) 30vw, (min-width: 640px) 28rem, 100vw';
 const HERO_SCENE_SIZES = `(min-width: 64em) and (min-height: 45em) and (min-aspect-ratio: 1/1) and (prefers-reduced-motion: no-preference) 100vw, ${HERO_SIZES}`;
+
+/**
+ * Whether the opening may ask for its full-window file: once the arch's own
+ * file has loaded. The first frame is the arch, so the page's lead image
+ * loads (and paints) at the arch's size first; the full-window file follows,
+ * and the browser keeps showing the arch's file until it arrives — the
+ * scene's resolution never delays the first paint.
+ */
+function useLeadImageLoaded(
+  frame: RefObject<HTMLElement>,
+  enabled: boolean
+): boolean {
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    const image = frame.current?.querySelector('img');
+    if (!enabled || !image) return undefined;
+    let raf = 0;
+    const done = () => {
+      raf = requestAnimationFrame(() => setLoaded(true));
+    };
+    if (image.complete && image.naturalWidth > 0) {
+      done();
+      return () => cancelAnimationFrame(raf);
+    }
+    image.addEventListener('load', done, { once: true });
+    return () => {
+      image.removeEventListener('load', done);
+      cancelAnimationFrame(raf);
+    };
+  }, [frame, enabled]);
+  return loaded;
+}
 
 /** The staggered entrance for one supporting element. */
 function enter(index: number): { className: string; style: CSSProperties } {
@@ -163,6 +202,9 @@ export function AtelierHero({
       },
       locale
     );
+
+  const mediaRef = useRef<HTMLDivElement>(null);
+  const sceneImage = useLeadImageLoaded(mediaRef, cinematic);
 
   let index = 0;
   const next = () => enter(index++);
@@ -292,15 +334,18 @@ export function AtelierHero({
           </div>
 
           {hasImage ? (
-            <AtelierMedia
-              priority
-              settle
-              shape="arch"
-              value={config.image}
-              alt={resolveLocalizedText(config.imageAlt, locale)}
-              sizes={cinematic ? HERO_SCENE_SIZES : HERO_SIZES}
-              className="ath-hero-media aspect-[4/5] lg:col-span-4"
-            />
+            // `contents`: the frame stays a cell of the hero grid.
+            <div ref={mediaRef} className="contents">
+              <AtelierMedia
+                priority
+                settle
+                shape="arch"
+                value={config.image}
+                alt={resolveLocalizedText(config.imageAlt, locale)}
+                sizes={cinematic && sceneImage ? HERO_SCENE_SIZES : HERO_SIZES}
+                className="ath-hero-media aspect-[4/5] lg:col-span-4"
+              />
+            </div>
           ) : null}
         </div>
       </AtelierChapter>

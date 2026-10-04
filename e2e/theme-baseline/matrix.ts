@@ -164,7 +164,12 @@ export function fixtureSlug(
   theme: ThemeKey,
   state: DataState,
   palette = 'default',
-  composition?: 'c1' | 'migrated'
+  composition?:
+    | 'c1'
+    | 'migrated'
+    // Atelier content-limit compositions (fixture-server.mjs): `long`,
+    // `legacy`, `edge`, `std` with optional `-s<n>`, `-img`/`-noimg`, `-k<n>`.
+    | `${'long' | 'legacy' | 'edge' | 'std'}${string}`
 ): string {
   if (composition) return `fx--${theme}--${state}--${palette}--${composition}`;
   return palette === 'default'

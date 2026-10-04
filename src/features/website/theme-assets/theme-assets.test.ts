@@ -89,6 +89,31 @@ describe('theme asset manifests', () => {
     ).toEqual(['home-hero']);
   });
 
+  it('releases Atelier’s hero at full-window widths (v2) from the same approved master, v1 kept', () => {
+    const hero = ATELIER_ASSETS.assets.find((a) => a.key === 'home-hero')!;
+    expect(hero.version).toBe('v2');
+    // The opening scene's full window at 1440, 1920 and 2560 CSS px (1x),
+    // and 2x up to the widest the 3712 px master allows; never upscaled.
+    expect(hero.widths).toEqual([480, 800, 1200, 1600, 2000, 2560, 3200]);
+    expect(hero.master).toEqual({ width: 3680, height: 4600 });
+    expect(hero.provenance?.masterSha256).toBe(
+      '9ffb23f0e9b3ea066ba5348b19840970d2bb92d82a737caecf3c5367d7323e03'
+    );
+    expect(RELEASED_THEME_ASSET_FOLDERS).toEqual(
+      expect.arrayContaining(['atelier/v1', 'atelier/v2'])
+    );
+    // v1 stays served for anything that still references it.
+    for (const width of [480, 800, 1200, 1600]) {
+      for (const format of ATELIER_ASSETS.formats) {
+        expect(
+          existsSync(
+            join(PUBLIC_ROOT, 'atelier', 'v1', `home-hero-${width}.${format}`)
+          )
+        ).toBe(true);
+      }
+    }
+  });
+
   it('freezes every asset’s slot, crops, safe area, exclusion zone and RTL behaviour', () => {
     for (const entry of [
       ...MODERN_EDUCATION_ASSETS.assets,

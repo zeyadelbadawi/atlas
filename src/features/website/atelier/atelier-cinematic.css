@@ -195,9 +195,11 @@
  *    for a proportionally larger window before anything pins.
  * 3. A fit check after hydration: a stage whose content is taller than
  *    its window is marked `data-at-fit`, and every pinning rule below
+ *    (the sticky stage, the runway, the timeline and what it drives)
  *    requires `:not([data-at-fit])`. The opening keeps its stage geometry
  *    (the first frame) when it lets go, so dropping the pin never moves
- *    the top of the page.
+ *    the top of the page; the method and ink stages are released in place
+ *    for a frame (`release`) before becoming static (`overflow`).
  */
 
 /*
@@ -212,7 +214,11 @@
        spacing follow the window's height as well as its width, so longer
        copy on a short screen shrinks before it stops fitting. */
     [data-theme-pack='atelier'] [data-at-cinematic='opening'] > .ath-hero {
-      --at-display: clamp(2.5rem, min(1.35rem + 5.6vw, 10.5svh), 7.25rem);
+      --at-display: clamp(
+        2.5rem,
+        min(1.35rem + 5.6vw, 15svh - 2.0625rem),
+        7.25rem
+      );
       --at-subtitle: clamp(1.25rem, min(1.1rem + 0.9vw, 3.4svh), 1.875rem);
       --at-lead: clamp(1rem, min(0.98rem + 0.3vw, 2.5svh), 1.25rem);
       min-height: calc(100svh - var(--at-header-height));
@@ -758,6 +764,12 @@
       [data-at-cinematic='ink']:not([data-at-fit='overflow'])
       .ath-stat-value {
       font-size: clamp(2.75rem, min(1.6rem + 6vw, 14svh), 8rem);
+    }
+    [data-theme-pack='atelier']
+      [data-at-cinematic='ink']:not([data-at-fit='overflow'])
+      .ath-stats[data-rows]
+      .ath-stat-value {
+      font-size: clamp(2.5rem, min(1rem + 3.6vw, 9svh), 5.5rem);
     }
     /* Light type arrives only once the ink is there to carry it. */
     [data-theme-pack='atelier']

@@ -101,13 +101,18 @@ if (width < entry.master.width) {
 const outDir = join(args.out, folder);
 mkdirSync(outDir, { recursive: true });
 
-const base = () =>
+// One resize per pipeline: sharp applies only the LAST `.resize()`, so a
+// cover crop to the master size followed by a width-only resize kept the
+// source's ratio (v1/v2 derivatives are e.g. 1600×1986 for a 4:5 entry —
+// harmless under `object-fit: cover`, and released files are immutable).
+// Each derivative is now cropped to the entry's ratio at its own width.
+const base = (width) =>
   sharp(masterBuffer, { failOn: 'error' })
     .rotate()
     .toColourspace('srgb')
     .resize({
-      width: entry.master.width,
-      height: entry.master.height,
+      width,
+      height: Math.round((width * entry.master.height) / entry.master.width),
       fit: 'cover',
     });
 
@@ -116,7 +121,7 @@ for (const targetWidth of entry.widths) {
   for (const format of manifest.formats) {
     const file = join(outDir, `${entry.key}-${targetWidth}.${format}`);
     if (existsSync(file)) fail(`${file} already exists`);
-    const pipeline = base().resize({ width: targetWidth });
+    const pipeline = base(targetWidth);
     const info = await (
       format === 'avif'
         ? pipeline.avif({ quality: AVIF_QUALITY })
@@ -137,8 +142,7 @@ if (budgetFile && budgetFile.bytes > entry.budgetBytes) {
   );
 }
 
-const lqipBuffer = await base()
-  .resize({ width: LQIP_WIDTH })
+const lqipBuffer = await base(LQIP_WIDTH)
   .blur(1)
   .webp({ quality: 40 })
   .toBuffer();

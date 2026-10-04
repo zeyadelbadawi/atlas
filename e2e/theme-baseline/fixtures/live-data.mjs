@@ -484,7 +484,10 @@ const STAT_VALUES = [
 /**
  * `<base>[-s<1–6>][-img|-noimg][-k<2–12>]`, Atelier only:
  *   base   `long` (every field at its cap, EN and AR), `legacy` (the limits
- *          before the caps, so over budget) or `std` (the generated Home);
+ *          before the caps, so over budget), `edge` (the generated Home with
+ *          a hero title that fits a 1440×900 stage but not a 1024×720 one:
+ *          49 wide-glyph English characters, 70 Arabic) or `std` (the
+ *          generated Home);
  *   s<n>   the steps chapter's item count (long/legacy: 6, std: as generated);
  *   img    the method plate (`theme-asset:atelier/home-method`); `long` and
  *          `legacy` have it unless `noimg`;
@@ -494,12 +497,14 @@ const STAT_VALUES = [
  */
 export function parseAtelierLimitsComposition(composition) {
   const [base, ...modifiers] = String(composition).split('-');
-  if (!['long', 'legacy', 'std'].includes(base)) return null;
+  if (!['long', 'legacy', 'edge', 'std'].includes(base)) return null;
   const options = {
     base,
     steps: undefined,
-    image: base !== 'std',
+    image: base === 'long' || base === 'legacy',
     stats: undefined,
+    /* The generated Home's own steps and figures (std, edge). */
+    generated: base === 'std' || base === 'edge',
   };
   for (const modifier of modifiers) {
     let match;
@@ -533,23 +538,21 @@ function limitsHero(config, caps) {
 }
 
 function limitsSteps(config, options, caps) {
-  const count =
-    options.steps ?? (options.base === 'std' ? config.items.length : 6);
-  const items =
-    options.base === 'std'
-      ? Array.from({ length: count }, (_, index) => {
-          const source = config.items[index % config.items.length];
-          return { ...source, id: `${source.id}-${index}` };
-        })
-      : Array.from({ length: count }, (_, index) => ({
-          id: `step-limit-${index}`,
-          title: localized(caps.stepTitle, index * 2),
-          description: localized(caps.stepDescription, index * 2 + 1),
-        }));
+  const count = options.steps ?? (options.generated ? config.items.length : 6);
+  const items = options.generated
+    ? Array.from({ length: count }, (_, index) => {
+        const source = config.items[index % config.items.length];
+        return { ...source, id: `${source.id}-${index}` };
+      })
+    : Array.from({ length: count }, (_, index) => ({
+        id: `step-limit-${index}`,
+        title: localized(caps.stepTitle, index * 2),
+        description: localized(caps.stepDescription, index * 2 + 1),
+      }));
   const { image: _image, imageAlt: _alt, ...rest } = config;
   return {
     ...rest,
-    ...(options.base === 'std'
+    ...(options.generated
       ? {}
       : {
           title: localized(caps.stepsTitle, 4),
@@ -558,10 +561,9 @@ function limitsSteps(config, options, caps) {
     ...(options.image
       ? {
           image: 'theme-asset:atelier/home-method',
-          imageAlt:
-            options.base === 'std'
-              ? { en: '', ar: '' }
-              : localized(caps.alt, 8),
+          imageAlt: options.generated
+            ? { en: '', ar: '' }
+            : localized(caps.alt, 8),
         }
       : {}),
     items,
@@ -572,8 +574,9 @@ function limitsStatistics(config, options, caps) {
   const count = options.stats ?? config.items.length;
   const live = config.items.filter((item) => item.metric);
   const items = Array.from({ length: count }, (_, index) => {
-    const label =
-      options.base === 'std' ? undefined : localized(caps.statLabel, index);
+    const label = options.generated
+      ? undefined
+      : localized(caps.statLabel, index);
     if (index < live.length)
       return { ...live[index], ...(label ? { label } : {}) };
     const value = STAT_VALUES[(index - live.length) % STAT_VALUES.length];
@@ -585,7 +588,7 @@ function limitsStatistics(config, options, caps) {
   });
   return {
     ...config,
-    ...(options.base === 'std' ? {} : { title: localized(caps.statsTitle, 2) }),
+    ...(options.generated ? {} : { title: localized(caps.statsTitle, 2) }),
     items,
   };
 }
@@ -597,7 +600,16 @@ export function applyAtelierLimitsComposition(page, options) {
   return {
     ...page,
     sections: page.sections.map((section) => {
-      if (section.type === 'hero' && options.base !== 'std')
+      if (section.type === 'hero' && options.base === 'edge')
+        return {
+          ...section,
+          config: {
+            ...section.config,
+            title: { en: fill(EN_WORDS, 49), ar: fill(AR_WORDS, 70) },
+            highlight: { en: '', ar: '' },
+          },
+        };
+      if (section.type === 'hero' && !options.generated)
         return { ...section, config: limitsHero(section.config, caps) };
       if (section.type === 'steps')
         return {
@@ -606,7 +618,7 @@ export function applyAtelierLimitsComposition(page, options) {
         };
       if (
         section.type === 'statistics' &&
-        (options.base !== 'std' || options.stats)
+        (!options.generated || options.stats)
       )
         return {
           ...section,

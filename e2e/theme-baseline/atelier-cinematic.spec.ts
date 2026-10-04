@@ -246,6 +246,167 @@ for (const viewport of DESKTOPS) {
   }
 }
 
+/* ------------------------------------------------------------------ */
+/* Scene boundaries, reverse scroll, keyboard focus                     */
+/* ------------------------------------------------------------------ */
+
+for (const locale of ['en', 'ar'] as const) {
+  test.describe(`Atelier scene boundaries, 1440, ${locale}`, () => {
+    test.use({
+      viewport: { width: 1440, height: 900 },
+      contextOptions: { reducedMotion: 'no-preference' },
+    });
+
+    test('a stage lies in the flow before its range, pins inside it, leaves after it, and scrolling back reverses the scene', async ({
+      page,
+      issues,
+    }) => {
+      await openFixture(page, fixtureUrl(HOME, locale, SLUG));
+      for (const name of ['method', 'ink'] as const) {
+        const box = await sceneBox(page, name);
+        const start = box.top - box.header;
+        const end = box.top + box.height - box.viewport;
+        // Before: the stage is still below the header, in the flow.
+        await scrollToY(page, start - 200);
+        expect(await stageTop(page, name)).toBeCloseTo(box.header + 200, 0);
+        // Inside: held under the header.
+        await scrollToY(page, Math.round((start + end) / 2));
+        expect(
+          Math.abs((await stageTop(page, name)) - box.header)
+        ).toBeLessThanOrEqual(1.5);
+        // After: it scrolls away with the page.
+        await scrollToY(page, end + 200);
+        expect(await stageTop(page, name)).toBeLessThan(box.header - 150);
+      }
+      // Back up through the method scene: the track returns to its start.
+      const method = await sceneBox(page, 'method');
+      const start = method.top - method.header;
+      await scrollToY(page, start);
+      const atStart = await page
+        .locator('.atc-track')
+        .evaluate((el) => getComputedStyle(el).transform);
+      await scrollToY(page, method.top + method.height - method.viewport);
+      const atEnd = await page
+        .locator('.atc-track')
+        .evaluate((el) => getComputedStyle(el).transform);
+      expect(atEnd).not.toBe(atStart);
+      await scrollToY(page, start);
+      expect(
+        await page
+          .locator('.atc-track')
+          .evaluate((el) => getComputedStyle(el).transform)
+      ).toBe(atStart);
+      // And back to the top: the opening's first frame, whole again.
+      await scrollToY(page, 0);
+      expect(
+        await page
+          .locator('.ath-hero-copy, .ath-hero-media')
+          .evaluateAll((nodes) => nodes.map((n) => getComputedStyle(n).opacity))
+      ).toEqual(['1', '1']);
+      expect(await horizontalOverflow(page)).toBe(0);
+      expectNoIssues(issues);
+    });
+
+    test('keyboard focus in the opening is visible and never covered', async ({
+      page,
+    }) => {
+      await openFixture(page, fixtureUrl(HOME, locale, SLUG));
+      const controls = page.locator('.ath-hero-copy :is(a, button, input)');
+      const count = await controls.count();
+      expect(count).toBeGreaterThanOrEqual(2);
+      // Arrive with the keyboard from whatever precedes the spread.
+      await controls.first().focus();
+      await page.keyboard.press('Shift+Tab');
+      for (let i = 0; i < count; i++) {
+        await page.keyboard.press('Tab');
+        const focused = await page.evaluate(() => {
+          const node = document.activeElement as HTMLElement;
+          const style = getComputedStyle(node);
+          const rect = node.getBoundingClientRect();
+          const hit = document.elementFromPoint(
+            rect.left + rect.width / 2,
+            rect.top + rect.height / 2
+          );
+          return {
+            inHero: !!node.closest('.ath-hero-copy'),
+            visible: node.matches(':focus-visible'),
+            ring:
+              (style.outlineStyle !== 'none' &&
+                parseFloat(style.outlineWidth) > 0) ||
+              style.boxShadow !== 'none' ||
+              !!node.closest(':focus-within')?.matches('.ath-hero-search-row'),
+            onScreen: rect.top >= 0 && rect.bottom <= window.innerHeight,
+            uncovered: !!hit && (hit === node || node.contains(hit)),
+          };
+        });
+        expect(focused, `control ${i}`).toEqual({
+          inHero: true,
+          visible: true,
+          ring: true,
+          onScreen: true,
+          uncovered: true,
+        });
+      }
+    });
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/* The opening's photograph: arch-sized first, full window after        */
+/* ------------------------------------------------------------------ */
+
+test.describe('Atelier opening photograph', () => {
+  for (const [width, height, dpr, file] of [
+    [1440, 900, 1, 1600],
+    [1920, 1080, 1, 2000],
+    [1440, 900, 2, 3200],
+  ] as const) {
+    test.describe(`${width}×${height} @${dpr}x`, () => {
+      test.use({
+        viewport: { width, height },
+        deviceScaleFactor: dpr,
+        contextOptions: { reducedMotion: 'no-preference' },
+      });
+      test('loads the arch’s file first, then the full-window file, at the same size', async ({
+        page,
+      }) => {
+        await openFixture(page, fixtureUrl(HOME, 'en', SLUG));
+        const image = page.locator('.ath-hero-media img');
+        await expect
+          .poll(() => image.evaluate((el: HTMLImageElement) => el.currentSrc))
+          .toMatch(new RegExp(`/atelier/v2/home-hero-${file}\\.avif$`));
+        const requested = await page.evaluate(() =>
+          performance
+            .getEntriesByType('resource')
+            .map((entry) => entry.name)
+            .filter((name) => name.includes('/home-hero-'))
+            .map((name) => Number(/home-hero-(\d+)/.exec(name)![1]))
+        );
+        // The first request is the arch's width (30vw), never the window's.
+        expect(requested[0]).toBeLessThanOrEqual(dpr === 1 ? 800 : 1200);
+        // Intrinsic size reserved: the frame keeps its 4:5 box.
+        const box = (await page.locator('.ath-hero-media').boundingBox())!;
+        expect(box.width / box.height).toBeCloseTo(0.8, 2);
+      });
+    });
+  }
+
+  test.describe('static spread', () => {
+    test.use({
+      viewport: { width: 1920, height: 1080 },
+      contextOptions: { reducedMotion: 'reduce' },
+    });
+    test('asks for the arch’s width only', async ({ page }) => {
+      await openFixture(page, fixtureUrl(HOME, 'en', SLUG));
+      await page.waitForTimeout(500);
+      const src = await page
+        .locator('.ath-hero-media img')
+        .evaluate((el: HTMLImageElement) => el.currentSrc);
+      expect(Number(/home-hero-(\d+)/.exec(src)![1])).toBeLessThanOrEqual(800);
+    });
+  });
+});
+
 /** The static chapters: no pinning, no scroll-driven motion, no extra height. */
 async function expectStatic(page: Page): Promise<void> {
   const scenes = await page.evaluate(() =>

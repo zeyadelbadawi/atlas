@@ -718,6 +718,10 @@
     border-inline-start: 0;
     border-block-start: 1px solid var(--atelier-ink-hairline);
   }
+  /* A ledger of figures sets them smaller than a single row's. */
+  [data-theme-pack='atelier'] .ath-stats[data-rows] .ath-stat-value {
+    font-size: clamp(2.5rem, 1rem + 3.6vw, 5.5rem);
+  }
 }
 
 /* ------------------------------------------------------------------ */

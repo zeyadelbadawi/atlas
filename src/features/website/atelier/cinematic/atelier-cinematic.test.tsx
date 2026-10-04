@@ -89,6 +89,9 @@ afterEach(() => {
   cleanup();
 });
 
+/** Lets pending animation frames run. */
+const frames = () => new Promise((resolve) => setTimeout(resolve, 50));
+
 const scene = (container: HTMLElement, name: string) =>
   container.querySelector<HTMLElement>(`[data-at-cinematic="${name}"]`);
 
@@ -104,7 +107,7 @@ describe('Opening scene (hero)', () => {
     image: 'theme-asset:atelier/home-hero',
   };
 
-  it('wraps the page-opening hero on the public site, with a decorative runway after it', () => {
+  it('wraps the page-opening hero on the public site, with a decorative runway after it', async () => {
     const { container } = wrap(
       <AtelierHero
         config={config}
@@ -126,10 +129,18 @@ describe('Opening scene (hero)', () => {
         .getByRole('link', { name: /Browse the courses/ })
         .closest('.ath-hero-copy')
     ).toBeTruthy();
-    // The arch asks for a full-width file only where it opens to the window.
-    const sizes =
+    // The arch's own file first; the full-window file (only where the
+    // arch opens to the window) once that has loaded.
+    const sizes = () =>
       container.querySelector('picture source')?.getAttribute('sizes') ?? '';
-    expect(sizes).toMatch(
+    expect(sizes()).toBe(
+      '(min-width: 1024px) 30vw, (min-width: 640px) 28rem, 100vw'
+    );
+    await act(async () => {
+      container.querySelector('img')?.dispatchEvent(new Event('load'));
+      await frames();
+    });
+    expect(sizes()).toMatch(
       /^\(min-width: 64em\) and \(min-height: 45em\) and \(min-aspect-ratio: 1\/1\) and \(prefers-reduced-motion: no-preference\) 100vw, /
     );
     expect(container.querySelector('img')?.getAttribute('loading')).toBe(
@@ -419,7 +430,11 @@ describe('Content budget', () => {
     expect(plain.querySelector('.ath-method-plate')).toBeNull();
     cleanup();
 
-    const long = render(steps(6, wide(240), 'theme-asset:atelier/home-method'));
+    const long = render({
+      ...steps(6, wide(240), 'theme-asset:atelier/home-method'),
+      title: lt(wide(80)),
+      description: lt(wide(240)),
+    });
     expect(scene(long, 'method')).toBeNull();
     expect(long.querySelectorAll('.ath-syllabus-step')).toHaveLength(6);
     // The plate still renders in the static chapter.
@@ -487,7 +502,7 @@ describe('Fit check', () => {
     image: 'theme-asset:atelier/home-hero',
   };
 
-  it('lets go of the pin while the stage is taller than its window, and only then', () => {
+  it('lets go of the pin while the stage is taller than its window, and only then', async () => {
     const { container, unmount } = wrap(
       <AtelierHero
         config={config}
@@ -502,7 +517,13 @@ describe('Fit check', () => {
     // Inside the CSS gate the stage is one window tall (its min-height).
     stage.style.minHeight = '644px';
 
+    // Released in place first, then static on a later frame.
     stageHeight = 900;
+    act(() => observers[0].callback());
+    expect(opening.getAttribute('data-at-fit')).toBe('release');
+    await act(frames);
+    expect(opening.getAttribute('data-at-fit')).toBe('overflow');
+    // Still too tall: it stays let go.
     act(() => observers[0].callback());
     expect(opening.getAttribute('data-at-fit')).toBe('overflow');
 
@@ -520,7 +541,7 @@ describe('Fit check', () => {
     expect(observers[0].disconnected).toBe(true);
   });
 
-  it('re-arms a scene that let go when the window is resized', () => {
+  it('re-arms a scene that let go when the window is resized', async () => {
     const { container } = wrap(
       <AtelierHero
         config={config}
@@ -534,6 +555,7 @@ describe('Fit check', () => {
     stage.style.minHeight = '644px';
     stageHeight = 900;
     act(() => observers[0].callback());
+    await act(frames);
     expect(opening.getAttribute('data-at-fit')).toBe('overflow');
     // A static stage (no min-height) cannot be measured: the scene is
     // re-armed so the pinned layout is measured again.

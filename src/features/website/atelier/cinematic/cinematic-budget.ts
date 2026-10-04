@@ -102,8 +102,8 @@ const OPENING = {
     ar: { measure: 100, line: 1.225 },
   },
   title: {
-    en: { measure: 15, line: 6.95 },
-    ar: { measure: 16, line: 9.22 },
+    en: { measure: 14.5, line: 7.1 },
+    ar: { measure: 16, line: 9.43 },
   },
   /* The subtitle and description share the end half of the column. */
   subtitle: {
@@ -124,7 +124,7 @@ const OPENING = {
 /** Fixed parts of the spread, in rem. */
 const OPENING_FIXED = {
   /* The stage's padding, top and bottom. */
-  padding: 4.5,
+  padding: 4.6,
   /* Between the copy's blocks (eyebrow and headline, the two halves, the actions, the search). */
   gap: 2.45,
   eyebrowGap: 1.5,
