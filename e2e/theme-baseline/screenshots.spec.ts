@@ -14,6 +14,7 @@
  */
 import {
   ATELIER_COMING_SOON,
+  LEGACY_REDUCED_MOTION,
   ATELIER_PAGES,
   BRAND_PALETTES,
   LOCALES,
@@ -35,6 +36,11 @@ import {
   openFixture,
   test,
 } from './support/baseline-test';
+
+// Theme 1 and Themes 2–5 keep the motion condition their baselines were
+// recorded under; the Atelier describe below overrides it with real reduced
+// motion.
+test.use({ contextOptions: { reducedMotion: LEGACY_REDUCED_MOTION } });
 
 for (const viewport of VIEWPORTS) {
   test.describe(`${viewport.name}px`, () => {

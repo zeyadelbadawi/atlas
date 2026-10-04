@@ -145,6 +145,21 @@ export const ATELIER_PAGES: readonly BaselinePage[] = [
 ];
 export const ATELIER_COMING_SOON = THEME1_COMING_SOON;
 
+/**
+ * The motion preference the Theme 1 and Themes 2–5 snapshot cases were
+ * recorded under. Until Oct 2026 the config's `use.reducedMotion` never
+ * reached the browser, so those baselines were captured with motion on
+ * (below-the-fold reveals still pending). They keep that condition so the
+ * committed baselines stay comparable; Atelier cases run with real reduced
+ * motion. `THEME_BASELINE_LEGACY_MOTION=reduce` runs the legacy cases under
+ * real reduced motion to investigate the difference (never to re-record
+ * silently).
+ */
+export const LEGACY_REDUCED_MOTION: 'reduce' | 'no-preference' =
+  process.env.THEME_BASELINE_LEGACY_MOTION === 'reduce'
+    ? 'reduce'
+    : 'no-preference';
+
 export function fixtureSlug(
   theme: ThemeKey,
   state: DataState,

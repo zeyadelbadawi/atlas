@@ -344,6 +344,12 @@ export interface StepItem {
 export interface StepsSectionConfig {
   readonly title?: LocalizedText;
   readonly description?: LocalizedText;
+  /**
+   * Optional plate beside the steps. Drawn by themes that support it
+   * (Atelier's Method scene); the builder offers it only for those themes.
+   */
+  readonly image?: string;
+  readonly imageAlt?: LocalizedText;
   readonly items: readonly StepItem[];
 }
 
