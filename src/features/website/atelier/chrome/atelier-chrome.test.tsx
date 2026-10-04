@@ -4,7 +4,15 @@
  * signed-in rules and hidden-page links; the colophon footer's attribution,
  * Home link, live columns and hidden-page links; the auth frame.
  */
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
 import { cleanup, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -16,10 +24,19 @@ import { PublicWebsiteLocaleProvider } from '@/features/website/renderer/PublicW
 import { getWebsiteTheme } from '@/features/website/themes/website-theme.registry';
 import type { WebsiteHeaderProps } from '@/features/website/renderer/WebsiteHeader';
 import type { WebsiteLinkRenderer } from '@/features/website/renderer/website-link-renderer.types';
-import type { PublicWebsiteLocale, WebsiteFooterConfig, WebsitePage } from '@types';
+import type {
+  PublicWebsiteLocale,
+  WebsiteFooterConfig,
+  WebsitePage,
+} from '@types';
 import fragmentEn from '../i18n/pages.en.json';
 import fragmentAr from '../i18n/pages.ar.json';
-import { ATELIER_CHROME, AtelierAuthFrame, AtelierFooter, AtelierHeader } from '.';
+import {
+  ATELIER_CHROME,
+  AtelierAuthFrame,
+  AtelierFooter,
+  AtelierHeader,
+} from '.';
 
 /* ------------------------------------------------------------------ */
 /* Live data                                                            */
@@ -73,7 +90,12 @@ const linkRenderer: WebsiteLinkRenderer = ({
   ariaLabel,
   children,
 }) => (
-  <a href={href} className={className} aria-current={ariaCurrent} aria-label={ariaLabel}>
+  <a
+    href={href}
+    className={className}
+    aria-current={ariaCurrent}
+    aria-label={ariaLabel}
+  >
     {children}
   </a>
 );
@@ -95,7 +117,12 @@ const HEADER: WebsiteHeaderProps = {
   academyName: 'Horizon Academy',
   navigation: [
     { id: 'n1', label: lt('Home', 'الرئيسية'), pageId: 'p-home', order: 0 },
-    { id: 'n2', label: lt('Courses', 'الدورات'), pageId: 'p-courses', order: 1 },
+    {
+      id: 'n2',
+      label: lt('Courses', 'الدورات'),
+      pageId: 'p-courses',
+      order: 1,
+    },
     { id: 'n3', label: lt('FAQs', 'الأسئلة'), pageId: HIDDEN, order: 2 },
   ] as WebsiteHeaderProps['navigation'],
   pages: PAGES,
@@ -125,7 +152,9 @@ describe('AtelierHeader', () => {
       AuthFrame: AtelierAuthFrame,
     });
     const { container } = wrap(<AtelierHeader {...HEADER} />);
-    expect(container.querySelector('[data-theme-pack="atelier"] header')).toBeTruthy();
+    expect(
+      container.querySelector('[data-theme-pack="atelier"] header')
+    ).toBeTruthy();
   });
 
   it('marks the current page; previews keep every item as an inert button', () => {
@@ -134,7 +163,11 @@ describe('AtelierHeader', () => {
     const nav = screen.getByRole('navigation', { name: 'Main' });
     const courses = within(nav).getByRole('button', { name: 'Courses' });
     expect(courses.getAttribute('aria-current')).toBe('page');
-    expect(within(nav).getByRole('button', { name: 'Home' }).getAttribute('aria-current')).toBeNull();
+    expect(
+      within(nav)
+        .getByRole('button', { name: 'Home' })
+        .getAttribute('aria-current')
+    ).toBeNull();
     expect(within(nav).getByRole('button', { name: 'FAQs' })).toBeTruthy();
     expect(within(nav).getByRole('button', { name: 'My Learn' })).toBeTruthy();
     courses.click();
@@ -145,10 +178,14 @@ describe('AtelierHeader', () => {
     wrap(<AtelierHeader {...HEADER} linkRenderer={linkRenderer} />);
     const nav = screen.getByRole('navigation', { name: 'Main' });
     expect(within(nav).queryByText('FAQs')).toBeNull();
-    expect(within(nav).getByRole('link', { name: 'Courses' }).getAttribute('href')).toBe('/courses');
+    expect(
+      within(nav).getByRole('link', { name: 'Courses' }).getAttribute('href')
+    ).toBe('/courses');
     expect(within(nav).queryAllByRole('button')).toHaveLength(0);
     expect(
-      screen.getByRole('link', { name: 'Horizon Academy home' }).getAttribute('href')
+      screen
+        .getByRole('link', { name: 'Horizon Academy home' })
+        .getAttribute('href')
     ).toBe('/');
   });
 
@@ -162,12 +199,22 @@ describe('AtelierHeader', () => {
   });
 
   it('a configured CTA takes the slot; a Sign-in CTA drops the extra Sign in; hidden targets render nothing', () => {
-    wrap(<AtelierHeader {...HEADER} header={{ cta: { label: lt('Start learning') } }} />);
-    expect(screen.getAllByRole('button', { name: 'Start learning' })).toHaveLength(2);
+    wrap(
+      <AtelierHeader
+        {...HEADER}
+        header={{ cta: { label: lt('Start learning') } }}
+      />
+    );
+    expect(
+      screen.getAllByRole('button', { name: 'Start learning' })
+    ).toHaveLength(2);
     expect(screen.getAllByRole('button', { name: 'Sign in' })).toHaveLength(1);
     cleanup();
     wrap(
-      <AtelierHeader {...HEADER} header={{ cta: { label: lt('Log in'), authAction: 'signIn' } }} />
+      <AtelierHeader
+        {...HEADER}
+        header={{ cta: { label: lt('Log in'), authAction: 'signIn' } }}
+      />
     );
     expect(screen.queryByRole('button', { name: 'Sign in' })).toBeNull();
     cleanup();
@@ -182,8 +229,15 @@ describe('AtelierHeader', () => {
   });
 
   it('a signed-in visitor sees the account menu, never Sign in / Sign up', () => {
-    wrap(<AtelierHeader {...HEADER} authState={{ name: 'Mona', onSignOut: () => undefined }} />);
-    expect(screen.getByRole('button', { name: 'Account menu for Mona' })).toBeTruthy();
+    wrap(
+      <AtelierHeader
+        {...HEADER}
+        authState={{ name: 'Mona', onSignOut: () => undefined }}
+      />
+    );
+    expect(
+      screen.getByRole('button', { name: 'Account menu for Mona' })
+    ).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Sign up' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'Sign in' })).toBeNull();
   });
@@ -193,13 +247,15 @@ describe('AtelierHeader', () => {
     wrap(<AtelierHeader {...HEADER} />);
     const trigger = screen.getByRole('button', { name: 'Open menu' });
     await user.click(trigger);
-    const dialog = await screen.findByRole('dialog', { name: 'Horizon Academy menu' });
+    const dialog = await screen.findByRole('dialog', {
+      name: 'Horizon Academy menu',
+    });
     expect(dialog.hasAttribute('data-atelier-menu')).toBe(true);
     expect(dialog.contains(document.activeElement)).toBe(true);
     // Display-size links, numbered by CSS.
-    expect(within(dialog).getAllByRole('button', { name: 'Courses' })[0].className).toContain(
-      'atp-overlay-link'
-    );
+    expect(
+      within(dialog).getAllByRole('button', { name: 'Courses' })[0].className
+    ).toContain('atp-overlay-link');
     for (let i = 0; i < 10; i += 1) {
       await user.tab();
       expect(dialog.contains(document.activeElement)).toBe(true);
@@ -229,8 +285,12 @@ describe('AtelierHeader', () => {
     await user.click(screen.getByRole('button', { name: 'فتح القائمة' }));
     const dialog = await screen.findByRole('dialog');
     expect(dialog.getAttribute('dir')).toBe('rtl');
-    expect(within(dialog).getByRole('button', { name: 'إغلاق القائمة' })).toBeTruthy();
-    expect(within(dialog).getAllByRole('button', { name: 'الدورات' }).length).toBe(1);
+    expect(
+      within(dialog).getByRole('button', { name: 'إغلاق القائمة' })
+    ).toBeTruthy();
+    expect(
+      within(dialog).getAllByRole('button', { name: 'الدورات' }).length
+    ).toBe(1);
   });
 });
 
@@ -248,7 +308,11 @@ const FOOTER = {
         { id: 'l2', label: lt('FAQs'), pageId: HIDDEN },
       ],
     },
-    { id: 'g2', title: lt('Help'), links: [{ id: 'l3', label: lt('FAQs'), pageId: HIDDEN }] },
+    {
+      id: 'g2',
+      title: lt('Help'),
+      links: [{ id: 'l3', label: lt('FAQs'), pageId: HIDDEN }],
+    },
   ],
   socialLinks: [],
 } as unknown as WebsiteFooterConfig;
@@ -301,12 +365,17 @@ describe('AtelierFooter (the colophon)', () => {
       { id: 'c1', name: 'Design', courseCount: 2 },
       { id: 'c2', name: 'Business', courseCount: 1 },
     ];
-    identity = { contactEmail: 'hello@academy.example', contactPhone: '+971 4 555' };
+    identity = {
+      contactEmail: 'hello@academy.example',
+      contactPhone: '+971 4 555',
+    };
     wrap(footer({ linkRenderer }));
-    expect(screen.getByRole('link', { name: 'Design' }).getAttribute('href')).toBe(
-      '/courses?category=c1'
-    );
-    expect(screen.getByText('+971 4 555').closest('a')?.getAttribute('href')).toBe('tel:+9714555');
+    expect(
+      screen.getByRole('link', { name: 'Design' }).getAttribute('href')
+    ).toBe('/courses?category=c1');
+    expect(
+      screen.getByText('+971 4 555').closest('a')?.getAttribute('href')
+    ).toBe('tel:+9714555');
   });
 
   it('Arabic: the shared column titles are translated', () => {
@@ -315,7 +384,9 @@ describe('AtelierFooter (the colophon)', () => {
       { id: 'c2', name: 'Business', courseCount: 1 },
     ];
     wrap(footer(), 'ar');
-    expect(screen.getByText('Horizon Academy').closest('[dir]')?.getAttribute('dir')).toBe('auto');
+    expect(
+      screen.getByText('Horizon Academy').closest('[dir]')?.getAttribute('dir')
+    ).toBe('auto');
     expect(document.querySelector('[dir="rtl"] footer')).toBeTruthy();
   });
 });

@@ -146,13 +146,13 @@
 
 /* Arabic display: Markazi's proportions want air and no negative tracking. */
 [data-theme-pack='atelier'] [dir='rtl'] .at-display,
-[data-theme-pack='atelier'][dir='rtl'] .at-display,
+[dir='rtl'] [data-theme-pack='atelier'] .at-display,
 [data-theme-pack='atelier'] [dir='rtl'] .at-title,
-[data-theme-pack='atelier'][dir='rtl'] .at-title,
+[dir='rtl'] [data-theme-pack='atelier'] .at-title,
 [data-theme-pack='atelier'] [dir='rtl'] .at-subtitle,
-[data-theme-pack='atelier'][dir='rtl'] .at-subtitle,
+[dir='rtl'] [data-theme-pack='atelier'] .at-subtitle,
 [data-theme-pack='atelier'] [dir='rtl'] .at-serif,
-[data-theme-pack='atelier'][dir='rtl'] .at-serif {
+[dir='rtl'] [data-theme-pack='atelier'] .at-serif {
   letter-spacing: 0;
   line-height: 1.3;
   font-weight: 500;
@@ -169,7 +169,7 @@
 }
 /* Arabic has no italic: the phrase keeps the brand colour and an underline stroke. */
 [data-theme-pack='atelier'] [dir='rtl'] .at-em,
-[data-theme-pack='atelier'][dir='rtl'] .at-em {
+[dir='rtl'] [data-theme-pack='atelier'] .at-em {
   font-style: normal;
   text-decoration: underline;
   text-decoration-thickness: 0.06em;
@@ -194,7 +194,7 @@
   color: var(--atelier-text-muted);
 }
 [data-theme-pack='atelier'] [dir='rtl'] .at-label,
-[data-theme-pack='atelier'][dir='rtl'] .at-label {
+[dir='rtl'] [data-theme-pack='atelier'] .at-label {
   letter-spacing: 0;
   text-transform: none;
   font-size: 0.875rem;
@@ -274,7 +274,7 @@
   content: counter(at-chapter, decimal-leading-zero);
 }
 [data-theme-pack='atelier'] [dir='rtl'] .at-chapter-no::before,
-[data-theme-pack='atelier'][dir='rtl'] .at-chapter-no::before {
+[dir='rtl'] [data-theme-pack='atelier'] .at-chapter-no::before {
   content: counter(at-chapter, arabic-indic);
 }
 
@@ -377,7 +377,7 @@
   transition: background-size var(--at-duration-fast) var(--at-ease);
 }
 [data-theme-pack='atelier'] [dir='rtl'] .at-link,
-[data-theme-pack='atelier'][dir='rtl'] .at-link {
+[dir='rtl'] [data-theme-pack='atelier'] .at-link {
   background-position: 100% 100%;
 }
 [data-theme-pack='atelier'] .at-link:hover {
@@ -455,14 +455,14 @@
   transition: transform var(--at-duration-fast) var(--at-ease);
 }
 [data-theme-pack='atelier'] [dir='rtl'] .at-arrow,
-[data-theme-pack='atelier'][dir='rtl'] .at-arrow {
+[dir='rtl'] [data-theme-pack='atelier'] .at-arrow {
   transform: scaleX(-1);
 }
 [data-theme-pack='atelier'] :is(a, button):hover > .at-arrow {
   transform: translateX(0.25rem);
 }
 [data-theme-pack='atelier'] [dir='rtl'] :is(a, button):hover > .at-arrow,
-[data-theme-pack='atelier'][dir='rtl'] :is(a, button):hover > .at-arrow {
+[dir='rtl'] [data-theme-pack='atelier'] :is(a, button):hover > .at-arrow {
   transform: scaleX(-1) translateX(0.25rem);
 }
 

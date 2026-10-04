@@ -14,6 +14,8 @@ export const THEMES = [
   'corporate-learning',
   'minimal-editorial',
   'bold-creative',
+  // Theme 2 — Atelier (Reports/THEME_2_ATELIER_PLAN.md).
+  'atelier',
 ] as const;
 export type ThemeKey = (typeof THEMES)[number];
 
@@ -130,6 +132,18 @@ export const THEME1_BRAND_PAGES: readonly {
   { page: NOT_FOUND, state: 'rich' },
   { page: { name: 'coming-soon', path: '/' }, state: 'unpublished' },
 ];
+
+/**
+ * Atelier (Theme 2) beyond `THEMED_PAGES`: its rich inner pages and 404,
+ * its own Coming Soon, and the identity matrix on its Home.
+ */
+export const ATELIER_PAGES: readonly BaselinePage[] = [
+  ABOUT,
+  FAQS,
+  CONTACT,
+  NOT_FOUND,
+];
+export const ATELIER_COMING_SOON = THEME1_COMING_SOON;
 
 export function fixtureSlug(
   theme: ThemeKey,

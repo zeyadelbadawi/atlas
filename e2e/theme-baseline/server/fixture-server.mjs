@@ -77,6 +77,7 @@ const THEMES = [
   'corporate-learning',
   'minimal-editorial',
   'bold-creative',
+  'atelier',
 ];
 const STATES = ['new', 'rich', 'unpublished'];
 

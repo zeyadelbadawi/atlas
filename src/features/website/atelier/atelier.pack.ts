@@ -9,9 +9,12 @@
 import type { ThemePack } from '../theme-packs/theme-pack.types';
 import './atelier.css';
 import { mapAtelierBrandPalette } from './atelier.brand-mapping';
+import { ATELIER_SECTION_RENDERERS } from './sections';
 
 export const ATELIER_PACK: ThemePack = {
   key: 'atelier',
-  renderers: {},
+  renderers: {
+    ...ATELIER_SECTION_RENDERERS,
+  },
   mapBrandPalette: mapAtelierBrandPalette,
 };

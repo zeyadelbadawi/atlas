@@ -5,12 +5,16 @@
  *   themes/<theme>/<state>/<page>--<locale>--<width>.png
  *   shared/<case>--<locale>--<width>.png
  *   brand/modern-education/home--<palette>--en--<width>.png
+ *   themes/atelier/{rich,unpublished}/… (Theme 2's extra pages)
+ *   brand/atelier/home--<palette>--en--<width>.png
  *
  * Every later phase is compared with these. Themes 2–5 must stay
  * pixel-identical through the whole Theme 1 plan (§G, §J.11); Theme 1's
  * snapshots are expected to change, and are re-recorded deliberately.
  */
 import {
+  ATELIER_COMING_SOON,
+  ATELIER_PAGES,
   BRAND_PALETTES,
   LOCALES,
   SHARED_CASES,
@@ -190,6 +194,76 @@ for (const viewport of VIEWPORTS) {
             'modern-education',
             `home--${palette}--en--${viewport.name}.png`,
           ],
+          { fullPage: true }
+        );
+        expectNoIssues(issues);
+      });
+    }
+    for (const page of ATELIER_PAGES) {
+      for (const locale of LOCALES) {
+        test(`atelier rich ${page.name} ${locale}`, async ({
+          page: browserPage,
+          issues,
+        }) => {
+          await openFixture(
+            browserPage,
+            fixtureUrl(page, locale, fixtureSlug('atelier', 'rich'))
+          );
+          await expect(browserPage).toHaveScreenshot(
+            [
+              'themes',
+              'atelier',
+              'rich',
+              `${page.name}--${locale}--${viewport.name}.png`,
+            ],
+            { fullPage: true }
+          );
+          expectNoIssues(issues);
+        });
+      }
+    }
+
+    for (const locale of LOCALES) {
+      test(`atelier coming-soon ${locale}`, async ({
+        page: browserPage,
+        issues,
+      }) => {
+        await openFixture(
+          browserPage,
+          fixtureUrl(
+            ATELIER_COMING_SOON.page,
+            locale,
+            fixtureSlug('atelier', ATELIER_COMING_SOON.state)
+          )
+        );
+        await expect(browserPage).toHaveScreenshot(
+          [
+            'themes',
+            'atelier',
+            'unpublished',
+            `coming-soon--${locale}--${viewport.name}.png`,
+          ],
+          { fullPage: true }
+        );
+        expectNoIssues(issues);
+      });
+    }
+
+    for (const palette of BRAND_PALETTES) {
+      test(`brand atelier home ${palette}`, async ({
+        page: browserPage,
+        issues,
+      }) => {
+        await openFixture(
+          browserPage,
+          fixtureUrl(
+            { name: 'home', path: '/' },
+            'en',
+            fixtureSlug('atelier', 'rich', palette)
+          )
+        );
+        await expect(browserPage).toHaveScreenshot(
+          ['brand', 'atelier', `home--${palette}--en--${viewport.name}.png`],
           { fullPage: true }
         );
         expectNoIssues(issues);
