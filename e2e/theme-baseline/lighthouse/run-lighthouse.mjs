@@ -43,13 +43,20 @@ const RUNS = Number(process.env.THEME_BASELINE_LIGHTHOUSE_RUNS ?? 3);
 const HTTP2 = process.env.THEME_BASELINE_HTTP2 === '1';
 const BASE = `${HTTP2 ? 'https' : 'http'}://127.0.0.1:${PORT}`;
 
-const THEMES = [
+const ALL_THEMES = [
   'modern-education',
   'premium-academy',
   'corporate-learning',
   'minimal-editorial',
   'bold-creative',
+  'atelier',
 ];
+// THEME_BASELINE_LIGHTHOUSE_THEMES=atelier,modern-education runs a subset.
+const THEMES = process.env.THEME_BASELINE_LIGHTHOUSE_THEMES
+  ? process.env.THEME_BASELINE_LIGHTHOUSE_THEMES.split(',').filter((theme) =>
+      ALL_THEMES.includes(theme)
+    )
+  : ALL_THEMES;
 const CASES = [
   { name: 'home-new', path: '/', state: 'new' },
   { name: 'home-rich', path: '/', state: 'rich' },

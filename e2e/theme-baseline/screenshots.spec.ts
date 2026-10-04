@@ -40,7 +40,7 @@ for (const viewport of VIEWPORTS) {
   test.describe(`${viewport.name}px`, () => {
     test.use({ viewport: { width: viewport.width, height: viewport.height } });
 
-    for (const theme of THEMES) {
+    for (const theme of THEMES.filter((key) => key !== 'atelier')) {
       for (const state of ['new', 'rich'] as const) {
         for (const page of THEMED_PAGES[state]) {
           for (const locale of LOCALES) {
@@ -199,76 +199,111 @@ for (const viewport of VIEWPORTS) {
         expectNoIssues(issues);
       });
     }
-    for (const page of ATELIER_PAGES) {
+    // Atelier (Theme 2) is captured in its final state: real reduced
+    // motion (`contextOptions` — the config's `use.reducedMotion` never
+    // reaches the browser), so below-the-fold reveals are drawn and the
+    // scroll scenes render their static layout. The scenes themselves are
+    // covered by atelier-cinematic.spec.ts.
+    test.describe('atelier', () => {
+      test.use({ contextOptions: { reducedMotion: 'reduce' } });
+
+      for (const state of ['new', 'rich'] as const) {
+        for (const page of THEMED_PAGES[state]) {
+          for (const locale of LOCALES) {
+            test(`atelier ${state} ${page.name} ${locale}`, async ({
+              page: browserPage,
+              issues,
+            }) => {
+              await openFixture(
+                browserPage,
+                fixtureUrl(page, locale, fixtureSlug('atelier', state))
+              );
+              await expect(browserPage).toHaveScreenshot(
+                [
+                  'themes',
+                  'atelier',
+                  state,
+                  `${page.name}--${locale}--${viewport.name}.png`,
+                ],
+                { fullPage: true }
+              );
+              expectNoIssues(issues);
+            });
+          }
+        }
+      }
+
+      for (const page of ATELIER_PAGES) {
+        for (const locale of LOCALES) {
+          test(`atelier rich ${page.name} ${locale}`, async ({
+            page: browserPage,
+            issues,
+          }) => {
+            await openFixture(
+              browserPage,
+              fixtureUrl(page, locale, fixtureSlug('atelier', 'rich'))
+            );
+            await expect(browserPage).toHaveScreenshot(
+              [
+                'themes',
+                'atelier',
+                'rich',
+                `${page.name}--${locale}--${viewport.name}.png`,
+              ],
+              { fullPage: true }
+            );
+            expectNoIssues(issues);
+          });
+        }
+      }
+
       for (const locale of LOCALES) {
-        test(`atelier rich ${page.name} ${locale}`, async ({
+        test(`atelier coming-soon ${locale}`, async ({
           page: browserPage,
           issues,
         }) => {
           await openFixture(
             browserPage,
-            fixtureUrl(page, locale, fixtureSlug('atelier', 'rich'))
+            fixtureUrl(
+              ATELIER_COMING_SOON.page,
+              locale,
+              fixtureSlug('atelier', ATELIER_COMING_SOON.state)
+            )
           );
           await expect(browserPage).toHaveScreenshot(
             [
               'themes',
               'atelier',
-              'rich',
-              `${page.name}--${locale}--${viewport.name}.png`,
+              'unpublished',
+              `coming-soon--${locale}--${viewport.name}.png`,
             ],
             { fullPage: true }
           );
           expectNoIssues(issues);
         });
       }
-    }
 
-    for (const locale of LOCALES) {
-      test(`atelier coming-soon ${locale}`, async ({
-        page: browserPage,
-        issues,
-      }) => {
-        await openFixture(
-          browserPage,
-          fixtureUrl(
-            ATELIER_COMING_SOON.page,
-            locale,
-            fixtureSlug('atelier', ATELIER_COMING_SOON.state)
-          )
-        );
-        await expect(browserPage).toHaveScreenshot(
-          [
-            'themes',
-            'atelier',
-            'unpublished',
-            `coming-soon--${locale}--${viewport.name}.png`,
-          ],
-          { fullPage: true }
-        );
-        expectNoIssues(issues);
-      });
-    }
-
-    for (const palette of BRAND_PALETTES) {
-      test(`brand atelier home ${palette}`, async ({
-        page: browserPage,
-        issues,
-      }) => {
-        await openFixture(
-          browserPage,
-          fixtureUrl(
-            { name: 'home', path: '/' },
-            'en',
-            fixtureSlug('atelier', 'rich', palette)
-          )
-        );
-        await expect(browserPage).toHaveScreenshot(
-          ['brand', 'atelier', `home--${palette}--en--${viewport.name}.png`],
-          { fullPage: true }
-        );
-        expectNoIssues(issues);
-      });
-    }
+      for (const palette of BRAND_PALETTES) {
+        test(`brand atelier home ${palette}`, async ({
+          page: browserPage,
+          issues,
+        }) => {
+          await openFixture(
+            browserPage,
+            fixtureUrl(
+              { name: 'home', path: '/' },
+              'en',
+              fixtureSlug('atelier', 'rich', palette)
+            )
+          );
+          await expect(browserPage).toHaveScreenshot(
+            ['brand', 'atelier', `home--${palette}--en--${viewport.name}.png`],
+            { fullPage: true }
+          );
+          expectNoIssues(issues);
+        });
+      }
+    });
   });
 }
 
