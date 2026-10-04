@@ -24,7 +24,14 @@
  *                                `communication_campaigns` (academy messages)
  *   - audit trail             -> `audit_log_entries`
  *   - support                 -> `support_cases`, `support_case_messages`
- *   - payments                -> `payments` (no card data — see §5)
+ *   - payments                -> `payments`, `payment_proofs` (manual-transfer proof
+ *                                uploads; no card data — see §5)
+ *   - trusted devices         -> `trusted_devices` (cookie hash, label, UA; 90/180 d
+ *                                expiry; rows not pruned)
+ *   - learner devices         -> `student_devices` (cookie hash, label, UA; revoked,
+ *                                never deleted)
+ *   - lesson access records   -> `content_access_log` (no IP/UA, 90 d)
+ *   - quiz/exam activity      -> `quiz_attempt_events` (no IP/UA, 180 d)
  *   - page performance (RUM)  -> `atlas_rum_*` Prometheus histograms: page
  *                                template + phone/desktop only, aggregate,
  *                                15-day retention (Reports/REAL_USER_MONITORING.md)
@@ -109,6 +116,26 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
                 'Records of your active sessions, including the IP address and browser user agent seen when a session was created or last used, and when it was last active. If you enable two-factor authentication, an encrypted authenticator secret and hashed single-use recovery codes. Short-lived records of the one-time codes we email you to confirm a sign-in or an account deletion, and security event records, are described in section 7.',
             },
             {
+              term: 'Trusted devices',
+              detail:
+                'When you confirm a sign-in with a code we email you, Atlas can remember that browser so you are not asked for a code there every time. It does this with a random value stored in a cookie on that browser. We keep a one-way hash of that value (never the value itself), a short label such as “Chrome on macOS”, the browser user agent, and when it was last used. You can see and remove your trusted devices in your security settings. A trusted device stops working after 90 days for the dashboard or 180 days for an academy, or earlier if you remove it, change or reset your password, sign out everywhere, or delete your account. Expired and removed entries are not currently deleted automatically.',
+            },
+            {
+              term: 'Learning devices',
+              detail:
+                'Where an academy limits how many devices a learner can use, each browser a learner studies on is identified by a random value stored in a cookie. We keep a one-way hash of that value, a short label such as “Chrome on Android”, the browser user agent, and when the device was first and last used. No IP address and no device fingerprint is collected. Learners can see and remove their own devices. A removed device stops counting towards the limit, but its entry is kept and is not currently deleted automatically.',
+            },
+            {
+              term: 'Lesson access records',
+              detail:
+                'Each time a learner opens protected lesson content, we record whether access was given or refused and why, the course and lesson, the learning device and session involved, and the time. No IP address or user agent is stored with them. They help academies spot accounts being shared and help us investigate problems. The learner, the academy’s owners, administrators and managers, and Atlas platform administrators can access them; academy staff see them as a sharing report that names learners. They are deleted after 90 days.',
+            },
+            {
+              term: 'Quiz and exam activity',
+              detail:
+                'Where an academy turns on integrity monitoring for a quiz or exam, we record certain events during an attempt — such as leaving the page or window, leaving full screen, copying, pasting, printing, or the same attempt being opened in a second session — with their time. The number of such events and whether the attempt was flagged are kept with the attempt, and, depending on the academy’s settings, an attempt may be submitted automatically. No IP address or user agent is recorded. The learner, the course’s instructors, the academy’s owners, administrators and managers, the organization owner, and Atlas platform administrators can access this activity. The individual events are deleted after 180 days; the count and the flag stay with the attempt.',
+            },
+            {
               term: 'Email verification',
               detail:
                 'A short-lived, single-use token sent to your email address to confirm you can receive mail there, and the date verification succeeded.',
@@ -116,7 +143,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
             {
               term: 'Eligibility records',
               detail:
-                'To apply our one-free-trial-per-customer rule and our once-per-customer gifted subscription days, we keep records that contain a keyed cryptographic hash of the organization owner’s email address, not the address itself. Section 6 explains what these records contain and how long we keep them.',
+                'To apply our one-free-trial-per-customer rule and our once-per-customer gifted subscription days, we keep records that contain a cryptographic hash of the organization owner’s email address, not the address itself. Section 6 explains what these records contain and how long we keep them.',
             },
             {
               term: 'Support information',
@@ -126,7 +153,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
             {
               term: 'Payment and subscription information',
               detail:
-                'Your plan, subscription status, billing cycle, invoices, and the record of payments made. See section 5 for what we specifically do not hold.',
+                'Your plan, subscription status, billing cycle, invoices, the record of payments made, and any proof of payment you upload. See section 5 for what we specifically do not hold.',
             },
             {
               term: 'Audit and security logs',
@@ -191,7 +218,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
       blocks: [
         {
           kind: 'paragraph',
-          text: 'Atlas does not collect or store full payment card numbers, card security codes, or bank account credentials. Where a payment is taken, it is handled by the configured payment provider, and Atlas retains only the resulting record — amount, status, date, and a reference — needed to show your billing history and to keep your subscription accurate.',
+          text: 'Atlas does not collect or store full payment card numbers, card security codes, or bank account credentials. Subscriptions are currently paid by manual transfer — bank transfer, mobile wallet or InstaPay. When you pay this way, you upload proof of the transfer, such as a screenshot or receipt, and an Atlas platform administrator reviews it. Atlas keeps that proof with the payment record, together with the amount, status, date and a reference, to show your billing history, keep your subscription accurate and resolve any dispute. Whatever account details appear on the proof you upload are stored as part of it.',
         },
       ],
     },
@@ -214,7 +241,12 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
             {
               term: 'Free trial record',
               detail:
-                'Created when a free trial starts. It contains the hash, when the trial started and when it was due to end, the organization and account that used it, and the IP address and browser user agent at that moment. The IP address and user agent are kept only as evidence for investigating abuse, are never used to decide eligibility, and are cleared automatically after 180 days. Trial records created with our earlier method — a salted hash without a secret key — are still checked, so a trial used before the change still counts. Cancelling a trial does not make the customer eligible again.',
+                'Created when a free trial starts. It contains the hash, when the trial started and when it was due to end, the organization and account that used it, and the IP address and browser user agent at that moment. The IP address and user agent are kept only as evidence for investigating abuse, are never used to decide eligibility, and are cleared automatically after 180 days. Cancelling a trial does not make the customer eligible again.',
+            },
+            {
+              term: 'Older free trial records',
+              detail:
+                'Free trial records created before we introduced the keyed hash used an earlier method: a hash with a fixed label but no secret key. That method is weaker — someone who obtained such a record and already knew or guessed an email address could check whether it matches. These older records are still checked, so a trial used before the change still counts, but no new records are created this way.',
             },
             {
               term: 'Gifted subscription days record',
@@ -224,12 +256,12 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
             {
               term: 'Customers from before these records existed',
               detail:
-                'Customers who had already used a free trial, or had already paid for a subscription, before these records were introduced may also be recorded in them, based on our existing account, subscription and payment records, so that the once-per-customer rules apply to them too. These entries contain the same kind of hash, but no IP address or user agent.',
+                'Customers who had already used a free trial, or had already paid for a subscription, before these records were introduced have also been recorded in them where our existing account, subscription and payment records show it, so that the once-per-customer rules apply to them too. These entries contain the same kind of keyed hash, but no IP address or user agent, and they do not grant any gifted days.',
             },
             {
               term: 'What this means if you delete your account',
               detail:
-                'Deleting an account or organization removes its link to these records, but the hash and dates remain. Signing up again with the same mailbox — including a variation of it such as the same Gmail address with dots or a “+” tag — does not create a new free trial or new gifted days.',
+                'When an account is deleted, the account these records point to is anonymised; the hash and the dates remain. Signing up again with the same mailbox — including a variation of it such as the same Gmail address with dots or a “+” tag — does not create a new free trial or new gifted days.',
             },
             {
               term: 'How long we keep them',
@@ -321,7 +353,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
             {
               term: 'Legitimate interests',
               detail:
-                'Security, fraud and abuse prevention, and keeping the platform reliable and fast (including the sampled page-speed measurement in section 3) — balanced against your rights, which is why our eligibility and security records store keyed hashes rather than your email address or IP address.',
+                'Security, fraud and abuse prevention, and keeping the platform reliable and fast (including the sampled page-speed measurement in section 3) — balanced against your rights, which is why our eligibility and security records store hashes rather than your email address or IP address.',
             },
             {
               term: 'Consent',
@@ -369,14 +401,24 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
                 'Transactional email, such as verification and password-reset messages, and messages academies send to their learners and staff, are sent through an email delivery provider, which reports back whether each message was delivered.',
             },
             {
-              term: 'Error monitoring',
+              term: 'Sign in with Google',
               detail:
-                'Application errors are reported to an error-monitoring provider so we can fix faults. Credentials, tokens, cookies, and authorization headers are removed before an error report leaves Atlas.',
+                'If you choose to sign in with Google, Google confirms your identity to Atlas and shares your name and email address with us. Google handles that sign-in under its own terms and privacy policy.',
             },
             {
-              term: 'Payment providers',
+              term: 'Live video sessions',
               detail:
-                'Where payments are enabled, they are processed by the configured payment provider under its own terms.',
+                'Where an academy runs live sessions, they are hosted by a video-meeting provider, which receives the display name of each participant who joins.',
+            },
+            {
+              term: 'Error monitoring',
+              detail:
+                'Where it is enabled, application errors are reported to an error-monitoring provider so we can fix faults. Credentials, tokens, cookies, and authorization headers are removed before an error report leaves Atlas.',
+            },
+            {
+              term: 'Payments',
+              detail:
+                'Subscriptions are currently paid by manual transfer, which you make through your own bank, wallet or InstaPay provider under their terms. Atlas does not currently use a card-payment provider.',
             },
           ],
         },
@@ -392,7 +434,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
       blocks: [
         {
           kind: 'paragraph',
-          text: 'Some of the providers described above operate outside the country where you are located, which means your personal data may be transferred across borders. Where the law that applies to you restricts such transfers — including under Egyptian and Saudi data protection law — we take the steps that law requires before transferring, such as relying on your consent, an adequacy assessment, or appropriate contractual safeguards.',
+          text: 'Some of the providers described above may store or process personal data in countries other than the one where you are located, so your personal data may be transferred across borders. Some laws — including the data protection laws of Egypt and Saudi Arabia — set conditions for such transfers. If you would like to know more about where your data is processed, contact us using the details in section 18.',
         },
       ],
     },
@@ -446,6 +488,25 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
                 'Each message and its recipient list are kept in the academy’s message history. They are not currently deleted automatically, and they remain after an academy is archived; if a recipient deletes their account, their entry stays linked to the anonymised account. The individual email records created to deliver a message are deleted after 90 days, as described above.',
             },
             {
+              term: 'Trusted devices and learning devices',
+              detail:
+                'Trusted devices stop working after 90 days (dashboard) or 180 days (academy), or when removed; learning devices stop counting when removed. Neither kind of entry is currently deleted automatically.',
+            },
+            {
+              term: 'Lesson access records',
+              detail: 'Deleted after 90 days.',
+            },
+            {
+              term: 'Quiz and exam activity',
+              detail:
+                'The individual events are deleted after 180 days. The number of events and whether an attempt was flagged stay with the attempt, as part of the academy’s learning records.',
+            },
+            {
+              term: 'Archived academies',
+              detail:
+                'When an academy is deleted, or archived because its owner deleted their account, its public website goes offline and its content is kept. Atlas does not currently delete an archived academy’s content automatically, and an archived academy cannot currently be restored — by its owner or by Atlas.',
+            },
+            {
               term: 'Page performance measurements',
               detail:
                 'Aggregate counts only, deleted automatically after 15 days.',
@@ -453,7 +514,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
             {
               term: 'Billing and audit records',
               detail:
-                'Retained as long as needed for accounting, legal, and security purposes.',
+                'Retained as long as needed for accounting, legal, and security purposes. This includes proof of payment you upload.',
             },
           ],
         },
@@ -473,7 +534,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
         },
         {
           kind: 'paragraph',
-          text: 'If you own an organization, you can also delete an academy you created. Deleting an academy takes its public website offline and frees the academy allowance on your plan.',
+          text: 'If you own an organization, you can also delete an academy you created. Deleting an academy takes its public website offline and frees the academy allowance on your plan. A deleted academy is archived rather than erased, and it cannot currently be restored.',
         },
         {
           kind: 'paragraph',

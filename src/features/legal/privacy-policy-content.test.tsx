@@ -84,6 +84,85 @@ describe('Privacy Policy content', () => {
     expect(PRIVACY_POLICY_AR.lastUpdated).toBe('٤ أكتوبر ٢٠٢٦');
   });
 
+  it('distinguishes the older unkeyed trial records from the keyed ones (EN + AR)', () => {
+    const en = sectionText(PRIVACY_POLICY_EN, 'eligibility-records');
+    expect(en).toContain('Older free trial records');
+    expect(en).toContain('That method is weaker');
+    expect(en).toContain('no new records are created this way');
+    // Backfilled entries are disclosed, without counts or identities.
+    expect(en).toContain('have also been recorded in them');
+    expect(en).toContain('they do not grant any gifted days');
+    expect(en).toContain('the account these records point to is anonymised');
+    expect(en).not.toMatch(/removes its link/);
+    const ar = sectionText(PRIVACY_POLICY_AR, 'eligibility-records');
+    expect(ar).toContain('سجلات الفترات التجريبية الأقدم');
+    expect(ar).toContain('وهذه الطريقة أضعف');
+    expect(ar).toContain('ولا تمنح أي أيام مُهداة');
+  });
+
+  it('discloses devices, lesson access records and quiz activity (EN + AR)', () => {
+    const en = sectionText(PRIVACY_POLICY_EN, 'what-we-collect');
+    for (const term of [
+      'Trusted devices',
+      'Learning devices',
+      'Lesson access records',
+      'Quiz and exam activity',
+    ]) {
+      expect(en).toContain(term);
+    }
+    expect(en).toContain(
+      'No IP address and no device fingerprint is collected'
+    );
+    const ar = sectionText(PRIVACY_POLICY_AR, 'what-we-collect');
+    for (const term of [
+      'الأجهزة الموثوقة',
+      'أجهزة التعلّم',
+      'سجلات الوصول إلى الدروس',
+      'نشاط الاختبارات والامتحانات',
+    ]) {
+      expect(ar).toContain(term);
+    }
+    const retention = sectionText(PRIVACY_POLICY_EN, 'retention');
+    expect(retention).toContain('Lesson access records');
+    expect(retention).toContain(
+      'The individual events are deleted after 180 days'
+    );
+  });
+
+  it('states that archived academies cannot be restored (EN + AR)', () => {
+    expect(sectionText(PRIVACY_POLICY_EN, 'retention')).toContain(
+      'an archived academy cannot currently be restored'
+    );
+    expect(sectionText(PRIVACY_POLICY_EN, 'deletion')).toContain(
+      'it cannot currently be restored'
+    );
+    expect(sectionText(PRIVACY_POLICY_AR, 'retention')).toContain(
+      'ولا يمكن حاليًا استعادة الأكاديمية المؤرشفة'
+    );
+  });
+
+  it('describes manual-transfer payments and proof uploads, not a card provider (EN + AR)', () => {
+    const en = sectionText(PRIVACY_POLICY_EN, 'payments');
+    expect(en).toContain('manual transfer');
+    expect(en).toContain('proof of the transfer');
+    expect(sectionText(PRIVACY_POLICY_EN, 'sharing')).toContain(
+      'does not currently use a card-payment provider'
+    );
+    expect(sectionText(PRIVACY_POLICY_AR, 'payments')).toContain(
+      'إثباتًا للتحويل'
+    );
+  });
+
+  it('does not claim transfer safeguards Atlas has not established (EN + AR)', () => {
+    const en = sectionText(PRIVACY_POLICY_EN, 'transfers');
+    expect(en).not.toMatch(
+      /adequacy|contractual safeguards|we take the steps/i
+    );
+    expect(en).toContain('set conditions for such transfers');
+    const ar = sectionText(PRIVACY_POLICY_AR, 'transfers');
+    expect(ar).not.toMatch(/تقييم كفاية الحماية|ضمانات تعاقدية/);
+  });
+
   it('describes the eligibility ledgers as implemented (EN)', () => {
     const text = sectionText(PRIVACY_POLICY_EN, 'eligibility-records');
     expect(text).toContain('keyed cryptographic hash (HMAC)');
