@@ -3,7 +3,12 @@
  *
  * Mutation hook for updating a course section.
  */
-import { useApiMutation, useInvalidate } from '@/shared/hooks';
+import {
+  useApiMutation,
+  useInvalidate,
+  useAcademyBoundMutation,
+} from '@/shared/hooks';
+import type { AcademyScopedVariables } from '@/shared/hooks';
 import { courseKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { courseService } from '../services/CourseService';
@@ -17,8 +22,12 @@ export interface UpdateCourseSectionVariables {
 export function useUpdateCourseSection(academyId: string, courseId: string) {
   const { invalidate } = useInvalidate();
 
-  return useApiMutation<CourseSection, UpdateCourseSectionVariables, ApiError>({
-    mutationFn: ({ sectionId, payload }) =>
+  const mutation = useApiMutation<
+    CourseSection,
+    AcademyScopedVariables<UpdateCourseSectionVariables>,
+    ApiError
+  >({
+    mutationFn: ({ academyId, payload: { sectionId, payload } }) =>
       courseService.updateCourseSection(
         academyId,
         courseId,
@@ -27,8 +36,10 @@ export function useUpdateCourseSection(academyId: string, courseId: string) {
       ),
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: async () => {
+    onSuccess: async (_data, { academyId }) => {
       await invalidate(courseKeys.sections(academyId, courseId));
     },
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }

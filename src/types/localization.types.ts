@@ -66,6 +66,8 @@ export const TRANSLATION_NAMESPACES = [
   'certificates',
   'platformCommerce',
   'platformObservability',
+  'platformEmail',
+  'messaging',
   'onboarding',
 ] as const;
 

@@ -6,7 +6,7 @@
  */
 import { useQueryClient } from '@tanstack/react-query';
 import { useApiMutation } from '@/shared/hooks';
-import { invalidateRoster } from '@services/query';
+import { INLINE_ERRORS_META, invalidateRoster } from '@services/query';
 import type { ApiError } from '@api';
 import { academyService } from '../services/AcademyService';
 import type {
@@ -34,6 +34,10 @@ export function useCreateAcademyStudent() {
     // but the learner IS on the roster and in the academy's counts.
     showSuccessToast: false,
     showErrorToast: false,
+    // The form renders every failure itself (fields, a taken name on the
+    // name field — W4 — or its own message), so the app-wide error toast
+    // stays quiet instead of repeating it.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (_result, { academyId }) => {
       await invalidateRoster(queryClient, { academyId });
     },

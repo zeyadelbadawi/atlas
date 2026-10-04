@@ -51,7 +51,12 @@ import { generateIdempotencyKey } from '../utils/idempotency.utils';
 import { formatMoney } from '../utils/money.utils';
 import { PlanChangeSummary } from '../components/PlanChangeSummary';
 import { ManualPaymentBrandChip } from '../components/ManualPaymentBrandChip';
-import { usePlanCatalog, useTenantSubscription } from '@features/tenant';
+import {
+  PlanGiftOffer,
+  usePlanCatalog,
+  useSubscriptionLifecycleState,
+  useTenantSubscription,
+} from '@features/tenant';
 import {
   cn,
   formatCurrency,
@@ -190,10 +195,13 @@ export default function CheckoutPage(): JSX.Element {
       : { type: 'add_on', addOnKey: targetKey };
   }, [targetType, targetKey]);
 
-  const planPricing =
+  const targetPlan =
     target?.type === 'plan_subscription'
-      ? plansQuery.data?.find((plan) => plan.key === target.planKey)?.pricing
+      ? plansQuery.data?.find((plan) => plan.key === target.planKey)
       : undefined;
+  const planPricing = targetPlan?.pricing;
+  // W8 — display-only gift availability; the backend decides at approval.
+  const { state: lifecycle } = useSubscriptionLifecycleState();
   const billingCycles = availableBillingCycles(planPricing);
   // A cycle chosen before the catalog loaded (or one this plan doesn't
   // offer) never reaches the request.
@@ -347,6 +355,15 @@ export default function CheckoutPage(): JSX.Element {
                     </p>
                   ) : null}
                 </div>
+              ) : null}
+
+              {targetPlan ? (
+                <PlanGiftOffer
+                  plan={targetPlan}
+                  cycle={effectiveBillingCycle}
+                  giftAvailable={lifecycle?.giftAvailable}
+                  showNote
+                />
               ) : null}
 
               {createCheckout.error ? (

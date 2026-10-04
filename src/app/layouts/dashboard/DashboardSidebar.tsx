@@ -19,6 +19,7 @@ import { useAcademyIdentity } from '@hooks';
 import { getDashboardNavigation, filterNavigationItems } from '@app/navigation';
 import { useAuth, useLanguage, usePlatform } from '@hooks';
 import { useSubscriptionLifecycleState } from '@features/tenant';
+import { useAcademyScope } from '@features/academy';
 import { cn } from '@utils';
 import { SidebarNavigation } from './SidebarNavigation';
 
@@ -41,7 +42,13 @@ export function DashboardSidebar({
   const { t } = useTranslation();
   const { isRtl } = useLanguage();
   const { isAuthenticated, user, organization } = useAuth();
-  const { activeAcademyId, isFeatureEnabled } = usePlatform();
+  const { activeAcademyId: rememberedAcademyId, isFeatureEnabled } =
+    usePlatform();
+  // W5 — the URL's academy wins in the same render (no frame where the
+  // links or the brand belong to another academy); the remembered academy
+  // only fills in on screens outside any academy.
+  const { academyId: urlAcademyId } = useAcademyScope();
+  const activeAcademyId = urlAcademyId ?? rememberedAcademyId;
   // The authoritative lifecycle state — the same answer the backend
   // enforces with, never a second local derivation.
   const { state: lifecycle, isLoading: isLifecycleLoading } =

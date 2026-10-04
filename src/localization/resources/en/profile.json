@@ -10,7 +10,12 @@
   "sections": {
     "personal": {
       "title": "Personal Information",
-      "description": "Update your name — shown across Atlas wherever your account is referenced."
+      "description": "Update your name — shown across Atlas wherever your account is referenced.",
+      "nameChangeSuggested": {
+        "title": "Please choose a different display name",
+        "body": "Another learner at {{academies}} already uses this name. Add a middle or family name so people there can tell you apart.",
+        "action": "Change name"
+      }
     },
     "account": {
       "title": "Account Information",

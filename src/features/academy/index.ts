@@ -3,6 +3,8 @@
  */
 export * from './pages';
 export * from './components/AcademySwitcher';
+export * from './components/AcademySwitchingOverlay';
+export * from './scope';
 export * from './components/AcademyBrandingForm';
 export * from './hooks';
 export * from './services/AcademyService';

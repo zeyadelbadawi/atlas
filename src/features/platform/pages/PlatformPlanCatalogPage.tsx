@@ -88,17 +88,34 @@ export default function PlatformPlanCatalogPage(): JSX.Element {
                 {plansQuery.data.map((plan) => (
                   <li
                     key={plan.id}
-                    className="flex items-center justify-between gap-3 py-3"
+                    // Stacked on a phone: the price, status and three
+                    // actions need ~290 px and pushed the page sideways at
+                    // 390 px next to the plan's name.
+                    className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between"
+                    data-testid={`plan-row-${plan.key}`}
                   >
-                    <div>
+                    <div className="min-w-0">
                       <p className="font-medium text-foreground">{plan.name}</p>
                       {plan.description ? (
                         <p className="text-xs text-muted-foreground">
                           {plan.description}
                         </p>
                       ) : null}
+                      {/* W8 — the configured gift per cycle, at a glance. */}
+                      <p
+                        className="text-xs text-muted-foreground"
+                        data-testid={`plan-gift-summary-${plan.key}`}
+                      >
+                        {t('tenant:gift.adminPlanSummary', {
+                          monthly:
+                            plan.giftedDaysMonthly ??
+                            t('tenant:gift.adminNone'),
+                          yearly:
+                            plan.giftedDaysYearly ?? t('tenant:gift.adminNone'),
+                        })}
+                      </p>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-3">
                       {plan.pricing?.amount !== undefined &&
                       plan.pricing.currency ? (
                         <span

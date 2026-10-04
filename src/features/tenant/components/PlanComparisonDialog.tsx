@@ -30,6 +30,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@components/data-display';
+import { PlanGiftOffer } from './PlanGiftOffer';
 import { cn } from '@utils';
 import {
   PLAN_FEATURE_KEYS,
@@ -37,7 +38,10 @@ import {
   STORAGE_LIMIT_KEYS,
 } from '../constants/tenant.constants';
 import { formatLimitValue } from '../utils/entitlement.utils';
-import { resolvePlanDescription, resolvePlanName } from '../utils/plan-text.utils';
+import {
+  resolvePlanDescription,
+  resolvePlanName,
+} from '../utils/plan-text.utils';
 import type { LanguageCode, Plan } from '@types';
 
 /**
@@ -99,6 +103,13 @@ export interface PlanComparisonDialogProps {
    * itself when selection genuinely cannot succeed).
    */
   readonly notice?: PlanComparisonNotice;
+  /**
+   * W8 — the backend's display-only `lifecycle.giftAvailable`. When true,
+   * plans that offer gifted setup days say so ("Your first paid
+   * subscription includes N gifted setup days"). The grant itself is decided
+   * server-side at payment approval.
+   */
+  readonly giftAvailable?: boolean;
 }
 
 export function PlanComparisonDialog({
@@ -110,6 +121,7 @@ export function PlanComparisonDialog({
   onSelectPlan,
   onStartTrial,
   notice,
+  giftAvailable,
 }: PlanComparisonDialogProps): JSX.Element {
   const { t, i18n } = useTranslation();
   const unlimitedLabel = t('tenant:common.unlimited');
@@ -252,6 +264,14 @@ export function PlanComparisonDialog({
                     })}
                   </div>
 
+                  {plan.key !== currentPlanKey && onSelectPlan ? (
+                    <PlanGiftOffer
+                      plan={plan}
+                      cycle={plan.pricing?.billingCycle ?? 'monthly'}
+                      giftAvailable={giftAvailable}
+                    />
+                  ) : null}
+
                   {plan.key !== currentPlanKey ? (
                     <div className="mt-auto flex flex-col gap-2">
                       {/*
@@ -263,7 +283,9 @@ export function PlanComparisonDialog({
                         itself (`trialDurationDays`), so no "3" is written
                         into this component.
                       */}
-                      {onStartTrial && plan.trialEligible && plan.status === 'active' ? (
+                      {onStartTrial &&
+                      plan.trialEligible &&
+                      plan.status === 'active' ? (
                         <Button
                           type="button"
                           onClick={() => onStartTrial(plan)}

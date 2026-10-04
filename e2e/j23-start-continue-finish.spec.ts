@@ -24,8 +24,10 @@ import {
   type Page,
 } from '@playwright/test';
 import {
+  API_BASE,
   LEARNER_PASSWORD,
   academyPath,
+  authHeader,
   apiGet,
   apiPost,
   apiSignIn,
@@ -34,6 +36,7 @@ import {
   seedCookieDecision,
   uniqueLearnerEmail,
   type Session,
+  uniqueLearnerName,
 } from './support/atlas';
 import { clearAuthRateLimits } from './support/global-setup';
 import { signInOnWebsite } from './support/phase4';
@@ -258,7 +261,11 @@ test.describe('J23 — Start, Continue, Completed and Finish course', () => {
     context = await browser.newContext();
     page = await context.newPage();
     await seedCookieDecision(page);
-    await registerLearnerThroughWebsite(page, learnerEmail, 'J23 Learner');
+    await registerLearnerThroughWebsite(
+      page,
+      learnerEmail,
+      uniqueLearnerName('J23 Learner')
+    );
     await expect(
       page
         .getByText(
@@ -284,8 +291,19 @@ test.describe('J23 — Start, Continue, Completed and Finish course', () => {
     await signInOnWebsite(page, learnerEmail);
   });
 
-  test.afterAll(async () => {
+  test.afterAll(async ({ request }) => {
     await context?.close();
+    // Archive this run's two courses (the same DELETE the dashboard uses):
+    // left active, every run added two courses to the seeded academy until
+    // its plan's course limit refused the next run's setup with 409.
+    for (const courseId of [lessonsCourse?.id, quizCourse?.id]) {
+      if (!courseId || !owner) continue;
+      await request
+        .delete(`${API_BASE}/academies/${academyId}/courses/${courseId}`, {
+          headers: authHeader(owner),
+        })
+        .catch(() => undefined);
+    }
   });
 
   test('Start → Continue on the course page, and the outline agrees', async () => {

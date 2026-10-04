@@ -4,7 +4,11 @@
  * Mutation hook for updating an existing academy.
  */
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { academyKeys, publicWebsiteKeys } from '@services/query';
+import {
+  INLINE_ERRORS_META,
+  academyKeys,
+  publicWebsiteKeys,
+} from '@services/query';
 import type { ApiError } from '@api';
 import { academyService } from '../services/AcademyService';
 import type { Academy, UpdateAcademyPayload } from '@types';
@@ -24,6 +28,10 @@ export function useUpdateAcademy() {
     // suppressed to avoid showing the user two messages for one failure.
     showSuccessToast: false,
     showErrorToast: false,
+    // Both pages render every failure (fields, a taken name on the name
+    // field — W4 — or their own toast), so the app-wide error toast stays
+    // quiet too; it repeated the name-field message as a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (_academy, { id }) => {
       await invalidate(academyKeys.all);
       // The academy name shown by the LMS/public shell comes from the

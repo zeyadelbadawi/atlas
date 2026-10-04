@@ -594,6 +594,17 @@ describe('onboarding shell — Academy step', () => {
     renderShell('/onboarding/academy');
     const panel = await screen.findByTestId('academy-provisioning');
     expect(panel.textContent).toContain('Setting up Nile Academy');
+    // W2 — the same four real stages as the status page, not the raw steps.
+    expect(
+      (await within(panel).findAllByRole('listitem')).map((item) =>
+        item.getAttribute('data-testid')
+      )
+    ).toEqual([
+      'provisioning-stage-academy',
+      'provisioning-stage-website',
+      'provisioning-stage-brand',
+      'provisioning-stage-ready',
+    ]);
     expect(screen.queryByRole('button', { name: 'Continue' })).toBeNull();
   });
 

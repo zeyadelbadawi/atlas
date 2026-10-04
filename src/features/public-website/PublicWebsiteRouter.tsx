@@ -32,6 +32,7 @@ import { PublicWebsiteSitemapRoute } from './components/PublicWebsiteSitemapRout
 import { PublicWebsiteGuestRoute } from './components/PublicWebsiteGuestRoute';
 import { PublicWebsiteAuthShell } from './components/PublicWebsiteAuthShell';
 import { PublicWebsiteRetiredLearnerRedirect } from './components/PublicWebsiteRetiredLearnerRedirect';
+import { PublicWebsiteConsentLayer } from './components/PublicWebsiteConsentLayer';
 import { usePublicWebsiteData } from './hooks/usePublicWebsiteData';
 import { useResolveHostname } from './hooks/useResolveHostname';
 import {
@@ -434,6 +435,10 @@ export function PublicWebsiteRouter({
           }
         />
       </Routes>
+      {/* After the routes, outside them: mounted once for the whole site
+          and never remounted by a navigation. `RootRoute` skips its own
+          banner on an Academy host. */}
+      <PublicWebsiteConsentLayer lookupKey={lookupKey} />
     </AcademyTitleBaselineContext.Provider>
   );
 }

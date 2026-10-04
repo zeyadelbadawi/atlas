@@ -39,6 +39,7 @@ import {
   seedCookieDecision,
   uniqueLearnerEmail,
   type Session,
+  uniqueLearnerName,
 } from './support/atlas';
 import { clearAuthRateLimits } from './support/global-setup';
 
@@ -203,7 +204,7 @@ test.describe('J9 — full-screen exam and integrity signals', () => {
 
     learnerEmail = uniqueLearnerEmail('j9');
     const page = await browser.newPage();
-    await registerLearnerThroughWebsite(page, learnerEmail, 'J9 Learner');
+    await registerLearnerThroughWebsite(page, learnerEmail, uniqueLearnerName('J9 Learner'));
     await expect(
       page.getByText(/check your (email|inbox)|account created|your account is ready|verify/i).first()
     ).toBeVisible({ timeout: 20_000 });

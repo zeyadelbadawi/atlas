@@ -10,3 +10,12 @@ export * from './validation.schemas';
 export { useFormSubmit } from './useFormSubmit';
 export type { UseFormSubmitOptions } from './useFormSubmit';
 export { useServerValidation } from './useServerValidation';
+export {
+  useNameConflictError,
+  nameConflictFromError,
+  NAME_CONFLICT_ERROR_KEYS,
+} from './useNameConflictError';
+export type {
+  NameConflict,
+  UseNameConflictErrorOptions,
+} from './useNameConflictError';

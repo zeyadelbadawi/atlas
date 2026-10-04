@@ -9,6 +9,8 @@ import enPlatformZoom from './en/platformZoom.json';
 import enPlatformAddOns from './en/platformAddOns.json';
 import enPlatformCommerce from './en/platformCommerce.json';
 import enPlatformObservability from './en/platformObservability.json';
+import enPlatformEmail from './en/platformEmail.json';
+import enMessaging from './en/messaging.json';
 import enLayout from './en/layout.json';
 import enHome from './en/home.json';
 import enDashboard from './en/dashboard.json';
@@ -43,6 +45,8 @@ const bundle: Record<string, Record<string, unknown>> = {
   platformAddOns: enPlatformAddOns,
   platformCommerce: enPlatformCommerce,
   platformObservability: enPlatformObservability,
+  platformEmail: enPlatformEmail,
+  messaging: enMessaging,
   layout: enLayout,
   home: enHome,
   dashboard: enDashboard,

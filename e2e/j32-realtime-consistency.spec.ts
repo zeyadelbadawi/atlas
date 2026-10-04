@@ -199,9 +199,12 @@ test.describe('J32 — a change in one session reaches another without a reload'
         .getByLabel('Course Title')
         .fill(createdTitle, { timeout: 120_000 });
       await a.getByRole('button', { name: 'Create Course' }).click();
-      await expect(
-        a.getByRole('button', { name: 'Continue to Course Builder' })
-      ).toBeVisible();
+      // W6 — Create Course is the guided wizard's first step: the draft
+      // exists once the wizard moves on to Details.
+      await a.waitForURL(/\/courses\/[^/]+\/setup\?step=details/);
+      await expect(a.getByTestId('wizard-step-heading')).toHaveText(
+        'Course details'
+      );
       toDelete.push(
         (await findCourseByTitle(request, owner, academyId, createdTitle)).id
       );
@@ -246,10 +249,7 @@ test.describe('J32 — a change in one session reaches another without a reload'
         )
       )[0].n;
 
-    const b = await openSessionB(
-      browser,
-      `/dashboard/academy?academyId=${academyId}`
-    );
+    const b = await openSessionB(browser, `/dashboard/academy/${academyId}`);
     const contextA = await browser.newContext();
     try {
       const cardB = metric(b.page, 'الدورات المنشورة');

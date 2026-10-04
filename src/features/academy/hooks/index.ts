@@ -57,6 +57,10 @@ export {
 export type { UseAcademyInvitesOptions } from './useAcademyInvites';
 // 22 Sep 2026 — stale/foreign active-academy reconciliation (authorization audit).
 export { useActiveAcademyReconciliation } from './useActiveAcademyReconciliation';
+// W5 — academy switching isolation.
+export { useAcademyMembership } from './useAcademyMembership';
+export { useSwitchAcademy } from './useSwitchAcademy';
+export type { UseSwitchAcademyResult } from './useSwitchAcademy';
 export {
   useAcademyCommunicationSettings,
   useUpdateAcademyCommunicationSettings,

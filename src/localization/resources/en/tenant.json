@@ -402,5 +402,22 @@
       "reactivate": "Subscribe again",
       "manageSubscription": "Manage subscription"
     }
+  },
+  "gift": {
+    "includes_one": "Includes 1 gifted setup day",
+    "includes_other": "Includes {{count}} gifted setup days",
+    "firstSubscriptionNote": "Gifted on your first paid subscription. Your paid period starts when the gifted days end, so you still get the full period you paid for.",
+    "offer_one": "Your first paid subscription includes 1 gifted setup day",
+    "offer_other": "Your first paid subscription includes {{count}} gifted setup days",
+    "offerNote": "Added before your paid period starts, once your payment is confirmed.",
+    "daysLeft_one": "1 gifted day left",
+    "daysLeft_other": "{{count}} gifted days left",
+    "segmentLabel": "Gifted setup days",
+    "paidPeriodLabel": "Paid period",
+    "range": "{{start}} – {{end}}",
+    "paidPeriodStarts": "Your paid period starts on {{date}}.",
+    "adminPlanSummary": "Gifted setup days: {{monthly}} monthly · {{yearly}} yearly",
+    "adminNone": "none",
+    "adminGiftEnds": "Gift ends {{date}}"
   }
 }

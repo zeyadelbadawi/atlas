@@ -20,7 +20,7 @@ test('J33 — the academy dashboard has no sideways scroll at 390px (EN and AR)'
   await signInThroughDashboard(page, SEED.owner, SEED.password);
   await page.waitForURL(/dashboard/);
   for (const lang of ['en', 'ar']) {
-    await page.goto(`/dashboard/academy?academyId=${academyId}`);
+    await page.goto(`/dashboard/academy/${academyId}`);
     await page.evaluate(
       (l) => localStorage.setItem('atlas:language', JSON.stringify(l)),
       lang

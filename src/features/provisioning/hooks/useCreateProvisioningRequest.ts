@@ -10,7 +10,7 @@
  */
 import { useQueryClient } from '@tanstack/react-query';
 import { useApiMutation } from '@/shared/hooks';
-import { invalidateProvisioning } from '@services/query';
+import { INLINE_ERRORS_META, invalidateProvisioning } from '@services/query';
 import type { ApiError } from '@api';
 import type {
   CreateProvisioningRequestPayload,
@@ -35,6 +35,10 @@ export function useCreateProvisioningRequest() {
       provisioningService.createProvisioningRequest(organizationId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // The form renders every failure itself (fields, a taken name on the
+    // name field — W4 — or its own message), so the app-wide error toast
+    // stays quiet instead of repeating it.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (_data, variables) => {
       // Every list of this organization (`lists`, not `list(org)`, whose
       // trailing `undefined` never matched the screen's query-bearing key).

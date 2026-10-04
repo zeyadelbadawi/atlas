@@ -23,7 +23,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { usePaymentHistory } from '../hooks';
-import { useTenantSubscription } from '@features/tenant';
+import {
+  SubscriptionGiftDetails,
+  useTenantSubscription,
+} from '@features/tenant';
 import { getPaymentStatusTone } from '../utils/payment-status.utils';
 import { formatMoney } from '../utils/money.utils';
 import { TERMINAL_PAYMENT_STATUSES } from '@types';
@@ -134,8 +137,18 @@ export default function BillingOverviewPage(): JSX.Element {
               onClick={() => navigate(DASHBOARD_ROUTES.tenantSubscription)}
             >
               {t('payments:overview.manageSubscription')}
-              <ArrowRight className={cn('size-4', MIRROR_IN_RTL)} strokeWidth={2} aria-hidden />
+              <ArrowRight
+                className={cn('size-4', MIRROR_IN_RTL)}
+                strokeWidth={2}
+                aria-hidden
+              />
             </Button>
+            {/* W8 — "Includes N gifted setup days" when one was granted. */}
+            {subscription.giftedDays ? (
+              <div className="basis-full">
+                <SubscriptionGiftDetails subscription={subscription} />
+              </div>
+            ) : null}
           </CardContent>
         </Card>
 
@@ -151,7 +164,11 @@ export default function BillingOverviewPage(): JSX.Element {
               onClick={() => navigate(DASHBOARD_ROUTES.tenantBillingPayments)}
             >
               {t('payments:overview.viewAllPayments')}
-              <ArrowRight className={cn('size-4', MIRROR_IN_RTL)} strokeWidth={2} aria-hidden />
+              <ArrowRight
+                className={cn('size-4', MIRROR_IN_RTL)}
+                strokeWidth={2}
+                aria-hidden
+              />
             </Button>
           </CardHeader>
           <CardContent>

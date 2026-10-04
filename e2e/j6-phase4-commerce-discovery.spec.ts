@@ -32,6 +32,7 @@ import {
   registerLearnerThroughWebsite,
   uniqueLearnerEmail,
   type Session,
+  uniqueLearnerName,
 } from './support/atlas';
 import { clearAuthRateLimits } from './support/global-setup';
 import {
@@ -310,7 +311,7 @@ test.describe('J6 — catalog, details, reviews and paid checkout', () => {
   }) => {
     test.setTimeout(120_000);
     learnerEmail = uniqueLearnerEmail('j6');
-    await registerLearnerThroughWebsite(page, learnerEmail, 'J6 Learner');
+    await registerLearnerThroughWebsite(page, learnerEmail, uniqueLearnerName('J6 Learner'));
     await expect(
       page.getByText(/check your (email|inbox)|account created|your account is ready|verify/i).first()
     ).toBeVisible({ timeout: 20_000 });

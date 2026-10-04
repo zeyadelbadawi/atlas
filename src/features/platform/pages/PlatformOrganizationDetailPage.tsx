@@ -12,12 +12,14 @@ import { ErrorState, EmptyState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useDateFormatter } from '@hooks';
 import { OrganizationCommissionCard } from '@features/platform-commerce';
 import { usePlatformOrganization } from '../hooks';
 import { getPlatformOrganizationStatusTone } from '../utils/platform-status.utils';
 
 export default function PlatformOrganizationDetailPage(): JSX.Element {
   const { t, i18n } = useTranslation();
+  const fmt = useDateFormatter();
   const { organizationId } = useParams<{ organizationId: string }>();
 
   const {
@@ -133,6 +135,26 @@ export default function PlatformOrganizationDetailPage(): JSX.Element {
                       : '—'}
                   </p>
                 </div>
+                {/* W8 — gifted setup days granted on this organization's
+                    first paid subscription. */}
+                {organization.subscription.giftedDays &&
+                organization.subscription.giftedEndsAt ? (
+                  <div
+                    className="sm:col-span-3"
+                    data-testid="platform-org-gift"
+                  >
+                    <p className="font-medium text-foreground">
+                      {t('tenant:gift.includes', {
+                        count: organization.subscription.giftedDays,
+                      })}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {t('tenant:gift.adminGiftEnds', {
+                        date: fmt.date(organization.subscription.giftedEndsAt),
+                      })}
+                    </p>
+                  </div>
+                ) : null}
               </div>
             ) : (
               <EmptyState titleKey="platform:organizations.noSubscription" />

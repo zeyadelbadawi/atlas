@@ -1,12 +1,24 @@
 /**
- * Quiz Settings Editor (P64 Phase 3 §E.1).
+ * Quiz Settings Editor (P64 Phase 3 §E.1; W7 essentials + advanced split).
  *
  * The settings half of the quiz builder: two presets (Practice / Exam)
- * that FILL the fields, then five grouped cards — timing and
- * availability, attempts and grading, results and review, integrity,
- * progression. Every field carries a one-line description that says what
- * the server ENFORCES versus what it merely RECORDS, and the integrity
- * copy never claims to prevent anything (design review rule 9).
+ * that FILL the fields, the ESSENTIAL settings (passing score, max
+ * attempts, time limit, "required for completion") always visible, and
+ * everything else behind an "Advanced options" disclosure
+ * (`QUIZ_ADVANCED_SETTING_KEYS`) in the same five grouped cards as before
+ * — timing and availability, attempts and grading, results and review,
+ * integrity, progression. Every field carries a one-line description that
+ * says what the server ENFORCES versus what it merely RECORDS, and the
+ * integrity copy never claims to prevent anything (design review rule 9).
+ *
+ * The advanced panel stays mounted while collapsed (values are kept and
+ * always submitted) and OPENS BY ITSELF when:
+ *   - an existing quiz is opened with a customised advanced value
+ *     (`customisedAdvancedSettings`, judged against both untouched
+ *     baselines — the Practice preset and the server defaults);
+ *   - a client or server validation error lands on an advanced field
+ *     (focus then moves to that field);
+ *   - the author picks the Exam preset (it sets integrity and full screen).
  *
  * Reads and writes the settings fields of the enclosing
  * `QuizAuthoringFormData` form through `useFormContext`, the same way
@@ -14,7 +26,7 @@
  * bottom are the page boundary: minutes ↔ seconds and `datetime-local`
  * ↔ ISO, with `null` clearing a date or a limit on the server.
  */
-import type { ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useFormContext, useWatch, type FieldPath } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import {
@@ -22,6 +34,7 @@ import {
   CalendarClock,
   Eye,
   Flag,
+  Gauge,
   ListChecks,
   ShieldCheck,
 } from 'lucide-react';
@@ -58,37 +71,84 @@ import {
   MAX_QUIZ_TIME_LIMIT_MINUTES,
   MIN_QUIZ_MAX_VIOLATIONS,
   MIN_QUIZ_TIME_LIMIT_MINUTES,
+  QUIZ_ADVANCED_SETTING_KEYS,
   QUIZ_DISCLOSURES,
   QUIZ_GRADING_POLICIES,
   QUIZ_LAYOUTS,
   QUIZ_MODES,
   QUIZ_SETTINGS_PRESETS,
   QUIZ_SETTINGS_PRESET_KEYS,
+  customisedAdvancedSettings,
+  sameQuizSetting,
   type QuizAuthoringFormData,
   type QuizSettingsFormData,
   type QuizSettingsPresetName,
 } from '@features/learning';
 import type { QuizSettingsAuthoring, QuizSettingsInput } from '@types';
 import { toDateTimeLocalValue } from './AssignmentFormDialog';
+import { AdvancedOptionsDisclosure } from './AdvancedOptionsDisclosure';
 
 type SettingsField = FieldPath<QuizAuthoringFormData>;
 
 const PRESET_NAMES: readonly QuizSettingsPresetName[] = ['practice', 'exam'];
 
-/** Loose equality for preset detection: number inputs hand back strings. */
-function sameSetting(a: unknown, b: unknown): boolean {
-  return String(a ?? '') === String(b ?? '');
+/**
+ * Read at CALL time, never captured at module scope: `@features/learning`
+ * can reach this module through its own barrel, and inside that import
+ * cycle a module-scope copy of the binding is `undefined` (the same trap
+ * `emptyQuizValues` documents).
+ */
+function isAdvancedKey(key: string): boolean {
+  return (QUIZ_ADVANCED_SETTING_KEYS as readonly string[]).includes(key);
 }
 
 export function QuizSettingsEditor(): JSX.Element {
   const { t } = useTranslation();
-  const { control, setValue } = useFormContext<QuizAuthoringFormData>();
+  const { control, setValue, getValues, setFocus, formState } =
+    useFormContext<QuizAuthoringFormData>();
 
   const values = useWatch({ control });
 
+  // Opened by itself for an edited quiz that already customises an
+  // advanced setting; the author can still collapse it afterwards.
+  const [advancedOpen, setAdvancedOpen] = useState(
+    () => customisedAdvancedSettings(getValues()).length > 0
+  );
+
+  // An error on a hidden field must never be invisible: open the panel and
+  // move focus to the first such field. Keyed on the error set, so a
+  // second failed submit with the same error re-focuses it too.
+  const advancedErrorKeys = Object.keys(formState.errors).filter(isAdvancedKey);
+  const advancedErrorSignature = `${formState.submitCount}:${advancedErrorKeys.join(',')}`;
+  const lastSignature = useRef('');
+  useEffect(() => {
+    if (advancedErrorKeys.length === 0) return;
+    if (lastSignature.current === advancedErrorSignature) return;
+    lastSignature.current = advancedErrorSignature;
+    setAdvancedOpen(true);
+    const hasEssentialError = Object.keys(formState.errors).some(
+      (key) => !isAdvancedKey(key)
+    );
+    if (hasEssentialError) return; // React Hook Form already focused that one.
+    const first = QUIZ_ADVANCED_SETTING_KEYS.find((key) =>
+      advancedErrorKeys.includes(key)
+    );
+    if (!first) return;
+    // After the panel is shown (focus cannot land in a hidden element).
+    requestAnimationFrame(() => {
+      try {
+        setFocus(first);
+      } catch {
+        // Not every control is focusable through RHF (e.g. a Select); the
+        // open panel and its inline message are the fallback.
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [advancedErrorSignature]);
+
   const activePreset = PRESET_NAMES.find((name) =>
     QUIZ_SETTINGS_PRESET_KEYS.every((key) =>
-      sameSetting(values[key], QUIZ_SETTINGS_PRESETS[name][key])
+      sameQuizSetting(values[key], QUIZ_SETTINGS_PRESETS[name][key])
     )
   );
 
@@ -97,8 +157,11 @@ export function QuizSettingsEditor(): JSX.Element {
     QUIZ_SETTINGS_PRESET_KEYS.forEach((key) => {
       setValue(key, preset[key], { shouldDirty: true, shouldValidate: true });
     });
+    // Exam turns on integrity and full screen — show the author what it set.
+    if (name === 'exam') setAdvancedOpen(true);
   };
 
+  const customisedCount = customisedAdvancedSettings(values).length;
   const integrityMode = values.integrityMode ?? 'off';
   const hasTimeLimit =
     values.timeLimitMinutes !== undefined &&
@@ -150,68 +213,13 @@ export function QuizSettingsEditor(): JSX.Element {
         )}
       </div>
 
-      {/* Timing and availability */}
+      {/* Essentials — always visible. */}
       <SettingsCard
-        icon={
-          <CalendarClock className="size-4" strokeWidth={1.75} aria-hidden />
-        }
-        titleKey="course:quizAuthoring.settings.timing.title"
-        descriptionKey="course:quizAuthoring.settings.timing.description"
+        icon={<Gauge className="size-4" strokeWidth={1.75} aria-hidden />}
+        titleKey="course:quizAuthoring.settings.essentials.title"
+        descriptionKey="course:quizAuthoring.settings.essentials.description"
       >
-        <div className="grid gap-4 sm:grid-cols-2">
-          <SelectSetting
-            name="mode"
-            labelKey="course:quizAuthoring.settings.fields.mode.label"
-            descriptionKey="course:quizAuthoring.settings.fields.mode.description"
-            options={QUIZ_MODES}
-            optionKeyPrefix="course:quizAuthoring.settings.fields.mode.options"
-          />
-          <NumberSetting
-            name="timeLimitMinutes"
-            labelKey="course:quizAuthoring.settings.fields.timeLimit.label"
-            descriptionKey="course:quizAuthoring.settings.fields.timeLimit.description"
-            min={MIN_QUIZ_TIME_LIMIT_MINUTES}
-            max={MAX_QUIZ_TIME_LIMIT_MINUTES}
-            placeholderKey="course:quizAuthoring.settings.fields.timeLimit.placeholder"
-          />
-          <DateTimeSetting
-            name="availableFrom"
-            labelKey="course:quizAuthoring.settings.fields.availableFrom.label"
-            descriptionKey="course:quizAuthoring.settings.fields.availableFrom.description"
-          />
-          <DateTimeSetting
-            name="availableUntil"
-            labelKey="course:quizAuthoring.settings.fields.availableUntil.label"
-            descriptionKey="course:quizAuthoring.settings.fields.availableUntil.description"
-          />
-          <DateTimeSetting
-            name="dueAt"
-            labelKey="course:quizAuthoring.settings.fields.dueAt.label"
-            descriptionKey="course:quizAuthoring.settings.fields.dueAt.description"
-          />
-          <SelectSetting
-            name="latePolicy"
-            labelKey="course:quizAuthoring.settings.fields.latePolicy.label"
-            descriptionKey="course:quizAuthoring.settings.fields.latePolicy.description"
-            options={ASSESSMENT_LATE_POLICIES}
-            optionKeyPrefix="course:quizAuthoring.settings.fields.latePolicy.options"
-          />
-        </div>
-        <SwitchSetting
-          name="hideTimer"
-          labelKey="course:quizAuthoring.settings.fields.hideTimer.label"
-          descriptionKey="course:quizAuthoring.settings.fields.hideTimer.description"
-          disabled={!hasTimeLimit}
-        />
-      </SettingsCard>
-
-      {/* Attempts and grading */}
-      <SettingsCard
-        icon={<ListChecks className="size-4" strokeWidth={1.75} aria-hidden />}
-        titleKey="course:quizAuthoring.settings.attempts.title"
-        descriptionKey="course:quizAuthoring.settings.attempts.description"
-      >
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-3">
           <NumberSetting
             name="passingScore"
             labelKey="course:quizAuthoring.editor.passingScoreLabel"
@@ -227,164 +235,253 @@ export function QuizSettingsEditor(): JSX.Element {
             min={1}
             placeholderKey="course:quizAuthoring.settings.fields.maxAttempts.placeholder"
           />
-          <SelectSetting
-            name="gradingPolicy"
-            labelKey="course:quizAuthoring.settings.fields.gradingPolicy.label"
-            descriptionKey="course:quizAuthoring.settings.fields.gradingPolicy.description"
-            options={QUIZ_GRADING_POLICIES}
-            optionKeyPrefix="course:quizAuthoring.settings.fields.gradingPolicy.options"
-          />
           <NumberSetting
-            name="questionsPerAttempt"
-            labelKey="course:quizAuthoring.settings.fields.questionsPerAttempt.label"
-            descriptionKey="course:quizAuthoring.settings.fields.questionsPerAttempt.description"
-            min={1}
-            max={MAX_QUIZ_QUESTIONS}
-            placeholderKey="course:quizAuthoring.settings.fields.questionsPerAttempt.placeholder"
+            name="timeLimitMinutes"
+            labelKey="course:quizAuthoring.settings.fields.timeLimit.label"
+            descriptionKey="course:quizAuthoring.settings.fields.timeLimit.description"
+            min={MIN_QUIZ_TIME_LIMIT_MINUTES}
+            max={MAX_QUIZ_TIME_LIMIT_MINUTES}
+            placeholderKey="course:quizAuthoring.settings.fields.timeLimit.placeholder"
           />
         </div>
-        <SwitchSetting
-          name="shuffleQuestions"
-          labelKey="course:quizAuthoring.settings.fields.shuffleQuestions.label"
-          descriptionKey="course:quizAuthoring.settings.fields.shuffleQuestions.description"
-        />
-        <SwitchSetting
-          name="shuffleOptions"
-          labelKey="course:quizAuthoring.settings.fields.shuffleOptions.label"
-          descriptionKey="course:quizAuthoring.settings.fields.shuffleOptions.description"
-        />
-      </SettingsCard>
-
-      {/* Results and review */}
-      <SettingsCard
-        icon={<Eye className="size-4" strokeWidth={1.75} aria-hidden />}
-        titleKey="course:quizAuthoring.settings.results.title"
-        descriptionKey="course:quizAuthoring.settings.results.description"
-      >
-        <div className="grid gap-4 sm:grid-cols-2">
-          <SelectSetting
-            name="layout"
-            labelKey="course:quizAuthoring.settings.fields.layout.label"
-            descriptionKey="course:quizAuthoring.settings.fields.layout.description"
-            options={QUIZ_LAYOUTS}
-            optionKeyPrefix="course:quizAuthoring.settings.fields.layout.options"
-          />
-          <SelectSetting
-            name="showScore"
-            labelKey="course:quizAuthoring.settings.fields.showScore.label"
-            descriptionKey="course:quizAuthoring.settings.fields.showScore.description"
-            options={QUIZ_DISCLOSURES}
-            optionKeyPrefix="course:quizAuthoring.settings.disclosure"
-          />
-          <SelectSetting
-            name="showAnswers"
-            labelKey="course:quizAuthoring.settings.fields.showAnswers.label"
-            descriptionKey="course:quizAuthoring.settings.fields.showAnswers.description"
-            options={QUIZ_DISCLOSURES}
-            optionKeyPrefix="course:quizAuthoring.settings.disclosure"
-          />
-        </div>
-        <SwitchSetting
-          name="showExplanations"
-          labelKey="course:quizAuthoring.settings.fields.showExplanations.label"
-          descriptionKey="course:quizAuthoring.settings.fields.showExplanations.description"
-        />
-      </SettingsCard>
-
-      {/* Integrity */}
-      <SettingsCard
-        icon={<ShieldCheck className="size-4" strokeWidth={1.75} aria-hidden />}
-        titleKey="course:quizAuthoring.settings.integrity.title"
-        descriptionKey="course:quizAuthoring.settings.integrity.description"
-      >
-        <FormField
-          control={control}
-          name="integrityMode"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                {t('course:quizAuthoring.settings.fields.integrityMode.label')}
-              </FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger className="sm:max-w-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {(['off', 'monitor', 'warn', 'strict'] as const).map(
-                    (mode) => (
-                      <SelectItem key={mode} value={mode}>
-                        {t(
-                          `course:quizAuthoring.settings.fields.integrityMode.options.${mode}`
-                        )}
-                      </SelectItem>
-                    )
-                  )}
-                </SelectContent>
-              </Select>
-              <FormDescription>
-                {t(
-                  `course:quizAuthoring.settings.fields.integrityMode.descriptions.${integrityMode}`
-                )}
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {integrityMode !== 'off' ? (
-          <>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <NumberSetting
-                name="maxViolations"
-                labelKey="course:quizAuthoring.settings.fields.maxViolations.label"
-                descriptionKey={
-                  integrityMode === 'strict'
-                    ? 'course:quizAuthoring.settings.fields.maxViolations.descriptionStrict'
-                    : integrityMode === 'warn'
-                      ? 'course:quizAuthoring.settings.fields.maxViolations.descriptionWarn'
-                      : 'course:quizAuthoring.settings.fields.maxViolations.descriptionMonitor'
-                }
-                min={MIN_QUIZ_MAX_VIOLATIONS}
-                max={MAX_QUIZ_MAX_VIOLATIONS}
-              />
-            </div>
-            <SwitchSetting
-              name="requireFullscreen"
-              labelKey="course:quizAuthoring.settings.fields.requireFullscreen.label"
-              descriptionKey="course:quizAuthoring.settings.fields.requireFullscreen.description"
-            />
-          </>
-        ) : (
-          <p
-            className="text-sm text-muted-foreground"
-            data-testid="fullscreen-requires-integrity"
-          >
-            {t(
-              'course:quizAuthoring.settings.fields.requireFullscreen.offHint'
-            )}
-          </p>
-        )}
-      </SettingsCard>
-
-      {/* Progression */}
-      <SettingsCard
-        icon={<Flag className="size-4" strokeWidth={1.75} aria-hidden />}
-        titleKey="course:quizAuthoring.settings.progression.title"
-        descriptionKey="course:quizAuthoring.settings.progression.description"
-      >
-        <SwitchSetting
-          name="requiredToProgress"
-          labelKey="course:quizAuthoring.settings.fields.requiredToProgress.label"
-          descriptionKey="course:quizAuthoring.settings.fields.requiredToProgress.description"
-        />
         <SwitchSetting
           name="requiredForCompletion"
           labelKey="course:quizAuthoring.settings.fields.requiredForCompletion.label"
           descriptionKey="course:quizAuthoring.settings.fields.requiredForCompletion.description"
         />
       </SettingsCard>
+
+      <AdvancedOptionsDisclosure
+        open={advancedOpen}
+        onOpenChange={setAdvancedOpen}
+        label={t('course:quizAuthoring.settings.advanced.toggle')}
+        summary={
+          customisedCount > 0
+            ? t('course:quizAuthoring.settings.advanced.customised', {
+                count: customisedCount,
+              })
+            : undefined
+        }
+        testId="quiz-advanced-options"
+      >
+        <p className="text-sm text-muted-foreground">
+          {t('course:quizAuthoring.settings.advanced.description')}
+        </p>
+
+        {/* Timing and availability */}
+        <SettingsCard
+          icon={
+            <CalendarClock className="size-4" strokeWidth={1.75} aria-hidden />
+          }
+          titleKey="course:quizAuthoring.settings.timing.title"
+          descriptionKey="course:quizAuthoring.settings.timing.description"
+        >
+          <div className="grid gap-4 sm:grid-cols-2">
+            <SelectSetting
+              name="mode"
+              labelKey="course:quizAuthoring.settings.fields.mode.label"
+              descriptionKey="course:quizAuthoring.settings.fields.mode.description"
+              options={QUIZ_MODES}
+              optionKeyPrefix="course:quizAuthoring.settings.fields.mode.options"
+            />
+            <SelectSetting
+              name="latePolicy"
+              labelKey="course:quizAuthoring.settings.fields.latePolicy.label"
+              descriptionKey="course:quizAuthoring.settings.fields.latePolicy.description"
+              options={ASSESSMENT_LATE_POLICIES}
+              optionKeyPrefix="course:quizAuthoring.settings.fields.latePolicy.options"
+            />
+            <DateTimeSetting
+              name="availableFrom"
+              labelKey="course:quizAuthoring.settings.fields.availableFrom.label"
+              descriptionKey="course:quizAuthoring.settings.fields.availableFrom.description"
+            />
+            <DateTimeSetting
+              name="availableUntil"
+              labelKey="course:quizAuthoring.settings.fields.availableUntil.label"
+              descriptionKey="course:quizAuthoring.settings.fields.availableUntil.description"
+            />
+            <DateTimeSetting
+              name="dueAt"
+              labelKey="course:quizAuthoring.settings.fields.dueAt.label"
+              descriptionKey="course:quizAuthoring.settings.fields.dueAt.description"
+            />
+          </div>
+          <SwitchSetting
+            name="hideTimer"
+            labelKey="course:quizAuthoring.settings.fields.hideTimer.label"
+            descriptionKey="course:quizAuthoring.settings.fields.hideTimer.description"
+            disabled={!hasTimeLimit}
+          />
+        </SettingsCard>
+
+        {/* Attempts and grading */}
+        <SettingsCard
+          icon={
+            <ListChecks className="size-4" strokeWidth={1.75} aria-hidden />
+          }
+          titleKey="course:quizAuthoring.settings.attempts.title"
+          descriptionKey="course:quizAuthoring.settings.attempts.description"
+        >
+          <div className="grid gap-4 sm:grid-cols-2">
+            <SelectSetting
+              name="gradingPolicy"
+              labelKey="course:quizAuthoring.settings.fields.gradingPolicy.label"
+              descriptionKey="course:quizAuthoring.settings.fields.gradingPolicy.description"
+              options={QUIZ_GRADING_POLICIES}
+              optionKeyPrefix="course:quizAuthoring.settings.fields.gradingPolicy.options"
+            />
+            <NumberSetting
+              name="questionsPerAttempt"
+              labelKey="course:quizAuthoring.settings.fields.questionsPerAttempt.label"
+              descriptionKey="course:quizAuthoring.settings.fields.questionsPerAttempt.description"
+              min={1}
+              max={MAX_QUIZ_QUESTIONS}
+              placeholderKey="course:quizAuthoring.settings.fields.questionsPerAttempt.placeholder"
+            />
+          </div>
+          <SwitchSetting
+            name="shuffleQuestions"
+            labelKey="course:quizAuthoring.settings.fields.shuffleQuestions.label"
+            descriptionKey="course:quizAuthoring.settings.fields.shuffleQuestions.description"
+          />
+          <SwitchSetting
+            name="shuffleOptions"
+            labelKey="course:quizAuthoring.settings.fields.shuffleOptions.label"
+            descriptionKey="course:quizAuthoring.settings.fields.shuffleOptions.description"
+          />
+        </SettingsCard>
+
+        {/* Results and review */}
+        <SettingsCard
+          icon={<Eye className="size-4" strokeWidth={1.75} aria-hidden />}
+          titleKey="course:quizAuthoring.settings.results.title"
+          descriptionKey="course:quizAuthoring.settings.results.description"
+        >
+          <div className="grid gap-4 sm:grid-cols-2">
+            <SelectSetting
+              name="layout"
+              labelKey="course:quizAuthoring.settings.fields.layout.label"
+              descriptionKey="course:quizAuthoring.settings.fields.layout.description"
+              options={QUIZ_LAYOUTS}
+              optionKeyPrefix="course:quizAuthoring.settings.fields.layout.options"
+            />
+            <SelectSetting
+              name="showScore"
+              labelKey="course:quizAuthoring.settings.fields.showScore.label"
+              descriptionKey="course:quizAuthoring.settings.fields.showScore.description"
+              options={QUIZ_DISCLOSURES}
+              optionKeyPrefix="course:quizAuthoring.settings.disclosure"
+            />
+            <SelectSetting
+              name="showAnswers"
+              labelKey="course:quizAuthoring.settings.fields.showAnswers.label"
+              descriptionKey="course:quizAuthoring.settings.fields.showAnswers.description"
+              options={QUIZ_DISCLOSURES}
+              optionKeyPrefix="course:quizAuthoring.settings.disclosure"
+            />
+          </div>
+          <SwitchSetting
+            name="showExplanations"
+            labelKey="course:quizAuthoring.settings.fields.showExplanations.label"
+            descriptionKey="course:quizAuthoring.settings.fields.showExplanations.description"
+          />
+        </SettingsCard>
+
+        {/* Integrity */}
+        <SettingsCard
+          icon={
+            <ShieldCheck className="size-4" strokeWidth={1.75} aria-hidden />
+          }
+          titleKey="course:quizAuthoring.settings.integrity.title"
+          descriptionKey="course:quizAuthoring.settings.integrity.description"
+        >
+          <FormField
+            control={control}
+            name="integrityMode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  {t(
+                    'course:quizAuthoring.settings.fields.integrityMode.label'
+                  )}
+                </FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger className="sm:max-w-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {(['off', 'monitor', 'warn', 'strict'] as const).map(
+                      (mode) => (
+                        <SelectItem key={mode} value={mode}>
+                          {t(
+                            `course:quizAuthoring.settings.fields.integrityMode.options.${mode}`
+                          )}
+                        </SelectItem>
+                      )
+                    )}
+                  </SelectContent>
+                </Select>
+                <FormDescription>
+                  {t(
+                    `course:quizAuthoring.settings.fields.integrityMode.descriptions.${integrityMode}`
+                  )}
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {integrityMode !== 'off' ? (
+            <>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <NumberSetting
+                  name="maxViolations"
+                  labelKey="course:quizAuthoring.settings.fields.maxViolations.label"
+                  descriptionKey={
+                    integrityMode === 'strict'
+                      ? 'course:quizAuthoring.settings.fields.maxViolations.descriptionStrict'
+                      : integrityMode === 'warn'
+                        ? 'course:quizAuthoring.settings.fields.maxViolations.descriptionWarn'
+                        : 'course:quizAuthoring.settings.fields.maxViolations.descriptionMonitor'
+                  }
+                  min={MIN_QUIZ_MAX_VIOLATIONS}
+                  max={MAX_QUIZ_MAX_VIOLATIONS}
+                />
+              </div>
+              <SwitchSetting
+                name="requireFullscreen"
+                labelKey="course:quizAuthoring.settings.fields.requireFullscreen.label"
+                descriptionKey="course:quizAuthoring.settings.fields.requireFullscreen.description"
+              />
+            </>
+          ) : (
+            <p
+              className="text-sm text-muted-foreground"
+              data-testid="fullscreen-requires-integrity"
+            >
+              {t(
+                'course:quizAuthoring.settings.fields.requireFullscreen.offHint'
+              )}
+            </p>
+          )}
+        </SettingsCard>
+
+        {/* Progression */}
+        <SettingsCard
+          icon={<Flag className="size-4" strokeWidth={1.75} aria-hidden />}
+          titleKey="course:quizAuthoring.settings.progression.title"
+          descriptionKey="course:quizAuthoring.settings.progression.description"
+        >
+          <SwitchSetting
+            name="requiredToProgress"
+            labelKey="course:quizAuthoring.settings.fields.requiredToProgress.label"
+            descriptionKey="course:quizAuthoring.settings.fields.requiredToProgress.description"
+          />
+        </SettingsCard>
+      </AdvancedOptionsDisclosure>
     </div>
   );
 }

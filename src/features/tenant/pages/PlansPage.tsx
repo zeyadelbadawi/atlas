@@ -151,6 +151,8 @@ export default function PlansPage(): JSX.Element {
         // plans show it is decided per-plan by `plan.trialEligible` inside
         // the dialog, never by a plan-name check here.
         onStartTrial={canOfferTrial ? (plan) => setTrialPlan(plan) : undefined}
+        // W8 — display-only; the gift is decided at payment approval.
+        giftAvailable={hasOrganization && lifecycle?.giftAvailable === true}
         notice={
           hasOrganization
             ? undefined

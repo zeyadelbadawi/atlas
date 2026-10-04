@@ -116,6 +116,14 @@ export interface SubscriptionLifecycleState {
   readonly accessEndsAt?: string;
   /** Whether this ACCOUNT may still redeem its one lifetime Free Trial. Display only — the backend decides at redemption. */
   readonly trialAvailable: boolean;
+  /** W8 — gifted setup days granted on this subscription, when any. */
+  readonly giftedDays?: number;
+  /** W8 — when the gift ends, which is when the paid period starts. */
+  readonly giftedEndsAt?: string;
+  /** W8 — whole days of the gift left; absent once it is over. */
+  readonly giftedDaysRemaining?: number;
+  /** W8 — display only: a first paid subscription bought now would include the plan's gift. */
+  readonly giftAvailable?: boolean;
 }
 
 /** A Tenant's (Organization's) subscription. Always tenant-scoped, never per-Academy. */
@@ -139,6 +147,14 @@ export interface TenantSubscription {
    * have populated it.
    */
   readonly billingCycle?: SubscriptionBillingCycle;
+  /**
+   * W8 — gifted setup days granted on the organization's first paid
+   * subscription. The paid period (`currentPeriodStart`) begins at
+   * `giftedEndsAt`, so during the gift `currentPeriodStart` is in the future.
+   */
+  readonly giftedDays?: number;
+  readonly giftedStartsAt?: string;
+  readonly giftedEndsAt?: string;
 }
 
 /** One resource's usage against its (possibly unlimited) limit. */

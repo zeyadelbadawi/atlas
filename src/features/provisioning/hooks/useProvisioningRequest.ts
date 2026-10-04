@@ -8,9 +8,10 @@
  * just runs two read-only queries against the same backend-authoritative
  * record, never two provisioning operations.
  *
- * Polls while the request is genuinely in progress (see
- * `PROVISIONING_STATUS_POLL_INTERVAL_MS`), stops at any terminal status —
- * the same discipline Prompt 7's `usePaymentDetails` established.
+ * Polls while the request is genuinely in progress — about every second
+ * for the first 30 s this hook watches it, then every 4 s
+ * (`provisioningPollInterval`) — and stops at any terminal status, the
+ * same discipline Prompt 7's `usePaymentDetails` established.
  *
  * The moment `status` is first observed transitioning INTO `'ready'`, this
  * hook invalidates `academyKeys` (Prompt 3B — the new Academy must appear
@@ -27,7 +28,7 @@ import {
   tenantKeys,
 } from '@services/query';
 import { provisioningService } from '../services/ProvisioningService';
-import { PROVISIONING_STATUS_POLL_INTERVAL_MS } from '../constants/provisioning.constants';
+import { provisioningPollInterval } from '../constants/provisioning.constants';
 import { TERMINAL_PROVISIONING_STATUSES } from '@types';
 import type { ProvisioningRequest } from '@types';
 import type { ApiError } from '@api';
@@ -38,6 +39,9 @@ export function useProvisioningRequest(requestId: string) {
   const previousStatusRef = useRef<ProvisioningRequest['status'] | undefined>(
     undefined
   );
+  // When this hook started watching — the fast-poll window is measured from
+  // here, so a refreshed page polls quickly again for its first 30 s.
+  const watchingSinceRef = useRef<number>(Date.now());
 
   const query = useApiQuery<ProvisioningRequest, ApiError>({
     queryKey: provisioningKeys.detail(organization?.id, requestId),
@@ -48,7 +52,7 @@ export function useProvisioningRequest(requestId: string) {
       const request = activeQuery.state.data;
       if (!request) return false;
       if (TERMINAL_PROVISIONING_STATUSES.includes(request.status)) return false;
-      return PROVISIONING_STATUS_POLL_INTERVAL_MS;
+      return provisioningPollInterval(Date.now() - watchingSinceRef.current);
     },
   });
 

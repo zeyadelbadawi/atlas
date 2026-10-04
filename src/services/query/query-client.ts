@@ -20,7 +20,7 @@ import type { ApiError } from '@api';
 export type QueryErrorReporter = (error: ApiError) => void;
 
 /**
- * Mutation `meta` flag: the component that runs this mutation renders every
+ * Mutation (and query) `meta` flag: the component that runs this renders every
  * failure itself, so the app-wide error toast must stay quiet for it (it
  * would only repeat — or, worse, contradict — what is already on screen).
  */
@@ -40,7 +40,15 @@ export function createQueryClient(
   };
 
   return new QueryClient({
-    queryCache: new QueryCache({ onError: handleError }),
+    queryCache: new QueryCache({
+      // The same opt-out for queries: a query whose screen renders its own
+      // failure (W5 — the academy membership check, which redirects with
+      // its own message) must not also raise the generic toast.
+      onError: (error, query) => {
+        if (query.meta?.[INLINE_ERRORS_META] === true) return;
+        handleError(error);
+      },
+    }),
     mutationCache: new MutationCache({
       onError: (error, _variables, _context, mutation) => {
         if (mutation.meta?.[INLINE_ERRORS_META] === true) return;

@@ -11,8 +11,16 @@
  * screen, the onboarding shell stays put and shows progress. Plan-limit
  * gating stays with the caller too — the backend enforces the limit
  * regardless, and a refusal surfaces through the form's error state.
+ *
+ * W2 — the theme is always set (the platform default, pre-selected), so the
+ * website is always built; the "Logo & colours" choice is sent WITH the
+ * request (`brand`), validated and applied server-side. Only the logo file
+ * waits in the page for its Academy (`pendingLogoStore`). Another tab that
+ * already claimed the same address answers 409 with its request id, and
+ * this form offers to follow that request instead.
  */
 import { useCallback, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -23,15 +31,17 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@utils';
 import {
   listWebsiteThemes,
-  pendingBrandingStore,
   SetupBrandStudio,
-  type PendingBranding,
+  type SetupBrandingChoice,
 } from '@features/website';
+import { DEFAULT_WEBSITE_THEME_KEY } from '@types';
 import type {
   ProvisioningRequest,
   WebsiteThemeDefinition,
   WebsiteThemeKey,
 } from '@types';
+import { isApiError } from '@api';
+import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import {
   Form,
   FormControl,
@@ -43,7 +53,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useSlugSuggestion, useUnsavedChanges } from '@hooks';
-import { useServerValidation } from '@forms';
+import { useNameConflictError, useServerValidation } from '@forms';
 import { MAX_SUBDOMAIN_LENGTH } from '../constants/provisioning.constants';
 import {
   useCheckSubdomainAvailability,
@@ -54,6 +64,7 @@ import {
   type CreateProvisioningRequestFormData,
 } from '../schemas/provisioning.schemas';
 import { generateProvisioningIdempotencyKey } from '../utils/idempotency.utils';
+import { pendingLogoStore } from '../logo/pending-logo';
 
 export interface AcademySetupFormProps {
   readonly organizationId: string;
@@ -88,7 +99,9 @@ export function AcademySetupForm({
     defaultValues: {
       academyName: '',
       requestedSubdomain: '',
-      selectedThemeKey: undefined,
+      // W2 — the platform default theme, pre-selected: the website is always
+      // built (an unset theme used to skip generation silently).
+      selectedThemeKey: DEFAULT_WEBSITE_THEME_KEY,
       websiteSetupMode: 'complete',
     },
   });
@@ -105,6 +118,9 @@ export function AcademySetupForm({
   const websiteSetupMode = form.watch('websiteSetupMode');
 
   useServerValidation(form, createRequest.error);
+  // W4 — academy names are unique platform-wide; a taken name is shown on
+  // the academy-name field (the request is refused when it is made).
+  const nameConflict = useNameConflictError(form, createRequest.error);
 
   const subdomainValue = form.watch('requestedSubdomain');
   const availability = useCheckSubdomainAvailability(subdomainValue);
@@ -132,29 +148,58 @@ export function AcademySetupForm({
       }),
   });
 
-  // Theme 1 plan §F.4.3 — branding chosen here waits in the page for its
-  // Academy; the request itself carries no new fields.
-  const pendingBranding = useRef<PendingBranding | null>(null);
-  const onBrandingChange = useCallback((value: PendingBranding | null) => {
-    pendingBranding.current = value;
+  // W2 — the latest "Logo & colours" choice; its palette travels with the
+  // request, its logo file is attached once the Academy exists.
+  const branding = useRef<SetupBrandingChoice | null>(null);
+  const onBrandingChange = useCallback((value: SetupBrandingChoice | null) => {
+    branding.current = value;
   }, []);
 
+  // Another tab (or an earlier submit with a different form) already set
+  // up this address: the server names that request so we can follow it.
+  const inProgressRequestId = (() => {
+    const error = createRequest.error;
+    if (
+      !isApiError(error) ||
+      error.messageKey !== 'errors.provisioning.subdomainRequestInProgress'
+    ) {
+      return undefined;
+    }
+    const id = error.details?.requestId;
+    return typeof id === 'string' ? id : undefined;
+  })();
+
   const onSubmit = (data: CreateProvisioningRequestFormData) => {
+    const choice = branding.current;
+    const brand =
+      choice && (choice.palette || choice.logoFile)
+        ? {
+            ...(choice.palette
+              ? {
+                  palette: choice.palette as unknown as Readonly<
+                    Record<string, unknown>
+                  >,
+                }
+              : {}),
+            ...(choice.logoFile ? { logoPending: true } : {}),
+          }
+        : undefined;
     createRequest.mutate(
       {
         organizationId,
         payload: {
           academyName: data.academyName,
           requestedSubdomain: data.requestedSubdomain,
-          selectedThemeKey: data.selectedThemeKey,
+          selectedThemeKey: data.selectedThemeKey ?? DEFAULT_WEBSITE_THEME_KEY,
           websiteSetupMode: data.websiteSetupMode,
+          ...(brand ? { brand } : {}),
           idempotencyKey,
         },
       },
       {
         onSuccess: (request) => {
-          if (pendingBranding.current) {
-            pendingBrandingStore.set(request.id, pendingBranding.current);
+          if (choice?.logoFile) {
+            pendingLogoStore.set(request.id, choice.logoFile);
           }
           // Submitted means saved: clear the unsaved-changes guard so the
           // move to the status page isn't met with "Leave without saving?".
@@ -252,12 +297,10 @@ export function AcademySetupForm({
           )}
         />
 
-        {/* Phase P19 — real theme selection during onboarding
-            (previously always skipped — see `Reports/
-            DEVELOPMENT_E2E_FLOW_AUDIT.md` P1-1). Optional: skipping
-            leaves the Website Builder's own bootstrap default in
-            place, applied the first time the Academy's website is
-            ever read (`WebsiteBootstrapService`). */}
+        {/* Phase P19 — real theme selection during onboarding. W2: a
+            single-choice radio group with the platform default
+            pre-selected — a theme can be changed, never cleared, so the
+            website is always built with starter pages. */}
         <FormField
           control={form.control}
           name="selectedThemeKey"
@@ -267,19 +310,23 @@ export function AcademySetupForm({
               <FormDescription>
                 {t('provisioning:start.themeHelp')}
               </FormDescription>
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <div
+                role="radiogroup"
+                aria-label={t('provisioning:start.themeLabel')}
+                className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
+              >
                 {themes.map((theme: WebsiteThemeDefinition) => {
                   const isSelected = selectedThemeKey === theme.key;
                   return (
                     <button
                       key={theme.key}
                       type="button"
+                      role="radio"
+                      aria-checked={isSelected}
                       onClick={() =>
-                        form.setValue(
-                          'selectedThemeKey',
-                          isSelected ? undefined : theme.key,
-                          { shouldDirty: true }
-                        )
+                        form.setValue('selectedThemeKey', theme.key, {
+                          shouldDirty: !isSelected,
+                        })
                       }
                       className={cn(
                         'flex flex-col gap-3 rounded-lg border p-4 text-start transition-colors',
@@ -422,7 +469,37 @@ export function AcademySetupForm({
           </Button>
         </div>
 
-        {createRequest.error ? (
+        {inProgressRequestId ? (
+          <div
+            role="alert"
+            className="flex flex-col gap-3 rounded-lg border border-warning/40 bg-warning-surface p-4 sm:flex-row sm:items-center"
+          >
+            <p className="flex-1 text-sm text-foreground">
+              {t('provisioning:start.addressInProgress')}
+            </p>
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="min-h-11 sm:min-h-9"
+            >
+              <Link
+                to={buildPath(DASHBOARD_ROUTES.provisioningStatus, {
+                  requestId: inProgressRequestId,
+                })}
+              >
+                {t('provisioning:start.followInProgress')}
+              </Link>
+            </Button>
+          </div>
+        ) : createRequest.error &&
+          isApiError(createRequest.error) &&
+          createRequest.error.messageKey ===
+            'errors.provisioning.subdomainUnavailable' ? (
+          <p role="alert" className="text-sm text-destructive">
+            {t('errors:provisioning.subdomainUnavailable')}
+          </p>
+        ) : createRequest.error && !nameConflict ? (
           <ErrorState onRetry={form.handleSubmit(onSubmit)} />
         ) : null}
       </form>

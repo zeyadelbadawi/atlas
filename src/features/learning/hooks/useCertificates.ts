@@ -6,7 +6,9 @@ import {
   useApiQuery,
   useAuth,
   useInvalidate,
+  useAcademyBoundMutation,
 } from '@/shared/hooks';
+import type { AcademyScopedVariables } from '@/shared/hooks';
 import { certificateKeys, completionKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { certificateService } from '../services/CertificateService';
@@ -128,56 +130,62 @@ function useInvalidateAcademyCertificates(academyId: string) {
 
 export function useRevokeCertificate(academyId: string) {
   const refresh = useInvalidateAcademyCertificates(academyId);
-  return useApiMutation<
+  const mutation = useApiMutation<
     Certificate,
-    {
+    AcademyScopedVariables<{
       readonly certificateId: string;
       readonly payload: RevokeCertificatePayload;
-    },
+    }>,
     ApiError
   >({
-    mutationFn: ({ certificateId, payload }) =>
+    mutationFn: ({ academyId, payload: { certificateId, payload } }) =>
       certificateService.revoke(academyId, certificateId, payload),
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: refresh,
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }
 
 export function useRegenerateCertificate(academyId: string) {
   const refresh = useInvalidateAcademyCertificates(academyId);
-  return useApiMutation<
+  const mutation = useApiMutation<
     Certificate,
-    {
+    AcademyScopedVariables<{
       readonly certificateId: string;
       readonly payload: RegenerateCertificatePayload;
-    },
+    }>,
     ApiError
   >({
-    mutationFn: ({ certificateId, payload }) =>
+    mutationFn: ({ academyId, payload: { certificateId, payload } }) =>
       certificateService.regenerate(academyId, certificateId, payload),
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: refresh,
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }
 
 export function useIssueCertificate(academyId: string) {
   const refresh = useInvalidateAcademyCertificates(academyId);
-  return useApiMutation<
+  const mutation = useApiMutation<
     Certificate,
-    {
+    AcademyScopedVariables<{
       readonly enrollmentId: string;
       readonly payload: IssueCertificatePayload;
-    },
+    }>,
     ApiError
   >({
-    mutationFn: ({ enrollmentId, payload }) =>
+    mutationFn: ({ academyId, payload: { enrollmentId, payload } }) =>
       certificateService.issueManually(academyId, enrollmentId, payload),
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: refresh,
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }
 
 export function useCertificateTemplate(
@@ -196,17 +204,19 @@ export function useCertificateTemplate(
 export function useUpdateCertificateTemplate(academyId: string) {
   const { invalidate } = useInvalidate();
 
-  return useApiMutation<
+  const mutation = useApiMutation<
     CertificateTemplate,
-    UpdateCertificateTemplatePayload,
+    AcademyScopedVariables<UpdateCertificateTemplatePayload>,
     ApiError
   >({
-    mutationFn: (payload) =>
+    mutationFn: ({ academyId, payload }) =>
       certificateService.updateTemplate(academyId, payload),
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: async () => {
+    onSuccess: async (_data, { academyId }) => {
       await invalidate(certificateKeys.template(academyId));
     },
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }

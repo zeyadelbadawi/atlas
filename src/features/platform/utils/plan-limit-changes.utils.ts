@@ -112,3 +112,30 @@ export function isCompleteDraft(
     return raw !== '' && Number.isFinite(value) && value >= 0;
   });
 }
+
+/**
+ * The saved plan's limits that this editor does not show, carried through
+ * unchanged into the save payload.
+ *
+ * The API refuses a `limits` object that lacks any limit it requires, and
+ * it can know limits this editor has no field for (`videoStorageMinutes`,
+ * added server-side). Rebuilding `limits` from the editor's own keys alone
+ * dropped those and made EVERY plan save fail with a 400. `excluded` names
+ * keys the editor manages outside the draft (e.g. `monthlyEmails`, where a
+ * blank field deliberately omits the key), which must not be resurrected.
+ */
+export function withUneditedLimits(
+  edited: PlanResourceLimits,
+  saved: PlanResourceLimits | undefined,
+  editedKeys: readonly PlanLimitKey[],
+  excluded: readonly string[] = []
+): PlanResourceLimits {
+  if (!saved) return edited;
+  const carried: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(saved)) {
+    if ((editedKeys as readonly string[]).includes(key)) continue;
+    if (excluded.includes(key)) continue;
+    carried[key] = value;
+  }
+  return { ...carried, ...edited } as PlanResourceLimits;
+}

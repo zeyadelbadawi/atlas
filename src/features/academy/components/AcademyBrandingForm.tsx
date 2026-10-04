@@ -35,7 +35,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
 import { useFilePicker, useUnsavedChanges } from '@hooks';
-import { useServerValidation } from '@forms';
+import {
+  nameConflictFromError,
+  useNameConflictError,
+  useServerValidation,
+} from '@forms';
 import { useUploadMediaAsset } from '@features/media';
 import { useUpdateAcademyBranding } from '../hooks';
 import {
@@ -103,6 +107,9 @@ export function AcademyBrandingForm({
   });
 
   useServerValidation(form, mutationError);
+  // W4 — academy names are unique platform-wide: a taken name is shown on
+  // the name field instead of a generic toast.
+  useNameConflictError(form, mutationError);
   useUnsavedChanges({
     isDirty: form.formState.isDirty,
     messageKey: 'academy:branding.unsavedChanges',
@@ -234,6 +241,7 @@ export function AcademyBrandingForm({
       });
       onSaved?.();
     } catch (error) {
+      if (nameConflictFromError(error)) return;
       toast({
         title: t('academy:branding.error'),
         description: t('errors:generic.description'),

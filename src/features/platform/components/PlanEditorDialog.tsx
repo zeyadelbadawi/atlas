@@ -49,11 +49,24 @@ import {
 import {
   UNLIMITED,
   draftToLimits,
+  withUneditedLimits,
   findReducedLimitKeys,
   isCompleteDraft,
   limitsToDraft,
 } from '../utils/plan-limit-changes.utils';
 import type { LimitDraft } from '../utils/plan-limit-changes.utils';
+import {
+  DEFAULT_MONTHLY_EMAILS,
+  isValidMonthlyEmailsInput,
+  withMonthlyEmails,
+} from '../utils/monthly-emails.utils';
+import {
+  GIFTED_DAYS_MAX,
+  GIFTED_DAYS_MIN,
+  giftedDaysInputToPayload,
+  giftedDaysToInput,
+  isValidGiftedDaysInput,
+} from '../utils/gifted-days.utils';
 import type { LanguageCode, Plan, PlanLimitImpact } from '@types';
 
 /** The backend's ceiling for `pricing.yearlyAmount` (`PlanPricingDto`). */
@@ -87,6 +100,11 @@ export function PlanEditorDialog({
   const [yearlyAmount, setYearlyAmount] = useState('');
   const [trialEligible, setTrialEligible] = useState(false);
   const [trialDays, setTrialDays] = useState('');
+  const [giftedMonthly, setGiftedMonthly] = useState('');
+  const [giftedYearly, setGiftedYearly] = useState('');
+  // W3-compose — optional per-academy monthly email allowance. Blank keeps
+  // the platform default (50); a number or `unlimited` is saved as is.
+  const [monthlyEmails, setMonthlyEmails] = useState('');
   const [impact, setImpact] = useState<PlanLimitImpact | null>(null);
   const [confirmed, setConfirmed] = useState(false);
 
@@ -95,6 +113,11 @@ export function PlanEditorDialog({
   useEffect(() => {
     if (!plan) return;
     setLimits(limitsToDraft(plan.limits, PLAN_LIMIT_KEYS));
+    setMonthlyEmails(
+      plan.limits.monthlyEmails === undefined
+        ? ''
+        : String(plan.limits.monthlyEmails)
+    );
     setFeatures({ ...(plan.features as unknown as Record<string, boolean>) });
     setAmount(
       plan.pricing?.amount !== undefined ? String(plan.pricing.amount) : ''
@@ -107,6 +130,8 @@ export function PlanEditorDialog({
     );
     setTrialEligible(plan.trialEligible);
     setTrialDays(plan.trialDurationDays ? String(plan.trialDurationDays) : '');
+    setGiftedMonthly(giftedDaysToInput(plan.giftedDaysMonthly));
+    setGiftedYearly(giftedDaysToInput(plan.giftedDaysYearly));
     setImpact(null);
     setConfirmed(false);
   }, [plan]);
@@ -139,6 +164,13 @@ export function PlanEditorDialog({
   const yearlyAmountValid =
     !offersYearlyPrice || isValidYearlyAmount(yearlyAmount);
 
+  // W8 — blank/0 (no gift) or 5..15. The server enforces the same range.
+  const giftedMonthlyValid = isValidGiftedDaysInput(giftedMonthly);
+  const giftedYearlyValid = isValidGiftedDaysInput(giftedYearly);
+  const giftedValid = giftedMonthlyValid && giftedYearlyValid;
+
+  const monthlyEmailsValid = isValidMonthlyEmailsInput(monthlyEmails);
+
   const hasReduction = reducedLimitKeys.length > 0;
   // A reduction must be checked and then explicitly confirmed. Everything
   // else saves directly.
@@ -159,7 +191,15 @@ export function PlanEditorDialog({
       key: plan.key,
       payload: {
         expectedVersion: plan.version,
-        limits: draftToLimits(limits, PLAN_LIMIT_KEYS),
+        limits: withMonthlyEmails(
+          withUneditedLimits(
+            draftToLimits(limits, PLAN_LIMIT_KEYS),
+            plan.limits,
+            PLAN_LIMIT_KEYS,
+            ['monthlyEmails']
+          ),
+          monthlyEmails
+        ),
         features: features as never,
         pricing: amount
           ? {
@@ -177,6 +217,8 @@ export function PlanEditorDialog({
         // backend expresses as null — not 0, which would mean a zero-day
         // trial.
         trialDurationDays: trialDays ? Number(trialDays) : null,
+        giftedDaysMonthly: giftedDaysInputToPayload(giftedMonthly),
+        giftedDaysYearly: giftedDaysInputToPayload(giftedYearly),
       },
     });
     onOpenChange(false);
@@ -319,6 +361,84 @@ export function PlanEditorDialog({
             ) : null}
           </section>
 
+          {/* ---------- gifted setup days (W8) ---------- */}
+          <section className="space-y-3" aria-labelledby="plan-gift-title">
+            <h3 id="plan-gift-title" className="text-sm font-semibold">
+              {t('platform:planAdmin.editor.giftTitle')}
+            </h3>
+            <p className="text-xs text-muted-foreground">
+              {t('platform:planAdmin.editor.giftDescription')}
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {(
+                [
+                  {
+                    id: 'plan-gifted-monthly',
+                    label: 'giftMonthly',
+                    help: 'giftMonthlyHelp',
+                    value: giftedMonthly,
+                    set: setGiftedMonthly,
+                    valid: giftedMonthlyValid,
+                  },
+                  {
+                    id: 'plan-gifted-yearly',
+                    label: 'giftYearly',
+                    help: 'giftYearlyHelp',
+                    value: giftedYearly,
+                    set: setGiftedYearly,
+                    valid: giftedYearlyValid,
+                  },
+                ] as const
+              ).map((field) => (
+                <div key={field.id} className="space-y-1.5">
+                  <Label htmlFor={field.id}>
+                    {t(`platform:planAdmin.editor.${field.label}`)}
+                  </Label>
+                  <Input
+                    id={field.id}
+                    data-testid={field.id}
+                    type="number"
+                    inputMode="numeric"
+                    min={0}
+                    max={GIFTED_DAYS_MAX}
+                    step={1}
+                    dir="ltr"
+                    placeholder={t('platform:planAdmin.editor.giftPlaceholder')}
+                    aria-invalid={!field.valid}
+                    aria-describedby={`${field.id}-help${field.valid ? '' : ` ${field.id}-error`}`}
+                    value={field.value}
+                    onChange={(event) => field.set(event.target.value)}
+                  />
+                  <p
+                    id={`${field.id}-help`}
+                    className="text-xs text-muted-foreground"
+                  >
+                    {t(`platform:planAdmin.editor.${field.help}`)}
+                  </p>
+                  {!field.valid ? (
+                    <p
+                      id={`${field.id}-error`}
+                      role="alert"
+                      className="text-sm font-medium text-destructive"
+                      data-testid={`${field.id}-error`}
+                    >
+                      {t('platform:planAdmin.editor.giftInvalid', {
+                        min: formatNumber(
+                          GIFTED_DAYS_MIN,
+                          i18n.language as LanguageCode
+                        ),
+                        max: formatNumber(
+                          GIFTED_DAYS_MAX,
+                          i18n.language as LanguageCode
+                        ),
+                      })}
+                    </p>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          </section>
+
           {/* ---------- limits ---------- */}
           <section className="space-y-3">
             <h3 className="text-sm font-semibold">
@@ -351,6 +471,34 @@ export function PlanEditorDialog({
             <p className="text-xs text-muted-foreground">
               {t('platform:planAdmin.editor.limitsHelp')}
             </p>
+            <div className="space-y-1.5 sm:max-w-xs">
+              <Label htmlFor="plan-limit-monthlyEmails">
+                {t('platform:planAdmin.editor.monthlyEmails')}
+              </Label>
+              <Input
+                id="plan-limit-monthlyEmails"
+                data-testid="plan-limit-monthlyEmails"
+                dir="ltr"
+                inputMode="numeric"
+                placeholder={String(DEFAULT_MONTHLY_EMAILS)}
+                value={monthlyEmails}
+                aria-invalid={!monthlyEmailsValid}
+                aria-describedby="plan-limit-monthlyEmails-help"
+                onChange={(event) => setMonthlyEmails(event.target.value)}
+              />
+              <p
+                id="plan-limit-monthlyEmails-help"
+                className={
+                  monthlyEmailsValid
+                    ? 'text-xs text-muted-foreground'
+                    : 'text-xs text-destructive'
+                }
+              >
+                {t('platform:planAdmin.editor.monthlyEmailsHelp', {
+                  count: DEFAULT_MONTHLY_EMAILS,
+                })}
+              </p>
+            </div>
           </section>
 
           {/* ---------- features ---------- */}
@@ -523,7 +671,9 @@ export function PlanEditorDialog({
               updatePlan.isPending ||
               needsConfirmation ||
               !isComplete ||
-              !yearlyAmountValid
+              !yearlyAmountValid ||
+              !giftedValid ||
+              !monthlyEmailsValid
             }
             onClick={() => void handleSave()}
           >

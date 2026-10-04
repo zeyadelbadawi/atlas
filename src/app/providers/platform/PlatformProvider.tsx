@@ -30,21 +30,18 @@ export function AtlasPlatformProvider({
 }: PlatformProviderProps): JSX.Element {
   const [state, setState] = useState<PlatformState>(() => {
     /*
-      THE ACTIVE ACADEMY WAS WRITTEN BUT NEVER READ BACK.
+      W5 — THE ACTIVE ACADEMY IS NOT RESTORED FROM STORAGE ANY MORE.
 
-      `setActiveAcademy` persists to its own key (`atlas:active-academy`),
-      separate from the user-preferences blob restored below — and nothing
-      ever loaded it again. So `activeAcademyId` was `undefined` after every
-      page load, and since the whole academy-scoped sidebar section is built
-      only `if (activeAcademyId)`, Courses, Members, Branding, Settings and
-      Website all silently disappeared on refresh and stayed gone until the
-      user happened to touch the academy switcher again.
-
-      Restoring it is a navigation convenience and grants nothing: every
-      academy route and every API call behind it is independently
-      authorised, and each nav item is still permission-gated. A stale id
-      for an academy the user has lost access to resolves to the same
-      refusal it would today.
+      It used to be read back from a per-BROWSER key (`atlas:active-academy`)
+      on every load, which made a third source of truth beside the URL and
+      the page: two tabs diverged, a reload adopted the other tab's academy,
+      and another account's academy could leak into this session. Now:
+        - inside `/dashboard/academy/:academyId/*` the URL is the truth and
+          `AcademyScopeProvider` mirrors it here;
+        - elsewhere `useActiveAcademyReconciliation` seeds it from the
+          "last academy" preference, keyed by user AND organization
+          (`features/academy/scope/last-academy.ts`), and validates it
+          against the academies the server lists for the caller.
 
       `activeOrganizationId` deliberately stays excluded — it is validated
       and restored only after authentication is confirmed, which is a
@@ -54,25 +51,24 @@ export function AtlasPlatformProvider({
     // (Reports/SSR_ARCHITECTURE_ANALYSIS.md §4 #3); nothing here is shown there.
     if (typeof window === 'undefined') return INITIAL_STATE;
 
-    const restoredAcademyId =
-      localStorage.getItem(STORAGE_KEYS.activeAcademy) ?? undefined;
-
     try {
+      // The retired per-browser key is dropped so nothing can read it again.
+      localStorage.removeItem(STORAGE_KEYS.activeAcademy);
       const stored = localStorage.getItem(STORAGE_KEYS.userPreferences);
       if (stored) {
         const parsed = JSON.parse(stored) as Partial<PlatformState>;
-        // Exclude activeOrganizationId from initial restoration.
-        const { activeOrganizationId: _, ...safeState } = parsed;
-        return {
-          ...INITIAL_STATE,
-          ...safeState,
-          activeAcademyId: restoredAcademyId,
-        };
+        // Exclude activeOrganizationId (and any stale academy) from restoration.
+        const {
+          activeOrganizationId: _,
+          activeAcademyId: __,
+          ...safeState
+        } = parsed;
+        return { ...INITIAL_STATE, ...safeState };
       }
     } catch {
-      // Corrupted storage; use defaults.
+      // Corrupted or unavailable storage; use defaults.
     }
-    return { ...INITIAL_STATE, activeAcademyId: restoredAcademyId };
+    return INITIAL_STATE;
   });
 
   /**
@@ -178,14 +174,18 @@ export function AtlasPlatformProvider({
     []
   );
 
+  /**
+   * W5 — a MIRROR of the URL's academy (written by `AcademyScopeProvider`)
+   * or, outside the academy scope, the reconciled "last academy". Never
+   * persisted here: switching academies is a navigation (`useSwitchAcademy`),
+   * not a call to this setter.
+   */
   const setActiveAcademy = useCallback((academyId: string | undefined) => {
-    setState((prev) => ({ ...prev, activeAcademyId: academyId }));
-
-    if (academyId) {
-      localStorage.setItem(STORAGE_KEYS.activeAcademy, academyId);
-    } else {
-      localStorage.removeItem(STORAGE_KEYS.activeAcademy);
-    }
+    setState((prev) =>
+      prev.activeAcademyId === academyId
+        ? prev
+        : { ...prev, activeAcademyId: academyId }
+    );
   }, []);
 
   const isFeatureEnabled = useCallback(

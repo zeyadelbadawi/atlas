@@ -39,6 +39,7 @@ import {
   signInThroughDashboard,
   uniqueLearnerEmail,
   type Session,
+  uniqueLearnerName,
 } from './support/atlas';
 import { clearAuthRateLimits } from './support/global-setup';
 
@@ -177,7 +178,7 @@ test.describe('J3 — roster and RBAC', () => {
   });
 
   test('a learner signs up on the academy website', async ({ request }) => {
-    await registerLearnerThroughWebsite(page, learnerEmail, 'J3 Learner');
+    await registerLearnerThroughWebsite(page, learnerEmail, uniqueLearnerName('J3 Learner'));
     await expect(
       page.getByText(/check your (email|inbox)|account created|your account is ready|verify/i).first()
     ).toBeVisible({ timeout: 20_000 });

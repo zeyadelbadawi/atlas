@@ -14,7 +14,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
-import { Save, X } from 'lucide-react';
+import { Save, UserPen, X } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -28,6 +29,7 @@ import {
 import { ErrorState } from '@components/feedback';
 import { useUnsavedChanges } from '@hooks';
 import { saveViaForm } from '@utils';
+import { useNameConflictError } from '@forms';
 import { useUpdateProfile } from '../hooks';
 import type { CurrentUser } from '@types';
 
@@ -45,21 +47,28 @@ export interface ProfilePersonalSectionProps {
 export function ProfilePersonalSection({
   user,
 }: ProfilePersonalSectionProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const updateProfile = useUpdateProfile();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isDirty },
-    reset,
-  } = useForm<PersonalFormData>({
+  const form = useForm<PersonalFormData>({
     resolver: zodResolver(personalSchema),
     defaultValues: {
       firstName: user.name.split(' ')[0] || '',
       lastName: user.name.split(' ').slice(1).join(' ') || '',
     },
+  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isDirty },
+    reset,
+  } = form;
+  // W4 — a learner name is unique inside each academy; a rename that clashes
+  // is refused and names the user's own academies. Shown on the family-name
+  // field (the copy suggests adding a middle or family name).
+  const nameConflict = useNameConflictError(form, updateProfile.error, {
+    fields: { name: 'lastName' },
   });
 
   useEffect(() => {
@@ -100,6 +109,13 @@ export function ProfilePersonalSection({
       }),
   });
 
+  // W4 — registration no longer refuses a learner name another learner
+  // already uses (that answer went to anyone, unauthenticated); the account
+  // was admitted and is asked here, once signed in, to pick a different one.
+  const clashAcademies = user.academies
+    .filter((academy) => academy.nameChangeSuggested)
+    .map((academy) => academy.name);
+
   const handleCancel = () => {
     reset();
     setIsEditing(false);
@@ -116,7 +132,34 @@ export function ProfilePersonalSection({
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
-          {updateProfile.error ? (
+          {clashAcademies.length > 0 ? (
+            <Alert role="status" data-testid="name-change-suggested">
+              <UserPen className="size-4" aria-hidden />
+              <AlertTitle>
+                {t('profile:sections.personal.nameChangeSuggested.title')}
+              </AlertTitle>
+              <AlertDescription className="space-y-3">
+                <p>
+                  {t('profile:sections.personal.nameChangeSuggested.body', {
+                    academies: new Intl.ListFormat(i18n.language, {
+                      type: 'conjunction',
+                    }).format(clashAcademies),
+                  })}
+                </p>
+                {!isEditing ? (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    {t('profile:sections.personal.nameChangeSuggested.action')}
+                  </Button>
+                ) : null}
+              </AlertDescription>
+            </Alert>
+          ) : null}
+          {updateProfile.error && !nameConflict ? (
             <ErrorState onRetry={handleSubmit(handleFormSubmit)} />
           ) : null}
 
@@ -146,12 +189,26 @@ export function ProfilePersonalSection({
                 disabled={!isEditing || updateProfile.isPending}
                 {...register('lastName')}
                 aria-invalid={!!errors.lastName}
+                aria-describedby={
+                  errors.lastName ? 'lastName-error' : undefined
+                }
               />
               {errors.lastName ? (
-                <p className="text-sm text-destructive">
-                  {t(
-                    errors.lastName.message || 'profile:errors.lastNameRequired'
-                  )}
+                <p
+                  id="lastName-error"
+                  role="alert"
+                  className="text-sm text-destructive"
+                >
+                  {/* A server message arrives already translated (it names
+                      the user's academies); anything else is a key. */}
+                  {errors.lastName.type === 'server' &&
+                  errors.lastName.message &&
+                  !errors.lastName.message.startsWith('errors:')
+                    ? errors.lastName.message
+                    : t(
+                        errors.lastName.message ||
+                          'profile:errors.lastNameRequired'
+                      )}
                 </p>
               ) : null}
             </div>

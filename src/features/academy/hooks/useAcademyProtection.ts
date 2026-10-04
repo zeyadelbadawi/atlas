@@ -15,7 +15,13 @@
  * response rather than from what was asked for.
  */
 import { useQueryClient } from '@tanstack/react-query';
-import { useApiMutation, useApiQuery, useAuth } from '@/shared/hooks';
+import {
+  useApiMutation,
+  useApiQuery,
+  useAuth,
+  useAcademyBoundMutation,
+} from '@/shared/hooks';
+import type { AcademyScopedVariables } from '@/shared/hooks';
 import { academyKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { academyProtectionService } from '../services/AcademyProtectionService';
@@ -51,22 +57,24 @@ export function useUpdateAcademyContentProtection(academyId: string) {
   const queryClient = useQueryClient();
   const { organization } = useAuth();
 
-  return useApiMutation<
+  const mutation = useApiMutation<
     AcademyContentProtection,
-    UpdateAcademyContentProtectionPayload,
+    AcademyScopedVariables<UpdateAcademyContentProtectionPayload>,
     ApiError
   >({
-    mutationFn: (payload) =>
+    mutationFn: ({ academyId, payload }) =>
       academyProtectionService.updateContentProtection(academyId, payload),
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: (data) => {
+    onSuccess: (data, { academyId }) => {
       queryClient.setQueryData(
         academyKeys.contentProtection(organization?.id, academyId),
         data
       );
     },
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }
 
 export function useAcademyVideoTier(
@@ -86,26 +94,32 @@ export function useAcademyVideoTier(
 export function useUpdateAcademyVideoTier(academyId: string) {
   const queryClient = useQueryClient();
   const { organization } = useAuth();
-  const queryKey = academyKeys.videoTier(organization?.id, academyId);
 
-  return useApiMutation<
+  const mutation = useApiMutation<
     AcademyVideoTierSettings,
-    UpdateAcademyVideoTierPayload,
+    AcademyScopedVariables<UpdateAcademyVideoTierPayload>,
     ApiError
   >({
-    mutationFn: (payload) =>
+    mutationFn: ({ academyId, payload }) =>
       academyProtectionService.updateVideoTier(academyId, payload),
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: (data) => {
-      queryClient.setQueryData(queryKey, data);
+    onSuccess: (data, { academyId }) => {
+      queryClient.setQueryData(
+        academyKeys.videoTier(organization?.id, academyId),
+        data
+      );
     },
     // A refusal usually means the plan changed under the screen — refetch
     // so the entitlement it shows is the one the server just applied.
-    onError: async () => {
-      await queryClient.invalidateQueries({ queryKey });
+    onError: async (_error, { academyId }) => {
+      await queryClient.invalidateQueries({
+        queryKey: academyKeys.videoTier(organization?.id, academyId),
+      });
     },
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }
 
 export function useAcademyDevicePolicy(
@@ -125,24 +139,30 @@ export function useAcademyDevicePolicy(
 export function useUpdateAcademyDevicePolicy(academyId: string) {
   const queryClient = useQueryClient();
   const { organization } = useAuth();
-  const queryKey = academyKeys.devicePolicy(organization?.id, academyId);
 
-  return useApiMutation<
+  const mutation = useApiMutation<
     AcademyDevicePolicy,
-    UpdateAcademyDevicePolicyPayload,
+    AcademyScopedVariables<UpdateAcademyDevicePolicyPayload>,
     ApiError
   >({
-    mutationFn: (payload) =>
+    mutationFn: ({ academyId, payload }) =>
       academyProtectionService.updateDevicePolicy(academyId, payload),
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: (data) => {
-      queryClient.setQueryData(queryKey, data);
+    onSuccess: (data, { academyId }) => {
+      queryClient.setQueryData(
+        academyKeys.devicePolicy(organization?.id, academyId),
+        data
+      );
     },
     // `devicePolicyAboveMaximum` means the platform ceiling moved — refetch
     // so the form's limits are the live ones.
-    onError: async () => {
-      await queryClient.invalidateQueries({ queryKey });
+    onError: async (_error, { academyId }) => {
+      await queryClient.invalidateQueries({
+        queryKey: academyKeys.devicePolicy(organization?.id, academyId),
+      });
     },
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }

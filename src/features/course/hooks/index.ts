@@ -14,6 +14,8 @@ export type { AssignCourseInstructorVariables } from './useAssignCourseInstructo
 export { useRemoveCourseInstructor } from './useRemoveCourseInstructor';
 export type { RemoveCourseInstructorVariables } from './useRemoveCourseInstructor';
 export { usePublishCourse } from './usePublishCourse';
+export { usePublishReadiness } from './usePublishReadiness';
+export type { UsePublishReadinessOptions } from './usePublishReadiness';
 export { useUnpublishCourse } from './useUnpublishCourse';
 export { useCourseCategories } from './useCourseCategories';
 export type { UseCourseCategoriesOptions } from './useCourseCategories';

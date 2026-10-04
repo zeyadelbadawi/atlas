@@ -156,7 +156,8 @@
     "add_on": "add-on",
     "observability": "monitoring",
     "platform_contact_submission": "contact enquiry",
-    "lesson": "lesson"
+    "lesson": "lesson",
+    "communication_campaign": "message"
   },
   "fields": {
     "title": "Title",
@@ -233,6 +234,8 @@
     "pricing": "Pricing",
     "trialEligible": "Trial available",
     "trialDurationDays": "Trial length (days)",
+    "giftedDaysMonthly": "Gifted setup days (monthly)",
+    "giftedDaysYearly": "Gifted setup days (yearly)",
     "limits": "Limits"
   },
   "values": {
@@ -469,6 +472,7 @@
         "added": "{{actor}} added a student to the academy",
         "added_withName": "{{actor}} added {{name}} as a student",
         "joined": "{{actor}} joined the academy as a student",
+        "name_clash_exempted": "{{actor}} joined the academy as a student (their name matches another student’s here)",
         "blocked": "{{actor}} blocked a student",
         "blocked_withName": "{{actor}} blocked the student {{name}}",
         "unblocked": "{{actor}} unblocked a student",
@@ -481,6 +485,10 @@
       "invite": {
         "created": "{{actor}} created a student invite link",
         "revoked": "{{actor}} revoked a student invite link"
+      },
+      "message": {
+        "sent": "{{actor}} sent a message",
+        "sent_full": "{{actor}} sent a message to {{recipientCount}} people"
       }
     },
     "enrollment": {
@@ -581,6 +589,9 @@
       "created": "{{actor}} requested a new academy “{{target}}”"
     },
     "subscription": {
+      "gift": {
+        "granted": "{{actor}} approved a first subscription that includes gifted setup days"
+      },
       "trial": {
         "redeemed": "{{actor}} started a free trial",
         "cancelled": "{{actor}} cancelled the free trial"
@@ -662,6 +673,10 @@
       "contact_submission": {
         "status_changed": "{{actor}} changed the status of a contact enquiry",
         "deleted": "{{actor}} deleted a contact enquiry"
+      },
+      "campaign": {
+        "sent": "{{actor}} sent a platform message",
+        "sent_full": "{{actor}} sent a platform message to {{recipientCount}} people"
       }
     }
   }

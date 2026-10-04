@@ -9,6 +9,8 @@ import arPlatformZoom from './ar/platformZoom.json';
 import arPlatformAddOns from './ar/platformAddOns.json';
 import arPlatformCommerce from './ar/platformCommerce.json';
 import arPlatformObservability from './ar/platformObservability.json';
+import arPlatformEmail from './ar/platformEmail.json';
+import arMessaging from './ar/messaging.json';
 import arLayout from './ar/layout.json';
 import arHome from './ar/home.json';
 import arDashboard from './ar/dashboard.json';
@@ -43,6 +45,8 @@ const bundle: Record<string, Record<string, unknown>> = {
   platformAddOns: arPlatformAddOns,
   platformCommerce: arPlatformCommerce,
   platformObservability: arPlatformObservability,
+  platformEmail: arPlatformEmail,
+  messaging: arMessaging,
   layout: arLayout,
   home: arHome,
   dashboard: arDashboard,

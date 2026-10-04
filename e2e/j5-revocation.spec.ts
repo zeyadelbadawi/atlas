@@ -32,6 +32,7 @@ import {
   registerLearnerThroughWebsite,
   uniqueLearnerEmail,
   type Session,
+  uniqueLearnerName,
 } from './support/atlas';
 import { clearAuthRateLimits } from './support/global-setup';
 import {
@@ -107,7 +108,7 @@ test.describe('J5 — revocation after refund', () => {
   }) => {
     test.setTimeout(120_000);
     learnerEmail = uniqueLearnerEmail('j5');
-    await registerLearnerThroughWebsite(page, learnerEmail, 'J5 Learner');
+    await registerLearnerThroughWebsite(page, learnerEmail, uniqueLearnerName('J5 Learner'));
     // Mirrors J1: this assertion is the synchronisation barrier. The
     // helper only clicks Sign up, so without waiting for the success
     // state the API sign-in below races the registration request and

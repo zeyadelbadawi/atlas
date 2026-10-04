@@ -12,7 +12,9 @@ import {
   useApiQuery,
   useAuth,
   useInvalidate,
+  useAcademyBoundMutation,
 } from '@/shared/hooks';
+import type { AcademyScopedVariables } from '@/shared/hooks';
 import { LIVE_LIST_QUERY_OPTIONS } from '@config';
 import { academyKeys } from '@services/query';
 import type { ApiError } from '@api';
@@ -48,32 +50,40 @@ export function useCreateAcademyInvite(academyId: string) {
   const { invalidate } = useInvalidate();
   const { organization } = useAuth();
 
-  return useApiMutation<
+  const mutation = useApiMutation<
     CreatedAcademyInvite,
-    CreateAcademyInvitePayload,
+    AcademyScopedVariables<CreateAcademyInvitePayload>,
     ApiError
   >({
-    mutationFn: (payload) =>
+    mutationFn: ({ academyId, payload }) =>
       academyRosterService.createInvite(academyId, payload),
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: async () => {
+    onSuccess: async (_data, { academyId }) => {
       await invalidate(academyKeys.invites(organization?.id, academyId));
     },
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }
 
 export function useRevokeAcademyInvite(academyId: string) {
   const { invalidate } = useInvalidate();
   const { organization } = useAuth();
 
-  return useApiMutation<void, { readonly inviteId: string }, ApiError>({
-    mutationFn: ({ inviteId }) =>
+  const mutation = useApiMutation<
+    void,
+    AcademyScopedVariables<{ readonly inviteId: string }>,
+    ApiError
+  >({
+    mutationFn: ({ academyId, payload: { inviteId } }) =>
       academyRosterService.revokeInvite(academyId, inviteId),
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: async () => {
+    onSuccess: async (_data, { academyId }) => {
       await invalidate(academyKeys.invites(organization?.id, academyId));
     },
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }

@@ -179,6 +179,21 @@ export type DomainDnsBlockedReason =
   'provider_not_registered' | 'routing_target_missing';
 
 /**
+ * W2 — the stages a person sees, each tied to real server steps
+ * (`PROVISIONING_STAGE_OF_STEP` on the backend): `academy` = tenant +
+ * academy (the address is reserved inside the academy step), `website` =
+ * theme + generation, `brand` = branding, `finalize` = subdomain re-check,
+ * domain (always the separate custom-domain flow) and finalization.
+ */
+export type ProvisioningStage = 'academy' | 'website' | 'brand' | 'finalize';
+
+/** W2 — what the setup form asked for, as the server reports it (never the palette itself). */
+export interface ProvisioningRequestedBrand {
+  readonly palette: boolean;
+  readonly logo: 'none' | 'awaiting_upload' | 'attached';
+}
+
+/**
  * The provisioning request itself. Always Tenant-scoped
  * (`organizationId`) — never addressable by an arbitrary id without that
  * scope (see `Reports/ARCHITECTURE.md`, Prompt 8, "Tenant Isolation").
@@ -206,10 +221,31 @@ export interface ProvisioningRequest {
   /** Phase 6 (Bilingual Academy Websites) — `'empty' | 'complete'`; see `CreateProvisioningRequestPayload.websiteSetupMode`'s own doc comment. */
   readonly websiteSetupMode?: string;
   readonly lastError?: ProvisioningError;
+  /** W2 — the stage the request is really in, or `'ready'`. Optional only for responses from servers that predate it. */
+  readonly stage?: ProvisioningStage | 'ready';
+  /** W2 — when a step last started, finished or failed. */
+  readonly lastProgressAt?: string;
+  /** W2 — non-terminal and no progress for `stallThresholdSeconds`: offer Retry. */
+  readonly stalled?: boolean;
+  readonly stallThresholdSeconds?: number;
+  /** W2 — absent when the form chose nothing (theme default colours). */
+  readonly requestedBrand?: ProvisioningRequestedBrand;
   readonly createdAt: string;
   readonly startedAt?: string;
   readonly completedAt?: string;
   readonly failedAt?: string;
+}
+
+/**
+ * W2 — the brand chosen in the setup form, sent WITH the request and applied
+ * server-side by the `branding` step. Colours are the Brand Studio's stored
+ * `"H S% L%"` triplets (hex is accepted too). The logo is never sent here:
+ * `logoPending` says one is coming, and the page attaches it by media-asset
+ * id once the Academy exists (`attachProvisioningLogo`).
+ */
+export interface CreateProvisioningBrandPayload {
+  readonly palette?: Readonly<Record<string, unknown>>;
+  readonly logoPending?: boolean;
 }
 
 export interface CreateProvisioningRequestPayload {
@@ -228,6 +264,8 @@ export interface CreateProvisioningRequestPayload {
    * §3.2). Meaningless without `selectedThemeKey`.
    */
   readonly websiteSetupMode?: 'empty' | 'complete';
+  /** W2 — see `CreateProvisioningBrandPayload`. Omitted means the theme's default colours. */
+  readonly brand?: CreateProvisioningBrandPayload;
   readonly idempotencyKey: string;
 }
 

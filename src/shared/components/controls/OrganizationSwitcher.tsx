@@ -82,7 +82,15 @@ export function OrganizationSwitcher({
           {/* Phones: icon only (the name is in the menu, and the button
               keeps its accessible name) — the full label pushed the top bar
               28 px past a 360 px screen (J13). */}
-          <span className="hidden truncate sm:inline">{activeLabel}</span>
+          {/* `dir="auto"`: the name keeps its own direction, so a Latin
+              name in the Arabic dashboard is cut at its end. */}
+          <span
+            dir="auto"
+            title={organization?.name}
+            className="hidden truncate sm:inline ltr:text-left rtl:text-right"
+          >
+            {activeLabel}
+          </span>
           <ChevronsUpDown
             className="size-3.5 shrink-0 text-muted-foreground"
             strokeWidth={1.75}
@@ -98,7 +106,13 @@ export function OrganizationSwitcher({
             onSelect={() => switchOrganization(membership.organizationId)}
             className="flex items-center justify-between gap-3"
           >
-            <span className="truncate">{membership.organizationName}</span>
+            <span
+              dir="auto"
+              title={membership.organizationName}
+              className="min-w-0 truncate ltr:text-left rtl:text-right"
+            >
+              {membership.organizationName}
+            </span>
             {membership.organizationId === organization?.id ? (
               <Check
                 className="size-4 shrink-0 text-primary"

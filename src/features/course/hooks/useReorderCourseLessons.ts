@@ -7,7 +7,8 @@
  * lists are invalidated too.
  */
 import { useQueryClient } from '@tanstack/react-query';
-import { useApiMutation } from '@/shared/hooks';
+import { useApiMutation, useAcademyBoundMutation } from '@/shared/hooks';
+import type { AcademyScopedVariables } from '@/shared/hooks';
 import { invalidateCourseCurriculum } from '@services/query/curriculum-invalidation';
 import type { ApiError } from '@api';
 import { courseService } from '../services/CourseService';
@@ -21,8 +22,12 @@ export interface ReorderCourseLessonsVariables {
 export function useReorderCourseLessons(academyId: string, courseId: string) {
   const queryClient = useQueryClient();
 
-  return useApiMutation<void, ReorderCourseLessonsVariables, ApiError>({
-    mutationFn: ({ sectionId, payload }) =>
+  const mutation = useApiMutation<
+    void,
+    AcademyScopedVariables<ReorderCourseLessonsVariables>,
+    ApiError
+  >({
+    mutationFn: ({ academyId, payload: { sectionId, payload } }) =>
       courseService.reorderCourseLessons(
         academyId,
         courseId,
@@ -31,8 +36,10 @@ export function useReorderCourseLessons(academyId: string, courseId: string) {
       ),
     showSuccessToast: false,
     showErrorToast: false,
-    onSuccess: async () => {
+    onSuccess: async (_data, { academyId }) => {
       await invalidateCourseCurriculum(queryClient, { academyId, courseId });
     },
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }

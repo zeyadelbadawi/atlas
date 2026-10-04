@@ -13,3 +13,4 @@ export * from './query-keys';
 export * from './query-utils';
 export * from './invalidation';
 export * from './placeholder';
+export * from './academy-scope';

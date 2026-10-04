@@ -37,9 +37,12 @@ import type { DehydratedState, QueryClient } from '@tanstack/react-query';
 import {
   HydrationSnapshotProvider,
   RequestLocationProvider,
+  useRequestLocation,
   type HydrationSnapshot,
   type RequestLocation,
 } from '@hooks';
+import { ENV } from '@config';
+import { resolvePublicWebsiteContext } from '@utils';
 import type { LanguageCode } from '@types';
 import { AppProviders } from '@app/providers';
 // The module itself, not the `@app/routes` barrel (which re-exports the
@@ -65,8 +68,24 @@ import {
  * router throws. The banner and dialog are mounted once rather than per
  * layout so the choice is offered on every surface, including the tenant
  * and academy public sites, which do not use `PublicLayout`.
+ *
+ * On an Academy's public website the banner and dialog are rendered by the
+ * website router instead (`PublicWebsiteConsentLayer`), inside a scope that
+ * wears that Academy's palette: mounted here they sat outside every website
+ * scope and took the dashboard's teal and its dark mode. The host decision
+ * is the one `AppRouter` makes, from the same request location, so the
+ * server and the browser agree. The provider stays here, so there is one
+ * consent state for the banner, the dialog and the footer links.
  */
 function RootRoute(): JSX.Element {
+  const { hostname, search } = useRequestLocation();
+  const isAcademyWebsite =
+    resolvePublicWebsiteContext(
+      hostname,
+      search,
+      ENV.platformBaseDomain,
+      ENV.isDevelopment
+    ).mode === 'academy-website';
   return (
     <UnsavedChangesProvider>
       <CookieConsentProvider>
@@ -77,8 +96,12 @@ function RootRoute(): JSX.Element {
         */}
         <AppScrollManager />
         <AppRouter />
-        <CookieConsentBanner />
-        <CookiePreferencesDialog />
+        {!isAcademyWebsite && (
+          <>
+            <CookieConsentBanner />
+            <CookiePreferencesDialog />
+          </>
+        )}
         <NavigationBlockDialog />
       </CookieConsentProvider>
     </UnsavedChangesProvider>

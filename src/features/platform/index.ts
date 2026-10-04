@@ -18,6 +18,8 @@ export {
   useCommunicationsHealth,
   useCommunicationSuppressions,
   useUnsuppressAddress,
+  // W3-compose — Compose and send picks one organization as an audience.
+  usePlatformOrganizations,
 } from './hooks';
 export { PlatformVideoInventory } from './components/PlatformVideoInventory';
 export { platformCommunicationsService } from './services/PlatformCommunicationsService';

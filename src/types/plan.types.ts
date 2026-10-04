@@ -44,6 +44,12 @@ export interface PlanResourceLimits {
    * gates those.
    */
   readonly recordedSessions: LimitValue;
+  /**
+   * W3-compose — emails each ACADEMY may send from Messages per calendar
+   * month (UTC). Optional: a plan without it gets the platform default
+   * (`DEFAULT_MONTHLY_EMAILS`, 50) on the server, never "unlimited".
+   */
+  readonly monthlyEmails?: LimitValue;
 }
 
 /** The feature entitlements every Plan (and Add-on effect) can express. */
@@ -163,6 +169,14 @@ export interface Plan {
   /** How many days this plan's trial runs. Absent when the plan is not trialable. */
   readonly trialDurationDays?: number;
   /**
+   * W8 — gifted setup days in front of the first paid period of a
+   * customer's FIRST-EVER paid subscription, per billing cycle (5..15).
+   * `null`/absent means no gift. DISPLAY ONLY: the backend decides at
+   * payment approval whether a customer actually receives it.
+   */
+  readonly giftedDaysMonthly?: number | null;
+  readonly giftedDaysYearly?: number | null;
+  /**
    * P57 — optimistic-concurrency token, sent back as `expectedVersion` on
    * every Platform-Owner edit. Customer-facing screens ignore it.
    */
@@ -182,6 +196,9 @@ export interface CreatePlanPayload {
   readonly pricing?: PlanPricingMetadata;
   readonly trialEligible?: boolean;
   readonly trialDurationDays?: number | null;
+  /** W8 — `null` clears the gift; otherwise 5..15. */
+  readonly giftedDaysMonthly?: number | null;
+  readonly giftedDaysYearly?: number | null;
 }
 
 export interface UpdatePlanPayload {
@@ -197,6 +214,9 @@ export interface UpdatePlanPayload {
   readonly pricing?: PlanPricingMetadata;
   readonly trialEligible?: boolean;
   readonly trialDurationDays?: number | null;
+  /** W8 — `null` clears the gift; otherwise 5..15. */
+  readonly giftedDaysMonthly?: number | null;
+  readonly giftedDaysYearly?: number | null;
 }
 
 export type PlanLimits = PlanResourceLimits;

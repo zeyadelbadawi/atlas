@@ -19,13 +19,14 @@ import {
   requireSeed,
   seedCookieDecision,
   uniqueLearnerEmail,
+  uniqueLearnerName,
 } from './support/atlas';
 import { clearAuthRateLimits } from './support/global-setup';
 
 test.describe.configure({ mode: 'serial' });
 
 const learnerEmail = uniqueLearnerEmail('j22');
-const LEARNER_NAME = 'J22 Learner';
+const LEARNER_NAME = uniqueLearnerName('J22 Learner');
 
 test.describe('J22 — My Learn and the account menu', () => {
   test.beforeAll(async ({ request }) => {

@@ -159,6 +159,9 @@ export const academyKeys = {
     [...academyKeys.all, 'members', organizationId, academyId, query] as const,
   stats: (organizationId: string | undefined, academyId: string) =>
     [...academyKeys.all, 'stats', organizationId, academyId] as const,
+  /** W5 — `GET academies/:id/me`: the caller's role and permissions in one academy. */
+  membership: (organizationId: string | undefined, academyId: string) =>
+    [...academyKeys.all, 'membership', organizationId, academyId] as const,
   memberLookup: (
     organizationId: string | undefined,
     academyId: string,
@@ -276,6 +279,14 @@ export const courseKeys = {
     [...courseKeys.all, 'unit-items', academyId, courseId, sectionId] as const,
   availableContent: (academyId: string | undefined, courseId: string) =>
     [...courseKeys.all, 'available-content', academyId, courseId] as const,
+  /**
+   * W6 — the publish-readiness verdict. Nested UNDER the course detail key
+   * on purpose: every invalidation of the detail (course edits, publish,
+   * and every curriculum mutation via `invalidateCourseCurriculum`) is a
+   * prefix match that refreshes readiness too, with no extra fan-out.
+   */
+  publishReadiness: (academyId: string | undefined, courseId: string) =>
+    [...courseKeys.detail(academyId, courseId), 'publish-readiness'] as const,
 } as const;
 
 /**
@@ -1231,6 +1242,37 @@ export const platformCommunicationsKeys = {
     [...platformCommunicationsKeys.all, 'health', days] as const,
   suppressions: (limit: number) =>
     [...platformCommunicationsKeys.all, 'suppressions', limit] as const,
+} as const;
+
+/**
+ * W3 — the Platform Owner's Email & Notifications consoles: Academy Email
+ * Activity (cursor feed + summary) and OTP & Security Monitoring. Both
+ * feeds are infinite queries whose page param is the server's cursor.
+ */
+export const platformEmailMonitoringKeys = {
+  all: [...QUERY_KEY_ROOTS.platformMetrics, 'email-monitoring'] as const,
+  activity: (filters?: unknown) =>
+    [...platformEmailMonitoringKeys.all, 'activity', filters] as const,
+  activitySummary: (filters?: unknown) =>
+    [...platformEmailMonitoringKeys.all, 'activity-summary', filters] as const,
+  securitySummary: (filters?: unknown) =>
+    [...platformEmailMonitoringKeys.all, 'security-summary', filters] as const,
+  securityEvents: (filters?: unknown) =>
+    [...platformEmailMonitoringKeys.all, 'security-events', filters] as const,
+} as const;
+
+/**
+ * W3-compose — person-authored messages. The academy keys carry the academy
+ * id as a top-level element (the academy-scope invariant); previews and
+ * sends are mutations and never cached.
+ */
+export const messagingKeys = {
+  all: ['messaging'] as const,
+  academyQuota: (academyId: string) =>
+    [...messagingKeys.all, 'academy', academyId, 'quota'] as const,
+  academyHistory: (academyId: string) =>
+    [...messagingKeys.all, 'academy', academyId, 'history'] as const,
+  platformHistory: () => [...messagingKeys.all, 'platform', 'history'] as const,
 } as const;
 
 /** Platform Analytics (Prompt 13). */

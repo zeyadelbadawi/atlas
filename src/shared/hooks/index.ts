@@ -35,6 +35,8 @@ export { useFeatureFlag } from './useFeatureFlag';
 export { useApiQuery } from './useApiQuery';
 export { useApiMutation } from './useApiMutation';
 export type { UseApiMutationOptions } from './useApiMutation';
+export { useAcademyBoundMutation } from './useAcademyBoundMutation';
+export type { AcademyScopedVariables } from './useAcademyBoundMutation';
 export { useInvalidate } from './useInvalidate';
 export type { UseInvalidateResult } from './useInvalidate';
 export { useUnsavedChanges } from './useUnsavedChanges';

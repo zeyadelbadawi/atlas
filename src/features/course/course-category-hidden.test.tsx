@@ -22,6 +22,8 @@ import { courseService } from './services/CourseService';
 vi.mock('@hooks', async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),
   useUnsavedChanges: () => ({ markSaved: () => undefined }),
+  // The list's W6 "Continue setup" action reads permissions.
+  usePermissions: () => ({ hasPermission: () => true }),
 }));
 vi.mock('./components/CourseInstructorsCard', () => ({
   CourseInstructorsCard: () => null,

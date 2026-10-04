@@ -28,7 +28,11 @@ import {
 } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { useToast } from '@app/providers/toast/useToast';
-import { useServerValidation } from '@forms';
+import {
+  nameConflictFromError,
+  useNameConflictError,
+  useServerValidation,
+} from '@forms';
 import { useCreateAcademyStudent } from '../hooks';
 import { useAcademyMemberLookup } from '../hooks/useAcademyMemberLookup';
 import { MemberAccountFields, isBlockedByLookup } from './MemberAccountFields';
@@ -82,6 +86,10 @@ export function CreateAcademyStudentDialog({
   );
 
   useServerValidation(form, createStudent.error);
+  // W4 — a learner name already used in this academy: on the name field for
+  // a new account, on the email field for an existing account (whose name
+  // staff cannot edit).
+  useNameConflictError(form, createStudent.error);
 
   // Unsaved-changes protection for a MODAL. Closing a dialog is not a
   // navigation, so the route blocker never sees the X button, an outside
@@ -118,6 +126,7 @@ export function CreateAcademyStudentDialog({
             return;
           }
 
+          if (nameConflictFromError(error)) return;
           if (error.messageKey === 'errors.academy.nameRequiredForNewAccount') {
             form.setError('name', { message: 'validation:required' });
             return;

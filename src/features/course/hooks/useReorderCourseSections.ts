@@ -15,7 +15,8 @@
  * built on the same stale snapshot.
  */
 import { useQueryClient } from '@tanstack/react-query';
-import { useApiMutation } from '@/shared/hooks';
+import { useApiMutation, useAcademyBoundMutation } from '@/shared/hooks';
+import type { AcademyScopedVariables } from '@/shared/hooks';
 import { courseKeys } from '@services/query';
 import { invalidateCourseCurriculum } from '@services/query/curriculum-invalidation';
 import type { ApiError } from '@api';
@@ -37,22 +38,22 @@ export const reorderSectionsMutationKey = (courseId: string) =>
 
 export function useReorderCourseSections(academyId: string, courseId: string) {
   const queryClient = useQueryClient();
-  const sectionsKey = courseKeys.sections(academyId, courseId);
   const mutationKey = reorderSectionsMutationKey(courseId);
 
-  return useApiMutation<
+  const mutation = useApiMutation<
     void,
-    ReorderItemsPayload,
+    AcademyScopedVariables<ReorderItemsPayload>,
     ApiError,
     ReorderSectionsContext
   >({
     mutationKey,
     scope: { id: `course-sections-order:${courseId}` },
-    mutationFn: (payload) =>
+    mutationFn: ({ academyId, payload }) =>
       courseService.reorderCourseSections(academyId, courseId, payload),
     showSuccessToast: false,
     showErrorToast: false,
-    onMutate: async (payload) => {
+    onMutate: async ({ academyId, payload }) => {
+      const sectionsKey = courseKeys.sections(academyId, courseId);
       await queryClient.cancelQueries({ queryKey: sectionsKey });
       const previous =
         queryClient.getQueryData<PaginatedResult<CourseSection>>(sectionsKey);
@@ -64,16 +65,21 @@ export function useReorderCourseSections(academyId: string, courseId: string) {
       }
       return { previous };
     },
-    onError: (_error, _payload, context) => {
+    onError: (_error, { academyId }, context) => {
       if (context?.previous) {
-        queryClient.setQueryData(sectionsKey, context.previous);
+        queryClient.setQueryData(
+          courseKeys.sections(academyId, courseId),
+          context.previous
+        );
       }
     },
-    onSettled: async () => {
+    onSettled: async (_data, _error, { academyId }) => {
       // `isMutating` still counts this mutation while its onSettled runs.
       if (queryClient.isMutating({ mutationKey }) <= 1) {
         await invalidateCourseCurriculum(queryClient, { academyId, courseId });
       }
     },
   });
+
+  return useAcademyBoundMutation(mutation, academyId);
 }

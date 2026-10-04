@@ -34,8 +34,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { saveViaForm } from '@utils';
 import { useUnsavedChanges } from '@hooks';
-import { useServerValidation } from '@forms';
-import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
+import {
+  nameConflictFromError,
+  useNameConflictError,
+  useServerValidation,
+} from '@forms';
+import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useAcademy, useUpdateAcademy } from '../hooks';
 import {
   updateAcademyProfileSchema,
@@ -82,6 +86,9 @@ export default function AcademyProfilePage(): JSX.Element {
   });
 
   useServerValidation(form, mutationError);
+  // W4 — academy names are unique platform-wide: a taken name is shown on
+  // the name field instead of a generic toast.
+  useNameConflictError(form, mutationError);
   // `save` resolves false after a failure it already reported, so both the
   // Save button and the unsaved-changes dialog's "Save and leave" share it.
   const save = async (data: UpdateAcademyProfileFormData): Promise<boolean> => {
@@ -117,7 +124,8 @@ export default function AcademyProfilePage(): JSX.Element {
         description: t('common:states.success.description'),
       });
       return true;
-    } catch {
+    } catch (error) {
+      if (nameConflictFromError(error)) return false;
       toast({
         title: t('academy:profile.error'),
         description: t('errors:generic.description'),
@@ -137,7 +145,11 @@ export default function AcademyProfilePage(): JSX.Element {
   });
 
   const handleCancel = () => {
-    navigate(DASHBOARD_ROUTES.academy + `?academyId=${academyId}`);
+    navigate(
+      academyId
+        ? buildPath(DASHBOARD_ROUTES.academyOverview, { academyId })
+        : DASHBOARD_ROUTES.academy
+    );
   };
 
   if (isLoading) {

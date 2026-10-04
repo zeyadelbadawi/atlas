@@ -39,3 +39,33 @@ export function getProvisioningStepStatusTone(
       return 'neutral';
   }
 }
+
+/**
+ * The status page's subtitle and checklist heading for each lifecycle
+ * state. "Preparing …" is only true while the request is still running: a
+ * ready Academy says so, and a failed or cancelled request no longer claims
+ * to be preparing anything.
+ */
+export function getProvisioningHeadingKeys(status: ProvisioningStatus): {
+  readonly subtitleKey: string;
+  readonly checklistTitleKey: string;
+} {
+  switch (status) {
+    case 'ready':
+      return {
+        subtitleKey: 'provisioning:status.subtitleReady',
+        checklistTitleKey: 'provisioning:status.checklistTitleReady',
+      };
+    case 'failed':
+    case 'cancelled':
+      return {
+        subtitleKey: 'provisioning:status.subtitleStopped',
+        checklistTitleKey: 'provisioning:status.checklistTitleStopped',
+      };
+    default:
+      return {
+        subtitleKey: 'provisioning:status.subtitle',
+        checklistTitleKey: 'provisioning:status.checklistTitle',
+      };
+  }
+}

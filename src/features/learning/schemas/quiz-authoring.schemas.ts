@@ -273,8 +273,10 @@ export const quizAuthoringSchema = quizSettingsFormSchema
       .max(MAX_QUIZ_DESCRIPTION_LENGTH, 'validation:maxLength')
       .optional(),
     status: z.enum(['draft', 'published']),
-    passingScore: optionalNumber(0, 100),
-    maxAttempts: optionalNumber(1, 1000),
+    // W7 — whole numbers, like the server (`@IsInt`): a decimal used to pass
+    // here and come back as an unexplained 400.
+    passingScore: optionalInteger(0, 100),
+    maxAttempts: optionalInteger(1, 1000),
     questions: z
       .array(quizQuestionSchema)
       .min(MIN_QUIZ_QUESTIONS, 'validation:min')
@@ -294,6 +296,27 @@ export const quizAuthoringSchema = quizSettingsFormSchema
         path: ['availableUntil'],
       });
     }
+    // W7 — the two cross-field rules the server enforces
+    // (`assertValidQuizSettings`) that the form used to leave to a 400.
+    if (quiz.dueAt && quiz.availableUntil && quiz.dueAt > quiz.availableUntil) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'course:quizAuthoring.validation.dueAfterWindow',
+        path: ['dueAt'],
+      });
+    }
+    if (
+      quiz.questionsPerAttempt !== undefined &&
+      quiz.questionsPerAttempt > quiz.questions.length
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          'course:quizAuthoring.validation.questionsPerAttemptExceedsCount',
+        path: ['questionsPerAttempt'],
+        params: { count: quiz.questions.length },
+      });
+    }
   });
 
 export type QuizAuthoringFormData = z.infer<typeof quizAuthoringSchema>;
@@ -306,9 +329,16 @@ export type QuizSettingsPresetName = 'practice' | 'exam';
 
 /**
  * The two starting points an author picks from. A preset only FILLS the
- * fields; the author can change anything afterwards. Practice reproduces
- * the server's own defaults (what every quiz did before Phase 3), so a
- * new quiz starts as practice.
+ * fields; the author can change anything afterwards. A new quiz starts as
+ * Practice, and the form always sends every setting, so Practice — not the
+ * server's column defaults — is what a quiz created here gets.
+ *
+ * W7: Practice is NOT the server's defaults, and this comment used to say
+ * it was. It deliberately differs on review: Practice shows answers and
+ * explanations immediately (the point of practice), while a quiz created
+ * WITHOUT settings (API, seed, pre-Phase-3 rows) gets
+ * `QUIZ_SERVER_DEFAULT_SETTINGS` — answers never, no explanations. Both
+ * are "untouched" baselines: see `isAdvancedSettingCustomised`.
  */
 export const QUIZ_SETTINGS_PRESETS: Readonly<
   Record<QuizSettingsPresetName, QuizSettingsFormData>
@@ -363,6 +393,79 @@ export const QUIZ_SETTINGS_PRESETS: Readonly<
 export const QUIZ_SETTINGS_PRESET_KEYS = Object.keys(
   QUIZ_SETTINGS_PRESETS.practice
 ) as readonly (keyof QuizSettingsFormData)[];
+
+/**
+ * The server's column defaults (`schema.prisma`, model `Quiz`) — what a quiz
+ * created without settings holds. Mirrored here only so the form can tell
+ * an untouched legacy/API quiz from a customised one; the form itself never
+ * sends these as a preset.
+ */
+export const QUIZ_SERVER_DEFAULT_SETTINGS: Readonly<QuizSettingsFormData> = {
+  ...QUIZ_SETTINGS_PRESETS.practice,
+  showAnswers: 'never',
+  showExplanations: false,
+};
+
+/**
+ * W7 — the settings the authoring form keeps behind "Advanced options"
+ * (collapsed by default). Everything else — title, description, status,
+ * the preset chooser, passing score, max attempts, time limit, "required
+ * for completion" and the questions — is always visible. Nothing required
+ * is hidden: every key here has a valid default (`maxViolations` included).
+ */
+export const QUIZ_ADVANCED_SETTING_KEYS = [
+  'mode',
+  'availableFrom',
+  'availableUntil',
+  'dueAt',
+  'latePolicy',
+  'hideTimer',
+  'gradingPolicy',
+  'questionsPerAttempt',
+  'shuffleQuestions',
+  'shuffleOptions',
+  'layout',
+  'showScore',
+  'showAnswers',
+  'showExplanations',
+  'integrityMode',
+  'maxViolations',
+  'requireFullscreen',
+  'requiredToProgress',
+] as const satisfies readonly (keyof QuizSettingsFormData)[];
+
+export type QuizAdvancedSettingKey =
+  (typeof QUIZ_ADVANCED_SETTING_KEYS)[number];
+
+/** Loose equality: number inputs hand back strings, blanks are `''`/`undefined`. */
+export function sameQuizSetting(a: unknown, b: unknown): boolean {
+  return String(a ?? '') === String(b ?? '');
+}
+
+/**
+ * Whether one advanced setting differs from BOTH untouched baselines — the
+ * Practice preset (what this form creates) and the server defaults (what
+ * an API/legacy quiz holds). One rule for the "N customised" count and for
+ * opening the panel when an existing quiz is edited.
+ */
+export function isAdvancedSettingCustomised(
+  key: QuizAdvancedSettingKey,
+  value: unknown
+): boolean {
+  return (
+    !sameQuizSetting(value, QUIZ_SETTINGS_PRESETS.practice[key]) &&
+    !sameQuizSetting(value, QUIZ_SERVER_DEFAULT_SETTINGS[key])
+  );
+}
+
+/** The advanced settings that differ from the untouched baselines. */
+export function customisedAdvancedSettings(
+  values: Partial<Record<QuizAdvancedSettingKey, unknown>>
+): QuizAdvancedSettingKey[] {
+  return QUIZ_ADVANCED_SETTING_KEYS.filter((key) =>
+    isAdvancedSettingCustomised(key, values[key])
+  );
+}
 
 /** A fresh copy of the practice defaults, for "create". */
 export function defaultQuizSettingsFormValues(): QuizSettingsFormData {

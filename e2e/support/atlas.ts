@@ -73,6 +73,16 @@ export function uniqueLearnerEmail(label: string): string {
   return `p64.${label}.${unique}@${LEARNER_EMAIL_DOMAIN}`;
 }
 
+/**
+ * W4 — a learner's name is unique inside each academy (and organization and
+ * academy names platform-wide). Journeys run again and again against the
+ * same seeded academy, so a fixed learner name would collide with the
+ * previous run's learner. Keeps the readable label, adds a unique suffix.
+ */
+export function uniqueLearnerName(label: string): string {
+  return `${label} ${Date.now() % 1e8}${Math.random().toString(36).slice(2, 5)}`;
+}
+
 export const LEARNER_EMAIL_DOMAIN =
   process.env.E2E_LEARNER_EMAIL_DOMAIN ?? 'atlass.dpdns.org';
 
@@ -216,7 +226,7 @@ export async function findCourseByTitle(
 export async function registerLearnerThroughWebsite(
   page: Page,
   email: string,
-  name = 'Playwright Learner'
+  name = uniqueLearnerName('Playwright Learner')
 ): Promise<void> {
   await page.goto(academyPath('/sign-up'));
   await page.locator('#name').fill(name);

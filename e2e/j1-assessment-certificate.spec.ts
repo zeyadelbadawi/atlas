@@ -40,6 +40,7 @@ import {
   requireSeed,
   uniqueLearnerEmail,
   type Session,
+  uniqueLearnerName,
 } from './support/atlas';
 import { clearAuthRateLimits } from './support/global-setup';
 
@@ -47,6 +48,8 @@ test.describe.configure({ mode: 'serial' });
 
 /** The quiz's time limit. The minimum the server accepts, so expiry is observable. */
 const TIME_LIMIT_SECONDS = 60;
+/** W4 — learner names are unique per academy; the seeded academy persists across runs. */
+const J1_LEARNER_NAME = uniqueLearnerName('J1 Learner');
 
 async function apiPut(
   request: Parameters<typeof apiPost>[0],
@@ -241,7 +244,7 @@ test.describe('J1 — assessment and certificate', () => {
     request,
   }) => {
     learnerEmail = uniqueLearnerEmail('j1');
-    await registerLearnerThroughWebsite(page, learnerEmail, 'J1 Learner');
+    await registerLearnerThroughWebsite(page, learnerEmail, J1_LEARNER_NAME);
     await expect(
       page.getByText(/check your (email|inbox)|account created|your account is ready|verify/i).first()
     ).toBeVisible({ timeout: 20_000 });
@@ -519,7 +522,7 @@ test.describe('J1 — assessment and certificate', () => {
       await page.goto(path);
       const sheet = page.getByTestId('certificate-verify-valid');
       await expect(sheet).toBeVisible({ timeout: 30_000 });
-      await expect(sheet.getByText('J1 Learner')).toBeVisible();
+      await expect(sheet.getByText(J1_LEARNER_NAME)).toBeVisible();
       await expect(sheet.getByText(SEED.academyName)).toBeVisible();
     }
     const verify = await request.get(`${API_BASE}/verify/${verificationCode}`);

@@ -127,6 +127,8 @@ interface OrgOwner {
   email: string;
   session: Session;
   organizationId: string;
+  /** Unique per run; the review queue and detail show it (not the id). */
+  organizationName: string;
 }
 
 interface CatalogMethod {
@@ -157,8 +159,9 @@ async function createOrganizationOwner(
     password: LEARNER_PASSWORD,
     surface: 'management',
   });
+  const organizationName = `J20 ${label} Org ${stamp}`;
   const created = await apiPost(request, session, '/organizations', {
-    name: `J20 ${label} Org ${stamp}`,
+    name: organizationName,
   });
   expect(created.status(), await created.text()).toBe(201);
   const organizationId: string = (await created.json()).id;
@@ -168,7 +171,7 @@ async function createOrganizationOwner(
     password: LEARNER_PASSWORD,
     surface: 'management',
   });
-  return { email, session, organizationId };
+  return { email, session, organizationId, organizationName };
 }
 
 async function signInOwner(page: Page, email: string): Promise<void> {
@@ -832,14 +835,14 @@ test.describe('J20 — E-wallet and InstaPay: configure, checkout, review', () =
     await page.getByRole('combobox').first().click();
     await page.getByRole('option', { name: 'Awaiting review' }).click();
     const row = page.getByRole('button', {
-      name: new RegExp(`^${ownerA.organizationId} `),
+      name: new RegExp(`^${ownerA.organizationName} `),
     });
     await expect(row).toBeVisible({ timeout: 30_000 });
     await row.click();
     await page.waitForURL(new RegExp(`${ROUTES.review}/${paymentAId}`), {
       timeout: 30_000,
     });
-    await expect(page.getByText(ownerA.organizationId).first()).toBeVisible({
+    await expect(page.getByText(ownerA.organizationName).first()).toBeVisible({
       timeout: 30_000,
     });
     await page
