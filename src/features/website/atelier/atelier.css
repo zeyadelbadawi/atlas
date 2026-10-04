@@ -24,10 +24,12 @@
   font-style: normal;
   font-display: swap;
   font-weight: 300 900;
-  src: url('../../../assets/fonts/markazi-text-arabic.woff2') format('woff2-variations');
-  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1,
-    U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74,
-    U+FE76-FEFC;
+  src: url('../../../assets/fonts/markazi-text-arabic.woff2')
+    format('woff2-variations');
+  unicode-range:
+    U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1,
+    U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF,
+    U+FE70-FE74, U+FE76-FEFC;
 }
 
 @font-face {
@@ -35,10 +37,12 @@
   font-style: normal;
   font-display: swap;
   font-weight: 100 900;
-  src: url('../../../assets/fonts/fraunces-latin.woff2') format('woff2-variations');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-    U+0304, U+0308, U+0329, U+2000-200B, U+2012-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
+  src: url('../../../assets/fonts/fraunces-latin.woff2')
+    format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-200B, U+2012-206F, U+20AC, U+2122, U+2191,
+    U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
@@ -46,10 +50,12 @@
   font-style: normal;
   font-display: swap;
   font-weight: 100 900;
-  src: url('../../../assets/fonts/fraunces-latin-ext.woff2') format('woff2-variations');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
-    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113,
-    U+2C60-2C7F, U+A720-A7FF;
+  src: url('../../../assets/fonts/fraunces-latin-ext.woff2')
+    format('woff2-variations');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 @font-face {
@@ -57,10 +63,12 @@
   font-style: italic;
   font-display: swap;
   font-weight: 100 900;
-  src: url('../../../assets/fonts/fraunces-latin-italic.woff2') format('woff2-variations');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-    U+0304, U+0308, U+0329, U+2000-200B, U+2012-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
+  src: url('../../../assets/fonts/fraunces-latin-italic.woff2')
+    format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-200B, U+2012-206F, U+20AC, U+2122, U+2191,
+    U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 /* ------------------------------------------------------------------ */
@@ -68,7 +76,8 @@
 /* ------------------------------------------------------------------ */
 
 .website-theme-scope[data-theme-pack='atelier'] {
-  --at-font-display: 'Atelier Display', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --at-font-display:
+    'Atelier Display', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
 
   /* Type scale: fluid, clamped at both ends. */
   --at-display: clamp(2.75rem, 1.35rem + 5.6vw, 7.25rem);
@@ -297,7 +306,8 @@
 @media (min-width: 90rem) {
   [data-theme-pack='atelier'] .at-thread {
     inset-inline-start: calc(
-      (100% - var(--at-container)) / 2 + var(--at-gutter) + var(--at-margin) * 0.38
+      (100% - var(--at-container)) / 2 + var(--at-gutter) + var(--at-margin) *
+        0.38
     );
   }
 }
@@ -312,7 +322,9 @@
 /* The knot where the thread meets a chapter mark. */
 [data-theme-pack='atelier'] .at-knot {
   position: absolute;
-  inset-inline-start: calc(var(--at-margin) * -0.62 - 0.3125rem + var(--at-thread-width) / 2);
+  inset-inline-start: calc(
+    var(--at-margin) * -0.62 - 0.3125rem + var(--at-thread-width) / 2
+  );
   inset-block-start: 0.55em;
   width: 0.625rem;
   height: 0.625rem;
@@ -466,11 +478,14 @@
   transform: scaleX(-1) translateX(0.25rem);
 }
 
-[data-theme-pack='atelier'] :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+[data-theme-pack='atelier']
+  :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
   outline: 2px solid var(--website-focus);
   outline-offset: 3px;
 }
-[data-theme-pack='atelier'] [data-env='ink'] :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+[data-theme-pack='atelier']
+  [data-env='ink']
+  :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
   outline-color: var(--atelier-ink-text);
 }
 

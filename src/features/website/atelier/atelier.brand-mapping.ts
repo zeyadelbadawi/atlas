@@ -171,7 +171,12 @@ export function resolveAtelierTokens(
 
   // Body text: the palette's foreground, kept at AAA on both papers.
   const text = ensureContrast(roles.foreground, papers, 7, 'darker');
-  const textMuted = ensureContrast(roles.foregroundMuted, papers, 4.5, 'darker');
+  const textMuted = ensureContrast(
+    roles.foregroundMuted,
+    papers,
+    4.5,
+    'darker'
+  );
   // The brand as text: the palette's link colour (already the brand at a
   // readable lightness), re-solved for Atelier's papers.
   const brandText = ensureContrast(roles.link, papers, 4.5, 'darker');

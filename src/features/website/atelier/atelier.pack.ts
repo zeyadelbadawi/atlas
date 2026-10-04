@@ -10,11 +10,16 @@ import type { ThemePack } from '../theme-packs/theme-pack.types';
 import './atelier.css';
 import { mapAtelierBrandPalette } from './atelier.brand-mapping';
 import { ATELIER_SECTION_RENDERERS } from './sections';
+import { ATELIER_CHROME } from './chrome';
+import { ATELIER_PAGES, ATELIER_PAGE_RENDERERS } from './pages';
 
 export const ATELIER_PACK: ThemePack = {
   key: 'atelier',
   renderers: {
     ...ATELIER_SECTION_RENDERERS,
+    ...ATELIER_PAGE_RENDERERS,
   },
+  pages: ATELIER_PAGES,
+  chrome: ATELIER_CHROME,
   mapBrandPalette: mapAtelierBrandPalette,
 };

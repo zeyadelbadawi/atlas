@@ -117,7 +117,11 @@ export function AtelierChapterMark({
   if (!label && !numbered) return null;
   return (
     <div className={cn('at-mark', className)}>
-      <span aria-hidden className="at-knot" data-filled={filledKnot ? '' : undefined} />
+      <span
+        aria-hidden
+        className="at-knot"
+        data-filled={filledKnot ? '' : undefined}
+      />
       {numbered ? (
         <span aria-hidden className="at-mark-no at-chapter-no" />
       ) : null}
@@ -152,7 +156,11 @@ export function AtelierHeading({
     <Tag
       id={id}
       className={cn(
-        size === 'display' ? 'at-display' : size === 'title' ? 'at-title' : 'at-subtitle',
+        size === 'display'
+          ? 'at-display'
+          : size === 'title'
+            ? 'at-title'
+            : 'at-subtitle',
         className
       )}
     >
@@ -313,7 +321,8 @@ export function AtelierMedia({
 /* Actions                                                              */
 /* ------------------------------------------------------------------ */
 
-export type AtelierActionVariant = 'primary' | 'ghost' | 'link' | 'ink' | 'inkGhost';
+export type AtelierActionVariant =
+  'primary' | 'ghost' | 'link' | 'ink' | 'inkGhost';
 
 const ACTION_CLASSES: Record<AtelierActionVariant, string> = {
   primary: 'at-btn',
@@ -390,7 +399,11 @@ export function AtelierAction({
 }
 
 /** The arrow inside an action; mirrors and nudges with the reading direction. */
-export function AtelierArrow({ className }: { readonly className?: string }): JSX.Element {
+export function AtelierArrow({
+  className,
+}: {
+  readonly className?: string;
+}): JSX.Element {
   return (
     <ArrowRight
       className={cn('at-arrow size-4', className)}
@@ -427,7 +440,10 @@ export function AtelierMonogram({
 }
 
 /** The locale's digits (Arabic-Indic in Arabic). */
-export function formatAtelierNumber(value: number, locale: 'en' | 'ar'): string {
+export function formatAtelierNumber(
+  value: number,
+  locale: 'en' | 'ar'
+): string {
   return value.toLocaleString(locale === 'ar' ? 'ar-EG' : 'en-US');
 }
 

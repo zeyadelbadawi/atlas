@@ -34,8 +34,6 @@ import type {
   WebsiteNavigationItem,
   WebsitePage,
 } from '@types';
-import fragmentEn from '../i18n/pages.en.json';
-import fragmentAr from '../i18n/pages.ar.json';
 import {
   ATELIER_PAGES,
   ATELIER_PAGE_RENDERERS,
@@ -113,15 +111,7 @@ vi.mock('@/shared/hooks/useAcademyIdentity', () => ({
 const lt = (en: string, ar = '') => ({ en, ar });
 
 function i18nFor(locale: PublicWebsiteLocale) {
-  const i18n = createI18nInstance(locale);
-  i18n.addResourceBundle(
-    locale,
-    'website',
-    { atelier: locale === 'en' ? fragmentEn : fragmentAr },
-    true,
-    true
-  );
-  return i18n;
+  return createI18nInstance(locale);
 }
 
 const linkRenderer: WebsiteLinkRenderer = ({

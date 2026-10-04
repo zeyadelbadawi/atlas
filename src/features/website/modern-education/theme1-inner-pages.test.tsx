@@ -36,7 +36,7 @@ import {
   hasThemeNotFound,
 } from '../renderer/WebsiteSystemPages';
 import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
-import { WEBSITE_THEME_KEYS } from '@types';
+import { SELECTABLE_WEBSITE_THEME_KEYS, WEBSITE_THEME_KEYS } from '@types';
 import type {
   Course,
   SectionConfigMap,
@@ -685,9 +685,11 @@ describe('Theme 1 system pages', () => {
     ).toBe('/contact');
   });
 
-  it('only Theme 1 draws its own 404 and Coming Soon; Themes 2–5 keep the shared pages', () => {
+  it('the selectable themes draw their own 404 and Coming Soon; retired Themes 2–5 keep the shared pages', () => {
     for (const key of WEBSITE_THEME_KEYS) {
-      const own = key === 'modern-education';
+      const own = (SELECTABLE_WEBSITE_THEME_KEYS as readonly string[]).includes(
+        key
+      );
       expect(hasThemeNotFound(key)).toBe(own);
       expect(hasThemeComingSoon({ themeKey: key, brand: {} })).toBe(own);
     }

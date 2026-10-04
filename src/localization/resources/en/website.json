@@ -1327,5 +1327,145 @@
     "unsavedHint": "You have unsaved changes.",
     "savedHint": "Everything is saved and live.",
     "nameRequired": "Enter your academy’s name."
+  },
+  "atelier": {
+    "home": {
+      "liveData": {
+        "previewUnavailable": "Live data couldn't be loaded, so visitors don't see this section right now."
+      },
+      "hero": {
+        "searchLabel": "Search the courses",
+        "searchPlaceholder": "What would you like to learn?",
+        "searchSubmit": "Search"
+      },
+      "categories": {
+        "viewAll": "Browse all courses",
+        "courseCount_one": "{{formatted}} course",
+        "courseCount_other": "{{formatted}} courses"
+      },
+      "courses": {
+        "viewAll": "View all courses",
+        "listLabel": "Featured courses",
+        "taughtBy": "With {{name}}",
+        "errorTitle": "The courses couldn't be loaded right now",
+        "errorDescription": "Please try again in a moment.",
+        "retry": "Try again",
+        "launchingTitle": "Our first courses are in the making",
+        "launchingDescription": "We're preparing the first courses now. Get in touch and we'll tell you as soon as enrolment opens.",
+        "launchingAction": "Contact us"
+      },
+      "instructors": {
+        "listLabel": "Instructors",
+        "courseCount_one": "{{formatted}} course",
+        "courseCount_other": "{{formatted}} courses",
+        "previewHidden": "Hidden on your public site until at least one published course has an instructor.",
+        "sampleName": "Instructor name",
+        "sampleCourses": "Their published courses"
+      },
+      "statistics": {
+        "label": "In numbers",
+        "previewHidden": "Hidden on your public site until at least two numbers are above zero.",
+        "sampleValue": "Live number, shown once above zero"
+      },
+      "testimonials": {
+        "label": "Testimonials",
+        "roleDescription": "quotes",
+        "position": "Testimonial {{position}} of {{total}}",
+        "previous": "Previous testimonial",
+        "next": "Next testimonial",
+        "rating": "Rated {{rating}} out of 5"
+      },
+      "faq": {
+        "listTitle": "All questions",
+        "resultCount_one": "{{count}} question matches",
+        "resultCount_other": "{{count}} questions match",
+        "noMatchTitle": "No questions match your search",
+        "noMatchDescription": "Try different words, or contact us and we'll help."
+      },
+      "gallery": {
+        "label": "Gallery"
+      }
+    },
+    "chrome": {
+      "closeMenu": "Close menu",
+      "social": "Elsewhere"
+    },
+    "pages": {
+      "trail": {
+        "label": "Breadcrumb",
+        "home": "Home"
+      },
+      "search": {
+        "placeholder": "What would you like to learn?",
+        "submit": "Search",
+        "faqLabel": "Search the questions",
+        "faqPlaceholder": "Type a word from your question"
+      },
+      "summary": {
+        "courses_one": "{{formatted}} course",
+        "courses_other": "{{formatted}} courses",
+        "catalog_one": "{{courses}} course in {{categories}} categories",
+        "catalog_other": "{{courses}} courses in {{categories}} categories"
+      },
+      "intro": {
+        "about": "The people, purpose and craft behind our courses.",
+        "courses": "Every course we teach, gathered in one index.",
+        "faqs": "Answers to the questions learners ask us most.",
+        "contact": "A question about a course or enrolling? Write to us."
+      },
+      "catalog": {
+        "filters": "Refine the index",
+        "categories": "Categories",
+        "allCategories": "All",
+        "removeFilter": "Remove the filter {{name}}",
+        "clearAll": "Clear all",
+        "loading": "Loading courses",
+        "errorTitle": "The index could not be loaded",
+        "errorDescription": "Something interrupted the connection. Please try again.",
+        "retry": "Try again",
+        "launchingTitle": "The first courses are in preparation",
+        "launchingDescription": "Our index is still being written. Check back soon, or get in touch to hear when enrolment opens.",
+        "pagination": "Course pages",
+        "previousPage": "Previous page",
+        "nextPage": "Next page",
+        "page": "Page {{page}}",
+        "by": "by {{name}}"
+      },
+      "contact": {
+        "channels": "Reach us",
+        "emailLabel": "Email",
+        "phoneLabel": "Telephone",
+        "addressLabel": "Address",
+        "formTitle": "Write to us",
+        "formNote": "Every field is required.",
+        "successTitle": "Your letter is on its way",
+        "sendAnother": "Write another message"
+      },
+      "courseDetails": {
+        "breadcrumb": "Breadcrumb",
+        "allCourses": "All courses",
+        "taughtBy": "Taught by",
+        "purchase": "Enrol in this course",
+        "includes": "This course includes",
+        "hasPreview": "Free preview lessons",
+        "contents": "Contents",
+        "errorTitle": "This course could not be loaded",
+        "errorDescription": "Something went wrong while loading the course. Please try again.",
+        "retry": "Try again"
+      },
+      "notFound": {
+        "eyebrow": "Error 404",
+        "title": "This page is not in our index",
+        "description": "It may have moved, or the link may be out of date. These are good places to continue reading.",
+        "home": "Back to home",
+        "courses": "Browse the courses",
+        "contact": "Contact us"
+      },
+      "comingSoon": {
+        "eyebrow": "Opening soon",
+        "title": "{{name}} is being prepared",
+        "description": "Our website is being set in type. Please come back soon."
+      }
+    }
   }
 }

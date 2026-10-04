@@ -33,8 +33,6 @@ import type {
   SectionConfigMap,
   WebsitePage,
 } from '@types';
-import homeEn from '../i18n/home.en.json';
-import homeAr from '../i18n/home.ar.json';
 import {
   ATELIER_SECTION_RENDERERS,
   AtelierAbout,
@@ -93,8 +91,6 @@ vi.mock('@/shared/hooks/usePublicWebsiteStatistics', () => ({
 
 const i18nEn = createI18nInstance('en');
 const i18nAr = createI18nInstance('ar');
-i18nEn.addResourceBundle('en', 'website', { atelier: homeEn }, true, true);
-i18nAr.addResourceBundle('ar', 'website', { atelier: homeAr }, true, true);
 const lt = (en: string, ar = '') => ({ en, ar });
 
 const linkRenderer: WebsiteLinkRenderer = ({ href, className, children }) => (

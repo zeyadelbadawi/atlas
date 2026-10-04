@@ -19,8 +19,6 @@ import { PublicWebsiteLocaleProvider } from '@/features/website/renderer/PublicW
 import { getWebsiteTheme } from '@/features/website/themes/website-theme.registry';
 import type { WebsiteLinkRenderer } from '@/features/website/renderer/website-link-renderer.types';
 import type { Course, PublicWebsiteLocale, WebsitePage } from '@types';
-import fragmentEn from '../i18n/pages.en.json';
-import fragmentAr from '../i18n/pages.ar.json';
 import { AtelierCourseDetails } from './AtelierCourseDetails';
 
 /* ------------------------------------------------------------------ */
@@ -78,15 +76,7 @@ vi.mock('@features/learning', () => ({
 /* ------------------------------------------------------------------ */
 
 function i18nFor(locale: PublicWebsiteLocale) {
-  const i18n = createI18nInstance(locale);
-  i18n.addResourceBundle(
-    locale,
-    'website',
-    { atelier: locale === 'en' ? fragmentEn : fragmentAr },
-    true,
-    true
-  );
-  return i18n;
+  return createI18nInstance(locale);
 }
 
 const linkRenderer: WebsiteLinkRenderer = ({ href, className, children }) => (
@@ -136,7 +126,7 @@ const COURSE = {
   description: 'A long description.',
   level: 'beginner',
   language: 'en',
-  pricing: { type: 'paid', price: 120, currency: 'USD' },
+  pricing: { type: 'paid', amount: 120, currency: 'USD' },
   category: { id: 'cat-1', name: 'Print' },
   instructors: [{ id: 'i1', name: 'Layla Haddad' }],
   outcomes: ['Compose a page', 'Lock up a forme'],
