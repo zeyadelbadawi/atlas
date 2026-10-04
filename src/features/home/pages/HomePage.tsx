@@ -43,6 +43,7 @@ import {
 import { RISE_VARIANTS, createStaggerVariants } from '@motion';
 import { useAuth } from '@hooks';
 import { usePublicPlans } from '../hooks/usePublicPlans';
+import { PlanGiftedDays } from '../components/PlanGiftedDays';
 import { useStartPlanFlow } from '../hooks/useStartPlanFlow';
 import { formatPlanPrice } from '../utils/formatPlanPrice';
 import {
@@ -363,6 +364,8 @@ export default function HomePage(): JSX.Element {
                   <p className="flex-1 text-sm leading-relaxed text-muted-foreground">
                     {plan.description}
                   </p>
+                  {/* W8 — only for plans whose catalog entry has a gift. */}
+                  <PlanGiftedDays plan={plan} />
                   <Button
                     onClick={() => startPlanFlow(plan.key)}
                     variant="outline"

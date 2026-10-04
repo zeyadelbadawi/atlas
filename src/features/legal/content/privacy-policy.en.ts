@@ -222,6 +222,11 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
                 'Created when gifted setup days are granted on a first paid subscription. Whether a subscription qualifies depends on the plan and billing cycle chosen. The record contains the hash, the organization and account, a payment reference, the plan, the billing cycle, the number of gifted days and their dates. It contains no IP address or user agent. These records are only ever added, never edited, and a refund does not restore eligibility.',
             },
             {
+              term: 'Customers from before these records existed',
+              detail:
+                'Customers who had already used a free trial, or had already paid for a subscription, before these records were introduced may also be recorded in them, based on our existing account, subscription and payment records, so that the once-per-customer rules apply to them too. These entries contain the same kind of hash, but no IP address or user agent.',
+            },
+            {
               term: 'What this means if you delete your account',
               detail:
                 'Deleting an account or organization removes its link to these records, but the hash and dates remain. Signing up again with the same mailbox — including a variation of it such as the same Gmail address with dots or a “+” tag — does not create a new free trial or new gifted days.',

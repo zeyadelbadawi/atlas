@@ -25,6 +25,12 @@ import { RISE_VARIANTS, createStaggerVariants } from '@motion';
 import { usePublicPlans } from '../hooks/usePublicPlans';
 import { useStartPlanFlow } from '../hooks/useStartPlanFlow';
 import { formatPlanPrice } from '../utils/formatPlanPrice';
+import { planCatalogHasGifts } from '@utils';
+import {
+  GiftedDaysExplainer,
+  PlanGiftedDays,
+  PlanGiftedDaysCell,
+} from '../components/PlanGiftedDays';
 import {
   MarketingContainer,
   MarketingSection,
@@ -82,6 +88,9 @@ export default function PricingPage(): JSX.Element {
     (a, b) => a.displayOrder - b.displayOrder
   );
   const recommendedKey = plans[1]?.key;
+  // W8 — gifted setup days are catalog data; with no plan offering any, the
+  // page says nothing about them at all.
+  const hasGifts = planCatalogHasGifts(plans);
   const stagger = createStaggerVariants(plans.length || 1);
 
   return (
@@ -192,6 +201,8 @@ export default function PricingPage(): JSX.Element {
                       {plan.description}
                     </p>
 
+                    <PlanGiftedDays plan={plan} />
+
                     <ul className="flex-1 space-y-2.5 border-t border-border pt-5 text-sm text-muted-foreground">
                       {LIMIT_ROWS.slice(0, 4).map((key) => (
                         <li key={key} className="flex items-start gap-2.5">
@@ -241,9 +252,13 @@ export default function PricingPage(): JSX.Element {
                 make the page itself scroll horizontally at 375px.
                 `tabIndex={0}` makes the scroll region reachable by keyboard,
                 and the region needs an accessible name to be announced.
+                `relative` makes it the containing block of the cells'
+                `sr-only` labels (absolutely positioned): without it they are
+                placed against the page, outside this scroll clip, and widen
+                the document itself at phone width.
               */}
               <div
-                className="mt-6 overflow-x-auto"
+                className="relative mt-6 overflow-x-auto"
                 role="region"
                 aria-label={t('pricing:comparison.title')}
                 tabIndex={0}
@@ -299,6 +314,24 @@ export default function PricingPage(): JSX.Element {
                         ))}
                       </tr>
                     ))}
+                    {hasGifts ? (
+                      <tr
+                        className="border-b border-border"
+                        data-testid="pricing-comparison-gift-row"
+                      >
+                        <th
+                          scope="row"
+                          className="py-3 text-start font-normal text-muted-foreground"
+                        >
+                          {t('pricing:gift.comparisonRow')}
+                        </th>
+                        {plans.map((plan) => (
+                          <td key={plan.key} className="py-3 pe-4">
+                            <PlanGiftedDaysCell plan={plan} />
+                          </td>
+                        ))}
+                      </tr>
+                    ) : null}
                     {FEATURE_ROWS.map((key) => (
                       <tr key={key} className="border-b border-border">
                         <th
@@ -346,6 +379,12 @@ export default function PricingPage(): JSX.Element {
           </>
         )}
       </MarketingSection>
+
+      {/* ── Gifted setup days — the conditions, only while some plan offers
+          them (catalog data, never a hardcoded promise). ──────────────── */}
+      {!plansQuery.isLoading && !plansQuery.isError && hasGifts ? (
+        <GiftedDaysExplainer />
+      ) : null}
 
       {/* ── Pricing note — a supporting visual moment, not a bare closing
           paragraph. Reuses the hero's own resolved-structure motif (see

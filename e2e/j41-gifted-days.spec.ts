@@ -289,6 +289,91 @@ test.describe('J41 — gifted setup days on the first paid subscription', () => 
     });
   });
 
+  test('1b: the public Pricing page shows this plan’s own gifted days, from the catalog (EN + AR, desktop + phone)', async ({
+    browser,
+  }) => {
+    test.setTimeout(180_000);
+    // An anonymous visitor: no session, the marketing site only.
+    const context = await browser.newContext();
+    const page = await context.newPage();
+    try {
+      await seedCookieDecision(page);
+      await page.goto('/pricing');
+      for (const variant of VARIANTS) {
+        await applyVariant(page, variant);
+        const note = page.getByTestId(`marketing-plan-gift-${PLAN.key}`);
+        // 7 days monthly, read from `GET /public/plans`. The plan has no
+        // yearly price, so its 14 yearly days are never advertised.
+        await expect(note).toContainText(
+          variant.language === 'ar'
+            ? 'الفوترة الشهرية: 7 أيام'
+            : 'Monthly billing: 7 days',
+          { timeout: 30_000 }
+        );
+        await expect(note).not.toContainText(
+          variant.language === 'ar' ? 'السنوية' : 'Yearly'
+        );
+        // The comparison table carries the same catalog figure.
+        await expect(
+          page.getByTestId('pricing-comparison-gift-row')
+        ).toContainText(
+          variant.language === 'ar'
+            ? 'الفوترة الشهرية: 7 أيام'
+            : 'Monthly billing: 7 days'
+        );
+        const explainer = page.getByTestId('pricing-gifted-days');
+        await expect(explainer).toContainText(
+          variant.language === 'ar'
+            ? 'تتضمن بعض الخطط أيام إعداد مُهداة'
+            : 'Some plans include gifted setup days'
+        );
+        await expectNoSidewaysScroll(page);
+        await note.scrollIntoViewIfNeeded();
+        await captureEvidence(page, `pricing-gift-card-${variant.name}`);
+        await explainer.scrollIntoViewIfNeeded();
+        await captureEvidence(page, `pricing-gift-explainer-${variant.name}`);
+      }
+    } finally {
+      await setStoredLanguage(page, 'en');
+      await context.close();
+    }
+  });
+
+  test('1c: the Privacy Policy explains the eligibility ledgers (EN + AR, desktop + phone)', async ({
+    browser,
+  }) => {
+    test.setTimeout(120_000);
+    const context = await browser.newContext();
+    const page = await context.newPage();
+    try {
+      await seedCookieDecision(page);
+      await page.goto('/privacy-policy');
+      for (const variant of VARIANTS) {
+        await applyVariant(page, variant);
+        const article = page.getByRole('article');
+        await expect(article).toHaveAttribute(
+          'dir',
+          variant.language === 'ar' ? 'rtl' : 'ltr'
+        );
+        await expect(article).toContainText(
+          variant.language === 'ar' ? '٤ أكتوبر ٢٠٢٦' : '4 October 2026'
+        );
+        const heading = page.locator('#eligibility-records h2');
+        await expect(heading).toHaveText(
+          variant.language === 'ar'
+            ? '٦. الفترات التجريبية المجانية وأيام الاشتراك المُهداة'
+            : '6. Free trials and gifted subscription days'
+        );
+        await expectNoSidewaysScroll(page);
+        await heading.scrollIntoViewIfNeeded();
+        await captureEvidence(page, `privacy-ledgers-${variant.name}`);
+      }
+    } finally {
+      await setStoredLanguage(page, 'en');
+      await context.close();
+    }
+  });
+
   test('2: a new customer is offered the gift, receives it, and sees it on the billing pages (EN + AR)', async ({
     browser,
     request,

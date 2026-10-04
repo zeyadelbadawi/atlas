@@ -62,6 +62,7 @@ import {
   formatCurrency,
   isOnboardingReturnPath,
   MIRROR_IN_RTL,
+  planBillingCycles,
   toErrorsNamespaceKey,
 } from '@utils';
 import type { ApiError } from '@api';
@@ -72,33 +73,6 @@ import type {
   PlanPricingMetadata,
   SubscriptionBillingCycle,
 } from '@types';
-
-/**
- * The billing cycles the plan's catalog pricing can actually be bought at —
- * the same rule the backend's checkout pricing applies, so the page never
- * offers a cycle the server will refuse (or, worse, would accept while
- * charging the other cycle's amount):
- *
- * - a plan priced per year is bought yearly;
- * - a plan priced per month is bought monthly, and ALSO yearly when the
- *   Platform Owner set a whole-year price (`yearlyAmount`) beside it;
- * - anything else (no cycle recorded, no pricing yet) is offered monthly
- *   only, and an unpriced plan is explained by the backend's own
- *   `pricingUnavailable` error.
- */
-function availableBillingCycles(
-  pricing: PlanPricingMetadata | undefined
-): readonly SubscriptionBillingCycle[] {
-  if (pricing?.billingCycle === 'yearly') return ['yearly'];
-  if (
-    pricing?.billingCycle === 'monthly' &&
-    typeof pricing.yearlyAmount === 'number' &&
-    Number.isFinite(pricing.yearlyAmount)
-  ) {
-    return ['monthly', 'yearly'];
-  }
-  return ['monthly'];
-}
 
 /** The catalog price (major units) for one cycle, or `undefined` when there is none. */
 function catalogPriceFor(
@@ -202,7 +176,8 @@ export default function CheckoutPage(): JSX.Element {
   const planPricing = targetPlan?.pricing;
   // W8 — display-only gift availability; the backend decides at approval.
   const { state: lifecycle } = useSubscriptionLifecycleState();
-  const billingCycles = availableBillingCycles(planPricing);
+  // The same cycle rule the backend's checkout pricing applies (`@utils`).
+  const billingCycles = planBillingCycles(planPricing);
   // A cycle chosen before the catalog loaded (or one this plan doesn't
   // offer) never reaches the request.
   const effectiveBillingCycle = billingCycles.includes(billingCycle)
