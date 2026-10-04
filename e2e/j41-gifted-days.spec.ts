@@ -329,6 +329,14 @@ test.describe('J41 — gifted setup days on the first paid subscription', () => 
         );
         await expectNoSidewaysScroll(page);
         await note.scrollIntoViewIfNeeded();
+        // The plan cards fade in (staggered); capture once this one has.
+        await expect
+          .poll(() =>
+            note.evaluate(
+              (el) => getComputedStyle(el.closest('li') ?? el).opacity
+            )
+          )
+          .toBe('1');
         await captureEvidence(page, `pricing-gift-card-${variant.name}`);
         await explainer.scrollIntoViewIfNeeded();
         await captureEvidence(page, `pricing-gift-explainer-${variant.name}`);

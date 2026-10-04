@@ -323,7 +323,12 @@ export default function PricingPage(): JSX.Element {
                           scope="row"
                           className="py-3 text-start font-normal text-muted-foreground"
                         >
-                          {t('pricing:gift.comparisonRow')}
+                          <span className="block">
+                            {t('pricing:gift.comparisonRow')}
+                          </span>
+                          <span className="block text-xs">
+                            {t('pricing:gift.comparisonRowNote')}
+                          </span>
                         </th>
                         {plans.map((plan) => (
                           <td key={plan.key} className="py-3 pe-4">

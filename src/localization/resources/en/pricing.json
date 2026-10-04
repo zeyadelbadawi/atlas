@@ -55,7 +55,8 @@
     "monthly_other": "Monthly billing: {{count}} days",
     "yearly_one": "Yearly billing: {{count}} day",
     "yearly_other": "Yearly billing: {{count}} days",
-    "comparisonRow": "Gifted setup days (first paid subscription)",
+    "comparisonRow": "Gifted setup days",
+    "comparisonRowNote": "First paid subscription only",
     "section": {
       "title": "Gifted setup days",
       "lead": "Some plans include gifted setup days on your first paid subscription: extra time to set up your academy before your paid period begins.",
