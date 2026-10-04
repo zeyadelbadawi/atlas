@@ -233,6 +233,20 @@ describe('MessageComposer', () => {
     );
   });
 
+  it('shows the backend refusal in the errors namespace, not a generic error', async () => {
+    const onPreview = vi
+      .fn()
+      .mockRejectedValue(apiError('messaging.academyInactive'));
+    renderComposer({ onPreview });
+    const user = await fillDraft();
+    await user.click(screen.getByTestId('message-preview-button'));
+    // The i18n mock renders `key:defaultValue`; the key must be the
+    // namespaced backend key (a raw `errors.…` key never resolves).
+    expect(
+      await screen.findByText(/^errors:messaging\.academyInactive/)
+    ).not.toBeNull();
+  });
+
   it('disables the confirm button while sending (no double submit)', async () => {
     const { rerender, onPreview, onSend } = renderComposer();
     const user = await fillDraft();
