@@ -3,12 +3,14 @@
  * that ship photographs have a manifest.
  */
 import { MODERN_EDUCATION_ASSETS } from './manifests/modern-education.manifest';
+import { ATELIER_ASSETS } from './manifests/atelier.manifest';
 import type { ThemeAssetEntry, ThemeAssetManifest } from './theme-asset.types';
 
 export const THEME_ASSET_MANIFESTS: Readonly<
   Record<string, ThemeAssetManifest>
 > = {
   [MODERN_EDUCATION_ASSETS.theme]: MODERN_EDUCATION_ASSETS,
+  [ATELIER_ASSETS.theme]: ATELIER_ASSETS,
 };
 
 /** Public URL root the derivatives are served from (same origin, immutable). */
