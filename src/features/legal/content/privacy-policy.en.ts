@@ -261,7 +261,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
             {
               term: 'What this means if you delete your account',
               detail:
-                'When an account is deleted, the account these records point to is anonymised, so they no longer lead to your name or email address; the hash and the dates remain. Signing up again with the same mailbox — including a variation of it such as the same Gmail address with dots or a “+” tag — does not create a new free trial or new gifted days.',
+                'When an account is deleted, the account these records point to is anonymised; the hash and the dates remain. Signing up again with the same mailbox — including a variation of it such as the same Gmail address with dots or a “+” tag — does not create a new free trial or new gifted days.',
             },
             {
               term: 'How long we keep them',
