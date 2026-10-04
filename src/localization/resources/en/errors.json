@@ -312,5 +312,23 @@
   },
   "profile": {
     "nameTakenInAcademy": "Another learner already uses this name in {{academies}}. Add a middle or family name so your name stays unique there."
+  },
+  "messaging": {
+    "notAllowed": "Only an owner or administrator of this academy can send messages.",
+    "academyInactive": "This academy is suspended or archived, so messages can't be sent. Your message history and allowance are still shown.",
+    "audienceChanged": "The number of recipients changed since your preview, so nothing was sent. Preview again, then send.",
+    "audienceInvalid": "Choose who should receive this message.",
+    "bodyEmpty": "Write a message before sending.",
+    "bodyTooLong": "The message is too long. Shorten it and try again.",
+    "confirmationRequired": "Confirm the large send before it goes out.",
+    "idempotencyKeyReused": "This send was already submitted. Refresh the page to see it in your history.",
+    "noChannel": "Choose email, in-app notification, or both.",
+    "noRecipients": "No one matches these recipients yet, so there is nothing to send.",
+    "quotaExceeded": "This message needs more emails than your academy has left this month.",
+    "rateLimited": "You're sending too quickly. Wait a moment, then try again.",
+    "subjectInvalid": "Enter a subject of up to 150 characters.",
+    "unknownCourse": "One of the selected courses isn't part of this academy.",
+    "unknownOrganization": "That organization can't be found.",
+    "unsubscribeInvalid": "This unsubscribe link is invalid or has expired."
   }
 }

@@ -36,6 +36,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@app/providers';
 import type { ApiError } from '@api';
+import { toErrorsNamespaceKey } from '@utils';
 import { RichTextEditor } from './RichTextEditor';
 import { PreviewSummary } from './PreviewSummary';
 import { ConfirmSendDialog } from './ConfirmSendDialog';
@@ -287,7 +288,7 @@ export function MessageComposer({
               <AlertTriangle className="h-4 w-4" aria-hidden="true" />
               <AlertTitle>{t('messaging:notice.errorTitle')}</AlertTitle>
               <AlertDescription>
-                {t(notice.messageKey, {
+                {t(toErrorsNamespaceKey(notice.messageKey), {
                   defaultValue: t('messaging:notice.error'),
                 })}
                 {notice.requestId ? (
