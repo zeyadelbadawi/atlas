@@ -1,0 +1,691 @@
+/*
+ * Atelier — chrome and inner pages (Reports/THEME_2_ATELIER_PLAN.md §5a,
+ * "Chrome" and the pageHeader / courseCatalog / contact rows).
+ *
+ * Scoped to `[data-theme-pack='atelier']`; colours only from the Atelier
+ * mapping (`--atelier-*`, `--website-*`); logical properties throughout, so
+ * every rule reads the same in `dir="rtl"`. Scroll-linked effects are CSS
+ * scroll timelines inside `@supports` + `prefers-reduced-motion:
+ * no-preference`; everywhere else the final state shows.
+ */
+
+/* ------------------------------------------------------------------ */
+/* Shared controls                                                      */
+/* ------------------------------------------------------------------ */
+
+/* A 44px square control (menu, close, pagination arrows). */
+[data-theme-pack='atelier'] .atp-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  color: var(--atelier-text);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+[data-theme-pack='atelier'] .atp-icon-btn:disabled {
+  color: var(--atelier-text-muted);
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* A text control set in tracked small caps (filters, trail, tools). */
+[data-theme-pack='atelier'] .atp-text-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 2.75rem;
+  padding: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--atelier-text-muted);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color var(--at-duration-fast) var(--at-ease);
+}
+[data-theme-pack='atelier'] .atp-text-btn:hover,
+[data-theme-pack='atelier'] .atp-text-btn[aria-current='page'],
+[data-theme-pack='atelier'] .atp-text-btn[aria-pressed='true'] {
+  color: var(--atelier-text);
+}
+[data-theme-pack='atelier'] .atp-text-btn[aria-current='page'],
+[data-theme-pack='atelier'] .atp-text-btn[aria-pressed='true'] {
+  text-decoration: underline;
+  text-decoration-color: var(--atelier-brand);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.5em;
+}
+[data-theme-pack='atelier'] [dir='rtl'] .atp-text-btn,
+[data-theme-pack='atelier'][dir='rtl'] .atp-text-btn {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 0.9375rem;
+}
+
+/* Underlined fields: no box, a rule beneath, the label above. */
+[data-theme-pack='atelier'] .atp-field-label {
+  display: block;
+  margin-block-end: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--atelier-text-muted);
+}
+[data-theme-pack='atelier'] [dir='rtl'] .atp-field-label,
+[data-theme-pack='atelier'][dir='rtl'] .atp-field-label {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 0.875rem;
+}
+[data-theme-pack='atelier'] .atp-field {
+  display: block;
+  width: 100%;
+  min-height: 2.75rem;
+  padding-block: 0.5rem;
+  padding-inline: 0;
+  font-size: 1.0625rem;
+  color: var(--atelier-text);
+  background: transparent;
+  border: 0;
+  border-block-end: 1px solid var(--website-input-border);
+  border-radius: 0;
+  transition: border-color var(--at-duration-fast) var(--at-ease);
+}
+[data-theme-pack='atelier'] .atp-field::placeholder {
+  color: var(--atelier-text-muted);
+  opacity: 1;
+}
+[data-theme-pack='atelier'] .atp-field:hover {
+  border-block-end-color: var(--atelier-text);
+}
+[data-theme-pack='atelier'] .atp-field:focus-visible {
+  outline-offset: 4px;
+  border-block-end-color: var(--atelier-brand);
+}
+[data-theme-pack='atelier'] textarea.atp-field {
+  min-height: 9rem;
+  resize: vertical;
+  line-height: 1.6;
+}
+[data-theme-pack='atelier'] select.atp-field {
+  appearance: none;
+  padding-inline-end: 1.75rem;
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-size:
+    5px 5px,
+    5px 5px;
+  background-position:
+    calc(100% - 10px) 55%,
+    calc(100% - 5px) 55%;
+  background-repeat: no-repeat;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+[data-theme-pack='atelier'] [dir='rtl'] select.atp-field,
+[data-theme-pack='atelier'][dir='rtl'] select.atp-field {
+  background-position:
+    5px 55%,
+    10px 55%;
+}
+[data-theme-pack='atelier'] select.atp-field option {
+  color: var(--atelier-text);
+  background: var(--atelier-paper);
+}
+
+/* ------------------------------------------------------------------ */
+/* Header                                                               */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='atelier'] .atp-header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 40;
+  background: color-mix(in srgb, var(--atelier-paper) 94%, transparent);
+  -webkit-backdrop-filter: saturate(1.2) blur(10px);
+  backdrop-filter: saturate(1.2) blur(10px);
+}
+/* The hairline beneath: drawn once the page scrolls (scroll timeline),
+   always drawn where scroll timelines aren't supported. */
+[data-theme-pack='atelier'] .atp-header::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  height: 1px;
+  background: var(--atelier-hairline);
+  pointer-events: none;
+}
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes atp-hairline {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    [data-theme-pack='atelier'] .atp-header::after {
+      animation: atp-hairline linear both;
+      animation-timeline: scroll();
+      animation-range: 0 24px;
+    }
+  }
+}
+[data-theme-pack='atelier'] .atp-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-height: var(--at-header-height);
+}
+
+[data-theme-pack='atelier'] .atp-wordmark {
+  font-family: var(--at-font-display);
+  font-size: 1.375rem;
+  font-weight: 420;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--atelier-text);
+  text-decoration: none;
+}
+[data-theme-pack='atelier'] [dir='rtl'] .atp-wordmark,
+[data-theme-pack='atelier'][dir='rtl'] .atp-wordmark {
+  letter-spacing: 0;
+  font-weight: 500;
+}
+
+[data-theme-pack='atelier'] .atp-nav-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 2rem;
+}
+
+/* The full-screen menu. */
+[data-theme-pack='atelier'] .atp-overlay {
+  display: flex;
+  flex-direction: column;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100dvh;
+  padding: 0;
+  overflow-y: auto;
+  border: 0;
+  box-shadow: none;
+  background: var(--atelier-paper);
+  color: var(--atelier-text);
+}
+[data-theme-pack='atelier'] .atp-overlay-list {
+  counter-reset: atp-menu;
+  border-block-start: 1px solid var(--atelier-hairline);
+}
+[data-theme-pack='atelier'] .atp-overlay-list > li {
+  border-block-end: 1px solid var(--atelier-hairline);
+}
+[data-theme-pack='atelier'] .atp-overlay-link {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  width: 100%;
+  min-height: 3.5rem;
+  padding-block: 0.75rem;
+  font-family: var(--at-font-display);
+  font-size: clamp(2rem, 1.4rem + 3vw, 3.25rem);
+  font-weight: 360;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-align: start;
+  color: var(--atelier-text);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  text-decoration: none;
+}
+[data-theme-pack='atelier'] [dir='rtl'] .atp-overlay-link,
+[data-theme-pack='atelier'][dir='rtl'] .atp-overlay-link {
+  letter-spacing: 0;
+  line-height: 1.3;
+  font-weight: 500;
+}
+[data-theme-pack='atelier'] .atp-overlay-link::before {
+  counter-increment: atp-menu;
+  content: counter(atp-menu, decimal-leading-zero);
+  flex: 0 0 2rem;
+  font-size: 0.875rem;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--atelier-brand);
+}
+[data-theme-pack='atelier'] [dir='rtl'] .atp-overlay-link::before,
+[data-theme-pack='atelier'][dir='rtl'] .atp-overlay-link::before {
+  content: counter(atp-menu, arabic-indic);
+}
+[data-theme-pack='atelier'] .atp-overlay-link[aria-current='page'] {
+  color: var(--atelier-brand);
+}
+
+/* ------------------------------------------------------------------ */
+/* Footer: the colophon                                                 */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='atelier'] .atp-footer {
+  margin-block-start: auto;
+  padding-block: clamp(3.5rem, 2rem + 5vw, 6.5rem) 1.5rem;
+}
+[data-theme-pack='atelier'] .atp-colophon-name {
+  font-family: var(--at-font-display);
+  font-size: clamp(2.75rem, 1rem + 7.5vw, 8.5rem);
+  font-weight: 320;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+[data-theme-pack='atelier'] [dir='rtl'] .atp-colophon-name,
+[data-theme-pack='atelier'][dir='rtl'] .atp-colophon-name {
+  letter-spacing: 0;
+  line-height: 1.2;
+  font-weight: 500;
+}
+[data-theme-pack='atelier'] .atp-colophon-name a,
+[data-theme-pack='atelier'] .atp-colophon-name button {
+  color: inherit;
+  text-decoration: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+[data-theme-pack='atelier'] .atp-footer-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  padding: 0;
+  font-size: 0.9375rem;
+  text-align: start;
+  color: var(--atelier-text);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+[data-theme-pack='atelier'] .atp-footer-link:hover {
+  color: var(--atelier-brand);
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+/* ------------------------------------------------------------------ */
+/* Masthead (pageHeader, page intro)                                    */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='atelier'] .at-chapter.atp-masthead {
+  padding-block: clamp(3rem, 1.5rem + 5vw, 6.5rem)
+    clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
+  border-block-end: 1px solid var(--atelier-hairline);
+}
+[data-theme-pack='atelier'] .atp-trail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 0.75rem;
+}
+[data-theme-pack='atelier'] .atp-trail > li + li::before {
+  content: '/';
+  margin-inline-end: 0.75rem;
+  color: var(--atelier-hairline);
+}
+[data-theme-pack='atelier'] .atp-trail [aria-current='page'] {
+  color: var(--atelier-text);
+}
+
+[data-theme-pack='atelier'] .atp-search {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.25rem;
+  max-width: 36rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* Catalog: the index                                                   */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='atelier'] .atp-filterbar {
+  display: grid;
+  gap: 1.5rem;
+  padding-block: 1.5rem;
+  border-block: 1px solid var(--atelier-hairline);
+}
+[data-theme-pack='atelier'] .atp-category-rail {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 1.75rem;
+  row-gap: 0.25rem;
+}
+[data-theme-pack='atelier'] .atp-count {
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  font-variant-numeric: lining-nums tabular-nums;
+  vertical-align: super;
+  color: var(--atelier-brand);
+}
+
+[data-theme-pack='atelier'] .atp-index {
+  border-block-start: 1px solid var(--atelier-text);
+}
+[data-theme-pack='atelier'] .atp-index > li {
+  border-block-end: 1px solid var(--atelier-hairline);
+}
+[data-theme-pack='atelier'] .atp-row {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  gap: 0.75rem 1.25rem;
+  align-items: start;
+  width: 100%;
+  padding-block: 1.5rem;
+  color: var(--atelier-text);
+  text-align: start;
+  text-decoration: none;
+}
+@media (min-width: 640px) {
+  [data-theme-pack='atelier'] .atp-row {
+    grid-template-columns: 3rem 7.5rem minmax(0, 1fr) auto;
+    align-items: center;
+  }
+}
+@media (min-width: 1024px) {
+  [data-theme-pack='atelier'] .atp-row {
+    grid-template-columns: 4rem 10rem minmax(0, 1fr) auto;
+    gap: 1rem 2rem;
+    padding-block: 1.75rem;
+  }
+}
+[data-theme-pack='atelier'] .atp-row-no {
+  font-family: var(--at-font-display);
+  font-size: 1.125rem;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--atelier-brand);
+  line-height: 1.4;
+}
+[data-theme-pack='atelier'] .atp-row-plate {
+  display: none;
+}
+@media (min-width: 640px) {
+  [data-theme-pack='atelier'] .atp-row-plate {
+    display: block;
+  }
+}
+[data-theme-pack='atelier'] .atp-row-title {
+  font-family: var(--at-font-display);
+  font-size: clamp(1.375rem, 1.1rem + 1vw, 2rem);
+  font-weight: 380;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  overflow-wrap: anywhere;
+}
+[data-theme-pack='atelier'] [dir='rtl'] .atp-row-title,
+[data-theme-pack='atelier'][dir='rtl'] .atp-row-title {
+  letter-spacing: 0;
+  line-height: 1.35;
+  font-weight: 500;
+}
+[data-theme-pack='atelier'] .atp-row-end {
+  grid-column: 2 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+@media (min-width: 640px) {
+  [data-theme-pack='atelier'] .atp-row-end {
+    grid-column: auto;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+}
+[data-theme-pack='atelier'] .atp-price {
+  font-family: var(--at-font-display);
+  font-size: 1.25rem;
+  font-variant-numeric: lining-nums tabular-nums;
+  white-space: nowrap;
+}
+[data-theme-pack='atelier'] a.atp-row:hover .atp-row-title {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  text-decoration-color: var(--atelier-brand);
+}
+[data-theme-pack='atelier'] a.atp-row:focus-visible {
+  outline-offset: 0;
+}
+[data-theme-pack='atelier'] .atp-skeleton {
+  background: var(--atelier-paper-deep);
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme-pack='atelier'] .atp-skeleton {
+    animation: atp-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes atp-pulse {
+    50% {
+      opacity: 0.55;
+    }
+  }
+}
+
+/* A statement set in type (empty, error, launching). */
+[data-theme-pack='atelier'] .atp-statement {
+  padding-block: clamp(3rem, 2rem + 4vw, 5.5rem);
+  border-block: 1px solid var(--atelier-hairline);
+}
+
+[data-theme-pack='atelier'] .atp-pages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem 0.5rem;
+}
+[data-theme-pack='atelier'] .atp-page {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  font-family: var(--at-font-display);
+  font-size: 1.125rem;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--atelier-text-muted);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+[data-theme-pack='atelier'] .atp-page:hover {
+  color: var(--atelier-text);
+}
+[data-theme-pack='atelier'] .atp-page[aria-current='page'] {
+  color: var(--atelier-brand);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.35em;
+}
+
+/* ------------------------------------------------------------------ */
+/* Contact: the letter                                                  */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='atelier'] .atp-channels > div {
+  padding-block: 1.25rem;
+  border-block-end: 1px solid var(--atelier-hairline);
+}
+[data-theme-pack='atelier'] .atp-channels > div:first-child {
+  border-block-start: 1px solid var(--atelier-hairline);
+}
+[data-theme-pack='atelier'] .atp-letter {
+  padding-block-start: 0.5rem;
+}
+@media (min-width: 1024px) {
+  [data-theme-pack='atelier'] .atp-letter {
+    padding-inline-start: 3rem;
+    border-inline-start: 1px solid var(--atelier-hairline);
+  }
+}
+/* The spam trap: off-screen, out of the tab order and the a11y tree. */
+[data-theme-pack='atelier'] .atp-trap {
+  position: absolute;
+  inset-inline-start: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  pointer-events: none;
+}
+[data-theme-pack='atelier'] .atp-error {
+  color: var(--website-error);
+  font-weight: 500;
+}
+
+/* ------------------------------------------------------------------ */
+/* Course Details: the spread                                           */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='atelier'] .atp-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 1.25rem;
+  row-gap: 0.5rem;
+}
+[data-theme-pack='atelier'] .atp-meta > * + *::before {
+  content: '';
+  display: inline-block;
+  width: 0.25rem;
+  height: 0.25rem;
+  margin-inline-end: 1.25rem;
+  vertical-align: middle;
+  border-radius: 999px;
+  background: var(--atelier-accent);
+}
+
+[data-theme-pack='atelier'] .atp-block + .atp-block {
+  margin-block-start: clamp(3rem, 2rem + 3vw, 5rem);
+}
+[data-theme-pack='atelier'] .atp-block-title {
+  margin-block-end: 1.5rem;
+  padding-block-end: 0.75rem;
+  border-block-end: 1px solid var(--atelier-hairline);
+}
+
+/* The curriculum as a table of contents. */
+[data-theme-pack='atelier'] .atp-toc {
+  border-block-start: 1px solid var(--atelier-text);
+}
+[data-theme-pack='atelier'] .atp-toc > li {
+  border-block-end: 1px solid var(--atelier-hairline);
+}
+[data-theme-pack='atelier'] .atp-toc summary {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  min-height: 3.5rem;
+  padding-block: 1rem;
+  list-style: none;
+  cursor: pointer;
+}
+[data-theme-pack='atelier'] .atp-toc summary::-webkit-details-marker {
+  display: none;
+}
+[data-theme-pack='atelier'] .atp-toc-leader {
+  flex: 1 1 2rem;
+  min-width: 1rem;
+  align-self: center;
+  border-block-end: 1px dotted var(--website-input-border);
+}
+[data-theme-pack='atelier'] .atp-toc-chevron {
+  align-self: center;
+  transition: transform var(--at-duration-fast) var(--at-ease);
+}
+[data-theme-pack='atelier'] .atp-toc details[open] .atp-toc-chevron {
+  transform: rotate(180deg);
+}
+[data-theme-pack='atelier'] .atp-lessons > li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  padding-inline-start: 2.75rem;
+}
+
+/* The purchase ticket. */
+[data-theme-pack='atelier'] .atp-ticket {
+  position: sticky;
+  inset-block-start: calc(var(--at-header-height) + 1.5rem);
+  padding: 1.75rem;
+  background: var(--atelier-paper);
+  border: 1px solid var(--atelier-text);
+}
+[data-theme-pack='atelier'] .atp-perforation {
+  margin-block: 1.5rem;
+  margin-inline: -1.75rem;
+  border: 0;
+  border-block-start: 1px dashed var(--website-input-border);
+}
+[data-theme-pack='atelier'] .atp-ticket-price {
+  font-family: var(--at-font-display);
+  font-size: clamp(2.25rem, 1.8rem + 1.5vw, 3rem);
+  font-weight: 340;
+  line-height: 1;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+[data-theme-pack='atelier'] .atp-includes > li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 0.625rem;
+  border-block-end: 1px solid var(--atelier-hairline);
+  font-size: 0.9375rem;
+}
+[data-theme-pack='atelier'] .atp-purchase-bar {
+  position: fixed;
+  inset-inline: 0;
+  z-index: 30;
+  padding-block: 0.75rem;
+  padding-inline: 1rem;
+  background: var(--atelier-paper);
+  border-block-start: 1px solid var(--atelier-text);
+}
+
+/* ------------------------------------------------------------------ */
+/* System pages: typographic posters                                    */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='atelier'] .atp-poster-figure {
+  font-family: var(--at-font-display);
+  font-size: clamp(7rem, 3rem + 20vw, 20rem);
+  font-weight: 260;
+  line-height: 0.82;
+  letter-spacing: -0.05em;
+  font-variant-numeric: lining-nums;
+  color: var(--atelier-brand);
+}
+[data-theme-pack='atelier'] .atp-poster-rule {
+  width: 4rem;
+  height: 1px;
+  border: 0;
+  background: var(--atelier-accent);
+}
+
+/* A course title is often long: the spread keeps it display-set but
+   smaller than a page's display line. */
+[data-theme-pack='atelier'] .at-display.atp-spread-title {
+  font-size: clamp(2.5rem, 1.5rem + 3.6vw, 5.25rem);
+  line-height: 1.02;
+}

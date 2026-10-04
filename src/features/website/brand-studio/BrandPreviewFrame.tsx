@@ -8,6 +8,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { WebsiteRenderer } from '../renderer';
 import type { BrandPalette } from '../brand-engine';
+import type { PublicWebsiteLocale } from '../constants/locale.constants';
 import type {
   WebsiteConfiguration,
   WebsitePage,
@@ -32,6 +33,8 @@ export interface BrandPreviewFrameProps {
   readonly scale?: number;
   /** The frame's height at `scale`; it shrinks in proportion with the scale. */
   readonly height?: number;
+  /** Which side of the page's bilingual text to show; English by default. */
+  readonly locale?: PublicWebsiteLocale;
 }
 
 const useIsomorphicLayoutEffect =
@@ -74,6 +77,7 @@ export function BrandPreviewFrame({
   canvasWidth = 1280,
   scale = 0.45,
   height = 520,
+  locale,
 }: BrandPreviewFrameProps): JSX.Element {
   const [frameRef, frameWidth] = useFrameWidth();
   const fittedScale =
@@ -117,6 +121,7 @@ export function BrandPreviewFrame({
           }}
           pages={pages}
           page={page}
+          locale={locale}
           onNavigate={() => undefined}
         />
       </div>
