@@ -22,6 +22,7 @@ export * from './storage.utils';
 export * from './url.utils';
 export * from './youtube.utils';
 export * from './api-error-copy.utils';
+export * from './plan-gifted-days.utils';
 export {
   DEV_OVERRIDE_PARAM,
   getCurrentPublicWebsiteContext,
