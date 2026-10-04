@@ -20,19 +20,30 @@ import {
   FEATURE_ICON_OPTIONS,
   MAX_CHIP_TEXT,
   MAX_COURSE_CATALOG_PAGE_SIZE,
+  MAX_CTA_LABEL_LENGTH,
   MAX_FEATURE_SPLIT_ITEMS,
+  MAX_HERO_DESCRIPTION_LENGTH,
+  MAX_HERO_EYEBROW_LENGTH,
   MAX_HERO_HIGHLIGHTS,
+  MAX_HERO_SUBTITLE_LENGTH,
+  MAX_HERO_TITLE_LENGTH,
+  MAX_LONG_TEXT,
   MAX_SECTION_ITEMS,
   MAX_SECTION_STEPS,
+  MAX_SHORT_TEXT,
+  MAX_STATISTIC_LABEL_LENGTH,
+  MAX_STATISTIC_VALUE_LENGTH,
+  MAX_STATISTICS_TITLE_LENGTH,
+  MAX_STEP_DESCRIPTION_LENGTH,
+  MAX_STEP_TITLE_LENGTH,
+  MAX_STEPS_DESCRIPTION_LENGTH,
+  MAX_STEPS_TITLE_LENGTH,
   MIN_COURSE_CATALOG_PAGE_SIZE,
   MIN_COURSE_CATEGORIES,
 } from '../constants/website.constants';
 import { isAllowedImageValue } from '../utils/image-value.utils';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
 import { COURSE_CATALOG_SORT_VALUES, type SectionType } from '@types';
-
-const MAX_SHORT_TEXT = 100;
-const MAX_LONG_TEXT = 2000;
 
 /** Matches the backend's identically-named helper (`section-config.schemas.ts`) exactly. Exported so `website.schemas.ts` (header/footer/navigation/page SEO) applies the exact same widening rule. */
 export function coerceLegacyLocalized(value: unknown): unknown {
@@ -62,9 +73,9 @@ export const localizedOptional = (maxLength: number) =>
     })
   );
 
-/** `url` is checked against `isSafeExternalUrl` (never `javascript:`/`data:`/etc.) in addition to being syntactically a URL — see that util's doc comment. */
+/** `url` is checked against `isSafeExternalUrl` (never `javascript:`/`data:`/etc.) in addition to being syntactically a URL — see that util's doc comment. The label cap applies to every section CTA (hero, FAQ, CTA banner, feature split). */
 const websiteCtaSchema = z.object({
-  label: localizedRequired(MAX_SHORT_TEXT),
+  label: localizedRequired(MAX_CTA_LABEL_LENGTH),
   pageId: z.string().optional(),
   courseId: z.string().optional(),
   url: z
@@ -85,16 +96,17 @@ const heroHighlightSchema = z.object({
   label: localizedRequired(MAX_CHIP_TEXT),
 });
 
+/** Content limits: see `website.constants.ts` ("Section content limits"). */
 export const heroSectionSchema = z.object({
-  eyebrow: localizedOptional(MAX_SHORT_TEXT).optional(),
-  title: localizedRequired(MAX_SHORT_TEXT),
-  subtitle: localizedOptional(MAX_SHORT_TEXT).optional(),
-  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  eyebrow: localizedOptional(MAX_HERO_EYEBROW_LENGTH).optional(),
+  title: localizedRequired(MAX_HERO_TITLE_LENGTH),
+  subtitle: localizedOptional(MAX_HERO_SUBTITLE_LENGTH).optional(),
+  description: localizedOptional(MAX_HERO_DESCRIPTION_LENGTH).optional(),
   image: imageValueSchema.optional(),
   imageAlt: localizedOptional(MAX_SHORT_TEXT).optional(),
   cta: websiteCtaSchema.optional(),
   secondaryCta: websiteCtaSchema.optional(),
-  highlight: localizedOptional(MAX_SHORT_TEXT).optional(),
+  highlight: localizedOptional(MAX_HERO_TITLE_LENGTH).optional(),
   highlights: z.array(heroHighlightSchema).max(MAX_HERO_HIGHLIGHTS).optional(),
   showSearch: z.boolean().optional(),
 });
@@ -132,8 +144,8 @@ const statisticItemSchema = z
     // Theme 1 plan §D.4 — a live item (`metric` set) needs no authored
     // number, so starter content carries none; without `metric` the value
     // is the item and stays required.
-    value: localizedOptional(20),
-    label: localizedRequired(MAX_SHORT_TEXT),
+    value: localizedOptional(MAX_STATISTIC_VALUE_LENGTH),
+    label: localizedRequired(MAX_STATISTIC_LABEL_LENGTH),
   })
   .refine((item) => !!item.metric || item.value.en.trim().length > 0, {
     message: 'validation:required',
@@ -141,7 +153,7 @@ const statisticItemSchema = z
   });
 
 export const statisticsSectionSchema = z.object({
-  title: localizedOptional(MAX_SHORT_TEXT).optional(),
+  title: localizedOptional(MAX_STATISTICS_TITLE_LENGTH).optional(),
   items: z.array(statisticItemSchema).max(MAX_SECTION_ITEMS),
 });
 
@@ -269,13 +281,16 @@ export const courseCategoriesSectionSchema = z.object({
 
 const stepItemSchema = z.object({
   id: z.string(),
-  title: localizedRequired(MAX_SHORT_TEXT),
-  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  title: localizedRequired(MAX_STEP_TITLE_LENGTH),
+  description: localizedOptional(MAX_STEP_DESCRIPTION_LENGTH).optional(),
 });
 
+/** `image`/`imageAlt` validate exactly like `featureSplit`'s; only themes that draw the plate (Atelier) offer them in the editor. */
 export const stepsSectionSchema = z.object({
-  title: localizedOptional(MAX_SHORT_TEXT).optional(),
-  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  title: localizedOptional(MAX_STEPS_TITLE_LENGTH).optional(),
+  description: localizedOptional(MAX_STEPS_DESCRIPTION_LENGTH).optional(),
+  image: imageValueSchema.optional(),
+  imageAlt: localizedOptional(MAX_SHORT_TEXT).optional(),
   items: z.array(stepItemSchema).max(MAX_SECTION_STEPS),
 });
 

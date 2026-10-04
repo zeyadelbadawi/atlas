@@ -6,17 +6,38 @@
  * every field that is `LocalizedText` in the real Zod schema
  * (`website-section.schemas.ts`); see that file's own doc comment for the
  * exact rule (visitor-facing copy is localized, references/enums/proper
- * names are not).
+ * names are not). `maxLength` carries the content limit from the same
+ * constant the schema uses, so the editor's counter and the save-time
+ * check agree by construction.
  */
 import {
   FEATURE_ICON_OPTIONS,
+  MAX_CHIP_TEXT,
+  MAX_FEATURE_SPLIT_ITEMS,
+  MAX_HERO_HIGHLIGHTS,
+  MAX_SECTION_STEPS,
   MAX_COURSE_CATALOG_PAGE_SIZE,
+  MAX_HERO_DESCRIPTION_LENGTH,
+  MAX_HERO_EYEBROW_LENGTH,
+  MAX_HERO_SUBTITLE_LENGTH,
+  MAX_HERO_TITLE_LENGTH,
   MAX_SECTION_ITEMS,
+  MAX_SHORT_TEXT,
+  MAX_STATISTIC_LABEL_LENGTH,
+  MAX_STATISTIC_VALUE_LENGTH,
+  MAX_STATISTICS_TITLE_LENGTH,
+  MAX_STEP_DESCRIPTION_LENGTH,
+  MAX_STEP_TITLE_LENGTH,
+  MAX_STEPS_DESCRIPTION_LENGTH,
+  MAX_STEPS_TITLE_LENGTH,
   MIN_COURSE_CATALOG_PAGE_SIZE,
   MIN_COURSE_CATEGORIES,
 } from '../constants/website.constants';
 import type { SectionFieldSchema } from './section-field.types';
-import type { SectionType } from '@types';
+import type { SectionType, WebsiteThemeKey } from '@types';
+
+/** Fields only Atelier draws — see `SectionFieldDescriptor.themes`. */
+const ATELIER_ONLY: readonly WebsiteThemeKey[] = ['atelier'];
 
 const iconOptions = FEATURE_ICON_OPTIONS.map((icon) => ({
   value: icon,
@@ -32,24 +53,28 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
         kind: 'text',
         labelKey: 'website:fields.eyebrow',
         localized: true,
+        maxLength: MAX_HERO_EYEBROW_LENGTH,
       },
       {
         key: 'title',
         kind: 'text',
         labelKey: 'website:fields.title',
         localized: true,
+        maxLength: MAX_HERO_TITLE_LENGTH,
       },
       {
         key: 'subtitle',
         kind: 'text',
         labelKey: 'website:fields.subtitle',
         localized: true,
+        maxLength: MAX_HERO_SUBTITLE_LENGTH,
       },
       {
         key: 'description',
         kind: 'longText',
         labelKey: 'website:fields.description',
         localized: true,
+        maxLength: MAX_HERO_DESCRIPTION_LENGTH,
       },
       { key: 'image', kind: 'image', labelKey: 'website:fields.image' },
       {
@@ -69,6 +94,7 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
         kind: 'text',
         labelKey: 'website:fields.highlight',
         localized: true,
+        maxLength: MAX_HERO_TITLE_LENGTH,
       },
       {
         key: 'showSearch',
@@ -78,6 +104,7 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
     ],
     repeatable: {
       key: 'highlights',
+      maxItems: MAX_HERO_HIGHLIGHTS,
       labelKey: 'website:fields.heroHighlights',
       itemLabelKey: 'website:fields.heroHighlight',
       itemFields: [
@@ -86,6 +113,7 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
           kind: 'text',
           labelKey: 'website:fields.label',
           localized: true,
+          maxLength: MAX_CHIP_TEXT,
         },
       ],
     },
@@ -168,6 +196,7 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
         kind: 'text',
         labelKey: 'website:fields.title',
         localized: true,
+        maxLength: MAX_STATISTICS_TITLE_LENGTH,
       },
     ],
     repeatable: {
@@ -197,12 +226,14 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
           kind: 'text',
           labelKey: 'website:fields.statValue',
           localized: true,
+          maxLength: MAX_STATISTIC_VALUE_LENGTH,
         },
         {
           key: 'label',
           kind: 'text',
           labelKey: 'website:fields.statLabel',
           localized: true,
+          maxLength: MAX_STATISTIC_LABEL_LENGTH,
         },
       ],
     },
@@ -576,17 +607,35 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
         kind: 'text',
         labelKey: 'website:fields.title',
         localized: true,
+        maxLength: MAX_STEPS_TITLE_LENGTH,
       },
       {
         key: 'description',
         kind: 'longText',
         labelKey: 'website:fields.description',
         localized: true,
+        maxLength: MAX_STEPS_DESCRIPTION_LENGTH,
+      },
+      // Only Atelier draws the plate beside the steps (its Method scene).
+      {
+        key: 'image',
+        kind: 'image',
+        labelKey: 'website:fields.image',
+        themes: ATELIER_ONLY,
+      },
+      {
+        key: 'imageAlt',
+        kind: 'text',
+        labelKey: 'website:fields.imageAlt',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+        themes: ATELIER_ONLY,
       },
     ],
     repeatable: {
       key: 'items',
       labelKey: 'website:fields.stepItems',
+      maxItems: MAX_SECTION_STEPS,
       itemLabelKey: 'website:fields.stepItem',
       itemFields: [
         {
@@ -594,12 +643,14 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
           kind: 'text',
           labelKey: 'website:fields.title',
           localized: true,
+          maxLength: MAX_STEP_TITLE_LENGTH,
         },
         {
           key: 'description',
           kind: 'longText',
           labelKey: 'website:fields.description',
           localized: true,
+          maxLength: MAX_STEP_DESCRIPTION_LENGTH,
         },
       ],
     },
@@ -646,6 +697,7 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
     repeatable: {
       key: 'items',
       labelKey: 'website:fields.benefitItems',
+      maxItems: MAX_FEATURE_SPLIT_ITEMS,
       itemLabelKey: 'website:fields.benefitItem',
       itemFields: [
         {

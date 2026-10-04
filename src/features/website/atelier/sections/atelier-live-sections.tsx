@@ -51,6 +51,7 @@ import {
 } from './atelier-section-utils';
 import { AtelierScene } from '../cinematic/AtelierScene';
 import { isCinematicRuntime } from '../cinematic/cinematic-runtime';
+import { inkFitsWindow } from '../cinematic/cinematic-budget';
 import { stagger } from './atelier-stagger';
 import '../atelier-sections.css';
 
@@ -546,6 +547,23 @@ export function AtelierInstructors({
 /* Statistics — the ink numbers chapter                                 */
 /* ------------------------------------------------------------------ */
 
+/**
+ * The figures' grid on larger screens: one row of up to four, then even
+ * rows (five as three and two, nine as three rows of three) so a figure
+ * never gets a column too narrow for its numerals.
+ */
+function statsGrid(count: number): {
+  readonly 'data-rows'?: number;
+  readonly style?: CSSProperties;
+} {
+  const rows = Math.ceil(count / 4);
+  if (rows < 2) return {};
+  return {
+    'data-rows': rows,
+    style: { '--at-stat-cols': Math.ceil(count / rows) } as CSSProperties,
+  };
+}
+
 export function AtelierStatistics({
   config,
   academyId,
@@ -619,8 +637,11 @@ export function AtelierStatistics({
   }
 
   // The ink scene (public site, large screens): the page turns from paper
-  // to ink through a growing window, then the figures rise in order.
-  const cinematic = isCinematicRuntime(linkRenderer);
+  // to ink through a growing window, then the figures rise in order — when
+  // the chapter fits one window.
+  const cinematic =
+    isCinematicRuntime(linkRenderer) &&
+    inkFitsWindow({ title, labels: items.map((item) => item.label) }, locale);
   return (
     <AtelierScene
       name="ink"
@@ -641,7 +662,7 @@ export function AtelierStatistics({
         {title ? (
           <AtelierSectionHeader id={headingId} title={title} numbered={false} />
         ) : null}
-        <dl className="ath-stats">
+        <dl className="ath-stats" {...statsGrid(items.length)}>
           {items.map((item, index) => (
             <div
               key={item.id}

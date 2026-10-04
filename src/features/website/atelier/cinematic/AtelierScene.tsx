@@ -9,12 +9,83 @@
  * preference, a viewport large enough to pin — so every other visitor, the
  * server-rendered page without support, and every dashboard preview get
  * the static editorial layout with the same content and no empty space.
+ *
+ * A pinned stage must never clip or trap its content. The section decides
+ * on the server whether its copy fits a window at all (`cinematic-budget`);
+ * after hydration this component watches the stage and, when its content
+ * is taller than its window, marks the scene `data-at-fit` so the CSS lets
+ * go of the pin.
  */
-import type { CSSProperties, ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties, ReactNode, RefObject } from 'react';
 import '../atelier-cinematic.css';
 
 /** The scenes the Home can play. */
 export type AtelierSceneName = 'opening' | 'method' | 'ink' | 'closing';
+
+/**
+ * How a pinned stage fits its window: `fits`; `release` — it does not, and
+ * the pin is let go in place (the stage keeps its layout for a frame);
+ * `overflow` — the scene is its static chapter. Releasing before changing
+ * the layout means no element changes layout while it is pinned.
+ */
+type StageFit = 'fits' | 'release' | 'overflow';
+
+/**
+ * Watches a pinned stage. Inside the CSS gate the stage (the scene's first
+ * child) is exactly one window tall (its `min-height`) unless its content
+ * needs more. Outside the gate, or once a method or ink scene is static
+ * (no `min-height`), there is nothing to measure: a window resize re-arms
+ * the scene so the next measurement is taken in the pinned layout again.
+ *
+ * A ResizeObserver only — no scroll listener, nothing per frame.
+ */
+function useStageFit(
+  scene: RefObject<HTMLElement>,
+  enabled: boolean
+): StageFit {
+  const [fit, setFit] = useState<StageFit>('fits');
+  useEffect(() => {
+    const stage = scene.current?.firstElementChild;
+    if (
+      !enabled ||
+      !(stage instanceof HTMLElement) ||
+      typeof ResizeObserver === 'undefined'
+    ) {
+      return undefined;
+    }
+    const windowHeight = () =>
+      parseFloat(getComputedStyle(stage).minHeight) || 0;
+    const measure = () => {
+      const box = windowHeight();
+      if (box === 0) return;
+      const overflows = stage.offsetHeight > box + 1;
+      setFit((current) =>
+        !overflows ? 'fits' : current === 'fits' ? 'release' : current
+      );
+    };
+    const rearm = () => {
+      if (windowHeight() > 0) measure();
+      else setFit('fits');
+    };
+    const observer = new ResizeObserver(measure);
+    observer.observe(stage);
+    window.addEventListener('resize', rearm);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', rearm);
+    };
+  }, [scene, enabled]);
+  useEffect(() => {
+    if (fit !== 'release') return undefined;
+    // One frame released in place, then the static layout.
+    let frame = requestAnimationFrame(() => {
+      frame = requestAnimationFrame(() => setFit('overflow'));
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [fit]);
+  return fit;
+}
 
 /**
  * Wraps a chapter in its scene. `pinned` scenes get a runway after the
@@ -34,9 +105,17 @@ export function AtelierScene({
   readonly style?: CSSProperties;
   readonly children: ReactNode;
 }): JSX.Element {
+  const ref = useRef<HTMLDivElement>(null);
+  const fit = useStageFit(ref, enabled && pinned);
   if (!enabled) return <>{children}</>;
   return (
-    <div className="atc-scene" data-at-cinematic={name} style={style}>
+    <div
+      ref={ref}
+      className="atc-scene"
+      data-at-cinematic={name}
+      data-at-fit={fit === 'fits' ? undefined : fit}
+      style={style}
+    >
       {children}
       {pinned ? <span aria-hidden className="atc-runway" /> : null}
     </div>

@@ -94,6 +94,59 @@ export const MAX_FEATURE_SPLIT_ITEMS = 6;
 export const MAX_HERO_HIGHLIGHTS = 4;
 export const MAX_CHIP_TEXT = 40;
 export const MIN_COURSE_CATEGORIES = 2;
+
+/* -------------------------------------------------------------------- */
+/* Section content limits                                               */
+/* -------------------------------------------------------------------- */
+
+/**
+ * Content limits — characters per language (`en` and `ar` each), the same
+ * numbers as the backend's `website.constants.ts` (the shared parity cases
+ * prove both schemas agree at every boundary).
+ *
+ * They live on the shared section contract, not per theme: a section's
+ * config survives a theme switch, so a value valid in one theme must be
+ * valid in every theme. The tighter caps keep the cinematic scenes
+ * (Atelier's opening hero, Method and Ink) inside their layout budget.
+ *
+ * | Field                                  | Limit |
+ * | -------------------------------------- | ----- |
+ * | hero eyebrow                           | 60    |
+ * | hero title / emphasised highlight      | 70    |
+ * | hero subtitle                          | 140   |
+ * | hero description                       | 280   |
+ * | hero highlight chip label              | 40    |
+ * | every section CTA label                | 40    |
+ * | steps title                            | 80    |
+ * | steps description                      | 240   |
+ * | step title                             | 60    |
+ * | step description                       | 240   |
+ * | statistics title                       | 80    |
+ * | statistic label                        | 40    |
+ * | other short text (titles, alt text)    | 100   |
+ * | other long text (descriptions, bodies) | 2000  |
+ *
+ * Counted the way zod counts (`string.length`, UTF-16 code units): every
+ * Arabic diacritic (tashkeel) is a character of its own. Enforced on every
+ * write (editor Save and the API); reads never re-validate, so content
+ * saved under an older, looser limit keeps rendering until it is edited.
+ */
+export const MAX_SHORT_TEXT = 100;
+export const MAX_LONG_TEXT = 2000;
+export const MAX_HERO_EYEBROW_LENGTH = 60;
+export const MAX_HERO_TITLE_LENGTH = 70;
+export const MAX_HERO_SUBTITLE_LENGTH = 140;
+export const MAX_HERO_DESCRIPTION_LENGTH = 280;
+export const MAX_CTA_LABEL_LENGTH = 40;
+export const MAX_STEPS_TITLE_LENGTH = 80;
+export const MAX_STEPS_DESCRIPTION_LENGTH = 240;
+export const MAX_STEP_TITLE_LENGTH = 60;
+export const MAX_STEP_DESCRIPTION_LENGTH = 240;
+export const MAX_STATISTICS_TITLE_LENGTH = 80;
+export const MAX_STATISTIC_LABEL_LENGTH = 40;
+/** A statistic's authored value ("500+", "٥٠٠+"). */
+export const MAX_STATISTIC_VALUE_LENGTH = 20;
+
 /** The public Contact form's field limits — the backend's `SubmitContactMessageDto` bounds exactly. */
 export const CONTACT_NAME_MAX_LENGTH = 200;
 export const CONTACT_EMAIL_MAX_LENGTH = 320;

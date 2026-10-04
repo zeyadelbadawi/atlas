@@ -10,11 +10,11 @@
  *   gate, scoped to the theme, animating only transform, opacity and
  *   clip-path.
  */
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import postcss, { type AtRule, type Node, type Rule } from 'postcss';
-import { cleanup, render, screen } from '@testing-library/react';
+import { act, cleanup, render, screen } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
@@ -130,7 +130,7 @@ describe('Opening scene (hero)', () => {
     const sizes =
       container.querySelector('picture source')?.getAttribute('sizes') ?? '';
     expect(sizes).toMatch(
-      /^\(min-width: 1024px\) and \(min-height: 720px\) and \(min-aspect-ratio: 1\/1\) and \(prefers-reduced-motion: no-preference\) 100vw, /
+      /^\(min-width: 64em\) and \(min-height: 45em\) and \(min-aspect-ratio: 1\/1\) and \(prefers-reduced-motion: no-preference\) 100vw, /
     );
     expect(container.querySelector('img')?.getAttribute('loading')).toBe(
       'eager'
@@ -331,6 +331,226 @@ describe('Closing scene (CTA)', () => {
 });
 
 /* ------------------------------------------------------------------ */
+/* Safety layers: the content budget and the fit check                  */
+/* ------------------------------------------------------------------ */
+
+/** Exactly `length` characters of wide-glyph running words. */
+const wide = (length: number) =>
+  'Wholehearted Workmanship Masterworks Methodical Mentorship '
+    .repeat(Math.ceil(length / 58))
+    .slice(0, length)
+    .trim()
+    .padEnd(length, 'W');
+
+describe('Content budget', () => {
+  it('renders an over-budget hero static and complete, never truncated', () => {
+    const description = wide(2000);
+    const { container } = wrap(
+      <AtelierHero
+        config={{
+          eyebrow: lt(wide(60)),
+          title: lt(wide(70)),
+          subtitle: lt(wide(140)),
+          description: lt(description),
+          cta: { label: lt(wide(40)), pageId: 'p-courses' },
+          image: 'theme-asset:atelier/home-hero',
+        }}
+        academyId="a1"
+        pages={PAGES}
+        linkRenderer={linkRenderer}
+      />
+    );
+    expect(scene(container, 'opening')).toBeNull();
+    expect(container.querySelector('.atc-runway')).toBeNull();
+    expect(container.querySelector('h1')?.textContent).toBe(wide(70));
+    expect(container.querySelector('.at-lead')?.textContent).toBe(description);
+    // A static spread asks for the arch's width only.
+    expect(
+      container.querySelector('picture source')?.getAttribute('sizes')
+    ).toBe('(min-width: 1024px) 30vw, (min-width: 640px) 28rem, 100vw');
+  });
+
+  it('keeps the method scene for typical copy, with or without a plate, and lets long syllabi go static', () => {
+    const steps = (
+      count: number,
+      text: string,
+      image?: string
+    ): SectionConfigMap['steps'] => ({
+      title: lt('The method'),
+      description: lt('Three movements, from the first page to the last.'),
+      image,
+      imageAlt: lt('Sketches laid out in sequence'),
+      items: Array.from({ length: count }, (_, index) => ({
+        id: `s${index}`,
+        title: lt(`Step ${index + 1}`),
+        description: lt(text),
+      })),
+    });
+    const render = (config: SectionConfigMap['steps']) =>
+      wrap(
+        <AtelierSteps
+          config={config}
+          academyId="a1"
+          pages={PAGES}
+          linkRenderer={linkRenderer}
+        />
+      ).container;
+
+    const withPlate = render(
+      steps(
+        4,
+        'Open a course and see what it covers.',
+        'theme-asset:atelier/home-method'
+      )
+    );
+    const method = scene(withPlate, 'method');
+    expect(method).toBeTruthy();
+    const plate = method!.querySelector(
+      '.ath-method-head .ath-method-plate img'
+    );
+    expect(plate?.getAttribute('alt')).toBe('Sketches laid out in sequence');
+    expect(method!.querySelector('.ath-method-head h2')?.textContent).toBe(
+      'The method'
+    );
+    cleanup();
+
+    const plain = render(steps(6, 'Open a course and see what it covers.'));
+    expect(scene(plain, 'method')).toBeTruthy();
+    expect(plain.querySelector('.ath-method-plate')).toBeNull();
+    cleanup();
+
+    const long = render(steps(6, wide(240), 'theme-asset:atelier/home-method'));
+    expect(scene(long, 'method')).toBeNull();
+    expect(long.querySelectorAll('.ath-syllabus-step')).toHaveLength(6);
+    // The plate still renders in the static chapter.
+    expect(long.querySelector('.ath-method-plate img')).toBeTruthy();
+  });
+
+  it('lets a chapter of many figures go static, in even rows', () => {
+    const { container } = wrap(
+      <AtelierStatistics
+        config={{
+          title: lt(wide(80)),
+          items: Array.from({ length: 12 }, (_, index) => ({
+            id: `k${index}`,
+            value: lt(`${index + 1}0%`),
+            label: lt(wide(40)),
+          })),
+        }}
+        academyId="a1"
+        pages={PAGES}
+        linkRenderer={linkRenderer}
+      />
+    );
+    expect(scene(container, 'ink')).toBeNull();
+    const list = container.querySelector<HTMLElement>('dl.ath-stats');
+    expect(list?.getAttribute('data-rows')).toBe('3');
+    expect(list?.style.getPropertyValue('--at-stat-cols')).toBe('4');
+    expect(container.querySelectorAll('.ath-stat')).toHaveLength(12);
+  });
+});
+
+describe('Fit check', () => {
+  type Callback = () => void;
+  const observers: { callback: Callback; disconnected: boolean }[] = [];
+  let stageHeight = 0;
+
+  beforeEach(() => {
+    observers.length = 0;
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        private readonly entry: { callback: Callback; disconnected: boolean };
+        constructor(callback: Callback) {
+          this.entry = { callback, disconnected: false };
+          observers.push(this.entry);
+        }
+        observe(): void {}
+        disconnect(): void {
+          this.entry.disconnected = true;
+        }
+      }
+    );
+    vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(
+      () => stageHeight
+    );
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  const config: SectionConfigMap['hero'] = {
+    title: lt('Learn deliberately'),
+    cta: { label: lt('Browse the courses'), pageId: 'p-courses' },
+    image: 'theme-asset:atelier/home-hero',
+  };
+
+  it('lets go of the pin while the stage is taller than its window, and only then', () => {
+    const { container, unmount } = wrap(
+      <AtelierHero
+        config={config}
+        academyId="a1"
+        pages={PAGES}
+        linkRenderer={linkRenderer}
+      />
+    );
+    const opening = scene(container, 'opening')!;
+    const stage = opening.firstElementChild as HTMLElement;
+    expect(observers).toHaveLength(1);
+    // Inside the CSS gate the stage is one window tall (its min-height).
+    stage.style.minHeight = '644px';
+
+    stageHeight = 900;
+    act(() => observers[0].callback());
+    expect(opening.getAttribute('data-at-fit')).toBe('overflow');
+
+    stageHeight = 644;
+    act(() => observers[0].callback());
+    expect(opening.hasAttribute('data-at-fit')).toBe(false);
+
+    // Outside the gate there is nothing to measure: no change.
+    stage.style.minHeight = '';
+    stageHeight = 2000;
+    act(() => observers[0].callback());
+    expect(opening.hasAttribute('data-at-fit')).toBe(false);
+
+    unmount();
+    expect(observers[0].disconnected).toBe(true);
+  });
+
+  it('re-arms a scene that let go when the window is resized', () => {
+    const { container } = wrap(
+      <AtelierHero
+        config={config}
+        academyId="a1"
+        pages={PAGES}
+        linkRenderer={linkRenderer}
+      />
+    );
+    const opening = scene(container, 'opening')!;
+    const stage = opening.firstElementChild as HTMLElement;
+    stage.style.minHeight = '644px';
+    stageHeight = 900;
+    act(() => observers[0].callback());
+    expect(opening.getAttribute('data-at-fit')).toBe('overflow');
+    // A static stage (no min-height) cannot be measured: the scene is
+    // re-armed so the pinned layout is measured again.
+    stage.style.minHeight = '';
+    act(() => {
+      window.dispatchEvent(new Event('resize'));
+    });
+    expect(opening.hasAttribute('data-at-fit')).toBe(false);
+  });
+
+  it('watches nothing in previews', () => {
+    wrap(<AtelierHero config={config} academyId="a1" pages={PAGES} />);
+    expect(observers).toHaveLength(0);
+  });
+});
+
+/* ------------------------------------------------------------------ */
 /* The stylesheet's gates                                               */
 /* ------------------------------------------------------------------ */
 
@@ -386,11 +606,33 @@ describe('atelier-cinematic.css', () => {
       pinning.push(decl.prop);
       const gates = conditions(decl).join(' ');
       expect(gates).toContain('@supports (animation-timeline: view())');
+      // In em, so a larger default font size asks for a larger window.
       expect(gates).toMatch(
-        /prefers-reduced-motion: no-preference\) and \(min-width: 1024px\) and \(min-height: \d+px\)/
+        /prefers-reduced-motion: no-preference\) and \(min-width: 64em\) and \(min-height: \d+em\)/
       );
+      // And only while the stage fits its window (the fit check).
+      const rule = decl.parent as Rule;
+      expect(
+        rule.selector.replace(/\s+/g, ''),
+        `${rule.selector} { ${decl.prop} }`
+      ).toContain(':not([data-at-fit])');
     });
     expect(pinning.length).toBeGreaterThanOrEqual(4);
+  });
+
+  it('plays every pinned scene-driven animation only while the stage fits', () => {
+    let checked = 0;
+    css.walkDecls((decl) => {
+      if (decl.prop !== 'animation-timeline') return;
+      const rule = decl.parent as Rule;
+      if (!/opening|method|ink/.test(rule.selector)) return;
+      if (rule.selector.includes("'closing'")) return;
+      checked += 1;
+      expect(rule.selector.replace(/\s+/g, '')).toContain(
+        ':not([data-at-fit])'
+      );
+    });
+    expect(checked).toBeGreaterThan(8);
   });
 
   it('scopes every selector to the Atelier theme', () => {

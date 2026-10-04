@@ -32,6 +32,9 @@
  *   migrated Themes 2–5 only: the same website after the retirement
  *            migration (Reports/THEMES_2_5_RETIREMENT.md) — its own pages,
  *            sections and brand, with the theme key set to Theme 1.
+ *   long…    Atelier only: the content-limits Home (renderer hardening) —
+ *   legacy…  boundary, over-limit and steps/statistics variants, see
+ *   std…     `parseAtelierLimitsComposition` in `live-data.mjs`.
  * Anything else resolves as an unknown hostname, exactly like production.
  *
  * Any API request this server has no fixture for is answered 404 in the
@@ -58,7 +61,9 @@ import { gzipSync } from 'node:zlib';
 import {
   FIXTURE_ACADEMY_NAME,
   FIXTURE_PALETTES,
+  applyAtelierLimitsComposition,
   buildLiveData,
+  parseAtelierLimitsComposition,
 } from '../fixtures/live-data.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -113,11 +118,16 @@ function parseSlug(slug) {
   if (
     composition !== undefined &&
     !(composition === 'c1' && theme === 'modern-education') &&
-    !(composition === 'migrated' && theme !== 'modern-education')
+    !(composition === 'migrated' && theme !== 'modern-education') &&
+    !(theme === 'atelier' && parseAtelierLimitsComposition(composition))
   ) {
     return null;
   }
-  return { slug, theme, state, palette, composition };
+  const limits =
+    theme === 'atelier' && composition !== undefined
+      ? parseAtelierLimitsComposition(composition)
+      : null;
+  return { slug, theme, state, palette, composition, limits };
 }
 
 /** An established Academy has confirmed its testimonials: `sample` cleared. */
@@ -167,6 +177,9 @@ function buildFixture(parsed) {
       parsed.composition === 'c1' && parsed.state === 'rich'
         ? confirmSampleTestimonials(page)
         : page
+    )
+    .map((page) =>
+      parsed.limits ? applyAtelierLimitsComposition(page, parsed.limits) : page
     );
   return {
     academyId,

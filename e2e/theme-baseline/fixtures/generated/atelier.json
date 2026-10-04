@@ -399,6 +399,7 @@
               "en": "Three movements, from the first page to the last.",
               "ar": "ثلاث مراحل، من الصفحة الأولى إلى الأخيرة."
             },
+            "image": "theme-asset:atelier/home-method",
             "items": [
               {
                 "id": "step-read",

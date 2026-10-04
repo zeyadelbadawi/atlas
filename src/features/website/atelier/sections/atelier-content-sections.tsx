@@ -23,6 +23,7 @@ import {
 } from '../atelier-parts';
 import { AtelierScene } from '../cinematic/AtelierScene';
 import { isCinematicRuntime } from '../cinematic/cinematic-runtime';
+import { methodFitsWindow } from '../cinematic/cinematic-budget';
 import { stagger } from './atelier-stagger';
 import '../atelier-sections.css';
 
@@ -273,6 +274,7 @@ export function AtelierSteps({
   const { locale } = usePublicWebsiteLocale();
   const headingId = useId();
   const title = resolveLocalizedText(config.title, locale);
+  const description = resolveLocalizedText(config.description, locale);
   const items = config.items
     .map((item) => ({
       id: item.id,
@@ -281,10 +283,17 @@ export function AtelierSteps({
     }))
     .filter((item) => item.title);
   if (items.length === 0) return null;
+  const hasImage = !!config.image;
   // On the public site three or more steps become the method scene: the
-  // chapter pins and the syllabus travels sideways along the thread.
+  // chapter pins and the syllabus travels sideways along the thread. Copy
+  // too long for one window keeps the static syllabus.
   const cinematic =
-    isCinematicRuntime(linkRenderer) && items.length >= MIN_SCENE_STEPS;
+    isCinematicRuntime(linkRenderer) &&
+    items.length >= MIN_SCENE_STEPS &&
+    methodFitsWindow(
+      { title, description, image: hasImage, steps: items },
+      locale
+    );
 
   const syllabus = (
     <ol
@@ -325,12 +334,37 @@ export function AtelierSteps({
         labelledBy={title ? headingId : undefined}
         numbered
       >
-        <AtelierSectionHeader
-          id={headingId}
-          title={title}
-          description={resolveLocalizedText(config.description, locale)}
-          layout="split"
-        />
+        {hasImage ? (
+          // With a plate: the title and lead on the start side, the plate
+          // on the end side, above the syllabus. In the scene the plate is
+          // uncovered a step's share at a time as the pen advances.
+          <header className="ath-method-head mb-12 md:mb-16">
+            <AtelierChapterMark />
+            <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
+              <div className="min-w-0 space-y-6 lg:col-span-7">
+                {title ? (
+                  <AtelierHeading id={headingId}>{title}</AtelierHeading>
+                ) : null}
+                {description ? <p className="at-lead">{description}</p> : null}
+              </div>
+              <div className="ath-method-figure min-w-0 lg:col-span-5 lg:col-start-8">
+                <AtelierMedia
+                  value={config.image}
+                  alt={resolveLocalizedText(config.imageAlt, locale)}
+                  sizes="(min-width: 1024px) 34vw, 100vw"
+                  className="ath-method-plate aspect-[3/2]"
+                />
+              </div>
+            </div>
+          </header>
+        ) : (
+          <AtelierSectionHeader
+            id={headingId}
+            title={title}
+            description={description}
+            layout="split"
+          />
+        )}
         {/* On desktop the thread turns sideways through each step's knot;
             on phones the steps hang from a vertical line. In the scene the
             track (with its drawn thread) slides under a window that opens

@@ -14,6 +14,14 @@
  * version just saved, so a colleague's later save is never put live
  * unseen. "Save draft" stays for work that should not go live yet. Before
  * the site is first published, "Save changes" is the only page action.
+ *
+ * CONTENT LIMITS. The API validates the whole `sections` array on every
+ * save, so one section holding text over a current limit (saved before
+ * the limit tightened — reads never re-validate) blocks saving the page.
+ * Such sections are marked in the tree, a notice lists them with a way
+ * into each, and saving is held back until they are shortened. A refused
+ * save's path-level violations reach the same messages: the tree marker
+ * and the section editor's field errors.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,6 +31,7 @@ import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
   Dialog,
   DialogContent,
@@ -79,6 +88,12 @@ import {
   isContentValidationFailure,
   rejectedSections,
 } from '../utils/save-validation.utils';
+import {
+  isOverLimitIssue,
+  sectionIssuesFromViolations,
+  sectionNeedsShortening,
+  type SectionContentIssue,
+} from '../schemas/section-content-issues';
 import { DEFAULT_RESPONSIVE_VISIBILITY } from '@types';
 import type {
   ResponsiveVisibility,
@@ -198,6 +213,27 @@ export default function WebsitePageEditorPage(): JSX.Element {
   const draftKey = useMemo(() => stableJsonKey(draftSections), [draftSections]);
   const isDirty = serverKey !== null && draftKey !== serverKey;
 
+  // What the API refused on the last save, per section id (see the doc
+  // comment's "Content limits"); cleared by a successful save, and per
+  // section when that section is edited.
+  const [serverIssuesById, setServerIssuesById] = useState<
+    Readonly<Record<string, readonly SectionContentIssue[]>>
+  >({});
+  const needsShorteningIds = useMemo(
+    () =>
+      new Set(
+        draftSections
+          .filter(
+            (section) =>
+              sectionNeedsShortening(section) ||
+              (serverIssuesById[section.id] ?? []).some(isOverLimitIssue)
+          )
+          .map((section) => section.id)
+      ),
+    [draftSections, serverIssuesById]
+  );
+  const isBlockedByLimits = needsShorteningIds.size > 0;
+
   // One save or publish at a time, whichever button started it.
   const busyRef = useRef(false);
 
@@ -216,6 +252,8 @@ export default function WebsitePageEditorPage(): JSX.Element {
     overrideVersion?: number
   ): Promise<WebsitePage | null> => {
     if (!academyId || !pageId) return null;
+    // The API would refuse the whole page; the notice says which sections.
+    if (isBlockedByLimits) return null;
     const sections = draftRef.current;
     const sentKey = stableJsonKey(sections);
     try {
@@ -228,6 +266,7 @@ export default function WebsitePageEditorPage(): JSX.Element {
         },
       });
       setConflict(null);
+      setServerIssuesById({});
       if (stableJsonKey(draftRef.current) === sentKey) {
         adoptServerPage(saved);
       } else {
@@ -245,6 +284,20 @@ export default function WebsitePageEditorPage(): JSX.Element {
       // see `readSaveConflict`.
       const stale = readSaveConflict(error as ApiError);
       setConflict(stale ? { value: stale, intent, canKeepMine: true } : null);
+      const violations = (error as ApiError).violations;
+      setServerIssuesById(
+        Object.fromEntries(
+          sections
+            .map(
+              (section, index) =>
+                [
+                  section.id,
+                  sectionIssuesFromViolations(violations, index),
+                ] as const
+            )
+            .filter(([, issues]) => issues.length > 0)
+        )
+      );
       return null;
     }
   };
@@ -398,6 +451,13 @@ export default function WebsitePageEditorPage(): JSX.Element {
   };
 
   const handleSaveSectionConfig = (config: SectionInstance['config']) => {
+    if (selectedId) {
+      setServerIssuesById((prev) => {
+        const next = { ...prev };
+        delete next[selectedId];
+        return next;
+      });
+    }
     setDraftSections((prev) =>
       prev.map((section) =>
         section.id === selectedId
@@ -531,7 +591,7 @@ export default function WebsitePageEditorPage(): JSX.Element {
                   variant={showPublishPage ? 'outline' : 'default'}
                   data-testid="website-save-page"
                   onClick={() => void handleSaveDraft()}
-                  disabled={!isDirty || isBusy}
+                  disabled={!isDirty || isBusy || isBlockedByLimits}
                 >
                   {updatePage.isPending && !publishPage.isPending ? (
                     <Loader2 className="size-4 animate-spin" aria-hidden />
@@ -552,7 +612,9 @@ export default function WebsitePageEditorPage(): JSX.Element {
                     data-testid="website-publish-page"
                     onClick={() => void handlePublishPage()}
                     disabled={
-                      (!isDirty && !page.hasUnpublishedChanges) || isBusy
+                      (!isDirty && !page.hasUnpublishedChanges) ||
+                      isBusy ||
+                      (isDirty && isBlockedByLimits)
                     }
                   >
                     {publishPage.isPending ? (
@@ -618,7 +680,47 @@ export default function WebsitePageEditorPage(): JSX.Element {
           choices. Showing the generic retry strip for it would offer
           "retry", which for a stale save means "try to overwrite again".
         */}
-        {updatePage.error && updatePage.error.kind !== 'conflict' ? (
+        {isBlockedByLimits ? (
+          <Alert
+            variant="destructive"
+            role="status"
+            data-testid="website-page-over-limit"
+          >
+            <AlertTitle>{t('website:editor.pageOverLimitTitle')}</AlertTitle>
+            <AlertDescription className="space-y-2 text-foreground">
+              <p>
+                {t('website:editor.pageOverLimit', {
+                  count: needsShorteningIds.size,
+                })}
+              </p>
+              <ul className="flex flex-wrap gap-2">
+                {draftSections.map((section, index) =>
+                  needsShorteningIds.has(section.id) ? (
+                    <li key={section.id}>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSelectedId(section.id)}
+                      >
+                        {t('website:editor.openSectionToShorten', {
+                          section: `${index + 1}. ${t(SECTION_METADATA[section.type].labelKey)}`,
+                        })}
+                      </Button>
+                    </li>
+                  ) : null
+                )}
+              </ul>
+            </AlertDescription>
+          </Alert>
+        ) : null}
+        {updatePage.error &&
+        updatePage.error.kind !== 'conflict' &&
+        // Over-limit refusals are explained by the notice above.
+        !(
+          isContentValidationFailure(updatePage.error) &&
+          (updatePage.error.violations ?? []).every(isOverLimitIssue)
+        ) ? (
           isContentValidationFailure(updatePage.error) ? (
             /*
               The server said exactly which sections it refused, so say so.
@@ -675,6 +777,7 @@ export default function WebsitePageEditorPage(): JSX.Element {
                 onDuplicate={handleDuplicate}
                 onDelete={handleDelete}
                 onAdd={handleAdd}
+                needsShorteningIds={needsShorteningIds}
               />
             </CardContent>
           </Card>
@@ -720,6 +823,7 @@ export default function WebsitePageEditorPage(): JSX.Element {
                 isSaving={false}
                 onSave={handleSaveSectionConfig}
                 onCancel={() => setSelectedId(undefined)}
+                serverIssues={serverIssuesById[selectedSection.id]}
               />
             </>
           ) : null}

@@ -19,12 +19,22 @@
  * sha256 are recorded below; archiving them to the private bucket
  * (`npm run archive-master`) needs the R2 credentials, which the session
  * that generated them did not have — run it from an environment that does.
+ *
+ * `home-hero` v2 (4 Oct 2026): the same approved master, re-released with
+ * full-window widths for the opening scene (v1 stopped at 1600w). v1 stays
+ * served for anything that still references it.
  */
 import type { ThemeAssetManifest } from '../theme-asset.types';
 
 const HERO_BUDGET = 180_000;
 const DEFAULT_BUDGET = 120_000;
 const W_PORTRAIT = [480, 800, 1200, 1600];
+/**
+ * The hero also fills the whole window in the opening scene, so its widths
+ * reach the full-window crops: 1440, 1920 and 2560 CSS px at 1x (1600,
+ * 2000, 2560) and 2x (3200, the widest the 3712 px master allows).
+ */
+const W_HERO = [480, 800, 1200, 1600, 2000, 2560, 3200];
 const W_LANDSCAPE = [640, 1024, 1600];
 const ATELIER_LICENSE_BASIS =
   "Owner's explicit authorisation in the Theme 2 brief (4 Oct 2026) to use Magnific autonomously, through Atlas's paid Magnific Premium+ subscription active at generation, for Atlas Theme 2 production assets";
@@ -43,8 +53,8 @@ export const ATELIER_ASSETS: ThemeAssetManifest = {
       key: 'home-hero',
       purpose: 'Home › Hero, the arched image (first impression, LCP image)',
       ratio: '4:5',
-      master: { width: 2000, height: 2500 },
-      widths: W_PORTRAIT,
+      master: { width: 3680, height: 4600 },
+      widths: W_HERO,
       focal: { x: 0.5, y: 0.6 },
       alt: {
         en: 'A sunlit studio worktable with an open sketchbook, brushes and folded linen',
@@ -67,7 +77,7 @@ export const ATELIER_ASSETS: ThemeAssetManifest = {
       priority: true,
       budgetBytes: HERO_BUDGET,
       status: 'released',
-      version: 'v1',
+      version: 'v2',
       lqip: 'data:image/webp;base64,UklGRoIAAABXRUJQVlA4IHYAAADwBACdASoYAB4APu1cqU2ppKQiN/VYATAdiWUAwNw/I1xPNukleFhqA43zorbTlyAA+xM9aPgbuLnwmrdu/0OZz60z23ptve9qwoT8uFFmgalFvrJl8pCWzbkqUXJSv5wtI6ZZfqwP8esVHBZr9ruCYM1ngAAA',
       provenance: {
         generator: 'magnific',

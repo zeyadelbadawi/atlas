@@ -384,6 +384,12 @@
   }
 }
 
+/* The method plate (optional): beside the title on desktop, above the
+   syllabus on phones. */
+[data-theme-pack='atelier'] .ath-method-figure {
+  width: 100%;
+}
+
 /* ------------------------------------------------------------------ */
 /* Course categories — the typographic list                             */
 /* ------------------------------------------------------------------ */
@@ -698,6 +704,19 @@
   [data-theme-pack='atelier'] .ath-stat:first-child {
     padding-inline-start: 0;
     border-inline-start: 0;
+  }
+  /* More than four figures: even rows under hairlines, never a column too
+     narrow for its numerals (`--at-stat-cols` from the section). */
+  [data-theme-pack='atelier'] .ath-stats[data-rows] {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(var(--at-stat-cols), minmax(0, 1fr));
+    column-gap: 2rem;
+  }
+  [data-theme-pack='atelier'] .ath-stats[data-rows] > .ath-stat {
+    padding-block: 1.5rem;
+    padding-inline: 0;
+    border-inline-start: 0;
+    border-block-start: 1px solid var(--atelier-ink-hairline);
   }
 }
 

@@ -7,6 +7,10 @@
  * buttons — the same keyboard-accessible pattern Course Builder's
  * curriculum reordering already established (Prompt 3C) — not
  * drag-and-drop as the only way to reorder.
+ *
+ * A section holding text over a current content limit is marked "Needs
+ * shortening" here, where the Owner scans the page: the whole page is
+ * validated on every save, so one such section blocks saving any of it.
  */
 import { useTranslation } from 'react-i18next';
 import {
@@ -52,6 +56,8 @@ export interface SectionTreeProps {
   readonly onDuplicate: (id: string) => void;
   readonly onDelete: (id: string) => void;
   readonly onAdd: (type: SectionType) => void;
+  /** Sections with text over a content limit (`sectionNeedsShortening`, or refused by the API for it). */
+  readonly needsShorteningIds?: ReadonlySet<string>;
 }
 
 const VISIBILITY_ICONS: Record<keyof ResponsiveVisibility, typeof Laptop> = {
@@ -71,6 +77,7 @@ export function SectionTree({
   onDuplicate,
   onDelete,
   onAdd,
+  needsShorteningIds,
 }: SectionTreeProps): JSX.Element {
   const { t } = useTranslation();
 
@@ -108,6 +115,19 @@ export function SectionTree({
                   </button>
                   {/* Theme 1 plan §D.4 — preview-only content is flagged
                       where the Owner scans the page, not only inside it. */}
+                  {needsShorteningIds?.has(instance.id) ? (
+                    <Badge
+                      variant="outline"
+                      className="whitespace-nowrap border-destructive text-destructive"
+                      data-testid={`needs-shortening-${instance.id}`}
+                    >
+                      {t('website:editor.needsShortening')}
+                      <span className="sr-only">
+                        {' '}
+                        {t('website:editor.needsShorteningHint')}
+                      </span>
+                    </Badge>
+                  ) : null}
                   {countSampleItems(instance) > 0 ? (
                     <Badge variant="outline" className="whitespace-nowrap">
                       {t('website:editor.sampleBadge')}

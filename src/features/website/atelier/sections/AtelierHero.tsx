@@ -36,14 +36,17 @@ import {
 } from '../atelier-parts';
 import { AtelierScene } from '../cinematic/AtelierScene';
 import { isCinematicRuntime } from '../cinematic/cinematic-runtime';
+import { openingFitsWindow } from '../cinematic/cinematic-budget';
 import '../atelier-sections.css';
 
 /**
  * The arch's image sizes. In the opening scene the image grows to the full
- * window on large screens, so it asks for a full-width file there.
+ * window on large screens, so it asks for a full-width file there (the
+ * scene's own gate, `../atelier-cinematic.css`); everywhere else, and for a
+ * hero that renders static, it asks for the arch's width.
  */
 const HERO_SIZES = '(min-width: 1024px) 30vw, (min-width: 640px) 28rem, 100vw';
-const HERO_SCENE_SIZES = `(min-width: 1024px) and (min-height: 720px) and (min-aspect-ratio: 1/1) and (prefers-reduced-motion: no-preference) 100vw, ${HERO_SIZES}`;
+const HERO_SCENE_SIZES = `(min-width: 64em) and (min-height: 45em) and (min-aspect-ratio: 1/1) and (prefers-reduced-motion: no-preference) 100vw, ${HERO_SIZES}`;
 
 /** The staggered entrance for one supporting element. */
 function enter(index: number): { className: string; style: CSSProperties } {
@@ -137,11 +140,29 @@ export function AtelierHero({
     .slice(0, 4);
   const hasActions = !!config.cta || !!config.secondaryCta;
   const showSearch = !!config.showSearch && !!resolveCatalogHref(pages);
+  const title = resolveLocalizedText(config.title, locale);
   const hasImage = !!config.image;
   // The opening scene is the arch opening: only for the hero that opens
-  // the page, and only with an image.
+  // the page, only with an image, and only when the spread fits one window
+  // (longer copy renders the static spread, complete).
   const cinematic =
-    isCinematicRuntime(linkRenderer) && hasImage && headingLevel === 'h1';
+    isCinematicRuntime(linkRenderer) &&
+    hasImage &&
+    headingLevel === 'h1' &&
+    openingFitsWindow(
+      {
+        eyebrow,
+        title,
+        subtitle,
+        description,
+        highlights: highlights.map((item) => item.label),
+        actions: [config.cta, config.secondaryCta].map((cta) =>
+          cta ? resolveLocalizedText(cta.label, locale) : ''
+        ),
+        search: showSearch,
+      },
+      locale
+    );
 
   let index = 0;
   const next = () => enter(index++);
@@ -189,7 +210,7 @@ export function AtelierHero({
                 highlight={resolveLocalizedText(config.highlight, locale)}
                 className={hasImage ? undefined : 'max-w-[14ch]'}
               >
-                {resolveLocalizedText(config.title, locale)}
+                {title}
               </AtelierHeading>
             </div>
             {asideMotion || highlightsMotion ? (

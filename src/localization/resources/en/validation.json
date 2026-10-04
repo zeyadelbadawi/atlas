@@ -5,6 +5,7 @@
   "invalidEmail": "Enter a valid email address",
   "url": "Enter a valid URL",
   "invalidUrl": "Enter a valid URL",
+  "invalidImage": "Use an image from your media library, an uploaded image or a secure image link.",
   "invalidSlug": "Use only lowercase letters, numbers, and hyphens",
   "invalidHostname": "Enter a valid domain, like example.com",
   "invalidColor": "Choose a valid color",
