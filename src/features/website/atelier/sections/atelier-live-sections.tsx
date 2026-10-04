@@ -25,15 +25,15 @@ import type { Course, CourseInstructorSummary } from '@types';
 import {
   MAX_SELECTED_COURSES,
   MIN_COURSE_CATEGORIES,
-} from '../../constants/website.constants';
-import { formatCatalogDuration } from '../../sections/CourseCatalogSection';
-import { resolveCatalogHref } from '../../utils/catalog-url.utils';
-import { resolvePagePath } from '../../utils/link-resolution.utils';
-import { usePublicWebsiteLocale } from '../../renderer/PublicWebsiteLocaleContext';
-import { resolveLocalizedText } from '../../utils/localized-text.utils';
-import { Reveal } from '../../primitives';
-import type { SectionRenderProps } from '../../theme-packs/theme-pack.types';
-import type { WebsiteLinkRenderer } from '../../renderer/website-link-renderer.types';
+} from '@/features/website/constants/website.constants';
+import { formatCatalogDuration } from '@/features/website/sections/CourseCatalogSection';
+import { resolveCatalogHref } from '@/features/website/utils/catalog-url.utils';
+import { resolvePagePath } from '@/features/website/utils/link-resolution.utils';
+import { usePublicWebsiteLocale } from '@/features/website/renderer/PublicWebsiteLocaleContext';
+import { resolveLocalizedText } from '@/features/website/utils/localized-text.utils';
+import { Reveal } from '@/features/website/primitives';
+import type { SectionRenderProps } from '@/features/website/theme-packs/theme-pack.types';
+import type { WebsiteLinkRenderer } from '@/features/website/renderer/website-link-renderer.types';
 import {
   AtelierArrow,
   AtelierChapter,
@@ -48,8 +48,8 @@ import {
   AtelierLiveDataUnavailable,
   AtelierPreviewNote,
   AtelierPreviewSample,
-  stagger,
 } from './atelier-section-utils';
+import { stagger } from './atelier-stagger';
 import '../atelier-sections.css';
 
 const COURSE_FALLBACK = 'theme-asset:atelier/course-fallback';
@@ -113,10 +113,16 @@ export function AtelierCourseCategories({
                 {category.name}
               </span>
               {config.showCounts ? (
-                <span className="at-label ath-cat-count" data-atlas-numeric="true">
+                <span
+                  className="at-label ath-cat-count"
+                  data-atlas-numeric="true"
+                >
                   {t('website:atelier.home.categories.courseCount', {
                     count: category.courseCount,
-                    formatted: formatAtelierNumber(category.courseCount, locale),
+                    formatted: formatAtelierNumber(
+                      category.courseCount,
+                      locale
+                    ),
                   })}
                 </span>
               ) : null}
@@ -127,14 +133,16 @@ export function AtelierCourseCategories({
             : undefined;
           return (
             <li key={category.id} className="ath-cat">
-              {href && linkRenderer
-                ? linkRenderer({
-                    href,
-                    external: false,
-                    className: 'ath-cat-link',
-                    children: body,
-                  })
-                : <span className="ath-cat-link">{body}</span>}
+              {href && linkRenderer ? (
+                linkRenderer({
+                  href,
+                  external: false,
+                  className: 'ath-cat-link',
+                  children: body,
+                })
+              ) : (
+                <span className="ath-cat-link">{body}</span>
+              )}
             </li>
           );
         })}
@@ -201,7 +209,12 @@ function CourseEntry({
         // Desktop only: the hovered row's photograph in the fixed frame
         // beside the contents (decorative; CSS shows it).
         <div aria-hidden className="ath-peek">
-          <AtelierMedia value={image} alt="" sizes="20rem" className="size-full" />
+          <AtelierMedia
+            value={image}
+            alt=""
+            sizes="20rem"
+            className="size-full"
+          />
         </div>
       )}
       <span aria-hidden className="at-numeral ath-entry-no">
@@ -488,7 +501,9 @@ export function AtelierInstructors({
       />
       <ul
         className="ath-masthead"
-        aria-label={title ? undefined : t('website:atelier.home.instructors.listLabel')}
+        aria-label={
+          title ? undefined : t('website:atelier.home.instructors.listLabel')
+        }
       >
         {instructors.map(({ instructor, courses }, index) => (
           <li key={instructor.id}>

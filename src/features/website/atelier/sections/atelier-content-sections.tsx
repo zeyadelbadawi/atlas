@@ -8,10 +8,10 @@
 import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@utils';
-import { usePublicWebsiteLocale } from '../../renderer/PublicWebsiteLocaleContext';
-import { resolveLocalizedText } from '../../utils/localized-text.utils';
-import { Reveal } from '../../primitives';
-import type { SectionRenderProps } from '../../theme-packs/theme-pack.types';
+import { usePublicWebsiteLocale } from '@/features/website/renderer/PublicWebsiteLocaleContext';
+import { resolveLocalizedText } from '@/features/website/utils/localized-text.utils';
+import { Reveal } from '@/features/website/primitives';
+import type { SectionRenderProps } from '@/features/website/theme-packs/theme-pack.types';
 import {
   AtelierAction,
   AtelierChapter,
@@ -21,7 +21,7 @@ import {
   AtelierSectionHeader,
   formatAtelierIndex,
 } from '../atelier-parts';
-import { stagger } from './atelier-section-utils';
+import { stagger } from './atelier-stagger';
 import '../atelier-sections.css';
 
 /* ------------------------------------------------------------------ */
@@ -165,7 +165,7 @@ export function AtelierFeatureSplit({
               value={config.image}
               alt={imageAlt}
               sizes="(min-width: 1024px) 50vw, 100vw"
-              className="at-drift aspect-[4/5] md:aspect-[5/6]"
+              className="at-drift aspect-[4/5]"
             />
             {imageAlt ? (
               <figcaption aria-hidden className="ath-caption">
@@ -342,7 +342,9 @@ export function AtelierCta({
           hasImage && 'lg:grid-cols-12 lg:items-end lg:gap-10'
         )}
       >
-        <div className={cn('ath-cta-text min-w-0', hasImage && 'lg:col-span-7')}>
+        <div
+          className={cn('ath-cta-text min-w-0', hasImage && 'lg:col-span-7')}
+        >
           {/* The thread's last knot, filled: the path arrives here. */}
           <span aria-hidden className="at-knot ath-cta-knot" data-filled="" />
           <div className="space-y-8">
@@ -374,7 +376,7 @@ export function AtelierCta({
             value={config.image}
             alt={resolveLocalizedText(config.imageAlt, locale)}
             sizes="(min-width: 1024px) 36vw, 100vw"
-            className="aspect-[16/10] lg:col-span-5"
+            className="aspect-[4/3] md:aspect-[16/9] lg:col-span-5"
           />
         ) : null}
       </div>
@@ -388,11 +390,31 @@ export function AtelierCta({
 
 /** The sheet's rhythm: spans and ratios repeat every five frames. */
 const SHEET_PATTERN = [
-  { cell: 'md:col-span-7', ratio: 'aspect-[3/2]', sizes: '(min-width: 768px) 55vw, 100vw' },
-  { cell: 'md:col-span-5 md:mt-16', ratio: 'aspect-[4/5]', sizes: '(min-width: 768px) 40vw, 100vw' },
-  { cell: 'md:col-span-4', ratio: 'aspect-[1/1]', sizes: '(min-width: 768px) 30vw, 100vw' },
-  { cell: 'md:col-span-4 md:mt-10', ratio: 'aspect-[4/5]', sizes: '(min-width: 768px) 30vw, 100vw' },
-  { cell: 'md:col-span-4', ratio: 'aspect-[3/2]', sizes: '(min-width: 768px) 30vw, 100vw' },
+  {
+    cell: 'md:col-span-5',
+    ratio: 'aspect-[4/5]',
+    sizes: '(min-width: 768px) 40vw, 100vw',
+  },
+  {
+    cell: 'md:col-span-7 md:mt-24',
+    ratio: 'aspect-[3/2]',
+    sizes: '(min-width: 768px) 55vw, 100vw',
+  },
+  {
+    cell: 'md:col-span-4',
+    ratio: 'aspect-[1/1]',
+    sizes: '(min-width: 768px) 30vw, 100vw',
+  },
+  {
+    cell: 'md:col-span-4 md:mt-12',
+    ratio: 'aspect-[4/5]',
+    sizes: '(min-width: 768px) 30vw, 100vw',
+  },
+  {
+    cell: 'md:col-span-4',
+    ratio: 'aspect-[3/2]',
+    sizes: '(min-width: 768px) 30vw, 100vw',
+  },
 ] as const;
 
 export function AtelierGallery({

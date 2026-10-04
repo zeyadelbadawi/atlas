@@ -1,6 +1,5 @@
 /**
- * What every Atelier home section shares: the entrance stagger and the
- * preview-only frames a live section uses when the public site would not
+ * The preview-only frames a live section uses when the public site would not
  * draw it (the same §D.4 rules Theme 1 follows — a preview explains a
  * hidden section, the public route never shows a sample).
  */
@@ -8,9 +7,6 @@ import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AtelierChapter, AtelierSectionHeader } from '../atelier-parts';
 import '../atelier-sections.css';
-
-/** A group rises with a 60ms stagger, capped at 400ms in total (§4). */
-export const stagger = (index: number): number => Math.min(index * 60, 400);
 
 /** Shown only in previews, where a publicly hidden section needs a reason. */
 export function AtelierPreviewNote({

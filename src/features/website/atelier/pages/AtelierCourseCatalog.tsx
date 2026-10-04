@@ -19,7 +19,10 @@ import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { cn } from '@utils';
 import { usePublicCourseCategories } from '@hooks';
 import { COURSE_CATALOG_SORT_VALUES, COURSE_LEVEL_VALUES } from '@types';
-import { ALL, useCourseCatalog } from '@/features/website/sections/useCourseCatalog';
+import {
+  ALL,
+  useCourseCatalog,
+} from '@/features/website/sections/useCourseCatalog';
 import { SORT_LABEL_KEYS } from '@/features/website/sections/CourseCatalogSection';
 import { PUBLIC_WEBSITE_LOCALE_DIRECTION } from '@/features/website/constants/locale.constants';
 import { usePublicWebsiteLocale } from '@/features/website/renderer/PublicWebsiteLocaleContext';

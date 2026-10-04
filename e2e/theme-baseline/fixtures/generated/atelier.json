@@ -1,0 +1,1423 @@
+{
+  "generatedBy": "atlas-backend scripts/export-website-template-fixtures.ts",
+  "themeKey": "atelier",
+  "setupMode": "complete",
+  "academy": {
+    "academyId": "fx-academy",
+    "academyName": "Horizon Academy"
+  },
+  "configuration": {
+    "id": "fx-academy",
+    "academyId": "fx-academy",
+    "themeKey": "atelier",
+    "themeVersion": 1,
+    "configVersion": 1,
+    "brand": {
+      "primaryColor": "221 83% 53%",
+      "secondaryColor": "221 83% 53%",
+      "accentColor": "221 83% 53%"
+    },
+    "seo": {},
+    "navigation": [
+      {
+        "id": "fx-atelier-item-1",
+        "label": {
+          "en": "About",
+          "ar": "من نحن"
+        },
+        "pageId": "fx-atelier-page-2",
+        "order": 0
+      },
+      {
+        "id": "fx-atelier-item-3",
+        "label": {
+          "en": "Courses",
+          "ar": "الدورات"
+        },
+        "pageId": "fx-atelier-page-4",
+        "order": 1
+      },
+      {
+        "id": "fx-atelier-item-5",
+        "label": {
+          "en": "FAQs",
+          "ar": "الأسئلة الشائعة"
+        },
+        "pageId": "fx-atelier-page-6",
+        "order": 2
+      },
+      {
+        "id": "fx-atelier-item-7",
+        "label": {
+          "en": "Contact",
+          "ar": "تواصل معنا"
+        },
+        "pageId": "fx-atelier-page-8",
+        "order": 3
+      }
+    ],
+    "header": {
+      "cta": {
+        "label": {
+          "en": "Sign Up",
+          "ar": "إنشاء حساب"
+        },
+        "authAction": "signUp"
+      }
+    },
+    "footer": {
+      "groups": [
+        {
+          "id": "fx-atelier-item-9",
+          "title": {
+            "en": "Quick Links",
+            "ar": "روابط سريعة"
+          },
+          "links": [
+            {
+              "id": "fx-atelier-item-10",
+              "label": {
+                "en": "About",
+                "ar": "من نحن"
+              },
+              "pageId": "fx-atelier-page-2"
+            },
+            {
+              "id": "fx-atelier-item-11",
+              "label": {
+                "en": "Courses",
+                "ar": "الدورات"
+              },
+              "pageId": "fx-atelier-page-4"
+            },
+            {
+              "id": "fx-atelier-item-12",
+              "label": {
+                "en": "FAQs",
+                "ar": "الأسئلة الشائعة"
+              },
+              "pageId": "fx-atelier-page-6"
+            },
+            {
+              "id": "fx-atelier-item-13",
+              "label": {
+                "en": "Contact",
+                "ar": "تواصل معنا"
+              },
+              "pageId": "fx-atelier-page-8"
+            }
+          ]
+        }
+      ],
+      "socialLinks": [],
+      "copyrightText": {
+        "en": "© 2026 Horizon Academy",
+        "ar": "© 2026 Horizon Academy"
+      }
+    },
+    "status": "draft",
+    "updatedAt": "2026-09-01T09:00:00.000Z"
+  },
+  "pages": [
+    {
+      "id": "fx-atelier-page-14",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "home",
+      "title": "Home",
+      "slug": "home",
+      "visible": true,
+      "seo": {},
+      "sections": [
+        {
+          "id": "fx-atelier-item-15",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "hero",
+          "config": {
+            "eyebrow": {
+              "en": "Horizon Academy — a learning studio",
+              "ar": "Horizon Academy — استوديو للتعلّم"
+            },
+            "title": {
+              "en": "Learn deliberately, one chapter at a time",
+              "ar": "تعلّم بتأنٍّ، فصلًا بعد فصل"
+            },
+            "description": {
+              "en": "Every course at Horizon Academy is set out like a well-made book: a clear outline, an order to follow and room to think.",
+              "ar": "تُقدَّم كل دورة في Horizon Academy كما يُصنع كتاب متقن: مخطّط واضح، وترتيب تتّبعه، ومساحة للتفكير."
+            },
+            "image": "theme-asset:atelier/home-hero",
+            "cta": {
+              "label": {
+                "en": "Browse the courses",
+                "ar": "استعرض الدورات"
+              },
+              "pageId": "fx-atelier-page-4"
+            },
+            "secondaryCta": {
+              "label": {
+                "en": "Write to us",
+                "ar": "راسلنا"
+              },
+              "pageId": "fx-atelier-page-8"
+            },
+            "highlight": {
+              "en": "one chapter at a time",
+              "ar": "فصلًا بعد فصل"
+            },
+            "highlights": [
+              {
+                "id": "hl-outline",
+                "label": {
+                  "en": "A clear outline for every course",
+                  "ar": "لكل دورة مخطّط واضح"
+                }
+              },
+              {
+                "id": "hl-order",
+                "label": {
+                  "en": "Lessons in a considered order",
+                  "ar": "دروس بترتيب مدروس"
+                }
+              },
+              {
+                "id": "hl-questions",
+                "label": {
+                  "en": "Your questions are welcome",
+                  "ar": "أسئلتك موضع ترحيب"
+                }
+              }
+            ],
+            "showSearch": false
+          }
+        },
+        {
+          "id": "fx-atelier-item-16",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "featureSplit",
+          "config": {
+            "eyebrow": {
+              "en": "Our approach",
+              "ar": "منهجنا"
+            },
+            "title": {
+              "en": "Good learning takes its time",
+              "ar": "التعلّم الجيّد يأخذ وقته"
+            },
+            "description": {
+              "en": "We care more about understanding than about speed. Each course is arranged so that one idea prepares the next.",
+              "ar": "يهمّنا الفهم أكثر من السرعة؛ لذلك تُرتَّب كل دورة بحيث تمهّد كل فكرة لما بعدها."
+            },
+            "image": "theme-asset:atelier/home-philosophy",
+            "imagePosition": "start",
+            "items": [
+              {
+                "id": "approach-outline",
+                "title": {
+                  "en": "Begin with the outline",
+                  "ar": "ابدأ بالمخطّط"
+                },
+                "description": {
+                  "en": "Every course page sets out what it covers before you decide.",
+                  "ar": "تعرض صفحة كل دورة ما تغطّيه قبل أن تقرّر."
+                }
+              },
+              {
+                "id": "approach-order",
+                "title": {
+                  "en": "Follow the order",
+                  "ar": "اتّبع الترتيب"
+                },
+                "description": {
+                  "en": "Sections and lessons build on one another, so nothing arrives out of place.",
+                  "ar": "تُبنى الأقسام والدروس بعضها على بعض، فلا يأتي شيء في غير موضعه."
+                }
+              },
+              {
+                "id": "approach-place",
+                "title": {
+                  "en": "Keep your place",
+                  "ar": "احتفظ بموضعك"
+                },
+                "description": {
+                  "en": "Your progress is saved, so you can return to the lesson where you stopped.",
+                  "ar": "يُحفظ تقدّمك، فتعود إلى الدرس الذي توقّفت عنده."
+                }
+              }
+            ],
+            "cta": {
+              "label": {
+                "en": "Read our story",
+                "ar": "اقرأ قصّتنا"
+              },
+              "pageId": "fx-atelier-page-2"
+            }
+          }
+        },
+        {
+          "id": "fx-atelier-item-17",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "features",
+          "config": {
+            "title": {
+              "en": "What you will find here",
+              "ar": "ما ستجده هنا"
+            },
+            "description": {
+              "en": "The same care runs through every course.",
+              "ar": "العناية نفسها حاضرة في كل دورة."
+            },
+            "items": [
+              {
+                "id": "feature-outline",
+                "title": {
+                  "en": "A written outline",
+                  "ar": "مخطّط مكتوب"
+                },
+                "description": {
+                  "en": "Sections, lessons and level, listed before you enrol.",
+                  "ar": "الأقسام والدروس والمستوى، معروضة قبل التسجيل."
+                },
+                "icon": "BookOpen"
+              },
+              {
+                "id": "feature-instructors",
+                "title": {
+                  "en": "Named instructors",
+                  "ar": "مدرّبون بأسمائهم"
+                },
+                "description": {
+                  "en": "Every course names the person who teaches it.",
+                  "ar": "تذكر كل دورة اسم من يقدّمها."
+                },
+                "icon": "GraduationCap"
+              },
+              {
+                "id": "feature-devices",
+                "title": {
+                  "en": "Learn from anywhere",
+                  "ar": "تعلّم من أي مكان"
+                },
+                "description": {
+                  "en": "Lessons open on a phone, a tablet or a computer.",
+                  "ar": "تُفتح الدروس على الهاتف أو الجهاز اللوحي أو الحاسوب."
+                },
+                "icon": "Globe"
+              },
+              {
+                "id": "feature-correspondence",
+                "title": {
+                  "en": "Someone to write to",
+                  "ar": "جهة تراسلها"
+                },
+                "description": {
+                  "en": "Send us a message whenever something is unclear.",
+                  "ar": "أرسل إلينا رسالة كلما احتجت إلى توضيح."
+                },
+                "icon": "Users"
+              }
+            ]
+          }
+        },
+        {
+          "id": "fx-atelier-item-18",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "courseCategories",
+          "config": {
+            "title": {
+              "en": "Browse by subject",
+              "ar": "تصفّح حسب الموضوع"
+            },
+            "description": {
+              "en": "Each subject gathers the courses that belong together.",
+              "ar": "يجمع كل موضوع الدورات التي تنتمي إليه."
+            },
+            "maxItems": 8,
+            "showCounts": true
+          }
+        },
+        {
+          "id": "fx-atelier-item-19",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "featuredCourses",
+          "config": {
+            "title": {
+              "en": "Recently published",
+              "ar": "صدر حديثًا"
+            },
+            "description": {
+              "en": "The newest courses in our catalogue.",
+              "ar": "أحدث الدورات في فهرسنا."
+            },
+            "mode": "latest",
+            "layout": "grid",
+            "count": 6,
+            "showPrice": true,
+            "showInstructor": true
+          }
+        },
+        {
+          "id": "fx-atelier-item-20",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "steps",
+          "config": {
+            "title": {
+              "en": "The method",
+              "ar": "المنهج"
+            },
+            "description": {
+              "en": "Three movements, from the first page to the last.",
+              "ar": "ثلاث مراحل، من الصفحة الأولى إلى الأخيرة."
+            },
+            "items": [
+              {
+                "id": "step-read",
+                "title": {
+                  "en": "Read the outline",
+                  "ar": "اقرأ المخطّط"
+                },
+                "description": {
+                  "en": "Open a course and see what it covers, its level and who teaches it.",
+                  "ar": "افتح الدورة واطّلع على ما تغطّيه ومستواها ومن يقدّمها."
+                }
+              },
+              {
+                "id": "step-work",
+                "title": {
+                  "en": "Work through the lessons",
+                  "ar": "تابع الدروس"
+                },
+                "description": {
+                  "en": "Move section by section, in the order the course was written.",
+                  "ar": "انتقل من قسم إلى قسم، بالترتيب الذي كُتبت به الدورة."
+                }
+              },
+              {
+                "id": "step-finish",
+                "title": {
+                  "en": "Finish and apply",
+                  "ar": "أنهِ وطبّق"
+                },
+                "description": {
+                  "en": "Complete the final lesson and put the ideas to use.",
+                  "ar": "أكمل الدرس الأخير وضع الأفكار موضع التطبيق."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "fx-atelier-item-21",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "instructors",
+          "config": {
+            "title": {
+              "en": "Who teaches here",
+              "ar": "من يعلّم هنا"
+            },
+            "description": {
+              "en": "The people whose names appear on our courses.",
+              "ar": "الأشخاص الذين تحمل دوراتنا أسماءهم."
+            },
+            "count": 4
+          }
+        },
+        {
+          "id": "fx-atelier-item-22",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "statistics",
+          "config": {
+            "title": {
+              "en": "Horizon Academy, in figures",
+              "ar": "Horizon Academy في أرقام"
+            },
+            "items": [
+              {
+                "id": "stat-courses",
+                "value": {
+                  "en": "",
+                  "ar": ""
+                },
+                "label": {
+                  "en": "Courses",
+                  "ar": "الدورات"
+                },
+                "metric": "courses"
+              },
+              {
+                "id": "stat-students",
+                "value": {
+                  "en": "",
+                  "ar": ""
+                },
+                "label": {
+                  "en": "Learners",
+                  "ar": "المتعلّمون"
+                },
+                "metric": "students"
+              },
+              {
+                "id": "stat-instructors",
+                "value": {
+                  "en": "",
+                  "ar": ""
+                },
+                "label": {
+                  "en": "Instructors",
+                  "ar": "المدرّبون"
+                },
+                "metric": "instructors"
+              }
+            ]
+          }
+        },
+        {
+          "id": "fx-atelier-item-23",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "testimonials",
+          "config": {
+            "title": {
+              "en": "In their words",
+              "ar": "بكلماتهم"
+            },
+            "items": [
+              {
+                "id": "sample-testimonial-1",
+                "quote": {
+                  "en": "Nothing felt rushed. Each lesson left me with one thing to practise, and that was enough.",
+                  "ar": "لم يكن شيء على عجل. كان كل درس يترك لي أمرًا واحدًا أتدرّب عليه، وكان ذلك كافيًا."
+                },
+                "authorName": "Layla K.",
+                "authorRole": {
+                  "en": "Illustrator",
+                  "ar": "رسّامة"
+                },
+                "sample": true
+              },
+              {
+                "id": "sample-testimonial-2",
+                "quote": {
+                  "en": "The outline told me exactly what the course would cover, and the course kept to it.",
+                  "ar": "أخبرني المخطّط بما ستغطّيه الدورة بالضبط، والتزمت الدورة به."
+                },
+                "authorName": "Omar S.",
+                "authorRole": {
+                  "en": "Architect",
+                  "ar": "مهندس معماري"
+                },
+                "sample": true
+              },
+              {
+                "id": "sample-testimonial-3",
+                "quote": {
+                  "en": "It read like a well-edited book: clear, patient and easy to return to.",
+                  "ar": "كانت أشبه بكتاب محرَّر بعناية: واضحة وهادئة ويسهل الرجوع إليها."
+                },
+                "authorName": "Hana R.",
+                "authorRole": {
+                  "en": "Translator",
+                  "ar": "مترجمة"
+                },
+                "sample": true
+              }
+            ]
+          }
+        },
+        {
+          "id": "fx-atelier-item-24",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "faq",
+          "config": {
+            "title": {
+              "en": "Questions & answers",
+              "ar": "أسئلة وأجوبة"
+            },
+            "items": [
+              {
+                "id": "faq-fit",
+                "question": {
+                  "en": "How do I know if a course is right for me?",
+                  "ar": "كيف أعرف أن الدورة تناسبني؟"
+                },
+                "answer": {
+                  "en": "Read its page first. It describes the level, what the course covers and what you need before you begin.",
+                  "ar": "اقرأ صفحتها أولًا؛ فهي تصف المستوى وما تغطّيه الدورة وما تحتاجه قبل أن تبدأ."
+                }
+              },
+              {
+                "id": "faq-access",
+                "question": {
+                  "en": "How long can I keep a course?",
+                  "ar": "إلى متى يمكنني الاحتفاظ بالدورة؟"
+                },
+                "answer": {
+                  "en": "Access varies from course to course. The course details say more, and you can write to us if anything is unclear.",
+                  "ar": "تختلف مدة الوصول من دورة إلى أخرى. تجد المزيد في تفاصيل الدورة، ويمكنك مراسلتنا إن كان أي أمر غير واضح."
+                }
+              },
+              {
+                "id": "faq-devices",
+                "question": {
+                  "en": "Which devices can I learn on?",
+                  "ar": "ما الأجهزة التي يمكنني التعلّم عليها؟"
+                },
+                "answer": {
+                  "en": "Lessons open on phones, tablets and computers, and your progress follows you from one to the next.",
+                  "ar": "تُفتح الدروس على الهواتف والأجهزة اللوحية والحواسيب، ويرافقك تقدّمك من جهاز إلى آخر."
+                }
+              },
+              {
+                "id": "faq-help",
+                "question": {
+                  "en": "What if I get stuck?",
+                  "ar": "ماذا لو تعثّرت؟"
+                },
+                "answer": {
+                  "en": "Write to us through the Contact page and tell us which course and lesson you are on.",
+                  "ar": "راسلنا عبر صفحة «تواصل معنا»، وأخبرنا بالدورة والدرس اللذين وصلت إليهما."
+                }
+              }
+            ],
+            "maxItems": 4,
+            "cta": {
+              "label": {
+                "en": "All questions",
+                "ar": "كل الأسئلة"
+              },
+              "pageId": "fx-atelier-page-6"
+            }
+          }
+        },
+        {
+          "id": "fx-atelier-item-25",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "cta",
+          "config": {
+            "title": {
+              "en": "Begin your first chapter",
+              "ar": "ابدأ فصلك الأول"
+            },
+            "description": {
+              "en": "Create an account, choose a course and turn to the first lesson.",
+              "ar": "أنشئ حسابًا، واختر دورة، وافتح الدرس الأول."
+            },
+            "cta": {
+              "label": {
+                "en": "Create an account",
+                "ar": "أنشئ حسابًا"
+              },
+              "authAction": "signUp"
+            },
+            "secondaryCta": {
+              "label": {
+                "en": "See the catalogue",
+                "ar": "اطّلع على الفهرس"
+              },
+              "pageId": "fx-atelier-page-4"
+            },
+            "image": "theme-asset:atelier/home-cta"
+          }
+        }
+      ],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-atelier-page-2",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "about",
+      "title": "About",
+      "slug": "about",
+      "visible": true,
+      "seo": {},
+      "sections": [
+        {
+          "id": "fx-atelier-item-26",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "pageHeader",
+          "config": {
+            "eyebrow": {
+              "en": "About Horizon Academy",
+              "ar": "عن Horizon Academy"
+            },
+            "title": {
+              "en": "A studio for learning",
+              "ar": "استوديو للتعلّم"
+            },
+            "description": {
+              "en": "Horizon Academy publishes online courses for people who like to learn with attention.",
+              "ar": "تنشر Horizon Academy دورات عبر الإنترنت لمن يحبّ أن يتعلّم بانتباه."
+            },
+            "image": "theme-asset:atelier/about-header",
+            "search": "none"
+          }
+        },
+        {
+          "id": "fx-atelier-item-27",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "about",
+          "config": {
+            "title": {
+              "en": "Why we teach the way we do",
+              "ar": "لماذا نعلّم بهذه الطريقة"
+            },
+            "body": {
+              "en": "We think a course should read like a good book: it knows where it begins, it moves in a sensible order and it respects the reader's time. That is the standard we hold our courses to.",
+              "ar": "نرى أن الدورة ينبغي أن تُقرأ ككتاب جيّد: تعرف من أين تبدأ، وتمضي بترتيب منطقي، وتحترم وقت قارئها. وهذا هو المعيار الذي نلتزم به في دوراتنا."
+            }
+          }
+        },
+        {
+          "id": "fx-atelier-item-28",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "featureSplit",
+          "config": {
+            "eyebrow": {
+              "en": "Our story",
+              "ar": "قصّتنا"
+            },
+            "title": {
+              "en": "How a course comes together",
+              "ar": "كيف تُصنع الدورة"
+            },
+            "description": {
+              "en": "Before a course is published, we decide what it should cover and in what order. The outline comes first; the lessons follow it.",
+              "ar": "قبل نشر أي دورة، نحدّد ما ينبغي أن تغطّيه وبأي ترتيب. يأتي المخطّط أولًا، ثم تتبعه الدروس."
+            },
+            "image": "theme-asset:atelier/about-story",
+            "imagePosition": "end",
+            "items": [
+              {
+                "id": "story-outline",
+                "title": {
+                  "en": "An outline first",
+                  "ar": "المخطّط أولًا"
+                },
+                "description": {
+                  "en": "Each course starts as a list of sections and lessons.",
+                  "ar": "تبدأ كل دورة قائمةً من الأقسام والدروس."
+                }
+              },
+              {
+                "id": "story-clarity",
+                "title": {
+                  "en": "Clarity over volume",
+                  "ar": "الوضوح قبل الكثرة"
+                },
+                "description": {
+                  "en": "We try to keep every lesson focused on one idea.",
+                  "ar": "نحرص على أن يركّز كل درس على فكرة واحدة."
+                }
+              },
+              {
+                "id": "story-suggestions",
+                "title": {
+                  "en": "Open to suggestions",
+                  "ar": "منفتحون على الاقتراحات"
+                },
+                "description": {
+                  "en": "Tell us which subjects you would like to see next.",
+                  "ar": "أخبرنا بالموضوعات التي تودّ أن تراها لاحقًا."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "fx-atelier-item-29",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "features",
+          "config": {
+            "title": {
+              "en": "What we hold to",
+              "ar": "ما نلتزم به"
+            },
+            "description": {
+              "en": "Three principles behind every course.",
+              "ar": "ثلاثة مبادئ وراء كل دورة."
+            },
+            "items": [
+              {
+                "id": "value-care",
+                "title": {
+                  "en": "Care",
+                  "ar": "العناية"
+                },
+                "description": {
+                  "en": "We look closely at every course before it is published.",
+                  "ar": "ننظر في كل دورة بعناية قبل نشرها."
+                },
+                "icon": "Award"
+              },
+              {
+                "id": "value-clarity",
+                "title": {
+                  "en": "Clarity",
+                  "ar": "الوضوح"
+                },
+                "description": {
+                  "en": "Each course says plainly what it covers.",
+                  "ar": "تقول كل دورة بوضوح ما تغطّيه."
+                },
+                "icon": "Sparkles"
+              },
+              {
+                "id": "value-conversation",
+                "title": {
+                  "en": "Conversation",
+                  "ar": "الحوار"
+                },
+                "description": {
+                  "en": "Questions and suggestions are welcome.",
+                  "ar": "الأسئلة والاقتراحات موضع ترحيب."
+                },
+                "icon": "Users"
+              }
+            ]
+          }
+        },
+        {
+          "id": "fx-atelier-item-30",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "statistics",
+          "config": {
+            "title": {
+              "en": "Horizon Academy, in figures",
+              "ar": "Horizon Academy في أرقام"
+            },
+            "items": [
+              {
+                "id": "stat-courses",
+                "value": {
+                  "en": "",
+                  "ar": ""
+                },
+                "label": {
+                  "en": "Courses",
+                  "ar": "الدورات"
+                },
+                "metric": "courses"
+              },
+              {
+                "id": "stat-students",
+                "value": {
+                  "en": "",
+                  "ar": ""
+                },
+                "label": {
+                  "en": "Learners",
+                  "ar": "المتعلّمون"
+                },
+                "metric": "students"
+              },
+              {
+                "id": "stat-instructors",
+                "value": {
+                  "en": "",
+                  "ar": ""
+                },
+                "label": {
+                  "en": "Instructors",
+                  "ar": "المدرّبون"
+                },
+                "metric": "instructors"
+              }
+            ]
+          }
+        },
+        {
+          "id": "fx-atelier-item-31",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "instructors",
+          "config": {
+            "title": {
+              "en": "The people behind the courses",
+              "ar": "الأشخاص وراء الدورات"
+            },
+            "description": {
+              "en": "The instructors who teach at Horizon Academy.",
+              "ar": "المدرّبون الذين يعلّمون في Horizon Academy."
+            },
+            "count": 8
+          }
+        },
+        {
+          "id": "fx-atelier-item-32",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "gallery",
+          "config": {
+            "title": {
+              "en": "From the studio",
+              "ar": "من الاستوديو"
+            },
+            "images": [
+              {
+                "id": "gallery-1",
+                "image": "theme-asset:atelier/gallery-1"
+              },
+              {
+                "id": "gallery-2",
+                "image": "theme-asset:atelier/gallery-2"
+              },
+              {
+                "id": "gallery-3",
+                "image": "theme-asset:atelier/gallery-3"
+              },
+              {
+                "id": "gallery-4",
+                "image": "theme-asset:atelier/gallery-4"
+              },
+              {
+                "id": "gallery-5",
+                "image": "theme-asset:atelier/gallery-5"
+              }
+            ]
+          }
+        },
+        {
+          "id": "fx-atelier-item-33",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "cta",
+          "config": {
+            "title": {
+              "en": "Continue to the catalogue",
+              "ar": "تابع إلى فهرس الدورات"
+            },
+            "description": {
+              "en": "Every course, set out with its outline and level.",
+              "ar": "كل الدورات، معروضة بمخطّطها ومستواها."
+            },
+            "cta": {
+              "label": {
+                "en": "Browse the courses",
+                "ar": "استعرض الدورات"
+              },
+              "pageId": "fx-atelier-page-4"
+            },
+            "secondaryCta": {
+              "label": {
+                "en": "Write to us",
+                "ar": "راسلنا"
+              },
+              "pageId": "fx-atelier-page-8"
+            }
+          }
+        }
+      ],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-atelier-page-4",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "courses",
+      "title": "Courses",
+      "slug": "courses",
+      "visible": true,
+      "seo": {},
+      "sections": [
+        {
+          "id": "fx-atelier-item-34",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "pageHeader",
+          "config": {
+            "eyebrow": {
+              "en": "The catalogue",
+              "ar": "الفهرس"
+            },
+            "title": {
+              "en": "Every course, in one index",
+              "ar": "كل الدورات في فهرس واحد"
+            },
+            "description": {
+              "en": "Search by title, narrow by subject or level, and open any course to read its outline.",
+              "ar": "ابحث بالعنوان، وضيّق النتائج حسب الموضوع أو المستوى، وافتح أي دورة لتقرأ مخطّطها."
+            },
+            "search": "courses"
+          }
+        },
+        {
+          "id": "fx-atelier-item-35",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "courseCatalog",
+          "config": {
+            "title": {
+              "en": "Index of courses",
+              "ar": "فهرس الدورات"
+            },
+            "pageSize": 12,
+            "defaultSort": "newest",
+            "showSearch": false,
+            "showLevelFilter": true,
+            "showPricingFilter": true,
+            "showSort": true
+          }
+        },
+        {
+          "id": "fx-atelier-item-36",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "cta",
+          "config": {
+            "title": {
+              "en": "Unsure where to begin?",
+              "ar": "حائر في نقطة البداية؟"
+            },
+            "description": {
+              "en": "Write to us about what you would like to learn.",
+              "ar": "راسلنا بما تودّ تعلّمه."
+            },
+            "cta": {
+              "label": {
+                "en": "Write to us",
+                "ar": "راسلنا"
+              },
+              "pageId": "fx-atelier-page-8"
+            }
+          }
+        }
+      ],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-atelier-page-6",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "faqs",
+      "title": "FAQs",
+      "slug": "faqs",
+      "visible": true,
+      "seo": {},
+      "sections": [
+        {
+          "id": "fx-atelier-item-37",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "pageHeader",
+          "config": {
+            "eyebrow": {
+              "en": "Questions",
+              "ar": "أسئلة"
+            },
+            "title": {
+              "en": "Questions & answers",
+              "ar": "أسئلة وأجوبة"
+            },
+            "description": {
+              "en": "Short answers about courses, access and enrolling.",
+              "ar": "إجابات موجزة عن الدورات والوصول إليها والتسجيل فيها."
+            },
+            "search": "faq"
+          }
+        },
+        {
+          "id": "fx-atelier-item-38",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "faq",
+          "config": {
+            "items": [
+              {
+                "id": "faq-fit",
+                "question": {
+                  "en": "How do I know if a course is right for me?",
+                  "ar": "كيف أعرف أن الدورة تناسبني؟"
+                },
+                "answer": {
+                  "en": "Read its page first. It describes the level, what the course covers and what you need before you begin.",
+                  "ar": "اقرأ صفحتها أولًا؛ فهي تصف المستوى وما تغطّيه الدورة وما تحتاجه قبل أن تبدأ."
+                }
+              },
+              {
+                "id": "faq-access",
+                "question": {
+                  "en": "How long can I keep a course?",
+                  "ar": "إلى متى يمكنني الاحتفاظ بالدورة؟"
+                },
+                "answer": {
+                  "en": "Access varies from course to course. The course details say more, and you can write to us if anything is unclear.",
+                  "ar": "تختلف مدة الوصول من دورة إلى أخرى. تجد المزيد في تفاصيل الدورة، ويمكنك مراسلتنا إن كان أي أمر غير واضح."
+                }
+              },
+              {
+                "id": "faq-devices",
+                "question": {
+                  "en": "Which devices can I learn on?",
+                  "ar": "ما الأجهزة التي يمكنني التعلّم عليها؟"
+                },
+                "answer": {
+                  "en": "Lessons open on phones, tablets and computers, and your progress follows you from one to the next.",
+                  "ar": "تُفتح الدروس على الهواتف والأجهزة اللوحية والحواسيب، ويرافقك تقدّمك من جهاز إلى آخر."
+                }
+              },
+              {
+                "id": "faq-help",
+                "question": {
+                  "en": "What if I get stuck?",
+                  "ar": "ماذا لو تعثّرت؟"
+                },
+                "answer": {
+                  "en": "Write to us through the Contact page and tell us which course and lesson you are on.",
+                  "ar": "راسلنا عبر صفحة «تواصل معنا»، وأخبرنا بالدورة والدرس اللذين وصلت إليهما."
+                }
+              },
+              {
+                "id": "faq-price",
+                "question": {
+                  "en": "Where do I find a course's price?",
+                  "ar": "أين أجد سعر الدورة؟"
+                },
+                "answer": {
+                  "en": "In the catalogue and on each course's own page.",
+                  "ar": "في فهرس الدورات وفي صفحة كل دورة."
+                }
+              },
+              {
+                "id": "faq-contents",
+                "question": {
+                  "en": "Can I see what a course contains before enrolling?",
+                  "ar": "هل يمكنني الاطّلاع على محتوى الدورة قبل التسجيل؟"
+                },
+                "answer": {
+                  "en": "Yes. Each course page shows its description and curriculum. Where a course offers preview lessons, they are marked as such.",
+                  "ar": "نعم. تعرض صفحة كل دورة وصفها ومنهجها، وإذا كانت الدورة تتيح دروسًا للمعاينة فستجدها مميّزة فيها."
+                }
+              },
+              {
+                "id": "faq-enrol",
+                "question": {
+                  "en": "How do I enrol?",
+                  "ar": "كيف أسجّل في دورة؟"
+                },
+                "answer": {
+                  "en": "Open the course and follow the enrolment steps on its page. For questions about payment, write to us.",
+                  "ar": "افتح الدورة واتّبع خطوات التسجيل في صفحتها. ولأي سؤال عن الدفع، راسلنا."
+                }
+              },
+              {
+                "id": "faq-groups",
+                "question": {
+                  "en": "Can we enrol as a group?",
+                  "ar": "هل يمكننا التسجيل كمجموعة؟"
+                },
+                "answer": {
+                  "en": "Write to us with the size of your group and the courses you have in mind, and we can discuss the options.",
+                  "ar": "راسلنا واذكر عدد أفراد مجموعتكم والدورات التي تفكّرون فيها، لنناقش الخيارات المتاحة."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "fx-atelier-item-39",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "cta",
+          "config": {
+            "title": {
+              "en": "Another question?",
+              "ar": "سؤال آخر؟"
+            },
+            "description": {
+              "en": "Write to us and ask.",
+              "ar": "راسلنا واطرح سؤالك."
+            },
+            "cta": {
+              "label": {
+                "en": "Write to us",
+                "ar": "راسلنا"
+              },
+              "pageId": "fx-atelier-page-8"
+            }
+          }
+        }
+      ],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-atelier-page-8",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "contact",
+      "title": "Contact",
+      "slug": "contact",
+      "visible": true,
+      "seo": {},
+      "sections": [
+        {
+          "id": "fx-atelier-item-40",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "pageHeader",
+          "config": {
+            "eyebrow": {
+              "en": "Correspondence",
+              "ar": "مراسلات"
+            },
+            "title": {
+              "en": "Write to us",
+              "ar": "راسلنا"
+            },
+            "description": {
+              "en": "A question about a course, a group enrolment or anything else — send us a note.",
+              "ar": "سؤال عن دورة، أو تسجيل مجموعة، أو أي أمر آخر — أرسل إلينا رسالة."
+            },
+            "search": "none"
+          }
+        },
+        {
+          "id": "fx-atelier-item-41",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "contact",
+          "config": {
+            "title": {
+              "en": "Our details",
+              "ar": "بياناتنا"
+            },
+            "description": {
+              "en": "Use our contact details, or leave a message with the form.",
+              "ar": "استخدم بيانات التواصل، أو اترك رسالة عبر النموذج."
+            },
+            "showForm": true
+          }
+        },
+        {
+          "id": "fx-atelier-item-42",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "faq",
+          "config": {
+            "title": {
+              "en": "Before you write",
+              "ar": "قبل أن تراسلنا"
+            },
+            "items": [
+              {
+                "id": "faq-fit",
+                "question": {
+                  "en": "How do I know if a course is right for me?",
+                  "ar": "كيف أعرف أن الدورة تناسبني؟"
+                },
+                "answer": {
+                  "en": "Read its page first. It describes the level, what the course covers and what you need before you begin.",
+                  "ar": "اقرأ صفحتها أولًا؛ فهي تصف المستوى وما تغطّيه الدورة وما تحتاجه قبل أن تبدأ."
+                }
+              },
+              {
+                "id": "faq-access",
+                "question": {
+                  "en": "How long can I keep a course?",
+                  "ar": "إلى متى يمكنني الاحتفاظ بالدورة؟"
+                },
+                "answer": {
+                  "en": "Access varies from course to course. The course details say more, and you can write to us if anything is unclear.",
+                  "ar": "تختلف مدة الوصول من دورة إلى أخرى. تجد المزيد في تفاصيل الدورة، ويمكنك مراسلتنا إن كان أي أمر غير واضح."
+                }
+              },
+              {
+                "id": "faq-devices",
+                "question": {
+                  "en": "Which devices can I learn on?",
+                  "ar": "ما الأجهزة التي يمكنني التعلّم عليها؟"
+                },
+                "answer": {
+                  "en": "Lessons open on phones, tablets and computers, and your progress follows you from one to the next.",
+                  "ar": "تُفتح الدروس على الهواتف والأجهزة اللوحية والحواسيب، ويرافقك تقدّمك من جهاز إلى آخر."
+                }
+              },
+              {
+                "id": "faq-help",
+                "question": {
+                  "en": "What if I get stuck?",
+                  "ar": "ماذا لو تعثّرت؟"
+                },
+                "answer": {
+                  "en": "Write to us through the Contact page and tell us which course and lesson you are on.",
+                  "ar": "راسلنا عبر صفحة «تواصل معنا»، وأخبرنا بالدورة والدرس اللذين وصلت إليهما."
+                }
+              },
+              {
+                "id": "faq-price",
+                "question": {
+                  "en": "Where do I find a course's price?",
+                  "ar": "أين أجد سعر الدورة؟"
+                },
+                "answer": {
+                  "en": "In the catalogue and on each course's own page.",
+                  "ar": "في فهرس الدورات وفي صفحة كل دورة."
+                }
+              }
+            ],
+            "maxItems": 3,
+            "cta": {
+              "label": {
+                "en": "All questions",
+                "ar": "كل الأسئلة"
+              },
+              "pageId": "fx-atelier-page-6"
+            }
+          }
+        }
+      ],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-atelier-page-43",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "courseDetails",
+      "title": "Course Details",
+      "slug": "course-details",
+      "visible": true,
+      "seo": {},
+      "sections": [],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    }
+  ]
+}

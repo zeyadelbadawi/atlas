@@ -102,13 +102,15 @@ export function SetupThemePicker({
   const { t, i18n } = useTranslation();
   const [groupRef, nearViewport] = useNearViewport<HTMLDivElement>();
   const radios = useRef<Array<HTMLButtonElement | null>>([]);
-  // Dragging a colour control re-renders both previews; keep the controls
-  // themselves responsive by letting the previews lag behind.
+  // Typing the name or dragging a colour control re-renders both previews;
+  // keep the controls themselves responsive by letting the previews lag.
   const palette = useDeferredValue(branding?.palette);
+  const deferredName = useDeferredValue(academyName);
   const logoUrl = useObjectUrl(branding?.logoFile);
   const language = i18n.resolvedLanguage ?? i18n.language;
   const locale = isPublicWebsiteLocale(language) ? language : undefined;
-  const previewName = academyName.trim() || t('website:brandStudio.sampleName');
+  const previewName =
+    deferredName.trim() || t('website:brandStudio.sampleName');
   const selectedIndex = themes.findIndex((theme) => theme.key === value);
 
   const choose = (index: number) => {

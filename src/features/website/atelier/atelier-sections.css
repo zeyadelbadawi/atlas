@@ -534,7 +534,10 @@
 /* Loading rows mirror the real rows' height (no shift when data lands). */
 [data-theme-pack='atelier'] .ath-row-skeleton {
   height: 6.5rem;
-  background: linear-gradient(var(--atelier-paper-deep), var(--atelier-paper-deep))
+  background: linear-gradient(
+      var(--atelier-paper-deep),
+      var(--atelier-paper-deep)
+    )
     no-repeat 0 50% / 60% 1.5rem;
 }
 [data-theme-pack='atelier'] .ath-row-skeleton:dir(rtl) {

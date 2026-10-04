@@ -14,11 +14,14 @@
 import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { useTestimonialLibraryEntries } from '../../hooks';
-import { ThemeImage, hasRenderableImage } from '../../theme-assets';
-import { usePublicWebsiteLocale } from '../../renderer/PublicWebsiteLocaleContext';
-import { resolveLocalizedText } from '../../utils/localized-text.utils';
-import type { SectionRenderProps } from '../../theme-packs/theme-pack.types';
+import { useTestimonialLibraryEntries } from '@/features/website/hooks';
+import {
+  ThemeImage,
+  hasRenderableImage,
+} from '@/features/website/theme-assets';
+import { usePublicWebsiteLocale } from '@/features/website/renderer/PublicWebsiteLocaleContext';
+import { resolveLocalizedText } from '@/features/website/utils/localized-text.utils';
+import type { SectionRenderProps } from '@/features/website/theme-packs/theme-pack.types';
 import {
   AtelierChapter,
   AtelierMonogram,
@@ -100,7 +103,9 @@ export function AtelierTestimonials({
       <div
         className="ath-quote-stage"
         role="group"
-        aria-roledescription={t('website:atelier.home.testimonials.roleDescription')}
+        aria-roledescription={t(
+          'website:atelier.home.testimonials.roleDescription'
+        )}
         aria-label={t('website:atelier.home.testimonials.label')}
         tabIndex={canPage ? 0 : undefined}
         onKeyDown={(event) => {
@@ -172,7 +177,9 @@ export function AtelierTestimonials({
       {canPage ? (
         <div className="ath-quote-controls">
           <p aria-hidden className="ath-quote-count" data-atlas-numeric="true">
-            <span className="at-numeral">{formatAtelierIndex(index, locale)}</span>
+            <span className="at-numeral">
+              {formatAtelierIndex(index, locale)}
+            </span>
             <span className="ath-quote-count-sep">/</span>
             <span>{formatAtelierIndex(total - 1, locale)}</span>
           </p>

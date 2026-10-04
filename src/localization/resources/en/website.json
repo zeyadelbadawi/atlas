@@ -454,7 +454,7 @@
   },
   "theme": {
     "retiredTitle": "{{theme}} is no longer offered",
-    "retiredDescription": "Your website keeps using {{theme}} until you choose another theme. Modern Education is the theme available now. Switching to it can't be undone, because {{theme}} can't be selected again.",
+    "retiredDescription": "Your website keeps using {{theme}} until you choose another theme. Switching to one of the themes offered now can't be undone, because {{theme}} can't be selected again.",
     "switchConfirmTitle": "Switch to {{theme}}?",
     "switchConfirmDescription": "This changes your draft to {{theme}}. {{current}} is no longer offered, so you won't be able to switch back. Your live website doesn't change until you publish.",
     "switchConfirmAction": "Switch theme",

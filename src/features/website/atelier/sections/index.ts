@@ -3,7 +3,7 @@
  * §5a). The pack spreads `ATELIER_SECTION_RENDERERS` into its `renderers`;
  * a type absent here falls back to its base renderer.
  */
-import type { SectionRenderers } from '../../theme-packs/theme-pack.types';
+import type { SectionRenderers } from '@/features/website/theme-packs/theme-pack.types';
 import { AtelierHero } from './AtelierHero';
 import {
   AtelierAbout,

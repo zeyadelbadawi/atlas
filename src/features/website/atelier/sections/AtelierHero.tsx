@@ -16,12 +16,12 @@ import { useId, useState, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useInRouterContext } from 'react-router-dom';
 import { cn } from '@utils';
-import { usePageOpeningHeading } from '../../renderer/PageHeadingContext';
-import { usePublicWebsiteLocale } from '../../renderer/PublicWebsiteLocaleContext';
-import { resolveLocalizedText } from '../../utils/localized-text.utils';
-import { resolveCatalogHref } from '../../utils/catalog-url.utils';
-import { useT1Navigate } from '../../modern-education/t1-navigation';
-import type { SectionRenderProps } from '../../theme-packs/theme-pack.types';
+import { usePageOpeningHeading } from '@/features/website/renderer/PageHeadingContext';
+import { usePublicWebsiteLocale } from '@/features/website/renderer/PublicWebsiteLocaleContext';
+import { resolveLocalizedText } from '@/features/website/utils/localized-text.utils';
+import { resolveCatalogHref } from '@/features/website/utils/catalog-url.utils';
+import { useT1Navigate } from '@/features/website/modern-education/t1-navigation';
+import type { SectionRenderProps } from '@/features/website/theme-packs/theme-pack.types';
 import type { WebsitePage } from '@types';
 import {
   AtelierAction,
@@ -136,11 +136,7 @@ export function AtelierHero({
   const searchIndex = showSearch ? index++ : 0;
 
   return (
-    <AtelierChapter
-      labelledBy={headingId}
-      thread="start"
-      className="ath-hero"
-    >
+    <AtelierChapter labelledBy={headingId} thread="start" className="ath-hero">
       <div
         className={cn(
           'grid gap-12 lg:grid-cols-12 lg:gap-x-10',
@@ -191,7 +187,9 @@ export function AtelierHero({
                   {subtitle ? (
                     <p className="at-serif ath-hero-subtitle">{subtitle}</p>
                   ) : null}
-                  {description ? <p className="at-lead">{description}</p> : null}
+                  {description ? (
+                    <p className="at-lead">{description}</p>
+                  ) : null}
                 </div>
               ) : null}
               {highlightsMotion ? (

@@ -11,15 +11,15 @@
 import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus } from 'lucide-react';
-import { useFaqLibraryEntries } from '../../hooks';
-import { usePublicWebsiteLocale } from '../../renderer/PublicWebsiteLocaleContext';
-import { resolveLocalizedText } from '../../utils/localized-text.utils';
-import { resolveWebsiteCtaHref } from '../../utils/link-resolution.utils';
+import { useFaqLibraryEntries } from '@/features/website/hooks';
+import { usePublicWebsiteLocale } from '@/features/website/renderer/PublicWebsiteLocaleContext';
+import { resolveLocalizedText } from '@/features/website/utils/localized-text.utils';
+import { resolveWebsiteCtaHref } from '@/features/website/utils/link-resolution.utils';
 import {
   matchesFaqFilter,
   useFaqFilter,
-} from '../../modern-education/t1-faq-filter';
-import type { SectionRenderProps } from '../../theme-packs/theme-pack.types';
+} from '@/features/website/modern-education/t1-faq-filter';
+import type { SectionRenderProps } from '@/features/website/theme-packs/theme-pack.types';
 import {
   AtelierChapter,
   AtelierHeading,
@@ -113,7 +113,11 @@ export function AtelierFaq({
     : undefined;
   const more =
     config.cta && ctaLabel ? (
-      <AtelierLink href={ctaHref} linkRenderer={linkRenderer} className="at-link">
+      <AtelierLink
+        href={ctaHref}
+        linkRenderer={linkRenderer}
+        className="at-link"
+      >
         {ctaLabel}
       </AtelierLink>
     ) : null;
