@@ -1,6 +1,6 @@
 # Theme 2 — "Atelier": plan and contract
 
-Status: implementation in progress (started 2026-10-04). Branch `claude/confident-bardeen-s216dw` in both repos.
+Status: implemented and verified (2026-10-04); see §8. Branch `claude/confident-bardeen-s216dw` in both repos.
 Theme key: **`atelier`** (kebab-case slug, the convention `modern-education` set; not one of the retired keys
 `premium-academy`, `corporate-learning`, `minimal-editorial`, `bold-creative`).
 
@@ -136,6 +136,39 @@ related courses) built on `useCourseDetails`; 404 and Coming Soon as typographic
 1. Foundation (F) → 2. parallel B, H, P, O, A → 3. integration + i18n merge → 4. QA, fixes, visual refinement →
 5. PRs (backend first), merge, deploy, production verification.
 
-## 8. Results
+## 8. Results (4 Oct 2026)
 
-(Recorded at the end of the work.)
+**Delivered.** `atelier` is a selectable theme in both repos (no migration; index 0 stays the default) with a bilingual
+starter template. The pack draws all 16 section types, its own header/footer/auth frame, page intro, Course Details,
+404 and Coming Soon; the brand mapping re-solves every text/fill pair on its paper and ink grounds (99 matrix tests).
+Onboarding shows live previews of both themes (real renderer); the builder's theme tab previews and switches them.
+14 Magnific photographs (`atelier/v1`) plus a higher-resolution hero release (`atelier/v2`, up to 3200w from the 3712px
+master — no upscaling).
+
+**Cinematic scroll (added on request).** Four CSS scroll-driven scenes (view timelines + sticky pinning, no scroll
+listeners, no dependency): Opening (the arch becomes a full-window photograph, Chapter I slides over it), Method (the
+steps advance sideways through the thread; the optional steps plate uncovers step by step), Into the ink (ink rises
+through an arched window, real figures rise in turn), Closing (the plate pulls back, the thread ends). Gated by
+scroll-timeline support (Chrome/Edge 115+, Safari 26+; Firefox static), no reduced motion, em-based viewport gates,
+public runtime only. Three safety layers keep CMS content from breaking a scene: a pure SSR-safe content budget, the
+em gates, and a ResizeObserver fit check — anything over budget renders the static layout, never clipped.
+
+**Content limits.** Layout-critical section copy is capped on the shared section contract (all themes; table in
+`Reports/ARCHITECTURE.md` → "Content limits"), enforced by the builder (live counters, field-level errors, a page notice
+for content saved before the limits) and by the backend on every page write (path-level violations). Existing content is
+never truncated; reads, reorder and publish keep working. `steps` gained an optional `image`/`imageAlt` (offered for
+Atelier only).
+
+**Quality.** Theme-baseline: Theme 1 and Themes 2–5 pixel-identical; 123 Atelier screenshots (EN/AR, 1440/1024/390,
+11 brand palettes) recorded under real reduced motion; axe 0 violations on all 40 Atelier cases. The harness's reduced
+motion now really reaches the browser (`harness.spec.ts`); legacy cases keep the condition they were recorded under —
+under real reduced motion 80 Theme 1 Home/About screenshots differ only by below-the-fold reveals now drawn (same
+layout and height, axe unchanged), reported rather than re-recorded. Cinematic and content-limit browser specs cover
+motion/reduced/unsupported, 390, AR, reverse scroll, boundaries, focus.
+
+**Performance** (Lighthouse 13.5, mobile simulated throttling, median of 3, same machine): Theme 1 Home on `main`
+LCP 4.47 s / perf 75 → on this branch 4.69 s / 73; Atelier Home LCP 4.89 s / perf 66–70, CLS ≤ 0.010 (catalogue 0.080).
+Desktop unthrottled LCP 0.44–0.49 s. The plan's 2.5 s LCP target is not met under simulated mobile throttling by any
+theme (Theme 1 was already 4.4 s); every public site now carries Atelier's code (+29 KB JS, +9 KB CSS transferred)
+because the pack registry is static — follow-up: lazy-load packs per theme (SSR preloads the active pack before render).
+
