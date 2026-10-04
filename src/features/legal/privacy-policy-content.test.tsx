@@ -79,9 +79,9 @@ describe('Privacy Policy content', () => {
     }
   });
 
-  it('carries the 5 October 2026 revision date', () => {
-    expect(PRIVACY_POLICY_EN.lastUpdated).toBe('5 October 2026');
-    expect(PRIVACY_POLICY_AR.lastUpdated).toBe('٥ أكتوبر ٢٠٢٦');
+  it('carries the 4 October 2026 revision date', () => {
+    expect(PRIVACY_POLICY_EN.lastUpdated).toBe('4 October 2026');
+    expect(PRIVACY_POLICY_AR.lastUpdated).toBe('٤ أكتوبر ٢٠٢٦');
   });
 
   it('distinguishes the older unkeyed trial records from the keyed ones (EN + AR)', () => {

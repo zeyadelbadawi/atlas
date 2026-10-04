@@ -364,7 +364,7 @@ test.describe('J41 — gifted setup days on the first paid subscription', () => 
           variant.language === 'ar' ? 'rtl' : 'ltr'
         );
         await expect(article).toContainText(
-          variant.language === 'ar' ? '٥ أكتوبر ٢٠٢٦' : '5 October 2026'
+          variant.language === 'ar' ? '٤ أكتوبر ٢٠٢٦' : '4 October 2026'
         );
         const heading = page.locator('#eligibility-records h2');
         await expect(heading).toHaveText(

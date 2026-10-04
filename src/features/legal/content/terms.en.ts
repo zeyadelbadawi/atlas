@@ -24,7 +24,7 @@ export const TERMS_EN: LegalDocument = {
   title: 'Terms of Service',
   summary: 'The terms on which you may use the Atlas platform.',
   effectiveDate: '11 September 2026',
-  lastUpdated: '5 October 2026',
+  lastUpdated: '4 October 2026',
   sections: [
     {
       id: 'acceptance',

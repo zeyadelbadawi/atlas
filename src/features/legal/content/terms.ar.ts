@@ -12,7 +12,7 @@ export const TERMS_AR: LegalDocument = {
   title: 'شروط الخدمة',
   summary: 'الشروط التي يمكنك بموجبها استخدام منصة أطلس.',
   effectiveDate: '١١ سبتمبر ٢٠٢٦',
-  lastUpdated: '٥ أكتوبر ٢٠٢٦',
+  lastUpdated: '٤ أكتوبر ٢٠٢٦',
   sections: [
     {
       id: 'acceptance',

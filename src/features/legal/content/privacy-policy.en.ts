@@ -54,7 +54,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
   summary:
     'How Atlas collects, uses, and protects personal data when you use the Atlas platform.',
   effectiveDate: '11 September 2026',
-  lastUpdated: '5 October 2026',
+  lastUpdated: '4 October 2026',
   sections: [
     {
       id: 'who-we-are',

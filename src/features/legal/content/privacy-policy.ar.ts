@@ -13,7 +13,7 @@ export const PRIVACY_POLICY_AR: LegalDocument = {
   summary:
     'كيف يجمع أطلس البيانات الشخصية ويستخدمها ويحميها عند استخدامك للمنصة.',
   effectiveDate: '١١ سبتمبر ٢٠٢٦',
-  lastUpdated: '٥ أكتوبر ٢٠٢٦',
+  lastUpdated: '٤ أكتوبر ٢٠٢٦',
   sections: [
     {
       id: 'who-we-are',
