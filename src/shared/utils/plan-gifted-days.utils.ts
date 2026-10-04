@@ -67,15 +67,36 @@ export interface PlanCycleGift {
 }
 
 /**
+ * The catalog price (major units) of one billing cycle — `yearlyAmount`
+ * beside a monthly price, otherwise `amount` — or `undefined` when the
+ * catalog records none. The same pairing the checkout uses.
+ */
+export function planCyclePrice(
+  pricing: PlanPricingMetadata | undefined,
+  cycle: SubscriptionBillingCycle
+): number | undefined {
+  if (!pricing) return undefined;
+  if (cycle === 'yearly' && pricing.billingCycle === 'monthly') {
+    return pricing.yearlyAmount;
+  }
+  return pricing.amount;
+}
+
+/**
  * Every cycle a plan can be bought at that comes with gifted days, in
- * monthly → yearly order. Empty when the plan offers none (including a free
- * plan, which never becomes a paid subscription), so callers render nothing.
+ * monthly → yearly order. A cycle counts only when the catalog gives it a
+ * real, nonzero price: a free or unpriced cycle never becomes a paid
+ * subscription, so it can never carry the gift. Empty when nothing
+ * qualifies, so callers render nothing.
  */
 export function planCycleGifts(
   plan: Pick<Plan, 'giftedDaysMonthly' | 'giftedDaysYearly' | 'pricing'>
 ): readonly PlanCycleGift[] {
-  if (plan.pricing?.amount === 0) return [];
   return planBillingCycles(plan.pricing).flatMap((cycle) => {
+    const price = planCyclePrice(plan.pricing, cycle);
+    if (typeof price !== 'number' || !Number.isFinite(price) || price <= 0) {
+      return [];
+    }
     const days = planGiftedDaysFor(plan, cycle);
     return days === null ? [] : [{ cycle, days }];
   });

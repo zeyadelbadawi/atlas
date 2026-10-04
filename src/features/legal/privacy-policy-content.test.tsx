@@ -103,9 +103,28 @@ describe('Privacy Policy content', () => {
     expect(en).toContain('365 days');
     expect(en).toContain('15 days');
     const ar = sectionText(PRIVACY_POLICY_AR, 'retention');
-    for (const figure of ['٢٤ ساعة', '١٨٠ يومًا', '٩٠ يومًا', '٣٦٥ يومًا']) {
+    for (const figure of [
+      '٢٤ ساعة',
+      '١٨٠ يومًا',
+      '٩٠ يومًا',
+      '٣٦٥ يومًا',
+      '١٥ يومًا',
+    ]) {
       expect(ar).toContain(figure);
     }
+  });
+
+  it('states how long the do-not-email list and academy messages are kept', () => {
+    const en = sectionText(PRIVACY_POLICY_EN, 'retention');
+    expect(en).toContain('Do-not-email list');
+    expect(en).toContain('until an Atlas platform administrator removes it');
+    expect(en).toContain('Messages from academies');
+    expect(en).toContain('not currently deleted automatically');
+    const ar = sectionText(PRIVACY_POLICY_AR, 'retention');
+    expect(ar).toContain('قائمة عدم المراسلة');
+    expect(ar).toContain('إلى أن يزيلها أحد مسؤولي منصة أطلس');
+    expect(ar).toContain('رسائل الأكاديميات');
+    expect(ar).toContain('ولا تُحذف حاليًا بشكل تلقائي');
   });
 
   it('explains what deletion removes and what it keeps (EN + AR)', () => {

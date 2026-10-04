@@ -12,7 +12,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen, within } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import { createI18nInstance } from '@/localization/i18n';
-import { planBillingCycles, planCatalogHasGifts, planCycleGifts } from '@utils';
+import {
+  planBillingCycles,
+  planCatalogHasGifts,
+  planCycleGifts,
+  planCyclePrice,
+} from '@utils';
 import type { Plan } from '@types';
 import {
   GiftedDaysExplainer,
@@ -137,6 +142,69 @@ describe('plan gift helpers (@utils)', () => {
     expect(planCatalogHasGifts([NONE])).toBe(false);
     expect(planCatalogHasGifts([NONE, BOTH])).toBe(true);
   });
+
+  it('pairs each cycle with its own catalog price', () => {
+    expect(planCyclePrice(BOTH.pricing, 'monthly')).toBe(49);
+    expect(planCyclePrice(BOTH.pricing, 'yearly')).toBe(490);
+    expect(
+      planCyclePrice({ billingCycle: 'yearly', amount: 300 }, 'yearly')
+    ).toBe(300);
+    expect(planCyclePrice(undefined, 'monthly')).toBeUndefined();
+  });
+
+  it('needs a nonzero price for the cycle before offering its gift', () => {
+    const gifts = { giftedDaysMonthly: 7, giftedDaysYearly: 14 };
+    // No pricing at all, or no amount: no monthly gift.
+    expect(
+      planCycleGifts(
+        makePlan({ key: 'unpriced', pricing: undefined, ...gifts })
+      )
+    ).toEqual([]);
+    expect(
+      planCycleGifts(
+        makePlan({
+          key: 'no-amount',
+          pricing: { currency: 'USD', billingCycle: 'monthly' },
+          ...gifts,
+        })
+      )
+    ).toEqual([]);
+    // A zero yearly price: monthly keeps its gift, yearly gets none.
+    expect(
+      planCycleGifts(
+        makePlan({
+          key: 'zero-yearly',
+          pricing: {
+            amount: 29,
+            currency: 'USD',
+            billingCycle: 'monthly',
+            yearlyAmount: 0,
+          },
+          ...gifts,
+        })
+      )
+    ).toEqual([{ cycle: 'monthly', days: 7 }]);
+    // A yearly-priced plan with a real price keeps its yearly gift.
+    expect(
+      planCycleGifts(
+        makePlan({
+          key: 'yearly',
+          pricing: { amount: 300, currency: 'USD', billingCycle: 'yearly' },
+          ...gifts,
+        })
+      )
+    ).toEqual([{ cycle: 'yearly', days: 14 }]);
+  });
+
+  it('ignores unpriced offers when deciding whether the catalog has gifts', () => {
+    const unpriced = makePlan({
+      key: 'contact-us',
+      pricing: undefined,
+      giftedDaysMonthly: 7,
+      giftedDaysYearly: 14,
+    });
+    expect(planCatalogHasGifts([NONE, unpriced])).toBe(false);
+  });
 });
 
 describe('PlanGiftedDays (plan card)', () => {
@@ -230,6 +298,22 @@ describe('PricingPage — gifted days from the catalog', () => {
     expect(within(row).getAllByRole('cell')).toHaveLength(3);
     expect(row.textContent).toContain('Monthly billing: 5 days');
     expect(screen.getByTestId('pricing-gifted-days')).toBeTruthy();
+  });
+
+  it('hides the row and explainer when only unpriced plans carry a gift', () => {
+    plansState.data = [
+      NONE,
+      makePlan({
+        key: 'contact-us',
+        pricing: undefined,
+        giftedDaysMonthly: 7,
+        giftedDaysYearly: 14,
+      }),
+    ];
+    withI18n(<PricingPage />);
+    expect(screen.queryByTestId('marketing-plan-gift-contact-us')).toBeNull();
+    expect(screen.queryByTestId('pricing-comparison-gift-row')).toBeNull();
+    expect(screen.queryByTestId('pricing-gifted-days')).toBeNull();
   });
 
   it('says nothing about gifted days when no plan offers any', () => {

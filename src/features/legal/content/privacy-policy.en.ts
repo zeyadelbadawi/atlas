@@ -436,6 +436,16 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
                 'Email delivery records, and the queue records used to send emails, are deleted after 90 days. In-app notifications are deleted after 180 days, or after 365 days for billing, security and account notifications.',
             },
             {
+              term: 'Do-not-email list',
+              detail:
+                'A hashed address stays on the list until an Atlas platform administrator removes it. It is not deleted automatically, and it is not removed when an account is deleted.',
+            },
+            {
+              term: 'Messages from academies',
+              detail:
+                'Each message and its recipient list are kept in the academy’s message history. They are not currently deleted automatically, and they remain after an academy is archived; if a recipient deletes their account, their entry stays linked to the anonymised account. The individual email records created to deliver a message are deleted after 90 days, as described above.',
+            },
+            {
               term: 'Page performance measurements',
               detail:
                 'Aggregate counts only, deleted automatically after 15 days.',
