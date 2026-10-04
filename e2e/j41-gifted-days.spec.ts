@@ -364,7 +364,7 @@ test.describe('J41 — gifted setup days on the first paid subscription', () => 
           variant.language === 'ar' ? 'rtl' : 'ltr'
         );
         await expect(article).toContainText(
-          variant.language === 'ar' ? '٤ أكتوبر ٢٠٢٦' : '4 October 2026'
+          variant.language === 'ar' ? '٥ أكتوبر ٢٠٢٦' : '5 October 2026'
         );
         const heading = page.locator('#eligibility-records h2');
         await expect(heading).toHaveText(
@@ -379,6 +379,65 @@ test.describe('J41 — gifted setup days on the first paid subscription', () => 
     } finally {
       await setStoredLanguage(page, 'en');
       await context.close();
+    }
+  });
+
+  test('1d: the Terms and the pricing FAQ describe the free trial truthfully (EN + AR, desktop + phone)', async ({
+    browser,
+  }) => {
+    test.setTimeout(180_000);
+    // One fresh context per page: eight full reloads of the dev-server app
+    // in a single page can exhaust the browser's resources.
+    const termsContext = await browser.newContext();
+    const terms = await termsContext.newPage();
+    try {
+      await seedCookieDecision(terms);
+      await terms.goto('/terms');
+      for (const variant of VARIANTS) {
+        await applyVariant(terms, variant);
+        const trials = terms.locator('#trials');
+        await expect(trials).toContainText(
+          variant.language === 'ar'
+            ? 'تبدأ الفترة التجريبية لتلك الخطة عند إنشاء حسابك'
+            : 'the trial of that plan starts when your account is created',
+          { timeout: 30_000 }
+        );
+        await expect(trials).not.toContainText(
+          variant.language === 'ar'
+            ? 'ولا تبدأ تلقائيًا'
+            : 'does not begin automatically'
+        );
+        await expectNoSidewaysScroll(terms);
+      }
+    } finally {
+      await setStoredLanguage(terms, 'en');
+      await termsContext.close();
+    }
+
+    const pricingContext = await browser.newContext();
+    const pricing = await pricingContext.newPage();
+    try {
+      await seedCookieDecision(pricing);
+      await pricing.goto('/pricing');
+      for (const variant of VARIANTS) {
+        await applyVariant(pricing, variant);
+        const faq = pricing.getByText(
+          variant.language === 'ar'
+            ? 'تتضمن بعض الخطط فترة تجريبية مجانية'
+            : 'Some plans include a free trial',
+          { exact: false }
+        );
+        await expect(faq).toBeVisible({ timeout: 30_000 });
+        await expect(pricing.locator('body')).not.toContainText(
+          variant.language === 'ar'
+            ? 'تبدأ كل خطة بتجربة مجانية'
+            : 'Every plan starts with a free trial'
+        );
+        await expectNoSidewaysScroll(pricing);
+      }
+    } finally {
+      await setStoredLanguage(pricing, 'en');
+      await pricingContext.close();
     }
   });
 

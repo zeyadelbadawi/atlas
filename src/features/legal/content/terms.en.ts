@@ -11,8 +11,9 @@
  * as decisions requiring the business and a lawyer.
  *
  * Everything that IS stated was checked against the running product:
- * one free trial per customer, trial and subscription cancellation
- * behaviour, account and academy deletion, role model, and the
+ * one free trial per customer, the signup trial (granted when an eligible
+ * owner picks a trial plan at registration), trial and subscription
+ * cancellation behaviour, manual-transfer payment and the receipt email, account and academy deletion, role model, and the
  * anti-abuse rules.
  *
  * This is an implementation draft and requires qualified legal review.
@@ -23,7 +24,7 @@ export const TERMS_EN: LegalDocument = {
   title: 'Terms of Service',
   summary: 'The terms on which you may use the Atlas platform.',
   effectiveDate: '11 September 2026',
-  lastUpdated: '11 September 2026',
+  lastUpdated: '5 October 2026',
   sections: [
     {
       id: 'acceptance',
@@ -151,7 +152,8 @@ export const TERMS_EN: LegalDocument = {
         {
           kind: 'list',
           items: [
-            'A free trial is available once per customer. It is started deliberately, from the Plans page — it does not begin automatically when you create an account or an academy.',
+            'A free trial is available once per customer, and only on plans that include one. Free trials may also be unavailable at times.',
+            'If you choose a plan that includes a free trial when you sign up, and your email address has not been used for a free trial before, the trial of that plan starts when your account is created. Otherwise, an organization owner who is still eligible can start a trial from the Plans page. Creating an academy never starts a trial.',
             'Eligibility is determined by Atlas and is based on the email address of the account starting the trial. Creating another account, organization, or academy does not create a new entitlement.',
             'Deleting an account or an academy does not restore trial eligibility, and neither does cancelling, changing, or letting a subscription lapse.',
             'No payment card is required to start a trial, and a trial does not convert into a paid subscription by itself.',
@@ -170,7 +172,9 @@ export const TERMS_EN: LegalDocument = {
           items: [
             'Paid plans are billed according to the billing cycle shown when you subscribe.',
             'Plan limits — such as the number of academies, students, or instructors — are enforced by Atlas.',
-            'Payments are handled by the configured payment provider. Atlas does not store your card details.',
+            'Subscriptions are currently paid by manual transfer — bank transfer, mobile wallet or InstaPay — and a subscription starts or renews once Atlas has confirmed the payment. Atlas does not collect your card details.',
+            'When a payment for a plan is confirmed, the organization owner receives an email receipt with the subscription period.',
+            'On plans and billing cycles that include them, gifted setup days are added before the paid period on a customer’s first paid subscription. They are given once per customer, are free, and are not taken from the period you paid for.',
             'You are responsible for any taxes that apply to your purchase unless we state otherwise.',
           ],
         },
@@ -235,7 +239,7 @@ export const TERMS_EN: LegalDocument = {
       blocks: [
         {
           kind: 'paragraph',
-          text: 'Atlas relies on third parties for hosting, content delivery, storage, email delivery, error monitoring, and payments. Their availability and their own terms can affect the service. Content you link to from your courses is outside our control.',
+          text: 'Atlas relies on third parties for hosting, content delivery, storage, email delivery, sign-in with Google, live video sessions and error monitoring, and you make manual transfers through your own bank, wallet or payment provider. Their availability and their own terms can affect the service. Content you link to from your courses is outside our control.',
         },
       ],
     },
