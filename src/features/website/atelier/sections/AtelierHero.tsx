@@ -10,7 +10,10 @@
  *   the spread; the thread starts under them and runs on into Chapter I.
  *
  * Motion: the supporting lines rise once after load (`at-enter`); the
- * headline — the LCP element — is never animated.
+ * headline is never animated at load. On the public site the spread is the
+ * opening scene (`cinematic/`): pinned on large screens, the arch opens to
+ * the full window as the copy recedes, then Chapter I slides over it. Its
+ * first frame is this spread exactly.
  */
 import { useId, useState, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -31,7 +34,16 @@ import {
   AtelierMedia,
   formatAtelierIndex,
 } from '../atelier-parts';
+import { AtelierScene } from '../cinematic/AtelierScene';
+import { isCinematicRuntime } from '../cinematic/cinematic-runtime';
 import '../atelier-sections.css';
+
+/**
+ * The arch's image sizes. In the opening scene the image grows to the full
+ * window on large screens, so it asks for a full-width file there.
+ */
+const HERO_SIZES = '(min-width: 1024px) 30vw, (min-width: 640px) 28rem, 100vw';
+const HERO_SCENE_SIZES = `(min-width: 1024px) and (min-height: 720px) and (min-aspect-ratio: 1/1) and (prefers-reduced-motion: no-preference) 100vw, ${HERO_SIZES}`;
 
 /** The staggered entrance for one supporting element. */
 function enter(index: number): { className: string; style: CSSProperties } {
@@ -126,6 +138,10 @@ export function AtelierHero({
   const hasActions = !!config.cta || !!config.secondaryCta;
   const showSearch = !!config.showSearch && !!resolveCatalogHref(pages);
   const hasImage = !!config.image;
+  // The opening scene is the arch opening: only for the hero that opens
+  // the page, and only with an image.
+  const cinematic =
+    isCinematicRuntime(linkRenderer) && hasImage && headingLevel === 'h1';
 
   let index = 0;
   const next = () => enter(index++);
@@ -136,131 +152,137 @@ export function AtelierHero({
   const searchIndex = showSearch ? index++ : 0;
 
   return (
-    <AtelierChapter labelledBy={headingId} thread="start" className="ath-hero">
-      <div
-        className={cn(
-          'grid gap-12 lg:grid-cols-12 lg:gap-x-10',
-          hasImage && 'lg:items-end'
-        )}
+    <AtelierScene name="opening" enabled={cinematic}>
+      <AtelierChapter
+        labelledBy={headingId}
+        thread="start"
+        className="ath-hero"
       >
         <div
           className={cn(
-            'min-w-0 space-y-10',
-            hasImage ? 'lg:col-span-8' : 'lg:col-span-12'
+            'grid gap-12 lg:grid-cols-12 lg:gap-x-10',
+            hasImage && 'lg:items-end'
           )}
         >
-          <div className="space-y-6">
-            {eyebrowMotion ? (
-              <p
-                className={cn(
-                  'at-label at-label-brand',
-                  eyebrowMotion.className
-                )}
-                style={eyebrowMotion.style}
+          <div
+            className={cn(
+              'ath-hero-copy min-w-0 space-y-10',
+              hasImage ? 'lg:col-span-8' : 'lg:col-span-12'
+            )}
+          >
+            <div className="space-y-6">
+              {eyebrowMotion ? (
+                <p
+                  className={cn(
+                    'at-label at-label-brand',
+                    eyebrowMotion.className
+                  )}
+                  style={eyebrowMotion.style}
+                >
+                  {eyebrow}
+                </p>
+              ) : null}
+              <AtelierHeading
+                as={headingLevel}
+                id={headingId}
+                size="display"
+                highlight={resolveLocalizedText(config.highlight, locale)}
+                className={hasImage ? undefined : 'max-w-[14ch]'}
               >
-                {eyebrow}
-              </p>
+                {resolveLocalizedText(config.title, locale)}
+              </AtelierHeading>
+            </div>
+            {asideMotion || highlightsMotion ? (
+              // Under the headline: the highlights on the start half, the
+              // subtitle and description in the narrow end column. On phones
+              // the description comes first.
+              <div className="grid gap-8 md:grid-cols-2 md:gap-10">
+                {asideMotion ? (
+                  <div
+                    className={cn(
+                      'space-y-4 md:col-start-2 md:row-start-1',
+                      asideMotion.className
+                    )}
+                    style={asideMotion.style}
+                  >
+                    {subtitle ? (
+                      <p className="at-serif ath-hero-subtitle">{subtitle}</p>
+                    ) : null}
+                    {description ? (
+                      <p className="at-lead">{description}</p>
+                    ) : null}
+                  </div>
+                ) : null}
+                {highlightsMotion ? (
+                  <ol
+                    className={cn(
+                      'ath-hero-highlights md:col-start-1 md:row-start-1',
+                      highlightsMotion.className
+                    )}
+                    style={highlightsMotion.style}
+                  >
+                    {highlights.map((item, position) => (
+                      <li key={item.id}>
+                        <span aria-hidden className="at-numeral">
+                          {formatAtelierIndex(position, locale)}
+                        </span>
+                        <span className="min-w-0">{item.label}</span>
+                      </li>
+                    ))}
+                  </ol>
+                ) : null}
+              </div>
             ) : null}
-            <AtelierHeading
-              as={headingLevel}
-              id={headingId}
-              size="display"
-              highlight={resolveLocalizedText(config.highlight, locale)}
-              className={hasImage ? undefined : 'max-w-[14ch]'}
-            >
-              {resolveLocalizedText(config.title, locale)}
-            </AtelierHeading>
+            {actionsMotion ? (
+              <div
+                className={cn(
+                  'flex flex-wrap items-center gap-3',
+                  actionsMotion.className
+                )}
+                style={actionsMotion.style}
+              >
+                <AtelierAction
+                  cta={config.cta}
+                  pages={pages}
+                  linkRenderer={linkRenderer}
+                  large
+                />
+                <AtelierAction
+                  cta={config.secondaryCta}
+                  pages={pages}
+                  linkRenderer={linkRenderer}
+                  variant="ghost"
+                  large
+                  arrow={false}
+                />
+              </div>
+            ) : null}
+            {showSearch ? (
+              linkRenderer && inRouter ? (
+                <RoutedSearchField pages={pages} enterIndex={searchIndex} />
+              ) : (
+                // Previews show the search without navigating anywhere.
+                <SearchField
+                  enterIndex={searchIndex}
+                  onSearch={() => undefined}
+                />
+              )
+            ) : null}
           </div>
-          {asideMotion || highlightsMotion ? (
-            // Under the headline: the highlights on the start half, the
-            // subtitle and description in the narrow end column. On phones
-            // the description comes first.
-            <div className="grid gap-8 md:grid-cols-2 md:gap-10">
-              {asideMotion ? (
-                <div
-                  className={cn(
-                    'space-y-4 md:col-start-2 md:row-start-1',
-                    asideMotion.className
-                  )}
-                  style={asideMotion.style}
-                >
-                  {subtitle ? (
-                    <p className="at-serif ath-hero-subtitle">{subtitle}</p>
-                  ) : null}
-                  {description ? (
-                    <p className="at-lead">{description}</p>
-                  ) : null}
-                </div>
-              ) : null}
-              {highlightsMotion ? (
-                <ol
-                  className={cn(
-                    'ath-hero-highlights md:col-start-1 md:row-start-1',
-                    highlightsMotion.className
-                  )}
-                  style={highlightsMotion.style}
-                >
-                  {highlights.map((item, position) => (
-                    <li key={item.id}>
-                      <span aria-hidden className="at-numeral">
-                        {formatAtelierIndex(position, locale)}
-                      </span>
-                      <span className="min-w-0">{item.label}</span>
-                    </li>
-                  ))}
-                </ol>
-              ) : null}
-            </div>
-          ) : null}
-          {actionsMotion ? (
-            <div
-              className={cn(
-                'flex flex-wrap items-center gap-3',
-                actionsMotion.className
-              )}
-              style={actionsMotion.style}
-            >
-              <AtelierAction
-                cta={config.cta}
-                pages={pages}
-                linkRenderer={linkRenderer}
-                large
-              />
-              <AtelierAction
-                cta={config.secondaryCta}
-                pages={pages}
-                linkRenderer={linkRenderer}
-                variant="ghost"
-                large
-                arrow={false}
-              />
-            </div>
-          ) : null}
-          {showSearch ? (
-            linkRenderer && inRouter ? (
-              <RoutedSearchField pages={pages} enterIndex={searchIndex} />
-            ) : (
-              // Previews show the search without navigating anywhere.
-              <SearchField
-                enterIndex={searchIndex}
-                onSearch={() => undefined}
-              />
-            )
+
+          {hasImage ? (
+            <AtelierMedia
+              priority
+              settle
+              shape="arch"
+              value={config.image}
+              alt={resolveLocalizedText(config.imageAlt, locale)}
+              sizes={cinematic ? HERO_SCENE_SIZES : HERO_SIZES}
+              className="ath-hero-media aspect-[4/5] lg:col-span-4"
+            />
           ) : null}
         </div>
-
-        {hasImage ? (
-          <AtelierMedia
-            priority
-            settle
-            shape="arch"
-            value={config.image}
-            alt={resolveLocalizedText(config.imageAlt, locale)}
-            sizes="(min-width: 1024px) 30vw, (min-width: 640px) 28rem, 100vw"
-            className="ath-hero-media aspect-[4/5] lg:col-span-4"
-          />
-        ) : null}
-      </div>
-    </AtelierChapter>
+      </AtelierChapter>
+    </AtelierScene>
   );
 }

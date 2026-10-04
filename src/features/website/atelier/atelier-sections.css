@@ -648,6 +648,12 @@
 /* Statistics — giant numerals in ink                                   */
 /* ------------------------------------------------------------------ */
 
+/* Headings in an ink chapter take the ink text colour (the app's base
+   heading colour is the paper text, unreadable on ink). */
+[data-theme-pack='atelier'] [data-env='ink'] :is(.at-title, .at-subtitle) {
+  color: var(--atelier-ink-text);
+}
+
 [data-theme-pack='atelier'] .ath-stats {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

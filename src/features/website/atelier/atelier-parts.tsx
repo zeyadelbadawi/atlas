@@ -42,6 +42,8 @@ export type AtelierEnv = 'paper' | 'deep' | 'ink';
  *   `--at-thread-end` (the closing chapter, where the thread ends in a knot);
  *   `'none'` draws no thread (system pages).
  * - `unveil`: an ink chapter opens like a window as it scrolls in.
+ * - `backdrop`: a decorative layer drawn behind the chapter's content, across
+ *   its full width (a cinematic scene's ink window, `cinematic/`).
  */
 export function AtelierChapter({
   env = 'paper',
@@ -51,6 +53,7 @@ export function AtelierChapter({
   thread = 'full',
   unveil = false,
   flushTop = false,
+  backdrop,
   className,
   bodyClassName,
   style,
@@ -65,6 +68,7 @@ export function AtelierChapter({
   readonly thread?: 'full' | 'start' | 'end' | 'none';
   readonly unveil?: boolean;
   readonly flushTop?: boolean;
+  readonly backdrop?: ReactNode;
   readonly className?: string;
   readonly bodyClassName?: string;
   readonly style?: CSSProperties;
@@ -82,6 +86,7 @@ export function AtelierChapter({
       className={cn('at-chapter', className)}
       style={style}
     >
+      {backdrop}
       {thread !== 'none' ? (
         <span
           aria-hidden

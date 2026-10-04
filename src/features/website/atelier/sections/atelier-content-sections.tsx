@@ -5,7 +5,7 @@
  * sheet (`gallery`). Each composes as a page of a studio publication —
  * numbered chapters, hairlines and type — rather than cards.
  */
-import { useId } from 'react';
+import { useId, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@utils';
 import { usePublicWebsiteLocale } from '@/features/website/renderer/PublicWebsiteLocaleContext';
@@ -21,6 +21,8 @@ import {
   AtelierSectionHeader,
   formatAtelierIndex,
 } from '../atelier-parts';
+import { AtelierScene } from '../cinematic/AtelierScene';
+import { isCinematicRuntime } from '../cinematic/cinematic-runtime';
 import { stagger } from './atelier-stagger';
 import '../atelier-sections.css';
 
@@ -261,8 +263,12 @@ const TRACK_COLUMNS: Record<number, string> = {
   4: 'lg:grid-cols-4',
 };
 
+/** The method scene needs a track long enough to travel along. */
+const MIN_SCENE_STEPS = 3;
+
 export function AtelierSteps({
   config,
+  linkRenderer,
 }: SectionRenderProps<'steps'>): JSX.Element | null {
   const { locale } = usePublicWebsiteLocale();
   const headingId = useId();
@@ -275,43 +281,75 @@ export function AtelierSteps({
     }))
     .filter((item) => item.title);
   if (items.length === 0) return null;
+  // On the public site three or more steps become the method scene: the
+  // chapter pins and the syllabus travels sideways along the thread.
+  const cinematic =
+    isCinematicRuntime(linkRenderer) && items.length >= MIN_SCENE_STEPS;
+
+  const syllabus = (
+    <ol
+      className={cn(
+        'ath-syllabus',
+        TRACK_COLUMNS[items.length] ?? 'lg:grid-cols-3'
+      )}
+    >
+      {items.map((item, index) => (
+        <li
+          key={item.id}
+          className="ath-syllabus-step"
+          style={cinematic ? ({ '--at-i': index } as CSSProperties) : undefined}
+        >
+          <span aria-hidden className="ath-syllabus-knot" />
+          <Reveal delayMs={stagger(index)} className="space-y-3">
+            <span aria-hidden className="at-numeral ath-syllabus-no">
+              {formatAtelierIndex(index, locale)}
+            </span>
+            <h3 className="at-serif ath-item-title">{item.title}</h3>
+            {item.description ? (
+              <p className="ath-item-text">{item.description}</p>
+            ) : null}
+          </Reveal>
+        </li>
+      ))}
+    </ol>
+  );
 
   return (
-    <AtelierChapter
-      env="deep"
-      labelledBy={title ? headingId : undefined}
-      numbered
+    <AtelierScene
+      name="method"
+      enabled={cinematic}
+      style={{ '--at-steps': items.length } as CSSProperties}
     >
-      <AtelierSectionHeader
-        id={headingId}
-        title={title}
-        description={resolveLocalizedText(config.description, locale)}
-        layout="split"
-      />
-      {/* On desktop the thread turns sideways through each step's knot;
-          on phones the steps hang from a vertical line. */}
-      <ol
-        className={cn(
-          'ath-syllabus',
-          TRACK_COLUMNS[items.length] ?? 'lg:grid-cols-3'
-        )}
+      <AtelierChapter
+        env="deep"
+        labelledBy={title ? headingId : undefined}
+        numbered
       >
-        {items.map((item, index) => (
-          <li key={item.id} className="ath-syllabus-step">
-            <span aria-hidden className="ath-syllabus-knot" />
-            <Reveal delayMs={stagger(index)} className="space-y-3">
-              <span aria-hidden className="at-numeral ath-syllabus-no">
-                {formatAtelierIndex(index, locale)}
-              </span>
-              <h3 className="at-serif ath-item-title">{item.title}</h3>
-              {item.description ? (
-                <p className="ath-item-text">{item.description}</p>
-              ) : null}
-            </Reveal>
-          </li>
-        ))}
-      </ol>
-    </AtelierChapter>
+        <AtelierSectionHeader
+          id={headingId}
+          title={title}
+          description={resolveLocalizedText(config.description, locale)}
+          layout="split"
+        />
+        {/* On desktop the thread turns sideways through each step's knot;
+            on phones the steps hang from a vertical line. In the scene the
+            track (with its drawn thread) slides under a window that opens
+            at the margin thread, where passing steps fade out. */}
+        {cinematic ? (
+          <div className="atc-track-frame">
+            <div className="atc-track-window">
+              <div className="atc-track">
+                <span aria-hidden className="atc-track-guide" />
+                <span aria-hidden className="atc-track-line" />
+                {syllabus}
+              </div>
+            </div>
+          </div>
+        ) : (
+          syllabus
+        )}
+      </AtelierChapter>
+    </AtelierScene>
   );
 }
 
@@ -329,58 +367,66 @@ export function AtelierCta({
   const description = resolveLocalizedText(config.description, locale);
   const hasImage = !!config.image;
 
+  // The closing scene (public site): the plate pulls back into its frame
+  // and the knot fills as the thread arrives. Not pinned.
   return (
-    <AtelierChapter
-      env="ink"
-      labelledBy={headingId}
-      thread="end"
-      className="ath-cta"
+    <AtelierScene
+      name="closing"
+      enabled={isCinematicRuntime(linkRenderer)}
+      pinned={false}
     >
-      <div
-        className={cn(
-          'grid gap-12',
-          hasImage && 'lg:grid-cols-12 lg:items-end lg:gap-10'
-        )}
+      <AtelierChapter
+        env="ink"
+        labelledBy={headingId}
+        thread="end"
+        className="ath-cta"
       >
         <div
-          className={cn('ath-cta-text min-w-0', hasImage && 'lg:col-span-7')}
+          className={cn(
+            'grid gap-12',
+            hasImage && 'lg:grid-cols-12 lg:items-end lg:gap-10'
+          )}
         >
-          {/* The thread's last knot, filled: the path arrives here. */}
-          <span aria-hidden className="at-knot ath-cta-knot" data-filled="" />
-          <div className="space-y-8">
-            <AtelierHeading id={headingId} size="display">
-              {resolveLocalizedText(config.title, locale)}
-            </AtelierHeading>
-            {description ? <p className="at-lead">{description}</p> : null}
-            <div className="flex flex-wrap items-center gap-3 pt-2">
-              <AtelierAction
-                cta={config.cta}
-                pages={pages}
-                linkRenderer={linkRenderer}
-                variant="ink"
-                large
-              />
-              <AtelierAction
-                cta={config.secondaryCta}
-                pages={pages}
-                linkRenderer={linkRenderer}
-                variant="inkGhost"
-                large
-                arrow={false}
-              />
+          <div
+            className={cn('ath-cta-text min-w-0', hasImage && 'lg:col-span-7')}
+          >
+            {/* The thread's last knot, filled: the path arrives here. */}
+            <span aria-hidden className="at-knot ath-cta-knot" data-filled="" />
+            <div className="space-y-8">
+              <AtelierHeading id={headingId} size="display">
+                {resolveLocalizedText(config.title, locale)}
+              </AtelierHeading>
+              {description ? <p className="at-lead">{description}</p> : null}
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <AtelierAction
+                  cta={config.cta}
+                  pages={pages}
+                  linkRenderer={linkRenderer}
+                  variant="ink"
+                  large
+                />
+                <AtelierAction
+                  cta={config.secondaryCta}
+                  pages={pages}
+                  linkRenderer={linkRenderer}
+                  variant="inkGhost"
+                  large
+                  arrow={false}
+                />
+              </div>
             </div>
           </div>
+          {hasImage ? (
+            <AtelierMedia
+              value={config.image}
+              alt={resolveLocalizedText(config.imageAlt, locale)}
+              sizes="(min-width: 1024px) 36vw, 100vw"
+              className="ath-cta-plate aspect-[4/3] md:aspect-[16/9] lg:col-span-5"
+            />
+          ) : null}
         </div>
-        {hasImage ? (
-          <AtelierMedia
-            value={config.image}
-            alt={resolveLocalizedText(config.imageAlt, locale)}
-            sizes="(min-width: 1024px) 36vw, 100vw"
-            className="aspect-[4/3] md:aspect-[16/9] lg:col-span-5"
-          />
-        ) : null}
-      </div>
-    </AtelierChapter>
+      </AtelierChapter>
+    </AtelierScene>
   );
 }
 

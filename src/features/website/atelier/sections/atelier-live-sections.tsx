@@ -11,7 +11,7 @@
  * A preview (no `linkRenderer`) explains a hidden section instead, with
  * labelled placeholders — never invented names or numbers.
  */
-import { useId } from 'react';
+import { useId, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RotateCw } from 'lucide-react';
 import { cn } from '@utils';
@@ -49,6 +49,8 @@ import {
   AtelierPreviewNote,
   AtelierPreviewSample,
 } from './atelier-section-utils';
+import { AtelierScene } from '../cinematic/AtelierScene';
+import { isCinematicRuntime } from '../cinematic/cinematic-runtime';
 import { stagger } from './atelier-stagger';
 import '../atelier-sections.css';
 
@@ -616,28 +618,48 @@ export function AtelierStatistics({
     );
   }
 
+  // The ink scene (public site, large screens): the page turns from paper
+  // to ink through a growing window, then the figures rise in order.
+  const cinematic = isCinematicRuntime(linkRenderer);
   return (
-    <AtelierChapter
-      env="ink"
-      unveil
-      labelledBy={title ? headingId : undefined}
-      label={title ? undefined : t('website:atelier.home.statistics.label')}
+    <AtelierScene
+      name="ink"
+      enabled={cinematic}
+      style={{ '--at-stats': items.length } as CSSProperties}
     >
-      {title ? (
-        <AtelierSectionHeader id={headingId} title={title} numbered={false} />
-      ) : null}
-      <dl className="ath-stats">
-        {items.map((item, index) => (
-          <div key={item.id} className="ath-stat">
-            <dt className="at-label">{item.label}</dt>
-            <dd data-atlas-numeric="true">
-              <Reveal delayMs={stagger(index)} className="ath-stat-value">
-                {item.text}
-              </Reveal>
-            </dd>
-          </div>
-        ))}
-      </dl>
-    </AtelierChapter>
+      <AtelierChapter
+        env="ink"
+        unveil
+        labelledBy={title ? headingId : undefined}
+        label={title ? undefined : t('website:atelier.home.statistics.label')}
+        backdrop={
+          cinematic ? (
+            <span aria-hidden className="atc-ink-window" />
+          ) : undefined
+        }
+      >
+        {title ? (
+          <AtelierSectionHeader id={headingId} title={title} numbered={false} />
+        ) : null}
+        <dl className="ath-stats">
+          {items.map((item, index) => (
+            <div
+              key={item.id}
+              className="ath-stat"
+              style={
+                cinematic ? ({ '--at-i': index } as CSSProperties) : undefined
+              }
+            >
+              <dt className="at-label">{item.label}</dt>
+              <dd data-atlas-numeric="true">
+                <Reveal delayMs={stagger(index)} className="ath-stat-value">
+                  {item.text}
+                </Reveal>
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </AtelierChapter>
+    </AtelierScene>
   );
 }
