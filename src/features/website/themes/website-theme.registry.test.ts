@@ -1,6 +1,7 @@
 /**
- * Themes 2–5 retirement (Reports/THEMES_2_5_RETIREMENT.md): only Theme 1 is
- * offered; a website still on a retired theme keeps rendering it and sees
+ * Themes 2–5 retirement (Reports/THEMES_2_5_RETIREMENT.md) and Theme 2
+ * Atelier (Reports/THEME_2_ATELIER_PLAN.md): Theme 1 and Atelier are
+ * offered, the retired themes never are; a website still on a retired theme keeps rendering it and sees
  * it as its active theme; every section a retired theme's website holds has
  * a Theme 1 renderer, so the migration moves nothing that can't be drawn.
  */
@@ -15,20 +16,28 @@ import { getThemePack } from '../theme-packs/theme-pack.registry';
 import { getWebsiteTheme, listWebsiteThemes } from './website-theme.registry';
 
 describe('theme selection after the Themes 2–5 retirement', () => {
-  it('offers Theme 1 only', () => {
-    expect(SELECTABLE_WEBSITE_THEME_KEYS).toEqual(['modern-education']);
+  it('offers Theme 1 (the default) and Atelier, never a retired theme', () => {
+    expect(SELECTABLE_WEBSITE_THEME_KEYS).toEqual(['modern-education', 'atelier']);
     expect(listWebsiteThemes().map((theme) => theme.key)).toEqual([
       'modern-education',
+      'atelier',
     ]);
-    expect(
-      listWebsiteThemes('modern-education').map((theme) => theme.key)
-    ).toEqual(['modern-education']);
+    for (const current of ['modern-education', 'atelier'] as const) {
+      expect(listWebsiteThemes(current).map((theme) => theme.key)).toEqual([
+        'modern-education',
+        'atelier',
+      ]);
+    }
+    for (const key of RETIRED_WEBSITE_THEME_KEYS) {
+      expect(SELECTABLE_WEBSITE_THEME_KEYS).not.toContain(key);
+    }
   });
 
   it("shows a website's own retired theme alongside Theme 1, until it moves", () => {
     for (const key of RETIRED_WEBSITE_THEME_KEYS) {
       expect(listWebsiteThemes(key).map((theme) => theme.key)).toEqual([
         'modern-education',
+        'atelier',
         key,
       ]);
     }

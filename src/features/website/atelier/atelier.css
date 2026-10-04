@@ -1,0 +1,637 @@
+/*
+ * Theme 2 — Atelier: the visual system (Reports/THEME_2_ATELIER_PLAN.md §2, §4).
+ *
+ * Scoped to `[data-theme-pack='atelier']`, so nothing here reaches Theme 1,
+ * the retired themes or the dashboard. Colours are never declared here: they
+ * come from the brand mapping (`--atelier-*`, `--website-*`). This file holds
+ * the invariants — type, rhythm, grid, environments, the thread and motion —
+ * which stay identical for every brand.
+ *
+ * Motion: entrances use the shared `Reveal` (one IntersectionObserver).
+ * Scroll-linked effects use CSS scroll-driven animations only, inside
+ * `@supports (animation-timeline: view())` and
+ * `prefers-reduced-motion: no-preference`; everything else — no support,
+ * reduced motion, server-rendered HTML without JavaScript — sees the final,
+ * readable state. No scroll listeners, no pinning.
+ */
+
+/* ------------------------------------------------------------------ */
+/* Display face: Fraunces (Latin) + Markazi Text (Arabic) as one family */
+/* ------------------------------------------------------------------ */
+
+@font-face {
+  font-family: 'Atelier Display';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 900;
+  src: url('../../../assets/fonts/markazi-text-arabic.woff2') format('woff2-variations');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1,
+    U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74,
+    U+FE76-FEFC;
+}
+
+@font-face {
+  font-family: 'Atelier Display';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('../../../assets/fonts/fraunces-latin.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-200B, U+2012-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Atelier Display';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('../../../assets/fonts/fraunces-latin-ext.woff2') format('woff2-variations');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113,
+    U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Atelier Display';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('../../../assets/fonts/fraunces-latin-italic.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-200B, U+2012-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ------------------------------------------------------------------ */
+/* Tokens                                                               */
+/* ------------------------------------------------------------------ */
+
+.website-theme-scope[data-theme-pack='atelier'] {
+  --at-font-display: 'Atelier Display', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+
+  /* Type scale: fluid, clamped at both ends. */
+  --at-display: clamp(2.75rem, 1.35rem + 5.6vw, 7.25rem);
+  --at-title: clamp(2rem, 1.35rem + 2.4vw, 3.75rem);
+  --at-subtitle: clamp(1.375rem, 1.1rem + 0.9vw, 1.875rem);
+  --at-lead: clamp(1.0625rem, 0.98rem + 0.3vw, 1.25rem);
+  --at-measure: 62ch;
+
+  /* Rhythm and grid. */
+  --at-rhythm: clamp(4.5rem, 2.6rem + 7vw, 10rem);
+  --at-gutter: clamp(1.25rem, 0.6rem + 2.4vw, 3rem);
+  --at-margin: 2.75rem; /* the thread's column on phones */
+  --at-container: 90rem;
+  --at-header-height: 4.25rem;
+
+  /* Motion. */
+  --at-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --at-duration: 520ms;
+  --at-duration-fast: 200ms;
+
+  /* The thread. */
+  --at-thread-width: 1.5px;
+
+  background-color: var(--atelier-paper);
+  color: var(--atelier-text);
+  counter-reset: at-chapter;
+}
+
+@media (min-width: 768px) {
+  .website-theme-scope[data-theme-pack='atelier'] {
+    --at-margin: 5.5rem;
+    --at-header-height: 4.75rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .website-theme-scope[data-theme-pack='atelier'] {
+    --at-margin: 8rem;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Typography                                                           */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='atelier'] .at-display,
+[data-theme-pack='atelier'] .at-title,
+[data-theme-pack='atelier'] .at-subtitle,
+[data-theme-pack='atelier'] .at-serif {
+  font-family: var(--at-font-display);
+  font-optical-sizing: auto;
+  font-weight: 380;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+[data-theme-pack='atelier'] .at-display {
+  font-size: var(--at-display);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  font-weight: 340;
+}
+
+[data-theme-pack='atelier'] .at-title {
+  font-size: var(--at-title);
+  line-height: 1.04;
+  letter-spacing: -0.022em;
+}
+
+[data-theme-pack='atelier'] .at-subtitle {
+  font-size: var(--at-subtitle);
+  line-height: 1.15;
+}
+
+/* Arabic display: Markazi's proportions want air and no negative tracking. */
+[data-theme-pack='atelier'] [dir='rtl'] .at-display,
+[data-theme-pack='atelier'][dir='rtl'] .at-display,
+[data-theme-pack='atelier'] [dir='rtl'] .at-title,
+[data-theme-pack='atelier'][dir='rtl'] .at-title,
+[data-theme-pack='atelier'] [dir='rtl'] .at-subtitle,
+[data-theme-pack='atelier'][dir='rtl'] .at-subtitle,
+[data-theme-pack='atelier'] [dir='rtl'] .at-serif,
+[data-theme-pack='atelier'][dir='rtl'] .at-serif {
+  letter-spacing: 0;
+  line-height: 1.3;
+  font-weight: 500;
+}
+
+/* The configured highlight phrase: italic in the brand colour. */
+[data-theme-pack='atelier'] .at-em {
+  font-style: italic;
+  font-weight: inherit;
+  color: var(--atelier-brand);
+}
+[data-theme-pack='atelier'] [data-env='ink'] .at-em {
+  color: var(--atelier-ink-brand);
+}
+/* Arabic has no italic: the phrase keeps the brand colour and an underline stroke. */
+[data-theme-pack='atelier'] [dir='rtl'] .at-em,
+[data-theme-pack='atelier'][dir='rtl'] .at-em {
+  font-style: normal;
+  text-decoration: underline;
+  text-decoration-thickness: 0.06em;
+  text-underline-offset: 0.18em;
+  text-decoration-color: var(--atelier-accent);
+}
+
+[data-theme-pack='atelier'] .at-lead {
+  font-size: var(--at-lead);
+  line-height: 1.6;
+  max-width: var(--at-measure);
+  color: var(--atelier-text-muted);
+}
+
+/* Tracked small caps for labels, eyebrows and metadata. */
+[data-theme-pack='atelier'] .at-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--atelier-text-muted);
+}
+[data-theme-pack='atelier'] [dir='rtl'] .at-label,
+[data-theme-pack='atelier'][dir='rtl'] .at-label {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 0.875rem;
+}
+[data-theme-pack='atelier'] .at-label-brand {
+  color: var(--atelier-brand);
+}
+[data-theme-pack='atelier'] [data-env='ink'] .at-label {
+  color: var(--atelier-ink-text-muted);
+}
+[data-theme-pack='atelier'] [data-env='ink'] .at-label-brand {
+  color: var(--atelier-ink-brand);
+}
+
+/* Numerals as typographic objects. */
+[data-theme-pack='atelier'] .at-numeral {
+  font-family: var(--at-font-display);
+  font-variant-numeric: lining-nums tabular-nums;
+  font-weight: 300;
+  color: var(--atelier-brand);
+  line-height: 1;
+}
+[data-theme-pack='atelier'] [data-env='ink'] .at-numeral {
+  color: var(--atelier-ink-brand);
+}
+
+/* ------------------------------------------------------------------ */
+/* Layout: container, margin column, chapters                           */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='atelier'] .at-container {
+  width: 100%;
+  max-width: var(--at-container);
+  margin-inline: auto;
+  padding-inline: var(--at-gutter);
+}
+
+/* The body column, offset by the margin column the thread runs in. */
+[data-theme-pack='atelier'] .at-body {
+  position: relative;
+  padding-inline-start: var(--at-margin);
+}
+
+[data-theme-pack='atelier'] .at-chapter {
+  position: relative;
+  padding-block: var(--at-rhythm);
+  isolation: isolate;
+}
+[data-theme-pack='atelier'] .at-chapter[data-flush-top] {
+  padding-block-start: 0;
+}
+
+/* Environments. */
+[data-theme-pack='atelier'] [data-env='paper'] {
+  background-color: var(--atelier-paper);
+  color: var(--atelier-text);
+}
+[data-theme-pack='atelier'] [data-env='deep'] {
+  background-color: var(--atelier-paper-deep);
+  color: var(--atelier-text);
+}
+[data-theme-pack='atelier'] [data-env='ink'] {
+  background-color: var(--atelier-ink);
+  color: var(--atelier-ink-text);
+  --atelier-thread: var(--atelier-ink-thread);
+}
+[data-theme-pack='atelier'] [data-env='ink'] .at-lead {
+  color: var(--atelier-ink-text-muted);
+}
+
+/* Automatic chapter numbering: counted in page order, wherever a numbered
+   chapter appears, so the Owner's section order is the story order. */
+[data-theme-pack='atelier'] .at-chapter[data-numbered] {
+  counter-increment: at-chapter;
+}
+[data-theme-pack='atelier'] .at-chapter-no::before {
+  content: counter(at-chapter, decimal-leading-zero);
+}
+[data-theme-pack='atelier'] [dir='rtl'] .at-chapter-no::before,
+[data-theme-pack='atelier'][dir='rtl'] .at-chapter-no::before {
+  content: counter(at-chapter, arabic-indic);
+}
+
+/* ------------------------------------------------------------------ */
+/* The thread                                                           */
+/* ------------------------------------------------------------------ */
+
+/* One line per chapter, in the margin column; consecutive chapters join
+   into a single line running from the hero to the closing chapter. */
+[data-theme-pack='atelier'] .at-thread {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: calc(var(--at-gutter) + var(--at-margin) * 0.38);
+  width: var(--at-thread-width);
+  background: var(--atelier-thread);
+  transform-origin: top;
+  pointer-events: none;
+  z-index: 0;
+}
+@media (min-width: 90rem) {
+  [data-theme-pack='atelier'] .at-thread {
+    inset-inline-start: calc(
+      (100% - var(--at-container)) / 2 + var(--at-gutter) + var(--at-margin) * 0.38
+    );
+  }
+}
+[data-theme-pack='atelier'] .at-thread[data-start] {
+  inset-block-start: var(--at-thread-start, 0);
+}
+[data-theme-pack='atelier'] .at-thread[data-end] {
+  inset-block-end: auto;
+  height: var(--at-thread-end, 6rem);
+}
+
+/* The knot where the thread meets a chapter mark. */
+[data-theme-pack='atelier'] .at-knot {
+  position: absolute;
+  inset-inline-start: calc(var(--at-margin) * -0.62 - 0.3125rem + var(--at-thread-width) / 2);
+  inset-block-start: 0.55em;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 999px;
+  background: var(--atelier-paper);
+  box-shadow: inset 0 0 0 var(--at-thread-width) var(--atelier-thread);
+}
+[data-theme-pack='atelier'] [data-env='ink'] .at-knot {
+  background: var(--atelier-ink);
+}
+[data-theme-pack='atelier'] .at-knot[data-filled] {
+  background: var(--atelier-thread);
+}
+
+/* The chapter mark: numeral, rule and label, on the thread. */
+[data-theme-pack='atelier'] .at-mark {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 0.875rem;
+  margin-block-end: clamp(1.75rem, 1rem + 2vw, 3rem);
+}
+[data-theme-pack='atelier'] .at-mark-no {
+  font-family: var(--at-font-display);
+  font-size: 0.9375rem;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--atelier-brand);
+}
+[data-theme-pack='atelier'] [data-env='ink'] .at-mark-no {
+  color: var(--atelier-ink-brand);
+}
+[data-theme-pack='atelier'] .at-mark-rule {
+  flex: 0 0 2.5rem;
+  height: 1px;
+  align-self: center;
+  background: currentColor;
+  opacity: 0.35;
+}
+
+/* ------------------------------------------------------------------ */
+/* Rules, links, actions, focus                                         */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='atelier'] .at-rule {
+  border: 0;
+  height: 1px;
+  background: var(--atelier-hairline);
+}
+[data-theme-pack='atelier'] [data-env='ink'] .at-rule {
+  background: var(--atelier-ink-hairline);
+}
+
+/* Links: an underline that draws from the reading start on hover. */
+[data-theme-pack='atelier'] .at-link {
+  color: var(--atelier-brand);
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  background-position: 0 100%;
+  padding-block-end: 0.125em;
+  transition: background-size var(--at-duration-fast) var(--at-ease);
+}
+[data-theme-pack='atelier'] [dir='rtl'] .at-link,
+[data-theme-pack='atelier'][dir='rtl'] .at-link {
+  background-position: 100% 100%;
+}
+[data-theme-pack='atelier'] .at-link:hover {
+  background-size: 0% 1px;
+}
+[data-theme-pack='atelier'] [data-env='ink'] .at-link {
+  color: var(--atelier-ink-brand);
+}
+
+[data-theme-pack='atelier'] .at-btn,
+[data-theme-pack='atelier'] .at-btn-ghost,
+[data-theme-pack='atelier'] .at-btn-ink,
+[data-theme-pack='atelier'] .at-btn-ink-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 3rem;
+  padding-inline: 1.5rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  border-radius: 0;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    background-color var(--at-duration-fast) var(--at-ease),
+    color var(--at-duration-fast) var(--at-ease),
+    border-color var(--at-duration-fast) var(--at-ease);
+}
+[data-theme-pack='atelier'] .at-btn {
+  background: var(--website-cta);
+  color: var(--website-cta-foreground);
+  border: 1px solid var(--website-cta);
+}
+[data-theme-pack='atelier'] .at-btn:hover {
+  background: var(--website-cta-hover);
+  border-color: var(--website-cta-hover);
+}
+[data-theme-pack='atelier'] .at-btn:active {
+  background: var(--website-cta-pressed);
+}
+[data-theme-pack='atelier'] .at-btn-ghost {
+  background: transparent;
+  color: var(--atelier-text);
+  border: 1px solid var(--website-input-border);
+}
+[data-theme-pack='atelier'] .at-btn-ghost:hover {
+  border-color: var(--atelier-text);
+}
+[data-theme-pack='atelier'] .at-btn-ink {
+  background: var(--atelier-ink-cta);
+  color: var(--atelier-ink-cta-foreground);
+  border: 1px solid var(--atelier-ink-cta);
+}
+[data-theme-pack='atelier'] .at-btn-ink:hover {
+  background: transparent;
+  color: var(--atelier-ink-text);
+}
+[data-theme-pack='atelier'] .at-btn-ink-ghost {
+  background: transparent;
+  color: var(--atelier-ink-text);
+  border: 1px solid var(--atelier-ink-text-muted);
+}
+[data-theme-pack='atelier'] .at-btn-ink-ghost:hover {
+  border-color: var(--atelier-ink-text);
+}
+[data-theme-pack='atelier'] .at-btn-lg {
+  min-height: 3.5rem;
+  padding-inline: 2rem;
+  font-size: 1rem;
+}
+
+[data-theme-pack='atelier'] .at-arrow {
+  transition: transform var(--at-duration-fast) var(--at-ease);
+}
+[data-theme-pack='atelier'] [dir='rtl'] .at-arrow,
+[data-theme-pack='atelier'][dir='rtl'] .at-arrow {
+  transform: scaleX(-1);
+}
+[data-theme-pack='atelier'] :is(a, button):hover > .at-arrow {
+  transform: translateX(0.25rem);
+}
+[data-theme-pack='atelier'] [dir='rtl'] :is(a, button):hover > .at-arrow,
+[data-theme-pack='atelier'][dir='rtl'] :is(a, button):hover > .at-arrow {
+  transform: scaleX(-1) translateX(0.25rem);
+}
+
+[data-theme-pack='atelier'] :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--website-focus);
+  outline-offset: 3px;
+}
+[data-theme-pack='atelier'] [data-env='ink'] :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline-color: var(--atelier-ink-text);
+}
+
+/* ------------------------------------------------------------------ */
+/* Media frames                                                         */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='atelier'] .at-frame {
+  position: relative;
+  overflow: hidden;
+  background: var(--atelier-paper-deep);
+}
+[data-theme-pack='atelier'] [data-env='ink'] .at-frame {
+  background: var(--atelier-ink-raised);
+}
+[data-theme-pack='atelier'] .at-frame > picture,
+[data-theme-pack='atelier'] .at-frame > img,
+[data-theme-pack='atelier'] .at-frame picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* The studio window: a tall arch. */
+[data-theme-pack='atelier'] .at-frame[data-shape='arch'] {
+  border-start-start-radius: 999px;
+  border-start-end-radius: 999px;
+}
+[data-theme-pack='atelier'] .at-frame[data-shape='round'] {
+  border-radius: 999px;
+}
+
+[data-theme-pack='atelier'] .at-placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--atelier-text-muted);
+  background:
+    repeating-linear-gradient(
+      135deg,
+      transparent 0 12px,
+      var(--atelier-hairline) 12px 13px
+    ),
+    var(--atelier-paper-deep);
+}
+[data-theme-pack='atelier'] .at-placeholder-label {
+  position: absolute;
+  inset-block-end: 0.75rem;
+  inset-inline-start: 0.75rem;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Monogram plates for people without a photo. */
+[data-theme-pack='atelier'] .at-monogram {
+  display: inline-grid;
+  place-items: center;
+  font-family: var(--at-font-display);
+  font-weight: 340;
+  color: var(--website-chip-fg);
+  background: var(--website-chip-bg);
+}
+
+/* ------------------------------------------------------------------ */
+/* Motion: scroll-driven, progressive                                   */
+/* ------------------------------------------------------------------ */
+
+@keyframes at-draw {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes at-unveil {
+  from {
+    clip-path: inset(7% 5% 0 5%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes at-settle {
+  from {
+    transform: scale(1.08) translateY(-2%);
+  }
+  to {
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes at-drift {
+  from {
+    transform: translateY(6%);
+  }
+  to {
+    transform: translateY(-6%);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* The thread draws as its chapter scrolls through the viewport. */
+    [data-theme-pack='atelier'] .at-thread {
+      animation: at-draw linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 55%;
+    }
+
+    /* An ink chapter opens like a window as it arrives. */
+    [data-theme-pack='atelier'] .at-chapter[data-env='ink'][data-unveil] {
+      animation: at-unveil linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+    }
+
+    /* A lead image settles into its frame. */
+    [data-theme-pack='atelier'] .at-settle :is(picture, img) {
+      animation: at-settle linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 60%;
+    }
+  }
+
+  /* Parallax drift only where there is room for it. */
+  @media (prefers-reduced-motion: no-preference) and (min-width: 768px) {
+    [data-theme-pack='atelier'] .at-drift {
+      animation: at-drift linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+  }
+}
+
+/* Hero entrance (load-time, once): the headline is never hidden; the
+   supporting lines rise after it. */
+@keyframes at-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme-pack='atelier'] .at-enter {
+    animation: at-rise var(--at-duration) var(--at-ease) both;
+    animation-delay: calc(var(--at-enter-index, 0) * 90ms + 120ms);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-theme-pack='atelier'] *,
+  [data-theme-pack='atelier'] *::before,
+  [data-theme-pack='atelier'] *::after {
+    transition-duration: 0.01ms !important;
+  }
+}

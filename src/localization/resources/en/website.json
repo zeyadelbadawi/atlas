@@ -482,6 +482,10 @@
     "boldCreative": {
       "name": "Bold Creative",
       "description": "Energetic and expressive, for academies that want to stand out."
+    },
+    "atelier": {
+      "name": "Atelier",
+      "description": "An editorial, art-directed site: a serif display face, a warm paper canvas, numbered chapters and a brand thread that draws down the page as visitors scroll."
     }
   },
   "brand": {

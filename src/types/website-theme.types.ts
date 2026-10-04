@@ -24,7 +24,12 @@
  * new key here and in `WEBSITE_THEME_KEYS`, one definition module and one
  * pack — never touching an existing one (see `WebsiteThemeRegistry`).
  */
-export const SELECTABLE_WEBSITE_THEME_KEYS = ['modern-education'] as const;
+export const SELECTABLE_WEBSITE_THEME_KEYS = [
+  'modern-education',
+  // Theme 2 — Atelier (Reports/THEME_2_ATELIER_PLAN.md). Appended: index 0
+  // stays the platform default.
+  'atelier',
+] as const;
 
 /** W2 — the platform's default theme (the backend's `DEFAULT_WEBSITE_THEME_KEY`): pre-selected in the setup form, and what provisioning applies when none is named. */
 export const DEFAULT_WEBSITE_THEME_KEY: (typeof SELECTABLE_WEBSITE_THEME_KEYS)[number] =

@@ -5,7 +5,11 @@
  */
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
-import { SECTION_TYPES, WEBSITE_THEME_KEYS } from '@types';
+import {
+  RETIRED_WEBSITE_THEME_KEYS,
+  SECTION_TYPES,
+  WEBSITE_THEME_KEYS,
+} from '@types';
 import type { SectionInstance, WebsiteThemeKey } from '@types';
 import { SectionRenderer } from '../sections/SectionRenderer';
 import { WebsiteThemeScope } from '../renderer/WebsiteThemeScope';
@@ -44,9 +48,8 @@ describe('theme packs', () => {
       expect(BASE_RENDERERS[type]).toBeTypeOf('function');
   });
 
-  it('Themes 2–5 redesign nothing: base renderers and the base brand mapping', () => {
-    for (const key of WEBSITE_THEME_KEYS) {
-      if (key === 'modern-education') continue;
+  it('the retired themes redesign nothing: base renderers and the base brand mapping', () => {
+    for (const key of RETIRED_WEBSITE_THEME_KEYS) {
       const pack = getThemePack(key);
       expect(pack.renderers).toEqual({});
       expect(pack.pages).toBeUndefined();

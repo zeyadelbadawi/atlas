@@ -16,10 +16,12 @@ import { PREMIUM_ACADEMY_THEME } from './premium-academy.theme';
 import { CORPORATE_LEARNING_THEME } from './corporate-learning.theme';
 import { MINIMAL_EDITORIAL_THEME } from './minimal-editorial.theme';
 import { BOLD_CREATIVE_THEME } from './bold-creative.theme';
+import { ATELIER_THEME } from './atelier.theme';
 
 /** Every theme the renderer knows, selectable or retired. */
 const registry: Record<WebsiteThemeKey, WebsiteThemeDefinition> = {
   'modern-education': MODERN_EDUCATION_THEME,
+  atelier: ATELIER_THEME,
   'premium-academy': PREMIUM_ACADEMY_THEME,
   'corporate-learning': CORPORATE_LEARNING_THEME,
   'minimal-editorial': MINIMAL_EDITORIAL_THEME,
