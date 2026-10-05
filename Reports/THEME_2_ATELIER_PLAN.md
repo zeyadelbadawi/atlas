@@ -172,3 +172,25 @@ Desktop unthrottled LCP 0.44–0.49 s. The plan's 2.5 s LCP target is not met un
 theme (Theme 1 was already 4.4 s); every public site now carries Atelier's code (+29 KB JS, +9 KB CSS transferred)
 because the pack registry is static — follow-up: lazy-load packs per theme (SSR preloads the active pack before render).
 
+
+### 8.1 Follow-up (5 Oct 2026)
+
+- **Photographs follow the theme.** A site generated on Modern Education and switched to Atelier kept Modern
+  Education's starter photographs (section content stores `theme-asset:modern-education/…`, and content survives a
+  theme switch). The renderer now draws another theme's starter photograph as the active theme's photograph for the
+  same slot (`theme-assets/adopt-theme-assets.ts`; `home-benefit` ↔ `home-philosophy`, every other slot shares its
+  key). Render-time only: stored content is unchanged, owner uploads are never touched.
+- **Atelier v3 photographs.** All fourteen replaced with new learning photographs generated with Magnific (reading
+  rooms, books, study desks, online study; no identifiable faces, no logos, no readable text). None is shared with
+  Modern Education (a test compares master hashes). Keys and slots unchanged; v1/v2 stay served.
+- **Theme cards.** The Theme tab shows each theme's feature image (`theme-card`, `atelier/v3`,
+  `modern-education/v2`); a theme without one (retired) keeps the live miniature.
+- **Colophon.** The footer's academy name is capped at ~4.5rem (smaller still past 24 characters).
+- **Each site loads only its theme.** Theme packs are their own chunks with their own stylesheets, loaded before
+  render (SSR) or hydration; theme stylesheets are linked in front of the entry stylesheet so Tailwind utilities keep
+  winning ties. Each theme's image manifest ships with its pack. Theme 1 Home: JS −12.0 KB, CSS −9.2 KB (gzip) vs
+  `main`; Atelier Home: JS −24.2 KB, CSS −2.0 KB; plus ~10 KB for the other theme's manifest no longer shipped. A
+  build guard fails if a Theme 1 page's code carries Atelier (and vice versa). The Atelier display-font preload was
+  measured slower (LCP more variable) and ships off (`preloadThemeFonts`).
+- **Atelier inner pages' lead image** (About plate, Course Details plate) loads eagerly at high priority: mobile LCP
+  ~5.3 s → ~2.6–3.0 s on those pages.
