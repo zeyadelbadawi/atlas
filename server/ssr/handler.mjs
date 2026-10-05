@@ -17,13 +17,18 @@ import { pathToFileURL } from 'node:url';
 /**
  * The public router chunk's manifest key. Rollup keys a chunk by its source
  * path only when that module is the chunk's facade; otherwise it is an
- * `_<name>-<hash>.js` key, found through the entry's dynamic imports.
+ * `_<name>-<hash>.js` key, found through the entry's dynamic imports —
+ * by its file name, which the client build pins (`chunkFileNames` in
+ * vite.config.ts), or by Rollup's chunk name.
  */
 export function findPublicRouterChunk(manifest) {
   const source = 'src/features/public-website/PublicWebsiteRouter.tsx';
   if (manifest[source]) return source;
   return manifest['index.html']?.dynamicImports?.find(
-    (key) => manifest[key]?.name === 'PublicWebsiteRouter'
+    (key) =>
+      /^assets\/PublicWebsiteRouter-[\w-]+\.js$/.test(
+        manifest[key]?.file ?? ''
+      ) || manifest[key]?.name === 'PublicWebsiteRouter'
   );
 }
 

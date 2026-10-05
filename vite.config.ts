@@ -293,6 +293,18 @@ export default defineConfig(({ command, mode, isSsrBuild }) => {
         output: ssr
           ? {}
           : {
+              // The public router's chunk keeps a stable file name: the
+              // server renderer finds it in the manifest by that name
+              // (`findPublicRouterChunk`), and Rollup's own name for a
+              // chunk without a facade is whichever module it orders last.
+              chunkFileNames: (chunk) =>
+                chunk.moduleIds.some((id) =>
+                  id.endsWith(
+                    '/src/features/public-website/PublicWebsiteRouter.tsx'
+                  )
+                )
+                  ? 'assets/PublicWebsiteRouter-[hash].js'
+                  : 'assets/[name]-[hash].js',
               manualChunks: {
                 // Vendor chunks
                 'react-vendor': ['react', 'react-dom'],

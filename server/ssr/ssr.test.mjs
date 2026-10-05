@@ -17,7 +17,7 @@
 import { after, before, beforeEach, describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -106,12 +106,43 @@ function academy(label, id, primaryColor, heroTitle) {
   };
 }
 
+// Atelier (Theme 2)'s own generated website.
+const ATELIER_TEMPLATE = JSON.parse(
+  readFileSync(
+    join(ROOT, 'e2e/theme-baseline/fixtures/generated/atelier.json'),
+    'utf8'
+  )
+);
+
+/** An Academy on Atelier: the same identity and courses, Atelier's website. */
+function atelierAcademy(label, id, primaryColor) {
+  const base = academy(label, id, primaryColor, `${label} on Atelier`);
+  const rebase = (value) =>
+    JSON.parse(JSON.stringify(value).replaceAll('"fx-academy"', `"${id}"`));
+  return {
+    ...base,
+    resolve: {
+      ...base.resolve,
+      presentation: { ...base.resolve.presentation, themeKey: 'atelier' },
+    },
+    configuration: {
+      ...rebase(ATELIER_TEMPLATE.configuration),
+      brand: base.configuration.brand,
+      status: 'published',
+      publishedAt: '2026-09-01T09:00:00.000Z',
+    },
+    pages: rebase(ATELIER_TEMPLATE.pages).filter((page) => page.visible),
+  };
+}
+
 const ALPHA_ID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 const BETA_ID = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
 const GAMMA_ID = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
+const DELTA_ID = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
 const ALPHA = `alpha.${BASE}`;
 const BETA = `beta.${BASE}`;
 const GAMMA = `gamma.${BASE}`;
+const DELTA = `delta.${BASE}`;
 const ALPHA_PRIMARY = '350 60% 45%';
 const BETA_PRIMARY = '200 80% 35%';
 
@@ -134,6 +165,7 @@ function resetState() {
       ),
       [BETA_ID]: academy('beta', BETA_ID, BETA_PRIMARY, 'Beta builds careers'),
       [GAMMA_ID]: gamma,
+      [DELTA_ID]: atelierAcademy('delta', DELTA_ID, '20 70% 40%'),
     },
     requests: [],
     failPages: false,
@@ -1045,5 +1077,149 @@ describe('security', () => {
       JSON.stringify(payload),
       /password|token|secret|refresh/i
     );
+  });
+});
+
+describe('theme packs: each site gets only its own theme', () => {
+  const manifest = () =>
+    JSON.parse(readFileSync(join(DIST, '.vite', 'manifest.json'), 'utf8'));
+  const PACKS = {
+    'modern-education':
+      'src/features/website/modern-education/modern-education.pack.ts',
+    atelier: 'src/features/website/atelier/atelier.pack.ts',
+  };
+  // What identifies a theme's components and stylesheet in built files.
+  const MARKERS = {
+    'modern-education': {
+      script: /["'\s]t1-[a-z]/,
+      stylesheet: /data-theme-pack=["']?modern-education/,
+    },
+    atelier: {
+      script: /["'\s]at-(?:lead|label|subtitle|link|btn)[\s"']/,
+      stylesheet: /data-theme-pack=["']?atelier/,
+    },
+  };
+
+  /** The files these chunks load with them: themselves, their static imports, their CSS. */
+  function staticClosure(m, keys) {
+    const files = new Set();
+    const seen = new Set();
+    const visit = (key) => {
+      const chunk = m[key];
+      if (!chunk || seen.has(key)) return;
+      seen.add(key);
+      files.add(chunk.file);
+      for (const css of chunk.css ?? []) files.add(css);
+      for (const imported of chunk.imports ?? []) visit(imported);
+    };
+    keys.forEach(visit);
+    return files;
+  }
+
+  /** The head's stylesheet links, in order: their theme key, or "app". */
+  const headStylesheets = (html) =>
+    [
+      ...html
+        .slice(0, html.indexOf('</head>'))
+        .matchAll(/<link rel="stylesheet"[^>]*>/g),
+    ].map(([tag]) => /data-theme-stylesheet="([^"]+)"/.exec(tag)?.[1] ?? 'app');
+
+  for (const [label, host, theme, other] of [
+    ['a Theme 1', ALPHA, 'modern-education', 'atelier'],
+    ['an Atelier', DELTA, 'atelier', 'modern-education'],
+  ]) {
+    it(`${label} page links only its theme's stylesheet, in front of the app's, and names its pack for hydration`, async () => {
+      for (const path of ['/', '/ar/courses', '/no-such-page']) {
+        const result = await get(handler, host, path);
+        assert.equal(result.headers['X-Atlas-SSR'], 'render', result.reason);
+        assert.deepEqual(headStylesheets(result.body), [theme, 'app'], path);
+        assert.deepEqual(payloadOf(result.body).themePacks, [theme], path);
+        const markup = markupOf(result.body);
+        assert.match(markup, new RegExp(`data-theme-pack="${theme}"`));
+        assert.doesNotMatch(markup, new RegExp(`data-theme-pack="${other}"`));
+        // The stylesheet the server names is the client build's own file.
+        const href =
+          /<link rel="stylesheet" crossorigin href="\/(assets\/[^"]+)" data-theme-stylesheet/.exec(
+            result.body
+          )?.[1];
+        assert.ok(
+          href && existsSync(join(DIST, href)),
+          `${href} exists in the client build`
+        );
+      }
+    });
+
+    it(`the code ${label} page loads carries none of the other theme`, () => {
+      const m = manifest();
+      const loaded = staticClosure(m, [
+        'index.html',
+        findPublicRouterChunk(m),
+        PACKS[theme],
+      ]);
+      const otherPack = m[PACKS[other]];
+      assert.ok(otherPack, `${PACKS[other]} is a chunk of its own`);
+      assert.ok(!loaded.has(otherPack.file), `${otherPack.file} is loaded`);
+      const texts = [...loaded].map((file) => [
+        file,
+        readFileSync(join(DIST, file), 'utf8'),
+      ]);
+      for (const [file, text] of texts) {
+        const marker = file.endsWith('.css')
+          ? MARKERS[other].stylesheet
+          : MARKERS[other].script;
+        assert.doesNotMatch(text, marker, `${file} carries ${other}`);
+      }
+      // ...and its own theme is what it does load.
+      assert.ok(texts.some(([, text]) => MARKERS[theme].script.test(text)));
+    });
+  }
+
+  it('the entry stylesheet carries no theme stylesheet (each is a file of its own)', () => {
+    const m = manifest();
+    for (const css of m['index.html'].css ?? []) {
+      const text = readFileSync(join(DIST, css), 'utf8');
+      for (const [theme, marker] of Object.entries(MARKERS)) {
+        assert.doesNotMatch(text, marker.stylesheet, `${css}: ${theme}`);
+      }
+    }
+    const themeStylesheets = readdirSync(join(DIST, 'assets')).filter((file) =>
+      /^(modern-education|atelier\.stylesheet)-[\w-]+\.css$/.test(file)
+    );
+    assert.equal(themeStylesheets.length, 2, themeStylesheets.join(', '));
+  });
+
+  it('the manifest names no absolute source path', () => {
+    for (const key of Object.keys(manifest()))
+      assert.ok(!key.startsWith('/'), key);
+  });
+
+  it('an Atelier page preloads the display face its heading uses; Theme 1 none', async () => {
+    const fontPreloads = (html) =>
+      [
+        ...html.matchAll(
+          /<link rel="preload" as="font" type="font\/woff2" crossorigin href="\/(assets\/[^"]+)">/g
+        ),
+      ].map((match) => match[1]);
+    const atelier = fontPreloads((await get(handler, DELTA, '/')).body);
+    assert.ok(atelier.length > 0, 'the Atelier hero face is preloaded');
+    for (const file of atelier) {
+      assert.match(file, /^assets\/(fraunces-latin|markazi-text-arabic)/);
+      assert.ok(existsSync(join(DIST, file)), `${file} exists`);
+    }
+    const atelierArabic = fontPreloads(
+      (await get(handler, DELTA, '/ar/')).body
+    );
+    assert.ok(atelierArabic.length > 0);
+    assert.ok(atelierArabic.every((file) => /markazi-text-arabic/.test(file)));
+    assert.deepEqual(fontPreloads((await get(handler, ALPHA, '/')).body), []);
+    const off = await makeHandler({ preloadThemeFonts: false });
+    assert.deepEqual(fontPreloads((await get(off, DELTA, '/')).body), []);
+  });
+
+  it('Coming Soon on a theme that draws its own links that theme only', async () => {
+    const result = await get(handler, GAMMA, '/');
+    assert.equal(result.headers['X-Atlas-SSR'], 'render', result.reason);
+    assert.deepEqual(headStylesheets(result.body), ['modern-education', 'app']);
+    assert.deepEqual(payloadOf(result.body).themePacks, ['modern-education']);
   });
 });
