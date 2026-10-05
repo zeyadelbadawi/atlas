@@ -104,7 +104,8 @@ export interface SsrOptions {
   readonly maxPasses?: number;
   /**
    * Preload the display font(s) the page's heading is set in, for a theme
-   * that has its own (Atelier; `theme-font-preloads.ts`). Default on.
+   * that has its own (Atelier; `theme-font-preloads.ts`). Default off
+   * (measured; see `preloadThemeFonts` in server/ssr/handler.mjs).
    */
   readonly preloadThemeFonts?: boolean;
 }
@@ -455,9 +456,9 @@ export async function renderPublicWebsitePage(
         preloadHtml:
           options.preloadHtml +
           (options.localePreloadHtml?.[locale] ?? '') +
-          (options.preloadThemeFonts === false
-            ? ''
-            : themeFontPreloadHtml(themePackUsage, appHtml)),
+          (options.preloadThemeFonts
+            ? themeFontPreloadHtml(themePackUsage, appHtml)
+            : ''),
         themeStylesheetHtml: themeStylesheetLinksHtml(themePackUsage),
         appHtml,
         payloadJson: serializePayload({

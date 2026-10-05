@@ -16,6 +16,10 @@
  *
  * The URLs are content-hashed assets, the same files `atelier.css` names
  * (its `@font-face` rules), so the preload is the request the page uses.
+ *
+ * OPT-IN (`preloadThemeFonts`, off by default): Lighthouse mobile measured
+ * it slower, not faster — the fonts then compete with the render-blocking
+ * stylesheets in the first wave (see server/ssr/handler.mjs).
  */
 import type { WebsiteThemeKey } from '@types';
 import frauncesLatin from '@/assets/fonts/fraunces-latin.woff2?url';

@@ -1193,27 +1193,26 @@ describe('theme packs: each site gets only its own theme', () => {
       assert.ok(!key.startsWith('/'), key);
   });
 
-  it('an Atelier page preloads the display face its heading uses; Theme 1 none', async () => {
+  it('when asked, an Atelier page preloads the display face its heading uses; Theme 1 none', async () => {
     const fontPreloads = (html) =>
       [
         ...html.matchAll(
           /<link rel="preload" as="font" type="font\/woff2" crossorigin href="\/(assets\/[^"]+)">/g
         ),
       ].map((match) => match[1]);
-    const atelier = fontPreloads((await get(handler, DELTA, '/')).body);
+    // Off unless asked (measured: see the handler's `preloadThemeFonts`).
+    assert.deepEqual(fontPreloads((await get(handler, DELTA, '/')).body), []);
+    const on = await makeHandler({ preloadThemeFonts: true });
+    const atelier = fontPreloads((await get(on, DELTA, '/')).body);
     assert.ok(atelier.length > 0, 'the Atelier hero face is preloaded');
     for (const file of atelier) {
       assert.match(file, /^assets\/(fraunces-latin|markazi-text-arabic)/);
       assert.ok(existsSync(join(DIST, file)), `${file} exists`);
     }
-    const atelierArabic = fontPreloads(
-      (await get(handler, DELTA, '/ar/')).body
-    );
+    const atelierArabic = fontPreloads((await get(on, DELTA, '/ar/')).body);
     assert.ok(atelierArabic.length > 0);
     assert.ok(atelierArabic.every((file) => /markazi-text-arabic/.test(file)));
-    assert.deepEqual(fontPreloads((await get(handler, ALPHA, '/')).body), []);
-    const off = await makeHandler({ preloadThemeFonts: false });
-    assert.deepEqual(fontPreloads((await get(off, DELTA, '/')).body), []);
+    assert.deepEqual(fontPreloads((await get(on, ALPHA, '/')).body), []);
   });
 
   it('Coming Soon on a theme that draws its own links that theme only', async () => {
