@@ -24,8 +24,8 @@ import markaziTextArabic from '@/assets/fonts/markazi-text-arabic.woff2?url';
 
 /** Heading classes set in Atelier's display face (`atelier.css`). */
 const ATELIER_DISPLAY_HEADING = /class="[^"]*\bat-(?:display|title)\b/;
-const LATIN = /[A-Za-z0-9À-ÿ]/;
-const ARABIC = /[؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿]/;
+const LATIN = /[A-Za-z0-9\u00C0-\u00FF]/;
+const ARABIC = /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/;
 
 /** The text of some markup: tags and character references removed. */
 const textOf = (html: string): string =>
