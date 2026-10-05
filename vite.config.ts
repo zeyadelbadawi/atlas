@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import fs from 'node:fs';
 import path from 'path';
@@ -45,6 +45,74 @@ function ensureBuildOutDir() {
     },
     writeBundle() {
       fs.mkdirSync(outDir, { recursive: true });
+    },
+  };
+}
+
+/**
+ * Theme stylesheets are delivered as links, never through chunks
+ * (src/features/website/theme-packs/theme-stylesheets.ts): each theme's
+ * CSS is a `?url` asset linked in front of the entry stylesheet, so it
+ * loses to Tailwind utilities of equal specificity, and a site downloads
+ * only its own theme's CSS.
+ *
+ * A plain `import './x.css'` in a theme module would ALSO put that CSS in
+ * the theme chunk's stylesheet, which Vite appends after `index.css` —
+ * overriding utilities and duplicating the link. This plugin makes those
+ * imports no-ops (the module loads as empty CSS); the `?url` imports and
+ * the dev server's `<link>` requests carry a query and are untouched.
+ * A new theme folder with its own stylesheet is added to the pattern.
+ */
+const THEME_STYLESHEET_PATH =
+  /\/src\/features\/website\/(?:modern-education|atelier)\/[^?]*\.css$/;
+const STYLESHEET_ASSET_QUERY =
+  /(?:^|&)(?:url|transform-only|direct|raw|inline)\b/;
+
+function themeStylesheetsAsLinks(): Plugin {
+  let root = __dirname;
+  return {
+    name: 'atlas:theme-stylesheets-as-links',
+    enforce: 'pre',
+    configResolved(config) {
+      root = config.root;
+    },
+    load(id) {
+      const [file, query = ''] = id.split('?');
+      if (
+        THEME_STYLESHEET_PATH.test(file.replace(/\\/g, '/')) &&
+        !STYLESHEET_ASSET_QUERY.test(query)
+      ) {
+        return '';
+      }
+      return undefined;
+    },
+    // Vite 5 keys a `?url` CSS asset in `.vite/manifest.json` by its
+    // ABSOLUTE source path (every other entry is root-relative), which
+    // would publish the build machine's directory layout with the build.
+    generateBundle: {
+      order: 'post',
+      handler(_options, bundle) {
+        const manifest = bundle['.vite/manifest.json'];
+        if (manifest?.type !== 'asset') return;
+        const relative = (file: string) =>
+          path.isAbsolute(file)
+            ? path.relative(root, file).split(path.sep).join('/')
+            : file;
+        const entries = JSON.parse(String(manifest.source)) as Record<
+          string,
+          { src?: string }
+        >;
+        manifest.source = JSON.stringify(
+          Object.fromEntries(
+            Object.entries(entries).map(([key, entry]) => [
+              relative(key),
+              entry.src ? { ...entry, src: relative(entry.src) } : entry,
+            ])
+          ),
+          undefined,
+          2
+        );
+      },
     },
   };
 }
@@ -97,6 +165,7 @@ export default defineConfig(({ command, mode, isSsrBuild }) => {
           ]
         : []),
       react(),
+      themeStylesheetsAsLinks(),
       ...(command === 'serve' ? [atoms()] : []),
       ensureBuildOutDir(),
       ...(ssr
@@ -200,6 +269,10 @@ export default defineConfig(({ command, mode, isSsrBuild }) => {
       manifest: !ssr,
       // `public/` belongs to the client build only.
       copyPublicDir: !ssr,
+      // Minified CSS in the server bundle too (Vite's SSR default is off):
+      // the theme stylesheet URLs it writes into the page are content
+      // hashes, which must name the client build's (minified) files.
+      cssMinify: 'esbuild',
       rollupOptions: {
         // The app's own TypeScript modules are side-effect free (the only
         // import-for-effect statements are CSS). Declaring it lets Rollup
@@ -220,6 +293,18 @@ export default defineConfig(({ command, mode, isSsrBuild }) => {
         output: ssr
           ? {}
           : {
+              // The public router's chunk keeps a stable file name: the
+              // server renderer finds it in the manifest by that name
+              // (`findPublicRouterChunk`), and Rollup's own name for a
+              // chunk without a facade is whichever module it orders last.
+              chunkFileNames: (chunk) =>
+                chunk.moduleIds.some((id) =>
+                  id.endsWith(
+                    '/src/features/public-website/PublicWebsiteRouter.tsx'
+                  )
+                )
+                  ? 'assets/PublicWebsiteRouter-[hash].js'
+                  : 'assets/[name]-[hash].js',
               manualChunks: {
                 // Vendor chunks
                 'react-vendor': ['react', 'react-dom'],

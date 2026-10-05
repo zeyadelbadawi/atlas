@@ -1,36 +1,44 @@
 /**
  * Theme pack registry — the code counterpart of `website-theme.registry.ts`
  * (tokens). One entry per theme key; a theme with its own presentation
- * gets its own module under `packs/`, so adding or redesigning one theme
- * never edits another's file (§F.2, §J.12).
+ * gets its own module (`modern-education.pack.ts`, `atelier.pack.ts`), so
+ * adding or redesigning one theme never edits another's file (§F.2, §J.12).
  *
  * Themes 2–5 use the base pack: base renderers and the base brand mapping,
  * which keeps them pixel-identical through the Theme 1 work.
  *
- * Packs are small descriptors, resolved synchronously: the brand mapping
- * must be ready for the first paint (it sets the page's colours). Heavy
- * renderer code a pack adds later is split out with `React.lazy` inside
- * the pack, so it only downloads for Academies on that theme.
+ * A theme with its own pack is a chunk of its own, loaded on demand
+ * (`theme-pack.loader.ts`), so each public site downloads only its theme.
+ * `getThemePack` reads a pack that has loaded: call it inside
+ * `ThemePackGate` (or after `loadThemePack`).
  */
 import type { SectionType, WebsiteThemeKey } from '@types';
 import { BASE_RENDERERS } from './base-renderers';
-import { createBasePack } from './base-pack';
-import { MODERN_EDUCATION_PACK } from '../modern-education/modern-education.pack';
-import { ATELIER_PACK } from '../atelier/atelier.pack';
+import { getLoadedThemePack, resolveThemePackKey } from './theme-pack.loader';
 import type { SectionRendererComponent, ThemePack } from './theme-pack.types';
 
-const registry: Record<WebsiteThemeKey, ThemePack> = {
-  'modern-education': MODERN_EDUCATION_PACK,
-  atelier: ATELIER_PACK,
-  'premium-academy': createBasePack('premium-academy'),
-  'corporate-learning': createBasePack('corporate-learning'),
-  'minimal-editorial': createBasePack('minimal-editorial'),
-  'bold-creative': createBasePack('bold-creative'),
-};
+export {
+  getLoadedThemePack,
+  isKnownThemeKey,
+  loadAllThemePacks,
+  loadThemePack,
+  resolveThemePackKey,
+  themeDrawsSystemPage,
+} from './theme-pack.loader';
 
-/** Same fallback as `getWebsiteTheme`: an unknown/legacy key renders as Modern Education. */
+/**
+ * The theme's pack — an unknown/legacy key gets Modern Education's, the
+ * same fallback as `getWebsiteTheme`. Throws when that pack has not loaded
+ * yet: rendering a theme without its pack would show the wrong design.
+ */
 export function getThemePack(key: WebsiteThemeKey): ThemePack {
-  return registry[key] ?? MODERN_EDUCATION_PACK;
+  const pack = getLoadedThemePack(key);
+  if (!pack) {
+    throw new Error(
+      `Theme pack "${resolveThemePackKey(key)}" has not loaded: render it inside ThemePackGate, or await loadThemePack() first.`
+    );
+  }
+  return pack;
 }
 
 /** `pack.renderers[type] ?? BASE_RENDERERS[type]` — `undefined` only for a type no code knows. */

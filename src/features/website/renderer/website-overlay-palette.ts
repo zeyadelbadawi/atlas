@@ -45,7 +45,11 @@ const BLACK = '0 0% 0%';
 const TEXT_CONTRAST = 4.5;
 const NON_TEXT_CONTRAST = 3;
 
-/** Exactly what `WebsiteThemeScope` maps for this theme and brand. */
+/**
+ * Exactly what `WebsiteThemeScope` maps for this theme and brand. The
+ * mapping is the theme pack's, so the pack must have loaded
+ * (`WebsiteOverlayScope` stays neutral until it has).
+ */
 export function mapWebsiteBrandVariables(
   theme: WebsiteThemeDefinition,
   brand: WebsiteOverlayBrand | undefined

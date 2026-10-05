@@ -21,6 +21,7 @@ import { WebsiteHeader, type WebsiteHeaderAuthState } from './WebsiteHeader';
 import { AtlasPlatformAttribution } from '@components/branding';
 import { WebsiteFooter } from './WebsiteFooter';
 import { getThemePack } from '../theme-packs/theme-pack.registry';
+import { ThemePackGate } from '../theme-packs/ThemePackGate';
 import { MobileBottomNav } from './MobileBottomNav';
 import { useMobileBottomNavVisibility } from './useMobileBottomNavVisibility';
 import { PublicWebsiteLocaleProvider } from './PublicWebsiteLocaleContext';
@@ -62,7 +63,29 @@ export interface WebsiteChromeProps {
   readonly authState?: WebsiteHeaderAuthState;
 }
 
-export function WebsiteChrome({
+/**
+ * The theme's pack loads on demand (`theme-pack.loader.ts`): on the public
+ * site it is loaded before the first render, so this passes straight
+ * through; elsewhere (dashboard previews) the page's place is held by an
+ * empty full-height box until it arrives.
+ */
+export function WebsiteChrome(props: WebsiteChromeProps): JSX.Element {
+  return (
+    <ThemePackGate
+      themeKey={getWebsiteTheme(props.configuration.themeKey).key}
+      fallback={
+        <div
+          className={cn('min-h-[100dvh]', props.className)}
+          aria-busy="true"
+        />
+      }
+    >
+      <LoadedWebsiteChrome {...props} />
+    </ThemePackGate>
+  );
+}
+
+function LoadedWebsiteChrome({
   academyId,
   academyName,
   academyLogo,
