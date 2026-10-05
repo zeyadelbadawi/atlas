@@ -32,6 +32,7 @@ import { useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import type { WebsiteThemeKey } from '@types';
 import { PortalContainerProvider } from '@/components/ui/portal-container';
 import { getWebsiteTheme } from '../themes/website-theme.registry';
+import { useLoadedThemePack } from '../theme-packs/ThemePackGate';
 import {
   mapWebsiteBrandVariables,
   resolveContrastSafePrimary,
@@ -51,15 +52,21 @@ export function WebsiteOverlayScope({
   children,
 }: WebsiteOverlayScopeProps): JSX.Element {
   const theme = themeKey ? getWebsiteTheme(themeKey) : undefined;
+  // The palette needs the theme's pack (its brand mapping). On a
+  // server-rendered page it has loaded before the first render; otherwise
+  // the overlay stays neutral until it arrives, as it does while the
+  // site's data loads.
+  const pack = useLoadedThemePack(theme?.key);
 
   const style = useMemo<CSSProperties>(() => {
-    const variables = theme ? mapWebsiteBrandVariables(theme, brand) : null;
+    const variables =
+      theme && pack ? mapWebsiteBrandVariables(theme, brand) : null;
     return {
       ...variables,
       ...resolveContrastSafePrimary(variables, theme?.tokens.defaultPrimary),
       colorScheme: 'light',
     } as CSSProperties;
-  }, [theme, brand]);
+  }, [theme, pack, brand]);
 
   const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
     null

@@ -17,6 +17,13 @@ export interface SsrPayload {
   readonly locale: 'en' | 'ar';
   readonly renderYear: number;
   readonly consentDecided: boolean;
+  /**
+   * The themes the page rendered (`ThemePackUsageContext`): the browser
+   * loads their packs before hydrating, so it renders what the server did.
+   * Optional so a page rendered without it still hydrates (the theme then
+   * loads during hydration instead).
+   */
+  readonly themePacks?: readonly string[];
   /** The dehydrated public-website queries (`@tanstack/react-query`). */
   readonly queries: unknown;
 }
@@ -53,6 +60,12 @@ export interface SsrDocumentParts {
   readonly headHtml: string;
   /** `<link rel="modulepreload">` and the like, placed before `</head>`. */
   readonly preloadHtml: string;
+  /**
+   * The page's theme stylesheet links (`themeStylesheetLinksHtml`), placed
+   * BEFORE the app's own stylesheet: theme rules must lose to Tailwind
+   * utilities of equal specificity (`theme-stylesheets.ts`).
+   */
+  readonly themeStylesheetHtml?: string;
   readonly appHtml: string;
   readonly payloadJson: string;
 }
@@ -74,6 +87,15 @@ export function buildSsrDocument(
     // beside it (browsers differ in which of two icons they pick).
     if (parts.headHtml.includes('data-atlas-favicon'))
       html = html.replace(/<link rel="icon"[^>]*>\s*/, () => '');
+  }
+  if (parts.themeStylesheetHtml) {
+    const themeStylesheets = parts.themeStylesheetHtml;
+    // The client build links its entry stylesheet in the head; without one
+    // (a template with no stylesheet), the head's end will do.
+    const appStylesheet = /<link rel="stylesheet"[^>]*>/;
+    html = appStylesheet.test(html)
+      ? html.replace(appStylesheet, (link) => `${themeStylesheets}${link}`)
+      : html.replace('</head>', () => `${themeStylesheets}</head>`);
   }
   html = html.replace(
     '</head>',

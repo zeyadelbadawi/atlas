@@ -1,0 +1,9 @@
+/*
+ * Atelier's (Theme 2) stylesheet as ONE file, linked only on pages that use
+ * Atelier (`theme-packs/theme-stylesheets.ts`). Same order the four files
+ * had in the entry stylesheet; Vite inlines the imports at build time.
+ */
+@import './atelier.css';
+@import './atelier-sections.css';
+@import './atelier-pages.css';
+@import './atelier-cinematic.css';
