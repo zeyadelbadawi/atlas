@@ -3,7 +3,7 @@ import {
   adoptThemeAssetReference,
   adoptThemeAssets,
 } from './adopt-theme-assets';
-import { THEME_ASSET_MANIFESTS } from './theme-asset.registry';
+import { ALL_THEME_ASSET_MANIFESTS } from './manifests';
 import type { ThemeAssetManifest } from './theme-asset.types';
 
 describe('adoptThemeAssetReference', () => {
@@ -38,7 +38,7 @@ describe('adoptThemeAssetReference', () => {
   });
 
   it('every Modern Education starter photograph has an Atelier counterpart', () => {
-    for (const entry of THEME_ASSET_MANIFESTS['modern-education'].assets) {
+    for (const entry of ALL_THEME_ASSET_MANIFESTS['modern-education'].assets) {
       if (entry.key === 'theme-card') continue;
       expect(
         adoptThemeAssetReference(
@@ -79,9 +79,9 @@ describe('adoptThemeAssetReference', () => {
   });
 
   it('never points at a photograph the active theme has not released', () => {
-    const atelier = THEME_ASSET_MANIFESTS.atelier;
+    const atelier = ALL_THEME_ASSET_MANIFESTS.atelier;
     const pendingHero: Record<string, ThemeAssetManifest> = {
-      ...THEME_ASSET_MANIFESTS,
+      ...ALL_THEME_ASSET_MANIFESTS,
       atelier: {
         ...atelier,
         assets: atelier.assets.map((entry) =>

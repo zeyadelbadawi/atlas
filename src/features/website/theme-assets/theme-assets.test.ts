@@ -7,10 +7,8 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { themeAssetManifestSchema } from './theme-asset.schema';
-import {
-  THEME_ASSET_MANIFESTS,
-  buildThemeAssetPrompt,
-} from './theme-asset.registry';
+import { buildThemeAssetPrompt } from './theme-asset.registry';
+import { ALL_THEME_ASSET_MANIFESTS } from './manifests';
 import {
   hasRenderableImage,
   resolveImageUrl,
@@ -60,14 +58,14 @@ const ATELIER_KEYS = [
   'theme-card',
 ];
 
-const released = Object.values(THEME_ASSET_MANIFESTS).flatMap((manifest) =>
+const released = Object.values(ALL_THEME_ASSET_MANIFESTS).flatMap((manifest) =>
   manifest.assets
     .filter((entry) => entry.status === 'released')
     .map((entry) => ({ manifest, entry }))
 );
 
 describe('theme asset manifests', () => {
-  it.each(Object.values(THEME_ASSET_MANIFESTS).map((m) => [m.theme, m]))(
+  it.each(Object.values(ALL_THEME_ASSET_MANIFESTS).map((m) => [m.theme, m]))(
     '%s satisfies the manifest contract',
     (_theme, manifest) => {
       const result = themeAssetManifestSchema.safeParse(manifest);
@@ -258,7 +256,7 @@ describe('template references', () => {
     for (const reference of new Set(references)) {
       const [theme, key] = reference.slice('theme-asset:'.length).split('/');
       expect(
-        THEME_ASSET_MANIFESTS[theme]?.assets.some((a) => a.key === key),
+        ALL_THEME_ASSET_MANIFESTS[theme]?.assets.some((a) => a.key === key),
         reference
       ).toBe(true);
     }

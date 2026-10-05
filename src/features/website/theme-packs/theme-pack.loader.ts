@@ -23,6 +23,7 @@
 import { WEBSITE_THEME_KEYS, type WebsiteThemeKey } from '@types';
 import { createBasePack } from './base-pack';
 import { ensureThemeStylesheets } from './theme-stylesheets';
+import { registerThemeAssetManifest } from '../theme-assets/theme-asset.registry';
 import type { ThemePack } from './theme-pack.types';
 
 /** A system page a theme may draw itself (`ThemePages`). */
@@ -106,6 +107,7 @@ export function themePackLoadError(key: string | undefined): unknown {
  * also used by the test setup, which registers every pack up front.
  */
 export function registerThemePack(pack: ThemePack): void {
+  if (pack.assets) registerThemeAssetManifest(pack.assets);
   loaded.set(pack.key, pack);
   failures.delete(pack.key);
   notify();

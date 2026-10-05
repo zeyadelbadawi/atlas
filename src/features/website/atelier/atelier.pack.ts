@@ -14,6 +14,7 @@ import { mapAtelierBrandPalette } from './atelier.brand-mapping';
 import { ATELIER_SECTION_RENDERERS } from './sections';
 import { ATELIER_CHROME } from './chrome';
 import { ATELIER_PAGES, ATELIER_PAGE_RENDERERS } from './pages';
+import { ATELIER_ASSETS } from '../theme-assets/manifests/atelier.manifest';
 
 export const ATELIER_PACK: ThemePack = {
   key: 'atelier',
@@ -24,4 +25,5 @@ export const ATELIER_PACK: ThemePack = {
   pages: ATELIER_PAGES,
   chrome: ATELIER_CHROME,
   mapBrandPalette: mapAtelierBrandPalette,
+  assets: ATELIER_ASSETS,
 };

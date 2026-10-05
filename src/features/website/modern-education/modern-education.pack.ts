@@ -43,6 +43,7 @@ import { T1CourseCatalog } from './T1CourseCatalog';
 import { T1Contact, T1Gallery } from './t1-page-sections';
 import { T1CourseDetails } from './T1CourseDetails';
 import { T1ComingSoon, T1NotFound } from './T1SystemPages';
+import { MODERN_EDUCATION_ASSETS } from '../theme-assets/manifests/modern-education.manifest';
 
 export const MODERN_EDUCATION_PACK: ThemePack = {
   key: 'modern-education',
@@ -76,4 +77,5 @@ export const MODERN_EDUCATION_PACK: ThemePack = {
     AuthFrame: ModernEducationAuthFrame,
   },
   mapBrandPalette: mapModernEducationBrandPalette,
+  assets: MODERN_EDUCATION_ASSETS,
 };

@@ -20,6 +20,7 @@ export {
   THEME_ASSET_PUBLIC_ROOT,
   buildThemeAssetPrompt,
   findThemeAsset,
+  registerThemeAssetManifest,
 } from './theme-asset.registry';
 export { themeAssetManifestSchema } from './theme-asset.schema';
 export type {

@@ -18,6 +18,7 @@ import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { WebsiteRenderer } from '../renderer';
 import { ThemeImage, hasRenderableImage } from '../theme-assets';
+import { ThemePackGate } from '../theme-packs/ThemePackGate';
 import type {
   WebsiteConfiguration,
   WebsitePage,
@@ -74,26 +75,30 @@ export function WebsiteThemePreviewCard({
         // `inert` — React 18's types don't know it yet.
         {...{ inert: '' }}
       >
-        {hasRenderableImage(featureImage) ? (
-          <div className="h-full w-full [&>picture]:block [&>picture]:h-full">
-            <ThemeImage
-              value={featureImage}
-              alt=""
-              sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw"
-              className="block h-full w-full object-cover"
+        {/* The feature image is in the theme's manifest, which arrives
+            with its pack. */}
+        <ThemePackGate themeKey={theme.key}>
+          {hasRenderableImage(featureImage) ? (
+            <div className="h-full w-full [&>picture]:block [&>picture]:h-full">
+              <ThemeImage
+                value={featureImage}
+                alt=""
+                sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw"
+                className="block h-full w-full object-cover"
+              />
+            </div>
+          ) : (
+            <Miniature
+              academyId={academyId}
+              academyName={academyName}
+              academyLogo={academyLogo}
+              configuration={configuration}
+              pages={pages}
+              homePage={homePage}
+              themeKey={theme.key}
             />
-          </div>
-        ) : (
-          <Miniature
-            academyId={academyId}
-            academyName={academyName}
-            academyLogo={academyLogo}
-            configuration={configuration}
-            pages={pages}
-            homePage={homePage}
-            themeKey={theme.key}
-          />
-        )}
+          )}
+        </ThemePackGate>
       </div>
       <div className="space-y-2 p-4">
         <div className="flex items-center justify-between gap-2">
