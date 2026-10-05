@@ -599,6 +599,8 @@ if (SSR) {
     // As production (off) unless an experiment asks for it.
     preloadRouterChunks: process.env.THEME_BASELINE_SSR_PRELOAD === '1',
     preloadArabicFonts: process.env.THEME_BASELINE_SSR_AR_FONTS === '1',
+    // As production (on); `0` turns the theme display-font preloads off.
+    preloadThemeFonts: process.env.THEME_BASELINE_SSR_THEME_FONTS !== '0',
     log:
       process.env.THEME_BASELINE_SSR_LOG === '1'
         ? (event) => console.log(JSON.stringify(event))

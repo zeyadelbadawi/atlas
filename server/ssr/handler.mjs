@@ -157,6 +157,11 @@ export class RenderCache {
  *   the chunk at boot (Reports/SSR_ARCHITECTURE_ANALYSIS.md §12.6).
  * @param {boolean} [options.preloadArabicFonts] Arabic pages preload the
  *   Arabic subsets of the theme fonts (see §12.6 for the measurement).
+ * @param {boolean} [options.preloadThemeFonts] on by default: an Atelier
+ *   page preloads the display face(s) its heading (the Home hero, its LCP
+ *   element) is set in, which the browser otherwise finds only after the
+ *   theme stylesheet (src/ssr/theme-font-preloads.ts). Theme 1 and the
+ *   base-pack themes get none.
  */
 export async function createSsrHandler({
   distDir,
@@ -171,6 +176,7 @@ export async function createSsrHandler({
   log = () => {},
   preloadRouterChunks = false,
   preloadArabicFonts = false,
+  preloadThemeFonts = true,
 }) {
   const entry = await import(pathToFileURL(entryPath).href);
   const template = readFileSync(join(distDir, 'index.html'), 'utf8');
@@ -250,6 +256,7 @@ export async function createSsrHandler({
             template,
             preloadHtml,
             localePreloadHtml,
+            preloadThemeFonts,
             apiOrigin,
             apiTimeoutMs,
             // A response larger than the page budget means the page would

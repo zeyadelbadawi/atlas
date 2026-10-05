@@ -68,6 +68,7 @@ import {
   isServerRenderablePath,
   publicWebsiteLocaleForPath,
 } from './ssr-paths';
+import { themeFontPreloadHtml } from './theme-font-preloads';
 
 export interface SsrRequest {
   /** Path and query, e.g. `/ar/courses?level=beginner`. */
@@ -101,6 +102,11 @@ export interface SsrOptions {
   readonly cache?: SsrCache;
   /** Render passes before giving up (each fetches one wave of queries). */
   readonly maxPasses?: number;
+  /**
+   * Preload the display font(s) the page's heading is set in, for a theme
+   * that has its own (Atelier; `theme-font-preloads.ts`). Default on.
+   */
+  readonly preloadThemeFonts?: boolean;
 }
 
 export type SsrOutcome = 'ready' | 'unpublished';
@@ -447,7 +453,11 @@ export async function renderPublicWebsitePage(
           ? renderSeoHeadHtml(seoCollector.current)
           : '',
         preloadHtml:
-          options.preloadHtml + (options.localePreloadHtml?.[locale] ?? ''),
+          options.preloadHtml +
+          (options.localePreloadHtml?.[locale] ?? '') +
+          (options.preloadThemeFonts === false
+            ? ''
+            : themeFontPreloadHtml(themePackUsage, appHtml)),
         themeStylesheetHtml: themeStylesheetLinksHtml(themePackUsage),
         appHtml,
         payloadJson: serializePayload({
