@@ -12,6 +12,10 @@ export {
 } from './resolve-theme-asset';
 export type { ResolvedThemeAsset } from './resolve-theme-asset';
 export {
+  adoptThemeAssetReference,
+  adoptThemeAssets,
+} from './adopt-theme-assets';
+export {
   THEME_ASSET_MANIFESTS,
   THEME_ASSET_PUBLIC_ROOT,
   buildThemeAssetPrompt,

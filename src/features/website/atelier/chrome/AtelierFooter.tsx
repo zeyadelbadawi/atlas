@@ -62,6 +62,9 @@ function FooterColumn({
   );
 }
 
+/** Names longer than this set a size smaller still, so they stay a signature, not a banner. */
+const COLOPHON_LONG_NAME = 24;
+
 export function AtelierFooter({
   academyId,
   academyName,
@@ -162,7 +165,13 @@ export function AtelierFooter({
               className="h-10 w-auto max-w-[12rem] object-contain"
             />
           ) : null}
-          <p className="atp-colophon-name" dir="auto">
+          <p
+            className="atp-colophon-name"
+            dir="auto"
+            data-length={
+              academyName.length > COLOPHON_LONG_NAME ? 'long' : undefined
+            }
+          >
             {name}
           </p>
         </div>

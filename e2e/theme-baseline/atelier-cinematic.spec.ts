@@ -374,7 +374,7 @@ test.describe('Atelier opening photograph', () => {
         const image = page.locator('.ath-hero-media img');
         await expect
           .poll(() => image.evaluate((el: HTMLImageElement) => el.currentSrc))
-          .toMatch(new RegExp(`/atelier/v2/home-hero-${file}\\.avif$`));
+          .toMatch(new RegExp(`/atelier/v3/home-hero-${file}\\.avif$`));
         const requested = await page.evaluate(() =>
           performance
             .getEntriesByType('resource')

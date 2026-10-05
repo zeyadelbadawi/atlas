@@ -38,6 +38,7 @@ const MATRIX_KEYS = [
   'gallery-4',
   'gallery-5',
   'auth-side',
+  'theme-card',
 ];
 
 /** Atelier's asset keys (Reports/THEME_2_ATELIER_PLAN.md §5). */
@@ -56,6 +57,7 @@ const ATELIER_KEYS = [
   'gallery-5',
   'auth-side',
   'course-fallback',
+  'theme-card',
 ];
 
 const released = Object.values(THEME_ASSET_MANIFESTS).flatMap((manifest) =>
@@ -89,28 +91,53 @@ describe('theme asset manifests', () => {
     ).toEqual(['home-hero']);
   });
 
-  it('releases Atelier’s hero at full-window widths (v2) from the same approved master, v1 kept', () => {
+  it('releases Atelier’s learning photographs as v3, hero at full-window widths; v1 and v2 kept', () => {
     const hero = ATELIER_ASSETS.assets.find((a) => a.key === 'home-hero')!;
-    expect(hero.version).toBe('v2');
+    expect(hero.version).toBe('v3');
     // The opening scene's full window at 1440, 1920 and 2560 CSS px (1x),
-    // and 2x up to the widest the 3712 px master allows; never upscaled.
+    // and 2x up to the widest the 3686 px master allows; never upscaled.
     expect(hero.widths).toEqual([480, 800, 1200, 1600, 2000, 2560, 3200]);
     expect(hero.master).toEqual({ width: 3680, height: 4600 });
     expect(hero.provenance?.masterSha256).toBe(
-      '9ffb23f0e9b3ea066ba5348b19840970d2bb92d82a737caecf3c5367d7323e03'
+      'cc1628a9d2b76ee325bdd97bb6b7f1b00ada416ee36994bad4a655e2fbfb47a8'
     );
+    // Every Atelier photograph was replaced together (5 Oct 2026).
+    for (const entry of ATELIER_ASSETS.assets) {
+      expect(entry.version, entry.key).toBe('v3');
+    }
     expect(RELEASED_THEME_ASSET_FOLDERS).toEqual(
-      expect.arrayContaining(['atelier/v1', 'atelier/v2'])
+      expect.arrayContaining(['atelier/v1', 'atelier/v2', 'atelier/v3'])
     );
-    // v1 stays served for anything that still references it.
-    for (const width of [480, 800, 1200, 1600]) {
-      for (const format of ATELIER_ASSETS.formats) {
-        expect(
-          existsSync(
-            join(PUBLIC_ROOT, 'atelier', 'v1', `home-hero-${width}.${format}`)
-          )
-        ).toBe(true);
+    // Earlier versions stay served for anything that still references them.
+    for (const [version, widths] of [
+      ['v1', [480, 800, 1200, 1600]],
+      ['v2', [480, 800, 1200, 1600, 2000, 2560, 3200]],
+    ] as const) {
+      for (const width of widths) {
+        for (const format of ATELIER_ASSETS.formats) {
+          expect(
+            existsSync(
+              join(
+                PUBLIC_ROOT,
+                'atelier',
+                version,
+                `home-hero-${width}.${format}`
+              )
+            )
+          ).toBe(true);
+        }
       }
+    }
+  });
+
+  it('shares no photograph between Atelier and Modern Education', () => {
+    const atelier = new Set(
+      ATELIER_ASSETS.assets.map((a) => a.provenance?.masterSha256)
+    );
+    for (const entry of MODERN_EDUCATION_ASSETS.assets) {
+      expect(atelier.has(entry.provenance?.masterSha256), entry.key).toBe(
+        false
+      );
     }
   });
 
