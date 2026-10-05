@@ -22,6 +22,17 @@ import type { ProvisioningRequest, TenantSubscription } from '@types';
 import { provisioningService } from './services/ProvisioningService';
 import ProvisioningStartPage from './pages/ProvisioningStartPage';
 
+// jsdom has no ResizeObserver; the form's Radix RadioGroup (payment
+// methods section) measures with one.
+if (!('ResizeObserver' in globalThis)) {
+  (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver =
+    class {
+      observe(): void {}
+      unobserve(): void {}
+      disconnect(): void {}
+    };
+}
+
 const toastValue: ToastContextValue = {
   notify: vi.fn(),
   notifySuccess: vi.fn(),

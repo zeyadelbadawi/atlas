@@ -20,6 +20,17 @@ import { provisioningService } from '../services/ProvisioningService';
 import { AcademySetupForm } from './AcademySetupForm';
 import { SetupThemePicker } from './SetupThemePicker';
 
+// jsdom has no ResizeObserver; the form's Radix RadioGroup (payment
+// methods section) measures with one.
+if (!('ResizeObserver' in globalThis)) {
+  (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver =
+    class {
+      observe(): void {}
+      unobserve(): void {}
+      disconnect(): void {}
+    };
+}
+
 const toastValue: ToastContextValue = {
   notify: vi.fn(),
   notifySuccess: vi.fn(),

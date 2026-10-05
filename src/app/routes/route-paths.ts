@@ -346,6 +346,16 @@ export const DASHBOARD_ROUTES = {
   academyOrders: '/dashboard/academy/:academyId/orders',
   academyOrderDetail: '/dashboard/academy/:academyId/orders/:orderId',
 
+  /**
+   * Academy Manual Payments — the academy's own payment methods (bank
+   * transfer, InstaPay, wallet) and the review of what learners paid with
+   * them. Organization-Owner-only server-side, same gate as `academyOrders`.
+   * `?payment=<id>` opens one payment on the review page (the "payment to
+   * review" notification links there).
+   */
+  academyPaymentMethods: '/dashboard/academy/:academyId/payment-methods',
+  academyPayments: '/dashboard/academy/:academyId/payments',
+
   /** The Website Management landing (Prompt 10) — `websiteSettings` moved to its own sub-path to make room for it. */
   websiteOverview: '/dashboard/academy/:academyId/website',
   websiteSettings: '/dashboard/academy/:academyId/website/settings',
@@ -405,6 +415,8 @@ export const LEARNER_ROUTES = {
   /** Empty until Phase 3 issues the first certificate. */
   certificates: '/my/certificates',
   purchases: '/my/purchases',
+  /** Academy Manual Payments — every payment the learner made to this academy, with its review status. */
+  payments: '/my/payments',
   /** P64 Phase 4 — the paid-course checkout (order → payment → proof). */
   courseCheckout: '/my/courses/:courseId/checkout',
   /**

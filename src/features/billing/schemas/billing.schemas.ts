@@ -175,3 +175,73 @@ export const instapayMethodSchema = z.object({
 });
 
 export type InstapayMethodFormData = z.infer<typeof instapayMethodSchema>;
+
+/*
+ * Academy Manual Payments — an academy's OWN methods (settings page and the
+ * academy setup form). Only the details: an academy method has no display
+ * name or description of its own (the checkout names it by type). The same
+ * patterns and limits as the platform catalog, plus an optional bank branch.
+ */
+export const bankTransferDetailsSchema = z.object({
+  bankName: requiredText(120),
+  branchName: optionalText(120),
+  accountNumber: requiredText(64).refine(
+    (value) => BANK_ACCOUNT_NUMBER_PATTERN.test(value),
+    { message: 'validation:invalidAccountNumber' }
+  ),
+  iban: optionalPattern(IBAN_PATTERN, 'validation:invalidIban'),
+  swiftCode: optionalPattern(SWIFT_CODE_PATTERN, 'validation:invalidSwift'),
+  ...manualMethodTextsShape,
+});
+export type BankTransferDetailsFormData = z.infer<
+  typeof bankTransferDetailsSchema
+>;
+
+export const instapayDetailsSchema = z.object({
+  instapayAddress: z
+    .string()
+    .trim()
+    .min(1, BANK_FIELD_REQUIRED)
+    .refine((value) => INSTAPAY_ADDRESS_PATTERN.test(value), {
+      message: 'validation:invalidInstapayAddress',
+    }),
+  ...manualMethodTextsShape,
+});
+export type InstapayDetailsFormData = z.infer<typeof instapayDetailsSchema>;
+
+export const walletDetailsSchema = z
+  .object({
+    walletProvider: z
+      .enum(['', ...WALLET_PROVIDERS])
+      .refine((value) => value.length > 0, { message: BANK_FIELD_REQUIRED }),
+    walletProviderName: optionalText(60),
+    walletNumber: z
+      .string()
+      .trim()
+      .min(1, BANK_FIELD_REQUIRED)
+      .refine((value) => WALLET_NUMBER_PATTERN.test(value), {
+        message: 'validation:invalidWalletNumber',
+      }),
+    ...manualMethodTextsShape,
+  })
+  .superRefine((values, context) => {
+    if (values.walletProvider === 'other' && values.walletProviderName === '') {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['walletProviderName'],
+        message: 'errors:paymentMethod.walletProviderNameRequired',
+      });
+    }
+  });
+export type WalletDetailsFormData = z.infer<typeof walletDetailsSchema>;
+
+/** One academy method's form: its details under `instructions`, like the request body. */
+export const academyBankTransferMethodSchema = z.object({
+  instructions: bankTransferDetailsSchema,
+});
+export const academyInstapayMethodSchema = z.object({
+  instructions: instapayDetailsSchema,
+});
+export const academyWalletMethodSchema = z.object({
+  instructions: walletDetailsSchema,
+});

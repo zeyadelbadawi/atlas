@@ -393,6 +393,18 @@
     "academyLearnerAdded": {
       "title": "You've been added to an academy",
       "message": "You're now a student at {{academyName}}. Sign in with your existing Atlas credentials."
+    },
+    "coursePaymentApproved": {
+      "title": "Payment approved",
+      "message": "Your payment of {{amount}} {{currency}} for \"{{courseTitle}}\" was approved. You now have access."
+    },
+    "coursePaymentRejected": {
+      "title": "Payment not approved",
+      "message": "Your payment for \"{{courseTitle}}\" was not approved. Open My payments to see why and pay again."
+    },
+    "academyPaymentSubmitted": {
+      "title": "New payment to review",
+      "message": "A learner sent {{amount}} {{currency}} for \"{{courseTitle}}\". Check it and approve or reject."
     }
   },
   "liveSession": {

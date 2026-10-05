@@ -472,7 +472,8 @@
       "notifications": "Notifications",
       "devices": "Devices",
       "profile": "Profile",
-      "security": "Security"
+      "security": "Security",
+      "payments": "Payments"
     },
     "progress": {
       "label": "Course progress",
@@ -629,7 +630,8 @@
         },
         "loading": "Loading refund details",
         "loadFailed": "Couldn't load the refund details.",
-        "retry": "Try again"
+        "retry": "Try again",
+        "contactAcademy": "Paid to the academy directly. For a refund, contact the academy."
       }
     },
     "notifications": {
@@ -693,6 +695,39 @@
       "review": "Review course",
       "accessEnded": "Access ended",
       "browseCourses": "Browse courses"
+    },
+    "payments": {
+      "title": "My payments",
+      "subtitle": "Every payment you made to this academy, and where it stands.",
+      "loading": "Loading your payments…",
+      "empty": {
+        "title": "No payments yet",
+        "description": "When you pay for a course, it appears here."
+      },
+      "meta": "{{method}} · {{when}}",
+      "status": {
+        "awaitingProof": "Waiting for your proof",
+        "underReview": "Under review",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "closed": "Closed"
+      },
+      "explain": {
+        "awaitingProof": "Send the payment, then upload your proof to finish.",
+        "underReview": "The academy is checking your payment. You’ll get an email when it’s reviewed.",
+        "approved": "Your payment was approved and you have access to the course.",
+        "rejected": "This payment was not approved, so you don’t have access yet.",
+        "closed": "This payment is no longer open."
+      },
+      "reference": "Reference",
+      "proofSent": "Proof sent",
+      "viewProof": "View proof",
+      "viewProofFor": "View your proof for {{course}}",
+      "proofError": "Couldn’t open your proof. Please try again.",
+      "rejectedTitle": "Reason from the academy",
+      "noReason": "No reason was given. Contact the academy if you have questions.",
+      "submitNew": "Submit a new payment",
+      "continuePayment": "Continue payment"
     }
   },
   "player": {

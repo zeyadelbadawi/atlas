@@ -148,7 +148,8 @@
     "placeholderTitle": "Placeholder details — do not send money",
     "placeholderDescription": "The payment details below are placeholders for testing, not a real account. Do not transfer any money to them. Contact support if you see this outside a test environment.",
     "notFoundTitle": "Payment not found",
-    "notFoundDescription": "This payment doesn't exist, or it belongs to another organization."
+    "notFoundDescription": "This payment doesn't exist, or it belongs to another organization.",
+    "branchName": "Branch"
   },
   "platformReview": {
     "title": "Payment Review",
@@ -496,5 +497,165 @@
     "effectiveOnConfirmation": "When your payment is confirmed",
     "trialConversionNote": "Your trial ends and this plan starts once the payment is confirmed. You keep trial access until then.",
     "replacementNote": "This replaces your current plan once the payment is confirmed. You keep your current plan until then."
+  },
+  "academyMethods": {
+    "title": "Payment methods",
+    "description": "Choose how learners pay this academy for paid courses, and the details they are shown.",
+    "forbidden": {
+      "title": "Only the academy owner can manage payment methods",
+      "description": "Ask the owner of this organization to set up how learners pay."
+    },
+    "howItWorks": {
+      "title": "Learners pay your academy directly",
+      "description": "Learners see these details at checkout, send the money, and upload a proof. You check that the money arrived and approve or reject each payment. Access is given only after you approve.",
+      "reviewLink": "Review payments"
+    },
+    "noneEnabled": {
+      "title": "No payment method is on",
+      "description": "Learners can’t buy paid courses from this academy until you turn on at least one method."
+    },
+    "types": {
+      "manual_bank_transfer": "Learners transfer to your bank account.",
+      "manual_instapay": "Learners send the amount to your InstaPay address.",
+      "manual_wallet_transfer": "Learners send the amount to your mobile wallet (Vodafone Cash, Orange Cash and others)."
+    },
+    "status": {
+      "enabled": "Accepting",
+      "disabled": "Off",
+      "notSetUp": "Not set up"
+    },
+    "acceptLabel": "Accept",
+    "edit": "Edit details",
+    "editFor": "Edit {{method}} details",
+    "setUp": "Set up",
+    "setUpFor": "Set up {{method}}",
+    "notSetUpHint": "Add your details to start accepting this method.",
+    "setUpTitle": "Set up {{method}}",
+    "editTitle": "Edit {{method}}",
+    "dialogDescription": "Learners see these details at checkout. Use the account the money should really go to; an Arabic version of each text is shown to learners using Arabic.",
+    "saveAndEnable": "Save and turn on",
+    "savedToast": "{{method}} saved",
+    "enabledToast": "{{method}} is on — learners can pay with it now",
+    "disabledToast": "{{method}} is off — learners no longer see it",
+    "saveError": "Couldn’t save the payment method",
+    "fields": {
+      "branchName": "Branch"
+    }
+  },
+  "academyReview": {
+    "title": "Payments",
+    "description": "Payments learners made to this academy. Check that the money arrived, then approve or reject.",
+    "forbidden": {
+      "title": "Only the academy owner can review payments",
+      "description": "Ask the owner of this organization to review learners’ payments."
+    },
+    "tabsLabel": "Review status",
+    "tabs": {
+      "pending": "Waiting for review",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "all": "All"
+    },
+    "searchLabel": "Search by learner, email, course or reference",
+    "filters": {
+      "method": "Method",
+      "all": "All methods",
+      "sort": "Sort",
+      "clear": "Clear filters"
+    },
+    "sortOptions": {
+      "createdAt_desc": "Newest first",
+      "createdAt_asc": "Oldest first",
+      "amount_desc": "Highest amount",
+      "amount_asc": "Lowest amount"
+    },
+    "columns": {
+      "learner": "Learner",
+      "course": "Course",
+      "amount": "Amount",
+      "method": "Method",
+      "submitted": "Submitted",
+      "status": "Status"
+    },
+    "status": {
+      "not_required": "Waiting for proof",
+      "pending": "Waiting for review",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "empty": {
+      "pending": {
+        "title": "Nothing to review",
+        "description": "When a learner sends a payment proof, it appears here."
+      },
+      "approved": {
+        "title": "No approved payments yet",
+        "description": "Payments you approve appear here."
+      },
+      "rejected": {
+        "title": "No rejected payments",
+        "description": "Payments you reject appear here."
+      },
+      "all": {
+        "title": "No payments yet",
+        "description": "When learners pay with your academy’s methods, their payments appear here."
+      }
+    },
+    "emptyFiltered": {
+      "title": "No payments match",
+      "description": "Try another search or clear the filters."
+    },
+    "sheetTitle": "Payment",
+    "sheetDescription": "{{learner}} — {{course}}",
+    "loading": "Loading payment…",
+    "loadError": "Couldn’t load this payment. Close it and try again.",
+    "alreadyReviewed": "This payment was already reviewed. Its current status is shown.",
+    "fields": {
+      "learner": "Learner",
+      "course": "Course",
+      "method": "Method",
+      "submittedAt": "Submitted",
+      "reference": "Reference",
+      "note": "Learner’s note",
+      "paymentId": "Payment ID"
+    },
+    "none": "Not given",
+    "proofTitle": "Proof of payment",
+    "noProof": "No proof was uploaded.",
+    "proofLoading": "Loading proof…",
+    "proofError": "Couldn’t load the proof.",
+    "proofAlt": "Payment proof uploaded by {{learner}}",
+    "openPdf": "Open {{file}}",
+    "instructionsTitle": "Details the learner was shown",
+    "historyTitle": "Review history",
+    "historyEntry": {
+      "approved": "Approved by {{reviewer}} on {{when}}",
+      "rejected": "Rejected by {{reviewer}} on {{when}}",
+      "pending": "Reviewed by {{reviewer}} on {{when}}",
+      "not_required": "Reviewed by {{reviewer}} on {{when}}"
+    },
+    "someone": "a reviewer",
+    "decisionLabel": "Decision",
+    "decisionHint": "Approve only after the money has arrived in your account. Approving gives the learner access and emails them.",
+    "approve": "Approve",
+    "reject": "Reject payment",
+    "rejectEllipsis": "Reject…",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholder": "For example: the amount received doesn’t match the course price.",
+    "reasonHelp": "The learner sees this reason and receives it by email.",
+    "rejectionReason": "Reason:",
+    "confirmApprove": {
+      "title": "Approve this payment?",
+      "description": "{{learner}} gets access to “{{course}}” and is emailed. Confirm that {{amount}} arrived in your account.",
+      "confirm": "Approve payment"
+    },
+    "confirmReject": {
+      "title": "Reject this payment?",
+      "description": "{{learner}} won’t get access, and is emailed that the payment of {{amount}} was not approved. They can send a new payment.",
+      "confirm": "Reject payment"
+    },
+    "approvedToast": "Payment approved — {{learner}} now has access",
+    "rejectedToast": "Payment rejected — {{learner}} has been told",
+    "decisionError": "Couldn’t save your decision. Please try again."
   }
 }

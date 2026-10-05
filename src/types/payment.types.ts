@@ -69,6 +69,8 @@ export interface ManualInstructionTexts {
 export interface BankTransferInstructions extends ManualInstructionTexts {
   readonly type: 'manual_bank_transfer';
   readonly bankName: string;
+  /** Optional branch, as the payer's bank asks for it. */
+  readonly branchName?: string;
   readonly accountNumber: string;
   readonly iban?: string;
   /** Optional SWIFT/BIC code (8 or 11 characters). */
@@ -264,6 +266,8 @@ export interface PaymentProof {
   readonly fileUrl: string;
   readonly mimeType: string;
   readonly note?: string;
+  /** The transfer reference the payer typed (Academy Manual Payments). */
+  readonly payerReference?: string;
   readonly uploadedAt: string;
 }
 

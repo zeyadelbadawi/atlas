@@ -223,6 +223,29 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
         requiredPermissions: ['tenant.billing.view'],
       },
       {
+        // Academy Manual Payments — learners' payments to THIS academy,
+        // reviewed by the Organization Owner. Same gate as Orders.
+        id: 'academy-payments',
+        labelKey: 'navigation:items.academyPayments',
+        path: buildPath(DASHBOARD_ROUTES.academyPayments, {
+          academyId: activeAcademyId,
+        }),
+        icon: Inbox,
+        requiresAuth: true,
+        requiredPermissions: ['tenant.billing.view'],
+      },
+      {
+        // The manual methods (bank transfer, InstaPay, wallet) this academy accepts.
+        id: 'academy-payment-methods',
+        labelKey: 'navigation:items.academyPaymentMethods',
+        path: buildPath(DASHBOARD_ROUTES.academyPaymentMethods, {
+          academyId: activeAcademyId,
+        }),
+        icon: Wallet,
+        requiresAuth: true,
+        requiredPermissions: ['tenant.billing.view'],
+      },
+      {
         id: 'academy-announcements',
         requiresEntitlement: true,
         labelKey: 'navigation:items.academyAnnouncements',

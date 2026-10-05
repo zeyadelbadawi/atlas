@@ -397,6 +397,18 @@
     "academyLearnerAdded": {
       "title": "تمت إضافتك إلى أكاديمية",
       "message": "أصبحت الآن طالبًا في {{academyName}}. سجّل الدخول ببيانات حسابك الحالية في Atlas."
+    },
+    "coursePaymentApproved": {
+      "title": "تمت الموافقة على الدفع",
+      "message": "تمت الموافقة على دفعتك بقيمة {{amount}} {{currency}} لدورة \"{{courseTitle}}\". أصبح بإمكانك الوصول الآن."
+    },
+    "coursePaymentRejected": {
+      "title": "لم تتم الموافقة على الدفع",
+      "message": "لم تتم الموافقة على دفعتك لدورة \"{{courseTitle}}\". افتح صفحة مدفوعاتي لمعرفة السبب والدفع مرة أخرى."
+    },
+    "academyPaymentSubmitted": {
+      "title": "دفعة جديدة للمراجعة",
+      "message": "أرسل أحد المتعلّمين {{amount}} {{currency}} لدورة \"{{courseTitle}}\". راجعها ووافق عليها أو ارفضها."
     }
   },
   "liveSession": {

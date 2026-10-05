@@ -7,6 +7,7 @@
  */
 import type {
   AcademyCourseOrderListQuery,
+  AcademyCoursePaymentListQuery,
   AcademyRosterQuery,
   AnalyticsQuery,
   CollectionQuery,
@@ -86,6 +87,9 @@ export const QUERY_KEY_ROOTS = {
   academyPayouts: ['academy-payouts'] as const,
   /** Academy Orders — the Organization Owner's per-academy course order list/detail. */
   academyCourseOrders: ['academy-course-orders'] as const,
+  academyPaymentMethods: ['academy-payment-methods'] as const,
+  academyCoursePayments: ['academy-course-payments'] as const,
+  learnerCoursePayments: ['learner-course-payments'] as const,
   /** Phase 8 — the server-side dashboard aggregation (organization or academy scope). */
   dashboard: ['dashboard'] as const,
   /** Phase 8 — the dashboard's "my support tickets" list (organization or academy scope). */
@@ -1487,6 +1491,33 @@ export const academyCourseOrderKeys = {
     [...academyCourseOrderKeys.all, 'list', academyId, query] as const,
   detail: (academyId: string | undefined, orderId: string) =>
     [...academyCourseOrderKeys.all, 'detail', academyId, orderId] as const,
+} as const;
+
+/**
+ * Academy Manual Payments. The academy id is IN every academy key (index 2),
+ * so one academy's methods or payments are never served for another; the
+ * learner's history is keyed by the learner and the academy host.
+ */
+export const academyPaymentMethodKeys = {
+  all: QUERY_KEY_ROOTS.academyPaymentMethods,
+  list: (academyId: string | undefined) =>
+    [...academyPaymentMethodKeys.all, 'list', academyId] as const,
+} as const;
+
+export const academyCoursePaymentKeys = {
+  all: QUERY_KEY_ROOTS.academyCoursePayments,
+  list: (
+    academyId: string | undefined,
+    query?: AcademyCoursePaymentListQuery
+  ) => [...academyCoursePaymentKeys.all, 'list', academyId, query] as const,
+  detail: (academyId: string | undefined, paymentId: string | undefined) =>
+    [...academyCoursePaymentKeys.all, 'detail', academyId, paymentId] as const,
+} as const;
+
+export const learnerCoursePaymentKeys = {
+  all: QUERY_KEY_ROOTS.learnerCoursePayments,
+  list: (studentId: string | undefined, academyId: string | undefined) =>
+    [...learnerCoursePaymentKeys.all, 'list', studentId, academyId] as const,
 } as const;
 
 /**

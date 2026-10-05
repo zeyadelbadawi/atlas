@@ -489,6 +489,14 @@
       "message": {
         "sent": "{{actor}} sent a message",
         "sent_full": "{{actor}} sent a message to {{recipientCount}} people"
+      },
+      "payment_method": {
+        "saved": "{{actor}} updated a payment method of this academy"
+      },
+      "course_payment": {
+        "proof_submitted": "{{actor}} sent a payment proof to the academy",
+        "approved": "{{actor}} approved a learner payment",
+        "rejected": "{{actor}} rejected a learner payment"
       }
     },
     "enrollment": {

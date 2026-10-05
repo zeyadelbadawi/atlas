@@ -158,6 +158,8 @@ interface ManualMethodTextsFieldsProps<T extends FieldValues> {
   readonly testIdPrefix: string;
   /** Leave out the account holder when the dialog places it itself. */
   readonly includeAccountName?: boolean;
+  /** Where the details live in the form; `instructions` like every request body. */
+  readonly pathPrefix?: string;
 }
 
 /**
@@ -170,8 +172,9 @@ export function ManualMethodTextsFields<T extends FieldValues>({
   section,
   testIdPrefix,
   includeAccountName = true,
+  pathPrefix = 'instructions',
 }: ManualMethodTextsFieldsProps<T>): JSX.Element {
-  const path = (name: string) => `instructions.${name}` as FieldPath<T>;
+  const path = (name: string) => `${pathPrefix}.${name}` as FieldPath<T>;
   const arabicHelp = 'payments:manualMethods.fields.arabicHelp';
   return (
     <>

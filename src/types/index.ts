@@ -77,6 +77,7 @@ export * from './learner-overview.types';
 export * from './course-sequence.types';
 export * from './lesson-content.types';
 export * from './course-order.types';
+export * from './academy-payment.types';
 // P13 — learner self-service refunds and the owner's academy payouts.
 export * from './course-order-refund.types';
 export * from './academy-payout.types';

@@ -143,6 +143,13 @@ const AcademyOrdersPage = lazy(
 const AcademyOrdersDetailPage = lazy(
   () => import('@features/academy/pages/AcademyOrdersDetailPage')
 );
+// Academy Manual Payments — the academy's own methods and the review of learners' payments.
+const AcademyPaymentMethodsPage = lazy(
+  () => import('@features/academy/pages/AcademyPaymentMethodsPage')
+);
+const AcademyPaymentsPage = lazy(
+  () => import('@features/academy/pages/AcademyPaymentsPage')
+);
 // New Customer Onboarding — the full-screen setup shell (outside the
 // dashboard layout). The old `AcademyOnboardingPage` wizard is retired;
 // its address is served by `LegacyAcademyOnboardingRedirect`.
@@ -837,6 +844,34 @@ export default function AtlasAppRoutes(): JSX.Element {
                   requiredPermissions={['tenant.billing.view']}
                 >
                   <AcademyOrdersDetailPage />
+                </RouteGuard>
+              }
+            />
+
+            {/* Academy Manual Payments — same owner-only gate as Orders
+                (`tenant.billing.view`), backend 403 rendered as a
+                permission state, and no entitlement gate: an owner whose
+                subscription lapsed must still be able to review money
+                learners already sent. */}
+            <Route
+              path={DASHBOARD_ROUTES.academyPaymentMethods}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['tenant.billing.view']}
+                >
+                  <AcademyPaymentMethodsPage />
+                </RouteGuard>
+              }
+            />
+            <Route
+              path={DASHBOARD_ROUTES.academyPayments}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['tenant.billing.view']}
+                >
+                  <AcademyPaymentsPage />
                 </RouteGuard>
               }
             />
