@@ -7,13 +7,15 @@
  * caller's orders so `/my/purchases` reflects the new pending order.
  */
 import { useApiMutation, useApiQuery, useInvalidate } from '@/shared/hooks';
-import { courseOrderKeys } from '@services/query';
+import { courseOrderKeys, learnerCoursePaymentKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { courseOrderService } from '../services/CourseOrderService';
 import type {
   CheckoutPaymentMethod,
   CourseOrder,
   CourseOrderPayment,
+  LearnerCoursePayment,
+  PaginatedResult,
 } from '@types';
 
 /** Reads a File as a base64 data URL — the proof wire shape (see billing). */
@@ -90,15 +92,16 @@ export function useSubmitCourseOrderProof(orderId: string) {
   const { invalidate } = useInvalidate();
   return useApiMutation<
     CourseOrderPayment,
-    { paymentId: string; file: File; note?: string },
+    { paymentId: string; file: File; note?: string; payerReference?: string },
     ApiError
   >({
-    mutationFn: async ({ paymentId, file, note }) => {
+    mutationFn: async ({ paymentId, file, note, payerReference }) => {
       const fileData = await readFileAsDataUrl(file);
       return courseOrderService.submitProof(orderId, paymentId, {
         fileName: file.name,
         fileData,
-        note,
+        ...(note ? { note } : {}),
+        ...(payerReference ? { payerReference } : {}),
       });
     },
     showSuccessToast: false,
@@ -106,6 +109,23 @@ export function useSubmitCourseOrderProof(orderId: string) {
     onSuccess: async (_data, variables) => {
       await invalidate(courseOrderKeys.payment(orderId, variables.paymentId));
       await invalidate(courseOrderKeys.all);
+      await invalidate(learnerCoursePaymentKeys.all);
     },
+  });
+}
+
+/**
+ * Academy Manual Payments — the learner's own payments to THIS academy
+ * ("My payments"), newest first. Filtered server-side by the academy whose
+ * portal is open, so a payment to another academy never shows here.
+ */
+export function useLearnerPayments(
+  studentId: string | undefined,
+  academyId: string | undefined
+) {
+  return useApiQuery<PaginatedResult<LearnerCoursePayment>, ApiError>({
+    queryKey: learnerCoursePaymentKeys.list(studentId, academyId),
+    queryFn: () => courseOrderService.getMyPayments(academyId!),
+    enabled: !!studentId && !!academyId,
   });
 }

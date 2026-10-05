@@ -85,3 +85,12 @@ export {
   useAcademyCourseOrder,
   useAcademyCourseOrders,
 } from './useAcademyCourseOrders';
+// Academy Manual Payments — the academy's own methods and the review of learners' payments.
+export {
+  useAcademyCoursePayment,
+  useAcademyCoursePayments,
+  useAcademyPaymentMethods,
+  useApproveAcademyCoursePayment,
+  useRejectAcademyCoursePayment,
+  useSaveAcademyPaymentMethod,
+} from './useAcademyPayments';

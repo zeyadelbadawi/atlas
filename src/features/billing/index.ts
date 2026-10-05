@@ -45,3 +45,46 @@ export {
 // P64 Phase 4 — the learner course-checkout reuses the platform-owned
 // payment-method catalog (not org-scoped), the same way it reuses formatMoney.
 export { usePaymentMethods } from './hooks/usePaymentMethods';
+
+// Academy Manual Payments — an academy's own methods reuse the platform
+// catalog's instruction panel, brand chip, detail fields, schemas and
+// proof-file rules, so a payer sees and enters exactly the same shapes.
+export {
+  ManualPaymentInstructionsPanel,
+  PlaceholderPaymentBanner,
+} from './components/ManualPaymentInstructionsPanel';
+export { ManualPaymentBrandChip } from './components/ManualPaymentBrandChip';
+export { CopyValueButton } from './components/CopyValueButton';
+export {
+  BankTransferDetailsFields,
+  InstapayDetailsFields,
+  WalletDetailsFields,
+} from './components/ManualMethodDetailsFields';
+export { useManualMethodServerValidation } from './components/ManualMethodFormFields';
+export {
+  academyBankTransferMethodSchema,
+  academyInstapayMethodSchema,
+  academyWalletMethodSchema,
+  bankTransferDetailsSchema,
+  instapayDetailsSchema,
+  walletDetailsSchema,
+  type BankTransferDetailsFormData,
+  type InstapayDetailsFormData,
+  type WalletDetailsFormData,
+} from './schemas/billing.schemas';
+export {
+  toBankTransferDetailsFormValues,
+  toBankTransferDetailsPayload,
+  toInstapayDetailsFormValues,
+  toInstapayDetailsPayload,
+  toWalletDetailsFormValues,
+  toWalletDetailsPayload,
+} from './utils/manual-method-form.utils';
+export {
+  ALLOWED_PAYMENT_PROOF_TYPES,
+  MAX_PAYMENT_PROOF_FILE_SIZE,
+  MAX_PAYMENT_PROOF_NOTE_LENGTH,
+  MAX_PAYMENT_REVIEW_NOTES_LENGTH,
+} from './constants/billing.constants';
+export { manualDestination } from './utils/manual-payment-method.utils';
+export { MANUAL_METHOD_ICONS } from './constants/manual-method-icons';

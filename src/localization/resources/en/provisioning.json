@@ -164,5 +164,21 @@
     "cancelAction": "Cancel",
     "cancelConfirmTitle": "Cancel provisioning?",
     "cancelConfirmDescription": "This request will stop where it stands. Any steps already completed are not undone."
+  },
+  "payments": {
+    "title": "Payment methods",
+    "description": "How learners will pay this academy for paid courses. Learners pay you directly and you approve each payment.",
+    "mode": {
+      "later": {
+        "title": "Set up later",
+        "description": "Create the academy now and add payment methods from its settings."
+      },
+      "now": {
+        "title": "Accept payments now",
+        "description": "Choose bank transfer, InstaPay and/or a mobile wallet."
+      }
+    },
+    "chooseOne": "Turn on at least one payment method, or choose “Set up later”.",
+    "laterHint": "Paid courses can’t be bought until you turn on a payment method."
   }
 }

@@ -32,6 +32,7 @@ import {
   MonitorSmartphone,
   Receipt,
   ShieldCheck,
+  Wallet,
   User,
   type LucideIcon,
 } from 'lucide-react';
@@ -44,6 +45,7 @@ export type LearnerSectionId =
   | 'assessments'
   | 'certificates'
   | 'purchases'
+  | 'payments'
   | 'notifications'
   | 'devices'
   | 'profile'
@@ -100,6 +102,13 @@ export const LEARNER_NAVIGATION: readonly LearnerNavigationItem[] = [
     labelKey: 'learning:learnerDashboard.nav.purchases',
     path: LEARNER_ROUTES.purchases,
     icon: Receipt,
+  },
+  {
+    // Academy Manual Payments — every payment to this academy and its review.
+    id: 'payments',
+    labelKey: 'learning:learnerDashboard.nav.payments',
+    path: LEARNER_ROUTES.payments,
+    icon: Wallet,
   },
   {
     id: 'notifications',

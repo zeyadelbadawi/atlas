@@ -16,8 +16,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { CheckCircle2, Loader2, Upload } from 'lucide-react';
+import { CheckCircle2, Clock, Loader2, Upload } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -28,7 +30,16 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { formatMoney } from '@features/billing';
+import {
+  ALLOWED_PAYMENT_PROOF_TYPES,
+  MAX_PAYMENT_PROOF_FILE_SIZE,
+  MAX_PAYMENT_PROOF_NOTE_LENGTH,
+  ManualPaymentBrandChip,
+  ManualPaymentInstructionsPanel,
+  formatMoney,
+  MANUAL_METHOD_ICONS,
+} from '@features/billing';
+import { hasMessageKey } from '@utils';
 import { LEARNER_ROUTES, buildPath } from '@app/routes/route-paths';
 import { LearnerPageHeader } from '../components/LearnerPageHeader';
 import { useLearnerSurface } from '../context/LearnerSurface.context';
@@ -59,8 +70,11 @@ export default function CourseCheckoutPage(): JSX.Element {
   const [selectedMethod, setSelectedMethod] = useState<string>('');
   const [payment, setPayment] = useState<CourseOrderPayment | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
   const [note, setNote] = useState('');
+  const [payerReference, setPayerReference] = useState('');
   const [actionError, setActionError] = useState<string | null>(null);
+  const [underReview, setUnderReview] = useState(false);
 
   const createPayment = useCreateCoursePayment(order?.id ?? '');
   const submitProof = useSubmitCourseOrderProof(order?.id ?? '');
@@ -96,6 +110,7 @@ export default function CourseCheckoutPage(): JSX.Element {
 
   const coursesHref = buildHref(LEARNER_ROUTES.courses);
   const purchasesHref = buildHref(LEARNER_ROUTES.purchases);
+  const paymentsHref = buildHref(LEARNER_ROUTES.payments);
   const courseProgressHref = courseId
     ? buildHref(buildPath(LEARNER_ROUTES.courseProgress, { courseId }))
     : coursesHref;
@@ -109,9 +124,37 @@ export default function CourseCheckoutPage(): JSX.Element {
       });
       setPayment(created);
       setStep('proof');
-    } catch {
+    } catch (error) {
+      // Academy Manual Payments — a proof for this order is already with
+      // the academy: the learner waits for that decision.
+      if (hasMessageKey(error, 'errors.courseOrder.paymentUnderReview')) {
+        setUnderReview(true);
+        return;
+      }
       setActionError(t('course:checkout.paymentError'));
     }
+  };
+
+  // Checked before upload, with the same limits the server enforces.
+  const onFileChange = (next: File | null) => {
+    setFileError(null);
+    if (!next) {
+      setFile(null);
+      return;
+    }
+    if (
+      !(ALLOWED_PAYMENT_PROOF_TYPES as readonly string[]).includes(next.type)
+    ) {
+      setFile(null);
+      setFileError(t('payments:payment.proofInvalidType'));
+      return;
+    }
+    if (next.size > MAX_PAYMENT_PROOF_FILE_SIZE) {
+      setFile(null);
+      setFileError(t('payments:payment.proofTooLarge'));
+      return;
+    }
+    setFile(next);
   };
 
   const onSubmitProof = async () => {
@@ -125,10 +168,22 @@ export default function CourseCheckoutPage(): JSX.Element {
         paymentId: payment.id,
         file,
         note: note.trim() || undefined,
+        payerReference: payerReference.trim() || undefined,
       });
       setStep('submitted');
-    } catch {
-      setActionError(t('course:checkout.proofError'));
+    } catch (error) {
+      if (
+        hasMessageKey(error, 'errors.payment.alreadyUnderReview') ||
+        hasMessageKey(error, 'errors.courseOrder.paymentUnderReview')
+      ) {
+        setUnderReview(true);
+        return;
+      }
+      setActionError(
+        hasMessageKey(error, 'errors.payment.unsupportedProofFileType')
+          ? t('payments:payment.proofInvalidType')
+          : t('course:checkout.proofError')
+      );
     }
   };
 
@@ -202,6 +257,33 @@ export default function CourseCheckoutPage(): JSX.Element {
   }
 
   const price = order.snapshot.price;
+  const selected = enabledMethods.find((m) => m.key === selectedMethod);
+  const instructions =
+    payment?.instructions ?? selected?.manualInstructions ?? undefined;
+
+  if (underReview) {
+    return (
+      <div className="space-y-6">
+        {header}
+        <Card>
+          <CardHeader>
+            <CardTitle as="h2" className="flex items-center gap-2">
+              <Clock className="size-5 text-warning" aria-hidden />
+              {t('course:checkout.underReviewTitle')}
+            </CardTitle>
+            <CardDescription>
+              {t('course:checkout.underReviewDescription')}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild className="min-h-11 sm:min-h-9">
+              <a href={paymentsHref}>{t('course:checkout.viewPayments')}</a>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -245,6 +327,9 @@ export default function CourseCheckoutPage(): JSX.Element {
           </CardHeader>
           <CardContent className="flex flex-wrap gap-3">
             <Button asChild>
+              <a href={paymentsHref}>{t('course:checkout.viewPayments')}</a>
+            </Button>
+            <Button variant="outline" asChild>
               <a href={purchasesHref}>{t('course:checkout.viewPurchases')}</a>
             </Button>
             <Button variant="outline" asChild>
@@ -266,29 +351,45 @@ export default function CourseCheckoutPage(): JSX.Element {
               onValueChange={setSelectedMethod}
               className="space-y-2"
             >
-              {enabledMethods.map((method) => (
-                <label
-                  key={method.key}
-                  htmlFor={`method-${method.key}`}
-                  className="flex cursor-pointer items-start gap-3 rounded-lg border border-border p-3 hover:bg-muted/40"
-                >
-                  <RadioGroupItem
-                    id={`method-${method.key}`}
-                    value={method.key}
-                    className="mt-0.5"
-                  />
-                  <span>
-                    <span className="block font-medium text-foreground">
-                      {method.displayName}
-                    </span>
-                    {method.description ? (
-                      <span className="block text-sm text-muted-foreground">
-                        {method.description}
-                      </span>
+              {enabledMethods.map((method) => {
+                const Icon = MANUAL_METHOD_ICONS[method.type];
+                const isAcademyMethod = method.provider === 'academy_manual';
+                return (
+                  <label
+                    key={method.key}
+                    htmlFor={`method-${method.key}`}
+                    className="flex min-h-11 cursor-pointer items-start gap-3 rounded-lg border border-border p-3 hover:bg-muted/40 has-[[data-state=checked]]:border-primary"
+                    data-testid={`checkout-method-${method.type}`}
+                  >
+                    <RadioGroupItem
+                      id={`method-${method.key}`}
+                      value={method.key}
+                      className="mt-0.5"
+                    />
+                    {Icon ? (
+                      <Icon
+                        className="mt-0.5 size-5 shrink-0 text-muted-foreground"
+                        aria-hidden
+                      />
                     ) : null}
-                  </span>
-                </label>
-              ))}
+                    <span className="min-w-0 space-y-1">
+                      <span className="block font-medium text-foreground">
+                        {isAcademyMethod
+                          ? t(`payments:common.methodType.${method.type}`)
+                          : method.displayName}
+                      </span>
+                      {method.description ? (
+                        <span className="block text-sm text-muted-foreground">
+                          {method.description}
+                        </span>
+                      ) : null}
+                      <ManualPaymentBrandChip
+                        instructions={method.manualInstructions}
+                      />
+                    </span>
+                  </label>
+                );
+              })}
             </RadioGroup>
 
             {actionError ? (
@@ -317,6 +418,64 @@ export default function CourseCheckoutPage(): JSX.Element {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            {instructions ? (
+              <section
+                aria-labelledby="checkout-instructions-title"
+                className="space-y-3 rounded-lg border border-border bg-muted/30 p-4"
+                data-testid="checkout-instructions"
+              >
+                <h3
+                  id="checkout-instructions-title"
+                  className="text-sm font-semibold text-foreground"
+                >
+                  {t('course:checkout.instructionsTitle')}
+                </h3>
+                <p className="text-sm text-foreground">
+                  {t('course:checkout.sendExactly')}{' '}
+                  <span
+                    className="font-semibold tabular-nums"
+                    data-atlas-numeric="true"
+                    data-testid="checkout-amount-to-send"
+                  >
+                    {formatMoney(payment?.money ?? price, intlLocale)}
+                  </span>
+                </p>
+                <ManualPaymentInstructionsPanel instructions={instructions} />
+              </section>
+            ) : null}
+
+            <Alert>
+              <AlertTitle>{t('course:checkout.afterTransferTitle')}</AlertTitle>
+              <AlertDescription>
+                {t('course:checkout.afterTransferDescription')}
+              </AlertDescription>
+            </Alert>
+
+            <div className="space-y-1.5">
+              <label
+                htmlFor="proof-reference"
+                className="block text-sm font-medium text-foreground"
+              >
+                {t('course:checkout.referenceLabel')}
+              </label>
+              <Input
+                id="proof-reference"
+                value={payerReference}
+                onChange={(e) => setPayerReference(e.target.value)}
+                maxLength={120}
+                dir="ltr"
+                autoComplete="off"
+                aria-describedby="proof-reference-help"
+                data-testid="checkout-reference"
+              />
+              <p
+                id="proof-reference-help"
+                className="text-xs text-muted-foreground"
+              >
+                {t('course:checkout.referenceHelp')}
+              </p>
+            </div>
+
             <div className="space-y-1.5">
               <label
                 htmlFor="proof-file"
@@ -328,9 +487,20 @@ export default function CourseCheckoutPage(): JSX.Element {
                 id="proof-file"
                 type="file"
                 accept="image/png,image/jpeg,application/pdf"
-                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-                className="block w-full text-sm text-muted-foreground file:me-3 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-primary-foreground hover:file:bg-primary/90"
+                onChange={(e) => onFileChange(e.target.files?.[0] ?? null)}
+                aria-describedby="proof-file-help"
+                aria-invalid={fileError ? true : undefined}
+                data-testid="checkout-proof-file"
+                className="block w-full text-sm text-muted-foreground file:me-3 file:min-h-11 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-primary-foreground hover:file:bg-primary/90 sm:file:min-h-0"
               />
+              <p id="proof-file-help" className="text-xs text-muted-foreground">
+                {t('course:checkout.proofFileHelp')}
+              </p>
+              {fileError ? (
+                <p role="alert" className="text-sm text-destructive">
+                  {fileError}
+                </p>
+              ) : null}
             </div>
 
             <div className="space-y-1.5">
@@ -343,6 +513,7 @@ export default function CourseCheckoutPage(): JSX.Element {
               <Textarea
                 id="proof-note"
                 rows={3}
+                maxLength={MAX_PAYMENT_PROOF_NOTE_LENGTH}
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder={t('course:checkout.proofNotePlaceholder')}
@@ -358,6 +529,8 @@ export default function CourseCheckoutPage(): JSX.Element {
             <Button
               onClick={onSubmitProof}
               disabled={!file || submitProof.isPending}
+              className="min-h-11 sm:min-h-9"
+              data-testid="checkout-submit-proof"
             >
               {submitProof.isPending ? (
                 <Loader2 className="size-4 animate-spin" aria-hidden />

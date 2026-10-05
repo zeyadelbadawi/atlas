@@ -98,11 +98,7 @@ export function ManualPaymentInstructionsPanel({
     'accountName',
     i18n.language
   );
-  const body = localizedManualText(
-    instructions,
-    'instructions',
-    i18n.language
-  );
+  const body = localizedManualText(instructions, 'instructions', i18n.language);
   const reference = localizedManualText(
     instructions,
     'referenceInstructions',
@@ -130,6 +126,13 @@ export function ManualPaymentInstructionsPanel({
             label={t('payments:payment.bankName')}
             value={instructions.bankName}
           />
+          {instructions.branchName ? (
+            <InstructionRow
+              label={t('payments:payment.branchName')}
+              value={instructions.branchName}
+              testId="payment-instructions-branch"
+            />
+          ) : null}
           {holderRow}
           <InstructionRow
             label={t('payments:payment.accountNumber')}

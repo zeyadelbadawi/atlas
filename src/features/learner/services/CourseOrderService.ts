@@ -28,6 +28,7 @@ import type {
   CourseOrderRefund,
   CreateCourseOrderPayload,
   CreateCourseOrderPaymentPayload,
+  LearnerCoursePayment,
   PaginatedResult,
   RequestCourseOrderRefundPayload,
 } from '@types';
@@ -89,6 +90,36 @@ export class CourseOrderService extends BaseService {
     );
   }
 
+  /**
+   * Academy Manual Payments — the learner's own payment history
+   * (`GET course-payments`), filtered server-side to the academy whose
+   * portal they are in. Self-scoped by the session, never by a parameter.
+   */
+  async getMyPayments(
+    academyId: string,
+    options?: ReadOptions
+  ): Promise<PaginatedResult<LearnerCoursePayment>> {
+    return this.client.get<PaginatedResult<LearnerCoursePayment>>(
+      'course-payments',
+      {
+        ...options,
+        params: { academyId, page: 1, pageSize: 100, ...options?.params },
+      }
+    );
+  }
+
+  /** The learner's own proof file for one payment, as an authenticated Blob. */
+  async getProofFile(
+    orderId: string,
+    paymentId: string,
+    options?: ReadOptions
+  ): Promise<Blob> {
+    return this.client.get<Blob>(
+      this.path(orderId, 'payments', paymentId, 'proof', 'file'),
+      { ...options, responseType: 'blob' }
+    );
+  }
+
   /** Create a Payment against an order (buyer picks the method key). */
   async createPayment(
     orderId: string,
@@ -122,12 +153,22 @@ export class CourseOrderService extends BaseService {
   async submitProof(
     orderId: string,
     paymentId: string,
-    payload: { fileName: string; fileData: string; note?: string },
+    payload: {
+      fileName: string;
+      fileData: string;
+      note?: string;
+      payerReference?: string;
+    },
     options?: WriteOptions
   ): Promise<CourseOrderPayment> {
     return this.client.patch<
       CourseOrderPayment,
-      { fileName: string; fileData: string; note?: string }
+      {
+        fileName: string;
+        fileData: string;
+        note?: string;
+        payerReference?: string;
+      }
     >(this.path(orderId, 'payments', paymentId, 'proof'), payload, options);
   }
 

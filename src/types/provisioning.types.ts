@@ -14,6 +14,7 @@
  * record shape remain owned by Prompt 6/Prompt 3B respectively — this file
  * only adds `organizationId`/`academyId` references, never redeclares them.
  */
+import type { RequestedPaymentMethodsPayload } from './academy-payment.types';
 
 /**
  * A ProvisioningRequest's overall milestone — which stage of the canonical
@@ -266,6 +267,11 @@ export interface CreateProvisioningRequestPayload {
   readonly websiteSetupMode?: 'empty' | 'complete';
   /** W2 — see `CreateProvisioningBrandPayload`. Omitted means the theme's default colours. */
   readonly brand?: CreateProvisioningBrandPayload;
+  /**
+   * Academy Manual Payments — the methods chosen in the setup form, saved
+   * (enabled) to the new academy by the worker. Omitted for "set up later".
+   */
+  readonly paymentMethods?: RequestedPaymentMethodsPayload;
   readonly idempotencyKey: string;
 }
 

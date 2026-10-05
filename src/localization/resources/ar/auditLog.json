@@ -489,6 +489,14 @@
       "message": {
         "sent": "أرسل {{actor}} رسالة",
         "sent_full": "أرسل {{actor}} رسالة إلى {{recipientCount}} شخصًا"
+      },
+      "payment_method": {
+        "saved": "حدّث {{actor}} إحدى طرق الدفع لهذه الأكاديمية"
+      },
+      "course_payment": {
+        "proof_submitted": "أرسل {{actor}} إثبات دفع إلى الأكاديمية",
+        "approved": "وافق {{actor}} على دفعة متعلّم",
+        "rejected": "رفض {{actor}} دفعة متعلّم"
       }
     },
     "enrollment": {

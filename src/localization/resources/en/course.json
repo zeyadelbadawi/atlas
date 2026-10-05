@@ -951,6 +951,16 @@
     "unavailableTitle": "Not available for purchase yet",
     "unavailableDescription": "This academy hasn't finished setting up payments, so this course can't be purchased right now. Please check back later.",
     "paymentError": "We couldn't start your payment. Please try again.",
-    "proofError": "We couldn't submit your proof. Please try again."
+    "proofError": "We couldn't submit your proof. Please try again.",
+    "underReviewTitle": "Your payment is under review",
+    "underReviewDescription": "You already sent a payment for this course and the academy is checking it. You’ll get an email when it’s reviewed — you don’t need to pay again.",
+    "viewPayments": "View my payments",
+    "instructionsTitle": "Where to send the money",
+    "sendExactly": "Send exactly",
+    "afterTransferTitle": "After you send the money",
+    "afterTransferDescription": "Upload a screenshot or receipt of the transfer. The academy checks it and gives you access once it’s approved.",
+    "referenceLabel": "Transfer reference (optional)",
+    "referenceHelp": "The transaction or reference number from your bank or wallet. It helps the academy find your payment.",
+    "proofFileHelp": "PNG, JPG or PDF, up to 10 MB."
   }
 }

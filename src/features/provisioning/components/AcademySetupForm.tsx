@@ -62,6 +62,10 @@ import {
 import { generateProvisioningIdempotencyKey } from '../utils/idempotency.utils';
 import { pendingLogoStore } from '../logo/pending-logo';
 import { SetupThemePicker } from './SetupThemePicker';
+import {
+  SetupPaymentMethods,
+  type SetupPaymentMethodsHandle,
+} from './SetupPaymentMethods';
 
 export interface AcademySetupFormProps {
   readonly organizationId: string;
@@ -170,7 +174,14 @@ export function AcademySetupForm({
     return typeof id === 'string' ? id : undefined;
   })();
 
-  const onSubmit = (data: CreateProvisioningRequestFormData) => {
+  // Academy Manual Payments — the "Payment methods" section validates and
+  // hands over its own sub-forms at submit time.
+  const paymentMethodsRef = useRef<SetupPaymentMethodsHandle>(null);
+
+  const onSubmit = async (data: CreateProvisioningRequestFormData) => {
+    const paymentMethods = await paymentMethodsRef.current?.collect();
+    // `null`: a chosen method is incomplete; the section shows why.
+    if (paymentMethods === null) return;
     const choice = branding.current;
     const brand =
       choice && (choice.palette || choice.logoFile)
@@ -194,6 +205,7 @@ export function AcademySetupForm({
           selectedThemeKey: data.selectedThemeKey ?? DEFAULT_WEBSITE_THEME_KEY,
           websiteSetupMode: data.websiteSetupMode,
           ...(brand ? { brand } : {}),
+          ...(paymentMethods ? { paymentMethods } : {}),
           idempotencyKey,
         },
       },
@@ -402,6 +414,8 @@ export function AcademySetupForm({
           )}
         />
 
+        <SetupPaymentMethods ref={paymentMethodsRef} />
+
         <div className="flex items-center justify-end">
           <Button
             type="submit"
@@ -452,7 +466,7 @@ export function AcademySetupForm({
             {t('errors:provisioning.subdomainUnavailable')}
           </p>
         ) : createRequest.error && !nameConflict ? (
-          <ErrorState onRetry={form.handleSubmit(onSubmit)} />
+          <ErrorState onRetry={() => void form.handleSubmit(onSubmit)()} />
         ) : null}
       </form>
     </Form>

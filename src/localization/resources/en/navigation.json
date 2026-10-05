@@ -109,6 +109,8 @@
     "platformCourses": "Global Courses",
     "academyRevenue": "Revenue & payouts",
     "academyOrders": "Orders",
+    "academyPayments": "Payments",
+    "academyPaymentMethods": "Payment methods",
     "platformCommerce": "Commerce",
     "platformCoursePayments": "Course payments",
     "platformPayouts": "Payouts",

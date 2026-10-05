@@ -16,6 +16,7 @@
  */
 import type { Money } from './money.types';
 import type {
+  ManualPaymentInstructions,
   ManualReviewStatus,
   PaymentAttempt,
   PaymentLifecycleStatus,
@@ -52,6 +53,13 @@ export interface CourseOrder {
   readonly idempotencyKey: string;
   readonly paidAt?: string;
   readonly createdAt: string;
+  /**
+   * Academy Manual Payments — the order was paid to the academy directly
+   * (one of its own manual methods). Atlas holds none of that money, so
+   * the self-service refund is not offered; refunds are arranged with the
+   * academy.
+   */
+  readonly paidToAcademy?: boolean;
 }
 
 /** `POST courses/:id/course-orders` request (P13). */
@@ -88,7 +96,12 @@ export interface CourseOrderPayment {
   readonly nextAction?: PaymentNextAction;
   /** §4.1 snapshot — the payment-collection mode in force when this Payment was created. Never recomputed. */
   readonly paymentCollectionModeSnapshot?:
-    'unconfigured' | 'atlas_payments' | 'organization_gateway';
+    | 'unconfigured'
+    | 'atlas_payments'
+    | 'organization_gateway'
+    | 'academy_manual';
+  /** The transfer details this payer was shown when the payment was created (Academy Manual Payments). */
+  readonly instructions?: ManualPaymentInstructions;
   /** §4.2 snapshot — absent under Organization-Owned Gateway mode (no Atlas commission applies there). */
   readonly commission?: {
     readonly rateBasisPoints: number;

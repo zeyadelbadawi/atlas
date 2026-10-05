@@ -278,7 +278,9 @@
   },
   "courseOrder": {
     "refundNotEligible": "This order can't be refunded. Only paid orders that haven't already been refunded are eligible.",
-    "refundWindowElapsed": "The refund period for this order has ended. Refunds are available within 30 days of purchase."
+    "refundWindowElapsed": "The refund period for this order has ended. Refunds are available within 30 days of purchase.",
+    "paymentUnderReview": "A payment for this order is already being reviewed by the academy. You’ll get an email when it’s reviewed.",
+    "refundContactAcademy": "This order was paid to the academy directly. Contact the academy about a refund."
   },
   "payment": {
     "notPendingReview": "This payment is no longer waiting for review. Reload to see its current status.",

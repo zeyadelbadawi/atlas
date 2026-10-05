@@ -16,6 +16,8 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 export type RefundEligibility =
   | { readonly kind: 'eligible'; readonly deadline: Date }
   | { readonly kind: 'windowClosed'; readonly deadline: Date }
+  /** Academy Manual Payments — paid to the academy directly; refunds are arranged with the academy. */
+  | { readonly kind: 'contactAcademy' }
   | { readonly kind: 'notApplicable' };
 
 /** The last moment a paid order may be refunded, or `null` when it was never paid. */
@@ -29,10 +31,13 @@ export function refundDeadline(
 }
 
 export function refundEligibility(
-  order: Pick<CourseOrder, 'status' | 'paidAt'>,
+  order: Pick<CourseOrder, 'status' | 'paidAt' | 'paidToAcademy'>,
   now: number = Date.now()
 ): RefundEligibility {
   if (order.status !== 'paid') return { kind: 'notApplicable' };
+  // Atlas holds none of a direct-to-academy payment, so the self-service
+  // refund (which would only revoke access) is never offered for one.
+  if (order.paidToAcademy) return { kind: 'contactAcademy' };
   const deadline = refundDeadline(order);
   if (!deadline) return { kind: 'notApplicable' };
   return now > deadline.getTime()

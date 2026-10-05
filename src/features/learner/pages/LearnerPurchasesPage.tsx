@@ -262,6 +262,12 @@ export default function LearnerPurchasesPage(): JSX.Element {
                     }
                   )}
                 </p>
+              ) : eligibility.kind === 'contactAcademy' ? (
+                <p className="w-full ps-7 text-xs text-muted-foreground">
+                  {t(
+                    'learning:learnerDashboard.purchases.refund.contactAcademy'
+                  )}
+                </p>
               ) : order.status === 'refunded' ? (
                 <div className="w-full ps-7">
                   <RefundDetails orderId={order.id} locale={locale} />
