@@ -15,6 +15,7 @@
  * auth-page frame. A replacement footer receives the platform attribution
  * as a prop and must render it on its copyright line — no theme can remove it; the chrome
  */
+import type { ThemeAssetManifest } from '../theme-assets/theme-asset.types';
 import type { ComponentType, ReactNode } from 'react';
 import type { WebsiteHeaderProps } from '../renderer/WebsiteHeader';
 import type { WebsiteFooterProps } from '../renderer/WebsiteFooter';
@@ -131,4 +132,9 @@ export interface ThemePack {
    * extraction knowledge; the palette carries no theme knowledge.
    */
   readonly mapBrandPalette: (input: BrandMappingInput) => WebsiteBrandVariables;
+  /**
+   * The theme's photographs, registered with the pack (`registerThemePack`)
+   * so a site carries only its own theme's manifest.
+   */
+  readonly assets?: ThemeAssetManifest;
 }

@@ -10,18 +10,9 @@ import { startTransition } from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import type { DehydratedState } from '@tanstack/react-query';
 import App from './App.tsx';
-// The theme stylesheets must come before `index.css` (Tailwind): their
-// rules lose to utilities of equal specificity by coming first, as they did
-// when the whole app was one bundle. Their modules are lazy now, so without
-// these imports Vite would ship them in a chunk stylesheet that loads after
-// `index.css` and overrides the utilities (Reports/LCP_ROOT_CAUSE.md §8).
-import './features/website/modern-education/modern-education.css';
-// Atelier (Theme 2): in the entry stylesheet too, so a server-rendered
-// Atelier page is styled at first paint instead of when its chunk arrives.
-import './features/website/atelier/atelier.css';
-import './features/website/atelier/atelier-sections.css';
-import './features/website/atelier/atelier-pages.css';
-import './features/website/atelier/atelier-cinematic.css';
+// Theme stylesheets are not imported here: each theme pack's CSS is its
+// own file, linked in front of this entry's stylesheet only where that
+// theme renders (`features/website/theme-packs/theme-stylesheets.ts`).
 import './features/website/brand-studio/brand-studio.css';
 import './index.css';
 import { loadRuntimeConfig } from './lib/config.ts';
@@ -37,6 +28,7 @@ import {
 } from './ssr/ssr-document';
 import { publicWebsiteLocaleForPath } from './ssr/ssr-paths';
 import { preloadPublicWebsiteRouter } from './app/routes/public-website-router-loader';
+import { isKnownThemeKey, loadThemePack } from '@features/website';
 
 /** Id of the mount node declared in `index.html`. */
 const ROOT_ELEMENT_ID = 'root';
@@ -99,8 +91,23 @@ async function initializeApp(): Promise<void> {
   const routerChunk = isAcademyWebsite
     ? preloadPublicWebsiteRouter().catch(() => undefined)
     : undefined;
+  // The theme pack(s) the server rendered the page with (code and
+  // stylesheet), so hydration renders exactly what the server did.
+  const themePacks = ssr
+    ? Promise.all((ssr.themePacks ?? []).map(loadThemePack)).catch(
+        () => undefined
+      )
+    : undefined;
   if (isAcademyWebsite && !ssr) {
-    startPublicWebsitePrefetch(publicWebsiteLookupKey(websiteContext));
+    startPublicWebsitePrefetch(publicWebsiteLookupKey(websiteContext), {
+      // Not server-rendered: start the Academy's theme pack as soon as
+      // its hostname lookup names it, alongside its data.
+      onResolved(resolution) {
+        const themeKey = resolution.presentation?.themeKey;
+        if (isKnownThemeKey(themeKey))
+          loadThemePack(themeKey).catch(() => undefined);
+      },
+    });
   }
 
   try {
@@ -123,8 +130,8 @@ async function initializeApp(): Promise<void> {
   if (!rootElement) return;
 
   if (ssr && rootElement.hasChildNodes()) {
-    // The route's code first, so hydration does not wait on it.
-    await routerChunk;
+    // The route's code and theme first, so hydration does not wait on them.
+    await Promise.all([routerChunk, themePacks]);
     // In a transition, hydration is time-sliced: React 18 otherwise
     // hydrates the whole page in one blocking task. The page is already
     // painted from the server, so nothing waits on it visually.

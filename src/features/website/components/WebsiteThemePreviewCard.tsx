@@ -1,14 +1,15 @@
 /**
  * Website Theme Preview Card.
  *
- * Renders the REAL `WebsiteRenderer` — the Tenant's own Home page,
- * content and current brand — at a miniature scale, never a static
- * screenshot or unrelated placeholder content (see
- * `Reports/ARCHITECTURE.md`, Prompt 9, "Theme Preview").
+ * A theme that ships a feature image (`theme-asset:<theme>/theme-card`)
+ * shows it: a photograph made for the theme, which reads at card size where
+ * a 22% miniature of a whole page did not. A theme without one (the retired
+ * base-pack themes) keeps the miniature of the REAL `WebsiteRenderer` — the
+ * Tenant's own Home page, content and current brand.
  *
- * The miniature is a picture of the site, not a second copy of its links:
- * hidden from assistive tech and unreachable by keyboard. Each card's action
- * is named with its theme ("Select theme Atelier"), so several cards never
+ * The picture is decoration, not a second copy of the site's links: hidden
+ * from assistive tech and unreachable by keyboard. Each card's action is
+ * named with its theme ("Select theme Atelier"), so several cards never
  * offer identical, ambiguous buttons.
  */
 import { useId } from 'react';
@@ -16,6 +17,8 @@ import { useTranslation } from 'react-i18next';
 import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { WebsiteRenderer } from '../renderer';
+import { ThemeImage, hasRenderableImage } from '../theme-assets';
+import { ThemePackGate } from '../theme-packs/ThemePackGate';
 import type {
   WebsiteConfiguration,
   WebsitePage,
@@ -54,6 +57,7 @@ export function WebsiteThemePreviewCard({
 }: WebsiteThemePreviewCardProps): JSX.Element {
   const { t } = useTranslation();
   const nameId = useId();
+  const featureImage = `theme-asset:${theme.key}/theme-card`;
   const actionId = useId();
 
   return (
@@ -71,28 +75,30 @@ export function WebsiteThemePreviewCard({
         // `inert` — React 18's types don't know it yet.
         {...{ inert: '' }}
       >
-        {/* The scaled canvas keeps its 1200 px layout box, so it sits in a
-            box of its scaled width, anchored at the inline start: the
-            miniature then shows whole and centred in either direction. */}
-        <div className="shrink-0" style={{ width: PREVIEW_WIDTH }}>
-          <div
-            className="pointer-events-none origin-top-left rtl:origin-top-right"
-            style={{
-              width: `${PREVIEW_CANVAS_WIDTH}px`,
-              transform: `scale(${PREVIEW_SCALE})`,
-            }}
-          >
-            <WebsiteRenderer
+        {/* The feature image is in the theme's manifest, which arrives
+            with its pack. */}
+        <ThemePackGate themeKey={theme.key}>
+          {hasRenderableImage(featureImage) ? (
+            <div className="h-full w-full [&>picture]:block [&>picture]:h-full">
+              <ThemeImage
+                value={featureImage}
+                alt=""
+                sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw"
+                className="block h-full w-full object-cover"
+              />
+            </div>
+          ) : (
+            <Miniature
               academyId={academyId}
               academyName={academyName}
               academyLogo={academyLogo}
-              configuration={{ ...configuration, themeKey: theme.key }}
+              configuration={configuration}
               pages={pages}
-              page={homePage}
-              onNavigate={() => undefined}
+              homePage={homePage}
+              themeKey={theme.key}
             />
-          </div>
-        </div>
+          )}
+        </ThemePackGate>
       </div>
       <div className="space-y-2 p-4">
         <div className="flex items-center justify-between gap-2">
@@ -123,5 +129,51 @@ export function WebsiteThemePreviewCard({
         </Button>
       </div>
     </div>
+  );
+}
+
+/** The live miniature, for a theme without a feature image. */
+function Miniature({
+  academyId,
+  academyName,
+  academyLogo,
+  configuration,
+  pages,
+  homePage,
+  themeKey,
+}: Pick<
+  WebsiteThemePreviewCardProps,
+  | 'academyId'
+  | 'academyName'
+  | 'academyLogo'
+  | 'configuration'
+  | 'pages'
+  | 'homePage'
+> & { readonly themeKey: WebsiteThemeDefinition['key'] }): JSX.Element {
+  return (
+    <>
+      {/* The scaled canvas keeps its 1200 px layout box, so it sits in a
+            box of its scaled width, anchored at the inline start: the
+            miniature then shows whole and centred in either direction. */}
+      <div className="shrink-0" style={{ width: PREVIEW_WIDTH }}>
+        <div
+          className="pointer-events-none origin-top-left rtl:origin-top-right"
+          style={{
+            width: `${PREVIEW_CANVAS_WIDTH}px`,
+            transform: `scale(${PREVIEW_SCALE})`,
+          }}
+        >
+          <WebsiteRenderer
+            academyId={academyId}
+            academyName={academyName}
+            academyLogo={academyLogo}
+            configuration={{ ...configuration, themeKey }}
+            pages={pages}
+            page={homePage}
+            onNavigate={() => undefined}
+          />
+        </div>
+      </div>
+    </>
   );
 }

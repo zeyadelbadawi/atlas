@@ -36,6 +36,12 @@ export interface ThemeImageProps {
    * before (the shared sections don't pass it).
    */
   readonly loading?: 'lazy' | 'eager';
+  /**
+   * For a theme asset that leads its page without being the theme's hero
+   * (an inner page's plate, the Course Details plate): eager at high
+   * priority, as the hero is. Omitted, the manifest decides.
+   */
+  readonly priority?: boolean;
 }
 
 export function ThemeImage({
@@ -46,6 +52,7 @@ export function ThemeImage({
   sizes = '100vw',
   fallback = null,
   loading,
+  priority = false,
 }: ThemeImageProps): JSX.Element | null {
   const { locale } = usePublicWebsiteLocale();
   if (!value) return <>{fallback}</>;
@@ -67,6 +74,7 @@ export function ThemeImage({
 
   const asset = resolveThemeAsset(value);
   if (!asset) return <>{fallback}</>;
+  const eager = asset.priority || priority;
 
   return (
     <picture>
@@ -83,10 +91,10 @@ export function ThemeImage({
         alt={alt || asset.alt[locale]}
         width={asset.width}
         height={asset.height}
-        loading={asset.priority ? 'eager' : 'lazy'}
+        loading={eager ? 'eager' : 'lazy'}
         decoding="async"
         // React 18 forwards the lowercase attribute unchanged.
-        {...{ fetchpriority: asset.priority ? 'high' : 'auto' }}
+        {...{ fetchpriority: eager ? 'high' : 'auto' }}
         className={className}
         style={{
           ...style,

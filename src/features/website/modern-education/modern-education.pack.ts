@@ -13,9 +13,11 @@
  * A renderer serves its section type wherever it appears; every type
  * Theme 1 doesn't redesign keeps its base renderer
  * (`pack.renderers[type] ?? BASE_RENDERERS[type]`).
+ *
+ * Its own chunk, loaded only where Theme 1 renders (`theme-pack.loader.ts`);
+ * its CSS is `modern-education.css`, linked by `theme-stylesheets.ts`.
  */
 import type { ThemePack } from '../theme-packs/theme-pack.types';
-import './modern-education.css';
 import { mapModernEducationBrandPalette } from './modern-education.brand-mapping';
 import { ModernEducationHeader } from './ModernEducationHeader';
 import { ModernEducationFooter } from './ModernEducationFooter';
@@ -41,6 +43,7 @@ import { T1CourseCatalog } from './T1CourseCatalog';
 import { T1Contact, T1Gallery } from './t1-page-sections';
 import { T1CourseDetails } from './T1CourseDetails';
 import { T1ComingSoon, T1NotFound } from './T1SystemPages';
+import { MODERN_EDUCATION_ASSETS } from '../theme-assets/manifests/modern-education.manifest';
 
 export const MODERN_EDUCATION_PACK: ThemePack = {
   key: 'modern-education',
@@ -74,4 +77,5 @@ export const MODERN_EDUCATION_PACK: ThemePack = {
     AuthFrame: ModernEducationAuthFrame,
   },
   mapBrandPalette: mapModernEducationBrandPalette,
+  assets: MODERN_EDUCATION_ASSETS,
 };

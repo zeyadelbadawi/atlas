@@ -1,17 +1,25 @@
 /**
  * Theme asset manifests by theme key, and the prompt builder. Only themes
  * that ship photographs have a manifest.
+ *
+ * A manifest arrives with its theme's pack: `registerThemePack` registers
+ * `pack.assets`, so a public site carries only its own theme's manifest
+ * (the pack is loaded before anything of that theme renders). Every
+ * manifest at once, for tests and tooling: `manifests/index.ts`.
  */
-import { MODERN_EDUCATION_ASSETS } from './manifests/modern-education.manifest';
-import { ATELIER_ASSETS } from './manifests/atelier.manifest';
 import type { ThemeAssetEntry, ThemeAssetManifest } from './theme-asset.types';
 
+const registered: Record<string, ThemeAssetManifest> = {};
+
+/** The manifests of the themes loaded on this page, by theme key. */
 export const THEME_ASSET_MANIFESTS: Readonly<
   Record<string, ThemeAssetManifest>
-> = {
-  [MODERN_EDUCATION_ASSETS.theme]: MODERN_EDUCATION_ASSETS,
-  [ATELIER_ASSETS.theme]: ATELIER_ASSETS,
-};
+> = registered;
+
+/** Makes a theme's manifest resolvable (called when its pack loads). */
+export function registerThemeAssetManifest(manifest: ThemeAssetManifest): void {
+  registered[manifest.theme] = manifest;
+}
 
 /** Public URL root the derivatives are served from (same origin, immutable). */
 export const THEME_ASSET_PUBLIC_ROOT = '/theme-assets';

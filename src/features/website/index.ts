@@ -53,6 +53,18 @@ export { WebsiteAuthFrame } from './renderer/WebsiteAuthFrame';
 // mounted once by the public website router (outside every page scope).
 export { WebsiteOverlayScope } from './renderer/WebsiteOverlayScope';
 
+// Theme packs load per theme (`theme-packs/theme-pack.loader.ts`): the app
+// entry loads the theme a server-rendered page used before hydrating it,
+// and the server renderer loads them all, records which themes a page
+// rendered and links their stylesheets in the document head.
+export {
+  isKnownThemeKey,
+  loadAllThemePacks,
+  loadThemePack,
+} from './theme-packs/theme-pack.loader';
+export { ThemePackUsageContext } from './theme-packs/ThemePackGate';
+export { themeStylesheetLinksHtml } from './theme-packs/theme-stylesheets';
+
 // Phase P19 — `ProvisioningStartPage`'s theme-selection step needs the
 // real theme registry (never a second, invented catalog). Curated export,
 // same discipline as this barrel's own header comment: only what a

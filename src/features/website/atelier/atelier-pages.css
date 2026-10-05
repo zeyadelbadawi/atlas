@@ -284,12 +284,16 @@
 }
 [data-theme-pack='atelier'] .atp-colophon-name {
   font-family: var(--at-font-display);
-  font-size: clamp(2.75rem, 1rem + 7.5vw, 8.5rem);
+  /* A signature under the folio, not a second masthead: at most ~4.5rem. */
+  font-size: clamp(2rem, 1rem + 3.5vw, 4.5rem);
   font-weight: 320;
   line-height: 0.95;
   letter-spacing: -0.035em;
   overflow-wrap: anywhere;
   text-wrap: balance;
+}
+[data-theme-pack='atelier'] .atp-colophon-name[data-length='long'] {
+  font-size: clamp(1.625rem, 0.75rem + 2.5vw, 3.25rem);
 }
 [data-theme-pack='atelier'] [dir='rtl'] .atp-colophon-name,
 [data-theme-pack='atelier'][dir='rtl'] .atp-colophon-name {

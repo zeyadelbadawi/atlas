@@ -9,12 +9,14 @@
  * produces" can never drift apart (see `Reports/ARCHITECTURE.md`,
  * Prompt 9, "One Renderer, Every Surface").
  */
+import { useMemo } from 'react';
 import { WebsiteChrome } from './WebsiteChrome';
 import type { WebsiteHeaderAuthState } from './WebsiteHeader';
 import { SectionRenderer } from '../sections';
 import { CourseDetailsTemplate } from './CourseDetailsTemplate';
 import { useThemePack } from '../theme-packs/ThemePackContext';
 import { PageHeadingProvider } from './PageHeadingContext';
+import { adoptThemeAssets } from '../theme-assets/adopt-theme-assets';
 import type {
   ThemeCourseDetailsProps,
   ThemePageIntroProps,
@@ -90,6 +92,7 @@ export function WebsiteRenderer({
       ) : (
         <PageSections
           page={page}
+          themeKey={configuration.themeKey}
           navigation={configuration.navigation}
           academyId={academyId}
           academyName={academyName}
@@ -125,7 +128,8 @@ const PAGE_OPENING_TYPES = new Set(['hero', 'pageHeader']);
  * Academy. Every other hero on the page uses `<h2>`.
  */
 function PageSections({
-  page,
+  page: storedPage,
+  themeKey,
   navigation,
   academyId,
   academyName,
@@ -133,12 +137,20 @@ function PageSections({
   linkRenderer,
 }: {
   readonly page: WebsitePage;
+  readonly themeKey: string;
   readonly navigation: ThemePageIntroProps['navigation'];
   readonly academyId: string;
   readonly academyName: string;
   readonly pages: readonly WebsitePage[];
   readonly linkRenderer?: WebsiteLinkRenderer;
 }): JSX.Element {
+  // A starter photograph of another theme is drawn as this theme's
+  // photograph for the same slot (`adopt-theme-assets.ts`); the stored
+  // content is unchanged.
+  const page = useMemo(
+    () => adoptThemeAssets(storedPage, themeKey),
+    [storedPage, themeKey]
+  );
   const PageIntro = useThemePack().pages?.PageIntro;
   const enabled = page.sections.filter((instance) => instance.enabled);
   const first = enabled[0];

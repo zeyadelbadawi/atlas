@@ -14,6 +14,7 @@
  * handling and retries are unchanged: a failed early request is a failed
  * first attempt, retried like any other.
  */
+import type { HostnameResolution } from '@types';
 import { publicWebsiteService } from './PublicWebsiteService';
 
 const inFlight = new Map<string, Promise<unknown>>();
@@ -32,8 +33,16 @@ export const prefetchKeys = {
   pages: (academyId: string) => `pages:${academyId}`,
 };
 
+export interface PublicWebsitePrefetchOptions {
+  /** Called with the hostname lookup's answer (e.g. to start the Academy's theme). */
+  readonly onResolved?: (resolution: HostnameResolution) => void;
+}
+
 /** Starts resolve → configuration + pages for this page load. */
-export function startPublicWebsitePrefetch(lookupKey: string): void {
+export function startPublicWebsitePrefetch(
+  lookupKey: string,
+  options: PublicWebsitePrefetchOptions = {}
+): void {
   // Browser only: this map is module state, which on a server would be
   // shared by every request (Reports/SSR_ARCHITECTURE_ANALYSIS.md §4 #7).
   if (typeof window === 'undefined') return;
@@ -53,6 +62,7 @@ export function startPublicWebsitePrefetch(lookupKey: string): void {
         prefetchKeys.pages(resolution.academyId),
         publicWebsiteService.getPublishedPages(resolution.academyId)
       );
+      options.onResolved?.(resolution);
     },
     () => undefined
   );

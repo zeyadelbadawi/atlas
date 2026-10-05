@@ -1,6 +1,7 @@
 /**
  * Theme 2 (WS-O) — the Theme tab offers every selectable theme with its
- * live miniature: Modern Education and Atelier. A miniature is a picture
+ * feature image: Modern Education and Atelier. A theme without one (a
+ * retired theme) keeps the live miniature. The picture is decoration
  * (hidden from assistive tech, unreachable by keyboard), each card's action
  * names its theme, and choosing Atelier on a Theme 1 site writes the draft
  * at once (no retired-theme confirmation).
@@ -78,7 +79,7 @@ function renderTab(themeKey: string, locale: 'en' | 'ar' = 'en') {
 }
 
 describe('Theme tab — both selectable themes', () => {
-  it('shows Modern Education and Atelier, each with its own live miniature', () => {
+  it('shows Modern Education and Atelier, each with its own feature image', () => {
     renderTab('modern-education');
     expect(
       screen.getByRole('heading', { level: 3, name: 'Modern Education' })
@@ -86,15 +87,29 @@ describe('Theme tab — both selectable themes', () => {
     expect(
       screen.getByRole('heading', { level: 3, name: 'Atelier' })
     ).toBeTruthy();
+    const frames = screen.getAllByTestId('theme-preview-frame');
     expect(
-      screen.getAllByTestId('miniature').map((node) => node.textContent)
-    ).toEqual(['modern-education', 'atelier']);
+      frames.map((frame) => frame.querySelector('img')?.getAttribute('src'))
+    ).toEqual([
+      expect.stringMatching(
+        /\/theme-assets\/modern-education\/v2\/theme-card-/
+      ),
+      expect.stringMatching(/\/theme-assets\/atelier\/v3\/theme-card-/),
+    ]);
+    expect(screen.queryByTestId('miniature')).toBeNull();
   });
 
-  it('miniatures are hidden from assistive tech and inert', () => {
-    renderTab('modern-education');
+  it('a retired theme without a feature image keeps its live miniature', () => {
+    renderTab('premium-academy');
+    expect(
+      screen.getAllByTestId('miniature').map((node) => node.textContent)
+    ).toEqual(['premium-academy']);
+  });
+
+  it('pictures are hidden from assistive tech and inert', () => {
+    renderTab('premium-academy');
     const frames = screen.getAllByTestId('theme-preview-frame');
-    expect(frames).toHaveLength(2);
+    expect(frames).toHaveLength(3);
     for (const frame of frames) {
       expect(frame.getAttribute('aria-hidden')).toBe('true');
       expect(frame.hasAttribute('inert')).toBe(true);

@@ -52,8 +52,13 @@ export default defineConfig({
     environment: 'jsdom',
     include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
     // Registers both translation bundles (the app loads one per language),
-    // and answers jsdom's top-layer pseudo-classes (see the file).
-    setupFiles: ['src/test/setup-i18n.ts', 'src/test/setup-jsdom.ts'],
+    // answers jsdom's top-layer pseudo-classes, and registers every theme
+    // pack (the app loads them on demand) — see each file.
+    setupFiles: [
+      'src/test/setup-i18n.ts',
+      'src/test/setup-jsdom.ts',
+      'src/test/setup-theme-packs.ts',
+    ],
     restoreMocks: true,
   },
 });

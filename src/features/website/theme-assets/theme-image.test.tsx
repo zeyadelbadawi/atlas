@@ -88,6 +88,20 @@ describe('ThemeImage', () => {
     expect(img.style.backgroundImage).toContain('data:image/webp');
   });
 
+  it('loads a page-leading theme asset eagerly at high priority when asked', () => {
+    const { container } = render(
+      <ThemeImage
+        value="theme-asset:modern-education/about-story"
+        alt=""
+        sizes="30vw"
+        priority
+      />
+    );
+    const img = container.querySelector('img')!;
+    expect(img.getAttribute('loading')).toBe('eager');
+    expect(img.getAttribute('fetchpriority')).toBe('high');
+  });
+
   it('renders the fallback for a pending asset', () => {
     const { container } = render(
       <ThemeImage

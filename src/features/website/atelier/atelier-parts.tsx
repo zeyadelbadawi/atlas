@@ -316,6 +316,7 @@ export function AtelierMedia({
         className="size-full object-cover"
         fallback={<AtelierPlaceholder reference={value} />}
         loading={priority ? 'eager' : 'lazy'}
+        priority={priority}
       />
       {children}
     </div>

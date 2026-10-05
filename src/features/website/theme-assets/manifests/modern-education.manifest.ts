@@ -21,6 +21,9 @@ const DEFAULT_BUDGET = 120_000;
 const W_4_3 = [480, 800, 1200, 1600];
 const W_SMALL_TILE = [400, 800, 1200];
 
+const T1_THEME_CARD_LICENSE_BASIS =
+  "Owner's explicit request (5 Oct 2026) for a Magnific-generated feature image for each theme in the dashboard's Theme tab, through Atlas's paid Magnific Premium+ subscription active at generation";
+
 export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
   theme: 'modern-education',
   artDirection:
@@ -653,6 +656,55 @@ export const MODERN_EDUCATION_ASSETS: ThemeAssetManifest = {
           "Owner's explicit approval (29 Sep 2026) to use Atlas's paid Magnific Premium+ subscription, active at generation, for Atlas Theme 1 production assets",
         masterSha256:
           '11408e59f2ee5625b6c3c46ac49cc36c72104bddda9a49614567a6f67a00f6b7',
+      },
+    },
+    {
+      key: 'theme-card',
+      purpose:
+        'Dashboard › Website › Theme tab, the card that offers this theme',
+      ratio: '16:9',
+      master: { width: 2400, height: 1350 },
+      widths: [480, 800, 1200],
+      focal: { x: 0.5, y: 0.5 },
+      // The card's picture is decorative (the card names the theme); the
+      // text exists for contexts without the card.
+      alt: {
+        en: 'A bright, modern learning space with adult learners studying together',
+        ar: 'مساحة تعلّم حديثة ومشرقة يدرس فيها متعلّمون بالغون معًا',
+      },
+      direction:
+        'A bright, modern open learning space: a few adult learners at a distance studying together at light wooden tables with notebooks and printed handouts, tall windows, plants and soft daylight, friendly and energetic. No laptops. The group in the centre third of the frame with calm space around it.',
+      composition: {
+        slot: 'Theme tab card, the picture above the theme name (about 7:3 crop)',
+        crops: [
+          { breakpoint: 'desktop', ratio: '7:3', width: '~480px' },
+          { breakpoint: 'tablet', ratio: '7:3', width: '~45vw' },
+          { breakpoint: 'mobile', ratio: '7:3', width: '100vw' },
+        ],
+        safeArea:
+          'The subject inside the central 70% of the width and y 0.25–0.75.',
+        exclusion: 'None; the theme name sits under the picture.',
+        rtl: 'Layout mirrors in Arabic; the photograph is not mirrored.',
+      },
+      budgetBytes: DEFAULT_BUDGET,
+      status: 'released',
+      version: 'v2',
+      lqip: 'data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAADwAwCdASoYAA4APu1iqk4ppaQiMAgBMB2JYwCdABs8abBETbzsxwgAAP7nkWkL0UdrklnxqEruy7KkiXJPQDMIia/SCfrDcI/fNKcinLbPcTsIMwf0zhp89LW42EewkuWE+tceku8cxAAA',
+      provenance: {
+        generator: 'magnific',
+        tool: 'images_generate (text-to-image), Magnific MCP',
+        model: 'Google Nano Banana Pro (imagen-nano-banana-2), 4k, 16:9',
+        prompt:
+          'A bright, modern open learning space: a few adult learners at a distance studying together at light wooden tables with notebooks and printed handouts, tall windows, plants and soft daylight, friendly and energetic. No laptops. The group in the centre third of the frame with calm space around it. Framing: 16:9 aspect ratio. Editorial documentary photograph, photographic realism. Natural daylight, warm-neutral colour grade, low saturation and soft contrast so any brand colour can be the accent. Real, diverse adults suited to both English-speaking and Middle Eastern audiences, including modest attire. Genuine, unposed moments. Clean, uncluttered backgrounds with calm negative space where interface elements overlay. Strictly avoid: No text, letters or numbers anywhere; no logos, brand names or recognisable products; no readable screens or user interfaces (screens blurred or angled away); no watermarks; no illustration or 3D render style; no recognisable real people; no distorted hands, faces or eyes.',
+        seed: 777831,
+        jobId: 'CqJhv8cEEy',
+        generatedAt: '2026-10-05T05:42:41Z',
+        reviewer:
+          'Claude Code — full-frame and 100% detail review (faces, hands, readable marks, logos, frame edges); candidate 4 of 4 (3 rejected: brand logos on laptop lids)',
+        reviewOutcome: 'approved',
+        licenseBasis: T1_THEME_CARD_LICENSE_BASIS,
+        masterSha256:
+          '89373b7bdb47673ee5e158a826aa4f25adc6bb08c942788273e6e4b4f8f83f04',
       },
     },
   ],

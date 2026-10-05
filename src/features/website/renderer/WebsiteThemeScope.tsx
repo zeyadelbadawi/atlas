@@ -26,6 +26,7 @@ import {
   WEBSITE_SHADOW_VALUES,
 } from '../utils/website-theme-tokens.utils';
 import { getThemePack } from '../theme-packs/theme-pack.registry';
+import { ThemePackGate } from '../theme-packs/ThemePackGate';
 import {
   ThemePackContext,
   WebsiteBrandVariablesContext,
@@ -42,7 +43,23 @@ export interface WebsiteThemeScopeProps {
   readonly className?: string;
 }
 
-export function WebsiteThemeScope({
+/**
+ * The theme's pack (its renderers, chrome, pages, brand mapping and
+ * stylesheet) loads on demand (`theme-pack.loader.ts`); until it has, the
+ * scope holds the place with an empty box of the same classes.
+ */
+export function WebsiteThemeScope(props: WebsiteThemeScopeProps): JSX.Element {
+  return (
+    <ThemePackGate
+      themeKey={props.theme.key}
+      fallback={<div className={props.className} aria-busy="true" />}
+    >
+      <LoadedWebsiteThemeScope {...props} />
+    </ThemePackGate>
+  );
+}
+
+function LoadedWebsiteThemeScope({
   theme,
   brand,
   children,
