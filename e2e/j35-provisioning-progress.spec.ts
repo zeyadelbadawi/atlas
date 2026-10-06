@@ -20,7 +20,7 @@
  *   J35e  the status page in EN and AR, on a desktop and a phone (evidence);
  *   J35f  the seeded Manager and Instructor are not offered provisioning,
  *         and the API refuses them (403);
- *   J35g  Theme 2: both themes are offered with live previews of the real
+ *   J35g  Theme 2: every selectable theme is offered with live previews of the real
  *         site; Atelier is chosen with the keyboard, sent as
  *         `selectedThemeKey`, and the Academy's website is built in it;
  *   J35h  Theme 3: the three themes are offered; Manara is reached with
@@ -288,7 +288,8 @@ test.describe('J35 — provisioning progress', () => {
     const group = page.getByRole('radiogroup', { name: 'Theme' });
     const modern = group.getByRole('radio', { name: /Modern Education/ });
     const atelier = group.getByRole('radio', { name: /Atelier/ });
-    await expect(group.getByRole('radio')).toHaveCount(2);
+    // Three selectable themes since Theme 3 (Manara); Atelier is the second.
+    await expect(group.getByRole('radio')).toHaveCount(3);
     await expect(modern).toHaveAttribute('aria-checked', 'true');
     await expect(atelier).toHaveAttribute('aria-checked', 'false');
 
@@ -296,7 +297,7 @@ test.describe('J35 — provisioning progress', () => {
     // hidden from assistive tech, rendered once the group is in view.
     await group.scrollIntoViewIfNeeded();
     const previews = page.getByTestId('setup-theme-preview');
-    await expect(previews).toHaveCount(2);
+    await expect(previews).toHaveCount(3);
     await expect(
       previews.nth(0).locator('[data-theme-pack="modern-education"]')
     ).toBeAttached();
