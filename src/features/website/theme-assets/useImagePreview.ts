@@ -21,12 +21,14 @@
  *                   (unknown key, not released, no pack) — the field says so
  *                   instead of showing a broken image.
  */
-import { useEffect } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 import { useLoadedThemePack } from '../theme-packs/ThemePackGate';
 import {
   getLoadedThemePack,
   isKnownThemeKey,
   loadThemePack,
+  subscribeToThemePacks,
+  themePackLoadError,
   resolveThemePackKey,
 } from '../theme-packs/theme-pack.loader';
 import { adoptThemeAssetReference } from './adopt-theme-assets';
@@ -62,18 +64,26 @@ export function useImagePreview(
   themeKey?: string
 ): ImagePreview {
   const themeAsset = isThemeAssetReference(value);
-  // Whose pack (and manifest) decides: the site's theme when known — as the
-  // public renderer loads it, a retired key renders with Theme 1's pack —
-  // else the reference's own theme.
-  const candidate = themeAsset
-    ? (themeKey ?? referencedTheme(value as string))
-    : undefined;
-  const packKey =
-    candidate && isKnownThemeKey(candidate)
-      ? resolveThemePackKey(candidate)
-      : undefined;
-  // Re-renders when the pack (and with it the manifest) arrives.
+  // Whose pack (and manifest) decides: the site's theme when known —
+  // through `resolveThemePackKey`, exactly as the public renderer loads it,
+  // so a retired key renders with Theme 1's pack — else the reference's own
+  // theme, which must be one this build knows.
+  const referenced = themeAsset ? referencedTheme(value as string) : undefined;
+  const packKey = !themeAsset
+    ? undefined
+    : themeKey !== undefined
+      ? resolveThemePackKey(themeKey)
+      : referenced && isKnownThemeKey(referenced)
+        ? resolveThemePackKey(referenced)
+        : undefined;
+  // Re-renders when the pack (and with it the manifest) arrives — or fails.
   const pack = useLoadedThemePack(packKey);
+  const readError = () => (packKey ? themePackLoadError(packKey) : undefined);
+  const loadError = useSyncExternalStore(
+    subscribeToThemePacks,
+    readError,
+    readError
+  );
 
   useEffect(() => {
     if (!packKey || getLoadedThemePack(packKey)) return;
@@ -85,7 +95,8 @@ export function useImagePreview(
   if (!value) return { status: 'none' };
   if (!themeAsset) return { status: 'url', src: value };
   if (!packKey) return { status: 'unavailable' };
-  if (!pack) return { status: 'pending' };
+  if (!pack)
+    return loadError ? { status: 'unavailable' } : { status: 'pending' };
 
   const drawn = themeKey ? adoptThemeAssetReference(value, themeKey) : value;
   const resolved = resolveThemeAsset(drawn);
