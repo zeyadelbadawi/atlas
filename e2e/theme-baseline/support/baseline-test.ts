@@ -152,6 +152,117 @@ export async function openFixture(page: Page, url: string): Promise<void> {
   );
 }
 
+/**
+ * Loads, decodes and paints every image before a full-page screenshot. A
+ * full-page capture grows the viewport, which starts the lazy images below
+ * the fold mid-shot: the capture then lands on the LQIP, or on the quick
+ * lower-quality scale the compositor paints before upgrading a freshly
+ * decoded photograph, both of which differ run to run. Scroll through the
+ * page slowly enough for each lazy image to start loading and be painted at
+ * its final scale, wait until every rendered image is complete and decoded,
+ * and repeat until a pass finds nothing new; then return to the top.
+ */
+export async function settleImages(page: Page): Promise<void> {
+  await page.evaluate(async () => {
+    const frame = () =>
+      new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    const wait = (ms: number) =>
+      new Promise<void>((resolve) => setTimeout(resolve, ms));
+    // Only images that can appear in the capture: one in a hidden container
+    // (the auth side plate on phones) or beyond the viewport's horizontal
+    // band (cards further along a horizontally scrolling rail) never starts
+    // loading lazily and is not in a full-page screenshot either.
+    const rendered = () =>
+      Array.from(document.images).filter((image) => {
+        const rect = image.getBoundingClientRect();
+        return (
+          image.getClientRects().length > 0 &&
+          rect.right > 0 &&
+          rect.left < window.innerWidth
+        );
+      });
+    // Decode synchronously at paint time: with `decoding="async"` an image
+    // whose decoded pixels were dropped while off screen paints blank on
+    // the first frame of a beyond-viewport capture, and the LQIP shows.
+    for (const image of Array.from(document.images)) image.decoding = 'sync';
+    const step = Math.max(1, Math.floor(window.innerHeight / 2));
+    const bottom = () =>
+      Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    const deadline = performance.now() + 20_000;
+    let settled = '';
+    for (let round = 0; round < 6 && performance.now() < deadline; round++) {
+      for (let y = 0; y <= bottom(); y += step) {
+        window.scrollTo(0, y);
+        await frame();
+        await frame();
+        await wait(40);
+      }
+      window.scrollTo(0, bottom());
+      await frame();
+      await frame();
+      await wait(40);
+      // Lazy images start loading a frame or two after they scroll in.
+      while (
+        performance.now() < deadline &&
+        rendered().some((image) => !image.complete)
+      ) {
+        await wait(50);
+      }
+      await Promise.all(
+        rendered().map((image) =>
+          Promise.race([image.decode().catch(() => undefined), wait(2_000)])
+        )
+      );
+      const signature = rendered()
+        .map((image) => `${image.currentSrc}:${image.complete ? 1 : 0}`)
+        .join('|');
+      if (signature === settled) break;
+      settled = signature;
+    }
+    window.scrollTo(0, 0);
+    // Never hand an unfinished page to the capture: every rendered image
+    // must be loaded, intact and decoded, or the case fails with the
+    // offenders named instead of recording them.
+    const describe = (image: HTMLImageElement) => image.currentSrc || image.src;
+    const pending = rendered().filter((image) => !image.complete);
+    if (pending.length > 0) {
+      throw new Error(
+        `images still loading after ${Math.round((performance.now() - (deadline - 20_000)) / 1000)}s: ${pending.map(describe).join(', ')}`
+      );
+    }
+    const broken = rendered().filter((image) => image.naturalWidth === 0);
+    if (broken.length > 0) {
+      throw new Error(
+        `images failed to load: ${broken.map(describe).join(', ')}`
+      );
+    }
+    const undecoded = (
+      await Promise.all(
+        rendered().map((image) =>
+          Promise.race([
+            image.decode().then(
+              () => null,
+              () => image
+            ),
+            wait(5_000).then(() => image),
+          ])
+        )
+      )
+    ).filter((image): image is HTMLImageElement => image !== null);
+    if (undecoded.length > 0) {
+      throw new Error(
+        `images not decoded: ${undecoded.map(describe).join(', ')}`
+      );
+    }
+  });
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+      )
+  );
+}
+
 /** Asserts the page rendered without depending on anything outside the fixture. */
 export function expectNoIssues(issues: PageIssues): void {
   expect(issues.unmockedApi, 'API calls with no fixture').toEqual([]);

@@ -38,6 +38,7 @@ import {
   expect,
   expectNoIssues,
   openFixture,
+  settleImages,
   test,
 } from './support/baseline-test';
 
@@ -323,6 +324,8 @@ for (const viewport of VIEWPORTS) {
     // final state).
     test.describe('manara', () => {
       test.use({ contextOptions: { reducedMotion: 'reduce' } });
+      // `settleImages` scrolls each page and waits for every photograph.
+      test.slow();
 
       for (const state of ['new', 'rich'] as const) {
         for (const page of THEMED_PAGES[state]) {
@@ -335,6 +338,7 @@ for (const viewport of VIEWPORTS) {
                 browserPage,
                 fixtureUrl(page, locale, fixtureSlug('manara', state))
               );
+              await settleImages(browserPage);
               await expect(browserPage).toHaveScreenshot(
                 [
                   'themes',
@@ -360,6 +364,7 @@ for (const viewport of VIEWPORTS) {
               browserPage,
               fixtureUrl(page, locale, fixtureSlug('manara', 'rich'))
             );
+            await settleImages(browserPage);
             await expect(browserPage).toHaveScreenshot(
               [
                 'themes',
@@ -387,6 +392,7 @@ for (const viewport of VIEWPORTS) {
               fixtureSlug('manara', MANARA_COMING_SOON.state)
             )
           );
+          await settleImages(browserPage);
           await expect(browserPage).toHaveScreenshot(
             [
               'themes',
@@ -413,6 +419,7 @@ for (const viewport of VIEWPORTS) {
               fixtureSlug('manara', 'rich', palette)
             )
           );
+          await settleImages(browserPage);
           await expect(browserPage).toHaveScreenshot(
             ['brand', 'manara', `home--${palette}--en--${viewport.name}.png`],
             { fullPage: true }
