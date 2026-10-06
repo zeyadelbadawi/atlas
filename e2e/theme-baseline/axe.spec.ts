@@ -285,6 +285,46 @@ for (const viewport of AXE_VIEWPORTS) {
   });
 }
 
+// The consent banner is the first thing every visitor sees and is fixed to
+// the bottom of the viewport, so it sits over whatever ground the theme
+// paints there (Manara's night hero, Atelier's paper). The cases above seed
+// the consent decision, so the banner is covered here, once per theme with
+// a home page, in each locale and width. Its text must stay legible over
+// any ground: zero violations, not a recorded baseline.
+test.describe('axe first visit, consent banner', () => {
+  test.use({ seedConsent: false, contextOptions: { reducedMotion: 'reduce' } });
+
+  for (const viewport of AXE_VIEWPORTS) {
+    for (const theme of ['atelier', 'manara'] as const) {
+      for (const locale of LOCALES) {
+        test(`first visit ${theme} rich home ${locale} ${viewport.name}`, async ({
+          page,
+          issues,
+        }) => {
+          await page.setViewportSize({
+            width: viewport.width,
+            height: viewport.height,
+          });
+          await openFixture(
+            page,
+            fixtureUrl(
+              { name: 'home', path: '/' },
+              locale,
+              fixtureSlug(theme, 'rich')
+            )
+          );
+          await expect(page.getByTestId('cookie-consent-banner')).toBeVisible();
+          const summary = JSON.parse(await axeSummary(page)) as {
+            violations: unknown[];
+          };
+          expect(summary.violations).toEqual([]);
+          expectNoIssues(issues);
+        });
+      }
+    }
+  }
+});
+
 test.describe('axe brand matrix, Theme 1 inner pages (1440)', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 

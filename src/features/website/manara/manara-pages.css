@@ -396,6 +396,15 @@
   > span {
   color: var(--mn-night-text);
 }
+
+/* The shared cookie-consent banner is fixed to the bottom of the viewport
+   and paints a translucent paper (80–95%) behind a blur. On Manara the
+   ground behind it is often the night hero, which darkens that paper until
+   the banner's muted text falls below 4.5:1. Paint the paper solid so the
+   banner reads the same over any ground. */
+[data-theme-pack='manara'] [data-testid='cookie-consent-banner'] {
+  background-color: hsl(var(--background));
+}
 @media (min-width: 640px) {
   [data-theme-pack='manara'] .mnp-footer-legal {
     flex-direction: row;
