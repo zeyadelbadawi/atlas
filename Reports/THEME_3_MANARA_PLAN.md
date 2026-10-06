@@ -295,3 +295,41 @@ baseline harness measures.
   be complete and decoded, repeats until a pass finds nothing new, and fails
   on a broken image rather than recording it; the Manara baselines were
   re-recorded in that state (Theme 1/Atelier baselines untouched).
+
+### 7.5 Release and production verification (6 Oct 2026)
+
+- **Backend**: `atlas-backend#37` merged (`8a9ee48`), CI and Deploy green, no
+  migrations; `/health` 200 after the deploy.
+- **Frontend**: `atlas#25` merged by the owner (`107950d`), CI green on
+  `main`, Deploy run `37420904862` succeeded at 06:23Z (about 29 minutes).
+  `atlas#26` (harness + re-recorded Manara baselines, §7.4) merged after
+  it (`0692192`); it carries no runtime code.
+- **Deployed build**: entry `index-BadrnbYH.js` references
+  `manara.pack-aEJbtcLZ.js` (121.6 kB) and `manara.stylesheet-bK4kcYw9.css`
+  (59.0 kB), both served with 200; `theme-assets/manara/v1/*` AVIF/WebP
+  served with the right content types (hero 1600w AVIF 19.4 kB, course
+  fallback 800w AVIF 9.2 kB, theme card 800w WebP 16.0 kB).
+- **Real browser against production** (Chromium 141, 1440 and 390, reduced
+  motion): the Atelier academy (`german-lectrue`) in EN and AR, Home and
+  Courses, renders with `data-theme-pack="atelier"`, downloads only the
+  Atelier pack and stylesheet (no Manara code), shows the platform
+  attribution, one `h1`, no console or page errors; the Theme 1 and
+  retired-theme test academies (`ghg`, `oljioklnk`, `klnkllk`, all
+  unpublished → Coming Soon) and the marketing site load with the shared
+  entry only. The only console error on every page is Cloudflare's
+  injected analytics beacon blocked by the site's own CSP, which predates
+  this release.
+- **Observed, pre-existing, not changed here**: the Atelier academy's EN
+  Home at 390 has a 21 px horizontal overflow from the hero search row
+  (`ath-hero-search-row`: the 245 px input plus the 86 px Search button in a
+  306 px column). Atelier's code was not touched by this release (last
+  change `27f4dcd`, 5 Oct) and the local Atelier fixtures do not reproduce
+  it, so it depends on that academy's content; the AR Home and Courses at
+  390 have no overflow. Follow-up for Theme 2.
+- **Not yet verified in production, needs the owner**: no production
+  academy uses Manara yet. The CMS edit round-trip on a live Manara site
+  (hero text, image and CTA, course content, one Manara-only section) and
+  the builder-preview comparison need a test academy switched to Manara and
+  published from the dashboard, which signs in with a code sent to the
+  owner's mailbox. The same journey ran against the real stack locally
+  (J35h) and the fixture matrix covers every Manara section and page.
