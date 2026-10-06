@@ -97,6 +97,8 @@ interface ElementState {
   readonly tag: string;
   /** The class attribute (SVG `className` is an object), for failure messages. */
   readonly cls: string;
+  /** Resolved font-relative sizing and web-font state, for failure messages. */
+  readonly measure: string;
   readonly rect: readonly number[];
   readonly type: string;
   readonly colors: Record<string, string>;
@@ -118,10 +120,21 @@ async function settleLayout(page: Page): Promise<void> {
   for (let attempt = 0; attempt < 40 && stable < 2; attempt += 1) {
     const signature = await page.evaluate(async () => {
       await document.fonts.ready;
+      // `fonts.ready` resolves between loads; a face that starts loading on
+      // the next style pass (and a `ch`-based measure with it) is still in
+      // flight, so a page with a loading face never counts as stable.
+      const loading = Array.from(document.fonts).some(
+        (face) => face.status === 'loading'
+      );
+      if (loading) return `loading:${performance.now()}`;
+      // Widths too: a font swap can change a `ch` measure without moving
+      // any box vertically.
       return Array.from(document.body.querySelectorAll('*'))
         .map((element) => {
           const rect = element.getBoundingClientRect();
-          return `${Math.round(rect.y * 100)}:${Math.round(rect.height * 100)}`;
+          return [rect.x, rect.y, rect.width, rect.height]
+            .map((value) => Math.round(value * 100))
+            .join(':');
         })
         .join(',');
     });
@@ -132,6 +145,28 @@ async function settleLayout(page: Page): Promise<void> {
 }
 
 async function capture(page: Page): Promise<PageState> {
+  // Closed `<details>` content (Theme 1's mobile footer columns) renders
+  // with `content-visibility: hidden`. Chromium may skip style recalc inside
+  // that skipped subtree, so a brand slot repainted on an ancestor can read
+  // stale through `getComputedStyle` there. Open every disclosure before
+  // measuring so each pass sees rendered, freshly resolved styles.
+  await page.evaluate(() => {
+    document.querySelectorAll('details').forEach((details) => {
+      details.open = true;
+    });
+  });
+  await settleLayout(page);
+  // Chromium can keep a font-relative length it resolved while the web
+  // font was still loading (seen as `max-inline-size: 585px`, i.e. 65ch at
+  // the 0.5em placeholder, with every Rubik face loaded). With the fonts
+  // in, change an inherited property on the root and revert it so every
+  // element's style is resolved again, then let the layout settle.
+  await page.evaluate(() => {
+    const root = document.documentElement;
+    root.style.letterSpacing = '0.001px';
+    getComputedStyle(root).letterSpacing;
+    root.style.letterSpacing = '';
+  });
   await settleLayout(page);
   return page.evaluate((canvasVariables) => {
     const scope =
@@ -155,6 +190,17 @@ async function capture(page: Page): Promise<PageState> {
       return {
         tag: element.tagName.toLowerCase(),
         cls: (element.getAttribute('class') ?? '').slice(0, 80),
+        // Font-relative sizing, for the failure message: a `ch` measure
+        // that resolved before the web font was available reads here.
+        measure: `max-inline-size ${style.maxInlineSize}; font ${style.fontSize} ${style.fontFamily.split(',')[0]}; faces ${Array.from(
+          document.fonts
+        )
+          .filter((face) => face.status !== 'unloaded')
+          .map(
+            (face) =>
+              `${face.family.replace(/"/g, '')}/${face.weight}:${face.status}`
+          )
+          .join(' ')}`,
         rect: [rect.x, rect.y + window.scrollY, rect.width, rect.height].map(
           (value) => Math.round(value * 100) / 100
         ),
@@ -360,7 +406,9 @@ for (const entry of CASES) {
               (value, i) => Math.abs(value - base.rect[i]) > GEOMETRY_TOLERANCE
             )
           ) {
-            failures.push(`${where} box ${element.rect} vs ${base.rect}`);
+            failures.push(
+              `${where} box ${element.rect} vs ${base.rect} (${element.measure}; reference ${base.measure})`
+            );
           }
           if (element.type !== base.type) {
             failures.push(`${where} type "${element.type}" vs "${base.type}"`);
