@@ -259,3 +259,4 @@ release report once the remaining gates run.
 - Course Details at exactly 1024: phone purchase bar and sticky panel both showed (utility class lost to the stylesheet's specificity) → explicit `≥1024` rule.
 - **RTL never applied on the public runtime**: `dir` sits on the locale wrapper _above_ the theme scope, so `[data-theme-pack] [dir='rtl']` never matched; every RTL rule now also carries Atelier's `[dir='rtl'] [data-theme-pack='manara']` form (seams, beams, select chevrons, letter-spacing verified in Arabic).
 - Banner block bottom padding tightened.
+- axe colour-contrast (32 nodes on the first recording): the shared platform attribution kept its light-ground colours on the night footer (1.12:1 / 3.17:1) → footer text tones; translucent count pills on block/accent tiles (3.7:1) → solid inverted pills; the shared mobile bottom bar drew `brandText` on a 95%-opaque surface over the night footer (4.41:1) → `brandText` solved to 5:1.
