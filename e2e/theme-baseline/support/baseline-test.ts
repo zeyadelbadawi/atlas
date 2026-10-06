@@ -152,6 +152,83 @@ export async function openFixture(page: Page, url: string): Promise<void> {
   );
 }
 
+/**
+ * Loads, decodes and paints every image before a full-page screenshot. A
+ * full-page capture grows the viewport, which starts the lazy images below
+ * the fold mid-shot: the capture then lands on the LQIP, or on the quick
+ * lower-quality scale the compositor paints before upgrading a freshly
+ * decoded photograph, both of which differ run to run. Scroll through the
+ * page slowly enough for each lazy image to start loading and be painted at
+ * its final scale, wait until every rendered image is complete and decoded,
+ * and repeat until a pass finds nothing new; then return to the top.
+ */
+export async function settleImages(page: Page): Promise<void> {
+  await page.evaluate(async () => {
+    const frame = () =>
+      new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    const wait = (ms: number) =>
+      new Promise<void>((resolve) => setTimeout(resolve, ms));
+    // Only images that take part in layout: a lazy image inside a hidden
+    // container (the auth side plate on phones) never starts loading, and
+    // `decode()` on it would never settle.
+    const rendered = () =>
+      Array.from(document.images).filter(
+        (image) => image.getClientRects().length > 0
+      );
+    // Decode synchronously at paint time: with `decoding="async"` an image
+    // whose decoded pixels were dropped while off screen paints blank on
+    // the first frame of a beyond-viewport capture, and the LQIP shows.
+    for (const image of Array.from(document.images)) image.decoding = 'sync';
+    const step = Math.max(1, Math.floor(window.innerHeight / 2));
+    const bottom = () =>
+      Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    const deadline = performance.now() + 20_000;
+    let settled = '';
+    for (let round = 0; round < 6 && performance.now() < deadline; round++) {
+      for (let y = 0; y <= bottom(); y += step) {
+        window.scrollTo(0, y);
+        await frame();
+        await frame();
+        await wait(40);
+      }
+      window.scrollTo(0, bottom());
+      await frame();
+      await frame();
+      await wait(40);
+      // Lazy images start loading a frame or two after they scroll in.
+      while (
+        performance.now() < deadline &&
+        rendered().some((image) => !image.complete)
+      ) {
+        await wait(50);
+      }
+      await Promise.all(
+        rendered().map((image) =>
+          Promise.race([image.decode().catch(() => undefined), wait(2_000)])
+        )
+      );
+      const signature = rendered()
+        .map((image) => `${image.currentSrc}:${image.complete ? 1 : 0}`)
+        .join('|');
+      if (signature === settled) break;
+      settled = signature;
+    }
+    window.scrollTo(0, 0);
+    const broken = rendered()
+      .filter((image) => image.complete && image.naturalWidth === 0)
+      .map((image) => image.currentSrc || image.src);
+    if (broken.length > 0) {
+      throw new Error(`images failed to load: ${broken.join(', ')}`);
+    }
+  });
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+      )
+  );
+}
+
 /** Asserts the page rendered without depending on anything outside the fixture. */
 export function expectNoIssues(issues: PageIssues): void {
   expect(issues.unmockedApi, 'API calls with no fixture').toEqual([]);

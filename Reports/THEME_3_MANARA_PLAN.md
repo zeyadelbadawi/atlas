@@ -246,12 +246,12 @@ release report once the remaining gates run.
 | SSR renderer tests (`test:ssr`)                                                                               | 84 passed — Manara pack isolation, stylesheet link, Alexandria preloads                                                                                                                                                                                                                                                                                                                                                                                |
 | Theme 1 / Atelier / retired-theme visual + axe regression                                                     | 1303/1304; the one diff is a lazy-image capture race on an Atelier page (passes on re-run), no baseline changed                                                                                                                                                                                                                                                                                                                                        |
 | Manara visual baseline (EN/AR × 1440/1024/390, new/rich/unpublished, 11 palettes)                             | _pending_                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| Manara axe (0 violations)                                                                                     | _pending_                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Manara axe (0 violations)                                                                                     | 40 snapshots (EN/AR × 1440/1024/390, new/rich pages, Coming Soon), 0 violations after the §7.3 contrast fixes; `e2e/theme-baseline/__screenshots__/axe/themes/manara/**`                                                                                                                                                                                                                                                                               |
 | Lighthouse (mobile, simulated throttling, median of 3, fixture server, same machine/run for all three themes) | Manara perf 64–67 · a11y 100 · best-practices 100 · SEO 100 · CLS 0–0.056 · TBT 286–410 ms; Atelier 63–67, Theme 1 65–71 on the same run. The score is bounded by the shared SPA boot (FCP ≈ 3.6 s on every theme; LCP element = the hero `h1`, hero image eager/high). Manara carries the smallest script (474 kB vs 477/490) and font (67 kB vs Atelier 118–186) payloads; the full report is `e2e/theme-baseline/baselines/lighthouse-manara.json`. |
 | Real browser: reduced motion                                                                                  | no-preference → `mn-rise`/`mn-sweep` + scroll-driven header beam; reduce → none, reveals in final state, hero h1 never animates                                                                                                                                                                                                                                                                                                                        |
 | Real browser: keyboard                                                                                        | skip link → nav → locale → sign in/up → CTAs with 3 px rings; full-screen menu opens on Enter, focus to Close, Esc returns focus; FAQ accordion toggles                                                                                                                                                                                                                                                                                                |
 | Real browser: layout                                                                                          | no horizontal overflow at 390/768/1024/1440 EN+AR, one `h1` per page, no console errors                                                                                                                                                                                                                                                                                                                                                                |
-| J35h real-stack provisioning journey                                                                          | _pending_                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| J35h real-stack provisioning journey                                                                          | passed with J35g (Postgres + Redis + API + Vite): Manara chosen by keyboard in the setup picker → academy provisioned → public site renders in Manara; J35g now expects all three selectable themes                                                                                                                                                                                                                                                    |
 
 ### 7.3 Fixed during browser QA
 
@@ -260,3 +260,38 @@ release report once the remaining gates run.
 - **RTL never applied on the public runtime**: `dir` sits on the locale wrapper _above_ the theme scope, so `[data-theme-pack] [dir='rtl']` never matched; every RTL rule now also carries Atelier's `[dir='rtl'] [data-theme-pack='manara']` form (seams, beams, select chevrons, letter-spacing verified in Arabic).
 - Banner block bottom padding tightened.
 - axe colour-contrast (32 nodes on the first recording): the shared platform attribution kept its light-ground colours on the night footer (1.12:1 / 3.17:1) → footer text tones; translucent count pills on block/accent tiles (3.7:1) → solid inverted pills; the shared mobile bottom bar drew `brandText` on a 95%-opaque surface over the night footer (4.41:1) → `brandText` solved to 5:1.
+
+### 7.4 Harness fixes found by CI and the re-runs
+
+Theme 1 and Atelier rendering code is untouched; these change only how the
+baseline harness measures.
+
+- **Theme 1 identity audit (CI only, `home 390`)**: the audit repaints the
+  brand slots on the theme scope with a sentinel and treats every colour
+  that does not follow as "brand colour outside a slot". On CI's newer
+  Chromium the footer contact icons never followed: they sit inside the
+  closed `<details>` of the mobile footer column, whose content renders with
+  `content-visibility: hidden`, and Chromium skips style recalc inside that
+  subtree, so `getComputedStyle` kept reporting the pre-paint colour. Every
+  disclosure is now opened before a capture.
+- **Stale `ch` measure (local, ~1 in 6 full runs)**: with the diagnostics
+  added to the failure message, the odd pass read `max-inline-size: 585px`
+  for `.t1-lead` (65ch at the 0.5em placeholder Chromium uses while a font
+  is loading) with every Rubik face reported `loaded`; the real value is
+  742.9px. The layout settle now tracks x/width as well as y/height, counts
+  a loading font face as unstable, and re-resolves every element's style
+  once the fonts are in. 12 consecutive local runs of the audit passed.
+  The same stale length can in principle reach a visitor on a cold cache;
+  it is a Chromium invalidation quirk around `ch` inside `var()` and is
+  noted as a follow-up for Theme 1, not changed here.
+- **Manara screenshots**: a full-page capture paints the lazy photographs
+  below the fold for the first time during the shot. Depending on timing the
+  recorded state was the LQIP (the image decoded asynchronously after the
+  frame was captured), the compositor's quick lower-quality scale, or the
+  final image — 0.5–3% of pixels on the gallery, course-card and teaching
+  photographs, invisible to the eye, different run to run. `settleImages`
+  now switches every image to synchronous decoding, scrolls the page so the
+  lazy images load in their final layout, waits for each rendered image to
+  be complete and decoded, repeats until a pass finds nothing new, and fails
+  on a broken image rather than recording it; the Manara baselines were
+  re-recorded in that state (Theme 1/Atelier baselines untouched).
