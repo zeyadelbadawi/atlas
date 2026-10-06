@@ -13,11 +13,13 @@
  */
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { PaymentProofDialog } from '@/components/payments/PaymentProofDialog';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import {
   ArrowLeft,
   CheckCircle2,
   ExternalLink,
+  FileText,
   Loader2,
   Upload,
   XCircle,
@@ -80,27 +82,8 @@ export default function PaymentDetailsPage(): JSX.Element {
 
   const [note, setNote] = useState('');
   const [fileError, setFileError] = useState<string>();
-  const [isOpeningProof, setIsOpeningProof] = useState(false);
+  const [isProofOpen, setIsProofOpen] = useState(false);
 
-  // `payment.proof.fileUrl` is a path relative to the API base, not a
-  // usable link `href` on its own — see `PaymentService.getProofFile`'s
-  // doc comment. Fetched as an authenticated Blob, then opened as a local
-  // object URL.
-  const handleViewProof = async () => {
-    if (!payment?.id || !organization?.id) return;
-    setIsOpeningProof(true);
-    try {
-      const blob = await paymentService.getProofFile(
-        organization.id,
-        payment.id
-      );
-      window.open(URL.createObjectURL(blob), '_blank', 'noreferrer');
-    } catch {
-      notifyError('errors:unknown.title', 'payments:payment.proofLoadError');
-    } finally {
-      setIsOpeningProof(false);
-    }
-  };
   const filePicker = useFilePicker({
     accept: ALLOWED_PAYMENT_PROOF_TYPES.join(','),
   });
@@ -361,23 +344,33 @@ export default function PaymentDetailsPage(): JSX.Element {
                 {t('payments:payment.awaitingReviewDescription')}
               </p>
               {payment.proof ? (
-                <button
-                  type="button"
-                  onClick={handleViewProof}
-                  disabled={isOpeningProof}
-                  className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline disabled:opacity-60"
-                >
-                  {t('payments:payment.viewProof')}
-                  {isOpeningProof ? (
-                    <Loader2 className="size-3.5 animate-spin" aria-hidden />
-                  ) : (
-                    <ExternalLink
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setIsProofOpen(true)}
+                    className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline disabled:opacity-60"
+                  >
+                    {t('payments:payment.viewProof')}
+                    <FileText
                       className="size-3.5"
                       strokeWidth={2}
                       aria-hidden
                     />
-                  )}
-                </button>
+                  </button>
+                  <PaymentProofDialog
+                    open={isProofOpen}
+                    onOpenChange={setIsProofOpen}
+                    load={() =>
+                      organization?.id
+                        ? paymentService.getProofFile(
+                            organization.id,
+                            payment.id
+                          )
+                        : Promise.reject(new Error('No organization'))
+                    }
+                    fileName={payment.proof?.fileName}
+                  />
+                </>
               ) : null}
             </CardContent>
           </Card>

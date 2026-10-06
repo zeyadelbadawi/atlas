@@ -11,6 +11,8 @@ export {
   themeAssetUrl,
 } from './resolve-theme-asset';
 export type { ResolvedThemeAsset } from './resolve-theme-asset';
+export { useImagePreview } from './useImagePreview';
+export type { ImagePreview } from './useImagePreview';
 export {
   adoptThemeAssetReference,
   adoptThemeAssets,

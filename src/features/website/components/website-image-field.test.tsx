@@ -87,3 +87,89 @@ describe('WebsiteImageField — uploads go through MediaAsset', () => {
     expect(onChange).not.toHaveBeenCalled();
   });
 });
+
+/**
+ * Starter photographs are stored as `theme-asset:<theme>/<key>` references,
+ * not URLs. The field previews them as the public site draws them — through
+ * the theme's manifest, mapped to the site's theme for the same slot — and
+ * never hands the reference to an `<img>` (which the browser shows as a
+ * broken image). The theme packs are registered by the test setup.
+ */
+describe('WebsiteImageField — starter photographs preview like the public site', () => {
+  function renderPreview(
+    value: string | undefined,
+    themeKey?: string,
+    locale: 'en' | 'ar' = 'en'
+  ) {
+    return render(
+      <I18nextProvider i18n={createI18nInstance(locale)}>
+        <WebsiteImageField
+          id="benefit-image"
+          labelKey="website:fields.image"
+          value={value}
+          onChange={vi.fn()}
+          academyId="a1"
+          themeKey={themeKey}
+        />
+      </I18nextProvider>
+    );
+  }
+
+  it('resolves a theme-asset reference to its released file', () => {
+    renderPreview('theme-asset:modern-education/home-hero');
+    const img = screen.getByTestId('benefit-image-preview');
+    expect(img.getAttribute('src')).toMatch(
+      /^\/theme-assets\/modern-education\/v\d+\/home-hero-\d+\.(webp|avif)$/
+    );
+    expect(document.querySelector('img[src^="theme-asset:"]')).toBeNull();
+  });
+
+  it("draws another theme's starter photograph as the site's theme does", () => {
+    // ASG GROUP: generated on Theme 1, now on Manara.
+    renderPreview('theme-asset:modern-education/home-benefit', 'manara');
+    expect(
+      screen.getByTestId('benefit-image-preview').getAttribute('src')
+    ).toMatch(/^\/theme-assets\/manara\/v1\/home-benefit-\d+\.(webp|avif)$/);
+  });
+
+  it("maps Atelier's slot key to the site's theme (home-philosophy → home-benefit)", () => {
+    renderPreview('theme-asset:atelier/home-philosophy', 'manara');
+    expect(
+      screen.getByTestId('benefit-image-preview').getAttribute('src')
+    ).toMatch(/^\/theme-assets\/manara\/v1\/home-benefit-/);
+  });
+
+  it('says the preview is unavailable for a reference nothing can draw', () => {
+    renderPreview('theme-asset:modern-education/no-such-key', 'manara');
+    expect(
+      screen.getByTestId('benefit-image-preview-unavailable').textContent
+    ).toContain('Preview unavailable');
+    expect(screen.queryByRole('img')).toBeNull();
+  });
+
+  it('says so in Arabic too', () => {
+    renderPreview('theme-asset:unknown-theme/home-hero', undefined, 'ar');
+    expect(
+      screen.getByTestId('benefit-image-preview-unavailable').textContent
+    ).toContain('المعاينة غير متاحة');
+  });
+
+  it('keeps an uploaded image as stored', () => {
+    renderPreview(MEDIA_URL, 'manara');
+    expect(
+      screen.getByTestId('benefit-image-preview').getAttribute('src')
+    ).toBe(MEDIA_URL);
+  });
+
+  it('replaces a file that fails to load with the unavailable state', async () => {
+    renderPreview('/api/v1/public/media/academies/a1/deleted.png');
+    act(() => {
+      screen
+        .getByTestId('benefit-image-preview')
+        .dispatchEvent(new Event('error'));
+    });
+    expect(
+      await screen.findByTestId('benefit-image-preview-unavailable')
+    ).toBeTruthy();
+  });
+});

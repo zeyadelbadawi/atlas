@@ -5,7 +5,10 @@
  * which is NOT mounted on this host. Reuses `ForgotPasswordForm`
  * unmodified — the request is by email address alone, so there is nothing
  * academy-specific to pass; the academy identity in the reset email comes
- * from the request host, server-side.
+ * from the request host, server-side. The backend sends this academy's
+ * email (its brand, and a link to its own `/reset-password`) only to an
+ * account that already belongs to this academy; anyone else gets the
+ * Atlas email, and the request is answered identically either way.
  */
 import { useTranslation } from 'react-i18next';
 import { ForgotPasswordForm } from '@features/auth';
