@@ -17,6 +17,7 @@ import {
 import { RELEASED_THEME_ASSET_FOLDERS } from './released-versions';
 import { MODERN_EDUCATION_ASSETS } from './manifests/modern-education.manifest';
 import { ATELIER_ASSETS } from './manifests/atelier.manifest';
+import { MANARA_ASSETS } from './manifests/manara.manifest';
 import type { ThemeAssetEntry, ThemeAssetManifest } from './theme-asset.types';
 
 const REPO = resolve(__dirname, '../../../..');
@@ -128,6 +129,37 @@ describe('theme asset manifests', () => {
     }
   });
 
+  it('Manara holds exactly its plan keys, once each, released as v1 with one LCP image', () => {
+    // Reports/THEME_3_MANARA_PLAN.md §3.13: Theme 1's slots plus course-fallback.
+    expect(MANARA_ASSETS.assets.map((a) => a.key)).toEqual([
+      ...MATRIX_KEYS.slice(0, 12),
+      'course-fallback',
+      'theme-card',
+    ]);
+    expect(
+      MANARA_ASSETS.assets.filter((a) => a.priority).map((a) => a.key)
+    ).toEqual(['home-hero']);
+    for (const entry of MANARA_ASSETS.assets) {
+      expect(entry.status, entry.key).toBe('released');
+      expect(entry.version, entry.key).toBe('v1');
+      expect(entry.provenance?.generator, entry.key).toBe('magnific');
+    }
+    expect(RELEASED_THEME_ASSET_FOLDERS).toContain('manara/v1');
+  });
+
+  it('shares no photograph between Manara and the other themes', () => {
+    const others = new Set(
+      [...MODERN_EDUCATION_ASSETS.assets, ...ATELIER_ASSETS.assets].map(
+        (a) => a.provenance?.masterSha256
+      )
+    );
+    const manara = MANARA_ASSETS.assets.map((a) => a.provenance?.masterSha256);
+    expect(new Set(manara).size).toBe(manara.length);
+    for (const entry of MANARA_ASSETS.assets) {
+      expect(others.has(entry.provenance?.masterSha256), entry.key).toBe(false);
+    }
+  });
+
   it('shares no photograph between Atelier and Modern Education', () => {
     const atelier = new Set(
       ATELIER_ASSETS.assets.map((a) => a.provenance?.masterSha256)
@@ -143,6 +175,7 @@ describe('theme asset manifests', () => {
     for (const entry of [
       ...MODERN_EDUCATION_ASSETS.assets,
       ...ATELIER_ASSETS.assets,
+      ...MANARA_ASSETS.assets,
     ]) {
       const { composition } = entry;
       expect(

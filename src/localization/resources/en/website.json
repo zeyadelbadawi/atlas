@@ -486,6 +486,10 @@
     "atelier": {
       "name": "Atelier",
       "description": "An editorial, art-directed site: a serif display face, a warm paper canvas, numbered chapters and a brand thread that draws down the page as visitors scroll."
+    },
+    "manara": {
+      "name": "Manara",
+      "description": "Bold and kinetic, built for teacher-led academies with big audiences: a dark stage, brand-coloured blocks, oversized Arabic-first type, scoreboard numbers and slanted beam seams."
     }
   },
   "brand": {
@@ -1481,6 +1485,156 @@
         "eyebrow": "Opening soon",
         "title": "{{name}} is being prepared",
         "description": "Our website is being set in type. Please come back soon."
+      }
+    }
+  },
+  "manara": {
+    "home": {
+      "liveData": {
+        "previewUnavailable": "Live data couldn't be loaded, so visitors don't see this section right now."
+      },
+      "hero": {
+        "searchLabel": "Find a course",
+        "searchPlaceholder": "Subject, teacher or exam",
+        "searchSubmit": "Search"
+      },
+      "categories": {
+        "viewAll": "See every course",
+        "courseCount_one": "{{formatted}} course",
+        "courseCount_other": "{{formatted}} courses"
+      },
+      "courses": {
+        "viewAll": "View all courses",
+        "listLabel": "Courses enrolling now",
+        "loading": "Loading courses",
+        "taughtBy": "With {{name}}",
+        "errorTitle": "The courses couldn't be loaded right now",
+        "errorDescription": "Please try again in a moment.",
+        "retry": "Try again",
+        "launchingTitle": "The first courses are being prepared",
+        "launchingDescription": "Enrolment opens as soon as the first course is ready. Get in touch and we'll let you know first.",
+        "launchingAction": "Contact us"
+      },
+      "steps": {
+        "stepLabel": "Step {{number}}"
+      },
+      "instructors": {
+        "listLabel": "Teachers",
+        "courseCount_one": "{{formatted}} course",
+        "courseCount_other": "{{formatted}} courses",
+        "previewHidden": "Hidden on your public site until at least one published course has a teacher.",
+        "sampleName": "Teacher name",
+        "sampleCourses": "Published courses"
+      },
+      "statistics": {
+        "label": "The scoreboard",
+        "previewHidden": "Hidden on your public site until at least two live numbers are above zero.",
+        "sampleValue": "Live number, shown once above zero"
+      },
+      "testimonials": {
+        "label": "Students say",
+        "roleDescription": "quotes",
+        "position": "Quote {{position}} of {{total}}",
+        "previous": "Previous quote",
+        "next": "Next quote",
+        "rating": "Rated {{rating}} out of 5"
+      },
+      "faq": {
+        "listTitle": "All questions",
+        "resultCount_one": "{{count}} question matches",
+        "resultCount_other": "{{count}} questions match",
+        "noMatchTitle": "No questions match your search",
+        "noMatchDescription": "Try different words, or contact us and we'll help."
+      },
+      "gallery": {
+        "label": "Gallery"
+      }
+    },
+    "chrome": {
+      "join": "Join",
+      "closeMenu": "Close menu",
+      "menuActions": "Account",
+      "social": "Follow us",
+      "contactColumn": "Reach us",
+      "authPanel": "Sign in to your academy"
+    },
+    "pages": {
+      "trail": {
+        "label": "Breadcrumb",
+        "home": "Home"
+      },
+      "search": {
+        "placeholder": "Which subject or course?",
+        "submit": "Search",
+        "faqLabel": "Search the questions",
+        "faqPlaceholder": "Type a word from your question"
+      },
+      "summary": {
+        "courses_one": "{{formatted}} course open for enrolment",
+        "courses_other": "{{formatted}} courses open for enrolment",
+        "catalog_one": "{{courses}} course across {{categories}} tracks",
+        "catalog_other": "{{courses}} courses across {{categories}} tracks"
+      },
+      "intro": {
+        "about": "Who teaches here, how we teach, and the results behind it.",
+        "courses": "Every course, every level — pick yours and start today.",
+        "faqs": "Straight answers to what students and parents ask us most.",
+        "contact": "A question about a course, a fee or a class time? Reach us here."
+      },
+      "catalog": {
+        "filters": "Filter the courses",
+        "categories": "Tracks",
+        "allCategories": "All tracks",
+        "removeFilter": "Remove the filter {{name}}",
+        "clearAll": "Clear all",
+        "loading": "Loading courses",
+        "errorTitle": "The courses couldn't be loaded",
+        "errorDescription": "Something interrupted the connection. Please try again.",
+        "retry": "Try again",
+        "launchingTitle": "Launching soon",
+        "launchingDescription": "The first courses are being prepared. Check back soon, or get in touch to hear when enrolment opens.",
+        "pagination": "Course pages",
+        "previousPage": "Previous page",
+        "nextPage": "Next page",
+        "page": "Page {{page}}",
+        "by": "with {{name}}",
+        "openCourse": "Open the course {{title}}"
+      },
+      "contact": {
+        "channels": "Ways to reach us",
+        "emailLabel": "Email",
+        "phoneLabel": "Phone",
+        "addressLabel": "Address",
+        "formTitle": "Send us a message",
+        "formNote": "Every field is required. We reply as soon as we can.",
+        "successTitle": "Your message is in",
+        "sendAnother": "Send another message"
+      },
+      "courseDetails": {
+        "breadcrumb": "Breadcrumb",
+        "allCourses": "All courses",
+        "taughtBy": "Taught by",
+        "enrol": "Enrol in this course",
+        "includes": "What's included",
+        "hasPreview": "Free preview lessons",
+        "contents": "Curriculum",
+        "sectionLabel": "Part {{index}}",
+        "errorTitle": "This course couldn't be loaded",
+        "errorDescription": "Something went wrong while loading the course. Please try again.",
+        "retry": "Try again"
+      },
+      "notFound": {
+        "eyebrow": "Error 404",
+        "title": "This page isn't on the timetable",
+        "description": "It may have moved, or the link may be out of date. Here are the quickest ways back.",
+        "home": "Back to home",
+        "courses": "See the courses",
+        "contact": "Contact us"
+      },
+      "comingSoon": {
+        "eyebrow": "Opening soon",
+        "title": "{{name}} opens soon",
+        "description": "The classroom is being set up. Come back soon — enrolment will open here."
       }
     }
   }

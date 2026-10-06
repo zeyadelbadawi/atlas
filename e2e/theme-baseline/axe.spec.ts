@@ -101,14 +101,17 @@ function axeCase(
 }
 
 // Theme 1 and Themes 2–5 keep the motion condition their snapshots were
-// recorded under (see LEGACY_REDUCED_MOTION).
+// recorded under (see LEGACY_REDUCED_MOTION); the Atelier and Manara
+// describes below override it with real reduced motion.
 test.use({ contextOptions: { reducedMotion: LEGACY_REDUCED_MOTION } });
 
 for (const viewport of AXE_VIEWPORTS) {
   test.describe(`axe ${viewport.name}px`, () => {
     test.use({ viewport: { width: viewport.width, height: viewport.height } });
 
-    for (const theme of THEMES.filter((key) => key !== 'atelier')) {
+    for (const theme of THEMES.filter(
+      (key) => key !== 'atelier' && key !== 'manara'
+    )) {
       for (const state of ['new', 'rich'] as const) {
         for (const page of THEMED_PAGES[state]) {
           for (const locale of LOCALES) {
@@ -145,6 +148,29 @@ for (const viewport of AXE_VIEWPORTS) {
                 `${page.name}--${locale}--${viewport.name}.json`,
               ],
               { page, locale, theme: 'atelier', state }
+            );
+          }
+        }
+      }
+    });
+
+    // Manara is audited in its final state too, under real reduced motion.
+    test.describe('manara', () => {
+      test.use({ contextOptions: { reducedMotion: 'reduce' } });
+
+      for (const state of ['new', 'rich'] as const) {
+        for (const page of THEMED_PAGES[state]) {
+          for (const locale of LOCALES) {
+            axeCase(
+              `manara ${state} ${page.name} ${locale}`,
+              [
+                'axe',
+                'themes',
+                'manara',
+                state,
+                `${page.name}--${locale}--${viewport.name}.json`,
+              ],
+              { page, locale, theme: 'manara', state }
             );
           }
         }

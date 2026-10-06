@@ -50,6 +50,7 @@ const ALL_THEMES = [
   'minimal-editorial',
   'bold-creative',
   'atelier',
+  'manara',
 ];
 // THEME_BASELINE_LIGHTHOUSE_THEMES=atelier,modern-education runs a subset.
 const THEMES = process.env.THEME_BASELINE_LIGHTHOUSE_THEMES

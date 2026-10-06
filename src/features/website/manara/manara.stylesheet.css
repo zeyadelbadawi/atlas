@@ -1,0 +1,8 @@
+/*
+ * Manara's (Theme 3) stylesheet as ONE file, linked only on pages that use
+ * Manara (`theme-packs/theme-stylesheets.ts`). Vite inlines the imports at
+ * build time.
+ */
+@import './manara.css';
+@import './manara-sections.css';
+@import './manara-pages.css';

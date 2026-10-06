@@ -24,17 +24,19 @@
 import type { WebsiteThemeKey } from '@types';
 import modernEducationStylesheet from '../modern-education/modern-education.css?url';
 import atelierStylesheet from '../atelier/atelier.stylesheet.css?url';
+import manaraStylesheet from '../manara/manara.stylesheet.css?url';
 
 /**
  * The stylesheets of the themes that have their own, in cascade order
  * (when a dashboard shows several themes, Theme 1's comes first, as it did
- * in the entry stylesheet). Themes 3–6 (base pack) have none.
+ * in the entry stylesheet). The retired themes (base pack) have none.
  */
 export const THEME_STYLESHEETS: Readonly<
   Partial<Record<WebsiteThemeKey, readonly string[]>>
 > = {
   'modern-education': [modernEducationStylesheet],
   atelier: [atelierStylesheet],
+  manara: [manaraStylesheet],
 };
 
 /** The attribute that marks a theme stylesheet link (value: the theme key). */

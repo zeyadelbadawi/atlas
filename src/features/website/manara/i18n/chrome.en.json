@@ -1,0 +1,10 @@
+{
+  "chrome": {
+    "join": "Join",
+    "closeMenu": "Close menu",
+    "menuActions": "Account",
+    "social": "Follow us",
+    "contactColumn": "Reach us",
+    "authPanel": "Sign in to your academy"
+  }
+}

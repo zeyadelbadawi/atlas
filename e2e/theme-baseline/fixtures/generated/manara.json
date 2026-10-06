@@ -1,0 +1,1452 @@
+{
+  "generatedBy": "atlas-backend scripts/export-website-template-fixtures.ts",
+  "themeKey": "manara",
+  "setupMode": "complete",
+  "academy": {
+    "academyId": "fx-academy",
+    "academyName": "Horizon Academy"
+  },
+  "configuration": {
+    "id": "fx-academy",
+    "academyId": "fx-academy",
+    "themeKey": "manara",
+    "themeVersion": 1,
+    "configVersion": 1,
+    "brand": {
+      "primaryColor": "221 83% 53%",
+      "secondaryColor": "221 83% 53%",
+      "accentColor": "221 83% 53%"
+    },
+    "seo": {},
+    "navigation": [
+      {
+        "id": "fx-manara-item-1",
+        "label": {
+          "en": "About",
+          "ar": "من نحن"
+        },
+        "pageId": "fx-manara-page-2",
+        "order": 0
+      },
+      {
+        "id": "fx-manara-item-3",
+        "label": {
+          "en": "Courses",
+          "ar": "الدورات"
+        },
+        "pageId": "fx-manara-page-4",
+        "order": 1
+      },
+      {
+        "id": "fx-manara-item-5",
+        "label": {
+          "en": "FAQs",
+          "ar": "الأسئلة الشائعة"
+        },
+        "pageId": "fx-manara-page-6",
+        "order": 2
+      },
+      {
+        "id": "fx-manara-item-7",
+        "label": {
+          "en": "Contact",
+          "ar": "تواصل معنا"
+        },
+        "pageId": "fx-manara-page-8",
+        "order": 3
+      }
+    ],
+    "header": {
+      "cta": {
+        "label": {
+          "en": "Sign Up",
+          "ar": "إنشاء حساب"
+        },
+        "authAction": "signUp"
+      }
+    },
+    "footer": {
+      "groups": [
+        {
+          "id": "fx-manara-item-9",
+          "title": {
+            "en": "Quick Links",
+            "ar": "روابط سريعة"
+          },
+          "links": [
+            {
+              "id": "fx-manara-item-10",
+              "label": {
+                "en": "About",
+                "ar": "من نحن"
+              },
+              "pageId": "fx-manara-page-2"
+            },
+            {
+              "id": "fx-manara-item-11",
+              "label": {
+                "en": "Courses",
+                "ar": "الدورات"
+              },
+              "pageId": "fx-manara-page-4"
+            },
+            {
+              "id": "fx-manara-item-12",
+              "label": {
+                "en": "FAQs",
+                "ar": "الأسئلة الشائعة"
+              },
+              "pageId": "fx-manara-page-6"
+            },
+            {
+              "id": "fx-manara-item-13",
+              "label": {
+                "en": "Contact",
+                "ar": "تواصل معنا"
+              },
+              "pageId": "fx-manara-page-8"
+            }
+          ]
+        }
+      ],
+      "socialLinks": [],
+      "copyrightText": {
+        "en": "© 2026 Horizon Academy",
+        "ar": "© 2026 Horizon Academy"
+      }
+    },
+    "status": "draft",
+    "updatedAt": "2026-09-01T09:00:00.000Z"
+  },
+  "pages": [
+    {
+      "id": "fx-manara-page-14",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "home",
+      "title": "Home",
+      "slug": "home",
+      "visible": true,
+      "seo": {},
+      "sections": [
+        {
+          "id": "fx-manara-item-15",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "hero",
+          "config": {
+            "eyebrow": {
+              "en": "Horizon Academy — learn with your teacher",
+              "ar": "Horizon Academy — تعلّم مع معلّمك"
+            },
+            "title": {
+              "en": "Understand the lesson. Practise it. Walk into the exam ready.",
+              "ar": "افهم الدرس، وتدرّب عليه، وادخل الامتحان واثقًا"
+            },
+            "subtitle": {
+              "en": "Your teacher's lessons, practice questions and progress, all in one place on your phone.",
+              "ar": "دروس معلّمك وأسئلة التدريب وتقدّمك، كلّها في مكان واحد على هاتفك."
+            },
+            "description": {
+              "en": "Watch the explanation, work through the questions and see exactly where you stand before the exam. Horizon Academy brings the class to wherever you are.",
+              "ar": "شاهد الشرح، وحلّ الأسئلة، واعرف موقعك بالضبط قبل الامتحان. Horizon Academy تنقل الفصل إلى حيث تكون."
+            },
+            "image": "theme-asset:manara/home-hero",
+            "imageAlt": {
+              "en": "A desk lamp lighting notebooks and a blank exam sheet",
+              "ar": "مصباح مكتب يضيء دفاتر وورقة امتحان فارغة"
+            },
+            "cta": {
+              "label": {
+                "en": "Join now",
+                "ar": "انضمّ الآن"
+              },
+              "authAction": "signUp"
+            },
+            "secondaryCta": {
+              "label": {
+                "en": "Browse courses",
+                "ar": "تصفّح الدورات"
+              },
+              "pageId": "fx-manara-page-4"
+            },
+            "highlight": {
+              "en": "Walk into the exam ready.",
+              "ar": "وادخل الامتحان واثقًا"
+            },
+            "highlights": [
+              {
+                "id": "hl-phone",
+                "label": {
+                  "en": "Lessons on your phone",
+                  "ar": "الدروس على هاتفك"
+                }
+              },
+              {
+                "id": "hl-practice",
+                "label": {
+                  "en": "Practice before the exam",
+                  "ar": "تدرّب قبل الامتحان"
+                }
+              },
+              {
+                "id": "hl-progress",
+                "label": {
+                  "en": "Progress you can see",
+                  "ar": "تقدّم تراه بعينك"
+                }
+              }
+            ],
+            "showSearch": true
+          }
+        },
+        {
+          "id": "fx-manara-item-16",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "statistics",
+          "config": {
+            "title": {
+              "en": "Horizon Academy in numbers",
+              "ar": "Horizon Academy بالأرقام"
+            },
+            "items": [
+              {
+                "id": "stat-courses",
+                "value": {
+                  "en": "",
+                  "ar": ""
+                },
+                "label": {
+                  "en": "Courses",
+                  "ar": "الدورات"
+                },
+                "metric": "courses"
+              },
+              {
+                "id": "stat-students",
+                "value": {
+                  "en": "",
+                  "ar": ""
+                },
+                "label": {
+                  "en": "Students",
+                  "ar": "الطلاب"
+                },
+                "metric": "students"
+              },
+              {
+                "id": "stat-instructors",
+                "value": {
+                  "en": "",
+                  "ar": ""
+                },
+                "label": {
+                  "en": "Teachers",
+                  "ar": "المعلّمون"
+                },
+                "metric": "instructors"
+              }
+            ]
+          }
+        },
+        {
+          "id": "fx-manara-item-17",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "courseCategories",
+          "config": {
+            "title": {
+              "en": "Pick your track",
+              "ar": "اختر مسارك"
+            },
+            "description": {
+              "en": "Find the subject or level you need and open its courses.",
+              "ar": "اختر المادة أو المستوى الذي تحتاجه وافتح دوراته."
+            },
+            "maxItems": 8,
+            "showCounts": true
+          }
+        },
+        {
+          "id": "fx-manara-item-18",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "featuredCourses",
+          "config": {
+            "title": {
+              "en": "Now enrolling",
+              "ar": "متاح للتسجيل الآن"
+            },
+            "description": {
+              "en": "The latest courses from Horizon Academy.",
+              "ar": "أحدث دورات Horizon Academy."
+            },
+            "mode": "latest",
+            "layout": "grid",
+            "count": 6,
+            "showPrice": true,
+            "showInstructor": true
+          }
+        },
+        {
+          "id": "fx-manara-item-19",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "featureSplit",
+          "config": {
+            "eyebrow": {
+              "en": "Our method",
+              "ar": "طريقتنا"
+            },
+            "title": {
+              "en": "How we teach",
+              "ar": "كيف نعلّم"
+            },
+            "description": {
+              "en": "Explain, practise, check — every lesson is built to be understood, not just watched.",
+              "ar": "شرح، ثم تدريب، ثم مراجعة — كل درس مبنيّ ليُفهم لا ليُشاهد فقط."
+            },
+            "image": "theme-asset:manara/home-benefit",
+            "imageAlt": {
+              "en": "A lecture hall seen from the back rows under a single projector light",
+              "ar": "قاعة محاضرات من الصفوف الخلفية تحت ضوء جهاز عرض واحد"
+            },
+            "imagePosition": "start",
+            "items": [
+              {
+                "id": "method-explain",
+                "title": {
+                  "en": "Clear explanation first",
+                  "ar": "الشرح الواضح أولًا"
+                },
+                "description": {
+                  "en": "Every lesson explains the idea step by step, at a pace you can rewind.",
+                  "ar": "يشرح كل درس الفكرة خطوة بخطوة، بإيقاع يمكنك إعادته متى شئت."
+                }
+              },
+              {
+                "id": "method-practise",
+                "title": {
+                  "en": "Then you practise",
+                  "ar": "ثم تتدرّب"
+                },
+                "description": {
+                  "en": "Questions after the lesson show you what stuck and what needs another look.",
+                  "ar": "تكشف لك الأسئلة بعد الدرس ما رسخ وما يحتاج إلى نظرة أخرى."
+                }
+              },
+              {
+                "id": "method-track",
+                "title": {
+                  "en": "Nothing left behind",
+                  "ar": "لا شيء يُترك خلفك"
+                },
+                "description": {
+                  "en": "Your progress shows which lessons are done and which are still waiting.",
+                  "ar": "يعرض تقدّمك الدروس التي أنهيتها وتلك التي لا تزال تنتظرك."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "fx-manara-item-20",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "steps",
+          "config": {
+            "title": {
+              "en": "Start in three steps",
+              "ar": "ابدأ في ثلاث خطوات"
+            },
+            "description": {
+              "en": "From creating your account to your first lesson.",
+              "ar": "من إنشاء حسابك إلى درسك الأول."
+            },
+            "items": [
+              {
+                "id": "step-join",
+                "title": {
+                  "en": "Join",
+                  "ar": "انضمّ"
+                },
+                "description": {
+                  "en": "Create your account in your own name.",
+                  "ar": "أنشئ حسابك باسمك."
+                }
+              },
+              {
+                "id": "step-learn",
+                "title": {
+                  "en": "Learn",
+                  "ar": "تعلّم"
+                },
+                "description": {
+                  "en": "Pick a course, enrol and start the first lesson on any device.",
+                  "ar": "اختر دورة، وسجّل فيها، وابدأ الدرس الأول على أي جهاز."
+                }
+              },
+              {
+                "id": "step-practise",
+                "title": {
+                  "en": "Practise",
+                  "ar": "تدرّب"
+                },
+                "description": {
+                  "en": "Answer the questions after each lesson and watch your progress fill up before the exam.",
+                  "ar": "حلّ الأسئلة بعد كل درس وراقب تقدّمك يكتمل قبل الامتحان."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "fx-manara-item-21",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "features",
+          "config": {
+            "title": {
+              "en": "What's included",
+              "ar": "ما الذي تحصل عليه"
+            },
+            "description": {
+              "en": "Everything a class needs, on your phone.",
+              "ar": "كل ما يحتاجه الفصل، على هاتفك."
+            },
+            "items": [
+              {
+                "id": "feature-video",
+                "title": {
+                  "en": "Video lessons on your phone",
+                  "ar": "دروس مصوّرة على هاتفك"
+                },
+                "description": {
+                  "en": "Watch, pause and rewind the explanation as many times as you need.",
+                  "ar": "شاهد الشرح وأوقفه وأعده كما تشاء."
+                },
+                "icon": "Video"
+              },
+              {
+                "id": "feature-practice",
+                "title": {
+                  "en": "Practice and exams",
+                  "ar": "تدريب وامتحانات"
+                },
+                "description": {
+                  "en": "Practice questions and exams you take from wherever you are.",
+                  "ar": "أسئلة تدريب وامتحانات تؤدّيها من مكانك."
+                },
+                "icon": "ShieldCheck"
+              },
+              {
+                "id": "feature-progress",
+                "title": {
+                  "en": "Progress you can see",
+                  "ar": "تقدّم تراه بعينك"
+                },
+                "description": {
+                  "en": "Every finished lesson and every attempt is recorded, so you know where you stand.",
+                  "ar": "يُسجَّل كل درس تنهيه وكل محاولة، فتعرف أين تقف."
+                },
+                "icon": "Sparkles"
+              },
+              {
+                "id": "feature-help",
+                "title": {
+                  "en": "Help when you're stuck",
+                  "ar": "مساعدة عندما تتعثّر"
+                },
+                "description": {
+                  "en": "Write to us through the Contact page and tell us which lesson.",
+                  "ar": "راسلنا عبر صفحة التواصل وأخبرنا بالدرس الذي تعثّرت فيه."
+                },
+                "icon": "Headphones"
+              }
+            ]
+          }
+        },
+        {
+          "id": "fx-manara-item-22",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "testimonials",
+          "config": {
+            "title": {
+              "en": "Students say",
+              "ar": "يقول الطلاب"
+            },
+            "items": [
+              {
+                "id": "sample-testimonial-1",
+                "quote": {
+                  "en": "I watched the lessons on the bus and solved the questions at night. For the first time the whole subject was in one place.",
+                  "ar": "كنت أشاهد الدروس في الطريق وأحلّ الأسئلة ليلًا. لأول مرة كانت المادة كلّها في مكان واحد."
+                },
+                "authorName": "Mariam A.",
+                "authorRole": {
+                  "en": "Secondary-school student",
+                  "ar": "طالبة في المرحلة الثانوية"
+                },
+                "sample": true
+              },
+              {
+                "id": "sample-testimonial-2",
+                "quote": {
+                  "en": "Enrolling my son took a few minutes, and he started the first lesson the same evening.",
+                  "ar": "استغرق تسجيل ابني دقائق، وبدأ الدرس الأول في المساء نفسه."
+                },
+                "authorName": "Ahmed S.",
+                "authorRole": {
+                  "en": "Parent",
+                  "ar": "وليّ أمر"
+                },
+                "sample": true
+              },
+              {
+                "id": "sample-testimonial-3",
+                "quote": {
+                  "en": "The practice questions showed me exactly which chapters I had been avoiding.",
+                  "ar": "أظهرت لي أسئلة التدريب بالضبط أيّ الفصول كنت أتجنّبها."
+                },
+                "authorName": "Youssef M.",
+                "authorRole": {
+                  "en": "University applicant",
+                  "ar": "متقدّم للجامعة"
+                },
+                "sample": true
+              }
+            ]
+          }
+        },
+        {
+          "id": "fx-manara-item-23",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "instructors",
+          "config": {
+            "title": {
+              "en": "Your teachers",
+              "ar": "معلّموك"
+            },
+            "description": {
+              "en": "The people behind the lessons at Horizon Academy.",
+              "ar": "من يقف وراء دروس Horizon Academy."
+            },
+            "count": 4
+          }
+        },
+        {
+          "id": "fx-manara-item-24",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "faq",
+          "config": {
+            "title": {
+              "en": "Before you join",
+              "ar": "قبل أن تنضمّ"
+            },
+            "items": [
+              {
+                "id": "faq-recorded",
+                "question": {
+                  "en": "Are the lessons recorded?",
+                  "ar": "هل الدروس مسجّلة؟"
+                },
+                "answer": {
+                  "en": "Recorded lessons are videos you open whenever suits you: pause, rewind and come back to the hard parts as often as you need. Each course page lists exactly what it includes.",
+                  "ar": "الدروس المسجّلة مقاطع مصوّرة تفتحها في الوقت الذي يناسبك: أوقفها وأعدها وارجع إلى الأجزاء الصعبة كلما احتجت. وتعرض صفحة كل دورة ما تتضمّنه بالضبط."
+                }
+              },
+              {
+                "id": "faq-live",
+                "question": {
+                  "en": "Are there live sessions?",
+                  "ar": "هل توجد حصص مباشرة؟"
+                },
+                "answer": {
+                  "en": "Some courses add live sessions at a set date and time. If a course has them, you will see them on its page, and you join from inside the course when the session starts.",
+                  "ar": "تضيف بعض الدورات حصصًا مباشرة في موعد محدّد. إن كانت الدورة تتضمّنها فستجدها في صفحتها، وتنضمّ إليها من داخل الدورة عند بدئها."
+                }
+              },
+              {
+                "id": "faq-practice",
+                "question": {
+                  "en": "How do I practise before the exam?",
+                  "ar": "كيف أتدرّب قبل الامتحان؟"
+                },
+                "answer": {
+                  "en": "Courses that include practice questions or mock exams list them in their curriculum. You take them on your phone or computer, and your attempts are saved so you can see how you are doing.",
+                  "ar": "الدورات التي تتضمّن أسئلة تدريب أو امتحانات تجريبية تعرضها في منهجها. تؤدّيها على هاتفك أو حاسوبك، وتُحفظ محاولاتك لترى مستواك."
+                }
+              },
+              {
+                "id": "faq-pay",
+                "question": {
+                  "en": "How do I pay?",
+                  "ar": "كيف أدفع؟"
+                },
+                "answer": {
+                  "en": "Open the course and press Enrol. The payment methods available are shown at that step and may include a mobile wallet, InstaPay or a bank transfer. If you pay by transfer, upload a photo of the receipt; your enrolment is confirmed once it has been checked.",
+                  "ar": "افتح الدورة واضغط «سجّل». تظهر طرق الدفع المتاحة في تلك الخطوة، وقد تشمل المحفظة الإلكترونية أو إنستاباي أو التحويل البنكي. وإذا دفعت بالتحويل فارفع صورة الإيصال، ويُؤكَّد تسجيلك بعد مراجعته."
+                }
+              }
+            ],
+            "maxItems": 4,
+            "cta": {
+              "label": {
+                "en": "Ask us",
+                "ar": "اسألنا"
+              },
+              "pageId": "fx-manara-page-8"
+            }
+          }
+        },
+        {
+          "id": "fx-manara-item-25",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "cta",
+          "config": {
+            "title": {
+              "en": "Enrolment is open",
+              "ar": "باب التسجيل مفتوح"
+            },
+            "description": {
+              "en": "Create your account, pick your course and start the first lesson today.",
+              "ar": "أنشئ حسابك، واختر دورتك، وابدأ الدرس الأول اليوم."
+            },
+            "cta": {
+              "label": {
+                "en": "Join now",
+                "ar": "انضمّ الآن"
+              },
+              "authAction": "signUp"
+            },
+            "secondaryCta": {
+              "label": {
+                "en": "Contact us",
+                "ar": "تواصل معنا"
+              },
+              "pageId": "fx-manara-page-8"
+            },
+            "image": "theme-asset:manara/home-cta",
+            "imageAlt": {
+              "en": "Stacked plain textbooks under a warm desk lamp",
+              "ar": "كتب مدرسية مكدّسة تحت ضوء مصباح مكتب دافئ"
+            }
+          }
+        }
+      ],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-manara-page-2",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "about",
+      "title": "About",
+      "slug": "about",
+      "visible": true,
+      "seo": {},
+      "sections": [
+        {
+          "id": "fx-manara-item-26",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "pageHeader",
+          "config": {
+            "eyebrow": {
+              "en": "About Horizon Academy",
+              "ar": "عن Horizon Academy"
+            },
+            "title": {
+              "en": "A classroom that fits in your pocket",
+              "ar": "فصل دراسي في جيبك"
+            },
+            "description": {
+              "en": "Horizon Academy takes the teacher's lessons online, so students can study, practise and keep up from wherever they are.",
+              "ar": "تنقل Horizon Academy دروس المعلّم إلى الإنترنت، ليذاكر الطلاب ويتدرّبوا ويواكبوا الدروس من أي مكان."
+            },
+            "image": "theme-asset:manara/about-header",
+            "imageAlt": {
+              "en": "A blank whiteboard with markers under a spotlight",
+              "ar": "سبّورة بيضاء فارغة وأقلام تحت ضوء مسلّط"
+            },
+            "search": "none"
+          }
+        },
+        {
+          "id": "fx-manara-item-27",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "featureSplit",
+          "config": {
+            "eyebrow": {
+              "en": "Our story",
+              "ar": "قصّتنا"
+            },
+            "title": {
+              "en": "From the classroom to your phone",
+              "ar": "من الفصل إلى هاتفك"
+            },
+            "description": {
+              "en": "The lessons started in a real classroom. Moving them online meant every student could get the same explanation, the same questions and the same follow-up on their progress.",
+              "ar": "بدأت الدروس في فصل حقيقي، ونقلها إلى الإنترنت يعني أن يحصل كل طالب على الشرح نفسه والأسئلة نفسها والمتابعة نفسها لتقدّمه."
+            },
+            "image": "theme-asset:manara/about-story",
+            "imageAlt": {
+              "en": "A teacher's silhouette from behind, facing a blank board",
+              "ar": "ظلّ معلّم من الخلف أمام سبّورة فارغة"
+            },
+            "imagePosition": "end",
+            "items": [
+              {
+                "id": "story-one-place",
+                "title": {
+                  "en": "One place for everything",
+                  "ar": "مكان واحد لكل شيء"
+                },
+                "description": {
+                  "en": "Lessons, questions and progress, instead of scattered chats.",
+                  "ar": "الدروس والأسئلة والتقدّم، بدلًا من محادثات متفرّقة."
+                }
+              },
+              {
+                "id": "story-same-lesson",
+                "title": {
+                  "en": "The same lesson for everyone",
+                  "ar": "الدرس نفسه للجميع"
+                },
+                "description": {
+                  "en": "Whether you join first or last, you get the full explanation.",
+                  "ar": "سواء انضممت أولًا أو أخيرًا، تحصل على الشرح كاملًا."
+                }
+              },
+              {
+                "id": "story-exam-season",
+                "title": {
+                  "en": "Built for exam season",
+                  "ar": "مبنيّ لموسم الامتحانات"
+                },
+                "description": {
+                  "en": "Practice and revision are part of the course, not an afterthought.",
+                  "ar": "التدريب والمراجعة جزء من الدورة، لا إضافة لاحقة."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "fx-manara-item-28",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "features",
+          "config": {
+            "title": {
+              "en": "Four things we stand for",
+              "ar": "أربعة أشياء نؤمن بها"
+            },
+            "description": {
+              "en": "Four things every lesson here is built on.",
+              "ar": "أربعة أمور يقوم عليها كل درس هنا."
+            },
+            "items": [
+              {
+                "id": "value-clarity",
+                "title": {
+                  "en": "Understanding",
+                  "ar": "الفهم"
+                },
+                "description": {
+                  "en": "A lesson is finished when it is understood, not when it ends.",
+                  "ar": "ينتهي الدرس عندما يُفهم، لا عندما يتوقّف."
+                },
+                "icon": "BookOpen"
+              },
+              {
+                "id": "value-practice",
+                "title": {
+                  "en": "Practice",
+                  "ar": "التدريب"
+                },
+                "description": {
+                  "en": "Questions are how you find out what you actually know.",
+                  "ar": "الأسئلة هي الطريقة التي تعرف بها ما تعرفه فعلًا."
+                },
+                "icon": "ShieldCheck"
+              },
+              {
+                "id": "value-consistency",
+                "title": {
+                  "en": "Consistency",
+                  "ar": "الانتظام"
+                },
+                "description": {
+                  "en": "A little every day beats a lot the night before.",
+                  "ar": "قليل كل يوم خير من كثير في الليلة الأخيرة."
+                },
+                "icon": "Clock"
+              },
+              {
+                "id": "value-respect",
+                "title": {
+                  "en": "Respect",
+                  "ar": "الاحترام"
+                },
+                "description": {
+                  "en": "Every student and every parent deserves a straight answer.",
+                  "ar": "كل طالب وكل وليّ أمر يستحقّ إجابة واضحة."
+                },
+                "icon": "Users"
+              }
+            ]
+          }
+        },
+        {
+          "id": "fx-manara-item-29",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "statistics",
+          "config": {
+            "title": {
+              "en": "Horizon Academy in numbers",
+              "ar": "Horizon Academy بالأرقام"
+            },
+            "items": [
+              {
+                "id": "stat-courses",
+                "value": {
+                  "en": "",
+                  "ar": ""
+                },
+                "label": {
+                  "en": "Courses",
+                  "ar": "الدورات"
+                },
+                "metric": "courses"
+              },
+              {
+                "id": "stat-students",
+                "value": {
+                  "en": "",
+                  "ar": ""
+                },
+                "label": {
+                  "en": "Students",
+                  "ar": "الطلاب"
+                },
+                "metric": "students"
+              },
+              {
+                "id": "stat-instructors",
+                "value": {
+                  "en": "",
+                  "ar": ""
+                },
+                "label": {
+                  "en": "Teachers",
+                  "ar": "المعلّمون"
+                },
+                "metric": "instructors"
+              }
+            ]
+          }
+        },
+        {
+          "id": "fx-manara-item-30",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "instructors",
+          "config": {
+            "title": {
+              "en": "Who teaches at Horizon Academy",
+              "ar": "من يُدرّس في Horizon Academy"
+            },
+            "description": {
+              "en": "The people who teach the courses at Horizon Academy.",
+              "ar": "من يعلّمون الدورات في Horizon Academy."
+            },
+            "count": 8
+          }
+        },
+        {
+          "id": "fx-manara-item-31",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "gallery",
+          "config": {
+            "title": {
+              "en": "After hours",
+              "ar": "بعد انتهاء اليوم"
+            },
+            "images": [
+              {
+                "id": "gallery-1",
+                "image": "theme-asset:manara/gallery-1",
+                "imageAlt": {
+                  "en": "Hands writing in a notebook under a desk lamp",
+                  "ar": "يدان تكتبان في دفتر تحت ضوء مصباح مكتب"
+                }
+              },
+              {
+                "id": "gallery-2",
+                "image": "theme-asset:manara/gallery-2",
+                "imageAlt": {
+                  "en": "A lecture hall seen from the back rows",
+                  "ar": "قاعة محاضرات من الصفوف الخلفية"
+                }
+              },
+              {
+                "id": "gallery-3",
+                "image": "theme-asset:manara/gallery-3",
+                "imageAlt": {
+                  "en": "Markers lined up beneath a blank whiteboard",
+                  "ar": "أقلام مصفوفة أسفل سبّورة بيضاء فارغة"
+                }
+              },
+              {
+                "id": "gallery-4",
+                "image": "theme-asset:manara/gallery-4",
+                "imageAlt": {
+                  "en": "A phone face down beside open notes",
+                  "ar": "هاتف مقلوب بجوار أوراق مفتوحة"
+                }
+              },
+              {
+                "id": "gallery-5",
+                "image": "theme-asset:manara/gallery-5",
+                "imageAlt": {
+                  "en": "A tutoring-centre corridor at night",
+                  "ar": "ممرّ مركز تعليمي ليلًا"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "fx-manara-item-32",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "cta",
+          "config": {
+            "title": {
+              "en": "Find your course",
+              "ar": "اعثر على دورتك"
+            },
+            "description": {
+              "en": "Browse by subject and level, then join from the course page.",
+              "ar": "تصفّح حسب المادة والمستوى، ثم انضمّ من صفحة الدورة."
+            },
+            "cta": {
+              "label": {
+                "en": "Browse courses",
+                "ar": "تصفّح الدورات"
+              },
+              "pageId": "fx-manara-page-4"
+            },
+            "secondaryCta": {
+              "label": {
+                "en": "Contact us",
+                "ar": "تواصل معنا"
+              },
+              "pageId": "fx-manara-page-8"
+            }
+          }
+        }
+      ],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-manara-page-4",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "courses",
+      "title": "Courses",
+      "slug": "courses",
+      "visible": true,
+      "seo": {},
+      "sections": [
+        {
+          "id": "fx-manara-item-33",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "pageHeader",
+          "config": {
+            "eyebrow": {
+              "en": "Courses",
+              "ar": "الدورات"
+            },
+            "title": {
+              "en": "Every course, one list",
+              "ar": "كل الدورات في قائمة واحدة"
+            },
+            "description": {
+              "en": "Search by name, filter by level or price, and open any course to see its lessons before you join.",
+              "ar": "ابحث بالاسم، وصفِّ النتائج حسب المستوى أو السعر، وافتح أي دورة لترى دروسها قبل أن تنضمّ."
+            },
+            "search": "courses"
+          }
+        },
+        {
+          "id": "fx-manara-item-34",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "courseCatalog",
+          "config": {
+            "title": {
+              "en": "All courses",
+              "ar": "كل الدورات"
+            },
+            "pageSize": 12,
+            "defaultSort": "newest",
+            "showSearch": false,
+            "showLevelFilter": true,
+            "showPricingFilter": true,
+            "showSort": true
+          }
+        },
+        {
+          "id": "fx-manara-item-35",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "cta",
+          "config": {
+            "title": {
+              "en": "Can't find your subject?",
+              "ar": "لم تجد مادّتك؟"
+            },
+            "description": {
+              "en": "Tell us what you are studying and which year you are in.",
+              "ar": "أخبرنا بما تدرسه وفي أي صفّ أنت."
+            },
+            "cta": {
+              "label": {
+                "en": "Contact us",
+                "ar": "تواصل معنا"
+              },
+              "pageId": "fx-manara-page-8"
+            }
+          }
+        }
+      ],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-manara-page-6",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "faqs",
+      "title": "FAQs",
+      "slug": "faqs",
+      "visible": true,
+      "seo": {},
+      "sections": [
+        {
+          "id": "fx-manara-item-36",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "pageHeader",
+          "config": {
+            "eyebrow": {
+              "en": "FAQ",
+              "ar": "الأسئلة الشائعة"
+            },
+            "title": {
+              "en": "Your questions, answered",
+              "ar": "أسئلتك وإجاباتها"
+            },
+            "description": {
+              "en": "Lessons, exams, payment and how to get help.",
+              "ar": "الدروس والامتحانات والدفع وكيف تطلب المساعدة."
+            },
+            "search": "faq"
+          }
+        },
+        {
+          "id": "fx-manara-item-37",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "faq",
+          "config": {
+            "items": [
+              {
+                "id": "faq-recorded",
+                "question": {
+                  "en": "Are the lessons recorded?",
+                  "ar": "هل الدروس مسجّلة؟"
+                },
+                "answer": {
+                  "en": "Recorded lessons are videos you open whenever suits you: pause, rewind and come back to the hard parts as often as you need. Each course page lists exactly what it includes.",
+                  "ar": "الدروس المسجّلة مقاطع مصوّرة تفتحها في الوقت الذي يناسبك: أوقفها وأعدها وارجع إلى الأجزاء الصعبة كلما احتجت. وتعرض صفحة كل دورة ما تتضمّنه بالضبط."
+                }
+              },
+              {
+                "id": "faq-live",
+                "question": {
+                  "en": "Are there live sessions?",
+                  "ar": "هل توجد حصص مباشرة؟"
+                },
+                "answer": {
+                  "en": "Some courses add live sessions at a set date and time. If a course has them, you will see them on its page, and you join from inside the course when the session starts.",
+                  "ar": "تضيف بعض الدورات حصصًا مباشرة في موعد محدّد. إن كانت الدورة تتضمّنها فستجدها في صفحتها، وتنضمّ إليها من داخل الدورة عند بدئها."
+                }
+              },
+              {
+                "id": "faq-practice",
+                "question": {
+                  "en": "How do I practise before the exam?",
+                  "ar": "كيف أتدرّب قبل الامتحان؟"
+                },
+                "answer": {
+                  "en": "Courses that include practice questions or mock exams list them in their curriculum. You take them on your phone or computer, and your attempts are saved so you can see how you are doing.",
+                  "ar": "الدورات التي تتضمّن أسئلة تدريب أو امتحانات تجريبية تعرضها في منهجها. تؤدّيها على هاتفك أو حاسوبك، وتُحفظ محاولاتك لترى مستواك."
+                }
+              },
+              {
+                "id": "faq-pay",
+                "question": {
+                  "en": "How do I pay?",
+                  "ar": "كيف أدفع؟"
+                },
+                "answer": {
+                  "en": "Open the course and press Enrol. The payment methods available are shown at that step and may include a mobile wallet, InstaPay or a bank transfer. If you pay by transfer, upload a photo of the receipt; your enrolment is confirmed once it has been checked.",
+                  "ar": "افتح الدورة واضغط «سجّل». تظهر طرق الدفع المتاحة في تلك الخطوة، وقد تشمل المحفظة الإلكترونية أو إنستاباي أو التحويل البنكي. وإذا دفعت بالتحويل فارفع صورة الإيصال، ويُؤكَّد تسجيلك بعد مراجعته."
+                }
+              },
+              {
+                "id": "faq-parent",
+                "question": {
+                  "en": "I am a parent. Can I enrol my child?",
+                  "ar": "أنا وليّ أمر، هل يمكنني تسجيل ابني؟"
+                },
+                "answer": {
+                  "en": "Yes. Create the account in the student's name so the lessons and progress stay theirs, then enrol in the course and complete the payment. If anything is unclear, write to us through the Contact page.",
+                  "ar": "نعم. أنشئ الحساب باسم الطالب حتى تبقى الدروس والتقدّم باسمه، ثم سجّل في الدورة وأكمل الدفع. وإن كان أي أمر غير واضح فراسلنا عبر صفحة «تواصل معنا»."
+                }
+              },
+              {
+                "id": "faq-levels",
+                "question": {
+                  "en": "Which years and levels do you teach?",
+                  "ar": "ما الصفوف والمستويات التي تدرّسونها؟"
+                },
+                "answer": {
+                  "en": "Every course page says which year or level it is for. Open the Courses page and filter by level to find yours.",
+                  "ar": "تذكر صفحة كل دورة الصفّ أو المستوى الموجّهة إليه. افتح صفحة الدورات وصفِّ النتائج حسب المستوى لتجد ما يناسبك."
+                }
+              },
+              {
+                "id": "faq-devices",
+                "question": {
+                  "en": "Can I study on my phone?",
+                  "ar": "هل يمكنني المذاكرة من هاتفي؟"
+                },
+                "answer": {
+                  "en": "Yes. Lessons open on phones, tablets and computers, and your progress follows you from one device to the next.",
+                  "ar": "نعم. تُفتح الدروس على الهواتف والأجهزة اللوحية والحواسيب، ويرافقك تقدّمك من جهاز إلى آخر."
+                }
+              },
+              {
+                "id": "faq-help",
+                "question": {
+                  "en": "What if I get stuck on a lesson?",
+                  "ar": "ماذا لو تعثّرت في درس؟"
+                },
+                "answer": {
+                  "en": "Watch it again first — that is what recorded lessons are for. If it still does not click, write to us through the Contact page and name the course and the lesson.",
+                  "ar": "شاهده مرة أخرى أولًا؛ فهذا ما وُجدت الدروس المسجّلة لأجله. وإن بقي غامضًا فراسلنا عبر صفحة «تواصل معنا» واذكر الدورة والدرس."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "fx-manara-item-38",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "cta",
+          "config": {
+            "title": {
+              "en": "Didn't find your answer?",
+              "ar": "لم تجد إجابتك؟"
+            },
+            "description": {
+              "en": "Write to us and tell us which course you mean.",
+              "ar": "راسلنا واذكر الدورة التي تقصدها."
+            },
+            "cta": {
+              "label": {
+                "en": "Contact us",
+                "ar": "تواصل معنا"
+              },
+              "pageId": "fx-manara-page-8"
+            }
+          }
+        }
+      ],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-manara-page-8",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "contact",
+      "title": "Contact",
+      "slug": "contact",
+      "visible": true,
+      "seo": {},
+      "sections": [
+        {
+          "id": "fx-manara-item-39",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "pageHeader",
+          "config": {
+            "eyebrow": {
+              "en": "Contact",
+              "ar": "تواصل"
+            },
+            "title": {
+              "en": "Send us your question",
+              "ar": "أرسل إلينا سؤالك"
+            },
+            "description": {
+              "en": "A question about a course, a payment or enrolling a student — send it here.",
+              "ar": "سؤال عن دورة أو دفعة أو تسجيل طالب — أرسله من هنا."
+            },
+            "search": "none"
+          }
+        },
+        {
+          "id": "fx-manara-item-40",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "contact",
+          "config": {
+            "title": {
+              "en": "How to reach us",
+              "ar": "كيف تصل إلينا"
+            },
+            "description": {
+              "en": "Use the details below, or send a message with the form.",
+              "ar": "استخدم البيانات أدناه، أو أرسل رسالة عبر النموذج."
+            },
+            "showForm": true
+          }
+        },
+        {
+          "id": "fx-manara-item-41",
+          "enabled": true,
+          "visibility": {
+            "desktop": true,
+            "tablet": true,
+            "mobile": true
+          },
+          "type": "faq",
+          "config": {
+            "title": {
+              "en": "Answers in brief",
+              "ar": "إجابات موجزة"
+            },
+            "items": [
+              {
+                "id": "faq-recorded",
+                "question": {
+                  "en": "Are the lessons recorded?",
+                  "ar": "هل الدروس مسجّلة؟"
+                },
+                "answer": {
+                  "en": "Recorded lessons are videos you open whenever suits you: pause, rewind and come back to the hard parts as often as you need. Each course page lists exactly what it includes.",
+                  "ar": "الدروس المسجّلة مقاطع مصوّرة تفتحها في الوقت الذي يناسبك: أوقفها وأعدها وارجع إلى الأجزاء الصعبة كلما احتجت. وتعرض صفحة كل دورة ما تتضمّنه بالضبط."
+                }
+              },
+              {
+                "id": "faq-live",
+                "question": {
+                  "en": "Are there live sessions?",
+                  "ar": "هل توجد حصص مباشرة؟"
+                },
+                "answer": {
+                  "en": "Some courses add live sessions at a set date and time. If a course has them, you will see them on its page, and you join from inside the course when the session starts.",
+                  "ar": "تضيف بعض الدورات حصصًا مباشرة في موعد محدّد. إن كانت الدورة تتضمّنها فستجدها في صفحتها، وتنضمّ إليها من داخل الدورة عند بدئها."
+                }
+              },
+              {
+                "id": "faq-practice",
+                "question": {
+                  "en": "How do I practise before the exam?",
+                  "ar": "كيف أتدرّب قبل الامتحان؟"
+                },
+                "answer": {
+                  "en": "Courses that include practice questions or mock exams list them in their curriculum. You take them on your phone or computer, and your attempts are saved so you can see how you are doing.",
+                  "ar": "الدورات التي تتضمّن أسئلة تدريب أو امتحانات تجريبية تعرضها في منهجها. تؤدّيها على هاتفك أو حاسوبك، وتُحفظ محاولاتك لترى مستواك."
+                }
+              },
+              {
+                "id": "faq-pay",
+                "question": {
+                  "en": "How do I pay?",
+                  "ar": "كيف أدفع؟"
+                },
+                "answer": {
+                  "en": "Open the course and press Enrol. The payment methods available are shown at that step and may include a mobile wallet, InstaPay or a bank transfer. If you pay by transfer, upload a photo of the receipt; your enrolment is confirmed once it has been checked.",
+                  "ar": "افتح الدورة واضغط «سجّل». تظهر طرق الدفع المتاحة في تلك الخطوة، وقد تشمل المحفظة الإلكترونية أو إنستاباي أو التحويل البنكي. وإذا دفعت بالتحويل فارفع صورة الإيصال، ويُؤكَّد تسجيلك بعد مراجعته."
+                }
+              },
+              {
+                "id": "faq-parent",
+                "question": {
+                  "en": "I am a parent. Can I enrol my child?",
+                  "ar": "أنا وليّ أمر، هل يمكنني تسجيل ابني؟"
+                },
+                "answer": {
+                  "en": "Yes. Create the account in the student's name so the lessons and progress stay theirs, then enrol in the course and complete the payment. If anything is unclear, write to us through the Contact page.",
+                  "ar": "نعم. أنشئ الحساب باسم الطالب حتى تبقى الدروس والتقدّم باسمه، ثم سجّل في الدورة وأكمل الدفع. وإن كان أي أمر غير واضح فراسلنا عبر صفحة «تواصل معنا»."
+                }
+              }
+            ],
+            "maxItems": 3,
+            "cta": {
+              "label": {
+                "en": "All questions",
+                "ar": "كل الأسئلة"
+              },
+              "pageId": "fx-manara-page-6"
+            }
+          }
+        }
+      ],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-manara-page-42",
+      "academyId": "fx-academy",
+      "pageType": "core",
+      "coreType": "courseDetails",
+      "title": "Course Details",
+      "slug": "course-details",
+      "visible": true,
+      "seo": {},
+      "sections": [],
+      "version": 1,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    }
+  ]
+}

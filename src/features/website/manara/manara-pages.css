@@ -1,0 +1,1104 @@
+/*
+ * Manara (Theme 3) — chrome and inner pages (plan §3.11): header, footer,
+ * auth frame, banner block, catalogue, contact, course details, 404 and
+ * Coming Soon. Page-specific rules only; the system lives in `manara.css`.
+ * Class prefix `mnp-`. Scoped to `[data-theme-pack='manara']`.
+ *
+ * Colours only from the Manara mapping (`--mn-*`, `--website-*`) and the
+ * ground variables a block sets (`--mn-env-*`); logical properties
+ * throughout, so every rule reads the same in `dir="rtl"`. Only
+ * transform, opacity and clip-path animate. No scroll listeners.
+ */
+
+/* ------------------------------------------------------------------ */
+/* Shared controls                                                      */
+/* ------------------------------------------------------------------ */
+
+/* A 44px square control on the current ground (menu, close, paging). */
+[data-theme-pack='manara'] .mnp-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: 2.75rem;
+  min-block-size: 2.75rem;
+  border-radius: var(--mn-radius);
+  color: var(--mn-env-text, var(--mn-text));
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: background-color var(--mn-fast) var(--mn-ease);
+}
+[data-theme-pack='manara'] .mnp-icon-btn:hover {
+  background-color: var(--mn-env-pill, var(--mn-pill));
+}
+[data-theme-pack='manara'] .mnp-icon-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: transparent;
+}
+
+/* A text link on the current ground: the underline draws in from the
+   start on hover and stays drawn on the current page. */
+[data-theme-pack='manara'] .mnp-nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  padding-inline: 0.125rem;
+  font-family: var(--mn-font-display);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--mn-env-text, var(--mn-text));
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+}
+[data-theme-pack='manara'] .mnp-nav-link::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0.5rem;
+  block-size: 0.1875rem;
+  border-radius: 999px;
+  background: var(--mn-beam);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform var(--mn-fast) var(--mn-ease);
+}
+[data-theme-pack='manara'] [dir='rtl'] .mnp-nav-link::after,
+[dir='rtl'] [data-theme-pack='manara'] .mnp-nav-link::after,
+[data-theme-pack='manara'][dir='rtl'] .mnp-nav-link::after {
+  transform-origin: 100% 50%;
+}
+[data-theme-pack='manara'] .mnp-nav-link:hover::after,
+[data-theme-pack='manara'] .mnp-nav-link[aria-current='page']::after {
+  transform: scaleX(1);
+}
+
+/* A hidden-but-read label beside a compact control. */
+[data-theme-pack='manara'] .mnp-sr-label {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* The spam trap: off-screen, out of the tab order and the a11y tree. */
+[data-theme-pack='manara'] .mnp-trap {
+  position: absolute;
+  inset-inline-start: -10000px;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+[data-theme-pack='manara'] .mnp-error {
+  color: var(--website-error);
+  font-weight: 600;
+}
+
+/* Skeletons: the ground's raised surface, pulsing (opacity only). */
+[data-theme-pack='manara'] .mnp-skeleton {
+  display: block;
+  border-radius: var(--mn-radius);
+  background: var(--mn-env-pill, var(--mn-pill));
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme-pack='manara'] .mnp-skeleton {
+    animation: mnp-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes mnp-pulse {
+    50% {
+      opacity: 0.55;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Header: the brand block                                              */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mnp-header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 40;
+  background: var(--mn-block);
+  color: var(--mn-block-text);
+  /* The block ground's variables, so every control reads on it. */
+  --mn-env-text: var(--mn-block-text);
+  --mn-env-text-muted: var(--mn-block-text-muted);
+  --mn-env-link: var(--mn-block-text);
+  --mn-env-line: color-mix(in srgb, var(--mn-block-text) 24%, transparent);
+  --mn-env-focus: var(--mn-block-text);
+  --mn-env-pill: color-mix(in srgb, var(--mn-block-text) 16%, transparent);
+  --mn-env-pill-text: var(--mn-block-text);
+}
+[data-theme-pack='manara'] .mnp-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-block-size: var(--mn-header-height);
+}
+@media (min-width: 1024px) {
+  [data-theme-pack='manara'] .mnp-header-bar {
+    gap: 2rem;
+  }
+}
+
+/* The academy's name in the display face (no logo). */
+[data-theme-pack='manara'] .mnp-wordmark {
+  font-family: var(--mn-font-display);
+  font-size: 1.125rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  color: inherit;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+@media (min-width: 768px) {
+  [data-theme-pack='manara'] .mnp-wordmark {
+    font-size: 1.25rem;
+  }
+}
+[data-theme-pack='manara'] [dir='rtl'] .mnp-wordmark,
+[dir='rtl'] [data-theme-pack='manara'] .mnp-wordmark,
+[data-theme-pack='manara'][dir='rtl'] .mnp-wordmark {
+  letter-spacing: 0;
+}
+[data-theme-pack='manara'] .mnp-brand {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  min-inline-size: 0;
+  color: inherit;
+  text-decoration: none;
+  text-align: start;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+[data-theme-pack='manara'] .mnp-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 1.5rem;
+}
+
+/* The header's Join: the accent block, compact. */
+[data-theme-pack='manara'] .mnp-header .mn-btn {
+  min-block-size: 2.75rem;
+  padding-block: 0.5rem;
+}
+/* Sign in reads as a quiet control on the block. */
+[data-theme-pack='manara'] .mnp-header .mn-btn-quiet {
+  background-color: transparent;
+  color: var(--mn-block-text);
+}
+[data-theme-pack='manara'] .mnp-header .mn-btn-quiet:hover {
+  background-color: var(--mn-env-pill);
+}
+
+/* The full-screen menu: the night ground. */
+[data-theme-pack='manara'] .mnp-menu {
+  display: flex;
+  flex-direction: column;
+  inset: 0;
+  inline-size: 100%;
+  max-inline-size: none;
+  block-size: 100dvh;
+  padding: 0;
+  overflow-y: auto;
+  border: 0;
+  box-shadow: none;
+  background: var(--mn-night);
+  color: var(--mn-night-text);
+  --mn-env-text: var(--mn-night-text);
+  --mn-env-text-muted: var(--mn-night-text-muted);
+  --mn-env-link: var(--mn-night-brand);
+  --mn-env-line: var(--mn-night-line);
+  --mn-env-focus: var(--mn-night-focus);
+  --mn-env-pill: var(--mn-night-pill);
+  --mn-env-pill-text: var(--mn-night-pill-text);
+}
+[data-theme-pack='manara'] .mnp-menu-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-block-size: var(--mn-header-height);
+  border-block-end: 2px solid var(--mn-night-line);
+}
+[data-theme-pack='manara'] .mnp-menu-list {
+  display: grid;
+  gap: 0.25rem;
+  padding-block: 1.5rem;
+}
+[data-theme-pack='manara'] .mnp-menu-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  inline-size: 100%;
+  min-block-size: 3.5rem;
+  padding-block: 0.5rem;
+  font-family: var(--mn-font-display);
+  font-size: clamp(1.75rem, 1.2rem + 2.5vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-align: start;
+  color: var(--mn-night-text);
+  background: transparent;
+  border: 0;
+  border-radius: var(--mn-radius);
+  cursor: pointer;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+[data-theme-pack='manara'] [dir='rtl'] .mnp-menu-link,
+[dir='rtl'] [data-theme-pack='manara'] .mnp-menu-link,
+[data-theme-pack='manara'][dir='rtl'] .mnp-menu-link {
+  letter-spacing: 0;
+  line-height: 1.3;
+}
+[data-theme-pack='manara'] .mnp-menu-link[aria-current='page'] {
+  color: var(--mn-night-accent-text);
+}
+[data-theme-pack='manara'] .mnp-menu-link[aria-current='page']::after {
+  content: '';
+  flex: none;
+  inline-size: 0.75rem;
+  block-size: 0.75rem;
+  border-radius: 999px;
+  background: var(--mn-beam);
+}
+[data-theme-pack='manara'] .mnp-menu-foot {
+  margin-block-start: auto;
+  display: grid;
+  gap: 0.75rem;
+  padding-block: 1.5rem 2.5rem;
+  border-block-start: 2px solid var(--mn-night-line);
+}
+
+/* ------------------------------------------------------------------ */
+/* Footer                                                               */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mnp-footer {
+  margin-block-start: auto;
+}
+/* A name set large, capped so it stays a signature, not a second hero. */
+[data-theme-pack='manara'] .mnp-footer-name {
+  font-family: var(--mn-font-display);
+  font-size: clamp(2.25rem, 1.25rem + 3.5vw, 4.5rem);
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+[data-theme-pack='manara'] .mnp-footer-name[data-length='long'] {
+  font-size: clamp(1.75rem, 0.9rem + 2.5vw, 3.25rem);
+}
+[data-theme-pack='manara'] [dir='rtl'] .mnp-footer-name,
+[dir='rtl'] [data-theme-pack='manara'] .mnp-footer-name,
+[data-theme-pack='manara'][dir='rtl'] .mnp-footer-name {
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+[data-theme-pack='manara'] .mnp-footer-name a,
+[data-theme-pack='manara'] .mnp-footer-name button {
+  color: inherit;
+  text-decoration: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+[data-theme-pack='manara'] .mnp-footer-name a:hover,
+[data-theme-pack='manara'] .mnp-footer-name button:hover {
+  color: var(--mn-night-accent-text);
+}
+[data-theme-pack='manara'] .mnp-footer-columns {
+  display: grid;
+  gap: 2.5rem 2rem;
+  margin-block-start: clamp(2.5rem, 1.5rem + 3vw, 4rem);
+  padding-block-start: clamp(2rem, 1rem + 2vw, 3rem);
+  border-block-start: 2px solid var(--mn-night-line);
+}
+@media (min-width: 640px) {
+  [data-theme-pack='manara'] .mnp-footer-columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  [data-theme-pack='manara'] .mnp-footer-columns {
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  }
+}
+[data-theme-pack='manara'] .mnp-footer-link {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  padding: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: start;
+  color: var(--mn-night-text);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+[data-theme-pack='manara'] .mnp-footer-link:hover {
+  color: var(--mn-night-accent-text);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.25em;
+}
+[data-theme-pack='manara'] .mnp-footer-legal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem 1.5rem;
+  margin-block-start: clamp(2.5rem, 1.5rem + 3vw, 4rem);
+  padding-block-start: 1.5rem;
+  border-block-start: 2px solid var(--mn-night-line);
+  font-size: 0.8125rem;
+  color: var(--mn-night-text-muted);
+  text-align: center;
+}
+@media (min-width: 640px) {
+  [data-theme-pack='manara'] .mnp-footer-legal {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    text-align: start;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Auth frame                                                           */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mnp-auth {
+  display: grid;
+  min-block-size: calc(100dvh - var(--mn-header-height));
+  background: var(--mn-day);
+}
+@media (min-width: 1024px) {
+  [data-theme-pack='manara'] .mnp-auth {
+    grid-template-columns: minmax(0, 38fr) minmax(0, 62fr);
+  }
+}
+/* The night panel: decorative, a beam and the photograph; phones skip it. */
+[data-theme-pack='manara'] .mnp-auth-side {
+  position: relative;
+  display: none;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--mn-night);
+  color: var(--mn-night-text);
+}
+@media (min-width: 1024px) {
+  [data-theme-pack='manara'] .mnp-auth-side {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: clamp(1.5rem, 1rem + 2vw, 3rem);
+  }
+}
+[data-theme-pack='manara'] .mnp-auth-side .mn-frame {
+  position: relative;
+  z-index: 1;
+  inline-size: 100%;
+}
+[data-theme-pack='manara'] .mnp-auth-side .mn-beam {
+  z-index: 0;
+}
+[data-theme-pack='manara'] .mnp-auth-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-inline-size: 0;
+  padding-inline: var(--mn-gutter);
+  padding-block: 1.5rem;
+}
+@media (min-width: 1024px) {
+  [data-theme-pack='manara'] .mnp-auth-form {
+    padding-block: 3rem;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Banner block (pageHeader, page intro)                                */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mn-block.mnp-banner {
+  padding-block-start: clamp(2.5rem, 1.5rem + 4vw, 5.5rem);
+  /* The seam already adds its own depth below the copy. */
+  padding-block-end: calc(var(--mn-rhythm) * 0.6 + var(--mn-seam));
+}
+[data-theme-pack='manara'] .mnp-trail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 0.625rem;
+  row-gap: 0.25rem;
+}
+[data-theme-pack='manara'] .mnp-trail > li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+[data-theme-pack='manara'] .mnp-trail > li + li::before {
+  content: '';
+  inline-size: 0.375rem;
+  block-size: 0.375rem;
+  border-radius: 999px;
+  background: var(--mn-beam);
+}
+[data-theme-pack='manara'] .mnp-trail .mnp-nav-link {
+  min-block-size: 2.25rem;
+  font-size: 0.875rem;
+}
+[data-theme-pack='manara'] .mnp-trail [aria-current='page'] {
+  font-family: var(--mn-font-display);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--mn-env-text-muted);
+}
+
+/* The banner's search: an underlined field in the block's own text, with
+   the accent submit. */
+[data-theme-pack='manara'] .mnp-banner-search {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  max-inline-size: 36rem;
+}
+[data-theme-pack='manara'] .mnp-banner-search .mnp-underline-input {
+  display: block;
+  inline-size: 100%;
+  min-block-size: 2.75rem;
+  padding-block: 0.5rem;
+  padding-inline: 0;
+  font-size: 1.125rem;
+  color: var(--mn-env-text);
+  background: transparent;
+  border: 0;
+  border-block-end: 3px solid var(--mn-env-line);
+  border-radius: 0;
+  transition: border-color var(--mn-fast) var(--mn-ease);
+}
+[data-theme-pack='manara'] .mnp-underline-input::placeholder {
+  color: var(--mn-env-text-muted);
+  opacity: 1;
+}
+[data-theme-pack='manara'] .mnp-underline-input:hover,
+[data-theme-pack='manara'] .mnp-underline-input:focus-visible {
+  border-block-end-color: var(--mn-beam);
+  outline-offset: 6px;
+}
+[data-theme-pack='manara']
+  .mnp-banner-search
+  input[type='search']::-webkit-search-decoration {
+  appearance: none;
+}
+
+/* The wide image tile under the banner: on the day ground, cut by the
+   seam above; the ratio widens with the viewport. */
+[data-theme-pack='manara'] .mnp-banner-image {
+  margin-block-start: calc(-1 * var(--mn-seam) * 0.5);
+  position: relative;
+  z-index: 2;
+}
+
+/* ------------------------------------------------------------------ */
+/* Catalogue                                                            */
+/* ------------------------------------------------------------------ */
+
+/* The pill filter bar: sticky under the header, on the ground's raised
+   surface. */
+[data-theme-pack='manara'] .mnp-filterbar {
+  position: sticky;
+  inset-block-start: var(--mn-header-height);
+  z-index: 20;
+  display: grid;
+  gap: 0.75rem;
+  margin-inline: calc(-1 * var(--mn-gutter));
+  padding-inline: var(--mn-gutter);
+  padding-block: 0.75rem;
+  background: color-mix(in srgb, var(--mn-day) 94%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-block-end: 2px solid var(--mn-line);
+}
+@media (min-width: 768px) {
+  [data-theme-pack='manara'] .mnp-filterbar {
+    margin-inline: 0;
+    padding-inline: 1rem;
+    border: 2px solid var(--mn-line);
+    border-radius: var(--mn-radius-lg);
+  }
+}
+[data-theme-pack='manara'] .mnp-filter-fields {
+  display: grid;
+  gap: 0.5rem;
+}
+@media (min-width: 640px) {
+  [data-theme-pack='manara'] .mnp-filter-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  [data-theme-pack='manara'] .mnp-filter-fields {
+    grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
+  }
+}
+[data-theme-pack='manara'] .mnp-filter-fields > [role='search'] {
+  grid-column: 1 / -1;
+}
+@media (min-width: 1024px) {
+  [data-theme-pack='manara'] .mnp-filter-fields > [role='search'] {
+    grid-column: auto;
+  }
+}
+[data-theme-pack='manara'] .mnp-filter-fields .mn-input {
+  font-size: 0.9375rem;
+}
+[data-theme-pack='manara'] select.mn-input {
+  appearance: none;
+  padding-inline-end: 2.25rem;
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-size:
+    6px 6px,
+    6px 6px;
+  background-position:
+    calc(100% - 16px) 50%,
+    calc(100% - 10px) 50%;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+[data-theme-pack='manara'] [dir='rtl'] select.mn-input,
+[dir='rtl'] [data-theme-pack='manara'] select.mn-input,
+[data-theme-pack='manara'][dir='rtl'] select.mn-input {
+  padding-inline-end: 2.25rem;
+  background-position:
+    10px 50%,
+    16px 50%;
+}
+
+/* A category rail of pills; scrolls sideways on phones, wraps from 768. */
+[data-theme-pack='manara'] .mnp-pill-rail {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding-block: 0.125rem;
+  scrollbar-width: none;
+}
+[data-theme-pack='manara'] .mnp-pill-rail::-webkit-scrollbar {
+  display: none;
+}
+@media (min-width: 768px) {
+  [data-theme-pack='manara'] .mnp-pill-rail {
+    flex-wrap: wrap;
+    overflow: visible;
+  }
+}
+/* A filter pill: a quiet pill that fills with the brand when pressed. */
+[data-theme-pack='manara'] .mnp-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: none;
+  min-block-size: 2.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 2px solid var(--mn-line);
+  background: var(--mn-env-card, var(--mn-day));
+  color: var(--mn-text);
+  font-family: var(--mn-font-display);
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--mn-fast) var(--mn-ease),
+    border-color var(--mn-fast) var(--mn-ease),
+    color var(--mn-fast) var(--mn-ease);
+}
+[data-theme-pack='manara'] .mnp-filter-pill:hover {
+  border-color: var(--mn-block);
+}
+[data-theme-pack='manara'] .mnp-filter-pill[aria-pressed='true'] {
+  background: var(--mn-block);
+  border-color: var(--mn-block);
+  color: var(--mn-block-text);
+}
+[data-theme-pack='manara'] .mnp-filter-pill .mnp-count {
+  font-variant-numeric: lining-nums tabular-nums;
+  opacity: 0.75;
+}
+
+/* The results line and its removable filters. */
+[data-theme-pack='manara'] .mnp-results {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  min-block-size: 2.75rem;
+  margin-block: 1.25rem;
+}
+[data-theme-pack='manara'] .mnp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-block-size: 2.75rem;
+  padding-inline: 0.75rem;
+  border-radius: 999px;
+  background: var(--mn-pill);
+  color: var(--mn-pill-text);
+  font-family: var(--mn-font-display);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  border: 0;
+  cursor: pointer;
+}
+[data-theme-pack='manara'] .mnp-chip:hover {
+  background: var(--mn-line);
+}
+
+/* The 3 / 2 / 1 grid of poster cards. */
+[data-theme-pack='manara'] .mnp-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+@media (min-width: 640px) {
+  [data-theme-pack='manara'] .mnp-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  [data-theme-pack='manara'] .mnp-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+/* The poster card (the home rail's card language). */
+[data-theme-pack='manara'] .mnp-course-card {
+  block-size: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+[data-theme-pack='manara'] .mnp-course-card .mn-frame {
+  /* A card's slant is shallower than a block's seam. */
+  --mn-seam: clamp(1rem, 0.5rem + 1.5vw, 1.75rem);
+  border-radius: 0;
+}
+[data-theme-pack='manara'] .mnp-card-level {
+  position: absolute;
+  inset-block-start: 0.75rem;
+  inset-inline-start: 0.75rem;
+  z-index: 1;
+}
+[data-theme-pack='manara'] .mnp-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem 1.25rem;
+}
+[data-theme-pack='manara'] .mnp-card-title {
+  font-size: 1.25rem;
+  line-height: 1.2;
+  text-wrap: pretty;
+}
+[data-theme-pack='manara'] .mnp-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-block-start: auto;
+  padding-block-start: 0.75rem;
+}
+[data-theme-pack='manara'] a.mnp-course-card:focus-visible {
+  outline-offset: 0;
+}
+[data-theme-pack='manara'] .mnp-card-skeleton {
+  block-size: 100%;
+}
+
+/* A statement set in type on a night tile (empty, error, launching). */
+[data-theme-pack='manara'] .mnp-statement {
+  display: grid;
+  gap: 1rem;
+  justify-items: start;
+  padding: clamp(2rem, 1.5rem + 3vw, 4rem);
+}
+
+/* Numbered pagination. */
+[data-theme-pack='manara'] .mnp-pages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  margin-block-start: clamp(2rem, 1.5rem + 2vw, 3rem);
+}
+[data-theme-pack='manara'] .mnp-page {
+  min-inline-size: 2.75rem;
+  padding-inline: 0.75rem;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+[data-theme-pack='manara'] .mnp-page[aria-current='page'] {
+  background-color: var(--mn-block);
+  color: var(--mn-block-text);
+}
+
+/* ------------------------------------------------------------------ */
+/* Contact                                                              */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mnp-channels {
+  display: grid;
+  gap: 0.75rem;
+}
+@media (min-width: 640px) and (max-width: 1023.98px) {
+  [data-theme-pack='manara'] .mnp-channels {
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  }
+}
+[data-theme-pack='manara'] .mnp-channel dt {
+  font-family: var(--mn-font-display);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--mn-env-text-muted);
+}
+[data-theme-pack='manara'] .mnp-channel dd {
+  margin: 0;
+  font-family: var(--mn-font-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+[data-theme-pack='manara'] .mnp-channel a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+}
+[data-theme-pack='manara'] .mnp-channel a:hover {
+  text-decoration-color: currentColor;
+}
+[data-theme-pack='manara'] .mnp-form {
+  padding: clamp(1.25rem, 1rem + 1.5vw, 2.25rem);
+}
+[data-theme-pack='manara'] textarea.mn-input {
+  min-block-size: 9rem;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+/* ------------------------------------------------------------------ */
+/* Course Details                                                       */
+/* ------------------------------------------------------------------ */
+
+/* A course title is often long: display-set, one step under a page's. */
+[data-theme-pack='manara'] .mn-display.mnp-course-title {
+  font-size: clamp(2rem, 1.1rem + 3.4vw, 4rem);
+  line-height: 1.04;
+}
+[data-theme-pack='manara'] .mnp-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+[data-theme-pack='manara'] .mnp-meta .mn-pill {
+  min-block-size: 2rem;
+}
+[data-theme-pack='manara'] .mnp-meta a.mn-pill {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+}
+
+[data-theme-pack='manara'] .mnp-section + .mnp-section {
+  margin-block-start: clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
+}
+[data-theme-pack='manara'] .mnp-section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-block-end: 1.25rem;
+}
+[data-theme-pack='manara'] .mnp-section-title::before {
+  content: '';
+  flex: none;
+  inline-size: 0.375rem;
+  block-size: 1.5em;
+  border-radius: 999px;
+  background: var(--mn-beam);
+}
+
+/* A bold list: outcomes and requirements. */
+[data-theme-pack='manara'] .mnp-bold-list {
+  display: grid;
+  gap: 0.5rem;
+}
+@media (min-width: 640px) {
+  [data-theme-pack='manara'] .mnp-bold-list[data-columns] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+[data-theme-pack='manara'] .mnp-bold-list > li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-radius: var(--mn-radius-lg);
+  background: var(--mn-day-soft);
+  font-weight: 600;
+  line-height: 1.45;
+}
+[data-theme-pack='manara'] .mnp-bold-list > li > svg {
+  flex: none;
+  margin-block-start: 0.125rem;
+  color: var(--mn-brand-text);
+}
+
+/* The curriculum as a numbered track: parts along a beam. */
+[data-theme-pack='manara'] .mnp-track {
+  position: relative;
+  display: grid;
+  gap: 1.25rem;
+  padding-inline-start: 3.5rem;
+}
+[data-theme-pack='manara'] .mnp-track::before {
+  content: '';
+  position: absolute;
+  inset-block: 1.25rem;
+  inset-inline-start: 1.375rem;
+  inline-size: 0.25rem;
+  border-radius: 999px;
+  background: var(--mn-beam-soft);
+}
+[data-theme-pack='manara'] .mnp-track > li {
+  position: relative;
+}
+[data-theme-pack='manara'] .mnp-track-no {
+  position: absolute;
+  inset-inline-start: -3.5rem;
+  inset-block-start: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 3rem;
+  block-size: 3rem;
+  border-radius: var(--mn-radius);
+  background: var(--mn-block);
+  color: var(--mn-block-text);
+  font-family: var(--mn-font-display);
+  font-size: 1rem;
+  font-weight: 800;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+[data-theme-pack='manara'] .mnp-track-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  min-block-size: 3rem;
+}
+[data-theme-pack='manara'] .mnp-lessons {
+  display: grid;
+  gap: 0.25rem;
+  margin-block-start: 0.75rem;
+}
+[data-theme-pack='manara'] .mnp-lessons > li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-block-size: 2.75rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: var(--mn-radius);
+  background: var(--mn-day-soft);
+}
+[data-theme-pack='manara'] .mnp-lessons > li > svg {
+  flex: none;
+  color: var(--mn-text-muted);
+}
+
+/* The instructors' name plates. */
+[data-theme-pack='manara'] .mnp-people {
+  display: grid;
+  gap: 0.75rem;
+}
+@media (min-width: 640px) {
+  [data-theme-pack='manara'] .mnp-people {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+[data-theme-pack='manara'] .mnp-person {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-radius: var(--mn-radius-lg);
+  background: var(--mn-day-soft);
+}
+
+/* The enrolment panel: sticky beside the body from 1024. */
+[data-theme-pack='manara'] .mnp-panel {
+  position: sticky;
+  inset-block-start: calc(var(--mn-header-height) + 1.5rem);
+  padding: 1.5rem;
+  border-width: 2px;
+}
+[data-theme-pack='manara'] .mnp-panel-price {
+  font-family: var(--mn-font-display);
+  font-size: clamp(2rem, 1.6rem + 1.2vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+[data-theme-pack='manara'] .mnp-includes {
+  display: grid;
+  gap: 0.375rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+[data-theme-pack='manara'] .mnp-includes > li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-block-size: 2rem;
+}
+[data-theme-pack='manara'] .mnp-includes > li::before {
+  content: '';
+  flex: none;
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: 999px;
+  background: var(--mn-beam);
+}
+
+/* Phones and tablets: the price and the action stay one tap away. */
+[data-theme-pack='manara'] .mnp-bar {
+  position: fixed;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-block-size: calc(3.75rem + env(safe-area-inset-bottom));
+  padding-block: 0.625rem calc(0.625rem + env(safe-area-inset-bottom));
+  padding-inline: var(--mn-gutter);
+  background: var(--mn-night);
+  color: var(--mn-night-text);
+  border-block-start: 3px solid var(--mn-beam);
+  --mn-env-text: var(--mn-night-text);
+  --mn-env-focus: var(--mn-night-focus);
+}
+/* Above the public site's bottom navigation on phones. */
+[data-theme-pack='manara'] .mnp-bar[data-above-nav] {
+  inset-block-end: calc(4rem + env(safe-area-inset-bottom));
+  min-block-size: 3.75rem;
+  padding-block-end: 0.625rem;
+}
+@media (min-width: 768px) {
+  [data-theme-pack='manara'] .mnp-bar[data-above-nav] {
+    inset-block-end: 0;
+    min-block-size: calc(3.75rem + env(safe-area-inset-bottom));
+    padding-block-end: calc(0.625rem + env(safe-area-inset-bottom));
+  }
+}
+[data-theme-pack='manara'] .mnp-bar-price {
+  font-family: var(--mn-font-display);
+  font-size: 1.375rem;
+  font-weight: 800;
+  font-variant-numeric: lining-nums tabular-nums;
+  white-space: nowrap;
+}
+[data-theme-pack='manara'] .mnp-bar-space {
+  block-size: calc(5rem + env(safe-area-inset-bottom));
+}
+/* From 1024 the sticky enrolment panel takes over; the utility classes on
+   the bar lose to this file's specificity, so hide it here. */
+@media (min-width: 1024px) {
+  [data-theme-pack='manara'] .mnp-bar,
+  [data-theme-pack='manara'] .mnp-bar-space {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* System pages: night posters                                          */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mn-block.mnp-poster {
+  min-block-size: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+[data-theme-pack='manara'] .mnp-poster-figure .mn-numeral {
+  display: block;
+  font-size: clamp(6rem, 2rem + 22vw, 18rem);
+  line-height: 0.85;
+  color: var(--mn-night-accent-text);
+}
+[data-theme-pack='manara'] .mnp-poster-name {
+  font-family: var(--mn-font-display);
+  font-size: clamp(2.5rem, 1rem + 7vw, 7rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--mn-night-accent-text);
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+[data-theme-pack='manara'] [dir='rtl'] .mnp-poster-name,
+[dir='rtl'] [data-theme-pack='manara'] .mnp-poster-name,
+[data-theme-pack='manara'][dir='rtl'] .mnp-poster-name {
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+[data-theme-pack='manara'] .mnp-coming-soon {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100dvh;
+  background: var(--mn-night);
+  color: var(--mn-night-text);
+}
+[data-theme-pack='manara'] .mnp-coming-soon > .mn-block {
+  flex: 1;
+}

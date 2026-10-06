@@ -1,0 +1,81 @@
+{
+  "pages": {
+    "trail": {
+      "label": "Breadcrumb",
+      "home": "Home"
+    },
+    "search": {
+      "placeholder": "Which subject or course?",
+      "submit": "Search",
+      "faqLabel": "Search the questions",
+      "faqPlaceholder": "Type a word from your question"
+    },
+    "summary": {
+      "courses_one": "{{formatted}} course open for enrolment",
+      "courses_other": "{{formatted}} courses open for enrolment",
+      "catalog_one": "{{courses}} course across {{categories}} tracks",
+      "catalog_other": "{{courses}} courses across {{categories}} tracks"
+    },
+    "intro": {
+      "about": "Who teaches here, how we teach, and the results behind it.",
+      "courses": "Every course, every level — pick yours and start today.",
+      "faqs": "Straight answers to what students and parents ask us most.",
+      "contact": "A question about a course, a fee or a class time? Reach us here."
+    },
+    "catalog": {
+      "filters": "Filter the courses",
+      "categories": "Tracks",
+      "allCategories": "All tracks",
+      "removeFilter": "Remove the filter {{name}}",
+      "clearAll": "Clear all",
+      "loading": "Loading courses",
+      "errorTitle": "The courses couldn't be loaded",
+      "errorDescription": "Something interrupted the connection. Please try again.",
+      "retry": "Try again",
+      "launchingTitle": "Launching soon",
+      "launchingDescription": "The first courses are being prepared. Check back soon, or get in touch to hear when enrolment opens.",
+      "pagination": "Course pages",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "page": "Page {{page}}",
+      "by": "with {{name}}",
+      "openCourse": "Open the course {{title}}"
+    },
+    "contact": {
+      "channels": "Ways to reach us",
+      "emailLabel": "Email",
+      "phoneLabel": "Phone",
+      "addressLabel": "Address",
+      "formTitle": "Send us a message",
+      "formNote": "Every field is required. We reply as soon as we can.",
+      "successTitle": "Your message is in",
+      "sendAnother": "Send another message"
+    },
+    "courseDetails": {
+      "breadcrumb": "Breadcrumb",
+      "allCourses": "All courses",
+      "taughtBy": "Taught by",
+      "enrol": "Enrol in this course",
+      "includes": "What's included",
+      "hasPreview": "Free preview lessons",
+      "contents": "Curriculum",
+      "sectionLabel": "Part {{index}}",
+      "errorTitle": "This course couldn't be loaded",
+      "errorDescription": "Something went wrong while loading the course. Please try again.",
+      "retry": "Try again"
+    },
+    "notFound": {
+      "eyebrow": "Error 404",
+      "title": "This page isn't on the timetable",
+      "description": "It may have moved, or the link may be out of date. Here are the quickest ways back.",
+      "home": "Back to home",
+      "courses": "See the courses",
+      "contact": "Contact us"
+    },
+    "comingSoon": {
+      "eyebrow": "Opening soon",
+      "title": "{{name}} opens soon",
+      "description": "The classroom is being set up. Come back soon — enrolment will open here."
+    }
+  }
+}

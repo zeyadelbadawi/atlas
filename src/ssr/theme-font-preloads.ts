@@ -14,8 +14,15 @@
  *     the highlighted words use the same file).
  * The rarer Latin Extended face is left to the stylesheet.
  *
- * The URLs are content-hashed assets, the same files `atelier.css` names
- * (its `@font-face` rules), so the preload is the request the page uses.
+ * Manara (Theme 3) is mapped the same way for its display face, Alexandria
+ * (`<h1 class="mn-display">`, `manara.css`): Latin text → Alexandria Latin,
+ * Arabic text → Alexandria Arabic. Alexandria has no italic, so the
+ * highlighted phrase (`<em class="mn-em">`) uses the same files; Latin
+ * Extended is left to the stylesheet here too.
+ *
+ * The URLs are content-hashed assets, the same files `atelier.css` and
+ * `manara.css` name (their `@font-face` rules), so the preload is the
+ * request the page uses.
  *
  * OPT-IN (`preloadThemeFonts`, off by default): Lighthouse mobile measured
  * it slower, not faster — the fonts then compete with the render-blocking
@@ -25,9 +32,13 @@ import type { WebsiteThemeKey } from '@types';
 import frauncesLatin from '@/assets/fonts/fraunces-latin.woff2?url';
 import frauncesLatinItalic from '@/assets/fonts/fraunces-latin-italic.woff2?url';
 import markaziTextArabic from '@/assets/fonts/markazi-text-arabic.woff2?url';
+import alexandriaLatin from '@/assets/fonts/alexandria-latin.woff2?url';
+import alexandriaArabic from '@/assets/fonts/alexandria-arabic.woff2?url';
 
 /** Heading classes set in Atelier's display face (`atelier.css`). */
 const ATELIER_DISPLAY_HEADING = /class="[^"]*\bat-(?:display|title)\b/;
+/** Heading classes set in Manara's display face (`manara.css`). */
+const MANARA_DISPLAY_HEADING = /class="[^"]*\bmn-(?:display|title)\b/;
 const LATIN = /[A-Za-z0-9\u00C0-\u00FF]/;
 const ARABIC = /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/;
 
@@ -56,14 +67,29 @@ function atelierHeadingFonts(appHtml: string): string[] {
   return fonts;
 }
 
+/** The fonts Manara's page heading uses, as preload links. */
+function manaraHeadingFonts(appHtml: string): string[] {
+  const heading = /<h1\b[^>]*>([\s\S]*?)<\/h1>/.exec(appHtml);
+  if (!heading || !MANARA_DISPLAY_HEADING.test(heading[0])) return [];
+  const text = textOf(heading[1]);
+  const fonts: string[] = [];
+  if (LATIN.test(text)) fonts.push(alexandriaLatin);
+  if (ARABIC.test(text)) fonts.push(alexandriaArabic);
+  return fonts;
+}
+
 /**
  * Preload links for the display fonts the page's heading uses, for the
- * themes the page rendered; `''` for a theme without (Theme 1, Themes 3–6).
+ * themes the page rendered; `''` for a theme without (Theme 1, the retired
+ * base-pack themes).
  */
 export function themeFontPreloadHtml(
   themes: ReadonlySet<WebsiteThemeKey>,
   appHtml: string
 ): string {
-  if (!themes.has('atelier')) return '';
-  return atelierHeadingFonts(appHtml).map(preloadLink).join('');
+  if (themes.has('atelier'))
+    return atelierHeadingFonts(appHtml).map(preloadLink).join('');
+  if (themes.has('manara'))
+    return manaraHeadingFonts(appHtml).map(preloadLink).join('');
+  return '';
 }

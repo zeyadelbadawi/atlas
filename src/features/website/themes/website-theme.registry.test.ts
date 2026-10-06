@@ -20,15 +20,18 @@ describe('theme selection after the Themes 2–5 retirement', () => {
     expect(SELECTABLE_WEBSITE_THEME_KEYS).toEqual([
       'modern-education',
       'atelier',
+      'manara',
     ]);
     expect(listWebsiteThemes().map((theme) => theme.key)).toEqual([
       'modern-education',
       'atelier',
+      'manara',
     ]);
-    for (const current of ['modern-education', 'atelier'] as const) {
+    for (const current of ['modern-education', 'atelier', 'manara'] as const) {
       expect(listWebsiteThemes(current).map((theme) => theme.key)).toEqual([
         'modern-education',
         'atelier',
+        'manara',
       ]);
     }
     for (const key of RETIRED_WEBSITE_THEME_KEYS) {
@@ -41,6 +44,7 @@ describe('theme selection after the Themes 2–5 retirement', () => {
       expect(listWebsiteThemes(key).map((theme) => theme.key)).toEqual([
         'modern-education',
         'atelier',
+        'manara',
         key,
       ]);
     }
