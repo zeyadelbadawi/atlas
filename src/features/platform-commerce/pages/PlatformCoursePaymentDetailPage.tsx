@@ -19,10 +19,11 @@
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { PaymentProofDialog } from '@/components/payments/PaymentProofDialog';
 import { Link, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Check, ExternalLink, Loader2, X } from 'lucide-react';
+import { Check, FileText, Loader2, X } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
@@ -65,7 +66,6 @@ import {
 } from '../schemas/platform-commerce.schemas';
 
 /** How long a proof's object URL stays alive for the tab that opened it. */
-const PROOF_URL_LIFETIME_MS = 60_000;
 
 function DetailRow({
   label,
@@ -87,7 +87,7 @@ export default function PlatformCoursePaymentDetailPage(): JSX.Element {
   const { paymentId } = useParams<{ paymentId: string }>();
   const { notifyError, notifySuccess } = useToast();
   const { confirm } = useConfirmDialog();
-  const [isOpeningProof, setIsOpeningProof] = useState(false);
+  const [isProofOpen, setIsProofOpen] = useState(false);
 
   const {
     data: payment,
@@ -141,25 +141,6 @@ export default function PlatformCoursePaymentDetailPage(): JSX.Element {
   const isPendingReview = payment.reviewStatus === 'pending';
   const isDeciding = approvePayment.isPending || rejectPayment.isPending;
   const amount = formatMoney(payment.money, i18n.language);
-
-  const handleViewProof = async () => {
-    setIsOpeningProof(true);
-    try {
-      const blob = await platformCourseOrderPaymentService.getProofFile(
-        payment.id
-      );
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank', 'noreferrer');
-      window.setTimeout(() => URL.revokeObjectURL(url), PROOF_URL_LIFETIME_MS);
-    } catch {
-      notifyError(
-        'errors:unknown.title',
-        'platformCommerce:coursePayments.proofLoadError'
-      );
-    } finally {
-      setIsOpeningProof(false);
-    }
-  };
 
   const onApprove = async (data: ApproveCourseOrderPaymentFormData) => {
     const confirmed = await confirm({
@@ -343,20 +324,19 @@ export default function PlatformCoursePaymentDetailPage(): JSX.Element {
                   type="button"
                   variant="link"
                   className="h-auto p-0"
-                  onClick={() => void handleViewProof()}
-                  disabled={isOpeningProof}
+                  onClick={() => setIsProofOpen(true)}
                 >
                   {t('platformCommerce:coursePayments.viewProof')}
-                  {isOpeningProof ? (
-                    <Loader2 className="size-3.5 animate-spin" aria-hidden />
-                  ) : (
-                    <ExternalLink
-                      className="size-3.5"
-                      strokeWidth={2}
-                      aria-hidden
-                    />
-                  )}
+                  <FileText className="size-3.5" strokeWidth={2} aria-hidden />
                 </Button>
+                <PaymentProofDialog
+                  open={isProofOpen}
+                  onOpenChange={setIsProofOpen}
+                  load={() =>
+                    platformCourseOrderPaymentService.getProofFile(payment.id)
+                  }
+                  fileName={payment.proof?.fileName}
+                />
               </>
             ) : (
               <p className="text-sm text-muted-foreground">

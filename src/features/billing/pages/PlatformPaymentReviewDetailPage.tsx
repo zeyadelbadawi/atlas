@@ -13,10 +13,11 @@
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { PaymentProofDialog } from '@/components/payments/PaymentProofDialog';
 import { useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertTriangle, Check, ExternalLink, Loader2, X } from 'lucide-react';
+import { AlertTriangle, Check, FileText, Loader2, X } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
@@ -59,7 +60,7 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
   const { organization } = useAuth();
   const { hasPermission } = usePermissions();
   const { notifyError } = useToast();
-  const [isOpeningProof, setIsOpeningProof] = useState(false);
+  const [isProofOpen, setIsProofOpen] = useState(false);
 
   const {
     data: payment,
@@ -69,24 +70,6 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
   } = usePlatformPaymentDetail(paymentId ?? '');
   const approvePayment = useApprovePayment();
   const rejectPayment = useRejectPayment();
-
-  // `payment.proof.fileUrl` is a path relative to the API base, not a
-  // usable link `href` on its own — see `PlatformPaymentService.getProofFile`'s
-  // doc comment. Fetched as an authenticated Blob, then opened as a local
-  // object URL; deliberately not revoked immediately, since the new tab
-  // still needs it after this function returns.
-  const handleViewProof = async () => {
-    if (!payment?.id) return;
-    setIsOpeningProof(true);
-    try {
-      const blob = await platformPaymentService.getProofFile(payment.id);
-      window.open(URL.createObjectURL(blob), '_blank', 'noreferrer');
-    } catch {
-      notifyError('errors:unknown.title', 'payments:payment.proofLoadError');
-    } finally {
-      setIsOpeningProof(false);
-    }
-  };
 
   const approveForm = useForm<ApprovePaymentFormData>({
     resolver: zodResolver(approvePaymentSchema),
@@ -227,21 +210,18 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
               ) : null}
               <button
                 type="button"
-                onClick={handleViewProof}
-                disabled={isOpeningProof}
+                onClick={() => setIsProofOpen(true)}
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline disabled:opacity-60"
               >
                 {t('payments:payment.viewProof')}
-                {isOpeningProof ? (
-                  <Loader2 className="size-3.5 animate-spin" aria-hidden />
-                ) : (
-                  <ExternalLink
-                    className="size-3.5"
-                    strokeWidth={2}
-                    aria-hidden
-                  />
-                )}
+                <FileText className="size-3.5" strokeWidth={2} aria-hidden />
               </button>
+              <PaymentProofDialog
+                open={isProofOpen}
+                onOpenChange={setIsProofOpen}
+                load={() => platformPaymentService.getProofFile(payment.id)}
+                fileName={payment.proof?.fileName}
+              />
             </CardContent>
           </Card>
         ) : null}

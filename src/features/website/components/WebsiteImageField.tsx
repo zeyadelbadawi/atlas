@@ -18,14 +18,15 @@
  * is unchanged and still the default; the library is optional, gated by
  * `academyId` being known to the caller.
  */
-import { useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FolderOpen, Loader2, Upload, X } from 'lucide-react';
+import { FolderOpen, ImageOff, Loader2, Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useFilePicker } from '@hooks';
 import { isolateNumericExpression } from '@utils';
 import { MediaLibraryDialog, useUploadMediaAsset } from '@features/media';
+import { useImagePreview } from '../theme-assets/useImagePreview';
 import {
   ALLOWED_WEBSITE_IMAGE_TYPES,
   MAX_WEBSITE_IMAGE_FILE_SIZE,
@@ -34,6 +35,15 @@ import {
   WEBSITE_IMAGE_RECOMMENDATIONS,
   type WebsiteImagePurpose,
 } from '../constants/image-recommendations.constants';
+
+/**
+ * The theme the edited Academy's public site renders under, for every image
+ * field below — so a form can say it once instead of threading it through
+ * each nested field. A field's own `themeKey` prop wins.
+ */
+export const WebsiteImageThemeContext = createContext<string | undefined>(
+  undefined
+);
 
 export interface WebsiteImageFieldProps {
   readonly id: string;
@@ -49,6 +59,13 @@ export interface WebsiteImageFieldProps {
    * showing no hint is better than showing a wrong one.
    */
   readonly purpose?: WebsiteImagePurpose;
+  /**
+   * The theme the Academy's public site renders under. A starter photograph
+   * (`theme-asset:` reference) previews as that theme draws it — the same
+   * picture the public site shows. Without it, the reference previews as
+   * the photograph it names.
+   */
+  readonly themeKey?: string;
 }
 
 export function WebsiteImageField({
@@ -59,9 +76,22 @@ export function WebsiteImageField({
   aspectClassName = 'aspect-video',
   academyId,
   purpose,
+  themeKey,
 }: WebsiteImageFieldProps): JSX.Element {
   const { t } = useTranslation();
   const [error, setError] = useState<string>();
+  const contextThemeKey = useContext(WebsiteImageThemeContext);
+  const preview = useImagePreview(value, themeKey ?? contextThemeKey);
+  // The stored value whose file failed to load (deleted asset, offline):
+  // the tile says so instead of showing the browser's broken-image icon.
+  const [failedSrc, setFailedSrc] = useState<string>();
+  const previewSrc =
+    preview.status === 'url' || preview.status === 'theme-asset'
+      ? preview.src
+      : undefined;
+  const unavailable =
+    preview.status === 'unavailable' ||
+    (previewSrc !== undefined && failedSrc === previewSrc);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const uploadAsset = useUploadMediaAsset();
   const isUploading = uploadAsset.isPending;
@@ -122,13 +152,32 @@ export function WebsiteImageField({
         <div
           className={`flex ${aspectClassName} w-32 items-center justify-center overflow-hidden rounded-md border border-dashed border-border bg-muted`}
         >
-          {isUploading ? (
+          {isUploading || preview.status === 'pending' ? (
             <Loader2
               className="size-5 animate-spin text-muted-foreground"
               aria-hidden
             />
-          ) : value ? (
-            <img src={value} alt="" className="size-full object-contain" />
+          ) : unavailable ? (
+            <span
+              className="flex flex-col items-center gap-1 px-2 text-center text-[11px] leading-tight text-muted-foreground"
+              data-testid={`${id}-preview-unavailable`}
+            >
+              <ImageOff className="size-4" aria-hidden />
+              {t('website:common.imagePreviewUnavailable')}
+            </span>
+          ) : previewSrc ? (
+            <img
+              src={previewSrc}
+              alt=""
+              data-testid={`${id}-preview`}
+              className={`size-full ${preview.status === 'theme-asset' ? 'object-cover' : 'object-contain'}`}
+              style={
+                preview.status === 'theme-asset'
+                  ? { objectPosition: preview.objectPosition }
+                  : undefined
+              }
+              onError={() => setFailedSrc(previewSrc)}
+            />
           ) : (
             <Upload className="size-5 text-muted-foreground" aria-hidden />
           )}

@@ -20,7 +20,6 @@ import {
   Clock,
   FileText,
   Hourglass,
-  Loader2,
   Wallet,
   XCircle,
   type LucideIcon,
@@ -29,6 +28,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@components/feedback';
+import { PaymentProofDialog } from '@/components/payments/PaymentProofDialog';
 import { useAuth, useDateFormatter } from '@hooks';
 import { formatMoney } from '@features/billing';
 import { LANGUAGES } from '@localization';
@@ -46,7 +46,6 @@ import {
 import { courseOrderService } from '../services/CourseOrderService';
 
 const K = 'learning:learnerDashboard.payments';
-const PROOF_URL_LIFETIME_MS = 60_000;
 
 const STATE_STYLE: Record<
   LearnerPaymentDisplayState,
@@ -76,8 +75,11 @@ export default function LearnerPaymentsPage(): JSX.Element {
   const locale =
     LANGUAGES[i18n.language as LanguageCode]?.locale ?? i18n.language;
   const payments = useLearnerPayments(user?.id, academyId);
-  const [openingProof, setOpeningProof] = useState<string | null>(null);
-  const [proofError, setProofError] = useState<string | null>(null);
+  // The payment whose proof is open in the dialog (`PaymentProofDialog`:
+  // opened on the tap itself, never as a popup after a download).
+  const [proofPayment, setProofPayment] = useState<LearnerCoursePayment | null>(
+    null
+  );
 
   const header = (
     <LearnerPageHeader
@@ -122,24 +124,6 @@ export default function LearnerPaymentsPage(): JSX.Element {
       </>
     );
   }
-
-  const openProof = async (payment: LearnerCoursePayment) => {
-    setOpeningProof(payment.id);
-    setProofError(null);
-    try {
-      const blob = await courseOrderService.getProofFile(
-        payment.courseOrderId,
-        payment.id
-      );
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank', 'noreferrer');
-      window.setTimeout(() => URL.revokeObjectURL(url), PROOF_URL_LIFETIME_MS);
-    } catch {
-      setProofError(payment.id);
-    } finally {
-      setOpeningProof(null);
-    }
-  };
 
   return (
     <>
@@ -225,28 +209,15 @@ export default function LearnerPaymentsPage(): JSX.Element {
                         type="button"
                         variant="link"
                         className="h-auto min-h-11 p-0 sm:min-h-0"
-                        onClick={() => void openProof(payment)}
-                        disabled={openingProof === payment.id}
+                        onClick={() => setProofPayment(payment)}
                         aria-label={t(`${K}.viewProofFor`, {
                           course: payment.course.title,
                         })}
                       >
-                        {openingProof === payment.id ? (
-                          <Loader2
-                            className="size-4 animate-spin"
-                            aria-hidden
-                          />
-                        ) : (
-                          <FileText className="size-4" aria-hidden />
-                        )}
+                        <FileText className="size-4" aria-hidden />
                         {t(`${K}.viewProof`)}
                       </Button>
                     </dd>
-                    {proofError === payment.id ? (
-                      <p role="alert" className="text-xs text-destructive">
-                        {t(`${K}.proofError`)}
-                      </p>
-                    ) : null}
                   </div>
                 </dl>
               ) : null}
@@ -284,6 +255,22 @@ export default function LearnerPaymentsPage(): JSX.Element {
           );
         })}
       </ul>
+      <PaymentProofDialog
+        open={proofPayment !== null}
+        onOpenChange={(open) => {
+          if (!open) setProofPayment(null);
+        }}
+        load={() =>
+          proofPayment
+            ? courseOrderService.getProofFile(
+                proofPayment.courseOrderId,
+                proofPayment.id
+              )
+            : Promise.reject(new Error('No payment selected'))
+        }
+        fileName={proofPayment?.proof?.fileName}
+        subject={proofPayment?.course.title}
+      />
     </>
   );
 }

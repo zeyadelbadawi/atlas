@@ -380,6 +380,40 @@ test.describe('J42 — academy manual payments: approve, reject, isolation', () 
     await expect(page.getByTestId('learner-payment-status').first()).toHaveText(
       'Approved'
     );
+
+    // Production QA Issue 2 — "View proof" opens the learner's own proof in
+    // a dialog on the tap itself (a popup opened after the download was
+    // silently blocked on phones). Desktop, then a phone in Arabic.
+    const popups: string[] = [];
+    page.on('popup', (popup) => popups.push(popup.url()));
+    await page
+      .getByRole('button', { name: /View your proof/ })
+      .first()
+      .click();
+    const proof = page.getByTestId('payment-proof-dialog');
+    await expect(proof.getByTestId('payment-proof-image')).toBeVisible();
+    await expect(proof.getByTestId('payment-proof-open')).toHaveAttribute(
+      'href',
+      /^blob:/
+    );
+    await page.keyboard.press('Escape');
+    await expect(proof).toBeHidden();
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(academyPath('/ar/my/payments'));
+    await page
+      .getByTestId('learner-payments')
+      .getByRole('button')
+      .filter({
+        hasText: /إثبات/,
+      })
+      .first()
+      .click();
+    await expect(proof.getByTestId('payment-proof-image')).toBeVisible();
+    const box = await proof.boundingBox();
+    expect(box && box.x >= 0 && box.x + box.width <= 390).toBe(true);
+    expect(popups).toEqual([]);
+    await page.setViewportSize({ width: 1280, height: 720 });
+
     await page.goto(academyPath(`/courses/${courseId}`));
     await expect(
       page.getByRole('button', { name: 'Start course' })

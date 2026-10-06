@@ -975,6 +975,7 @@
     "saving": "Saving…",
     "chooseImage": "Choose image",
     "replaceImage": "Replace image",
+    "imagePreviewUnavailable": "Preview unavailable",
     "chooseFromLibrary": "Choose from library",
     "removeImage": "Remove image",
     "imageTooLarge": "The file is too large.",

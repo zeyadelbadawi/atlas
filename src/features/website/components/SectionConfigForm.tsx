@@ -40,7 +40,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { WebsiteImageField } from './WebsiteImageField';
+import {
+  WebsiteImageField,
+  WebsiteImageThemeContext,
+} from './WebsiteImageField';
 import { resolveSectionImagePurpose } from '../constants/image-recommendations.constants';
 import {
   LocalizedTextField,
@@ -1164,214 +1167,228 @@ export function SectionConfigForm<TType extends SectionType>({
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      <div ref={formRef} className="space-y-5">
-        {summary.length > 0 ? (
-          <div
-            ref={summaryRef}
-            tabIndex={-1}
-            role={attempted ? 'alert' : 'status'}
-            data-testid="section-form-issues"
-            className="space-y-1 rounded-md border border-destructive/50 bg-destructive/5 p-3 text-sm"
-          >
-            <p className="font-medium text-destructive">
-              {attempted
-                ? t('website:editor.fieldIssuesSummary', {
-                    count: summary.length,
-                  })
-                : t('website:editor.overLimitSummary', {
-                    count: summary.length,
-                  })}
-            </p>
-            <ul className="list-disc space-y-0.5 ps-5 text-xs text-foreground">
-              {summary.map((entry) => (
-                <li key={entry.key}>{entry.text}</li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
-
-        {fields.map((field) =>
-          field.kind === 'cta' ? (
-            <CtaFieldEditor
-              key={field.key}
-              labelKey={field.labelKey}
-              path={field.key}
-              errorFor={errorFor}
-              pages={pages}
-              academyId={academyId}
-              value={draft[field.key] as Partial<WebsiteCta> | undefined}
-              onChange={(value) => setField(field.key, value)}
-            />
-          ) : (
-            <ScalarField
-              key={field.key}
-              descriptor={field}
-              path={field.key}
-              errorFor={errorFor}
-              value={draft[field.key]}
-              onChange={(value) => setField(field.key, value)}
-              academyId={academyId}
-              sectionType={type}
-            />
-          )
-        )}
-
-        {schema.repeatable ? (
-          <div className="space-y-3 border-t border-border pt-4">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-foreground">
-                {t(schema.repeatable.labelKey)}
+    // Starter photographs in image fields preview as this site's theme
+    // draws them (`useImagePreview`).
+    <WebsiteImageThemeContext.Provider value={configuration.themeKey}>
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div ref={formRef} className="space-y-5">
+          {summary.length > 0 ? (
+            <div
+              ref={summaryRef}
+              tabIndex={-1}
+              role={attempted ? 'alert' : 'status'}
+              data-testid="section-form-issues"
+              className="space-y-1 rounded-md border border-destructive/50 bg-destructive/5 p-3 text-sm"
+            >
+              <p className="font-medium text-destructive">
+                {attempted
+                  ? t('website:editor.fieldIssuesSummary', {
+                      count: summary.length,
+                    })
+                  : t('website:editor.overLimitSummary', {
+                      count: summary.length,
+                    })}
               </p>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={addItem}
-                disabled={
-                  items.length >=
-                  (schema.repeatable.maxItems ?? MAX_SECTION_ITEMS)
-                }
-              >
-                <Plus className="size-3.5" aria-hidden />
-                {t('website:editor.addItem')}
-              </Button>
-            </div>
-            {hasSampleItems ? (
-              <p className="text-xs text-muted-foreground">
-                {t('website:editor.sampleHelp')}
-              </p>
-            ) : null}
-            {items.map((item, index) => (
-              <div
-                key={(item.id as string) ?? index}
-                className="space-y-3 rounded-md border border-border p-3"
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-xs font-medium text-muted-foreground">
-                      {t(schema.repeatable!.itemLabelKey)} {index + 1}
-                    </p>
-                    {item.sample === true ? (
-                      <>
-                        <Badge variant="outline" className="whitespace-nowrap">
-                          {t('website:editor.sampleBadge')}
-                        </Badge>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="min-h-6 px-2 text-xs"
-                          onClick={() => confirmItemReal(index)}
-                        >
-                          <BadgeCheck className="size-3.5" aria-hidden />
-                          {t('website:editor.markTestimonialReal')}
-                        </Button>
-                      </>
-                    ) : null}
-                  </div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeItem(index)}
-                    aria-label={t('website:editor.removeItem')}
-                  >
-                    <Trash2 className="size-4" aria-hidden />
-                  </Button>
-                </div>
-                {itemFields.map((field) => (
-                  <ScalarField
-                    key={field.key}
-                    descriptor={field}
-                    path={`${schema.repeatable!.key}.${index}.${field.key}`}
-                    errorFor={errorFor}
-                    value={item[field.key]}
-                    onChange={(value) => updateItem(index, field.key, value)}
-                    academyId={academyId}
-                    sectionType={type}
-                  />
+              <ul className="list-disc space-y-0.5 ps-5 text-xs text-foreground">
+                {summary.map((entry) => (
+                  <li key={entry.key}>{entry.text}</li>
                 ))}
+              </ul>
+            </div>
+          ) : null}
+
+          {fields.map((field) =>
+            field.kind === 'cta' ? (
+              <CtaFieldEditor
+                key={field.key}
+                labelKey={field.labelKey}
+                path={field.key}
+                errorFor={errorFor}
+                pages={pages}
+                academyId={academyId}
+                value={draft[field.key] as Partial<WebsiteCta> | undefined}
+                onChange={(value) => setField(field.key, value)}
+              />
+            ) : (
+              <ScalarField
+                key={field.key}
+                descriptor={field}
+                path={field.key}
+                errorFor={errorFor}
+                value={draft[field.key]}
+                onChange={(value) => setField(field.key, value)}
+                academyId={academyId}
+                sectionType={type}
+              />
+            )
+          )}
+
+          {schema.repeatable ? (
+            <div className="space-y-3 border-t border-border pt-4">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium text-foreground">
+                  {t(schema.repeatable.labelKey)}
+                </p>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={addItem}
+                  disabled={
+                    items.length >=
+                    (schema.repeatable.maxItems ?? MAX_SECTION_ITEMS)
+                  }
+                >
+                  <Plus className="size-3.5" aria-hidden />
+                  {t('website:editor.addItem')}
+                </Button>
               </div>
-            ))}
+              {hasSampleItems ? (
+                <p className="text-xs text-muted-foreground">
+                  {t('website:editor.sampleHelp')}
+                </p>
+              ) : null}
+              {items.map((item, index) => (
+                <div
+                  key={(item.id as string) ?? index}
+                  className="space-y-3 rounded-md border border-border p-3"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="text-xs font-medium text-muted-foreground">
+                        {t(schema.repeatable!.itemLabelKey)} {index + 1}
+                      </p>
+                      {item.sample === true ? (
+                        <>
+                          <Badge
+                            variant="outline"
+                            className="whitespace-nowrap"
+                          >
+                            {t('website:editor.sampleBadge')}
+                          </Badge>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="min-h-6 px-2 text-xs"
+                            onClick={() => confirmItemReal(index)}
+                          >
+                            <BadgeCheck className="size-3.5" aria-hidden />
+                            {t('website:editor.markTestimonialReal')}
+                          </Button>
+                        </>
+                      ) : null}
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeItem(index)}
+                      aria-label={t('website:editor.removeItem')}
+                    >
+                      <Trash2 className="size-4" aria-hidden />
+                    </Button>
+                  </div>
+                  {itemFields.map((field) => (
+                    <ScalarField
+                      key={field.key}
+                      descriptor={field}
+                      path={`${schema.repeatable!.key}.${index}.${field.key}`}
+                      errorFor={errorFor}
+                      value={item[field.key]}
+                      onChange={(value) => updateItem(index, field.key, value)}
+                      academyId={academyId}
+                      sectionType={type}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
+          ) : null}
+
+          {type === 'featuredCourses' && draft.mode === 'selected' ? (
+            <FeaturedCoursesPicker
+              academyId={academyId}
+              selectedIds={(draft.courseIds as string[] | undefined) ?? []}
+              onChange={(ids) => setField('courseIds', ids)}
+            />
+          ) : null}
+          {type === 'faq' ? (
+            <FaqLibraryField
+              academyId={academyId}
+              selectedIds={
+                (draft.libraryEntryIds as string[] | undefined) ?? []
+              }
+              onChange={(ids) => setField('libraryEntryIds', ids)}
+            />
+          ) : null}
+          {type === 'testimonials' ? (
+            <TestimonialLibraryField
+              academyId={academyId}
+              selectedIds={
+                (draft.libraryEntryIds as string[] | undefined) ?? []
+              }
+              onChange={(ids) => setField('libraryEntryIds', ids)}
+            />
+          ) : null}
+
+          <div className="flex justify-end gap-2 border-t border-border pt-4">
+            <Button type="button" variant="outline" onClick={onCancel}>
+              {t('common:actions.cancel')}
+            </Button>
+            <Button type="button" onClick={handleSave} disabled={isSaving}>
+              {t('website:editor.applyChanges')}
+            </Button>
           </div>
-        ) : null}
-
-        {type === 'featuredCourses' && draft.mode === 'selected' ? (
-          <FeaturedCoursesPicker
-            academyId={academyId}
-            selectedIds={(draft.courseIds as string[] | undefined) ?? []}
-            onChange={(ids) => setField('courseIds', ids)}
-          />
-        ) : null}
-        {type === 'faq' ? (
-          <FaqLibraryField
-            academyId={academyId}
-            selectedIds={(draft.libraryEntryIds as string[] | undefined) ?? []}
-            onChange={(ids) => setField('libraryEntryIds', ids)}
-          />
-        ) : null}
-        {type === 'testimonials' ? (
-          <TestimonialLibraryField
-            academyId={academyId}
-            selectedIds={(draft.libraryEntryIds as string[] | undefined) ?? []}
-            onChange={(ids) => setField('libraryEntryIds', ids)}
-          />
-        ) : null}
-
-        <div className="flex justify-end gap-2 border-t border-border pt-4">
-          <Button type="button" variant="outline" onClick={onCancel}>
-            {t('common:actions.cancel')}
-          </Button>
-          <Button type="button" onClick={handleSave} disabled={isSaving}>
-            {t('website:editor.applyChanges')}
-          </Button>
         </div>
-      </div>
 
-      {/*
+        {/*
         Phase 6 — live inline preview, updating on every field change.
         `pointer-events-none` + the section's own `enabled: true` keeps it
         a pure visual preview (CTA buttons/links stay inert, matching the
         whole-page preview's own established convention — see
         `WebsitePageEditorPage`'s doc comment on `linkRenderer`).
       */}
-      <div className="space-y-2 lg:sticky lg:top-0 lg:self-start">
-        <div className="flex items-center justify-between">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            {t('website:editor.livePreview')}
-          </p>
-          <div className="flex overflow-hidden rounded-md border border-border text-xs">
-            {PUBLIC_WEBSITE_LOCALES.map((candidate) => (
-              <button
-                key={candidate}
-                type="button"
-                onClick={() => setPreviewLocale(candidate)}
-                className={
-                  candidate === previewLocale
-                    ? 'bg-primary px-2.5 py-1 font-medium text-primary-foreground'
-                    : 'px-2.5 py-1 text-muted-foreground hover:text-foreground'
-                }
-              >
-                {PUBLIC_WEBSITE_LOCALE_LABELS[candidate]}
-              </button>
-            ))}
+        <div className="space-y-2 lg:sticky lg:top-0 lg:self-start">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              {t('website:editor.livePreview')}
+            </p>
+            <div className="flex overflow-hidden rounded-md border border-border text-xs">
+              {PUBLIC_WEBSITE_LOCALES.map((candidate) => (
+                <button
+                  key={candidate}
+                  type="button"
+                  onClick={() => setPreviewLocale(candidate)}
+                  className={
+                    candidate === previewLocale
+                      ? 'bg-primary px-2.5 py-1 font-medium text-primary-foreground'
+                      : 'px-2.5 py-1 text-muted-foreground hover:text-foreground'
+                  }
+                >
+                  {PUBLIC_WEBSITE_LOCALE_LABELS[candidate]}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-        <div className="max-h-[70vh] overflow-y-auto rounded-lg border border-border">
-          <div className="pointer-events-none">
-            <WebsiteThemeScope theme={previewTheme} brand={configuration.brand}>
-              <PublicWebsiteLocaleProvider locale={previewLocale}>
-                <SectionRenderer
-                  instance={previewInstance}
-                  academyId={academyId}
-                  pages={pages}
-                />
-              </PublicWebsiteLocaleProvider>
-            </WebsiteThemeScope>
+          <div className="max-h-[70vh] overflow-y-auto rounded-lg border border-border">
+            <div className="pointer-events-none">
+              <WebsiteThemeScope
+                theme={previewTheme}
+                brand={configuration.brand}
+              >
+                <PublicWebsiteLocaleProvider locale={previewLocale}>
+                  <SectionRenderer
+                    instance={previewInstance}
+                    academyId={academyId}
+                    pages={pages}
+                  />
+                </PublicWebsiteLocaleProvider>
+              </WebsiteThemeScope>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </WebsiteImageThemeContext.Provider>
   );
 }

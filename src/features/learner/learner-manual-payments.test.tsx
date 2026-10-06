@@ -92,6 +92,7 @@ const { default: LearnerPaymentsPage } =
   await import('./pages/LearnerPaymentsPage');
 const { default: CourseCheckoutPage } =
   await import('./pages/CourseCheckoutPage');
+const { courseOrderService } = await import('./services/CourseOrderService');
 
 function renderWith(node: JSX.Element, language: 'en' | 'ar' = 'en') {
   return render(
@@ -193,6 +194,31 @@ describe('LearnerPaymentsPage', () => {
       .map((node) => node.textContent);
     expect(statuses).toEqual(['Under review', 'Approved']);
     expect(screen.getAllByText('TRX-1')).toHaveLength(2);
+  });
+
+  it('opens the proof on the tap itself, in a dialog — no popup to block', async () => {
+    const getProofFile = vi
+      .spyOn(courseOrderService, 'getProofFile')
+      .mockResolvedValue(new Blob(['x'], { type: 'image/png' }));
+    const openSpy = vi.spyOn(window, 'open');
+    const createObjectURL = vi.fn(() => 'blob:proof');
+    Object.assign(URL, { createObjectURL, revokeObjectURL: vi.fn() });
+    useLearnerPayments.mockReturnValue(list([payment()]));
+    renderWith(<LearnerPaymentsPage />);
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /arabic calligraphy/i })
+    );
+
+    // The dialog is there before the file arrives…
+    expect(screen.getByTestId('payment-proof-dialog')).toBeTruthy();
+    // …and the file loads into it.
+    const image = await screen.findByTestId('payment-proof-image');
+    expect(image.getAttribute('src')).toBe('blob:proof');
+    expect(getProofFile).toHaveBeenCalledWith('o-1', 'p-1');
+    expect(openSpy).not.toHaveBeenCalled();
+    getProofFile.mockRestore();
+    openSpy.mockRestore();
   });
 
   it('shows the academy’s reason and offers a new payment only where allowed', () => {

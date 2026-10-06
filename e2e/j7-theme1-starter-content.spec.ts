@@ -382,4 +382,69 @@ test.describe('J7 — Theme 1 starter content', () => {
       await expect(page.getByText(quote)).toHaveCount(0);
     }
   });
+  test('J7d: the editor previews the starter photographs, after a reload, in both languages', async ({
+    page,
+  }) => {
+    // Production QA Issue 1 — a starter photograph is stored as a
+    // `theme-asset:` reference, which only the theme can turn into a file.
+    // The editor used to put the reference itself in `<img src>`: a broken
+    // image for every starter photo, on every theme, while the public site
+    // showed it fine. It now resolves it exactly as the site does.
+    const academyId = skipped.academyId;
+    const pages = await (
+      await apiGet(
+        page.request,
+        owner,
+        `/academies/${academyId}/website/pages`,
+        {
+          page: '1',
+          pageSize: '50',
+        }
+      )
+    ).json();
+    const home = pages.items.find(
+      (item: { coreType: string }) => item.coreType === 'home'
+    );
+    const hero = home.sections[0];
+    expect(hero.config.image).toMatch(/^theme-asset:/);
+
+    await signIn(page);
+    for (const language of ['en', 'ar'] as const) {
+      await goInApp(
+        page,
+        `/dashboard/academy/${academyId}/website/pages/${home.id}?section=${hero.id}`
+      );
+      if (language === 'ar') {
+        await page.evaluate(() =>
+          localStorage.setItem('atlas:language', JSON.stringify('ar'))
+        );
+      }
+      // A full refresh: nothing may depend on a theme pack some other
+      // screen happened to load earlier.
+      await page.reload();
+      const preview = page
+        .getByRole('dialog')
+        .getByTestId('section-field-image-preview');
+      await expect(preview).toBeVisible({ timeout: 30_000 });
+      await expect(preview).toHaveAttribute(
+        'src',
+        /\/theme-assets\/modern-education\/v\d+\/home-hero/
+      );
+      await expect
+        .poll(() =>
+          preview.evaluate(
+            (img) =>
+              (img as HTMLImageElement).complete &&
+              (img as HTMLImageElement).naturalWidth
+          )
+        )
+        .toBeGreaterThan(0);
+      if (language === 'ar') {
+        expect(await page.locator('html').getAttribute('dir')).toBe('rtl');
+      }
+    }
+    await page.evaluate(() =>
+      localStorage.setItem('atlas:language', JSON.stringify('en'))
+    );
+  });
 });

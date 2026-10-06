@@ -130,5 +130,15 @@
     "save": "Save and leave",
     "saving": "Saving…"
   },
-  "by": "by"
+  "by": "by",
+  "paymentProof": {
+    "title": "Payment proof",
+    "titleFor": "Payment proof — {{subject}}",
+    "description": "The payment proof file that was submitted.",
+    "loading": "Loading the payment proof…",
+    "error": "The payment proof could not be loaded. Check your connection and try again.",
+    "alt": "Payment proof",
+    "altFor": "Payment proof for {{subject}}",
+    "open": "Open in a new tab"
+  }
 }
