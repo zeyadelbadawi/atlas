@@ -219,7 +219,10 @@ export function resolveManaraTokens(
   // Day text: the palette's foreground, kept at AAA on both days.
   const text = ensureContrast(roles.foreground, days, 7, 'darker');
   const textMuted = ensureContrast(roles.foregroundMuted, days, 4.5, 'darker');
-  const brandText = ensureContrast(roles.link, days, 4.5, 'darker');
+  // 5:1 rather than 4.5:1: shared chrome such as the mobile bottom bar
+  // draws this colour on a 95%-opaque day surface over the night footer,
+  // and the 5% bleed costs about 0.1 of contrast.
+  const brandText = ensureContrast(roles.link, days, 5, 'darker');
   const line = composite(text, day, 0.12);
   const inputBorder = ensureContrast(roles.border, days, 3, 'darker');
   const focus = ensureContrast(roles.focus, days, 3, 'darker');

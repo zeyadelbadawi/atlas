@@ -267,8 +267,10 @@
   --mn-env-link: var(--mn-block-text);
   --mn-env-line: color-mix(in srgb, var(--mn-block-text) 24%, transparent);
   --mn-env-focus: var(--mn-block-text);
-  --mn-env-pill: color-mix(in srgb, var(--mn-block-text) 16%, transparent);
-  --mn-env-pill-text: var(--mn-block-text);
+  /* A solid inverted pill: its contrast is the tile's own text contrast,
+     which the mapping guarantees (a translucent tint would not). */
+  --mn-env-pill: var(--mn-block-text);
+  --mn-env-pill-text: var(--mn-block);
   --mn-env-card: var(--mn-block-hover);
   --mn-env-card-raised: var(--mn-block-hover);
   --mn-env-em: var(--mn-block-text);
@@ -282,8 +284,8 @@
   --mn-env-link: var(--mn-accent-text);
   --mn-env-line: color-mix(in srgb, var(--mn-accent-text) 24%, transparent);
   --mn-env-focus: var(--mn-accent-text);
-  --mn-env-pill: color-mix(in srgb, var(--mn-accent-text) 14%, transparent);
-  --mn-env-pill-text: var(--mn-accent-text);
+  --mn-env-pill: var(--mn-accent-text);
+  --mn-env-pill-text: var(--mn-accent);
   --mn-env-card: var(--mn-accent-hover);
   --mn-env-card-raised: var(--mn-accent-hover);
   --mn-env-em: var(--mn-accent-text);
@@ -613,8 +615,8 @@
   --mn-env-text-muted: var(--mn-block-text-muted);
   --mn-env-link: var(--mn-block-text);
   --mn-env-focus: var(--mn-block-text);
-  --mn-env-pill: color-mix(in srgb, var(--mn-block-text) 16%, transparent);
-  --mn-env-pill-text: var(--mn-block-text);
+  --mn-env-pill: var(--mn-block-text);
+  --mn-env-pill-text: var(--mn-block);
   text-decoration: none;
   transition:
     transform var(--mn-fast) var(--mn-ease),
@@ -628,8 +630,8 @@
   --mn-env-text-muted: var(--mn-accent-text);
   --mn-env-link: var(--mn-accent-text);
   --mn-env-focus: var(--mn-accent-text);
-  --mn-env-pill: color-mix(in srgb, var(--mn-accent-text) 14%, transparent);
-  --mn-env-pill-text: var(--mn-accent-text);
+  --mn-env-pill: var(--mn-accent-text);
+  --mn-env-pill-text: var(--mn-accent);
 }
 
 [data-theme-pack='manara'] .mn-tile[data-tone='night'] {

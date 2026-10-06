@@ -383,6 +383,19 @@
   color: var(--mn-night-text-muted);
   text-align: center;
 }
+/* The platform attribution arrives styled for a light ground; on the night
+   footer it takes the footer's own text tones (both ≥ 4.5:1 on night). */
+[data-theme-pack='manara']
+  .mnp-footer-legal
+  [data-testid='atlas-platform-attribution'] {
+  color: var(--mn-night-text-muted);
+}
+[data-theme-pack='manara']
+  .mnp-footer-legal
+  [data-testid='atlas-platform-attribution']
+  > span {
+  color: var(--mn-night-text);
+}
 @media (min-width: 640px) {
   [data-theme-pack='manara'] .mnp-footer-legal {
     flex-direction: row;
