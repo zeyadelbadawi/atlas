@@ -1,0 +1,108 @@
+{
+  "recordedAt": "2026-10-06",
+  "lighthouseVersion": "13.5.0",
+  "chromium": "141.0.7390.37",
+  "method": "mobile, simulated throttling, median of 3 runs by performance score; first visit (no consent seeded, cold cache); HTTP/1.1",
+  "results": {
+    "manara/home-new": {
+      "url": "/?__atlas_academy_preview=fx--manara--new",
+      "scores": {
+        "performance": 64,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3643,
+        "largestContentfulPaintMs": 4950,
+        "totalBlockingTimeMs": 410,
+        "cumulativeLayoutShift": 0,
+        "speedIndexMs": 3643
+      },
+      "transferBytes": {
+        "total": 634650,
+        "script": 473574,
+        "stylesheet": 40509,
+        "font": 66866,
+        "image": 39900,
+        "document": 1342
+      },
+      "requests": 70
+    },
+    "manara/home-rich": {
+      "url": "/?__atlas_academy_preview=fx--manara--rich",
+      "scores": {
+        "performance": 66,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3614,
+        "largestContentfulPaintMs": 4916,
+        "totalBlockingTimeMs": 357,
+        "cumulativeLayoutShift": 0.009,
+        "speedIndexMs": 3614
+      },
+      "transferBytes": {
+        "total": 617042,
+        "script": 473574,
+        "stylesheet": 40509,
+        "font": 66866,
+        "image": 19567,
+        "document": 1342
+      },
+      "requests": 69
+    },
+    "manara/courses-rich": {
+      "url": "/courses?__atlas_academy_preview=fx--manara--rich",
+      "scores": {
+        "performance": 67,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3609,
+        "largestContentfulPaintMs": 4904,
+        "totalBlockingTimeMs": 286,
+        "cumulativeLayoutShift": 0.056,
+        "speedIndexMs": 3609
+      },
+      "transferBytes": {
+        "total": 605983,
+        "script": 473574,
+        "stylesheet": 40509,
+        "font": 66866,
+        "image": 9966,
+        "document": 1342
+      },
+      "requests": 67
+    },
+    "manara/course-details-rich": {
+      "url": "/courses/fx-course-1?__atlas_academy_preview=fx--manara--rich",
+      "scores": {
+        "performance": 64,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 3596,
+        "largestContentfulPaintMs": 5704,
+        "totalBlockingTimeMs": 316,
+        "cumulativeLayoutShift": 0.009,
+        "speedIndexMs": 3596
+      },
+      "transferBytes": {
+        "total": 640252,
+        "script": 473574,
+        "stylesheet": 40509,
+        "font": 98983,
+        "image": 9966,
+        "document": 1342
+      },
+      "requests": 71
+    }
+  }
+}
