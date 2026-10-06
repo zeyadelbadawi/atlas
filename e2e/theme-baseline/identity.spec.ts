@@ -95,6 +95,8 @@ const CANVAS_VARIABLES = [
 
 interface ElementState {
   readonly tag: string;
+  /** The class attribute (SVG `className` is an object), for failure messages. */
+  readonly cls: string;
   readonly rect: readonly number[];
   readonly type: string;
   readonly colors: Record<string, string>;
@@ -152,6 +154,7 @@ async function capture(page: Page): Promise<PageState> {
       const style = getComputedStyle(element);
       return {
         tag: element.tagName.toLowerCase(),
+        cls: (element.getAttribute('class') ?? '').slice(0, 80),
         rect: [rect.x, rect.y + window.scrollY, rect.width, rect.height].map(
           (value) => Math.round(value * 100) / 100
         ),
@@ -347,7 +350,7 @@ for (const entry of CASES) {
         }
         state.elements.forEach((element, index) => {
           const base = reference.elements[index];
-          const where = `${palette}: #${index} <${element.tag}>`;
+          const where = `${palette}: #${index} <${element.tag}${base.cls ? ` class="${base.cls}"` : ''}>`;
           if (element.tag !== base.tag) {
             failures.push(`${where} is <${base.tag}> in the reference`);
             return;
@@ -366,8 +369,10 @@ for (const entry of CASES) {
             if (value === base.colors[property]) continue;
             if (slotted.has(`${index}:${property}`)) continue;
             if (isCappedNeutral(value)) continue;
+            // The reference and sentinel-pass values tell whether the slot
+            // paint reached this element at all.
             failures.push(
-              `${where} ${property} "${value}" is brand colour outside a slot`
+              `${where} ${property} "${value}" is brand colour outside a slot (reference "${base.colors[property]}", sentinel "${sentinel.elements[index].colors[property]}")`
             );
           }
         });
