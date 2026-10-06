@@ -22,7 +22,7 @@ This document is the contract between the workstreams. Facts in §1–§2 were r
 - **Backend** stores `website_configurations.theme_key` (TEXT). Allowed keys = `SELECTABLE_WEBSITE_THEME_KEYS` in
   `src/website/constants/website.constants.ts` (`@IsIn` on the configuration and provisioning DTOs). Provisioning's
   theme step calls `getWebsiteTemplate(themeKey)` → a starter template per theme is mandatory (`templates/<key>.template.ts`
-  + `website-template.registry.ts`). No migration needed. Fixtures: `npm run fixtures:website-templates`.
+  - `website-template.registry.ts`). No migration needed. Fixtures: `npm run fixtures:website-templates`.
 - **Routes a theme must draw**: data-driven core pages (home, about, courses, faqs, contact, `courses/:id`), auth pages
   (`AuthFrame`), `PageIntro`, 404, Coming Soon, header, footer. The learner portal (`my/*`) is shared and themed by the
   palette bridge only.
@@ -36,7 +36,7 @@ This document is the contract between the workstreams. Facts in §1–§2 were r
   `src/test/setup-theme-packs.ts`, `renderer/__snapshots__/website-theme-scope-variables…snap`, tests that count
   themes (`setup-theme-picker.test.tsx`, `website-theme-tab-themes.test.tsx`, `website-theme.registry.test.ts`),
   `e2e/theme-baseline/{matrix.ts,server/fixture-server.mjs,lighthouse/run-lighthouse.mjs,screenshots.spec.ts,axe.spec.ts,
-  palette-injection.spec.ts,theme-pack-split.spec.ts}`, `server/ssr/ssr.test.mjs` (`PACKS`, `MARKERS`, stylesheet regex,
+palette-injection.spec.ts,theme-pack-split.spec.ts}`, `server/ssr/ssr.test.mjs` (`PACKS`, `MARKERS`, stylesheet regex,
   size budget), `ssr/theme-font-preloads.ts` (opt-in, Atelier only today), i18n `website.json` → `themes.<key>` +
   `<key>.*`, backend `website.constants.ts` / `website-template.registry.ts` / `website-generation.matrix.spec.ts` /
   `test/{website,provisioning}.e2e-spec.ts`. Atelier reuses Theme 1's `useT1Navigate` and `setFaqFilter`; Manara does
@@ -66,17 +66,17 @@ progress, Arabic UI, manual payments).
 
 ## 3. Proposal
 
-1. **Name**: **Manara** (منارة, "lighthouse/beacon"). The display face is *Alexandria* — the Lighthouse of Alexandria.
+1. **Name**: **Manara** (منارة, "lighthouse/beacon"). The display face is _Alexandria_ — the Lighthouse of Alexandria.
 2. **Target audience**: teacher-led and centre-led academies with large student audiences — secondary-school and
    exam-preparation teachers, tutoring centres, language/test-prep and bootcamp-style academies — whose visitors are
    students (and parents) on phones.
-3. **Design thesis**: *the teacher on stage, the student on the phone.* A bold, kinetic, poster-like theme: a dark
+3. **Design thesis**: _the teacher on stage, the student on the phone._ A bold, kinetic, poster-like theme: a dark
    "night" stage, brand colour as **surface** (big dyed blocks), oversized Arabic-first display type, giant numbers,
    slanted "beam" seams, poster-style course cards, and a sticky "Join" action always one tap away.
 4. **Why it belongs in Atlas**: it is designed for the product's own Phase 1 persona; it is Arabic-first in a market
    that is; it turns the data Atlas already has (courses, levels, counts, live sessions, exams) into proof and a path.
-5. **Vs Theme 1**: T1 is a white brochure with rounded elevated cards, the brand as *signal* (CTAs, strokes, chips),
-   neutral canvas, Readex/Rubik, split hero, 20px radius. Manara is a dark stage with brand as *wash* in defined
+5. **Vs Theme 1**: T1 is a white brochure with rounded elevated cards, the brand as _signal_ (CTAs, strokes, chips),
+   neutral canvas, Readex/Rubik, split hero, 20px radius. Manara is a dark stage with brand as _wash_ in defined
    blocks, 0–8px radius, slanted seams, a full-bleed type-led hero, poster cards, scoreboard numerals, a solid
    brand-block header, a mobile-first rail composition.
 6. **Vs Theme 2**: Atelier is paper, hairlines, serif, numbered chapters, a drawn thread, cinematic pinned scenes,
@@ -119,9 +119,9 @@ progress, Arabic UI, manual payments).
        when none.
     10. `faq` — **Before you join**: numbered bold accordion.
     11. `cta` — **Enrolment is open**: brand block with the beam; huge line; Join + Contact.
-    Order is proof-first (hero → scoreboard → tracks → courses), unlike T1 (hero → highlights → categories …) and T2
-    (hero → philosophy chapters …). A brand-new Academy (no live data) still reads: hero → how we teach → steps →
-    what's included → FAQ → CTA.
+        Order is proof-first (hero → scoreboard → tracks → courses), unlike T1 (hero → highlights → categories …) and T2
+        (hero → philosophy chapters …). A brand-new Academy (no live data) still reads: hero → how we teach → steps →
+        what's included → FAQ → CTA.
 11. **Inner-page architecture**: `pageHeader` = **banner block** (brand block, slanted bottom seam, giant title, lead,
     optional search, optional image tile). About: banner, `featureSplit` story (`about-story`), `features` values,
     `statistics`, `instructors`, `gallery` (slanted mosaic), `cta`. Courses: banner with search + `courseCatalog`
@@ -142,7 +142,7 @@ progress, Arabic UI, manual payments).
     manual, keyboard-reachable, counter in text. Reduced motion: everything at its final state; verified in a real
     browser context. Only `transform`, `opacity`, `clip-path` animate.
 13. **Image / art direction** (Magnific only, new assets, none shared with T1/T2 — a test compares master hashes):
-    *"After-hours stage light"* — photographic realism, high contrast, deep cool-dark grounds (charcoal, ink blue) with
+    _"After-hours stage light"_ — photographic realism, high contrast, deep cool-dark grounds (charcoal, ink blue) with
     one warm directional key light (desk lamp, projector, window at dusk), low saturation so the brand dyes sit on top.
     Subjects are exam-season learning without people's faces: a lamp over notebooks and blank exam sheets, a lecture
     hall from the back rows, a blank whiteboard with markers under a spotlight, stacked plain textbooks, a phone face
@@ -170,22 +170,22 @@ progress, Arabic UI, manual payments).
     1024 (3-up, banner + aside), 1440 (12-col asymmetric blocks). Slanted shapes are `clip-path` on in-flow boxes with
     `overflow-x: clip`, so nothing scrolls sideways; checked at 390/768/1024/1440 in EN and AR, short and long content.
 
-UI/UX Pro Max gate (run 6 Oct 2026, `--design-system`, variance 8 / motion 5 / density 6): pattern *Trust & Authority +
-Conversion* (hero → proof → solution → CTA) — matches §3.10; style *large blocks, bold 700+ type, visible grid,
-asymmetric, high contrast* — adopted, with 150–300 ms transitions instead of "instant"; avoid playful design and AI
+UI/UX Pro Max gate (run 6 Oct 2026, `--design-system`, variance 8 / motion 5 / density 6): pattern _Trust & Authority +
+Conversion_ (hero → proof → solution → CTA) — matches §3.10; style _large blocks, bold 700+ type, visible grid,
+asymmetric, high contrast_ — adopted, with 150–300 ms transitions instead of "instant"; avoid playful design and AI
 purple/pink gradients — adopted. The tool's generic Arabic pairing (Noto Naskh/Sans) is replaced by Alexandria, a
 single Arabic+Latin family that keeps EN and AR identical in weight and rhythm; recorded as a deliberate deviation.
 
 ## 4. Workstreams and file ownership
 
-| WS | Files |
-|----|-------|
-| F Foundation | `src/types/website-theme.types.ts`, `themes/manara.theme.ts` + registry, `theme-packs/{theme-pack.loader,theme-stylesheets}.ts`, `manara/manara.pack.ts`, `manara/manara.brand-mapping.ts`(+test), `manara/manara.css` (tokens, fonts, beam, seams), `manara/manara.stylesheet.css`, `manara/manara-parts.tsx`, `src/assets/fonts/alexandria-*.woff2` + OFL, `theme-assets/manifests/manara.manifest.ts` + index, `adopt-theme-assets.ts`, `src/test/setup-theme-packs.ts`, i18n `website.json` (`themes.manara`, `manara.*`) |
-| B Backend | `website.constants.ts`, `templates/manara.template.ts` + registry + spec, e2e cases, fixtures export |
-| H Home | `manara/sections/*` (all 13 home types) + `manara-sections.css` + tests |
-| P Pages & chrome | `manara/chrome/*`, `manara/pages/*` (pageHeader/pageIntro, catalog, contact, courseDetails, notFound, comingSoon, authFrame, header, footer) + `manara-pages.css` + tests |
-| A Assets | Magnific generation, `public/theme-assets/manara/v1/`, manifest release, `released-versions.ts`, archive |
-| Q QA | theme-baseline matrix (+ fixture server, Lighthouse), axe, SSR tests, pack-split guard, J43 real-stack journey, reduced motion in the browser, visual review EN/AR × 390/768/1024/1440 |
+| WS               | Files                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| F Foundation     | `src/types/website-theme.types.ts`, `themes/manara.theme.ts` + registry, `theme-packs/{theme-pack.loader,theme-stylesheets}.ts`, `manara/manara.pack.ts`, `manara/manara.brand-mapping.ts`(+test), `manara/manara.css` (tokens, fonts, beam, seams), `manara/manara.stylesheet.css`, `manara/manara-parts.tsx`, `src/assets/fonts/alexandria-*.woff2` + OFL, `theme-assets/manifests/manara.manifest.ts` + index, `adopt-theme-assets.ts`, `src/test/setup-theme-packs.ts`, i18n `website.json` (`themes.manara`, `manara.*`) |
+| B Backend        | `website.constants.ts`, `templates/manara.template.ts` + registry + spec, e2e cases, fixtures export                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| H Home           | `manara/sections/*` (all 13 home types) + `manara-sections.css` + tests                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| P Pages & chrome | `manara/chrome/*`, `manara/pages/*` (pageHeader/pageIntro, catalog, contact, courseDetails, notFound, comingSoon, authFrame, header, footer) + `manara-pages.css` + tests                                                                                                                                                                                                                                                                                                                                                     |
+| A Assets         | Magnific generation, `public/theme-assets/manara/v1/`, manifest release, `released-versions.ts`, archive                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Q QA             | theme-baseline matrix (+ fixture server, Lighthouse), axe, SSR tests, pack-split guard, J43 real-stack journey, reduced motion in the browser, visual review EN/AR × 390/768/1024/1440                                                                                                                                                                                                                                                                                                                                        |
 
 Rules: colours only via `--mn-*`/`--website-*`; logical CSS properties only; `Reveal` for entrances; `linkRenderer`
 present = public runtime (hidden targets render nothing; empty optional data hides the section; samples never public).
@@ -204,8 +204,58 @@ present = public runtime (hidden targets render nothing; empty optional data hid
 ## 6. Phases
 
 1. Foundation (F) → 2. B, H, P, A in parallel → 3. integration + i18n → 4. QA, fixes, visual refinement →
-5. PRs (backend first), merge, deploy, production verification → 6. Results recorded in §7.
+2. PRs (backend first), merge, deploy, production verification → 6. Results recorded in §7.
 
 ## 7. Results
 
-(To be recorded when delivered.)
+Recorded as delivered (6 Oct 2026). Items marked _pending_ are filled in by the
+release report once the remaining gates run.
+
+### 7.1 What shipped
+
+- **Theme key** `manara`, selectable in the setup picker and the Theme tab;
+  starter template v1 in the backend (`manara.template.ts`): Home = hero →
+  statistics → courseCategories → featuredCourses → featureSplit → steps →
+  features → testimonials → instructors → faq → cta; About, Courses, FAQs and
+  Contact open with the banner block (`pageHeader`). No new CMS fields, no
+  migration.
+- **Pack** `manara.pack.ts`: all 13 Home renderers, `pageHeader`,
+  `courseCatalog`, `contact`, Header/Footer/AuthFrame, PageIntro,
+  CourseDetails, NotFound, ComingSoon. Lazy chunk 121.6 kB (Atelier 132.4 kB,
+  Theme 1 155.5 kB); stylesheet 58.9 kB (Atelier 62.4 kB), loaded only when
+  the theme is active (`theme-pack-split.spec.ts`, SSR pack isolation tests).
+- **Brand mapping** `manara.brand-mapping.ts`: day/night/block/accent tokens
+  re-solved per palette; 127 matrix tests over the §I.2 identity palettes.
+- **Assets**: 14 photographs generated with Magnific (Nano Banana Pro, 4k),
+  28 + 8 candidates reviewed at full frame and 100% (faces, hands, readable
+  marks, logos, screens, frame edges); 14 approved, prepared as AVIF/WebP +
+  LQIP under `public/theme-assets/manara/v1` (92 files, 1.9 MB) with full
+  provenance (prompt = `buildThemeAssetPrompt`, seed, job, sha256). No image
+  is shared with Theme 1 or Atelier (asserted). Masters kept in the session
+  scratchpad; R2 archive upload _pending_ (`ATLAS_THEME_ARCHIVE_*` not present
+  in this environment).
+
+### 7.2 Verification
+
+| Gate                                                                              | Result                                                                                                                                                  |
+| --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TypeScript / ESLint / Prettier (frontend)                                         | clean                                                                                                                                                   |
+| Frontend unit tests                                                               | 3164 passed (incl. 240 Manara: brand mapping 127, sections 39, chrome 17, inner pages 32, course details 12, loader/registry/assets)                    |
+| Backend lint / tsc / unit                                                         | clean; 460 passed (23 new Manara template tests)                                                                                                        |
+| Backend e2e (website, provisioning)                                               | 56 passed, incl. Manara selection + provisioning                                                                                                        |
+| SSR renderer tests (`test:ssr`)                                                   | 84 passed — Manara pack isolation, stylesheet link, Alexandria preloads                                                                                 |
+| Theme 1 / Atelier / retired-theme visual + axe regression                         | 1303/1304; the one diff is a lazy-image capture race on an Atelier page (passes on re-run), no baseline changed                                         |
+| Manara visual baseline (EN/AR × 1440/1024/390, new/rich/unpublished, 11 palettes) | _pending_                                                                                                                                               |
+| Manara axe (0 violations)                                                         | _pending_                                                                                                                                               |
+| Lighthouse (mobile, fixture server)                                               | _pending_                                                                                                                                               |
+| Real browser: reduced motion                                                      | no-preference → `mn-rise`/`mn-sweep` + scroll-driven header beam; reduce → none, reveals in final state, hero h1 never animates                         |
+| Real browser: keyboard                                                            | skip link → nav → locale → sign in/up → CTAs with 3 px rings; full-screen menu opens on Enter, focus to Close, Esc returns focus; FAQ accordion toggles |
+| Real browser: layout                                                              | no horizontal overflow at 390/768/1024/1440 EN+AR, one `h1` per page, no console errors                                                                 |
+| J35h real-stack provisioning journey                                              | _pending_                                                                                                                                               |
+
+### 7.3 Fixed during browser QA
+
+- Coming Soon: the beam overshot its block when nothing followed → `overflow: clip` on `.mn-block`.
+- Course Details at exactly 1024: phone purchase bar and sticky panel both showed (utility class lost to the stylesheet's specificity) → explicit `≥1024` rule.
+- **RTL never applied on the public runtime**: `dir` sits on the locale wrapper _above_ the theme scope, so `[data-theme-pack] [dir='rtl']` never matched; every RTL rule now also carries Atelier's `[dir='rtl'] [data-theme-pack='manara']` form (seams, beams, select chevrons, letter-spacing verified in Arabic).
+- Banner block bottom padding tightened.
