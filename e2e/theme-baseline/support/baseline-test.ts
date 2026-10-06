@@ -168,13 +168,19 @@ export async function settleImages(page: Page): Promise<void> {
       new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
     const wait = (ms: number) =>
       new Promise<void>((resolve) => setTimeout(resolve, ms));
-    // Only images that take part in layout: a lazy image inside a hidden
-    // container (the auth side plate on phones) never starts loading, and
-    // `decode()` on it would never settle.
+    // Only images that can appear in the capture: one in a hidden container
+    // (the auth side plate on phones) or beyond the viewport's horizontal
+    // band (cards further along a horizontally scrolling rail) never starts
+    // loading lazily and is not in a full-page screenshot either.
     const rendered = () =>
-      Array.from(document.images).filter(
-        (image) => image.getClientRects().length > 0
-      );
+      Array.from(document.images).filter((image) => {
+        const rect = image.getBoundingClientRect();
+        return (
+          image.getClientRects().length > 0 &&
+          rect.right > 0 &&
+          rect.left < window.innerWidth
+        );
+      });
     // Decode synchronously at paint time: with `decoding="async"` an image
     // whose decoded pixels were dropped while off screen paints blank on
     // the first frame of a beyond-viewport capture, and the LQIP shows.
@@ -214,11 +220,39 @@ export async function settleImages(page: Page): Promise<void> {
       settled = signature;
     }
     window.scrollTo(0, 0);
-    const broken = rendered()
-      .filter((image) => image.complete && image.naturalWidth === 0)
-      .map((image) => image.currentSrc || image.src);
+    // Never hand an unfinished page to the capture: every rendered image
+    // must be loaded, intact and decoded, or the case fails with the
+    // offenders named instead of recording them.
+    const describe = (image: HTMLImageElement) => image.currentSrc || image.src;
+    const pending = rendered().filter((image) => !image.complete);
+    if (pending.length > 0) {
+      throw new Error(
+        `images still loading after ${Math.round((performance.now() - (deadline - 20_000)) / 1000)}s: ${pending.map(describe).join(', ')}`
+      );
+    }
+    const broken = rendered().filter((image) => image.naturalWidth === 0);
     if (broken.length > 0) {
-      throw new Error(`images failed to load: ${broken.join(', ')}`);
+      throw new Error(
+        `images failed to load: ${broken.map(describe).join(', ')}`
+      );
+    }
+    const undecoded = (
+      await Promise.all(
+        rendered().map((image) =>
+          Promise.race([
+            image.decode().then(
+              () => null,
+              () => image
+            ),
+            wait(5_000).then(() => image),
+          ])
+        )
+      )
+    ).filter((image): image is HTMLImageElement => image !== null);
+    if (undecoded.length > 0) {
+      throw new Error(
+        `images not decoded: ${undecoded.map(describe).join(', ')}`
+      );
     }
   });
   await page.evaluate(
