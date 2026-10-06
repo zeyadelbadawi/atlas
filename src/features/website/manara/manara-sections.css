@@ -1,0 +1,906 @@
+/*
+ * Manara (Theme 3) — Home section layouts (plan §3.10). Section-specific
+ * rules only; the system (tokens, grounds, seams, type, actions, tiles,
+ * cards, frames, rails, motion) lives in `manara.css`. Class prefix `mnh-`.
+ * Scoped to `[data-theme-pack='manara']`.
+ *
+ * Colours come only from the Manara mapping (`--mn-*`, `--website-*`) and
+ * the ground's `--mn-env-*` variables; layout uses logical properties so
+ * Arabic mirrors by construction. Motion: hover/focus transitions only;
+ * entrances are the shared `Reveal` and the foundation's `mn-enter`.
+ */
+
+/* ------------------------------------------------------------------ */
+/* Shared                                                               */
+/* ------------------------------------------------------------------ */
+
+/* Headings inside a block take the ground's text colour (the app's base
+   heading colour is the day ink, unreadable on night and dyed grounds). */
+[data-theme-pack='manara'] .mn-block :is(h1, h2, h3, h4, h5, h6) {
+  color: inherit;
+}
+
+[data-theme-pack='manara'] .mn-block :is(ul, ol) {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* The eyebrow: the beam's rule and a bold label. */
+[data-theme-pack='manara'] .mnh-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+[data-theme-pack='manara'] .mnh-item-title {
+  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+  overflow-wrap: anywhere;
+}
+
+[data-theme-pack='manara'] .mnh-item-text {
+  margin-block-start: 0.375rem;
+  overflow-wrap: anywhere;
+}
+
+/* A plain notice (load errors, no matches): text, never colour alone. */
+[data-theme-pack='manara'] .mnh-notice {
+  display: grid;
+  justify-items: start;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border-radius: var(--mn-radius-lg);
+  border: 2px dashed var(--mn-env-line, var(--mn-line));
+}
+
+/* Preview-only frames (never on the public route). */
+[data-theme-pack='manara'] .mnh-preview-block {
+  padding-block: 2rem;
+}
+
+[data-theme-pack='manara'] .mnh-preview-note {
+  padding: 1.5rem;
+  border: 2px dashed var(--website-input-border);
+  border-radius: var(--mn-radius-lg);
+  font-size: 0.875rem;
+  color: var(--mn-env-text-muted, var(--mn-text-muted));
+  text-align: center;
+}
+
+[data-theme-pack='manara'] .mnh-sample-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-block-end: 2rem;
+  font-size: 0.875rem;
+  color: var(--mn-env-text-muted, var(--mn-text-muted));
+}
+
+[data-theme-pack='manara'] .mnh-sample-badge {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 1.5rem;
+  padding-inline: 0.625rem;
+  border: 2px dashed currentColor;
+  border-radius: 999px;
+  font-family: var(--mn-font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+[data-theme-pack='manara'] .mnh-sample {
+  opacity: 0.75;
+}
+
+/* ------------------------------------------------------------------ */
+/* Hero — the Stage                                                     */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mnh-hero {
+  padding-block-start: calc(var(--mn-rhythm) * 0.7);
+}
+
+[data-theme-pack='manara'] .mnh-hero-copy {
+  display: grid;
+  gap: 1.5rem;
+  align-content: center;
+}
+
+[data-theme-pack='manara'] .mnh-hero-title {
+  margin-block: 0.25rem;
+}
+
+[data-theme-pack='manara'] .mnh-hero-subtitle {
+  max-inline-size: var(--mn-measure);
+  color: var(--mn-env-em, var(--mn-brand-text));
+}
+
+[data-theme-pack='manara'] .mnh-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding-block-start: 0.5rem;
+}
+
+/* Proof pills: short claims that wrap rather than overflow. */
+[data-theme-pack='manara'] .mnh-hero-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+[data-theme-pack='manara'] .mnh-hero-pill {
+  min-block-size: 2.25rem;
+  padding-inline: 1rem;
+  font-size: 0.875rem;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+[data-theme-pack='manara'] .mnh-hero-poster {
+  inline-size: 100%;
+}
+
+@media (min-width: 1024px) {
+  [data-theme-pack='manara'] .mnh-hero-poster {
+    max-inline-size: 34rem;
+    justify-self: end;
+  }
+}
+
+/* The underlined search field. */
+[data-theme-pack='manara'] .mnh-search {
+  display: grid;
+  gap: 0.5rem;
+  max-inline-size: 34rem;
+  padding-block-start: 0.5rem;
+}
+
+[data-theme-pack='manara'] .mnh-search-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0.75rem;
+  border-block-end: 2px solid var(--mn-env-line, var(--mn-line));
+  transition: border-color var(--mn-fast) var(--mn-ease);
+}
+
+[data-theme-pack='manara'] .mnh-search-row:focus-within {
+  border-block-end-color: var(--mn-beam);
+}
+
+[data-theme-pack='manara'] .mnh-search-input {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  min-block-size: 3rem;
+  padding-inline: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 1.125rem;
+}
+
+[data-theme-pack='manara'] .mnh-search-input::placeholder {
+  color: var(--mn-env-text-muted, var(--mn-text-muted));
+}
+
+[data-theme-pack='manara'] .mnh-search-submit {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.5rem;
+  min-block-size: 3rem;
+  min-inline-size: 2.75rem;
+  padding-inline: 0.25rem;
+  border: 0;
+  background: none;
+  font-family: var(--mn-font-display);
+  font-weight: 700;
+  color: var(--mn-env-link, var(--mn-brand-text));
+  cursor: pointer;
+}
+
+/* ------------------------------------------------------------------ */
+/* About — the lead statement                                           */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mnh-about {
+  display: grid;
+  gap: 1.5rem;
+}
+
+[data-theme-pack='manara'] .mnh-about-body {
+  display: grid;
+  gap: 1.25rem;
+}
+
+[data-theme-pack='manara'] .mnh-about-lead {
+  font-size: clamp(1.25rem, 1.05rem + 0.9vw, 1.75rem);
+  font-weight: 600;
+  line-height: 1.45;
+  max-inline-size: 40ch;
+}
+
+[data-theme-pack='manara'] .mnh-about-plate {
+  inline-size: 100%;
+  max-inline-size: 20rem;
+}
+
+@media (min-width: 1024px) {
+  [data-theme-pack='manara'] .mnh-about-plate {
+    max-inline-size: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Feature split — How we teach                                         */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mnh-split-copy {
+  display: grid;
+  gap: 1.5rem;
+  justify-items: start;
+}
+
+[data-theme-pack='manara'] .mnh-split-plate {
+  inline-size: 100%;
+}
+
+/* Bold numbered points. */
+[data-theme-pack='manara'] .mnh-points {
+  display: grid;
+  gap: 1.25rem;
+  inline-size: 100%;
+  padding-block-start: 0.5rem;
+}
+
+[data-theme-pack='manara'] .mnh-point {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  column-gap: 1rem;
+  align-items: start;
+}
+
+[data-theme-pack='manara'] .mnh-point-no {
+  font-size: clamp(1.75rem, 1.4rem + 1.4vw, 2.5rem);
+  line-height: 1.1;
+  color: var(--mn-env-link, var(--mn-brand-text));
+}
+
+/* ------------------------------------------------------------------ */
+/* Features — What's included                                           */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mnh-included {
+  display: grid;
+  gap: 1rem;
+}
+
+[data-theme-pack='manara'] .mnh-feature {
+  gap: 1rem;
+  padding: 1.5rem;
+  block-size: 100%;
+}
+
+/* The icon on a block square (decorative). */
+[data-theme-pack='manara'] .mnh-feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 3rem;
+  block-size: 3rem;
+  border-radius: var(--mn-radius);
+  background-color: var(--mn-block);
+  color: var(--mn-block-text);
+}
+
+[data-theme-pack='manara'] .mnh-feature .mnh-item-text {
+  margin-block-start: 0;
+}
+
+@media (min-width: 640px) {
+  [data-theme-pack='manara'] .mnh-included {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  [data-theme-pack='manara'] .mnh-included {
+    grid-template-columns: repeat(var(--mnh-cols, 2), minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Steps — Start in three steps                                         */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mnh-steps-plate {
+  inline-size: 100%;
+}
+
+/*
+ * Phones: the steps stack along a vertical beam on the start side, each
+ * with its outlined numeral on the beam. Desktop (1024+): a horizontal
+ * track, the beam running behind the numerals.
+ */
+[data-theme-pack='manara'] .mnh-steps {
+  position: relative;
+  display: grid;
+  gap: 2rem;
+  --mnh-step-col: 4.5rem;
+}
+
+[data-theme-pack='manara'] .mnh-steps-beam {
+  position: absolute;
+  inset-block: 0.5rem;
+  inset-inline-start: calc(var(--mnh-step-col) / 2 - 0.125rem);
+  inline-size: 0.25rem;
+  block-size: auto;
+  border-radius: 999px;
+}
+
+[data-theme-pack='manara'] .mnh-step {
+  position: relative;
+  min-inline-size: 0;
+}
+
+[data-theme-pack='manara'] .mnh-step-body {
+  display: grid;
+  grid-template-columns: var(--mnh-step-col) minmax(0, 1fr);
+  column-gap: 1rem;
+  align-items: start;
+}
+
+[data-theme-pack='manara'] .mnh-step-no {
+  grid-row: span 2;
+  justify-self: center;
+  padding-block: 0.25rem;
+  font-size: clamp(2.5rem, 1.8rem + 2.5vw, 3.5rem);
+  line-height: 1;
+  color: var(--mn-env-text, var(--mn-text));
+  /* The numeral sits on the beam: its ground breaks the line behind it. */
+  background-color: var(--mn-day-soft);
+}
+
+/* Outlined numerals (filled where text stroke isn't supported). */
+@supports (-webkit-text-stroke-width: 1px) {
+  [data-theme-pack='manara'] .mnh-step-no {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--mn-env-text, var(--mn-text));
+  }
+}
+
+[data-theme-pack='manara'] .mnh-step .mnh-item-title {
+  padding-block-start: 0.375rem;
+}
+
+@media (min-width: 1024px) {
+  [data-theme-pack='manara'] .mnh-steps {
+    grid-template-columns: repeat(var(--mnh-steps, 3), minmax(0, 1fr));
+    column-gap: 2rem;
+  }
+
+  [data-theme-pack='manara'] .mnh-steps-beam {
+    inset-block: calc(var(--mn-numeral) * 0.95 / 2 - 0.125rem) auto;
+    inset-inline: 0;
+    inline-size: auto;
+    block-size: 0.25rem;
+  }
+
+  [data-theme-pack='manara'] .mnh-step-body {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0.5rem;
+  }
+
+  [data-theme-pack='manara'] .mnh-step-no {
+    grid-row: auto;
+    justify-self: start;
+    padding-block: 0;
+    padding-inline-end: 0.75rem;
+    font-size: var(--mn-numeral);
+    line-height: 0.95;
+  }
+
+  [data-theme-pack='manara'] .mnh-step .mnh-item-title {
+    padding-block-start: 0.5rem;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Course categories — Pick your track                                  */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mnh-tracks {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  [data-theme-pack='manara'] .mnh-tracks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  [data-theme-pack='manara'] .mnh-tracks {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  [data-theme-pack='manara'] .mnh-tracks {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* The tile carries the tone; the link inside takes its padding, so the
+   whole tile is the target. */
+[data-theme-pack='manara'] .mnh-track {
+  padding: 0;
+  block-size: 100%;
+}
+
+[data-theme-pack='manara'] .mnh-track:hover {
+  transform: translateY(-2px);
+}
+
+[data-theme-pack='manara'] .mnh-track-link {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2.5rem;
+  block-size: 100%;
+  min-block-size: 11rem;
+  padding: clamp(1.25rem, 1rem + 1.5vw, 2rem);
+  border-radius: inherit;
+  color: inherit;
+  text-decoration: none;
+}
+
+[data-theme-pack='manara'] .mnh-track-name {
+  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem);
+  line-height: 1.1;
+}
+
+[data-theme-pack='manara'] .mnh-track-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+[data-theme-pack='manara'] .mnh-track .mn-pill {
+  white-space: normal;
+}
+
+[data-theme-pack='manara'] .mnh-track-arrow {
+  flex: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* Featured courses — Now enrolling                                     */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mnh-courses {
+  --mn-rail-cols: 2;
+  --mn-rail-cols-lg: 3;
+  padding-block-start: 0.25rem;
+}
+
+/* A poster card: the slanted image, its level pill, title, teacher, price. */
+[data-theme-pack='manara'] .mnh-course {
+  block-size: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+[data-theme-pack='manara'] .mnh-course-media {
+  border-radius: 0;
+}
+
+[data-theme-pack='manara'] .mnh-course-level {
+  position: absolute;
+  inset-block-start: 0.75rem;
+  inset-inline-start: 0.75rem;
+  z-index: 1;
+}
+
+[data-theme-pack='manara'] .mnh-course-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.25rem;
+}
+
+[data-theme-pack='manara'] .mnh-course-title {
+  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+  transition: color var(--mn-fast) var(--mn-ease);
+}
+
+[data-theme-pack='manara'] a.mnh-course:hover .mnh-course-title,
+[data-theme-pack='manara'] a.mnh-course:focus-visible .mnh-course-title {
+  color: var(--mn-env-link, var(--mn-brand-text));
+}
+
+[data-theme-pack='manara'] .mnh-course-teacher {
+  font-size: 0.9375rem;
+  overflow-wrap: anywhere;
+}
+
+[data-theme-pack='manara'] .mnh-course-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-block-start: auto;
+  padding-block-start: 0.75rem;
+}
+
+[data-theme-pack='manara'] .mnh-course-arrow {
+  flex: none;
+}
+
+/* Loading cards mirror the posters' height (no shift when data lands). */
+[data-theme-pack='manara'] .mnh-course-skeleton {
+  min-block-size: 20rem;
+  background-color: var(--mn-env-card-raised, var(--mn-day-soft));
+}
+
+/* The designed empty state: a night tile with the launching plate. */
+[data-theme-pack='manara'] .mnh-launching {
+  display: grid;
+  gap: 2rem;
+  align-items: center;
+}
+
+[data-theme-pack='manara'] .mnh-launching-copy {
+  display: grid;
+  gap: 1rem;
+  justify-items: start;
+}
+
+@media (min-width: 768px) {
+  [data-theme-pack='manara'] .mnh-launching {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: 3rem;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Instructors — Your teachers                                          */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mnh-teachers {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  [data-theme-pack='manara'] .mnh-teachers {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  [data-theme-pack='manara'] .mnh-teachers {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  [data-theme-pack='manara'] .mnh-teachers {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* A name plate: the monogram block, the name, the courses pill. */
+[data-theme-pack='manara'] .mnh-teacher {
+  flex-direction: row;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.25rem;
+  block-size: 100%;
+}
+
+[data-theme-pack='manara'] .mnh-teacher-plate {
+  flex: none;
+  inline-size: 4rem;
+  block-size: 4rem;
+  border-radius: var(--mn-radius);
+  font-size: 1.5rem;
+}
+
+[data-theme-pack='manara'] .mnh-teacher-name {
+  display: block;
+  font-size: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
+  line-height: 1.2;
+}
+
+/* ------------------------------------------------------------------ */
+/* Statistics — the Scoreboard                                          */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mnh-score {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  [data-theme-pack='manara'] .mnh-score {
+    grid-template-columns: repeat(var(--mnh-cols, 4), minmax(0, 1fr));
+    gap: 1rem;
+  }
+}
+
+[data-theme-pack='manara'] .mnh-score-tile {
+  justify-content: flex-end;
+  gap: 0.5rem;
+  min-block-size: 11rem;
+  block-size: 100%;
+}
+
+[data-theme-pack='manara'] .mnh-score-value {
+  display: block;
+  min-inline-size: 0;
+}
+
+/* Two tiles share a phone's width: the numeral steps down a little. */
+[data-theme-pack='manara'] .mnh-score-value .mn-numeral {
+  display: block;
+  font-size: clamp(2.75rem, 1.5rem + 5.5vw, 6rem);
+}
+
+[data-theme-pack='manara'] .mnh-score-label {
+  overflow-wrap: anywhere;
+}
+
+/* ------------------------------------------------------------------ */
+/* Testimonials — Students say                                          */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mnh-quote-stage {
+  position: relative;
+  max-inline-size: 60rem;
+  padding-block-start: 3.5rem;
+}
+
+/* The decorative quote glyph behind the quote. */
+[data-theme-pack='manara'] .mnh-quote-glyph {
+  position: absolute;
+  inset-block-start: -0.75rem;
+  inset-inline-start: -0.25rem;
+  font-family: var(--mn-font-display);
+  font-size: clamp(6rem, 4rem + 8vw, 12rem);
+  font-weight: 900;
+  line-height: 1;
+  color: var(--mn-beam-soft);
+  pointer-events: none;
+  user-select: none;
+}
+
+[data-theme-pack='manara'] .mnh-quote {
+  position: relative;
+  display: grid;
+  gap: 2rem;
+}
+
+[data-theme-pack='manara'] .mnh-quote-text {
+  font-family: var(--mn-font-display);
+  font-size: clamp(1.5rem, 1.1rem + 1.8vw, 2.75rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+[data-theme-pack='manara'] [dir='rtl'] .mnh-quote-text,
+[dir='rtl'] [data-theme-pack='manara'] .mnh-quote-text,
+[data-theme-pack='manara'][dir='rtl'] .mnh-quote-text {
+  letter-spacing: 0;
+}
+
+[data-theme-pack='manara'] .mnh-quote-by {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+[data-theme-pack='manara'] .mnh-quote-avatar {
+  flex: none;
+  inline-size: 3.5rem;
+  block-size: 3.5rem;
+  border-radius: var(--mn-radius);
+}
+
+[data-theme-pack='manara'] .mnh-quote-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  min-inline-size: 0;
+}
+
+[data-theme-pack='manara'] .mnh-quote-pills .mn-pill {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+[data-theme-pack='manara'] .mnh-quote-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  max-inline-size: 60rem;
+  margin-block-start: 2.5rem;
+}
+
+/* The running count in text: "02 / 05". */
+[data-theme-pack='manara'] .mnh-quote-count {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--mn-env-text-muted, var(--mn-text-muted));
+}
+
+[data-theme-pack='manara'] .mnh-quote-count-now {
+  font-size: 2.5rem;
+  line-height: 1;
+  color: var(--mn-env-text, var(--mn-text));
+}
+
+[data-theme-pack='manara'] .mnh-icon-btn {
+  inline-size: 3rem;
+  min-inline-size: 3rem;
+  padding-inline: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* FAQ — Before you join                                                */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mnh-faq-aside {
+  display: grid;
+  gap: 1.5rem;
+  justify-items: start;
+}
+
+@media (min-width: 1024px) {
+  [data-theme-pack='manara'] .mnh-faq-aside {
+    position: sticky;
+    inset-block-start: calc(var(--mn-header-height) + 2rem);
+  }
+}
+
+[data-theme-pack='manara'] .mnh-faq-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+[data-theme-pack='manara'] .mnh-faq-item {
+  border-radius: var(--mn-radius-lg);
+  background-color: var(--mn-env-card, var(--mn-day));
+  border: 1px solid var(--mn-env-line, var(--mn-line));
+}
+
+[data-theme-pack='manara'] .mnh-faq-trigger {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr) 2.75rem;
+  align-items: center;
+  gap: 0.75rem;
+  inline-size: 100%;
+  min-block-size: 3.5rem;
+  padding: 1rem 1.25rem;
+  border: 0;
+  background: none;
+  text-align: start;
+  color: inherit;
+  cursor: pointer;
+}
+
+[data-theme-pack='manara'] .mnh-faq-no {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: var(--mn-env-link, var(--mn-brand-text));
+}
+
+[data-theme-pack='manara'] .mnh-faq-question {
+  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+  text-wrap: pretty;
+}
+
+/* The plus on a block square turns into a cross when open. */
+[data-theme-pack='manara'] .mnh-faq-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  border-radius: var(--mn-radius);
+  background-color: var(--mn-block);
+  color: var(--mn-block-text);
+  transition: transform var(--mn-fast) var(--mn-ease);
+}
+
+[data-theme-pack='manara'] .mnh-faq-item[data-open] .mnh-faq-icon {
+  transform: rotate(45deg);
+}
+
+[data-theme-pack='manara'] .mnh-faq-answer {
+  padding-block: 0 1.25rem;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  [data-theme-pack='manara'] .mnh-faq-answer {
+    padding-inline-start: calc(1.25rem + 2.75rem + 0.75rem);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* CTA — Enrolment is open                                              */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mnh-cta-copy {
+  display: grid;
+  gap: 1.5rem;
+}
+
+[data-theme-pack='manara'] .mnh-cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding-block-start: 0.5rem;
+}
+
+[data-theme-pack='manara'] .mnh-cta-plate {
+  inline-size: 100%;
+}
+
+/* ------------------------------------------------------------------ */
+/* Gallery — the slanted mosaic                                         */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mnh-gallery {
+  display: grid;
+  gap: 2rem 1.25rem;
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  [data-theme-pack='manara'] .mnh-gallery {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 2.5rem 1.5rem;
+  }
+}
+
+[data-theme-pack='manara'] .mnh-gallery-tile {
+  display: grid;
+  gap: 0.75rem;
+}
+
+[data-theme-pack='manara'] .mnh-gallery-caption {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--mn-env-text-muted, var(--mn-text-muted));
+}
+
+[data-theme-pack='manara'] .mnh-gallery-caption .mn-body {
+  overflow-wrap: anywhere;
+}
+
+[data-theme-pack='manara'] .mnh-gallery-no {
+  flex: none;
+}

@@ -18,7 +18,7 @@
  * `WebsiteRenderer` → `WebsiteThemeScope` → sections.
  *
  * THE SLUG SELECTS THE FIXTURE:  fx--<theme>--<state>[--<palette>[--c1]]
- *   theme    one of the five theme keys (`generated/<theme>.json`)
+ *   theme    one of the theme keys (`generated/<theme>.json`)
  *   state    `new` | `rich` | `unpublished`  (see `live-data.mjs`)
  *   palette  a `FIXTURE_PALETTES` name, injected as the stored brand
  *            (default: `default`, what a new Academy stores today)
@@ -83,6 +83,7 @@ const THEMES = [
   'minimal-editorial',
   'bold-creative',
   'atelier',
+  'manara',
 ];
 const STATES = ['new', 'rich', 'unpublished'];
 

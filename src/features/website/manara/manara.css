@@ -1,0 +1,980 @@
+/*
+ * Theme 3 — Manara: the visual system (Reports/THEME_3_MANARA_PLAN.md §3).
+ *
+ * Scoped to `[data-theme-pack='manara']`, so nothing here reaches the other
+ * themes or the dashboard. Colours are never declared here: they come from
+ * the brand mapping (`--mn-*`, `--website-*`). This file holds the
+ * invariants — type, rhythm, grounds, blocks, seams, the beam and motion —
+ * which stay identical for every brand.
+ *
+ * Motion: entrances use the shared `Reveal` (one IntersectionObserver) or
+ * the load-time `mn-enter` rise; the beam sweeps once at load; one
+ * scroll-driven decoration (the header beam) runs only inside
+ * `@supports (animation-timeline: scroll())` and
+ * `prefers-reduced-motion: no-preference`. Everything else — no support,
+ * reduced motion, server-rendered HTML without JavaScript — sees the final,
+ * readable state. No scroll listeners, no pinning. Only transform, opacity
+ * and clip-path animate.
+ */
+
+/* ------------------------------------------------------------------ */
+/* Display face: Alexandria (Arabic + Latin, one family)                 */
+/* ------------------------------------------------------------------ */
+
+@font-face {
+  font-family: 'Manara Display';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 900;
+  src: url('../../../assets/fonts/alexandria-arabic.woff2')
+    format('woff2-variations');
+  unicode-range:
+    U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1,
+    U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF,
+    U+FE70-FE74, U+FE76-FEFC;
+}
+
+@font-face {
+  font-family: 'Manara Display';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 900;
+  src: url('../../../assets/fonts/alexandria-latin.woff2')
+    format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-200B, U+2012-206F, U+20AC, U+2122, U+2191,
+    U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Manara Display';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 900;
+  src: url('../../../assets/fonts/alexandria-latin-ext.woff2')
+    format('woff2-variations');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* ------------------------------------------------------------------ */
+/* Tokens                                                               */
+/* ------------------------------------------------------------------ */
+
+.website-theme-scope[data-theme-pack='manara'] {
+  --mn-font-display:
+    'Manara Display', 'Readex Pro', 'Rubik', 'Segoe UI', system-ui, sans-serif;
+
+  /* Type scale: fluid, clamped at both ends (390 → 1440). */
+  --mn-display: clamp(2.25rem, 1.15rem + 4.7vw, 4.5rem);
+  --mn-display-compact: clamp(1.875rem, 1rem + 3.7vw, 3.5rem);
+  --mn-title: clamp(1.75rem, 1.2rem + 2.3vw, 2.75rem);
+  --mn-subtitle: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+  --mn-numeral: clamp(3.5rem, 2rem + 6.4vw, 6rem);
+  --mn-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+  --mn-measure: 60ch;
+
+  /* Rhythm, grid and shapes. */
+  --mn-rhythm: clamp(3.5rem, 2rem + 6vw, 7.5rem);
+  --mn-gutter: clamp(1rem, 0.5rem + 2.4vw, 3rem);
+  --mn-container: 88rem;
+  --mn-header-height: 4rem;
+  --mn-seam: clamp(1.5rem, 1rem + 3vw, 4rem);
+  --mn-radius: 0.375rem;
+  --mn-radius-lg: 0.75rem;
+
+  /* Motion. */
+  --mn-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --mn-duration: 480ms;
+  --mn-fast: 180ms;
+
+  background-color: var(--mn-day);
+  color: var(--mn-text);
+  /* Slanted shapes are clipped in-flow boxes; nothing may scroll sideways. */
+  overflow-x: clip;
+}
+
+@media (min-width: 768px) {
+  .website-theme-scope[data-theme-pack='manara'] {
+    --mn-header-height: 4.5rem;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Typography                                                           */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mn-display,
+[data-theme-pack='manara'] .mn-title,
+[data-theme-pack='manara'] .mn-subtitle,
+[data-theme-pack='manara'] .mn-numeral,
+[data-theme-pack='manara'] .mn-font-display {
+  font-family: var(--mn-font-display);
+  font-weight: 800;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+[data-theme-pack='manara'] .mn-display {
+  font-size: var(--mn-display);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+
+/* The fit rule (plan §3.14): a long headline steps down one size. */
+[data-theme-pack='manara'] .mn-display[data-long] {
+  font-size: var(--mn-display-compact);
+  line-height: 1.06;
+}
+
+[data-theme-pack='manara'] .mn-title {
+  font-size: var(--mn-title);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+}
+
+[data-theme-pack='manara'] .mn-subtitle {
+  font-size: var(--mn-subtitle);
+  line-height: 1.25;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+[data-theme-pack='manara'] .mn-numeral {
+  font-size: var(--mn-numeral);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Arabic has no tracking: letterforms connect. */
+[dir='rtl'] [data-theme-pack='manara'] .mn-display,
+[data-theme-pack='manara'][dir='rtl'] .mn-display,
+[dir='rtl'] [data-theme-pack='manara'] .mn-title,
+[data-theme-pack='manara'][dir='rtl'] .mn-title,
+[dir='rtl'] [data-theme-pack='manara'] .mn-numeral,
+[data-theme-pack='manara'][dir='rtl'] .mn-numeral,
+[data-theme-pack='manara'] [dir='rtl'] .mn-display,
+[data-theme-pack='manara'] [dir='rtl'] .mn-title,
+[data-theme-pack='manara'] [dir='rtl'] .mn-numeral {
+  letter-spacing: 0;
+}
+
+[data-theme-pack='manara'] .mn-lead {
+  font-size: var(--mn-lead);
+  line-height: 1.6;
+  max-width: var(--mn-measure);
+}
+
+[data-theme-pack='manara'] .mn-body {
+  font-size: 1rem;
+  line-height: 1.65;
+  max-width: var(--mn-measure);
+}
+
+/* An eyebrow: short, bold, in the display face. */
+[data-theme-pack='manara'] .mn-label {
+  font-family: var(--mn-font-display);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+}
+
+[data-theme-pack='manara'] [dir='rtl'] .mn-label,
+[dir='rtl'] [data-theme-pack='manara'] .mn-label,
+[data-theme-pack='manara'][dir='rtl'] .mn-label {
+  letter-spacing: 0;
+}
+
+[data-theme-pack='manara'] .mn-muted {
+  color: var(--mn-text-muted);
+}
+
+/* The highlighted phrase: a marker stroke of the beam under the words. */
+[data-theme-pack='manara'] .mn-em {
+  font-style: normal;
+  color: var(--mn-brand-text);
+  background-image: linear-gradient(
+    transparent 64%,
+    var(--mn-beam-soft) 64%,
+    var(--mn-beam-soft) 94%,
+    transparent 94%
+  );
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* ------------------------------------------------------------------ */
+/* Grounds and blocks                                                   */
+/* ------------------------------------------------------------------ */
+
+/*
+ * A block: one section-sized ground. `data-env` picks the ground; the
+ * text colour, links, pills and focus follow it, so a renderer never
+ * chooses a colour for a ground.
+ */
+[data-theme-pack='manara'] .mn-block {
+  position: relative;
+  isolation: isolate;
+  /* The beam overshoots its block by design; `clip` (not `hidden`) keeps
+     sticky descendants working and never adds a scroll container. */
+  overflow: clip;
+  padding-block: var(--mn-rhythm);
+  background-color: var(--mn-day);
+  color: var(--mn-text);
+  --mn-env-text: var(--mn-text);
+  --mn-env-text-muted: var(--mn-text-muted);
+  --mn-env-link: var(--mn-brand-text);
+  --mn-env-line: var(--mn-line);
+  --mn-env-focus: var(--mn-focus);
+  --mn-env-pill: var(--mn-pill);
+  --mn-env-pill-text: var(--mn-pill-text);
+  --mn-env-card: var(--mn-day);
+  --mn-env-card-raised: var(--mn-day-soft);
+  --mn-env-em: var(--mn-brand-text);
+}
+
+[data-theme-pack='manara'] .mn-block[data-env='soft'] {
+  background-color: var(--mn-day-soft);
+  --mn-env-card: var(--mn-day);
+  --mn-env-card-raised: var(--mn-day);
+}
+
+[data-theme-pack='manara'] .mn-block[data-env='night'] {
+  background-color: var(--mn-night);
+  color: var(--mn-night-text);
+  --mn-env-text: var(--mn-night-text);
+  --mn-env-text-muted: var(--mn-night-text-muted);
+  --mn-env-link: var(--mn-night-brand);
+  --mn-env-line: var(--mn-night-line);
+  --mn-env-focus: var(--mn-night-focus);
+  --mn-env-pill: var(--mn-night-pill);
+  --mn-env-pill-text: var(--mn-night-pill-text);
+  --mn-env-card: var(--mn-night-raised);
+  --mn-env-card-raised: var(--mn-night-raised);
+  --mn-env-em: var(--mn-night-accent-text);
+}
+
+[data-theme-pack='manara'] .mn-block[data-env='block'] {
+  background-color: var(--mn-block);
+  color: var(--mn-block-text);
+  --mn-env-text: var(--mn-block-text);
+  --mn-env-text-muted: var(--mn-block-text-muted);
+  --mn-env-link: var(--mn-block-text);
+  --mn-env-line: color-mix(in srgb, var(--mn-block-text) 24%, transparent);
+  --mn-env-focus: var(--mn-block-text);
+  /* A solid inverted pill: its contrast is the tile's own text contrast,
+     which the mapping guarantees (a translucent tint would not). */
+  --mn-env-pill: var(--mn-block-text);
+  --mn-env-pill-text: var(--mn-block);
+  --mn-env-card: var(--mn-block-hover);
+  --mn-env-card-raised: var(--mn-block-hover);
+  --mn-env-em: var(--mn-block-text);
+}
+
+[data-theme-pack='manara'] .mn-block[data-env='accent'] {
+  background-color: var(--mn-accent);
+  color: var(--mn-accent-text);
+  --mn-env-text: var(--mn-accent-text);
+  --mn-env-text-muted: var(--mn-accent-text);
+  --mn-env-link: var(--mn-accent-text);
+  --mn-env-line: color-mix(in srgb, var(--mn-accent-text) 24%, transparent);
+  --mn-env-focus: var(--mn-accent-text);
+  --mn-env-pill: var(--mn-accent-text);
+  --mn-env-pill-text: var(--mn-accent);
+  --mn-env-card: var(--mn-accent-hover);
+  --mn-env-card-raised: var(--mn-accent-hover);
+  --mn-env-em: var(--mn-accent-text);
+}
+
+[data-theme-pack='manara'] .mn-block .mn-muted,
+[data-theme-pack='manara'] .mn-block[data-env] .mn-muted {
+  color: var(--mn-env-text-muted);
+}
+
+[data-theme-pack='manara'] .mn-block[data-env] .mn-em {
+  color: var(--mn-env-em);
+}
+
+[data-theme-pack='manara'] .mn-block[data-tight] {
+  padding-block: calc(var(--mn-rhythm) * 0.55);
+}
+
+[data-theme-pack='manara'] .mn-block[data-flush-top] {
+  padding-block-start: 0;
+}
+
+/*
+ * Seams: a slanted edge between two grounds. The block overlaps the one
+ * before it by the seam's height and clips its own top corner, so the
+ * previous ground shows through as a 12°-ish diagonal. Logical: the high
+ * corner is at the reading start, so Arabic mirrors it.
+ */
+[data-theme-pack='manara'] .mn-block[data-seam-top] {
+  margin-block-start: calc(-1 * var(--mn-seam));
+  padding-block-start: calc(var(--mn-rhythm) + var(--mn-seam));
+  clip-path: polygon(0 var(--mn-seam), 100% 0, 100% 100%, 0 100%);
+}
+
+[data-theme-pack='manara'] .mn-block[data-seam-bottom] {
+  padding-block-end: calc(var(--mn-rhythm) + var(--mn-seam));
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--mn-seam)), 0 100%);
+}
+
+[data-theme-pack='manara'] .mn-block[data-seam-top][data-seam-bottom] {
+  clip-path: polygon(
+    0 var(--mn-seam),
+    100% 0,
+    100% calc(100% - var(--mn-seam)),
+    0 100%
+  );
+}
+
+[data-theme-pack='manara'] [dir='rtl'] .mn-block[data-seam-top],
+[dir='rtl'] [data-theme-pack='manara'] .mn-block[data-seam-top],
+[data-theme-pack='manara'][dir='rtl'] .mn-block[data-seam-top] {
+  clip-path: polygon(0 0, 100% var(--mn-seam), 100% 100%, 0 100%);
+}
+
+[data-theme-pack='manara'] [dir='rtl'] .mn-block[data-seam-bottom],
+[dir='rtl'] [data-theme-pack='manara'] .mn-block[data-seam-bottom],
+[data-theme-pack='manara'][dir='rtl'] .mn-block[data-seam-bottom] {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - var(--mn-seam)));
+}
+
+[data-theme-pack='manara']
+  [dir='rtl']
+  .mn-block[data-seam-top][data-seam-bottom],
+[dir='rtl']
+  [data-theme-pack='manara']
+  .mn-block[data-seam-top][data-seam-bottom],
+[data-theme-pack='manara'][dir='rtl']
+  .mn-block[data-seam-top][data-seam-bottom] {
+  clip-path: polygon(
+    0 0,
+    100% var(--mn-seam),
+    100% 100%,
+    0 calc(100% - var(--mn-seam))
+  );
+}
+
+/* A seamed block sits above the one it overlaps. */
+[data-theme-pack='manara'] .mn-block[data-seam-top] {
+  z-index: 1;
+}
+
+[data-theme-pack='manara'] .mn-container {
+  width: min(100% - 2 * var(--mn-gutter), var(--mn-container));
+  margin-inline: auto;
+}
+
+/* ------------------------------------------------------------------ */
+/* The beam                                                             */
+/* ------------------------------------------------------------------ */
+
+/*
+ * A diagonal band of the accent, decorative (`aria-hidden`), clipped by its
+ * block. `data-sweep` runs it across the block once at load.
+ */
+[data-theme-pack='manara'] .mn-beam {
+  position: absolute;
+  inset-block: -25%;
+  inset-inline-start: 58%;
+  inline-size: clamp(6rem, 18vw, 18rem);
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--mn-beam-soft) 35%,
+    var(--mn-beam-soft) 65%,
+    transparent
+  );
+  transform: skewX(-14deg);
+  z-index: 0;
+}
+
+[data-theme-pack='manara'] [dir='rtl'] .mn-beam,
+[dir='rtl'] [data-theme-pack='manara'] .mn-beam,
+[data-theme-pack='manara'][dir='rtl'] .mn-beam {
+  transform: skewX(14deg);
+}
+
+[data-theme-pack='manara'] .mn-beam[data-position='start'] {
+  inset-inline-start: 6%;
+}
+
+[data-theme-pack='manara'] .mn-beam[data-position='end'] {
+  inset-inline-start: auto;
+  inset-inline-end: 4%;
+}
+
+/* Content sits above the beam. */
+[data-theme-pack='manara'] .mn-block > .mn-container {
+  position: relative;
+  z-index: 1;
+}
+
+/* A solid rule of the beam: under eyebrows, between tiles. */
+[data-theme-pack='manara'] .mn-rule {
+  display: block;
+  inline-size: 3rem;
+  block-size: 0.25rem;
+  background: var(--mn-beam);
+  border-radius: 999px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Actions                                                              */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mn-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-block-size: 2.75rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--mn-radius);
+  border: 2px solid transparent;
+  font-family: var(--mn-font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  background-color: var(--mn-accent);
+  color: var(--mn-accent-text);
+  transition:
+    background-color var(--mn-fast) var(--mn-ease),
+    color var(--mn-fast) var(--mn-ease),
+    border-color var(--mn-fast) var(--mn-ease),
+    transform var(--mn-fast) var(--mn-ease);
+}
+
+[data-theme-pack='manara'] .mn-btn:hover {
+  background-color: var(--mn-accent-hover);
+}
+
+[data-theme-pack='manara'] .mn-btn:active {
+  background-color: var(--mn-accent-pressed);
+  transform: translateY(1px);
+}
+
+[data-theme-pack='manara'] .mn-btn-block {
+  background-color: var(--mn-block);
+  color: var(--mn-block-text);
+}
+
+[data-theme-pack='manara'] .mn-btn-block:hover,
+[data-theme-pack='manara'] .mn-btn-block:active {
+  background-color: var(--mn-block-hover);
+}
+
+/* An outline button takes the ground's text colour. */
+[data-theme-pack='manara'] .mn-btn-outline {
+  background-color: transparent;
+  color: var(--mn-env-text, var(--mn-text));
+  border-color: currentColor;
+}
+
+[data-theme-pack='manara'] .mn-btn-outline:hover,
+[data-theme-pack='manara'] .mn-btn-outline:active {
+  background-color: var(--mn-env-pill, var(--mn-pill));
+}
+
+/* A quiet button on the ground (filters, pagination). */
+[data-theme-pack='manara'] .mn-btn-quiet {
+  background-color: var(--mn-env-pill, var(--mn-pill));
+  color: var(--mn-env-text, var(--mn-text));
+}
+
+[data-theme-pack='manara'] .mn-btn-quiet:hover,
+[data-theme-pack='manara'] .mn-btn-quiet:active {
+  background-color: var(--mn-env-line, var(--mn-line));
+}
+
+[data-theme-pack='manara'] .mn-btn-lg {
+  min-block-size: 3.25rem;
+  padding: 0.875rem 1.625rem;
+  font-size: 1.0625rem;
+}
+
+[data-theme-pack='manara'] .mn-btn:disabled,
+[data-theme-pack='manara'] .mn-btn[aria-disabled='true'] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* The arrow nudges along the reading direction. */
+[data-theme-pack='manara'] .mn-arrow {
+  flex: none;
+  transition: transform var(--mn-fast) var(--mn-ease);
+}
+
+[data-theme-pack='manara'] [dir='rtl'] .mn-arrow,
+[dir='rtl'] [data-theme-pack='manara'] .mn-arrow,
+[data-theme-pack='manara'][dir='rtl'] .mn-arrow {
+  transform: scaleX(-1);
+}
+
+[data-theme-pack='manara'] .mn-btn:hover .mn-arrow,
+[data-theme-pack='manara'] .mn-link:hover .mn-arrow,
+[data-theme-pack='manara'] .mn-card:hover .mn-arrow {
+  transform: translateX(0.2rem);
+}
+
+[data-theme-pack='manara'] [dir='rtl'] .mn-btn:hover .mn-arrow,
+[data-theme-pack='manara'] [dir='rtl'] .mn-link:hover .mn-arrow,
+[data-theme-pack='manara'] [dir='rtl'] .mn-card:hover .mn-arrow,
+[dir='rtl'] [data-theme-pack='manara'] .mn-btn:hover .mn-arrow,
+[data-theme-pack='manara'][dir='rtl'] .mn-btn:hover .mn-arrow,
+[dir='rtl'] [data-theme-pack='manara'] .mn-link:hover .mn-arrow,
+[data-theme-pack='manara'][dir='rtl'] .mn-link:hover .mn-arrow,
+[dir='rtl'] [data-theme-pack='manara'] .mn-card:hover .mn-arrow,
+[data-theme-pack='manara'][dir='rtl'] .mn-card:hover .mn-arrow {
+  transform: scaleX(-1) translateX(0.2rem);
+}
+
+/* Links: the ground's link colour, a 2px underline that thickens on hover. */
+[data-theme-pack='manara'] .mn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--mn-env-link, var(--mn-brand-text));
+  font-family: var(--mn-font-display);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.22em;
+  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+  transition: text-decoration-color var(--mn-fast) var(--mn-ease);
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
+[data-theme-pack='manara'] .mn-link:hover {
+  text-decoration-color: currentColor;
+}
+
+/* Focus: a 3px ring in the ground's focus colour, never removed. */
+[data-theme-pack='manara']
+  :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--mn-env-focus, var(--mn-focus));
+  outline-offset: 2px;
+  border-radius: var(--mn-radius);
+}
+
+/* ------------------------------------------------------------------ */
+/* Pills, tiles, cards, frames                                          */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mn-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-block-size: 1.75rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  background-color: var(--mn-env-pill, var(--mn-pill));
+  color: var(--mn-env-pill-text, var(--mn-pill-text));
+  font-family: var(--mn-font-display);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+[data-theme-pack='manara'] .mn-pill[data-tone='accent'] {
+  background-color: var(--mn-accent);
+  color: var(--mn-accent-text);
+}
+
+[data-theme-pack='manara'] .mn-pill[data-tone='block'] {
+  background-color: var(--mn-block);
+  color: var(--mn-block-text);
+}
+
+/* A tile: a dyed block inside a block (tracks, scoreboard). */
+[data-theme-pack='manara'] .mn-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: clamp(1.25rem, 1rem + 1.5vw, 2rem);
+  border-radius: var(--mn-radius-lg);
+  background-color: var(--mn-block);
+  color: var(--mn-block-text);
+  --mn-env-text: var(--mn-block-text);
+  --mn-env-text-muted: var(--mn-block-text-muted);
+  --mn-env-link: var(--mn-block-text);
+  --mn-env-focus: var(--mn-block-text);
+  --mn-env-pill: var(--mn-block-text);
+  --mn-env-pill-text: var(--mn-block);
+  text-decoration: none;
+  transition:
+    transform var(--mn-fast) var(--mn-ease),
+    background-color var(--mn-fast) var(--mn-ease);
+}
+
+[data-theme-pack='manara'] .mn-tile[data-tone='accent'] {
+  background-color: var(--mn-accent);
+  color: var(--mn-accent-text);
+  --mn-env-text: var(--mn-accent-text);
+  --mn-env-text-muted: var(--mn-accent-text);
+  --mn-env-link: var(--mn-accent-text);
+  --mn-env-focus: var(--mn-accent-text);
+  --mn-env-pill: var(--mn-accent-text);
+  --mn-env-pill-text: var(--mn-accent);
+}
+
+[data-theme-pack='manara'] .mn-tile[data-tone='night'] {
+  background-color: var(--mn-night-raised);
+  color: var(--mn-night-text);
+  --mn-env-text: var(--mn-night-text);
+  --mn-env-text-muted: var(--mn-night-text-muted);
+  --mn-env-link: var(--mn-night-brand);
+  --mn-env-focus: var(--mn-night-focus);
+  --mn-env-pill: var(--mn-night-pill);
+  --mn-env-pill-text: var(--mn-night-pill-text);
+}
+
+[data-theme-pack='manara'] .mn-tile[data-tone='day'] {
+  background-color: var(--mn-env-card, var(--mn-day));
+  color: var(--mn-env-text, var(--mn-text));
+}
+
+[data-theme-pack='manara'] a.mn-tile:hover,
+[data-theme-pack='manara'] button.mn-tile:hover {
+  transform: translateY(-2px);
+}
+
+/* A card: the ground's raised surface with a soft edge. */
+[data-theme-pack='manara'] .mn-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--mn-radius-lg);
+  background-color: var(--mn-env-card, var(--mn-day));
+  border: 1px solid var(--mn-env-line, var(--mn-line));
+  color: var(--mn-env-text, var(--mn-text));
+  overflow: hidden;
+  transition:
+    transform var(--mn-fast) var(--mn-ease),
+    box-shadow var(--mn-fast) var(--mn-ease);
+}
+
+[data-theme-pack='manara'] .mn-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px -16px rgb(0 0 0 / 0.35);
+}
+
+/* A fixed-ratio frame; the image covers it; the frame reserves its space. */
+[data-theme-pack='manara'] .mn-frame {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--mn-night-raised);
+  border-radius: var(--mn-radius-lg);
+}
+
+[data-theme-pack='manara'] .mn-frame > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--mn-duration) var(--mn-ease);
+}
+
+[data-theme-pack='manara'] .mn-card:hover .mn-frame > img,
+[data-theme-pack='manara'] a.mn-tile:hover .mn-frame > img {
+  transform: scale(1.03);
+}
+
+/* The poster: a slanted bottom edge (mirrored in Arabic). */
+[data-theme-pack='manara'] .mn-frame[data-shape='slant'] {
+  border-radius: var(--mn-radius);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--mn-seam)), 0 100%);
+}
+
+[data-theme-pack='manara'] [dir='rtl'] .mn-frame[data-shape='slant'],
+[dir='rtl'] [data-theme-pack='manara'] .mn-frame[data-shape='slant'],
+[data-theme-pack='manara'][dir='rtl'] .mn-frame[data-shape='slant'] {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - var(--mn-seam)));
+}
+
+/* The stage poster: slanted top and bottom, opposite corners. */
+[data-theme-pack='manara'] .mn-frame[data-shape='poster'] {
+  border-radius: var(--mn-radius);
+  clip-path: polygon(
+    0 var(--mn-seam),
+    100% 0,
+    100% calc(100% - var(--mn-seam)),
+    0 100%
+  );
+}
+
+[data-theme-pack='manara'] [dir='rtl'] .mn-frame[data-shape='poster'],
+[dir='rtl'] [data-theme-pack='manara'] .mn-frame[data-shape='poster'],
+[data-theme-pack='manara'][dir='rtl'] .mn-frame[data-shape='poster'] {
+  clip-path: polygon(
+    0 0,
+    100% var(--mn-seam),
+    100% 100%,
+    0 calc(100% - var(--mn-seam))
+  );
+}
+
+/* The neutral stand-in for a photograph that isn't released. */
+[data-theme-pack='manara'] .mn-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background:
+    linear-gradient(
+      135deg,
+      transparent 0 48%,
+      var(--mn-beam-soft) 48% 52%,
+      transparent 52%
+    ),
+    var(--mn-night-raised);
+  color: var(--mn-night-text-muted);
+}
+
+[data-theme-pack='manara'] .mn-placeholder-label {
+  font-family: var(--mn-font-display);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Initials on a dyed plate (no fabricated photographs of people). */
+[data-theme-pack='manara'] .mn-monogram {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 3.5rem;
+  block-size: 3.5rem;
+  border-radius: var(--mn-radius);
+  background-color: var(--mn-block);
+  color: var(--mn-block-text);
+  font-family: var(--mn-font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  flex: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* Rails (phones) and grids                                             */
+/* ------------------------------------------------------------------ */
+
+/* A horizontal, scroll-snapping rail on phones; a grid from 768px. */
+[data-theme-pack='manara'] .mn-rail {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--mn-gutter);
+  margin-inline: calc(-1 * var(--mn-gutter));
+  padding-inline: var(--mn-gutter);
+  padding-block-end: 0.5rem;
+  scrollbar-width: none;
+}
+
+[data-theme-pack='manara'] .mn-rail::-webkit-scrollbar {
+  display: none;
+}
+
+[data-theme-pack='manara'] .mn-rail > * {
+  flex: 0 0 min(82vw, 22rem);
+  scroll-snap-align: start;
+}
+
+@media (min-width: 768px) {
+  [data-theme-pack='manara'] .mn-rail {
+    display: grid;
+    grid-template-columns: repeat(var(--mn-rail-cols, 2), minmax(0, 1fr));
+    gap: 1.25rem;
+    overflow: visible;
+    margin-inline: 0;
+    padding-inline: 0;
+    padding-block-end: 0;
+  }
+
+  [data-theme-pack='manara'] .mn-rail > * {
+    flex: initial;
+  }
+}
+
+@media (min-width: 1024px) {
+  [data-theme-pack='manara'] .mn-rail {
+    grid-template-columns: repeat(var(--mn-rail-cols-lg, 3), minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Forms                                                                */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mn-input {
+  inline-size: 100%;
+  min-block-size: 2.75rem;
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--mn-radius);
+  border: 2px solid var(--mn-input-border);
+  background-color: var(--mn-day);
+  color: var(--mn-text);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+[data-theme-pack='manara'] .mn-input::placeholder {
+  color: var(--mn-text-muted);
+}
+
+[data-theme-pack='manara'] .mn-block[data-env='night'] .mn-input {
+  background-color: var(--mn-night-raised);
+  color: var(--mn-night-text);
+  border-color: var(--mn-night-line);
+}
+
+[data-theme-pack='manara'] .mn-block[data-env='night'] .mn-input::placeholder {
+  color: var(--mn-night-text-muted);
+}
+
+[data-theme-pack='manara'] .mn-field-label {
+  display: block;
+  margin-block-end: 0.375rem;
+  font-family: var(--mn-font-display);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+/* ------------------------------------------------------------------ */
+/* Motion                                                               */
+/* ------------------------------------------------------------------ */
+
+@keyframes mn-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes mn-sweep {
+  from {
+    transform: translateX(-160%) skewX(-14deg);
+  }
+  to {
+    transform: translateX(0) skewX(-14deg);
+  }
+}
+
+@keyframes mn-sweep-rtl {
+  from {
+    transform: translateX(160%) skewX(14deg);
+  }
+  to {
+    transform: translateX(0) skewX(14deg);
+  }
+}
+
+@keyframes mn-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Load-time entrance for a hero's supporting lines (never its headline). */
+  [data-theme-pack='manara'] .mn-enter {
+    animation: mn-rise var(--mn-duration) var(--mn-ease) both;
+    animation-delay: calc(90ms * var(--mn-enter-index, 0) + 60ms);
+  }
+
+  /* The beam sweeps across its block once, after the first paint. */
+  [data-theme-pack='manara'] .mn-beam[data-sweep] {
+    animation: mn-sweep 900ms var(--mn-ease) 120ms both;
+  }
+
+  [data-theme-pack='manara'] [dir='rtl'] .mn-beam[data-sweep],
+  [dir='rtl'] [data-theme-pack='manara'] .mn-beam[data-sweep],
+  [data-theme-pack='manara'][dir='rtl'] .mn-beam[data-sweep] {
+    animation-name: mn-sweep-rtl;
+  }
+}
+
+/* The shared `Reveal` primitive carries its own rise (Tailwind utilities). */
+
+/* The header beam fills with scroll (decorative; hidden without support). */
+[data-theme-pack='manara'] .mn-header-beam {
+  display: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-theme-pack='manara'] .mn-header-beam {
+      display: block;
+      position: absolute;
+      inset-inline: 0;
+      inset-block-end: 0;
+      block-size: 0.1875rem;
+      background: var(--mn-beam);
+      transform-origin: 0 50%;
+      animation: mn-progress linear both;
+      animation-timeline: scroll(root);
+      pointer-events: none;
+    }
+
+    [data-theme-pack='manara'] [dir='rtl'] .mn-header-beam,
+    [dir='rtl'] [data-theme-pack='manara'] .mn-header-beam,
+    [data-theme-pack='manara'][dir='rtl'] .mn-header-beam {
+      transform-origin: 100% 50%;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-theme-pack='manara'] *,
+  [data-theme-pack='manara'] *::before,
+  [data-theme-pack='manara'] *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Skip link and screen-reader helpers                                  */
+/* ------------------------------------------------------------------ */
+
+[data-theme-pack='manara'] .mn-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

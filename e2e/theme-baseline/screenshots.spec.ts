@@ -7,6 +7,8 @@
  *   brand/modern-education/home--<palette>--en--<width>.png
  *   themes/atelier/{rich,unpublished}/… (Theme 2's extra pages)
  *   brand/atelier/home--<palette>--en--<width>.png
+ *   themes/manara/{rich,unpublished}/… (Theme 3's extra pages)
+ *   brand/manara/home--<palette>--en--<width>.png
  *
  * Every later phase is compared with these. Themes 2–5 must stay
  * pixel-identical through the whole Theme 1 plan (§G, §J.11); Theme 1's
@@ -18,6 +20,8 @@ import {
   ATELIER_PAGES,
   BRAND_PALETTES,
   LOCALES,
+  MANARA_COMING_SOON,
+  MANARA_PAGES,
   SHARED_CASES,
   SHARED_CASE_THEME,
   THEME1_BRAND_PAGES,
@@ -38,15 +42,17 @@ import {
 } from './support/baseline-test';
 
 // Theme 1 and Themes 2–5 keep the motion condition their baselines were
-// recorded under; the Atelier describe below overrides it with real reduced
-// motion.
+// recorded under; the Atelier and Manara describes below override it with
+// real reduced motion.
 test.use({ contextOptions: { reducedMotion: LEGACY_REDUCED_MOTION } });
 
 for (const viewport of VIEWPORTS) {
   test.describe(`${viewport.name}px`, () => {
     test.use({ viewport: { width: viewport.width, height: viewport.height } });
 
-    for (const theme of THEMES.filter((key) => key !== 'atelier')) {
+    for (const theme of THEMES.filter(
+      (key) => key !== 'atelier' && key !== 'manara'
+    )) {
       for (const state of ['new', 'rich'] as const) {
         for (const page of THEMED_PAGES[state]) {
           for (const locale of LOCALES) {
@@ -304,6 +310,111 @@ for (const viewport of VIEWPORTS) {
           );
           await expect(browserPage).toHaveScreenshot(
             ['brand', 'atelier', `home--${palette}--en--${viewport.name}.png`],
+            { fullPage: true }
+          );
+          expectNoIssues(issues);
+        });
+      }
+    });
+
+    // Manara (Theme 3) is captured the same way as Atelier: real reduced
+    // motion, so its `Reveal` entrances are drawn in their final state and
+    // the beam seams render their static layout (plan §5: reduced motion =
+    // final state).
+    test.describe('manara', () => {
+      test.use({ contextOptions: { reducedMotion: 'reduce' } });
+
+      for (const state of ['new', 'rich'] as const) {
+        for (const page of THEMED_PAGES[state]) {
+          for (const locale of LOCALES) {
+            test(`manara ${state} ${page.name} ${locale}`, async ({
+              page: browserPage,
+              issues,
+            }) => {
+              await openFixture(
+                browserPage,
+                fixtureUrl(page, locale, fixtureSlug('manara', state))
+              );
+              await expect(browserPage).toHaveScreenshot(
+                [
+                  'themes',
+                  'manara',
+                  state,
+                  `${page.name}--${locale}--${viewport.name}.png`,
+                ],
+                { fullPage: true }
+              );
+              expectNoIssues(issues);
+            });
+          }
+        }
+      }
+
+      for (const page of MANARA_PAGES) {
+        for (const locale of LOCALES) {
+          test(`manara rich ${page.name} ${locale}`, async ({
+            page: browserPage,
+            issues,
+          }) => {
+            await openFixture(
+              browserPage,
+              fixtureUrl(page, locale, fixtureSlug('manara', 'rich'))
+            );
+            await expect(browserPage).toHaveScreenshot(
+              [
+                'themes',
+                'manara',
+                'rich',
+                `${page.name}--${locale}--${viewport.name}.png`,
+              ],
+              { fullPage: true }
+            );
+            expectNoIssues(issues);
+          });
+        }
+      }
+
+      for (const locale of LOCALES) {
+        test(`manara coming-soon ${locale}`, async ({
+          page: browserPage,
+          issues,
+        }) => {
+          await openFixture(
+            browserPage,
+            fixtureUrl(
+              MANARA_COMING_SOON.page,
+              locale,
+              fixtureSlug('manara', MANARA_COMING_SOON.state)
+            )
+          );
+          await expect(browserPage).toHaveScreenshot(
+            [
+              'themes',
+              'manara',
+              'unpublished',
+              `coming-soon--${locale}--${viewport.name}.png`,
+            ],
+            { fullPage: true }
+          );
+          expectNoIssues(issues);
+        });
+      }
+
+      for (const palette of BRAND_PALETTES) {
+        test(`brand manara home ${palette}`, async ({
+          page: browserPage,
+          issues,
+        }) => {
+          await openFixture(
+            browserPage,
+            fixtureUrl(
+              { name: 'home', path: '/' },
+              'en',
+              fixtureSlug('manara', 'rich', palette)
+            )
+          );
+          await expect(browserPage).toHaveScreenshot(
+            ['brand', 'manara', `home--${palette}--en--${viewport.name}.png`],
             { fullPage: true }
           );
           expectNoIssues(issues);

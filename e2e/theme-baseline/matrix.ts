@@ -16,6 +16,8 @@ export const THEMES = [
   'bold-creative',
   // Theme 2 — Atelier (Reports/THEME_2_ATELIER_PLAN.md).
   'atelier',
+  // Theme 3 — Manara (Reports/THEME_3_MANARA_PLAN.md).
+  'manara',
 ] as const;
 export type ThemeKey = (typeof THEMES)[number];
 
@@ -146,14 +148,27 @@ export const ATELIER_PAGES: readonly BaselinePage[] = [
 export const ATELIER_COMING_SOON = THEME1_COMING_SOON;
 
 /**
+ * Manara (Theme 3) beyond `THEMED_PAGES`: its rich inner pages and its own
+ * 404 (`manara/pages/ManaraSystemPages`), its own Coming Soon, and the
+ * identity matrix on its Home — the same set Atelier records.
+ */
+export const MANARA_PAGES: readonly BaselinePage[] = [
+  ABOUT,
+  FAQS,
+  CONTACT,
+  NOT_FOUND,
+];
+export const MANARA_COMING_SOON = THEME1_COMING_SOON;
+
+/**
  * The motion preference the Theme 1 and Themes 2–5 snapshot cases were
  * recorded under. Until Oct 2026 the config's `use.reducedMotion` never
  * reached the browser, so those baselines were captured with motion on
  * (below-the-fold reveals still pending). They keep that condition so the
- * committed baselines stay comparable; Atelier cases run with real reduced
- * motion. `THEME_BASELINE_LEGACY_MOTION=reduce` runs the legacy cases under
- * real reduced motion to investigate the difference (never to re-record
- * silently).
+ * committed baselines stay comparable; Atelier and Manara cases run with
+ * real reduced motion. `THEME_BASELINE_LEGACY_MOTION=reduce` runs the
+ * legacy cases under real reduced motion to investigate the difference
+ * (never to re-record silently).
  */
 export const LEGACY_REDUCED_MOTION: 'reduce' | 'no-preference' =
   process.env.THEME_BASELINE_LEGACY_MOTION === 'reduce'

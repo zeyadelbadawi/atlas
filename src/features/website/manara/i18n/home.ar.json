@@ -1,0 +1,75 @@
+{
+  "home": {
+    "liveData": {
+      "previewUnavailable": "تعذّر تحميل البيانات المباشرة، لذلك لا يرى الزوار هذا القسم حاليًا."
+    },
+    "hero": {
+      "searchLabel": "ابحث عن دورة",
+      "searchPlaceholder": "المادة أو المعلّم أو الامتحان",
+      "searchSubmit": "بحث"
+    },
+    "categories": {
+      "viewAll": "شاهد كل الدورات",
+      "courseCount_zero": "لا دورات",
+      "courseCount_one": "دورة واحدة",
+      "courseCount_two": "دورتان",
+      "courseCount_few": "{{formatted}} دورات",
+      "courseCount_many": "{{formatted}} دورة",
+      "courseCount_other": "{{formatted}} دورة"
+    },
+    "courses": {
+      "viewAll": "عرض كل الدورات",
+      "listLabel": "دورات مفتوحة للتسجيل الآن",
+      "loading": "جارٍ تحميل الدورات",
+      "taughtBy": "مع {{name}}",
+      "errorTitle": "تعذّر تحميل الدورات الآن",
+      "errorDescription": "يُرجى المحاولة مجددًا بعد قليل.",
+      "retry": "أعد المحاولة",
+      "launchingTitle": "الدورات الأولى قيد الإعداد",
+      "launchingDescription": "يُفتح باب التسجيل فور جاهزية أول دورة. تواصل معنا وسنُخبرك أولًا.",
+      "launchingAction": "تواصل معنا"
+    },
+    "steps": {
+      "stepLabel": "الخطوة {{number}}"
+    },
+    "instructors": {
+      "listLabel": "المعلّمون",
+      "courseCount_zero": "لا دورات",
+      "courseCount_one": "دورة واحدة",
+      "courseCount_two": "دورتان",
+      "courseCount_few": "{{formatted}} دورات",
+      "courseCount_many": "{{formatted}} دورة",
+      "courseCount_other": "{{formatted}} دورة",
+      "previewHidden": "مخفي في موقعك العام إلى أن يكون لدورة منشورة واحدة على الأقل معلّم.",
+      "sampleName": "اسم المعلّم",
+      "sampleCourses": "الدورات المنشورة"
+    },
+    "statistics": {
+      "label": "لوحة الأرقام",
+      "previewHidden": "مخفي في موقعك العام إلى أن يتجاوز رقمان مباشران على الأقل الصفر.",
+      "sampleValue": "رقم مباشر يظهر عندما يتجاوز الصفر"
+    },
+    "testimonials": {
+      "label": "آراء الطلاب",
+      "roleDescription": "اقتباسات",
+      "position": "الرأي {{position}} من {{total}}",
+      "previous": "الرأي السابق",
+      "next": "الرأي التالي",
+      "rating": "التقييم {{rating}} من ٥"
+    },
+    "faq": {
+      "listTitle": "جميع الأسئلة",
+      "resultCount_zero": "لا توجد أسئلة مطابقة",
+      "resultCount_one": "سؤال واحد مطابق",
+      "resultCount_two": "سؤالان مطابقان",
+      "resultCount_few": "{{count}} أسئلة مطابقة",
+      "resultCount_many": "{{count}} سؤالًا مطابقًا",
+      "resultCount_other": "{{count}} سؤال مطابق",
+      "noMatchTitle": "لا توجد أسئلة تطابق بحثك",
+      "noMatchDescription": "جرّب كلمات أخرى، أو تواصل معنا وسنساعدك."
+    },
+    "gallery": {
+      "label": "معرض الصور"
+    }
+  }
+}

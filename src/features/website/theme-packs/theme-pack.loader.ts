@@ -54,6 +54,11 @@ const CHUNKED_PACKS: Readonly<
       import('../atelier/atelier.pack').then((module) => module.ATELIER_PACK),
     systemPages: ['NotFound', 'ComingSoon'],
   },
+  manara: {
+    load: () =>
+      import('../manara/manara.pack').then((module) => module.MANARA_PACK),
+    systemPages: ['NotFound', 'ComingSoon'],
+  },
 };
 
 /** The theme an unknown or legacy key renders as (same fallback as `getWebsiteTheme`). */

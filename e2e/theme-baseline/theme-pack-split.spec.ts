@@ -1,14 +1,17 @@
 /**
  * Each public site downloads only its own theme pack
  * (src/features/website/theme-packs/theme-pack.loader.ts): a Theme 1 page
- * fetches none of Atelier's code or CSS, an Atelier page none of Theme 1's
- * renderers or CSS, and a retired (base-pack) theme neither. Runs in both
- * modes of the fixture server (single-page app, and THEME_BASELINE_SSR=1),
- * where it also checks the server-rendered head and the hydration.
+ * fetches none of Atelier's or Manara's code or CSS, an Atelier page none
+ * of Theme 1's or Manara's, a Manara page none of Theme 1's or Atelier's,
+ * and a retired (base-pack) theme none of the three. Runs in both modes of
+ * the fixture server (single-page app, and THEME_BASELINE_SSR=1), where it
+ * also checks the server-rendered head and the hydration.
  *
  * What identifies a theme's code, beyond its chunk and stylesheet names:
  *   - Atelier's components use `at-*` classes (`at-lead`, `at-label`…) and
  *     its stylesheet is scoped to `[data-theme-pack=atelier]`;
+ *   - Manara's components use `mn-*` classes (`mn-lead`, `mn-label`…) and
+ *     its stylesheet is scoped to `[data-theme-pack=manara]`;
  *   - Theme 1's components use `t1-*` classes and its stylesheet is scoped
  *     to `[data-theme-pack=modern-education]`.
  */
@@ -31,6 +34,11 @@ const ATELIER: ThemeCode = {
   fileName: /atelier/i,
   script: /["'\s]at-(?:lead|label|subtitle|link|btn)[\s"']/,
   stylesheet: /data-theme-pack=["']?atelier/,
+};
+const MANARA: ThemeCode = {
+  fileName: /manara/i,
+  script: /["'\s]mn-(?:lead|label|subtitle|link|btn)[\s"']/,
+  stylesheet: /data-theme-pack=["']?manara/,
 };
 const THEME_1: ThemeCode = {
   fileName: /modern-education/i,
@@ -115,27 +123,34 @@ const CASES: ReadonlyArray<{
     theme: 'modern-education',
     slug: fixtureSlug('modern-education', 'rich', 'default', 'c1'),
     own: THEME_1,
-    others: [ATELIER],
+    others: [ATELIER, MANARA],
   },
   {
     name: 'Theme 1 (v1 website)',
     theme: 'modern-education',
     slug: fixtureSlug('modern-education', 'new'),
     own: THEME_1,
-    others: [ATELIER],
+    others: [ATELIER, MANARA],
   },
   {
     name: 'Atelier',
     theme: 'atelier',
     slug: fixtureSlug('atelier', 'rich'),
     own: ATELIER,
-    others: [THEME_1],
+    others: [THEME_1, MANARA],
+  },
+  {
+    name: 'Manara',
+    theme: 'manara',
+    slug: fixtureSlug('manara', 'rich'),
+    own: MANARA,
+    others: [THEME_1, ATELIER],
   },
   {
     name: 'a retired theme (base pack)',
     theme: 'premium-academy',
     slug: fixtureSlug('premium-academy', 'new'),
-    others: [ATELIER, THEME_1],
+    others: [ATELIER, MANARA, THEME_1],
   },
 ];
 

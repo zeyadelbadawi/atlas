@@ -1,0 +1,63 @@
+{
+  "home": {
+    "liveData": {
+      "previewUnavailable": "Live data couldn't be loaded, so visitors don't see this section right now."
+    },
+    "hero": {
+      "searchLabel": "Find a course",
+      "searchPlaceholder": "Subject, teacher or exam",
+      "searchSubmit": "Search"
+    },
+    "categories": {
+      "viewAll": "See every course",
+      "courseCount_one": "{{formatted}} course",
+      "courseCount_other": "{{formatted}} courses"
+    },
+    "courses": {
+      "viewAll": "View all courses",
+      "listLabel": "Courses enrolling now",
+      "loading": "Loading courses",
+      "taughtBy": "With {{name}}",
+      "errorTitle": "The courses couldn't be loaded right now",
+      "errorDescription": "Please try again in a moment.",
+      "retry": "Try again",
+      "launchingTitle": "The first courses are being prepared",
+      "launchingDescription": "Enrolment opens as soon as the first course is ready. Get in touch and we'll let you know first.",
+      "launchingAction": "Contact us"
+    },
+    "steps": {
+      "stepLabel": "Step {{number}}"
+    },
+    "instructors": {
+      "listLabel": "Teachers",
+      "courseCount_one": "{{formatted}} course",
+      "courseCount_other": "{{formatted}} courses",
+      "previewHidden": "Hidden on your public site until at least one published course has a teacher.",
+      "sampleName": "Teacher name",
+      "sampleCourses": "Published courses"
+    },
+    "statistics": {
+      "label": "The scoreboard",
+      "previewHidden": "Hidden on your public site until at least two live numbers are above zero.",
+      "sampleValue": "Live number, shown once above zero"
+    },
+    "testimonials": {
+      "label": "Students say",
+      "roleDescription": "quotes",
+      "position": "Quote {{position}} of {{total}}",
+      "previous": "Previous quote",
+      "next": "Next quote",
+      "rating": "Rated {{rating}} out of 5"
+    },
+    "faq": {
+      "listTitle": "All questions",
+      "resultCount_one": "{{count}} question matches",
+      "resultCount_other": "{{count}} questions match",
+      "noMatchTitle": "No questions match your search",
+      "noMatchDescription": "Try different words, or contact us and we'll help."
+    },
+    "gallery": {
+      "label": "Gallery"
+    }
+  }
+}

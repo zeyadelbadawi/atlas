@@ -34,7 +34,7 @@ import {
   test,
 } from './support/baseline-test';
 
-const SELECTABLE: readonly string[] = ['modern-education', 'atelier'];
+const SELECTABLE: readonly string[] = ['modern-education', 'atelier', 'manara'];
 const RETIRED = THEMES.filter((theme) => !SELECTABLE.includes(theme));
 const GENERATED = join(
   dirname(fileURLToPath(import.meta.url)),

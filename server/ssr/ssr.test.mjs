@@ -135,14 +135,45 @@ function atelierAcademy(label, id, primaryColor) {
   };
 }
 
+// Manara (Theme 3)'s own generated website.
+const MANARA_TEMPLATE = JSON.parse(
+  readFileSync(
+    join(ROOT, 'e2e/theme-baseline/fixtures/generated/manara.json'),
+    'utf8'
+  )
+);
+
+/** An Academy on Manara: the same identity and courses, Manara's website. */
+function manaraAcademy(label, id, primaryColor) {
+  const base = academy(label, id, primaryColor, `${label} on Manara`);
+  const rebase = (value) =>
+    JSON.parse(JSON.stringify(value).replaceAll('"fx-academy"', `"${id}"`));
+  return {
+    ...base,
+    resolve: {
+      ...base.resolve,
+      presentation: { ...base.resolve.presentation, themeKey: 'manara' },
+    },
+    configuration: {
+      ...rebase(MANARA_TEMPLATE.configuration),
+      brand: base.configuration.brand,
+      status: 'published',
+      publishedAt: '2026-09-01T09:00:00.000Z',
+    },
+    pages: rebase(MANARA_TEMPLATE.pages).filter((page) => page.visible),
+  };
+}
+
 const ALPHA_ID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 const BETA_ID = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
 const GAMMA_ID = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
 const DELTA_ID = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
+const EPSILON_ID = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
 const ALPHA = `alpha.${BASE}`;
 const BETA = `beta.${BASE}`;
 const GAMMA = `gamma.${BASE}`;
 const DELTA = `delta.${BASE}`;
+const EPSILON = `epsilon.${BASE}`;
 const ALPHA_PRIMARY = '350 60% 45%';
 const BETA_PRIMARY = '200 80% 35%';
 
@@ -166,6 +197,7 @@ function resetState() {
       [BETA_ID]: academy('beta', BETA_ID, BETA_PRIMARY, 'Beta builds careers'),
       [GAMMA_ID]: gamma,
       [DELTA_ID]: atelierAcademy('delta', DELTA_ID, '20 70% 40%'),
+      [EPSILON_ID]: manaraAcademy('epsilon', EPSILON_ID, '222 72% 46%'),
     },
     requests: [],
     failPages: false,
@@ -1087,6 +1119,7 @@ describe('theme packs: each site gets only its own theme', () => {
     'modern-education':
       'src/features/website/modern-education/modern-education.pack.ts',
     atelier: 'src/features/website/atelier/atelier.pack.ts',
+    manara: 'src/features/website/manara/manara.pack.ts',
   };
   // What identifies a theme's components and stylesheet in built files.
   const MARKERS = {
@@ -1097,6 +1130,10 @@ describe('theme packs: each site gets only its own theme', () => {
     atelier: {
       script: /["'\s]at-(?:lead|label|subtitle|link|btn)[\s"']/,
       stylesheet: /data-theme-pack=["']?atelier/,
+    },
+    manara: {
+      script: /["'\s]mn-(?:lead|label|subtitle|link|btn)[\s"']/,
+      stylesheet: /data-theme-pack=["']?manara/,
     },
   };
 
@@ -1124,11 +1161,16 @@ describe('theme packs: each site gets only its own theme', () => {
         .matchAll(/<link rel="stylesheet"[^>]*>/g),
     ].map(([tag]) => /data-theme-stylesheet="([^"]+)"/.exec(tag)?.[1] ?? 'app');
 
+  // Each selectable theme against each of the other two.
   for (const [label, host, theme, other] of [
     ['a Theme 1', ALPHA, 'modern-education', 'atelier'],
+    ['a Theme 1', ALPHA, 'modern-education', 'manara'],
     ['an Atelier', DELTA, 'atelier', 'modern-education'],
+    ['an Atelier', DELTA, 'atelier', 'manara'],
+    ['a Manara', EPSILON, 'manara', 'modern-education'],
+    ['a Manara', EPSILON, 'manara', 'atelier'],
   ]) {
-    it(`${label} page links only its theme's stylesheet, in front of the app's, and names its pack for hydration`, async () => {
+    it(`${label} page links only its theme's stylesheet, in front of the app's, and names its pack for hydration (not ${other}'s)`, async () => {
       for (const path of ['/', '/ar/courses', '/no-such-page']) {
         const result = await get(handler, host, path);
         assert.equal(result.headers['X-Atlas-SSR'], 'render', result.reason);
@@ -1149,7 +1191,7 @@ describe('theme packs: each site gets only its own theme', () => {
       }
     });
 
-    it(`the code ${label} page loads carries none of the other theme`, () => {
+    it(`the code ${label} page loads carries none of ${other}`, () => {
       const m = manifest();
       const loaded = staticClosure(m, [
         'index.html',
@@ -1183,9 +1225,11 @@ describe('theme packs: each site gets only its own theme', () => {
       }
     }
     const themeStylesheets = readdirSync(join(DIST, 'assets')).filter((file) =>
-      /^(modern-education|atelier\.stylesheet)-[\w-]+\.css$/.test(file)
+      /^(modern-education|atelier\.stylesheet|manara\.stylesheet)-[\w-]+\.css$/.test(
+        file
+      )
     );
-    assert.equal(themeStylesheets.length, 2, themeStylesheets.join(', '));
+    assert.equal(themeStylesheets.length, 3, themeStylesheets.join(', '));
   });
 
   it('the manifest names no absolute source path', () => {
@@ -1193,7 +1237,7 @@ describe('theme packs: each site gets only its own theme', () => {
       assert.ok(!key.startsWith('/'), key);
   });
 
-  it('when asked, an Atelier page preloads the display face its heading uses; Theme 1 none', async () => {
+  it('when asked, an Atelier page preloads the display face its heading uses, a Manara page its own; Theme 1 none', async () => {
     const fontPreloads = (html) =>
       [
         ...html.matchAll(
@@ -1212,6 +1256,17 @@ describe('theme packs: each site gets only its own theme', () => {
     const atelierArabic = fontPreloads((await get(on, DELTA, '/ar/')).body);
     assert.ok(atelierArabic.length > 0);
     assert.ok(atelierArabic.every((file) => /markazi-text-arabic/.test(file)));
+    // Manara: Alexandria, Latin on the EN hero and Arabic on the AR one.
+    assert.deepEqual(fontPreloads((await get(handler, EPSILON, '/')).body), []);
+    const manara = fontPreloads((await get(on, EPSILON, '/')).body);
+    assert.ok(manara.length > 0, 'the Manara hero face is preloaded');
+    for (const file of manara) {
+      assert.match(file, /^assets\/alexandria-latin-[\w-]+\.woff2$/);
+      assert.ok(existsSync(join(DIST, file)), `${file} exists`);
+    }
+    const manaraArabic = fontPreloads((await get(on, EPSILON, '/ar/')).body);
+    assert.ok(manaraArabic.length > 0);
+    assert.ok(manaraArabic.every((file) => /alexandria-arabic/.test(file)));
     assert.deepEqual(fontPreloads((await get(on, ALPHA, '/')).body), []);
   });
 

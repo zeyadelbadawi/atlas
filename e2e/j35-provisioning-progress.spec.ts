@@ -20,9 +20,13 @@
  *   J35e  the status page in EN and AR, on a desktop and a phone (evidence);
  *   J35f  the seeded Manager and Instructor are not offered provisioning,
  *         and the API refuses them (403);
- *   J35g  Theme 2: both themes are offered with live previews of the real
+ *   J35g  Theme 2: every selectable theme is offered with live previews of the real
  *         site; Atelier is chosen with the keyboard, sent as
- *         `selectedThemeKey`, and the Academy's website is built in it.
+ *         `selectedThemeKey`, and the Academy's website is built in it;
+ *   J35h  Theme 3: the three themes are offered; Manara is reached with
+ *         the keyboard (two arrow presses from Modern Education), sent as
+ *         `selectedThemeKey`, the website is built in it and renders
+ *         Manara's own header.
  *
  * NEEDS THE INTEGRATED REBUILD: the brand/stall/stage contract and the
  * logo-attach endpoint are new backend code (W2).
@@ -34,6 +38,7 @@ import { clearAuthRateLimits } from './support/global-setup';
 import { adminSql } from './support/admin-db';
 import { createTrialOrganizationOwner } from './support/trial-owner';
 import {
+  ACADEMY_PREVIEW_PARAM,
   API_BASE,
   SEED,
   apiGet,
@@ -283,7 +288,8 @@ test.describe('J35 — provisioning progress', () => {
     const group = page.getByRole('radiogroup', { name: 'Theme' });
     const modern = group.getByRole('radio', { name: /Modern Education/ });
     const atelier = group.getByRole('radio', { name: /Atelier/ });
-    await expect(group.getByRole('radio')).toHaveCount(2);
+    // Three selectable themes since Theme 3 (Manara); Atelier is the second.
+    await expect(group.getByRole('radio')).toHaveCount(3);
     await expect(modern).toHaveAttribute('aria-checked', 'true');
     await expect(atelier).toHaveAttribute('aria-checked', 'false');
 
@@ -291,7 +297,7 @@ test.describe('J35 — provisioning progress', () => {
     // hidden from assistive tech, rendered once the group is in view.
     await group.scrollIntoViewIfNeeded();
     const previews = page.getByTestId('setup-theme-preview');
-    await expect(previews).toHaveCount(2);
+    await expect(previews).toHaveCount(3);
     await expect(
       previews.nth(0).locator('[data-theme-pack="modern-education"]')
     ).toBeAttached();
@@ -337,6 +343,97 @@ test.describe('J35 — provisioning progress', () => {
       )
     ).json();
     expect(configuration.themeKey).toBe('atelier');
+  });
+
+  test('J35h: Manara chosen in the setup form — three live previews, keyboard selection, the website is built in it', async ({
+    page,
+  }) => {
+    test.setTimeout(120_000);
+    await signIn(page);
+    await goInApp(page, '/dashboard/provisioning/new');
+    await page
+      .getByLabel('Academy name')
+      .fill(`J35 Manara ${Date.now() % 1e7}`);
+
+    const group = page.getByRole('radiogroup', { name: 'Theme' });
+    const modern = group.getByRole('radio', { name: /Modern Education/ });
+    const atelier = group.getByRole('radio', { name: /Atelier/ });
+    const manara = group.getByRole('radio', { name: /Manara/ });
+    await expect(group.getByRole('radio')).toHaveCount(3);
+    await expect(modern).toHaveAttribute('aria-checked', 'true');
+    await expect(atelier).toHaveAttribute('aria-checked', 'false');
+    await expect(manara).toHaveAttribute('aria-checked', 'false');
+
+    // Each option previews the real site in its own theme — a picture,
+    // hidden from assistive tech, rendered once the group is in view.
+    await group.scrollIntoViewIfNeeded();
+    const previews = page.getByTestId('setup-theme-preview');
+    await expect(previews).toHaveCount(3);
+    await expect(
+      previews.nth(0).locator('[data-theme-pack="modern-education"]')
+    ).toBeAttached();
+    await expect(
+      previews.nth(1).locator('[data-theme-pack="atelier"]')
+    ).toBeAttached();
+    await expect(
+      previews.nth(2).locator('[data-theme-pack="manara"]')
+    ).toBeAttached();
+    await expect(previews.nth(2)).toHaveAttribute('aria-hidden', 'true');
+
+    // The radio-group keyboard pattern: arrows move AND select; the third
+    // option is two presses from the first.
+    await modern.focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(atelier).toHaveAttribute('aria-checked', 'true');
+    await page.keyboard.press('ArrowRight');
+    await expect(manara).toHaveAttribute('aria-checked', 'true');
+    await expect(manara).toBeFocused();
+    await expect(modern).toHaveAttribute('aria-checked', 'false');
+    await expect(atelier).toHaveAttribute('aria-checked', 'false');
+    await noSidewaysScroll(page);
+    await captureEvidence(page, 'provisioning-start-theme-manara-en-phone', {
+      fullPage: true,
+    });
+    const slug = await page.getByLabel('Atlas address').inputValue();
+
+    const createdResponse = page.waitForResponse(
+      (response) =>
+        response.request().method() === 'POST' &&
+        /\/provisioning-requests$/.test(new URL(response.url()).pathname)
+    );
+    await page.getByRole('button', { name: 'Start provisioning' }).click();
+    const created = await createdResponse;
+    expect(created.status()).toBe(201);
+    const sent = created.request().postDataJSON() as {
+      selectedThemeKey: string;
+    };
+    expect(sent.selectedThemeKey).toBe('manara');
+
+    await expect(page.getByText('Your Academy is ready')).toBeVisible({
+      timeout: 60_000,
+    });
+    const requestId = new URL(page.url()).pathname.split('/').pop()!;
+    const request = await getRequest(page, requestId);
+    const configuration = await (
+      await apiGet(
+        page.request,
+        owner,
+        `/academies/${request.academyId}/website/configuration`
+      )
+    ).json();
+    expect(configuration.themeKey).toBe('manara');
+
+    // Published, the provisioned site really renders through Manara's
+    // pack: its own header, not the base chrome.
+    await apiPost(
+      page.request,
+      owner,
+      `/academies/${request.academyId}/website/publish`
+    );
+    await page.goto(`/?${ACADEMY_PREVIEW_PARAM}=${slug}`);
+    await expect(page.locator('[data-manara-header]')).toBeVisible({
+      timeout: 30_000,
+    });
   });
 
   test('J35b: two tabs, one address — one request wins, the other is told which to follow', async ({

@@ -1,0 +1,89 @@
+{
+  "pages": {
+    "trail": {
+      "label": "مسار التنقل",
+      "home": "الرئيسية"
+    },
+    "search": {
+      "placeholder": "أي مادة أو دورة تبحث عنها؟",
+      "submit": "بحث",
+      "faqLabel": "ابحث في الأسئلة",
+      "faqPlaceholder": "اكتب كلمة من سؤالك"
+    },
+    "summary": {
+      "courses_zero": "{{formatted}} دورة مفتوحة للتسجيل",
+      "courses_one": "دورة واحدة مفتوحة للتسجيل",
+      "courses_two": "دورتان مفتوحتان للتسجيل",
+      "courses_few": "{{formatted}} دورات مفتوحة للتسجيل",
+      "courses_many": "{{formatted}} دورة مفتوحة للتسجيل",
+      "courses_other": "{{formatted}} دورة مفتوحة للتسجيل",
+      "catalog_zero": "{{courses}} دورة في {{categories}} مسارات",
+      "catalog_one": "دورة واحدة في {{categories}} مسارات",
+      "catalog_two": "دورتان في {{categories}} مسارات",
+      "catalog_few": "{{courses}} دورات في {{categories}} مسارات",
+      "catalog_many": "{{courses}} دورة في {{categories}} مسارات",
+      "catalog_other": "{{courses}} دورة في {{categories}} مسارات"
+    },
+    "intro": {
+      "about": "من يدرّس هنا، وكيف ندرّس، والنتائج التي تقف وراء ذلك.",
+      "courses": "كل الدورات وكل المستويات — اختر دورتك وابدأ اليوم.",
+      "faqs": "إجابات واضحة عمّا يسأله الطلاب وأولياء الأمور أكثر.",
+      "contact": "سؤال عن دورة أو رسوم أو موعد حصة؟ تواصل معنا هنا."
+    },
+    "catalog": {
+      "filters": "تصفية الدورات",
+      "categories": "المسارات",
+      "allCategories": "كل المسارات",
+      "removeFilter": "إزالة عامل التصفية {{name}}",
+      "clearAll": "مسح الكل",
+      "loading": "جارٍ تحميل الدورات",
+      "errorTitle": "تعذّر تحميل الدورات",
+      "errorDescription": "انقطع الاتصال لسبب ما. يُرجى المحاولة مرة أخرى.",
+      "retry": "إعادة المحاولة",
+      "launchingTitle": "نفتتح قريبًا",
+      "launchingDescription": "نُعدّ الدورات الأولى الآن. عُد قريبًا، أو تواصل معنا لنخبرك حين يُفتح باب التسجيل.",
+      "pagination": "صفحات الدورات",
+      "previousPage": "الصفحة السابقة",
+      "nextPage": "الصفحة التالية",
+      "page": "الصفحة {{page}}",
+      "by": "مع {{name}}",
+      "openCourse": "فتح دورة {{title}}"
+    },
+    "contact": {
+      "channels": "طرق التواصل",
+      "emailLabel": "البريد الإلكتروني",
+      "phoneLabel": "الهاتف",
+      "addressLabel": "العنوان",
+      "formTitle": "أرسل لنا رسالة",
+      "formNote": "جميع الحقول مطلوبة. نردّ في أقرب وقت.",
+      "successTitle": "وصلتنا رسالتك",
+      "sendAnother": "إرسال رسالة أخرى"
+    },
+    "courseDetails": {
+      "breadcrumb": "مسار التنقل",
+      "allCourses": "كل الدورات",
+      "taughtBy": "يقدّمها",
+      "enrol": "التسجيل في هذه الدورة",
+      "includes": "ماذا تتضمّن",
+      "hasPreview": "دروس معاينة مجانية",
+      "contents": "المنهج",
+      "sectionLabel": "الجزء {{index}}",
+      "errorTitle": "تعذّر تحميل هذه الدورة",
+      "errorDescription": "حدث خطأ أثناء تحميل الدورة. يُرجى المحاولة مرة أخرى.",
+      "retry": "إعادة المحاولة"
+    },
+    "notFound": {
+      "eyebrow": "خطأ ٤٠٤",
+      "title": "هذه الصفحة ليست في الجدول",
+      "description": "ربما نُقلت، أو ربما أصبح الرابط قديمًا. هذه أسرع الطرق للعودة.",
+      "home": "العودة إلى الرئيسية",
+      "courses": "تصفّح الدورات",
+      "contact": "تواصل معنا"
+    },
+    "comingSoon": {
+      "eyebrow": "نفتتح قريبًا",
+      "title": "{{name}} تفتح أبوابها قريبًا",
+      "description": "نجهّز الفصل الآن. عُد قريبًا — سيُفتح التسجيل هنا."
+    }
+  }
+}

@@ -19,14 +19,20 @@ const THEMED_TESTS =
 
 beforeAll(async () => {
   if (!THEMED_TESTS.test(expect.getState().testPath ?? '')) return;
-  const [{ registerThemePack }, { MODERN_EDUCATION_PACK }, { ATELIER_PACK }] =
-    await Promise.all([
-      import('@/features/website/theme-packs/theme-pack.loader'),
-      import('@/features/website/modern-education/modern-education.pack'),
-      import('@/features/website/atelier/atelier.pack'),
-    ]);
+  const [
+    { registerThemePack },
+    { MODERN_EDUCATION_PACK },
+    { ATELIER_PACK },
+    { MANARA_PACK },
+  ] = await Promise.all([
+    import('@/features/website/theme-packs/theme-pack.loader'),
+    import('@/features/website/modern-education/modern-education.pack'),
+    import('@/features/website/atelier/atelier.pack'),
+    import('@/features/website/manara/manara.pack'),
+  ]);
   registerThemePack(MODERN_EDUCATION_PACK);
   registerThemePack(ATELIER_PACK);
+  registerThemePack(MANARA_PACK);
   // The first import of the packs in a worker can take a while under a
   // loaded full run; it is module loading, not a hanging test.
 }, 120_000);

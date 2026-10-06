@@ -165,8 +165,8 @@ export class RenderCache {
  * @param {boolean} [options.preloadThemeFonts] off by default (measured):
  *   an Atelier page preloads the display face(s) its heading (the Home hero,
  *   its LCP element) is set in, which the browser otherwise finds only after
- *   the theme stylesheet (src/ssr/theme-font-preloads.ts); Theme 1 and the
- *   base-pack themes get none. Lighthouse mobile (simulated throttling,
+ *   the theme stylesheet (src/ssr/theme-font-preloads.ts); a Manara page its
+ *   Alexandria face the same way; Theme 1 and the base-pack themes get none. Lighthouse mobile (simulated throttling,
  *   fixture build, HTTP/1.1) measured it slower and less stable: Atelier
  *   Home EN LCP median 3.76 s without it (5 runs, 3.757–3.772 s) vs 3.83–
  *   5.89 s with it (8 runs) — the ~150 KB of fonts compete with the

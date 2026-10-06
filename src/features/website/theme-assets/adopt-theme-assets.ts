@@ -30,6 +30,8 @@ const EQUIVALENT_KEYS: Readonly<
 > = {
   atelier: { 'home-benefit': 'home-philosophy' },
   'modern-education': { 'home-philosophy': 'home-benefit' },
+  // Manara shares Theme 1's slot keys (`home-benefit`); only Atelier's differs.
+  manara: { 'home-philosophy': 'home-benefit' },
 };
 
 /** One stored image value, as the active theme draws it. */

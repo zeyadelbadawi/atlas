@@ -49,6 +49,24 @@ describe('adoptThemeAssetReference', () => {
     }
   });
 
+  it('every Modern Education starter photograph has a Manara counterpart, and back', () => {
+    for (const entry of ALL_THEME_ASSET_MANIFESTS['modern-education'].assets) {
+      if (entry.key === 'theme-card') continue;
+      expect(
+        adoptThemeAssetReference(
+          `theme-asset:modern-education/${entry.key}`,
+          'manara'
+        )
+      ).toBe(`theme-asset:manara/${entry.key}`);
+    }
+    expect(
+      adoptThemeAssetReference('theme-asset:atelier/home-philosophy', 'manara')
+    ).toBe('theme-asset:manara/home-benefit');
+    expect(
+      adoptThemeAssetReference('theme-asset:manara/home-benefit', 'atelier')
+    ).toBe('theme-asset:atelier/home-philosophy');
+  });
+
   it("keeps the active theme's own references, owner images and other values", () => {
     for (const value of [
       'theme-asset:atelier/home-hero',
