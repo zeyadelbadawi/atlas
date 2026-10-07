@@ -126,11 +126,6 @@
   }
 }
 
-[lang='ar'] [data-theme-pack='riwaq'],
-[data-theme-pack='riwaq']:lang(ar) {
-  line-height: 1.75;
-}
-
 /* ------------------------------------------------------------------ */
 /* Typography                                                           */
 /* ------------------------------------------------------------------ */
@@ -196,14 +191,10 @@ a[href='#main-content'] {
   font-variant-numeric: tabular-nums lining-nums;
 }
 
-/* Arabic display is set at regular weight, looser, and never tracked. */
+/* Arabic display is set at regular weight and never tracked; its
+   line-heights are in `riwaq-arabic.css`. */
 [lang='ar'] :is(.rw-display, .rw-title, .rw-subtitle, .rw-figure) {
   letter-spacing: 0;
-  line-height: 1.3;
-}
-
-[lang='ar'] .rw-display {
-  line-height: 1.25;
 }
 
 .rw-lead {

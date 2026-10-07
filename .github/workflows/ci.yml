@@ -81,7 +81,9 @@ jobs:
       # retirement rendering, the brand-identity audit, palette injection
       # and the logo → Home navigation, and Riwaq (Theme 4)'s own gates
       # (axe on every page, overflow at seven widths, keyboard, reduced
-      # motion). The pixel baselines
+      # motion), and Arabic line spacing on every page of the four
+      # themes (no word's ink within 0.08 em of the line above). The pixel
+      # baselines
       # (`screenshots.spec.ts`) are not run here: they were recorded with
       # one Chromium build and fonts, and a CI runner's differ, so they are
       # compared locally on that pinned browser instead.
@@ -91,6 +93,7 @@ jobs:
           --config e2e/theme-baseline/playwright.config.ts
           axe.spec.ts theme-retirement.spec.ts identity.spec.ts
           palette-injection.spec.ts logo-home.spec.ts riwaq.spec.ts
+          arabic-line-spacing.spec.ts
 
       - if: failure()
         uses: actions/upload-artifact@v4

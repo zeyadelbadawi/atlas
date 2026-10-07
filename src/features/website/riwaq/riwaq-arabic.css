@@ -1,0 +1,102 @@
+/*
+ * Riwaq — Arabic line spacing (Arabic only: `:lang(ar)`; English is
+ * unchanged).
+ *
+ * IBM Plex Sans Arabic's ink is about 1.35 em for typical text and about
+ * 1.75 em fully vowelled, against about 1 em for its Latin. The display
+ * sizes need more air than the Latin values (1.02–1.3) give, so every role
+ * gets its own Arabic value here — the one place Riwaq sets Arabic
+ * line-heights. `e2e/theme-baseline/arabic-line-spacing.spec.ts` measures
+ * the ink of every wrapped Arabic line on every page.
+ *
+ * Loaded last (`riwaq.stylesheet.css`), so it wins over the section and
+ * page rules of equal weight.
+ */
+
+/* Running text. */
+.website-theme-scope[data-theme-pack='riwaq']:lang(ar) {
+  line-height: 1.85;
+}
+
+/*
+ * Shared blocks and plain elements, at the weight of one class (`:where`):
+ * they reach only text no theme rule sets, never a numeral or a control
+ * the theme sized on purpose.
+ */
+:where([data-theme-pack='riwaq'])
+  :where(p, li, blockquote, dd, figcaption):lang(ar) {
+  line-height: 1.85;
+}
+
+:where([data-theme-pack='riwaq']) :where(h1, h2, h3, h4, h5, h6):lang(ar) {
+  line-height: 1.55;
+}
+
+/* Tailwind's size and leading utilities load after this stylesheet, so
+   these weigh one class more than a utility. */
+:where([data-theme-pack='riwaq'])
+  :is(.leading-normal, .leading-relaxed):lang(ar),
+:where([data-theme-pack='riwaq'])
+  :where(p, li, blockquote, dd, figcaption):is(
+    [class*='text-xs'],
+    [class*='text-sm'],
+    [class*='text-base'],
+    [class*='text-lg']
+  ):lang(ar) {
+  line-height: 1.85;
+}
+
+:where([data-theme-pack='riwaq']) button[aria-expanded]:lang(ar),
+:where([data-theme-pack='riwaq'])
+  :is(
+    [class*='text-xl'],
+    [class*='text-2xl'],
+    [class*='text-3xl'],
+    [class*='text-4xl'],
+    [class*='text-5xl'],
+    [class*='text-6xl'],
+    .leading-none,
+    .leading-tight,
+    .leading-snug
+  ):lang(ar) {
+  line-height: 1.55;
+}
+
+/* Display: the page headline. */
+[data-theme-pack='riwaq'] :is(.rw-display):lang(ar) {
+  line-height: 1.45;
+}
+
+/* Titles, names and figures. */
+[data-theme-pack='riwaq']
+  :is(
+    .rw-title,
+    .rw-figure,
+    .rwx-row-title,
+    .rwc-wordmark,
+    .rwc-foot-name
+  ):lang(ar) {
+  line-height: 1.5;
+}
+
+/* Subtitles, questions, quotations and spec rows. */
+[data-theme-pack='riwaq']
+  :is(.rw-subtitle, .rwq-question, .rwt-text p, .rw-specs > li):lang(ar) {
+  line-height: 1.6;
+}
+
+/* Labels. */
+[data-theme-pack='riwaq'] :is(.rw-label):lang(ar) {
+  line-height: 1.6;
+}
+
+/* Running text. */
+[data-theme-pack='riwaq'] :is(.rw-lead):lang(ar) {
+  line-height: 1.85;
+}
+
+/* Buttons: a label that wraps (a narrow sidebar, a long translation) needs
+   room for its marks; a one-line button grows by about 2px. */
+[data-theme-pack='riwaq'] :is(.rw-btn):lang(ar) {
+  line-height: 1.45;
+}

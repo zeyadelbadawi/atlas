@@ -747,3 +747,85 @@
     animation: none;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/*
+ * Theme 1 — Arabic line spacing (Arabic only: `:lang(ar)`; English is
+ * unchanged).
+ *
+ * Theme 1 sets Arabic headings in Readex Pro, whose ink is about 1.45 em
+ * for typical text (1.8 em fully vowelled), and running text in Rubik
+ * (about 1.3 em). Its Latin line-heights — 1.08–1.35 for headings, and
+ * Tailwind's for the shared blocks — let a hamza or shadda meet the line
+ * above, so every role gets its own Arabic value.
+ * `e2e/theme-baseline/arabic-line-spacing.spec.ts` measures the ink of
+ * every wrapped Arabic line on every page.
+ *
+ * Kept at the end of `modern-education.css`, so it wins over the rules of
+ * equal weight above it.
+ */
+
+/* Running text. */
+.website-theme-scope[data-theme-pack='modern-education']:lang(ar) {
+  line-height: 1.85;
+}
+
+/*
+ * Shared blocks and plain elements, at the weight of one class (`:where`):
+ * they reach only text no theme rule sets, never a numeral or a control
+ * the theme sized on purpose.
+ */
+:where([data-theme-pack='modern-education'])
+  :where(p, li, blockquote, dd, figcaption):lang(ar) {
+  line-height: 1.85;
+}
+
+:where([data-theme-pack='modern-education'])
+  :where(h1, h2, h3, h4, h5, h6):lang(ar) {
+  line-height: 1.7;
+}
+
+/* Tailwind's size and leading utilities load after this stylesheet, so
+   these weigh one class more than a utility. */
+:where([data-theme-pack='modern-education'])
+  :is(.leading-normal, .leading-relaxed):lang(ar),
+:where([data-theme-pack='modern-education'])
+  :where(p, li, blockquote, dd, figcaption):is(
+    [class*='text-xs'],
+    [class*='text-sm'],
+    [class*='text-base'],
+    [class*='text-lg']
+  ):lang(ar) {
+  line-height: 1.85;
+}
+
+:where([data-theme-pack='modern-education']) button[aria-expanded]:lang(ar),
+:where([data-theme-pack='modern-education'])
+  :is(
+    [class*='text-xl'],
+    [class*='text-2xl'],
+    [class*='text-3xl'],
+    [class*='text-4xl'],
+    [class*='text-5xl'],
+    [class*='text-6xl'],
+    .leading-none,
+    .leading-tight,
+    .leading-snug
+  ):lang(ar) {
+  line-height: 1.7;
+}
+
+/* Display and titles (Readex Pro). */
+[data-theme-pack='modern-education'] :is(.t1-display, .t1-title):lang(ar) {
+  line-height: 1.7;
+}
+
+/* Eyebrows. */
+[data-theme-pack='modern-education'] :is(.t1-eyebrow):lang(ar) {
+  line-height: 1.6;
+}
+
+/* Running text. */
+[data-theme-pack='modern-education'] :is(.t1-lead):lang(ar) {
+  line-height: 1.85;
+}
