@@ -135,6 +135,21 @@
 /* Typography                                                           */
 /* ------------------------------------------------------------------ */
 
+/* The app's base styles set every heading in its own display face; inside
+   Riwaq a heading (a card's title, a shared block's h2) is set in Riwaq's
+   one family like everything else — never a second family to download. */
+.website-theme-scope[data-theme-pack='riwaq'] :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--rw-font);
+}
+
+/* The page's skip link sits before the theme scope. This stylesheet loads
+   only on a Riwaq page, so it is set in Riwaq's family here: otherwise its
+   visually hidden text alone downloads the app's body face. */
+a[href='#main-content'] {
+  font-family:
+    'Riwaq Sans', 'Riwaq Fallback', 'Segoe UI', Tahoma, system-ui, sans-serif;
+}
+
 .rw-display,
 .rw-title,
 .rw-subtitle,
