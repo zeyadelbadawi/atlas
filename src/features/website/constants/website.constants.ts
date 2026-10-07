@@ -44,6 +44,7 @@ export const SECTION_TYPE_ORDER: readonly SectionType[] = [
   'statistics',
   'features',
   'featureSplit',
+  'courseSpotlight',
   'steps',
   'testimonials',
   'instructors',
@@ -91,6 +92,11 @@ export const MAX_WEBSITE_IMAGE_FILE_SIZE = 5 * 1024 * 1024;
 /** Theme 1 plan §B density (one idea per section, 3–6 items) — mirrors the backend constants exactly. */
 export const MAX_SECTION_STEPS = 6;
 export const MAX_FEATURE_SPLIT_ITEMS = 6;
+/** `courseSpotlight`: how many syllabus sections it may list — mirrors the backend `MIN/MAX_SPOTLIGHT_MODULES`. */
+export const MIN_SPOTLIGHT_MODULES = 1;
+export const MAX_SPOTLIGHT_MODULES = 12;
+/** The backend generator's default (`SECTION_BASE_DEFAULTS.courseSpotlight`). */
+export const DEFAULT_SPOTLIGHT_MODULES = 6;
 export const MAX_HERO_HIGHLIGHTS = 4;
 export const MAX_CHIP_TEXT = 40;
 export const MIN_COURSE_CATEGORIES = 2;

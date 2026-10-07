@@ -20,6 +20,8 @@ import { mapAtelierBrandPalette } from '../../src/features/website/atelier/ateli
 import { ATELIER_THEME } from '../../src/features/website/themes/atelier.theme';
 import { mapManaraBrandPalette } from '../../src/features/website/manara/manara.brand-mapping';
 import { MANARA_THEME } from '../../src/features/website/themes/manara.theme';
+import { mapRiwaqBrandPalette } from '../../src/features/website/riwaq/riwaq.brand-mapping';
+import { RIWAQ_THEME } from '../../src/features/website/themes/riwaq.theme';
 import { fixtureSlug, fixtureUrl, THEMES } from './matrix';
 import {
   expect,
@@ -60,14 +62,17 @@ for (const theme of THEMES) {
       if (
         theme === 'modern-education' ||
         theme === 'atelier' ||
-        theme === 'manara'
+        theme === 'manara' ||
+        theme === 'riwaq'
       ) {
         const mapped =
           theme === 'atelier'
             ? mapAtelierBrandPalette({ theme: ATELIER_THEME, seeds: seedRoles })
             : theme === 'manara'
               ? mapManaraBrandPalette({ theme: MANARA_THEME, seeds: seedRoles })
-              : mapModernEducationBrandPalette({
+              : theme === 'riwaq'
+                ? mapRiwaqBrandPalette({ theme: RIWAQ_THEME, seeds: seedRoles })
+                : mapModernEducationBrandPalette({
                   theme: MODERN_EDUCATION_THEME,
                   seeds: seedRoles,
                 });

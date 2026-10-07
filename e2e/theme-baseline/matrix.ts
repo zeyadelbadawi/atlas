@@ -18,6 +18,8 @@ export const THEMES = [
   'atelier',
   // Theme 3 — Manara (Reports/THEME_3_MANARA_PLAN.md).
   'manara',
+  // Theme 4 — Riwaq (Reports/THEME_4_RIWAQ_PLAN.md).
+  'riwaq',
 ] as const;
 export type ThemeKey = (typeof THEMES)[number];
 
@@ -159,6 +161,13 @@ export const MANARA_PAGES: readonly BaselinePage[] = [
   NOT_FOUND,
 ];
 export const MANARA_COMING_SOON = THEME1_COMING_SOON;
+
+/**
+ * Riwaq's (Theme 4) own inner pages, its 404 and Coming Soon — the same
+ * set as Manara's: every page a visitor can open, beyond `THEMED_PAGES`.
+ */
+export const RIWAQ_PAGES: readonly BaselinePage[] = MANARA_PAGES;
+export const RIWAQ_COMING_SOON = THEME1_COMING_SOON;
 
 /**
  * The motion preference the Theme 1 and Themes 2–5 snapshot cases were

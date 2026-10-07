@@ -110,7 +110,7 @@ for (const viewport of AXE_VIEWPORTS) {
     test.use({ viewport: { width: viewport.width, height: viewport.height } });
 
     for (const theme of THEMES.filter(
-      (key) => key !== 'atelier' && key !== 'manara'
+      (key) => key !== 'atelier' && key !== 'manara' && key !== 'riwaq'
     )) {
       for (const state of ['new', 'rich'] as const) {
         for (const page of THEMED_PAGES[state]) {
@@ -295,7 +295,7 @@ test.describe('axe first visit, consent banner', () => {
   test.use({ seedConsent: false, contextOptions: { reducedMotion: 'reduce' } });
 
   for (const viewport of AXE_VIEWPORTS) {
-    for (const theme of ['atelier', 'manara'] as const) {
+    for (const theme of ['atelier', 'manara', 'riwaq'] as const) {
       for (const locale of LOCALES) {
         test(`first visit ${theme} rich home ${locale} ${viewport.name}`, async ({
           page,

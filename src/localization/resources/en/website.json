@@ -490,6 +490,10 @@
     "manara": {
       "name": "Manara",
       "description": "Bold and kinetic, built for teacher-led academies with big audiences: a dark stage, brand-coloured blocks, oversized Arabic-first type, scoreboard numbers and slanted beam seams."
+    },
+    "riwaq": {
+      "name": "Riwaq",
+      "description": "Measured and clear, built for professional institutes and career academies: a visible column grid, your brand as ink, square-cornered spec sheets and daylight architecture photography."
     }
   },
   "brand": {
@@ -661,7 +665,11 @@
     "pageOverLimitTitle": "Shorten text before saving",
     "pageOverLimit_one": "One section has text longer than the current limits. Your website still shows it, but the whole page is checked on every save, so this page can't be saved until that text is shortened.",
     "pageOverLimit_other": "{{count}} sections have text longer than the current limits. Your website still shows it, but the whole page is checked on every save, so this page can't be saved until that text is shortened.",
-    "openSectionToShorten": "Edit {{section}}"
+    "openSectionToShorten": "Edit {{section}}",
+    "spotlightCourseTitle": "Course",
+    "spotlightCourseHelp": "Choose the course this section presents. Left on automatic, it shows your newest published course.",
+    "spotlightCourseAutomatic": "Automatic: newest published course",
+    "spotlightCourseUnavailable": "The chosen course is no longer published and public, so this section is hidden on your website. Choose another course or switch to automatic."
   },
   "preview": {
     "title": "Preview",
@@ -755,6 +763,9 @@
     },
     "featureSplit": {
       "label": "Image with benefits"
+    },
+    "courseSpotlight": {
+      "label": "Course in focus"
     }
   },
   "fields": {
@@ -844,7 +855,10 @@
     "imagePositionStart": "Before the text",
     "imagePositionEnd": "After the text",
     "benefitItems": "Benefits",
-    "benefitItem": "Benefit"
+    "benefitItem": "Benefit",
+    "showOutcomes": "Show what learners will be able to do",
+    "showSyllabus": "Show the syllabus",
+    "maxModules": "Syllabus sections to list"
   },
   "icons": {
     "GraduationCap": "Graduation cap",
@@ -968,6 +982,15 @@
     },
     "testimonials": {
       "sampleBadge": "Sample"
+    },
+    "courseSpotlight": {
+      "unavailable": "No published course to show yet. This section stays hidden on your website until there is one.",
+      "viewCourse": "View the course",
+      "levelLabel": "Level",
+      "lessonsLabel": "Lessons",
+      "priceLabel": "Price",
+      "moreSections_one": "and {{count}} more section",
+      "moreSections_other": "and {{count}} more sections"
     }
   },
   "common": {
@@ -1636,6 +1659,174 @@
         "eyebrow": "Opening soon",
         "title": "{{name}} opens soon",
         "description": "The classroom is being set up. Come back soon — enrolment will open here."
+      }
+    }
+  },
+  "riwaq": {
+    "chrome": {
+      "apply": "Apply now",
+      "menu": "Menu",
+      "closeMenu": "Close menu",
+      "departments": "Departments",
+      "contactColumn": "Contact",
+      "social": "Follow"
+    },
+    "home": {
+      "liveData": {
+        "previewUnavailable": "Live data couldn't be loaded, so visitors don't see this section right now."
+      },
+      "hero": {
+        "searchLabel": "Find a course",
+        "searchPlaceholder": "Subject, skill or role",
+        "searchSubmit": "Search"
+      },
+      "categories": {
+        "viewAll": "All courses",
+        "listLabel": "Departments",
+        "courseCount_one": "{{formatted}} course",
+        "courseCount_other": "{{formatted}} courses"
+      },
+      "courses": {
+        "viewAll": "All courses",
+        "listLabel": "Courses",
+        "view": "View the course",
+        "errorTitle": "Courses couldn't be loaded.",
+        "errorDescription": "This is a problem on our side, not a sign there are no courses. Please try again.",
+        "retry": "Try again",
+        "launchingTitle": "Courses open soon.",
+        "launchingDescription": "The first courses are being prepared. Check back shortly, or get in touch to hear when enrolment opens.",
+        "launchingAction": "Get in touch",
+        "facts": {
+          "level": "Level",
+          "lessons": "Lessons",
+          "duration": "Duration",
+          "faculty": "Taught by",
+          "certificate": "Certificate",
+          "certificateIncluded": "Certificate on completion",
+          "price": "Price"
+        }
+      },
+      "spotlight": {
+        "loading": "Loading the course",
+        "syllabus": "Syllabus",
+        "view": "View the course"
+      },
+      "instructors": {
+        "listLabel": "Faculty",
+        "courseCount_one": "{{formatted}} course",
+        "courseCount_other": "{{formatted}} courses",
+        "previewHidden": "Visitors see your faculty once a published course names its instructors.",
+        "sampleName": "Instructor name",
+        "sampleCourses": "Courses taught"
+      },
+      "statistics": {
+        "label": "Facts and figures",
+        "previewHidden": "Visitors see these figures once at least two of them are above zero.",
+        "sampleValue": "No figure yet"
+      },
+      "testimonials": {
+        "label": "What learners say",
+        "roleDescription": "statements",
+        "position": "Statement {{position}} of {{total}}",
+        "previous": "Previous statement",
+        "next": "Next statement",
+        "rating": "Rated {{rating}} out of 5"
+      },
+      "faq": {
+        "listTitle": "Questions and answers",
+        "resultCount_one": "{{count}} question matches",
+        "resultCount_other": "{{count}} questions match",
+        "noMatchTitle": "No question matches that.",
+        "noMatchDescription": "Try a shorter word, or ask us directly on the contact page."
+      },
+      "gallery": {
+        "label": "Gallery"
+      }
+    },
+    "pages": {
+      "trail": {
+        "label": "You are here",
+        "home": "Home"
+      },
+      "search": {
+        "placeholder": "Subject, skill or role",
+        "submit": "Search",
+        "faqLabel": "Filter the questions",
+        "faqPlaceholder": "Type a word, such as payment"
+      },
+      "summary": {
+        "courses_one": "{{formatted}} course",
+        "courses_other": "{{formatted}} courses",
+        "catalog_one": "{{courses}} course in {{categories}} departments",
+        "catalog_other": "{{courses}} courses in {{categories}} departments"
+      },
+      "intro": {
+        "about": "Who teaches here, how the courses are run, and what they lead to.",
+        "courses": "Every course, with its level, length and price, before you enrol.",
+        "faqs": "Plain answers on length, level, completion and payment.",
+        "contact": "A question about a course or enrolment? Reach us here."
+      },
+      "catalog": {
+        "label": "Courses",
+        "filters": "Filters",
+        "closeFilters": "Close filters",
+        "departments": "Departments",
+        "allDepartments": "All departments",
+        "showResults_one": "Show {{count}} course",
+        "showResults_other": "Show {{count}} courses",
+        "done": "Done",
+        "removeFilter": "Remove filter: {{name}}",
+        "clearAll": "Clear all",
+        "loading": "Loading courses",
+        "errorTitle": "Courses couldn't be loaded.",
+        "errorDescription": "This is a problem on our side, not a sign there are no courses. Please try again.",
+        "retry": "Try again",
+        "launchingTitle": "Courses open soon.",
+        "launchingDescription": "The first courses are being prepared. Check back shortly.",
+        "pagination": "Pages",
+        "previousPage": "Previous page",
+        "nextPage": "Next page",
+        "page": "Page {{page}}",
+        "by": "Taught by {{name}}"
+      },
+      "contact": {
+        "label": "Contact",
+        "emailLabel": "Email",
+        "phoneLabel": "Phone",
+        "addressLabel": "Address",
+        "formTitle": "Send a message",
+        "formNote": "All fields are required.",
+        "successTitle": "Message sent.",
+        "sendAnother": "Send another message"
+      },
+      "courseDetails": {
+        "breadcrumb": "Course location",
+        "allCourses": "All courses",
+        "onThisPage": "On this page",
+        "overview": "Overview",
+        "faculty": "Faculty",
+        "assessments": "Assessments",
+        "language": "Language",
+        "contents": "Course contents",
+        "sectionLabel": "Section {{index}}:",
+        "enrol": "Enrolment",
+        "hasPreview": "A free preview lesson is available.",
+        "errorTitle": "This course couldn't be loaded.",
+        "errorDescription": "This is a problem on our side. Please try again.",
+        "retry": "Try again"
+      },
+      "notFound": {
+        "eyebrow": "Page not found",
+        "title": "This page isn't here.",
+        "description": "The link may be old, or the page may have moved. These will take you somewhere useful.",
+        "home": "Go to the home page",
+        "courses": "Browse courses",
+        "contact": "Contact us"
+      },
+      "comingSoon": {
+        "eyebrow": "Opening soon",
+        "title": "{{name}} is preparing its website.",
+        "description": "Courses and details will be published here soon."
       }
     }
   }

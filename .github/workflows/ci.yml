@@ -79,7 +79,9 @@ jobs:
 
       # axe (WCAG 2.2 AA + best practice, EN/AR, 390/1440), the Themes 2–5
       # retirement rendering, the brand-identity audit, palette injection
-      # and the logo → Home navigation. The pixel baselines
+      # and the logo → Home navigation, and Riwaq (Theme 4)'s own gates
+      # (axe on every page, overflow at seven widths, keyboard, reduced
+      # motion). The pixel baselines
       # (`screenshots.spec.ts`) are not run here: they were recorded with
       # one Chromium build and fonts, and a CI runner's differ, so they are
       # compared locally on that pinned browser instead.
@@ -88,7 +90,7 @@ jobs:
           pnpm exec playwright test
           --config e2e/theme-baseline/playwright.config.ts
           axe.spec.ts theme-retirement.spec.ts identity.spec.ts
-          palette-injection.spec.ts logo-home.spec.ts
+          palette-injection.spec.ts logo-home.spec.ts riwaq.spec.ts
 
       - if: failure()
         uses: actions/upload-artifact@v4

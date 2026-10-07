@@ -12,6 +12,7 @@
  */
 import {
   Award,
+  BookOpenCheck,
   Columns2,
   Heading1,
   ListOrdered,
@@ -35,6 +36,7 @@ import {
   DEFAULT_COURSE_CATEGORIES_COUNT,
   DEFAULT_FEATURED_COURSES_COUNT,
   DEFAULT_INSTRUCTORS_COUNT,
+  DEFAULT_SPOTLIGHT_MODULES,
 } from '../constants/website.constants';
 
 export interface SectionMetadataEntry {
@@ -120,6 +122,11 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadataEntry> = {
     labelKey: 'website:sections.featureSplit.label',
     icon: Columns2,
   },
+  courseSpotlight: {
+    type: 'courseSpotlight',
+    labelKey: 'website:sections.courseSpotlight.label',
+    icon: BookOpenCheck,
+  },
 };
 
 /** Every registered section type's metadata, in the Page Composer's "Add section" display order. */
@@ -171,6 +178,11 @@ export function getDefaultSectionConfig<TType extends SectionType>(
       title: EMPTY_LOCALIZED_TEXT,
       imagePosition: 'start',
       items: [],
+    },
+    courseSpotlight: {
+      showOutcomes: true,
+      showSyllabus: true,
+      maxModules: DEFAULT_SPOTLIGHT_MODULES,
     },
   };
 

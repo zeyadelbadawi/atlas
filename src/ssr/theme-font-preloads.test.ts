@@ -1,6 +1,7 @@
 /**
  * An Atelier page preloads exactly the display faces its heading uses, a
- * Manara page the Alexandria faces its heading uses; every other theme
+ * Manara page the Alexandria faces its heading uses, a Riwaq page the
+ * IBM Plex faces its heading uses; every other theme
  * gets no font preload from here.
  */
 import { describe, expect, it, vi } from 'vitest';
@@ -24,9 +25,16 @@ vi.mock('@/assets/fonts/alexandria-latin.woff2?url', () => ({
 vi.mock('@/assets/fonts/alexandria-arabic.woff2?url', () => ({
   default: '/assets/alexandria-arabic.woff2',
 }));
+vi.mock('@/assets/fonts/ibm-plex-sans-latin.woff2?url', () => ({
+  default: '/assets/ibm-plex-sans-latin.woff2',
+}));
+vi.mock('@/assets/fonts/ibm-plex-sans-arabic-400.woff2?url', () => ({
+  default: '/assets/ibm-plex-sans-arabic-400.woff2',
+}));
 
 const ATELIER = new Set<WebsiteThemeKey>(['atelier']);
 const MANARA = new Set<WebsiteThemeKey>(['manara']);
+const RIWAQ = new Set<WebsiteThemeKey>(['riwaq']);
 const hrefs = (html: string) =>
   [...html.matchAll(/href="([^"]+)"/g)].map((match) => match[1]);
 
@@ -154,6 +162,53 @@ describe('themeFontPreloadHtml', () => {
           )
         )
       ).toEqual(['/assets/alexandria-latin.woff2']);
+    });
+  });
+
+  describe('Riwaq', () => {
+    it('English hero: the Plex Latin face only', () => {
+      const html = themeFontPreloadHtml(
+        RIWAQ,
+        '<main><h1 id="a" class="rw-display">Learn the craft, <em data-highlight="" class="rw-em">column by column</em></h1></main>'
+      );
+      expect(hrefs(html)).toEqual(['/assets/ibm-plex-sans-latin.woff2']);
+    });
+
+    it('Arabic hero: the Plex Arabic face only', () => {
+      expect(
+        hrefs(
+          themeFontPreloadHtml(
+            RIWAQ,
+            '<h1 class="rw-display" data-long="">تعلّم الحرفة، <em class="rw-em">عمودًا بعد عمود</em></h1>'
+          )
+        )
+      ).toEqual(['/assets/ibm-plex-sans-arabic-400.woff2']);
+    });
+
+    it('a mixed heading needs both faces', () => {
+      expect(
+        hrefs(
+          themeFontPreloadHtml(
+            RIWAQ,
+            '<h1 class="rw-display rwp-dossier-title" dir="auto">أساسيات UX</h1>'
+          )
+        )
+      ).toEqual([
+        '/assets/ibm-plex-sans-latin.woff2',
+        '/assets/ibm-plex-sans-arabic-400.woff2',
+      ]);
+    });
+
+    it('other themes’ headings earn Riwaq nothing', () => {
+      expect(
+        themeFontPreloadHtml(RIWAQ, '<h1 class="mn-display">Learn</h1>')
+      ).toBe('');
+      expect(
+        themeFontPreloadHtml(RIWAQ, '<h1 class="text-xl">Sign in</h1>')
+      ).toBe('');
+      expect(
+        themeFontPreloadHtml(MANARA, '<h1 class="rw-display">Learn</h1>')
+      ).toBe('');
     });
   });
 });

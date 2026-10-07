@@ -25,6 +25,7 @@ import type { WebsiteThemeKey } from '@types';
 import modernEducationStylesheet from '../modern-education/modern-education.css?url';
 import atelierStylesheet from '../atelier/atelier.stylesheet.css?url';
 import manaraStylesheet from '../manara/manara.stylesheet.css?url';
+import riwaqStylesheet from '../riwaq/riwaq.stylesheet.css?url';
 
 /**
  * The stylesheets of the themes that have their own, in cascade order
@@ -37,6 +38,7 @@ export const THEME_STYLESHEETS: Readonly<
   'modern-education': [modernEducationStylesheet],
   atelier: [atelierStylesheet],
   manara: [manaraStylesheet],
+  riwaq: [riwaqStylesheet],
 };
 
 /** The attribute that marks a theme stylesheet link (value: the theme key). */
