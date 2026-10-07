@@ -21,7 +21,6 @@ import {
   fixtureSlug,
   fixtureUrl,
   type BaselinePage,
-  type DataState,
   type ThemeKey,
 } from './matrix';
 import {
@@ -40,8 +39,6 @@ import {
 const MIN_GAP_EM = 0.08;
 
 const HOME: BaselinePage = { name: 'home', path: '/' };
-const SIGN_IN: BaselinePage = { name: 'sign-in', path: '/sign-in' };
-const SIGN_UP: BaselinePage = { name: 'sign-up', path: '/sign-up' };
 
 interface Case {
   readonly theme: ThemeKey;
@@ -50,10 +47,7 @@ interface Case {
   readonly slug: string;
 }
 
-function themeCases(
-  theme: ThemeKey,
-  extra: readonly BaselinePage[]
-): Case[] {
+function themeCases(theme: ThemeKey, extra: readonly BaselinePage[]): Case[] {
   const cases: Case[] = [];
   for (const state of ['new', 'rich'] as const) {
     for (const page of THEMED_PAGES[state]) {
@@ -100,13 +94,16 @@ function theme1Cases(): Case[] {
       });
     }
   }
-  for (const page of [SIGN_IN, SIGN_UP]) {
-    cases.push({
-      theme: 'modern-education',
-      label: `new ${page.name}`,
-      page,
-      slug: fixtureSlug('modern-education', 'new' as DataState),
-    });
+  // The v1 compositions existing Academies still have (default slug).
+  for (const state of ['new', 'rich'] as const) {
+    for (const page of THEMED_PAGES[state]) {
+      cases.push({
+        theme: 'modern-education',
+        label: `v1 ${state} ${page.name}`,
+        page,
+        slug: fixtureSlug('modern-education', state),
+      });
+    }
   }
   cases.push({
     theme: 'modern-education',
