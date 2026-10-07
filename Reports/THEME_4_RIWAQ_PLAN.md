@@ -204,6 +204,47 @@ manifest/adoption entries) → B Backend (key, `courseSpotlight` schema + parity
 specs, e2e, fixtures) → H Home → P Pages & chrome → A Assets → Q QA (unit, SSR, theme-baseline screenshots/axe/
 palette/pack split/budgets, Lighthouse, real-stack journey, browser QA EN/AR × 390/768/1024/1440, T1–T3 identity).
 
-## 11. Results
+## 11. Results (7 Oct 2026, measured on the fixture build, Chromium 141, Lighthouse 13 mobile)
 
-Recorded on delivery.
+**Payload** (raw bytes as built; the budget test in `server/ssr/ssr.test.mjs` enforces these):
+
+| | Riwaq | Manara | Atelier | Theme 1 |
+|---|---|---|---|---|
+| Theme pack chunk | 113.6 kB | 121.8 kB | 132.6 kB | 155.2 kB |
+| Theme stylesheet | 47.2 kB | 59.1 kB | 62.4 kB | — |
+| Fonts, EN Home (transfer) | 45 kB | 65 kB | 115–182 kB | 67 kB |
+| Total transfer, Home (new) | 592 kB | 625 kB | 681 kB | 602 kB |
+
+**Lighthouse mobile, first visit (median of 5)**: CLS 0–0.014 (Atelier up to 0.08, Manara up to 0.145); TBT
+81–169 ms (others 90–182 ms); accessibility 100 on every case. LCP: Home rich 4.86 s (best of the four);
+Home new 5.40 s, Courses 5.41 s, Course Details 5.72 s (others 4.78–5.68 s). The first-visit gap is not
+bytes: Riwaq's lead photograph (above the fold on phones) is larger than the shared cookie-banner text, so
+its LCP is the theme's own content, while on the other themes' inner pages the LCP element is the banner
+paragraph the app shell paints before any theme loads. A static `<link rel="preload">` of the photograph in
+the HTML did not move LCP (the image is ready before the page renders), confirming the render, not the
+download, is the bound.
+
+**Lighthouse mobile, consent given (the theme's own content is the LCP on every theme; median of 3)**:
+
+| LCP | Riwaq | Theme 1 | Atelier | Manara |
+|---|---|---|---|---|
+| Home (new) | **5.35 s** | 5.44 s | 5.51 s | 5.49 s |
+| Courses | 5.34 s | **4.54 s** | 5.04 s | 5.32 s |
+| Course Details | 5.49 s | **4.93 s** | 5.43 s | 5.59 s |
+
+Riwaq leads on Home and is level with Themes 2–3 on inner pages; Theme 1 is faster on inner pages. Fixed
+on the way: Riwaq's card titles, FAQ questions and syllabus labels inherited the app's heading face (an extra
+font download and the wrong face) and the skip link downloaded the app's body face — both now in Riwaq Sans.
+
+**Accessibility / layout / motion** (`riwaq.spec.ts`, in CI): axe 0 violations on every Riwaq page, EN and
+AR, at 1440 and 390, new / rich / unpublished; no horizontal overflow at 390/430/768/1024/1280/1440/1920;
+keyboard: explorer, bottom-sheet menu (focus trapped, returned), catalogue filter sheet, FAQ; reduced motion
+draws everything in its final state, and with motion the figures end on their real values.
+
+**Visual baselines**: 153 Riwaq screenshots (EN/AR × 390/768/1024/1440 × new/rich/inner/unpublished + 11
+palettes). **Themes 1–3**: the full screenshot + axe suite (1,196 cases) passed against the approved
+baselines with no update — pixel-identical.
+
+**Unit / SSR**: vitest 3,364 tests pass; SSR 97 tests pass (Riwaq isolation both ways, font preloads,
+budget). Pack split: Riwaq never downloads another theme's code or stylesheet, and no other theme downloads
+Riwaq's.
