@@ -6,6 +6,7 @@
 import { ATELIER_ASSETS } from './atelier.manifest';
 import { MANARA_ASSETS } from './manara.manifest';
 import { MODERN_EDUCATION_ASSETS } from './modern-education.manifest';
+import { RIWAQ_ASSETS } from './riwaq.manifest';
 import type { ThemeAssetManifest } from '../theme-asset.types';
 
 export const ALL_THEME_ASSET_MANIFESTS: Readonly<
@@ -14,4 +15,5 @@ export const ALL_THEME_ASSET_MANIFESTS: Readonly<
   [MODERN_EDUCATION_ASSETS.theme]: MODERN_EDUCATION_ASSETS,
   [ATELIER_ASSETS.theme]: ATELIER_ASSETS,
   [MANARA_ASSETS.theme]: MANARA_ASSETS,
+  [RIWAQ_ASSETS.theme]: RIWAQ_ASSETS,
 };

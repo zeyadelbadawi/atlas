@@ -1,0 +1,8 @@
+/*
+ * Riwaq's (Theme 4) stylesheet as ONE file, linked only on pages that use
+ * Riwaq (`theme-packs/theme-stylesheets.ts`). Vite inlines the imports at
+ * build time.
+ */
+@import './riwaq.css';
+@import './riwaq-sections.css';
+@import './riwaq-pages.css';

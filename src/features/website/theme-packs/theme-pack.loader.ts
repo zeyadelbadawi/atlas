@@ -59,6 +59,11 @@ const CHUNKED_PACKS: Readonly<
       import('../manara/manara.pack').then((module) => module.MANARA_PACK),
     systemPages: ['NotFound', 'ComingSoon'],
   },
+  riwaq: {
+    load: () =>
+      import('../riwaq/riwaq.pack').then((module) => module.RIWAQ_PACK),
+    systemPages: ['NotFound', 'ComingSoon'],
+  },
 };
 
 /** The theme an unknown or legacy key renders as (same fallback as `getWebsiteTheme`). */

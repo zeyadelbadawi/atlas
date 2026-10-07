@@ -64,7 +64,7 @@ function ensureBuildOutDir() {
  * A new theme folder with its own stylesheet is added to the pattern.
  */
 const THEME_STYLESHEET_PATH =
-  /\/src\/features\/website\/(?:modern-education|atelier|manara)\/[^?]*\.css$/;
+  /\/src\/features\/website\/(?:modern-education|atelier|manara|riwaq)\/[^?]*\.css$/;
 const STYLESHEET_ASSET_QUERY =
   /(?:^|&)(?:url|transform-only|direct|raw|inline)\b/;
 

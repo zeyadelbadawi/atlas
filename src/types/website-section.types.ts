@@ -44,6 +44,8 @@ export const SECTION_TYPES = [
   'courseCategories',
   'steps',
   'featureSplit',
+  // Theme 4 plan §6 (Reports/THEME_4_RIWAQ_PLAN.md) — shared by every theme, with a base renderer.
+  'courseSpotlight',
 ] as const;
 
 export type SectionType = (typeof SECTION_TYPES)[number];
@@ -372,6 +374,26 @@ export interface FeatureSplitSectionConfig {
   readonly cta?: WebsiteCta;
 }
 
+/**
+ * Theme 4 plan §6 — one real course's outcomes and syllabus. `courseId`
+ * references the Academy's own Course domain (absent → the newest published
+ * course); every fact the section shows is read live from the public course
+ * and its curriculum, so the config carries no course copy of its own.
+ */
+export interface CourseSpotlightSectionConfig {
+  readonly eyebrow?: LocalizedText;
+  /** Absent → the course's own title. */
+  readonly title?: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly courseId?: string;
+  readonly showOutcomes: boolean;
+  readonly showSyllabus: boolean;
+  /** How many syllabus sections to list (1–12); the rest are summarised. */
+  readonly maxModules: number;
+  /** Absent → a link to the course itself. */
+  readonly cta?: WebsiteCta;
+}
+
 /** Every section's config, keyed by its `SectionType`. */
 export interface SectionConfigMap {
   readonly hero: HeroSectionConfig;
@@ -390,6 +412,7 @@ export interface SectionConfigMap {
   readonly courseCategories: CourseCategoriesSectionConfig;
   readonly steps: StepsSectionConfig;
   readonly featureSplit: FeatureSplitSectionConfig;
+  readonly courseSpotlight: CourseSpotlightSectionConfig;
 }
 
 /**

@@ -40,6 +40,11 @@ const MANARA: ThemeCode = {
   script: /["'\s]mn-(?:lead|label|subtitle|link|btn)[\s"']/,
   stylesheet: /data-theme-pack=["']?manara/,
 };
+const RIWAQ: ThemeCode = {
+  fileName: /riwaq/i,
+  script: /["'\s]rw-(?:lead|label|subtitle|link|btn)[\s"']/,
+  stylesheet: /data-theme-pack=["']?riwaq/,
+};
 const THEME_1: ThemeCode = {
   fileName: /modern-education/i,
   script: /["'\s]t1-[a-z]/,
@@ -123,34 +128,41 @@ const CASES: ReadonlyArray<{
     theme: 'modern-education',
     slug: fixtureSlug('modern-education', 'rich', 'default', 'c1'),
     own: THEME_1,
-    others: [ATELIER, MANARA],
+    others: [ATELIER, MANARA, RIWAQ],
   },
   {
     name: 'Theme 1 (v1 website)',
     theme: 'modern-education',
     slug: fixtureSlug('modern-education', 'new'),
     own: THEME_1,
-    others: [ATELIER, MANARA],
+    others: [ATELIER, MANARA, RIWAQ],
   },
   {
     name: 'Atelier',
     theme: 'atelier',
     slug: fixtureSlug('atelier', 'rich'),
     own: ATELIER,
-    others: [THEME_1, MANARA],
+    others: [THEME_1, MANARA, RIWAQ],
   },
   {
     name: 'Manara',
     theme: 'manara',
     slug: fixtureSlug('manara', 'rich'),
     own: MANARA,
-    others: [THEME_1, ATELIER],
+    others: [THEME_1, ATELIER, RIWAQ],
+  },
+  {
+    name: 'Riwaq',
+    theme: 'riwaq',
+    slug: fixtureSlug('riwaq', 'rich'),
+    own: RIWAQ,
+    others: [THEME_1, ATELIER, MANARA],
   },
   {
     name: 'a retired theme (base pack)',
     theme: 'premium-academy',
     slug: fixtureSlug('premium-academy', 'new'),
-    others: [ATELIER, MANARA, THEME_1],
+    others: [ATELIER, MANARA, RIWAQ, THEME_1],
   },
 ];
 

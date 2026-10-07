@@ -187,6 +187,12 @@ export interface Course {
   readonly language?: string;
   readonly outcomes?: readonly string[];
   readonly requirements?: readonly string[];
+  /**
+   * Theme 4 plan §6 — whether finishing this course issues a certificate.
+   * Optional so an API that predates the field reads as "not stated" (no
+   * certificate is claimed), never as a blanket yes.
+   */
+  readonly certificatesEnabled?: boolean;
   readonly introVideoAssetId?: string;
   readonly createdAt: string;
   readonly updatedAt: string;

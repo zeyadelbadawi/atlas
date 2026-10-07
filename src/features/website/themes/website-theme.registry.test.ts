@@ -13,6 +13,7 @@ import {
   WEBSITE_THEME_KEYS,
 } from '@types';
 import { getThemePack } from '../theme-packs/theme-pack.registry';
+import { BASE_RENDERERS } from '../theme-packs/base-renderers';
 import { getWebsiteTheme, listWebsiteThemes } from './website-theme.registry';
 
 describe('theme selection after the Themes 2–5 retirement', () => {
@@ -21,17 +22,25 @@ describe('theme selection after the Themes 2–5 retirement', () => {
       'modern-education',
       'atelier',
       'manara',
+      'riwaq',
     ]);
     expect(listWebsiteThemes().map((theme) => theme.key)).toEqual([
       'modern-education',
       'atelier',
       'manara',
+      'riwaq',
     ]);
-    for (const current of ['modern-education', 'atelier', 'manara'] as const) {
+    for (const current of [
+      'modern-education',
+      'atelier',
+      'manara',
+      'riwaq',
+    ] as const) {
       expect(listWebsiteThemes(current).map((theme) => theme.key)).toEqual([
         'modern-education',
         'atelier',
         'manara',
+        'riwaq',
       ]);
     }
     for (const key of RETIRED_WEBSITE_THEME_KEYS) {
@@ -45,6 +54,7 @@ describe('theme selection after the Themes 2–5 retirement', () => {
         'modern-education',
         'atelier',
         'manara',
+        'riwaq',
         key,
       ]);
     }
@@ -63,8 +73,14 @@ describe('theme selection after the Themes 2–5 retirement', () => {
 
   it('Theme 1 draws every section type itself, so no retired section is unmappable', () => {
     const pack = getThemePack('modern-education');
+    // Types added after the retirement (no retired website holds one) are
+    // drawn by their shared base renderer.
+    const POST_RETIREMENT_TYPES = new Set(['courseSpotlight']);
     for (const type of SECTION_TYPES) {
-      expect(pack.renderers[type], type).toBeTypeOf('function');
+      const renderer = POST_RETIREMENT_TYPES.has(type)
+        ? BASE_RENDERERS[type]
+        : pack.renderers[type];
+      expect(renderer, type).toBeTypeOf('function');
     }
   });
 });

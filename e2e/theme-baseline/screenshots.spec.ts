@@ -22,6 +22,8 @@ import {
   LOCALES,
   MANARA_COMING_SOON,
   MANARA_PAGES,
+  RIWAQ_COMING_SOON,
+  RIWAQ_PAGES,
   SHARED_CASES,
   SHARED_CASE_THEME,
   THEME1_BRAND_PAGES,
@@ -52,7 +54,7 @@ for (const viewport of VIEWPORTS) {
     test.use({ viewport: { width: viewport.width, height: viewport.height } });
 
     for (const theme of THEMES.filter(
-      (key) => key !== 'atelier' && key !== 'manara'
+      (key) => key !== 'atelier' && key !== 'manara' && key !== 'riwaq'
     )) {
       for (const state of ['new', 'rich'] as const) {
         for (const page of THEMED_PAGES[state]) {
@@ -428,6 +430,117 @@ for (const viewport of VIEWPORTS) {
         });
       }
     });
+
+    // Riwaq (Theme 4) is captured like Atelier and Manara: real reduced
+    // motion, so its `Reveal` entrances are drawn in their final state and
+    // the colonnade, windows and figures render their final state (plan §5: reduced motion =
+    // final state).
+    test.describe('riwaq', () => {
+      test.use({ contextOptions: { reducedMotion: 'reduce' } });
+      // `settleImages` scrolls each page and waits for every photograph.
+      test.slow();
+
+      for (const state of ['new', 'rich'] as const) {
+        for (const page of THEMED_PAGES[state]) {
+          for (const locale of LOCALES) {
+            test(`riwaq ${state} ${page.name} ${locale}`, async ({
+              page: browserPage,
+              issues,
+            }) => {
+              await openFixture(
+                browserPage,
+                fixtureUrl(page, locale, fixtureSlug('riwaq', state))
+              );
+              await settleImages(browserPage);
+              await expect(browserPage).toHaveScreenshot(
+                [
+                  'themes',
+                  'riwaq',
+                  state,
+                  `${page.name}--${locale}--${viewport.name}.png`,
+                ],
+                { fullPage: true }
+              );
+              expectNoIssues(issues);
+            });
+          }
+        }
+      }
+
+      for (const page of RIWAQ_PAGES) {
+        for (const locale of LOCALES) {
+          test(`riwaq rich ${page.name} ${locale}`, async ({
+            page: browserPage,
+            issues,
+          }) => {
+            await openFixture(
+              browserPage,
+              fixtureUrl(page, locale, fixtureSlug('riwaq', 'rich'))
+            );
+            await settleImages(browserPage);
+            await expect(browserPage).toHaveScreenshot(
+              [
+                'themes',
+                'riwaq',
+                'rich',
+                `${page.name}--${locale}--${viewport.name}.png`,
+              ],
+              { fullPage: true }
+            );
+            expectNoIssues(issues);
+          });
+        }
+      }
+
+      for (const locale of LOCALES) {
+        test(`riwaq coming-soon ${locale}`, async ({
+          page: browserPage,
+          issues,
+        }) => {
+          await openFixture(
+            browserPage,
+            fixtureUrl(
+              RIWAQ_COMING_SOON.page,
+              locale,
+              fixtureSlug('riwaq', RIWAQ_COMING_SOON.state)
+            )
+          );
+          await settleImages(browserPage);
+          await expect(browserPage).toHaveScreenshot(
+            [
+              'themes',
+              'riwaq',
+              'unpublished',
+              `coming-soon--${locale}--${viewport.name}.png`,
+            ],
+            { fullPage: true }
+          );
+          expectNoIssues(issues);
+        });
+      }
+
+      for (const palette of BRAND_PALETTES) {
+        test(`brand riwaq home ${palette}`, async ({
+          page: browserPage,
+          issues,
+        }) => {
+          await openFixture(
+            browserPage,
+            fixtureUrl(
+              { name: 'home', path: '/' },
+              'en',
+              fixtureSlug('riwaq', 'rich', palette)
+            )
+          );
+          await settleImages(browserPage);
+          await expect(browserPage).toHaveScreenshot(
+            ['brand', 'riwaq', `home--${palette}--en--${viewport.name}.png`],
+            { fullPage: true }
+          );
+          expectNoIssues(issues);
+        });
+      }
+    });
   });
 }
 
@@ -493,6 +606,64 @@ test.describe('first visit', () => {
         'shared',
         `first-visit--en--${viewport.name}.png`,
       ]);
+      expectNoIssues(issues);
+    });
+  }
+});
+
+// Riwaq (Theme 4) is also captured at the tablet width, where its colonnade
+// steps from four to eight columns and the explorer becomes side by side
+// (plan §9). Themes 1–3 keep their approved three-width matrix.
+test.describe('768px riwaq tablet', () => {
+  test.use({
+    viewport: { width: 768, height: 1024 },
+    contextOptions: { reducedMotion: 'reduce' },
+  });
+  test.slow();
+
+  const cases = [
+    ...THEMED_PAGES.new.map((page) => ({ state: 'new' as const, page })),
+    ...THEMED_PAGES.rich.map((page) => ({ state: 'rich' as const, page })),
+    ...RIWAQ_PAGES.map((page) => ({ state: 'rich' as const, page })),
+  ];
+  for (const { state, page } of cases) {
+    for (const locale of LOCALES) {
+      test(`riwaq ${state} ${page.name} ${locale} 768`, async ({
+        page: browserPage,
+        issues,
+      }) => {
+        await openFixture(
+          browserPage,
+          fixtureUrl(page, locale, fixtureSlug('riwaq', state))
+        );
+        await settleImages(browserPage);
+        await expect(browserPage).toHaveScreenshot(
+          ['themes', 'riwaq', state, `${page.name}--${locale}--768.png`],
+          { fullPage: true }
+        );
+        expectNoIssues(issues);
+      });
+    }
+  }
+
+  for (const locale of LOCALES) {
+    test(`riwaq coming-soon ${locale} 768`, async ({
+      page: browserPage,
+      issues,
+    }) => {
+      await openFixture(
+        browserPage,
+        fixtureUrl(
+          RIWAQ_COMING_SOON.page,
+          locale,
+          fixtureSlug('riwaq', RIWAQ_COMING_SOON.state)
+        )
+      );
+      await settleImages(browserPage);
+      await expect(browserPage).toHaveScreenshot(
+        ['themes', 'riwaq', 'unpublished', `coming-soon--${locale}--768.png`],
+        { fullPage: true }
+      );
       expectNoIssues(issues);
     });
   }

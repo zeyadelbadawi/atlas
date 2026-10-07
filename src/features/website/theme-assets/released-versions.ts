@@ -13,4 +13,5 @@ export const RELEASED_THEME_ASSET_FOLDERS: readonly string[] = [
   'atelier/v3',
   'modern-education/v2',
   'manara/v1',
+  'riwaq/v1',
 ];

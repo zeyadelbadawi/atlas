@@ -24,6 +24,7 @@ import { PageHeaderSection } from '../sections/PageHeaderSection';
 import { CourseCategoriesSection } from '../sections/CourseCategoriesSection';
 import { StepsSection } from '../sections/StepsSection';
 import { FeatureSplitSection } from '../sections/FeatureSplitSection';
+import { CourseSpotlightSection } from '../sections/CourseSpotlightSection';
 import type { SectionRenderers } from './theme-pack.types';
 
 export const BASE_RENDERERS: SectionRenderers = {
@@ -125,6 +126,21 @@ export const BASE_RENDERERS: SectionRenderers = {
     return (
       <FeatureSplitSection
         config={config}
+        pages={pages}
+        linkRenderer={linkRenderer}
+      />
+    );
+  },
+  courseSpotlight: function BaseCourseSpotlight({
+    config,
+    academyId,
+    pages,
+    linkRenderer,
+  }) {
+    return (
+      <CourseSpotlightSection
+        config={config}
+        academyId={academyId}
         pages={pages}
         linkRenderer={linkRenderer}
       />

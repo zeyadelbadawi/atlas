@@ -17,7 +17,7 @@
 import { after, before, beforeEach, describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -164,16 +164,47 @@ function manaraAcademy(label, id, primaryColor) {
   };
 }
 
+// Riwaq (Theme 4)'s own generated website.
+const RIWAQ_TEMPLATE = JSON.parse(
+  readFileSync(
+    join(ROOT, 'e2e/theme-baseline/fixtures/generated/riwaq.json'),
+    'utf8'
+  )
+);
+
+/** An Academy on Riwaq: the same identity and courses, Riwaq's website. */
+function riwaqAcademy(label, id, primaryColor) {
+  const base = academy(label, id, primaryColor, `${label} on Riwaq`);
+  const rebase = (value) =>
+    JSON.parse(JSON.stringify(value).replaceAll('"fx-academy"', `"${id}"`));
+  return {
+    ...base,
+    resolve: {
+      ...base.resolve,
+      presentation: { ...base.resolve.presentation, themeKey: 'riwaq' },
+    },
+    configuration: {
+      ...rebase(RIWAQ_TEMPLATE.configuration),
+      brand: base.configuration.brand,
+      status: 'published',
+      publishedAt: '2026-09-01T09:00:00.000Z',
+    },
+    pages: rebase(RIWAQ_TEMPLATE.pages).filter((page) => page.visible),
+  };
+}
+
 const ALPHA_ID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 const BETA_ID = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
 const GAMMA_ID = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
 const DELTA_ID = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
 const EPSILON_ID = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
+const ZETA_ID = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
 const ALPHA = `alpha.${BASE}`;
 const BETA = `beta.${BASE}`;
 const GAMMA = `gamma.${BASE}`;
 const DELTA = `delta.${BASE}`;
 const EPSILON = `epsilon.${BASE}`;
+const ZETA = `zeta.${BASE}`;
 const ALPHA_PRIMARY = '350 60% 45%';
 const BETA_PRIMARY = '200 80% 35%';
 
@@ -198,6 +229,7 @@ function resetState() {
       [GAMMA_ID]: gamma,
       [DELTA_ID]: atelierAcademy('delta', DELTA_ID, '20 70% 40%'),
       [EPSILON_ID]: manaraAcademy('epsilon', EPSILON_ID, '222 72% 46%'),
+      [ZETA_ID]: riwaqAcademy('zeta', ZETA_ID, '199 64% 30%'),
     },
     requests: [],
     failPages: false,
@@ -1120,6 +1152,7 @@ describe('theme packs: each site gets only its own theme', () => {
       'src/features/website/modern-education/modern-education.pack.ts',
     atelier: 'src/features/website/atelier/atelier.pack.ts',
     manara: 'src/features/website/manara/manara.pack.ts',
+    riwaq: 'src/features/website/riwaq/riwaq.pack.ts',
   };
   // What identifies a theme's components and stylesheet in built files.
   const MARKERS = {
@@ -1134,6 +1167,10 @@ describe('theme packs: each site gets only its own theme', () => {
     manara: {
       script: /["'\s]mn-(?:lead|label|subtitle|link|btn)[\s"']/,
       stylesheet: /data-theme-pack=["']?manara/,
+    },
+    riwaq: {
+      script: /["'\s]rw-(?:lead|label|subtitle|link|btn)[\s"']/,
+      stylesheet: /data-theme-pack=["']?riwaq/,
     },
   };
 
@@ -1161,14 +1198,20 @@ describe('theme packs: each site gets only its own theme', () => {
         .matchAll(/<link rel="stylesheet"[^>]*>/g),
     ].map(([tag]) => /data-theme-stylesheet="([^"]+)"/.exec(tag)?.[1] ?? 'app');
 
-  // Each selectable theme against each of the other two.
+  // Each selectable theme against each of the others.
   for (const [label, host, theme, other] of [
     ['a Theme 1', ALPHA, 'modern-education', 'atelier'],
     ['a Theme 1', ALPHA, 'modern-education', 'manara'],
+    ['a Theme 1', ALPHA, 'modern-education', 'riwaq'],
     ['an Atelier', DELTA, 'atelier', 'modern-education'],
     ['an Atelier', DELTA, 'atelier', 'manara'],
+    ['an Atelier', DELTA, 'atelier', 'riwaq'],
     ['a Manara', EPSILON, 'manara', 'modern-education'],
     ['a Manara', EPSILON, 'manara', 'atelier'],
+    ['a Manara', EPSILON, 'manara', 'riwaq'],
+    ['a Riwaq', ZETA, 'riwaq', 'modern-education'],
+    ['a Riwaq', ZETA, 'riwaq', 'atelier'],
+    ['a Riwaq', ZETA, 'riwaq', 'manara'],
   ]) {
     it(`${label} page links only its theme's stylesheet, in front of the app's, and names its pack for hydration (not ${other}'s)`, async () => {
       for (const path of ['/', '/ar/courses', '/no-such-page']) {
@@ -1225,11 +1268,52 @@ describe('theme packs: each site gets only its own theme', () => {
       }
     }
     const themeStylesheets = readdirSync(join(DIST, 'assets')).filter((file) =>
-      /^(modern-education|atelier\.stylesheet|manara\.stylesheet)-[\w-]+\.css$/.test(
+      /^(modern-education|atelier\.stylesheet|manara\.stylesheet|riwaq\.stylesheet)-[\w-]+\.css$/.test(
         file
       )
     );
-    assert.equal(themeStylesheets.length, 3, themeStylesheets.join(', '));
+    assert.equal(themeStylesheets.length, 4, themeStylesheets.join(', '));
+  });
+
+  // Theme 4's performance budget (Reports/THEME_4_RIWAQ_PLAN.md §8): more
+  // beautiful must not mean more expensive. Raw bytes as built.
+  it("Riwaq's pack, stylesheet and fonts stay within budget, and smaller than Themes 1–3's", () => {
+    const m = manifest();
+    const size = (file) => statSync(join(DIST, file)).size;
+    const pack = (theme) => m[PACKS[theme]];
+    const riwaq = pack('riwaq');
+    assert.ok(riwaq, 'the Riwaq pack is a chunk of its own');
+    const packBytes = size(riwaq.file);
+    assert.ok(packBytes <= 115_000, `Riwaq pack ${packBytes} B > 115 kB`);
+    const stylesheet = readdirSync(join(DIST, 'assets')).find((file) =>
+      /^riwaq\.stylesheet-[\w-]+\.css$/.test(file)
+    );
+    assert.ok(stylesheet, 'the Riwaq stylesheet is a file of its own');
+    const cssBytes = size(join('assets', stylesheet));
+    assert.ok(cssBytes <= 56_000, `Riwaq stylesheet ${cssBytes} B > 56 kB`);
+    for (const theme of ['modern-education', 'atelier', 'manara']) {
+      assert.ok(
+        packBytes < size(pack(theme).file),
+        `Riwaq pack is not smaller than ${theme}'s`
+      );
+    }
+    for (const theme of ['atelier', 'manara']) {
+      const other = readdirSync(join(DIST, 'assets')).find((file) =>
+        new RegExp(`^${theme}\\.stylesheet-[\\w-]+\\.css$`).test(file)
+      );
+      assert.ok(
+        cssBytes < size(join('assets', other)),
+        `Riwaq stylesheet is not smaller than ${theme}'s`
+      );
+    }
+    const fonts = readdirSync(join(DIST, 'assets')).filter((file) =>
+      /^ibm-plex-sans-[\w-]+\.woff2$/.test(file)
+    );
+    assert.equal(fonts.length, 2, fonts.join(', '));
+    for (const font of fonts) {
+      const bytes = size(join('assets', font));
+      assert.ok(bytes <= 50_000, `${font} ${bytes} B > 50 kB`);
+    }
   });
 
   it('the manifest names no absolute source path', () => {
@@ -1237,7 +1321,7 @@ describe('theme packs: each site gets only its own theme', () => {
       assert.ok(!key.startsWith('/'), key);
   });
 
-  it('when asked, an Atelier page preloads the display face its heading uses, a Manara page its own; Theme 1 none', async () => {
+  it('when asked, an Atelier page preloads the display face its heading uses, a Manara and a Riwaq page their own; Theme 1 none', async () => {
     const fontPreloads = (html) =>
       [
         ...html.matchAll(
@@ -1267,6 +1351,17 @@ describe('theme packs: each site gets only its own theme', () => {
     const manaraArabic = fontPreloads((await get(on, EPSILON, '/ar/')).body);
     assert.ok(manaraArabic.length > 0);
     assert.ok(manaraArabic.every((file) => /alexandria-arabic/.test(file)));
+    // Riwaq: IBM Plex, Latin on the EN hero and Arabic on the AR one.
+    assert.deepEqual(fontPreloads((await get(handler, ZETA, '/')).body), []);
+    const riwaq = fontPreloads((await get(on, ZETA, '/')).body);
+    assert.ok(riwaq.length > 0, 'the Riwaq hero face is preloaded');
+    for (const file of riwaq) {
+      assert.match(file, /^assets\/ibm-plex-sans-latin-[\w-]+\.woff2$/);
+      assert.ok(existsSync(join(DIST, file)), `${file} exists`);
+    }
+    const riwaqArabic = fontPreloads((await get(on, ZETA, '/ar/')).body);
+    assert.ok(riwaqArabic.length > 0);
+    assert.ok(riwaqArabic.every((file) => /ibm-plex-sans-arabic/.test(file)));
     assert.deepEqual(fontPreloads((await get(on, ALPHA, '/')).body), []);
   });
 

@@ -106,30 +106,34 @@ describe('Setup theme picker', () => {
     const modern = screen.getByRole('radio', { name: /Modern Education/ });
     const atelier = screen.getByRole('radio', { name: /Atelier/ });
     const manara = screen.getByRole('radio', { name: /Manara/ });
-    expect(radios()).toEqual([modern, atelier, manara]);
+    const riwaq = screen.getByRole('radio', { name: /Riwaq/ });
+    expect(radios()).toEqual([modern, atelier, manara, riwaq]);
     expect(modern.textContent).toContain('split hero');
     expect(atelier.textContent).toContain('editorial');
     expect(manara.textContent).toContain('dark stage');
+    expect(riwaq.textContent).toContain('column grid');
     expect(checked(modern)).toBe('true');
     expect(checked(atelier)).toBe('false');
     expect(checked(manara)).toBe('false');
+    expect(checked(riwaq)).toBe('false');
     // One tab stop: the selected radio.
     expect(modern.tabIndex).toBe(0);
     expect(atelier.tabIndex).toBe(-1);
     expect(manara.tabIndex).toBe(-1);
+    expect(riwaq.tabIndex).toBe(-1);
   });
 
   it('each option previews the REAL renderer in its own theme, hidden from assistive tech and inert', () => {
     renderForm();
     const previews = screen.getAllByTestId('setup-theme-preview');
-    expect(previews).toHaveLength(3);
+    expect(previews).toHaveLength(4);
     expect(
       previews.map((preview) =>
         preview
           .querySelector('[data-theme-pack]')
           ?.getAttribute('data-theme-pack')
       )
-    ).toEqual(['modern-education', 'atelier', 'manara']);
+    ).toEqual(['modern-education', 'atelier', 'manara', 'riwaq']);
     for (const preview of previews) {
       expect(preview.getAttribute('aria-hidden')).toBe('true');
       expect(preview.hasAttribute('inert')).toBe(true);
@@ -141,7 +145,7 @@ describe('Setup theme picker', () => {
   it('arrow keys move and select; Home/End jump; selection wraps', async () => {
     const user = userEvent.setup();
     renderForm();
-    const [modern, atelier, manara] = radios();
+    const [modern, atelier, manara, riwaq] = radios();
     modern.focus();
     await user.keyboard('{ArrowRight}');
     expect(checked(atelier)).toBe('true');
@@ -151,16 +155,18 @@ describe('Setup theme picker', () => {
     await user.keyboard('{ArrowDown}');
     expect(checked(manara)).toBe('true');
     expect(document.activeElement).toBe(manara);
+    await user.keyboard('{ArrowRight}');
+    expect(checked(riwaq)).toBe('true');
     // Past the last option wraps to the first.
     await user.keyboard('{ArrowRight}');
     expect(checked(modern)).toBe('true');
     expect(document.activeElement).toBe(modern);
     await user.keyboard('{End}');
-    expect(checked(manara)).toBe('true');
+    expect(checked(riwaq)).toBe('true');
     await user.keyboard('{Home}');
     expect(checked(modern)).toBe('true');
     await user.keyboard('{ArrowUp}');
-    expect(checked(manara)).toBe('true');
+    expect(checked(riwaq)).toBe('true');
   });
 
   it('a click on the preview card selects that theme; it cannot be cleared', async () => {
@@ -253,7 +259,7 @@ describe('Setup theme picker — previews', () => {
     renderPicker(null);
     expect(document.querySelector('[data-theme-pack]')).toBeNull();
     act(() => notify([{ isIntersecting: true }]));
-    expect(document.querySelectorAll('[data-theme-pack]')).toHaveLength(3);
+    expect(document.querySelectorAll('[data-theme-pack]')).toHaveLength(4);
   });
 
   it("use each theme's own colours until the Owner picks some, then the Owner's", () => {

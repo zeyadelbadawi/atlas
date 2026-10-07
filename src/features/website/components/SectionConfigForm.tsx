@@ -574,6 +574,71 @@ function FeaturedCoursesPicker({
   );
 }
 
+/**
+ * Course Spotlight: the one course the section presents, or "automatic"
+ * (no `courseId`: the newest published course). Offers only courses the
+ * public site can show and names an earlier pick that no longer qualifies,
+ * the same rule as `FeaturedCoursesPicker`.
+ */
+const SPOTLIGHT_AUTOMATIC = '__automatic__';
+
+function CourseSpotlightPicker({
+  academyId,
+  courseId,
+  onChange,
+}: {
+  readonly academyId: string;
+  readonly courseId: string | undefined;
+  readonly onChange: (id: string | undefined) => void;
+}): JSX.Element {
+  const { t } = useTranslation();
+  const { data } = useCourses(academyId, {
+    query: {
+      pagination: { page: 1, pageSize: 100 },
+      filters: { status: 'published', visibility: 'public' },
+    },
+  });
+  const options = data?.items ?? [];
+  const unavailable =
+    !!data && !!courseId && !options.some((course) => course.id === courseId);
+
+  return (
+    <div className="space-y-2 border-t border-border pt-4">
+      <Label htmlFor="course-spotlight-course">
+        {t('website:editor.spotlightCourseTitle')}
+      </Label>
+      <p className="text-xs text-muted-foreground">
+        {t('website:editor.spotlightCourseHelp')}
+      </p>
+      <Select
+        value={courseId && !unavailable ? courseId : SPOTLIGHT_AUTOMATIC}
+        onValueChange={(next) =>
+          onChange(next === SPOTLIGHT_AUTOMATIC ? undefined : next)
+        }
+      >
+        <SelectTrigger id="course-spotlight-course">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value={SPOTLIGHT_AUTOMATIC}>
+            {t('website:editor.spotlightCourseAutomatic')}
+          </SelectItem>
+          {options.map((course) => (
+            <SelectItem key={course.id} value={course.id}>
+              {course.title}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      {unavailable ? (
+        <p className="text-xs text-destructive" role="status">
+          {t('website:editor.spotlightCourseUnavailable')}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 /** Which target kind a CTA currently points to — derived from which field is populated, never stored separately (see `WebsiteCta`'s doc comment). */
 type CtaLinkType = 'page' | 'external' | 'course';
 
@@ -1311,6 +1376,13 @@ export function SectionConfigForm<TType extends SectionType>({
               academyId={academyId}
               selectedIds={(draft.courseIds as string[] | undefined) ?? []}
               onChange={(ids) => setField('courseIds', ids)}
+            />
+          ) : null}
+          {type === 'courseSpotlight' ? (
+            <CourseSpotlightPicker
+              academyId={academyId}
+              courseId={(draft.courseId as string | undefined) || undefined}
+              onChange={(id) => setField('courseId', id)}
             />
           ) : null}
           {type === 'faq' ? (

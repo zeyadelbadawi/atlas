@@ -20,8 +20,12 @@
  * highlighted phrase (`<em class="mn-em">`) uses the same files; Latin
  * Extended is left to the stylesheet here too.
  *
- * The URLs are content-hashed assets, the same files `atelier.css` and
- * `manara.css` name (their `@font-face` rules), so the preload is the
+ * Riwaq (Theme 4) sets its heading and its text in one family, IBM Plex
+ * (`<h1 class="rw-display">`, `riwaq.css`): Latin text → Plex Sans Latin,
+ * Arabic text → Plex Sans Arabic (one file serves every Arabic weight).
+ *
+ * The URLs are content-hashed assets, the same files `atelier.css`,
+ * `manara.css` and `riwaq.css` name (their `@font-face` rules), so the preload is the
  * request the page uses.
  *
  * OPT-IN (`preloadThemeFonts`, off by default): Lighthouse mobile measured
@@ -34,11 +38,15 @@ import frauncesLatinItalic from '@/assets/fonts/fraunces-latin-italic.woff2?url'
 import markaziTextArabic from '@/assets/fonts/markazi-text-arabic.woff2?url';
 import alexandriaLatin from '@/assets/fonts/alexandria-latin.woff2?url';
 import alexandriaArabic from '@/assets/fonts/alexandria-arabic.woff2?url';
+import plexSansLatin from '@/assets/fonts/ibm-plex-sans-latin.woff2?url';
+import plexSansArabic from '@/assets/fonts/ibm-plex-sans-arabic-400.woff2?url';
 
 /** Heading classes set in Atelier's display face (`atelier.css`). */
 const ATELIER_DISPLAY_HEADING = /class="[^"]*\bat-(?:display|title)\b/;
 /** Heading classes set in Manara's display face (`manara.css`). */
 const MANARA_DISPLAY_HEADING = /class="[^"]*\bmn-(?:display|title)\b/;
+/** Heading classes set in Riwaq's face (`riwaq.css`). */
+const RIWAQ_DISPLAY_HEADING = /class="[^"]*\brw-(?:display|title)\b/;
 const LATIN = /[A-Za-z0-9\u00C0-\u00FF]/;
 const ARABIC = /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/;
 
@@ -67,16 +75,42 @@ function atelierHeadingFonts(appHtml: string): string[] {
   return fonts;
 }
 
-/** The fonts Manara's page heading uses, as preload links. */
-function manaraHeadingFonts(appHtml: string): string[] {
+/**
+ * The fonts a single-family theme's page heading uses (no italic file):
+ * its Latin face for Latin text, its Arabic face for Arabic text.
+ */
+function singleFamilyHeadingFonts(
+  appHtml: string,
+  headingClass: RegExp,
+  latin: string,
+  arabic: string
+): string[] {
   const heading = /<h1\b[^>]*>([\s\S]*?)<\/h1>/.exec(appHtml);
-  if (!heading || !MANARA_DISPLAY_HEADING.test(heading[0])) return [];
+  if (!heading || !headingClass.test(heading[0])) return [];
   const text = textOf(heading[1]);
   const fonts: string[] = [];
-  if (LATIN.test(text)) fonts.push(alexandriaLatin);
-  if (ARABIC.test(text)) fonts.push(alexandriaArabic);
+  if (LATIN.test(text)) fonts.push(latin);
+  if (ARABIC.test(text)) fonts.push(arabic);
   return fonts;
 }
+
+/** The fonts Manara's page heading uses (Alexandria). */
+const manaraHeadingFonts = (appHtml: string): string[] =>
+  singleFamilyHeadingFonts(
+    appHtml,
+    MANARA_DISPLAY_HEADING,
+    alexandriaLatin,
+    alexandriaArabic
+  );
+
+/** The fonts Riwaq's page heading uses (IBM Plex). */
+const riwaqHeadingFonts = (appHtml: string): string[] =>
+  singleFamilyHeadingFonts(
+    appHtml,
+    RIWAQ_DISPLAY_HEADING,
+    plexSansLatin,
+    plexSansArabic
+  );
 
 /**
  * Preload links for the display fonts the page's heading uses, for the
@@ -91,5 +125,7 @@ export function themeFontPreloadHtml(
     return atelierHeadingFonts(appHtml).map(preloadLink).join('');
   if (themes.has('manara'))
     return manaraHeadingFonts(appHtml).map(preloadLink).join('');
+  if (themes.has('riwaq'))
+    return riwaqHeadingFonts(appHtml).map(preloadLink).join('');
   return '';
 }

@@ -490,6 +490,10 @@
     "manara": {
       "name": "منارة",
       "description": "جريء ومفعم بالحركة، مصمَّم للأكاديميات التي يقودها معلّمون لجماهير كبيرة: مسرح داكن، كتل بألوان العلامة، خطوط عربية ضخمة أولًا، أرقام كلوحة نتائج، وفواصل مائلة كشعاع."
+    },
+    "riwaq": {
+      "name": "رواق",
+      "description": "متّزن وواضح، مصمَّم للمعاهد المهنية وأكاديميات التأهيل الوظيفي: شبكة أعمدة ظاهرة، علامتك بلون الحبر، بطاقات مواصفات بزوايا قائمة، وصور معمارية في ضوء النهار."
     }
   },
   "brand": {
@@ -685,7 +689,11 @@
     "pageOverLimit_few": "تحتوي {{count}} أقسام على نصوص أطول من الحدود الحالية. لا تزال تظهر على موقعك، لكن الصفحة كلها تُفحص عند كل حفظ، لذا لا يمكن حفظ هذه الصفحة حتى تُختصر تلك النصوص.",
     "pageOverLimit_many": "يحتوي {{count}} قسمًا على نصوص أطول من الحدود الحالية. لا تزال تظهر على موقعك، لكن الصفحة كلها تُفحص عند كل حفظ، لذا لا يمكن حفظ هذه الصفحة حتى تُختصر تلك النصوص.",
     "pageOverLimit_other": "يحتوي {{count}} قسم على نصوص أطول من الحدود الحالية. لا تزال تظهر على موقعك، لكن الصفحة كلها تُفحص عند كل حفظ، لذا لا يمكن حفظ هذه الصفحة حتى تُختصر تلك النصوص.",
-    "openSectionToShorten": "تحرير {{section}}"
+    "openSectionToShorten": "تحرير {{section}}",
+    "spotlightCourseTitle": "الدورة",
+    "spotlightCourseHelp": "اختر الدورة التي يعرضها هذا القسم. إذا تركته تلقائيًا فسيعرض أحدث دورة منشورة لديك.",
+    "spotlightCourseAutomatic": "تلقائي: أحدث دورة منشورة",
+    "spotlightCourseUnavailable": "الدورة المختارة لم تعد منشورة وعامة، لذا يُخفى هذا القسم في موقعك. اختر دورة أخرى أو انتقل إلى الوضع التلقائي."
   },
   "preview": {
     "title": "المعاينة",
@@ -787,6 +795,9 @@
     },
     "featureSplit": {
       "label": "صورة مع المزايا"
+    },
+    "courseSpotlight": {
+      "label": "دورة في الواجهة"
     }
   },
   "fields": {
@@ -876,7 +887,10 @@
     "imagePositionStart": "قبل النص",
     "imagePositionEnd": "بعد النص",
     "benefitItems": "المزايا",
-    "benefitItem": "ميزة"
+    "benefitItem": "ميزة",
+    "showOutcomes": "عرض ما سيصبح المتعلّمون قادرين عليه",
+    "showSyllabus": "عرض المنهج",
+    "maxModules": "عدد أقسام المنهج المعروضة"
   },
   "icons": {
     "GraduationCap": "قبعة التخرج",
@@ -1028,6 +1042,19 @@
     },
     "testimonials": {
       "sampleBadge": "نموذج"
+    },
+    "courseSpotlight": {
+      "unavailable": "لا توجد دورة منشورة لعرضها بعد. يبقى هذا القسم مخفيًا في موقعك حتى تُنشر دورة.",
+      "viewCourse": "عرض الدورة",
+      "levelLabel": "المستوى",
+      "lessonsLabel": "الدروس",
+      "priceLabel": "السعر",
+      "moreSections_zero": "ولا أقسام أخرى",
+      "moreSections_one": "وقسم آخر",
+      "moreSections_two": "وقسمان آخران",
+      "moreSections_few": "و{{count}} أقسام أخرى",
+      "moreSections_many": "و{{count}} قسمًا آخر",
+      "moreSections_other": "و{{count}} قسم آخر"
     }
   },
   "common": {
@@ -1772,6 +1799,198 @@
         "eyebrow": "نفتتح قريبًا",
         "title": "{{name}} تفتح أبوابها قريبًا",
         "description": "نجهّز الفصل الآن. عُد قريبًا — سيُفتح التسجيل هنا."
+      }
+    }
+  },
+  "riwaq": {
+    "chrome": {
+      "apply": "قدِّم الآن",
+      "menu": "القائمة",
+      "closeMenu": "إغلاق القائمة",
+      "departments": "الأقسام",
+      "contactColumn": "التواصل",
+      "social": "تابعنا"
+    },
+    "home": {
+      "liveData": {
+        "previewUnavailable": "تعذّر تحميل البيانات المباشرة، لذا لا يرى الزوار هذا القسم الآن."
+      },
+      "hero": {
+        "searchLabel": "ابحث عن دورة",
+        "searchPlaceholder": "مادة أو مهارة أو وظيفة",
+        "searchSubmit": "بحث"
+      },
+      "categories": {
+        "viewAll": "كل الدورات",
+        "listLabel": "الأقسام",
+        "courseCount_zero": "لا دورات",
+        "courseCount_one": "دورة واحدة",
+        "courseCount_two": "دورتان",
+        "courseCount_few": "{{formatted}} دورات",
+        "courseCount_many": "{{formatted}} دورة",
+        "courseCount_other": "{{formatted}} دورة"
+      },
+      "courses": {
+        "viewAll": "كل الدورات",
+        "listLabel": "الدورات",
+        "view": "عرض الدورة",
+        "errorTitle": "تعذّر تحميل الدورات.",
+        "errorDescription": "المشكلة من جهتنا، وليست دليلًا على عدم وجود دورات. حاول مرة أخرى.",
+        "retry": "حاول مرة أخرى",
+        "launchingTitle": "الدورات تُفتح قريبًا.",
+        "launchingDescription": "يجري إعداد الدورات الأولى. عُد بعد قليل، أو تواصل معنا لتعرف موعد فتح التسجيل.",
+        "launchingAction": "تواصل معنا",
+        "facts": {
+          "level": "المستوى",
+          "lessons": "الدروس",
+          "duration": "المدة",
+          "faculty": "يقدّمها",
+          "certificate": "الشهادة",
+          "certificateIncluded": "شهادة عند الإتمام",
+          "price": "السعر"
+        }
+      },
+      "spotlight": {
+        "loading": "جارٍ تحميل الدورة",
+        "syllabus": "المنهج",
+        "view": "عرض الدورة"
+      },
+      "instructors": {
+        "listLabel": "هيئة التدريس",
+        "courseCount_zero": "لا دورات",
+        "courseCount_one": "دورة واحدة",
+        "courseCount_two": "دورتان",
+        "courseCount_few": "{{formatted}} دورات",
+        "courseCount_many": "{{formatted}} دورة",
+        "courseCount_other": "{{formatted}} دورة",
+        "previewHidden": "يرى الزوار هيئة التدريس عندما تذكر دورة منشورة مدرّبيها.",
+        "sampleName": "اسم المدرّب",
+        "sampleCourses": "الدورات التي يقدّمها"
+      },
+      "statistics": {
+        "label": "حقائق وأرقام",
+        "previewHidden": "يرى الزوار هذه الأرقام عندما يتجاوز اثنان منها على الأقل الصفر.",
+        "sampleValue": "لا رقم بعد"
+      },
+      "testimonials": {
+        "label": "ما يقوله المتعلّمون",
+        "roleDescription": "شهادات",
+        "position": "الشهادة {{position}} من {{total}}",
+        "previous": "الشهادة السابقة",
+        "next": "الشهادة التالية",
+        "rating": "التقييم {{rating}} من ٥"
+      },
+      "faq": {
+        "listTitle": "أسئلة وأجوبة",
+        "resultCount_zero": "لا أسئلة مطابقة",
+        "resultCount_one": "سؤال واحد مطابق",
+        "resultCount_two": "سؤالان مطابقان",
+        "resultCount_few": "{{count}} أسئلة مطابقة",
+        "resultCount_many": "{{count}} سؤالًا مطابقًا",
+        "resultCount_other": "{{count}} سؤال مطابق",
+        "noMatchTitle": "لا يوجد سؤال مطابق.",
+        "noMatchDescription": "جرّب كلمة أقصر، أو اسألنا مباشرة من صفحة التواصل."
+      },
+      "gallery": {
+        "label": "معرض الصور"
+      }
+    },
+    "pages": {
+      "trail": {
+        "label": "أنت هنا",
+        "home": "الرئيسية"
+      },
+      "search": {
+        "placeholder": "مادة أو مهارة أو وظيفة",
+        "submit": "بحث",
+        "faqLabel": "صفِّ الأسئلة",
+        "faqPlaceholder": "اكتب كلمة، مثل الدفع"
+      },
+      "summary": {
+        "courses_zero": "لا دورات",
+        "courses_one": "دورة واحدة",
+        "courses_two": "دورتان",
+        "courses_few": "{{formatted}} دورات",
+        "courses_many": "{{formatted}} دورة",
+        "courses_other": "{{formatted}} دورة",
+        "catalog_zero": "لا دورات",
+        "catalog_one": "دورة واحدة في {{categories}} أقسام",
+        "catalog_two": "دورتان في {{categories}} أقسام",
+        "catalog_few": "{{courses}} دورات في {{categories}} أقسام",
+        "catalog_many": "{{courses}} دورة في {{categories}} أقسام",
+        "catalog_other": "{{courses}} دورة في {{categories}} أقسام"
+      },
+      "intro": {
+        "about": "من يدرّس هنا، وكيف تُدار الدورات، وإلامَ تقود.",
+        "courses": "كل دورة بمستواها ومدتها وسعرها، قبل أن تسجّل.",
+        "faqs": "إجابات واضحة عن المدة والمستوى والإتمام والدفع.",
+        "contact": "لديك سؤال عن دورة أو عن التسجيل؟ تواصل معنا هنا."
+      },
+      "catalog": {
+        "label": "الدورات",
+        "filters": "التصفية",
+        "closeFilters": "إغلاق التصفية",
+        "departments": "الأقسام",
+        "allDepartments": "كل الأقسام",
+        "showResults_zero": "لا دورات",
+        "showResults_one": "اعرض دورة واحدة",
+        "showResults_two": "اعرض دورتين",
+        "showResults_few": "اعرض {{count}} دورات",
+        "showResults_many": "اعرض {{count}} دورة",
+        "showResults_other": "اعرض {{count}} دورة",
+        "done": "تم",
+        "removeFilter": "إزالة عامل التصفية: {{name}}",
+        "clearAll": "مسح الكل",
+        "loading": "جارٍ تحميل الدورات",
+        "errorTitle": "تعذّر تحميل الدورات.",
+        "errorDescription": "المشكلة من جهتنا، وليست دليلًا على عدم وجود دورات. حاول مرة أخرى.",
+        "retry": "حاول مرة أخرى",
+        "launchingTitle": "الدورات تُفتح قريبًا.",
+        "launchingDescription": "يجري إعداد الدورات الأولى. عُد بعد قليل.",
+        "pagination": "الصفحات",
+        "previousPage": "الصفحة السابقة",
+        "nextPage": "الصفحة التالية",
+        "page": "الصفحة {{page}}",
+        "by": "يقدّمها {{name}}"
+      },
+      "contact": {
+        "label": "التواصل",
+        "emailLabel": "البريد الإلكتروني",
+        "phoneLabel": "الهاتف",
+        "addressLabel": "العنوان",
+        "formTitle": "أرسل رسالة",
+        "formNote": "كل الحقول مطلوبة.",
+        "successTitle": "أُرسلت الرسالة.",
+        "sendAnother": "أرسل رسالة أخرى"
+      },
+      "courseDetails": {
+        "breadcrumb": "موقع الدورة",
+        "allCourses": "كل الدورات",
+        "onThisPage": "في هذه الصفحة",
+        "overview": "نظرة عامة",
+        "faculty": "هيئة التدريس",
+        "assessments": "التقييمات",
+        "language": "اللغة",
+        "contents": "محتوى الدورة",
+        "sectionLabel": "القسم {{index}}:",
+        "enrol": "التسجيل",
+        "hasPreview": "يتوفر درس تجريبي مجاني.",
+        "errorTitle": "تعذّر تحميل هذه الدورة.",
+        "errorDescription": "المشكلة من جهتنا. حاول مرة أخرى.",
+        "retry": "حاول مرة أخرى"
+      },
+      "notFound": {
+        "eyebrow": "الصفحة غير موجودة",
+        "title": "هذه الصفحة ليست هنا.",
+        "description": "ربما الرابط قديم، أو نُقلت الصفحة. هذه الروابط تأخذك إلى مكان مفيد.",
+        "home": "اذهب إلى الصفحة الرئيسية",
+        "courses": "تصفّح الدورات",
+        "contact": "تواصل معنا"
+      },
+      "comingSoon": {
+        "eyebrow": "قريبًا",
+        "title": "‏{{name}} يُعِدّ موقعه الإلكتروني.",
+        "description": "ستُنشر الدورات والتفاصيل هنا قريبًا."
       }
     }
   }

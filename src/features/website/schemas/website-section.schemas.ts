@@ -22,6 +22,8 @@ import {
   MAX_COURSE_CATALOG_PAGE_SIZE,
   MAX_CTA_LABEL_LENGTH,
   MAX_FEATURE_SPLIT_ITEMS,
+  MAX_SPOTLIGHT_MODULES,
+  MIN_SPOTLIGHT_MODULES,
   MAX_HERO_DESCRIPTION_LENGTH,
   MAX_HERO_EYEBROW_LENGTH,
   MAX_HERO_HIGHLIGHTS,
@@ -311,6 +313,22 @@ export const featureSplitSectionSchema = z.object({
   cta: websiteCtaSchema.optional(),
 });
 
+/** Theme 4 plan §6 — mirrors the backend `courseSpotlightSectionSchema` field for field. */
+export const courseSpotlightSectionSchema = z.object({
+  eyebrow: localizedOptional(MAX_SHORT_TEXT).optional(),
+  title: localizedOptional(MAX_SHORT_TEXT).optional(),
+  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  courseId: z.string().min(1).optional(),
+  showOutcomes: z.boolean(),
+  showSyllabus: z.boolean(),
+  maxModules: z
+    .number()
+    .int()
+    .min(MIN_SPOTLIGHT_MODULES)
+    .max(MAX_SPOTLIGHT_MODULES),
+  cta: websiteCtaSchema.optional(),
+});
+
 const SECTION_SCHEMAS = {
   hero: heroSectionSchema,
   about: aboutSectionSchema,
@@ -328,6 +346,7 @@ const SECTION_SCHEMAS = {
   courseCategories: courseCategoriesSectionSchema,
   steps: stepsSectionSchema,
   featureSplit: featureSplitSectionSchema,
+  courseSpotlight: courseSpotlightSectionSchema,
 } satisfies Record<SectionType, z.ZodTypeAny>;
 
 /** Resolves the right Zod schema for a section type. The Section Editor's ONE dynamic-form entry point — no section's validation is ever hand-rolled inline in a component. */

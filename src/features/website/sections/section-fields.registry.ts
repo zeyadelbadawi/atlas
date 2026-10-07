@@ -32,6 +32,8 @@ import {
   MAX_STEPS_TITLE_LENGTH,
   MIN_COURSE_CATALOG_PAGE_SIZE,
   MIN_COURSE_CATEGORIES,
+  MAX_SPOTLIGHT_MODULES,
+  MIN_SPOTLIGHT_MODULES,
 } from '../constants/website.constants';
 import type { SectionFieldSchema } from './section-field.types';
 import type { SectionType, WebsiteThemeKey } from '@types';
@@ -714,5 +716,46 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
         },
       ],
     },
+  },
+  courseSpotlight: {
+    type: 'courseSpotlight',
+    fields: [
+      {
+        key: 'eyebrow',
+        kind: 'text',
+        labelKey: 'website:fields.eyebrow',
+        localized: true,
+      },
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+      },
+      {
+        key: 'showOutcomes',
+        kind: 'boolean',
+        labelKey: 'website:fields.showOutcomes',
+      },
+      {
+        key: 'showSyllabus',
+        kind: 'boolean',
+        labelKey: 'website:fields.showSyllabus',
+      },
+      {
+        key: 'maxModules',
+        kind: 'number',
+        labelKey: 'website:fields.maxModules',
+        min: MIN_SPOTLIGHT_MODULES,
+        max: MAX_SPOTLIGHT_MODULES,
+      },
+      { key: 'cta', kind: 'cta', labelKey: 'website:fields.primaryCta' },
+    ],
   },
 };

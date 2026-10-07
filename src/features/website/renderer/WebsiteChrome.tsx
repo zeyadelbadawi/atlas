@@ -14,6 +14,7 @@
  * in between (CMS sections, the Course Details template, or an auth
  * form) is the one axis that's allowed to differ.
  */
+import { useMemo } from 'react';
 import { cn } from '@utils';
 import { getWebsiteTheme } from '../themes/website-theme.registry';
 import { WebsiteThemeScope } from './WebsiteThemeScope';
@@ -25,6 +26,7 @@ import { ThemePackGate } from '../theme-packs/ThemePackGate';
 import { MobileBottomNav } from './MobileBottomNav';
 import { useMobileBottomNavVisibility } from './useMobileBottomNavVisibility';
 import { PublicWebsiteLocaleProvider } from './PublicWebsiteLocaleContext';
+import { WebsiteIdentityProvider } from './WebsiteIdentityContext';
 import {
   DEFAULT_PUBLIC_WEBSITE_LOCALE,
   PUBLIC_WEBSITE_LOCALE_DIRECTION,
@@ -117,15 +119,20 @@ function LoadedWebsiteChrome({
   // comment for why these must never disagree).
   const isBottomNavRouteVisible = useMobileBottomNavVisibility();
   const showBottomNav = !!linkRenderer && isBottomNavRouteVisible;
+  const identity = useMemo(
+    () => ({ name: academyName, logo: academyLogo }),
+    [academyName, academyLogo]
+  );
 
   return (
-    <PublicWebsiteLocaleProvider locale={locale} className="min-h-[100dvh]">
-      <WebsiteThemeScope
-        theme={theme}
-        brand={brand}
-        className={cn('min-h-[100dvh]', className)}
-      >
-        {/*
+    <WebsiteIdentityProvider value={identity}>
+      <PublicWebsiteLocaleProvider locale={locale} className="min-h-[100dvh]">
+        <WebsiteThemeScope
+          theme={theme}
+          brand={brand}
+          className={cn('min-h-[100dvh]', className)}
+        >
+          {/*
         `dir` is no longer set here — `PublicWebsiteLocaleProvider` owns it,
         so every surface that renders public-website content gets correct
         direction by construction rather than each shell remembering to.
@@ -143,22 +150,22 @@ function LoadedWebsiteChrome({
         MIN-height, never a fixed height: the column below grows normally
         once the Academy has real content, so a long page simply scrolls.
       */}
-        <div className="flex min-h-[100dvh] flex-col bg-[var(--website-background)] text-[var(--website-foreground)]">
-          <Header
-            logo={academyLogo}
-            academyName={academyName}
-            navigation={configuration.navigation}
-            pages={pages}
-            header={configuration.header}
-            activePageId={activePageId}
-            onNavigate={onNavigate}
-            linkRenderer={linkRenderer}
-            locale={locale}
-            onLocaleChange={onLocaleChange}
-            authState={authState}
-          />
+          <div className="flex min-h-[100dvh] flex-col bg-[var(--website-background)] text-[var(--website-foreground)]">
+            <Header
+              logo={academyLogo}
+              academyName={academyName}
+              navigation={configuration.navigation}
+              pages={pages}
+              header={configuration.header}
+              activePageId={activePageId}
+              onNavigate={onNavigate}
+              linkRenderer={linkRenderer}
+              locale={locale}
+              onLocaleChange={onLocaleChange}
+              authState={authState}
+            />
 
-          {/* `flex-1` is what makes the empty-Academy case work: with little
+            {/* `flex-1` is what makes the empty-Academy case work: with little
               or no content the main region absorbs the remaining viewport
               height, so the footer rests at the bottom and the space above
               it belongs to the ACADEMY's background rather than revealing
@@ -169,24 +176,24 @@ function LoadedWebsiteChrome({
               the page's own last CTA/content — see that component's own doc
               comment for why this and its render condition must never
               disagree. */}
-          {/* The public runtime's skip link (`PublicWebsitePage`) lands
+            {/* The public runtime's skip link (`PublicWebsitePage`) lands
               here — past the header, at the page's own content. Only on
               the real public site: a dashboard can show several previews
               at once and has its own skip target. */}
-          <main
-            id={linkRenderer ? PUBLIC_WEBSITE_MAIN_ID : undefined}
-            tabIndex={linkRenderer ? -1 : undefined}
-            className={cn(
-              'flex-1 focus:outline-none',
-              // A theme footer gets the clearance after the footer instead
-              // (below), so the page's last band meets the footer directly.
-              showBottomNav && !ThemeFooter && 'pb-16 md:pb-0'
-            )}
-          >
-            {children}
-          </main>
+            <main
+              id={linkRenderer ? PUBLIC_WEBSITE_MAIN_ID : undefined}
+              tabIndex={linkRenderer ? -1 : undefined}
+              className={cn(
+                'flex-1 focus:outline-none',
+                // A theme footer gets the clearance after the footer instead
+                // (below), so the page's last band meets the footer directly.
+                showBottomNav && !ThemeFooter && 'pb-16 md:pb-0'
+              )}
+            >
+              {children}
+            </main>
 
-          {/*
+            {/*
           ONE footer region, not two. The mandatory Atlas attribution is
           platform-owned (Phase 6): emitted from component code, never from
           `configuration.footer`, so no CMS field, prop or toggle removes
@@ -194,49 +201,50 @@ function LoadedWebsiteChrome({
           the theme footer's own copyright row), not in a row of its own —
           a separate strip read to visitors as a second footer.
         */}
-          {ThemeFooter ? (
-            <ThemeFooter
-              academyId={academyId}
-              academyName={academyName}
-              academyLogo={academyLogo}
-              footer={configuration.footer}
-              pages={pages}
-              onNavigate={onNavigate}
-              linkRenderer={linkRenderer}
-              // The platform attribution is handed to the theme's footer as
-              // a finished element: the theme places it, it can't change it.
-              attribution={<AtlasPlatformAttribution className="shrink-0" />}
-            />
-          ) : (
-            <WebsiteFooter
-              academyName={academyName}
-              footer={configuration.footer}
-              pages={pages}
-              onNavigate={onNavigate}
-              linkRenderer={linkRenderer}
-            />
-          )}
+            {ThemeFooter ? (
+              <ThemeFooter
+                academyId={academyId}
+                academyName={academyName}
+                academyLogo={academyLogo}
+                footer={configuration.footer}
+                pages={pages}
+                onNavigate={onNavigate}
+                linkRenderer={linkRenderer}
+                // The platform attribution is handed to the theme's footer as
+                // a finished element: the theme places it, it can't change it.
+                attribution={<AtlasPlatformAttribution className="shrink-0" />}
+              />
+            ) : (
+              <WebsiteFooter
+                academyName={academyName}
+                footer={configuration.footer}
+                pages={pages}
+                onNavigate={onNavigate}
+                linkRenderer={linkRenderer}
+              />
+            )}
 
-          {showBottomNav && ThemeFooter ? (
-            // Continues the footer surface under the fixed bar.
-            <div
-              aria-hidden
-              className="h-16 shrink-0 bg-[var(--website-surface)] md:hidden"
-            />
-          ) : null}
+            {showBottomNav && ThemeFooter ? (
+              // Continues the footer surface under the fixed bar.
+              <div
+                aria-hidden
+                className="h-16 shrink-0 bg-[var(--website-surface)] md:hidden"
+              />
+            ) : null}
 
-          <MobileBottomNav
-            pages={pages}
-            locale={locale}
-            linkRenderer={linkRenderer}
-            // Theme 1 (plan §M.5 #16): a signed-out visitor is offered
-            // "Sign in" instead of account tabs they can't use yet.
-            accountTabs={
-              ThemeFooter ? (authState ? 'learner' : 'signIn') : undefined
-            }
-          />
-        </div>
-      </WebsiteThemeScope>
-    </PublicWebsiteLocaleProvider>
+            <MobileBottomNav
+              pages={pages}
+              locale={locale}
+              linkRenderer={linkRenderer}
+              // Theme 1 (plan §M.5 #16): a signed-out visitor is offered
+              // "Sign in" instead of account tabs they can't use yet.
+              accountTabs={
+                ThemeFooter ? (authState ? 'learner' : 'signIn') : undefined
+              }
+            />
+          </div>
+        </WebsiteThemeScope>
+      </PublicWebsiteLocaleProvider>
+    </WebsiteIdentityProvider>
   );
 }

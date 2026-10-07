@@ -84,6 +84,7 @@ const THEMES = [
   'bold-creative',
   'atelier',
   'manara',
+  'riwaq',
 ];
 const STATES = ['new', 'rich', 'unpublished'];
 

@@ -31,6 +31,8 @@ export const SELECTABLE_WEBSITE_THEME_KEYS = [
   'atelier',
   // Theme 3 — Manara (Reports/THEME_3_MANARA_PLAN.md).
   'manara',
+  // Theme 4 — Riwaq (Reports/THEME_4_RIWAQ_PLAN.md).
+  'riwaq',
 ] as const;
 
 /** W2 — the platform's default theme (the backend's `DEFAULT_WEBSITE_THEME_KEY`): pre-selected in the setup form, and what provisioning applies when none is named. */

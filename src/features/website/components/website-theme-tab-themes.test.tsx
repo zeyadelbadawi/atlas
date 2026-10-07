@@ -1,6 +1,6 @@
 /**
  * Theme 2 (WS-O) — the Theme tab offers every selectable theme with its
- * feature image: Modern Education, Atelier and Manara. A theme without one (a
+ * feature image: Modern Education, Atelier, Manara and Riwaq. A theme without one (a
  * retired theme) keeps the live miniature. The picture is decoration
  * (hidden from assistive tech, unreachable by keyboard), each card's action
  * names its theme, and choosing Atelier on a Theme 1 site writes the draft
@@ -79,7 +79,7 @@ function renderTab(themeKey: string, locale: 'en' | 'ar' = 'en') {
 }
 
 describe('Theme tab — every selectable theme', () => {
-  it('shows Modern Education, Atelier and Manara, each with its own feature image', () => {
+  it('shows Modern Education, Atelier, Manara and Riwaq, each with its own feature image', () => {
     renderTab('modern-education');
     expect(
       screen.getByRole('heading', { level: 3, name: 'Modern Education' })
@@ -90,6 +90,9 @@ describe('Theme tab — every selectable theme', () => {
     expect(
       screen.getByRole('heading', { level: 3, name: 'Manara' })
     ).toBeTruthy();
+    expect(
+      screen.getByRole('heading', { level: 3, name: 'Riwaq' })
+    ).toBeTruthy();
     const frames = screen.getAllByTestId('theme-preview-frame');
     expect(
       frames.map((frame) => frame.querySelector('img')?.getAttribute('src'))
@@ -99,6 +102,7 @@ describe('Theme tab — every selectable theme', () => {
       ),
       expect.stringMatching(/\/theme-assets\/atelier\/v3\/theme-card-/),
       expect.stringMatching(/\/theme-assets\/manara\/v1\/theme-card-/),
+      expect.stringMatching(/\/theme-assets\/riwaq\/v1\/theme-card-/),
     ]);
     expect(screen.queryByTestId('miniature')).toBeNull();
   });
@@ -113,7 +117,7 @@ describe('Theme tab — every selectable theme', () => {
   it('pictures are hidden from assistive tech and inert', () => {
     renderTab('premium-academy');
     const frames = screen.getAllByTestId('theme-preview-frame');
-    expect(frames).toHaveLength(4);
+    expect(frames).toHaveLength(5);
     for (const frame of frames) {
       expect(frame.getAttribute('aria-hidden')).toBe('true');
       expect(frame.hasAttribute('inert')).toBe(true);
@@ -148,7 +152,7 @@ describe('Theme tab — every selectable theme', () => {
   it('Arabic: every theme listed, actions translated and named', () => {
     renderTab('atelier', 'ar');
     const buttons = screen.getAllByRole('button');
-    expect(buttons).toHaveLength(3);
+    expect(buttons).toHaveLength(4);
     // Each accessible name = the translated action + the translated theme name.
     for (const button of buttons) {
       const name = (button.getAttribute('aria-labelledby') ?? '')
