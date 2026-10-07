@@ -1,0 +1,100 @@
+/*
+ * Manara — Arabic line spacing (Arabic only: `:lang(ar)`; English is
+ * unchanged).
+ *
+ * Alexandria's Arabic reaches far above and below the line: the ink of
+ * typical text is about 1.6 em tall (2 em fully vowelled), against about
+ * 1 em for its Latin, and Rubik's Arabic is about 1.3 em. The Latin
+ * line-heights (1.02–1.25 for headings) let a hamza or shadda meet the
+ * descender of the line above, so every role gets its own Arabic value.
+ * `e2e/theme-baseline/arabic-line-spacing.spec.ts` measures the ink of
+ * every wrapped Arabic line on every page.
+ *
+ * Loaded last (`manara.stylesheet.css`), so it wins over the section and
+ * page rules of equal weight.
+ */
+
+/* Running text. */
+.website-theme-scope[data-theme-pack='manara']:lang(ar) {
+  line-height: 1.85;
+}
+
+/*
+ * Shared blocks and plain elements, at the weight of one class (`:where`):
+ * they reach only text no theme rule sets, never a numeral or a control
+ * the theme sized on purpose.
+ */
+:where([data-theme-pack='manara'])
+  :where(p, li, blockquote, dd, figcaption):lang(ar) {
+  line-height: 1.85;
+}
+
+:where([data-theme-pack='manara']) :where(h1, h2, h3, h4, h5, h6):lang(ar) {
+  line-height: 1.6;
+}
+
+/* Tailwind's size and leading utilities load after this stylesheet, so
+   these weigh one class more than a utility. */
+:where([data-theme-pack='manara'])
+  :is(.leading-normal, .leading-relaxed):lang(ar),
+:where([data-theme-pack='manara'])
+  :where(p, li, blockquote, dd, figcaption):is(
+    [class*='text-xs'],
+    [class*='text-sm'],
+    [class*='text-base'],
+    [class*='text-lg']
+  ):lang(ar) {
+  line-height: 1.85;
+}
+
+:where([data-theme-pack='manara']) button[aria-expanded]:lang(ar),
+:where([data-theme-pack='manara'])
+  :is(
+    [class*='text-xl'],
+    [class*='text-2xl'],
+    [class*='text-3xl'],
+    [class*='text-4xl'],
+    [class*='text-5xl'],
+    [class*='text-6xl'],
+    .leading-none,
+    .leading-tight,
+    .leading-snug
+  ):lang(ar) {
+  line-height: 1.6;
+}
+
+/* Display face: headlines, titles, names. */
+[data-theme-pack='manara']
+  :is(
+    .mn-display,
+    .mn-title,
+    .mnh-track-name,
+    .mnh-teacher-name,
+    .mnh-quote-text,
+    .mnp-card-title,
+    .mnp-wordmark,
+    .mnp-menu-link,
+    .mnp-footer-name,
+    .mnp-poster-name
+  ):lang(ar) {
+  line-height: 1.6;
+}
+
+[data-theme-pack='manara'] .mn-subtitle:lang(ar) {
+  line-height: 1.75;
+}
+
+[data-theme-pack='manara'] .mn-label:lang(ar) {
+  line-height: 1.6;
+}
+
+[data-theme-pack='manara']
+  :is(
+    .mn-lead,
+    .mn-body,
+    .mnh-about-lead,
+    .mnp-bold-list > li,
+    textarea.mn-input
+  ):lang(ar) {
+  line-height: 1.85;
+}
