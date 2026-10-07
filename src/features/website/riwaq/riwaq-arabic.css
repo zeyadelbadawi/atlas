@@ -94,3 +94,9 @@
 [data-theme-pack='riwaq'] :is(.rw-lead):lang(ar) {
   line-height: 1.85;
 }
+
+/* Buttons: a label that wraps (a narrow sidebar, a long translation) needs
+   room for its marks; a one-line button grows by about 2px. */
+[data-theme-pack='riwaq'] :is(.rw-btn):lang(ar) {
+  line-height: 1.45;
+}

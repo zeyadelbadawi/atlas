@@ -146,7 +146,9 @@ function arabicLineCollisions(minGap: number): ArabicCollision[] {
   const context = document.createElement('canvas').getContext('2d')!;
   const isBlock = (element: Element) => {
     const display = getComputedStyle(element).display;
-    return !display.startsWith('inline') && display !== 'contents';
+    // Only plain inline boxes share their parent's lines: an inline-block,
+    // inline-flex or inline-grid box (a button) lays out lines of its own.
+    return display !== 'inline' && display !== 'contents';
   };
   const blockOf = (node: Node): Element | null => {
     let element = node.parentElement;

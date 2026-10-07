@@ -780,8 +780,9 @@
   line-height: 1.85;
 }
 
-:where([data-theme-pack='modern-education']) :where(h1, h2, h3, h4, h5, h6):lang(ar) {
-  line-height: 1.6;
+:where([data-theme-pack='modern-education'])
+  :where(h1, h2, h3, h4, h5, h6):lang(ar) {
+  line-height: 1.7;
 }
 
 /* Tailwind's size and leading utilities load after this stylesheet, so
@@ -811,12 +812,12 @@
     .leading-tight,
     .leading-snug
   ):lang(ar) {
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 /* Display and titles (Readex Pro). */
 [data-theme-pack='modern-education'] :is(.t1-display, .t1-title):lang(ar) {
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 /* Eyebrows. */
