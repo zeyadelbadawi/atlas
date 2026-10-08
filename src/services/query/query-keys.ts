@@ -1225,6 +1225,41 @@ export const platformContactSubmissionKeys = {
   summary: () => [...platformContactSubmissionKeys.all, 'summary'] as const,
 } as const;
 
+/**
+ * Customer Requests — custom services (logo, domain, theme, section,
+ * feature) an academy asks the Atlas team for. The academy's own views
+ * carry the academy id as a top-level element (the W5 invariant); the
+ * Platform Owner console is namespaced apart under `platform`, so a
+ * cross-tenant list is never served to an academy or vice versa. `all`
+ * is the prefix every mutation invalidates: a reply, a status change or
+ * a cancel shows up in the lists, the counts and the detail at once.
+ */
+export const customerRequestKeys = {
+  all: ['customer-requests'] as const,
+  academyAll: (academyId: string) =>
+    [...customerRequestKeys.all, 'academy', academyId] as const,
+  academyList: (academyId: string, query?: unknown) =>
+    [...customerRequestKeys.all, 'academy', academyId, 'list', query] as const,
+  academyDetail: (academyId: string, requestId: string) =>
+    [
+      ...customerRequestKeys.all,
+      'academy',
+      academyId,
+      'detail',
+      requestId,
+    ] as const,
+  platformAll: () => [...customerRequestKeys.all, 'platform'] as const,
+  platformList: (query?: unknown) =>
+    [...customerRequestKeys.all, 'platform', 'list', query] as const,
+  platformDetail: (requestId: string) =>
+    [...customerRequestKeys.all, 'platform', 'detail', requestId] as const,
+  platformCounts: () =>
+    [...customerRequestKeys.all, 'platform', 'counts'] as const,
+  platformAssignees: () =>
+    [...customerRequestKeys.all, 'platform', 'assignees'] as const,
+  routing: () => [...customerRequestKeys.all, 'platform', 'routing'] as const,
+} as const;
+
 /** Platform-wide command-center metrics (Prompt 13). */
 export const platformMetricsKeys = {
   all: QUERY_KEY_ROOTS.platformMetrics,

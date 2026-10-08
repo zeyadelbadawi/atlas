@@ -110,6 +110,9 @@ vi.mock('@features/academy', () => ({
     error: null,
     refetch: vi.fn(),
   }),
+  // Read by the Customer Requests menu entry in the section tree; no
+  // resolved membership means the entry stays hidden.
+  useAcademyScope: () => ({ academyId: 'a1', membership: undefined }),
 }));
 vi.mock('@features/course', () => ({
   useCourses: () => ({ data: undefined }),

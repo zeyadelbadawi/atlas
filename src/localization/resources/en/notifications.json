@@ -366,6 +366,30 @@
       "title": "New contact enquiry",
       "message": "A new message arrived through the Atlas website contact form."
     },
+    "customerRequestRouted": {
+      "title": "Customer request activity",
+      "message": "{{academyName}}: \"{{title}}\" needs the team's attention."
+    },
+    "customerRequestReceived": {
+      "title": "New customer request",
+      "message": "{{academyName}} sent a request: \"{{title}}\"."
+    },
+    "customerRequestCustomerReplied": {
+      "title": "Customer replied",
+      "message": "{{academyName}} replied on \"{{title}}\": {{excerpt}}"
+    },
+    "customerRequestSubmitted": {
+      "title": "We received your request",
+      "message": "Your request \"{{title}}\" has reached the Atlas team. We'll reply here."
+    },
+    "customerRequestStatusChanged": {
+      "title": "Request updated",
+      "message": "Your request \"{{title}}\" has a new status. Open it to see what happens next."
+    },
+    "customerRequestTeamReplied": {
+      "title": "The Atlas team replied",
+      "message": "There's a new reply on your request \"{{title}}\"."
+    },
     "academyMemberInvited": {
       "title": "Your account is ready",
       "message": "An account was created for you at {{academyName}}. Set your password to get started."

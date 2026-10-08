@@ -26,6 +26,7 @@ import {
   getWebsiteTheme,
   listWebsiteThemes,
 } from '../themes/website-theme.registry';
+import { RequestServiceCard } from '@features/customer-requests';
 import { useUpdateWebsiteConfiguration } from '../hooks';
 import { WebsiteThemePreviewCard } from './WebsiteThemePreviewCard';
 import { RETIRED_WEBSITE_THEME_KEYS } from '@types';
@@ -101,6 +102,10 @@ export function WebsiteThemeTab({
           />
         ))}
       </div>
+
+      {/* Owners/administrators only (the card checks the academy role):
+          a theme designed by the Atlas team, below the stock choices. */}
+      <RequestServiceCard type="theme" />
 
       <AlertDialog
         open={pendingTheme !== null}

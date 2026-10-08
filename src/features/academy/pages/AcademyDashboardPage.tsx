@@ -49,6 +49,7 @@ import {
   tenantEntryToRow,
   useAcademyActivityLog,
 } from '@features/audit-log';
+import { RequestServiceCard } from '@features/customer-requests';
 import { WEBSITE_STATUS_TONE } from '../utils/academy-status.utils';
 import { useAcademyScope } from '../scope/academy-scope.context';
 import { readLastAcademy } from '../scope/last-academy';
@@ -519,6 +520,13 @@ export default function AcademyDashboardPage(): JSX.Element {
                 {t('academy:dashboard.manageSettings')}
               </Button>
             </div>
+            {/* Owners/administrators only (the card checks the academy
+                role): ask the Atlas team for a feature built for you. */}
+            <RequestServiceCard
+              type="custom_feature"
+              headingLevel="h4"
+              className="mt-4"
+            />
           </CardContent>
         </Card>
       </div>

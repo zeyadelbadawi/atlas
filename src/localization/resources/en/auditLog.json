@@ -148,6 +148,8 @@
     "tenant_subscription": "subscription",
     "tenant_add_on": "add-on",
     "support_case": "support ticket",
+    "customer_request": "customer request",
+    "customer_request_routing": "request email routing",
     "trusted_device": "trusted device",
     "plan": "plan",
     "platform_settings": "platform settings",
@@ -621,6 +623,16 @@
       "replied": "{{actor}} replied to the support ticket “{{target}}”",
       "status_changed": "{{actor}} changed the status of the support ticket “{{target}}”",
       "auto_created": "A support ticket was opened automatically: “{{target}}”"
+    },
+    "customer_request": {
+      "created": "{{actor}} sent the customer request “{{target}}”",
+      "cancelled": "{{actor}} cancelled the customer request “{{target}}”",
+      "customer_replied": "{{actor}} replied on the customer request “{{target}}”",
+      "status_changed": "{{actor}} changed the status of the customer request “{{target}}”",
+      "team_replied": "{{actor}} replied to the customer request “{{target}}”",
+      "internal_note_added": "{{actor}} added an internal note to the customer request “{{target}}”",
+      "assigned": "{{actor}} changed who handles the customer request “{{target}}”",
+      "routing_updated": "{{actor}} updated the customer request email routing"
     },
     "auth": {
       "otp": {

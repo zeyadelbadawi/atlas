@@ -46,6 +46,7 @@ import {
   Send,
   Mail,
   ShieldAlert,
+  MessageSquarePlus,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem, NavigationSection } from '@types';
@@ -274,6 +275,25 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
         icon: Send,
         requiresAuth: true,
         requiredPermissions: ['tenant.dashboard.view'],
+      },
+      {
+        // Customer Requests — custom services (logo, domain, theme,
+        // section, feature) asked of the Atlas team. Owner/administrator
+        // only server-side, so the entry uses the same owner-tier
+        // permission as Messages and the activity log (no organization
+        // permission tells an academy administrator from a manager; the
+        // pages themselves check the verified academy role). No
+        // entitlement gate: the API allows requests while a subscription
+        // is inactive, and asking for help is a way out, not a feature.
+        id: 'academy-requests',
+        labelKey: 'navigation:items.academyRequests',
+        path: buildPath(DASHBOARD_ROUTES.academyRequests, {
+          academyId: activeAcademyId,
+        }),
+        icon: MessageSquarePlus,
+        requiresAuth: true,
+        requiredPermissions: ['tenant.dashboard.view'],
+        matchNestedPaths: true,
       },
       {
         id: 'academy-website',
@@ -1007,6 +1027,18 @@ export function getDashboardNavigation(
           icon: Inbox,
           requiresAuth: true,
           requiredRoles: ['platform_owner'],
+        },
+        {
+          // Customer Requests — custom-service requests from academies, and
+          // their email routing. `PlatformCustomerRequestsController`
+          // (PlatformOwnerGuard + RLS) is the server-side boundary.
+          id: 'platform-customer-requests',
+          labelKey: 'navigation:items.platformCustomerRequests',
+          path: DASHBOARD_ROUTES.platformCustomerRequests,
+          icon: MessageSquarePlus,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+          matchNestedPaths: true,
         },
         {
           // Add-ons Catalog Management (P51). Platform-owner only at every

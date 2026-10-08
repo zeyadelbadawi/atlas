@@ -44,6 +44,7 @@ const SCREEN_SEGMENTS: ReadonlySet<string> = new Set([
   'pages',
   'preview',
   'messages',
+  'requests',
 ]);
 
 /**

@@ -38,6 +38,7 @@ import enFeatures from './en/features.json';
 import enPricing from './en/pricing.json';
 import enCertificates from './en/certificates.json';
 import enOnboarding from './en/onboarding.json';
+import enCustomerRequests from './en/customerRequests.json';
 
 const bundle: Record<string, Record<string, unknown>> = {
   liveSessions: enLiveSessions,
@@ -74,6 +75,7 @@ const bundle: Record<string, Record<string, unknown>> = {
   pricing: enPricing,
   certificates: enCertificates,
   onboarding: enOnboarding,
+  customerRequests: enCustomerRequests,
 };
 
 export default bundle;

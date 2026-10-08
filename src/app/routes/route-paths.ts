@@ -306,6 +306,18 @@ export const DASHBOARD_ROUTES = {
   /** TASK 7 — enquiries sent through the Atlas marketing homepage's contact form. Platform Owner only. */
   platformContactSubmissions: '/dashboard/platform/contact-submissions',
 
+  /**
+   * Customer Requests — custom services (logo, domain, theme, section,
+   * feature) academies ask the Atlas team for. Platform Owner only. The
+   * static `routing` child is registered before `:requestId`. The detail
+   * path is where the requests' team emails and notifications link.
+   */
+  platformCustomerRequests: '/dashboard/platform/customer-requests',
+  platformCustomerRequestRouting:
+    '/dashboard/platform/customer-requests/routing',
+  platformCustomerRequestDetail:
+    '/dashboard/platform/customer-requests/:requestId',
+
   platformPlanCatalog: '/dashboard/platform/plans',
 
   /** Add-ons Catalog Management (P51) — Platform Owner controls the customer-store publication state of every add-on. */
@@ -330,6 +342,13 @@ export const DASHBOARD_ROUTES = {
 
   /** W3-compose — the academy owner/administrator's Messages composer and history. */
   academyMessages: '/dashboard/academy/:academyId/messages',
+
+  /**
+   * Customer Requests — the academy owner/administrator's requests to the
+   * Atlas team, and one request (where its emails and notifications link).
+   */
+  academyRequests: '/dashboard/academy/:academyId/requests',
+  academyRequestDetail: '/dashboard/academy/:academyId/requests/:requestId',
 
   /**
    * P13 — the academy's net unsettled revenue and its payout history.

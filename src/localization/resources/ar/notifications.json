@@ -370,6 +370,30 @@
       "title": "استفسار تواصل جديد",
       "message": "وصلت رسالة جديدة عبر نموذج التواصل في موقع Atlas."
     },
+    "customerRequestRouted": {
+      "title": "نشاط على طلب عميل",
+      "message": "{{academyName}}: يحتاج \"{{title}}\" إلى متابعة الفريق."
+    },
+    "customerRequestReceived": {
+      "title": "طلب عميل جديد",
+      "message": "أرسلت {{academyName}} طلبًا: \"{{title}}\"."
+    },
+    "customerRequestCustomerReplied": {
+      "title": "رد العميل",
+      "message": "ردت {{academyName}} على \"{{title}}\": {{excerpt}}"
+    },
+    "customerRequestSubmitted": {
+      "title": "استلمنا طلبك",
+      "message": "وصل طلبك \"{{title}}\" إلى فريق Atlas، وسنرد عليك هنا."
+    },
+    "customerRequestStatusChanged": {
+      "title": "تحديث على طلبك",
+      "message": "تغيّرت حالة طلبك \"{{title}}\". افتحه لمعرفة الخطوة التالية."
+    },
+    "customerRequestTeamReplied": {
+      "title": "رد فريق Atlas",
+      "message": "هناك رد جديد على طلبك \"{{title}}\"."
+    },
     "academyMemberInvited": {
       "title": "حسابك جاهز",
       "message": "تم إنشاء حساب لك في {{academyName}}. اختر كلمة المرور للبدء."
