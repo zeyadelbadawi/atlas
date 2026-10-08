@@ -5,10 +5,18 @@
  * This provider initializes by attempting silent session restoration, then keeps
  * the session alive through token refresh and handles sign-in/sign-out.
  */
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { isEmailOtpChallenge, isTwoFactorChallenge } from '@types';
 import type { ReactNode } from 'react';
-import { currentUserService, sessionService } from '@services/identity';
+import {
+  announceSessionEnded,
+  currentUserService,
+  isDefinitiveAuthFailure,
+  sessionService,
+  subscribeToSessionSignals,
+  tokenService,
+} from '@services/identity';
+import { getGlobalQueryClient } from '@services/query';
 import type {
   Session,
   SignInCredentials,
@@ -23,6 +31,9 @@ import { STORAGE_KEYS } from '@constants';
 export interface IdentityProviderProps {
   readonly children: ReactNode;
 }
+
+/** How long before the access token expires the proactive refresh runs. */
+const PROACTIVE_REFRESH_LEAD_MS = 2 * 60 * 1000;
 
 const INITIAL_SESSION: Session = {
   status: 'restoring',
@@ -122,39 +133,92 @@ export function AtlasIdentityProvider({
   }, [session.status]);
 
   /**
-   * Proactively refreshes tokens when they approach expiration.
+   * Stale-tab recovery — the session as every OTHER part of the app (and
+   * every other tab) learns about it.
+   *  - Ended (the server refused a refresh, or another tab signed out):
+   *    forget the token and every cached query, and become unauthenticated
+   *    so the route guard sends the person to sign in — instead of a
+   *    signed-in UI in which nothing works.
+   *  - Another tab signed in as SOMEONE ELSE: the shared session cookie now
+   *    belongs to them, so this tab's in-memory identity and cached data
+   *    are another person's; start over from the current session.
    */
+  const sessionRef = useRef(session);
+  sessionRef.current = session;
+  useEffect(
+    () =>
+      subscribeToSessionSignals({
+        onEnded: () => {
+          tokenService.clear();
+          getGlobalQueryClient().clear();
+          setSession({ status: 'unauthenticated' });
+        },
+        onSignedInElsewhere: (userId) => {
+          const current = sessionRef.current;
+          if (
+            current.status === 'authenticated' &&
+            current.user?.id !== userId
+          ) {
+            getGlobalQueryClient().clear();
+            window.location.reload();
+          }
+        },
+      }),
+    []
+  );
+
+  /**
+   * Proactively refreshes the access token before it expires — on a timer,
+   * and again whenever the tab becomes visible or the connection returns
+   * (timers do not run while a laptop sleeps, which is exactly when a tab
+   * goes stale). The 401 → refresh → retry path in the HTTP client remains
+   * the safety net. A refresh the server REFUSES ends the session everywhere;
+   * one that cannot reach the server is left for the next attempt.
+   */
+  const expiresAt =
+    session.status === 'authenticated' ? session.tokens?.expiresAt : undefined;
   useEffect(() => {
-    if (session.status !== 'authenticated' || !session.tokens) {
-      return;
-    }
-
-    if (!sessionService.shouldRefreshTokens(session.tokens)) {
-      return;
-    }
-
+    if (!expiresAt) return;
     let cancelled = false;
 
-    async function refreshTokens() {
+    const refreshIfDue = async (): Promise<void> => {
+      if (cancelled || !tokenService.shouldRefresh(expiresAt)) return;
+      if (typeof navigator !== 'undefined' && navigator.onLine === false)
+        return;
       try {
         const refreshed = await sessionService.refresh();
-        if (!cancelled) {
-          setSession(refreshed);
+        if (!cancelled && refreshed.status === 'authenticated') {
+          // Keep the organization the person is working in.
+          setSession((previous) => ({
+            ...previous,
+            tokens: refreshed.tokens,
+            user: refreshed.user,
+          }));
         }
-      } catch {
-        // Refresh failure invalidates the session.
-        if (!cancelled) {
-          setSession({ status: 'unauthenticated' });
-        }
+      } catch (error) {
+        if (!cancelled && isDefinitiveAuthFailure(error))
+          announceSessionEnded();
       }
-    }
+    };
 
-    void refreshTokens();
+    const dueIn =
+      new Date(expiresAt).getTime() - Date.now() - PROACTIVE_REFRESH_LEAD_MS;
+    const timer = setTimeout(() => void refreshIfDue(), Math.max(0, dueIn));
+    const onWake = (): void => {
+      if (document.visibilityState === 'visible') void refreshIfDue();
+    };
+    document.addEventListener('visibilitychange', onWake);
+    window.addEventListener('online', onWake);
+    window.addEventListener('focus', onWake);
 
     return () => {
       cancelled = true;
+      clearTimeout(timer);
+      document.removeEventListener('visibilitychange', onWake);
+      window.removeEventListener('online', onWake);
+      window.removeEventListener('focus', onWake);
     };
-  }, [session]);
+  }, [expiresAt]);
 
   /**
    * Phase 10.3 — sign-in can now end in one of two places: an

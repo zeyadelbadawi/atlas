@@ -25,6 +25,7 @@ import { createBasePack } from './base-pack';
 import { ensureThemeStylesheets } from './theme-stylesheets';
 import { registerThemeAssetManifest } from '../theme-assets/theme-asset.registry';
 import type { ThemePack } from './theme-pack.types';
+import { importWithRetry } from '@utils/lazy-with-retry.utils';
 
 /** A system page a theme may draw itself (`ThemePages`). */
 export type ThemeSystemPage = 'NotFound' | 'ComingSoon';
@@ -133,7 +134,9 @@ export function loadThemePack(key: string | undefined): Promise<ThemePack> {
 
   const chunked = CHUNKED_PACKS[resolved] as ChunkedThemePack;
   const request = Promise.all([
-    chunked.load(),
+    // Stale-tab recovery: a pack chunk removed by a deploy retries, then
+    // reloads once into the new build (`lazy-with-retry.utils`).
+    importWithRetry(chunked.load),
     ensureThemeStylesheets(resolved),
   ]).then(
     ([pack]) => {

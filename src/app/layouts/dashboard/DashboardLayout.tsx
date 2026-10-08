@@ -26,6 +26,8 @@ import {
   useActiveAcademyReconciliation,
 } from '@features/academy';
 import { AcademyScopeRoute } from '@app/routes/AcademyScopeRoute';
+import { ErrorBoundary } from '@app/providers/error/ErrorBoundary';
+import { useLocation } from 'react-router-dom';
 import { DashboardSidebar } from './DashboardSidebar';
 import { DashboardTopbar } from './DashboardTopbar';
 import { useSmartBack } from './useSmartBack';
@@ -61,6 +63,7 @@ function DashboardShell(): JSX.Element {
   const drawer = useDisclosure(false);
   const isMobile = isBelow(SIDEBAR_BREAKPOINT);
   const smartBack = useSmartBack();
+  const location = useLocation();
   // A remembered academy this account cannot reach is replaced or cleared
   // before any academy-scoped link is built (authorization audit, 22 Sep 2026).
   useActiveAcademyReconciliation();
@@ -131,8 +134,13 @@ function DashboardShell(): JSX.Element {
           className="flex-1 bg-background"
         >
           {/* W5 — the content outlet is the academy remount boundary
-              (`<Outlet key={academyId} />`) and hosts the switch overlay. */}
-          <AcademyScopeRoute />
+              (`<Outlet key={academyId} />`) and hosts the switch overlay.
+              Stale-tab recovery: its own error boundary, so a section that
+              fails keeps the header and navigation on screen ("the rest of
+              Atlas is still working" is then true), reset on navigation. */}
+          <ErrorBoundary resetKey={location.pathname}>
+            <AcademyScopeRoute />
+          </ErrorBoundary>
         </main>
       </div>
     </div>

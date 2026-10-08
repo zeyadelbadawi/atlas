@@ -29,9 +29,22 @@ import {
 import { publicWebsiteLocaleForPath } from './ssr/ssr-paths';
 import { preloadPublicWebsiteRouter } from './app/routes/public-website-router-loader';
 import { isKnownThemeKey, loadThemePack } from '@features/website';
+import { reloadOnceForNewVersion } from '@utils/lazy-with-retry.utils';
 
 /** Id of the mount node declared in `index.html`. */
 const ROOT_ELEMENT_ID = 'root';
+
+/*
+  Stale-tab recovery — a stylesheet or module that Vite PRELOADS for a route
+  failed (a tab left open across a deploy asks for files the new build no
+  longer has). Reload once into the current build, at the URL the person
+  navigated to; `reloadOnceForNewVersion` guards against a loop and does
+  nothing offline. Not prevented when no reload starts: the import then
+  fails and the error boundary explains.
+*/
+window.addEventListener('vite:preloadError', (event) => {
+  if (reloadOnceForNewVersion()) event.preventDefault();
+});
 
 /**
  * True for prerendered blog pages.

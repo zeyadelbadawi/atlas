@@ -1,4 +1,6 @@
-import { Suspense, lazy } from 'react';
+import { Suspense } from 'react';
+// Stale-tab recovery: route chunks retry, then reload once for a new build.
+import { lazyWithRetry as lazy } from '@utils/lazy-with-retry.utils';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import { ErrorBoundary } from '@app/providers/error/ErrorBoundary';

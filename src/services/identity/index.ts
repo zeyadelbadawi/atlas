@@ -16,3 +16,10 @@ export {
 } from './authorization.service';
 export { SessionService, sessionService } from './session.service';
 export { twoFactorService, TwoFactorService } from './two-factor.service';
+export {
+  SESSION_ENDED_EVENT,
+  announceSessionEnded,
+  announceSignedIn,
+  isDefinitiveAuthFailure,
+  subscribeToSessionSignals,
+} from './session-events';

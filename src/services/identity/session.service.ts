@@ -11,6 +11,11 @@ import { tokenService } from './token.service';
 import { STORAGE_KEYS } from '@constants';
 import { isEmailOtpChallenge, isTwoFactorChallenge } from '@types';
 import { twoFactorService } from './two-factor.service';
+import {
+  announceSessionEnded,
+  announceSignedIn,
+  isDefinitiveAuthFailure,
+} from './session-events';
 import type {
   AuthenticationResponse,
   SignInCredentials,
@@ -38,7 +43,9 @@ function withCrossTabRefreshLock<T>(work: () => Promise<T>): Promise<T> {
 }
 
 /** The "Last used" hint on the sign-in pages. Best effort: storage may be unavailable. */
-function rememberAuthMethod(method: AuthenticationResponse['authMethod']): void {
+function rememberAuthMethod(
+  method: AuthenticationResponse['authMethod']
+): void {
   if (method !== 'password' && method !== 'google') return;
   try {
     localStorage.setItem(STORAGE_KEYS.lastAuthMethod, method);
@@ -101,7 +108,9 @@ export class SessionService {
    * created via 2FA is stored and shaped identically — there is no second
    * notion of "logged in" to keep in sync.
    */
-  public async completeTwoFactor(input: TwoFactorVerifyInput): Promise<Session> {
+  public async completeTwoFactor(
+    input: TwoFactorVerifyInput
+  ): Promise<Session> {
     const response = await twoFactorService.verifyChallenge(input);
     return this.establishSession(response);
   }
@@ -116,7 +125,9 @@ export class SessionService {
    * Google Identity — adopts a session minted by a Google completion or
    * step. The same `establishSession` as every other path.
    */
-  public acceptAuthenticationResponse(response: AuthenticationResponse): Session {
+  public acceptAuthenticationResponse(
+    response: AuthenticationResponse
+  ): Session {
     return this.establishSession(response);
   }
 
@@ -132,6 +143,9 @@ export class SessionService {
     tokenService.store(tokens);
 
     const organization = this.selectPrimaryOrganization(response.user);
+    // Every other tab shares the session cookie that was just replaced: one
+    // still holding another person's state starts over (session-events).
+    announceSignedIn(response.user.id);
 
     return {
       status: 'authenticated',
@@ -151,6 +165,9 @@ export class SessionService {
     // that has lapsed, by the session cookie — and clears the cookie.
     await authenticationService.signOut();
     tokenService.clear();
+    // Sign-out in one tab signs every tab out (they share the cookie that
+    // was just cleared) instead of leaving them showing a dead session.
+    announceSessionEnded();
     // The remembered academy belongs to the account that just left, never
     // to whoever signs in next in this browser (22 Sep 2026 audit).
     localStorage.removeItem(STORAGE_KEYS.activeAcademy);
@@ -190,8 +207,11 @@ export class SessionService {
 
     try {
       return await this.refresh();
-    } catch {
-      tokenService.clear();
+    } catch (error) {
+      // Only the server saying "no" ends the session. A reload without a
+      // connection keeps the session hint, so the next load restores it
+      // instead of treating a network blip as a sign-out.
+      if (isDefinitiveAuthFailure(error)) tokenService.clear();
       return { status: 'unauthenticated' };
     }
   }
@@ -205,16 +225,31 @@ export class SessionService {
     if (this.refreshInFlight) {
       return this.refreshInFlight;
     }
-    this.refreshInFlight = withCrossTabRefreshLock(() =>
-      this.performRefresh()
-    ).finally(() => {
+    this.refreshInFlight = (async () => {
+      // Only the cookie rotation holds the cross-tab lock. Loading the
+      // profile afterwards inside it could wait on itself: a 401 there sends
+      // the interceptor back into `refresh()`, i.e. into this very promise,
+      // while the lock stays held for every tab.
+      const tokens = await withCrossTabRefreshLock(() => this.rotateToken());
+      // Marked as already-refreshed: a 401 here is a final answer, never a
+      // second refresh of the session just obtained.
+      const user = await currentUserService.getCurrent({
+        headers: { 'X-Retry-After-Refresh': 'true' },
+      });
+      return {
+        status: 'authenticated' as const,
+        tokens,
+        user,
+        organization: this.selectPrimaryOrganization(user),
+      };
+    })().finally(() => {
       this.refreshInFlight = null;
     });
     return this.refreshInFlight;
   }
 
-  /** The actual refresh round-trip — always invoked through the single-flight `refresh`. */
-  private async performRefresh(): Promise<Session> {
+  /** The cookie rotation — always invoked through the single-flight `refresh`, under the cross-tab lock. */
+  private async rotateToken(): Promise<TokenMetadata> {
     // A session an older build left in localStorage is converted into the
     // cookie by presenting its token once; it is deleted as it is read.
     const legacy = tokenService.takeLegacyRefreshToken();
@@ -239,16 +274,7 @@ export class SessionService {
     );
 
     tokenService.store(tokens);
-
-    const user = await currentUserService.getCurrent();
-    const organization = this.selectPrimaryOrganization(user);
-
-    return {
-      status: 'authenticated',
-      tokens,
-      user,
-      organization,
-    };
+    return tokens;
   }
 
   /**

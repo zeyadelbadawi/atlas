@@ -6,6 +6,7 @@
  * authentication mechanics.
  */
 import { apiClient } from '@api';
+import type { ReadOptions } from '@api';
 import type { CurrentUser, UserPreferences } from '@types';
 
 export class CurrentUserService {
@@ -14,8 +15,8 @@ export class CurrentUserService {
    *
    * @returns The current user.
    */
-  public async getCurrent(): Promise<CurrentUser> {
-    return apiClient.get<CurrentUser>('/users/me');
+  public async getCurrent(options?: ReadOptions): Promise<CurrentUser> {
+    return apiClient.get<CurrentUser>('/users/me', options);
   }
 
   /**

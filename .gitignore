@@ -39,3 +39,7 @@ ATLAS_HANDOVER_SECRETS.local.md
 /dist-theme-fixtures/
 /dist-theme-fixtures-ssr/
 /e2e/theme-baseline/.results/
+
+# Stale-tab recovery: filled by the deploy workflow, never committed.
+previous-assets/*
+!previous-assets/.gitkeep

@@ -23,7 +23,9 @@
  * bottom bar along with the content, which is the whole point of a layout
  * route undone by where one boundary was placed.
  */
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
+// Stale-tab recovery: route chunks retry, then reload once for a new build.
+import { lazyWithRetry as lazy } from '@utils/lazy-with-retry.utils';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { SectionLoader } from '@components/loading';
 import { LEARNER_ROUTES } from '@app/routes/route-paths';
