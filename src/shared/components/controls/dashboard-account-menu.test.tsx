@@ -28,7 +28,7 @@ let user: { id: string; name: string; email: string } | null = {
 const signOut = vi.fn(async () => undefined);
 
 vi.mock('@hooks', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('@hooks')>()),
+  ...(await importOriginal<Record<string, unknown>>()),
   useAuth: () => ({ user }),
   useSignOut: () => ({ signOut, isLoading: false }),
   useToast: () => ({ toast: vi.fn() }),
