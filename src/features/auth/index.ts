@@ -42,6 +42,7 @@ export type { TrialPlanPickerProps } from './components/TrialPlanPicker';
 // Hooks and helpers the academy website's own auth pages reuse.
 export {
   useValidatePasswordResetToken,
+  useUrlCredentialToken,
   useVerifyEmail,
   useVerifyEmailFlow,
   useResendEmailVerification,

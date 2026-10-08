@@ -150,6 +150,7 @@
 	vars atlas_ssr 1
 	reverse_proxy ssr:3100 {
 		header_up X-Real-IP {client_ip}
+		header_up X-Forwarded-Host {host}
 		transport http {
 			dial_timeout 1s
 			response_header_timeout 3s
@@ -238,6 +239,9 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 	handle /api/* {
 		reverse_proxy backend:3000 {
 			header_up X-Real-IP {client_ip}
+			# ATO review F14 — the host the request actually reached, never a
+			# client-supplied X-Forwarded-Host passed through a trusted proxy.
+			header_up X-Forwarded-Host {host}
 		}
 	}
 
@@ -297,6 +301,9 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 	handle /api/* {
 		reverse_proxy backend:3000 {
 			header_up X-Real-IP {client_ip}
+			# ATO review F14 — the host the request actually reached, never a
+			# client-supplied X-Forwarded-Host passed through a trusted proxy.
+			header_up X-Forwarded-Host {host}
 		}
 	}
 
