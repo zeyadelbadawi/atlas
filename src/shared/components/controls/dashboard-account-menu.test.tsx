@@ -34,7 +34,7 @@ vi.mock('@hooks', async (importOriginal) => ({
   useToast: () => ({ toast: vi.fn() }),
 }));
 
-import { AccountMenu, displayNameOf } from './AccountMenu';
+import { AccountMenu } from './AccountMenu';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { DashboardTopbar } from '@app/layouts/dashboard/DashboardTopbar';
 
@@ -108,7 +108,9 @@ describe('account menu', () => {
   });
 
   it('falls back to the email name when the profile has no name', () => {
-    expect(displayNameOf({ name: '  ', email: 'zed@example.com' })).toBe('zed');
+    user = { id: 'u3', name: '  ', email: 'zed@example.com' };
+    renderUi(<AccountMenu />);
+    expect(trigger().textContent).toContain('Welcome, zed');
   });
 
   it('opens with identity, Profile, Appearance and Sign out; Escape returns focus', async () => {

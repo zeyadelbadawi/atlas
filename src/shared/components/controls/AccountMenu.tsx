@@ -57,7 +57,7 @@ function isThemePreference(value: string): value is ThemePreference {
 }
 
 /** The name to greet: the profile name, else the email's local part. */
-export function displayNameOf(user: {
+function displayNameOf(user: {
   readonly name?: string | null;
   readonly email: string;
 }): string {
