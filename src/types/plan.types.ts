@@ -52,35 +52,20 @@ export interface PlanResourceLimits {
   readonly monthlyEmails?: LimitValue;
 }
 
-/** The feature entitlements every Plan (and Add-on effect) can express. */
+/**
+ * The feature entitlements every Plan (and Add-on effect) can express.
+ *
+ * Only keys the backend actually ENFORCES belong here — Atlas never
+ * advertises a plan entitlement it does not enforce. The former CMS/SEO/
+ * Marketing/Analytics/Custom domain/Themes/Backup switches were removed
+ * because nothing ever gated on them (backend `LEGACY_PLAN_FEATURE_KEYS`).
+ */
 export type PlanFeatureKey =
-  | 'cms'
-  | 'seo'
-  | 'seoAdvanced'
-  | 'marketing'
-  | 'marketingAdvanced'
-  | 'analytics'
-  | 'analyticsAdvanced'
-  | 'customDomain'
-  | 'themes'
-  | 'multipleThemes'
-  | 'backup'
   /** Whether Live Sessions may be run at all. Normally granted by activating the Live Sessions add-on. */
-  | 'liveSessions';
+  'liveSessions';
 
 /** Feature availability granted by a Plan. A capability switch, not a quota. */
 export interface PlanFeatures {
-  readonly cms: boolean;
-  readonly seo: boolean;
-  readonly seoAdvanced: boolean;
-  readonly marketing: boolean;
-  readonly marketingAdvanced: boolean;
-  readonly analytics: boolean;
-  readonly analyticsAdvanced: boolean;
-  readonly customDomain: boolean;
-  readonly themes: boolean;
-  readonly multipleThemes: boolean;
-  readonly backup: boolean;
   readonly liveSessions: boolean;
 }
 

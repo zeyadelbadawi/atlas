@@ -44,20 +44,7 @@ export const PLAN_LIMIT_KEYS: readonly PlanLimitKey[] = [
 ];
 
 /** Every feature entitlement key, in display order. */
-export const PLAN_FEATURE_KEYS: readonly PlanFeatureKey[] = [
-  'cms',
-  'seo',
-  'seoAdvanced',
-  'marketing',
-  'marketingAdvanced',
-  'analytics',
-  'analyticsAdvanced',
-  'customDomain',
-  'themes',
-  'multipleThemes',
-  'backup',
-  'liveSessions',
-];
+export const PLAN_FEATURE_KEYS: readonly PlanFeatureKey[] = ['liveSessions'];
 
 /**
  * The limit keys the cached `tenant_usage` snapshot actually carries.
