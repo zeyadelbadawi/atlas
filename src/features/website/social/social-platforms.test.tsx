@@ -114,6 +114,24 @@ describe('legacy links: the platform is inferred, never invented', () => {
     );
   });
 
+  it('never resolves a label to an inherited object member', () => {
+    for (const label of [
+      'constructor',
+      'toString',
+      'valueOf',
+      '__proto__',
+      'hasOwnProperty',
+    ]) {
+      expect(platformFromLabel(label)).toBeUndefined();
+      expect(
+        resolveSocialPlatform({
+          label: lt(label),
+          url: 'https://news.example.com',
+        })
+      ).toBeUndefined();
+    }
+  });
+
   it('leaves an unidentifiable link without a platform (it still renders, generically)', () => {
     expect(
       resolveSocialPlatform({

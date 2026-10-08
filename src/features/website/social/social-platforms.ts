@@ -150,7 +150,12 @@ export function platformFromLabel(
   label: string | undefined
 ): SocialPlatform | undefined {
   if (!label) return undefined;
-  return LABEL_ALIASES[normaliseLabel(label)];
+  const key = normaliseLabel(label);
+  // Own keys only: a free-text label such as "constructor" must not reach
+  // an inherited Object.prototype member.
+  return Object.prototype.hasOwnProperty.call(LABEL_ALIASES, key)
+    ? LABEL_ALIASES[key]
+    : undefined;
 }
 
 export function platformFromUrl(
