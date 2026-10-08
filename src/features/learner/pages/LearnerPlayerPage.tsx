@@ -199,10 +199,10 @@ export default function LearnerPlayerPage(): JSX.Element {
 
   const handleRemoveDevice = (deviceId: string) => {
     removeDevice.mutate(deviceId, {
-      onSuccess: () => {
-        setDeviceDialogOpen(false);
-        refresh();
-      },
+      // No `refresh()` here: the removal invalidates the learner subtree,
+      // which already re-requests this lesson's grant. A second request on
+      // top raced the first for the slot just freed (Device-Limit fix).
+      onSuccess: () => setDeviceDialogOpen(false),
     });
   };
 
