@@ -107,11 +107,38 @@ export interface WebsiteHeaderConfig {
   };
 }
 
+/**
+ * The social platforms an Academy can link to from its footer, in the order
+ * the CMS offers them. Mirrors the backend's `SOCIAL_PLATFORMS`.
+ */
+export const SOCIAL_PLATFORMS = [
+  'facebook',
+  'instagram',
+  'x',
+  'tiktok',
+  'linkedin',
+  'youtube',
+  'whatsapp',
+  'telegram',
+  'snapchat',
+  'threads',
+  'discord',
+  'github',
+] as const;
+
+export type SocialPlatform = (typeof SOCIAL_PLATFORMS)[number];
+
 export interface WebsiteFooterLink {
   readonly id: string;
   readonly label: LocalizedText;
   readonly pageId?: string;
   readonly url?: string;
+  /**
+   * Social links only: which platform this is — the public site shows its
+   * icon. Links saved before the platform picker have none; their platform
+   * is inferred from the label or the URL when shown (`resolveSocialPlatform`).
+   */
+  readonly platform?: SocialPlatform;
 }
 
 export interface WebsiteFooterGroup {

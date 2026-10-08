@@ -72,6 +72,8 @@ export interface ContactMessagePayload {
 export interface AcademyIdentity {
   readonly academyId: string;
   readonly name: string;
+  /** The Academy's own description (Academy settings); absent when blank. */
+  readonly description?: string;
   readonly logoUrl?: string;
   readonly faviconUrl?: string;
   readonly primaryColor?: string;

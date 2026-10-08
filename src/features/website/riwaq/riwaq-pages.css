@@ -288,7 +288,7 @@
 
 .rwc-foot-name {
   margin: 0;
-  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.5rem);
+  font-size: clamp(1.375rem, 1.15rem + 0.9vw, 2rem);
   font-weight: 300;
   line-height: 1.15;
   letter-spacing: -0.015em;
@@ -297,7 +297,48 @@
 }
 
 .rwc-foot-name[data-length='long'] {
-  font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+  font-size: clamp(1.25rem, 1.05rem + 0.6vw, 1.625rem);
+}
+
+.rwc-foot-desc {
+  margin: 0;
+  max-inline-size: 38ch;
+  color: var(--rw-deep-muted);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+
+.rwc-foot-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Square bays on the deep ground, like the colonnade's: the mark in the
+   ground's text tone, the rule brightening on hover — never the
+   platforms' own colours. */
+.rwc-foot-social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  border: 1px solid var(--rw-deep-rule);
+  color: var(--rw-deep-text);
+  transition: border-color 150ms ease;
+}
+
+a.rwc-foot-social-link:hover {
+  border-color: currentColor;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rwc-foot-social-link {
+    transition: none;
+  }
 }
 
 .rwc-foot-name :is(a, button) {
@@ -310,14 +351,31 @@
   cursor: pointer;
 }
 
+/* Two columns of links on a phone (short labels; no wall of links), more
+   as the width allows; contact details take a full row on a phone. */
 .rwc-foot-cols {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 2rem var(--rw-gap);
+}
+
+.rwc-foot-col[data-wide] {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 768px) {
+  .rwc-foot-cols {
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  }
+
+  .rwc-foot-col[data-wide] {
+    grid-column: auto;
+  }
 }
 
 .rwc-foot-col {
   display: grid;
+  min-inline-size: 0;
   gap: 0.75rem;
   align-content: start;
   padding-block-start: 0.75rem;

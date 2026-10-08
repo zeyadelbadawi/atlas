@@ -138,6 +138,29 @@
   color: var(--website-foreground);
   text-decoration: underline;
 }
+/* Social marks: the muted ink of the footer links, the brand colour on
+   hover; a 44px target with a soft round ground on hover. */
+.t1-footer-social {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  border-radius: 999px;
+  color: var(--website-foreground-muted);
+  transition:
+    color 150ms ease,
+    background-color 150ms ease;
+}
+a.t1-footer-social:hover {
+  color: var(--website-primary-solid);
+  background-color: var(--website-primary-surface);
+}
+@media (prefers-reduced-motion: reduce) {
+  .t1-footer-social {
+    transition: none;
+  }
+}
 
 /* ------------------------------------------------------------------ */
 /* Sections (Phase 5): rhythm, tones, type, actions, cards, media.      */

@@ -299,18 +299,71 @@
 [data-theme-pack='manara'] .mnp-footer {
   margin-block-start: auto;
 }
-/* A name set large, capped so it stays a signature, not a second hero. */
+/* The academy's identity beside the columns: the name is a mark that sits
+   with them (at most 2.5rem), not a second hero. */
+[data-theme-pack='manara'] .mnp-footer-top {
+  display: grid;
+  gap: clamp(2rem, 1.25rem + 2.5vw, 3rem);
+}
+@media (min-width: 1024px) {
+  [data-theme-pack='manara'] .mnp-footer-top {
+    grid-template-columns: minmax(16rem, 1.15fr) minmax(0, 2.85fr);
+    align-items: start;
+  }
+}
+[data-theme-pack='manara'] .mnp-footer-id {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  min-inline-size: 0;
+}
 [data-theme-pack='manara'] .mnp-footer-name {
   font-family: var(--mn-font-display);
-  font-size: clamp(2.25rem, 1.25rem + 3.5vw, 4.5rem);
+  font-size: clamp(1.625rem, 1.25rem + 1.25vw, 2.5rem);
   font-weight: 800;
-  line-height: 0.98;
-  letter-spacing: -0.03em;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
   overflow-wrap: anywhere;
   text-wrap: balance;
 }
 [data-theme-pack='manara'] .mnp-footer-name[data-length='long'] {
-  font-size: clamp(1.75rem, 0.9rem + 2.5vw, 3.25rem);
+  font-size: clamp(1.375rem, 1.1rem + 0.9vw, 1.875rem);
+}
+[data-theme-pack='manara'] .mnp-footer-desc {
+  max-inline-size: 36ch;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--mn-night-text-muted);
+}
+[data-theme-pack='manara'] .mnp-footer-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+/* Square chips on the night ground: the mark in the footer's own text
+   tone, the accent on hover and focus — never the platforms' colours. */
+[data-theme-pack='manara'] .mnp-footer-social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  border: 2px solid var(--mn-night-line);
+  border-radius: 0.5rem;
+  color: var(--mn-night-text);
+  transition:
+    color 150ms ease,
+    border-color 150ms ease;
+}
+[data-theme-pack='manara'] a.mnp-footer-social-link:hover {
+  color: var(--mn-night-accent-text);
+  border-color: currentColor;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-theme-pack='manara'] .mnp-footer-social-link {
+    transition: none;
+  }
 }
 [data-theme-pack='manara'] [dir='rtl'] .mnp-footer-name,
 [dir='rtl'] [data-theme-pack='manara'] .mnp-footer-name,
@@ -333,21 +386,34 @@
 [data-theme-pack='manara'] .mnp-footer-name button:hover {
   color: var(--mn-night-accent-text);
 }
+/* Two columns of links on a phone (short labels; no wall of links), more
+   as the width allows; contact details take a full row on a phone. */
 [data-theme-pack='manara'] .mnp-footer-columns {
   display: grid;
-  gap: 2.5rem 2rem;
-  margin-block-start: clamp(2.5rem, 1.5rem + 3vw, 4rem);
-  padding-block-start: clamp(2rem, 1rem + 2vw, 3rem);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2rem 1.5rem;
+  min-inline-size: 0;
+  padding-block-start: clamp(1.5rem, 1rem + 1.5vw, 2rem);
   border-block-start: 2px solid var(--mn-night-line);
 }
-@media (min-width: 640px) {
+[data-theme-pack='manara'] .mnp-footer-col {
+  min-inline-size: 0;
+}
+[data-theme-pack='manara'] .mnp-footer-col[data-wide] {
+  grid-column: 1 / -1;
+}
+@media (min-width: 768px) {
   [data-theme-pack='manara'] .mnp-footer-columns {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  }
+  [data-theme-pack='manara'] .mnp-footer-col[data-wide] {
+    grid-column: auto;
   }
 }
 @media (min-width: 1024px) {
   [data-theme-pack='manara'] .mnp-footer-columns {
-    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    padding-block-start: 0;
+    border-block-start: 0;
   }
 }
 [data-theme-pack='manara'] .mnp-footer-link {

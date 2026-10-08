@@ -284,16 +284,48 @@
 }
 [data-theme-pack='atelier'] .atp-colophon-name {
   font-family: var(--at-font-display);
-  /* A signature under the folio, not a second masthead: at most ~4.5rem. */
-  font-size: clamp(2rem, 1rem + 3.5vw, 4.5rem);
+  /* A signature on the colophon, beside its columns: at most 2.75rem. */
+  font-size: clamp(1.75rem, 1.3rem + 1.4vw, 2.75rem);
   font-weight: 320;
-  line-height: 0.95;
-  letter-spacing: -0.035em;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
   overflow-wrap: anywhere;
   text-wrap: balance;
 }
 [data-theme-pack='atelier'] .atp-colophon-name[data-length='long'] {
-  font-size: clamp(1.625rem, 0.75rem + 2.5vw, 3.25rem);
+  font-size: clamp(1.5rem, 1.15rem + 1vw, 2.125rem);
+}
+[data-theme-pack='atelier'] .atp-colophon-desc {
+  max-inline-size: 38ch;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--atelier-text-muted);
+}
+[data-theme-pack='atelier'] .atp-footer-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-inline-start: -0.625rem;
+}
+/* Ink marks on the paper, no chip: the colophon stays typographic. The
+   brand colour comes in on hover, as on every Atelier link. */
+[data-theme-pack='atelier'] .atp-footer-social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  border-radius: 999px;
+  color: var(--atelier-text);
+  transition: color 150ms ease;
+}
+[data-theme-pack='atelier'] a.atp-footer-social-link:hover {
+  color: var(--atelier-brand);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-theme-pack='atelier'] .atp-footer-social-link {
+    transition: none;
+  }
 }
 [data-theme-pack='atelier'] [dir='rtl'] .atp-colophon-name,
 [data-theme-pack='atelier'][dir='rtl'] .atp-colophon-name {
