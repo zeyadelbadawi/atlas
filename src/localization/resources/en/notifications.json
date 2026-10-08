@@ -386,6 +386,14 @@
       "title": "Google sign-in removed",
       "message": "Google can no longer be used to sign in to your account. If this wasn't you, reset your password."
     },
+    "twoFactorEnabled": {
+      "title": "Two-factor authentication turned on",
+      "message": "Signing in now asks for a code from your authenticator app. If this wasn't you, reset your password."
+    },
+    "twoFactorDisabled": {
+      "title": "Two-factor authentication turned off",
+      "message": "You were signed out on your other devices. If this wasn't you, reset your password."
+    },
     "academyMemberAdded": {
       "title": "You've been added to an academy",
       "message": "You now have access to {{academyName}}. Sign in with your existing Atlas credentials."

@@ -86,10 +86,11 @@ export function TwoFactorCard(): JSX.Element {
 
   const confirmSetup = useApiMutation<
     { recoveryCodes: string[] },
-    string,
+    { readonly token: string; readonly password: string },
     ApiError
   >({
-    mutationFn: (token) => twoFactorService.confirmSetup(token),
+    mutationFn: ({ token, password: pw }) =>
+      twoFactorService.confirmSetup(token, pw),
     showSuccessToast: false,
     showErrorToast: false,
   });
@@ -125,22 +126,31 @@ export function TwoFactorCard(): JSX.Element {
   };
 
   const handleConfirm = (): void => {
-    confirmSetup.mutate(code, {
-      onSuccess: (result) => {
-        // The secret has served its purpose — drop it immediately rather
-        // than leaving it in state behind the next dialog.
-        setSetup(null);
-        setCode('');
-        setRecoveryCodes(result.recoveryCodes);
-        setStage('codes');
-      },
-      onError: () =>
-        toast({
-          variant: 'destructive',
-          title: t('profile:twoFactor.invalidCode'),
-          description: t('profile:twoFactor.invalidCodeDescription'),
-        }),
-    });
+    confirmSetup.mutate(
+      { token: code, password },
+      {
+        onSuccess: (result) => {
+          // The secret has served its purpose — drop it immediately rather
+          // than leaving it in state behind the next dialog.
+          setSetup(null);
+          setCode('');
+          setPassword('');
+          setRecoveryCodes(result.recoveryCodes);
+          setStage('codes');
+        },
+        onError: (error) =>
+          error.messageKey === 'errors.auth.invalidCredentials'
+            ? toast({
+                variant: 'destructive',
+                title: t('profile:twoFactor.passwordRejected'),
+              })
+            : toast({
+                variant: 'destructive',
+                title: t('profile:twoFactor.invalidCode'),
+                description: t('profile:twoFactor.invalidCodeDescription'),
+              }),
+      }
+    );
   };
 
   const handleDisable = (): void => {
@@ -293,6 +303,22 @@ export function TwoFactorCard(): JSX.Element {
                   className="text-center font-mono text-lg tracking-widest"
                 />
               </div>
+
+              <div className="space-y-1">
+                <Label htmlFor="totp-setup-password">
+                  {t('profile:fields.currentPassword')}
+                </Label>
+                <Input
+                  id="totp-setup-password"
+                  type="password"
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                />
+                <p className="text-xs text-muted-foreground">
+                  {t('profile:twoFactor.passwordRequiredReason')}
+                </p>
+              </div>
             </div>
           ) : null}
 
@@ -302,7 +328,9 @@ export function TwoFactorCard(): JSX.Element {
             </Button>
             <Button
               onClick={handleConfirm}
-              disabled={code.length !== 6 || confirmSetup.isPending}
+              disabled={
+                code.length !== 6 || !password || confirmSetup.isPending
+              }
             >
               {confirmSetup.isPending
                 ? t('common:actions.saving')
