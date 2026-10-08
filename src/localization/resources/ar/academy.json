@@ -475,6 +475,8 @@
     "label": "الأكاديمية",
     "triggerLabel": "الأكاديمية الحالية: {{name}}. تبديل الأكاديمية",
     "searchPlaceholder": "ابحث في الأكاديميات…",
+    "openSearch": "البحث في الأكاديميات",
+    "closeSearch": "إغلاق البحث",
     "yourRole": "دورك",
     "switching": "جارٍ فتح الأكاديمية…",
     "switchingTo": "جارٍ فتح {{name}}…",

@@ -12,18 +12,22 @@
  * can intercept and Back/Forward can replay.
  *
  * Keyboard: the trigger is a combobox button (Enter/Space/ArrowDown open
- * it); the list supports type-to-filter, arrow keys and Enter; Escape
- * closes and returns focus to the trigger (Radix Popover + cmdk).
+ * it). The dropdown opens compact — a header with a search toggle, then the
+ * list — with focus on the list, where the arrow keys and Enter choose an
+ * academy. The toggle (or typing any character on the list) opens the
+ * search field and focuses it; Escape closes the search first and returns
+ * focus to the toggle, then closes the dropdown and returns focus to the
+ * trigger (Radix Popover + cmdk).
  */
-import { Building2, Check, ChevronsUpDown } from 'lucide-react';
-import { useState } from 'react';
+import { Command as CommandPrimitive } from 'cmdk';
+import { Building2, Check, ChevronsUpDown, Search, X } from 'lucide-react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
@@ -47,6 +51,14 @@ export interface AcademySwitcherProps {
    * has no room left at 390 px.
    */
   readonly variant?: 'topbar' | 'bar';
+}
+
+/** The cmdk value of an academy's option: its name to filter on, its id to stay unique. */
+function optionValue(academy: {
+  readonly id: string;
+  readonly name: string;
+}): string {
+  return `${academy.name} ${academy.id}`;
 }
 
 function RoleBadge({
@@ -76,6 +88,21 @@ export function AcademySwitcher({
 }: AcademySwitcherProps): JSX.Element | null {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const searchId = useId();
+  const listRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+
+  // Opening the search moves focus into it, so typing can start at once.
+  useEffect(() => {
+    const input = inputRef.current;
+    if (!searchOpen || !input) return;
+    input.focus();
+    // A search opened by typing keeps the caret after that character.
+    input.setSelectionRange(input.value.length, input.value.length);
+  }, [searchOpen]);
   const { data } = useAcademies();
   const {
     academyId: scopeAcademyId,
@@ -97,13 +124,36 @@ export function AcademySwitcher({
   const currentRole: AcademyStaffRole | undefined =
     (scopeAcademyId ? membership?.role : undefined) ?? current?.viewerRole;
 
+  const needle = query.trim().toLocaleLowerCase();
+  const visibleAcademies = needle
+    ? academies.filter((academy) =>
+        academy.name.toLocaleLowerCase().includes(needle)
+      )
+    : academies;
+
   const handleSelect = (academyId: string) => {
     setOpen(false);
     switchAcademy(academyId);
   };
 
+  const openSearch = (initialQuery = '') => {
+    setQuery(initialQuery);
+    setSearchOpen(true);
+  };
+  const closeSearch = () => {
+    setSearchOpen(false);
+    setQuery('');
+    toggleRef.current?.focus();
+  };
+  const handleOpenChange = (next: boolean) => {
+    setOpen(next);
+    // Every opening starts compact, with the whole list.
+    setSearchOpen(false);
+    setQuery('');
+  };
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         <Button
           type="button"
@@ -160,32 +210,109 @@ export function AcademySwitcher({
       <PopoverContent
         align="start"
         className="w-[min(20rem,calc(100vw-2rem))] p-0"
+        // Focus lands on the list (a listbox with an active option), so the
+        // arrows and Enter work at once and typing opens the search.
+        onOpenAutoFocus={(event) => {
+          event.preventDefault();
+          listRef.current?.focus();
+        }}
+        // Escape closes the search first, the dropdown on the next press.
+        onEscapeKeyDown={(event) => {
+          if (!searchOpen) return;
+          event.preventDefault();
+          closeSearch();
+        }}
       >
-        {currentName && currentRole ? (
-          <div className="flex items-center justify-between gap-3 border-b border-border px-3 py-2 text-sm">
-            <span className="min-w-0 truncate text-muted-foreground">
-              {t('academy:switcher.yourRole')}
-            </span>
-            <RoleBadge role={currentRole} />
-          </div>
-        ) : null}
-        <Command>
-          <CommandInput
-            placeholder={t('academy:switcher.searchPlaceholder')}
-            aria-label={t('academy:switcher.searchPlaceholder')}
-            className="h-10"
-          />
-          <CommandList>
+        {/* The header sits outside the command root on purpose: Enter on the
+            toggle must not also choose the highlighted academy. */}
+        <div className="flex min-h-11 items-center justify-between gap-2 border-b border-border pe-1.5 ps-3">
+          <p className="min-w-0 truncate text-sm font-semibold text-foreground">
+            {t('academy:switcher.title')}
+          </p>
+          <Button
+            ref={toggleRef}
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="size-9 shrink-0 text-muted-foreground hover:text-foreground"
+            aria-expanded={searchOpen}
+            aria-controls={searchOpen ? searchId : undefined}
+            aria-label={t(
+              searchOpen
+                ? 'academy:switcher.closeSearch'
+                : 'academy:switcher.openSearch'
+            )}
+            data-testid="academy-switcher-search-toggle"
+            onClick={() => (searchOpen ? closeSearch() : openSearch())}
+          >
+            {searchOpen ? (
+              <X className="size-4" strokeWidth={1.75} aria-hidden />
+            ) : (
+              <Search className="size-4" strokeWidth={1.75} aria-hidden />
+            )}
+          </Button>
+        </div>
+        <Command
+          // Filtered here, not by cmdk: its own filter outlives the field,
+          // so closing the search would leave the list filtered.
+          shouldFilter={false}
+          onKeyDown={(event) => {
+            // Type-to-search: a printable key typed on the list opens the
+            // search with that character in it.
+            if (
+              !searchOpen &&
+              event.key.length === 1 &&
+              event.key !== ' ' &&
+              !event.ctrlKey &&
+              !event.metaKey &&
+              !event.altKey
+            ) {
+              event.preventDefault();
+              openSearch(event.key);
+            }
+          }}
+        >
+          {searchOpen ? (
+            <div
+              id={searchId}
+              className="border-b border-border p-2 motion-safe:duration-150 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1"
+            >
+              {/* The ring is drawn on the whole field, inset, so it never
+                  crosses the icon or the text. */}
+              <div className="flex h-10 items-center gap-2 rounded-md border border-input bg-background px-2.5 focus-within:border-ring focus-within:ring-2 focus-within:ring-inset focus-within:ring-ring/40">
+                <Search
+                  className="size-4 shrink-0 text-muted-foreground"
+                  strokeWidth={1.75}
+                  aria-hidden
+                />
+                <CommandPrimitive.Input
+                  ref={inputRef}
+                  value={query}
+                  onValueChange={setQuery}
+                  placeholder={t('academy:switcher.searchPlaceholder')}
+                  aria-label={t('academy:switcher.searchPlaceholder')}
+                  data-testid="academy-switcher-search"
+                  className="h-full min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
+                />
+              </div>
+            </div>
+          ) : null}
+          <CommandList
+            ref={listRef}
+            label={t('academy:switcher.title')}
+            // The highlighted option is the focus indicator inside the list.
+            className="py-1 focus-visible:ring-0 focus-visible:ring-offset-0"
+          >
             <CommandEmpty>{t('academy:switcher.noAcademies')}</CommandEmpty>
-            <CommandGroup heading={t('academy:switcher.title')}>
-              {academies.map((academy) => {
+            <CommandGroup>
+              {visibleAcademies.map((academy) => {
                 const isCurrent = academy.id === currentId;
                 return (
                   <CommandItem
                     key={academy.id}
                     // Filtered by name (the id keeps two same-named
                     // academies distinct).
-                    value={`${academy.name} ${academy.id}`}
+                    value={optionValue(academy)}
                     onSelect={() => handleSelect(academy.id)}
                     aria-current={isCurrent ? 'true' : undefined}
                     data-testid={`academy-switcher-option-${academy.id}`}

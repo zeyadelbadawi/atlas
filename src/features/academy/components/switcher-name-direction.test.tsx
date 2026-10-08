@@ -5,8 +5,8 @@
  * switchers carries `dir="auto"` (its own direction, isolated from the
  * page's) and the full name as a tooltip.
  */
-import { describe, expect, it, vi } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { cleanup, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { I18nextProvider } from 'react-i18next';
 import { createI18nInstance } from '@/localization/i18n';
@@ -74,6 +74,8 @@ function renderAr(ui: JSX.Element) {
     </I18nextProvider>
   );
 }
+
+afterEach(() => cleanup());
 
 describe('switcher names keep their own direction (RTL truncation)', () => {
   it('academy switcher: the current name and every listed name are dir="auto" with the full name as a tooltip', async () => {
