@@ -145,5 +145,28 @@
     "alt": "Payment proof",
     "altFor": "Payment proof for {{subject}}",
     "open": "Open in a new tab"
+  },
+  "connectivity": {
+    "offline": {
+      "title": "You're offline.",
+      "savedAt": "Showing what was saved at {{time}}.",
+      "noCopy": "Pages you haven't opened recently can't be shown until you're back online.",
+      "readOnly": "Actions that need a connection are paused.",
+      "pending_one": "{{count}} change will sync when you reconnect.",
+      "pending_other": "{{count}} changes will sync when you reconnect."
+    },
+    "reconnecting": "Reconnecting…",
+    "syncing_one": "Syncing {{count}} change…",
+    "syncing_other": "Syncing {{count}} changes…",
+    "synced": "All changes synced.",
+    "attention_one": "{{count}} change couldn't be synced.",
+    "attention_other": "{{count}} changes couldn't be synced.",
+    "retry": "Retry",
+    "discard": "Discard",
+    "notSaved": "This hasn't been saved for offline use yet. It will load when you're back online.",
+    "actionNeedsConnection": {
+      "title": "You're offline",
+      "description": "This action needs a connection. Nothing was changed — try again when you're back online."
+    }
   }
 }

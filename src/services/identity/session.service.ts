@@ -16,6 +16,14 @@ import {
   announceSignedIn,
   isDefinitiveAuthFailure,
 } from './session-events';
+import {
+  clearOfflineData,
+  clearPendingSignOut,
+  hasPendingSignOut,
+  loadIdentitySnapshot,
+  markPendingSignOut,
+  saveIdentitySnapshot,
+} from '../offline';
 import type {
   AuthenticationResponse,
   SignInCredentials,
@@ -146,6 +154,8 @@ export class SessionService {
     // Every other tab shares the session cookie that was just replaced: one
     // still holding another person's state starts over (session-events).
     announceSignedIn(response.user.id);
+    clearPendingSignOut();
+    void saveIdentitySnapshot(response.user, organization);
 
     return {
       status: 'authenticated',
@@ -163,8 +173,22 @@ export class SessionService {
   public async signOut(): Promise<Session> {
     // The server ends the session identified by the access token or, when
     // that has lapsed, by the session cookie — and clears the cookie.
-    await authenticationService.signOut();
+    try {
+      await authenticationService.signOut();
+    } catch (error) {
+      // Offline (or the server unreachable): this tab signs out anyway, and
+      // the server-side session is revoked the next time Atlas starts online
+      // — before anything could restore it (see `restore`).
+      if (isDefinitiveAuthFailure(error)) {
+        // The server already considers the session over; nothing pending.
+      } else {
+        markPendingSignOut();
+      }
+    }
     tokenService.clear();
+    // Local-first dashboard — saved copies and queued changes belong to the
+    // person who just left; never to whoever uses this browser next.
+    await clearOfflineData();
     // Sign-out in one tab signs every tab out (they share the cookie that
     // was just cleared) instead of leaving them showing a dead session.
     announceSessionEnded();
@@ -186,6 +210,20 @@ export class SessionService {
    * no sign of a session on this host (an anonymous visitor).
    */
   public async restore(): Promise<Session> {
+    // Someone signed out while offline: revoke that session on the server
+    // FIRST. Until that succeeds nothing is restored — the cookie may still
+    // be valid, and it belongs to the person who signed out.
+    if (hasPendingSignOut()) {
+      try {
+        await authenticationService.signOut();
+        clearPendingSignOut();
+      } catch (error) {
+        if (isDefinitiveAuthFailure(error)) clearPendingSignOut();
+      }
+      tokenService.clear();
+      return { status: 'unauthenticated' };
+    }
+
     if (!tokenService.mayHaveSession()) {
       return { status: 'unauthenticated' };
     }
@@ -206,12 +244,32 @@ export class SessionService {
     }
 
     try {
-      return await this.refresh();
+      const restored = await this.refresh();
+      if (restored.user)
+        void saveIdentitySnapshot(restored.user, restored.organization);
+      return restored;
     } catch (error) {
       // Only the server saying "no" ends the session. A reload without a
       // connection keeps the session hint, so the next load restores it
       // instead of treating a network blip as a sign-out.
-      if (isDefinitiveAuthFailure(error)) tokenService.clear();
+      if (isDefinitiveAuthFailure(error)) {
+        tokenService.clear();
+        await clearOfflineData();
+        return { status: 'unauthenticated' };
+      }
+      // Local-first dashboard — no server to ask: resume READ-ONLY as the
+      // person saved at their last online start, so they can read their
+      // saved copies. No token is issued; the server re-checks the session
+      // the moment the connection returns (IdentityProvider).
+      const snapshot = await loadIdentitySnapshot();
+      if (snapshot) {
+        return {
+          status: 'authenticated',
+          user: snapshot.user,
+          organization: snapshot.organization,
+          offline: true,
+        };
+      }
       return { status: 'unauthenticated' };
     }
   }

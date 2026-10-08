@@ -77,6 +77,14 @@ export function createQueryClient(
       mutations: {
         retry: MUTATION_MAX_RETRIES,
         throwOnError: false,
+        // Local-first dashboard — NEVER replay a change silently. TanStack's
+        // default (`'online'`) pauses a mutation while offline and fires it
+        // when the connection returns, possibly minutes later and after the
+        // person has moved on — a create or a publish nobody is watching.
+        // With `'always'` an online-only action fails at once ("you're
+        // offline"); the few changes that are safe to replay go through the
+        // durable outbox explicitly (`@services/offline`).
+        networkMode: 'always',
       },
     },
   });

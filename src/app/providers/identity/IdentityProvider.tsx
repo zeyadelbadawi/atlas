@@ -17,6 +17,7 @@ import {
   tokenService,
 } from '@services/identity';
 import { getGlobalQueryClient } from '@services/query';
+import { clearOfflineData } from '@services/offline';
 import type {
   Session,
   SignInCredentials,
@@ -151,6 +152,8 @@ export function AtlasIdentityProvider({
         onEnded: () => {
           tokenService.clear();
           getGlobalQueryClient().clear();
+          // The saved offline copies belonged to that session too.
+          void clearOfflineData();
           setSession({ status: 'unauthenticated' });
         },
         onSignedInElsewhere: (userId) => {
@@ -160,12 +163,65 @@ export function AtlasIdentityProvider({
             current.user?.id !== userId
           ) {
             getGlobalQueryClient().clear();
-            window.location.reload();
+            void clearOfflineData().finally(() => window.location.reload());
           }
         },
       }),
     []
   );
+
+  /**
+   * Local-first dashboard — a session resumed OFFLINE (from the identity
+   * saved at the last online start) is only a promise to check. As soon as
+   * the connection returns, the server decides: the same person → the real
+   * session replaces it; refused → signed out everywhere and the saved
+   * copies wiped; someone else → everything local is discarded and the app
+   * starts over as them.
+   */
+  const isOfflineSession =
+    session.status === 'authenticated' && session.offline === true;
+  useEffect(() => {
+    if (!isOfflineSession) return;
+    let cancelled = false;
+    let inFlight = false;
+    const revalidate = async (): Promise<void> => {
+      if (cancelled || inFlight) return;
+      if (typeof navigator !== 'undefined' && navigator.onLine === false)
+        return;
+      inFlight = true;
+      try {
+        const offlineUserId = sessionRef.current.user?.id;
+        const verified = await sessionService.restore();
+        if (cancelled) return;
+        if (verified.status === 'authenticated' && !verified.offline) {
+          if (verified.user?.id !== offlineUserId) {
+            getGlobalQueryClient().clear();
+            await clearOfflineData();
+            window.location.reload();
+            return;
+          }
+          setSession((previous) => ({
+            ...verified,
+            // Keep the organization the person is working in.
+            organization: previous.organization ?? verified.organization,
+          }));
+        } else if (verified.status === 'unauthenticated') {
+          getGlobalQueryClient().clear();
+          setSession({ status: 'unauthenticated' });
+        }
+      } finally {
+        inFlight = false;
+      }
+    };
+    void revalidate();
+    window.addEventListener('online', revalidate);
+    const retry = setInterval(() => void revalidate(), 30_000);
+    return () => {
+      cancelled = true;
+      window.removeEventListener('online', revalidate);
+      clearInterval(retry);
+    };
+  }, [isOfflineSession]);
 
   /**
    * Proactively refreshes the access token before it expires — on a timer,

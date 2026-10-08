@@ -8,16 +8,10 @@
  */
 import { LifecyclePanel } from '@features/tenant';
 import { useTranslation } from 'react-i18next';
-import { OfflineNotice } from '@components/feedback';
 import { SkipToContentLink } from '@components/navigation';
 import { STORAGE_KEYS } from '@constants';
 import { SIDEBAR_BREAKPOINT } from '@tokens';
-import {
-  useBreakpoint,
-  useDisclosure,
-  useLocalStorage,
-  useOnlineStatus,
-} from '@hooks';
+import { useBreakpoint, useDisclosure, useLocalStorage } from '@hooks';
 import { AccountMenu, OrganizationSwitcher } from '@components/controls';
 import { NotificationBell } from '@features/notifications';
 import {
@@ -31,6 +25,7 @@ import { useLocation } from 'react-router-dom';
 import { DashboardSidebar } from './DashboardSidebar';
 import { DashboardTopbar } from './DashboardTopbar';
 import { useSmartBack } from './useSmartBack';
+import { ConnectivityBanner } from './ConnectivityBanner';
 
 /** Id of the main landmark, targeted by the skip link. */
 const MAIN_CONTENT_ID = 'atlas-dashboard-content';
@@ -51,7 +46,6 @@ export function DashboardLayout(): JSX.Element {
 function DashboardShell(): JSX.Element {
   const { t } = useTranslation();
   const { isBelow } = useBreakpoint();
-  const isOnline = useOnlineStatus();
 
   // Remembered across sessions: a user who collapsed the rail expects it to
   // stay collapsed the next time they sign in.
@@ -105,7 +99,8 @@ function DashboardShell(): JSX.Element {
             <AcademySwitcher variant="bar" />
           </div>
         ) : null}
-        {!isOnline ? <OfflineNotice /> : null}
+        {/* Local-first dashboard — offline, reconnecting and sync state. */}
+        <ConnectivityBanner />
 
         {/*
           Above the content, not instead of it. An expired tenant must still
