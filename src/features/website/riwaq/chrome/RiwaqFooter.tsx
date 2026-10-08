@@ -1,227 +1,158 @@
 /**
- * Riwaq footer (plan §4, chrome): the deep ground — the crest and the
- * academy's name, then the Owner's link groups, the departments, the
- * contact details from the academy's identity and the social links, on
- * the page grid; the copyright line carries the platform attribution the
- * chrome hands in (never removable). Only resolvable links on the public
- * site; every link in previews.
+ * Riwaq footer (plan §4, chrome): the deep ground. The content is the
+ * shared footer (`useWebsiteFooterModel`): the crest (or logo), the
+ * academy's name, its own description and its social marks, on the start
+ * of the page grid; the link groups (the Owner's, Learning, departments,
+ * Help) and the contact details on the rest; the copyright line carries the
+ * platform attribution the chrome hands in (never removable). Anything with
+ * no data behind it is left out. Only resolvable links on the public site;
+ * every link in previews.
  */
-import type { ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAcademyIdentity, useCurrentYear, usePublicCourseCategories } from '@hooks';
-import { usePublicWebsiteLocale } from '@/features/website/renderer/PublicWebsiteLocaleContext';
-import {
-  isExternalHref,
-  resolvePagePath,
-  resolveWebsiteCtaHref,
-} from '@/features/website/utils/link-resolution.utils';
-import { resolveCatalogHref } from '@/features/website/utils/catalog-url.utils';
-import { resolveLocalizedText } from '@/features/website/utils/localized-text.utils';
-import { MIN_COURSE_CATEGORIES } from '@/features/website/constants/website.constants';
 import type { ThemeFooterProps } from '@/features/website/theme-packs/theme-pack.types';
-import type { AcademyAddress, WebsiteFooterLink } from '@types';
+import {
+  FooterEmail,
+  renderFooterHomeLink,
+  renderFooterLink,
+  renderFooterSocialLink,
+  telHref,
+  useWebsiteFooterModel,
+} from '@/features/website/renderer/website-footer.model';
 import { RiwaqBand, RiwaqCrest } from '../riwaq-parts';
 import '../riwaq-pages.css';
 
-const TOP_CATEGORIES = 5;
 const LONG_NAME = 24;
-
-function formatAddress(address: AcademyAddress | undefined): string {
-  if (!address) return '';
-  return [address.street, address.city, address.state, address.postalCode, address.country]
-    .filter(Boolean)
-    .join(', ');
-}
 
 function FooterColumn({
   title,
   children,
+  wide = false,
 }: {
   readonly title: string;
-  readonly children: ReactNode;
+  readonly children: (titleId: string) => ReactNode;
+  readonly wide?: boolean;
 }): JSX.Element {
+  const titleId = useId();
   return (
-    <div className="rwc-foot-col">
-      <p className="rw-label">{title}</p>
-      {children}
+    <div className="rwc-foot-col" data-wide={wide ? '' : undefined}>
+      <p id={titleId} className="rw-label">
+        {title}
+      </p>
+      {children(titleId)}
     </div>
   );
 }
 
-export function RiwaqFooter({
-  academyId,
-  academyName,
-  academyLogo,
-  footer,
-  pages,
-  onNavigate,
-  linkRenderer,
-  attribution,
-}: ThemeFooterProps): JSX.Element {
+export function RiwaqFooter(props: ThemeFooterProps): JSX.Element {
   const { t } = useTranslation();
-  const { locale } = usePublicWebsiteLocale();
-  const { data: identity } = useAcademyIdentity(academyId);
-  const { data: categoryData } = usePublicCourseCategories(academyId);
-  const currentYear = useCurrentYear();
-
-  const categories =
-    categoryData && categoryData.length >= MIN_COURSE_CATEGORIES
-      ? categoryData.slice(0, TOP_CATEGORIES)
-      : [];
-  const address = formatAddress(identity?.address);
-  const email = identity?.contactEmail;
-  const phone = identity?.contactPhone;
-  const hasContact = !!email || !!phone || !!address;
-
-  const renderFooterLink = (link: WebsiteFooterLink): JSX.Element | null => {
-    const label = resolveLocalizedText(link.label, locale);
-    if (linkRenderer) {
-      const href = resolveWebsiteCtaHref(link, pages);
-      if (!href) return null;
-      return linkRenderer({
-        href,
-        external: isExternalHref(href),
-        className: 'rwc-foot-link',
-        children: label,
-      });
-    }
-    return (
-      <button
-        type="button"
-        className="rwc-foot-link"
-        onClick={link.pageId ? () => onNavigate(link.pageId!) : undefined}
-      >
-        {label}
-      </button>
-    );
-  };
-
-  const usableLinks = (links: readonly WebsiteFooterLink[]) =>
-    linkRenderer ? links.filter((link) => !!resolveWebsiteCtaHref(link, pages)) : links;
-  const socialLinks = usableLinks(footer.socialLinks);
-  const groups = footer.groups
-    .map((group) => ({ ...group, links: usableLinks(group.links) }))
-    .filter((group) => group.links.length > 0);
-
-  const homePage = pages.find((page) => page.coreType === 'home');
-  const homeLabel = t('website:chrome.homeLink', { name: academyName });
-  const homeHref = linkRenderer && homePage ? resolvePagePath(homePage) : undefined;
-  const name =
-    homeHref && linkRenderer ? (
-      linkRenderer({ href: homeHref, external: false, ariaLabel: homeLabel, children: academyName })
-    ) : homePage && !linkRenderer ? (
-      <button type="button" aria-label={homeLabel} onClick={() => onNavigate(homePage.id)}>
-        {academyName}
-      </button>
-    ) : (
-      academyName
-    );
-
-  const copyright =
-    resolveLocalizedText(footer.copyrightText, locale) || `© ${currentYear} ${academyName}`;
+  const model = useWebsiteFooterModel(props, {
+    categories: t('website:riwaq.chrome.departments'),
+  });
+  const { name, logo, description, groups, contact, social, copyright } = model;
 
   return (
     <RiwaqBand as="footer" ground="deep" className="rwc-foot">
       <div className="rw-grid">
         <div className="rwc-foot-id">
-          {academyLogo ? (
-            <img
-              src={academyLogo}
-              alt=""
-              aria-hidden
-              className="rwc-foot-logo"
-            />
+          {logo ? (
+            <img src={logo} alt="" aria-hidden className="rwc-foot-logo" />
           ) : (
-            <RiwaqCrest name={academyName} size="6rem" />
+            <RiwaqCrest name={name} size="4rem" />
           )}
           <p
             className="rwc-foot-name"
             dir="auto"
-            data-length={academyName.length > LONG_NAME ? 'long' : undefined}
+            data-length={name.length > LONG_NAME ? 'long' : undefined}
           >
-            {name}
+            {renderFooterHomeLink(model, name, undefined, props)}
           </p>
+          {description ? (
+            <p className="rwc-foot-desc" dir="auto">
+              {description}
+            </p>
+          ) : null}
+          {social.length > 0 ? (
+            <ul
+              className="rwc-foot-social"
+              aria-label={t('website:chrome.social')}
+            >
+              {social.map((link) => (
+                <li key={link.key}>
+                  {renderFooterSocialLink(
+                    link,
+                    'rwc-foot-social-link',
+                    'size-[1.0625rem]',
+                    props
+                  )}
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </div>
 
-        {groups.length > 0 || categories.length > 0 || hasContact || socialLinks.length > 0 ? (
-          <div className="rwc-foot-cols">
+        {groups.length > 0 || contact ? (
+          <nav
+            className="rwc-foot-cols"
+            aria-label={t('website:chrome.footerNavigation')}
+          >
             {groups.map((group) => (
-              <FooterColumn key={group.id} title={resolveLocalizedText(group.title, locale)}>
-                <ul>
-                  {group.links.map((link) => (
-                    <li key={link.id}>{renderFooterLink(link)}</li>
-                  ))}
-                </ul>
+              <FooterColumn key={group.key} title={group.title}>
+                {(titleId) => (
+                  <ul aria-labelledby={titleId}>
+                    {group.links.map((link) => (
+                      <li key={link.key}>
+                        {renderFooterLink(link, 'rwc-foot-link', props)}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </FooterColumn>
             ))}
-            {categories.length > 0 ? (
-              <FooterColumn title={t('website:riwaq.chrome.departments')}>
-                <ul>
-                  {categories.map((category) => {
-                    const href = linkRenderer
-                      ? resolveCatalogHref(pages, { category: category.id })
-                      : undefined;
-                    return (
-                      <li key={category.id}>
-                        {href && linkRenderer ? (
-                          linkRenderer({
-                            href,
-                            external: false,
-                            className: 'rwc-foot-link',
-                            children: <span dir="auto">{category.name}</span>,
-                          })
-                        ) : (
-                          <span className="rwc-foot-link" dir="auto">
-                            {category.name}
-                          </span>
-                        )}
+            {contact ? (
+              <FooterColumn
+                title={t('website:riwaq.chrome.contactColumn')}
+                wide
+              >
+                {(titleId) => (
+                  <ul aria-labelledby={titleId}>
+                    {contact.email ? (
+                      <li>
+                        <a
+                          href={`mailto:${contact.email}`}
+                          className="rwc-foot-link"
+                          dir="ltr"
+                        >
+                          <FooterEmail email={contact.email} />
+                        </a>
                       </li>
-                    );
-                  })}
-                </ul>
+                    ) : null}
+                    {contact.phone ? (
+                      <li>
+                        <a
+                          href={telHref(contact.phone)}
+                          className="rwc-foot-link"
+                          dir="ltr"
+                        >
+                          {contact.phone}
+                        </a>
+                      </li>
+                    ) : null}
+                    {contact.address ? (
+                      <li className="rwc-foot-address">
+                        <span dir="auto">{contact.address}</span>
+                      </li>
+                    ) : null}
+                  </ul>
+                )}
               </FooterColumn>
             ) : null}
-            {hasContact ? (
-              <FooterColumn title={t('website:riwaq.chrome.contactColumn')}>
-                <ul>
-                  {email ? (
-                    <li>
-                      <a href={`mailto:${email}`} className="rwc-foot-link" dir="ltr">
-                        {email.split('@')[0]}@<wbr />
-                        {email.split('@').slice(1).join('@')}
-                      </a>
-                    </li>
-                  ) : null}
-                  {phone ? (
-                    <li>
-                      <a href={`tel:${phone.replace(/[^\d+]/g, '')}`} className="rwc-foot-link" dir="ltr">
-                        {phone}
-                      </a>
-                    </li>
-                  ) : null}
-                  {address ? (
-                    <li className="rwc-foot-address">
-                      <span dir="auto">{address}</span>
-                    </li>
-                  ) : null}
-                </ul>
-              </FooterColumn>
-            ) : null}
-            {socialLinks.length > 0 ? (
-              <FooterColumn title={t('website:riwaq.chrome.social')}>
-                <ul aria-label={t('website:chrome.social')}>
-                  {socialLinks.map((link) => (
-                    <li key={link.id}>{renderFooterLink(link)}</li>
-                  ))}
-                </ul>
-              </FooterColumn>
-            ) : null}
-          </div>
+          </nav>
         ) : null}
 
         <div data-testid="website-footer-legal" className="rwc-foot-legal">
           <p>{copyright}</p>
-          {attribution}
+          {props.attribution}
         </div>
       </div>
     </RiwaqBand>

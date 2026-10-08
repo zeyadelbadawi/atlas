@@ -39,27 +39,10 @@ export function OrganizationSwitcher({
   // but this component stays defensive rather than assuming that.
   if (!user) return null;
 
-  // Zero organizations: a real, reachable state today — P2 shipped no
-  // organization-creation flow (Phase P14 provisioning), so a freshly
-  // registered user has none. Shown as a static, non-interactive
-  // indicator rather than hidden entirely, so the absence is legible
-  // rather than looking like a bug.
-  if (user.organizations.length === 0) {
-    return (
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        disabled
-        className="gap-2 text-muted-foreground"
-      >
-        <Building2 className="size-4" strokeWidth={1.75} aria-hidden />
-        <span className="hidden sm:inline">
-          {t('organization:switcher.noOrganizations')}
-        </span>
-      </Button>
-    );
-  }
+  // Only someone who belongs to two or more organizations has anything to
+  // switch between; with one (or none) the dropdown would only repeat what
+  // the rest of the dashboard already shows, so it is not rendered.
+  if (user.organizations.length < 2) return null;
 
   const activeLabel =
     organization?.name ?? t('organization:switcher.selectPrompt');

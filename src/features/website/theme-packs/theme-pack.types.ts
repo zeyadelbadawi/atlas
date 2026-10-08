@@ -17,9 +17,13 @@
  */
 import type { ThemeAssetManifest } from '../theme-assets/theme-asset.types';
 import type { ComponentType, ReactNode } from 'react';
-import type { WebsiteHeaderProps } from '../renderer/WebsiteHeader';
+import type {
+  WebsiteHeaderAuthState,
+  WebsiteHeaderProps,
+} from '../renderer/WebsiteHeader';
 import type { WebsiteFooterProps } from '../renderer/WebsiteFooter';
 import type {
+  LocalizedText,
   PublicWebsiteLocale,
   SectionConfigMap,
   SectionType,
@@ -71,6 +75,10 @@ export type WebsiteBrandVariables = Readonly<Record<`--${string}`, string>>;
 export interface ThemeFooterProps extends WebsiteFooterProps {
   readonly academyId?: string;
   readonly attribution: ReactNode;
+  /** The site's own description (Website settings → SEO), shown under the name. */
+  readonly siteDescription?: LocalizedText;
+  /** The visitor's session on the public site (My Learn / certificates links). */
+  readonly authState?: WebsiteHeaderAuthState;
 }
 
 /** Wraps an auth page's body (sign in/up, reset…). The base frame renders it unchanged. */

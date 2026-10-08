@@ -406,7 +406,7 @@ describe('F-2: a link to a hidden page is left out on the public site', () => {
               },
               {
                 id: 'g2',
-                title: lt('Help'),
+                title: lt('Support'),
                 links: [
                   { id: 'l3', label: lt('FAQs'), pageId: HIDDEN_FAQS_ID },
                 ],
@@ -424,7 +424,7 @@ describe('F-2: a link to a hidden page is left out on the public site', () => {
       screen.getAllByRole('link', { name: 'Courses' }).length
     ).toBeGreaterThan(0);
     expect(screen.queryByText('FAQs')).toBeNull();
-    expect(screen.queryByText('Help')).toBeNull();
+    expect(screen.queryByText('Support')).toBeNull();
     expect(screen.getAllByText('Explore').length).toBeGreaterThan(0);
   });
 

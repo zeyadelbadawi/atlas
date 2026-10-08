@@ -561,7 +561,17 @@
     "socialLabelPlaceholder": "Label",
     "saveError": "Failed to save navigation",
     "staleConflict": "Someone else changed these settings in the meantime. Their version is now shown — make your change again.",
-    "itemLabel": "Menu item label"
+    "itemLabel": "Menu item label",
+    "social": {
+      "platform": "Platform",
+      "platformFor": "Platform for social link {{number}}",
+      "choosePlatform": "Choose a platform",
+      "url": "Link",
+      "remove": "Remove {{name}} link",
+      "duplicate": "This link is already in your social links.",
+      "empty": "No social links yet. Add one to show its icon in your website footer.",
+      "legacy": "Saved as “{{label}}”. Choose its platform so its icon shows on your website."
+    }
   },
   "pages": {
     "title": "Pages",
@@ -1032,7 +1042,16 @@
     "social": "Social links",
     "topCategories": "Top categories",
     "contact": "Contact",
-    "homeLink": "{{name}} home"
+    "homeLink": "{{name}} home",
+    "footerNavigation": "Footer",
+    "learning": "Learning",
+    "browseCourses": "Browse courses",
+    "myLearn": "My Learn",
+    "certificates": "My certificates",
+    "createAccount": "Create an account",
+    "help": "Help",
+    "contactUs": "Contact us",
+    "faqs": "FAQs"
   },
   "brandStudio": {
     "title": "Brand colours",

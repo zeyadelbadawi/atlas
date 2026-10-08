@@ -475,6 +475,8 @@
     "label": "Academy",
     "triggerLabel": "Current academy: {{name}}. Switch academy",
     "searchPlaceholder": "Search academies…",
+    "openSearch": "Search academies",
+    "closeSearch": "Close search",
     "yourRole": "Your role",
     "switching": "Opening academy…",
     "switchingTo": "Opening {{name}}…",

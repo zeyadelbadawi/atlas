@@ -1,52 +1,33 @@
 /**
  * Theme 1 footer (plan §C.1 "Footer").
  *
- * Brand · the Owner's link groups · top categories (live) · contact (the
- * Academy's own details, live). Four columns on desktop, two on tablets,
- * and on phones each column after the brand folds into a disclosure
- * (native `<details>`: keyboard- and screen-reader-operable with no
- * script). Columns with no data are left out rather than shown empty.
+ * The content is the shared footer (`useWebsiteFooterModel`): the brand —
+ * logo or name, the academy's own description and its social marks — then
+ * the link groups (the Owner's, Learning, top categories, Help) and the
+ * contact details. Up to five columns on desktop, two on tablets, and on
+ * phones each column after the brand folds into a disclosure (native
+ * `<details>`: keyboard- and screen-reader-operable with no script).
+ * Anything with no data behind it is left out rather than shown empty.
  *
  * The platform attribution arrives as a finished element and is rendered
  * as the last row — the theme positions it, it cannot remove or alter it.
  */
-import type { ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, Mail, MapPin, Phone } from 'lucide-react';
 import { cn } from '@utils';
-import {
-  useAcademyIdentity,
-  useCurrentYear,
-  usePublicCourseCategories,
-} from '@hooks';
 import { useWebsiteContainerClass } from '../renderer/renderer-style.utils';
-import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import {
-  isExternalHref,
-  resolvePagePath,
-  resolveWebsiteCtaHref,
-} from '../utils/link-resolution.utils';
-import { resolveCatalogHref } from '../utils/catalog-url.utils';
-import { resolveLocalizedText } from '../utils/localized-text.utils';
-import { MIN_COURSE_CATEGORIES } from '../constants/website.constants';
+  FooterEmail,
+  renderFooterHomeLink,
+  renderFooterLink,
+  renderFooterSocialLink,
+  telHref,
+  useWebsiteFooterModel,
+} from '../renderer/website-footer.model';
 import type { ThemeFooterProps } from '../theme-packs/theme-pack.types';
-import type { AcademyAddress, WebsiteFooterLink } from '@types';
 
-const TOP_CATEGORIES = 5;
 const LINK_CLASS = 't1-footer-link t1-focus text-sm';
-
-function formatAddress(address: AcademyAddress | undefined): string {
-  if (!address) return '';
-  return [
-    address.street,
-    address.city,
-    address.state,
-    address.postalCode,
-    address.country,
-  ]
-    .filter(Boolean)
-    .join(', ');
-}
 
 /** A titled column: a plain column from `sm` up, a disclosure below it. */
 function FooterColumn({
@@ -54,260 +35,182 @@ function FooterColumn({
   children,
 }: {
   readonly title: string;
-  readonly children: ReactNode;
+  readonly children: (titleId: string) => ReactNode;
 }): JSX.Element {
+  const titleId = useId();
+  const wideTitleId = useId();
   return (
     <div className="min-w-0">
       <details className="group border-b border-[var(--website-border)] sm:hidden">
         <summary className="t1-focus flex min-h-12 cursor-pointer list-none items-center justify-between text-sm font-semibold text-[var(--website-foreground)] [&::-webkit-details-marker]:hidden">
-          {title}
+          <span id={titleId}>{title}</span>
           <ChevronDown
             className="size-4 transition-transform group-open:rotate-180 motion-reduce:transition-none"
             aria-hidden
           />
         </summary>
-        <div className="pb-4">{children}</div>
+        <div className="pb-4">{children(titleId)}</div>
       </details>
       <div className="hidden sm:block">
-        <p className="mb-4 text-sm font-semibold text-[var(--website-foreground)]">
+        <p
+          id={wideTitleId}
+          className="mb-4 text-sm font-semibold text-[var(--website-foreground)]"
+        >
           {title}
         </p>
-        {children}
+        {children(wideTitleId)}
       </div>
     </div>
   );
 }
 
-export function ModernEducationFooter({
-  academyId,
-  academyName,
-  academyLogo,
-  footer,
-  pages,
-  onNavigate,
-  linkRenderer,
-  attribution,
-}: ThemeFooterProps): JSX.Element {
+export function ModernEducationFooter(props: ThemeFooterProps): JSX.Element {
   const { t } = useTranslation();
   const container = useWebsiteContainerClass();
-  const { locale } = usePublicWebsiteLocale();
-  const { data: identity } = useAcademyIdentity(academyId);
-  const { data: categoryData } = usePublicCourseCategories(academyId);
+  const model = useWebsiteFooterModel(props);
+  const { name, logo, description, groups, contact, social, copyright } = model;
 
-  const categories =
-    (categoryData?.length ?? 0) >= MIN_COURSE_CATEGORIES
-      ? categoryData!.slice(0, TOP_CATEGORIES)
-      : [];
-  const address = formatAddress(identity?.address);
-  const hasContact =
-    !!identity?.contactEmail || !!identity?.contactPhone || !!address;
-
-  const renderFooterLink = (link: WebsiteFooterLink): JSX.Element | null => {
-    const label = resolveLocalizedText(link.label, locale);
-    const href = linkRenderer ? resolveWebsiteCtaHref(link, pages) : undefined;
-    // On the public site a link whose target resolves to nothing (a hidden
-    // or deleted page) is left out rather than shown as a dead control.
-    if (linkRenderer && !href) return null;
-    if (href) {
-      return linkRenderer!({
-        href,
-        external: isExternalHref(href),
-        className: LINK_CLASS,
-        children: label,
-      });
-    }
-    return (
-      <button
-        type="button"
-        className={cn(LINK_CLASS, 'text-start')}
-        onClick={link.pageId ? () => onNavigate(link.pageId!) : undefined}
-      >
-        {label}
-      </button>
-    );
-  };
-
-  /** The links that render here: all in previews, resolvable ones on the public site. */
-  const usableLinks = (links: readonly WebsiteFooterLink[]) =>
-    linkRenderer
-      ? links.filter((link) => !!resolveWebsiteCtaHref(link, pages))
-      : links;
-
-  const linkList = (links: readonly WebsiteFooterLink[]) => (
-    <ul className="flex flex-col gap-3">
-      {links.map((link) => (
-        <li key={link.id}>{renderFooterLink(link)}</li>
-      ))}
-    </ul>
-  );
-
-  const socialLinks = usableLinks(footer.socialLinks);
-  const groups = footer.groups
-    .map((group) => ({ ...group, links: usableLinks(group.links) }))
-    .filter((group) => group.links.length > 0);
-
-  // The logo (or name) leads to this Academy's own Home page, as in the
-  // header — only while Home is a visible page.
-  const homePage = pages.find((page) => page.coreType === 'home');
-  const homeHref =
-    linkRenderer && homePage ? resolvePagePath(homePage) : undefined;
-  const homeLabel = t('website:chrome.homeLink', { name: academyName });
   const focusClass = 't1-focus rounded-[var(--t1-radius-control)]';
-  /** The logo, or the name, as a link to Home where one is possible. */
-  const homeLink = (children: ReactNode, className: string) =>
-    homeHref ? (
-      linkRenderer!({
-        href: homeHref,
-        external: false,
-        className,
-        ariaLabel: homeLabel,
-        children,
-      })
-    ) : homePage && !linkRenderer ? (
-      <button
-        type="button"
-        className={cn(className, 'text-start')}
-        aria-label={homeLabel}
-        onClick={() => onNavigate(homePage.id)}
-      >
-        {children}
-      </button>
-    ) : (
-      <>{children}</>
-    );
-  // The name keeps its own `dir="auto"` paragraph (its placement in
-  // either reading direction is unchanged); only its text becomes the link.
-  const brandMark = academyLogo ? (
-    homeLink(
+  // The logo (or the name) leads to this Academy's own Home page, as in
+  // the header — only while Home is a visible page.
+  const brandMark = logo ? (
+    renderFooterHomeLink(
+      model,
       <img
-        src={academyLogo}
-        alt={academyName}
+        src={logo}
+        alt={name}
         className="h-10 w-auto max-w-[12rem] object-contain"
       />,
-      cn(focusClass, 'flex w-fit max-w-full')
+      cn(focusClass, 'flex w-fit max-w-full'),
+      props
     )
   ) : (
     <p
       className="break-words font-display text-xl font-bold text-[var(--website-foreground)]"
       dir="auto"
     >
-      {homeLink(academyName, focusClass)}
+      {renderFooterHomeLink(model, name, focusClass, props)}
     </p>
   );
 
-  const currentYear = useCurrentYear();
-  const copyright =
-    resolveLocalizedText(footer.copyrightText, locale) ||
-    `© ${currentYear} ${academyName}`;
+  const columnCount = groups.length + (contact ? 1 : 0);
 
   return (
     <footer className="mt-auto border-t border-[var(--website-border)] bg-[var(--website-surface)] pb-6 pt-14 sm:pt-16">
       <div
         className={cn(
           container,
-          'grid gap-x-10 gap-y-2 sm:grid-cols-2 sm:gap-y-10 lg:grid-cols-[1.4fr_repeat(3,1fr)]'
+          'grid gap-x-10 gap-y-2 sm:grid-cols-2 sm:gap-y-10',
+          columnCount >= 4
+            ? 'lg:grid-cols-[1.5fr_repeat(4,1fr)]'
+            : 'lg:grid-cols-[1.5fr_repeat(3,1fr)]'
         )}
       >
-        <div className="min-w-0 space-y-4 pb-6 sm:pb-0">
+        <div className="min-w-0 space-y-4 pb-6 sm:col-span-2 sm:pb-0 lg:col-span-1">
           {brandMark}
-          {socialLinks.length > 0 ? (
+          {description ? (
+            <p
+              className="max-w-[38ch] text-sm leading-relaxed text-[var(--website-foreground-muted)]"
+              dir="auto"
+            >
+              {description}
+            </p>
+          ) : null}
+          {social.length > 0 ? (
             <ul
-              className="flex flex-wrap gap-x-5 gap-y-2"
+              className="-ms-2.5 flex flex-wrap gap-1"
               aria-label={t('website:chrome.social')}
             >
-              {socialLinks.map((link) => (
-                <li key={link.id}>{renderFooterLink(link)}</li>
+              {social.map((link) => (
+                <li key={link.key}>
+                  {renderFooterSocialLink(
+                    link,
+                    't1-focus t1-footer-social',
+                    'size-[1.125rem]',
+                    props
+                  )}
+                </li>
               ))}
             </ul>
           ) : null}
         </div>
 
-        {groups.map((group) => (
-          <FooterColumn
-            key={group.id}
-            title={resolveLocalizedText(group.title, locale)}
+        {groups.length > 0 || contact ? (
+          // `contents`: the columns stay on the footer's grid; the element
+          // only adds the navigation landmark.
+          <nav
+            className="contents"
+            aria-label={t('website:chrome.footerNavigation')}
           >
-            {linkList(group.links)}
-          </FooterColumn>
-        ))}
+            {groups.map((group) => (
+              <FooterColumn key={group.key} title={group.title}>
+                {(titleId) => (
+                  <ul className="flex flex-col gap-3" aria-labelledby={titleId}>
+                    {group.links.map((link) => (
+                      <li key={link.key}>
+                        {renderFooterLink(
+                          link,
+                          cn(LINK_CLASS, 'text-start'),
+                          props
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </FooterColumn>
+            ))}
 
-        {categories.length > 0 ? (
-          <FooterColumn title={t('website:chrome.topCategories')}>
-            <ul className="flex flex-col gap-3">
-              {categories.map((category) => {
-                const href = linkRenderer
-                  ? resolveCatalogHref(pages, { category: category.id })
-                  : undefined;
-                return (
-                  <li key={category.id}>
-                    {href ? (
-                      linkRenderer!({
-                        href,
-                        external: false,
-                        className: LINK_CLASS,
-                        children: <span dir="auto">{category.name}</span>,
-                      })
-                    ) : (
-                      <span
-                        className="text-sm text-[var(--website-foreground-muted)]"
-                        dir="auto"
-                      >
-                        {category.name}
-                      </span>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-          </FooterColumn>
-        ) : null}
-
-        {hasContact ? (
-          <FooterColumn title={t('website:chrome.contact')}>
-            <ul className="flex flex-col gap-3 text-sm">
-              {identity?.contactEmail ? (
-                <li className="flex items-start gap-2">
-                  <Mail
-                    className="mt-0.5 size-4 shrink-0 text-[var(--website-icon-fg)]"
-                    aria-hidden
-                  />
-                  <a
-                    href={`mailto:${identity.contactEmail}`}
-                    className={LINK_CLASS}
-                    dir="ltr"
+            {contact ? (
+              <FooterColumn title={t('website:chrome.contact')}>
+                {(titleId) => (
+                  <ul
+                    className="flex flex-col gap-3 text-sm"
+                    aria-labelledby={titleId}
                   >
-                    {/* Wrap only after the "@", never mid-word. */}
-                    {identity.contactEmail.split('@')[0]}@<wbr />
-                    {identity.contactEmail.split('@').slice(1).join('@')}
-                  </a>
-                </li>
-              ) : null}
-              {identity?.contactPhone ? (
-                <li className="flex items-start gap-2">
-                  <Phone
-                    className="mt-0.5 size-4 shrink-0 text-[var(--website-icon-fg)]"
-                    aria-hidden
-                  />
-                  <a
-                    href={`tel:${identity.contactPhone.replace(/[^\d+]/g, '')}`}
-                    className={LINK_CLASS}
-                    dir="ltr"
-                  >
-                    {identity.contactPhone}
-                  </a>
-                </li>
-              ) : null}
-              {address ? (
-                <li className="flex items-start gap-2 text-[var(--website-foreground-muted)]">
-                  <MapPin
-                    className="mt-0.5 size-4 shrink-0 text-[var(--website-icon-fg)]"
-                    aria-hidden
-                  />
-                  <span dir="auto">{address}</span>
-                </li>
-              ) : null}
-            </ul>
-          </FooterColumn>
+                    {contact.email ? (
+                      <li className="flex items-start gap-2">
+                        <Mail
+                          className="mt-0.5 size-4 shrink-0 text-[var(--website-icon-fg)]"
+                          aria-hidden
+                        />
+                        <a
+                          href={`mailto:${contact.email}`}
+                          className={LINK_CLASS}
+                          dir="ltr"
+                        >
+                          <FooterEmail email={contact.email} />
+                        </a>
+                      </li>
+                    ) : null}
+                    {contact.phone ? (
+                      <li className="flex items-start gap-2">
+                        <Phone
+                          className="mt-0.5 size-4 shrink-0 text-[var(--website-icon-fg)]"
+                          aria-hidden
+                        />
+                        <a
+                          href={telHref(contact.phone)}
+                          className={LINK_CLASS}
+                          dir="ltr"
+                        >
+                          {contact.phone}
+                        </a>
+                      </li>
+                    ) : null}
+                    {contact.address ? (
+                      <li className="flex items-start gap-2 text-[var(--website-foreground-muted)]">
+                        <MapPin
+                          className="mt-0.5 size-4 shrink-0 text-[var(--website-icon-fg)]"
+                          aria-hidden
+                        />
+                        <span dir="auto">{contact.address}</span>
+                      </li>
+                    ) : null}
+                  </ul>
+                )}
+              </FooterColumn>
+            ) : null}
+          </nav>
         ) : null}
       </div>
 
@@ -326,7 +229,7 @@ export function ModernEducationFooter({
           <p className="text-center text-xs text-[var(--website-foreground-muted)] sm:text-start">
             {copyright}
           </p>
-          {attribution}
+          {props.attribution}
         </div>
       </div>
     </footer>

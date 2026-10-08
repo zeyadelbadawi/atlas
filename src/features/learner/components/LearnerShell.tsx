@@ -61,12 +61,13 @@ export function LearnerShell(): JSX.Element {
       </p>
 
       {/* Below the rail breakpoint the sections live in a drawer, opened
-          from here. Above it the rail is already on screen, so the button
-          would be a second way to reach what is permanently visible. The
-          bell stays at every breakpoint: the unread signal has no other
-          home once the bottom bar is full and the drawer is closed. */}
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <LearnerNavigationDrawer className="lg:hidden" />
+          from here, with the notification bell beside it. From the rail
+          breakpoint up this row is not drawn at all: the rail is on screen
+          and its Notifications entry carries the unread count, and a row
+          holding only a bell was a band of empty space between the
+          Academy's header and the page. */}
+      <div className="mb-4 flex items-center justify-between gap-3 lg:hidden">
+        <LearnerNavigationDrawer />
         <LearnerNotificationBell className="ms-auto" />
       </div>
 

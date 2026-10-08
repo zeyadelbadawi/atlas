@@ -26,7 +26,6 @@ import {
   ClipboardList,
   Image as ImageIcon,
   Megaphone,
-  Newspaper,
   Boxes,
   Gauge,
   Gift,
@@ -348,20 +347,8 @@ export function getDashboardNavigation(
         },
       ],
     },
-    {
-      id: 'organization',
-      labelKey: 'navigation:sections.organization',
-      items: [
-        {
-          id: 'organization-overview',
-          tenantSurface: true,
-          labelKey: 'navigation:items.organizationOverview',
-          path: DASHBOARD_ROUTES.organization,
-          icon: Building2,
-        },
-      ],
-      showDivider: true,
-    },
+    // No Organization section: the Organization page and its route stay
+    // (`DASHBOARD_ROUTES.organization`), it is just not a sidebar entry.
     {
       id: 'platform',
       labelKey: 'navigation:sections.platform',
@@ -414,32 +401,9 @@ export function getDashboardNavigation(
      * `RETIRED_DASHBOARD_LEARNER_ROUTES` forwarding table — so there is no
      * longer a constant here that could be linked to by accident.
      */
-    {
-      id: 'community',
-      labelKey: 'navigation:sections.community',
-      items: [
-        {
-          id: 'announcements',
-          requiresEntitlement: true,
-          labelKey: 'navigation:items.announcements',
-          path: DASHBOARD_ROUTES.announcements,
-          icon: Megaphone,
-          requiresAuth: true,
-          requiredPermissions: ['announcement.view'],
-        },
-        {
-          id: 'blog',
-          requiresEntitlement: true,
-          labelKey: 'navigation:items.blog',
-          path: DASHBOARD_ROUTES.blog,
-          icon: Newspaper,
-          requiresAuth: true,
-          requiredPermissions: ['blog.view'],
-          matchNestedPaths: true,
-        },
-      ],
-      showDivider: true,
-    },
+    // No Community section: Announcements and the Knowledge Base keep their
+    // pages and routes (`DASHBOARD_ROUTES.announcements`/`.blog`), they are
+    // just not sidebar entries.
     {
       /*
         Phase 12 — the Add-ons area.
@@ -975,15 +939,9 @@ export function getDashboardNavigation(
           requiredRoles: ['platform_owner'],
           matchNestedPaths: true,
         },
-        {
-          id: 'platform-organizations',
-          labelKey: 'navigation:items.platformOrganizations',
-          path: DASHBOARD_ROUTES.platformOrganizations,
-          icon: Building2,
-          requiresAuth: true,
-          requiredRoles: ['platform_owner'],
-          matchNestedPaths: true,
-        },
+        // No Organizations entry: the list, its detail pages and its route
+        // stay (`DASHBOARD_ROUTES.platformOrganizations`, linked from the
+        // Commission page), it is just not a sidebar entry.
         {
           id: 'platform-academies',
           labelKey: 'navigation:items.platformAcademies',

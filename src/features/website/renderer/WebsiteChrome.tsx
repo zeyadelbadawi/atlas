@@ -50,7 +50,10 @@ export interface WebsiteChromeProps {
   readonly configuration: Pick<
     WebsiteConfiguration,
     'themeKey' | 'brand' | 'navigation' | 'header' | 'footer'
-  >;
+  > & {
+    /** Its site description feeds the theme footer; previews may omit it. */
+    readonly seo?: Pick<WebsiteConfiguration['seo'], 'metaDescription'>;
+  };
   readonly pages: readonly WebsitePage[];
   readonly activePageId?: string;
   readonly onNavigate: (pageId: string) => void;
@@ -207,6 +210,8 @@ function LoadedWebsiteChrome({
                 academyName={academyName}
                 academyLogo={academyLogo}
                 footer={configuration.footer}
+                siteDescription={configuration.seo?.metaDescription}
+                authState={authState}
                 pages={pages}
                 onNavigate={onNavigate}
                 linkRenderer={linkRenderer}

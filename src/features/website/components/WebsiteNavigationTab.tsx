@@ -33,6 +33,7 @@ import { websiteKeys } from '@services/query';
 import { useUpdateWebsiteConfiguration } from '../hooks';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
 import { LocalizedTextField } from './LocalizedTextField';
+import { SocialLinksEditor } from './SocialLinksEditor';
 import {} from '../utils/auth-page-copy.utils';
 import type {
   LocalizedText,
@@ -252,53 +253,6 @@ export function WebsiteNavigationTab({
     save({ footer: { ...configuration.footer, socialLinks: links } });
   };
 
-  /**
-   * The backend requires a non-empty `label` on every footer link
-   * (`footerLinkSchema.label` is `min(1)`) — a brand-new row created with
-   * `label: ''` was rejected outright, and with no `onError` handler on
-   * this mutation the failure was silent: the request round-tripped, the
-   * cache never updated, and "Add link" looked like it did nothing.
-   * Seeding a real, editable default label (renamed inline afterward,
-   * same as any other link) makes the add itself always succeed.
-   */
-  const addSocialLink = () => {
-    persistSocialLinks([
-      ...configuration.footer.socialLinks,
-      {
-        id: crypto.randomUUID(),
-        label: { en: t('website:navigation.newSocialLinkLabel'), ar: '' },
-        url: '',
-      },
-    ]);
-  };
-
-  const updateSocialLink = (id: string, patch: Partial<WebsiteFooterLink>) => {
-    if (patch.url !== undefined && !isSafeExternalUrl(patch.url)) {
-      toast({ title: t('validation:invalidUrl'), variant: 'destructive' });
-      return;
-    }
-    if (patch.label !== undefined && !patch.label.en.trim()) {
-      toast({
-        title: t('validation:required', {
-          field: t('website:navigation.socialLabelPlaceholder'),
-        }),
-        variant: 'destructive',
-      });
-      return;
-    }
-    persistSocialLinks(
-      configuration.footer.socialLinks.map((link) =>
-        link.id === id ? { ...link, ...patch } : link
-      )
-    );
-  };
-
-  const removeSocialLink = (id: string) => {
-    persistSocialLinks(
-      configuration.footer.socialLinks.filter((link) => link.id !== id)
-    );
-  };
-
   return (
     <div className="space-y-6">
       <Card>
@@ -494,50 +448,10 @@ export function WebsiteNavigationTab({
             onBlur={updateFooterCopyright}
           />
 
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label>{t('website:navigation.socialLinks')}</Label>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={addSocialLink}
-              >
-                <Plus className="size-3.5" aria-hidden />
-                {t('website:navigation.addSocialLink')}
-              </Button>
-            </div>
-            {configuration.footer.socialLinks.map((link) => (
-              <div key={link.id} className="flex items-start gap-2">
-                <div className="w-48">
-                  <LocalizedTextField
-                    id={`social-link-${link.id}`}
-                    labelKey="website:navigation.socialLabelPlaceholder"
-                    value={link.label}
-                    onBlur={(label) => updateSocialLink(link.id, { label })}
-                  />
-                </div>
-                <Input
-                  placeholder="https://"
-                  defaultValue={link.url ?? ''}
-                  onBlur={(event) =>
-                    updateSocialLink(link.id, { url: event.target.value })
-                  }
-                  className="mt-8 flex-1"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="mt-6"
-                  onClick={() => removeSocialLink(link.id)}
-                  aria-label={t('website:navigation.removeSocialLink')}
-                >
-                  <X className="size-4" aria-hidden />
-                </Button>
-              </div>
-            ))}
-          </div>
+          <SocialLinksEditor
+            links={configuration.footer.socialLinks}
+            onChange={persistSocialLinks}
+          />
         </CardContent>
       </Card>
 

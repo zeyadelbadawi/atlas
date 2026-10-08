@@ -319,6 +319,40 @@ const REVIEWS = [
   },
 ];
 
+/** A rich Academy's footer social links (structured, plus one legacy). */
+export const FIXTURE_SOCIAL_LINKS = [
+  {
+    id: 'fx-social-1',
+    label: { en: 'Instagram', ar: 'Instagram' },
+    url: 'https://instagram.com/horizonacademy',
+    platform: 'instagram',
+  },
+  {
+    id: 'fx-social-2',
+    label: { en: 'LinkedIn', ar: 'LinkedIn' },
+    url: 'https://linkedin.com/company/horizonacademy',
+    platform: 'linkedin',
+  },
+  {
+    id: 'fx-social-3',
+    label: { en: 'YouTube', ar: 'YouTube' },
+    url: 'https://youtube.com/@horizonacademy',
+    platform: 'youtube',
+  },
+  // Saved before the platform picker: a free-text label and no platform.
+  {
+    id: 'fx-social-4',
+    label: { en: 'facebook', ar: '' },
+    url: 'https://facebook.com/horizonacademy',
+  },
+  {
+    id: 'fx-social-5',
+    label: { en: 'WhatsApp', ar: 'WhatsApp' },
+    url: 'https://wa.me/97145550142',
+    platform: 'whatsapp',
+  },
+];
+
 /** Everything the public API would return for this Academy in `state`. */
 export function buildLiveData(academyId, state) {
   const rich = state === 'rich';
@@ -330,6 +364,8 @@ export function buildLiveData(academyId, state) {
       contactEmail: 'hello@horizon-academy.example',
       ...(rich
         ? {
+            description:
+              'Practical design and product courses taught by working designers, with mentor feedback on every project.',
             contactPhone: '+971 4 555 0142',
             address: {
               street: '12 Knowledge Park',

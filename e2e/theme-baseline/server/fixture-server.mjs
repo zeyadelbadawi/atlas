@@ -61,6 +61,7 @@ import { gzipSync } from 'node:zlib';
 import {
   FIXTURE_ACADEMY_NAME,
   FIXTURE_PALETTES,
+  FIXTURE_SOCIAL_LINKS,
   applyAtelierLimitsComposition,
   buildLiveData,
   parseAtelierLimitsComposition,
@@ -166,8 +167,14 @@ function buildFixture(parsed) {
     JSON.parse(
       JSON.stringify(value).replaceAll('"fx-academy"', `"${academyId}"`)
     );
+  const rich = parsed.state === 'rich';
   const configuration = rebaseIds({
     ...generated.configuration,
+    // A rich Academy links its social accounts: structured links (picked in
+    // the CMS) and one saved before the picker (free-text label only).
+    footer: rich
+      ? { ...generated.configuration.footer, socialLinks: FIXTURE_SOCIAL_LINKS }
+      : generated.configuration.footer,
     themeKey: renderedThemeKey(parsed),
     brand: { ...FIXTURE_PALETTES[parsed.palette] },
     status: 'published',
@@ -188,7 +195,7 @@ function buildFixture(parsed) {
     published: parsed.state !== 'unpublished',
     configuration,
     pages,
-    live: buildLiveData(academyId, parsed.state === 'rich' ? 'rich' : 'new'),
+    live: buildLiveData(academyId, rich ? 'rich' : 'new'),
   };
 }
 
