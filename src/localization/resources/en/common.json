@@ -117,7 +117,8 @@
   },
   "notifications": {
     "bell": "Notifications",
-    "bellUnread": "Notifications ({{count}} unread)"
+    "bellUnread": "Notifications ({{count}} unread)",
+    "unreadSuffix": ", {{count}} unread"
   },
   "fieldHelp": {
     "trigger": "More information about this field"

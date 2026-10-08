@@ -117,7 +117,8 @@
   },
   "notifications": {
     "bell": "الإشعارات",
-    "bellUnread": "الإشعارات ({{count}} غير مقروءة)"
+    "bellUnread": "الإشعارات ({{count}} غير مقروءة)",
+    "unreadSuffix": "، {{count}} غير مقروءة"
   },
   "fieldHelp": {
     "trigger": "مزيد من المعلومات عن هذا الحقل"

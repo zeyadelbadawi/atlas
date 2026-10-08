@@ -19,6 +19,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ChevronRight } from 'lucide-react';
 import { isPathActive } from '@app/routes/route-paths';
+import { useNotificationSummary } from '@features/notifications';
 import { cn } from '@utils';
 import { LEARNER_NAVIGATION } from '../constants/learner-navigation.constants';
 import { useLearnerSurface } from '../context/LearnerSurface.context';
@@ -38,6 +39,10 @@ export function LearnerNavigationList({
 }: LearnerNavigationListProps): JSX.Element {
   const { t } = useTranslation();
   const { buildHref, pathname } = useLearnerSurface();
+  // The unread count rides on the Notifications entry: on wide screens the
+  // rail is where the learner looks for it (the shell has no bell there).
+  const { data: notificationSummary } = useNotificationSummary();
+  const unreadCount = notificationSummary?.unread ?? 0;
 
   return (
     <ul className={cn('space-y-1', className)}>
@@ -65,6 +70,22 @@ export function LearnerNavigationList({
                 aria-hidden
               />
               <span className="truncate">{t(item.labelKey)}</span>
+              {item.id === 'notifications' && unreadCount > 0 ? (
+                <>
+                  <span
+                    aria-hidden
+                    data-testid="learner-nav-unread-badge"
+                    className="ms-auto flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-destructive px-1.5 text-[11px] font-medium leading-none text-destructive-foreground"
+                  >
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                  <span className="sr-only">
+                    {t('common:notifications.unreadSuffix', {
+                      count: unreadCount,
+                    })}
+                  </span>
+                </>
+              ) : null}
               {showChevron ? (
                 <ChevronRight
                   className="ms-auto size-4 shrink-0 text-border-strong rtl:-scale-x-100"
