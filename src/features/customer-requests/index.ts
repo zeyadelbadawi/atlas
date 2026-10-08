@@ -17,6 +17,7 @@ export {
 } from './hooks';
 export type { CustomerRequestAccess } from './hooks';
 export {
+  CUSTOMER_REQUEST_ACADEMY_ROLES,
   CUSTOMER_REQUEST_TYPES,
   CUSTOMER_REQUEST_STATUSES,
 } from './constants/customer-request.constants';

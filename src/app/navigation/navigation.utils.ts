@@ -26,6 +26,12 @@ export interface NavigationFilterContext {
    * so undefined is treated as "not yet known, leave it alone".
    */
   readonly hasEntitlement?: boolean;
+  /**
+   * The caller's verified role in the academy the URL addresses (academy
+   * scope), or `undefined` outside an academy screen / while unresolved.
+   * Used only by items with `academyRoles`.
+   */
+  readonly academyRole?: string;
 }
 
 /**
@@ -76,8 +82,13 @@ function shouldShowNavigationItem(
   item: NavigationItem,
   context: NavigationFilterContext
 ): boolean {
-  const { isAuthenticated, user, organization, isFeatureEnabled, hasEntitlement } =
-    context;
+  const {
+    isAuthenticated,
+    user,
+    organization,
+    isFeatureEnabled,
+    hasEntitlement,
+  } = context;
 
   /*
     Entitlement requirement (Phase 11).
@@ -133,6 +144,18 @@ function shouldShowNavigationItem(
     return false;
   }
 
+  // Academy-role requirement: the verified academy role decides when known
+  // (see `NavigationItem.academyRoles`); otherwise the permission check
+  // below applies.
+  const academyRoleDecides =
+    !!item.academyRoles && context.academyRole !== undefined;
+  if (
+    academyRoleDecides &&
+    !item.academyRoles!.includes(context.academyRole as string)
+  ) {
+    return false;
+  }
+
   // Permission requirement.
   // FAIL CLOSED: if permissions are required but user is missing, hide item.
   // A permission is granted if EITHER the account's own base permissions
@@ -142,7 +165,11 @@ function shouldShowNavigationItem(
   // happens to be active. Matches the fix already applied to
   // `RouteGuard.tsx`'s equivalent check (see that file's own doc comment);
   // this was the same bug, independently present here too.
-  if (item.requiredPermissions && item.requiredPermissions.length > 0) {
+  if (
+    !academyRoleDecides &&
+    item.requiredPermissions &&
+    item.requiredPermissions.length > 0
+  ) {
     if (!user) {
       return false;
     }

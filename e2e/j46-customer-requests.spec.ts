@@ -12,8 +12,10 @@
  *      with a message, adds an INTERNAL note and a reply.
  *   4. The owner sees the new status and the reply — never the internal
  *      note (not in the page, not in the API answer).
- *   5. The academy's Manager is offered no request card, and the Requests
- *      page explains it is for owners and administrators.
+ *   5. The academy's Manager is offered no request card and no Requests
+ *      sidebar entry; made an academy Administrator (same organization
+ *      permissions), she gets both — the entry follows the verified
+ *      academy role, like the API.
  *   6. Phone width (360 px), Arabic: Requests list and detail have no
  *      sideways scroll.
  * The request and its events are deleted afterwards.
@@ -201,9 +203,46 @@ test.describe('J46 — customer requests', () => {
     await expect(
       page.getByRole('button', { name: 'Request a custom feature' })
     ).toHaveCount(0);
+    await expect(
+      page.getByRole('navigation').getByRole('link', { name: 'Requests' })
+    ).toHaveCount(0);
     await page.goto(`/dashboard/academy/${academyId}/requests`);
     await expect(page.locator('main')).toBeVisible();
     await expect(page.getByText(TITLE)).toHaveCount(0);
+  });
+
+  test('an academy Administrator gets the Requests entry and the card', async ({
+    page,
+  }) => {
+    // The seeded Manager, made an administrator of THIS academy for the
+    // test — her organization permissions stay the manager set, so only
+    // the verified academy role can show her the entry. Restored after.
+    const roleSql = (role: string) =>
+      adminSql(
+        `update academy_members set role = :'role'::academy_member_role
+          where academy_id = :'a'
+            and user_id = (select id from users where email = :'e')`,
+        { role, a: academyId, e: SEED.manager }
+      );
+    await roleSql('administrator');
+    try {
+      await signIn(page, SEED.manager);
+      await page.goto(`/dashboard/academy/${academyId}`);
+      const entry = page
+        .getByRole('navigation')
+        .getByRole('link', { name: 'Requests' });
+      await expect(entry).toBeVisible({ timeout: 30_000 });
+      await expect(
+        page.getByRole('button', { name: 'Request a custom feature' }).first()
+      ).toBeVisible();
+      await entry.click();
+      await page.waitForURL(new RegExp(`/academy/${academyId}/requests`));
+      await expect(
+        page.getByText(TITLE).filter({ visible: true }).first()
+      ).toBeVisible({ timeout: 30_000 });
+    } finally {
+      await roleSql('manager');
+    }
   });
 
   test('phone width, Arabic: list and detail have no sideways scroll', async ({

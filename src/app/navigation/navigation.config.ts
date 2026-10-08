@@ -278,13 +278,14 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
       },
       {
         // Customer Requests — custom services (logo, domain, theme,
-        // section, feature) asked of the Atlas team. Owner/administrator
-        // only server-side, so the entry uses the same owner-tier
-        // permission as Messages and the activity log (no organization
-        // permission tells an academy administrator from a manager; the
-        // pages themselves check the verified academy role). No
-        // entitlement gate: the API allows requests while a subscription
-        // is inactive, and asking for help is a way out, not a feature.
+        // section, feature) asked of the Atlas team. The API admits the
+        // academy's owner and administrators (`AcademyRoles`), so inside an
+        // academy the entry follows the caller's verified academy role
+        // (the same rule as `CUSTOMER_REQUEST_ACADEMY_ROLES`, which the
+        // pages and cards use); outside one it falls back to the
+        // owner-tier permission. No entitlement gate: the API allows
+        // requests while a subscription is inactive, and asking for help
+        // is a way out, not a feature.
         id: 'academy-requests',
         labelKey: 'navigation:items.academyRequests',
         path: buildPath(DASHBOARD_ROUTES.academyRequests, {
@@ -292,6 +293,7 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
         }),
         icon: MessageSquarePlus,
         requiresAuth: true,
+        academyRoles: ['owner', 'administrator'],
         requiredPermissions: ['tenant.dashboard.view'],
         matchNestedPaths: true,
       },
