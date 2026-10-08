@@ -1295,13 +1295,19 @@ export const analyticsKeys = {
  * the same technique `blogKeys`/`announcementKeys` already use, so one
  * user's notifications can never surface for another in the same
  * browser session.
+ *
+ * Notification context isolation — the feed and the unread count are ALSO
+ * keyed by context (`management` or `academy:<id>`), so the Management
+ * feed, Academy A's and Academy B's never share a cache entry.
  */
 export const notificationKeys = {
   all: QUERY_KEY_ROOTS.notification,
-  list: (userId: string | undefined, query?: CollectionQuery) =>
-    [...notificationKeys.all, 'list', userId, query] as const,
-  unreadCount: (userId: string | undefined) =>
-    [...notificationKeys.all, 'unread-count', userId] as const,
+  /** Every feed/count entry of one context — what a mark-read refreshes. */
+  scope: (scope: string) => [...notificationKeys.all, 'scope', scope] as const,
+  list: (scope: string, userId: string | undefined, query?: CollectionQuery) =>
+    [...notificationKeys.scope(scope), 'list', userId, query] as const,
+  unreadCount: (scope: string, userId: string | undefined) =>
+    [...notificationKeys.scope(scope), 'unread-count', userId] as const,
   preferences: (userId: string | undefined) =>
     [...notificationKeys.all, 'preferences', userId] as const,
   /** `users/me/communication-preferences` — user-scoped like the rest. */

@@ -14,14 +14,16 @@
 import { useApiQuery, useAuth } from '@/shared/hooks';
 import { notificationKeys } from '@services/query';
 import { notificationService } from '../services/NotificationService';
+import { useNotificationScope } from '../context/notification-scope';
 import type { NotificationSummary } from '@types';
 import type { ApiError } from '@api';
 
 export function useNotificationSummary() {
   const { user } = useAuth();
+  const scope = useNotificationScope();
 
   return useApiQuery<NotificationSummary, ApiError>({
-    queryKey: notificationKeys.unreadCount(user?.id),
+    queryKey: notificationKeys.unreadCount(scope, user?.id),
     queryFn: () => notificationService.getSummary(),
     enabled: !!user,
     refetchInterval: 60_000,
