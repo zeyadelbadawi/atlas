@@ -19,7 +19,8 @@
     "light": "فاتح",
     "dark": "داكن",
     "system": "حسب النظام",
-    "current": "المظهر الحالي: {{theme}}"
+    "current": "المظهر الحالي: {{theme}}",
+    "appearance": "المظهر"
   },
   "actions": {
     "save": "حفظ التغييرات",
@@ -113,7 +114,10 @@
   },
   "account": {
     "menu": "قائمة الحساب",
-    "signOut": "تسجيل الخروج"
+    "signOut": "تسجيل الخروج",
+    "welcome": "مرحبًا، {{name}}",
+    "menuSuffix": "(قائمة الحساب)",
+    "profile": "الملف الشخصي"
   },
   "notifications": {
     "bell": "الإشعارات",

@@ -19,7 +19,8 @@
     "light": "Light",
     "dark": "Dark",
     "system": "System",
-    "current": "Current theme: {{theme}}"
+    "current": "Current theme: {{theme}}",
+    "appearance": "Appearance"
   },
   "actions": {
     "save": "Save changes",
@@ -113,7 +114,10 @@
   },
   "account": {
     "menu": "Account menu",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "welcome": "Welcome, {{name}}",
+    "menuSuffix": "(account menu)",
+    "profile": "Profile"
   },
   "notifications": {
     "bell": "Notifications",

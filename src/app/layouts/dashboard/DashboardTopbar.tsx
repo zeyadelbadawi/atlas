@@ -9,7 +9,7 @@ import type { ReactNode } from 'react';
 import { ArrowLeft, Menu } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { LanguageSwitcher, ThemeSwitcher } from '@components/controls';
+import { LanguageSwitcher } from '@components/controls';
 
 export interface DashboardTopbarProps {
   /** Opens the mobile navigation drawer. */
@@ -73,9 +73,10 @@ export function DashboardTopbar({
       </div>
 
       <div className="flex min-w-0 items-center gap-1">
-        {actions}
+        {/* Appearance (light/dark) lives in the account menu, with the
+            account it belongs to — not as a separate icon here. */}
         <LanguageSwitcher />
-        <ThemeSwitcher />
+        {actions}
       </div>
     </header>
   );
