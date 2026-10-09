@@ -250,6 +250,11 @@ CodeRabbit skipped both PRs because they exceed its 100-file limit. This is info
    - left Caddy and the renderer healthy;
    - recorded the last-good digests.
 5. Frontend Deploy #152 was then re-run (attempt 2) for `652f4a3`.
+6. **The frontend image build stalled.**
+   - The `caddy-build` stage's cache entry was missing, so `xcaddy build` compiled Caddy under QEMU (linux/arm64 on an x86 runner). The step printed nothing for more than 50 minutes after `go build` started at 18:05.
+   - For comparison, the same build cross-compiled natively took 60 seconds of `go build`: a static ARM aarch64 binary with `caddy-dns/cloudflare` v0.2.4.
+   - The run was cancelled before it reached "Deploy to VPS", so production stayed on the previous frontend, which is compatible with the new backend.
+7. **Fix:** the `caddy-build` stage now runs on `$BUILDPLATFORM` and cross-compiles with `GOOS=$TARGETOS GOARCH=$TARGETARCH CGO_ENABLED=0`. It shipped in a small PR, and its merge triggered the frontend deploy.
 
 **Known short window:** between steps 4 and 5, the old frontend showed "invalid link" to signed-out users who clicked a verification link, because of F1. This ends once the new frontend is live.
 
