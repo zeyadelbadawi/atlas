@@ -7,6 +7,7 @@
 | Pull requests | [atlas#33](https://github.com/zeyadelbadawi/atlas/pull/33) (merged as `a59be1f`), [atlas-backend#41](https://github.com/zeyadelbadawi/atlas-backend/pull/41) (merged as `88b1fb4`) |
 | Production | `https://atlass.dpdns.org` — backend Deploy #265, frontend Deploy #151 (both 9 Oct 2026) |
 | Status of this document | Engineering record. Items that were not verified are marked **Not verified**. |
+| Follow-up | [ATLAS_SECURITY_HARDENING_LOCAL_FIRST_REPORT.md](./ATLAS_SECURITY_HARDENING_LOCAL_FIRST_REPORT.md) covers the production security hardening (the deferred ATO items below), secure local-first Academy websites, phone number, Arabic RTL and the forensic video watermark. It also has the section "Deferred: VPS Disk Capacity and Docker Image Retention". |
 
 ## Contents
 

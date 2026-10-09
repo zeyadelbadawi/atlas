@@ -54,8 +54,14 @@ HEALTHCHECK --interval=15s --timeout=3s --start-period=10s --retries=3 \
   CMD wget -qO- http://127.0.0.1:3100/__ssr/health || exit 1
 CMD ["node", "server/ssr/server.mjs"]
 
-FROM caddy:2-builder-alpine AS caddy-build
-RUN xcaddy build --with github.com/caddy-dns/cloudflare
+# Cross-compiled on the build host's own architecture: Go builds a static
+# linux/arm64 Caddy natively in about a minute, where compiling it under
+# QEMU emulation took close to an hour.
+FROM --platform=$BUILDPLATFORM caddy:2-builder-alpine AS caddy-build
+ARG TARGETOS
+ARG TARGETARCH
+RUN GOOS=$TARGETOS GOARCH=$TARGETARCH CGO_ENABLED=0 \
+    xcaddy build --with github.com/caddy-dns/cloudflare
 
 FROM caddy:2-alpine
 COPY --from=caddy-build /usr/bin/caddy /usr/bin/caddy
