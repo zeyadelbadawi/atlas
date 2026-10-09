@@ -138,7 +138,11 @@ describe('course categories are hidden from Academy Owners and Managers', () => 
       '/dashboard/academy/:academyId/courses/:courseId/edit',
       <CourseEditPage />
     );
-    const title = await screen.findByLabelText('Course Title');
+    const title =
+      await screen.findByLabelText<HTMLInputElement>('Course Title');
+    // The field renders before the loaded course fills it; editing earlier
+    // races that reset (the typed text would be appended to it).
+    await waitFor(() => expect(title.value).toBe('Chemistry 101'));
     expect(screen.queryByText('Category')).toBeNull();
     await user.clear(title);
     await user.type(title, 'Chemistry 102');
