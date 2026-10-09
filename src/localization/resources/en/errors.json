@@ -78,7 +78,15 @@
     "contentUnavailable": "This content cannot be opened right now. Reload the page, and contact the academy if it keeps happening.",
     "lessonNoContent": "This lesson has no content yet. The academy has not added anything to it.",
     "lessonProcessing": "This lesson is not ready to play yet. Its video may still be processing — try again in a few minutes.",
-    "lessonLocked": "Finish the earlier lessons in this course first. This one unlocks when the item before it is complete."
+    "lessonLocked": "Finish the earlier lessons in this course first. This one unlocks when the item before it is complete.",
+    "watermarkUnavailable": "This video couldn’t be prepared securely right now. Please try again in a moment."
+  },
+  "watermark": {
+    "invalidCode": "That isn’t a valid watermark code. A code has 10 letters and digits, shown as XXXXX-XXXXX.",
+    "checksumMismatch": "One symbol of this code looks misread. Re-check the recording, especially 0/O, 1/I/L, 5/S and 8/B.",
+    "notFound": "No watermark was issued with this code. Check that it was read correctly — records are also removed once their retention period ends.",
+    "lookupRateLimited": "You’ve made many lookups in a short time. Wait a few minutes, then try again.",
+    "lookupUnavailable": "Watermark lookup is temporarily unavailable. Try again in a moment."
   },
   "provisioning": {
     "stepFailed": "Something went wrong while setting up your Academy. Please try again or contact support if the problem continues.",
