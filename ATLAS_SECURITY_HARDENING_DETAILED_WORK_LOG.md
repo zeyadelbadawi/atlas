@@ -418,18 +418,70 @@ It is a deterrent and a trace, never described as preventing recording.
    - Caddy and the renderer healthy.
    - Last-good digests recorded (rollback backend `sha256:f9ddaa3f…`).
 5. **18:03:** frontend Deploy #152 re-run (attempt 2) for `652f4a3`.
+6. **18:05–19:00: the frontend image build stalled.**
+   - The `caddy-build` stage had no cache entry, so `xcaddy build` ran `go build` under QEMU (linux/arm64 on an x86 runner).
+   - It printed nothing after 18:05:23. The same step had taken 24 minutes in total in Deploy #151.
+   - Locally, the identical build cross-compiled natively took 60 s of `go build` (go1.26.0, `caddy-dns/cloudflare v0.2.4`, static ARM aarch64).
+   - The owner asked for the run to be cancelled. It was cancelled at 19:00:49, before "Deploy to VPS".
+7. **19:00–19:36: [atlas#35](https://github.com/zeyadelbadawi/atlas/pull/35).**
+   - The Caddy stage moved to `FROM --platform=$BUILDPLATFORM … ` with `GOOS=$TARGETOS GOARCH=$TARGETARCH CGO_ENABLED=0`, plus the two reports.
+   - CodeRabbit raised two documentation points, both handled:
+     - phone visibility now names the watermark lookup as the one exception;
+     - migration prefixes are ordering keys, not dates (CodeRabbit withdrew that one).
+   - Merged as `082a428`.
+8. **19:43: CI on `main` `082a428` red.** One unit test, `website-messages-page.test.tsx` ("Clear filters"), failed, although the same tree had passed on the PR.
+   - **Root cause:** a real, pre-existing bug in `SearchInput`.
+     - After "Clear filters", the debounced draft still held `"nobody"` for one debounce window.
+     - React Router hands out a new `setSearchParams` (and so a new `onValueChange`) whenever the URL changes.
+     - The reporting effect re-ran in the same commit, before the draft reset was visible, and pushed the cleared search back into the URL.
+   - **Fixed in [atlas#36](https://github.com/zeyadelbadawi/atlas/pull/36)** (`93d08f9`):
+     - the draft is reset during render, using React's "adjust state on prop change" pattern;
+     - only a settled draft (`debouncedDraft === draft`) is reported.
+   - **Tests:**
+     - a new `search-input.test.tsx` with fake timers reproduced the bug before the fix;
+     - the Messages test passed 5 times in a row;
+     - full suite: 306 files, 3882 tests.
+   - On the owner's instruction, CodeRabbit was skipped from here on.
+9. **20:50–20:54: Deploy #154 failed twice, about 1 s into the image build.**
+   - Docker Hub returned `429 Too Many Requests` for the anonymous metadata request for `node:20-alpine`; shared runner IPs exhaust the anonymous limit.
+   - It was re-run once (it had died before any build step), then left alone.
+10. **21:05–21:34: [atlas#37](https://github.com/zeyadelbadawi/atlas/pull/37).**
+    - All five `FROM` lines now pull from `mirror.gcr.io/library/…`.
+    - Checked first: all three tags return 200 with amd64 and arm64, and the `caddy:2-builder-alpine` index digest matches Docker Hub (`sha256:aa705b1e…`).
+    - CodeRabbit noted the mirror does not guarantee retention. It was skipped per the owner and recorded as a follow-up (Docker Hub login).
+    - Merged as `ed343fe`.
+11. **22:02–22:13: Deploy #155 succeeded.**
 
-**Known window:** between steps 4 and 5, signed-out users clicking a verification link saw "invalid link" on the old frontend (F1). It ends once the new frontend is live.
+    | Step | Duration |
+    |---|---|
+    | Frontend image | 6 min 33 s (Caddy cross-compiled) |
+    | Renderer | 2 min |
+    | VPS deploy | 1 min 8 s |
+
+    Production served `/assets/index-Bg5Hwlk5.js` from **22:12:48 UTC**.
+
+**Known window:** from 17:58 to 22:12, the old frontend ran against the new backend. They were compatible, and sign-up and sign-in were unaffected. The one gap: signed-out users clicking a verification link saw "invalid link" (F1). It ended at 22:12.
 
 ## 11. Production verification
 
-See the summary report, §9. Verified by HTTP:
+See the summary report, §9.
+
+**Backend, by HTTP:**
 - the new routes exist and are guarded (watermark lookup 401, phone 401, tamper 204);
 - register accepts the phone fields;
-- unsigned public media is refused;
+- unsigned public media is refused (400);
 - the API security headers are present.
 
-Signed-in browser checks are **Not verified**; they need the owner's checklist.
+**Frontend, by HTTP, after Deploy #155:**
+- the new entry bundle is live;
+- the document `Permissions-Policy` sets picture-in-picture off and fullscreen to `self`;
+- the deployed chunks contain:
+  - the watermark frame, tamper shield, `nofullscreen` and the lookup page;
+  - the phone input and its parser;
+  - the RTL markers;
+- `/sw.js` is byte-identical to the repository.
+
+Signed-in browser checks are **Not verified**. They need the owner's checklist; the sandbox browser cannot reach production over TLS, and no production accounts were used.
 
 ## 12. Incidents during the work
 
@@ -437,7 +489,13 @@ Signed-in browser checks are **Not verified**; they need the owner's checklist.
 - **Shared Redis:** `j47` clears auth rate-limit keys in Redis at sign-in, which corrupted backend rate-limit tests running at the same time. Don't run them together.
 - **Container disk full:** the container hit 100 % (ENOSPC) while 3 agents and browser tests ran. About 12 GB was freed by deleting stale scratch artifacts from earlier theme work (already archived) and the Jest cache. The agents were told to re-verify.
 - **A background `serve` command was killed at its time limit:** the servers survived. A `pkill` once killed its own shell (exit 144). The preview server was later stopped by PID.
-- **Permission prompts during deployment:** after the backend deploy was dispatched, the session's permission system refused status reads. The owner confirmed the backend result manually.
+- **Permission prompts during deployment:** after the backend deploy was dispatched, the session's permission system refused status reads. The owner confirmed the backend result manually. Later reads went through the GitHub integration instead.
+- **Frontend deploy blocked three times by CI infrastructure:**
+  - the QEMU Caddy compile;
+  - a timing-dependent unit-test failure that exposed a real bug;
+  - the Docker Hub rate limit.
+
+  Each was root-caused and fixed in its own PR (#35, #36, #37). None was worked around by disabling a check or a test.
 
 ## 13. Everything still pending
 
@@ -462,6 +520,11 @@ Signed-in browser checks are **Not verified**; they need the owner's checklist.
 - durable offline receipts;
 - phone verification (needs a provider);
 - an account-data export that includes `user_phones`.
+
+**Deploy pipeline follow-ups:**
+- Add a Docker Hub login to `deploy.yml` (`DOCKERHUB_USERNAME`/`DOCKERHUB_TOKEN` secrets). `mirror.gcr.io` does not guarantee it keeps images nobody requests.
+- Pin base-image digests.
+- Consider native ARM runners, so the Node build no longer runs under emulation (about 6 minutes now).
 
 **VPS disk and Docker image retention:** **unresolved**. `deploy.sh` doesn't prune and there is no log rotation; see the summary report, §13.
 

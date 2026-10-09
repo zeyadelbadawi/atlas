@@ -5,8 +5,8 @@
 | Period | 9 October 2026 |
 | Follows | [ATLAS_ENGINEERING_INITIATIVE_REPORT.md](./ATLAS_ENGINEERING_INITIATIVE_REPORT.md) (its deferred items are the starting point here) |
 | Repositories | `zeyadelbadawi/atlas` (frontend), `zeyadelbadawi/atlas-backend` (backend) |
-| Pull requests | [atlas-backend#42](https://github.com/zeyadelbadawi/atlas-backend/pull/42) (merged as `21b27b5`), [atlas#34](https://github.com/zeyadelbadawi/atlas/pull/34) (merged as `652f4a3`) |
-| Production | `https://atlass.dpdns.org`: backend Deploy #267, frontend Deploy #152 (attempt 2) |
+| Pull requests | [atlas-backend#42](https://github.com/zeyadelbadawi/atlas-backend/pull/42) (merged as `21b27b5`), [atlas#34](https://github.com/zeyadelbadawi/atlas/pull/34) (merged as `652f4a3`); deploy fixes [atlas#35](https://github.com/zeyadelbadawi/atlas/pull/35), [atlas#36](https://github.com/zeyadelbadawi/atlas/pull/36), [atlas#37](https://github.com/zeyadelbadawi/atlas/pull/37) |
+| Production | `https://atlass.dpdns.org`: backend Deploy #267 (17:58 UTC), frontend Deploy #155 (live 22:12 UTC), both 9 October 2026 |
 | Status of this document | Engineering record. Anything not verified is marked **Not verified**. Nothing here claims the system is "100% secure". These changes reduce specific, named risks. |
 
 ## Contents
@@ -232,6 +232,7 @@ All four are additive. `deploy.sh` backed up the database before applying them i
 |---|---|
 | atlas-backend#42 | Green: static checks, 3 e2e shards and the aggregate. The first run failed W6 (§10), fixed in `cfd80c5`. Backend CI on `main` `21b27b5`: success. |
 | atlas#34 | Green. Frontend CI on `main` `652f4a3` (run 37966050361): success. |
+| atlas#35, #36, #37 | Green on each PR. `main` `082a428` was red (SearchInput race, fixed by #36); `main` `93d08f9` and `ed343fe` green. |
 
 CodeRabbit skipped both PRs because they exceed its 100-file limit. This is informational; no review was posted.
 
@@ -254,9 +255,21 @@ CodeRabbit skipped both PRs because they exceed its 100-file limit. This is info
    - The `caddy-build` stage's cache entry was missing, so `xcaddy build` compiled Caddy under QEMU (linux/arm64 on an x86 runner). The step printed nothing for more than 50 minutes after `go build` started at 18:05.
    - For comparison, the same build cross-compiled natively took 60 seconds of `go build`: a static ARM aarch64 binary with `caddy-dns/cloudflare` v0.2.4.
    - The run was cancelled before it reached "Deploy to VPS", so production stayed on the previous frontend, which is compatible with the new backend.
-7. **Fix:** the `caddy-build` stage now runs on `$BUILDPLATFORM` and cross-compiles with `GOOS=$TARGETOS GOARCH=$TARGETARCH CGO_ENABLED=0`. It shipped in a small PR, and its merge triggered the frontend deploy.
+7. **Fix, [atlas#35](https://github.com/zeyadelbadawi/atlas/pull/35)** (merged as `082a428`): the `caddy-build` stage now runs on `$BUILDPLATFORM` and cross-compiles with `GOOS=$TARGETOS GOARCH=$TARGETARCH CGO_ENABLED=0`. The PR also carried this report and the work log.
+8. **CI on `main` failed after the merge.** `website-messages-page.test.tsx` caught a real, pre-existing race in the shared `SearchInput`: right after "Clear filters", the stale debounced text was pushed back into the URL. The trigger was that React Router hands out a new `setSearchParams` whenever the URL changes. The deploy was skipped.
+   - Fixed in [atlas#36](https://github.com/zeyadelbadawi/atlas/pull/36) (`93d08f9`): the draft is reset during render, and only a settled draft is reported.
+   - A new deterministic regression test fails without the fix.
+   - Full suite: 306 files, 3882 tests.
+9. **Frontend Deploy #154 failed twice in under a second**, the original run and one re-run. Docker Hub answered the anonymous metadata request for `node:20-alpine` with **429 Too Many Requests**: the shared runner IPs exhaust the anonymous limit. Nothing reached the VPS.
+10. **Fix, [atlas#37](https://github.com/zeyadelbadawi/atlas/pull/37)** (`ed343fe`): all base images are pulled through `mirror.gcr.io`, Google's pull-through cache of Docker Hub's official images. Every tag was checked for amd64/arm64, and the `caddy:2-builder-alpine` digest is identical on both registries.
+11. **Frontend Deploy #155 succeeded** (run 37996954465). Timings:
+    - frontend image: 6 min 33 s (24 min in Deploy #151);
+    - renderer: 2 min;
+    - VPS deploy: 1 min 8 s.
 
-**Known short window:** between steps 4 and 5, the old frontend showed "invalid link" to signed-out users who clicked a verification link, because of F1. This ends once the new frontend is live.
+    Production served the new bundle (`/assets/index-Bg5Hwlk5.js`) from **22:12:48 UTC**.
+
+**Known window:** from step 4 (17:58) until 22:12, the old frontend ran against the new backend. It was compatible: sign-up, sign-in and the API were unaffected. The one gap was that signed-out users clicking a verification link were shown "invalid link", because of F1. That ended when the new frontend went live.
 
 ## 9. Production Verification
 
@@ -273,9 +286,17 @@ CodeRabbit skipped both PRs because they exceed its 100-file limit. This is info
 | W1 public media | An unsigned `/api/v1/public/media/...` request is refused (**400**) |
 | API security headers | `Permissions-Policy` (camera, display-capture, fullscreen and picture-in-picture all denied for the API), `Cache-Control: private, no-store`, CSP, HSTS, `nosniff`, `Referrer-Policy: no-referrer` |
 
-### Frontend deploy
+### Frontend (Deploy #155, verified 22:13–22:20 UTC by HTTP)
 
-**In progress** when this was written. Deploy #152 (attempt 2) was building the frontend image. The frontend checks (deployed bundle, `Permissions-Policy` on documents) will be added once it is live.
+| Check | Result |
+|---|---|
+| New build live | `/` references `/assets/index-Bg5Hwlk5.js`. The previous entry was `index-fBHCA1tk.js`. |
+| Document `Permissions-Policy` (W14) | `camera=(self), microphone=(self), display-capture=(self), fullscreen=(self)`, `picture-in-picture=()`, YouTube allowed only for autoplay/encrypted-media |
+| Document headers | CSP with YouTube-only `frame-src`, HSTS, `nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, HTML `Cache-Control: no-cache` |
+| Watermark in the bundle | The deployed chunks (554 fetched by following imports) contain `forensic-watermark-label`, the "Restore and continue" tamper shield, `nofullscreen`, the YouTube `fs` option, and the `PlatformWatermarkLookupPage` chunk calling `platform/watermarks`. The tamper path is built at runtime from `path('watermarks', 'tamper')`. |
+| Phone in the bundle | `users/me/phone`, `phoneCountry` and the phone-number parser are present |
+| RTL in the bundle | `data-ltr-content` markers and Radix `Direction` present |
+| Service worker | `/sw.js` is byte-identical to the repository's `public/sw.js` |
 
 ### Not verified in production
 
@@ -293,6 +314,9 @@ The sandbox browser cannot complete TLS to production through the egress proxy, 
 | Problem | Cause | Fix |
 |---|---|---|
 | A frontend-first deploy would have broken every sign-up | Old backend's `forbidNonWhitelisted`, and frontend deploys automatically | Guard cancelled the frontend deploy until the backend was live (§8) |
+| Frontend image build stalled for more than 50 minutes | `caddy-build` cache miss, so Caddy compiled under QEMU emulation | #35: cross-compile on `$BUILDPLATFORM`; the frontend image now builds in about 6.5 minutes |
+| CI red on `main` after #35 | A real `SearchInput` race: a stale debounced search was re-applied after "Clear filters" when the URL-backed handler changed identity | #36: render-time draft reset plus a settled-draft guard, with a deterministic regression test |
+| Deploy #154 failed twice before building | Docker Hub anonymous rate limit (429) on shared runner IPs | #37: base images pulled through `mirror.gcr.io`. Durable follow-up: a Docker Hub login (§12). |
 | CI W6 failed on the first PR run | SeaweedFS enforces the signed `Content-Length`, as intended; the test assumed a non-enforcing store | `cfd80c5`: assert the refusal, then write the object directly to prove completion still refuses and deletes it |
 | Anonymous previews could mint unlimited watermark records | Only signed-in grants were rate-limited | A per-IP ceiling for anonymous grants (WM-04b) |
 | Deleting a watermark layer in devtools, then pressing Resume, crashed React | React removed nodes that were no longer in the DOM | Layers built outside React; Resume rebuilds a fresh host |
@@ -330,6 +354,8 @@ These need production access and were **not** done by this work:
 - **Customer-request notifier:** emails Platform Owners one by one inside a single transaction, which is O(owners). Batch it or move it outside the transaction before the owner count grows.
 - **Durable offline receipts:** a `learner_operation_receipts` table, `lesson_progress.last_op_*`, `assignment_submissions.draft_revision`, and a per-academy offline switch. Designed, not applied.
 - **Phone verification:** needs a provider contract. A future account-data export must include `user_phones`.
+- **Deploy image source:** base images now come from `mirror.gcr.io`, which does not guarantee it keeps images nobody requests. The images used are among the most-pulled on Docker Hub, but the durable fix is a Docker Hub login in `deploy.yml` (`docker/login-action` with `DOCKERHUB_USERNAME`/`DOCKERHUB_TOKEN` repository secrets). Pinning base-image digests would also make builds reproducible.
+- **Build speed:** the Node build still runs under QEMU (about 6 minutes). GitHub's native ARM runners would remove emulation entirely.
 - **Watermark burn-in:** per-viewer burned-in marks are not possible with the current video stack. The overlay is a deterrent and a trace, not prevention: a camera pointed at a screen still records.
 
 ## 13. Deferred: VPS Disk Capacity and Docker Image Retention
@@ -343,7 +369,7 @@ These need production access and were **not** done by this work:
 
 **Current state:**
 - Checked on `main` in `atlas-backend`: `deploy/deploy.sh` still never prunes images, and `deploy/docker-compose.prod.yml` still sets no container log rotation (`logging` / `max-size`).
-- Every deploy pulls new backend, frontend and renderer images and keeps the old ones. This release added two more deploys (#267 and #152).
+- Every deploy pulls new backend, frontend and renderer images and keeps the old ones. This release added two successful deploys (backend #267 and frontend #155), which pulled new images onto the VPS.
 - Free space was **not re-measured** after this release, so the current figure is **Not verified**.
 
 **Risk:** the disk fills again. A later deploy then fails partway, as #264 did while copying `.env`. `set -e` kept that failure safe, but it blocks releases until someone frees space by hand.
@@ -360,7 +386,7 @@ These need production access and were **not** done by this work:
 |---|---|
 | Implementation | **Complete** for WS1, WS2, phone, RTL and watermark |
 | Testing | **Complete** for unit, e2e and the journeys in §6. Three local e2e failures are environment-only. No load or axe testing in this release. |
-| CI | **Green** on both PRs and both `main` merges |
-| Deployment | Backend **complete** (Deploy #267, 4 migrations). Frontend: **in progress** (Deploy #152, attempt 2) |
-| Production verification | **Partial.** HTTP checks in §9 are verified. Signed-in browser checks are **Not verified** and need the §9 checklist. |
+| CI | **Green** on #42, #34–#37 and on `main` `ed343fe`. One red `main` run (`082a428`) found a real SearchInput race, fixed in #36 (§8). |
+| Deployment | **Complete.** Backend Deploy #267 (4 migrations, 17:58 UTC); frontend Deploy #155 (live 22:12 UTC) |
+| Production verification | **Partial.** Backend and frontend HTTP and bundle checks in §9 are verified. Signed-in browser checks are **Not verified** and need the §9 checklist. |
 | Known remaining issues | Ops actions (§11); deferred work (§12); VPS disk and image retention **unresolved** (§13) |
