@@ -37,18 +37,27 @@ export function SearchInput({
   const [draft, setDraft] = useState(value);
   const debouncedDraft = useDebounce(draft, debounceMs);
 
+  // Reset the draft when the caller clears the value externally. Done while
+  // rendering, not in an effect, so the reporting effect below never runs
+  // with the old draft in the same commit as the clear.
+  const [seenValue, setSeenValue] = useState(value);
+  if (value !== seenValue) {
+    setSeenValue(value);
+    if (value === '' && draft !== '') setDraft('');
+  }
+
   useEffect(() => {
-    if (debouncedDraft !== value) onValueChange(debouncedDraft);
+    // Only a settled draft is reported. Right after the caller clears the
+    // value, the debounced draft still holds the old text for one debounce
+    // window; a caller whose handler changes identity with the value (a
+    // URL-backed one) would re-run this effect and get that text back.
+    if (debouncedDraft === draft && debouncedDraft !== value) {
+      onValueChange(debouncedDraft);
+    }
     // `value` is intentionally omitted: reacting to it would echo the caller's
     // own update back and fight the user's typing.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedDraft, onValueChange]);
-
-  // Reset the draft when the caller clears the value externally.
-  useEffect(() => {
-    if (value === '' && draft !== '') setDraft('');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
 
   const label = t(labelKey);
 
