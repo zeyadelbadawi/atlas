@@ -664,7 +664,11 @@
         "confirmed": "{{actor}} confirmed account deletion"
       },
       "deleted": "{{actor}} deleted their account",
-      "deleted_by_platform_owner": "{{actor}} deleted a user account"
+      "deleted_by_platform_owner": "{{actor}} deleted a user account",
+      "phone": {
+        "updated": "{{actor}} updated their phone number",
+        "removed": "{{actor}} removed their phone number"
+      }
     },
     "plan": {
       "created": "{{actor}} created the plan “{{target}}”",

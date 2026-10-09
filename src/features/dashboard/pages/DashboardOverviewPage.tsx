@@ -32,6 +32,8 @@ import { useDashboardOverview } from '../hooks/useDashboardOverview';
 import { useDashboardScope } from '../hooks/useDashboardScope';
 import { GettingStartedChecklist } from '@features/tenant';
 import { SetupChecklistCard } from '@features/onboarding';
+import { PhoneNumberPrompt } from '@features/profile';
+import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 
 export default function DashboardOverviewPage(): JSX.Element {
   const { i18n } = useTranslation();
@@ -50,6 +52,7 @@ export default function DashboardOverviewPage(): JSX.Element {
           titleKey="dashboard:overview.title"
           descriptionKey="dashboard:overview.description"
         />
+        <PhoneNumberPrompt profileHref={DASHBOARD_ROUTES.profile} />
         <SectionCard>
           <EmptyState
             icon={Building2}
@@ -109,6 +112,9 @@ export default function DashboardOverviewPage(): JSX.Element {
           owner's open setup items, with a way back into each. Renders
           nothing for non-owners or once every step is done. */}
       <SetupChecklistCard />
+
+      {/* Accounts without a phone number get a dismissible nudge. */}
+      <PhoneNumberPrompt profileHref={DASHBOARD_ROUTES.profile} />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {/* An Academy Manager sees their own academy's numbers only — the

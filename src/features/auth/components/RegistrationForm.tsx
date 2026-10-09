@@ -42,6 +42,11 @@ import { INTENDED_PLAN_STORAGE_KEY } from '@features/home';
 import { useRegister, useSignupOptions } from '../hooks';
 import { AUTH_ERROR_KEYS } from '../utils/academy-surface.utils';
 import { TrialPlanPicker } from './TrialPlanPicker';
+import {
+  PhoneField,
+  defaultPhoneCountry,
+  refinePhone,
+} from '@components/phone';
 
 /**
  * Registration failures that describe the ACADEMY's policy rather than
@@ -104,11 +109,20 @@ function buildRegistrationSchema(mode: RegistrationMode) {
       }),
       organizationName: z.string().optional(),
       planId: z.string().optional(),
+      // Phone number (docs/USER_PHONE.md) — required on this page for both
+      // the management and the academy-learner sign-up. The API accepts a
+      // registration without one (older pages, Google sign-up); this page
+      // always sends both fields and the server re-validates them.
+      phoneCountry: z.string(),
+      phoneNumber: z.string(),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: 'auth:register.errors.passwordMismatch',
       path: ['confirmPassword'],
     })
+    .superRefine((data, context) =>
+      refinePhone(data, context, { required: true })
+    )
     .superRefine((data, context) => {
       if (!mode.organization) return;
       const organizationName = (data.organizationName ?? '').trim();
@@ -277,6 +291,8 @@ export function RegistrationForm({
       acceptTerms: false,
       organizationName: '',
       planId: undefined,
+      phoneCountry: defaultPhoneCountry(),
+      phoneNumber: '',
     },
   });
   const {
@@ -403,6 +419,9 @@ export function RegistrationForm({
         password: data.password,
         academyId,
         inviteToken,
+        // As typed, with the chosen country; the server normalises.
+        phoneNumber: data.phoneNumber,
+        phoneCountry: data.phoneCountry,
         ...(organizationName ? { organizationName } : {}),
         ...(planId ? { planId } : {}),
       },
@@ -584,6 +603,15 @@ export function RegistrationForm({
             </p>
           ) : null}
         </div>
+
+        <PhoneField
+          control={control}
+          errors={errors}
+          id="phoneNumber"
+          label={t('auth:register.phone')}
+          hint={t('auth:register.phoneHint')}
+          disabled={isLoading}
+        />
 
         <div className="space-y-2">
           <Label htmlFor="password">{t('auth:register.password')}</Label>

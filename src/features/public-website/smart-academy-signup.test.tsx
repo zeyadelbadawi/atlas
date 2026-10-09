@@ -249,6 +249,7 @@ function renderPage(language: 'en' | 'ar' = 'en') {
 async function submitSignUp(user: ReturnType<typeof userEvent.setup>) {
   await user.type(screen.getByLabelText('Full Name'), 'Ahmed');
   await user.type(screen.getByLabelText('Email'), 'ahmed@example.com');
+  await user.type(screen.getByLabelText('Mobile number'), '+20 100 123 4567');
   await user.type(screen.getByLabelText('Password'), 'not-my-atlas-password');
   await user.type(
     screen.getByLabelText('Confirm Password'),
@@ -538,6 +539,11 @@ describe('smart academy signup — existing account', () => {
     await user.type(
       screen.getByLabelText('البريد الإلكتروني'),
       'ahmed@example.com'
+    );
+    // Arabic-Indic digits, international form — accepted as typed.
+    await user.type(
+      screen.getByLabelText('رقم الهاتف المحمول'),
+      '+٢٠ ١٠٠ ١٢٣ ٤٥٦٧'
     );
     await user.type(
       screen.getByLabelText('كلمة المرور'),

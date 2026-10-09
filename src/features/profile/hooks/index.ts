@@ -23,3 +23,9 @@ export {
   useUnlinkGoogle,
   SIGN_IN_METHODS_QUERY_KEY,
 } from './useSignInMethods';
+export {
+  useUserPhone,
+  useUpdatePhone,
+  useRemovePhone,
+  USER_PHONE_QUERY_KEY,
+} from './useUserPhone';

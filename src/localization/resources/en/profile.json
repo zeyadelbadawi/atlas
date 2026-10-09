@@ -201,5 +201,34 @@
     "title": "Set up an authenticator app to keep Platform Owner access",
     "description": "Platform Owner tools will soon require two-step verification with an authenticator app. Set it up now in your security settings so your access is not interrupted.",
     "action": "Open security settings"
+  },
+  "phone": {
+    "title": "Phone number",
+    "description": "Your mobile number. Only you can see it.",
+    "label": "Mobile number",
+    "empty": "You haven’t added a phone number yet.",
+    "add": "Add phone number",
+    "change": "Change number",
+    "remove": "Remove",
+    "status": {
+      "verified": "Verified",
+      "unverified": "Not verified",
+      "comingSoon": "Verification by SMS or WhatsApp is coming soon. There’s nothing you need to do for now."
+    },
+    "reverifyNotice": "Your new number will need to be verified again.",
+    "removeConfirm": {
+      "title": "Remove your phone number?",
+      "description": "You can add a number again at any time.",
+      "confirm": "Remove number"
+    },
+    "saved": "Phone number saved",
+    "removed": "Phone number removed",
+    "rateLimited": "You’ve changed your number several times recently. Please try again later.",
+    "prompt": {
+      "title": "Add your phone number",
+      "body": "So we can reach you about your account if we ever need to. Only you can see it.",
+      "action": "Add phone number",
+      "dismiss": "Not now"
+    }
   }
 }

@@ -46,5 +46,9 @@
     "multipleNotAllowed": "Only one file can be uploaded here.",
     "fileTooLarge": "That file is too large.",
     "invalidType": "That file type is not supported."
-  }
+  },
+  "invalidPhone": "Enter a valid phone number for the selected country",
+  "phoneCountryMismatch": "This number belongs to another country. Choose that country or check the number.",
+  "phoneNotMobile": "Enter a mobile number — landlines, toll-free and premium-rate numbers can’t receive messages.",
+  "invalidPhoneCountry": "Choose a supported country"
 }

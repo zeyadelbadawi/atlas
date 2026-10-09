@@ -10,6 +10,7 @@ import { PageContainer, PageHeader } from '@components/layout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCurrentUser, useAuth } from '@hooks';
 import { ProfilePersonalSection } from '../components/ProfilePersonalSection';
+import { ProfilePhoneCard } from '../components/ProfilePhoneCard';
 import { ProfileAccountSection } from '../components/ProfileAccountSection';
 import { ProfilePreferencesSection } from '../components/ProfilePreferencesSection';
 import { ProfileSecuritySection } from '../components/ProfileSecuritySection';
@@ -76,6 +77,7 @@ export default function ProfilePage(): JSX.Element {
 
         <TabsContent value="personal" className="space-y-6">
           <ProfilePersonalSection user={user} />
+          <ProfilePhoneCard />
         </TabsContent>
 
         <TabsContent value="account" className="space-y-6">
