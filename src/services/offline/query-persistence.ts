@@ -51,9 +51,21 @@ export interface PersistedQueryRecord {
   readonly buster: string;
 }
 
-const WEBSITE_EXCLUDED = new Set([
-  'contactSubmissions',
-  'contactSubmissionSummary',
+/**
+ * Website reads that are safe on disk: the academy's own published-content
+ * editors. Named explicitly (default deny) — an exclusion list once named
+ * the contact-submission keys by the wrong spelling and let visitors'
+ * messages through, so a new website key family stays off disk until it is
+ * added here on purpose.
+ */
+const WEBSITE_INCLUDED = new Set([
+  'configuration',
+  'page',
+  'pages',
+  'faq-entries',
+  'faq-entry',
+  'testimonial-entries',
+  'testimonial-entry',
 ]);
 const ACADEMY_INCLUDED = new Set(['list', 'detail', 'stats', 'membership']);
 
@@ -69,7 +81,7 @@ export function isPersistableQueryKey(queryKey: QueryKey): boolean {
     case 'organizations':
       return true;
     case 'website':
-      return typeof kind === 'string' && !WEBSITE_EXCLUDED.has(kind);
+      return typeof kind === 'string' && WEBSITE_INCLUDED.has(kind);
     default:
       return false;
   }

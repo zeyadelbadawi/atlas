@@ -6,6 +6,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { QueryClient } from '@tanstack/react-query';
 import { createApiError, ApiError } from '@api';
+import {
+  academyKeys,
+  auditLogKeys,
+  courseOrderKeys,
+  customerRequestKeys,
+  websiteKeys,
+} from '@/services/query/query-keys';
 import { MemoryOfflineStore, setOfflineStoreForTesting } from './offline-store';
 import type { OfflineStore } from './offline-store';
 import {
@@ -74,17 +81,29 @@ describe('isPersistableQueryKey — default deny', () => {
     [['dashboard', 'overview'], true],
     [['notification', 'scope', 'academy:a1', 'list'], true],
     [['website', 'pages', 'a1'], true],
+    [websiteKeys.configuration('a1'), true],
+    [websiteKeys.page('a1', 'p1'), true],
+    [websiteKeys.faqEntries('a1'), true],
+    [websiteKeys.testimonialEntry('a1', 't1'), true],
   ])('keeps %j', (key, expected) => {
     expect(isPersistableQueryKey(key)).toBe(expected);
   });
 
   it.each([
     [['academy', 'members', 'a1']],
-    [['website', 'contactSubmissions', 'a1']],
+    // Built from the real key factories: a literal here once hid that the
+    // exclusion list spelled the contact-submission keys differently.
+    [websiteKeys.contactSubmissions('a1')],
+    [websiteKeys.allContactSubmissions('a1')],
+    [websiteKeys.contactSubmissionSummary('a1')],
+    [['website', 'some-future-key', 'a1']],
+    [academyKeys.members('o1', 'a1')],
+    [academyKeys.memberLookup('o1', 'a1', 'student', 'x@example.com')],
+    [auditLogKeys.academyFeed('a1')],
+    [customerRequestKeys.academyList('a1')],
+    [courseOrderKeys.list('u1')],
     [['orders', 'list']],
     [['billing']],
-    [['auditLog', 'a1']],
-    [['customerRequests', 'a1']],
     [['currentUser']],
     [[]],
   ])('never writes %j to disk', (key) => {
@@ -178,6 +197,29 @@ describe('query persistence', () => {
     ).toBeUndefined();
     const left = await store.getAll<PersistedQueryRecord>('queries');
     expect(left.map((r) => r.userId).sort()).toEqual(['u1']);
+  });
+
+  it('deletes a saved record the allowlist no longer admits (e.g. contact submissions saved by an earlier build)', async () => {
+    const now = Date.now();
+    const store = new MemoryOfflineStore();
+    setOfflineStoreForTesting(store);
+    const key = websiteKeys.contactSubmissions('a1');
+    await store.put('queries', `u1|${JSON.stringify(key)}`, {
+      userId: 'u1',
+      queryHash: JSON.stringify(key),
+      queryKey: key,
+      state: { data: [{ email: 'visitor@example.com' }], dataUpdatedAt: now },
+      savedAt: now - 1_000,
+      bytes: 40,
+      buster: BUSTER,
+    } satisfies PersistedQueryRecord);
+
+    const client = new QueryClient();
+    const result = await restorePersistedQueries(client, 'u1', now);
+
+    expect(result.count).toBe(0);
+    expect(client.getQueryData(key)).toBeUndefined();
+    expect(await store.getAll('queries')).toEqual([]);
   });
 
   it('a restored copy is never fresh, even one saved a second before the reload', async () => {
