@@ -979,5 +979,56 @@
     "notYetTitle": "You’re nearly there",
     "notYetDescription": "This was your last activity, but the course still needs the items below before it counts as completed.",
     "backToCourse": "Back to course"
+  },
+  "offline": {
+    "banner": {
+      "offlineTitle": "You're offline.",
+      "savedAt": "Showing what was saved on this device at {{time}}.",
+      "noCopy": "Pages you haven't opened on this device can't be shown until you're back online.",
+      "whatWorks": "Text lessons you've opened can still be read; videos need a connection.",
+      "pending_one": "{{count}} change will sync when you reconnect.",
+      "pending_other": "{{count}} changes will sync when you reconnect.",
+      "reconnecting": "Reconnecting…",
+      "syncing": "Syncing your progress…",
+      "synced": "Your progress is synced.",
+      "attention_one": "{{count}} change couldn't be synced.",
+      "attention_other": "{{count}} changes couldn't be synced.",
+      "retry": "Retry",
+      "discard": "Discard"
+    },
+    "lesson": {
+      "savedCopyTitle": "Reading the copy saved on this device",
+      "savedCopyDescription": "You're offline, so this is the version you opened earlier. It stays on this device until {{date}} and is removed when you sign out.",
+      "needsConnectionTitle": "This lesson needs a connection",
+      "needsConnectionDescription": "Videos, files and external lessons are never stored on your device — they always play online. Text lessons you've opened recently are kept for offline reading."
+    },
+    "video": {
+      "title": "Video needs a connection",
+      "description": "You're offline. Playback continues only for what has already loaded, then stops until you reconnect. Videos are never saved on your device."
+    },
+    "completion": {
+      "queuedTitle": "Saved on this device",
+      "queuedComplete": "This lesson is marked complete here and will sync when you're back online. If you changed it on another device since, the newest change wins.",
+      "queuedUndo": "Completion is removed here and will sync when you're back online. If you changed it on another device since, the newest change wins."
+    },
+    "assignment": {
+      "savedOnDevice": "Saved on this device",
+      "restored": "We restored text you wrote on this device that hadn't reached the server yet.",
+      "conflictShort": "Changed elsewhere",
+      "conflictTitle": "This draft was changed in another tab or on another device",
+      "conflictBody": "Choose which version to keep. Nothing is overwritten until you decide.",
+      "keepMine": "Keep my version",
+      "useTheirs": "Use the other version",
+      "queuedTitle": "Submission waiting to send",
+      "queuedDescription": "You pressed Submit at {{time}} while offline. It will be sent automatically when you're back online — it hasn't reached your instructor yet, and the due date is checked when it arrives.",
+      "notSentTitle": "Submission not sent",
+      "conflictDescription": "Your submission changed since you pressed Submit (for example, from another device), so this one wasn't sent. Review the current submission and submit again if needed.",
+      "failedDescription": "The academy didn't accept this submission. Review the assignment and try again.",
+      "cancel": "Cancel submission",
+      "discard": "Dismiss"
+    },
+    "sync": {
+      "tooOld": "This change is more than 7 days old and was not sent."
+    }
   }
 }
