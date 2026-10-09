@@ -77,6 +77,7 @@ import {
 import type { ApiError } from '@api';
 import type { RosterEnrollment } from '@types';
 import { progressCounts } from '@utils';
+import { PhoneNumberDisplay } from '@components/phone';
 
 export interface AcademyStudentDrawerProps {
   readonly academyId: string;
@@ -295,6 +296,13 @@ export function AcademyStudentDrawer({
                 >
                   {student.email}
                 </p>
+                {student.phone ? (
+                  <PhoneNumberDisplay
+                    e164={student.phone.e164}
+                    country={student.phone.country}
+                    className="text-sm text-muted-foreground"
+                  />
+                ) : null}
                 <div className="flex flex-wrap items-center gap-2 pt-1">
                   <StatusBadge
                     labelKey={getRosterStatusLabelKey(student)}

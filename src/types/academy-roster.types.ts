@@ -58,6 +58,12 @@ export interface AcademyRosterStudent {
   readonly lastActivityAt?: string;
   readonly enrollmentCount: number;
   readonly activeEnrollmentCount: number;
+  /**
+   * The student's phone number. Sent only to the academy's owner,
+   * administrator or manager (never to an instructor); absent or `null`
+   * otherwise.
+   */
+  readonly phone?: { readonly e164: string; readonly country: string } | null;
 }
 
 export type AcademyRosterPage = PaginatedResult<AcademyRosterStudent>;

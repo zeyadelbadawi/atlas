@@ -37,6 +37,7 @@ import type {
   AcademyRosterStatusFilter,
   AcademyRosterStudent,
 } from '@types';
+import { PhoneNumberDisplay } from '@components/phone';
 
 export interface AcademyStudentsTabProps {
   readonly academyId: string;
@@ -147,6 +148,13 @@ export function AcademyStudentsTab({
               <p className="truncate text-xs text-muted-foreground" dir="auto">
                 {row.original.email}
               </p>
+              {row.original.phone ? (
+                <PhoneNumberDisplay
+                  e164={row.original.phone.e164}
+                  country={row.original.phone.country}
+                  className="text-xs text-muted-foreground"
+                />
+              ) : null}
             </div>
           </div>
         ),

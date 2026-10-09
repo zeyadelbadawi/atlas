@@ -101,6 +101,7 @@
     "table": {
       "name": "الاسم",
       "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
       "status": "الحالة",
       "organizations": "المؤسسات",
       "lastSignIn": "آخر تسجيل دخول",

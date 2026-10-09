@@ -146,7 +146,8 @@
     "invalidCurrentPassword": "Your current password is incorrect.",
     "invalidCredentials": "Invalid email or password.",
     "crossOriginSession": "Your session couldn't be verified for this site. Please sign in again.",
-    "platformOwnerTwoFactorRequired": "Platform Owner tools need an authenticator app on your account. Set up two-step verification in your security settings, then try again."
+    "platformOwnerTwoFactorRequired": "Platform Owner tools need an authenticator app on your account. Set up two-step verification in your security settings, then try again.",
+    "phoneTaken": "This phone number is already in use. Enter a different number."
   },
   "subscription": {
     "required": "An active subscription is required to make this change."

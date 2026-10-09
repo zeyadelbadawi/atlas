@@ -36,7 +36,11 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ErrorState } from '@components/feedback';
 import { useToast } from '@hooks';
 import { AUTH_ROUTES } from '@app/routes/route-paths';
-import { useNameConflictError, useServerValidation } from '@forms';
+import {
+  isFieldViolationError,
+  useNameConflictError,
+  useServerValidation,
+} from '@forms';
 import { toErrorsNamespaceKey } from '@utils';
 import { INTENDED_PLAN_STORAGE_KEY } from '@features/home';
 import { useRegister, useSignupOptions } from '../hooks';
@@ -518,7 +522,7 @@ export function RegistrationForm({
         // on the field that caused it, via `useServerValidation` above —
         // this block is for every other failure.
         !(
-          registerAccount.error.kind === 'validation' &&
+          isFieldViolationError(registerAccount.error) &&
           registerAccount.error.violations &&
           registerAccount.error.violations.length > 0
         ) ? (

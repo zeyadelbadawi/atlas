@@ -39,6 +39,8 @@ export interface PlatformUserSummary {
   readonly organizationCount: number;
   readonly createdAt: string;
   readonly lastSignInAt?: string;
+  /** Phone number of an academy student (Platform Owner view only); `null` otherwise. */
+  readonly phone?: { readonly e164: string; readonly country: string } | null;
 }
 
 /** The full detail view. `roles`/`permissions` are the same flat vocabulary `CurrentUser` already carries — see `rbac.types.ts` for why no richer `Role`/`Permission` entity exists yet. */

@@ -87,6 +87,20 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
       requiredPermissions: ['academy.provisioning.view'],
       matchNestedPaths: true,
     },
+    {
+      // Phase 9 (roadmap CO11) — same owner-exclusive permission the
+      // backend endpoint itself requires, so nav and server agree. Listed
+      // with the academy items (it reports on learners), but it is an
+      // organization-wide page, so it does not wait for an active academy.
+      id: 'student-analytics',
+      tenantSurface: true,
+      requiresEntitlement: true,
+      labelKey: 'navigation:items.studentAnalytics',
+      path: DASHBOARD_ROUTES.studentAnalytics,
+      icon: LineChart,
+      requiresAuth: true,
+      requiredPermissions: ['tenant.dashboard.view'],
+    },
   ];
 
   if (activeAcademyId) {
@@ -197,23 +211,12 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
         requiresAuth: true,
         requiredPermissions: ['tenant.dashboard.view'],
       },
+      // P13 — Revenue & payouts (`academy-revenue`) is deliberately not
+      // in the sidebar. The page and its route still exist and stay
+      // owner-only (`assertCanViewAcademyFinance`); only the entry is hidden.
       {
-        // P13 — this academy's net unsettled revenue and payout history.
-        // Owner-only, matching the backend (`assertCanViewAcademyFinance`);
-        // no entitlement gate, like tenant billing — money owed stays
-        // visible while a subscription is lapsed.
-        id: 'academy-revenue',
-        labelKey: 'navigation:items.academyRevenue',
-        path: buildPath(DASHBOARD_ROUTES.academyRevenue, {
-          academyId: activeAcademyId,
-        }),
-        icon: Wallet,
-        requiresAuth: true,
-        requiredPermissions: ['tenant.billing.view'],
-      },
-      {
-        // Academy Orders — this academy's course orders, read-only. Same
-        // owner-only gate and no entitlement gate, like Revenue & payouts.
+        // Academy Orders — this academy's course orders, read-only.
+        // Owner-only gate and no entitlement gate, like tenant billing.
         id: 'academy-orders',
         labelKey: 'navigation:items.academyOrders',
         path: buildPath(DASHBOARD_ROUTES.academyOrders, {
@@ -444,17 +447,10 @@ export function getDashboardNavigation(
       id: 'add-ons',
       labelKey: 'navigation:sections.addOns',
       items: [
-        {
-          id: 'add-ons-catalog',
-          labelKey: 'navigation:items.addOnsCatalog',
-          path: DASHBOARD_ROUTES.addOns,
-          icon: Boxes,
-          requiresAuth: true,
-          // Add-ons are a commercial decision, so this is billing
-          // territory — the same owner-exclusive permission the
-          // subscription screens use.
-          requiredPermissions: ['tenant.subscription.view'],
-        },
+        // One Add-ons entry only: `tenant-add-ons` (Cloud Services) lists the
+        // add-ons on the subscription and the store's available ones. The
+        // Live Sessions install/enable store (`DASHBOARD_ROUTES.addOns`) is
+        // reached from the Live Sessions pages, not from the sidebar.
         {
           id: 'live-sessions',
           labelKey: 'navigation:items.liveSessions',
@@ -505,18 +501,6 @@ export function getDashboardNavigation(
           labelKey: 'navigation:items.tenantOverview',
           path: DASHBOARD_ROUTES.tenant,
           icon: Gauge,
-          requiresAuth: true,
-          requiredPermissions: ['tenant.dashboard.view'],
-        },
-        {
-          // Phase 9 (roadmap CO11) — same owner-exclusive permission the
-          // backend endpoint itself requires, so nav and server agree.
-          id: 'student-analytics',
-          tenantSurface: true,
-          requiresEntitlement: true,
-          labelKey: 'navigation:items.studentAnalytics',
-          path: DASHBOARD_ROUTES.studentAnalytics,
-          icon: LineChart,
           requiresAuth: true,
           requiredPermissions: ['tenant.dashboard.view'],
         },
