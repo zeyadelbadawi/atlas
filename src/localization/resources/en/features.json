@@ -157,6 +157,10 @@
         "infrastructure": {
           "title": "Production infrastructure, not a prototype",
           "description": "Automated backups, encrypted credentials, and rate-limited APIs protect your academy's data and uptime."
+        },
+        "watermark": {
+          "title": "Forensic watermark on every video",
+          "description": "Every learner sees their own personal code and a masked hint of their email moving across each course video, with a faint copy of the code across the whole frame — hard to remove without ruining the video. No web platform can fully stop screen recording; this deters it, and if a recording leaks, report it and Atlas traces it to the account and session it came from. Always on, on every plan."
         }
       }
     }

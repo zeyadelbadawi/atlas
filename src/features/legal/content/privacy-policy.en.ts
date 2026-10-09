@@ -35,6 +35,11 @@
  *   - page performance (RUM)  -> `atlas_rum_*` Prometheus histograms: page
  *                                template + phone/desktop only, aggregate,
  *                                15-day retention (Reports/REAL_USER_MONITORING.md)
+ *   - phone number            -> `user_phones` (optional, owner-only)
+ *   - forensic video watermark -> `forensic_watermarks` (no FKs, encrypted
+ *                                identity snapshot, Platform Owner only, 730 d
+ *                                after last shown, survives account deletion;
+ *                                atlas-backend docs/FORENSIC_WATERMARK.md)
  *
  * THINGS DELIBERATELY NOT CLAIMED, because they are not true of Atlas:
  * no advertising, no analytics product, no marketing pixels, no
@@ -54,7 +59,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
   summary:
     'How Atlas collects, uses, and protects personal data when you use the Atlas platform.',
   effectiveDate: '11 September 2026',
-  lastUpdated: '4 October 2026',
+  lastUpdated: '9 October 2026',
   sections: [
     {
       id: 'who-we-are',
@@ -98,7 +103,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
             {
               term: 'Account information',
               detail:
-                'Your name, email address, and a securely hashed form of your password. Atlas never stores your password itself. Optionally, a profile picture and interface preferences such as language and theme.',
+                'Your name, email address, and a securely hashed form of your password. Atlas never stores your password itself. Optionally, a mobile phone number, a profile picture and interface preferences such as language and theme.',
             },
             {
               term: 'Organization and academy information',
@@ -134,6 +139,11 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
               term: 'Quiz and exam activity',
               detail:
                 'Where an academy turns on integrity monitoring for a quiz or exam, we record certain events during an attempt — such as leaving the page or window, leaving full screen, copying, pasting, printing, or the same attempt being opened in a second session — with their time. The number of such events and whether the attempt was flagged are kept with the attempt, and, depending on the academy’s settings, an attempt may be submitted automatically. No IP address or user agent is recorded. The learner, the course’s instructors, the academy’s owners, administrators and managers, the organization owner, and Atlas platform administrators can access this activity. The individual events are deleted after 180 days; the count and the flag stay with the attempt.',
+            },
+            {
+              term: 'Forensic video watermark records',
+              detail:
+                'Each video you watch in an Atlas player, including free course previews and live classes, shows a personal watermark code. We keep a record that links that code to your account, sign-in session and device. Section 8 explains what these records contain, who can see them and how long we keep them.',
             },
             {
               term: 'Email verification',
@@ -314,8 +324,62 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
       ],
     },
     {
+      id: 'forensic-watermark',
+      heading: '8. Forensic video watermark',
+      blocks: [
+        {
+          kind: 'paragraph',
+          text: 'To protect the work of course creators, every video shown in an Atlas player — lesson videos hosted by Atlas, YouTube videos played inside the Atlas player, free course previews and live classes — carries a forensic watermark. It is a short code unique to the viewer and their current sign-in session (for example, 7K3QM-X9TR2), shown with a partly hidden form of the account’s email address (for example, l•••@gmail.com). The code moves around the picture, and a faint copy of it is repeated across the whole frame. The watermark is applied in every academy, and academies cannot turn it off.',
+        },
+        {
+          kind: 'paragraph',
+          text: 'The watermark discourages people from recording and sharing course videos, and it lets a leaked recording be traced back to the account and session it came from. It does not prevent screen recording. Atlas does not offer course videos for offline playback.',
+        },
+        {
+          kind: 'definitions',
+          items: [
+            {
+              term: 'What we record for each code',
+              detail:
+                'Your account identifier, name, email address and, if you have saved one, your phone number; your sign-in session identifier and when that session started; the IP address, country and device from which you signed in; the IP address, country, browser user agent and device of the request to watch; what was watched (the organization, academy, course, lesson or live class); when the code was issued and when it was last shown; and tamper reports — how many times, and when last, the player detected the watermark being hidden, removed or covered.',
+            },
+            {
+              term: 'Visitors who are not signed in',
+              detail:
+                'When someone watches a free course preview without signing in, the record contains no name, email address or account: only the IP address, country and browser user agent, a one-way hash of a random identifier stored in a cookie on that browser, and what was watched and when.',
+            },
+            {
+              term: 'Why we keep it',
+              detail:
+                'To protect course creators’ and academies’ content, and to investigate leaked recordings and unauthorised redistribution of course videos. These records are not used for advertising or profiling.',
+            },
+            {
+              term: 'Who can see it',
+              detail:
+                'Only Atlas platform administrators — members of the Atlas team who hold the platform owner role — can look up a code, in order to investigate a leaked recording, and every lookup is recorded in an audit log. Academies, including their owners, staff and instructors, cannot read these records. When an academy reports a leaked recording of its content, Atlas may tell that academy which account the recording was traced to, and may take action under our Terms of Service.',
+            },
+            {
+              term: 'How it is protected',
+              detail:
+                'The identity details in each record — name, email address, phone number, sign-in details and the titles of what was watched — are stored encrypted.',
+            },
+            {
+              term: 'How long we keep it',
+              detail:
+                'Each record is deleted automatically 730 days after its code was last shown.',
+            },
+            {
+              term: 'What this means if you delete your account',
+              detail:
+                'Watermark records are not deleted when you delete your account. They keep the identity details recorded when each code was issued until their retention period ends, so that a recording leaked before the deletion can still be traced.',
+            },
+          ],
+        },
+      ],
+    },
+    {
       id: 'how-we-use',
-      heading: '8. How we use personal data',
+      heading: '9. How we use personal data',
       blocks: [
         {
           kind: 'list',
@@ -327,6 +391,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
             'To prevent abuse — in particular, to stop the same customer repeatedly obtaining a free trial or gifted subscription days, and to refuse signups from disposable or undeliverable email addresses.',
             'To send emails, including messages academies send to their learners and staff, and to know whether they were delivered.',
             'To respond to your support requests.',
+            'To protect course creators’ content: showing a personal forensic watermark on course videos and investigating leaked or redistributed recordings.',
             'To keep an audit trail of significant actions, so account owners can see what happened in their organization and we can investigate security incidents.',
             'To diagnose faults and keep the service running.',
             'To comply with legal obligations.',
@@ -336,7 +401,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
     },
     {
       id: 'legal-bases',
-      heading: '9. Legal bases for processing',
+      heading: '10. Legal bases for processing',
       blocks: [
         {
           kind: 'paragraph',
@@ -353,7 +418,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
             {
               term: 'Legitimate interests',
               detail:
-                'Security, fraud and abuse prevention, and keeping the platform reliable and fast (including the sampled page-speed measurement in section 3) — balanced against your rights, which is why our eligibility and security records store hashes rather than your email address or IP address.',
+                'Security, fraud and abuse prevention, protecting course creators’ content against unauthorised recording and redistribution (the forensic video watermark in section 8), and keeping the platform reliable and fast (including the sampled page-speed measurement in section 3) — balanced against your rights, which is why our eligibility and security records store hashes rather than your email address or IP address.',
             },
             {
               term: 'Consent',
@@ -371,7 +436,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
     },
     {
       id: 'sharing',
-      heading: '10. Service providers and sharing',
+      heading: '11. Service providers and sharing',
       blocks: [
         {
           kind: 'paragraph',
@@ -430,17 +495,17 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
     },
     {
       id: 'transfers',
-      heading: '11. International transfers',
+      heading: '12. International transfers',
       blocks: [
         {
           kind: 'paragraph',
-          text: 'Some of the providers described above may store or process personal data in countries other than the one where you are located, so your personal data may be transferred across borders. Some laws — including the data protection laws of Egypt and Saudi Arabia — set conditions for such transfers. If you would like to know more about where your data is processed, contact us using the details in section 18.',
+          text: 'Some of the providers described above may store or process personal data in countries other than the one where you are located, so your personal data may be transferred across borders. Some laws — including the data protection laws of Egypt and Saudi Arabia — set conditions for such transfers. If you would like to know more about where your data is processed, contact us using the details in section 19.',
         },
       ],
     },
     {
       id: 'retention',
-      heading: '12. How long we keep data',
+      heading: '13. How long we keep data',
       blocks: [
         {
           kind: 'definitions',
@@ -448,7 +513,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
             {
               term: 'Account and content',
               detail:
-                'Kept while your account exists. If you delete your account, your personal details are removed or replaced as described in section 13, except where a record must be retained (below).',
+                'Kept while your account exists. If you delete your account, your personal details are removed or replaced as described in section 14, except where a record must be retained (below).',
             },
             {
               term: 'Sessions',
@@ -502,6 +567,11 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
                 'The individual events are deleted after 180 days. The number of events and whether an attempt was flagged stay with the attempt, as part of the academy’s learning records.',
             },
             {
+              term: 'Forensic video watermark records',
+              detail:
+                'Deleted 730 days after the code was last shown. They are kept for that period even if the account is deleted (see section 8).',
+            },
+            {
               term: 'Archived academies',
               detail:
                 'When an academy is deleted, or archived because its owner deleted their account, its public website goes offline and its content is kept. Atlas does not currently delete an archived academy’s content automatically, and an archived academy cannot currently be restored — by its owner or by Atlas.',
@@ -522,7 +592,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
     },
     {
       id: 'deletion',
-      heading: '13. Deleting your account or academy',
+      heading: '14. Deleting your account or academy',
       blocks: [
         {
           kind: 'paragraph',
@@ -538,7 +608,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
         },
         {
           kind: 'paragraph',
-          text: 'What is kept, and why: billing and audit records, and learning records held by an academy — such as quiz attempts, submissions and progress — are kept, linked to the anonymised account rather than to you, because the academy and Atlas need an accurate history. An organization’s own record is also kept, because its billing and audit history depend on it. The free trial and gifted days eligibility records described in section 6 are kept as hashes and dates only — never your email address — so that these benefits cannot be claimed again by deleting an account and signing up again. Retention periods are listed in section 12.',
+          text: 'What is kept, and why: billing and audit records, and learning records held by an academy — such as quiz attempts, submissions and progress — are kept, linked to the anonymised account rather than to you, because the academy and Atlas need an accurate history. An organization’s own record is also kept, because its billing and audit history depend on it. The free trial and gifted days eligibility records described in section 6 are kept as hashes and dates only — never your email address — so that these benefits cannot be claimed again by deleting an account and signing up again. Forensic video watermark records described in section 8 are kept, with the name, email address and other identity details recorded when each code was issued, until 730 days after the code was last shown, so that a leaked recording can still be traced. Retention periods are listed in section 13.',
         },
         {
           kind: 'paragraph',
@@ -548,7 +618,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
     },
     {
       id: 'security',
-      heading: '14. Security',
+      heading: '15. Security',
       blocks: [
         {
           kind: 'list',
@@ -570,7 +640,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
     },
     {
       id: 'your-rights',
-      heading: '15. Your rights',
+      heading: '16. Your rights',
       blocks: [
         {
           kind: 'paragraph',
@@ -588,7 +658,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
     },
     {
       id: 'children',
-      heading: '16. Children',
+      heading: '17. Children',
       blocks: [
         {
           kind: 'paragraph',
@@ -598,7 +668,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
     },
     {
       id: 'changes',
-      heading: '17. Changes to this policy',
+      heading: '18. Changes to this policy',
       blocks: [
         {
           kind: 'paragraph',
@@ -608,7 +678,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
     },
     {
       id: 'contact',
-      heading: '18. Contact us',
+      heading: '19. Contact us',
       blocks: [
         {
           kind: 'paragraph',

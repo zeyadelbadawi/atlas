@@ -63,6 +63,10 @@
     "security": {
       "title": "Real tenant isolation",
       "description": "Every academy's data is isolated at the database level, not just hidden in the interface — one customer's data is never reachable by another's."
+    },
+    "watermark": {
+      "title": "Forensic watermark on every video",
+      "description": "Every learner sees their own personal code moving across each course video. It deters recording and sharing — and if a recording leaks, report it and Atlas traces it to the account and session it came from. Always on, on every plan."
     }
   },
   "howItWorks": {

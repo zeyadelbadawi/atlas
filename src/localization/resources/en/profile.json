@@ -168,6 +168,7 @@
     "consequenceSessions": "You are signed out everywhere immediately, and you will not be able to sign in again.",
     "consequenceAcademies": "Any academy you own is archived, which takes its public website offline.",
     "consequenceRecords": "Records that must be kept — billing history, audit entries, and content you posted — remain, but are no longer linked to you by name.",
+    "consequenceWatermark": "Forensic video watermark records — which link the codes shown on videos you watched to your name, email and session — are kept until 730 days after each code was last shown, so a leaked recording can still be traced.",
     "action": "Delete my account",
     "confirmTitle": "Delete your account permanently?",
     "confirmDescription": "This is irreversible. Please confirm you want to delete your Atlas account.",
@@ -204,7 +205,7 @@
   },
   "phone": {
     "title": "Phone number",
-    "description": "Your mobile number. Only you can see it.",
+    "description": "Your mobile number. Academies and other users can’t see it. It’s also stored, encrypted, in the forensic watermark records described in our Privacy Policy.",
     "label": "Mobile number",
     "empty": "You haven’t added a phone number yet.",
     "add": "Add phone number",
@@ -226,7 +227,7 @@
     "rateLimited": "You’ve changed your number several times recently. Please try again later.",
     "prompt": {
       "title": "Add your phone number",
-      "body": "So we can reach you about your account if we ever need to. Only you can see it.",
+      "body": "So we can reach you about your account if we ever need to. Academies and other users can’t see it.",
       "action": "Add phone number",
       "dismiss": "Not now"
     }

@@ -198,6 +198,7 @@ export function DeleteAccountCard({
           <li>{t('profile:deleteAccount.consequenceSessions')}</li>
           <li>{t('profile:deleteAccount.consequenceAcademies')}</li>
           <li>{t('profile:deleteAccount.consequenceRecords')}</li>
+          <li>{t('profile:deleteAccount.consequenceWatermark')}</li>
         </ul>
 
         <Button
