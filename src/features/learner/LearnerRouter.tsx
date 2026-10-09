@@ -31,6 +31,7 @@ import { SectionLoader } from '@components/loading';
 import { LEARNER_ROUTES } from '@app/routes/route-paths';
 import type { PublicWebsiteLocale } from '@types';
 import { LearnerShell } from './components/LearnerShell';
+import { LearnerConnectivityBanner } from './components/LearnerConnectivityBanner';
 import { LearnerSurfaceProvider } from './context/LearnerSurface.context';
 
 const LearnerOverviewPage = lazy(() => import('./pages/LearnerOverviewPage'));
@@ -98,6 +99,8 @@ export function LearnerRouter({
       locale={locale}
       buildHref={buildHref}
     >
+      {/* Academy offline — what the connection and saved changes are doing. */}
+      <LearnerConnectivityBanner />
       <Routes>
         {/* The player, ahead of the shell's own `courses/:courseId` so
               a deeper path is never swallowed by the course page. Its own

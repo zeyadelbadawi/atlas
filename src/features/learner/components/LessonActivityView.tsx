@@ -25,7 +25,7 @@
  */
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ExternalLink, FileDown, PauseCircle } from 'lucide-react';
+import { ExternalLink, FileDown, PauseCircle, WifiOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -44,6 +44,12 @@ export interface LessonActivityViewProps {
   readonly onPositionSource: (getPosition: () => number) => void;
   /** Called when the media reaches its end, so auto-advance may arm. */
   readonly onFinished: () => void;
+  /**
+   * Academy offline — the connection dropped while this lesson is open. A
+   * video keeps playing only what is already buffered; the learner is told
+   * so instead of watching it freeze without explanation.
+   */
+  readonly isOffline?: boolean;
 }
 
 export function LessonActivityView({
@@ -52,6 +58,7 @@ export function LessonActivityView({
   onCredentialFailure,
   onPositionSource,
   onFinished,
+  isOffline = false,
 }: LessonActivityViewProps): JSX.Element {
   const { t } = useTranslation();
   const [readingPercentage, setReadingPercentage] = useState(0);
@@ -83,6 +90,16 @@ export function LessonActivityView({
   return (
     <div className="space-y-4">
       {leaseNotice}
+
+      {isOffline && grant.kind !== 'text' ? (
+        <Alert role="status" className="border-warning" data-offline-video>
+          <WifiOff className="size-4" aria-hidden />
+          <AlertTitle>{t('learning:offline.video.title')}</AlertTitle>
+          <AlertDescription>
+            {t('learning:offline.video.description')}
+          </AlertDescription>
+        </Alert>
+      ) : null}
 
       {grant.kind === 'video' && grant.video ? (
         <ProtectedVideoPlayer

@@ -16,7 +16,19 @@
  * so the UI can say "Offline copies are unavailable in this browser".
  */
 
-export type OfflineStoreName = 'queries' | 'outbox' | 'meta';
+/**
+ * `content` (academy offline work) holds a learner's own offline material:
+ * server-permitted lesson text, local assignment drafts and the answer
+ * journal of an untimed quiz. Separate from `queries` so the query restore
+ * pass never mistakes one for a stale query record.
+ */
+export type OfflineStoreName = 'queries' | 'outbox' | 'meta' | 'content';
+
+import {
+  OFFLINE_DB_PREFIX,
+  currentOfflineScope,
+  onOfflineScopeChange,
+} from './offline-scope';
 
 export type OfflineStoreStatus = 'available' | 'unavailable' | 'full';
 
@@ -29,10 +41,14 @@ export interface OfflineStore {
   status(): OfflineStoreStatus;
 }
 
-const DB_NAME = 'atlas-offline';
-/** Bump with a new `upgrade` step if the stores ever change shape. */
-const DB_VERSION = 1;
-const STORES: readonly OfflineStoreName[] = ['queries', 'outbox', 'meta'];
+/** Bump with a new `upgrade` step if the stores ever change shape. v2: `content`. */
+const DB_VERSION = 2;
+const STORES: readonly OfflineStoreName[] = [
+  'queries',
+  'outbox',
+  'meta',
+  'content',
+];
 
 function isQuotaError(error: unknown): boolean {
   const name = (error as { name?: unknown } | null)?.name;
@@ -50,6 +66,9 @@ export class IndexedDbOfflineStore implements OfflineStore {
   private dbPromise: Promise<IDBDatabase | null> | null = null;
   private state: OfflineStoreStatus = 'available';
 
+  /** One database per offline scope — see `offline-scope.ts`. */
+  constructor(private readonly dbName: string = OFFLINE_DB_PREFIX) {}
+
   status(): OfflineStoreStatus {
     return this.state;
   }
@@ -64,7 +83,7 @@ export class IndexedDbOfflineStore implements OfflineStore {
       }
       let request: IDBOpenDBRequest;
       try {
-        request = indexedDB.open(DB_NAME, DB_VERSION);
+        request = indexedDB.open(this.dbName, DB_VERSION);
       } catch {
         this.state = 'unavailable';
         resolve(null);
@@ -201,14 +220,68 @@ function structuredCloneSafe<T>(value: T): T {
 }
 
 let activeStore: OfflineStore | null = null;
+let testStore: OfflineStore | null = null;
 
-/** The process-wide store (IndexedDB in the browser). */
+// A different scope is a different database: drop the open handle.
+onOfflineScopeChange(() => {
+  activeStore = null;
+});
+
+/** The store of the current offline scope (IndexedDB in the browser). */
 export function offlineStore(): OfflineStore {
-  if (!activeStore) activeStore = new IndexedDbOfflineStore();
+  if (testStore) return testStore;
+  if (!activeStore)
+    activeStore = new IndexedDbOfflineStore(currentOfflineScope().dbName);
   return activeStore;
 }
 
 /** Tests replace the store; `null` restores the default. */
 export function setOfflineStoreForTesting(store: OfflineStore | null): void {
-  activeStore = store;
+  testStore = store;
+}
+
+/**
+ * Deletes every Atlas offline database of THIS origin except the current
+ * scope's (which the caller clears in place). Sign-out ends the session for
+ * the whole origin — the session cookie is per origin — so on a host that
+ * serves several surfaces (local development) the other surfaces' copies
+ * belong to the person who just left too. Best effort: browsers without
+ * `indexedDB.databases()` keep only the current scope wiped.
+ */
+export async function deleteOtherOfflineDatabases(): Promise<void> {
+  if (typeof indexedDB === 'undefined') return;
+  const list = (
+    indexedDB as IDBFactory & {
+      databases?: () => Promise<readonly { name?: string }[]>;
+    }
+  ).databases;
+  if (typeof list !== 'function') return;
+  let names: string[];
+  try {
+    names = (await list.call(indexedDB))
+      .map((db) => db.name ?? '')
+      .filter(
+        (name) =>
+          (name === OFFLINE_DB_PREFIX ||
+            name.startsWith(`${OFFLINE_DB_PREFIX}:`)) &&
+          name !== currentOfflineScope().dbName
+      );
+  } catch {
+    return;
+  }
+  await Promise.all(
+    names.map(
+      (name) =>
+        new Promise<void>((resolve) => {
+          try {
+            const request = indexedDB.deleteDatabase(name);
+            request.onsuccess = () => resolve();
+            request.onerror = () => resolve();
+            request.onblocked = () => resolve();
+          } catch {
+            resolve();
+          }
+        })
+    )
+  );
 }

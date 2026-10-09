@@ -33,13 +33,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { GraduationCap } from 'lucide-react';
+import { CloudUpload, GraduationCap } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { buildPath, LEARNER_ROUTES } from '@app/routes/route-paths';
 import { useAuth } from '@hooks';
+import { useConnectivity } from '@app/providers/offline/useOfflineState';
 import type { CourseSequenceItem, LanguageCode } from '@types';
 import { useLearnerSurface } from '../context/LearnerSurface.context';
 import {
@@ -52,6 +53,9 @@ import { ActivityLockCard } from '../components/ActivityLockCard';
 import { AssessmentActivityView } from '../components/AssessmentActivityView';
 import { DeviceLimitDialog } from '../components/DeviceLimitDialog';
 import { LessonActivityView } from '../components/LessonActivityView';
+import { LessonNeedsConnection } from '../components/LessonNeedsConnection';
+import { OfflineLessonView } from '../components/OfflineLessonView';
+import { useOfflineLessonText } from '../hooks/useOfflineLessonText';
 import { PlayerActionBar } from '../components/PlayerActionBar';
 import { PlayerFailureState } from '../components/PlayerFailureState';
 import { PlayerShell } from '../components/PlayerShell';
@@ -121,6 +125,22 @@ export default function LearnerPlayerPage(): JSX.Element {
     sequenceSaysAvailable,
   });
   const { grant, failure, refresh } = grantQuery;
+
+  /*
+   * ACADEMY OFFLINE. Without a connection there is no grant. A text lesson
+   * the server allowed for offline reading is then read from this device's
+   * copy; anything else (video above all) says honestly that it needs a
+   * connection. Never a spinner that waits for a network that is not there.
+   */
+  const connectivity = useConnectivity();
+  const isOffline = connectivity.state === 'offline';
+  const noLiveGrant =
+    isLessonRoute &&
+    !isLockedActivity &&
+    !grant &&
+    (isOffline || failure?.kind === 'network');
+  const offlineLesson = useOfflineLessonText(courseId, currentId, noLiveGrant);
+  const offlineRecord = noLiveGrant ? offlineLesson.record : null;
 
   /*
    * The heartbeat reads position through a getter the content view hands
@@ -253,8 +273,9 @@ export default function LearnerPlayerPage(): JSX.Element {
   // and the bar says so instead of waiting for evidence that cannot come.
   const isUnobservableEmbed =
     grant?.kind === 'external' && !!grant.externalEmbed;
+  const completionRule = grant?.completionRule ?? offlineRecord?.completionRule;
   const canComplete =
-    grant?.completionRule === 'watched_ratio'
+    completionRule === 'watched_ratio'
       ? !isUnobservableEmbed && heartbeat.completionEligible
       : true;
   const completionHintKey =
@@ -264,7 +285,7 @@ export default function LearnerPlayerPage(): JSX.Element {
 
   const handleComplete = () => {
     if (!isLessonRoute || !currentId) return;
-    completeLesson.mutate({ lessonId: currentId });
+    completeLesson.mutate(currentId);
   };
 
   /*
@@ -288,14 +309,20 @@ export default function LearnerPlayerPage(): JSX.Element {
   );
   const needsLessonCompletion = isLessonRoute && !isCompleted;
   const canFinish =
-    !needsLessonCompletion || (!!grant && canComplete && heartbeat.leaseHeld);
+    !needsLessonCompletion ||
+    ((!!grant || !!offlineRecord) && canComplete && heartbeat.leaseHeld);
   const handleFinish = async () => {
     if (finishingRef.current || !canFinish) return;
     finishingRef.current = true;
     setIsFinishing(true);
     try {
       if (needsLessonCompletion && currentId) {
-        await completeLesson.mutateAsync({ lessonId: currentId });
+        const outcome = await completeLesson.mutateAsync(currentId);
+        // Offline: the completion waits on this device (the player says
+        // so); the completion page reads the server's verdict, which is
+        // not reachable yet — stay here rather than open a page that can
+        // only say it needs a connection.
+        if (outcome.queued) return;
       }
       navigate(completeHref);
     } catch {
@@ -331,6 +358,15 @@ export default function LearnerPlayerPage(): JSX.Element {
         availableAt={current?.availableAt}
       />
     );
+  } else if (offlineRecord) {
+    content = (
+      <OfflineLessonView
+        lesson={offlineRecord}
+        onFinished={() => setHasFinishedPlaying(true)}
+      />
+    );
+  } else if (noLiveGrant && (offlineLesson.checked || isOffline)) {
+    content = <LessonNeedsConnection />;
   } else if (failure) {
     content = (
       <PlayerFailureState
@@ -353,6 +389,7 @@ export default function LearnerPlayerPage(): JSX.Element {
     content = (
       <LessonActivityView
         grant={grant}
+        isOffline={isOffline}
         leaseHeld={heartbeat.leaseHeld}
         onCredentialFailure={refresh}
         onPositionSource={handlePositionSource}
@@ -406,6 +443,11 @@ export default function LearnerPlayerPage(): JSX.Element {
    */
   const showPreviewRail = !!grant?.isPreview && items.length === 0;
 
+  /* The last operation on this lesson waits in the outbox (offline). */
+  const lastOutcome = undoCompletion.data ?? completeLesson.data;
+  const queuedAction =
+    lastOutcome && lastOutcome.queued === true ? lastOutcome.action : null;
+
   return (
     <>
       <PlayerShell
@@ -428,7 +470,11 @@ export default function LearnerPlayerPage(): JSX.Element {
               next={next}
               language={language}
               onGoTo={goTo}
-              onComplete={isLessonRoute && grant ? handleComplete : undefined}
+              onComplete={
+                isLessonRoute && (grant || offlineRecord)
+                  ? handleComplete
+                  : undefined
+              }
               onUndoComplete={isLessonRoute ? handleUndo : undefined}
               isCompleted={isCompleted}
               isCompleting={completeLesson.isPending}
@@ -455,6 +501,21 @@ export default function LearnerPlayerPage(): JSX.Element {
           ) : null
         }
       >
+        {queuedAction ? (
+          <Alert role="status" data-offline-queued={queuedAction}>
+            <CloudUpload className="size-4" aria-hidden />
+            <AlertTitle>
+              {t('learning:offline.completion.queuedTitle')}
+            </AlertTitle>
+            <AlertDescription>
+              {t(
+                queuedAction === 'complete'
+                  ? 'learning:offline.completion.queuedComplete'
+                  : 'learning:offline.completion.queuedUndo'
+              )}
+            </AlertDescription>
+          </Alert>
+        ) : null}
         {showPreviewRail ? (
           <Alert>
             <GraduationCap className="size-4" aria-hidden />

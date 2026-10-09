@@ -89,12 +89,22 @@ export interface CreateAssignmentSubmissionPayload {
   readonly response?: string;
   /** The student's own protected asset, from `uploadSubmissionAttachment`. */
   readonly attachmentAssetId?: string;
+  /**
+   * Academy offline — this submit action's id, the same on every retry
+   * (including one sent later from the offline outbox): the server returns
+   * the original submission instead of submitting again.
+   */
+  readonly idempotencyKey?: string;
+  /** The `submittedRevision` the learner saw; a server past it refuses (409) rather than re-applies. */
+  readonly baseRevision?: number;
 }
 
 /** P64 Phase 3 — draft autosave. `attachmentAssetId: null` detaches. */
 export interface SaveAssignmentDraftPayload {
   readonly response?: string;
   readonly attachmentAssetId?: string | null;
+  /** Academy offline — compare-and-set base: the `draftSavedAt` this text started from (`null` = none). */
+  readonly baseDraftSavedAt?: string | null;
 }
 
 /** Assignment AUTHORING payload (Phase 4) — reached only by an Owner/Manager/course-assigned Instructor. */

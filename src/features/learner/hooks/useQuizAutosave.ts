@@ -14,6 +14,24 @@
  * expired, submitted, invalidated) stops the queue and tells the caller,
  * which then asks the server for results rather than guessing.
  *
+ * A STALE SAVE IS REBASED, NEVER DROPPED (academy offline work). The
+ * server ignores a revision it has already passed (`applied: false`) — two
+ * tabs, or a reload while a save was in flight. That used to be treated as
+ * success and the learner's latest answers were silently lost. Now the
+ * queue adopts the server's revision, merges: every question the learner
+ * changed since the last CONFIRMED save keeps the learner's answer, every
+ * other question takes the server's (newer) copy, and sends the merge at
+ * revision + 1. The runner is told (`onRebased`) so the screen shows what
+ * is being saved. Bounded: after `MAX_REBASES` in a row it backs off like
+ * any other failure, still holding the answers.
+ *
+ * UNTIMED ATTEMPTS ARE JOURNALLED ON THE DEVICE (`journal`). Every edit is
+ * written to the learner's own offline store, so a reload or a closed tab
+ * while offline loses nothing; the journal is restored by the runner and
+ * deleted once the server confirmed it. A TIMED attempt is never
+ * journalled and never completed offline: its clock, its deadline and its
+ * submission belong to the server.
+ *
  * FLUSH ON HIDE. `pagehide` and a hidden `visibilitychange` flush the
  * pending edit immediately: the browser gives an in-flight request a
  * moment to complete after a tab is backgrounded, which is the closest
@@ -23,7 +41,48 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { isApiError } from '@api';
 import type { QuizAnswer, SaveQuizAnswersResponse } from '@types';
 import { useSaveQuizAnswers } from '@features/learning';
-import { AUTOSAVE_DEBOUNCE_MS } from '../utils/quiz-attempt.utils';
+import { deleteQuizJournal, saveQuizJournal } from '@services/offline';
+import {
+  AUTOSAVE_DEBOUNCE_MS,
+  answersEqual,
+  toAnswerMap,
+} from '../utils/quiz-attempt.utils';
+
+/** Consecutive stale answers rebased before the queue backs off instead. */
+export const MAX_REBASES = 3;
+
+/**
+ * Merges the learner's unconfirmed edits onto the server's newer copy.
+ *
+ *   - a question the learner changed since `baseline` (the last answers the
+ *     server confirmed from this queue) keeps the learner's answer —
+ *     including a cleared one;
+ *   - every other question takes the server's copy.
+ *
+ * Without a server copy (an older server), the learner's full set is kept.
+ */
+export function rebaseAnswers(
+  server: readonly QuizAnswer[] | undefined,
+  local: readonly QuizAnswer[],
+  baseline: readonly QuizAnswer[]
+): QuizAnswer[] {
+  if (!server) return [...local];
+  const serverMap = toAnswerMap(server);
+  const localMap = toAnswerMap(local);
+  const baseMap = toAnswerMap(baseline);
+  const ids = new Set([
+    ...local.map((a) => a.questionId),
+    ...server.map((a) => a.questionId),
+    ...baseline.map((a) => a.questionId),
+  ]);
+  const merged: QuizAnswer[] = [];
+  for (const id of ids) {
+    const edited = !answersEqual(localMap[id], baseMap[id]);
+    const chosen = edited ? localMap[id] : serverMap[id];
+    if (chosen) merged.push(chosen);
+  }
+  return merged;
+}
 
 export type AutosaveState = 'idle' | 'dirty' | 'saving' | 'saved' | 'offline';
 
@@ -47,6 +106,15 @@ export interface UseQuizAutosaveOptions {
   readonly onTerminal?: (messageKey: string) => void;
   /** Every confirmed save, so the clock can re-sync from `serverNow`. */
   readonly onSaved?: (response: SaveQuizAnswersResponse) => void;
+  /** The answers the server last confirmed (the session's), the rebase baseline. */
+  readonly confirmedAnswers?: readonly QuizAnswer[];
+  /** A stale save was rebased onto the server's copy: these answers are now being saved. */
+  readonly onRebased?: (answers: readonly QuizAnswer[]) => void;
+  /**
+   * Journal edits on this device — UNTIMED attempts only (`timed: true`
+   * refuses, by design).
+   */
+  readonly journal?: { readonly userId: string; readonly timed: boolean };
 }
 
 export interface UseQuizAutosaveResult {
@@ -68,6 +136,9 @@ export function useQuizAutosave({
   enabled,
   onTerminal,
   onSaved,
+  confirmedAnswers,
+  onRebased,
+  journal,
 }: UseQuizAutosaveOptions): UseQuizAutosaveResult {
   const save = useSaveQuizAnswers(courseId, quizId);
   const saveRef = useRef(save);
@@ -85,13 +156,20 @@ export function useQuizAutosave({
   const stoppedRef = useRef(false);
   const onTerminalRef = useRef(onTerminal);
   const onSavedRef = useRef(onSaved);
+  const onRebasedRef = useRef(onRebased);
+  const journalRef = useRef(journal);
   onTerminalRef.current = onTerminal;
   onSavedRef.current = onSaved;
+  onRebasedRef.current = onRebased;
+  journalRef.current = journal;
+  const baselineRef = useRef<readonly QuizAnswer[]>(confirmedAnswers ?? []);
+  const rebasesRef = useRef(0);
 
   useEffect(() => {
     revisionRef.current = initialRevision;
     stoppedRef.current = false;
     failuresRef.current = 0;
+    rebasesRef.current = 0;
   }, [initialRevision, attemptId]);
 
   const clearTimers = () => {
@@ -117,9 +195,33 @@ export function useQuizAutosave({
         });
         revisionRef.current = Math.max(revisionRef.current, response.revision);
         failuresRef.current = 0;
+        if (response.applied === false) {
+          // Stale: the server holds a newer copy. Rebase and send again —
+          // the learner's answers are never dropped.
+          rebasesRef.current += 1;
+          const merged = rebaseAnswers(
+            response.answers,
+            pendingRef.current ?? answers,
+            baselineRef.current
+          );
+          if (response.answers) baselineRef.current = response.answers;
+          pendingRef.current = merged;
+          onRebasedRef.current?.(merged);
+          if (rebasesRef.current > MAX_REBASES) {
+            throw new Error('quiz-autosave: rebase limit');
+          }
+          setState('dirty');
+          return;
+        }
+        rebasesRef.current = 0;
+        baselineRef.current = answers;
         setLastSavedAt(response.savedAt ?? new Date().toISOString());
         onSavedRef.current?.(response);
         setState(pendingRef.current ? 'dirty' : 'saved');
+        const journalOptions = journalRef.current;
+        if (!pendingRef.current && journalOptions && !journalOptions.timed) {
+          void deleteQuizJournal(journalOptions.userId, attemptId);
+        }
       } catch (error) {
         const key = isApiError(error) ? error.messageKey : '';
         if (isApiError(error) && TERMINAL_MESSAGE_KEYS.has(key)) {
@@ -163,6 +265,16 @@ export function useQuizAutosave({
       if (!enabled || stoppedRef.current) return;
       pendingRef.current = answers;
       setState('dirty');
+      const journalOptions = journalRef.current;
+      if (journalOptions && !journalOptions.timed) {
+        void saveQuizJournal({
+          userId: journalOptions.userId,
+          attemptId,
+          answers,
+          baseRevision: revisionRef.current,
+          timed: false,
+        });
+      }
       if (debounceRef.current !== null)
         window.clearTimeout(debounceRef.current);
       debounceRef.current = window.setTimeout(() => {
@@ -170,7 +282,7 @@ export function useQuizAutosave({
         void send();
       }, AUTOSAVE_DEBOUNCE_MS);
     },
-    [enabled, send]
+    [enabled, send, attemptId]
   );
 
   const flush = useCallback(async () => {

@@ -165,6 +165,8 @@ export interface SaveQuizAnswersResponse {
   readonly savedAt: string | null;
   readonly serverNow: string;
   readonly deadlineAt: string | null;
+  /** Only when `applied` is false: the newer answers the server holds, to rebase onto. */
+  readonly answers?: readonly QuizAnswer[];
 }
 
 /** The settings frozen into the attempt when it started. */
