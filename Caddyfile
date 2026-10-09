@@ -22,6 +22,14 @@
 		X-Content-Type-Options "nosniff"
 		X-Frame-Options "SAMEORIGIN"
 		Referrer-Policy "strict-origin-when-cross-origin"
+		# Powerful browser features are off unless a page of ours needs them:
+		# camera/microphone/screen-share for live classes (the Zoom SDK runs
+		# in our own page), fullscreen for our own player containers (the
+		# forensic watermark must stay visible, so videos never go fullscreen
+		# by themselves), YouTube embeds for autoplay/encrypted media.
+		# Picture-in-picture is off everywhere: it would show a lesson video
+		# without its watermark.
+		Permissions-Policy "camera=(self), microphone=(self), display-capture=(self), fullscreen=(self), autoplay=(self \"https://www.youtube-nocookie.com\" \"https://www.youtube.com\"), encrypted-media=(self \"https://www.youtube-nocookie.com\" \"https://www.youtube.com\"), picture-in-picture=(), geolocation=(), payment=(), usb=(), serial=(), hid=(), bluetooth=(), midi=(), magnetometer=(), gyroscope=(), accelerometer=(), idle-detection=(), xr-spatial-tracking=()"
 	}
 }
 
