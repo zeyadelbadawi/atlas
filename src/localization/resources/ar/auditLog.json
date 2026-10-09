@@ -664,7 +664,11 @@
         "confirmed": "{{actor}} أكّد حذف الحساب"
       },
       "deleted": "{{actor}} حذف حسابه",
-      "deleted_by_platform_owner": "{{actor}} حذف حساب مستخدم"
+      "deleted_by_platform_owner": "{{actor}} حذف حساب مستخدم",
+      "phone": {
+        "updated": "{{actor}} حدّث رقم هاتفه",
+        "removed": "{{actor}} حذف رقم هاتفه"
+      }
     },
     "plan": {
       "created": "{{actor}} أنشأ الباقة «{{target}}»",

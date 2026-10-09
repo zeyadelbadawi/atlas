@@ -127,6 +127,12 @@ export const userKeys = {
   profile: (userId: string) => [...userKeys.all, 'profile', userId] as const,
   preferences: (userId: string) =>
     [...userKeys.all, 'preferences', userId] as const,
+  /**
+   * The signed-in account's own phone number. Personal data: the `user`
+   * root is NOT in the offline persistence allowlist
+   * (`services/offline/query-persistence.ts`), and must never be added.
+   */
+  phone: () => [...userKeys.all, 'phone'] as const,
 } as const;
 
 /**

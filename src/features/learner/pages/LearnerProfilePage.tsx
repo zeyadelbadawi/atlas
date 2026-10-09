@@ -28,6 +28,7 @@ import { useCurrentUser } from '@hooks';
 import {
   ProfileAccountSection,
   ProfilePersonalSection,
+  ProfilePhoneCard,
   ProfilePreferencesSection,
 } from '@features/profile';
 import { LearnerPageHeader } from '../components/LearnerPageHeader';
@@ -83,6 +84,7 @@ export default function LearnerProfilePage(): JSX.Element {
 
         <TabsContent value="personal" className="space-y-6">
           <ProfilePersonalSection user={user} />
+          <ProfilePhoneCard />
         </TabsContent>
 
         <TabsContent value="account" className="space-y-6">

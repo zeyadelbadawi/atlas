@@ -44,6 +44,7 @@ import { useLearnerSurface } from '../context/LearnerSurface.context';
 import { useLearnerOverview } from '../hooks';
 import { learnerAssessmentStateLabel } from '../utils/assessment-state.utils';
 import { learningStateOf, progressCounts } from '@utils';
+import { PhoneNumberPrompt } from '@features/profile';
 
 export default function LearnerOverviewPage(): JSX.Element {
   const { t } = useTranslation();
@@ -110,6 +111,9 @@ export default function LearnerOverviewPage(): JSX.Element {
   return (
     <>
       {header}
+
+      {/* Accounts without a phone number get a dismissible nudge. */}
+      <PhoneNumberPrompt profileHref={buildHref(LEARNER_ROUTES.profile)} />
 
       {/* Continue learning — the answer to the one question. */}
       {data.continueLearning.length > 0 ? (
