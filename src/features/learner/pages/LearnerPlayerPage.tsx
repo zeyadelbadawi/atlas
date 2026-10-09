@@ -317,7 +317,12 @@ export default function LearnerPlayerPage(): JSX.Element {
     setIsFinishing(true);
     try {
       if (needsLessonCompletion && currentId) {
-        await completeLesson.mutateAsync(currentId);
+        const outcome = await completeLesson.mutateAsync(currentId);
+        // Offline: the completion waits on this device (the player says
+        // so); the completion page reads the server's verdict, which is
+        // not reachable yet — stay here rather than open a page that can
+        // only say it needs a connection.
+        if (outcome.queued) return;
       }
       navigate(completeHref);
     } catch {
