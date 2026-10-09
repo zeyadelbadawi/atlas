@@ -88,6 +88,12 @@ export function buildYouTubeEmbedUrl(
      * failed one instead of guessing.
      */
     readonly jsApiOrigin?: string;
+    /**
+     * Hides the embed's own fullscreen button (`fs=0`). The lesson player
+     * makes its FRAME fullscreen instead, so the forensic watermark drawn
+     * over the embed stays on screen.
+     */
+    readonly disableFullscreen?: boolean;
   }
 ): string | null {
   // Defence in depth: the server vets the id, and so does this. An id that
@@ -98,6 +104,7 @@ export function buildYouTubeEmbedUrl(
   if (start !== undefined && Number.isInteger(start) && start > 0) {
     params.set('start', String(start));
   }
+  if (options?.disableFullscreen) params.set('fs', '0');
   if (options?.jsApiOrigin) {
     params.set('enablejsapi', '1');
     params.set('origin', options.jsApiOrigin);

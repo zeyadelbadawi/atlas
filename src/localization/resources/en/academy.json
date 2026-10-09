@@ -620,21 +620,28 @@
     "sectionTitle": "Content protection",
     "ownerOnly": "Only the academy owner can view or change content protection, video and device settings.",
     "content": {
-      "title": "Video watermark and player",
-      "description": "How your academy's hosted videos are marked and played for learners.",
+      "title": "Video protection",
+      "description": "How every video in your academy is protected for learners. These apply automatically to every plan.",
       "watermark": {
-        "label": "Watermark videos",
-        "description": "Draws an identifying overlay on every hosted video a learner watches, so a recording can be traced back to the account it came from."
+        "label": "Forensic watermark on every video",
+        "badge": "Always on",
+        "description": "Each learner sees their own personal code and a masked hint of their account moving across the video, with a faint pattern of the code over the whole picture. It covers hosted videos, YouTube lessons, free previews and live classes, and it can't be turned off.",
+        "leak": "If a recording of your course turns up somewhere, contact Atlas support with the code you can see in it — Atlas can trace it to the account and session it came from."
       },
       "watermarkText": {
-        "label": "Watermark text",
-        "placeholder": "Each learner's own ID",
-        "description": "Leave blank to show each learner their own short ID (for example “ID 1A2B3C4D”). Custom text replaces that ID for everyone, so the overlay no longer shows which learner was watching. Up to {{count}} characters.",
         "tooLong": "Keep the watermark text to 80 characters or fewer."
       },
       "deterrents": {
-        "title": "Player restrictions",
+        "title": "Player protections",
         "alwaysOn": "Always on",
+        "fullscreen": {
+          "label": "Fullscreen keeps the watermark",
+          "description": "Fullscreen always includes the watermark, and videos can't be cast to another screen."
+        },
+        "tamper": {
+          "label": "Tamper detection",
+          "description": "If the watermark is hidden or removed in the browser, playback pauses and Atlas is notified."
+        },
         "download": {
           "label": "Download button hidden",
           "description": "The player does not offer a download option."
@@ -647,21 +654,8 @@
           "label": "Right-click menu suppressed",
           "description": "“Save video as” is not offered over the player."
         },
-        "note": "The learner player always applies these, whatever the academy's settings. They discourage casual copying; they do not stop screen recording, and nothing in a browser can."
-      },
-      "confirmOn": {
-        "title": "Turn the watermark on?",
-        "description": "Every learner will see the watermark on every hosted video from their next lesson onwards.",
-        "action": "Turn on"
-      },
-      "confirmOff": {
-        "title": "Turn the watermark off?",
-        "description": "Learners will no longer see an identifying overlay on hosted videos, so a recording can no longer be traced back to the account it came from. This applies from their next lesson onwards.",
-        "action": "Turn off"
-      },
-      "save": "Save",
-      "saved": "Content protection updated",
-      "saveFailed": "The content protection settings could not be saved."
+        "note": "These discourage copying and make a leaked recording traceable. They do not stop screen recording — no website can."
+      }
     },
     "videoTier": {
       "title": "Video protection tier",

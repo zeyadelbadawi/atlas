@@ -822,7 +822,7 @@
       "notProtectedTitle": "This content is hosted somewhere else",
       "notProtectedDescription": "The academy links to it rather than hosting it, so none of the academy’s protections apply to it. Opening it takes you out of this course.",
       "open": "Open in a new tab",
-      "youtubeNotice": "This video is hosted on YouTube. The academy’s protections do not apply to it, and your watching is not tracked here."
+      "youtubeNotice": "This video is hosted on YouTube. Your personal watermark is shown over it, but YouTube's own player is outside the academy's control, and your watching is not tracked here."
     },
     "resources": {
       "title": "Resources",
@@ -886,7 +886,7 @@
           "no": "Playback is not restricted to this academy’s websites."
         },
         "watermark": {
-          "yes": "Your account is shown over the video.",
+          "yes": "A personal watermark code linked to your account and this sign-in is shown over the video.",
           "no": "No watermark is drawn over this content."
         }
       },
@@ -1029,6 +1029,27 @@
     },
     "sync": {
       "tooOld": "This change is more than 7 days old and was not sent."
+    }
+  },
+  "watermark": {
+    "previewTag": "Preview",
+    "caption": {
+      "account": "Personal watermark",
+      "preview": "Preview watermark"
+    },
+    "about": {
+      "trigger": "About the watermark",
+      "title": "Why is there a code on this video?",
+      "accountBody": "Every video shows a code that is unique to your account and this sign-in, moving around the picture. It lets a recording that's shared without permission be traced back to where it came from. Only you see your code, and only while you watch.",
+      "previewBody": "Free previews show a code tied to this visit, moving around the picture. It lets a recording that's shared without permission be traced back to where it came from.",
+      "privacy": "Atlas keeps a record of each code for up to two years after it was last shown, as described in the privacy policy. Only Atlas can look a code up — your academy can't."
+    },
+    "fullscreen": "Full screen",
+    "exitFullscreen": "Exit full screen",
+    "tamper": {
+      "title": "Playback paused",
+      "description": "The personal watermark on this video was hidden or removed. It has to stay visible while you watch.",
+      "resume": "Restore and continue"
     }
   }
 }

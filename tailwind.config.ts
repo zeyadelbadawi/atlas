@@ -228,6 +228,17 @@ export default {
           '50%': { top: '76%', insetInlineStart: '58%' },
           '75%': { top: '72%', insetInlineStart: '6%' },
         },
+        /*
+          The forensic watermark's full-frame tile (`ForensicWatermarkFrame`)
+          drifting by exactly one tile, so the loop is seamless. Ninety
+          seconds a lap: movement a recording cannot freeze-frame away,
+          too slow to notice while learning. Stood down under
+          `prefers-reduced-motion` by the component.
+        */
+        'watermark-pattern-drift': {
+          from: { backgroundPosition: '0 0' },
+          to: { backgroundPosition: '280px 160px' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down var(--duration-normal) var(--ease-standard)',
@@ -239,6 +250,7 @@ export default {
           'progress-indeterminate 1.4s var(--ease-standard) infinite',
         // Slow on purpose — see the keyframes' own comment.
         'watermark-drift': 'watermark-drift 40s linear infinite',
+        'watermark-pattern-drift': 'watermark-pattern-drift 90s linear infinite',
       },
     },
   },

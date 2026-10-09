@@ -34,6 +34,11 @@ import { useTranslation } from 'react-i18next';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  ForensicWatermarkCaption,
+  ForensicWatermarkFrame,
+  resolveWatermark,
+} from '@features/learner';
 import type { LiveSessionJoinAuthorization } from '@types';
 
 export interface ZoomMeetingEmbedProps {
@@ -80,7 +85,8 @@ export function ZoomMeetingEmbed({
     async function start(): Promise<void> {
       try {
         // Fetched only now — see the note on bundle size above.
-        const { default: ZoomMtgEmbedded } = await import('@zoom/meetingsdk/embedded');
+        const { default: ZoomMtgEmbedded } =
+          await import('@zoom/meetingsdk/embedded');
         if (cancelled || !containerRef.current) return;
 
         const client = ZoomMtgEmbedded.createClient();
@@ -151,6 +157,16 @@ export function ZoomMeetingEmbed({
     };
   }, [authorization, userName, t]);
 
+  const forensic = resolveWatermark(authorization.watermark);
+  const meeting = (
+    <div
+      ref={containerRef}
+      dir="ltr"
+      data-ltr-content
+      className="min-h-[60vh] w-full overflow-hidden rounded-lg border border-border bg-black sm:min-h-[70vh]"
+    />
+  );
+
   return (
     <div className="space-y-3">
       {state === 'failed' ? (
@@ -174,7 +190,7 @@ export function ZoomMeetingEmbed({
           {t(
             state === 'loading'
               ? 'liveSessions:student.embed.loading'
-              : 'liveSessions:student.embed.joining',
+              : 'liveSessions:student.embed.joining'
           )}
         </div>
       ) : null}
@@ -192,12 +208,23 @@ export function ZoomMeetingEmbed({
         `min-h` rather than a fixed height so the meeting grows on a
         desktop and stays usable on a phone, with no per-device breakpoint.
       */}
-      <div
-        ref={containerRef}
-        dir="ltr"
-        data-ltr-content
-        className="min-h-[60vh] w-full overflow-hidden rounded-lg border border-border bg-black sm:min-h-[70vh]"
-      />
+      {forensic ? (
+        /*
+          The forensic watermark over the class (backend
+          `docs/FORENSIC_WATERMARK.md`) — issued by the redeem before the
+          SDK signature, so a join that reached this point always has one.
+          The frame redirects any fullscreen the SDK takes to itself, so
+          the meeting is never shown without the watermark.
+        */
+        <>
+          <ForensicWatermarkFrame watermark={forensic}>
+            {meeting}
+          </ForensicWatermarkFrame>
+          <ForensicWatermarkCaption watermark={forensic} />
+        </>
+      ) : (
+        meeting
+      )}
 
       {state === 'joined' ? (
         <div className="flex justify-end">

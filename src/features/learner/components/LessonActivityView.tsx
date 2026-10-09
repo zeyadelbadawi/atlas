@@ -108,7 +108,7 @@ export function LessonActivityView({
           resumePositionSeconds={grant.resumePositionSeconds}
           lessonId={grant.lessonId}
           title={grant.title}
-          watermarkText={grant.watermark.enabled ? grant.watermark.text : ''}
+          watermark={grant.watermark}
           resources={grant.resources}
           onCredentialFailure={onCredentialFailure}
           onPositionSource={onPositionSource}
@@ -166,7 +166,11 @@ export function LessonActivityView({
         /* A supported YouTube link plays INLINE, inside the same player
            shell as every other source. The server decided it was
            embeddable; the component embeds by id, never by URL. */
-        <YouTubeLessonPlayer embed={grant.externalEmbed} title={grant.title} />
+        <YouTubeLessonPlayer
+          embed={grant.externalEmbed}
+          title={grant.title}
+          watermark={grant.watermark}
+        />
       ) : null}
 
       {grant.kind === 'external' &&

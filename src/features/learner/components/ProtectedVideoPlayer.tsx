@@ -24,9 +24,10 @@
  * DEFAULTS, which the backend itself documents as "the stronger setting":
  * a missing or malformed settings blob resolves to full protection, never
  * to none, because the failure mode has to be "more protected than the
- * owner asked for". The one protection setting that IS learner-visible —
- * the watermark — arrives on the grant as `watermark.enabled`, and is
- * honoured exactly as sent.
+ * owner asked for". The forensic watermark is not a setting at all: it is
+ * mandatory, arrives on the grant, and is drawn by `ForensicWatermarkFrame`
+ * — which also owns fullscreen, so the picture never leaves the watermark
+ * behind (backend `docs/FORENSIC_WATERMARK.md`).
  *
  * CAPTIONS come from the lesson's own resources, matched by file
  * extension, because the grant has no dedicated captions field: a
@@ -54,11 +55,16 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@utils';
-import type { GrantedResource, GrantedVideo } from '@types';
+import type { ContentWatermark, GrantedResource, GrantedVideo } from '@types';
 import { useVideoSource } from '../hooks/useVideoSource';
 import { useMediaReadiness } from '../hooks/useMediaReadiness';
 import { VideoStatusOverlay } from './VideoStatusOverlay';
-import { WatermarkOverlay } from './WatermarkOverlay';
+import {
+  ForensicWatermarkCaption,
+  ForensicWatermarkFrame,
+  resolveWatermark,
+  type ForensicWatermarkFrameHandle,
+} from './forensic';
 
 /** Seek step for the arrow keys, in seconds. The convention every video UI uses. */
 const ARROW_SEEK_SECONDS = 5;
@@ -85,8 +91,11 @@ export interface ProtectedVideoPlayerProps {
   readonly resumePositionSeconds: number;
   readonly lessonId: string;
   readonly title: string;
-  /** Server-composed, per-viewer. Empty string means the academy turned it off. */
-  readonly watermarkText: string;
+  /**
+   * The grant's forensic watermark — mandatory, per viewer and session,
+   * composed server-side (backend `docs/FORENSIC_WATERMARK.md`).
+   */
+  readonly watermark: ContentWatermark;
   readonly resources: readonly GrantedResource[];
   /** Asks `useLessonGrant` for a new credential — the element reported one is dead. */
   readonly onCredentialFailure: () => void;
@@ -110,7 +119,7 @@ export function ProtectedVideoPlayer({
   resumePositionSeconds,
   lessonId,
   title,
-  watermarkText,
+  watermark,
   resources,
   onCredentialFailure,
   onPositionSource,
@@ -119,7 +128,9 @@ export function ProtectedVideoPlayer({
 }: ProtectedVideoPlayerProps): JSX.Element {
   const { t } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const frameRef = useRef<ForensicWatermarkFrameHandle>(null);
   const [playbackRate, setPlaybackRate] = useState(1);
+  const forensic = resolveWatermark(watermark);
 
   const { hasMediaError, reload, attachedUrl } = useVideoSource({
     videoRef,
@@ -219,15 +230,62 @@ export function ProtectedVideoPlayer({
           return;
         case 'f':
         case 'F':
+          // The FRAME goes fullscreen, never the `<video>`: the element's
+          // own fullscreen would leave the forensic watermark behind.
           event.preventDefault();
-          if (document.fullscreenElement) void document.exitFullscreen();
-          else void element.requestFullscreen?.().catch(() => undefined);
+          frameRef.current?.toggleFullscreen();
           return;
         default:
           return;
       }
     },
     []
+  );
+
+  const media = (
+    <AspectRatio ratio={16 / 9}>
+      <video
+        ref={videoRef}
+        controls
+        playsInline
+        preload="metadata"
+        poster={video.posterUrl}
+        // `nofullscreen` / `noremoteplayback`: the element's own
+        // fullscreen and casting would show the picture without the
+        // forensic watermark; fullscreen is the frame's (see below).
+        controlsList="nodownload noplaybackrate nofullscreen noremoteplayback"
+        disablePictureInPicture
+        disableRemotePlayback
+        x-webkit-airplay="deny"
+        onEnded={onEnded}
+        onDoubleClick={(event) => {
+          // A double-click is the browser's fullscreen gesture; route it
+          // to the frame instead of letting the element take it.
+          event.preventDefault();
+          frameRef.current?.toggleFullscreen();
+        }}
+        className="size-full"
+      >
+        {captions?.url ? (
+          <track
+            kind="captions"
+            src={captions.url}
+            label={captions.title}
+            default
+          />
+        ) : null}
+        {t('learning:lesson.videoUnsupported')}
+      </video>
+
+      <VideoStatusOverlay
+        phase={readiness.phase}
+        slow={readiness.slow}
+        onRetry={reload}
+        errorMessage={
+          hasMediaError ? t('learning:player.video.decodeError') : undefined
+        }
+      />
+    </AspectRatio>
   );
 
   return (
@@ -242,43 +300,28 @@ export function ProtectedVideoPlayer({
         onKeyDown={handleKeyDown}
         // A deterrent, and named as one in this file's doc comment.
         onContextMenu={(event) => event.preventDefault()}
-        className="relative overflow-hidden rounded-lg bg-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        className="relative rounded-lg bg-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
-        <AspectRatio ratio={16 / 9}>
-          <video
-            ref={videoRef}
-            controls
-            playsInline
-            preload="metadata"
-            poster={video.posterUrl}
-            controlsList="nodownload noplaybackrate"
-            disablePictureInPicture
-            onEnded={onEnded}
-            className="size-full"
+        {forensic ? (
+          <ForensicWatermarkFrame
+            ref={frameRef}
+            watermark={forensic}
+            mediaRef={videoRef}
+            onTamper={() => videoRef.current?.pause()}
           >
-            {captions?.url ? (
-              <track
-                kind="captions"
-                src={captions.url}
-                label={captions.title}
-                default
-              />
-            ) : null}
-            {t('learning:lesson.videoUnsupported')}
-          </video>
-
-          {watermarkText ? <WatermarkOverlay text={watermarkText} /> : null}
-
-          <VideoStatusOverlay
-            phase={readiness.phase}
-            slow={readiness.slow}
-            onRetry={reload}
-            errorMessage={
-              hasMediaError ? t('learning:player.video.decodeError') : undefined
-            }
-          />
-        </AspectRatio>
+            {media}
+          </ForensicWatermarkFrame>
+        ) : (
+          media
+        )}
       </div>
+
+      {forensic ? (
+        <ForensicWatermarkCaption
+          watermark={forensic}
+          onToggleFullscreen={() => frameRef.current?.toggleFullscreen()}
+        />
+      ) : null}
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         {/* The native rate control is suppressed by `controlsList` so this

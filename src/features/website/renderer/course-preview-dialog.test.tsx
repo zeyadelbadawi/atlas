@@ -19,12 +19,31 @@ const grantState: {
   failure: unknown;
 } = { grant: null, isLoading: false, failure: null };
 
-vi.mock('@features/learner', () => ({
+vi.mock('@features/learner', async () => ({
+  // The real forensic watermark frame: a preview is watermarked too.
+  ...(await import('@features/learner/components/forensic')),
   useLessonGrant: () => grantState,
-  YouTubeLessonPlayer: ({ embed }: { embed: { videoId: string } }) => (
-    <div data-testid="youtube-player">{embed.videoId}</div>
+  YouTubeLessonPlayer: ({
+    embed,
+    watermark,
+  }: {
+    embed: { videoId: string };
+    watermark: { code?: string };
+  }) => (
+    <div data-testid="youtube-player" data-watermark={watermark?.code}>
+      {embed.videoId}
+    </div>
   ),
 }));
+
+const PREVIEW_WATERMARK = {
+  enabled: true,
+  text: '7K3QM-X9TR2 · academy.example · Preview',
+  code: '7K3QM-X9TR2',
+  kind: 'preview',
+  maskedIdentity: null,
+  host: 'academy.example',
+} as const;
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key }),
@@ -70,16 +89,21 @@ describe('CoursePreviewDialog', () => {
       title: 'Intro to Hooks',
       externalEmbed: { provider: 'youtube', videoId: 'dQw4w9WgXcQ' },
       externalUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      watermark: PREVIEW_WATERMARK,
     };
     renderDialog();
     expect(screen.getByTestId('youtube-player').textContent).toBe(
       'dQw4w9WgXcQ'
     );
+    // The embed is handed the grant's forensic watermark to draw.
+    expect(
+      screen.getByTestId('youtube-player').getAttribute('data-watermark')
+    ).toBe('7K3QM-X9TR2');
     // The raw address never reaches the DOM.
     expect(document.body.innerHTML).not.toContain('youtube.com/watch');
   });
 
-  it('plays a hosted video preview with download disabled', () => {
+  it('plays a hosted video preview inside the forensic watermark frame, with no download, fullscreen, PiP or casting of the bare element', () => {
     grantState.grant = {
       kind: 'video',
       title: 'Intro to Hooks',
@@ -88,11 +112,29 @@ describe('CoursePreviewDialog', () => {
         url: 'https://cdn.example/v.mp4',
         downloadable: false,
       },
+      watermark: PREVIEW_WATERMARK,
     };
     renderDialog();
     const video = screen.getByTestId('course-preview-video');
-    expect(video.getAttribute('controlslist')).toBe('nodownload');
+    const controls = (video.getAttribute('controlslist') ?? '').split(' ');
+    expect(controls).toEqual(
+      expect.arrayContaining(['nodownload', 'nofullscreen', 'noremoteplayback'])
+    );
+    expect(video.hasAttribute('disablepictureinpicture')).toBe(true);
+    expect(video.getAttribute('x-webkit-airplay')).toBe('deny');
     expect(video.getAttribute('src')).toBe('https://cdn.example/v.mp4');
+
+    // The video sits inside the frame, under the code and its pattern.
+    const frame = video.closest('[data-forensic-frame]');
+    expect(frame).toBeTruthy();
+    const label = screen.getByTestId('forensic-watermark-label');
+    expect(frame?.contains(label)).toBe(true);
+    expect(label.textContent).toContain('7K3QM-X9TR2');
+    expect(label.textContent).toContain('academy.example');
+    expect(
+      screen.getByTestId('forensic-watermark-pattern').style.backgroundImage
+    ).toContain('data:image/svg+xml');
+    expect(screen.getByTestId('forensic-watermark-caption')).toBeTruthy();
   });
 
   it('gives one unrevealing message for any refusal', () => {

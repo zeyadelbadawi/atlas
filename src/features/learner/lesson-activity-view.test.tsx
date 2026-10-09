@@ -86,6 +86,9 @@ describe('LessonActivityView — external sources', () => {
         rel: '0',
         modestbranding: '1',
         start: '90',
+        // The embed's own fullscreen is off: the forensic watermark frame
+        // goes fullscreen instead, so the watermark stays on screen.
+        fs: '0',
         // The embed's ready/error events, for this page only (Task D).
         enablejsapi: '1',
         origin: window.location.origin,

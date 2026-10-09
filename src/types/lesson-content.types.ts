@@ -68,9 +68,30 @@ export type ContentAccessReason = (typeof CONTENT_ACCESS_REASONS)[number];
  * course content. `text` is built server-side from the viewer's own
  * identity, so a client cannot blank it by lying.
  */
-export interface ContentWatermark {
+export interface ContentWatermark extends Partial<ForensicWatermarkDisplay> {
   readonly enabled: boolean;
+  /**
+   * The flat label (`CODE · a•••@mail.com`). Kept for compatibility; the
+   * player draws the structured fields below when they are present.
+   */
   readonly text: string;
+}
+
+/**
+ * The forensic watermark a player must draw over a video
+ * (backend `docs/FORENSIC_WATERMARK.md`). Mandatory: every video grant,
+ * free course preview and live-class join carries one, and the server
+ * refuses to sign a video credential without it.
+ */
+export interface ForensicWatermarkDisplay {
+  /** `7K3QM-X9TR2` — the code an operator reads off a leaked recording. */
+  readonly code: string;
+  /** `account` for a signed-in viewer; `preview` for an anonymous visitor. */
+  readonly kind: 'account' | 'preview';
+  /** A masked hint of whose account this is (`a•••@gmail.com`). */
+  readonly maskedIdentity: string | null;
+  /** The academy host, shown with "Preview" to an anonymous visitor. */
+  readonly host: string | null;
 }
 
 /** What the browser must do to keep the single-session lease alive. */
