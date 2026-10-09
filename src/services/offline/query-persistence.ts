@@ -31,7 +31,7 @@
  */
 import { dehydrate, hydrate } from '@tanstack/react-query';
 import type { Query, QueryClient, QueryKey } from '@tanstack/react-query';
-import { offlineStore } from './offline-store';
+import { deleteOtherOfflineDatabases, offlineStore } from './offline-store';
 
 export const OFFLINE_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 export const MAX_ENTRIES = 400;
@@ -42,6 +42,7 @@ const WRITE_DEBOUNCE_MS = 1_000;
 export const BUSTER = 'atlas-offline-v1';
 
 export interface PersistedQueryRecord {
+  /** The signed-in user the copy belongs to, or `PUBLIC_OWNER` for tenant-public data. */
   readonly userId: string;
   readonly queryHash: string;
   readonly queryKey: QueryKey;
@@ -87,6 +88,78 @@ export function isPersistableQueryKey(queryKey: QueryKey): boolean {
   }
 }
 
+/**
+ * Owner of a record that is not about any person: an Academy's published
+ * website (pages, configuration, public course pages). Kept on the
+ * Academy's own origin/scope, restored for whoever opens that site.
+ */
+export const PUBLIC_OWNER = '__public__';
+
+/**
+ * Which queries a surface may keep on disk, for whom, and how long.
+ * `dashboardPersistencePolicy` (below) is the platform host's;
+ * `learnerPersistencePolicy` (`learner-persistence.ts`) the Academy
+ * website's. Both are allowlists: a key not named is never written.
+ */
+export interface PersistencePolicy {
+  readonly name: string;
+  /** Who the copy belongs to — `null` means "do not keep it". */
+  readonly ownerOf: (
+    queryKey: QueryKey,
+    userId: string | null
+  ) => string | null;
+  readonly maxEntryBytes: (queryKey: QueryKey) => number;
+  readonly ttlMs: number;
+  readonly maxEntries: number;
+  readonly maxTotalBytes: number;
+  /** Data that must never reach disk even under an allowlisted key. */
+  readonly rejectsData?: (data: unknown) => boolean;
+}
+
+export const dashboardPersistencePolicy: PersistencePolicy = {
+  name: 'dashboard',
+  ownerOf: (queryKey, userId) =>
+    userId && isPersistableQueryKey(queryKey) ? userId : null,
+  maxEntryBytes: () => MAX_ENTRY_BYTES,
+  ttlMs: OFFLINE_CACHE_TTL_MS,
+  maxEntries: MAX_ENTRIES,
+  maxTotalBytes: MAX_TOTAL_BYTES,
+};
+
+/**
+ * DEFENCE IN DEPTH (learner policy). Field names that mean "credential" or
+ * "durable media address". An allowlisted query whose data contains any of
+ * them anywhere is not written — so a future response shape that starts carrying a
+ * signed URL or a lesson's `contentUrl` cannot reach disk just because its
+ * key family was allowlisted for something else.
+ */
+const FORBIDDEN_FIELDS = new Set([
+  'accesstoken',
+  'refreshtoken',
+  'token',
+  'contenturl',
+  'fileurl',
+  'videourl',
+  'signedurl',
+  'streamurl',
+  'playbacklease',
+  'watermark',
+  'video',
+  'bodyhtml',
+  'password',
+]);
+
+export function containsForbiddenField(value: unknown, depth = 0): boolean {
+  if (depth > 12 || value === null || typeof value !== 'object') return false;
+  if (Array.isArray(value))
+    return value.some((item) => containsForbiddenField(item, depth + 1));
+  for (const [key, child] of Object.entries(value as Record<string, unknown>)) {
+    if (FORBIDDEN_FIELDS.has(key.toLowerCase())) return true;
+    if (containsForbiddenField(child, depth + 1)) return true;
+  }
+  return false;
+}
+
 function recordKey(userId: string, queryHash: string): string {
   return `${userId}|${queryHash}`;
 }
@@ -97,16 +170,18 @@ function recordKey(userId: string, queryHash: string): string {
  */
 export function startQueryPersistence(
   queryClient: QueryClient,
-  getUserId: () => string | null
+  getUserId: () => string | null,
+  policy: PersistencePolicy = dashboardPersistencePolicy
 ): () => void {
   const timers = new Map<string, ReturnType<typeof setTimeout>>();
 
   const persist = async (query: Query) => {
-    const userId = getUserId();
+    const owner = policy.ownerOf(query.queryKey, getUserId());
     if (
-      !userId ||
+      !owner ||
       query.state.status !== 'success' ||
-      query.state.data === undefined
+      query.state.data === undefined ||
+      policy.rejectsData?.(query.state.data)
     ) {
       return;
     }
@@ -122,9 +197,9 @@ export function startQueryPersistence(
     } catch {
       return;
     }
-    if (serialized.length > MAX_ENTRY_BYTES) return;
+    if (serialized.length > policy.maxEntryBytes(query.queryKey)) return;
     const record: PersistedQueryRecord = {
-      userId,
+      userId: owner,
       queryHash: query.queryHash,
       queryKey: query.queryKey,
       state: entry.state,
@@ -134,7 +209,7 @@ export function startQueryPersistence(
     };
     await offlineStore().put(
       'queries',
-      recordKey(userId, query.queryHash),
+      recordKey(owner, query.queryHash),
       record
     );
   };
@@ -142,7 +217,7 @@ export function startQueryPersistence(
   const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
     if (event.type !== 'updated' || event.action.type !== 'success') return;
     const { query } = event;
-    if (!isPersistableQueryKey(query.queryKey)) return;
+    if (!policy.ownerOf(query.queryKey, getUserId())) return;
     if (query.meta?.persistOffline === false) return;
     const pending = timers.get(query.queryHash);
     if (pending) clearTimeout(pending);
@@ -163,25 +238,40 @@ export function startQueryPersistence(
 }
 
 /**
- * Puts the user's saved copies back into the query cache (only theirs,
- * only fresh enough, only this build's) and deletes everything else.
+ * Puts saved copies back into the query cache — the user's own (when
+ * `userId` is given) and the surface's public ones — only fresh enough,
+ * only this build's, only what the policy still allows, and deletes what
+ * is expired, foreign to this build or no longer allowed. Another user's
+ * records are deleted when a user is restored (a different person signing
+ * in also wipes the store; this is the second line). An anonymous restore
+ * leaves user records untouched: the person may still be signing in.
  * Returns when the copies were saved, or `null` when there were none.
  */
 export async function restorePersistedQueries(
   queryClient: QueryClient,
-  userId: string,
-  now: number = Date.now()
+  userId: string | null,
+  now: number = Date.now(),
+  policy: PersistencePolicy = dashboardPersistencePolicy
 ): Promise<{ readonly count: number; readonly newestSavedAt: number | null }> {
   const records = await offlineStore().getAll<PersistedQueryRecord>('queries');
   const keep: PersistedQueryRecord[] = [];
   for (const record of records) {
-    const usable =
-      record.userId === userId &&
+    const isPublic = record.userId === PUBLIC_OWNER;
+    const valid =
       record.buster === BUSTER &&
-      now - record.savedAt <= OFFLINE_CACHE_TTL_MS &&
-      isPersistableQueryKey(record.queryKey);
-    if (usable) keep.push(record);
-    else
+      now - record.savedAt <= policy.ttlMs &&
+      policy.ownerOf(record.queryKey, isPublic ? null : record.userId) ===
+        record.userId &&
+      !policy.rejectsData?.((record.state as { data?: unknown })?.data);
+    if (!valid) {
+      await offlineStore().delete(
+        'queries',
+        recordKey(record.userId, record.queryHash)
+      );
+      continue;
+    }
+    if (isPublic || record.userId === userId) keep.push(record);
+    else if (userId)
       await offlineStore().delete(
         'queries',
         recordKey(record.userId, record.queryHash)
@@ -194,8 +284,8 @@ export async function restorePersistedQueries(
   const restored: PersistedQueryRecord[] = [];
   for (const record of keep) {
     if (
-      restored.length >= MAX_ENTRIES ||
-      total + record.bytes > MAX_TOTAL_BYTES
+      restored.length >= policy.maxEntries ||
+      total + record.bytes > policy.maxTotalBytes
     ) {
       await offlineStore().delete(
         'queries',
@@ -242,11 +332,34 @@ export async function restorePersistedQueries(
   };
 }
 
-/** Every saved copy and queued change, for every user — sign-out and account switches. */
+/** Deletes saved query copies of `userId` whose key matches — e.g. one course after its enrolment was revoked. */
+export async function deletePersistedQueries(
+  userId: string,
+  matches: (queryKey: QueryKey) => boolean
+): Promise<void> {
+  const records = await offlineStore().getAll<PersistedQueryRecord>('queries');
+  for (const record of records) {
+    if (record.userId === userId && matches(record.queryKey)) {
+      await offlineStore().delete(
+        'queries',
+        recordKey(record.userId, record.queryHash)
+      );
+    }
+  }
+}
+
+/**
+ * Every saved copy, queued change, offline lesson, draft and journal, for
+ * every user — sign-out, a server-ended session and account switches. The
+ * current scope's database is cleared in place and every other Atlas
+ * offline database of this origin is deleted (`deleteOtherOfflineDatabases`).
+ */
 export async function clearOfflineData(): Promise<void> {
   await Promise.all([
     offlineStore().clear('queries'),
     offlineStore().clear('outbox'),
     offlineStore().clear('meta'),
+    offlineStore().clear('content'),
+    deleteOtherOfflineDatabases(),
   ]);
 }

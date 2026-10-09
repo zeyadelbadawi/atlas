@@ -50,7 +50,16 @@ export interface OutboxHandler<P = unknown> {
    * (e.g. a deleted notification: 404) is dropped instead of shown.
    */
   readonly dropOnStatus?: readonly number[];
+  /**
+   * Academy offline — an entry older than this is not sent any more; it is
+   * marked failed (`OUTBOX_TOO_OLD_KEY`) for the person to see and discard.
+   * The server's replay guards remember an operation for 10 days; the
+   * client stops well before.
+   */
+  readonly maxAgeMs?: number;
 }
+
+export const OUTBOX_TOO_OLD_KEY = 'learning:offline.sync.tooOld';
 
 export interface OutboxSnapshot {
   readonly pending: number;
@@ -120,6 +129,17 @@ export function getOutboxSnapshot(): OutboxSnapshot {
   return snapshot;
 }
 
+/** The signed-in user's entries of one kind, oldest first — for "waiting to send" states in the UI. */
+export async function listOutboxEntries<P>(
+  kind: string
+): Promise<readonly OutboxEntry<P>[]> {
+  const userId = currentUser();
+  if (!userId) return [];
+  return (await entriesFor(userId)).filter(
+    (entry) => entry.kind === kind
+  ) as OutboxEntry<P>[];
+}
+
 async function entriesFor(userId: string): Promise<OutboxEntry[]> {
   const all = await offlineStore().getAll<OutboxEntry>('outbox');
   return all
@@ -157,9 +177,28 @@ export async function enqueueOutbox<P>(
   userId: string,
   kind: string,
   payload: P,
-  id: string = crypto.randomUUID()
+  id: string = crypto.randomUUID(),
+  options: {
+    /**
+     * Pending entries of the same user and kind this one supersedes (e.g.
+     * an earlier complete/undo of the same lesson): removed before this one
+     * is stored, so only the latest intent is sent.
+     */
+    readonly supersedes?: (entry: OutboxEntry<P>) => boolean;
+  } = {}
 ): Promise<boolean> {
   if (!handlers.has(kind)) throw new Error(`No outbox handler for ${kind}`);
+  if (options.supersedes) {
+    for (const entry of await entriesFor(userId)) {
+      if (
+        entry.kind === kind &&
+        entry.status === 'pending' &&
+        options.supersedes(entry as OutboxEntry<P>)
+      ) {
+        await offlineStore().delete('outbox', entry.id);
+      }
+    }
+  }
   const entry: OutboxEntry<P> = {
     id,
     userId,
@@ -246,6 +285,17 @@ export async function drainOutbox(now: () => number = Date.now): Promise<void> {
         // Its feature's code has not loaded yet (route chunks load lazily):
         // the entry waits; registering the handler drains again.
         if (!handler) continue;
+        if (
+          handler.maxAgeMs !== undefined &&
+          now() - entry.createdAt > handler.maxAgeMs
+        ) {
+          await offlineStore().put('outbox', entry.id, {
+            ...entry,
+            status: 'failed',
+            lastErrorKey: OUTBOX_TOO_OLD_KEY,
+          });
+          continue;
+        }
         try {
           await handler.run(entry.payload as never);
           await offlineStore().delete('outbox', entry.id);

@@ -50,6 +50,22 @@ function withCrossTabRefreshLock<T>(work: () => Promise<T>): Promise<T> {
   return locks.request('atlas:session-refresh', () => work()) as Promise<T>;
 }
 
+/**
+ * Local-first — remembers who signed in, for a read-only offline start.
+ * A DIFFERENT person than the one whose copies this browser holds wipes
+ * those copies first (sign-out normally already did; a session that simply
+ * lapsed did not), so one learner's saved lessons, drafts and queued
+ * changes can never be shown to — or synced as — the next.
+ */
+async function rememberIdentity(
+  user: CurrentUser,
+  organization?: OrganizationContext
+): Promise<void> {
+  const previous = await loadIdentitySnapshot(Number.NEGATIVE_INFINITY);
+  if (previous && previous.user.id !== user.id) await clearOfflineData();
+  await saveIdentitySnapshot(user, organization);
+}
+
 /** The "Last used" hint on the sign-in pages. Best effort: storage may be unavailable. */
 function rememberAuthMethod(
   method: AuthenticationResponse['authMethod']
@@ -155,7 +171,7 @@ export class SessionService {
     // still holding another person's state starts over (session-events).
     announceSignedIn(response.user.id);
     clearPendingSignOut();
-    void saveIdentitySnapshot(response.user, organization);
+    void rememberIdentity(response.user, organization);
 
     return {
       status: 'authenticated',
@@ -246,7 +262,7 @@ export class SessionService {
     try {
       const restored = await this.refresh();
       if (restored.user)
-        void saveIdentitySnapshot(restored.user, restored.organization);
+        void rememberIdentity(restored.user, restored.organization);
       return restored;
     } catch (error) {
       // Only the server saying "no" ends the session. A reload without a
