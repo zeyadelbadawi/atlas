@@ -35,6 +35,7 @@ export function WatermarkLookupIdle(): JSX.Element {
           >
             <div
               dir="ltr"
+              data-ltr-content
               className="absolute inset-[-25%] flex rotate-[-18deg] flex-wrap content-around justify-around gap-x-10 gap-y-6 font-mono text-[0.625rem] tracking-widest text-white/[0.07]"
             >
               {Array.from({ length: 24 }, (_, index) => (
@@ -48,6 +49,7 @@ export function WatermarkLookupIdle(): JSX.Element {
             </div>
             <div
               dir="ltr"
+              data-ltr-content
               className="absolute bottom-[18%] end-[8%] rounded bg-black/35 px-2 py-1 font-mono text-xs leading-tight text-white/80 sm:text-sm"
             >
               <span className="block tracking-widest">
