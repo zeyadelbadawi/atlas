@@ -97,7 +97,8 @@
     "saving": "Saving settings...",
     "success": "Settings updated successfully",
     "error": "Failed to update settings",
-    "unsavedChanges": "You have unsaved settings changes. Are you sure you want to leave?"
+    "unsavedChanges": "You have unsaved settings changes. Are you sure you want to leave?",
+    "slugOwnerOnly": "Only the organization owner can change the web address."
   },
   "branding": {
     "title": "Academy Branding",
@@ -246,6 +247,15 @@
       "invited": "Invitation sent. They'll get an email to set up their account.",
       "reinvited": "Added. We sent them a fresh link to finish setting up their account.",
       "added": "Added. We've emailed them to let them know."
+    },
+    "remove": {
+      "action": "Remove",
+      "ariaLabel": "Remove {{name}} from this academy",
+      "title": "Remove this team member?",
+      "description": "{{name}} will lose access to this academy straight away, including any courses they teach here. Their account is not deleted, and you can add them back later.",
+      "confirm": "Remove from academy",
+      "success": "{{name}} was removed from the academy.",
+      "failed": "We couldn't remove this team member. Please try again."
     }
   },
   "students": {

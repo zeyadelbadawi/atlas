@@ -94,3 +94,5 @@ export {
   useRejectAcademyCoursePayment,
   useSaveAcademyPaymentMethod,
 } from './useAcademyPayments';
+export { useRemoveAcademyMember } from './useRemoveAcademyMember';
+export type { RemoveAcademyMemberVariables } from './useRemoveAcademyMember';

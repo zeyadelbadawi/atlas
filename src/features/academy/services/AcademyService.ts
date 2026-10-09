@@ -219,6 +219,23 @@ export class AcademyService extends BaseService {
   }
 
   /**
+   * Removes a staff member from this academy
+   * (`DELETE /academies/:id/members/:userId`, Organization Owner only).
+   * Their academy role becomes inactive, their course assignments here are
+   * removed, and their organization membership ends when no other academy
+   * of the organization still needs it. 409
+   * `errors.academy.cannotRemoveOrganizationOwner` for the owner; 404 when
+   * the person is not (or no longer) staff here.
+   */
+  async removeAcademyMember(
+    id: string,
+    userId: string,
+    options?: WriteOptions
+  ): Promise<void> {
+    await this.client.delete<void>(this.path(id, 'members', userId), options);
+  }
+
+  /**
    * Grants Instructor access to this academy — see
    * `AddAcademyInstructorPayload`'s doc comment for the email-lookup-or-
    * create shape. Only the Academy Owner may call this
