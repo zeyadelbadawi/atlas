@@ -197,7 +197,6 @@
       "description": "This invites a brand-new Atlas account for the student. They'll get an email with a link to set their own password, then they can browse the course catalog and enroll.",
       "emailLabel": "Email address",
       "cancelButton": "Cancel",
-      "submitButton": "Send invitation",
       "doneButton": "Done",
       "errors": {
         "insufficientRole": "Only the academy owner can create a student account.",
@@ -220,9 +219,8 @@
       }
     },
     "newAccount": {
-      "title": "New account (optional)",
-      "description": "Leave the name blank if this person already has an Atlas account. Enter their name to invite them — they'll get an email with a link to set their own password.",
-      "nameLabel": "Full name"
+      "nameLabel": "Full name",
+      "nameHelp": "Used if they don't have an Atlas account yet. People who already use Atlas keep their own name."
     },
     "tabs": {
       "team": "Team",
@@ -230,17 +228,14 @@
     },
     "lookup": {
       "checking": "Checking this email…",
-      "new": "No Atlas account uses this email yet. Enter their name and we'll email them an invitation to set up their account.",
-      "existingTitle": "This person already has an Atlas account",
-      "existingBody": "They'll be added to this academy as {{role}} and can sign in with their existing Atlas credentials. We'll email them to let them know. Their name, password and other academies won't change.",
-      "pendingTitle": "This person was invited to Atlas but hasn't set up their account yet",
-      "pendingBody": "They'll be added to this academy as {{role}}, and we'll email them a fresh link to finish setting up their account.",
+      "new": "Not in this academy yet. Enter their full name — we'll add them and email them, with a link to set up an account if they don't have one.",
       "alreadyMember": "This person is already {{role}} in this academy.",
       "unavailable": "This Atlas account can't be added right now.",
       "rateLimited": "Too many checks in a short time — you can still continue, and we'll check this email when you submit.",
       "error": "We couldn't check this email right now — you can still continue.",
-      "nameReadOnly": "This is the name on their Atlas account. Only they can change it.",
-      "nameRequired": "Enter a name to invite a new account.",
+      "nameRequired": "Enter their full name.",
+      "nameTooShort": "Enter at least 2 characters.",
+      "nameTooLong": "Use 120 characters or fewer.",
       "roles": {
         "manager": "a manager",
         "instructor": "an instructor",

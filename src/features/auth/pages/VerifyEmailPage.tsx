@@ -9,10 +9,16 @@
  * happened — verified, invalid, expired, already used, rate limited or
  * unreachable. A reader who is signed in can send themselves a new link
  * from here; one who is not is sent to sign in and brought back.
+ *
+ * A live link opened without its account's session (ATO F1 follow-up) is
+ * not spent: the page asks the reader to sign in and comes back here,
+ * where the kept token is submitted again. Signed in as someone else, it
+ * says the link belongs to a different account and offers to sign out.
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { CheckCircle2, Loader2, MailCheck } from 'lucide-react';
+import { CheckCircle2, Loader2, MailCheck, ShieldCheck } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { ErrorState } from '@components/feedback';
 import { PageContainer } from '@components/layout';
 import { useAuth } from '@hooks';
@@ -31,7 +37,7 @@ const SIGN_IN_AND_RETURN = `${AUTH_ROUTES.signIn}?redirect=${encodeURIComponent(
 
 /** Failure states and their copy; `missing` is handled separately for a signed-in reader. */
 const FAILURE_COPY: Record<
-  Exclude<VerifyEmailState, 'pending' | 'success'>,
+  Exclude<VerifyEmailState, 'pending' | 'success' | 'signInRequired'>,
   { readonly title: string; readonly description: string }
 > = {
   missing: {
@@ -69,7 +75,7 @@ const RESENDABLE: ReadonlySet<VerifyEmailState> = new Set([
 
 export default function VerifyEmailPage(): JSX.Element {
   const { t } = useTranslation();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, signOut } = useAuth();
   const { state, requestId, canRetry, retry, outcomeRef } =
     useVerifyEmailFlow();
 
@@ -130,6 +136,49 @@ export default function VerifyEmailPage(): JSX.Element {
           )}
         </p>
         {proceed}
+      </div>
+    );
+  }
+
+  // A live link that only its own account can confirm. Signed out: sign
+  // in and come back (the token is kept). Signed in: the wrong account.
+  if (state === 'signInRequired') {
+    return shell(
+      <div
+        className="flex flex-col items-center gap-4 text-center"
+        data-testid="verify-email-sign-in-required"
+        data-account={isAuthenticated ? 'other' : 'none'}
+      >
+        <ShieldCheck className="size-8 text-primary" aria-hidden />
+        <h1
+          ref={outcomeRef}
+          tabIndex={-1}
+          className="text-2xl font-semibold text-foreground focus-visible:outline-none"
+        >
+          {t(
+            isAuthenticated
+              ? 'auth:verifyEmail.otherAccountTitle'
+              : 'auth:verifyEmail.signInRequiredTitle'
+          )}
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          {t(
+            isAuthenticated
+              ? 'auth:verifyEmail.otherAccountDescription'
+              : 'auth:verifyEmail.signInRequiredDescription'
+          )}
+        </p>
+        {isAuthenticated ? (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => void signOut().catch(() => undefined)}
+          >
+            {t('auth:verifyEmail.signOutToSwitch')}
+          </Button>
+        ) : (
+          signIn
+        )}
       </div>
     );
   }

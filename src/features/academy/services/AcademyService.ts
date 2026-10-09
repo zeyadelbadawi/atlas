@@ -179,9 +179,10 @@ export class AcademyService extends BaseService {
 
   /**
    * Smart member invitation — the Add Manager/Instructor/Student dialogs'
-   * debounced email check. Answers only a status (and the account's display
-   * name when one exists); it is a hint, and the add call re-checks
-   * everything. Owner-only and rate-limited server-side.
+   * debounced email check. Answers only whether the person is already in
+   * this academy — never whether an Atlas account exists (ATO F5); it is a
+   * hint, and the add call re-checks everything. Owner-only and
+   * rate-limited server-side.
    */
   async lookupAcademyMember(
     id: string,
@@ -197,7 +198,8 @@ export class AcademyService extends BaseService {
 
   /**
    * Grants Manager access to this academy to an existing Atlas account, or
-   * invites a new one (`name` required then). Only the
+   * invites a new one (`name` always required; used only for a new
+   * account). Only the
    * Academy Owner may call this (backend-enforced;
    * `errors.academy.insufficientRole` otherwise); `errors.academy.
    * managerUserNotFound` means no Atlas account exists for that email,

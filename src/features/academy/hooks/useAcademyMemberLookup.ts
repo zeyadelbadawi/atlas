@@ -4,8 +4,13 @@
  * Smart member invitation — the Add Manager/Instructor/Student dialogs'
  * debounced email check (`AcademyService.lookupAcademyMember`). Purely a UX
  * hint: the add call re-resolves the email server-side and never reads this
- * answer, so every failure here degrades to the plain "type a name to
- * invite" form rather than blocking the dialog.
+ * answer, so every failure here degrades to the plain form rather than
+ * blocking the dialog.
+ *
+ * ATO F5: the server only says whether the person is already in THIS
+ * academy (`already_member`) or not (`new`) — never whether the address
+ * has an Atlas account, or whose name is on it — so a stranger with the
+ * dialog open cannot use it to probe who uses Atlas.
  */
 import { z } from 'zod';
 import { useApiQuery, useAuth, useDebounce } from '@/shared/hooks';
@@ -35,10 +40,7 @@ export type MemberLookupState =
   | { readonly state: 'invalid' }
   | { readonly state: 'checking' }
   | { readonly state: 'new' }
-  | { readonly state: 'existing'; readonly name: string }
-  | { readonly state: 'existing_pending_setup'; readonly name: string }
   | { readonly state: 'already_member' }
-  | { readonly state: 'unavailable' }
   | { readonly state: 'rate_limited' }
   | { readonly state: 'error' };
 
@@ -99,12 +101,5 @@ export function useAcademyMemberLookup(
   if (!emailSchema.safeParse(typed).success) return { state: 'invalid' };
   if (typed !== debounced || query.isPending) return { state: 'checking' };
   if (query.isError) return { state: 'error' };
-  const result = query.data;
-  switch (result.status) {
-    case 'existing':
-    case 'existing_pending_setup':
-      return { state: result.status, name: result.name };
-    default:
-      return { state: result.status };
-  }
+  return { state: query.data.status };
 }

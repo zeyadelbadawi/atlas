@@ -104,6 +104,7 @@
     "invalidVerificationToken": "This verification link is not valid. Open the full link from your most recent verification email.",
     "verificationTokenExpired": "This verification link has expired or was replaced by a newer one. Request a new link to continue.",
     "verificationTokenUsed": "This verification link has already been used. Your email address is verified.",
+    "verificationSignInRequired": "For your security, sign in to the account this verification link was sent to before confirming the email address. The link has not been used.",
     "studentUseAcademySignIn": "You are a student. Please sign in through your academy’s website.",
     "academyContextRequired": "We could not tell which academy this request is for. Open your academy’s website and try again.",
     "academyHostMismatch": "This academy does not belong to this website address.",

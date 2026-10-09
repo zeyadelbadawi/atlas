@@ -121,29 +121,31 @@ export interface AcademyMember {
 }
 
 /**
- * Grants Manager access to an academy (`POST /academies/:id/members`) —
- * either to an already-registered Atlas user (`email` alone), or to a
- * brand-new, invited account (`email` + `name`). The invitee sets their
- * own password through the emailed setup link (Launch Stabilization A2).
+ * Grants Manager access to an academy (`POST /academies/:id/members`).
+ * `name` (2–120 characters) is required on every request (ATO F5): the
+ * dialog cannot know whether the address has an Atlas account, so the
+ * server uses it only to invite a brand-new account — an existing account
+ * keeps its own name. The invitee sets their own password through the
+ * emailed setup link (Launch Stabilization A2).
  */
 export interface AddAcademyManagerPayload {
   readonly email: string;
-  readonly name?: string;
+  readonly name: string;
 }
 
 /** Grants Instructor access to an academy (`POST /academies/:id/instructors`) — same shape/rationale as `AddAcademyManagerPayload`. */
 export interface AddAcademyInstructorPayload {
   readonly email: string;
-  readonly name?: string;
+  readonly name: string;
 }
 
 /**
- * Adds a learner to an academy (`POST /academies/:id/students`). An email
- * that already has an Atlas account is added as-is; a new email becomes an
- * invited account, which is the only case that needs `name`.
+ * Adds a learner to an academy (`POST /academies/:id/students`) — same
+ * shape/rationale as `AddAcademyManagerPayload`: `name` is always sent and
+ * only used when the address has no account yet.
  */
 export interface CreateAcademyStudentPayload {
-  readonly name?: string;
+  readonly name: string;
   readonly email: string;
 }
 
@@ -171,13 +173,13 @@ export type AcademyMemberLookupRole = 'manager' | 'instructor' | 'student';
 /**
  * `GET /academies/:id/member-lookup` — a UX hint for the invitation
  * dialogs, never a decision (the add call re-checks everything).
+ *
+ * ATO F5: it no longer says whether an address has an Atlas account (nor
+ * whose name is on it) — only whether the person is already in THIS
+ * academy. `new` covers both "no account" and "an account elsewhere".
  */
 export type AcademyMemberLookupResult =
-  | { readonly status: 'new' }
-  | { readonly status: 'existing'; readonly name: string }
-  | { readonly status: 'existing_pending_setup'; readonly name: string }
-  | { readonly status: 'already_member' }
-  | { readonly status: 'unavailable' };
+  { readonly status: 'new' } | { readonly status: 'already_member' };
 
 /** The account `createAcademyStudent` just created. */
 export interface AcademyStudent {

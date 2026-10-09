@@ -3,8 +3,9 @@
  *
  * Adds a learner to this academy (`AcademyService.createAcademyStudent`).
  * Smart member invitation: an email that already has an Atlas account is
- * added as-is (its name shown read-only, the person told by email); a new
- * email invites a new account.
+ * added as-is (it keeps its own name, and the person is told by email); a
+ * new email invites a new account under the name typed here. The dialog
+ * cannot tell which (ATO F5), so the name is always asked for.
  *
  * Launch Stabilization A2 — staff never choose, see or hand over a
  * student's password. A new account is created `invited`, and the student
@@ -36,11 +37,7 @@ import {
 import { useCreateAcademyStudent } from '../hooks';
 import { useAcademyMemberLookup } from '../hooks/useAcademyMemberLookup';
 import { MemberAccountFields, isBlockedByLookup } from './MemberAccountFields';
-import {
-  isNameMissingForNewAccount,
-  memberAddErrorKey,
-  memberAddPayload,
-} from '../utils/member-add.utils';
+import { memberAddErrorKey, memberAddPayload } from '../utils/member-add.utils';
 import type { AcademyMemberAddOutcome } from '@types';
 import {
   createAcademyStudentSchema,
@@ -107,12 +104,8 @@ export function CreateAcademyStudentDialog({
   };
 
   const onSubmit = (data: CreateAcademyStudentFormData) => {
-    if (isNameMissingForNewAccount(data, lookup)) {
-      form.setError('name', { message: 'validation:required' });
-      return;
-    }
     createStudent.mutate(
-      { academyId, payload: memberAddPayload(data, lookup) },
+      { academyId, payload: memberAddPayload(data) },
       {
         onSuccess: (result) => {
           setCreated({ email: data.email.trim(), outcome: result.outcome });
@@ -128,7 +121,9 @@ export function CreateAcademyStudentDialog({
 
           if (nameConflictFromError(error)) return;
           if (error.messageKey === 'errors.academy.nameRequiredForNewAccount') {
-            form.setError('name', { message: 'validation:required' });
+            form.setError('name', {
+              message: 'academy:members.lookup.nameRequired',
+            });
             return;
           }
           notifyError(
@@ -216,9 +211,7 @@ export function CreateAcademyStudentDialog({
                   {createStudent.isPending ? (
                     <Loader2 className="size-4 animate-spin" aria-hidden />
                   ) : null}
-                  {lookup.state === 'existing'
-                    ? t('academy:members.createStudent.addButton')
-                    : t('academy:members.createStudent.submitButton')}
+                  {t('academy:members.createStudent.addButton')}
                 </Button>
               </DialogFooter>
             </form>
