@@ -204,6 +204,25 @@ export async function restorePersistedQueries(
         state: record.state as never,
       })),
     });
+    // A saved copy is a fallback, never fresh: keeping its original
+    // `dataUpdatedAt` would make a copy saved seconds before a reload count
+    // as fresh for `staleTime`, so an online page would show it (possibly
+    // from before the last change) without asking the server. Marked stale,
+    // every restored query is refetched as soon as it is used online, and
+    // still shown while offline. Only queries the copy actually filled are
+    // touched (`hydrate` keeps fresher data already in the cache).
+    const savedAt = new Map(
+      restored.map((record) => [
+        record.queryHash,
+        (record.state as { dataUpdatedAt?: number }).dataUpdatedAt,
+      ])
+    );
+    void queryClient.invalidateQueries({
+      predicate: (query) =>
+        savedAt.has(query.queryHash) &&
+        query.state.dataUpdatedAt === savedAt.get(query.queryHash),
+      refetchType: 'none',
+    });
   }
   return {
     count: restored.length,

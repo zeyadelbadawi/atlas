@@ -8,9 +8,12 @@
  *    "reconnecting" also covers a browser that claims to be online while
  *    requests still fail.
  *
- * Client only. On the server (SSR) and for an anonymous visitor it does
- * nothing at all.
+ * Client only, and only on the platform (dashboard) host: an Academy
+ * website and its learner portal always read from the network (W1 is the
+ * dashboard's offline mode). On the server (SSR) and for an anonymous
+ * visitor it does nothing at all.
  */
+
 import { useContext, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -22,8 +25,18 @@ import {
   startOutbox,
   startQueryPersistence,
 } from '@services/offline';
+import { ENV } from '@config';
+import { getCurrentPublicWebsiteContext } from '@utils';
 import { IdentityContext } from '../identity/identity.context';
 import { setOfflineSavedAt } from './offline-status';
+
+function isPlatformHost(): boolean {
+  if (typeof window === 'undefined') return false;
+  return (
+    getCurrentPublicWebsiteContext(ENV.platformBaseDomain, ENV.isDevelopment)
+      .mode === 'atlas-app'
+  );
+}
 
 export function OfflineProvider({
   children,
@@ -56,7 +69,7 @@ export function OfflineProvider({
   }, [queryClient]);
 
   useEffect(() => {
-    if (typeof window === 'undefined' || !userId) return;
+    if (!userId || !isPlatformHost()) return;
     let cancelled = false;
     void restorePersistedQueries(queryClient, userId).then((restored) => {
       if (!cancelled) setOfflineSavedAt(restored.newestSavedAt);

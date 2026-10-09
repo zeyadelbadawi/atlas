@@ -180,6 +180,54 @@ describe('query persistence', () => {
     expect(left.map((r) => r.userId).sort()).toEqual(['u1']);
   });
 
+  it('a restored copy is never fresh, even one saved a second before the reload', async () => {
+    vi.useFakeTimers();
+    const writer = new QueryClient();
+    const stop = startQueryPersistence(writer, () => 'u1');
+    writer.setQueryData(['course', 'detail', 'c1'], { title: 'before' });
+    await vi.advanceTimersByTimeAsync(1_500);
+    stop();
+    vi.useRealTimers();
+
+    // A new page load: staleTime would treat a just-saved copy as fresh.
+    const reader = new QueryClient({
+      defaultOptions: { queries: { staleTime: 60_000 } },
+    });
+    await restorePersistedQueries(reader, 'u1');
+    const query = reader
+      .getQueryCache()
+      .find({ queryKey: ['course', 'detail', 'c1'] });
+    expect(query?.state.data).toEqual({ title: 'before' });
+    expect(query?.isStale()).toBe(true);
+  });
+
+  it('does not touch fresher data the page already loaded', async () => {
+    const writer = new QueryClient();
+    vi.useFakeTimers();
+    const stop = startQueryPersistence(writer, () => 'u1');
+    writer.setQueryData(['course', 'detail', 'c2'], { title: 'saved' });
+    await vi.advanceTimersByTimeAsync(1_500);
+    stop();
+    vi.useRealTimers();
+
+    const reader = new QueryClient({
+      defaultOptions: { queries: { staleTime: 60_000 } },
+    });
+    reader.setQueryData(
+      ['course', 'detail', 'c2'],
+      { title: 'live' },
+      {
+        updatedAt: Date.now() + 10_000,
+      }
+    );
+    await restorePersistedQueries(reader, 'u1');
+    const query = reader
+      .getQueryCache()
+      .find({ queryKey: ['course', 'detail', 'c2'] });
+    expect(query?.state.data).toEqual({ title: 'live' });
+    expect(query?.isStale()).toBe(false);
+  });
+
   it('clearOfflineData wipes copies, queued changes and metadata', async () => {
     await store.put('queries', 'k', { a: 1 });
     await store.put('outbox', 'k', { a: 1 });
