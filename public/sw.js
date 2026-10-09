@@ -1,19 +1,29 @@
 /*
- * Local-first dashboard — the app shell, available without a connection.
+ * Local-first — the app shell, available without a connection.
  *
- * Registered ONLY on the platform (dashboard) host, never on an Academy
- * website (`src/services/offline/app-shell.ts`). It caches exactly two
- * things, both identical for every person and every tenant:
+ * Registered on the platform (dashboard) host AND on every Academy website
+ * (academy offline work, `src/services/offline/app-shell.ts`). A worker is
+ * per origin and every Academy website is its own origin, so each academy
+ * gets its own worker and its own caches; nothing here is shared between
+ * academies or with the dashboard. It caches exactly three things, all
+ * identical for every person:
  *
  *   1. the HTML shell — the build's own `/index.html`, fetched directly
- *      (never a navigation response, which can be a prerendered static
- *      page); the platform host is never server-rendered, so the document
- *      carries no user or tenant data;
- *   2. the build's hashed files under `/assets/` (immutable by name).
+ *      (never a navigation response: on an Academy website that can be a
+ *      server-rendered page, and on the platform a prerendered blog page).
+ *      `/index.html` is the static single-page app on every host and
+ *      carries no user or tenant data — the app renders the academy from
+ *      its own (per-academy) offline store;
+ *   2. the build's hashed files under `/assets/` (immutable by name);
+ *   3. theme photographs under `/theme-assets/<theme>/v<n>/` (immutable:
+ *      a changed image ships as a new version folder).
  *
  * It NEVER touches `/api/*`, cross-origin requests or anything but GET:
- * people's data is cached by the app itself (allowlisted, per user, wiped at
- * sign-out — `query-persistence.ts`), not here.
+ * people's data — and on an Academy website the learner's lessons, drafts
+ * and progress — is kept by the app itself (allowlisted, per user, per
+ * academy, wiped at sign-out — `query-persistence.ts`,
+ * `learner-persistence.ts`), never by this worker. In particular no lesson
+ * grant, no signed media URL and no video segment is ever cached here.
  *
  * Navigations are network-first: online, every load comes from the server
  * (a deploy is picked up at once) and the saved shell is refreshed in the
@@ -25,11 +35,13 @@
  * Kill switch: shipping a build with `VITE_OFFLINE_SHELL=off` unregisters
  * this worker and deletes its caches on the next visit.
  */
-const VERSION = 'v1';
+const VERSION = 'v2';
 const SHELL_CACHE = `atlas-shell-${VERSION}`;
 const ASSET_CACHE = `atlas-assets-${VERSION}`;
+const THEME_CACHE = `atlas-theme-${VERSION}`;
 const SHELL_KEY = '/__atlas_shell__';
 const MAX_ASSETS = 400;
+const MAX_THEME_ASSETS = 200;
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -56,7 +68,7 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     (async () => {
-      const keep = new Set([SHELL_CACHE, ASSET_CACHE]);
+      const keep = new Set([SHELL_CACHE, ASSET_CACHE, THEME_CACHE]);
       for (const name of await caches.keys()) {
         if (name.startsWith('atlas-') && !keep.has(name)) await caches.delete(name);
       }
@@ -86,7 +98,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   if (url.pathname.startsWith('/assets/')) {
-    event.respondWith(asset(request));
+    event.respondWith(asset(request, ASSET_CACHE, MAX_ASSETS));
+    return;
+  }
+  if (url.pathname.startsWith('/theme-assets/')) {
+    event.respondWith(asset(request, THEME_CACHE, MAX_THEME_ASSETS));
   }
 });
 
@@ -130,8 +146,18 @@ async function refreshShell() {
   return html;
 }
 
-async function asset(request) {
-  const cache = await caches.open(ASSET_CACHE);
+function isCacheablePath(pathname) {
+  return pathname.startsWith('/assets/') || pathname.startsWith('/theme-assets/');
+}
+
+function cacheFor(pathname) {
+  return pathname.startsWith('/theme-assets/')
+    ? { name: THEME_CACHE, max: MAX_THEME_ASSETS }
+    : { name: ASSET_CACHE, max: MAX_ASSETS };
+}
+
+async function asset(request, cacheName, max) {
+  const cache = await caches.open(cacheName);
   // `ignoreVary`: a hashed file is the same bytes whatever the request's
   // Origin/Accept-Encoding (module scripts send Origin; the copy saved at
   // install time was fetched without it).
@@ -140,19 +166,22 @@ async function asset(request) {
   const response = await fetch(request);
   if (isStorableAsset(response)) {
     await cache.put(request, response.clone());
-    void trim(cache);
+    void trim(cache, max);
   }
   return response;
 }
 
 async function cacheAssets(urls) {
-  const cache = await caches.open(ASSET_CACHE);
+  const touched = new Map();
   for (const raw of urls) {
     try {
       const url = new URL(raw, self.location.origin);
-      if (url.origin !== self.location.origin || !url.pathname.startsWith('/assets/')) {
+      if (url.origin !== self.location.origin || !isCacheablePath(url.pathname)) {
         continue;
       }
+      const target = cacheFor(url.pathname);
+      const cache = await caches.open(target.name);
+      touched.set(target.name, target.max);
       if (await cache.match(url.pathname, { ignoreVary: true })) continue;
       const response = await fetch(url.pathname);
       if (isStorableAsset(response)) await cache.put(url.pathname, response);
@@ -160,13 +189,14 @@ async function cacheAssets(urls) {
       // One file failing never stops the others.
     }
   }
-  await trim(cache);
+  if (!touched.has(ASSET_CACHE)) touched.set(ASSET_CACHE, MAX_ASSETS);
+  for (const [name, max] of touched) await trim(await caches.open(name), max);
 }
 
-/** Oldest first out once the cache holds more than `MAX_ASSETS` files. */
-async function trim(cache) {
+/** Oldest first out once the cache holds more than `max` files. */
+async function trim(cache, max) {
   const keys = await cache.keys();
-  for (const key of keys.slice(0, Math.max(0, keys.length - MAX_ASSETS))) {
+  for (const key of keys.slice(0, Math.max(0, keys.length - max))) {
     await cache.delete(key);
   }
 }

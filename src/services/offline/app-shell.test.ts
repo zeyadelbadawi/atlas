@@ -1,7 +1,7 @@
 /**
- * The app-shell worker is registered only on the platform host in a
- * production build — never on an Academy website — and the kill switch
- * removes a previously installed one.
+ * The app-shell worker is registered in a production build on the platform
+ * host and on Academy websites (each its own origin, scope `/`), never in
+ * development, and the kill switch removes a previously installed one.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { setUpAppShell } from './app-shell';
@@ -34,7 +34,7 @@ describe('setUpAppShell', () => {
   it('registers /sw.js on the platform host in a production build', async () => {
     const { register, postMessage } = stubServiceWorker();
     setUpAppShell({
-      isPlatformHost: true,
+      surface: 'platform',
       isProductionBuild: true,
       enabled: true,
     });
@@ -46,20 +46,20 @@ describe('setUpAppShell', () => {
     );
   });
 
-  it('never registers on an Academy website', () => {
+  it('registers on an Academy website too, at its own origin root', () => {
     const { register } = stubServiceWorker();
     setUpAppShell({
-      isPlatformHost: false,
+      surface: 'academy',
       isProductionBuild: true,
       enabled: true,
     });
-    expect(register).not.toHaveBeenCalled();
+    expect(register).toHaveBeenCalledWith('/sw.js', { scope: '/' });
   });
 
   it('never registers in development', () => {
     const { register } = stubServiceWorker();
     setUpAppShell({
-      isPlatformHost: true,
+      surface: 'platform',
       isProductionBuild: false,
       enabled: true,
     });
@@ -69,7 +69,7 @@ describe('setUpAppShell', () => {
   it('kill switch: unregisters an installed worker instead', async () => {
     const { register, unregister } = stubServiceWorker();
     setUpAppShell({
-      isPlatformHost: true,
+      surface: 'platform',
       isProductionBuild: true,
       enabled: false,
     });
