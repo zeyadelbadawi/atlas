@@ -238,6 +238,89 @@ test.describe('J25 — video loading, slow, failed and ready', () => {
     await expect(loading).toHaveCount(0);
     await expect(page.getByTestId('video-status-error')).toHaveCount(0);
 
+    // The forensic watermark (backend docs/FORENSIC_WATERMARK.md): the
+    // SERVER's per-viewer code is drawn over the playing picture.
+    const label = page.getByTestId('forensic-watermark-label');
+    await expect(label).toBeVisible();
+    await expect(label).toHaveText(
+      /^[0-9A-HJKMNP-TV-Z]{5}-[0-9A-HJKMNP-TV-Z]{5} · \S+@\S+$/
+    );
+    await expect(page.getByTestId('forensic-watermark-pattern')).toBeVisible();
+    await expect(video).toHaveAttribute('controlslist', /nofullscreen/);
+    // A real, laid-out, playing player never trips the watchdog.
+    await page.waitForTimeout(5_000);
+    await expect(page.getByTestId('forensic-watermark-tamper')).toHaveCount(0);
+    await page.screenshot({
+      path: testInfo.outputPath('hosted-watermark.png'),
+    });
+
+    // Fullscreen is the FRAME (video + watermark), never the bare video.
+    await page.getByRole('button', { name: /^full screen$/i }).click();
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () =>
+            document.fullscreenElement?.hasAttribute('data-forensic-frame') ??
+            false
+        )
+      )
+      .toBe(true);
+    await expect(label).toBeVisible();
+    await page.screenshot({
+      path: testInfo.outputPath('hosted-watermark-fullscreen.png'),
+    });
+    await page.getByRole('button', { name: /exit full screen/i }).click();
+    await expect
+      .poll(() => page.evaluate(() => document.fullscreenElement === null))
+      .toBe(true);
+
+    // Even if the bare video goes fullscreen anyway (a browser that ignores
+    // `nofullscreen`), it is pulled straight back out and the FRAME fills
+    // the screen instead, watermark included.
+    await page.evaluate(() => {
+      const button = document.createElement('button');
+      button.id = 'force-video-fullscreen';
+      button.textContent = 'force';
+      button.onclick = () =>
+        void document.querySelector('video')?.requestFullscreen();
+      document.body.append(button);
+    });
+    await page.locator('#force-video-fullscreen').click();
+    await expect
+      .poll(() =>
+        page.evaluate(() => document.fullscreenElement?.tagName ?? null)
+      )
+      .not.toBe('VIDEO');
+    await expect(
+      page.locator('[data-forensic-frame][data-fullscreen="true"]')
+    ).toBeVisible();
+    await expect(label).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(
+      page.locator('[data-forensic-frame][data-fullscreen="true"]')
+    ).toHaveCount(0);
+    await page.evaluate(() =>
+      document.getElementById('force-video-fullscreen')?.remove()
+    );
+
+    // Deleting the watermark (as devtools would) pauses playback and says
+    // why; restoring brings the code back, and nothing crashes.
+    await video.evaluate((el: HTMLVideoElement) => {
+      el.muted = true;
+      return el.play().catch(() => undefined);
+    });
+    await label.evaluate((el) => el.remove());
+    const shield = page.getByTestId('forensic-watermark-tamper');
+    await expect(shield).toBeVisible({ timeout: 5_000 });
+    await expect(shield).toContainText('Playback paused');
+    await expect
+      .poll(() => video.evaluate((el: HTMLVideoElement) => el.paused))
+      .toBe(true);
+    await page.screenshot({ path: testInfo.outputPath('hosted-tamper.png') });
+    await shield.getByRole('button', { name: /restore and continue/i }).click();
+    await expect(shield).toHaveCount(0);
+    await expect(page.getByTestId('forensic-watermark-label')).toBeVisible();
+
     // A file that fails to load: an error the learner can act on.
     await freshPage();
     await page.route(
@@ -322,6 +405,21 @@ test.describe('J25 — video loading, slow, failed and ready', () => {
         .frameLocator('[data-testid="youtube-lesson-player"]')
         .getByText('stub embed')
     ).toBeVisible();
+
+    // The embed sits under the forensic watermark, with its own
+    // fullscreen, PiP and presentation switched off.
+    expect(
+      new URL((await frame.getAttribute('src'))!).searchParams.get('fs')
+    ).toBe('0');
+    await expect(frame).not.toHaveAttribute('allowfullscreen', /.*/);
+    await expect(page.getByTestId('forensic-watermark-label')).toHaveText(
+      /^[0-9A-HJKMNP-TV-Z]{5}-[0-9A-HJKMNP-TV-Z]{5} · /
+    );
+    await page.waitForTimeout(3_000);
+    await expect(page.getByTestId('forensic-watermark-tamper')).toHaveCount(0);
+    await page.screenshot({
+      path: testInfo.outputPath('youtube-watermark.png'),
+    });
 
     mode = 'refuse';
     await page.reload();

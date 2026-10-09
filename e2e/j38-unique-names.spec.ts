@@ -35,6 +35,7 @@ import {
   apiPost,
   apiSignIn,
   declineCookies,
+  fillSignUpPhone,
   requireSeed,
   resolveAcademy,
   seedCookieDecision,
@@ -102,6 +103,7 @@ async function fillWebsiteSignUp(
   await declineCookies(page);
   await page.locator('#name').fill(name);
   await page.locator('#email').fill(email);
+  await fillSignUpPhone(page);
   await page.locator('#password').fill(LEARNER_PASSWORD);
   await page.locator('#confirmPassword').fill(LEARNER_PASSWORD);
   const terms = page.locator('#acceptTerms');
