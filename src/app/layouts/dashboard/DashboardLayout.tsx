@@ -7,6 +7,7 @@
  * product.
  */
 import { LifecyclePanel } from '@features/tenant';
+import { PlatformOwnerMfaNotice } from '@features/profile';
 import { useTranslation } from 'react-i18next';
 import { SkipToContentLink } from '@components/navigation';
 import { STORAGE_KEYS } from '@constants';
@@ -121,6 +122,11 @@ function DashboardShell(): JSX.Element {
             whose subscription is simply working.
           */}
           <LifecyclePanel />
+        </div>
+        {/* ATO F11 — a Platform Owner without an authenticator app is told
+            before platform tools start requiring one. */}
+        <div className="px-4 pt-4 sm:px-6 lg:px-8 empty:hidden">
+          <PlatformOwnerMfaNotice />
         </div>
 
         <main

@@ -196,5 +196,10 @@
     "resend": "Send a new code",
     "resendIn": "You can request a new code in {{seconds}} s",
     "back": "Back"
+  },
+  "platformOwnerMfa": {
+    "title": "Set up an authenticator app to keep Platform Owner access",
+    "description": "Platform Owner tools will soon require two-step verification with an authenticator app. Set it up now in your security settings so your access is not interrupted.",
+    "action": "Open security settings"
   }
 }
