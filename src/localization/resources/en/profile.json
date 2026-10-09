@@ -168,6 +168,7 @@
     "consequenceSessions": "You are signed out everywhere immediately, and you will not be able to sign in again.",
     "consequenceAcademies": "Any academy you own is archived, which takes its public website offline.",
     "consequenceRecords": "Records that must be kept — billing history, audit entries, and content you posted — remain, but are no longer linked to you by name.",
+    "consequenceWatermark": "Forensic video watermark records — which link the codes shown on videos you watched to your name, email and session — are kept until 730 days after each code was last shown, so a leaked recording can still be traced.",
     "action": "Delete my account",
     "confirmTitle": "Delete your account permanently?",
     "confirmDescription": "This is irreversible. Please confirm you want to delete your Atlas account.",
@@ -196,5 +197,39 @@
     "resend": "Send a new code",
     "resendIn": "You can request a new code in {{seconds}} s",
     "back": "Back"
+  },
+  "platformOwnerMfa": {
+    "title": "Set up an authenticator app to keep Platform Owner access",
+    "description": "Platform Owner tools will soon require two-step verification with an authenticator app. Set it up now in your security settings so your access is not interrupted.",
+    "action": "Open security settings"
+  },
+  "phone": {
+    "title": "Phone number",
+    "description": "Your mobile number. Academies and other users can’t see it. It’s also stored, encrypted, in the forensic watermark records described in our Privacy Policy.",
+    "label": "Mobile number",
+    "empty": "You haven’t added a phone number yet.",
+    "add": "Add phone number",
+    "change": "Change number",
+    "remove": "Remove",
+    "status": {
+      "verified": "Verified",
+      "unverified": "Not verified",
+      "comingSoon": "Verification by SMS or WhatsApp is coming soon. There’s nothing you need to do for now."
+    },
+    "reverifyNotice": "Your new number will need to be verified again.",
+    "removeConfirm": {
+      "title": "Remove your phone number?",
+      "description": "You can add a number again at any time.",
+      "confirm": "Remove number"
+    },
+    "saved": "Phone number saved",
+    "removed": "Phone number removed",
+    "rateLimited": "You’ve changed your number several times recently. Please try again later.",
+    "prompt": {
+      "title": "Add your phone number",
+      "body": "So we can reach you about your account if we ever need to. Academies and other users can’t see it.",
+      "action": "Add phone number",
+      "dismiss": "Not now"
+    }
   }
 }

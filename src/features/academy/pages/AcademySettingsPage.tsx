@@ -79,6 +79,9 @@ export default function AcademySettingsPage(): JSX.Element {
     the server is the authority.
   */
   const canManageRegistrationPolicy = organization?.role === 'owner';
+  // The web address (slug) can only be changed by the Organization Owner
+  // (backend-enforced, 403 otherwise); others see it read-only.
+  const canChangeSlug = organization?.role === 'owner';
 
   /*
     The invite link is `https://{academy host}/sign-up?invite={token}`.
@@ -267,10 +270,18 @@ export default function AcademySettingsPage(): JSX.Element {
                   <FormItem>
                     <FormLabel>{t('academy:create.slugLabel')}</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input
+                        {...field}
+                        dir="ltr"
+                        data-ltr-content
+                        readOnly={!canChangeSlug}
+                        aria-readonly={!canChangeSlug || undefined}
+                      />
                     </FormControl>
                     <FormDescription>
-                      {t('academy:create.slugHelp')}
+                      {canChangeSlug
+                        ? t('academy:create.slugHelp')
+                        : t('academy:settings.slugOwnerOnly')}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

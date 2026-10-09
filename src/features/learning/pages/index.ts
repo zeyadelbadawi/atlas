@@ -4,4 +4,3 @@
 export { default as StudentCourseDiscoveryPage } from './StudentCourseDiscoveryPage';
 export { default as StudentCourseDetailsPage } from './StudentCourseDetailsPage';
 export { default as CourseLearnRedirectPage } from './CourseLearnRedirectPage';
-export { default as LessonPage } from './LessonPage';

@@ -188,6 +188,9 @@ function renderForm(
 async function fillAccount(user: ReturnType<typeof userEvent.setup>) {
   await user.type(screen.getByLabelText('Full Name'), 'Sara Ali');
   await user.type(screen.getByLabelText('Email'), 'sara@example.com');
+  // International form: the selector follows the number, whatever the
+  // runner's time zone made the default country.
+  await user.type(screen.getByLabelText('Mobile number'), '+20 100 123 4567');
   await user.type(screen.getByLabelText('Password'), 'correct-horse-1');
   await user.type(screen.getByLabelText('Confirm Password'), 'correct-horse-1');
   await user.click(screen.getByRole('checkbox'));
@@ -249,6 +252,9 @@ describe('one-page sign-up — organization mode on', () => {
       inviteToken: undefined,
       organizationName: 'Nile Learning',
       planId: 'plan-growth',
+      // Tidied to the national format on blur; the server normalises.
+      phoneNumber: '010 01234567',
+      phoneCountry: 'EG',
     });
     const probe = await screen.findByTestId('sign-in-probe');
     expect(JSON.parse(probe.textContent ?? 'null')).toEqual({
@@ -284,6 +290,38 @@ describe('one-page sign-up — organization mode on', () => {
 });
 
 describe('one-page sign-up — the form falls back to today', () => {
+  it('requires a valid mobile number on both sign-ups and sends nothing without one', async () => {
+    getSignupOptions.mockResolvedValue(
+      options({ organizationSignup: false, trialPlans: [] })
+    );
+    const user = userEvent.setup();
+    // The academy-website learner sign-up uses the same form.
+    renderForm('/auth/register', { academyId: 'academy-1' });
+    await fillAccount(user);
+    const phone = screen.getByLabelText('Mobile number');
+    await user.clear(phone);
+    await user.click(screen.getByRole('button', { name: 'Create Account' }));
+    expect(await screen.findByText('Enter your mobile number')).toBeTruthy();
+    await user.type(phone, '0223456789');
+    await user.click(screen.getByRole('button', { name: 'Create Account' }));
+    expect(
+      await screen.findByText(
+        'Enter a valid mobile number for the selected country'
+      )
+    ).toBeTruthy();
+    expect(register).not.toHaveBeenCalled();
+
+    await user.clear(phone);
+    await user.type(phone, '01001234567');
+    await user.click(screen.getByRole('button', { name: 'Create Account' }));
+    await waitFor(() => expect(register).toHaveBeenCalledTimes(1));
+    expect(register.mock.calls[0][0]).toMatchObject({
+      academyId: 'academy-1',
+      phoneNumber: '010 01234567',
+      phoneCountry: 'EG',
+    });
+  });
+
   it('renders the account-only form when the flag is off, and sends no organization fields', async () => {
     getSignupOptions.mockResolvedValue(
       options({ organizationSignup: false, trialPlans: [] })

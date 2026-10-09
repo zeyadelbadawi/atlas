@@ -2,8 +2,9 @@
  * Add Academy Manager Dialog.
  *
  * Grants Manager access to this academy (`AcademyService.addAcademyManager`)
- * — either to an already-registered Atlas user (email alone), or to a
- * brand-new account invited in the same action (email + name). Launch
+ * — either to an already-registered Atlas user (who keeps their own name),
+ * or to a brand-new account invited in the same action under the name
+ * typed here. Email and name are always both asked for (ATO F5). Launch
  * Stabilization A2: nobody chooses a password for someone else — the
  * invitee sets their own through the emailed setup link.
  */
@@ -28,7 +29,6 @@ import { useAddAcademyManager } from '../hooks';
 import { useAcademyMemberLookup } from '../hooks/useAcademyMemberLookup';
 import { MemberAccountFields, isBlockedByLookup } from './MemberAccountFields';
 import {
-  isNameMissingForNewAccount,
   memberAddErrorKey,
   memberAddOutcomeKey,
   memberAddPayload,
@@ -90,12 +90,8 @@ export function AddAcademyManagerDialog({
   };
 
   const onSubmit = (data: AddAcademyManagerFormData) => {
-    if (isNameMissingForNewAccount(data, lookup)) {
-      form.setError('name', { message: 'validation:required' });
-      return;
-    }
     addManager.mutate(
-      { academyId, payload: memberAddPayload(data, lookup) },
+      { academyId, payload: memberAddPayload(data) },
       {
         onSuccess: (result) => {
           notifySuccess(memberAddOutcomeKey(result.outcome));

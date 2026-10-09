@@ -161,6 +161,7 @@ describe('protection cards — access', () => {
     renderAll(false);
 
     expect(screen.getAllByText(OWNER_ONLY)).toHaveLength(3);
+    // The content card has nothing to fetch at all any more.
     expect(useContentQuery).not.toHaveBeenCalled();
     expect(useTierQuery).not.toHaveBeenCalled();
     expect(useDevicesQuery).not.toHaveBeenCalled();
@@ -176,12 +177,15 @@ describe('protection cards — access', () => {
     devices = { data: undefined, isLoading: false, error: refused };
     renderAll(true);
 
-    expect(screen.getAllByText(OWNER_ONLY)).toHaveLength(3);
+    // The two cards that read settings explain the refusal; the content
+    // card reads nothing (the watermark is mandatory) and is unaffected.
+    expect(screen.getAllByText(OWNER_ONLY)).toHaveLength(2);
+    expect(screen.getByText(/forensic watermark on every video/i)).toBeTruthy();
     expect(screen.queryByRole('button', { name: /try again/i })).toBeNull();
   });
 
   it('shows skeletons while loading and a retry on a real failure', () => {
-    content = { data: undefined, isLoading: true, error: null };
+    devices = { data: undefined, isLoading: true, error: null };
     tier = {
       data: undefined,
       isLoading: false,
@@ -196,65 +200,41 @@ describe('protection cards — access', () => {
 });
 
 describe('ContentProtectionCard', () => {
-  it('confirms before turning the watermark off, then sends the stored deterrents unchanged', async () => {
+  it('states the forensic watermark is always on, with no switch, text field or save to change it', () => {
     renderOne(<ContentProtectionCard academyId="academy-1" canEdit />);
 
-    expect(screen.getAllByText(/always on/i)).toHaveLength(3);
-    const toggle = screen.getByRole('switch', { name: /watermark videos/i });
-    expect(toggle.getAttribute('aria-checked')).toBe('true');
-
-    fireEvent.click(toggle);
-    fireEvent.click(screen.getByRole('button', { name: /^save$/i }));
-
-    const dialog = await screen.findByRole('alertdialog');
-    expect(dialog.textContent).toMatch(/turn the watermark off/i);
+    expect(
+      screen.getByRole('heading', {
+        name: /forensic watermark on every video/i,
+      })
+    ).toBeTruthy();
+    expect(screen.getByText(/can't be turned off/i)).toBeTruthy();
+    // How a leak is traced, honestly: by Atlas, on request.
+    expect(screen.getByText(/contact atlas support/i)).toBeTruthy();
+    // Nothing configurable is offered — a control would change nothing.
+    expect(screen.queryByRole('switch')).toBeNull();
+    expect(screen.queryByRole('textbox')).toBeNull();
+    expect(screen.queryByRole('button', { name: /save/i })).toBeNull();
+    // Nor is anything read or written for it.
+    expect(useContentQuery).not.toHaveBeenCalled();
     expect(mutateContent).not.toHaveBeenCalled();
-
-    fireEvent.click(screen.getByRole('button', { name: /^turn off$/i }));
-
-    expect(mutateContent).toHaveBeenCalledTimes(1);
-    expect(mutateContent.mock.calls[0][0]).toEqual({
-      contentProtection: {
-        watermark: false,
-        disableDownload: true,
-        disablePip: false,
-        disableContextMenu: true,
-      },
-    });
-    expect(notifySuccess).toHaveBeenCalledWith(
-      'academy:protection.content.saved'
-    );
   });
 
-  it('saves a text-only change without a confirmation, trimmed', async () => {
+  it('lists every player protection as always on, and never claims recording is prevented', () => {
     renderOne(<ContentProtectionCard academyId="academy-1" canEdit />);
 
-    fireEvent.change(screen.getByRole('textbox', { name: /watermark text/i }), {
-      target: { value: '  Atlas Academy  ' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: /^save$/i }));
-
-    await waitFor(() => expect(mutateContent).toHaveBeenCalledTimes(1));
-    expect(screen.queryByRole('alertdialog')).toBeNull();
-    expect(mutateContent.mock.calls[0][0]).toMatchObject({
-      contentProtection: { watermark: true, watermarkText: 'Atlas Academy' },
-    });
-  });
-
-  it('shows a save refusal inline and as a toast', async () => {
-    failure = createApiError('server');
-    renderOne(<ContentProtectionCard academyId="academy-1" canEdit />);
-
-    expect(screen.getByRole('alert').textContent).toBeTruthy();
-    fireEvent.change(screen.getByRole('textbox', { name: /watermark text/i }), {
-      target: { value: 'x' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: /^save$/i }));
-    await waitFor(() =>
-      expect(notifyError).toHaveBeenCalledWith(
-        'academy:protection.content.saveFailed'
-      )
-    );
+    for (const label of [
+      /fullscreen keeps the watermark/i,
+      /tamper detection/i,
+      /download button hidden/i,
+      /picture-in-picture blocked/i,
+      /right-click menu suppressed/i,
+    ]) {
+      expect(screen.getByText(label)).toBeTruthy();
+    }
+    // The badge plus one per protection.
+    expect(screen.getAllByText(/always on/i)).toHaveLength(6);
+    expect(screen.getByText(/they do not stop screen recording/i)).toBeTruthy();
   });
 });
 

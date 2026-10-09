@@ -127,6 +127,12 @@ export const userKeys = {
   profile: (userId: string) => [...userKeys.all, 'profile', userId] as const,
   preferences: (userId: string) =>
     [...userKeys.all, 'preferences', userId] as const,
+  /**
+   * The signed-in account's own phone number. Personal data: the `user`
+   * root is NOT in the offline persistence allowlist
+   * (`services/offline/query-persistence.ts`), and must never be added.
+   */
+  phone: () => [...userKeys.all, 'phone'] as const,
 } as const;
 
 /**
@@ -1223,6 +1229,20 @@ export const platformContactSubmissionKeys = {
   list: (query?: unknown) =>
     [...platformContactSubmissionKeys.all, 'list', query] as const,
   summary: () => [...platformContactSubmissionKeys.all, 'summary'] as const,
+} as const;
+
+/**
+ * Forensic watermark lookup (docs/FORENSIC_WATERMARK.md) — the Platform
+ * Owner's "who leaked this recording?" answer. The response carries a
+ * person's name, email and phone, so this root is deliberately absent from
+ * the offline persistence allowlist (`isPersistableQueryKey`) and the hook
+ * also opts out with `meta.persistOffline: false` and `gcTime: 0`.
+ */
+export const platformWatermarkKeys = {
+  all: ['platform-watermarks'] as const,
+  /** `code` is the normalised code (no dash, upper case). */
+  lookup: (code: string) =>
+    [...platformWatermarkKeys.all, 'lookup', code] as const,
 } as const;
 
 /**

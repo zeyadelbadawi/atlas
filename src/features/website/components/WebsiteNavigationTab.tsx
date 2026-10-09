@@ -380,6 +380,7 @@ export function WebsiteNavigationTab({
               <Input
                 id="header-cta-url"
                 dir="ltr"
+                data-ltr-content
                 placeholder="https://example.com"
                 defaultValue={configuration.header.cta?.url ?? ''}
                 onBlur={(event) =>

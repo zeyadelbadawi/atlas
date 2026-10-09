@@ -5,10 +5,18 @@
  * attributes that make RTL work platform-wide. Because `dir` is set on the
  * document root, every component inherits direction automatically and no
  * component needs a direction branch of its own.
+ *
+ * Radix primitives are the exception: they do not read the document's
+ * `dir`, they default to `ltr` and several of them (Tabs, Toggle Group,
+ * Radio Group, Scroll Area, menus…) WRITE `dir="ltr"` onto their own root,
+ * which turned everything inside a tab — whole profile pages, the members
+ * table — left-to-right in Arabic. `DirectionProvider` hands them the
+ * active language's direction instead.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { I18nextProvider } from 'react-i18next';
+import { DirectionProvider } from '@radix-ui/react-direction';
 import type { i18n as I18nInstance } from 'i18next';
 import { STORAGE_KEYS } from '@constants';
 import {
@@ -96,7 +104,9 @@ export function AtlasLocalizationProvider({
   return (
     <I18nextProvider i18n={i18n}>
       <LocalizationContext.Provider value={value}>
-        {children}
+        <DirectionProvider dir={languageDefinition.direction}>
+          {children}
+        </DirectionProvider>
       </LocalizationContext.Provider>
     </I18nextProvider>
   );

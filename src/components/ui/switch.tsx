@@ -15,9 +15,12 @@ const Switch = React.forwardRef<
         {...props}
         ref={ref}
     >
+        {/* The thumb starts at the inline START edge, so "on" moves it toward
+            the inline end: right in LTR, LEFT in RTL (a plain translate-x-5
+            pushed it out of the track in Arabic). */}
         <SwitchPrimitives.Thumb
             className={cn(
-                'pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0'
+                'pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=unchecked]:translate-x-0 data-[state=checked]:translate-x-5 rtl:data-[state=checked]:-translate-x-5'
             )}
         />
     </SwitchPrimitives.Root>

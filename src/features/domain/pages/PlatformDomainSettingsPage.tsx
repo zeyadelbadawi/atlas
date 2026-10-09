@@ -176,7 +176,7 @@ function TruthRow({
       <div className="min-w-0">
         <p className="text-foreground">{t(labelKey)}</p>
         {detail ? (
-          <p className="break-all text-muted-foreground" dir="ltr">
+          <p className="break-all text-muted-foreground" dir="auto">
             {detail}
           </p>
         ) : null}
@@ -343,7 +343,7 @@ export default function PlatformDomainSettingsPage(): JSX.Element {
         id: 'subdomain',
         header: t('website:platformDomain.operations.table.subdomain'),
         cell: ({ row }) => (
-          <span className="font-mono text-xs" dir="ltr">
+          <span className="font-mono text-xs" dir="ltr" data-ltr-content>
             {row.original.subdomain?.fullHost ??
               row.original.subdomain?.subdomain ??
               '—'}
@@ -356,7 +356,7 @@ export default function PlatformDomainSettingsPage(): JSX.Element {
         cell: ({ row }) =>
           row.original.customDomain?.hostname ? (
             <div className="flex flex-wrap items-center gap-2">
-              <span className="font-mono text-xs" dir="ltr">
+              <span className="font-mono text-xs" dir="ltr" data-ltr-content>
                 {row.original.customDomain.hostname}
               </span>
               <StatusBadge
@@ -375,7 +375,7 @@ export default function PlatformDomainSettingsPage(): JSX.Element {
         header: t('website:platformDomain.operations.table.canonical'),
         cell: ({ row }) =>
           row.original.canonicalHost ? (
-            <span className="font-mono text-xs" dir="ltr">
+            <span className="font-mono text-xs" dir="ltr" data-ltr-content>
               {row.original.canonicalHost.host}
             </span>
           ) : (
@@ -622,6 +622,7 @@ export default function PlatformDomainSettingsPage(): JSX.Element {
                             <Input
                               {...field}
                               dir="ltr"
+                              data-ltr-content
                               placeholder="example.com"
                             />
                           </FormControl>

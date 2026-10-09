@@ -45,6 +45,13 @@ export const ACADEMY_MEMBER_ROLES: readonly AcademyMemberRole[] = [
 /** Maximum academy name length. */
 export const MAX_ACADEMY_NAME_LENGTH = 100;
 
+/**
+ * Bounds of the name an Add Manager/Instructor/Student request carries —
+ * the backend's own limits on that field (ATO F5).
+ */
+export const MIN_MEMBER_NAME_LENGTH = 2;
+export const MAX_MEMBER_NAME_LENGTH = 120;
+
 /** Maximum academy description length. */
 export const MAX_ACADEMY_DESCRIPTION_LENGTH = 500;
 

@@ -279,6 +279,45 @@ export interface RegistrationRequest {
   readonly organizationName?: string;
   /** New Customer Onboarding — the trial plan's `id` (a UUID). Requires `organizationName`. */
   readonly planId?: string;
+  /**
+   * The phone number exactly as typed and the ISO 3166-1 alpha-2 country
+   * chosen beside it (docs/USER_PHONE.md). The server validates and
+   * normalises; the sign-up page always sends both.
+   */
+  readonly phoneNumber?: string;
+  readonly phoneCountry?: string;
+}
+
+/** `GET|PUT|DELETE /users/me/phone` — the signed-in account's own number. */
+export interface UserPhoneDetails {
+  /** `+201001234567` */
+  readonly e164: string;
+  /** ISO 3166-1 alpha-2, as chosen. */
+  readonly country: string;
+  readonly callingCode: string;
+  /** National significant number, for the edit field. */
+  readonly nationalNumber: string;
+  readonly verified: boolean;
+  readonly verifiedAt?: string;
+  readonly updatedAt: string;
+}
+
+/** Whether phone verification is offered. Today it never is: no SMS/WhatsApp provider is contracted. */
+export type PhoneVerificationAvailability =
+  | { readonly available: true; readonly channel: 'sms' | 'whatsapp' }
+  | {
+      readonly available: false;
+      readonly reason: 'disabled' | 'provider_not_configured';
+    };
+
+export interface UserPhone {
+  readonly phone: UserPhoneDetails | null;
+  readonly verification: PhoneVerificationAvailability;
+}
+
+export interface UpdatePhoneRequest {
+  readonly phoneNumber: string;
+  readonly phoneCountry: string;
 }
 
 /** `POST /auth/password-reset/validate` — whether a reset token is currently usable. */

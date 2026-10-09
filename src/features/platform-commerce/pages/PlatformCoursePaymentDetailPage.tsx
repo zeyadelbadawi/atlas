@@ -211,14 +211,14 @@ export default function PlatformCoursePaymentDetailPage(): JSX.Element {
           <CardContent>
             <dl className="space-y-3 text-sm">
               <DetailRow label={t('platformCommerce:coursePayments.reference')}>
-                <span className="font-mono text-xs" dir="ltr">
+                <span className="font-mono text-xs" dir="ltr" data-ltr-content>
                   {payment.id}
                 </span>
               </DetailRow>
               <DetailRow
                 label={t('platformCommerce:coursePayments.courseOrder')}
               >
-                <span className="font-mono text-xs" dir="ltr">
+                <span className="font-mono text-xs" dir="ltr" data-ltr-content>
                   {payment.courseOrderId}
                 </span>
               </DetailRow>
@@ -269,6 +269,7 @@ export default function PlatformCoursePaymentDetailPage(): JSX.Element {
                   })}
                   className="font-mono text-xs text-primary hover:underline"
                   dir="ltr"
+                  data-ltr-content
                 >
                   {payment.payerUserId}
                 </Link>

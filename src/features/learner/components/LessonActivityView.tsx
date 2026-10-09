@@ -25,7 +25,7 @@
  */
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ExternalLink, FileDown, PauseCircle } from 'lucide-react';
+import { ExternalLink, FileDown, PauseCircle, WifiOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -44,6 +44,12 @@ export interface LessonActivityViewProps {
   readonly onPositionSource: (getPosition: () => number) => void;
   /** Called when the media reaches its end, so auto-advance may arm. */
   readonly onFinished: () => void;
+  /**
+   * Academy offline — the connection dropped while this lesson is open. A
+   * video keeps playing only what is already buffered; the learner is told
+   * so instead of watching it freeze without explanation.
+   */
+  readonly isOffline?: boolean;
 }
 
 export function LessonActivityView({
@@ -52,6 +58,7 @@ export function LessonActivityView({
   onCredentialFailure,
   onPositionSource,
   onFinished,
+  isOffline = false,
 }: LessonActivityViewProps): JSX.Element {
   const { t } = useTranslation();
   const [readingPercentage, setReadingPercentage] = useState(0);
@@ -84,6 +91,16 @@ export function LessonActivityView({
     <div className="space-y-4">
       {leaseNotice}
 
+      {isOffline && grant.kind !== 'text' ? (
+        <Alert role="status" className="border-warning" data-offline-video>
+          <WifiOff className="size-4" aria-hidden />
+          <AlertTitle>{t('learning:offline.video.title')}</AlertTitle>
+          <AlertDescription>
+            {t('learning:offline.video.description')}
+          </AlertDescription>
+        </Alert>
+      ) : null}
+
       {grant.kind === 'video' && grant.video ? (
         <ProtectedVideoPlayer
           video={grant.video}
@@ -91,7 +108,7 @@ export function LessonActivityView({
           resumePositionSeconds={grant.resumePositionSeconds}
           lessonId={grant.lessonId}
           title={grant.title}
-          watermarkText={grant.watermark.enabled ? grant.watermark.text : ''}
+          watermark={grant.watermark}
           resources={grant.resources}
           onCredentialFailure={onCredentialFailure}
           onPositionSource={onPositionSource}
@@ -149,7 +166,11 @@ export function LessonActivityView({
         /* A supported YouTube link plays INLINE, inside the same player
            shell as every other source. The server decided it was
            embeddable; the component embeds by id, never by URL. */
-        <YouTubeLessonPlayer embed={grant.externalEmbed} title={grant.title} />
+        <YouTubeLessonPlayer
+          embed={grant.externalEmbed}
+          title={grant.title}
+          watermark={grant.watermark}
+        />
       ) : null}
 
       {grant.kind === 'external' &&

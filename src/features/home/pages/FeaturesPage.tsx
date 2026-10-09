@@ -59,7 +59,8 @@ interface FeatureGroup {
   readonly icon: LucideIcon;
   readonly items: readonly string[];
   /** Set only for the groups chosen for visual elevation — see header comment. */
-  readonly visual?: 'platform-convergence' | 'course-structure' | 'secure-shield';
+  readonly visual?:
+    'platform-convergence' | 'course-structure' | 'secure-shield';
 }
 
 const FEATURE_GROUPS: readonly FeatureGroup[] = [
@@ -96,7 +97,9 @@ const FEATURE_GROUPS: readonly FeatureGroup[] = [
   {
     id: 'security',
     icon: ShieldCheck,
-    items: ['isolation', 'auditLog', 'infrastructure'],
+    // `watermark`: the forensic video watermark is mandatory on every plan,
+    // so it is listed here rather than on the (limits-only) pricing page.
+    items: ['isolation', 'auditLog', 'infrastructure', 'watermark'],
     visual: 'secure-shield',
   },
 ];
@@ -110,7 +113,8 @@ function GroupVisual({
     return <CourseStructureFigure />;
   }
 
-  const src = visual === 'platform-convergence' ? platformConvergence : secureShield;
+  const src =
+    visual === 'platform-convergence' ? platformConvergence : secureShield;
   return (
     <img
       src={src}

@@ -30,7 +30,12 @@ import { publicWebsiteLocaleForPath } from './ssr/ssr-paths';
 import { preloadPublicWebsiteRouter } from './app/routes/public-website-router-loader';
 import { isKnownThemeKey, loadThemePack } from '@features/website';
 import { reloadOnceForNewVersion } from '@utils/lazy-with-retry.utils';
-import { installJitteredOnlineManager, setUpAppShell } from '@services/offline';
+import {
+  academyScope,
+  configureOfflineScope,
+  installJitteredOnlineManager,
+  setUpAppShell,
+} from '@services/offline';
 
 /** Id of the mount node declared in `index.html`. */
 const ROOT_ELEMENT_ID = 'root';
@@ -100,10 +105,17 @@ async function initializeApp(): Promise<void> {
     ENV.isDevelopment
   );
   const isAcademyWebsite = websiteContext.mode === 'academy-website';
-  // Local-first dashboard — the dashboard's shell loads without a connection
-  // (never on an Academy website; see `app-shell.ts`).
+  // Local-first — this page's offline store is its surface's own: the
+  // dashboard's, or this academy's (never another academy's, even on a
+  // shared development host). Set before anything reads the store.
+  if (websiteContext.mode === 'academy-website') {
+    configureOfflineScope(academyScope(publicWebsiteLookupKey(websiteContext)));
+  }
+  // The app shell loads without a connection, on the dashboard and on every
+  // Academy website — each on its own origin, with its own worker
+  // (`app-shell.ts`).
   setUpAppShell({
-    isPlatformHost: !isAcademyWebsite,
+    surface: isAcademyWebsite ? 'academy' : 'platform',
     isProductionBuild: import.meta.env.PROD,
     enabled: import.meta.env.VITE_OFFLINE_SHELL !== 'off',
   });

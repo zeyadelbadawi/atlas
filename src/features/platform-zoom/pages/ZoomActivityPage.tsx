@@ -65,7 +65,7 @@ export default function ZoomActivityPage(): JSX.Element {
                   <p className="text-sm text-foreground">{t(`platformZoom:action.${e.action}`, { defaultValue: e.action })}</p>
                   {e.actorName ? <p className="text-xs text-muted-foreground">{e.actorName}</p> : null}
                 </div>
-                <span className="text-xs text-muted-foreground" dir="ltr">{formatDate(e.occurredAt, language, 'short')}</span>
+                <span className="text-xs text-muted-foreground">{formatDate(e.occurredAt, language, 'short')}</span>
               </div>
             ))}
           </CardContent>

@@ -280,6 +280,7 @@ export function PlanEditorDialog({
                   data-testid="plan-amount"
                   inputMode="numeric"
                   dir="ltr"
+                  data-ltr-content
                   value={amount}
                   onChange={(event) => setAmount(event.target.value)}
                 />
@@ -292,6 +293,7 @@ export function PlanEditorDialog({
                   id="plan-currency"
                   data-testid="plan-currency"
                   dir="ltr"
+                  data-ltr-content
                   maxLength={3}
                   value={currency}
                   onChange={(event) => setCurrency(event.target.value)}
@@ -308,6 +310,7 @@ export function PlanEditorDialog({
                   data-testid="plan-yearly-amount"
                   inputMode="numeric"
                   dir="ltr"
+                  data-ltr-content
                   aria-invalid={!yearlyAmountValid}
                   aria-describedby="plan-yearly-amount-help"
                   value={yearlyAmount}
@@ -365,6 +368,7 @@ export function PlanEditorDialog({
                   data-testid="plan-trial-days"
                   inputMode="numeric"
                   dir="ltr"
+                  data-ltr-content
                   placeholder={t(
                     'platform:planAdmin.editor.trialDaysPlaceholder'
                   )}
@@ -420,6 +424,7 @@ export function PlanEditorDialog({
                     max={GIFTED_DAYS_MAX}
                     step={1}
                     dir="ltr"
+                    data-ltr-content
                     placeholder={t('platform:planAdmin.editor.giftPlaceholder')}
                     aria-invalid={!field.valid}
                     aria-describedby={`${field.id}-help${field.valid ? '' : ` ${field.id}-error`}`}
@@ -471,6 +476,7 @@ export function PlanEditorDialog({
                     id={`plan-limit-${key}`}
                     data-testid={`plan-limit-${key}`}
                     dir="ltr"
+                    data-ltr-content
                     value={limits[key] ?? ''}
                     onChange={(event) => {
                       setLimits((prev) => ({
@@ -496,6 +502,7 @@ export function PlanEditorDialog({
                 id="plan-limit-monthlyEmails"
                 data-testid="plan-limit-monthlyEmails"
                 dir="ltr"
+                data-ltr-content
                 inputMode="numeric"
                 placeholder={String(DEFAULT_MONTHLY_EMAILS)}
                 value={monthlyEmails}
@@ -608,7 +615,7 @@ export function PlanEditorDialog({
                             >
                               {row.organizationName} —{' '}
                               {t(`tenant:common.limits.${row.limitKey}`)}:{' '}
-                              <span dir="ltr">
+                              <span dir="ltr" data-ltr-content>
                                 {row.currentUsage} / {row.proposedLimit}
                               </span>
                             </li>

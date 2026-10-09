@@ -387,11 +387,11 @@ export default function EmailActivityPage(): JSX.Element {
                   </td>
                   <td className="px-4 py-3">{typeCell(item)}</td>
                   <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
-                    <span dir="ltr">{recipientText(item)}</span>
+                    <span dir="auto">{recipientText(item)}</span>
                   </td>
                   <td className="px-4 py-3">{statusCell(item)}</td>
                   <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
-                    <span dir="ltr">
+                    <span dir="auto">
                       {item.provider ?? t('platformEmail:common.notAvailable')}
                     </span>
                     <span className="block text-xs">
@@ -424,7 +424,7 @@ export default function EmailActivityPage(): JSX.Element {
               </div>
               {typeCell(item)}
               <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
-                <span dir="ltr">{recipientText(item)}</span>
+                <span dir="auto">{recipientText(item)}</span>
                 <time dateTime={item.createdAt}>
                   {fmt.dateTime(item.createdAt)}
                 </time>

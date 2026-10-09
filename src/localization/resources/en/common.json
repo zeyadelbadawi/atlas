@@ -168,5 +168,16 @@
       "title": "You're offline",
       "description": "This action needs a connection. Nothing was changed — try again when you're back online."
     }
+  },
+  "phone": {
+    "countryButton": "Country code: {{country}} ({{code}})",
+    "searchCountry": "Search country or code",
+    "noCountry": "No country found",
+    "errors": {
+      "required": "Enter your mobile number",
+      "invalid": "Enter a valid mobile number for the selected country",
+      "countryMismatch": "This number belongs to another country. Choose that country or check the number.",
+      "country": "Choose a country"
+    }
   }
 }

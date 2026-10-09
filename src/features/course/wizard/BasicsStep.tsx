@@ -261,6 +261,7 @@ function BasicsFields({
                 {...field}
                 // ASCII and part of a URL: left-to-right even on an Arabic page.
                 dir="ltr"
+                data-ltr-content
                 autoComplete="off"
                 onChange={(event) => {
                   onSlugEdited?.();

@@ -125,6 +125,7 @@ function ColorField({
           key={hex}
           defaultValue={value ? hex : ''}
           dir="ltr"
+          data-ltr-content
           spellCheck={false}
           className="w-28 font-mono uppercase"
           onBlur={(event) => {

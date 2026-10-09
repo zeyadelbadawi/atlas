@@ -47,6 +47,9 @@ function videoWithReadyState(readyState = 0): HTMLVideoElement {
   return element;
 }
 
+/** These tests are about loading states; the watermark has its own suite. */
+const NO_WATERMARK = { enabled: false, text: '' } as const;
+
 describe('useMediaReadiness — real media events', () => {
   function setup(readyState = 0) {
     const element = videoWithReadyState(readyState);
@@ -179,7 +182,7 @@ describe('Atlas-hosted video', () => {
         resumePositionSeconds={0}
         lessonId="l1"
         title="Lesson"
-        watermarkText=""
+        watermark={NO_WATERMARK}
         resources={[]}
         onCredentialFailure={onCredentialFailure}
       />
@@ -221,7 +224,7 @@ describe('Atlas-hosted video — the replacement credential', () => {
       resumePositionSeconds: 0,
       lessonId: 'l1',
       title: 'Lesson',
-      watermarkText: '',
+      watermark: NO_WATERMARK,
       resources: [],
       onCredentialFailure: vi.fn(),
     };
@@ -255,7 +258,14 @@ describe('Atlas-hosted video — the replacement credential', () => {
 
 describe('YouTube', () => {
   const embed = { provider: 'youtube', videoId: 'dQw4w9WgXcQ' } as const;
-  const show = () => wrap(<YouTubeLessonPlayer embed={embed} title="Lesson" />);
+  const show = () =>
+    wrap(
+      <YouTubeLessonPlayer
+        embed={embed}
+        title="Lesson"
+        watermark={NO_WATERMARK}
+      />
+    );
   const frame = () =>
     screen.getByTestId('youtube-lesson-player') as HTMLIFrameElement;
   const postFromEmbed = (

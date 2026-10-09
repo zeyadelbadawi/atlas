@@ -136,7 +136,7 @@ function FaqEntryDialog({
                   <FormItem>
                     <FormLabel>{t('website:content.questionEn')}</FormLabel>
                     <FormControl>
-                      <Input {...field} dir="ltr" />
+                      <Input {...field} dir="ltr" lang="en" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -164,7 +164,7 @@ function FaqEntryDialog({
                   <FormItem>
                     <FormLabel>{t('website:content.answerEn')}</FormLabel>
                     <FormControl>
-                      <Textarea rows={4} {...field} dir="ltr" />
+                      <Textarea rows={4} {...field} dir="ltr" lang="en" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

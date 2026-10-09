@@ -115,17 +115,34 @@ export function academiesWithHost(
   );
 }
 
+/** Origin used only to resolve a candidate path; never navigated to. */
+const RETURN_PATH_PROBE_ORIGIN = 'https://example.invalid';
+
 /**
  * Whether a `returnTo` is a same-site relative path that is safe to
  * navigate to after sign-in. Refuses absolute URLs, protocol-relative
  * `//host` forms and anything with a scheme — an open redirect would let a
  * phishing link bounce a freshly signed-in learner to a look-alike site.
+ *
+ * Browsers strip tabs and newlines from URLs and read `\` as `/`, so
+ * `/\tevil.com` or `/\evil.com` would become `//evil.com` when followed:
+ * any control character, whitespace or backslash anywhere refuses the
+ * value outright. As a final check the path must resolve against a probe
+ * origin without leaving it.
  */
 export function isSafeReturnPath(
   value: string | null | undefined
 ): value is string {
   if (!value) return false;
-  if (!value.startsWith('/')) return false;
-  if (value.startsWith('//') || value.startsWith('/\\')) return false;
-  return !/^[a-z][a-z\d+.-]*:/i.test(value);
+  // eslint-disable-next-line no-control-regex
+  if (/[\u0000- \u007f\\]/.test(value)) return false;
+  if (!value.startsWith('/') || value.startsWith('//')) return false;
+  try {
+    return (
+      new URL(value, RETURN_PATH_PROBE_ORIGIN).origin ===
+      RETURN_PATH_PROBE_ORIGIN
+    );
+  } catch {
+    return false;
+  }
 }

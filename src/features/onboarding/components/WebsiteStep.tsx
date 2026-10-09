@@ -71,7 +71,11 @@ export function WebsiteStep({
       </Button>
     );
     const hostLine = academy.host ? (
-      <p className="text-sm font-medium text-foreground" dir="ltr">
+      <p
+        className="text-sm font-medium text-foreground"
+        dir="ltr"
+        data-ltr-content
+      >
         {academy.host}
       </p>
     ) : (

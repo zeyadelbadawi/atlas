@@ -3,8 +3,9 @@
  *
  * Grants Instructor access to this academy
  * (`AcademyService.addAcademyInstructor`) — either to an already-registered
- * Atlas user (email alone), or to a brand-new account invited in the same
- * action (email + name; Launch Stabilization A2 — the invitee sets their
+ * Atlas user (who keeps their own name), or to a brand-new account invited
+ * in the same action (email and name are always both asked for — ATO F5;
+ * Launch Stabilization A2 — the invitee sets their
  * own password through the emailed setup link). Mirrors
  * `AddAcademyManagerDialog` exactly; kept as a separate
  * component so the Manager flow (already verified end-to-end) is never at
@@ -31,7 +32,6 @@ import { useAddAcademyInstructor } from '../hooks';
 import { useAcademyMemberLookup } from '../hooks/useAcademyMemberLookup';
 import { MemberAccountFields, isBlockedByLookup } from './MemberAccountFields';
 import {
-  isNameMissingForNewAccount,
   memberAddErrorKey,
   memberAddOutcomeKey,
   memberAddPayload,
@@ -89,12 +89,8 @@ export function AddAcademyInstructorDialog({
   };
 
   const onSubmit = (data: AddAcademyInstructorFormData) => {
-    if (isNameMissingForNewAccount(data, lookup)) {
-      form.setError('name', { message: 'validation:required' });
-      return;
-    }
     addInstructor.mutate(
-      { academyId, payload: memberAddPayload(data, lookup) },
+      { academyId, payload: memberAddPayload(data) },
       {
         onSuccess: (result) => {
           notifySuccess(memberAddOutcomeKey(result.outcome));

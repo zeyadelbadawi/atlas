@@ -137,7 +137,7 @@ function ProviderStatusList({
           <div className="min-w-0 space-y-1">
             <p className="text-sm font-medium">
               {t('settings:communications.providers.order')}:{' '}
-              <span className="font-normal" dir="ltr">
+              <span className="font-normal" dir="ltr" data-ltr-content>
                 {provider.order.length > 0
                   ? provider.order.join(' → ')
                   : t('settings:communications.providers.noOrder')}
@@ -145,13 +145,13 @@ function ProviderStatusList({
             </p>
             <p className="text-xs text-muted-foreground">
               {t('settings:communications.providers.active')}:{' '}
-              <span dir="ltr">
+              <span dir="ltr" data-ltr-content>
                 {provider.active ??
                   t('settings:communications.providers.noneActive')}
               </span>
               {' · '}
               {t('settings:communications.providers.fromEmail')}:{' '}
-              <span dir="ltr">
+              <span dir="ltr" data-ltr-content>
                 {provider.fromEmail ??
                   t('settings:communications.providers.noFromEmail')}
               </span>
@@ -453,7 +453,9 @@ export function CommunicationsSettings(): JSX.Element {
                     variant="secondary"
                     className="gap-1 ps-2.5 pe-1 text-sm font-normal"
                   >
-                    <span dir="ltr">{value}%</span>
+                    <span dir="ltr" data-ltr-content>
+                      {value}%
+                    </span>
                     <button
                       type="button"
                       className="rounded-pill p-0.5 hover:bg-background/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"

@@ -161,7 +161,7 @@ export default function ZoomSessionsPage(): JSX.Element {
                       <span className="block truncate">{row.academyName}</span>
                       <span className="block truncate text-xs">{row.organizationName}</span>
                     </TableCell>
-                    <TableCell dir="ltr" className="text-xs">
+                    <TableCell className="text-xs">
                       {formatDate(row.scheduledStartAt, language, 'short')}
                     </TableCell>
                     <TableCell>

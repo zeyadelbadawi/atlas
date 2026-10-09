@@ -172,7 +172,12 @@ export function WebsiteSeoTab({
                   <FormItem>
                     <FormLabel>{t('website:seo.canonicalBaseUrl')}</FormLabel>
                     <FormControl>
-                      <Input {...field} dir="ltr" placeholder="https://" />
+                      <Input
+                        {...field}
+                        dir="ltr"
+                        data-ltr-content
+                        placeholder="https://"
+                      />
                     </FormControl>
                     <p className="text-xs text-muted-foreground">
                       {t('website:seo.canonicalBaseUrlHelp')}

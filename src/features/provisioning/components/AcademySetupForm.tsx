@@ -261,6 +261,7 @@ export function AcademySetupForm({
                     // page — otherwise the caret and the hyphens sit
                     // on the wrong side of what the user is typing.
                     dir="ltr"
+                    data-ltr-content
                     onChange={(event) => {
                       // Latch FIRST, then apply: the edit must be
                       // recorded before any re-render can let a

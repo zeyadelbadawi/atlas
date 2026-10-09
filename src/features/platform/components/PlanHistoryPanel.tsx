@@ -51,13 +51,17 @@ function ChangeRow({ field, from, to }: { field: string; from: unknown; to: unkn
   return (
     <li className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm">
       <span className="font-medium text-foreground">{field}</span>
-      <span className="text-muted-foreground line-through" dir="ltr">
+      <span
+        className="text-muted-foreground line-through"
+        dir="ltr"
+        data-ltr-content
+      >
         {renderValue(from)}
       </span>
       <span className="text-muted-foreground" aria-hidden>
         →
       </span>
-      <span className="text-foreground" dir="ltr">
+      <span className="text-foreground" dir="ltr" data-ltr-content>
         {renderValue(to)}
       </span>
     </li>

@@ -464,6 +464,7 @@ export default function CourseCheckoutPage(): JSX.Element {
                 onChange={(e) => setPayerReference(e.target.value)}
                 maxLength={120}
                 dir="ltr"
+                data-ltr-content
                 autoComplete="off"
                 aria-describedby="proof-reference-help"
                 data-testid="checkout-reference"

@@ -327,7 +327,7 @@ export interface UpdateCoursePayload {
   readonly categoryId?: string;
   readonly pricing?: CoursePricing;
   readonly visibility?: CourseVisibility;
-  readonly status?: CourseStatus;
+  // No `status`: the API refuses it on update (publish/unpublish only).
   // P64 Phase 4 catalog metadata.
   readonly level?: CourseLevel;
   readonly language?: string;

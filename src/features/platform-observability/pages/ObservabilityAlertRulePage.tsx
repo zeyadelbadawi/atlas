@@ -94,7 +94,7 @@ function LabelChips({
   const entries = Object.entries(labels).sort(([a], [b]) => a.localeCompare(b));
   if (entries.length === 0) return null;
   return (
-    <ul className="flex flex-wrap gap-1.5" dir="ltr">
+    <ul className="flex flex-wrap gap-1.5" dir="ltr" data-ltr-content>
       {entries.map(([key, value]) => (
         <li
           key={key}
@@ -168,7 +168,7 @@ function Timeline({
               {formatDate(event.at, language, 'dateTime')}
             </time>
             {' · '}
-            <span className="font-mono" dir="ltr">
+            <span className="font-mono" dir="ltr" data-ltr-content>
               {event.alertId}
             </span>
           </p>
@@ -248,7 +248,7 @@ function RuleDetail({
               : t('platformObservability:rule.immediately')}
           </Field>
           <Field label={t('platformObservability:rule.fields.group')}>
-            <span className="font-mono" dir="ltr">
+            <span className="font-mono" dir="ltr" data-ltr-content>
               {rule.group}
             </span>
           </Field>
@@ -297,7 +297,7 @@ function RuleDetail({
               >
                 <span
                   className="min-w-0 break-all font-mono text-xs text-muted-foreground"
-                  dir="ltr"
+                  dir="auto"
                 >
                   {describeLabels(entry.labels) ||
                     t('platformObservability:rule.noLabels')}
@@ -404,6 +404,7 @@ function RuleDetail({
                   <p
                     className="font-mono text-xs text-muted-foreground"
                     dir="ltr"
+                    data-ltr-content
                   >
                     {[tenant.organizationId, tenant.academyId]
                       .filter(Boolean)

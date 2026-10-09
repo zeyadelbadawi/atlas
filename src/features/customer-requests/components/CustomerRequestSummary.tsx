@@ -44,7 +44,7 @@ export function CustomerRequestSummary({
       id: 'reference',
       label: t(`${CR_NS}:detail.reference`),
       value: (
-        <span className="font-mono text-sm" dir="ltr">
+        <span className="font-mono text-sm" dir="ltr" data-ltr-content>
           {request.reference}
         </span>
       ),

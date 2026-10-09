@@ -10,6 +10,7 @@
  * Atlas-minted, single-use grant; shipping a meeting identifier to the
  * browser would make the room reachable by anyone who opened dev tools.
  */
+import type { ForensicWatermarkDisplay } from './lesson-content.types';
 
 /** Mirrors the backend `LiveSessionStatus` enum exactly. */
 export type LiveSessionStatus =
@@ -238,6 +239,12 @@ export interface LiveSessionJoinAuthorization {
    * duration of the join call, and never persisted anywhere.
    */
   readonly hostToken?: string;
+  /**
+   * The forensic watermark drawn over the meeting (backend
+   * `docs/FORENSIC_WATERMARK.md`). Issued before the SDK signature; a join
+   * the server could not watermark is refused (`watermark_unavailable`).
+   */
+  readonly watermark?: ForensicWatermarkDisplay;
 }
 
 /**

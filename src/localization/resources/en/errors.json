@@ -78,7 +78,15 @@
     "contentUnavailable": "This content cannot be opened right now. Reload the page, and contact the academy if it keeps happening.",
     "lessonNoContent": "This lesson has no content yet. The academy has not added anything to it.",
     "lessonProcessing": "This lesson is not ready to play yet. Its video may still be processing — try again in a few minutes.",
-    "lessonLocked": "Finish the earlier lessons in this course first. This one unlocks when the item before it is complete."
+    "lessonLocked": "Finish the earlier lessons in this course first. This one unlocks when the item before it is complete.",
+    "watermarkUnavailable": "This video couldn’t be prepared securely right now. Please try again in a moment."
+  },
+  "watermark": {
+    "invalidCode": "That isn’t a valid watermark code. A code has 10 letters and digits, shown as XXXXX-XXXXX.",
+    "checksumMismatch": "One symbol of this code looks misread. Re-check the recording, especially 0/O, 1/I/L, 5/S and 8/B.",
+    "notFound": "No watermark was issued with this code. Check that it was read correctly — records are also removed once their retention period ends.",
+    "lookupRateLimited": "You’ve made many lookups in a short time. Wait a few minutes, then try again.",
+    "lookupUnavailable": "Watermark lookup is temporarily unavailable. Try again in a moment."
   },
   "provisioning": {
     "stepFailed": "Something went wrong while setting up your Academy. Please try again or contact support if the problem continues.",
@@ -104,6 +112,7 @@
     "invalidVerificationToken": "This verification link is not valid. Open the full link from your most recent verification email.",
     "verificationTokenExpired": "This verification link has expired or was replaced by a newer one. Request a new link to continue.",
     "verificationTokenUsed": "This verification link has already been used. Your email address is verified.",
+    "verificationSignInRequired": "For your security, sign in to the account this verification link was sent to before confirming the email address. The link has not been used.",
     "studentUseAcademySignIn": "You are a student. Please sign in through your academy’s website.",
     "academyContextRequired": "We could not tell which academy this request is for. Open your academy’s website and try again.",
     "academyHostMismatch": "This academy does not belong to this website address.",
@@ -136,7 +145,8 @@
     "setPasswordFirst": "Set a password before disconnecting Google — otherwise you couldn't sign in.",
     "invalidCurrentPassword": "Your current password is incorrect.",
     "invalidCredentials": "Invalid email or password.",
-    "crossOriginSession": "Your session couldn't be verified for this site. Please sign in again."
+    "crossOriginSession": "Your session couldn't be verified for this site. Please sign in again.",
+    "platformOwnerTwoFactorRequired": "Platform Owner tools need an authenticator app on your account. Set up two-step verification in your security settings, then try again."
   },
   "subscription": {
     "required": "An active subscription is required to make this change."
@@ -207,7 +217,8 @@
     "devicePolicyAboveMaximum": "That limit is higher than the platform allows. Choose a number no higher than the maximum shown.",
     "nameTaken": "Another academy already uses this name. Please choose a different one.",
     "learnerNameTaken": "A learner in this academy already has this name. Add a middle or family name so it is unique here.",
-    "learnerNameTakenExistingAccount": "This person's account name matches a learner already in this academy. Ask them to add a middle or family name in their profile, then add them again."
+    "learnerNameTakenExistingAccount": "This person's account name matches a learner already in this academy. Ask them to add a middle or family name in their profile, then add them again.",
+    "cannotRemoveOrganizationOwner": "The organization owner can't be removed from an academy."
   },
   "course": {
     "slugTaken": "That web address is already used by another course in this academy. Please choose a different one.",
@@ -272,7 +283,10 @@
     "responseRequired": "Write a response or attach a file before submitting.",
     "pastDue": "The due date has passed and this assignment does not accept late submissions.",
     "attachmentNotOwned": "That attachment is not one you uploaded for this assignment. Upload the file again.",
-    "locked": "This assignment is locked until you finish the item before it in the course."
+    "locked": "This assignment is locked until you finish the item before it in the course.",
+    "submissionChanged": "Your submission changed since you started this one (for example, from another device), so it wasn't sent again. Review the current submission.",
+    "draftConflict": "This draft was changed in another tab or on another device.",
+    "idempotencyKeyReused": "This submission was already sent with different content. Refresh and submit again."
   },
   "certificate": {
     "insufficientRole": "Only the academy's owner or a manager can issue, revoke or regenerate certificates.",

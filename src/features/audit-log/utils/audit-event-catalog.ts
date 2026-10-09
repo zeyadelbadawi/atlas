@@ -199,6 +199,8 @@ export const AUDIT_ACTION_CATEGORIES: Readonly<Record<string, AuditCategory>> =
     'account.deletion.code_failed': 'security',
     'account.deletion.locked_out': 'security',
     'account.deletion.confirmed': 'security',
+    'account.phone.updated': 'security',
+    'account.phone.removed': 'security',
     'account.deleted': 'security',
     'account.deleted_by_platform_owner': 'security',
     'plan.created': 'platform',
@@ -214,6 +216,8 @@ export const AUDIT_ACTION_CATEGORIES: Readonly<Record<string, AuditCategory>> =
     'observability.synthetic_alert.armed': 'platform',
     'observability.synthetic_alert.resolved': 'platform',
     'platform.contact_submission.status_changed': 'platform',
+    // Forensic video watermark — every Platform Owner lookup, found or not.
+    'platform.watermark.looked_up': 'security',
     'platform.contact_submission.deleted': 'platform',
     'platform.campaign.sent': 'platform',
     'academy.message.sent': 'academy',

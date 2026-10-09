@@ -296,6 +296,13 @@ export const DASHBOARD_ROUTES = {
   platformAuditLog: '/dashboard/platform/audit-log',
   platformAuditLogDetail: '/dashboard/platform/audit-log/:eventId',
 
+  /**
+   * Forensic watermark lookup (docs/FORENSIC_WATERMARK.md) — the code read
+   * off a leaked recording → the viewer and session it was issued to.
+   * Platform Owner only. Accepts `?code=` so a related code opens by link.
+   */
+  platformWatermarks: '/dashboard/platform/watermarks',
+
   /** The TENANT's own support centre — distinct from the Platform-Owner console below. */
   support: '/dashboard/support',
   supportDetail: '/dashboard/support/:caseId',

@@ -206,6 +206,7 @@ export function InstapayMethodFormDialog({
               labelKey="payments:instapayMethods.fields.instapayAddress"
               helpKey="payments:instapayMethods.fields.instapayAddressHelp"
               dir="ltr"
+              data-ltr-content
               inputMode="email"
               testId="instapay-method-address"
             />

@@ -159,7 +159,8 @@
     "observability": "المراقبة",
     "platform_contact_submission": "استفسار تواصل",
     "lesson": "درس",
-    "communication_campaign": "رسالة"
+    "communication_campaign": "رسالة",
+    "forensic_watermark": "رمز علامة مائية"
   },
   "fields": {
     "title": "العنوان",
@@ -664,7 +665,11 @@
         "confirmed": "{{actor}} أكّد حذف الحساب"
       },
       "deleted": "{{actor}} حذف حسابه",
-      "deleted_by_platform_owner": "{{actor}} حذف حساب مستخدم"
+      "deleted_by_platform_owner": "{{actor}} حذف حساب مستخدم",
+      "phone": {
+        "updated": "{{actor}} حدّث رقم هاتفه",
+        "removed": "{{actor}} حذف رقم هاتفه"
+      }
     },
     "plan": {
       "created": "{{actor}} أنشأ الباقة «{{target}}»",
@@ -697,6 +702,10 @@
       "campaign": {
         "sent": "أرسل {{actor}} رسالة من المنصة",
         "sent_full": "أرسل {{actor}} رسالة من المنصة إلى {{recipientCount}} شخصًا"
+      },
+      "watermark": {
+        "looked_up": "بحث {{actor}} عن رمز العلامة المائية {{target}}",
+        "looked_up_noTarget": "بحث {{actor}} عن رمز علامة مائية"
       }
     }
   }

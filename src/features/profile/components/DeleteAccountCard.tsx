@@ -198,6 +198,7 @@ export function DeleteAccountCard({
           <li>{t('profile:deleteAccount.consequenceSessions')}</li>
           <li>{t('profile:deleteAccount.consequenceAcademies')}</li>
           <li>{t('profile:deleteAccount.consequenceRecords')}</li>
+          <li>{t('profile:deleteAccount.consequenceWatermark')}</li>
         </ul>
 
         <Button
@@ -272,7 +273,7 @@ export function DeleteAccountCard({
                   containerClassName="justify-center"
                 >
                   {/* Digits read left-to-right in Arabic too. */}
-                  <InputOTPGroup dir="ltr">
+                  <InputOTPGroup dir="ltr" data-ltr-content>
                     {Array.from({ length: 6 }, (_, index) => (
                       <InputOTPSlot
                         key={index}

@@ -9,6 +9,9 @@
  *     one on every plan;
  *   - subscriptions are paid by manual transfer and confirmed by Atlas, and
  *     a confirmed plan payment sends the owner a receipt;
+ *   - every video carries a personal forensic watermark, and redistributing
+ *     a recording may be traced to the account — stated without claiming
+ *     the watermark stops recording;
  *   - EN and AR stay structurally identical.
  */
 import { describe, expect, it } from 'vitest';
@@ -48,9 +51,19 @@ describe('Terms of Service content', () => {
     expect(shape(TERMS_AR)).toEqual(shape(TERMS_EN));
   });
 
-  it('carries the 4 October 2026 revision date', () => {
-    expect(TERMS_EN.lastUpdated).toBe('4 October 2026');
-    expect(TERMS_AR.lastUpdated).toBe('٤ أكتوبر ٢٠٢٦');
+  it('carries the 9 October 2026 revision date', () => {
+    expect(TERMS_EN.lastUpdated).toBe('9 October 2026');
+    expect(TERMS_AR.lastUpdated).toBe('٩ أكتوبر ٢٠٢٦');
+  });
+
+  it('warns that redistributed recordings may be traced through the watermark (EN + AR)', () => {
+    const en = sectionText(TERMS_EN, 'acceptable-use');
+    expect(en).toContain('personal forensic watermark');
+    expect(en).toContain('may be traced back to that account');
+    expect(en).not.toMatch(/unremovable|impossible|100%|cannot be recorded/i);
+    const ar = sectionText(TERMS_AR, 'acceptable-use');
+    expect(ar).toContain('علامة مائية تتبّعية شخصية');
+    expect(ar).toContain('وصولًا إلى ذلك الحساب');
   });
 
   it('describes the signup trial truthfully (EN + AR)', () => {

@@ -161,7 +161,7 @@ export function LocalizedTextField({
                 )}
               >
                 {/* Always "count / max", left to right, in either UI direction. */}
-                <span dir="ltr" aria-hidden>
+                <span dir="ltr" data-ltr-content aria-hidden>
                   {t('website:editor.characterCount', {
                     count,
                     max: maxLength,
@@ -181,6 +181,7 @@ export function LocalizedTextField({
           id={inputId}
           {...(multiline ? { rows: 3 } : {})}
           dir={language === 'ar' ? 'rtl' : 'ltr'}
+          lang={language}
           placeholder={language === 'ar' ? placeholderAr : placeholderEn}
           value={text}
           onChange={(event) => update({ [language]: event.target.value })}

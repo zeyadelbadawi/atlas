@@ -61,6 +61,7 @@ export default function PlatformPayoutsPage(): JSX.Element {
             })}
             className="font-mono text-xs text-primary hover:underline"
             dir="ltr"
+            data-ltr-content
           >
             {row.original.academyId}
           </Link>

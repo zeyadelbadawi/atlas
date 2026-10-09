@@ -179,9 +179,10 @@ export class AcademyService extends BaseService {
 
   /**
    * Smart member invitation — the Add Manager/Instructor/Student dialogs'
-   * debounced email check. Answers only a status (and the account's display
-   * name when one exists); it is a hint, and the add call re-checks
-   * everything. Owner-only and rate-limited server-side.
+   * debounced email check. Answers only whether the person is already in
+   * this academy — never whether an Atlas account exists (ATO F5); it is a
+   * hint, and the add call re-checks everything. Owner-only and
+   * rate-limited server-side.
    */
   async lookupAcademyMember(
     id: string,
@@ -197,7 +198,8 @@ export class AcademyService extends BaseService {
 
   /**
    * Grants Manager access to this academy to an existing Atlas account, or
-   * invites a new one (`name` required then). Only the
+   * invites a new one (`name` always required; used only for a new
+   * account). Only the
    * Academy Owner may call this (backend-enforced;
    * `errors.academy.insufficientRole` otherwise); `errors.academy.
    * managerUserNotFound` means no Atlas account exists for that email,
@@ -214,6 +216,23 @@ export class AcademyService extends BaseService {
       payload,
       options
     );
+  }
+
+  /**
+   * Removes a staff member from this academy
+   * (`DELETE /academies/:id/members/:userId`, Organization Owner only).
+   * Their academy role becomes inactive, their course assignments here are
+   * removed, and their organization membership ends when no other academy
+   * of the organization still needs it. 409
+   * `errors.academy.cannotRemoveOrganizationOwner` for the owner; 404 when
+   * the person is not (or no longer) staff here.
+   */
+  async removeAcademyMember(
+    id: string,
+    userId: string,
+    options?: WriteOptions
+  ): Promise<void> {
+    await this.client.delete<void>(this.path(id, 'members', userId), options);
   }
 
   /**

@@ -252,6 +252,7 @@ export function CourseCreateForm({
                       // A course slug is ASCII and appears in a URL, so it
                       // reads left-to-right even on an Arabic page.
                       dir="ltr"
+                      data-ltr-content
                       onChange={(event) => {
                         // Latch before applying — see `useSlugSuggestion`.
                         slugSuggestion.onSlugEdited();

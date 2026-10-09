@@ -19,6 +19,7 @@ import {
   BookOpen,
   Building2,
   Clock,
+  Fingerprint,
   Globe2,
   GraduationCap,
   Layers,
@@ -87,12 +88,15 @@ interface Capability {
 }
 
 const CAPABILITIES: readonly Capability[] = [
-  // Row 1 — lead item (8) + one companion (4).
+  // Row 1 — lead item (8) + one companion (4). The companion is the
+  // forensic video watermark: mandatory on every plan, so it is a claim
+  // that holds for every customer (see atlas-backend FORENSIC_WATERMARK.md).
   { id: 'security', icon: ShieldCheck, span: 8, lead: true },
+  { id: 'watermark', icon: Fingerprint, span: 4 },
+  // Row 2 — three thirds.
   { id: 'academies', icon: Building2, span: 4 },
-  // Row 2 — two halves.
-  { id: 'lms', icon: BookOpen, span: 6 },
-  { id: 'website', icon: Palette, span: 6 },
+  { id: 'lms', icon: BookOpen, span: 4 },
+  { id: 'website', icon: Palette, span: 4 },
   // Row 3 — three thirds.
   { id: 'students', icon: Users, span: 4 },
   { id: 'instructors', icon: GraduationCap, span: 4 },

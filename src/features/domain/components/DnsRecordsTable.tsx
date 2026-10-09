@@ -75,16 +75,16 @@ export function DnsRecordsTable({
         </p>
       ) : null}
       <div className="overflow-x-auto rounded-md border border-border">
-        <table className="w-full text-sm" dir="ltr">
+        <table className="w-full text-sm">
           <thead className="bg-muted/50 text-xs text-muted-foreground">
             <tr>
-              <th className="p-2 text-left">
+              <th className="p-2 text-start">
                 {t('website:domain.custom.dnsType')}
               </th>
-              <th className="p-2 text-left">
+              <th className="p-2 text-start">
                 {t('website:domain.custom.dnsName')}
               </th>
-              <th className="p-2 text-left">
+              <th className="p-2 text-start">
                 {t('website:domain.custom.dnsValue')}
               </th>
             </tr>
@@ -95,10 +95,16 @@ export function DnsRecordsTable({
                 key={`${row.type}-${row.name}-${index}`}
                 className="border-t border-border align-top"
               >
-                <td className="p-2 font-mono">{row.type}</td>
+                <td className="p-2 font-mono">
+                  <span dir="ltr" data-ltr-content>
+                    {row.type}
+                  </span>
+                </td>
                 <td className="p-2 font-mono break-all">
                   <span className="inline-flex items-start gap-1">
-                    <span>{row.name}</span>
+                    <span dir="ltr" data-ltr-content>
+                      {row.name}
+                    </span>
                     <CopyValueButton
                       value={row.name}
                       label={t('website:domain.custom.copyValue')}
@@ -107,7 +113,9 @@ export function DnsRecordsTable({
                 </td>
                 <td className="p-2 font-mono break-all">
                   <span className="inline-flex items-start gap-1">
-                    <span>{row.value}</span>
+                    <span dir="ltr" data-ltr-content>
+                      {row.value}
+                    </span>
                     <CopyValueButton
                       value={row.value}
                       label={t('website:domain.custom.copyValue')}

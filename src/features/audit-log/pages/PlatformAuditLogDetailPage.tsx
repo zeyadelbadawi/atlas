@@ -121,7 +121,11 @@ export default function PlatformAuditLogDetailPage(): JSX.Element {
                   {roleLabel ? ` · ${roleLabel}` : ''}
                 </dd>
                 {entry.actor.email ? (
-                  <dd className="text-xs text-muted-foreground" dir="ltr">
+                  <dd
+                    className="text-xs text-muted-foreground"
+                    dir="ltr"
+                    data-ltr-content
+                  >
                     {entry.actor.email}
                   </dd>
                 ) : null}
@@ -140,7 +144,11 @@ export default function PlatformAuditLogDetailPage(): JSX.Element {
                 'auto'
               )}
             </dl>
-            <p className="text-xs text-muted-foreground" dir="ltr">
+            <p
+              className="text-xs text-muted-foreground"
+              dir="ltr"
+              data-ltr-content
+            >
               <code className="font-mono">{entry.action}</code>
             </p>
           </div>

@@ -15,13 +15,19 @@
  * rules to be wrong. Nothing in it needs a session — it keys on
  * `user?.id`, which is simply undefined for a visitor.
  *
- * WHY IT DOES NOT REUSE `ProtectedVideoPlayer`: that player requires
- * watermark text, a resume position and credential-failure callbacks —
- * all session concepts. An anonymous visitor has no identity to watermark
- * and no progress to resume, and inventing those values to satisfy a prop
- * type would put a claim on screen that nothing backs. A marketing
- * preview is honestly just a video element.
+ * WHY IT DOES NOT REUSE `ProtectedVideoPlayer`: that player requires a
+ * resume position and credential-failure callbacks — session concepts an
+ * anonymous visitor does not have, and inventing them to satisfy a prop
+ * type would put a claim on screen that nothing backs.
+ *
+ * IT IS WATERMARKED ALL THE SAME. A free preview is still the academy's
+ * video, so the server issues a forensic code for it too — a signed-in
+ * visitor's own, or an anonymous "preview" code bound to the visitor's
+ * network and device (backend `docs/FORENSIC_WATERMARK.md`) — and it is
+ * drawn by the same `ForensicWatermarkFrame` every lesson uses, with the
+ * same fullscreen rule: the frame, never the bare `<video>`.
  */
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Loader2 } from 'lucide-react';
 import {
@@ -32,8 +38,14 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { YouTubeLessonPlayer } from '@features/learner';
-import { useLessonGrant } from '@features/learner';
+import {
+  ForensicWatermarkCaption,
+  ForensicWatermarkFrame,
+  resolveWatermark,
+  useLessonGrant,
+  YouTubeLessonPlayer,
+  type ForensicWatermarkFrameHandle,
+} from '@features/learner';
 
 export interface CoursePreviewDialogProps {
   readonly courseId: string;
@@ -50,6 +62,8 @@ export function CoursePreviewDialog({
 }: CoursePreviewDialogProps): JSX.Element {
   const { t } = useTranslation();
   const open = !!lessonId;
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const forensicRef = useRef<ForensicWatermarkFrameHandle>(null);
 
   // `sequenceSaysAvailable` is a learner-sequence concept; a visitor has
   // no sequence, and the preview short-circuit is the authority here.
@@ -91,29 +105,63 @@ export function CoursePreviewDialog({
 
     if (grant.kind === 'external' && grant.externalEmbed) {
       return (
-        <YouTubeLessonPlayer embed={grant.externalEmbed} title={grant.title} />
+        <YouTubeLessonPlayer
+          embed={grant.externalEmbed}
+          title={grant.title}
+          watermark={grant.watermark}
+        />
       );
     }
 
     if (grant.video) {
+      const forensic = resolveWatermark(grant.watermark);
+      const media = (
+        <AspectRatio ratio={16 / 9}>
+          <video
+            ref={videoRef}
+            key={grant.video.url}
+            src={grant.video.url}
+            poster={grant.video.posterUrl}
+            controls
+            playsInline
+            // The element's own fullscreen, PiP and casting would show the
+            // picture without the forensic watermark.
+            controlsList="nodownload nofullscreen noremoteplayback"
+            disablePictureInPicture
+            disableRemotePlayback
+            x-webkit-airplay="deny"
+            onDoubleClick={(event) => {
+              event.preventDefault();
+              forensicRef.current?.toggleFullscreen();
+            }}
+            preload="metadata"
+            className="size-full"
+            data-testid="course-preview-video"
+          >
+            {/* No captions track is delivered with a preview grant; saying
+                so is better than implying one exists. */}
+          </video>
+        </AspectRatio>
+      );
+      if (!forensic) {
+        return (
+          <div className="overflow-hidden rounded-lg bg-black">{media}</div>
+        );
+      }
       return (
-        <div className="overflow-hidden rounded-lg bg-black">
-          <AspectRatio ratio={16 / 9}>
-            <video
-              key={grant.video.url}
-              src={grant.video.url}
-              poster={grant.video.posterUrl}
-              controls
-              controlsList="nodownload"
-              disablePictureInPicture={false}
-              preload="metadata"
-              className="size-full"
-              data-testid="course-preview-video"
-            >
-              {/* No captions track is delivered with a preview grant; saying
-                  so is better than implying one exists. */}
-            </video>
-          </AspectRatio>
+        <div className="space-y-3">
+          <ForensicWatermarkFrame
+            ref={forensicRef}
+            watermark={forensic}
+            mediaRef={videoRef}
+            onTamper={() => videoRef.current?.pause()}
+          >
+            {media}
+          </ForensicWatermarkFrame>
+          <ForensicWatermarkCaption
+            watermark={forensic}
+            onToggleFullscreen={() => forensicRef.current?.toggleFullscreen()}
+          />
         </div>
       );
     }

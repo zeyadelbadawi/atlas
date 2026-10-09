@@ -24,7 +24,7 @@ export const TERMS_EN: LegalDocument = {
   title: 'Terms of Service',
   summary: 'The terms on which you may use the Atlas platform.',
   effectiveDate: '11 September 2026',
-  lastUpdated: '4 October 2026',
+  lastUpdated: '9 October 2026',
   sections: [
     {
       id: 'acceptance',
@@ -117,7 +117,12 @@ export const TERMS_EN: LegalDocument = {
             'Interfere with the operation of Atlas, including by circumventing rate limits or automating abusive volumes of requests.',
             'Attempt to obtain more than one free trial per customer, including by creating additional accounts, organizations, or email addresses for that purpose.',
             'Resell or provide access to Atlas in a way that disguises it as your own platform, unless we have agreed to it in writing.',
+            'Record, copy or redistribute course videos without the permission of the academy that owns them, or hide, remove or cover the watermark shown on them.',
           ],
+        },
+        {
+          kind: 'paragraph',
+          text: 'Every video shown in an Atlas player carries a personal forensic watermark that identifies the account and sign-in session watching it. A recording that is redistributed may be traced back to that account, and we may suspend or terminate an account involved in unauthorised redistribution. Our Privacy Policy explains what the watermark records and who can see them.',
         },
       ],
     },

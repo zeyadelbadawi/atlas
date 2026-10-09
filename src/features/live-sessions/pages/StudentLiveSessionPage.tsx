@@ -224,14 +224,12 @@ export default function StudentLiveSessionPage(): JSX.Element {
                 {t('liveSessions:student.startsAt')}
               </dt>
               {/*
-                `dir="ltr"` on the value, not the label.
-
-                A formatted date is a bidi hazard: an Arabic sentence
-                containing Latin digits and a colon reorders unpredictably
-                when the whole line is RTL, so the timestamp is isolated
-                while the label around it stays in the page's direction.
+                No `dir="ltr"` on the value: in Arabic the date is Arabic
+                text (month names, its own direction marks), and forcing it
+                left-to-right reversed its reading order. It follows the
+                page direction like the label does.
               */}
-              <dd className="text-sm font-medium" dir="ltr">
+              <dd className="text-sm font-medium">
                 {dateTime(eligibility.scheduledStartAt)}
               </dd>
             </div>
@@ -239,7 +237,7 @@ export default function StudentLiveSessionPage(): JSX.Element {
               <dt className="text-xs text-muted-foreground">
                 {t('liveSessions:student.endsAt')}
               </dt>
-              <dd className="text-sm font-medium" dir="ltr">
+              <dd className="text-sm font-medium">
                 {dateTime(eligibility.scheduledEndAt)}
               </dd>
             </div>

@@ -192,7 +192,11 @@ export default function LearnerPaymentsPage(): JSX.Element {
                       <dt className="text-muted-foreground">
                         {t(`${K}.reference`)}
                       </dt>
-                      <dd className="font-mono text-foreground" dir="ltr">
+                      <dd
+                        className="font-mono text-foreground"
+                        dir="ltr"
+                        data-ltr-content
+                      >
                         {payment.proof.payerReference}
                       </dd>
                     </div>

@@ -174,7 +174,9 @@ export function SignInMethodsCard({
                 <p className="break-all text-sm text-muted-foreground">
                   {google ? (
                     <>
-                      <span dir="ltr">{google.email}</span>
+                      <span dir="ltr" data-ltr-content>
+                        {google.email}
+                      </span>
                       {' · '}
                       {t('auth:google.settings.connectedOn', {
                         date: formatDate(google.linkedAt, language),

@@ -7,7 +7,12 @@
  */
 import { apiClient } from '@api';
 import type { ReadOptions } from '@api';
-import type { CurrentUser, UserPreferences } from '@types';
+import type {
+  CurrentUser,
+  UpdatePhoneRequest,
+  UserPhone,
+  UserPreferences,
+} from '@types';
 
 export class CurrentUserService {
   /**
@@ -44,6 +49,27 @@ export class CurrentUserService {
       '/users/me/preferences',
       { preferences }
     );
+  }
+
+  /**
+   * The account's own phone number (docs/USER_PHONE.md). Not part of
+   * `CurrentUser`: it is fetched only where it is shown, and its query key
+   * (`userKeys.phone()`) is outside the offline persistence allowlist.
+   */
+  public async getPhone(options?: ReadOptions): Promise<UserPhone> {
+    return apiClient.get<UserPhone>('/users/me/phone', options);
+  }
+
+  /** Sets or replaces the number. The server validates and normalises it. */
+  public async updatePhone(input: UpdatePhoneRequest): Promise<UserPhone> {
+    return apiClient.put<UserPhone, UpdatePhoneRequest>(
+      '/users/me/phone',
+      input
+    );
+  }
+
+  public async removePhone(): Promise<UserPhone> {
+    return apiClient.delete<UserPhone>('/users/me/phone');
   }
 
   /**

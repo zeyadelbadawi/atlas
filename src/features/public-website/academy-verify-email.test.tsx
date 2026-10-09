@@ -4,6 +4,11 @@
  * as the management host's page (`useVerifyEmailFlow`), rendered in the
  * academy's own shell, with the academy's sign-in (and `returnTo`) and
  * the `/ar` locale prefix on every link.
+ *
+ * ATO F1 follow-up: a live link opened without its account's session is
+ * refused (`signInRequired`) and not spent — the learner is sent to this
+ * academy's sign-in, the token waits in `sessionStorage`, and it is
+ * submitted again when they come back signed in.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
@@ -32,7 +37,11 @@ const blank = (): MutationState => ({
 });
 let verify = blank();
 let resend = blank();
-const auth = { isAuthenticated: false, refreshSession: vi.fn(async () => {}) };
+const auth = {
+  isAuthenticated: false,
+  refreshSession: vi.fn(async () => {}),
+  signOut: vi.fn(async () => {}),
+};
 
 vi.mock('@/features/auth/hooks/useVerifyEmail', () => ({
   useVerifyEmail: () => verify,
@@ -83,6 +92,20 @@ function renderAt(url: string, locale: 'en' | 'ar' = 'en') {
 }
 
 const KEYS = 'publicWebsite:auth.verifyEmail';
+const PENDING_KEY = 'atlas:pending-email-verification';
+const storedToken = () => {
+  const raw = window.sessionStorage.getItem(PENDING_KEY);
+  return raw ? (JSON.parse(raw) as { token: string }).token : null;
+};
+const keepPending = (token: string, expiresAt = Date.now() + 60_000) =>
+  window.sessionStorage.setItem(
+    PENDING_KEY,
+    JSON.stringify({ token, expiresAt })
+  );
+const signInRequired = () =>
+  createApiError('forbidden', {
+    messageKey: 'errors.auth.verificationSignInRequired',
+  });
 const errorState = () => screen.getByTestId('verify-email-error').dataset.state;
 
 beforeEach(() => {
@@ -90,6 +113,8 @@ beforeEach(() => {
   resend = blank();
   auth.isAuthenticated = false;
   auth.refreshSession = vi.fn(async () => {});
+  auth.signOut = vi.fn(async () => {});
+  window.sessionStorage.clear();
 });
 afterEach(() => cleanup());
 
@@ -177,5 +202,54 @@ describe('PublicWebsiteVerifyEmailPage (academy host)', () => {
     expect(verify.mutate).not.toHaveBeenCalled();
     expect(screen.getByTestId('verify-email-request')).toBeTruthy();
     expect(screen.getByText(`${KEYS}.resend.action`)).toBeTruthy();
+  });
+
+  it("sign-in required: the academy's own sign-in, returning here, and the token is kept", () => {
+    verify.isError = true;
+    verify.error = signInRequired();
+    renderAt('/ar/verify-email?token=tok-1', 'ar');
+    const prompt = screen.getByTestId('verify-email-sign-in-required');
+    expect(prompt.dataset.account).toBe('none');
+    expect(screen.getByText(`${KEYS}.signInRequiredTitle`)).toBeTruthy();
+    expect(screen.getByText(`${KEYS}.goToSignIn`).getAttribute('href')).toBe(
+      '/ar/sign-in?returnTo=%2Fverify-email'
+    );
+    expect(currentSearch).toBe('');
+    expect(storedToken()).toBe('tok-1');
+  });
+
+  it('back signed in: the kept token is submitted and cleared once verified', () => {
+    keepPending('tok-1');
+    auth.isAuthenticated = true;
+    verify.mutate = vi.fn((_vars, options?: { onSuccess?: () => void }) => {
+      verify.isSuccess = true;
+      options?.onSuccess?.();
+    });
+    renderAt('/verify-email');
+    expect(verify.mutate).toHaveBeenCalledTimes(1);
+    expect(verify.mutate.mock.calls[0][0]).toEqual({ token: 'tok-1' });
+    expect(screen.getByTestId('verify-email-success')).toBeTruthy();
+    expect(storedToken()).toBeNull();
+  });
+
+  it('signed in as someone else: the link is for a different account, with sign out', () => {
+    auth.isAuthenticated = true;
+    verify.isError = true;
+    verify.error = signInRequired();
+    renderAt('/verify-email?token=tok-1');
+    expect(
+      screen.getByTestId('verify-email-sign-in-required').dataset.account
+    ).toBe('other');
+    expect(screen.getByText(`${KEYS}.otherAccountTitle`)).toBeTruthy();
+    fireEvent.click(screen.getByText(`${KEYS}.signOutToSwitch`));
+    expect(auth.signOut).toHaveBeenCalledTimes(1);
+  });
+
+  it('an expired kept token is ignored', () => {
+    keepPending('tok-1', Date.now() - 1);
+    renderAt('/verify-email');
+    expect(verify.mutate).not.toHaveBeenCalled();
+    expect(errorState()).toBe('missing');
+    expect(storedToken()).toBeNull();
   });
 });

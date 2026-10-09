@@ -194,7 +194,11 @@ export function AcademyStep({
               <span className="text-muted-foreground">
                 {t('onboarding:academy.address')}{' '}
               </span>
-              <span className="font-medium text-foreground" dir="ltr">
+              <span
+                className="font-medium text-foreground"
+                dir="ltr"
+                data-ltr-content
+              >
                 {status.academy.host}
               </span>
             </p>

@@ -199,7 +199,11 @@ export default function LiveSessionsConnectionPage(): JSX.Element {
                 </dt>
                 {/* Direction-isolated: an opaque Latin identifier inside an
                     Arabic line reorders unpredictably otherwise. */}
-                <dd className="truncate text-sm font-medium" dir="ltr">
+                <dd
+                  className="truncate text-sm font-medium"
+                  dir="ltr"
+                  data-ltr-content
+                >
                   {provider.externalAccountId}
                 </dd>
               </div>
@@ -208,7 +212,7 @@ export default function LiveSessionsConnectionPage(): JSX.Element {
                   <dt className="text-xs text-muted-foreground">
                     {t('liveSessions:connection.connectedAt')}
                   </dt>
-                  <dd className="text-sm font-medium" dir="ltr">
+                  <dd className="text-sm font-medium">
                     {formatDate(provider.connectedAt, language, 'short')}
                   </dd>
                 </div>

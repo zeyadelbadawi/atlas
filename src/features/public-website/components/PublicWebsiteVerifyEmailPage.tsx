@@ -12,9 +12,16 @@
  * A signed-in learner whose link is missing, invalid or expired can send
  * a new one from here; a signed-out one is sent to this academy's sign-in
  * and brought back (`returnTo`), where the same button is waiting.
+ *
+ * A live link opened without its account's session (ATO F1 follow-up) is
+ * not spent: the learner is asked to sign in on this academy and brought
+ * back, where the kept token is submitted again. Signed in as someone
+ * else, the page says the link belongs to a different account and offers
+ * to sign out.
  */
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, Loader2, MailCheck } from 'lucide-react';
+import { CheckCircle2, Loader2, MailCheck, ShieldCheck } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '@hooks';
 import { useVerifyEmailFlow, VerifyEmailResend } from '@features/auth';
 import type { VerifyEmailState } from '@features/auth';
@@ -33,7 +40,7 @@ const PAGE_PATH = '/verify-email';
 const KEYS = 'publicWebsite:auth.verifyEmail';
 
 const FAILURE_COPY: Record<
-  Exclude<VerifyEmailState, 'pending' | 'success'>,
+  Exclude<VerifyEmailState, 'pending' | 'success' | 'signInRequired'>,
   { readonly title: string; readonly description: string }
 > = {
   missing: {
@@ -71,7 +78,7 @@ export function PublicWebsiteVerifyEmailPage({
   locale,
 }: PublicWebsiteVerifyEmailPageProps): JSX.Element {
   const { t } = useTranslation();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, signOut } = useAuth();
   const linkRenderer = usePublicWebsiteLinkRenderer(locale);
   const { state, requestId, canRetry, retry, outcomeRef } =
     useVerifyEmailFlow();
@@ -80,7 +87,8 @@ export function PublicWebsiteVerifyEmailPage({
     'font-medium text-[var(--website-primary-solid)] hover:underline';
   const signInLink = linkRenderer({
     // Bare path; the renderer applies the locale prefix. Sign-in brings
-    // the learner back here, where a new link can be requested.
+    // the learner back here, where a new link can be requested (or a kept
+    // one is confirmed).
     href: `/sign-in?returnTo=${encodeURIComponent(PAGE_PATH)}`,
     external: false,
     className: linkClass,
@@ -142,6 +150,53 @@ export function PublicWebsiteVerifyEmailPage({
                 )}
               </p>
               {proceed}
+            </div>
+          );
+        }
+
+        // A live link that only its own account can confirm. Signed out:
+        // sign in and come back (the token is kept). Signed in: the wrong
+        // account.
+        if (state === 'signInRequired') {
+          return (
+            <div
+              className="flex flex-col items-center gap-4 rounded-lg border border-border bg-card p-6 text-center"
+              data-testid="verify-email-sign-in-required"
+              data-account={isAuthenticated ? 'other' : 'none'}
+            >
+              <ShieldCheck
+                className="size-8 text-[var(--website-primary-solid)]"
+                aria-hidden
+              />
+              <p
+                ref={outcomeRef}
+                tabIndex={-1}
+                className="font-medium text-foreground focus-visible:outline-none"
+              >
+                {t(
+                  isAuthenticated
+                    ? `${KEYS}.otherAccountTitle`
+                    : `${KEYS}.signInRequiredTitle`
+                )}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {t(
+                  isAuthenticated
+                    ? `${KEYS}.otherAccountDescription`
+                    : `${KEYS}.signInRequiredDescription`
+                )}
+              </p>
+              {isAuthenticated ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => void signOut().catch(() => undefined)}
+                >
+                  {t(`${KEYS}.signOutToSwitch`)}
+                </Button>
+              ) : (
+                signInLink
+              )}
             </div>
           );
         }

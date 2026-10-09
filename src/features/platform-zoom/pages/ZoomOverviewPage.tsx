@@ -29,7 +29,7 @@ function Stat({ labelKey, value }: { labelKey: string; value: number }): JSX.Ele
     <div className="rounded-lg border border-border bg-surface p-4">
       <p className="text-xs text-muted-foreground">{t(labelKey)}</p>
       {/* Numerals are direction-isolated so an Arabic layout keeps them intact. */}
-      <p className="mt-1 text-2xl font-semibold text-foreground" dir="ltr">
+      <p className="mt-1 text-2xl font-semibold text-foreground" dir="ltr" data-ltr-content>
         {value}
       </p>
     </div>
@@ -105,7 +105,7 @@ export default function ZoomOverviewPage(): JSX.Element {
                     />
                     {t(`platformZoom:attention.${item.kind}`)}
                   </span>
-                  <Badge variant={item.severity === 'critical' ? 'destructive' : 'secondary'} dir="ltr">
+                  <Badge variant={item.severity === 'critical' ? 'destructive' : 'secondary'} dir="ltr" data-ltr-content>
                     {item.count}
                   </Badge>
                 </div>
@@ -173,7 +173,7 @@ export default function ZoomOverviewPage(): JSX.Element {
                   <span className="text-sm text-foreground">
                     {t(`platformZoom:action.${entry.action}`, { defaultValue: entry.action })}
                   </span>
-                  <span className="text-xs text-muted-foreground" dir="ltr">
+                  <span className="text-xs text-muted-foreground">
                     {formatDate(entry.occurredAt, language, 'short')}
                   </span>
                 </div>

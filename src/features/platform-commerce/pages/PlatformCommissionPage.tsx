@@ -210,7 +210,11 @@ function PlanCommissionRow({
     <li className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
       <div className="min-w-0">
         <p className="font-medium text-foreground">{planName}</p>
-        <p className="font-mono text-xs text-muted-foreground" dir="ltr">
+        <p
+          className="font-mono text-xs text-muted-foreground"
+          dir="ltr"
+          data-ltr-content
+        >
           {plan.key}
         </p>
       </div>

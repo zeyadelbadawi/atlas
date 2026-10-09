@@ -9,6 +9,8 @@ import {
   MAX_ACADEMY_NAME_LENGTH,
   MAX_ACADEMY_DESCRIPTION_LENGTH,
   MAX_ACADEMY_SLUG_LENGTH,
+  MAX_MEMBER_NAME_LENGTH,
+  MIN_MEMBER_NAME_LENGTH,
 } from '../constants/academy.constants';
 
 /** Slug validation regex: lowercase letters, numbers, hyphens. */
@@ -126,10 +128,12 @@ export type UpdateAcademyBrandingFormData = z.infer<
 >;
 
 /**
- * Add Academy Manager schema — `email` alone grants access to an
- * already-registered Atlas account; adding a `name` invites a brand-new
- * account. Launch Stabilization A2: nobody chooses a password for another
- * person — the invitee sets their own through the emailed link.
+ * Add Academy Manager schema — `email` and `name`, both always required
+ * (ATO F5): the dialog no longer learns whether the address has an Atlas
+ * account, so the name is always asked for; the server uses it only to
+ * invite a brand-new account, and an existing account keeps its own.
+ * Launch Stabilization A2: nobody chooses a password for another person —
+ * the invitee sets their own through the emailed link.
  */
 export const addAcademyManagerSchema = z.object({
   email: z
@@ -138,9 +142,10 @@ export const addAcademyManagerSchema = z.object({
     .email('validation:invalidEmail'),
   name: z
     .string()
-    .max(MAX_ACADEMY_NAME_LENGTH, 'validation:maxLength')
-    .optional()
-    .or(z.literal('')),
+    .trim()
+    .min(1, 'academy:members.lookup.nameRequired')
+    .min(MIN_MEMBER_NAME_LENGTH, 'academy:members.lookup.nameTooShort')
+    .max(MAX_MEMBER_NAME_LENGTH, 'academy:members.lookup.nameTooLong'),
 });
 
 export type AddAcademyManagerFormData = z.infer<typeof addAcademyManagerSchema>;
@@ -153,10 +158,9 @@ export type AddAcademyInstructorFormData = z.infer<
 >;
 
 /**
- * Create Academy Student schema — the same shape as the staff dialogs: an
- * email that already has an Atlas account needs nothing else; a new email
- * needs a name (enforced once the lookup says it is new, and by the server).
- * Launch Stabilization A2: no password field.
+ * Create Academy Student schema — the same shape as the staff dialogs:
+ * email and name, both required (the name is only used for a new
+ * account). Launch Stabilization A2: no password field.
  */
 export const createAcademyStudentSchema = addAcademyManagerSchema;
 

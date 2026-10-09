@@ -353,6 +353,7 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
                           <Textarea
                             {...field}
                             dir="ltr"
+                            data-ltr-content
                             rows={6}
                             placeholder={t(
                               'payments:atlasPaymentProvider.configurationPlaceholder'

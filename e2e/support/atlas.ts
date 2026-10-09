@@ -218,6 +218,19 @@ export async function findCourseByTitle(
 }
 
 /**
+ * A valid test mobile number (Egypt, the form's default country). Phone
+ * numbers are not unique across accounts, so one number serves every test
+ * learner; it is never verified or messaged.
+ */
+export const TEST_MOBILE_NUMBER = '01012345678';
+
+/** Fills the sign-up form's mobile number, which the form requires. */
+export async function fillSignUpPhone(page: Page): Promise<void> {
+  const phone = page.locator('#phoneNumber');
+  if (await phone.count()) await phone.fill(TEST_MOBILE_NUMBER);
+}
+
+/**
  * Registers a learner through the academy website's own sign-up FORM —
  * the journey step "learner created through academy website". Deliberately
  * the real form and not an API call: registration atomicity and the
@@ -231,6 +244,7 @@ export async function registerLearnerThroughWebsite(
   await page.goto(academyPath('/sign-up'));
   await page.locator('#name').fill(name);
   await page.locator('#email').fill(email);
+  await fillSignUpPhone(page);
   await page.locator('#password').fill(LEARNER_PASSWORD);
   await page.locator('#confirmPassword').fill(LEARNER_PASSWORD);
 

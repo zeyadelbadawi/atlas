@@ -227,6 +227,7 @@ export default function PlatformContactSubmissionsPage(): JSX.Element {
           <span
             className="block max-w-[14rem] truncate text-muted-foreground"
             dir="ltr"
+            data-ltr-content
           >
             {row.original.email}
           </span>
@@ -388,6 +389,7 @@ export default function PlatformContactSubmissionsPage(): JSX.Element {
                   <span
                     className="block truncate text-xs text-muted-foreground"
                     dir="ltr"
+                    data-ltr-content
                   >
                     {submission.email}
                   </span>

@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -33,7 +34,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { saveViaForm } from '@utils';
-import { useUnsavedChanges } from '@hooks';
+import { useAuth, useUnsavedChanges } from '@hooks';
 import {
   nameConflictFromError,
   useNameConflictError,
@@ -50,6 +51,10 @@ export default function AcademyProfilePage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { academyId } = useParams<{ academyId: string }>();
+  const { organization } = useAuth();
+  // Changing the web address (slug) is Organization-Owner-only
+  // (backend-enforced, 403 otherwise); others see it read-only.
+  const canChangeSlug = organization?.role === 'owner';
 
   const {
     data: academy,
@@ -213,8 +218,19 @@ export default function AcademyProfilePage(): JSX.Element {
                   <FormItem>
                     <FormLabel>{t('academy:create.slugLabel')}</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input
+                        {...field}
+                        dir="ltr"
+                        data-ltr-content
+                        readOnly={!canChangeSlug}
+                        aria-readonly={!canChangeSlug || undefined}
+                      />
                     </FormControl>
+                    {canChangeSlug ? null : (
+                      <FormDescription>
+                        {t('academy:settings.slugOwnerOnly')}
+                      </FormDescription>
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}

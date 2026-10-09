@@ -37,6 +37,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { useConfirmDialog } from '@app/providers';
 import { useAuth } from '@hooks';
+import { deleteQuizJournal, loadQuizJournal } from '@services/offline';
 import { MIRROR_IN_RTL, cn, formatNumber } from '@utils';
 import type { LanguageCode, QuizAnswer, QuizAttemptSession } from '@types';
 import { useAttemptClock } from '../hooks/useAttemptClock';
@@ -115,11 +116,28 @@ export function QuizAttemptRunner({
   const onFinishedRef = useRef(onFinished);
   onFinishedRef.current = onFinished;
 
-  const finish = useCallback((reason: 'timeout' | 'integrity' | 'terminal') => {
-    if (finishedRef.current) return;
-    finishedRef.current = true;
-    onFinishedRef.current(reason);
-  }, []);
+  /*
+   * Academy offline — an UNTIMED attempt's answers are journalled on this
+   * device as the learner works (`useQuizAutosave`), so a reload or a closed
+   * tab while offline loses nothing. A timed or strict-integrity attempt is
+   * never journalled: its clock and completion are the server's alone.
+   */
+  const journalled =
+    session.deadlineAt === null && session.settings.integrityMode !== 'strict';
+  const journal = useMemo(
+    () => (user ? { userId: user.id, timed: !journalled } : undefined),
+    [user, journalled]
+  );
+
+  const finish = useCallback(
+    (reason: 'timeout' | 'integrity' | 'terminal') => {
+      if (finishedRef.current) return;
+      finishedRef.current = true;
+      if (user) void deleteQuizJournal(user.id, session.attemptId);
+      onFinishedRef.current(reason);
+    },
+    [user, session.attemptId]
+  );
 
   /* ---------- layout ---------- */
 
@@ -148,8 +166,36 @@ export function QuizAttemptRunner({
         setDeadlineAt(response.deadlineAt);
     },
     onTerminal: () => finish('terminal'),
+    confirmedAnswers: session.answers,
+    // A stale save was rebased onto the server's newer copy: show exactly
+    // what is now being saved.
+    onRebased: (merged) => setAnswers(toAnswerMap(merged)),
+    journal,
   });
   const { schedule } = autosave;
+
+  // Restore a journal written on this device on top of the revision the
+  // server still holds (edits made offline, then a reload). A journal older
+  // than the server's copy is discarded: the server moved on since.
+  useEffect(() => {
+    if (!user || !journalled) return;
+    let cancelled = false;
+    void loadQuizJournal(user.id, session.attemptId).then((saved) => {
+      if (cancelled || !saved) return;
+      if (saved.baseRevision < session.revision) {
+        void deleteQuizJournal(user.id, session.attemptId);
+        return;
+      }
+      const restored = toAnswerMap(saved.answers);
+      setAnswers(restored);
+      schedule(toAnswerList(questions, restored));
+    });
+    return () => {
+      cancelled = true;
+    };
+    // Once per attempt: later edits flow through `handleAnswer`.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session.attemptId]);
 
   const handleAnswer = useCallback(
     (answer: QuizAnswer) => {

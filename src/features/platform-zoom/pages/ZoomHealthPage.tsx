@@ -44,7 +44,7 @@ export default function ZoomHealthPage(): JSX.Element {
                     />
                     {t(`platformZoom:attention.${g.kind}`, { defaultValue: g.kind })}
                   </span>
-                  <Badge variant={g.severity === 'critical' ? 'destructive' : 'secondary'} dir="ltr">{g.count}</Badge>
+                  <Badge variant={g.severity === 'critical' ? 'destructive' : 'secondary'} dir="ltr" data-ltr-content>{g.count}</Badge>
                 </div>
                 {g.samples.length > 0 ? (
                   <ul className="mt-3 space-y-1">

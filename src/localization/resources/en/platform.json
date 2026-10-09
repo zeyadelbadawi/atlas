@@ -154,7 +154,9 @@
         "sessions_one": "{{count}} active session",
         "sessions_other": "{{count}} active sessions",
         "financialRecords": "Payments, orders and refunds",
-        "auditRecords": "Audit history"
+        "auditRecords": "Audit history",
+        "forensicWatermarks_one": "Forensic video watermark records — kept until their retention period ends, so a leaked recording can still be traced",
+        "forensicWatermarks_other": "Forensic video watermark records — kept until their retention period ends, so a leaked recording can still be traced"
       },
       "confirmLabel": "Type {{email}} to confirm",
       "confirmHelp": "The email must match exactly. This is what stops the wrong account being deleted.",
@@ -494,6 +496,210 @@
       "failed": "The enquiry could not be updated",
       "deleteFailed": "The enquiry could not be deleted",
       "undo": "Undo"
+    }
+  },
+  "watermarkLookup": {
+    "title": "Watermark lookup",
+    "subtitle": "Trace a leaked recording to the viewer and session it was issued to.",
+    "form": {
+      "label": "Watermark code",
+      "hint": "Type the ten letters and digits shown on the recording. Case, spaces and dashes don’t matter.",
+      "example": "Example:",
+      "submit": "Look up",
+      "submitting": "Looking up…",
+      "clear": "Clear",
+      "readsAs": "Reads as",
+      "progress": "{{typed}} of {{total}} symbols",
+      "valid": "Valid code — ready to look up",
+      "problems": {
+        "empty": "Enter the code shown on the recording.",
+        "tooShort": "A code has {{total}} symbols — {{typed}} entered so far.",
+        "tooLong": "Too many symbols — a code has exactly {{total}}, shown as XXXXX-XXXXX.",
+        "symbol": "These characters can’t appear in a code: {{symbols}}. Codes use digits and the letters A–Z except I, L, O and U.",
+        "checksum": "One symbol looks misread — re-check the recording, especially 0/O, 1/I/L, 5/S, 8/B."
+      }
+    },
+    "auditNotice": "Every lookup is recorded in the audit log.",
+    "idle": {
+      "title": "Read the code off the recording",
+      "description": "Every course video shows a code unique to the viewer and their session. Find it on the leaked recording and enter it above.",
+      "sampleCaption": "How the watermark appears on a video",
+      "steps": {
+        "pause": {
+          "title": "Pause on a clear frame",
+          "body": "The label moves to a new spot every 20–45 seconds, and a faint copy of the code is tiled across the whole frame. Pick the sharpest one."
+        },
+        "read": {
+          "title": "Read the ten symbols",
+          "body": "Codes are shown as two groups of five. I, L, O and U never appear, so 0/O and 1/I/L are read the same way."
+        },
+        "enter": {
+          "title": "Look it up",
+          "body": "A misread symbol is caught here, before anything is sent. You’ll see who the code was issued to, for which content, and on which session and device."
+        }
+      }
+    },
+    "loading": "Looking up {{code}}…",
+    "found": "Result for code {{code}}.",
+    "errors": {
+      "invalid": {
+        "title": "That isn’t a valid code"
+      },
+      "checksum": {
+        "title": "This code looks misread"
+      },
+      "notFound": {
+        "title": "No record for this code"
+      },
+      "rateLimited": {
+        "title": "Too many lookups"
+      },
+      "unavailable": {
+        "title": "Lookup unavailable"
+      },
+      "forbidden": {
+        "title": "Platform Owners only",
+        "description": "Only a Platform Owner can look up watermark codes. Sign in with a Platform Owner account to continue."
+      },
+      "network": {
+        "title": "Couldn’t reach Atlas"
+      },
+      "generic": {
+        "title": "The lookup didn’t complete"
+      }
+    },
+    "surface": {
+      "lesson_video": "Lesson video",
+      "course_preview": "Course preview",
+      "live_session": "Live session"
+    },
+    "accountState": {
+      "active": "Active",
+      "suspended": "Suspended",
+      "deleted": "Deleted",
+      "missing": "Missing",
+      "anonymous": "Anonymous preview"
+    },
+    "summary": {
+      "label": "Watermark code",
+      "copyCode": "Copy code",
+      "issued": "Issued",
+      "lastSeen": "Last seen",
+      "tamperCount": "Tamper events: {{count}}",
+      "openAccount": "Open account",
+      "deleted": {
+        "title": "Account deleted",
+        "body": "Account deleted — identity shown is from the time the code was issued."
+      },
+      "missing": {
+        "title": "Account no longer found",
+        "body": "The account this code was issued to no longer exists. The identity shown is from the time the code was issued."
+      },
+      "anonymous": {
+        "title": "Anonymous preview",
+        "body": "This code was issued to a visitor who wasn’t signed in, watching a free preview, so there is no account or identity. Use the network, the device and the other codes from the same device to follow up."
+      },
+      "unreadable": {
+        "title": "Identity snapshot unreadable",
+        "body": "The identity recorded when this code was issued couldn’t be decrypted — the record may have been altered, or the encryption key changed. The session, device and network details are still accurate."
+      }
+    },
+    "viewer": {
+      "title": "Viewer at issue time",
+      "description": "Who the code was issued to, as recorded at that moment.",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "copyEmail": "Copy email address",
+      "copyPhone": "Copy phone number",
+      "anonymous": "Anonymous preview — the visitor wasn’t signed in, so no identity was recorded.",
+      "unreadable": "The identity recorded at issue time couldn’t be decrypted.",
+      "current": {
+        "title": "Current account",
+        "status": "Status",
+        "name": "Name",
+        "email": "Email",
+        "userId": "Account ID",
+        "copyUserId": "Copy account ID",
+        "deletedAt": "Deleted on",
+        "deletedNotice": "Account deleted — identity shown is from the time the code was issued.",
+        "missingNotice": "This account no longer exists. Identity shown is from the time the code was issued."
+      }
+    },
+    "content": {
+      "title": "What was watched",
+      "description": "The content the code was drawn over.",
+      "surface": "Where",
+      "organization": "Organization",
+      "academy": "Academy",
+      "course": "Course",
+      "lesson": "Lesson",
+      "liveSession": "Live session",
+      "scheduledFor": "Scheduled for"
+    },
+    "session": {
+      "title": "Session",
+      "description": "The sign-in the code was issued under.",
+      "id": "Session ID",
+      "copyId": "Copy session ID",
+      "startedAt": "Signed in",
+      "signInIp": "Sign-in IP",
+      "copySignInIp": "Copy sign-in IP address",
+      "signInCountry": "Sign-in country",
+      "signInDevice": "Sign-in device",
+      "none": "No signed-in session — this was an anonymous preview."
+    },
+    "device": {
+      "title": "Device & network",
+      "description": "Where the video was playing when the code was issued.",
+      "label": "Device",
+      "type": "Type",
+      "types": {
+        "mobile": "Mobile",
+        "tablet": "Tablet",
+        "desktop": "Desktop",
+        "unknown": "Unknown"
+      },
+      "browser": "Browser",
+      "os": "Operating system",
+      "ip": "IP address",
+      "copyIp": "Copy IP address",
+      "country": "Country",
+      "deviceId": "Device ID",
+      "userAgent": "User agent",
+      "showUserAgent": "Show user agent",
+      "hideUserAgent": "Hide user agent"
+    },
+    "activity": {
+      "title": "Watermark activity",
+      "description": "When the code was on screen, and whether anyone tried to hide it.",
+      "issuedAt": "Issued",
+      "lastSeenAt": "Last seen",
+      "tamperEvents": "Tamper events",
+      "lastTamperAt": "Last tamper event",
+      "tamperTitle": "Tampering detected",
+      "tamperBody": "The player detected the watermark being hidden or removed while this code was on screen. A recording without a visible label may have been made then.",
+      "noTamper": "No tampering detected."
+    },
+    "related": {
+      "title": "Other codes in this session",
+      "description": "Every other code issued to the same session — or, for an anonymous preview, the same device.",
+      "caption": "Other codes issued in the same session",
+      "code": "Code",
+      "surface": "Where",
+      "content": "Content",
+      "issued": "Issued",
+      "lastSeen": "Last seen",
+      "tamper": "Tamper events",
+      "open": "Look up {{code}}",
+      "empty": {
+        "title": "No other codes",
+        "description": "No other code was issued in this session."
+      }
+    },
+    "values": {
+      "notRecorded": "Not recorded",
+      "untitled": "Untitled"
     }
   }
 }

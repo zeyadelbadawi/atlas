@@ -8,9 +8,13 @@
  * from the lesson's URL — on the privacy-enhanced `youtube-nocookie.com`
  * host, sandboxed to what YouTube's own embed needs.
  *
- * HONESTY, TWICE. The academy's protections do not apply to YouTube (the
- * protection report already says so); and Atlas cannot observe YouTube
- * playback, so nothing here reports watched time. Completion stays with
+ * HONESTY, TWICE. The academy's protections do not apply to YouTube's
+ * bytes (the protection report already says so); and Atlas cannot observe
+ * YouTube playback, so nothing here reports watched time. What Atlas DOES
+ * own is the frame around the embed: the mandatory forensic watermark is
+ * drawn over it like any other video, and the embed's own fullscreen,
+ * picture-in-picture and presentation are switched off — each would show
+ * the picture without the watermark. Fullscreen is the frame's instead. Completion stays with
  * the lesson's existing rule — a manual "Mark complete" is the learner's
  * own word, and a watched-ratio rule cannot be satisfied at all, which the
  * action bar states rather than pretends otherwise.
@@ -23,14 +27,20 @@
  * origins and from this frame). A frame that has not loaded after a while
  * says so and offers Retry, which reloads it.
  */
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Youtube } from 'lucide-react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { buildYouTubeEmbedUrl } from '@utils';
-import type { ExternalEmbed } from '@types';
+import type { ContentWatermark, ExternalEmbed } from '@types';
 import type { MediaPhase } from '../hooks/useMediaReadiness';
 import { VideoStatusOverlay } from './VideoStatusOverlay';
+import {
+  ForensicWatermarkCaption,
+  ForensicWatermarkFrame,
+  resolveWatermark,
+  type ForensicWatermarkFrameHandle,
+} from './forensic';
 
 const YOUTUBE_ORIGINS = new Set([
   'https://www.youtube-nocookie.com',
@@ -44,14 +54,19 @@ const UNPLAYABLE_ERRORS = new Set([100, 101, 150]);
 export interface YouTubeLessonPlayerProps {
   readonly embed: ExternalEmbed;
   readonly title: string;
+  /** The grant's forensic watermark (mandatory; composed server-side). */
+  readonly watermark: ContentWatermark;
 }
 
 export function YouTubeLessonPlayer({
   embed,
   title,
+  watermark,
 }: YouTubeLessonPlayerProps): JSX.Element | null {
   const { t } = useTranslation();
   const frameRef = useRef<HTMLIFrameElement>(null);
+  const forensicRef = useRef<ForensicWatermarkFrameHandle>(null);
+  const forensic = resolveWatermark(watermark);
   const [attempt, setAttempt] = useState(0);
   const [phase, setPhase] = useState<MediaPhase>('loading');
   const [slow, setSlow] = useState(false);
@@ -61,7 +76,16 @@ export function YouTubeLessonPlayer({
     startSeconds: embed.startSeconds,
     jsApiOrigin:
       typeof window === 'undefined' ? undefined : window.location.origin,
+    disableFullscreen: true,
   });
+
+  // The watchdog tripped: stop the embed through its own command API.
+  const pauseEmbed = useCallback(() => {
+    frameRef.current?.contentWindow?.postMessage(
+      JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }),
+      'https://www.youtube-nocookie.com'
+    );
+  }, []);
 
   // A new video or a retry starts loading again.
   useEffect(() => {
@@ -114,36 +138,56 @@ export function YouTubeLessonPlayer({
     );
   };
 
+  const media = (
+    <AspectRatio ratio={16 / 9}>
+      <iframe
+        ref={frameRef}
+        key={`${embed.videoId}:${attempt}`}
+        src={src}
+        title={t('learning:player.video.regionLabel', { title })}
+        className="size-full border-0"
+        loading="lazy"
+        // No `picture-in-picture`, no `allowFullScreen`, no
+        // `allow-presentation`: each would put the picture somewhere the
+        // forensic watermark is not. Fullscreen is the frame's.
+        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; web-share"
+        referrerPolicy="strict-origin-when-cross-origin"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+        data-testid="youtube-lesson-player"
+        onLoad={onFrameLoad}
+      />
+      <VideoStatusOverlay
+        phase={phase}
+        slow={slow}
+        onRetry={() => setAttempt((value) => value + 1)}
+        errorMessage={
+          unplayable ? t('learning:player.video.youtubeUnavailable') : undefined
+        }
+      />
+    </AspectRatio>
+  );
+
   return (
     <div className="space-y-3">
-      <div className="relative overflow-hidden rounded-lg bg-black">
-        <AspectRatio ratio={16 / 9}>
-          <iframe
-            ref={frameRef}
-            key={`${embed.videoId}:${attempt}`}
-            src={src}
-            title={t('learning:player.video.regionLabel', { title })}
-            className="size-full border-0"
-            loading="lazy"
-            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-            referrerPolicy="strict-origin-when-cross-origin"
-            sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox"
-            data-testid="youtube-lesson-player"
-            onLoad={onFrameLoad}
-          />
-          <VideoStatusOverlay
-            phase={phase}
-            slow={slow}
-            onRetry={() => setAttempt((value) => value + 1)}
-            errorMessage={
-              unplayable
-                ? t('learning:player.video.youtubeUnavailable')
-                : undefined
-            }
-          />
-        </AspectRatio>
-      </div>
+      {forensic ? (
+        <ForensicWatermarkFrame
+          ref={forensicRef}
+          watermark={forensic}
+          onTamper={pauseEmbed}
+        >
+          {media}
+        </ForensicWatermarkFrame>
+      ) : (
+        <div className="relative overflow-hidden rounded-lg bg-black">
+          {media}
+        </div>
+      )}
+      {forensic ? (
+        <ForensicWatermarkCaption
+          watermark={forensic}
+          onToggleFullscreen={() => forensicRef.current?.toggleFullscreen()}
+        />
+      ) : null}
       <p className="flex items-start gap-2 text-xs text-muted-foreground">
         <Youtube className="mt-0.5 size-3.5 shrink-0" aria-hidden />
         <span>{t('learning:player.external.youtubeNotice')}</span>

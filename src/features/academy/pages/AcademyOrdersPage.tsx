@@ -272,6 +272,7 @@ export default function AcademyOrdersPage(): JSX.Element {
             <span
               className="font-mono text-xs text-foreground"
               dir="ltr"
+              data-ltr-content
               title={row.original.id}
             >
               {row.original.id.slice(0, 8)}
@@ -291,7 +292,11 @@ export default function AcademyOrdersPage(): JSX.Element {
             <span className="font-medium text-foreground" dir="auto">
               {row.original.student.name}
             </span>
-            <span className="text-xs text-muted-foreground" dir="ltr">
+            <span
+              className="text-xs text-muted-foreground"
+              dir="ltr"
+              data-ltr-content
+            >
               {row.original.student.maskedEmail}
             </span>
           </div>

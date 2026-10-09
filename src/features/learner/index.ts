@@ -59,3 +59,10 @@ export type {
 export { useLessonGrant } from './hooks/useLessonGrant';
 export { YouTubeLessonPlayer } from './components/YouTubeLessonPlayer';
 export type { YouTubeLessonPlayerProps } from './components/YouTubeLessonPlayer';
+export {
+  ForensicWatermarkCaption,
+  ForensicWatermarkFrame,
+  resolveWatermark,
+  type ForensicWatermarkFrameHandle,
+  type ResolvedWatermark,
+} from './components/forensic';

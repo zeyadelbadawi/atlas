@@ -215,7 +215,11 @@ export function AcademyJoinForm({
               {/* The address reads left-to-right in every locale, so its
                   box (icon + padding) is LTR too — otherwise, on an RTL
                   page, the icon and the padding land on opposite sides. */}
-              <div className="relative min-w-0 flex-1" dir="ltr">
+              <div
+                className="relative min-w-0 flex-1"
+                dir="ltr"
+                data-ltr-content
+              >
                 <Lock
                   className="pointer-events-none absolute inset-y-0 start-3 my-auto size-4 text-muted-foreground"
                   aria-hidden

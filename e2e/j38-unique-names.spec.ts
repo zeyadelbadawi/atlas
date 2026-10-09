@@ -35,10 +35,12 @@ import {
   apiPost,
   apiSignIn,
   declineCookies,
+  fillSignUpPhone,
   requireSeed,
   resolveAcademy,
   seedCookieDecision,
   signInThroughDashboard,
+  signOutInBrowser,
   uniqueLearnerEmail,
   uniqueLearnerName,
 } from './support/atlas';
@@ -102,6 +104,7 @@ async function fillWebsiteSignUp(
   await declineCookies(page);
   await page.locator('#name').fill(name);
   await page.locator('#email').fill(email);
+  await fillSignUpPhone(page);
   await page.locator('#password').fill(LEARNER_PASSWORD);
   await page.locator('#confirmPassword').fill(LEARNER_PASSWORD);
   const terms = page.locator('#acceptTerms');
@@ -163,12 +166,17 @@ async function verifyThroughLink(
      values (gen_random_uuid()::text, :'user', :'hash', now() + interval '1 hour');`,
     { user: user.id, hash }
   );
+  // A link confirms only for its own account's session (ATO hardening F1):
+  // the learner signs in first, opens it, and signs out again so the rest
+  // of the journey starts from the same signed-out state as before.
+  await signInOnAcademyWebsite(page, email, language);
   await page.goto(
     academyPath(`${language === 'ar' ? '/ar' : ''}/verify-email?token=${raw}`)
   );
   await expect(page.getByTestId('verify-email-success')).toBeVisible({
     timeout: 90_000,
   });
+  await signOutInBrowser(page);
   const [after] = await adminQuery<{ verified: string | null }>(
     `select email_verified_at as verified from users where id = :'id'`,
     { id: user.id }
@@ -176,8 +184,8 @@ async function verifyThroughLink(
   expect(after.verified).not.toBeNull();
 }
 
-/** Signs in on the academy website (either language) and opens the profile. */
-async function openLearnerProfile(
+/** Signs in on the academy website (either language) and waits for My Learn. */
+async function signInOnAcademyWebsite(
   page: Page,
   email: string,
   language: 'en' | 'ar'
@@ -189,6 +197,16 @@ async function openLearnerProfile(
   await page.locator('input[type="password"]').fill(LEARNER_PASSWORD);
   await page.locator('form button[type="submit"]').first().click();
   await expect(page).toHaveURL(/\/my(\/|\?|$)/, { timeout: 60_000 });
+}
+
+/** Signs in on the academy website (either language) and opens the profile. */
+async function openLearnerProfile(
+  page: Page,
+  email: string,
+  language: 'en' | 'ar'
+): Promise<void> {
+  await signInOnAcademyWebsite(page, email, language);
+  const prefix = language === 'ar' ? '/ar' : '';
   await page.goto(academyPath(`${prefix}/my/profile`));
 }
 

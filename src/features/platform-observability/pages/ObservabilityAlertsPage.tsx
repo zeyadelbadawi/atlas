@@ -75,6 +75,7 @@ function RuleFilterInput({
         id={id}
         type="search"
         dir="ltr"
+        data-ltr-content
         value={draft}
         onChange={(event) => setDraft(event.target.value)}
         onKeyDown={(event) => {
@@ -161,6 +162,7 @@ function AlertsTable({
                     to={ruleLink(alert.rule)}
                     className="font-mono text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     dir="ltr"
+                    data-ltr-content
                   >
                     {alert.rule}
                   </Link>
@@ -214,6 +216,7 @@ function AlertsTable({
                 <span
                   className="font-mono text-sm font-medium text-primary"
                   dir="ltr"
+                  data-ltr-content
                 >
                   {alert.rule}
                 </span>

@@ -5,32 +5,18 @@
  */
 import type { ApiError } from '@api';
 import type { AcademyMemberAddOutcome } from '@types';
-import type { MemberLookupState } from '../hooks/useAcademyMemberLookup';
 
 /**
- * The add request body. An existing account's name is theirs — it is never
- * sent, so a stale value typed before the lookup answered cannot reach the
- * server (which ignores it for an existing account anyway).
+ * The add request body. The name is always sent (ATO F5 — the dialog
+ * cannot tell whether the address has an account, and the server requires
+ * it); the server uses it only for a brand-new account, and an existing
+ * account keeps its own name. The form schema has already required it.
  */
-export function memberAddPayload(
-  data: { readonly email: string; readonly name?: string },
-  lookup: MemberLookupState
-): { readonly email: string; readonly name?: string } {
-  const existing =
-    lookup.state === 'existing' || lookup.state === 'existing_pending_setup';
-  const name = data.name?.trim();
-  return {
-    email: data.email.trim(),
-    name: existing || !name ? undefined : name,
-  };
-}
-
-/** A new account is invited by name: required once the lookup knows it is new. */
-export function isNameMissingForNewAccount(
-  data: { readonly name?: string },
-  lookup: MemberLookupState
-): boolean {
-  return lookup.state === 'new' && !data.name?.trim();
+export function memberAddPayload(data: {
+  readonly email: string;
+  readonly name: string;
+}): { readonly email: string; readonly name: string } {
+  return { email: data.email.trim(), name: data.name.trim() };
 }
 
 /** Toast copy for what the add actually did. */

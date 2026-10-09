@@ -292,7 +292,7 @@ export function MessageComposer({
                   defaultValue: t('messaging:notice.error'),
                 })}
                 {notice.requestId ? (
-                  <span className="mt-1 block text-xs opacity-80" dir="ltr">
+                  <span className="mt-1 block text-xs opacity-80">
                     {t('messaging:notice.reference', { id: notice.requestId })}
                   </span>
                 ) : null}

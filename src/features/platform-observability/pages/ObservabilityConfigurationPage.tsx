@@ -191,6 +191,7 @@ function RulesTable({
                   )}
                   className="font-mono text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   dir="ltr"
+                  data-ltr-content
                 >
                   {rule.name}
                 </Link>
@@ -198,6 +199,7 @@ function RulesTable({
               <td
                 className="px-3 py-2.5 font-mono text-xs text-muted-foreground"
                 dir="ltr"
+                data-ltr-content
               >
                 {rule.group}
               </td>

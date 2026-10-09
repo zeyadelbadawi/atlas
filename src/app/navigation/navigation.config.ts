@@ -47,6 +47,7 @@ import {
   Mail,
   ShieldAlert,
   MessageSquarePlus,
+  ScanSearch,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem, NavigationSection } from '@types';
@@ -1009,6 +1010,17 @@ export function getDashboardNavigation(
           requiresAuth: true,
           requiredRoles: ['platform_owner'],
           matchNestedPaths: true,
+        },
+        {
+          // Forensic watermark lookup — trace a leaked recording's code to
+          // its viewer. `PlatformWatermarksController` (PlatformOwnerGuard +
+          // rate limit + RLS) is the boundary; this only decides visibility.
+          id: 'platform-watermarks',
+          labelKey: 'navigation:items.platformWatermarkLookup',
+          path: DASHBOARD_ROUTES.platformWatermarks,
+          icon: ScanSearch,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
         },
         {
           id: 'platform-support',
