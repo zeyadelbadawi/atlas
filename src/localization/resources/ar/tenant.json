@@ -12,17 +12,6 @@
       "recordedSessions": "الجلسات المسجّلة"
     },
     "features": {
-      "cms": "إدارة المحتوى (CMS)",
-      "seo": "تحسين محركات البحث",
-      "seoAdvanced": "تحسين محركات البحث المتقدم",
-      "marketing": "التسويق",
-      "marketingAdvanced": "التسويق المتقدم",
-      "analytics": "التحليلات",
-      "analyticsAdvanced": "التحليلات المتقدمة",
-      "customDomain": "نطاق مخصص",
-      "themes": "القوالب",
-      "multipleThemes": "قوالب متعددة",
-      "backup": "النسخ الاحتياطي",
       "liveSessions": "الجلسات المباشرة"
     },
     "subscriptionStatus": {
@@ -91,7 +80,7 @@
   },
   "subscription": {
     "title": "الاشتراك",
-    "subtitle": "خطتك وحالة دورة حياة الاشتراك واستحقاقات الميزات.",
+    "subtitle": "خطتك وحالة دورة حياة الاشتراك.",
     "comparePlans": "مقارنة الخطط",
     "noSubscription": {
       "title": "لا يوجد اشتراك بعد",
@@ -99,8 +88,8 @@
       "action": "استعراض الخطط"
     },
     "cancelAtPeriodEnd": "لن يتم تجديد اشتراكك في نهاية الفترة الحالية.",
-    "featuresTitle": "ميزات الخطة",
-    "featuresSubtitle": "تعكس خطتك بالإضافة إلى أي إضافات نشطة.",
+    "featuresTitle": "الإضافات",
+    "featuresSubtitle": "إمكانات تُضاف إلى خطتك بشكل منفصل.",
     "cancelSubscription": "إلغاء الاشتراك"
   },
   "usage": {
@@ -138,7 +127,7 @@
   },
   "planComparison": {
     "title": "مقارنة الخطط",
-    "description": "الحدود والميزات عبر جميع خطط أطلس.",
+    "description": "حدود الاستخدام في جميع خطط أطلس.",
     "currentPlanBadge": "الخطة الحالية",
     "footerNote": "يتم التعامل مع تغييرات الخطة من قِبل ممثل أطلس الخاص بك — هذه الصفحة لا تعالج المدفوعات ولا تغيّر خطتك.",
     "selectPlan": "اختيار هذه الخطة",

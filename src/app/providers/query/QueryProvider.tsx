@@ -68,6 +68,20 @@ export function AtlasQueryProvider({
         error.kind === 'notFound'
       )
         return;
+      // Local-first dashboard — an action attempted without a connection:
+      // say plainly that nothing changed and why, instead of a generic
+      // "connection problem".
+      if (
+        (error.kind === 'network' || error.kind === 'timeout') &&
+        typeof navigator !== 'undefined' &&
+        navigator.onLine === false
+      ) {
+        notifyError(
+          'common:connectivity.actionNeedsConnection.title',
+          'common:connectivity.actionNeedsConnection.description'
+        );
+        return;
+      }
       // Namespaced and existence-checked: a dotted backend key or an
       // untranslated one must never reach the screen as a raw identifier
       // (see `errorToastDescriptionKey`).

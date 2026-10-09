@@ -139,6 +139,11 @@ export function NotificationBell({
               titleKey="notifications:messages.loadError"
               onRetry={() => preview.refetch()}
             />
+          ) : preview.isPending && preview.fetchStatus === 'paused' ? (
+            // Offline with no saved copy: say so, never "all caught up".
+            <p className="px-2 py-6 text-center text-sm text-muted-foreground">
+              {t('common:connectivity.notSaved')}
+            </p>
           ) : items.length === 0 ? (
             <p className="px-2 py-6 text-center text-sm text-muted-foreground">
               {t('notifications:center.noUnread')}

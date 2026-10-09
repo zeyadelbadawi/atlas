@@ -17,6 +17,10 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm run build
+# Stale-tab recovery — this build's own chunk list, named by its build time.
+# Later deploys keep a previous build's chunks while its list is under 14
+# days old (see the deploy workflow's "Carry the previous builds' assets").
+RUN ls dist/assets > "dist/assets/.build-$(date +%s).list"
 
 # Phase 8 — the public Academy website's server renderer
 # (Reports/SSR_ARCHITECTURE_ANALYSIS.md): the same build, plus the SSR
@@ -55,6 +59,12 @@ RUN xcaddy build --with github.com/caddy-dns/cloudflare
 
 FROM caddy:2-alpine
 COPY --from=caddy-build /usr/bin/caddy /usr/bin/caddy
+# Stale-tab recovery — the previous builds' hashed chunks, carried forward
+# by the deploy workflow (each build's for 14 days), so a tab opened before this
+# deploy can still load the routes it has not visited yet. The current
+# build is copied over them, so its files always win. Empty (just
+# `.gitkeep`) for a local build.
+COPY previous-assets/ /srv/assets/
 COPY --from=build /app/dist /srv
 COPY Caddyfile /etc/caddy/Caddyfile
 

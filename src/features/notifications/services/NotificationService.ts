@@ -57,10 +57,15 @@ export class NotificationService extends BaseService {
     );
   }
 
-  async markAllAsRead(options?: WriteOptions): Promise<void> {
-    await this.client.post<void, Record<string, never>>(
+  /**
+   * `before` (ISO) limits the action to notifications that existed when the
+   * person pressed it — required for a replay from the offline outbox, so
+   * notifications that arrived in between stay unread.
+   */
+  async markAllAsRead(options?: WriteOptions, before?: string): Promise<void> {
+    await this.client.post<void, { before?: string }>(
       this.path('read-all'),
-      {},
+      before ? { before } : {},
       options
     );
   }

@@ -9,6 +9,10 @@ import { withDevHostAcademy } from './dev-host-academy';
 import axios, { type AxiosInstance, type AxiosError } from 'axios';
 import { ENV } from '@config';
 import { tokenService } from '@services/identity';
+import {
+  announceSessionEnded,
+  isDefinitiveAuthFailure,
+} from '@services/identity/session-events';
 import type { ApiRequest, ApiResponse } from '@types';
 import { normalizeAxiosError, ApiError } from './api-error';
 
@@ -308,10 +312,19 @@ export class HttpClient {
               // Retry the original request with the new token.
               originalRequest.headers['X-Retry-After-Refresh'] = 'true';
               return this.instance.request(originalRequest);
-            } catch {
-              // Refresh failed; clear tokens and propagate error.
-              tokenService.clear();
-              return Promise.reject(error);
+            } catch (refreshError) {
+              // Stale-tab recovery — only the server refusing the session
+              // ends it, and then the whole app (every tab) is told, so the
+              // UI does not keep showing a signed-in state nothing works in.
+              if (isDefinitiveAuthFailure(refreshError)) {
+                tokenService.clear();
+                announceSessionEnded();
+                return Promise.reject(error);
+              }
+              // The refresh never reached the server (asleep, offline): the
+              // session may well be fine. Keep it and report THAT failure —
+              // a network error the caller can retry, not a 401.
+              return Promise.reject(refreshError);
             } finally {
               // Clear the shared promise after completion.
               this.refreshPromise = null;

@@ -1,4 +1,6 @@
-import { Suspense, lazy } from 'react';
+import { Suspense } from 'react';
+// Stale-tab recovery: route chunks retry, then reload once for a new build.
+import { lazyWithRetry as lazy } from '@utils/lazy-with-retry.utils';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import { ErrorBoundary } from '@app/providers/error/ErrorBoundary';
@@ -465,6 +467,24 @@ const PlatformSupportDetailPage = lazy(
 const PlatformContactSubmissionsPage = lazy(
   () => import('@features/platform/pages/PlatformContactSubmissionsPage')
 );
+// Customer Requests — the academy's own requests and the Platform Owner console.
+const AcademyRequestsPage = lazy(
+  () => import('@features/customer-requests/pages/AcademyRequestsPage')
+);
+const AcademyRequestDetailPage = lazy(
+  () => import('@features/customer-requests/pages/AcademyRequestDetailPage')
+);
+const PlatformCustomerRequestsPage = lazy(
+  () => import('@features/customer-requests/pages/PlatformCustomerRequestsPage')
+);
+const PlatformCustomerRequestDetailPage = lazy(
+  () =>
+    import('@features/customer-requests/pages/PlatformCustomerRequestDetailPage')
+);
+const PlatformCustomerRequestRoutingPage = lazy(
+  () =>
+    import('@features/customer-requests/pages/PlatformCustomerRequestRoutingPage')
+);
 // W3 — Email & Notifications (Platform Owner). Compose and Send is owned by
 // W3-compose; the other two are the read-only monitoring consoles.
 const ComposeAndSendPage = lazy(
@@ -800,6 +820,37 @@ export default function AtlasAppRoutes(): JSX.Element {
                   requiresEntitlement
                 >
                   <AcademyMessagesPage />
+                </RouteGuard>
+              }
+            />
+
+            {/* Customer Requests — an academy's requests to the Atlas team.
+                Owner/administrator only server-side (an academy role that
+                no organization permission distinguishes from a manager),
+                so the route admits the academy-management tier and the
+                pages check the verified academy membership. No entitlement
+                gate: the API allows it with an inactive subscription
+                (asking for help is what a lapsed customer may need). */}
+            <Route
+              path={DASHBOARD_ROUTES.academyRequests}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.view']}
+                >
+                  <AcademyRequestsPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.academyRequestDetail}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.view']}
+                >
+                  <AcademyRequestDetailPage />
                 </RouteGuard>
               }
             />
@@ -2329,6 +2380,45 @@ export default function AtlasAppRoutes(): JSX.Element {
                   requiredRoles={['platform_owner']}
                 >
                   <PlatformContactSubmissionsPage />
+                </RouteGuard>
+              }
+            />
+
+            {/* Customer Requests — the Platform Owner console. The static
+                `routing` path is declared before `:requestId`. The API's
+                PlatformOwnerGuard + RLS are the real control. */}
+            <Route
+              path={DASHBOARD_ROUTES.platformCustomerRequests}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformCustomerRequestsPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformCustomerRequestRouting}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformCustomerRequestRoutingPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformCustomerRequestDetail}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformCustomerRequestDetailPage />
                 </RouteGuard>
               }
             />

@@ -53,6 +53,7 @@ import {
   useAcademy,
 } from '@features/academy';
 import { useUploadMediaAsset } from '@features/media';
+import { RequestServiceCard } from '@features/customer-requests';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import type {
   Academy,
@@ -535,6 +536,9 @@ export function VisualIdentityEditor({
                 {t('academy:branding.removeLogo')}
               </Button>
             ) : null}
+            {/* Owners/administrators only (the card checks the academy
+                role itself): a professional logo from the Atlas team. */}
+            <RequestServiceCard type="logo" headingLevel="h4" />
           </CardContent>
         </Card>
 

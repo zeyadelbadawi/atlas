@@ -7,7 +7,9 @@
  * dependencies) before it can paint, and the dashboard never downloads
  * the website runtime (Reports/LCP_ROOT_CAUSE.md).
  */
-import { Suspense, lazy, useState } from 'react';
+import { Suspense, useState } from 'react';
+// Stale-tab recovery: route chunks retry, then reload once for a new build.
+import { lazyWithRetry as lazy } from '@utils/lazy-with-retry.utils';
 import { useLocation } from 'react-router-dom';
 import { ENV } from '@config';
 import { resolvePublicWebsiteContext } from '@utils';

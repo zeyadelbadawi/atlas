@@ -84,6 +84,24 @@
 	}
 }
 
+# Stale-tab recovery — the app's own build output. A tab opened before a
+# deploy asks for the chunks of the build it is running; the image keeps the
+# previous builds' chunks for two weeks (Dockerfile), and a chunk that is
+# truly gone is a real 404 — never the SPA's index.html served as
+# JavaScript (which failed the module MIME check, and was cached by
+# browsers for hours) — uncached, so the app's own recovery can act on it.
+(app_assets) {
+	handle /assets/* {
+		import security_headers
+		root * /srv
+		@found file
+		header @found Cache-Control "public, max-age=31536000, immutable"
+		@missing not file
+		header @missing Cache-Control "no-store"
+		file_server
+	}
+}
+
 # Browser caching for the app's own static files (2 Oct 2026). Before this,
 # nothing under /assets/ or the HTML shell carried a Cache-Control header,
 # so every visit revalidated (or heuristically cached) everything.
@@ -91,8 +109,9 @@
 #     hash, so a changed file is a new URL. Only a file that exists is
 #     marked immutable; a 404 stays uncached.
 #   * Everything else this block serves from disk is the SPA shell
-#     (index.html via try_files, also in place of a missing /assets/ file)
-#     or a root file such as robots.txt: always revalidated, so a deploy is
+#     (index.html via try_files) or a root file such as robots.txt — a
+#     missing /assets/ file no longer reaches here (`app_assets` answers it
+#     with a real 404): always revalidated, so a deploy is
 #     picked up on the next request. `?` sets it only when the response has
 #     none (the server renderer sets its own).
 # API responses are routed elsewhere and never pass through here; nothing
@@ -150,6 +169,7 @@
 	vars atlas_ssr 1
 	reverse_proxy ssr:3100 {
 		header_up X-Real-IP {client_ip}
+		header_up X-Forwarded-Host {host}
 		transport http {
 			dial_timeout 1s
 			response_header_timeout 3s
@@ -238,10 +258,14 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 	handle /api/* {
 		reverse_proxy backend:3000 {
 			header_up X-Real-IP {client_ip}
+			# ATO review F14 — the host the request actually reached, never a
+			# client-supplied X-Forwarded-Host passed through a trusted proxy.
+			header_up X-Forwarded-Host {host}
 		}
 	}
 
 	import theme_assets
+	import app_assets
 
 	handle {
 		import security_headers
@@ -297,10 +321,14 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 	handle /api/* {
 		reverse_proxy backend:3000 {
 			header_up X-Real-IP {client_ip}
+			# ATO review F14 — the host the request actually reached, never a
+			# client-supplied X-Forwarded-Host passed through a trusted proxy.
+			header_up X-Forwarded-Host {host}
 		}
 	}
 
 	import theme_assets
+	import app_assets
 
 	handle {
 		# Previously this block set NO security headers at all, so an

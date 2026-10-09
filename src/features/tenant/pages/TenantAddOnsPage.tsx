@@ -26,10 +26,15 @@ import {
   useTenantAddOns,
   useTenantSubscription,
 } from '../hooks';
+import { PLAN_FEATURE_KEYS } from '../constants/tenant.constants';
 import { formatLimitValue } from '../utils/entitlement.utils';
-import type { AddOn } from '@types';
+import type { AddOn, PlanFeatureKey } from '@types';
 
-function AddOnEffectSummary({ addOn }: { readonly addOn: AddOn }): JSX.Element {
+function AddOnEffectSummary({
+  addOn,
+}: {
+  readonly addOn: AddOn;
+}): JSX.Element | null {
   const { t } = useTranslation();
   const unlimitedLabel = t('tenant:common.unlimited');
 
@@ -49,6 +54,11 @@ function AddOnEffectSummary({ addOn }: { readonly addOn: AddOn }): JSX.Element {
     );
   }
 
+  // An effect naming a key that is no longer a plan feature (a legacy,
+  // never-enforced one such as `analyticsAdvanced`) unlocks nothing, so it
+  // is described as nothing — never as a raw translation key.
+  if (!isPlanFeatureKey(addOn.effect.featureKey)) return null;
+
   return (
     <span>
       {t('tenant:addOns.featureEffect', {
@@ -56,6 +66,10 @@ function AddOnEffectSummary({ addOn }: { readonly addOn: AddOn }): JSX.Element {
       })}
     </span>
   );
+}
+
+function isPlanFeatureKey(value: unknown): value is PlanFeatureKey {
+  return (PLAN_FEATURE_KEYS as readonly unknown[]).includes(value);
 }
 
 export default function TenantAddOnsPage(): JSX.Element {

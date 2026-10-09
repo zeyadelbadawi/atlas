@@ -12,12 +12,14 @@
  * shortening" here, where the Owner scans the page: the whole page is
  * validated on every save, so one such section blocks saving any of it.
  */
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowDown,
   ArrowUp,
   Copy,
   Laptop,
+  MessageSquarePlus,
   Pencil,
   Smartphone,
   Tablet,
@@ -30,9 +32,14 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { EmptyState } from '@components/feedback';
+import {
+  CreateCustomerRequestDialog,
+  useCanRequestCustomerServices,
+} from '@features/customer-requests';
 import { SECTION_METADATA, listSectionMetadata } from '../sections';
 import { SECTION_TYPE_ORDER } from '../constants/website.constants';
 import { countSampleItems } from '../utils/sample-content.utils';
@@ -80,6 +87,8 @@ export function SectionTree({
   needsShorteningIds,
 }: SectionTreeProps): JSX.Element {
   const { t } = useTranslation();
+  const canRequestSection = useCanRequestCustomerServices();
+  const [isRequestOpen, setIsRequestOpen] = useState(false);
 
   return (
     <div className="space-y-3">
@@ -237,7 +246,15 @@ export function SectionTree({
               {t('website:editor.addSection')}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-64">
+          <DropdownMenuContent
+            align="start"
+            className="w-64"
+            // The request dialog takes focus when it opens from this menu;
+            // returning focus to the trigger would pull it back out.
+            onCloseAutoFocus={(event) => {
+              if (isRequestOpen) event.preventDefault();
+            }}
+          >
             {listSectionMetadata(SECTION_TYPE_ORDER).map((entry) => (
               <DropdownMenuItem
                 key={entry.type}
@@ -247,8 +264,32 @@ export function SectionTree({
                 {t(entry.labelKey)}
               </DropdownMenuItem>
             ))}
+            {/* A section the editor doesn't offer yet: ask the Atlas team
+                (owners/administrators only — the API's own rule). */}
+            {canRequestSection ? (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  data-testid="request-custom-section"
+                  onSelect={() => setIsRequestOpen(true)}
+                >
+                  <MessageSquarePlus className="size-4" aria-hidden />
+                  {t('customerRequests:types.custom_section.menuAction')}
+                </DropdownMenuItem>
+              </>
+            ) : null}
           </DropdownMenuContent>
         </DropdownMenu>
+      ) : null}
+
+      {/* Mounted on first use only; outside the menu so closing the menu
+          never unmounts the dialog it just opened. */}
+      {canRequestSection && isRequestOpen ? (
+        <CreateCustomerRequestDialog
+          open
+          onOpenChange={setIsRequestOpen}
+          initialType="custom_section"
+        />
       ) : null}
     </div>
   );

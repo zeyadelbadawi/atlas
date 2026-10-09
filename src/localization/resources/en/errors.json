@@ -50,7 +50,13 @@
   },
   "boundary": {
     "title": "This section could not be displayed",
-    "description": "The rest of Atlas is still working. Try reloading this section."
+    "description": "The rest of Atlas is still working. Try reloading this section.",
+    "updatedTitle": "Atlas was updated",
+    "updatedDescription": "A newer version of Atlas is available. Reload to continue — you will stay on this page.",
+    "offlineTitle": "You're offline",
+    "offlineDescription": "This part of Atlas could not be loaded without a connection. It will load as soon as you are back online.",
+    "persistentDescription": "This section keeps failing. Reloading Atlas usually fixes it; your other work is not affected.",
+    "reload": "Reload"
   },
   "errorReference": "Reference: {{requestId}}",
   "entitlement": {
@@ -213,6 +219,15 @@
   },
   "support": {
     "caseClosed": "This ticket is closed. Please open a new ticket if you still need help."
+  },
+  "customerRequest": {
+    "invalidDetails": "Some of the request details aren't valid for this type of request. Check them and try again.",
+    "closed": "This request is closed, so it can't be changed or replied to.",
+    "duplicateClientId": "This request was already sent from another academy. Close the form and start a new request.",
+    "invalidTransition": "The request can't move to that status from where it is now. Refresh to see its current status.",
+    "nothingToUpdate": "Choose a new status or assignee first.",
+    "invalidAssignee": "That person can't be assigned. Choose a Platform Owner.",
+    "duplicateRoutingType": "Each request type can have only one inbox."
   },
   "mutation": {
     "failed": "That action could not be completed. Please try again."

@@ -69,6 +69,7 @@ export const TRANSLATION_NAMESPACES = [
   'platformEmail',
   'messaging',
   'onboarding',
+  'customerRequests',
 ] as const;
 
 export type TranslationNamespace = (typeof TRANSLATION_NAMESPACES)[number];

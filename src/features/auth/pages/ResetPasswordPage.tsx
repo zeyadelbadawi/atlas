@@ -11,12 +11,14 @@ import { PageContainer, PageHeader } from '@components/layout';
 import { ResetPasswordForm } from '../components/ResetPasswordForm';
 import { GoogleSignInOption } from '../google/GoogleSignInOption';
 import { useValidatePasswordResetToken } from '../hooks';
+import { useUrlCredentialToken } from '../hooks/useUrlCredentialToken';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function ResetPasswordPage(): JSX.Element {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
-  const token = searchParams.get('token');
+  // Read once, then removed from the address bar (ATO review F12).
+  const token = useUrlCredentialToken();
   /*
     `setup=1` marks a link from an account-setup email — somebody whose
     academy created the account for them. Same token, same endpoint, same
@@ -55,7 +57,7 @@ export default function ResetPasswordPage(): JSX.Element {
               {t(
                 isSetup
                   ? 'auth:setPassword.errors.invalidToken'
-                  : 'auth:resetPassword.errors.invalidToken',
+                  : 'auth:resetPassword.errors.invalidToken'
               )}
             </AlertDescription>
           </Alert>
@@ -67,7 +69,7 @@ export default function ResetPasswordPage(): JSX.Element {
               {t(
                 isSetup
                   ? 'auth:setPassword.requestNewLink'
-                  : 'auth:resetPassword.requestNewLink',
+                  : 'auth:resetPassword.requestNewLink'
               )}
             </Link>
           </div>
@@ -88,7 +90,9 @@ export default function ResetPasswordPage(): JSX.Element {
               isSetup ? 'auth:setPassword.title' : 'auth:resetPassword.title'
             }
             descriptionKey={
-              isSetup ? 'auth:setPassword.subtitle' : 'auth:resetPassword.subtitle'
+              isSetup
+                ? 'auth:setPassword.subtitle'
+                : 'auth:resetPassword.subtitle'
             }
             className="mt-6"
           />

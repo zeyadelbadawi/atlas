@@ -22,7 +22,9 @@
  * locale split — they are site-wide infrastructure files, never
  * duplicated per locale.
  */
-import { Suspense, lazy, useEffect, type ReactNode } from 'react';
+import { Suspense, useEffect, type ReactNode } from 'react';
+// Stale-tab recovery: route chunks retry, then reload once for a new build.
+import { lazyWithRetry as lazy } from '@utils/lazy-with-retry.utils';
 import { Route, Routes } from 'react-router-dom';
 import { PublicWebsiteStatus } from './components/PublicWebsiteStatus';
 import { AcademyComingSoon } from './components/AcademyComingSoon';

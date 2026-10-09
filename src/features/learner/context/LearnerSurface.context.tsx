@@ -19,6 +19,7 @@
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import type { PublicWebsiteLocale } from '@types';
+import { NotificationScopeProvider } from '@features/notifications';
 
 export interface LearnerSurface {
   /** The academy whose learner dashboard this is. */
@@ -68,9 +69,13 @@ export function LearnerSurfaceProvider({
     };
   }, [academyId, locale, buildHref, location.pathname]);
 
+  // Notification context isolation — the bell, the count and the
+  // notifications page under this tree are THIS academy's.
   return (
     <LearnerSurfaceContext.Provider value={value}>
-      {children}
+      <NotificationScopeProvider scope={`academy:${academyId}`}>
+        {children}
+      </NotificationScopeProvider>
     </LearnerSurfaceContext.Provider>
   );
 }

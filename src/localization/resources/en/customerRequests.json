@@ -1,0 +1,354 @@
+{
+  "title": "Requests",
+  "subtitle": "Ask the Atlas team for a logo, a custom domain, a theme, a website section or a new feature — and follow every request from here.",
+  "types": {
+    "logo": {
+      "label": "Logo",
+      "description": "A professional logo designed for your academy.",
+      "cardTitle": "Need a professional logo?",
+      "cardPitch": "Our designers can create a logo that fits your academy's brand.",
+      "cardAction": "Request a logo",
+      "dialogTitle": "Request a logo",
+      "dialogDescription": "Tell us about your brand. The more you share, the closer the first draft will be.",
+      "team": "Usually handled by the design team."
+    },
+    "domain": {
+      "label": "Custom domain",
+      "description": "Help registering or connecting your own domain.",
+      "cardTitle": "Want to use your own domain?",
+      "cardPitch": "We can help you register or connect a custom domain for your website.",
+      "cardAction": "Request a domain",
+      "dialogTitle": "Request a custom domain",
+      "dialogDescription": "Tell us which address you want and whether you already own it.",
+      "team": "Usually handled by the infrastructure team."
+    },
+    "theme": {
+      "label": "Custom theme",
+      "description": "A website theme designed around your brand.",
+      "cardTitle": "Want something completely custom?",
+      "cardPitch": "Get a theme designed around your brand and the way you teach.",
+      "cardAction": "Request a theme",
+      "dialogTitle": "Request a custom theme",
+      "dialogDescription": "Describe the look you want. Links to websites you like help a lot.",
+      "team": "Usually handled by the design team."
+    },
+    "custom_section": {
+      "label": "Website section",
+      "description": "A new section for your website that the editor doesn't offer yet.",
+      "cardTitle": "Need a section that isn't here?",
+      "cardPitch": "Describe it and our team will build it for your website.",
+      "cardAction": "Request a section",
+      "menuAction": "Request a custom section…",
+      "dialogTitle": "Request a custom section",
+      "dialogDescription": "Describe the section you need and where it should appear.",
+      "team": "Usually handled by the website team."
+    },
+    "custom_feature": {
+      "label": "Custom feature",
+      "description": "Something new in Atlas, built for the way your academy works.",
+      "cardTitle": "Missing something in Atlas?",
+      "cardPitch": "Tell us what you need and our team will scope a custom feature for your academy.",
+      "cardAction": "Request a custom feature",
+      "dialogTitle": "Request a custom feature",
+      "dialogDescription": "Explain the problem you want solved and what a good result looks like.",
+      "team": "Usually handled by the product team."
+    }
+  },
+  "status": {
+    "submitted": "Submitted",
+    "received": "Received",
+    "under_review": "Under review",
+    "in_progress": "In progress",
+    "waiting_for_customer": "Waiting for you",
+    "completed": "Completed",
+    "rejected": "Declined",
+    "cancelled": "Cancelled"
+  },
+  "teamStatus": {
+    "waiting_for_customer": "Waiting for customer"
+  },
+  "priority": {
+    "low": "Low",
+    "normal": "Normal",
+    "high": "High"
+  },
+  "nextStep": {
+    "title": "What happens next",
+    "submitted": "Your request has reached the Atlas team. We'll review it and reply here — you'll also get an email when anything changes.",
+    "received": "The team has your request and will review it shortly.",
+    "under_review": "The team is reviewing your request and working out the details.",
+    "in_progress": "The team is working on your request. We'll let you know when there's something to see.",
+    "waiting_for_customer": "The team needs your reply. Read their latest message below and answer to keep things moving.",
+    "completed": "This request is complete. If something isn't right, start a new request and mention this reference.",
+    "rejected": "The team declined this request. Their message below explains why.",
+    "cancelled": "You cancelled this request. Start a new one any time."
+  },
+  "fields": {
+    "type": "What do you need?",
+    "title": "Title",
+    "titlePlaceholder": "A short summary, e.g. \"New logo for our spring launch\"",
+    "titleHelp": "Between {{min}} and {{max}} characters.",
+    "titleInvalid": "Enter a title between {{min}} and {{max}} characters.",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe what you need, who it's for and any deadline.",
+    "descriptionHelp": "At least {{min}} characters.",
+    "descriptionInvalid": "Write a description between {{min}} and {{max}} characters.",
+    "priority": "Priority",
+    "priorityHelp": "Choose High only when there's a real deadline.",
+    "optional": "Optional",
+    "tooLong": "Keep this under {{max}} characters.",
+    "characterCount": "{{count}} / {{max}}"
+  },
+  "details": {
+    "heading": "Details",
+    "logo": {
+      "brandName": {
+        "label": "Brand name on the logo",
+        "placeholder": "e.g. Falcon Academy"
+      },
+      "style": {
+        "label": "Style",
+        "placeholder": "Modern, playful, classic, minimal…"
+      },
+      "colors": {
+        "label": "Colours",
+        "placeholder": "e.g. navy and gold, or your current brand colours"
+      },
+      "references": {
+        "label": "References",
+        "placeholder": "Links to logos you like, and what you like about them"
+      }
+    },
+    "domain": {
+      "desiredDomain": {
+        "label": "Domain you want",
+        "placeholder": "e.g. academy.example.com"
+      },
+      "alreadyOwned": {
+        "label": "Do you already own this domain?",
+        "yes": "Yes, I own it",
+        "no": "No, I need to buy it",
+        "unsure": "Not sure",
+        "valueYes": "Yes",
+        "valueNo": "No"
+      },
+      "registrar": {
+        "label": "Where it's registered",
+        "placeholder": "e.g. GoDaddy, Namecheap, Cloudflare"
+      }
+    },
+    "theme": {
+      "style": {
+        "label": "Look and feel",
+        "placeholder": "Bold and colourful, calm and professional…"
+      },
+      "colors": {
+        "label": "Colours",
+        "placeholder": "Your brand colours, or colours to avoid"
+      },
+      "references": {
+        "label": "Websites you like",
+        "placeholder": "Links, and what you like about each one"
+      },
+      "requirements": {
+        "label": "Must-haves",
+        "placeholder": "Pages, sections or behaviour the theme must support"
+      }
+    },
+    "custom_section": {
+      "page": {
+        "label": "Page",
+        "placeholder": "Which page should it appear on? e.g. Home"
+      },
+      "references": {
+        "label": "References",
+        "placeholder": "Links or examples of a similar section"
+      }
+    },
+    "custom_feature": {
+      "problem": {
+        "label": "Problem to solve",
+        "placeholder": "What's hard or impossible today?"
+      },
+      "expectedOutcome": {
+        "label": "Expected outcome",
+        "placeholder": "What should you be able to do once it's built?"
+      }
+    }
+  },
+  "create": {
+    "title": "New request",
+    "description": "Choose what you need. The Atlas team reviews every request and replies in your dashboard.",
+    "submit": "Send request",
+    "submitting": "Sending…",
+    "successTitle": "Request sent",
+    "successDescription": "We'll reply in your dashboard and by email.",
+    "viewRequest": "View request",
+    "failed": "Couldn't send your request. Please try again."
+  },
+  "list": {
+    "newRequest": "New request",
+    "requestFeature": "Request a custom feature",
+    "searchLabel": "Search requests",
+    "filtersLabel": "Filter requests",
+    "statusFilter": "Status",
+    "typeFilter": "Type",
+    "allStatuses": "All",
+    "openStatuses": "Open",
+    "allTypes": "All types",
+    "sortLabel": "Sort",
+    "sort": {
+      "lastActivityAt_desc": "Recently updated",
+      "lastActivityAt_asc": "Least recently updated",
+      "createdAt_desc": "Newest first",
+      "createdAt_asc": "Oldest first",
+      "title_asc": "Title A–Z",
+      "title_desc": "Title Z–A"
+    },
+    "clearFilters": "Clear filters",
+    "caption": "Your requests",
+    "columns": {
+      "request": "Request",
+      "type": "Type",
+      "status": "Status",
+      "created": "Created",
+      "updated": "Last update"
+    },
+    "createdOn": "Created {{date}}",
+    "updatedOn": "Updated {{date}}",
+    "resultRange": "{{from}}–{{to}} of {{total}}",
+    "loading": "Loading requests",
+    "empty": {
+      "title": "No requests yet",
+      "description": "The Atlas team can design a logo, connect your own domain, build a custom theme or section, or add a feature made for your academy. Pick one to get started."
+    },
+    "noResults": {
+      "title": "No requests match",
+      "description": "Try a different search or clear the filters."
+    }
+  },
+  "detail": {
+    "breadcrumb": "Request",
+    "reference": "Reference",
+    "type": "Type",
+    "status": "Status",
+    "priority": "Priority",
+    "created": "Created",
+    "updated": "Last update",
+    "description": "Description",
+    "noDetails": "No extra details were added.",
+    "summary": "Request summary",
+    "timeline": "History",
+    "timelineEmpty": "No activity yet.",
+    "replyLabel": "Reply to the Atlas team",
+    "replyPlaceholder": "Write your reply…",
+    "send": "Send reply",
+    "replySent": "Reply sent",
+    "replyFailed": "Couldn't send your reply. Please try again.",
+    "closedNotice": "This request is closed, so replies are off. Start a new request if you need anything else.",
+    "cancel": "Cancel request",
+    "cancelDialog": {
+      "title": "Cancel this request?",
+      "description": "The Atlas team will stop working on “{{title}}”. You can't reopen a cancelled request, but you can always start a new one.",
+      "confirm": "Cancel request",
+      "keep": "Keep request"
+    },
+    "cancelled": "Request cancelled",
+    "cancelFailed": "Couldn't cancel the request. Please try again.",
+    "notFound": "This request doesn't exist or isn't available to you.",
+    "notAllowed": {
+      "title": "Only owners and administrators can see requests",
+      "description": "Ask an owner or administrator of this academy to request custom services from the Atlas team."
+    }
+  },
+  "timeline": {
+    "label": "Request history",
+    "created": "{{actor}} submitted the request",
+    "statusChanged": "{{actor}} changed the status",
+    "customerMessage": "{{actor}} replied",
+    "teamMessage": "{{actor}} replied",
+    "internalNote": "{{actor}} added an internal note",
+    "assigned": "{{actor}} assigned the request to {{assignee}}",
+    "unassigned": "{{actor}} removed the assignee",
+    "fromTo": "From {{from}} to {{to}}",
+    "atlasTeam": "Atlas team",
+    "internalHint": "Only visible to the Atlas team"
+  },
+  "platform": {
+    "title": "Customer requests",
+    "subtitle": "Custom services academies have asked for — review, assign, reply and move each one along.",
+    "routingLink": "Email routing",
+    "counts": {
+      "openCount": "{{formatted}} open"
+    },
+    "searchLabel": "Search title, academy or requester",
+    "assigneeFilter": "Assignee",
+    "allAssignees": "Anyone",
+    "unassigned": "Unassigned",
+    "columns": {
+      "request": "Request",
+      "type": "Type",
+      "academy": "Academy",
+      "requester": "Requester",
+      "status": "Status",
+      "assignee": "Assignee",
+      "lastActivity": "Last activity"
+    },
+    "caption": "Customer requests",
+    "empty": {
+      "title": "No customer requests yet",
+      "description": "When an academy asks for a logo, a domain, a theme, a section or a feature, it appears here."
+    },
+    "detail": {
+      "breadcrumb": "Request",
+      "requester": "Requester",
+      "requesterEmail": "Email",
+      "organization": "Organization",
+      "academy": "Academy",
+      "routedTo": "Emails go to",
+      "allPlatformOwners": "All Platform Owners",
+      "manage": "Manage",
+      "assignee": "Assignee",
+      "assigneeUpdated": "Assignee updated",
+      "status": "Move to",
+      "statusPlaceholder": "Choose a new status",
+      "noTransitions": "This request can't move to another status.",
+      "note": "Message to the customer (optional)",
+      "notePlaceholder": "Explain the change — it's posted to the customer with the new status.",
+      "declineHint": "Declining is final. Tell the customer why, and what they can do instead.",
+      "updateStatus": "Update status",
+      "statusUpdated": "Status updated",
+      "updateFailed": "Couldn't update the request. Please try again.",
+      "composer": {
+        "label": "Message type",
+        "reply": "Reply to customer",
+        "internal": "Internal note",
+        "replyPlaceholder": "Write a reply the customer will see…",
+        "internalPlaceholder": "Write a note for the Atlas team…",
+        "internalHint": "Only visible to the Atlas team",
+        "replyHint": "The customer sees this in their dashboard and gets an email.",
+        "closedHint": "This request is closed, so only internal notes can be added.",
+        "sendReply": "Send reply",
+        "addNote": "Add note",
+        "replySent": "Reply sent",
+        "noteAdded": "Note added",
+        "failed": "Couldn't send. Please try again."
+      }
+    }
+  },
+  "routing": {
+    "title": "Request email routing",
+    "subtitle": "Choose which team inbox is emailed when a request of each type arrives or the customer replies.",
+    "fallback": "Leave an inbox empty to email every Platform Owner instead. Requests are never routed to nobody.",
+    "emailLabel": "{{type}} inbox",
+    "placeholder": "team@example.com",
+    "invalidEmail": "Enter a valid email address, or leave it empty.",
+    "emptyMeans": "Empty — all Platform Owners are emailed.",
+    "lastUpdated": "Last updated {{date}}",
+    "neverUpdated": "Not set yet",
+    "save": "Save routing",
+    "saved": "Routing saved",
+    "saveFailed": "Couldn't save the routing. Please try again.",
+    "back": "Back to requests"
+  }
+}

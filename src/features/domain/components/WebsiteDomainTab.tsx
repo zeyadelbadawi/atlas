@@ -63,6 +63,7 @@ import { useConfirmDialog } from '@app/providers';
 import { useDateFormatter, usePermissions, useUnsavedChanges } from '@hooks';
 import { useServerValidation } from '@forms';
 import { cn, MIRROR_IN_RTL } from '@utils';
+import { RequestServiceCard } from '@features/customer-requests';
 import {
   useAcademyDomain,
   useAddCustomDomain,
@@ -454,6 +455,10 @@ export function WebsiteDomainTab({
           </p>
         </CardContent>
       </Card>
+
+      {/* Owners/administrators only (the card checks the academy role):
+          help from the Atlas team to register or connect a domain. */}
+      <RequestServiceCard type="domain" />
 
       {/* ------------------------------------------------ custom domain */}
       <Card>

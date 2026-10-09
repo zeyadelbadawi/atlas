@@ -4,6 +4,7 @@
 import { useApiQuery, useAuth } from '@/shared/hooks';
 import { notificationKeys } from '@services/query';
 import { notificationService } from '../services/NotificationService';
+import { useNotificationScope } from '../context/notification-scope';
 import type { CollectionQuery, Notification, PaginatedResult } from '@types';
 import type { ApiError } from '@api';
 
@@ -15,9 +16,10 @@ export interface UseNotificationsOptions {
 
 export function useNotifications(options?: UseNotificationsOptions) {
   const { user } = useAuth();
+  const scope = useNotificationScope();
 
   return useApiQuery<PaginatedResult<Notification>, ApiError>({
-    queryKey: notificationKeys.list(user?.id, options?.query),
+    queryKey: notificationKeys.list(scope, user?.id, options?.query),
     queryFn: () => notificationService.getNotifications(options?.query),
     enabled: !!user && (options?.enabled ?? true),
   });

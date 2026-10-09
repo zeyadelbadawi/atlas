@@ -25,6 +25,7 @@ import { ErrorBoundary } from './error/ErrorBoundary';
 import { AtlasThemeProvider } from './theme/ThemeProvider';
 import { AtlasLocalizationProvider } from './localization/LocalizationProvider';
 import { AtlasIdentityProvider } from './identity/IdentityProvider';
+import { OfflineProvider } from './offline/OfflineProvider';
 import { AtlasPlatformProvider } from './platform/PlatformProvider';
 import { AtlasToastProvider } from './toast/ToastProvider';
 import { AtlasQueryProvider } from './query/QueryProvider';
@@ -61,11 +62,12 @@ export function AppProviders({
                   client={queryClient}
                   dehydratedState={dehydratedState}
                 >
-                  <AtlasDialogProvider>
-                    <AtlasLoadingProvider>
-                      <TooltipProvider delayDuration={200}>
-                        {children}
-                        {/*
+                  <OfflineProvider>
+                    <AtlasDialogProvider>
+                      <AtlasLoadingProvider>
+                        <TooltipProvider delayDuration={200}>
+                          {children}
+                          {/*
                           Found during a real browser acceptance test: 24
                           pages call `toast()` from `@/hooks/use-toast` (a
                           self-contained shadcn/Radix toast store, entirely
@@ -84,10 +86,11 @@ export function AppProviders({
                           Consolidating onto one toast system end-to-end is
                           a separate, larger cleanup left for a future pass.
                         */}
-                        <Toaster />
-                      </TooltipProvider>
-                    </AtlasLoadingProvider>
-                  </AtlasDialogProvider>
+                          <Toaster />
+                        </TooltipProvider>
+                      </AtlasLoadingProvider>
+                    </AtlasDialogProvider>
+                  </OfflineProvider>
                 </AtlasQueryProvider>
               </AtlasToastProvider>
             </AtlasPlatformProvider>

@@ -38,6 +38,7 @@ import arFeatures from './ar/features.json';
 import arPricing from './ar/pricing.json';
 import arCertificates from './ar/certificates.json';
 import arOnboarding from './ar/onboarding.json';
+import arCustomerRequests from './ar/customerRequests.json';
 
 const bundle: Record<string, Record<string, unknown>> = {
   liveSessions: arLiveSessions,
@@ -74,6 +75,7 @@ const bundle: Record<string, Record<string, unknown>> = {
   pricing: arPricing,
   certificates: arCertificates,
   onboarding: arOnboarding,
+  customerRequests: arCustomerRequests,
 };
 
 export default bundle;

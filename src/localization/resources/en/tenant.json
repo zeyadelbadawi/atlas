@@ -12,17 +12,6 @@
       "recordedSessions": "Recorded sessions"
     },
     "features": {
-      "cms": "Content management (CMS)",
-      "seo": "SEO",
-      "seoAdvanced": "Advanced SEO",
-      "marketing": "Marketing",
-      "marketingAdvanced": "Advanced marketing",
-      "analytics": "Analytics",
-      "analyticsAdvanced": "Advanced analytics",
-      "customDomain": "Custom domain",
-      "themes": "Themes",
-      "multipleThemes": "Multiple themes",
-      "backup": "Backup",
       "liveSessions": "Live sessions"
     },
     "subscriptionStatus": {
@@ -83,7 +72,7 @@
   },
   "subscription": {
     "title": "Subscription",
-    "subtitle": "Your plan, lifecycle status and feature entitlements.",
+    "subtitle": "Your plan and its lifecycle status.",
     "comparePlans": "Compare plans",
     "noSubscription": {
       "title": "No subscription yet",
@@ -91,8 +80,8 @@
       "action": "Browse plans"
     },
     "cancelAtPeriodEnd": "Your subscription will not renew at the end of the current period.",
-    "featuresTitle": "Plan features",
-    "featuresSubtitle": "Reflects your plan plus any active add-ons.",
+    "featuresTitle": "Add-ons",
+    "featuresSubtitle": "Capabilities you add to your plan separately.",
     "cancelSubscription": "Cancel subscription"
   },
   "usage": {
@@ -130,7 +119,7 @@
   },
   "planComparison": {
     "title": "Compare plans",
-    "description": "Limits and features across every Atlas plan.",
+    "description": "Limits across every Atlas plan.",
     "currentPlanBadge": "Current plan",
     "footerNote": "Plan changes are handled by your Atlas representative — this page does not process payments or change your plan.",
     "selectPlan": "Select this plan",

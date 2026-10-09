@@ -33,3 +33,6 @@ export {
   useUpdateCommunicationPreferences,
 } from './hooks';
 export type { UseNotificationsOptions } from './hooks';
+export { NotificationScopeProvider } from './context/NotificationScopeProvider';
+export { useNotificationScope } from './context/notification-scope';
+export type { NotificationScopeKey } from './context/notification-scope';

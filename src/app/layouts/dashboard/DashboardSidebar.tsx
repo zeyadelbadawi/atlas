@@ -47,7 +47,13 @@ export function DashboardSidebar({
   // W5 — the URL's academy wins in the same render (no frame where the
   // links or the brand belong to another academy); the remembered academy
   // only fills in on screens outside any academy.
-  const { academyId: urlAcademyId } = useAcademyScope();
+  const { academyId: urlAcademyId, membership } = useAcademyScope();
+  // The verified role in the URL's academy (never a late answer for the
+  // academy just left) — gates `academyRoles` entries.
+  const academyRole =
+    urlAcademyId && membership?.academy.id === urlAcademyId
+      ? membership.role
+      : undefined;
   const activeAcademyId = urlAcademyId ?? rememberedAcademyId;
   // The authoritative lifecycle state — the same answer the backend
   // enforces with, never a second local derivation.
@@ -83,6 +89,7 @@ export function DashboardSidebar({
       // while the lifecycle read is in flight so the sidebar does not
       // flicker; see `NavigationFilterContext.hasEntitlement`.
       hasEntitlement: isLifecycleLoading ? undefined : lifecycle?.hasAccess,
+      academyRole,
     };
     return getDashboardNavigation(activeAcademyId)
       .map((section) => ({
@@ -98,6 +105,7 @@ export function DashboardSidebar({
     isFeatureEnabled,
     lifecycle?.hasAccess,
     isLifecycleLoading,
+    academyRole,
   ]);
 
   const brandRow = (

@@ -148,6 +148,8 @@
     "tenant_subscription": "اشتراك",
     "tenant_add_on": "إضافة",
     "support_case": "تذكرة دعم",
+    "customer_request": "طلب عميل",
+    "customer_request_routing": "توجيه بريد الطلبات",
     "trusted_device": "جهاز موثوق",
     "plan": "باقة",
     "platform_settings": "إعدادات المنصة",
@@ -621,6 +623,16 @@
       "replied": "{{actor}} ردّ على تذكرة الدعم «{{target}}»",
       "status_changed": "{{actor}} غيّر حالة تذكرة الدعم «{{target}}»",
       "auto_created": "فُتحت تذكرة دعم تلقائيًا: «{{target}}»"
+    },
+    "customer_request": {
+      "created": "أرسل {{actor}} طلب العميل “{{target}}”",
+      "cancelled": "ألغى {{actor}} طلب العميل “{{target}}”",
+      "customer_replied": "رد {{actor}} على طلب العميل “{{target}}”",
+      "status_changed": "غيّر {{actor}} حالة طلب العميل “{{target}}”",
+      "team_replied": "رد {{actor}} على طلب العميل “{{target}}”",
+      "internal_note_added": "أضاف {{actor}} ملاحظة داخلية إلى طلب العميل “{{target}}”",
+      "assigned": "غيّر {{actor}} المسؤول عن طلب العميل “{{target}}”",
+      "routing_updated": "حدّث {{actor}} توجيه بريد طلبات العملاء"
     },
     "auth": {
       "otp": {

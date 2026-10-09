@@ -29,6 +29,13 @@ export interface Session {
   readonly tokens?: TokenMetadata;
   readonly user?: CurrentUser;
   readonly organization?: OrganizationContext;
+  /**
+   * Local-first dashboard — the session was resumed WITHOUT the server
+   * (the browser is offline) from the identity saved at the last online
+   * sign-in. Read-only: nothing is authorized by it; the server re-checks
+   * the moment the connection returns, and a refusal signs out.
+   */
+  readonly offline?: boolean;
 }
 
 /**

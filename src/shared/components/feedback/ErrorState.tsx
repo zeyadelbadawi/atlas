@@ -26,6 +26,8 @@ export interface ErrorStateProps {
   readonly requestId?: string;
   /** Invoked by the retry action. Omit when the action cannot be retried. */
   readonly onRetry?: () => void;
+  /** The retry action's label (defaults to "Try again"). */
+  readonly retryLabelKey?: string;
   /** Invoked by the support action. */
   readonly onContactSupport?: () => void;
   /**
@@ -44,6 +46,7 @@ export function ErrorState({
   values,
   requestId,
   onRetry,
+  retryLabelKey = 'common:actions.retry',
   onContactSupport,
   headingLevel: Heading = 'h3',
   className,
@@ -82,7 +85,7 @@ export function ErrorState({
         <div className="flex flex-wrap items-center justify-center gap-2">
           {onRetry ? (
             <Button type="button" onClick={onRetry}>
-              {t('common:actions.retry')}
+              {t(retryLabelKey)}
             </Button>
           ) : null}
           {onContactSupport ? (

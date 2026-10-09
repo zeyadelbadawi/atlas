@@ -1,9 +1,9 @@
 /**
  * Tenant Subscription Page.
  *
- * Full subscription lifecycle detail, plan features (effective — Plan +
- * active Add-ons, via `useEffectiveEntitlements`), and the Plan Comparison
- * dialog. Since Prompt 7, selecting a plan in the dialog navigates into
+ * Full subscription lifecycle detail, add-on capabilities (effective —
+ * Plan + active Add-ons, via `useEffectiveEntitlements`), and the Plan
+ * Comparison dialog. Since Prompt 7, selecting a plan in the dialog navigates into
  * real Checkout (`/dashboard/tenant/billing/checkout/plan_subscription/:planKey`)
  * — but this page itself still never submits a plan change or claims one
  * happened; only an authoritative, backend-confirmed Payment does that.
@@ -11,7 +11,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Check, Columns3, CreditCard, X } from 'lucide-react';
+import { Check, Columns3, CreditCard, Plus } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { SubscriptionLifecycleActions } from '../components/SubscriptionLifecycleActions';
 import { ErrorState, EmptyState } from '@components/feedback';
@@ -27,6 +27,7 @@ import {
   usePlanCatalog,
   useTenantSubscription,
 } from '../hooks';
+import { isFeatureEnabled } from '@config';
 import { PLAN_FEATURE_KEYS } from '../constants/tenant.constants';
 import {
   getDaysRemaining,
@@ -190,66 +191,79 @@ export default function TenantSubscriptionPage(): JSX.Element {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">
-              {t('tenant:subscription.featuresTitle')}
-            </CardTitle>
-            <p className="text-sm text-muted-foreground">
-              {t('tenant:subscription.featuresSubtitle')}
-            </p>
-          </CardHeader>
-          <CardContent>
-            <ul className="divide-y divide-border">
-              {PLAN_FEATURE_KEYS.map((featureKey) => {
-                const included = entitlements.data!.features[featureKey];
-                const gapAction = getFeatureGapAction(
-                  featureKey,
-                  included,
-                  subscription.plan.key,
-                  catalogAddOns
-                );
+        {/* Add-on capabilities. Live Sessions is the only feature entitlement
+            Atlas enforces, and it is sold as an ADD-ON — so it is presented
+            as one (active, or available to add), never as something the
+            plan is missing. While its customer launch is deferred the
+            section is not rendered at all, rather than as an empty card. */}
+        {isFeatureEnabled('liveSessions') ? (
+          <Card data-testid="subscription-add-on-capabilities">
+            <CardHeader>
+              <CardTitle className="text-base">
+                {t('tenant:subscription.featuresTitle')}
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">
+                {t('tenant:subscription.featuresSubtitle')}
+              </p>
+            </CardHeader>
+            <CardContent>
+              <ul className="divide-y divide-border">
+                {PLAN_FEATURE_KEYS.map((featureKey) => {
+                  const active =
+                    entitlements.data!.features[featureKey] === true;
+                  const gapAction = getFeatureGapAction(
+                    featureKey,
+                    active,
+                    subscription.plan.key,
+                    catalogAddOns
+                  );
 
-                return (
-                  <li
-                    key={featureKey}
-                    className="flex items-center justify-between gap-3 py-3"
-                  >
-                    <span className="flex items-center gap-2 text-sm">
-                      {included ? (
-                        <Check
-                          className="size-4 shrink-0 text-success"
-                          strokeWidth={2}
-                          aria-hidden
-                        />
-                      ) : (
-                        <X
-                          className="size-4 shrink-0 text-muted-foreground"
-                          strokeWidth={2}
-                          aria-hidden
-                        />
-                      )}
-                      <span
-                        className={cn(
-                          included ? 'text-foreground' : 'text-muted-foreground'
+                  return (
+                    <li
+                      key={featureKey}
+                      className="flex items-center justify-between gap-3 py-3"
+                    >
+                      <span className="flex items-center gap-2 text-sm">
+                        {active ? (
+                          <Check
+                            className="size-4 shrink-0 text-success"
+                            strokeWidth={2}
+                            aria-hidden
+                          />
+                        ) : (
+                          <Plus
+                            className="size-4 shrink-0 text-muted-foreground"
+                            strokeWidth={2}
+                            aria-hidden
+                          />
                         )}
-                      >
-                        {t(`tenant:common.features.${featureKey}`)}
+                        <span
+                          className={cn(
+                            active ? 'text-foreground' : 'text-muted-foreground'
+                          )}
+                        >
+                          {t(`tenant:common.features.${featureKey}`)}
+                        </span>
                       </span>
-                    </span>
 
-                    {gapAction !== 'none' ? (
-                      <StatusBadge
-                        labelKey={`tenant:common.gapAction.${gapAction}`}
-                        tone={gapAction === 'addOn' ? 'info' : 'warning'}
-                      />
-                    ) : null}
-                  </li>
-                );
-              })}
-            </ul>
-          </CardContent>
-        </Card>
+                      {active ? (
+                        <StatusBadge
+                          labelKey="tenant:addOns.activeBadge"
+                          tone="success"
+                        />
+                      ) : gapAction === 'addOn' ? (
+                        <StatusBadge
+                          labelKey="tenant:common.gapAction.addOn"
+                          tone="info"
+                        />
+                      ) : null}
+                    </li>
+                  );
+                })}
+              </ul>
+            </CardContent>
+          </Card>
+        ) : null}
       </div>
 
       <PlanComparisonDialog

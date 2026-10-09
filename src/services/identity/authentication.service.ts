@@ -75,12 +75,10 @@ export class AuthenticationService {
    * Invalidates tokens on the backend. Local cleanup is handled by SessionService.
    */
   public async signOut(): Promise<void> {
-    try {
-      await apiClient.post<void>('/auth/sign-out');
-    } catch {
-      // Sign-out failure should not prevent local cleanup.
-      // SessionService will clear local state regardless.
-    }
+    // Failures propagate: SessionService always clears local state, and it
+    // must know whether the server was reached — a sign-out that could not
+    // be delivered (offline) is retried before the next session restore.
+    await apiClient.post<void>('/auth/sign-out');
   }
 
   /**

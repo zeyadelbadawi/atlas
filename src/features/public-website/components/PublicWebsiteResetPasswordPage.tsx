@@ -9,10 +9,11 @@
  * default, does not exist on this host.
  */
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import {
   ResetPasswordForm,
+  useUrlCredentialToken,
   useValidatePasswordResetToken,
 } from '@features/auth';
 import { ErrorState } from '@components/feedback';
@@ -33,11 +34,11 @@ export function PublicWebsiteResetPasswordPage({
   locale,
 }: PublicWebsiteResetPasswordPageProps): JSX.Element {
   const { t } = useTranslation();
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const buildHref = usePublicWebsiteHrefBuilder(locale);
   const linkRenderer = usePublicWebsiteLinkRenderer(locale);
-  const token = searchParams.get('token');
+  // Read once, then removed from the address bar (ATO review F12).
+  const token = useUrlCredentialToken();
 
   const validation = useValidatePasswordResetToken(token);
   // A failed validation REQUEST is treated as "not valid": showing the

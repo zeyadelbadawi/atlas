@@ -46,6 +46,7 @@ import {
   Send,
   Mail,
   ShieldAlert,
+  MessageSquarePlus,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem, NavigationSection } from '@types';
@@ -274,6 +275,27 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
         icon: Send,
         requiresAuth: true,
         requiredPermissions: ['tenant.dashboard.view'],
+      },
+      {
+        // Customer Requests — custom services (logo, domain, theme,
+        // section, feature) asked of the Atlas team. The API admits the
+        // academy's owner and administrators (`AcademyRoles`), so inside an
+        // academy the entry follows the caller's verified academy role
+        // (the same rule as `CUSTOMER_REQUEST_ACADEMY_ROLES`, which the
+        // pages and cards use); outside one it falls back to the
+        // owner-tier permission. No entitlement gate: the API allows
+        // requests while a subscription is inactive, and asking for help
+        // is a way out, not a feature.
+        id: 'academy-requests',
+        labelKey: 'navigation:items.academyRequests',
+        path: buildPath(DASHBOARD_ROUTES.academyRequests, {
+          academyId: activeAcademyId,
+        }),
+        icon: MessageSquarePlus,
+        requiresAuth: true,
+        academyRoles: ['owner', 'administrator'],
+        requiredPermissions: ['tenant.dashboard.view'],
+        matchNestedPaths: true,
       },
       {
         id: 'academy-website',
@@ -1007,6 +1029,18 @@ export function getDashboardNavigation(
           icon: Inbox,
           requiresAuth: true,
           requiredRoles: ['platform_owner'],
+        },
+        {
+          // Customer Requests — custom-service requests from academies, and
+          // their email routing. `PlatformCustomerRequestsController`
+          // (PlatformOwnerGuard + RLS) is the server-side boundary.
+          id: 'platform-customer-requests',
+          labelKey: 'navigation:items.platformCustomerRequests',
+          path: DASHBOARD_ROUTES.platformCustomerRequests,
+          icon: MessageSquarePlus,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+          matchNestedPaths: true,
         },
         {
           // Add-ons Catalog Management (P51). Platform-owner only at every

@@ -28,12 +28,19 @@ export class TwoFactorService {
     );
   }
 
-  /** Completes enrolment and returns the recovery codes — also shown once. */
-  async confirmSetup(token: string): Promise<{ recoveryCodes: string[] }> {
-    return apiClient.post<{ recoveryCodes: string[] }, { token: string }>(
-      '/auth/2fa/confirm',
-      { token }
-    );
+  /**
+   * Completes enrolment and returns the recovery codes — also shown once.
+   * The password is required by the backend: enrolling a second factor is
+   * persistent control of the account, so a session alone is not enough.
+   */
+  async confirmSetup(
+    token: string,
+    password: string
+  ): Promise<{ recoveryCodes: string[] }> {
+    return apiClient.post<
+      { recoveryCodes: string[] },
+      { token: string; password: string }
+    >('/auth/2fa/confirm', { token, password });
   }
 
   /**

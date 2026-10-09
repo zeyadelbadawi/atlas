@@ -25,6 +25,19 @@ export interface NavigationItem {
   readonly requiredPermissions?: readonly string[];
   /** Roles required to view this item. */
   readonly requiredRoles?: readonly string[];
+  /**
+   * Academy roles that open this entry, read from the caller's VERIFIED
+   * standing in the academy the URL addresses (`GET /academies/:id/me`,
+   * the academy scope) — the same answer the academy's pages and the API's
+   * `AcademyRoles(...)` check use. Not a permission: organization
+   * permissions cannot tell an academy administrator from a manager, so an
+   * entry whose API is gated by academy role is shown by that role.
+   *
+   * When the academy role is known it DECIDES (and `requiredPermissions`
+   * is not consulted); outside an academy screen, where there is no
+   * verified role, `requiredPermissions` applies as before.
+   */
+  readonly academyRoles?: readonly string[];
   /** Feature flag required to view this item. */
   readonly featureFlag?: string;
   /** Whether to match nested paths under this route. */

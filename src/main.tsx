@@ -29,9 +29,27 @@ import {
 import { publicWebsiteLocaleForPath } from './ssr/ssr-paths';
 import { preloadPublicWebsiteRouter } from './app/routes/public-website-router-loader';
 import { isKnownThemeKey, loadThemePack } from '@features/website';
+import { reloadOnceForNewVersion } from '@utils/lazy-with-retry.utils';
+import { installJitteredOnlineManager, setUpAppShell } from '@services/offline';
 
 /** Id of the mount node declared in `index.html`. */
 const ROOT_ELEMENT_ID = 'root';
+
+/*
+  Stale-tab recovery — a stylesheet or module that Vite PRELOADS for a route
+  failed (a tab left open across a deploy asks for files the new build no
+  longer has). Reload once into the current build, at the URL the person
+  navigated to; `reloadOnceForNewVersion` guards against a loop and does
+  nothing offline. Not prevented when no reload starts: the import then
+  fails and the error boundary explains.
+*/
+// Local-first dashboard — spread the refetch burst that follows a reconnect
+// (see `installJitteredOnlineManager`).
+installJitteredOnlineManager();
+
+window.addEventListener('vite:preloadError', (event) => {
+  if (reloadOnceForNewVersion()) event.preventDefault();
+});
 
 /**
  * True for prerendered blog pages.
@@ -82,6 +100,13 @@ async function initializeApp(): Promise<void> {
     ENV.isDevelopment
   );
   const isAcademyWebsite = websiteContext.mode === 'academy-website';
+  // Local-first dashboard — the dashboard's shell loads without a connection
+  // (never on an Academy website; see `app-shell.ts`).
+  setUpAppShell({
+    isPlatformHost: !isAcademyWebsite,
+    isProductionBuild: import.meta.env.PROD,
+    enabled: import.meta.env.VITE_OFFLINE_SHELL !== 'off',
+  });
   // A server-rendered page brings its data; only then is it hydrated.
   const ssr = isAcademyWebsite ? readSsrPayload() : null;
   // An Academy website renders in its URL locale from the first render

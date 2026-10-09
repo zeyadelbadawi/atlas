@@ -67,10 +67,25 @@ import {
   giftedDaysToInput,
   isValidGiftedDaysInput,
 } from '../utils/gifted-days.utils';
-import type { LanguageCode, Plan, PlanLimitImpact } from '@types';
+import type { LanguageCode, Plan, PlanFeatures, PlanLimitImpact } from '@types';
 
 /** The backend's ceiling for `pricing.yearlyAmount` (`PlanPricingDto`). */
 const MAX_YEARLY_AMOUNT = 10_000_000;
+
+/**
+ * Only the current feature keys, each a real boolean. A plan row (or a
+ * cached response) may still carry legacy, never-enforced keys; they are
+ * neither shown as switches nor sent back on save.
+ */
+function pickPlanFeatures(raw: unknown): PlanFeatures {
+  const source =
+    raw !== null && typeof raw === 'object'
+      ? (raw as Record<string, unknown>)
+      : {};
+  return Object.fromEntries(
+    PLAN_FEATURE_KEYS.map((key) => [key, source[key] === true])
+  ) as unknown as PlanFeatures;
+}
 
 /** Empty (no yearly option) or a whole number from 0 to the ceiling. */
 function isValidYearlyAmount(value: string): boolean {
@@ -94,7 +109,9 @@ export function PlanEditorDialog({
   const previewImpact = usePreviewLimitImpact();
 
   const [limits, setLimits] = useState<LimitDraft>({});
-  const [features, setFeatures] = useState<Record<string, boolean>>({});
+  const [features, setFeatures] = useState<PlanFeatures>(() =>
+    pickPlanFeatures({})
+  );
   const [amount, setAmount] = useState('');
   const [currency, setCurrency] = useState('USD');
   const [yearlyAmount, setYearlyAmount] = useState('');
@@ -118,7 +135,7 @@ export function PlanEditorDialog({
         ? ''
         : String(plan.limits.monthlyEmails)
     );
-    setFeatures({ ...(plan.features as unknown as Record<string, boolean>) });
+    setFeatures(pickPlanFeatures(plan.features));
     setAmount(
       plan.pricing?.amount !== undefined ? String(plan.pricing.amount) : ''
     );
@@ -200,7 +217,7 @@ export function PlanEditorDialog({
           ),
           monthlyEmails
         ),
-        features: features as never,
+        features: pickPlanFeatures(features),
         pricing: amount
           ? {
               amount: Number(amount),

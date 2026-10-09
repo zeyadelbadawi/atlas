@@ -11,10 +11,11 @@
  * Accessibility fix carried by this redesign: the comparison table previously
  * conveyed included-vs-excluded with an `aria-hidden` Check/Minus icon and no
  * text alternative, so every feature cell was announced as empty — a screen
- * reader user could not read the comparison at all. Each cell now carries an
- * `sr-only` label, and the table has a real caption plus `scope` on its headers.
+ * reader user could not read the comparison at all. The table has a real
+ * caption plus `scope` on its headers, and any cell that shows only a mark
+ * carries an `sr-only` label.
  */
-import { Check, Minus } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -37,23 +38,13 @@ import {
 } from '../components/MarketingSection';
 import launchReady from '../assets/launch-ready.webp';
 import structureCalm from '../components/cinematic-hero/assets/structure-calm.webp';
-import type { PlanFeatures } from '@types';
 
-/** Order features are compared in — matches `PlanFeatures`' own real fields. */
-const FEATURE_ROWS: readonly (keyof PlanFeatures)[] = [
-  'cms',
-  'themes',
-  'multipleThemes',
-  'customDomain',
-  'seo',
-  'seoAdvanced',
-  'marketing',
-  'marketingAdvanced',
-  'analytics',
-  'analyticsAdvanced',
-  'backup',
-];
-
+/**
+ * Only enforced plan LIMITS are compared. The page used to also compare
+ * CMS/SEO/Marketing/Analytics/Custom domain/Themes/Backup switches, but no
+ * plan ever enforced them — Atlas never advertises an entitlement it does
+ * not enforce.
+ */
 const LIMIT_ROWS = [
   'academies',
   'students',
@@ -337,46 +328,6 @@ export default function PricingPage(): JSX.Element {
                         ))}
                       </tr>
                     ) : null}
-                    {FEATURE_ROWS.map((key) => (
-                      <tr key={key} className="border-b border-border">
-                        <th
-                          scope="row"
-                          className="py-3 text-start font-normal text-muted-foreground"
-                        >
-                          {t(`pricing:features.${key}`)}
-                        </th>
-                        {plans.map((plan) => (
-                          <td key={plan.key} className="py-3">
-                            {/* The icon is decorative; the sr-only text is what
-                                actually conveys the value. Colour alone must
-                                never carry meaning. */}
-                            {plan.features[key] ? (
-                              <>
-                                <Check
-                                  className="size-4 text-primary"
-                                  strokeWidth={2}
-                                  aria-hidden
-                                />
-                                <span className="sr-only">
-                                  {t('pricing:comparison.included')}
-                                </span>
-                              </>
-                            ) : (
-                              <>
-                                <Minus
-                                  className="size-4 text-muted-foreground/60"
-                                  strokeWidth={2}
-                                  aria-hidden
-                                />
-                                <span className="sr-only">
-                                  {t('pricing:comparison.notIncluded')}
-                                </span>
-                              </>
-                            )}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
                   </tbody>
                 </table>
               </div>

@@ -1,9 +1,14 @@
 /**
  * Plan Comparison Dialog.
  *
- * Read-only comparison of every catalog Plan's limits and features. Reused
- * from the Subscription, Usage and Add-ons pages whenever the user needs to
- * see "what would change" after reaching a limit or missing a feature.
+ * Read-only comparison of every catalog Plan's limits. Reused from the
+ * Subscription, Usage and Add-ons pages whenever the user needs to see
+ * "what would change" after reaching a limit.
+ *
+ * Only enforced entitlements are compared. The one feature entitlement
+ * (`liveSessions`) is sold as an add-on, so a plan is never shown as
+ * "missing" it: a plan that bundles it says so, and nothing is shown
+ * otherwise — and nothing at all while its customer launch is deferred.
  *
  * `onSelectPlan` is optional and, when provided (Prompt 7's
  * `TenantSubscriptionPage`), adds a "Select this plan" action per plan
@@ -16,7 +21,7 @@
  * behavior unchanged.
  */
 import { useTranslation } from 'react-i18next';
-import { Check, Info, X } from 'lucide-react';
+import { Check, Info } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import {
   Dialog,
@@ -32,6 +37,7 @@ import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@components/data-display';
 import { PlanGiftOffer } from './PlanGiftOffer';
 import { cn } from '@utils';
+import { isFeatureEnabled } from '@config';
 import {
   PLAN_FEATURE_KEYS,
   PLAN_LIMIT_KEYS,
@@ -229,40 +235,30 @@ export function PlanComparisonDialog({
                     ))}
                   </div>
 
-                  <div className="space-y-1.5 border-t border-border pt-3 text-sm">
-                    {PLAN_FEATURE_KEYS.map((featureKey) => {
-                      const included = plan.features[featureKey];
-                      return (
+                  {isFeatureEnabled('liveSessions') &&
+                  PLAN_FEATURE_KEYS.some(
+                    (key) => plan.features[key] === true
+                  ) ? (
+                    <div className="space-y-1.5 border-t border-border pt-3 text-sm">
+                      {PLAN_FEATURE_KEYS.filter(
+                        (key) => plan.features[key] === true
+                      ).map((featureKey) => (
                         <div
                           key={featureKey}
                           className="flex items-center gap-2"
                         >
-                          {included ? (
-                            <Check
-                              className="size-4 shrink-0 text-success"
-                              strokeWidth={2}
-                              aria-hidden
-                            />
-                          ) : (
-                            <X
-                              className="size-4 shrink-0 text-muted-foreground"
-                              strokeWidth={2}
-                              aria-hidden
-                            />
-                          )}
-                          <span
-                            className={cn(
-                              included
-                                ? 'text-foreground'
-                                : 'text-muted-foreground'
-                            )}
-                          >
+                          <Check
+                            className="size-4 shrink-0 text-success"
+                            strokeWidth={2}
+                            aria-hidden
+                          />
+                          <span className="text-foreground">
                             {t(`tenant:common.features.${featureKey}`)}
                           </span>
                         </div>
-                      );
-                    })}
-                  </div>
+                      ))}
+                    </div>
+                  ) : null}
 
                   {plan.key !== currentPlanKey && onSelectPlan ? (
                     <PlanGiftOffer

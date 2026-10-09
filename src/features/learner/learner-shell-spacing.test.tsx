@@ -15,7 +15,8 @@ import { createI18nInstance } from '@/localization/i18n';
 import type { PublicWebsiteLocale } from '@types';
 
 let unread = 0;
-vi.mock('@features/notifications', () => ({
+vi.mock('@features/notifications', async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
   useNotificationSummary: () => ({ data: { unread } }),
 }));
 

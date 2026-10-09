@@ -147,11 +147,32 @@ describe('every document Caddy serves gets the headers', () => {
     // the shared `(theme_assets)` handler, which both site blocks import,
     // plus one in the shared `(ssr_unavailable)` fallback (Phase 8: the
     // single-page app served when the public website renderer is down),
-    // which both site blocks' error handlers import.
-    expect(imports).toBe(4);
+    // which both site blocks' error handlers import, plus one in the shared
+    // `(app_assets)` handler (stale-tab recovery), which both import too.
+    expect(imports).toBe(5);
     expect(directives.split('import theme_assets').length - 1).toBe(2);
+    expect(directives.split('import app_assets').length - 1).toBe(2);
     const catchAll = directives.slice(directives.indexOf('\n:443 {'));
     expect(catchAll).toContain('import theme_assets');
+    expect(catchAll).toContain('import app_assets');
+  });
+
+  /*
+   * Stale-tab recovery — a missing build chunk is a real, uncached 404,
+   * never the SPA shell served as JavaScript (which failed the module MIME
+   * check and was cached by browsers and the CDN for hours).
+   */
+  it('answers a missing /assets/ file with an uncached 404, not the SPA shell', () => {
+    const start = directives.indexOf('(app_assets) {');
+    const block = directives.slice(start, directives.indexOf('\n}\n', start));
+    expect(block).toContain('handle /assets/* {');
+    expect(block).toContain(
+      'header @found Cache-Control "public, max-age=31536000, immutable"'
+    );
+    expect(block).toContain('@missing not file');
+    expect(block).toContain('header @missing Cache-Control "no-store"');
+    expect(block).toContain('file_server');
+    expect(block).not.toContain('try_files');
   });
 
   /*
