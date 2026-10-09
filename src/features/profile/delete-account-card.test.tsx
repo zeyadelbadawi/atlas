@@ -7,7 +7,10 @@
  *     only then calls the deletion with the challenge id and the code;
  *   - a wrong or expired code is explained in place and can be retried;
  *     resend waits for the cooldown;
- *   - Arabic renders the same flow right-to-left with the digits LTR.
+ *   - Arabic renders the same flow right-to-left with the digits LTR;
+ *   - before anything is asked, the card says forensic watermark records
+ *     outlive the account (730 days after last shown), as the Privacy
+ *     Policy does.
  */
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -105,6 +108,22 @@ afterEach(() => {
 });
 
 describe('delete account dialog', () => {
+  it('says forensic watermark records are kept after deletion (EN + AR)', () => {
+    renderCard('en');
+    expect(
+      screen.getByText(
+        /Forensic video watermark records .* are kept until 730 days after each code was last shown/
+      )
+    ).toBeTruthy();
+    cleanup();
+    renderCard('ar');
+    expect(
+      screen.getByText(
+        /يُحتفظ بسجلات العلامة المائية التتبّعية للفيديو .* 730 يومًا/
+      )
+    ).toBeTruthy();
+  });
+
   it('asks for a code first and deletes only with the emailed code', async () => {
     const request = vi
       .spyOn(currentUserService, 'requestAccountDeletion')

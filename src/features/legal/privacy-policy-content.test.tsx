@@ -7,6 +7,9 @@
  *     block shapes — so an English clause can never be missing from the
  *     Arabic page (the parity the content files' own comments promise);
  *   - the "last updated" date of this revision;
+ *   - the forensic video watermark disclosure (what is recorded, who can
+ *     look it up, encryption, 730-day retention that survives account
+ *     deletion) and that it never claims to stop screen recording;
  *   - the implemented facts the policy now states (the eligibility ledgers,
  *     180-day trial forensics, 90-day security events and email records,
  *     24-hour code records), in both languages;
@@ -79,9 +82,48 @@ describe('Privacy Policy content', () => {
     }
   });
 
-  it('carries the 4 October 2026 revision date', () => {
-    expect(PRIVACY_POLICY_EN.lastUpdated).toBe('4 October 2026');
-    expect(PRIVACY_POLICY_AR.lastUpdated).toBe('٤ أكتوبر ٢٠٢٦');
+  it('carries the 9 October 2026 revision date', () => {
+    expect(PRIVACY_POLICY_EN.lastUpdated).toBe('9 October 2026');
+    expect(PRIVACY_POLICY_AR.lastUpdated).toBe('٩ أكتوبر ٢٠٢٦');
+  });
+
+  it('discloses the forensic video watermark records (EN + AR)', () => {
+    const en = sectionText(PRIVACY_POLICY_EN, 'forensic-watermark');
+    for (const fact of [
+      'academies cannot turn it off',
+      'It does not prevent screen recording',
+      'if you have saved one, your phone number',
+      'tamper reports',
+      'no name, email address or account',
+      'Only Atlas platform administrators',
+      'every lookup is recorded in an audit log',
+      'cannot read these records',
+      'are stored encrypted',
+      '730 days after its code was last shown',
+      'not deleted when you delete your account',
+    ]) {
+      expect(en).toContain(fact);
+    }
+    expect(en).not.toMatch(
+      /unremovable|cannot be removed|impossible to remove|100%|prevents (piracy|recording)/i
+    );
+    expect(sectionText(PRIVACY_POLICY_EN, 'what-we-collect')).toContain(
+      'Forensic video watermark records'
+    );
+    expect(sectionText(PRIVACY_POLICY_EN, 'retention')).toContain(
+      'Deleted 730 days after the code was last shown'
+    );
+    expect(sectionText(PRIVACY_POLICY_EN, 'deletion')).toContain(
+      'Forensic video watermark records described in section 8 are kept'
+    );
+    const ar = sectionText(PRIVACY_POLICY_AR, 'forensic-watermark');
+    expect(ar).toContain('ولا تمنع تسجيل الشاشة');
+    expect(ar).toContain('لا يمكن البحث عن رمز إلا لمسؤولي منصة أطلس');
+    expect(ar).toContain('مشفّرةً');
+    expect(ar).toContain('٧٣٠ يومًا');
+    expect(ar).toContain('لا تُحذف سجلات العلامة المائية عند حذف حسابك');
+    expect(sectionText(PRIVACY_POLICY_AR, 'retention')).toContain('٧٣٠ يومًا');
+    expect(sectionText(PRIVACY_POLICY_AR, 'deletion')).toContain('٧٣٠ يومًا');
   });
 
   it('distinguishes the older unkeyed trial records from the keyed ones (EN + AR)', () => {
