@@ -137,7 +137,8 @@
     "setPasswordFirst": "Set a password before disconnecting Google — otherwise you couldn't sign in.",
     "invalidCurrentPassword": "Your current password is incorrect.",
     "invalidCredentials": "Invalid email or password.",
-    "crossOriginSession": "Your session couldn't be verified for this site. Please sign in again."
+    "crossOriginSession": "Your session couldn't be verified for this site. Please sign in again.",
+    "platformOwnerTwoFactorRequired": "Platform Owner tools need an authenticator app on your account. Set up two-step verification in your security settings, then try again."
   },
   "subscription": {
     "required": "An active subscription is required to make this change."
@@ -208,7 +209,8 @@
     "devicePolicyAboveMaximum": "That limit is higher than the platform allows. Choose a number no higher than the maximum shown.",
     "nameTaken": "Another academy already uses this name. Please choose a different one.",
     "learnerNameTaken": "A learner in this academy already has this name. Add a middle or family name so it is unique here.",
-    "learnerNameTakenExistingAccount": "This person's account name matches a learner already in this academy. Ask them to add a middle or family name in their profile, then add them again."
+    "learnerNameTakenExistingAccount": "This person's account name matches a learner already in this academy. Ask them to add a middle or family name in their profile, then add them again.",
+    "cannotRemoveOrganizationOwner": "The organization owner can't be removed from an academy."
   },
   "course": {
     "slugTaken": "That web address is already used by another course in this academy. Please choose a different one.",

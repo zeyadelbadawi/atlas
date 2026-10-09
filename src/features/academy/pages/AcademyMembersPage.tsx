@@ -18,7 +18,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { GraduationCap, Search, UserPlus, Users } from 'lucide-react';
+import {
+  GraduationCap,
+  Search,
+  UserMinus,
+  UserPlus,
+  Users,
+} from 'lucide-react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
@@ -39,8 +45,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useAuth, useDateFormatter, usePagination } from '@hooks';
+import { useConfirmDialog, useToast } from '@app/providers';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
-import { useAcademy, useAcademyMembers } from '../hooks';
+import {
+  useAcademy,
+  useAcademyMembers,
+  useRemoveAcademyMember,
+} from '../hooks';
+import { getRosterErrorKey } from '../utils/academy-roster.utils';
 import { AddAcademyManagerDialog } from '../components/AddAcademyManagerDialog';
 import { AddAcademyInstructorDialog } from '../components/AddAcademyInstructorDialog';
 import { CreateAcademyStudentDialog } from '../components/CreateAcademyStudentDialog';
@@ -57,7 +69,13 @@ import type { AcademyMember, AcademyMemberRole, BreadcrumbItem } from '@types';
 export default function AcademyMembersPage(): JSX.Element {
   const fmt = useDateFormatter();
   const { t } = useTranslation();
-  const { organization } = useAuth();
+  const { organization, user } = useAuth();
+  const { notifySuccess, notifyError } = useToast();
+  const { confirm } = useConfirmDialog();
+  const removeMember = useRemoveAcademyMember();
+  // Removing staff is Organization-Owner-only (backend-enforced); the
+  // action is not shown to anyone else, and never for the owner's own row.
+  const canRemoveStaff = organization?.role === 'owner';
   const { academyId } = useParams<{ academyId: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab =
@@ -159,9 +177,72 @@ export default function AcademyMembersPage(): JSX.Element {
           </span>
         ),
       },
+      ...(canRemoveStaff
+        ? [
+            {
+              id: 'actions',
+              header: t('academy:members.table.actions'),
+              cell: ({ row }: { row: { original: AcademyMember } }) => {
+                const member = row.original;
+                if (
+                  member.status !== 'active' ||
+                  member.role === 'owner' ||
+                  member.userId === user?.id
+                ) {
+                  return null;
+                }
+                return (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="text-destructive hover:text-destructive"
+                    disabled={removeMember.isPending}
+                    onClick={() => void handleRemove(member)}
+                    aria-label={t('academy:members.remove.ariaLabel', {
+                      name: member.name,
+                    })}
+                  >
+                    <UserMinus className="size-4" aria-hidden />
+                    {t('academy:members.remove.action')}
+                  </Button>
+                );
+              },
+            } satisfies ColumnDef<AcademyMember, unknown>,
+          ]
+        : []),
     ],
-    [t]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, canRemoveStaff, user?.id, removeMember.isPending]
   );
+
+  async function handleRemove(member: AcademyMember): Promise<void> {
+    if (!academyId) return;
+    const confirmed = await confirm({
+      titleKey: 'academy:members.remove.title',
+      descriptionKey: 'academy:members.remove.description',
+      values: { name: member.name },
+      confirmLabelKey: 'academy:members.remove.confirm',
+      cancelLabelKey: 'common:actions.cancel',
+      intent: 'destructive',
+    });
+    if (!confirmed) return;
+    removeMember.mutate(
+      { academyId, userId: member.userId },
+      {
+        onSuccess: () =>
+          notifySuccess('academy:members.remove.success', undefined, {
+            name: member.name,
+          }),
+        onError: (err) =>
+          notifyError(
+            err.messageKey === 'errors.academy.cannotRemoveOrganizationOwner'
+              ? 'errors:academy.cannotRemoveOrganizationOwner'
+              : getRosterErrorKey(err, 'academy:members.remove.failed')
+          ),
+      }
+    );
+  }
 
   if (isLoadingAcademy) {
     return (
@@ -181,7 +262,10 @@ export default function AcademyMembersPage(): JSX.Element {
           titleKey="academy:members.title"
           descriptionKey="academy:members.subtitle"
         />
-        <ErrorState kind={apiErrorKind(academyError)} onRetry={() => refetchAcademy()} />
+        <ErrorState
+          kind={apiErrorKind(academyError)}
+          onRetry={() => refetchAcademy()}
+        />
       </PageContainer>
     );
   }
@@ -314,7 +398,10 @@ export default function AcademyMembersPage(): JSX.Element {
 
               {/* Members Table */}
               {membersError ? (
-                <ErrorState kind={apiErrorKind(membersError)} onRetry={() => refetchMembers()} />
+                <ErrorState
+                  kind={apiErrorKind(membersError)}
+                  onRetry={() => refetchMembers()}
+                />
               ) : (
                 <DataTable
                   columns={columns}
