@@ -160,13 +160,13 @@ export default function ZoomConnectionsPage(): JSX.Element {
                     </TableCell>
                     {/* Masked by the server. Direction-isolated: an opaque
                         Latin id inside an Arabic row reorders otherwise. */}
-                    <TableCell dir="ltr" className="font-mono text-xs">
+                    <TableCell dir="ltr" data-ltr-content className="font-mono text-xs">
                       {row.maskedAccountId ?? '—'}
                     </TableCell>
-                    <TableCell dir="ltr" className="text-xs">
+                    <TableCell className="text-xs">
                       {row.connectedAt ? formatDate(row.connectedAt, language, 'short') : '—'}
                     </TableCell>
-                    <TableCell dir="ltr" className="text-xs">
+                    <TableCell className="text-xs">
                       {row.lastCheckedAt ? formatDate(row.lastCheckedAt, language, 'short') : '—'}
                     </TableCell>
                   </TableRow>

@@ -798,6 +798,7 @@ function CtaFieldEditor({
         <div className="space-y-1">
           <Input
             dir="ltr"
+            data-ltr-content
             placeholder="https://example.com"
             aria-invalid={urlError || undefined}
             data-field-error={urlError || undefined}

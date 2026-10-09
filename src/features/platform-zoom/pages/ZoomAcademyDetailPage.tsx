@@ -26,7 +26,7 @@ function Stat({ labelKey, value }: { labelKey: string; value: number | string })
   return (
     <div className="rounded-lg border border-border bg-surface p-4">
       <p className="text-xs text-muted-foreground">{t(labelKey)}</p>
-      <p className="mt-1 text-xl font-semibold text-foreground" dir="ltr">{value}</p>
+      <p className="mt-1 text-xl font-semibold text-foreground" dir="ltr" data-ltr-content>{value}</p>
     </div>
   );
 }
@@ -73,7 +73,7 @@ export default function ZoomAcademyDetailPage(): JSX.Element {
           <div className="flex items-center gap-3">
             <ZoomStatusBadge status={d.connection.status} />
             {d.connection.maskedAccountId ? (
-              <span className="font-mono text-xs text-muted-foreground" dir="ltr">{d.connection.maskedAccountId}</span>
+              <span className="font-mono text-xs text-muted-foreground" dir="ltr" data-ltr-content>{d.connection.maskedAccountId}</span>
             ) : null}
           </div>
         </CardContent>
@@ -117,7 +117,7 @@ export default function ZoomAcademyDetailPage(): JSX.Element {
                 <div key={s.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium text-foreground">{s.title}</p>
-                    <p className="truncate text-xs text-muted-foreground" dir="ltr">{formatDate(s.scheduledStartAt, language, 'short')}</p>
+                    <p className="truncate text-xs text-muted-foreground">{formatDate(s.scheduledStartAt, language, 'short')}</p>
                   </div>
                   <Badge variant="destructive">{t(`platformZoom:risk.${s.riskReason ?? 'unknown'}`)}</Badge>
                 </div>
@@ -135,7 +135,7 @@ export default function ZoomAcademyDetailPage(): JSX.Element {
               {d.recentActivity.map((e) => (
                 <div key={e.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
                   <span className="text-sm text-foreground">{t(`platformZoom:action.${e.action}`, { defaultValue: e.action })}</span>
-                  <span className="text-xs text-muted-foreground" dir="ltr">{formatDate(e.occurredAt, language, 'short')}</span>
+                  <span className="text-xs text-muted-foreground">{formatDate(e.occurredAt, language, 'short')}</span>
                 </div>
               ))}
             </CardContent>

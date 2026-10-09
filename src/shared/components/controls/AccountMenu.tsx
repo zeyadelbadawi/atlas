@@ -137,6 +137,7 @@ export function AccountMenu({
           <span
             className="truncate text-xs font-normal text-muted-foreground"
             dir="ltr"
+            data-ltr-content
           >
             {user.email}
           </span>

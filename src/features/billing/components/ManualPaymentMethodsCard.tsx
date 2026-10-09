@@ -144,6 +144,7 @@ function Detail({
           mono ? 'break-all font-mono text-foreground' : 'text-foreground'
         }
         dir={mono ? 'ltr' : 'auto'}
+        data-ltr-content={mono || undefined}
       >
         {value}
       </dd>

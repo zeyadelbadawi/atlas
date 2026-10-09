@@ -155,7 +155,7 @@ function TrendChart({
                     scope="row"
                     className="whitespace-nowrap px-3 py-2 text-start font-normal"
                   >
-                    <time dateTime={day.date} dir="ltr">
+                    <time dateTime={day.date} dir="ltr" data-ltr-content>
                       {day.date}
                     </time>
                   </th>
@@ -500,14 +500,14 @@ export default function SecurityMonitoringPage(): JSX.Element {
                   </td>
                   <td className="px-4 py-3">{typeBadge(item)}</td>
                   <td className="whitespace-nowrap px-4 py-3">
-                    <span dir="ltr">{accountText(item)}</span>
+                    <span dir="auto">{accountText(item)}</span>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
                     {surfaceText(item)}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
                     {item.ipRef ? (
-                      <code className="text-xs" dir="ltr">
+                      <code className="text-xs">
                         {t(`${K}.events.ipRef`, { ref: item.ipRef })}
                       </code>
                     ) : (
@@ -537,7 +537,7 @@ export default function SecurityMonitoringPage(): JSX.Element {
                   {fmt.dateTime(item.createdAt)}
                 </time>
               </div>
-              <p className="truncate text-sm" dir="ltr">
+              <p className="truncate text-sm" dir="auto">
                 {accountText(item)}
               </p>
               <p className="text-xs text-muted-foreground" dir="auto">
@@ -647,6 +647,7 @@ export default function SecurityMonitoringPage(): JSX.Element {
               id="security-ip"
               autoComplete="off"
               dir="ltr"
+              data-ltr-content
               value={ipInput}
               onChange={(event) => setIpInput(event.target.value)}
               aria-invalid={inputError === 'ip'}

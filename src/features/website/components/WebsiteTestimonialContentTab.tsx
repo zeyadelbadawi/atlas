@@ -137,7 +137,7 @@ function TestimonialEntryDialog({
                   <FormItem>
                     <FormLabel>{t('website:content.quoteEn')}</FormLabel>
                     <FormControl>
-                      <Textarea rows={3} {...field} dir="ltr" />
+                      <Textarea rows={3} {...field} dir="ltr" lang="en" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -178,7 +178,7 @@ function TestimonialEntryDialog({
                   <FormItem>
                     <FormLabel>{t('website:content.authorRoleEn')}</FormLabel>
                     <FormControl>
-                      <Input {...field} dir="ltr" />
+                      <Input {...field} dir="ltr" lang="en" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -70,6 +70,8 @@ interface MethodFieldProps<T extends FieldValues> {
   /** Arabic inputs carry `lang="ar"` as well as `dir="rtl"`. */
   readonly lang?: string;
   readonly inputMode?: 'text' | 'tel' | 'email';
+  /** Marks an intentionally left-to-right value (with `dir="ltr"`). */
+  readonly 'data-ltr-content'?: boolean;
 }
 
 export function MethodTextField<T extends FieldValues>({
@@ -81,6 +83,7 @@ export function MethodTextField<T extends FieldValues>({
   dir = 'auto',
   lang,
   inputMode,
+  'data-ltr-content': ltrContent,
 }: MethodFieldProps<T>): JSX.Element {
   const { t } = useTranslation();
   return (
@@ -95,6 +98,7 @@ export function MethodTextField<T extends FieldValues>({
               {...field}
               value={(field.value as string | undefined) ?? ''}
               dir={dir}
+              data-ltr-content={ltrContent}
               lang={lang}
               inputMode={inputMode}
               autoComplete="off"
@@ -118,6 +122,7 @@ export function MethodLongTextField<T extends FieldValues>({
   dir = 'auto',
   lang,
   rows = 3,
+  'data-ltr-content': ltrContent,
 }: Omit<MethodFieldProps<T>, 'inputMode'> & {
   readonly rows?: number;
 }): JSX.Element {
@@ -134,6 +139,7 @@ export function MethodLongTextField<T extends FieldValues>({
               {...field}
               value={(field.value as string | undefined) ?? ''}
               dir={dir}
+              data-ltr-content={ltrContent}
               lang={lang}
               rows={rows}
               data-testid={testId}

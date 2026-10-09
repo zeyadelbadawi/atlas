@@ -217,7 +217,7 @@ export default function PaymentDetailsPage(): JSX.Element {
               >
                 {/* LTR isolate: Arabic currency formatting otherwise
                     renders as "$US 39.00" inside an RTL page. */}
-                <span dir="ltr">
+                <span dir="ltr" data-ltr-content>
                   {formatMoney(payment.money, i18n.language)}
                 </span>
               </CardTitle>

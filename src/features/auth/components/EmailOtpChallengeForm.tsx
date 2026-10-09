@@ -296,7 +296,7 @@ export function EmailOtpChallengeForm({
           // group is what the eye reads, so it is the LTR island.
           containerClassName="justify-center"
         >
-          <InputOTPGroup dir="ltr">
+          <InputOTPGroup dir="ltr" data-ltr-content>
             {Array.from({ length: EMAIL_OTP_LENGTH }, (_, index) => (
               <InputOTPSlot
                 key={index}
@@ -418,7 +418,11 @@ export function EmailOtpChallengeForm({
               <h2 className="font-medium">{t('auth:emailOtp.title')}</h2>
               <p className="text-sm text-muted-foreground">
                 {t('auth:emailOtp.description')}{' '}
-                <span className="font-medium text-foreground" dir="ltr">
+                <span
+                  className="font-medium text-foreground"
+                  dir="ltr"
+                  data-ltr-content
+                >
                   {challenge.maskedEmail}
                 </span>
               </p>

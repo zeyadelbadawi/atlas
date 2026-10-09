@@ -31,7 +31,7 @@ function Stat({ labelKey, value }: { labelKey: string; value: number }): JSX.Ele
   return (
     <div className="rounded-lg border border-border bg-surface p-4">
       <p className="text-xs text-muted-foreground">{t(labelKey)}</p>
-      <p className="mt-1 text-2xl font-semibold text-foreground" dir="ltr">{value}</p>
+      <p className="mt-1 text-2xl font-semibold text-foreground" dir="ltr" data-ltr-content>{value}</p>
     </div>
   );
 }
@@ -91,7 +91,7 @@ export default function ZoomEventsPage(): JSX.Element {
               <TableBody>
                 {items.map((r) => (
                   <TableRow key={r.id}>
-                    <TableCell className="font-mono text-xs" dir="ltr">{r.eventType}</TableCell>
+                    <TableCell className="font-mono text-xs" dir="ltr" data-ltr-content>{r.eventType}</TableCell>
                     <TableCell>
                       <Badge variant={r.status === 'processed' ? 'default' : r.status === 'failed' ? 'destructive' : r.status === 'unmatched' ? 'secondary' : 'outline'}>
                         {t(`platformZoom:eventStatus.${r.status}`, { defaultValue: r.status })}
@@ -100,7 +100,7 @@ export default function ZoomEventsPage(): JSX.Element {
                     </TableCell>
                     <TableCell className="text-muted-foreground">{r.academyName ?? '—'}</TableCell>
                     <TableCell className="text-muted-foreground"><span className="block truncate">{r.sessionTitle ?? '—'}</span></TableCell>
-                    <TableCell dir="ltr" className="text-xs">{formatDate(r.receivedAt, language, 'short')}</TableCell>
+                    <TableCell className="text-xs">{formatDate(r.receivedAt, language, 'short')}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

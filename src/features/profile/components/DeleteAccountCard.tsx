@@ -272,7 +272,7 @@ export function DeleteAccountCard({
                   containerClassName="justify-center"
                 >
                   {/* Digits read left-to-right in Arabic too. */}
-                  <InputOTPGroup dir="ltr">
+                  <InputOTPGroup dir="ltr" data-ltr-content>
                     {Array.from({ length: 6 }, (_, index) => (
                       <InputOTPSlot
                         key={index}

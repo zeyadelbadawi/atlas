@@ -169,7 +169,7 @@ export function CreateAcademyStudentDialog({
                 <span className="text-muted-foreground">
                   {t('academy:members.createStudent.emailLabel')}
                 </span>
-                <span className="font-medium" dir="ltr">
+                <span className="font-medium" dir="ltr" data-ltr-content>
                   {created.email}
                 </span>
               </div>

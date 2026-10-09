@@ -195,6 +195,7 @@ export function ZoomMeetingEmbed({
       <div
         ref={containerRef}
         dir="ltr"
+        data-ltr-content
         className="min-h-[60vh] w-full overflow-hidden rounded-lg border border-border bg-black sm:min-h-[70vh]"
       />
 

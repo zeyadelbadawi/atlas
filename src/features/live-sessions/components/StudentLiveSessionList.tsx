@@ -83,9 +83,9 @@ function SessionRow({
         {/* `truncate` rather than wrapping: a long Arabic title must not
             push the date column off a narrow screen. */}
         <span className="block truncate font-medium">{session.title}</span>
-        {/* The timestamp is direction-isolated — see the note on the
-            session page: Latin digits inside an RTL line reorder. */}
-        <span className="block text-xs text-muted-foreground" dir="ltr">
+        {/* The timestamp follows the page direction — see the note on
+            the session page: the Arabic date is Arabic text. */}
+        <span className="block text-xs text-muted-foreground">
           {dateTime(session.scheduledStartAt)}
         </span>
       </span>

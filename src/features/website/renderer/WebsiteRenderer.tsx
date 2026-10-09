@@ -10,6 +10,7 @@
  * Prompt 9, "One Renderer, Every Surface").
  */
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { WebsiteChrome } from './WebsiteChrome';
 import type { WebsiteHeaderAuthState } from './WebsiteHeader';
 import { SectionRenderer } from '../sections';
@@ -21,7 +22,10 @@ import type {
   ThemeCourseDetailsProps,
   ThemePageIntroProps,
 } from '../theme-packs/theme-pack.types';
-import type { PublicWebsiteLocale } from '../constants/locale.constants';
+import {
+  PUBLIC_WEBSITE_LOCALES,
+  type PublicWebsiteLocale,
+} from '../constants/locale.constants';
 import type { WebsiteConfiguration, WebsitePage } from '@types';
 import type { WebsiteLinkRenderer } from './website-link-renderer.types';
 
@@ -60,10 +64,23 @@ export function WebsiteRenderer({
   onNavigate,
   linkRenderer,
   className,
-  locale,
+  locale: requestedLocale,
   onLocaleChange,
   authState,
 }: WebsiteRendererProps): JSX.Element {
+  // The public runtime always passes the visitor's locale. Dashboard
+  // previews (theme gallery, brand studio…) often don't — and their chrome
+  // labels come from the dashboard's translations — so they preview the site
+  // in the dashboard's language: an Arabic dashboard shows the Arabic,
+  // right-to-left site rather than Arabic labels laid out left to right.
+  const { i18n } = useTranslation();
+  const dashboardLanguage = (i18n.resolvedLanguage ??
+    i18n.language) as PublicWebsiteLocale;
+  const locale =
+    requestedLocale ??
+    (PUBLIC_WEBSITE_LOCALES.includes(dashboardLanguage)
+      ? dashboardLanguage
+      : undefined);
   return (
     <WebsiteChrome
       academyId={academyId}

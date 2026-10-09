@@ -302,6 +302,7 @@ function CreateInviteDialog({
                   readOnly
                   value={shareValue}
                   dir="ltr"
+                  data-ltr-content
                   className="font-mono text-xs"
                   onFocus={(event) => event.currentTarget.select()}
                 />

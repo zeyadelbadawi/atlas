@@ -184,7 +184,7 @@ export default function PlatformAddOnsPage(): JSX.Element {
                     <TableCell className="text-end tabular-nums">
                       {row.enabledCount}
                     </TableCell>
-                    <TableCell dir="ltr" className="text-xs">
+                    <TableCell className="text-xs">
                       {formatDate(row.updatedAt, language, 'short')}
                     </TableCell>
                     <TableCell>

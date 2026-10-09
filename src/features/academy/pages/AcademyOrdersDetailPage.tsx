@@ -135,7 +135,11 @@ export default function AcademyOrdersDetailPage(): JSX.Element {
         header: t('payments:academyOrders.detail.paymentColumns.reference'),
         cell: ({ row }) =>
           row.original.providerReference ? (
-            <span className="break-all font-mono text-xs" dir="ltr">
+            <span
+              className="break-all font-mono text-xs"
+              dir="ltr"
+              data-ltr-content
+            >
               {row.original.providerReference}
             </span>
           ) : (
@@ -241,7 +245,11 @@ export default function AcademyOrdersDetailPage(): JSX.Element {
         </div>
         <dl className="space-y-3 text-sm">
           <DetailRow label={t('payments:academyOrders.detail.orderId')}>
-            <span className="break-all font-mono text-xs" dir="ltr">
+            <span
+              className="break-all font-mono text-xs"
+              dir="ltr"
+              data-ltr-content
+            >
               {order.id}
             </span>
           </DetailRow>
@@ -251,7 +259,11 @@ export default function AcademyOrdersDetailPage(): JSX.Element {
           <DetailRow label={t('payments:academyOrders.detail.student')}>
             <span className="flex flex-col sm:items-end">
               <span dir="auto">{order.student.name}</span>
-              <span className="text-xs text-muted-foreground" dir="ltr">
+              <span
+                className="text-xs text-muted-foreground"
+                dir="ltr"
+                data-ltr-content
+              >
                 {order.student.maskedEmail}
               </span>
             </span>

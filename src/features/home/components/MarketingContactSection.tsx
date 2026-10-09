@@ -344,6 +344,7 @@ export function MarketingContactSection(): JSX.Element {
                     id={errorId('message-count')}
                     className="ms-auto shrink-0 text-xs tabular-nums text-muted-foreground"
                     dir="ltr"
+                    data-ltr-content
                   >
                     {t('home:contact.form.messageCount', {
                       count: messageLength,

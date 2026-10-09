@@ -172,6 +172,7 @@ export default function PlatformCustomerRequestDetailPage(): JSX.Element {
                         href={`mailto:${request.requesterEmail}`}
                         className="text-primary underline-offset-4 hover:underline"
                         dir="ltr"
+                        data-ltr-content
                       >
                         {request.requesterEmail}
                       </a>
@@ -181,7 +182,11 @@ export default function PlatformCustomerRequestDetailPage(): JSX.Element {
                     id: 'routedTo',
                     label: t(`${P}.routedTo`),
                     value: request.routedTo ? (
-                      <span dir="ltr" data-testid="customer-request-routed-to">
+                      <span
+                        dir="ltr"
+                        data-ltr-content
+                        data-testid="customer-request-routed-to"
+                      >
                         {request.routedTo}
                       </span>
                     ) : (

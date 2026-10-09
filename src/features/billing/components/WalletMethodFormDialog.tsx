@@ -301,6 +301,7 @@ export function WalletMethodFormDialog({
                 labelKey="payments:walletMethods.fields.walletNumber"
                 helpKey="payments:walletMethods.fields.walletNumberHelp"
                 dir="ltr"
+                data-ltr-content
                 inputMode="tel"
                 testId="wallet-method-number"
               />

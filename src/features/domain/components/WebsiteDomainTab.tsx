@@ -328,6 +328,7 @@ export function WebsiteDomainTab({
                 <Input
                   {...field}
                   dir="ltr"
+                  data-ltr-content
                   placeholder="www.example.com"
                   autoComplete="off"
                   autoFocus
@@ -386,6 +387,7 @@ export function WebsiteDomainTab({
                   rel="noreferrer"
                   className="inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline"
                   dir="ltr"
+                  data-ltr-content
                 >
                   {canonicalHost}
                   <ExternalLink className="size-3.5" aria-hidden />

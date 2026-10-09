@@ -64,6 +64,7 @@ export function BankTransferDetailsFields<T extends FieldValues>({
           name={path('accountNumber')}
           labelKey="payments:bankTransferMethods.fields.accountNumber"
           dir="ltr"
+          data-ltr-content
           testId={`${testIdPrefix}-account-number`}
         />
         <MethodTextField
@@ -72,6 +73,7 @@ export function BankTransferDetailsFields<T extends FieldValues>({
           labelKey="payments:bankTransferMethods.fields.iban"
           helpKey="payments:bankTransferMethods.fields.optional"
           dir="ltr"
+          data-ltr-content
           testId={`${testIdPrefix}-iban`}
         />
         <MethodTextField
@@ -80,6 +82,7 @@ export function BankTransferDetailsFields<T extends FieldValues>({
           labelKey="payments:bankTransferMethods.fields.swiftCode"
           helpKey="payments:bankTransferMethods.fields.optional"
           dir="ltr"
+          data-ltr-content
           testId={`${testIdPrefix}-swift`}
         />
       </div>
@@ -106,6 +109,7 @@ export function InstapayDetailsFields<T extends FieldValues>({
         labelKey="payments:instapayMethods.fields.instapayAddress"
         helpKey="payments:instapayMethods.fields.instapayAddressHelp"
         dir="ltr"
+        data-ltr-content
         inputMode="email"
         testId={`${testIdPrefix}-address`}
       />
@@ -190,6 +194,7 @@ export function WalletDetailsFields<T extends FieldValues>({
           labelKey="payments:walletMethods.fields.walletNumber"
           helpKey="payments:walletMethods.fields.walletNumberHelp"
           dir="ltr"
+          data-ltr-content
           inputMode="tel"
           testId={`${testIdPrefix}-number`}
         />

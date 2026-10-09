@@ -230,7 +230,12 @@ export function WebsitePageSeoDialog({
                 <FormItem>
                   <FormLabel>{t('website:seo.canonicalPath')}</FormLabel>
                   <FormControl>
-                    <Input {...field} dir="ltr" placeholder={`/${page.slug}`} />
+                    <Input
+                      {...field}
+                      dir="ltr"
+                      data-ltr-content
+                      placeholder={`/${page.slug}`}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -352,7 +352,9 @@ export default function AcademyCertificateTemplatePage(): JSX.Element {
   );
 
   const renderWording = (locale: 'en' | 'ar', labelKey: string) => (
-    <div className="space-y-4" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    // The labels follow the dashboard's direction; only what is TYPED in
+    // each column takes that column's language and direction.
+    <div className="space-y-4">
       <h3 className="text-sm font-semibold text-foreground">{t(labelKey)}</h3>
       <FormField
         control={form.control}
@@ -363,7 +365,12 @@ export default function AcademyCertificateTemplatePage(): JSX.Element {
               {t('certificates:template.fields.wordingTitle')}
             </FormLabel>
             <FormControl>
-              <Input {...field} disabled={disabled} lang={locale} />
+              <Input
+                {...field}
+                disabled={disabled}
+                lang={locale}
+                dir={locale === 'ar' ? 'rtl' : 'ltr'}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -378,7 +385,13 @@ export default function AcademyCertificateTemplatePage(): JSX.Element {
               {t('certificates:template.fields.wordingBody')}
             </FormLabel>
             <FormControl>
-              <Textarea {...field} rows={4} disabled={disabled} lang={locale} />
+              <Textarea
+                {...field}
+                rows={4}
+                disabled={disabled}
+                lang={locale}
+                dir={locale === 'ar' ? 'rtl' : 'ltr'}
+              />
             </FormControl>
             <FormDescription>
               {t('certificates:template.fields.wordingHint')}

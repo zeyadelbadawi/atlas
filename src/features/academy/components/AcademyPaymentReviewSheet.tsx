@@ -251,7 +251,11 @@ export function AcademyPaymentReviewSheet({
                 <span className="block font-medium" dir="auto">
                   {payment.learner.name}
                 </span>
-                <span className="block text-xs text-muted-foreground" dir="ltr">
+                <span
+                  className="block text-xs text-muted-foreground"
+                  dir="ltr"
+                  data-ltr-content
+                >
                   {payment.learner.maskedEmail}
                 </span>
               </Row>
@@ -279,6 +283,7 @@ export function AcademyPaymentReviewSheet({
                   <span
                     className="font-mono"
                     dir="ltr"
+                    data-ltr-content
                     data-testid="academy-payment-reference"
                   >
                     {payment.proof.payerReference}
@@ -297,7 +302,7 @@ export function AcademyPaymentReviewSheet({
                 </Row>
               ) : null}
               <Row label={t(`${K}.fields.paymentId`)}>
-                <span className="font-mono text-xs" dir="ltr">
+                <span className="font-mono text-xs" dir="ltr" data-ltr-content>
                   {payment.id}
                 </span>
               </Row>

@@ -107,6 +107,7 @@ export default function PlatformCustomerRequestsPage(): JSX.Element {
             <span
               className="block font-mono text-xs text-muted-foreground"
               dir="ltr"
+              data-ltr-content
             >
               {row.original.reference}
             </span>
@@ -308,7 +309,7 @@ export default function PlatformCustomerRequestsPage(): JSX.Element {
                       {t(customerRequestTypeLabelKey(request.type))}
                     </span>
                     <span dir="auto">{request.academy.name}</span>
-                    <span className="font-mono" dir="ltr">
+                    <span className="font-mono" dir="ltr" data-ltr-content>
                       {request.reference}
                     </span>
                   </span>

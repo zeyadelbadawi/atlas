@@ -47,6 +47,7 @@ export function NumericExpression({
   return (
     <span
       dir="ltr"
+      data-ltr-content
       // Inline-block would break the expression out of the sentence it sits
       // in; `dir` alone does the isolation, so this stays plain inline.
       className={cn('tabular-nums', className)}

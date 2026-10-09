@@ -88,13 +88,13 @@ export default function ZoomAttendancePage(): JSX.Element {
                         {t(`platformZoom:reconciliation.${r.reconciliationState}`)}
                       </Badge>
                       {r.reconciliationState === 'failing' ? (
-                        <span className="ms-2 text-xs text-muted-foreground" dir="ltr">
+                        <span className="ms-2 text-xs text-muted-foreground">
                           {t('platformZoom:attendance.attempts', { count: r.reconciliationAttempts })}
                         </span>
                       ) : null}
                     </TableCell>
-                    <TableCell dir="ltr">{r.participantCount}</TableCell>
-                    <TableCell dir="ltr" className="text-xs">
+                    <TableCell dir="ltr" data-ltr-content>{r.participantCount}</TableCell>
+                    <TableCell className="text-xs">
                       {r.reconciledAt ? formatDate(r.reconciledAt, language, 'short') : '—'}
                     </TableCell>
                   </TableRow>

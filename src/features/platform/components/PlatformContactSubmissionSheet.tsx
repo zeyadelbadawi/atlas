@@ -135,7 +135,7 @@ export function PlatformContactSubmissionSheet({
                 <dt className="text-muted-foreground">
                   {t(`${K}.drawer.email`)}
                 </dt>
-                <dd className="min-w-0 break-all" dir="ltr">
+                <dd className="min-w-0 break-all" dir="ltr" data-ltr-content>
                   {submission.email}
                 </dd>
                 <dt className="text-muted-foreground">
@@ -172,7 +172,7 @@ export function PlatformContactSubmissionSheet({
                 <dt className="text-muted-foreground">
                   {t(`${K}.drawer.language`)}
                 </dt>
-                <dd className="uppercase" dir="ltr">
+                <dd className="uppercase" dir="ltr" data-ltr-content>
                   {submission.locale}
                 </dd>
                 {submission.sourcePath ? (
@@ -183,6 +183,7 @@ export function PlatformContactSubmissionSheet({
                     <dd
                       className="min-w-0 break-all font-mono text-xs"
                       dir="ltr"
+                      data-ltr-content
                     >
                       {submission.sourcePath}
                     </dd>

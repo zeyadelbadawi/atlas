@@ -195,6 +195,7 @@ export default function WebsiteOverviewPage(): JSX.Element {
                   <p
                     className="font-mono text-xs text-muted-foreground"
                     dir="ltr"
+                    data-ltr-content
                   >
                     {publicUrl}
                   </p>
@@ -290,7 +291,7 @@ function SitemapPreviewCard({
             {t('website:overview.sitemapPreview.empty')}
           </p>
         ) : (
-          <ul className="space-y-1 text-sm" dir="ltr">
+          <ul className="space-y-1 text-sm" dir="ltr" data-ltr-content>
             {entries.map((entry) => (
               <li
                 key={entry.path}

@@ -80,11 +80,11 @@ export default function ZoomRecordingsPage(): JSX.Element {
                       </Badge>
                       {r.failureReason ? <span className="block text-xs text-destructive">{r.failureReason}</span> : null}
                     </TableCell>
-                    <TableCell dir="ltr">{r.fileCount}</TableCell>
+                    <TableCell dir="ltr" data-ltr-content>{r.fileCount}</TableCell>
                     <TableCell>
                       {r.quotaConsumed ? t('platformZoom:recordings.quotaConsumed') : t('platformZoom:recordings.quotaFree')}
                     </TableCell>
-                    <TableCell dir="ltr" className="text-xs">{formatDate(r.createdAt, language, 'short')}</TableCell>
+                    <TableCell className="text-xs">{formatDate(r.createdAt, language, 'short')}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

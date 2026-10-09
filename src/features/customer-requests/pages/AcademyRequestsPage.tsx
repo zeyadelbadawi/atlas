@@ -123,6 +123,7 @@ export default function AcademyRequestsPage(): JSX.Element {
             <span
               className="block font-mono text-xs text-muted-foreground"
               dir="ltr"
+              data-ltr-content
             >
               {row.original.reference}
             </span>
@@ -335,7 +336,7 @@ export default function AcademyRequestsPage(): JSX.Element {
                 </span>
                 <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
                   <TypeLabel type={request.type} />
-                  <span className="font-mono" dir="ltr">
+                  <span className="font-mono" dir="ltr" data-ltr-content>
                     {request.reference}
                   </span>
                 </span>

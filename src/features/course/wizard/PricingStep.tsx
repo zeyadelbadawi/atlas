@@ -180,6 +180,7 @@ export function PricingStep({
                         min={0}
                         step="0.01"
                         dir="ltr"
+                        data-ltr-content
                         placeholder={t('course:create.pricePlaceholder')}
                         {...field}
                         value={field.value ?? ''}

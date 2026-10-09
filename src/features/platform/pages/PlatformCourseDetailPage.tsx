@@ -200,7 +200,11 @@ export default function PlatformCourseDetailPage(): JSX.Element {
                   {course.createdBy ? (
                     <span className="flex flex-col items-end text-end">
                       <span>{course.createdBy.name}</span>
-                      <span className="text-xs text-muted-foreground" dir="ltr">
+                      <span
+                        className="text-xs text-muted-foreground"
+                        dir="ltr"
+                        data-ltr-content
+                      >
                         {course.createdBy.email}
                       </span>
                     </span>

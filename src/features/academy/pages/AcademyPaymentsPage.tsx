@@ -185,7 +185,11 @@ export default function AcademyPaymentsPage(): JSX.Element {
             <span className="font-medium text-foreground" dir="auto">
               {row.original.learner.name}
             </span>
-            <span className="text-xs text-muted-foreground" dir="ltr">
+            <span
+              className="text-xs text-muted-foreground"
+              dir="ltr"
+              data-ltr-content
+            >
               {row.original.learner.maskedEmail}
             </span>
           </div>

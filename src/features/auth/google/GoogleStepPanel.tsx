@@ -66,7 +66,11 @@ export function GoogleStepPanel(props: GoogleStepPanelProps): JSX.Element {
     <div className="space-y-6" data-testid={`google-step-${step.googleStep}`}>
       <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/40 p-3 text-sm">
         <GoogleLogo className="size-5 shrink-0" />
-        <span className="min-w-0 break-all font-medium" dir="ltr">
+        <span
+          className="min-w-0 break-all font-medium"
+          dir="ltr"
+          data-ltr-content
+        >
           {step.email}
         </span>
       </div>
