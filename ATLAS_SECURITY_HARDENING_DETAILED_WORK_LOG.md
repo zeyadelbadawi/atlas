@@ -242,7 +242,7 @@ Merged as backend `6267266` and frontend `1d7310f`.
 - **Where:** required on management and academy sign-up. A profile card on `/dashboard/profile` and `/my/profile`, and a dismissible prompt for accounts without a number.
 - **Offline:** the phone query key is excluded from offline persistence, and a test pins that.
 
-**Visibility decision:** only the account itself sees its number; staff, organization owners and Platform Owners don't. The watermark's identity snapshot (§7) captures the phone in the learner's own context, encrypted.
+**Visibility decision:** through the profile and the API, only the account itself sees its number; staff, organization owners and Platform Owners don't. The one exception is the forensic watermark lookup: the watermark's identity snapshot (§7) captures the phone in the learner's own context, encrypted, and a Platform Owner looking up a leaked code can see that issue-time phone.
 
 **WhatsApp research:** there is no free OTP. Since 1 July 2025 Meta charges for every authentication template (about US$0.0036 per message in Egypt plus VAT, according to third-party rate cards). The cheapest legitimate route is a user-initiated `wa.me` message, which is free inbound but still needs a WhatsApp Business account, a number and a payment method. It was not built.
 

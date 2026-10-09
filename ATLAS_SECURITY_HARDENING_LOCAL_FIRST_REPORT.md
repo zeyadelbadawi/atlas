@@ -142,7 +142,7 @@
 - **Storage:** a `user_phones` table with self-only FORCE RLS, E.164 checks, and verification cleared when the number changes.
 - **API:** `GET/PUT/DELETE /users/me/phone`, plus optional fields on register. The fields are both-or-neither; numbers are mobile only and not unique; changes are limited to 6 per hour.
 - **UI:** required at sign-up (management and academy), with a searchable country select and SVG flags.
-- **Visibility:** only the account itself sees the number.
+- **Visibility:** through the profile and the API, only the account itself sees the number. The one exception is the forensic watermark lookup (§4.3): a Platform Owner can see the phone recorded in the encrypted identity snapshot when a video code was issued.
 - **Verification:** not built yet. It needs a provider contract. WhatsApp OTP is not free: Meta charges every authentication template.
 
 ### 4.2 Arabic right-to-left
@@ -186,7 +186,7 @@ Full design: backend `docs/FORENSIC_WATERMARK.md`.
 
 ## 5. Database Migrations
 
-All four are additive. `deploy.sh` backed up the database before applying them in Deploy #267.
+All four are additive. `deploy.sh` backed up the database before applying them in Deploy #267 on 9 October 2026. The `20261110…` prefixes are ordering keys that continue the repository's existing sequence (the previous one is `20261109000000_customer_requests`); they are not the deploy date.
 
 1. `20261110000000_refresh_token_session_started_at`: column plus staggered backfill (F10).
 2. `20261110000100_staff_member_removal_rls` (A4).
