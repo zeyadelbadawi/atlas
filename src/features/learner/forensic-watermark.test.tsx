@@ -44,8 +44,8 @@ const wrap = (ui: JSX.Element) =>
 
 const ACCOUNT: ContentWatermark = {
   enabled: true,
-  text: '7K3QM-X9TR2 · l•••@gmail.com',
-  code: '7K3QM-X9TR2',
+  text: '7K3QM-X9TR7 · l•••@gmail.com',
+  code: '7K3QM-X9TR7',
   kind: 'account',
   maskedIdentity: 'l•••@gmail.com',
   host: null,
@@ -88,8 +88,8 @@ afterEach(() => {
 describe('resolveWatermark', () => {
   it('uses the structured code and masked identity when the server sends them', () => {
     expect(resolveWatermark(ACCOUNT)).toEqual({
-      code: '7K3QM-X9TR2',
-      primary: '7K3QM-X9TR2',
+      code: '7K3QM-X9TR7',
+      primary: '7K3QM-X9TR7',
       secondary: 'l•••@gmail.com',
       kind: 'account',
     });
@@ -155,7 +155,7 @@ describe('ForensicWatermarkFrame', () => {
   it('draws the code and masked identity over the media, plus the full-frame pattern, without catching the pointer', () => {
     renderFrame();
     const label = screen.getByTestId('forensic-watermark-label');
-    expect(label.textContent).toBe('7K3QM-X9TR2 · l•••@gmail.com');
+    expect(label.textContent).toBe('7K3QM-X9TR7 · l•••@gmail.com');
     expect(label.getAttribute('aria-hidden')).toBe('true');
     expect(label.className).toContain('pointer-events-none');
     const pattern = screen.getByTestId('forensic-watermark-pattern');
@@ -202,7 +202,7 @@ describe('ForensicWatermarkFrame', () => {
       /playback paused/i
     );
     expect(reportWatermarkTamper).toHaveBeenCalledTimes(1);
-    expect(reportWatermarkTamper).toHaveBeenCalledWith('7K3QM-X9TR2');
+    expect(reportWatermarkTamper).toHaveBeenCalledWith('7K3QM-X9TR7');
 
     fireEvent.click(
       screen.getByRole('button', { name: /restore and continue/i })
@@ -210,7 +210,7 @@ describe('ForensicWatermarkFrame', () => {
     expect(screen.queryByTestId('forensic-watermark-tamper')).toBeNull();
     expect(
       screen.getByTestId('forensic-watermark-label').textContent
-    ).toContain('7K3QM-X9TR2');
+    ).toContain('7K3QM-X9TR7');
 
     // Removed again straight away: paused again, but not reported twice
     // inside the 30-second window.
@@ -359,7 +359,7 @@ describe('ProtectedVideoPlayer — no route around the watermark', () => {
     expect(element.closest('[data-forensic-frame]')).toBeTruthy();
     expect(
       screen.getByTestId('forensic-watermark-label').textContent
-    ).toContain('7K3QM-X9TR2');
+    ).toContain('7K3QM-X9TR7');
     expect(
       screen.getByTestId('forensic-watermark-caption').textContent
     ).toMatch(/personal watermark/i);
@@ -425,6 +425,6 @@ describe('YouTube — the embed cannot leave the frame', () => {
     expect(frame.closest('[data-forensic-frame]')).toBeTruthy();
     expect(
       screen.getByTestId('forensic-watermark-label').textContent
-    ).toContain('7K3QM-X9TR2');
+    ).toContain('7K3QM-X9TR7');
   });
 });

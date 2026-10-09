@@ -84,7 +84,7 @@ export interface ContentWatermark extends Partial<ForensicWatermarkDisplay> {
  * refuses to sign a video credential without it.
  */
 export interface ForensicWatermarkDisplay {
-  /** `7K3QM-X9TR2` — the code an operator reads off a leaked recording. */
+  /** `7K3QM-X9TR7` — the code an operator reads off a leaked recording. */
   readonly code: string;
   /** `account` for a signed-in viewer; `preview` for an anonymous visitor. */
   readonly kind: 'account' | 'preview';

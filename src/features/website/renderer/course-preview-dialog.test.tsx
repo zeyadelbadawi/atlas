@@ -38,8 +38,8 @@ vi.mock('@features/learner', async () => ({
 
 const PREVIEW_WATERMARK = {
   enabled: true,
-  text: '7K3QM-X9TR2 · academy.example · Preview',
-  code: '7K3QM-X9TR2',
+  text: '7K3QM-X9TR7 · academy.example · Preview',
+  code: '7K3QM-X9TR7',
   kind: 'preview',
   maskedIdentity: null,
   host: 'academy.example',
@@ -98,7 +98,7 @@ describe('CoursePreviewDialog', () => {
     // The embed is handed the grant's forensic watermark to draw.
     expect(
       screen.getByTestId('youtube-player').getAttribute('data-watermark')
-    ).toBe('7K3QM-X9TR2');
+    ).toBe('7K3QM-X9TR7');
     // The raw address never reaches the DOM.
     expect(document.body.innerHTML).not.toContain('youtube.com/watch');
   });
@@ -129,7 +129,7 @@ describe('CoursePreviewDialog', () => {
     expect(frame).toBeTruthy();
     const label = screen.getByTestId('forensic-watermark-label');
     expect(frame?.contains(label)).toBe(true);
-    expect(label.textContent).toContain('7K3QM-X9TR2');
+    expect(label.textContent).toContain('7K3QM-X9TR7');
     expect(label.textContent).toContain('academy.example');
     expect(
       screen.getByTestId('forensic-watermark-pattern').style.backgroundImage

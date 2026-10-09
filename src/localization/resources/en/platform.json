@@ -154,7 +154,9 @@
         "sessions_one": "{{count}} active session",
         "sessions_other": "{{count}} active sessions",
         "financialRecords": "Payments, orders and refunds",
-        "auditRecords": "Audit history"
+        "auditRecords": "Audit history",
+        "forensicWatermarks_one": "Forensic video watermark records — kept until their retention period ends, so a leaked recording can still be traced",
+        "forensicWatermarks_other": "Forensic video watermark records — kept until their retention period ends, so a leaked recording can still be traced"
       },
       "confirmLabel": "Type {{email}} to confirm",
       "confirmHelp": "The email must match exactly. This is what stops the wrong account being deleted.",

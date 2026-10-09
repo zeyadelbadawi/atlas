@@ -10,7 +10,7 @@
  * code itself; this is feedback, never the control.
  *
  * SHAPE. Ten symbols — nine data symbols, then one check symbol — shown as
- * two groups of five: `7K3QM-X9TR2`. Crockford's alphabet has no I, L, O or
+ * two groups of five: `7K3QM-X9TR7`. Crockford's alphabet has no I, L, O or
  * U, so the classic OCR confusions (O/0, I/1/L) have only one reading, and
  * a single misread symbol (or two adjacent symbols swapped) fails the check.
  *
@@ -26,7 +26,7 @@ export const WATERMARK_CODE_LENGTH = WATERMARK_CODE_DATA_LENGTH + 1;
 /**
  * What the placeholder and the help text show. A VALID code (its check
  * symbol is `7`), so an operator who types it to try the field sees it
- * accepted — the docs' illustrative `7K3QM-X9TR2` fails the check.
+ * accepted — e.g. `7K3QM-X9TR2` (one misread symbol) fails the check.
  */
 export const WATERMARK_CODE_EXAMPLE = '7K3QM-X9TR7';
 
@@ -49,7 +49,7 @@ export function crockfordCheckSymbol(data: string): string {
   return CHECK_ALPHABET[crockfordCheckValue(data)];
 }
 
-/** `7K3QMX9TR2` → `7K3QM-X9TR2`; anything not ten symbols long is returned unchanged. */
+/** `7K3QMX9TR7` → `7K3QM-X9TR7`; anything not ten symbols long is returned unchanged. */
 export function formatWatermarkCode(code: string): string {
   return code.length === WATERMARK_CODE_LENGTH
     ? `${code.slice(0, 5)}-${code.slice(5)}`

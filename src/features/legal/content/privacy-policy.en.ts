@@ -329,7 +329,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
       blocks: [
         {
           kind: 'paragraph',
-          text: 'To protect the work of course creators, every video shown in an Atlas player — lesson videos hosted by Atlas, YouTube videos played inside the Atlas player, free course previews and live classes — carries a forensic watermark. It is a short code unique to the viewer and their current sign-in session (for example, 7K3QM-X9TR2), shown with a partly hidden form of the account’s email address (for example, l•••@gmail.com). The code moves around the picture, and a faint copy of it is repeated across the whole frame. The watermark is applied in every academy, and academies cannot turn it off.',
+          text: 'To protect the work of course creators, every video shown in an Atlas player — lesson videos hosted by Atlas, YouTube videos played inside the Atlas player, free course previews and live classes — carries a forensic watermark. It is a short code unique to the viewer and their current sign-in session (for example, 7K3QM-X9TR7), shown with a partly hidden form of the account’s email address (for example, l•••@gmail.com). The code moves around the picture, and a faint copy of it is repeated across the whole frame. The watermark is applied in every academy, and academies cannot turn it off.',
         },
         {
           kind: 'paragraph',
