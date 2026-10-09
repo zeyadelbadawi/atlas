@@ -51,9 +51,18 @@ export interface CourseProgress {
   readonly lessons: readonly LessonProgress[];
   readonly completionState: CourseCompletionState;
   readonly certificateStatus: CertificateStatus;
+  /**
+   * Academy offline — on a stamped complete/undo only: `false` when a newer
+   * operation for the lesson had already been applied, so this one was not.
+   */
+  readonly applied?: boolean;
 }
 
 /** Marks a lesson complete for the current student. */
 export interface CompleteLessonPayload {
   readonly lessonId: string;
+  /** Academy offline — ordering stamp: this operation's id (same on every retry)… */
+  readonly opId?: string;
+  /** …and when the learner acted (epoch ms). An older op arriving later is not applied. */
+  readonly clientOpAt?: number;
 }

@@ -167,6 +167,16 @@ export interface LessonContentGrant {
   /** Where this learner left off, so the player can resume without a second round-trip. */
   readonly resumePositionSeconds: number;
   readonly expiresAt: string;
+  /**
+   * Academy offline — the server's permission to keep THIS lesson's text
+   * for offline reading, and until when. Only ever true for a text lesson
+   * read by a signed-in learner; absent from older servers (= not allowed).
+   * The client keeps the title and body only — see `learner-content.ts`.
+   */
+  readonly offlineReading?: {
+    readonly allowed: boolean;
+    readonly until: string | null;
+  };
 }
 
 /** Body of `POST /learning/courses/:id/playback`. */
