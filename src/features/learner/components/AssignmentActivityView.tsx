@@ -9,6 +9,18 @@
  * Graded), the submitted text, the attachment as a short-lived signed
  * link, and the grade and feedback once a reviewer has entered them.
  *
+ * NOTHING IS LOST WITHOUT A CONNECTION (academy offline work). Every edit
+ * is also written to this device (`learner-content.ts`, per learner and
+ * academy), so a reload, a closed tab or a dropped connection keeps the
+ * text; it is restored when newer than the server's draft. Server saves
+ * carry the draft they were based on (compare-and-set): a draft changed in
+ * another tab or device meanwhile is shown as a conflict the learner
+ * resolves, never silently overwritten. A Submit carries an idempotency
+ * key (kept with the local draft, the same on every retry) and the
+ * revision the learner saw; without a connection it waits in the outbox
+ * and the learner SEES it waiting — "Waiting to send" — and can cancel it.
+ * The server decides lateness when it arrives, and says so.
+ *
  * THE ATTACHMENT IS PROTECTED. The upload answers with an asset id; the
  * submit references that id; the file is read only through a signed
  * link minted for this learner. There is no public URL anywhere here.
@@ -20,7 +32,9 @@ import {
   CheckCircle2,
   Circle,
   Clock,
+  CloudUpload,
   FileText,
+  GitMerge,
   Loader2,
   Paperclip,
   Send,
@@ -35,7 +49,23 @@ import { Textarea } from '@/components/ui/textarea';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { useConfirmDialog } from '@app/providers';
-import { useDateFormatter, useFilePicker } from '@hooks';
+import { useAuth, useDateFormatter, useFilePicker } from '@hooks';
+import { isApiError, normalizeUnknownError } from '@api';
+import {
+  deleteAssignmentDraft,
+  discardOutboxEntry,
+  listOutboxEntries,
+  loadAssignmentDraft,
+  saveAssignmentDraft,
+  subscribeOutbox,
+  type OutboxEntry,
+} from '@services/offline';
+import {
+  ASSIGNMENT_SUBMIT_KIND,
+  newClientOpId,
+  queueAssignmentSubmit,
+  type AssignmentSubmitPayload,
+} from '../offline/learner-outbox';
 import { apiErrorMessage, cn, formatNumber } from '@utils';
 import type {
   AssignmentSubmission,
@@ -63,7 +93,18 @@ export interface AssignmentActivityViewProps {
   readonly onContinue?: () => void;
 }
 
-type DraftState = 'idle' | 'dirty' | 'saving' | 'saved' | 'failed';
+type DraftState =
+  'idle' | 'dirty' | 'saving' | 'saved' | 'failed' | 'local' | 'conflict';
+
+interface DraftConflict {
+  readonly response: string;
+  readonly savedAt: string | null;
+}
+
+function isOfflineError(error: unknown): boolean {
+  const kind = normalizeUnknownError(error).kind;
+  return kind === 'network' || kind === 'timeout';
+}
 
 interface PendingAttachment {
   readonly assetId: string;
@@ -96,6 +137,8 @@ export function AssignmentActivityView({
   const fmt = useDateFormatter();
   const { confirm } = useConfirmDialog();
   const assignmentId = item.id;
+  const { user } = useAuth();
+  const userId = user?.id ?? null;
 
   const assignmentQuery = useAssignment(courseId, assignmentId);
   const submissionQuery = useAssignmentSubmission(courseId, assignmentId);
@@ -114,6 +157,36 @@ export function AssignmentActivityView({
   const [submitError, setSubmitError] = useState<string | undefined>();
   const debounceRef = useRef<number | null>(null);
   const seededRef = useRef<string | null>(null);
+  /** The server `draftSavedAt` the text on screen is based on (compare-and-set base). */
+  const baseRef = useRef<string | null>(null);
+  const [conflict, setConflict] = useState<DraftConflict | null>(null);
+  const [restoredLocal, setRestoredLocal] = useState(false);
+  const [queuedSubmit, setQueuedSubmit] =
+    useState<OutboxEntry<AssignmentSubmitPayload> | null>(null);
+
+  // A submit waiting in (or refused by) the outbox, kept in view.
+  useEffect(() => {
+    if (!userId) return;
+    let cancelled = false;
+    const refresh = () =>
+      void listOutboxEntries<AssignmentSubmitPayload>(
+        ASSIGNMENT_SUBMIT_KIND
+      ).then((entries) => {
+        if (cancelled) return;
+        setQueuedSubmit(
+          entries.find(
+            (entry) =>
+              entry.payload.assignmentId === assignmentId &&
+              entry.payload.courseId === courseId
+          ) ?? null
+        );
+      });
+    const unsubscribe = subscribeOutbox(refresh);
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
+  }, [userId, assignmentId, courseId]);
 
   // Seed the form from the draft (or the submitted text when resubmitting) once per submission row.
   useEffect(() => {
@@ -135,11 +208,49 @@ export function AssignmentActivityView({
         : null
     );
     setDraftState(draft ? 'saved' : 'idle');
-  }, [assignmentId, submission]);
+    baseRef.current = submission?.draftSavedAt ?? null;
+
+    // Text typed on this device that the server never confirmed (offline,
+    // closed tab) wins over an older server draft.
+    if (!userId) return;
+    const serverText = draft ?? '';
+    const serverSavedAt = submission?.draftSavedAt
+      ? Date.parse(submission.draftSavedAt)
+      : 0;
+    void loadAssignmentDraft(userId, courseId, assignmentId).then((local) => {
+      if (!local || seededRef.current !== seedKey) return;
+      if (
+        !local.synced &&
+        local.response !== serverText &&
+        local.updatedAt > serverSavedAt
+      ) {
+        setResponse(local.response);
+        setRestoredLocal(true);
+        setDraftState('local');
+      }
+    });
+  }, [assignmentId, submission, userId, courseId]);
+
+  const keepLocal = useCallback(
+    (nextResponse: string, synced: boolean) => {
+      if (!userId) return;
+      void saveAssignmentDraft({
+        userId,
+        courseId,
+        assignmentId,
+        response: nextResponse,
+        baseDraftSavedAt: baseRef.current,
+        synced,
+      });
+    },
+    [userId, courseId, assignmentId]
+  );
 
   const scheduleDraft = useCallback(
     (nextResponse: string, nextAttachment: PendingAttachment | null) => {
       setDraftState('dirty');
+      // On this device at once; to the server after the debounce.
+      keepLocal(nextResponse, false);
       if (debounceRef.current !== null)
         window.clearTimeout(debounceRef.current);
       debounceRef.current = window.setTimeout(() => {
@@ -149,13 +260,55 @@ export function AssignmentActivityView({
           .mutateAsync({
             response: nextResponse,
             attachmentAssetId: nextAttachment?.assetId ?? null,
+            baseDraftSavedAt: baseRef.current,
           })
-          .then(() => setDraftState('saved'))
-          .catch(() => setDraftState('failed'));
+          .then((saved) => {
+            baseRef.current = saved.draftSavedAt;
+            keepLocal(nextResponse, true);
+            setDraftState('saved');
+          })
+          .catch((error: unknown) => {
+            if (
+              isApiError(error) &&
+              error.messageKey === 'errors.assignment.draftConflict'
+            ) {
+              const details = error.details ?? {};
+              setConflict({
+                response:
+                  typeof details.draftResponse === 'string'
+                    ? details.draftResponse
+                    : '',
+                savedAt:
+                  typeof details.draftSavedAt === 'string'
+                    ? details.draftSavedAt
+                    : null,
+              });
+              setDraftState('conflict');
+              return;
+            }
+            setDraftState(isOfflineError(error) ? 'local' : 'failed');
+          });
       }, AUTOSAVE_DEBOUNCE_MS);
     },
-    [saveDraft]
+    [saveDraft, keepLocal]
   );
+
+  /** Conflict: keep the text on screen, now based on the other copy. */
+  const keepMine = () => {
+    if (!conflict) return;
+    baseRef.current = conflict.savedAt;
+    setConflict(null);
+    scheduleDraft(response, attachment);
+  };
+  /** Conflict: take the other tab's / device's text. */
+  const useTheirs = () => {
+    if (!conflict) return;
+    baseRef.current = conflict.savedAt;
+    setResponse(conflict.response);
+    keepLocal(conflict.response, true);
+    setConflict(null);
+    setDraftState('saved');
+  };
 
   useEffect(
     () => () => {
@@ -253,20 +406,81 @@ export function AssignmentActivityView({
       window.clearTimeout(debounceRef.current);
       debounceRef.current = null;
     }
-    try {
-      await submit.mutateAsync({
-        response: response.trim() || undefined,
-        attachmentAssetId: attachment?.assetId,
+    // ONE key per submit action, kept with the local draft, so a retry —
+    // now, after a reload, or from the outbox — is the same submit.
+    const stored = userId
+      ? await loadAssignmentDraft(userId, courseId, assignmentId)
+      : null;
+    const forPayload = JSON.stringify([
+      response.trim(),
+      attachment?.assetId ?? null,
+    ]);
+    const pendingSubmit =
+      stored?.pendingSubmit?.forPayload === forPayload
+        ? stored.pendingSubmit
+        : {
+            idempotencyKey: newClientOpId(),
+            baseRevision: submission?.submittedRevision ?? 0,
+            createdAt: Date.now(),
+            forPayload,
+          };
+    if (userId) {
+      await saveAssignmentDraft({
+        userId,
+        courseId,
+        assignmentId,
+        response,
+        baseDraftSavedAt: baseRef.current,
+        synced: false,
+        pendingSubmit,
       });
+    }
+    const payload = {
+      response: response.trim() || undefined,
+      attachmentAssetId: attachment?.assetId,
+      idempotencyKey: pendingSubmit.idempotencyKey,
+      baseRevision: pendingSubmit.baseRevision,
+    };
+    const offline =
+      typeof navigator !== 'undefined' && navigator.onLine === false;
+    try {
+      if (offline) throw new TypeError('offline');
+      await submit.mutateAsync(payload);
+      if (userId) await deleteAssignmentDraft(userId, courseId, assignmentId);
       setEditing(false);
       setDraftState('idle');
+      setRestoredLocal(false);
     } catch (error) {
+      if (userId && (offline || isOfflineError(error))) {
+        const queued = await queueAssignmentSubmit({
+          userId,
+          courseId,
+          assignmentId,
+          ...payload,
+        });
+        if (queued) {
+          setEditing(false);
+          return;
+        }
+      }
       setSubmitError(
         apiErrorMessage(t, i18n, error, {
           fallbackKey: 'learning:assignment.submitError',
         })
       );
     }
+  };
+
+  /** The learner withdraws a submit that has not reached the server yet. */
+  const cancelQueuedSubmit = async () => {
+    if (!queuedSubmit || !userId) return;
+    await discardOutboxEntry(queuedSubmit.id);
+    const local = await loadAssignmentDraft(userId, courseId, assignmentId);
+    if (local) {
+      await saveAssignmentDraft({ ...local, pendingSubmit: undefined });
+    }
+    setQueuedSubmit(null);
+    setEditing(true);
   };
 
   /* ---------- render ---------- */
@@ -300,18 +514,63 @@ export function AssignmentActivityView({
   const isLocked = item.state === 'locked';
 
   const draftLabel =
-    draftState === 'saving'
-      ? t('learning:assignment.draft.saving')
-      : draftState === 'saved'
-        ? t('learning:assignment.draft.saved')
-        : draftState === 'failed'
-          ? t('learning:assignment.draft.failed')
-          : draftState === 'dirty'
-            ? t('learning:assignment.draft.unsaved')
-            : '';
+    draftState === 'local'
+      ? t('learning:offline.assignment.savedOnDevice')
+      : draftState === 'conflict'
+        ? t('learning:offline.assignment.conflictShort')
+        : draftState === 'saving'
+          ? t('learning:assignment.draft.saving')
+          : draftState === 'saved'
+            ? t('learning:assignment.draft.saved')
+            : draftState === 'failed'
+              ? t('learning:assignment.draft.failed')
+              : draftState === 'dirty'
+                ? t('learning:assignment.draft.unsaved')
+                : '';
+
+  const queuedNotice = queuedSubmit ? (
+    <Alert
+      role="status"
+      data-testid="assignment-queued"
+      data-queue-status={queuedSubmit.status}
+      className={
+        queuedSubmit.status === 'pending' ? undefined : 'border-warning'
+      }
+    >
+      <CloudUpload className="size-4" aria-hidden />
+      <AlertTitle>
+        {queuedSubmit.status === 'pending'
+          ? t('learning:offline.assignment.queuedTitle')
+          : t('learning:offline.assignment.notSentTitle')}
+      </AlertTitle>
+      <AlertDescription className="space-y-3">
+        <p>
+          {queuedSubmit.status === 'pending'
+            ? t('learning:offline.assignment.queuedDescription', {
+                time: fmt.dateTime(
+                  new Date(queuedSubmit.createdAt).toISOString()
+                ),
+              })
+            : queuedSubmit.status === 'conflict'
+              ? t('learning:offline.assignment.conflictDescription')
+              : t('learning:offline.assignment.failedDescription')}
+        </p>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => void cancelQueuedSubmit()}
+        >
+          {queuedSubmit.status === 'pending'
+            ? t('learning:offline.assignment.cancel')
+            : t('learning:offline.assignment.discard')}
+        </Button>
+      </AlertDescription>
+    </Alert>
+  ) : null;
 
   return (
     <div className="space-y-4" data-testid="assignment-activity">
+      {queuedNotice}
       {isLocked ? (
         <ActivityLockCard
           lockReason={item.lockReason}
@@ -520,7 +779,7 @@ export function AssignmentActivityView({
       ) : null}
 
       {/* Draft form */}
-      {showForm && !isLocked ? (
+      {showForm && !isLocked && !queuedSubmit ? (
         blockedByDue ? (
           <Alert data-testid="assignment-blocked">
             <Clock className="size-4" aria-hidden />
@@ -546,6 +805,34 @@ export function AssignmentActivityView({
               </Alert>
             ) : null}
 
+            {restoredLocal ? (
+              <Alert role="status">
+                <CloudUpload className="size-4" aria-hidden />
+                <AlertDescription>
+                  {t('learning:offline.assignment.restored')}
+                </AlertDescription>
+              </Alert>
+            ) : null}
+            {conflict ? (
+              <Alert className="border-warning" data-testid="draft-conflict">
+                <GitMerge className="size-4" aria-hidden />
+                <AlertTitle>
+                  {t('learning:offline.assignment.conflictTitle')}
+                </AlertTitle>
+                <AlertDescription className="space-y-3">
+                  <p>{t('learning:offline.assignment.conflictBody')}</p>
+                  <div className="flex flex-wrap gap-2">
+                    <Button size="sm" onClick={keepMine}>
+                      {t('learning:offline.assignment.keepMine')}
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={useTheirs}>
+                      {t('learning:offline.assignment.useTheirs')}
+                    </Button>
+                  </div>
+                </AlertDescription>
+              </Alert>
+            ) : null}
+
             <div className="space-y-1.5">
               <div className="flex items-center justify-between gap-3">
                 <Label htmlFor="assignment-response">
@@ -556,7 +843,7 @@ export function AssignmentActivityView({
                   aria-live="polite"
                   className={cn(
                     'text-xs',
-                    draftState === 'failed'
+                    draftState === 'failed' || draftState === 'conflict'
                       ? 'text-destructive'
                       : 'text-muted-foreground'
                   )}
