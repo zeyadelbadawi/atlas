@@ -159,7 +159,8 @@
     "observability": "monitoring",
     "platform_contact_submission": "contact enquiry",
     "lesson": "lesson",
-    "communication_campaign": "message"
+    "communication_campaign": "message",
+    "forensic_watermark": "watermark code"
   },
   "fields": {
     "title": "Title",
@@ -701,6 +702,10 @@
       "campaign": {
         "sent": "{{actor}} sent a platform message",
         "sent_full": "{{actor}} sent a platform message to {{recipientCount}} people"
+      },
+      "watermark": {
+        "looked_up": "{{actor}} looked up the watermark code {{target}}",
+        "looked_up_noTarget": "{{actor}} looked up a watermark code"
       }
     }
   }

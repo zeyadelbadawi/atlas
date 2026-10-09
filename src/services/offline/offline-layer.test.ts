@@ -11,6 +11,7 @@ import {
   auditLogKeys,
   courseOrderKeys,
   customerRequestKeys,
+  platformWatermarkKeys,
   websiteKeys,
 } from '@/services/query/query-keys';
 import { MemoryOfflineStore, setOfflineStoreForTesting } from './offline-store';
@@ -102,6 +103,8 @@ describe('isPersistableQueryKey — default deny', () => {
     [auditLogKeys.academyFeed('a1')],
     [customerRequestKeys.academyList('a1')],
     [courseOrderKeys.list('u1')],
+    // Forensic watermark lookups name a person (name, email, phone, IP).
+    [platformWatermarkKeys.lookup('7K3QMX9TR7')],
     [['orders', 'list']],
     [['billing']],
     [['currentUser']],

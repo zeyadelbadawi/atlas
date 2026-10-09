@@ -1232,6 +1232,20 @@ export const platformContactSubmissionKeys = {
 } as const;
 
 /**
+ * Forensic watermark lookup (docs/FORENSIC_WATERMARK.md) — the Platform
+ * Owner's "who leaked this recording?" answer. The response carries a
+ * person's name, email and phone, so this root is deliberately absent from
+ * the offline persistence allowlist (`isPersistableQueryKey`) and the hook
+ * also opts out with `meta.persistOffline: false` and `gcTime: 0`.
+ */
+export const platformWatermarkKeys = {
+  all: ['platform-watermarks'] as const,
+  /** `code` is the normalised code (no dash, upper case). */
+  lookup: (code: string) =>
+    [...platformWatermarkKeys.all, 'lookup', code] as const,
+} as const;
+
+/**
  * Customer Requests — custom services (logo, domain, theme, section,
  * feature) an academy asks the Atlas team for. The academy's own views
  * carry the academy id as a top-level element (the W5 invariant); the

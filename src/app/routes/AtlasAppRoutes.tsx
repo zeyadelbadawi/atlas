@@ -457,6 +457,10 @@ const AcademyActivityLogPage = lazy(
 const PlatformAuditLogDetailPage = lazy(
   () => import('@features/audit-log/pages/PlatformAuditLogDetailPage')
 );
+// Forensic watermark lookup — a leaked recording's code → viewer and session.
+const PlatformWatermarkLookupPage = lazy(
+  () => import('@features/platform/pages/PlatformWatermarkLookupPage')
+);
 const PlatformSupportListPage = lazy(
   () => import('@features/support/pages/PlatformSupportListPage')
 );
@@ -2344,6 +2348,20 @@ export default function AtlasAppRoutes(): JSX.Element {
                   requiredRoles={['platform_owner']}
                 >
                   <PlatformAuditLogDetailPage />
+                </RouteGuard>
+              }
+            />
+
+            {/* Forensic watermark lookup. The API's PlatformOwnerGuard, its
+                per-owner rate limit and RLS are the real control. */}
+            <Route
+              path={DASHBOARD_ROUTES.platformWatermarks}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformWatermarkLookupPage />
                 </RouteGuard>
               }
             />

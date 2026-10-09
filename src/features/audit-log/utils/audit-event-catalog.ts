@@ -216,6 +216,8 @@ export const AUDIT_ACTION_CATEGORIES: Readonly<Record<string, AuditCategory>> =
     'observability.synthetic_alert.armed': 'platform',
     'observability.synthetic_alert.resolved': 'platform',
     'platform.contact_submission.status_changed': 'platform',
+    // Forensic video watermark — every Platform Owner lookup, found or not.
+    'platform.watermark.looked_up': 'security',
     'platform.contact_submission.deleted': 'platform',
     'platform.campaign.sent': 'platform',
     'academy.message.sent': 'academy',
