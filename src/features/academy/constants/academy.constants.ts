@@ -4,13 +4,13 @@
 import type { AcademyStatus, AcademyMemberRole } from '@types';
 
 /** Default timezone for new academies. */
-export const DEFAULT_TIMEZONE = 'UTC';
+export const DEFAULT_TIMEZONE = 'Africa/Cairo';
 
 /** Default language for new academies. */
 export const DEFAULT_LANGUAGE = 'en';
 
 /** Default currency for new academies. */
-export const DEFAULT_CURRENCY = 'USD';
+export const DEFAULT_CURRENCY = 'EGP';
 
 /** Academy status options. */
 export const ACADEMY_STATUS_OPTIONS: readonly AcademyStatus[] = [

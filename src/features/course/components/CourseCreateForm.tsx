@@ -474,6 +474,7 @@ export function CourseCreateForm({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
+                            <SelectItem value="EGP">EGP</SelectItem>
                             <SelectItem value="USD">USD</SelectItem>
                             <SelectItem value="EUR">EUR</SelectItem>
                             <SelectItem value="GBP">GBP</SelectItem>
