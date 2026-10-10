@@ -9,7 +9,7 @@
 |---|---|
 | Written | 10 October 2026, after the unique-phone / sidebar release reached production |
 | Repositories | `zeyadelbadawi/atlas` (frontend, this repo) and `zeyadelbadawi/atlas-backend` (backend) |
-| `main` at writing | frontend ``6f4c246` (plus this docs commit)`, backend ``edc3672`` |
+| `main` at writing | frontend `6f4c246` (plus this docs PR), backend `edc3672` |
 | Production | `https://atlass.dpdns.org` (academy sites on `*.atlass.dpdns.org` and custom domains) |
 | Latest reports | `ATLAS_SECURITY_HARDENING_LOCAL_FIRST_REPORT.md` (+ `ATLAS_SECURITY_HARDENING_DETAILED_WORK_LOG.md`) and `ATLAS_ENGINEERING_INITIATIVE_REPORT.md`, both in this repo |
 | Secrets | Never in this file. Only names and locations (§9) |
