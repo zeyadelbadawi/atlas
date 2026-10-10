@@ -148,6 +148,7 @@ export default function ProvisioningStartPage(): JSX.Element {
         <CardContent>
           <AcademySetupForm
             organizationId={organization.id}
+            brandStudioOpen
             onCreated={(request) => {
               navigate(
                 buildPath(DASHBOARD_ROUTES.provisioningStatus, {

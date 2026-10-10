@@ -27,6 +27,7 @@
  * warning with Retry on an otherwise ready Academy. "View your website" is
  * offered whenever the website was built — which is now always.
  */
+import { useSyncExternalStore } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CheckCircle2, Loader2 } from 'lucide-react';
@@ -49,6 +50,12 @@ import {
 } from '@app/routes/route-paths';
 import { useCancelProvisioning, useProvisioningProgress } from '../hooks';
 import { ProvisioningProgress } from '../components/ProvisioningProgress';
+import { AcademyBuildExperience } from '@components/academy-build';
+import {
+  academyBuildStore,
+  finishAcademyBuild,
+  isAcademyBuildActive,
+} from '@components/academy-build';
 import {
   getProvisioningHeadingKeys,
   getProvisioningStatusTone,
@@ -65,6 +72,11 @@ export default function ProvisioningStatusPage(): JSX.Element {
   const progress = useProvisioningProgress(requestId ?? '');
   const { request, query } = progress;
   const cancelProvisioning = useCancelProvisioning();
+  useSyncExternalStore(
+    academyBuildStore.subscribe,
+    academyBuildStore.version,
+    academyBuildStore.version
+  );
 
   if (query.isLoading) {
     return (
@@ -91,6 +103,15 @@ export default function ProvisioningStatusPage(): JSX.Element {
     request.status === 'failed' ||
     request.status === 'cancelled';
   const isCancellable = !isTerminal;
+  // The same academy build screen as onboarding, for every academy created
+  // with the setup form (the second, third… academy): the form starts the
+  // build window on submit. Never over a failure or a cancellation; the
+  // ready card waits until the screen hands back. A request opened without
+  // a window on this device keeps the real four-stage view.
+  const showBuild =
+    request.status !== 'failed' &&
+    request.status !== 'cancelled' &&
+    isAcademyBuildActive(request.id);
   const headings = getProvisioningHeadingKeys(request.status);
 
   const handleRetry = () => progress.retry();
@@ -124,25 +145,47 @@ export default function ProvisioningStatusPage(): JSX.Element {
       />
 
       <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">
-              {t(headings.checklistTitleKey)}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ProvisioningProgress
-              request={request}
-              logo={progress.logo}
-              onRetry={handleRetry}
-              isRetrying={progress.isRetrying}
-              retryFailed={!!progress.retryError && request.status !== 'failed'}
-              isReconnecting={progress.isReconnecting}
-            />
-          </CardContent>
-        </Card>
+        {showBuild ? (
+          <AcademyBuildExperience
+            requestId={request.id}
+            academyName={request.requestedAcademyName}
+            serverReady={request.status === 'ready'}
+            onComplete={() => finishAcademyBuild(request.id)}
+          >
+            {request.stalled === true || progress.isReconnecting ? (
+              <ProvisioningProgress
+                request={request}
+                logo={progress.logo}
+                onRetry={handleRetry}
+                isRetrying={progress.isRetrying}
+                retryFailed={!!progress.retryError}
+                isReconnecting={progress.isReconnecting}
+              />
+            ) : null}
+          </AcademyBuildExperience>
+        ) : (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">
+                {t(headings.checklistTitleKey)}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ProvisioningProgress
+                request={request}
+                logo={progress.logo}
+                onRetry={handleRetry}
+                isRetrying={progress.isRetrying}
+                retryFailed={
+                  !!progress.retryError && request.status !== 'failed'
+                }
+                isReconnecting={progress.isReconnecting}
+              />
+            </CardContent>
+          </Card>
+        )}
 
-        {request.status === 'failed' ? (
+        {showBuild ? null : request.status === 'failed' ? (
           <Card>
             <CardHeader>
               <CardTitle className="text-base text-destructive">

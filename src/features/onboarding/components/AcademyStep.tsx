@@ -42,12 +42,12 @@ import { OnboardingStepFrame } from './OnboardingStepFrame';
 import { StepPanel } from './StepPanel';
 import { findStep } from '../utils/onboarding-status.utils';
 import { BlockedNotice } from './BlockedNotice';
-import { AcademyBuildExperience } from './AcademyBuildExperience';
+import { AcademyBuildExperience } from '@components/academy-build';
 import {
   academyBuildStore,
   finishAcademyBuild,
   isAcademyBuildActive,
-} from '../utils/academy-build-timer';
+} from '@components/academy-build';
 import type { OnboardingStepProps } from './step.types';
 
 /** Live progress of one provisioning request, with retry on failure or a stall. */

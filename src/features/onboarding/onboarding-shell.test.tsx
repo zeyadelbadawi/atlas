@@ -58,7 +58,7 @@ import OnboardingPage from './pages/OnboardingPage';
 import {
   resetAcademyBuildTimersForTests,
   startAcademyBuild,
-} from './utils/academy-build-timer';
+} from '@components/academy-build';
 
 // jsdom has no ResizeObserver; Radix RadioGroup measures its items with one.
 if (!('ResizeObserver' in globalThis)) {

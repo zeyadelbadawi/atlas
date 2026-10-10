@@ -21,7 +21,7 @@ import {
   ONBOARDING_SCREEN_KEYS,
   ONBOARDING_STEP_ORDER,
 } from '../constants/onboarding.constants';
-import { isAcademyBuildActive } from './academy-build-timer';
+import { isAcademyBuildActive } from '@components/academy-build';
 
 export function findStep(
   status: OnboardingStatusResponse,

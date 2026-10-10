@@ -20,12 +20,12 @@ import { cn } from '@utils';
 import {
   readAcademyBuild,
   startAcademyBuild,
-} from '../utils/academy-build-timer';
+} from './academy-build-timer';
 import {
   ACADEMY_BUILD_STAGES,
   BUILD_HIGHLIGHT_KEYS as HIGHLIGHT_KEYS,
   buildProgressAt,
-} from '../utils/academy-build-progress';
+} from './academy-build-progress';
 
 const TICK_MS = 250;
 const HIGHLIGHT_MS = 7_000;
