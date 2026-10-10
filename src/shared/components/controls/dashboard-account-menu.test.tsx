@@ -113,7 +113,7 @@ describe('account menu', () => {
     expect(trigger().textContent).toContain('Welcome, zed');
   });
 
-  it('opens with identity, Profile, Appearance and Sign out; Escape returns focus', async () => {
+  it('opens with identity, Profile, Notifications, Support, Appearance and Sign out; Escape returns focus', async () => {
     const ue = userEvent.setup();
     renderUi(<AccountMenu />);
     await ue.click(trigger());
@@ -122,7 +122,14 @@ describe('account menu', () => {
     expect(
       within(menu).getByRole('menuitem', { name: 'Profile' })
     ).toBeTruthy();
+    expect(
+      within(menu).getByRole('menuitem', { name: 'Notifications' })
+    ).toBeTruthy();
+    expect(within(menu).getByRole('menuitem', { name: 'Support' })).toBeTruthy();
     expect(within(menu).getByText('Appearance')).toBeTruthy();
+    // Appearance is collapsed until opened, then lists the three options.
+    expect(within(menu).queryAllByRole('menuitemradio')).toHaveLength(0);
+    await ue.click(within(menu).getByTestId('appearance-toggle'));
     const radios = within(menu).getAllByRole('menuitemradio');
     expect(radios.map((r) => r.textContent)).toEqual([
       'Light',
@@ -132,8 +139,6 @@ describe('account menu', () => {
     expect(
       within(menu).getByRole('menuitem', { name: 'Sign out' })
     ).toBeTruthy();
-    // No notifications entry in this menu.
-    expect(within(menu).queryByText(/Notifications/)).toBeNull();
 
     await ue.keyboard('{Escape}');
     expect(screen.queryByRole('menu')).toBeNull();
@@ -159,6 +164,8 @@ describe('account menu', () => {
     const ue = userEvent.setup();
     renderUi(<AccountMenu />);
     await ue.click(trigger());
+    // Appearance is a collapsed row; it opens in place.
+    await ue.click(await screen.findByTestId('appearance-toggle'));
     await ue.click(await screen.findByTestId('appearance-dark'));
     expect(document.documentElement.classList.contains('dark')).toBe(true);
     expect(window.localStorage.getItem(STORAGE_KEYS.theme)).toContain('dark');
@@ -178,6 +185,7 @@ describe('account menu', () => {
     renderUi(<AccountMenu />);
     expect(document.documentElement.classList.contains('dark')).toBe(true);
     await ue.click(trigger());
+    await ue.click(await screen.findByTestId('appearance-toggle'));
     expect(
       (await screen.findByTestId('appearance-dark')).getAttribute(
         'aria-checked'

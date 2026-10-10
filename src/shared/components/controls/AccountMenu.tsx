@@ -13,8 +13,11 @@
  * (`useTheme`), so there is still a single source of truth that persists
  * exactly as before.
  */
+import { useState } from 'react';
 import {
+  Bell,
   ChevronDown,
+  LifeBuoy,
   LogOut,
   Monitor,
   Moon,
@@ -78,8 +81,13 @@ export function AccountMenu({
   const { signOut, isLoading } = useSignOut();
   const { preference, setPreference } = useTheme();
   const { toast } = useToast();
+  // Appearance is a collapsed row, like the other items; it opens in place.
+  const [appearanceOpen, setAppearanceOpen] = useState(false);
 
   if (!user) return null;
+  // Support is a customer action; a Platform Owner answers cases instead.
+  const isPlatformOwner = !!user.roles?.includes('platform_owner');
+  const CurrentAppearanceIcon = APPEARANCE[preference].icon;
 
   const fullName = displayNameOf(user);
   const firstName = fullName.split(/\s+/)[0] || fullName;
@@ -149,42 +157,88 @@ export function AccountMenu({
             {t('common:account.profile')}
           </Link>
         </DropdownMenuItem>
+        <DropdownMenuItem asChild className="min-h-10 gap-2">
+          <Link to={DASHBOARD_ROUTES.notifications}>
+            <Bell className="size-4" strokeWidth={1.75} aria-hidden />
+            {t('navigation:items.notifications')}
+          </Link>
+        </DropdownMenuItem>
+        {isPlatformOwner ? null : (
+          <DropdownMenuItem asChild className="min-h-10 gap-2">
+            <Link to={DASHBOARD_ROUTES.support}>
+              <LifeBuoy className="size-4" strokeWidth={1.75} aria-hidden />
+              {t('navigation:items.support')}
+            </Link>
+          </DropdownMenuItem>
+        )}
 
         {isFeatureEnabled('themeSwitcher') ? (
           <>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup aria-labelledby="account-menu-appearance">
-              <DropdownMenuLabel
-                id="account-menu-appearance"
-                className="text-xs font-medium text-muted-foreground"
+            <DropdownMenuItem
+              className="min-h-10 gap-2"
+              aria-expanded={appearanceOpen}
+              aria-controls="account-menu-appearance-options"
+              data-testid="appearance-toggle"
+              // Toggle in place without closing the menu.
+              onSelect={(event) => {
+                event.preventDefault();
+                setAppearanceOpen((open) => !open);
+              }}
+            >
+              <CurrentAppearanceIcon
+                className="size-4"
+                strokeWidth={1.75}
+                aria-hidden
+              />
+              <span className="flex-1">{t('common:theme.appearance')}</span>
+              <span className="text-xs text-muted-foreground">
+                {t(APPEARANCE[preference].labelKey)}
+              </span>
+              <ChevronDown
+                className={cn(
+                  'size-4 text-muted-foreground transition-transform motion-reduce:transition-none',
+                  appearanceOpen && 'rotate-180'
+                )}
+                aria-hidden
+              />
+            </DropdownMenuItem>
+            {appearanceOpen ? (
+              <DropdownMenuGroup
+                id="account-menu-appearance-options"
+                aria-label={t('common:theme.appearance')}
+                className="ps-4"
               >
-                {t('common:theme.appearance')}
-              </DropdownMenuLabel>
-              <DropdownMenuRadioGroup
-                value={preference}
-                onValueChange={(value) => {
-                  if (isThemePreference(value)) setPreference(value);
-                }}
-              >
-                {THEME_PREFERENCES.map((option) => {
-                  const { icon: Icon, labelKey } = APPEARANCE[option];
-                  return (
-                    <DropdownMenuRadioItem
-                      key={option}
-                      value={option}
-                      // Keep the menu open: the person sees the change
-                      // apply and can compare before closing.
-                      onSelect={(event) => event.preventDefault()}
-                      className="min-h-10 gap-2"
-                      data-testid={`appearance-${option}`}
-                    >
-                      <Icon className="size-4" strokeWidth={1.75} aria-hidden />
-                      {t(labelKey)}
-                    </DropdownMenuRadioItem>
-                  );
-                })}
-              </DropdownMenuRadioGroup>
-            </DropdownMenuGroup>
+                <DropdownMenuRadioGroup
+                  value={preference}
+                  onValueChange={(value) => {
+                    if (isThemePreference(value)) setPreference(value);
+                  }}
+                >
+                  {THEME_PREFERENCES.map((option) => {
+                    const { icon: Icon, labelKey } = APPEARANCE[option];
+                    return (
+                      <DropdownMenuRadioItem
+                        key={option}
+                        value={option}
+                        // Keep the menu open: the person sees the change
+                        // apply and can compare before closing.
+                        onSelect={(event) => event.preventDefault()}
+                        className="min-h-10 gap-2"
+                        data-testid={`appearance-${option}`}
+                      >
+                        <Icon
+                          className="size-4"
+                          strokeWidth={1.75}
+                          aria-hidden
+                        />
+                        {t(labelKey)}
+                      </DropdownMenuRadioItem>
+                    );
+                  })}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuGroup>
+            ) : null}
           </>
         ) : null}
 
