@@ -6,7 +6,7 @@
 | Follows | [ATLAS_ENGINEERING_INITIATIVE_REPORT.md](./ATLAS_ENGINEERING_INITIATIVE_REPORT.md) (its deferred items are the starting point here) |
 | Repositories | `zeyadelbadawi/atlas` (frontend), `zeyadelbadawi/atlas-backend` (backend) |
 | Pull requests | [atlas-backend#42](https://github.com/zeyadelbadawi/atlas-backend/pull/42) (merged as `21b27b5`), [atlas#34](https://github.com/zeyadelbadawi/atlas/pull/34) (merged as `652f4a3`); deploy fixes [atlas#35](https://github.com/zeyadelbadawi/atlas/pull/35), [atlas#36](https://github.com/zeyadelbadawi/atlas/pull/36), [atlas#37](https://github.com/zeyadelbadawi/atlas/pull/37); follow-up [atlas-backend#43](https://github.com/zeyadelbadawi/atlas-backend/pull/43) (merged as `edc3672`) and [atlas#39](https://github.com/zeyadelbadawi/atlas/pull/39) (merged as `6f4c246`) |
-| Production | `https://atlass.dpdns.org`: backend Deploy #267 (17:58 UTC), frontend Deploy #155 (live 22:12 UTC), both 9 October 2026; follow-up backend Deploy #268 (00:31 UTC) and frontend deploy (in progress at writing), 10 October 2026 |
+| Production | `https://atlass.dpdns.org`: backend Deploy #267 (17:58 UTC), frontend Deploy #155 (live 22:12 UTC), both 9 October 2026; follow-up backend Deploy #268 (00:31 UTC) and frontend Deploy #158 (live 02:00 UTC), 10 October 2026 |
 | Status of this document | Engineering record. Anything not verified is marked **Not verified**. Nothing here claims the system is "100% secure". These changes reduce specific, named risks. |
 
 ## Contents
@@ -450,7 +450,9 @@ All of this lives in the one navigation config (`src/app/navigation/navigation.c
    - applied `20261110000400_user_phone_unique_staff_read` (171 migrations in total);
    - recreated the backend; backend, Caddy and the renderer reported healthy (00:31 UTC);
    - recorded the last-good digests.
-3. atlas#39 merged (`6f4c246`); the frontend deploy follows automatically after CI (result recorded below when complete).
+3. The automatic backend Deploy #269 that followed Backend CI on `main` found nothing pending and redeployed the same image (no approval needed).
+4. atlas#39 merged (`6f4c246`). The first CI run on `main` was cancelled at its 45-minute limit: headless Chromium crashed in `arabic-line-spacing.spec.ts` ("Target page, context or browser has been closed") and the job hung. The identical tree had passed every check on the PR. The failed job was re-run once and passed.
+5. Frontend Deploy #158 built both images and ran `deploy.sh --frontend-only`. Production served the new bundle (`/assets/index-B5idt4oF.js`) from **02:00 UTC**.
 
 **Verified in production (HTTP, unauthenticated):**
 
@@ -475,6 +477,6 @@ All of this lives in the one navigation config (`src/app/navigation/navigation.c
 | Implementation | **Complete** for WS1, WS2, phone, RTL and watermark; and on 10 October for unique phone numbers, staff/Platform Owner phone visibility and the Client Owner sidebar (§14) |
 | Testing | **Complete** for unit, e2e and the journeys in §6 and §14.4. Three local e2e failures are environment-only. No load or axe testing in this release. |
 | CI | **Green** on #42, #34–#37, atlas-backend#43, atlas#39 and on `main`. One red `main` run (`082a428`) found a real SearchInput race, fixed in #36 (§8). |
-| Deployment | **Complete.** Backend Deploy #267 (4 migrations, 17:58 UTC 9 Oct); frontend Deploy #155 (live 22:12 UTC 9 Oct); backend Deploy #268 (1 migration, 00:31 UTC 10 Oct); frontend deploy (in progress at writing) |
+| Deployment | **Complete.** Backend Deploy #267 (4 migrations, 17:58 UTC 9 Oct); frontend Deploy #155 (live 22:12 UTC 9 Oct); backend Deploy #268 (1 migration, 00:31 UTC 10 Oct); frontend Deploy #158 (live 02:00 UTC 10 Oct) |
 | Production verification | **Partial.** HTTP and bundle checks in §9 and §14.5 are verified. Signed-in browser checks are **Not verified** and need the §9 and §14.5 checklists. |
 | Known remaining issues | Ops actions (§11); deferred work (§12); VPS disk and image retention **unresolved** (§13) |
