@@ -21,7 +21,11 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ONBOARDING_ROUTES, buildPath } from '@app/routes/route-paths';
+import {
+  DASHBOARD_ROUTES,
+  ONBOARDING_ROUTES,
+  buildPath,
+} from '@app/routes/route-paths';
 import { cn, MIRROR_IN_RTL } from '@utils';
 import { useOnboardingStatus } from '../hooks';
 import { ONBOARDING_CARD_DISMISSED_STORAGE_PREFIX } from '../constants/onboarding.constants';
@@ -65,11 +69,9 @@ export function SetupChecklistCard(): JSX.Element | null {
   const recommendedOpen = openRecommendedSteps(status);
   if (requiredOpen.length === 0 && recommendedOpen.length === 0) return null;
 
-  const onlyRecommendedLeft = status.requiredComplete && requiredOpen.length === 0;
-  if (
-    onlyRecommendedLeft &&
-    (hiddenNow || readHidden(status.organizationId))
-  ) {
+  const onlyRecommendedLeft =
+    status.requiredComplete && requiredOpen.length === 0;
+  if (onlyRecommendedLeft && (hiddenNow || readHidden(status.organizationId))) {
     return null;
   }
 
@@ -143,7 +145,17 @@ export function SetupChecklistCard(): JSX.Element | null {
             </span>
             {step.status === 'blocked' ? null : (
               <Button asChild variant="ghost" size="sm">
-                <Link to={buildPath(ONBOARDING_ROUTES.step, { step: step.key })}>
+                <Link
+                  to={
+                    // Branding has no setup screen of its own: the logo is
+                    // set in the Academy step or the academy's Brand settings.
+                    step.key === 'branding' && status.academy?.id
+                      ? buildPath(DASHBOARD_ROUTES.academyBranding, {
+                          academyId: status.academy.id,
+                        })
+                      : buildPath(ONBOARDING_ROUTES.step, { step: step.key })
+                  }
+                >
                   {t('onboarding:card.open')}
                 </Link>
               </Button>

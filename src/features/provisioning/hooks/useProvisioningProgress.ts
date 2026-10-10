@@ -2,12 +2,13 @@
  * W2 — everything a provisioning progress surface needs, in one place, so
  * the status page and the onboarding Academy step behave identically:
  * the polled request (`useProvisioningRequest`), the logo attach
- * (`usePendingLogoUpload`), and Retry (`useRetryProvisioning` — the server
+ * (`usePendingLogoUpload`), the favicon save (`usePendingFaviconSave`), and Retry (`useRetryProvisioning` — the server
  * decides whether that resumes the run or re-applies a failed brand).
  */
 import { useAuth } from '@hooks';
 import { useProvisioningRequest } from './useProvisioningRequest';
 import { usePendingLogoUpload } from './usePendingLogoUpload';
+import { usePendingFaviconSave } from './usePendingFaviconSave';
 import { useRetryProvisioning } from './useRetryProvisioning';
 
 export function useProvisioningProgress(requestId: string) {
@@ -15,6 +16,8 @@ export function useProvisioningProgress(requestId: string) {
   const query = useProvisioningRequest(requestId);
   const retryMutation = useRetryProvisioning();
   const logo = usePendingLogoUpload(query.data);
+  // The favicon picked in the setup form, saved once the Academy is ready.
+  const favicon = usePendingFaviconSave(query.data);
 
   const retry = (options?: { readonly onSuccess?: () => void }) => {
     if (!organization?.id || !query.data) return;
@@ -28,6 +31,7 @@ export function useProvisioningProgress(requestId: string) {
     query,
     request: query.data,
     logo,
+    favicon,
     retry,
     isRetrying: retryMutation.isPending,
     retryError: retryMutation.error,

@@ -6,7 +6,7 @@
  * words and with an icon. A locked step is listed but not linked — it
  * says why it is locked when opened from the summary instead.
  */
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ListChecks } from 'lucide-react';
@@ -14,6 +14,10 @@ import { ONBOARDING_ROUTES, buildPath } from '@app/routes/route-paths';
 import { cn } from '@utils';
 import type { OnboardingScreenKey, OnboardingStatusResponse } from '@types';
 import { visibleSteps } from '../utils/onboarding-status.utils';
+import {
+  academyBuildStore,
+  isAcademyBuildActive,
+} from '../utils/academy-build-timer';
 import { StepStatusIcon, StepStatusText } from './StepStatusIndicator';
 
 export interface OnboardingProgressRailProps {
@@ -26,7 +30,20 @@ export function OnboardingProgressRail({
   current,
 }: OnboardingProgressRailProps): JSX.Element {
   const { t } = useTranslation();
-  const steps = visibleSteps(status);
+  useSyncExternalStore(
+    academyBuildStore.subscribe,
+    academyBuildStore.version,
+    academyBuildStore.version
+  );
+  // While the build screen is up, the academy reads "in progress" here too.
+  const building = isAcademyBuildActive(
+    status.provisioning?.requestId ?? undefined
+  );
+  const steps = visibleSteps(status).map((step) =>
+    building && step.key === 'academy' && step.status === 'complete'
+      ? { ...step, status: 'in_progress' as const }
+      : step
+  );
   const listRef = useRef<HTMLOListElement>(null);
 
   // On narrow screens the rail scrolls sideways: keep the current step in

@@ -8,8 +8,23 @@
  */
 import type { OnboardingScreenKey, OnboardingStepKey } from '@types';
 
-/** The rail's order. `plan` is shown only while it is not complete. */
+/**
+ * The rail's order. `plan` is shown only while it is not complete.
+ *
+ * `branding` is not a screen of its own any more: the logo, colours and
+ * favicon are chosen in the Academy step's form. The server still reports
+ * the step (recommended; complete once a logo exists), so the dashboard
+ * card links it to the academy's Brand settings instead.
+ */
 export const ONBOARDING_STEP_ORDER: readonly OnboardingStepKey[] = [
+  'plan',
+  'academy',
+  'website',
+  'course',
+];
+
+/** Every step the server may report, in its own resume order. */
+export const ONBOARDING_ALL_STEPS: readonly OnboardingStepKey[] = [
   'plan',
   'academy',
   'branding',
@@ -28,10 +43,7 @@ export const ONBOARDING_SCREEN_KEYS: readonly OnboardingScreenKey[] = [
  * nothing — it only moves to the next screen; the step stays open on the
  * summary and the dashboard card.
  */
-export const SKIPPABLE_STEPS: readonly OnboardingStepKey[] = [
-  'branding',
-  'course',
-];
+export const SKIPPABLE_STEPS: readonly OnboardingStepKey[] = ['course'];
 
 /**
  * How often the status is re-read while the server is still working on
