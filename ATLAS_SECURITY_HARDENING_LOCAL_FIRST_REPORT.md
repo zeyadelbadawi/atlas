@@ -462,6 +462,9 @@ All of this lives in the one navigation config (`src/app/navigation/navigation.c
 | Phone route guarded | `GET /api/v1/users/me/phone` → 401 |
 | Platform users route guarded | `GET /api/v1/platform-users` → 401 |
 | Register still accepts the phone fields | violations only for `name`, `email`, `password` |
+| New frontend live | `/` references `/assets/index-B5idt4oF.js` (was `index-Bg5Hwlk5.js`) |
+| Sidebar in the deployed bundle | The navigation chunk lists `student-analytics` directly after `academy-provisioning` (academy section); no `academy-revenue` or `add-ons-catalog` entry exists in any of the 252 chunks fetched |
+| New labels and message in the deployed bundle | EN chunk: "Atlas service requests", "Course orders", "This phone number is already in use. Enter a different number."; AR chunk: «طلبات شراء الدورات» and the AR phone message |
 
 
 **Not verified in production** (needs real accounts; no production data was used):
