@@ -144,7 +144,9 @@ export function useBrandStudio({
   );
 
   const analyzeFile = useCallback(
-    async (file: Blob) => {
+    // `onAccepted` runs only once the file passes `inspectLogoFile` (size,
+    // type, dimensions), so callers never upload/keep a rejected logo.
+    async (file: Blob, onAccepted?: () => void) => {
       lastFile.current = file;
       const ticket = ++run.current;
       setAnalysis({ kind: 'analyzing', slow: false });
@@ -154,6 +156,9 @@ export function useBrandStudio({
       }, SLOW_ANALYSIS_MS);
       try {
         const inspected = await inspectLogoFile(file);
+        // Every valid pick is handed on, even one a newer pick superseded:
+        // the caller orders its own uploads (the later pick wins there).
+        if (inspected.ok) onAccepted?.();
         if (run.current !== ticket) return;
         if (!inspected.ok) {
           setAnalysis({ kind: 'error', error: inspected.error });

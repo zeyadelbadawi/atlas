@@ -49,6 +49,33 @@ const ORANGE_LOGO = {
 };
 
 describe('useBrandStudio', () => {
+  it('accepts a logo for upload only after it passes validation', async () => {
+    const { result } = renderHook(() =>
+      useBrandStudio({
+        theme,
+        analysisOptions: { createWorker: workerAnswering(ORANGE_LOGO) },
+      })
+    );
+    const oversized = new File(
+      [new Uint8Array(2 * 1024 * 1024 + 1)],
+      'big.png',
+      {
+        type: 'image/png',
+      }
+    );
+    const rejected = vi.fn();
+    await act(() => result.current.actions.analyzeFile(oversized, rejected));
+    expect(result.current.analysis).toMatchObject({
+      kind: 'error',
+      error: 'tooLarge',
+    });
+    expect(rejected).not.toHaveBeenCalled();
+
+    const accepted = vi.fn();
+    await act(() => result.current.actions.analyzeFile(pngFile(), accepted));
+    expect(accepted).toHaveBeenCalledTimes(1);
+  });
+
   it('starts from the theme default, then proposes the palette a logo suggests', async () => {
     const { result } = renderHook(() =>
       useBrandStudio({
