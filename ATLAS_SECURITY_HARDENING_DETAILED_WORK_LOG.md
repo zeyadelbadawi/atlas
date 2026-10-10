@@ -529,3 +529,44 @@ Signed-in browser checks are **Not verified**. They need the owner's checklist; 
 **VPS disk and Docker image retention:** **unresolved**. `deploy.sh` doesn't prune and there is no log rotation; see the summary report, §13.
 
 **Manual production checklist:** the signed-in checks in the summary report, §9, plus the 7-item checklist from the previous initiative, which is still unanswered.
+
+## 14. Follow-up release (10 October): unique phone numbers, staff phone visibility, Client Owner sidebar
+
+Summary: report §14. PRs [atlas-backend#43](https://github.com/zeyadelbadawi/atlas-backend/pull/43) (`edc3672`) and [atlas#39](https://github.com/zeyadelbadawi/atlas/pull/39) (`6f4c246`).
+
+### Backend
+
+- `prisma/migrations/20261110000400_user_phone_unique_staff_read/migration.sql`:
+  - a `DO` block that raises (and changes nothing) when any `phone_e164` is held by more than one row;
+  - `CREATE UNIQUE INDEX "user_phones_phone_e164_key"`;
+  - `user_phone_taken(text, text)` → boolean; `academy_student_phones(text, text[])` → `(user_id, phone_e164, country_code)` gated by `can_manage_academy_students`; `platform_student_phones(text[])` gated by `is_platform_owner` and `academy_students`;
+  - `REVOKE ... FROM PUBLIC`, `GRANT EXECUTE ... TO "atlas_app"`.
+- `prisma/schema.prisma`: `phoneE164 ... @unique(map: "user_phones_phone_e164_key")`. Hand-edited; `prisma format` would have reformatted unrelated models.
+- `src/identity/phone/user-phone.service.ts`: `phoneTakenError()`, `isPhoneTaken()`, `isPhoneUniqueViolation()`, `readStudentPhones()`. `setOwn` spends the change budget, then checks, and maps P2002 on the index to the same 409.
+- `src/identity/services/auth.service.ts`: the register pre-check (excluding the account being completed, if any) and the P2002 mapping in the transaction's catch, after the email-conflict branch.
+- `src/learning/...academy-roster.contract.ts` and `academy-students.service.ts`: `phone` added to the list and detail only for academy-scope viewers; the key is omitted otherwise.
+- `src/platform/...platform-user.contract.ts` and `platform-users.service.ts`: `phone` on summary and detail.
+- `HANDOVER.md`: now a single pointer to `ATLAS_FULL_PROJECT_HANDOVER_2026-10-10.md` (frontend repo).
+- Tests: `test/user-phone.e2e-spec.ts` (PHONE-03 conflict and no-leak, PHONE-08 visibility matrix, fixed numbers cleaned per test); `test/forensic-watermark.e2e-spec.ts` owns its own number.
+
+### Frontend
+
+- `src/shared/forms/useServerValidation.ts`: `isFieldViolationError()` treats the `errors.auth.phoneTaken` 409 like a validation error, so its violation lands on the field. Used by `RegistrationForm` and `ProfilePhoneCard`.
+- i18n EN/AR: `validation.phoneTaken`, `errors.auth.phoneTaken`, `platform.users.table.phone`, renamed `navigation.items.academyRequests` / `academyOrders`.
+- `AcademyStudentsTab`, `AcademyStudentDrawer`, `PlatformUserListPage`, `PlatformUserDetailPage`: `PhoneNumberDisplay` when the API returns a phone.
+- `src/app/navigation/navigation.config.ts`: `academy-revenue` removed from the sidebar; `add-ons-catalog` removed (one Add-ons entry, `tenant-add-ons`); `student-analytics` moved into the academy section's always-present items. New `client-owner-sidebar-navigation.test.ts`.
+- `e2e/support/atlas.ts`: `uniqueTestMobileNumber()` replaces the fixed test number.
+
+### Problems met
+
+| Problem | Cause | Fix |
+|---|---|---|
+| Local migration aborted ("5 phone numbers are shared") | Playwright helper registered one fixed number repeatedly | Guard behaved as designed; local test data deduplicated; helper now generates unique numbers |
+| PHONE-05 unique violation | A fixed number not in the suite's cleanup list | Added to the list |
+| WM-01 lost its learner's phone | Parallel suites shared a number; one cleanup deleted the other's row | Watermark suite owns its own number |
+| `prisma format` noise | Formatter rewrote unrelated models | Reverted; two-line manual edit |
+| CodeRabbit: sign-up reveals that a number is in use | Inherent in the requested message | Kept by design; one bit only, rate limited, no owner data (report §14.1) |
+
+### Deployment
+
+Backend Deploy #268 (dispatch, `apply_migrations=true`, owner approved `production-migrations`): backup `atlas-20261010T003042Z.sql.gz`, pre-check `duplicate_number_groups=0`, migration applied, backend/Caddy/renderer healthy at 00:31 UTC, last-good recorded. Then atlas#39 merged; frontend deploy followed automatically (report §14.5).

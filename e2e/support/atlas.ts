@@ -218,11 +218,6 @@ export async function findCourseByTitle(
 }
 
 /**
- * A valid test mobile number (Egypt, the form's default country). Phone
- * numbers are not unique across accounts, so one number serves every test
- * learner; it is never verified or messaged.
- */
-/**
  * A fresh, valid Egyptian mobile number (`010` + 8 digits). Phone numbers
  * are unique per account, so every sign-up needs its own: the time-based
  * digits keep consecutive runs apart, the random tail keeps parallel

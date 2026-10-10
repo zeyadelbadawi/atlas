@@ -1,3 +1,6 @@
+> **Superseded (10 Oct 2026).** The current handover for the whole project is
+> [`ATLAS_FULL_PROJECT_HANDOVER_2026-10-10.md`](../ATLAS_FULL_PROJECT_HANDOVER_2026-10-10.md). This file is kept as history.
+
 # Atlas — Claude session handover (Theme 1 programme)
 
 Written 30 Sep 2026 at the end of a Claude Code session that ran out of credit, so another Claude account can continue. **Do not trust this document blindly.** Every important claim below names its evidence (a file, a commit or a command); re-verify it against the repositories before acting.
