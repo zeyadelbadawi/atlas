@@ -31,7 +31,7 @@ import { useStepSave } from './useStepSave';
 import { WizardStepFooter } from './WizardStepFooter';
 import type { WizardStepProps } from './wizard-step.types';
 
-const CURRENCIES = ['USD', 'EUR', 'GBP', 'AED', 'SAR'] as const;
+const CURRENCIES = ['EGP', 'USD', 'EUR', 'GBP', 'AED', 'SAR'] as const;
 
 const pricingSchema = z
   .object({

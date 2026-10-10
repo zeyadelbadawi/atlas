@@ -43,7 +43,7 @@ export const COURSE_LESSON_STATUS_OPTIONS: readonly CourseLessonStatus[] = [
 export const DEFAULT_COURSE_STATUS: CourseStatus = 'draft';
 export const DEFAULT_COURSE_VISIBILITY: CourseVisibility = 'private';
 export const DEFAULT_COURSE_PRICING: CoursePricing = { type: 'free' };
-export const DEFAULT_COURSE_PRICING_CURRENCY = 'USD';
+export const DEFAULT_COURSE_PRICING_CURRENCY = 'EGP';
 
 /** Maximum course field lengths. */
 export const MAX_COURSE_TITLE_LENGTH = 150;

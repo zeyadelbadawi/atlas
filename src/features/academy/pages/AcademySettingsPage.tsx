@@ -364,6 +364,9 @@ export default function AcademySettingsPage(): JSX.Element {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
+                          <SelectItem value="Africa/Cairo">
+                            Africa/Cairo
+                          </SelectItem>
                           <SelectItem value="UTC">UTC</SelectItem>
                           <SelectItem value="America/New_York">
                             America/New_York
@@ -398,6 +401,7 @@ export default function AcademySettingsPage(): JSX.Element {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
+                          <SelectItem value="EGP">EGP</SelectItem>
                           <SelectItem value="USD">USD</SelectItem>
                           <SelectItem value="EUR">EUR</SelectItem>
                           <SelectItem value="GBP">GBP</SelectItem>
