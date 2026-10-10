@@ -1056,8 +1056,8 @@
   "brandStudio": {
     "title": "Brand colours",
     "description": "Your logo suggests a palette. Every colour is checked so text stays readable, and you can adjust anything before you accept it.",
-    "setupTitle": "Logo & colours (optional)",
-    "setupHelp": "Add your logo to see your website in your own colours. You can also do this later.",
+    "setupTitle": "Logo, colours & favicon (optional)",
+    "setupHelp": "Add your logo and browser icon to see your website in your own colours. You can also do this later.",
     "logoTitle": "Logo",
     "chooseLogo": "Choose logo",
     "replaceLogo": "Replace logo",
@@ -1145,7 +1145,12 @@
     "statusProposed": "Suggested palette — accept it to confirm your choice",
     "savingLogo": "Saving your logo…",
     "logoSaveError": "Your logo couldn't be saved. Please try again.",
-    "sampleName": "Your Academy"
+    "sampleName": "Your Academy",
+    "faviconLabel": "Favicon (browser tab icon)",
+    "faviconHelp": "PNG or ICO, up to 1 MB. Square works best.",
+    "faviconPick": "Choose favicon",
+    "faviconChange": "Change",
+    "faviconRemove": "Remove favicon"
   },
   "theme1": {
     "liveData": {

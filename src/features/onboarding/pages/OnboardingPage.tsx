@@ -2,8 +2,8 @@
  * Onboarding Page — the New Customer Onboarding shell.
  *
  * `/onboarding` and `/onboarding/:step`. One step per screen, in the order
- * plan → academy → branding → website → first course → summary (the plan
- * step only while it is not complete). Everything it shows comes from
+ * plan → academy (with logo, colours and favicon) → website → first course
+ * → summary (the plan step only while it is not complete). Everything it shows comes from
  * `GET /organizations/:id/onboarding`; nothing about progress is stored
  * in the browser, so the shell resumes correctly on any device.
  *
@@ -36,7 +36,6 @@ import { OnboardingLayout } from '../components/OnboardingLayout';
 import { OnboardingProgressRail } from '../components/OnboardingProgressRail';
 import { PlanStep } from '../components/PlanStep';
 import { AcademyStep } from '../components/AcademyStep';
-import { BrandingStep } from '../components/BrandingStep';
 import { WebsiteStep } from '../components/WebsiteStep';
 import { CourseStep } from '../components/CourseStep';
 import { SummaryStep } from '../components/SummaryStep';
@@ -47,6 +46,7 @@ import {
   isStepComplete,
   nextScreen,
   previousScreen,
+  resumeScreen,
   visibleScreens,
 } from '../utils/onboarding-status.utils';
 
@@ -126,7 +126,7 @@ export default function OnboardingPage(): JSX.Element {
 
   // `/onboarding` (or an unknown step) resumes where the server says.
   if (!isOnboardingScreenKey(stepParam)) {
-    return <Navigate to={stepPath(status.nextStep)} replace />;
+    return <Navigate to={stepPath(resumeScreen(status))} replace />;
   }
   const current: OnboardingScreenKey = stepParam;
 
@@ -136,12 +136,13 @@ export default function OnboardingPage(): JSX.Element {
   }
   // A step the server did not report cannot be shown honestly.
   if (current !== 'summary' && !findStep(status, current)) {
-    return <Navigate to={stepPath(status.nextStep)} replace />;
+    return <Navigate to={stepPath(resumeScreen(status))} replace />;
   }
 
   const screens = visibleScreens(status);
   const position = screens.indexOf(current) + 1;
-  const currentStep = current === 'summary' ? undefined : findStep(status, current);
+  const currentStep =
+    current === 'summary' ? undefined : findStep(status, current);
   const eyebrow = [
     t('onboarding:shell.stepOf', { current: position, total: screens.length }),
     currentStep ? t(`onboarding:requirement.${currentStep.requirement}`) : null,
@@ -149,7 +150,8 @@ export default function OnboardingPage(): JSX.Element {
     .filter(Boolean)
     .join(' · ');
 
-  const goTo = (screen: OnboardingScreenKey): void => navigate(stepPath(screen));
+  const goTo = (screen: OnboardingScreenKey): void =>
+    navigate(stepPath(screen));
   const previous = previousScreen(status, current);
 
   const stepProps: OnboardingStepProps = {
@@ -171,8 +173,6 @@ export default function OnboardingPage(): JSX.Element {
         return <PlanStep {...stepProps} onNext={() => goTo('academy')} />;
       case 'academy':
         return <AcademyStep {...stepProps} />;
-      case 'branding':
-        return <BrandingStep {...stepProps} />;
       case 'website':
         return <WebsiteStep {...stepProps} />;
       case 'course':
@@ -195,7 +195,9 @@ export default function OnboardingPage(): JSX.Element {
     <OnboardingLayout
       rail={<OnboardingProgressRail status={status} current={current} />}
       // The summary offers "Finish for now" beside "Finish" itself.
-      onFinishForNow={current === 'summary' ? undefined : () => void leave('defer')}
+      onFinishForNow={
+        current === 'summary' ? undefined : () => void leave('defer')
+      }
       isFinishingForNow={pendingMode === 'defer'}
     >
       {renderStep()}

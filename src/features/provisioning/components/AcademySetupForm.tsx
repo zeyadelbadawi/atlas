@@ -61,6 +61,7 @@ import {
 } from '../schemas/provisioning.schemas';
 import { generateProvisioningIdempotencyKey } from '../utils/idempotency.utils';
 import { pendingLogoStore } from '../logo/pending-logo';
+import { pendingFaviconStore } from '../logo/pending-favicon';
 import { SetupThemePicker } from './SetupThemePicker';
 import {
   SetupPaymentMethods,
@@ -73,12 +74,15 @@ export interface AcademySetupFormProps {
   readonly onCreated: (request: ProvisioningRequest) => void;
   /** Primary action label; the provisioning page keeps its own default. */
   readonly submitLabelKey?: string;
+  /** Show the "Logo, colours & favicon" block open (the onboarding shell). */
+  readonly brandStudioOpen?: boolean;
 }
 
 export function AcademySetupForm({
   organizationId,
   onCreated,
   submitLabelKey = 'provisioning:start.submit',
+  brandStudioOpen = false,
 }: AcademySetupFormProps): JSX.Element {
   const { t } = useTranslation();
   const createRequest = useCreateProvisioningRequest();
@@ -214,6 +218,9 @@ export function AcademySetupForm({
           if (choice?.logoFile) {
             pendingLogoStore.set(request.id, choice.logoFile);
           }
+          if (choice?.faviconFile) {
+            pendingFaviconStore.set(request.id, choice.faviconFile);
+          }
           // Submitted means saved: clear the unsaved-changes guard so the
           // move to the status page isn't met with "Leave without saving?".
           // `reset` alone reaches the guard only after the next render;
@@ -348,6 +355,7 @@ export function AcademySetupForm({
           }
           academyName={academyNameValue}
           onChange={onBrandingChange}
+          defaultOpen={brandStudioOpen}
         />
 
         {/*

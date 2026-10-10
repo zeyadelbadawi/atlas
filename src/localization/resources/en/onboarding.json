@@ -36,7 +36,7 @@
     "academy": {
       "label": "Academy",
       "title": "Create your academy",
-      "description": "Name your academy and pick its address. We'll set up its website for you.",
+      "description": "Name your academy, pick its address and add your logo. We'll build its website for you.",
       "submit": "Create academy"
     },
     "branding": {
@@ -94,7 +94,10 @@
     "failedDescription": "Nothing you entered was lost. Try again, and contact support if it keeps failing.",
     "readyTitle": "{{name}} is set up",
     "readyDescription": "Your academy and its website have been created.",
-    "address": "Address"
+    "address": "Address",
+    "visit": "Visit",
+    "nextHint": "Next, publish your website so learners can find it.",
+    "faviconFailed": "Your favicon couldn't be saved. Try again, or add it later in Brand settings."
   },
   "branding": {
     "logoAdded": "Your logo is in place. You can change it any time.",
@@ -143,5 +146,68 @@
     "continue": "Continue setup",
     "hide": "Hide",
     "open": "Open"
+  },
+  "build": {
+    "title": "Building {{name}}",
+    "doneTitle": "{{name}} is ready",
+    "doneLine": "Everything is in place. Taking you to your academy…",
+    "finalChecks": "Running final checks so everything works on day one…",
+    "progressLabel": "Academy build progress",
+    "stayHere": "Keep this page open — it updates on its own.",
+    "highlightLead": "Did you know?",
+    "state": {
+      "done": "done",
+      "active": "in progress",
+      "pending": "waiting"
+    },
+    "stages": {
+      "workspace": {
+        "label": "Creating your academy workspace",
+        "active": "Creating your academy workspace…"
+      },
+      "packages": {
+        "label": "Installing your plan's features",
+        "active": "Installing the features included in your plan…"
+      },
+      "theme": {
+        "label": "Applying your website theme",
+        "active": "Applying your website theme and layouts…"
+      },
+      "pages": {
+        "label": "Building your website pages",
+        "active": "Building your home, about and contact pages…"
+      },
+      "courses": {
+        "label": "Preparing your courses page",
+        "active": "Preparing your course catalogue and course pages…"
+      },
+      "brand": {
+        "label": "Applying your brand",
+        "active": "Applying your logo, colours and favicon…"
+      },
+      "payments": {
+        "label": "Setting up payments",
+        "active": "Setting up the payment methods learners will use…"
+      },
+      "security": {
+        "label": "Securing your address",
+        "active": "Securing your academy address with HTTPS…"
+      },
+      "protection": {
+        "label": "Enabling content protection",
+        "active": "Enabling video watermarking and content protection…"
+      },
+      "launch": {
+        "label": "Final checks",
+        "active": "Getting everything ready for your first learners…"
+      }
+    },
+    "highlights": {
+      "bilingual": "Your academy works in Arabic and English, right to left included.",
+      "payments": "Learners can pay you by bank transfer, mobile wallets or InstaPay.",
+      "protection": "Every lesson video carries a per-learner watermark that traces leaks.",
+      "offline": "Learners can keep reading their lessons even when their connection drops.",
+      "certificates": "Issue certificates automatically when learners finish a course."
+    }
   }
 }

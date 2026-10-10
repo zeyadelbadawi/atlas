@@ -17,9 +17,11 @@ import {
   buildPath,
 } from '@app/routes/route-paths';
 import {
+  ONBOARDING_ALL_STEPS,
   ONBOARDING_SCREEN_KEYS,
   ONBOARDING_STEP_ORDER,
 } from '../constants/onboarding.constants';
+import { isAcademyBuildActive } from './academy-build-timer';
 
 export function findStep(
   status: OnboardingStatusResponse,
@@ -65,6 +67,31 @@ export function isOnboardingScreenKey(
     value !== undefined &&
     (ONBOARDING_SCREEN_KEYS as readonly string[]).includes(value)
   );
+}
+
+/**
+ * Where `/onboarding` resumes: the server's `nextStep`, unless that step has
+ * no screen of its own (`branding`) — then the first visible screen after it
+ * in the server's order. While this device is still showing the academy
+ * build, it resumes there rather than skipping past it.
+ */
+export function resumeScreen(
+  status: OnboardingStatusResponse
+): OnboardingScreenKey {
+  if (isAcademyBuildActive(status.provisioning?.requestId ?? undefined)) {
+    return 'academy';
+  }
+  const screens = visibleScreens(status);
+  if (screens.includes(status.nextStep)) return status.nextStep;
+  const start = ONBOARDING_ALL_STEPS.indexOf(
+    status.nextStep as OnboardingStepKey
+  );
+  for (const key of ONBOARDING_ALL_STEPS.slice(start + 1)) {
+    if (screens.includes(key) && findStep(status, key)?.status !== 'complete') {
+      return key;
+    }
+  }
+  return 'summary';
 }
 
 /** The screen after `current` in UI order, or the summary. */

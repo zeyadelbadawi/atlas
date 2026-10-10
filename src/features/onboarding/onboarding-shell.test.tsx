@@ -55,6 +55,10 @@ import { provisioningService } from '../provisioning/services/ProvisioningServic
 import { websiteConfigurationService } from '../website/services/WebsiteConfigurationService';
 import { onboardingService } from './services/OnboardingService';
 import OnboardingPage from './pages/OnboardingPage';
+import {
+  resetAcademyBuildTimersForTests,
+  startAcademyBuild,
+} from './utils/academy-build-timer';
 
 // jsdom has no ResizeObserver; Radix RadioGroup measures its items with one.
 if (!('ResizeObserver' in globalThis)) {
@@ -253,6 +257,8 @@ afterEach(() => {
   cleanup();
   vi.clearAllMocks();
   window.localStorage.clear();
+  window.sessionStorage.clear();
+  resetAcademyBuildTimersForTests();
 });
 
 function identity(role = 'owner'): IdentityContextValue {
@@ -377,9 +383,8 @@ describe('onboarding shell — entry', () => {
     expect(within(nav).getByTestId('rail-step-website').textContent).toContain(
       'Required'
     );
-    expect(within(nav).getByTestId('rail-step-branding').textContent).toContain(
-      'Recommended'
-    );
+    // Branding is chosen in the Academy step; it has no screen of its own.
+    expect(within(nav).queryByTestId('rail-step-branding')).toBeNull();
     expect(within(nav).getByTestId('rail-step-course').textContent).toContain(
       'Recommended'
     );
@@ -579,20 +584,39 @@ describe('onboarding shell — Academy step', () => {
       provisioningRequest('provisioning')
     );
     renderShell('/onboarding/academy');
-    const panel = await screen.findByTestId('academy-provisioning');
-    expect(panel.textContent).toContain('Setting up Nile Academy');
-    // W2 — the same four real stages as the status page, not the raw steps.
-    expect(
-      (await within(panel).findAllByRole('listitem')).map((item) =>
-        item.getAttribute('data-testid')
-      )
-    ).toEqual([
-      'provisioning-stage-academy',
-      'provisioning-stage-website',
-      'provisioning-stage-brand',
-      'provisioning-stage-ready',
-    ]);
+    const build = await screen.findByTestId('academy-build');
+    expect(build.textContent).toContain('Building Nile Academy');
+    expect(within(build).getAllByRole('listitem')).toHaveLength(10);
+    expect(within(build).getByRole('progressbar')).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Continue' })).toBeNull();
+  });
+
+  it('keeps the build screen up until its window has passed, even once the server says ready', async () => {
+    startAcademyBuild('req-1');
+    current = status(
+      {},
+      {
+        provisioning: {
+          requestId: 'req-1',
+          status: 'ready',
+          currentStepKey: null,
+          failed: false,
+        },
+        nextStep: 'website',
+      }
+    );
+    vi.spyOn(provisioningService, 'getProvisioningRequest').mockResolvedValue(
+      provisioningRequest('ready')
+    );
+    renderShell('/onboarding/academy');
+    expect(await screen.findByTestId('academy-build')).toBeTruthy();
+    expect(screen.queryByTestId('academy-ready')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Continue' })).toBeNull();
+    // `/onboarding` resumes on the build rather than skipping past it.
+    const nav = screen.getByRole('navigation', { name: 'Setup progress' });
+    expect(within(nav).getByTestId('rail-step-academy').textContent).toContain(
+      'In progress'
+    );
   });
 
   it('offers retry when provisioning failed', async () => {
@@ -652,7 +676,6 @@ describe('onboarding shell — Website step', () => {
 
 describe('onboarding shell — Skip', () => {
   it.each([
-    ['branding', 'Make it yours', true],
     ['course', 'Create your first course', true],
     ['website', 'Publish your website', false],
     ['academy', 'Create your academy', false],
@@ -660,24 +683,30 @@ describe('onboarding shell — Skip', () => {
   ] as const)('on %s: Skip offered = %s', async (step, title, skippable) => {
     renderShell(`/onboarding/${step}`);
     expect((await heading()).textContent).toBe(title);
-    if (step === 'branding') {
-      // Wait for the academy to load so the form is on screen.
-      await screen.findByRole('button', { name: 'Save branding' });
-    }
     expect(!!screen.queryByTestId('onboarding-skip')).toBe(skippable);
   });
 
   it('moves to the next screen without storing anything', async () => {
     const user = userEvent.setup();
-    renderShell('/onboarding/branding');
+    renderShell('/onboarding/course');
     await heading();
     await user.click(screen.getByTestId('onboarding-skip'));
-    expect((await heading()).textContent).toBe('Publish your website');
+    expect((await heading()).textContent).toBe(
+      'Setup incomplete — 1 required step left'
+    );
     expect(completeCall).not.toHaveBeenCalled();
     const stored = Object.keys(window.localStorage).filter((key) =>
       key.toLowerCase().includes('onboarding')
     );
     expect(stored).toEqual([]);
+  });
+});
+
+describe('onboarding shell — no Branding screen', () => {
+  it('sends /onboarding/branding to the next visible step, even when the server resumes there', async () => {
+    current = status({ website: 'complete' }, { nextStep: 'branding' });
+    renderShell('/onboarding/branding');
+    expect((await heading()).textContent).toBe('Create your first course');
   });
 });
 

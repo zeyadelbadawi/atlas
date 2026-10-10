@@ -15,10 +15,20 @@
  * step states only, a live-region announcement, Retry when stalled), and
  * the branding chosen in the form is applied server-side; the finished
  * panel shows a brand follow-up only when something still needs the owner.
+ *
+ * While the request runs, the step shows `AcademyBuildExperience` for the
+ * request's build window (a random 45–75 s, or longer if provisioning takes
+ * longer). The ready panel and Continue appear only after it hands back.
+ * A failure replaces it at once; a stall or lost connection is shown under it.
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AlertTriangle, CheckCircle2, Loader2 } from 'lucide-react';
+import {
+  AlertTriangle,
+  CheckCircle2,
+  ExternalLink,
+  Loader2,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@hooks';
 import { toErrorsNamespaceKey } from '@utils';
@@ -32,6 +42,12 @@ import { OnboardingStepFrame } from './OnboardingStepFrame';
 import { StepPanel } from './StepPanel';
 import { findStep } from '../utils/onboarding-status.utils';
 import { BlockedNotice } from './BlockedNotice';
+import { AcademyBuildExperience } from './AcademyBuildExperience';
+import {
+  academyBuildStore,
+  finishAcademyBuild,
+  isAcademyBuildActive,
+} from '../utils/academy-build-timer';
 import type { OnboardingStepProps } from './step.types';
 
 /** Live progress of one provisioning request, with retry on failure or a stall. */
@@ -73,6 +89,13 @@ function ProvisioningRun({
     />
   ) : null;
 
+  useEffect(() => {
+    // A failed run never keeps the build screen up.
+    if (requestStatus === 'failed' || requestStatus === 'cancelled') {
+      finishAcademyBuild(requestId);
+    }
+  }, [requestStatus, requestId]);
+
   if (requestStatus === 'failed') {
     return (
       <StepPanel
@@ -103,17 +126,22 @@ function ProvisioningRun({
     );
   }
 
+  // Real problems are never hidden behind the build screen.
+  const needsAttention =
+    !!request && (request.stalled === true || progress.isReconnecting);
+
   return (
-    <StepPanel
-      icon={Loader2}
-      spinIcon
-      tone="info"
-      title={t('onboarding:academy.provisioningTitle', { name: academyName })}
-      description={t('onboarding:academy.provisioningDescription')}
-      testId="academy-provisioning"
+    <AcademyBuildExperience
+      requestId={requestId}
+      academyName={academyName}
+      serverReady={requestStatus === 'ready'}
+      onComplete={() => {
+        finishAcademyBuild(requestId);
+        onSettled();
+      }}
     >
-      {stages}
-    </StepPanel>
+      {needsAttention ? stages : null}
+    </AcademyBuildExperience>
   );
 }
 
@@ -128,22 +156,44 @@ function BrandFollowUp({
 }: {
   readonly requestId: string;
 }): JSX.Element | null {
+  const { t } = useTranslation();
   const progress = useProvisioningProgress(requestId);
   const request = progress.request;
   if (!request) return null;
   const needsAttention =
     isBrandingFailure(request) ||
     ['waiting', 'uploading', 'failed', 'missing'].includes(progress.logo.state);
-  if (!needsAttention) return null;
+  const faviconFailed = progress.favicon.state === 'failed';
+  if (!needsAttention && !faviconFailed) return null;
   return (
-    <div className="mt-4">
-      <ProvisioningProgress
-        request={request}
-        logo={progress.logo}
-        onRetry={() => progress.retry()}
-        isRetrying={progress.isRetrying}
-        retryFailed={!!progress.retryError}
-      />
+    <div className="mt-4 space-y-3">
+      {needsAttention ? (
+        <ProvisioningProgress
+          request={request}
+          logo={progress.logo}
+          onRetry={() => progress.retry()}
+          isRetrying={progress.isRetrying}
+          retryFailed={!!progress.retryError}
+        />
+      ) : null}
+      {faviconFailed ? (
+        <p
+          className="flex flex-wrap items-center gap-2 text-sm text-warning"
+          role="status"
+          data-testid="academy-favicon-failed"
+        >
+          <AlertTriangle className="size-4" aria-hidden />
+          {t('onboarding:academy.faviconFailed')}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={progress.favicon.retry}
+          >
+            {t('onboarding:actions.retry')}
+          </Button>
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -165,12 +215,21 @@ export function AcademyStep({
     readonly name: string;
   }>();
 
-  const isComplete = step?.status === 'complete';
+  useSyncExternalStore(
+    academyBuildStore.subscribe,
+    academyBuildStore.version,
+    academyBuildStore.version
+  );
   const requestId = status.provisioning?.requestId ?? createdRequest?.id;
+  // The build screen is still up on this device: the server may already say
+  // "complete", but the owner sees the ready panel only when it hands back.
+  const buildActive = isAcademyBuildActive(requestId);
+  const isComplete = step?.status === 'complete' && !buildActive;
   const showProgress =
     !isComplete &&
     !!requestId &&
-    (step?.status === 'in_progress' ||
+    (buildActive ||
+      step?.status === 'in_progress' ||
       status.provisioning?.failed === true ||
       !!createdRequest);
 
@@ -201,8 +260,21 @@ export function AcademyStep({
               >
                 {status.academy.host}
               </span>
+              <a
+                href={`https://${status.academy.host}/`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ms-2 inline-flex items-center gap-1 text-primary underline-offset-4 hover:underline"
+                data-testid="academy-ready-visit"
+              >
+                {t('onboarding:academy.visit')}
+                <ExternalLink className="size-3.5" aria-hidden />
+              </a>
             </p>
           ) : null}
+          <p className="mt-3 text-sm text-muted-foreground">
+            {t('onboarding:academy.nextHint')}
+          </p>
           {status.provisioning?.requestId || createdRequest ? (
             <BrandFollowUp
               requestId={
@@ -228,6 +300,7 @@ export function AcademyStep({
         <AcademySetupForm
           organizationId={organization.id}
           submitLabelKey="onboarding:steps.academy.submit"
+          brandStudioOpen
           onCreated={(request) => {
             setCreatedRequest({
               id: request.id,
