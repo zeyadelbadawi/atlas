@@ -553,46 +553,22 @@ export function getDashboardNavigation(
           requiredPermissions: ['tenant.billing.view'],
           matchNestedPaths: true,
         },
-      ],
-      showDivider: true,
-    },
-    {
-      id: 'user',
-      labelKey: 'navigation:sections.user',
-      items: [
         {
-          id: 'profile',
-          labelKey: 'navigation:items.profile',
-          path: DASHBOARD_ROUTES.profile,
-          icon: User,
-          requiresAuth: true,
-        },
-        {
-          id: 'notifications',
-          labelKey: 'navigation:items.notifications',
-          path: DASHBOARD_ROUTES.notifications,
-          icon: Bell,
-          requiresAuth: true,
-        },
-        {
-          // In the USER section, with no `requiredRoles`: support is for
-          // everyone who can sign in. A student who cannot open a ticket
-          // has no way to report a problem, and per-ticket authorization
-          // is enforced by RLS rather than by hiding the page.
+          // Profile and Notifications live in the account menu (top bar);
+          // Support stays in the sidebar as the last Cloud Services item.
+          // No `requiredRoles`: support is for everyone who can sign in,
+          // and per-ticket authorization is enforced by RLS. Hidden from
+          // Platform Owners, who answer cases in the platform console.
           id: 'support',
           labelKey: 'navigation:items.support',
           path: DASHBOARD_ROUTES.support,
           icon: LifeBuoy,
           requiresAuth: true,
           matchNestedPaths: true,
-          // Raising a support ticket is a CUSTOMER action — it opens a case
-          // against Atlas. A Platform Owner is the other end of that
-          // conversation and answers cases from the platform Support
-          // console (`platform-support`), so this entry only ever led them
-          // to a form for filing tickets with themselves.
           tenantSurface: true,
         },
       ],
+      showDivider: true,
     },
     {
       /*
