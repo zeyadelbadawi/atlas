@@ -222,12 +222,22 @@ export async function findCourseByTitle(
  * numbers are not unique across accounts, so one number serves every test
  * learner; it is never verified or messaged.
  */
-export const TEST_MOBILE_NUMBER = '01012345678';
+/**
+ * A fresh, valid Egyptian mobile number (`010` + 8 digits). Phone numbers
+ * are unique per account, so every sign-up needs its own: the time-based
+ * digits keep consecutive runs apart, the random tail keeps parallel
+ * workers apart.
+ */
+export function uniqueTestMobileNumber(): string {
+  const time = String(Date.now() % 10_000).padStart(4, '0');
+  const random = String(Math.floor(Math.random() * 10_000)).padStart(4, '0');
+  return `010${time}${random}`;
+}
 
-/** Fills the sign-up form's mobile number, which the form requires. */
+/** Fills the sign-up form's mobile number (required) with a unique number. */
 export async function fillSignUpPhone(page: Page): Promise<void> {
   const phone = page.locator('#phoneNumber');
-  if (await phone.count()) await phone.fill(TEST_MOBILE_NUMBER);
+  if (await phone.count()) await phone.fill(uniqueTestMobileNumber());
 }
 
 /**

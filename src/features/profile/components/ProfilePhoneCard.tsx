@@ -48,7 +48,7 @@ import {
   isPhoneCountry,
   refinePhone,
 } from '@components/phone';
-import { useServerValidation } from '@forms';
+import { isFieldViolationError, useServerValidation } from '@forms';
 import { useToast } from '@app/providers';
 import type { ApiError } from '@api';
 import { useRemovePhone, useUpdatePhone, useUserPhone } from '../hooks';
@@ -142,8 +142,8 @@ export function ProfilePhoneCard(): JSX.Element {
 
   const updateError = updatePhone.error;
   const hasFieldViolations =
-    updateError?.kind === 'validation' &&
-    (updateError.violations?.length ?? 0) > 0;
+    isFieldViolationError(updateError) &&
+    (updateError?.violations?.length ?? 0) > 0;
 
   return (
     <Card id="phone" data-testid="profile-phone-card">

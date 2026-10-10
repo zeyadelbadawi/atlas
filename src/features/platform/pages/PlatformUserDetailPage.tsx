@@ -25,6 +25,7 @@ import { Trash2 } from 'lucide-react';
 import { usePlatformUser } from '../hooks';
 import { DeleteUserDialog } from '../components/DeleteUserDialog';
 import { getPlatformUserStatusTone } from '../utils/platform-status.utils';
+import { PhoneNumberDisplay } from '@components/phone';
 
 export default function PlatformUserDetailPage(): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -105,6 +106,18 @@ export default function PlatformUserDetailPage(): JSX.Element {
               </p>
               <p className="text-sm text-foreground">{user.email}</p>
             </div>
+            {user.phone ? (
+              <div className="space-y-1">
+                <p className="text-xs text-muted-foreground">
+                  {t('platform:users.table.phone')}
+                </p>
+                <PhoneNumberDisplay
+                  e164={user.phone.e164}
+                  country={user.phone.country}
+                  className="text-sm text-foreground"
+                />
+              </div>
+            ) : null}
             <div className="space-y-1">
               <p className="text-xs text-muted-foreground">
                 {t('platform:users.table.lastSignIn')}

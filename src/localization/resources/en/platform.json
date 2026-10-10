@@ -101,6 +101,7 @@
     "table": {
       "name": "Name",
       "email": "Email",
+      "phone": "Phone",
       "status": "Status",
       "organizations": "Organizations",
       "lastSignIn": "Last sign-in",

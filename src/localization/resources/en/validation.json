@@ -50,5 +50,6 @@
   "invalidPhone": "Enter a valid phone number for the selected country",
   "phoneCountryMismatch": "This number belongs to another country. Choose that country or check the number.",
   "phoneNotMobile": "Enter a mobile number — landlines, toll-free and premium-rate numbers can’t receive messages.",
-  "invalidPhoneCountry": "Choose a supported country"
+  "invalidPhoneCountry": "Choose a supported country",
+  "phoneTaken": "This phone number is already in use. Enter a different number."
 }

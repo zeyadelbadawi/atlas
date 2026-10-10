@@ -9,7 +9,11 @@ export * from './form.utils';
 export * from './validation.schemas';
 export { useFormSubmit } from './useFormSubmit';
 export type { UseFormSubmitOptions } from './useFormSubmit';
-export { useServerValidation } from './useServerValidation';
+export {
+  isFieldViolationError,
+  PHONE_TAKEN_ERROR_KEY,
+  useServerValidation,
+} from './useServerValidation';
 export {
   useNameConflictError,
   nameConflictFromError,

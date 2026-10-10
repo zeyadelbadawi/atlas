@@ -21,6 +21,7 @@ import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { usePlatformUsers } from '../hooks';
 import { getPlatformUserStatusTone } from '../utils/platform-status.utils';
 import type { PlatformUserSummary } from '@types';
+import { PhoneNumberDisplay } from '@components/phone';
 
 export default function PlatformUserListPage(): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -65,6 +66,13 @@ export default function PlatformUserListPage(): JSX.Element {
             <p className="text-xs text-muted-foreground">
               {row.original.email}
             </p>
+            {row.original.phone ? (
+              <PhoneNumberDisplay
+                e164={row.original.phone.e164}
+                country={row.original.phone.country}
+                className="text-xs text-muted-foreground"
+              />
+            ) : null}
           </div>
         ),
       },
