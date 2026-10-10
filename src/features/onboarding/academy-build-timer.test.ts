@@ -12,8 +12,8 @@ import {
   readAcademyBuild,
   resetAcademyBuildTimersForTests,
   startAcademyBuild,
-} from './utils/academy-build-timer';
-import { buildProgressAt } from './utils/academy-build-progress';
+} from '@components/academy-build';
+import { buildProgressAt } from '@components/academy-build';
 
 afterEach(() => {
   window.sessionStorage.clear();

@@ -62,6 +62,7 @@ import {
 import { generateProvisioningIdempotencyKey } from '../utils/idempotency.utils';
 import { pendingLogoStore } from '../logo/pending-logo';
 import { pendingFaviconStore } from '../logo/pending-favicon';
+import { startAcademyBuild } from '@components/academy-build';
 import { SetupThemePicker } from './SetupThemePicker';
 import {
   SetupPaymentMethods,
@@ -221,6 +222,9 @@ export function AcademySetupForm({
           if (choice?.faviconFile) {
             pendingFaviconStore.set(request.id, choice.faviconFile);
           }
+          // Start the academy build screen's window now, so a fast
+          // provisioning still shows it (onboarding and the status page).
+          startAcademyBuild(request.id);
           // Submitted means saved: clear the unsaved-changes guard so the
           // move to the status page isn't met with "Leave without saving?".
           // `reset` alone reaches the guard only after the next render;

@@ -17,7 +17,7 @@ import { visibleSteps } from '../utils/onboarding-status.utils';
 import {
   academyBuildStore,
   isAcademyBuildActive,
-} from '../utils/academy-build-timer';
+} from '@components/academy-build';
 import { StepStatusIcon, StepStatusText } from './StepStatusIndicator';
 
 export interface OnboardingProgressRailProps {
