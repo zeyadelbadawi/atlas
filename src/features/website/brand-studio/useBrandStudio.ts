@@ -156,12 +156,14 @@ export function useBrandStudio({
       }, SLOW_ANALYSIS_MS);
       try {
         const inspected = await inspectLogoFile(file);
+        // Every valid pick is handed on, even one a newer pick superseded:
+        // the caller orders its own uploads (the later pick wins there).
+        if (inspected.ok) onAccepted?.();
         if (run.current !== ticket) return;
         if (!inspected.ok) {
           setAnalysis({ kind: 'error', error: inspected.error });
           return;
         }
-        onAccepted?.();
         const decodable =
           inspected.logo.kind === 'svg'
             ? await rasterizeSvg(inspected.logo.blob)
