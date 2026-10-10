@@ -2,11 +2,11 @@
 
 | | |
 |---|---|
-| Period | 9–10 October 2026 (follow-up release on 10 October, §14) |
+| Period | 9–10 October 2026 (follow-up releases on 10 October, §14 and §15) |
 | Follows | [ATLAS_ENGINEERING_INITIATIVE_REPORT.md](./ATLAS_ENGINEERING_INITIATIVE_REPORT.md) (its deferred items are the starting point here) |
 | Repositories | `zeyadelbadawi/atlas` (frontend), `zeyadelbadawi/atlas-backend` (backend) |
-| Pull requests | [atlas-backend#42](https://github.com/zeyadelbadawi/atlas-backend/pull/42) (merged as `21b27b5`), [atlas#34](https://github.com/zeyadelbadawi/atlas/pull/34) (merged as `652f4a3`); deploy fixes [atlas#35](https://github.com/zeyadelbadawi/atlas/pull/35), [atlas#36](https://github.com/zeyadelbadawi/atlas/pull/36), [atlas#37](https://github.com/zeyadelbadawi/atlas/pull/37); follow-up [atlas-backend#43](https://github.com/zeyadelbadawi/atlas-backend/pull/43) (merged as `edc3672`) and [atlas#39](https://github.com/zeyadelbadawi/atlas/pull/39) (merged as `6f4c246`) |
-| Production | `https://atlass.dpdns.org`: backend Deploy #267 (17:58 UTC), frontend Deploy #155 (live 22:12 UTC), both 9 October 2026; follow-up backend Deploy #268 (00:31 UTC) and frontend Deploy #158 (live 02:00 UTC), 10 October 2026 |
+| Pull requests | [atlas-backend#42](https://github.com/zeyadelbadawi/atlas-backend/pull/42) (merged as `21b27b5`), [atlas#34](https://github.com/zeyadelbadawi/atlas/pull/34) (merged as `652f4a3`); deploy fixes [atlas#35](https://github.com/zeyadelbadawi/atlas/pull/35), [atlas#36](https://github.com/zeyadelbadawi/atlas/pull/36), [atlas#37](https://github.com/zeyadelbadawi/atlas/pull/37); follow-up [atlas-backend#43](https://github.com/zeyadelbadawi/atlas-backend/pull/43) (merged as `edc3672`) and [atlas#39](https://github.com/zeyadelbadawi/atlas/pull/39) (merged as `6f4c246`); onboarding [atlas#41](https://github.com/zeyadelbadawi/atlas/pull/41) (merged as `371e572`) |
+| Production | `https://atlass.dpdns.org`: backend Deploy #267 (17:58 UTC), frontend Deploy #155 (live 22:12 UTC), both 9 October 2026; follow-up backend Deploy #268 (00:31 UTC) and frontend Deploy #158 (live 02:00 UTC), 10 October 2026; onboarding frontend Deploy #160 (10 October) |
 | Status of this document | Engineering record. Anything not verified is marked **Not verified**. Nothing here claims the system is "100% secure". These changes reduce specific, named risks. |
 
 ## Contents
@@ -25,7 +25,8 @@
 12. [Deferred Work](#12-deferred-work)
 13. [Deferred: VPS Disk Capacity and Docker Image Retention](#13-deferred-vps-disk-capacity-and-docker-image-retention)
 14. [Follow-up Release — Unique Phone Numbers and Client Owner Sidebar](#14-follow-up-release--unique-phone-numbers-and-client-owner-sidebar)
-15. [Final Status](#15-final-status)
+15. [Follow-up Release — Onboarding Academy Build Screen and Branding in Step 1](#15-follow-up-release--onboarding-academy-build-screen-and-branding-in-step-1)
+16. [Final Status](#16-final-status)
 
 ---
 
@@ -473,13 +474,66 @@ All of this lives in the one navigation config (`src/app/navigation/navigation.c
 3. As the Platform Owner, open Platform → Users: phones show for academy students.
 4. As a Client Owner, check the sidebar: no Revenue & payouts; "Atlas service requests" and "Course orders"; one Add-ons entry; Student Analytics in the Academy section.
 
-## 15. Final Status
+## 15. Follow-up Release — Onboarding Academy Build Screen and Branding in Step 1
+
+Released on 10 October 2026 through [atlas#41](https://github.com/zeyadelbadawi/atlas/pull/41) (merged as `371e572`). Frontend only: no API, schema or permission change.
+
+### 15.1 Academy build screen
+
+**Why:** provisioning finishes in a few seconds. Owners who had just spent a long time on the setup form read that as "a template, not something made for me".
+
+**Behaviour:**
+- After "Create academy", the Academy step shows `AcademyBuildExperience`:
+  - an animated progress ring with a percentage;
+  - ten build stages that tick off in turn: workspace, plan features, theme, website pages, courses page, brand, payments, HTTPS address, content protection, final checks;
+  - rotating "Did you know?" lines, each about a real feature (Arabic/English with RTL, bank/wallet/InstaPay payments, per-learner video watermark, offline reading, certificates).
+- **Duration:** a random 45–75 seconds per provisioning request, or longer when provisioning itself takes longer. The ring holds at 97% until the server reports `ready`.
+- The ready panel ("{name} is set up", a **Visit** link to the live site, the next-step hint) and Continue appear only when **both** the window has passed **and** the server says ready.
+- While the screen is up:
+  - the progress rail shows the Academy step as "In progress";
+  - `/onboarding` resumes on it rather than skipping past.
+
+**Safety:**
+- **Presentation only.** The academy is created exactly as fast as before, and nothing server-side changes.
+- **Failure is never hidden.** A failed request replaces the screen with the failure panel and Retry at once. A stall, or a lost connection while reconnecting, is shown under the screen.
+- **Timer storage:** one window per request, kept in `sessionStorage` (`atlas:academyBuild:<requestId>`) so a reload resumes the same countdown.
+  - It stores only the request id, start time and duration.
+  - Values are validated: the duration must be within 45–75 s, a start time in the future is rejected, and windows older than 30 minutes are ignored.
+  - If storage throws (private mode), the timer lives in memory.
+- With reduced motion the same content shows without movement.
+
+### 15.2 Branding moved into step 1
+
+- The separate **Branding** ("Make it yours") screen is removed. The setup form's "Logo, colours & favicon" block opens by default in onboarding.
+- **Favicon:**
+  - New picker for PNG/ICO up to 1 MB, the same types the backend's favicon validator accepts.
+  - The file waits in memory (`pendingFaviconStore`) and is saved with the existing `PATCH /academies/:id/branding` once the academy is `ready` (`usePendingFaviconSave`, one attempt per action).
+  - A failure shows "Your favicon couldn't be saved" with Retry on the ready panel. It never pretends the save worked.
+- The server still reports the `branding` step (recommended; complete once a logo exists). `resumeScreen()` resumes past it, so there is no redirect loop when the server's `nextStep` is `branding`, and the dashboard setup card links branding to the academy's Brand settings.
+
+### 15.3 Testing and deployment
+
+- tsc and eslint are clean.
+- Onboarding and provisioning Vitest: 7 files, 71 tests. New coverage:
+  - `academy-build-timer.test.ts`: the window range, reload persistence, tampered/stale values ignored, finish clears;
+  - shell tests: the build screen stays up after the server says ready, the rail reads "In progress", and `/onboarding/branding` redirects to the next visible step.
+- CI is green on the PR and on `main` (CI #91).
+- Frontend Deploy #160 succeeded, and production serves `index-Bo8B53jl.js`. The deployed EN/AR translation bundles contain the new build-screen and favicon strings (checked by HTTP).
+
+**Not verified in production** (needs a real account):
+1. A new owner creates an academy: the build screen runs 45–75 s, and a reload mid-way resumes it.
+2. The ready panel appears with Visit, and the favicon shows in the academy site's browser tab.
+3. On a failed provisioning request, the failure panel appears immediately.
+
+**Not changed in this release:** the Plan, Website, First course and Summary onboarding steps.
+
+## 16. Final Status
 
 | Area | Status |
 |---|---|
-| Implementation | **Complete** for WS1, WS2, phone, RTL and watermark; and on 10 October for unique phone numbers, staff/Platform Owner phone visibility and the Client Owner sidebar (§14) |
+| Implementation | **Complete** for WS1, WS2, phone, RTL and watermark; and on 10 October for unique phone numbers, staff/Platform Owner phone visibility and the Client Owner sidebar (§14); the onboarding build screen and branding in step 1 (§15) |
 | Testing | **Complete** for unit, e2e and the journeys in §6 and §14.4. Three local e2e failures are environment-only. No load or axe testing in this release. |
 | CI | **Green** on #42, #34–#37, atlas-backend#43, atlas#39 and on `main`. One red `main` run (`082a428`) found a real SearchInput race, fixed in #36 (§8). |
-| Deployment | **Complete.** Backend Deploy #267 (4 migrations, 17:58 UTC 9 Oct); frontend Deploy #155 (live 22:12 UTC 9 Oct); backend Deploy #268 (1 migration, 00:31 UTC 10 Oct); frontend Deploy #158 (live 02:00 UTC 10 Oct) |
-| Production verification | **Partial.** HTTP and bundle checks in §9 and §14.5 are verified. Signed-in browser checks are **Not verified** and need the §9 and §14.5 checklists. |
+| Deployment | **Complete.** Backend Deploy #267 (4 migrations, 17:58 UTC 9 Oct); frontend Deploy #155 (live 22:12 UTC 9 Oct); backend Deploy #268 (1 migration, 00:31 UTC 10 Oct); frontend Deploy #158 (live 02:00 UTC 10 Oct); onboarding frontend Deploy #160 (10 Oct) |
+| Production verification | **Partial.** HTTP and bundle checks in §9 and §14.5 are verified. Signed-in browser checks are **Not verified** and need the §9, §14.5 and §15.3 checklists. |
 | Known remaining issues | Ops actions (§11); deferred work (§12); VPS disk and image retention **unresolved** (§13) |

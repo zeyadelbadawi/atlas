@@ -9,7 +9,7 @@
 |---|---|
 | Written | 10 October 2026, after the unique-phone / sidebar release reached production |
 | Repositories | `zeyadelbadawi/atlas` (frontend, this repo) and `zeyadelbadawi/atlas-backend` (backend) |
-| `main` at writing | frontend `6f4c246` (plus this docs PR), backend `edc3672` |
+| `main` at writing | frontend `371e572` (plus later docs commits), backend `edc3672` |
 | Production | `https://atlass.dpdns.org` (academy sites on `*.atlass.dpdns.org` and custom domains) |
 | Latest reports | `ATLAS_SECURITY_HARDENING_LOCAL_FIRST_REPORT.md` (+ `ATLAS_SECURITY_HARDENING_DETAILED_WORK_LOG.md`) and `ATLAS_ENGINEERING_INITIATIVE_REPORT.md`, both in this repo |
 | Secrets | Never in this file. Only names and locations (§9) |
@@ -217,12 +217,24 @@ any non-localhost URL. Needs `npm i --prefix /tmp/atlas-tools s3rver`.
   without an active academy).
 - Pinned by `src/app/navigation/client-owner-sidebar-navigation.test.ts`.
 
+### 6.2 New-customer onboarding (since 10 Oct, atlas#41)
+
+- **Steps shown:** Plan (only until complete) → Academy → Website → First course → Summary. There is no separate Branding screen. The logo, colours and **favicon** are chosen in the Academy step's form (brand block open by default). The server still reports a `branding` step, recommended and complete once a logo exists; `resumeScreen()` skips it and the dashboard card links it to Brand settings.
+- **Academy build screen** (`AcademyBuildExperience`): after "Create academy", an animated build screen runs for a random **45–75 s** per request (or longer if provisioning is slower). The ready panel and Continue appear only once the window has passed **and** the server reports `ready`.
+  - **Presentation only.** Failures replace it at once, and stalls show under it.
+  - The window lives in `sessionStorage` (`atlas:academyBuild:<requestId>`: id, start, duration; validated, ignored after 30 min), so a reload resumes it.
+  - Code: `src/features/onboarding/utils/academy-build-timer.ts`, `academy-build-progress.ts`.
+  - **Do not move this timing to the backend, and never block a real failure behind it.**
+- **Favicon from step 1:** saved after `ready` with the ordinary `PATCH /academies/:id/branding` (`usePendingFaviconSave`, in-memory `pendingFaviconStore`). It is lost if the page closes before `ready`; the owner can add it in Brand settings.
+- **Not yet reworked:** the Plan, Website, First course and Summary steps (candidates for a later UX pass).
+
 ---
 
 ## 7. Recent history (newest first)
 
 | Date | What | PRs |
 |---|---|---|
+| 10 Oct | Onboarding: 45–75 s academy build screen; logo, colours and favicon in step 1 (Branding screen removed) | atlas#41 |
 | 10 Oct | Unique phone numbers; owner/manager/Platform Owner phone visibility; Client Owner sidebar cleanup | atlas-backend#43, atlas#39 |
 | 9 Oct | Security hardening (ATO F1–F13, authorization A1–A11, web W1–W15), offline academy sites, phone at sign-up, Arabic RTL, forensic watermark; deploy fixes (Caddy cross-compile, SearchInput race, `mirror.gcr.io`) | atlas-backend#42, atlas#34–#38 |
 | 8–9 Oct | Platform-wide initiative: notification isolation, stale-tab recovery, header/profile, plan feature cleanup, device identity, customer requests, local-first dashboard | see `ATLAS_ENGINEERING_INITIATIVE_REPORT.md` |
@@ -295,7 +307,7 @@ add a disk-usage alert. Current free space: not measured.
   `/sw.js` `no-cache`.
 - **Deploy:** Docker Hub login + digest pinning (and move the backend Dockerfile to the
   mirror or a login); native ARM runners; health path through Caddy.
-- **Product:** card payment gateway adapter; Zoom launch after approvals; customer-request
+- **Product:** UX pass on the remaining onboarding steps (Plan, Website, First course, Summary); card payment gateway adapter; Zoom launch after approvals; customer-request
   attachments and SLA.
 - **Quality:** stabilise flaky journeys (J6, J34, J35, J36, J41, J8b); axe/visual baselines
   for new pages; import cycles (`docs/TECHNICAL_DEBT.md`).

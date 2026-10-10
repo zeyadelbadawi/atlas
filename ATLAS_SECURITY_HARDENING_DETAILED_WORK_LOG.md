@@ -570,3 +570,29 @@ Summary: report §14. PRs [atlas-backend#43](https://github.com/zeyadelbadawi/at
 ### Deployment
 
 Backend Deploy #268 (dispatch, `apply_migrations=true`, owner approved `production-migrations`): backup `atlas-20261010T003042Z.sql.gz`, pre-check `duplicate_number_groups=0`, migration applied, backend/Caddy/renderer healthy at 00:31 UTC, last-good recorded. Then atlas#39 merged; frontend deploy followed automatically (report §14.5).
+
+## 15. Follow-up release (10 October): onboarding build screen, branding in step 1
+
+Summary: report §15. PR [atlas#41](https://github.com/zeyadelbadawi/atlas/pull/41) (`371e572`), frontend Deploy #160.
+
+### Files
+
+- `src/features/onboarding/utils/academy-build-timer.ts`: one build window per request (random 45–75 s), kept in `sessionStorage` and validated (range, no future start, ignored after 30 min), with an in-memory fallback. Exports `startAcademyBuild`, `readAcademyBuild`, `isAcademyBuildActive`, `finishAcademyBuild` and a `useSyncExternalStore`-compatible `academyBuildStore`.
+- `src/features/onboarding/utils/academy-build-progress.ts`: the ten weighted stages, the highlight keys, and `buildProgressAt()`. The percentage is capped at 97 until the server is ready.
+- `src/features/onboarding/components/AcademyBuildExperience.tsx`: the ring, stage list, highlights and `aria-live` status line. Calls `onComplete` once, 1.2 s after window over **and** server ready.
+- `src/features/onboarding/components/AcademyStep.tsx`: `ProvisioningRun` renders the build screen; failure finishes the window and shows the failure panel; stall/reconnecting renders the real `ProvisioningProgress` under it. The step treats the academy as complete only when the build window is not active. The ready panel gains Visit, the next-step hint and the favicon-failed notice.
+- `OnboardingProgressRail.tsx`: shows the academy as in progress while the build is active.
+- `onboarding.constants.ts`, `onboarding-status.utils.ts`, `OnboardingPage.tsx`: `branding` removed from the screens, and `resumeScreen()` added. `BrandingStep.tsx` deleted.
+- `SetupChecklistCard.tsx`: the branding item links to the academy's Brand settings.
+- `src/features/website/brand-studio/SetupBrandStudio.tsx`: favicon picker (PNG/ICO ≤ 1 MB), `defaultOpen`; a favicon alone does not send a palette.
+- `src/features/provisioning/logo/pending-favicon.ts`, `hooks/usePendingFaviconSave.ts`, `useProvisioningProgress.ts` (`favicon`), `AcademySetupForm.tsx` (`brandStudioOpen`, stores the favicon on success).
+- EN/AR `onboarding.json` (`build.*`, `academy.visit`, `academy.nextHint`, `academy.faviconFailed`, new academy description) and `website.json` (`brandStudio.favicon*`, new setup title/help).
+
+### Review
+
+CodeRabbit asked to normalise empty MIME types for the favicon. Kept as is: the picker accepts exactly the backend's types, the same as Brand settings, and has no filename fallback. Its thread was resolved after the explanation.
+
+### Problems met
+
+- Two `react-refresh/only-export-components` warnings: the pure helpers were moved out of the component file.
+- The local e2e journeys were checked: none drives the onboarding academy step, so none waits on the new window.
