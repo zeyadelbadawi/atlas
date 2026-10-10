@@ -2,11 +2,11 @@
 
 | | |
 |---|---|
-| Period | 9 October 2026 |
+| Period | 9–10 October 2026 (follow-up release on 10 October, §14) |
 | Follows | [ATLAS_ENGINEERING_INITIATIVE_REPORT.md](./ATLAS_ENGINEERING_INITIATIVE_REPORT.md) (its deferred items are the starting point here) |
 | Repositories | `zeyadelbadawi/atlas` (frontend), `zeyadelbadawi/atlas-backend` (backend) |
-| Pull requests | [atlas-backend#42](https://github.com/zeyadelbadawi/atlas-backend/pull/42) (merged as `21b27b5`), [atlas#34](https://github.com/zeyadelbadawi/atlas/pull/34) (merged as `652f4a3`); deploy fixes [atlas#35](https://github.com/zeyadelbadawi/atlas/pull/35), [atlas#36](https://github.com/zeyadelbadawi/atlas/pull/36), [atlas#37](https://github.com/zeyadelbadawi/atlas/pull/37) |
-| Production | `https://atlass.dpdns.org`: backend Deploy #267 (17:58 UTC), frontend Deploy #155 (live 22:12 UTC), both 9 October 2026 |
+| Pull requests | [atlas-backend#42](https://github.com/zeyadelbadawi/atlas-backend/pull/42) (merged as `21b27b5`), [atlas#34](https://github.com/zeyadelbadawi/atlas/pull/34) (merged as `652f4a3`); deploy fixes [atlas#35](https://github.com/zeyadelbadawi/atlas/pull/35), [atlas#36](https://github.com/zeyadelbadawi/atlas/pull/36), [atlas#37](https://github.com/zeyadelbadawi/atlas/pull/37); follow-up [atlas-backend#43](https://github.com/zeyadelbadawi/atlas-backend/pull/43) (merged as `edc3672`) and [atlas#39](https://github.com/zeyadelbadawi/atlas/pull/39) (merged as `6f4c246`) |
+| Production | `https://atlass.dpdns.org`: backend Deploy #267 (17:58 UTC), frontend Deploy #155 (live 22:12 UTC), both 9 October 2026; follow-up backend Deploy #268 (00:31 UTC) and frontend Deploy #158 (live 02:00 UTC), 10 October 2026 |
 | Status of this document | Engineering record. Anything not verified is marked **Not verified**. Nothing here claims the system is "100% secure". These changes reduce specific, named risks. |
 
 ## Contents
@@ -24,7 +24,8 @@
 11. [Operations Actions Required](#11-operations-actions-required)
 12. [Deferred Work](#12-deferred-work)
 13. [Deferred: VPS Disk Capacity and Docker Image Retention](#13-deferred-vps-disk-capacity-and-docker-image-retention)
-14. [Final Status](#14-final-status)
+14. [Follow-up Release — Unique Phone Numbers and Client Owner Sidebar](#14-follow-up-release--unique-phone-numbers-and-client-owner-sidebar)
+15. [Final Status](#15-final-status)
 
 ---
 
@@ -140,9 +141,9 @@
 ### 4.1 Phone number
 
 - **Storage:** a `user_phones` table with self-only FORCE RLS, E.164 checks, and verification cleared when the number changes.
-- **API:** `GET/PUT/DELETE /users/me/phone`, plus optional fields on register. The fields are both-or-neither; numbers are mobile only and not unique; changes are limited to 6 per hour.
+- **API:** `GET/PUT/DELETE /users/me/phone`, plus optional fields on register. The fields are both-or-neither; numbers are mobile only; changes are limited to 6 per hour. **Since 10 October each number belongs to one account only (§14).**
 - **UI:** required at sign-up (management and academy), with a searchable country select and SVG flags.
-- **Visibility:** through the profile and the API, only the account itself sees the number. The one exception is the forensic watermark lookup (§4.3): a Platform Owner can see the phone recorded in the encrypted identity snapshot when a video code was issued.
+- **Visibility (9 October release):** through the profile and the API, only the account itself sees the number. Since 10 October academy owners, administrators and managers, the Organization owner and the Platform Owner also see learners' numbers (§14). The other exception is the forensic watermark lookup (§4.3): a Platform Owner can see the phone recorded in the encrypted identity snapshot when a video code was issued.
 - **Verification:** not built yet. It needs a provider contract. WhatsApp OTP is not free: Meta charges every authentication template.
 
 ### 4.2 Arabic right-to-left
@@ -192,6 +193,7 @@ All four are additive. `deploy.sh` backed up the database before applying them i
 2. `20261110000100_staff_member_removal_rls` (A4).
 3. `20261110000200_user_phone`.
 4. `20261110000300_forensic_watermarks`.
+5. `20261110000400_user_phone_unique_staff_read` (10 October, Deploy #268, §14). It aborts without changing anything if two accounts share a number, then adds the unique index and three read functions.
 
 **Rollback:** `deploy.sh --rollback` re-pins the last-good images. It does not revert migrations, and doesn't need to: the old code ignores the new column and tables.
 
@@ -380,13 +382,104 @@ These need production access and were **not** done by this work:
 3. Add Docker log rotation (`max-size` / `max-file`) for every service.
 4. Add a disk-usage alert to the existing Prometheus/Alertmanager stack.
 
-## 14. Final Status
+## 14. Follow-up Release — Unique Phone Numbers and Client Owner Sidebar
+
+Released on 10 October 2026 through [atlas-backend#43](https://github.com/zeyadelbadawi/atlas-backend/pull/43) and [atlas#39](https://github.com/zeyadelbadawi/atlas/pull/39), in the usual order: backend with its migration first, frontend second.
+
+### 14.1 One account per phone number
+
+- **Rule:** a mobile number can belong to one account only, whatever the role (management, academy staff, learner, Platform Owner).
+- **Database:** migration `20261110000400_user_phone_unique_staff_read`:
+  - a guard that raises an error, and changes nothing, if two accounts already share a number. Production had none: the deploy's pre-check recorded `duplicate_number_groups=0`;
+  - a unique index `user_phones_phone_e164_key` on `user_phones.phone_e164`. The index is the real arbiter; it holds even though `user_phones` RLS stays self-only;
+  - `user_phone_taken(e164, exclude_user_id)`, a SECURITY DEFINER function that returns only a boolean.
+- **API:** `POST /auth/register` and `PUT /users/me/phone` check the number first, and also map a race on the index (Prisma P2002) to the same answer:
+  - **409** `errors.auth.phoneTaken`, with a field violation on `phoneNumber` (`validation:phoneTaken`);
+  - the response never names, hints at or links to the account that holds the number;
+  - re-entering your own number is allowed.
+- **UI:** the message appears on the phone field at sign-up (the management sign-up and every academy website's sign-up, which share `RegistrationForm`) and on the profile phone card. EN: "This phone number is already in use. Enter a different number." AR: «رقم الهاتف هذا مستخدم بالفعل. أدخل رقمًا آخر.»
+- **Academy website sign-up** already required the phone (9 October release); no change was needed there.
+
+**Security trade-off, accepted by design:** telling someone "this number is already in use" necessarily tells them that the number has an account. The answer is limited to that single bit:
+- no owner information in any response;
+- registration stays behind the existing `RegisterRateLimitGuard`;
+- profile changes spend the 6-per-hour budget **before** the check, so the profile endpoint cannot be used to test numbers quickly.
+
+### 14.2 Who can see learners' phone numbers
+
+`user_phones` RLS is unchanged (self-only). Staff read numbers only through two SECURITY DEFINER readers that decide from the caller's own identity (`app.current_user_id`), never from anything the caller sends:
+
+| Viewer | Sees | Where |
+|---|---|---|
+| Academy owner, administrator, manager; the Organization owner | Phone numbers of that academy's students | Academy → Students: table (under the email) and student drawer. Reader: `academy_student_phones(academy_id, user_ids[])` via `can_manage_academy_students` |
+| Instructor, staff, learners, anyone else | **Nothing.** The `phone` field is absent from the response | — |
+| Platform Owner | Phone numbers of every user who is a student of any academy | Platform → Users: list and detail. Reader: `platform_student_phones(user_ids[])` via `is_platform_owner` |
+
+Note: the academy **administrator** role is included with owner and manager, because the existing `can_manage_academy_students` rule (used for the roster itself) already includes it.
+
+### 14.3 Client Owner sidebar
+
+| Before | After |
+|---|---|
+| "Revenue & payouts" (AR «الإيرادات والمدفوعات») | Removed from the sidebar. The page and route still exist and stay owner-only |
+| "Requests" (AR «الطلبات»), requests to Atlas for a logo, custom section, theme… | **"Atlas service requests"** (AR «طلبات خدمات أطلس») |
+| "Orders" (AR «الطلبات»), learners' course orders | **"Course orders"** (AR «طلبات شراء الدورات») |
+| An "Add-ons" section with "Browse add-ons", plus "Add-ons" under Cloud Services | **One "Add-ons" entry** (Cloud Services). Its page lists the add-ons on the subscription and the store's available ones, with purchase. The Live Sessions install/enable page stays reachable from the Live Sessions pages |
+| "Student Analytics" under Cloud Services | Moved to the Academy section. It is organization-wide, so it shows with or without an active academy |
+
+All of this lives in the one navigation config (`src/app/navigation/navigation.config.ts`), so desktop, collapsed and mobile sidebars change together. `client-owner-sidebar-navigation.test.ts` pins it.
+
+### 14.4 Testing
+
+- **Backend:**
+  - e2e `user-phone` and `forensic-watermark`: 29/29. PHONE-03 covers the 409, no owner information, own-number re-entry and the profile conflict. PHONE-08 covers who sees phones (owner yes; instructor, outsider and learner get nothing from both readers; Platform Owner yes);
+  - roster, platform control plane, tenant isolation, RBAC, instructor, identity surfaces and academies e2e: 99/99;
+  - unit tests (identity, learning, platform): 484 pass; lint and typecheck clean.
+- **Frontend:** typecheck and lint clean; Vitest on navigation, customer requests, forms, auth, profile, academy, platform and phone: 72 files, 636 tests, plus the new sidebar test.
+- **CI:** green on both PRs (backend static checks, 3 e2e shards and the aggregate; frontend checks and the accessibility/theme job).
+- **Problems met:**
+  - the local migration refused to run because the Playwright sign-up helper had registered one fixed number many times. This proved the guard; the helper now generates a unique number per sign-up (`uniqueTestMobileNumber()`);
+  - parallel e2e suites shared a fixed number, and one suite's cleanup deleted another's phone. Each suite now owns its own numbers.
+
+### 14.5 Deployment and verification
+
+1. atlas-backend#43 merged (`edc3672`).
+2. Backend Deploy #268 dispatched with `apply_migrations=true`; the owner approved `production-migrations`. It:
+   - backed up the database (`atlas-20261010T003042Z.sql.gz`, uploaded to the backup bucket);
+   - recorded the pre-check (`duplicate_number_groups=0`);
+   - applied `20261110000400_user_phone_unique_staff_read` (171 migrations in total);
+   - recreated the backend; backend, Caddy and the renderer reported healthy (00:31 UTC);
+   - recorded the last-good digests.
+3. The automatic backend Deploy #269 that followed Backend CI on `main` found nothing pending and redeployed the same image (no approval needed).
+4. atlas#39 merged (`6f4c246`). The first CI run on `main` was cancelled at its 45-minute limit: headless Chromium crashed in `arabic-line-spacing.spec.ts` ("Target page, context or browser has been closed") and the job hung. The identical tree had passed every check on the PR. The failed job was re-run once and passed.
+5. Frontend Deploy #158 built both images and ran `deploy.sh --frontend-only`. Production served the new bundle (`/assets/index-B5idt4oF.js`) from **02:00 UTC**.
+
+**Verified in production (HTTP, unauthenticated):**
+
+| Check | Result |
+|---|---|
+| Migration applied | Deploy #268 log: "Applying migration `20261110000400_user_phone_unique_staff_read`", "All migrations have been successfully applied" |
+| Phone route guarded | `GET /api/v1/users/me/phone` → 401 |
+| Platform users route guarded | `GET /api/v1/platform-users` → 401 |
+| Register still accepts the phone fields | violations only for `name`, `email`, `password` |
+| New frontend live | `/` references `/assets/index-B5idt4oF.js` (was `index-Bg5Hwlk5.js`) |
+| Sidebar in the deployed bundle | The navigation chunk lists `student-analytics` directly after `academy-provisioning` (academy section); no `academy-revenue` or `add-ons-catalog` entry exists in any of the 252 chunks fetched |
+| New labels and message in the deployed bundle | EN chunk: "Atlas service requests", "Course orders", "This phone number is already in use. Enter a different number."; AR chunk: «طلبات شراء الدورات» and the AR phone message |
+
+
+**Not verified in production** (needs real accounts; no production data was used):
+1. Sign up with a number that another account already uses: the field shows the "already in use" message.
+2. As an academy owner or manager, open Students: each learner's phone shows under the email, and in the drawer. As an instructor, no phone appears.
+3. As the Platform Owner, open Platform → Users: phones show for academy students.
+4. As a Client Owner, check the sidebar: no Revenue & payouts; "Atlas service requests" and "Course orders"; one Add-ons entry; Student Analytics in the Academy section.
+
+## 15. Final Status
 
 | Area | Status |
 |---|---|
-| Implementation | **Complete** for WS1, WS2, phone, RTL and watermark |
-| Testing | **Complete** for unit, e2e and the journeys in §6. Three local e2e failures are environment-only. No load or axe testing in this release. |
-| CI | **Green** on #42, #34–#37 and on `main` `ed343fe`. One red `main` run (`082a428`) found a real SearchInput race, fixed in #36 (§8). |
-| Deployment | **Complete.** Backend Deploy #267 (4 migrations, 17:58 UTC); frontend Deploy #155 (live 22:12 UTC) |
-| Production verification | **Partial.** Backend and frontend HTTP and bundle checks in §9 are verified. Signed-in browser checks are **Not verified** and need the §9 checklist. |
+| Implementation | **Complete** for WS1, WS2, phone, RTL and watermark; and on 10 October for unique phone numbers, staff/Platform Owner phone visibility and the Client Owner sidebar (§14) |
+| Testing | **Complete** for unit, e2e and the journeys in §6 and §14.4. Three local e2e failures are environment-only. No load or axe testing in this release. |
+| CI | **Green** on #42, #34–#37, atlas-backend#43, atlas#39 and on `main`. One red `main` run (`082a428`) found a real SearchInput race, fixed in #36 (§8). |
+| Deployment | **Complete.** Backend Deploy #267 (4 migrations, 17:58 UTC 9 Oct); frontend Deploy #155 (live 22:12 UTC 9 Oct); backend Deploy #268 (1 migration, 00:31 UTC 10 Oct); frontend Deploy #158 (live 02:00 UTC 10 Oct) |
+| Production verification | **Partial.** HTTP and bundle checks in §9 and §14.5 are verified. Signed-in browser checks are **Not verified** and need the §9 and §14.5 checklists. |
 | Known remaining issues | Ops actions (§11); deferred work (§12); VPS disk and image retention **unresolved** (§13) |

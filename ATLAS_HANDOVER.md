@@ -1,3 +1,6 @@
+> **Superseded (10 Oct 2026).** The current handover for the whole project is
+> [`ATLAS_FULL_PROJECT_HANDOVER_2026-10-10.md`](./ATLAS_FULL_PROJECT_HANDOVER_2026-10-10.md). This file is kept as history.
+
 # ATLAS — COMPLETE PROJECT HANDOVER
 
 **Generated:** 12 September 2026, by Claude (Opus 5), as a documentation-only task.
