@@ -144,7 +144,9 @@ export function useBrandStudio({
   );
 
   const analyzeFile = useCallback(
-    async (file: Blob) => {
+    // `onAccepted` runs only once the file passes `inspectLogoFile` (size,
+    // type, dimensions), so callers never upload/keep a rejected logo.
+    async (file: Blob, onAccepted?: () => void) => {
       lastFile.current = file;
       const ticket = ++run.current;
       setAnalysis({ kind: 'analyzing', slow: false });
@@ -159,6 +161,7 @@ export function useBrandStudio({
           setAnalysis({ kind: 'error', error: inspected.error });
           return;
         }
+        onAccepted?.();
         const decodable =
           inspected.logo.kind === 'svg'
             ? await rasterizeSvg(inspected.logo.blob)

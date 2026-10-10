@@ -260,8 +260,8 @@ export function BrandStudio({
                 const file = event.target.files?.[0];
                 event.target.value = '';
                 if (!file) return;
-                onLogoPicked?.(file);
-                void actions.analyzeFile(file);
+                // Upload/keep the logo only after it passes validation.
+                void actions.analyzeFile(file, () => onLogoPicked?.(file));
               }}
             />
           </div>
