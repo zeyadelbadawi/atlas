@@ -113,7 +113,7 @@ export function PlanEditorDialog({
     pickPlanFeatures({})
   );
   const [amount, setAmount] = useState('');
-  const [currency, setCurrency] = useState('USD');
+  const [currency, setCurrency] = useState('EGP');
   const [yearlyAmount, setYearlyAmount] = useState('');
   const [trialEligible, setTrialEligible] = useState(false);
   const [trialDays, setTrialDays] = useState('');
@@ -139,7 +139,7 @@ export function PlanEditorDialog({
     setAmount(
       plan.pricing?.amount !== undefined ? String(plan.pricing.amount) : ''
     );
-    setCurrency(plan.pricing?.currency ?? 'USD');
+    setCurrency(plan.pricing?.currency ?? 'EGP');
     setYearlyAmount(
       plan.pricing?.yearlyAmount !== undefined
         ? String(plan.pricing.yearlyAmount)
