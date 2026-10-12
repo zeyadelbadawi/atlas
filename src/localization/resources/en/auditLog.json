@@ -610,7 +610,8 @@
       "cancelled": "{{actor}} cancelled the subscription",
       "grace_started": "The subscription entered its grace period",
       "expired": "The subscription expired",
-      "cancelled_at_period_end": "The subscription ended at the close of its billing period"
+      "cancelled_at_period_end": "The subscription ended at the close of its billing period",
+      "scheduled_plan_change_applied": "The scheduled plan change took effect at the end of the paid period"
     },
     "add_on": {
       "install": "{{actor}} added the add-on {{addOn}}",

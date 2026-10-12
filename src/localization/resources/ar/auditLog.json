@@ -610,7 +610,8 @@
       "cancelled": "{{actor}} ألغى الاشتراك",
       "grace_started": "دخل الاشتراك فترة السماح",
       "expired": "انتهى الاشتراك",
-      "cancelled_at_period_end": "انتهى الاشتراك بنهاية فترة الفوترة"
+      "cancelled_at_period_end": "انتهى الاشتراك بنهاية فترة الفوترة",
+      "scheduled_plan_change_applied": "طُبّق تغيير الباقة المجدول عند نهاية الفترة المدفوعة"
     },
     "add_on": {
       "install": "{{actor}} أضاف الإضافة {{addOn}}",

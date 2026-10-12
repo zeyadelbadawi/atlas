@@ -169,6 +169,7 @@ export const AUDIT_ACTION_CATEGORIES: Readonly<Record<string, AuditCategory>> =
     'subscription.grace_started': 'subscription',
     'subscription.expired': 'subscription',
     'subscription.cancelled_at_period_end': 'subscription',
+    'subscription.scheduled_plan_change_applied': 'subscription',
     'add_on.install': 'subscription',
     'add_on.enable': 'subscription',
     'add_on.disable': 'subscription',

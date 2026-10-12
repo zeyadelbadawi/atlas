@@ -90,7 +90,8 @@
     "cancelAtPeriodEnd": "لن يتم تجديد اشتراكك في نهاية الفترة الحالية.",
     "featuresTitle": "الإضافات",
     "featuresSubtitle": "إمكانات تُضاف إلى خطتك بشكل منفصل.",
-    "cancelSubscription": "إلغاء الاشتراك"
+    "cancelSubscription": "إلغاء الاشتراك",
+    "scheduledChange": "ستتغير باقتك إلى {{plan}} في {{date}}. وحتى ذلك الحين تحتفظ بكل ما في باقتك الحالية."
   },
   "usage": {
     "title": "الاستخدام",

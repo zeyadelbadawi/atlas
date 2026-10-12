@@ -82,7 +82,8 @@
     "cancelAtPeriodEnd": "Your subscription will not renew at the end of the current period.",
     "featuresTitle": "Add-ons",
     "featuresSubtitle": "Capabilities you add to your plan separately.",
-    "cancelSubscription": "Cancel subscription"
+    "cancelSubscription": "Cancel subscription",
+    "scheduledChange": "Your plan changes to {{plan}} on {{date}}. Until then you keep everything in your current plan."
   },
   "usage": {
     "title": "Usage",

@@ -155,6 +155,16 @@ export interface TenantSubscription {
   readonly giftedDays?: number;
   readonly giftedStartsAt?: string;
   readonly giftedEndsAt?: string;
+  /**
+   * B0-BIL-04 — a smaller plan already bought that takes over at
+   * `effectiveAt` (the end of the current paid period). Until then the
+   * current plan and its limits apply.
+   */
+  readonly scheduledChange?: {
+    readonly planId: string;
+    readonly planName: string;
+    readonly effectiveAt: string;
+  };
 }
 
 /** One resource's usage against its (possibly unlimited) limit. */
