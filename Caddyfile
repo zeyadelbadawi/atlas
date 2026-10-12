@@ -142,6 +142,29 @@
 	header @app_shell ?Cache-Control "no-cache"
 }
 
+# B0-WEB-08 — the service worker script must be revalidated on every
+# load so a deploy (or the VITE_OFFLINE_SHELL=off kill switch) reaches
+# browsers promptly. Set explicitly rather than relying on the
+# `static_cache` fallback. NOTE: Cloudflare's zone Browser Cache TTL
+# (default 4 h) overrides any origin max-age shorter than itself for files
+# it caches, which is why the live header reads max-age=14400; the owner
+# side of the fix is a Cloudflare Cache Rule for /sw.js (Browser TTL:
+# respect origin). Browsers already bypass the HTTP cache for the worker's
+# own update check (`updateViaCache` defaults to 'imports').
+#
+# B0-LRN-10 — certificate verification pages show a learner's name,
+# course and dates: never indexed, on any host. Deferred so a server-
+# rendered response cannot drop it; robots.txt deliberately does NOT
+# disallow /verify/, or crawlers could not read this header.
+(page_policy_headers) {
+	header /sw.js Cache-Control "no-cache"
+	@verify_page path /verify /verify/*
+	header @verify_page {
+		X-Robots-Tag "noindex, nofollow"
+		defer
+	}
+}
+
 # P63g — HSTS is split by ownership. Atlas owns the whole platform tree,
 # so `includeSubDomains` is right there. A customer's custom domain is
 # NOT Atlas's to make policy for: asserting `includeSubDomains` on
@@ -298,6 +321,7 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 		import hsts_platform
 		root * /srv
 		import static_cache
+		import page_policy_headers
 		# Academy subdomains only: the platform itself (apex, www) is the
 		# dashboard and is never server-rendered.
 		@academy_page {
@@ -379,6 +403,7 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 		import hsts_custom_domain
 		root * /srv
 		import static_cache
+		import page_policy_headers
 		# Every host here is an Academy's connected domain.
 		@academy_page {
 			expression {env.ATLAS_SSR} == "on"

@@ -10,7 +10,7 @@
  *
  * Works without a session: the code is the credential.
  */
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { CertificateVerifySheet } from '../components/CertificateVerifySheet';
@@ -43,6 +43,33 @@ export interface CertificateVerifyPageProps {
   readonly renderFrame?: (frame: CertificateVerifyFrame) => ReactNode;
 }
 
+/**
+ * B0-LRN-10 — a verification sheet names a learner, a course and dates:
+ * it must never be indexed. The edge also sends `X-Robots-Tag` for
+ * `/verify/*` (Caddyfile); this covers the document itself on every host.
+ * The previous value is restored on leave so a later page in the same
+ * session is not left unindexable.
+ */
+function useNoIndex(): void {
+  useEffect(() => {
+    let tag = document.head.querySelector<HTMLMetaElement>(
+      'meta[name="robots"]'
+    );
+    const previous = tag?.getAttribute('content') ?? null;
+    const created = !tag;
+    if (!tag) {
+      tag = document.createElement('meta');
+      tag.setAttribute('name', 'robots');
+      document.head.appendChild(tag);
+    }
+    tag.setAttribute('content', 'noindex,nofollow');
+    return () => {
+      if (created) tag?.remove();
+      else if (previous !== null) tag?.setAttribute('content', previous);
+    };
+  }, []);
+}
+
 /** Translates one key at the point where the frame renders it (see `CertificateVerifyFrame.title`). */
 function FrameText({ translationKey }: { readonly translationKey: string }): JSX.Element {
   const { t } = useTranslation();
@@ -53,6 +80,7 @@ export default function CertificateVerifyPage({
   renderFrame,
 }: CertificateVerifyPageProps): JSX.Element {
   const { code = '' } = useParams<{ code: string }>();
+  useNoIndex();
   const normalizedCode = code.trim();
 
   const title = <FrameText translationKey="certificates:verify.title" />;

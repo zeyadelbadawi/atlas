@@ -278,3 +278,34 @@ describe('CertificateVerifyPage heading language', () => {
     RENDER_TIMEOUT
   );
 });
+
+/** B0-LRN-10 — the verification sheet is never indexed; leaving restores the page's previous robots value. */
+describe('CertificateVerifyPage — robots', () => {
+  it('marks the document noindex while shown and restores the previous value', () => {
+    const existing = document.createElement('meta');
+    existing.setAttribute('name', 'robots');
+    existing.setAttribute('content', 'index,follow');
+    document.head.appendChild(existing);
+    try {
+      answer(undefined, { isLoading: true });
+      show();
+      expect(
+        document.head
+          .querySelector('meta[name="robots"]')
+          ?.getAttribute('content')
+      ).toBe('noindex,nofollow');
+      cleanup();
+      expect(existing.getAttribute('content')).toBe('index,follow');
+    } finally {
+      existing.remove();
+    }
+  });
+
+  it('removes the tag it created when there was none', () => {
+    answer(undefined, { isLoading: true });
+    show();
+    expect(document.head.querySelector('meta[name="robots"]')).not.toBeNull();
+    cleanup();
+    expect(document.head.querySelector('meta[name="robots"]')).toBeNull();
+  });
+});
