@@ -82,7 +82,7 @@
     "general": "General",
     "generalDescription": "Your academy's name, web address, and description — this is what students and staff see first.",
     "localization": "Localization",
-    "localizationDescription": "The default language, timezone, and currency used across your academy.",
+    "localizationDescription": "Language sets the language of your academy's emails and certificates. Timezone sets when email digests are sent. Your website's main address is in English, with Arabic pages under /ar. Course prices use the currency set on each course.",
     "contact": "Contact",
     "contactDescription": "How students and staff can reach you — shown on your academy's public pages.",
     "branding": "Branding",
