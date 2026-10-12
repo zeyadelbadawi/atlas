@@ -314,11 +314,12 @@
     "unpublishAction": "إلغاء نشر الدورة",
     "publishDialog": {
       "title": "نشر هذه الدورة؟",
-      "descriptionWithCurriculum": "ستصبح دورتك مرئية وفقًا لإعداد الظهور المحدد.",
-      "descriptionNoCurriculum": "لا يحتوي هذا المنهج على أي محتوى بعد. يمكنك نشره وإضافة الدروس لاحقًا.",
+      "description": "ستصبح دورتك مرئية وفقًا لإعداد الظهور المحدد.",
       "confirmLabel": "نشر",
       "cancelLabel": "إلغاء"
     },
+    "publishBlockedTitle": "قبل أن تتمكن من النشر:",
+    "openCurriculum": "افتح المنهج",
     "unpublishDialog": {
       "title": "إلغاء نشر هذه الدورة؟",
       "description": "ستعود الدورة إلى وضع المسودة ولن تكون مرئية وفقًا لإعداد الظهور المحدد.",

@@ -314,11 +314,12 @@
     "unpublishAction": "Unpublish Course",
     "publishDialog": {
       "title": "Publish this course?",
-      "descriptionWithCurriculum": "Your course will become visible according to its configured visibility.",
-      "descriptionNoCurriculum": "This course doesn't have any curriculum yet. You can still publish it and add lessons later.",
+      "description": "Your course will become visible according to its configured visibility.",
       "confirmLabel": "Publish",
       "cancelLabel": "Cancel"
     },
+    "publishBlockedTitle": "Before you can publish:",
+    "openCurriculum": "Open the curriculum",
     "unpublishDialog": {
       "title": "Unpublish this course?",
       "description": "The course will return to draft and won't be visible per its configured visibility.",
