@@ -148,7 +148,8 @@
     "invalidCredentials": "Invalid email or password.",
     "crossOriginSession": "Your session couldn't be verified for this site. Please sign in again.",
     "platformOwnerTwoFactorRequired": "Platform Owner tools need an authenticator app on your account. Set up two-step verification in your security settings, then try again.",
-    "phoneTaken": "This phone number is already in use. Enter a different number."
+    "phoneTaken": "This phone number is already in use. Enter a different number.",
+    "setPasswordBeforeTwoFactor": "Your account doesn't have a password yet, and two-factor authentication needs one. Sign out, choose \"Forgot password?\" on the sign-in page to set a password, then turn on two-factor authentication."
   },
   "subscription": {
     "required": "An active subscription is required to make this change."
