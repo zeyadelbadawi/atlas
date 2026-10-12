@@ -652,6 +652,11 @@
       },
       "sessions": {
         "revoked": "{{actor}}’s other sessions were signed out"
+      },
+      "two_factor": {
+        "enabled": "{{actor}} turned on two-factor authentication",
+        "disabled": "{{actor}} turned off two-factor authentication",
+        "reset_by_operator": "{{actor}} reset a user’s two-factor authentication"
       }
     },
     "password_reset": {

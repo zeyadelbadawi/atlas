@@ -652,6 +652,11 @@
       },
       "sessions": {
         "revoked": "تم تسجيل خروج الجلسات الأخرى لـ {{actor}}"
+      },
+      "two_factor": {
+        "enabled": "فعّل {{actor}} المصادقة الثنائية",
+        "disabled": "أوقف {{actor}} المصادقة الثنائية",
+        "reset_by_operator": "أعاد {{actor}} ضبط المصادقة الثنائية لحساب مستخدم"
       }
     },
     "password_reset": {
