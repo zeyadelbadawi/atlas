@@ -85,8 +85,6 @@ const LIMIT_LABELS = {
     'Staff',
     'Courses',
     'General storage',
-    'Video storage',
-    'Recorded sessions',
   ],
   ar: [
     'الأكاديميات',
@@ -95,9 +93,16 @@ const LIMIT_LABELS = {
     'الموظفون',
     'الدورات',
     'التخزين العام',
-    'تخزين الفيديو',
-    'الجلسات المسجّلة',
   ],
+} as const;
+
+/**
+ * B0-MED-04 — allowances no academy can use yet: video storage (no hosted
+ * video authoring) and recorded sessions (Live Sessions unlaunched).
+ */
+const UNUSABLE_LIMIT_LABELS = {
+  en: ['Video storage', 'Recorded sessions'],
+  ar: ['تخزين الفيديو', 'الجلسات المسجّلة'],
 } as const;
 
 afterEach(() => cleanup());
@@ -132,6 +137,13 @@ describe.each(['en', 'ar'] as const)(
       const text = renderDialog();
       for (const label of LIMIT_LABELS[language]) {
         expect(text.split(label).length - 1).toBeGreaterThanOrEqual(2);
+      }
+    });
+
+    it('shows no allowance an academy cannot use yet (B0-MED-04)', () => {
+      const text = renderDialog();
+      for (const label of UNUSABLE_LIMIT_LABELS[language]) {
+        expect(text).not.toContain(label);
       }
     });
   }

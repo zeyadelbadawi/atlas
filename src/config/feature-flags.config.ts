@@ -30,6 +30,13 @@ export const FEATURE_FLAGS = {
    * and data are kept. Flip to `true` when a reader surface ships.
    */
   academyBlogAndForum: false,
+  /**
+   * B0-MED-02 / B0-MED-04 — academies cannot upload or author hosted video
+   * yet (lessons use YouTube links). While `false`, no customer screen
+   * offers a video tier choice or shows a video storage allowance; the
+   * catalog keeps its stored limits. Flip to `true` when authoring ships.
+   */
+  hostedVideoAuthoring: false,
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;

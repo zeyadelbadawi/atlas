@@ -108,7 +108,6 @@ const LIMIT_LABELS = {
     'Staff members',
     'Courses',
     'Storage',
-    'Video storage',
   ],
   ar: [
     'الأكاديميات',
@@ -117,8 +116,13 @@ const LIMIT_LABELS = {
     'أعضاء الفريق',
     'الدورات',
     'التخزين',
-    'تخزين الفيديو',
   ],
+} as const;
+
+/** B0-MED-04 — limits no academy can use yet (no hosted video authoring). */
+const UNUSABLE_LIMIT_LABELS = {
+  en: ['Video storage'],
+  ar: ['تخزين الفيديو'],
 } as const;
 
 afterEach(() => cleanup());
@@ -151,5 +155,13 @@ describe.each(['en', 'ar'] as const)('PricingPage (%s)', (language) => {
     expect(rowHeaders).toEqual([...LIMIT_LABELS[language]]);
     // One column per plan, filled from the plan's own limits.
     expect(table.querySelectorAll('thead th')).toHaveLength(3);
+  });
+
+  it('shows no allowance an academy cannot use yet (B0-MED-04)', () => {
+    const { container } = renderPage();
+    const text = container.textContent ?? '';
+    for (const label of UNUSABLE_LIMIT_LABELS[language]) {
+      expect(text).not.toContain(label);
+    }
   });
 });

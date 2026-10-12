@@ -22,6 +22,7 @@ import type {
   PriceChangeNoticePrice,
   TenantSubscription,
 } from '@types';
+import { isCustomerVisibleLimitKey } from '@utils';
 import { STORAGE_LIMIT_KEYS } from '../constants/tenant.constants';
 import { formatLimitValue } from '../utils/entitlement.utils';
 import { useDismissPriceChangeNotice } from '../hooks';
@@ -61,7 +62,9 @@ function PriceChangeNoticeCard({
           STORAGE_LIMIT_KEYS.includes(key as PlanLimitKey),
           unlimited
         );
-  const limitChanges = Object.entries(notice.limitChanges);
+  const limitChanges = Object.entries(notice.limitChanges).filter(([key]) =>
+    isCustomerVisibleLimitKey(key as PlanLimitKey)
+  );
 
   return (
     <Alert data-testid="subscription-price-change">

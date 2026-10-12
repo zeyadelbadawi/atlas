@@ -681,7 +681,8 @@
       },
       "save": "Save",
       "saved": "Video tier updated",
-      "saveFailed": "The video tier could not be saved."
+      "saveFailed": "The video tier could not be saved.",
+      "unavailable": "Hosted video is not available yet, so there is no tier to choose. Video lessons use YouTube links."
     },
     "devices": {
       "title": "Learner devices",

@@ -5,6 +5,7 @@
  * day-count literals — every place that needs to talk about "7 days" or
  * "3 days" reads these two constants.
  */
+import { isCustomerVisibleLimitKey } from '@utils';
 import type { PlanFeatureKey, PlanLimitKey, TrialPolicy } from '@types';
 
 /**
@@ -61,6 +62,14 @@ export type UsageMetricKey = Exclude<PlanLimitKey, 'recordedSessions'>;
 export const USAGE_METRIC_KEYS: readonly UsageMetricKey[] = PLAN_LIMIT_KEYS.filter(
   (key): key is UsageMetricKey => key !== 'recordedSessions'
 );
+
+/** B0-MED-04 — `PLAN_LIMIT_KEYS` as customers see them (see `isCustomerVisibleLimitKey`). */
+export const CUSTOMER_PLAN_LIMIT_KEYS: readonly PlanLimitKey[] =
+  PLAN_LIMIT_KEYS.filter(isCustomerVisibleLimitKey);
+
+/** `USAGE_METRIC_KEYS` as customers see them. */
+export const CUSTOMER_USAGE_METRIC_KEYS: readonly UsageMetricKey[] =
+  USAGE_METRIC_KEYS.filter(isCustomerVisibleLimitKey);
 
 /** Limit keys measured in GB rather than a plain count. */
 export const STORAGE_LIMIT_KEYS: readonly PlanLimitKey[] = [

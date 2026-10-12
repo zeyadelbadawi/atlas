@@ -62,7 +62,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 // never reaches into another feature's files.
 import {
   STORAGE_LIMIT_KEYS,
-  USAGE_METRIC_KEYS,
+  CUSTOMER_USAGE_METRIC_KEYS,
   formatLimitValue,
   getUsageMetricStatus,
   getUsagePercentage,
@@ -668,7 +668,7 @@ export default function AcademyReportsPage(): JSX.Element {
       >
         {usage.isLoading ? (
           <div className="space-y-3" aria-busy="true">
-            {USAGE_METRIC_KEYS.map((key) => (
+            {CUSTOMER_USAGE_METRIC_KEYS.map((key) => (
               <Skeleton key={key} className="h-12 w-full" />
             ))}
           </div>
@@ -689,7 +689,7 @@ export default function AcademyReportsPage(): JSX.Element {
           />
         ) : (
           <ul className="flex flex-col divide-y divide-border">
-            {USAGE_METRIC_KEYS.map((limitKey) => {
+            {CUSTOMER_USAGE_METRIC_KEYS.map((limitKey) => {
               const metric = usage.data[limitKey];
               const status = getUsageMetricStatus(metric);
               const percentage = getUsagePercentage(metric);
