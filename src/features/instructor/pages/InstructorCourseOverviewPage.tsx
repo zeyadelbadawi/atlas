@@ -24,6 +24,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
+import { isFeatureEnabled } from '@config';
 import { useInstructorCourseOverview } from '../hooks';
 import {
   getCourseStatusLabelKey,
@@ -85,11 +86,16 @@ export default function InstructorCourseOverviewPage(): JSX.Element {
       icon: Megaphone,
       path: DASHBOARD_ROUTES.instructorAnnouncements,
     },
-    {
-      key: 'discussions',
-      icon: MessageSquare,
-      path: DASHBOARD_ROUTES.instructorDiscussions,
-    },
+    // B0-WEB-07 — no Discussions link while learners have no forum screen.
+    ...(isFeatureEnabled('academyBlogAndForum')
+      ? [
+          {
+            key: 'discussions',
+            icon: MessageSquare,
+            path: DASHBOARD_ROUTES.instructorDiscussions,
+          } as const,
+        ]
+      : []),
   ] as const;
 
   return (

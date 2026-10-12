@@ -18,6 +18,7 @@ import { WebsiteFaqContentTab } from '../components/WebsiteFaqContentTab';
 import { WebsiteTestimonialContentTab } from '../components/WebsiteTestimonialContentTab';
 import { WebsiteBlogContentTab } from '../components/WebsiteBlogContentTab';
 import { getWebsiteTabs } from '../utils/website-navigation.utils';
+import { isFeatureEnabled } from '@config';
 import type { BreadcrumbItem } from '@types';
 
 export default function WebsiteContentPage(): JSX.Element {
@@ -63,7 +64,11 @@ export default function WebsiteContentPage(): JSX.Element {
             {t('website:content.tabs.testimonials')}
           </TabsTrigger>
           <TabsTrigger value="blog">
-            {t('website:content.tabs.blog')}
+            {t(
+              isFeatureEnabled('academyBlogAndForum')
+                ? 'website:content.tabs.blog'
+                : 'website:content.tabs.announcements'
+            )}
           </TabsTrigger>
         </TabsList>
 

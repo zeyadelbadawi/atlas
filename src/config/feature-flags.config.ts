@@ -22,6 +22,14 @@ export const FEATURE_FLAGS = {
    * gated by this flag.
    */
   liveSessions: false,
+  /**
+   * B0-WEB-07 — academy blog posts and course discussion threads can be
+   * written by staff, but nothing shows them to visitors or learners yet
+   * (no public blog route, no learner forum screen). While `false`, the
+   * entry points that invite that authoring are hidden; the APIs, pages
+   * and data are kept. Flip to `true` when a reader surface ships.
+   */
+  academyBlogAndForum: false,
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;
