@@ -8,14 +8,21 @@ export const MAX_ASSIGNMENT_RESPONSE_LENGTH = 5000;
 /** Assignment attachment maximum file size (10MB). */
 export const MAX_ASSIGNMENT_ATTACHMENT_FILE_SIZE = 10 * 1024 * 1024;
 
-/** Allowed assignment attachment file types. */
+/**
+ * Allowed assignment attachment file types.
+ *
+ * CF-32 — exactly what the server accepts for a submission attachment
+ * (`detectFileKind` in the backend sniffs PDF, JPEG, PNG, GIF and WebP by
+ * their bytes). Word files used to be offered here and were always refused
+ * on upload; learners are told to save them as PDF instead.
+ */
 export const ALLOWED_ASSIGNMENT_ATTACHMENT_TYPES = [
   'application/pdf',
   'image/png',
   'image/jpeg',
   'image/jpg',
-  'application/msword',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'image/gif',
+  'image/webp',
 ];
 
 /** Phase 4 — Quiz/Assignment authoring validation constants. Mirrors `atlas backend/src/learning/dto/learning.constants.ts` exactly. */
