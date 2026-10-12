@@ -9,6 +9,7 @@
       "courses": "الدورات",
       "generalStorage": "التخزين العام",
       "videoStorage": "تخزين الفيديو",
+      "videoStorageMinutes": "دقائق الفيديو",
       "recordedSessions": "الجلسات المسجّلة"
     },
     "features": {
@@ -91,7 +92,18 @@
     "featuresTitle": "الإضافات",
     "featuresSubtitle": "إمكانات تُضاف إلى خطتك بشكل منفصل.",
     "cancelSubscription": "إلغاء الاشتراك",
-    "scheduledChange": "ستتغير باقتك إلى {{plan}} في {{date}}. وحتى ذلك الحين تحتفظ بكل ما في باقتك الحالية."
+    "scheduledChange": "ستتغير باقتك إلى {{plan}} في {{date}}. وحتى ذلك الحين تحتفظ بكل ما في باقتك الحالية.",
+    "priceChange": {
+      "title": "تتغير خطة {{plan}} عند تجديدك القادم",
+      "when": "لا يتغير شيء خلال فترتك المدفوعة الحالية. يسري التغيير من تجديدك القادم المستحق في {{date}}.",
+      "whenNextRenewal": "يسري التغيير من تجديدك القادم.",
+      "price": "سعر التجديد: {{from}} حاليًا، و{{to}} من تجديدك القادم.",
+      "newPrice": "سعر التجديد من تجديدك القادم: {{to}}.",
+      "limitsTitle": "الحدود التي تتغير عند التجديد:",
+      "limit": "{{name}}: {{from}} ← {{to}}",
+      "notIncluded": "غير مشمول",
+      "dismiss": "فهمت"
+    }
   },
   "usage": {
     "title": "الاستخدام",

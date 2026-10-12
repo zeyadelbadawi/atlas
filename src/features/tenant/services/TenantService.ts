@@ -161,6 +161,29 @@ export class TenantService extends BaseService {
       options
     );
   }
+
+  /**
+   * B0-BIL-07 — hides the "your plan changes at renewal" banner. The
+   * notice stays on record until the next paid renewal; this only hides it.
+   */
+  async dismissPriceChangeNotice(
+    organizationId: string,
+    options?: WriteOptions
+  ): Promise<{ readonly dismissed: boolean }> {
+    return this.client.post<
+      { readonly dismissed: boolean },
+      Record<string, never>
+    >(
+      this.path(
+        organizationId,
+        'subscription',
+        'price-change-notice',
+        'dismiss'
+      ),
+      {},
+      options
+    );
+  }
 }
 
 /** Singleton instance following the Atlas service pattern. */

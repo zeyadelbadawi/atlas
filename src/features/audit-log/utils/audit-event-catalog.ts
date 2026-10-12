@@ -211,6 +211,7 @@ export const AUDIT_ACTION_CATEGORIES: Readonly<Record<string, AuditCategory>> =
     'plan.updated': 'platform',
     'plan.pricing_changed': 'platform',
     'plan.trial_config_changed': 'platform',
+    'plan.subscribers_notified': 'platform',
     'plan.archived': 'platform',
     'platform_settings.updated': 'platform',
     'payment_method.created': 'platform',

@@ -9,6 +9,7 @@
       "courses": "Courses",
       "generalStorage": "General storage",
       "videoStorage": "Video storage",
+      "videoStorageMinutes": "Video minutes",
       "recordedSessions": "Recorded sessions"
     },
     "features": {
@@ -83,7 +84,18 @@
     "featuresTitle": "Add-ons",
     "featuresSubtitle": "Capabilities you add to your plan separately.",
     "cancelSubscription": "Cancel subscription",
-    "scheduledChange": "Your plan changes to {{plan}} on {{date}}. Until then you keep everything in your current plan."
+    "scheduledChange": "Your plan changes to {{plan}} on {{date}}. Until then you keep everything in your current plan.",
+    "priceChange": {
+      "title": "The {{plan}} plan changes at your next renewal",
+      "when": "Nothing changes for your current paid period. The change applies from your next renewal, due {{date}}.",
+      "whenNextRenewal": "The change applies from your next renewal.",
+      "price": "Renewal price: {{from}} now, {{to}} from your next renewal.",
+      "newPrice": "Renewal price from your next renewal: {{to}}.",
+      "limitsTitle": "Limits that change at renewal:",
+      "limit": "{{name}}: {{from}} → {{to}}",
+      "notIncluded": "not included",
+      "dismiss": "Got it"
+    }
   },
   "usage": {
     "title": "Usage",

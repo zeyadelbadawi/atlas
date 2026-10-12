@@ -682,6 +682,7 @@
       "updated": "{{actor}} حدّث الباقة «{{target}}»",
       "pricing_changed": "{{actor}} غيّر تسعير الباقة «{{target}}»",
       "trial_config_changed": "{{actor}} غيّر إعدادات التجربة للباقة «{{target}}»",
+      "subscribers_notified": "{{actor}} أبلغ مشتركي الباقة «{{target}}» بتغيير فيها",
       "archived": "{{actor}} أرشف الباقة «{{target}}»"
     },
     "platform_settings": {

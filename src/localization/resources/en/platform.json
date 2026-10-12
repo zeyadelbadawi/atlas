@@ -263,6 +263,7 @@
       "toggle": "History",
       "by": "by {{name}}",
       "noDetail": "No change detail was recorded for this entry.",
+      "subscribersNotified": "Organizations notified: {{notified}}. Not sent (see server logs): {{failed}}.",
       "emptyTitle": "No changes recorded yet",
       "emptyDescription": "Administrative changes to this plan will appear here.",
       "actions": {
@@ -270,6 +271,7 @@
         "plan.updated": "Plan updated",
         "plan.pricing_changed": "Pricing changed",
         "plan.trial_config_changed": "Free trial settings changed",
+        "plan.subscribers_notified": "Subscribers notified",
         "plan.archived": "Plan archived"
       }
     },
@@ -277,6 +279,7 @@
       "title": "Edit {{plan}}",
       "description": "Changes take effect immediately for new operations. Existing customer data is never removed.",
       "pricingTitle": "Pricing",
+      "subscriberNotice": "Saving a change to the price or the limits emails the owner of every paying organization on this plan, and shows them a notice on their subscription page. It applies to them from their next renewal.",
       "amount": "Amount",
       "currency": "Currency",
       "yearlyAmount": "Yearly price (optional)",

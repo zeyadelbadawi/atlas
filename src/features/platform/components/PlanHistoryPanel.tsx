@@ -132,7 +132,15 @@ export function PlanHistoryPanel({ planKey }: PlanHistoryPanelProps): JSX.Elemen
                 {t('platform:planAdmin.history.by', { name: entry.actor.name })}
               </p>
 
-              {entry.changes && Object.keys(entry.changes).length > 0 ? (
+              {entry.action === 'plan.subscribers_notified' ? (
+                // B0-BIL-07 — a notice run has counts, not a field diff.
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {t('platform:planAdmin.history.subscribersNotified', {
+                    notified: Number(entry.context?.notified ?? 0),
+                    failed: Number(entry.context?.failed ?? 0),
+                  })}
+                </p>
+              ) : entry.changes && Object.keys(entry.changes).length > 0 ? (
                 <ul className="mt-2 space-y-1">
                   {Object.entries(entry.changes).map(([field, change]) => (
                     <ChangeRow

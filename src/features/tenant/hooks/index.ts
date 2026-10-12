@@ -21,4 +21,5 @@ export {
   useStartTrial,
   useCancelTrial,
   useCancelSubscription,
+  useDismissPriceChangeNotice,
 } from './useSubscriptionLifecycle';

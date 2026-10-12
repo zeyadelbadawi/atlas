@@ -682,6 +682,7 @@
       "updated": "{{actor}} updated the plan “{{target}}”",
       "pricing_changed": "{{actor}} changed the pricing of the plan “{{target}}”",
       "trial_config_changed": "{{actor}} changed the trial settings of the plan “{{target}}”",
+      "subscribers_notified": "{{actor}} notified the subscribers of the plan “{{target}}” about a change",
       "archived": "{{actor}} archived the plan “{{target}}”"
     },
     "platform_settings": {

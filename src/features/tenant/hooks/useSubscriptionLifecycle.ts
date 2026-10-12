@@ -92,3 +92,20 @@ export function useCancelSubscription() {
     showErrorToast: false,
   });
 }
+
+/** B0-BIL-07 — hides the price-change banner for this organization. */
+export function useDismissPriceChangeNotice() {
+  const { organization } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useApiMutation<{ readonly dismissed: boolean }, void, ApiError>({
+    mutationFn: () => tenantService.dismissPriceChangeNotice(organization!.id),
+    onSuccess: () => {
+      if (!organization?.id) return;
+      void queryClient.invalidateQueries({
+        queryKey: tenantKeys.subscription(organization.id),
+      });
+    },
+    showSuccessToast: false,
+  });
+}

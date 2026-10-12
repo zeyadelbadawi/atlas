@@ -318,6 +318,10 @@
       "title": "Your cancellation is scheduled",
       "message": "Your subscription ends {{effectiveAtDate}}. Everything keeps working until then."
     },
+    "lifecycleSubscriptionPriceChangeNotice": {
+      "title": "Your plan changes at renewal",
+      "message": "The {{planName}} plan's price or limits change from your next renewal. Nothing changes before then."
+    },
     "lifecycleSubscriptionCancelled": {
       "title": "Your subscription has ended",
       "message": "Your subscription ended {{effectiveAtDate}}. Your content is safe and resubscribing restores it."

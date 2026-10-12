@@ -322,6 +322,10 @@
       "title": "تم جدولة إلغاء اشتراكك",
       "message": "ينتهي اشتراكك في {{effectiveAtDate}}. كل شيء يستمر في العمل حتى ذلك الحين."
     },
+    "lifecycleSubscriptionPriceChangeNotice": {
+      "title": "تتغير خطتك عند التجديد",
+      "message": "يتغير سعر خطة {{planName}} أو حدودها من تجديدك القادم. لا يتغير شيء قبل ذلك."
+    },
     "lifecycleSubscriptionCancelled": {
       "title": "انتهى اشتراكك",
       "message": "انتهى اشتراكك في {{effectiveAtDate}}. محتواك محفوظ وإعادة الاشتراك تستعيده."
