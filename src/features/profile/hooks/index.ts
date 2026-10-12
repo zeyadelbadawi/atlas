@@ -9,6 +9,7 @@ export type { ChangePasswordVariables } from './useChangePassword';
 export {
   useSessions,
   useRevokeSession,
+  useRevokeOtherSessions,
   SESSIONS_QUERY_KEY,
 } from './useSessions';
 export type { RevokeSessionVariables } from './useSessions';

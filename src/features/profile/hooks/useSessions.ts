@@ -66,3 +66,20 @@ export function useRevokeSession() {
     showErrorToast: false,
   });
 }
+
+/**
+ * B0-IAM-06 — signs out every other device. The current session survives,
+ * so the list can (and should) be refetched afterwards.
+ */
+export function useRevokeOtherSessions() {
+  const queryClient = useQueryClient();
+
+  return useApiMutation<{ sessionsRevoked: number }, void, ApiError>({
+    mutationFn: () => authenticationService.revokeOtherSessions(),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: SESSIONS_QUERY_KEY });
+    },
+    showSuccessToast: false,
+    showErrorToast: false,
+  });
+}
