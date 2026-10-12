@@ -28,6 +28,7 @@ import { liveSessionKeys } from '@services/query';
 import { addOnCatalogService } from '../services/AddOnCatalogService';
 import type { AddOnAccessState, AddOnCatalogEntry } from '@types';
 import type { ApiError } from '@api';
+import { DEFAULT_DISPLAY_CURRENCY } from '@utils';
 
 type Action = 'install' | 'enable' | 'disable' | 'uninstall';
 
@@ -128,7 +129,7 @@ export default function AddOnsCatalogPage(): JSX.Element {
                         ? t('liveSessions:catalog.free')
                         : t('liveSessions:catalog.price', {
                             amount: addOn.pricing?.amount ?? 0,
-                            currency: addOn.pricing?.currency ?? 'USD',
+                            currency: addOn.pricing?.currency ?? DEFAULT_DISPLAY_CURRENCY,
                           })}
                     </p>
 

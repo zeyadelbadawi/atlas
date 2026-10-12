@@ -23,7 +23,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { useDateFormatter } from '@hooks';
-import { formatCurrency } from '@utils';
+import { formatCurrency, DEFAULT_DISPLAY_CURRENCY } from '@utils';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import {
   getCourseStatusLabelKey,
@@ -245,7 +245,7 @@ export default function PlatformCourseDetailPage(): JSX.Element {
                     ? formatCurrency(
                         course.pricingAmount,
                         language,
-                        course.pricingCurrency ?? 'USD'
+                        course.pricingCurrency ?? DEFAULT_DISPLAY_CURRENCY
                       )
                     : t('course:pricing.free')}
                 </DetailRow>

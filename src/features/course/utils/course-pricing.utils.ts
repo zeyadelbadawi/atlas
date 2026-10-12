@@ -6,8 +6,9 @@
  */
 import type { TFunction } from 'i18next';
 import type { CoursePricing } from '@types';
+import { DEFAULT_DISPLAY_CURRENCY } from '@utils';
 
-/** Renders a course's pricing as display text, e.g. "Free" or "$49.00". */
+/** Renders a course's pricing as display text, e.g. "Free" or "EGP 490.00". */
 export function formatCoursePricing(
   pricing: CoursePricing,
   t: TFunction
@@ -22,9 +23,9 @@ export function formatCoursePricing(
     // (Reports/SSR_ARCHITECTURE_ANALYSIS.md §4 #11).
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: pricing.currency ?? 'USD',
+      currency: pricing.currency ?? DEFAULT_DISPLAY_CURRENCY,
     }).format(pricing.amount);
   } catch {
-    return `${pricing.amount} ${pricing.currency ?? 'USD'}`;
+    return `${pricing.amount} ${pricing.currency ?? DEFAULT_DISPLAY_CURRENCY}`;
   }
 }

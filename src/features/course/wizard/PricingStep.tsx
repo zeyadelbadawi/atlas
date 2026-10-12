@@ -30,8 +30,7 @@ import { DEFAULT_COURSE_PRICING_CURRENCY } from '../constants/course.constants';
 import { useStepSave } from './useStepSave';
 import { WizardStepFooter } from './WizardStepFooter';
 import type { WizardStepProps } from './wizard-step.types';
-
-const CURRENCIES = ['EGP', 'USD', 'EUR', 'GBP', 'AED', 'SAR'] as const;
+import { currencyOptions } from '@utils';
 
 const pricingSchema = z
   .object({
@@ -203,7 +202,7 @@ export function PricingStep({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {CURRENCIES.map((currency) => (
+                        {currencyOptions(field.value).map((currency) => (
                           <SelectItem key={currency} value={currency}>
                             {currency}
                           </SelectItem>

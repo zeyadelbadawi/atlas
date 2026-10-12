@@ -52,5 +52,6 @@
   "phoneNotMobile": "Enter a mobile number — landlines, toll-free and premium-rate numbers can’t receive messages.",
   "invalidPhoneCountry": "Choose a supported country",
   "phoneTaken": "This phone number is already in use. Enter a different number.",
-  "commonPassword": "This password is too common and easy to guess. Choose a different one."
+  "commonPassword": "This password is too common and easy to guess. Choose a different one.",
+  "unsupportedCurrency": "Choose a supported currency (EGP)."
 }

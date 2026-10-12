@@ -48,7 +48,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { useFilePicker, useUnsavedChanges } from '@hooks';
-import { saveViaForm } from '@utils';
+import { saveViaForm, currencyOptions } from '@utils';
 import { CourseLanguageSelect } from '../components/CourseLanguageSelect';
 import { LinesTextarea, normalizeLines } from '../components/LinesTextarea';
 import {
@@ -524,12 +524,11 @@ export default function CourseEditPage(): JSX.Element {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="EGP">EGP</SelectItem>
-                              <SelectItem value="USD">USD</SelectItem>
-                              <SelectItem value="EUR">EUR</SelectItem>
-                              <SelectItem value="GBP">GBP</SelectItem>
-                              <SelectItem value="AED">AED</SelectItem>
-                              <SelectItem value="SAR">SAR</SelectItem>
+                              {currencyOptions(field.value).map((code) => (
+                                <SelectItem key={code} value={code}>
+                                  {code}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                           <FormMessage />

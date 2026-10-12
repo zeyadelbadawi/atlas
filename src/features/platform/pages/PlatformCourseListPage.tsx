@@ -35,7 +35,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { usePagination, useSearch, useDateFormatter } from '@hooks';
-import { formatCurrency } from '@utils';
+import { formatCurrency, DEFAULT_DISPLAY_CURRENCY } from '@utils';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import {
   getCoursePricingTone,
@@ -210,7 +210,7 @@ export default function PlatformCourseListPage(): JSX.Element {
               {formatCurrency(
                 row.original.pricingAmount,
                 language,
-                row.original.pricingCurrency ?? 'USD'
+                row.original.pricingCurrency ?? DEFAULT_DISPLAY_CURRENCY
               )}
             </span>
           ) : (

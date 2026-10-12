@@ -51,6 +51,7 @@ import {
   MAX_COURSE_THUMBNAIL_FILE_SIZE,
 } from '../constants/course.constants';
 import type { Course, CoursePricing } from '@types';
+import { currencyOptions } from '@utils';
 
 export interface CourseCreateFormProps {
   readonly academyId: string;
@@ -474,12 +475,11 @@ export function CourseCreateForm({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="EGP">EGP</SelectItem>
-                            <SelectItem value="USD">USD</SelectItem>
-                            <SelectItem value="EUR">EUR</SelectItem>
-                            <SelectItem value="GBP">GBP</SelectItem>
-                            <SelectItem value="AED">AED</SelectItem>
-                            <SelectItem value="SAR">SAR</SelectItem>
+                            {currencyOptions(field.value).map((code) => (
+                              <SelectItem key={code} value={code}>
+                                {code}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />
