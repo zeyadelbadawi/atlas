@@ -611,7 +611,10 @@
       "grace_started": "دخل الاشتراك فترة السماح",
       "expired": "انتهى الاشتراك",
       "cancelled_at_period_end": "انتهى الاشتراك بنهاية فترة الفوترة",
-      "scheduled_plan_change_applied": "طُبّق تغيير الباقة المجدول عند نهاية الفترة المدفوعة"
+      "scheduled_plan_change_applied": "طُبّق تغيير الباقة المجدول عند نهاية الفترة المدفوعة",
+      "extended_by_platform": "{{actor}} مدّد الاشتراك",
+      "days_granted_by_platform": "{{actor}} منح أيامًا مجانية على الاشتراك",
+      "plan_changed_by_platform": "{{actor}} غيّر باقة الاشتراك"
     },
     "add_on": {
       "install": "{{actor}} أضاف الإضافة {{addOn}}",

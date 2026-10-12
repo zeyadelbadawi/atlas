@@ -51,6 +51,29 @@
       "active": "Active",
       "suspended": "Suspended",
       "archived": "Archived"
+    },
+    "adjust": {
+      "title": "Adjust subscription",
+      "description": "Platform Owner remedies. Each one needs a reason and is written to the audit log.",
+      "extend": "Extend",
+      "grantDays": "Grant days",
+      "changePlan": "Change plan",
+      "extendTitle": "Extend the subscription",
+      "extendDescription": "Moves the trial end (while trialing) or the paid period end by this many days, counted from that date or from today if it has passed. A subscription in its grace period becomes active again.",
+      "grantTitle": "Grant days",
+      "grantDescription": "Gives free days as goodwill. Same effect as Extend, recorded separately in the audit log.",
+      "changePlanTitle": "Change the plan",
+      "changePlanDescription": "Moves this organization to another plan, including hidden plans, and grants that plan's current limits.",
+      "days": "Days",
+      "planKey": "Plan key",
+      "planKeyHint": "Type the plan key. Hidden plans are not listed; type their key.",
+      "applyAt": "When",
+      "applyNow": "Now",
+      "applyPeriodEnd": "At the end of the paid period",
+      "reason": "Reason",
+      "reasonHint": "At least 10 characters. Kept in the audit log.",
+      "submit": "Apply",
+      "success": "Subscription updated."
     }
   },
   "academies": {

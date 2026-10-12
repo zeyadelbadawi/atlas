@@ -24,3 +24,5 @@ export {
   useUnsuppressAddress,
 } from './usePlatformCommunications';
 export * from './useUserDeletion';
+export { useSubscriptionAdjustment } from './useSubscriptionAdjustments';
+export type { SubscriptionAdjustmentInput } from './useSubscriptionAdjustments';

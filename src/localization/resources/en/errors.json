@@ -368,5 +368,14 @@
     "unknownCourse": "One of the selected courses isn't part of this academy.",
     "unknownOrganization": "That organization can't be found.",
     "unsubscribeInvalid": "This unsubscribe link is invalid or has expired."
+  },
+  "platform": {
+    "subscriptionAdjustment": {
+      "notExtendable": "Only a trial, an active subscription or one in its grace period can be extended. Change the plan instead.",
+      "planArchived": "That plan is archived. Choose a plan that is still offered or hidden, not archived.",
+      "noPaidPeriod": "There is no running paid period to wait for. Apply the plan change now instead.",
+      "daysRange": "Enter a whole number of days from 1 to 365.",
+      "reasonTooShort": "Write a reason of at least 10 characters. It is kept in the audit log."
+    }
   }
 }

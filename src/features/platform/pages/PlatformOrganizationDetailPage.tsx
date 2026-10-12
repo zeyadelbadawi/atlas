@@ -15,6 +15,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useDateFormatter } from '@hooks';
 import { OrganizationCommissionCard } from '@features/platform-commerce';
 import { usePlatformOrganization } from '../hooks';
+import { SubscriptionAdjustmentsCard } from '../components/SubscriptionAdjustmentsCard';
 import { getPlatformOrganizationStatusTone } from '../utils/platform-status.utils';
 
 export default function PlatformOrganizationDetailPage(): JSX.Element {
@@ -161,6 +162,11 @@ export default function PlatformOrganizationDetailPage(): JSX.Element {
             )}
           </CardContent>
         </Card>
+
+        {/* B0-BIL-06 — audited Platform Owner remedies. */}
+        {organization.subscription ? (
+          <SubscriptionAdjustmentsCard organizationId={organization.id} />
+        ) : null}
 
         <Card>
           <CardHeader>
