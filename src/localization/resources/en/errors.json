@@ -377,5 +377,9 @@
       "daysRange": "Enter a whole number of days from 1 to 365.",
       "reasonTooShort": "Write a reason of at least 10 characters. It is kept in the audit log."
     }
+  },
+  "lessonContent": {
+    "bodyRequired": "Write the lesson text before saving.",
+    "unexpectedBody": "Only a text lesson can have lesson text."
   }
 }

@@ -25,9 +25,11 @@ import type {
   CreateCourseSectionPayload,
   PaginatedResult,
   ReorderItemsPayload,
+  StaffLessonContent,
   UpdateCourseLessonPayload,
   UpdateCoursePayload,
   UpdateCourseSectionPayload,
+  UpsertTextLessonContentPayload,
 } from '@types';
 
 export class CourseService extends BaseService {
@@ -316,6 +318,55 @@ export class CourseService extends BaseService {
   ): Promise<CourseLesson> {
     return this.client.post<CourseLesson, CreateCourseLessonPayload>(
       this.coursesPath(academyId, courseId, 'sections', sectionId, 'lessons'),
+      payload,
+      options
+    );
+  }
+
+  /**
+   * B0-LRN-01 — the staff read of a lesson's content row, including the
+   * text body (manage permission, same as the write).
+   */
+  async getLessonContent(
+    academyId: string,
+    courseId: string,
+    sectionId: string,
+    lessonId: string,
+    options?: ReadOptions
+  ): Promise<StaffLessonContent> {
+    return this.client.get<StaffLessonContent>(
+      this.coursesPath(
+        academyId,
+        courseId,
+        'sections',
+        sectionId,
+        'lessons',
+        lessonId,
+        'content'
+      ),
+      options
+    );
+  }
+
+  /** B0-LRN-01 — writes a text lesson's body; the server sanitises it. */
+  async upsertTextLessonContent(
+    academyId: string,
+    courseId: string,
+    sectionId: string,
+    lessonId: string,
+    payload: UpsertTextLessonContentPayload,
+    options?: WriteOptions
+  ): Promise<StaffLessonContent> {
+    return this.client.put<StaffLessonContent, UpsertTextLessonContentPayload>(
+      this.coursesPath(
+        academyId,
+        courseId,
+        'sections',
+        sectionId,
+        'lessons',
+        lessonId,
+        'content'
+      ),
       payload,
       options
     );

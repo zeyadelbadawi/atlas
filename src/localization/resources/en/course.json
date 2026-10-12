@@ -216,7 +216,12 @@
       "saveButton": "Save Lesson",
       "cancelButton": "Cancel",
       "creating": "Adding lesson...",
-      "saving": "Saving lesson..."
+      "saving": "Saving lesson...",
+      "bodyLabel": "Lesson text",
+      "bodyPlaceholder": "Write the lesson your learners will read…",
+      "bodyHelp": "This is what learners read. The description above is a short summary.",
+      "bodyLoading": "Loading the lesson text…",
+      "bodyRequired": "Write the lesson text before saving."
     },
     "deleteSectionConfirm": {
       "title": "Delete this section?",
@@ -293,7 +298,8 @@
     },
     "itemDetached": "Removed from unit",
     "removing": "Removing…",
-    "deleting": "Deleting…"
+    "deleting": "Deleting…",
+    "lessonBodyError": "The lesson was saved, but its text was not. Try saving again."
   },
   "settings": {
     "title": "Course Settings",

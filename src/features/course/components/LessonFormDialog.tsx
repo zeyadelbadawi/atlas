@@ -11,6 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FolderOpen, Loader2, Youtube } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { MediaLibraryDialog } from '@features/media';
+import { RichTextEditor } from '@features/messaging';
 import { isYouTubeUrl } from '@utils';
 import {
   Dialog,
@@ -60,6 +61,12 @@ export interface LessonFormDialogProps {
    * already real and production-shaped).
    */
   readonly academyId?: string;
+  /**
+   * B0-LRN-01 — true while an existing text lesson's body is being read
+   * for editing. Saving is disabled until it arrives, so an edit can never
+   * overwrite the stored body with an empty one.
+   */
+  readonly bodyLoading?: boolean;
 }
 
 const EMPTY_LESSON_VALUES: CourseLessonFormData = {
@@ -68,6 +75,7 @@ const EMPTY_LESSON_VALUES: CourseLessonFormData = {
   contentType: 'text',
   contentUrl: '',
   status: 'draft',
+  bodyHtml: '',
 };
 
 export function LessonFormDialog({
@@ -79,8 +87,9 @@ export function LessonFormDialog({
   onSubmit,
   academyId,
   error,
+  bodyLoading = false,
 }: LessonFormDialogProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
 
   const form = useForm<CourseLessonFormData>({
@@ -242,77 +251,124 @@ export function LessonFormDialog({
               />
             </div>
 
-            <FormField
-              control={form.control}
-              name="contentUrl"
-              render={({ field }) => {
-                const contentType = form.watch('contentType');
-                const canUpload = academyId && contentType !== 'text';
-                // Inferred from the URL string itself, never a separate
-                // stored field — see `youtube.utils.ts`'s own doc comment
-                // for why the content model stays a single opaque
-                // `contentUrl` regardless of source.
-                const isYoutube =
-                  contentType === 'video' &&
-                  !!field.value &&
-                  isYouTubeUrl(field.value);
-
-                return (
+            {/* B0-LRN-01 — a text lesson's body. It is what the learner
+                reads; the description above stays a short summary. */}
+            {form.watch('contentType') === 'text' ? (
+              <FormField
+                control={form.control}
+                name="bodyHtml"
+                render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel>
-                      {t('course:builder.lessonDialog.contentUrlLabel')}
+                    <FormLabel id="lesson-body-label">
+                      {t('course:builder.lessonDialog.bodyLabel')}
                     </FormLabel>
-                    <div className="flex gap-2">
-                      <FormControl>
-                        <Input
-                          type="url"
-                          placeholder={t(
-                            'course:builder.lessonDialog.contentUrlPlaceholder'
-                          )}
-                          {...field}
-                        />
-                      </FormControl>
-                      {canUpload ? (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => setIsLibraryOpen(true)}
-                        >
-                          <FolderOpen className="size-4" aria-hidden />
-                          {t('course:builder.lessonDialog.chooseFromLibrary')}
-                        </Button>
-                      ) : null}
-                    </div>
-                    {contentType === 'video' || contentType === 'file' ? (
-                      <p className="text-xs text-muted-foreground">
-                        {t(
-                          contentType === 'video'
-                            ? 'course:builder.lessonDialog.contentUrlHelpVideo'
-                            : 'course:builder.lessonDialog.contentUrlHelpFile'
+                    {bodyLoading ? (
+                      <p
+                        className="flex items-center gap-2 text-sm text-muted-foreground"
+                        role="status"
+                      >
+                        <Loader2 className="size-4 animate-spin" aria-hidden />
+                        {t('course:builder.lessonDialog.bodyLoading')}
+                      </p>
+                    ) : (
+                      <RichTextEditor
+                        id="lesson-body"
+                        value={field.value ?? ''}
+                        onChange={field.onChange}
+                        labelledBy="lesson-body-label"
+                        describedBy="lesson-body-help"
+                        dir={i18n.dir()}
+                        invalid={!!fieldState.error}
+                        placeholder={t(
+                          'course:builder.lessonDialog.bodyPlaceholder'
                         )}
-                      </p>
-                    ) : null}
-                    {isYoutube ? (
-                      <p className="flex items-center gap-1.5 text-xs font-medium text-[hsl(var(--brand-500))]">
-                        <Youtube className="size-3.5" aria-hidden />
-                        {t('course:builder.lessonDialog.youtubeDetected')}
-                      </p>
-                    ) : null}
-                    <FormMessage />
-                    {canUpload ? (
-                      <MediaLibraryDialog
-                        academyId={academyId}
-                        open={isLibraryOpen}
-                        onOpenChange={setIsLibraryOpen}
-                        onSelect={(asset) => field.onChange(asset.url)}
-                        selectedUrl={field.value || undefined}
-                        accept={contentType === 'video' ? 'video/*' : '*/*'}
                       />
-                    ) : null}
+                    )}
+                    <p
+                      id="lesson-body-help"
+                      className="text-xs text-muted-foreground"
+                    >
+                      {t('course:builder.lessonDialog.bodyHelp')}
+                    </p>
+                    <FormMessage />
                   </FormItem>
-                );
-              }}
-            />
+                )}
+              />
+            ) : null}
+
+            {form.watch('contentType') !== 'text' ? (
+              <FormField
+                control={form.control}
+                name="contentUrl"
+                render={({ field }) => {
+                  const contentType = form.watch('contentType');
+                  const canUpload = academyId && contentType !== 'text';
+                  // Inferred from the URL string itself, never a separate
+                  // stored field — see `youtube.utils.ts`'s own doc comment
+                  // for why the content model stays a single opaque
+                  // `contentUrl` regardless of source.
+                  const isYoutube =
+                    contentType === 'video' &&
+                    !!field.value &&
+                    isYouTubeUrl(field.value);
+
+                  return (
+                    <FormItem>
+                      <FormLabel>
+                        {t('course:builder.lessonDialog.contentUrlLabel')}
+                      </FormLabel>
+                      <div className="flex gap-2">
+                        <FormControl>
+                          <Input
+                            type="url"
+                            placeholder={t(
+                              'course:builder.lessonDialog.contentUrlPlaceholder'
+                            )}
+                            {...field}
+                          />
+                        </FormControl>
+                        {canUpload ? (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setIsLibraryOpen(true)}
+                          >
+                            <FolderOpen className="size-4" aria-hidden />
+                            {t('course:builder.lessonDialog.chooseFromLibrary')}
+                          </Button>
+                        ) : null}
+                      </div>
+                      {contentType === 'video' || contentType === 'file' ? (
+                        <p className="text-xs text-muted-foreground">
+                          {t(
+                            contentType === 'video'
+                              ? 'course:builder.lessonDialog.contentUrlHelpVideo'
+                              : 'course:builder.lessonDialog.contentUrlHelpFile'
+                          )}
+                        </p>
+                      ) : null}
+                      {isYoutube ? (
+                        <p className="flex items-center gap-1.5 text-xs font-medium text-[hsl(var(--brand-500))]">
+                          <Youtube className="size-3.5" aria-hidden />
+                          {t('course:builder.lessonDialog.youtubeDetected')}
+                        </p>
+                      ) : null}
+                      <FormMessage />
+                      {canUpload ? (
+                        <MediaLibraryDialog
+                          academyId={academyId}
+                          open={isLibraryOpen}
+                          onOpenChange={setIsLibraryOpen}
+                          onSelect={(asset) => field.onChange(asset.url)}
+                          selectedUrl={field.value || undefined}
+                          accept={contentType === 'video' ? 'video/*' : '*/*'}
+                        />
+                      ) : null}
+                    </FormItem>
+                  );
+                }}
+              />
+            ) : null}
 
             <DialogFooter>
               <Button
@@ -325,7 +381,7 @@ export function LessonFormDialog({
               >
                 {t('course:builder.lessonDialog.cancelButton')}
               </Button>
-              <Button type="submit" disabled={isPending}>
+              <Button type="submit" disabled={isPending || bodyLoading}>
                 {isPending ? (
                   <Loader2 className="size-4 animate-spin" aria-hidden />
                 ) : null}

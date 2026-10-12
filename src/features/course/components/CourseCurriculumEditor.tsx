@@ -16,7 +16,7 @@
  * "Add section" button in its own header (the builder's page actions);
  * without it, the editor shows the button in its own toolbar.
  */
-import { useState, type ReactNode } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useIsMutating } from '@tanstack/react-query';
 import {
@@ -49,7 +49,10 @@ import {
   useCreateCourseLesson,
   useUpdateCourseLesson,
   useDeleteCourseLesson,
+  useLessonTextBody,
 } from '../hooks';
+import { courseService } from '../services/CourseService';
+import { plainTextToLessonHtml } from '../utils/lesson-body.utils';
 import { reorderSectionsMutationKey } from '../hooks/useReorderCourseSections';
 import { SectionFormDialog } from './SectionFormDialog';
 import { LessonFormDialog } from './LessonFormDialog';
@@ -75,6 +78,11 @@ type LessonDialogState =
       readonly mode: 'edit';
       readonly sectionId: string;
       readonly lesson: CourseLesson;
+      /**
+       * B0-LRN-01 — a body the author already typed, kept when the lesson
+       * saved but its body did not, so a retry does not lose it.
+       */
+      readonly pendingBodyHtml?: string;
     }
   | null;
 
@@ -265,6 +273,33 @@ export function CourseCurriculumEditor({
     void persistSectionOrder(orderedIds, movedId, [`${movedId}:handle`]);
   };
 
+  // B0-LRN-01 — an existing text lesson's body, read for editing.
+  const editingTextLesson =
+    lessonDialog?.mode === 'edit' &&
+    lessonDialog.lesson.contentType === 'text' &&
+    lessonDialog.pendingBodyHtml === undefined
+      ? { sectionId: lessonDialog.sectionId, lessonId: lessonDialog.lesson.id }
+      : null;
+  const lessonBody = useLessonTextBody(academyId, courseId, editingTextLesson);
+  const lessonDefaultValues = useMemo<CourseLessonFormData | undefined>(() => {
+    if (lessonDialog?.mode !== 'edit') return undefined;
+    const { lesson } = lessonDialog;
+    return {
+      title: lesson.title,
+      description: lesson.description ?? '',
+      contentType: lesson.contentType,
+      contentUrl: lesson.contentUrl ?? '',
+      status: lesson.status,
+      // The stored body; else an older lesson's body from its description.
+      bodyHtml:
+        lessonDialog.pendingBodyHtml ??
+        lessonBody.data?.bodyHtml ??
+        (lesson.contentType === 'text'
+          ? plainTextToLessonHtml(lesson.description)
+          : ''),
+    };
+  }, [lessonDialog, lessonBody.data]);
+
   const handleLessonSubmit = async (data: CourseLessonFormData) => {
     if (!lessonDialog) return;
     const payload = {
@@ -276,20 +311,56 @@ export function CourseCurriculumEditor({
     };
 
     try {
-      if (lessonDialog.mode === 'edit') {
-        await updateLesson.mutateAsync({
-          sectionId: lessonDialog.sectionId,
-          lessonId: lessonDialog.lesson.id,
-          payload,
-        });
-        toast({ title: t('course:builder.lessonUpdated') });
-      } else {
-        await createLesson.mutateAsync({
-          sectionId: lessonDialog.sectionId,
-          payload,
-        });
-        toast({ title: t('course:builder.lessonCreated') });
+      const saved =
+        lessonDialog.mode === 'edit'
+          ? await updateLesson.mutateAsync({
+              sectionId: lessonDialog.sectionId,
+              lessonId: lessonDialog.lesson.id,
+              payload,
+            })
+          : await createLesson.mutateAsync({
+              sectionId: lessonDialog.sectionId,
+              payload,
+            });
+
+      // B0-LRN-01 — the body a learner reads lives in the lesson's content
+      // row, written after the lesson itself. If that write fails, the
+      // dialog stays open in edit mode on the saved lesson with the typed
+      // body kept, so a retry updates this lesson instead of adding
+      // another one.
+      if (data.contentType === 'text') {
+        try {
+          await courseService.upsertTextLessonContent(
+            academyId,
+            courseId,
+            lessonDialog.sectionId,
+            saved.id,
+            { kind: 'text', bodyHtml: data.bodyHtml ?? '' }
+          );
+        } catch {
+          setLessonDialog({
+            mode: 'edit',
+            sectionId: lessonDialog.sectionId,
+            lesson: saved,
+            pendingBodyHtml: data.bodyHtml ?? '',
+          });
+          toast({
+            title: t('course:builder.lessonBodyError'),
+            description: t('errors:generic.description'),
+            variant: 'destructive',
+          });
+          return;
+        }
+        void lessonBody.refetch();
       }
+
+      toast({
+        title: t(
+          lessonDialog.mode === 'edit'
+            ? 'course:builder.lessonUpdated'
+            : 'course:builder.lessonCreated'
+        ),
+      });
       setLessonDialog(null);
     } catch (error) {
       // A validation error is shown inline, on the field that caused it,
@@ -586,17 +657,8 @@ export function CourseCurriculumEditor({
         open={lessonDialog !== null}
         onOpenChange={(open) => !open && setLessonDialog(null)}
         mode={lessonDialog?.mode ?? 'create'}
-        defaultValues={
-          lessonDialog?.mode === 'edit'
-            ? {
-                title: lessonDialog.lesson.title,
-                description: lessonDialog.lesson.description ?? '',
-                contentType: lessonDialog.lesson.contentType,
-                contentUrl: lessonDialog.lesson.contentUrl ?? '',
-                status: lessonDialog.lesson.status,
-              }
-            : undefined
-        }
+        defaultValues={lessonDefaultValues}
+        bodyLoading={editingTextLesson !== null && lessonBody.isLoading}
         isPending={createLesson.isPending || updateLesson.isPending}
         onSubmit={handleLessonSubmit}
         academyId={academyId}

@@ -348,6 +348,26 @@ export interface UpdateCourseSectionPayload {
 }
 
 /** Course lesson creation payload. */
+/**
+ * B0-LRN-01 — the staff view of a lesson's content row. `bodyHtml` is the
+ * server-sanitised text body, present only for `kind: 'text'` on the staff
+ * read used to edit an existing text lesson.
+ */
+export interface StaffLessonContent {
+  readonly id: string;
+  readonly lessonId: string;
+  readonly kind: 'text' | 'video' | 'file' | 'external';
+  readonly bodyHtml?: string;
+  readonly externalUrl?: string;
+  readonly mediaAssetId?: string;
+}
+
+/** B0-LRN-01 — writes a text lesson's body; the server sanitises it. */
+export interface UpsertTextLessonContentPayload {
+  readonly kind: 'text';
+  readonly bodyHtml: string;
+}
+
 export interface CreateCourseLessonPayload {
   readonly title: string;
   readonly description?: string;
