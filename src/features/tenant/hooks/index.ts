@@ -5,6 +5,7 @@ export { useTenantSubscription } from './useTenantSubscription';
 export { useTenantUsage } from './useTenantUsage';
 export { useTenantAddOns } from './useTenantAddOns';
 export { usePlanCatalog } from './usePlanCatalog';
+export { usePlanByKey } from './usePlanByKey';
 export { useAddOnCatalog } from './useAddOnCatalog';
 export { useTrialPolicy } from './useTrialPolicy';
 export { useUpdateTrialPolicy } from './useUpdateTrialPolicy';
