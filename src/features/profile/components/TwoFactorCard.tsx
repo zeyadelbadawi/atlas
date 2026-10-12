@@ -38,10 +38,18 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useToast } from '@hooks';
+import { toErrorsNamespaceKey } from '@utils';
 import { useApiMutation, useApiQuery } from '@/shared/hooks';
 import { twoFactorService } from '@services/identity';
 import type { TwoFactorSetupResult, TwoFactorStatus } from '@types';
 import type { ApiError } from '@api';
+
+/**
+ * B0-IAM-02 — a Google-only account has no password to confirm with. The
+ * server says so; show that (with the "Forgot password?" way out) instead
+ * of "wrong code" or "wrong password".
+ */
+const NO_PASSWORD_ERROR_KEY = 'errors.auth.setPasswordBeforeTwoFactor';
 
 const TWO_FACTOR_STATUS_KEY = ['auth', '2fa', 'status'] as const;
 
@@ -125,6 +133,13 @@ export function TwoFactorCard(): JSX.Element {
     });
   };
 
+  const showNoPassword = (): void => {
+    toast({
+      variant: 'destructive',
+      title: t(toErrorsNamespaceKey(NO_PASSWORD_ERROR_KEY)),
+    });
+  };
+
   const handleConfirm = (): void => {
     confirmSetup.mutate(
       { token: code, password },
@@ -139,16 +154,18 @@ export function TwoFactorCard(): JSX.Element {
           setStage('codes');
         },
         onError: (error) =>
-          error.messageKey === 'errors.auth.invalidCredentials'
-            ? toast({
-                variant: 'destructive',
-                title: t('profile:twoFactor.passwordRejected'),
-              })
-            : toast({
-                variant: 'destructive',
-                title: t('profile:twoFactor.invalidCode'),
-                description: t('profile:twoFactor.invalidCodeDescription'),
-              }),
+          error.messageKey === NO_PASSWORD_ERROR_KEY
+            ? showNoPassword()
+            : error.messageKey === 'errors.auth.invalidCredentials'
+              ? toast({
+                  variant: 'destructive',
+                  title: t('profile:twoFactor.passwordRejected'),
+                })
+              : toast({
+                  variant: 'destructive',
+                  title: t('profile:twoFactor.invalidCode'),
+                  description: t('profile:twoFactor.invalidCodeDescription'),
+                }),
       }
     );
   };
@@ -159,11 +176,13 @@ export function TwoFactorCard(): JSX.Element {
         toast({ title: t('profile:twoFactor.disabled') });
         closeAll();
       },
-      onError: () =>
-        toast({
-          variant: 'destructive',
-          title: t('profile:twoFactor.passwordRejected'),
-        }),
+      onError: (error) =>
+        error.messageKey === NO_PASSWORD_ERROR_KEY
+          ? showNoPassword()
+          : toast({
+              variant: 'destructive',
+              title: t('profile:twoFactor.passwordRejected'),
+            }),
     });
   };
 
@@ -174,11 +193,13 @@ export function TwoFactorCard(): JSX.Element {
         setRecoveryCodes(result.recoveryCodes);
         setStage('codes');
       },
-      onError: () =>
-        toast({
-          variant: 'destructive',
-          title: t('profile:twoFactor.passwordRejected'),
-        }),
+      onError: (error) =>
+        error.messageKey === NO_PASSWORD_ERROR_KEY
+          ? showNoPassword()
+          : toast({
+              variant: 'destructive',
+              title: t('profile:twoFactor.passwordRejected'),
+            }),
     });
   };
 
