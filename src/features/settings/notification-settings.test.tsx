@@ -59,6 +59,8 @@ describe('NotificationSettings', () => {
     expect(screen.getAllByText('Always on')).toHaveLength(3);
     expect(screen.getAllByRole('switch')).toHaveLength(1);
     expect(screen.queryByText('Operations')).toBeNull();
+    // B0-IAM-07 — no control for a channel Atlas does not deliver.
+    expect(screen.queryByText(/push|sms/i)).toBeNull();
   });
 
   it('writes the engagement switch back to the legacy email default', () => {
@@ -71,7 +73,7 @@ describe('NotificationSettings', () => {
 
     renderSettings();
     fireEvent.click(
-      screen.getByRole('switch', { name: 'Email for Updates and announcements' })
+      screen.getByRole('switch', { name: 'Email for Academy updates' })
     );
 
     expect(mutate).toHaveBeenCalledWith({ email: false, push: true, sms: false });

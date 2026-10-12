@@ -75,6 +75,11 @@ const BANNED: Record<'en' | 'ar', { pattern: RegExp; scope?: RegExp }[]> = {
     { pattern: /invoices/i, scope: /^notifications\.communication\./ },
     { pattern: /receipts/i, scope: /^learning\.learnerDashboard\.purchases\./ },
     { pattern: /remember me/i, scope: /^auth\.signIn\./ },
+    // B0-MSG-07: announcements are in-app only; the email category must not promise them.
+    {
+      pattern: /announcements/i,
+      scope: /^notifications\.communication\.categories\.engagement\.title/,
+    },
     { pattern: /Atlas representative/i },
     { pattern: /connection drops|installing/i, scope: /^onboarding\.build\./ },
     { pattern: /live classes/i, scope: /^academy\.protection\./ },
@@ -109,6 +114,10 @@ const BANNED: Record<'en' | 'ar', { pattern: RegExp; scope?: RegExp }[]> = {
     { pattern: /الفواتير/, scope: /^notifications\.communication\./ },
     { pattern: /إيصالاتك/, scope: /^learning\.learnerDashboard\.purchases\./ },
     { pattern: /ممثل أطلس/ },
+    {
+      pattern: /الإعلانات/,
+      scope: /^notifications\.communication\.categories\.engagement\.title/,
+    },
     { pattern: /انقطاع الاتصال|جارٍ تثبيت/, scope: /^onboarding\.build\./ },
     {
       pattern: /الجلسات المباشرة/,

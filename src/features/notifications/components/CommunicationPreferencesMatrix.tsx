@@ -20,8 +20,8 @@
  *
  * EVERY CONTROL IS DESCRIBED. Each switch and select carries
  * `aria-describedby` pointing at its row's description, so a screen
- * reader hears "Updates and announcements — announcements, discussions
- * and new content in your courses — switch, on", not "switch, on".
+ * reader hears "Academy updates — messages from your academy, grades and
+ * results… — switch, on", not "switch, on".
  *
  * Optimism belongs to the parent: this component renders the value it is
  * given, and reports what changed as the exact PATCH body.
