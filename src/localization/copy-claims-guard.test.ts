@@ -9,6 +9,9 @@
  *   promise uploading or protecting hosted video.
  * - B0-CPY-19: there is no learner forum, no live-session reminder email
  *   and no deadline-reminder event.
+ * - B0-CPY-02/03/06/07/10/14/16/17: organization rename, invite policy,
+ *   trial rule, review time, staff dialogs, who reviews academy payments,
+ *   and invoices — each stated as it actually works.
  */
 import { describe, expect, it } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
@@ -49,6 +52,15 @@ const BANNED: Record<'en' | 'ar', { pattern: RegExp; scope?: RegExp }[]> = {
       pattern: /discussion replies|live sessions|deadlines/i,
       scope: /^notifications\.communication\./,
     },
+    { pattern: /change it later/i, scope: /^auth\.register\.organization\./ },
+    { pattern: /whatever the policy says/i },
+    { pattern: /once per account/i },
+    { pattern: /a day or two/i, scope: /^tenant\.lifecycle\./ },
+    { pattern: /brand-new Atlas account/i },
+    { pattern: /reviewed by Atlas/i, scope: /^payments\.academy/ },
+    { pattern: /only the academy owner/i, scope: /^payments\./ },
+    { pattern: /invoices/i, scope: /^notifications\.communication\./ },
+    { pattern: /receipts/i, scope: /^learning\.learnerDashboard\.purchases\./ },
   ],
   ar: [
     { pattern: /لا يراه أحد غيرك/ },
@@ -59,6 +71,15 @@ const BANNED: Record<'en' | 'ar', { pattern: RegExp; scope?: RegExp }[]> = {
       pattern: /النقاشات|الجلسات المباشرة/,
       scope: /^notifications\.communication\./,
     },
+    { pattern: /تغييره لاحق/, scope: /^auth\.register\.organization\./ },
+    { pattern: /مهما كانت السياسة/ },
+    { pattern: /مرة واحدة لكل حساب/ },
+    { pattern: /يومًا أو يومين/, scope: /^tenant\.lifecycle\./ },
+    { pattern: /حساب أطلس جديدًا/ },
+    { pattern: /تراجع أطلس/, scope: /^payments\.academy/ },
+    { pattern: /مالك الأكاديمية فقط/, scope: /^payments\./ },
+    { pattern: /الفواتير/, scope: /^notifications\.communication\./ },
+    { pattern: /إيصالاتك/, scope: /^learning\.learnerDashboard\.purchases\./ },
   ],
 };
 

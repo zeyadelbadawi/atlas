@@ -164,7 +164,7 @@
     "addManager": {
       "triggerButton": "Add Manager",
       "title": "Add an Academy Manager",
-      "description": "Grant an Atlas user Manager access to this academy — they'll be able to manage courses, instructors, content and academy settings, but not your organization's billing or subscription.",
+      "description": "Grant an Atlas user Manager access to this academy. Managers manage courses, content and academy settings and assign existing instructors to courses. They can't add staff or see your organization's billing.",
       "emailLabel": "Email address",
       "emailPlaceholder": "manager@example.com",
       "cancelButton": "Cancel",
@@ -195,7 +195,7 @@
     "createStudent": {
       "triggerButton": "Add Student",
       "title": "Create a Student Account",
-      "description": "This invites a brand-new Atlas account for the student. They'll get an email with a link to set their own password, then they can browse the course catalog and enroll.",
+      "description": "Adds the student to this academy. If they don't have an Atlas account yet, they get an email to set their password.",
       "emailLabel": "Email address",
       "cancelButton": "Cancel",
       "doneButton": "Done",
@@ -423,7 +423,7 @@
     },
     "invites": {
       "title": "Invite links",
-      "description": "A learner opens an invite link to register on your academy website, whatever the policy says.",
+      "description": "Invite links are required only when registration is set to Invite only. With Open or Approval required, learners register without a link, and approval still applies.",
       "anyone": "Anyone with the link",
       "empty": "No invite links",
       "emptyDescription": "Create one to let a specific person register.",

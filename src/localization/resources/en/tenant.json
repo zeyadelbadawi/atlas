@@ -270,7 +270,7 @@
       "description": "We haven't received payment for the new period. Everything keeps working until {{date}}. Pay before then and nothing changes.",
       "descriptionNoDate": "We haven't received payment for the new period. Everything keeps working for a short grace window. Pay now and nothing changes.",
       "action": "Complete payment",
-      "footnote": "Nothing has been switched off and nothing has been deleted. If you have already paid, it can take a day or two to be reviewed."
+      "footnote": "Nothing has been switched off or deleted. If you have already paid, your payment is being reviewed and your plan activates once it is approved."
     },
     "retentionWarning": {
       "title": "Your hosted video is scheduled to be deleted",
@@ -290,7 +290,7 @@
     "factNoCard": "No credit card required.",
     "factNoAutoCharge": "You won't be charged when it ends — you choose whether to subscribe.",
     "factEntitlements": "Full access to everything on the {{plan}} plan.",
-    "onePerAccount": "A free trial can be used once per account.",
+    "onePerAccount": "One trial per email address.",
     "confirm": "Start {{plan}} trial"
   },
   "retention": {

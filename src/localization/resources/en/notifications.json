@@ -508,7 +508,7 @@
       },
       "transactional": {
         "title": "Receipts and orders",
-        "description": "Purchases, payments, refunds and invoices."
+        "description": "Purchases, payments and refunds, including email receipts."
       },
       "lifecycle": {
         "title": "Account and courses",

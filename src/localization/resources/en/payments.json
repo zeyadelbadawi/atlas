@@ -224,7 +224,7 @@
   },
   "academyOrders": {
     "title": "Orders",
-    "description": "Course purchases from this academy's students. Read-only: manual payments are reviewed by Atlas.",
+    "description": "Course purchases from this academy's students. Manual payment proofs are reviewed by your organization owner.",
     "searchLabel": "Search by student, course or order ID",
     "filters": {
       "status": "Order status",
@@ -502,7 +502,7 @@
     "title": "Payment methods",
     "description": "Choose how learners pay this academy for paid courses, and the details they are shown.",
     "forbidden": {
-      "title": "Only the academy owner can manage payment methods",
+      "title": "Only the organization owner can manage payment methods",
       "description": "Ask the owner of this organization to set up how learners pay."
     },
     "howItWorks": {
@@ -546,7 +546,7 @@
     "title": "Payments",
     "description": "Payments learners made to this academy. Check that the money arrived, then approve or reject.",
     "forbidden": {
-      "title": "Only the academy owner can review payments",
+      "title": "Only the organization owner can review payments",
       "description": "Ask the owner of this organization to review learners’ payments."
     },
     "tabsLabel": "Review status",

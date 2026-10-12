@@ -584,7 +584,7 @@
     },
     "purchases": {
       "title": "Purchases",
-      "subtitle": "Your orders and receipts with this academy.",
+      "subtitle": "Your orders with this academy.",
       "empty": {
         "title": "No orders yet",
         "description": "Anything you buy from this academy is listed here with its payment status."
