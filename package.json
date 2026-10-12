@@ -1,5 +1,6 @@
 {
-  "name": "shadcnui",
+  "name": "atlas",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -28,8 +29,8 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@hookform/resolvers": "^3.9.0",
-    "@metagptx/vite-plugin-source-locator": "latest",
-    "@metagptx/web-sdk": "latest",
+    "@metagptx/vite-plugin-source-locator": "0.0.19",
+    "@metagptx/web-sdk": "0.0.77",
     "@playwright/mcp": "^0.0.36",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
