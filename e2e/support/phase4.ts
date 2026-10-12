@@ -37,6 +37,7 @@ import {
   declineCookies,
   type Session,
 } from './atlas';
+import { adminSql } from './admin-db';
 
 /** Local-only. The frontend calls the API through this proxy so the request host names the academy. */
 export const FRONTEND_BASE = process.env.E2E_BASE_URL ?? 'http://localhost:3001';
@@ -247,7 +248,8 @@ export interface PaymentMethodFixture {
 
 /**
  * Makes paid checkout possible for the organization: Atlas Payments
- * collection mode (the owner's decision), an effective commission (the
+ * collection mode (seeded through the admin database, since no tenant
+ * may select it), an effective commission (the
  * platform owner's), and one enabled manual method with proof support.
  * Each step is skipped when the state is already right, so re-runs are
  * no-ops.
@@ -261,10 +263,15 @@ export async function ensurePaymentCollection(
   const settings = await apiGet(request, owner, `/organizations/${organizationId}/payment-settings`);
   expect(settings.ok(), `payment settings unreadable: ${settings.status()} ${await settings.text()}`).toBeTruthy();
   if ((await settings.json()).paymentCollectionMode !== 'atlas_payments') {
-    const updated = await apiPatch(request, owner, `/organizations/${organizationId}/payment-settings`, {
-      paymentCollectionMode: 'atlas_payments',
-    });
-    expect(updated.ok(), `could not enable Atlas Payments: ${updated.status()} ${await updated.text()}`).toBeTruthy();
+    // An organization cannot switch itself to Atlas Payments (B0-COM-03:
+    // not offered at launch), so the disposable stack's admin role sets it.
+    await adminSql(
+      `INSERT INTO organization_payment_settings (id, organization_id, payment_collection_mode, updated_at)
+       VALUES (gen_random_uuid()::text, :'organizationId', 'atlas_payments', now())
+       ON CONFLICT (organization_id) DO UPDATE
+         SET payment_collection_mode = 'atlas_payments', updated_at = now()`,
+      { organizationId }
+    );
   }
 
   const commission = await apiGet(
