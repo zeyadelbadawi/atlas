@@ -556,9 +556,11 @@ export function getDashboardNavigation(
         {
           // Profile and Notifications live in the account menu (top bar);
           // Support stays in the sidebar as the last Cloud Services item.
-          // No `requiredRoles`: support is for everyone who can sign in,
-          // and per-ticket authorization is enforced by RLS. Hidden from
-          // Platform Owners, who answer cases in the platform console.
+          // No `requiredRoles`: anyone signed in on the management surface
+          // can file a case, and per-ticket authorization is enforced by
+          // RLS. Learners never see this sidebar; their help is their
+          // academy (B0-SUP-02). Hidden from Platform Owners, who answer
+          // cases in the platform console.
           id: 'support',
           labelKey: 'navigation:items.support',
           path: DASHBOARD_ROUTES.support,

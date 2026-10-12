@@ -1007,10 +1007,12 @@ export default function AtlasAppRoutes(): JSX.Element {
             <Route path={DASHBOARD_ROUTES.search} element={<SearchPage />} />
 
             {/*
-              Support is available to EVERY signed-in role — a student
-              who cannot submit a ticket has no way to report a problem.
-              Authorization is per-ticket and enforced by RLS, not by a
-              route permission, so no `requiredPermissions` here.
+              Atlas support is for the people who run an organization on
+              the management surface. Learners do not open Atlas tickets:
+              their help is their academy (the site's Contact page, linked
+              from its footer), and the API refuses academy-site sessions
+              (`ManagementSurfaceGuard`, B0-SUP-02). Per-ticket access is
+              enforced by RLS, so no `requiredPermissions` here.
             */}
             <Route
               path={DASHBOARD_ROUTES.support}
