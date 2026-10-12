@@ -1219,7 +1219,7 @@ export default function AtlasAppRoutes(): JSX.Element {
               (`atlas-backend/src/tenancy/constants/
               organization-permissions.constants.ts`) and in no other set —
               a plain organization member holds only `academy.view` and
-              `academy.website.view` and still cannot reach this route.
+              still cannot reach this route.
               So the audience is unchanged for everyone who could already
               get here, and widened by exactly the role the backend just
               authorized.
@@ -2582,8 +2582,8 @@ export default function AtlasAppRoutes(): JSX.Element {
             />
 
             {/* The website Contact form inbox. `manage`, not `view`: the
-                backend serves it to Owners/Managers only, and a plain
-                member holds `academy.website.view`. */}
+                backend serves it to Owners/Managers only (`view` alone
+                is also a manager-tier permission since B0-WEB-04). */}
             <Route
               path={DASHBOARD_ROUTES.websiteMessages}
               element={

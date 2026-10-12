@@ -318,8 +318,8 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
         // Placed right under Website, which it belongs to, as its own
         // entry because an inbox is somewhere people go directly. Gated
         // on `academy.website.manage` (Owner + Manager) — the backend
-        // serves contact submissions to that tier only, and a plain
-        // member's `academy.website.view` must not advertise it.
+        // serves contact submissions to that tier only. (A plain or
+        // `staff` member holds no website permission at all — B0-WEB-04.)
         id: 'academy-website-messages',
         requiresEntitlement: true,
         labelKey: 'navigation:items.academyWebsiteMessages',
