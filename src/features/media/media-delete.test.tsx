@@ -404,6 +404,22 @@ describe('Media Library picker — delete', () => {
       status: 'active',
     });
     expect(screen.queryByRole('button', { name: /^Delete/ })).toBeNull();
+    // B0-MED-08 — an instructor can pick a file but not upload one.
+    expect(screen.getByRole('tab', { name: 'Browse' })).toBeTruthy();
+    expect(screen.queryByRole('tab', { name: 'Upload' })).toBeNull();
+  });
+
+  it('offers the upload tab to a role that may upload', async () => {
+    renderWith(
+      <MediaLibraryDialog
+        academyId={ACADEMY}
+        open
+        onOpenChange={vi.fn()}
+        onSelect={vi.fn()}
+      />
+    );
+    await screen.findByRole('button', { name: 'a.pdf' });
+    expect(screen.getByRole('tab', { name: 'Upload' })).toBeTruthy();
   });
 
   it('removes a deleted item, marks the current file as gone, and never changes the form value', async () => {

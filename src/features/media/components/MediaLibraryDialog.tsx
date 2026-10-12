@@ -62,8 +62,12 @@ export function MediaLibraryDialog({
 }: MediaLibraryDialogProps): JSX.Element {
   const { t } = useTranslation();
   const { hasPermission } = usePermissions();
-  // Gates the control only; the backend authorises the caller's academy role.
+  // Gates the controls only; the backend authorises the caller's academy
+  // role. Uploading and deleting are for the managing roles; an instructor
+  // (no `academy.website.manage`) can still browse and pick a file
+  // (B0-MED-08).
   const canDelete = hasPermission('academy.website.manage');
+  const canUpload = canDelete;
   const deletion = useMediaDeletion(academyId);
   /** File name of a deleted asset the calling form still holds (never cleared silently). */
   const [deletedCurrent, setDeletedCurrent] = useState<string | null>(null);
@@ -140,9 +144,11 @@ export function MediaLibraryDialog({
             <TabsTrigger value="browse">
               {t('media:dialog.browseTab')}
             </TabsTrigger>
-            <TabsTrigger value="upload">
-              {t('media:dialog.uploadTab')}
-            </TabsTrigger>
+            {canUpload ? (
+              <TabsTrigger value="upload">
+                {t('media:dialog.uploadTab')}
+              </TabsTrigger>
+            ) : null}
           </TabsList>
 
           <TabsContent value="browse" className="space-y-4">
