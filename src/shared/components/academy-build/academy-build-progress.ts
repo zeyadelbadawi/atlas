@@ -36,11 +36,14 @@ export const ACADEMY_BUILD_STAGES: readonly BuildStage[] = [
 ];
 
 const TOTAL_WEIGHT = ACADEMY_BUILD_STAGES.reduce((sum, s) => sum + s.weight, 0);
+/**
+ * B0-CPY-08 — no "offline reading" highlight: text lessons authored in the
+ * builder are not delivered offline yet (B0-LRN-01). Re-add it once they are.
+ */
 export const BUILD_HIGHLIGHT_KEYS = [
   'bilingual',
   'payments',
   'protection',
-  'offline',
   'certificates',
 ];
 /** The ring never claims 100 % before the server says the academy is ready. */

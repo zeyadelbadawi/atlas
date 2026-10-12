@@ -272,7 +272,7 @@ describe('GiftedDaysExplainer', () => {
     expect(text).toContain('Some plans and billing cycles include none');
     expect(text).toContain('Once per customer');
     expect(text).toContain('renewals, plan changes');
-    expect(text).toContain('Separate from the free trial');
+    expect(text).toContain('Separate from the trial');
     expect(text).not.toMatch(/\b7\b|\b14\b/);
   });
 
@@ -281,7 +281,7 @@ describe('GiftedDaysExplainer', () => {
     const text = screen.getByTestId('pricing-gifted-days').textContent ?? '';
     expect(text).toContain('تتضمن بعض الخطط أيام إعداد مُهداة');
     expect(text).toContain('مرة واحدة لكل عميل');
-    expect(text).toContain('منفصلة عن الفترة التجريبية المجانية');
+    expect(text).toContain('منفصلة عن فترة التجربة');
     expect(text).not.toMatch(/[A-Za-z]{3,}/);
   });
 });

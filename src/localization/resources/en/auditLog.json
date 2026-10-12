@@ -604,8 +604,8 @@
         "granted": "{{actor}} approved a first subscription that includes gifted setup days"
       },
       "trial": {
-        "redeemed": "{{actor}} started a free trial",
-        "cancelled": "{{actor}} cancelled the free trial"
+        "redeemed": "{{actor}} started a trial",
+        "cancelled": "{{actor}} cancelled the trial"
       },
       "cancelled": "{{actor}} cancelled the subscription",
       "grace_started": "The subscription entered its grace period",

@@ -12,6 +12,12 @@
  * - B0-CPY-02/03/06/07/10/14/16/17: organization rename, invite policy,
  *   trial rule, review time, staff dialogs, who reviews academy payments,
  *   and invoices — each stated as it actually works.
+ * - B0-CPY-04/05/08/11/12/18/20/22/23/24: no ineffective "Remember me", no
+ *   plan-changing representative, no offline or live-installation claims
+ *   on the build screen, no hosted/live/enforced/30-day overclaims, no
+ *   Word attachments, one AR spelling of MB and of "custom domain", no
+ *   invoices link, no legacy `billing` namespace, and the trial is never
+ *   called "free" in customer-facing copy.
  */
 import { describe, expect, it } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
@@ -42,6 +48,13 @@ function allStrings(lang: 'en' | 'ar'): [string, string][] {
   return out;
 }
 
+/** B0-CPY-11 (c) — the quiz "mode" is a preset label, not enforcement. */
+const QUIZ_MODE = /^course\.quizAuthoring\.settings\.fields\.mode\./;
+
+/** B0-CPY-24 — customer-facing namespaces where the trial must not be "free". */
+const CUSTOMER_TRIAL_SCOPE =
+  /^(auth|onboarding|pricing|errors|home|features)\.|^tenant\.(?!platformAdmin\.)/;
+
 const BANNED: Record<'en' | 'ar', { pattern: RegExp; scope?: RegExp }[]> = {
   en: [
     { pattern: /only you can see it/i },
@@ -61,6 +74,21 @@ const BANNED: Record<'en' | 'ar', { pattern: RegExp; scope?: RegExp }[]> = {
     { pattern: /only the academy owner/i, scope: /^payments\./ },
     { pattern: /invoices/i, scope: /^notifications\.communication\./ },
     { pattern: /receipts/i, scope: /^learning\.learnerDashboard\.purchases\./ },
+    { pattern: /remember me/i, scope: /^auth\.signIn\./ },
+    { pattern: /Atlas representative/i },
+    { pattern: /connection drops|installing/i, scope: /^onboarding\.build\./ },
+    { pattern: /live classes/i, scope: /^academy\.protection\./ },
+    { pattern: /hosted video file/i, scope: /^course\./ },
+    { pattern: /^Enforced:/, scope: QUIZ_MODE },
+    { pattern: /destroyed after 30 days|permanently removed after 30 days/i },
+    { pattern: /Atlas stores and delivers/i },
+    { pattern: /Word or image/i },
+    { pattern: /invoices/i, scope: /^payments\.overview\./ },
+    {
+      pattern:
+        /free trial|get started free|^start free|try .* free|days? free\b/i,
+      scope: CUSTOMER_TRIAL_SCOPE,
+    },
   ],
   ar: [
     { pattern: /لا يراه أحد غيرك/ },
@@ -80,8 +108,32 @@ const BANNED: Record<'en' | 'ar', { pattern: RegExp; scope?: RegExp }[]> = {
     { pattern: /مالك الأكاديمية فقط/, scope: /^payments\./ },
     { pattern: /الفواتير/, scope: /^notifications\.communication\./ },
     { pattern: /إيصالاتك/, scope: /^learning\.learnerDashboard\.purchases\./ },
+    { pattern: /ممثل أطلس/ },
+    { pattern: /انقطاع الاتصال|جارٍ تثبيت/, scope: /^onboarding\.build\./ },
+    {
+      pattern: /الجلسات المباشرة/,
+      scope: /^academy\.protection\.content\.watermark\./,
+    },
+    { pattern: /مُطبَّق:/, scope: QUIZ_MODE },
+    { pattern: /بعد 30 يومًا/, scope: /^media\./ },
+    { pattern: /تخزّن Atlas الفيديو/ },
+    { pattern: /Word أو صورة/ },
+    { pattern: /ميغابايت/ },
+    { pattern: /نطاق خاص/ },
+    { pattern: /الفواتير|فواتيرك/, scope: /^payments\.overview\.(?!title)/ },
+    {
+      pattern:
+        /تجربة مجانية|التجربة المجانية|تجربتك المجانية|التجارب المجانية|تجريبية مجانية|ابدأ مجانًا|جرّب .*مجانًا|أيام مجانًا/,
+      scope: CUSTOMER_TRIAL_SCOPE,
+    },
   ],
 };
+
+describe('legacy namespaces (B0-CPY-23)', () => {
+  it.each(['en', 'ar'])('has no billing namespace in %s', (lang) => {
+    expect(readdirSync(resolve(ROOT, lang))).not.toContain('billing.json');
+  });
+});
 
 describe.each(['en', 'ar'] as const)('copy claims guard (%s)', (lang) => {
   const all = allStrings(lang);

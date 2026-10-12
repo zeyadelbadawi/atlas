@@ -8,12 +8,26 @@
  *
  * It renders only while no decision exists. A user who has decided sees
  * nothing until they deliberately open preferences from the footer.
+ *
+ * B0-CPY-13 — on an academy website the visitor is dealing with the
+ * academy, so the banner names the academy (or "this website" until the
+ * name is known), never Atlas. The platform keeps the Atlas text.
  */
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { useCookieConsent } from '../consent/CookieConsentProvider';
 
-export function CookieConsentBanner() {
+export interface CookieConsentBannerProps {
+  /** Rendered on an academy website rather than on the Atlas platform. */
+  readonly academySite?: boolean;
+  /** The academy's name, once the host has resolved. */
+  readonly academyName?: string;
+}
+
+export function CookieConsentBanner({
+  academySite = false,
+  academyName,
+}: CookieConsentBannerProps = {}) {
   const { t } = useTranslation(['legal']);
   const { needsDecision, decide, openPreferences } = useCookieConsent();
 
@@ -35,7 +49,11 @@ export function CookieConsentBanner() {
             {t('legal:consent.bannerTitle')}
           </p>
           <p className="max-w-2xl text-sm text-muted-foreground">
-            {t('legal:consent.bannerBody')}
+            {!academySite
+              ? t('legal:consent.bannerBody')
+              : academyName
+                ? t('legal:consent.bannerBodyAcademy', { academyName })
+                : t('legal:consent.bannerBodySite')}
           </p>
         </div>
 

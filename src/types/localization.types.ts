@@ -40,7 +40,6 @@ export const TRANSLATION_NAMESPACES = [
   'profile',
   'settings',
   'notifications',
-  'billing',
   'analytics',
   'platform',
   'search',

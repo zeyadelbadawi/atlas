@@ -6,8 +6,8 @@
  * from local optimism:
  *
  *   - no trial started yet (`expired`/`cancelled` with no `trialEndsAt`)
- *       -> "Start free trial"
- *   - `trialing`                -> "Cancel free trial"
+ *       -> "Start trial"
+ *   - `trialing`                -> "Cancel trial"
  *   - a live paid subscription  -> "Cancel subscription"
  *
  * A REFUSED TRIAL IS NOT AN ERROR. The backend answers 200 with

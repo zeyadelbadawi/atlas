@@ -4,7 +4,8 @@
  * The Tenant's financial-operations home — distinct from Prompt 6's Tenant
  * Dashboard (`/dashboard/tenant`), which is a SaaS-status summary
  * (subscription/usage/add-ons). This page is about the money: payments
- * that need attention right now, and quick access to full History/Invoices.
+ * that need attention right now, and quick access to full payment history.
+ * B0-CPY-22: no Invoices link — no invoice is ever issued yet.
  */
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -210,7 +211,7 @@ export default function BillingOverviewPage(): JSX.Element {
         <div className="grid gap-4 sm:grid-cols-2">
           <button
             type="button"
-            onClick={() => navigate(DASHBOARD_ROUTES.tenantBillingInvoices)}
+            onClick={() => navigate(DASHBOARD_ROUTES.tenantBillingPayments)}
             className="flex items-center gap-3 rounded-lg border border-border bg-card p-4 text-start hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <FileText
@@ -220,10 +221,10 @@ export default function BillingOverviewPage(): JSX.Element {
             />
             <span>
               <span className="block font-medium text-foreground">
-                {t('payments:overview.invoicesLink')}
+                {t('payments:overview.paymentHistoryLink')}
               </span>
               <span className="block text-sm text-muted-foreground">
-                {t('payments:overview.invoicesLinkDescription')}
+                {t('payments:overview.paymentHistoryLinkDescription')}
               </span>
             </span>
           </button>

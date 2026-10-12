@@ -224,7 +224,7 @@ describe('one-page sign-up — organization mode on', () => {
     expect(screen.getByText('Standard')).toBeTruthy();
     expect(screen.getByText('Premium')).toBeTruthy();
     const growth = screen.getByTestId('trial-plan-growth');
-    expect(within(growth).getByText('14-day free trial')).toBeTruthy();
+    expect(within(growth).getByText('14-day trial')).toBeTruthy();
     expect(within(growth).getByText('No card required')).toBeTruthy();
     expect(within(growth).getByText('Then $79 / month')).toBeTruthy();
     expect(
@@ -270,7 +270,7 @@ describe('one-page sign-up — organization mode on', () => {
     await user.type(await screen.findByLabelText('Organization name'), 'Nile');
     await user.click(screen.getByRole('button', { name: 'Create Account' }));
     expect(
-      await screen.findByText('Choose a plan to start your free trial')
+      await screen.findByText('Choose a plan to start your trial')
     ).toBeTruthy();
     expect(register).not.toHaveBeenCalled();
   });
@@ -525,6 +525,6 @@ describe('one-page sign-up — Arabic', () => {
     expect(screen.getByTestId('root').getAttribute('dir')).toBe('rtl');
     // Catalog text in the visitor's language, from `nameLocalized`.
     expect(screen.getByRole('radio', { name: 'المبتدئة' })).toBeTruthy();
-    expect(screen.getByText('اختر تجربتك المجانية')).toBeTruthy();
+    expect(screen.getByText('اختر باقة للتجربة')).toBeTruthy();
   });
 });

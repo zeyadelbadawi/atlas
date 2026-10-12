@@ -166,7 +166,16 @@ interface ManualMethodTextsFieldsProps<T extends FieldValues> {
   readonly includeAccountName?: boolean;
   /** Where the details live in the form; `instructions` like every request body. */
   readonly pathPrefix?: string;
+  /**
+   * B0-CPY-21 — who reads these instructions: an organization paying its
+   * Atlas subscription (default) or a learner paying an academy for a
+   * course. Only the help texts change.
+   */
+  readonly audience?: ManualMethodAudience;
 }
+
+/** Who pays with the method being edited. */
+export type ManualMethodAudience = 'organization' | 'learner';
 
 /**
  * Account holder, transfer instructions and reference instructions —
@@ -179,9 +188,11 @@ export function ManualMethodTextsFields<T extends FieldValues>({
   testIdPrefix,
   includeAccountName = true,
   pathPrefix = 'instructions',
+  audience = 'organization',
 }: ManualMethodTextsFieldsProps<T>): JSX.Element {
   const path = (name: string) => `${pathPrefix}.${name}` as FieldPath<T>;
-  const arabicHelp = 'payments:manualMethods.fields.arabicHelp';
+  const suffix = audience === 'learner' ? 'Learner' : '';
+  const arabicHelp = `payments:manualMethods.fields.arabicHelp${suffix}`;
   return (
     <>
       {includeAccountName ? (
@@ -208,7 +219,7 @@ export function ManualMethodTextsFields<T extends FieldValues>({
           control={control}
           name={path('instructions')}
           labelKey={`payments:${section}.fields.instructions`}
-          helpKey={`payments:${section}.fields.instructionsHelp`}
+          helpKey={`payments:${section}.fields.instructionsHelp${suffix}`}
           testId={`${testIdPrefix}-instructions`}
         />
         <MethodLongTextField
@@ -226,7 +237,7 @@ export function ManualMethodTextsFields<T extends FieldValues>({
           control={control}
           name={path('referenceInstructions')}
           labelKey={`payments:${section}.fields.referenceInstructions`}
-          helpKey={`payments:${section}.fields.referenceInstructionsHelp`}
+          helpKey={`payments:${section}.fields.referenceInstructionsHelp${suffix}`}
           rows={2}
           testId={`${testIdPrefix}-reference-instructions`}
         />

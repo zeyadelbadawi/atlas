@@ -13,7 +13,6 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AUTH_ROUTES } from '@app/routes/route-paths';
 import { toErrorsNamespaceKey } from '@utils';
@@ -25,17 +24,17 @@ const signInSchema = z.object({
     .min(1, 'auth:signIn.errors.emailRequired')
     .email('auth:signIn.errors.invalidEmail'),
   password: z.string().min(1, 'auth:signIn.errors.passwordRequired'),
-  rememberMe: z.boolean().optional(),
 });
 
 type SignInFormData = z.infer<typeof signInSchema>;
 
 export interface SignInFormProps {
-  readonly onSubmit: (
-    email: string,
-    password: string,
-    rememberMe: boolean
-  ) => Promise<void>;
+  /**
+   * B0-CPY-04 — no "Remember me": the server ignored it (session lifetime
+   * is fixed by the session caps). The real control is "Remember this
+   * device" on the emailed-code step.
+   */
+  readonly onSubmit: (email: string, password: string) => Promise<void>;
   readonly isLoading: boolean;
   readonly error: ApiError | null;
   /**
@@ -72,12 +71,11 @@ export function SignInForm({
     defaultValues: {
       email: defaultEmail ?? '',
       password: '',
-      rememberMe: false,
     },
   });
 
   const handleFormSubmit = async (data: SignInFormData) => {
-    await onSubmit(data.email, data.password, data.rememberMe ?? false);
+    await onSubmit(data.email, data.password);
   };
 
   return (
@@ -157,21 +155,7 @@ export function SignInForm({
           ) : null}
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="rememberMe"
-              {...register('rememberMe')}
-              disabled={isLoading}
-            />
-            <Label
-              htmlFor="rememberMe"
-              className="text-sm font-normal cursor-pointer"
-            >
-              {t('auth:signIn.rememberMe')}
-            </Label>
-          </div>
-
+        <div className="flex items-center justify-end">
           <Link
             to={forgotPasswordHref}
             className="text-sm font-medium text-primary hover:underline"

@@ -184,7 +184,6 @@ export function PublicWebsiteSignUpPage({
       const challenge = await signIn({
         email: credentials.email,
         password: credentials.password,
-        rememberMe: false,
         surface: 'academy',
         academyId: academy.academyId,
       });

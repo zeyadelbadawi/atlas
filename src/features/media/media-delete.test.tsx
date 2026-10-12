@@ -212,7 +212,7 @@ describe('Academy Media — single delete', () => {
     await waitFor(() => expect(screen.queryByText('a.pdf')).toBeNull());
     expect(screen.getByText('b.pdf')).toBeTruthy();
     expect(toast).toHaveBeenCalledWith({
-      title: expect.stringContaining('permanently removed after 30 days'),
+      title: '“a.pdf” was removed from your library.',
     });
   });
 
@@ -380,7 +380,9 @@ describe('Academy Media — bulk delete', () => {
       '“c.pdf” is used by a lesson video. Replace or remove it there first.',
       "“d.pdf” wasn't found. It may already have been deleted.",
     ]);
-    expect(outcome.textContent).toContain('permanently removed after 30 days');
+    expect(outcome.textContent).toContain(
+      'Files are deleted from storage later.'
+    );
     await waitFor(() => expect(screen.queryByText('a.pdf')).toBeNull());
     expect(screen.getByText('c.pdf')).toBeTruthy();
   });

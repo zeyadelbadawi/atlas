@@ -39,6 +39,12 @@ export interface DashboardRevenue {
   /** See this file's header comment — `false` means "not tracked", never "zero". */
   readonly tracked: boolean;
   readonly paymentCollectionMode: PaymentCollectionMode;
+  /**
+   * B0-CPY-15 — an academy in scope has an enabled manual payment method.
+   * Optional so an older API (before this field) still type-checks; absent
+   * reads as `false`.
+   */
+  readonly manualPaymentMethodsEnabled?: boolean;
   readonly totals: readonly DashboardRevenueTotal[];
 }
 

@@ -26,7 +26,8 @@
     "notTracked": {
       "title": "Not tracked here",
       "ownGateway": "Your academy collects payments through your own gateway, so this money never passes through Atlas and we have no figure to show. Check your gateway's own dashboard for earnings.",
-      "unconfigured": "Set up how you collect payments to start seeing earnings here."
+      "unconfigured": "Set up how you collect payments to start seeing earnings here.",
+      "manual": "Earnings from manual payments aren't shown here yet. You can see each approved payment in Orders."
     },
     "none": {
       "title": "No earnings yet",

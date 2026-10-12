@@ -60,12 +60,15 @@ export function PublicWebsiteConsentLayer({
 }: {
   readonly lookupKey: string;
 }): JSX.Element {
-  const { themeKey, brand } = consentPaletteSource(
-    usePublicWebsiteData(lookupKey)
-  );
+  const data = usePublicWebsiteData(lookupKey);
+  const { themeKey, brand } = consentPaletteSource(data);
+  const academyName =
+    data.status === 'ready' || data.status === 'unpublished'
+      ? data.academy.academyName
+      : undefined;
   return (
     <WebsiteOverlayScope themeKey={themeKey} brand={brand}>
-      <CookieConsentBanner />
+      <CookieConsentBanner academySite academyName={academyName} />
       <CookiePreferencesDialog />
     </WebsiteOverlayScope>
   );

@@ -319,7 +319,6 @@ const PaymentHistoryPage = lazy(
 const PaymentDetailsPage = lazy(
   () => import('@features/billing/pages/PaymentDetailsPage')
 );
-const InvoicesPage = lazy(() => import('@features/billing/pages/InvoicesPage'));
 const PlatformPaymentReviewListPage = lazy(
   () => import('@features/billing/pages/PlatformPaymentReviewListPage')
 );
@@ -1853,15 +1852,13 @@ export default function AtlasAppRoutes(): JSX.Element {
               }
             />
 
+            {/* B0-CPY-22 — no invoices are ever issued yet, so the old
+                Invoices page (always empty) is not offered; a saved link
+                lands on payment history instead. */}
             <Route
               path={DASHBOARD_ROUTES.tenantBillingInvoices}
               element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['tenant.billing.view']}
-                >
-                  <InvoicesPage />
-                </RouteGuard>
+                <Navigate to={DASHBOARD_ROUTES.tenantBillingPayments} replace />
               }
             />
 

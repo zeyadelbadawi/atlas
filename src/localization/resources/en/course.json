@@ -595,7 +595,7 @@
       "fields": {
         "mode": {
           "label": "Mode",
-          "description": "Enforced: exam mode requests fullscreen when integrity is on and shows the attempt one question at a time by default.",
+          "description": "Exam preset: turns on full screen (when integrity is on) and one question at a time. You can change each setting below.",
           "options": {
             "practice": "Practice",
             "exam": "Exam"

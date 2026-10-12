@@ -160,17 +160,12 @@ export function PublicWebsiteSignInPage({
   // the same trusted `resolveHostname` lookup every other public page
   // uses, never a client guess). The backend re-verifies that the id
   // belongs to the request host and refuses otherwise.
-  const handleSubmit = async (
-    email: string,
-    password: string,
-    rememberMe: boolean
-  ) => {
+  const handleSubmit = async (email: string, password: string) => {
     clearError();
     try {
       const result = await signIn({
         email,
         password,
-        rememberMe,
         surface: 'academy',
         academyId: academy.academyId,
       });

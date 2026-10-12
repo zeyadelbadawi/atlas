@@ -181,7 +181,18 @@ export function AcademyBuildExperience({
         </p>
       </div>
 
-      <ol className="relative mt-8 grid gap-2 sm:grid-cols-2">
+      {/* B0-CPY-08 — the list summarises what the academy includes; it does
+          not report live installation steps. */}
+      <h3
+        id="academy-build-includes"
+        className="relative mt-8 text-sm font-medium text-foreground"
+      >
+        {t('onboarding:build.includesTitle')}
+      </h3>
+      <ol
+        className="relative mt-3 grid gap-2 sm:grid-cols-2"
+        aria-labelledby="academy-build-includes"
+      >
         {ACADEMY_BUILD_STAGES.map((stage, index) => {
           const state =
             done || index < stageIndex || (windowOver && index <= stageIndex)

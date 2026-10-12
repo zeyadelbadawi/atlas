@@ -18,14 +18,14 @@
   },
   "overview": {
     "title": "Billing",
-    "subtitle": "Payments that need your attention, and quick access to your history and invoices.",
+    "subtitle": "Payments that need your attention, and quick access to your payment history.",
     "currentPlan": "Current plan",
     "manageSubscription": "Manage subscription",
     "needsAttentionTitle": "Needs attention",
     "viewAllPayments": "View all payments",
     "noAttentionNeeded": "Nothing needs your attention right now",
-    "invoicesLink": "Invoices",
-    "invoicesLinkDescription": "View issued and paid invoices",
+    "paymentHistoryLink": "Payment history",
+    "paymentHistoryLinkDescription": "Every payment you've submitted and its status",
     "addOnsLink": "Add-ons",
     "addOnsLinkDescription": "Browse and purchase available add-ons"
   },
@@ -389,8 +389,10 @@
       "optional": "Optional.",
       "instructions": "Transfer instructions",
       "instructionsHelp": "Shown to the Organization with the bank details — for example, how to make the transfer and what to upload as proof.",
+      "instructionsHelpLearner": "Shown to learners with the bank details when they pay for a course — for example, how to make the transfer and what to upload as proof.",
       "referenceInstructions": "Payment reference instructions",
-      "referenceInstructionsHelp": "Tell the Organization what to write in the transfer reference so you can match the payment."
+      "referenceInstructionsHelp": "Tell the Organization what to write in the transfer reference so you can match the payment.",
+      "referenceInstructionsHelpLearner": "Tell learners what to write in the transfer reference so you can match their payment."
     },
     "validation": {
       "required": "This field is required.",
@@ -417,7 +419,8 @@
       "accountNameAr": "Account holder name (Arabic)",
       "instructionsAr": "Transfer instructions (Arabic)",
       "referenceInstructionsAr": "Payment reference instructions (Arabic)",
-      "arabicHelp": "Optional. Shown instead of the English text to customers using Atlas in Arabic."
+      "arabicHelp": "Optional. Shown instead of the English text to customers using Atlas in Arabic.",
+      "arabicHelpLearner": "Optional. Shown instead of the English text to learners viewing your academy in Arabic."
     }
   },
   "walletMethods": {
@@ -451,8 +454,10 @@
       "accountName": "Account holder name",
       "instructions": "Transfer instructions",
       "instructionsHelp": "Shown to the Organization with the wallet details — for example, how to send the transfer and what to upload as proof.",
+      "instructionsHelpLearner": "Shown to learners with the wallet details when they pay for a course — for example, how to send the transfer and what to upload as proof.",
       "referenceInstructions": "Payment reference instructions",
-      "referenceInstructionsHelp": "Tell the Organization what to write in the transfer note so you can match the payment."
+      "referenceInstructionsHelp": "Tell the Organization what to write in the transfer note so you can match the payment.",
+      "referenceInstructionsHelpLearner": "Tell learners what to write in the transfer note so you can match their payment."
     }
   },
   "instapayMethods": {
@@ -482,8 +487,10 @@
       "accountName": "Account holder name",
       "instructions": "Transfer instructions",
       "instructionsHelp": "Shown to the Organization with the InstaPay address — for example, how to send the transfer and what to upload as proof.",
+      "instructionsHelpLearner": "Shown to learners with the InstaPay address when they pay for a course — for example, how to send the transfer and what to upload as proof.",
       "referenceInstructions": "Payment reference instructions",
-      "referenceInstructionsHelp": "Tell the Organization what to write in the transfer note so you can match the payment."
+      "referenceInstructionsHelp": "Tell the Organization what to write in the transfer note so you can match the payment.",
+      "referenceInstructionsHelpLearner": "Tell learners what to write in the transfer note so you can match their payment."
     }
   },
   "planChange": {

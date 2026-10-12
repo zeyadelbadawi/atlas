@@ -14,6 +14,10 @@
  * currency (an organization can genuinely hold entries in more than one)
  * and converted from minor units at the last possible moment. Nothing is
  * projected, annualized, or estimated.
+ *
+ * B0-CPY-15 — an academy that already collects by manual transfer is told
+ * those earnings aren't shown here yet (B0-COM-02), never asked to "set up
+ * how you collect payments".
  */
 import { useTranslation } from 'react-i18next';
 import type { DashboardRevenue } from '@types';
@@ -33,6 +37,15 @@ function formatAmount(
   }).format(amountMinorUnits / 100);
 }
 
+function notTrackedKey(revenue: DashboardRevenue): string {
+  if (revenue.paymentCollectionMode === 'organization_gateway') {
+    return 'dashboard:revenue.notTracked.ownGateway';
+  }
+  return revenue.manualPaymentMethodsEnabled
+    ? 'dashboard:revenue.notTracked.manual'
+    : 'dashboard:revenue.notTracked.unconfigured';
+}
+
 export function RevenueSummary({ revenue }: RevenueSummaryProps): JSX.Element {
   const { t, i18n } = useTranslation();
 
@@ -43,11 +56,7 @@ export function RevenueSummary({ revenue }: RevenueSummaryProps): JSX.Element {
           {t('dashboard:revenue.notTracked.title')}
         </p>
         <p className="text-sm text-muted-foreground">
-          {t(
-            revenue.paymentCollectionMode === 'organization_gateway'
-              ? 'dashboard:revenue.notTracked.ownGateway'
-              : 'dashboard:revenue.notTracked.unconfigured'
-          )}
+          {t(notTrackedKey(revenue))}
         </p>
       </div>
     );

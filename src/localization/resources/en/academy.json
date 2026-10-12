@@ -625,7 +625,7 @@
       "watermark": {
         "label": "Forensic watermark on every video",
         "badge": "Always on",
-        "description": "Each learner sees their own personal code and a masked hint of their account moving across the video, with a faint pattern of the code over the whole picture. It covers hosted videos, YouTube lessons, free previews and live classes, and it can't be turned off.",
+        "description": "Each learner sees their own personal code and a masked hint of their account moving across the video, with a faint pattern of the code over the whole picture. It appears on every video lesson and course preview, and it can't be turned off.",
         "leak": "If a recording of your course turns up somewhere, contact Atlas support with the code you can see in it — Atlas can trace it to the account and session it came from."
       },
       "watermarkText": {
@@ -663,7 +663,7 @@
       "options": {
         "normal": {
           "label": "Normal",
-          "description": "Basic video protection: Atlas stores and delivers the video itself, through short-lived links that are only issued to learners with access."
+          "description": "Short-lived links issued only to learners with access, for videos uploaded to Atlas. Uploading videos is not available yet."
         },
         "premium": {
           "label": "Premium",

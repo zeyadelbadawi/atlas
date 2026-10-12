@@ -31,7 +31,7 @@
     "plan": {
       "label": "Plan",
       "title": "Choose how to start",
-      "description": "Start a free trial or choose a plan. Everything else in setup unlocks once your plan is active."
+      "description": "Start a trial or choose a plan. Everything else in setup unlocks once your plan is active."
     },
     "academy": {
       "label": "Academy",
@@ -65,16 +65,16 @@
     "goToAcademy": "Go to academy"
   },
   "plan": {
-    "trialTitle": "Start your free trial",
+    "trialTitle": "Start your trial",
     "trialDescription": "Pick the plan you'd like to try. No card required — you decide whether to continue when the trial ends.",
-    "startTrial": "Start free trial",
+    "startTrial": "Start trial",
     "starting": "Starting your trial…",
-    "trialStarted": "Your free trial has started",
-    "trialRefused": "Your free trial isn't available for this account. Choose a plan below to continue.",
+    "trialStarted": "Your trial has started",
+    "trialRefused": "A trial isn't available for this account. Choose a plan below to continue.",
     "trialFailed": "We couldn't start your trial. Please try again.",
     "chooseTrialPlan": "Choose a plan to try",
     "paidTitle": "Choose a plan",
-    "paidDescription": "Your free trial has already been used or isn't available right now. Choose a plan to continue — you'll pay securely and come back here.",
+    "paidDescription": "Your trial has already been used or isn't available right now. Choose a plan to continue — you'll pay securely and come back here.",
     "choosePlan": "Choose {{plan}}",
     "noPlans": "No plans are available right now. Please contact support.",
     "awaitingTitle": "Payment submitted — waiting for confirmation",
@@ -155,6 +155,7 @@
     "progressLabel": "Academy build progress",
     "stayHere": "Keep this page open — it updates on its own.",
     "highlightLead": "Did you know?",
+    "includesTitle": "Here's what your academy includes",
     "state": {
       "done": "done",
       "active": "in progress",
@@ -162,40 +163,40 @@
     },
     "stages": {
       "workspace": {
-        "label": "Creating your academy workspace",
-        "active": "Creating your academy workspace…"
+        "label": "Your academy workspace",
+        "active": "Your academy gets its own workspace and dashboard."
       },
       "packages": {
-        "label": "Installing your plan's features",
-        "active": "Installing the features included in your plan…"
+        "label": "Your plan's features",
+        "active": "The features included in your plan."
       },
       "theme": {
-        "label": "Applying your website theme",
-        "active": "Applying your website theme and layouts…"
+        "label": "Your website theme",
+        "active": "The theme you picked, with its layouts."
       },
       "pages": {
-        "label": "Building your website pages",
-        "active": "Building your home, about and contact pages…"
+        "label": "Your website pages",
+        "active": "Home, About and Contact pages, ready for you to edit."
       },
       "courses": {
-        "label": "Preparing your courses page",
-        "active": "Preparing your course catalogue and course pages…"
+        "label": "Your courses page",
+        "active": "A catalogue that lists the courses you publish."
       },
       "brand": {
-        "label": "Applying your brand",
-        "active": "Applying your logo, colours and favicon…"
+        "label": "Your brand",
+        "active": "Your logo, colours and favicon on every page."
       },
       "payments": {
-        "label": "Setting up payments",
-        "active": "Setting up the payment methods learners will use…"
+        "label": "Payments set-up",
+        "active": "Add bank transfer, wallet or InstaPay details in Settings so learners can pay you."
       },
       "security": {
-        "label": "Securing your address",
-        "active": "Securing your academy address with HTTPS…"
+        "label": "A secure address",
+        "active": "Your academy address works over HTTPS."
       },
       "protection": {
-        "label": "Enabling content protection",
-        "active": "Enabling video watermarking and content protection…"
+        "label": "Content protection",
+        "active": "Video lessons carry a per-learner watermark."
       },
       "launch": {
         "label": "Final checks",
@@ -205,8 +206,7 @@
     "highlights": {
       "bilingual": "Your academy works in Arabic and English, right to left included.",
       "payments": "Learners can pay you by bank transfer, mobile wallets or InstaPay.",
-      "protection": "Every lesson video carries a per-learner watermark that traces leaks.",
-      "offline": "Learners can keep reading their lessons even when their connection drops.",
+      "protection": "Every video lesson carries a per-learner watermark.",
       "certificates": "Issue certificates automatically when learners finish a course."
     }
   }
