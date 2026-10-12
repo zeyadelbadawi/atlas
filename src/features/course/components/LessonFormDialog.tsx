@@ -54,7 +54,7 @@ export interface LessonFormDialogProps {
   /** The create/update mutation's current error, so a validation (400) failure maps onto the field that caused it instead of only a page-level toast. */
   readonly error?: ApiError | null;
   /**
-   * When provided, video/file lessons offer "Choose from library" — the
+   * When provided, file lessons offer "Choose from library" — the
    * same real, working `MediaLibraryDialog` upload the Website Builder
    * already uses (Phase 0 fix: this dialog previously only ever offered a
    * plain URL field, even though the upload pipeline behind it was
@@ -302,7 +302,12 @@ export function LessonFormDialog({
                 name="contentUrl"
                 render={({ field }) => {
                   const contentType = form.watch('contentType');
-                  const canUpload = academyId && contentType !== 'text';
+                  // B0-MED-01 — files only. A video went through the public
+                  // image/document upload, whose byte check refuses every
+                  // video, so the control could never succeed; hosted video
+                  // authoring is not available yet, and a video lesson takes
+                  // a YouTube link only.
+                  const canUpload = academyId && contentType === 'file';
                   // Inferred from the URL string itself, never a separate
                   // stored field — see `youtube.utils.ts`'s own doc comment
                   // for why the content model stays a single opaque
@@ -361,7 +366,7 @@ export function LessonFormDialog({
                           onOpenChange={setIsLibraryOpen}
                           onSelect={(asset) => field.onChange(asset.url)}
                           selectedUrl={field.value || undefined}
-                          accept={contentType === 'video' ? 'video/*' : '*/*'}
+                          accept="*/*"
                         />
                       ) : null}
                     </FormItem>
