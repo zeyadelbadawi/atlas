@@ -43,6 +43,7 @@ import { hasConsentDecidedCookie, resolvePublicWebsiteContext } from '@utils';
 import {
   classifyPublicWebsiteData,
   renderSeoHeadHtml,
+  resolveCanonicalRedirect,
   SeoHeadCollectorContext,
   type PublicWebsiteDataState,
   type UseDocumentSeoOptions,
@@ -108,6 +109,14 @@ export interface SsrOptions {
    * (measured; see `preloadThemeFonts` in server/ssr/handler.mjs).
    */
   readonly preloadThemeFonts?: boolean;
+  /**
+   * B0-WEB-06 — answer a visitor on the non-canonical host (the Atlas
+   * subdomain once a custom domain is connected and reachable) with a
+   * permanent redirect instead of a page, so crawlers see one host. The
+   * browser's own redirect (`useCanonicalHostRedirect`) stays as the
+   * fallback for everything the server does not render. Default off.
+   */
+  readonly canonicalRedirect?: boolean;
 }
 
 export type SsrOutcome = 'ready' | 'unpublished';
@@ -120,7 +129,11 @@ export type SsrResult =
       readonly cache: 'hit' | 'miss' | 'bypass';
       readonly cacheKey?: string;
     }
+  | { readonly kind: 'redirect'; readonly location: string }
   | { readonly kind: 'pass'; readonly reason: string };
+
+/** The Atlas session cookie (either name): a signed-in visitor is never moved by the server. */
+const SESSION_COOKIE = /(?:^|;\s*)(?:__Host-)?atlas_session=/;
 
 const requestContext = new AsyncLocalStorage<ServerRequestContext>();
 setServerRequestContextProvider(() => requestContext.getStore());
@@ -285,6 +298,7 @@ export async function renderPublicWebsitePage(
 
   const lookupKey =
     context.lookupType === 'dev-override' ? context.value : hostname;
+  const isDevOverride = context.lookupType === 'dev-override';
   const locale = publicWebsiteLocaleForPath(url.pathname);
   const consentDecided = hasConsentDecidedCookie(request.cookieHeader);
   const renderYear = new Date().getUTCFullYear();
@@ -379,6 +393,22 @@ export async function renderPublicWebsitePage(
       const state = classify(queryClient, lookupKey);
       if (state.status === 'not-found' || state.status === 'unavailable') {
         return pass(state.status);
+      }
+
+      // B0-WEB-06 — before any cached page: the canonical host can change
+      // (a domain connected, or found unreachable) within a page's TTL.
+      if (
+        options.canonicalRedirect &&
+        !isDevOverride &&
+        !SESSION_COOKIE.test(request.cookieHeader ?? '') &&
+        (state.status === 'ready' || state.status === 'unpublished')
+      ) {
+        const location = resolveCanonicalRedirect(
+          { hostname, pathname: url.pathname, search: url.search, hash: '' },
+          state.academy.canonicalHost,
+          ENV.isDevelopment
+        );
+        if (location) return { kind: 'redirect', location };
       }
 
       if (

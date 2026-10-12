@@ -81,7 +81,9 @@ export function AcademyComingSoon({
       description,
       ogTitle: academy.academyName,
       ogDescription: description,
-      indexable: true,
+      // B0-WEB-06 — a thin placeholder, near-identical across academies:
+      // never indexed, so it cannot outrank the real site once published.
+      indexable: false,
       titleSource: 'fallback',
       descriptionSource: 'fallback',
       locale,

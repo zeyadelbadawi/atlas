@@ -24,3 +24,4 @@ export {
   renderSeoHeadHtml,
 } from './hooks/useDocumentSeo';
 export type { UseDocumentSeoOptions } from './hooks/useDocumentSeo';
+export { resolveCanonicalRedirect } from './utils/canonical-redirect.utils';

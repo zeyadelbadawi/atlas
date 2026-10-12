@@ -162,6 +162,11 @@ export class RenderCache {
  *   the chunk at boot (Reports/SSR_ARCHITECTURE_ANALYSIS.md §12.6).
  * @param {boolean} [options.preloadArabicFonts] Arabic pages preload the
  *   Arabic subsets of the theme fonts (see §12.6 for the measurement).
+ * @param {boolean} [options.canonicalRedirect] B0-WEB-06: a public page
+ *   requested on the non-canonical host (the Atlas subdomain of an academy
+ *   whose custom domain is connected and reachable) is answered with a 301
+ *   to the same path and query on the canonical host. Off by default here;
+ *   `server.mjs` turns it on (SSR_CANONICAL_REDIRECT=off to stop it).
  * @param {boolean} [options.preloadThemeFonts] off by default (measured):
  *   an Atelier page preloads the display face(s) its heading (the Home hero,
  *   its LCP element) is set in, which the browser otherwise finds only after
@@ -186,6 +191,7 @@ export async function createSsrHandler({
   preloadRouterChunks = false,
   preloadArabicFonts = false,
   preloadThemeFonts = false,
+  canonicalRedirect = false,
 }) {
   const entry = await import(pathToFileURL(entryPath).href);
   const template = readFileSync(join(distDir, 'index.html'), 'utf8');
@@ -266,6 +272,7 @@ export async function createSsrHandler({
             preloadHtml,
             localePreloadHtml,
             preloadThemeFonts,
+            canonicalRedirect,
             apiOrigin,
             apiTimeoutMs,
             // A response larger than the page budget means the page would
@@ -282,6 +289,20 @@ export async function createSsrHandler({
           );
         }),
       ]);
+      if (result.kind === 'redirect') {
+        log({ event: 'redirect', ms: Date.now() - started });
+        return {
+          status: 301,
+          headers: {
+            Location: result.location,
+            // Revalidated, never remembered for good: the canonical host
+            // moves back to the subdomain if the custom domain breaks.
+            'Cache-Control': 'private, no-cache',
+            'X-Atlas-SSR': 'redirect',
+          },
+          body: '',
+        };
+      }
       if (result.kind !== 'html') {
         log({ event: 'pass', reason: result.reason, ms: Date.now() - started });
         return shell(result.reason);
@@ -311,6 +332,11 @@ export async function createSsrHandler({
           // Tenant HTML is never stored by a shared cache (Cloudflare).
           'Cache-Control': 'private, no-cache',
           'X-Atlas-SSR': result.cache === 'hit' ? 'hit' : 'render',
+          // B0-WEB-06 — Coming Soon (unpublished or lapsed) is never indexed;
+          // the page's own robots meta says the same.
+          ...(result.outcome === 'unpublished'
+            ? { 'X-Robots-Tag': 'noindex' }
+            : {}),
         },
         body: result.html,
       };
