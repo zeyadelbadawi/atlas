@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 // Stale-tab recovery: route chunks retry, then reload once for a new build.
 import { lazyWithRetry as lazy } from '@utils/lazy-with-retry.utils';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { LiveSessionsLaunchGate } from './LiveSessionsLaunchGate';
 
 import { ErrorBoundary } from '@app/providers/error/ErrorBoundary';
 import { PublicLayout } from '@app/layouts/public/PublicLayout';
@@ -953,45 +954,53 @@ export default function AtlasAppRoutes(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.liveSessions}
               element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['academy.view']}
-                >
-                  <LiveSessionsOverviewPage />
-                </RouteGuard>
+                <LiveSessionsLaunchGate>
+                  <RouteGuard
+                    requireAuthentication
+                    requiredPermissions={['academy.view']}
+                  >
+                    <LiveSessionsOverviewPage />
+                  </RouteGuard>
+                </LiveSessionsLaunchGate>
               }
             />
             <Route
               path={DASHBOARD_ROUTES.liveSessionsList}
               element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['academy.view']}
-                >
-                  <LiveSessionsOverviewPage />
-                </RouteGuard>
+                <LiveSessionsLaunchGate>
+                  <RouteGuard
+                    requireAuthentication
+                    requiredPermissions={['academy.view']}
+                  >
+                    <LiveSessionsOverviewPage />
+                  </RouteGuard>
+                </LiveSessionsLaunchGate>
               }
             />
             <Route
               path={DASHBOARD_ROUTES.liveSessionsRecordings}
               element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['academy.view']}
-                >
-                  <LiveSessionsOverviewPage />
-                </RouteGuard>
+                <LiveSessionsLaunchGate>
+                  <RouteGuard
+                    requireAuthentication
+                    requiredPermissions={['academy.view']}
+                  >
+                    <LiveSessionsOverviewPage />
+                  </RouteGuard>
+                </LiveSessionsLaunchGate>
               }
             />
             <Route
               path={DASHBOARD_ROUTES.liveSessionsSettings}
               element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['academy.configure']}
-                >
-                  <LiveSessionsConnectionPage />
-                </RouteGuard>
+                <LiveSessionsLaunchGate>
+                  <RouteGuard
+                    requireAuthentication
+                    requiredPermissions={['academy.configure']}
+                  >
+                    <LiveSessionsConnectionPage />
+                  </RouteGuard>
+                </LiveSessionsLaunchGate>
               }
             />
 
