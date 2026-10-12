@@ -381,5 +381,10 @@
   "lessonContent": {
     "bodyRequired": "Write the lesson text before saving.",
     "unexpectedBody": "Only a text lesson can have lesson text."
+  },
+  "platformUsers": {
+    "cannotSuspend": "This account cannot be suspended or reinstated in its current state.",
+    "cannotSuspendSelf": "You cannot suspend your own account.",
+    "cannotSuspendPlatformOwner": "A Platform Owner account cannot be suspended here."
   }
 }

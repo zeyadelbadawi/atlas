@@ -210,6 +210,8 @@ export const AUDIT_ACTION_CATEGORIES: Readonly<Record<string, AuditCategory>> =
     'account.phone.removed': 'security',
     'account.deleted': 'security',
     'account.deleted_by_platform_owner': 'security',
+    'account.suspended': 'security',
+    'account.unsuspended': 'security',
     'plan.created': 'platform',
     'plan.updated': 'platform',
     'plan.pricing_changed': 'platform',

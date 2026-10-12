@@ -678,7 +678,9 @@
       "phone": {
         "updated": "{{actor}} حدّث رقم هاتفه",
         "removed": "{{actor}} حذف رقم هاتفه"
-      }
+      },
+      "suspended": "علّق {{actor}} حساب مستخدم",
+      "unsuspended": "أعاد {{actor}} تفعيل حساب مستخدم"
     },
     "plan": {
       "created": "{{actor}} أنشأ الباقة «{{target}}»",

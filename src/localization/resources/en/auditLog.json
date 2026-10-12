@@ -678,7 +678,9 @@
       "phone": {
         "updated": "{{actor}} updated their phone number",
         "removed": "{{actor}} removed their phone number"
-      }
+      },
+      "suspended": "{{actor}} suspended a user account",
+      "unsuspended": "{{actor}} reinstated a user account"
     },
     "plan": {
       "created": "{{actor}} created the plan “{{target}}”",

@@ -195,6 +195,23 @@
       "planFailed": "We could not work out what this deletion would affect, so nothing has been deleted. Close this and try again.",
       "alreadyDeleted": "This account has already been deleted. There is nothing left to do.",
       "refused": "This account cannot be deleted here. Platform Owner accounts are only changed through server provisioning."
+    },
+    "suspend": {
+      "action": "Suspend account",
+      "reinstateAction": "Reinstate account",
+      "title": "Suspend this account",
+      "description": "{{name}} ({{email}}) will be signed out everywhere now and cannot sign in until reinstated. Nothing is deleted.",
+      "reinstateTitle": "Reinstate this account",
+      "reinstateDescription": "{{name}} ({{email}}) will be able to sign in again.",
+      "reasonLabel": "Reason",
+      "reasonHint": "Required. Kept in the audit log.",
+      "reasonOptionalHint": "Optional. Kept in the audit log.",
+      "confirm": "Suspend",
+      "reinstateConfirm": "Reinstate",
+      "cancel": "Cancel",
+      "suspended": "Account suspended",
+      "reinstated": "Account reinstated",
+      "failed": "The change could not be made"
     }
   },
   "rolesPermissions": {

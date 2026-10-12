@@ -381,5 +381,10 @@
   "lessonContent": {
     "bodyRequired": "اكتب نص الدرس قبل الحفظ.",
     "unexpectedBody": "لا يمكن إضافة نص إلا لدرس نصي."
+  },
+  "platformUsers": {
+    "cannotSuspend": "لا يمكن تعليق هذا الحساب أو إعادة تفعيله في حالته الحالية.",
+    "cannotSuspendSelf": "لا يمكنك تعليق حسابك.",
+    "cannotSuspendPlatformOwner": "لا يمكن تعليق حساب مالك منصة من هنا."
   }
 }

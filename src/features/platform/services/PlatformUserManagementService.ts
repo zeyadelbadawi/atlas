@@ -85,7 +85,43 @@ export class PlatformUserManagementService extends BaseService {
       options
     );
   }
+
+  /**
+   * B0-SEC-07 — suspends the user: sign-in is refused and every session
+   * ends at once. A reason is required (it goes to the audit trail).
+   */
+  async suspendUser(
+    userId: string,
+    reason: string,
+    options?: WriteOptions
+  ): Promise<AccountSuspensionResult> {
+    return this.client.post<AccountSuspensionResult, { reason: string }>(
+      this.path(userId, 'suspend'),
+      { reason },
+      options
+    );
+  }
+
+  /** B0-SEC-07 — reinstates a suspended user. */
+  async unsuspendUser(
+    userId: string,
+    reason?: string,
+    options?: WriteOptions
+  ): Promise<AccountSuspensionResult> {
+    return this.client.post<AccountSuspensionResult, { reason?: string }>(
+      this.path(userId, 'unsuspend'),
+      reason ? { reason } : {},
+      options
+    );
+  }
+}
+
+/** B0-SEC-07 — the account's status after a suspend / reinstate call. */
+export interface AccountSuspensionResult {
+  readonly status: 'suspended' | 'active';
+  readonly sessionsRevoked: number;
 }
 
 /** Singleton instance following the Atlas service pattern. */
-export const platformUserManagementService = new PlatformUserManagementService();
+export const platformUserManagementService =
+  new PlatformUserManagementService();

@@ -18,6 +18,7 @@ import { useApiMutation, useApiQuery } from '@/shared/hooks';
 import { platformUserKeys } from '@services/query';
 import {
   platformUserManagementService,
+  type AccountSuspensionResult,
   type DeleteUserPayload,
 } from '../services/PlatformUserManagementService';
 import type { DeleteUserResult, DeletionPlan } from '@types';
@@ -54,6 +55,32 @@ export function useDeleteUserAsPlatformOwner() {
       platformUserManagementService.deleteUser(userId, payload),
     // The directory, the detail view and the plan all describe an account
     // that has just changed shape, so all three are invalidated together.
+    invalidateKeys: [platformUserKeys.all],
+    showSuccessToast: false,
+    showErrorToast: false,
+  });
+}
+
+/**
+ * B0-SEC-07 — suspend / reinstate. Toasts are left to the dialog, which
+ * reports the outcome next to the account it changed.
+ */
+export interface UseUserSuspensionVariables {
+  readonly userId: string;
+  readonly action: 'suspend' | 'unsuspend';
+  readonly reason?: string;
+}
+
+export function useUserSuspension() {
+  return useApiMutation<
+    AccountSuspensionResult,
+    UseUserSuspensionVariables,
+    ApiError
+  >({
+    mutationFn: ({ userId, action, reason }) =>
+      action === 'suspend'
+        ? platformUserManagementService.suspendUser(userId, reason ?? '')
+        : platformUserManagementService.unsuspendUser(userId, reason),
     invalidateKeys: [platformUserKeys.all],
     showSuccessToast: false,
     showErrorToast: false,
