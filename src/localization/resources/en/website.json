@@ -822,6 +822,7 @@
     "statMetricNone": "Custom text (below)",
     "statMetricCourses": "Live course count",
     "statMetricStudents": "Live student count",
+    "statMetricStudentsHint": "This number is public on your website.",
     "statMetricInstructors": "Live instructor count",
     "statValue": "Value",
     "statLabel": "Label",

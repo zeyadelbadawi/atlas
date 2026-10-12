@@ -854,6 +854,7 @@
     "statMetricNone": "نص مخصص (أدناه)",
     "statMetricCourses": "عدد الدورات المباشر",
     "statMetricStudents": "عدد الطلاب المباشر",
+    "statMetricStudentsHint": "هذا الرقم يظهر للجميع على موقعك.",
     "statMetricInstructors": "عدد المدرّبين المباشر",
     "statValue": "القيمة",
     "statLabel": "التسمية",

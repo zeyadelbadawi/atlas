@@ -971,7 +971,10 @@ function ScalarControl({
           />
         </div>
       );
-    case 'select':
+    case 'select': {
+      const selectedHintKey = descriptor.options.find(
+        (option) => option.value === value
+      )?.hintKey;
       return (
         <div className="space-y-1.5">
           <Label>{t(descriptor.labelKey)}</Label>
@@ -987,8 +990,14 @@ function ScalarControl({
               ))}
             </SelectContent>
           </Select>
+          {selectedHintKey ? (
+            <p className="text-xs text-muted-foreground">
+              {t(selectedHintKey)}
+            </p>
+          ) : null}
         </div>
       );
+    }
     case 'image':
       return (
         // The picker has several controls; the wrapper is what an error
