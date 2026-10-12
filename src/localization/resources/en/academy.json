@@ -138,6 +138,7 @@
     "subtitle": "Manage your academy team members",
     "searchPlaceholder": "Search members...",
     "filterByRole": "Filter by Role",
+    "ownerOnlyAdds": "Only the account owner can add people.",
     "allRoles": "All Roles",
     "table": {
       "name": "Name",
