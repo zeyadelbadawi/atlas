@@ -123,11 +123,6 @@ export function TrialPlanPicker({
                       : 'auth:register.plan.familyNormal'
                   )}
                 </p>
-                {group.family === 'premium' ? (
-                  <p className="text-xs text-muted-foreground">
-                    {t('auth:register.plan.familyPremiumHint')}
-                  </p>
-                ) : null}
               </div>
             ) : null}
 

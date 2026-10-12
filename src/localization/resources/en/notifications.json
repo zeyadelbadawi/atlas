@@ -500,7 +500,7 @@
       "off": "Off"
     },
     "reminders": "Reminders",
-    "remindersDescription": "Upcoming live sessions, deadlines and an expiring trial.",
+    "remindersDescription": "Reminders about your trial and subscription renewal.",
     "categories": {
       "security": {
         "title": "Security",
@@ -516,7 +516,7 @@
       },
       "engagement": {
         "title": "Updates and announcements",
-        "description": "Announcements, discussion replies and new content in your courses."
+        "description": "Messages from your academy, grades and results, and course completion."
       },
       "operational": {
         "title": "Operations",
