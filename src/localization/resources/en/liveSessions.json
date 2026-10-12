@@ -49,6 +49,7 @@
     "free": "Free",
     "price": "{{amount}} {{currency}} / month",
     "install": "Install",
+    "purchase": "Buy",
     "enable": "Enable",
     "disable": "Disable",
     "uninstall": "Uninstall",

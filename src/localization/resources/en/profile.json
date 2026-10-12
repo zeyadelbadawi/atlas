@@ -205,7 +205,7 @@
   },
   "phone": {
     "title": "Phone number",
-    "description": "Your mobile number. Academies and other users can’t see it. It’s also stored, encrypted, in the forensic watermark records described in our Privacy Policy.",
+    "description": "Your mobile number. If you are a student in an academy, that academy’s owners and managers can see it, and so can Atlas platform administrators. Instructors and other students can’t. It’s also stored, encrypted, in the forensic watermark records described in our Privacy Policy.",
     "label": "Mobile number",
     "empty": "You haven’t added a phone number yet.",
     "add": "Add phone number",
@@ -227,7 +227,7 @@
     "rateLimited": "You’ve changed your number several times recently. Please try again later.",
     "prompt": {
       "title": "Add your phone number",
-      "body": "So we can reach you about your account if we ever need to. Academies and other users can’t see it.",
+      "body": "So we can reach you about your account if we ever need to. If you are a student in an academy, its owners and managers can see it, and so can Atlas platform administrators.",
       "action": "Add phone number",
       "dismiss": "Not now"
     }

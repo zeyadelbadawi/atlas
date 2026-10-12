@@ -82,9 +82,9 @@ describe('Privacy Policy content', () => {
     }
   });
 
-  it('carries the 9 October 2026 revision date', () => {
-    expect(PRIVACY_POLICY_EN.lastUpdated).toBe('9 October 2026');
-    expect(PRIVACY_POLICY_AR.lastUpdated).toBe('٩ أكتوبر ٢٠٢٦');
+  it('carries the 12 October 2026 revision date', () => {
+    expect(PRIVACY_POLICY_EN.lastUpdated).toBe('12 October 2026');
+    expect(PRIVACY_POLICY_AR.lastUpdated).toBe('١٢ أكتوبر ٢٠٢٦');
   });
 
   it('discloses the forensic video watermark records (EN + AR)', () => {

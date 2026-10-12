@@ -14,7 +14,8 @@
  */
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
-import { Boxes, Check, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Boxes, Check, Loader2, ShoppingCart } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { EmptyState, ErrorState } from '@components/feedback';
 import { SectionLoader } from '@components/loading';
@@ -22,6 +23,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useApiMutation, useApiQuery, useAuth } from '@hooks';
+import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { liveSessionKeys } from '@services/query';
 import { addOnCatalogService } from '../services/AddOnCatalogService';
 import type { AddOnAccessState, AddOnCatalogEntry } from '@types';
@@ -33,6 +35,7 @@ export default function AddOnsCatalogPage(): JSX.Element {
   const { t } = useTranslation();
   const { organization } = useAuth();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const organizationId = organization?.id;
 
   const catalogQuery = useApiQuery<readonly AddOnCatalogEntry[], ApiError>({
@@ -138,6 +141,25 @@ export default function AddOnsCatalogPage(): JSX.Element {
                         <p className="text-sm text-muted-foreground">
                           {t('liveSessions:catalog.comingSoonNote')}
                         </p>
+                      ) : !installed && !addOn.isFree ? (
+                        // CF-23 — a priced add-on is bought through checkout
+                        // (proof → approval activates it); the API refuses a
+                        // direct install, so the button goes to checkout.
+                        <Button
+                          size="sm"
+                          disabled={busy}
+                          onClick={() =>
+                            navigate(
+                              buildPath(DASHBOARD_ROUTES.tenantBillingCheckout, {
+                                targetType: 'add_on',
+                                targetKey: addOn.key,
+                              }),
+                            )
+                          }
+                        >
+                          <ShoppingCart className="me-2 size-4" aria-hidden />
+                          {t('liveSessions:catalog.purchase')}
+                        </Button>
                       ) : !installed ? (
                         <Button
                           size="sm"
