@@ -763,5 +763,65 @@
       "notRecorded": "Not recorded",
       "untitled": "Untitled"
     }
+  },
+  "privacyRequests": {
+    "title": "Privacy requests",
+    "subtitle": "Requests to export or delete a person's data. Handle the oldest first; nothing in the product promises a handling time.",
+    "breadcrumb": "Privacy requests",
+    "empty": "No privacy requests match this view.",
+    "loadFailed": "Could not load privacy requests.",
+    "filters": {
+      "all": "All",
+      "open": "Open"
+    },
+    "columns": {
+      "type": "Type",
+      "requester": "Requester",
+      "academy": "Filed from",
+      "status": "Status",
+      "created": "Filed"
+    },
+    "noAcademy": "Management dashboard",
+    "type": {
+      "export": "Data export",
+      "deletion": "Account deletion"
+    },
+    "status": {
+      "submitted": "Submitted",
+      "in_progress": "In progress",
+      "completed": "Completed",
+      "rejected": "Declined"
+    },
+    "detail": {
+      "back": "Back to privacy requests",
+      "requester": "Requester",
+      "email": "Email",
+      "academy": "Filed from",
+      "filed": "Filed",
+      "completed": "Completed",
+      "availableUntil": "Download available until",
+      "note": "Reason given",
+      "openUser": "Open user",
+      "accountGone": "Account deleted",
+      "identity": "Filed from the signed-in account and confirmed by a code sent to its verified email address.",
+      "start": "Start handling",
+      "starting": "Saving…",
+      "fulfilExport": "Prepare download",
+      "fulfilExportHint": "The person can download their data from their profile for 7 days. They are emailed.",
+      "fulfilDeletion": "Delete account",
+      "fulfilDeletionHint": "Deletes the account through the standard Platform Owner deletion: owned academies are archived, memberships removed, sessions ended. Check the deletion plan on the user's page first. This cannot be undone.",
+      "confirmDeletionTitle": "Delete this account?",
+      "confirmDeletionBody": "Type DELETE to confirm. This cannot be undone.",
+      "confirmWord": "DELETE",
+      "confirm": "Confirm",
+      "working": "Working…",
+      "reject": "Decline",
+      "rejectTitle": "Decline this request",
+      "rejectLabel": "Reason (sent to the person)",
+      "rejectPlaceholder": "For example: an open payment dispute must be settled first.",
+      "saved": "Request updated.",
+      "failed": "The request could not be updated.",
+      "cancel": "Cancel"
+    }
   }
 }

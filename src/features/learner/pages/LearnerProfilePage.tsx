@@ -31,6 +31,7 @@ import {
   ProfilePhoneCard,
   ProfilePreferencesSection,
 } from '@features/profile';
+import { PrivacyRequestsCard } from '@features/privacy-requests';
 import { LearnerPageHeader } from '../components/LearnerPageHeader';
 import { LearnerSectionPlaceholder } from '../components/LearnerSectionPlaceholder';
 
@@ -93,6 +94,10 @@ export default function LearnerProfilePage(): JSX.Element {
               irreversible control on the page a learner opens to change
               their phone number is a trap. */}
           <ProfileAccountSection user={user} audience="learner" />
+          {/* B0-SEC-13 — data export / deletion as a REQUEST the Atlas
+              team handles, confirmed by an emailed code. Not the
+              irreversible act itself (see the note above). */}
+          <PrivacyRequestsCard />
         </TabsContent>
 
         <TabsContent value="preferences" className="space-y-6">

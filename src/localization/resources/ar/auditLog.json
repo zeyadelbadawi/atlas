@@ -162,7 +162,8 @@
     "communication_campaign": "رسالة",
     "forensic_watermark": "رمز علامة مائية",
     "trial_policy": "سياسة الفترة التجريبية",
-    "academy_payout": "دفعة مستحقات أكاديمية"
+    "academy_payout": "دفعة مستحقات أكاديمية",
+    "privacy_request": "طلب خصوصية"
   },
   "fields": {
     "title": "العنوان",
@@ -738,6 +739,18 @@
     "payout": {
       "created": "{{actor}} أنشأ دفعة مستحقات لأكاديمية",
       "marked_paid": "{{actor}} سجّل دفعة مستحقات أكاديمية كمدفوعة"
+    },
+    "privacy_request": {
+      "code": {
+        "requested": "طلب {{actor}} رمز طلب خصوصية",
+        "code_failed": "أدخل {{actor}} رمز طلب خصوصية خاطئًا",
+        "locked_out": "أُوقف {{actor}} عن رموز طلبات الخصوصية بعد محاولات كثيرة",
+        "confirmed": "أكّد {{actor}} رمز طلب خصوصية"
+      },
+      "submitted": "قدّم {{actor}} طلب خصوصية",
+      "status_changed": "غيّر {{actor}} حالة طلب خصوصية",
+      "fulfilled": "أتمّ {{actor}} طلب خصوصية",
+      "export_downloaded": "نزّل {{actor}} نسخة بياناته"
     }
   }
 }

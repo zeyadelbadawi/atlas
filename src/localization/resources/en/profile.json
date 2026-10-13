@@ -237,5 +237,49 @@
       "action": "Add phone number",
       "dismiss": "Not now"
     }
+  },
+  "privacyRequests": {
+    "title": "Your data",
+    "description": "Ask for a copy of the personal data your account holds, or ask for your account to be deleted. Our team handles each request and emails you when it is done.",
+    "exportTitle": "Get a copy of your data",
+    "exportDescription": "A file with your profile, academies, enrolments, progress, certificates, orders and payments.",
+    "exportAction": "Request a copy",
+    "deletionTitle": "Delete your account",
+    "deletionDescription": "Your account is deleted and cannot be recovered. You lose access to every course, and every session ends.",
+    "deletionAction": "Request deletion",
+    "dialogTitleExport": "Request a copy of your data",
+    "dialogTitleDeletion": "Request deletion of your account",
+    "dialogDescription": "To confirm it is you, we will email a code to your address.",
+    "sendCode": "Email me a code",
+    "sendingCode": "Sending…",
+    "codeTitle": "Enter the code",
+    "codeDescription": "We sent a 6-digit code to {{email}}.",
+    "codeLabel": "Confirmation code",
+    "resend": "Send a new code",
+    "resendIn": "Send a new code in {{seconds}} s",
+    "submit": "Send request",
+    "submitting": "Sending…",
+    "submitted": "Request sent. We will email you when it is done.",
+    "failed": "We could not send your request. Try again.",
+    "historyTitle": "Your requests",
+    "historyEmpty": "You have not made any requests.",
+    "loadFailed": "We could not load your requests.",
+    "download": "Download your data",
+    "downloading": "Preparing…",
+    "downloadFailed": "The download is no longer available.",
+    "availableUntil": "Available until {{date}}",
+    "reason": "Reason: {{note}}",
+    "filedOn": "Requested {{date}}",
+    "openRequest": "You already have an open request of this kind.",
+    "type": {
+      "export": "Copy of your data",
+      "deletion": "Account deletion"
+    },
+    "status": {
+      "submitted": "Received",
+      "in_progress": "In progress",
+      "completed": "Done",
+      "rejected": "Declined"
+    }
   }
 }

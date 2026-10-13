@@ -517,6 +517,30 @@
     "billingLimitReachedStorage": {
       "title": "Storage limit reached",
       "message": "You're using {{used}} of {{limit}} GB. New uploads are refused until you upgrade."
+    },
+    "privacyRequestCode": {
+      "title": "Privacy request code",
+      "message": "A code to confirm your privacy request was sent to your email."
+    },
+    "privacyRequestReceived": {
+      "title": "Privacy request received",
+      "message": "We received your privacy request."
+    },
+    "privacyRequestExportReady": {
+      "title": "Your data is ready",
+      "message": "Your copy of your data can be downloaded from your profile."
+    },
+    "privacyRequestRejected": {
+      "title": "Privacy request update",
+      "message": "We could not complete your privacy request."
+    },
+    "privacyRequestDeletionCompleted": {
+      "title": "Account deleted",
+      "message": "Your account was deleted as you requested."
+    },
+    "platformPrivacyRequestCreated": {
+      "title": "New privacy request",
+      "message": "A person filed a privacy request."
     }
   },
   "liveSession": {

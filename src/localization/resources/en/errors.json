@@ -386,5 +386,10 @@
     "cannotSuspend": "This account cannot be suspended or reinstated in its current state.",
     "cannotSuspendSelf": "You cannot suspend your own account.",
     "cannotSuspendPlatformOwner": "A Platform Owner account cannot be suspended here."
+  },
+  "privacyRequest": {
+    "invalidTransition": "This request has already moved on. Reload to see its current state.",
+    "noteRequired": "Give the person a reason when declining.",
+    "accountGone": "The account behind this request no longer exists."
   }
 }

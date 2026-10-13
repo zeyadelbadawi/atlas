@@ -237,5 +237,49 @@
       "action": "إضافة رقم هاتف",
       "dismiss": "ليس الآن"
     }
+  },
+  "privacyRequests": {
+    "title": "بياناتك",
+    "description": "اطلب نسخة من البيانات الشخصية التي يحتفظ بها حسابك، أو اطلب حذف حسابك. يتولى فريقنا كل طلب ويراسلك عند الانتهاء منه.",
+    "exportTitle": "احصل على نسخة من بياناتك",
+    "exportDescription": "ملف يضم ملفك الشخصي وأكاديمياتك وتسجيلاتك وتقدمك وشهاداتك وطلباتك ومدفوعاتك.",
+    "exportAction": "اطلب نسخة",
+    "deletionTitle": "احذف حسابك",
+    "deletionDescription": "يُحذف حسابك ولا يمكن استعادته. تفقد الوصول إلى جميع الدورات وتنتهي جميع الجلسات.",
+    "deletionAction": "اطلب الحذف",
+    "dialogTitleExport": "طلب نسخة من بياناتك",
+    "dialogTitleDeletion": "طلب حذف حسابك",
+    "dialogDescription": "للتأكد من أنك صاحب الحساب، سنرسل رمزًا إلى بريدك الإلكتروني.",
+    "sendCode": "أرسل لي رمزًا",
+    "sendingCode": "جارٍ الإرسال…",
+    "codeTitle": "أدخل الرمز",
+    "codeDescription": "أرسلنا رمزًا من 6 أرقام إلى {{email}}.",
+    "codeLabel": "رمز التأكيد",
+    "resend": "أرسل رمزًا جديدًا",
+    "resendIn": "أرسل رمزًا جديدًا خلال {{seconds}} ث",
+    "submit": "أرسل الطلب",
+    "submitting": "جارٍ الإرسال…",
+    "submitted": "تم إرسال الطلب. سنراسلك عند الانتهاء منه.",
+    "failed": "تعذّر إرسال طلبك. حاول مرة أخرى.",
+    "historyTitle": "طلباتك",
+    "historyEmpty": "لم تقدّم أي طلبات.",
+    "loadFailed": "تعذّر تحميل طلباتك.",
+    "download": "نزّل بياناتك",
+    "downloading": "جارٍ التحضير…",
+    "downloadFailed": "لم يعد التنزيل متاحًا.",
+    "availableUntil": "متاحة حتى {{date}}",
+    "reason": "السبب: {{note}}",
+    "filedOn": "قُدّم في {{date}}",
+    "openRequest": "لديك بالفعل طلب مفتوح من هذا النوع.",
+    "type": {
+      "export": "نسخة من بياناتك",
+      "deletion": "حذف الحساب"
+    },
+    "status": {
+      "submitted": "تم الاستلام",
+      "in_progress": "قيد المعالجة",
+      "completed": "تم",
+      "rejected": "مرفوض"
+    }
   }
 }

@@ -162,7 +162,8 @@
     "communication_campaign": "message",
     "forensic_watermark": "watermark code",
     "trial_policy": "trial policy",
-    "academy_payout": "academy payout"
+    "academy_payout": "academy payout",
+    "privacy_request": "Privacy request"
   },
   "fields": {
     "title": "Title",
@@ -738,6 +739,18 @@
     "payout": {
       "created": "{{actor}} created an academy payout",
       "marked_paid": "{{actor}} marked an academy payout as paid"
+    },
+    "privacy_request": {
+      "code": {
+        "requested": "{{actor}} asked for a privacy-request code",
+        "code_failed": "{{actor}} entered a wrong privacy-request code",
+        "locked_out": "{{actor}} was locked out of privacy-request codes",
+        "confirmed": "{{actor}} confirmed a privacy-request code"
+      },
+      "submitted": "{{actor}} filed a privacy request",
+      "status_changed": "{{actor}} changed the status of a privacy request",
+      "fulfilled": "{{actor}} fulfilled a privacy request",
+      "export_downloaded": "{{actor}} downloaded their data export"
     }
   }
 }

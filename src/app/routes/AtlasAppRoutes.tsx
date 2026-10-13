@@ -481,6 +481,13 @@ const AcademyRequestDetailPage = lazy(
 const PlatformCustomerRequestsPage = lazy(
   () => import('@features/customer-requests/pages/PlatformCustomerRequestsPage')
 );
+const PlatformPrivacyRequestsPage = lazy(
+  () => import('@features/privacy-requests/pages/PlatformPrivacyRequestsPage')
+);
+const PlatformPrivacyRequestDetailPage = lazy(
+  () =>
+    import('@features/privacy-requests/pages/PlatformPrivacyRequestDetailPage')
+);
 const PlatformCustomerRequestDetailPage = lazy(
   () =>
     import('@features/customer-requests/pages/PlatformCustomerRequestDetailPage')
@@ -2445,6 +2452,32 @@ export default function AtlasAppRoutes(): JSX.Element {
                   requiredRoles={['platform_owner']}
                 >
                   <PlatformCustomerRequestDetailPage />
+                </RouteGuard>
+              }
+            />
+
+            {/* B0-SEC-13 — privacy requests. The API's PlatformOwnerGuard +
+                RLS are the real control. */}
+            <Route
+              path={DASHBOARD_ROUTES.platformPrivacyRequests}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformPrivacyRequestsPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformPrivacyRequestDetail}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformPrivacyRequestDetailPage />
                 </RouteGuard>
               }
             />

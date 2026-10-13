@@ -117,7 +117,8 @@
     "platformCommerce": "التجارة",
     "platformCoursePayments": "مدفوعات الدورات",
     "platformPayouts": "مستحقات الأكاديميات",
-    "platformCommission": "العمولة"
+    "platformCommission": "العمولة",
+    "platformPrivacyRequests": "طلبات الخصوصية"
   },
   "account": {
     "menu": "قائمة الحساب",

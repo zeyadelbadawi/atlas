@@ -521,6 +521,30 @@
     "billingLimitReachedStorage": {
       "title": "وصلت إلى حد التخزين",
       "message": "تستخدم {{used}} من {{limit}} جيجابايت. تُرفض عمليات الرفع الجديدة إلى أن تُرقّي خطتك."
+    },
+    "privacyRequestCode": {
+      "title": "رمز طلب الخصوصية",
+      "message": "أُرسل إلى بريدك الإلكتروني رمز لتأكيد طلب الخصوصية."
+    },
+    "privacyRequestReceived": {
+      "title": "تم استلام طلب الخصوصية",
+      "message": "تلقّينا طلب الخصوصية الخاص بك."
+    },
+    "privacyRequestExportReady": {
+      "title": "بياناتك جاهزة",
+      "message": "يمكنك تنزيل نسخة بياناتك من ملفك الشخصي."
+    },
+    "privacyRequestRejected": {
+      "title": "تحديث بشأن طلب الخصوصية",
+      "message": "لم نتمكن من إتمام طلب الخصوصية الخاص بك."
+    },
+    "privacyRequestDeletionCompleted": {
+      "title": "تم حذف الحساب",
+      "message": "تم حذف حسابك بناءً على طلبك."
+    },
+    "platformPrivacyRequestCreated": {
+      "title": "طلب خصوصية جديد",
+      "message": "قدّم شخص طلب خصوصية."
     }
   },
   "liveSession": {

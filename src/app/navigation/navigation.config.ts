@@ -1017,6 +1017,18 @@ export function getDashboardNavigation(
           matchNestedPaths: true,
         },
         {
+          // B0-SEC-13 — data export / account deletion requests.
+          // `PlatformPrivacyRequestsController` (PlatformOwnerGuard + RLS)
+          // is the server-side boundary.
+          id: 'platform-privacy-requests',
+          labelKey: 'navigation:items.platformPrivacyRequests',
+          path: DASHBOARD_ROUTES.platformPrivacyRequests,
+          icon: ShieldCheck,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+          matchNestedPaths: true,
+        },
+        {
           // Add-ons Catalog Management (P51). Platform-owner only at every
           // level; `PlatformAddOnsController` is the server-side boundary,
           // this nav entry only decides what a platform owner is shown.

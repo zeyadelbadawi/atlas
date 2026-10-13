@@ -1283,6 +1283,16 @@ export const customerRequestKeys = {
   routing: () => [...customerRequestKeys.all, 'platform', 'routing'] as const,
 } as const;
 
+/** B0-SEC-13 — privacy requests: the person's own, and the Platform Owner queue. */
+export const privacyRequestKeys = {
+  all: ['privacy-requests'] as const,
+  mine: () => [...privacyRequestKeys.all, 'mine'] as const,
+  platformList: (query?: unknown) =>
+    [...privacyRequestKeys.all, 'platform', 'list', query] as const,
+  platformDetail: (requestId: string) =>
+    [...privacyRequestKeys.all, 'platform', 'detail', requestId] as const,
+} as const;
+
 /** Platform-wide command-center metrics (Prompt 13). */
 export const platformMetricsKeys = {
   all: QUERY_KEY_ROOTS.platformMetrics,
