@@ -160,7 +160,9 @@
     "platform_contact_submission": "contact enquiry",
     "lesson": "lesson",
     "communication_campaign": "message",
-    "forensic_watermark": "watermark code"
+    "forensic_watermark": "watermark code",
+    "trial_policy": "trial policy",
+    "academy_payout": "academy payout"
   },
   "fields": {
     "title": "Title",
@@ -597,7 +599,11 @@
       "refund_recorded": "{{actor}} recorded a refund for a course order"
     },
     "provisioning_request": {
-      "created": "{{actor}} requested a new academy “{{target}}”"
+      "created": "{{actor}} requested a new academy “{{target}}”",
+      "retried": "{{actor}} retried the setup of “{{target}}”",
+      "cancelled": "{{actor}} cancelled the setup of “{{target}}”",
+      "retried_by_platform": "{{actor}} retried the setup of “{{target}}” from the platform console",
+      "cancelled_by_platform": "{{actor}} cancelled the setup of “{{target}}” from the platform console"
     },
     "subscription": {
       "gift": {
@@ -661,6 +667,10 @@
         "enabled": "{{actor}} turned on two-factor authentication",
         "disabled": "{{actor}} turned off two-factor authentication",
         "reset_by_operator": "{{actor}} reset a user’s two-factor authentication"
+      },
+      "sign_in": {
+        "succeeded": "{{actor}} signed in",
+        "failed": "A sign-in to {{actor}}’s account failed"
       }
     },
     "password_reset": {
@@ -698,7 +708,9 @@
       "updated": "{{actor}} updated the payment method “{{target}}”"
     },
     "commission_config": {
-      "global_default_updated": "{{actor}} changed the default commission rate"
+      "global_default_updated": "{{actor}} changed the default commission rate",
+      "plan_updated": "{{actor}} changed a plan’s commission rate",
+      "organization_updated": "{{actor}} changed an organization’s commission rate"
     },
     "observability": {
       "synthetic_alert": {
@@ -719,6 +731,13 @@
         "looked_up": "{{actor}} looked up the watermark code {{target}}",
         "looked_up_noTarget": "{{actor}} looked up a watermark code"
       }
+    },
+    "trial_policy": {
+      "updated": "{{actor}} changed the free trial policy"
+    },
+    "payout": {
+      "created": "{{actor}} created an academy payout",
+      "marked_paid": "{{actor}} marked an academy payout as paid"
     }
   }
 }

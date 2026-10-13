@@ -160,7 +160,9 @@
     "platform_contact_submission": "استفسار تواصل",
     "lesson": "درس",
     "communication_campaign": "رسالة",
-    "forensic_watermark": "رمز علامة مائية"
+    "forensic_watermark": "رمز علامة مائية",
+    "trial_policy": "سياسة الفترة التجريبية",
+    "academy_payout": "دفعة مستحقات أكاديمية"
   },
   "fields": {
     "title": "العنوان",
@@ -597,7 +599,11 @@
       "refund_recorded": "{{actor}} سجّل استردادًا لطلب دورة"
     },
     "provisioning_request": {
-      "created": "{{actor}} طلب إنشاء أكاديمية جديدة «{{target}}»"
+      "created": "{{actor}} طلب إنشاء أكاديمية جديدة «{{target}}»",
+      "retried": "أعاد {{actor}} محاولة إعداد «{{target}}»",
+      "cancelled": "ألغى {{actor}} إعداد «{{target}}»",
+      "retried_by_platform": "أعاد {{actor}} محاولة إعداد «{{target}}» من لوحة المنصة",
+      "cancelled_by_platform": "ألغى {{actor}} إعداد «{{target}}» من لوحة المنصة"
     },
     "subscription": {
       "gift": {
@@ -661,6 +667,10 @@
         "enabled": "فعّل {{actor}} المصادقة الثنائية",
         "disabled": "أوقف {{actor}} المصادقة الثنائية",
         "reset_by_operator": "أعاد {{actor}} ضبط المصادقة الثنائية لحساب مستخدم"
+      },
+      "sign_in": {
+        "succeeded": "سجّل {{actor}} الدخول",
+        "failed": "فشلت محاولة لتسجيل الدخول إلى حساب {{actor}}"
       }
     },
     "password_reset": {
@@ -698,7 +708,9 @@
       "updated": "{{actor}} حدّث طريقة الدفع «{{target}}»"
     },
     "commission_config": {
-      "global_default_updated": "{{actor}} غيّر نسبة العمولة الافتراضية"
+      "global_default_updated": "{{actor}} غيّر نسبة العمولة الافتراضية",
+      "plan_updated": "{{actor}} غيّر نسبة العمولة لخطة",
+      "organization_updated": "{{actor}} غيّر نسبة العمولة لمؤسسة"
     },
     "observability": {
       "synthetic_alert": {
@@ -719,6 +731,13 @@
         "looked_up": "بحث {{actor}} عن رمز العلامة المائية {{target}}",
         "looked_up_noTarget": "بحث {{actor}} عن رمز علامة مائية"
       }
+    },
+    "trial_policy": {
+      "updated": "{{actor}} غيّر سياسة الفترة التجريبية المجانية"
+    },
+    "payout": {
+      "created": "{{actor}} أنشأ دفعة مستحقات لأكاديمية",
+      "marked_paid": "{{actor}} سجّل دفعة مستحقات أكاديمية كمدفوعة"
     }
   }
 }
