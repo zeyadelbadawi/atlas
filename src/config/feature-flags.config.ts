@@ -31,10 +31,13 @@ export const FEATURE_FLAGS = {
    */
   academyBlogAndForum: false,
   /**
-   * B0-MED-02 / B0-MED-04 — academies cannot upload or author hosted video
-   * yet (lessons use YouTube links). While `false`, no customer screen
-   * offers a video tier choice or shows a video storage allowance; the
-   * catalog keeps its stored limits. Flip to `true` when authoring ships.
+   * B0-MED-02 / B0-MED-04 / B0-MED-11 — hosted (Normal-tier) video. While
+   * `false`, no customer screen offers a video tier choice, shows a video
+   * storage allowance, or lets a Video lesson upload / pick an Atlas-hosted
+   * video (lessons use YouTube links); the catalog keeps its stored limits.
+   * The builder path is built (B0-MED-11). Flip to `true` only after the
+   * owner enables the Normal tier in production and one upload → playback
+   * with the watermark is verified (B0-OC-34).
    */
   hostedVideoAuthoring: false,
 } as const;

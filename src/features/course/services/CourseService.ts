@@ -32,6 +32,9 @@ import type {
   UpsertTextLessonContentPayload,
   UpsertFileLessonContentPayload,
   UploadProtectedLessonFilePayload,
+  CreateHostedVideoUploadPayload,
+  HostedVideoAsset,
+  HostedVideoUploadTicket,
   ProtectedLessonFile,
 } from '@types';
 
@@ -412,6 +415,51 @@ export class CourseService extends BaseService {
       ProtectedLessonFile,
       UploadProtectedLessonFilePayload
     >(this.path(academyId, 'media', 'protected'), payload, options);
+  }
+
+  /**
+   * B0-MED-11 — reserves quota and returns a one-shot upload URL for a
+   * hosted (Normal-tier) video. Refused with `errors.media.videoNotEnabled`
+   * while the tier is off, and with the quota error when minutes run out.
+   */
+  async createHostedVideoUpload(
+    academyId: string,
+    payload: CreateHostedVideoUploadPayload,
+    options?: WriteOptions
+  ): Promise<HostedVideoUploadTicket> {
+    return this.client.post<HostedVideoUploadTicket, CreateHostedVideoUploadPayload>(
+      this.path(academyId, 'media', 'video-uploads'),
+      payload,
+      options
+    );
+  }
+
+  /** B0-MED-11 — tells the server the PUT finished; it verifies the object itself. */
+  async completeHostedVideoUpload(
+    academyId: string,
+    assetId: string,
+    options?: WriteOptions
+  ): Promise<HostedVideoAsset> {
+    return this.client.post<HostedVideoAsset, Record<string, never>>(
+      this.path(academyId, 'media', 'video-uploads', assetId, 'complete'),
+      {},
+      options
+    );
+  }
+
+  /** B0-MED-11 — the academy's hosted videos (protected, newest first). */
+  async listHostedVideos(
+    academyId: string,
+    options?: ReadOptions
+  ): Promise<readonly HostedVideoAsset[]> {
+    const page = await this.client.get<{ items: readonly HostedVideoAsset[] }>(
+      this.path(academyId, 'media'),
+      {
+        ...options,
+        params: { type: 'video', access: 'protected', pageSize: 100, ...options?.params },
+      }
+    );
+    return page.items;
   }
 
   /** Updates a lesson. */

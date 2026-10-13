@@ -42,8 +42,11 @@ import {
   type CourseLessonFormData,
 } from '../schemas/course.schemas';
 import type { ApiError } from '@api';
-import type { ProtectedLessonFile } from '@types';
+import type { HostedVideoAsset, ProtectedLessonFile } from '@types';
+import { isFeatureEnabled } from '@config';
 import { ProtectedLessonFileField } from './ProtectedLessonFileField';
+import { HostedVideoField } from './HostedVideoField';
+import type { UploadedHostedVideo } from '../utils/hosted-video-upload';
 
 export interface LessonFormDialogProps {
   readonly open: boolean;
@@ -68,6 +71,17 @@ export interface LessonFormDialogProps {
    * overwrite the stored body with an empty one.
    */
   readonly bodyLoading?: boolean;
+  /**
+   * B0-MED-11 — upload a Video lesson's video to Atlas (Normal tier). Used
+   * only while `hostedVideoAuthoring` is on; otherwise a video lesson takes
+   * a YouTube link only.
+   */
+  readonly onUploadHostedVideo?: (
+    file: File,
+    onProgress: (percent: number) => void
+  ) => Promise<UploadedHostedVideo>;
+  /** B0-MED-11 — the academy's hosted videos, for "choose an existing video". */
+  readonly loadHostedVideos?: () => Promise<readonly HostedVideoAsset[]>;
 }
 
 const EMPTY_LESSON_VALUES: CourseLessonFormData = {
@@ -90,9 +104,16 @@ export function LessonFormDialog({
   hasProtectedFile = false,
   error,
   bodyLoading = false,
+  onUploadHostedVideo,
+  loadHostedVideos,
 }: LessonFormDialogProps): JSX.Element {
   const { t, i18n } = useTranslation();
   const [isUploadingFile, setIsUploadingFile] = useState(false);
+  const hostedVideo =
+    isFeatureEnabled('hostedVideoAuthoring') && onUploadHostedVideo && loadHostedVideos
+      ? { onUpload: onUploadHostedVideo, loadLibrary: loadHostedVideos }
+      : null;
+  const hostedVideoEnabled = hostedVideo !== null;
 
   const form = useForm<CourseLessonFormData>({
     resolver: zodResolver(courseLessonSchema),
@@ -318,13 +339,34 @@ export function LessonFormDialog({
               />
             ) : null}
 
+            {form.watch('contentType') === 'video' && hostedVideo ? (
+              <FormField
+                control={form.control}
+                name="hostedVideo"
+                render={({ field }) => (
+                  <FormItem>
+                    <HostedVideoField
+                      value={field.value}
+                      onChange={field.onChange}
+                      onUpload={hostedVideo.onUpload}
+                      loadLibrary={hostedVideo.loadLibrary}
+                      onUploadingChange={setIsUploadingFile}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : null}
+
             {form.watch('contentType') !== 'text' &&
             // B0-MED-05 — once a protected file is attached, the public link
             // field goes: saving clears that link.
             !(
               form.watch('contentType') === 'file' &&
               (hasProtectedFile || !!form.watch('protectedFile'))
-            ) ? (
+            ) &&
+            // B0-MED-11 — likewise for a hosted video: it is what plays.
+            !(form.watch('contentType') === 'video' && !!form.watch('hostedVideo')) ? (
               <FormField
                 control={form.control}
                 name="contentUrl"
@@ -357,7 +399,9 @@ export function LessonFormDialog({
                         <p className="text-xs text-muted-foreground">
                           {t(
                             contentType === 'video'
-                              ? 'course:builder.lessonDialog.contentUrlHelpVideo'
+                              ? hostedVideoEnabled
+                                ? 'course:builder.lessonDialog.contentUrlHelpVideoOr'
+                                : 'course:builder.lessonDialog.contentUrlHelpVideo'
                               : 'course:builder.lessonDialog.contentUrlHelpFile'
                           )}
                         </p>

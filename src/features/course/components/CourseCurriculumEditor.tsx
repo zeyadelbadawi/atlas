@@ -16,6 +16,8 @@
  * "Add section" button in its own header (the builder's page actions);
  * without it, the editor shows the button in its own toolbar.
  */
+import { isFeatureEnabled } from '@config';
+import { uploadHostedVideo } from '../utils/hosted-video-upload';
 import { useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useIsMutating } from '@tanstack/react-query';
@@ -320,6 +322,12 @@ export function CourseCurriculumEditor({
       file: await readFileAsDataUrl(file),
       courseId,
     });
+  // B0-MED-11 — hosted video authoring, offered only while the Normal tier
+  // is enabled in production (`hostedVideoAuthoring`, B0-OC-34).
+  const hostedVideoAuthoring = isFeatureEnabled('hostedVideoAuthoring');
+  const uploadLessonVideo = (file: File, onProgress: (percent: number) => void) =>
+    uploadHostedVideo(courseService, { academyId, courseId, file, onProgress });
+  const loadHostedVideos = () => courseService.listHostedVideos(academyId);
   const lessonDefaultValues = useMemo<CourseLessonFormData | undefined>(() => {
     if (lessonDialog?.mode !== 'edit') return undefined;
     const { lesson } = lessonDialog;
@@ -331,6 +339,9 @@ export function CourseCurriculumEditor({
       status: lesson.status,
       // The stored body; else an older lesson's body from its description.
       protectedFile: lessonDialog.pendingProtectedFile,
+      hostedVideo: lesson.videoAssetId
+        ? { mediaAssetId: lesson.videoAssetId, fileName: '' }
+        : undefined,
       bodyHtml:
         lessonDialog.pendingBodyHtml ??
         lessonBody.data?.bodyHtml ??
@@ -349,6 +360,17 @@ export function CourseCurriculumEditor({
       contentUrl: data.contentUrl || undefined,
       status: data.status,
     };
+    // B0-MED-11 — attach the hosted video; removing it in the dialog
+    // (`null`) detaches it on save. Untouched while the feature is off.
+    const attachVideoAssetId =
+      hostedVideoAuthoring && data.contentType === 'video' && data.hostedVideo
+        ? data.hostedVideo.mediaAssetId
+        : undefined;
+    const detachVideo =
+      hostedVideoAuthoring &&
+      lessonDialog.mode === 'edit' &&
+      (data.hostedVideo === null ||
+        (data.contentType !== 'video' && !!lessonDialog.lesson.videoAssetId));
 
     try {
       const saved =
@@ -356,11 +378,21 @@ export function CourseCurriculumEditor({
           ? await updateLesson.mutateAsync({
               sectionId: lessonDialog.sectionId,
               lessonId: lessonDialog.lesson.id,
-              payload,
+              payload: {
+                ...payload,
+                ...(attachVideoAssetId
+                  ? { videoAssetId: attachVideoAssetId }
+                  : detachVideo
+                    ? { videoAssetId: null }
+                    : {}),
+              },
             })
           : await createLesson.mutateAsync({
               sectionId: lessonDialog.sectionId,
-              payload,
+              payload: {
+                ...payload,
+                ...(attachVideoAssetId ? { videoAssetId: attachVideoAssetId } : {}),
+              },
             });
 
       // B0-LRN-01 — the body a learner reads lives in the lesson's content
@@ -747,6 +779,8 @@ export function CourseCurriculumEditor({
         onSubmit={handleLessonSubmit}
         onUploadProtectedFile={uploadProtectedFile}
         hasProtectedFile={hasProtectedFile}
+        onUploadHostedVideo={hostedVideoAuthoring ? uploadLessonVideo : undefined}
+        loadHostedVideos={hostedVideoAuthoring ? loadHostedVideos : undefined}
         error={
           lessonDialog?.mode === 'edit'
             ? updateLesson.error

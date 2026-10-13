@@ -231,6 +231,24 @@
         "attached": "A protected file is attached. Only enrolled learners can open it. Upload a new one to replace it.",
         "publicLink": "This lesson links to a public file: anyone with the link can open it. Upload the file here to protect it.",
         "tooLarge": "That file is larger than 20 MB."
+      },
+      "contentUrlHelpVideoOr": "Or paste a YouTube link instead.",
+      "hostedVideo": {
+        "label": "Video hosted by Atlas",
+        "upload": "Upload a video",
+        "replace": "Upload a different video",
+        "uploading": "Uploading… {{percent}}%",
+        "progressLabel": "Upload progress",
+        "chooseExisting": "Choose an uploaded video",
+        "libraryLabel": "Your uploaded videos",
+        "libraryPlaceholder": "Select a video",
+        "libraryEmpty": "No uploaded videos yet.",
+        "attached": "A video hosted by Atlas is attached.",
+        "attachedNamed": "Attached: {{fileName}}",
+        "remove": "Remove",
+        "wrongType": "Upload an MP4 video.",
+        "tooLarge": "This video is larger than 5 GB.",
+        "help": "MP4 only. Learners watch it with their name watermarked on the video, on the devices your academy allows. It counts towards your plan's video minutes and storage."
       }
     },
     "deleteSectionConfirm": {

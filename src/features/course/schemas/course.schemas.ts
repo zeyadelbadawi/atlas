@@ -210,6 +210,15 @@ export const courseLessonSchema = z
     protectedFile: z
       .object({ mediaAssetId: z.string().min(1), fileName: z.string() })
       .optional(),
+    /**
+     * B0-MED-11 — the Video lesson's Atlas-hosted video (uploaded or picked
+     * from the academy's videos). `null` = removed in this dialog, so the
+     * save detaches it; absent = untouched.
+     */
+    hostedVideo: z
+      .object({ mediaAssetId: z.string().min(1), fileName: z.string() })
+      .nullable()
+      .optional(),
   })
   // A `video` lesson's URL is either a hosted file (uploaded/library) or a
   // YouTube link — the content model stays a single opaque `contentUrl`
