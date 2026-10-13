@@ -9,7 +9,7 @@
  * recurring revenue comes from approved subscription payments only, one
  * figure per currency (never summed across currencies), and the page says
  * how many active subscriptions have no approved payment behind them and
- * that test organizations are still included.
+ * that organizations marked internal (B0-ANL-04) are left out.
  *
  * AUTHORIZATION IS NOT THIS FILE'S JOB. The sidebar hides this page from
  * non-admins and the route is role-gated, but the actual control is
@@ -297,11 +297,11 @@ export function AdminSubscriptionsPage(): JSX.Element {
                 </span>
               </p>
             ) : null}
-            {data.revenue.excludesInternalOrganizations ? null : (
+            {data.revenue.excludesInternalOrganizations ? (
               <p className="text-xs text-muted-foreground">
-                {t('platform:adminSubscriptions.revenue.internalIncluded')}
+                {t('platform:adminSubscriptions.revenue.internalExcluded')}
               </p>
-            )}
+            ) : null}
             <div>
               <p className="text-sm font-medium">
                 {t('platform:adminSubscriptions.revenue.cyclesTitle')}

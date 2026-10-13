@@ -1137,6 +1137,9 @@ export const platformOrganizationKeys = {
     [...platformOrganizationKeys.all, 'list', query] as const,
   detail: (organizationId: string) =>
     [...platformOrganizationKeys.all, 'detail', organizationId] as const,
+  /** B0-ANL-04 — operator-only flags (internal/test organization). */
+  flags: (organizationId: string) =>
+    [...platformOrganizationKeys.all, 'flags', organizationId] as const,
 } as const;
 
 export const platformAcademyKeys = {

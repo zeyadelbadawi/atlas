@@ -439,7 +439,7 @@ export interface AdminSubscriptionOverview {
     readonly mrr: readonly AdminRecurringRevenueRow[];
     readonly activeSubscriptions: number;
     readonly activeWithoutPayment: number;
-    readonly excludesInternalOrganizations: false;
+    readonly excludesInternalOrganizations: true;
   };
   readonly generatedAt: string;
 }

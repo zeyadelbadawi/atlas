@@ -2,7 +2,7 @@
  * B0-ANL-01 — the Platform Owner subscriptions overview shows monthly
  * recurring revenue from approved payments, one figure per currency (never
  * summed), says how many active subscriptions have no approved payment,
- * that test organizations are still included, and the active split by
+ * that internal organizations are left out, and the active split by
  * billing cycle.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -40,7 +40,7 @@ function overview(
       ],
       activeSubscriptions: 4,
       activeWithoutPayment: 1,
-      excludesInternalOrganizations: false,
+      excludesInternalOrganizations: true,
       ...revenue,
     },
     generatedAt: '2026-10-13T00:00:00.000Z',
@@ -89,7 +89,7 @@ describe('Platform subscriptions overview — MRR (B0-ANL-01)', () => {
     ).toBeTruthy();
     expect(
       within(mrr).getByText(
-        'Test and demo organizations are included until they can be marked as internal.'
+        'Organizations marked as internal (test, demo or staff) are not included.'
       )
     ).toBeTruthy();
   });
