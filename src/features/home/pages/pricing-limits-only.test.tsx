@@ -101,28 +101,17 @@ const REMOVED_LABELS = {
 } as const;
 
 const LIMIT_LABELS = {
-  en: [
-    'Academies',
-    'Students',
-    'Instructors',
-    'Staff members',
-    'Courses',
-    'Storage',
-  ],
-  ar: [
-    'الأكاديميات',
-    'الطلاب',
-    'المعلمون',
-    'أعضاء الفريق',
-    'الدورات',
-    'التخزين',
-  ],
+  en: ['Academies', 'Students', 'Instructors', 'Courses', 'Storage'],
+  ar: ['الأكاديميات', 'الطلاب', 'المعلمون', 'الدورات', 'التخزين'],
 } as const;
 
-/** B0-MED-04 — limits no academy can use yet (no hosted video authoring). */
+/**
+ * B0-MED-04 — limits no academy can use yet (no hosted video authoring).
+ * B0-ORG-01 — and staff members: the `staff` role cannot be granted.
+ */
 const UNUSABLE_LIMIT_LABELS = {
-  en: ['Video storage'],
-  ar: ['تخزين الفيديو'],
+  en: ['Video storage', 'Staff members'],
+  ar: ['تخزين الفيديو', 'أعضاء الفريق'],
 } as const;
 
 afterEach(() => cleanup());

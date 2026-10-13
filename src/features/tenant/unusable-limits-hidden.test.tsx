@@ -55,11 +55,18 @@ describe('customer-visible plan limits', () => {
   it('leaves video storage and recorded sessions out while they cannot be used', () => {
     expect(isCustomerVisibleLimitKey('videoStorage')).toBe(false);
     expect(isCustomerVisibleLimitKey('recordedSessions')).toBe(false);
+    // B0-ORG-01 — staff is never a customer-facing limit (the role
+    // cannot be granted).
+    expect(isCustomerVisibleLimitKey('staff')).toBe(false);
     expect(CUSTOMER_PLAN_LIMIT_KEYS).toEqual(
       PLAN_LIMIT_KEYS.filter(
-        (key) => key !== 'videoStorage' && key !== 'recordedSessions'
+        (key) =>
+          key !== 'videoStorage' &&
+          key !== 'recordedSessions' &&
+          key !== 'staff'
       )
     );
+    expect(CUSTOMER_USAGE_METRIC_KEYS).not.toContain('staff');
     expect(CUSTOMER_USAGE_METRIC_KEYS).not.toContain('videoStorage');
     expect(CUSTOMER_PLAN_LIMIT_KEYS).toContain('generalStorage');
   });

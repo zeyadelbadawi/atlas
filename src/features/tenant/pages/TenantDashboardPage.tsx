@@ -33,7 +33,7 @@ import {
 import { formatLimitValue, getDaysRemaining } from '../utils/entitlement.utils';
 import { getSubscriptionStatusTone } from '../utils/subscription-status.utils';
 import { resolvePlanDescription, resolvePlanName } from '../utils/plan-text.utils';
-import { cn, MIRROR_IN_RTL } from '@utils';
+import { cn, isCustomerVisibleLimitKey, MIRROR_IN_RTL } from '@utils';
 import { SetupChecklistCard } from '@features/onboarding';
 import type { LanguageCode } from '@types';
 
@@ -228,11 +228,14 @@ export default function TenantDashboardPage(): JSX.Element {
                 icon={Users}
                 value={`${usage.instructors.used} / ${formatLimitValue(usage.instructors.limit, false, unlimitedLabel)}`}
               />
-              <MetricCard
-                labelKey="tenant:common.limits.staff"
-                icon={Users}
-                value={`${usage.staff.used} / ${formatLimitValue(usage.staff.limit, false, unlimitedLabel)}`}
-              />
+              {/* B0-ORG-01 — no Staff card: the role cannot be granted. */}
+              {isCustomerVisibleLimitKey('staff') ? (
+                <MetricCard
+                  labelKey="tenant:common.limits.staff"
+                  icon={Users}
+                  value={`${usage.staff.used} / ${formatLimitValue(usage.staff.limit, false, unlimitedLabel)}`}
+                />
+              ) : null}
               <MetricCard
                 labelKey="tenant:common.limits.courses"
                 icon={BookOpen}
