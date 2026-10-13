@@ -24,6 +24,9 @@
  *                        larger one passes to the single-page app
  *   SSR_CANONICAL_REDIRECT  `off` stops the 301 from the Atlas subdomain to a
  *                        connected custom domain (default on; B0-WEB-06)
+ *   SSR_PRELOAD_ARABIC_FONTS  `off` stops an Arabic Theme 1 page preloading
+ *                        the Arabic subsets of Rubik and Readex Pro (default
+ *                        on; B0-WEB-12: About AR mobile CLS 0.066 → 0.040)
  */
 import { createServer } from 'node:http';
 import { createReadStream, existsSync, statSync } from 'node:fs';
@@ -63,6 +66,7 @@ const { handle } = await createSsrHandler({
   cacheMaxBytes: Number(env('SSR_CACHE_MAX_BYTES', DEFAULT_CACHE_MAX_BYTES)),
   maxHtmlBytes: Number(env('SSR_MAX_HTML_BYTES', DEFAULT_MAX_HTML_BYTES)),
   canonicalRedirect: env('SSR_CANONICAL_REDIRECT', 'on') !== 'off',
+  preloadArabicFonts: env('SSR_PRELOAD_ARABIC_FONTS', 'on') !== 'off',
   log,
 });
 

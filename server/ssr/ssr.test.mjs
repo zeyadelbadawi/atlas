@@ -441,6 +441,13 @@ describe('server-rendered public pages', () => {
       2
     );
     assert.doesNotMatch((await get(withFonts, ALPHA, '/')).body, fontPreload);
+    // B0-WEB-12: only Theme 1 sets its Arabic in Rubik / Readex Pro; the
+    // other themes would download files they never use.
+    for (const host of [DELTA, EPSILON, ZETA]) {
+      const page = await get(withFonts, host, '/ar/');
+      assert.equal(page.headers['X-Atlas-SSR'], 'render', page.reason);
+      assert.doesNotMatch(page.body, fontPreload);
+    }
   });
 
   it('renders Arabic pages right to left', async () => {

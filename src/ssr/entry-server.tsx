@@ -71,6 +71,16 @@ import {
 } from './ssr-paths';
 import { themeFontPreloadHtml } from './theme-font-preloads';
 
+/**
+ * B0-WEB-12: the themes whose page type is Rubik / Readex Pro, so a locale
+ * font preload (their Arabic subsets) is a request the page makes anyway.
+ */
+const LOCALE_FONT_THEMES: ReadonlySet<WebsiteThemeKey> = new Set([
+  'modern-education',
+]);
+const usesLocaleFonts = (themes: ReadonlySet<WebsiteThemeKey>): boolean =>
+  [...themes].some((theme) => LOCALE_FONT_THEMES.has(theme));
+
 export interface SsrRequest {
   /** Path and query, e.g. `/ar/courses?level=beginner`. */
   readonly url: string;
@@ -92,7 +102,12 @@ export interface SsrOptions {
   readonly template: string;
   /** Preload tags for every page (may be empty). */
   readonly preloadHtml: string;
-  /** Preload tags for pages in one locale only (e.g. that script's fonts). */
+  /**
+   * Preload tags for pages in one locale only: the Arabic subsets of Rubik
+   * and Readex Pro (`preloadArabicFonts` in server/ssr/handler.mjs). Added
+   * only to pages rendered in Theme 1, whose type these are; Atelier,
+   * Manara and Riwaq set their Arabic in their own faces.
+   */
   readonly localePreloadHtml?: Partial<Record<PublicWebsiteLocale, string>>;
   /** Where the public API is reachable from the renderer, e.g. `http://backend:3000`. */
   readonly apiOrigin: string;
@@ -485,7 +500,9 @@ export async function renderPublicWebsitePage(
           : '',
         preloadHtml:
           options.preloadHtml +
-          (options.localePreloadHtml?.[locale] ?? '') +
+          (usesLocaleFonts(themePackUsage)
+            ? (options.localePreloadHtml?.[locale] ?? '')
+            : '') +
           (options.preloadThemeFonts
             ? themeFontPreloadHtml(themePackUsage, appHtml)
             : ''),

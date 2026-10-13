@@ -160,8 +160,13 @@ export class RenderCache {
  *   HTML painted later — Lighthouse mobile FCP +200–490 ms. Without them
  *   the page paints as soon as the CSS arrives and `main.tsx` still starts
  *   the chunk at boot (Reports/SSR_ARCHITECTURE_ANALYSIS.md §12.6).
- * @param {boolean} [options.preloadArabicFonts] Arabic pages preload the
- *   Arabic subsets of the theme fonts (see §12.6 for the measurement).
+ * @param {boolean} [options.preloadArabicFonts] Arabic Theme 1 pages
+ *   preload the Arabic subsets of Rubik and Readex Pro (off here, on in
+ *   `server.mjs`). B0-WEB-12, Lighthouse mobile, fixture build, About AR
+ *   cold, median of 3: CLS 0.066 → 0.040 (the fallback face made the
+ *   section heading wrap to two lines, then one, moving the footer),
+ *   FCP 2.57 → 2.43 s, LCP 2.57 → 2.73 s. The 2 Oct measurement (§12.6)
+ *   was CLS 0.021 with LCP about 450 ms later.
  * @param {boolean} [options.canonicalRedirect] B0-WEB-06: a public page
  *   requested on the non-canonical host (the Atlas subdomain of an academy
  *   whose custom domain is connected and reachable) is answered with a 301
