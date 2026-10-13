@@ -270,6 +270,10 @@
       "title": "Your {{planName}} trial has started",
       "message": "Your trial runs until {{trialEndsAtDate}}. Choose a plan before then to keep your site online."
     },
+    "lifecycleTrialEndingIn3Days": {
+      "title": "Your trial ends in 3 days",
+      "message": "Your {{planName}} trial ends {{trialEndsAtDate}}. Payments are reviewed by a person, so choose a plan now to keep your site online."
+    },
     "lifecycleTrialEndingSoon": {
       "title": "Your trial ends tomorrow",
       "message": "Your {{planName}} trial ends {{trialEndsAtDate}}. Choose a plan to keep your site online."
@@ -297,6 +301,10 @@
     "lifecycleSubscriptionPaymentSubmitted": {
       "title": "We received your payment proof",
       "message": "We received {{amount}} {{currency}} on {{submittedAtDate}}. We'll confirm once it's reviewed."
+    },
+    "lifecycleSubscriptionRenewal30d": {
+      "title": "Your yearly plan renews in 30 days",
+      "message": "Your {{planName}} yearly period ends {{periodEndDate}}. You have time to arrange the transfer before it ends."
     },
     "lifecycleSubscriptionRenewalDue": {
       "title": "Your plan renews soon",

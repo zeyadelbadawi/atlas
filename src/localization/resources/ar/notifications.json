@@ -274,6 +274,10 @@
       "title": "بدأت فترتك التجريبية على {{planName}}",
       "message": "تستمر فترتك التجريبية حتى {{trialEndsAtDate}}. اختر خطة قبل ذلك لإبقاء موقعك متاحًا."
     },
+    "lifecycleTrialEndingIn3Days": {
+      "title": "تنتهي فترتك التجريبية خلال 3 أيام",
+      "message": "تنتهي فترتك التجريبية على {{planName}} في {{trialEndsAtDate}}. تتم مراجعة المدفوعات بواسطة موظف، لذا اختر خطة الآن لإبقاء موقعك متاحًا."
+    },
     "lifecycleTrialEndingSoon": {
       "title": "تنتهي فترتك التجريبية غدًا",
       "message": "تنتهي فترتك التجريبية على {{planName}} في {{trialEndsAtDate}}. اختر خطة لإبقاء موقعك متاحًا."
@@ -301,6 +305,10 @@
     "lifecycleSubscriptionPaymentSubmitted": {
       "title": "استلمنا إثبات دفعك",
       "message": "استلمنا {{amount}} {{currency}} في {{submittedAtDate}}. سنؤكد لك بعد المراجعة."
+    },
+    "lifecycleSubscriptionRenewal30d": {
+      "title": "يُجدَّد اشتراكك السنوي خلال 30 يومًا",
+      "message": "تنتهي الفترة السنوية لـ {{planName}} في {{periodEndDate}}. لديك وقت لترتيب التحويل قبل انتهائها."
     },
     "lifecycleSubscriptionRenewalDue": {
       "title": "يقترب موعد تجديد خطتك",
