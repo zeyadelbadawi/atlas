@@ -30,6 +30,9 @@ import type {
   UpdateCoursePayload,
   UpdateCourseSectionPayload,
   UpsertTextLessonContentPayload,
+  UpsertFileLessonContentPayload,
+  UploadProtectedLessonFilePayload,
+  ProtectedLessonFile,
 } from '@types';
 
 export class CourseService extends BaseService {
@@ -370,6 +373,45 @@ export class CourseService extends BaseService {
       payload,
       options
     );
+  }
+
+  /** B0-MED-05 — attaches a protected file to a File lesson. */
+  async upsertFileLessonContent(
+    academyId: string,
+    courseId: string,
+    sectionId: string,
+    lessonId: string,
+    payload: UpsertFileLessonContentPayload,
+    options?: WriteOptions
+  ): Promise<StaffLessonContent> {
+    return this.client.put<StaffLessonContent, UpsertFileLessonContentPayload>(
+      this.coursesPath(
+        academyId,
+        courseId,
+        'sections',
+        sectionId,
+        'lessons',
+        lessonId,
+        'content'
+      ),
+      payload,
+      options
+    );
+  }
+
+  /**
+   * B0-MED-05 — uploads a lesson file to the protected tier (PDF or image,
+   * checked server-side by its bytes). Owner/manager only.
+   */
+  async uploadProtectedLessonFile(
+    academyId: string,
+    payload: UploadProtectedLessonFilePayload,
+    options?: WriteOptions
+  ): Promise<ProtectedLessonFile> {
+    return this.client.post<
+      ProtectedLessonFile,
+      UploadProtectedLessonFilePayload
+    >(this.path(academyId, 'media', 'protected'), payload, options);
   }
 
   /** Updates a lesson. */

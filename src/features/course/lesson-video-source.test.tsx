@@ -2,7 +2,8 @@
  * B0-MED-01 — a video lesson takes a YouTube link only: the upload /
  * "Choose from library" control is gone for video (it posted to an upload
  * path that refuses every video), and the help text says uploading video
- * is not available yet. File lessons keep the library.
+ * is not available yet. File lessons upload to the protected tier instead
+ * of the public library (B0-MED-05, see lesson-protected-file.test.tsx).
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
@@ -15,10 +16,6 @@ vi.mock('@features/unsaved-changes', () => ({
     requestClose: (close: () => void) => close(),
   }),
 }));
-vi.mock('@features/media', () => ({
-  MediaLibraryDialog: () => null,
-}));
-
 function renderDialog(contentType: CourseLessonFormData['contentType']) {
   render(
     <AtlasLocalizationProvider initialLanguage="en">
@@ -26,7 +23,7 @@ function renderDialog(contentType: CourseLessonFormData['contentType']) {
         open
         onOpenChange={vi.fn()}
         mode="edit"
-        academyId="academy-1"
+        onUploadProtectedFile={vi.fn()}
         defaultValues={{
           title: 'Lesson',
           description: '',
@@ -58,10 +55,11 @@ describe('lesson dialog — video source', () => {
     expect(screen.getByLabelText('Content URL')).toBeTruthy();
   });
 
-  it('keeps the library for a file lesson', () => {
+  it('offers a protected upload, not the public library, for a file lesson', () => {
     renderDialog('file');
     expect(
-      screen.getByRole('button', { name: 'Choose from library' })
-    ).toBeTruthy();
+      screen.queryByRole('button', { name: 'Choose from library' })
+    ).toBeNull();
+    expect(screen.getByRole('button', { name: 'Upload file' })).toBeTruthy();
   });
 });

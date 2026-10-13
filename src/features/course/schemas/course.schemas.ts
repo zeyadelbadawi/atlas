@@ -202,6 +202,14 @@ export const courseLessonSchema = z
       .string()
       .max(MAX_LESSON_BODY_HTML_LENGTH, 'validation:maxLength')
       .optional(),
+    /**
+     * B0-MED-05 — a file just uploaded to the protected tier for this File
+     * lesson, attached after the lesson saves. Absent when no new file was
+     * chosen in this dialog.
+     */
+    protectedFile: z
+      .object({ mediaAssetId: z.string().min(1), fileName: z.string() })
+      .optional(),
   })
   // A `video` lesson's URL is either a hosted file (uploaded/library) or a
   // YouTube link — the content model stays a single opaque `contentUrl`

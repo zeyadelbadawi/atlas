@@ -368,6 +368,32 @@ export interface UpsertTextLessonContentPayload {
   readonly bodyHtml: string;
 }
 
+/**
+ * B0-MED-05 — attaches a protected file (uploaded through
+ * `POST /academies/:id/media/protected`) to a File lesson. Learners get it
+ * only through a short-lived signed link.
+ */
+export interface UpsertFileLessonContentPayload {
+  readonly kind: 'file';
+  readonly mediaAssetId: string;
+}
+
+/** B0-MED-05 — `POST /academies/:id/media/protected`. `file` is a data URL. */
+export interface UploadProtectedLessonFilePayload {
+  readonly fileName: string;
+  readonly file: string;
+  readonly courseId: string;
+}
+
+/** B0-MED-05 — the fields of the protected asset the builder uses (it has no URL). */
+export interface ProtectedLessonFile {
+  readonly id: string;
+  readonly fileName: string;
+  readonly mimeType: string;
+  readonly sizeBytes: number;
+  readonly access: 'protected';
+}
+
 export interface CreateCourseLessonPayload {
   readonly title: string;
   readonly description?: string;
@@ -381,7 +407,8 @@ export interface UpdateCourseLessonPayload {
   readonly title?: string;
   readonly description?: string;
   readonly contentType?: CourseLessonContentType;
-  readonly contentUrl?: string;
+  /** `null` clears it (B0-MED-05: the public link a protected file replaces). */
+  readonly contentUrl?: string | null;
   readonly status?: CourseLessonStatus;
 }
 

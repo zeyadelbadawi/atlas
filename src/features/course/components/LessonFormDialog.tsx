@@ -8,9 +8,8 @@ import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { useDirtyGuard } from '@features/unsaved-changes';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FolderOpen, Loader2, Youtube } from 'lucide-react';
+import { Loader2, Youtube } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { MediaLibraryDialog } from '@features/media';
 import { RichTextEditor } from '@features/messaging';
 import { isYouTubeUrl } from '@utils';
 import {
@@ -43,6 +42,8 @@ import {
   type CourseLessonFormData,
 } from '../schemas/course.schemas';
 import type { ApiError } from '@api';
+import type { ProtectedLessonFile } from '@types';
+import { ProtectedLessonFileField } from './ProtectedLessonFileField';
 
 export interface LessonFormDialogProps {
   readonly open: boolean;
@@ -54,13 +55,13 @@ export interface LessonFormDialogProps {
   /** The create/update mutation's current error, so a validation (400) failure maps onto the field that caused it instead of only a page-level toast. */
   readonly error?: ApiError | null;
   /**
-   * When provided, file lessons offer "Choose from library" — the
-   * same real, working `MediaLibraryDialog` upload the Website Builder
-   * already uses (Phase 0 fix: this dialog previously only ever offered a
-   * plain URL field, even though the upload pipeline behind it was
-   * already real and production-shaped).
+   * B0-MED-05 — when provided, a File lesson's file is uploaded to the
+   * protected tier (signed, short-lived links for enrolled learners only)
+   * instead of the public media library it used to come from.
    */
-  readonly academyId?: string;
+  readonly onUploadProtectedFile?: (file: File) => Promise<ProtectedLessonFile>;
+  /** B0-MED-05 — the lesson being edited already delivers a protected file. */
+  readonly hasProtectedFile?: boolean;
   /**
    * B0-LRN-01 — true while an existing text lesson's body is being read
    * for editing. Saving is disabled until it arrives, so an edit can never
@@ -85,12 +86,13 @@ export function LessonFormDialog({
   defaultValues,
   isPending,
   onSubmit,
-  academyId,
+  onUploadProtectedFile,
+  hasProtectedFile = false,
   error,
   bodyLoading = false,
 }: LessonFormDialogProps): JSX.Element {
   const { t, i18n } = useTranslation();
-  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+  const [isUploadingFile, setIsUploadingFile] = useState(false);
 
   const form = useForm<CourseLessonFormData>({
     resolver: zodResolver(courseLessonSchema),
@@ -296,18 +298,38 @@ export function LessonFormDialog({
               />
             ) : null}
 
-            {form.watch('contentType') !== 'text' ? (
+            {form.watch('contentType') === 'file' && onUploadProtectedFile ? (
+              <FormField
+                control={form.control}
+                name="protectedFile"
+                render={({ field }) => (
+                  <FormItem>
+                    <ProtectedLessonFileField
+                      value={field.value}
+                      onChange={field.onChange}
+                      onUpload={onUploadProtectedFile}
+                      hasProtectedFile={hasProtectedFile}
+                      hasPublicLink={!!form.watch('contentUrl')}
+                      onUploadingChange={setIsUploadingFile}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : null}
+
+            {form.watch('contentType') !== 'text' &&
+            // B0-MED-05 — once a protected file is attached, the public link
+            // field goes: saving clears that link.
+            !(
+              form.watch('contentType') === 'file' &&
+              (hasProtectedFile || !!form.watch('protectedFile'))
+            ) ? (
               <FormField
                 control={form.control}
                 name="contentUrl"
                 render={({ field }) => {
                   const contentType = form.watch('contentType');
-                  // B0-MED-01 — files only. A video went through the public
-                  // image/document upload, whose byte check refuses every
-                  // video, so the control could never succeed; hosted video
-                  // authoring is not available yet, and a video lesson takes
-                  // a YouTube link only.
-                  const canUpload = academyId && contentType === 'file';
                   // Inferred from the URL string itself, never a separate
                   // stored field — see `youtube.utils.ts`'s own doc comment
                   // for why the content model stays a single opaque
@@ -322,27 +344,15 @@ export function LessonFormDialog({
                       <FormLabel>
                         {t('course:builder.lessonDialog.contentUrlLabel')}
                       </FormLabel>
-                      <div className="flex gap-2">
-                        <FormControl>
-                          <Input
-                            type="url"
-                            placeholder={t(
-                              'course:builder.lessonDialog.contentUrlPlaceholder'
-                            )}
-                            {...field}
-                          />
-                        </FormControl>
-                        {canUpload ? (
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => setIsLibraryOpen(true)}
-                          >
-                            <FolderOpen className="size-4" aria-hidden />
-                            {t('course:builder.lessonDialog.chooseFromLibrary')}
-                          </Button>
-                        ) : null}
-                      </div>
+                      <FormControl>
+                        <Input
+                          type="url"
+                          placeholder={t(
+                            'course:builder.lessonDialog.contentUrlPlaceholder'
+                          )}
+                          {...field}
+                        />
+                      </FormControl>
                       {contentType === 'video' || contentType === 'file' ? (
                         <p className="text-xs text-muted-foreground">
                           {t(
@@ -359,16 +369,6 @@ export function LessonFormDialog({
                         </p>
                       ) : null}
                       <FormMessage />
-                      {canUpload ? (
-                        <MediaLibraryDialog
-                          academyId={academyId}
-                          open={isLibraryOpen}
-                          onOpenChange={setIsLibraryOpen}
-                          onSelect={(asset) => field.onChange(asset.url)}
-                          selectedUrl={field.value || undefined}
-                          accept="*/*"
-                        />
-                      ) : null}
                     </FormItem>
                   );
                 }}
@@ -386,7 +386,10 @@ export function LessonFormDialog({
               >
                 {t('course:builder.lessonDialog.cancelButton')}
               </Button>
-              <Button type="submit" disabled={isPending || bodyLoading}>
+              <Button
+                type="submit"
+                disabled={isPending || bodyLoading || isUploadingFile}
+              >
                 {isPending ? (
                   <Loader2 className="size-4 animate-spin" aria-hidden />
                 ) : null}

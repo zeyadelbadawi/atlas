@@ -55,6 +55,7 @@ import { courseService } from '../services/CourseService';
 import { plainTextToLessonHtml } from '../utils/lesson-body.utils';
 import { reorderSectionsMutationKey } from '../hooks/useReorderCourseSections';
 import { SectionFormDialog } from './SectionFormDialog';
+import { attachProtectedLessonFile } from '../utils/protected-lesson-file.utils';
 import { LessonFormDialog } from './LessonFormDialog';
 import { UnitCurriculum } from './UnitCurriculum';
 import { CurriculumSortableList, DragHandle } from './UnitCurriculumSortable';
@@ -83,8 +84,26 @@ type LessonDialogState =
        * saved but its body did not, so a retry does not lose it.
        */
       readonly pendingBodyHtml?: string;
+      /**
+       * B0-MED-05 — a protected file uploaded in the dialog, kept when the
+       * lesson saved but attaching the file did not.
+       */
+      readonly pendingProtectedFile?: {
+        readonly mediaAssetId: string;
+        readonly fileName: string;
+      };
     }
   | null;
+
+/** Reads a picked file as the data URL the protected upload expects. */
+function readFileAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error ?? new Error('read failed'));
+    reader.readAsDataURL(file);
+  });
+}
 
 /** Move buttons stay focusable while a reorder is saving (focus must not drop to <body>). */
 const SOFT_DISABLED =
@@ -281,6 +300,26 @@ export function CourseCurriculumEditor({
       ? { sectionId: lessonDialog.sectionId, lessonId: lessonDialog.lesson.id }
       : null;
   const lessonBody = useLessonTextBody(academyId, courseId, editingTextLesson);
+  // B0-MED-05 — does the File lesson being edited already deliver a
+  // protected file? (Same staff read; a 404 means no content row yet.)
+  const editingFileLesson =
+    lessonDialog?.mode === 'edit' && lessonDialog.lesson.contentType === 'file'
+      ? { sectionId: lessonDialog.sectionId, lessonId: lessonDialog.lesson.id }
+      : null;
+  const lessonFileContent = useLessonTextBody(
+    academyId,
+    courseId,
+    editingFileLesson
+  );
+  const hasProtectedFile =
+    lessonFileContent.data?.kind === 'file' &&
+    !!lessonFileContent.data.mediaAssetId;
+  const uploadProtectedFile = async (file: File) =>
+    courseService.uploadProtectedLessonFile(academyId, {
+      fileName: file.name,
+      file: await readFileAsDataUrl(file),
+      courseId,
+    });
   const lessonDefaultValues = useMemo<CourseLessonFormData | undefined>(() => {
     if (lessonDialog?.mode !== 'edit') return undefined;
     const { lesson } = lessonDialog;
@@ -291,6 +330,7 @@ export function CourseCurriculumEditor({
       contentUrl: lesson.contentUrl ?? '',
       status: lesson.status,
       // The stored body; else an older lesson's body from its description.
+      protectedFile: lessonDialog.pendingProtectedFile,
       bodyHtml:
         lessonDialog.pendingBodyHtml ??
         lessonBody.data?.bodyHtml ??
@@ -352,6 +392,50 @@ export function CourseCurriculumEditor({
           return;
         }
         void lessonBody.refetch();
+      }
+
+      // B0-MED-05 — attach the protected file, then drop the public link it
+      // replaces (`attachProtectedLessonFile`). Same retry rule as the
+      // text body.
+      if (data.contentType === 'file' && data.protectedFile) {
+        try {
+          await attachProtectedLessonFile(
+            {
+              attach: (mediaAssetId) =>
+                courseService.upsertFileLessonContent(
+                  academyId,
+                  courseId,
+                  lessonDialog.sectionId,
+                  saved.id,
+                  { kind: 'file', mediaAssetId }
+                ),
+              clearPublicLink: () =>
+                updateLesson.mutateAsync({
+                  sectionId: lessonDialog.sectionId,
+                  lessonId: saved.id,
+                  payload: { contentUrl: null },
+                }),
+            },
+            {
+              mediaAssetId: data.protectedFile.mediaAssetId,
+              publicLink: saved.contentUrl,
+            }
+          );
+        } catch {
+          setLessonDialog({
+            mode: 'edit',
+            sectionId: lessonDialog.sectionId,
+            lesson: saved,
+            pendingProtectedFile: data.protectedFile,
+          });
+          toast({
+            title: t('course:builder.lessonFileError'),
+            description: t('errors:generic.description'),
+            variant: 'destructive',
+          });
+          return;
+        }
+        void lessonFileContent.refetch();
       }
 
       toast({
@@ -661,7 +745,8 @@ export function CourseCurriculumEditor({
         bodyLoading={editingTextLesson !== null && lessonBody.isLoading}
         isPending={createLesson.isPending || updateLesson.isPending}
         onSubmit={handleLessonSubmit}
-        academyId={academyId}
+        onUploadProtectedFile={uploadProtectedFile}
+        hasProtectedFile={hasProtectedFile}
         error={
           lessonDialog?.mode === 'edit'
             ? updateLesson.error

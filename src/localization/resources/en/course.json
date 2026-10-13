@@ -208,10 +208,9 @@
       "contentUrlLabel": "Content URL",
       "contentUrlPlaceholder": "https://...",
       "contentUrlHelpVideo": "Paste a YouTube link. Uploading videos to Atlas is not available yet.",
-      "contentUrlHelpFile": "Paste a link to the file, or upload/choose one from your media library below.",
+      "contentUrlHelpFile": "Or paste a link to a file hosted elsewhere. Anyone with that link can open it.",
       "youtubeDetected": "YouTube video detected",
       "invalidYoutubeUrl": "That doesn't look like a valid YouTube link. Double-check the URL and try again.",
-      "chooseFromLibrary": "Choose from library",
       "statusLabel": "Availability",
       "saveButton": "Save Lesson",
       "cancelButton": "Cancel",
@@ -221,7 +220,18 @@
       "bodyPlaceholder": "Write the lesson your learners will read…",
       "bodyHelp": "This is what learners read. The description above is a short summary.",
       "bodyLoading": "Loading the lesson text…",
-      "bodyRequired": "Write the lesson text before saving."
+      "bodyRequired": "Write the lesson text before saving.",
+      "protectedFile": {
+        "label": "Lesson file",
+        "upload": "Upload file",
+        "replace": "Replace file",
+        "uploading": "Uploading…",
+        "help": "PDF or image, up to 20 MB. Only learners enrolled in this course can open it, through a link that expires.",
+        "uploaded": "{{fileName}} is uploaded. It will be attached when you save the lesson.",
+        "attached": "A protected file is attached. Only enrolled learners can open it. Upload a new one to replace it.",
+        "publicLink": "This lesson links to a public file: anyone with the link can open it. Upload the file here to protect it.",
+        "tooLarge": "That file is larger than 20 MB."
+      }
     },
     "deleteSectionConfirm": {
       "title": "Delete this section?",
@@ -299,7 +309,8 @@
     "itemDetached": "Removed from unit",
     "removing": "Removing…",
     "deleting": "Deleting…",
-    "lessonBodyError": "The lesson was saved, but its text was not. Try saving again."
+    "lessonBodyError": "The lesson was saved, but its text was not. Try saving again.",
+    "lessonFileError": "The lesson was saved, but its file was not attached. Try saving again."
   },
   "settings": {
     "title": "Course Settings",
