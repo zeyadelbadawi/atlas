@@ -469,6 +469,46 @@
     "academyPaymentSubmitted": {
       "title": "New payment to review",
       "message": "A learner sent {{amount}} {{currency}} for \"{{courseTitle}}\". Check it and approve or reject."
+    },
+    "billingLimitApproaching": {
+      "title": "Close to a plan limit",
+      "message": "You're at {{used}} of {{limit}} on one of your plan limits."
+    },
+    "billingLimitApproachingStudents": {
+      "title": "Close to your student limit",
+      "message": "You have {{used}} of {{limit}} students on your plan."
+    },
+    "billingLimitApproachingCourses": {
+      "title": "Close to your course limit",
+      "message": "You have {{used}} of {{limit}} courses on your plan."
+    },
+    "billingLimitApproachingAcademies": {
+      "title": "Close to your academy limit",
+      "message": "You have {{used}} of {{limit}} academies on your plan."
+    },
+    "billingLimitApproachingStorage": {
+      "title": "Close to your storage limit",
+      "message": "You're using {{used}} of {{limit}} GB of storage on your plan."
+    },
+    "billingLimitReached": {
+      "title": "Plan limit reached",
+      "message": "You reached one of your plan limits ({{used}} of {{limit}}). New additions are refused until you upgrade."
+    },
+    "billingLimitReachedStudents": {
+      "title": "Student limit reached",
+      "message": "You have {{used}} of {{limit}} students. New students cannot join until you upgrade."
+    },
+    "billingLimitReachedCourses": {
+      "title": "Course limit reached",
+      "message": "You have {{used}} of {{limit}} courses. New courses cannot be created until you upgrade."
+    },
+    "billingLimitReachedAcademies": {
+      "title": "Academy limit reached",
+      "message": "You have {{used}} of {{limit}} academies. New academies cannot be created until you upgrade."
+    },
+    "billingLimitReachedStorage": {
+      "title": "Storage limit reached",
+      "message": "You're using {{used}} of {{limit}} GB. New uploads are refused until you upgrade."
     }
   },
   "liveSession": {

@@ -59,12 +59,17 @@
       "academies": "الأكاديميات",
       "courses": "الدورات",
       "students": "الطلاب",
-      "instructors": "المعلمون"
+      "instructors": "المعلمون",
+      "generalStorage": "التخزين"
     },
     "unavailable": {
       "title": "الاستهلاك غير متاح بعد",
       "description": "سيظهر استهلاك خطتك هنا بمجرد تفعيل اشتراكك واحتساب أول البيانات."
-    }
+    },
+    "limitWarning": "اقتربت من حد خطتك أو وصلت إليه: {{limits}}. تُرفض الإضافات الجديدة عند الوصول إلى الحد.",
+    "limitWarningItem": "{{name}} ({{percent}}٪)",
+    "limitWarningSeparator": "، ",
+    "comparePlans": "مقارنة الخطط"
   },
   "activity": {
     "title": "النشاط الأخير",

@@ -473,6 +473,46 @@
     "academyPaymentSubmitted": {
       "title": "دفعة جديدة للمراجعة",
       "message": "أرسل أحد المتعلّمين {{amount}} {{currency}} لدورة \"{{courseTitle}}\". راجعها ووافق عليها أو ارفضها."
+    },
+    "billingLimitApproaching": {
+      "title": "اقتربت من أحد حدود خطتك",
+      "message": "وصلت إلى {{used}} من {{limit}} في أحد حدود خطتك."
+    },
+    "billingLimitApproachingStudents": {
+      "title": "اقتربت من حد المتعلّمين",
+      "message": "لديك {{used}} من {{limit}} متعلّمًا في خطتك."
+    },
+    "billingLimitApproachingCourses": {
+      "title": "اقتربت من حد الدورات",
+      "message": "لديك {{used}} من {{limit}} دورة في خطتك."
+    },
+    "billingLimitApproachingAcademies": {
+      "title": "اقتربت من حد الأكاديميات",
+      "message": "لديك {{used}} من {{limit}} أكاديمية في خطتك."
+    },
+    "billingLimitApproachingStorage": {
+      "title": "اقتربت من حد التخزين",
+      "message": "تستخدم {{used}} من {{limit}} جيجابايت من مساحة التخزين في خطتك."
+    },
+    "billingLimitReached": {
+      "title": "وصلت إلى أحد حدود خطتك",
+      "message": "وصلت إلى أحد حدود خطتك ({{used}} من {{limit}}). تُرفض الإضافات الجديدة إلى أن تُرقّي خطتك."
+    },
+    "billingLimitReachedStudents": {
+      "title": "وصلت إلى حد المتعلّمين",
+      "message": "لديك {{used}} من {{limit}} متعلّمًا. لا يمكن انضمام متعلّمين جدد إلى أن تُرقّي خطتك."
+    },
+    "billingLimitReachedCourses": {
+      "title": "وصلت إلى حد الدورات",
+      "message": "لديك {{used}} من {{limit}} دورة. لا يمكن إنشاء دورات جديدة إلى أن تُرقّي خطتك."
+    },
+    "billingLimitReachedAcademies": {
+      "title": "وصلت إلى حد الأكاديميات",
+      "message": "لديك {{used}} من {{limit}} أكاديمية. لا يمكن إنشاء أكاديميات جديدة إلى أن تُرقّي خطتك."
+    },
+    "billingLimitReachedStorage": {
+      "title": "وصلت إلى حد التخزين",
+      "message": "تستخدم {{used}} من {{limit}} جيجابايت. تُرفض عمليات الرفع الجديدة إلى أن تُرقّي خطتك."
     }
   },
   "liveSession": {

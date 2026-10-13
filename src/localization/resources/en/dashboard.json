@@ -59,12 +59,17 @@
       "academies": "Academies",
       "courses": "Courses",
       "students": "Students",
-      "instructors": "Instructors"
+      "instructors": "Instructors",
+      "generalStorage": "Storage"
     },
     "unavailable": {
       "title": "Usage isn't available yet",
       "description": "Your plan usage appears here once your subscription is active and the first figures have been calculated."
-    }
+    },
+    "limitWarning": "Close to or at your plan limit: {{limits}}. New additions are refused at the limit.",
+    "limitWarningItem": "{{name}} ({{percent}}%)",
+    "limitWarningSeparator": ", ",
+    "comparePlans": "Compare plans"
   },
   "activity": {
     "title": "Recent activity",
