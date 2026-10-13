@@ -292,8 +292,21 @@
       "kindPaid": "Paid"
     },
     "revenue": {
-      "title": "Revenue",
-      "notTracked": "Atlas does not track subscription revenue. Plan prices are catalog information and no ledger links a subscription to money actually received, so no revenue figure is shown here rather than one derived from list prices."
+      "title": "Monthly recurring revenue",
+      "description": "From approved subscription payments only: each active subscription’s latest approved payment, with yearly payments divided by 12. Currencies are never added together.",
+      "currencyLabel": "Per month ({{currency}})",
+      "subscriptionsCount_one": "From {{count}} paid subscription",
+      "subscriptionsCount_other": "From {{count}} paid subscriptions",
+      "none": "No active subscription has an approved payment yet.",
+      "withoutPayment_one": "{{count}} active subscription has no approved payment on record (for example, time granted by the platform) and is not included.",
+      "withoutPayment_other": "{{count}} active subscriptions have no approved payment on record (for example, time granted by the platform) and are not included.",
+      "internalIncluded": "Test and demo organizations are included until they can be marked as internal.",
+      "cyclesTitle": "Active subscriptions by billing cycle",
+      "cycle": {
+        "monthly": "Monthly",
+        "yearly": "Yearly",
+        "none": "No cycle recorded"
+      }
     },
     "generatedAt": "Figures generated {{timestamp}}"
   },
