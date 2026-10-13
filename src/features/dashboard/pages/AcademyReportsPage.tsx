@@ -15,8 +15,9 @@
  *     so the page can never provoke the 400 the endpoint returns outside it.
  *   - A 403 (a member who is not owner/admin/manager of THIS academy) is a
  *     real state with its own copy, never a blank page or a generic error.
- *   - `truncated` means a LIST was capped, not a headline figure; the notice
- *     says exactly that and nothing more.
+ *   - `truncated` means the top lists were ranked from the window's most
+ *     recent rows only; the headline figures are exact counts over the
+ *     whole window either way (B0-ANL-03). The notice says exactly that.
  *   - Event types and refusal reasons are open string maps owned by the
  *     backend. Known keys get a translated label; an unknown one renders as
  *     its raw key rather than being dropped.
@@ -165,7 +166,7 @@ interface TruncatedNoticeProps {
   readonly show: boolean;
 }
 
-/** Says a list was capped. Rendered as a status so assistive tech announces it once. */
+/** Says the lists rank recent rows only. Rendered as a status so assistive tech announces it once. */
 function TruncatedNotice({ show }: TruncatedNoticeProps): JSX.Element | null {
   const { t } = useTranslation();
   if (!show) return null;

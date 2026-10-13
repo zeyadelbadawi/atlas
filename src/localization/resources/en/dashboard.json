@@ -205,7 +205,7 @@
       "title": "You can't view reports for this academy",
       "description": "Reports are available to the academy's owner, admins and managers. Ask an owner if you need access."
     },
-    "truncated": "Some lists were shortened to their top entries. The headline figures are complete.",
+    "truncated": "This period has a lot of activity, so the top lists rank its most recent records only. The headline figures cover the whole period.",
     "columns": {
       "course": "Course",
       "events": "Events",
