@@ -46,6 +46,27 @@ export interface DashboardRevenue {
    */
   readonly manualPaymentMethodsEnabled?: boolean;
   readonly totals: readonly DashboardRevenueTotal[];
+  /**
+   * B0-COM-02 — sales the academy collected itself by manual payment and
+   * approved in Atlas (gross; not ledger revenue). `null` for anyone but
+   * the organization owner; optional so an older API still type-checks.
+   */
+  readonly manualSales?: DashboardManualSales | null;
+}
+
+export interface DashboardManualSalesTotal {
+  readonly currency: string;
+  readonly amountMinorUnits: number;
+  /** Approved orders in the window. */
+  readonly count: number;
+}
+
+export interface DashboardManualSales {
+  /** 7, 30 and 90 days, each ending now. */
+  readonly periods: readonly {
+    readonly days: number;
+    readonly totals: readonly DashboardManualSalesTotal[];
+  }[];
 }
 
 export interface DashboardActivityItem {

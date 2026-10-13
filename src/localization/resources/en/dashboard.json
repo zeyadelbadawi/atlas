@@ -32,6 +32,22 @@
     "none": {
       "title": "No earnings yet",
       "description": "Once your first course sale goes through, it will appear here."
+    },
+    "manualSales": {
+      "title": "Sales recorded in Atlas (manual payments)",
+      "windowLabel": "Period",
+      "window": {
+        "7": "Last 7 days",
+        "30": "Last 30 days",
+        "90": "Last 90 days"
+      },
+      "orders": "Approved orders: {{count}}",
+      "empty": {
+        "7": "No approved manual payments in the last 7 days.",
+        "30": "No approved manual payments in the last 30 days.",
+        "90": "No approved manual payments in the last 90 days."
+      },
+      "note": "Amounts of the payments you approved. Your academy received this money directly; Atlas does not hold it. Refunds you make outside Atlas are not subtracted."
     }
   },
   "usage": {

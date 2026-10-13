@@ -4,7 +4,7 @@
  * yet"; none → "set up how you collect payments"; own gateway → unchanged.
  */
 import { afterEach, describe, expect, it } from 'vitest';
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import { createI18nInstance } from '@/localization/i18n';
 import { RevenueSummary } from './components/RevenueSummary';
@@ -60,5 +60,70 @@ describe('RevenueSummary — not-tracked message', () => {
       manualPaymentMethodsEnabled: true,
     });
     expect(screen.getByText(/your own gateway/)).toBeTruthy();
+  });
+});
+
+describe('RevenueSummary — manual-payment sales (B0-COM-02)', () => {
+  const manualSales = {
+    periods: [
+      { days: 7, totals: [] },
+      {
+        days: 30,
+        totals: [{ currency: 'EGP', amountMinorUnits: 119000, count: 1 }],
+      },
+      {
+        days: 90,
+        totals: [{ currency: 'EGP', amountMinorUnits: 169000, count: 2 }],
+      },
+    ],
+  };
+
+  it('shows the owner the last 30 days by default, labelled as manual sales, not revenue', () => {
+    renderCard({ ...base, manualPaymentMethodsEnabled: true, manualSales });
+    expect(
+      screen.getByText('Sales recorded in Atlas (manual payments)')
+    ).toBeTruthy();
+    expect(
+      screen
+        .getByRole('button', { name: 'Last 30 days' })
+        .getAttribute('aria-pressed')
+    ).toBe('true');
+    expect(screen.getByText('Approved orders: 1')).toBeTruthy();
+    expect(screen.queryByText('After platform fees')).toBeNull();
+    expect(screen.queryByText(/aren't shown here yet/)).toBeNull();
+  });
+
+  it('switches windows, and says so when a window has no sales', () => {
+    renderCard({ ...base, manualPaymentMethodsEnabled: true, manualSales });
+    fireEvent.click(screen.getByRole('button', { name: 'Last 90 days' }));
+    expect(screen.getByText('Approved orders: 2')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Last 7 days' }));
+    expect(
+      screen.getByText('No approved manual payments in the last 7 days.')
+    ).toBeTruthy();
+  });
+
+  it('renders in Arabic', () => {
+    renderCard(
+      { ...base, manualPaymentMethodsEnabled: true, manualSales },
+      'ar'
+    );
+    expect(
+      screen.getByText('المبيعات المسجّلة في Atlas (المدفوعات اليدوية)')
+    ).toBeTruthy();
+    expect(screen.getByText('الطلبات المعتمدة: 1')).toBeTruthy();
+  });
+
+  it('keeps the earlier message for anyone without sales figures (null)', () => {
+    renderCard({
+      ...base,
+      manualPaymentMethodsEnabled: true,
+      manualSales: null,
+    });
+    expect(
+      screen.getByText(
+        "Earnings from manual payments aren't shown here yet. You can see each approved payment in Orders."
+      )
+    ).toBeTruthy();
   });
 });
