@@ -28,7 +28,6 @@ import { liveSessionKeys } from '@services/query';
 import { addOnCatalogService } from '../services/AddOnCatalogService';
 import type { AddOnAccessState, AddOnCatalogEntry } from '@types';
 import type { ApiError } from '@api';
-import { DEFAULT_DISPLAY_CURRENCY } from '@utils';
 
 type Action = 'install' | 'enable' | 'disable' | 'uninstall';
 
@@ -124,14 +123,22 @@ export default function AddOnsCatalogPage(): JSX.Element {
                       </p>
                     ) : null}
 
-                    <p className="text-sm font-medium text-foreground">
-                      {addOn.isFree
-                        ? t('liveSessions:catalog.free')
-                        : t('liveSessions:catalog.price', {
-                            amount: addOn.pricing?.amount ?? 0,
-                            currency: addOn.pricing?.currency ?? DEFAULT_DISPLAY_CURRENCY,
-                          })}
-                    </p>
+                    {/* B0-LIV-02 — a "coming soon" add-on cannot be bought, so it
+                        shows no price; a priced add-on without an amount or a
+                        currency shows none rather than an invented one. */}
+                    {addOn.comingSoon ? null : addOn.isFree ? (
+                      <p className="text-sm font-medium text-foreground">
+                        {t('liveSessions:catalog.free')}
+                      </p>
+                    ) : addOn.pricing?.currency &&
+                      addOn.pricing.amount !== undefined ? (
+                      <p className="text-sm font-medium text-foreground">
+                        {t('liveSessions:catalog.price', {
+                          amount: addOn.pricing.amount,
+                          currency: addOn.pricing.currency,
+                        })}
+                      </p>
+                    ) : null}
 
                     {addOn.failureReason ? (
                       <p className="text-sm text-destructive">{addOn.failureReason}</p>

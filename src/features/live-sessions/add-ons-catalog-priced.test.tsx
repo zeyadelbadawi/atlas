@@ -102,3 +102,33 @@ describe('Add-ons catalog — paid add-ons', () => {
     expect(screen.queryByRole('button', { name: 'Buy' })).toBeNull();
   });
 });
+
+describe('Add-ons catalog — price line (B0-LIV-02)', () => {
+  it('shows no price for a "coming soon" add-on', () => {
+    catalog = [
+      entry({
+        key: 'live-sessions',
+        name: 'Live sessions',
+        comingSoon: true,
+        pricing: { amount: 0, currency: 'USD' },
+      }),
+    ];
+    renderPage();
+    expect(screen.getByText('Live sessions')).toBeTruthy();
+    expect(screen.queryByText(/USD|EGP/)).toBeNull();
+  });
+
+  it('shows no invented currency when the add-on has none', () => {
+    catalog = [entry({ pricing: { amount: 450 } })];
+    renderPage();
+    expect(screen.getByText('Extra academies')).toBeTruthy();
+    expect(screen.queryByText(/USD|EGP|450/)).toBeNull();
+  });
+
+  it('still shows the price of a priced add-on with its currency', () => {
+    catalog = [entry({})];
+    renderPage();
+    expect(screen.getByText(/450/)).toBeTruthy();
+    expect(screen.getByText(/EGP/)).toBeTruthy();
+  });
+});
