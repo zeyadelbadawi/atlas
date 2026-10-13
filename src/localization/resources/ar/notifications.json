@@ -378,6 +378,30 @@
       "title": "استفسار تواصل جديد",
       "message": "وصلت رسالة جديدة عبر نموذج التواصل في موقع Atlas."
     },
+    "platformSubscriptionPaymentSubmitted": {
+      "title": "دفعة اشتراك للمراجعة",
+      "message": "أرسلت {{organizationName}} إثبات دفع بقيمة {{amount}} {{currency}}."
+    },
+    "platformSupportCaseCreated": {
+      "title": "طلب دعم جديد",
+      "message": "فتحت {{organizationName}} طلب دعم جديدًا."
+    },
+    "platformSupportCaseCustomerReplied": {
+      "title": "ردّ عميل على طلب دعم",
+      "message": "ردّت {{organizationName}} على طلب دعم."
+    },
+    "platformOrganizationSignedUp": {
+      "title": "مؤسسة جديدة",
+      "message": "سجّلت {{organizationName}} في Atlas."
+    },
+    "platformCoursePaymentSubmitted": {
+      "title": "دفعة دورة للمراجعة",
+      "message": "أرسل متعلّم في {{academyName}} دفعة بقيمة {{amount}} {{currency}} لدورة \"{{courseTitle}}\"."
+    },
+    "platformRefundRecorded": {
+      "title": "تم تسجيل استرداد",
+      "message": "تم تسجيل استرداد بقيمة {{amount}} {{currency}} لدورة \"{{courseTitle}}\" في {{academyName}}."
+    },
     "customerRequestRouted": {
       "title": "نشاط على طلب عميل",
       "message": "{{academyName}}: يحتاج \"{{title}}\" إلى متابعة الفريق."

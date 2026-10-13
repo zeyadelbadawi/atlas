@@ -374,6 +374,30 @@
       "title": "New contact enquiry",
       "message": "A new message arrived through the Atlas website contact form."
     },
+    "platformSubscriptionPaymentSubmitted": {
+      "title": "Subscription payment to review",
+      "message": "{{organizationName}} submitted a payment proof of {{amount}} {{currency}}."
+    },
+    "platformSupportCaseCreated": {
+      "title": "New support case",
+      "message": "{{organizationName}} opened a new support case."
+    },
+    "platformSupportCaseCustomerReplied": {
+      "title": "Customer replied on a support case",
+      "message": "{{organizationName}} replied on a support case."
+    },
+    "platformOrganizationSignedUp": {
+      "title": "New organization",
+      "message": "{{organizationName}} signed up for Atlas."
+    },
+    "platformCoursePaymentSubmitted": {
+      "title": "Course payment to review",
+      "message": "A learner at {{academyName}} submitted a payment of {{amount}} {{currency}} for \"{{courseTitle}}\"."
+    },
+    "platformRefundRecorded": {
+      "title": "Refund recorded",
+      "message": "A refund of {{amount}} {{currency}} was recorded for \"{{courseTitle}}\" at {{academyName}}."
+    },
     "customerRequestRouted": {
       "title": "Customer request activity",
       "message": "{{academyName}}: \"{{title}}\" needs the team's attention."
