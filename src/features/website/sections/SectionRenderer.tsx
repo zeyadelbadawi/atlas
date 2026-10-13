@@ -13,6 +13,8 @@
  */
 import type { ComponentType } from 'react';
 import type { SectionInstance, WebsitePage } from '@types';
+import { DEFAULT_RESPONSIVE_VISIBILITY } from '@types';
+import { sectionVisibilityClass } from './section-visibility.utils';
 import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
 import { resolveSectionRenderer } from '../theme-packs/theme-pack.registry';
 import { useThemePack } from '../theme-packs/ThemePackContext';
@@ -49,12 +51,27 @@ export function SectionRenderer({
   // renders nothing rather than failing the page.
   if (!Renderer) return null;
 
-  return (
+  const visibility = instance.visibility ?? DEFAULT_RESPONSIVE_VISIBILITY;
+  // Hidden at every size: nothing to render at all.
+  if (!visibility.mobile && !visibility.tablet && !visibility.desktop)
+    return null;
+
+  const rendered = (
     <Renderer
       config={instance.config as never}
       academyId={academyId}
       pages={pages}
       linkRenderer={linkRenderer}
     />
+  );
+  const visibilityClass = sectionVisibilityClass(visibility);
+  // Wrapped only when something is hidden; `display: contents` keeps the
+  // section's own box in its parent's layout.
+  return visibilityClass ? (
+    <div className={visibilityClass} data-section-visibility="">
+      {rendered}
+    </div>
+  ) : (
+    rendered
   );
 }
