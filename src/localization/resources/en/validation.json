@@ -51,7 +51,7 @@
   "phoneCountryMismatch": "This number belongs to another country. Choose that country or check the number.",
   "phoneNotMobile": "Enter a mobile number — landlines, toll-free and premium-rate numbers can’t receive messages.",
   "invalidPhoneCountry": "Choose a supported country",
-  "phoneTaken": "This phone number is already in use. Enter a different number.",
+  "phoneTaken": "This phone number is already used by another account. If it's your number, contact support to reclaim it, or enter a different number.",
   "commonPassword": "This password is too common and easy to guess. Choose a different one.",
   "unsupportedCurrency": "Choose a supported currency (EGP)."
 }
