@@ -3,8 +3,9 @@
  * people who manage the academy website — Owners and Managers, who hold
  * `academy.website.manage` — and no one else.
  *
- * A plain member holds `academy.website.view` (they still see Website)
- * and an Instructor holds neither. Hiding is UX, not security: the route
+ * A plain (or academy `staff`) member holds only `academy.view` and an
+ * Instructor holds neither, so neither sees Website at all (B0-WEB-04:
+ * every website API refuses them). Hiding is UX, not security: the route
  * is independently guarded and the backend refuses the read — what this
  * pins is that the sidebar never advertises a door that is locked.
  */
@@ -63,6 +64,13 @@ describe('website Messages navigation entry', () => {
     );
     expect(entry?.path).toBe(`/dashboard/academy/${ACADEMY}/website/messages`);
     expect(entry?.requiredPermissions).toEqual(['academy.website.manage']);
+  });
+
+  it('B0-WEB-04: a plain or staff member (academy.view only) sees no Website entry at all', () => {
+    // The exact set the backend's ORGANIZATION_MEMBER_PERMISSIONS now holds.
+    const ids = visibleIds(['academy.view']);
+    expect(ids).not.toContain('academy-website');
+    expect(ids).not.toContain('academy-website-messages');
   });
 
   it('is hidden from a member who can only view the website', () => {

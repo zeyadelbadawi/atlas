@@ -94,7 +94,12 @@ export function AddAcademyInstructorDialog({
       {
         onSuccess: (result) => {
           notifySuccess(memberAddOutcomeKey(result.outcome));
-          handleOpenChange(false);
+          // B0-IAM-04 — the add succeeded, so nothing is unsaved: close
+          // directly. Going through the dirty guard here asked "Leave
+          // without saving?" after every successful add (the form still
+          // held the typed address).
+          form.reset(DEFAULT_VALUES);
+          onOpenChange(false);
         },
         onError: (error) => {
           if (

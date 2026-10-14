@@ -89,7 +89,10 @@ export function RichTextEditor({
 }: RichTextEditorProps): JSX.Element {
   const { t } = useTranslation();
   const editorRef = useRef<HTMLDivElement>(null);
-  const lastEmitted = useRef<string>(value);
+  // `null` until the first sync, so an editor MOUNTED with a value (an
+  // existing lesson body, a restored draft) writes it into the DOM. Seeding
+  // this with `value` made that first sync a no-op and the editor blank.
+  const lastEmitted = useRef<string | null>(null);
   const savedRange = useRef<Range | null>(null);
   const [active, setActive] = useState<Record<Mark, boolean>>({
     bold: false,

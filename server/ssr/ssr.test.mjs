@@ -441,6 +441,13 @@ describe('server-rendered public pages', () => {
       2
     );
     assert.doesNotMatch((await get(withFonts, ALPHA, '/')).body, fontPreload);
+    // B0-WEB-12: only Theme 1 sets its Arabic in Rubik / Readex Pro; the
+    // other themes would download files they never use.
+    for (const host of [DELTA, EPSILON, ZETA]) {
+      const page = await get(withFonts, host, '/ar/');
+      assert.equal(page.headers['X-Atlas-SSR'], 'render', page.reason);
+      assert.doesNotMatch(page.body, fontPreload);
+    }
   });
 
   it('renders Arabic pages right to left', async () => {
@@ -485,6 +492,20 @@ describe('server-rendered public pages', () => {
     assert.equal(result.headers['X-Atlas-SSR'], 'render', result.reason);
     assert.match(result.body, /data-testid="academy-coming-soon"/);
     assert.doesNotMatch(result.body, /Gamma is not live yet/);
+  });
+
+  // B0-WEB-06 — a thin, near-identical placeholder is never indexed.
+  it('marks Coming Soon noindex, in the head and in X-Robots-Tag', async () => {
+    const result = await get(handler, GAMMA, '/');
+    assert.equal(result.headers['X-Robots-Tag'], 'noindex');
+    assert.match(result.body, /name="robots" content="noindex,nofollow"/);
+  });
+
+  it('sends no X-Robots-Tag with a published page', async () => {
+    const result = await get(handler, ALPHA, '/');
+    assert.equal(result.headers['X-Atlas-SSR'], 'render', result.reason);
+    assert.equal(result.headers['X-Robots-Tag'], undefined);
+    assert.match(result.body, /name="robots" content="index,follow"/);
   });
 
   it('emits no Suspense boundary on a public page (hydrated in one pass)', async () => {
@@ -1370,5 +1391,73 @@ describe('theme packs: each site gets only its own theme', () => {
     assert.equal(result.headers['X-Atlas-SSR'], 'render', result.reason);
     assert.deepEqual(headStylesheets(result.body), ['modern-education', 'app']);
     assert.deepEqual(payloadOf(result.body).themePacks, ['modern-education']);
+  });
+});
+
+// B0-WEB-06 — once a custom domain is connected and reachable, the backend
+// names it as the canonical host; a page asked for on the Atlas subdomain
+// is answered with a 301 there, path and query kept.
+describe('canonical host redirect', () => {
+  const CUSTOM = 'www.alpha-learning.example';
+  let redirecting;
+
+  before(async () => {
+    redirecting = await makeHandler({ canonicalRedirect: true });
+  });
+
+  const withCustomDomain = () => {
+    state.academies[ALPHA_ID].resolve.canonicalHost = CUSTOM;
+  };
+
+  it('301s a public page on the subdomain to the canonical host, path and query kept', async () => {
+    withCustomDomain();
+    const result = await get(redirecting, ALPHA, '/courses?level=beginner');
+    assert.equal(result.status, 301);
+    assert.equal(
+      result.headers.Location,
+      `https://${CUSTOM}/courses?level=beginner`
+    );
+    assert.equal(result.headers['Cache-Control'], 'private, no-cache');
+    assert.equal(result.body, '');
+  });
+
+  it('301s Coming Soon too', async () => {
+    state.academies[GAMMA_ID].resolve.canonicalHost = 'www.gamma.example';
+    const result = await get(redirecting, GAMMA, '/ar');
+    assert.equal(result.status, 301);
+    assert.equal(result.headers.Location, 'https://www.gamma.example/ar');
+  });
+
+  it('renders on the canonical host itself', async () => {
+    state.academies[ALPHA_ID].resolve.canonicalHost = ALPHA;
+    const result = await get(redirecting, ALPHA, '/');
+    assert.equal(result.status, 200);
+    assert.equal(result.headers['X-Atlas-SSR'], 'render', result.reason);
+  });
+
+  it('never moves a signed-in visitor (the session cookie is host-only)', async () => {
+    withCustomDomain();
+    for (const name of ['atlas_session', '__Host-atlas_session']) {
+      const result = await get(redirecting, ALPHA, '/', {
+        cookieHeader: `theme=dark; ${name}=abc`,
+      });
+      assert.equal(result.status, 200, name);
+    }
+  });
+
+  it('leaves account and auth paths to the app', async () => {
+    withCustomDomain();
+    for (const path of ['/my/courses', '/sign-in']) {
+      const result = await get(redirecting, ALPHA, path);
+      assert.equal(result.status, 200, path);
+      assert.equal(result.headers['X-Atlas-SSR'], 'pass', path);
+    }
+  });
+
+  it('is off unless the renderer is configured for it', async () => {
+    withCustomDomain();
+    const result = await get(handler, ALPHA, '/');
+    assert.equal(result.status, 200);
+    assert.equal(result.headers['X-Atlas-SSR'], 'render', result.reason);
   });
 });

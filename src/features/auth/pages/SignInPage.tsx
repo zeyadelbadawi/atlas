@@ -92,17 +92,12 @@ export default function SignInPage(): JSX.Element {
     }
   }, [session.status, navigate, searchParams]);
 
-  const handleSignIn = async (
-    email: string,
-    password: string,
-    rememberMe: boolean
-  ) => {
+  const handleSignIn = async (email: string, password: string) => {
     clearError();
     try {
       const result = await signIn({
         email,
         password,
-        rememberMe,
         surface: SURFACE,
       });
       // Phase 10.3 — a challenge means the password was correct but the

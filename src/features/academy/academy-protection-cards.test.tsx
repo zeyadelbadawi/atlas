@@ -20,6 +20,8 @@ import {
 import { I18nextProvider } from 'react-i18next';
 import { createI18nInstance } from '@/localization/i18n';
 import { createApiError, type ApiError } from '@api';
+import type * as ConfigModule from '@config';
+import type { FeatureFlag } from '@config';
 import type {
   AcademyContentProtection,
   AcademyDevicePolicy,
@@ -127,6 +129,20 @@ vi.mock('@app/providers', () => ({
   useToast: () => ({ notifySuccess, notifyError }),
 }));
 
+// B0-MED-02 — the tier form exists for when hosted video ships; these cases
+// exercise it with the flag on, and one case below checks the flag-off state.
+const flags = vi.hoisted(() => ({ hostedVideoAuthoring: true }));
+vi.mock('@config', async (orig) => {
+  const actual = (await orig()) as typeof ConfigModule;
+  return {
+    ...actual,
+    isFeatureEnabled: (flag: FeatureFlag) =>
+      flag === 'hostedVideoAuthoring'
+        ? flags.hostedVideoAuthoring
+        : actual.isFeatureEnabled(flag),
+  };
+});
+
 const { ContentProtectionCard } =
   await import('./components/ContentProtectionCard');
 const { VideoTierCard } = await import('./components/VideoTierCard');
@@ -137,6 +153,7 @@ const i18n = createI18nInstance('en');
 afterEach(() => {
   cleanup();
   reset();
+  flags.hostedVideoAuthoring = true;
   vi.clearAllMocks();
 });
 
@@ -239,6 +256,17 @@ describe('ContentProtectionCard', () => {
 });
 
 describe('VideoTierCard', () => {
+  it('offers no tier choice while hosted video cannot be authored (B0-MED-02)', () => {
+    flags.hostedVideoAuthoring = false;
+    renderOne(<VideoTierCard academyId="academy-1" canEdit />);
+
+    expect(screen.getByTestId('video-tier-unavailable')).toBeTruthy();
+    expect(screen.getByText(/hosted video is not available yet/i)).toBeTruthy();
+    expect(screen.queryAllByRole('radio')).toHaveLength(0);
+    expect(screen.queryByRole('button', { name: /^save$/i })).toBeNull();
+    expect(useTierQuery).not.toHaveBeenCalled();
+  });
+
   it('does not offer Premium when the plan does not include it', () => {
     renderOne(<VideoTierCard academyId="academy-1" canEdit />);
 

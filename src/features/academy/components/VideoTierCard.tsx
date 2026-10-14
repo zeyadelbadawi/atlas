@@ -36,6 +36,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { isFeatureEnabled } from '@config';
 import { ErrorState } from '@components/feedback';
 import { useToast } from '@app/providers';
 import { useAcademyVideoTier, useUpdateAcademyVideoTier } from '../hooks';
@@ -76,7 +77,15 @@ export function VideoTierCard({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {canEdit ? (
+        {!isFeatureEnabled('hostedVideoAuthoring') ? (
+          // B0-MED-02 — no academy can upload hosted video yet, so there is
+          // no tier to choose: say so instead of offering a choice.
+          <Alert data-testid="video-tier-unavailable">
+            <AlertDescription>
+              {t('academy:protection.videoTier.unavailable')}
+            </AlertDescription>
+          </Alert>
+        ) : canEdit ? (
           <VideoTierBody academyId={academyId} />
         ) : (
           <ProtectionOwnerOnlyNotice />

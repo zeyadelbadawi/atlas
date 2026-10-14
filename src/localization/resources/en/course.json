@@ -207,16 +207,49 @@
       "contentTypeLabel": "Content Type",
       "contentUrlLabel": "Content URL",
       "contentUrlPlaceholder": "https://...",
-      "contentUrlHelpVideo": "Paste a YouTube link (e.g. https://www.youtube.com/watch?v=...), or upload/choose a hosted video file below.",
-      "contentUrlHelpFile": "Paste a link to the file, or upload/choose one from your media library below.",
+      "contentUrlHelpVideo": "Paste a YouTube link. Uploading videos to Atlas is not available yet.",
+      "contentUrlHelpFile": "Or paste a link to a file hosted elsewhere. Anyone with that link can open it.",
       "youtubeDetected": "YouTube video detected",
       "invalidYoutubeUrl": "That doesn't look like a valid YouTube link. Double-check the URL and try again.",
-      "chooseFromLibrary": "Choose from library",
       "statusLabel": "Availability",
       "saveButton": "Save Lesson",
       "cancelButton": "Cancel",
       "creating": "Adding lesson...",
-      "saving": "Saving lesson..."
+      "saving": "Saving lesson...",
+      "bodyLabel": "Lesson text",
+      "bodyPlaceholder": "Write the lesson your learners will read…",
+      "bodyHelp": "This is what learners read. The description above is a short summary.",
+      "bodyLoading": "Loading the lesson text…",
+      "bodyRequired": "Write the lesson text before saving.",
+      "protectedFile": {
+        "label": "Lesson file",
+        "upload": "Upload file",
+        "replace": "Replace file",
+        "uploading": "Uploading…",
+        "help": "PDF or image, up to 20 MB. Only learners enrolled in this course can open it, through a link that expires.",
+        "uploaded": "{{fileName}} is uploaded. It will be attached when you save the lesson.",
+        "attached": "A protected file is attached. Only enrolled learners can open it. Upload a new one to replace it.",
+        "publicLink": "This lesson links to a public file: anyone with the link can open it. Upload the file here to protect it.",
+        "tooLarge": "That file is larger than 20 MB."
+      },
+      "contentUrlHelpVideoOr": "Or paste a YouTube link instead.",
+      "hostedVideo": {
+        "label": "Video hosted by Atlas",
+        "upload": "Upload a video",
+        "replace": "Upload a different video",
+        "uploading": "Uploading… {{percent}}%",
+        "progressLabel": "Upload progress",
+        "chooseExisting": "Choose an uploaded video",
+        "libraryLabel": "Your uploaded videos",
+        "libraryPlaceholder": "Select a video",
+        "libraryEmpty": "No uploaded videos yet.",
+        "attached": "A video hosted by Atlas is attached.",
+        "attachedNamed": "Attached: {{fileName}}",
+        "remove": "Remove",
+        "wrongType": "Upload an MP4 video.",
+        "tooLarge": "This video is larger than 5 GB.",
+        "help": "MP4 only. Learners watch it with their name watermarked on the video, on the devices your academy allows. It counts towards your plan's video minutes and storage."
+      }
     },
     "deleteSectionConfirm": {
       "title": "Delete this section?",
@@ -293,7 +326,9 @@
     },
     "itemDetached": "Removed from unit",
     "removing": "Removing…",
-    "deleting": "Deleting…"
+    "deleting": "Deleting…",
+    "lessonBodyError": "The lesson was saved, but its text was not. Try saving again.",
+    "lessonFileError": "The lesson was saved, but its file was not attached. Try saving again."
   },
   "settings": {
     "title": "Course Settings",
@@ -308,11 +343,12 @@
     "unpublishAction": "Unpublish Course",
     "publishDialog": {
       "title": "Publish this course?",
-      "descriptionWithCurriculum": "Your course will become visible according to its configured visibility.",
-      "descriptionNoCurriculum": "This course doesn't have any curriculum yet. You can still publish it and add lessons later.",
+      "description": "Your course will become visible according to its configured visibility.",
       "confirmLabel": "Publish",
       "cancelLabel": "Cancel"
     },
+    "publishBlockedTitle": "Before you can publish:",
+    "openCurriculum": "Open the curriculum",
     "unpublishDialog": {
       "title": "Unpublish this course?",
       "description": "The course will return to draft and won't be visible per its configured visibility.",
@@ -588,7 +624,7 @@
       "fields": {
         "mode": {
           "label": "Mode",
-          "description": "Enforced: exam mode requests fullscreen when integrity is on and shows the attempt one question at a time by default.",
+          "description": "Exam preset: turns on full screen (when integrity is on) and one question at a time. You can change each setting below.",
           "options": {
             "practice": "Practice",
             "exam": "Exam"

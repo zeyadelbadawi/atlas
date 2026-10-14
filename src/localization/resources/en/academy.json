@@ -82,7 +82,7 @@
     "general": "General",
     "generalDescription": "Your academy's name, web address, and description — this is what students and staff see first.",
     "localization": "Localization",
-    "localizationDescription": "The default language, timezone, and currency used across your academy.",
+    "localizationDescription": "Language sets the language of your academy's emails and certificates. Timezone sets when email digests are sent. Your website's main address is in English, with Arabic pages under /ar. Course prices use the currency set on each course.",
     "contact": "Contact",
     "contactDescription": "How students and staff can reach you — shown on your academy's public pages.",
     "branding": "Branding",
@@ -138,6 +138,7 @@
     "subtitle": "Manage your academy team members",
     "searchPlaceholder": "Search members...",
     "filterByRole": "Filter by Role",
+    "ownerOnlyAdds": "Only the account owner can add people.",
     "allRoles": "All Roles",
     "table": {
       "name": "Name",
@@ -164,7 +165,7 @@
     "addManager": {
       "triggerButton": "Add Manager",
       "title": "Add an Academy Manager",
-      "description": "Grant an Atlas user Manager access to this academy — they'll be able to manage courses, instructors, content and academy settings, but not your organization's billing or subscription.",
+      "description": "Grant an Atlas user Manager access to this academy. Managers manage courses, content and academy settings and assign existing instructors to courses. They can't add staff or see your organization's billing.",
       "emailLabel": "Email address",
       "emailPlaceholder": "manager@example.com",
       "cancelButton": "Cancel",
@@ -195,7 +196,7 @@
     "createStudent": {
       "triggerButton": "Add Student",
       "title": "Create a Student Account",
-      "description": "This invites a brand-new Atlas account for the student. They'll get an email with a link to set their own password, then they can browse the course catalog and enroll.",
+      "description": "Adds the student to this academy. If they don't have an Atlas account yet, they get an email to set their password.",
       "emailLabel": "Email address",
       "cancelButton": "Cancel",
       "doneButton": "Done",
@@ -423,7 +424,7 @@
     },
     "invites": {
       "title": "Invite links",
-      "description": "A learner opens an invite link to register on your academy website, whatever the policy says.",
+      "description": "Invite links are required only when registration is set to Invite only. With Open or Approval required, learners register without a link, and approval still applies.",
       "anyone": "Anyone with the link",
       "empty": "No invite links",
       "emptyDescription": "Create one to let a specific person register.",
@@ -625,7 +626,7 @@
       "watermark": {
         "label": "Forensic watermark on every video",
         "badge": "Always on",
-        "description": "Each learner sees their own personal code and a masked hint of their account moving across the video, with a faint pattern of the code over the whole picture. It covers hosted videos, YouTube lessons, free previews and live classes, and it can't be turned off.",
+        "description": "Each learner sees their own personal code and a masked hint of their account moving across the video, with a faint pattern of the code over the whole picture. It appears on every video lesson and course preview, and it can't be turned off.",
         "leak": "If a recording of your course turns up somewhere, contact Atlas support with the code you can see in it — Atlas can trace it to the account and session it came from."
       },
       "watermarkText": {
@@ -663,7 +664,7 @@
       "options": {
         "normal": {
           "label": "Normal",
-          "description": "Basic video protection: Atlas stores and delivers the video itself, through short-lived links that are only issued to learners with access."
+          "description": "Short-lived links issued only to learners with access, for videos uploaded to Atlas. Uploading videos is not available yet."
         },
         "premium": {
           "label": "Premium",
@@ -680,7 +681,8 @@
       },
       "save": "Save",
       "saved": "Video tier updated",
-      "saveFailed": "The video tier could not be saved."
+      "saveFailed": "The video tier could not be saved.",
+      "unavailable": "Hosted video is not available yet, so there is no tier to choose. Video lessons use YouTube links."
     },
     "devices": {
       "title": "Learner devices",

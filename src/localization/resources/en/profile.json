@@ -56,6 +56,12 @@
       "sessionRevokedDescription": "That device no longer has access to your account.",
       "sessionRevokeFailed": "Could not sign out that device",
       "sessionRevokeFailedDescription": "The session is still active. Please try again.",
+      "signOutOthers": "Sign out all other devices",
+      "signOutOthersTitle": "Sign out all other devices?",
+      "signOutOthersDescription": "Every other device will be signed out immediately and will need to sign in again. This device stays signed in.",
+      "signedOutOthers": "Other devices signed out",
+      "signedOutOthersDescription": "Only this device is signed in to your account now.",
+      "signOutOthersFailed": "Could not sign out the other devices",
       "unknownLocation": "Location unavailable",
       "ipAddress": "IP address",
       "trustedDevices": "Remembered Devices",
@@ -205,7 +211,7 @@
   },
   "phone": {
     "title": "Phone number",
-    "description": "Your mobile number. Academies and other users can’t see it. It’s also stored, encrypted, in the forensic watermark records described in our Privacy Policy.",
+    "description": "Your mobile number. If you are a student in an academy, that academy’s owners and managers can see it, and so can Atlas platform administrators. Instructors and other students can’t. It’s also stored, encrypted, in the forensic watermark records described in our Privacy Policy.",
     "label": "Mobile number",
     "empty": "You haven’t added a phone number yet.",
     "add": "Add phone number",
@@ -227,9 +233,53 @@
     "rateLimited": "You’ve changed your number several times recently. Please try again later.",
     "prompt": {
       "title": "Add your phone number",
-      "body": "So we can reach you about your account if we ever need to. Academies and other users can’t see it.",
+      "body": "So we can reach you about your account if we ever need to. If you are a student in an academy, its owners and managers can see it, and so can Atlas platform administrators.",
       "action": "Add phone number",
       "dismiss": "Not now"
+    }
+  },
+  "privacyRequests": {
+    "title": "Your data",
+    "description": "Ask for a copy of the personal data your account holds, or ask for your account to be deleted. Our team handles each request and emails you when it is done.",
+    "exportTitle": "Get a copy of your data",
+    "exportDescription": "A file with your profile, academies, enrolments, progress, certificates, orders and payments.",
+    "exportAction": "Request a copy",
+    "deletionTitle": "Delete your account",
+    "deletionDescription": "Your account is deleted and cannot be recovered. You lose access to every course, and every session ends.",
+    "deletionAction": "Request deletion",
+    "dialogTitleExport": "Request a copy of your data",
+    "dialogTitleDeletion": "Request deletion of your account",
+    "dialogDescription": "To confirm it is you, we will email a code to your address.",
+    "sendCode": "Email me a code",
+    "sendingCode": "Sending…",
+    "codeTitle": "Enter the code",
+    "codeDescription": "We sent a 6-digit code to {{email}}.",
+    "codeLabel": "Confirmation code",
+    "resend": "Send a new code",
+    "resendIn": "Send a new code in {{seconds}} s",
+    "submit": "Send request",
+    "submitting": "Sending…",
+    "submitted": "Request sent. We will email you when it is done.",
+    "failed": "We could not send your request. Try again.",
+    "historyTitle": "Your requests",
+    "historyEmpty": "You have not made any requests.",
+    "loadFailed": "We could not load your requests.",
+    "download": "Download your data",
+    "downloading": "Preparing…",
+    "downloadFailed": "The download is no longer available.",
+    "availableUntil": "Available until {{date}}",
+    "reason": "Reason: {{note}}",
+    "filedOn": "Requested {{date}}",
+    "openRequest": "You already have an open request of this kind.",
+    "type": {
+      "export": "Copy of your data",
+      "deletion": "Account deletion"
+    },
+    "status": {
+      "submitted": "Received",
+      "in_progress": "In progress",
+      "completed": "Done",
+      "rejected": "Declined"
     }
   }
 }

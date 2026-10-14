@@ -375,9 +375,10 @@ export interface CancellationResult {
  * Platform-admin subscription/trial operations view — mirrors the
  * backend's `AdminSubscriptionOverview` exactly.
  *
- * `revenue.tracked` is `false` because Atlas genuinely does not track
- * subscription revenue. The UI must say so rather than render a zero that
- * a reader would mistake for a measurement.
+ * B0-ANL-01 — `revenue` is monthly recurring revenue from APPROVED
+ * subscription payments only (latest approved plan payment per active
+ * period, yearly ÷ 12), per currency and never summed across currencies.
+ * Active periods with no approved payment are counted, not valued.
  */
 export interface AdminCancellationRow {
   readonly id: string;
@@ -399,11 +400,23 @@ export interface AdminPlanDistributionRow {
   readonly subscriptions: number;
 }
 
+export interface AdminRecurringRevenueRow {
+  readonly currency: string;
+  readonly monthlyAmountMinorUnits: number;
+  readonly subscriptions: number;
+}
+
+export type AdminBillingCycleKey = 'monthly' | 'yearly' | 'none';
+
 export interface AdminSubscriptionOverview {
   readonly organizations: number;
   readonly subscriptions: {
     readonly byStatus: Record<string, number>;
     readonly activePaid: number;
+    readonly byStatusAndCycle: Record<
+      string,
+      Record<AdminBillingCycleKey, number>
+    >;
   };
   readonly trials: {
     readonly everRedeemed: number;
@@ -421,7 +434,12 @@ export interface AdminSubscriptionOverview {
   readonly plans: readonly AdminPlanDistributionRow[];
   /** How many plans carry a subscription in total, including any beyond the cut. */
   readonly totalPlansWithSubscriptions: number;
-  /** Atlas does not track subscription revenue — reported, never fabricated. */
-  readonly revenue: { readonly tracked: false };
+  readonly revenue: {
+    readonly tracked: true;
+    readonly mrr: readonly AdminRecurringRevenueRow[];
+    readonly activeSubscriptions: number;
+    readonly activeWithoutPayment: number;
+    readonly excludesInternalOrganizations: true;
+  };
   readonly generatedAt: string;
 }

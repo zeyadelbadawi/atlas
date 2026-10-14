@@ -6,7 +6,7 @@
  * real mutation via `useConfirmPasswordReset`
  * (`authenticationService.confirmPasswordReset`).
  */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ErrorState } from '@components/feedback';
 import { useToast } from '@hooks';
+import { isFieldViolationError } from '@forms';
 import { AUTH_ROUTES } from '@app/routes/route-paths';
 import { useConfirmPasswordReset } from '../hooks';
 
@@ -57,6 +58,7 @@ export function ResetPasswordForm({
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
@@ -67,6 +69,22 @@ export function ResetPasswordForm({
   });
 
   const isLoading = confirmPasswordReset.isPending;
+
+  // B0-SEC-11 — the server refuses some new passwords (e.g. too common).
+  // Its `newPassword` violation belongs on this form's `password` field,
+  // not in a generic "something went wrong" card.
+  const resetError = confirmPasswordReset.error;
+  const passwordViolation = isFieldViolationError(resetError)
+    ? resetError?.violations?.find((v) => v.field === 'newPassword')
+    : undefined;
+  useEffect(() => {
+    if (passwordViolation) {
+      setError('password', {
+        type: 'server',
+        message: passwordViolation.messageKey,
+      });
+    }
+  }, [passwordViolation, setError]);
 
   const handleFormSubmit = (data: ResetPasswordFormData) => {
     confirmPasswordReset.mutate(
@@ -89,7 +107,7 @@ export function ResetPasswordForm({
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
-      {confirmPasswordReset.error ? (
+      {resetError && !passwordViolation ? (
         <ErrorState onRetry={handleSubmit(handleFormSubmit)} />
       ) : null}
 

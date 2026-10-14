@@ -417,7 +417,7 @@ describe('onboarding shell — entry', () => {
 });
 
 describe('onboarding shell — Plan step', () => {
-  it('offers the free trial with a plan choice when one is available', async () => {
+  it('offers the trial with a plan choice when one is available', async () => {
     current = planPending({
       subscription: {
         status: 'no_plan',
@@ -430,7 +430,7 @@ describe('onboarding shell — Plan step', () => {
     renderShell('/onboarding');
     expect((await heading()).textContent).toBe('Choose how to start');
     const start = await screen.findByRole('button', {
-      name: 'Start free trial',
+      name: 'Start trial',
     });
     expect((start as HTMLButtonElement).disabled).toBe(true);
 
@@ -453,9 +453,7 @@ describe('onboarding shell — Plan step', () => {
     expect(link.getAttribute('href')).toBe(
       '/dashboard/tenant/billing/checkout/plan_subscription/growth?returnTo=%2Fonboarding'
     );
-    expect(
-      screen.queryByRole('button', { name: 'Start free trial' })
-    ).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Start trial' })).toBeNull();
   });
 
   it('says a submitted payment is awaiting confirmation and links to it', async () => {

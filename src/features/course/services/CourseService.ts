@@ -25,9 +25,17 @@ import type {
   CreateCourseSectionPayload,
   PaginatedResult,
   ReorderItemsPayload,
+  StaffLessonContent,
   UpdateCourseLessonPayload,
   UpdateCoursePayload,
   UpdateCourseSectionPayload,
+  UpsertTextLessonContentPayload,
+  UpsertFileLessonContentPayload,
+  UploadProtectedLessonFilePayload,
+  CreateHostedVideoUploadPayload,
+  HostedVideoAsset,
+  HostedVideoUploadTicket,
+  ProtectedLessonFile,
 } from '@types';
 
 export class CourseService extends BaseService {
@@ -319,6 +327,139 @@ export class CourseService extends BaseService {
       payload,
       options
     );
+  }
+
+  /**
+   * B0-LRN-01 — the staff read of a lesson's content row, including the
+   * text body (manage permission, same as the write).
+   */
+  async getLessonContent(
+    academyId: string,
+    courseId: string,
+    sectionId: string,
+    lessonId: string,
+    options?: ReadOptions
+  ): Promise<StaffLessonContent> {
+    return this.client.get<StaffLessonContent>(
+      this.coursesPath(
+        academyId,
+        courseId,
+        'sections',
+        sectionId,
+        'lessons',
+        lessonId,
+        'content'
+      ),
+      options
+    );
+  }
+
+  /** B0-LRN-01 — writes a text lesson's body; the server sanitises it. */
+  async upsertTextLessonContent(
+    academyId: string,
+    courseId: string,
+    sectionId: string,
+    lessonId: string,
+    payload: UpsertTextLessonContentPayload,
+    options?: WriteOptions
+  ): Promise<StaffLessonContent> {
+    return this.client.put<StaffLessonContent, UpsertTextLessonContentPayload>(
+      this.coursesPath(
+        academyId,
+        courseId,
+        'sections',
+        sectionId,
+        'lessons',
+        lessonId,
+        'content'
+      ),
+      payload,
+      options
+    );
+  }
+
+  /** B0-MED-05 — attaches a protected file to a File lesson. */
+  async upsertFileLessonContent(
+    academyId: string,
+    courseId: string,
+    sectionId: string,
+    lessonId: string,
+    payload: UpsertFileLessonContentPayload,
+    options?: WriteOptions
+  ): Promise<StaffLessonContent> {
+    return this.client.put<StaffLessonContent, UpsertFileLessonContentPayload>(
+      this.coursesPath(
+        academyId,
+        courseId,
+        'sections',
+        sectionId,
+        'lessons',
+        lessonId,
+        'content'
+      ),
+      payload,
+      options
+    );
+  }
+
+  /**
+   * B0-MED-05 — uploads a lesson file to the protected tier (PDF or image,
+   * checked server-side by its bytes). Owner/manager only.
+   */
+  async uploadProtectedLessonFile(
+    academyId: string,
+    payload: UploadProtectedLessonFilePayload,
+    options?: WriteOptions
+  ): Promise<ProtectedLessonFile> {
+    return this.client.post<
+      ProtectedLessonFile,
+      UploadProtectedLessonFilePayload
+    >(this.path(academyId, 'media', 'protected'), payload, options);
+  }
+
+  /**
+   * B0-MED-11 — reserves quota and returns a one-shot upload URL for a
+   * hosted (Normal-tier) video. Refused with `errors.media.videoNotEnabled`
+   * while the tier is off, and with the quota error when minutes run out.
+   */
+  async createHostedVideoUpload(
+    academyId: string,
+    payload: CreateHostedVideoUploadPayload,
+    options?: WriteOptions
+  ): Promise<HostedVideoUploadTicket> {
+    return this.client.post<HostedVideoUploadTicket, CreateHostedVideoUploadPayload>(
+      this.path(academyId, 'media', 'video-uploads'),
+      payload,
+      options
+    );
+  }
+
+  /** B0-MED-11 — tells the server the PUT finished; it verifies the object itself. */
+  async completeHostedVideoUpload(
+    academyId: string,
+    assetId: string,
+    options?: WriteOptions
+  ): Promise<HostedVideoAsset> {
+    return this.client.post<HostedVideoAsset, Record<string, never>>(
+      this.path(academyId, 'media', 'video-uploads', assetId, 'complete'),
+      {},
+      options
+    );
+  }
+
+  /** B0-MED-11 — the academy's hosted videos (protected, newest first). */
+  async listHostedVideos(
+    academyId: string,
+    options?: ReadOptions
+  ): Promise<readonly HostedVideoAsset[]> {
+    const page = await this.client.get<{ items: readonly HostedVideoAsset[] }>(
+      this.path(academyId, 'media'),
+      {
+        ...options,
+        params: { type: 'video', access: 'protected', pageSize: 100, ...options?.params },
+      }
+    );
+    return page.items;
   }
 
   /** Updates a lesson. */

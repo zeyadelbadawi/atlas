@@ -18,7 +18,6 @@ import enAuth from './en/auth.json';
 import enProfile from './en/profile.json';
 import enSettings from './en/settings.json';
 import enNotifications from './en/notifications.json';
-import enBilling from './en/billing.json';
 import enAnalytics from './en/analytics.json';
 import enPlatform from './en/platform.json';
 import enSearch from './en/search.json';
@@ -55,7 +54,6 @@ const bundle: Record<string, Record<string, unknown>> = {
   profile: enProfile,
   settings: enSettings,
   notifications: enNotifications,
-  billing: enBilling,
   analytics: enAnalytics,
   platform: enPlatform,
   search: enSearch,

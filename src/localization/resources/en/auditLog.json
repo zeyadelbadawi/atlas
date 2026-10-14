@@ -160,7 +160,10 @@
     "platform_contact_submission": "contact enquiry",
     "lesson": "lesson",
     "communication_campaign": "message",
-    "forensic_watermark": "watermark code"
+    "forensic_watermark": "watermark code",
+    "trial_policy": "trial policy",
+    "academy_payout": "academy payout",
+    "privacy_request": "Privacy request"
   },
   "fields": {
     "title": "Title",
@@ -597,20 +600,28 @@
       "refund_recorded": "{{actor}} recorded a refund for a course order"
     },
     "provisioning_request": {
-      "created": "{{actor}} requested a new academy “{{target}}”"
+      "created": "{{actor}} requested a new academy “{{target}}”",
+      "retried": "{{actor}} retried the setup of “{{target}}”",
+      "cancelled": "{{actor}} cancelled the setup of “{{target}}”",
+      "retried_by_platform": "{{actor}} retried the setup of “{{target}}” from the platform console",
+      "cancelled_by_platform": "{{actor}} cancelled the setup of “{{target}}” from the platform console"
     },
     "subscription": {
       "gift": {
         "granted": "{{actor}} approved a first subscription that includes gifted setup days"
       },
       "trial": {
-        "redeemed": "{{actor}} started a free trial",
-        "cancelled": "{{actor}} cancelled the free trial"
+        "redeemed": "{{actor}} started a trial",
+        "cancelled": "{{actor}} cancelled the trial"
       },
       "cancelled": "{{actor}} cancelled the subscription",
       "grace_started": "The subscription entered its grace period",
       "expired": "The subscription expired",
-      "cancelled_at_period_end": "The subscription ended at the close of its billing period"
+      "cancelled_at_period_end": "The subscription ended at the close of its billing period",
+      "scheduled_plan_change_applied": "The scheduled plan change took effect at the end of the paid period",
+      "extended_by_platform": "{{actor}} extended the subscription",
+      "days_granted_by_platform": "{{actor}} granted free days on the subscription",
+      "plan_changed_by_platform": "{{actor}} changed the subscription's plan"
     },
     "add_on": {
       "install": "{{actor}} added the add-on {{addOn}}",
@@ -652,6 +663,15 @@
       },
       "sessions": {
         "revoked": "{{actor}}’s other sessions were signed out"
+      },
+      "two_factor": {
+        "enabled": "{{actor}} turned on two-factor authentication",
+        "disabled": "{{actor}} turned off two-factor authentication",
+        "reset_by_operator": "{{actor}} reset a user’s two-factor authentication"
+      },
+      "sign_in": {
+        "succeeded": "{{actor}} signed in",
+        "failed": "A sign-in to {{actor}}’s account failed"
       }
     },
     "password_reset": {
@@ -669,13 +689,16 @@
       "phone": {
         "updated": "{{actor}} updated their phone number",
         "removed": "{{actor}} removed their phone number"
-      }
+      },
+      "suspended": "{{actor}} suspended a user account",
+      "unsuspended": "{{actor}} reinstated a user account"
     },
     "plan": {
       "created": "{{actor}} created the plan “{{target}}”",
       "updated": "{{actor}} updated the plan “{{target}}”",
       "pricing_changed": "{{actor}} changed the pricing of the plan “{{target}}”",
       "trial_config_changed": "{{actor}} changed the trial settings of the plan “{{target}}”",
+      "subscribers_notified": "{{actor}} notified the subscribers of the plan “{{target}}” about a change",
       "archived": "{{actor}} archived the plan “{{target}}”"
     },
     "platform_settings": {
@@ -686,7 +709,9 @@
       "updated": "{{actor}} updated the payment method “{{target}}”"
     },
     "commission_config": {
-      "global_default_updated": "{{actor}} changed the default commission rate"
+      "global_default_updated": "{{actor}} changed the default commission rate",
+      "plan_updated": "{{actor}} changed a plan’s commission rate",
+      "organization_updated": "{{actor}} changed an organization’s commission rate"
     },
     "observability": {
       "synthetic_alert": {
@@ -707,6 +732,25 @@
         "looked_up": "{{actor}} looked up the watermark code {{target}}",
         "looked_up_noTarget": "{{actor}} looked up a watermark code"
       }
+    },
+    "trial_policy": {
+      "updated": "{{actor}} changed the free trial policy"
+    },
+    "payout": {
+      "created": "{{actor}} created an academy payout",
+      "marked_paid": "{{actor}} marked an academy payout as paid"
+    },
+    "privacy_request": {
+      "code": {
+        "requested": "{{actor}} asked for a privacy-request code",
+        "code_failed": "{{actor}} entered a wrong privacy-request code",
+        "locked_out": "{{actor}} was locked out of privacy-request codes",
+        "confirmed": "{{actor}} confirmed a privacy-request code"
+      },
+      "submitted": "{{actor}} filed a privacy request",
+      "status_changed": "{{actor}} changed the status of a privacy request",
+      "fulfilled": "{{actor}} fulfilled a privacy request",
+      "export_downloaded": "{{actor}} downloaded their data export"
     }
   }
 }

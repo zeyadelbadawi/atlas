@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 // Stale-tab recovery: route chunks retry, then reload once for a new build.
 import { lazyWithRetry as lazy } from '@utils/lazy-with-retry.utils';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { LiveSessionsLaunchGate } from './LiveSessionsLaunchGate';
 
 import { ErrorBoundary } from '@app/providers/error/ErrorBoundary';
 import { PublicLayout } from '@app/layouts/public/PublicLayout';
@@ -319,7 +320,6 @@ const PaymentHistoryPage = lazy(
 const PaymentDetailsPage = lazy(
   () => import('@features/billing/pages/PaymentDetailsPage')
 );
-const InvoicesPage = lazy(() => import('@features/billing/pages/InvoicesPage'));
 const PlatformPaymentReviewListPage = lazy(
   () => import('@features/billing/pages/PlatformPaymentReviewListPage')
 );
@@ -480,6 +480,13 @@ const AcademyRequestDetailPage = lazy(
 );
 const PlatformCustomerRequestsPage = lazy(
   () => import('@features/customer-requests/pages/PlatformCustomerRequestsPage')
+);
+const PlatformPrivacyRequestsPage = lazy(
+  () => import('@features/privacy-requests/pages/PlatformPrivacyRequestsPage')
+);
+const PlatformPrivacyRequestDetailPage = lazy(
+  () =>
+    import('@features/privacy-requests/pages/PlatformPrivacyRequestDetailPage')
 );
 const PlatformCustomerRequestDetailPage = lazy(
   () =>
@@ -954,55 +961,65 @@ export default function AtlasAppRoutes(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.liveSessions}
               element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['academy.view']}
-                >
-                  <LiveSessionsOverviewPage />
-                </RouteGuard>
+                <LiveSessionsLaunchGate>
+                  <RouteGuard
+                    requireAuthentication
+                    requiredPermissions={['academy.view']}
+                  >
+                    <LiveSessionsOverviewPage />
+                  </RouteGuard>
+                </LiveSessionsLaunchGate>
               }
             />
             <Route
               path={DASHBOARD_ROUTES.liveSessionsList}
               element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['academy.view']}
-                >
-                  <LiveSessionsOverviewPage />
-                </RouteGuard>
+                <LiveSessionsLaunchGate>
+                  <RouteGuard
+                    requireAuthentication
+                    requiredPermissions={['academy.view']}
+                  >
+                    <LiveSessionsOverviewPage />
+                  </RouteGuard>
+                </LiveSessionsLaunchGate>
               }
             />
             <Route
               path={DASHBOARD_ROUTES.liveSessionsRecordings}
               element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['academy.view']}
-                >
-                  <LiveSessionsOverviewPage />
-                </RouteGuard>
+                <LiveSessionsLaunchGate>
+                  <RouteGuard
+                    requireAuthentication
+                    requiredPermissions={['academy.view']}
+                  >
+                    <LiveSessionsOverviewPage />
+                  </RouteGuard>
+                </LiveSessionsLaunchGate>
               }
             />
             <Route
               path={DASHBOARD_ROUTES.liveSessionsSettings}
               element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['academy.configure']}
-                >
-                  <LiveSessionsConnectionPage />
-                </RouteGuard>
+                <LiveSessionsLaunchGate>
+                  <RouteGuard
+                    requireAuthentication
+                    requiredPermissions={['academy.configure']}
+                  >
+                    <LiveSessionsConnectionPage />
+                  </RouteGuard>
+                </LiveSessionsLaunchGate>
               }
             />
 
             <Route path={DASHBOARD_ROUTES.search} element={<SearchPage />} />
 
             {/*
-              Support is available to EVERY signed-in role — a student
-              who cannot submit a ticket has no way to report a problem.
-              Authorization is per-ticket and enforced by RLS, not by a
-              route permission, so no `requiredPermissions` here.
+              Atlas support is for the people who run an organization on
+              the management surface. Learners do not open Atlas tickets:
+              their help is their academy (the site's Contact page, linked
+              from its footer), and the API refuses academy-site sessions
+              (`ManagementSurfaceGuard`, B0-SUP-02). Per-ticket access is
+              enforced by RLS, so no `requiredPermissions` here.
             */}
             <Route
               path={DASHBOARD_ROUTES.support}
@@ -1219,7 +1236,7 @@ export default function AtlasAppRoutes(): JSX.Element {
               (`atlas-backend/src/tenancy/constants/
               organization-permissions.constants.ts`) and in no other set —
               a plain organization member holds only `academy.view` and
-              `academy.website.view` and still cannot reach this route.
+              still cannot reach this route.
               So the audience is unchanged for everyone who could already
               get here, and widened by exactly the role the backend just
               authorized.
@@ -1853,15 +1870,13 @@ export default function AtlasAppRoutes(): JSX.Element {
               }
             />
 
+            {/* B0-CPY-22 — no invoices are ever issued yet, so the old
+                Invoices page (always empty) is not offered; a saved link
+                lands on payment history instead. */}
             <Route
               path={DASHBOARD_ROUTES.tenantBillingInvoices}
               element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['tenant.billing.view']}
-                >
-                  <InvoicesPage />
-                </RouteGuard>
+                <Navigate to={DASHBOARD_ROUTES.tenantBillingPayments} replace />
               }
             />
 
@@ -2441,6 +2456,32 @@ export default function AtlasAppRoutes(): JSX.Element {
               }
             />
 
+            {/* B0-SEC-13 — privacy requests. The API's PlatformOwnerGuard +
+                RLS are the real control. */}
+            <Route
+              path={DASHBOARD_ROUTES.platformPrivacyRequests}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformPrivacyRequestsPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformPrivacyRequestDetail}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformPrivacyRequestDetailPage />
+                </RouteGuard>
+              }
+            />
+
             {/* W3 — Email & Notifications. Operator-only at the route; the
                 APIs' PlatformOwnerGuard + RLS are the real control. */}
             <Route
@@ -2582,8 +2623,8 @@ export default function AtlasAppRoutes(): JSX.Element {
             />
 
             {/* The website Contact form inbox. `manage`, not `view`: the
-                backend serves it to Owners/Managers only, and a plain
-                member holds `academy.website.view`. */}
+                backend serves it to Owners/Managers only (`view` alone
+                is also a manager-tier permission since B0-WEB-04). */}
             <Route
               path={DASHBOARD_ROUTES.websiteMessages}
               element={

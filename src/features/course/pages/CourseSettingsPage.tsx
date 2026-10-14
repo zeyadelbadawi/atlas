@@ -14,7 +14,7 @@
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '@hooks';
 import {
   AlertTriangle,
@@ -44,6 +44,7 @@ import {
   useCourseSections,
   useDeleteCourse,
   usePublishCourse,
+  usePublishReadiness,
   useUnpublishCourse,
 } from '../hooks';
 import {
@@ -97,15 +98,23 @@ export default function CourseSettingsPage(): JSX.Element {
     (sum, section) => sum + section.lessons.length,
     0
   );
-  const hasCurriculum = totalLessons > 0;
+
+  // B0-LRN-03 — the same readiness verdict the wizard uses, and the server
+  // enforces it on publish: a course with nothing deliverable for learners
+  // cannot be published from here either.
+  const readiness = usePublishReadiness(academyId ?? '', courseId ?? '', {
+    enabled: !!course && course.status !== 'published',
+  });
+  const publishBlockers = (readiness.data?.checks ?? []).filter(
+    (check) => check.severity === 'blocking' && check.status === 'fail'
+  );
+  const canPublish = !!readiness.data?.ready;
 
   const handlePublish = async () => {
-    if (!courseId) return;
+    if (!courseId || !canPublish) return;
     const confirmed = await confirm({
       titleKey: 'course:settings.publishDialog.title',
-      descriptionKey: hasCurriculum
-        ? 'course:settings.publishDialog.descriptionWithCurriculum'
-        : 'course:settings.publishDialog.descriptionNoCurriculum',
+      descriptionKey: 'course:settings.publishDialog.description',
       confirmLabelKey: 'course:settings.publishDialog.confirmLabel',
       cancelLabelKey: 'course:settings.publishDialog.cancelLabel',
       intent: 'default',
@@ -321,12 +330,46 @@ export default function CourseSettingsPage(): JSX.Element {
                 {t('course:settings.unpublishAction')}
               </Button>
             ) : (
-              <Button onClick={handlePublish} disabled={isPublishing}>
-                {isPublishing ? (
-                  <Loader2 className="size-4 animate-spin" aria-hidden />
+              <div className="space-y-3">
+                {publishBlockers.length > 0 ? (
+                  <div
+                    className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm"
+                    role="status"
+                    data-testid="course-publish-blockers"
+                  >
+                    <p className="font-medium text-foreground">
+                      {t('course:settings.publishBlockedTitle')}
+                    </p>
+                    <ul className="mt-1 list-disc space-y-0.5 ps-5 text-muted-foreground">
+                      {publishBlockers.map((check) => (
+                        <li key={check.key}>
+                          {t(`course:wizard.review.checks.${check.key}.fail`)}
+                        </li>
+                      ))}
+                    </ul>
+                    {academyId && courseId ? (
+                      <Link
+                        className="mt-2 inline-block font-medium text-primary underline"
+                        to={buildPath(DASHBOARD_ROUTES.academyCourseBuilder, {
+                          academyId,
+                          courseId,
+                        })}
+                      >
+                        {t('course:settings.openCurriculum')}
+                      </Link>
+                    ) : null}
+                  </div>
                 ) : null}
-                {t('course:settings.publishAction')}
-              </Button>
+                <Button
+                  onClick={handlePublish}
+                  disabled={isPublishing || !canPublish}
+                >
+                  {isPublishing ? (
+                    <Loader2 className="size-4 animate-spin" aria-hidden />
+                  ) : null}
+                  {t('course:settings.publishAction')}
+                </Button>
+              </div>
             )}
           </CardContent>
         </Card>

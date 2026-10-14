@@ -9,6 +9,7 @@
  */
 import type { PlanPricingMetadata } from '@types';
 import type { TFunction } from 'i18next';
+import { DEFAULT_DISPLAY_CURRENCY } from '@utils';
 
 export function formatPlanPrice(
   pricing: PlanPricingMetadata | undefined,
@@ -24,7 +25,7 @@ export function formatPlanPrice(
 
   const formatted = new Intl.NumberFormat(undefined, {
     style: 'currency',
-    currency: pricing.currency ?? 'USD',
+    currency: pricing.currency ?? DEFAULT_DISPLAY_CURRENCY,
     maximumFractionDigits: 0,
   }).format(pricing.amount);
 

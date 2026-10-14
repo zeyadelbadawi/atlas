@@ -26,6 +26,7 @@ export { useUpdateCourseSection } from './useUpdateCourseSection';
 export type { UpdateCourseSectionVariables } from './useUpdateCourseSection';
 export { useDeleteCourseSection } from './useDeleteCourseSection';
 export { useReorderCourseSections } from './useReorderCourseSections';
+export { useLessonTextBody } from './useLessonTextBody';
 export { useCreateCourseLesson } from './useCreateCourseLesson';
 export type { CreateCourseLessonVariables } from './useCreateCourseLesson';
 export { useUpdateCourseLesson } from './useUpdateCourseLesson';

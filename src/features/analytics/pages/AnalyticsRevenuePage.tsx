@@ -24,7 +24,7 @@ import {
   useAnalyticsTimeSeries,
 } from '../hooks';
 import { useAnalyticsRange } from './useAnalyticsRange';
-import { formatCurrency } from '@utils';
+import { formatCurrency, DEFAULT_DISPLAY_CURRENCY } from '@utils';
 import type { LanguageCode } from '@types';
 
 export default function AnalyticsRevenuePage(): JSX.Element {
@@ -89,7 +89,7 @@ export default function AnalyticsRevenuePage(): JSX.Element {
                   {formatCurrency(
                     item.value,
                     language,
-                    overview?.revenueCurrency ?? 'USD'
+                    overview?.revenueCurrency ?? DEFAULT_DISPLAY_CURRENCY
                   )}
                 </span>
               </li>

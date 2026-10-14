@@ -374,7 +374,7 @@
     "responseLabel": "إجابتك",
     "responsePlaceholder": "اكتب إجابتك هنا",
     "attachmentLabel": "مرفق",
-    "attachmentHelp": "اختياري. PDF أو Word أو صورة، بحد أقصى 10 ميجابايت.",
+    "attachmentHelp": "اختياري. ملف PDF أو صورة (JPG أو PNG أو GIF أو WebP)، بحد أقصى 10 ميجابايت. احفظ مستندات Word بصيغة PDF أولًا.",
     "uploadAttachment": "تحميل ملف",
     "uploadingAttachment": "جارٍ الرفع...",
     "changeAttachment": "تغيير الملف",
@@ -394,7 +394,7 @@
     "resubmissionUnavailable": "إعادة الإرسال غير متاحة لهذا الواجب.",
     "loadFailed": "فشل تحميل هذا الواجب",
     "attachmentTooLarge": "يجب أن يكون حجم المرفق أقل من 10 ميجابايت.",
-    "attachmentInvalidType": "يجب أن يكون المرفق بصيغة PDF أو Word أو صورة.",
+    "attachmentInvalidType": "يجب أن يكون المرفق ملف PDF أو صورة (JPG أو PNG أو GIF أو WebP). احفظ مستندات Word بصيغة PDF أولًا.",
     "attachmentUploadError": "فشل رفع المرفق. يرجى المحاولة مرة أخرى.",
     "noInstructions": "لم تُضف الأكاديمية تعليمات.",
     "noDueDate": "بلا موعد استحقاق",
@@ -646,7 +646,7 @@
     },
     "purchases": {
       "title": "المشتريات",
-      "subtitle": "طلباتك وإيصالاتك لدى هذه الأكاديمية.",
+      "subtitle": "طلباتك لدى هذه الأكاديمية.",
       "empty": {
         "title": "لا توجد طلبات بعد",
         "description": "يُدرَج هنا كل ما تشتريه من هذه الأكاديمية مع حالة الدفع."

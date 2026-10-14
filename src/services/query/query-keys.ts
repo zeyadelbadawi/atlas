@@ -1137,6 +1137,9 @@ export const platformOrganizationKeys = {
     [...platformOrganizationKeys.all, 'list', query] as const,
   detail: (organizationId: string) =>
     [...platformOrganizationKeys.all, 'detail', organizationId] as const,
+  /** B0-ANL-04 — operator-only flags (internal/test organization). */
+  flags: (organizationId: string) =>
+    [...platformOrganizationKeys.all, 'flags', organizationId] as const,
 } as const;
 
 export const platformAcademyKeys = {
@@ -1278,6 +1281,16 @@ export const customerRequestKeys = {
   platformAssignees: () =>
     [...customerRequestKeys.all, 'platform', 'assignees'] as const,
   routing: () => [...customerRequestKeys.all, 'platform', 'routing'] as const,
+} as const;
+
+/** B0-SEC-13 — privacy requests: the person's own, and the Platform Owner queue. */
+export const privacyRequestKeys = {
+  all: ['privacy-requests'] as const,
+  mine: () => [...privacyRequestKeys.all, 'mine'] as const,
+  platformList: (query?: unknown) =>
+    [...privacyRequestKeys.all, 'platform', 'list', query] as const,
+  platformDetail: (requestId: string) =>
+    [...privacyRequestKeys.all, 'platform', 'detail', requestId] as const,
 } as const;
 
 /** Platform-wide command-center metrics (Prompt 13). */

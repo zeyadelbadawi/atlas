@@ -28,6 +28,7 @@ import { brandName } from '../utils/manual-payment-method.utils';
 import {
   ManualMethodTextsFields,
   MethodTextField,
+  type ManualMethodAudience,
 } from './ManualMethodFormFields';
 
 interface DetailsFieldsProps<T extends FieldValues> {
@@ -35,12 +36,18 @@ interface DetailsFieldsProps<T extends FieldValues> {
   /** e.g. `academy-bank` → `academy-bank-account-number`. */
   readonly testIdPrefix: string;
   readonly pathPrefix?: string;
+  /**
+   * B0-CPY-21 — these fields only ever edit an ACADEMY's methods (settings
+   * page and setup form), which learners read; hence the default.
+   */
+  readonly audience?: ManualMethodAudience;
 }
 
 export function BankTransferDetailsFields<T extends FieldValues>({
   control,
   testIdPrefix,
   pathPrefix = 'instructions',
+  audience = 'learner',
 }: DetailsFieldsProps<T>): JSX.Element {
   const path = (name: string) => `${pathPrefix}.${name}` as FieldPath<T>;
   return (
@@ -91,6 +98,7 @@ export function BankTransferDetailsFields<T extends FieldValues>({
         section="bankTransferMethods"
         testIdPrefix={testIdPrefix}
         pathPrefix={pathPrefix}
+        audience={audience}
       />
     </div>
   );
@@ -100,6 +108,7 @@ export function InstapayDetailsFields<T extends FieldValues>({
   control,
   testIdPrefix,
   pathPrefix = 'instructions',
+  audience = 'learner',
 }: DetailsFieldsProps<T>): JSX.Element {
   return (
     <div className="space-y-4">
@@ -118,6 +127,7 @@ export function InstapayDetailsFields<T extends FieldValues>({
         section="instapayMethods"
         testIdPrefix={testIdPrefix}
         pathPrefix={pathPrefix}
+        audience={audience}
       />
     </div>
   );
@@ -127,6 +137,7 @@ export function WalletDetailsFields<T extends FieldValues>({
   control,
   testIdPrefix,
   pathPrefix = 'instructions',
+  audience = 'learner',
 }: DetailsFieldsProps<T>): JSX.Element {
   const { t, i18n } = useTranslation();
   const providerPath = `${pathPrefix}.walletProvider` as FieldPath<T>;
@@ -204,6 +215,7 @@ export function WalletDetailsFields<T extends FieldValues>({
         section="walletMethods"
         testIdPrefix={testIdPrefix}
         pathPrefix={pathPrefix}
+        audience={audience}
       />
     </div>
   );

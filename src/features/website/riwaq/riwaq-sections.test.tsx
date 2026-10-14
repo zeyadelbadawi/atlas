@@ -336,7 +336,24 @@ describe('Course spotlight (Riwaq and the shared base renderer)', () => {
       expect(screen.queryByText('Section 3')).toBeNull();
       expect(screen.getByText('and 3 more sections')).toBeTruthy();
     });
+
+    it(`${name}: drops a call to action whose page is gone on the public site (B0-WEB-11)`, () => {
+      singleCourse = course('c9', { title: 'UX Foundations' });
+      curriculum = sections(1);
+      const deadCta = { ...config, cta: { label: lt('Join the cohort'), pageId: 'deleted-page' } };
+      renderIn(<Component config={deadCta} academyId="a1" pages={PAGES} linkRenderer={linkRenderer} />);
+      expect(screen.getByText('UX Foundations')).toBeTruthy();
+      expect(screen.queryByText('Join the cohort')).toBeNull();
+    });
   }
+
+  it('base: previews keep the configured (inert) call to action label', () => {
+    singleCourse = course('c9');
+    curriculum = sections(1);
+    const deadCta = { ...config, cta: { label: lt('Join the cohort'), pageId: 'deleted-page' } };
+    renderIn(<CourseSpotlightSection config={deadCta} academyId="a1" pages={PAGES} />);
+    expect(screen.getByText('Join the cohort')).toBeTruthy();
+  });
 
   it('Riwaq: claims a certificate only when the course issues one', () => {
     singleCourse = course('c9');

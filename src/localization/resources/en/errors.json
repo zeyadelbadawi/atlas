@@ -64,8 +64,8 @@
     "noSubscription": "This organization doesn't have an active subscription yet.",
     "subscriptionInactive": "Your subscription isn't currently active. Renew or upgrade your plan to continue.",
     "noPlanAvailable": "No plan is currently available. Please contact support.",
-    "planNotTrialEligible": "This plan isn't available as a free trial. You can subscribe to it directly, or start a trial on a plan that offers one.",
-    "trialsDisabled": "Free trials aren't available right now.",
+    "planNotTrialEligible": "This plan isn't available as a trial. You can subscribe to it directly, or start a trial on a plan that offers one.",
+    "trialsDisabled": "Trials aren't available right now.",
     "videoStorageMinutesExceeded": "Adding this video would take the academy past its plan's video minutes. Upgrade the plan, or remove videos that are no longer needed, to make room.",
     "videoTierNotEntitled": "Your plan doesn't include Premium video. Upgrade to a Premium plan to use it, or keep new uploads on Normal."
   },
@@ -99,6 +99,7 @@
     "notRetryable": "There's nothing to retry for this setup."
   },
   "checkout": {
+    "annualPlanChangeViaSupport": "You can’t switch to a different plan from checkout while more than 30 days of your annual plan remain. Contact Atlas support to change plans, or renew your current plan.",
     "expired": "This checkout has expired. Please start again.",
     "notPayable": "This checkout can no longer be paid.",
     "planNotFound": "The selected plan is no longer available.",
@@ -132,7 +133,7 @@
     "organizationSignupDisabled": "Creating an organization during sign-up isn't available right now. Please try again.",
     "signupFieldsNotAllowed": "An organization can't be created from an academy's sign-up page.",
     "organizationNameRequired": "Enter your organization name to start a trial.",
-    "signupTrialsUnavailable": "Free trials aren't available right now. You'll choose a plan after signing in.",
+    "signupTrialsUnavailable": "Trials aren't available right now. You'll choose a plan after signing in.",
     "signupPlanUnavailable": "That plan can no longer be trialled. Please choose another.",
     "emailAlreadyRegistered": "An account with this email already exists. Try signing in instead.",
     "alreadyLearnerHere": "You already have access to this academy. Sign in instead.",
@@ -147,7 +148,8 @@
     "invalidCredentials": "Invalid email or password.",
     "crossOriginSession": "Your session couldn't be verified for this site. Please sign in again.",
     "platformOwnerTwoFactorRequired": "Platform Owner tools need an authenticator app on your account. Set up two-step verification in your security settings, then try again.",
-    "phoneTaken": "This phone number is already in use. Enter a different number."
+    "phoneTaken": "This phone number is already in use. Enter a different number.",
+    "setPasswordBeforeTwoFactor": "Your account doesn't have a password yet, and two-factor authentication needs one. Sign out, choose \"Forgot password?\" on the sign-in page to set a password, then turn on two-factor authentication."
   },
   "subscription": {
     "required": "An active subscription is required to make this change."
@@ -182,7 +184,9 @@
     "uploadNotFound": "This upload could not be found — it may have expired. Start the upload again.",
     "uploadNotStarted": "The file did not finish uploading before it was submitted. Upload it again.",
     "completionNotApplicable": "This upload cannot be finished from its current state. Start the upload again.",
-    "inUse": "This file is still in use. Replace or remove it where it's used, then try again."
+    "inUse": "This file is still in use. Replace or remove it where it's used, then try again.",
+    "videoNotAttachable": "Only a video uploaded to Atlas for lessons can be attached here.",
+    "videoNotReady": "This video has not finished uploading. Upload it again or choose another one."
   },
   "tenancy": {
     "notAMember": "You don't have access to this workspace.",
@@ -210,7 +214,9 @@
     "authorizationFailed": "We couldn't finish connecting to Zoom. Please try again."
   },
   "addOns": {
-    "comingSoon": "Live Sessions is coming soon and can’t be installed yet."
+    "comingSoon": "This add-on isn’t available yet, so it can’t be installed.",
+    "purchaseRequired": "This is a paid add-on. Buy it from the Add-ons page; it turns on once your payment is approved.",
+    "incompatiblePlan": "This add-on isn’t available on your current plan."
   },
   "academy": {
     "insufficientRole": "Your role in this academy does not allow that. Ask an academy owner or manager if you need access.",
@@ -307,6 +313,7 @@
     "watchRequirementNotMet": "Watch more of this lesson before marking it complete."
   },
   "courseOrder": {
+    "notAcceptingEnrollments": "This academy isn’t accepting new enrollments right now. Please contact the academy.",
     "refundNotEligible": "This order can't be refunded. Only paid orders that haven't already been refunded are eligible.",
     "refundWindowElapsed": "The refund period for this order has ended. Refunds are available within 30 days of purchase.",
     "paymentUnderReview": "A payment for this order is already being reviewed by the academy. You’ll get an email when it’s reviewed.",
@@ -316,7 +323,8 @@
     "notPendingReview": "This payment is no longer waiting for review. Reload to see its current status.",
     "cannotReviewOwnOrganization": "This payment belongs to an organization you're a member of. You can't review your own organization's payments.",
     "rejectedByReviewer": "Atlas reviewed this payment and couldn't accept it.",
-    "alreadyUnderReview": "A payment for this order is already awaiting review. Open it to follow its status — you don't need to pay again."
+    "alreadyUnderReview": "A payment for this order is already awaiting review. Open it to follow its status — you don't need to pay again.",
+    "collectionModeNotAvailable": "Atlas Payments and connected payment gateways aren't available yet. Learners pay you directly through your academy's own payment methods."
   },
   "paymentMethod": {
     "incompleteInstructions": "Enter the bank name, account holder name, account number, transfer instructions and reference instructions before saving or enabling this account.",
@@ -362,5 +370,28 @@
     "unknownCourse": "One of the selected courses isn't part of this academy.",
     "unknownOrganization": "That organization can't be found.",
     "unsubscribeInvalid": "This unsubscribe link is invalid or has expired."
+  },
+  "platform": {
+    "subscriptionAdjustment": {
+      "notExtendable": "Only a trial, an active subscription or one in its grace period can be extended. Change the plan instead.",
+      "planArchived": "That plan is archived. Choose a plan that is still offered or hidden, not archived.",
+      "noPaidPeriod": "There is no running paid period to wait for. Apply the plan change now instead.",
+      "daysRange": "Enter a whole number of days from 1 to 365.",
+      "reasonTooShort": "Write a reason of at least 10 characters. It is kept in the audit log."
+    }
+  },
+  "lessonContent": {
+    "bodyRequired": "Write the lesson text before saving.",
+    "unexpectedBody": "Only a text lesson can have lesson text."
+  },
+  "platformUsers": {
+    "cannotSuspend": "This account cannot be suspended or reinstated in its current state.",
+    "cannotSuspendSelf": "You cannot suspend your own account.",
+    "cannotSuspendPlatformOwner": "A Platform Owner account cannot be suspended here."
+  },
+  "privacyRequest": {
+    "invalidTransition": "This request has already moved on. Reload to see its current state.",
+    "noteRequired": "Give the person a reason when declining.",
+    "accountGone": "The account behind this request no longer exists."
   }
 }

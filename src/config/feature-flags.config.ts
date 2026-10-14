@@ -22,6 +22,24 @@ export const FEATURE_FLAGS = {
    * gated by this flag.
    */
   liveSessions: false,
+  /**
+   * B0-WEB-07 — academy blog posts and course discussion threads can be
+   * written by staff, but nothing shows them to visitors or learners yet
+   * (no public blog route, no learner forum screen). While `false`, the
+   * entry points that invite that authoring are hidden; the APIs, pages
+   * and data are kept. Flip to `true` when a reader surface ships.
+   */
+  academyBlogAndForum: false,
+  /**
+   * B0-MED-02 / B0-MED-04 / B0-MED-11 — hosted (Normal-tier) video. While
+   * `false`, no customer screen offers a video tier choice, shows a video
+   * storage allowance, or lets a Video lesson upload / pick an Atlas-hosted
+   * video (lessons use YouTube links); the catalog keeps its stored limits.
+   * The builder path is built (B0-MED-11). Flip to `true` only after the
+   * owner enables the Normal tier in production and one upload → playback
+   * with the watermark is verified (B0-OC-34).
+   */
+  hostedVideoAuthoring: false,
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;

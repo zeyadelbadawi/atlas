@@ -73,6 +73,8 @@ export interface CourseLesson {
   readonly contentType: CourseLessonContentType;
   /** URL to the lesson's content/resource, when applicable. */
   readonly contentUrl?: string;
+  /** B0-MED-11 — the attached Atlas-hosted video (authoring projection only). */
+  readonly videoAssetId?: string | null;
   readonly status: CourseLessonStatus;
   readonly createdAt: string;
   readonly updatedAt: string;
@@ -348,12 +350,90 @@ export interface UpdateCourseSectionPayload {
 }
 
 /** Course lesson creation payload. */
+/**
+ * B0-LRN-01 — the staff view of a lesson's content row. `bodyHtml` is the
+ * server-sanitised text body, present only for `kind: 'text'` on the staff
+ * read used to edit an existing text lesson.
+ */
+export interface StaffLessonContent {
+  readonly id: string;
+  readonly lessonId: string;
+  readonly kind: 'text' | 'video' | 'file' | 'external';
+  readonly bodyHtml?: string;
+  readonly externalUrl?: string;
+  readonly mediaAssetId?: string;
+}
+
+/** B0-LRN-01 — writes a text lesson's body; the server sanitises it. */
+export interface UpsertTextLessonContentPayload {
+  readonly kind: 'text';
+  readonly bodyHtml: string;
+}
+
+/**
+ * B0-MED-05 — attaches a protected file (uploaded through
+ * `POST /academies/:id/media/protected`) to a File lesson. Learners get it
+ * only through a short-lived signed link.
+ */
+export interface UpsertFileLessonContentPayload {
+  readonly kind: 'file';
+  readonly mediaAssetId: string;
+}
+
+/** B0-MED-05 — `POST /academies/:id/media/protected`. `file` is a data URL. */
+export interface UploadProtectedLessonFilePayload {
+  readonly fileName: string;
+  readonly file: string;
+  readonly courseId: string;
+}
+
+/** B0-MED-05 — the fields of the protected asset the builder uses (it has no URL). */
+export interface ProtectedLessonFile {
+  readonly id: string;
+  readonly fileName: string;
+  readonly mimeType: string;
+  readonly sizeBytes: number;
+  readonly access: 'protected';
+}
+
+/**
+ * B0-MED-11 — `POST academies/:id/media/video-uploads`: a one-shot upload URL
+ * straight to storage (no video byte passes through the API).
+ */
+export interface HostedVideoUploadTicket {
+  readonly assetId: string;
+  readonly uploadUrl: string;
+  readonly expiresAt: string;
+  readonly reservedMinutes: number;
+  readonly securityTier: string;
+  /** True when the client must call `.../complete` once the PUT finished. */
+  readonly requiresCompletionCall: boolean;
+}
+
+export interface CreateHostedVideoUploadPayload {
+  readonly fileName: string;
+  readonly maxDurationSeconds: number;
+  readonly courseId?: string;
+  readonly sizeBytes?: number;
+}
+
+/** B0-MED-11 — a hosted video the builder may attach (protected media list row). */
+export interface HostedVideoAsset {
+  readonly id: string;
+  readonly fileName: string;
+  readonly processingStatus: 'pending' | 'processing' | 'ready' | 'failed';
+  readonly durationSeconds: number | null;
+  readonly createdAt: string;
+}
+
 export interface CreateCourseLessonPayload {
   readonly title: string;
   readonly description?: string;
   readonly contentType: CourseLessonContentType;
   readonly contentUrl?: string;
   readonly status?: CourseLessonStatus;
+  /** B0-MED-11 — an Atlas-hosted (protected, watermarked) video. */
+  readonly videoAssetId?: string;
 }
 
 /** Course lesson update payload. */
@@ -361,8 +441,11 @@ export interface UpdateCourseLessonPayload {
   readonly title?: string;
   readonly description?: string;
   readonly contentType?: CourseLessonContentType;
-  readonly contentUrl?: string;
+  /** `null` clears it (B0-MED-05: the public link a protected file replaces). */
+  readonly contentUrl?: string | null;
   readonly status?: CourseLessonStatus;
+  /** B0-MED-11 — `null` detaches the hosted video. */
+  readonly videoAssetId?: string | null;
 }
 
 /** Reorders a flat list of curriculum items (sections, or lessons within a section). */

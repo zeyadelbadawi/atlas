@@ -423,8 +423,8 @@ test.describe('J41 — gifted setup days on the first paid subscription', () => 
         await applyVariant(pricing, variant);
         const faq = pricing.getByText(
           variant.language === 'ar'
-            ? 'تتضمن بعض الخطط فترة تجريبية مجانية'
-            : 'Some plans include a free trial',
+            ? 'تتضمن بعض الخطط فترة تجربة'
+            : 'Some plans include a trial',
           { exact: false }
         );
         await expect(faq).toBeVisible({ timeout: 30_000 });

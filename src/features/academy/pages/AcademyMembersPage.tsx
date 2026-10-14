@@ -64,6 +64,7 @@ import {
   getAcademyMemberStatusTone,
 } from '../utils/academy-status.utils';
 import { getAcademyAdminTabs } from '../utils/academy-navigation.utils';
+import { useAcademyScope } from '../scope/academy-scope.context';
 import type { AcademyMember, AcademyMemberRole, BreadcrumbItem } from '@types';
 
 export default function AcademyMembersPage(): JSX.Element {
@@ -77,6 +78,17 @@ export default function AcademyMembersPage(): JSX.Element {
   // action is not shown to anyone else, and never for the owner's own row.
   const canRemoveStaff = organization?.role === 'owner';
   const { academyId } = useParams<{ academyId: string }>();
+  // B0-ORG-02 — the add actions mirror `assertCanAddMember`: adding anyone
+  // needs the academy-owner role in THIS academy, and adding staff
+  // (instructor, manager) also needs the organization owner. A role the
+  // server refuses never sees the button.
+  const { membership } = useAcademyScope();
+  const isAcademyOwner =
+    !!academyId &&
+    membership?.academy.id === academyId &&
+    membership.role === 'owner';
+  const canAddStudent = isAcademyOwner;
+  const canAddStaff = isAcademyOwner && organization?.role === 'owner';
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab =
     searchParams.get('tab') === 'students' ? 'students' : 'team';
@@ -318,32 +330,39 @@ export default function AcademyMembersPage(): JSX.Element {
             <CardHeader className="flex flex-row items-center justify-between space-y-0">
               <CardTitle>{t('academy:members.title')}</CardTitle>
               <div className="flex flex-wrap items-center gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsCreateStudentOpen(true)}
-                >
-                  <GraduationCap
-                    className="size-4"
-                    strokeWidth={2}
-                    aria-hidden
-                  />
-                  {t('academy:members.createStudent.triggerButton')}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsAddInstructorOpen(true)}
-                >
-                  <UserPlus className="size-4" strokeWidth={2} aria-hidden />
-                  {t('academy:members.addInstructor.triggerButton')}
-                </Button>
-                {/* Backend restricts granting Manager access to the
-                Organization Owner only (`GRANTS_MANAGER_ROLES`,
-                `academies.service.ts`) — this mirrors that restriction
-                here so a Manager never sees an action that would only
-                ever 403. */}
-                {organization?.role === 'owner' ? (
+                {canAddStudent ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsCreateStudentOpen(true)}
+                  >
+                    <GraduationCap
+                      className="size-4"
+                      strokeWidth={2}
+                      aria-hidden
+                    />
+                    {t('academy:members.createStudent.triggerButton')}
+                  </Button>
+                ) : null}
+                {canAddStaff ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsAddInstructorOpen(true)}
+                  >
+                    <UserPlus className="size-4" strokeWidth={2} aria-hidden />
+                    {t('academy:members.addInstructor.triggerButton')}
+                  </Button>
+                ) : null}
+                {!canAddStudent ? (
+                  <p
+                    className="text-sm text-muted-foreground"
+                    data-testid="members-owner-only-note"
+                  >
+                    {t('academy:members.ownerOnlyAdds')}
+                  </p>
+                ) : null}
+                {canAddStaff ? (
                   <Button
                     type="button"
                     onClick={() => setIsAddManagerOpen(true)}

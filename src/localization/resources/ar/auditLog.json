@@ -160,7 +160,10 @@
     "platform_contact_submission": "استفسار تواصل",
     "lesson": "درس",
     "communication_campaign": "رسالة",
-    "forensic_watermark": "رمز علامة مائية"
+    "forensic_watermark": "رمز علامة مائية",
+    "trial_policy": "سياسة الفترة التجريبية",
+    "academy_payout": "دفعة مستحقات أكاديمية",
+    "privacy_request": "طلب خصوصية"
   },
   "fields": {
     "title": "العنوان",
@@ -597,20 +600,28 @@
       "refund_recorded": "{{actor}} سجّل استردادًا لطلب دورة"
     },
     "provisioning_request": {
-      "created": "{{actor}} طلب إنشاء أكاديمية جديدة «{{target}}»"
+      "created": "{{actor}} طلب إنشاء أكاديمية جديدة «{{target}}»",
+      "retried": "أعاد {{actor}} محاولة إعداد «{{target}}»",
+      "cancelled": "ألغى {{actor}} إعداد «{{target}}»",
+      "retried_by_platform": "أعاد {{actor}} محاولة إعداد «{{target}}» من لوحة المنصة",
+      "cancelled_by_platform": "ألغى {{actor}} إعداد «{{target}}» من لوحة المنصة"
     },
     "subscription": {
       "gift": {
         "granted": "{{actor}} وافق على أول اشتراك يتضمن أيام إعداد مُهداة"
       },
       "trial": {
-        "redeemed": "{{actor}} بدأ فترة تجربة مجانية",
-        "cancelled": "{{actor}} ألغى فترة التجربة المجانية"
+        "redeemed": "{{actor}} بدأ فترة تجربة",
+        "cancelled": "{{actor}} ألغى فترة التجربة"
       },
       "cancelled": "{{actor}} ألغى الاشتراك",
       "grace_started": "دخل الاشتراك فترة السماح",
       "expired": "انتهى الاشتراك",
-      "cancelled_at_period_end": "انتهى الاشتراك بنهاية فترة الفوترة"
+      "cancelled_at_period_end": "انتهى الاشتراك بنهاية فترة الفوترة",
+      "scheduled_plan_change_applied": "طُبّق تغيير الباقة المجدول عند نهاية الفترة المدفوعة",
+      "extended_by_platform": "{{actor}} مدّد الاشتراك",
+      "days_granted_by_platform": "{{actor}} منح أيامًا مجانية على الاشتراك",
+      "plan_changed_by_platform": "{{actor}} غيّر باقة الاشتراك"
     },
     "add_on": {
       "install": "{{actor}} أضاف الإضافة {{addOn}}",
@@ -652,6 +663,15 @@
       },
       "sessions": {
         "revoked": "تم تسجيل خروج الجلسات الأخرى لـ {{actor}}"
+      },
+      "two_factor": {
+        "enabled": "فعّل {{actor}} المصادقة الثنائية",
+        "disabled": "أوقف {{actor}} المصادقة الثنائية",
+        "reset_by_operator": "أعاد {{actor}} ضبط المصادقة الثنائية لحساب مستخدم"
+      },
+      "sign_in": {
+        "succeeded": "سجّل {{actor}} الدخول",
+        "failed": "فشلت محاولة لتسجيل الدخول إلى حساب {{actor}}"
       }
     },
     "password_reset": {
@@ -669,13 +689,16 @@
       "phone": {
         "updated": "{{actor}} حدّث رقم هاتفه",
         "removed": "{{actor}} حذف رقم هاتفه"
-      }
+      },
+      "suspended": "علّق {{actor}} حساب مستخدم",
+      "unsuspended": "أعاد {{actor}} تفعيل حساب مستخدم"
     },
     "plan": {
       "created": "{{actor}} أنشأ الباقة «{{target}}»",
       "updated": "{{actor}} حدّث الباقة «{{target}}»",
       "pricing_changed": "{{actor}} غيّر تسعير الباقة «{{target}}»",
       "trial_config_changed": "{{actor}} غيّر إعدادات التجربة للباقة «{{target}}»",
+      "subscribers_notified": "{{actor}} أبلغ مشتركي الباقة «{{target}}» بتغيير فيها",
       "archived": "{{actor}} أرشف الباقة «{{target}}»"
     },
     "platform_settings": {
@@ -686,7 +709,9 @@
       "updated": "{{actor}} حدّث طريقة الدفع «{{target}}»"
     },
     "commission_config": {
-      "global_default_updated": "{{actor}} غيّر نسبة العمولة الافتراضية"
+      "global_default_updated": "{{actor}} غيّر نسبة العمولة الافتراضية",
+      "plan_updated": "{{actor}} غيّر نسبة العمولة لخطة",
+      "organization_updated": "{{actor}} غيّر نسبة العمولة لمؤسسة"
     },
     "observability": {
       "synthetic_alert": {
@@ -707,6 +732,25 @@
         "looked_up": "بحث {{actor}} عن رمز العلامة المائية {{target}}",
         "looked_up_noTarget": "بحث {{actor}} عن رمز علامة مائية"
       }
+    },
+    "trial_policy": {
+      "updated": "{{actor}} غيّر سياسة الفترة التجريبية المجانية"
+    },
+    "payout": {
+      "created": "{{actor}} أنشأ دفعة مستحقات لأكاديمية",
+      "marked_paid": "{{actor}} سجّل دفعة مستحقات أكاديمية كمدفوعة"
+    },
+    "privacy_request": {
+      "code": {
+        "requested": "طلب {{actor}} رمز طلب خصوصية",
+        "code_failed": "أدخل {{actor}} رمز طلب خصوصية خاطئًا",
+        "locked_out": "أُوقف {{actor}} عن رموز طلبات الخصوصية بعد محاولات كثيرة",
+        "confirmed": "أكّد {{actor}} رمز طلب خصوصية"
+      },
+      "submitted": "قدّم {{actor}} طلب خصوصية",
+      "status_changed": "غيّر {{actor}} حالة طلب خصوصية",
+      "fulfilled": "أتمّ {{actor}} طلب خصوصية",
+      "export_downloaded": "نزّل {{actor}} نسخة بياناته"
     }
   }
 }

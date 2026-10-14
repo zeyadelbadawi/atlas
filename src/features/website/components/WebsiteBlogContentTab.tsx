@@ -17,6 +17,7 @@ import { ArrowRight, Megaphone, Newspaper } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
+import { isFeatureEnabled } from '@config';
 
 export function WebsiteBlogContentTab(): JSX.Element {
   const { t } = useTranslation();
@@ -24,27 +25,30 @@ export function WebsiteBlogContentTab(): JSX.Element {
 
   return (
     <div className="grid gap-4 sm:grid-cols-2">
-      <Card>
-        <CardHeader className="flex flex-row items-center gap-3 space-y-0">
-          <Newspaper className="size-5 text-muted-foreground" aria-hidden />
-          <CardTitle className="text-base">
-            {t('website:content.blog.title')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <p className="text-sm text-muted-foreground">
-            {t('website:content.blog.description')}
-          </p>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => navigate(DASHBOARD_ROUTES.blog)}
-          >
-            {t('website:content.blog.manageAction')}
-            <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />
-          </Button>
-        </CardContent>
-      </Card>
+      {/* B0-WEB-07 — no Blog card while posts reach no reader. */}
+      {isFeatureEnabled('academyBlogAndForum') ? (
+        <Card>
+          <CardHeader className="flex flex-row items-center gap-3 space-y-0">
+            <Newspaper className="size-5 text-muted-foreground" aria-hidden />
+            <CardTitle className="text-base">
+              {t('website:content.blog.title')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              {t('website:content.blog.description')}
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate(DASHBOARD_ROUTES.blog)}
+            >
+              {t('website:content.blog.manageAction')}
+              <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />
+            </Button>
+          </CardContent>
+        </Card>
+      ) : null}
 
       <Card>
         <CardHeader className="flex flex-row items-center gap-3 space-y-0">

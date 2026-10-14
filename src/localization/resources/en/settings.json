@@ -27,14 +27,10 @@
   },
   "security": {
     "title": "Security Settings",
-    "description": "Manage platform-wide security configuration",
-    "twoFactorAuth": "Require two-factor authentication",
-    "twoFactorAuthDescription": "Require every account to set up two-factor authentication.",
-    "sessionTimeout": "Session timeout",
-    "timeout15": "15 minutes",
-    "timeout30": "30 minutes",
-    "timeout60": "60 minutes",
-    "timeoutNever": "Never"
+    "description": "How sign-in security works on Atlas today",
+    "perAccountTwoFactor": "Two-factor authentication is set up by each person on their own account, from the Security tab of their profile.",
+    "openProfile": "Open your profile",
+    "notYetAvailable": "A rule that makes two-factor authentication required for every account, and an automatic sign-out after inactivity, aren't available yet, so there are no settings for them here."
   },
   "notifications": {
     "title": "Notification Preferences",

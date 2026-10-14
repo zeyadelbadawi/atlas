@@ -18,7 +18,6 @@ import arAuth from './ar/auth.json';
 import arProfile from './ar/profile.json';
 import arSettings from './ar/settings.json';
 import arNotifications from './ar/notifications.json';
-import arBilling from './ar/billing.json';
 import arAnalytics from './ar/analytics.json';
 import arPlatform from './ar/platform.json';
 import arSearch from './ar/search.json';
@@ -55,7 +54,6 @@ const bundle: Record<string, Record<string, unknown>> = {
   profile: arProfile,
   settings: arSettings,
   notifications: arNotifications,
-  billing: arBilling,
   analytics: arAnalytics,
   platform: arPlatform,
   search: arSearch,

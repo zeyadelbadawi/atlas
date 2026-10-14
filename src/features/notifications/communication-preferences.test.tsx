@@ -96,7 +96,7 @@ describe('CommunicationPreferencesMatrix', () => {
     );
 
     fireEvent.click(
-      screen.getByRole('switch', { name: 'Email for Updates and announcements' })
+      screen.getByRole('switch', { name: 'Email for Academy updates' })
     );
     expect(onChange).toHaveBeenLastCalledWith({
       engagement: { email: false, digest: 'daily' },
@@ -133,7 +133,7 @@ describe('CommunicationPreferencesMatrix', () => {
     const digest = screen.getByRole('combobox', { name: 'Delivery for Operations' });
     expect(digest.hasAttribute('disabled')).toBe(true);
     const engagementDigest = screen.getByRole('combobox', {
-      name: 'Delivery for Updates and announcements',
+      name: 'Delivery for Academy updates',
     });
     expect(engagementDigest.hasAttribute('disabled')).toBe(false);
   });

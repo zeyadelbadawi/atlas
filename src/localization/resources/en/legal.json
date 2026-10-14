@@ -8,6 +8,8 @@
   "consent": {
     "bannerTitle": "Cookies and similar technologies",
     "bannerBody": "Atlas stores a small amount of data in your browser. Some of it is required to keep you signed in. The rest only remembers your preferences, and you can decline it.",
+    "bannerBodyAcademy": "{{academyName}} stores a small amount of data in your browser. Some of it keeps you signed in; the rest only remembers your preferences, and you can decline it.",
+    "bannerBodySite": "This website stores a small amount of data in your browser. Some of it keeps you signed in; the rest only remembers your preferences, and you can decline it.",
     "acceptAll": "Accept all",
     "rejectAll": "Reject optional",
     "managePreferences": "Manage preferences",

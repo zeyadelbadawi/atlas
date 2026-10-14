@@ -5,8 +5,9 @@
  * The confirmation is the app's single destructive-confirm dialog
  * (`useConfirmDialog`) and distinguishes one file from many. Its copy
  * states what actually happens — the item leaves the library now, the
- * file is destroyed after 30 days, and media still in use is refused —
- * and never promises an immediate permanent deletion.
+ * file is deleted from storage later, and media still in use is refused —
+ * and never promises an immediate permanent deletion. B0-CPY-11 / MED-07:
+ * no day count, because the storage purge defaults to a dry run.
  *
  * Outcomes that need reading (a refusal, a partial bulk result) are kept
  * as state for an `aria-live` region; a clean single delete is a toast.

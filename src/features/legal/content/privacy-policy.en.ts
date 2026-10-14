@@ -59,7 +59,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
   summary:
     'How Atlas collects, uses, and protects personal data when you use the Atlas platform.',
   effectiveDate: '11 September 2026',
-  lastUpdated: '9 October 2026',
+  lastUpdated: '12 October 2026',
   sections: [
     {
       id: 'who-we-are',
@@ -103,7 +103,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
             {
               term: 'Account information',
               detail:
-                'Your name, email address, and a securely hashed form of your password. Atlas never stores your password itself. Optionally, a mobile phone number, a profile picture and interface preferences such as language and theme.',
+                'Your name, email address, and a securely hashed form of your password. Atlas never stores your password itself. Optionally, a mobile phone number, a profile picture and interface preferences such as language and theme. If you are a student in an academy, your phone number can be seen by that academy’s owners and managers and by Atlas platform administrators; instructors and other students cannot see it.',
             },
             {
               term: 'Organization and academy information',

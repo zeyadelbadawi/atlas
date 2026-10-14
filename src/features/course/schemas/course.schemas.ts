@@ -158,6 +158,24 @@ export const courseSectionSchema = z.object({
 
 export type CourseSectionFormData = z.infer<typeof courseSectionSchema>;
 
+/** Mirrors the server's `MAX_LESSON_BODY_HTML_LENGTH`. */
+export const MAX_LESSON_BODY_HTML_LENGTH = 200_000;
+
+/**
+ * Whether rich-text HTML has any readable text. Only an emptiness check
+ * for the form (the server sanitises and re-checks); never used to clean
+ * or render HTML.
+ */
+function hasReadableText(html: string | undefined): boolean {
+  if (!html) return false;
+  return (
+    html
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/&nbsp;/gi, ' ')
+      .trim().length > 0
+  );
+}
+
 /** Course lesson creation/update schema. */
 export const courseLessonSchema = z
   .object({
@@ -176,6 +194,31 @@ export const courseLessonSchema = z
       .optional()
       .or(z.literal('')),
     status: z.enum(['draft', 'published']),
+    /**
+     * B0-LRN-01 — a text lesson's body (rich-text HTML). Required for a
+     * text lesson; ignored otherwise. The server sanitises it.
+     */
+    bodyHtml: z
+      .string()
+      .max(MAX_LESSON_BODY_HTML_LENGTH, 'validation:maxLength')
+      .optional(),
+    /**
+     * B0-MED-05 — a file just uploaded to the protected tier for this File
+     * lesson, attached after the lesson saves. Absent when no new file was
+     * chosen in this dialog.
+     */
+    protectedFile: z
+      .object({ mediaAssetId: z.string().min(1), fileName: z.string() })
+      .optional(),
+    /**
+     * B0-MED-11 — the Video lesson's Atlas-hosted video (uploaded or picked
+     * from the academy's videos). `null` = removed in this dialog, so the
+     * save detaches it; absent = untouched.
+     */
+    hostedVideo: z
+      .object({ mediaAssetId: z.string().min(1), fileName: z.string() })
+      .nullable()
+      .optional(),
   })
   // A `video` lesson's URL is either a hosted file (uploaded/library) or a
   // YouTube link — the content model stays a single opaque `contentUrl`
@@ -185,6 +228,13 @@ export const courseLessonSchema = z
   // link, a copy-paste mistake) — a hosted URL on any other host is
   // untouched, exactly like before this addition.
   .superRefine((data, ctx) => {
+    if (data.contentType === 'text' && !hasReadableText(data.bodyHtml)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['bodyHtml'],
+        message: 'course:builder.lessonDialog.bodyRequired',
+      });
+    }
     if (data.contentType !== 'video' || !data.contentUrl) return;
     if (isYouTubeHost(data.contentUrl) && !isYouTubeUrl(data.contentUrl)) {
       ctx.addIssue({

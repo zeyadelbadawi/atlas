@@ -9,6 +9,7 @@
       "courses": "Courses",
       "generalStorage": "General storage",
       "videoStorage": "Video storage",
+      "videoStorageMinutes": "Video minutes",
       "recordedSessions": "Recorded sessions"
     },
     "features": {
@@ -26,7 +27,7 @@
       "trial_expired": "Trial ended"
     },
     "subscriptionStatusDescription": {
-      "trialing": "Your organization is on a free trial.",
+      "trialing": "Your organization is on a trial.",
       "active": "Your subscription is active and in good standing.",
       "past_due": "We were unable to confirm your latest payment. Please update your billing details to avoid an interruption.",
       "paused": "Your subscription is currently paused.",
@@ -34,7 +35,7 @@
       "cancelled": "Your subscription has been cancelled.",
       "expired": "Your subscription has expired.",
       "no_plan": "Your organization is ready. Choose a plan to start building your academy.",
-      "trial_expired": "Your free trial has ended. Choose a plan to keep using Atlas."
+      "trial_expired": "Your trial has ended. Choose a plan to keep using Atlas."
     },
     "usageStatus": {
       "allowed": "Within limit",
@@ -82,7 +83,19 @@
     "cancelAtPeriodEnd": "Your subscription will not renew at the end of the current period.",
     "featuresTitle": "Add-ons",
     "featuresSubtitle": "Capabilities you add to your plan separately.",
-    "cancelSubscription": "Cancel subscription"
+    "cancelSubscription": "Cancel subscription",
+    "scheduledChange": "Your plan changes to {{plan}} on {{date}}. Until then you keep everything in your current plan.",
+    "priceChange": {
+      "title": "The {{plan}} plan changes at your next renewal",
+      "when": "Nothing changes for your current paid period. The change applies from your next renewal, due {{date}}.",
+      "whenNextRenewal": "The change applies from your next renewal.",
+      "price": "Renewal price: {{from}} now, {{to}} from your next renewal.",
+      "newPrice": "Renewal price from your next renewal: {{to}}.",
+      "limitsTitle": "Limits that change at renewal:",
+      "limit": "{{name}}: {{from}} → {{to}}",
+      "notIncluded": "not included",
+      "dismiss": "Got it"
+    }
   },
   "usage": {
     "title": "Usage",
@@ -121,12 +134,12 @@
     "title": "Compare plans",
     "description": "Limits across every Atlas plan.",
     "currentPlanBadge": "Current plan",
-    "footerNote": "Plan changes are handled by your Atlas representative — this page does not process payments or change your plan.",
+    "footerNote": "To change your plan, open Subscription, choose a plan and complete checkout.",
     "selectPlan": "Select this plan",
     "selectableFooterNote": "Selecting a plan starts checkout — no payment is taken until you complete it.",
-    "tryFreeForDays_one": "Try {{plan}} free for 1 day",
-    "tryFreeForDays_other": "Try {{plan}} free for {{count}} days",
-    "tryFree": "Try {{plan}} free"
+    "tryFreeForDays_one": "Try {{plan}} for 1 day",
+    "tryFreeForDays_other": "Try {{plan}} for {{count}} days",
+    "tryFree": "Try {{plan}}"
   },
   "platformAdmin": {
     "trialPolicy": {
@@ -146,25 +159,25 @@
     }
   },
   "trial": {
-    "startTitle": "Start your free trial",
-    "startDescription": "Try Atlas free for {{days}} days. No card required.",
-    "startAction": "Start free trial",
+    "startTitle": "Start your trial",
+    "startDescription": "Try Atlas for {{days}} days. No card needed, and nothing is charged automatically.",
+    "startAction": "Start trial",
     "starting": "Starting your trial…",
-    "started": "Your free trial has started",
+    "started": "Your trial has started",
     "startedDescription": "You have full access until {{date}}.",
-    "alreadyUsedTitle": "You've already used your free trial",
-    "alreadyUsedDescription": "Free trials are one per customer. Choose a plan to continue with Atlas.",
-    "activeUntil": "Free trial — active until {{date}}",
-    "cancelAction": "Cancel free trial",
+    "alreadyUsedTitle": "You've already used your trial",
+    "alreadyUsedDescription": "Trials are one per customer. Choose a plan to continue with Atlas.",
+    "activeUntil": "Trial — active until {{date}}",
+    "cancelAction": "Cancel trial",
     "noTrialYet": "No active plan yet",
-    "noTrialYetDescription": "Start a free trial or choose a plan to activate this workspace.",
+    "noTrialYetDescription": "Start a trial or choose a plan to activate this workspace.",
     "failedTitle": "We couldn't start your trial",
     "failedDescription": "Something went wrong. Please try again, or contact support if it keeps happening.",
-    "choosePlanToStart": "Choose a plan to start your free trial"
+    "choosePlanToStart": "Choose a plan to start your trial"
   },
   "cancellation": {
-    "trialTitle": "Cancel your free trial?",
-    "trialDescription": "Your trial ends as soon as you confirm, and this workspace loses access. Free trials are one per customer, so you won't be able to start another one.",
+    "trialTitle": "Cancel your trial?",
+    "trialDescription": "Your trial ends as soon as you confirm, and this workspace loses access. Trials are one per customer, so you won't be able to start another one.",
     "subscriptionTitle": "Cancel your subscription?",
     "subscriptionDescription": "Your subscription will not renew. You keep access until the end of your current billing period.",
     "subscriptionDescriptionWithDate": "Your subscription will not renew. You keep full access until {{date}} — you're not losing time you've already paid for.",
@@ -175,7 +188,7 @@
     "feedbackOptional": "Optional — you can cancel without answering.",
     "keepIt": "Never mind, keep it",
     "confirmCancel": "Confirm cancellation",
-    "cancelledTrial": "Your free trial has been cancelled",
+    "cancelledTrial": "Your trial has been cancelled",
     "cancelledSubscription": "Your subscription has been cancelled",
     "cancelledSubscriptionDescription": "You keep access until {{date}}.",
     "failed": "We couldn't cancel that",
@@ -192,7 +205,7 @@
   },
   "subscriptionRequired": {
     "title": "Your subscription has ended",
-    "trialTitle": "Your free trial has ended",
+    "trialTitle": "Your trial has ended",
     "description": "You need an active subscription to continue managing your academies.",
     "trialDescription": "Choose a plan to continue managing your academies.",
     "dataSafe": "Nothing has been deleted. Your academies, courses, students and content are all still here and will be exactly as you left them.",
@@ -210,8 +223,8 @@
       "title": "Your organization is ready",
       "description": "Choose a plan to start building your academy. You can see exactly what each plan includes before you commit.",
       "action": "View plans",
-      "trialAction": "View plans and start your free trial",
-      "noCardFootnote": "Your free trial needs no credit card, and you won't be charged when it ends."
+      "trialAction": "View plans and start your trial",
+      "noCardFootnote": "Your trial needs no card, and nothing is charged when it ends."
     },
     "trialing": {
       "title": "{{plan}} trial",
@@ -222,7 +235,7 @@
       "action": "Subscribe to {{plan}}"
     },
     "trialExpired": {
-      "title": "Your free trial has ended",
+      "title": "Your trial has ended",
       "description": "You were trialing {{plan}}. Subscribe to pick up exactly where you left off, or choose a different plan.",
       "descriptionGeneric": "Subscribe to continue managing your academies, or choose a different plan.",
       "continueWith": "Continue with {{plan}}",
@@ -257,7 +270,7 @@
       "description": "We haven't received payment for the new period. Everything keeps working until {{date}}. Pay before then and nothing changes.",
       "descriptionNoDate": "We haven't received payment for the new period. Everything keeps working for a short grace window. Pay now and nothing changes.",
       "action": "Complete payment",
-      "footnote": "Nothing has been switched off and nothing has been deleted. If you have already paid, it can take a day or two to be reviewed."
+      "footnote": "Nothing has been switched off or deleted. If you have already paid, your payment is being reviewed and your plan activates once it is approved."
     },
     "retentionWarning": {
       "title": "Your hosted video is scheduled to be deleted",
@@ -269,15 +282,15 @@
   },
   "startTrial": {
     "title": "Start your {{plan}} trial",
-    "subtitle_one": "1 day free, with everything {{plan}} includes.",
-    "subtitle_other": "{{count}} days free, with everything {{plan}} includes.",
-    "subtitleNoDays": "Free, with everything {{plan}} includes.",
+    "subtitle_one": "A 1-day trial, with everything {{plan}} includes.",
+    "subtitle_other": "A {{count}}-day trial, with everything {{plan}} includes.",
+    "subtitleNoDays": "A trial with everything {{plan}} includes.",
     "factDates": "Your trial starts today and ends on {{date}}.",
     "factDatesUnknown": "Your trial starts today.",
     "factNoCard": "No credit card required.",
     "factNoAutoCharge": "You won't be charged when it ends — you choose whether to subscribe.",
     "factEntitlements": "Full access to everything on the {{plan}} plan.",
-    "onePerAccount": "A free trial can be used once per account.",
+    "onePerAccount": "One trial per email address.",
     "confirm": "Start {{plan}} trial"
   },
   "retention": {
@@ -349,7 +362,7 @@
       "removedOn": "Most recently on {{date}}"
     },
     "origin": {
-      "trial": "90 days, because this organization was last on a free trial",
+      "trial": "90 days, because this organization was last on a trial",
       "paid": "180 days, because this organization was last on a paid plan"
     },
     "timeline": {

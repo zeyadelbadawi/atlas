@@ -494,6 +494,8 @@ Residual, pre-existing (§10): the public API exposes `instructors[].id`, `intro
    - (a) accept it;
    - (b) `preloadArabicFonts`: CLS 0.021 but Arabic LCP about 450 ms later;
    - (c) metric-matched fallback fonts (a CSS change; needs a visual review).
+
+   **Resolved 13 Oct 2026 (B0-WEB-12, owner-approved fix to ≤ 0.05):** option (b), limited to Theme 1 pages and on by default in `server.mjs` (`SSR_PRELOAD_ARABIC_FONTS=off` turns it off). Cause, measured: the About section heading ("نبذة عن …" plus the Latin academy name) is one line in Readex Pro and two in the fallback face, so the section and the footer, which is inside the first mobile viewport on this short page, move 47 px when the fonts arrive. Re-measured on the current code (fixture build, Lighthouse mobile cold, median of 3): CLS 0.066 → 0.040, FCP 2.57 → 2.43 s, LCP 2.57 → 2.73 s. `font-display: optional` on Readex Pro was tried and rejected (CLS 0.059, LCP 2.73 s). Option (c) was not used: a size-adjusted fallback can be tuned to one fallback font only (the lab's is DejaVu Sans; phones use Noto, SF Arabic or Segoe UI). The single-page app fallback (when the renderer passes) keeps its 0.08.
 4. **Carried from §10:**
    - the `atlas_consent` cookie;
    - `en-US` currency formatting;

@@ -43,7 +43,7 @@ const ACADEMY_ID = 'aca-elzozo';
 
 /*
  * jsdom implements no layout and therefore no `ResizeObserver`, which the
- * Radix primitive behind the "Remember me" checkbox constructs on mount.
+ * Radix primitives in the sign-in page may construct on mount.
  * Nothing here observes a size; the stub exists so the real sign-in form
  * can be rendered rather than replaced by a stand-in that would prove
  * nothing about the page under test.

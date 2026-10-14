@@ -103,15 +103,12 @@ describe('Terms of Service content', () => {
 });
 
 describe('Pricing FAQ', () => {
-  it('does not promise a free trial on every plan (EN + AR)', () => {
+  // B0-CPY-24: the trial is "a trial", never "free" (no free plan).
+  it('does not promise a trial on every plan (EN + AR)', () => {
     expect(enPricing.faq.description).not.toMatch(/every plan/i);
-    expect(enPricing.faq.description).toContain(
-      'Some plans include a free trial'
-    );
-    expect(enPricing.faq.description).toContain('one free trial');
+    expect(enPricing.faq.description).toContain('Some plans include a trial');
+    expect(enPricing.faq.description).toContain('one trial');
     expect(arPricing.faq.description).not.toContain('تبدأ كل خطة');
-    expect(arPricing.faq.description).toContain(
-      'تتضمن بعض الخطط فترة تجريبية مجانية'
-    );
+    expect(arPricing.faq.description).toContain('تتضمن بعض الخطط فترة تجربة');
   });
 });

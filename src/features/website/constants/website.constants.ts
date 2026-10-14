@@ -33,14 +33,20 @@ export const MAX_SEO_DESCRIPTION_LENGTH = 160;
 /** A validated HSL triplet, e.g. `"221 83% 53%"` — matches Atlas's own `hsl(var(--x))` token format. Bounds the client to a real color, never an arbitrary CSS value. */
 export const HSL_TRIPLET_REGEX = /^\d{1,3} \d{1,3}% \d{1,3}%$/;
 
-/** Every section type, in the order they appear in the "Add section" picker. */
+/**
+ * The section types the "Add section" picker offers, in its order.
+ *
+ * B0-LRN-04 — `courseCategories` is not offered: academies cannot create
+ * categories, so the section never renders on the public site. Pages that
+ * already contain one keep loading and rendering it (hidden) as before;
+ * only adding a new one is gone.
+ */
 export const SECTION_TYPE_ORDER: readonly SectionType[] = [
   'hero',
   'pageHeader',
   'about',
   'featuredCourses',
   'courseCatalog',
-  'courseCategories',
   'statistics',
   'features',
   'featureSplit',

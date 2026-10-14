@@ -39,7 +39,34 @@ export interface DashboardRevenue {
   /** See this file's header comment — `false` means "not tracked", never "zero". */
   readonly tracked: boolean;
   readonly paymentCollectionMode: PaymentCollectionMode;
+  /**
+   * B0-CPY-15 — an academy in scope has an enabled manual payment method.
+   * Optional so an older API (before this field) still type-checks; absent
+   * reads as `false`.
+   */
+  readonly manualPaymentMethodsEnabled?: boolean;
   readonly totals: readonly DashboardRevenueTotal[];
+  /**
+   * B0-COM-02 — sales the academy collected itself by manual payment and
+   * approved in Atlas (gross; not ledger revenue). `null` for anyone but
+   * the organization owner; optional so an older API still type-checks.
+   */
+  readonly manualSales?: DashboardManualSales | null;
+}
+
+export interface DashboardManualSalesTotal {
+  readonly currency: string;
+  readonly amountMinorUnits: number;
+  /** Approved orders in the window. */
+  readonly count: number;
+}
+
+export interface DashboardManualSales {
+  /** 7, 30 and 90 days, each ending now. */
+  readonly periods: readonly {
+    readonly days: number;
+    readonly totals: readonly DashboardManualSalesTotal[];
+  }[];
 }
 
 export interface DashboardActivityItem {

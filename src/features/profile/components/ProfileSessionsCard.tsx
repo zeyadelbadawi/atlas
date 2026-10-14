@@ -51,7 +51,11 @@ import { useSignOut } from '@/shared/hooks';
 import { formatDate, formatRelativeTime } from '@/shared/utils/date.utils';
 import type { LanguageCode } from '@types';
 import type { UserSession } from '@types';
-import { useRevokeSession, useSessions } from '../hooks';
+import {
+  useRevokeOtherSessions,
+  useRevokeSession,
+  useSessions,
+} from '../hooks';
 
 export function ProfileSessionsCard(): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -60,6 +64,32 @@ export function ProfileSessionsCard(): JSX.Element {
   const { signOut } = useSignOut();
   const sessions = useSessions();
   const revokeSession = useRevokeSession();
+  const revokeOthers = useRevokeOtherSessions();
+  const [confirmOthers, setConfirmOthers] = useState(false);
+
+  // B0-IAM-06 — one action for a suspected compromise.
+  const handleConfirmRevokeOthers = (): void => {
+    setConfirmOthers(false);
+    revokeOthers.mutate(undefined, {
+      onSuccess: () => {
+        toast({
+          title: t('profile:sections.security.signedOutOthers'),
+          description: t(
+            'profile:sections.security.signedOutOthersDescription'
+          ),
+        });
+      },
+      onError: () => {
+        toast({
+          variant: 'destructive',
+          title: t('profile:sections.security.signOutOthersFailed'),
+          description: t(
+            'profile:sections.security.sessionRevokeFailedDescription'
+          ),
+        });
+      },
+    });
+  };
 
   // Which session the confirmation dialog is currently asking about.
   // Holding the whole session (not just an id) keeps the dialog copy able
@@ -221,10 +251,27 @@ export function ProfileSessionsCard(): JSX.Element {
       );
     }
 
+    const hasOthers = data.some((session) => !session.isCurrent);
+
     return (
-      <ul className="space-y-3" aria-busy={revokeSession.isPending}>
-        {data.map(renderSessionRow)}
-      </ul>
+      <div className="space-y-4">
+        {hasOthers ? (
+          <Button
+            variant="outline"
+            onClick={() => setConfirmOthers(true)}
+            disabled={revokeOthers.isPending || revokeSession.isPending}
+          >
+            <LogOut className="me-2 size-4" aria-hidden />
+            {t('profile:sections.security.signOutOthers')}
+          </Button>
+        ) : null}
+        <ul
+          className="space-y-3"
+          aria-busy={revokeSession.isPending || revokeOthers.isPending}
+        >
+          {data.map(renderSessionRow)}
+        </ul>
+      </div>
     );
   };
 
@@ -266,6 +313,25 @@ export function ProfileSessionsCard(): JSX.Element {
               {pendingSession?.isCurrent
                 ? t('profile:sections.security.signOutThisDevice')
                 : t('profile:actions.revoke')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={confirmOthers} onOpenChange={setConfirmOthers}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t('profile:sections.security.signOutOthersTitle')}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('profile:sections.security.signOutOthersDescription')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common:actions.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmRevokeOthers}>
+              {t('profile:sections.security.signOutOthers')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

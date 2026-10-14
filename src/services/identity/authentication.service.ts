@@ -221,6 +221,17 @@ export class AuthenticationService {
   }
 
   /**
+   * B0-IAM-06 — signs out every OTHER device in one action. The session
+   * making the request survives; the backend resolves both the account and
+   * the session to keep from the access token.
+   */
+  public async revokeOtherSessions(): Promise<{ sessionsRevoked: number }> {
+    return apiClient.post<{ sessionsRevoked: number }>(
+      '/auth/sessions/revoke-others'
+    );
+  }
+
+  /**
    * P66 — completes a sign-in that stopped for an emailed one-time code.
    *
    * Mirrors `TwoFactorService.verifyChallenge`: the challenge id travels

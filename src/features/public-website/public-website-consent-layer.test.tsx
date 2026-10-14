@@ -289,3 +289,40 @@ describe('PublicWebsiteConsentLayer', () => {
     );
   });
 });
+
+describe('B0-CPY-13 — who the banner says stores the data', () => {
+  it('names the academy on its own website, never Atlas (EN and AR)', () => {
+    publishedSite('modern-education', { primaryColor: ROLES.cta });
+    renderLayer('en');
+    const en = banners()[0]!.textContent ?? '';
+    expect(en).toContain('Alpha Academy stores a small amount of data');
+    expect(en).not.toContain('Atlas');
+    cleanup();
+    renderLayer('ar');
+    const ar = banners()[0]!.textContent ?? '';
+    expect(ar).toContain('تخزّن Alpha Academy');
+    expect(ar).not.toContain('أطلس');
+  });
+
+  it('says "this website" while the academy has not resolved', () => {
+    useResolveHostname.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isError: false,
+      error: null,
+    });
+    usePublishedWebsite.mockReturnValue(settled(undefined));
+    usePublishedPages.mockReturnValue(settled(undefined));
+    renderLayer();
+    const text = banners()[0]!.textContent ?? '';
+    expect(text).toContain('This website stores a small amount of data');
+    expect(text).not.toContain('Atlas');
+  });
+
+  it('keeps the Atlas text on the Atlas host', () => {
+    renderApp(ATLAS_HOST);
+    expect(banners()[0]!.textContent).toContain(
+      'Atlas stores a small amount of data'
+    );
+  });
+});

@@ -15,8 +15,9 @@
  *     so the page can never provoke the 400 the endpoint returns outside it.
  *   - A 403 (a member who is not owner/admin/manager of THIS academy) is a
  *     real state with its own copy, never a blank page or a generic error.
- *   - `truncated` means a LIST was capped, not a headline figure; the notice
- *     says exactly that and nothing more.
+ *   - `truncated` means the top lists were ranked from the window's most
+ *     recent rows only; the headline figures are exact counts over the
+ *     whole window either way (B0-ANL-03). The notice says exactly that.
  *   - Event types and refusal reasons are open string maps owned by the
  *     backend. Known keys get a translated label; an unknown one renders as
  *     its raw key rather than being dropped.
@@ -62,7 +63,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 // never reaches into another feature's files.
 import {
   STORAGE_LIMIT_KEYS,
-  USAGE_METRIC_KEYS,
+  CUSTOMER_USAGE_METRIC_KEYS,
   formatLimitValue,
   getUsageMetricStatus,
   getUsagePercentage,
@@ -165,7 +166,7 @@ interface TruncatedNoticeProps {
   readonly show: boolean;
 }
 
-/** Says a list was capped. Rendered as a status so assistive tech announces it once. */
+/** Says the lists rank recent rows only. Rendered as a status so assistive tech announces it once. */
 function TruncatedNotice({ show }: TruncatedNoticeProps): JSX.Element | null {
   const { t } = useTranslation();
   if (!show) return null;
@@ -668,7 +669,7 @@ export default function AcademyReportsPage(): JSX.Element {
       >
         {usage.isLoading ? (
           <div className="space-y-3" aria-busy="true">
-            {USAGE_METRIC_KEYS.map((key) => (
+            {CUSTOMER_USAGE_METRIC_KEYS.map((key) => (
               <Skeleton key={key} className="h-12 w-full" />
             ))}
           </div>
@@ -689,7 +690,7 @@ export default function AcademyReportsPage(): JSX.Element {
           />
         ) : (
           <ul className="flex flex-col divide-y divide-border">
-            {USAGE_METRIC_KEYS.map((limitKey) => {
+            {CUSTOMER_USAGE_METRIC_KEYS.map((limitKey) => {
               const metric = usage.data[limitKey];
               const status = getUsageMetricStatus(metric);
               const percentage = getUsagePercentage(metric);

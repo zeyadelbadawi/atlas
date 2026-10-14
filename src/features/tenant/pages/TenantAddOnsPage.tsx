@@ -28,6 +28,7 @@ import {
 } from '../hooks';
 import { PLAN_FEATURE_KEYS } from '../constants/tenant.constants';
 import { formatLimitValue } from '../utils/entitlement.utils';
+import { isCustomerVisibleLimitKey } from '@utils';
 import type { AddOn, PlanFeatureKey } from '@types';
 
 function AddOnEffectSummary({
@@ -153,13 +154,22 @@ export default function TenantAddOnsPage(): JSX.Element {
   const comingSoonKeys = new Set(
     catalogQuery.data.filter((addOn) => addOn.comingSoon).map((addOn) => addOn.key),
   );
+  // B0-MED-04 — an add-on that only raises a limit customers cannot use
+  // yet (video storage) is not offered. One a tenant already holds stays
+  // listed under "Active": it is something they have, and hiding it would
+  // hide what they pay for.
+  const isUsable = (addOn: AddOn): boolean =>
+    addOn.effect.type !== 'limit' ||
+    isCustomerVisibleLimitKey(addOn.effect.limitKey);
   const activeAddOns = activeAddOnsQuery.data.filter(
     (a) => !comingSoonKeys.has(a.addOn.key),
   );
   const activeAddOnIds = new Set(activeAddOns.map((a) => a.addOnId));
   const currentPlanKey = subscriptionQuery.data.plan.key;
   const availableAddOns = catalogQuery.data.filter(
-    (addOn) => comingSoonKeys.has(addOn.key) || !activeAddOnIds.has(addOn.id),
+    (addOn) =>
+      isUsable(addOn) &&
+      (comingSoonKeys.has(addOn.key) || !activeAddOnIds.has(addOn.id)),
   );
 
   return (

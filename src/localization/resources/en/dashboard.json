@@ -26,11 +26,28 @@
     "notTracked": {
       "title": "Not tracked here",
       "ownGateway": "Your academy collects payments through your own gateway, so this money never passes through Atlas and we have no figure to show. Check your gateway's own dashboard for earnings.",
-      "unconfigured": "Set up how you collect payments to start seeing earnings here."
+      "unconfigured": "Set up how you collect payments to start seeing earnings here.",
+      "manual": "Earnings from manual payments aren't shown here yet. You can see each approved payment in Orders."
     },
     "none": {
       "title": "No earnings yet",
       "description": "Once your first course sale goes through, it will appear here."
+    },
+    "manualSales": {
+      "title": "Sales recorded in Atlas (manual payments)",
+      "windowLabel": "Period",
+      "window": {
+        "7": "Last 7 days",
+        "30": "Last 30 days",
+        "90": "Last 90 days"
+      },
+      "orders": "Approved orders: {{count}}",
+      "empty": {
+        "7": "No approved manual payments in the last 7 days.",
+        "30": "No approved manual payments in the last 30 days.",
+        "90": "No approved manual payments in the last 90 days."
+      },
+      "note": "Amounts of the payments you approved. Your academy received this money directly; Atlas does not hold it. Refunds you make outside Atlas are not subtracted."
     }
   },
   "usage": {
@@ -42,12 +59,17 @@
       "academies": "Academies",
       "courses": "Courses",
       "students": "Students",
-      "instructors": "Instructors"
+      "instructors": "Instructors",
+      "generalStorage": "Storage"
     },
     "unavailable": {
       "title": "Usage isn't available yet",
       "description": "Your plan usage appears here once your subscription is active and the first figures have been calculated."
-    }
+    },
+    "limitWarning": "Close to or at your plan limit: {{limits}}. New additions are refused at the limit.",
+    "limitWarningItem": "{{name}} ({{percent}}%)",
+    "limitWarningSeparator": ", ",
+    "comparePlans": "Compare plans"
   },
   "activity": {
     "title": "Recent activity",
@@ -183,7 +205,7 @@
       "title": "You can't view reports for this academy",
       "description": "Reports are available to the academy's owner, admins and managers. Ask an owner if you need access."
     },
-    "truncated": "Some lists were shortened to their top entries. The headline figures are complete.",
+    "truncated": "This period has a lot of activity, so the top lists rank its most recent records only. The headline figures cover the whole period.",
     "columns": {
       "course": "Course",
       "events": "Events",

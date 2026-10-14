@@ -21,9 +21,10 @@ import { StatusBadge } from '@components/data-display';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { Trash2 } from 'lucide-react';
+import { ShieldCheck, ShieldOff, Trash2 } from 'lucide-react';
 import { usePlatformUser } from '../hooks';
 import { DeleteUserDialog } from '../components/DeleteUserDialog';
+import { SuspendUserDialog } from '../components/SuspendUserDialog';
 import { getPlatformUserStatusTone } from '../utils/platform-status.utils';
 import { PhoneNumberDisplay } from '@components/phone';
 
@@ -31,6 +32,7 @@ export default function PlatformUserDetailPage(): JSX.Element {
   const { t, i18n } = useTranslation();
   const { userId } = useParams<{ userId: string }>();
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [suspendOpen, setSuspendOpen] = useState(false);
 
   const {
     data: user,
@@ -77,6 +79,26 @@ export default function PlatformUserDetailPage(): JSX.Element {
               the account's email typed out; nothing is destroyed by this
               click alone.
             */}
+            {/* B0-SEC-07 — suspend / reinstate, a reversible action. */}
+            {user.status === 'active' || user.status === 'suspended' ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setSuspendOpen(true)}
+              >
+                {user.status === 'active' ? (
+                  <ShieldOff className="size-4" aria-hidden />
+                ) : (
+                  <ShieldCheck className="size-4" aria-hidden />
+                )}
+                {t(
+                  user.status === 'active'
+                    ? 'platform:users.suspend.action'
+                    : 'platform:users.suspend.reinstateAction'
+                )}
+              </Button>
+            ) : null}
             {user.status === 'deleted' ? null : (
               <Button
                 type="button"
@@ -205,6 +227,14 @@ export default function PlatformUserDetailPage(): JSX.Element {
       <DeleteUserDialog
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
+        userId={user.id}
+        userEmail={user.email}
+        userName={user.name}
+      />
+      <SuspendUserDialog
+        open={suspendOpen}
+        onOpenChange={setSuspendOpen}
+        mode={user.status === 'suspended' ? 'unsuspend' : 'suspend'}
         userId={user.id}
         userEmail={user.email}
         userName={user.name}

@@ -24,3 +24,9 @@ export {
   useUnsuppressAddress,
 } from './usePlatformCommunications';
 export * from './useUserDeletion';
+export { useSubscriptionAdjustment } from './useSubscriptionAdjustments';
+export {
+  useOrganizationPlatformFlags,
+  useSetOrganizationInternal,
+} from './useOrganizationPlatformFlags';
+export type { SubscriptionAdjustmentInput } from './useSubscriptionAdjustments';

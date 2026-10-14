@@ -8,9 +8,9 @@ import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { useDirtyGuard } from '@features/unsaved-changes';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FolderOpen, Loader2, Youtube } from 'lucide-react';
+import { Loader2, Youtube } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { MediaLibraryDialog } from '@features/media';
+import { RichTextEditor } from '@features/messaging';
 import { isYouTubeUrl } from '@utils';
 import {
   Dialog,
@@ -42,6 +42,11 @@ import {
   type CourseLessonFormData,
 } from '../schemas/course.schemas';
 import type { ApiError } from '@api';
+import type { HostedVideoAsset, ProtectedLessonFile } from '@types';
+import { isFeatureEnabled } from '@config';
+import { ProtectedLessonFileField } from './ProtectedLessonFileField';
+import { HostedVideoField } from './HostedVideoField';
+import type { UploadedHostedVideo } from '../utils/hosted-video-upload';
 
 export interface LessonFormDialogProps {
   readonly open: boolean;
@@ -53,13 +58,30 @@ export interface LessonFormDialogProps {
   /** The create/update mutation's current error, so a validation (400) failure maps onto the field that caused it instead of only a page-level toast. */
   readonly error?: ApiError | null;
   /**
-   * When provided, video/file lessons offer "Choose from library" — the
-   * same real, working `MediaLibraryDialog` upload the Website Builder
-   * already uses (Phase 0 fix: this dialog previously only ever offered a
-   * plain URL field, even though the upload pipeline behind it was
-   * already real and production-shaped).
+   * B0-MED-05 — when provided, a File lesson's file is uploaded to the
+   * protected tier (signed, short-lived links for enrolled learners only)
+   * instead of the public media library it used to come from.
    */
-  readonly academyId?: string;
+  readonly onUploadProtectedFile?: (file: File) => Promise<ProtectedLessonFile>;
+  /** B0-MED-05 — the lesson being edited already delivers a protected file. */
+  readonly hasProtectedFile?: boolean;
+  /**
+   * B0-LRN-01 — true while an existing text lesson's body is being read
+   * for editing. Saving is disabled until it arrives, so an edit can never
+   * overwrite the stored body with an empty one.
+   */
+  readonly bodyLoading?: boolean;
+  /**
+   * B0-MED-11 — upload a Video lesson's video to Atlas (Normal tier). Used
+   * only while `hostedVideoAuthoring` is on; otherwise a video lesson takes
+   * a YouTube link only.
+   */
+  readonly onUploadHostedVideo?: (
+    file: File,
+    onProgress: (percent: number) => void
+  ) => Promise<UploadedHostedVideo>;
+  /** B0-MED-11 — the academy's hosted videos, for "choose an existing video". */
+  readonly loadHostedVideos?: () => Promise<readonly HostedVideoAsset[]>;
 }
 
 const EMPTY_LESSON_VALUES: CourseLessonFormData = {
@@ -68,6 +90,7 @@ const EMPTY_LESSON_VALUES: CourseLessonFormData = {
   contentType: 'text',
   contentUrl: '',
   status: 'draft',
+  bodyHtml: '',
 };
 
 export function LessonFormDialog({
@@ -77,11 +100,20 @@ export function LessonFormDialog({
   defaultValues,
   isPending,
   onSubmit,
-  academyId,
+  onUploadProtectedFile,
+  hasProtectedFile = false,
   error,
+  bodyLoading = false,
+  onUploadHostedVideo,
+  loadHostedVideos,
 }: LessonFormDialogProps): JSX.Element {
-  const { t } = useTranslation();
-  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+  const { t, i18n } = useTranslation();
+  const [isUploadingFile, setIsUploadingFile] = useState(false);
+  const hostedVideo =
+    isFeatureEnabled('hostedVideoAuthoring') && onUploadHostedVideo && loadHostedVideos
+      ? { onUpload: onUploadHostedVideo, loadLibrary: loadHostedVideos }
+      : null;
+  const hostedVideoEnabled = hostedVideo !== null;
 
   const form = useForm<CourseLessonFormData>({
     resolver: zodResolver(courseLessonSchema),
@@ -242,27 +274,118 @@ export function LessonFormDialog({
               />
             </div>
 
-            <FormField
-              control={form.control}
-              name="contentUrl"
-              render={({ field }) => {
-                const contentType = form.watch('contentType');
-                const canUpload = academyId && contentType !== 'text';
-                // Inferred from the URL string itself, never a separate
-                // stored field — see `youtube.utils.ts`'s own doc comment
-                // for why the content model stays a single opaque
-                // `contentUrl` regardless of source.
-                const isYoutube =
-                  contentType === 'video' &&
-                  !!field.value &&
-                  isYouTubeUrl(field.value);
-
-                return (
+            {/* B0-LRN-01 — a text lesson's body. It is what the learner
+                reads; the description above stays a short summary. */}
+            {form.watch('contentType') === 'text' ? (
+              <FormField
+                control={form.control}
+                name="bodyHtml"
+                render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel>
-                      {t('course:builder.lessonDialog.contentUrlLabel')}
+                    <FormLabel id="lesson-body-label">
+                      {t('course:builder.lessonDialog.bodyLabel')}
                     </FormLabel>
-                    <div className="flex gap-2">
+                    {bodyLoading ? (
+                      <p
+                        className="flex items-center gap-2 text-sm text-muted-foreground"
+                        role="status"
+                      >
+                        <Loader2 className="size-4 animate-spin" aria-hidden />
+                        {t('course:builder.lessonDialog.bodyLoading')}
+                      </p>
+                    ) : (
+                      <RichTextEditor
+                        id="lesson-body"
+                        value={field.value ?? ''}
+                        onChange={field.onChange}
+                        labelledBy="lesson-body-label"
+                        describedBy="lesson-body-help"
+                        dir={i18n.dir()}
+                        invalid={!!fieldState.error}
+                        placeholder={t(
+                          'course:builder.lessonDialog.bodyPlaceholder'
+                        )}
+                      />
+                    )}
+                    <p
+                      id="lesson-body-help"
+                      className="text-xs text-muted-foreground"
+                    >
+                      {t('course:builder.lessonDialog.bodyHelp')}
+                    </p>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : null}
+
+            {form.watch('contentType') === 'file' && onUploadProtectedFile ? (
+              <FormField
+                control={form.control}
+                name="protectedFile"
+                render={({ field }) => (
+                  <FormItem>
+                    <ProtectedLessonFileField
+                      value={field.value}
+                      onChange={field.onChange}
+                      onUpload={onUploadProtectedFile}
+                      hasProtectedFile={hasProtectedFile}
+                      hasPublicLink={!!form.watch('contentUrl')}
+                      onUploadingChange={setIsUploadingFile}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : null}
+
+            {form.watch('contentType') === 'video' && hostedVideo ? (
+              <FormField
+                control={form.control}
+                name="hostedVideo"
+                render={({ field }) => (
+                  <FormItem>
+                    <HostedVideoField
+                      value={field.value}
+                      onChange={field.onChange}
+                      onUpload={hostedVideo.onUpload}
+                      loadLibrary={hostedVideo.loadLibrary}
+                      onUploadingChange={setIsUploadingFile}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : null}
+
+            {form.watch('contentType') !== 'text' &&
+            // B0-MED-05 — once a protected file is attached, the public link
+            // field goes: saving clears that link.
+            !(
+              form.watch('contentType') === 'file' &&
+              (hasProtectedFile || !!form.watch('protectedFile'))
+            ) &&
+            // B0-MED-11 — likewise for a hosted video: it is what plays.
+            !(form.watch('contentType') === 'video' && !!form.watch('hostedVideo')) ? (
+              <FormField
+                control={form.control}
+                name="contentUrl"
+                render={({ field }) => {
+                  const contentType = form.watch('contentType');
+                  // Inferred from the URL string itself, never a separate
+                  // stored field — see `youtube.utils.ts`'s own doc comment
+                  // for why the content model stays a single opaque
+                  // `contentUrl` regardless of source.
+                  const isYoutube =
+                    contentType === 'video' &&
+                    !!field.value &&
+                    isYouTubeUrl(field.value);
+
+                  return (
+                    <FormItem>
+                      <FormLabel>
+                        {t('course:builder.lessonDialog.contentUrlLabel')}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="url"
@@ -272,47 +395,29 @@ export function LessonFormDialog({
                           {...field}
                         />
                       </FormControl>
-                      {canUpload ? (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => setIsLibraryOpen(true)}
-                        >
-                          <FolderOpen className="size-4" aria-hidden />
-                          {t('course:builder.lessonDialog.chooseFromLibrary')}
-                        </Button>
+                      {contentType === 'video' || contentType === 'file' ? (
+                        <p className="text-xs text-muted-foreground">
+                          {t(
+                            contentType === 'video'
+                              ? hostedVideoEnabled
+                                ? 'course:builder.lessonDialog.contentUrlHelpVideoOr'
+                                : 'course:builder.lessonDialog.contentUrlHelpVideo'
+                              : 'course:builder.lessonDialog.contentUrlHelpFile'
+                          )}
+                        </p>
                       ) : null}
-                    </div>
-                    {contentType === 'video' || contentType === 'file' ? (
-                      <p className="text-xs text-muted-foreground">
-                        {t(
-                          contentType === 'video'
-                            ? 'course:builder.lessonDialog.contentUrlHelpVideo'
-                            : 'course:builder.lessonDialog.contentUrlHelpFile'
-                        )}
-                      </p>
-                    ) : null}
-                    {isYoutube ? (
-                      <p className="flex items-center gap-1.5 text-xs font-medium text-[hsl(var(--brand-500))]">
-                        <Youtube className="size-3.5" aria-hidden />
-                        {t('course:builder.lessonDialog.youtubeDetected')}
-                      </p>
-                    ) : null}
-                    <FormMessage />
-                    {canUpload ? (
-                      <MediaLibraryDialog
-                        academyId={academyId}
-                        open={isLibraryOpen}
-                        onOpenChange={setIsLibraryOpen}
-                        onSelect={(asset) => field.onChange(asset.url)}
-                        selectedUrl={field.value || undefined}
-                        accept={contentType === 'video' ? 'video/*' : '*/*'}
-                      />
-                    ) : null}
-                  </FormItem>
-                );
-              }}
-            />
+                      {isYoutube ? (
+                        <p className="flex items-center gap-1.5 text-xs font-medium text-[hsl(var(--brand-500))]">
+                          <Youtube className="size-3.5" aria-hidden />
+                          {t('course:builder.lessonDialog.youtubeDetected')}
+                        </p>
+                      ) : null}
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+            ) : null}
 
             <DialogFooter>
               <Button
@@ -325,7 +430,10 @@ export function LessonFormDialog({
               >
                 {t('course:builder.lessonDialog.cancelButton')}
               </Button>
-              <Button type="submit" disabled={isPending}>
+              <Button
+                type="submit"
+                disabled={isPending || bodyLoading || isUploadingFile}
+              >
                 {isPending ? (
                   <Loader2 className="size-4 animate-spin" aria-hidden />
                 ) : null}

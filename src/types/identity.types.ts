@@ -158,7 +158,6 @@ export type SignInSurface = 'management' | 'academy';
 export interface SignInCredentials {
   readonly email: string;
   readonly password: string;
-  readonly rememberMe?: boolean;
   /** Defaults to `management` server-side; every caller sets it explicitly. */
   readonly surface?: SignInSurface;
   /** Required when `surface` is `academy` — the resolved academy of the current host. */

@@ -14,7 +14,8 @@
  */
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
-import { Boxes, Check, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Boxes, Check, Loader2, ShoppingCart } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { EmptyState, ErrorState } from '@components/feedback';
 import { SectionLoader } from '@components/loading';
@@ -22,6 +23,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useApiMutation, useApiQuery, useAuth } from '@hooks';
+import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { liveSessionKeys } from '@services/query';
 import { addOnCatalogService } from '../services/AddOnCatalogService';
 import type { AddOnAccessState, AddOnCatalogEntry } from '@types';
@@ -33,6 +35,7 @@ export default function AddOnsCatalogPage(): JSX.Element {
   const { t } = useTranslation();
   const { organization } = useAuth();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const organizationId = organization?.id;
 
   const catalogQuery = useApiQuery<readonly AddOnCatalogEntry[], ApiError>({
@@ -120,14 +123,22 @@ export default function AddOnsCatalogPage(): JSX.Element {
                       </p>
                     ) : null}
 
-                    <p className="text-sm font-medium text-foreground">
-                      {addOn.isFree
-                        ? t('liveSessions:catalog.free')
-                        : t('liveSessions:catalog.price', {
-                            amount: addOn.pricing?.amount ?? 0,
-                            currency: addOn.pricing?.currency ?? 'USD',
-                          })}
-                    </p>
+                    {/* B0-LIV-02 — a "coming soon" add-on cannot be bought, so it
+                        shows no price; a priced add-on without an amount or a
+                        currency shows none rather than an invented one. */}
+                    {addOn.comingSoon ? null : addOn.isFree ? (
+                      <p className="text-sm font-medium text-foreground">
+                        {t('liveSessions:catalog.free')}
+                      </p>
+                    ) : addOn.pricing?.currency &&
+                      addOn.pricing.amount !== undefined ? (
+                      <p className="text-sm font-medium text-foreground">
+                        {t('liveSessions:catalog.price', {
+                          amount: addOn.pricing.amount,
+                          currency: addOn.pricing.currency,
+                        })}
+                      </p>
+                    ) : null}
 
                     {addOn.failureReason ? (
                       <p className="text-sm text-destructive">{addOn.failureReason}</p>
@@ -138,6 +149,25 @@ export default function AddOnsCatalogPage(): JSX.Element {
                         <p className="text-sm text-muted-foreground">
                           {t('liveSessions:catalog.comingSoonNote')}
                         </p>
+                      ) : !installed && !addOn.isFree ? (
+                        // CF-23 — a priced add-on is bought through checkout
+                        // (proof → approval activates it); the API refuses a
+                        // direct install, so the button goes to checkout.
+                        <Button
+                          size="sm"
+                          disabled={busy}
+                          onClick={() =>
+                            navigate(
+                              buildPath(DASHBOARD_ROUTES.tenantBillingCheckout, {
+                                targetType: 'add_on',
+                                targetKey: addOn.key,
+                              }),
+                            )
+                          }
+                        >
+                          <ShoppingCart className="me-2 size-4" aria-hidden />
+                          {t('liveSessions:catalog.purchase')}
+                        </Button>
                       ) : !installed ? (
                         <Button
                           size="sm"

@@ -214,6 +214,30 @@ describe('CheckoutPage — billing cycles', () => {
     ]);
   });
 
+  it('shows a hidden plan (not in the public list) by reading it by key — B0-BIL-11', async () => {
+    vi.spyOn(planService, 'getPlans').mockResolvedValue([]);
+    const getPlan = vi
+      .spyOn(planService, 'getPlan')
+      .mockResolvedValue(
+        planWith({ amount: 1190, currency: 'USD', billingCycle: 'monthly' })
+      );
+    renderCheckout();
+
+    const price = await screen.findByTestId('checkout-cycle-price');
+    expect(price.textContent).toContain('$1,190');
+    expect(getPlan).toHaveBeenCalledWith('growth');
+  });
+
+  it('does not fetch by key when the plan is already in the public list', async () => {
+    vi.spyOn(planService, 'getPlans').mockResolvedValue([
+      planWith({ amount: 100, currency: 'USD', billingCycle: 'monthly' }),
+    ]);
+    const getPlan = vi.spyOn(planService, 'getPlan');
+    renderCheckout();
+    await screen.findByTestId('checkout-cycle-price');
+    expect(getPlan).not.toHaveBeenCalled();
+  });
+
   it('offers only Monthly when the plan has no yearly price', async () => {
     vi.spyOn(planService, 'getPlans').mockResolvedValue([
       planWith({ amount: 100, currency: 'USD', billingCycle: 'monthly' }),

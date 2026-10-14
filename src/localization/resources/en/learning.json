@@ -316,7 +316,7 @@
     "responseLabel": "Your Response",
     "responsePlaceholder": "Write your response here",
     "attachmentLabel": "Attachment",
-    "attachmentHelp": "Optional. PDF, Word or image, max 10MB.",
+    "attachmentHelp": "Optional. PDF or image (JPG, PNG, GIF, WebP), max 10MB. Save Word documents as PDF first.",
     "uploadAttachment": "Upload File",
     "uploadingAttachment": "Uploading...",
     "changeAttachment": "Change File",
@@ -336,7 +336,7 @@
     "resubmissionUnavailable": "Resubmission isn't available for this assignment.",
     "loadFailed": "Failed to load this assignment",
     "attachmentTooLarge": "Attachment must be smaller than 10MB.",
-    "attachmentInvalidType": "Attachment must be a PDF, Word document, or image.",
+    "attachmentInvalidType": "Attachment must be a PDF or an image (JPG, PNG, GIF or WebP). Save Word documents as PDF first.",
     "attachmentUploadError": "Failed to upload the attachment. Please try again.",
     "noInstructions": "The academy has not added instructions.",
     "noDueDate": "No due date",
@@ -584,7 +584,7 @@
     },
     "purchases": {
       "title": "Purchases",
-      "subtitle": "Your orders and receipts with this academy.",
+      "subtitle": "Your orders with this academy.",
       "empty": {
         "title": "No orders yet",
         "description": "Anything you buy from this academy is listed here with its payment status."

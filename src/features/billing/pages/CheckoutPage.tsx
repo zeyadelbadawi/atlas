@@ -54,6 +54,7 @@ import { ManualPaymentBrandChip } from '../components/ManualPaymentBrandChip';
 import {
   PlanGiftOffer,
   usePlanCatalog,
+  usePlanByKey,
   useSubscriptionLifecycleState,
   useTenantSubscription,
 } from '@features/tenant';
@@ -169,10 +170,18 @@ export default function CheckoutPage(): JSX.Element {
       : { type: 'add_on', addOnKey: targetKey };
   }, [targetType, targetKey]);
 
-  const targetPlan =
+  const listedPlan =
     target?.type === 'plan_subscription'
       ? plansQuery.data?.find((plan) => plan.key === target.planKey)
       : undefined;
+  // B0-BIL-11 — a hidden plan (founding lock, Enterprise deal) is never in
+  // the customer-facing list; once the list has loaded without it, read it
+  // by key so its price and billing cycles still show.
+  const hiddenPlanQuery = usePlanByKey(
+    target?.type === 'plan_subscription' ? target.planKey : undefined,
+    plansQuery.isSuccess && !listedPlan
+  );
+  const targetPlan = listedPlan ?? hiddenPlanQuery.data;
   const planPricing = targetPlan?.pricing;
   // W8 — display-only gift availability; the backend decides at approval.
   const { state: lifecycle } = useSubscriptionLifecycleState();

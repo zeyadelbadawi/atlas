@@ -262,6 +262,10 @@
       "title": "مراجعة بانتظار الاعتماد",
       "message": "قام أحد المتعلمين بمراجعة «{{courseTitle}}». تبقى مخفية حتى تعتمدها."
     },
+    "academyContactSubmissionReceived": {
+      "title": "رسالة جديدة من الموقع",
+      "message": "أرسل أحد الزوار رسالة عبر نموذج التواصل في موقع أكاديميتك."
+    },
     "rosterStudentAwaitingApproval": {
       "title": "هناك من ينتظر الانضمام",
       "message": "سجّل متعلم جديد ويحتاج إلى موافقة قبل أن يتمكن من الوصول إلى أي دورة."
@@ -269,6 +273,10 @@
     "lifecycleTrialStarted": {
       "title": "بدأت فترتك التجريبية على {{planName}}",
       "message": "تستمر فترتك التجريبية حتى {{trialEndsAtDate}}. اختر خطة قبل ذلك لإبقاء موقعك متاحًا."
+    },
+    "lifecycleTrialEndingIn3Days": {
+      "title": "تنتهي فترتك التجريبية خلال 3 أيام",
+      "message": "تنتهي فترتك التجريبية على {{planName}} في {{trialEndsAtDate}}. تتم مراجعة المدفوعات بواسطة موظف، لذا اختر خطة الآن لإبقاء موقعك متاحًا."
     },
     "lifecycleTrialEndingSoon": {
       "title": "تنتهي فترتك التجريبية غدًا",
@@ -298,6 +306,10 @@
       "title": "استلمنا إثبات دفعك",
       "message": "استلمنا {{amount}} {{currency}} في {{submittedAtDate}}. سنؤكد لك بعد المراجعة."
     },
+    "lifecycleSubscriptionRenewal30d": {
+      "title": "يُجدَّد اشتراكك السنوي خلال 30 يومًا",
+      "message": "تنتهي الفترة السنوية لـ {{planName}} في {{periodEndDate}}. لديك وقت لترتيب التحويل قبل انتهائها."
+    },
     "lifecycleSubscriptionRenewalDue": {
       "title": "يقترب موعد تجديد خطتك",
       "message": "تنتهي فترة {{planName}} في {{periodEndDate}}. تستغرق التحويلات البنكية أيامًا، لذا ابدأ الآن."
@@ -321,6 +333,10 @@
     "lifecycleSubscriptionCancelScheduled": {
       "title": "تم جدولة إلغاء اشتراكك",
       "message": "ينتهي اشتراكك في {{effectiveAtDate}}. كل شيء يستمر في العمل حتى ذلك الحين."
+    },
+    "lifecycleSubscriptionPriceChangeNotice": {
+      "title": "تتغير خطتك عند التجديد",
+      "message": "يتغير سعر خطة {{planName}} أو حدودها من تجديدك القادم. لا يتغير شيء قبل ذلك."
     },
     "lifecycleSubscriptionCancelled": {
       "title": "انتهى اشتراكك",
@@ -369,6 +385,30 @@
     "platformContactSubmissionReceived": {
       "title": "استفسار تواصل جديد",
       "message": "وصلت رسالة جديدة عبر نموذج التواصل في موقع Atlas."
+    },
+    "platformSubscriptionPaymentSubmitted": {
+      "title": "دفعة اشتراك للمراجعة",
+      "message": "أرسلت {{organizationName}} إثبات دفع بقيمة {{amount}} {{currency}}."
+    },
+    "platformSupportCaseCreated": {
+      "title": "طلب دعم جديد",
+      "message": "فتحت {{organizationName}} طلب دعم جديدًا."
+    },
+    "platformSupportCaseCustomerReplied": {
+      "title": "ردّ عميل على طلب دعم",
+      "message": "ردّت {{organizationName}} على طلب دعم."
+    },
+    "platformOrganizationSignedUp": {
+      "title": "مؤسسة جديدة",
+      "message": "سجّلت {{organizationName}} في Atlas."
+    },
+    "platformCoursePaymentSubmitted": {
+      "title": "دفعة دورة للمراجعة",
+      "message": "أرسل متعلّم في {{academyName}} دفعة بقيمة {{amount}} {{currency}} لدورة \"{{courseTitle}}\"."
+    },
+    "platformRefundRecorded": {
+      "title": "تم تسجيل استرداد",
+      "message": "تم تسجيل استرداد بقيمة {{amount}} {{currency}} لدورة \"{{courseTitle}}\" في {{academyName}}."
     },
     "customerRequestRouted": {
       "title": "نشاط على طلب عميل",
@@ -441,6 +481,70 @@
     "academyPaymentSubmitted": {
       "title": "دفعة جديدة للمراجعة",
       "message": "أرسل أحد المتعلّمين {{amount}} {{currency}} لدورة \"{{courseTitle}}\". راجعها ووافق عليها أو ارفضها."
+    },
+    "billingLimitApproaching": {
+      "title": "اقتربت من أحد حدود خطتك",
+      "message": "وصلت إلى {{used}} من {{limit}} في أحد حدود خطتك."
+    },
+    "billingLimitApproachingStudents": {
+      "title": "اقتربت من حد المتعلّمين",
+      "message": "لديك {{used}} من {{limit}} متعلّمًا في خطتك."
+    },
+    "billingLimitApproachingCourses": {
+      "title": "اقتربت من حد الدورات",
+      "message": "لديك {{used}} من {{limit}} دورة في خطتك."
+    },
+    "billingLimitApproachingAcademies": {
+      "title": "اقتربت من حد الأكاديميات",
+      "message": "لديك {{used}} من {{limit}} أكاديمية في خطتك."
+    },
+    "billingLimitApproachingStorage": {
+      "title": "اقتربت من حد التخزين",
+      "message": "تستخدم {{used}} من {{limit}} جيجابايت من مساحة التخزين في خطتك."
+    },
+    "billingLimitReached": {
+      "title": "وصلت إلى أحد حدود خطتك",
+      "message": "وصلت إلى أحد حدود خطتك ({{used}} من {{limit}}). تُرفض الإضافات الجديدة إلى أن تُرقّي خطتك."
+    },
+    "billingLimitReachedStudents": {
+      "title": "وصلت إلى حد المتعلّمين",
+      "message": "لديك {{used}} من {{limit}} متعلّمًا. لا يمكن انضمام متعلّمين جدد إلى أن تُرقّي خطتك."
+    },
+    "billingLimitReachedCourses": {
+      "title": "وصلت إلى حد الدورات",
+      "message": "لديك {{used}} من {{limit}} دورة. لا يمكن إنشاء دورات جديدة إلى أن تُرقّي خطتك."
+    },
+    "billingLimitReachedAcademies": {
+      "title": "وصلت إلى حد الأكاديميات",
+      "message": "لديك {{used}} من {{limit}} أكاديمية. لا يمكن إنشاء أكاديميات جديدة إلى أن تُرقّي خطتك."
+    },
+    "billingLimitReachedStorage": {
+      "title": "وصلت إلى حد التخزين",
+      "message": "تستخدم {{used}} من {{limit}} جيجابايت. تُرفض عمليات الرفع الجديدة إلى أن تُرقّي خطتك."
+    },
+    "privacyRequestCode": {
+      "title": "رمز طلب الخصوصية",
+      "message": "أُرسل إلى بريدك الإلكتروني رمز لتأكيد طلب الخصوصية."
+    },
+    "privacyRequestReceived": {
+      "title": "تم استلام طلب الخصوصية",
+      "message": "تلقّينا طلب الخصوصية الخاص بك."
+    },
+    "privacyRequestExportReady": {
+      "title": "بياناتك جاهزة",
+      "message": "يمكنك تنزيل نسخة بياناتك من ملفك الشخصي."
+    },
+    "privacyRequestRejected": {
+      "title": "تحديث بشأن طلب الخصوصية",
+      "message": "لم نتمكن من إتمام طلب الخصوصية الخاص بك."
+    },
+    "privacyRequestDeletionCompleted": {
+      "title": "تم حذف الحساب",
+      "message": "تم حذف حسابك بناءً على طلبك."
+    },
+    "platformPrivacyRequestCreated": {
+      "title": "طلب خصوصية جديد",
+      "message": "قدّم شخص طلب خصوصية."
     }
   },
   "liveSession": {
@@ -496,7 +600,7 @@
       "off": "إيقاف"
     },
     "reminders": "التذكيرات",
-    "remindersDescription": "الجلسات المباشرة القادمة والمواعيد النهائية وانتهاء الفترة التجريبية.",
+    "remindersDescription": "تذكيرات بفترة التجربة وتجديد الاشتراك.",
     "categories": {
       "security": {
         "title": "الأمان",
@@ -504,15 +608,15 @@
       },
       "transactional": {
         "title": "الإيصالات والطلبات",
-        "description": "المشتريات والمدفوعات والاستردادات والفواتير."
+        "description": "المشتريات والمدفوعات والاستردادات، بما في ذلك إيصالات البريد الإلكتروني."
       },
       "lifecycle": {
         "title": "الحساب والدورات",
         "description": "التسجيل في الدورات والدرجات والشهادات وإعداد الأكاديمية."
       },
       "engagement": {
-        "title": "التحديثات والإعلانات",
-        "description": "الإعلانات والردود في النقاشات والمحتوى الجديد في دوراتك."
+        "title": "تحديثات الأكاديمية",
+        "description": "رسائل أكاديميتك والدرجات والنتائج وإتمام الدورات. تظهر الإعلانات في إشعاراتك، وليس عبر البريد."
       },
       "operational": {
         "title": "العمليات",

@@ -35,7 +35,8 @@
     "tabs": {
       "faqs": "FAQs",
       "testimonials": "Testimonials",
-      "blog": "Blog & Announcements"
+      "blog": "Blog & Announcements",
+      "announcements": "Announcements"
     },
     "questionEn": "Question (English)",
     "questionAr": "Question (Arabic)",
@@ -822,6 +823,7 @@
     "statMetricNone": "Custom text (below)",
     "statMetricCourses": "Live course count",
     "statMetricStudents": "Live student count",
+    "statMetricStudentsHint": "This number is public on your website.",
     "statMetricInstructors": "Live instructor count",
     "statValue": "Value",
     "statLabel": "Label",

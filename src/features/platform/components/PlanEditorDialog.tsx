@@ -270,6 +270,13 @@ export function PlanEditorDialog({
             <h3 className="text-sm font-semibold">
               {t('platform:planAdmin.editor.pricingTitle')}
             </h3>
+            {/* B0-BIL-07 — saving reaches existing subscribers; say so first. */}
+            <p
+              className="text-xs text-muted-foreground"
+              data-testid="plan-subscriber-notice"
+            >
+              {t('platform:planAdmin.editor.subscriberNotice')}
+            </p>
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <Label htmlFor="plan-amount">

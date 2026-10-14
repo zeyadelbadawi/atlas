@@ -325,6 +325,14 @@ export const DASHBOARD_ROUTES = {
   platformCustomerRequestDetail:
     '/dashboard/platform/customer-requests/:requestId',
 
+  /**
+   * B0-SEC-13 — privacy requests (data export / account deletion). Platform
+   * Owner only. The detail path is where the Platform Owner alert links.
+   */
+  platformPrivacyRequests: '/dashboard/platform/privacy-requests',
+  platformPrivacyRequestDetail:
+    '/dashboard/platform/privacy-requests/:requestId',
+
   platformPlanCatalog: '/dashboard/platform/plans',
 
   /** Add-ons Catalog Management (P51) — Platform Owner controls the customer-store publication state of every add-on. */

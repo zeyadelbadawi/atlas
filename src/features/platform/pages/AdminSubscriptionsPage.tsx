@@ -5,12 +5,11 @@
  * `GET /platform-subscriptions/overview`. Nothing is sampled, seeded, or
  * placeholder.
  *
- * REVENUE IS SHOWN AS UNTRACKED, NOT AS ZERO. Atlas does not record
- * subscription revenue — plan prices are catalog metadata and no ledger
- * ties a subscription to money received. A "$0 MRR" tile would be read as
- * a measurement, so the page states the limitation in words instead. This
- * is the same honest treatment the tenant dashboard already gives
- * revenue.
+ * REVENUE IS MEASURED, NEVER DERIVED FROM LIST PRICES (B0-ANL-01). Monthly
+ * recurring revenue comes from approved subscription payments only, one
+ * figure per currency (never summed across currencies), and the page says
+ * how many active subscriptions have no approved payment behind them and
+ * that organizations marked internal (B0-ANL-04) are left out.
  *
  * AUTHORIZATION IS NOT THIS FILE'S JOB. The sidebar hides this page from
  * non-admins and the route is role-gated, but the actual control is
@@ -34,6 +33,7 @@ import { useApiQuery } from '@/shared/hooks';
 import { platformSubscriptionKeys } from '@services/query';
 import { adminSubscriptionsService } from '../services/AdminSubscriptionsService';
 import { formatDate } from '@/shared/utils/date.utils';
+import { formatCurrency } from '@utils';
 import type { LanguageCode, AdminSubscriptionOverview } from '@types';
 import type { ApiError } from '@api';
 
@@ -252,17 +252,73 @@ export function AdminSubscriptionsPage(): JSX.Element {
           )}
         </SectionCard>
 
-        {/* The limitation, stated plainly where a revenue tile would
-            otherwise sit. */}
-        <SectionCard titleKey="platform:adminSubscriptions.revenue.title">
-          <div className="flex items-start gap-3">
-            <AlertCircle
-              className="mt-0.5 size-5 shrink-0 text-muted-foreground"
-              aria-hidden
-            />
-            <p className="text-sm text-muted-foreground">
-              {t('platform:adminSubscriptions.revenue.notTracked')}
-            </p>
+        <SectionCard
+          titleKey="platform:adminSubscriptions.revenue.title"
+          descriptionKey="platform:adminSubscriptions.revenue.description"
+        >
+          <div className="space-y-4" data-testid="platform-mrr">
+            {data.revenue.mrr.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                {t('platform:adminSubscriptions.revenue.none')}
+              </p>
+            ) : (
+              <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {data.revenue.mrr.map((row) => (
+                  <div key={row.currency}>
+                    <dt className="text-sm text-muted-foreground">
+                      {t('platform:adminSubscriptions.revenue.currencyLabel', {
+                        currency: row.currency,
+                      })}
+                    </dt>
+                    <dd className="text-2xl font-semibold tabular-nums">
+                      {formatCurrency(
+                        row.monthlyAmountMinorUnits / 100,
+                        language,
+                        row.currency
+                      )}
+                    </dd>
+                    <dd className="text-xs text-muted-foreground">
+                      {t(
+                        'platform:adminSubscriptions.revenue.subscriptionsCount',
+                        { count: row.subscriptions }
+                      )}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+            {data.revenue.activeWithoutPayment > 0 ? (
+              <p className="flex items-start gap-2 text-sm text-muted-foreground">
+                <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
+                <span>
+                  {t('platform:adminSubscriptions.revenue.withoutPayment', {
+                    count: data.revenue.activeWithoutPayment,
+                  })}
+                </span>
+              </p>
+            ) : null}
+            {data.revenue.excludesInternalOrganizations ? (
+              <p className="text-xs text-muted-foreground">
+                {t('platform:adminSubscriptions.revenue.internalExcluded')}
+              </p>
+            ) : null}
+            <div>
+              <p className="text-sm font-medium">
+                {t('platform:adminSubscriptions.revenue.cyclesTitle')}
+              </p>
+              <dl className="mt-2 grid grid-cols-3 gap-4">
+                {(['monthly', 'yearly', 'none'] as const).map((cycle) => (
+                  <div key={cycle}>
+                    <dt className="text-xs text-muted-foreground">
+                      {t(`platform:adminSubscriptions.revenue.cycle.${cycle}`)}
+                    </dt>
+                    <dd className="text-lg font-semibold tabular-nums">
+                      {data.subscriptions.byStatusAndCycle.active?.[cycle] ?? 0}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
           </div>
         </SectionCard>
 

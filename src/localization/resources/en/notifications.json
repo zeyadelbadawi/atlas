@@ -258,6 +258,10 @@
       "title": "A review needs moderating",
       "message": "A learner reviewed \"{{courseTitle}}\". It stays hidden until you approve it."
     },
+    "academyContactSubmissionReceived": {
+      "title": "New website message",
+      "message": "A visitor sent a message through your academy website's Contact form."
+    },
     "rosterStudentAwaitingApproval": {
       "title": "Someone is waiting to join",
       "message": "A new learner signed up and needs approval before they can reach any course."
@@ -265,6 +269,10 @@
     "lifecycleTrialStarted": {
       "title": "Your {{planName}} trial has started",
       "message": "Your trial runs until {{trialEndsAtDate}}. Choose a plan before then to keep your site online."
+    },
+    "lifecycleTrialEndingIn3Days": {
+      "title": "Your trial ends in 3 days",
+      "message": "Your {{planName}} trial ends {{trialEndsAtDate}}. Payments are reviewed by a person, so choose a plan now to keep your site online."
     },
     "lifecycleTrialEndingSoon": {
       "title": "Your trial ends tomorrow",
@@ -294,6 +302,10 @@
       "title": "We received your payment proof",
       "message": "We received {{amount}} {{currency}} on {{submittedAtDate}}. We'll confirm once it's reviewed."
     },
+    "lifecycleSubscriptionRenewal30d": {
+      "title": "Your yearly plan renews in 30 days",
+      "message": "Your {{planName}} yearly period ends {{periodEndDate}}. You have time to arrange the transfer before it ends."
+    },
     "lifecycleSubscriptionRenewalDue": {
       "title": "Your plan renews soon",
       "message": "Your {{planName}} period ends {{periodEndDate}}. Bank transfers take a few days to clear, so start now."
@@ -317,6 +329,10 @@
     "lifecycleSubscriptionCancelScheduled": {
       "title": "Your cancellation is scheduled",
       "message": "Your subscription ends {{effectiveAtDate}}. Everything keeps working until then."
+    },
+    "lifecycleSubscriptionPriceChangeNotice": {
+      "title": "Your plan changes at renewal",
+      "message": "The {{planName}} plan's price or limits change from your next renewal. Nothing changes before then."
     },
     "lifecycleSubscriptionCancelled": {
       "title": "Your subscription has ended",
@@ -365,6 +381,30 @@
     "platformContactSubmissionReceived": {
       "title": "New contact enquiry",
       "message": "A new message arrived through the Atlas website contact form."
+    },
+    "platformSubscriptionPaymentSubmitted": {
+      "title": "Subscription payment to review",
+      "message": "{{organizationName}} submitted a payment proof of {{amount}} {{currency}}."
+    },
+    "platformSupportCaseCreated": {
+      "title": "New support case",
+      "message": "{{organizationName}} opened a new support case."
+    },
+    "platformSupportCaseCustomerReplied": {
+      "title": "Customer replied on a support case",
+      "message": "{{organizationName}} replied on a support case."
+    },
+    "platformOrganizationSignedUp": {
+      "title": "New organization",
+      "message": "{{organizationName}} signed up for Atlas."
+    },
+    "platformCoursePaymentSubmitted": {
+      "title": "Course payment to review",
+      "message": "A learner at {{academyName}} submitted a payment of {{amount}} {{currency}} for \"{{courseTitle}}\"."
+    },
+    "platformRefundRecorded": {
+      "title": "Refund recorded",
+      "message": "A refund of {{amount}} {{currency}} was recorded for \"{{courseTitle}}\" at {{academyName}}."
     },
     "customerRequestRouted": {
       "title": "Customer request activity",
@@ -437,6 +477,70 @@
     "academyPaymentSubmitted": {
       "title": "New payment to review",
       "message": "A learner sent {{amount}} {{currency}} for \"{{courseTitle}}\". Check it and approve or reject."
+    },
+    "billingLimitApproaching": {
+      "title": "Close to a plan limit",
+      "message": "You're at {{used}} of {{limit}} on one of your plan limits."
+    },
+    "billingLimitApproachingStudents": {
+      "title": "Close to your student limit",
+      "message": "You have {{used}} of {{limit}} students on your plan."
+    },
+    "billingLimitApproachingCourses": {
+      "title": "Close to your course limit",
+      "message": "You have {{used}} of {{limit}} courses on your plan."
+    },
+    "billingLimitApproachingAcademies": {
+      "title": "Close to your academy limit",
+      "message": "You have {{used}} of {{limit}} academies on your plan."
+    },
+    "billingLimitApproachingStorage": {
+      "title": "Close to your storage limit",
+      "message": "You're using {{used}} of {{limit}} GB of storage on your plan."
+    },
+    "billingLimitReached": {
+      "title": "Plan limit reached",
+      "message": "You reached one of your plan limits ({{used}} of {{limit}}). New additions are refused until you upgrade."
+    },
+    "billingLimitReachedStudents": {
+      "title": "Student limit reached",
+      "message": "You have {{used}} of {{limit}} students. New students cannot join until you upgrade."
+    },
+    "billingLimitReachedCourses": {
+      "title": "Course limit reached",
+      "message": "You have {{used}} of {{limit}} courses. New courses cannot be created until you upgrade."
+    },
+    "billingLimitReachedAcademies": {
+      "title": "Academy limit reached",
+      "message": "You have {{used}} of {{limit}} academies. New academies cannot be created until you upgrade."
+    },
+    "billingLimitReachedStorage": {
+      "title": "Storage limit reached",
+      "message": "You're using {{used}} of {{limit}} GB. New uploads are refused until you upgrade."
+    },
+    "privacyRequestCode": {
+      "title": "Privacy request code",
+      "message": "A code to confirm your privacy request was sent to your email."
+    },
+    "privacyRequestReceived": {
+      "title": "Privacy request received",
+      "message": "We received your privacy request."
+    },
+    "privacyRequestExportReady": {
+      "title": "Your data is ready",
+      "message": "Your copy of your data can be downloaded from your profile."
+    },
+    "privacyRequestRejected": {
+      "title": "Privacy request update",
+      "message": "We could not complete your privacy request."
+    },
+    "privacyRequestDeletionCompleted": {
+      "title": "Account deleted",
+      "message": "Your account was deleted as you requested."
+    },
+    "platformPrivacyRequestCreated": {
+      "title": "New privacy request",
+      "message": "A person filed a privacy request."
     }
   },
   "liveSession": {
@@ -492,7 +596,7 @@
       "off": "Off"
     },
     "reminders": "Reminders",
-    "remindersDescription": "Upcoming live sessions, deadlines and an expiring trial.",
+    "remindersDescription": "Reminders about your trial and subscription renewal.",
     "categories": {
       "security": {
         "title": "Security",
@@ -500,15 +604,15 @@
       },
       "transactional": {
         "title": "Receipts and orders",
-        "description": "Purchases, payments, refunds and invoices."
+        "description": "Purchases, payments and refunds, including email receipts."
       },
       "lifecycle": {
         "title": "Account and courses",
         "description": "Enrolments, grades, certificates and academy setup."
       },
       "engagement": {
-        "title": "Updates and announcements",
-        "description": "Announcements, discussion replies and new content in your courses."
+        "title": "Academy updates",
+        "description": "Messages from your academy, grades and results, and course completion. Announcements appear in your notifications, not by email."
       },
       "operational": {
         "title": "Operations",

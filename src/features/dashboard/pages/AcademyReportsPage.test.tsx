@@ -296,8 +296,12 @@ describe('AcademyReportsPage', () => {
 
     const notices = screen.getAllByRole('status');
     expect(notices).toHaveLength(1);
+    // B0-ANL-03: only the lists are sampled; the headline counts are exact.
     expect(notices[0]?.textContent).toContain(
-      'Some lists were shortened to their top entries.'
+      'the top lists rank its most recent records only.'
+    );
+    expect(notices[0]?.textContent).toContain(
+      'The headline figures cover the whole period.'
     );
 
     cleanup();

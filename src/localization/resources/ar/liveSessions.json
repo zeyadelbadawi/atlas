@@ -53,6 +53,7 @@
     "free": "مجانًا",
     "price": "{{amount}} {{currency}} / شهريًا",
     "install": "تثبيت",
+    "purchase": "شراء",
     "enable": "تفعيل",
     "disable": "تعطيل",
     "uninstall": "إزالة",

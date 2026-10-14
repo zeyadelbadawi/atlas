@@ -51,6 +51,34 @@
       "active": "Active",
       "suspended": "Suspended",
       "archived": "Archived"
+    },
+    "adjust": {
+      "title": "Adjust subscription",
+      "description": "Platform Owner remedies. Each one needs a reason and is written to the audit log.",
+      "extend": "Extend",
+      "grantDays": "Grant days",
+      "changePlan": "Change plan",
+      "extendTitle": "Extend the subscription",
+      "extendDescription": "Moves the trial end (while trialing) or the paid period end by this many days, counted from that date or from today if it has passed. A subscription in its grace period becomes active again.",
+      "grantTitle": "Grant days",
+      "grantDescription": "Gives free days as goodwill. Same effect as Extend, recorded separately in the audit log.",
+      "changePlanTitle": "Change the plan",
+      "changePlanDescription": "Moves this organization to another plan, including hidden plans, and grants that plan's current limits.",
+      "days": "Days",
+      "planKey": "Plan key",
+      "planKeyHint": "Type the plan key. Hidden plans are not listed; type their key.",
+      "applyAt": "When",
+      "applyNow": "Now",
+      "applyPeriodEnd": "At the end of the paid period",
+      "reason": "Reason",
+      "reasonHint": "At least 10 characters. Kept in the audit log.",
+      "submit": "Apply",
+      "success": "Subscription updated."
+    },
+    "internal": {
+      "title": "Internal organization",
+      "label": "Internal (test, demo or staff)",
+      "description": "Internal organizations are left out of platform revenue figures. The customer never sees this setting. Every change is recorded in the audit log."
     }
   },
   "academies": {
@@ -172,6 +200,23 @@
       "planFailed": "We could not work out what this deletion would affect, so nothing has been deleted. Close this and try again.",
       "alreadyDeleted": "This account has already been deleted. There is nothing left to do.",
       "refused": "This account cannot be deleted here. Platform Owner accounts are only changed through server provisioning."
+    },
+    "suspend": {
+      "action": "Suspend account",
+      "reinstateAction": "Reinstate account",
+      "title": "Suspend this account",
+      "description": "{{name}} ({{email}}) will be signed out everywhere now and cannot sign in until reinstated. Nothing is deleted.",
+      "reinstateTitle": "Reinstate this account",
+      "reinstateDescription": "{{name}} ({{email}}) will be able to sign in again.",
+      "reasonLabel": "Reason",
+      "reasonHint": "Required. Kept in the audit log.",
+      "reasonOptionalHint": "Optional. Kept in the audit log.",
+      "confirm": "Suspend",
+      "reinstateConfirm": "Reinstate",
+      "cancel": "Cancel",
+      "suspended": "Account suspended",
+      "reinstated": "Account reinstated",
+      "failed": "The change could not be made"
     }
   },
   "rolesPermissions": {
@@ -252,8 +297,21 @@
       "kindPaid": "Paid"
     },
     "revenue": {
-      "title": "Revenue",
-      "notTracked": "Atlas does not track subscription revenue. Plan prices are catalog information and no ledger links a subscription to money actually received, so no revenue figure is shown here rather than one derived from list prices."
+      "title": "Monthly recurring revenue",
+      "description": "From approved subscription payments only: each active subscription’s latest approved payment, with yearly payments divided by 12. Currencies are never added together.",
+      "currencyLabel": "Per month ({{currency}})",
+      "subscriptionsCount_one": "From {{count}} paid subscription",
+      "subscriptionsCount_other": "From {{count}} paid subscriptions",
+      "none": "No active subscription has an approved payment yet.",
+      "withoutPayment_one": "{{count}} active subscription has no approved payment on record (for example, time granted by the platform) and is not included.",
+      "withoutPayment_other": "{{count}} active subscriptions have no approved payment on record (for example, time granted by the platform) and are not included.",
+      "internalExcluded": "Organizations marked as internal (test, demo or staff) are not included.",
+      "cyclesTitle": "Active subscriptions by billing cycle",
+      "cycle": {
+        "monthly": "Monthly",
+        "yearly": "Yearly",
+        "none": "No cycle recorded"
+      }
     },
     "generatedAt": "Figures generated {{timestamp}}"
   },
@@ -263,6 +321,7 @@
       "toggle": "History",
       "by": "by {{name}}",
       "noDetail": "No change detail was recorded for this entry.",
+      "subscribersNotified": "Organizations notified: {{notified}}. Not sent (see server logs): {{failed}}.",
       "emptyTitle": "No changes recorded yet",
       "emptyDescription": "Administrative changes to this plan will appear here.",
       "actions": {
@@ -270,6 +329,7 @@
         "plan.updated": "Plan updated",
         "plan.pricing_changed": "Pricing changed",
         "plan.trial_config_changed": "Free trial settings changed",
+        "plan.subscribers_notified": "Subscribers notified",
         "plan.archived": "Plan archived"
       }
     },
@@ -277,6 +337,7 @@
       "title": "Edit {{plan}}",
       "description": "Changes take effect immediately for new operations. Existing customer data is never removed.",
       "pricingTitle": "Pricing",
+      "subscriberNotice": "Saving a change to the price or the limits emails the owner of every paying organization on this plan, and shows them a notice on their subscription page. It applies to them from their next renewal.",
       "amount": "Amount",
       "currency": "Currency",
       "yearlyAmount": "Yearly price (optional)",
@@ -701,6 +762,66 @@
     "values": {
       "notRecorded": "Not recorded",
       "untitled": "Untitled"
+    }
+  },
+  "privacyRequests": {
+    "title": "Privacy requests",
+    "subtitle": "Requests to export or delete a person's data. Handle the oldest first; nothing in the product promises a handling time.",
+    "breadcrumb": "Privacy requests",
+    "empty": "No privacy requests match this view.",
+    "loadFailed": "Could not load privacy requests.",
+    "filters": {
+      "all": "All",
+      "open": "Open"
+    },
+    "columns": {
+      "type": "Type",
+      "requester": "Requester",
+      "academy": "Filed from",
+      "status": "Status",
+      "created": "Filed"
+    },
+    "noAcademy": "Management dashboard",
+    "type": {
+      "export": "Data export",
+      "deletion": "Account deletion"
+    },
+    "status": {
+      "submitted": "Submitted",
+      "in_progress": "In progress",
+      "completed": "Completed",
+      "rejected": "Declined"
+    },
+    "detail": {
+      "back": "Back to privacy requests",
+      "requester": "Requester",
+      "email": "Email",
+      "academy": "Filed from",
+      "filed": "Filed",
+      "completed": "Completed",
+      "availableUntil": "Download available until",
+      "note": "Reason given",
+      "openUser": "Open user",
+      "accountGone": "Account deleted",
+      "identity": "Filed from the signed-in account and confirmed by a code sent to its verified email address.",
+      "start": "Start handling",
+      "starting": "Saving…",
+      "fulfilExport": "Prepare download",
+      "fulfilExportHint": "The person can download their data from their profile for 7 days. They are emailed.",
+      "fulfilDeletion": "Delete account",
+      "fulfilDeletionHint": "Deletes the account through the standard Platform Owner deletion: owned academies are archived, memberships removed, sessions ended. Check the deletion plan on the user's page first. This cannot be undone.",
+      "confirmDeletionTitle": "Delete this account?",
+      "confirmDeletionBody": "Type DELETE to confirm. This cannot be undone.",
+      "confirmWord": "DELETE",
+      "confirm": "Confirm",
+      "working": "Working…",
+      "reject": "Decline",
+      "rejectTitle": "Decline this request",
+      "rejectLabel": "Reason (sent to the person)",
+      "rejectPlaceholder": "For example: an open payment dispute must be settled first.",
+      "saved": "Request updated.",
+      "failed": "The request could not be updated.",
+      "cancel": "Cancel"
     }
   }
 }

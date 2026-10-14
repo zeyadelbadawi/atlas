@@ -32,7 +32,6 @@ import type {
 export interface SignInCredentials {
   readonly email: string;
   readonly password: string;
-  readonly rememberMe: boolean;
   /**
    * P64 Phase 1 (AD-5) — the surface this sign-in is for. Every page sets
    * it explicitly: `management` for Atlas's own `/auth/sign-in`, `academy`

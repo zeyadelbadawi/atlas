@@ -117,7 +117,8 @@
     "platformCommerce": "Commerce",
     "platformCoursePayments": "Course payments",
     "platformPayouts": "Payouts",
-    "platformCommission": "Commission"
+    "platformCommission": "Commission",
+    "platformPrivacyRequests": "Privacy requests"
   },
   "account": {
     "menu": "Account menu",

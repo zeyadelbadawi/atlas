@@ -40,7 +40,7 @@ import {
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
-import { saveViaForm } from '@utils';
+import { saveViaForm, currencyOptions } from '@utils';
 import { useAuth, useUnsavedChanges } from '@hooks';
 import { useAcademyDomain } from '@features/domain';
 import {
@@ -401,12 +401,11 @@ export default function AcademySettingsPage(): JSX.Element {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="EGP">EGP</SelectItem>
-                          <SelectItem value="USD">USD</SelectItem>
-                          <SelectItem value="EUR">EUR</SelectItem>
-                          <SelectItem value="GBP">GBP</SelectItem>
-                          <SelectItem value="AED">AED</SelectItem>
-                          <SelectItem value="SAR">SAR</SelectItem>
+                          {currencyOptions(field.value).map((code) => (
+                            <SelectItem key={code} value={code}>
+                              {code}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       <FormMessage />

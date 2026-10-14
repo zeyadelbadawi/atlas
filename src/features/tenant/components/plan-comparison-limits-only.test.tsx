@@ -78,26 +78,18 @@ const REMOVED_LABELS = {
 } as const;
 
 const LIMIT_LABELS = {
-  en: [
-    'Academies',
-    'Students',
-    'Instructors',
-    'Staff',
-    'Courses',
-    'General storage',
-    'Video storage',
-    'Recorded sessions',
-  ],
-  ar: [
-    'الأكاديميات',
-    'الطلاب',
-    'المدرّبون',
-    'الموظفون',
-    'الدورات',
-    'التخزين العام',
-    'تخزين الفيديو',
-    'الجلسات المسجّلة',
-  ],
+  en: ['Academies', 'Students', 'Instructors', 'Courses', 'General storage'],
+  ar: ['الأكاديميات', 'الطلاب', 'المدرّبون', 'الدورات', 'التخزين العام'],
+} as const;
+
+/**
+ * B0-MED-04 — allowances no academy can use yet: video storage (no hosted
+ * video authoring) and recorded sessions (Live Sessions unlaunched).
+ * B0-ORG-01 — and staff: the `staff` role cannot be granted.
+ */
+const UNUSABLE_LIMIT_LABELS = {
+  en: ['Video storage', 'Recorded sessions', 'Staff'],
+  ar: ['تخزين الفيديو', 'الجلسات المسجّلة', 'الموظفون'],
 } as const;
 
 afterEach(() => cleanup());
@@ -132,6 +124,13 @@ describe.each(['en', 'ar'] as const)(
       const text = renderDialog();
       for (const label of LIMIT_LABELS[language]) {
         expect(text.split(label).length - 1).toBeGreaterThanOrEqual(2);
+      }
+    });
+
+    it('shows no allowance an academy cannot use yet (B0-MED-04)', () => {
+      const text = renderDialog();
+      for (const label of UNUSABLE_LIMIT_LABELS[language]) {
+        expect(text).not.toContain(label);
       }
     });
   }

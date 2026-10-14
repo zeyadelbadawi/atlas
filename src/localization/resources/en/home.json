@@ -3,7 +3,7 @@
     "eyebrow": "For academies and training providers in Egypt and beyond",
     "title": "Launch your online academy without building a platform from scratch",
     "description": "Atlas brings courses, students, instructors, your branded website and the infrastructure behind them into one platform — so you launch in days, not months, and without a development project.",
-    "primaryAction": "Get started free",
+    "primaryAction": "Start your trial",
     "secondaryAction": "See pricing",
     "scrollHint": "See how"
   },
@@ -89,7 +89,7 @@
   },
   "pricingPreview": {
     "title": "Straightforward pricing",
-    "description": "Start free. Upgrade when your academy needs more room to grow.",
+    "description": "Start with a trial — no card needed. Upgrade when your academy needs more room to grow.",
     "loading": "Loading plans…",
     "choosePlan": "Choose plan",
     "viewFullPricing": "See the full plan comparison",
@@ -102,7 +102,7 @@
   "finalCta": {
     "title": "Bring your academy onto Atlas",
     "description": "Create your organization in minutes — no credit card required to start.",
-    "action": "Get started free"
+    "action": "Start your trial"
   },
   "contact": {
     "nav": "Contact",

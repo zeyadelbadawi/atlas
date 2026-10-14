@@ -216,6 +216,9 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
             {
               value: 'students',
               labelKey: 'website:fields.statMetricStudents',
+              // B0-WEB-10 — off by default in starter sections; when an
+              // owner picks it, say plainly that the count is public.
+              hintKey: 'website:fields.statMetricStudentsHint',
             },
             {
               value: 'instructors',

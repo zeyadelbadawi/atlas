@@ -33,6 +33,7 @@ import {
 } from '@/components/ui/card';
 import { ErrorState } from '@components/feedback';
 import { useToast } from '@hooks';
+import { isFieldViolationError, useServerValidation } from '@forms';
 import { useChangePassword } from '../hooks';
 import { ProfileSessionsCard } from './ProfileSessionsCard';
 import { TrustedDevicesCard } from './TrustedDevicesCard';
@@ -70,12 +71,7 @@ export function ProfileSecuritySection({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const changePassword = useChangePassword();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<PasswordFormData>({
+  const form = useForm<PasswordFormData>({
     resolver: zodResolver(passwordSchema),
     defaultValues: {
       currentPassword: '',
@@ -83,6 +79,19 @@ export function ProfileSecuritySection({
       confirmPassword: '',
     },
   });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = form;
+
+  // B0-SEC-11 — a refused new password (e.g. too common) is shown on the
+  // field, not as a generic "something went wrong" card.
+  useServerValidation(form, changePassword.error);
+  const hasFieldViolations =
+    isFieldViolationError(changePassword.error) &&
+    (changePassword.error?.violations?.length ?? 0) > 0;
 
   const isLoading = changePassword.isPending;
 
@@ -112,7 +121,7 @@ export function ProfileSecuritySection({
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
-            {changePassword.error ? (
+            {changePassword.error && !hasFieldViolations ? (
               <ErrorState onRetry={handleSubmit(handleFormSubmit)} />
             ) : null}
 

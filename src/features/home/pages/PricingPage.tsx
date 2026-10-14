@@ -26,7 +26,7 @@ import { RISE_VARIANTS, createStaggerVariants } from '@motion';
 import { usePublicPlans } from '../hooks/usePublicPlans';
 import { useStartPlanFlow } from '../hooks/useStartPlanFlow';
 import { formatPlanPrice } from '../utils/formatPlanPrice';
-import { planCatalogHasGifts } from '@utils';
+import { isCustomerVisibleLimitKey, planCatalogHasGifts } from '@utils';
 import {
   GiftedDaysExplainer,
   PlanGiftedDays,
@@ -45,15 +45,17 @@ import structureCalm from '../components/cinematic-hero/assets/structure-calm.we
  * plan ever enforced them — Atlas never advertises an entitlement it does
  * not enforce.
  */
-const LIMIT_ROWS = [
-  'academies',
-  'students',
-  'instructors',
-  'staff',
-  'courses',
-  'generalStorage',
-  'videoStorage',
-] as const;
+const LIMIT_ROWS = (
+  [
+    'academies',
+    'students',
+    'instructors',
+    'staff',
+    'courses',
+    'generalStorage',
+    'videoStorage',
+  ] as const
+).filter(isCustomerVisibleLimitKey);
 
 const STORAGE_LIMIT_KEYS = new Set(['generalStorage', 'videoStorage']);
 

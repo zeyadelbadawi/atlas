@@ -1,7 +1,7 @@
 {
   "page": {
     "title": "Plans for academies of every size",
-    "description": "Start free, and move up only when you actually need more room.",
+    "description": "Start with a trial, and move up only when you actually need more room.",
     "eyebrow": "Pricing"
   },
   "table": {
@@ -28,7 +28,7 @@
   },
   "faq": {
     "title": "Questions about pricing?",
-    "description": "Some plans include a free trial. Each customer can use one free trial, and it needs no credit card. Reach out any time if you need help choosing."
+    "description": "Some plans include a trial. Each customer can use one trial; it needs no card, and nothing is charged automatically. Reach out any time if you need help choosing."
   },
   "comparison": {
     "title": "Compare every plan",
@@ -50,7 +50,7 @@
       "timing": "They're added once your first payment is confirmed, and your paid period starts when they end, so you still get the full period you pay for.",
       "amount": "The number of days depends on the plan and billing cycle. Some plans and billing cycles include none; each plan above shows what it includes.",
       "once": "Once per customer, on your first-ever paid subscription. They aren't added to renewals, plan changes or later subscriptions.",
-      "trial": "Separate from the free trial: starting with a free trial doesn't use them up."
+      "trial": "Separate from the trial: starting a trial doesn't use them up."
     }
   }
 }

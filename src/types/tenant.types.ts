@@ -155,6 +155,45 @@ export interface TenantSubscription {
   readonly giftedDays?: number;
   readonly giftedStartsAt?: string;
   readonly giftedEndsAt?: string;
+  /**
+   * B0-BIL-04 — a smaller plan already bought that takes over at
+   * `effectiveAt` (the end of the current paid period). Until then the
+   * current plan and its limits apply.
+   */
+  readonly scheduledChange?: {
+    readonly planId: string;
+    readonly planName: string;
+    readonly effectiveAt: string;
+  };
+  /**
+   * B0-BIL-07 — the plan this organization renews into had its price or
+   * limits edited. Shown until the next paid renewal or until the owner
+   * dismisses it. `effectiveAt` is the end of the current paid period
+   * (absent in grace, where the next renewal is whenever they pay).
+   * Prices are display amounts, not minor units.
+   */
+  readonly priceChangeNotice?: PriceChangeNotice;
+}
+
+export interface PriceChangeNoticePrice {
+  readonly amount: number;
+  readonly currency: string;
+}
+
+export interface PriceChangeNotice {
+  readonly planId: string;
+  readonly planName: string;
+  readonly billingCycle: 'monthly' | 'yearly';
+  readonly fromPrice: PriceChangeNoticePrice | null;
+  readonly toPrice: PriceChangeNoticePrice | null;
+  readonly limitChanges: Readonly<
+    Record<
+      string,
+      { readonly from: LimitValue | null; readonly to: LimitValue | null }
+    >
+  >;
+  readonly noticedAt: string;
+  readonly effectiveAt?: string;
 }
 
 /** One resource's usage against its (possibly unlimited) limit. */

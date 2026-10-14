@@ -160,8 +160,18 @@ export class RenderCache {
  *   HTML painted later — Lighthouse mobile FCP +200–490 ms. Without them
  *   the page paints as soon as the CSS arrives and `main.tsx` still starts
  *   the chunk at boot (Reports/SSR_ARCHITECTURE_ANALYSIS.md §12.6).
- * @param {boolean} [options.preloadArabicFonts] Arabic pages preload the
- *   Arabic subsets of the theme fonts (see §12.6 for the measurement).
+ * @param {boolean} [options.preloadArabicFonts] Arabic Theme 1 pages
+ *   preload the Arabic subsets of Rubik and Readex Pro (off here, on in
+ *   `server.mjs`). B0-WEB-12, Lighthouse mobile, fixture build, About AR
+ *   cold, median of 3: CLS 0.066 → 0.040 (the fallback face made the
+ *   section heading wrap to two lines, then one, moving the footer),
+ *   FCP 2.57 → 2.43 s, LCP 2.57 → 2.73 s. The 2 Oct measurement (§12.6)
+ *   was CLS 0.021 with LCP about 450 ms later.
+ * @param {boolean} [options.canonicalRedirect] B0-WEB-06: a public page
+ *   requested on the non-canonical host (the Atlas subdomain of an academy
+ *   whose custom domain is connected and reachable) is answered with a 301
+ *   to the same path and query on the canonical host. Off by default here;
+ *   `server.mjs` turns it on (SSR_CANONICAL_REDIRECT=off to stop it).
  * @param {boolean} [options.preloadThemeFonts] off by default (measured):
  *   an Atelier page preloads the display face(s) its heading (the Home hero,
  *   its LCP element) is set in, which the browser otherwise finds only after
@@ -186,6 +196,7 @@ export async function createSsrHandler({
   preloadRouterChunks = false,
   preloadArabicFonts = false,
   preloadThemeFonts = false,
+  canonicalRedirect = false,
 }) {
   const entry = await import(pathToFileURL(entryPath).href);
   const template = readFileSync(join(distDir, 'index.html'), 'utf8');
@@ -266,6 +277,7 @@ export async function createSsrHandler({
             preloadHtml,
             localePreloadHtml,
             preloadThemeFonts,
+            canonicalRedirect,
             apiOrigin,
             apiTimeoutMs,
             // A response larger than the page budget means the page would
@@ -282,6 +294,20 @@ export async function createSsrHandler({
           );
         }),
       ]);
+      if (result.kind === 'redirect') {
+        log({ event: 'redirect', ms: Date.now() - started });
+        return {
+          status: 301,
+          headers: {
+            Location: result.location,
+            // Revalidated, never remembered for good: the canonical host
+            // moves back to the subdomain if the custom domain breaks.
+            'Cache-Control': 'private, no-cache',
+            'X-Atlas-SSR': 'redirect',
+          },
+          body: '',
+        };
+      }
       if (result.kind !== 'html') {
         log({ event: 'pass', reason: result.reason, ms: Date.now() - started });
         return shell(result.reason);
@@ -311,6 +337,11 @@ export async function createSsrHandler({
           // Tenant HTML is never stored by a shared cache (Cloudflare).
           'Cache-Control': 'private, no-cache',
           'X-Atlas-SSR': result.cache === 'hit' ? 'hit' : 'render',
+          // B0-WEB-06 — Coming Soon (unpublished or lapsed) is never indexed;
+          // the page's own robots meta says the same.
+          ...(result.outcome === 'unpublished'
+            ? { 'X-Robots-Tag': 'noindex' }
+            : {}),
         },
         body: result.html,
       };

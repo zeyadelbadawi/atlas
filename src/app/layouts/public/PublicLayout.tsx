@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 import { AtlasLogo } from '@components/branding';
+import { isFeatureEnabled } from '@config';
 import { LanguageSwitcher, ThemeSwitcher } from '@components/controls';
 import { OfflineNotice } from '@components/feedback';
 import { SkipToContentLink } from '@components/navigation';
@@ -68,7 +69,11 @@ export function PublicLayout(): JSX.Element {
       {!isOnline ? <OfflineNotice /> : null}
 
       <header className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur">
-        <div className="mx-auto flex h-layout-header max-w-marketing items-center justify-between gap-4 px-5 sm:px-6 lg:px-8">
+        {/* Phones get tighter padding and gaps, and the theme control moves
+            into the drawer below `sm`: with the language trigger's label
+            (EN plus a chevron) the row was 33 px wider than a 360 px screen
+            in English, and pushed the logo off the start edge in Arabic. */}
+        <div className="mx-auto flex h-layout-header max-w-marketing items-center justify-between gap-2 px-4 sm:gap-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-8">
             <Link
               to={PUBLIC_ROUTES.home}
@@ -103,7 +108,7 @@ export function PublicLayout(): JSX.Element {
 
           <div className="flex items-center gap-1">
             <LanguageSwitcher />
-            <ThemeSwitcher />
+            <ThemeSwitcher className="hidden sm:inline-flex" />
 
             {isAuthenticated ? (
               <Button asChild size="sm" className="ms-2">
@@ -185,6 +190,15 @@ export function PublicLayout(): JSX.Element {
                     </Link>
                   ))}
                 </nav>
+
+                {isFeatureEnabled('themeSwitcher') ? (
+                  <div className="flex min-h-11 items-center justify-between border-b border-border sm:hidden">
+                    <span className="text-base font-medium text-foreground">
+                      {t('common:theme.appearance')}
+                    </span>
+                    <ThemeSwitcher />
+                  </div>
+                ) : null}
 
                 {!isAuthenticated ? (
                   <div className="mt-8 flex flex-col gap-3">

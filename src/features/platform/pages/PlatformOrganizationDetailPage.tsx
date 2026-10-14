@@ -15,6 +15,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useDateFormatter } from '@hooks';
 import { OrganizationCommissionCard } from '@features/platform-commerce';
 import { usePlatformOrganization } from '../hooks';
+import { SubscriptionAdjustmentsCard } from '../components/SubscriptionAdjustmentsCard';
+import { InternalOrganizationCard } from '../components/InternalOrganizationCard';
 import { getPlatformOrganizationStatusTone } from '../utils/platform-status.utils';
 
 export default function PlatformOrganizationDetailPage(): JSX.Element {
@@ -161,6 +163,14 @@ export default function PlatformOrganizationDetailPage(): JSX.Element {
             )}
           </CardContent>
         </Card>
+
+        {/* B0-BIL-06 — audited Platform Owner remedies. */}
+        {organization.subscription ? (
+          <SubscriptionAdjustmentsCard organizationId={organization.id} />
+        ) : null}
+
+        {/* B0-ANL-04 — internal (test/demo/staff) organizations leave MRR. */}
+        <InternalOrganizationCard organizationId={organization.id} />
 
         <Card>
           <CardHeader>

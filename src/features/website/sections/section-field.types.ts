@@ -65,6 +65,8 @@ export interface SelectFieldDescriptor extends FieldDescriptorBase {
   readonly options: readonly {
     readonly value: string;
     readonly labelKey: string;
+    /** Shown under the select while this option is chosen (e.g. what choosing it makes public). */
+    readonly hintKey?: string;
   }[];
 }
 

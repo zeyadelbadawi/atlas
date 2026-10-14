@@ -85,6 +85,11 @@ export function CourseSpotlightSection({
     ? resolveWebsiteCtaHref(config.cta, pages)
     : courseHref;
   const remaining = totalSections - sections.length;
+  // B0-WEB-11 — on the public site a CTA whose target is gone (a deleted
+  // or hidden page) is dropped, like every theme's own links, instead of a
+  // button that goes nowhere. Previews keep the inert label (no
+  // `linkRenderer`) so the Owner still sees what they configured.
+  const showCta = !!ctaLabel && (!linkRenderer || !!ctaHref);
 
   return (
     <section className={`${container} ${section}`}>
@@ -162,7 +167,7 @@ export function CourseSpotlightSection({
               </ul>
             </div>
           ) : null}
-          {ctaLabel ? (
+          {showCta ? (
             linkRenderer && ctaHref ? (
               <Button asChild>
                 {linkRenderer({

@@ -318,8 +318,8 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
         // Placed right under Website, which it belongs to, as its own
         // entry because an inbox is somewhere people go directly. Gated
         // on `academy.website.manage` (Owner + Manager) — the backend
-        // serves contact submissions to that tier only, and a plain
-        // member's `academy.website.view` must not advertise it.
+        // serves contact submissions to that tier only. (A plain or
+        // `staff` member holds no website permission at all — B0-WEB-04.)
         id: 'academy-website-messages',
         requiresEntitlement: true,
         labelKey: 'navigation:items.academyWebsiteMessages',
@@ -556,9 +556,11 @@ export function getDashboardNavigation(
         {
           // Profile and Notifications live in the account menu (top bar);
           // Support stays in the sidebar as the last Cloud Services item.
-          // No `requiredRoles`: support is for everyone who can sign in,
-          // and per-ticket authorization is enforced by RLS. Hidden from
-          // Platform Owners, who answer cases in the platform console.
+          // No `requiredRoles`: anyone signed in on the management surface
+          // can file a case, and per-ticket authorization is enforced by
+          // RLS. Learners never see this sidebar; their help is their
+          // academy (B0-SUP-02). Hidden from Platform Owners, who answer
+          // cases in the platform console.
           id: 'support',
           labelKey: 'navigation:items.support',
           path: DASHBOARD_ROUTES.support,
@@ -1010,6 +1012,18 @@ export function getDashboardNavigation(
           labelKey: 'navigation:items.platformCustomerRequests',
           path: DASHBOARD_ROUTES.platformCustomerRequests,
           icon: MessageSquarePlus,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+          matchNestedPaths: true,
+        },
+        {
+          // B0-SEC-13 — data export / account deletion requests.
+          // `PlatformPrivacyRequestsController` (PlatformOwnerGuard + RLS)
+          // is the server-side boundary.
+          id: 'platform-privacy-requests',
+          labelKey: 'navigation:items.platformPrivacyRequests',
+          path: DASHBOARD_ROUTES.platformPrivacyRequests,
+          icon: ShieldCheck,
           requiresAuth: true,
           requiredRoles: ['platform_owner'],
           matchNestedPaths: true,

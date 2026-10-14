@@ -308,7 +308,7 @@ describe('AcademyPaymentMethodsPage', () => {
     });
     renderWith(<AcademyPaymentMethodsPage />);
     expect(
-      screen.getByText('Only the academy owner can manage payment methods')
+      screen.getByText('Only the organization owner can manage payment methods')
     ).toBeTruthy();
   });
 

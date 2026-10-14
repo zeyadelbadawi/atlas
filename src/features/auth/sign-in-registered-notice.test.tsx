@@ -25,7 +25,7 @@ function testQueryClient(): QueryClient {
 
 afterEach(cleanup);
 
-// jsdom has no ResizeObserver; the Radix "remember me" checkbox measures with one.
+// jsdom has no ResizeObserver; Radix primitives on the page may measure with one.
 if (!('ResizeObserver' in globalThis)) {
   (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver =
     class {

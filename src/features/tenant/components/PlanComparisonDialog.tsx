@@ -40,7 +40,7 @@ import { cn } from '@utils';
 import { isFeatureEnabled } from '@config';
 import {
   PLAN_FEATURE_KEYS,
-  PLAN_LIMIT_KEYS,
+  CUSTOMER_PLAN_LIMIT_KEYS,
   STORAGE_LIMIT_KEYS,
 } from '../constants/tenant.constants';
 import { formatLimitValue } from '../utils/entitlement.utils';
@@ -213,7 +213,7 @@ export function PlanComparisonDialog({
                   </div>
 
                   <div className="space-y-1.5 text-sm">
-                    {PLAN_LIMIT_KEYS.map((limitKey) => (
+                    {CUSTOMER_PLAN_LIMIT_KEYS.map((limitKey) => (
                       <div
                         key={limitKey}
                         className="flex items-center justify-between gap-2"
