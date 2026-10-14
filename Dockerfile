@@ -14,8 +14,15 @@
 # cache of Docker Hub's official images (same content and digests). The
 # deploy runner pulls anonymously, and Docker Hub's anonymous rate limit on
 # shared GitHub runner IPs failed two deploys in a row with 429.
+#
+# B0-OPS-12 — every base image is pinned to the multi-arch index digest its
+# tag resolved to when it was pinned (amd64 and arm64 builds both resolve
+# through it), so every build pulls the same bytes. The tags stay for
+# readability; Dependabot (.github/dependabot.yml) proposes digest updates
+# as reviewable PRs, and src/ci-supply-chain-pins.test.ts fails CI if a
+# FROM loses its digest.
 
-FROM mirror.gcr.io/library/node:20-alpine AS build
+FROM mirror.gcr.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 AS build
 WORKDIR /app
 RUN corepack enable
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
@@ -36,7 +43,7 @@ RUN ls dist/assets > "dist/assets/.build-$(date +%s).list"
 FROM build AS ssr-build
 RUN pnpm run build:ssr
 
-FROM mirror.gcr.io/library/node:20-alpine AS ssr-deps
+FROM mirror.gcr.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 AS ssr-deps
 WORKDIR /app
 RUN corepack enable
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
@@ -45,7 +52,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 # scripts: nothing the renderer loads needs a build step.
 RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 
-FROM mirror.gcr.io/library/node:20-alpine AS ssr
+FROM mirror.gcr.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 AS ssr
 WORKDIR /app
 ENV NODE_ENV=production
 COPY package.json ./
@@ -62,13 +69,13 @@ CMD ["node", "server/ssr/server.mjs"]
 # Cross-compiled on the build host's own architecture: Go builds a static
 # linux/arm64 Caddy natively in about a minute, where compiling it under
 # QEMU emulation took close to an hour.
-FROM --platform=$BUILDPLATFORM mirror.gcr.io/library/caddy:2-builder-alpine AS caddy-build
+FROM --platform=$BUILDPLATFORM mirror.gcr.io/library/caddy:2-builder-alpine@sha256:d6161a2c82fd58b3205048958fb6246d0c5d892beee8a47e90944610c4efd100 AS caddy-build
 ARG TARGETOS
 ARG TARGETARCH
 RUN GOOS=$TARGETOS GOARCH=$TARGETARCH CGO_ENABLED=0 \
     xcaddy build --with github.com/caddy-dns/cloudflare
 
-FROM mirror.gcr.io/library/caddy:2-alpine
+FROM mirror.gcr.io/library/caddy:2-alpine@sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f
 COPY --from=caddy-build /usr/bin/caddy /usr/bin/caddy
 # Stale-tab recovery — the previous builds' hashed chunks, carried forward
 # by the deploy workflow (each build's for 14 days), so a tab opened before this
