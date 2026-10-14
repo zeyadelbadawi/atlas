@@ -86,18 +86,22 @@ export interface LearnerRouterProps {
    * `LearnerSurface.context.tsx`.
    */
   readonly buildHref: (path: string) => string;
+  /** This academy's Contact page, ready to link (B0-SUP-02); absent when the site shows none. */
+  readonly contactHref?: string;
 }
 
 export function LearnerRouter({
   academyId,
   locale,
   buildHref,
+  contactHref,
 }: LearnerRouterProps): JSX.Element {
   return (
     <LearnerSurfaceProvider
       academyId={academyId}
       locale={locale}
       buildHref={buildHref}
+      contactHref={contactHref}
     >
       {/* Academy offline — what the connection and saved changes are doing. */}
       <LearnerConnectivityBanner />

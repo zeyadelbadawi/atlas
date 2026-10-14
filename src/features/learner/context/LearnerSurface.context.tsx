@@ -35,6 +35,13 @@ export interface LearnerSurface {
    * of every consumer remembering to strip it.
    */
   readonly pathname: string;
+  /**
+   * B0-SUP-02 — where a learner gets help: this academy's own Contact
+   * page, already a real href on this host. Learners do not open Atlas
+   * support tickets (the API refuses academy-site sessions), so there is
+   * no Atlas fallback; `undefined` when the site shows no Contact page.
+   */
+  readonly contactHref?: string;
 }
 
 const LearnerSurfaceContext = createContext<LearnerSurface | null>(null);
@@ -43,6 +50,7 @@ export interface LearnerSurfaceProviderProps {
   readonly academyId: string;
   readonly locale: PublicWebsiteLocale;
   readonly buildHref: (path: string) => string;
+  readonly contactHref?: string;
   readonly children: ReactNode;
 }
 
@@ -50,6 +58,7 @@ export function LearnerSurfaceProvider({
   academyId,
   locale,
   buildHref,
+  contactHref,
   children,
 }: LearnerSurfaceProviderProps): JSX.Element {
   const location = useLocation();
@@ -66,8 +75,9 @@ export function LearnerSurfaceProvider({
       isRtl: locale === 'ar',
       buildHref,
       pathname,
+      contactHref,
     };
-  }, [academyId, locale, buildHref, location.pathname]);
+  }, [academyId, locale, buildHref, location.pathname, contactHref]);
 
   // Notification context isolation — the bell, the count and the
   // notifications page under this tree are THIS academy's.

@@ -359,11 +359,12 @@ function PublicWebsiteLocaleRoutes({
         element={
           <LazyRoute>
             <PublicWebsiteLearningRoute lookupKey={lookupKey} locale={locale}>
-              {({ academyId, buildHref }) => (
+              {({ academyId, buildHref, contactHref }) => (
                 <LearnerRouter
                   academyId={academyId}
                   locale={locale}
                   buildHref={buildHref}
+                  contactHref={contactHref}
                 />
               )}
             </PublicWebsiteLearningRoute>
