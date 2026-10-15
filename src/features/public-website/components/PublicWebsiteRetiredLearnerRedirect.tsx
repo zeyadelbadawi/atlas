@@ -13,6 +13,10 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { resolveRetiredAcademyLearnerTarget } from '@app/routes/retired-learner-routes';
 import type { PublicWebsiteLocale } from '@types';
 import { usePublicWebsiteHrefBuilder } from '../utils/public-website-link-renderer';
+import {
+  stripPublicWebsiteLocalePrefix,
+  usePublicWebsiteDefaultLocale,
+} from '@features/website';
 
 export interface PublicWebsiteRetiredLearnerRedirectProps {
   readonly locale: PublicWebsiteLocale;
@@ -23,10 +27,11 @@ export function PublicWebsiteRetiredLearnerRedirect({
 }: PublicWebsiteRetiredLearnerRedirectProps): JSX.Element {
   const location = useLocation();
   const buildHref = usePublicWebsiteHrefBuilder(locale);
-  const unprefixed =
-    locale === 'en'
-      ? location.pathname
-      : location.pathname.replace(/^\/ar/, '') || '/';
+  const unprefixed = stripPublicWebsiteLocalePrefix(
+    location.pathname,
+    locale,
+    usePublicWebsiteDefaultLocale()
+  );
 
   return (
     <Navigate

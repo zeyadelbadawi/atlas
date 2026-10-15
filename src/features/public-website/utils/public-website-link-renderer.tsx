@@ -38,7 +38,12 @@
  * the prefix doubles (`/ar/ar/...`).
  */
 import { Link, useSearchParams } from 'react-router-dom';
-import type { WebsiteLinkRenderer } from '@features/website';
+import {
+  DEFAULT_PUBLIC_WEBSITE_LOCALE,
+  publicWebsiteLocalePrefix,
+  usePublicWebsiteDefaultLocale,
+  type WebsiteLinkRenderer,
+} from '@features/website';
 import type { PublicWebsiteLocale } from '@types';
 import { DEV_OVERRIDE_PARAM } from './hostname-resolution.utils';
 
@@ -53,12 +58,15 @@ import { DEV_OVERRIDE_PARAM } from './hostname-resolution.utils';
  */
 export function withPublicWebsiteLocale(
   path: string,
-  locale: PublicWebsiteLocale
+  locale: PublicWebsiteLocale,
+  // B0-WEB-02 — the site's default locale is the unprefixed one.
+  defaultLocale: PublicWebsiteLocale = DEFAULT_PUBLIC_WEBSITE_LOCALE
 ): string {
-  if (locale === 'en') return path;
+  const prefix = publicWebsiteLocalePrefix(locale, defaultLocale);
+  if (!prefix) return path;
   if (/^[a-z][a-z\d+.-]*:/i.test(path)) return path; // absolute/external (e.g. `https://…`, `mailto:…`)
-  if (path === '/ar' || path.startsWith('/ar/')) return path; // already prefixed
-  return path === '/' ? '/ar' : `/ar${path}`;
+  if (path === prefix || path.startsWith(`${prefix}/`)) return path; // already prefixed
+  return path === '/' ? prefix : `${prefix}${path}`;
 }
 
 /**
@@ -77,9 +85,10 @@ export function usePublicWebsiteHrefBuilder(
 ): (path: string) => string {
   const [searchParams] = useSearchParams();
   const devSlug = searchParams.get(DEV_OVERRIDE_PARAM);
+  const defaultLocale = usePublicWebsiteDefaultLocale();
 
   return (path: string) => {
-    const localized = withPublicWebsiteLocale(path, locale);
+    const localized = withPublicWebsiteLocale(path, locale, defaultLocale);
     if (!devSlug) return localized;
     const separator = localized.includes('?') ? '&' : '?';
     return `${localized}${separator}${DEV_OVERRIDE_PARAM}=${encodeURIComponent(devSlug)}`;

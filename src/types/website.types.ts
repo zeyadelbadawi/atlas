@@ -20,6 +20,7 @@ import type { WebsiteThemeKey } from './website-theme.types';
 import type { SectionInstance } from './website-section.types';
 import type { Academy } from './academy.types';
 import type { LocalizedText } from './website-content.types';
+import type { PublicWebsiteLocale } from './public-website-locale.types';
 
 export type WebsitePublishStatus =
   'draft' | 'published' | 'publishing' | 'failed';
@@ -181,6 +182,14 @@ export interface WebsiteConfiguration {
   readonly lastPublishError?: WebsitePublishError;
   readonly updatedAt: string;
   /**
+   * B0-WEB-02 — the site's main language, served at `/` (the other language
+   * moves under its own prefix: `/ar` on an English-default site, `/en` on
+   * an Arabic-default one). Present only when it is not `en`: ABSENT MEANS
+   * `en` (`resolveDefaultLocale`). The dashboard reads the saved value, the
+   * public runtime the published one.
+   */
+  readonly defaultLocale?: PublicWebsiteLocale;
+  /**
    * Saved but not yet published: whether the site-wide settings (theme,
    * brand, SEO, navigation, header, footer) differ from what visitors see,
    * and how many pages do. Visitors only ever see the published copy.
@@ -200,6 +209,8 @@ export interface UpdateWebsiteConfigurationPayload {
   readonly navigation?: readonly WebsiteNavigationItem[];
   readonly header?: WebsiteHeaderConfig;
   readonly footer?: WebsiteFooterConfig;
+  /** B0-WEB-02 — the site's main language; live at the next publish. */
+  readonly defaultLocale?: PublicWebsiteLocale;
   /**
    * The `updatedAt` of the copy this edit was based on. The save is refused
    * (409 `stale_resource_version`) if anyone has saved since — used where a

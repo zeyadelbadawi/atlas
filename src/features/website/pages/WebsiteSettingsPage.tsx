@@ -24,13 +24,39 @@ import { WebsitePublishBar } from '../components/WebsitePublishBar';
 import { WebsiteThemeTab } from '../components/WebsiteThemeTab';
 import { WebsiteSeoTab } from '../components/WebsiteSeoTab';
 import { WebsiteNavigationTab } from '../components/WebsiteNavigationTab';
+import { WebsiteLanguageTab } from '../components/WebsiteLanguageTab';
+import { WebsiteContentLocaleProvider } from '../components/website-content-locale';
+import { resolveDefaultLocale } from '../constants/locale.constants';
 import { getWebsiteTabs } from '../utils/website-navigation.utils';
 import type { BreadcrumbItem } from '@types';
 
-const SETTINGS_TABS = ['theme', 'seo', 'navigation', 'domain'] as const;
+const SETTINGS_TABS = [
+  'theme',
+  'seo',
+  'navigation',
+  'language',
+  'domain',
+] as const;
 type SettingsTab = (typeof SETTINGS_TABS)[number];
 
+/**
+ * B0-WEB-02 — every bilingual field on this page requires the site's main
+ * language (`LocalizedTextField`): the saved configuration (the same cached
+ * query the page reads) says which.
+ */
 export default function WebsiteSettingsPage(): JSX.Element {
+  const { academyId } = useParams<{ academyId: string }>();
+  const configQuery = useWebsiteConfiguration(academyId ?? '');
+  return (
+    <WebsiteContentLocaleProvider
+      value={resolveDefaultLocale(configQuery.data?.defaultLocale)}
+    >
+      <WebsiteSettings />
+    </WebsiteContentLocaleProvider>
+  );
+}
+
+function WebsiteSettings(): JSX.Element {
   const { t } = useTranslation();
   const { academyId } = useParams<{ academyId: string }>();
   const { hasPermission } = usePermissions();
@@ -164,6 +190,9 @@ export default function WebsiteSettingsPage(): JSX.Element {
             <TabsTrigger value="navigation">
               {t('website:settings.tabs.navigation')}
             </TabsTrigger>
+            <TabsTrigger value="language">
+              {t('website:settings.tabs.language')}
+            </TabsTrigger>
             <TabsTrigger value="domain">
               {t('website:settings.tabs.domain')}
             </TabsTrigger>
@@ -191,6 +220,13 @@ export default function WebsiteSettingsPage(): JSX.Element {
               academyId={academyId}
               configuration={configuration}
               pages={pages}
+            />
+          </TabsContent>
+
+          <TabsContent value="language" className="pt-4">
+            <WebsiteLanguageTab
+              academyId={academyId}
+              configuration={configuration}
             />
           </TabsContent>
 

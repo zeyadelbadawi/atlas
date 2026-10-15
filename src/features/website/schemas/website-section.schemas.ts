@@ -45,16 +45,44 @@ import {
 } from '../constants/website.constants';
 import { isAllowedImageValue } from '../utils/image-value.utils';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
-import { COURSE_CATALOG_SORT_VALUES, type SectionType } from '@types';
+import {
+  COURSE_CATALOG_SORT_VALUES,
+  type PublicWebsiteLocale,
+  type SectionType,
+} from '@types';
+import { DEFAULT_PUBLIC_WEBSITE_LOCALE } from '../constants/locale.constants';
 
 /** Matches the backend's identically-named helper (`section-config.schemas.ts`) exactly. Exported so `website.schemas.ts` (header/footer/navigation/page SEO) applies the exact same widening rule. */
 export function coerceLegacyLocalized(value: unknown): unknown {
   return typeof value === 'string' ? { en: value, ar: '' } : value;
 }
 
-/** `en` required non-empty; `ar` may be blank — an incomplete translation degrades to `en` at render time (`resolveLocalizedText`), it never blocks a save. */
-export const localizedRequired = (maxLength: number) =>
-  z.preprocess(
+/*
+ * B0-WEB-02 — WHICH LANGUAGE IS REQUIRED FOLLOWS THE SITE'S DEFAULT, exactly
+ * as the backend's `section-config.schemas.ts` does: English on an
+ * English-default site (every site until now, and the default), Arabic on
+ * an Arabic-default one. `withRequiredLocale` sets it around one synchronous
+ * parse; outside it, it is `en` — the schema this was before.
+ */
+let requiredLocale: PublicWebsiteLocale = DEFAULT_PUBLIC_WEBSITE_LOCALE;
+
+/** Runs `parse` (a synchronous zod parse) with `locale` as the language every `localizedRequired` field must fill. */
+export function withRequiredLocale<T>(
+  locale: PublicWebsiteLocale,
+  parse: () => T
+): T {
+  const previous = requiredLocale;
+  requiredLocale = locale;
+  try {
+    return parse();
+  } finally {
+    requiredLocale = previous;
+  }
+}
+
+/** `en` required non-empty; `ar` may be blank — an incomplete translation degrades to `en` at render time (`resolveLocalizedText`), it never blocks a save. On an Arabic-default site the roles swap (see `withRequiredLocale`). */
+export const localizedRequired = (maxLength: number) => {
+  const englishRequired = z.preprocess(
     coerceLegacyLocalized,
     z.object({
       en: z
@@ -64,6 +92,20 @@ export const localizedRequired = (maxLength: number) =>
       ar: z.string().max(maxLength, 'validation:maxLength'),
     })
   );
+  const arabicRequired = z.preprocess(
+    coerceLegacyLocalized,
+    z.object({
+      en: z.string().max(maxLength, 'validation:maxLength'),
+      ar: z
+        .string()
+        .min(1, 'validation:required')
+        .max(maxLength, 'validation:maxLength'),
+    })
+  );
+  return z.lazy(() =>
+    requiredLocale === 'ar' ? arabicRequired : englishRequired
+  );
+};
 
 /** Neither key is required to be non-empty — matches the field's own plain-string equivalent already being optional content. */
 export const localizedOptional = (maxLength: number) =>

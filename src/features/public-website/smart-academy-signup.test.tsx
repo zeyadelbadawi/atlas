@@ -118,6 +118,10 @@ vi.mock('@features/website', () => ({
   resolvePagePath: () => undefined,
   resolveLocalizedText: () => '',
   usePublicWebsiteDocumentDirection: () => undefined,
+  // B0-WEB-02 — an English-default site, as every site was before.
+  usePublicWebsiteDefaultLocale: () => 'en',
+  publicWebsiteLocalePrefix: (locale: string) =>
+    locale === 'en' ? '' : `/${locale}`,
 }));
 
 vi.mock('./hooks/usePublicWebsiteData', () => ({

@@ -53,12 +53,15 @@ import { PublicWebsiteLocaleProvider } from '../renderer/PublicWebsiteLocaleCont
 import {
   PUBLIC_WEBSITE_LOCALES,
   PUBLIC_WEBSITE_LOCALE_LABELS,
-  DEFAULT_PUBLIC_WEBSITE_LOCALE,
+  resolveDefaultLocale,
   type PublicWebsiteLocale,
 } from '../constants/locale.constants';
 import { useWebsiteFaqEntries, useWebsiteTestimonialEntries } from '../hooks';
 import { SECTION_FIELD_SCHEMAS } from '../sections/section-fields.registry';
-import { getSectionConfigSchema } from '../schemas/website-section.schemas';
+import {
+  getSectionConfigSchema,
+  withRequiredLocale,
+} from '../schemas/website-section.schemas';
 import {
   collectSectionIssues,
   isOverLimitIssue,
@@ -105,7 +108,10 @@ export interface SectionConfigFormProps<TType extends SectionType> {
    * `WebsiteThemeScope`/`SectionRenderer` pipeline as the actual public
    * site (never a second, simplified preview renderer).
    */
-  readonly configuration: Pick<WebsiteConfiguration, 'themeKey' | 'brand'>;
+  readonly configuration: Pick<
+    WebsiteConfiguration,
+    'themeKey' | 'brand' | 'defaultLocale'
+  >;
   readonly onSave: (config: SectionConfigMap[TType]) => void;
   readonly onCancel: () => void;
   readonly isSaving: boolean;
@@ -1047,6 +1053,8 @@ export function SectionConfigForm<TType extends SectionType>({
   serverIssues,
 }: SectionConfigFormProps<TType>): JSX.Element {
   const { t, i18n } = useTranslation();
+  // B0-WEB-02 — Arabic is the required language on an Arabic-default site.
+  const requiredLocale = resolveDefaultLocale(configuration.defaultLocale);
   const schema = SECTION_FIELD_SCHEMAS[type];
   const initialDraft = initialConfig as unknown as DraftValue;
   const [draft, setDraft] = useState<DraftValue>(initialDraft);
@@ -1071,7 +1079,7 @@ export function SectionConfigForm<TType extends SectionType>({
   const formRef = useRef<HTMLDivElement>(null);
   const summaryRef = useRef<HTMLDivElement>(null);
   const issues = useMemo(() => {
-    const own = collectSectionIssues(type, draft).filter(
+    const own = collectSectionIssues(type, draft, requiredLocale).filter(
       (issue) => attempted || isOverLimitIssue(issue)
     );
     if (draft !== initialDraft || !serverIssues?.length) return own;
@@ -1150,9 +1158,9 @@ export function SectionConfigForm<TType extends SectionType>({
   // side of the editor fields the admin is currently typing into — a
   // small, explicit toggle so an Owner can genuinely check their Arabic
   // content looks right before saving, not just trust it does.
-  const [previewLocale, setPreviewLocale] = useState<PublicWebsiteLocale>(
-    DEFAULT_PUBLIC_WEBSITE_LOCALE
-  );
+  // Opens in the site's main language (B0-WEB-02).
+  const [previewLocale, setPreviewLocale] =
+    useState<PublicWebsiteLocale>(requiredLocale);
 
   // Phase 6 — live inline preview. Reactive to every keystroke (`draft`),
   // scoped to just this one section instance, rendered through the exact
@@ -1232,7 +1240,9 @@ export function SectionConfigForm<TType extends SectionType>({
   };
 
   const handleSave = () => {
-    const result = getSectionConfigSchema(type).safeParse(draft);
+    const result = withRequiredLocale(requiredLocale, () =>
+      getSectionConfigSchema(type).safeParse(draft)
+    );
     if (!result.success) {
       setAttempted(true);
       setFocusRequest((count) => count + 1);

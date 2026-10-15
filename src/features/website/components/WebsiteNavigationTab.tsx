@@ -34,6 +34,7 @@ import { useUpdateWebsiteConfiguration } from '../hooks';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
 import { LocalizedTextField } from './LocalizedTextField';
 import { SocialLinksEditor } from './SocialLinksEditor';
+import { useWebsiteContentLocale } from './website-content-locale';
 import {} from '../utils/auth-page-copy.utils';
 import type {
   LocalizedText,
@@ -72,6 +73,8 @@ export function WebsiteNavigationTab({
   const { t } = useTranslation();
   const updateConfig = useUpdateWebsiteConfiguration();
   const { invalidate } = useInvalidate();
+  // B0-WEB-02 — the site's main language is the one a label must have.
+  const primaryLocale = useWebsiteContentLocale();
 
   /**
    * Every change on this tab is a full replace of navigation, header or
@@ -186,7 +189,7 @@ export function WebsiteNavigationTab({
    */
   const updateHeaderCtaLabel = (label: LocalizedText) => {
     save({
-      header: label.en.trim()
+      header: label[primaryLocale].trim()
         ? {
             cta: {
               label,

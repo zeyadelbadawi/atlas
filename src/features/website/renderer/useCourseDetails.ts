@@ -25,6 +25,8 @@ import { DEV_OVERRIDE_PARAM } from '@features/public-website';
 import { learningStateOf } from '@utils';
 import { useEnrollment, useEnroll } from '@features/learning';
 import type { PublicWebsiteLocale } from '@types';
+import { usePublicWebsiteDefaultLocale } from './PublicWebsiteLocaleContext';
+import { publicWebsiteLocalePrefix } from '../constants/locale.constants';
 
 export type CourseDetailsActionKind =
   'start' | 'continue' | 'completed' | 'enroll' | 'buy' | 'signIn';
@@ -55,6 +57,7 @@ export function useCourseDetails(
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const defaultLocale = usePublicWebsiteDefaultLocale();
   // Same locale-prefix + dev-preview-param rule `usePublicWebsiteHrefBuilder`
   // (`@features/public-website`) applies — reimplemented locally rather
   // than imported, since that hook lives one layer up in a feature this
@@ -65,13 +68,13 @@ export function useCourseDetails(
   // duplicated, not the constant.
   const buildHref = useCallback(
     (path: string): string => {
-      const localized = locale === 'en' ? path : `/ar${path}`;
+      const localized = `${publicWebsiteLocalePrefix(locale, defaultLocale)}${path}`;
       const devSlug = searchParams.get(DEV_OVERRIDE_PARAM);
       if (!devSlug) return localized;
       const separator = localized.includes('?') ? '&' : '?';
       return `${localized}${separator}${DEV_OVERRIDE_PARAM}=${encodeURIComponent(devSlug)}`;
     },
-    [locale, searchParams]
+    [locale, defaultLocale, searchParams]
   );
   const { session } = useAuth();
   const isAuthenticated = session.status === 'authenticated';

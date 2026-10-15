@@ -264,3 +264,72 @@ test.describe('Arabic line spacing', () => {
     }
   }
 });
+
+/**
+ * B0-WEB-02 — an Arabic-default site serves Arabic at its main address
+ * (`/`, no `/ar`): the same right-to-left layout and line spacing, every
+ * theme, at the narrowest and widest widths; an old `/ar/...` link lands on
+ * the unprefixed page.
+ */
+test.describe('Arabic line spacing — Arabic-default site', () => {
+  test.use({ contextOptions: { reducedMotion: 'reduce' } });
+  const THEMES: readonly ThemeKey[] = [
+    'modern-education',
+    'atelier',
+    'manara',
+    'riwaq',
+  ];
+  const PAGES: readonly BaselinePage[] = [
+    HOME,
+    { name: 'about', path: '/about' },
+    { name: 'courses', path: '/courses' },
+  ];
+
+  for (const viewport of [
+    { name: '390', width: 390, height: 844 },
+    { name: '1440', width: 1440, height: 900 },
+  ]) {
+    for (const theme of THEMES) {
+      const slug = fixtureSlug(theme, 'rich', 'default', 'ardefault');
+      for (const page of PAGES) {
+        test(`${theme} ar-default ${page.name} ${viewport.name}`, async ({
+          page: browserPage,
+          issues,
+        }) => {
+          await browserPage.setViewportSize(viewport);
+          // The unprefixed address: the site's default language.
+          await openFixture(browserPage, fixtureUrl(page, 'en', slug));
+          await expect(browserPage.locator('html')).toHaveAttribute(
+            'lang',
+            'ar'
+          );
+          await expect(browserPage.locator('html')).toHaveAttribute(
+            'dir',
+            'rtl'
+          );
+          await settleImages(browserPage);
+          const collisions = await browserPage.evaluate(
+            arabicLineCollisions,
+            MIN_GAP_EM
+          );
+          expect(collisions).toEqual([]);
+          expectNoIssues(issues);
+        });
+      }
+
+      test(`${theme} ar-default old /ar link ${viewport.name}`, async ({
+        page: browserPage,
+        issues,
+      }) => {
+        await browserPage.setViewportSize(viewport);
+        await openFixture(
+          browserPage,
+          fixtureUrl({ name: 'about', path: '/about' }, 'ar', slug)
+        );
+        expect(new URL(browserPage.url()).pathname).toBe('/about');
+        await expect(browserPage.locator('html')).toHaveAttribute('dir', 'rtl');
+        expectNoIssues(issues);
+      });
+    }
+  }
+});

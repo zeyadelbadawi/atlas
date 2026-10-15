@@ -110,7 +110,11 @@ export {
   isLocalizedTextComplete,
 } from './utils/localized-text.utils';
 export { usePublicWebsiteDocumentDirection } from './renderer/usePublicWebsiteDocumentDirection';
-export { usePublicWebsiteLocale } from './renderer/PublicWebsiteLocaleContext';
+export {
+  usePublicWebsiteLocale,
+  usePublicWebsiteDefaultLocale,
+  PublicWebsiteDefaultLocaleProvider,
+} from './renderer/PublicWebsiteLocaleContext';
 export {
   PUBLIC_WEBSITE_LOCALES,
   DEFAULT_PUBLIC_WEBSITE_LOCALE,
@@ -118,6 +122,10 @@ export {
   PUBLIC_WEBSITE_LOCALE_LABELS,
   PUBLIC_WEBSITE_LOCALE_PATH_PREFIX,
   isPublicWebsiteLocale,
+  resolveDefaultLocale,
+  publicWebsiteLocalePrefix,
+  stripPublicWebsiteLocalePrefix,
+  publicWebsiteLocaleForPath,
 } from './constants/locale.constants';
 export type { PublicWebsiteLocale } from './constants/locale.constants';
 

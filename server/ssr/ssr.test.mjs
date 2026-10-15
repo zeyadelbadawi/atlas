@@ -1461,3 +1461,131 @@ describe('canonical host redirect', () => {
     assert.equal(result.headers['X-Atlas-SSR'], 'render', result.reason);
   });
 });
+
+// B0-WEB-02 — an Arabic-default site: Arabic at `/`, English under `/en`,
+// old `/ar/...` links one permanent hop from their page; switching back
+// restores the English-default URLs (and `/en/...` links come home).
+describe('Arabic as the default language', () => {
+  const arabicDefault = () => {
+    state.academies[BETA_ID].configuration.defaultLocale = 'ar';
+  };
+  const alternates = (html) =>
+    [
+      ...html.matchAll(
+        /<link rel="alternate" hreflang="([^"]+)" href="([^"]+)"/g
+      ),
+    ].map(([, locale, href]) => `${locale} ${href}`);
+  const canonicalOf = (html) =>
+    html.match(/<link rel="canonical" href="([^"]+)"/)?.[1];
+
+  it('serves Arabic at the root: lang/dir, content, canonical, hreflang and hydration locale', async () => {
+    arabicDefault();
+    const result = await get(handler, BETA, '/');
+    assert.equal(result.headers['X-Atlas-SSR'], 'render', result.reason);
+    assert.match(result.body, /<html lang="ar" dir="rtl">/);
+    assert.match(markupOf(result.body), /Beta builds careers ع/);
+    assert.equal(canonicalOf(result.body), `https://${BETA}/`);
+    // Home's alternates use its slug path (`/home`, pre-existing behaviour
+    // on every site); the site's default language is the unprefixed one.
+    assert.deepEqual(alternates(result.body), [
+      `en https://${BETA}/en/home`,
+      `ar https://${BETA}/home`,
+    ]);
+    assert.equal(payloadOf(result.body).locale, 'ar');
+  });
+
+  it('serves English under /en, with the same reciprocal alternates', async () => {
+    arabicDefault();
+    for (const [path, canonical] of [
+      ['/en', `https://${BETA}/en/`],
+      ['/en/about', `https://${BETA}/en/about`],
+    ]) {
+      const result = await get(handler, BETA, path);
+      assert.equal(result.headers['X-Atlas-SSR'], 'render', result.reason);
+      assert.match(result.body, /<html lang="en" dir="ltr">/);
+      assert.equal(canonicalOf(result.body), canonical);
+      assert.equal(payloadOf(result.body).locale, 'en');
+    }
+    const home = await get(handler, BETA, '/en');
+    assert.match(markupOf(home.body), /Beta builds careers/);
+    assert.doesNotMatch(markupOf(home.body), /Beta builds careers ع/);
+    assert.deepEqual(alternates(home.body), [
+      `en https://${BETA}/en/home`,
+      `ar https://${BETA}/home`,
+    ]);
+    const about = await get(handler, BETA, '/about');
+    assert.match(about.body, /<html lang="ar" dir="rtl">/);
+    assert.deepEqual(alternates(about.body), [
+      `en https://${BETA}/en/about`,
+      `ar https://${BETA}/about`,
+    ]);
+  });
+
+  it('moves old /ar links to the unprefixed page in one hop, query kept, never looping', async () => {
+    arabicDefault();
+    for (const [path, location] of [
+      ['/ar', '/'],
+      ['/ar/', '/'],
+      ['/ar/about', '/about'],
+      ['/ar/courses?level=beginner', '/courses?level=beginner'],
+    ]) {
+      const result = await get(handler, BETA, path);
+      assert.equal(result.status, 301, path);
+      assert.equal(result.headers.Location, location);
+      assert.equal(result.headers['Cache-Control'], 'private, no-cache');
+      const target = await get(handler, BETA, location);
+      assert.equal(target.status, 200, location);
+      assert.equal(target.headers['X-Atlas-SSR'], 'render', target.reason);
+    }
+  });
+
+  it('an old /ar link on the non-canonical host is still one hop', async () => {
+    arabicDefault();
+    state.academies[BETA_ID].resolve.canonicalHost = 'www.beta.example';
+    const redirecting = await makeHandler({ canonicalRedirect: true });
+    const result = await get(redirecting, BETA, '/ar/about?x=1');
+    assert.equal(result.status, 301);
+    assert.equal(result.headers.Location, 'https://www.beta.example/about?x=1');
+  });
+
+  it('keeps every other site English-default, and its own pages unchanged', async () => {
+    arabicDefault();
+    const alpha = await get(handler, ALPHA, '/');
+    assert.match(alpha.body, /<html lang="en" dir="ltr">/);
+    assert.deepEqual(alternates(alpha.body), [
+      `en https://${ALPHA}/home`,
+      `ar https://${ALPHA}/ar/home`,
+    ]);
+    const alphaAr = await get(handler, ALPHA, '/ar/about');
+    assert.equal(alphaAr.status, 200);
+    assert.match(alphaAr.body, /<html lang="ar" dir="rtl">/);
+  });
+
+  it('switching back restores the English-default URLs; /en links come home in one hop', async () => {
+    // BETA as it was before the switch (the default for every site).
+    const root = await get(handler, BETA, '/');
+    assert.match(root.body, /<html lang="en" dir="ltr">/);
+    assert.equal((await get(handler, BETA, '/ar/about')).status, 200);
+    for (const [path, location] of [
+      ['/en', '/'],
+      ['/en/about', '/about'],
+    ]) {
+      const result = await get(handler, BETA, path);
+      assert.equal(result.status, 301, path);
+      assert.equal(result.headers.Location, location);
+      assert.equal((await get(handler, BETA, location)).status, 200);
+    }
+  });
+
+  it('caches each locale of an Arabic-default page under its own key', async () => {
+    arabicDefault();
+    const cached = await makeHandler({ cacheTtlMs: 60_000 });
+    const first = await get(cached, BETA, '/');
+    const again = await get(cached, BETA, '/');
+    const english = await get(cached, BETA, '/en');
+    assert.equal(first.headers['X-Atlas-SSR'], 'render');
+    assert.equal(again.headers['X-Atlas-SSR'], 'hit');
+    assert.match(again.body, /<html lang="ar" dir="rtl">/);
+    assert.match(english.body, /<html lang="en" dir="ltr">/);
+  });
+});

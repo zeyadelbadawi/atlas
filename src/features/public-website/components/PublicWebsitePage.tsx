@@ -28,6 +28,9 @@ import {
   resolvePageSeo,
   resolveCourseSeo,
   resolveLocalizedText,
+  publicWebsiteLocalePrefix,
+  stripPublicWebsiteLocalePrefix,
+  usePublicWebsiteDefaultLocale,
 } from '@features/website';
 import { useDocumentSeo } from '../hooks/useDocumentSeo';
 import { academyFaviconHref } from '../hooks/useAcademyFavicon';
@@ -45,7 +48,7 @@ import { LEARNER_ROUTES } from '@app/routes/route-paths';
 
 export interface PublicWebsitePageProps {
   readonly data: Extract<PublicWebsiteDataState, { status: 'ready' }>;
-  /** Derived by `PublicWebsiteRouter` from the `/ar/...` URL prefix — see `locale.constants.ts`. */
+  /** Derived by `PublicWebsiteRouter` from the URL prefix (`/ar/...`, or `/en/...` on an Arabic-default site) — see `locale.constants.ts`. */
   readonly locale: PublicWebsiteLocale;
 }
 
@@ -62,18 +65,25 @@ export function PublicWebsitePage({
   const { session } = useAuth();
   const { signOut } = useSignOut();
   const { academy, configuration, pages } = data;
+  // B0-WEB-02 — the language this site serves unprefixed.
+  const defaultLocale = usePublicWebsiteDefaultLocale();
 
   // `useLocation().pathname` is the full, un-nested-away path — still
   // carrying the `/ar` prefix `PublicWebsiteRouter` matched on, even
   // though pages are stored/matched by their one canonical, unprefixed
   // slug path. Strip it before matching, re-apply it (via `buildHref`)
   // wherever a path is turned back into a real link/URL below.
-  const unprefixedPathname =
-    locale === 'en'
-      ? location.pathname
-      : location.pathname.replace(/^\/ar/, '') || '/';
+  const unprefixedPathname = stripPublicWebsiteLocalePrefix(
+    location.pathname,
+    locale,
+    defaultLocale
+  );
   const withLocale = (path: string): string =>
-    locale === 'en' ? path : `/ar${path}`;
+    `${publicWebsiteLocalePrefix(locale, defaultLocale)}${path}`;
+  const switchLocale = (targetLocale: PublicWebsiteLocale) =>
+    navigate(
+      `${publicWebsiteLocalePrefix(targetLocale, defaultLocale)}${unprefixedPathname}${location.search}`
+    );
 
   const authState =
     session.status === 'authenticated' && session.user
@@ -118,9 +128,9 @@ export function PublicWebsitePage({
   const isMissingCourse = isCourseDetailsPage && course === null;
   const resolvedSeo =
     isCourseDetailsPage && course
-      ? resolveCourseSeo(course, configuration, fallback, locale)
+      ? resolveCourseSeo(course, configuration, fallback, locale, defaultLocale)
       : page
-        ? resolvePageSeo(page, configuration, fallback, locale)
+        ? resolvePageSeo(page, configuration, fallback, locale, defaultLocale)
         : {
             title: fallback.title,
             description: fallback.description,
@@ -212,11 +222,7 @@ export function PublicWebsitePage({
           onNavigate={onNavigate}
           linkRenderer={linkRenderer}
           locale={locale}
-          onLocaleChange={(targetLocale) =>
-            navigate(
-              `${targetLocale === 'en' ? unprefixedPathname : `/ar${unprefixedPathname}`}${location.search}`
-            )
-          }
+          onLocaleChange={switchLocale}
           authState={authState}
         />
       </>
@@ -275,11 +281,7 @@ export function PublicWebsitePage({
         // literal path the visitor is actually looking at, so switching
         // locale can never land anywhere it didn't already know how to
         // render.
-        onLocaleChange={(targetLocale) =>
-          navigate(
-            `${targetLocale === 'en' ? unprefixedPathname : `/ar${unprefixedPathname}`}${location.search}`
-          )
-        }
+        onLocaleChange={switchLocale}
         authState={authState}
       />
     </>
