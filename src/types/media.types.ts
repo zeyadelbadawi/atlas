@@ -36,12 +36,32 @@ export interface MediaAssetSummary {
   readonly type: MediaAssetType;
   readonly status: MediaAssetStatus;
   readonly fileName: string;
-  readonly url: string;
+  /**
+   * D5-4 — `null` for a PROTECTED asset (a lesson file or a learner's
+   * attachment). It lives in a private bucket and has no address of its
+   * own; staff open it through a short-lived grant
+   * (`MediaService.getProtectedFileGrant`), learners through the lesson.
+   */
+  readonly url: string | null;
+  /** D5-4 — true for a protected asset, which then has no `url`. */
+  readonly protected?: boolean;
   readonly altText?: string;
   readonly mimeType: string;
   readonly sizeBytes: number;
   readonly dimensions?: MediaAssetDimensions;
   readonly createdAt: string;
+}
+
+/**
+ * A library asset that HAS an address — what an upload returns and the only
+ * kind the picker hands to a field (a logo, a cover, a website image).
+ */
+export type PublicMediaAsset = MediaAssetSummary & { readonly url: string };
+
+/** D5-4 — `POST academies/:id/media/:assetId/grant`: a link that expires in minutes. */
+export interface MediaFileGrant {
+  readonly url: string;
+  readonly expiresAt: string;
 }
 
 /** No additional fields beyond the summary today — kept as its own type for symmetry with every other domain's summary/detail pair, and so a future backend-only detail field never requires a call-site rewrite. */

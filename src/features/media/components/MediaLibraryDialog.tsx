@@ -14,6 +14,11 @@
  * lesson/course uses is refused by the backend with the usages named, and
  * an asset only picked in the unsaved form is reported, not silently
  * cleared.
+ *
+ * PUBLIC ASSETS ONLY (D5-4). Every caller puts the picked asset's URL into a
+ * public field — a logo, a course cover, a website image. A protected file
+ * has no URL and must never land there, so the picker asks the server for
+ * the public tier and drops anything without an address as well.
  */
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -39,13 +44,14 @@ import {
   useUploadMediaAsset,
 } from '../hooks';
 import { MediaDeleteOutcome } from './MediaDeleteOutcome';
-import type { MediaAssetSummary } from '@types';
+import { isPublicMediaAsset } from '../utils/media-protection';
+import type { MediaAssetSummary, PublicMediaAsset } from '@types';
 
 export interface MediaLibraryDialogProps {
   readonly academyId: string;
   readonly open: boolean;
   readonly onOpenChange: (open: boolean) => void;
-  readonly onSelect: (asset: MediaAssetSummary) => void;
+  readonly onSelect: (asset: PublicMediaAsset) => void;
   /** Restricts the file picker's accepted types. Defaults to images. */
   readonly accept?: string;
   /** URL the calling field currently holds, marked as the current file. */
@@ -81,7 +87,7 @@ export function MediaLibraryDialog({
   const assetsQuery = useMediaAssets(academyId, {
     query: {
       search: debouncedQuery || undefined,
-      filters: { status: 'active' },
+      filters: { status: 'active', access: 'public' },
     },
   });
   const uploadAsset = useUploadMediaAsset();
@@ -119,7 +125,7 @@ export function MediaLibraryDialog({
   }, [filePicker.files]);
 
   const assets = useMemo(
-    () => assetsQuery.data?.items ?? [],
+    () => (assetsQuery.data?.items ?? []).filter(isPublicMediaAsset),
     [assetsQuery.data]
   );
 

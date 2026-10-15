@@ -16,7 +16,9 @@ import type {
   MediaAssetDetail,
   MediaAssetSummary,
   MediaBulkArchiveResult,
+  MediaFileGrant,
   PaginatedResult,
+  PublicMediaAsset,
   UpdateMediaAssetPayload,
   UploadMediaAssetPayload,
 } from '@types';
@@ -95,8 +97,9 @@ export class MediaService extends BaseService {
     academyId: string,
     payload: UploadMediaAssetPayload,
     options?: WriteOptions
-  ): Promise<MediaAssetDetail> {
-    return this.client.post<MediaAssetDetail, UploadMediaAssetPayload>(
+  ): Promise<PublicMediaAsset> {
+    // The library upload is the public tier: its response always has a URL.
+    return this.client.post<PublicMediaAsset, UploadMediaAssetPayload>(
       this.mediaPath(academyId),
       payload,
       options
@@ -123,6 +126,23 @@ export class MediaService extends BaseService {
   ): Promise<MediaAssetDetail> {
     return this.client.post<MediaAssetDetail, Record<string, never>>(
       this.mediaPath(academyId, assetId, 'archive'),
+      {},
+      options
+    );
+  }
+
+  /**
+   * D5-4 — a short-lived link to one PROTECTED file, for staff to preview or
+   * download it. The same signed delivery learners get through a lesson;
+   * owner/manager only, checked server-side. Never cache or store the URL.
+   */
+  async getProtectedFileGrant(
+    academyId: string,
+    assetId: string,
+    options?: WriteOptions
+  ): Promise<MediaFileGrant> {
+    return this.client.post<MediaFileGrant, Record<string, never>>(
+      this.mediaPath(academyId, assetId, 'grant'),
       {},
       options
     );

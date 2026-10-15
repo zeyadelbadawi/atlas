@@ -16,6 +16,11 @@
  * field that silently did nothing would be worse than not offering one. The
  * stored name is shown as a heading instead.
  *
+ * PROTECTED FILES (D5-4) have no address: no image preview and no link is
+ * rendered for them. Owners and managers open one through a short-lived
+ * signed link (`onOpenProtectedFile`), the same delivery learners get from
+ * their lesson. A hosted video plays only inside its lesson.
+ *
  * ARCHIVE, NOT DELETE. The backend offers no hard delete for media — an
  * asset may be referenced by a published page, and removing the bytes under
  * a live site is not an undoable mistake. Archiving hides it from the
@@ -31,12 +36,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Trash2 } from 'lucide-react';
+import { ExternalLink, Lock, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { NumericExpression } from '@components/data-display';
+import { NumericExpression, StatusBadge } from '@components/data-display';
 import { formatBytes } from '@utils';
+import { isProtectedMediaAsset } from '../utils/media-protection';
 import type {
   LanguageCode,
   MediaAssetSummary,
@@ -51,6 +57,9 @@ export interface MediaAssetDetailsDialogProps {
   readonly onSave: (payload: UpdateMediaAssetPayload) => void | Promise<void>;
   /** Starts the confirmed delete flow; the dialog closes first so its outcome is visible on the page. */
   readonly onDelete: () => void;
+  /** D5-4 — opens a protected file through a short-lived signed link (managing roles). */
+  readonly onOpenProtectedFile?: () => void;
+  readonly isOpeningProtectedFile?: boolean;
 }
 
 export function MediaAssetDetailsDialog({
@@ -60,6 +69,8 @@ export function MediaAssetDetailsDialog({
   onOpenChange,
   onSave,
   onDelete,
+  onOpenProtectedFile,
+  isOpeningProtectedFile = false,
 }: MediaAssetDetailsDialogProps): JSX.Element {
   const fmt = useDateFormatter();
   const { t, i18n } = useTranslation();
@@ -72,6 +83,8 @@ export function MediaAssetDetailsDialog({
   const size = asset
     ? formatBytes(asset.sizeBytes, i18n.language as LanguageCode)
     : null;
+  const isProtected = asset ? isProtectedMediaAsset(asset) : false;
+  const isVideo = asset?.type === 'video';
 
   return (
     <Dialog open={asset !== null} onOpenChange={onOpenChange}>
@@ -84,7 +97,38 @@ export function MediaAssetDetailsDialog({
 
         {asset ? (
           <div className="space-y-4">
-            {asset.type === 'image' ? (
+            {isProtected ? (
+              <div
+                className="space-y-3 rounded-lg border border-border bg-muted/40 p-3"
+                data-testid="media-protected-note"
+              >
+                <div className="flex items-center gap-2">
+                  <Lock className="size-4 text-muted-foreground" aria-hidden />
+                  <StatusBadge labelKey="media:protected.badge" tone="info" />
+                </div>
+                <p className="text-sm text-foreground">
+                  {t(
+                    isVideo
+                      ? 'media:protected.videoNote'
+                      : 'media:protected.fileNote'
+                  )}
+                </p>
+                {canManage && onOpenProtectedFile && !isVideo ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={onOpenProtectedFile}
+                    disabled={isOpeningProtectedFile}
+                  >
+                    <ExternalLink className="size-4" aria-hidden />
+                    {isOpeningProtectedFile
+                      ? t('media:protected.opening')
+                      : t('media:protected.open')}
+                  </Button>
+                ) : null}
+              </div>
+            ) : asset.type === 'image' && asset.url ? (
               <img
                 src={asset.url}
                 alt={asset.altText ?? asset.fileName}
