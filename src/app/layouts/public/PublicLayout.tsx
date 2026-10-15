@@ -1,9 +1,13 @@
 /**
  * Public layout.
  *
- * Wraps unauthenticated marketing and system surfaces. It carries the same brand
- * identity as the product shell so a visitor who signs in experiences one
- * continuous product rather than two different applications.
+ * Wraps the platform host's public pages — contact, the legal documents,
+ * certificate verification — and the system pages. Since owner decision D6
+ * (14 Oct 2026) retired the marketing site, its header and footer link only
+ * to the holding page (the logo), the contact page, sign-in and the legal
+ * documents. It carries the same brand identity as the product shell so a
+ * visitor who signs in experiences one continuous product rather than two
+ * different applications.
  *
  * Design system: `design-system/atlas-marketing/MASTER.md`. The header and
  * footer measure themselves to `max-w-marketing` (75rem), narrower than the
@@ -38,15 +42,13 @@ import { CookiePreferencesButton } from '@features/legal';
 /** Id of the main landmark, targeted by the skip link. */
 const MAIN_CONTENT_ID = 'atlas-public-content';
 
-/** The marketing nav. Declared once and rendered by both desktop and drawer. */
+/**
+ * The public nav. Declared once and rendered by desktop, drawer and footer.
+ * D6: the marketing pages it listed are retired; the contact form has its
+ * own page.
+ */
 const NAV_ITEMS: readonly { readonly to: string; readonly labelKey: string }[] =
-  [
-    { to: PUBLIC_ROUTES.features, labelKey: 'layout:public.nav.product' },
-    { to: PUBLIC_ROUTES.pricing, labelKey: 'layout:public.nav.pricing' },
-    // TASK 7 — the homepage contact form (`MarketingContactSection`,
-    // anchor `#contact`); `AppScrollManager` scrolls to the hash.
-    { to: `${PUBLIC_ROUTES.home}#contact`, labelKey: 'home:contact.nav' },
-  ];
+  [{ to: PUBLIC_ROUTES.contact, labelKey: 'home:contact.nav' }];
 
 export function PublicLayout(): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -117,26 +119,14 @@ export function PublicLayout(): JSX.Element {
                 </Link>
               </Button>
             ) : (
-              <>
-                {/* Sign in is the lower-priority action, so it stays text-only
-                    and is hidden on the narrowest viewports where the drawer
-                    carries it instead — never two competing filled buttons. */}
-                <Button
-                  asChild
-                  variant="ghost"
-                  size="sm"
-                  className="ms-2 hidden sm:inline-flex"
-                >
-                  <Link to={AUTH_ROUTES.signIn}>
-                    {t('layout:public.nav.signIn')}
-                  </Link>
-                </Button>
-                <Button asChild size="sm">
-                  <Link to={AUTH_ROUTES.register}>
-                    {t('layout:public.nav.getStarted')}
-                  </Link>
-                </Button>
-              </>
+              // D6: sign-in is the header's only call to action (no sign-up
+              // button). Hidden on the narrowest viewports, where the drawer
+              // carries it, so the phone row keeps its width.
+              <Button asChild size="sm" className="ms-2 hidden sm:inline-flex">
+                <Link to={AUTH_ROUTES.signIn}>
+                  {t('layout:public.nav.signIn')}
+                </Link>
+              </Button>
             )}
 
             {/* Mobile navigation. `Sheet` (Radix Dialog) gives a real focus
@@ -202,14 +192,9 @@ export function PublicLayout(): JSX.Element {
 
                 {!isAuthenticated ? (
                   <div className="mt-8 flex flex-col gap-3">
-                    <Button asChild variant="outline" className="w-full">
+                    <Button asChild className="w-full">
                       <Link to={AUTH_ROUTES.signIn}>
                         {t('layout:public.nav.signIn')}
-                      </Link>
-                    </Button>
-                    <Button asChild className="w-full">
-                      <Link to={AUTH_ROUTES.register}>
-                        {t('layout:public.nav.getStarted')}
                       </Link>
                     </Button>
                   </div>
@@ -229,18 +214,15 @@ export function PublicLayout(): JSX.Element {
           <div className="flex flex-col gap-10 lg:flex-row lg:justify-between lg:gap-16">
             <div className="flex max-w-[38ch] flex-col gap-3">
               <AtlasLogo />
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {t('layout:public.footer.tagline')}
-              </p>
             </div>
 
             <div className="grid gap-8 sm:grid-cols-2 sm:gap-16">
               <nav
-                aria-label={t('layout:public.footer.productGroup')}
-                className="flex flex-col gap-3"
+                aria-label={t('layout:public.footer.siteGroup')}
+                className="flex flex-col items-start gap-3"
               >
                 <h2 className="font-display text-sm font-semibold text-foreground">
-                  {t('layout:public.footer.productGroup')}
+                  {t('layout:public.footer.siteGroup')}
                 </h2>
                 {NAV_ITEMS.map((item) => (
                   <Link
@@ -251,6 +233,14 @@ export function PublicLayout(): JSX.Element {
                     {t(item.labelKey)}
                   </Link>
                 ))}
+                {!isAuthenticated ? (
+                  <Link
+                    to={AUTH_ROUTES.signIn}
+                    className="rounded-sm text-sm text-muted-foreground underline-offset-4 transition-colors duration-normal hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  >
+                    {t('layout:public.nav.signIn')}
+                  </Link>
+                ) : null}
               </nav>
 
               {/* Atlas's own legal links. Deliberately NOT added to tenant

@@ -33,8 +33,6 @@ import arProvisioning from './ar/provisioning.json';
 import arAuditLog from './ar/auditLog.json';
 import arSupport from './ar/support.json';
 import arMedia from './ar/media.json';
-import arFeatures from './ar/features.json';
-import arPricing from './ar/pricing.json';
 import arCertificates from './ar/certificates.json';
 import arOnboarding from './ar/onboarding.json';
 import arCustomerRequests from './ar/customerRequests.json';
@@ -69,8 +67,6 @@ const bundle: Record<string, Record<string, unknown>> = {
   auditLog: arAuditLog,
   support: arSupport,
   media: arMedia,
-  features: arFeatures,
-  pricing: arPricing,
   certificates: arCertificates,
   onboarding: arOnboarding,
   customerRequests: arCustomerRequests,

@@ -9,11 +9,25 @@
  * tree and the layout structure aligned as modules are added.
  */
 
-/** Paths rendered inside the public marketing layout. */
+/**
+ * The platform host's public pages.
+ *
+ * Owner decision D6 (14 Oct 2026) retired the marketing site: `/` and
+ * `/ar` render a self-contained holding page (`features/home/holding`),
+ * the rest render inside `PublicLayout`. The retired marketing addresses
+ * are forwarding addresses, not pages — `RETIRED_MARKETING_ROUTES` below.
+ */
 export const PUBLIC_ROUTES = {
+  /** The holding page, in English. */
   home: '/',
-  features: '/features',
-  pricing: '/pricing',
+  /** The holding page, in Arabic — the platform host's only `/ar` page. */
+  homeAr: '/ar',
+  /**
+   * The platform contact form (`POST public/contact`, the Platform Owner's
+   * inbox). It sat on the marketing homepage as `/#contact` until D6;
+   * `?topic=` preselects one of its topics.
+   */
+  contact: '/contact',
   /** Atlas's own legal documents — the SaaS platform's, not a tenant academy's. */
   privacyPolicy: '/privacy-policy',
   terms: '/terms',
@@ -26,13 +40,22 @@ export const PUBLIC_ROUTES = {
 } as const;
 
 /**
+ * D6 — the retired marketing pages. Old links, bookmarks and search results
+ * still reach these, so each forwards to the holding page with a
+ * client-side `Navigate replace` instead of a 404; their Arabic twins
+ * (`/ar/...`) are handled by `ArabicPlatformRedirect`. Nothing should link
+ * here any more.
+ */
+export const RETIRED_MARKETING_ROUTES = ['/features', '/pricing'] as const;
+
+/**
  * Paths rendered inside the authentication layout.
  */
 export const AUTH_ROUTES = {
   root: '/auth',
   signIn: '/auth/sign-in',
   register: '/auth/register',
-  /** The same sign-up page under the name the marketing site and people use. */
+  /** The same sign-up page under the name people (and old links) use. */
   signUpAlias: '/auth/sign-up',
   forgotPassword: '/auth/forgot-password',
   resetPassword: '/auth/reset-password',

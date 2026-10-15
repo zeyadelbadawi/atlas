@@ -1,1 +1,0 @@
-export { CinematicHero } from './CinematicHero';
