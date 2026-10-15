@@ -79,6 +79,24 @@
       "title": "Internal organization",
       "label": "Internal (test, demo or staff)",
       "description": "Internal organizations are left out of platform revenue figures. The customer never sees this setting. Every change is recorded in the audit log."
+    },
+    "ownerWhatsapp": {
+      "label": "Owner WhatsApp",
+      "optedIn": "Agreed to WhatsApp contact on {{date}} (wording {{version}})",
+      "notShared": "Not shared — the owner did not agree to WhatsApp contact."
+    },
+    "signupSource": {
+      "label": "Sign-up source",
+      "none": "Not recorded",
+      "fields": {
+        "utmSource": "Source",
+        "utmMedium": "Medium",
+        "utmCampaign": "Campaign",
+        "utmTerm": "Term",
+        "utmContent": "Content",
+        "referrerDomain": "Referring site",
+        "landingTemplate": "Landing page"
+      }
     }
   },
   "academies": {
@@ -534,7 +552,13 @@
       "status": "Status",
       "message": "Message",
       "actions": "Enquiry actions",
-      "reply": "Reply by email"
+      "reply": "Reply by email",
+      "leadTitle": "Contact preferences",
+      "whatsapp": "WhatsApp",
+      "contactConsent": "Contact about this enquiry",
+      "marketingConsent": "Marketing",
+      "consentGiven": "Agreed on {{date}} (wording {{version}})",
+      "consentNotGiven": "Not agreed"
     },
     "actions": {
       "markRead": "Mark as read",
@@ -823,5 +847,24 @@
       "failed": "The request could not be updated.",
       "cancel": "Cancel"
     }
+  },
+  "growth": {
+    "title": "Growth",
+    "description": "Organizations by sign-up week over the last {{weeks}} weeks, and how many have reached each step since.",
+    "week": "Sign-up week",
+    "tableCaption": "Activation by sign-up week",
+    "steps": {
+      "signups": "Sign-ups",
+      "academyCreated": "Academy created",
+      "coursePublished": "Course published",
+      "firstEnrolment": "First enrolment",
+      "firstPayment": "First payment"
+    },
+    "sources": {
+      "title": "Sign-ups by source",
+      "empty": "No sign-ups in this period.",
+      "untagged": "No source recorded"
+    },
+    "footnote": "Weeks start on Monday ({{timeZone}}). Internal test, demo and staff organizations are not counted."
   }
 }

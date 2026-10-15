@@ -30,6 +30,7 @@ import { publicWebsiteLocaleForPath } from './ssr/ssr-paths';
 import { preloadPublicWebsiteRouter } from './app/routes/public-website-router-loader';
 import { isKnownThemeKey, loadThemePack } from '@features/website';
 import { reloadOnceForNewVersion } from '@utils/lazy-with-retry.utils';
+import { captureLandingAttribution } from '@utils/landing-attribution.utils';
 import {
   academyScope,
   configureOfflineScope,
@@ -51,6 +52,10 @@ const ROOT_ELEMENT_ID = 'root';
 // Local-first dashboard — spread the refetch burst that follows a reconnect
 // (see `installJitteredOnlineManager`).
 installJitteredOnlineManager();
+
+// B0-ANL-04 — read the landing URL's UTM values / referrer host once, into
+// memory only (no browser storage). A no-op while `signupAttribution` is off.
+captureLandingAttribution();
 
 window.addEventListener('vite:preloadError', (event) => {
   if (reloadOnceForNewVersion()) event.preventDefault();

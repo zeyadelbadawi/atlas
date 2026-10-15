@@ -285,6 +285,28 @@ export interface RegistrationRequest {
    */
   readonly phoneNumber?: string;
   readonly phoneCountry?: string;
+  /**
+   * B0-IAM-08 — the organization owner's WhatsApp opt-in, sent only when
+   * ticked on the owner sign-up (`ownerWhatsappConsent` flag). Never sent by
+   * a learner sign-up; the server ignores it there.
+   */
+  readonly whatsappConsent?: boolean;
+  /** B0-ANL-04 — in-memory landing attribution (`signupAttribution` flag), organization sign-up only. */
+  readonly attribution?: LandingAttribution;
+}
+
+/**
+ * B0-ANL-04 — where a visitor came from: UTM values, the referrer HOST and
+ * the landing template. Held in memory only (`landing-attribution.utils`).
+ */
+export interface LandingAttribution {
+  readonly utmSource?: string;
+  readonly utmMedium?: string;
+  readonly utmCampaign?: string;
+  readonly utmTerm?: string;
+  readonly utmContent?: string;
+  readonly referrerDomain?: string;
+  readonly landingTemplate?: string;
 }
 
 /** `GET|PUT|DELETE /users/me/phone` — the signed-in account's own number. */

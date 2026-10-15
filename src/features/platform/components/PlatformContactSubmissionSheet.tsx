@@ -13,6 +13,7 @@
  *
  * Focus is managed by the Radix dialog underneath `Sheet`.
  */
+import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Archive,
@@ -191,6 +192,92 @@ export function PlatformContactSubmissionSheet({
                 ) : null}
               </dl>
             </section>
+
+            {/* B0-SUP-04 / B0-ANL-04 — present only for enquiries sent
+                while the consent / attribution flags were on. */}
+            {submission.contactConsent || submission.attribution ? (
+              <>
+                <Separator />
+                <section className="space-y-3" data-testid="platform-contact-consents">
+                  <h3 className="text-sm font-medium text-muted-foreground">
+                    {t(`${K}.drawer.leadTitle`)}
+                  </h3>
+                  <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
+                    {submission.phoneE164 ? (
+                      <>
+                        <dt className="text-muted-foreground">
+                          {t(`${K}.drawer.whatsapp`)}
+                        </dt>
+                        <dd dir="ltr" data-ltr-content>
+                          {submission.phoneE164}
+                        </dd>
+                      </>
+                    ) : null}
+                    {(['contactConsent', 'marketingConsent'] as const).map((name) => {
+                      const consent = submission[name];
+                      if (!consent) return null;
+                      return (
+                        <Fragment key={name}>
+                          <dt className="text-muted-foreground">
+                            {t(`${K}.drawer.${name}`)}
+                          </dt>
+                          <dd data-testid={`platform-contact-${name}`}>
+                            {consent.given && consent.at
+                              ? t(`${K}.drawer.consentGiven`, {
+                                  date: fmt.dateTime(consent.at),
+                                  version: consent.version,
+                                })
+                              : t(`${K}.drawer.consentNotGiven`)}
+                          </dd>
+                        </Fragment>
+                      );
+                    })}
+                    {(
+                      [
+                        ['requesterRole', 'roles'],
+                        ['studentBand', 'bands'],
+                        ['preferredChannel', 'channels'],
+                      ] as const
+                    ).map(([name, group]) => {
+                      const value = submission[name];
+                      if (!value) return null;
+                      return (
+                        <Fragment key={name}>
+                          <dt className="text-muted-foreground">
+                            {t(`home:contact.qualification.${name}`)}
+                          </dt>
+                          <dd>{t(`home:contact.qualification.${group}.${value}`)}</dd>
+                        </Fragment>
+                      );
+                    })}
+                    {submission.subject ? (
+                      <>
+                        <dt className="text-muted-foreground">
+                          {t('home:contact.qualification.subject')}
+                        </dt>
+                        <dd className="min-w-0 break-words" dir="auto">
+                          {submission.subject}
+                        </dd>
+                      </>
+                    ) : null}
+                    {submission.attribution
+                      ? Object.entries(submission.attribution).map(([key, value]) => (
+                          <Fragment key={key}>
+                            <dt className="text-muted-foreground">
+                              {t(`platform:organizations.signupSource.fields.${key}`, {
+                                defaultValue: key,
+                              })}
+                            </dt>
+                            <dd className="min-w-0 break-all" dir="ltr" data-ltr-content>
+                              {value}
+                            </dd>
+                          </Fragment>
+                        ))
+                      : null}
+                  </dl>
+                </section>
+              </>
+            ) : null}
 
             <Separator />
 
