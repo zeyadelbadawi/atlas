@@ -169,6 +169,10 @@
       "description": "This action needs a connection. Nothing was changed — try again when you're back online."
     }
   },
+  "country": {
+    "search": "Search country",
+    "noResults": "No country found"
+  },
   "phone": {
     "countryButton": "Country code: {{country}} ({{code}})",
     "searchCountry": "Search country or code",

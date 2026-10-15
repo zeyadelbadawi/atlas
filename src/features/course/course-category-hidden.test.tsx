@@ -24,6 +24,12 @@ vi.mock('@hooks', async (importOriginal) => ({
   useUnsavedChanges: () => ({ markSaved: () => undefined }),
   // The list's W6 "Continue setup" action reads permissions.
   usePermissions: () => ({ hasPermission: () => true }),
+  // D5-3 — the edit page reads the academy (its currency is the default
+  // for a price that has none yet), which needs the signed-in organization.
+  useAuth: () => ({
+    organization: { id: 'org-1' },
+    switchOrganization: () => undefined,
+  }),
 }));
 vi.mock('./components/CourseInstructorsCard', () => ({
   CourseInstructorsCard: () => null,

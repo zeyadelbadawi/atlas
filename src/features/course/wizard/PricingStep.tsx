@@ -26,7 +26,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import type { CoursePricing } from '@types';
-import { DEFAULT_COURSE_PRICING_CURRENCY } from '../constants/course.constants';
+import {
+  useAcademyPriceCurrency,
+  usePriceCurrencyDefault,
+} from '../hooks/useAcademyPriceCurrency';
 import { useStepSave } from './useStepSave';
 import { WizardStepFooter } from './WizardStepFooter';
 import type { WizardStepProps } from './wizard-step.types';
@@ -58,16 +61,19 @@ export function PricingStep({
   onNext,
 }: WizardStepProps): JSX.Element {
   const { t } = useTranslation();
+  // D5-3 — a course with no price currency yet starts in the academy's;
+  // one that has a currency keeps it.
+  const academyCurrency = useAcademyPriceCurrency(academyId);
   const form = useForm<PricingValues>({
     resolver: zodResolver(pricingSchema),
     defaultValues: {
       visibility: course.visibility,
       pricingType: course.pricing.type,
       pricingAmount: course.pricing.amount,
-      pricingCurrency:
-        course.pricing.currency ?? DEFAULT_COURSE_PRICING_CURRENCY,
+      pricingCurrency: course.pricing.currency ?? academyCurrency,
     },
   });
+  usePriceCurrencyDefault(form, academyCurrency, course.pricing.currency);
   const pricingType = form.watch('pricingType');
 
   const { save, markSaved, isSaving } = useStepSave({
@@ -82,8 +88,7 @@ export function PricingStep({
           ? {
               type: 'paid',
               amount: values.pricingAmount,
-              currency:
-                values.pricingCurrency || DEFAULT_COURSE_PRICING_CURRENCY,
+              currency: values.pricingCurrency || academyCurrency,
             }
           : { type: 'free' };
       return {
