@@ -17,7 +17,7 @@
  */
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, LifeBuoy } from 'lucide-react';
 import { isPathActive } from '@app/routes/route-paths';
 import { useNotificationSummary } from '@features/notifications';
 import { cn } from '@utils';
@@ -38,7 +38,7 @@ export function LearnerNavigationList({
   className,
 }: LearnerNavigationListProps): JSX.Element {
   const { t } = useTranslation();
-  const { buildHref, pathname } = useLearnerSurface();
+  const { buildHref, pathname, contactHref } = useLearnerSurface();
   // The unread count rides on the Notifications entry: on wide screens the
   // rail is where the learner looks for it (the shell has no bell there).
   const { data: notificationSummary } = useNotificationSummary();
@@ -97,6 +97,40 @@ export function LearnerNavigationList({
           </li>
         );
       })}
+      {/* B0-SUP-02 — help for a learner is their academy, not an Atlas
+          ticket: the academy's own Contact page, set apart from the
+          sections. Not drawn when the site shows no Contact page. */}
+      {contactHref ? (
+        <li className="mt-2 border-t border-border pt-2">
+          <Link
+            to={contactHref}
+            onClick={onNavigate}
+            data-testid="learner-nav-contact-academy"
+            className={cn(
+              'flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium',
+              'transition-colors duration-fast ease-standard motion-reduce:transition-none',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+              'text-muted-foreground hover:bg-accent/60 hover:text-foreground'
+            )}
+          >
+            <LifeBuoy
+              className="size-[1.125rem] shrink-0"
+              strokeWidth={1.75}
+              aria-hidden
+            />
+            <span className="truncate">
+              {t('learning:learnerDashboard.nav.contactAcademy')}
+            </span>
+            {showChevron ? (
+              <ChevronRight
+                className="ms-auto size-4 shrink-0 text-border-strong rtl:-scale-x-100"
+                strokeWidth={2}
+                aria-hidden
+              />
+            ) : null}
+          </Link>
+        </li>
+      ) : null}
     </ul>
   );
 }

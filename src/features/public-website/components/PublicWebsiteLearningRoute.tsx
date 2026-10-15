@@ -61,6 +61,12 @@ export interface PublicWebsiteLearningRouteProps {
      * bug class `usePublicWebsiteLinkRenderer` documents at length.
      */
     readonly buildHref: (path: string) => string;
+    /**
+     * B0-SUP-02 — this academy's own Contact page, ready to link, or
+     * `undefined` when the site shows none. A learner's help is their
+     * academy, never an Atlas support ticket.
+     */
+    readonly contactHref?: string;
   }) => React.ReactNode;
 }
 
@@ -132,6 +138,12 @@ export function PublicWebsiteLearningRoute({
       }
     : undefined;
 
+  // B0-SUP-02 — `pages` holds only what the site shows, so an academy
+  // without a visible Contact page simply gets no help link.
+  const contactPage = pages.find((page) => page.coreType === 'contact');
+  const contactPath = contactPage ? resolvePagePath(contactPage) : undefined;
+  const contactHref = contactPath ? buildHref(contactPath) : undefined;
+
   const onNavigate = (pageId: string) => {
     const target = pages.find((candidate) => candidate.id === pageId);
     const path = target ? resolvePagePath(target) : undefined;
@@ -181,7 +193,7 @@ export function PublicWebsiteLearningRoute({
     >
       <LearningPathsProvider paths={websiteLearningPaths}>
         <WebsiteBrandBridge>
-          {children({ academyId: academy.academyId, buildHref })}
+          {children({ academyId: academy.academyId, buildHref, contactHref })}
         </WebsiteBrandBridge>
       </LearningPathsProvider>
     </WebsiteChrome>
