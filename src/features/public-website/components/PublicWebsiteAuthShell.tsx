@@ -28,6 +28,8 @@ import {
   WebsiteBrandBridge,
   resolvePagePath,
   usePublicWebsiteDocumentDirection,
+  publicWebsiteLocalePrefix,
+  usePublicWebsiteDefaultLocale,
 } from '@features/website';
 import { useAuth, useSignOut } from '@hooks';
 import { usePublicWebsiteData } from '../hooks/usePublicWebsiteData';
@@ -67,6 +69,7 @@ export function PublicWebsiteAuthShell({
   const { signOut } = useSignOut();
   const linkRenderer = usePublicWebsiteLinkRenderer(locale);
   const buildHref = usePublicWebsiteHrefBuilder(locale);
+  const defaultLocale = usePublicWebsiteDefaultLocale();
   const [searchParams] = useSearchParams();
 
   const authState =
@@ -107,7 +110,7 @@ export function PublicWebsiteAuthShell({
         // language switch — a reset link opened in the wrong language and
         // then switched would otherwise arrive with no token at all.
         const preserved = new URLSearchParams(searchParams);
-        const base = `${target === 'en' ? '' : '/ar'}${path}`;
+        const base = `${publicWebsiteLocalePrefix(target, defaultLocale)}${path}`;
         const query = preserved.toString();
         window.location.assign(query ? `${base}?${query}` : base);
       }}

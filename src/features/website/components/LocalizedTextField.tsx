@@ -8,7 +8,8 @@
  * could miss and accidentally ship an English-only "bilingual" site
  * (see the Bilingual Academy Websites specification, "make the easiest
  * action the correct action"). English is marked required (the one
- * always-complete language); Arabic is explicitly labeled optional, with
+ * always-complete language — Arabic on an Arabic-default site, B0-WEB-02,
+ * where the two swap places); Arabic is explicitly labeled optional, with
  * a small status chip reflecting whether it's actually been filled in —
  * the same "English ✓ Complete / Arabic ⚠ Incomplete" language the rest
  * of the CMS uses, applied at the single-field level instead of only a
@@ -44,6 +45,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { cn } from '@utils';
 import type { LocalizedText } from '@types';
+import { useWebsiteContentLocale } from './website-content-locale';
 
 const EMPTY: LocalizedText = { en: '', ar: '' };
 
@@ -96,7 +98,12 @@ export function LocalizedTextField({
     setLocal({ en: value?.en ?? '', ar: value?.ar ?? '' });
   }, [value?.en, value?.ar]);
   const Control = multiline ? Textarea : Input;
-  const arComplete = local.ar.trim().length > 0;
+  // B0-WEB-02 — the site's default language is the required one, shown
+  // first; the other is the optional translation (English and Arabic
+  // respectively everywhere but an Arabic-default site).
+  const primary = useWebsiteContentLocale();
+  const secondary: keyof LocalizedText = primary === 'ar' ? 'en' : 'ar';
+  const secondaryComplete = local[secondary].trim().length > 0;
 
   /*
    * LANGUAGE HINTS, NOT BLOCKING ERRORS.
@@ -109,8 +116,14 @@ export function LocalizedTextField({
    * otherwise be impossible to save. See `script-validation.utils.ts` for
    * everything it deliberately tolerates.
    */
-  const enLooksWrong = !isAcceptableForLanguage(local.en, 'en');
-  const arLooksWrong = !isAcceptableForLanguage(local.ar, 'ar');
+  const looksWrong: Record<keyof LocalizedText, boolean> = {
+    en: !isAcceptableForLanguage(local.en, 'en'),
+    ar: !isAcceptableForLanguage(local.ar, 'ar'),
+  };
+  const languageLabel = (language: keyof LocalizedText): string =>
+    language === 'ar'
+      ? t('website:editor.languageArabic')
+      : t('website:editor.languageEnglish');
 
   const update = (patch: Partial<LocalizedText>) => {
     const next = { ...local, ...patch };
@@ -225,31 +238,31 @@ export function LocalizedTextField({
       </p>
 
       {renderLanguage(
-        'en',
-        t('website:editor.languageEnglish'),
+        primary,
+        languageLabel(primary),
         null,
-        enLooksWrong
+        looksWrong[primary]
       )}
 
       {renderLanguage(
-        'ar',
+        secondary,
         <>
-          {t('website:editor.languageArabic')} · {t('website:editor.optional')}
+          {languageLabel(secondary)} · {t('website:editor.optional')}
         </>,
         <span
           className={cn(
             'flex items-center gap-1 text-xs',
-            arComplete ? 'text-success' : 'text-muted-foreground'
+            secondaryComplete ? 'text-success' : 'text-muted-foreground'
           )}
         >
-          {arComplete ? (
+          {secondaryComplete ? (
             <CheckCircle2 className="size-3.5" aria-hidden />
           ) : null}
-          {arComplete
+          {secondaryComplete
             ? t('website:editor.translationComplete')
             : t('website:editor.translationIncomplete')}
         </span>,
-        arLooksWrong
+        looksWrong[secondary]
       )}
     </div>
   );

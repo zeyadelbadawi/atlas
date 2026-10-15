@@ -122,8 +122,13 @@ async function initializeApp(): Promise<void> {
   // A server-rendered page brings its data; only then is it hydrated.
   const ssr = isAcademyWebsite ? readSsrPayload() : null;
   // An Academy website renders in its URL locale from the first render
-  // (server and browser alike); the dashboard keeps the preference.
-  const urlLocale = publicWebsiteLocaleForPath(window.location.pathname);
+  // (server and browser alike); the dashboard keeps the preference. A
+  // server-rendered page says which (B0-WEB-02: on an Arabic-default site
+  // `/` is Arabic, which the path alone cannot tell); otherwise the
+  // English-default reading of the path, which the router corrects once
+  // the site's configuration has loaded.
+  const urlLocale =
+    ssr?.locale ?? publicWebsiteLocaleForPath(window.location.pathname);
 
   const routerChunk = isAcademyWebsite
     ? preloadPublicWebsiteRouter().catch(() => undefined)

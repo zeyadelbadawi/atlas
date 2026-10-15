@@ -59,3 +59,53 @@ export function isPublicWebsiteLocale(
 ): value is PublicWebsiteLocale {
   return (PUBLIC_WEBSITE_LOCALES as readonly string[]).includes(value);
 }
+
+/**
+ * B0-WEB-02 — a website's own default locale: the language it serves at
+ * `/`. Every other locale lives under its own `/<locale>` prefix. Read from
+ * the published configuration (`WebsiteConfiguration.defaultLocale`, absent
+ * = `en`); with `en` every rule below is exactly the fixed routing every
+ * site had before (`/about` English, `/ar/about` Arabic).
+ */
+export function resolveDefaultLocale(value: unknown): PublicWebsiteLocale {
+  return typeof value === 'string' && isPublicWebsiteLocale(value)
+    ? value
+    : DEFAULT_PUBLIC_WEBSITE_LOCALE;
+}
+
+/** `''` for the site's default locale, `/<locale>` for any other. */
+export function publicWebsiteLocalePrefix(
+  locale: PublicWebsiteLocale,
+  defaultLocale: PublicWebsiteLocale = DEFAULT_PUBLIC_WEBSITE_LOCALE
+): string {
+  return locale === defaultLocale ? '' : `/${locale}`;
+}
+
+/** The current path without `locale`'s prefix (`/ar/about` → `/about`, `/ar` → `/`). */
+export function stripPublicWebsiteLocalePrefix(
+  pathname: string,
+  locale: PublicWebsiteLocale,
+  defaultLocale: PublicWebsiteLocale = DEFAULT_PUBLIC_WEBSITE_LOCALE
+): string {
+  const prefix = publicWebsiteLocalePrefix(locale, defaultLocale);
+  if (!prefix || !pathname.startsWith(prefix)) return pathname;
+  return pathname.slice(prefix.length) || '/';
+}
+
+/**
+ * The locale a request path is in, on a site whose default is
+ * `defaultLocale`: a path under another locale's prefix (`/ar`, `/ar/...`)
+ * is in that locale; every other path is in the default.
+ */
+export function publicWebsiteLocaleForPath(
+  pathname: string,
+  defaultLocale: PublicWebsiteLocale = DEFAULT_PUBLIC_WEBSITE_LOCALE
+): PublicWebsiteLocale {
+  return (
+    PUBLIC_WEBSITE_LOCALES.find(
+      (locale) =>
+        locale !== defaultLocale &&
+        (pathname === `/${locale}` || pathname.startsWith(`/${locale}/`))
+    ) ?? defaultLocale
+  );
+}

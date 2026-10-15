@@ -79,6 +79,8 @@ export interface LearnerRouterProps {
   /** The academy this dashboard belongs to, from the resolved hostname. */
   readonly academyId: string;
   readonly locale: PublicWebsiteLocale;
+  /** B0-WEB-02 — the site's default (unprefixed) locale; `en` unless the site is Arabic-default. */
+  readonly defaultLocale?: PublicWebsiteLocale;
   /**
    * Turns a bare `LEARNER_ROUTES` path into a real href on this host.
    * Supplied by the public-website side (which owns the `/ar` prefix and
@@ -91,12 +93,14 @@ export interface LearnerRouterProps {
 export function LearnerRouter({
   academyId,
   locale,
+  defaultLocale,
   buildHref,
 }: LearnerRouterProps): JSX.Element {
   return (
     <LearnerSurfaceProvider
       academyId={academyId}
       locale={locale}
+      defaultLocale={defaultLocale}
       buildHref={buildHref}
     >
       {/* Academy offline — what the connection and saved changes are doing. */}

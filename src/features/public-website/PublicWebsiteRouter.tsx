@@ -21,11 +21,18 @@
  * routing decision. `/robots.txt`/`/sitemap.xml` are matched BEFORE the
  * locale split — they are site-wide infrastructure files, never
  * duplicated per locale.
+ *
+ * B0-WEB-02 — the unprefixed language is the site's DEFAULT locale, from
+ * its published configuration: English unless the owner made the site
+ * Arabic-default, in which case Arabic is unprefixed (`/about`) and English
+ * lives under `/en` (`/en/about`). A path under the default's own prefix
+ * (`/ar/...` on an Arabic-default site) redirects to the unprefixed path
+ * (`resolveLocalePrefixRedirect`).
  */
 import { Suspense, useEffect, type ReactNode } from 'react';
 // Stale-tab recovery: route chunks retry, then reload once for a new build.
 import { lazyWithRetry as lazy } from '@utils/lazy-with-retry.utils';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { PublicWebsiteStatus } from './components/PublicWebsiteStatus';
 import { AcademyComingSoon } from './components/AcademyComingSoon';
 import { PublicWebsitePage } from './components/PublicWebsitePage';
@@ -37,6 +44,8 @@ import { PublicWebsiteRetiredLearnerRedirect } from './components/PublicWebsiteR
 import { PublicWebsiteConsentLayer } from './components/PublicWebsiteConsentLayer';
 import { usePublicWebsiteData } from './hooks/usePublicWebsiteData';
 import { useResolveHostname } from './hooks/useResolveHostname';
+import { usePublishedWebsite } from './hooks/usePublishedWebsite';
+import { resolveLocalePrefixRedirect } from './utils/locale-redirect.utils';
 import {
   academyFaviconHref,
   useAcademyFavicon,
@@ -55,6 +64,12 @@ import { ENV } from '@config';
 import { publicWebsiteLookupKey } from '@utils';
 import { useRequestLocation } from '@hooks';
 import { withCompleteTranslations } from '@localization';
+import {
+  PUBLIC_WEBSITE_LOCALES,
+  PublicWebsiteDefaultLocaleProvider,
+  resolveDefaultLocale,
+  usePublicWebsiteDefaultLocale,
+} from '@features/website';
 import type { PublicWebsiteLocale } from '@types';
 
 // Account pages and the learning route load with their own routes, so a
@@ -187,11 +202,25 @@ function PublicWebsiteShell({
   readonly locale: PublicWebsiteLocale;
 }): JSX.Element {
   const data = usePublicWebsiteData(lookupKey);
+  const location = useLocation();
+  const defaultLocale = usePublicWebsiteDefaultLocale();
   const academy =
     data.status === 'ready' || data.status === 'unpublished'
       ? data.academy
       : undefined;
   useCanonicalHostRedirect(academy?.canonicalHost);
+
+  // B0-WEB-02 — an old link under the default language's own prefix.
+  const localeRedirect =
+    data.status === 'ready'
+      ? resolveLocalePrefixRedirect(
+          location.pathname,
+          location.search,
+          defaultLocale,
+          data.pages
+        )
+      : null;
+  if (localeRedirect) return <Navigate to={localeRedirect} replace />;
 
   // An Academy that exists but has not published its website is a normal
   // product state, not a failure — it gets a branded Coming Soon page
@@ -228,7 +257,7 @@ function LazyRoute({
   );
 }
 
-/** One locale's worth of real page routes — mounted once for `en` (unprefixed) and once for `ar` (under `/ar`), see `PublicWebsiteRouter` below. */
+/** One locale's worth of real page routes — mounted once for the site's default locale (unprefixed) and once for the other (under its prefix: `/ar`, or `/en` on an Arabic-default site), see `PublicWebsiteRouter` below. */
 function PublicWebsiteLocaleRoutes({
   lookupKey,
   locale,
@@ -359,10 +388,11 @@ function PublicWebsiteLocaleRoutes({
         element={
           <LazyRoute>
             <PublicWebsiteLearningRoute lookupKey={lookupKey} locale={locale}>
-              {({ academyId, buildHref }) => (
+              {({ academyId, buildHref, defaultLocale }) => (
                 <LearnerRouter
                   academyId={academyId}
                   locale={locale}
+                  defaultLocale={defaultLocale}
                   buildHref={buildHref}
                 />
               )}
@@ -412,35 +442,55 @@ export function PublicWebsiteRouter({
   // …and its own name as the browser title, never "Atlas".
   const academyName = resolution.data?.academyName;
   useAcademyHeadDefaults(academyName);
+  // B0-WEB-02 — the language served at `/`: the PUBLISHED configuration's
+  // (the same cached query every page reads), English until it is known
+  // and for a site that is not published.
+  const configuration = usePublishedWebsite(resolution.data?.academyId);
+  const defaultLocale = resolveDefaultLocale(
+    configuration.data?.status === 'published'
+      ? configuration.data.defaultLocale
+      : undefined
+  );
+  const otherLocale =
+    PUBLIC_WEBSITE_LOCALES.find((locale) => locale !== defaultLocale) ??
+    defaultLocale;
 
   return (
     <AcademyTitleBaselineContext.Provider value={academyName}>
-      <Routes>
-        <Route
-          path="/robots.txt"
-          element={<PublicWebsiteRobotsRoute lookupKey={lookupKey} />}
-        />
-        <Route
-          path="/sitemap.xml"
-          element={<PublicWebsiteSitemapRoute lookupKey={lookupKey} />}
-        />
-        <Route
-          path="/ar/*"
-          element={
-            <PublicWebsiteLocaleRoutes lookupKey={lookupKey} locale="ar" />
-          }
-        />
-        <Route
-          path="/*"
-          element={
-            <PublicWebsiteLocaleRoutes lookupKey={lookupKey} locale="en" />
-          }
-        />
-      </Routes>
-      {/* After the routes, outside them: mounted once for the whole site
+      <PublicWebsiteDefaultLocaleProvider value={defaultLocale}>
+        <Routes>
+          <Route
+            path="/robots.txt"
+            element={<PublicWebsiteRobotsRoute lookupKey={lookupKey} />}
+          />
+          <Route
+            path="/sitemap.xml"
+            element={<PublicWebsiteSitemapRoute lookupKey={lookupKey} />}
+          />
+          <Route
+            path={`/${otherLocale}/*`}
+            element={
+              <PublicWebsiteLocaleRoutes
+                lookupKey={lookupKey}
+                locale={otherLocale}
+              />
+            }
+          />
+          <Route
+            path="/*"
+            element={
+              <PublicWebsiteLocaleRoutes
+                lookupKey={lookupKey}
+                locale={defaultLocale}
+              />
+            }
+          />
+        </Routes>
+        {/* After the routes, outside them: mounted once for the whole site
           and never remounted by a navigation. `RootRoute` skips its own
           banner on an Academy host. */}
-      <PublicWebsiteConsentLayer lookupKey={lookupKey} />
+        <PublicWebsiteConsentLayer lookupKey={lookupKey} />
+      </PublicWebsiteDefaultLocaleProvider>
     </AcademyTitleBaselineContext.Provider>
   );
 }

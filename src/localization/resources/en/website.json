@@ -450,6 +450,7 @@
       "brand": "Brand",
       "seo": "SEO",
       "navigation": "Navigation",
+      "language": "Language",
       "domain": "Domain"
     }
   },
@@ -518,6 +519,19 @@
       "unknownOverride": "This colour can't be changed here.",
       "overrideNotApplied": "This change couldn't be applied."
     }
+  },
+  "language": {
+    "title": "Main language",
+    "description": "The language your website opens in at its main address. Visitors can switch to the other language from the site's header at any time.",
+    "option": {
+      "en": "English at your main address; Arabic pages under /ar.",
+      "ar": "Arabic at your main address; English pages under /en."
+    },
+    "required": "Text in the main language is required; the other language is optional. Where a translation is missing, visitors see the main-language text.",
+    "redirects": "Old links keep working: they forward to the new address. Switching back restores the previous addresses.",
+    "publish": "The change goes live when you publish your website.",
+    "saved": "Main language saved. Publish your website to apply it.",
+    "saveError": "We couldn't save the main language. Please try again."
   },
   "seo": {
     "siteTitle": "Site title",

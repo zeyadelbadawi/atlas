@@ -52,6 +52,8 @@ import {
   useWebsitePage,
   useWebsitePages,
 } from '../hooks';
+import { WebsiteContentLocaleProvider } from '../components/website-content-locale';
+import { resolveDefaultLocale } from '../constants/locale.constants';
 import { WebsitePublishBar } from '../components/WebsitePublishBar';
 import { SectionTree } from '../components/SectionTree';
 import { SectionConfigForm } from '../components/SectionConfigForm';
@@ -111,7 +113,24 @@ interface PendingConflict {
   readonly canKeepMine: boolean;
 }
 
+/**
+ * B0-WEB-02 — every bilingual field on this page requires the site's main
+ * language (`LocalizedTextField`): the saved configuration (the same cached
+ * query the page reads) says which.
+ */
 export default function WebsitePageEditorPage(): JSX.Element {
+  const { academyId } = useParams<{ academyId: string }>();
+  const configQuery = useWebsiteConfiguration(academyId ?? '');
+  return (
+    <WebsiteContentLocaleProvider
+      value={resolveDefaultLocale(configQuery.data?.defaultLocale)}
+    >
+      <WebsitePageEditor />
+    </WebsiteContentLocaleProvider>
+  );
+}
+
+function WebsitePageEditor(): JSX.Element {
   const { t, i18n } = useTranslation();
   const { academyId, pageId } = useParams<{
     academyId: string;

@@ -18,6 +18,7 @@
  * `WebsiteRenderer` → `WebsiteThemeScope` → sections.
  *
  * THE SLUG SELECTS THE FIXTURE:  fx--<theme>--<state>[--<palette>[--c1]]
+ *   (`--ardefault` as the composition: the same website, Arabic-default.)
  *   theme    one of the theme keys (`generated/<theme>.json`)
  *   state    `new` | `rich` | `unpublished`  (see `live-data.mjs`)
  *   palette  a `FIXTURE_PALETTES` name, injected as the stored brand
@@ -122,6 +123,8 @@ function parseSlug(slug) {
     composition !== undefined &&
     !(composition === 'c1' && theme === 'modern-education') &&
     !(composition === 'migrated' && theme !== 'modern-education') &&
+    // B0-WEB-02 — the same website, Arabic-default (Arabic at `/`).
+    composition !== 'ardefault' &&
     !(theme === 'atelier' && parseAtelierLimitsComposition(composition))
   ) {
     return null;
@@ -179,6 +182,7 @@ function buildFixture(parsed) {
     brand: { ...FIXTURE_PALETTES[parsed.palette] },
     status: 'published',
     publishedAt: '2026-09-01T09:00:00.000Z',
+    ...(parsed.composition === 'ardefault' ? { defaultLocale: 'ar' } : {}),
   });
   const pages = rebaseIds(generated.pages)
     .filter((page) => page.visible)

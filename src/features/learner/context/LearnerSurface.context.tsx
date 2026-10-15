@@ -42,6 +42,8 @@ const LearnerSurfaceContext = createContext<LearnerSurface | null>(null);
 export interface LearnerSurfaceProviderProps {
   readonly academyId: string;
   readonly locale: PublicWebsiteLocale;
+  /** B0-WEB-02 — the site's default (unprefixed) locale; `en` unless the site is Arabic-default. */
+  readonly defaultLocale?: PublicWebsiteLocale;
   readonly buildHref: (path: string) => string;
   readonly children: ReactNode;
 }
@@ -49,16 +51,20 @@ export interface LearnerSurfaceProviderProps {
 export function LearnerSurfaceProvider({
   academyId,
   locale,
+  defaultLocale = 'en',
   buildHref,
   children,
 }: LearnerSurfaceProviderProps): JSX.Element {
   const location = useLocation();
 
   const value = useMemo<LearnerSurface>(() => {
+    // The current path without its locale prefix: the site's default
+    // locale is unprefixed, the other under `/<locale>` (B0-WEB-02).
+    const prefix = locale === defaultLocale ? '' : `/${locale}`;
     const pathname =
-      locale === 'en'
-        ? location.pathname
-        : location.pathname.replace(/^\/ar/, '') || '/';
+      prefix && location.pathname.startsWith(prefix)
+        ? location.pathname.slice(prefix.length) || '/'
+        : location.pathname;
 
     return {
       academyId,
@@ -67,7 +73,7 @@ export function LearnerSurfaceProvider({
       buildHref,
       pathname,
     };
-  }, [academyId, locale, buildHref, location.pathname]);
+  }, [academyId, locale, defaultLocale, buildHref, location.pathname]);
 
   // Notification context isolation — the bell, the count and the
   // notifications page under this tree are THIS academy's.

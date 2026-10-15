@@ -86,3 +86,22 @@ export function PublicWebsiteLocaleProvider({
 export function usePublicWebsiteLocale(): PublicWebsiteLocaleValue {
   return useContext(PublicWebsiteLocaleContext);
 }
+
+/**
+ * B0-WEB-02 — the site's DEFAULT locale (the language served at `/`), next
+ * to the locale a page is in. Every public URL is built from both: the
+ * default locale is unprefixed, any other under `/<locale>`. Provided once
+ * by `PublicWebsiteRouter` from the published configuration; everywhere else
+ * (the dashboard's previews, the theme gallery, tests) it is `en`, which is
+ * the fixed routing every site had before.
+ */
+const PublicWebsiteDefaultLocaleContext = createContext<PublicWebsiteLocale>(
+  DEFAULT_PUBLIC_WEBSITE_LOCALE
+);
+
+export const PublicWebsiteDefaultLocaleProvider =
+  PublicWebsiteDefaultLocaleContext.Provider;
+
+export function usePublicWebsiteDefaultLocale(): PublicWebsiteLocale {
+  return useContext(PublicWebsiteDefaultLocaleContext);
+}

@@ -25,3 +25,4 @@ export {
 } from './hooks/useDocumentSeo';
 export type { UseDocumentSeoOptions } from './hooks/useDocumentSeo';
 export { resolveCanonicalRedirect } from './utils/canonical-redirect.utils';
+export { resolveLocalePrefixRedirect } from './utils/locale-redirect.utils';

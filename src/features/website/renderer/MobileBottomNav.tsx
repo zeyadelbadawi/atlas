@@ -41,6 +41,8 @@ import { cn } from '@/lib/utils';
 import { LEARNER_ROUTES } from '@app/routes/route-paths';
 import { resolvePagePath } from '../utils/link-resolution.utils';
 import { useMobileBottomNavVisibility } from './useMobileBottomNavVisibility';
+import { usePublicWebsiteDefaultLocale } from './PublicWebsiteLocaleContext';
+import { stripPublicWebsiteLocalePrefix } from '../constants/locale.constants';
 import { MY_LEARN_SIGN_IN_HREF } from './WebsiteAccountMenu';
 import type { WebsiteLinkRenderer } from './website-link-renderer.types';
 import type { PublicWebsiteLocale, WebsitePage } from '@types';
@@ -67,16 +69,18 @@ export function MobileBottomNav({
   const { t } = useTranslation();
   const location = useLocation();
   const isVisible = useMobileBottomNavVisibility();
+  const defaultLocale = usePublicWebsiteDefaultLocale();
 
   // No real navigation possible without it (matches `WebsiteHeader`'s own
   // "absent in every dashboard preview context" convention) — the Theme
   // gallery/Page Editor preview simply doesn't render this bar.
   if (!linkRenderer || !isVisible) return null;
 
-  const unprefixedPathname =
-    locale === 'en'
-      ? location.pathname
-      : location.pathname.replace(/^\/ar/, '') || '/';
+  const unprefixedPathname = stripPublicWebsiteLocalePrefix(
+    location.pathname,
+    locale,
+    defaultLocale
+  );
   const coursesPage = pages.find((page) => page.coreType === 'courses');
   const coursesPath = coursesPage ? resolvePagePath(coursesPage) : '/courses';
 

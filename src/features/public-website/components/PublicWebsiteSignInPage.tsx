@@ -54,6 +54,8 @@ import {
   resolvePagePath,
   resolveLocalizedText,
   usePublicWebsiteDocumentDirection,
+  publicWebsiteLocalePrefix,
+  usePublicWebsiteDefaultLocale,
 } from '@features/website';
 import {
   SignInForm,
@@ -109,6 +111,7 @@ export function PublicWebsiteSignInPage({
   const [challenge, setChallenge] = useState<SignInChallenge | null>(null);
   const linkRenderer = usePublicWebsiteLinkRenderer(locale);
   const buildHref = usePublicWebsiteHrefBuilder(locale);
+  const defaultLocale = usePublicWebsiteDefaultLocale();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   // Set by `PublicWebsiteLearningRoute` (and any other authenticated-only
@@ -253,7 +256,7 @@ export function PublicWebsiteSignInPage({
       linkRenderer={linkRenderer}
       locale={locale}
       onLocaleChange={(target) => {
-        const base = `${target === 'en' ? '' : '/ar'}/sign-in`;
+        const base = `${publicWebsiteLocalePrefix(target, defaultLocale)}/sign-in`;
         const devSlug = searchParams.get(DEV_OVERRIDE_PARAM);
         window.location.assign(
           devSlug
