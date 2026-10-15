@@ -16,7 +16,9 @@
  *
  * NOT INDEXED: `noindex, follow` while it is mounted, so search engines
  * drop the page but still follow its links to the legal and contact
- * pages, which the static sitemap lists.
+ * pages, which the static sitemap lists. The platform host's edge sends
+ * the same value as an `X-Robots-Tag` header on `/`, `/ar` and `/ar/`
+ * (Caddyfile, `@holding_page`), so it holds before the app has run.
  *
  * Old links to the homepage contact form (`/#contact`) land on the form
  * itself.
