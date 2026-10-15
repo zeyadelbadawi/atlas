@@ -23,15 +23,15 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
           persist-credentials: false
 
-      - uses: pnpm/action-setup@v5
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
         with:
           version: 10
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: 20
           cache: pnpm
@@ -61,15 +61,15 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
           persist-credentials: false
 
-      - uses: pnpm/action-setup@v5
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
         with:
           version: 10
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: 20
           cache: pnpm
@@ -100,10 +100,22 @@ jobs:
           arabic-line-spacing.spec.ts
 
       - if: failure()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: theme-baseline-report
           path: e2e/theme-baseline/.results
           # `.results` is a hidden directory, which upload-artifact skips by default.
           include-hidden-files: true
           retention-days: 7
+
+  # B0-OPS-11 — the critical product journeys (sign-up, subscription bank
+  # transfer and wallet/InstaPay, academy manual payments, commerce,
+  # orders, watermark lookup) against a real backend built from
+  # `atlas-backend` `main`. The full set runs nightly from the same
+  # workflow file; see its header and e2e/FLAKY.md. Being a job of this
+  # workflow, it also gates Deploy.
+  journeys-critical:
+    name: Critical journeys
+    uses: ./.github/workflows/journeys.yml
+    with:
+      suite: critical

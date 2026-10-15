@@ -1,9 +1,11 @@
 /**
- * J29 — the Atlas marketing contact form and the Platform Owner's inbox
+ * J29 — the Atlas platform contact form and the Platform Owner's inbox
  * (Task 7), Chromium against the real stack and database.
  *
- *  - A visitor on the Atlas marketing home page (the platform host — the
- *    plain dashboard origin, without the academy preview selector) submits
+ *  - A visitor on the Atlas contact page, `/contact` (the platform host —
+ *    the plain dashboard origin, without the academy preview selector; the
+ *    form was the marketing homepage's `#contact` section until owner
+ *    decision D6 retired that homepage) submits
  *    the empty form and sees an error on every required field (EN desktop,
  *    AR phone with RTL and Arabic messages).
  *  - The visitor fills it in, waits past the server's minimum fill time
@@ -47,7 +49,7 @@ async function openContactSection(page: Page, language: 'en' | 'ar') {
   await page.addInitScript((lang) => {
     window.localStorage.setItem('atlas:language', JSON.stringify(lang));
   }, language);
-  await page.goto('/#contact');
+  await page.goto('/contact');
   const form = page.getByRole('form', {
     name: language === 'ar' ? 'تواصل مع فريق أطلس' : 'Contact the Atlas team',
   });

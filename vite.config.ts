@@ -4,10 +4,11 @@ import fs from 'node:fs';
 import path from 'path';
 import { viteSourceLocator } from '@metagptx/vite-plugin-source-locator';
 import { atoms } from '@metagptx/web-sdk/plugins';
-import { vitePrerenderPlugin } from 'vite-prerender-plugin';
 import Sitemap from 'vite-plugin-sitemap';
-import { getBlogRoutes } from './prerender/blog-routes.js';
-import { getSitemapLastmod } from './prerender/blog-sitemap.js';
+import {
+  PLATFORM_SITEMAP_EXCLUDED,
+  PLATFORM_SITEMAP_ROUTES,
+} from './src/app/routes/platform-sitemap';
 
 function escapeHtmlAttr(str: string): string {
   return str
@@ -123,8 +124,6 @@ export default defineConfig(({ command, mode, isSsrBuild }) => {
   // Reports/SSR_ARCHITECTURE_ANALYSIS.md): its own output folder, and none
   // of the client build's page generators.
   const ssr = isSsrBuild === true;
-  const blogPrerenderRoutes =
-    command === 'build' && !ssr ? getBlogRoutes() : [];
   // Theme baseline fixture build (`pnpm theme-baseline:build`, Theme 1 plan
   // Phase 0) — its own output folder, so it can never overwrite `dist/`.
   // The sitemap plugin writes to a fixed folder, hence passing it too.
@@ -178,18 +177,16 @@ export default defineConfig(({ command, mode, isSsrBuild }) => {
               // production domain (e.g. a future staging deploy).
               hostname: process.env.VITE_SITE_URL || 'https://atlass.dpdns.org',
               outDir,
-              lastmod: getSitemapLastmod(),
+              // Owner decision D6: only the platform's indexable pages —
+              // contact and the legal documents — never the noindex
+              // holding page or a retired marketing page
+              // (`src/app/routes/platform-sitemap.ts`).
+              dynamicRoutes: [...PLATFORM_SITEMAP_ROUTES],
+              exclude: [...PLATFORM_SITEMAP_EXCLUDED],
               readable: true,
               generateRobotsTxt: true,
             }),
           ]),
-      ...(blogPrerenderRoutes.length > 0
-        ? vitePrerenderPlugin({
-            renderTarget: '#root',
-            prerenderScript: path.resolve(__dirname, 'prerender/blog.js'),
-            additionalPrerenderRoutes: blogPrerenderRoutes,
-          })
-        : []),
     ],
     resolve: {
       // Atlas path aliases. Mirrored in tsconfig.json / tsconfig.app.json.

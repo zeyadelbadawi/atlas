@@ -226,7 +226,8 @@ async function uploadReceipt(page: Page, fileName: string): Promise<void> {
   ).toBeVisible();
 }
 
-test.describe('J20 — E-wallet and InstaPay: configure, checkout, review', () => {
+// `@critical`: in the required CI set (.github/workflows/journeys.yml).
+test.describe('J20 — E-wallet and InstaPay: configure, checkout, review @critical', () => {
   let platformOwner: Session;
   let ownerA: OrgOwner;
   let ownerB: OrgOwner;

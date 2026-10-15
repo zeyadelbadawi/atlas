@@ -335,7 +335,7 @@
         "fullscreen_unavailable": {
           "title": "Full screen unavailable",
           "summary": "The browser reported that full screen was not available ({{reasons}}).",
-          "innocent": "Phones and some tablets have no full screen for web pages, and a browser setting can block it. A modified browser could also claim this.",
+          "innocent": "Some browsers have no full screen for web pages (every browser on iPhone, for example), and a browser setting can block it. A modified browser could also claim this.",
           "reason": {
             "unsupported": "not supported",
             "refused": "refused"

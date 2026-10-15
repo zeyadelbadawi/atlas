@@ -36,7 +36,8 @@ test.describe.configure({ mode: 'serial' });
 
 const CODE = /^[0-9A-HJKMNP-TV-Z]{5}-[0-9A-HJKMNP-TV-Z]{5}$/;
 
-test.describe('J48 — forensic watermark: learner code → Platform Owner lookup', () => {
+// `@critical`: in the required CI set (.github/workflows/journeys.yml).
+test.describe('J48 — forensic watermark: learner code → Platform Owner lookup @critical', () => {
   const stamp = `${Date.now()}`;
   const learnerEmail = uniqueLearnerEmail('j48');
   const learnerName = uniqueLearnerName('J48 Learner');

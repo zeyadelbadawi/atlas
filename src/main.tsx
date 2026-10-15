@@ -21,6 +21,7 @@ import { ENV } from '@config';
 import { startPublicWebsitePrefetch } from '@services';
 import { getCurrentPublicWebsiteContext, publicWebsiteLookupKey } from '@utils';
 import { languagesForFirstRender } from './app/providers/localization/initial-language';
+import { platformUrlLanguage } from './app/routes/retired-marketing-routes';
 import {
   SSR_PAYLOAD_ELEMENT_ID,
   SSR_PAYLOAD_VERSION,
@@ -30,6 +31,7 @@ import { publicWebsiteLocaleForPath } from './ssr/ssr-paths';
 import { preloadPublicWebsiteRouter } from './app/routes/public-website-router-loader';
 import { isKnownThemeKey, loadThemePack } from '@features/website';
 import { reloadOnceForNewVersion } from '@utils/lazy-with-retry.utils';
+import { captureLandingAttribution } from '@utils/landing-attribution.utils';
 import {
   academyScope,
   configureOfflineScope,
@@ -51,6 +53,10 @@ const ROOT_ELEMENT_ID = 'root';
 // Local-first dashboard — spread the refetch burst that follows a reconnect
 // (see `installJitteredOnlineManager`).
 installJitteredOnlineManager();
+
+// B0-ANL-04 — read the landing URL's UTM values / referrer host once, into
+// memory only (no browser storage). A no-op while `signupAttribution` is off.
+captureLandingAttribution();
 
 window.addEventListener('vite:preloadError', (event) => {
   if (reloadOnceForNewVersion()) event.preventDefault();
@@ -122,8 +128,13 @@ async function initializeApp(): Promise<void> {
   // A server-rendered page brings its data; only then is it hydrated.
   const ssr = isAcademyWebsite ? readSsrPayload() : null;
   // An Academy website renders in its URL locale from the first render
-  // (server and browser alike); the dashboard keeps the preference.
-  const urlLocale = publicWebsiteLocaleForPath(window.location.pathname);
+  // (server and browser alike); the dashboard keeps the preference. A
+  // server-rendered page says which (B0-WEB-02: on an Arabic-default site
+  // `/` is Arabic, which the path alone cannot tell); otherwise the
+  // English-default reading of the path, which the router corrects once
+  // the site's configuration has loaded.
+  const urlLocale =
+    ssr?.locale ?? publicWebsiteLocaleForPath(window.location.pathname);
 
   const routerChunk = isAcademyWebsite
     ? preloadPublicWebsiteRouter().catch(() => undefined)
@@ -197,7 +208,17 @@ async function initializeApp(): Promise<void> {
     });
   } else {
     createRoot(rootElement).render(
-      <App initialLanguage={isAcademyWebsite ? urlLocale : undefined} />
+      <App
+        initialLanguage={
+          isAcademyWebsite
+            ? urlLocale
+            : // `/ar` (the Arabic holding page, owner decision D6) and
+              // the `/ar/...` addresses that forward from it open in
+              // Arabic without changing the stored preference; any other
+              // platform page keeps the preference.
+              platformUrlLanguage(window.location.pathname)
+        }
+      />
     );
   }
 

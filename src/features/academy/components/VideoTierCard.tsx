@@ -55,6 +55,13 @@ export interface VideoTierCardProps {
 
 const TIERS: readonly VideoSecurityTier[] = ['normal', 'premium'];
 
+/** B0-MED-11 — the tiers an academy may be offered right now: Premium only once it is (`hostedVideoPremium`). */
+function offeredTiers(): readonly VideoSecurityTier[] {
+  return isFeatureEnabled('hostedVideoPremium')
+    ? TIERS
+    : TIERS.filter((tier) => tier !== 'premium');
+}
+
 export function VideoTierCard({
   academyId,
   canEdit,
@@ -169,7 +176,7 @@ function VideoTierForm({
         aria-label={t('academy:protection.videoTier.title')}
         className="gap-3"
       >
-        {TIERS.map((tier) => {
+        {offeredTiers().map((tier) => {
           const locked = tier === 'premium' && !premiumEntitled;
           return (
             <div

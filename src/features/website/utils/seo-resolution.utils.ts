@@ -31,7 +31,9 @@ import type {
   WebsitePage,
 } from '@types';
 import {
+  DEFAULT_PUBLIC_WEBSITE_LOCALE,
   PUBLIC_WEBSITE_LOCALES,
+  publicWebsiteLocalePrefix,
   type PublicWebsiteLocale,
 } from '../constants/locale.constants';
 import { resolveLocalizedText } from './localized-text.utils';
@@ -41,16 +43,23 @@ export interface SeoFallback {
   readonly description: string;
 }
 
-function withLocalePrefix(path: string, locale: PublicWebsiteLocale): string {
-  return locale === 'en' ? path : `/${locale}${path}`;
+/** B0-WEB-02 — the site's default locale is unprefixed, every other under `/<locale>`. */
+function withLocalePrefix(
+  path: string,
+  locale: PublicWebsiteLocale,
+  defaultLocale: PublicWebsiteLocale
+): string {
+  return `${publicWebsiteLocalePrefix(locale, defaultLocale)}${path}`;
 }
 
-function buildHreflangAlternates(
-  canonicalPath: string
+/** One alternate per supported locale, always in the same order — every locale's page lists the same set, so the alternates are reciprocal. */
+export function buildHreflangAlternates(
+  canonicalPath: string,
+  defaultLocale: PublicWebsiteLocale = DEFAULT_PUBLIC_WEBSITE_LOCALE
 ): readonly HreflangAlternate[] {
   return PUBLIC_WEBSITE_LOCALES.map((locale) => ({
     locale,
-    path: withLocalePrefix(canonicalPath, locale),
+    path: withLocalePrefix(canonicalPath, locale, defaultLocale),
   }));
 }
 
@@ -58,7 +67,9 @@ export function resolvePageSeo(
   page: WebsitePage,
   configuration: WebsiteConfiguration,
   fallback: SeoFallback,
-  locale: PublicWebsiteLocale
+  locale: PublicWebsiteLocale,
+  /** B0-WEB-02 — the site's default locale (unprefixed); `en` unless the site is Arabic-default. */
+  defaultLocale: PublicWebsiteLocale = DEFAULT_PUBLIC_WEBSITE_LOCALE
 ): ResolvedSeoMetadata {
   const pageMetaTitle = resolveLocalizedText(page.seo.metaTitle, locale);
   const globalMetaTitle = resolveLocalizedText(
@@ -105,7 +116,7 @@ export function resolvePageSeo(
     titleSource,
     descriptionSource,
     locale,
-    hreflangAlternates: buildHreflangAlternates(canonicalPath),
+    hreflangAlternates: buildHreflangAlternates(canonicalPath, defaultLocale),
   };
 }
 
@@ -120,7 +131,9 @@ export function resolveCourseSeo(
   course: Course,
   configuration: WebsiteConfiguration,
   fallback: SeoFallback,
-  locale: PublicWebsiteLocale
+  locale: PublicWebsiteLocale,
+  /** B0-WEB-02 — the site's default locale (unprefixed); `en` unless the site is Arabic-default. */
+  defaultLocale: PublicWebsiteLocale = DEFAULT_PUBLIC_WEBSITE_LOCALE
 ): ResolvedSeoMetadata {
   const title = course.title || fallback.title;
   const description =
@@ -145,7 +158,7 @@ export function resolveCourseSeo(
     descriptionSource:
       course.shortDescription || course.description ? 'override' : 'fallback',
     locale,
-    hreflangAlternates: buildHreflangAlternates(canonicalPath),
+    hreflangAlternates: buildHreflangAlternates(canonicalPath, defaultLocale),
   };
 }
 

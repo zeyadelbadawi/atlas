@@ -4,6 +4,16 @@
  * the academy named in the route. Read-only: payouts are created and marked
  * paid by the Platform Owner.
  *
+ * D5-5 (B0-COM-02) — SALES FIRST, AND FROM THE RIGHT SOURCE. The ledger
+ * below only ever holds Atlas Payments sales, which are not launched, so on
+ * its own this page showed an academy selling by bank transfer an empty
+ * "revenue". The summary read now also carries `manualSales` — the
+ * dashboard card's figure and rule (approved manual payments whose order is
+ * still paid, gross, 7/30/90 days) — shown first under its own name, never
+ * as revenue or "after fees". The ledger balance and payout history sit
+ * apart under "Atlas Payments payouts", which says plainly that Atlas
+ * Payments is not available yet when it holds nothing.
+ *
  * Presentation rules that follow from the backend contract:
  *
  *   - ORGANIZATION OWNER ONLY. Both endpoints answer 403 to a manager or
@@ -41,6 +51,7 @@ import type {
   AcademyPayout,
   AcademyPayoutStatus,
   CollectionQuery,
+  DashboardManualSales,
   LanguageCode,
   Money,
 } from '@types';
@@ -90,6 +101,63 @@ function BalanceCard({ balance, locale }: BalanceCardProps): JSX.Element {
         </p>
       ) : null}
     </li>
+  );
+}
+
+interface ManualSalesPeriodsProps {
+  readonly manualSales: DashboardManualSales;
+  readonly locale: string;
+}
+
+/** D5-5 — one card per window (7/30/90 days), one line per currency. */
+function ManualSalesPeriods({
+  manualSales,
+  locale,
+}: ManualSalesPeriodsProps): JSX.Element {
+  const { t } = useTranslation();
+  return (
+    <ul
+      className="grid gap-4 sm:grid-cols-3"
+      aria-label={t('academy:revenue.manualSales.title')}
+    >
+      {manualSales.periods.map((period) => (
+        <li
+          key={period.days}
+          className="rounded-lg border border-border bg-card p-4 shadow-xs sm:p-5"
+        >
+          <p className="text-sm font-medium text-muted-foreground">
+            {t(`academy:revenue.manualSales.window.${period.days}`)}
+          </p>
+          {period.totals.length === 0 ? (
+            <p className="mt-3 text-sm text-muted-foreground">
+              {t('academy:revenue.manualSales.empty')}
+            </p>
+          ) : (
+            period.totals.map((total) => (
+              <div key={total.currency} className="mt-3">
+                <p
+                  className="font-display text-2xl font-semibold leading-none text-foreground"
+                  data-atlas-numeric="true"
+                >
+                  {formatMoney(
+                    {
+                      amountMinorUnits: total.amountMinorUnits,
+                      currency: total.currency,
+                    },
+                    locale
+                  )}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {t('academy:revenue.manualSales.orders', {
+                    count: total.count,
+                  })}
+                </p>
+              </div>
+            ))
+          )}
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -229,82 +297,147 @@ export default function AcademyRevenuePage(): JSX.Element {
   }
 
   const balances = summary.data?.unsettled ?? [];
+  const manualSales = summary.data?.manualSales;
+  // Nothing has ever gone through Atlas Payments for this academy.
+  const atlasPaymentsEmpty =
+    !summary.isLoading &&
+    !summary.error &&
+    balances.length === 0 &&
+    !payouts.isLoading &&
+    !payouts.error &&
+    (payouts.data?.items.length ?? 0) === 0;
 
   return (
     <PageContainer>
       {header}
 
       <SectionCard
-        titleKey="academy:revenue.summary.title"
-        descriptionKey="academy:revenue.summary.description"
+        titleKey="academy:revenue.manualSales.title"
+        descriptionKey="academy:revenue.manualSales.description"
       >
         {summary.isLoading ? (
-          <div
-            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-            aria-busy="true"
-          >
+          <div className="grid gap-4 sm:grid-cols-3" aria-busy="true">
             <span className="sr-only" role="status">
-              {t('academy:revenue.summary.loading')}
+              {t('academy:revenue.manualSales.loading')}
             </span>
+            <Skeleton className="h-28 w-full" />
             <Skeleton className="h-28 w-full" />
             <Skeleton className="h-28 w-full" />
           </div>
         ) : summary.error ? (
           <ErrorState
             kind={summary.error.kind}
-            titleKey="academy:revenue.summary.error.title"
-            descriptionKey="academy:revenue.summary.error.description"
+            titleKey="academy:revenue.manualSales.error.title"
+            descriptionKey="academy:revenue.manualSales.error.description"
             requestId={summary.error.requestId}
             onRetry={() => void summary.refetch()}
           />
-        ) : balances.length === 0 ? (
-          <p className="flex items-start gap-2 rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground">
-            <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
-            <span>{t('academy:revenue.summary.empty')}</span>
-          </p>
+        ) : manualSales ? (
+          <ManualSalesPeriods manualSales={manualSales} locale={locale} />
         ) : (
-          <ul
-            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-            aria-label={t('academy:revenue.summary.title')}
-          >
-            {balances.map((balance) => (
-              <BalanceCard
-                key={balance.currency}
-                balance={balance}
-                locale={locale}
-              />
-            ))}
-          </ul>
+          <p className="text-sm text-muted-foreground">
+            {t('academy:revenue.manualSales.empty')}
+          </p>
         )}
       </SectionCard>
 
-      <SectionCard
-        titleKey="academy:revenue.payouts.title"
-        descriptionKey="academy:revenue.payouts.description"
-        flushBody
+      <section
+        className="flex flex-col gap-4"
+        aria-labelledby="atlas-payments-payouts"
       >
-        {payouts.error ? (
-          <div className="p-6">
+        <div className="space-y-1">
+          <h2
+            id="atlas-payments-payouts"
+            className="text-lg font-semibold text-foreground"
+          >
+            {t('academy:revenue.atlasPayments.title')}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {t('academy:revenue.atlasPayments.description')}
+          </p>
+        </div>
+        {atlasPaymentsEmpty ? (
+          <p
+            className="flex items-start gap-2 rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground"
+            data-testid="atlas-payments-not-launched"
+          >
+            <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
+            <span>{t('academy:revenue.atlasPayments.notLaunched')}</span>
+          </p>
+        ) : null}
+
+        <SectionCard
+          titleKey="academy:revenue.summary.title"
+          descriptionKey="academy:revenue.summary.description"
+        >
+          {summary.isLoading ? (
+            <div
+              className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+              aria-busy="true"
+            >
+              <span className="sr-only" role="status">
+                {t('academy:revenue.summary.loading')}
+              </span>
+              <Skeleton className="h-28 w-full" />
+              <Skeleton className="h-28 w-full" />
+            </div>
+          ) : summary.error ? (
             <ErrorState
-              kind={payouts.error.kind}
-              titleKey="academy:revenue.payouts.error.title"
-              descriptionKey="academy:revenue.payouts.error.description"
-              requestId={payouts.error.requestId}
-              onRetry={() => void payouts.refetch()}
+              kind={summary.error.kind}
+              titleKey="academy:revenue.summary.error.title"
+              descriptionKey="academy:revenue.summary.error.description"
+              requestId={summary.error.requestId}
+              onRetry={() => void summary.refetch()}
             />
-          </div>
-        ) : (
-          <DataTable
-            columns={columns}
-            data={payouts.data?.items ?? []}
-            isLoading={payouts.isLoading}
-            pagination={totalItems > 0 ? pagination : undefined}
-            emptyTitleKey="academy:revenue.payouts.empty.title"
-            emptyDescriptionKey="academy:revenue.payouts.empty.description"
-            getRowId={(payout) => payout.id}
-          />
-        )}
-      </SectionCard>
+          ) : balances.length === 0 ? (
+            <p className="flex items-start gap-2 rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground">
+              <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
+              <span>{t('academy:revenue.summary.empty')}</span>
+            </p>
+          ) : (
+            <ul
+              className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+              aria-label={t('academy:revenue.summary.title')}
+            >
+              {balances.map((balance) => (
+                <BalanceCard
+                  key={balance.currency}
+                  balance={balance}
+                  locale={locale}
+                />
+              ))}
+            </ul>
+          )}
+        </SectionCard>
+
+        <SectionCard
+          titleKey="academy:revenue.payouts.title"
+          descriptionKey="academy:revenue.payouts.description"
+          flushBody
+        >
+          {payouts.error ? (
+            <div className="p-6">
+              <ErrorState
+                kind={payouts.error.kind}
+                titleKey="academy:revenue.payouts.error.title"
+                descriptionKey="academy:revenue.payouts.error.description"
+                requestId={payouts.error.requestId}
+                onRetry={() => void payouts.refetch()}
+              />
+            </div>
+          ) : (
+            <DataTable
+              columns={columns}
+              data={payouts.data?.items ?? []}
+              isLoading={payouts.isLoading}
+              pagination={totalItems > 0 ? pagination : undefined}
+              emptyTitleKey="academy:revenue.payouts.empty.title"
+              emptyDescriptionKey="academy:revenue.payouts.empty.description"
+              getRowId={(payout) => payout.id}
+            />
+          )}
+        </SectionCard>
+      </section>
     </PageContainer>
   );
 }

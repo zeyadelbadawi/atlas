@@ -1,6 +1,10 @@
 /**
- * Marketing contact section — the Atlas homepage's "talk to us" form
- * (`#contact`).
+ * The platform contact form — the whole of the `/contact` page.
+ *
+ * It was the marketing homepage's `#contact` section until owner decision
+ * D6 retired that homepage; it keeps the `contact` id, so `/contact#contact`
+ * and `#contact form` still find it. `defaultTopic` (from `?topic=`)
+ * preselects a topic.
  *
  * Sends to `POST public/contact`, which lands in the Platform Owner's inbox
  * (`/dashboard/platform/contact-submissions`). Never an Academy's inbox:
@@ -19,7 +23,15 @@
  * so the form has a single success state and never claims more than "we
  * received it".
  *
- * Design system: `design-system/atlas-marketing/MASTER.md` — a divided
+ * B0-SUP-04 / B0-ANL-04 — behind feature flags that are OFF until counsel
+ * approves the consent wording: an optional WhatsApp number, two SEPARATE,
+ * UNTICKED consents (being contacted about this enquiry; marketing),
+ * optional qualification questions for a sales enquiry
+ * (`marketingContactConsent`), and the in-memory landing attribution
+ * (`signupAttribution`). With both flags off the form and its payload are
+ * exactly as before.
+ *
+ * Design system: `design-system/atlas-marketing/MASTER.md` — a
  * `MarketingSection`, start-aligned heading block, one `rounded-xl` card,
  * `rounded-md` controls, tokens only, logical properties for RTL.
  */
@@ -33,6 +45,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import { PhoneField, defaultPhoneCountry } from '@components/phone';
+import { isFeatureEnabled } from '@config/feature-flags.config';
+import { getLandingAttribution } from '@utils/landing-attribution.utils';
 import {
   Select,
   SelectContent,
@@ -41,8 +57,13 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useSubmitPlatformContact } from '../hooks/useSubmitPlatformContact';
+import type { PlatformContactTopic } from '../services/PlatformContactService';
 import {
+  MARKETING_CONTACT_CHANNELS,
   MARKETING_CONTACT_LIMITS as LIMITS,
+  MARKETING_CONTACT_ROLES,
+  MARKETING_CONTACT_STUDENT_BANDS,
+  MARKETING_CONTACT_SUBJECT_MAX,
   MARKETING_CONTACT_TOPICS,
   marketingContactSchema,
   toSourcePath,
@@ -51,7 +72,7 @@ import {
 } from '../utils/marketing-contact';
 import { MarketingSection, SectionHeading } from './MarketingSection';
 
-/** The in-page anchor the marketing nav links to (`/#contact`). */
+/** The section's id (the old homepage anchor, `/#contact`). */
 export const MARKETING_CONTACT_ANCHOR = 'contact';
 
 const EMPTY_VALUES: MarketingContactValues = {
@@ -63,6 +84,15 @@ const EMPTY_VALUES: MarketingContactValues = {
   topic: undefined as unknown as MarketingContactValues['topic'],
   message: '',
   company: '',
+  phoneCountry: defaultPhoneCountry(),
+  phoneNumber: '',
+  // Both consents start UNTICKED; nothing is pre-checked.
+  contactConsent: false,
+  marketingConsent: false,
+  requesterRole: undefined,
+  subject: '',
+  studentBand: undefined,
+  preferredChannel: undefined,
 };
 
 /** Interpolation values for every `home:contact.errors.*` key. */
@@ -75,8 +105,18 @@ const LIMIT_VALUES = {
   messageMax: LIMITS.messageMax,
 };
 
-export function MarketingContactSection(): JSX.Element {
+export interface MarketingContactSectionProps {
+  /** Preselected topic; the visitor can still change it. */
+  readonly defaultTopic?: PlatformContactTopic;
+}
+
+export function MarketingContactSection({
+  defaultTopic,
+}: MarketingContactSectionProps = {}): JSX.Element {
   const { t, i18n } = useTranslation();
+  const emptyValues: MarketingContactValues = defaultTopic
+    ? { ...EMPTY_VALUES, topic: defaultTopic }
+    : EMPTY_VALUES;
   const location = useLocation();
   const formId = useId();
   const submit = useSubmitPlatformContact();
@@ -96,7 +136,7 @@ export function MarketingContactSection(): JSX.Element {
     formState: { errors, isSubmitting },
   } = useForm<MarketingContactValues, unknown, MarketingContactParsed>({
     resolver: zodResolver(marketingContactSchema),
-    defaultValues: EMPTY_VALUES,
+    defaultValues: emptyValues,
     mode: 'onTouched',
   });
 
@@ -110,12 +150,16 @@ export function MarketingContactSection(): JSX.Element {
   const errorId = (name: string) => `${formId}-${name}-error`;
   const isPending = submit.isPending;
   const messageLength = (watch('message') ?? '').length;
+  // Read per render so a test (or a later runtime flag) can switch it.
+  const consentFieldsOn = isFeatureEnabled('marketingContactConsent');
+  const isSalesTopic = watch('topic') === 'sales';
 
   const onSubmit = async (values: MarketingContactParsed) => {
     if (inFlight.current) return;
     inFlight.current = true;
     const company = values.company.trim();
     const sourcePath = toSourcePath(location.pathname);
+    const attribution = getLandingAttribution();
     try {
       await submit.mutateAsync({
         name: values.name,
@@ -129,14 +173,33 @@ export function MarketingContactSection(): JSX.Element {
         ...(sourcePath ? { sourcePath } : {}),
         ...(company ? { company } : {}),
         startedAt: startedAt.current,
+        ...(consentFieldsOn ? leadFields(values) : {}),
+        ...(attribution ? { attribution } : {}),
       });
-      reset(EMPTY_VALUES);
+      reset(emptyValues);
       setIsSent(true);
     } catch {
       // Shown by the failure alert (`submit.isError`); the text is kept.
     } finally {
       inFlight.current = false;
     }
+  };
+
+  /** B0-SUP-04 — the flag-gated fields, only what the visitor actually gave. */
+  const leadFields = (values: MarketingContactParsed) => {
+    const phoneNumber = values.phoneNumber.trim();
+    const sales = values.topic === 'sales';
+    return {
+      ...(phoneNumber ? { phoneNumber, phoneCountry: values.phoneCountry } : {}),
+      contactConsent: values.contactConsent,
+      marketingConsent: values.marketingConsent,
+      ...(sales && values.requesterRole ? { requesterRole: values.requesterRole } : {}),
+      ...(sales && values.subject ? { subject: values.subject } : {}),
+      ...(sales && values.studentBand ? { studentBand: values.studentBand } : {}),
+      ...(sales && values.preferredChannel
+        ? { preferredChannel: values.preferredChannel }
+        : {}),
+    };
   };
 
   const startOver = () => {
@@ -165,7 +228,6 @@ export function MarketingContactSection(): JSX.Element {
 
   return (
     <MarketingSection
-      divided
       id={MARKETING_CONTACT_ANCHOR}
       aria-labelledby="home-contact"
       className="scroll-mt-20"
@@ -174,6 +236,7 @@ export function MarketingContactSection(): JSX.Element {
         <div className="flex flex-col gap-8 lg:col-span-5">
           <SectionHeading
             id="home-contact"
+            headingLevel="h1"
             eyebrow={t('home:contact.eyebrow')}
             title={t('home:contact.title')}
             lead={t('home:contact.description')}
@@ -186,7 +249,15 @@ export function MarketingContactSection(): JSX.Element {
                   strokeWidth={1.75}
                   aria-hidden
                 />
-                <span>{t(`home:contact.points.${point}`)}</span>
+                <span>
+                  {t(
+                    // With the consent boxes shown, "only to reply" would no
+                    // longer be the whole promise.
+                    point === 'privacy' && consentFieldsOn
+                      ? 'home:contact.points.privacyWithConsent'
+                      : `home:contact.points.${point}`
+                  )}
+                </span>
               </li>
             ))}
           </ul>
@@ -202,13 +273,13 @@ export function MarketingContactSection(): JSX.Element {
               <span className="flex size-11 items-center justify-center rounded-md bg-accent text-accent-foreground">
                 <Mail className="size-5" strokeWidth={1.75} aria-hidden />
               </span>
-              <h3
+              <h2
                 ref={successHeadingRef}
                 tabIndex={-1}
                 className="font-display text-xl font-semibold text-foreground focus-visible:outline-none"
               >
                 {t('home:contact.success.title')}
-              </h3>
+              </h2>
               <p className="max-w-[52ch] text-base leading-relaxed text-muted-foreground">
                 {t('home:contact.success.description')}
               </p>
@@ -353,6 +424,115 @@ export function MarketingContactSection(): JSX.Element {
                   </p>
                 </div>
               </div>
+
+              {consentFieldsOn ? (
+                <div
+                  className="flex flex-col gap-5 border-t border-border pt-5"
+                  data-testid="marketing-contact-lead-fields"
+                >
+                  <PhoneField
+                    control={control}
+                    errors={errors}
+                    id={fieldId('phoneNumber')}
+                    label={t('home:contact.form.whatsapp')}
+                    hint={t('home:contact.form.whatsappHint')}
+                    disabled={isPending}
+                  />
+
+                  {isSalesTopic ? (
+                    <fieldset
+                      className="grid gap-5 sm:grid-cols-2"
+                      data-testid="marketing-contact-qualification"
+                    >
+                      <legend className="mb-3 text-sm font-medium text-foreground">
+                        {t('home:contact.qualification.legend')}
+                      </legend>
+                      {(
+                        [
+                          ['requesterRole', MARKETING_CONTACT_ROLES, 'roles'],
+                          ['studentBand', MARKETING_CONTACT_STUDENT_BANDS, 'bands'],
+                          ['preferredChannel', MARKETING_CONTACT_CHANNELS, 'channels'],
+                        ] as const
+                      ).map(([name, options, group]) => (
+                        <div key={name} className="flex flex-col gap-2">
+                          <Label htmlFor={fieldId(name)}>
+                            {t(`home:contact.qualification.${name}`)}
+                          </Label>
+                          <Controller
+                            control={control}
+                            name={name}
+                            render={({ field }) => (
+                              <Select
+                                value={(field.value as string | undefined) ?? ''}
+                                onValueChange={(value) => field.onChange(value)}
+                                disabled={isPending}
+                              >
+                                <SelectTrigger
+                                  id={fieldId(name)}
+                                  ref={field.ref}
+                                  onBlur={field.onBlur}
+                                  aria-label={t(`home:contact.qualification.${name}`)}
+                                >
+                                  <SelectValue
+                                    placeholder={t('home:contact.qualification.optional')}
+                                  />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {options.map((option) => (
+                                    <SelectItem key={option} value={option}>
+                                      {t(`home:contact.qualification.${group}.${option}`)}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            )}
+                          />
+                        </div>
+                      ))}
+                      <div className="flex flex-col gap-2">
+                        <Label htmlFor={fieldId('subject')}>
+                          {t('home:contact.qualification.subject')}
+                        </Label>
+                        <Input
+                          id={fieldId('subject')}
+                          maxLength={MARKETING_CONTACT_SUBJECT_MAX}
+                          aria-invalid={!!errors.subject}
+                          aria-describedby={describedBy('subject')}
+                          disabled={isPending}
+                          {...register('subject')}
+                        />
+                        {fieldError('subject')}
+                      </div>
+                    </fieldset>
+                  ) : null}
+
+                  {/* Two SEPARATE consents, both unticked by default. DRAFT
+                      wording pending counsel (version
+                      `CONTACT_CONSENT_WORDING_VERSION`). */}
+                  {(['contactConsent', 'marketingConsent'] as const).map((name) => (
+                    <div key={name} className="flex items-start gap-3">
+                      <Controller
+                        control={control}
+                        name={name}
+                        render={({ field }) => (
+                          <Checkbox
+                            id={fieldId(name)}
+                            checked={field.value === true}
+                            onCheckedChange={(checked) => field.onChange(checked === true)}
+                            disabled={isPending}
+                          />
+                        )}
+                      />
+                      <Label
+                        htmlFor={fieldId(name)}
+                        className="cursor-pointer text-sm font-normal leading-relaxed"
+                      >
+                        {t(`home:contact.consent.${name}`)}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
 
               {/* Spam trap: out of sight, out of the tab order and hidden
                   from assistive tech, so only a bot fills it in. The name

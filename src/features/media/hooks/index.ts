@@ -14,6 +14,8 @@ export type {
   ArchiveMediaAssetsVariables,
 } from './useArchiveMediaAsset';
 export { useUpdateMediaAsset } from './useUpdateMediaAsset';
+export { useProtectedMediaFileGrant } from './useProtectedMediaFileGrant';
+export type { ProtectedMediaFileGrantVariables } from './useProtectedMediaFileGrant';
 export type { UpdateMediaAssetVariables } from './useUpdateMediaAsset';
 export { useMediaDeletion, MEDIA_BULK_DELETE_LIMIT } from './useMediaDeletion';
 export type {

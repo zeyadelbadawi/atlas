@@ -37,6 +37,9 @@ import {
   resolvePagePath,
   WebsiteBrandBridge,
   usePublicWebsiteDocumentDirection,
+  publicWebsiteLocalePrefix,
+  stripPublicWebsiteLocalePrefix,
+  usePublicWebsiteDefaultLocale,
 } from '@features/website';
 import { LearningPathsProvider, type LearningPaths } from '@features/learning';
 import { LEARNER_ROUTES, buildPath } from '@app/routes/route-paths';
@@ -61,6 +64,14 @@ export interface PublicWebsiteLearningRouteProps {
      * bug class `usePublicWebsiteLinkRenderer` documents at length.
      */
     readonly buildHref: (path: string) => string;
+    /**
+     * B0-SUP-02 — this academy's own Contact page, ready to link, or
+     * `undefined` when the site shows none. A learner's help is their
+     * academy, never an Atlas support ticket.
+     */
+    readonly contactHref?: string;
+    /** B0-WEB-02 — the site's default (unprefixed) locale. */
+    readonly defaultLocale: PublicWebsiteLocale;
   }) => React.ReactNode;
 }
 
@@ -91,16 +102,18 @@ export function PublicWebsiteLearningRoute({
   // `linkRenderer` — `LearningPaths` never touches CMS nav), so every one
   // of them gets the same locale/dev-param handling for free.
   const buildHref = usePublicWebsiteHrefBuilder(locale);
+  const defaultLocale = usePublicWebsiteDefaultLocale();
 
   if (data.status !== 'ready') {
     return <PublicWebsiteStatus state={data} />;
   }
 
   const { academy, configuration, pages } = data;
-  const unprefixedPathname =
-    locale === 'en'
-      ? location.pathname
-      : location.pathname.replace(/^\/ar/, '') || '/';
+  const unprefixedPathname = stripPublicWebsiteLocalePrefix(
+    location.pathname,
+    locale,
+    defaultLocale
+  );
 
   // Real, backend-enforced route protection, not a UI-hiding convenience:
   // every reused learning page/hook below assumes a real, authenticated
@@ -131,6 +144,12 @@ export function PublicWebsiteLearningRoute({
         myLearningHref: LEARNER_ROUTES.root,
       }
     : undefined;
+
+  // B0-SUP-02 — `pages` holds only what the site shows, so an academy
+  // without a visible Contact page simply gets no help link.
+  const contactPage = pages.find((page) => page.coreType === 'contact');
+  const contactPath = contactPage ? resolvePagePath(contactPage) : undefined;
+  const contactHref = contactPath ? buildHref(contactPath) : undefined;
 
   const onNavigate = (pageId: string) => {
     const target = pages.find((candidate) => candidate.id === pageId);
@@ -174,14 +193,19 @@ export function PublicWebsiteLearningRoute({
       locale={locale}
       onLocaleChange={(target) =>
         navigate(
-          `${target === 'en' ? unprefixedPathname : `/ar${unprefixedPathname}`}${location.search}`
+          `${publicWebsiteLocalePrefix(target, defaultLocale)}${unprefixedPathname}${location.search}`
         )
       }
       authState={authState}
     >
       <LearningPathsProvider paths={websiteLearningPaths}>
         <WebsiteBrandBridge>
-          {children({ academyId: academy.academyId, buildHref })}
+          {children({
+            academyId: academy.academyId,
+            buildHref,
+            contactHref,
+            defaultLocale,
+          })}
         </WebsiteBrandBridge>
       </LearningPathsProvider>
     </WebsiteChrome>

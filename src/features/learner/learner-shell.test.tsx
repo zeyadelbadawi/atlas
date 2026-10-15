@@ -87,7 +87,11 @@ function hrefBuilder(locale: PublicWebsiteLocale) {
   return (path: string) => (locale === 'en' ? path : `/ar${path}`);
 }
 
-function renderLearner(path: string, locale: PublicWebsiteLocale = 'en') {
+function renderLearner(
+  path: string,
+  locale: PublicWebsiteLocale = 'en',
+  contactHref?: string
+) {
   const i18n = createI18nInstance(locale);
   const entry = locale === 'en' ? path : `/ar${path}`;
 
@@ -112,6 +116,7 @@ function renderLearner(path: string, locale: PublicWebsiteLocale = 'en') {
                       academyId="aca-1"
                       locale={locale}
                       buildHref={hrefBuilder(locale)}
+                      contactHref={contactHref}
                     />
                   }
                 />
@@ -222,5 +227,44 @@ describe('learner dashboard shell', () => {
     for (const href of hrefs) {
       expect(href, href ?? '').toMatch(/^\/ar\//);
     }
+  });
+});
+
+/**
+ * B0-SUP-02 — a learner's help is their academy. The section rail offers
+ * the academy's own Contact page and never an Atlas support ticket (the
+ * support-case API refuses academy-site sessions).
+ */
+describe('learner help path', () => {
+  it("links to the academy's Contact page, never to Atlas support", async () => {
+    renderLearner('/my/courses', 'en', '/contact');
+    await findSectionHeading('My Courses');
+
+    const sections = screen.getByRole('navigation', { name: /learner sections/i });
+    const help = within(sections).getByRole('link', {
+      name: /contact your academy/i,
+    });
+    expect(help.getAttribute('href')).toBe('/contact');
+
+    const hrefs = screen
+      .getAllByRole('link')
+      .map((link) => link.getAttribute('href') ?? '');
+    expect(hrefs.some((href) => href.includes('/dashboard/support'))).toBe(false);
+  });
+
+  it('keeps the Arabic help link inside /ar', async () => {
+    renderLearner('/my/courses', 'ar', '/ar/contact');
+    await findSectionHeading('دوراتي');
+
+    const help = screen.getByTestId('learner-nav-contact-academy');
+    expect(help.textContent).toContain('تواصل مع أكاديميتك');
+    expect(help.getAttribute('href')).toBe('/ar/contact');
+  });
+
+  it('draws no help link when the site shows no Contact page', async () => {
+    renderLearner('/my/courses');
+    await findSectionHeading('My Courses');
+
+    expect(screen.queryByTestId('learner-nav-contact-academy')).toBeNull();
   });
 });

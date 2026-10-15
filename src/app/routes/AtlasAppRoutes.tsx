@@ -12,6 +12,7 @@ import { DashboardLayout } from '@app/layouts/dashboard/DashboardLayout';
 import {
   AUTH_ROUTES,
   PUBLIC_ROUTES,
+  RETIRED_MARKETING_ROUTES,
   SYSTEM_ROUTES,
   DASHBOARD_ROUTES,
   RETIRED_DASHBOARD_LEARNER_ROUTES,
@@ -21,11 +22,12 @@ import {
 
 import { RouteGuard } from './guards';
 import { RouteFallback } from './RouteFallback';
+import { ArabicPlatformRedirect } from './ArabicPlatformRedirect';
 
 // Lazily loaded so each route ships as its own chunk.
-const HomePage = lazy(() => import('@features/home/pages/HomePage'));
-const FeaturesPage = lazy(() => import('@features/home/pages/FeaturesPage'));
-const PricingPage = lazy(() => import('@features/home/pages/PricingPage'));
+// D6 — the platform host's holding page (the marketing site is retired).
+const HoldingPage = lazy(() => import('@features/home/holding/HoldingPage'));
+const ContactPage = lazy(() => import('@features/home/pages/ContactPage'));
 
 const SignInPage = lazy(() => import('@features/auth/pages/SignInPage'));
 const GoogleReturnPage = lazy(
@@ -543,7 +545,7 @@ const ForbiddenPage = lazy(
 const NotFoundPage = lazy(() => import('@features/system/pages/NotFoundPage'));
 
 /**
- * The Atlas application's routes: marketing, auth, dashboard, learner.
+ * The Atlas application's routes: holding page, auth, dashboard, learner.
  * Loaded lazily by `AppRouter`, so an Academy website never downloads the
  * dashboard's route table, guards and layouts (Reports/LCP_ROOT_CAUSE.md).
  */
@@ -554,11 +556,37 @@ export default function AtlasAppRoutes(): JSX.Element {
     <ErrorBoundary resetKey={location.pathname}>
       <Suspense fallback={<RouteFallback />}>
         <Routes>
+          {/* D6 (14 Oct 2026) — the marketing site is retired. `/` and
+              `/ar` render the self-contained holding page, outside
+              `PublicLayout`; the replacement static site (B1, behind
+              `ATLAS_MARKETING_STATIC`) takes over these two routes. */}
+          <Route
+            path={PUBLIC_ROUTES.home}
+            element={<HoldingPage locale="en" />}
+          />
+          <Route
+            path={PUBLIC_ROUTES.homeAr}
+            element={<HoldingPage locale="ar" />}
+          />
+          {/* The retired marketing pages forward instead of 404ing; their
+              Arabic twins, and every other `/ar/...`, are resolved by
+              `ArabicPlatformRedirect` (a kept page's `/ar/` address to the
+              page, anything else to `/ar`). No target is itself forwarded,
+              so none of these can loop. */}
+          {RETIRED_MARKETING_ROUTES.map((path) => (
+            <Route
+              key={path}
+              path={path}
+              element={<Navigate to={PUBLIC_ROUTES.home} replace />}
+            />
+          ))}
+          <Route path="/ar/*" element={<ArabicPlatformRedirect />} />
+
           {/* Public routes */}
           <Route element={<PublicLayout />}>
-            <Route path={PUBLIC_ROUTES.home} element={<HomePage />} />
-            <Route path={PUBLIC_ROUTES.features} element={<FeaturesPage />} />
-            <Route path={PUBLIC_ROUTES.pricing} element={<PricingPage />} />
+            {/* The platform contact form (the Platform Owner's inbox) —
+                the homepage's `#contact` section until D6. */}
+            <Route path={PUBLIC_ROUTES.contact} element={<ContactPage />} />
             {/* Atlas's own legal documents. Public and unauthenticated by
                 design — someone must be able to read the privacy policy
                 and terms BEFORE deciding to create an account. */}

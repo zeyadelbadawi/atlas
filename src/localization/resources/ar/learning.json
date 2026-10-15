@@ -531,7 +531,8 @@
       "devices": "الأجهزة",
       "profile": "الملف الشخصي",
       "security": "الأمان",
-      "payments": "المدفوعات"
+      "payments": "المدفوعات",
+      "contactAcademy": "تواصل مع أكاديميتك"
     },
     "progress": {
       "label": "التقدّم في الدورة",

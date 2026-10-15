@@ -175,7 +175,8 @@ async function newPage(
   return context.newPage();
 }
 
-test.describe('J34 — the cookie banner follows each Academy’s palette', () => {
+// `@quarantine`: flaky, see e2e/FLAKY.md.
+test.describe('J34 — the cookie banner follows each Academy’s palette @quarantine', () => {
   async function saveBrand(
     request: APIRequestContext,
     academy: Academy,

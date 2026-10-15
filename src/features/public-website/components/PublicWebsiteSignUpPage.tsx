@@ -28,6 +28,8 @@ import {
   resolvePagePath,
   resolveLocalizedText,
   usePublicWebsiteDocumentDirection,
+  publicWebsiteLocalePrefix,
+  usePublicWebsiteDefaultLocale,
 } from '@features/website';
 import {
   AcademyJoinForm,
@@ -113,6 +115,7 @@ export function PublicWebsiteSignUpPage({
   const holdGuestRedirect = useHoldGuestRedirect();
   const linkRenderer = usePublicWebsiteLinkRenderer(locale);
   const buildHref = usePublicWebsiteHrefBuilder(locale);
+  const defaultLocale = usePublicWebsiteDefaultLocale();
   const [searchParams] = useSearchParams();
   const { session } = useAuth();
   const { signOut } = useSignOut();
@@ -288,7 +291,7 @@ export function PublicWebsiteSignUpPage({
       linkRenderer={linkRenderer}
       locale={locale}
       onLocaleChange={(target) => {
-        const base = `${target === 'en' ? '' : '/ar'}/sign-up`;
+        const base = `${publicWebsiteLocalePrefix(target, defaultLocale)}/sign-up`;
         const devSlug = searchParams.get(DEV_OVERRIDE_PARAM);
         window.location.assign(
           devSlug

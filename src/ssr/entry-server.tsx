@@ -12,7 +12,10 @@
  *     fetched from the existing public API, and the page renders again
  *     until nothing is pending (bounded);
  *   - the i18n instance in the URL locale, with the core translations the
- *     browser also has when it hydrates.
+ *     browser also has when it hydrates. The URL locale depends on the
+ *     site's default language (B0-WEB-02): English is assumed until the
+ *     published configuration arrives, and an Arabic-default site's page
+ *     then renders again in its real locale.
  *
  * Nothing here can see a session: no cookie or token is forwarded to the
  * API, and the only request header passed on is the visitor's IP (for the
@@ -44,12 +47,14 @@ import {
   classifyPublicWebsiteData,
   renderSeoHeadHtml,
   resolveCanonicalRedirect,
+  resolveLocalePrefixRedirect,
   SeoHeadCollectorContext,
   type PublicWebsiteDataState,
   type UseDocumentSeoOptions,
 } from '@features/public-website';
 import {
   loadAllThemePacks,
+  resolveDefaultLocale,
   themeStylesheetLinksHtml,
   ThemePackUsageContext,
 } from '@features/website';
@@ -314,7 +319,10 @@ export async function renderPublicWebsitePage(
   const lookupKey =
     context.lookupType === 'dev-override' ? context.value : hostname;
   const isDevOverride = context.lookupType === 'dev-override';
-  const locale = publicWebsiteLocaleForPath(url.pathname);
+  // English-default until the published configuration says otherwise
+  // (B0-WEB-02); corrected in `renderPasses` once it has arrived.
+  let locale = publicWebsiteLocaleForPath(url.pathname);
+  let localeChanged = false;
   const consentDecided = hasConsentDecidedCookie(request.cookieHeader);
   const renderYear = new Date().getUTCFullYear();
 
@@ -367,7 +375,7 @@ export async function renderPublicWebsitePage(
   // their keys to the browser, which loads those packs before hydrating.
   const themePackUsage = new Set<WebsiteThemeKey>();
 
-  const element = (
+  const buildElement = (language: PublicWebsiteLocale): JSX.Element => (
     <SeoHeadCollectorContext.Provider value={seoCollector}>
       <ThemePackUsageContext.Provider value={themePackUsage}>
         <App
@@ -376,12 +384,13 @@ export async function renderPublicWebsitePage(
           })}
           requestLocation={{ hostname, origin, search: url.search }}
           hydrationSnapshot={snapshot}
-          initialLanguage={locale}
+          initialLanguage={language}
           queryClient={queryClient}
         />
       </ThemePackUsageContext.Provider>
     </SeoHeadCollectorContext.Provider>
   );
+  let element = buildElement(locale);
 
   const maxPasses = options.maxPasses ?? 6;
   let cacheKey: string | undefined;
@@ -410,6 +419,24 @@ export async function renderPublicWebsitePage(
         return pass(state.status);
       }
 
+      // B0-WEB-02 — the site's default language, from the PUBLISHED
+      // configuration (English for Coming Soon), decides this page's locale
+      // and whether the path is an old link under the default's own prefix
+      // (`/ar/...` on an Arabic-default site), which moves permanently to
+      // its unprefixed path.
+      const defaultLocale = resolveDefaultLocale(
+        state.status === 'ready' ? state.configuration.defaultLocale : undefined
+      );
+      const localeTarget =
+        state.status === 'ready'
+          ? resolveLocalePrefixRedirect(
+              url.pathname,
+              url.search,
+              defaultLocale,
+              state.pages
+            )
+          : null;
+
       // B0-WEB-06 — before any cached page: the canonical host can change
       // (a domain connected, or found unreachable) within a page's TTL.
       if (
@@ -418,12 +445,34 @@ export async function renderPublicWebsitePage(
         !SESSION_COOKIE.test(request.cookieHeader ?? '') &&
         (state.status === 'ready' || state.status === 'unpublished')
       ) {
+        // Straight to the final path, so an old link on the old host is
+        // still one hop.
+        const target = localeTarget
+          ? new URL(localeTarget, 'http://ssr.invalid')
+          : url;
         const location = resolveCanonicalRedirect(
-          { hostname, pathname: url.pathname, search: url.search, hash: '' },
+          {
+            hostname,
+            pathname: target.pathname,
+            search: target.search,
+            hash: '',
+          },
           state.academy.canonicalHost,
           ENV.isDevelopment
         );
         if (location) return { kind: 'redirect', location };
+      }
+      if (localeTarget) return { kind: 'redirect', location: localeTarget };
+
+      if (state.status === 'ready' || state.status === 'unpublished') {
+        const pageLocale = publicWebsiteLocaleForPath(
+          url.pathname,
+          defaultLocale
+        );
+        if (pageLocale !== locale) {
+          locale = pageLocale;
+          localeChanged = true;
+        }
       }
 
       if (
@@ -469,10 +518,18 @@ export async function renderPublicWebsitePage(
             isEnabled(query)
         );
 
-      if (pending.length > 0) {
-        await Promise.all(
-          pending.map((query) => query.fetch().catch(() => undefined))
-        );
+      // A page rendered in the English-default guess renders again in its
+      // real locale, with that locale's translations — in the same pass as
+      // the next wave of data, so an Arabic-default site costs no extra one.
+      if (pending.length > 0 || localeChanged) {
+        await Promise.all([
+          ...pending.map((query) => query.fetch().catch(() => undefined)),
+          localeChanged ? preloadLanguages([locale], 'core') : undefined,
+        ]);
+        if (localeChanged) {
+          localeChanged = false;
+          element = buildElement(locale);
+        }
         continue;
       }
 

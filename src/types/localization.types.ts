@@ -60,8 +60,6 @@ export const TRANSLATION_NAMESPACES = [
   'support',
   'media',
   'publicWebsite',
-  'features',
-  'pricing',
   'certificates',
   'platformCommerce',
   'platformObservability',

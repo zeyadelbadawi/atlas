@@ -183,9 +183,7 @@ describe('AcademyRevenuePage', () => {
 
     expect(screen.getByText('No payouts yet')).toBeTruthy();
     expect(
-      screen.getByText(
-        /online payment gateways aren't available yet/
-      )
+      screen.getByText(/online payment gateways aren't available yet/)
     ).toBeTruthy();
     expect(
       screen.getByText('Nothing is awaiting payout right now.')
@@ -238,6 +236,132 @@ describe('AcademyRevenuePage', () => {
     renderPage();
     expect(screen.getByText('No academy selected')).toBeTruthy();
     expect(screen.queryByText(/Unsettled balance/)).toBeNull();
+  });
+});
+
+/*
+ * D5-5 (B0-COM-02) — an academy selling by manual payment sees its sales
+ * here, from the dashboard's manual-sales figure, and the ledger balance is
+ * shown apart as Atlas Payments payouts (not launched), never as revenue.
+ */
+const MANUAL_SALES: AcademyRevenueSummary['manualSales'] = {
+  periods: [
+    { days: 7, totals: [] },
+    {
+      days: 30,
+      totals: [{ currency: 'EGP', amountMinorUnits: 119000, count: 1 }],
+    },
+    {
+      days: 90,
+      totals: [
+        { currency: 'EGP', amountMinorUnits: 169000, count: 2 },
+        { currency: 'USD', amountMinorUnits: 2500, count: 1 },
+      ],
+    },
+  ],
+};
+
+describe('AcademyRevenuePage — manual sales (D5-5)', () => {
+  it('shows manual sales per window and currency, with approved-order counts', () => {
+    arrange({
+      summary: ready({
+        academyId: 'academy-1',
+        unsettled: [],
+        manualSales: MANUAL_SALES,
+      }),
+      payouts: ready(page([])),
+    });
+    renderPage();
+
+    const list = screen.getByRole('list', {
+      name: 'Sales recorded in Atlas (manual payments)',
+    });
+    const cards = within(list).getAllByRole('listitem');
+    expect(cards).toHaveLength(3);
+    expect(cards[0]?.textContent).toContain('Last 7 days');
+    expect(cards[0]?.textContent).toContain(
+      'No approved manual payments in this period.'
+    );
+    expect(cards[1]?.textContent).toContain('Last 30 days');
+    expect(cards[1]?.textContent).toContain('1 approved order');
+    expect(cards[2]?.textContent).toContain('2 approved orders');
+    expect(cards[2]?.textContent).toContain('$25.00');
+    // Never labelled as revenue or as net of fees.
+    expect(list.textContent).not.toMatch(/revenue|after|fee/i);
+  });
+
+  it('labels the empty ledger as Atlas Payments payouts that are not available yet', () => {
+    arrange({
+      summary: ready({
+        academyId: 'academy-1',
+        unsettled: [],
+        manualSales: MANUAL_SALES,
+      }),
+      payouts: ready(page([])),
+    });
+    renderPage();
+
+    expect(
+      screen.getByRole('heading', { name: 'Atlas Payments payouts' })
+    ).toBeTruthy();
+    expect(
+      screen.getByTestId('atlas-payments-not-launched').textContent
+    ).toContain("Atlas Payments isn't available yet");
+  });
+
+  it('does not call the ledger section not launched when it holds a balance or payouts', () => {
+    arrange({
+      summary: ready({ ...SUMMARY, manualSales: MANUAL_SALES }),
+      payouts: ready(page([payout()])),
+    });
+    renderPage();
+
+    expect(screen.queryByTestId('atlas-payments-not-launched')).toBeNull();
+    expect(screen.getByText('Unsettled balance · USD')).toBeTruthy();
+  });
+
+  it('renders the manual sales in Arabic', () => {
+    arrange({
+      summary: ready({
+        academyId: 'academy-1',
+        unsettled: [],
+        manualSales: MANUAL_SALES,
+      }),
+      payouts: ready(page([])),
+    });
+    renderPage('ar');
+
+    expect(
+      screen.getByRole('list', {
+        name: 'المبيعات المسجّلة في Atlas (المدفوعات اليدوية)',
+      })
+    ).toBeTruthy();
+    expect(screen.getByText('دفعات Atlas Payments')).toBeTruthy();
+  });
+
+  it('shows a loading state and a retryable error for the sales read', () => {
+    arrange({ summary: loading(), payouts: ready(page([])) });
+    renderPage();
+    expect(screen.getByText('Loading sales recorded in Atlas')).toBeTruthy();
+    expect(screen.queryByTestId('atlas-payments-not-launched')).toBeNull();
+    cleanup();
+
+    const summary = failed('server');
+    arrange({ summary, payouts: ready(page([])) });
+    renderPage();
+    expect(screen.getByText("We couldn't load sales")).toBeTruthy();
+    fireEvent.click(screen.getAllByRole('button', { name: /try again/i })[0]!);
+    expect(summary.refetch).toHaveBeenCalled();
+  });
+
+  it('shows no figures, manual or ledger, to a caller refused with 403', () => {
+    arrange({ summary: failed('forbidden'), payouts: failed('forbidden') });
+    renderPage();
+    expect(
+      screen.getByText('Only the organization owner can view this')
+    ).toBeTruthy();
+    expect(screen.queryByText(/Sales recorded in Atlas/)).toBeNull();
+    expect(screen.queryByText('Atlas Payments payouts')).toBeNull();
   });
 });
 

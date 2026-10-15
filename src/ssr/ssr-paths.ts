@@ -7,9 +7,14 @@
  * edge then serves the unchanged single-page app, exactly as today.
  */
 import type { PublicWebsiteLocale } from '@types';
+import {
+  DEFAULT_PUBLIC_WEBSITE_LOCALE,
+  PUBLIC_WEBSITE_LOCALES,
+  publicWebsiteLocaleForPath as localeForPath,
+} from '@features/website';
 
 /**
- * First path segments (after an optional `/ar`) that are never server
+ * First path segments (after an optional `/ar` or `/en`) that are never server
  * rendered: authentication, the learner area, certificate verification,
  * the retired learner paths that redirect, and machine-readable routes.
  */
@@ -31,17 +36,34 @@ const PASS_SEGMENTS: ReadonlySet<string> = new Set([
 /** Query parameters that mark a request as something other than a page view. */
 const PASS_QUERY_PARAMS: readonly string[] = ['__atlas_probe'];
 
-/** The public website's locale for a path: `/ar` and `/ar/...` are Arabic. */
+/**
+ * The public website's locale for a path, on a site whose default locale is
+ * `defaultLocale` (`en` unless the published configuration says `ar`,
+ * B0-WEB-02): `/ar` and `/ar/...` are Arabic on an English-default site,
+ * `/en` and `/en/...` English on an Arabic-default one, and every other
+ * path is in the default. Before the configuration is known this is the
+ * English-default answer, which is every site's until its owner says
+ * otherwise.
+ */
 export function publicWebsiteLocaleForPath(
-  pathname: string
+  pathname: string,
+  defaultLocale: PublicWebsiteLocale = DEFAULT_PUBLIC_WEBSITE_LOCALE
 ): PublicWebsiteLocale {
-  return pathname === '/ar' || pathname.startsWith('/ar/') ? 'ar' : 'en';
+  return localeForPath(pathname, defaultLocale);
 }
 
-/** The path without its locale prefix, always starting with `/`. */
+/**
+ * The path without any locale prefix (`/ar/...` or `/en/...`), always
+ * starting with `/`. Decides only which requests are pages at all, so it
+ * needs no default locale: a non-page under either prefix is never a page.
+ */
 export function unprefixedPath(pathname: string): string {
-  if (pathname === '/ar') return '/';
-  return pathname.startsWith('/ar/') ? pathname.slice(3) : pathname;
+  for (const locale of PUBLIC_WEBSITE_LOCALES) {
+    if (pathname === `/${locale}`) return '/';
+    if (pathname.startsWith(`/${locale}/`))
+      return pathname.slice(locale.length + 1);
+  }
+  return pathname;
 }
 
 /**

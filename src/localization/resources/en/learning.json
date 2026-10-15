@@ -473,7 +473,8 @@
       "devices": "Devices",
       "profile": "Profile",
       "security": "Security",
-      "payments": "Payments"
+      "payments": "Payments",
+      "contactAcademy": "Contact your academy"
     },
     "progress": {
       "label": "Course progress",

@@ -17,9 +17,13 @@
  * message key every string cap uses, on both sides, which is what
  * identifies it here.
  */
-import { getSectionConfigSchema } from './website-section.schemas';
+import {
+  getSectionConfigSchema,
+  withRequiredLocale,
+} from './website-section.schemas';
+import { DEFAULT_PUBLIC_WEBSITE_LOCALE } from '../constants/locale.constants';
 import { SECTION_TYPES } from '@types';
-import type { FieldViolation, SectionType } from '@types';
+import type { FieldViolation, PublicWebsiteLocale, SectionType } from '@types';
 
 /** The message key every string length cap uses, in both repos. */
 export const MAX_LENGTH_MESSAGE_KEY = 'validation:maxLength';
@@ -46,10 +50,14 @@ export function isOverLimitIssue(issue: {
 /** Every issue the shared schema finds in one section's config; `[]` for a valid config or a type this build doesn't know. */
 export function collectSectionIssues(
   type: string,
-  config: unknown
+  config: unknown,
+  // B0-WEB-02 — the site's default language is the required one.
+  requiredLocale: PublicWebsiteLocale = DEFAULT_PUBLIC_WEBSITE_LOCALE
 ): readonly SectionContentIssue[] {
   if (!isSectionType(type)) return [];
-  const result = getSectionConfigSchema(type).safeParse(config);
+  const result = withRequiredLocale(requiredLocale, () =>
+    getSectionConfigSchema(type).safeParse(config)
+  );
   if (result.success) return [];
   return result.error.issues.map((issue) => ({
     path: issue.path.join('.'),

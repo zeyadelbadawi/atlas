@@ -169,7 +169,38 @@ export async function ensureAcademy(request: APIRequestContext): Promise<{
   const detail = await apiGet(request, owner, `/academies/${academy.id}`);
   expect(detail.ok(), `could not read the academy: ${detail.status()}`).toBeTruthy();
   const organizationId: string = (await detail.json()).organizationId;
+  await ensureCourseDetailsPublished(request, owner, academy.id);
   return { academyId: academy.id, academyName: academy.name, organizationId, owner };
+}
+
+/**
+ * The public `/courses/:id` page renders the website's `courseDetails`
+ * core page, so that page must be published. A website generated outside
+ * the dashboard (the backend's `npm run e2e:prepare-journeys` fixtures)
+ * has the other five core pages only: the sixth is created on the owner's
+ * first read of the pages (the backend's lazy `WebsiteBootstrapService`)
+ * and goes public with the next publish. On a long-lived database an
+ * earlier journey has done both; on a fresh one (CI) nothing has, and
+ * every course page answers "We can't find that page". So: read the
+ * pages, publish once, and skip both when the page is already public.
+ */
+async function ensureCourseDetailsPublished(
+  request: APIRequestContext,
+  owner: Session,
+  academyId: string
+): Promise<void> {
+  const publicPages = await request.get(`${API_BASE}/public/websites/${academyId}/pages`);
+  expect(publicPages.ok(), await publicPages.text()).toBeTruthy();
+  const pages = (await publicPages.json()) as { coreType?: string | null }[];
+  if (pages.some((page) => page.coreType === 'courseDetails')) return;
+
+  const ownerPages = await apiGet(request, owner, `/academies/${academyId}/website/pages`);
+  expect(ownerPages.ok(), await ownerPages.text()).toBeTruthy();
+  const published = await apiPost(request, owner, `/academies/${academyId}/website/publish`);
+  expect(
+    published.ok(),
+    `website publish refused: ${published.status()} ${await published.text()}`
+  ).toBeTruthy();
 }
 
 async function provisionAcademy(

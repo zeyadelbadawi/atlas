@@ -198,6 +198,32 @@ describe('MarketingContactSection', () => {
     expect(field('home:contact.form.name').value).toBe('');
   });
 
+  it('with the B0-SUP-04 / B0-ANL-04 flags off (the default), shows and sends nothing new', async () => {
+    mockSubmit.mockResolvedValue({ received: true });
+    const user = userEvent.setup();
+    renderSection();
+    expect(screen.queryByTestId('marketing-contact-lead-fields')).toBeNull();
+    expect(screen.queryByRole('checkbox')).toBeNull();
+    expect(screen.getByText('home:contact.points.privacy')).toBeTruthy();
+    await fillValid(user);
+    await user.click(submitButton());
+    await waitFor(() => expect(mockSubmit).toHaveBeenCalledTimes(1));
+    const payload = mockSubmit.mock.calls[0][0] as Record<string, unknown>;
+    for (const key of [
+      'phoneNumber',
+      'phoneCountry',
+      'contactConsent',
+      'marketingConsent',
+      'requesterRole',
+      'subject',
+      'studentBand',
+      'preferredChannel',
+      'attribution',
+    ]) {
+      expect(payload).not.toHaveProperty(key);
+    }
+  });
+
   it('sends exactly one request when the button is clicked twice quickly', async () => {
     // Never settles: the first submission is still in flight for the second click.
     mockSubmit.mockImplementation(() => new Promise(() => undefined));

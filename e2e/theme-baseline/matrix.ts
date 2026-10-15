@@ -191,6 +191,8 @@ export function fixtureSlug(
   composition?:
     | 'c1'
     | 'migrated'
+    // B0-WEB-02 — the same website with Arabic as its default language.
+    | 'ardefault'
     // Atelier content-limit compositions (fixture-server.mjs): `long`,
     // `legacy`, `edge`, `std` with optional `-s<n>`, `-img`/`-noimg`, `-k<n>`.
     | `${'long' | 'legacy' | 'edge' | 'std'}${string}`

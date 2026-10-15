@@ -35,7 +35,13 @@ export default defineConfig({
   workers: 1,
   forbidOnly: !!process.env.CI,
   retries: 0,
-  reporter: process.env.CI ? [['github'], ['list']] : [['list']],
+  // In CI (`.github/workflows/journeys.yml`) the HTML report is uploaded
+  // when a run fails. Which journeys run is chosen by tag on the command
+  // line: `@critical` is the required set, `@quarantine` never blocks
+  // (e2e/FLAKY.md).
+  reporter: process.env.CI
+    ? [['github'], ['list'], ['html', { open: 'never' }]]
+    : [['list']],
   timeout: 60_000,
   expect: { timeout: 15_000 },
   use: {

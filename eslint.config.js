@@ -10,9 +10,6 @@ import tseslint from 'typescript-eslint';
  */
 const TEMPLATE_OWNED_FILES = [
   'src/components/ui/**',
-  'src/components/blog/**',
-  'src/pages/blog/**',
-  'src/blog-routes.tsx',
   'src/pages/AuthCallback.tsx',
   'src/pages/AuthError.tsx',
   'src/lib/**',

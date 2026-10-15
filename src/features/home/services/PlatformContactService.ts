@@ -13,6 +13,7 @@
  */
 import { BaseService } from '@services';
 import type { WriteOptions } from '@services';
+import type { LandingAttribution } from '@utils/landing-attribution.utils';
 
 export type PlatformContactTopic =
   'sales' | 'support' | 'partnership' | 'other';
@@ -30,6 +31,21 @@ export interface PlatformContactPayload {
   readonly company?: string;
   /** Epoch ms when the form was first shown (minimum fill-time check). */
   readonly startedAt: number;
+  /**
+   * B0-SUP-04 — sent only while `marketingContactConsent` is on. The server
+   * stamps each ticked consent with its time and wording version, and
+   * stores none of this while its own flag is off.
+   */
+  readonly phoneNumber?: string;
+  readonly phoneCountry?: string;
+  readonly contactConsent?: boolean;
+  readonly marketingConsent?: boolean;
+  readonly requesterRole?: string;
+  readonly subject?: string;
+  readonly studentBand?: string;
+  readonly preferredChannel?: string;
+  /** B0-ANL-04 — in-memory landing attribution (`signupAttribution` flag). */
+  readonly attribution?: LandingAttribution;
 }
 
 export interface PlatformContactReceipt {

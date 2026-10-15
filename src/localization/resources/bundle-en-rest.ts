@@ -33,8 +33,6 @@ import enProvisioning from './en/provisioning.json';
 import enAuditLog from './en/auditLog.json';
 import enSupport from './en/support.json';
 import enMedia from './en/media.json';
-import enFeatures from './en/features.json';
-import enPricing from './en/pricing.json';
 import enCertificates from './en/certificates.json';
 import enOnboarding from './en/onboarding.json';
 import enCustomerRequests from './en/customerRequests.json';
@@ -69,8 +67,6 @@ const bundle: Record<string, Record<string, unknown>> = {
   auditLog: enAuditLog,
   support: enSupport,
   media: enMedia,
-  features: enFeatures,
-  pricing: enPricing,
   certificates: enCertificates,
   onboarding: enOnboarding,
   customerRequests: enCustomerRequests,

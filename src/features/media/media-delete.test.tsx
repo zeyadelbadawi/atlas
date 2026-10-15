@@ -400,8 +400,10 @@ describe('Media Library picker — delete', () => {
       />
     );
     await screen.findByRole('button', { name: 'a.pdf' });
+    // D5-4 — and only the public tier: a protected file has no URL to pick.
     expect((getAssets.mock.calls[0][1] as CollectionQuery).filters).toEqual({
       status: 'active',
+      access: 'public',
     });
     expect(screen.queryByRole('button', { name: /^Delete/ })).toBeNull();
     // B0-MED-08 — an instructor can pick a file but not upload one.

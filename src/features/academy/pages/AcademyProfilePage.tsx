@@ -3,6 +3,11 @@
  *
  * View and edit academy profile information including basic details,
  * contact information, and localization settings.
+ *
+ * D5-3 — the country is an ISO code picked from the phone field's country
+ * list, and the currency follows it until changed by hand
+ * (`useCurrencyFollowsCountry`). The currency is the default for new course
+ * prices; it never converts or rewrites an existing price.
  */
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -33,7 +38,8 @@ import {
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
-import { saveViaForm, currencyOptions } from '@utils';
+import { saveViaForm, currencyOptions, formatCountryName } from '@utils';
+import { CountrySelect } from '@/shared/components/phone';
 import { useAuth, useUnsavedChanges } from '@hooks';
 import {
   nameConflictFromError,
@@ -42,13 +48,14 @@ import {
 } from '@forms';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useAcademy, useUpdateAcademy } from '../hooks';
+import { useCurrencyFollowsCountry } from '../hooks/useCurrencyFollowsCountry';
 import {
   updateAcademyProfileSchema,
   type UpdateAcademyProfileFormData,
 } from '../schemas/academy.schemas';
 
 export default function AcademyProfilePage(): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { academyId } = useParams<{ academyId: string }>();
   const { organization } = useAuth();
@@ -89,6 +96,13 @@ export default function AcademyProfilePage(): JSX.Element {
         }
       : undefined,
   });
+
+  const currencyFollow = useCurrencyFollowsCountry(
+    form,
+    academy
+      ? { country: academy.address?.country, currency: academy.currency }
+      : undefined
+  );
 
   useServerValidation(form, mutationError);
   // W4 — academy names are unique platform-wide: a taken name is shown on
@@ -383,25 +397,14 @@ export default function AcademyProfilePage(): JSX.Element {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t('academy:create.countryLabel')}</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="US">United States</SelectItem>
-                          <SelectItem value="GB">United Kingdom</SelectItem>
-                          <SelectItem value="AE">
-                            United Arab Emirates
-                          </SelectItem>
-                          <SelectItem value="SA">Saudi Arabia</SelectItem>
-                          <SelectItem value="EG">Egypt</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <FormControl>
+                        <CountrySelect
+                          value={field.value ?? ''}
+                          onChange={currencyFollow.selectCountry}
+                          onBlur={field.onBlur}
+                          placeholder={t('academy:create.countryPlaceholder')}
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -486,7 +489,7 @@ export default function AcademyProfilePage(): JSX.Element {
                     <FormItem>
                       <FormLabel>{t('academy:create.currencyLabel')}</FormLabel>
                       <Select
-                        onValueChange={field.onChange}
+                        onValueChange={currencyFollow.selectCurrency}
                         value={field.value}
                       >
                         <FormControl>
@@ -495,13 +498,45 @@ export default function AcademyProfilePage(): JSX.Element {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {currencyOptions(field.value).map((code) => (
+                          {/* From the academy as saved, not `field.value`:
+                              this form mounts a render before `values`
+                              applies, and options without a legacy currency
+                              make Radix's native select clear the field. */}
+                          {currencyOptions(academy.currency).map((code) => (
                             <SelectItem key={code} value={code}>
                               {code}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
+                      <FormDescription>
+                        {t('academy:profile.currencyHelp')}
+                      </FormDescription>
+                      {currencyFollow.suggestion ? (
+                        <p
+                          className="text-sm text-muted-foreground"
+                          data-testid="currency-country-hint"
+                        >
+                          {t('academy:profile.countryCurrencyHint', {
+                            country:
+                              formatCountryName(
+                                form.getValues('country'),
+                                i18n.language
+                              ) ?? form.getValues('country'),
+                            currency: currencyFollow.suggestion,
+                          })}{' '}
+                          <Button
+                            type="button"
+                            variant="link"
+                            className="h-auto p-0 align-baseline"
+                            onClick={currencyFollow.acceptSuggestion}
+                          >
+                            {t('academy:profile.useCurrency', {
+                              currency: currencyFollow.suggestion,
+                            })}
+                          </Button>
+                        </p>
+                      ) : null}
                       <FormMessage />
                     </FormItem>
                   )}

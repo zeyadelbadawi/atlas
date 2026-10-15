@@ -52,6 +52,7 @@ import {
 import { clearAuthRateLimits } from './support/global-setup';
 import {
   TINY_PNG,
+  addExternalPreviewLesson,
   apiPut,
   createCourse,
   enrollmentForCourse,
@@ -177,7 +178,8 @@ async function latestPayment(
   return found!;
 }
 
-test.describe('J42 — academy manual payments: approve, reject, isolation', () => {
+// `@critical`: in the required CI set (.github/workflows/journeys.yml).
+test.describe('J42 — academy manual payments: approve, reject, isolation @critical', () => {
   let academyId: string;
   let owner: Session;
   let courseId: string;
@@ -210,6 +212,14 @@ test.describe('J42 — academy manual payments: approve, reject, isolation', () 
       requirements: ['A bank or InstaPay account'],
       description: 'A paid course sold with the academy’s own methods.',
     });
+    // Publishing needs at least one published activity (backend B0-LRN-03).
+    await addExternalPreviewLesson(
+      request,
+      owner,
+      academyId,
+      courseId,
+      `J42 Sample Lesson ${stamp}`
+    );
     await publishCourse(request, owner, academyId, courseId);
 
     ownerContext = await browser.newContext();

@@ -65,6 +65,9 @@
     "contactInfo": "Contact Information",
     "localization": "Localization",
     "address": "Address",
+    "currencyHelp": "The default currency for new course prices. Each course keeps the currency it is priced in, and nothing is converted.",
+    "countryCurrencyHint": "Default for {{country}} is {{currency}}.",
+    "useCurrency": "Use {{currency}}",
     "streetLabel": "Street Address",
     "cityLabel": "City",
     "stateLabel": "State/Province",
@@ -82,7 +85,7 @@
     "general": "General",
     "generalDescription": "Your academy's name, web address, and description — this is what students and staff see first.",
     "localization": "Localization",
-    "localizationDescription": "Language sets the language of your academy's emails and certificates. Timezone sets when email digests are sent. Your website's main address is in English, with Arabic pages under /ar. Course prices use the currency set on each course.",
+    "localizationDescription": "Language sets the language of your academy's emails and certificates. Timezone sets when email digests are sent. Your website's main language is set separately, in Website settings. Currency is the default for new course prices; each course keeps the currency it is priced in, and changing this never converts or changes existing prices or orders.",
     "contact": "Contact",
     "contactDescription": "How students and staff can reach you — shown on your academy's public pages.",
     "branding": "Branding",
@@ -664,7 +667,7 @@
       "options": {
         "normal": {
           "label": "Normal",
-          "description": "Short-lived links issued only to learners with access, for videos uploaded to Atlas. Uploading videos is not available yet."
+          "description": "Short-lived links issued only to learners with access, for videos uploaded to Atlas."
         },
         "premium": {
           "label": "Premium",
@@ -714,7 +717,7 @@
   },
   "revenue": {
     "title": "Revenue & payouts",
-    "description": "What this academy has earned from course sales through Atlas Payments, and what Atlas has paid out to it.",
+    "description": "Sales this academy has recorded in Atlas, and the balance and payouts of Atlas Payments.",
     "forbidden": {
       "title": "Only the organization owner can view this",
       "description": "Academy revenue and payouts are visible to the organization owner only. Ask them if you need these figures."
@@ -722,6 +725,28 @@
     "noAcademy": {
       "title": "No academy selected",
       "description": "Choose an academy to see its revenue and payouts."
+    },
+    "manualSales": {
+      "title": "Sales recorded in Atlas (manual payments)",
+      "description": "Payments you approved for course orders that are still paid. Your academy received this money directly; Atlas does not hold it. Amounts are what learners paid, before anything you refund outside Atlas.",
+      "window": {
+        "7": "Last 7 days",
+        "30": "Last 30 days",
+        "90": "Last 90 days"
+      },
+      "orders_one": "{{count}} approved order",
+      "orders_other": "{{count}} approved orders",
+      "empty": "No approved manual payments in this period.",
+      "loading": "Loading sales recorded in Atlas",
+      "error": {
+        "title": "We couldn't load sales",
+        "description": "Sales recorded in Atlas could not be loaded. Please try again."
+      }
+    },
+    "atlasPayments": {
+      "title": "Atlas Payments payouts",
+      "description": "Only sales collected through Atlas Payments are settled and paid out here.",
+      "notLaunched": "Atlas Payments isn't available yet, so there is nothing to settle or pay out here. Sales you collect yourself by manual payment appear under Sales recorded in Atlas."
     },
     "summary": {
       "title": "Awaiting payout",

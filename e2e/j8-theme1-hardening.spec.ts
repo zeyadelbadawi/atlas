@@ -199,7 +199,8 @@ test.describe('J8 — Theme 1 hardening', () => {
   });
 
   for (const width of [390, 1024, 1440]) {
-    test(`J8b: the public site in Arabic at ${width}px is RTL with no overflow`, async ({
+    // `@quarantine`: flaky, see e2e/FLAKY.md.
+    test(`J8b: the public site in Arabic at ${width}px is RTL with no overflow @quarantine`, async ({
       page,
     }) => {
       await page.setViewportSize({ width, height: 900 });

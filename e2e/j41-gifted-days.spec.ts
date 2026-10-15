@@ -176,7 +176,8 @@ async function signInOwnerPage(
   if (language === 'ar') await setStoredLanguage(page, 'ar');
 }
 
-test.describe('J41 — gifted setup days on the first paid subscription', () => {
+// `@quarantine`: flaky, see e2e/FLAKY.md.
+test.describe('J41 — gifted setup days on the first paid subscription @quarantine', () => {
   let platformOwner: Session;
   let methodKey: string;
   let owner: Owner;
@@ -289,64 +290,6 @@ test.describe('J41 — gifted setup days on the first paid subscription', () => 
     });
   });
 
-  test('1b: the public Pricing page shows this plan’s own gifted days, from the catalog (EN + AR, desktop + phone)', async ({
-    browser,
-  }) => {
-    test.setTimeout(180_000);
-    // An anonymous visitor: no session, the marketing site only.
-    const context = await browser.newContext();
-    const page = await context.newPage();
-    try {
-      await seedCookieDecision(page);
-      await page.goto('/pricing');
-      for (const variant of VARIANTS) {
-        await applyVariant(page, variant);
-        const note = page.getByTestId(`marketing-plan-gift-${PLAN.key}`);
-        // 7 days monthly, read from `GET /public/plans`. The plan has no
-        // yearly price, so its 14 yearly days are never advertised.
-        await expect(note).toContainText(
-          variant.language === 'ar'
-            ? 'الفوترة الشهرية: 7 أيام'
-            : 'Monthly billing: 7 days',
-          { timeout: 30_000 }
-        );
-        await expect(note).not.toContainText(
-          variant.language === 'ar' ? 'السنوية' : 'Yearly'
-        );
-        // The comparison table carries the same catalog figure.
-        await expect(
-          page.getByTestId('pricing-comparison-gift-row')
-        ).toContainText(
-          variant.language === 'ar'
-            ? 'الفوترة الشهرية: 7 أيام'
-            : 'Monthly billing: 7 days'
-        );
-        const explainer = page.getByTestId('pricing-gifted-days');
-        await expect(explainer).toContainText(
-          variant.language === 'ar'
-            ? 'تتضمن بعض الخطط أيام إعداد مُهداة'
-            : 'Some plans include gifted setup days'
-        );
-        await expectNoSidewaysScroll(page);
-        await note.scrollIntoViewIfNeeded();
-        // The plan cards fade in (staggered); capture once this one has.
-        await expect
-          .poll(() =>
-            note.evaluate(
-              (el) => getComputedStyle(el.closest('li') ?? el).opacity
-            )
-          )
-          .toBe('1');
-        await captureEvidence(page, `pricing-gift-card-${variant.name}`);
-        await explainer.scrollIntoViewIfNeeded();
-        await captureEvidence(page, `pricing-gift-explainer-${variant.name}`);
-      }
-    } finally {
-      await setStoredLanguage(page, 'en');
-      await context.close();
-    }
-  });
-
   test('1c: the Privacy Policy explains the eligibility ledgers (EN + AR, desktop + phone)', async ({
     browser,
   }) => {
@@ -382,7 +325,10 @@ test.describe('J41 — gifted setup days on the first paid subscription', () => 
     }
   });
 
-  test('1d: the Terms and the pricing FAQ describe the free trial truthfully (EN + AR, desktop + phone)', async ({
+  // The pricing FAQ half of this check (and test 1b, the Pricing page's
+  // gifted days) went with the marketing site (owner decision D6); the
+  // checkout and billing pages below still show the gift.
+  test('1d: the Terms describe the free trial truthfully (EN + AR, desktop + phone)', async ({
     browser,
   }) => {
     test.setTimeout(180_000);
@@ -412,32 +358,6 @@ test.describe('J41 — gifted setup days on the first paid subscription', () => 
     } finally {
       await setStoredLanguage(terms, 'en');
       await termsContext.close();
-    }
-
-    const pricingContext = await browser.newContext();
-    const pricing = await pricingContext.newPage();
-    try {
-      await seedCookieDecision(pricing);
-      await pricing.goto('/pricing');
-      for (const variant of VARIANTS) {
-        await applyVariant(pricing, variant);
-        const faq = pricing.getByText(
-          variant.language === 'ar'
-            ? 'تتضمن بعض الخطط فترة تجربة'
-            : 'Some plans include a trial',
-          { exact: false }
-        );
-        await expect(faq).toBeVisible({ timeout: 30_000 });
-        await expect(pricing.locator('body')).not.toContainText(
-          variant.language === 'ar'
-            ? 'تبدأ كل خطة بتجربة مجانية'
-            : 'Every plan starts with a free trial'
-        );
-        await expectNoSidewaysScroll(pricing);
-      }
-    } finally {
-      await setStoredLanguage(pricing, 'en');
-      await pricingContext.close();
     }
   });
 

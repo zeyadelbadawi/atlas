@@ -9,16 +9,25 @@
 import { useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { DEV_OVERRIDE_PARAM } from '@features/public-website';
-import { usePublicWebsiteLocale } from '@/features/website/renderer/PublicWebsiteLocaleContext';
+import {
+  usePublicWebsiteDefaultLocale,
+  usePublicWebsiteLocale,
+} from '@/features/website/renderer/PublicWebsiteLocaleContext';
+import { publicWebsiteLocalePrefix } from '@/features/website/constants/locale.constants';
 
 export function useAtelierNavigate(): (path: string) => void {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { locale } = usePublicWebsiteLocale();
+  const defaultLocale = usePublicWebsiteDefaultLocale();
   return useCallback(
     (path: string) => {
-      const localized =
-        locale === 'en' ? path : path === '/' ? '/ar' : `/ar${path}`;
+      const prefix = publicWebsiteLocalePrefix(locale, defaultLocale);
+      const localized = !prefix
+        ? path
+        : path === '/'
+          ? prefix
+          : `${prefix}${path}`;
       const devSlug = searchParams.get(DEV_OVERRIDE_PARAM);
       if (!devSlug) {
         navigate(localized);
@@ -29,6 +38,6 @@ export function useAtelierNavigate(): (path: string) => void {
         `${localized}${separator}${DEV_OVERRIDE_PARAM}=${encodeURIComponent(devSlug)}`
       );
     },
-    [locale, navigate, searchParams]
+    [locale, defaultLocale, navigate, searchParams]
   );
 }

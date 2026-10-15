@@ -94,6 +94,8 @@ export interface SectionHeadingProps {
    * visually equivalent without a second rule.
    */
   readonly align?: 'start' | 'center';
+  /** `h1` where the section is the whole page (the contact page). */
+  readonly headingLevel?: 'h1' | 'h2';
   readonly className?: string;
 }
 
@@ -112,6 +114,7 @@ export function SectionHeading({
   lead,
   id,
   align = 'start',
+  headingLevel: Heading = 'h2',
   className,
 }: SectionHeadingProps): JSX.Element {
   return (
@@ -128,7 +131,7 @@ export function SectionHeading({
         </span>
       ) : null}
 
-      <h2
+      <Heading
         id={id}
         className={cn(
           'max-w-[22ch] text-balance font-display text-3xl font-semibold leading-[1.1] rtl:leading-[1.5] tracking-[-0.02em] rtl:tracking-normal text-foreground sm:text-4xl lg:text-5xl',
@@ -136,7 +139,7 @@ export function SectionHeading({
         )}
       >
         {title}
-      </h2>
+      </Heading>
 
       {lead ? (
         <p

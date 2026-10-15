@@ -17,7 +17,11 @@
  * without it, the editor shows the button in its own toolbar.
  */
 import { isFeatureEnabled } from '@config';
-import { uploadHostedVideo } from '../utils/hosted-video-upload';
+import {
+  uploadHostedVideo,
+  type HostedVideoUploadOptions,
+} from '../utils/hosted-video-upload';
+import { hostedVideoLessonPatch } from '../utils/hosted-video-lesson.utils';
 import { useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useIsMutating } from '@tanstack/react-query';
@@ -325,9 +329,20 @@ export function CourseCurriculumEditor({
   // B0-MED-11 — hosted video authoring, offered only while the Normal tier
   // is enabled in production (`hostedVideoAuthoring`, B0-OC-34).
   const hostedVideoAuthoring = isFeatureEnabled('hostedVideoAuthoring');
-  const uploadLessonVideo = (file: File, onProgress: (percent: number) => void) =>
-    uploadHostedVideo(courseService, { academyId, courseId, file, onProgress });
-  const loadHostedVideos = () => courseService.listHostedVideos(academyId);
+  const uploadLessonVideo = (
+    file: File,
+    onProgress: (percent: number) => void,
+    options?: HostedVideoUploadOptions
+  ) =>
+    uploadHostedVideo(courseService, {
+      academyId,
+      courseId,
+      file,
+      onProgress,
+      ...options,
+    });
+  const loadHostedVideos = () =>
+    courseService.listHostedVideos(academyId, courseId);
   const lessonDefaultValues = useMemo<CourseLessonFormData | undefined>(() => {
     if (lessonDialog?.mode !== 'edit') return undefined;
     const { lesson } = lessonDialog;
@@ -362,15 +377,13 @@ export function CourseCurriculumEditor({
     };
     // B0-MED-11 — attach the hosted video; removing it in the dialog
     // (`null`) detaches it on save. Untouched while the feature is off.
-    const attachVideoAssetId =
-      hostedVideoAuthoring && data.contentType === 'video' && data.hostedVideo
-        ? data.hostedVideo.mediaAssetId
-        : undefined;
-    const detachVideo =
-      hostedVideoAuthoring &&
-      lessonDialog.mode === 'edit' &&
-      (data.hostedVideo === null ||
-        (data.contentType !== 'video' && !!lessonDialog.lesson.videoAssetId));
+    const hostedVideoPatch = hostedVideoLessonPatch({
+      enabled: hostedVideoAuthoring,
+      mode: lessonDialog.mode,
+      data,
+      currentVideoAssetId:
+        lessonDialog.mode === 'edit' ? lessonDialog.lesson.videoAssetId : null,
+    });
 
     try {
       const saved =
@@ -378,20 +391,15 @@ export function CourseCurriculumEditor({
           ? await updateLesson.mutateAsync({
               sectionId: lessonDialog.sectionId,
               lessonId: lessonDialog.lesson.id,
-              payload: {
-                ...payload,
-                ...(attachVideoAssetId
-                  ? { videoAssetId: attachVideoAssetId }
-                  : detachVideo
-                    ? { videoAssetId: null }
-                    : {}),
-              },
+              payload: { ...payload, ...hostedVideoPatch },
             })
           : await createLesson.mutateAsync({
               sectionId: lessonDialog.sectionId,
               payload: {
                 ...payload,
-                ...(attachVideoAssetId ? { videoAssetId: attachVideoAssetId } : {}),
+                ...(hostedVideoPatch.videoAssetId
+                  ? { videoAssetId: hostedVideoPatch.videoAssetId }
+                  : {}),
               },
             });
 

@@ -37,9 +37,41 @@ export const FEATURE_FLAGS = {
    * video (lessons use YouTube links); the catalog keeps its stored limits.
    * The builder path is built (B0-MED-11). Flip to `true` only after the
    * owner enables the Normal tier in production and one upload → playback
-   * with the watermark is verified (B0-OC-34).
+   * with the watermark is verified (B0-OC-34). The order of steps is in
+   * atlas-backend `docs/HOSTED_VIDEO_ACTIVATION_RUNBOOK.md`.
    */
   hostedVideoAuthoring: false,
+  /**
+   * B0-MED-11 — the Premium video tier (Cloudflare Stream) is not offered:
+   * its provider is not onboarded and its server flag stays off. While
+   * `false`, no screen shows a Premium video option — even after
+   * `hostedVideoAuthoring` is turned on, the tier card offers Normal only.
+   * Flip only together with the server's `FLAG_VIDEO_PREMIUM_MODE`.
+   */
+  hostedVideoPremium: false,
+  /**
+   * B0-SUP-04 — the marketing contact form's optional WhatsApp number, its
+   * two separate, unticked consents (contact about this enquiry; marketing)
+   * and the sales qualification fields. While `false` the form is exactly
+   * as before. The consent wording is a DRAFT pending counsel: flip only
+   * after counsel approves it, together with the server's
+   * `FLAG_CONTACT_CONSENT_MODE=on` (the server stores nothing while off).
+   */
+  marketingContactConsent: false,
+  /**
+   * B0-IAM-08 — the unticked "Contact me on WhatsApp about my account and
+   * setup" box on the ORGANIZATION OWNER sign-up only (never a learner
+   * sign-up). DRAFT wording pending counsel; flip together with the
+   * server's `FLAG_SIGNUP_WHATSAPP_CONSENT_MODE=on`.
+   */
+  ownerWhatsappConsent: false,
+  /**
+   * B0-ANL-04 — capture UTM values, the referrer host and the landing
+   * template in memory (never browser storage) and send them with the
+   * organization sign-up and the contact form. Flip together with the
+   * server's `FLAG_ATTRIBUTION_CAPTURE_MODE=on`.
+   */
+  signupAttribution: false,
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;

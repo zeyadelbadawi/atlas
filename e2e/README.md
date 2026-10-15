@@ -29,6 +29,15 @@ scripts/e2e-local-stack.sh down             # atlas-backend: remove everything
 Each journey seeds its own accounts through the API and leaves the shared
 seed as it found it. Journeys run in order (`workers: 1`).
 
+## In CI
+
+`.github/workflows/journeys.yml` runs them against a backend built from
+`atlas-backend` `main`: the `@critical` set (J38 sign-up, J16, J20, J42,
+J6, J27, J48) on every pull request and push to `main` (the `Critical
+journeys` job of `CI`), everything nightly. `@quarantine` tests never
+block; they are listed, with the reason, in [`FLAKY.md`](FLAKY.md).
+Locally: `npx playwright test --grep @critical --grep-invert @quarantine`.
+
 ## What each journey proves
 
 | Journey | Acceptance criteria covered | Roles |
@@ -57,6 +66,7 @@ seed as it found it. Journeys run in order (`workers: 1`).
 | J44 device-limit dialog | Academy device limit 2: browsers A and B each register one device (one "New device added" each); browser C signs in at the limit and is given a device identity but registers nothing; its lesson is refused (403 `deviceLimit`) and the dialog lists both devices; removing one (the same endpoint Settings → Devices uses) is followed by exactly ONE grant, which succeeds — the dialog closes, C is one new device with one announcement, and a reload is the same device. Restores the academy's device policy and the temporary lesson body | Student (three browsers) |
 | J45 offline dashboard | **Production build** (`vite build && vite preview --port 3002`, `E2E_BASE_URL=http://localhost:3002` — the app-shell worker exists only there). Online once: the shell worker installs, only allowlisted reads are saved and only for this user. Offline + reload: the dashboard opens from the worker and the saved copies, read-only, with the offline banner. Offline mark-read updates the badge and is queued; back online it reaches the server (that notification only). Sign-out offline: the tab signs out and the store is wiped, the server session stays live until the next online start, which revokes it first. The next person's saved records are only theirs. Without IndexedDB, sign-in and the dashboard work as before. Deletes its notifications | Owner, Manager |
 | J46 customer requests | Owner sends a request from the contextual "Request a custom feature" card; it is listed under Requests and shows Submitted; the routing email is queued to an address with no tenant id on the outbox row. The Platform Owner moves it to In progress with a message, adds an internal note and a reply; the owner sees the status, the message and the reply — the internal note is in neither the page nor any API answer. The Manager is offered no card. Arabic at 360 px: list and detail without sideways scroll. Deletes its request | Owner, Platform Owner, Manager |
+| J49 hosted video (B0-MED-11) | Needs the stack's `FLAG_VIDEO_NORMAL_MODE=on` (set by `scripts/e2e-local-stack.sh`; skips, never passes, without it). The Owner's upload ticket reserves quota, the clip (recorded in the browser) is PUT to the local S3 store with the signed type and length, completion marks it ready, and the lesson is saved with `videoAssetId` through the lesson API; an enrolled learner opens the lesson and the `<video>` loads the bytes from the signed URL under their forensic watermark (code matches the grant). Locally the tier is served by the backend's development stand-in, not the delivery Worker; the builder's upload control is covered by Vitest while `hostedVideoAuthoring` is off | Owner, Student |
 
 What these journeys do **not** cover (no screen reader, Chromium only,
 real tab switching cannot be produced headless) is listed in

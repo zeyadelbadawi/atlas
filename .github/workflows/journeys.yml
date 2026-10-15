@@ -1,0 +1,267 @@
+name: Journeys
+
+# B0-OPS-11 — the Playwright product journeys (`e2e/j*.spec.ts`) against a
+# real stack: PostgreSQL, Redis and an S3 stand-in (SeaweedFS) as local
+# containers, exactly as Backend CI starts them; the backend built from a
+# checkout of `atlas-backend` (`main` unless told otherwise), migrated,
+# seeded (`prisma db seed`) and given the journey fixtures
+# (`npm run e2e:prepare-journeys`); this commit's app on the Vite dev
+# server (:3001), which proxies `/api` to the backend (:3000).
+#
+#   critical  the journeys tagged `@critical` (sign-up J38, J16, J20, J42,
+#             J6, J27, J48). Called from `ci.yml` on every pull request
+#             into `main` and every push to `main` — the required check,
+#             and Deploy waits for it because it is part of CI.
+#   full      every journey (nightly, or by hand), then the quarantined
+#             ones on their own, non-blocking, so `e2e/FLAKY.md` can be
+#             kept up to date from evidence.
+#
+# A test tagged `@quarantine` never runs in a blocking step; the reason
+# and the way back are in `e2e/FLAKY.md`. `@production-build` (J45) needs
+# a production build rather than the dev server and is left out here too.
+#
+# Why the backend is built from source and not pulled from GHCR: the
+# published image is linux/arm64 only (the VPS is ARM; Deploy cross-builds
+# it), and GitHub's runners are x86_64. Both repositories are public, so
+# the checkout needs nothing beyond `contents: read`.
+#
+# Nothing here can reach production: every service is a local container,
+# every credential below is a CI-only placeholder (the same values as
+# Backend CI), and the fixture script refuses NODE_ENV=production.
+
+on:
+  workflow_call:
+    inputs:
+      suite:
+        description: critical or full
+        type: string
+        default: critical
+      backend-ref:
+        description: atlas-backend branch, tag or SHA to run against
+        type: string
+        default: main
+  schedule:
+    # 01:30 UTC nightly (03:30/04:30 in Cairo), the full suite.
+    - cron: '30 1 * * *'
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: Which journeys
+        type: choice
+        options: [full, critical]
+        default: full
+      backend-ref:
+        description: atlas-backend branch, tag or SHA to run against
+        type: string
+        default: main
+
+permissions:
+  contents: read
+
+jobs:
+  journeys:
+    # A scheduled run has no inputs, so an empty suite means `full`.
+    name: Playwright journeys (${{ inputs.suite || 'full' }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ (inputs.suite || 'full') == 'critical' && 60 || 150 }}
+    defaults:
+      run:
+        working-directory: atlas
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: atlas
+          POSTGRES_PASSWORD: atlas_ci_password
+          POSTGRES_DB: atlas_ci
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U atlas -d atlas_ci"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      SUITE: ${{ inputs.suite || 'full' }}
+      # The backend's environment — `atlas-backend/scripts/e2e-local-stack.sh`
+      # (what these journeys were written against) with Backend CI's
+      # placeholder credentials. Not secrets.
+      NODE_ENV: development
+      PORT: '3000'
+      PRISMA_INTERACTIVE_TX_TIMEOUT_MS: '20000'
+      PRISMA_INTERACTIVE_TX_MAX_WAIT_MS: '10000'
+      DATABASE_URL: postgresql://atlas:atlas_ci_password@localhost:5432/atlas_ci?schema=public&connection_limit=9
+      # Created with this fixed, committed password by the backend migration
+      # 20260823183500_p2_app_role_rls_enforcement — not a secret.
+      APP_DATABASE_URL: postgresql://atlas_app:atlas_app_dev_password@localhost:5432/atlas_ci?schema=public&connection_limit=9
+      REDIS_URL: redis://localhost:6379
+      CORS_ALLOWED_ORIGINS: http://localhost:3001
+      LOG_LEVEL: warn
+      JWT_ACCESS_SECRET: ci-only-placeholder-jwt-secret-not-a-real-secret-32c
+      PAYMENT_WEBHOOK_SECRET: ci-only-placeholder-webhook-secret-not-real-32ch
+      PAYMENT_CREDENTIALS_ENCRYPTION_KEY: 'abababababababababababababababababababababababababababababababab'
+      R2_ENDPOINT: http://127.0.0.1:9000
+      R2_REGION: us-east-1
+      R2_ACCESS_KEY_ID: atlas_media_ci
+      R2_SECRET_ACCESS_KEY: atlas_media_ci_password
+      R2_BUCKET: atlas-media-ci
+      R2_PUBLIC_URL_BASE: http://127.0.0.1:9000/atlas-media-ci
+      R2_FORCE_PATH_STYLE: 'true'
+      MEDIA_MAX_UPLOAD_BYTES: '10485760'
+      EMAIL_DELIVERABILITY_CHECK_ENABLED: 'false'
+      FLAG_QUIZ_ENGINE_V2_MODE: 'on'
+      FLAG_QUIZ_INTEGRITY_MODE: 'on'
+      # The journeys sign in as organization owners through the UI; the
+      # emailed-code floor for privileged sign-ins is covered by the
+      # backend's test/privileged-mfa.e2e-spec.ts instead.
+      AUTH_PRIVILEGED_EMAIL_OTP_FLOOR: 'off'
+      PLATFORM_OWNER_TOTP_REQUIRED_FROM: never
+      # The journeys' side (e2e/support/*): the admin role for fixtures the
+      # product has no API for (psql, which rejects Prisma's URL options),
+      # and the Redis whose rate-limit keys global-setup clears.
+      E2E_ADMIN_DATABASE_URL: postgresql://atlas:atlas_ci_password@localhost:5432/atlas_ci
+      E2E_REDIS_URL: redis://127.0.0.1:6379
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          path: atlas
+          persist-credentials: false
+
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          repository: ${{ github.repository_owner }}/atlas-backend
+          ref: ${{ inputs.backend-ref || 'main' }}
+          path: atlas-backend
+          persist-credentials: false
+
+      - name: Start SeaweedFS S3 (as Backend CI; enforces request signatures)
+        working-directory: .
+        run: |
+          mkdir -p "$RUNNER_TEMP/s3"
+          cat > "$RUNNER_TEMP/s3/s3.json" <<JSON
+          {"identities":[{"name":"ci","credentials":[{"accessKey":"$R2_ACCESS_KEY_ID","secretKey":"$R2_SECRET_ACCESS_KEY"}],"actions":["Admin","Read","List","Tagging","Write"]}]}
+          JSON
+          docker run -d --name s3 -p 9000:9000 -v "$RUNNER_TEMP/s3:/etc/s3:ro" \
+            docker.io/chrislusf/seaweedfs:4.47 \
+            server -dir=/data -master.volumeSizeLimitMB=64 -volume.max=0 \
+            -s3 -s3.port=9000 -s3.config=/etc/s3/s3.json
+          for i in $(seq 1 30); do
+            test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:9000/)" = 403 && exit 0
+            sleep 2
+          done
+          docker logs s3; exit 1
+
+      # global-setup clears the sign-in limiter's keys with `redis-cli`,
+      # which the runner does not have; the Redis container does.
+      - name: redis-cli from the Redis container
+        working-directory: .
+        run: |
+          mkdir -p "$RUNNER_TEMP/bin"
+          printf '#!/bin/sh\nexec docker exec -i %s redis-cli "$@"\n' \
+            '${{ job.services.redis.id }}' > "$RUNNER_TEMP/bin/redis-cli"
+          chmod +x "$RUNNER_TEMP/bin/redis-cli"
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
+        with:
+          version: 10
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: atlas-backend/package-lock.json
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: atlas/pnpm-lock.yaml
+
+      - name: Backend — install, migrate, seed, journey fixtures, build
+        working-directory: atlas-backend
+        run: |
+          npm ci
+          npm run prisma:generate
+          npm run prisma:migrate:deploy
+          npx prisma db seed
+          npm run e2e:prepare-journeys
+          npm run build
+
+      - name: Backend — start (:3000)
+        working-directory: atlas-backend
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/logs"
+          nohup node dist/main.js > "$GITHUB_WORKSPACE/logs/backend.log" 2>&1 &
+          for i in $(seq 1 60); do
+            curl -sf -o /dev/null http://127.0.0.1:3000/health && exit 0
+            sleep 2
+          done
+          cat "$GITHUB_WORKSPACE/logs/backend.log"; exit 1
+
+      - run: pnpm install --frozen-lockfile
+
+      # Playwright's own Chromium (pinned by the lockfile), not the runner's
+      # Chrome, so a runner-image update cannot change the browser.
+      - name: Install Chromium
+        run: |
+          pnpm exec playwright install --with-deps chromium
+          echo "E2E_CHROMIUM=$(node -e "console.log(require('playwright').chromium.executablePath())")" >> "$GITHUB_ENV"
+
+      - name: App — Vite dev server (:3001)
+        run: |
+          nohup pnpm exec vite --port 3001 --strictPort > "$GITHUB_WORKSPACE/logs/frontend.log" 2>&1 &
+          for i in $(seq 1 60); do
+            curl -sf -o /dev/null http://127.0.0.1:3001/ && exit 0
+            sleep 2
+          done
+          cat "$GITHUB_WORKSPACE/logs/frontend.log"; exit 1
+
+      # The dev server compiles the app and pre-bundles its dependencies on
+      # the first page load; doing that here keeps it out of the first
+      # journey's time budget.
+      - name: App — warm up
+        run: |
+          node -e "
+            const { chromium } = require('playwright');
+            (async () => {
+              const browser = await chromium.launch({ executablePath: process.env.E2E_CHROMIUM });
+              const page = await browser.newPage();
+              for (const path of ['/', '/auth/login']) {
+                await page.goto('http://localhost:3001' + path, { waitUntil: 'networkidle', timeout: 300000 });
+              }
+              await browser.close();
+            })().catch((error) => { console.error(error); process.exit(1); });
+          "
+
+      - name: Journeys (${{ env.SUITE }})
+        run: |
+          if [ "$SUITE" = critical ]; then
+            pnpm exec playwright test --grep @critical --grep-invert @quarantine
+          else
+            pnpm exec playwright test --grep-invert "@quarantine|@production-build"
+          fi
+
+      # Evidence for e2e/FLAKY.md: never blocks, never runs on a PR.
+      - name: Quarantined journeys (tracking only)
+        if: ${{ !cancelled() && env.SUITE == 'full' }}
+        continue-on-error: true
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report-quarantine
+        run: pnpm exec playwright test --grep @quarantine --output test-results-quarantine
+
+      # The HTML report, traces and screenshots of failures, and both
+      # servers' logs; for a full run always (the quarantine evidence).
+      - if: ${{ !cancelled() && (failure() || env.SUITE == 'full') }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: journeys-${{ env.SUITE }}-report
+          path: |
+            atlas/playwright-report*
+            atlas/test-results*
+            logs/
+          retention-days: 14
+          if-no-files-found: ignore

@@ -48,6 +48,14 @@
     "active": "Active",
     "archived": "Deleted"
   },
+  "protected": {
+    "badge": "Protected",
+    "fileNote": "This file is protected. It has no public link: learners open it from their lesson, and a link you open here stops working after a few minutes.",
+    "videoNote": "This video is protected. It plays only inside its lesson.",
+    "open": "Open file",
+    "opening": "Opening…",
+    "openError": "The file couldn't be opened. Try again."
+  },
   "upload": {
     "stage": {
       "reading": "Preparing your file",

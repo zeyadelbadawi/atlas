@@ -58,6 +58,10 @@ import {
 import { useServerValidation } from '@forms';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useCourse, useUpdateCourse } from '../hooks';
+import {
+  useAcademyPriceCurrency,
+  usePriceCurrencyDefault,
+} from '../hooks/useAcademyPriceCurrency';
 import { CourseInstructorsCard } from '../components/CourseInstructorsCard';
 import { getCourseEditorTabs } from '../utils/course-navigation.utils';
 import {
@@ -92,6 +96,9 @@ export default function CourseEditPage(): JSX.Element {
     isPending,
     error: mutationError,
   } = useUpdateCourse(academyId ?? '');
+  // D5-3 — a course with no price currency yet (a free course turning paid)
+  // starts in the academy's; one that has a currency keeps it.
+  const academyCurrency = useAcademyPriceCurrency(academyId ?? '');
 
   const form = useForm<UpdateCourseFormData>({
     resolver: zodResolver(updateCourseSchema),
@@ -114,6 +121,14 @@ export default function CourseEditPage(): JSX.Element {
         }
       : undefined,
   });
+  // Applied after `values` (not inside it): the academy may load after the
+  // course, and a change to `values` would reset fields being edited.
+  usePriceCurrencyDefault(
+    form,
+    academyCurrency,
+    course?.pricing.currency,
+    course
+  );
 
   useServerValidation(form, mutationError);
 
@@ -171,7 +186,7 @@ export default function CourseEditPage(): JSX.Element {
         ? {
             type: 'paid',
             amount: data.pricingAmount,
-            currency: data.pricingCurrency || DEFAULT_COURSE_PRICING_CURRENCY,
+            currency: data.pricingCurrency || academyCurrency,
           }
         : { type: 'free' };
 

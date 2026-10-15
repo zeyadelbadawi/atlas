@@ -148,7 +148,7 @@
     "invalidCredentials": "Invalid email or password.",
     "crossOriginSession": "Your session couldn't be verified for this site. Please sign in again.",
     "platformOwnerTwoFactorRequired": "Platform Owner tools need an authenticator app on your account. Set up two-step verification in your security settings, then try again.",
-    "phoneTaken": "This phone number is already in use. Enter a different number.",
+    "phoneTaken": "This phone number is already used by another account. If it's your number, contact support to reclaim it, or enter a different number.",
     "setPasswordBeforeTwoFactor": "Your account doesn't have a password yet, and two-factor authentication needs one. Sign out, choose \"Forgot password?\" on the sign-in page to set a password, then turn on two-factor authentication."
   },
   "subscription": {
@@ -180,13 +180,15 @@
     "invalidDataUrl": "That file couldn't be read. Try choosing it again.",
     "fileTooLarge": "That file is too large to upload.",
     "insufficientRole": "You don't have permission to upload files to this academy.",
-    "videoNotEnabled": "Video uploads are not part of this academy's current plan. Upgrade the plan to upload videos, or add the lesson as a YouTube link instead.",
+    "videoNotEnabled": "Uploading videos to Atlas is not available for this academy yet. Add the lesson as a YouTube link instead.",
     "uploadNotFound": "This upload could not be found — it may have expired. Start the upload again.",
     "uploadNotStarted": "The file did not finish uploading before it was submitted. Upload it again.",
     "completionNotApplicable": "This upload cannot be finished from its current state. Start the upload again.",
     "inUse": "This file is still in use. Replace or remove it where it's used, then try again.",
     "videoNotAttachable": "Only a video uploaded to Atlas for lessons can be attached here.",
-    "videoNotReady": "This video has not finished uploading. Upload it again or choose another one."
+    "videoNotReady": "This video has not finished uploading. Upload it again or choose another one.",
+    "uploadAlreadyComplete": "This video has already finished uploading. Remove it from the media library instead.",
+    "previewUnavailable": "This file can't be opened from the library. A hosted video plays only inside its lesson."
   },
   "tenancy": {
     "notAMember": "You don't have access to this workspace.",

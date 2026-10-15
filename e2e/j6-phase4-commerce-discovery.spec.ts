@@ -71,7 +71,8 @@ const OUTCOME = 'Build a small web page from scratch';
 const REQUIREMENT = 'A laptop with a modern browser';
 const REVIEW_BODY = 'Clear, short and practical. I built my first page in an hour.';
 
-test.describe('J6 — catalog, details, reviews and paid checkout', () => {
+// `@critical`: in the required CI set (.github/workflows/journeys.yml).
+test.describe('J6 — catalog, details, reviews and paid checkout @critical', () => {
   let academyId: string;
   let owner: Session;
   let platformOwner: Session;
@@ -110,15 +111,14 @@ test.describe('J6 — catalog, details, reviews and paid checkout', () => {
     });
     paidCourseId = await createCourse(request, owner, academyId, {
       title: paidCourseTitle,
-      pricing: { type: 'paid', amount: 150, currency: 'USD' },
+      // EGP: the only course price currency the API accepts (backend
+      // B0-LRN-05 / B0-COM-05).
+      pricing: { type: 'paid', amount: 150, currency: 'EGP' },
       level: 'advanced',
       outcomes: ['Ship a production build'],
       requirements: ['The free course, or equivalent'],
       description: 'The advanced follow-up, sold as a paid course.',
     });
-    await publishCourse(request, owner, academyId, freeCourseId);
-    await publishCourse(request, owner, academyId, paidCourseId);
-
     // The paid course carries the free sample — that is what a preview is
     // for. External/YouTube on purpose: a preview is public marketing
     // content Atlas does not protect, so it needs none of the hosted-video
@@ -130,6 +130,17 @@ test.describe('J6 — catalog, details, reviews and paid checkout', () => {
       paidCourseId,
       previewLessonTitle
     );
+    // Publishing needs at least one published activity (backend B0-LRN-03),
+    // so the free course gets a lesson of its own before it is published.
+    await addExternalPreviewLesson(
+      request,
+      owner,
+      academyId,
+      freeCourseId,
+      `J6 Free Lesson ${stamp}`
+    );
+    await publishCourse(request, owner, academyId, freeCourseId);
+    await publishCourse(request, owner, academyId, paidCourseId);
 
     /* ---------- the owner adds the Course Catalog section and publishes ---------- */
     const pages = await apiGet(request, owner, `/academies/${academyId}/website/pages`);
@@ -376,6 +387,17 @@ test.describe('J6 — catalog, details, reviews and paid checkout', () => {
     expect(approved.ok(), await approved.text()).toBeTruthy();
     expect((await approved.json()).status).toBe('approved');
 
+    // The public reviews and rating are published website reads, which the
+    // API lets the visitor's own browser keep for a minute and then serve
+    // stale while it revalidates (backend `PUBLIC_WEBSITE_CACHE`,
+    // `Cache-Control: private, max-age=60, stale-while-revalidate=300`). A
+    // reload seconds after the approval would replay this browser's copy
+    // from before it, which is that policy working, not the approval
+    // failing. So the browser's HTTP cache is emptied first: the reload is
+    // then a visit after that minute, and what it shows comes from the API.
+    const cdp = await context.newCDPSession(page);
+    await cdp.send('Network.clearBrowserCache');
+    await cdp.detach();
     await page.reload();
     await expect(page.getByRole('heading', { name: 'Learner reviews' })).toBeVisible({
       timeout: 30_000,
