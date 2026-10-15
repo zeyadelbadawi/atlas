@@ -498,7 +498,11 @@ export default function AcademyProfilePage(): JSX.Element {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {currencyOptions(field.value).map((code) => (
+                          {/* From the academy as saved, not `field.value`:
+                              this form mounts a render before `values`
+                              applies, and options without a legacy currency
+                              make Radix's native select clear the field. */}
+                          {currencyOptions(academy.currency).map((code) => (
                             <SelectItem key={code} value={code}>
                               {code}
                             </SelectItem>
