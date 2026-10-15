@@ -32,6 +32,8 @@ ATLAS_HANDOVER_SECRETS.local.md
 # Playwright (P64 Phase 1 journeys) — generated run output, never committed
 /test-results/
 /playwright-report/
+/test-results-quarantine/
+/playwright-report-quarantine/
 /blob-report/
 /playwright/.cache/
 

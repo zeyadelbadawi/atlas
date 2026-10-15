@@ -129,7 +129,8 @@ async function signInOwner(page: Page, email: string): Promise<void> {
   await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 30_000 });
 }
 
-test.describe('J16 — Bank Transfer: configure, checkout, review', () => {
+// `@critical`: in the required CI set (.github/workflows/journeys.yml).
+test.describe('J16 — Bank Transfer: configure, checkout, review @critical', () => {
   let platformOwner: Session;
   let ownerA: OrgOwner;
   let ownerB: OrgOwner;

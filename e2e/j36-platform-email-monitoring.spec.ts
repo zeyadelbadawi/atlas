@@ -52,7 +52,8 @@ function masked(email: string): string {
   return `${email[0]}•••${email.slice(email.indexOf('@'))}`;
 }
 
-test.describe('J36 — Platform Owner email & security monitoring', () => {
+// `@quarantine`: flaky, see e2e/FLAKY.md.
+test.describe('J36 — Platform Owner email & security monitoring @quarantine', () => {
   const stamp = `${Date.now()}`;
   let outboxId = '';
   let eventId = '';

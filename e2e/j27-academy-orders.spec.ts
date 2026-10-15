@@ -70,7 +70,8 @@ async function horizontalOverflow(page: Page): Promise<number> {
   );
 }
 
-test.describe('J27 — Academy Orders and Platform payment lists', () => {
+// `@critical`: in the required CI set (.github/workflows/journeys.yml).
+test.describe('J27 — Academy Orders and Platform payment lists @critical', () => {
   const stamp = `${Date.now()}`;
   const buyerName = `J27 Buyer ${stamp}`;
   const buyerEmail = uniqueLearnerEmail('j27');
@@ -97,7 +98,9 @@ test.describe('J27 — Academy Orders and Platform payment lists', () => {
 
     courseId = await createCourse(request, owner, academyId, {
       title: courseTitle,
-      pricing: { type: 'paid', amount: 75, currency: 'USD' },
+      // EGP: the only course price currency the API accepts (backend
+      // B0-LRN-05 / B0-COM-05); the order and payment rows below match it.
+      pricing: { type: 'paid', amount: 75, currency: 'EGP' },
       description: 'Playwright journey J27: an order to list.',
     });
 
@@ -124,7 +127,7 @@ test.describe('J27 — Academy Orders and Platform payment lists', () => {
          snapshot, status, expires_at, idempotency_key, created_at, updated_at)
        values (gen_random_uuid()::text, :'student', :'course', :'academy', :'org',
          jsonb_build_object('course', jsonb_build_object('id', :'course', 'title', :'title'),
-           'price', jsonb_build_object('amountMinorUnits', 7500, 'currency', 'USD'),
+           'price', jsonb_build_object('amountMinorUnits', 7500, 'currency', 'EGP'),
            'capturedAt', :'createdAt'),
          'pending_payment', now() + interval '3 days', :'idem', now(), now())
        returning id;`,
@@ -144,7 +147,7 @@ test.describe('J27 — Academy Orders and Platform payment lists', () => {
          review_status, provider_reference, commission_rate_basis_points_snapshot,
          commission_amount_minor_units, payment_collection_mode_snapshot, created_at, updated_at)
        values (gen_random_uuid()::text, :'student', :'academy', :'order',
-         :'methodKey', 'manual_bank_transfer', 'atlas_manual', 7500, 'USD', 'pending',
+         :'methodKey', 'manual_bank_transfer', 'atlas_manual', 7500, 'EGP', 'pending',
          'pending', :'reference', 1000, 750, 'atlas_payments', now(), now())
        returning id;`,
       {
