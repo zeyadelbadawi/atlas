@@ -4,10 +4,7 @@ import fs from 'node:fs';
 import path from 'path';
 import { viteSourceLocator } from '@metagptx/vite-plugin-source-locator';
 import { atoms } from '@metagptx/web-sdk/plugins';
-import { vitePrerenderPlugin } from 'vite-prerender-plugin';
 import Sitemap from 'vite-plugin-sitemap';
-import { getBlogRoutes } from './prerender/blog-routes.js';
-import { getSitemapLastmod } from './prerender/blog-sitemap.js';
 import {
   PLATFORM_SITEMAP_EXCLUDED,
   PLATFORM_SITEMAP_ROUTES,
@@ -127,8 +124,6 @@ export default defineConfig(({ command, mode, isSsrBuild }) => {
   // Reports/SSR_ARCHITECTURE_ANALYSIS.md): its own output folder, and none
   // of the client build's page generators.
   const ssr = isSsrBuild === true;
-  const blogPrerenderRoutes =
-    command === 'build' && !ssr ? getBlogRoutes() : [];
   // Theme baseline fixture build (`pnpm theme-baseline:build`, Theme 1 plan
   // Phase 0) — its own output folder, so it can never overwrite `dist/`.
   // The sitemap plugin writes to a fixed folder, hence passing it too.
@@ -188,18 +183,10 @@ export default defineConfig(({ command, mode, isSsrBuild }) => {
               // (`src/app/routes/platform-sitemap.ts`).
               dynamicRoutes: [...PLATFORM_SITEMAP_ROUTES],
               exclude: [...PLATFORM_SITEMAP_EXCLUDED],
-              lastmod: getSitemapLastmod(),
               readable: true,
               generateRobotsTxt: true,
             }),
           ]),
-      ...(blogPrerenderRoutes.length > 0
-        ? vitePrerenderPlugin({
-            renderTarget: '#root',
-            prerenderScript: path.resolve(__dirname, 'prerender/blog.js'),
-            additionalPrerenderRoutes: blogPrerenderRoutes,
-          })
-        : []),
     ],
     resolve: {
       // Atlas path aliases. Mirrored in tsconfig.json / tsconfig.app.json.

@@ -23,9 +23,10 @@ export const PLATFORM_SITEMAP_ROUTES: readonly string[] = [
 ];
 
 /**
- * Built HTML the plugin would list on its own: the holding page's shell,
- * and the scaffold blog index the blog prerender writes (`prerender/`,
- * empty until `seo/content/` has posts) — neither is a page to index.
+ * Built HTML the plugin would list on its own: the holding page's shell.
+ * `/blog` stays excluded as a guard: the generator's scaffold blog
+ * prerender was removed with the legacy site (B0-WEB-13, XC-14), and the
+ * real docs/blog arrive with their own sitemaps in B2/B3.
  */
 export const PLATFORM_SITEMAP_EXCLUDED: readonly string[] = [
   PUBLIC_ROUTES.home,
