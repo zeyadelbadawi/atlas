@@ -5,7 +5,7 @@ import { useApiMutation } from '@/shared/hooks';
 import { mediaKeys } from '@services/query';
 import { mediaService } from '../services/MediaService';
 import type { ApiError } from '@api';
-import type { MediaAssetDetail, UploadMediaAssetPayload } from '@types';
+import type { PublicMediaAsset, UploadMediaAssetPayload } from '@types';
 
 export interface UploadMediaAssetVariables {
   readonly academyId: string;
@@ -13,7 +13,7 @@ export interface UploadMediaAssetVariables {
 }
 
 export function useUploadMediaAsset() {
-  return useApiMutation<MediaAssetDetail, UploadMediaAssetVariables, ApiError>({
+  return useApiMutation<PublicMediaAsset, UploadMediaAssetVariables, ApiError>({
     mutationFn: ({ academyId, payload }) =>
       mediaService.uploadAsset(academyId, payload),
     showSuccessToast: false,

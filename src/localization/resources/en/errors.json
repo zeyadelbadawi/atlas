@@ -187,7 +187,8 @@
     "inUse": "This file is still in use. Replace or remove it where it's used, then try again.",
     "videoNotAttachable": "Only a video uploaded to Atlas for lessons can be attached here.",
     "videoNotReady": "This video has not finished uploading. Upload it again or choose another one.",
-    "uploadAlreadyComplete": "This video has already finished uploading. Remove it from the media library instead."
+    "uploadAlreadyComplete": "This video has already finished uploading. Remove it from the media library instead.",
+    "previewUnavailable": "This file can't be opened from the library. A hosted video plays only inside its lesson."
   },
   "tenancy": {
     "notAMember": "You don't have access to this workspace.",

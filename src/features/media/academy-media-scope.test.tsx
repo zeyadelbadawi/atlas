@@ -64,6 +64,7 @@ vi.mock('./hooks', () => ({
     useMediaAssets(academyId, options) as unknown,
   useUploadMediaAsset: () => idleMutation,
   useArchiveMediaAsset: () => idleMutation,
+  useProtectedMediaFileGrant: () => idleMutation,
   useMediaDeletion: () => ({
     deleteOne: vi.fn(),
     deleteMany: vi.fn(),

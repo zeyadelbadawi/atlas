@@ -25,6 +25,11 @@
  *   - UPLOADER. `media_assets` records no user, so "uploaded by" cannot be
  *     shown without making it up. The upload DATE is real and is shown.
  *
+ * PROTECTED FILES (D5-4). Lesson files and learners' attachments live in a
+ * private bucket and come back with no `url`. They are shown with a
+ * Protected badge and never as an image or a link; owners and managers open
+ * one from its details through a short-lived signed link.
+ *
  * DELETE. Single (per item, or from the details dialog) and bulk (Select
  * mode). "Delete" is the backend's archive: the item leaves the library now
  * and its file is destroyed after a 30-day grace period. Media still in use
@@ -33,7 +38,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CheckSquare, Grid2x2, List, Trash2, Upload } from 'lucide-react';
+import { CheckSquare, Grid2x2, List, Lock, Trash2, Upload } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { EmptyState, ErrorState } from '@components/feedback';
 import { NumericExpression, StatusBadge } from '@components/data-display';
@@ -52,7 +57,12 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { useFilePicker, usePermissions, useSearch } from '@hooks';
 import { cn, formatBytes } from '@utils';
-import { useMediaAssets, useMediaDeletion } from '../hooks';
+import {
+  useMediaAssets,
+  useMediaDeletion,
+  useProtectedMediaFileGrant,
+} from '../hooks';
+import { isProtectedMediaAsset } from '../utils/media-protection';
 import { useMediaUpload } from '../hooks/useMediaUpload';
 import { MediaUploadProgress } from '../components/MediaUploadProgress';
 import { useUpdateMediaAsset } from '../hooks/useUpdateMediaAsset';
@@ -118,6 +128,7 @@ export default function AcademyMediaPage(): JSX.Element {
 
   const deletion = useMediaDeletion(academyId);
   const updateAsset = useUpdateMediaAsset();
+  const fileGrant = useProtectedMediaFileGrant();
   const filePicker = useFilePicker({ accept: ACCEPTED_UPLOAD_TYPES });
   const {
     state: uploadState,
@@ -214,6 +225,31 @@ export default function AcademyMediaPage(): JSX.Element {
     const chosen = assets.filter((asset) => checkedIds.has(asset.id));
     const deleted = await deletion.deleteMany(chosen);
     uncheck(deleted);
+  };
+
+  /*
+    D5-4 — the tab is opened inside the click, so a popup blocker allows it,
+    and pointed at the signed link once the server has issued one. The link
+    expires in minutes and is never kept anywhere. On a refusal the blank
+    tab is closed and the hook's error toast explains.
+  */
+  const handleOpenProtectedFile = async (asset: MediaAssetSummary) => {
+    if (!academyId) return;
+    const tab = window.open('', '_blank');
+    try {
+      const grant = await fileGrant.mutateAsync({
+        academyId,
+        assetId: asset.id,
+      });
+      if (tab) {
+        tab.opener = null;
+        tab.location.href = grant.url;
+      } else {
+        window.open(grant.url, '_blank', 'noopener,noreferrer');
+      }
+    } catch {
+      tab?.close();
+    }
   };
 
   const exitSelectMode = () => {
@@ -396,6 +432,7 @@ export default function AcademyMediaPage(): JSX.Element {
           {assets.map((asset) => {
             const isChecked = checkedIds.has(asset.id);
             const selecting = canDelete && isSelecting;
+            const isProtected = isProtectedMediaAsset(asset);
             return (
               <div
                 key={asset.id}
@@ -416,7 +453,12 @@ export default function AcademyMediaPage(): JSX.Element {
                   className="block w-full text-start"
                 >
                   <div className="flex h-32 items-center justify-center bg-muted">
-                    {asset.type === 'image' ? (
+                    {isProtected ? (
+                      <Lock
+                        className="size-6 text-muted-foreground"
+                        aria-hidden
+                      />
+                    ) : asset.type === 'image' && asset.url ? (
                       <img
                         src={asset.url}
                         alt={asset.altText ?? asset.fileName}
@@ -436,6 +478,12 @@ export default function AcademyMediaPage(): JSX.Element {
                     <p className="text-xs text-muted-foreground">
                       {renderSize(asset.sizeBytes)}
                     </p>
+                    {isProtected ? (
+                      <StatusBadge
+                        labelKey="media:protected.badge"
+                        tone="info"
+                      />
+                    ) : null}
                   </div>
                 </button>
                 {selecting
@@ -478,6 +526,9 @@ export default function AcademyMediaPage(): JSX.Element {
                       ) : null}
                     </p>
                   </button>
+                  {isProtectedMediaAsset(asset) ? (
+                    <StatusBadge labelKey="media:protected.badge" tone="info" />
+                  ) : null}
                   <StatusBadge
                     labelKey={`media:status.${asset.status}`}
                     tone={asset.status === 'active' ? 'success' : 'neutral'}
@@ -540,6 +591,10 @@ export default function AcademyMediaPage(): JSX.Element {
         onDelete={() => {
           if (selected) void handleDeleteOne(selected);
         }}
+        onOpenProtectedFile={() => {
+          if (selected) void handleOpenProtectedFile(selected);
+        }}
+        isOpeningProtectedFile={fileGrant.isPending}
       />
     </PageContainer>
   );
