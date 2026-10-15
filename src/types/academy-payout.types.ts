@@ -17,6 +17,7 @@
  * why an academy that sells only through its own gateway has no payouts.
  */
 import type { Money } from './money.types';
+import type { DashboardManualSales } from './dashboard.types';
 
 export const ACADEMY_PAYOUT_STATUSES = [
   'pending',
@@ -41,5 +42,12 @@ export interface AcademyPayout {
 
 export interface AcademyRevenueSummary {
   readonly academyId: string;
+  /** The Atlas Payments ledger balance not yet paid out — not the academy's sales. */
   readonly unsettled: readonly Money[];
+  /**
+   * D5-5 — the academy's manual sales: the dashboard card's figure and rule
+   * (approved academy-manual payments whose order is still paid, gross, per
+   * 7/30/90 days). Optional so an older API still type-checks.
+   */
+  readonly manualSales?: DashboardManualSales;
 }
