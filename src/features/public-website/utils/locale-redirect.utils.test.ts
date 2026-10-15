@@ -156,4 +156,23 @@ describe('resolveLocalePrefixRedirect', () => {
       '/about'
     );
   });
+
+  it('never produces an off-site (protocol-relative) target', () => {
+    for (const [path, locale] of [
+      ['/en//evil.com/', 'en'],
+      ['/en//evil.com', 'en'],
+      ['/en/\\evil.com', 'en'],
+      ['/en/\\/evil.com/x', 'en'],
+      ['/ar//evil.com/', 'ar'],
+      ['/ar///evil.com', 'ar'],
+    ] as const) {
+      const target = resolveLocalePrefixRedirect(path, '?q=1', locale, PAGES);
+      expect(target).not.toBeNull();
+      expect(target).toMatch(/^\/(?![/\\])/);
+      expect(target?.endsWith('?q=1')).toBe(true);
+    }
+    expect(resolveLocalePrefixRedirect('/en//evil.com/', '', 'en', PAGES)).toBe(
+      '/evil.com/'
+    );
+  });
 });

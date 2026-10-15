@@ -28,7 +28,10 @@ describe('readLandingAttribution', () => {
   it('reads UTM values, the referrer host and the landing template', () => {
     expect(
       readLandingAttribution(
-        loc('?utm_source=facebook&utm_medium=paid_social&utm_campaign=launch-20261015', '/pricing'),
+        loc(
+          '?utm_source=facebook&utm_medium=paid_social&utm_campaign=launch-20261015',
+          '/pricing'
+        ),
         'https://news.example.org/story?id=1'
       )
     ).toEqual({
@@ -38,6 +41,15 @@ describe('readLandingAttribution', () => {
       referrerDomain: 'news.example.org',
       landingTemplate: 'pricing',
     });
+  });
+
+  it('never keeps half of an emoji the length cap cut through', () => {
+    const value = `${'x'.repeat(99)}${encodeURIComponent('😀')}`;
+    const read = readLandingAttribution(loc(`?utm_source=${value}`, '/'), '');
+    expect(read?.utmSource).toBe('x'.repeat(99));
+    expect(JSON.stringify(read)).not.toMatch(
+      /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/
+    );
   });
 
   it('captures nothing for an untagged visit or a same-site referrer', () => {
@@ -50,7 +62,9 @@ describe('readLandingAttribution', () => {
   it('drops email- and phone-like values', () => {
     expect(
       readLandingAttribution(
-        loc('?utm_source=newsletter&utm_term=someone%40mail.test&utm_content=%2B20%20100%20000%200000'),
+        loc(
+          '?utm_source=newsletter&utm_term=someone%40mail.test&utm_content=%2B20%20100%20000%200000'
+        ),
         ''
       )
     ).toEqual({ utmSource: 'newsletter', landingTemplate: 'home' });

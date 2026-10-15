@@ -1577,6 +1577,22 @@ describe('Arabic as the default language', () => {
     }
   });
 
+  it('never redirects off-site from a doubled-slash locale prefix', async () => {
+    for (const [path, setup] of [
+      ['/en//evil.com/', () => {}],
+      ['/en/%5C%5Cevil.com/', () => {}],
+      ['/ar//evil.com/', arabicDefault],
+    ]) {
+      setup();
+      const result = await get(handler, BETA, path);
+      const location = result.headers.Location ?? '';
+      // A redirect, if any, stays on this site: a same-origin path, never
+      // a protocol-relative `//host` or `/\\host` target.
+      assert.doesNotMatch(location, /^[/\\][/\\]/, path);
+      if (location) assert.match(location, /^\/(?![/\\])/, path);
+    }
+  });
+
   it('caches each locale of an Arabic-default page under its own key', async () => {
     arabicDefault();
     const cached = await makeHandler({ cacheTtlMs: 60_000 });

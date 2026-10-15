@@ -44,18 +44,33 @@ export function looksLikePersonalData(value: string): boolean {
   return EMAIL_LIKE.test(value) || PHONE_LIKE.test(value);
 }
 
+/** A UTF-16 surrogate without its partner (half of an emoji, say). */
+const LONE_SURROGATE =
+  /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g;
+
 function clean(value: string | null): string | undefined {
   if (!value) return undefined;
   const text = value.replace(CONTROL_CHARS, '').replace(/\s+/g, ' ').trim();
   if (!text || looksLikePersonalData(text)) return undefined;
-  return text.slice(0, LANDING_ATTRIBUTION_VALUE_MAX).trim() || undefined;
+  // Cut, then drop any half of a surrogate pair the cut (or the input)
+  // left behind: Postgres rejects JSON with a lone surrogate.
+  return (
+    text
+      .slice(0, LANDING_ATTRIBUTION_VALUE_MAX)
+      .replace(LONE_SURROGATE, '')
+      .trim() || undefined
+  );
 }
 
 function referrerHost(referrer: string, ownHost: string): string | undefined {
   if (!referrer) return undefined;
   try {
     const host = new URL(referrer).hostname.toLowerCase();
-    if (!host || host === ownHost.toLowerCase() || looksLikePersonalData(host)) {
+    if (
+      !host ||
+      host === ownHost.toLowerCase() ||
+      looksLikePersonalData(host)
+    ) {
       return undefined;
     }
     return host.includes('.') ? host : undefined;
@@ -72,7 +87,11 @@ function templateFor(pathname: string): string | undefined {
 
 /** Pure: what a landing URL + referrer yield, or `null` for an untagged, direct visit. */
 export function readLandingAttribution(
-  location: { readonly search: string; readonly pathname: string; readonly hostname: string },
+  location: {
+    readonly search: string;
+    readonly pathname: string;
+    readonly hostname: string;
+  },
   referrer: string
 ): LandingAttribution | null {
   const params = new URLSearchParams(location.search);

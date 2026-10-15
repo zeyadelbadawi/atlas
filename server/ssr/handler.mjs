@@ -294,6 +294,13 @@ export async function createSsrHandler({
           );
         }),
       ]);
+      // Defence in depth: a relative target must be a same-origin path.
+      // `//host` or `/\\host` would leave the site, so the request passes
+      // to the single-page app instead of redirecting.
+      if (result.kind === 'redirect' && /^[/\\][/\\]/.test(result.location)) {
+        log({ event: 'pass', reason: 'unsafe redirect target' });
+        return shell('unsafe redirect target');
+      }
       if (result.kind === 'redirect') {
         log({ event: 'redirect', ms: Date.now() - started });
         return {

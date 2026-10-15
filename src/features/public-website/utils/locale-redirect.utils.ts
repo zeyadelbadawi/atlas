@@ -29,5 +29,9 @@ export function resolveLocalePrefixRedirect(
   const prefix = `/${defaultLocale}`;
   if (pathname !== prefix && !pathname.startsWith(`${prefix}/`)) return null;
   if (resolvePathToPage(pathname, pages).page) return null;
-  return `${pathname.slice(prefix.length) || '/'}${search}`;
+  // The rest of the path becomes a `Location`. Leading slashes and
+  // backslashes are collapsed to one `/`, so `/en//evil.com/` can never
+  // redirect off-site as the protocol-relative `//evil.com/`.
+  const rest = pathname.slice(prefix.length).replace(/^[/\\]+/, '');
+  return `/${rest}${search}`;
 }
