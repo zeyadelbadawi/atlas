@@ -7,7 +7,7 @@
  * signed grant, with the device rules and the forensic watermark. Upload
  * and quota refusals from the server are shown as they come.
  */
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Film, Loader2, ShieldCheck, Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -23,6 +23,9 @@ import type { HostedVideoAsset } from '@types';
 import {
   HOSTED_VIDEO_ACCEPT,
   MAX_HOSTED_VIDEO_BYTES,
+  isHostedVideoUploadError,
+  type HostedVideoUploadOptions,
+  type HostedVideoUploadPhase,
   type UploadedHostedVideo,
 } from '../utils/hosted-video-upload';
 
@@ -40,7 +43,8 @@ export interface HostedVideoFieldProps {
   readonly onChange: (value: HostedVideoValue | null) => void;
   readonly onUpload: (
     file: File,
-    onProgress: (percent: number) => void
+    onProgress: (percent: number) => void,
+    options: HostedVideoUploadOptions
   ) => Promise<UploadedHostedVideo>;
   readonly loadLibrary: () => Promise<readonly HostedVideoAsset[]>;
   readonly onUploadingChange?: (uploading: boolean) => void;
@@ -56,7 +60,13 @@ export function HostedVideoField({
   const { t, i18n } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
   const [progress, setProgress] = useState<number | null>(null);
+  const [phase, setPhase] = useState<HostedVideoUploadPhase>('uploading');
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  // Aborts the transfer on Cancel, and when the dialog closes mid-upload —
+  // either way the upload helper releases the server-side reservation.
+  const abortRef = useRef<AbortController | null>(null);
+  useEffect(() => () => abortRef.current?.abort(), []);
   const [library, setLibrary] = useState<readonly HostedVideoAsset[] | null>(
     null
   );
@@ -71,6 +81,7 @@ export function HostedVideoField({
   const handleFile = async (file: File | undefined) => {
     if (!file) return;
     setError(null);
+    setNotice(null);
     if (file.type && file.type !== HOSTED_VIDEO_ACCEPT) {
       setError(t(`${NS}.wrongType`));
       return;
@@ -79,13 +90,26 @@ export function HostedVideoField({
       setError(t(`${NS}.tooLarge`));
       return;
     }
+    const controller = new AbortController();
+    abortRef.current = controller;
+    setPhase('uploading');
     setBusy(true);
     try {
-      const uploaded = await onUpload(file, setProgress);
+      const uploaded = await onUpload(file, setProgress, {
+        signal: controller.signal,
+        onPhase: setPhase,
+      });
       onChange({ mediaAssetId: uploaded.id, fileName: uploaded.fileName });
     } catch (caught) {
-      setError(apiErrorMessage(t, i18n, caught));
+      if (isHostedVideoUploadError(caught)) {
+        // The storage leg has no server message: say what happened.
+        if (caught.reason === 'cancelled') setNotice(t(`${NS}.cancelled`));
+        else setError(t(`${NS}.uploadFailed`));
+      } else {
+        setError(apiErrorMessage(t, i18n, caught));
+      }
     } finally {
+      if (abortRef.current === controller) abortRef.current = null;
       setBusy(false);
       if (inputRef.current) inputRef.current.value = '';
     }
@@ -166,11 +190,24 @@ export function HostedVideoField({
             <Upload className="size-4" aria-hidden />
           )}
           {uploading
-            ? t(`${NS}.uploading`, { percent: progress ?? 0 })
+            ? phase === 'processing'
+              ? t(`${NS}.processing`)
+              : t(`${NS}.uploading`, { percent: progress ?? 0 })
             : value
               ? t(`${NS}.replace`)
               : t(`${NS}.upload`)}
         </Button>
+        {uploading && phase === 'uploading' ? (
+          <Button
+            type="button"
+            variant="ghost"
+            data-testid="hosted-video-cancel"
+            onClick={() => abortRef.current?.abort()}
+          >
+            <X className="size-4" aria-hidden />
+            {t(`${NS}.cancel`)}
+          </Button>
+        ) : null}
         <Button
           type="button"
           variant="outline"
@@ -234,6 +271,15 @@ export function HostedVideoField({
       ) : null}
 
       <p className="text-xs text-muted-foreground">{t(`${NS}.help`)}</p>
+      {notice ? (
+        <p
+          role="status"
+          className="text-sm text-muted-foreground"
+          data-testid="hosted-video-notice"
+        >
+          {notice}
+        </p>
+      ) : null}
       {error ? (
         <p
           role="alert"

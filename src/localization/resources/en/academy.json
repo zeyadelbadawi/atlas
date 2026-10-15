@@ -664,7 +664,7 @@
       "options": {
         "normal": {
           "label": "Normal",
-          "description": "Short-lived links issued only to learners with access, for videos uploaded to Atlas. Uploading videos is not available yet."
+          "description": "Short-lived links issued only to learners with access, for videos uploaded to Atlas."
         },
         "premium": {
           "label": "Premium",

@@ -37,9 +37,18 @@ export const FEATURE_FLAGS = {
    * video (lessons use YouTube links); the catalog keeps its stored limits.
    * The builder path is built (B0-MED-11). Flip to `true` only after the
    * owner enables the Normal tier in production and one upload → playback
-   * with the watermark is verified (B0-OC-34).
+   * with the watermark is verified (B0-OC-34). The order of steps is in
+   * atlas-backend `docs/HOSTED_VIDEO_ACTIVATION_RUNBOOK.md`.
    */
   hostedVideoAuthoring: false,
+  /**
+   * B0-MED-11 — the Premium video tier (Cloudflare Stream) is not offered:
+   * its provider is not onboarded and its server flag stays off. While
+   * `false`, no screen shows a Premium video option — even after
+   * `hostedVideoAuthoring` is turned on, the tier card offers Normal only.
+   * Flip only together with the server's `FLAG_VIDEO_PREMIUM_MODE`.
+   */
+  hostedVideoPremium: false,
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;
