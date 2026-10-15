@@ -25,8 +25,10 @@ export const PLATFORM_SITEMAP_ROUTES: readonly string[] = [
 /**
  * Built HTML the plugin would list on its own: the holding page's shell.
  * `/blog` stays excluded as a guard: the generator's scaffold blog
- * prerender was removed with the legacy site (B0-WEB-13, XC-14), and the
- * real docs/blog arrive with their own sitemaps in B2/B3.
+ * prerender was removed with the legacy site (B0-WEB-13, XC-14), the
+ * platform host's edge now answers `/blog` and `/blog/*` with a real 404
+ * (Caddyfile, `@retired_blog`), and the real docs/blog arrive with their
+ * own sitemaps in B2/B3.
  */
 export const PLATFORM_SITEMAP_EXCLUDED: readonly string[] = [
   PUBLIC_ROUTES.home,

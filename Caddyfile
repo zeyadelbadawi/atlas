@@ -322,6 +322,37 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 		root * /srv
 		import static_cache
 		import page_policy_headers
+		# B0-WEB-13 (owner decision D6) — the platform host's holding page
+		# (`/`, `/ar`; the router renders `/ar/` as `/ar`) is `noindex,
+		# follow`: kept out of search results, its links to the contact and
+		# legal pages still followed. Its meta tag only exists once the app
+		# has run; this header is on the response itself. Platform host only
+		# (apex, www) — an academy subdomain's `/` is that academy's home
+		# page. Deferred, as `@verify_page` is.
+		@holding_page {
+			host atlass.dpdns.org www.atlass.dpdns.org
+			path / /ar /ar/
+		}
+		header @holding_page {
+			X-Robots-Tag "noindex, follow"
+			defer
+		}
+		# B0-WEB-13 — the legacy marketing site's blog is gone, and the SPA
+		# answered `/blog` with a 200 "not found" page (a soft 404). On the
+		# platform host it is now a real 404: the same shell (the app still
+		# shows its own not-found page), with the status set, as
+		# `ssr_unavailable` sets 200. Platform host only — an academy website
+		# may have a page whose slug is `blog`.
+		@retired_blog {
+			host atlass.dpdns.org www.atlass.dpdns.org
+			path /blog /blog/*
+		}
+		handle @retired_blog {
+			rewrite * /index.html
+			file_server {
+				status 404
+			}
+		}
 		# Academy subdomains only: the platform itself (apex, www) is the
 		# dashboard and is never server-rendered.
 		@academy_page {
