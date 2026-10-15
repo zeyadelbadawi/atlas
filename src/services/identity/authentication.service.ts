@@ -1,4 +1,12 @@
 /**
+ * U-14d / OD-21 — the longest one `POST /auth/refresh` attempt may take. The
+ * server recovers a lost refresh answer only within a short window after it
+ * rotated (at most 30 s); every retry `sessionService.refresh` makes must
+ * start inside it, which a 30 s default timeout alone would already exceed.
+ */
+export const REFRESH_TIMEOUT_MS = 8_000;
+
+/**
  * Authentication Service.
  *
  * Handles authentication operations: sign-in, sign-out, token refresh and
@@ -57,6 +65,10 @@ export class AuthenticationService {
   /**
    * Refreshes an expired access token.
    *
+   * Bounded by `REFRESH_TIMEOUT_MS` rather than the 30 s default (U-14d /
+   * OD-21): a refresh whose answer is lost must be retried while the server
+   * can still hand back the successor it minted (`sessionService.refresh`).
+   *
    * @param request Token refresh request.
    * @returns New tokens.
    */
@@ -65,7 +77,8 @@ export class AuthenticationService {
   ): Promise<TokenRefreshResponse> {
     return apiClient.post<TokenRefreshResponse, TokenRefreshRequest>(
       '/auth/refresh',
-      request
+      request,
+      { timeoutMs: REFRESH_TIMEOUT_MS }
     );
   }
 
