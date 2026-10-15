@@ -1,12 +1,11 @@
 /**
- * The Terms of Service and the pricing FAQ must agree with each other, with
- * the Privacy Policy and with what Atlas actually does:
+ * The Terms of Service must agree with the Privacy Policy and with what
+ * Atlas actually does (the pricing FAQ these tests also covered was retired
+ * with the marketing site, owner decision D6):
  *
  *   - a free trial can start at signup (an eligible owner who picks a trial
  *     plan at registration gets it when the account is created), so the
  *     Terms must not say a trial never starts automatically;
- *   - not every plan offers a trial, so the pricing FAQ must not promise
- *     one on every plan;
  *   - subscriptions are paid by manual transfer and confirmed by Atlas, and
  *     a confirmed plan payment sends the owner a receipt;
  *   - every video carries a personal forensic watermark, and redistributing
@@ -18,8 +17,6 @@ import { describe, expect, it } from 'vitest';
 import { TERMS_EN } from './content/terms.en';
 import { TERMS_AR } from './content/terms.ar';
 import type { LegalDocument } from './content/legal-content.types';
-import enPricing from '@/localization/resources/en/pricing.json';
-import arPricing from '@/localization/resources/ar/pricing.json';
 
 function sectionText(document: LegalDocument, id: string): string {
   const section = document.sections.find((s) => s.id === id);
@@ -99,16 +96,5 @@ describe('Terms of Service content', () => {
       expect(text).not.toMatch(/\bTODO\b|\bTBD\b|\bFIXME\b/i);
       expect(text).not.toMatch(/GDPR|fully compliant|compliant with/i);
     }
-  });
-});
-
-describe('Pricing FAQ', () => {
-  // B0-CPY-24: the trial is "a trial", never "free" (no free plan).
-  it('does not promise a trial on every plan (EN + AR)', () => {
-    expect(enPricing.faq.description).not.toMatch(/every plan/i);
-    expect(enPricing.faq.description).toContain('Some plans include a trial');
-    expect(enPricing.faq.description).toContain('one trial');
-    expect(arPricing.faq.description).not.toContain('تبدأ كل خطة');
-    expect(arPricing.faq.description).toContain('تتضمن بعض الخطط فترة تجربة');
   });
 });

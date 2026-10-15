@@ -1,6 +1,10 @@
 /**
- * Marketing contact section — the Atlas homepage's "talk to us" form
- * (`#contact`).
+ * The platform contact form — the whole of the `/contact` page.
+ *
+ * It was the marketing homepage's `#contact` section until owner decision
+ * D6 retired that homepage; it keeps the `contact` id, so `/contact#contact`
+ * and `#contact form` still find it. `defaultTopic` (from `?topic=`)
+ * preselects a topic.
  *
  * Sends to `POST public/contact`, which lands in the Platform Owner's inbox
  * (`/dashboard/platform/contact-submissions`). Never an Academy's inbox:
@@ -19,7 +23,7 @@
  * so the form has a single success state and never claims more than "we
  * received it".
  *
- * Design system: `design-system/atlas-marketing/MASTER.md` — a divided
+ * Design system: `design-system/atlas-marketing/MASTER.md` — a
  * `MarketingSection`, start-aligned heading block, one `rounded-xl` card,
  * `rounded-md` controls, tokens only, logical properties for RTL.
  */
@@ -41,6 +45,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useSubmitPlatformContact } from '../hooks/useSubmitPlatformContact';
+import type { PlatformContactTopic } from '../services/PlatformContactService';
 import {
   MARKETING_CONTACT_LIMITS as LIMITS,
   MARKETING_CONTACT_TOPICS,
@@ -51,7 +56,7 @@ import {
 } from '../utils/marketing-contact';
 import { MarketingSection, SectionHeading } from './MarketingSection';
 
-/** The in-page anchor the marketing nav links to (`/#contact`). */
+/** The section's id (the old homepage anchor, `/#contact`). */
 export const MARKETING_CONTACT_ANCHOR = 'contact';
 
 const EMPTY_VALUES: MarketingContactValues = {
@@ -75,8 +80,18 @@ const LIMIT_VALUES = {
   messageMax: LIMITS.messageMax,
 };
 
-export function MarketingContactSection(): JSX.Element {
+export interface MarketingContactSectionProps {
+  /** Preselected topic; the visitor can still change it. */
+  readonly defaultTopic?: PlatformContactTopic;
+}
+
+export function MarketingContactSection({
+  defaultTopic,
+}: MarketingContactSectionProps = {}): JSX.Element {
   const { t, i18n } = useTranslation();
+  const emptyValues: MarketingContactValues = defaultTopic
+    ? { ...EMPTY_VALUES, topic: defaultTopic }
+    : EMPTY_VALUES;
   const location = useLocation();
   const formId = useId();
   const submit = useSubmitPlatformContact();
@@ -96,7 +111,7 @@ export function MarketingContactSection(): JSX.Element {
     formState: { errors, isSubmitting },
   } = useForm<MarketingContactValues, unknown, MarketingContactParsed>({
     resolver: zodResolver(marketingContactSchema),
-    defaultValues: EMPTY_VALUES,
+    defaultValues: emptyValues,
     mode: 'onTouched',
   });
 
@@ -130,7 +145,7 @@ export function MarketingContactSection(): JSX.Element {
         ...(company ? { company } : {}),
         startedAt: startedAt.current,
       });
-      reset(EMPTY_VALUES);
+      reset(emptyValues);
       setIsSent(true);
     } catch {
       // Shown by the failure alert (`submit.isError`); the text is kept.
@@ -165,7 +180,6 @@ export function MarketingContactSection(): JSX.Element {
 
   return (
     <MarketingSection
-      divided
       id={MARKETING_CONTACT_ANCHOR}
       aria-labelledby="home-contact"
       className="scroll-mt-20"
@@ -174,6 +188,7 @@ export function MarketingContactSection(): JSX.Element {
         <div className="flex flex-col gap-8 lg:col-span-5">
           <SectionHeading
             id="home-contact"
+            headingLevel="h1"
             eyebrow={t('home:contact.eyebrow')}
             title={t('home:contact.title')}
             lead={t('home:contact.description')}
@@ -202,13 +217,13 @@ export function MarketingContactSection(): JSX.Element {
               <span className="flex size-11 items-center justify-center rounded-md bg-accent text-accent-foreground">
                 <Mail className="size-5" strokeWidth={1.75} aria-hidden />
               </span>
-              <h3
+              <h2
                 ref={successHeadingRef}
                 tabIndex={-1}
                 className="font-display text-xl font-semibold text-foreground focus-visible:outline-none"
               >
                 {t('home:contact.success.title')}
-              </h3>
+              </h2>
               <p className="max-w-[52ch] text-base leading-relaxed text-muted-foreground">
                 {t('home:contact.success.description')}
               </p>

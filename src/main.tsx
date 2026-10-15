@@ -21,6 +21,7 @@ import { ENV } from '@config';
 import { startPublicWebsitePrefetch } from '@services';
 import { getCurrentPublicWebsiteContext, publicWebsiteLookupKey } from '@utils';
 import { languagesForFirstRender } from './app/providers/localization/initial-language';
+import { platformUrlLanguage } from './app/routes/retired-marketing-routes';
 import {
   SSR_PAYLOAD_ELEMENT_ID,
   SSR_PAYLOAD_VERSION,
@@ -197,7 +198,17 @@ async function initializeApp(): Promise<void> {
     });
   } else {
     createRoot(rootElement).render(
-      <App initialLanguage={isAcademyWebsite ? urlLocale : undefined} />
+      <App
+        initialLanguage={
+          isAcademyWebsite
+            ? urlLocale
+            : // `/ar` (the Arabic holding page, owner decision D6) and
+              // the `/ar/...` addresses that forward from it open in
+              // Arabic without changing the stored preference; any other
+              // platform page keeps the preference.
+              platformUrlLanguage(window.location.pathname)
+        }
+      />
     );
   }
 

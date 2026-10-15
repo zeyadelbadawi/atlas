@@ -1,13 +1,9 @@
 /**
- * Home (marketing) feature — public entry point.
+ * Home feature — the platform host's public pages — public entry point.
  *
- * Deliberately tiny: the marketing pages are lazy routes and never
- * imported across features. What IS shared is the marketing site's
- * "intended plan" hand-off — written by `useStartPlanFlow` when a visitor
- * picks a plan before having an account, and consumed (then cleared) by
- * the one-page sign-up in `@features/auth`.
+ * Deliberately tiny: the holding page (`holding/`, owner decision D6) and
+ * the contact page are lazy routes and never imported across features.
+ * What IS shared is the sign-up's "intended plan" storage key, consumed
+ * (then cleared) by the one-page sign-up in `@features/auth`.
  */
-export {
-  INTENDED_PLAN_STORAGE_KEY,
-  useStartPlanFlow,
-} from './hooks/useStartPlanFlow';
+export { INTENDED_PLAN_STORAGE_KEY } from './utils/intended-plan';

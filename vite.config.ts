@@ -8,6 +8,10 @@ import { vitePrerenderPlugin } from 'vite-prerender-plugin';
 import Sitemap from 'vite-plugin-sitemap';
 import { getBlogRoutes } from './prerender/blog-routes.js';
 import { getSitemapLastmod } from './prerender/blog-sitemap.js';
+import {
+  PLATFORM_SITEMAP_EXCLUDED,
+  PLATFORM_SITEMAP_ROUTES,
+} from './src/app/routes/platform-sitemap';
 
 function escapeHtmlAttr(str: string): string {
   return str
@@ -178,6 +182,12 @@ export default defineConfig(({ command, mode, isSsrBuild }) => {
               // production domain (e.g. a future staging deploy).
               hostname: process.env.VITE_SITE_URL || 'https://atlass.dpdns.org',
               outDir,
+              // Owner decision D6: only the platform's indexable pages —
+              // contact and the legal documents — never the noindex
+              // holding page or a retired marketing page
+              // (`src/app/routes/platform-sitemap.ts`).
+              dynamicRoutes: [...PLATFORM_SITEMAP_ROUTES],
+              exclude: [...PLATFORM_SITEMAP_EXCLUDED],
               lastmod: getSitemapLastmod(),
               readable: true,
               generateRobotsTxt: true,
