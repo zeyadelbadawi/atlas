@@ -59,7 +59,9 @@ function unpinnedFroms(text: string): string[] {
 function files(dir: string, keep: (name: string) => boolean): string[] {
   if (!existsSync(dir)) return [];
   return readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
-    if (['node_modules', '.git', 'dist', 'dist-ssr'].includes(e.name)) {
+    if (
+      ['node_modules', '.git', '.claude', 'dist', 'dist-ssr'].includes(e.name)
+    ) {
       return [];
     }
     const path = join(dir, e.name);
