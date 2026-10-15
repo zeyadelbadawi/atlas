@@ -387,6 +387,17 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
     expect(approved.ok(), await approved.text()).toBeTruthy();
     expect((await approved.json()).status).toBe('approved');
 
+    // The public reviews and rating are published website reads, which the
+    // API lets the visitor's own browser keep for a minute and then serve
+    // stale while it revalidates (backend `PUBLIC_WEBSITE_CACHE`,
+    // `Cache-Control: private, max-age=60, stale-while-revalidate=300`). A
+    // reload seconds after the approval would replay this browser's copy
+    // from before it, which is that policy working, not the approval
+    // failing. So the browser's HTTP cache is emptied first: the reload is
+    // then a visit after that minute, and what it shows comes from the API.
+    const cdp = await context.newCDPSession(page);
+    await cdp.send('Network.clearBrowserCache');
+    await cdp.detach();
     await page.reload();
     await expect(page.getByRole('heading', { name: 'Learner reviews' })).toBeVisible({
       timeout: 30_000,
