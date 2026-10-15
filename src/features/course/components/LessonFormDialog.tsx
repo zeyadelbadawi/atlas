@@ -46,7 +46,10 @@ import type { HostedVideoAsset, ProtectedLessonFile } from '@types';
 import { isFeatureEnabled } from '@config';
 import { ProtectedLessonFileField } from './ProtectedLessonFileField';
 import { HostedVideoField } from './HostedVideoField';
-import type { UploadedHostedVideo } from '../utils/hosted-video-upload';
+import type {
+  HostedVideoUploadOptions,
+  UploadedHostedVideo,
+} from '../utils/hosted-video-upload';
 
 export interface LessonFormDialogProps {
   readonly open: boolean;
@@ -78,7 +81,8 @@ export interface LessonFormDialogProps {
    */
   readonly onUploadHostedVideo?: (
     file: File,
-    onProgress: (percent: number) => void
+    onProgress: (percent: number) => void,
+    options?: HostedVideoUploadOptions
   ) => Promise<UploadedHostedVideo>;
   /** B0-MED-11 — the academy's hosted videos, for "choose an existing video". */
   readonly loadHostedVideos?: () => Promise<readonly HostedVideoAsset[]>;

@@ -180,13 +180,14 @@
     "invalidDataUrl": "That file couldn't be read. Try choosing it again.",
     "fileTooLarge": "That file is too large to upload.",
     "insufficientRole": "You don't have permission to upload files to this academy.",
-    "videoNotEnabled": "Video uploads are not part of this academy's current plan. Upgrade the plan to upload videos, or add the lesson as a YouTube link instead.",
+    "videoNotEnabled": "Uploading videos to Atlas is not available for this academy yet. Add the lesson as a YouTube link instead.",
     "uploadNotFound": "This upload could not be found — it may have expired. Start the upload again.",
     "uploadNotStarted": "The file did not finish uploading before it was submitted. Upload it again.",
     "completionNotApplicable": "This upload cannot be finished from its current state. Start the upload again.",
     "inUse": "This file is still in use. Replace or remove it where it's used, then try again.",
     "videoNotAttachable": "Only a video uploaded to Atlas for lessons can be attached here.",
-    "videoNotReady": "This video has not finished uploading. Upload it again or choose another one."
+    "videoNotReady": "This video has not finished uploading. Upload it again or choose another one.",
+    "uploadAlreadyComplete": "This video has already finished uploading. Remove it from the media library instead."
   },
   "tenancy": {
     "notAMember": "You don't have access to this workspace.",

@@ -447,16 +447,44 @@ export class CourseService extends BaseService {
     );
   }
 
-  /** B0-MED-11 — the academy's hosted videos (protected, newest first). */
+  /**
+   * B0-MED-11 — abandons an unfinished upload (Cancel, or a failed
+   * transfer): the server deletes any bytes and releases the reservation.
+   */
+  async cancelHostedVideoUpload(
+    academyId: string,
+    assetId: string,
+    options?: WriteOptions
+  ): Promise<HostedVideoAsset> {
+    return this.client.post<HostedVideoAsset, Record<string, never>>(
+      this.path(academyId, 'media', 'video-uploads', assetId, 'cancel'),
+      {},
+      options
+    );
+  }
+
+  /**
+   * B0-MED-11 — the academy's hosted videos (protected, newest first) that
+   * a lesson of `courseId` may attach: this course's and academy-wide ones,
+   * never deleted (archived) ones — the same rule the server enforces.
+   */
   async listHostedVideos(
     academyId: string,
+    courseId?: string,
     options?: ReadOptions
   ): Promise<readonly HostedVideoAsset[]> {
     const page = await this.client.get<{ items: readonly HostedVideoAsset[] }>(
       this.path(academyId, 'media'),
       {
         ...options,
-        params: { type: 'video', access: 'protected', pageSize: 100, ...options?.params },
+        params: {
+          type: 'video',
+          access: 'protected',
+          status: 'active',
+          ...(courseId ? { courseId } : {}),
+          pageSize: 100,
+          ...options?.params,
+        },
       }
     );
     return page.items;

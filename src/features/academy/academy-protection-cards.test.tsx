@@ -131,7 +131,12 @@ vi.mock('@app/providers', () => ({
 
 // B0-MED-02 — the tier form exists for when hosted video ships; these cases
 // exercise it with the flag on, and one case below checks the flag-off state.
-const flags = vi.hoisted(() => ({ hostedVideoAuthoring: true }));
+// B0-MED-11 — likewise the Premium option exists for when Premium ships
+// (`hostedVideoPremium`); one case below checks it is hidden until then.
+const flags = vi.hoisted(() => ({
+  hostedVideoAuthoring: true,
+  hostedVideoPremium: true,
+}));
 vi.mock('@config', async (orig) => {
   const actual = (await orig()) as typeof ConfigModule;
   return {
@@ -139,7 +144,9 @@ vi.mock('@config', async (orig) => {
     isFeatureEnabled: (flag: FeatureFlag) =>
       flag === 'hostedVideoAuthoring'
         ? flags.hostedVideoAuthoring
-        : actual.isFeatureEnabled(flag),
+        : flag === 'hostedVideoPremium'
+          ? flags.hostedVideoPremium
+          : actual.isFeatureEnabled(flag),
   };
 });
 
@@ -154,6 +161,7 @@ afterEach(() => {
   cleanup();
   reset();
   flags.hostedVideoAuthoring = true;
+  flags.hostedVideoPremium = true;
   vi.clearAllMocks();
 });
 
@@ -265,6 +273,19 @@ describe('VideoTierCard', () => {
     expect(screen.queryAllByRole('radio')).toHaveLength(0);
     expect(screen.queryByRole('button', { name: /^save$/i })).toBeNull();
     expect(useTierQuery).not.toHaveBeenCalled();
+  });
+
+  it('shows no Premium option at all while Premium is not offered, even to a Premium plan (B0-MED-11)', () => {
+    flags.hostedVideoPremium = false;
+    tier = {
+      ...tier,
+      data: { ...DEFAULT_TIER, entitled: 'premium', source: 'plan' },
+    };
+    renderOne(<VideoTierCard academyId="academy-1" canEdit />);
+
+    expect(screen.queryByRole('radio', { name: /premium/i })).toBeNull();
+    expect(screen.queryByText(/premium/i)).toBeNull();
+    expect(screen.getByRole('radio', { name: /normal/i })).toBeTruthy();
   });
 
   it('does not offer Premium when the plan does not include it', () => {
