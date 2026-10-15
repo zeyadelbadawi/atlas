@@ -31,6 +31,12 @@ interface CollectionEnvelope<TItem> {
   readonly totalItems?: number;
   readonly page?: number;
   readonly pageSize?: number;
+  /** The Atlas API's own shape: `{ items, pagination: { ... } }`. */
+  readonly pagination?: {
+    readonly page?: number;
+    readonly pageSize?: number;
+    readonly totalItems?: number;
+  };
 }
 
 export abstract class BaseService {
@@ -125,13 +131,17 @@ export abstract class BaseService {
 
     const envelope = response as CollectionEnvelope<TItem>;
     const items = envelope.items ?? envelope.data ?? envelope.results ?? [];
-    const totalItems = envelope.totalItems ?? envelope.total ?? items.length;
+    // The API nests its totals under `pagination`; reading only the top
+    // level fell back to `items.length`, so every list showed one page.
+    const meta = envelope.pagination;
+    const totalItems =
+      meta?.totalItems ?? envelope.totalItems ?? envelope.total ?? items.length;
 
     return {
       items,
       pagination: buildPaginationMeta(
-        envelope.page ?? requestedPage,
-        envelope.pageSize ?? requestedPageSize,
+        meta?.page ?? envelope.page ?? requestedPage,
+        meta?.pageSize ?? envelope.pageSize ?? requestedPageSize,
         totalItems
       ),
     };
