@@ -1305,6 +1305,9 @@ export const platformMetricsKeys = {
   /** P64 Phase 4 — content grants, video inventory, retention lag. */
   delivery: (days: number) =>
     [...platformMetricsKeys.all, 'delivery', days] as const,
+  /** B0-ANL-04 — weekly activation funnel by signup cohort. */
+  growth: (weeks: number) =>
+    [...platformMetricsKeys.all, 'growth', weeks] as const,
 } as const;
 
 /** P64 Communications C7 — the platform email pipeline console. */

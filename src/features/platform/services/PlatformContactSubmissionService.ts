@@ -40,6 +40,25 @@ export interface PlatformContactSubmission {
   readonly userAgent: string | null;
   readonly readAt: string | null;
   readonly createdAt: string;
+  /** B0-SUP-04 — optional WhatsApp number (E.164). Optional in the type for older responses. */
+  readonly phoneE164?: string | null;
+  readonly phoneCountry?: string | null;
+  /** B0-SUP-04 — each consent: given or not, when, and which wording version. */
+  readonly contactConsent?: PlatformContactConsent;
+  readonly marketingConsent?: PlatformContactConsent;
+  readonly requesterRole?: string | null;
+  readonly subject?: string | null;
+  readonly studentBand?: string | null;
+  readonly preferredChannel?: string | null;
+  /** B0-ANL-04 — sanitised UTM values / referrer host / landing template. */
+  readonly attribution?: Readonly<Record<string, string>> | null;
+}
+
+/** B0-SUP-04 — one recorded consent. `given: false` = not ticked (no marketing). */
+export interface PlatformContactConsent {
+  readonly given: boolean;
+  readonly at: string | null;
+  readonly version: string | null;
 }
 
 export interface PlatformContactSubmissionSummary {

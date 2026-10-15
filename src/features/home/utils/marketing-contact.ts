@@ -10,6 +10,7 @@
  * interpolates `min`/`max` from `MARKETING_CONTACT_LIMITS`.
  */
 import { z } from 'zod';
+import { refinePhone } from '@components/phone';
 import type { PlatformContactTopic } from '../services/PlatformContactService';
 
 export const MARKETING_CONTACT_LIMITS = {
@@ -30,7 +31,35 @@ export const MARKETING_CONTACT_TOPICS: readonly PlatformContactTopic[] = [
 
 const L = MARKETING_CONTACT_LIMITS;
 
-export const marketingContactSchema = z.object({
+/**
+ * B0-SUP-04 — mirrors the backend's `CONTACT_CONSENT_WORDING_VERSION`: the
+ * version the SERVER stamps on a ticked consent (the form sends only
+ * true/false). Change both together whenever the consent wording in
+ * `home:contact.consent.*` changes. `draft1` — DRAFT pending counsel.
+ */
+export const CONTACT_CONSENT_WORDING_VERSION = 'contact-consent-2026-10-draft1';
+
+/** B0-SUP-04 — optional sales qualification answers (the server's CHECK-listed values). */
+export const MARKETING_CONTACT_ROLES = [
+  'academy_owner',
+  'teacher',
+  'centre_manager',
+  'other',
+] as const;
+export const MARKETING_CONTACT_STUDENT_BANDS = [
+  'under_50',
+  '50_200',
+  '200_1000',
+  'over_1000',
+] as const;
+export const MARKETING_CONTACT_CHANNELS = [
+  'whatsapp',
+  'email',
+  'phone_call',
+] as const;
+export const MARKETING_CONTACT_SUBJECT_MAX = 120;
+
+const marketingContactObject = z.object({
   name: z
     .string()
     .trim()
@@ -58,7 +87,24 @@ export const marketingContactSchema = z.object({
     .max(L.messageMax, 'home:contact.errors.messageTooLong'),
   /** Honeypot — never shown to people. */
   company: z.string(),
+  // B0-SUP-04 — all optional; rendered only while `marketingContactConsent`
+  // is on. Both consent boxes start UNTICKED.
+  phoneCountry: z.string(),
+  phoneNumber: z.string(),
+  contactConsent: z.boolean(),
+  marketingConsent: z.boolean(),
+  requesterRole: z.enum(MARKETING_CONTACT_ROLES).optional(),
+  subject: z
+    .string()
+    .trim()
+    .max(MARKETING_CONTACT_SUBJECT_MAX, 'home:contact.errors.subjectTooLong'),
+  studentBand: z.enum(MARKETING_CONTACT_STUDENT_BANDS).optional(),
+  preferredChannel: z.enum(MARKETING_CONTACT_CHANNELS).optional(),
 });
+
+export const marketingContactSchema = marketingContactObject.superRefine(
+  (data, context) => refinePhone(data, context, { required: false })
+);
 
 export type MarketingContactValues = z.input<typeof marketingContactSchema>;
 export type MarketingContactParsed = z.output<typeof marketingContactSchema>;

@@ -6,7 +6,8 @@
     "description": "Questions about plans, moving an existing academy, or working together? Send us a message and we will reply by email.",
     "points": {
       "reply": "Every message is read by a person on the Atlas team.",
-      "privacy": "We use your details only to reply to you."
+      "privacy": "We use your details only to reply to you.",
+      "privacyWithConsent": "We use your details to reply to you, and for anything more only if you tick a box below."
     },
     "form": {
       "label": "Contact the Atlas team",
@@ -19,7 +20,9 @@
       "messageCount": "{{count}} / {{max}}",
       "privacyNote": "We reply to the email address you enter here.",
       "submit": "Send message",
-      "submitting": "Sending…"
+      "submitting": "Sending…",
+      "whatsapp": "WhatsApp number (optional)",
+      "whatsappHint": "Only if you would like us to reply on WhatsApp."
     },
     "topics": {
       "sales": "Plans and pricing",
@@ -38,7 +41,8 @@
       "topicRequired": "Choose a topic.",
       "messageRequired": "Enter a message.",
       "messageTooShort": "Tell us a little more — at least {{messageMin}} characters.",
-      "messageTooLong": "Use {{messageMax}} characters or fewer."
+      "messageTooLong": "Use {{messageMax}} characters or fewer.",
+      "subjectTooLong": "Use 120 characters or fewer."
     },
     "success": {
       "title": "Message sent",
@@ -49,6 +53,35 @@
       "title": "Your message was not sent",
       "description": "Something went wrong on our side or with the connection. Your text is still here — please try again.",
       "rateLimited": "You have sent several messages in a short time. Please wait a few minutes, then try again."
+    },
+    "consent": {
+      "contactConsent": "You may contact me about this enquiry by email, phone or WhatsApp.",
+      "marketingConsent": "Send me news and offers about Atlas. I can unsubscribe at any time."
+    },
+    "qualification": {
+      "legend": "A few details (optional)",
+      "optional": "Optional",
+      "requesterRole": "Your role",
+      "studentBand": "Number of students",
+      "preferredChannel": "Best way to reach you",
+      "subject": "Subject you teach (optional)",
+      "roles": {
+        "academy_owner": "Academy owner",
+        "teacher": "Teacher",
+        "centre_manager": "Centre manager",
+        "other": "Other"
+      },
+      "bands": {
+        "under_50": "Fewer than 50",
+        "50_200": "50–200",
+        "200_1000": "200–1,000",
+        "over_1000": "More than 1,000"
+      },
+      "channels": {
+        "whatsapp": "WhatsApp",
+        "email": "Email",
+        "phone_call": "Phone call"
+      }
     }
   }
 }

@@ -59,8 +59,23 @@ export interface PlatformOrganizationSummary {
 export interface PlatformOrganizationDetail extends PlatformOrganizationSummary {
   readonly ownerName?: string;
   readonly ownerEmail?: string;
+  /**
+   * B0-IAM-08 — present ONLY when the owner opted in to WhatsApp contact at
+   * sign-up (the server never returns it otherwise, and never a learner's).
+   */
+  readonly ownerPhone?: PlatformOrganizationOwnerPhone;
+  /** B0-ANL-04 — sanitised sign-up attribution, or `null` (untagged / not captured). */
+  readonly signupAttribution?: Readonly<Record<string, string>> | null;
   readonly subscription?: TenantSubscription;
   readonly usage?: TenantUsage;
   readonly academies: readonly PlatformOrganizationAcademyRef[];
   readonly members: readonly PlatformOrganizationMemberRef[];
+}
+
+/** B0-IAM-08 — an opted-in organization owner's number and the consent it rests on. */
+export interface PlatformOrganizationOwnerPhone {
+  readonly e164: string;
+  readonly country: string;
+  readonly whatsappConsentAt: string;
+  readonly whatsappConsentVersion: string;
 }

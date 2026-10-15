@@ -10,6 +10,7 @@ import type { ReadOptions } from '@services';
 import type {
   PlatformCommerceMetrics,
   PlatformDeliveryMetrics,
+  PlatformGrowthMetrics,
   PlatformMetricsOverview,
   PlatformVideoMetrics,
 } from '@types';
@@ -45,6 +46,17 @@ export class PlatformMetricsService extends BaseService {
     return this.client.get<PlatformDeliveryMetrics>(this.path('delivery'), {
       ...options,
       params: { ...options?.params, days },
+    });
+  }
+
+  /** B0-ANL-04 — weekly activation funnel by signup cohort (1–26 weeks), internal organizations excluded. */
+  async getGrowthOverview(
+    weeks: number,
+    options?: ReadOptions
+  ): Promise<PlatformGrowthMetrics> {
+    return this.client.get<PlatformGrowthMetrics>(this.path('growth'), {
+      ...options,
+      params: { ...options?.params, weeks },
     });
   }
 }

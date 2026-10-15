@@ -17,6 +17,7 @@ import { OrganizationCommissionCard } from '@features/platform-commerce';
 import { usePlatformOrganization } from '../hooks';
 import { SubscriptionAdjustmentsCard } from '../components/SubscriptionAdjustmentsCard';
 import { InternalOrganizationCard } from '../components/InternalOrganizationCard';
+import { OrganizationOwnerContactDetails } from '../components/OrganizationOwnerContactDetails';
 import { getPlatformOrganizationStatusTone } from '../utils/platform-status.utils';
 
 export default function PlatformOrganizationDetailPage(): JSX.Element {
@@ -95,6 +96,11 @@ export default function PlatformOrganizationDetailPage(): JSX.Element {
                 )}
               </p>
             </div>
+            {/* B0-IAM-08 / B0-ANL-04 — opted-in owner phone; sign-up source. */}
+            <OrganizationOwnerContactDetails
+              ownerPhone={organization.ownerPhone}
+              signupAttribution={organization.signupAttribution}
+            />
           </CardContent>
         </Card>
 

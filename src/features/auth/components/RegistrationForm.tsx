@@ -51,6 +51,8 @@ import {
   defaultPhoneCountry,
   refinePhone,
 } from '@components/phone';
+import { isFeatureEnabled } from '@config/feature-flags.config';
+import { getLandingAttribution } from '@utils/landing-attribution.utils';
 
 /**
  * Registration failures that describe the ACADEMY's policy rather than
@@ -312,6 +314,10 @@ export function RegistrationForm({
   const [planNoticeKey, setPlanNoticeKey] = useState<string>();
   // The organization mode itself was switched off mid-form.
   const [optionsChanged, setOptionsChanged] = useState(false);
+  // B0-IAM-08 — the owner's WhatsApp opt-in: UNTICKED unless ticked, and
+  // offered only on the organization owner sign-up while the flag is on.
+  const [whatsappConsent, setWhatsappConsent] = useState(false);
+  const whatsappConsentOffered = isFeatureEnabled('ownerWhatsappConsent');
 
   /*
     Pre-selects the plan the visitor arrived for (`?plan=` or the
@@ -403,6 +409,20 @@ export function RegistrationForm({
 
   const isLoading = registerAccount.isPending;
 
+  /**
+   * B0-IAM-08 / B0-ANL-04 — only on the ORGANIZATION OWNER sign-up (never a
+   * learner's): the WhatsApp opt-in when ticked, and the in-memory landing
+   * attribution. Both flag-gated; nothing extra is sent while they are off.
+   */
+  const organizationLeadFields = (isOrganizationSignup: boolean) => {
+    if (!isOrganizationSignup || academyId) return {};
+    const attribution = getLandingAttribution();
+    return {
+      ...(whatsappConsentOffered && whatsappConsent ? { whatsappConsent: true } : {}),
+      ...(attribution ? { attribution } : {}),
+    };
+  };
+
   const handleFormSubmit = (data: RegistrationFormData) => {
     setPlanNoticeKey(undefined);
     setOptionsChanged(false);
@@ -428,6 +448,7 @@ export function RegistrationForm({
         phoneCountry: data.phoneCountry,
         ...(organizationName ? { organizationName } : {}),
         ...(planId ? { planId } : {}),
+        ...(organizationLeadFields(Boolean(organizationName))),
       },
       {
         onSuccess: (result) => {
@@ -616,6 +637,25 @@ export function RegistrationForm({
           hint={t('auth:register.phoneHint')}
           disabled={isLoading}
         />
+
+        {mode.organization && whatsappConsentOffered ? (
+          // DRAFT wording pending counsel (`SIGNUP_WHATSAPP_CONSENT_WORDING_VERSION`,
+          // utils/owner-whatsapp-consent.ts).
+          <div className="flex items-start gap-3" data-testid="owner-whatsapp-consent">
+            <Checkbox
+              id="whatsappConsent"
+              checked={whatsappConsent}
+              onCheckedChange={(checked) => setWhatsappConsent(checked === true)}
+              disabled={isLoading}
+            />
+            <Label
+              htmlFor="whatsappConsent"
+              className="cursor-pointer text-sm font-normal leading-relaxed"
+            >
+              {t('auth:register.whatsappConsent')}
+            </Label>
+          </div>
+        ) : null}
 
         <div className="space-y-2">
           <Label htmlFor="password">{t('auth:register.password')}</Label>
