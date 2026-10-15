@@ -346,6 +346,22 @@
       "title": "Your academy is still here",
       "message": "Your subscription ended {{expiredAtDate}}. Your content is intact and resubscribing restores it immediately."
     },
+    "lifecycleActivationNoAcademy": {
+      "title": "One step to start designing your academy",
+      "message": "Your account is ready, but your academy has not been created yet. Continue setup to create it."
+    },
+    "lifecycleActivationSiteUnpublished": {
+      "title": "Your site isn't published yet",
+      "message": "Your academy exists, but its website is not published, so students cannot see it yet."
+    },
+    "lifecycleActivationPaymentsAndCourse": {
+      "title": "Set up payments and your first course",
+      "message": "Add the payment methods you accept and create your first course so students can join."
+    },
+    "lifecycleActivationFirstProof": {
+      "title": "Your first payment proof has arrived",
+      "message": "A student uploaded a payment proof. Review it on your academy's Payments page."
+    },
     "retentionVideoWarning30d": {
       "title": "Your hosted videos will be deleted on {{deletionAtDate}}",
       "message": "Your subscription has been inactive since {{anchorAtDate}}. In 30 days we will permanently delete {{videoCount}} video file(s) ({{videoMinutes}} minutes). Your courses, students and certificates are not affected."
