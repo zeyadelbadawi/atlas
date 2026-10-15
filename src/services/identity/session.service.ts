@@ -30,6 +30,7 @@ import type {
   Session,
   CurrentUser,
   TokenMetadata,
+  TokenRefreshResponse,
   OrganizationContext,
   TwoFactorChallenge,
   TwoFactorVerifyInput,
@@ -48,6 +49,33 @@ function withCrossTabRefreshLock<T>(work: () => Promise<T>): Promise<T> {
   const locks = (globalThis.navigator as Navigator | undefined)?.locks;
   if (!locks?.request) return work();
   return locks.request('atlas:session-refresh', () => work()) as Promise<T>;
+}
+
+/**
+ * U-14d / OD-21 — lost-response recovery. A refresh whose answer never
+ * arrived (dropped connection, timeout, a 5xx from the edge) may still have
+ * ROTATED the session cookie server-side; the browser then holds the token
+ * just retired. The server hands the same browser the successor it already
+ * minted, but only for a short window after the rotation (at most 30 s,
+ * `REFRESH_REISSUE_WINDOW_SECONDS`), so the retry must come promptly: each
+ * attempt is bounded by `REFRESH_TIMEOUT_MS` (authentication.service) and
+ * retried after these delays — every attempt starts well inside the window
+ * (≤ ~18 s after the first) — all under the same cross-tab lock. A refusal
+ * (401/403) is final and never retried here.
+ */
+export const LOST_RESPONSE_RETRY_DELAYS_MS = [500, 1_500] as const;
+
+/** A failure the request may not have survived to answer: worth a prompt retry. */
+function mayBeLostRefreshResponse(error: unknown): boolean {
+  return (
+    !!error &&
+    typeof error === 'object' &&
+    (error as { retryable?: unknown }).retryable === true
+  );
+}
+
+function wait(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -327,19 +355,36 @@ export class SessionService {
     // A session an older build left in localStorage is converted into the
     // cookie by presenting its token once; it is deleted as it is read.
     const legacy = tokenService.takeLegacyRefreshToken();
-    let response;
-    try {
-      response = await authenticationService.refreshToken(
-        legacy ? { refreshToken: legacy } : {}
-      );
-    } catch (error) {
-      // Without the Web Locks API another tab may have rotated the cookie a
-      // moment ago; the browser now holds the new one, so try once more.
-      if (legacy || (globalThis.navigator as Navigator | undefined)?.locks) {
-        throw error;
+    const hasLocks = !!(globalThis.navigator as Navigator | undefined)?.locks;
+    let response: TokenRefreshResponse | undefined;
+    let raceRetried = false;
+    let lostRetries = 0;
+    while (response === undefined) {
+      try {
+        response = await authenticationService.refreshToken(
+          legacy ? { refreshToken: legacy } : {}
+        );
+      } catch (error) {
+        // The pre-cookie token was taken out of storage to be presented
+        // once; the server never re-issues for it, so it is not retried.
+        if (legacy) throw error;
+        if (isDefinitiveAuthFailure(error)) {
+          // Without the Web Locks API another tab may have rotated the
+          // cookie a moment ago; the browser now holds the new one, so try
+          // once more. With the lock that race cannot happen: final.
+          if (hasLocks || raceRetried) throw error;
+          raceRetried = true;
+          await wait(400);
+          continue;
+        }
+        // U-14d — the answer may have been lost after the server rotated:
+        // ask again promptly, inside the server's recovery window.
+        const delay = LOST_RESPONSE_RETRY_DELAYS_MS[lostRetries];
+        if (!mayBeLostRefreshResponse(error) || delay === undefined)
+          throw error;
+        lostRetries += 1;
+        await wait(delay);
       }
-      await new Promise((resolve) => setTimeout(resolve, 400));
-      response = await authenticationService.refreshToken({});
     }
 
     const tokens = tokenService.createMetadata(
