@@ -70,7 +70,8 @@ async function horizontalOverflow(page: Page): Promise<number> {
   );
 }
 
-test.describe('J27 — Academy Orders and Platform payment lists', () => {
+// `@critical`: in the required CI set (.github/workflows/journeys.yml).
+test.describe('J27 — Academy Orders and Platform payment lists @critical', () => {
   const stamp = `${Date.now()}`;
   const buyerName = `J27 Buyer ${stamp}`;
   const buyerEmail = uniqueLearnerEmail('j27');

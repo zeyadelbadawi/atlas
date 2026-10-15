@@ -29,6 +29,15 @@ scripts/e2e-local-stack.sh down             # atlas-backend: remove everything
 Each journey seeds its own accounts through the API and leaves the shared
 seed as it found it. Journeys run in order (`workers: 1`).
 
+## In CI
+
+`.github/workflows/journeys.yml` runs them against a backend built from
+`atlas-backend` `main`: the `@critical` set (J38 sign-up, J16, J20, J42,
+J6, J27, J48) on every pull request and push to `main` (the `Critical
+journeys` job of `CI`), everything nightly. `@quarantine` tests never
+block; they are listed, with the reason, in [`FLAKY.md`](FLAKY.md).
+Locally: `npx playwright test --grep @critical --grep-invert @quarantine`.
+
 ## What each journey proves
 
 | Journey | Acceptance criteria covered | Roles |

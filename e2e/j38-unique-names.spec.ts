@@ -210,7 +210,8 @@ async function openLearnerProfile(
   await page.goto(academyPath(`${prefix}/my/profile`));
 }
 
-test.describe('J38 — unique names', () => {
+// `@critical`: in the required CI set (.github/workflows/journeys.yml).
+test.describe('J38 — unique names @critical', () => {
   let academyId: string;
 
   test.beforeAll(async ({ request }) => {

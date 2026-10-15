@@ -91,7 +91,9 @@ const banner = (page: Page) => page.locator('[data-connectivity]');
 const bell = (page: Page) =>
   page.getByRole('button', { name: /notification/i }).first();
 
-test.describe('J45 — offline dashboard', () => {
+// `@production-build`: needs the build on :3002 (above), not the dev server;
+// CI's dev-server runs leave it out (e2e/FLAKY.md).
+test.describe('J45 — offline dashboard @production-build', () => {
   let ownerId: string;
   const ids: Record<'first' | 'second', string> = { first: '', second: '' };
 

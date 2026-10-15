@@ -177,7 +177,8 @@ async function latestPayment(
   return found!;
 }
 
-test.describe('J42 — academy manual payments: approve, reject, isolation', () => {
+// `@critical`: in the required CI set (.github/workflows/journeys.yml).
+test.describe('J42 — academy manual payments: approve, reject, isolation @critical', () => {
   let academyId: string;
   let owner: Session;
   let courseId: string;

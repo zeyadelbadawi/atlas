@@ -107,3 +107,15 @@ jobs:
           # `.results` is a hidden directory, which upload-artifact skips by default.
           include-hidden-files: true
           retention-days: 7
+
+  # B0-OPS-11 — the critical product journeys (sign-up, subscription bank
+  # transfer and wallet/InstaPay, academy manual payments, commerce,
+  # orders, watermark lookup) against a real backend built from
+  # `atlas-backend` `main`. The full set runs nightly from the same
+  # workflow file; see its header and e2e/FLAKY.md. Being a job of this
+  # workflow, it also gates Deploy.
+  journeys-critical:
+    name: Critical journeys
+    uses: ./.github/workflows/journeys.yml
+    with:
+      suite: critical

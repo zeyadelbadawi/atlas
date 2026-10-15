@@ -136,7 +136,8 @@ async function getRequest(page: Page, requestId: string) {
   return response.json();
 }
 
-test.describe('J35 — provisioning progress', () => {
+// `@quarantine`: flaky, see e2e/FLAKY.md.
+test.describe('J35 — provisioning progress @quarantine', () => {
   test.beforeEach(async ({ page }) => {
     await seedCookieDecision(page);
     await page.setViewportSize(PHONE);

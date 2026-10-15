@@ -176,7 +176,8 @@ async function signInOwnerPage(
   if (language === 'ar') await setStoredLanguage(page, 'ar');
 }
 
-test.describe('J41 — gifted setup days on the first paid subscription', () => {
+// `@quarantine`: flaky, see e2e/FLAKY.md.
+test.describe('J41 — gifted setup days on the first paid subscription @quarantine', () => {
   let platformOwner: Session;
   let methodKey: string;
   let owner: Owner;

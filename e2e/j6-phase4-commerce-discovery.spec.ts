@@ -71,7 +71,8 @@ const OUTCOME = 'Build a small web page from scratch';
 const REQUIREMENT = 'A laptop with a modern browser';
 const REVIEW_BODY = 'Clear, short and practical. I built my first page in an hour.';
 
-test.describe('J6 — catalog, details, reviews and paid checkout', () => {
+// `@critical`: in the required CI set (.github/workflows/journeys.yml).
+test.describe('J6 — catalog, details, reviews and paid checkout @critical', () => {
   let academyId: string;
   let owner: Session;
   let platformOwner: Session;
