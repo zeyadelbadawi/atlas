@@ -17,3 +17,17 @@ export function currencyOptions(current?: string | null): readonly string[] {
     ? [...SUPPORTED_CURRENCIES, current]
     : SUPPORTED_CURRENCIES;
 }
+
+/**
+ * D5-3 — the currency a new course price starts in: the academy's own,
+ * unless that is a legacy value no new price may use, in which case the
+ * platform default. Mirrors the server's `defaultPriceCurrency`. A default
+ * only: a saved price keeps its own currency and nothing is converted.
+ */
+export function defaultPriceCurrency(
+  academyCurrency: string | null | undefined
+): string {
+  return academyCurrency && SUPPORTED_CURRENCIES.includes(academyCurrency)
+    ? academyCurrency
+    : DEFAULT_DISPLAY_CURRENCY;
+}

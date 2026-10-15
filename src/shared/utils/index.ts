@@ -7,6 +7,7 @@
 export * from './bidi.utils';
 export * from './class-name.utils';
 export * from './country.utils';
+export * from './country-currency.utils';
 export * from './date.utils';
 export * from './number.utils';
 export * from './progress-counts.utils';

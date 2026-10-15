@@ -40,12 +40,15 @@ import { useServerValidation } from '@forms';
 import { isApiError } from '@api';
 import { useCreateCourse } from '../hooks';
 import {
+  useAcademyPriceCurrency,
+  usePriceCurrencyDefault,
+} from '../hooks/useAcademyPriceCurrency';
+import {
   createCourseSchema,
   type CreateCourseFormData,
 } from '../schemas/course.schemas';
 import {
   ALLOWED_COURSE_THUMBNAIL_TYPES,
-  DEFAULT_COURSE_PRICING_CURRENCY,
   DEFAULT_COURSE_VISIBILITY,
   MAX_COURSE_SLUG_LENGTH,
   MAX_COURSE_THUMBNAIL_FILE_SIZE,
@@ -76,6 +79,8 @@ export function CourseCreateForm({
     isPending,
     error: mutationError,
   } = useCreateCourse(academyId);
+  // D5-3 — a new price starts in the academy's currency.
+  const academyCurrency = useAcademyPriceCurrency(academyId);
 
   const form = useForm<CreateCourseFormData>({
     resolver: zodResolver(createCourseSchema),
@@ -87,9 +92,10 @@ export function CourseCreateForm({
       visibility: DEFAULT_COURSE_VISIBILITY,
       pricingType: 'free',
       pricingAmount: undefined,
-      pricingCurrency: DEFAULT_COURSE_PRICING_CURRENCY,
+      pricingCurrency: academyCurrency,
     },
   });
+  usePriceCurrencyDefault(form, academyCurrency, undefined);
 
   // Warns before this editor is left with unsaved work — both on
   // in-app navigation (via the shared registry the route blocker
@@ -171,7 +177,7 @@ export function CourseCreateForm({
         ? {
             type: 'paid',
             amount: data.pricingAmount,
-            currency: data.pricingCurrency || DEFAULT_COURSE_PRICING_CURRENCY,
+            currency: data.pricingCurrency || academyCurrency,
           }
         : { type: 'free' };
 
