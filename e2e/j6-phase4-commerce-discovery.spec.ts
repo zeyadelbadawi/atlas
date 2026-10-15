@@ -111,15 +111,14 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
     });
     paidCourseId = await createCourse(request, owner, academyId, {
       title: paidCourseTitle,
-      pricing: { type: 'paid', amount: 150, currency: 'USD' },
+      // EGP: the only course price currency the API accepts (backend
+      // B0-LRN-05 / B0-COM-05).
+      pricing: { type: 'paid', amount: 150, currency: 'EGP' },
       level: 'advanced',
       outcomes: ['Ship a production build'],
       requirements: ['The free course, or equivalent'],
       description: 'The advanced follow-up, sold as a paid course.',
     });
-    await publishCourse(request, owner, academyId, freeCourseId);
-    await publishCourse(request, owner, academyId, paidCourseId);
-
     // The paid course carries the free sample — that is what a preview is
     // for. External/YouTube on purpose: a preview is public marketing
     // content Atlas does not protect, so it needs none of the hosted-video
@@ -131,6 +130,17 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
       paidCourseId,
       previewLessonTitle
     );
+    // Publishing needs at least one published activity (backend B0-LRN-03),
+    // so the free course gets a lesson of its own before it is published.
+    await addExternalPreviewLesson(
+      request,
+      owner,
+      academyId,
+      freeCourseId,
+      `J6 Free Lesson ${stamp}`
+    );
+    await publishCourse(request, owner, academyId, freeCourseId);
+    await publishCourse(request, owner, academyId, paidCourseId);
 
     /* ---------- the owner adds the Course Catalog section and publishes ---------- */
     const pages = await apiGet(request, owner, `/academies/${academyId}/website/pages`);

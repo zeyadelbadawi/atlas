@@ -40,9 +40,9 @@ so `--grep @critical` / `--grep-invert @quarantine` select them.
 
 ## Watched (flaky history, not quarantined)
 
-| Journey | Why it is not quarantined                                                                                                                                                                                                                                              | Evidence                                  |
-| ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| J6      | It is in the critical set (commerce: catalog, paid checkout with proof, approval enrols). The same report lists it as varying between runs; it stays blocking so a commerce regression cannot merge unnoticed. If it flakes in CI, fix it rather than quarantining it. | report §16; local run for B0-OPS-11 below |
+| Journey | Why it is not quarantined                                                                                                                                                                                                                                              | Evidence                  |
+| ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| J6      | It is in the critical set (commerce: catalog, paid checkout with proof, approval enrols). The same report lists it as varying between runs; it stays blocking so a commerce regression cannot merge unnoticed. If it flakes in CI, fix it rather than quarantining it. | report §16; History below |
 
 ## Not run in CI (environment, not flakiness)
 
@@ -57,3 +57,16 @@ so `--grep @critical` / `--grep-invert @quarantine` select them.
 - 2026-10-14 — list created (B0-OPS-11) from the engineering initiative
   report's §16; quarantine applied to J8b, J34, J35, J36 (email
   monitoring) and J41.
+- 2026-10-15 — first local runs of the critical set against a fresh
+  database (backend `main`, the CI job's setup) on an overloaded shared
+  machine (load average ~30 on 4 cores). On a fresh database J6, J27 and
+  J42 could not work at all: their fixtures were older than backend
+  B0-LRN-05 (course prices EGP only), B0-LRN-03 (publishing needs a
+  published activity), and they needed the website's Course details page,
+  which nothing publishes on a fresh database. All three are fixed in the
+  same change. The tests that still failed there (J38a/J38b, J42 step 2,
+  J6 "a learner registers…") ended on blank pages, with Chromium logging
+  `net::ERR_INSUFFICIENT_RESOURCES` while loading the dev server's modules
+  in the J6 and J42 traces. J38a passed in another run; J38b, J42 step 2
+  and J6 step 4 have not yet passed locally, so whether they are machine
+  load or real is open. Not quarantined: the first CI runs decide.

@@ -52,6 +52,7 @@ import {
 import { clearAuthRateLimits } from './support/global-setup';
 import {
   TINY_PNG,
+  addExternalPreviewLesson,
   apiPut,
   createCourse,
   enrollmentForCourse,
@@ -211,6 +212,14 @@ test.describe('J42 — academy manual payments: approve, reject, isolation @crit
       requirements: ['A bank or InstaPay account'],
       description: 'A paid course sold with the academy’s own methods.',
     });
+    // Publishing needs at least one published activity (backend B0-LRN-03).
+    await addExternalPreviewLesson(
+      request,
+      owner,
+      academyId,
+      courseId,
+      `J42 Sample Lesson ${stamp}`
+    );
     await publishCourse(request, owner, academyId, courseId);
 
     ownerContext = await browser.newContext();
