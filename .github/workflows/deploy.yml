@@ -36,6 +36,9 @@ jobs:
       (github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.event == 'push')
     runs-on: ubuntu-24.04
+    # A hung step (seen 19 Oct 2026: the arm64 QEMU build sat for 37 min)
+    # fails here instead of holding the runner for the 6-hour default.
+    timeout-minutes: 45  # a normal run takes 13-24 min
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
