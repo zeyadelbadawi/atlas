@@ -207,7 +207,7 @@
       "contentTypeLabel": "Content Type",
       "contentUrlLabel": "Content URL",
       "contentUrlPlaceholder": "https://...",
-      "contentUrlHelpVideo": "Paste a YouTube link. Uploading videos to Atlas is not available yet.",
+      "contentUrlHelpVideo": "Paste a YouTube link to a Public or Unlisted video that allows embedding. Private and members-only videos won’t play for your learners. Uploading videos to Atlas is not available yet.",
       "contentUrlHelpFile": "Or paste a link to a file hosted elsewhere. Anyone with that link can open it.",
       "youtubeDetected": "YouTube video detected",
       "invalidYoutubeUrl": "That doesn't look like a valid YouTube link. Double-check the URL and try again.",

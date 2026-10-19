@@ -128,7 +128,7 @@ describe('lesson dialog — hosted video (B0-MED-11)', () => {
     expect(screen.queryByTestId('hosted-video-field')).toBeNull();
     expect(
       screen.getByText(
-        'Paste a YouTube link. Uploading videos to Atlas is not available yet.'
+        'Paste a YouTube link to a Public or Unlisted video that allows embedding. Private and members-only videos won’t play for your learners. Uploading videos to Atlas is not available yet.'
       )
     ).toBeTruthy();
   });
