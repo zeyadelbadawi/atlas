@@ -4,7 +4,7 @@
  * New Customer Onboarding — the plan choice on the one-page sign-up. One
  * radio group of calm, selectable cards, grouped by plan family, each
  * saying exactly what the visitor gets: the plan's name in their language,
- * its tier, the limits that matter first (academies, students, courses),
+ * its tier when two families are shown, the limits that matter first (academies, students, courses),
  * how long the trial runs, what it costs afterwards, and that no card is
  * needed.
  *
@@ -159,7 +159,11 @@ export function TrialPlanPicker({
                         >
                           {name}
                         </span>
-                        {plan.tier ? (
+                        {/* The tier only pairs a Standard plan with its
+                            Premium twin; with one family on screen the
+                            plan's own name says it all ("Academy", not
+                            "Academy · Growth"). */}
+                        {showFamilyHeadings && plan.tier ? (
                           <span className="text-xs text-muted-foreground">
                             {t(`auth:register.plan.tier.${plan.tier}`)}
                           </span>

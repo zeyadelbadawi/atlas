@@ -24,7 +24,8 @@ import type { PlanFeatureKey, PlanLimitKey, TrialPolicy } from '@types';
  */
 export const DEFAULT_TRIAL_POLICY: TrialPolicy = Object.freeze({
   enabled: true,
-  durationDays: 7,
+  // B0-CAT-05: the platform trial is 14 days (backend default since BE #54).
+  durationDays: 14,
 });
 
 /** Default grace-period configuration: 3 days after trial/subscription lapse. */

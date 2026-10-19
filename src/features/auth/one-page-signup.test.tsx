@@ -232,6 +232,20 @@ describe('one-page sign-up — organization mode on', () => {
     ).toBeTruthy();
   });
 
+  it('shows no tier badge when only one family is on offer (the plan name is enough)', async () => {
+    getSignupOptions.mockResolvedValue(
+      options({ trialPlans: [STARTER, GROWTH] })
+    );
+    renderForm();
+    await screen.findByRole('radiogroup');
+    expect(screen.queryByText('Standard')).toBeNull();
+    const growth = screen.getByTestId('trial-plan-growth');
+    expect(
+      within(growth).queryByText('Growth', { selector: 'span.text-xs' })
+    ).toBeNull();
+    expect(within(growth).getByText('14-day trial')).toBeTruthy();
+  });
+
   it('sends organizationName and planId in ONE register call, then goes to sign-in with the email', async () => {
     const user = userEvent.setup();
     renderForm();
