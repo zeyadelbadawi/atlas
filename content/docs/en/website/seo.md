@@ -68,7 +68,7 @@ Atlas uses the first value it finds: the page's own field, then the site's field
 - Every page is sent as complete HTML with its title, description, share details and a canonical link.
 - Each page links to its version in the other language.
 - Your academy, and each course page, carry structured data that search engines can read. The **Structured data preview** card on the SEO tab shows your academy's.
-- With indexing and the sitemap switched on, your site's sitemap lists your published, visible pages that allow indexing, and your published public courses.
+- With indexing and the sitemap switched on, your site serves a sitemap at `/sitemap.xml` that lists your published, visible pages that allow indexing, and your published public courses. The **Sitemap preview** card on the Website overview lists its pages from what you have saved; publish to update the live sitemap.
 
 > [!NOTE]
 > These settings help search engines read your site, but Atlas can't promise when or where your site appears in search results.

@@ -25,8 +25,8 @@
     },
     "sitemapPreview": {
       "title": "Sitemap preview",
-      "help": "The pages a future public website would list in its sitemap, based on what's currently published, visible and indexable. Nothing here is served yet.",
-      "empty": "Nothing would appear in the sitemap yet — publish your website and make sure pages are visible and indexable."
+      "help": "The pages your published website lists for search engines in its sitemap, at /sitemap.xml on your site: visible pages that allow indexing. This preview uses your saved pages, so publish to update the live sitemap. Your public courses are listed there too.",
+      "empty": "Nothing appears in the sitemap yet. Publish your website, keep search engine indexing and the sitemap switched on in SEO, and make sure pages are visible and indexable."
     }
   },
   "content": {
@@ -547,7 +547,7 @@
     "sitemapEnabled": "Include this website in the sitemap",
     "indexable": "Allow search engines to index this page",
     "structuredDataPreview": "Structured data preview",
-    "structuredDataPreviewHelp": "A preview of the structured data (JSON-LD) a future public website would publish for search engines and social platforms — nothing here is published yet.",
+    "structuredDataPreviewHelp": "The structured data (JSON-LD) your published website adds to every page for search engines and social platforms: your academy's name and logo, as shown below. Each page also gets a breadcrumb, and course pages describe the course.",
     "resolvedFallbackHint": "If you leave the fields below blank, this page currently falls back to: \"{{title}}\" / \"{{description}}\".",
     "saved": "SEO settings saved",
     "saveError": "Failed to save SEO settings"

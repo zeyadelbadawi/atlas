@@ -243,7 +243,12 @@ export function WebsiteSeoTab({
               dir="ltr"
             >
               {JSON.stringify(
-                buildOrganizationJsonLd(academyQuery.data),
+                // The same fields the public page publishes
+                // (`PublicWebsitePage`): the academy's name and logo.
+                buildOrganizationJsonLd({
+                  name: academyQuery.data.name,
+                  logo: academyQuery.data.logo,
+                }),
                 null,
                 2
               )}
