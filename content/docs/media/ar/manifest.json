@@ -679,6 +679,23 @@
     "spec": "fe614dfbad3c9d0719cfbb9dc79d1f60e8ecd7da",
     "width": 1440
   },
+  "account/appearance-menu": {
+    "capturedAt": "2026-10-20T15:51:52.153Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/appearance-menu-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/appearance-menu-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "99e6703b462dff023e541f2b5b62ee122ba39425",
+    "width": 1440
+  },
   "account/change-password-form": {
     "capturedAt": "2026-10-20T15:48:44.355Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -730,6 +747,23 @@
     "spec": "5b7ec4d004e3356c55f6bd78f3af71c36d13e4ee",
     "width": 1440
   },
+  "account/learner-profile": {
+    "capturedAt": "2026-10-20T15:52:03.426Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/learner-profile-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/learner-profile-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "4b08d9c5b622f4a393b89679660cb61098ca7d87",
+    "width": 1440
+  },
   "account/learner-security-page": {
     "capturedAt": "2026-10-20T15:49:08.418Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -762,6 +796,57 @@
     ],
     "height": 900,
     "spec": "9d327e20b90c5b8861ea0571e6b38fbbbc8b159e",
+    "width": 1440
+  },
+  "account/profile-personal": {
+    "capturedAt": "2026-10-20T15:51:13.681Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/profile-personal-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/profile-personal-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "3e653f2c9eb3ad216a629c3daed7fe5900c3c2eb",
+    "width": 1440
+  },
+  "account/profile-preferences": {
+    "capturedAt": "2026-10-20T15:51:28.052Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/profile-preferences-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/profile-preferences-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "7121f5c01c072657dc342e74628580b18aaee45f",
+    "width": 1440
+  },
+  "account/profile-preferences-save": {
+    "capturedAt": "2026-10-20T15:51:40.227Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/profile-preferences-save-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/profile-preferences-save-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "cea20c451831c80fac417d75f5235e3a5b25283c",
     "width": 1440
   },
   "account/remembered-devices": {
@@ -831,6 +916,23 @@
     "height": 900,
     "spec": "ff333820b0e88c13b4f15bc8ec75ede964b1bff7",
     "width": 1440
+  },
+  "account/session-sign-out-confirm": {
+    "capturedAt": "2026-10-20T15:51:04.697Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/session-sign-out-confirm-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/session-sign-out-confirm-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 210,
+    "spec": "92d2b4b9318a9871b61e1efd7653e8f6a912a0ec",
+    "width": 560
   },
   "account/sessions-card": {
     "capturedAt": "2026-10-20T15:50:44.751Z",
