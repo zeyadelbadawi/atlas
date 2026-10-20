@@ -67,6 +67,23 @@
     "spec": "2069e8a723e01be3650f222c2205b4f676d33e45",
     "width": 1440
   },
+  "academy/profile-save": {
+    "capturedAt": "2026-10-20T15:36:46.510Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/academy/profile-save-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/academy/profile-save-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "f1cdcb11cc162be0e6c8a438c9eee153a52236ba",
+    "width": 1440
+  },
   "billing/billing-overview": {
     "capturedAt": "2026-10-20T09:17:24.149Z",
     "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
