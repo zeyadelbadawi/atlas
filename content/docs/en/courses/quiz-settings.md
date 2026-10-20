@@ -73,7 +73,7 @@ Owners, managers and the course's assigned instructors can change a quiz's setti
 | **Late policy** | **Do not allow late attempts**, or **Allow late attempts and flag them**. |
 | **Hide the countdown** | Hides the timer digits. The limit still applies, and the learner is still told when time is nearly up and when it has run out. |
 
-The server is the clock: limits follow its time, not the learner's device. The timer starts when the learner presses Start and keeps running if they close the page.
+The server is the clock: limits follow its time, not the learner's device. The timer starts when the learner chooses **Start Quiz** and keeps running if they close the page.
 
 ## Attempts and grading
 

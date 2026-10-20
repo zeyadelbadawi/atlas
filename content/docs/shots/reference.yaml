@@ -12,14 +12,14 @@
   surface: dashboard
   path: /dashboard/academy/{academyId}/website/settings?tab=domain
   waitFor: { text: website:domain.custom.title }
-  highlight: { text: website:domain.custom.title }
+  highlight: { text: website:domain.custom.title, exact: true }
 
 - key: reference/website-language-tab
   as: owner
   surface: dashboard
   path: /dashboard/academy/{academyId}/website/settings?tab=language
   waitFor: { text: website:language.title }
-  highlight: { text: website:language.title }
+  highlight: { text: website:language.title, exact: true }
 
 - key: reference/learner-devices
   as: learner

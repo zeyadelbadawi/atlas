@@ -55,7 +55,7 @@ Before starting a monitored quiz, learners see what is recorded and how their mo
 
 Turn on **Require full screen** under **Integrity**. It needs an integrity mode other than **Off**.
 
-- **Start** opens the quiz in full screen.
+- **Start Quiz** opens the quiz in full screen.
 - If the learner leaves full screen, the questions are hidden behind **Return to full screen to continue**. Their answers are kept and the timer keeps running. Leaving is recorded.
 - If the browser refuses full screen, the learner can choose **Continue without full screen**.
 - Some browsers can't use full screen at all, for example every browser on iPhone. Learners there take the quiz as usual, and the reviewer sees that full screen was unavailable.
