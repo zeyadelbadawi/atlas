@@ -24,6 +24,27 @@ export const INSTRUCTOR = { name: p('Mona Fathy', 'منى فتحي'), email: 'mo
 /** Invited as an instructor; never accepts (stays "pending"). */
 export const INVITED = { name: p('Dina Farouk', 'دينا فاروق'), email: 'dina.invited@example.com' };
 
+/**
+ * Atlas's OWN InstaPay method (the Platform Owner's catalog row `instapay`,
+ * inserted as a disabled placeholder by the backend migration
+ * 20261102000400): what the organization pays its subscription with.
+ * Stored exactly as `toStoredInstapayInstructions` stores a Platform Owner's
+ * edit (step 08). Not the academy's own methods below.
+ */
+export const PLATFORM_INSTAPAY = {
+  key: 'instapay',
+  instructions: {
+    type: 'manual_instapay',
+    instapayAddress: 'atlas.demo@instapay',
+    accountName: 'Atlas Platform (demo)',
+    accountNameAr: 'منصة أطلس (تجريبي)',
+    instructions: 'Send the exact amount shown by InstaPay to the address above, then upload a screenshot of the confirmation.',
+    instructionsAr: 'حوّل المبلغ المعروض بالظبط بإنستاباي على العنوان ده، وبعدين ارفع صورة شاشة التأكيد.',
+    referenceInstructions: 'Enter the InstaPay transaction number.',
+    referenceInstructionsAr: 'اكتب رقم عملية إنستاباي.',
+  },
+};
+
 export const PAYMENT_METHODS = {
   'bank-transfer': {
     enabled: true,

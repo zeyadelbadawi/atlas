@@ -44,6 +44,7 @@ scripts/docs/stack/start-frontend.sh    # Vite dev server of this repo, /api pro
 
 # 2. Demo data (~40 s)
 pnpm docs:seed                          # all steps; --only 04 / --from 05 for one step / the rest
+pnpm docs:seed -- --only 08             # e.g. add the subscription payment to an already seeded database
 
 # 3. Screenshots (both languages, ~10 s a shot)
 pnpm docs:capture
@@ -185,6 +186,7 @@ uncommitted app changes do not count as a change).
 | `{orderId}`, `{paymentId}` | Ali's order for `{courseId}`, pending review, wallet receipt uploaded |
 | `{approvedOrderId}` | Salma's approved order (InstaPay) |
 | `{rejectedOrderId}` | Mariam's rejected order (bank transfer) |
+| `{subscriptionPaymentId}`, `{subscriptionCheckoutId}` | the organization's own Atlas subscription payment (Organization plan, monthly, 7,490 EGP, Atlas InstaPay), proof uploaded, **awaiting review**; its checkout (step 08) |
 | `{pageId}` (= `{homePageId}`), `{aboutPageId}` | website home and about pages |
 | `{announcementId}`, `{courseAnnouncementId}`, `{draftAnnouncementId}` | published academy / course announcement, draft |
 | `{messageId}` | academy message sent in-app to the calculus learners |
@@ -208,7 +210,12 @@ phones `010 0000 00xx`.
 - **Staff** manager Karim Adel `karim.manager@example.com`, instructor Mona
   Fathy `mona.instructor@example.com` (both accepted), pending invitation Dina
   Farouk `dina.invited@example.com`.
-- **Payment methods** bank transfer (Demo Bank Egypt, account
+- **Atlas's own payment method** InstaPay `atlas.demo@instapay`
+  («منصة أطلس (تجريبي)»), enabled in the Platform Owner's catalog (SQL: no
+  demo account is a platform owner), and one subscription payment with it
+  awaiting review. Never approved: approval would end the Enterprise trial
+  that the billing shots show.
+- **Academy payment methods** bank transfer (Demo Bank Egypt, account
   0000111122223333), Vodafone Cash wallet 01000000009, InstaPay
   `nour.academy@instapay`, with English and Arabic instructions.
 - **Courses** as in the placeholders: YouTube lessons (fake video ids), link
@@ -224,7 +231,8 @@ phones `010 0000 00xx`.
 
 Direct SQL is used only where the API cannot express the fact: verified
 mailboxes and accepted staff invitations (the stub email provider keeps the
-links in memory), the platform system account, backdated timestamps, the
+links in memory), the platform system account, Atlas's demo InstaPay method (Platform Owner
+catalog), backdated timestamps, the
 learner's device slots before a capture, and, for the Arabic edition, quiz
 question texts, people's display names and order snapshots.
 

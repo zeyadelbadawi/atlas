@@ -628,6 +628,193 @@
     "spec": "3e9cbac870737178ebc121f39ceac5da8bdbda45",
     "width": 1440
   },
+  "account/academy-code-setting": {
+    "capturedAt": "2026-10-20T15:49:47.767Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/academy-code-setting-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/academy-code-setting-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "67d630453bff0700d274e2be15a22ee93fb757e5",
+    "width": 1440
+  },
+  "account/academy-sign-in-forgot-link": {
+    "capturedAt": "2026-10-20T15:47:22.729Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/academy-sign-in-forgot-link-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/academy-sign-in-forgot-link-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "3c3e73fc3f616d9d3f95e2f787314ebc60082188",
+    "width": 1440
+  },
+  "account/account-menu-sign-out": {
+    "capturedAt": "2026-10-20T15:47:03.195Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/account-menu-sign-out-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/account-menu-sign-out-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "fe614dfbad3c9d0719cfbb9dc79d1f60e8ecd7da",
+    "width": 1440
+  },
+  "account/change-password-form": {
+    "capturedAt": "2026-10-20T15:48:44.355Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/change-password-form-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/change-password-form-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "074f3c822f0b909512a3a0ece13d194caa9200d4",
+    "width": 1440
+  },
+  "account/forgot-password-form": {
+    "capturedAt": "2026-10-20T15:47:33.786Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/forgot-password-form-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/forgot-password-form-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "fd94323a9cc1f8da413659de1cdb96267f69a43f",
+    "width": 1440
+  },
+  "account/forgot-password-sent": {
+    "capturedAt": "2026-10-20T15:47:47.662Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/forgot-password-sent-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/forgot-password-sent-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "5b7ec4d004e3356c55f6bd78f3af71c36d13e4ee",
+    "width": 1440
+  },
+  "account/learner-security-page": {
+    "capturedAt": "2026-10-20T15:49:08.418Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/learner-security-page-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/learner-security-page-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "b2b39103f9ac2d764b863a10e8d05045cf8c73a4",
+    "width": 1440
+  },
+  "account/profile-menu": {
+    "capturedAt": "2026-10-20T15:48:15.052Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/profile-menu-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/profile-menu-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "9d327e20b90c5b8861ea0571e6b38fbbbc8b159e",
+    "width": 1440
+  },
+  "account/remembered-devices": {
+    "capturedAt": "2026-10-20T15:49:33.118Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/remembered-devices-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/remembered-devices-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e5eddd87be593a299b8b619d936279c96b8fc336",
+    "width": 1440
+  },
+  "account/reset-link-invalid": {
+    "capturedAt": "2026-10-20T15:47:57.117Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/reset-link-invalid-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/reset-link-invalid-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "65fed7d71dbdc3341dfb7402e26f5ffee4288118",
+    "width": 1440
+  },
+  "account/security-tab": {
+    "capturedAt": "2026-10-20T15:48:29.483Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/security-tab-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/security-tab-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "308a9766e20ab8410575ed06fda5fc75f35e6796",
+    "width": 1440
+  },
   "account/sign-in-academy": {
     "capturedAt": "2026-10-20T15:46:48.670Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -660,6 +847,91 @@
     ],
     "height": 900,
     "spec": "b7e3d88c4ab3e3cf289279419985014208177dbd",
+    "width": 1440
+  },
+  "account/sign-in-forgot-link": {
+    "capturedAt": "2026-10-20T15:47:13.301Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/sign-in-forgot-link-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/sign-in-forgot-link-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e8c5718489cb56cef5cfc7d3835985584edafc8f",
+    "width": 1440
+  },
+  "account/two-factor-card": {
+    "capturedAt": "2026-10-20T15:50:08.201Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/two-factor-card-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/two-factor-card-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "af41bac0a948cd68bee1585465c1159e145d94e0",
+    "width": 1440
+  },
+  "account/two-factor-confirm": {
+    "capturedAt": "2026-10-20T15:50:33.702Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/two-factor-confirm-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/two-factor-confirm-992.webp",
+        "width": 992
+      }
+    ],
+    "height": 720,
+    "spec": "2a9d5ed9dc6ddcb3d3f32b8cbe42fb7083664e64",
+    "width": 496
+  },
+  "account/two-factor-setup": {
+    "capturedAt": "2026-10-20T15:50:21.500Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/two-factor-setup-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/two-factor-setup-992.webp",
+        "width": 992
+      }
+    ],
+    "height": 720,
+    "spec": "3fb6e55945562d6765a88fde4c07461a978a1fd0",
+    "width": 496
+  },
+  "account/verify-email-request": {
+    "capturedAt": "2026-10-20T15:49:19.740Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/verify-email-request-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/verify-email-request-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "0c4e772ab06d0bf181d71a7ccb6b33f4d664efd3",
     "width": 1440
   },
   "billing/billing-overview": {

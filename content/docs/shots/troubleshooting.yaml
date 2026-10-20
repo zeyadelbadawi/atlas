@@ -162,8 +162,8 @@
   surface: dashboard
   path: /dashboard/tenant/billing/payments
   waitFor: { text: payments:paymentHistory.subtitle }
-  # SEED GAP: the demo organization is on the Enterprise trial and never pays
-  # a subscription, so this page shows "No payments yet" and has no table.
+  # One row (seed step 08): the trial organization's InstaPay subscription
+  # payment, proof uploaded, Review "Awaiting review".
   # Sortable headers also read "Sort ascending" (sr-only): a literal, not an
   # anchored key, matches the header's name (payments:paymentHistory.table.reviewStatus).
   highlight: { role: columnheader, name: { en: Review, ar: المراجعة } }

@@ -2,8 +2,10 @@
 # of the Organization plan (key `enterprise`), so the trial state, the plan
 # comparison, the checkout review step and the cancel-trial dialog can be
 # captured. No shot starts a checkout, creates a payment or confirms a
-# cancellation: the demo stack has no enabled Atlas payment method, and
-# those steps would change the demo subscription.
+# cancellation: those steps would change the demo data. The seed (step 08)
+# enables Atlas's demo InstaPay method and leaves one subscription payment
+# awaiting review ({subscriptionPaymentId}), shown under Needs attention on
+# billing/billing-overview; it is never approved, so the trial stays.
 
 # --- DOC-BIL-001 Subscription overview ---------------------------------
 - key: billing/subscription-status
