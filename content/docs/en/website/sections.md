@@ -89,7 +89,7 @@ A **Title**, **Description**, an optional **Image** and a list of **Steps**, eac
 
 ## Quotes section
 
-Shows quotes from your learners. Pick entries from your content library under **From your content library**, or type items in the section: quote, author name and role, photo and a rating. Library entries show first. Sample quotes from your starter site never appear on your live site. See [Reusable FAQs and quotes](doc:DOC-WEB-010).
+In **Add section** it's listed between **How it works** and **Instructors**. It shows quotes from your learners. Pick entries from your content library under **From your content library**, or type items in the section: quote, author name and role, photo and a rating. Library entries show first. Sample quotes from your starter site never appear on your live site. See [Reusable FAQs and quotes](doc:DOC-WEB-010).
 
 ## Instructors
 

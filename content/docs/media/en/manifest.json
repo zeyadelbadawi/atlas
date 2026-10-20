@@ -407,6 +407,23 @@
     "spec": "485cd1f90b8afb95f4d092bc46627c920c26ade2",
     "width": 1440
   },
+  "selling/payment-method-dialog": {
+    "capturedAt": "2026-10-20T09:12:18.657Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/selling/payment-method-dialog-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/selling/payment-method-dialog-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 813,
+    "spec": "3f04b48b4caae71ffe039a24c83808e8518df1e2",
+    "width": 720
+  },
   "selling/payment-method-edit": {
     "capturedAt": "2026-10-20T09:12:07.828Z",
     "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
@@ -424,6 +441,57 @@
     "spec": "b316f3f97bd4dee0bcdcc83da111f9896a51490c",
     "width": 1440
   },
+  "selling/payment-method-save": {
+    "capturedAt": "2026-10-20T09:12:38.916Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/selling/payment-method-save-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/selling/payment-method-save-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 813,
+    "spec": "2f83c5c7eea55098f39a4f671fb77d3ecfcac354",
+    "width": 720
+  },
+  "selling/payment-method-texts": {
+    "capturedAt": "2026-10-20T09:12:29.110Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/selling/payment-method-texts-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/selling/payment-method-texts-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 813,
+    "spec": "7668e8f8cfadb7367ab912045c33d258f9711666",
+    "width": 720
+  },
+  "selling/payment-method-toggle": {
+    "capturedAt": "2026-10-20T09:12:49.314Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/selling/payment-method-toggle-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/selling/payment-method-toggle-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "565feb726b6be5a0f53af26c81e1349a077d3d90",
+    "width": 1440
+  },
   "selling/payment-methods-nav": {
     "capturedAt": "2026-10-20T09:11:57.601Z",
     "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
@@ -439,6 +507,23 @@
     ],
     "height": 900,
     "spec": "ee80b3628319cb045eb06736acb30f7642c95d0b",
+    "width": 1440
+  },
+  "selling/payments-nav": {
+    "capturedAt": "2026-10-20T09:12:58.747Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/selling/payments-nav-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/selling/payments-nav-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "549a0e6339af164599da8f7f40db0fccd35198a5",
     "width": 1440
   }
 }
