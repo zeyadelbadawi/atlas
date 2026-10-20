@@ -60,7 +60,7 @@ A learner counts once toward your plan's student limit, as soon as they hold a c
 > [!NOTE]
 > You can't enroll a blocked learner. Unblock them first. The course list shows only courses the learner isn't already enrolled in.
 >
-> You can't enroll a learner who is **Pending approval**, or **Inactive** after a rejection, either: **Enroll in a course** stays unavailable and their details say **Approve this student before enrolling them in a course.** [Approve them](doc:DOC-ORG-007) first, then enroll them.
+> You can't enroll a learner who is **Pending approval**, or **Rejected**, either: **Enroll in a course** stays unavailable and their details say **Approve this student before enrolling them in a course.** [Approve them](doc:DOC-ORG-007) first, then enroll them.
 
 ## Related articles
 

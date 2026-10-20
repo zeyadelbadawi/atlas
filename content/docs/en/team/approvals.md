@@ -41,11 +41,11 @@ The message **Student approved** confirms it. The learner's status becomes **Act
 
    ![The Reject this registration confirmation](shot:team/reject-confirm)
 
-The message **Registration rejected** confirms it. The learner isn't admitted, and their status becomes **Inactive**. They stay on your list, so you can still change your mind.
+The message **Registration rejected** confirms it. The learner isn't admitted, and their status becomes **Rejected**. They stay on your list, so you can still change your mind.
 
 ## Approve a learner you rejected
 
-A rejection isn't final. On the **Students** tab, set **Filter by status** to **Inactive**, select the learner, then select **Approve**. Their status becomes **Active** and Atlas tells them they were approved. You can't approve a learner who is also **Blocked**: [unblock them](doc:DOC-ORG-008) first.
+A rejection isn't final. On the **Students** tab, set **Filter by status** to **Rejected**, select the learner, then select **Approve**. Their status becomes **Active** and Atlas tells them they were approved. You can't approve a learner who is also **Blocked**: [unblock them](doc:DOC-ORG-008) first.
 
 ## If the learner registers again
 

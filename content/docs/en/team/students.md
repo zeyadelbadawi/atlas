@@ -38,7 +38,7 @@ The **Students** tab is your academy's learner list. The owner and managers use 
 | Column | What it means |
 |---|---|
 | **Student** | Name and email. Owners and managers also see the phone number, if the learner added one. |
-| **Status** | **Active**, **Pending approval**, **Inactive** (a rejected registration) or **Blocked**. |
+| **Status** | **Active**, **Pending approval**, **Rejected** (you rejected their registration) or **Blocked**. |
 | **Joined via** | How they joined: **Website sign-up**, **Website sign-in**, **Added by staff**, **Purchase**, **Invite link**, **Imported** or **Other**. |
 | **Enrollments** | Active enrollments out of all their enrollments. |
 | **Joined** | The date they joined your academy. |
@@ -54,7 +54,7 @@ The sort options are **Newest first**, **Oldest first**, **Recently active**, **
 - **Quiz outcomes**: each attempt, with its score and result.
 - **Assignment outcomes**: each submission, its grade and whether feedback was given.
 
-Owners and managers also see the action buttons here: **Approve** and **Reject** for pending learners, **Approve** for a learner whose registration you rejected (**Inactive**), **Block** or **Unblock**, and **Enroll in a course** for active learners. See [Approve pending learners](doc:DOC-ORG-007), [Block or unblock a learner](doc:DOC-ORG-008) and [Enroll a learner manually](doc:DOC-ORG-010).
+Owners and managers also see the action buttons here: **Approve** and **Reject** for pending learners, **Approve** for a learner whose registration you rejected (**Rejected**), **Block** or **Unblock**, and **Enroll in a course** for active learners. See [Approve pending learners](doc:DOC-ORG-007), [Block or unblock a learner](doc:DOC-ORG-008) and [Enroll a learner manually](doc:DOC-ORG-010).
 
 ## What instructors see
 
