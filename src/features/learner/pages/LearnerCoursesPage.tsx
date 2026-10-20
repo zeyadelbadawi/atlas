@@ -248,11 +248,15 @@ export default function LearnerCoursesPage(): JSX.Element {
 
                       <CardContent className="flex flex-1 flex-col gap-2 pt-4">
                         <div className="flex items-center justify-between gap-2">
+                          {/* The same Start / Continue / Completed answer
+                              the button and the tabs use — not the
+                              enrolment row's status, whose `enrolled`
+                              reads "Not started" even at 8 of 8. */}
                           <Badge
                             variant={isCompleted ? 'default' : 'secondary'}
                           >
                             {t(
-                              `learning:myLearning.status.${enrollment.status}`
+                              `learning:myLearning.learningState.${learningState}`
                             )}
                           </Badge>
                         </div>

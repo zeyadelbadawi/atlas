@@ -47,6 +47,11 @@
       "available": "Available",
       "unavailable": "Unavailable"
     },
+    "learningState": {
+      "not_started": "Not started",
+      "in_progress": "In progress",
+      "completed": "Completed"
+    },
     "pendingApproval": {
       "title": "Your membership is awaiting approval",
       "description": "This academy reviews new students before granting access. You will be able to open your courses as soon as it is approved."
