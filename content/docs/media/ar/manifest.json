@@ -697,8 +697,8 @@
     "width": 1440
   },
   "account/academy-code-setting": {
-    "capturedAt": "2026-10-20T15:49:47.767Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:18:24.582Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/academy-code-setting-960.webp",
@@ -714,8 +714,8 @@
     "width": 1440
   },
   "account/academy-sign-in-forgot-link": {
-    "capturedAt": "2026-10-20T15:47:22.729Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:17:03.288Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/academy-sign-in-forgot-link-960.webp",
@@ -731,8 +731,8 @@
     "width": 1440
   },
   "account/account-menu-sign-out": {
-    "capturedAt": "2026-10-20T15:47:03.195Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:16:51.230Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/account-menu-sign-out-960.webp",
@@ -748,8 +748,8 @@
     "width": 1440
   },
   "account/appearance-menu": {
-    "capturedAt": "2026-10-20T15:51:52.153Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:19:55.685Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/appearance-menu-960.webp",
@@ -765,8 +765,8 @@
     "width": 1440
   },
   "account/change-password-form": {
-    "capturedAt": "2026-10-20T15:48:44.355Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:17:49.388Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/change-password-form-960.webp",
@@ -782,8 +782,8 @@
     "width": 1440
   },
   "account/delete-account-card": {
-    "capturedAt": "2026-10-20T15:52:35.378Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:20:22.566Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/delete-account-card-960.webp",
@@ -799,8 +799,8 @@
     "width": 1440
   },
   "account/delete-account-code": {
-    "capturedAt": "2026-10-20T15:52:57.921Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:20:41.527Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/delete-account-code-960.webp",
@@ -816,8 +816,8 @@
     "width": 560
   },
   "account/delete-account-dialog": {
-    "capturedAt": "2026-10-20T15:52:45.116Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:20:31.057Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/delete-account-dialog-960.webp",
@@ -833,8 +833,8 @@
     "width": 560
   },
   "account/forgot-password-form": {
-    "capturedAt": "2026-10-20T15:47:33.786Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:17:09.756Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/forgot-password-form-960.webp",
@@ -850,8 +850,8 @@
     "width": 1440
   },
   "account/forgot-password-sent": {
-    "capturedAt": "2026-10-20T15:47:47.662Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:17:18.407Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/forgot-password-sent-960.webp",
@@ -867,8 +867,8 @@
     "width": 1440
   },
   "account/invite-learner-sign-in": {
-    "capturedAt": "2026-10-20T15:53:38.665Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:21:13.834Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/invite-learner-sign-in-960.webp",
@@ -884,8 +884,8 @@
     "width": 1440
   },
   "account/invite-learner-sign-up": {
-    "capturedAt": "2026-10-20T15:53:30.768Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:21:07.951Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/invite-learner-sign-up-960.webp",
@@ -901,8 +901,8 @@
     "width": 1440
   },
   "account/invite-staff-profile-menu": {
-    "capturedAt": "2026-10-20T15:53:22.868Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:21:02.011Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/invite-staff-profile-menu-960.webp",
@@ -918,8 +918,8 @@
     "width": 1440
   },
   "account/learner-profile": {
-    "capturedAt": "2026-10-20T15:52:03.426Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:20:01.818Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/learner-profile-960.webp",
@@ -935,8 +935,8 @@
     "width": 1440
   },
   "account/learner-security-page": {
-    "capturedAt": "2026-10-20T15:49:08.418Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:18:01.585Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/learner-security-page-960.webp",
@@ -952,8 +952,8 @@
     "width": 1440
   },
   "account/phone-card": {
-    "capturedAt": "2026-10-20T15:52:14.751Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:20:09.084Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/phone-card-960.webp",
@@ -969,8 +969,8 @@
     "width": 1440
   },
   "account/profile-menu": {
-    "capturedAt": "2026-10-20T15:48:15.052Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:17:32.409Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/profile-menu-960.webp",
@@ -986,8 +986,8 @@
     "width": 1440
   },
   "account/profile-personal": {
-    "capturedAt": "2026-10-20T15:51:13.681Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:19:31.983Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/profile-personal-960.webp",
@@ -1003,8 +1003,8 @@
     "width": 1440
   },
   "account/profile-preferences": {
-    "capturedAt": "2026-10-20T15:51:28.052Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:19:39.338Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/profile-preferences-960.webp",
@@ -1020,8 +1020,8 @@
     "width": 1440
   },
   "account/profile-preferences-save": {
-    "capturedAt": "2026-10-20T15:51:40.227Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:19:46.801Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/profile-preferences-save-960.webp",
@@ -1037,8 +1037,8 @@
     "width": 1440
   },
   "account/remembered-devices": {
-    "capturedAt": "2026-10-20T15:49:33.118Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:18:15.682Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/remembered-devices-960.webp",
@@ -1054,8 +1054,8 @@
     "width": 1440
   },
   "account/reset-link-invalid": {
-    "capturedAt": "2026-10-20T15:47:57.117Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:17:23.987Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/reset-link-invalid-960.webp",
@@ -1071,8 +1071,8 @@
     "width": 1440
   },
   "account/security-tab": {
-    "capturedAt": "2026-10-20T15:48:29.483Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:17:40.495Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/security-tab-960.webp",
@@ -1088,8 +1088,8 @@
     "width": 1440
   },
   "account/session-sign-out": {
-    "capturedAt": "2026-10-20T15:50:54.894Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:19:15.790Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/session-sign-out-960.webp",
@@ -1105,8 +1105,8 @@
     "width": 1440
   },
   "account/session-sign-out-confirm": {
-    "capturedAt": "2026-10-20T15:51:04.697Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:19:25.234Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/session-sign-out-confirm-960.webp",
@@ -1122,8 +1122,8 @@
     "width": 560
   },
   "account/sessions-card": {
-    "capturedAt": "2026-10-20T15:50:44.751Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:19:07.454Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/sessions-card-960.webp",
@@ -1139,8 +1139,8 @@
     "width": 1440
   },
   "account/sign-in-academy": {
-    "capturedAt": "2026-10-20T15:46:48.670Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:16:36.528Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/sign-in-academy-960.webp",
@@ -1156,8 +1156,8 @@
     "width": 1440
   },
   "account/sign-in-dashboard": {
-    "capturedAt": "2026-10-20T15:46:38.654Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:16:30.269Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/sign-in-dashboard-960.webp",
@@ -1173,8 +1173,8 @@
     "width": 1440
   },
   "account/sign-in-forgot-link": {
-    "capturedAt": "2026-10-20T15:47:13.301Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:16:57.102Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/sign-in-forgot-link-960.webp",
@@ -1190,8 +1190,8 @@
     "width": 1440
   },
   "account/sign-in-submit": {
-    "capturedAt": "2026-10-20T15:53:05.384Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:20:47.257Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/sign-in-submit-960.webp",
@@ -1207,8 +1207,8 @@
     "width": 1440
   },
   "account/sign-up-phone": {
-    "capturedAt": "2026-10-20T15:52:23.259Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:20:15.104Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/sign-up-phone-960.webp",
@@ -1224,8 +1224,8 @@
     "width": 1440
   },
   "account/two-factor-card": {
-    "capturedAt": "2026-10-20T15:50:08.201Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:18:39.927Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/two-factor-card-960.webp",
@@ -1241,8 +1241,8 @@
     "width": 1440
   },
   "account/two-factor-confirm": {
-    "capturedAt": "2026-10-20T15:50:33.702Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:18:58.587Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/two-factor-confirm-960.webp",
@@ -1254,12 +1254,12 @@
       }
     ],
     "height": 720,
-    "spec": "2a9d5ed9dc6ddcb3d3f32b8cbe42fb7083664e64",
+    "spec": "662e9e4bd7debbf3b034ec4d988de898bfb0efc5",
     "width": 496
   },
   "account/two-factor-setup": {
-    "capturedAt": "2026-10-20T15:50:21.500Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:18:49.303Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/two-factor-setup-960.webp",
@@ -1271,12 +1271,12 @@
       }
     ],
     "height": 720,
-    "spec": "3fb6e55945562d6765a88fde4c07461a978a1fd0",
+    "spec": "45d4bfc50da5fa4c8ceb49d717c4bb1efaa8940e",
     "width": 496
   },
   "account/verify-email-request": {
-    "capturedAt": "2026-10-20T15:49:19.740Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:18:07.517Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
     "files": [
       {
         "src": "media/ar/account/verify-email-request-960.webp",
@@ -1833,6 +1833,23 @@
     ],
     "height": 900,
     "spec": "bec1acd41524977fb045f518abdcaf7384599760",
+    "width": 1440
+  },
+  "faq/learner-your-data": {
+    "capturedAt": "2026-10-20T18:21:21.125Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
+    "files": [
+      {
+        "src": "media/ar/faq/learner-your-data-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/faq/learner-your-data-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "27d4666d4cd17e12e7706b738d8ffc85cd28806f",
     "width": 1440
   },
   "for-learners/academy-home-my-learn": {
@@ -3824,6 +3841,74 @@
     "spec": "4c17b5e90af0a6af1515fb10f89e416025db5e3e",
     "width": 1440
   },
+  "reference/domain-tab": {
+    "capturedAt": "2026-10-20T18:21:35.679Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
+    "files": [
+      {
+        "src": "media/ar/reference/domain-tab-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/reference/domain-tab-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "5d495c452ec0a1222f565e36057eea56c1e78792",
+    "width": 1440
+  },
+  "reference/learner-devices": {
+    "capturedAt": "2026-10-20T18:21:49.205Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
+    "files": [
+      {
+        "src": "media/ar/reference/learner-devices-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/reference/learner-devices-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "efeaef36f43e9de75d6eed0ded0a739bcf72c03c",
+    "width": 1440
+  },
+  "reference/usage-page": {
+    "capturedAt": "2026-10-20T18:21:28.042Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
+    "files": [
+      {
+        "src": "media/ar/reference/usage-page-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/reference/usage-page-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "482e3c268d429f78522f0036d87258e593b4df23",
+    "width": 1440
+  },
+  "reference/website-language-tab": {
+    "capturedAt": "2026-10-20T18:21:43.108Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
+    "files": [
+      {
+        "src": "media/ar/reference/website-language-tab-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/reference/website-language-tab-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "8955e00c0c34d801045df672c8f81acb0145c2dc",
+    "width": 1440
+  },
   "roles/instructor-assessments": {
     "capturedAt": "2026-10-20T17:03:00.076Z",
     "commit": "733b76fa1399e88b253790b272774ef3e1167250",
@@ -3924,6 +4009,40 @@
     ],
     "height": 900,
     "spec": "d24a7f8317ebe4c790bd1d1083159a7470f8d89f",
+    "width": 1440
+  },
+  "security/learner-your-data": {
+    "capturedAt": "2026-10-20T18:22:10.130Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
+    "files": [
+      {
+        "src": "media/ar/security/learner-your-data-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/security/learner-your-data-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "a1bf1bf8ecff58a1bc3b40e1fdd01f7bd32bf7d2",
+    "width": 1440
+  },
+  "security/security-tab-overview": {
+    "capturedAt": "2026-10-20T18:22:02.429Z",
+    "commit": "92761b9634dd02547fcb0be6831dd19f276d6bee",
+    "files": [
+      {
+        "src": "media/ar/security/security-tab-overview-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/security/security-tab-overview-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 4323,
+    "spec": "053a15fa94f4c6e8ad44d5767b4d49800d6e043e",
     "width": 1440
   },
   "selling/dashboard-revenue": {
