@@ -34,12 +34,12 @@ There are three causes:
 
 Owners and managers can publish.
 
-1. In the academy sidebar, open **Website**. Read the publish bar at the top: its status shows **Draft**, **Published**, **Publishing…** or **Publish failed**.
+1. In the academy sidebar, open **Website**. Read the publish bar at the top: its status shows **Draft** or **Published**.
 
    ![The Website page with the publish bar status highlighted](shot:troubleshooting/website-publish-bar)
 
 2. If the site isn't published, choose **Publish**, then confirm "Publish this website?". Everything you have saved, site settings and every page, goes live.
-3. Open your academy's address again. If the status shows **Publish failed**, choose **Try again** under the bar.
+3. Open your academy's address again. If publishing failed, an error appears under the bar: choose **Try again**.
 
 ### Publish your latest changes
 

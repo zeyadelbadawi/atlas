@@ -58,7 +58,7 @@ The academy owner and managers can change the menu, header and footer. On the **
 - You can add up to 12 social links. The supported networks are Facebook, Instagram, X, TikTok, LinkedIn, YouTube, WhatsApp, Telegram, Snapchat, Threads, Discord and GitHub. Each network's icon shows in your site's footer.
 - The same link can't be added twice. A link saved before networks could be chosen asks you to pick its platform so its icon shows.
 - Sign In and Sign Up are fixed pages that already use your logo, colours and footer. Only their heading text can change.
-- Fill the labels in both languages: where the other language is empty, visitors see the main-language label. See [Build your site in Arabic and English](doc:DOC-WEB-006).
+- Fill the labels in both languages: where the other language is empty, visitors see the main-language label. See [Build your site in Arabic and English](doc:DOC-WEB-006) and [Arabic text appears in English on my site](doc:DOC-TRB-016).
 
 > [!NOTE]
 > Your site's header always has a **My Learn** item, and signed-in learners also get their account menu there. Atlas adds these, and they can't be removed.

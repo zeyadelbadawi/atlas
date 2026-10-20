@@ -62,7 +62,7 @@ Only reviews you have approved appear on the course page. See [Course reviews an
 - In a **Featured Courses** section set to **Selected courses**, check that the course is picked.
 
 > [!NOTE]
-> Course categories can't be created by academies today, so category filters and the Course categories section don't apply to most sites.
+> Academies can't create course categories, so category filters don't apply to your site, and a Course categories section shows nothing on it.
 
 ## Related
 

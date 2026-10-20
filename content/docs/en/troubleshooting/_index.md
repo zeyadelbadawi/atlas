@@ -26,7 +26,7 @@ Pick the group that matches what you see. Every article quotes the exact message
 
 ## Learning and devices
 
-- ["Device limit reached"](doc:DOC-TRB-003): free a device slot and keep learning.
+- ["You have reached your device limit"](doc:DOC-TRB-003): free a device slot and keep learning.
 - [A lesson won't open or play](doc:DOC-TRB-004): lessons with no content, YouTube videos that can't play, locked lessons and ended access.
 - [Quiz timer, autosave and full-screen problems](doc:DOC-TRB-011): what happens to your time and your answers.
 

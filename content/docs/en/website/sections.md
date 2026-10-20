@@ -129,4 +129,4 @@ For each button you choose a **Link type**:
 > [!NOTE]
 > Themes draw some sections differently, so a section can look different after you change theme. See [Choose or change your theme](doc:DOC-WEB-002).
 
-A page created before may also contain a **Course categories** section. It keeps working, but it isn't offered in **Add section**, because academies can't create course categories.
+A page created before may also contain a **Course categories** section. It stays on the page but shows nothing on your site, and it isn't offered in **Add section**, because academies can't create course categories.

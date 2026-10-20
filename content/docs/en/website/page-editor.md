@@ -75,7 +75,7 @@ Text fields have character limits. A counter under the field shows how much you'
 
 ## When someone else is editing
 
-If a colleague has the same page open, a banner at the top names them. If they save first, Atlas shows **This page changed while you were editing** with two choices: **Reload latest** to start again from their version, or **Keep my changes** to apply yours on top of theirs. Their work is never discarded.
+If a colleague has the same page open, a banner at the top names them. If they save first, Atlas shows **This page changed while you were editing** with two choices: **Reload latest** to start again from their version, or **Keep my changes** to apply yours on top of theirs. Their work is never discarded. See [Website save conflict](doc:DOC-TRB-013).
 
 ## If saving is blocked
 
@@ -87,3 +87,4 @@ If a colleague has the same page open, a banner at the top names them. If they s
 - [Section types reference](doc:DOC-WEB-005)
 - [Replace sample content before you launch](doc:DOC-WEB-007)
 - [Media library: upload and manage images and PDFs](doc:DOC-MED-007)
+- [Website save conflict](doc:DOC-TRB-013)

@@ -23,7 +23,7 @@ The academy owner and managers set up the languages of the site. Every text a vi
 
 - **Main language**: English or Arabic. It opens at your site's main address, and every text needs it.
 - **Other language**: optional. With English as the main language, the Arabic pages live under `/ar` (for example `/ar/courses`). With Arabic as the main language, the English pages live under `/en`.
-- **Missing translations**: where a box in the other language is empty, visitors on that version see the main-language text. An unfinished translation gives a page in two languages, so fill every box before you publish.
+- **Missing translations**: where a box in the other language is empty, visitors on that version see the main-language text. An unfinished translation gives a page in two languages, so fill every box before you publish. See [Arabic text appears in English on my site](doc:DOC-TRB-016).
 - **Switching**: visitors can switch to the other language from the site's header at any time.
 - Arabic pages are shown right to left.
 
@@ -78,3 +78,4 @@ If a box looks like it holds the wrong language (for example English text in the
 - [Edit a page with sections](doc:DOC-WEB-004)
 - [Academy site URLs](doc:DOC-REF-004)
 - [Language, currency and time zone](doc:DOC-ACD-003)
+- [Arabic text appears in English on my site](doc:DOC-TRB-016)

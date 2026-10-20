@@ -61,7 +61,7 @@ Each entry in the list has these controls:
 To edit an entry, choose its text in the list. Edits to a published entry show on your live pages without publishing those pages again.
 
 > [!WARNING]
-> The archive dialog says archiving can be reversed, but the dashboard has no way to publish or edit an archived entry again. Archive only entries you no longer need; to take one off your site for a while, switch off **Visible** instead.
+> The archive dialog says archiving can be reversed, but the dashboard can't publish an archived entry again. You can still edit its text, but it stays archived and off your site. Archive only entries you no longer need; to take one off your site for a while, switch off **Visible** instead.
 
 ## Library entries and section items
 

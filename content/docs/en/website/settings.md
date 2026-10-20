@@ -77,3 +77,4 @@ No. The website builder has no field for scripts, analytics tags or tracking pix
 - [Preview, publish and unpublish your site](doc:DOC-WEB-008)
 - [Navigation, header, footer and social links](doc:DOC-WEB-009)
 - [SEO settings for your academy site](doc:DOC-WEB-012)
+- [Arabic text appears in English on my site](doc:DOC-TRB-016)
