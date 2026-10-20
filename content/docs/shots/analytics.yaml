@@ -121,6 +121,8 @@
   path: /dashboard/academy/{academyId}/activity
   waitFor: { text: auditLog:academyLog.subtitle }
   actions:
-    - click: { role: button, name: auditLog:list.viewDetails, nth: 0 }
+    # The row button's accessible name is "<sentence> — View details", so a
+    # role/name match on the bare key (anchored) would never find it.
+    - click: { selector: '[data-testid="audit-entry"] > button', nth: 0 }
     - wait: 1000
   clip: dialog
