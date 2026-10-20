@@ -4097,8 +4097,8 @@
     "width": 1440
   },
   "getting-started/owner-dashboard": {
-    "capturedAt": "2026-10-20T14:33:07.425Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T16:48:20.558Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
     "files": [
       {
         "src": "media/en/getting-started/owner-dashboard-960.webp",
