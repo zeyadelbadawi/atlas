@@ -16,7 +16,7 @@ keywords: [orders, sales, course purchases, revenue, paid orders, awaiting payme
 updated: 2026-10-20
 ---
 
-**Course orders** is where you see what students bought from an academy and whether they paid. Only the **organization owner** can open it; anyone else sees "Only the organization owner can see orders".
+**Course orders** is where you see what students bought from an academy and whether they paid. Only the **organization owner** can open it. Managers and instructors don't have it in their menu, and opening its link shows "You do not have access".
 
 ## Find and open an order
 

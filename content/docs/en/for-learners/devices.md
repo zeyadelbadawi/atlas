@@ -17,7 +17,7 @@ keywords: [device limit, devices, remove device, another device, laptop, phone, 
 updated: 2026-10-20
 ---
 
-A "device" here is a browser you have used to learn at this academy: Chrome
+A "device" here is a browser you have used to sign in or learn at this academy: Chrome
 on your laptop and Safari on your phone are two devices. A new browser, or a
 browser where you cleared the site's data, counts as a new device.
 

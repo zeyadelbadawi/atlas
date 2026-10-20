@@ -43,7 +43,7 @@ You can't manage your academies until you subscribe, and your academy website sh
 
 ## Can I change plans in the middle of a period?
 
-You can upgrade at any time: the new limits start when your payment is approved, and the new plan's period starts when your current one ends. During a yearly plan, upgrades go through support. To move to a smaller plan, buy it near the end of your current period. See [Renew, upgrade or downgrade your plan](doc:DOC-BIL-005).
+On a monthly plan, yes. A bigger plan's limits start when your payment is approved, and its period starts when your current one ends. A smaller plan bought with more than a week left waits for the end of your current period, so you keep what you paid for. On a yearly plan with more than 30 days left, you change plans through Atlas support, or renew your current plan. See [Renew, upgrade or downgrade your plan](doc:DOC-BIL-005).
 
 ## How do I cancel?
 
@@ -67,6 +67,6 @@ Yes, up to your plan's academy limit. See [Plan limits reference](doc:DOC-REF-00
 
 ## Does Atlas take a commission on my course sales?
 
-No. Learners pay you directly, and Atlas charges only your plan subscription. See the [Selling and payments FAQ](doc:DOC-FAQ-004).
+No. Learners pay to your academy's own payment methods, so the money goes straight to you and Atlas records no commission on it. Atlas charges only your plan subscription. See the [Selling and payments FAQ](doc:DOC-FAQ-004).
 
 Related: [Your subscription: plan, trial and status](doc:DOC-BIL-001) · [The dashboard is read-only](doc:DOC-TRB-015)

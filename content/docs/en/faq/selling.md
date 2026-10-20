@@ -27,7 +27,7 @@ No. Each academy has one bank transfer, one e-wallet and one InstaPay method.
 
 ## Does Atlas take a share of my course sales?
 
-No. Learners pay you directly into your own accounts, and Atlas charges only your plan subscription.
+No. Learners pay to the payment methods you set up for your academy, so the money goes straight into your own accounts and Atlas records no commission on these payments. Atlas charges only your plan subscription.
 
 ## Are payments approved automatically?
 

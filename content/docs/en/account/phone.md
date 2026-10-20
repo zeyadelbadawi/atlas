@@ -51,7 +51,7 @@ Learn**, **Profile**). On the **Personal** tab, the **Phone number** card has
 If you change your number many times in a short period, Atlas asks you to try
 again later.
 
-## "This number is already in use"
+## If the number is already used by another account
 
 Each mobile number can belong to one Atlas account only. If you see "This phone
 number is already used by another account", Atlas won't say which account has

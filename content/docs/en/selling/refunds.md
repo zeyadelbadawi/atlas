@@ -31,7 +31,7 @@ Contact the academy, for example through its website's contact form, and agree t
 
 1. Agree the refund with the learner.
 2. Send the money back yourself, from your own bank, wallet or InstaPay app.
-3. End the learner's access to the course if you want to. In **Members**, open the student on the **Students** tab and use **Revoke** on the course. Confirm with **Revoke access**. The learner loses access to the course straight away, and their progress is kept.
+3. End the learner's access to the course if you want to. In **Members**, open the student on the **Students** tab and use **Revoke** on the course. Under **Reason**, you can choose **Refunded**, then confirm with **Revoke access**. The learner loses access to the course straight away, and their progress is kept.
 
 The owner and managers can revoke access. See [Enroll a learner manually and set access expiry](doc:DOC-ORG-010) for more on managing a student's courses.
 

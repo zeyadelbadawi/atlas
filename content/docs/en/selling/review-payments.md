@@ -55,7 +55,7 @@ Atlas emails you and adds a notification each time a learner submits a proof. Th
 ## What happens next
 
 - **Approved:** the learner is enrolled in the course straight away and receives a "payment approved" email and notification. The order shows as **Paid** in [Course orders](doc:DOC-COM-004).
-- **Rejected:** the learner receives an email with your reason and can send a new payment for the same order. The order is reopened for 72 hours so they can pay again.
+- **Rejected:** the learner receives an email (with your reason, if you wrote one) and can send a new payment for the same order. The order is reopened for 72 hours so they can pay again.
 
 ## Good to know
 

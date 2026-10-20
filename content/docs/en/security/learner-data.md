@@ -25,7 +25,7 @@ Learners can use it to see what is kept about them.
 | Data | Examples | Who can see it | How long |
 |---|---|---|---|
 | Account details | Name, email, mobile number, language | You. The team of each academy where you study; only its owners and managers see your mobile number. Atlas platform administrators. | Until the account is deleted; then your name and email are removed. |
-| Learning activity | Enrolments, progress, quiz answers and scores, assignments, certificates, orders and payments | You. The academy's team, according to their role. Atlas platform administrators. | While your account exists. |
+| Learning activity | Enrolments, progress, quiz answers and scores, assignments, certificates, orders and payments | You. The academy's team, according to their role. Atlas platform administrators. | While your account exists. After deletion, enrolments, certificates, orders and payments are kept but no longer linked to your name. |
 | Lesson access records | Each time a lesson is opened or refused, with the device and session | Atlas, to protect lessons (for example device limits). | 90 days |
 | Quiz activity signals | Leaving the page or full screen, copy, cut and paste, right-click, printing | The academy staff who review quiz attempts. Atlas platform administrators. | 180 days |
 | Forensic watermark records | The code shown on a video, linked to your name, email, phone number and session, stored encrypted | Atlas platform administrators only, and every lookup is logged. | Until 730 days after the code was last shown, even if the account is deleted. |

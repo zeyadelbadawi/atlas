@@ -55,6 +55,11 @@ a download link.
 Your organization's own record stays too, because it anchors billing and audit
 history.
 
+> [!NOTE]
+> Atlas backs up its database every day and keeps each backup for 14 days, so
+> deleted details can stay in a backup copy for up to 14 days. Backup copies of
+> uploaded files, such as payment proofs, aren't deleted yet.
+
 ## Deleting an academy is permanent
 
 Deleting an academy archives it and takes its website offline, and it can't be

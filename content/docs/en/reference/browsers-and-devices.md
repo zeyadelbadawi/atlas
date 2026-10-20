@@ -6,8 +6,8 @@ summary: >
   Atlas runs in a web browser on phones, tablets and computers, with
   JavaScript and cookies turned on. There is no app to install. For learners,
   each browser counts as one device: a new browser, a private window or cleared
-  cookies count as a new device. Some phone browsers, such as Safari on iPhone,
-  can't show quizzes in full screen.
+  cookies count as a new device. Browsers on iPhone can't show quizzes in
+  full screen.
 type: reference
 audience: [everyone]
 order: 7
@@ -39,11 +39,11 @@ Reaching the device limit never stops a learner from signing in. It only stops l
 
 ## Quizzes in full screen
 
-Some quizzes open in full screen. Safari on iPhone can't do that. The learner sees "Full screen isn't available in this browser", can still take the quiz, and the instructor sees that full screen wasn't available. See [Take a quiz or exam](doc:DOC-LRN-033).
+Some quizzes open in full screen. Browsers on iPhone can't do that. The learner sees "Full screen isn’t available in this browser", can still take the quiz, and the instructor sees that full screen wasn't available. See [Take a quiz or exam](doc:DOC-LRN-033).
 
 ## Watching lessons
 
-- Videos play inside the page. They can't be popped out into a floating window or cast to another screen, and full screen keeps the watermark.
+- Videos play inside the page. They can't be popped out into a floating picture-in-picture window, and full screen keeps the watermark.
 - Videos need an internet connection. They are never saved on the device for offline watching.
 
 > [!TIP]

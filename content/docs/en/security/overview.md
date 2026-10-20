@@ -69,7 +69,7 @@ The dashboard and academy websites are served over HTTPS.
 
 > [!LIMITATION]
 > - A setting that requires two-factor authentication for your whole team.
-> - Automatic sign-out after a period of inactivity.
+> - Automatic sign-out after a short period of inactivity.
 > - Self-service export of your academy's data.
 > - A way for learners to delete or download their own data instantly. They
 >   send a request instead, which the Atlas team handles.

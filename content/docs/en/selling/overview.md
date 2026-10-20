@@ -35,7 +35,7 @@ Course prices are in Egyptian pounds (EGP).
 
 ## Who can do what
 
-Only the **organization owner** can set up payment methods, review payments and see course orders. Managers and instructors don't see these pages; if they open one, Atlas tells them that only the organization owner can use it.
+Only the **organization owner** can set up payment methods, review payments and see course orders. Managers and instructors don't see these pages in their menu; if they open one from a link, Atlas shows "You do not have access".
 
 ## Payment methods you can offer
 

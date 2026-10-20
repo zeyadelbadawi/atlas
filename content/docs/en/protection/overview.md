@@ -30,7 +30,7 @@ that watched it.
 
 | Layer | What it does |
 |---|---|
-| **Access check** | Every time a lesson opens, Atlas checks that the learner is signed in, belongs to your academy, is enrolled, and that the course and lesson are published. |
+| **Access check** | Every time a lesson opens, Atlas checks that the learner is signed in, belongs to your academy and isn't blocked, is enrolled with access that hasn't ended, that the course and lesson are published, and that the lesson isn't still locked. Free preview lessons are the exception: anyone can open them. |
 | **Device limit** | Each learner can use a limited number of browsers at your academy. See [Device limits](doc:DOC-MED-003). |
 | **One screen at a time** | A learner's lessons play on one device at a time. Opening a lesson elsewhere asks to move playback there. |
 | **Forensic watermark** | A visible label with the learner's personal code and a masked hint of their account moves over every lesson video, with a faint pattern of the code across the whole picture. It is always on. See [The forensic watermark explained](doc:DOC-MED-002). |
@@ -52,9 +52,9 @@ nothing there stops screen recording.
 >   removing the watermark. Atlas pauses playback and is notified when that
 >   happens, but it can't make it impossible.
 > - **YouTube lessons:** the watermark is drawn over your academy's player, but
->   a learner who copies the YouTube link can watch the video on YouTube with
->   no watermark. The YouTube video itself is protected only by YouTube's own
->   settings.
+>   an enrolled learner can find a lesson's YouTube link and watch the video on
+>   YouTube, on any device, with no watermark and outside the device limit. The
+>   YouTube video itself is protected only by YouTube's own settings.
 > - **Link lessons** open other websites; Atlas protects nothing behind the link.
 > - In some Firefox versions the browser's own picture-in-picture button can
 >   show the video in a floating window without the watermark.

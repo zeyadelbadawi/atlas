@@ -35,7 +35,7 @@ Each term shows its Arabic name in the Arabic version of the app in brackets.
 
 - **Plan** (الخطة): what your organization subscribes to. Plans differ in their limits. See [Plan limits reference](doc:DOC-REF-001).
 - **Subscription** (الاشتراك): your paid plan for a monthly or yearly period. See [Your subscription](doc:DOC-BIL-001).
-- **Trial** (الفترة التجريبية): {trialDuration} with the full limits of the plan you pick, with no card and no automatic charge. See [How the trial works](doc:DOC-BIL-002).
+- **Trial** (فترة تجريبية): {trialDuration} with the full limits of the plan you pick, with no card and no automatic charge. See [How the trial works](doc:DOC-BIL-002).
 - **Grace period** (فترة السماح): a short time after a period ends, when everything keeps working while your next payment arrives. See [When a subscription lapses](doc:DOC-BIL-007).
 - **Gifted setup days** (أيام الإعداد المُهداة): extra days some plans add to your first paid subscription, before the paid period starts. See [Gifted setup days](doc:DOC-BIL-003).
 - **Usage** (الاستخدام): the page that shows what you use against each plan limit. See [The Usage page](doc:DOC-BIL-006).
@@ -71,7 +71,7 @@ Each term shows its Arabic name in the Arabic version of the app in brackets.
 ## Protection
 
 - **Content protection** (حماية المحتوى): the watermark, player restrictions and device limits that discourage sharing. See [Content protection](doc:DOC-MED-001).
-- **Forensic watermark** (علامة مائية تتبّعية): a visible code tied to the viewer that moves across every video, so a leaked recording can be traced. See [The forensic watermark explained](doc:DOC-MED-002).
+- **Forensic watermark** (علامة مائية شخصية): a visible code tied to the viewer that moves across every video, so a leaked recording can be traced. See [The forensic watermark explained](doc:DOC-MED-002).
 - **Devices** (الأجهزة): the browsers a learner learns on. Each academy allows a set number. See [Device limits](doc:DOC-MED-003).
 - **Sharing signals** (مؤشرات المشاركة): a report that points out accounts that may be shared. See [Sharing signals report](doc:DOC-MED-006).
 - **Academy Media** (وسائط الأكاديمية): your academy's library of uploaded images and PDFs. See [Media library](doc:DOC-MED-007).

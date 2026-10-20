@@ -61,8 +61,8 @@ you need.
 
 A file that is still used by a lesson, course, page or logo can't be
 deleted. The message names where it is used: replace or remove it there
-first, then try again. A deleted file leaves your library at once; the
-stored file is deleted later.
+first, then try again. A deleted file leaves your library at once, but its
+stored copy isn't removed straight away.
 
 ## Who can see your files
 
@@ -76,7 +76,7 @@ stored file is deleted later.
 >   also be opened by anyone who has their address.
 > - The watermark and device limits apply to lesson videos, not to library
 >   images or PDFs.
-> - Until the stored copy is deleted, a page or link that already uses a
->   deleted file's address may still open it.
+> - Deleting a file doesn't make its address stop working right away: a page
+>   or link that already uses it may still open the file.
 >
 > Don't upload private documents, answer keys or personal data to the library.

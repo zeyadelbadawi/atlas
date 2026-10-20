@@ -15,7 +15,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createI18n, SpecError } from './lib/i18n.mjs';
 import { loadSpecs, fillPlaceholders, VIEWPORTS } from './lib/specs.mjs';
-import { launch, newContext, settle, cleanUp, runAction, highlight, clipRect, ensureDir, PREVIEW_PARAM } from './lib/browser.mjs';
+import { launch, newContext, settle, cleanUp, runAction, highlight, clipRect, ensureDir, locate, PREVIEW_PARAM } from './lib/browser.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '../..');
@@ -194,7 +194,15 @@ async function capture(browser, entry, lang) {
     const clip = entry.clip ? await clipRect(page, entry.clip, t) : undefined;
     const master = path.join(MASTERS, lang, `${entry.key}.png`);
     ensureDir(master);
-    await page.screenshot({ path: master, clip, fullPage: !!entry.fullPage && !clip, animations: 'disabled', caret: 'hide', timeout: 60_000 });
+    const maskSpecs = entry.mask === undefined ? [] : Array.isArray(entry.mask) ? entry.mask : [entry.mask];
+    const mask = [];
+    for (const spec of maskSpecs) {
+      const loc = (await locate(page, spec, t)).first();
+      // A mask that matches nothing would publish the very thing it hides.
+      if (!(await loc.isVisible())) throw new Error(`mask: no visible element for ${JSON.stringify(spec)}`);
+      mask.push(loc);
+    }
+    await page.screenshot({ path: master, clip, mask, maskColor: '#CBD5E1', fullPage: !!entry.fullPage && !clip, animations: 'disabled', caret: 'hide', timeout: 60_000 });
     return { master, pageErrors };
   } finally {
     // Sessions rotate their refresh token: hand the newest one to the next shot.

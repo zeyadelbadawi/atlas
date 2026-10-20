@@ -35,7 +35,7 @@ The clock starts when you press Start and keeps running even if you close the pa
 
 ## Full screen doesn't work on my iPhone.
 
-Safari on iPhone can't show the quiz in full screen. You can take the quiz as it is, and your instructor sees that full screen wasn't available. See [Quiz timer, autosave and full-screen problems](doc:DOC-TRB-011).
+Browsers on iPhone can't show the quiz in full screen. You can take the quiz as it is, and your instructor sees that full screen wasn't available. See [Quiz timer, autosave and full-screen problems](doc:DOC-TRB-011).
 
 ## Can a learner get extra time or another attempt?
 

@@ -27,7 +27,7 @@ updated: 2026-10-20
 
 ## What counts as a device
 
-A device is a **browser** where the learner has learned at your academy:
+A device is a **browser** where the learner has signed in or learned at your academy:
 Chrome on a laptop and Safari on a phone are two devices. Atlas recognises a
 browser by a random value it stores in that browser (a cookie). It does not
 fingerprint the device. So a new browser, a private window, or a browser
@@ -60,8 +60,8 @@ connection), its hold expires on its own after a short while.
 
 The academy owner sets **Devices per learner** in
 [Content protection settings](doc:DOC-MED-004), from 1 up to the platform
-maximum shown on that page. Until the owner sets it, the academy uses its
-plan's or the platform's default, and the page says which. The
+maximum shown on that page. Until the owner sets it, the academy uses the
+platform's default, and the page says so. The
 **Concurrent sessions** number is shown to learners, but lessons always play
 on one device at a time.
 

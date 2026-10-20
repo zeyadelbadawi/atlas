@@ -87,7 +87,9 @@ recognise:
 > [!LIMITATION]
 > - You can't change the email address of your account yet.
 > - An organization can't require its whole team to use an authenticator app.
-> - Atlas doesn't sign you out automatically after a period of inactivity.
+> - Atlas doesn't sign you out after a short period of inactivity, so sign out
+>   yourself on a shared computer. A session you don't use for a long time ends
+>   on its own.
 > - Sign-in codes come by email only, not by SMS or WhatsApp.
 
 More: [Security at Atlas](doc:DOC-SEC-001).

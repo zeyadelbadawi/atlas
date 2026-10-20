@@ -250,7 +250,8 @@
   actions:
     - click: { testId: academy-switcher }
     - click: { testId: academy-switcher-search-toggle }
-  highlight: { label: academy:switcher.searchPlaceholder }
+    - wait: 300
+  highlight: { testId: academy-switcher-search }
 
 # --- Delete an academy (DOC-ACD-010) ----------------------------------------
 # Captured on the second demo academy and never confirmed.

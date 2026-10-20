@@ -94,6 +94,7 @@ screenshot, captured in English and Arabic.
 | `waitFor` | `{ text: <value> }` or `{ selector: <css> }`: must be visible before anything else happens. Then the page settles (network idle, fonts, images, no skeleton / spinner / `aria-busy` in view). |
 | `actions` | In order: `click`, `hover`, `fill` (`{ <locator>, value }`), `press` (`Enter`, or `{ key, <locator> }`), `scroll` (`{ <locator> }` → into view, or `{ y: 600 }`), `wait` (ms, ≤ 2000). |
 | `highlight` | One locator or a list: a navy (#1B3A8C) 3 px rounded outline, offset 4 px, drawn as an overlay element at capture time (pixels are never edited). |
+| `mask` | One locator or a list: painted over with a flat slate box (Playwright `mask`). Use it for secrets (two-factor QR code, setup key). Each must match a visible element or the shot fails. |
 | `clip` | `dialog` (the open `role=dialog`/`alertdialog`, 24 px padding), a CSS selector or a locator: capture only that box (clamped to the viewport; scroll inside a tall dialog first). Default: the viewport. |
 | `fullPage` | `true` captures the whole page height instead of the viewport. |
 
@@ -122,7 +123,10 @@ English, no Vite error overlay. Cookie banners, toasts and dev-only overlays
 are hidden; the browser has light theme, `Africa/Cairo`, `ar-EG`/`en-US`
 locale, `Accept-Language`, the stored language (`atlas:language`), decided
 cookie consent, device scale factor 2, reduced motion. Staff open the main demo
-academy (the app's "last academy" preference). Nothing is masked: all data is fake.
+academy (the app's "last academy" preference). All data is fake; an entry's
+`mask` list still paints over secrets that must never ship even as demo values
+(the two-factor QR code and setup key). A mask that matches no visible element
+fails the shot rather than publishing what it should hide.
 
 ## Output
 

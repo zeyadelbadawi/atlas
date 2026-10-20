@@ -43,7 +43,15 @@ You can connect a domain you own, such as `learn.your-academy.com`. When it is v
 
 ## Can I change it?
 
-Plan the address carefully: treat the one you chose at setup as permanent. The **Academy Slug** field in **Academy Settings** can only be edited by the organization owner, but the address your website is served on is the one shown on the **Domain** tab.
+No. Treat the address you chose at setup as permanent, so plan it carefully.
+
+The organization owner can edit the **Academy Slug** field in **Academy Settings** or on the **Academy Profile** page, but saving a new value there does **not** move your website. Today:
+
+- Your website keeps working on the address you chose at setup, the one shown on the **Domain** tab.
+- The new name does not become a web address: nothing opens at it.
+- Links in emails and invitations keep using the address on the **Domain** tab.
+
+If you want a different address for your learners, [connect your own domain](doc:DOC-ACD-006).
 
 > [!LIMITATION]
 > Deleting an academy does not free its address. The address stays reserved and can't be used again, even by you.

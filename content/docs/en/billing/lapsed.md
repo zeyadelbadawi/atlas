@@ -37,6 +37,7 @@ The change happens automatically shortly after the date passes.
 
 - You can still sign in and see everything in your dashboard: your academies, courses, students and content.
 - **Subscription**, **Plans**, **Billing** and checkout keep working, so you can pay.
+- **Support** keeps working, so you can still contact Atlas support.
 
 ## Is anything deleted?
 

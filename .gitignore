@@ -53,3 +53,6 @@ previous-assets/*
 # Help Center screenshot pipeline (scripts/docs/): local seed state and rendered demo assets
 /scripts/docs/seed/state.json
 /scripts/docs/seed/.generated/
+
+# Redis writes its snapshot into the working directory when started locally.
+/dump.rdb

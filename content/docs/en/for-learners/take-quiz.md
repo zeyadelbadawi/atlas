@@ -53,7 +53,7 @@ next.
 Some quizzes open in full screen. If you leave full screen, the questions
 are hidden until you choose **Enter full screen**; your answers and the timer
 are kept. If your browser can't use full screen (common on phones), you see
-**Full screen isn't available in this browser** and you can still take the
+**Full screen isn’t available in this browser** and you can still take the
 quiz. Your instructor sees that full screen wasn't available.
 
 ## What is recorded, and what never is

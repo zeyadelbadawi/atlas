@@ -65,6 +65,6 @@ Anyone can open `/verify/` followed by a certificate code to see whether the cer
 
 ## The Atlas dashboard is a different address
 
-You and your team manage the academy in the [Atlas dashboard](app:/dashboard). Learners never use it: they sign in on your academy's site. A learner who tries to sign in to the dashboard sees "You are a student. Please sign in through your academy's website." See [Where to sign in](doc:DOC-IAM-002).
+You and your team manage the academy in the [Atlas dashboard](app:/dashboard). Learners never use it: they sign in on your academy's site. A learner who tries to sign in to the dashboard sees "You are a student. Please sign in through your academy’s website." See [Where to sign in](doc:DOC-IAM-002).
 
 Related: [Your academy web address](doc:DOC-ACD-005) · [Build your site in Arabic and English](doc:DOC-WEB-006)

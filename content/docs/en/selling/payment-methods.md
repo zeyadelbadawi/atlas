@@ -20,7 +20,7 @@ Payment methods decide how learners pay your academy for paid courses. Each acad
 
 ## Before you start
 
-- You need to be the **organization owner**. Managers and instructors see "Only the organization owner can manage payment methods".
+- You need to be the **organization owner**. Managers and instructors don't have this page in their menu, and opening its link shows "You do not have access".
 - Work on one academy at a time. Open the academy you want in the dashboard first.
 - Have the real details ready: the account the money should actually go to. Learners see the details exactly as you type them.
 
@@ -68,7 +68,7 @@ Every method also has **Transfer instructions** and **Payment reference instruct
 - Payments learners already sent keep the details they were shown at the time. Editing a method changes only what new payments show.
 
 > [!WARNING]
-> If no method is on, the page shows "No payment method is on", and learners see "Not available for purchase yet" on your paid courses.
+> If no method is on, the page shows "No payment method is on", and learners who try to buy one of your paid courses see "Not available for purchase yet".
 
 > [!NOTE]
 > You can have one method of each type per academy: one bank account, one wallet and one InstaPay address. Methods are switched off, not deleted.

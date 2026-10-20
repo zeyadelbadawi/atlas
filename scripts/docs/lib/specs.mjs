@@ -13,7 +13,7 @@ export const VIEWPORTS = {
 };
 const KEY_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const ACTIONS = ['click', 'fill', 'hover', 'press', 'scroll', 'wait'];
-const TOP_FIELDS = ['key', 'as', 'surface', 'path', 'viewport', 'waitFor', 'actions', 'highlight', 'clip', 'fullPage', 'note'];
+const TOP_FIELDS = ['key', 'as', 'surface', 'path', 'viewport', 'waitFor', 'actions', 'highlight', 'mask', 'clip', 'fullPage', 'note'];
 
 /** Stable JSON (sorted object keys) for hashing. */
 export function stableStringify(value) {
@@ -71,6 +71,9 @@ export function validateEntry(entry, file) {
   }
   const highlights = entry.highlight === undefined ? [] : Array.isArray(entry.highlight) ? entry.highlight : [entry.highlight];
   highlights.forEach((h, i) => checkLocator(`${where}: highlight[${i}]`, h));
+  // `mask`: elements painted over in the capture (a QR code, a secret key).
+  const masks = entry.mask === undefined ? [] : Array.isArray(entry.mask) ? entry.mask : [entry.mask];
+  masks.forEach((m, i) => checkLocator(`${where}: mask[${i}]`, m));
   if (entry.clip !== undefined && typeof entry.clip !== 'string' && !(entry.clip && typeof entry.clip === 'object')) throw new SpecError(`${where}: clip must be "dialog", a CSS selector or a locator`);
   if (entry.clip && typeof entry.clip === 'object') checkLocator(`${where}: clip`, entry.clip);
   return entry;

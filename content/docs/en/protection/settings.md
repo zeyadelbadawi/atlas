@@ -3,7 +3,7 @@ id: DOC-MED-004
 title: Content protection settings
 description: Set how many devices each learner can use, and see the always-on watermark and player protections in your academy's settings.
 summary: >
-  The academy owner finds Content protection at the bottom of Academy
+  The academy owner finds Content protection near the bottom of Academy
   Settings. Video protection shows the forensic watermark and player
   protections, which are always on. Learner devices is where you set Devices
   per learner, up to the platform maximum shown. Managers see a short

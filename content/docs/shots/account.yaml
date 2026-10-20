@@ -158,6 +158,9 @@
     - click: { role: button, name: profile:actions.enable, exact: true }
     - wait: 1000
   highlight: { role: img, name: profile:twoFactor.qrAlt }
+  mask:
+    - { role: img, name: profile:twoFactor.qrAlt }
+    - { selector: '#totp-secret' }
   clip: dialog
 
 - key: account/two-factor-confirm
@@ -172,6 +175,9 @@
   highlight:
     - { selector: '#totp-code' }
     - { selector: '#totp-setup-password' }
+  mask:
+    - { role: img, name: profile:twoFactor.qrAlt }
+    - { selector: '#totp-secret' }
   clip: dialog
 
 # ---- Active sessions --------------------------------------------------------

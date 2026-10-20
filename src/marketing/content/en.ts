@@ -925,7 +925,7 @@ export const en: MarketingContent = {
         anchor: 'separation',
         learnMore: { label: 'How each academy’s data is kept separate', href: 'help:/security/data-isolation' },
         title: 'How is each academy’s data kept apart?',
-        lead: '{brand} keeps every academy’s students, courses and payments separate in the database itself, and we have checked this separation in production. A student who joins one academy on {brand} has an account in that academy only and does not appear in any other academy on the platform.',
+        lead: '{brand} keeps every academy’s students, courses and payments separate in the database itself, and we have checked this separation in production. A student uses one {brand} account for every academy they join, but each academy sees only its own students and what they do there, and never which other academies a student belongs to.',
         items: [
           {
             title: 'Separated in the database',
@@ -933,8 +933,8 @@ export const en: MarketingContent = {
             claim: 'ORG-5.2',
           },
           {
-            title: 'Students belong to one academy',
-            body: 'A student account in your academy does not appear in any other academy.',
+            title: 'Each academy sees only its own students',
+            body: 'Your academy sees only the students who joined it, and other academies can’t see your students or their activity.',
             claim: 'ORG-3.1',
           },
         ],
@@ -992,7 +992,7 @@ export const en: MarketingContent = {
         anchor: 'stored-data',
         learnMore: { label: 'What data {brand} keeps about learners', href: 'help:/security/learner-data' },
         title: 'How is data stored and backed up?',
-        lead: '{brand} encrypts sensitive payment settings when it stores them, backs up the database every day and keeps copies of uploaded files. Lesson videos stay on YouTube and play inside your academy, so a determined student can still copy the YouTube link itself.',
+        lead: '{brand} encrypts sensitive payment settings when it stores them, and backs up the database every day. Lesson videos stay on YouTube and play inside your academy, so a determined student can still copy the YouTube link itself.',
         items: [
           {
             title: 'Encrypted payment settings',
@@ -1000,7 +1000,7 @@ export const en: MarketingContent = {
           },
           {
             title: 'Daily backups',
-            body: 'We back up the database every day and keep copies of uploaded files.',
+            body: 'We back up the database every day and keep each backup for 14 days.',
             claim: 'OPS-08',
           },
           {
@@ -1014,19 +1014,19 @@ export const en: MarketingContent = {
     notYet: {
       anchor: 'not-yet',
       title: 'What doesn’t {brand} offer yet?',
-      lead: '{brand} does not yet let you require two-factor authentication for your whole team, sign people out automatically after inactivity, or export your academy’s data yourself. Students can’t delete or download their own data from inside the academy yet, and {brand} holds no security certifications. We would rather you hear this from us first.',
+      lead: '{brand} does not yet let you require two-factor authentication for your whole team, sign people out automatically after inactivity, or export your academy’s data yourself. Students can’t delete or download their own data instantly: they send a request from Your data in their profile and our team handles it, and {brand} holds no security certifications. We would rather you hear this from us first.',
       items: [
         'A setting that requires two-factor authentication for everyone on your team.',
         'Automatic sign-out after a period of inactivity.',
         'Self-service export of your academy’s data.',
-        'A way for students to delete their own account or download their data themselves.',
+        'Instant, self-service deletion or download of a student’s own data (today it is a request our team handles).',
         'Security certifications or third-party audit reports.',
       ],
     },
     requests: {
       anchor: 'privacy-requests',
       title: 'How do I make a privacy request?',
-      body: 'If you or one of your students wants a copy of personal data, a correction or a deletion, send us a request from the contact page and we’ll handle it by hand. Our privacy policy explains what we collect and why.',
+      body: 'If you or one of your students wants a copy of personal data, a correction or a deletion, send us a request from the contact page and we’ll handle it by hand. Students can also send the request themselves from Your data in their profile. Our privacy policy explains what we collect and why.',
       cta: { label: 'Send a privacy request', href: '/contact?topic=support' },
       privacyLink: { label: 'Read the privacy policy', href: '/privacy-policy' },
     },

@@ -49,7 +49,7 @@ The academy owner and managers can edit the academy profile. Instructors can't o
 - **Language, time zone and currency** are on this page as well, under **Localization**. See [Language, currency and time zone](doc:DOC-ACD-003).
 
 > [!NOTE]
-> The **Academy Slug** field is read-only unless you are the organization owner. See [Your academy web address](doc:DOC-ACD-005).
+> The **Academy Slug** field is read-only unless you are the organization owner. Changing it does not change your website's address. See [Your academy web address](doc:DOC-ACD-005).
 
 ## Related
 
