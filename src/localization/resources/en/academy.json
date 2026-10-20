@@ -337,7 +337,8 @@
       "assignmentOutcomes": "Assignment outcomes",
       "noAssignmentOutcomes": "No assignment submissions yet.",
       "notSubmitted": "Not submitted",
-      "hasFeedback": "Feedback given"
+      "hasFeedback": "Feedback given",
+      "approveBeforeEnroll": "Approve this student before enrolling them in a course."
     },
     "block": {
       "title": "Block this student",
@@ -348,7 +349,7 @@
     },
     "reject": {
       "title": "Reject this registration",
-      "description": "{{name}} will not be admitted to this academy. They can register again later.",
+      "description": "{{name}} will not be admitted to this academy. They can register again on your academy website under your registration policy, and you can still approve them later from the Students list.",
       "confirm": "Reject"
     },
     "enroll": {
@@ -396,6 +397,7 @@
       "insufficientRole": "Your role on this academy does not allow that action.",
       "studentNotPending": "This registration is no longer awaiting approval.",
       "studentBlocked": "This student is blocked. Unblock them first.",
+      "studentNotApproved": "This student is not approved yet. Approve them first, then enroll them in a course.",
       "alreadyEnrolled": "This student is already enrolled in that course.",
       "expiryInPast": "The expiry date must be in the future.",
       "notFound": "That student is no longer on this academy."

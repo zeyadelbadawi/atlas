@@ -56,6 +56,15 @@ export function getRosterStatusTone(student: RosterStatusInput): StatusTone {
   }
 }
 
+/**
+ * A registration staff rejected: `inactive` and not blocked (the backend's
+ * `isRejectedRegistration`). It can still be approved, and the learner can
+ * register again; a blocked row stays blocked whatever its status.
+ */
+export function isRejectedRegistration(student: RosterStatusInput): boolean {
+  return student.membershipStatus === 'inactive' && !student.blocked;
+}
+
 export function getRosterSourceLabelKey(source: string): string {
   return KNOWN_SOURCES.has(source)
     ? `academy:students.source.${source}`
@@ -98,7 +107,10 @@ export function getRosterEnrollmentTone(
 export type AcademyInviteState = 'active' | 'revoked' | 'expired' | 'exhausted';
 
 export function getInviteState(
-  invite: Pick<AcademyInvite, 'revokedAt' | 'expiresAt' | 'usedCount' | 'maxUses'>,
+  invite: Pick<
+    AcademyInvite,
+    'revokedAt' | 'expiresAt' | 'usedCount' | 'maxUses'
+  >,
   now: Date = new Date()
 ): AcademyInviteState {
   if (invite.revokedAt) return 'revoked';
@@ -131,9 +143,13 @@ export function getInviteStateTone(state: AcademyInviteState): StatusTone {
  */
 const ROSTER_MESSAGE_KEYS: Readonly<Record<string, string>> = {
   'errors.academy.insufficientRole': 'academy:students.errors.insufficientRole',
-  'errors.academy.studentNotPending': 'academy:students.errors.studentNotPending',
+  'errors.academy.studentNotPending':
+    'academy:students.errors.studentNotPending',
   'errors.academy.studentBlocked': 'academy:students.errors.studentBlocked',
-  'errors.enrollment.alreadyEnrolled': 'academy:students.errors.alreadyEnrolled',
+  'errors.academy.studentNotApproved':
+    'academy:students.errors.studentNotApproved',
+  'errors.enrollment.alreadyEnrolled':
+    'academy:students.errors.alreadyEnrolled',
   'errors.enrollment.expiryInPast': 'academy:students.errors.expiryInPast',
   'errors.notFound': 'academy:students.errors.notFound',
 };
