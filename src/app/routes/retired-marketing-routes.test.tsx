@@ -1,16 +1,17 @@
 /**
- * Owner decision D6 — the retired marketing site's addresses forward to
- * the holding page instead of 404ing, and the kept pages still render.
+ * B1 (DL-50) — the marketing pages are the static site; inside the app
+ * they hand off to it, and the kept app pages still render.
  *
  * The real `AtlasAppRoutes` table is rendered (lazy pages included) inside
  * the real providers, at each address a visitor may still follow:
- *   - `/features`, `/pricing` → `/`; their `/ar/` twins and any other
- *     `/ar/...` → `/ar`; a kept page's `/ar/` address → that page;
- *   - every target is a real page that is not itself forwarded (no loop);
- *   - `/`, `/ar`, `/contact`, `/privacy-policy`, `/terms`, `/auth/sign-in`
- *     and `/auth/forgot-password` render their pages, `/auth/sign-up`
- *     still reaches sign-up, and the public header no longer links to a
- *     marketing page or to sign-up.
+ *   - `/`, `/ar`, `/features`, `/pricing`, `/security`, `/about` and their
+ *     `/ar/` twins render `StaticMarketingRedirect` (one document reload to
+ *     the static page; here the loop guard has already fired, so its
+ *     fallback shows), never a forward to another page;
+ *   - any other `/ar/...` → `/ar`; a kept page's `/ar/` address → that page;
+ *   - `/contact`, `/privacy-policy`, `/terms`, `/auth/sign-in` and
+ *     `/auth/forgot-password` render their pages, `/auth/sign-up` still
+ *     reaches sign-up, and the public header links no marketing page.
  */
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
@@ -18,11 +19,16 @@ import { MemoryRouter, useLocation } from 'react-router-dom';
 import { AppProviders } from '@app/providers';
 import { CookieConsentProvider } from '@features/legal';
 import AtlasAppRoutes from './AtlasAppRoutes';
-import { PUBLIC_ROUTES, RETIRED_MARKETING_ROUTES } from './route-paths';
+import { PUBLIC_ROUTES, STATIC_MARKETING_ROUTES } from './route-paths';
 import {
   platformUrlLanguage,
   resolveArabicPlatformTarget,
 } from './retired-marketing-routes';
+import {
+  STATIC_MARKETING_RELOAD_KEY,
+  reloadGuardPath,
+  resetStaticMarketingReloadForTests,
+} from './static-marketing-reload';
 
 function Where(): JSX.Element {
   const location = useLocation();
@@ -31,7 +37,20 @@ function Where(): JSX.Element {
   );
 }
 
-function renderAt(path: string) {
+/**
+ * As if the document had just reloaded for `path` and come back to the app
+ * (the static site off): the guard refuses a second reload, so jsdom is
+ * never asked to navigate and the fallback renders.
+ */
+function seedReloadedFor(path: string): void {
+  window.sessionStorage.setItem(
+    STATIC_MARKETING_RELOAD_KEY,
+    JSON.stringify({ path: reloadGuardPath(path), at: Date.now() })
+  );
+}
+
+function renderAt(path: string, reloadedFor = path.split(/[?#]/)[0]) {
+  seedReloadedFor(reloadedFor);
   return render(
     <AppProviders initialLanguage="en">
       <CookieConsentProvider>
@@ -49,12 +68,27 @@ const where = () => screen.getByTestId('where').textContent;
 /** Lazy route chunks load from source here; allow for a slow machine. */
 const SLOW = { timeout: 15_000 };
 
-beforeEach(() => window.localStorage.clear());
+beforeEach(() => {
+  window.localStorage.clear();
+  window.sessionStorage.clear();
+  resetStaticMarketingReloadForTests();
+});
 afterEach(() => cleanup());
 
-describe('retired marketing routes (pure)', () => {
-  it('lists exactly the retired marketing pages', () => {
-    expect([...RETIRED_MARKETING_ROUTES]).toEqual(['/features', '/pricing']);
+describe('marketing routes (pure)', () => {
+  it('lists exactly the static marketing pages the app hands off', () => {
+    expect([...STATIC_MARKETING_ROUTES]).toEqual([
+      '/',
+      '/features',
+      '/pricing',
+      '/security',
+      '/about',
+      '/ar',
+      '/ar/features',
+      '/ar/pricing',
+      '/ar/security',
+      '/ar/about',
+    ]);
     expect(PUBLIC_ROUTES).not.toHaveProperty('features');
     expect(PUBLIC_ROUTES).not.toHaveProperty('pricing');
   });
@@ -85,17 +119,32 @@ describe('retired marketing routes (pure)', () => {
   });
 });
 
-describe('retired marketing routes (router)', { timeout: 30_000 }, () => {
-  it.each([
-    ['/features', '/'],
-    ['/pricing', '/'],
-    ['/ar/features', '/ar'],
-    ['/ar/pricing', '/ar'],
-    ['/ar/anything-else', '/ar'],
-  ])('%s forwards to the holding page %s', async (from, to) => {
-    renderAt(from);
-    expect(await screen.findByTestId('holding-page', {}, SLOW)).toBeTruthy();
-    expect(where()).toBe(to);
+describe('marketing routes (router)', { timeout: 30_000 }, () => {
+  it.each(STATIC_MARKETING_ROUTES.map((path) => [path]))(
+    '%s hands off to the static page (no in-app forward)',
+    async (path) => {
+      renderAt(path);
+      const fallback = await screen.findByTestId(
+        'static-marketing-fallback',
+        {},
+        SLOW
+      );
+      expect(fallback.getAttribute('lang')).toBe(
+        path === '/ar' || path.startsWith('/ar/') ? 'ar' : 'en'
+      );
+      expect(where()).toBe(path);
+      // The retry link: a full load of the same address, which the edge
+      // answers with the static page whenever it is on.
+      expect(fallback.querySelector(`a[href="${path}"]`)).not.toBeNull();
+    }
+  );
+
+  it('sends any other /ar/ address to /ar', async () => {
+    renderAt('/ar/anything-else', '/ar');
+    await waitFor(() => expect(where()).toBe('/ar'), SLOW);
+    expect(
+      await screen.findByTestId('static-marketing-fallback', {}, SLOW)
+    ).toBeTruthy();
   });
 
   it.each([
@@ -105,7 +154,7 @@ describe('retired marketing routes (router)', { timeout: 30_000 }, () => {
   ])('%s forwards to the kept page %s', async (from, to) => {
     renderAt(from);
     await waitFor(() => expect(where()).toBe(to), SLOW);
-    expect(screen.queryByTestId('holding-page')).toBeNull();
+    expect(screen.queryByTestId('static-marketing-fallback')).toBeNull();
   });
 
   it('sends the old /#contact anchor to the contact form', async () => {
@@ -120,16 +169,6 @@ describe('retired marketing routes (router)', { timeout: 30_000 }, () => {
 });
 
 describe('kept platform pages still render', { timeout: 30_000 }, () => {
-  it.each([
-    ['/', 'en'],
-    ['/ar', 'ar'],
-  ])('%s is the holding page (%s)', async (path, lang) => {
-    renderAt(path);
-    const page = await screen.findByTestId('holding-page', {}, SLOW);
-    expect(page.getAttribute('lang')).toBe(lang);
-    expect(where()).toBe(path);
-  });
-
   it('/contact renders the contact form, and the header links no marketing page', async () => {
     const { container } = renderAt('/contact');
     await waitFor(

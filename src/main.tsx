@@ -212,8 +212,8 @@ async function initializeApp(): Promise<void> {
         initialLanguage={
           isAcademyWebsite
             ? urlLocale
-            : // `/ar` (the Arabic holding page, owner decision D6) and
-              // the `/ar/...` addresses that forward from it open in
+            : // `/ar` and the `/ar/...` addresses (the Arabic marketing
+              // pages and the ones that forward to them) open in
               // Arabic without changing the stored preference; any other
               // platform page keeps the preference.
               platformUrlLanguage(window.location.pathname)

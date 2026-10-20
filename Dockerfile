@@ -33,6 +33,18 @@ RUN pnpm run build
 # Later deploys keep a previous build's chunks while its list is under 14
 # days old (see the deploy workflow's "Carry the previous builds' assets").
 RUN ls dist/assets > "dist/assets/.build-$(date +%s).list"
+# B1 (DL-50) — the static marketing site (`dist/marketing/`, written by
+# `pnpm build`; its hashed CSS/JS stay in dist/assets) and its public images
+# (`/marketing-assets/`) move to their own tree, served by Caddy from
+# /srv-marketing on the platform apex ONLY. Keeping them out of /srv means an
+# academy subdomain or connected domain can never be served a marketing
+# page, llms.txt, pricing.md or a marketing image (its `try_files` only
+# sees /srv). The build above fetched the live plans catalog: it fails
+# rather than ship the snapshot (MARKETING_PLANS_ALLOW_SNAPSHOT is never set
+# here).
+RUN mkdir -p dist-marketing \
+ && if [ -d dist/marketing ]; then cp -R dist/marketing/. dist-marketing/ && rm -rf dist/marketing; fi \
+ && if [ -d dist/marketing-assets ]; then mv dist/marketing-assets dist-marketing/marketing-assets; fi
 
 # Phase 8 — the public Academy website's server renderer
 # (Reports/SSR_ARCHITECTURE_ANALYSIS.md): the same build, plus the SSR
@@ -84,6 +96,7 @@ COPY --from=caddy-build /usr/bin/caddy /usr/bin/caddy
 # `.gitkeep`) for a local build.
 COPY previous-assets/ /srv/assets/
 COPY --from=build /app/dist /srv
+COPY --from=build /app/dist-marketing /srv-marketing
 COPY Caddyfile /etc/caddy/Caddyfile
 
 EXPOSE 80 443

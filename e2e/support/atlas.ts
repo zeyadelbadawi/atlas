@@ -268,7 +268,11 @@ export async function signOutInBrowser(page: Page): Promise<void> {
   // Only the session cookie goes — a remembered-device cookie stays, as it
   // would after a real sign-out.
   await page.context().clearCookies({ name: /^(__Host-)?atlas_session$/ });
-  await page.goto('/');
+  // Any document of the platform origin will do. `/robots.txt` is a plain
+  // file on every server (dev, preview, Caddy; B1 marketing prerender), so
+  // no app boots and writes storage again after it is cleared, and no
+  // static-page reload (`StaticMarketingRedirect`) races the evaluate.
+  await page.goto('/robots.txt');
   await page.evaluate(() => {
     window.localStorage.clear();
     window.sessionStorage.clear();

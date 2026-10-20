@@ -12,15 +12,16 @@
 /**
  * The platform host's public pages.
  *
- * Owner decision D6 (14 Oct 2026) retired the marketing site: `/` and
- * `/ar` render a self-contained holding page (`features/home/holding`),
- * the rest render inside `PublicLayout`. The retired marketing addresses
- * are forwarding addresses, not pages — `RETIRED_MARKETING_ROUTES` below.
+ * B1 (DL-50): `/` and `/ar` are the static marketing site's home pages —
+ * prerendered HTML the edge serves on a full page load; inside the app
+ * they are `STATIC_MARKETING_ROUTES` (below). Contact and the legal pages
+ * have static versions too, and keep their in-app pages here for
+ * navigation inside the app.
  */
 export const PUBLIC_ROUTES = {
-  /** The holding page, in English. */
+  /** The marketing home page, in English (static; see `STATIC_MARKETING_ROUTES`). */
   home: '/',
-  /** The holding page, in Arabic — the platform host's only `/ar` page. */
+  /** The marketing home page, in Arabic (static). */
   homeAr: '/ar',
   /**
    * The platform contact form (`POST public/contact`, the Platform Owner's
@@ -40,13 +41,25 @@ export const PUBLIC_ROUTES = {
 } as const;
 
 /**
- * D6 — the retired marketing pages. Old links, bookmarks and search results
- * still reach these, so each forwards to the holding page with a
- * client-side `Navigate replace` instead of a 404; their Arabic twins
- * (`/ar/...`) are handled by `ArabicPlatformRedirect`. Nothing should link
- * here any more.
+ * B1 (DL-50) — the static marketing pages the app can be navigated to.
+ * Each is prerendered HTML served by the edge on a full page load
+ * (Caddyfile, `@marketing_page`; `src/marketing/registry.tsx`); inside the
+ * app, `StaticMarketingRedirect` reloads the document once to fetch it.
+ * Contact and the legal pages are not listed: they also have in-app pages
+ * (`PUBLIC_ROUTES`), used for navigation within the app.
  */
-export const RETIRED_MARKETING_ROUTES = ['/features', '/pricing'] as const;
+export const STATIC_MARKETING_ROUTES = [
+  '/',
+  '/features',
+  '/pricing',
+  '/security',
+  '/about',
+  '/ar',
+  '/ar/features',
+  '/ar/pricing',
+  '/ar/security',
+  '/ar/about',
+] as const;
 
 /**
  * Paths rendered inside the authentication layout.

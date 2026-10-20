@@ -50,6 +50,9 @@ export default defineConfig({
   resolve: { alias: aliasesFromTsconfig() },
   test: {
     environment: 'jsdom',
+    // B1 (SPEC §C): only tests may fall back to the committed plans
+    // snapshot; `pnpm build` (CI, Docker) needs the live catalog.
+    env: { MARKETING_PLANS_ALLOW_SNAPSHOT: '1' },
     include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
     // Registers both translation bundles (the app loads one per language),
     // answers jsdom's top-layer pseudo-classes, and registers every theme

@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && pnpm run build:marketing",
+    "build:marketing": "vite build -c vite.marketing.config.ts && vite build -c vite.marketing.config.ts --ssr src/marketing/prerender/entry.tsx && node scripts/marketing/prerender.mjs",
     "build:ssr": "vite build --ssr src/ssr/entry-server.tsx",
     "start:ssr": "node server/ssr/server.mjs",
     "lint": "eslint --quiet ./src",

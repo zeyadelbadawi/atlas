@@ -1,16 +1,17 @@
 /**
- * Where the retired marketing site's addresses now lead (owner decision
- * D6, 14 Oct 2026), and which language a platform-host URL names.
+ * Where an `/ar/...` address leads INSIDE the app, and which language a
+ * platform-host URL names.
  *
- * The marketing pages are gone, but their URLs are bookmarked, indexed and
- * linked from old emails and posts, so they keep answering — as client-side
- * forwarding addresses (`Navigate replace`) to the holding page, never a
- * 404. The forwarding table itself (`RETIRED_MARKETING_ROUTES`) lives in
- * `route-paths.ts` with every other path; this module holds the logic
- * around it.
+ * B1 (DL-50): on a full page load the edge serves the static marketing
+ * site, including its Arabic pages (`/ar/contact`, `/ar/terms`…) and a real
+ * Arabic 404 for any other `/ar/...` (Caddyfile). The app only sees these
+ * addresses through client-side navigation; the static marketing pages are
+ * `STATIC_MARKETING_ROUTES` (`StaticMarketingRedirect`), and this module
+ * resolves the rest, as before D6's site was replaced: a kept page's
+ * Arabic address to its in-app page, anything else to `/ar`.
  *
- * NO LOOP: every target here (`/`, `/ar`, `/contact`, `/privacy-policy`,
- * `/terms`) is a real page, and none of them is itself forwarded.
+ * NO LOOP: every target here (`/ar`, `/contact`, `/privacy-policy`,
+ * `/terms`) is a real route, and none of them is itself forwarded.
  */
 import type { LanguageCode } from '@types';
 import { PUBLIC_ROUTES } from './route-paths';
@@ -32,9 +33,9 @@ function withoutTrailingSlash(pathname: string): string {
 }
 
 /**
- * Where a `/ar/...` path on the platform host goes: a kept page's Arabic
- * address to that page, anything else (the retired pages' Arabic twins,
- * unknown paths) to the Arabic holding page.
+ * Where a `/ar/...` path on the platform host goes inside the app: a kept
+ * page's Arabic address to that page, anything else (unknown paths) to the
+ * Arabic home page (static: `StaticMarketingRedirect` fetches it).
  *
  * @example
  * resolveArabicPlatformTarget('/ar/contact') // '/contact'
@@ -50,12 +51,12 @@ export function resolveArabicPlatformTarget(pathname: string): string {
 
 /**
  * The language a platform-host URL names, if it names one: Arabic for
- * `/ar` and `/ar/...` (the Arabic holding page, and the addresses that
- * forward from it). `main.tsx` renders the first page in it, without
+ * `/ar` and `/ar/...` (the Arabic marketing pages, and the addresses that
+ * forward from them). `main.tsx` renders the first page in it, without
  * saving it as the visitor's preference, so a visitor who follows an
  * Arabic link stays in Arabic on the page they open next. Every other
  * path returns `undefined`: the stored preference decides, so `/` — whose
- * holding page is always English — does not switch a returning Arabic
+ * marketing page is always English — does not switch a returning Arabic
  * visitor's app to English.
  */
 export function platformUrlLanguage(

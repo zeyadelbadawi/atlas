@@ -1,5 +1,9 @@
 # Atlas Marketing Website — Design System (Master)
 
+> **Superseded in part (20 Oct 2026):** colour (Deep Teal → Royal Navy + Gold) and motion
+> for the static B1 site are now defined in [`B1-STATIC-SITE.md`](./B1-STATIC-SITE.md).
+
+
 Generated with **UI/UX Pro Max v2.13.0** (`--design-system`, dials `--variance 5
 --motion 4 --density 3`), then reconciled against the Atlas repository's existing
 token layer. This file is the global source of truth for the **public marketing

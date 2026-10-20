@@ -59,7 +59,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
   summary:
     'How Atlas collects, uses, and protects personal data when you use the Atlas platform.',
   effectiveDate: '11 September 2026',
-  lastUpdated: '12 October 2026',
+  lastUpdated: '20 October 2026',
   sections: [
     {
       id: 'who-we-are',
@@ -214,7 +214,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
         },
         {
           kind: 'paragraph',
-          text: 'Atlas does not use analytics cookies, advertising cookies, marketing pixels, or any third-party tracking script. The page-speed measurement described in section 3 stores nothing in your browser and uses no identifier, so it is neither a cookie nor a tracking technology; it runs on Atlas’s own servers, is never used to profile anyone, and is skipped entirely for browsers that send Global Privacy Control or Do Not Track.',
+          text: 'Atlas does not use analytics cookies, advertising cookies, marketing pixels, or any third-party tracking script. The page-speed measurement described in section 3 stores nothing in your browser and uses no identifier, so it is neither a cookie nor a tracking technology; it runs on Atlas’s own servers, is never used to profile anyone, and is skipped entirely for browsers that send Global Privacy Control or Do Not Track. The Atlas marketing website likewise counts page visits and button clicks in aggregate, on Atlas’s own servers, without cookies, identifiers or stored IP addresses, and does not measure browsers that send Global Privacy Control or Do Not Track.',
         },
         {
           kind: 'paragraph',
