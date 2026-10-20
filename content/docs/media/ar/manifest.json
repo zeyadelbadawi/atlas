@@ -1,4 +1,55 @@
 {
+  "academy/domain-address": {
+    "capturedAt": "2026-10-20T15:41:15.231Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/academy/domain-address-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/academy/domain-address-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "8991aeaf2f1be9a92befb20e36ee06f281ba95eb",
+    "width": 1440
+  },
+  "academy/domain-tab": {
+    "capturedAt": "2026-10-20T15:41:45.140Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/academy/domain-tab-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/academy/domain-tab-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "113e3651dbb350ddc1e90341e27f02ac8b92e2d8",
+    "width": 1440
+  },
+  "academy/new-academy-reserved": {
+    "capturedAt": "2026-10-20T15:41:29.783Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/academy/new-academy-reserved-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/academy/new-academy-reserved-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "f8aa2b37981e67c494c6d3be862e36849d93a3ab",
+    "width": 1440
+  },
   "academy/overview-view-profile": {
     "capturedAt": "2026-10-20T15:36:01.195Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -186,6 +237,23 @@
     "spec": "c07ad4d6752e4eea0165753678cb453d8c316bc8",
     "width": 1440
   },
+  "academy/visual-identity-favicon": {
+    "capturedAt": "2026-10-20T15:40:41.727Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/academy/visual-identity-favicon-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/academy/visual-identity-favicon-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "2e670c3e407a8cfea4a26296d85833259ba35c00",
+    "width": 1440
+  },
   "academy/visual-identity-logo": {
     "capturedAt": "2026-10-20T15:38:39.954Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -218,6 +286,23 @@
     ],
     "height": 900,
     "spec": "20faa1421c9e829c395ec917532db21715afc762",
+    "width": 1440
+  },
+  "academy/visual-identity-save": {
+    "capturedAt": "2026-10-20T15:41:01.464Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/academy/visual-identity-save-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/academy/visual-identity-save-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "3e9cbac870737178ebc121f39ceac5da8bdbda45",
     "width": 1440
   },
   "billing/billing-overview": {
