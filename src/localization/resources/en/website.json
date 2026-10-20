@@ -716,9 +716,7 @@
     "publishedHint": "This website is live.",
     "status": {
       "draft": "Draft",
-      "published": "Published",
-      "publishing": "Publishing…",
-      "failed": "Publish failed"
+      "published": "Published"
     },
     "unpublishAction": "Unpublish",
     "unpublishConfirmTitle": "Take the website offline?",

@@ -21,8 +21,6 @@ import type {
 export const WEBSITE_STATUS_TONE: Record<WebsitePublishStatus, StatusTone> = {
   draft: 'neutral',
   published: 'success',
-  publishing: 'info',
-  failed: 'destructive',
 };
 
 /**

@@ -740,9 +740,7 @@
     "publishedHint": "هذا الموقع مباشر الآن.",
     "status": {
       "draft": "مسودة",
-      "published": "منشور",
-      "publishing": "جارٍ النشر…",
-      "failed": "فشل النشر"
+      "published": "منشور"
     },
     "unpublishAction": "إلغاء النشر",
     "unpublishConfirmTitle": "إيقاف الموقع؟",

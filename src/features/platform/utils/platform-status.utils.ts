@@ -89,10 +89,6 @@ export function getPlatformWebsitePublishStatusTone(
   switch (status) {
     case 'published':
       return 'success';
-    case 'publishing':
-      return 'info';
-    case 'failed':
-      return 'destructive';
     case 'draft':
     default:
       return 'neutral';
