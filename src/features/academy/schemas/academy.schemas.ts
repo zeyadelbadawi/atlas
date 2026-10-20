@@ -13,6 +13,9 @@ import {
   MIN_MEMBER_NAME_LENGTH,
 } from '../constants/academy.constants';
 
+/** Shortest address a new academy may take (backend `MIN_ACADEMY_SLUG_LENGTH`). */
+export const MIN_NEW_ACADEMY_SLUG_LENGTH = 3;
+
 /** Slug validation regex: lowercase letters, numbers, hyphens. */
 const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -22,9 +25,13 @@ export const createAcademySchema = z.object({
     .string()
     .min(1, 'validation:required')
     .max(MAX_ACADEMY_NAME_LENGTH, 'validation:maxLength'),
+  // A new address needs MIN_NEW_ACADEMY_SLUG_LENGTH characters (the backend
+  // refuses shorter new labels); the settings forms keep min(1) so an
+  // existing shorter address still saves.
   slug: z
     .string()
     .min(1, 'validation:required')
+    .min(MIN_NEW_ACADEMY_SLUG_LENGTH, 'validation:slugTooShort')
     .max(MAX_ACADEMY_SLUG_LENGTH, 'validation:maxLength')
     .regex(SLUG_REGEX, 'validation:invalidSlug'),
   description: z
