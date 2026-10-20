@@ -1240,6 +1240,23 @@
     "spec": "90f4ce3e2fd8084d7236d3039ad35ae8d5d75931",
     "width": 1440
   },
+  "analytics/activity-log-filters": {
+    "capturedAt": "2026-10-20T15:57:50.718Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/analytics/activity-log-filters-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/analytics/activity-log-filters-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e2f862bd6cefaa7949a0ceaa3e68b854f52ad335",
+    "width": 1440
+  },
   "analytics/activity-log-open": {
     "capturedAt": "2026-10-20T15:57:39.485Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -1697,6 +1714,23 @@
     ],
     "height": 900,
     "spec": "f6c0ed0a525053cce46d45c3bf53747b7012e0f2",
+    "width": 1440
+  },
+  "courses/course-list": {
+    "capturedAt": "2026-10-20T15:58:30.428Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/courses/course-list-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/courses/course-list-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "bec1acd41524977fb045f518abdcaf7384599760",
     "width": 1440
   },
   "pipeline-sample/academy-home-mobile": {
