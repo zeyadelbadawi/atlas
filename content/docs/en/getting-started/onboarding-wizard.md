@@ -29,8 +29,8 @@ straight to the dashboard.
 | **First course** | Recommended | Your academy has at least one course (a draft is enough). |
 | **Summary** | | You choose **Finish**. |
 
-The rail on the side shows where you are ("Step 2 of 4"), and each step is marked
-**Done**, **In progress**, **To do** or **Locked**. A logo for your academy is also
+Each screen shows where you are above its title (for example, "Step 1 of 4"), and the
+rail on the side marks each step **Done**, **In progress**, **To do** or **Locked**. A logo for your academy is also
 recommended; you can add it in the academy form or later in Visual Identity.
 
 ## If Atlas asks you to choose a plan first

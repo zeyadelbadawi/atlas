@@ -42,7 +42,8 @@ Only the academy owner can view or change the protection settings. See
    ![A learner's Devices page in My Learn](shot:tasks/protect-learner-devices)
 
 4. **Check the sharing signals.** Open **Reports** in the academy sidebar and look at
-   **Sharing signals**, which point to accounts that may be shared. See
+   **Sharing signals**. It counts lesson-access refusals: repeated refusals for one learner
+   point to a shared account or too many devices. See
    [Sharing signals report](doc:DOC-MED-006).
 
    ![The Sharing signals section of the academy Reports](shot:tasks/protect-sharing-signals)

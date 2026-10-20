@@ -713,6 +713,23 @@
     "spec": "5b7ec4d004e3356c55f6bd78f3af71c36d13e4ee",
     "width": 1440
   },
+  "account/profile-menu": {
+    "capturedAt": "2026-10-20T14:07:31.183Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/profile-menu-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/profile-menu-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "9d327e20b90c5b8861ea0571e6b38fbbbc8b159e",
+    "width": 1440
+  },
   "account/reset-link-invalid": {
     "capturedAt": "2026-10-20T14:06:55.864Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",

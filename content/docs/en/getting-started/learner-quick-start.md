@@ -23,7 +23,7 @@ signing up to watching lessons, happens there.
 
 Open the academy address your teacher or centre gave you. If you try to sign in on
 the Atlas dashboard instead, Atlas tells you **You are a student. Please sign in
-through your academy's website.** and lists the academies linked to your account.
+through your academy’s website.** and lists the academies linked to your account.
 
 ## Create your account
 
