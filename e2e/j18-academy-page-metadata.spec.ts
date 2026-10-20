@@ -31,7 +31,7 @@ import { clearAuthRateLimits } from './support/global-setup';
 
 test.describe.configure({ mode: 'serial' });
 
-const ATLAS_DESCRIPTION = 'The operating system for education businesses.';
+const ATLAS_DESCRIPTION = 'Your own teaching academy online, under your name.';
 const SECOND_SLUG = 'language-learning-hub';
 const SECOND_NAME = 'Language Learning Hub';
 const SECOND_OWNER = 'omar.hassan@nextgen-learning.dev';
