@@ -1,4 +1,72 @@
 {
+  "academy/overview-view-profile": {
+    "capturedAt": "2026-10-20T15:36:01.195Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/academy/overview-view-profile-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/academy/overview-view-profile-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "4eda21dfc6efe0b149a9afa170bca7865e86172e",
+    "width": 1440
+  },
+  "academy/profile-address": {
+    "capturedAt": "2026-10-20T15:36:29.828Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/academy/profile-address-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/academy/profile-address-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "582c96f88d901532325aee4e4076b5c7b061304f",
+    "width": 1440
+  },
+  "academy/profile-basic-info": {
+    "capturedAt": "2026-10-20T15:36:10.784Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/academy/profile-basic-info-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/academy/profile-basic-info-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "1565d56f906e9cff89936eb67e806323dfd4207b",
+    "width": 1440
+  },
+  "academy/profile-contact": {
+    "capturedAt": "2026-10-20T15:36:20.129Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/academy/profile-contact-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/academy/profile-contact-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "2069e8a723e01be3650f222c2205b4f676d33e45",
+    "width": 1440
+  },
   "billing/billing-overview": {
     "capturedAt": "2026-10-20T09:17:24.149Z",
     "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
