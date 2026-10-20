@@ -1819,8 +1819,8 @@
     "width": 1440
   },
   "courses/add-content-menu": {
-    "capturedAt": "2026-10-20T14:18:00.753Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:25:25.478Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/add-content-menu-960.webp",
@@ -1836,8 +1836,8 @@
     "width": 1440
   },
   "courses/assignment-dialog": {
-    "capturedAt": "2026-10-20T14:22:37.170Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:29:40.521Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/assignment-dialog-960.webp",
@@ -1853,8 +1853,8 @@
     "width": 560
   },
   "courses/assignments-list": {
-    "capturedAt": "2026-10-20T14:22:25.914Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:29:31.238Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/assignments-list-960.webp",
@@ -1870,8 +1870,8 @@
     "width": 1440
   },
   "courses/attach-assignment": {
-    "capturedAt": "2026-10-20T14:19:28.407Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:26:50.555Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/attach-assignment-960.webp",
@@ -1887,8 +1887,8 @@
     "width": 560
   },
   "courses/attach-quiz": {
-    "capturedAt": "2026-10-20T14:19:18.027Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:26:41.508Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/attach-quiz-960.webp",
@@ -1904,8 +1904,8 @@
     "width": 560
   },
   "courses/attempt-grading": {
-    "capturedAt": "2026-10-20T14:23:34.426Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:30:39.965Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/attempt-grading-960.webp",
@@ -1921,8 +1921,8 @@
     "width": 1440
   },
   "courses/attempt-void": {
-    "capturedAt": "2026-10-20T14:23:42.368Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:30:46.830Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/attempt-void-960.webp",
@@ -1938,8 +1938,8 @@
     "width": 1440
   },
   "courses/certificate-colors": {
-    "capturedAt": "2026-10-20T14:25:20.534Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:32:09.505Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/certificate-colors-960.webp",
@@ -1955,8 +1955,8 @@
     "width": 1440
   },
   "courses/certificate-regenerate": {
-    "capturedAt": "2026-10-20T14:25:53.620Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:32:40.762Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/certificate-regenerate-960.webp",
@@ -1972,8 +1972,8 @@
     "width": 560
   },
   "courses/certificate-revoke": {
-    "capturedAt": "2026-10-20T14:25:44.735Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:32:32.536Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/certificate-revoke-960.webp",
@@ -1989,8 +1989,8 @@
     "width": 560
   },
   "courses/certificate-save": {
-    "capturedAt": "2026-10-20T14:25:28.802Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:32:17.022Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/certificate-save-960.webp",
@@ -2006,8 +2006,8 @@
     "width": 1440
   },
   "courses/certificate-template": {
-    "capturedAt": "2026-10-20T14:24:55.882Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:31:45.419Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/certificate-template-960.webp",
@@ -2023,8 +2023,8 @@
     "width": 1440
   },
   "courses/certificate-template-images": {
-    "capturedAt": "2026-10-20T14:25:04.402Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:31:53.357Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/certificate-template-images-960.webp",
@@ -2040,8 +2040,8 @@
     "width": 1440
   },
   "courses/certificate-wording": {
-    "capturedAt": "2026-10-20T14:25:12.668Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:32:01.178Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/certificate-wording-960.webp",
@@ -2057,8 +2057,8 @@
     "width": 1440
   },
   "courses/certificates-list": {
-    "capturedAt": "2026-10-20T14:25:36.340Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:32:24.232Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/certificates-list-960.webp",
@@ -2074,8 +2074,8 @@
     "width": 1440
   },
   "courses/completion-card": {
-    "capturedAt": "2026-10-20T14:20:11.052Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:27:31.497Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/completion-card-960.webp",
@@ -2091,8 +2091,8 @@
     "width": 1440
   },
   "courses/course-list": {
-    "capturedAt": "2026-10-20T14:15:02.376Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:22:30.789Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/course-list-960.webp",
@@ -2108,8 +2108,8 @@
     "width": 1440
   },
   "courses/create-button": {
-    "capturedAt": "2026-10-20T14:15:10.163Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:22:38.403Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/create-button-960.webp",
@@ -2125,8 +2125,8 @@
     "width": 1440
   },
   "courses/edit-basic-info": {
-    "capturedAt": "2026-10-20T14:16:40.300Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:24:03.827Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/edit-basic-info-960.webp",
@@ -2142,8 +2142,8 @@
     "width": 1440
   },
   "courses/edit-catalog": {
-    "capturedAt": "2026-10-20T14:17:11.498Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:24:35.543Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/edit-catalog-960.webp",
@@ -2159,8 +2159,8 @@
     "width": 1440
   },
   "courses/edit-price": {
-    "capturedAt": "2026-10-20T14:17:03.691Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:24:27.839Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/edit-price-960.webp",
@@ -2176,8 +2176,8 @@
     "width": 1440
   },
   "courses/edit-pricing": {
-    "capturedAt": "2026-10-20T14:16:56.036Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:24:19.684Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/edit-pricing-960.webp",
@@ -2193,8 +2193,8 @@
     "width": 1440
   },
   "courses/edit-save": {
-    "capturedAt": "2026-10-20T14:17:27.409Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:24:50.885Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/edit-save-960.webp",
@@ -2210,8 +2210,8 @@
     "width": 1440
   },
   "courses/edit-thumbnail": {
-    "capturedAt": "2026-10-20T14:17:19.011Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:24:43.052Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/edit-thumbnail-960.webp",
@@ -2227,8 +2227,8 @@
     "width": 1440
   },
   "courses/edit-visibility": {
-    "capturedAt": "2026-10-20T14:16:47.802Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:24:11.674Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/edit-visibility-960.webp",
@@ -2244,8 +2244,8 @@
     "width": 1440
   },
   "courses/instructor-assessments": {
-    "capturedAt": "2026-10-20T14:22:46.503Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:29:54.333Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/instructor-assessments-960.webp",
@@ -2261,8 +2261,8 @@
     "width": 1440
   },
   "courses/instructors-card": {
-    "capturedAt": "2026-10-20T14:17:35.183Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:24:59.010Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/instructors-card-960.webp",
@@ -2278,8 +2278,8 @@
     "width": 1440
   },
   "courses/issue-certificate-dialog": {
-    "capturedAt": "2026-10-20T14:26:10.163Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:32:58.734Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/issue-certificate-dialog-960.webp",
@@ -2295,8 +2295,8 @@
     "width": 560
   },
   "courses/item-actions": {
-    "capturedAt": "2026-10-20T14:19:45.743Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:27:08.352Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/item-actions-960.webp",
@@ -2312,8 +2312,8 @@
     "width": 1440
   },
   "courses/learner-link-lesson": {
-    "capturedAt": "2026-10-20T14:26:54.723Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:33:46.905Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/learner-link-lesson-960.webp",
@@ -2329,8 +2329,8 @@
     "width": 1440
   },
   "courses/learner-youtube-lesson": {
-    "capturedAt": "2026-10-20T14:26:47.515Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:33:40.512Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/learner-youtube-lesson-960.webp",
@@ -2346,8 +2346,8 @@
     "width": 1440
   },
   "courses/lesson-availability": {
-    "capturedAt": "2026-10-20T14:18:45.628Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:26:08.032Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/lesson-availability-960.webp",
@@ -2359,12 +2359,12 @@
       }
     ],
     "height": 900,
-    "spec": "325545d659b15eef7743bb1ae063ae57021affda",
+    "spec": "bdadcd7cb0ffc6ed088dcbf0b283a9aa12e2fda6",
     "width": 1440
   },
   "courses/lesson-dialog": {
-    "capturedAt": "2026-10-20T14:18:11.925Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:25:36.231Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/lesson-dialog-960.webp",
@@ -2376,12 +2376,12 @@
       }
     ],
     "height": 652,
-    "spec": "a756e4d18f1119f5072501de262daf7e70688e53",
+    "spec": "0b0dc0c837ac7fe2eaec734f3f97d4f150667b7b",
     "width": 560
   },
   "courses/lesson-file-link": {
-    "capturedAt": "2026-10-20T14:19:08.348Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:26:32.415Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/lesson-file-link-960.webp",
@@ -2397,42 +2397,42 @@
     "width": 560
   },
   "courses/lesson-type-file": {
-    "capturedAt": "2026-10-20T14:18:56.610Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:26:19.515Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/lesson-type-file-960.webp",
         "width": 960
       },
       {
-        "src": "media/en/courses/lesson-type-file-1440.webp",
-        "width": 1440
+        "src": "media/en/courses/lesson-type-file-1120.webp",
+        "width": 1120
       }
     ],
-    "height": 900,
-    "spec": "ca7be373077a6b140f2b27d5876d02ef885b3221",
-    "width": 1440
+    "height": 714,
+    "spec": "ac5ee0ec05f61a61740b1e00613ab8e6a3ca659a",
+    "width": 560
   },
   "courses/lesson-type-video": {
-    "capturedAt": "2026-10-20T14:18:22.189Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:25:45.576Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/lesson-type-video-960.webp",
         "width": 960
       },
       {
-        "src": "media/en/courses/lesson-type-video-1440.webp",
-        "width": 1440
+        "src": "media/en/courses/lesson-type-video-1120.webp",
+        "width": 1120
       }
     ],
-    "height": 900,
-    "spec": "92cdf330325d951fcd1e817d73fe5d246ce0b712",
-    "width": 1440
+    "height": 628,
+    "spec": "17dbc754cbd571532104e82ee39a12e46eb3856e",
+    "width": 560
   },
   "courses/lesson-youtube-detected": {
-    "capturedAt": "2026-10-20T14:18:33.424Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:25:55.943Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/lesson-youtube-detected-960.webp",
@@ -2444,12 +2444,12 @@
       }
     ],
     "height": 652,
-    "spec": "57f8d33248cfe00a7b78899afb3d907e6b20aa2b",
+    "spec": "8615d089009a51a6d1993fbf0d7a97082ba1c030",
     "width": 560
   },
   "courses/list-actions-curriculum": {
-    "capturedAt": "2026-10-20T14:15:27.746Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:22:54.074Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/list-actions-curriculum-960.webp",
@@ -2465,8 +2465,8 @@
     "width": 1440
   },
   "courses/list-actions-edit": {
-    "capturedAt": "2026-10-20T14:15:18.188Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:22:45.938Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/list-actions-edit-960.webp",
@@ -2482,8 +2482,8 @@
     "width": 1440
   },
   "courses/overrides-save": {
-    "capturedAt": "2026-10-20T14:23:27.612Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:30:32.893Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/overrides-save-960.webp",
@@ -2499,8 +2499,8 @@
     "width": 536
   },
   "courses/overrides-sheet": {
-    "capturedAt": "2026-10-20T14:23:19.582Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:30:24.442Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/overrides-sheet-960.webp",
@@ -2516,8 +2516,8 @@
     "width": 536
   },
   "courses/quiz-advanced-toggle": {
-    "capturedAt": "2026-10-20T14:21:24.483Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:28:42.466Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/quiz-advanced-toggle-960.webp",
@@ -2533,8 +2533,8 @@
     "width": 1440
   },
   "courses/quiz-attempts": {
-    "capturedAt": "2026-10-20T14:21:43.451Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:28:59.042Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/quiz-attempts-960.webp",
@@ -2550,8 +2550,8 @@
     "width": 1440
   },
   "courses/quiz-details": {
-    "capturedAt": "2026-10-20T14:20:46.195Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:28:03.062Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/quiz-details-960.webp",
@@ -2567,8 +2567,8 @@
     "width": 1440
   },
   "courses/quiz-edit-menu": {
-    "capturedAt": "2026-10-20T14:20:37.096Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:27:55.328Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/quiz-edit-menu-960.webp",
@@ -2584,8 +2584,8 @@
     "width": 1440
   },
   "courses/quiz-essentials": {
-    "capturedAt": "2026-10-20T14:21:01.448Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:28:17.662Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/quiz-essentials-960.webp",
@@ -2601,8 +2601,8 @@
     "width": 1440
   },
   "courses/quiz-integrity-settings": {
-    "capturedAt": "2026-10-20T14:22:06.486Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:29:15.063Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/quiz-integrity-settings-960.webp",
@@ -2618,8 +2618,8 @@
     "width": 1440
   },
   "courses/quiz-presets": {
-    "capturedAt": "2026-10-20T14:20:53.673Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:28:10.157Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/quiz-presets-960.webp",
@@ -2635,8 +2635,8 @@
     "width": 1440
   },
   "courses/quiz-progression": {
-    "capturedAt": "2026-10-20T14:22:16.108Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:29:23.662Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/quiz-progression-960.webp",
@@ -2652,8 +2652,8 @@
     "width": 1440
   },
   "courses/quiz-questions": {
-    "capturedAt": "2026-10-20T14:21:09.684Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:28:26.231Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/quiz-questions-960.webp",
@@ -2669,8 +2669,8 @@
     "width": 1440
   },
   "courses/quiz-results": {
-    "capturedAt": "2026-10-20T14:22:55.849Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:30:01.637Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/quiz-results-960.webp",
@@ -2686,8 +2686,8 @@
     "width": 1440
   },
   "courses/quiz-results-export": {
-    "capturedAt": "2026-10-20T14:23:10.893Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:30:16.079Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/quiz-results-export-960.webp",
@@ -2703,8 +2703,8 @@
     "width": 1440
   },
   "courses/quiz-results-overrides": {
-    "capturedAt": "2026-10-20T14:23:03.103Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:30:08.885Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/quiz-results-overrides-960.webp",
@@ -2720,8 +2720,8 @@
     "width": 1440
   },
   "courses/quiz-results-settings": {
-    "capturedAt": "2026-10-20T14:21:55.603Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:29:07.283Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/quiz-results-settings-960.webp",
@@ -2737,8 +2737,8 @@
     "width": 1440
   },
   "courses/quiz-save": {
-    "capturedAt": "2026-10-20T14:21:17.644Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:28:34.751Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/quiz-save-960.webp",
@@ -2754,8 +2754,8 @@
     "width": 1440
   },
   "courses/quiz-timing": {
-    "capturedAt": "2026-10-20T14:21:32.640Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:28:50.524Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/quiz-timing-960.webp",
@@ -2771,8 +2771,8 @@
     "width": 1440
   },
   "courses/quizzes-list": {
-    "capturedAt": "2026-10-20T14:20:27.569Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:27:46.542Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/quizzes-list-960.webp",
@@ -2788,8 +2788,8 @@
     "width": 1440
   },
   "courses/reorder": {
-    "capturedAt": "2026-10-20T14:19:36.940Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:26:59.116Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/reorder-960.webp",
@@ -2805,8 +2805,8 @@
     "width": 1440
   },
   "courses/reports-integrity": {
-    "capturedAt": "2026-10-20T14:26:30.381Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:33:18.431Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/reports-integrity-960.webp",
@@ -2822,8 +2822,8 @@
     "width": 1440
   },
   "courses/reports-window": {
-    "capturedAt": "2026-10-20T14:26:38.566Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:33:26.620Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/reports-window-960.webp",
@@ -2839,8 +2839,8 @@
     "width": 1440
   },
   "courses/reviews-filter": {
-    "capturedAt": "2026-10-20T14:24:46.879Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:31:37.747Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/reviews-filter-960.webp",
@@ -2856,8 +2856,8 @@
     "width": 1440
   },
   "courses/reviews-tab": {
-    "capturedAt": "2026-10-20T14:17:43.100Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:25:06.872Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/reviews-tab-960.webp",
@@ -2873,8 +2873,8 @@
     "width": 1440
   },
   "courses/section-dialog": {
-    "capturedAt": "2026-10-20T14:17:52.267Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:25:16.123Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/section-dialog-960.webp",
@@ -2890,8 +2890,8 @@
     "width": 560
   },
   "courses/settings-certificate-switch": {
-    "capturedAt": "2026-10-20T14:20:19.721Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:27:38.959Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/settings-certificate-switch-960.webp",
@@ -2907,8 +2907,8 @@
     "width": 1440
   },
   "courses/settings-publish": {
-    "capturedAt": "2026-10-20T14:19:54.197Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:27:16.236Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/settings-publish-960.webp",
@@ -2924,8 +2924,8 @@
     "width": 1440
   },
   "courses/settings-unpublish-dialog": {
-    "capturedAt": "2026-10-20T14:20:02.861Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:27:24.275Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/settings-unpublish-dialog-960.webp",
@@ -2941,8 +2941,8 @@
     "width": 560
   },
   "courses/student-issue-certificate": {
-    "capturedAt": "2026-10-20T14:26:01.902Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:32:49.317Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/student-issue-certificate-960.webp",
@@ -2958,8 +2958,8 @@
     "width": 1440
   },
   "courses/submission-grade": {
-    "capturedAt": "2026-10-20T14:23:56.870Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:31:00.836Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/submission-grade-960.webp",
@@ -2975,8 +2975,8 @@
     "width": 1440
   },
   "courses/submissions-list": {
-    "capturedAt": "2026-10-20T14:23:49.791Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:30:53.793Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/submissions-list-960.webp",
@@ -2991,9 +2991,26 @@
     "spec": "c13dbee75c4b6a0bc03a186dad706bc4f68e543d",
     "width": 1440
   },
+  "courses/teaching-course-overview": {
+    "capturedAt": "2026-10-20T18:31:21.963Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
+    "files": [
+      {
+        "src": "media/en/courses/teaching-course-overview-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/teaching-course-overview-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "2251f05efc9d540b769e60f50bdd302b80b15109",
+    "width": 1440
+  },
   "courses/teaching-courses": {
-    "capturedAt": "2026-10-20T14:24:10.680Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:31:14.792Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/teaching-courses-960.webp",
@@ -3009,8 +3026,8 @@
     "width": 1440
   },
   "courses/teaching-dashboard": {
-    "capturedAt": "2026-10-20T14:24:03.904Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:31:08.230Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/teaching-dashboard-960.webp",
@@ -3026,8 +3043,8 @@
     "width": 1440
   },
   "courses/teaching-students": {
-    "capturedAt": "2026-10-20T14:24:38.590Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:31:29.690Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/teaching-students-960.webp",
@@ -3043,8 +3060,8 @@
     "width": 1440
   },
   "courses/verify-invalid": {
-    "capturedAt": "2026-10-20T14:26:22.427Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:33:10.327Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/verify-invalid-960.webp",
@@ -3060,8 +3077,8 @@
     "width": 1440
   },
   "courses/verify-valid": {
-    "capturedAt": "2026-10-20T14:26:16.117Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:33:04.445Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/verify-valid-960.webp",
@@ -3077,8 +3094,8 @@
     "width": 1440
   },
   "courses/wizard-assessments": {
-    "capturedAt": "2026-10-20T14:16:08.592Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:23:33.438Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/wizard-assessments-960.webp",
@@ -3094,8 +3111,8 @@
     "width": 1440
   },
   "courses/wizard-basics": {
-    "capturedAt": "2026-10-20T14:15:35.974Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:23:01.644Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/wizard-basics-960.webp",
@@ -3111,8 +3128,8 @@
     "width": 1440
   },
   "courses/wizard-curriculum": {
-    "capturedAt": "2026-10-20T14:16:00.393Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:23:25.597Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/wizard-curriculum-960.webp",
@@ -3128,8 +3145,8 @@
     "width": 1440
   },
   "courses/wizard-details": {
-    "capturedAt": "2026-10-20T14:15:43.960Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:23:09.167Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/wizard-details-960.webp",
@@ -3145,8 +3162,8 @@
     "width": 1440
   },
   "courses/wizard-media": {
-    "capturedAt": "2026-10-20T14:15:51.824Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:23:16.663Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/wizard-media-960.webp",
@@ -3162,8 +3179,8 @@
     "width": 1440
   },
   "courses/wizard-pricing": {
-    "capturedAt": "2026-10-20T14:16:16.411Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:23:41.055Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/wizard-pricing-960.webp",
@@ -3179,8 +3196,8 @@
     "width": 1440
   },
   "courses/wizard-publish": {
-    "capturedAt": "2026-10-20T14:16:32.135Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:23:56.269Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/wizard-publish-960.webp",
@@ -3196,8 +3213,8 @@
     "width": 1440
   },
   "courses/wizard-review": {
-    "capturedAt": "2026-10-20T14:16:24.171Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T18:23:48.643Z",
+    "commit": "4bd9a3f615dab93ab172cd64f032b0d5279590e5",
     "files": [
       {
         "src": "media/en/courses/wizard-review-960.webp",
