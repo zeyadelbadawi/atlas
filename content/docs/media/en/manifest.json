@@ -407,6 +407,23 @@
     "spec": "485cd1f90b8afb95f4d092bc46627c920c26ade2",
     "width": 1440
   },
+  "selling/payment-decision-hint": {
+    "capturedAt": "2026-10-20T09:13:28.436Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/selling/payment-decision-hint-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/selling/payment-decision-hint-1200.webp",
+        "width": 1200
+      }
+    ],
+    "height": 900,
+    "spec": "eb578b7552bf5d370bfc30341ee2410663aa7fe3",
+    "width": 600
+  },
   "selling/payment-method-dialog": {
     "capturedAt": "2026-10-20T09:12:18.657Z",
     "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
