@@ -6408,6 +6408,57 @@
     "spec": "b51dca397f3abf87637361766334bfb00e37990d",
     "width": 560
   },
+  "team/approve-drawer": {
+    "capturedAt": "2026-10-20T15:04:12.553Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/approve-drawer-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/approve-drawer-1200.webp",
+        "width": 1200
+      }
+    ],
+    "height": 900,
+    "spec": "55b6e4d2d1d398aa62ba6bc796c954e499bb7493",
+    "width": 600
+  },
+  "team/block-dialog": {
+    "capturedAt": "2026-10-20T15:05:16.053Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/block-dialog-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/block-dialog-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 348,
+    "spec": "89b0995e180a7dc761c93432866f4fdf94952e24",
+    "width": 560
+  },
+  "team/block-drawer": {
+    "capturedAt": "2026-10-20T15:04:51.499Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/block-drawer-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/block-drawer-1200.webp",
+        "width": 1200
+      }
+    ],
+    "height": 900,
+    "spec": "3e977805a1b42b7b35304b12967bcc802f75139f",
+    "width": 600
+  },
   "team/invites-card": {
     "capturedAt": "2026-10-20T15:00:54.733Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -6441,6 +6492,125 @@
     "height": 900,
     "spec": "1c07012b8da050fbb3d5d63dfacddac0acccc629",
     "width": 1440
+  },
+  "team/invites-create-dialog": {
+    "capturedAt": "2026-10-20T15:01:32.099Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/invites-create-dialog-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/invites-create-dialog-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 402,
+    "spec": "0a3a419104e74eb843ba3fe05449783b8faea8ac",
+    "width": 560
+  },
+  "team/invites-create-submit": {
+    "capturedAt": "2026-10-20T15:01:54.951Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/invites-create-submit-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/invites-create-submit-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 402,
+    "spec": "cd79f56714b0f352a663d4c8c92040de9f283e6f",
+    "width": 560
+  },
+  "team/invites-revoke-button": {
+    "capturedAt": "2026-10-20T15:02:12.775Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/invites-revoke-button-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/invites-revoke-button-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "26158cdedf73ca1e970522e45e5df9b8b204729e",
+    "width": 1440
+  },
+  "team/invites-revoke-confirm": {
+    "capturedAt": "2026-10-20T15:02:31.678Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/invites-revoke-confirm-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/invites-revoke-confirm-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 230,
+    "spec": "3f583958cc48b7429074576fe243e8296894eaf9",
+    "width": 560
+  },
+  "team/manual-enroll-dialog": {
+    "capturedAt": "2026-10-20T15:06:09.766Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/manual-enroll-dialog-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/manual-enroll-dialog-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 402,
+    "spec": "18859bd354d142d48a144bd11fa397858abbcbfb",
+    "width": 560
+  },
+  "team/manual-enroll-drawer": {
+    "capturedAt": "2026-10-20T15:05:51.954Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/manual-enroll-drawer-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/manual-enroll-drawer-1200.webp",
+        "width": 1200
+      }
+    ],
+    "height": 900,
+    "spec": "9edf72938aac250ed3397d742078ab3e61cd227e",
+    "width": 600
+  },
+  "team/manual-enroll-expiry": {
+    "capturedAt": "2026-10-20T15:06:25.858Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/manual-enroll-expiry-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/manual-enroll-expiry-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 312,
+    "spec": "f9d011add648aa80e11eac6944de3d745a39fb89",
+    "width": 560
   },
   "team/members-manager-view": {
     "capturedAt": "2026-10-20T14:55:47.312Z",
@@ -6510,6 +6680,23 @@
     "spec": "f8a16b5f890530cb58d24ac2288614566a4a2b7d",
     "width": 1440
   },
+  "team/reject-confirm": {
+    "capturedAt": "2026-10-20T15:04:31.595Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/reject-confirm-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/reject-confirm-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 230,
+    "spec": "80112f4ab941d9cc745034abfd5079683ac834c8",
+    "width": 560
+  },
   "team/remove-staff-button": {
     "capturedAt": "2026-10-20T14:57:38.897Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -6543,5 +6730,90 @@
     "height": 250,
     "spec": "107ba94c173bb2a6992fdfae79aeb4b7474c2cd3",
     "width": 560
+  },
+  "team/student-drawer": {
+    "capturedAt": "2026-10-20T15:03:51.084Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/student-drawer-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/student-drawer-1200.webp",
+        "width": 1200
+      }
+    ],
+    "height": 900,
+    "spec": "40ac1256546b3c07cd676ceb5a0859ac582867a2",
+    "width": 600
+  },
+  "team/students-filter-pending": {
+    "capturedAt": "2026-10-20T15:03:32.671Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/students-filter-pending-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/students-filter-pending-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "9b259cde7b8131249e7e9ce1ff7e5fb732daf10a",
+    "width": 1440
+  },
+  "team/students-filters": {
+    "capturedAt": "2026-10-20T15:03:12.738Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/students-filters-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/students-filters-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "afc5f6a496a23c6d07fbb561bfd6d84f5e813cd6",
+    "width": 1440
+  },
+  "team/students-tab": {
+    "capturedAt": "2026-10-20T15:02:51.112Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/students-tab-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/students-tab-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "b68b0d8467c60f977c9d3f4150484d14d7081253",
+    "width": 1440
+  },
+  "team/unblock-drawer": {
+    "capturedAt": "2026-10-20T15:05:36.523Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/unblock-drawer-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/unblock-drawer-1200.webp",
+        "width": 1200
+      }
+    ],
+    "height": 900,
+    "spec": "14152ed59663e0ce517d70fe7d5f228bfd027dcb",
+    "width": 600
   }
 }
