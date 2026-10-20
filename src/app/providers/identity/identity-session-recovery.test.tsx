@@ -81,14 +81,27 @@ async function mounted() {
   );
 }
 
+/**
+ * Fires a wake-up event until the provider reacts. The DOM shows "in" as
+ * soon as the restored session commits, but the listeners are attached by
+ * a passive effect that can run a moment later; one dispatch in that gap
+ * reaches nobody (seen on CI: `refresh` never called, 20 Oct 2026).
+ */
+async function wakeUntil(fire: () => void, done: () => void) {
+  await waitFor(() => {
+    fire();
+    done();
+  });
+}
+
 describe('identity session recovery', () => {
   it('refreshes a nearly expired token when the tab becomes visible again', async () => {
     await mounted();
     refresh.mockClear();
-    await act(async () => {
-      document.dispatchEvent(new Event('visibilitychange'));
-    });
-    await waitFor(() => expect(refresh).toHaveBeenCalled());
+    await wakeUntil(
+      () => document.dispatchEvent(new Event('visibilitychange')),
+      () => expect(refresh).toHaveBeenCalled()
+    );
     expect(screen.getByTestId('state').textContent).toBe('in');
   });
 
@@ -97,11 +110,9 @@ describe('identity session recovery', () => {
     const ended = vi.fn();
     window.addEventListener('atlas:session-ended', ended);
     await mounted();
-    await act(async () => {
-      window.dispatchEvent(new Event('online'));
-    });
-    await waitFor(() =>
-      expect(screen.getByTestId('state').textContent).toBe('out')
+    await wakeUntil(
+      () => window.dispatchEvent(new Event('online')),
+      () => expect(screen.getByTestId('state').textContent).toBe('out')
     );
     expect(ended).toHaveBeenCalled();
     expect(clearToken).toHaveBeenCalled();
@@ -112,10 +123,10 @@ describe('identity session recovery', () => {
   it('a refresh that cannot reach the server keeps the session', async () => {
     refresh.mockRejectedValue(new Error('Network Error'));
     await mounted();
-    await act(async () => {
-      window.dispatchEvent(new Event('online'));
-    });
-    await waitFor(() => expect(refresh).toHaveBeenCalled());
+    await wakeUntil(
+      () => window.dispatchEvent(new Event('online')),
+      () => expect(refresh).toHaveBeenCalled()
+    );
     expect(screen.getByTestId('state').textContent).toBe('in');
     expect(clearToken).not.toHaveBeenCalled();
   });
