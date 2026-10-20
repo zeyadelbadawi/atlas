@@ -42,7 +42,7 @@ import {
   getLessonStatusLabelKey,
   getLessonStatusTone,
 } from '../utils/course-status.utils';
-import { getCourseEditorTabs } from '../utils/course-navigation.utils';
+import { useCourseEditorTabs } from '../hooks/useCourseEditorTabs';
 import type { Assignment } from '@types';
 
 type DialogState =
@@ -58,6 +58,7 @@ export default function CourseAssignmentsPage(): JSX.Element {
     academyId: string;
     courseId: string;
   }>();
+  const editorTabs = useCourseEditorTabs(academyId ?? '', courseId ?? '');
   const { confirm } = useConfirmDialog();
 
   const [dialog, setDialog] = useState<DialogState>(null);
@@ -221,9 +222,7 @@ export default function CourseAssignmentsPage(): JSX.Element {
         }
       />
 
-      {academyId && courseId ? (
-        <SectionTabs items={getCourseEditorTabs(academyId, courseId)} />
-      ) : null}
+      {academyId && courseId ? <SectionTabs items={editorTabs} /> : null}
 
       {assignments.length === 0 ? (
         <EmptyState

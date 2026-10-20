@@ -17,13 +17,14 @@ import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { BreadcrumbItem } from '@types';
 import { useCourse } from '../hooks';
 import { CourseCurriculumEditor } from '../components/CourseCurriculumEditor';
-import { getCourseEditorTabs } from '../utils/course-navigation.utils';
+import { useCourseEditorTabs } from '../hooks/useCourseEditorTabs';
 
 export default function CourseBuilderPage(): JSX.Element {
   const { academyId, courseId } = useParams<{
     academyId: string;
     courseId: string;
   }>();
+  const editorTabs = useCourseEditorTabs(academyId ?? '', courseId ?? '');
 
   const { data: course } = useCourse(academyId ?? '', courseId ?? '');
 
@@ -68,7 +69,7 @@ export default function CourseBuilderPage(): JSX.Element {
                 actions={addSectionButton}
               />
               {academyId && courseId ? (
-                <SectionTabs items={getCourseEditorTabs(academyId, courseId)} />
+                <SectionTabs items={editorTabs} />
               ) : null}
             </>
           ) : (

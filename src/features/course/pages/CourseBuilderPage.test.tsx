@@ -8,7 +8,7 @@
  * QueryClient, stubbed HTTP service; the unit list and live-session block
  * are stubbed (they have their own tests).
  */
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ReactNode } from 'react';
 import {
   act,
@@ -50,6 +50,28 @@ vi.mock('../components/UnitCurriculum', () => ({
 }));
 vi.mock('@features/live-sessions', () => ({
   LiveSessionCurriculumBlock: () => null,
+}));
+// The signed-in user's permissions (the tab strip and the upload controls
+// read them). Owner/manager by default; a test narrows it to an instructor.
+const OWNER_PERMISSIONS = [
+  'course.update',
+  'course.configure',
+  'instructor.course.view',
+  'quiz.manage',
+  'assignment.manage',
+  'academy.website.manage',
+];
+const INSTRUCTOR_PERMISSIONS = [
+  'instructor.course.view',
+  'quiz.manage',
+  'assignment.manage',
+];
+const permissions = vi.hoisted(() => ({ granted: new Set<string>() }));
+vi.mock('@hooks', async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
+  usePermissions: () => ({
+    hasPermission: (permission: string) => permissions.granted.has(permission),
+  }),
 }));
 
 import CourseBuilderPage from './CourseBuilderPage';
@@ -102,9 +124,49 @@ function renderPage() {
 const sectionTitles = () =>
   screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
 
+beforeEach(() => {
+  permissions.granted = new Set(OWNER_PERMISSIONS);
+});
+
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
+});
+
+describe('CourseBuilderPage — editor tabs', () => {
+  const tabLabels = async () => {
+    const strip = await screen.findByRole('navigation', {
+      name: 'Section pages',
+    });
+    return within(strip)
+      .getAllByRole('link')
+      .map((link) => link.textContent);
+  };
+
+  it('shows every course editor tab to an owner or manager', async () => {
+    service.getCourseSections.mockResolvedValue(SECTIONS);
+    renderPage();
+    expect(await tabLabels()).toEqual([
+      'Details',
+      'Course Builder',
+      'Quizzes',
+      'Assignments',
+      'Reviews',
+      'Course Settings',
+    ]);
+  });
+
+  it('hides Details and Settings from a course instructor (their routes need owner/manager)', async () => {
+    permissions.granted = new Set(INSTRUCTOR_PERMISSIONS);
+    service.getCourseSections.mockResolvedValue(SECTIONS);
+    renderPage();
+    expect(await tabLabels()).toEqual([
+      'Course Builder',
+      'Quizzes',
+      'Assignments',
+      'Reviews',
+    ]);
+  });
 });
 
 describe('CourseBuilderPage — sections', () => {

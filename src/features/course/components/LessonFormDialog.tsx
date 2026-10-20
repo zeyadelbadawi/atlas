@@ -63,7 +63,9 @@ export interface LessonFormDialogProps {
   /**
    * B0-MED-05 — when provided, a File lesson's file is uploaded to the
    * protected tier (signed, short-lived links for enrolled learners only)
-   * instead of the public media library it used to come from.
+   * instead of the public media library it used to come from. Omitted for
+   * a caller the server refuses (an instructor): the File lesson then
+   * shows what it delivers and who can upload, with no upload control.
    */
   readonly onUploadProtectedFile?: (file: File) => Promise<ProtectedLessonFile>;
   /** B0-MED-05 — the lesson being edited already delivers a protected file. */
@@ -331,7 +333,7 @@ export function LessonFormDialog({
               />
             ) : null}
 
-            {form.watch('contentType') === 'file' && onUploadProtectedFile ? (
+            {form.watch('contentType') === 'file' ? (
               <FormField
                 control={form.control}
                 name="protectedFile"

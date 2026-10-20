@@ -37,7 +37,7 @@ import {
   useModerateReview,
   useRemoveReview,
 } from '../hooks/useCourseReviewModeration';
-import { getCourseEditorTabs } from '../utils/course-navigation.utils';
+import { useCourseEditorTabs } from '../hooks/useCourseEditorTabs';
 import type { BreadcrumbItem, CourseReviewStatus } from '@types';
 
 type StatusFilter = 'all' | CourseReviewStatus;
@@ -59,6 +59,7 @@ export default function CourseReviewsModerationPage(): JSX.Element {
     academyId: string;
     courseId: string;
   }>();
+  const editorTabs = useCourseEditorTabs(academyId ?? '', courseId ?? '');
   const { confirm } = useConfirmDialog();
 
   const [status, setStatus] = useState<StatusFilter>('all');
@@ -158,9 +159,7 @@ export default function CourseReviewsModerationPage(): JSX.Element {
         breadcrumbs={breadcrumbs}
       />
 
-      {academyId && courseId ? (
-        <SectionTabs items={getCourseEditorTabs(academyId, courseId)} />
-      ) : null}
+      {academyId && courseId ? <SectionTabs items={editorTabs} /> : null}
 
       <div className="mb-4 flex items-center justify-between gap-3">
         <label className="text-sm font-medium text-foreground" htmlFor="status">

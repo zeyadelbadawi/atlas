@@ -38,6 +38,8 @@ vi.mock('./components/CourseCompletionSettingsCard', () => ({
 vi.mock('@hooks', async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),
   useAuth: () => ({ organization: { id: 'o-1', role: 'owner' } }),
+  // The editor tab strip shows the tabs this user may open.
+  usePermissions: () => ({ hasPermission: () => true }),
 }));
 vi.mock('@app/providers', async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),

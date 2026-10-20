@@ -32,7 +32,7 @@ import {
   getLessonStatusLabelKey,
   getLessonStatusTone,
 } from '../utils/course-status.utils';
-import { getCourseEditorTabs } from '../utils/course-navigation.utils';
+import { useCourseEditorTabs } from '../hooks/useCourseEditorTabs';
 import type { Quiz } from '@types';
 
 export default function CourseQuizzesPage(): JSX.Element {
@@ -42,6 +42,7 @@ export default function CourseQuizzesPage(): JSX.Element {
     academyId: string;
     courseId: string;
   }>();
+  const editorTabs = useCourseEditorTabs(academyId ?? '', courseId ?? '');
   const { confirm } = useConfirmDialog();
 
   const { data: course } = useCourse(academyId ?? '', courseId ?? '');
@@ -184,9 +185,7 @@ export default function CourseQuizzesPage(): JSX.Element {
         }
       />
 
-      {academyId && courseId ? (
-        <SectionTabs items={getCourseEditorTabs(academyId, courseId)} />
-      ) : null}
+      {academyId && courseId ? <SectionTabs items={editorTabs} /> : null}
 
       {quizzes.length === 0 ? (
         <EmptyState

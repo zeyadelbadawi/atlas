@@ -9,6 +9,13 @@
  * `getCourseEditorTabs` is the one place this sibling set is declared, so
  * every one of the five pages renders the exact same, single, "you are
  * here" strip instead.
+ *
+ * Each tab carries the permission its route guard requires
+ * (`AtlasAppRoutes.tsx`), so the strip never offers a tab that would only
+ * land on the forbidden page: an assigned course instructor (no
+ * `course.update` / `course.configure`) sees Builder, Quizzes,
+ * Assignments and Reviews, not Details or Settings. Filter with
+ * `useCourseEditorTabs`; the route guard stays the control.
  */
 import {
   BookOpen,
@@ -28,6 +35,7 @@ export function getCourseEditorTabs(
   return [
     {
       id: 'course-tab-details',
+      requiredPermissions: ['course.update'],
       labelKey: 'course:edit.detailsTabLabel',
       path: buildPath(DASHBOARD_ROUTES.academyCourseDetail, {
         academyId,
@@ -37,6 +45,7 @@ export function getCourseEditorTabs(
     },
     {
       id: 'course-tab-builder',
+      requiredPermissions: ['instructor.course.view'],
       labelKey: 'course:edit.goToBuilder',
       path: buildPath(DASHBOARD_ROUTES.academyCourseBuilder, {
         academyId,
@@ -46,6 +55,7 @@ export function getCourseEditorTabs(
     },
     {
       id: 'course-tab-quizzes',
+      requiredPermissions: ['quiz.manage'],
       labelKey: 'course:edit.goToQuizzes',
       path: buildPath(DASHBOARD_ROUTES.academyCourseQuizzes, {
         academyId,
@@ -57,6 +67,7 @@ export function getCourseEditorTabs(
     },
     {
       id: 'course-tab-assignments',
+      requiredPermissions: ['assignment.manage'],
       labelKey: 'course:edit.goToAssignments',
       path: buildPath(DASHBOARD_ROUTES.academyCourseAssignments, {
         academyId,
@@ -66,6 +77,7 @@ export function getCourseEditorTabs(
     },
     {
       id: 'course-tab-reviews',
+      requiredPermissions: ['instructor.course.view'],
       labelKey: 'course:edit.goToReviews',
       path: buildPath(DASHBOARD_ROUTES.academyCourseReviews, {
         academyId,
@@ -75,6 +87,7 @@ export function getCourseEditorTabs(
     },
     {
       id: 'course-tab-settings',
+      requiredPermissions: ['course.configure'],
       labelKey: 'course:edit.goToSettings',
       path: buildPath(DASHBOARD_ROUTES.academyCourseSettings, {
         academyId,
@@ -83,4 +96,16 @@ export function getCourseEditorTabs(
       icon: Settings2,
     },
   ];
+}
+
+/** The tabs the caller may open: every permission a tab's route requires. */
+export function filterCourseEditorTabs(
+  tabs: readonly NavigationItem[],
+  hasPermission: (permission: string) => boolean
+): readonly NavigationItem[] {
+  return tabs.filter((tab) =>
+    (tab.requiredPermissions ?? []).every((permission) =>
+      hasPermission(permission)
+    )
+  );
 }

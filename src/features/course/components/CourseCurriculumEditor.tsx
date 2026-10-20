@@ -45,6 +45,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { toast } from '@/hooks/use-toast';
 import { isApiError } from '@api';
+import { usePermissions } from '@hooks';
 import { useConfirmDialog } from '@app/providers';
 import {
   useCourseSections,
@@ -139,6 +140,13 @@ export function CourseCurriculumEditor({
 }: CourseCurriculumEditorProps): JSX.Element {
   const { t } = useTranslation();
   const { confirm } = useConfirmDialog();
+  const { hasPermission } = usePermissions();
+  // Uploading to the academy's media (a protected lesson file, a hosted
+  // video) is for the managing roles; the server refuses a course
+  // instructor (`errors.media.insufficientRole`). Same gate as the media
+  // library (B0-MED-08): an instructor is not offered a control that can
+  // only fail.
+  const canUploadMedia = hasPermission('academy.website.manage');
 
   const [sectionDialog, setSectionDialog] = useState<SectionDialogState>(null);
   const [lessonDialog, setLessonDialog] = useState<LessonDialogState>(null);
@@ -328,7 +336,8 @@ export function CourseCurriculumEditor({
     });
   // B0-MED-11 — hosted video authoring, offered only while the Normal tier
   // is enabled in production (`hostedVideoAuthoring`, B0-OC-34).
-  const hostedVideoAuthoring = isFeatureEnabled('hostedVideoAuthoring');
+  const hostedVideoAuthoring =
+    isFeatureEnabled('hostedVideoAuthoring') && canUploadMedia;
   const uploadLessonVideo = (
     file: File,
     onProgress: (percent: number) => void,
@@ -785,7 +794,7 @@ export function CourseCurriculumEditor({
         bodyLoading={editingTextLesson !== null && lessonBody.isLoading}
         isPending={createLesson.isPending || updateLesson.isPending}
         onSubmit={handleLessonSubmit}
-        onUploadProtectedFile={uploadProtectedFile}
+        onUploadProtectedFile={canUploadMedia ? uploadProtectedFile : undefined}
         hasProtectedFile={hasProtectedFile}
         onUploadHostedVideo={hostedVideoAuthoring ? uploadLessonVideo : undefined}
         loadHostedVideos={hostedVideoAuthoring ? loadHostedVideos : undefined}

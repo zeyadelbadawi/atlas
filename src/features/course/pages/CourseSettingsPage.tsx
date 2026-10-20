@@ -53,7 +53,7 @@ import {
   getCourseVisibilityLabelKey,
   getCourseVisibilityTone,
 } from '../utils/course-status.utils';
-import { getCourseEditorTabs } from '../utils/course-navigation.utils';
+import { useCourseEditorTabs } from '../hooks/useCourseEditorTabs';
 import { CourseCompletionSettingsCard } from '../components/CourseCompletionSettingsCard';
 import type { BreadcrumbItem } from '@types';
 
@@ -64,6 +64,7 @@ export default function CourseSettingsPage(): JSX.Element {
     academyId: string;
     courseId: string;
   }>();
+  const editorTabs = useCourseEditorTabs(academyId ?? '', courseId ?? '');
   const { confirm } = useConfirmDialog();
   const { organization } = useAuth();
   const [justPublished, setJustPublished] = useState(false);
@@ -226,9 +227,7 @@ export default function CourseSettingsPage(): JSX.Element {
         breadcrumbs={breadcrumbs}
       />
 
-      {academyId && courseId ? (
-        <SectionTabs items={getCourseEditorTabs(academyId, courseId)} />
-      ) : null}
+      {academyId && courseId ? <SectionTabs items={editorTabs} /> : null}
 
       <div className="space-y-6">
         {justPublished && (

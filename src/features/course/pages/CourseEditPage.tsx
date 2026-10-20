@@ -63,7 +63,7 @@ import {
   usePriceCurrencyDefault,
 } from '../hooks/useAcademyPriceCurrency';
 import { CourseInstructorsCard } from '../components/CourseInstructorsCard';
-import { getCourseEditorTabs } from '../utils/course-navigation.utils';
+import { useCourseEditorTabs } from '../hooks/useCourseEditorTabs';
 import {
   updateCourseSchema,
   type UpdateCourseFormData,
@@ -83,6 +83,7 @@ export default function CourseEditPage(): JSX.Element {
     academyId: string;
     courseId: string;
   }>();
+  const editorTabs = useCourseEditorTabs(academyId ?? '', courseId ?? '');
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
 
   const {
@@ -294,9 +295,7 @@ export default function CourseEditPage(): JSX.Element {
         breadcrumbs={breadcrumbs}
       />
 
-      {academyId && courseId ? (
-        <SectionTabs items={getCourseEditorTabs(academyId, courseId)} />
-      ) : null}
+      {academyId && courseId ? <SectionTabs items={editorTabs} /> : null}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
