@@ -7445,6 +7445,91 @@
     "spec": "3b2a830fcf648861f513c4402b8d448e79288c9f",
     "width": 1440
   },
+  "website/editor": {
+    "capturedAt": "2026-10-20T15:27:41.222Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/editor-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/editor-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "54a3f918d33374bb4c35bc4173b96770ac6acea8",
+    "width": 1440
+  },
+  "website/editor-add-section": {
+    "capturedAt": "2026-10-20T15:28:28.081Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/editor-add-section-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/editor-add-section-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "93b55804a021ae04c56abf3bbddfb5819a5d23e2",
+    "width": 1440
+  },
+  "website/editor-section-apply": {
+    "capturedAt": "2026-10-20T15:29:12.632Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/editor-section-apply-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/editor-section-apply-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 813,
+    "spec": "65c98a266d9b22f1171fb512fae841cff4a520e5",
+    "width": 944
+  },
+  "website/editor-section-dialog": {
+    "capturedAt": "2026-10-20T15:28:51.834Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/editor-section-dialog-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/editor-section-dialog-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 813,
+    "spec": "8d00a0111c4da25e5257e1983c0b18fad975bbed",
+    "width": 944
+  },
+  "website/editor-visibility": {
+    "capturedAt": "2026-10-20T15:29:49.975Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/editor-visibility-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/editor-visibility-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "2589ee189355bc5a4b5db480f597d57233513b06",
+    "width": 1440
+  },
   "website/launch-checklist": {
     "capturedAt": "2026-10-20T15:17:34.249Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -7580,6 +7665,23 @@
     "height": 900,
     "spec": "29b3cb974d776617f85c271a6502ba835f9cd3c3",
     "width": 1440
+  },
+  "website/pages-auth-dialog": {
+    "capturedAt": "2026-10-20T15:27:00.306Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/pages-auth-dialog-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/pages-auth-dialog-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 652,
+    "spec": "939b4e3b44e7addf01b723fb1c47dffd30c41586",
+    "width": 560
   },
   "website/pages-create-dialog": {
     "capturedAt": "2026-10-20T15:26:17.916Z",
