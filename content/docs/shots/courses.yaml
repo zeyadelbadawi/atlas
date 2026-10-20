@@ -191,7 +191,7 @@
     - fill: { label: course:builder.lessonDialog.titleLabel, value: { en: Limits at infinity, ar: النهايات عند اللانهاية } }
     - click: { label: course:builder.lessonDialog.contentTypeLabel }
     - click: { role: option, name: course:contentType.video }
-    - fill: { label: course:builder.lessonDialog.contentUrlLabel, value: https://www.youtube.com/watch?v=atlasDemo05 }
+    - fill: { label: course:builder.lessonDialog.contentUrlLabel, value: "https://www.youtube.com/watch?v=atlasDemo05" }
   highlight: { label: course:builder.lessonDialog.contentTypeLabel }
   clip: dialog
 
@@ -218,7 +218,7 @@
     - fill: { label: course:builder.lessonDialog.titleLabel, value: { en: Limits at infinity, ar: النهايات عند اللانهاية } }
     - click: { label: course:builder.lessonDialog.contentTypeLabel }
     - click: { role: option, name: course:contentType.video }
-    - fill: { label: course:builder.lessonDialog.contentUrlLabel, value: https://www.youtube.com/watch?v=atlasDemo05 }
+    - fill: { label: course:builder.lessonDialog.contentUrlLabel, value: "https://www.youtube.com/watch?v=atlasDemo05" }
   highlight: { text: course:builder.lessonDialog.youtubeDetected }
   clip: dialog
 
@@ -233,7 +233,7 @@
     - fill: { label: course:builder.lessonDialog.titleLabel, value: { en: Limits at infinity, ar: النهايات عند اللانهاية } }
     - click: { label: course:builder.lessonDialog.contentTypeLabel }
     - click: { role: option, name: course:contentType.video }
-    - fill: { label: course:builder.lessonDialog.contentUrlLabel, value: https://www.youtube.com/watch?v=atlasDemo05 }
+    - fill: { label: course:builder.lessonDialog.contentUrlLabel, value: "https://www.youtube.com/watch?v=atlasDemo05" }
     - click: { label: course:builder.lessonDialog.statusLabel }
   highlight: { role: option, name: course:lessonStatus.published }
 
@@ -260,7 +260,7 @@
     - fill: { label: course:builder.lessonDialog.titleLabel, value: { en: Revision sheet, ar: ورقة المراجعة } }
     - click: { label: course:builder.lessonDialog.contentTypeLabel }
     - click: { role: option, name: course:contentType.file }
-    - fill: { label: course:builder.lessonDialog.contentUrlLabel, value: https://example.com/revision-sheet.pdf }
+    - fill: { label: course:builder.lessonDialog.contentUrlLabel, value: "https://example.com/revision-sheet.pdf" }
   highlight: { label: course:builder.lessonDialog.contentUrlLabel }
   clip: dialog
 

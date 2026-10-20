@@ -390,6 +390,23 @@
     "spec": "300e53f2056eebc6f0c45dbe5cadf9ba54c5d543",
     "width": 1440
   },
+  "selling/dashboard-revenue": {
+    "capturedAt": "2026-10-20T09:14:41.049Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/selling/dashboard-revenue-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/selling/dashboard-revenue-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "bbd671be0609d2f141ade1f4fba127025b06f2f7",
+    "width": 1440
+  },
   "selling/how-it-works": {
     "capturedAt": "2026-10-20T09:11:48.825Z",
     "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
@@ -406,6 +423,91 @@
     "height": 900,
     "spec": "485cd1f90b8afb95f4d092bc46627c920c26ade2",
     "width": 1440
+  },
+  "selling/learner-refund-contact": {
+    "capturedAt": "2026-10-20T09:14:55.536Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/selling/learner-refund-contact-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/selling/learner-refund-contact-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "bf913a252876b7ea829d534c657f3c7328a49814",
+    "width": 1440
+  },
+  "selling/order-detail": {
+    "capturedAt": "2026-10-20T09:14:30.980Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/selling/order-detail-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/selling/order-detail-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "2ac90cdf719f0fa647a8295a997386b78887fa5f",
+    "width": 1440
+  },
+  "selling/orders-filters": {
+    "capturedAt": "2026-10-20T09:14:20.068Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/selling/orders-filters-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/selling/orders-filters-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "f86ca9d28798d77eeafe2786f47d6989f8e47f5b",
+    "width": 1440
+  },
+  "selling/orders-nav": {
+    "capturedAt": "2026-10-20T09:14:10.951Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/selling/orders-nav-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/selling/orders-nav-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "69ed5d1cdb847371048f95f9251d088780bdb830",
+    "width": 1440
+  },
+  "selling/payment-approve-confirm": {
+    "capturedAt": "2026-10-20T09:13:39.554Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/selling/payment-approve-confirm-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/selling/payment-approve-confirm-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 230,
+    "spec": "f451d8cd7961ce9bdae1ebfaeb178116d1fa23db",
+    "width": 560
   },
   "selling/payment-decision-hint": {
     "capturedAt": "2026-10-20T09:13:28.436Z",
@@ -525,6 +627,40 @@
     "height": 900,
     "spec": "ee80b3628319cb045eb06736acb30f7642c95d0b",
     "width": 1440
+  },
+  "selling/payment-reject-confirm": {
+    "capturedAt": "2026-10-20T09:14:01.298Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/selling/payment-reject-confirm-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/selling/payment-reject-confirm-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 230,
+    "spec": "22b24c6cbb84983a2098a9cea71c5b9adf7827b6",
+    "width": 560
+  },
+  "selling/payment-reject-reason": {
+    "capturedAt": "2026-10-20T09:13:50.409Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/selling/payment-reject-reason-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/selling/payment-reject-reason-1200.webp",
+        "width": 1200
+      }
+    ],
+    "height": 900,
+    "spec": "0d924221e9ce3dae01bb3166da9d8192aa7ffafd",
+    "width": 600
   },
   "selling/payment-sheet": {
     "capturedAt": "2026-10-20T09:13:17.840Z",
