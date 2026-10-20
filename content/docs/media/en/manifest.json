@@ -5082,6 +5082,40 @@
     "spec": "4c17b5e90af0a6af1515fb10f89e416025db5e3e",
     "width": 1440
   },
+  "reference/domain-tab": {
+    "capturedAt": "2026-10-20T14:46:12.355Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/reference/domain-tab-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/reference/domain-tab-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "5d495c452ec0a1222f565e36057eea56c1e78792",
+    "width": 1440
+  },
+  "reference/learner-devices": {
+    "capturedAt": "2026-10-20T14:46:32.602Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/reference/learner-devices-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/reference/learner-devices-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "efeaef36f43e9de75d6eed0ded0a739bcf72c03c",
+    "width": 1440
+  },
   "reference/usage-page": {
     "capturedAt": "2026-10-20T14:46:01.339Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -5097,6 +5131,159 @@
     ],
     "height": 900,
     "spec": "482e3c268d429f78522f0036d87258e593b4df23",
+    "width": 1440
+  },
+  "reference/website-language-tab": {
+    "capturedAt": "2026-10-20T14:46:24.467Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/reference/website-language-tab-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/reference/website-language-tab-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "8955e00c0c34d801045df672c8f81acb0145c2dc",
+    "width": 1440
+  },
+  "roles/instructor-assessments": {
+    "capturedAt": "2026-10-20T14:47:14.827Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/roles/instructor-assessments-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/roles/instructor-assessments-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "1a266214c156e175eae0e9739404c305fa9b96e5",
+    "width": 1440
+  },
+  "roles/instructor-courses": {
+    "capturedAt": "2026-10-20T14:47:03.627Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/roles/instructor-courses-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/roles/instructor-courses-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "081a013686e63aa93913318e5d1bb66060fb17dd",
+    "width": 1440
+  },
+  "roles/learner-overview": {
+    "capturedAt": "2026-10-20T14:47:24.688Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/roles/learner-overview-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/roles/learner-overview-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "09a13f36ea53a730c9859023ea178a89b9200630",
+    "width": 1440
+  },
+  "roles/manager-members": {
+    "capturedAt": "2026-10-20T14:46:47.989Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/roles/manager-members-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/roles/manager-members-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "6de4034a38898c4d68b2e4c1edc7ad8351a835b9",
+    "width": 1440
+  },
+  "roles/manager-orders": {
+    "capturedAt": "2026-10-20T14:46:55.610Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/roles/manager-orders-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/roles/manager-orders-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "562881fe453107bbd528d2c4c3de5a7cd4db4250",
+    "width": 1440
+  },
+  "roles/owner-members": {
+    "capturedAt": "2026-10-20T14:46:40.034Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/roles/owner-members-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/roles/owner-members-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "d24a7f8317ebe4c790bd1d1083159a7470f8d89f",
+    "width": 1440
+  },
+  "security/learner-your-data": {
+    "capturedAt": "2026-10-20T14:47:44.397Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/security/learner-your-data-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/security/learner-your-data-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "a1bf1bf8ecff58a1bc3b40e1fdd01f7bd32bf7d2",
+    "width": 1440
+  },
+  "security/security-tab-overview": {
+    "capturedAt": "2026-10-20T14:47:35.952Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/security/security-tab-overview-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/security/security-tab-overview-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 2083,
+    "spec": "053a15fa94f4c6e8ad44d5767b4d49800d6e043e",
     "width": 1440
   },
   "selling/dashboard-revenue": {
@@ -5420,6 +5607,363 @@
     ],
     "height": 900,
     "spec": "e6d566047fe6cbe222ab3d4f3b56bce36a3350f5",
+    "width": 1440
+  },
+  "support/learner-contact-academy": {
+    "capturedAt": "2026-10-20T14:49:37.285Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/support/learner-contact-academy-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/support/learner-contact-academy-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "7536e95c5663cc960014705a2ef0286fbbd83084",
+    "width": 1440
+  },
+  "support/new-ticket-attach": {
+    "capturedAt": "2026-10-20T14:48:23.234Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/support/new-ticket-attach-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/support/new-ticket-attach-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 606,
+    "spec": "99d6983ab0f238803081b34f49e5aac1ad8e5218",
+    "width": 560
+  },
+  "support/new-ticket-button": {
+    "capturedAt": "2026-10-20T14:48:00.093Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/support/new-ticket-button-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/support/new-ticket-button-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "86d3cd15d4c7e47274c0b4498818d67502c70629",
+    "width": 1440
+  },
+  "support/new-ticket-form": {
+    "capturedAt": "2026-10-20T14:48:09.319Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/support/new-ticket-form-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/support/new-ticket-form-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 606,
+    "spec": "480cc2aabc0eb08c7723f82b46e833df72f6be65",
+    "width": 560
+  },
+  "support/new-ticket-submit": {
+    "capturedAt": "2026-10-20T14:48:35.686Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/support/new-ticket-submit-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/support/new-ticket-submit-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 606,
+    "spec": "55c86e88f918f6fb9376881312476fa954b7afd9",
+    "width": 560
+  },
+  "support/requests-brief": {
+    "capturedAt": "2026-10-20T14:49:18.000Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/support/requests-brief-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/support/requests-brief-1248.webp",
+        "width": 1248
+      }
+    ],
+    "height": 858,
+    "spec": "b7615d5eb0f4d637312cdc062fa4f8d7d94273f6",
+    "width": 624
+  },
+  "support/requests-new-button": {
+    "capturedAt": "2026-10-20T14:48:58.783Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/support/requests-new-button-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/support/requests-new-button-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "d472a585580586a6bcb7bedc7438d508194a3d73",
+    "width": 1440
+  },
+  "support/requests-page": {
+    "capturedAt": "2026-10-20T14:48:50.951Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/support/requests-page-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/support/requests-page-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "65469a8f016ea4dc7df4d734261d594c488704a1",
+    "width": 1440
+  },
+  "support/requests-submit": {
+    "capturedAt": "2026-10-20T14:49:28.579Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/support/requests-submit-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/support/requests-submit-1248.webp",
+        "width": 1248
+      }
+    ],
+    "height": 858,
+    "spec": "f9fa0ab20edba9488072c8e9c249bdfaa649caba",
+    "width": 624
+  },
+  "support/requests-type": {
+    "capturedAt": "2026-10-20T14:49:07.073Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/support/requests-type-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/support/requests-type-1248.webp",
+        "width": 1248
+      }
+    ],
+    "height": 858,
+    "spec": "2a0d9d602b713f06c9fad8e9b10bd1d9f7472807",
+    "width": 624
+  },
+  "support/support-page": {
+    "capturedAt": "2026-10-20T14:47:52.319Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/support/support-page-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/support/support-page-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "9c8f9336e9f90a49344496eb0252c61cca07da1a",
+    "width": 1440
+  },
+  "support/ticket-reply": {
+    "capturedAt": "2026-10-20T14:48:42.859Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/support/ticket-reply-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/support/ticket-reply-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "5e36557a57a42033c2abec04a844eb286f523b2e",
+    "width": 1440
+  },
+  "support/website-messages": {
+    "capturedAt": "2026-10-20T14:49:46.780Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/support/website-messages-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/support/website-messages-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "4cc1dd4368dfccd382ddedaecd7596727cbef3a1",
+    "width": 1440
+  },
+  "tasks/sell-payment-methods": {
+    "capturedAt": "2026-10-20T14:51:05.865Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/sell-payment-methods-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/sell-payment-methods-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "08b0609c1e561f457180dbd542c17d4e1f54c8d4",
+    "width": 1440
+  },
+  "tasks/sell-pricing": {
+    "capturedAt": "2026-10-20T14:50:56.354Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/sell-pricing-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/sell-pricing-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "586b03785c249da5f003192ea826023a718a15ea",
+    "width": 1440
+  },
+  "tasks/website-domain": {
+    "capturedAt": "2026-10-20T14:50:46.442Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/website-domain-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/website-domain-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e817e367041669cfb8b44af79c792f48e6fefd24",
+    "width": 1440
+  },
+  "tasks/website-language": {
+    "capturedAt": "2026-10-20T14:50:27.783Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/website-language-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/website-language-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "097e60bccf837ef61d86bdc53563cb32dff7996d",
+    "width": 1440
+  },
+  "tasks/website-pages": {
+    "capturedAt": "2026-10-20T14:50:17.514Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/website-pages-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/website-pages-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "f89244ce55bf22e3f08881b5b7d44c8553ce46dd",
+    "width": 1440
+  },
+  "tasks/website-publish": {
+    "capturedAt": "2026-10-20T14:50:37.875Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/website-publish-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/website-publish-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "d1da1a7513b14f7246c1876b595ec38c5b0feb21",
+    "width": 1440
+  },
+  "tasks/website-theme": {
+    "capturedAt": "2026-10-20T14:49:58.287Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/website-theme-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/website-theme-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "66c0136ef2e019e5fdce7b81a21fb019a30a963a",
+    "width": 1440
+  },
+  "tasks/website-visual-identity": {
+    "capturedAt": "2026-10-20T14:50:08.559Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/website-visual-identity-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/website-visual-identity-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "76c09556962ca7b0833416b373327a2824fae972",
     "width": 1440
   }
 }
