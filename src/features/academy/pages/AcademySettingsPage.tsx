@@ -23,7 +23,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -51,6 +50,8 @@ import {
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useAcademy, useUpdateAcademy } from '../hooks';
 import { DeleteAcademyCard } from '../components/DeleteAcademyCard';
+import { AcademySlugDescription } from '../components/AcademySlugDescription';
+import { academySlugErrorMessage } from '../utils/academy-slug-error.utils';
 import { RegistrationPolicyCard } from '../components/RegistrationPolicyCard';
 import { CommunicationSettingsCard } from '../components/CommunicationSettingsCard';
 import { AcademyInvitesCard } from '../components/AcademyInvitesCard';
@@ -62,10 +63,10 @@ import {
   updateAcademySettingsSchema,
   type UpdateAcademySettingsFormData,
 } from '../schemas/academy.schemas';
-import type { BreadcrumbItem } from '@types';
+import type { BreadcrumbItem, LanguageCode } from '@types';
 
 export default function AcademySettingsPage(): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { academyId } = useParams<{ academyId: string }>();
   const { organization } = useAuth();
@@ -102,6 +103,9 @@ export default function AcademySettingsPage(): JSX.Element {
     error: loadError,
     refetch,
   } = useAcademy(academyId ?? '');
+  // One slug change every 60 days: until then the field is read-only and
+  // says when the next change is possible (the server refuses it anyway).
+  const slugLocked = !!academy?.nextSlugChangeAt;
   const {
     mutateAsync: updateAcademy,
     isPending,
@@ -161,6 +165,19 @@ export default function AcademySettingsPage(): JSX.Element {
       return true;
     } catch (error) {
       if (nameConflictFromError(error)) return false;
+      const slugError = academySlugErrorMessage(
+        error,
+        t,
+        i18n.language as LanguageCode
+      );
+      if (slugError) {
+        form.setError(
+          'slug',
+          { type: 'server', message: slugError },
+          { shouldFocus: true }
+        );
+        return false;
+      }
       toast({
         title: t('academy:settings.error'),
         description: t('errors:generic.description'),
@@ -274,15 +291,15 @@ export default function AcademySettingsPage(): JSX.Element {
                         {...field}
                         dir="ltr"
                         data-ltr-content
-                        readOnly={!canChangeSlug}
-                        aria-readonly={!canChangeSlug || undefined}
+                        readOnly={!canChangeSlug || slugLocked}
+                        aria-readonly={!canChangeSlug || slugLocked || undefined}
                       />
                     </FormControl>
-                    <FormDescription>
-                      {canChangeSlug
-                        ? t('academy:create.slugHelp')
-                        : t('academy:settings.slugOwnerOnly')}
-                    </FormDescription>
+                    <AcademySlugDescription
+                      canChange={canChangeSlug}
+                      changing={!!academy && field.value !== academy.slug}
+                      nextChangeAt={academy?.nextSlugChangeAt}
+                    />
                     <FormMessage />
                   </FormItem>
                 )}

@@ -251,12 +251,19 @@ export default function AcademyPaymentsPage(): JSX.Element {
         id: 'status',
         enableSorting: false,
         header: t(`${K}.columns.status`),
-        cell: ({ row }) => (
-          <StatusBadge
-            labelKey={`${K}.status.${row.original.reviewStatus}`}
-            tone={getManualReviewStatusTone(row.original.reviewStatus)}
-          />
-        ),
+        cell: ({ row }) =>
+          // A payment the academy refunded reads Refunded, not Approved.
+          row.original.orderStatus === 'refunded' ? (
+            <StatusBadge
+              labelKey="payments:courseOrder.status.refunded"
+              tone="neutral"
+            />
+          ) : (
+            <StatusBadge
+              labelKey={`${K}.status.${row.original.reviewStatus}`}
+              tone={getManualReviewStatusTone(row.original.reviewStatus)}
+            />
+          ),
       },
     ],
     [t, fmt, locale]

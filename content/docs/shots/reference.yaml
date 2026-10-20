@@ -1,0 +1,28 @@
+# Screenshots for the Reference category (content/docs/{en,ar}/reference).
+# Real routes (src/app/routes/route-paths.ts), real i18n keys.
+
+- key: reference/usage-page
+  as: owner
+  surface: dashboard
+  path: /dashboard/tenant/usage
+  waitFor: { text: tenant:usage.subtitle }
+
+- key: reference/domain-tab
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=domain
+  waitFor: { text: website:domain.custom.title }
+  highlight: { text: website:domain.custom.title, exact: true }
+
+- key: reference/website-language-tab
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=language
+  waitFor: { text: website:language.title }
+  highlight: { text: website:language.title, exact: true }
+
+- key: reference/learner-devices
+  as: learner
+  surface: academy
+  path: /my/devices
+  waitFor: { text: learning:learnerDashboard.devices.subtitle }

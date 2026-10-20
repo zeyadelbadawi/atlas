@@ -1,0 +1,308 @@
+# Troubleshooting (DOC-TRB-*). Real routes (src/app/routes/route-paths.ts)
+# and real i18n keys (src/localization/resources/<lang>/*.json). Only states
+# the demo seed really has are captured: no failure is faked for a picture.
+
+# ---- I can't sign in (DOC-TRB-002) ----
+- key: troubleshooting/platform-sign-in-student-hint
+  as: visitor
+  surface: platform
+  path: /auth/sign-in
+  waitFor: { text: auth:signIn.studentHint }
+  highlight: { text: auth:signIn.studentHint }
+
+- key: troubleshooting/platform-forgot-password-link
+  as: visitor
+  surface: platform
+  path: /auth/sign-in
+  waitFor: { text: auth:signIn.studentHint }
+  highlight: { role: link, name: auth:signIn.forgotPassword }
+
+- key: troubleshooting/platform-forgot-password-form
+  as: visitor
+  surface: platform
+  path: /auth/forgot-password
+  waitFor: { text: auth:forgotPassword.subtitle }
+  highlight: { role: button, name: auth:forgotPassword.submit }
+
+- key: troubleshooting/academy-sign-in-forgot-password
+  as: visitor
+  surface: academy
+  path: /sign-in
+  waitFor: { text: publicWebsite:auth.signIn.subtitle }
+  highlight: { role: link, name: auth:signIn.forgotPassword }
+
+# ---- Device limit reached (DOC-TRB-003) ----
+- key: troubleshooting/learner-devices-nav
+  as: learner
+  surface: academy
+  path: /my
+  waitFor: { text: learning:learnerDashboard.nav.devices }
+  highlight: { role: link, name: learning:learnerDashboard.nav.devices }
+
+- key: troubleshooting/learner-devices-list
+  as: learner
+  surface: academy
+  path: /my/devices
+  waitFor: { text: learning:learnerDashboard.devices.subtitle }
+  highlight: { text: learning:learnerDashboard.devices.registeredTitle }
+
+- key: troubleshooting/owner-device-policy
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:protection.devices.title }
+  highlight: { text: academy:protection.devices.maxDevices.label }
+
+# ---- A lesson won't open or play (DOC-TRB-004) ----
+- key: troubleshooting/learner-course-outline
+  as: learner
+  surface: academy
+  path: /my/courses/{courseId}
+  waitFor: { text: learning:learnerDashboard.courseProgress.subtitle }
+
+- key: troubleshooting/builder-lesson-menu
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/builder
+  waitFor: { text: course:builder.subtitle }
+  actions:
+    - click: { role: button, name: course:builder.itemMenu.actions, nth: 0 }
+  highlight: { role: menuitem, name: course:builder.lessonMenu.edit }
+
+- key: troubleshooting/lesson-dialog-content
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/builder
+  waitFor: { text: course:builder.subtitle }
+  actions:
+    - click: { role: button, name: course:builder.itemMenu.actions, nth: 0 }
+    - click: { role: menuitem, name: course:builder.lessonMenu.edit }
+    - wait: 500
+  highlight: { text: course:builder.lessonDialog.contentTypeLabel, exact: true }
+  clip: dialog
+
+- key: troubleshooting/course-settings-publish
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{draftCourseId}/settings
+  waitFor: { text: course:settings.publishingDescription }
+  highlight: { role: button, name: course:settings.publishAction }
+
+# ---- My website shows "Coming soon" (DOC-TRB-005) ----
+- key: troubleshooting/website-publish-bar
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website
+  waitFor: { text: website:overview.title }
+  highlight: { testId: website-publish-hint }
+
+- key: troubleshooting/page-editor-publish-page
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}
+  waitFor: { text: website:editor.compositionTitle }
+  highlight: { testId: website-publish-page }
+
+# ---- Custom domain (DOC-TRB-006) ----
+- key: troubleshooting/domain-stepper
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=domain
+  waitFor: { text: website:domain.custom.title }
+  highlight: { label: website:domain.custom.steps.ariaLabel }
+
+- key: troubleshooting/domain-address
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=domain
+  waitFor: { text: website:domain.custom.title }
+  highlight: { text: website:domain.address.title }
+
+# ---- Academy creation (DOC-TRB-007) ----
+- key: troubleshooting/provisioning-history
+  as: owner
+  surface: dashboard
+  path: /dashboard/provisioning
+  waitFor: { text: provisioning:history.title }
+  highlight: { text: provisioning:history.table.status }
+
+- key: troubleshooting/provisioning-new-address
+  as: owner
+  surface: dashboard
+  path: /dashboard/provisioning/new
+  waitFor: { text: provisioning:start.formTitle }
+  highlight: { text: provisioning:start.subdomainLabel }
+
+# ---- Payment proof (DOC-TRB-008) ----
+- key: troubleshooting/learner-payments
+  as: learner
+  surface: academy
+  path: /my/payments
+  waitFor: { text: learning:learnerDashboard.payments.subtitle }
+  highlight: { role: link, name: learning:learnerDashboard.nav.payments }
+
+- key: troubleshooting/owner-payments-pending
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/payments
+  waitFor: { text: payments:academyReview.description }
+  highlight: { testId: academy-payments-tab-pending }
+
+- key: troubleshooting/owner-payments-rejected
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/payments
+  waitFor: { text: payments:academyReview.description }
+  actions:
+    - click: { testId: academy-payments-tab-rejected }
+  highlight: { testId: academy-payments-tab-rejected }
+
+- key: troubleshooting/subscription-payment-history
+  as: owner
+  surface: dashboard
+  path: /dashboard/tenant/billing/payments
+  waitFor: { text: payments:paymentHistory.subtitle }
+  # One row (seed step 08): the trial organization's InstaPay subscription
+  # payment, proof uploaded, Review "Awaiting review".
+  # Sortable headers also read "Sort ascending" (sr-only): a literal, not an
+  # anchored key, matches the header's name (payments:paymentHistory.table.reviewStatus).
+  highlight: { role: columnheader, name: { en: Review, ar: المراجعة } }
+
+# ---- I didn't get an email (DOC-TRB-009) ----
+- key: troubleshooting/owner-email-preferences
+  as: owner
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:tabs.preferences }
+  actions:
+    - click: { role: tab, name: profile:tabs.preferences }
+  highlight: { text: notifications:communication.title }
+
+- key: troubleshooting/learner-email-preferences
+  as: learner
+  surface: academy
+  path: /my/profile
+  waitFor: { text: profile:tabs.preferences }
+  actions:
+    - click: { role: tab, name: profile:tabs.preferences }
+  highlight: { text: notifications:communication.title }
+
+# ---- Plan limit (DOC-TRB-010) ----
+- key: troubleshooting/usage-page
+  as: owner
+  surface: dashboard
+  path: /dashboard/tenant/usage
+  waitFor: { text: tenant:usage.subtitle }
+  highlight: { text: tenant:usage.subtitle }
+
+- key: troubleshooting/compare-plans
+  as: owner
+  surface: dashboard
+  path: /dashboard/tenant/subscription
+  waitFor: { text: tenant:subscription.subtitle }
+  highlight: { role: button, name: tenant:subscription.comparePlans }
+
+# ---- Quiz (DOC-TRB-011) ----
+- key: troubleshooting/quiz-overrides
+  as: instructor
+  surface: dashboard
+  path: /dashboard/instructor/courses/{courseId}/quizzes/{quizId}/results
+  waitFor: { text: instructor:quizResults.title }
+  actions:
+    - click: { role: button, name: instructor:quizResults.actions.overrides }
+    - wait: 500
+  highlight: { text: instructor:quizResults.overrides.description }
+  clip: dialog
+
+# ---- Can't delete (DOC-TRB-012) ----
+- key: troubleshooting/lesson-dialog-availability
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/builder
+  waitFor: { text: course:builder.subtitle }
+  actions:
+    - click: { role: button, name: course:builder.itemMenu.actions, nth: 0 }
+    - click: { role: menuitem, name: course:builder.lessonMenu.edit }
+    - wait: 500
+  highlight: { text: course:builder.lessonDialog.statusLabel, exact: true }
+  clip: dialog
+
+- key: troubleshooting/quiz-editor
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/quizzes/{quizId}
+  waitFor: { text: course:quizAuthoring.editor.detailsTitle }
+
+# ---- Website save conflict (DOC-TRB-013) ----
+- key: troubleshooting/page-editor-save
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}
+  waitFor: { text: website:editor.compositionTitle }
+  highlight: { testId: website-save-page }
+
+# ---- A learner can't join (DOC-TRB-014) ----
+- key: troubleshooting/students-pending
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members?tab=students
+  waitFor: { text: academy:students.table.student }
+  highlight: { text: academy:students.status.pending }
+
+- key: troubleshooting/student-drawer-approve
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members?tab=students
+  waitFor: { text: academy:students.table.student }
+  actions:
+    - click: { text: academy:students.status.pending }
+    - wait: 800
+  highlight: { role: button, name: academy:students.actions.approve }
+  clip: dialog
+
+- key: troubleshooting/students-blocked
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members?tab=students
+  waitFor: { text: academy:students.table.student }
+  highlight: { text: academy:students.status.blocked }
+
+- key: troubleshooting/registration-policy
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:registration.policy.title }
+  highlight: { text: academy:registration.policy.description }
+
+# ---- Read-only dashboard (DOC-TRB-015) ----
+- key: troubleshooting/plans-page
+  as: owner
+  surface: dashboard
+  path: /dashboard/plans
+  waitFor: { text: tenant:plans.title }
+
+# ---- Arabic text in English (DOC-TRB-016) ----
+- key: troubleshooting/website-language-tab
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=language
+  waitFor: { text: website:language.description }
+  highlight: { text: website:language.required }
+
+- key: troubleshooting/page-editor-edit-section
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}
+  waitFor: { text: website:editor.compositionTitle }
+  highlight: { role: button, name: website:editor.editSection, nth: 0 }
+
+- key: troubleshooting/section-arabic-field
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}
+  waitFor: { text: website:editor.compositionTitle }
+  actions:
+    - click: { role: button, name: website:editor.editSection, nth: 0 }
+    - wait: 500
+  highlight: { text: website:editor.optional }
+  clip: dialog

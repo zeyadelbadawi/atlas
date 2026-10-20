@@ -4,9 +4,11 @@
  * JavaScript disabled.
  */
 import type { ReactNode } from 'react';
-import { ArrowLeft, ArrowRight, Check, Minus, Plus } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BookOpen, Check, Minus, Plus } from 'lucide-react';
 import { cn } from '@/shared/utils/class-name.utils';
+import type { MkLink } from '../content/content.types';
 import type { MarketingLang } from '../types';
+import { link, type Tokens } from '../lib/copy';
 import { formatNumber } from '../lib/site';
 
 export function Container({ children, className }: { children: ReactNode; className?: string }) {
@@ -280,6 +282,22 @@ export function CtaBand({
         </div>
       </Container>
     </section>
+  );
+}
+
+/** "Learn more" link to the help-center article behind a section (`help:/…`). */
+export function LearnMore({ lang, value, tokens }: { lang: MarketingLang; value: MkLink; tokens: Tokens }) {
+  const resolved = link(lang, value, tokens);
+  return (
+    <a
+      href={resolved.href}
+      aria-label={resolved.ariaLabel}
+      data-mkt-help
+      className="mt-6 inline-flex min-h-11 items-center gap-2 font-semibold text-primary underline-offset-4 hover:underline"
+    >
+      <BookOpen className="size-4 shrink-0" aria-hidden strokeWidth={1.75} />
+      {resolved.label}
+    </a>
   );
 }
 

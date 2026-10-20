@@ -1,0 +1,124 @@
+# Getting help screenshots (content/docs/<lang>/support/*.md).
+# Real routes (src/app/routes/route-paths.ts) and i18n keys
+# (src/localization/resources/<lang>/*.json).
+
+# --- Get help: open a support ticket (DOC-SUP-001) --------------------------
+
+- key: support/support-page
+  as: owner
+  surface: dashboard
+  path: /dashboard/support
+  waitFor: { text: support:center.subtitle }
+  highlight: { role: link, name: navigation:items.support, nth: 0 }
+
+- key: support/new-ticket-button
+  as: owner
+  surface: dashboard
+  path: /dashboard/support
+  waitFor: { text: support:center.subtitle }
+  highlight: { testId: open-create-ticket }
+
+- key: support/new-ticket-form
+  as: owner
+  surface: dashboard
+  path: /dashboard/support
+  waitFor: { text: support:center.subtitle }
+  actions:
+    - click: { testId: open-create-ticket }
+    - fill: { testId: support-subject, value: { en: Learners can't see the new course, ar: الطلاب مش شايفين الكورس الجديد } }
+    - fill: { testId: support-description, value: { en: "Academy: Al-Nour Academy. Since this morning, learners who open Calculus Essentials see an error. I expected the lessons to open.", ar: "الأكاديمية: أكاديمية النور. من الصبح الطلاب اللي بيفتحوا كورس أساسيات التفاضل بيظهرلهم خطأ، وكنت متوقع الدروس تفتح عادي." } }
+  highlight: { testId: support-description }
+  clip: dialog
+
+- key: support/new-ticket-attach
+  as: owner
+  surface: dashboard
+  path: /dashboard/support
+  waitFor: { text: support:center.subtitle }
+  actions:
+    - click: { testId: open-create-ticket }
+  highlight: { text: support:attachment.help }
+  clip: dialog
+
+- key: support/new-ticket-submit
+  as: owner
+  surface: dashboard
+  path: /dashboard/support
+  waitFor: { text: support:center.subtitle }
+  actions:
+    - click: { testId: open-create-ticket }
+  highlight: { testId: submit-ticket }
+  clip: dialog
+
+- key: support/ticket-reply
+  as: owner
+  surface: dashboard
+  path: /dashboard/support/{supportCaseId}
+  waitFor: { text: support:detail.replyLabel }
+  highlight: { testId: send-reply }
+
+# --- Request a service from the Atlas team (DOC-SUP-002) --------------------
+
+- key: support/requests-page
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/requests
+  waitFor: { text: customerRequests:subtitle }
+  highlight: { role: link, name: navigation:items.academyRequests, nth: 0 }
+
+- key: support/requests-new-button
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/requests
+  waitFor: { text: customerRequests:subtitle }
+  highlight: { testId: new-customer-request }
+
+- key: support/requests-type
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/requests
+  waitFor: { text: customerRequests:subtitle }
+  actions:
+    - click: { testId: new-customer-request }
+  highlight: { text: customerRequests:fields.type }
+  clip: dialog
+
+- key: support/requests-brief
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/requests
+  waitFor: { text: customerRequests:subtitle }
+  actions:
+    - click: { testId: new-customer-request }
+    - click: { text: customerRequests:types.logo.description }
+    - fill: { testId: customer-request-title, value: { en: New logo for our spring launch, ar: لوجو جديد لإطلاق الترم الجديد } }
+  highlight: { testId: customer-request-title }
+  clip: dialog
+
+- key: support/requests-submit
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/requests
+  waitFor: { text: customerRequests:subtitle }
+  actions:
+    - click: { testId: new-customer-request }
+    - click: { text: customerRequests:types.logo.description }
+    - scroll: { testId: customer-request-submit }
+  highlight: { testId: customer-request-submit }
+  clip: dialog
+
+# --- How learners get help (DOC-SUP-003) ------------------------------------
+
+- key: support/learner-contact-academy
+  as: learner
+  surface: academy
+  path: /my/courses
+  waitFor: { text: learning:learnerDashboard.courses.title }
+  highlight: { testId: learner-nav-contact-academy }
+
+- key: support/website-messages
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/messages
+  waitFor: { text: website:messages.subtitle }
+  highlight: { role: link, name: navigation:items.academyWebsiteMessages, nth: 0 }

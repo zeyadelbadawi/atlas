@@ -1,0 +1,243 @@
+# Screenshots for content/docs/{en,ar}/getting-started/*.md
+# Routes: src/app/routes/route-paths.ts. Keys: src/localization/resources/<lang>/*.json.
+
+# --- DOC-START-001 overview ---------------------------------------------------
+- key: getting-started/owner-dashboard
+  as: owner
+  surface: dashboard
+  path: /dashboard
+  waitFor: { text: dashboard:metrics.students }
+
+# --- DOC-START-002 create-account ---------------------------------------------
+- key: getting-started/sign-up-page
+  as: visitor
+  surface: platform
+  path: /auth/register
+  waitFor: { text: auth:register.title }
+
+- key: getting-started/sign-up-name-email
+  as: visitor
+  surface: platform
+  path: /auth/register
+  waitFor: { text: auth:register.title }
+  actions:
+    - fill: { label: auth:register.name, value: { en: Demo Teacher, ar: مدرس تجريبي } }
+    - fill: { label: auth:register.email, value: teacher@example.com }
+  highlight:
+    - { label: auth:register.name }
+    - { label: auth:register.email }
+
+- key: getting-started/sign-up-phone
+  as: visitor
+  surface: platform
+  path: /auth/register
+  waitFor: { text: auth:register.title }
+  highlight: { label: auth:register.phone }
+
+- key: getting-started/sign-up-password
+  as: visitor
+  surface: platform
+  path: /auth/register
+  waitFor: { text: auth:register.title }
+  highlight:
+    - { label: auth:register.password }
+    - { label: auth:register.confirmPassword }
+
+- key: getting-started/sign-up-organization
+  as: visitor
+  surface: platform
+  path: /auth/register
+  waitFor: { text: auth:register.organization.nameLabel }
+  actions:
+    - fill: { label: auth:register.organization.nameLabel, value: { en: Nile Learning, ar: أكاديمية النيل } }
+  highlight: { label: auth:register.organization.nameLabel }
+
+- key: getting-started/sign-up-plan
+  as: visitor
+  surface: platform
+  path: /auth/register
+  waitFor: { text: auth:register.plan.noCard }
+  highlight: { role: radiogroup, name: auth:register.plan.title }
+
+- key: getting-started/sign-up-submit
+  as: visitor
+  surface: platform
+  path: /auth/register
+  waitFor: { text: auth:register.title }
+  highlight:
+    - { role: checkbox }
+    - { role: button, name: auth:register.submit }
+
+- key: getting-started/sign-in
+  as: visitor
+  surface: platform
+  path: /auth/sign-in
+  waitFor: { text: auth:signIn.title }
+  highlight: { role: button, name: auth:signIn.submit }
+
+# --- DOC-START-003 onboarding-wizard -------------------------------------------
+- key: getting-started/onboarding-academy
+  as: owner
+  surface: dashboard
+  path: /onboarding/academy
+  waitFor: { text: onboarding:steps.academy.title }
+
+- key: getting-started/onboarding-website
+  as: owner
+  surface: dashboard
+  path: /onboarding/website
+  waitFor: { text: onboarding:steps.website.title }
+
+- key: getting-started/onboarding-course
+  as: owner
+  surface: dashboard
+  path: /onboarding/course
+  waitFor: { text: onboarding:steps.course.title }
+
+- key: getting-started/onboarding-summary
+  as: owner
+  surface: dashboard
+  path: /onboarding/summary
+  waitFor: { text: onboarding:summary.requiredHeading }
+  highlight: { role: button, name: onboarding:summary.finish }
+
+# --- DOC-START-003 / DOC-START-004 academy form ---------------------------------
+- key: getting-started/academy-form
+  as: owner
+  surface: dashboard
+  path: /dashboard/provisioning/new
+  waitFor: { text: provisioning:start.formTitle }
+
+- key: getting-started/new-academy-page
+  as: owner
+  surface: dashboard
+  path: /dashboard/provisioning/new
+  waitFor: { text: provisioning:start.formTitle }
+  highlight: { role: link, name: navigation:items.academyProvisioning }
+
+- key: getting-started/academy-name
+  as: owner
+  surface: dashboard
+  path: /dashboard/provisioning/new
+  waitFor: { text: provisioning:start.formTitle }
+  actions:
+    - fill: { label: provisioning:start.academyNameLabel, value: { en: Nile Science Academy, ar: أكاديمية النيل للعلوم } }
+  highlight: { label: provisioning:start.academyNameLabel }
+
+- key: getting-started/academy-address
+  as: owner
+  surface: dashboard
+  path: /dashboard/provisioning/new
+  waitFor: { text: provisioning:start.formTitle }
+  actions:
+    - fill: { label: provisioning:start.academyNameLabel, value: { en: Nile Science Academy, ar: أكاديمية النيل للعلوم } }
+    - fill: { label: provisioning:start.subdomainLabel, value: nile-science-demo }
+    - wait: 1500
+  highlight: { label: provisioning:start.subdomainLabel }
+
+- key: getting-started/academy-theme
+  as: owner
+  surface: dashboard
+  path: /dashboard/provisioning/new
+  waitFor: { text: provisioning:start.formTitle }
+  highlight: { role: radiogroup, name: provisioning:start.themeLabel }
+
+- key: getting-started/academy-brand
+  as: owner
+  surface: dashboard
+  path: /dashboard/provisioning/new
+  waitFor: { text: provisioning:start.formTitle }
+  # The page opens this section already (ProvisioningStartPage passes
+  # brandStudioOpen): clicking its summary would close it again.
+  actions:
+    - scroll: { selector: "details[open] > summary" }
+  highlight: { selector: "details[open] > summary" }
+
+- key: getting-started/academy-start-mode
+  as: owner
+  surface: dashboard
+  path: /dashboard/provisioning/new
+  waitFor: { text: provisioning:start.formTitle }
+  highlight: { text: provisioning:start.setupModeLabel, exact: true }
+
+- key: getting-started/academy-payment-methods
+  as: owner
+  surface: dashboard
+  path: /dashboard/provisioning/new
+  waitFor: { text: provisioning:start.formTitle }
+  highlight: { testId: setup-payment-methods }
+
+- key: getting-started/academy-submit
+  as: owner
+  surface: dashboard
+  path: /dashboard/provisioning/new
+  waitFor: { text: provisioning:start.formTitle }
+  highlight: { role: button, name: provisioning:start.submit }
+
+# --- DOC-START-005 launch-checklist --------------------------------------------
+- key: getting-started/launch-website
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website
+  waitFor: { text: website:launchChecklist.title }
+  highlight: { text: website:launchChecklist.title, exact: true }
+
+- key: getting-started/launch-courses
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses
+  waitFor: { text: course:list.title }
+  highlight: { role: button, name: course:list.createButton }
+
+- key: getting-started/launch-course-publish
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{draftCourseId}/setup?step=publish
+  waitFor: { text: course:wizard.steps.publish.title }
+
+- key: getting-started/launch-payment-methods
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/payment-methods
+  waitFor: { text: payments:academyMethods.title }
+
+- key: getting-started/launch-registration
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:registration.policy.title }
+  highlight: { text: academy:registration.policy.title, exact: true }
+
+- key: getting-started/launch-test-sign-up
+  as: visitor
+  surface: academy
+  path: /sign-up
+  waitFor: { text: publicWebsite:auth.signUp.title }
+
+# --- DOC-START-006 plans-and-limits ---------------------------------------------
+- key: getting-started/usage-page
+  as: owner
+  surface: dashboard
+  path: /dashboard/tenant/usage
+  waitFor: { text: tenant:usage.title }
+
+# --- DOC-START-007 instructor-quick-start --------------------------------------
+- key: getting-started/instructor-teaching-dashboard
+  as: instructor
+  surface: dashboard
+  path: /dashboard/instructor
+  waitFor: { text: instructor:dashboard.subtitle }
+
+- key: getting-started/instructor-course-overview
+  as: instructor
+  surface: dashboard
+  path: /dashboard/instructor/courses/{courseId}
+  waitFor: { text: instructor:overview.editCurriculum }
+  highlight: { text: instructor:overview.editCurriculum, exact: true }
+
+# --- DOC-START-008 learner-quick-start ------------------------------------------
+- key: getting-started/learner-my-courses
+  as: learner
+  surface: academy
+  path: /my/courses
+  waitFor: { text: learning:learnerDashboard.courses.subtitle }

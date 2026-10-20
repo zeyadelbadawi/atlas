@@ -101,7 +101,10 @@
     "success": "Settings updated successfully",
     "error": "Failed to update settings",
     "unsavedChanges": "You have unsaved settings changes. Are you sure you want to leave?",
-    "slugOwnerOnly": "Only the organization owner can change the web address."
+    "slugOwnerOnly": "Only the organization owner can change the web address.",
+    "slugMoveHelp": "Your academy's address on Atlas (lowercase letters, numbers and hyphens). Changing it moves your website to the new address. The old address keeps working: it sends visitors to the new one and stays reserved for you. You can change it once every 60 days.",
+    "slugMoveNotice": "When you save, your website moves to this new address and links to the old address will open it. A custom domain you connected stays your main address.",
+    "slugChangeLocked": "You changed the address recently. You can change it again on {{date}}."
   },
   "branding": {
     "title": "Academy Branding",
@@ -112,7 +115,7 @@
     "favicon": "Favicon",
     "displayName": "Display Name",
     "displayNameDescription": "The name shown to students across your academy's dashboard and public website.",
-    "logoHelp": "Upload your academy logo (PNG, JPG, max 5MB). Recommended: 400×96 px or larger, transparent background. SVG scales best.",
+    "logoHelp": "Upload your academy logo (PNG, JPG, up to 2 MB). Recommended: 400×96 px or larger, transparent background.",
     "faviconHelp": "Upload your favicon (ICO, PNG, max 1MB). Recommended: 512×512 px square, transparent background.",
     "uploadLogo": "Upload Logo",
     "uploadFavicon": "Upload Favicon",
@@ -129,7 +132,7 @@
     "uploadError": "Failed to upload file",
     "unsavedChanges": "You have unsaved branding changes. Are you sure you want to leave?",
     "errors": {
-      "logoTooLarge": "Logo must be smaller than 5MB.",
+      "logoTooLarge": "Logo must be 2 MB or smaller.",
       "logoInvalidType": "Logo must be a PNG or JPG image.",
       "faviconTooLarge": "Favicon must be smaller than 1MB.",
       "faviconInvalidType": "Favicon must be an ICO or PNG image.",
@@ -205,7 +208,9 @@
       "doneButton": "Done",
       "errors": {
         "insufficientRole": "Only the academy owner can create a student account.",
-        "generic": "Could not create this student account. Please try again."
+        "generic": "Could not create this student account. Please try again.",
+        "alreadyMember": "This person is already a student in this academy.",
+        "userNotFound": "Could not create this student account. Reload the page and try again."
       },
       "addButton": "Add student",
       "outcome": {
@@ -289,7 +294,7 @@
     },
     "status": {
       "active": "Active",
-      "inactive": "Inactive",
+      "inactive": "Rejected",
       "pending": "Pending approval",
       "blocked": "Blocked"
     },
@@ -337,7 +342,8 @@
       "assignmentOutcomes": "Assignment outcomes",
       "noAssignmentOutcomes": "No assignment submissions yet.",
       "notSubmitted": "Not submitted",
-      "hasFeedback": "Feedback given"
+      "hasFeedback": "Feedback given",
+      "approveBeforeEnroll": "Approve this student before enrolling them in a course."
     },
     "block": {
       "title": "Block this student",
@@ -348,7 +354,7 @@
     },
     "reject": {
       "title": "Reject this registration",
-      "description": "{{name}} will not be admitted to this academy. They can register again later.",
+      "description": "{{name}} will not be admitted to this academy. They can register again on your academy website under your registration policy, and you can still approve them later from the Students list.",
       "confirm": "Reject"
     },
     "enroll": {
@@ -364,6 +370,7 @@
     "revoke": {
       "title": "Revoke access",
       "description": "The student loses access to {{course}} immediately. Their progress is kept.",
+      "refundNote": "Revoking access doesn't refund the learner, and the order stays paid in your sales. If you gave the money back, use Record refund on the payment in Payments instead: it records the refund, ends access and tells the learner.",
       "reasonLabel": "Reason",
       "reasons": {
         "manual": "Revoked by staff",
@@ -396,6 +403,7 @@
       "insufficientRole": "Your role on this academy does not allow that action.",
       "studentNotPending": "This registration is no longer awaiting approval.",
       "studentBlocked": "This student is blocked. Unblock them first.",
+      "studentNotApproved": "This student is not approved yet. Approve them first, then enroll them in a course.",
       "alreadyEnrolled": "This student is already enrolled in that course.",
       "expiryInPast": "The expiry date must be in the future.",
       "notFound": "That student is no longer on this academy."
@@ -728,7 +736,7 @@
     },
     "manualSales": {
       "title": "Sales recorded in Atlas (manual payments)",
-      "description": "Payments you approved for course orders that are still paid. Your academy received this money directly; Atlas does not hold it. Amounts are what learners paid, before anything you refund outside Atlas.",
+      "description": "Payments you approved for course orders that are still paid. Your academy received this money directly; Atlas does not hold it. A payment you record as refunded drops out of these figures.",
       "window": {
         "7": "Last 7 days",
         "30": "Last 30 days",

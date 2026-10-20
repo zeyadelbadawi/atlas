@@ -1,7 +1,7 @@
 {
   "overview": {
     "title": "عمليات Zoom",
-    "subtitle": "سلامة التكامل عبر جميع الأكاديميات في Atlas.",
+    "subtitle": "سلامة التكامل عبر جميع الأكاديميات في أطلس.",
     "connectionsHeading": "الاتصالات",
     "sessionsHeading": "الجلسات المباشرة",
     "attentionHeading": "يحتاج إلى انتباه",
@@ -89,7 +89,7 @@
     "session.failed": "جلسات فشلت",
     "session.unprovisioned": "جلسات بلا اجتماع Zoom",
     "event.failed": "أحداث Webhook فشلت معالجتها",
-    "event.unmatched": "أحداث Webhook تعذّر على Atlas نسبتها",
+    "event.unmatched": "أحداث Webhook تعذّر على أطلس نسبتها",
     "session.at_risk": "جلسات قادمة معرّضة للخطر"
   },
   "action": {

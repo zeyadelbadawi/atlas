@@ -1,0 +1,218 @@
+# Notifications and messages screenshots (content/docs/<lang>/notifications/*.md).
+# Real routes (src/app/routes/route-paths.ts) and i18n keys
+# (src/localization/resources/<lang>/*.json).
+
+# --- Notifications: in-app and email (DOC-MSG-001) --------------------------
+
+- key: notifications/dashboard-bell
+  as: owner
+  surface: dashboard
+  path: /dashboard
+  waitFor: { text: dashboard:metrics.students }
+  actions:
+    - click: { role: button, name: { en: Notifications, ar: الإشعارات }, nth: 0 }
+  highlight: { text: notifications:center.viewAll }
+
+- key: notifications/dashboard-page
+  as: owner
+  surface: dashboard
+  path: /dashboard/notifications
+  waitFor: { text: notifications:subtitle }
+  highlight: { role: button, name: notifications:center.markAllRead }
+
+- key: notifications/learner-page
+  as: learner
+  surface: academy
+  path: /my/notifications
+  waitFor: { text: learning:learnerDashboard.notifications.subtitle }
+  highlight: { role: link, name: { en: Notifications, ar: الإشعارات }, nth: 0 }
+
+# --- Email preferences and unsubscribing (DOC-MSG-002) ----------------------
+
+- key: notifications/profile-preferences-tab
+  as: owner
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:tabs.preferences }
+  actions:
+    - click: { role: tab, name: profile:tabs.preferences }
+    - wait: 800
+  highlight: { role: tab, name: profile:tabs.preferences }
+
+- key: notifications/email-language
+  as: owner
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:tabs.preferences }
+  actions:
+    - click: { role: tab, name: profile:tabs.preferences }
+    - wait: 800
+    - scroll: { text: notifications:communication.emailLanguage }
+  highlight: { text: notifications:communication.emailLanguageDescription }
+
+- key: notifications/academy-updates
+  as: owner
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:tabs.preferences }
+  actions:
+    - click: { role: tab, name: profile:tabs.preferences }
+    - wait: 800
+    - scroll: { text: notifications:communication.categories.engagement.description }
+  highlight: { role: switch, name: notifications:communication.emailToggle, nth: 0 }
+
+- key: notifications/operations
+  as: owner
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:tabs.preferences }
+  actions:
+    - click: { role: tab, name: profile:tabs.preferences }
+    - wait: 800
+    - scroll: { text: notifications:communication.categories.operational.description }
+  highlight: { role: switch, name: notifications:communication.emailToggle, nth: 1 }
+
+- key: notifications/reminders
+  as: owner
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:tabs.preferences }
+  actions:
+    - click: { role: tab, name: profile:tabs.preferences }
+    - wait: 800
+    - scroll: { text: notifications:communication.remindersDescription }
+  highlight: { role: switch, name: notifications:communication.reminders }
+
+- key: notifications/learner-preferences
+  as: learner
+  surface: academy
+  path: /my/profile
+  waitFor: { text: profile:tabs.preferences }
+  actions:
+    - click: { role: tab, name: profile:tabs.preferences }
+    - wait: 800
+  highlight: { text: notifications:communication.title }
+
+# --- Message your learners (DOC-MSG-003) ------------------------------------
+
+- key: notifications/messages-page
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/messages
+  waitFor: { text: messaging:composer.title }
+  highlight: { role: link, name: navigation:items.academyMessages, nth: 0 }
+
+- key: notifications/messages-recipients
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/messages
+  waitFor: { text: messaging:composer.title }
+  highlight: { role: radiogroup, name: messaging:composer.audience }
+
+- key: notifications/messages-channels
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/messages
+  waitFor: { text: messaging:composer.title }
+  highlight: { text: messaging:composer.channels }
+
+- key: notifications/messages-write
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/messages
+  waitFor: { text: messaging:composer.title }
+  actions:
+    - fill: { testId: message-subject, value: { en: Revision session this Saturday, ar: مراجعة يوم السبت } }
+  highlight: { testId: message-subject }
+
+- key: notifications/messages-preview
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/messages
+  waitFor: { text: messaging:composer.title }
+  actions:
+    - fill: { testId: message-subject, value: { en: Revision session this Saturday, ar: مراجعة يوم السبت } }
+    - fill: { selector: '[contenteditable="true"]', value: { en: Join us on Saturday for a revision session before the mid-term exam., ar: مستنيينكم يوم السبت في حصة مراجعة قبل امتحان نص الترم. } }
+    - click: { testId: message-preview-button }
+    - wait: 1500
+  highlight: { text: messaging:preview.title }
+
+- key: notifications/messages-confirm
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/messages
+  waitFor: { text: messaging:composer.title }
+  actions:
+    - fill: { testId: message-subject, value: { en: Revision session this Saturday, ar: مراجعة يوم السبت } }
+    - fill: { selector: '[contenteditable="true"]', value: { en: Join us on Saturday for a revision session before the mid-term exam., ar: مستنيينكم يوم السبت في حصة مراجعة قبل امتحان نص الترم. } }
+    - click: { testId: message-preview-button }
+    - wait: 1500
+    - click: { testId: message-send-button }
+  highlight: { role: button, name: messaging:confirm.send }
+  clip: dialog
+
+- key: notifications/messages-quota
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/messages
+  waitFor: { text: messaging:quota.title }
+  highlight: { text: messaging:quota.explainer }
+
+# --- Post announcements (DOC-MSG-004) ---------------------------------------
+
+- key: notifications/announcements-page
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/announcements
+  waitFor: { text: announcements:academy.subtitle }
+  highlight: { role: link, name: navigation:items.academyAnnouncements, nth: 0 }
+
+- key: notifications/announcements-new
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/announcements
+  waitFor: { text: announcements:academy.subtitle }
+  highlight: { role: button, name: announcements:manage.createButton }
+
+- key: notifications/announcements-form
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/announcements
+  waitFor: { text: announcements:academy.subtitle }
+  actions:
+    - click: { role: button, name: announcements:manage.createButton }
+    - fill: { label: announcements:manage.titleLabel, value: { en: Exam timetable published, ar: جدول الامتحانات اتنشر } }
+    - fill: { label: announcements:manage.bodyLabel, value: { en: The final exam timetable is now on the academy website., ar: جدول الامتحانات النهائية موجود دلوقتي على موقع الأكاديمية. } }
+  highlight: { role: button, name: announcements:manage.saveButton }
+  clip: dialog
+
+- key: notifications/announcements-publish
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/announcements
+  waitFor: { text: announcements:academy.subtitle }
+  highlight: { role: button, name: announcements:manage.publishAction, nth: 0 }
+
+- key: notifications/announcements-publish-confirm
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/announcements
+  waitFor: { text: announcements:academy.subtitle }
+  actions:
+    - click: { role: button, name: announcements:manage.publishAction, nth: 0 }
+  highlight: { role: button, name: announcements:manage.publishDialog.confirmLabel }
+  clip: dialog
+
+- key: notifications/course-announcements
+  as: manager
+  surface: dashboard
+  path: /dashboard/instructor/courses/{courseId}/announcements
+  waitFor: { text: announcements:manage.subtitle }
+  highlight: { role: button, name: announcements:manage.createButton }
+
+- key: notifications/learner-announcements
+  as: learner
+  surface: academy
+  path: /my
+  waitFor: { text: learning:learnerDashboard.overview.announcements.title }
+  highlight: { text: learning:learnerDashboard.overview.announcements.title }

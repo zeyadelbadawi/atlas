@@ -4,7 +4,7 @@
  * a real screenshot, and the planned pages listed (not linked) as planned.
  */
 import { Check } from 'lucide-react';
-import { ButtonLink, Container, CtaBand, Section, SectionHeading, dirOf } from '../components/ui';
+import { ButtonLink, Container, CtaBand, LearnMore, Section, SectionHeading, dirOf } from '../components/ui';
 import { Screenshot } from '../components/screenshot';
 import type { ScreenshotKey } from '../data/screenshots';
 import { fill, link } from '../lib/copy';
@@ -82,6 +82,7 @@ function FeaturesPage({ env }: { env: PageEnv }) {
             {group.note ? (
               <p className="mt-6 rounded-lg border border-border bg-surface p-4 leading-relaxed">{fill(group.note, tokens)}</p>
             ) : null}
+            {group.learnMore ? <LearnMore lang={lang} value={group.learnMore} tokens={tokens} /> : null}
           </div>
         );
         return (

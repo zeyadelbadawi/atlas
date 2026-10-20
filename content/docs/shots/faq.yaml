@@ -1,0 +1,12 @@
+# Screenshots for the FAQ category (content/docs/{en,ar}/faq).
+# Real routes (src/app/routes/route-paths.ts), real i18n keys.
+
+- key: faq/learner-your-data
+  as: learner
+  surface: academy
+  path: /my/profile
+  waitFor: { text: profile:tabs.account }
+  actions:
+    - click: { role: tab, name: profile:tabs.account }
+    - wait: 500
+  highlight: { text: profile:privacyRequests.title, exact: true }

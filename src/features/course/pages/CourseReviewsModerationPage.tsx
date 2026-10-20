@@ -37,7 +37,10 @@ import {
   useModerateReview,
   useRemoveReview,
 } from '../hooks/useCourseReviewModeration';
-import { getCourseEditorTabs } from '../utils/course-navigation.utils';
+import {
+  useCourseEditorLeadCrumbs,
+  useCourseEditorTabs,
+} from '../hooks/useCourseEditorTabs';
 import type { BreadcrumbItem, CourseReviewStatus } from '@types';
 
 type StatusFilter = 'all' | CourseReviewStatus;
@@ -59,6 +62,14 @@ export default function CourseReviewsModerationPage(): JSX.Element {
     academyId: string;
     courseId: string;
   }>();
+  const editorTabs = useCourseEditorTabs(academyId ?? '', courseId ?? '');
+  // The course list crumb only: this page names the course itself.
+  const listCrumb = useCourseEditorLeadCrumbs(
+    academyId ?? '',
+    courseId ?? '',
+    undefined,
+    'course:reviews.title'
+  );
   const { confirm } = useConfirmDialog();
 
   const [status, setStatus] = useState<StatusFilter>('all');
@@ -138,12 +149,7 @@ export default function CourseReviewsModerationPage(): JSX.Element {
   }
 
   const breadcrumbs: readonly BreadcrumbItem[] = [
-    {
-      labelKey: 'course:list.title',
-      path: buildPath(DASHBOARD_ROUTES.academyCourses, {
-        academyId: academyId ?? '',
-      }),
-    },
+    ...listCrumb,
     { labelKey: 'course:reviews.title', label: course.title },
   ];
 
@@ -158,9 +164,7 @@ export default function CourseReviewsModerationPage(): JSX.Element {
         breadcrumbs={breadcrumbs}
       />
 
-      {academyId && courseId ? (
-        <SectionTabs items={getCourseEditorTabs(academyId, courseId)} />
-      ) : null}
+      {academyId && courseId ? <SectionTabs items={editorTabs} /> : null}
 
       <div className="mb-4 flex items-center justify-between gap-3">
         <label className="text-sm font-medium text-foreground" htmlFor="status">

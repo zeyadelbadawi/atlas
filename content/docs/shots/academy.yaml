@@ -1,0 +1,346 @@
+# Academy settings screenshots (content/docs/<lang>/academy/*.md).
+# Real routes (src/app/routes/route-paths.ts) and i18n keys
+# (src/localization/resources/<lang>/*.json).
+
+# --- Edit your academy profile (DOC-ACD-002) ---------------------------------
+
+- key: academy/overview-view-profile
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}
+  waitFor: { text: academy:dashboard.quickActions }
+  highlight: { role: button, name: academy:dashboard.viewProfile, nth: 0 }
+
+- key: academy/profile-basic-info
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/profile
+  waitFor: { text: academy:profile.basicInfo }
+  highlight: { label: academy:create.nameLabel }
+
+- key: academy/profile-contact
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/profile
+  waitFor: { text: academy:profile.contactInfo }
+  highlight: { label: academy:create.contactEmailLabel }
+
+- key: academy/profile-address
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/profile
+  waitFor: { text: academy:profile.address }
+  highlight: { label: academy:profile.streetLabel }
+
+- key: academy/profile-save
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/profile
+  waitFor: { text: academy:profile.basicInfo }
+  highlight: { role: button, name: academy:profile.saveButton }
+
+# --- Language, currency and time zone (DOC-ACD-003) --------------------------
+
+- key: academy/settings-localization
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:settings.localization }
+  highlight: { text: academy:settings.localizationDescription }
+
+- key: academy/settings-language
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:settings.localization }
+  highlight: { label: academy:create.languageLabel }
+
+- key: academy/settings-timezone
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:settings.localization }
+  highlight: { label: academy:create.timezoneLabel }
+
+- key: academy/settings-currency
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:settings.localization }
+  highlight: { label: academy:create.currencyLabel }
+
+- key: academy/settings-save
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:settings.localization }
+  highlight: { role: button, name: academy:settings.saveButton }
+
+# --- Visual identity (DOC-ACD-004) ------------------------------------------
+
+- key: academy/visual-identity
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/branding
+  waitFor: { text: website:visualIdentity.logoAndColoursTitle }
+  highlight: { role: link, name: navigation:items.academyBranding, nth: 0 }
+
+- key: academy/visual-identity-logo
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/branding
+  waitFor: { text: website:visualIdentity.logoAndColoursTitle }
+  highlight: { role: button, name: website:brandStudio.replaceLogo }
+
+- key: academy/visual-identity-palette
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/branding
+  waitFor: { text: website:brandStudio.paletteTitle }
+  highlight: { role: button, name: { en: Try another combination, ar: جرّب تركيبة أخرى } }
+
+- key: academy/visual-identity-advanced
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/branding
+  waitFor: { text: website:brandStudio.paletteTitle }
+  actions:
+    - click: { text: website:brandStudio.advanced }
+  highlight: { text: website:brandStudio.advancedHelp }
+
+- key: academy/visual-identity-favicon
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/branding
+  waitFor: { text: website:visualIdentity.basicsTitle }
+  highlight: { role: button, name: academy:branding.changeFavicon }
+
+- key: academy/visual-identity-save
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/branding
+  waitFor: { text: website:visualIdentity.logoAndColoursTitle }
+  highlight: { testId: visual-identity-save }
+
+# --- Web address (DOC-ACD-005) ----------------------------------------------
+
+- key: academy/domain-address
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=domain
+  waitFor: { text: website:domain.address.title }
+  highlight: { text: website:domain.subdomain.title }
+
+- key: academy/new-academy-reserved
+  as: owner
+  surface: dashboard
+  path: /dashboard/provisioning/new
+  waitFor: { text: provisioning:start.formTitle }
+  actions:
+    - fill: { label: provisioning:start.subdomainLabel, value: support }
+    - wait: 2000
+  highlight: { label: provisioning:start.subdomainLabel }
+
+# Changing the address: typed only, never saved (the capture must not move
+# the demo academy). The note under the field appears once it differs.
+- key: academy/settings-slug
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:settings.general }
+  actions:
+    - fill: { label: academy:create.slugLabel, value: nour-academy-new }
+  highlight: { label: academy:create.slugLabel }
+
+- key: academy/settings-slug-save
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:settings.general }
+  actions:
+    - fill: { label: academy:create.slugLabel, value: nour-academy-new }
+  highlight: { role: button, name: academy:settings.saveButton }
+
+# --- Connect your own domain (DOC-ACD-006) ----------------------------------
+
+- key: academy/domain-tab
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=domain
+  waitFor: { text: website:domain.custom.title }
+  highlight: { role: tab, name: website:settings.tabs.domain }
+
+- key: academy/domain-hostname-form
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=domain
+  waitFor: { text: website:domain.custom.title }
+  actions:
+    - click: { role: button, name: website:domain.custom.changeAction }
+  highlight: { label: website:domain.custom.hostnameLabel }
+
+- key: academy/domain-progress
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=domain
+  waitFor: { text: website:domain.custom.title }
+  highlight: { label: website:domain.custom.steps.ariaLabel }
+
+- key: academy/domain-check-now
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=domain
+  waitFor: { text: website:domain.custom.title }
+  highlight: { selector: 'button:has(svg.lucide-refresh-cw)' }
+
+# --- Create another academy (DOC-ACD-007) -----------------------------------
+
+- key: academy/provisioning-list
+  as: owner
+  surface: dashboard
+  path: /dashboard/provisioning
+  waitFor: { text: provisioning:history.subtitle }
+  highlight: { role: link, name: navigation:items.academyProvisioning, nth: 0 }
+
+- key: academy/provisioning-new-button
+  as: owner
+  surface: dashboard
+  path: /dashboard/provisioning
+  waitFor: { text: provisioning:history.subtitle }
+  highlight: { role: button, name: provisioning:history.newAcademyAction, nth: 0 }
+
+- key: academy/new-academy-name
+  as: owner
+  surface: dashboard
+  path: /dashboard/provisioning/new
+  waitFor: { text: provisioning:start.formTitle }
+  highlight: { label: provisioning:start.academyNameLabel }
+
+- key: academy/new-academy-setup-mode
+  as: owner
+  surface: dashboard
+  path: /dashboard/provisioning/new
+  waitFor: { text: provisioning:start.formTitle }
+  highlight: { text: provisioning:start.setupModeLabel }
+
+- key: academy/new-academy-brand
+  as: owner
+  surface: dashboard
+  path: /dashboard/provisioning/new
+  waitFor: { text: provisioning:start.formTitle }
+  highlight: { text: website:brandStudio.setupTitle }
+
+- key: academy/new-academy-payments
+  as: owner
+  surface: dashboard
+  path: /dashboard/provisioning/new
+  waitFor: { text: provisioning:start.formTitle }
+  highlight: { text: provisioning:payments.mode.later.title }
+
+- key: academy/new-academy-submit
+  as: owner
+  surface: dashboard
+  path: /dashboard/provisioning/new
+  waitFor: { text: provisioning:start.formTitle }
+  highlight: { role: button, name: provisioning:start.submit }
+
+# --- Switch between academies (DOC-ACD-008) ---------------------------------
+
+- key: academy/switcher
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}
+  waitFor: { text: academy:dashboard.quickActions }
+  highlight: { testId: academy-switcher }
+
+- key: academy/switcher-open
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}
+  waitFor: { text: academy:dashboard.quickActions }
+  actions:
+    - click: { testId: academy-switcher }
+  highlight: { text: academy:switcher.title }
+
+- key: academy/switcher-search
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}
+  waitFor: { text: academy:dashboard.quickActions }
+  actions:
+    - click: { testId: academy-switcher }
+    - click: { testId: academy-switcher-search-toggle }
+    - wait: 300
+  highlight: { testId: academy-switcher-search }
+
+# --- Delete an academy (DOC-ACD-010) ----------------------------------------
+# Captured on the second demo academy and never confirmed.
+
+- key: academy/delete-card
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{secondAcademyId}/settings
+  waitFor: { text: academy:settings.localization }
+  actions:
+    - scroll: { testId: open-delete-academy }
+  highlight: { text: academy:delete.consequenceWebsite }
+
+- key: academy/delete-button
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{secondAcademyId}/settings
+  waitFor: { text: academy:settings.localization }
+  actions:
+    - scroll: { testId: open-delete-academy }
+  highlight: { testId: open-delete-academy }
+
+- key: academy/delete-reason
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{secondAcademyId}/settings
+  waitFor: { text: academy:settings.localization }
+  actions:
+    - scroll: { testId: open-delete-academy }
+    - click: { testId: open-delete-academy }
+  highlight: { text: academy:delete.reasonLabel }
+  clip: dialog
+
+- key: academy/delete-type-name
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{secondAcademyId}/settings
+  waitFor: { text: academy:settings.localization }
+  actions:
+    - scroll: { testId: open-delete-academy }
+    - click: { testId: open-delete-academy }
+  highlight: { testId: delete-academy-confirmation }
+  clip: dialog
+
+- key: academy/delete-confirm
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{secondAcademyId}/settings
+  waitFor: { text: academy:settings.localization }
+  actions:
+    - scroll: { testId: open-delete-academy }
+    - click: { testId: open-delete-academy }
+  highlight: { testId: confirm-delete-academy }
+  clip: dialog
+
+# --- Academy creation status (DOC-ACD-011) ----------------------------------
+
+- key: academy/provisioning-history
+  as: owner
+  surface: dashboard
+  path: /dashboard/provisioning
+  waitFor: { text: provisioning:history.subtitle }
+  highlight: { text: provisioning:history.table.status }
+
+- key: academy/provisioning-status
+  as: owner
+  surface: dashboard
+  path: /dashboard/provisioning
+  waitFor: { text: provisioning:history.subtitle }
+  actions:
+    - click: { selector: 'tbody tr' }
+    - wait: 1500

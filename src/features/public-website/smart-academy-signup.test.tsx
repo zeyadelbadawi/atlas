@@ -218,7 +218,7 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-function renderPage(language: 'en' | 'ar' = 'en') {
+function renderPage(language: 'en' | 'ar' = 'en', entry = '/sign-up') {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
   });
@@ -227,7 +227,7 @@ function renderPage(language: 'en' | 'ar' = 'en') {
       <I18nextProvider i18n={createI18nInstance(language)}>
         <ToastContext.Provider value={toastValue}>
           <div dir={language === 'ar' ? 'rtl' : 'ltr'} data-testid="root">
-            <MemoryRouter initialEntries={['/sign-up']}>
+            <MemoryRouter initialEntries={[entry]}>
               <Routes>
                 <Route
                   path="/sign-up"
@@ -522,17 +522,25 @@ describe('smart academy signup — existing account', () => {
     expect(screen.getByLabelText('Full Name')).toBeTruthy();
   });
 
+  it('opens straight on the join step from "Apply again" (?join=1)', async () => {
+    renderPage('en', '/sign-up?join=1');
+    expect(
+      await screen.findByText('Join with your Atlas account')
+    ).toBeTruthy();
+    expect(screen.queryByLabelText('Full Name')).toBeNull();
+  });
+
   it('renders the join step in Arabic, right-to-left', async () => {
     const user = userEvent.setup();
     renderPage('ar');
     expect(screen.getByTestId('root').getAttribute('dir')).toBe('rtl');
     await user.click(screen.getByRole('button', { name: 'انضم به' }));
-    expect(screen.getByText('انضم باستخدام حسابك على Atlas')).toBeTruthy();
+    expect(screen.getByText('انضم باستخدام حسابك على أطلس')).toBeTruthy();
     expect(
-      screen.getByText('استخدم كلمة المرور التي تستخدمها بالفعل على Atlas.')
+      screen.getByText('استخدم كلمة المرور التي تستخدمها بالفعل على أطلس.')
     ).toBeTruthy();
     expect(
-      screen.getByRole('button', { name: 'المتابعة بحسابي على Atlas' })
+      screen.getByRole('button', { name: 'المتابعة بحسابي على أطلس' })
     ).toBeTruthy();
   });
 
@@ -560,8 +568,8 @@ describe('smart academy signup — existing account', () => {
     await user.click(screen.getByRole('checkbox'));
     await user.click(screen.getByRole('button', { name: 'إنشاء حساب' }));
 
-    expect(await screen.findByText('لديك حساب على Atlas بالفعل')).toBeTruthy();
-    expect(screen.getByText(/تعمل Nile Academy على منصة Atlas/)).toBeTruthy();
+    expect(await screen.findByText('لديك حساب على أطلس بالفعل')).toBeTruthy();
+    expect(screen.getByText(/تعمل Nile Academy على منصة أطلس/)).toBeTruthy();
     const email = screen.getByLabelText(
       'البريد الإلكتروني'
     ) as HTMLInputElement;

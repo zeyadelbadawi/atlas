@@ -11,6 +11,22 @@ import type { MarketingLang } from '../types';
  */
 export const APP_ORIGIN = '';
 
+/**
+ * The help center (DL-57) lives on its own host, `docs.<site host>`; links to
+ * it are absolute. VITE_DOCS_URL overrides it, like in scripts/docs/prerender.mjs.
+ */
+export const DOCS_ORIGIN = docsOrigin(import.meta.env.VITE_DOCS_URL, import.meta.env.VITE_SITE_URL);
+
+export function docsOrigin(docsUrl?: string, siteUrl?: string): string {
+  if (docsUrl) return docsUrl.replace(/\/+$/, '');
+  return `https://docs.${new URL(siteUrl || 'https://atlass.dpdns.org').host}`;
+}
+
+/** A help-center page in a language: `/selling/payment-methods` ↔ `/ar/selling/payment-methods`. */
+export function docsHref(lang: MarketingLang, path: string): string {
+  return `${DOCS_ORIGIN}${localePath(lang, path)}`;
+}
+
 export const LOCALE: Record<MarketingLang, string> = { en: 'en-US', ar: 'ar-EG' };
 
 /** Path of a page in a language: `/pricing` ↔ `/ar/pricing`, `/` ↔ `/ar`. */

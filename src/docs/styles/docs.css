@@ -1,0 +1,288 @@
+/*
+ * Atlas Help Center (DL-57). Own Tailwind pass (tailwind.docs.config.ts)
+ * whose content covers src/docs only. Colours, radius and type come from the
+ * platform token layer (index.css): Royal Navy + Gold, Readex Pro + Rubik.
+ * Design system: design-system/atlas-help-center/MASTER.md.
+ */
+@import '../../index.css';
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+    }
+  }
+  body.doc {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+  }
+  .doc h1,
+  .doc h2,
+  .doc h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+  .doc p {
+    text-wrap: pretty;
+  }
+  .doc :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  .doc [id] {
+    scroll-margin-top: 5.5rem;
+  }
+  [dir='rtl'] body.doc {
+    line-height: 1.85;
+  }
+}
+
+@layer components {
+  .doc-skip {
+    @apply absolute start-3 top-3 z-[60] -translate-y-20 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-transform;
+  }
+  .doc-skip:focus {
+    @apply translate-y-0;
+  }
+  .doc-eyebrow {
+    @apply inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.08em] text-primary rtl:tracking-normal;
+  }
+  .doc-eyebrow::before {
+    content: '';
+    @apply inline-block size-2 rounded-full bg-brand-gold;
+  }
+  .doc-h2 {
+    @apply font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight text-foreground rtl:tracking-normal;
+  }
+  .doc-btn {
+    @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200;
+  }
+  .doc-btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary-hover;
+  }
+  .doc-btn-secondary {
+    @apply border border-border-strong bg-background text-foreground hover:bg-surface;
+  }
+  .doc-card {
+    @apply rounded-xl border border-border bg-card text-card-foreground;
+  }
+  .doc-card-link {
+    @apply transition-[border-color,box-shadow] duration-200 hover:border-primary/40 hover:shadow-xs;
+  }
+  .doc-badge {
+    @apply inline-flex items-center rounded-md border border-border bg-surface px-2 py-0.5 text-xs font-medium text-foreground;
+  }
+  .doc-hero {
+    background-image:
+      radial-gradient(36rem 20rem at 85% 0%, hsl(var(--brand-gold) / 0.12), transparent 70%),
+      radial-gradient(40rem 26rem at 10% 100%, hsl(var(--primary) / 0.08), transparent 70%);
+    @apply border-b border-border bg-surface/50;
+  }
+
+  /* Header popovers (<details>): no marker; icon swaps. */
+  .doc-popover > summary::-webkit-details-marker,
+  .doc-sidebar summary::-webkit-details-marker,
+  details > summary.list-none::-webkit-details-marker {
+    display: none;
+  }
+  .doc-popover > summary {
+    list-style: none;
+  }
+  .doc-popover .doc-when-open {
+    display: none;
+  }
+  .doc-popover[open] .doc-when-open {
+    display: inline;
+  }
+  .doc-popover[open] .doc-when-closed {
+    display: none;
+  }
+
+  .doc-side-link {
+    @apply block rounded-md px-2.5 py-1.5 text-sm leading-snug text-muted-foreground transition-colors hover:bg-surface hover:text-foreground;
+  }
+  .doc-side-link[aria-current='page'] {
+    @apply bg-primary/10 font-semibold text-primary;
+  }
+
+  /* Instant search results under a search box. */
+  .doc-search-results {
+    @apply absolute inset-x-0 top-[calc(100%+0.375rem)] z-50 max-h-[70vh] overflow-y-auto rounded-xl border border-border bg-popover p-1.5 text-popover-foreground shadow-lg;
+  }
+  .doc-search-results ul {
+    @apply space-y-0.5;
+  }
+  .doc-hit {
+    @apply block rounded-lg px-3 py-2.5 text-start hover:bg-surface;
+  }
+  [aria-selected='true'] > .doc-hit {
+    @apply bg-surface outline outline-2 outline-offset-[-2px] outline-ring;
+  }
+  .doc-hit-meta {
+    @apply block text-xs font-medium text-primary;
+  }
+  .doc-hit-title {
+    @apply block font-semibold text-foreground;
+  }
+  .doc-hit-summary {
+    @apply mt-0.5 line-clamp-2 block text-sm text-muted-foreground;
+  }
+  .doc-hit-empty {
+    @apply px-3 py-3 text-sm text-muted-foreground;
+  }
+  .doc-hit-all {
+    @apply mt-1 block rounded-lg px-3 py-2 text-sm font-semibold text-primary hover:bg-surface;
+  }
+  [data-search-page-results] .doc-hit {
+    @apply rounded-xl border border-border bg-card p-4 hover:border-primary/40;
+  }
+
+  .doc-toc a[aria-current='true'] {
+    @apply border-primary text-foreground;
+  }
+  .doc-answer {
+    @apply border-s-4 border-brand-gold ps-4;
+  }
+
+  /* ---- Article body ---- */
+  .doc-prose {
+    @apply text-[1.0625rem] leading-relaxed text-foreground/90;
+  }
+  [dir='rtl'] .doc-prose {
+    @apply leading-[1.95];
+  }
+  .doc-prose > * + * {
+    @apply mt-5;
+  }
+  .doc-prose h2 {
+    @apply mt-12 text-2xl font-semibold tracking-tight text-foreground rtl:tracking-normal;
+  }
+  .doc-prose h3 {
+    @apply mt-8 text-lg font-semibold text-foreground;
+  }
+  .doc-prose a {
+    @apply font-medium text-primary underline decoration-primary/30 underline-offset-4 hover:decoration-primary;
+  }
+  .doc-prose strong {
+    @apply font-semibold text-foreground;
+  }
+  .doc-prose code {
+    @apply rounded bg-muted px-1.5 py-0.5 text-[0.9em];
+  }
+  .doc-prose ul {
+    @apply list-disc space-y-2 ps-6 marker:text-primary;
+  }
+  .doc-prose ul ul {
+    @apply mt-2;
+  }
+
+  /* Numbered steps: each item is a card with a number badge. */
+  .doc-prose ol.doc-steps {
+    counter-reset: doc-step;
+    @apply list-none space-y-5 ps-0;
+  }
+  .doc-prose ol.doc-steps > li {
+    counter-increment: doc-step;
+    @apply relative rounded-xl border border-border bg-card p-4 ps-14 sm:p-5 sm:ps-16;
+  }
+  .doc-prose ol.doc-steps > li::before {
+    content: counter(doc-step);
+    @apply absolute start-4 top-4 inline-flex size-8 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground sm:start-5 sm:top-5;
+  }
+  [lang='ar'] .doc-prose ol.doc-steps > li::before {
+    content: counter(doc-step, arabic-indic);
+  }
+  .doc-prose ol.doc-steps > li > * + * {
+    @apply mt-3;
+  }
+  .doc-prose ol.doc-steps ol {
+    @apply list-decimal space-y-1.5 ps-6;
+  }
+
+  /* Screenshots: browser-like frame, fixed dimensions, zoom by link. */
+  .doc-shot {
+    @apply my-0;
+  }
+  .doc-steps .doc-shot {
+    @apply -me-1 mt-4 sm:me-0;
+  }
+  .doc-shot-frame {
+    @apply block overflow-hidden rounded-lg border border-border bg-surface shadow-[0_12px_32px_-18px_hsl(var(--brand-700)/0.35)] transition-shadow hover:shadow-[0_16px_40px_-18px_hsl(var(--brand-700)/0.45)] dark:shadow-none;
+  }
+  .doc-shot-frame img {
+    @apply block h-auto w-full;
+  }
+  .doc-shot-mobile .doc-shot-frame {
+    @apply mx-auto max-w-[320px] rounded-[1.25rem];
+  }
+  .doc-shot figcaption {
+    @apply mt-2 text-xs text-muted-foreground;
+  }
+  .doc-shot-missing {
+    @apply flex aspect-[16/10] items-center justify-center border-dashed p-6 text-center text-sm text-muted-foreground;
+  }
+
+  /* Callouts: icon + label text, never colour alone. */
+  .doc-callout {
+    @apply rounded-xl border p-4;
+  }
+  .doc-callout-title {
+    @apply flex items-center gap-2 text-sm font-semibold;
+  }
+  .doc-callout-body {
+    @apply mt-1.5 text-[0.98rem];
+  }
+  .doc-callout-body > * + * {
+    @apply mt-2;
+  }
+  .doc-callout-note {
+    @apply border-primary/25 bg-primary/5;
+  }
+  .doc-callout-note .doc-callout-title {
+    @apply text-primary;
+  }
+  .doc-callout-tip {
+    @apply border-success/30 bg-success/5;
+  }
+  .doc-callout-tip .doc-callout-title {
+    @apply text-success;
+  }
+  .doc-callout-limitation {
+    @apply border-warning/40 bg-warning/10;
+  }
+  .doc-callout-limitation .doc-callout-title {
+    @apply text-foreground;
+  }
+  .doc-callout-warning {
+    @apply border-destructive/30 bg-destructive/5;
+  }
+  .doc-callout-warning .doc-callout-title {
+    @apply text-destructive;
+  }
+
+  .doc-table {
+    @apply overflow-x-auto rounded-xl border border-border;
+  }
+  .doc-table table {
+    @apply w-full border-collapse text-start text-[0.95rem];
+  }
+  .doc-table th {
+    @apply bg-surface px-4 py-2.5 text-start font-semibold text-foreground;
+  }
+  .doc-table td {
+    @apply border-t border-border px-4 py-2.5 align-top;
+  }
+  .doc-broken-link {
+    @apply text-destructive underline decoration-wavy;
+  }
+}

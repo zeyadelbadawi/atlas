@@ -1,0 +1,128 @@
+# Analytics and reports (content/docs/<lang>/analytics/*.md). Real routes
+# (src/app/routes/route-paths.ts) and real i18n keys
+# (src/localization/resources/<lang>/*.json). Figures on screen are the
+# seeded demo academy's real state; nothing is staged.
+
+# ---- Dashboard ----
+
+- key: analytics/dashboard-owner
+  as: owner
+  surface: dashboard
+  path: /dashboard
+  waitFor: { text: dashboard:usage.title }
+
+- key: analytics/dashboard-revenue-owner
+  as: owner
+  surface: dashboard
+  path: /dashboard
+  waitFor: { text: dashboard:revenue.manualSales.title }
+  highlight: { role: group, name: dashboard:revenue.manualSales.windowLabel }
+
+- key: analytics/dashboard-manager
+  as: manager
+  surface: dashboard
+  path: /dashboard
+  waitFor: { text: dashboard:revenue.notTracked.title }
+  highlight: { text: dashboard:revenue.notTracked.title }
+
+- key: analytics/academy-overview
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}
+  waitFor: { text: academy:stats.totalMembers }
+  highlight: { role: button, name: auditLog:dashboardWidget.viewAll }
+
+# ---- Student Analytics (owner) ----
+
+- key: analytics/student-analytics-open
+  as: owner
+  surface: dashboard
+  path: /dashboard/student-analytics
+  waitFor: { text: dashboard:studentAnalytics.funnel.title }
+  highlight: { role: link, name: navigation:items.studentAnalytics }
+
+- key: analytics/student-analytics-funnel
+  as: owner
+  surface: dashboard
+  path: /dashboard/student-analytics
+  waitFor: { text: dashboard:studentAnalytics.funnel.title }
+  highlight: { text: dashboard:studentAnalytics.funnel.title, exact: true }
+
+- key: analytics/student-analytics-trends
+  as: owner
+  surface: dashboard
+  path: /dashboard/student-analytics
+  waitFor: { text: dashboard:studentAnalytics.funnel.title }
+  highlight: { text: dashboard:studentAnalytics.trends.title, exact: true }
+
+- key: analytics/student-analytics-at-risk
+  as: owner
+  surface: dashboard
+  path: /dashboard/student-analytics
+  waitFor: { text: dashboard:studentAnalytics.funnel.title }
+  highlight: { text: dashboard:studentAnalytics.atRisk.title, exact: true }
+
+# ---- Reports (owner and managers) ----
+
+- key: analytics/reports-open
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/reports
+  waitFor: { text: dashboard:reports.integrity.title }
+  highlight: { role: link, name: navigation:items.academyReports }
+
+- key: analytics/reports-window
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/reports
+  waitFor: { text: dashboard:reports.integrity.title }
+  highlight: { selector: '#academy-reports-window' }
+
+- key: analytics/reports-integrity
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/reports
+  waitFor: { text: dashboard:reports.integrity.title }
+  highlight: { text: dashboard:reports.integrity.title, exact: true }
+
+- key: analytics/reports-sharing
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/reports
+  waitFor: { text: dashboard:reports.sharing.title }
+  highlight: { text: dashboard:reports.sharing.title, exact: true }
+
+- key: analytics/reports-quota
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/reports
+  waitFor: { text: dashboard:reports.quota.title }
+  highlight: { text: dashboard:reports.quota.title, exact: true }
+
+# ---- Activity log (owner) ----
+
+- key: analytics/activity-log-open
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/activity
+  waitFor: { text: auditLog:academyLog.subtitle }
+  highlight: { role: link, name: navigation:items.academyActivityLog }
+
+- key: analytics/activity-log-filters
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/activity
+  waitFor: { text: auditLog:academyLog.subtitle }
+  highlight: { selector: '[data-testid="audit-filters"]' }
+
+- key: analytics/activity-log-entry
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/activity
+  waitFor: { text: auditLog:academyLog.subtitle }
+  actions:
+    # The row button's accessible name is "<sentence> — View details", so a
+    # role/name match on the bare key (anchored) would never find it.
+    - click: { selector: '[data-testid="audit-entry"] > button', nth: 0 }
+    - wait: 1000
+  clip: dialog

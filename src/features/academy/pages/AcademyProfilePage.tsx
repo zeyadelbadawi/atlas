@@ -49,6 +49,9 @@ import {
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useAcademy, useUpdateAcademy } from '../hooks';
 import { useCurrencyFollowsCountry } from '../hooks/useCurrencyFollowsCountry';
+import { AcademySlugDescription } from '../components/AcademySlugDescription';
+import { academySlugErrorMessage } from '../utils/academy-slug-error.utils';
+import type { LanguageCode } from '@types';
 import {
   updateAcademyProfileSchema,
   type UpdateAcademyProfileFormData,
@@ -69,6 +72,9 @@ export default function AcademyProfilePage(): JSX.Element {
     error: loadError,
     refetch,
   } = useAcademy(academyId ?? '');
+  // One slug change every 60 days: until then the field is read-only and
+  // says when the next change is possible (the server refuses it anyway).
+  const slugLocked = !!academy?.nextSlugChangeAt;
   const {
     mutateAsync: updateAcademy,
     isPending,
@@ -145,6 +151,19 @@ export default function AcademyProfilePage(): JSX.Element {
       return true;
     } catch (error) {
       if (nameConflictFromError(error)) return false;
+      const slugError = academySlugErrorMessage(
+        error,
+        t,
+        i18n.language as LanguageCode
+      );
+      if (slugError) {
+        form.setError(
+          'slug',
+          { type: 'server', message: slugError },
+          { shouldFocus: true }
+        );
+        return false;
+      }
       toast({
         title: t('academy:profile.error'),
         description: t('errors:generic.description'),
@@ -236,15 +255,15 @@ export default function AcademyProfilePage(): JSX.Element {
                         {...field}
                         dir="ltr"
                         data-ltr-content
-                        readOnly={!canChangeSlug}
-                        aria-readonly={!canChangeSlug || undefined}
+                        readOnly={!canChangeSlug || slugLocked}
+                        aria-readonly={!canChangeSlug || slugLocked || undefined}
                       />
                     </FormControl>
-                    {canChangeSlug ? null : (
-                      <FormDescription>
-                        {t('academy:settings.slugOwnerOnly')}
-                      </FormDescription>
-                    )}
+                    <AcademySlugDescription
+                      canChange={canChangeSlug}
+                      changing={!!academy && field.value !== academy.slug}
+                      nextChangeAt={academy?.nextSlugChangeAt}
+                    />
                     <FormMessage />
                   </FormItem>
                 )}

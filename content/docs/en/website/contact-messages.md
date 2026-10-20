@@ -1,0 +1,73 @@
+---
+id: DOC-WEB-013
+title: Contact form and website messages
+description: Add a contact form to your site, find visitor messages in Website Messages, and mark, archive or restore them. Atlas notifies owners and managers.
+summary: >
+  A Contact section with Show contact form on lets visitors send you their
+  name, email and message. Messages arrive in Website Messages, under Website
+  in the sidebar, for the academy owner and managers, who also get a
+  notification. Open a message to read it, reply from your own email, and mark
+  it read, unread or archived.
+type: step-by-step
+audience: [owner, manager]
+order: 13
+priority: P1
+related: [DOC-WEB-005, DOC-WEB-008, DOC-SUP-003, DOC-ACD-002, DOC-MSG-001]
+keywords: [contact form, website messages, inbox, contact us, نموذج اتصل بنا, رسائل الموقع, رسايل الزوار, تواصل معنا]
+updated: 2026-10-20
+---
+
+The academy owner and managers can read website messages. Visitors and learners can use your contact form to reach you, so check the inbox often.
+
+## Add a contact form and read messages
+
+1. In the page editor, open the **Contact** section of your Contact page (or add one to any page) and make sure **Show contact form** is ticked. Then choose **Apply changes** and **Save draft**.
+
+   ![The Contact section dialog with Show contact form ticked](shot:website/contact-section-form)
+
+2. Publish your site: on the **Website** overview, choose **Publish changes** and confirm. The form works only on your published, live site.
+
+   ![The publish bar on the Website overview with Publish changes highlighted](shot:website/overview-publish)
+
+3. To read messages, open **Website Messages** in the sidebar (or the **Messages** tab in **Website**).
+
+   ![The Website Messages page listing visitor messages](shot:website/messages)
+
+4. Filter by status: **All**, **New**, **Read** or **Archived**. You can also search by name, email or message, filter by **Received date** and change **Sort by**.
+
+   ![The status filter tabs above the messages list](shot:website/messages-filters)
+
+5. Choose a message to open it. Opening a new message marks it as read.
+
+   ![A message row in the Website Messages list](shot:website/messages-row)
+
+## Manage a message
+
+In an open message:
+
+- **Reply by email** opens your email app with the visitor's address. Atlas doesn't send replies from the inbox.
+- **Mark as unread** or **Mark as read** changes its status.
+- **Archive** moves it to **Archived**; **Restore** brings it back.
+
+## What visitors fill in
+
+Visitors enter their **Name**, **Email** and **Message** (up to 5,000 characters) and choose **Send message**. If the Contact section's email, phone or address are empty, the section shows the contact details from your academy profile. See [Edit your academy profile and contact details](doc:DOC-ACD-002).
+
+![The contact form on the academy website as a visitor sees it](shot:website/public-contact-form)
+
+## Notifications
+
+When a message arrives, the academy owner and managers get an in-app notification, **New website message**, that links to the inbox. It's also included in a summary email, unless you turned those emails off. The notification doesn't contain the message itself: open the inbox to read it. See [Notifications: in-app and email](doc:DOC-MSG-001).
+
+## Spam protection
+
+The form has built-in protection against automated messages, and limits how many messages one visitor can send in a short time.
+
+> [!LIMITATION]
+> The inbox has no reply, assignment or export feature. Reply from your own email or phone.
+
+## Related
+
+- [How learners get help](doc:DOC-SUP-003)
+- [Section types reference](doc:DOC-WEB-005)
+- [Preview, publish and unpublish your site](doc:DOC-WEB-008)

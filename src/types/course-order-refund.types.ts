@@ -25,7 +25,8 @@ export interface CourseOrderRefund {
   readonly status: CourseOrderRefundStatus;
   readonly money: Money;
   readonly reason?: string;
-  readonly requestedBy: string;
+  // No `requestedBy`: the learner's answer names no user (an academy-
+  // recorded refund is requested by the owner, whose id is not theirs).
   readonly requestedAt: string;
   readonly processedAt?: string;
 }

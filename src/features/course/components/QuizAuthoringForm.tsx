@@ -84,6 +84,11 @@ export interface QuizAuthoringFormProps {
   readonly autoFocusTitle?: boolean;
 }
 
+/** The API's names for settings the form holds in another shape. */
+const QUIZ_SERVER_FIELD_ALIASES = {
+  timeLimitSeconds: 'timeLimitMinutes',
+} as const;
+
 export function QuizAuthoringForm({
   courseId,
   quiz,
@@ -116,7 +121,7 @@ export function QuizAuthoringForm({
 
   const mutationError = isEditMode ? updateQuiz.error : createQuiz.error;
   const isSaving = createQuiz.isPending || updateQuiz.isPending;
-  useServerValidation(form, mutationError ?? null);
+  useServerValidation(form, mutationError ?? null, QUIZ_SERVER_FIELD_ALIASES);
 
   async function persist(
     data: QuizAuthoringFormData

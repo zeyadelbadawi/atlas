@@ -50,8 +50,6 @@ import type {
 const STATUS_TONE: Record<WebsitePublishStatus, StatusTone> = {
   draft: 'neutral',
   published: 'success',
-  publishing: 'info',
-  failed: 'destructive',
 };
 
 export interface WebsitePublishBarProps {
@@ -111,11 +109,7 @@ export function WebsitePublishBar({
   // while either is pending, so a double click cannot queue a publish
   // behind an unpublish.
   const [isSaving, setIsSaving] = useState(false);
-  const isBusy =
-    isSaving ||
-    publish.isPending ||
-    unpublish.isPending ||
-    status === 'publishing';
+  const isBusy = isSaving || publish.isPending || unpublish.isPending;
 
   /** Saves the surface's local edits (if any), then publishes. */
   const saveThenPublish = async () => {

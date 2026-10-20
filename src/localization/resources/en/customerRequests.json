@@ -257,8 +257,8 @@
     "cancelFailed": "Couldn't cancel the request. Please try again.",
     "notFound": "This request doesn't exist or isn't available to you.",
     "notAllowed": {
-      "title": "Only owners and administrators can see requests",
-      "description": "Ask an owner or administrator of this academy to request custom services from the Atlas team."
+      "title": "Only the academy owner can see requests",
+      "description": "Ask the owner of this academy to request custom services from the Atlas team."
     }
   },
   "timeline": {

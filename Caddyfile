@@ -75,6 +75,14 @@
 	header Content-Security-Policy `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src 'self' blob: https://www.youtube-nocookie.com https://www.youtube.com; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; report-uri /api/v1/security/csp-reports; report-to csp-endpoint`
 }
 
+# DL-57 — the help center's CSP: static pages with one same-origin script,
+# no inline style, no frame, no third-party anything. Stricter than the app
+# (`csp`), which needs inline styles, YouTube frames and storage origins.
+(docs_csp) {
+	header Reporting-Endpoints `csp-endpoint="/api/v1/security/csp-reports"`
+	header Content-Security-Policy `default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self'; frame-src 'none'; worker-src 'none'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; report-uri /api/v1/security/csp-reports; report-to csp-endpoint`
+}
+
 # Theme 1 plan §E.4 — theme photographs. Every file lives in a versioned
 # folder (`/theme-assets/<theme>/v<n>/…`) that is never changed once
 # released (a changed image ships as a new version), so browsers and
@@ -409,6 +417,19 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 			file_server
 		}
 
+		# DL-57 — the help center lives on docs.<base>; the planned apex paths
+		# (`/docs/...`, `/ar/docs/...`) forward there, path kept.
+		@docs_moved_ar {
+			host atlass.dpdns.org
+			path_regexp docs_ar ^/ar/docs(/.*)?$
+		}
+		redir @docs_moved_ar https://docs.atlass.dpdns.org/ar{re.docs_ar.1} permanent
+		@docs_moved {
+			host atlass.dpdns.org
+			path_regexp docs ^/docs(/.*)?$
+		}
+		redir @docs_moved https://docs.atlass.dpdns.org{re.docs.1} permanent
+
 		# One 301 from a page URL with a trailing slash to the URL without
 		# it (`/ar/` → `/ar`, `/pricing/` → `/pricing`), query kept; only
 		# when that page exists, so app routes are untouched.
@@ -540,6 +561,115 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 
 	handle_errors {
 		import ssr_unavailable hsts_platform
+	}
+}
+
+# DL-57 — the Atlas Help Center: static pages prerendered by `pnpm build`
+# (scripts/docs/prerender.mjs) into /srv-docs (Dockerfile), a tree no other
+# host reads. These exact names win over `*.atlass.dpdns.org` (Caddy matches
+# the most specific host first), so the academy wildcard, the server renderer
+# and the app never see them; the names are reserved for academies in the
+# API and the database (atlas-backend DL-57). `doc` and `help` are aliases.
+#
+# ATLAS_DOCS_STATIC (compose passes it; unset or empty = preview):
+#   preview  pages are served with `X-Robots-Tag: noindex, nofollow` (live
+#            review before search engines may index them)
+#   on       indexable
+#   off      every page answers 503 "not available" (noindex), no rebuild
+#
+# The only API reachable here is the cookieless beacon and CSP reports.
+docs.atlass.dpdns.org, doc.atlass.dpdns.org, help.atlass.dpdns.org {
+	import origin_lock
+
+	tls {
+		dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+	}
+
+	encode zstd gzip
+
+	@docs_alias host doc.atlass.dpdns.org help.atlass.dpdns.org
+	redir @docs_alias https://docs.atlass.dpdns.org{uri} permanent
+
+	@docs_api path /api/v1/mkt/events /api/v1/security/csp-reports
+	handle @docs_api {
+		reverse_proxy backend:3000 {
+			header_up X-Real-IP {client_ip}
+			header_up X-Forwarded-Host {host}
+		}
+	}
+	handle /api/* {
+		respond 404
+	}
+
+	handle {
+		import security_headers
+		import docs_csp
+		import hsts_platform
+		root * /srv-docs
+
+		@docs_off expression `{env.ATLAS_DOCS_STATIC} == "off"`
+		handle @docs_off {
+			header X-Robots-Tag "noindex, nofollow"
+			header Cache-Control "no-store"
+			respond "The Atlas Help Center is not available right now." 503
+		}
+
+		@docs_preview expression `{env.ATLAS_DOCS_STATIC} != "on"`
+		header @docs_preview X-Robots-Tag "noindex, nofollow"
+
+		# Hashed files (build assets, screenshots) never change; a missing
+		# one is a real 404, uncached. Pages and indexes revalidate.
+		@docs_immutable {
+			path /assets/* /media/*
+			file
+		}
+		header @docs_immutable Cache-Control "public, max-age=31536000, immutable"
+		@docs_revalidate not path /assets/* /media/*
+		header @docs_revalidate Cache-Control "no-cache"
+		header /robots.txt Content-Type "text/plain; charset=utf-8"
+		header /llms.txt Content-Type "text/plain; charset=utf-8"
+
+		# `/x/` → `/x` (one 301, query kept) when that page exists.
+		@docs_slash {
+			method GET HEAD
+			path */
+			not path /
+			file {
+				try_files {path}index.html
+			}
+		}
+		handle @docs_slash {
+			route {
+				uri strip_suffix /
+				redir * {path}{?query} permanent
+			}
+		}
+
+		# A page (`/selling/refunds` → selling/refunds/index.html) or a file.
+		@docs_found {
+			method GET HEAD
+			file {
+				try_files {path} {path}/index.html
+			}
+		}
+		handle @docs_found {
+			rewrite * {file_match.relative}
+			file_server
+		}
+
+		# Anything else is a real 404 with the branded page in its language.
+		handle /ar/* {
+			rewrite * /ar/404.html
+			file_server {
+				status 404
+			}
+		}
+		handle {
+			rewrite * /404.html
+			file_server {
+				status 404
+			}
+		}
 	}
 }
 

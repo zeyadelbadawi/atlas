@@ -155,6 +155,7 @@ export function AcademyInvitesCard({
               disabled={revoke.isPending}
               onClick={() => void handleRevoke(row.original)}
               aria-label={t('academy:registration.invites.revoke.action')}
+              data-testid="invite-revoke"
             >
               <Trash2 className="size-4" aria-hidden />
               {t('academy:registration.invites.revoke.action')}

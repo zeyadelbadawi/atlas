@@ -10,6 +10,8 @@ import { describe, expect, it } from 'vitest';
 import type { Plan } from '@/types/plan.types';
 import snapshot from '../data/plans.snapshot.json';
 import { MARKETING_PAGES } from '../registry';
+import { DOC_CATEGORIES } from '@/docs/categories';
+import inventory from '@/docs/inventory.json';
 import { formatPrice } from '../lib/site';
 import type { MarketingRenderContext } from '../types';
 
@@ -165,6 +167,42 @@ describe('marketing pages', () => {
       expect(r.head.robots).toBe('noindex, follow');
       expect(r.head.alternates).toBeUndefined();
       expect(r.page.inSitemap).toBe(false);
+    }
+  });
+});
+
+describe('links to the help center (DL-57)', () => {
+  // Every help-center URL a marketing page links to must be a page the docs
+  // build writes: the home, a category page or an inventory article.
+  const docsPaths = new Set<string>(['/']);
+  for (const category of DOC_CATEGORIES) docsPaths.add(`/${category.id}`);
+  for (const entry of inventory as { category: string; slug: string }[]) {
+    if (entry.category === 'home') continue;
+    docsPaths.add(entry.slug === '_index' ? `/${entry.category}` : `/${entry.category}/${entry.slug}`);
+  }
+
+  it('point only at pages of the help center, in the page language', () => {
+    let count = 0;
+    for (const { page, html } of rendered) {
+      for (const [, href] of html.matchAll(/href="(https:\/\/docs\.atlass\.dpdns\.org[^"]*)"/g)) {
+        count += 1;
+        const path = new URL(href).pathname;
+        const ar = path === '/ar' || path.startsWith('/ar/');
+        expect(ar, `${page.path}: ${href}`).toBe(page.lang === 'ar');
+        const bare = ar ? path.slice(3) || '/' : path;
+        expect(docsPaths.has(bare), `${page.path}: ${href} is not a help-center page`).toBe(true);
+      }
+    }
+    expect(count).toBeGreaterThan(0);
+  });
+
+  it('puts the help center in the header and footer of every page, and learn-more links on features and security', () => {
+    for (const { page, html } of rendered) {
+      const home = page.lang === 'ar' ? 'https://docs.atlass.dpdns.org/ar"' : 'https://docs.atlass.dpdns.org/"';
+      expect(html.split(home).length - 1, page.path).toBeGreaterThanOrEqual(2);
+    }
+    for (const { page, html } of rendered.filter(({ page: p }) => p.id === 'features' || p.id === 'security')) {
+      expect((html.match(/data-mkt-help/g) ?? []).length, page.path).toBeGreaterThanOrEqual(4);
     }
   });
 });

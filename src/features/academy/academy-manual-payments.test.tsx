@@ -66,6 +66,7 @@ const useAcademyCoursePayments = vi.fn();
 const useAcademyCoursePayment = vi.fn();
 const approveMutate = vi.fn();
 const rejectMutate = vi.fn();
+const refundMutate = vi.fn();
 vi.mock('./hooks', () => ({
   useAcademyPaymentMethods: (id: string) =>
     useAcademyPaymentMethods(id) as unknown,
@@ -85,6 +86,10 @@ vi.mock('./hooks', () => ({
   }),
   useRejectAcademyCoursePayment: () => ({
     mutate: rejectMutate,
+    isPending: false,
+  }),
+  useRecordAcademyCoursePaymentRefund: () => ({
+    mutate: refundMutate,
     isPending: false,
   }),
 }));
@@ -444,6 +449,82 @@ describe('AcademyPaymentsPage', () => {
     const sheet = screen.getByTestId('academy-payment-sheet');
     expect(sheet.textContent).toContain('Wrong amount');
     expect(sheet.textContent).toContain('Rejected by Owner');
+  });
+
+  it('records a refund of an approved payment, with the note, after confirmation', async () => {
+    useAcademyCoursePayments.mockReturnValue(ready(listPage([])));
+    useAcademyCoursePayment.mockReturnValue(
+      ready(
+        payment({
+          status: 'succeeded',
+          reviewStatus: 'approved',
+          orderStatus: 'paid',
+        })
+      )
+    );
+    confirm.mockResolvedValueOnce(false).mockResolvedValueOnce(true);
+    renderWith(<AcademyPaymentsPage />, 'en', '/x?payment=pay-1');
+    fireEvent.click(screen.getByTestId('academy-payment-refund'));
+    fireEvent.change(screen.getByTestId('academy-payment-refund-note'), {
+      target: { value: '  Sent back by InstaPay  ' },
+    });
+    fireEvent.click(screen.getByTestId('academy-payment-refund-confirm'));
+    await waitFor(() => expect(confirm).toHaveBeenCalledTimes(1));
+    expect(confirm.mock.calls[0][0]).toMatchObject({ intent: 'destructive' });
+    expect(refundMutate).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByTestId('academy-payment-refund-confirm'));
+    await waitFor(() =>
+      expect(refundMutate).toHaveBeenCalledWith(
+        { paymentId: 'pay-1', payload: { note: 'Sent back by InstaPay' } },
+        expect.anything()
+      )
+    );
+  });
+
+  it('offers no refund before approval, and shows a recorded refund instead of the action', () => {
+    useAcademyCoursePayments.mockReturnValue(ready(listPage([])));
+    useAcademyCoursePayment.mockReturnValue(ready(payment()));
+    renderWith(<AcademyPaymentsPage />, 'en', '/x?payment=pay-1');
+    expect(screen.queryByTestId('academy-payment-refund')).toBeNull();
+    cleanup();
+
+    useAcademyCoursePayment.mockReturnValue(
+      ready(
+        payment({
+          status: 'succeeded',
+          reviewStatus: 'approved',
+          orderStatus: 'refunded',
+          refund: {
+            id: 'ref-1',
+            money: { amountMinorUnits: 150000, currency: 'EGP' },
+            note: 'Sent back by InstaPay',
+            recordedAt: '2026-10-05T10:00:00.000Z',
+            recordedByName: 'Owner',
+          },
+        })
+      )
+    );
+    renderWith(<AcademyPaymentsPage />, 'en', '/x?payment=pay-1');
+    expect(screen.queryByTestId('academy-payment-refund')).toBeNull();
+    const recorded = screen.getByTestId('academy-payment-refund-recorded');
+    expect(recorded.textContent).toMatch(/Refund of .* recorded on .* by Owner/);
+    expect(recorded.textContent).toContain('Sent back by InstaPay');
+  });
+
+  it('labels a refunded payment Refunded in the list', () => {
+    useAcademyCoursePayments.mockReturnValue(
+      ready(
+        listPage([
+          payment({
+            status: 'succeeded',
+            reviewStatus: 'approved',
+            orderStatus: 'refunded',
+          }),
+        ])
+      )
+    );
+    renderWith(<AcademyPaymentsPage />);
+    expect(screen.getByText('Refunded')).toBeTruthy();
   });
 
   it('closing the sheet removes the payment from the URL', async () => {

@@ -23,6 +23,7 @@ import type {
   AcademyCoursePaymentListQuery,
   AcademyPaymentMethod,
   ApproveAcademyCoursePaymentPayload,
+  RecordAcademyCoursePaymentRefundPayload,
   RejectAcademyCoursePaymentPayload,
   SaveAcademyPaymentMethodPayload,
 } from '@types';
@@ -119,6 +120,22 @@ export function useRejectAcademyCoursePayment(academyId: string) {
   >({
     mutationFn: ({ paymentId, payload }) =>
       academyPaymentsService.rejectPayment(academyId, paymentId, payload),
+    showSuccessToast: false,
+    showErrorToast: false,
+    onSuccess: onDecided,
+  });
+}
+
+/** Records the academy's own refund of an approved payment (Organization Owner). */
+export function useRecordAcademyCoursePaymentRefund(academyId: string) {
+  const onDecided = useDecisionInvalidation(academyId);
+  return useApiMutation<
+    AcademyCoursePaymentDetail,
+    { paymentId: string; payload: RecordAcademyCoursePaymentRefundPayload },
+    ApiError
+  >({
+    mutationFn: ({ paymentId, payload }) =>
+      academyPaymentsService.recordRefund(academyId, paymentId, payload),
     showSuccessToast: false,
     showErrorToast: false,
     onSuccess: onDecided,

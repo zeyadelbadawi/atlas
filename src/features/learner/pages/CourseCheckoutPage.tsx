@@ -51,6 +51,9 @@ import {
 } from '../hooks/useCourseCheckout';
 import type { CourseOrder, CourseOrderPayment } from '@types';
 
+/** The academy rejected this learner's registration (fix round, 20 Oct 2026). */
+const REJECTED_KEY = 'errors.academy.registrationRejected';
+
 type Step = 'method' | 'proof' | 'submitted';
 
 export default function CourseCheckoutPage(): JSX.Element {
@@ -75,6 +78,11 @@ export default function CourseCheckoutPage(): JSX.Element {
   const [payerReference, setPayerReference] = useState('');
   const [actionError, setActionError] = useState<string | null>(null);
   const [underReview, setUnderReview] = useState(false);
+  // Fix round (20 Oct 2026) — the academy rejected this learner's
+  // registration: the server refuses every checkout step
+  // (`errors.academy.registrationRejected`), and the page says why instead
+  // of "not available right now".
+  const [notAdmitted, setNotAdmitted] = useState(false);
 
   const createPayment = useCreateCoursePayment(order?.id ?? '');
   const submitProof = useSubmitCourseOrderProof(order?.id ?? '');
@@ -91,8 +99,10 @@ export default function CourseCheckoutPage(): JSX.Element {
       .then((created) => {
         if (!cancelled) setOrder(created);
       })
-      .catch(() => {
-        if (!cancelled) setOrderError(true);
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        if (hasMessageKey(error, REJECTED_KEY)) setNotAdmitted(true);
+        setOrderError(true);
       });
     return () => {
       cancelled = true;
@@ -129,6 +139,10 @@ export default function CourseCheckoutPage(): JSX.Element {
       // the academy: the learner waits for that decision.
       if (hasMessageKey(error, 'errors.courseOrder.paymentUnderReview')) {
         setUnderReview(true);
+        return;
+      }
+      if (hasMessageKey(error, REJECTED_KEY)) {
+        setNotAdmitted(true);
         return;
       }
       setActionError(t('course:checkout.paymentError'));
@@ -179,6 +193,10 @@ export default function CourseCheckoutPage(): JSX.Element {
         setUnderReview(true);
         return;
       }
+      if (hasMessageKey(error, REJECTED_KEY)) {
+        setNotAdmitted(true);
+        return;
+      }
       setActionError(
         hasMessageKey(error, 'errors.payment.unsupportedProofFileType')
           ? t('payments:payment.proofInvalidType')
@@ -200,6 +218,29 @@ export default function CourseCheckoutPage(): JSX.Element {
       <div className="space-y-6">
         {header}
         <Skeleton className="h-64 w-full" />
+      </div>
+    );
+  }
+
+  if (notAdmitted) {
+    return (
+      <div className="space-y-6">
+        {header}
+        <Card data-testid="checkout-not-admitted">
+          <CardHeader>
+            <CardTitle as="h2">
+              {t('course:checkout.notAdmittedTitle')}
+            </CardTitle>
+            <CardDescription>
+              {t('errors:academy.registrationRejected')}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button variant="outline" asChild>
+              <a href={coursesHref}>{t('course:checkout.browseCourses')}</a>
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }

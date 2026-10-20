@@ -42,7 +42,10 @@ import {
   getLessonStatusLabelKey,
   getLessonStatusTone,
 } from '../utils/course-status.utils';
-import { getCourseEditorTabs } from '../utils/course-navigation.utils';
+import {
+  useCourseEditorLeadCrumbs,
+  useCourseEditorTabs,
+} from '../hooks/useCourseEditorTabs';
 import type { Assignment } from '@types';
 
 type DialogState =
@@ -58,31 +61,21 @@ export default function CourseAssignmentsPage(): JSX.Element {
     academyId: string;
     courseId: string;
   }>();
+  const editorTabs = useCourseEditorTabs(academyId ?? '', courseId ?? '');
   const { confirm } = useConfirmDialog();
 
   const [dialog, setDialog] = useState<DialogState>(null);
 
   const { data: course } = useCourse(academyId ?? '', courseId ?? '');
 
+  const leadCrumbs = useCourseEditorLeadCrumbs(
+    academyId ?? '',
+    courseId ?? '',
+    course?.title,
+    'course:assignmentAuthoring.title'
+  );
   const breadcrumbs: readonly BreadcrumbItem[] = [
-    {
-      labelKey: 'course:list.title',
-      path: buildPath(DASHBOARD_ROUTES.academyCourses, {
-        academyId: academyId ?? '',
-      }),
-    },
-    ...(course
-      ? [
-          {
-            labelKey: 'course:assignmentAuthoring.title',
-            label: course.title,
-            path: buildPath(DASHBOARD_ROUTES.academyCourseDetail, {
-              academyId: academyId ?? '',
-              courseId: courseId ?? '',
-            }),
-          } satisfies BreadcrumbItem,
-        ]
-      : []),
+    ...leadCrumbs,
     { labelKey: 'course:assignmentAuthoring.title' },
   ];
 
@@ -221,9 +214,7 @@ export default function CourseAssignmentsPage(): JSX.Element {
         }
       />
 
-      {academyId && courseId ? (
-        <SectionTabs items={getCourseEditorTabs(academyId, courseId)} />
-      ) : null}
+      {academyId && courseId ? <SectionTabs items={editorTabs} /> : null}
 
       {assignments.length === 0 ? (
         <EmptyState

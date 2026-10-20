@@ -91,6 +91,7 @@ export {
   useAcademyCoursePayments,
   useAcademyPaymentMethods,
   useApproveAcademyCoursePayment,
+  useRecordAcademyCoursePaymentRefund,
   useRejectAcademyCoursePayment,
   useSaveAcademyPaymentMethod,
 } from './useAcademyPayments';

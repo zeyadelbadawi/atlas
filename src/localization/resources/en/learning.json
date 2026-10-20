@@ -47,6 +47,11 @@
       "available": "Available",
       "unavailable": "Unavailable"
     },
+    "learningState": {
+      "not_started": "Not started",
+      "in_progress": "In progress",
+      "completed": "Completed"
+    },
     "pendingApproval": {
       "title": "Your membership is awaiting approval",
       "description": "This academy reviews new students before granting access. You will be able to open your courses as soon as it is approved."
@@ -533,7 +538,7 @@
       "breadcrumb": "This course",
       "empty": {
         "title": "The course outline will appear here",
-        "description": "Each lesson, quiz, assignment and live session shows its own state — and, when something is locked, why."
+        "description": "Each lesson, quiz and assignment shows its own state — and, when something is locked, why."
       },
       "loading": "Loading the course outline",
       "notEnrolled": {
@@ -637,7 +642,7 @@
     },
     "notifications": {
       "title": "Notifications",
-      "subtitle": "Grades, certificates, live sessions and purchases. Everything that happened in your courses, in one place."
+      "subtitle": "Grades, certificates and purchases. Everything that happened in your courses, in one place."
     },
     "devices": {
       "title": "Devices",
@@ -729,6 +734,13 @@
       "noReason": "No reason was given. Contact the academy if you have questions.",
       "submitNew": "Submit a new payment",
       "continuePayment": "Continue payment"
+    },
+    "membership": {
+      "rejected": {
+        "title": "You haven't been admitted to this academy",
+        "description": "This academy didn't approve your registration, so you can't open or buy its courses. You can apply again: you'll be signed out here, then confirm with your Atlas account on the sign-up page. The academy decides again.",
+        "action": "Apply again"
+      }
     }
   },
   "player": {

@@ -12,6 +12,12 @@
  *   - The server decides: a payment someone else already reviewed answers
  *     409, shown here as "already reviewed" with the list refreshed.
  *   - Learner text (note, reference) is rendered as text, never markup.
+ *   - Once approved (and while the order is still paid), "Record refund…"
+ *     records that the ACADEMY gave the money back itself, outside Atlas:
+ *     full refund only, an optional note for the learner, and a
+ *     confirmation that names what follows (access ends, the order leaves
+ *     the sales figures, the learner is told). A recorded refund is shown
+ *     in place of the action.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -21,6 +27,7 @@ import {
   FileText,
   Loader2,
   RefreshCw,
+  Undo2,
   X,
 } from 'lucide-react';
 import {
@@ -49,6 +56,7 @@ import {
 import {
   useAcademyCoursePayment,
   useApproveAcademyCoursePayment,
+  useRecordAcademyCoursePaymentRefund,
   useRejectAcademyCoursePayment,
 } from '../hooks';
 import { useAcademyPaymentProof } from '../hooks/useAcademyPaymentProof';
@@ -98,6 +106,9 @@ export function AcademyPaymentReviewSheet({
   const [rejecting, setRejecting] = useState(false);
   const [reason, setReason] = useState('');
   const [alreadyReviewed, setAlreadyReviewed] = useState(false);
+  const recordRefund = useRecordAcademyCoursePaymentRefund(academyId);
+  const [refunding, setRefunding] = useState(false);
+  const [refundNote, setRefundNote] = useState('');
 
   const isImage = payment?.proof?.mimeType.startsWith('image/') ?? false;
   const proof = useAcademyPaymentProof(
@@ -118,6 +129,50 @@ export function AcademyPaymentReviewSheet({
     setRejecting(false);
     setReason('');
     setAlreadyReviewed(false);
+    setRefunding(false);
+    setRefundNote('');
+  };
+
+  const canRecordRefund =
+    payment?.reviewStatus === 'approved' &&
+    payment.orderStatus === 'paid' &&
+    !payment.refund;
+
+  const onRecordRefund = async () => {
+    if (!payment) return;
+    const confirmed = await confirm({
+      titleKey: `${K}.refund.confirm.title`,
+      descriptionKey: `${K}.refund.confirm.description`,
+      confirmLabelKey: `${K}.refund.confirm.confirm`,
+      intent: 'destructive',
+      values: {
+        amount,
+        learner: payment.learner.name,
+        course: payment.course.title,
+      },
+    });
+    if (!confirmed) return;
+    const trimmed = refundNote.trim();
+    recordRefund.mutate(
+      { paymentId: payment.id, payload: trimmed ? { note: trimmed } : {} },
+      {
+        onSuccess: () => {
+          notifySuccess(`${K}.refund.doneToast`, undefined, {
+            learner: payment.learner.name,
+          });
+          resetLocal();
+        },
+        onError: (error) => {
+          if (hasMessageKey(error, 'errors.courseOrder.alreadyRefunded')) {
+            void detail.refetch();
+            notifyError('errors:courseOrder.alreadyRefunded');
+            resetLocal();
+            return;
+          }
+          notifyError(`${K}.refund.error`);
+        },
+      }
+    );
   };
 
   const onConflict = (error: unknown): boolean => {
@@ -524,6 +579,95 @@ export function AcademyPaymentReviewSheet({
                       {t(`${K}.rejectEllipsis`)}
                     </Button>
                   </div>
+                )}
+              </section>
+            ) : payment.refund ? (
+              <Alert role="status" data-testid="academy-payment-refund-recorded">
+                <AlertDescription>
+                  <span className="block font-medium">
+                    {t(`${K}.refund.recorded`, {
+                      amount: formatMoney(payment.refund.money, locale),
+                      when: fmt.dateTime(payment.refund.recordedAt),
+                      who: payment.refund.recordedByName ?? t(`${K}.someone`),
+                    })}
+                  </span>
+                  {payment.refund.note ? (
+                    <span
+                      className="mt-1 block whitespace-pre-wrap"
+                      dir="auto"
+                    >
+                      {payment.refund.note}
+                    </span>
+                  ) : null}
+                </AlertDescription>
+              </Alert>
+            ) : canRecordRefund ? (
+              <section
+                aria-label={t(`${K}.refund.label`)}
+                className="space-y-3 border-t border-border pt-4"
+              >
+                <p className="text-sm text-muted-foreground">
+                  {t(`${K}.refund.hint`)}
+                </p>
+                {refunding ? (
+                  <div className="space-y-2">
+                    <Label htmlFor="academy-payment-refund-note">
+                      {t(`${K}.refund.noteLabel`)}
+                    </Label>
+                    <Textarea
+                      id="academy-payment-refund-note"
+                      rows={3}
+                      value={refundNote}
+                      maxLength={MAX_PAYMENT_REVIEW_NOTES_LENGTH}
+                      onChange={(event) => setRefundNote(event.target.value)}
+                      aria-describedby="academy-payment-refund-help"
+                      dir="auto"
+                      data-testid="academy-payment-refund-note"
+                    />
+                    <p
+                      id="academy-payment-refund-help"
+                      className="text-xs text-muted-foreground"
+                    >
+                      {t(`${K}.refund.noteHelp`)}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        className="min-h-11 sm:min-h-9"
+                        disabled={recordRefund.isPending}
+                        onClick={() => void onRecordRefund()}
+                        data-testid="academy-payment-refund-confirm"
+                      >
+                        {recordRefund.isPending ? (
+                          <Loader2 className="size-4 animate-spin" aria-hidden />
+                        ) : (
+                          <Undo2 className="size-4" aria-hidden />
+                        )}
+                        {t(`${K}.refund.submit`)}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        className="min-h-11 sm:min-h-9"
+                        disabled={recordRefund.isPending}
+                        onClick={() => setRefunding(false)}
+                      >
+                        {t('common:actions.cancel')}
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="min-h-11 sm:min-h-9"
+                    onClick={() => setRefunding(true)}
+                    data-testid="academy-payment-refund"
+                  >
+                    <Undo2 className="size-4" aria-hidden />
+                    {t(`${K}.refund.action`)}
+                  </Button>
                 )}
               </section>
             ) : payment.reviewStatus === 'rejected' && payment.reviewNotes ? (

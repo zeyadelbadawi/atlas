@@ -1,0 +1,42 @@
+# Screenshots for content/docs/{en,ar}/roles/*.md
+# Routes: src/app/routes/route-paths.ts. Keys: src/localization/resources/<lang>/*.json.
+
+- key: roles/owner-members
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members
+  waitFor: { text: academy:members.title }
+  highlight:
+    - { role: button, name: academy:members.addInstructor.triggerButton }
+    - { role: button, name: academy:members.addManager.triggerButton }
+
+- key: roles/manager-members
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members
+  waitFor: { text: academy:members.ownerOnlyAdds }
+  highlight: { testId: members-owner-only-note }
+
+- key: roles/manager-orders
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/orders
+  waitFor: { text: errors:forbidden.title }
+
+- key: roles/instructor-courses
+  as: instructor
+  surface: dashboard
+  path: /dashboard/instructor/courses
+  waitFor: { text: instructor:courses.title }
+
+- key: roles/instructor-assessments
+  as: instructor
+  surface: dashboard
+  path: /dashboard/instructor/courses/{courseId}/assessments
+  waitFor: { text: instructor:assessments.title }
+
+- key: roles/learner-overview
+  as: learner
+  surface: academy
+  path: /my
+  waitFor: { text: learning:learnerDashboard.overview.title }

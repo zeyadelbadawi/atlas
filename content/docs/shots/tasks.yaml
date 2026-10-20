@@ -1,0 +1,210 @@
+# Screenshots for content/docs/{en,ar}/tasks/*.md
+# Routes: src/app/routes/route-paths.ts. Keys: src/localization/resources/<lang>/*.json.
+
+# --- DOC-TASK-001 launch-website -----------------------------------------------
+- key: tasks/website-theme
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=theme
+  waitFor: { text: website:settings.tabs.theme }
+  highlight: { role: tab, name: website:settings.tabs.theme }
+
+- key: tasks/website-visual-identity
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/branding
+  waitFor: { text: website:visualIdentity.title }
+  highlight: { role: button, name: website:visualIdentity.save }
+
+- key: tasks/website-pages
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages
+  waitFor: { text: website:pages.title }
+
+- key: tasks/website-language
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=language
+  waitFor: { text: website:language.description }
+  highlight: { role: tab, name: website:settings.tabs.language }
+
+- key: tasks/website-publish
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website
+  waitFor: { text: website:launchChecklist.title }
+
+- key: tasks/website-domain
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=domain
+  waitFor: { text: website:domain.custom.title }
+  highlight: { role: tab, name: website:settings.tabs.domain }
+
+# --- DOC-TASK-002 sell-courses ---------------------------------------------------
+- key: tasks/sell-pricing
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/setup?step=pricing
+  waitFor: { text: course:wizard.steps.pricing.title }
+
+- key: tasks/sell-payment-methods
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/payment-methods
+  waitFor: { text: payments:academyMethods.title }
+
+- key: tasks/sell-learner-purchases
+  as: learner
+  surface: academy
+  path: /my/purchases
+  waitFor: { text: learning:learnerDashboard.purchases.title }
+
+- key: tasks/sell-review-payment
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/payments?payment={paymentId}
+  waitFor: { text: payments:academyReview.approve }
+  highlight: { role: button, name: payments:academyReview.approve }
+  clip: dialog
+
+- key: tasks/sell-orders
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/orders
+  waitFor: { text: payments:academyOrders.title }
+
+# --- DOC-TASK-003 run-exams ------------------------------------------------------
+- key: tasks/exams-quizzes
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/quizzes
+  waitFor: { text: course:quizAuthoring.subtitle }
+  highlight: { role: button, name: course:quizAuthoring.addQuiz }
+
+- key: tasks/exams-quiz-settings
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/quizzes/{quizId}
+  waitFor: { text: course:quizAuthoring.editor.detailsTitle }
+  # Mode and Integrity live under the collapsed "Advanced options"; the Exam
+  # preset opens that panel (and is what the article describes). Not saved.
+  actions:
+    - click: { role: button, name: course:quizAuthoring.settings.presets.exam.label }
+  highlight: { text: course:quizAuthoring.settings.fields.mode.label, exact: true }
+
+- key: tasks/exams-integrity
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/quizzes/{quizId}
+  waitFor: { text: course:quizAuthoring.editor.detailsTitle }
+  # Mode and Integrity live under the collapsed "Advanced options"; the Exam
+  # preset opens that panel (and is what the article describes). Not saved.
+  actions:
+    - click: { role: button, name: course:quizAuthoring.settings.presets.exam.label }
+  highlight: { text: course:quizAuthoring.settings.integrity.title, exact: true }
+
+- key: tasks/exams-learner-assessments
+  as: learner
+  surface: academy
+  path: /my/assessments
+  waitFor: { text: learning:learnerDashboard.assessments.title }
+
+- key: tasks/exams-results
+  as: instructor
+  surface: dashboard
+  path: /dashboard/instructor/courses/{courseId}/quizzes/{quizId}/results
+  waitFor: { text: instructor:quizResults.title }
+
+- key: tasks/exams-overrides
+  as: instructor
+  surface: dashboard
+  path: /dashboard/instructor/courses/{courseId}/quizzes/{quizId}/results
+  waitFor: { text: instructor:quizResults.title }
+  actions:
+    - click: { role: button, name: instructor:quizResults.actions.overrides }
+    - wait: 500
+  clip: dialog
+
+- key: tasks/exams-integrity-report
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/reports
+  waitFor: { text: dashboard:reports.integrity.title }
+  highlight: { text: dashboard:reports.integrity.title, exact: true }
+
+# --- DOC-TASK-004 protect-content -----------------------------------------------
+- key: tasks/protect-settings
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:protection.sectionTitle }
+  highlight: { text: academy:protection.sectionTitle, exact: true }
+
+- key: tasks/protect-devices
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:protection.devices.title }
+  highlight: { text: academy:protection.devices.title, exact: true }
+
+- key: tasks/protect-learner-devices
+  as: learner
+  surface: academy
+  path: /my/devices
+  waitFor: { text: learning:learnerDashboard.devices.title }
+
+- key: tasks/protect-sharing-signals
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/reports
+  waitFor: { text: dashboard:reports.sharing.title }
+  highlight: { text: dashboard:reports.sharing.title, exact: true }
+
+- key: tasks/protect-support
+  as: owner
+  surface: dashboard
+  path: /dashboard/support
+  waitFor: { text: support:center.title }
+
+# --- DOC-TASK-005 manage-learners ------------------------------------------------
+- key: tasks/learners-policy
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:registration.policy.title }
+  highlight: { role: button, name: academy:registration.policy.save }
+
+- key: tasks/learners-invite-links
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:registration.invites.title }
+  highlight: { text: academy:registration.invites.title, exact: true }
+
+- key: tasks/learners-add-student
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members
+  waitFor: { text: academy:members.title }
+  highlight: { role: button, name: academy:members.createStudent.triggerButton }
+
+- key: tasks/learners-students-tab
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members?tab=students
+  waitFor: { text: academy:students.table.student }
+  highlight: { label: academy:students.filterByStatus }
+
+- key: tasks/learners-student-details
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members?tab=students
+  # Clickable rows are role="button" (DataTable onRowSelect), not role="row":
+  # open Salma's details by her name, as courses/issue-certificate does.
+  waitFor: { text: { en: Salma Ibrahim, ar: سلمى إبراهيم } }
+  actions:
+    - click: { text: { en: Salma Ibrahim, ar: سلمى إبراهيم } }
+    - wait: 800
+  clip: dialog

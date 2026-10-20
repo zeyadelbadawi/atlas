@@ -4,7 +4,7 @@
  * Maps backend validation errors to form field errors. Use this when a mutation
  * fails with validation violations.
  */
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { FieldValues, UseFormReturn, Path } from 'react-hook-form';
 import type { FieldViolation } from '@types';
@@ -24,11 +24,22 @@ export function isFieldViolationError(error: ApiError | null): boolean {
   return error.kind === 'validation' || error.messageKey === PHONE_TAKEN_ERROR_KEY;
 }
 
+/**
+ * `fieldAliases` maps an API field name onto the form field that edits it,
+ * for a form that holds the value in another shape (a quiz's time limit is
+ * `timeLimitSeconds` on the wire and `timeLimitMinutes` in the form). An
+ * unmapped name is used as-is.
+ */
 export function useServerValidation<TValues extends FieldValues>(
   form: UseFormReturn<TValues>,
-  error: ApiError | null
+  error: ApiError | null,
+  fieldAliases?: Readonly<Record<string, Path<TValues>>>
 ): void {
   const { t } = useTranslation();
+  // Read through a ref: callers may pass an inline object, and a changed
+  // object must not re-apply the same server errors on every render.
+  const aliases = useRef(fieldAliases);
+  aliases.current = fieldAliases;
 
   useEffect(() => {
     if (!error || !error.violations || !isFieldViolationError(error)) {
@@ -47,7 +58,10 @@ export function useServerValidation<TValues extends FieldValues>(
         field: humanizeFieldName(violation.field),
         ...violation.values,
       });
-      form.setError(violation.field as Path<TValues>, {
+      const field =
+        aliases.current?.[violation.field] ??
+        (violation.field as Path<TValues>);
+      form.setError(field, {
         type: 'server',
         message,
       });

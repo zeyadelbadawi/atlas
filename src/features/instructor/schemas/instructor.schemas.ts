@@ -32,7 +32,7 @@ export type GradeSubmissionFormData = z.infer<typeof gradeSubmissionSchema>;
 export const MAX_REVIEW_REASON_LENGTH = 500;
 
 export const MIN_TIME_MULTIPLIER = 1;
-export const MAX_TIME_MULTIPLIER = 5;
+export const MAX_TIME_MULTIPLIER = 4;
 export const TIME_MULTIPLIER_STEP = 0.25;
 
 /**

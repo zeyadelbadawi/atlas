@@ -1,0 +1,156 @@
+# Screenshots for the "Content protection" category (content/docs/<lang>/protection/*.md).
+# Owner shots run on the dashboard of the demo academy; the watermark shot runs
+# as the demo learner in the lesson player. Real routes from route-paths.ts;
+# i18n keys from src/localization/resources/<lang>/*.json.
+
+# --- DOC-MED-002 The forensic watermark ------------------------------------------
+- key: protection/watermark-about
+  as: learner
+  surface: academy
+  path: /my/courses/{courseId}/learn/{lessonId}
+  waitFor: { text: learning:watermark.caption.account }
+  actions:
+    - click: { role: button, name: learning:watermark.about.trigger }
+  highlight: { text: learning:watermark.about.title, exact: true }
+
+# --- DOC-MED-004 Content protection settings (also DOC-MED-001, DOC-MED-003) -----
+- key: protection/settings-nav
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:protection.sectionTitle }
+  highlight: { role: link, name: navigation:items.academySettings }
+
+- key: protection/settings-video-protection
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:protection.content.watermark.label }
+  actions:
+    - scroll: { text: academy:protection.content.title, exact: true }
+  highlight: { text: academy:protection.content.watermark.label, exact: true }
+
+- key: protection/settings-devices
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:protection.devices.maxDevices.label }
+  actions:
+    - scroll: { text: academy:protection.devices.title, exact: true }
+  highlight: { label: academy:protection.devices.maxDevices.label }
+
+- key: protection/settings-devices-save
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:protection.devices.maxDevices.label }
+  actions:
+    - scroll: { selector: 'form:has(input[name="maxDevices"]) button[type="submit"]' }
+  highlight: { selector: 'form:has(input[name="maxDevices"]) button[type="submit"]' }
+
+# --- DOC-MED-005 If your content leaks (support ticket; never submitted) ---------
+- key: protection/support-center
+  as: owner
+  surface: dashboard
+  path: /dashboard/support
+  waitFor: { text: support:center.subtitle }
+  highlight: { testId: open-create-ticket }
+
+- key: protection/support-new-ticket
+  as: owner
+  surface: dashboard
+  path: /dashboard/support
+  waitFor: { text: support:center.subtitle }
+  actions:
+    - click: { testId: open-create-ticket }
+    - fill: { selector: '#support-subject', value: { en: 'Leaked lesson video: watermark code XXXXX-XXXXX', ar: 'فيديو درس متسرّب: كود العلامة المائية XXXXX-XXXXX' } }
+  highlight: { selector: '#support-subject' }
+  clip: dialog
+
+- key: protection/support-ticket-attach
+  as: owner
+  surface: dashboard
+  path: /dashboard/support
+  waitFor: { text: support:center.subtitle }
+  actions:
+    - click: { testId: open-create-ticket }
+  highlight: { text: support:attachment.label, exact: true }
+  clip: dialog
+
+- key: protection/support-ticket-submit
+  as: owner
+  surface: dashboard
+  path: /dashboard/support
+  waitFor: { text: support:center.subtitle }
+  actions:
+    - click: { testId: open-create-ticket }
+  highlight: { testId: submit-ticket }
+  clip: dialog
+
+# --- DOC-MED-006 Sharing signals report -------------------------------------------
+- key: protection/reports-nav
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/reports
+  waitFor: { text: dashboard:reports.window.label }
+  highlight: { role: link, name: navigation:items.academyReports }
+
+- key: protection/reports-window
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/reports
+  waitFor: { text: dashboard:reports.window.label }
+  highlight: { label: dashboard:reports.window.label }
+
+- key: protection/reports-sharing
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/reports
+  waitFor: { text: dashboard:reports.sharing.title }
+  actions:
+    - scroll: { text: dashboard:reports.sharing.title, exact: true }
+  highlight: { text: dashboard:reports.sharing.title, exact: true }
+
+# --- DOC-MED-007 Media library ------------------------------------------------------
+- key: protection/media-nav
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/media
+  waitFor: { text: media:page.subtitle }
+  highlight: { role: link, name: navigation:items.academyMedia }
+
+- key: protection/media-upload
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/media
+  waitFor: { text: media:page.subtitle }
+  highlight: { role: button, name: media:page.uploadButton }
+
+- key: protection/media-details
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/media
+  waitFor: { selector: '[data-testid="media-grid"]' }
+  actions:
+    - click: { selector: '[data-testid="media-grid"] button', nth: 0 }
+  highlight: { label: media:details.altText }
+  clip: dialog
+
+- key: protection/media-search
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/media
+  waitFor: { text: media:page.subtitle }
+  highlight: { label: media:page.searchPlaceholder }
+
+# Opens the confirmation only; nothing is deleted.
+- key: protection/media-delete-confirm
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/media
+  waitFor: { selector: '[data-testid="media-grid"]' }
+  actions:
+    - click: { selector: '[data-testid="media-grid"] button', nth: 0 }
+    - click: { role: button, name: media:details.delete }
+    - wait: 500
+  clip: dialog

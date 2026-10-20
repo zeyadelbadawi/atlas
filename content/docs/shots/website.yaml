@@ -1,0 +1,502 @@
+# Website builder screenshots (help center category "website").
+# Real routes (src/app/routes/route-paths.ts, PublicWebsiteRouter) and real
+# i18n keys (src/localization/resources/<lang>/website.json, publicWebsite.json,
+# navigation.json, common.json). No shot saves, publishes or opens a message:
+# dialogs are opened and captured, never confirmed, so the demo state stays
+# the same for every other capture.
+
+# ---- Overview ---------------------------------------------------------------
+
+- key: website/overview
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website
+  waitFor: { text: website:launchChecklist.title }
+
+- key: website/launch-checklist
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website
+  waitFor: { text: website:launchChecklist.title }
+  highlight: { testId: website-launch-checklist }
+
+- key: website/publish-bar
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website
+  waitFor: { text: website:launchChecklist.title }
+  highlight: { testId: website-publish-hint }
+
+- key: website/overview-publish
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website
+  waitFor: { text: website:launchChecklist.title }
+  highlight: { testId: website-publish-changes }
+
+- key: website/unpublish-dialog
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website
+  waitFor: { text: website:launchChecklist.title }
+  actions:
+    - click: { testId: website-publish-toggle }
+  highlight: { role: button, name: website:publish.unpublishConfirmAction, nth: -1 }
+  clip: dialog
+
+# ---- Settings: theme ----------------------------------------------------------
+
+- key: website/theme-tab
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=theme
+  waitFor: { text: website:theme.currentTheme }
+  highlight: { role: tab, name: website:settings.tabs.theme }
+
+- key: website/theme-current
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=theme
+  waitFor: { text: website:theme.currentTheme }
+  highlight: { text: website:theme.currentTheme, nth: 0 }
+
+- key: website/theme-select
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=theme
+  waitFor: { text: website:theme.currentTheme }
+  highlight: { text: website:theme.selectTheme, nth: 0 }
+
+- key: website/settings-publish
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings
+  waitFor: { text: website:theme.currentTheme }
+  highlight: { testId: website-publish-changes }
+
+- key: website/settings-tabs
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings
+  waitFor: { text: website:theme.currentTheme }
+  highlight: { role: tablist }
+
+# ---- Settings: language ------------------------------------------------------
+
+- key: website/settings-language
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=language
+  waitFor: { text: website:language.description }
+  highlight: { role: radiogroup, name: website:language.title }
+
+- key: website/settings-language-save
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=language
+  waitFor: { text: website:language.description }
+  highlight: { role: button, name: website:common.saveChanges }
+
+# ---- Settings: SEO -------------------------------------------------------------
+
+- key: website/seo-tab
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=seo
+  waitFor: { text: website:seo.siteTitle }
+  highlight: { role: tab, name: website:settings.tabs.seo }
+
+- key: website/settings-seo
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=seo
+  waitFor: { text: website:seo.siteTitle }
+  highlight:
+    - { text: website:seo.siteTitle, nth: 0 }
+    - { text: website:seo.metaTitle, nth: 0 }
+    - { text: website:seo.metaDescription, nth: 0 }
+
+- key: website/seo-share-image
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=seo
+  waitFor: { text: website:seo.siteTitle }
+  actions:
+    - scroll: { text: website:seo.ogImage, nth: 0 }
+  highlight: { text: website:seo.ogImage, nth: 0 }
+
+- key: website/seo-indexing
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=seo
+  waitFor: { text: website:seo.siteTitle }
+  actions:
+    - scroll: { text: website:seo.sitemapEnabled }
+  highlight:
+    - { text: website:seo.robotsIndexable }
+    - { text: website:seo.sitemapEnabled }
+
+- key: website/seo-save
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=seo
+  waitFor: { text: website:seo.siteTitle }
+  actions:
+    - scroll: { role: button, name: website:common.saveChanges }
+  highlight: { role: button, name: website:common.saveChanges }
+
+- key: website/settings-unsaved-dialog
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=seo
+  waitFor: { text: website:seo.siteTitle }
+  actions:
+    - fill: { selector: '#website-seo-site-title-en', value: Al-Nour Academy (draft title) }
+    - click: { role: tab, name: website:settings.tabs.navigation }
+  highlight: { role: button, name: common:unsavedChanges.stay }
+  clip: dialog
+
+# ---- Settings: navigation --------------------------------------------------------
+
+- key: website/settings-navigation
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=navigation
+  waitFor: { text: website:navigation.primaryNavTitle }
+  highlight: { role: tab, name: website:settings.tabs.navigation }
+
+- key: website/nav-menu-pages
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=navigation
+  waitFor: { text: website:navigation.primaryNavTitle }
+  highlight: { role: checkbox, nth: 0 }
+
+- key: website/nav-menu-order
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=navigation
+  waitFor: { text: website:navigation.orderTitle }
+  actions:
+    - scroll: { text: website:navigation.orderTitle }
+  highlight:
+    - { text: website:navigation.itemLabel, nth: 0 }
+    - { role: button, name: website:navigation.moveDown, nth: 0 }
+
+- key: website/nav-header-cta
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=navigation
+  waitFor: { text: website:navigation.primaryNavTitle }
+  actions:
+    - scroll: { text: website:navigation.headerCtaTitle }
+  highlight: { text: website:navigation.headerCtaTitle }
+
+- key: website/nav-footer
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=navigation
+  waitFor: { text: website:navigation.primaryNavTitle }
+  actions:
+    - scroll: { text: website:navigation.copyrightText }
+  highlight: { text: website:navigation.copyrightText }
+
+- key: website/nav-social
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=navigation
+  waitFor: { text: website:navigation.primaryNavTitle }
+  actions:
+    - scroll: { role: button, name: website:navigation.addSocialLink }
+  highlight: { role: button, name: website:navigation.addSocialLink }
+
+# ---- Pages ------------------------------------------------------------------------
+
+- key: website/pages-list
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages
+  waitFor: { text: website:pages.subtitle }
+  highlight: { role: link, name: website:overview.pages.title }
+
+- key: website/pages-open-row
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages
+  waitFor: { text: website:pages.subtitle }
+  highlight: { text: Home, exact: true }
+
+- key: website/pages-new
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages
+  waitFor: { text: website:pages.subtitle }
+  highlight: { role: button, name: website:pages.createAction }
+
+- key: website/pages-create-dialog
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages
+  waitFor: { text: website:pages.subtitle }
+  actions:
+    - click: { role: button, name: website:pages.createAction }
+    - fill: { label: website:pages.titleLabel, value: { en: Summer revision, ar: مراجعة الصيف } }
+    - fill: { label: website:pages.slugLabel, value: summer-revision }
+  highlight: { role: button, name: website:pages.createAction, nth: -1 }
+  clip: dialog
+
+- key: website/pages-visibility
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages
+  waitFor: { text: website:pages.subtitle }
+  highlight: { role: switch, name: website:pages.visibilityToggle, nth: 1 }
+
+- key: website/pages-auth-dialog
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages
+  waitFor: { text: website:pages.subtitle }
+  actions:
+    - click: { text: website:navigation.ctaTargetSignIn, nth: 0 }
+  highlight: { text: website:navigation.authPagesDescription }
+  clip: dialog
+
+# ---- Page editor ------------------------------------------------------------------
+
+- key: website/editor
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}
+  waitFor: { text: website:editor.compositionTitle }
+  highlight: { role: button, name: website:editor.addSection }
+
+- key: website/editor-add-section
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}
+  waitFor: { text: website:editor.compositionTitle }
+  actions:
+    - click: { role: button, name: website:editor.addSection }
+  highlight: { role: menu }
+
+- key: website/editor-section-dialog
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}
+  waitFor: { text: website:editor.compositionTitle }
+  actions:
+    - click: { role: button, name: website:sections.hero.label, nth: 0 }
+  highlight: { text: website:editor.optional, nth: 0 }
+  clip: dialog
+
+- key: website/editor-section-apply
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}
+  waitFor: { text: website:editor.compositionTitle }
+  actions:
+    - click: { role: button, name: website:sections.hero.label, nth: 0 }
+    - scroll: { role: button, name: website:editor.applyChanges }
+  highlight: { role: button, name: website:editor.applyChanges }
+  clip: dialog
+
+- key: website/editor-visibility
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}
+  waitFor: { text: website:editor.compositionTitle }
+  highlight:
+    - { role: button, name: website:editor.visibility.desktop, nth: 0 }
+    - { role: button, name: website:editor.visibility.tablet, nth: 0 }
+    - { role: button, name: website:editor.visibility.mobile, nth: 0 }
+
+- key: website/editor-save
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}
+  waitFor: { text: website:editor.compositionTitle }
+  highlight: { testId: website-save-page }
+
+- key: website/editor-publish-page
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}
+  waitFor: { text: website:editor.compositionTitle }
+  highlight: { testId: website-publish-page }
+
+- key: website/page-seo-dialog
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}
+  waitFor: { text: website:editor.compositionTitle }
+  actions:
+    - click: { role: button, name: website:editor.seoAction }
+    - scroll: { text: website:seo.indexable }
+  highlight: { text: website:seo.indexable }
+  clip: dialog
+
+- key: website/editor-faq-library
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}
+  waitFor: { text: website:editor.compositionTitle }
+  actions:
+    - click: { role: button, name: website:sections.faq.label, nth: 0 }
+    # The library block renders once the entries have loaded.
+    - wait: 2000
+    - scroll: { text: website:editor.libraryEntries }
+  highlight: { text: website:editor.libraryEntries }
+  clip: dialog
+
+- key: website/contact-section-form
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages
+  waitFor: { text: website:pages.subtitle }
+  actions:
+    - click: { text: Contact, exact: true }
+    - wait: 2000
+    - click: { role: button, name: website:sections.contact.label, nth: 0 }
+    - scroll: { text: website:fields.showForm }
+  highlight: { text: website:fields.showForm }
+  clip: dialog
+
+# ---- Preview ------------------------------------------------------------------------
+
+- key: website/preview
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/preview
+  waitFor: { text: website:preview.subtitle }
+  highlight: { selector: '[role="combobox"].w-56' }
+
+- key: website/preview-mobile
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/preview
+  waitFor: { text: website:preview.subtitle }
+  actions:
+    - click: { role: button, name: website:preview.breakpoint.mobile }
+    - wait: 800
+  highlight: { role: button, name: website:preview.breakpoint.mobile }
+
+- key: website/preview-language
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/preview
+  waitFor: { text: website:preview.subtitle }
+  highlight: { selector: '[role="combobox"].w-32' }
+
+# ---- Content library ------------------------------------------------------------------
+
+- key: website/content-faqs
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/content
+  waitFor: { text: website:content.subtitle }
+  highlight: { role: tab, name: website:content.tabs.faqs }
+
+- key: website/content-faq-new
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/content
+  waitFor: { text: website:content.subtitle }
+  highlight: { role: button, name: website:content.faq.createAction }
+
+- key: website/content-faq-dialog
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/content
+  waitFor: { text: website:content.subtitle }
+  actions:
+    - click: { role: button, name: website:content.faq.createAction }
+    - fill: { label: website:content.questionEn, value: Can I pay with InstaPay? }
+    - fill: { label: website:content.questionAr, value: هل ممكن أدفع بإنستاباي؟ }
+    - fill: { label: website:content.answerEn, value: Yes. Choose InstaPay at checkout and upload your receipt. }
+    - fill: { label: website:content.answerAr, value: أيوه. اختار إنستاباي وانت بتدفع وارفع الإيصال. }
+  highlight: { role: button, name: website:common.saveChanges, nth: -1 }
+  clip: dialog
+
+- key: website/content-testimonials
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/content
+  waitFor: { text: website:content.subtitle }
+  actions:
+    - click: { role: tab, name: website:content.tabs.testimonials }
+  highlight: { role: button, name: website:content.testimonial.createAction }
+
+- key: website/content-testimonial-dialog
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/content
+  waitFor: { text: website:content.subtitle }
+  actions:
+    - click: { role: tab, name: website:content.tabs.testimonials }
+    - click: { role: button, name: website:content.testimonial.createAction }
+  highlight: { label: website:content.quoteEn }
+  clip: dialog
+
+# ---- Visual identity ---------------------------------------------------------------------
+
+- key: website/visual-identity
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/branding
+  waitFor: { text: website:visualIdentity.logoAndColoursTitle }
+
+# ---- Messages ----------------------------------------------------------------------------
+
+- key: website/messages
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/messages
+  waitFor: { text: website:messages.subtitle }
+  highlight: { role: link, name: navigation:items.academyWebsiteMessages }
+
+- key: website/messages-filters
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/messages
+  waitFor: { text: website:messages.subtitle }
+  highlight: { role: tablist, name: website:messages.filters.status }
+
+- key: website/messages-row
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/messages
+  waitFor: { text: website:messages.subtitle }
+  highlight: { selector: 'tbody tr' }
+
+# ---- Public academy site --------------------------------------------------------------
+
+- key: website/public-home
+  as: visitor
+  surface: academy
+  path: /
+  waitFor: { text: { en: Understand every lesson, ar: افهم كل درس } }
+
+- key: website/public-contact-form
+  as: visitor
+  surface: academy
+  path: /contact
+  waitFor: { text: website:renderer.contactSubmit }
+  actions:
+    - scroll: { role: button, name: website:renderer.contactSubmit }
+  highlight: { role: button, name: website:renderer.contactSubmit }
+
+- key: website/public-catalog
+  as: visitor
+  surface: academy
+  path: /courses
+  waitFor: { text: { en: Calculus Essentials, ar: أساسيات التفاضل والتكامل } }
+  actions:
+    - scroll: { text: { en: Calculus Essentials, ar: أساسيات التفاضل والتكامل } }
+
+- key: website/public-course
+  as: visitor
+  surface: academy
+  path: /courses/{courseSlug}
+  waitFor: { text: website:renderer.courseDetails.signInToEnrollAction }
+  highlight: { text: website:renderer.courseDetails.signInToEnrollAction, nth: 0 }

@@ -74,9 +74,11 @@ function apiHandlerBodies(): readonly string[] {
 }
 
 describe("the proxy does not duplicate the API's own headers", () => {
-  it('routes /api/* on both site blocks', () => {
-    // If this drops to one, the assertions below stop covering a real path.
-    expect(apiHandlerBodies()).toHaveLength(2);
+  it('routes /api/* on both site blocks (and refuses it on the help center)', () => {
+    // If this drops, the assertions below stop covering a real path. The
+    // third is the help center's `respond 404` (DL-57): its only proxied
+    // paths are the beacon and CSP reports (edge-docs-host.test.ts).
+    expect(apiHandlerBodies()).toHaveLength(3);
   });
 
   it.each(SECURITY_HEADERS)(
@@ -118,7 +120,8 @@ describe('P63g — HSTS scope follows ownership', () => {
     expect(directives).toContain(
       'Strict-Transport-Security "max-age=31536000"'
     );
-    expect(directives.split('import hsts_platform').length - 1).toBe(1);
+    // The platform block and the help center (DL-57), both Atlas-owned.
+    expect(directives.split('import hsts_platform').length - 1).toBe(2);
     expect(directives.split('import hsts_custom_domain').length - 1).toBe(1);
     // The catch-all imports the custom-domain snippet, never the platform one.
     const catchAll = directives.slice(directives.indexOf('\n:443 {'));
@@ -148,8 +151,9 @@ describe('every document Caddy serves gets the headers', () => {
     // plus one in the shared `(ssr_unavailable)` fallback (Phase 8: the
     // single-page app served when the public website renderer is down),
     // which both site blocks' error handlers import, plus one in the shared
-    // `(app_assets)` handler (stale-tab recovery), which both import too.
-    expect(imports).toBe(5);
+    // `(app_assets)` handler (stale-tab recovery), which both import too,
+    // plus the help center's document handler (DL-57).
+    expect(imports).toBe(6);
     expect(directives.split('import theme_assets').length - 1).toBe(2);
     expect(directives.split('import app_assets').length - 1).toBe(2);
     const catchAll = directives.slice(directives.indexOf('\n:443 {'));

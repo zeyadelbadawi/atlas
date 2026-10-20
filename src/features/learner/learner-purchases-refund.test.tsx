@@ -354,7 +354,6 @@ describe('LearnerPurchasesPage refunds', () => {
       refundType: 'full',
       status: 'succeeded',
       money: { amountMinorUnits: 4900, currency: 'USD' },
-      requestedBy: 'u-1',
       requestedAt: '2026-09-20T10:00:00.000Z',
       processedAt: '2026-09-20T10:00:00.000Z',
     };

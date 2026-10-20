@@ -45,8 +45,10 @@ vi.mock('../hooks', () => ({
   }),
 }));
 vi.mock('../components/ResetPasswordForm', () => ({
-  ResetPasswordForm: ({ token }: { token: string }) => (
-    <div data-testid="form">{token}</div>
+  ResetPasswordForm: ({ token, variant }: { token: string; variant?: string }) => (
+    <div data-testid="form" data-variant={variant ?? 'reset'}>
+      {token}
+    </div>
   ),
 }));
 vi.mock('react-i18next', () => ({
@@ -87,6 +89,14 @@ describe('ResetPasswordPage', () => {
   it('uses the same token either way — one flow, not two', () => {
     renderAt('?token=the-token&setup=1');
     expect(screen.getByTestId('form').textContent).toBe('the-token');
+  });
+
+  it('asks the form for the "set password" button on a setup link only', () => {
+    renderAt('?token=abc&setup=1');
+    expect(screen.getByTestId('form').dataset.variant).toBe('setup');
+    cleanup();
+    renderAt('?token=abc');
+    expect(screen.getByTestId('form').dataset.variant).toBe('reset');
   });
 
   it('treats any other value of `setup` as an ordinary reset', () => {

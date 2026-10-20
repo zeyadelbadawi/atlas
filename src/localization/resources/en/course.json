@@ -230,7 +230,10 @@
         "uploaded": "{{fileName}} is uploaded. It will be attached when you save the lesson.",
         "attached": "A protected file is attached. Only enrolled learners can open it. Upload a new one to replace it.",
         "publicLink": "This lesson links to a public file: anyone with the link can open it. Upload the file here to protect it.",
-        "tooLarge": "That file is larger than 20 MB."
+        "tooLarge": "That file is larger than 20 MB.",
+        "attachedReadOnly": "A protected file is attached. Only enrolled learners can open it.",
+        "publicLinkReadOnly": "This lesson links to a public file: anyone with the link can open it.",
+        "managersOnly": "Only the academy owner or a manager can upload or replace the lesson file."
       },
       "contentUrlHelpVideoOr": "Or paste a YouTube link instead.",
       "hostedVideo": {
@@ -1001,6 +1004,7 @@
     "afterTransferDescription": "Upload a screenshot or receipt of the transfer. The academy checks it and gives you access once it’s approved.",
     "referenceLabel": "Transfer reference (optional)",
     "referenceHelp": "The transaction or reference number from your bank or wallet. It helps the academy find your payment.",
-    "proofFileHelp": "PNG, JPG or PDF, up to 10 MB."
+    "proofFileHelp": "PNG, JPG or PDF, up to 10 MB.",
+    "notAdmittedTitle": "You can't buy courses here yet"
   }
 }

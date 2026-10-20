@@ -20,6 +20,13 @@ vi.mock('@features/notifications', async (importOriginal) => ({
   useNotificationSummary: () => ({ data: { unread } }),
 }));
 
+// The membership notice reads the signed-in account (identity context),
+// which this layout-only harness does not provide; it has its own suite
+// (`learner-membership-notice.test.tsx`).
+vi.mock('./components/LearnerMembershipNotice', () => ({
+  LearnerMembershipNotice: () => null,
+}));
+
 import { LearnerSurfaceProvider } from './context/LearnerSurface.context';
 import { LearnerNavigationList } from './components/LearnerNavigationList';
 import { LearnerNotificationBell } from './components/LearnerNotificationBell';

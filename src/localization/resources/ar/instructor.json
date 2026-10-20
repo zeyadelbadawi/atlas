@@ -158,7 +158,7 @@
       "noStudents": "لا يوجد طلاب مسجّلون للاختيار من بينهم.",
       "timeMultiplier": "مضاعف الوقت",
       "timeMultiplierHelp": "1 يبقي الحد الزمني كما هو؛ 1.5 يمنح 50% وقتًا إضافيًا.",
-      "timeMultiplierRange": "أدخل مضاعفًا بين 1 و5.",
+      "timeMultiplierRange": "أدخل مضاعفًا بين 1 و4.",
       "extraAttempts": "محاولات إضافية",
       "availableFrom": "متاح من",
       "availableUntil": "متاح حتى",

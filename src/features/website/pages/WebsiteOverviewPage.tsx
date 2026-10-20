@@ -260,10 +260,10 @@ export default function WebsiteOverviewPage(): JSX.Element {
 }
 
 /**
- * A read-only preview of the future `sitemap.xml` this website's
- * PUBLISHED, VISIBLE, INDEXABLE pages would produce — see
- * `buildSitemapEntries`'s doc comment. Nothing here is served; it exists
- * so an Academy Owner can see what a future public runtime would list.
+ * A read-only preview of the pages this website's served `sitemap.xml`
+ * lists — see `buildSitemapEntries`'s doc comment. Built from the saved
+ * pages, so an unpublished edit shows here before it reaches the live
+ * file; the served file also lists the academy's public courses.
  */
 function SitemapPreviewCard({
   configuration,

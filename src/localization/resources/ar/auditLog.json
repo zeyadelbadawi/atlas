@@ -502,7 +502,8 @@
       "course_payment": {
         "proof_submitted": "أرسل {{actor}} إثبات دفع إلى الأكاديمية",
         "approved": "وافق {{actor}} على دفعة متعلّم",
-        "rejected": "رفض {{actor}} دفعة متعلّم"
+        "rejected": "رفض {{actor}} دفعة متعلّم",
+        "refunded": "سجّل {{actor}} استرداد دفعة متعلّم"
       }
     },
     "enrollment": {
@@ -556,6 +557,7 @@
     "domain": {
       "custom_domain_added": "{{actor}} ربط النطاق «{{target}}»",
       "custom_domain_removed": "{{actor}} ألغى ربط النطاق «{{target}}»",
+      "subdomain_changed": "{{actor}} نقل عنوان الموقع إلى «{{target}}»، وأصبح العنوان القديم يحوّل إليه",
       "verification_checked": "{{actor}} فحص النطاق «{{target}}»",
       "platform_check": "أطلس فحص النطاق «{{target}}»",
       "platform_release": "أطلس حرّر النطاق «{{target}}»"

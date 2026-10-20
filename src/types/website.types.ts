@@ -22,8 +22,14 @@ import type { Academy } from './academy.types';
 import type { LocalizedText } from './website-content.types';
 import type { PublicWebsiteLocale } from './public-website-locale.types';
 
-export type WebsitePublishStatus =
-  'draft' | 'published' | 'publishing' | 'failed';
+/**
+ * Publishing is synchronous on the server (`WebsiteConfigurationService`):
+ * a configuration is only ever `draft` or `published`. The database enum
+ * still has `publishing`/`failed` values, but nothing writes them, so the
+ * UI has no state for them. A failed publish is a request error, shown
+ * with a retry by `WebsitePublishBar`.
+ */
+export type WebsitePublishStatus = 'draft' | 'published';
 
 /** A validated HSL triplet string, e.g. `"221 83% 53%"` — the same format Atlas's own `hsl(var(--x))` design tokens use. */
 export type HslColorTriplet = string;

@@ -32,7 +32,10 @@ import {
   getLessonStatusLabelKey,
   getLessonStatusTone,
 } from '../utils/course-status.utils';
-import { getCourseEditorTabs } from '../utils/course-navigation.utils';
+import {
+  useCourseEditorLeadCrumbs,
+  useCourseEditorTabs,
+} from '../hooks/useCourseEditorTabs';
 import type { Quiz } from '@types';
 
 export default function CourseQuizzesPage(): JSX.Element {
@@ -42,29 +45,19 @@ export default function CourseQuizzesPage(): JSX.Element {
     academyId: string;
     courseId: string;
   }>();
+  const editorTabs = useCourseEditorTabs(academyId ?? '', courseId ?? '');
   const { confirm } = useConfirmDialog();
 
   const { data: course } = useCourse(academyId ?? '', courseId ?? '');
 
+  const leadCrumbs = useCourseEditorLeadCrumbs(
+    academyId ?? '',
+    courseId ?? '',
+    course?.title,
+    'course:quizAuthoring.title'
+  );
   const breadcrumbs: readonly BreadcrumbItem[] = [
-    {
-      labelKey: 'course:list.title',
-      path: buildPath(DASHBOARD_ROUTES.academyCourses, {
-        academyId: academyId ?? '',
-      }),
-    },
-    ...(course
-      ? [
-          {
-            labelKey: 'course:quizAuthoring.title',
-            label: course.title,
-            path: buildPath(DASHBOARD_ROUTES.academyCourseDetail, {
-              academyId: academyId ?? '',
-              courseId: courseId ?? '',
-            }),
-          } satisfies BreadcrumbItem,
-        ]
-      : []),
+    ...leadCrumbs,
     { labelKey: 'course:quizAuthoring.title' },
   ];
 
@@ -184,9 +177,7 @@ export default function CourseQuizzesPage(): JSX.Element {
         }
       />
 
-      {academyId && courseId ? (
-        <SectionTabs items={getCourseEditorTabs(academyId, courseId)} />
-      ) : null}
+      {academyId && courseId ? <SectionTabs items={editorTabs} /> : null}
 
       {quizzes.length === 0 ? (
         <EmptyState

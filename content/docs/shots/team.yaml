@@ -1,0 +1,412 @@
+# Team and learners (content/docs/<lang>/team/*.md). Real routes
+# (src/app/routes/route-paths.ts) and real i18n keys
+# (src/localization/resources/<lang>/*.json). Captures never confirm a
+# destructive action: dialogs are opened, highlighted and captured only.
+# Demo people (scripts/docs/seed): learners are <key>.learner@example.com
+# (salma, hana, laila = pending approval, youssef = blocked, ziad = manual
+# enrollment with an expiry); karim.manager@example.com is the manager.
+
+# ---- Members page, Team tab ----
+
+- key: team/members-team-tab
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members
+  waitFor: { text: academy:members.addManager.triggerButton }
+  highlight: { role: tab, name: academy:members.tabs.team }
+
+- key: team/members-manager-view
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members
+  waitFor: { text: academy:members.ownerOnlyAdds }
+  highlight: { text: academy:members.ownerOnlyAdds }
+
+- key: team/add-staff-buttons
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members
+  waitFor: { text: academy:members.addManager.triggerButton }
+  highlight:
+    - { role: button, name: academy:members.addInstructor.triggerButton }
+    - { role: button, name: academy:members.addManager.triggerButton }
+
+- key: team/add-instructor-email
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members
+  waitFor: { text: academy:members.addManager.triggerButton }
+  actions:
+    - click: { role: button, name: academy:members.addInstructor.triggerButton }
+    - fill: { label: academy:members.addInstructor.emailLabel, value: new.instructor@example.com }
+    - wait: 1500
+  highlight: { label: academy:members.addInstructor.emailLabel }
+  clip: dialog
+
+- key: team/add-instructor-name
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members
+  waitFor: { text: academy:members.addManager.triggerButton }
+  actions:
+    - click: { role: button, name: academy:members.addInstructor.triggerButton }
+    - fill: { label: academy:members.addInstructor.emailLabel, value: new.instructor@example.com }
+    - wait: 1500
+    - fill: { label: academy:members.newAccount.nameLabel, value: { en: Sara Demo, ar: سارة تجريبي } }
+  highlight: { label: academy:members.newAccount.nameLabel }
+  clip: dialog
+
+- key: team/add-instructor-submit
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members
+  waitFor: { text: academy:members.addManager.triggerButton }
+  actions:
+    - click: { role: button, name: academy:members.addInstructor.triggerButton }
+    - fill: { label: academy:members.addInstructor.emailLabel, value: new.instructor@example.com }
+    - wait: 1500
+    - fill: { label: academy:members.newAccount.nameLabel, value: { en: Sara Demo, ar: سارة تجريبي } }
+  highlight: { role: button, name: academy:members.addInstructor.submitButton, nth: -1 }
+  clip: dialog
+
+- key: team/add-staff-already-member
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members
+  waitFor: { text: academy:members.addManager.triggerButton }
+  actions:
+    - click: { role: button, name: academy:members.addInstructor.triggerButton }
+    - fill: { label: academy:members.addInstructor.emailLabel, value: karim.manager@example.com }
+    - wait: 1500
+  highlight: { text: academy:members.lookup.alreadyMember }
+  clip: dialog
+
+- key: team/remove-staff-button
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members
+  waitFor: { text: academy:members.addManager.triggerButton }
+  highlight: { role: button, name: academy:members.remove.ariaLabel, nth: 0 }
+
+- key: team/remove-staff-confirm
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members
+  waitFor: { text: academy:members.addManager.triggerButton }
+  actions:
+    - click: { role: button, name: academy:members.remove.ariaLabel, nth: 0 }
+  highlight: { role: button, name: academy:members.remove.confirm }
+  clip: dialog
+
+- key: team/add-student-button
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members
+  waitFor: { text: academy:members.addManager.triggerButton }
+  highlight: { role: button, name: academy:members.createStudent.triggerButton }
+
+- key: team/add-student-email
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members
+  waitFor: { text: academy:members.addManager.triggerButton }
+  actions:
+    - click: { role: button, name: academy:members.createStudent.triggerButton }
+    - fill: { label: academy:members.createStudent.emailLabel, value: new.student@example.com }
+    - wait: 1500
+  highlight: { label: academy:members.createStudent.emailLabel }
+  clip: dialog
+
+- key: team/add-student-name
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members
+  waitFor: { text: academy:members.addManager.triggerButton }
+  actions:
+    - click: { role: button, name: academy:members.createStudent.triggerButton }
+    - fill: { label: academy:members.createStudent.emailLabel, value: new.student@example.com }
+    - wait: 1500
+    - fill: { label: academy:members.newAccount.nameLabel, value: { en: Youssef Demo, ar: يوسف تجريبي } }
+  highlight: { label: academy:members.newAccount.nameLabel }
+  clip: dialog
+
+- key: team/add-student-submit
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members
+  waitFor: { text: academy:members.addManager.triggerButton }
+  actions:
+    - click: { role: button, name: academy:members.createStudent.triggerButton }
+    - fill: { label: academy:members.createStudent.emailLabel, value: new.student@example.com }
+    - wait: 1500
+    - fill: { label: academy:members.newAccount.nameLabel, value: { en: Youssef Demo, ar: يوسف تجريبي } }
+  highlight: { role: button, name: academy:members.createStudent.addButton, exact: true }
+  clip: dialog
+
+# ---- Academy Settings: registration policy and invite links ----
+
+- key: team/registration-section
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:registration.policy.title }
+  highlight: { role: radiogroup, name: academy:registration.policy.title }
+
+- key: team/registration-choose
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:registration.policy.title }
+  actions:
+    - scroll: { role: radiogroup, name: academy:registration.policy.title }
+    # The radio's accessible name is "<label> <description>" (one <Label>
+    # wraps both), so an anchored label match never finds it.
+    - click: { selector: "#registration-policy-approval" }
+  highlight: { text: academy:registration.policy.options.approval.label, exact: true }
+
+- key: team/registration-save
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:registration.policy.title }
+  actions:
+    - scroll: { role: radiogroup, name: academy:registration.policy.title }
+    # The radio's accessible name is "<label> <description>" (one <Label>
+    # wraps both), so an anchored label match never finds it.
+    - click: { selector: "#registration-policy-approval" }
+  highlight: { role: button, name: academy:registration.policy.save }
+
+- key: team/registration-manager
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:registration.policy.title }
+  highlight: { text: academy:registration.policy.ownerOnly }
+
+- key: team/invites-card
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:registration.policy.title }
+  highlight: { text: academy:registration.invites.title, exact: true }
+
+- key: team/invites-create-button
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:registration.policy.title }
+  highlight: { role: button, name: academy:registration.invites.create.trigger }
+
+- key: team/invites-create-dialog
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:registration.policy.title }
+  actions:
+    - scroll: { role: button, name: academy:registration.invites.create.trigger }
+    - click: { role: button, name: academy:registration.invites.create.trigger }
+  highlight:
+    - { label: academy:registration.invites.create.maxUsesLabel }
+    - { label: academy:registration.invites.create.expiresInDaysLabel }
+  clip: dialog
+
+- key: team/invites-create-submit
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:registration.policy.title }
+  actions:
+    - scroll: { role: button, name: academy:registration.invites.create.trigger }
+    - click: { role: button, name: academy:registration.invites.create.trigger }
+  highlight: { role: button, name: academy:registration.invites.create.submit, nth: -1 }
+  clip: dialog
+
+- key: team/invites-revoke-button
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:registration.policy.title }
+  highlight: { testId: invite-revoke, nth: 0 }
+
+- key: team/invites-revoke-confirm
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:registration.policy.title }
+  actions:
+    # By test id: in Arabic the button reads «إلغاء», the same word as every Cancel.
+    - scroll: { testId: invite-revoke, nth: 0 }
+    - click: { testId: invite-revoke, nth: 0 }
+  highlight: { role: button, name: academy:registration.invites.revoke.confirm }
+  clip: dialog
+
+# ---- Members page, Students tab ----
+
+- key: team/students-tab
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members?tab=students
+  waitFor: { text: salma.learner@example.com }
+  highlight: { role: tab, name: academy:members.tabs.students }
+
+- key: team/students-filters
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members?tab=students
+  waitFor: { text: salma.learner@example.com }
+  highlight:
+    - { role: searchbox, name: academy:students.searchPlaceholder }
+    - { role: combobox, name: academy:students.filterByStatus }
+    - { role: combobox, name: academy:students.sortBy }
+
+- key: team/students-filter-pending
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members?tab=students
+  waitFor: { text: salma.learner@example.com }
+  actions:
+    - click: { role: combobox, name: academy:students.filterByStatus }
+    - click: { role: option, name: academy:students.status.pending }
+    - wait: 1000
+  highlight: { role: combobox, name: academy:students.filterByStatus }
+
+- key: team/student-drawer
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members?tab=students
+  waitFor: { text: salma.learner@example.com }
+  actions:
+    - click: { text: salma.learner@example.com }
+    - wait: 1000
+  clip: dialog
+
+- key: team/approve-drawer
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members?tab=students
+  waitFor: { text: laila.learner@example.com }
+  actions:
+    - click: { text: laila.learner@example.com }
+    - wait: 1000
+  highlight: { role: button, name: academy:students.actions.approve }
+  clip: dialog
+
+- key: team/reject-confirm
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members?tab=students
+  waitFor: { text: laila.learner@example.com }
+  actions:
+    - click: { text: laila.learner@example.com }
+    - wait: 1000
+    - click: { role: button, name: academy:students.actions.reject, exact: true }
+  highlight: { role: button, name: academy:students.reject.confirm, exact: true, nth: -1 }
+  clip: dialog
+
+- key: team/block-drawer
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members?tab=students
+  waitFor: { text: hana.learner@example.com }
+  actions:
+    - click: { text: hana.learner@example.com }
+    - wait: 1000
+  highlight: { role: button, name: academy:students.actions.block, exact: true }
+  clip: dialog
+
+- key: team/block-dialog
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members?tab=students
+  waitFor: { text: hana.learner@example.com }
+  actions:
+    - click: { text: hana.learner@example.com }
+    - wait: 1000
+    - click: { role: button, name: academy:students.actions.block, exact: true }
+    - fill: { label: academy:students.block.reasonLabel, value: { en: Shared the account with friends., ar: شارك الحساب مع أصحابه. } }
+  highlight: { role: button, name: academy:students.block.confirm }
+  clip: dialog
+
+- key: team/unblock-drawer
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members?tab=students
+  waitFor: { text: youssef.learner@example.com }
+  actions:
+    - click: { text: youssef.learner@example.com }
+    - wait: 1000
+  highlight:
+    - { role: button, name: academy:students.actions.unblock }
+    - { text: academy:students.drawer.blockedReason }
+  clip: dialog
+
+- key: team/manual-enroll-drawer
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members?tab=students
+  waitFor: { text: hana.learner@example.com }
+  actions:
+    - click: { text: hana.learner@example.com }
+    - wait: 1000
+  highlight: { role: button, name: academy:students.actions.enroll }
+  clip: dialog
+
+- key: team/manual-enroll-dialog
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members?tab=students
+  waitFor: { text: hana.learner@example.com }
+  actions:
+    - click: { text: hana.learner@example.com }
+    - wait: 1000
+    - click: { role: button, name: academy:students.actions.enroll }
+    - click: { selector: '#enroll-course' }
+    - click: { role: option, nth: 0 }
+    - fill: { selector: '#enroll-expires', value: '2027-06-30' }
+  highlight: { role: button, name: academy:students.enroll.confirm, exact: true, nth: -1 }
+  clip: dialog
+
+- key: team/manual-enroll-expiry
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members?tab=students
+  waitFor: { text: ziad.learner@example.com }
+  actions:
+    - click: { text: ziad.learner@example.com }
+    - wait: 1000
+    - click: { role: button, name: academy:students.actions.setExpiry, nth: 0 }
+  highlight: { role: button, name: academy:students.expiry.confirm }
+  clip: dialog
+
+- key: team/manual-enroll-revoke
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members?tab=students
+  waitFor: { text: ziad.learner@example.com }
+  actions:
+    - click: { text: ziad.learner@example.com }
+    - wait: 1000
+    - click: { role: button, name: academy:students.actions.revoke, exact: true, nth: 0 }
+  highlight: { role: button, name: academy:students.revoke.confirm, exact: true, nth: -1 }
+  clip: dialog
+
+- key: team/students-instructor
+  as: instructor
+  surface: dashboard
+  path: /dashboard/instructor/courses/{courseId}/students
+  waitFor: { text: instructor:students.subtitle }
+
+# ---- Organization ----
+
+- key: team/organization-overview
+  as: owner
+  surface: dashboard
+  path: /dashboard/organization
+  waitFor: { text: organization:overview.fields.yourRelationship }
+
+- key: team/organization-create
+  as: owner
+  surface: dashboard
+  path: /dashboard/organization/create
+  waitFor: { text: organization:create.nameLabel }
+  highlight: { label: organization:create.nameLabel }

@@ -7,9 +7,13 @@
  * after. On success the visitor is sent to THIS academy's own sign-in —
  * Atlas's `/auth/sign-in`, which `ResetPasswordForm` navigates to by
  * default, does not exist on this host.
+ *
+ * `setup=1` marks the account-setup link a learner gets when the academy
+ * created their account (`academy.learner.invited`): same token and flow,
+ * but every line says "set your password", never "reset".
  */
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import {
   ResetPasswordForm,
@@ -39,6 +43,11 @@ export function PublicWebsiteResetPasswordPage({
   const linkRenderer = usePublicWebsiteLinkRenderer(locale);
   // Read once, then removed from the address bar (ATO review F12).
   const token = useUrlCredentialToken();
+  const [searchParams] = useSearchParams();
+  const isSetup = searchParams.get('setup') === '1';
+  const copy = isSetup
+    ? 'publicWebsite:auth.setPassword'
+    : 'publicWebsite:auth.resetPassword';
 
   const validation = useValidatePasswordResetToken(token);
   // A failed validation REQUEST is treated as "not valid": showing the
@@ -55,10 +64,10 @@ export function PublicWebsiteResetPasswordPage({
       lookupKey={lookupKey}
       locale={locale}
       path="/reset-password"
-      title={t('publicWebsite:auth.resetPassword.title')}
+      title={t(`${copy}.title`)}
       subtitle={
         tokenValid === true
-          ? t('publicWebsite:auth.resetPassword.subtitle')
+          ? t(`${copy}.subtitle`)
           : undefined
       }
     >
@@ -70,7 +79,7 @@ export function PublicWebsiteResetPasswordPage({
               data-testid="reset-password-checking"
             >
               <Loader2 className="size-4 animate-spin" aria-hidden />
-              {t('publicWebsite:auth.resetPassword.checking')}
+              {t(`${copy}.checking`)}
             </div>
           );
         }
@@ -80,8 +89,8 @@ export function PublicWebsiteResetPasswordPage({
             <div className="space-y-4" data-testid="reset-password-invalid">
               <ErrorState
                 kind="validation"
-                titleKey="publicWebsite:auth.resetPassword.invalidTitle"
-                descriptionKey="publicWebsite:auth.resetPassword.invalidDescription"
+                titleKey={`${copy}.invalidTitle`}
+                descriptionKey={`${copy}.invalidDescription`}
               />
               <div className="flex flex-col items-center gap-2 text-sm">
                 {linkRenderer({
@@ -90,14 +99,14 @@ export function PublicWebsiteResetPasswordPage({
                   className:
                     'font-medium text-[var(--website-primary-solid)] hover:underline',
                   children: t(
-                    'publicWebsite:auth.resetPassword.requestNewLink'
+                    `${copy}.requestNewLink`
                   ),
                 })}
                 {linkRenderer({
                   href: '/sign-in',
                   external: false,
                   className: 'text-muted-foreground hover:underline',
-                  children: t('publicWebsite:auth.resetPassword.goToSignIn'),
+                  children: t(`${copy}.goToSignIn`),
                 })}
               </div>
             </div>
@@ -107,6 +116,7 @@ export function PublicWebsiteResetPasswordPage({
         return (
           <ResetPasswordForm
             token={token as string}
+            variant={isSetup ? 'setup' : 'reset'}
             onSuccess={() => navigate(buildHref('/sign-in'), { replace: true })}
           />
         );

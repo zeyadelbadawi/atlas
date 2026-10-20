@@ -30,6 +30,7 @@ import {
 import { publicWebsiteLocaleForPath } from './ssr/ssr-paths';
 import { preloadPublicWebsiteRouter } from './app/routes/public-website-router-loader';
 import { isKnownThemeKey, loadThemePack } from '@features/website';
+import { resolveMovedHostRedirect } from './features/public-website/utils/canonical-redirect.utils';
 import { reloadOnceForNewVersion } from '@utils/lazy-with-retry.utils';
 import { captureLandingAttribution } from '@utils/landing-attribution.utils';
 import {
@@ -151,6 +152,16 @@ async function initializeApp(): Promise<void> {
       // Not server-rendered: start the Academy's theme pack as soon as
       // its hostname lookup names it, alongside its data.
       onResolved(resolution) {
+        // An old address (the slug changed): move on before the app boots.
+        const moved = resolveMovedHostRedirect(
+          window.location,
+          resolution.redirectHost,
+          ENV.isDevelopment
+        );
+        if (moved) {
+          window.location.replace(moved);
+          return;
+        }
         const themeKey = resolution.presentation?.themeKey;
         if (isKnownThemeKey(themeKey))
           loadThemePack(themeKey).catch(() => undefined);

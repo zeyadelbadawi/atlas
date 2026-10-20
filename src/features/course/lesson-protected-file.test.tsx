@@ -40,6 +40,8 @@ function renderDialog(
     hasProtectedFile?: boolean;
     upload?: (file: File) => Promise<ProtectedLessonFile>;
     onSubmit?: (data: CourseLessonFormData) => void;
+    /** The caller may not upload (a course instructor): no handler is passed. */
+    readOnly?: boolean;
   } = {}
 ) {
   const upload = options.upload ?? vi.fn().mockResolvedValue(UPLOADED);
@@ -60,7 +62,7 @@ function renderDialog(
         }}
         isPending={false}
         onSubmit={onSubmit}
-        onUploadProtectedFile={upload}
+        onUploadProtectedFile={options.readOnly ? undefined : upload}
         hasProtectedFile={options.hasProtectedFile}
       />
     </AtlasLocalizationProvider>
@@ -145,5 +147,29 @@ describe('File lesson — protected upload (B0-MED-05)', () => {
     expect((await screen.findByRole('alert')).textContent).toBe(
       "You don't have permission to upload files to this academy."
     );
+  });
+
+  it('offers no upload to someone who may not upload, and says who can', () => {
+    renderDialog({ readOnly: true });
+    expect(screen.queryByTestId('protected-lesson-file-input')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Upload file' })).toBeNull();
+    expect(
+      screen.getByText(
+        'Only the academy owner or a manager can upload or replace the lesson file.'
+      )
+    ).toBeTruthy();
+    // A link can still be pasted.
+    expect(screen.getByLabelText('Content URL')).toBeTruthy();
+  });
+
+  it('still tells that reader a protected file is attached, without offering to replace it', () => {
+    renderDialog({ readOnly: true, hasProtectedFile: true });
+    expect(
+      screen.getByText(
+        'A protected file is attached. Only enrolled learners can open it.'
+      )
+    ).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Replace file' })).toBeNull();
+    expect(screen.queryByLabelText('Content URL')).toBeNull();
   });
 });

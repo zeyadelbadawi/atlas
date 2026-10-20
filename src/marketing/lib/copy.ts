@@ -8,6 +8,7 @@ import type { MarketingContent, MkLink, MkPlural } from '../content/content.type
 import type { MarketingLang } from '../types';
 import {
   catalogTrialDays,
+  docsHref,
   fill,
   formatNumber,
   formatPrice,
@@ -18,6 +19,9 @@ import {
 } from './site';
 
 export type Tokens = Record<string, string | number>;
+
+/** Copy hrefs that point at the help center: `help:/selling/payment-methods`. */
+export const HELP_SCHEME = 'help:';
 
 /** `{count}` phrase in the page language, using CLDR plural categories. */
 export function plural(content: MarketingContent, forms: MkPlural, n: number): string {
@@ -108,9 +112,11 @@ export function canFill(text: string, tokens: Tokens): boolean {
 
 /**
  * A copy href made concrete for this page: `/ar` prefix on site pages,
- * `?plan=&lang=ar` on registration, app paths untouched, anchors kept.
+ * `?plan=&lang=ar` on registration, app paths untouched, anchors kept;
+ * `help:/path` is a help-center page in the same language.
  */
 export function resolveHref(lang: MarketingLang, href: string, planKey?: string): string {
+  if (href.startsWith(HELP_SCHEME)) return docsHref(lang, href.slice(HELP_SCHEME.length) || '/');
   if (href.startsWith('#') || /^[a-z]+:/i.test(href)) return href;
   const [pathAndQuery, hash] = href.split('#') as [string, string | undefined];
   const [path, query] = pathAndQuery.split('?') as [string, string | undefined];

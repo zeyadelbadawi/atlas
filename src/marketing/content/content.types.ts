@@ -43,6 +43,8 @@
  * `/contact?topic=sales`, `#payments`). The renderer adds the `/ar` prefix on
  * Arabic pages, and `?plan=<key>&lang=ar` plus UTM pass-through on
  * `/auth/register`. App paths (`/auth/*`, `/dashboard`) are never prefixed.
+ * `help:/selling/payment-methods` is that help-center page (docs host, same
+ * language); the path must be a page of src/docs/inventory.json.
  *
  * CLAIMS. `claim` carries the feature ID(s) behind a statement (claims
  * register, SPEC A.11). The build may hide an item whose claim is gated.
@@ -123,6 +125,8 @@ export interface MkSectionHead {
 
 export interface MkSectionWithItems extends MkSectionHead {
   readonly items: readonly MkItem[];
+  /** The help-center article that explains this in detail (`help:/…`). */
+  readonly learnMore?: MkLink;
 }
 
 export interface MkFaqSection extends MkSectionHead {
@@ -168,6 +172,8 @@ export interface MkChrome {
     readonly security: string;
     readonly contact: string;
     readonly about: string;
+    /** The help center (its own host). */
+    readonly help: string;
     readonly menuOpen: string;
     readonly menuClose: string;
     readonly menuLabel: string;
@@ -306,6 +312,8 @@ export interface MkFeatureGroup extends MkSectionHead {
   readonly note?: string;
   /** Claim IDs covered by this group. */
   readonly claim?: string;
+  /** The help-center article that explains this in detail (`help:/…`). */
+  readonly learnMore?: MkLink;
 }
 
 export interface MkFeatures {

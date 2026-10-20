@@ -109,7 +109,10 @@ export default function ResetPasswordPage(): JSX.Element {
           />
         ) : null}
 
-        <ResetPasswordForm token={token!} />
+        <ResetPasswordForm
+          token={token!}
+          variant={isSetup ? 'setup' : 'reset'}
+        />
       </div>
     </PageContainer>
   );
