@@ -47,7 +47,7 @@ The dialog then shows one of these results. Select **Done** to close it.
 - **Invitation sent**: they had no Atlas account. They get an email with a link to choose their own password. You never share a password with them.
 - **Student added**: they already had an account. They sign in to your academy website with their usual email and password. We email them to let them know, or send a fresh setup link if they never finished setting up their account.
 
-They appear on the **Students** tab with **Added by staff** under **Joined via**.
+They appear on the **Students** tab with **Added by staff** under **Joined via**. If you had rejected this person's registration, adding them admits them: their status becomes **Active**.
 
 ## Give them a course
 

@@ -54,7 +54,7 @@ The sort options are **Newest first**, **Oldest first**, **Recently active**, **
 - **Quiz outcomes**: each attempt, with its score and result.
 - **Assignment outcomes**: each submission, its grade and whether feedback was given.
 
-Owners and managers also see the action buttons here: **Approve** and **Reject** for pending learners, **Block** or **Unblock**, and **Enroll in a course**. See [Approve pending learners](doc:DOC-ORG-007), [Block or unblock a learner](doc:DOC-ORG-008) and [Enroll a learner manually](doc:DOC-ORG-010).
+Owners and managers also see the action buttons here: **Approve** and **Reject** for pending learners, **Approve** for a learner whose registration you rejected (**Inactive**), **Block** or **Unblock**, and **Enroll in a course** for active learners. See [Approve pending learners](doc:DOC-ORG-007), [Block or unblock a learner](doc:DOC-ORG-008) and [Enroll a learner manually](doc:DOC-ORG-010).
 
 ## What instructors see
 

@@ -1,18 +1,19 @@
 ---
 id: DOC-ORG-007
 title: Approve pending learners
-description: When registration needs approval, new learners wait as Pending approval on the Students tab. Approve them to let them in, or reject the registration.
+description: When registration needs approval, new learners wait as Pending approval on the Students tab. Approve them, or reject and approve them later if you change your mind.
 summary: >
   When your registration policy is Approval required, every new sign-up waits
   as Pending approval on the Members page, Students tab. Open the learner and
-  select Approve to let them in, or Reject to refuse (a rejection can't be
-  undone). The owner and managers can do this, and the learner is told.
+  select Approve to let them in, or Reject to refuse. A rejection isn't final:
+  you can approve the learner later, and they can register again. The owner
+  and managers can do this, and the learner is told.
 type: step-by-step
 audience: [owner, manager]
 order: 7
 priority: P1
 related: [DOC-ORG-005, DOC-ORG-009, DOC-ORG-008, DOC-MSG-001, DOC-TRB-014]
-keywords: [approve student, pending approval, registration request, reject, الموافقة على طالب, طلب انضمام, طالب مستني موافقة, رفض]
+keywords: [approve student, pending approval, registration request, reject, undo reject, register again, الموافقة على طالب, طلب انضمام, طالب مستني موافقة, رفض, أرجع طالب رفضته]
 updated: 2026-10-20
 ---
 
@@ -40,10 +41,21 @@ The message **Student approved** confirms it. The learner's status becomes **Act
 
    ![The Reject this registration confirmation](shot:team/reject-confirm)
 
-The message **Registration rejected** confirms it. The learner isn't admitted, and their status becomes **Inactive**.
+The message **Registration rejected** confirms it. The learner isn't admitted, and their status becomes **Inactive**. They stay on your list, so you can still change your mind.
 
-> [!WARNING]
-> Rejecting can't be undone. The confirmation says the learner can register again later, but Atlas keeps them on your list as **Inactive**: signing up again at your academy with the same account doesn't readmit them, and there is no button to approve them afterwards. If you aren't sure, leave the request pending.
+## Approve a learner you rejected
+
+A rejection isn't final. On the **Students** tab, set **Filter by status** to **Inactive**, select the learner, then select **Approve**. Their status becomes **Active** and Atlas tells them they were approved. You can't approve a learner who is also **Blocked**: [unblock them](doc:DOC-ORG-008) first.
+
+## If the learner registers again
+
+A rejected learner can sign up again on your academy website with the same account (they enter the password they already use). Their new request follows your registration policy at that moment:
+
+- **Approval required**: they wait as **Pending approval** again, and your team gets a new notification.
+- **Open**: they are admitted straight away.
+- **Invite only**: they need a valid invite link, like anyone else.
+
+A learner you blocked can't come back this way. See [Block or unblock a learner](doc:DOC-ORG-008).
 
 ## What the learner is told
 

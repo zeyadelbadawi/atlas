@@ -39,6 +39,7 @@ A learner tries to sign up or sign in on the academy's website and sees one of t
 | Not a member of this academy yet | The person has an Atlas account but isn't a learner here, and the academy isn't open. | The learner registers (or uses an invite), then the academy approves |
 | You already have an Atlas account | The email is already registered on Atlas, usually from another academy. One Atlas account works in many academies. | The learner |
 | Blocked | The academy blocked this learner. | Owner or manager |
+| An email saying the registration was not approved | The academy rejected the registration. A rejection isn't final. | The learner signs up again, or the owner or a manager approves them |
 | Permanent email address | Temporary or disposable email addresses are refused. | The learner uses a real address |
 | Phone number already used | Each phone number can belong to one account only. | The learner, or support |
 | "Your account name matches a learner already in this academy." | Learner names must be unique inside one academy. | The learner adds a middle or family name in their profile |
@@ -51,6 +52,7 @@ A learner tries to sign up or sign in on the academy's website and sees one of t
 - **Invite only:** open the invite link you were sent, or ask the academy for a new one.
 - **"You already have an Atlas account":** you don't need a new account. Choose **Continue with my Atlas account** and enter the password you already use. Forgot it? Choose **Forgot your password?**. Your courses and progress in each academy stay separate.
 - **"You are not a member of this academy yet"** on the sign-in page: choose **Create a student account** to register with this academy.
+- **Your registration wasn't approved:** you can sign up again on the academy's website with the same account and password. The academy decides again, or contact it.
 - **Blocked, phone or anything else:** contact the academy (use its Contact page).
 
 ### Owners and managers: approve a pending learner
@@ -62,6 +64,8 @@ A learner tries to sign up or sign in on the academy's website and sees one of t
 2. Open the learner and choose **Approve** (or **Reject**).
 
    ![The student panel with the Approve button highlighted](shot:troubleshooting/student-drawer-approve)
+
+A learner whose registration you rejected shows **Inactive**. You can approve them the same way. See [Approve pending learners](doc:DOC-ORG-007).
 
 ### Owners and managers: unblock a learner
 

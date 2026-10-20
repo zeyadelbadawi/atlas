@@ -76,6 +76,10 @@ Some academies review every new student. After you sign up you see
 "Your request to join … has been sent. You'll be able to sign in once the
 academy approves it." Wait for the academy, or contact it.
 
+If the academy doesn't approve you, you get an email saying so. You can sign
+up again later with the same account and password, and the academy decides
+again.
+
 ## If the academy uses invitations
 
 Some academies only accept students with an invitation link. Without one,

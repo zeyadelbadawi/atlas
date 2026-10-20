@@ -53,6 +53,8 @@ The message **Registration policy updated** confirms the change. New sign-ups fo
 
 A learner who already uses Atlas at another academy can join yours with the same account. With **Open**, they join as soon as they sign in on your website. With **Approval required** or **Invite only**, signing in isn't enough: they go through sign-up like everyone else.
 
+A learner whose registration you rejected can sign up again the same way, and the policy in force at that moment applies to them: with **Approval required** they wait for you again, with **Open** they are admitted, and with **Invite only** they need a valid link. See [Approve pending learners](doc:DOC-ORG-007).
+
 ## Who can change it
 
 Only the organization owner. Anyone else sees **Only the account owner can change the registration policy.** under the options.
