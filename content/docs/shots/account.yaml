@@ -312,7 +312,7 @@
 
 # ---- Accept an invitation -----------------------------------------------------
 
-- key: account/invite-staff-sign-in
+- key: account/sign-in-submit
   as: visitor
   surface: platform
   path: /auth/sign-in
